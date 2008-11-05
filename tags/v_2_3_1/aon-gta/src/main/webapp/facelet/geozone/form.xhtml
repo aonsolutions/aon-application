@@ -1,0 +1,208 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="geotreeParentForm" styleClass="aon-form">
+			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:div styleClass="aon-content-toolbar-item-group">
+						<t:commandButton id="save" value="#{bundle.aon_save}"
+							forceId="#{true}" actionListener="#{geotreeParent.accept}"
+							onclick="return (confirm('#{bundle.aon_save_confirm}'))"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
+							accesskey="#{bundle.aon_key_save}" />
+						<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							actionListener="#{geotreeParent.onCancel}"
+							action="geozone_list" immediate="#{true}"
+							onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'"
+							accesskey="#{bundle.aon_key_cancel}" />
+						<t:commandButton id="remove" value="#{bundle.aon_remove}"
+							rendered="#{!geotreeParent.new and geotreeChild.model.rowCount == 0}"
+							forceId="#{true}" immediate="#{true}"
+							action="geozone_list"
+							actionListener="#{geotreeParent.onRemove}"
+							onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-delete'"
+							accesskey="#{bundle.aon_key_remove}" />
+						<h:commandButton id="search" value="#{bundle.aon_search}"
+							immediate="#{true}"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
+							actionListener="#{geotreeParent.onEditSearch}"
+							action="geozone_search"
+							accesskey="#{bundle.aon_key_search}" />
+					</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+					<h:outputText
+						value="#{geotreeParent.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+				</t:div>
+			</t:div>
+
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+					<!-- start of bag panel -->
+					<!-- start of flow layout -->
+					<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+						<t:outputLabel for="GeoTree_parent_child_name"
+							value="#{geozoneBundle.geozone_country}"
+							styleClass="aon-form-input-text-label" />
+						<t:inputText id="GeoTree_parent_child_name" forceId="#{true}"
+							value="#{geotreeParent.to.child.name}"
+							styleClass="aon-form-input-text" size="40" />
+
+					</h:panelGrid>
+
+					<t:div styleClass="aon-form-group"
+						rendered="#{!geotreeParent.new}">
+						<t:div styleClass="aon-form-group-title">
+							<t:outputLabel for="geotreeChildDataList"
+								value="#{geozoneBundle.geozone_provinces}" />
+						</t:div>
+
+						<t:div styleClass="aon-form-group-body">
+							<t:dataTable id="geotreeChildDataList"
+								value="#{geotreeChild.model}" rows="20" var="to"
+								rowIndexVar="rowIndex"
+								rowOnMouseOver="selectRow( this )"
+								rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+								styleClass="aon-edit-table" headerClass="aon-edit-table-header"
+								footerClass="aon-edit-table-footer"
+								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+								columnClasses="aon-edit-table-body aon-edit-table-body-icon,
+									aon-edit-table-mainColumn aon-edit-table-body aon-edit-table-body-string,
+									aon-edit-table-body aon-edit-table-body-buttons">
+
+								<t:column>
+									<f:facet name="header">
+										<f:verbatim>&#160;</f:verbatim>
+									</f:facet>
+									<t:commandLink immediate="#{true}"
+										styleClass="aon-table-row-selected"
+										rendered="#{to.id!=geotreeChild.to.id}"
+										actionListener="#{geotreeChild.onSelect}" />
+									<f:verbatim>&#160;</f:verbatim>
+									<f:facet name="footer">
+										<t:div>
+											<t:commandButton id="reset" alt="[#{bundle.aon_reset}]"
+												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
+												actionListener="#{geotreeChild.onReset}" rendered="#{!geotreeChild.new}"
+												value="" accesskey="#{bundle.aon_key_new_line}">
+											</t:commandButton>
+										</t:div>
+									</f:facet>
+								</t:column>
+
+								<t:column>
+									<f:facet name="header">
+										<t:outputText value="#{geozoneBundle.geozone_province}" />
+									</f:facet>
+									<t:div rendered="#{to!=geotreeChild.to}">
+										<h:outputText value="#{to.child.name}" />
+									</t:div>
+									<t:div rendered="#{to==geotreeChild.to}">
+										<t:inputText id="GeoTree_child_child_name-Edit" forceId="#{true}"
+											value="#{geotreeChild.to.child.name}"
+											styleClass="aon-form-input-text" size="40" />
+									</t:div>
+									<f:facet name="footer">
+										<t:div rendered="#{geotreeChild.new}">
+											<t:inputText id="GeoTree_child_child_name-New" forceId="#{true}"
+												value="#{geotreeChild.to.child.name}"
+												styleClass="aon-form-input-text" size="40" />
+										</t:div>
+									</f:facet>
+								</t:column>
+
+								<h:column>
+									<f:facet name="header">
+										<f:verbatim>&#160;</f:verbatim>
+									</f:facet>
+
+									<t:commandButton title="#{bundle.aon_accept}"
+										actionListener="#{geotreeChild.onAccept}"
+										onclick="return (confirm('#{bundle.aon_accept_confirm}'));"
+										styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+										value="" rendered="#{to.id==geotreeChild.to.id}"
+										accesskey="#{bundle.aon_key_save_line}" />
+									<t:commandButton title="#{bundle.aon_cancel}"
+										actionListener="#{geotreeChild.onCancel}"
+										immediate="#{true}"
+										onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+										styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+										value="" accesskey="#{bundle.aon_key_cancel_line}"
+										rendered="#{to.id==geotreeChild.to.id}" />
+									<t:commandButton title="#{bundle.aon_remove}"
+										actionListener="#{geotreeChild.onRemove}"
+										onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
+										styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
+										value="" accesskey="#{bundle.aon_key_remove_line}"
+										rendered="#{to.id==geotreeChild.to.id}" />
+									<f:verbatim rendered="#{to.id!=geotreeChild.to.id}">&#160;</f:verbatim>
+									<f:facet name="footer">
+										<t:div>
+											<f:verbatim rendered="#{!geotreeChild.new}">&#160;</f:verbatim>
+											<t:commandButton title="#{bundle.aon_accept}"
+												actionListener="#{geotreeChild.onAccept}"
+												onclick="return (confirm('#{bundle.aon_accept_confirm}'));"
+												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+												value="" accesskey="#{bundle.aon_key_save_line}"
+												rendered="#{geotreeChild.new}" />
+											<t:commandButton title="#{bundle.aon_cancel}"
+												actionListener="#{geotreeChild.onCancel}"
+												immediate="#{true}"
+												onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+												value="" accesskey="#{bundle.aon_key_cancel_line}"
+												rendered="#{geotreeChild.new}" />
+										</t:div>
+									</f:facet>
+								</h:column>
+
+							</t:dataTable>
+
+							<ui:include src="/facelet/shared/dataScroller.xhtml">
+								<ui:param name="dataTable" value="geotreeChildDataList" />
+								<ui:param name="model" value="#{geotreeChild.model}" />
+								<ui:param name="showNote" value="#{false}" />
+							</ui:include>
+
+						</t:div>
+					</t:div>
+
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+</body>
+</html>

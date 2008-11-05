@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workstation description="Vehiculos por Titulares" label="Vehiculos por Titulares">
+    <external-parameters>
+        <external-parameter defaultValue="%" label="NIF/DNI del Titular"
+            name="document" prompt="true" type="STRING"/>
+        <external-parameter defaultValue="%" label="Nombre del titular"
+            name="name" prompt="true" type="STRING"/>
+        <external-parameter defaultValue="%"
+            label="Apellidos del titular" name="surname" prompt="true" type="STRING"/>
+    </external-parameters>
+    <node iconClose="icons/icon_users_group.gif"
+        iconOpen="icons/icon_users_group.gif" label="Titulares">
+        <layout type="COLUMN"/>
+        <contents>
+            <listViewContent id="view/Vehiculo/Titulares de Vehiculos.exvw.xml">
+                <sentence>SELECT support_order.target,CONCAT(registry.surname,", ", registry.name)&#xd;
+FROM support_order,registry&#xd;
+WHERE support_order.target = registry.id&#xd;
+ AND registry.document LIKE ?&#xd;
+ AND registry.name LIKE ?&#xd;
+ AND registry.surname LIKE ?&#xd;
+GROUP BY support_order.target,CONCAT(registry.surname,", ", registry.name)&#xd;
+ORDER BY CONCAT(registry.surname,", ", registry.name)</sentence>
+                <metadata>
+                    <attribute label="CODIGO CLIENTE" name="REGISTRY_ID" type="INTEGER"/>
+                    <attribute label="NOMBRE CLIENTE"
+                        name="REGISTRY_NAME" type="STRING"/>
+                </metadata>
+                <parameters>
+                    <parameter name="document"/>
+                    <parameter name="name"/>
+                    <parameter name="surname"/>
+                </parameters>
+            </listViewContent>
+        </contents>
+        <node
+            dynamicViewId="view/Vehiculo/Titulares de Vehiculos.exvw.xml"
+            iconClose="icons/icon_usuario.gif"
+            iconOpen="icons/icon_usuario.gif" label="${REGISTRY_NAME}">
+            <dynamicSentence>
+                <sentence>SELECT support_order.target,CONCAT(registry.surname,", ", registry.name)&#xd;
+FROM support_order,registry&#xd;
+WHERE support_order.target = registry.id&#xd;
+ AND registry.document LIKE ?&#xd;
+ AND registry.name LIKE ?&#xd;
+ AND registry.surname LIKE ?&#xd;
+GROUP BY support_order.target,CONCAT(registry.surname,", ", registry.name)&#xd;
+ORDER BY CONCAT(registry.surname,", ", registry.name)</sentence>
+                <metadata>
+                    <attribute label="CODIGO CLIENTE" name="REGISTRY_ID" type="INTEGER"/>
+                    <attribute label="NOMBRE CLIENTE"
+                        name="REGISTRY_NAME" type="STRING"/>
+                </metadata>
+                <parameters>
+                    <parameter name="document"/>
+                    <parameter name="name"/>
+                    <parameter name="surname"/>
+                </parameters>
+            </dynamicSentence>
+            <dynamicParameters>
+                <parameter name="document"/>
+                <parameter name="name"/>
+                <parameter name="surname"/>
+            </dynamicParameters>
+            <layout type="COLUMN"/>
+            <contents>
+                <contentComposite label="Datos del Titular">
+                    <layout type="COLUMN"/>
+                    <contents>
+                        <formViewContent id="view/Vehiculo/Datos del cliente.exvw.xml">
+                            <sentence>SELECT document, name, surname FROM registry WHERE id = ?</sentence>
+                            <metadata>
+                                <attribute label="NIF / CIF"
+                                    name="document" type="STRING"/>
+                                <attribute label="NOMBRE" name="name" type="STRING"/>
+                                <attribute label="APELLIDOS"
+                                    name="surname" type="STRING"/>
+                            </metadata>
+                            <parameters>
+                                <parameter name="REGISTRY_ID"/>
+                            </parameters>
+                        </formViewContent>
+                        <listViewContent id="view/Vehiculo/RAddressList.exvw.xml">
+                            <sentence>SELECT raddress.address, raddress.zip, raddress.city, geozone.name&#xd;
+  FROM raddress&#xd;
+  LEFT OUTER JOIN geozone ON raddress.geozone = geozone.id&#xd;
+  WHERE raddress.registry = ?&#xd;
+</sentence>
+                            <metadata>
+                                <attribute label="DIRECCION"
+                                    name="address" type="STRING"/>
+                                <attribute label="C.P." name="zip" type="STRING"/>
+                                <attribute label="CIUDAD" name="city" type="STRING"/>
+                                <attribute label="PROVINCIA" name="name" type="STRING"/>
+                            </metadata>
+                            <parameters>
+                                <parameter name="REGISTRY_ID"/>
+                            </parameters>
+                        </listViewContent>
+                        <listViewContent id="view/Vehiculo/RMediaList.exvw.xml">
+                            <sentence>SELECT &#xd;
+CASE rmedia.media&#xd;
+	WHEN 1 THEN 'Tlfno. Fijo'&#xd;
+	WHEN 2 THEN 'Tlfno. Movil'&#xd;
+	WHEN 3 THEN 'Fax'&#xd;
+	WHEN 4 THEN 'eMail'&#xd;
+	WHEN 5 THEN 'Pág. WEB'&#xd;
+	ELSE 'Desconocido'&#xd;
+END &#xd;
+, rmedia.value, rmedia.comment&#xd;
+FROM rmedia &#xd;
+WHERE rmedia.registry = ? &#xd;
+</sentence>
+                            <metadata>
+                                <attribute label="Forma de Contacto"
+                                    name="media" type="STRING"/>
+                                <attribute label="Valor" name="value" type="STRING"/>
+                                <attribute label="Comentario"
+                                    name="comment" type="STRING"/>
+                            </metadata>
+                            <parameters>
+                                <parameter name="REGISTRY_ID"/>
+                            </parameters>
+                        </listViewContent>
+                    </contents>
+                </contentComposite>
+            </contents>
+            <node
+                dynamicViewId="view/Vehiculo/Vehiculos de un titular.exvw.xml"
+                iconClose="icons/icon_coche.gif"
+                iconOpen="icons/icon_coche.gif" label="${TAS_ITEM_PUBLIC_CODE}">
+                <dynamicSentence>
+                    <sentence>SELECT tas_item.id, tas_item.publicCode&#xd;
+FROM support_order,tas_item&#xd;
+WHERE support_order.target = ?&#xd;
+  AND support_order.tas_item = tas_item.id&#xd;
+GROUP BY tas_item.id, tas_item.publicCode</sentence>
+                    <metadata>
+                        <attribute label="" name="TAS_ITEM_ID" type="INTEGER"/>
+                        <attribute label="" name="TAS_ITEM_PUBLIC_CODE" type="STRING"/>
+                    </metadata>
+                    <parameters>
+                        <parameter name="REGISTRY_ID"/>
+                    </parameters>
+                </dynamicSentence>
+                <dynamicParameters>
+                    <parameter name="REGISTRY_ID"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <contentComposite label="Datos del Vehículo">
+                        <layout type="COLUMN"/>
+                        <contents>
+                            <formViewContent id="view/Vehiculo/Datos del Vehiculo.exvw.xml">
+                                <sentence>SELECT tas_item.id, tas_item.publicCode, make.name, model.name, tas_item.description&#xd;
+FROM tas_item, model, make&#xd;
+WHERE model.make = make.id and tas_item.model = model.id and tas_item.publicCode = ?</sentence>
+                                <metadata>
+                                    <attribute label="CODIGO"
+                                    name="TAS_ITEM" type="INTEGER"/>
+                                    <attribute label="MATRICULA"
+                                    name="publicCode" type="STRING"/>
+                                    <attribute label="MARCA"
+                                    name="make_name" type="STRING"/>
+                                    <attribute label="MODELO"
+                                    name="model_name" type="STRING"/>
+                                    <attribute label="DESCRIPCION"
+                                    name="description" type="STRING"/>
+                                </metadata>
+                                <parameters>
+                                    <parameter name="TAS_ITEM_PUBLIC_CODE"/>
+                                </parameters>
+                            </formViewContent>
+                        </contents>
+                    </contentComposite>
+                </contents>
+                <node
+                    dynamicViewId="view/Vehiculo/Orden de Reparacion.exvw.xml"
+                    iconClose="icons/icon_libro.gif"
+                    iconOpen="icons/icon_libro.gif" label="${SUPPORT_ORDER_SERIES}/${SUPPORT_ORDER_NUMBER} - ${SUPPORT_ORDER_DATE}">
+                    <dynamicSentence>
+                        <sentence>SELECT support_order.id, support_order.series,support_order.number,&#xd;
+       support_order.start_date, support_order.target, &#xd;
+registry.document, registry.name, registry.surname &#xd;
+FROM support_order, tas_item, registry&#xd;
+WHERE tas_item.id = support_order.tas_item &#xd;
+  AND tas_item.publicCode = ?&#xd;
+  AND support_order.target = registry.id&#xd;
+ORDER BY support_order.start_date DESC</sentence>
+                        <metadata>
+                            <attribute label="CODIGO" name="ORDER_ID" type="INTEGER"/>
+                            <attribute label="series"
+                                name="SUPPORT_ORDER_SERIES" type="STRING"/>
+                            <attribute label="number"
+                                name="SUPPORT_ORDER_NUMBER" type="INTEGER"/>
+                            <attribute label="FECHA"
+                                name="SUPPORT_ORDER_DATE" type="DATE"/>
+                            <attribute label="CLIENTE"
+                                name="REGISTRY_ID" type="INTEGER"/>
+                            <attribute label="NIF" name="document" type="STRING"/>
+                            <attribute label="NOMBRE" name="name" type="STRING"/>
+                            <attribute label="APELLIDOS" name="surname" type="STRING"/>
+                        </metadata>
+                        <parameters>
+                            <parameter name="TAS_ITEM_PUBLIC_CODE"/>
+                        </parameters>
+                    </dynamicSentence>
+                    <dynamicParameters>
+                        <parameter name="TAS_ITEM_PUBLIC_CODE"/>
+                    </dynamicParameters>
+                    <layout type="COLUMN"/>
+                    <contents>
+                        <contentComposite label="Datos de Reparación">
+                            <layout type="COLUMN"/>
+                            <contents>
+                                <formViewContent id="view/Vehiculo/Datos de Reparacion.exvw.xml">
+                                    <sentence>SELECT CONCAT(support_order.series,"/",support_order.number), support_order.start_date, registry.name, support_order.description&#xd;
+  FROM support_order &#xd;
+  LEFT JOIN employee ON support_order.employee = employee.registry &#xd;
+ LEFT JOIN registry ON employee.registry = registry.id&#xd;
+ WHERE support_order.id = ?</sentence>
+                                    <metadata>
+                                    <attribute label="SERIE/NUMERO"
+                                    name="serie_numero" type="STRING"/>
+                                    <attribute label="FECHA"
+                                    name="SUPPORT_ORDER_DATE" type="DATE"/>
+                                    <attribute
+                                    label="NOMBRE MECANICO"
+                                    name="name" type="STRING"/>
+                                    <attribute label="DESCRIPCION"
+                                    name="description" type="STRING"/>
+                                    </metadata>
+                                    <parameters>
+                                    <parameter name="ORDER_ID"/>
+                                    </parameters>
+                                </formViewContent>
+                            </contents>
+                        </contentComposite>
+                    </contents>
+                    <node
+                        dynamicViewId="view/Vehiculo/Presupuesto.exvw.xml"
+                        iconClose="icons/icon_presupuesto.gif" label="Ppto.: ${OFFER_SERIES}/${OFFER_NUMBER} - ${OFFER_DATE}">
+                        <dynamicSentence>
+                            <sentence>SELECT offer.id, offer.series, offer.number, offer.issue_date &#xd;
+  FROM tas_offer, offer &#xd;
+ WHERE tas_offer.offer = offer.id &#xd;
+  AND tas_offer.support_order = ?</sentence>
+                            <metadata>
+                                <attribute label="CODIGO"
+                                    name="OFFER_ID" type="INTEGER"/>
+                                <attribute label="SERIE"
+                                    name="OFFER_SERIES" type="STRING"/>
+                                <attribute label="NUMERO"
+                                    name="OFFER_NUMBER" type="INTEGER"/>
+                                <attribute label="FECHA"
+                                    name="OFFER_DATE" type="DATE"/>
+                            </metadata>
+                            <parameters>
+                                <parameter name="ORDER_ID"/>
+                            </parameters>
+                        </dynamicSentence>
+                        <dynamicParameters>
+                            <parameter name="ORDER_ID"/>
+                        </dynamicParameters>
+                        <layout type="COLUMN"/>
+                        <contents>
+                            <contentComposite label="Presupuesto">
+                                <layout type="COLUMN"/>
+                                <contents>
+                                    <formViewContent id="view/Vehiculo/Presupuesto.exvw.xml">
+                                    <sentence>SELECT offer.id, offer.series, offer.number, offer.issue_date &#xd;
+  FROM tas_offer, offer &#xd;
+ WHERE tas_offer.offer = offer.id &#xd;
+  AND tas_offer.support_order = ?</sentence>
+                                    <metadata>
+                                    <attribute label="CODIGO"
+                                    name="OFFER_ID" type="INTEGER"/>
+                                    <attribute label="SERIE"
+                                    name="OFFER_SERIES" type="STRING"/>
+                                    <attribute label="NUMERO"
+                                    name="OFFER_NUMBER" type="INTEGER"/>
+                                    <attribute label="FECHA"
+                                    name="OFFER_DATE" type="DATE"/>
+                                    </metadata>
+                                    <parameters>
+                                    <parameter name="OFFER_ID"/>
+                                    </parameters>
+                                    </formViewContent>
+                                    <listViewContent id="view/Vehiculo/Linea de Pruesupuesto.exvw.xml">
+                                    <sentence>SELECT product.code, product.name, offer_detail.quantity, offer_detail.price &#xd;
+FROM offer_detail, item, product, offer, tas_offer &#xd;
+WHERE offer_detail.item = item.id &#xd;
+  AND offer.id = offer_detail.offer &#xd;
+  AND offer.id = tas_offer.offer &#xd;
+  AND item.product = product.id &#xd;
+  AND tas_offer.support_order = ?</sentence>
+                                    <metadata>
+                                    <attribute label="CODIGO"
+                                    name="code" type="STRING"/>
+                                    <attribute label="ARTICULO"
+                                    name="name" type="STRING"/>
+                                    <attribute label="CANTIDAD"
+                                    name="quantity" type="DOUBLE"/>
+                                    <attribute label="PRECIO"
+                                    name="price" type="DOUBLE"/>
+                                    </metadata>
+                                    <parameters>
+                                    <parameter name="OFFER_ID"/>
+                                    </parameters>
+                                    </listViewContent>
+                                </contents>
+                            </contentComposite>
+                        </contents>
+                    </node>
+                    <node
+                        dynamicViewId="view/Vehiculo/Albaran de Venta.exvw.xml"
+                        iconClose="icons/icon_albaran_venta.gif" label="Albn.: ${DELVRY_SERIES}/${DELVRY_NUMBER} - ${DELVRY_DATE}">
+                        <dynamicSentence>
+                            <sentence>SELECT series, number, issue_time &#xd;
+FROM delivery, tas_delivery &#xd;
+WHERE tas_delivery.delivery = delivery.id &#xd;
+  AND tas_delivery.support_order = ?</sentence>
+                            <metadata>
+                                <attribute label="SERIE"
+                                    name="DELVRY_SERIES" type="STRING"/>
+                                <attribute label="NUMERO"
+                                    name="DELVRY_NUMBER" type="INTEGER"/>
+                                <attribute label="FECHA"
+                                    name="DELVRY_DATE" type="DATE"/>
+                            </metadata>
+                            <parameters>
+                                <parameter name="ORDER_ID"/>
+                            </parameters>
+                        </dynamicSentence>
+                        <dynamicParameters>
+                            <parameter name="ORDER_ID"/>
+                        </dynamicParameters>
+                        <layout type="COLUMN"/>
+                        <contents>
+                            <contentComposite label="Albarán">
+                                <layout type="COLUMN"/>
+                                <contents>
+                                    <formViewContent id="view/Vehiculo/Albaran de Venta.exvw.xml">
+                                    <sentence>SELECT series, number, issue_time &#xd;
+FROM delivery, tas_delivery &#xd;
+WHERE tas_delivery.delivery = delivery.id &#xd;
+  AND tas_delivery.support_order = ?</sentence>
+                                    <metadata>
+                                    <attribute label="SERIE"
+                                    name="DELVRY_SERIES" type="STRING"/>
+                                    <attribute label="NUMERO"
+                                    name="DELVRY_NUMBER" type="INTEGER"/>
+                                    <attribute label="FECHA"
+                                    name="DELVRY_DATE" type="DATE"/>
+                                    </metadata>
+                                    <parameters>
+                                    <parameter name="ORDER_ID"/>
+                                    </parameters>
+                                    </formViewContent>
+                                    <listViewContent id="view/Vehiculo/Lineas Albaran de Venta.exvw.xml">
+                                    <sentence>SELECT product.code, product.name, delivery_detail.quantity, delivery_detail.price&#xd;
+FROM delivery_detail, delivery, tas_delivery, item, product&#xd;
+WHERE delivery_detail.delivery = delivery.id&#xd;
+  AND item.product = product.id&#xd;
+  AND delivery_detail.item = item.id&#xd;
+  AND tas_delivery.delivery = delivery.id&#xd;
+  AND tas_delivery.support_order = ?&#xd;
+  </sentence>
+                                    <metadata>
+                                    <attribute label="CODIGO"
+                                    name="code" type="STRING"/>
+                                    <attribute label="ARTICULO"
+                                    name="name" type="STRING"/>
+                                    <attribute label="CANTIDAD"
+                                    name="quantity" type="DOUBLE"/>
+                                    <attribute label="PRECIO"
+                                    name="price" type="DOUBLE"/>
+                                    </metadata>
+                                    <parameters>
+                                    <parameter name="ORDER_ID"/>
+                                    </parameters>
+                                    </listViewContent>
+                                </contents>
+                            </contentComposite>
+                        </contents>
+                    </node>
+                    <node dynamicViewId="view/Vehiculo/Factura.exvw.xml"
+                        iconClose="icons/icon_factura.gif" label="Fra.: ${INVOICE_SERIES}/${INVOICE_NUMBER} - ${INVOICE_DATE}">
+                        <dynamicSentence>
+                            <sentence>SELECT invoice.id, invoice.series, invoice.number, invoice.issue_date, invoice.registry, invoice.raddress &#xd;
+FROM invoice,invoice_detail, delivery_detail, delivery, tas_delivery&#xd;
+WHERE invoice_detail.invoice = invoice.id&#xd;
+ AND invoice_detail.delivery_detail = delivery_detail.id&#xd;
+ AND delivery_detail.delivery = delivery.id&#xd;
+ AND tas_delivery.delivery = delivery.id&#xd;
+ AND tas_delivery.support_order = ?&#xd;
+GROUP BY invoice.series, invoice.number, invoice.issue_date, invoice.registry, invoice.raddress &#xd;
+</sentence>
+                            <metadata>
+                                <attribute label="CODIGO"
+                                    name="INVOICE_ID" type="INTEGER"/>
+                                <attribute label="SERIE"
+                                    name="INVOICE_SERIES" type="STRING"/>
+                                <attribute label="NUMERO"
+                                    name="INVOICE_NUMBER" type="INTEGER"/>
+                                <attribute label="FECHA"
+                                    name="INVOICE_DATE" type="DATE"/>
+                                <attribute label="registry"
+                                    name="INVOICE_REGISTRY" type="INTEGER"/>
+                                <attribute label="raddress"
+                                    name="INVOICE_RADDRESS" type="INTEGER"/>
+                            </metadata>
+                            <parameters>
+                                <parameter name="ORDER_ID"/>
+                            </parameters>
+                        </dynamicSentence>
+                        <dynamicParameters>
+                            <parameter name="ORDER_ID"/>
+                        </dynamicParameters>
+                        <layout type="COLUMN"/>
+                        <contents>
+                            <contentComposite label="Datos de la Factura">
+                                <layout type="COLUMN"/>
+                                <contents>
+                                    <formViewContent id="view/Facturas/DatosFactura.exvw.xml">
+                                    <sentence>SELECT CONCAT(series,"/",number),  issue_date, &#xd;
+CASE status&#xd;
+	WHEN 0 THEN 'Pendiente'&#xd;
+	WHEN 1 THEN 'Contabilizada'&#xd;
+END&#xd;
+FROM invoice&#xd;
+WHERE id = ?&#xd;
+</sentence>
+                                    <metadata>
+                                    <attribute
+                                    label="SERIE/NUMERO"
+                                    name="serie_numero" type="STRING"/>
+                                    <attribute label="FECHA"
+                                    name="issue_date" type="DATE"/>
+                                    <attribute label="ESTADO"
+                                    name="estado" type="STRING"/>
+                                    </metadata>
+                                    <parameters>
+                                    <parameter name="INVOICE_ID"/>
+                                    </parameters>
+                                    </formViewContent>
+                                </contents>
+                            </contentComposite>
+                            <contentComposite label="Datos del Cliente">
+                                <layout type="ROW"/>
+                                <contents>
+                                    <formViewContent id="view/Vehiculo/Datos del cliente.exvw.xml">
+                                    <sentence>SELECT document, name, surname FROM registry WHERE id = ?</sentence>
+                                    <metadata>
+                                    <attribute label="NIF / CIF"
+                                    name="document" type="STRING"/>
+                                    <attribute label="NOMBRE"
+                                    name="name" type="STRING"/>
+                                    <attribute label="APELLIDOS"
+                                    name="surname" type="STRING"/>
+                                    </metadata>
+                                    <parameters>
+                                    <parameter name="INVOICE_REGISTRY"/>
+                                    </parameters>
+                                    </formViewContent>
+                                    <formViewContent id="view/Facturas/Datos de la Dirección.exvw.xml">
+                                    <sentence>SELECT raddress.address, raddress.zip, raddress.city, geozone.name&#xd;
+  FROM raddress&#xd;
+  LEFT OUTER JOIN geozone ON raddress.geozone = geozone.id&#xd;
+  WHERE raddress.id = ?&#xd;
+</sentence>
+                                    <metadata>
+                                    <attribute label="DIRECCION"
+                                    name="address" type="STRING"/>
+                                    <attribute label="C.P."
+                                    name="zip" type="STRING"/>
+                                    <attribute label="CIUDAD"
+                                    name="city" type="STRING"/>
+                                    <attribute label="PROVINCIA"
+                                    name="name" type="STRING"/>
+                                    </metadata>
+                                    <parameters>
+                                    <parameter name="INVOICE_RADDRESS"/>
+                                    </parameters>
+                                    </formViewContent>
+                                </contents>
+                            </contentComposite>
+                            <listViewContent id="view/Vehiculo/Lineas de Factura.exvw.xml">
+                                <sentence>SELECT line, product.code, product.name, invoice_detail.quantity, invoice_detail.price&#xd;
+  FROM invoice_detail, product, item&#xd;
+ WHERE invoice_detail.invoice = ?&#xd;
+   AND invoice_detail.item = item.id&#xd;
+   AND item.product = product.id&#xd;
+ORDER BY line&#xd;
+</sentence>
+                                <metadata>
+                                    <attribute label="LINEA" name="line" type="INTEGER"/>
+                                    <attribute label="CODIGO"
+                                    name="code" type="STRING"/>
+                                    <attribute label="ARTICULO"
+                                    name="name" type="STRING"/>
+                                    <attribute label="CANTIDAD"
+                                    name="quantity" type="DOUBLE"/>
+                                    <attribute label="PRECIO"
+                                    name="price" type="DOUBLE"/>
+                                </metadata>
+                                <parameters>
+                                    <parameter name="INVOICE_ID"/>
+                                </parameters>
+                            </listViewContent>
+                        </contents>
+                    </node>
+                </node>
+            </node>
+        </node>
+    </node>
+</workstation>

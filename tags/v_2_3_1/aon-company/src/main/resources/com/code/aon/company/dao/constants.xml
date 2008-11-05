@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.code.aon.company.resources.Employee">
+		<alias names="id,registry_id,registry_name,registry_surname,registry_alias,registry_document,calendar,socialSecurityNumber,agreementTime,active"/>
+		<hibernate names="id,registry.id,registry.name,registry.surname,registry.alias,registry.document,calendar,socialSecurityNumber,agreementTime,active"/>
+	</bean>
+</dao>
