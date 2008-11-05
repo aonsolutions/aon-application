@@ -84,7 +84,6 @@ public class CompanyController extends CompanyParentController implements IAonFi
 		if (getAonFile() != null && getAonFile().getData() != null) {
 			out.write(getAonFile().getData());
 		}
-
 	}
 	
 	public Date getTimeStamp() {
