@@ -15,8 +15,8 @@
 
 		<aon:form id="clientesForm">
 			
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_organismos_entidades__delegacion}" />
+			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_clientes}" />
 				<ui:param name="controller" value="#{cliente}"/>
 				<ui:param name="reportKey" value="DelegacionList"/>
 			</ui:include>	
@@ -306,7 +306,7 @@
 		
 	<aon:lookupButtonPopup lookup="#{delegacionLookup}" />	
 	<aon:lookupButtonPopup lookup="#{empresarioLookup}" />   
-  <!--   <aon:lookupButtonPopup lookup="#{divisaLookup}" />   -->
+   <!-- <aon:lookupButtonPopup lookup="#{divisaLookup}" />   -->
 	<aon:lookupButtonPopup lookup="#{paisLookup}" />   
 	<aon:lookupButtonPopup lookup="#{documentoLookup}" />  
   <!--  <aon:lookupButtonPopup lookup="#{tipoviaLookup}" /> 
