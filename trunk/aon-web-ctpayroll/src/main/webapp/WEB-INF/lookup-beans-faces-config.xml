@@ -61,5 +61,81 @@
 		</managed-property>
 	</managed-bean>	
 	
+		<!--  ************ Delegacion LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>delegacionLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>divisaLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/clientes/delegacionLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
 	
+	
+		<!--  ************ empresario LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>empresarioLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>empresarioLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.tipos.Empresario</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/clientes/empresarioLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+			<!--  ************ documento LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>documentoLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>documentoLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.tipos.Documento</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/clientes/documentoLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	
+			<!--  ************ Pais LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>paisLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>paisLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.geograficas.Pais</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/clientes/paisLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
 </faces-config>

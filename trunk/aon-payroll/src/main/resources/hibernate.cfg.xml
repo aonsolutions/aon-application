@@ -93,7 +93,10 @@
            
 
         <!-- ORGANISMOS Y ENTIDADES -->			
-        <mapping class="com.code.aon.payroll.auxiliares.Admon"/>	
+        <mapping class="com.code.aon.payroll.auxiliares.Admon"/>
+
+         <!-- Clientes -->			
+        <mapping class="com.code.aon.payroll.principales.Cliente"/>
 	</session-factory>
 
 </hibernate-configuration>
