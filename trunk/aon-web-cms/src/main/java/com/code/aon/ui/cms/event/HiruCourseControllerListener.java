@@ -5,6 +5,7 @@ import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.cms.controller.HiruCourseController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -14,11 +15,13 @@ public class HiruCourseControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)
 			throws ControllerListenerException {
+		HiruCourseController controller = (HiruCourseController)event.getController(); 
 		try{
-			Criteria criteria = event.getController().getCriteria();
+			Criteria criteria = controller.getCriteria();
 			IManagerBean bean = BeanManager.getManagerBean(HiruCourse.class);
+			controller.completeCriteria();
+			criteria.addOrder(bean.getFieldName(ICMSAlias.HIRU_COURSE_ACTIVE));
 			criteria.addOrder(bean.getFieldName(ICMSAlias.HIRU_COURSE_ALIAS));
-			event.getController().setCriteria(criteria);
 		}catch (Exception e) {
 		}
 	}

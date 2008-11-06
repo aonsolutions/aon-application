@@ -496,6 +496,10 @@
       <from-outcome>hiru_course_form</from-outcome>
       <to-view-id>/facelet/content/hiru/course/form.xhtml</to-view-id>
     </navigation-case>
+    <navigation-case>
+      <from-outcome>hiru_course_search</from-outcome>
+      <to-view-id>/facelet/content/hiru/course/search.xhtml</to-view-id>
+    </navigation-case>
   </navigation-rule>
 
   <navigation-rule>
