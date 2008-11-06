@@ -1,13 +1,21 @@
 package com.code.aon.account.summary;
 
-import java.io.StringWriter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import org.apache.commons.lang.StringUtils;
 
 public class Summary {
+	public Summary() {
+	}
 
+	public Summary(String id,String description,double debit,double credit) {
+		setId(id);
+		setDescription(description);
+		setDebit(debit);
+		setCredit(credit);
+	}
+	
 	/**
 	 * Identificador de la cuenta.
 	 */
@@ -114,7 +122,14 @@ public class Summary {
 		return formatter.format(getCreditBalance());
 	}
 
-	private double round(double value) {
+	/**
+	 * Diferencia para el balance de perdidas y Ganancias
+	 */
+    public double getDifference() {
+        return (credit - debit);
+    }
+
+    protected double round(double value) {
 		double decimal = Math.pow(10, 2);
 		return Math.round(decimal * value) / decimal;
 	}

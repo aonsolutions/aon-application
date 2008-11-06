@@ -17,16 +17,17 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 
 public class AccountUtils {
-	
+
 	public Balance getOpeningEntryBalance(Date date, String accountId) throws ManagerBeanException {
-		return getAccountEntryBalance(date,accountId, AccountEntryType.OPENING);	
+		return getAccountEntryBalance(date, accountId, AccountEntryType.OPENING);
 	}
 
 	public Balance getClosingEntryBalance(Date date, String accountId) throws ManagerBeanException {
-		return getAccountEntryBalance(date,accountId, AccountEntryType.CLOSING);	
+		return getAccountEntryBalance(date, accountId, AccountEntryType.CLOSING);
 	}
 
-	public Balance getAccountEntryBalance(Date date, String accountId, AccountEntryType type) throws ManagerBeanException {
+	public Balance getAccountEntryBalance(Date date, String accountId, AccountEntryType type)
+			throws ManagerBeanException {
 		if (date == null) {
 			throw new IllegalArgumentException("date param must not be null.");
 		}
@@ -39,11 +40,11 @@ public class AccountUtils {
 		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 		Criteria c = new Criteria();
 		String alias = entryBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENTRY_DATE);
-		c.addLessThanOrEqualExpression(alias, date);	
-		c.addOrder(alias,false);
+		c.addLessThanOrEqualExpression(alias, date);
+		c.addOrder(alias, false);
 		c.addEqualExpression(entryBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_TYPE), type);
 		List<ITransferObject> list = entryBean.getList(c);
-		if (list.size() == 0 ) {
+		if (list.size() == 0) {
 			return null;
 		}
 		IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
@@ -52,21 +53,23 @@ public class AccountUtils {
 		AccountEntry entry = (AccountEntry) list.get(0);
 		Integer id = entry.getId();
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), id);
-		criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), accountId);
+		criteria.addEqualExpression(entryDetailBean
+				.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), id);
+		criteria.addEqualExpression(entryDetailBean
+				.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), accountId);
 		List<ITransferObject> details = entryDetailBean.getList(criteria);
-		if (details.size() > 0 ) {
-			for (ITransferObject to: details) {
+		if (details.size() > 0) {
+			for (ITransferObject to : details) {
 				AccountEntryDetail detail = (AccountEntryDetail) to;
-				debit = round(debit + detail.getDebit() );
-				credit = round(credit + detail.getCredit() );
+				debit = round(debit + detail.getDebit());
+				credit = round(credit + detail.getCredit());
 			}
 		}
 		Balance balance = null;
 		if (debit != 0 || credit != 0) {
 			balance = new Balance();
 			balance.setAccountEntry(entry.getId());
-			balance.setFromDate( entry.getEntryDate());
+			balance.setFromDate(entry.getEntryDate());
 			balance.setDebit(debit);
 			balance.setCredit(credit);
 			balance.setUnpaidBalance(debit);
@@ -76,52 +79,54 @@ public class AccountUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Balance getPeriodBalance(Date fromDate, Date toDate, String accountId,boolean excludeOpeningEntry,boolean excludeClosingEntry) throws ManagerBeanException {
+	public Balance getPeriodBalance(Date fromDate, Date toDate, String accountId,
+			boolean excludeOpeningEntry, boolean excludeClosingEntry) throws ManagerBeanException {
 		IManagerBean sumBean = BeanManager.getManagerBean(AccountSummary.class);
 		String dateAlias = sumBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_ENTRY_DATE);
 		String accountAlias = sumBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_ACCOUNT_ID);
 		String debitAlias = sumBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_DEBIT);
-		String creditAlias  = sumBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_CREDIT);
+		String creditAlias = sumBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_CREDIT);
 		ProjectionList pl = new ProjectionList();
 		pl.add(Projection.sum(debitAlias));
 		pl.add(Projection.sum(creditAlias));
 		Criteria c = new Criteria();
 		c.addEqualExpression(accountAlias, accountId);
 		if (fromDate != null) {
-			c.addGreaterThanOrEqualExpression(dateAlias, fromDate);	
+			c.addGreaterThanOrEqualExpression(dateAlias, fromDate);
 		}
 		if (toDate != null) {
-			c.addLessThanOrEqualExpression(dateAlias, toDate);	
+			c.addLessThanOrEqualExpression(dateAlias, toDate);
 		}
 		List list = sumBean.getList(pl, c);
 		if (list.size() == 0) {
 			return null;
 		}
 		Object[] sums = (Object[]) list.get(0);
-		Double debit = sums[0]!=null?(Double) sums[0]:new Double(0);
-		Double credit = sums[1]!=null?(Double) sums[1]:new Double(0);
+		Double debit = sums[0] != null ? (Double) sums[0] : new Double(0);
+		Double credit = sums[1] != null ? (Double) sums[1] : new Double(0);
 		Balance balance = new Balance();
-		balance.setFromDate( fromDate );
-		balance.setToDate( toDate );
+		balance.setFromDate(fromDate);
+		balance.setToDate(toDate);
 		balance.setDebit(debit);
 		balance.setCredit(credit);
 		if (excludeOpeningEntry) {
-			substractAmounts(balance,fromDate, accountId,AccountEntryType.OPENING);
+			substractAmounts(balance, fromDate, accountId, AccountEntryType.OPENING);
 		}
 		if (excludeClosingEntry) {
-			substractAmounts(balance,fromDate, accountId,AccountEntryType.CLOSING);
+			substractAmounts(balance, fromDate, accountId, AccountEntryType.CLOSING);
 		}
 		double bal = round(debit - credit);
 		if (bal > 0) {
-			balance.setUnpaidBalance(bal);	
+			balance.setUnpaidBalance(bal);
 		} else {
-			balance.setCreditBalance(round(bal*(-1)));	
+			balance.setCreditBalance(round(bal * (-1)));
 		}
 		return balance;
 	}
 
-	private void substractAmounts(Balance balance,Date fromDate, String accountId, AccountEntryType type) throws ManagerBeanException {
-		Balance openingBalance = getAccountEntryBalance(fromDate, accountId,type);
+	private void substractAmounts(Balance balance, Date fromDate, String accountId,
+			AccountEntryType type) throws ManagerBeanException {
+		Balance openingBalance = getAccountEntryBalance(fromDate, accountId, type);
 		if (openingBalance != null) {
 			boolean inRange = false;
 			if (fromDate != null) {
@@ -130,16 +135,14 @@ public class AccountUtils {
 			}
 			if (!inRange) {
 				balance.setDebit(round(balance.getDebit() - openingBalance.getDebit()));
-				balance.setCredit( round(balance.getCredit() - openingBalance.getCredit()));
+				balance.setCredit(round(balance.getCredit() - openingBalance.getCredit()));
 			}
 		}
-
 	}
-	
-	
+
 	private double round(double value) {
 		double decimal = Math.pow(10, 2);
 		return Math.round(decimal * value) / decimal;
 	}
- 
+
 }

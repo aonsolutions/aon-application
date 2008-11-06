@@ -6,10 +6,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.RegistryBank;
 
-/**
- * The Class AccountLeasingFeeHeader.
- */
-public class AccountLeasingFeeHeader implements ITransferObject {
+public class LeasingFeeEntryHeader implements ITransferObject {
 
 	private static final long serialVersionUID = 6319898333754554449L;
 
@@ -21,10 +18,13 @@ public class AccountLeasingFeeHeader implements ITransferObject {
 	
 	/** The series. */
 	private String series;
-	
+
 	/** The number. */
 	private int number;
 	
+	/** The series. */
+	private AutoConcept concept;
+
 	/** The reference code. */
 	private String referenceCode;
 	
@@ -113,6 +113,14 @@ public class AccountLeasingFeeHeader implements ITransferObject {
 	 */
 	public void setNumber(int number) {
 		this.number = number;
+	}
+
+	public AutoConcept getConcept() {
+		return concept;
+	}
+
+	public void setConcept(AutoConcept concept) {
+		this.concept = concept;
 	}
 
 	/**

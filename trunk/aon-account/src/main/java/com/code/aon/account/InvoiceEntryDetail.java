@@ -4,10 +4,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.product.Tax;
 import com.code.aon.product.enumeration.TaxType;
 
-/**
- * The Class AccountInvoiceDetail.
- */
-public class AccountInvoiceDetail implements ITransferObject {
+public class InvoiceEntryDetail implements ITransferObject {
 
 	private static final long serialVersionUID = -2335488721813209995L;
 
@@ -49,7 +46,7 @@ public class AccountInvoiceDetail implements ITransferObject {
 	/**
 	 * The constructor.
 	 */
-	public AccountInvoiceDetail() {
+	public InvoiceEntryDetail() {
 		super();
 		Tax vat = new Tax();
 		vat.setType(TaxType.VAT);

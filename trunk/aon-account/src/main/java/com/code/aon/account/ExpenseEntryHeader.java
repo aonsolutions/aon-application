@@ -6,10 +6,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.RegistryBank;
 
-/**
- * The Class AccountExpenseHeader.
- */
-public class AccountExpenseHeader implements ITransferObject {
+public class ExpenseEntryHeader implements ITransferObject {
 	
 	private static final long serialVersionUID = -3850406267453485925L;
 
