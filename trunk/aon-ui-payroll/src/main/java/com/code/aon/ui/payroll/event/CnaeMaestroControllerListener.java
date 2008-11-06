@@ -18,6 +18,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.payroll.controller.CnaeMaestroController;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
+import com.code.aon.ui.payroll.controller.PayrollBasicController;
 
 
 public class CnaeMaestroControllerListener extends ControllerAdapter implements IPayrollConstants {
@@ -55,7 +56,7 @@ public class CnaeMaestroControllerListener extends ControllerAdapter implements 
 	@Override
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
-		CnaeMaestroController cnaeMaestro = (CnaeMaestroController) event.getController();
+		PayrollBasicController cnaeMaestro = (PayrollBasicController) event.getController();
 		CnaeMaestro cm = (CnaeMaestro)event.getController().getTo();
 		String ocupaciones = cm.getOcupacion();
 		
