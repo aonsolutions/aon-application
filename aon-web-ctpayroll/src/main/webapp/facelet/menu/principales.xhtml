@@ -29,7 +29,8 @@
 								<aon:div>
 									<aon:commandLink action="cliente_form"
 										value="#{menuBundle.principales_clientes__cliente}"
-										actionListener="#{cliente.onEditSearch}">
+										>
+										<aon:actionListener method="#{cliente.onEditSearch}" />
 										<aon:actionListener method="#{cliente.onSearch}" />
 										<aon:actionListener method="#{cliente.onSelectFirst}" />
 									</aon:commandLink>
