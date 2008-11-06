@@ -2641,7 +2641,8 @@
 			<property-name>beanName</property-name>
 			<value>cliente</value>
 		</managed-property>
-		<managed-property>
+		</managed-bean>
+		<!--  <managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>
@@ -2670,8 +2671,8 @@
 					<value>cdg</value>
 				</map-entry>
 			</map-entries>
-		</managed-property>
-	</managed-bean>
+		</managed-property> 
+	</managed-bean>-->
 
 
 
@@ -2697,7 +2698,7 @@
 			<property-name>beanName</property-name>
 			<value>domicilio</value>
 		</managed-property>
-		<managed-property>
+	<!--	<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
@@ -2713,7 +2714,7 @@
 					<value>id.cdg</value>
 				</map-entry>
 			</map-entries>
-		</managed-property>
+		</managed-property>  -->
 	</managed-bean>
 	
 	 <managed-bean>
