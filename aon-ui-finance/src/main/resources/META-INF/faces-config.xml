@@ -831,7 +831,16 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
-	<!-- **************** CONVERTERS  *************** -->
+	<!-- **************** VAT REPORT  *************** -->
+	<managed-bean>
+		<managed-bean-name>vatReport</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.VatReportController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	 
+	<!-- **************** CONVERTERS  *************** 
 	<converter>
 		<description>Conversor para FinanceBatchStatus</description>
 		<converter-id>fBatchStatusConverter</converter-id>
@@ -849,7 +858,7 @@
 		<converter-id>financeStatusConverter</converter-id>
 		<converter-class>com.code.aon.ui.finance.converter.FinanceStatusConverter</converter-class>
 	</converter>
-	
+	-->
   <!-- =================== Navigation Rules ================= -->
 	
   <!-- **************** MENU  *************** -->	
@@ -1068,6 +1077,11 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	<!--  ********* CREDITOR CONVERTER ***************** -->
+	<converter>
+		<converter-id>BankCodeConverter</converter-id>
+		<converter-class>com.code.aon.ui.finance.converter.BankCodeConverter</converter-class>
+	</converter>
 	<!-- ************ BANK LOOKUP ************** -->
 	<managed-bean>
 		<managed-bean-name>bankLookup</managed-bean-name>
@@ -1100,6 +1114,18 @@
 		<navigation-case>
 			<from-outcome>creditor_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/finance/facelet/creditor/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+  <!-- =================== VAT REPORT ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>vat_report_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/vat/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>vat_report_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/vat/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

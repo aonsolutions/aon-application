@@ -150,7 +150,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{trial_balance}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{account_trial_balance_report}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -186,7 +186,7 @@
 					<textElement>
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true" isItalic="false"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_date_from} + ":"]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{account_date_from} + ":"]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -224,7 +224,7 @@
 					<textElement>
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true" isItalic="false"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_date_to} + ":"]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{account_date_to} + ":"]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -262,7 +262,7 @@
 					<textElement textAlignment="Right">
 						<font pdfFontName="Helvetica-BoldOblique" size="8" isBold="true" isItalic="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_period} + " " + $P{params}.getPeriod().getId()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{account_period} + " " + $P{params}.getPeriod().getId()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -279,7 +279,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_date} + ":"]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{account_date} + ":"]]></textFieldExpression>
 				</textField>
 			</band>
 		</pageHeader>
@@ -304,7 +304,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_account}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{account_account}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -324,7 +324,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_description}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{account_description}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -345,7 +345,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_debit}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{account_debit}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -366,7 +366,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_debit_balance}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{account_debit_balance}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -386,7 +386,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_credit}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{account_credit}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -407,7 +407,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_credit_balance}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{account_credit_balance}]]></textFieldExpression>
 				</textField>
 			</band>
 		</columnHeader>
@@ -689,7 +689,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of} + " "]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{account_page} + " " + $V{PAGE_NUMBER} + " " + $R{account_of} + " "]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

@@ -25,9 +25,11 @@
 					actionListener="#{wizard.onLookup}" ignoreDupResponses="true"
 					requestDelay="100" event="onchange"
 					reRender="#{id}Name,#{reRenderAttr}">
+<!-- 
 					<a4j:actionparam name="actionParam" value="#{ELExpression}"
 						assignTo="#{wizard.valueExpression}">
 					</a4j:actionparam>
+ -->
 					<a4j:actionparam name="lookupActionParam"
 						value="#{onLookupELExpression}"
 						assignTo="#{wizard.extendedAttributesValueExpression}">

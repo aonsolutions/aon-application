@@ -9,6 +9,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.account.Account;
+import com.code.aon.account.AutoConcept;
 import com.code.aon.account.Leasing;
 import com.code.aon.account.Loan;
 import com.code.aon.account.Period;
@@ -339,6 +340,28 @@ public class AccountCollectionsController {
 	 * @throws ManagerBeanException
 	 * @throws ExpressionException
 	 */
+
+	public List<SelectItem> getAutoConcepts() throws ManagerBeanException, ExpressionException {
+		List<SelectItem> autoConcepts = new LinkedList<SelectItem>();
+		IManagerBean conceptBean = BeanManager.getManagerBean(AutoConcept.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(conceptBean.getFieldName(IAccountAlias.AUTO_CONCEPT_DESCRIPTION), false);
+		Iterator<?> iter = conceptBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			AutoConcept concept = (AutoConcept) iter.next();
+			SelectItem item = new SelectItem(concept, concept.getDescription());
+			autoConcepts.add(item);
+		}
+		return autoConcepts;
+	}
+
+	/**
+	 * Gets the account periods.
+	 * 
+	 * @return the expenses accounts
+	 * @throws ManagerBeanException
+	 * @throws ExpressionException
+	 */
 	public List<SelectItem> getAccountPeriodKeys() throws ManagerBeanException, ExpressionException {
 		List<SelectItem> accountPeriods = new LinkedList<SelectItem>();
 		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
@@ -378,7 +401,7 @@ public class AccountCollectionsController {
 		return accountLevels;
 	}
 
-	public List<SelectItem> getAccountLoans() throws ManagerBeanException, ExpressionException {
+	public List<SelectItem> getLoans() throws ManagerBeanException, ExpressionException {
 		List<SelectItem> loans = new LinkedList<SelectItem>();
 		IManagerBean loanBean = BeanManager.getManagerBean(Loan.class);
 		Iterator<?> iter = loanBean.getList(null).iterator();
@@ -390,7 +413,7 @@ public class AccountCollectionsController {
 		return loans;
 	}
 
-	public List<SelectItem> getAccountLeasings() throws ManagerBeanException, ExpressionException {
+	public List<SelectItem> getLeasings() throws ManagerBeanException, ExpressionException {
 		List<SelectItem> loans = new LinkedList<SelectItem>();
 		IManagerBean leasingBean = BeanManager.getManagerBean(Leasing.class);
 		Iterator<?> iter = leasingBean.getList(null).iterator();

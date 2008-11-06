@@ -7,21 +7,14 @@
 	<!--  *************** COLLECTIONS ***************** -->
 	<managed-bean>
 		<managed-bean-name>accountCollections</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.controller.AccountCollectionsController 
-		</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.account.controller.AccountCollectionsController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>nullItem</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.controller.NullSelectItemController 
-		</managed-bean-class>
-		<managed-bean-scope>application</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- **************** ACCOUNTING PERIOD ************************** -->
 	<managed-bean>
 		<managed-bean-name>accPeriod</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.form.BasicController </managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -40,7 +33,7 @@
 	<!-- **************** ACCOUNT ************************** -->
 	<managed-bean>
 		<managed-bean-name>account</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.form.BasicController </managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -57,38 +50,91 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class> com.code.aon.ui.form.event.IControllerListener </value-class>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{accountControllerLevelListener}</value>
 				<value>#{accountControllerListener}</value>
 				<value>#{accountControllerCascadeListener}</value>
 				<value>#{accountAppParamsControllerListener}</value>
+				<value>#{accountBudgetDetailListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>accountControllerLevelListener</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.event.AccountControllerLevelListener 
-		</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.account.event.AccountControllerLevelListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>accountControllerListener</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.event.AccountControllerListener </managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.account.event.AccountControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>accountControllerCascadeListener</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.event.AccountControllerCascadeListener 
-		</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.account.event.AccountControllerCascadeListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>accountAppParamsControllerListener</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.event.AccountAppParamsControllerListener 
-		</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.account.event.AccountAppParamsControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
+	<!-- **************** ACCOUNT BUDGET ************************** -->
+	<managed-bean>
+		<managed-bean-name>accountBudgetDetailListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>accountBudget</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>AccountBudget_account_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>accountBudget</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.controller.AccountBudgetController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.account.AccountBudget</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>accountBudget</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>account</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>account.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
 	<!-- ************ ACCOUNT LOOKUP ************** -->
 	<managed-bean>
 		<managed-bean-name>accountLookup</managed-bean-name>
@@ -111,15 +157,14 @@
 	<!-- **************** END PERIOD ENTRIES ************************** -->
 	<managed-bean>
 		<managed-bean-name>endPeriodEntries</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.controller.EndPeriodEntriesController 
-		</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.account.controller.EndPeriodEntriesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- **************** AUTOMATIC CONCEPTS ************************** -->
 	<managed-bean>
 		<managed-bean-name>autConcept</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.form.BasicController </managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -138,8 +183,7 @@
 	<!-- **************** ACCOUNT ENTRY ************************** -->
 	<managed-bean>
 		<managed-bean-name>accountEntry</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.controller.AccountEntryController 
-		</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.account.controller.AccountEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -156,7 +200,7 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class> com.code.aon.ui.form.event.IControllerListener </value-class>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{accountEntryControllerListener}</value>
 				<value>#{accountEntryControllerValidatorListener}</value>
 				<value>#{accountEntryDetailListener}</value>
@@ -165,19 +209,17 @@
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>accountEntryControllerListener</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.event.AccountEntryControllerListener 
-		</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.account.event.AccountEntryControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>accountEntryControllerValidatorListener</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.event.AccountEntryControllerValidatorListener 
-		</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.account.event.AccountEntryControllerValidatorListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>accountEntryDetailListener</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.form.listener.LinesControllerListener </managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -194,10 +236,10 @@
 		</managed-property>
 	</managed-bean>
 	
-	<!-- ********** ACCOUNT ENTRY DETAIL CONTROLLER ********* -->
+	<!--  ACCOUNT ENTRY DETAIL CONTROLLER -->
 	<managed-bean>
 		<managed-bean-name>accountEntryDetail</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.form.LinesController </managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -239,7 +281,7 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class> com.code.aon.ui.form.event.IControllerListener </value-class>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{accountEntryDetailControllerValidatorListener}</value>
 				<value>#{accountEntryDetailControllerListener}</value>
 			</list-entries>
@@ -247,88 +289,77 @@
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>accountEntryDetailControllerValidatorListener</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.event.AccountEntryDetailControllerValidatorListener 
-		</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.account.event.AccountEntryDetailControllerValidatorListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>accountEntryDetailControllerListener</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.event.AccountEntryDetailControllerListener 
-		</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.account.event.AccountEntryDetailControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
 
 	<!-- ********** ACCOUNT INVOICE CONTROLLER ********* -->
 	<managed-bean>
-		<managed-bean-name>accountInvoice</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.controller.AccountInvoiceController 
-		</managed-bean-class>
+		<managed-bean-name>invoiceEntry</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.controller.InvoiceEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 	
 	<!-- ********** ACCOUNT EXPENSE CONTROLLER ********* -->
 	<managed-bean>
-		<managed-bean-name>accountExpense</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.controller.AccountExpensesController 
-		</managed-bean-class>
+		<managed-bean-name>expenseEntry</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.controller.ExpenseEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- ********** ACCOUNT SALARY CONTROLLER ********* -->
 	<managed-bean>
-		<managed-bean-name>accountSalary</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.controller.AccountSalaryController 
-		</managed-bean-class>
+		<managed-bean-name>salaryEntry</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.controller.SalaryEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- ********** ACCOUNT SOCIAL INSURANCE CONTROLLER ********* -->
 	<managed-bean>
-		<managed-bean-name>accountSocialInsurance</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.controller.AccountSocialInsuranceController 
-		</managed-bean-class>
+		<managed-bean-name>socialInsuranceEntry</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.controller.SocialInsuranceEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ********** ACCOUNT LOAN CONTROLLER ********* -->
 	<managed-bean>
-		<managed-bean-name>accountLoan</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.controller.AccountLoanController 
-		</managed-bean-class>
+		<managed-bean-name>loanEntry</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.controller.LoanEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- ********** ACCOUNT LOAN FEE CONTROLLER ********* -->
 	<managed-bean>
-		<managed-bean-name>accountLoanFee</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.controller.AccountLoanFeeController 
-		</managed-bean-class>
+		<managed-bean-name>loanFeeEntry</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.controller.LoanFeeEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ********** ACCOUNT LEASING CONTROLLER ********* -->
 	<managed-bean>
-		<managed-bean-name>accountLeasing</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.controller.AccountLeasingController 
-		</managed-bean-class>
+		<managed-bean-name>leasingEntry</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.controller.LeasingEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- ********** ACCOUNT LEASING FEE CONTROLLER ********* -->
 	<managed-bean>
-		<managed-bean-name>accountLeasingFee</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.controller.AccountLeasingFeeController 
-		</managed-bean-class>
+		<managed-bean-name>leasingFeeEntry</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.controller.LeasingFeeEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	
-	<!-- ********** ACCOUNT ENTRY REPORT CONTROLLER ********* -->
+	<!-- ********** JOURNAL BOOK REPORT CONTROLLER ********* -->
 	<managed-bean>
-		<managed-bean-name>accountEntryReport</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.controller.AccountEntryReportController 
-		</managed-bean-class>
+		<managed-bean-name>journalReport</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.controller.JournalReportController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -338,50 +369,41 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.account.AccountEntryDetail</value>
 		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class> com.code.aon.ui.form.event.IControllerListener </value-class>
-				<value>#{accountEntryReportControllerListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>accountEntryReportControllerListener</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.event.AccountEntryReportControllerListener 
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- ********** ACCOUNT SUMMARY REPORT CONTROLLER ********* -->
+	<!-- ********** PROFIT AND LOSS REPORT CONTROLLER ********* -->
 	<managed-bean>
-		<managed-bean-name>accountSummaryReport</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.controller.AccountSummaryReportController 
-		</managed-bean-class>
+		<managed-bean-name>profitAndLossReport</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.controller.ProfitAndLossReportController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
+			<property-name>budgeted</property-name>
 			<value>false</value>
 		</managed-property>
 	</managed-bean>
-	
-	<!-- ********** ACCOUNT MONTHLY REPORT CONTROLLER ********* -->
+
+	<!-- ********** BUDGETED PROFIT AND LOSS REPORT CONTROLLER ********* -->
 	<managed-bean>
-		<managed-bean-name>accountMonthlyReport</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.controller.AccountMonthlyReportController 
-		</managed-bean-class>
+		<managed-bean-name>budgetedProfitAndLossReport</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.controller.ProfitAndLossReportController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
+			<property-name>budgeted</property-name>
+			<value>true</value>
 		</managed-property>
+	</managed-bean>
+	
+	<!-- ********** PROFIT AND LOSS MONTHLY REPORT CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>profitAndLossMonthly</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.controller.ProfitAndLossMonthlyReportController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ********** ACCOUNT SUMMARY REGENERATOR CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>accountSummaryRegenerator</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.controller.AccountSummaryRegeneratorController 
-		</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.account.controller.AccountSummaryRegeneratorController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -457,200 +479,22 @@
 
 	<!-- ********** ACCOUNT STATEMENT REPORT CONTROLLER ********* -->
 	<managed-bean>
-		<managed-bean-name>accStatement</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.controller.AccountStatementController 
-		</managed-bean-class>
+		<managed-bean-name>trialBalance</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.controller.TrialBalanceController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>accStatement_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/statement/search.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>accStatement_account_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/statement/accountList.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>accStatement_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/statement/statementList.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>trialBalance_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/trial_balance/search.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>trialBalance_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/trial_balance/list.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	
+
 	<!--  ********* ACCOUNT WIZARD  ***************** -->
 	<managed-bean>
 		<managed-bean-name>accountWizard</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.account.controller.AccountWizard </managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.account.controller.AccountWizard</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	<!--  ********* ACCOUNT CONVERTER ***************** -->
-	<converter>
-		<converter-for-class>com.code.aon.account.Account</converter-for-class>
-		<converter-class>com.code.aon.ui.account.converter.AccountConverter</converter-class>
-	</converter>
-	<!--  ********* ACCOUNT LEASING***************** -->
-	<converter>
-		<converter-for-class>com.code.aon.account.Leasing</converter-for-class>
-		<converter-class>com.code.aon.ui.account.converter.LeasingConverter</converter-class>
-	</converter>
-  <!-- =================== Converters ================= -->
-	<converter>
-		<description>Conversor para AccountEntryType</description>
-		<converter-id>accountEntryTypeConverter</converter-id>
-		<converter-class>com.code.aon.ui.account.converter.AccountEntryTypeConverter</converter-class>
-	</converter>
-  
-  <!-- =================== Navigation Rules ================= -->
-  <!-- =================== ACCOUNT ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>account_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/account/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>account_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/account/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>account_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/account/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-  <!-- =================== ACCOUNT ENTRY ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>account_entry_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/account_entry/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>account_entry_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/account_entry/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>account_entry_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/account_entry/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-  <!-- =================== ACCOUNT ENTRY INVOICE ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>accountInvoice_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/account_entry/invoice/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-  
-  <!-- =================== MENU ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>accountOpeningEntry</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/account_entry/opening/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>accountClosingEntry</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/account_entry/closing/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>accountOperatingEntry</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/account_entry/operating/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>autConcept</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/autConcept/grid.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>accPeriod</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/accPeriod/grid.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>defaultParams</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/acc_appParams/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>accountEntry</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/account_entry/search.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>accountInvoiceEntry</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/account_entry/invoice/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>accountExpenseEntry</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/account_entry/expense/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>accountSalaryEntry</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/account_entry/salary/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>accountSocialInsuranceEntry</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/account_entry/social_insurance/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>accountLoanFeeEntry</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/account_entry/loan/fee/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>accountLoanEntry</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/account_entry/loan/open/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>accountEntryDaybook</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/account_entry/daybook/search.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>daybook_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/account_entry/daybook/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>daybook_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/account_entry/daybook/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>accountLeasingEntry</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/account_entry/leasing/open/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>accountLeasingFeeEntry</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/account_entry/leasing/fee/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>regenerateAccountSummary</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/util/summary/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>profit_and_loss_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/profitAndLoss/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>profit_and_loss_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/profitAndLoss/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
 
  	<!-- **************** STATEMENT ACCOUNT ************************** -->
 	<managed-bean>
-		<managed-bean-name>statementAccount</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.account.controller.StatementAccountController</managed-bean-class>
+		<managed-bean-name>statement</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.controller.StatementController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -667,7 +511,7 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class> com.code.aon.ui.form.event.IControllerListener </value-class>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{statementAccountEntryDetailListener}</value>
 			</list-entries>
 		</managed-property>
@@ -678,7 +522,7 @@
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
-			<value>statementAccountDetail</value>
+			<value>statementDetail</value>
 		</managed-property>
 		<managed-property>
 			<property-name>aliasMap</property-name>
@@ -691,8 +535,8 @@
 		</managed-property>
 	</managed-bean>
 	<managed-bean>
-		<managed-bean-name>statementAccountDetail</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.form.LinesController </managed-bean-class>
+		<managed-bean-name>statementDetail</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -708,7 +552,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>masterControllerName</property-name>
-			<value>statementAccount</value>
+			<value>statement</value>
 		</managed-property>
 		<managed-property>
 			<property-name>propertyMap</property-name>
@@ -728,13 +572,201 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener 
 				</value-class>
-				<value>#{statementAccountEntryDetailFilterListener}</value>
+				<value>#{statementDetailFilterListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 	<managed-bean>
-		<managed-bean-name>statementAccountEntryDetailFilterListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.account.event.StatementAccountDetailListener</managed-bean-class>
+		<managed-bean-name>statementDetailFilterListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.event.StatementDetailListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
+
+  <!--  ******** Navigation Rules **************** -->
+
+  <!-- ****************** ACCOUNT **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>account_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/account/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>account_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/account/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>account_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/account/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+  <!-- ****************** ACCOUNT **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>accountBudget_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/budget/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>accountBudget_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/budget/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>accountBudget_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/budget/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+  <!-- ****************** AUT CONCEPT **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>autConcept</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/autConcept/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+  <!-- ****************** PERIOD **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>accPeriod</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/period/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+  <!-- ****************** DEFAULT PARAMETERS **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>defaultParams</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/params/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+ 	<!-- **************** ACCOUNT ENTRY ********************* -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>account_entry_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/entry/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>account_entry_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/entry/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>account_entry_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/entry/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>account_invoice_entry</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/entry/invoice/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>account_expense_entry</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/entry/expense/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>account_salary_entry</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/entry/salary/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>account_social_insurance_entry</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/entry/social_insurance/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>accountOpeningEntry</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/entry/opening/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>accountClosingEntry</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/entry/closing/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>accountOperatingEntry</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/entry/operating/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+ 	<!-- **************** LEASING ********************* -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>account_loan_fee_entry</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/entry/loan/fee/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>account_loan_entry</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/entry/loan/open/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+ 	<!-- **************** LEASING ********************* -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>account_leasing_entry</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/entry/leasing/open/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>account_leasing_fee_entry</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/entry/leasing/fee/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+ 	<!-- **************** REGENERATE ACCOUNT SUMMARY ********************* -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>regenerateAccountSummary</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/util/summary/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+ 	<!-- **************** ACCOUNT STATEMENT ************************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>account_statement_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/statement/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>account_statement_account_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/statement/accountList.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>account_statement_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/statement/statementList.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+ 	<!-- **************** TRIAL BALANCE ************************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>trialBalance_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/trialbalance/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>trialBalance_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/trialbalance/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+ 	<!-- **************** PROFIT AND LOSS BALANCE ************************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>profit_and_loss_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/profitAndLoss/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>profit_and_loss_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/profitAndLoss/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+ 	<!-- **************** BUDGETED PROFIT AND LOSS BALANCE ************************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>budgeted_profit_and_loss_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/budgetedProfitAndLoss/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>budgeted_profit_and_loss_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/budgetedProfitAndLoss/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+ 	<!-- **************** JOURNAL BOOK REPORT ************************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>journal_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/journal/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>journal_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/journal/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 </faces-config>
