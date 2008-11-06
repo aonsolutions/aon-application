@@ -10,6 +10,7 @@ import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.el.ValueBinding;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
@@ -44,9 +45,13 @@ public class FaceletUtil {
 		}
 		return url;
 	}
+
+	public static TagAttribute getAttribute(Tag tag, String name) {
+		return tag.getAttributes().get(name);
+	}
 	
 	public static boolean hasValue(FaceletContext ctx, Tag tag, String name) {
-		TagAttribute tagAttribute = tag.getAttributes().get(name);
+		TagAttribute tagAttribute = getAttribute(tag, name);
 		if (tagAttribute != null) {
 			String value = tagAttribute.getValue(ctx);
 			return !StringUtils.isBlank(value);
@@ -136,6 +141,14 @@ public class FaceletUtil {
 			}
 		}
 		return result;
+	}
+	
+	public static Object getProperty( FacesContext ctx, UIComponent c, String name ) {
+        ValueBinding vb = c.getValueBinding(name);
+        if ( vb == null ) {
+        	return c.getAttributes().get(name);
+        } 
+        return vb.getValue(ctx);
 	}
 	
 }
