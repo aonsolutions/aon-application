@@ -32,4 +32,12 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!--  *************** NULL ITEM ***************** -->
+	<managed-bean>
+		<managed-bean-name>nullItem</managed-bean-name>
+		<managed-bean-class> com.code.aon.ui.common.controller.NullSelectItemController 
+		</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+	</managed-bean>
+
 </faces-config>
