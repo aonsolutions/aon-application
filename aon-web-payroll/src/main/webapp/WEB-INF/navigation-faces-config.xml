@@ -20,6 +20,36 @@
 			<redirect/>
 		</navigation-case>
 	</navigation-rule>
+
+	<!-- =================== Application Menu Navigation Rules ================= -->	
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>principales</from-outcome>
+			<to-view-id>/facelet/menu/principales.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>procesos</from-outcome>
+			<to-view-id>/facelet/menu/procesos.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>avanzadas</from-outcome>
+			<to-view-id>/facelet/menu/avanzadas.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>resultados</from-outcome>
+			<to-view-id>/facelet/menu/resultados.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>utilidades</from-outcome>
+			<to-view-id>/facelet/menu/utilidades.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>auxiliares</from-outcome>
+			<to-view-id>/facelet/menu/auxiliares.xhtml</to-view-id> 
+		</navigation-case>
+	</navigation-rule>
+
 	
 	<!-- =================== Auxiliares/Cotizacion/Porcentaje ================= -->
 	<navigation-rule>
@@ -35,11 +65,17 @@
 				/facelet/auxiliares/cotizacion/porcentaje/search.xhtml
 			</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>porcentajeMaestro_form</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/cotizacion/porcentaje/form.xhtml
+			</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 
 	<!-- =================== Auxiliares/Cotizacion/Epigrafe ================= -->
 	<navigation-rule>
-	<navigation-case>
+		<navigation-case>
 			<from-outcome>epigrafeMaestro_form</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/cotizacion/epigrafe/form.xhtml
@@ -66,20 +102,12 @@
 				/facelet/auxiliares/cotizacion/base/form.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-
-	<navigation-rule>
-
 		<navigation-case>
 			<from-outcome>baseMaestro_list</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/cotizacion/base/list.xhtml
 			</to-view-id>
 		</navigation-case>
-		</navigation-rule>
-		
-		<navigation-rule>
-		
 		<navigation-case>
 			<from-outcome>baseMaestro_search</from-outcome>
 			<to-view-id>
@@ -95,14 +123,10 @@
 				/facelet/auxiliares/organismos_entidades/delegaciones/form.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>delegacion_search</from-outcome>
 			<to-view-id>/facelet/auxiliares/organismos_entidades/delegaciones/search.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>delegacion_list</from-outcome>
 			<to-view-id>/facelet/auxiliares/organismos_entidades/delegaciones/list.xhtml</to-view-id>
@@ -117,8 +141,6 @@
 				/facelet/auxiliares/contratos/internos/form.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>contratosInternos_list</from-outcome>
 			<to-view-id>
@@ -157,14 +179,21 @@
 				/facelet/auxiliares/tipos/documento/search.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	
-	<navigation-rule>
+		<navigation-case>
+			<from-outcome>tiposDocumento_form</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/tipos/documento/grid.xhtml
+			</to-view-id>
+		</navigation-case>
 		<navigation-case>
 			<from-outcome>tiposVia_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/tipos/tipoVia/search.xhtml
 			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>tiposVia_form</from-outcome>
+			<to-view-id>/facelet/auxiliares/tipos/tipoVia/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
@@ -176,9 +205,6 @@
 				/facelet/auxiliares/geograficas/nacion/search.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>nacion_form</from-outcome>
 			<to-view-id>/facelet/auxiliares/geograficas/nacion/grid.xhtml</to-view-id>
@@ -195,14 +221,10 @@
 		</navigation-case>
 	</navigation-rule> 
 	
-	
-	
-	
-  <!-- =================== Irpfforal/Cuotas y minoraciones================= -->
-		
+	<!-- =================== Irpfforal/Cuotas y minoraciones================= -->
 		
 	<navigation-rule>
-	<navigation-case>
+		<navigation-case>
 			<from-outcome>cuotaRetencionAlava_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/irpfforal/CuotaRetencionAlava/search.xhtml
@@ -269,25 +291,11 @@
 		</navigation-case>
 	</navigation-rule>
 		
-		
-		
-	<!-- =================== Application Menu Navigation Rules ================= -->	
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>tiposDocumento_form</from-outcome>
-			<to-view-id>
-				/facelet/auxiliares/tipos/documento/grid.xhtml
-			</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>tiposEmpresario_form</from-outcome>
 			<to-view-id>/facelet/auxiliares/tipos/empresario/grid.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>tiposEmpresario_search</from-outcome>
 			<to-view-id>/facelet/auxiliares/tipos/empresario/search.xhtml</to-view-id>
@@ -299,8 +307,6 @@
 			<from-outcome>tiposCnae_form</from-outcome>
 			<to-view-id>/facelet/auxiliares/tipos/cnae/grid.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>tiposCnae_search</from-outcome>
 			<to-view-id>/facelet/auxiliares/tipos/cnae/search.xhtml</to-view-id>
@@ -312,8 +318,6 @@
 			<from-outcome>admon_form</from-outcome>
 			<to-view-id>/facelet/auxiliares/organismos_entidades/admon/grid.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>admon_search</from-outcome>
 			<to-view-id>/facelet/auxiliares/organismos_entidades/admon/search.xhtml</to-view-id>
@@ -373,20 +377,9 @@
 	
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>porcentajeMaestro_form</from-outcome>
-			<to-view-id>
-				/facelet/auxiliares/cotizacion/porcentaje/form.xhtml
-			</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	
-	<navigation-rule>
-		<navigation-case>
 			<from-outcome>cotizacionBonificacion_form</from-outcome>
 			<to-view-id>/facelet/auxiliares/cotizacion/bonificacion/grid.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>cotizacionBonificacion_search</from-outcome>
 			<to-view-id>/facelet/auxiliares/cotizacion/bonificacion/search.xhtml</to-view-id>
@@ -415,14 +408,6 @@
 			<to-view-id>/facelet/auxiliares/sistema_red/colectivos/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>tiposVia_form</from-outcome>
-			<to-view-id>/facelet/auxiliares/tipos/tipoVia/grid.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	
     
 	<navigation-rule>
 		<navigation-case>
@@ -487,8 +472,6 @@
 			<from-outcome>exclusion_form</from-outcome>
 			<to-view-id>/facelet/auxiliares/irpf/Exclusion/grid.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>exclusion_search</from-outcome>
 			<to-view-id>/facelet/auxiliares/irpf/Exclusion/search.xhtml</to-view-id>
@@ -503,8 +486,6 @@
 				/facelet/auxiliares/convenios/complementos/form.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule> 
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>complemento_search</from-outcome>
 			<to-view-id>
@@ -527,8 +508,6 @@
 				/facelet/auxiliares/convenios/colectivos/form.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule> 
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>convenio_search</from-outcome>
 			<to-view-id>
@@ -551,16 +530,12 @@
 				/facelet/auxiliares/convenios/categoria/form.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>categoria_list</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/convenios/categoria/list.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule> 
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>categoria_search</from-outcome>
 			<to-view-id>
@@ -577,16 +552,12 @@
 				/facelet/auxiliares/convenios/percepcion/form.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule> 
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>percepcion_list</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/convenios/percepcion/list.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule> 
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>percepcion_search</from-outcome>
 			<to-view-id>
@@ -603,8 +574,6 @@
 				/facelet/auxiliares/cotizacion/elemento/form.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>elementoMaestro_list</from-outcome>
 			<to-view-id>
@@ -627,8 +596,6 @@
 				/facelet/auxiliares/cotizacion/ocupacion/form.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>ocupacionMaestro_list</from-outcome>
 			<to-view-id>
@@ -651,8 +618,6 @@
 				/facelet/auxiliares/cotizacion/cnae/form.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>cnaeMaestro_list</from-outcome>
 			<to-view-id>
@@ -667,7 +632,7 @@
 		</navigation-case>
 	</navigation-rule>
 	
-		<!-- =================== Divisas================= -->
+	<!-- =================== Divisas================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>divisaMaestro_form</from-outcome>
@@ -675,8 +640,6 @@
 				/facelet/auxiliares/divisa/form.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>divisaMaestro_list</from-outcome>
 			<to-view-id>
@@ -706,7 +669,8 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-		<!-- =================== Entidades y Sucursales================= -->
+	
+	<!-- =================== Entidades y Sucursales================= -->
 		
 	<navigation-rule>
 		<navigation-case>
@@ -715,8 +679,6 @@
 				/facelet/auxiliares/organismos_entidades/entidades/form.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>entidadMaestro_list</from-outcome>
 			<to-view-id>
@@ -731,7 +693,7 @@
 		</navigation-case>
 	</navigation-rule>
 	
-		<!-- ===================Mutuas================ -->
+	<!-- ===================Mutuas================ -->
 		
 	<navigation-rule>
 		<navigation-case>
@@ -740,8 +702,6 @@
 				/facelet/auxiliares/organismos_entidades/mutua/form.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>mutuaMaestro_list</from-outcome>
 			<to-view-id>
@@ -756,7 +716,7 @@
 		</navigation-case>
 	</navigation-rule>
 	
-			<!-- ===================Datos clave IRPF================ -->
+	<!-- ===================Datos clave IRPF================ -->
 		
 	<navigation-rule>
 		<navigation-case>
@@ -765,8 +725,6 @@
 				/facelet/auxiliares/irpf/datos/form.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>irpfMaestro_list</from-outcome>
 			<to-view-id>
@@ -781,34 +739,22 @@
 		</navigation-case>
 	</navigation-rule>
 	
-	
-		<!-- ===================cliente================ -->
-		<navigation-rule>
-			<navigation-case>
+	<!-- ===================cliente================ -->
+	<navigation-rule>
+		<navigation-case>
 			<from-outcome>cliente_form</from-outcome>
-			<to-view-id>
-				/facelet/principales/clientes/form.xhtml
-			</to-view-id>
-		   </navigation-case>
-	    </navigation-rule>
-	    
-	    <navigation-rule>
-			<navigation-case>
+			<to-view-id>/facelet/principales/clientes/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>domicilio_form</from-outcome>
-			<to-view-id>
-				/facelet/principales/clientes/domicilios.xhtml
-			</to-view-id>
-		   </navigation-case>
-	    </navigation-rule>
-	    
-	    <navigation-rule>
-			<navigation-case>
+			<to-view-id>/facelet/principales/clientes/domicilios.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>cuenta_form</from-outcome>
-			<to-view-id>
-				/facelet/principales/clientes/cuentas.xhtml
-			</to-view-id>
-		   </navigation-case>
-	    </navigation-rule>
+			<to-view-id>/facelet/principales/clientes/cuentas.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 </faces-config>
 
 
