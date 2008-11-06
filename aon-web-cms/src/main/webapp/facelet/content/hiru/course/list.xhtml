@@ -35,6 +35,13 @@
 							accesskey="#{bundle.aon_key_new}">
 							<aon:actionListener method="#{hiru_course.onReset}" />
 						</aon:commandButton>
+						<aon:commandButton id="search" 
+							value="#{bundle.aon_search}"
+							action="hiru_course_search"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}">
+							<aon:actionListener method="#{hiru_course.onEditSearch}" />
+						</aon:commandButton>
 						<aon:commandButton id="generate"
 							value="#{appBundle.aon_generate}" 
 							rendered="#{cms.roleEditor}"
@@ -72,6 +79,7 @@
 						columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 								dr-table-cell rich-table-cell aon-editDataTable-iconColumn">
 								
 							<aon:column>
@@ -84,6 +92,13 @@
 								</f:facet>
 								<aon:outputText value="#{to.alias}"
 									styleClass="aon-editDataTable-button" />
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.hiru_course_hiruOrganizerCentre}" />
+								</f:facet>
+								<aon:outputText value="#{to.hiruOrganizerCentre.name}" styleClass="aon-editDataTable-button" />
 							</aon:column>
 
 							<aon:column>

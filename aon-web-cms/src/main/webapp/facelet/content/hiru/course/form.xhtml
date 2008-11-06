@@ -54,6 +54,14 @@
 							confirmAction="hiru_course_list"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							accesskey="#{bundle.aon_key_remove}"/>
+						<aon:commandButton id="search" 
+							value="#{bundle.aon_search}"
+							immediate="#{true}"
+							action="hiru_course_search"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}">
+							<aon:actionListener method="#{hiru_course.onEditSearch}" />
+						</aon:commandButton>
 						<aon:commandButton id="exit" value="#{bundle.aon_close}"
 							action="hiru_course_list" 
 							immediate="#{true}"
