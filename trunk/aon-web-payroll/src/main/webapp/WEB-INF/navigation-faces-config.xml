@@ -543,6 +543,58 @@
 		</navigation-case>
 	</navigation-rule> 
 	
+	<!-- =================== Convenios - Colectivos - Categorias ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>categoria_form</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/convenios/categoria/form.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>categoria_list</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/convenios/categoria/list.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>categoria_search</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/convenios/categoria/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== Convenios - Colectivos - Percepciones ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>percepcion_form</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/convenios/percepcion/form.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>percepcion_list</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/convenios/percepcion/list.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>percepcion_search</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/convenios/percepcion/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
 	<!-- =================== Cotizacion - Elementos ================= -->
 	<navigation-rule>
 		<navigation-case>
