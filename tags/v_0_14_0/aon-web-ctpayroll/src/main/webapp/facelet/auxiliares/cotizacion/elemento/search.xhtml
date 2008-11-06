@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+	
+	<ui:define name="content">
+
+		<aon:form id="elementoMaestroSearch">
+						
+			<!-- start toolbar navigation -->
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_cotizacion__elemcotizacion}" />
+				<ui:param name="controller" value="#{elementoMaestro}" />
+				<ui:param name="skipResetButton" value="#{true}" />
+			</ui:include>
+			<!-- end toolbar navigation -->
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener" value="#{elementoMaestro.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="elementoMaestro_list" />				
+				
+					<aon:outputLabel for="ElementoMaestro_cdg"
+						value="#{appBundle.aon_payroll_cdg}" />
+					<aon:inputText id="ElementoMaestro_cdg" size="10" maxlength="8"
+						valueChangeListener="#{elementoMaestro.addExpression}" />
+
+					<aon:outputLabel for="ElementoMaestro_description"
+						value="#{appBundle.aon_payroll_description}" />
+					<aon:inputText id="ElementoMaestro_description" size="60" maxlength="50"
+						valueChangeListener="#{elementoMaestro.addExpression}" />
+						
+					<!--  	 
+					<aon:outputLabel for="ElementoMaestro_elementos_id_fecini"
+						value="#{appBundle.aon_payroll_cotizacion_fecini}" />
+					<aon:selectInputDate id="ElementoMaestro_elementos_id_fecini" 
+						inputSize="10" renderAsPopup="true"
+						valueChangeListener="#{elementoMaestro.addDirectExpression}" 
+						popupDateFormat="#{appBundle.aon_date_pattern}">
+					</aon:selectInputDate>
+					
+					<aon:outputLabel for="ElementoMaestro_elementos_fecfin"
+						value="#{appBundle.aon_payroll_cotizacion_fecfin}" />
+					<aon:selectInputDate id="ElementoMaestro_elementos_fecfin" 
+						inputSize="10" renderAsPopup="true"
+						valueChangeListener="#{elementoMaestro.addDirectExpression}" 
+						popupDateFormat="#{appBundle.aon_date_pattern}">
+					</aon:selectInputDate>
+					-->
+					
+					<aon:outputLabel for="ElementoMaestro_elementos_dato1"
+						value="#{appBundle.aon_payroll_cotizacion_dato1}" />
+					<aon:inputText id="ElementoMaestro_elementos_dato1" size="60" maxlength="50"
+						valueChangeListener="#{elementoMaestro.addDirectExpression}" />
+						
+					<aon:outputLabel for="ElementoMaestro_elementos_dato2"
+						value="#{appBundle.aon_payroll_cotizacion_dato2}" />
+					<aon:inputText id="ElementoMaestro_elementos_dato2" size="60" maxlength="50"
+						valueChangeListener="#{elementoMaestro.addDirectExpression}" />					
+						
+				</ui:define>
+			</ui:decorate>
+
+		</aon:form>
+	</ui:define>
+		
+</ui:composition>

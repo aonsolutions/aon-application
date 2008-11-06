@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="paisForm">
+
+			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{menuBundle.auxiliares_geograficas__paicopro}" />
+				<ui:param name="controller" value="#{pais}" />
+				<ui:param name="reportKey" value="BasesList"/>
+			</ui:include>
+
+			<aon:div id="paisGrid" styleClass="aon-scroll-area">
+
+				<ui:include src="grid.xhtml" />
+
+				<aon:div>
+					<aon:div id="comunidadDiv"
+						style="width:47%; float: left; margin: 3em; margin-left: 0;">
+						
+						<aon:div styleClass="aon-form-group">
+							<aon:div styleClass="aon-form-group-title">
+								<aon:div styleClass="aon-form-group-title-internal">
+									<aon:outputLabel for="comunidadData" value="#{appBundle.aon_payroll_auxiliares_geograficas__comunidades}" />
+								</aon:div>
+							</aon:div>
+							<ui:include src="comunidad/grid.xhtml" />
+						</aon:div>
+						
+					</aon:div>
+					<aon:div id="provinciaDiv"
+						style="float: left; margin: 3em 20px 3em 0;">
+						
+						<aon:div styleClass="aon-form-group">
+							<aon:div styleClass="aon-form-group-title">
+								<aon:div styleClass="aon-form-group-title-internal">
+									<aon:outputLabel for="provinciaData" value="#{appBundle.aon_payroll_auxiliares_geograficas__provincias}" />
+								</aon:div>
+							</aon:div>
+ 
+							<ui:include src="provincia/grid.xhtml" />
+						</aon:div>
+						
+					</aon:div>
+					<aon:div style="clear: both" />
+				</aon:div>
+
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>
