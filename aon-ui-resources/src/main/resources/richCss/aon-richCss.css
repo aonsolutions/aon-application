@@ -126,11 +126,6 @@ color:#000;
 /**********************/
 /******* HOME ********/
 /**********************/
-/* IMAGEN DE FONDO AL ENTRAR EN APLICACION*/
-.aon-content-home{
-	background:#fff url(images/aon-home/aon-home.jpg) scroll left top no-repeat;
-	height:400px;
-	}	
 
 
 /************  REGIONES DE CONTENIDO *****************/
@@ -993,6 +988,15 @@ color:#000;
 	background:transparent url(images/aon-content/aon-search-commandButton-right.png) scroll right center no-repeat;
 	padding:5px 1em 5px 0;
 	}
+.aon-search-lookup-button{
+    font-weight:bold;
+	cursor:hand;
+	background:transparent url(images/aon-content/aon-fileupload-button.png) scroll left center no-repeat;	
+	padding:4px 1em !important;
+	margin:0;
+	border:transparent 1px solid;
+	width:100px;
+	}
 .aon-search-commandButton-right .aon-commandButton{
 	border:0 !important;
 	background:transparent !important;
@@ -1288,7 +1292,7 @@ color:#000;
 .aon-dropDownMenu-item{
 	cursor:pointer;
 	font-size:1em;
-	background:transparent url(../images/aon-content/aon-icon-file.png) left top repeat-y;
+	/*background:transparent url(../images/aon-icon/aon-icon-file.png) left top repeat-y;*/
   }
  .aon-menuItem-styleClass{
  	font-size:1em;
