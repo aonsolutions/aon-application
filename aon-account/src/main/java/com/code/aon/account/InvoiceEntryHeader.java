@@ -4,19 +4,23 @@ import java.util.Date;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.finance.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.registry.Registry;
 
-/**
- * The Class AccountInvoiceHeader.
- */
-public class AccountInvoiceHeader implements ITransferObject {
+public class InvoiceEntryHeader implements ITransferObject {
 	
 	private static final long serialVersionUID = 7455764834130396589L;
 
 	/** The type. */
 	private InvoiceType type;
-	
+
+	/** The type. */
+	private boolean investment;
+
+	/** The type. */
+	private InvoiceTransactionType transaction;
+
 	/** The registry. */
 	private Registry registry;
 	
@@ -243,5 +247,21 @@ public class AccountInvoiceHeader implements ITransferObject {
 	 */
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
+	}
+
+	public boolean isInvestment() {
+		return investment;
+	}
+
+	public void setInvestment(boolean investment) {
+		this.investment = investment;
+	}
+
+	public InvoiceTransactionType getTransaction() {
+		return transaction;
+	}
+
+	public void setTransaction(InvoiceTransactionType transaction) {
+		this.transaction = transaction;
 	}
 }

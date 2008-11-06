@@ -18,6 +18,8 @@ public class SummaryCollection {
 		summaryList = new LinkedList<Summary>();
 		initialDebit = 0.0;
 		initialCredit = 0.0;
+		debit = 0.0;
+		credit = 0.0;
 	}
 
 	public void add(Summary summary) {
@@ -67,6 +69,9 @@ public class SummaryCollection {
 
 	public List<Summary> getSummaryList() {
 		return summaryList;
+	}
+	public void setSummaryList(List<Summary> list) {
+		this.summaryList = list;
 	}
 
 	public void print(PrintStream out) {

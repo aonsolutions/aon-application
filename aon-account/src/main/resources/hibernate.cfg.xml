@@ -15,6 +15,7 @@
 
 		<!-- Mapping files -->
 		<mapping class="com.code.aon.account.Account"/>
+		<mapping class="com.code.aon.account.AccountBudget"/>
 		<mapping class="com.code.aon.account.Period"/>
 		<mapping class="com.code.aon.account.AutoConcept"/>
 		<mapping class="com.code.aon.account.AccountEntry"/>

@@ -41,7 +41,9 @@ public class Account implements ITransferObject {
 	 * TRUE if account entries are enabled, FALSE otherwise.
 	 */
 	private boolean entryEnabled;
-
+	
+	private int level;
+	
 	/**
 	 * Gets the ID of this account.
 	 * 
@@ -113,6 +115,15 @@ public class Account implements ITransferObject {
 		return entryEnabled;
 	}
 
+	@Column(nullable = false)
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
 	/**
 	 * Sets if account entries are enabled.
 	 * 
@@ -124,24 +135,6 @@ public class Account implements ITransferObject {
 		this.entryEnabled = entryEnabled;
 	}
 
-	/**
-	 * Returns the level of this account.
-	 * 
-	 * @return The level of this account.
-	 */
-	@Transient
-	public int getLevel() {
-		if (id != null) {
-			if (id.length() > 5) {
-				return 5;
-			} else if (id.length() == 5 ) {
-				return 4;
-			} else {
-				return id.length();
-			}
-		}
-		return -1;
-	}
 
 	/**
 	 * Returns the level of this account.

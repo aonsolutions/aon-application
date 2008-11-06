@@ -3,6 +3,7 @@ package com.code.aon.account.summary;
 import java.util.Date;
 
 import com.code.aon.account.Period;
+import com.code.aon.common.enumeration.SecurityLevel;
 
 public class SummaryProviderParameters {
 
@@ -53,6 +54,13 @@ public class SummaryProviderParameters {
 	 * Fecha.
 	 */
 	private Date date;
+	
+	private SecurityLevel securityLevel;
+	
+	private boolean budgeted;
+
+	private boolean monthlyGrouping;
+	
 
 	public SummaryProviderParameters() {
 		setAccountExpression(null);
@@ -63,6 +71,9 @@ public class SummaryProviderParameters {
 		setToDate(null);
 		setDate( new Date() );
 		setPeriod(null);
+		setSecurityLevel(null);
+		setBudgeted(false);
+		setMonthlyGrouping(false);
 	}
 
 	public String getAccountExpression() {
@@ -127,5 +138,28 @@ public class SummaryProviderParameters {
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	public SecurityLevel getSecurityLevel() {
+		return securityLevel;
+	}
+
+	public void setSecurityLevel(SecurityLevel securityLevel) {
+		this.securityLevel = securityLevel;
+	}
+	public boolean isBudgeted() {
+		return budgeted;
+	}
+
+	public void setBudgeted(boolean budgeted) {
+		this.budgeted = budgeted;
+	}
+
+	public boolean isMonthlyGrouping() {
+		return monthlyGrouping;
+	}
+
+	public void setMonthlyGrouping(boolean monthlyGrouping) {
+		this.monthlyGrouping = monthlyGrouping;
 	}
 }

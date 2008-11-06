@@ -47,6 +47,12 @@ public interface IAccountAlias {
 	*/
 	String  ACCOUNT_ID = ACCOUNT_ENTRY.getAliasNames()[3];
 
+	/** 
+	* Alias value: Account_level
+	* Hibernate value: Account.level
+	*/
+	String  ACCOUNT_LEVEL = ACCOUNT_ENTRY.getAliasNames()[4];
+
 
 
 	/** 
