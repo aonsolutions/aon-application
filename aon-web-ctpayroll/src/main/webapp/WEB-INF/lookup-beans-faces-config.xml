@@ -61,7 +61,7 @@
 		</managed-property>
 	</managed-bean>	
 	
-		<!--  ************ Delegacion LOOKUP **************  -->	
+	<!--  ************ Delegacion LOOKUP **************  -->	
 	<managed-bean>
 		<managed-bean-name>delegacionLookup</managed-bean-name>
 		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
@@ -136,6 +136,44 @@
 		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/facelet/principales/clientes/paisLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	<!--  ************ Base LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>baseLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>baseLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.cotizacion.Base</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/auxiliares/convenios/categoria/categoriaLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	<!--  ************ Epigrafe LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>epigrafeLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>epigrafeLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.cotizacion.Epigrafe</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/auxiliares/convenios/categoria/epigrafeLookup/list.xhtml</value>
 		</managed-property>
 	</managed-bean>	
 	
