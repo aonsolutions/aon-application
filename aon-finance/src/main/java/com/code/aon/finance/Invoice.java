@@ -30,6 +30,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
+import com.code.aon.finance.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
@@ -108,6 +109,12 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
     
     private String comments;
     
+    /** If the Invoice is an investment. */
+    private boolean investment;
+
+    /** If the Invoice is an investiment. */
+    private InvoiceTransactionType transaction;
+
     /** The detail of this invoice. */
 	private Set<InvoiceDetail> lines = new HashSet<InvoiceDetail>();
 
@@ -371,6 +378,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	 * 
 	 * @return true, if is tax free
 	 */
+    @Column(name = "taxFree")
 	public boolean isTaxFree() {
 		return taxFree;
 	}
@@ -384,6 +392,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 		this.taxFree = taxFree;
 	}
 	
+	@Column(name = "withholding")
 	public boolean isWithholding() {
 		return withholding;
 	}
@@ -392,13 +401,31 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 		this.withholding = withholding;
 	}
 	
-	@Column(length=65535)
+	@Column(name="comments",length=65535)
 	public String getComments() {
 		return comments;
 	}
 
 	public void setComments(String comments) {
 		this.comments = comments;
+	}
+
+	@Column(name = "investment")
+	public boolean isInvestment() {
+		return investment;
+	}
+
+	public void setInvestment(boolean investment) {
+		this.investment = investment;
+	}
+
+	@Column(name = "transaction")
+	public InvoiceTransactionType getTransaction() {
+		return transaction;
+	}
+
+	public void setTransaction(InvoiceTransactionType transaction) {
+		this.transaction = transaction;
 	}
 
 	/**
@@ -472,19 +499,18 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	 */
 	@Transient
 	@SuppressWarnings("unchecked")
-	@Deprecated
 	public List getDetailList() {
 		try {
-			IManagerBean incomeDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(incomeDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), getId());
-			return incomeDetailBean.getList(criteria);
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), getId());
+			return invoiceDetailBean.getList(criteria);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining incomeDetail list", e);
+			LOGGER.log(Level.SEVERE, "Error obtaining invoiceDetail list", e);
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Gets the ordered detail list. Used in the reports
 	 * 
@@ -492,17 +518,16 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	 */
 	@Transient
 	@SuppressWarnings("unchecked")
-	@Deprecated
 	public List getOrderedDetailList() {
 		try {
-			IManagerBean offerDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(offerDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), getId());
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), getId());
 			if(getType().equals(InvoiceType.SALES)){
-				criteria.addOrder(offerDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_ITEM_PRODUCT_TYPE));
+				criteria.addOrder(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_ITEM_PRODUCT_TYPE));
 			}
-			criteria.addOrder(offerDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_ID));
-			return offerDetailBean.getList(criteria);
+			criteria.addOrder(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_ID));
+			return invoiceDetailBean.getList(criteria);
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error obtaining offerDetail list", e);
 		}
@@ -521,11 +546,14 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	
     @Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return super.equals(obj);
+		if (obj == null) {
+    		return super.equals(obj);
 		}
 		if (obj instanceof Invoice) {
 			Invoice o = (Invoice) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
 			if (ObjectUtils.equals(getId(), o.getId())) {
 				return true;
 			}
@@ -537,4 +565,5 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	public int hashCode() {
 		return 0;
 	}
+
 }
