@@ -52,7 +52,7 @@ public class ProductCollectionsController {
 			Iterator<ITransferObject> iter = brandBean.getList(criteria).iterator();
 			while (iter.hasNext()) {
 				Brand brand = (Brand) iter.next();
-				SelectItem item = new SelectItem(brand.getId(),brand.getName());
+				SelectItem item = new SelectItem(brand,brand.getName());
 				brands.add(item);
 			}
 		}
@@ -78,7 +78,7 @@ public class ProductCollectionsController {
 			Iterator<ITransferObject> iter = productCategoryBean.getList(criteria).iterator();
 			while (iter.hasNext()) {
 				ProductCategory pCategory = (ProductCategory) iter.next();
-				SelectItem item = new SelectItem(pCategory.getId(), pCategory.getName());
+				SelectItem item = new SelectItem(pCategory, pCategory.getName());
 				pCategories.add(item);
 			}
 		}
@@ -114,7 +114,7 @@ public class ProductCollectionsController {
 		Iterator iter = pcategoryBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			ProductCategory category = (ProductCategory)iter.next();
-			SelectItem item = new SelectItem(category.getId(),category.getName());
+			SelectItem item = new SelectItem(category,category.getName());
 			items.add(item);
 		}
 		return items.toArray(new SelectItem[items.size()]);
@@ -132,7 +132,7 @@ public class ProductCollectionsController {
 			Iterator iter = pCategoryGroupBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				ProductCategoryGroup group = (ProductCategoryGroup)iter.next();
-				SelectItem item = new SelectItem(group.getId(), group.getName());
+				SelectItem item = new SelectItem(group, group.getName());
 				pCategoryGroups.add(item);
 			}
 		}
@@ -156,7 +156,7 @@ public class ProductCollectionsController {
 			Iterator<ITransferObject> iter = c.iterator();
 			while (iter.hasNext()) {
 				Tax tax = (Tax) iter.next();
-				SelectItem item = new SelectItem(tax.getId(), tax.getName());
+				SelectItem item = new SelectItem(tax, tax.getName());
 				taxes.add(item);
 			}
 		}
@@ -183,7 +183,7 @@ public class ProductCollectionsController {
 			Iterator<ITransferObject> iter = c.iterator();
 			while (iter.hasNext()) {
 				Tax tax = (Tax) iter.next();
-				SelectItem item = new SelectItem(tax.getId(), tax.getName());
+				SelectItem item = new SelectItem(tax, tax.getName());
 				vatTaxes.add(item);
 			}
 		}
@@ -210,7 +210,7 @@ public class ProductCollectionsController {
 			Iterator<ITransferObject> iter = c.iterator();
 			while (iter.hasNext()) {
 				Tax tax = (Tax) iter.next();
-				SelectItem item = new SelectItem(tax.getId(), tax.getName());
+				SelectItem item = new SelectItem(tax, tax.getName());
 				retentionTaxes.add(item);
 			}
 		}
@@ -312,7 +312,7 @@ public class ProductCollectionsController {
 			Iterator<ITransferObject> iter = tariffBean.getList(criteria).iterator();
 			while (iter.hasNext()) {
 				Tariff tariff = (Tariff) iter.next();
-				SelectItem item = new SelectItem(tariff.getId(),tariff.getName());
+				SelectItem item = new SelectItem(tariff,tariff.getName());
 				tariffs.add(item);
 			}
 		}
