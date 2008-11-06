@@ -21,7 +21,7 @@ import com.code.aon.payroll.tipos.Tipovia;
 @Table(name="domicilio")
 public class Domicilio  implements ITransferObject {
 
-     private int cdg;
+     private Integer cdg;
      private String nomvia;
      private String numero;
      private String otrdir;
@@ -202,7 +202,7 @@ public class Domicilio  implements ITransferObject {
         this.codnsz = codnsz;
     }
     
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="codcli")
     public Cliente getCliente() {
         return this.cliente;
@@ -212,7 +212,7 @@ public class Domicilio  implements ITransferObject {
         this.cliente = cliente;
     }
     
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="provincia")
     public Provincia getProvincia() {
         return this.provincia;
@@ -222,7 +222,7 @@ public class Domicilio  implements ITransferObject {
         this.provincia = provincia;
     }
     
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="tipovia")
     public Tipovia getTipovia() {
         return this.tipovia;
