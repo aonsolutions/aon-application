@@ -13,17 +13,17 @@ import javax.faces.model.ListDataModel;
 
 import com.code.aon.account.AccountEntry;
 import com.code.aon.account.AccountEntryDetail;
-import com.code.aon.account.AccountExpenseHeader;
-import com.code.aon.account.AccountInvoiceDetail;
-import com.code.aon.account.AccountInvoiceHeader;
-import com.code.aon.account.AccountLeasingFeeHeader;
-import com.code.aon.account.AccountLoanFeeHeader;
-import com.code.aon.account.AccountSalaryHeader;
-import com.code.aon.account.AccountSocialInsuranceHeader;
 import com.code.aon.account.DefaultAccounts;
+import com.code.aon.account.ExpenseEntryHeader;
+import com.code.aon.account.InvoiceEntryDetail;
+import com.code.aon.account.InvoiceEntryHeader;
 import com.code.aon.account.Leasing;
+import com.code.aon.account.LeasingFeeEntryHeader;
 import com.code.aon.account.Loan;
+import com.code.aon.account.LoanFeeEntryHeader;
 import com.code.aon.account.Period;
+import com.code.aon.account.SalaryEntryHeader;
+import com.code.aon.account.SocialInsuranceEntryHeader;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.InvoiceDetailAccount;
 import com.code.aon.account.bridge.LeasingAccount;
@@ -54,21 +54,21 @@ public class AccountEntryController extends BasicController {
 	
 	private static final Logger LOGGER = Logger.getLogger(AccountEntryController.class.getName());
 	
-	private static final String ACCOUNT_INVOICE_CONTROLLER_NAME = "accountInvoice";
+	private static final String INVOICE_ENTRY_CONTROLLER_NAME = "invoiceEntry";
 	
-	private static final String ACCOUNT_EXPENSES_CONTROLLER_NAME = "accountExpense";
+	private static final String EXPENSE_ENTRY_CONTROLLER_NAME = "expenseEntry";
 	
-	private static final String ACCOUNT_SALARY_CONTROLLER_NAME = "accountSalary";
+	private static final String SALARY_ENTRY_CONTROLLER_NAME = "salaryEntry";
 	
-	private static final String ACCOUNT_SOCIAL_INSURANCE_CONTROLLER_NAME = "accountSocialInsurance";
+	private static final String SOCIAL_INSURANCE_ENTRY_CONTROLLER_NAME = "socialInsuranceEntry";
 	
-	private static final String ACCOUNT_LOAN_CONTROLLER_NAME = "accountLoan";
+	private static final String LOAN_ENTRY_CONTROLLER_NAME = "loanEntry";
 
-	private static final String ACCOUNT_LOAN_FEE_CONTROLLER_NAME = "accountLoanFee";
+	private static final String LOAN_FEE_ENTRY_CONTROLLER_NAME = "loanFeeEntry";
 
-	private static final String ACCOUNT_LEASING_CONTROLLER_NAME = "accountLeasing";
+	private static final String LEASING_ENTRY_CONTROLLER_NAME = "leasingEntry";
 
-	private static final String ACCOUNT_LEASING_FEE_CONTROLLER_NAME = "accountLeasingFee";
+	private static final String LEASING_FEE_ENTRY_CONTROLLER_NAME = "leasingFeeEntry";
 	
 	private Date fromDate;
 	private Date toDate;
@@ -108,28 +108,28 @@ public class AccountEntryController extends BasicController {
 		if(entry.getType().equals(AccountEntryType.SALES_INVOICE) ||
 				entry.getType().equals(AccountEntryType.PURCHASE_INVOICE) ||
 				entry.getType().equals(AccountEntryType.EXPENSE_INVOICE)){
-			loadAccountInvoiceController(entry);
+			loadInvoiceEntryController(entry);
 		}
 		if(entry.getType().equals(AccountEntryType.EXPENSES)){
-			loadAccountExpensesController(entry);
+			loadExpenseEntryController(entry);
 		}
 		if(entry.getType().equals(AccountEntryType.SALARY)){
-			loadAccountSalaryController(entry);
+			loadSalaryEntryController(entry);
 		}
 		if(entry.getType().equals(AccountEntryType.SOCIAL_INSURANCE)){
-			loadAccountSocialInsuranceController(entry);
+			loadSocialInsuranceEntryController(entry);
 		}
 		if(entry.getType().equals(AccountEntryType.LOAN)){
-			loadAccountLoanController(entry);
+			loadLoanEntryController(entry);
 		}
 		if(entry.getType().equals(AccountEntryType.LOAN_FEE)){
-			loadAccountLoanFeeController(entry);
+			loadLoanFeeEntryController(entry);
 		}
 		if(entry.getType().equals(AccountEntryType.LEASING)){
-			loadAccountLeasingController(entry);
+			loadLeasingEntryController(entry);
 		}
 		if(entry.getType().equals(AccountEntryType.LEASING_FEE)){
-			loadAccountLeasingFeeController(entry);
+			loadLeasingFeeEntryController(entry);
 		}
 	}
 	
@@ -137,46 +137,46 @@ public class AccountEntryController extends BasicController {
 		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.SALES_INVOICE) ||
 				((AccountEntry)getTo()).getType().equals(AccountEntryType.PURCHASE_INVOICE) ||
 				((AccountEntry)getTo()).getType().equals(AccountEntryType.EXPENSE_INVOICE)){
-			return "accountInvoiceEntry";
+			return "account_invoice_entry";
 		}
 		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.EXPENSES)){
-			return "accountExpenseEntry";
+			return "account_expense_entry";
 		}
 		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.SALARY)){
-			return "accountSalaryEntry";
+			return "account_salary_entry";
 		}
 		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.SOCIAL_INSURANCE)){
-			return "accountSocialInsuranceEntry";
+			return "account_social_insurance_entry";
 		}
 		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.LOAN)){
-			return "accountLoanEntry";
+			return "account_loan_entry";
 		}
 		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.LOAN_FEE)){
-			return "accountLoanFeeEntry";
+			return "account_loan_fee_entry";
 		}
 		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.LEASING)){
-			return "accountLeasingEntry";
+			return "account_leasing_entry";
 		}
 		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.LEASING_FEE)){
-			return "accountLeasingFeeEntry";
+			return "account_leasing_fee_entry";
 		}
 		return "";
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void loadAccountInvoiceController(AccountEntry entry) {
+	private void loadInvoiceEntryController(AccountEntry entry) {
 		try {
-			AccountInvoiceController accountInvoiceController = (AccountInvoiceController)AonUtil.getRegisteredBean(ACCOUNT_INVOICE_CONTROLLER_NAME);
-			accountInvoiceController.onReset(null);
-			accountInvoiceController.setNew(false);
+			InvoiceEntryController invoiceEntryController = (InvoiceEntryController)AonUtil.getRegisteredBean(INVOICE_ENTRY_CONTROLLER_NAME);
+			invoiceEntryController.onReset(null);
+			invoiceEntryController.setNew(false);
 			IManagerBean accountEntryInvoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(accountEntryInvoiceBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_INVOICE_ACCOUNT_ENTRY_ID), entry.getId());
 			Iterator iter = accountEntryInvoiceBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				AccountEntryInvoice accountEntryInvoice = (AccountEntryInvoice)iter.next();
-				accountInvoiceController.setAccountEntryInvoice(accountEntryInvoice);
-				AccountInvoiceHeader header = new AccountInvoiceHeader();
+				invoiceEntryController.setAccountEntryInvoice(accountEntryInvoice);
+				InvoiceEntryHeader header = new InvoiceEntryHeader();
 				AccountEntryDetail detail = null;
 				if(entry.getType().equals(AccountEntryType.SALES_INVOICE)){
 					header.setType(InvoiceType.SALES);
@@ -203,21 +203,21 @@ public class AccountEntryController extends BasicController {
 				header.getPeriod().setId(entry.getAccountPeriod());
 				header.setSecurityLevel(entry.getSecurityLevel());
 				header.setRegistry(accountEntryInvoice.getInvoice().getRegistry());
-				accountInvoiceController.setHeader(header);
-				accountInvoiceController.setFinances(new ListDataModel(obtainFinances(accountEntryInvoice.getInvoice())));
-				accountInvoiceController.setDetails(new ListDataModel(obtainDetails(accountEntryInvoice.getInvoice())));
+				invoiceEntryController.setHeader(header);
+				invoiceEntryController.setFinances(new ListDataModel(obtainFinances(accountEntryInvoice.getInvoice())));
+				invoiceEntryController.setDetails(new ListDataModel(obtainDetails(accountEntryInvoice.getInvoice())));
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading AccountInvoiceController", e);
+			LOGGER.log(Level.SEVERE, "Error loading InvoiceEntryController", e);
 		}
 	}
 	
-	private void loadAccountExpensesController(AccountEntry entry) {
-		AccountExpensesController accountExpensesController = (AccountExpensesController)AonUtil.getRegisteredBean(ACCOUNT_EXPENSES_CONTROLLER_NAME);
-		accountExpensesController.onReset(null);
-		accountExpensesController.setNew(false);
-		accountExpensesController.setAccountEntry(entry);
-		AccountExpenseHeader header = new AccountExpenseHeader();
+	private void loadExpenseEntryController(AccountEntry entry) {
+		ExpenseEntryController expenseEntryController = (ExpenseEntryController)AonUtil.getRegisteredBean(EXPENSE_ENTRY_CONTROLLER_NAME);
+		expenseEntryController.onReset(null);
+		expenseEntryController.setNew(false);
+		expenseEntryController.setAccountEntry(entry);
+		ExpenseEntryHeader header = new ExpenseEntryHeader();
 		Period period = new Period();
 		period.setId(entry.getAccountPeriod());
 		header.setPeriod(period);
@@ -228,15 +228,15 @@ public class AccountEntryController extends BasicController {
 		header.setAmount(accountEntryDetail.getDebit());
 		header.setRBank(obtainRBank(accountEntryDetail.getBalancingAccount().getId()));
 		header.setSecurityLevel(entry.getSecurityLevel());
-		accountExpensesController.setHeader(header);
+		expenseEntryController.setHeader(header);
 	}
 	
-	private void loadAccountSalaryController(AccountEntry entry) {
-		AccountSalaryController salaryController = (AccountSalaryController)AonUtil.getRegisteredBean(ACCOUNT_SALARY_CONTROLLER_NAME);
+	private void loadSalaryEntryController(AccountEntry entry) {
+		SalaryEntryController salaryController = (SalaryEntryController)AonUtil.getRegisteredBean(SALARY_ENTRY_CONTROLLER_NAME);
 		salaryController.onReset(null);
 		salaryController.setNew(false);
 		salaryController.setAccountEntry(entry);
-		AccountSalaryHeader header = new AccountSalaryHeader();
+		SalaryEntryHeader header = new SalaryEntryHeader();
 		Period period = new Period();
 		period.setId(entry.getAccountPeriod());
 		header.setPeriod(period);
@@ -254,12 +254,12 @@ public class AccountEntryController extends BasicController {
 		salaryController.setHeader(header);
 	}
 	
-	private void loadAccountSocialInsuranceController(AccountEntry entry) {
-		AccountSocialInsuranceController socialInsController = (AccountSocialInsuranceController)AonUtil.getRegisteredBean(ACCOUNT_SOCIAL_INSURANCE_CONTROLLER_NAME);
+	private void loadSocialInsuranceEntryController(AccountEntry entry) {
+		SocialInsuranceEntryController socialInsController = (SocialInsuranceEntryController)AonUtil.getRegisteredBean(SOCIAL_INSURANCE_ENTRY_CONTROLLER_NAME);
 		socialInsController.onReset(null);
 		socialInsController.setNew(false);
 		socialInsController.setAccountEntry(entry);
-		AccountSocialInsuranceHeader header = new AccountSocialInsuranceHeader();
+		SocialInsuranceEntryHeader header = new SocialInsuranceEntryHeader();
 		Period period = new Period();
 		period.setId(entry.getAccountPeriod());
 		header.setPeriod(period);
@@ -272,26 +272,26 @@ public class AccountEntryController extends BasicController {
 		socialInsController.setHeader(header);
 	}
 
-	private void loadAccountLoanController(AccountEntry entry) {
+	private void loadLoanEntryController(AccountEntry entry) {
 		try {
-			AccountLoanController loanController = (AccountLoanController)AonUtil.getRegisteredBean(ACCOUNT_LOAN_CONTROLLER_NAME);
+			LoanEntryController loanController = (LoanEntryController)AonUtil.getRegisteredBean(LOAN_ENTRY_CONTROLLER_NAME);
 			loanController.onReset(null);
 			loanController.setNew(false);
 			loanController.setAccountEntry(entry);
 			Loan loan = obtainLoan(entry);
 			loanController.setLoan(loan);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading AccountLoanController", e);
+			LOGGER.log(Level.SEVERE, "Error loading LoanEntryController", e);
 		}
 	}
 
-	private void loadAccountLoanFeeController(AccountEntry entry) {
+	private void loadLoanFeeEntryController(AccountEntry entry) {
 		try {
-			AccountLoanFeeController loanFeeController = (AccountLoanFeeController)AonUtil.getRegisteredBean(ACCOUNT_LOAN_FEE_CONTROLLER_NAME);
+			LoanFeeEntryController loanFeeController = (LoanFeeEntryController)AonUtil.getRegisteredBean(LOAN_FEE_ENTRY_CONTROLLER_NAME);
 			loanFeeController.onReset(null);
 			loanFeeController.setNew(false);
 			loanFeeController.setAccountEntry(entry);
-			AccountLoanFeeHeader header = new AccountLoanFeeHeader();
+			LoanFeeEntryHeader header = new LoanFeeEntryHeader();
 			Loan loan = obtainLoan(entry);
 			AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.LOAN_ACCOUNT_PREFIX + "*");
 			header.setAmortization(accountEntryDetail.getDebit());
@@ -303,37 +303,37 @@ public class AccountEntryController extends BasicController {
 			header.setInterest(accountEntryDetail.getDebit());
 			loanFeeController.setHeader(header);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading AccountLoanFeeController", e);
+			LOGGER.log(Level.SEVERE, "Error loading LoanFeeEntryController", e);
 		}
 	}
 	
-	private void loadAccountLeasingController(AccountEntry entry) {
+	private void loadLeasingEntryController(AccountEntry entry) {
 		try {
-			AccountLeasingController leasingController = (AccountLeasingController)AonUtil.getRegisteredBean(ACCOUNT_LEASING_CONTROLLER_NAME);
+			LeasingEntryController leasingController = (LeasingEntryController)AonUtil.getRegisteredBean(LEASING_ENTRY_CONTROLLER_NAME);
 			leasingController.onReset(null);
 			leasingController.setNew(false);
 			leasingController.setAccountEntry(entry);
 			Leasing leasing = obtainLeasing(entry);
 			leasingController.setLeasing(leasing);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading AccountLeasingController", e);
+			LOGGER.log(Level.SEVERE, "Error loading LeasingEntryController", e);
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void loadAccountLeasingFeeController(AccountEntry entry) {
+	private void loadLeasingFeeEntryController(AccountEntry entry) {
 		try {
-			AccountLeasingFeeController accountLeasingFeeController = (AccountLeasingFeeController)AonUtil.getRegisteredBean(ACCOUNT_LEASING_FEE_CONTROLLER_NAME);
-			accountLeasingFeeController.onReset(null);
-			accountLeasingFeeController.setNew(false);
+			LeasingFeeEntryController leasingEntryFeeController = (LeasingFeeEntryController)AonUtil.getRegisteredBean(LEASING_FEE_ENTRY_CONTROLLER_NAME);
+			leasingEntryFeeController.onReset(null);
+			leasingEntryFeeController.setNew(false);
 			IManagerBean accountEntryInvoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(accountEntryInvoiceBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_INVOICE_ACCOUNT_ENTRY_ID), entry.getId());
 			Iterator iter = accountEntryInvoiceBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				AccountEntryInvoice accountEntryInvoice = (AccountEntryInvoice)iter.next();
-				accountLeasingFeeController.setAccountEntryInvoice(accountEntryInvoice);
-				AccountLeasingFeeHeader header = new AccountLeasingFeeHeader();
+				leasingEntryFeeController.setAccountEntryInvoice(accountEntryInvoice);
+				LeasingFeeEntryHeader header = new LeasingFeeEntryHeader();
 				AccountEntryDetail detail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
 				header.setRBank(obtainRBank(detail.getAccount().getId()));
 				detail = obtainEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "");
@@ -349,10 +349,10 @@ public class AccountEntryController extends BasicController {
 				header.setNumber(accountEntryInvoice.getInvoice().getNumber());
 				header.setReferenceCode(accountEntryInvoice.getInvoice().getReferenceCode());
 				
-				accountLeasingFeeController.setHeader(header);
+				leasingEntryFeeController.setHeader(header);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading AccountInvoiceController", e);
+			LOGGER.log(Level.SEVERE, "Error loading InvoiceEntryController", e);
 		}
 	}
 
@@ -373,24 +373,23 @@ public class AccountEntryController extends BasicController {
 		return finances;
 	}
 	
-	@SuppressWarnings("unchecked")
-	private List obtainDetails(Invoice invoice) {
-		List<AccountInvoiceDetail> details = new LinkedList<AccountInvoiceDetail>();
+	private List<InvoiceEntryDetail> obtainDetails(Invoice invoice) {
+		List<InvoiceEntryDetail> details = new LinkedList<InvoiceEntryDetail>();
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 			IManagerBean invoiceAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-			Iterator iter = invoiceDetailBean.getList(criteria).iterator();
+			Iterator<?> iter = invoiceDetailBean.getList(criteria).iterator();
 			while(iter.hasNext()){
-				AccountInvoiceDetail detail = new AccountInvoiceDetail();
+				InvoiceEntryDetail detail = new InvoiceEntryDetail();
 				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
 				detail.setTaxableBase(invoiceDetail.getTaxableBase());
 
 				Criteria taxCriteria = new Criteria();
 				taxCriteria.addEqualExpression(invoiceTaxBean.getFieldName(IFinanceAlias.INVOICE_TAX_INVOICE_DETAIL_ID), invoiceDetail.getId());
-				Iterator taxIter= invoiceTaxBean.getList(taxCriteria).iterator();
+				Iterator<?> taxIter= invoiceTaxBean.getList(taxCriteria).iterator();
 				while(taxIter.hasNext()){
 					InvoiceTax invoiceTax = (InvoiceTax)taxIter.next();
 					if(invoiceTax.getTaxType().equals(TaxType.VAT)){
@@ -407,7 +406,7 @@ public class AccountEntryController extends BasicController {
 
 				Criteria accountCriteria = new Criteria();
 				accountCriteria.addEqualExpression(invoiceAccountBean.getFieldName(IAccountBridgeAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_ID), invoiceDetail.getId());
-				Iterator accountIter= invoiceAccountBean.getList(accountCriteria).iterator();
+				Iterator<?> accountIter= invoiceAccountBean.getList(accountCriteria).iterator();
 				if(accountIter.hasNext()){
 					InvoiceDetailAccount invoiceDetailAccount = (InvoiceDetailAccount)accountIter.next();
 					detail.setAccount(invoiceDetailAccount.getAccount());

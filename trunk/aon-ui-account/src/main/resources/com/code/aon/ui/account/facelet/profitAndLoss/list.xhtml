@@ -13,12 +13,12 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbarEx.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{appBundle.account_profit_and_loss}" />
+					value="#{accountBundle.account_profit_and_loss_module}" />
 				<ui:param name="skipResetButton" value="true" />
 
 				<ui:define name="toolbarActions">
 					<aon:methodParam name="searchActionListener"
-						value="#{accountSummaryReport.onEditSearch}" type="actionListener" />
+						value="#{profitAndLossReport.onEditSearch}" type="actionListener" />
 					<aon:methodParam name="searchAction" value="profit_and_loss_search" />
 				</ui:define>
 				<ui:define name="additionalToolbarContent">
@@ -28,207 +28,161 @@
 						<f:param name="reportKey" value="profitAndLoss" />
 						<f:param name="outputFormat" value="PDF" />
 					</h:commandLink>
-					<!-- 
-					<h:commandLink target="_blank"
-						styleClass="aon-finding-toolbar-item aon-icon-excel"
-						style="margin-left: 0.5em;" value="&#160;"
-						action="#{report.onExecute}">
-						<f:param name="reportKey" value="profitAndLoss" />
-						<f:param name="outputFormat" value="MS Excel" />
-					</h:commandLink>
- -->
 					<h:commandLink target="_blank"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
-						value="#{accountBundle.aon_monthly_report}"
+						value="#{accountBundle.account_monthly_report}"
 						action="#{report.onExecute}">
 						<f:param name="reportKey" value="profitAndLossMonthly" />
 						<f:param name="outputFormat" value="PDF" />
 					</h:commandLink>
-					<!-- 					
-					<h:commandLink target="_blank"
-						styleClass="aon-finding-toolbar-item aon-icon-excel"
-						value="&#160;" action="#{report.onExecute}">
-						<f:param name="reportKey" value="profitAndLossMonthly" />
-						<f:param name="outputFormat" value="MS Excel" />
-					</h:commandLink>
- -->
 				</ui:define>
 			</ui:decorate>
 
 			<aon:div id="accountData" styleClass="aon-scroll-area">
-				<aon:dataTable id="accountDataList"
-					value="#{accountSummaryReport.grossMarginSummaryCollection}"
-					rows="20" var="to">
 
-					<aon:column styleClass="aon-width-100">
-						<f:facet name="header">
-							<aon:outputText value="#{accountBundle.aon_account}" />
-						</f:facet>
-						<aon:commandLink immediate="#{true}" 
-							title="#{accountBundle.account_abstract}"
-							styleClass="aon-dataTable-link"
-							action="#{accStatement.getNextView}">
-							<f:setPropertyActionListener value="#{to.account}" target="#{accountSummaryReport.accountStatement}" />
-							<aon:actionListener method="#{accountSummaryReport.onStatement}" />
-							<aon:outputText value="#{to.account}" />
-						</aon:commandLink>
-					</aon:column>
+				<aon:dataTable value="#{profitAndLossReport.controller}"
+					var="controller">
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{accountBundle.aon_description}" />
-						</f:facet>
-						<aon:outputText value="#{to.description}" />
-					</aon:column>
-
-					<aon:column
-						styleClass="aon-editDataTable-numberColumn aon-width-100">
-						<f:facet name="header">
-							<aon:outputText value="#{accountBundle.aon_debit_balance}" />
-						</f:facet>
-						<aon:outputText value="#{to.difference}"
-							rendered="#{to.account lt '7'}">
-							<f:convertNumber pattern="#,##0.00" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column
-						styleClass="aon-editDataTable-numberColumn aon-width-100">
-						<f:facet name="header">
-							<aon:outputText value="#{accountBundle.aon_credit_balance}" />
-						</f:facet>
-						<aon:outputText value="#{to.difference}"
-							rendered="#{to.account ge '7'}">
-							<f:convertNumber pattern="#,##0.00" />
-						</aon:outputText>
-					</aon:column>
-					<f:facet name="footer">
-						<rich:columnGroup
-							style="font-size: 1em;background: #FFF;">
-							<aon:column colspan="2" styleClass="aon-text-right aon-normal">
-								<aon:outputText value="#{accountBundle.aon_gross_margin}" />
+					<f:facet name="header">
+						<rich:columnGroup>
+							<aon:column styleClass="aon-dataTable-header">
+								<aon:outputText value="#{accountBundle.account_account}" />
 							</aon:column>
-							<aon:column styleClass="aon-text-right aon-normal">
-								<aon:outputText
-									value="#{accountSummaryReport.grossMargin * (-1)}"
-									rendered="#{accountSummaryReport.grossMargin lt 0}">
-									<f:convertNumber pattern="#,##0.00" />
-								</aon:outputText>
+							<aon:column styleClass="aon-dataTable-header">
+								<aon:outputText value="#{bundle.aon_description}" />
 							</aon:column>
-							<aon:column styleClass="aon-text-right aon-normal">
-								<aon:outputText value="#{accountSummaryReport.grossMargin}"
-									rendered="#{accountSummaryReport.grossMargin gt 0}">
-									<f:convertNumber pattern="#,##0.00" />
-								</aon:outputText>
+							<aon:column styleClass="aon-dataTable-header">
+								<aon:outputText value="#{accountBundle.account_debit_balance}" />
+							</aon:column>
+							<aon:column styleClass="aon-dataTable-header">
+								<aon:outputText value="#{accountBundle.account_credit_balance}" />
 							</aon:column>
 						</rich:columnGroup>
 					</f:facet>
-				</aon:dataTable>
 
-				<aon:dataTable id="profitAndLossData2"
-					value="#{accountSummaryReport.totalExpensesSummaryCollection}"
-					rows="20" var="to">
+					<rich:subTable value="#{controller.grossMargin.summaryList}"
+						var="to">
+						<aon:column styleClass="aon-width-100">
+							<aon:commandLink immediate="true"
+								title="#{accountBundle.account_statement_module}"
+								styleClass="aon-dataTable-link" action="account_statement_list">
+								<f:setPropertyActionListener value="#{to.id}"
+									target="#{profitAndLossReport.accountStatement}" />
+								<aon:actionListener method="#{profitAndLossReport.onStatement}" />
+								<aon:outputText value="#{to.id}" />
+								<f:setPropertyActionListener value="profit_and_loss_list"
+									target="#{statement.backAction}" />
+							</aon:commandLink>
+						</aon:column>
 
-					<aon:column styleClass="aon-width-100">
-						<aon:commandLink immediate="#{true}" 
-							title="#{accountBundle.account_abstract}"
-							styleClass="aon-dataTable-link"
-							action="#{accStatement.getNextView}">
-							<f:setPropertyActionListener value="#{to.account}" target="#{accountSummaryReport.accountStatement}" />
-							<aon:actionListener method="#{accountSummaryReport.onStatement}" />
-							<aon:outputText value="#{to.account}" />
-						</aon:commandLink>
+						<aon:column>
+							<aon:outputText value="#{to.description}" />
+						</aon:column>
+
+						<aon:column
+							styleClass="aon-editDataTable-numberColumn aon-width-150">
+							<aon:outputText value="#{to.unpaidBalance}">
+								<f:convertNumber pattern="#,##0.00" />
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column
+							styleClass="aon-editDataTable-numberColumn aon-width-150">
+							<aon:outputText value="#{to.creditBalance}">
+								<f:convertNumber pattern="#,##0.00" />
+							</aon:outputText>
+						</aon:column>
+					</rich:subTable>
+
+					<aon:column colspan="2" styleClass="aon-text-right">
+						<aon:outputText value="#{accountBundle.account_gross_margin}" />
 					</aon:column>
-
-					<aon:column>
-						<aon:outputText value="#{to.description}" />
+					<aon:column styleClass="aon-text-right">
+						<aon:outputText value="#{controller.grossMargin.unpaidBalance}">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
 					</aon:column>
-
-					<aon:column
-						styleClass="aon-editDataTable-numberColumn aon-width-100">
-						<aon:outputText value="#{to.difference}"
-							rendered="#{to.account lt '7'}">
+					<aon:column styleClass="aon-text-right">
+						<aon:outputText value="#{controller.grossMargin.creditBalance}">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
 					</aon:column>
 
-					<aon:column
-						styleClass="aon-editDataTable-numberColumn aon-width-100">
-						<aon:outputText value="#{to.difference}"
-							rendered="#{to.account ge '7'}">
+					<rich:subTable value="#{controller.totalExpenses.summaryList}"
+						var="to">
+						<aon:column>
+							<aon:commandLink immediate="true"
+								title="#{accountBundle.account_statement_module}"
+								styleClass="aon-dataTable-link" action="account_statement_list">
+								<f:setPropertyActionListener value="#{to.id}"
+									target="#{profitAndLossReport.accountStatement}" />
+								<aon:actionListener method="#{profitAndLossReport.onStatement}" />
+								<aon:outputText value="#{to.id}" />
+								<f:setPropertyActionListener value="profit_and_loss_list"
+									target="#{statement.backAction}" />
+							</aon:commandLink>
+						</aon:column>
+
+						<aon:column>
+							<aon:outputText value="#{to.description}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-numberColumn">
+							<aon:outputText value="#{to.unpaidBalance}">
+								<f:convertNumber pattern="#,##0.00" />
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-numberColumn">
+							<aon:outputText value="#{to.creditBalance}">
+								<f:convertNumber pattern="#,##0.00" />
+							</aon:outputText>
+						</aon:column>
+
+					</rich:subTable>
+
+					<aon:column colspan="2" styleClass="aon-text-right">
+						<aon:outputText value="#{accountBundle.account_total_expenses}" />
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-numberColumn">
+						<aon:outputText value="#{controller.totalExpenses.unpaidBalance}">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
 					</aon:column>
 
+					<aon:column styleClass="aon-editDataTable-numberColumn">
+						<aon:outputText value="#{controller.totalExpenses.creditBalance}">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+					</aon:column>
 
-					<f:facet name="footer">
-						<rich:columnGroup
-							style="font-size: 1em;background: #FFF;">
-							<aon:column colspan="2" styleClass="aon-text-right aon-normal">
-								<aon:outputText value="#{accountBundle.aon_total_expenses}" />
-							</aon:column>
-							<aon:column
-								styleClass="aon-editDataTable-numberColumn aon-width-100 aon-normal">
-								<aon:panelGroup>
-									<aon:outputText value="#{accountSummaryReport.totalExpenses}"
-										rendered="#{accountSummaryReport.totalExpenses gt 0}">
-										<f:convertNumber pattern="#,##0.00" />
-									</aon:outputText>
-									<aon:outputText value="&#160;"
-										rendered="#{accountSummaryReport.totalExpenses le 0}" />
-								</aon:panelGroup>
-							</aon:column>
-							<aon:column
-								styleClass="aon-editDataTable-numberColumn aon-width-100 aon-normal">
-								<aon:panelGroup>
-									<aon:outputText
-										value="#{accountSummaryReport.totalExpenses * (-1)}"
-										rendered="#{accountSummaryReport.totalExpenses lt 0}">
-										<f:convertNumber pattern="#,##0.00" />
-									</aon:outputText>
-									<aon:outputText value="&#160;"
-										rendered="#{accountSummaryReport.totalExpenses ge 0}" />
-								</aon:panelGroup>
-							</aon:column>
+					<aon:column breakBefore="true" colspan="2" styleClass="aon-text-right">
+						<aon:outputText value="#{accountBundle.account_total_result}" />
+						<aon:outputText
+							value=" ( #{accountBundle.account_total_result_profit} )"
+							rendered="#{profitAndLossReport.totalResult gt 0}" />
+						<aon:outputText
+							value=" ( #{accountBundle.account_total_result_loss} )"
+							rendered="#{profitAndLossReport.totalResult lt 0}" />
+						<aon:outputText
+							value=" ( #{accountBundle.account_total_result_null} )"
+							rendered="#{profitAndLossReport.totalResult == 0}" />
+					</aon:column>
 
-							<aon:column breakBefore="true" colspan="2"
-								styleClass="aon-text-right aon-normal">
-								<aon:panelGroup>
-									<aon:outputText value="#{accountBundle.aon_total_result}" />
-									<aon:outputText
-										value=" ( #{accountBundle.aon_total_result_profit} )"
-										rendered="#{accountSummaryReport.totalResult gt 0}" />
-									<aon:outputText
-										value=" ( #{accountBundle.aon_total_result_loss} )"
-										rendered="#{accountSummaryReport.totalResult lt 0}" />
-									<aon:outputText
-										value=" ( #{accountBundle.aon_total_result_null} )"
-										rendered="#{accountSummaryReport.totalResult == 0}" />
-								</aon:panelGroup>
-							</aon:column>
+					<aon:column styleClass="aon-editDataTable-numberColumn">
+						<aon:outputText value="#{profitAndLossReport.totalResult * (-1)}"
+							rendered="#{profitAndLossReport.totalResult lt 0}">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+					</aon:column>
 
-							<aon:column
-								styleClass="aon-editDataTable-numberColumn aon-width-100 aon-normal">
-								<aon:panelGroup>
-									<aon:outputText
-										value="#{accountSummaryReport.totalResult * (-1)}"
-										rendered="#{accountSummaryReport.totalResult lt 0}">
-										<f:convertNumber pattern="#,##0.00" />
-									</aon:outputText>
-								</aon:panelGroup>
-							</aon:column>
-
-							<aon:column
-								styleClass="aon-editDataTable-numberColumn aon-width-100 aon-normal">
-								<aon:panelGroup>
-									<aon:outputText value="#{accountSummaryReport.totalResult}"
-										rendered="#{accountSummaryReport.totalResult gt 0}">
-										<f:convertNumber pattern="#,##0.00" />
-									</aon:outputText>
-								</aon:panelGroup>
-							</aon:column>
-						</rich:columnGroup>
-					</f:facet>
+					<aon:column styleClass="aon-editDataTable-numberColumn">
+						<aon:outputText value="#{profitAndLossReport.totalResult}"
+							rendered="#{profitAndLossReport.totalResult gt 0}">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+					</aon:column>
 				</aon:dataTable>
 			</aon:div>
 		</aon:form>

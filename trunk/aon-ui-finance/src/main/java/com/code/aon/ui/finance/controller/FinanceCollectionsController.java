@@ -22,8 +22,10 @@ import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.InvoiceStatus;
+import com.code.aon.finance.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.PayMethodType;
+import com.code.aon.finance.enumeration.VatType;
 import com.code.aon.ql.Criteria;
 
 /**
@@ -50,13 +52,12 @@ public class FinanceCollectionsController {
 	 * @return PayMethod collection
 	 * @throws ManagerBeanException
 	 */
-	@SuppressWarnings("unchecked")
 	public List<SelectItem> getPayMethods() throws ManagerBeanException {
 		List<SelectItem> payMethods = new LinkedList<SelectItem>();
 		IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
 		Criteria criteria = new Criteria();
 		criteria.addOrder(payMethodBean.getFieldName(IFinanceAlias.PAY_METHOD_NAME));
-		Iterator iter = payMethodBean.getList(criteria).iterator();
+		Iterator<?> iter = payMethodBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			PayMethod pMethod = (PayMethod) iter.next();
 			SelectItem item = new SelectItem(pMethod, pMethod.getName());
@@ -64,7 +65,7 @@ public class FinanceCollectionsController {
 		}
 		return payMethods;
 	}
-	
+
 	/**
 	 * Returns a list of PayMethodType
 	 * 
@@ -82,7 +83,7 @@ public class FinanceCollectionsController {
 		}
 		return types;
 	}
-	
+
 	/**
 	 * Returns a list of InvoiceStatus
 	 * 
@@ -100,7 +101,7 @@ public class FinanceCollectionsController {
 		}
 		return statuses;
 	}
-	
+
 	/**
 	 * Returns a list of InvoiceTypes
 	 * 
@@ -118,7 +119,43 @@ public class FinanceCollectionsController {
 		}
 		return types;
 	}
-	
+
+	/**
+	 * Returns a list of InvoiceTransactionTypes
+	 * 
+	 * @return list of InvoiceTransactionTypes
+	 */
+	public List<SelectItem> getInvoiceTransactionTypes() {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
+		InvoiceTransactionType[] invoiceTypes = InvoiceTransactionType.values();
+		for (int i = 0; i < invoiceTypes.length; i++) {
+			InvoiceTransactionType type = invoiceTypes[i];
+			String name = type.getName(locale);
+			SelectItem item = new SelectItem(type, name);
+			types.add(item);
+		}
+		return types;
+	}
+
+	/**
+	 * Returns a list of VatTypes
+	 * 
+	 * @return list of VatTypes
+	 */
+	public List<SelectItem> getVatTypes() {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
+		VatType[] vatTypes = VatType.values();
+		for (int i = 0; i < vatTypes.length; i++) {
+			VatType type = vatTypes[i];
+			String name = type.getName(locale);
+			SelectItem item = new SelectItem(type, name);
+			types.add(item);
+		}
+		return types;
+	}
+
 	/**
 	 * Returns a list of FinanceStatus
 	 * 
@@ -136,7 +173,7 @@ public class FinanceCollectionsController {
 		}
 		return statuses;
 	}
-	
+
 	public List<SelectItem> getFinanceBatchTypes() {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
@@ -149,7 +186,7 @@ public class FinanceCollectionsController {
 		}
 		return types;
 	}
-	
+
 	public List<SelectItem> getFinanceBatchStatus() {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		LinkedList<SelectItem> statuses = new LinkedList<SelectItem>();
@@ -163,26 +200,26 @@ public class FinanceCollectionsController {
 		return statuses;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<SelectItem> getCompanyBanks() throws ManagerBeanException{
-    	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
-    	IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
-    	Iterator iter = companyBean.getList(null).iterator();
-    	LinkedList<SelectItem> rBanks = new LinkedList<SelectItem>();
-    	if(iter.hasNext()){
-    		Company company = (Company)iter.next();
-    		Criteria criteria = new Criteria();
-    		criteria.addEqualExpression(rBankBean.getFieldName(IFinanceAlias.REGISTRY_BANK_REGISTRY_ID), company.getId());
-    		iter = rBankBean.getList(criteria).iterator();
-    		while(iter.hasNext()){
-    			RegistryBank rBank = (RegistryBank)iter.next();
-    			SelectItem item = new SelectItem(rBank,rBank.getBank().getName());
-    			rBanks.add(item);
-    		}
-    	}
-    	return rBanks;
-    }
-	
+	public List<SelectItem> getCompanyBanks() throws ManagerBeanException {
+		IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
+		Iterator<?> iter = companyBean.getList(null).iterator();
+		LinkedList<SelectItem> rBanks = new LinkedList<SelectItem>();
+		if (iter.hasNext()) {
+			Company company = (Company) iter.next();
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(rBankBean
+					.getFieldName(IFinanceAlias.REGISTRY_BANK_REGISTRY_ID), company.getId());
+			iter = rBankBean.getList(criteria).iterator();
+			while (iter.hasNext()) {
+				RegistryBank rBank = (RegistryBank) iter.next();
+				SelectItem item = new SelectItem(rBank, rBank.getBank().getName());
+				rBanks.add(item);
+			}
+		}
+		return rBanks;
+	}
+
 	public List<SelectItem> getFinanceTrackingTypes() {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		LinkedList<SelectItem> statuses = new LinkedList<SelectItem>();
@@ -195,7 +232,7 @@ public class FinanceCollectionsController {
 		}
 		return statuses;
 	}
-	
+
 	public List<SelectItem> getCreditorStatuses() {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		LinkedList<SelectItem> statuses = new LinkedList<SelectItem>();

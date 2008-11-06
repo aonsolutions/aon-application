@@ -32,13 +32,15 @@
 					</aon:inputText>
 
 					<aon:outputLabel for="Account_alias"
-						value="#{accountBundle.account_alias}" />
+						value="#{bundle.aon_alias}" />
 					<aon:inputText id="Account_alias" value="#{account.to.alias}"
 						size="20">
 						<f:validateLength maximum="15" />
 					</aon:inputText>
 				</aon:panelGrid>
 			</aon:div>
+			<ui:include
+				src="/com/code/aon/ui/account/facelet/budget/grid.xhtml" />
 		</aon:form>
 	</ui:define>
 </ui:composition>
