@@ -238,11 +238,14 @@ public class FinanceBatch implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return super.equals(obj);
+		if (obj == null) {
+    		return super.equals(obj);
 		}
 		if (obj instanceof FinanceBatch) {
 			FinanceBatch o = (FinanceBatch) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
 			if (ObjectUtils.equals(getId(), o.getId())) {
 				return true;
 			}

@@ -91,12 +91,15 @@ public class Bank implements ITransferObject{
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return super.equals(obj);
+		if (obj == null) {
+    		return super.equals(obj);
 		}
 		if (obj instanceof Bank) {
-			Bank bank = (Bank) obj;
-			if (ObjectUtils.equals(getId(), bank.getId())) {
+			Bank o = (Bank) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
 				return true;
 			}
 		}

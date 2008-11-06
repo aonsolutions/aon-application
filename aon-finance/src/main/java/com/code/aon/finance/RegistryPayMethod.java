@@ -210,11 +210,14 @@ public class RegistryPayMethod implements ITransferObject {
     
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return super.equals(obj);
+		if (obj == null) {
+    		return super.equals(obj);
 		}
 		if (obj instanceof RegistryPayMethod) {
 			RegistryPayMethod o = (RegistryPayMethod) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
 			if (ObjectUtils.equals(getId(), o.getId())) {
 				return true;
 			}

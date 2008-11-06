@@ -348,13 +348,15 @@ public class Finance implements ITransferObject{
     	return getBankAccount();
     }
 
-	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (obj == null) {
     		return super.equals(obj);
 		}
 		if (obj instanceof Finance) {
 			Finance o = (Finance) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
 			if (ObjectUtils.equals(getId(), o.getId())) {
 				return true;
 			}

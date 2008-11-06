@@ -132,11 +132,14 @@ public class Creditor implements ITransferObject, IScopable, IRegistry {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return super.equals(obj);
+		if (obj == null) {
+    		return super.equals(obj);
 		}
 		if (obj instanceof Creditor) {
 			Creditor o = (Creditor) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
 			if (ObjectUtils.equals(getId(), o.getId())) {
 				return true;
 			}
