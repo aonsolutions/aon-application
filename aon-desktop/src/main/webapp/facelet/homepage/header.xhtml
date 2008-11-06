@@ -32,9 +32,9 @@
 			<aon:div styleClass="aon-nowrap">
 				<aon:div>					
 					<aon:div styleClass="aon-nowrap" rendered="#{loggedUser.logged}">
-						<aon:outputText value="#{loggedUser.companyName}" />						
-						<aon:outputText value="/" styleClass="padding-left"/>																				
 						<aon:form>
+							<aon:outputText value="#{loggedUser.companyName}" style="padding-left:10px"/>
+							<aon:outputText value="/" styleClass="padding-left"/>																				
 							<h:commandLink title="#{appBundle.aon_user_data}"
 								actionListener="#{currentUser.onLoadCurrentUser}" styleClass="aon-icon aon-icon-user-change-password"
 								action="user_change_form">								

@@ -65,8 +65,9 @@
 		<!-- AON-COMPANY Mapping files -->
 		<mapping class="com.code.aon.company.resources.Employee"/>
 		
-		<!-- AON-GEOZONE Mapping files -->		
-		<mapping class="com.code.aon.geozone.GeoZone"/>			
+		<!-- AON-GEOZONE Mapping files -->
+		<mapping class="com.code.aon.geozone.GeoZone"/>
+		<mapping class="com.code.aon.geozone.GeoTree"/>			
 
 		<!-- AON-WEBMAIL Mapping files -->
 		<mapping class="com.code.aon.webmail.MailAccount"/>
