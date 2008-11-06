@@ -3,6 +3,8 @@ package com.code.aon.ui.payroll.event;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.dao.IPayrollAlias;
+import com.code.aon.payroll.geograficas.Comunidad;
+import com.code.aon.payroll.geograficas.Pais;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -12,7 +14,16 @@ import com.code.aon.ui.payroll.controller.IPayrollConstants;
 import com.code.aon.ui.util.AonUtil;
 
 public class ComunidadControllerListener extends ControllerAdapter implements IPayrollConstants {
-
+	
+	@Override
+	public void beforeBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
+		Comunidad c = (Comunidad)event.getController().getTo();
+		
+		if (c.getCdg().length()==1)
+			c.setCdg("0"+c.getCdg());
+	}
+	
 	@Override
 	public void afterModelInitialized(ControllerEvent event)
 			throws ControllerListenerException {
