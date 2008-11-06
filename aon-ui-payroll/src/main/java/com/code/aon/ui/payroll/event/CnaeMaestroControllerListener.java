@@ -1,5 +1,8 @@
 package com.code.aon.ui.payroll.event;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -13,6 +16,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.payroll.controller.CnaeMaestroController;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
 
 
@@ -41,11 +45,17 @@ public class CnaeMaestroControllerListener extends ControllerAdapter implements 
 		System.out.println("afterModelInitialized");
 		super.afterModelInitialized(event);
 	}
+	
+	@Override
+	public void beforeEditSearch(ControllerEvent event)
+			throws ControllerListenerException {
+		
+	}
 
 	@Override
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
-		
+		CnaeMaestroController cnaeMaestro = (CnaeMaestroController) event.getController();
 		CnaeMaestro cm = (CnaeMaestro)event.getController().getTo();
 		String ocupaciones = cm.getOcupacion();
 		
@@ -56,9 +66,16 @@ public class CnaeMaestroControllerListener extends ControllerAdapter implements 
 			IController ocupacion = AonUtil.getController(OCUPACION_CONTROLLER_NAME);
 			
 			if(ocupaciones!=null){
+				IManagerBean bean = BeanManager.getManagerBean( Ocupacion.class );
+				List<Ocupacion> o = new ArrayList<Ocupacion>();
 				for (int i = 0; i < ocupaciones.length(); i++) {
 					criteria.addOrExpression(ocupacionBean.getFieldName(IPayrollAlias.OCUPACION_OCUPACION_MAESTRO_CDG), ocupaciones.substring(i, i + 1));
+					 List l = bean.getList( criteria );
+					 if ( l != null ) {
+						 o.add( (Ocupacion)l.iterator().next() );
+					 }
 				}
+				
 				criteria.addEqualExpression(ocupacionBean.getFieldName(IPayrollAlias.OCUPACION_OCUPACION_MAESTRO_EXCLUSIVO), "S");
 			} else {
 				criteria.addEqualExpression(ocupacionBean.getFieldName(IPayrollAlias.OCUPACION_ID_CDG), "");

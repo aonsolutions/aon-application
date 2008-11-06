@@ -3,6 +3,7 @@ package com.code.aon.ui.payroll.event;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.dao.IPayrollAlias;
+import com.code.aon.payroll.geograficas.Pais;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -12,7 +13,19 @@ import com.code.aon.ui.payroll.controller.IPayrollConstants;
 import com.code.aon.ui.util.AonUtil;
 
 public class PaisControllerListener extends ControllerAdapter implements IPayrollConstants {
-
+	
+	@Override
+	public void beforeBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
+		Pais p = (Pais)event.getController().getTo();
+		if(p.getCdg().length()==0)
+			p.setCdg("000");
+		else if (p.getCdg().length()==1)
+			p.setCdg("00"+p.getCdg());
+		else if (p.getCdg().length()==2)
+			p.setCdg("0"+p.getCdg());
+	}
+	
 	@Override
 	public void afterModelInitialized(ControllerEvent event)
 			throws ControllerListenerException {
