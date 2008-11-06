@@ -123,10 +123,6 @@ color:#000;
 .aon-width-200{
 	width:200px;
 }	
-/**********************/
-/******* HOME ********/
-/**********************/
-
 
 /************  REGIONES DE CONTENIDO *****************/
 /* tamaño inicial de la aplicacion*/
@@ -867,6 +863,15 @@ color:#000;
 
 .aon-commandLink{
 }
+
+.aon-commandLink-disabled{
+	color:#cccccc;
+}
+
+.aon-commandLink-disabled:hover{
+	color:#cccccc;
+}
+
 .aon-label{
 	padding:0 5px 0 0em;
 	}
