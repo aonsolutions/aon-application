@@ -1,21 +1,16 @@
 package com.code.aon.product;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
-import com.code.aon.common.ILookupObject;
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.enumeration.TaxType;
 
 /**
@@ -27,9 +22,11 @@ import com.code.aon.product.enumeration.TaxType;
  */
 @Entity
 @Table(name="tax")
-public class Tax implements ITransferObject, ILookupObject {
+public class Tax implements ITransferObject{
 
-    /**
+	private static final long serialVersionUID = -513647182781441011L;
+
+	/**
      * Unique key.
      */
     private Integer id;
@@ -197,20 +194,24 @@ public class Tax implements ITransferObject, ILookupObject {
     public void setType(TaxType type) {
         this.type = type;
     }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.code.aon.common.ILookupObject#lookups()
-     */
-   @Transient
-	public Map<String, Object> getLookups() {
-		Map<String,Object> map = new HashMap<String,Object>();
-		map.put(IProductAlias.TAX_ID,getId());
-		map.put(IProductAlias.TAX_NAME,getName());
-		map.put(IProductAlias.TAX_START_DATE,getStartDate());
-		map.put(IProductAlias.TAX_PERCENTAGE,new Double(getPercentage()));
-		map.put(IProductAlias.TAX_SURCHARGE,new Double(getSurcharge()));
-		return map;
+ 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj instanceof Tax) {
+			Tax account = (Tax) obj;
+			if (ObjectUtils.equals(getId(), account.getId())) {
+				return true;
+			}
+		}
+		return false;
 	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}
+    
 }
