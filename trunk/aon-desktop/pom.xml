@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.desktop</artifactId>
 	<packaging>war</packaging>
-	<version>2.0.0</version>
+	<version>3.0.0</version>
 	<description>AON DESKTOP</description>
 	<name>AON DESKTOP</name>
 	<properties>
@@ -52,6 +52,12 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.geozone</artifactId>
+			<version>3.0.1</version>
+			<scope>compile</scope>
+		</dependency>		
+		<dependency>
 			<groupId>com.code.aon</groupId> 
 			<artifactId>aon.security</artifactId>
 			<version>1.6.0</version>
@@ -59,14 +65,14 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.company</artifactId>
-			<version>2.3.0</version>
+			<artifactId>aon.ui.company</artifactId>
+			<version>3.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
-			<version>2.1.2</version>
+			<version>3.0.0</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -81,30 +87,14 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.company</artifactId>
-			<version>2.3.5</version>
-			<scope>runtime</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.myfaces.tomahawk</groupId>
-					<artifactId>tomahawk</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.code.aon</groupId>
-					<artifactId>aon.ui.menu</artifactId>
-				</exclusion>
-			</exclusions> 
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.groupware</artifactId>
-			<version>3.0.0</version>
+			<version>3.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.project</artifactId>
-			<version>2.3.2</version>
+			<version>2.3.3</version>
 			<scope>compile</scope>
 		</dependency>
 	    <dependency>

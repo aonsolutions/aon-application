@@ -46,88 +46,83 @@
 				<aon:panelGrid columns="2" dir="true">
 
 					<aon:outputLabel for="User_name" style="width:200px"
-						value="#{configBundle.user_name}" />
+						value="#{bundle.aon_login_user}" />
 					<aon:inputText id="User_name"
 						required="true" size="80"
 						maxlength="64" value="#{currentUser.name}" />
 
 					<aon:outputLabel for="User_surname" style="width:200px"
-						value="#{appBundle.user_surname}" />
+						value="#{configBundle.config_user_surname}" />
 					<aon:inputText id="User_surname"
 						required="true" size="80"
 						maxlength="64" value="#{currentUser.surname}" />
 
 					<aon:outputLabel for="User_email"
-						value="#{appBundle.user_email}" />
+						value="#{configBundle.config_user_alternative_email}" />
 					<aon:inputText id="User_email"
 						size="64"
 						maxlength="64" value="#{currentUser.alternativeEmail}" />
 
 					<aon:outputLabel for="User_cellular"
-						value="#{appBundle.user_cellular}" />
+						value="#{configBundle.config_user_mobile}" />
 					<aon:inputText id="User_cellular"
 						size="20"
 						maxlength="16" value="#{currentUser.cellular}" />
 				</aon:panelGrid>
 
-			</aon:div>
-
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.aon_change_password}" />
+				<aon:div styleClass="aon-form-group">
+					<aon:div styleClass="aon-form-group-title">
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputLabel value="#{appBundle.aon_change_password}" />
+						</aon:div>
 					</aon:div>
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{user.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-					</aon:div>
-					<aon:div styleClass="aon-finding-toolbar-item-group">
+	
+					<aon:div styleClass="aon-toolbar">
 						<aon:commandButton id="save_id" value="#{appBundle.aon_save_password}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							action="changeuser_form" reRender="passwordChangedWindow"
 							actionListener="#{currentUser.acceptPassword}"
 							accesskey="#{bundle.aon_key_save}" />
 					</aon:div>
-				</aon:panelGrid>
+					<aon:div styleClass="aon-scroll-area">
+		
+						<aon:panelGrid columns="2" dir="true">
+		
+							<aon:outputLabel for="User_login"
+								value="#{bundle.aon_login}" />
+							<aon:inputText id="User_login" disabled="true"
+								required="true" size="20"
+								maxlength="16" value="#{currentUser.to.login}" />
+		
+							<aon:outputLabel for="User_Password" rendered="#{!currentUser.managerChangingPassword}"
+								value="#{configBundle.config_user_current_password}" />
+							<aon:inputSecret id="User_Password" styleClass="aon-inputText"
+								size="20" rendered="#{!currentUser.managerChangingPassword}"
+								maxlength="16" value="#{currentUser.userManager.password}" />
+		
+							<aon:outputLabel for="User_NewPassword"
+								value="#{configBundle.config_user_new_password}" />
+							<aon:inputSecret id="User_NewPassword"
+								size="20" styleClass="aon-inputText"
+								maxlength="16" value="#{currentUser.userManager.newPassword}">
+								<f:validateLength minimum="4" />
+							</aon:inputSecret>
+		
+							<aon:outputLabel for="User_ConfirmPassword"
+								value="#{configBundle.config_user_confirm_password}" />
+							<aon:inputSecret id="User_ConfirmPassword"
+								size="20" styleClass="aon-inputText"
+								maxlength="16" value="#{currentUser.userManager.confirmPassword}" >
+								<f:validateLength minimum="4" />
+							</aon:inputSecret>
+		
+						</aon:panelGrid>
+		
+					</aon:div>
+	
+				</aon:div>
+
 			</aon:div>
-			<aon:div styleClass="aon-scroll-area">
-
-				<aon:panelGrid columns="2" dir="true">
-
-					<aon:outputLabel for="User_login"
-						value="#{configBundle.user_login}" />
-					<aon:inputText id="User_login" disabled="true"
-						required="true" size="20"
-						maxlength="16" value="#{currentUser.to.login}" />
-
-					<aon:outputLabel for="User_Password" rendered="#{!currentUser.managerChangingPassword}"
-						value="#{appBundle.user_current_password}" />
-					<aon:inputSecret id="User_Password" 
-						size="20" rendered="#{!currentUser.managerChangingPassword}"
-						maxlength="16" value="#{currentUser.userManager.password}" />
-
-					<aon:outputLabel for="User_NewPassword"
-						value="#{appBundle.user_new_password}" />
-					<aon:inputSecret id="User_NewPassword"
-						size="20"
-						maxlength="16" value="#{currentUser.userManager.newPassword}">
-						<f:validateLength minimum="4" />
-					</aon:inputSecret>
-
-					<aon:outputLabel for="User_ConfirmPassword"
-						value="#{appBundle.user_confirm_password}" />
-					<aon:inputSecret id="User_ConfirmPassword"
-						size="20"
-						maxlength="16" value="#{currentUser.userManager.confirmPassword}" >
-						<f:validateLength minimum="4" />
-					</aon:inputSecret>
-
-				</aon:panelGrid>
-
-			</aon:div>
-
-
 		</aon:form>
 		
 		<ui:include src="/facelet/user/passwordChanged.xhtml" />

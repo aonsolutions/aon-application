@@ -17,9 +17,8 @@
 				</aon:commandLink>
 			</aon:div>
 
-			<aon:div styleClass="aon-sidebarIcons-icon">
-				<aon:outputLink value="/aon-webmail?aonDesktop=true" target="aonWebMail"
-					rendered="#{email.sidebarEnabled and email.mailActive}">
+			<aon:div styleClass="aon-sidebarIcons-icon" rendered="#{email.sidebarEnabled and email.mailActive}">
+				<aon:outputLink value="/aon-webmail?aonDesktop=true" target="aonWebMail">
 					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-correo.png']}" />
 					<aon:div><aon:outputText value="#{appBundle.aon_webmail}" /></aon:div>
 				</aon:outputLink>
@@ -57,37 +56,11 @@
 				</aon:commandLink>
 			</aon:div>
 
-			<aon:div styleClass="aon-sidebarIcons-icon">
+			<aon:div styleClass="aon-sidebarIcons-icon" rendered="#{sms.sidebarEnabled}">
 				<aon:commandLink 
-					actionListener="#{sms.reset}" action="sms" rendered="#{sms.sidebarEnabled}">
+					actionListener="#{sms.reset}" action="sms">
 					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-sms.png']}" />
 					<aon:div><aon:outputText value="#{appBundle.aon_desktop_sms}" /></aon:div>
-				</aon:commandLink>
-			</aon:div>
-
-			<aon:div styleClass="aon-sidebarIcons-icon">
-				<aon:commandLink 
-					actionListener="#{fax.createNewMessage}" action="fax" rendered="#{fax.sidebarEnabled}">
-					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-sendFax-big.png']}" />
-					<aon:div><aon:outputText value="#{appBundle.aon_desktop_fax}" /></aon:div>
-				</aon:commandLink>
-			</aon:div>
-
-			<aon:div styleClass="aon-sidebarIcons-icon">
-				<aon:commandLink 
-					actionListener="#{user.onSearch}" action="user"
-					rendered="#{desktop.roleManager}">
-					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-users.png']}" />
-					<aon:div><aon:outputText value="#{appBundle.aon_users}" /></aon:div>
-				</aon:commandLink>
-			</aon:div>
-
-			<aon:div styleClass="aon-sidebarIcons-icon">
-				<aon:commandLink 
-					actionListener="#{domain.onLoadCurrentDomain}" action="application_list"
-					rendered="#{desktop.roleManager}">
-					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-ambito.png']}" />
-					<aon:div><aon:outputText value="#{appBundle.aon_profiles}" /></aon:div>
 				</aon:commandLink>
 			</aon:div>
 
@@ -95,6 +68,31 @@
 				<aon:commandLink action="corporate_identity">
 					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-identity.gif']}" />
 					<aon:div><aon:outputText value="#{appBundle.aon_corporate_identity}" /></aon:div>
+				</aon:commandLink>
+			</aon:div>
+
+			<aon:div styleClass="aon-sidebarIcons-icon" rendered="#{desktop.roleManager}">
+				<aon:commandLink 
+					actionListener="#{user.onSearch}" action="user">
+					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-users.png']}" />
+					<aon:div><aon:outputText value="#{appBundle.aon_users}" /></aon:div>
+				</aon:commandLink>
+			</aon:div>
+
+			<aon:div styleClass="aon-sidebarIcons-icon" rendered="#{desktop.roleManager}">
+				<aon:commandLink 
+					actionListener="#{domain.onLoadCurrentDomain}" action="application_list">
+					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-ambito.png']}" />
+					<aon:div><aon:outputText value="#{appBundle.aon_profiles}" /></aon:div>
+				</aon:commandLink>
+			</aon:div>
+
+			<aon:div styleClass="aon-sidebarIcons-icon" rendered="#{desktop.roleManager}">
+				<aon:commandLink action="company" actionListener="#{company.onLoad}">
+					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-enterprise-configure.png']}" />
+					<aon:div><aon:outputText value="#{companyBundle.company_data_module}"/></aon:div>
+					<f:setPropertyActionListener value="#{false}" target="#{company.showFinanceRegistryBank}" />
+					<f:setPropertyActionListener value="#{false}" target="#{company.showCompanyOtherData}" />
 				</aon:commandLink>
 			</aon:div>
 			

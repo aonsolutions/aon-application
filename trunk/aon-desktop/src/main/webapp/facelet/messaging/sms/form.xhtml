@@ -100,10 +100,10 @@
 										</aon:inputText>
 
 										<aon:outputLabel styleClass="aon-bold aon-margin-left" value="#{bundle.aon_month}" />
-										<h:selectOneMenu id="Summary_Month" value="#{sms.month}" 
+										<aon:selectOneMenu id="Summary_Month" value="#{sms.month}" 
 												styleClass="aon-margin-left aon-form-selectOneMenu-field">
-											<f:selectItems value="#{commonsCollections.months}" />
-										</h:selectOneMenu>
+											<f:selectItems value="#{commonCollections.months}" />
+										</aon:selectOneMenu>
 
 										<aon:commandButton id="Summary" value="" title="#{appBundle.aon_sms_filter}"
 											reRender="smsSummary"
