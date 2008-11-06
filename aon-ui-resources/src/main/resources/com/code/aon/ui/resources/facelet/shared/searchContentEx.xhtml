@@ -7,7 +7,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:div styleClass="aon-scroll-area">
-		<aon:div styleClass="aon-scroll-area-internal">
+		
 			<aon:div styleClass="aon-panelGrid-search">
 				<aon:div styleClass="aon-panelGrid-search-info">
 					<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
@@ -15,22 +15,19 @@
 				
 				<aon:panelGrid columns="2">
 					<ui:insert name="searchContent" />
-
 					<c:if test="#{!skipSearchButton}">
-						<aon:outputText value="" />
-						<aon:div styleClass="aon-search-commandButton-left">
-							<aon:div styleClass="aon-search-commandButton-right">
-								<aon:commandButton id="#{searchButtonId}"
-									value="#{bundle.aon_search}" action="#{searchAction}"
-									actionListener="#{searchActionListener}"
-									reRender="#{searchReRender}"
-									accesskey="#{bundle.aon_key_search}" />
-							</aon:div>
-						</aon:div>
-					</c:if>
+					<aon:outputText value="" />
+					<aon:div >
+						<aon:commandButton id="#{searchButtonId}"
+							value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
+							action="#{searchAction}" actionListener="#{searchActionListener}"
+							reRender="#{searchReRender}"
+							accesskey="#{bundle.aon_key_search}" />							
+					</aon:div>	
+					</c:if>			
 				</aon:panelGrid>
 			</aon:div>
-		</aon:div>
+		
 	</aon:div>
-
+	
 </ui:composition>
