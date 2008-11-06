@@ -7,6 +7,7 @@ import javax.el.ExpressionFactory;
 import javax.el.MethodExpression;
 import javax.el.ValueExpression;
 import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -244,9 +245,8 @@ public abstract class AbstractWizard {
 		try {
 			FacesContext ctx = FacesContext.getCurrentInstance();
 			ELContext elctx = ctx.getELContext();
-			ExpressionFactory factory = ctx.getApplication().getExpressionFactory();
-			ValueExpression ve = factory.createValueExpression(elctx, getELValueExpression(),
-					Object.class);
+			UIComponent c = event.getComponent();
+			ValueExpression ve = c.getParent().getValueExpression("value");
 			Object newValue = ve.getValue(elctx);
 			assignExtendedLookupAttributes(ve.getValue(elctx));
 			fireValueChangeListener(event, null, newValue);
