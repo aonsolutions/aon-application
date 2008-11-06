@@ -55,6 +55,9 @@ import com.code.aon.payroll.auxiliares.organismosyentidades.Mutua;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Linmutua;
 import com.code.aon.payroll.irpf.Elemirpf;
 import com.code.aon.payroll.irpf.Linirpf;
+import com.code.aon.payroll.principales.Cliente;
+import com.code.aon.payroll.principales.Domicilio;
+import com.code.aon.payroll.principales.Cuentas;
 
 /** 
 * Interface for holding entity properties constants.
@@ -2417,6 +2420,393 @@ public interface IPayrollAlias {
 	* Hibernate value: Linirpf.importe
 	*/
 	String  LINIRPF_IMPORTE = LINIRPF_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for Cliente entity.
+	*/ 
+	DAOConstantsEntry CLIENTE_ENTRY = DAOConstants.getDAOConstant(Cliente.class);
+
+	/** 
+	* Alias value: Cliente_alias
+	* Hibernate value: Cliente.alias
+	*/
+	String  CLIENTE_ALIAS = CLIENTE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Cliente_cdg
+	* Hibernate value: Cliente.cdg
+	*/
+	String  CLIENTE_CDG = CLIENTE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Cliente_codpos
+	* Hibernate value: Cliente.codpos
+	*/
+	String  CLIENTE_CODPOS = CLIENTE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Cliente_delegacion_cdg
+	* Hibernate value: Cliente.delegacion.cdg
+	*/
+	String  CLIENTE_DELEGACION_CDG = CLIENTE_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Cliente_descripcion
+	* Hibernate value: Cliente.descripcion
+	*/
+	String  CLIENTE_DESCRIPCION = CLIENTE_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Cliente_divisa_cdg
+	* Hibernate value: Cliente.divisa.cdg
+	*/
+	String  CLIENTE_DIVISA_CDG = CLIENTE_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Cliente_email
+	* Hibernate value: Cliente.email
+	*/
+	String  CLIENTE_EMAIL = CLIENTE_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Cliente_envioss
+	* Hibernate value: Cliente.envioss
+	*/
+	String  CLIENTE_ENVIOSS = CLIENTE_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Cliente_fax
+	* Hibernate value: Cliente.fax
+	*/
+	String  CLIENTE_FAX = CLIENTE_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Cliente_fecfin
+	* Hibernate value: Cliente.fecfin
+	*/
+	String  CLIENTE_FECFIN = CLIENTE_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Cliente_fecini
+	* Hibernate value: Cliente.fecini
+	*/
+	String  CLIENTE_FECINI = CLIENTE_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: Cliente_fecmod
+	* Hibernate value: Cliente.fecmod
+	*/
+	String  CLIENTE_FECMOD = CLIENTE_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: Cliente_fecnew
+	* Hibernate value: Cliente.fecnew
+	*/
+	String  CLIENTE_FECNEW = CLIENTE_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: Cliente_hormod
+	* Hibernate value: Cliente.hormod
+	*/
+	String  CLIENTE_HORMOD = CLIENTE_ENTRY.getAliasNames()[13];
+
+	/** 
+	* Alias value: Cliente_hornew
+	* Hibernate value: Cliente.hornew
+	*/
+	String  CLIENTE_HORNEW = CLIENTE_ENTRY.getAliasNames()[14];
+
+	/** 
+	* Alias value: Cliente_inactivo
+	* Hibernate value: Cliente.inactivo
+	*/
+	String  CLIENTE_INACTIVO = CLIENTE_ENTRY.getAliasNames()[15];
+
+	/** 
+	* Alias value: Cliente_indcal
+	* Hibernate value: Cliente.indcal
+	*/
+	String  CLIENTE_INDCAL = CLIENTE_ENTRY.getAliasNames()[16];
+
+	/** 
+	* Alias value: Cliente_indcoste
+	* Hibernate value: Cliente.indcoste
+	*/
+	String  CLIENTE_INDCOSTE = CLIENTE_ENTRY.getAliasNames()[17];
+
+	/** 
+	* Alias value: Cliente_indnom
+	* Hibernate value: Cliente.indnom
+	*/
+	String  CLIENTE_INDNOM = CLIENTE_ENTRY.getAliasNames()[18];
+
+	/** 
+	* Alias value: Cliente_localidad
+	* Hibernate value: Cliente.localidad
+	*/
+	String  CLIENTE_LOCALIDAD = CLIENTE_ENTRY.getAliasNames()[19];
+
+	/** 
+	* Alias value: Cliente_nomvia
+	* Hibernate value: Cliente.nomvia
+	*/
+	String  CLIENTE_NOMVIA = CLIENTE_ENTRY.getAliasNames()[20];
+
+	/** 
+	* Alias value: Cliente_numdoc
+	* Hibernate value: Cliente.numdoc
+	*/
+	String  CLIENTE_NUMDOC = CLIENTE_ENTRY.getAliasNames()[21];
+
+	/** 
+	* Alias value: Cliente_numero
+	* Hibernate value: Cliente.numero
+	*/
+	String  CLIENTE_NUMERO = CLIENTE_ENTRY.getAliasNames()[22];
+
+	/** 
+	* Alias value: Cliente_obscli
+	* Hibernate value: Cliente.obscli
+	*/
+	String  CLIENTE_OBSCLI = CLIENTE_ENTRY.getAliasNames()[23];
+
+	/** 
+	* Alias value: Cliente_otrdir
+	* Hibernate value: Cliente.otrdir
+	*/
+	String  CLIENTE_OTRDIR = CLIENTE_ENTRY.getAliasNames()[24];
+
+	/** 
+	* Alias value: Cliente_pais_cdg
+	* Hibernate value: Cliente.pais.cdg
+	*/
+	String  CLIENTE_PAIS_CDG = CLIENTE_ENTRY.getAliasNames()[25];
+
+	/** 
+	* Alias value: Cliente_persona
+	* Hibernate value: Cliente.persona
+	*/
+	String  CLIENTE_PERSONA = CLIENTE_ENTRY.getAliasNames()[26];
+
+	/** 
+	* Alias value: Cliente_provincia_cdg
+	* Hibernate value: Cliente.provincia.cdg
+	*/
+	String  CLIENTE_PROVINCIA_CDG = CLIENTE_ENTRY.getAliasNames()[27];
+
+	/** 
+	* Alias value: Cliente_soloases
+	* Hibernate value: Cliente.soloases
+	*/
+	String  CLIENTE_SOLOASES = CLIENTE_ENTRY.getAliasNames()[28];
+
+	/** 
+	* Alias value: Cliente_telefono
+	* Hibernate value: Cliente.telefono
+	*/
+	String  CLIENTE_TELEFONO = CLIENTE_ENTRY.getAliasNames()[29];
+
+	/** 
+	* Alias value: Cliente_telefono2
+	* Hibernate value: Cliente.telefono2
+	*/
+	String  CLIENTE_TELEFONO2 = CLIENTE_ENTRY.getAliasNames()[30];
+
+	/** 
+	* Alias value: Cliente_telefono3
+	* Hibernate value: Cliente.telefono3
+	*/
+	String  CLIENTE_TELEFONO3 = CLIENTE_ENTRY.getAliasNames()[31];
+
+	/** 
+	* Alias value: Cliente_tipdoc_cdg
+	* Hibernate value: Cliente.tipdoc.cdg
+	*/
+	String  CLIENTE_TIPDOC_CDG = CLIENTE_ENTRY.getAliasNames()[32];
+
+	/** 
+	* Alias value: Cliente_tipempr_cdg
+	* Hibernate value: Cliente.tipempr.cdg
+	*/
+	String  CLIENTE_TIPEMPR_CDG = CLIENTE_ENTRY.getAliasNames()[33];
+
+	/** 
+	* Alias value: Cliente_tipovia_cdg
+	* Hibernate value: Cliente.tipovia.cdg
+	*/
+	String  CLIENTE_TIPOVIA_CDG = CLIENTE_ENTRY.getAliasNames()[34];
+
+
+
+	/** 
+	* DAOConstantsEntry for Domicilio entity.
+	*/ 
+	DAOConstantsEntry DOMICILIO_ENTRY = DAOConstants.getDAOConstant(Domicilio.class);
+
+	/** 
+	* Alias value: Domicilio_aclaracion
+	* Hibernate value: Domicilio.aclaracion
+	*/
+	String  DOMICILIO_ACLARACION = DOMICILIO_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Domicilio_cdg
+	* Hibernate value: Domicilio.cdg
+	*/
+	String  DOMICILIO_CDG = DOMICILIO_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Domicilio_cliente_cdg
+	* Hibernate value: Domicilio.cliente.cdg
+	*/
+	String  DOMICILIO_CLIENTE_CDG = DOMICILIO_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Domicilio_codnsz
+	* Hibernate value: Domicilio.codnsz
+	*/
+	String  DOMICILIO_CODNSZ = DOMICILIO_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Domicilio_codpos
+	* Hibernate value: Domicilio.codpos
+	*/
+	String  DOMICILIO_CODPOS = DOMICILIO_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Domicilio_email
+	* Hibernate value: Domicilio.email
+	*/
+	String  DOMICILIO_EMAIL = DOMICILIO_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Domicilio_fax
+	* Hibernate value: Domicilio.fax
+	*/
+	String  DOMICILIO_FAX = DOMICILIO_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Domicilio_linea1
+	* Hibernate value: Domicilio.linea1
+	*/
+	String  DOMICILIO_LINEA1 = DOMICILIO_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Domicilio_linea2
+	* Hibernate value: Domicilio.linea2
+	*/
+	String  DOMICILIO_LINEA2 = DOMICILIO_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Domicilio_localidad
+	* Hibernate value: Domicilio.localidad
+	*/
+	String  DOMICILIO_LOCALIDAD = DOMICILIO_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Domicilio_nomvia
+	* Hibernate value: Domicilio.nomvia
+	*/
+	String  DOMICILIO_NOMVIA = DOMICILIO_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: Domicilio_numero
+	* Hibernate value: Domicilio.numero
+	*/
+	String  DOMICILIO_NUMERO = DOMICILIO_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: Domicilio_otrdir
+	* Hibernate value: Domicilio.otrdir
+	*/
+	String  DOMICILIO_OTRDIR = DOMICILIO_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: Domicilio_persona
+	* Hibernate value: Domicilio.persona
+	*/
+	String  DOMICILIO_PERSONA = DOMICILIO_ENTRY.getAliasNames()[13];
+
+	/** 
+	* Alias value: Domicilio_provincia_cdg
+	* Hibernate value: Domicilio.provincia.cdg
+	*/
+	String  DOMICILIO_PROVINCIA_CDG = DOMICILIO_ENTRY.getAliasNames()[14];
+
+	/** 
+	* Alias value: Domicilio_telefono
+	* Hibernate value: Domicilio.telefono
+	*/
+	String  DOMICILIO_TELEFONO = DOMICILIO_ENTRY.getAliasNames()[15];
+
+	/** 
+	* Alias value: Domicilio_telefono2
+	* Hibernate value: Domicilio.telefono2
+	*/
+	String  DOMICILIO_TELEFONO2 = DOMICILIO_ENTRY.getAliasNames()[16];
+
+	/** 
+	* Alias value: Domicilio_telefono3
+	* Hibernate value: Domicilio.telefono3
+	*/
+	String  DOMICILIO_TELEFONO3 = DOMICILIO_ENTRY.getAliasNames()[17];
+
+	/** 
+	* Alias value: Domicilio_tipovia_cdg
+	* Hibernate value: Domicilio.tipovia.cdg
+	*/
+	String  DOMICILIO_TIPOVIA_CDG = DOMICILIO_ENTRY.getAliasNames()[18];
+
+
+
+	/** 
+	* DAOConstantsEntry for Cuentas entity.
+	*/ 
+	DAOConstantsEntry CUENTAS_ENTRY = DAOConstants.getDAOConstant(Cuentas.class);
+
+	/** 
+	* Alias value: Cuentas_cdg
+	* Hibernate value: Cuentas.cdg
+	*/
+	String  CUENTAS_CDG = CUENTAS_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Cuentas_cliente_cdg
+	* Hibernate value: Cuentas.cliente.cdg
+	*/
+	String  CUENTAS_CLIENTE_CDG = CUENTAS_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Cuentas_dc
+	* Hibernate value: Cuentas.dc
+	*/
+	String  CUENTAS_DC = CUENTAS_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Cuentas_entidad_cdg
+	* Hibernate value: Cuentas.entidad.cdg
+	*/
+	String  CUENTAS_ENTIDAD_CDG = CUENTAS_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Cuentas_numcta
+	* Hibernate value: Cuentas.numcta
+	*/
+	String  CUENTAS_NUMCTA = CUENTAS_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Cuentas_sucursal_id_cdg
+	* Hibernate value: Cuentas.sucursal.id.cdg
+	*/
+	String  CUENTAS_SUCURSAL_ID_CDG = CUENTAS_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Cuentas_sucursal_id_codent
+	* Hibernate value: Cuentas.sucursal.id.codent
+	*/
+	String  CUENTAS_SUCURSAL_ID_CODENT = CUENTAS_ENTRY.getAliasNames()[6];
 
 
 }
