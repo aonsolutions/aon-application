@@ -9,14 +9,24 @@ import java.util.logging.Logger;
 
 import javax.faces.component.UIComponent;
 
+import org.richfaces.component.html.HtmlCalendar;
+
+import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
+import com.code.aon.faces.component.util.FaceletUtil;
+import com.code.aon.faces.component.util.HTML;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.MetaRuleset;
 import com.sun.facelets.tag.Tag;
+import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.util.Classpath;
 
 public class ComponentManager {
 
 	private static final String SUFFIX = ".aonlib.xml";
+
+	private static final String DISABLED_STYLE_CLASS = "disabledStyleClass";		
+	
+	private static final String SELECT_INPUT_DATE_STYLE_CLASS = "inputClass";
 	
     private final static Logger log = Logger.getLogger(ComponentManager.class.getName());	
 	
@@ -77,9 +87,33 @@ public class ComponentManager {
 				} else if ( attribute.getAlias() != null ) {
 					set.alias( attribute.getName(), attribute.getAlias() );
 				}
+			}			
+		}
+		set.ignore(DISABLED_STYLE_CLASS);		
+	}
+	
+	private String getInputStyleClass( UIComponent c ) {
+		if ( HtmlCalendar.COMPONENT_FAMILY.equals(c.getFamily()) ) {
+			return SELECT_INPUT_DATE_STYLE_CLASS;
+		}
+		return HTML.STYLE_CLASS_ATTR;
+	}
+	
+	public void updateDisabledStyleClass(Tag tag, FaceletContext ctx, UIComponent c) {
+		TagAttribute disabled = FaceletUtil.getAttribute(tag, HTML.DISABLED_ATTR);
+		if ( (disabled != null) && disabled.getBoolean(ctx) ) {
+			String disabledClass = null;
+			TagAttribute disabledClassTag = FaceletUtil.getAttribute(tag, DISABLED_STYLE_CLASS);
+			if ( disabledClassTag != null ) {
+				disabledClass = disabledClassTag.getValue();
+			} else {
+				disabledClass = (String) FaceletUtil.getProperty(ctx.getFacesContext(), c, DISABLED_STYLE_CLASS);
+			}
+			if ( disabledClass != null ) {
+				UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), c, getInputStyleClass(c), disabledClass);
 			}
 		}
-	}
+	}		
 	
 	public void setAttributes( Tag tag, FaceletContext ctx, UIComponent component ) {
 		ComponentInfo componentInfo = getComponentInfo( tag );
@@ -88,7 +122,7 @@ public class ComponentManager {
 				attribute.update( tag, ctx, component );
 			}
 		}
+		updateDisabledStyleClass(tag, ctx, component);
 	}
-
 	
 }
