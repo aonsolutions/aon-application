@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.product.ItemTariff;
 import com.code.aon.product.Tariff;
 import com.code.aon.product.Tax;
 import com.code.aon.product.TaxDetail;
@@ -148,21 +147,8 @@ public class BasicPriceStrategy implements IPriceStrategy {
 	 */
 	public double getUnitPrice(ICalculable calc, Tariff tariff) {
 		double unitPrice = calc.getItem().getPrice();
-		try {
-			IManagerBean itemTariffBean = BeanManager.getManagerBean(ItemTariff.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(itemTariffBean.getFieldName(IProductAlias.ITEM_TARIFF_TARIFF_ID), tariff.getId());
-			Iterator iter = itemTariffBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				ItemTariff itemTariff = (ItemTariff)iter.next();
-				unitPrice *= round(1 - itemTariff.getPercentage()/100, 2);
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining unit price for item with id= " + calc.getItem().getId(), e);
-		}
 		return unitPrice;
 	}
-	
 	/* (non-Javadoc)
 	 * @see com.code.aon.product.strategy.IPriceStrategy#getTotalPrice(com.code.aon.product.strategy.ICalculableContainer, com.code.aon.registry.ITaxInfo)
 	 */
