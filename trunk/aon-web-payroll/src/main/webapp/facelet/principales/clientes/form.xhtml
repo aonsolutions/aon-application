@@ -18,10 +18,22 @@
 			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_clientes}" />
 				<ui:param name="controller" value="#{cliente}"/>
-				<ui:param name="reportKey" value="DelegacionList"/>
 			</ui:include>	
-
+      
 			<aon:div id="clientes" styleClass="aon-scroll-area">
+			
+		<!--  	
+			<aon:commandButton id="dom" value="Domicilios"
+			styleClass="aon-finding-toolbar-item" action="domicilio_form" >
+						<aon:actionListener method="#{domicilio.onEditSearch}" />
+						<aon:actionListener method="#{domicilio.onSearch}" />
+						<aon:actionListener method="#{domicilio.onSelectFirst}" />
+			</aon:commandButton>
+			
+			<aon:commandButton id="cta" value="Cuentas Bancarias"
+			styleClass="aon-finding-toolbar-item " action="cuenta_form"		
+			 />-->
+			
 			  <aon:div id="datos1" styleClass="aon-scroll-area">
 				<aon:panelGrid columns="4" dir="true" width="100%" style="margin-bottom=2px;">
 				
@@ -36,7 +48,7 @@
 				
 				    <aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_alias}" />
 					<aon:inputText value="#{cliente.to.alias}" 
-						required="true" size="60" maxlength="20" />
+						 size="60" maxlength="20" />
 								
 					<aon:outputLabel for="Dele_cdg" 
 						value="#{appBundle.aon_payroll_principales_clientes_deleg}" />
@@ -106,7 +118,7 @@
 					
 					  <aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_numdoc}" />
 					<aon:inputText value="#{cliente.to.numdoc}" 
-						required="true" size="60" maxlength="20" />
+						 size="60" maxlength="20" />
 					
 					<aon:outputLabel for="Divi_cdg" 
 						value="#{appBundle.aon_payroll_principales_clientes_div}" />
@@ -174,23 +186,23 @@
 					 --> 
 						<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_nomvia}" />
 					<aon:inputText value="#{cliente.to.nomvia}" 
-						required="true" size="50" maxlength="20" />
+						 size="50" maxlength="20" />
 						
 							<aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_num}" />
 					<aon:inputText value="#{cliente.to.numero}" 
-						required="true" size="50" maxlength="20" />
+						 size="50" maxlength="20" />
 						
 							<aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_otros}" />
 					<aon:inputText value="#{cliente.to.otrdir}" 
-						required="true" size="50" maxlength="20" />
+						 size="50" maxlength="20" />
 						
 							<aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_codpos}" />
 					<aon:inputText value="#{cliente.to.codpos}" 
-						required="true" size="50" maxlength="20" />
+						 size="50" maxlength="20" />
 						
 							<aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_localidad}" />
 					<aon:inputText value="#{cliente.to.localidad}" 
-						required="true" size="50" maxlength="20" />
+						 size="50" maxlength="20" />
 					
 			  <!--     <aon:outputLabel for="Provincia_cdg" 
 						value="#{appBundle.aon_payroll_principales_clientes_provincia}" />
@@ -225,11 +237,11 @@
 				
 				    <aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_perconta}" />
 					<aon:inputText value="#{cliente.to.persona}" 
-						required="true" size="60" maxlength="20" />
+						 size="60" maxlength="20" />
 						
 				    <aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_email}" />
 					<aon:inputText value="#{cliente.to.email}" 
-						required="true" size="60" maxlength="20" />
+						 size="60" maxlength="20" />
 						
 					<aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_inirel}" />
 					<aon:selectInputDate 
@@ -245,23 +257,23 @@
 						
 				   	<aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_telefono}" />
 					<aon:inputText value="#{cliente.to.telefono}" 
-						required="true" size="60" maxlength="20" />
+						 size="60" maxlength="20" />
 						
 				   <aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_fax}" />
 					<aon:inputText value="#{cliente.to.fax}" 
-						required="true" size="60" maxlength="20" />
+						 size="60" maxlength="20" />
 			
 				   <aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_telefono2}" />
 					<aon:inputText value="#{cliente.to.telefono2}" 
-						required="true" size="60" maxlength="20" />
+						 size="60" maxlength="20" />
 						
 				   <aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_telefono3}" />
 					<aon:inputText value="#{cliente.to.telefono3}" 
-						required="true" size="60" maxlength="20" />	
+						 size="60" maxlength="20" />	
 						
 				   <aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_obser}" />
-					<h:inputTextarea  value="#{cliente.to.obscli}" rows= "4" 
-						required="true" size="200" maxlength="20" />	
+					<h:inputTextarea  value="#{cliente.to.obscli}"  cols="80" rows= "4" 
+						 size="200" maxlength="20" />	
 					
 				
 							
@@ -298,9 +310,27 @@
 					</aon:panelGroup>
 				</aon:panelGrid>
 	         </aon:div> 
-	       
-	        
 	         
+	         <aon:div>
+	       <rich:tabPanel switchType="ajax" >
+					<rich:tab id="domi" label="#{appBundle.aon_payroll_principales_clientes_dom}">
+						
+							
+						<aon:div id="domDiv" >	
+							
+							  <ui:include src="domicilios/grid.xhtml" /> 
+						</aon:div>
+						
+					</rich:tab>
+					<rich:tab id="ctas" label="#{appBundle.aon_payroll_principales_clientes_ctas}">
+						<aon:div id="ctasDiv" >	
+							
+						    <ui:include src="cuentas/grid.xhtml" />
+						</aon:div>
+					</rich:tab>
+				</rich:tabPanel>
+	        
+	         </aon:div>
 			</aon:div>
 		</aon:form>
 		
