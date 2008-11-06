@@ -66,7 +66,8 @@
 	</component>
 
 	<component localName="commandLink">
-    	<attribute name="styleClass" value="aon-commandLink" />			
+    	<attribute name="styleClass" value="aon-commandLink" />
+    	<attribute name="disabledStyleClass" value="aon-commandLink-disabled" />			
 	</component>
 	
 	<component localName="panelTabSet">
