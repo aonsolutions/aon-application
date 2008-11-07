@@ -30,7 +30,7 @@
 	<field name="cdg" class="java.lang.String"/>
 	<field name="description" class="java.lang.String"/>
 	<field name="porcentajeMaestro" class="com.code.aon.payroll.cotizacion.PorcentajeMaestro"/>
-	<field name="desempleenum" class="com.code.aon.payroll.enumeration.Desempleado"/>
+	<field name="desemple" class="com.code.aon.payroll.enumeration.Desempleado"/>
 	<field name="mujersub" class="java.lang.String"/>
 	<field name="incaread" class="java.lang.String"/>
 	<field name="primertra" class="java.lang.String"/>
@@ -357,7 +357,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{desempleenum}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{desemple}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="MM/dd/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
