@@ -33,7 +33,7 @@ public class LinDivisa  implements  ITransferObject {
     @EmbeddedId    
     @AttributeOverrides( {
         @AttributeOverride(name="cdg", column=@Column(name="cdg", nullable=false, length=3) ), 
-        @AttributeOverride(name="divisaFinal", column=@Column(name="divisa_final", nullable=false, length=3) ), 
+        @AttributeOverride(name="divisaFinal", column=@Column(name="divisa_final", length=3) ), 
         @AttributeOverride(name="fecini", column=@Column(name="fecini", nullable=false, length=10) ) } )
     public LinDivisaId getId() {
         return this.id;
@@ -72,7 +72,7 @@ public class LinDivisa  implements  ITransferObject {
         this.importe = importe;
     }
     
-	@ManyToOne(fetch=FetchType.LAZY)   
+	@ManyToOne(fetch=FetchType.EAGER)   
     @JoinColumn(name="divisa_final", insertable=false, updatable=false)
     public Divisa getDivisa0() {
         return this.divisa0;
@@ -82,7 +82,7 @@ public class LinDivisa  implements  ITransferObject {
         this.divisa0 = divisa;
     }
     
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="cdg", insertable=false, updatable=false)
     public Divisa getDivisa1() {
         return this.divisa1;

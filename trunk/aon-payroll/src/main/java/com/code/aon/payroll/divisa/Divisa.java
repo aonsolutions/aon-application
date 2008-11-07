@@ -3,7 +3,10 @@ package com.code.aon.payroll.divisa;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +20,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.payroll.cotizacion.Linbasec;
 import com.code.aon.payroll.enumeration.Divisas;
 import com.code.aon.payroll.enumeration.Prorateo;
 
@@ -32,7 +36,6 @@ public class Divisa  implements  ITransferObject {
      private Integer mask1;
      private Integer mask2;
     
-
 
 
     @Id     
@@ -85,6 +88,8 @@ public class Divisa  implements  ITransferObject {
     }
 
 
+
+  	
 
 }
 
