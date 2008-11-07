@@ -18,33 +18,23 @@
 			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_clientes}" />
 				<ui:param name="controller" value="#{cliente}"/>
+				<ui:param name="reportKey" value="ClienteList"/>
 			</ui:include>	
       
 			<aon:div id="clientes" styleClass="aon-scroll-area">
 			
-		<!--  	
-			<aon:commandButton id="dom" value="Domicilios"
-			styleClass="aon-finding-toolbar-item" action="domicilio_form" >
-						<aon:actionListener method="#{domicilio.onEditSearch}" />
-						<aon:actionListener method="#{domicilio.onSearch}" />
-						<aon:actionListener method="#{domicilio.onSelectFirst}" />
-			</aon:commandButton>
-			
-			<aon:commandButton id="cta" value="Cuentas Bancarias"
-			styleClass="aon-finding-toolbar-item " action="cuenta_form"		
-			 />-->
 			
 			  <aon:div id="datos1" styleClass="aon-scroll-area">
-				<aon:panelGrid columns="4" dir="true" width="100%" style="margin-bottom=2px;">
+				<aon:panelGrid columns="4" dir="true" width="100%" >
 				
 				
-					<aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_cod}" />
+				<aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_cod}" />
 					<aon:inputText value="#{cliente.to.cdg}" 
-						required="true" size="10" maxlength="2" />
-				
+						  maxlength="4" /> 
+				 
 				    <aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_nom}" />
 					<aon:inputText value="#{cliente.to.descripcion}" 
-						required="true" size="60" maxlength="40" />
+						 size="60" maxlength="40" />
 				
 				    <aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_alias}" />
 					<aon:inputText value="#{cliente.to.alias}" 
@@ -95,7 +85,7 @@
 
 		 <aon:div id="datos2" styleClass="aon-scroll-area">
 						
-				<aon:panelGrid columns="4" dir="true" width="100%" style="margin-bottom=2px;">
+				<aon:panelGrid columns="4" dir="true" width="100%">
 				
 						<aon:outputLabel for="Docu_cdg" 
 						value="#{appBundle.aon_payroll_principales_clientes_doc}" />
@@ -128,7 +118,7 @@
 							reRender="Div_description"
 							value="#{cliente.to.divisa.cdg}" size="5">
 						</aon:lookupInputText>
-						<aon:lookupButton id="Div_lookup"
+						<aon:lookupButton id="Divi_lookup"
 							windowTitle="#{appBundle.aon_payroll_principales_clientes_div}"
 							selectReRender="Div_cdg,Div_description"
 							lookup="#{divisaLookup}" minHeight="440"
@@ -165,7 +155,7 @@
 	     <aon:div id="datos3" styleClass="aon-scroll-area">		
 				<aon:panelGrid columns="4" dir="true" width="100%" style="margin-bottom=2px;">
 				
-	         <!--     <aon:outputLabel for="Tipoviaa_cdg" 
+	              <aon:outputLabel for="Tipoviaa_cdg" 
 						value="#{appBundle.aon_payroll_principales_clientes_tipovia}" />
 					<aon:div styleClass="aon-lookup">
 						<aon:lookupInputText id="Tipovia_cdg"
@@ -183,7 +173,7 @@
 							value="#{(cliente.to.tipovia.description!=null)?(cliente.to.tipovia.description):('')}"
 							size="34" disabled="true" />
 					</aon:div>
-					 --> 
+					  
 						<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_nomvia}" />
 					<aon:inputText value="#{cliente.to.nomvia}" 
 						 size="50" maxlength="20" />
@@ -204,7 +194,7 @@
 					<aon:inputText value="#{cliente.to.localidad}" 
 						 size="50" maxlength="20" />
 					
-			  <!--     <aon:outputLabel for="Provincia_cdg" 
+			      <aon:outputLabel for="Provincia_cdg" 
 						value="#{appBundle.aon_payroll_principales_clientes_provincia}" />
 					<aon:div styleClass="aon-lookup">
 						<aon:lookupInputText id="Pro_cdg"
@@ -222,7 +212,7 @@
 							value="#{(cliente.to.provincia.descripcion!=null)?(cliente.to.provincia.descripcion):('')}"   
 							size="60" disabled="true" />
 					</aon:div>
-					 -->
+					 
 					
 						
 	     	</aon:panelGrid>	
@@ -283,6 +273,7 @@
 								<aon:selectBooleanCheckbox value="#{cliente.to.inactivo}" />
 								<aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_cliinac}" />
 							</aon:div>
+							<br></br>
 							<aon:div>
 								<aon:selectBooleanCheckbox value="#{cliente.to. indcal}" />
 								<aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_calenlabor}" />
@@ -336,11 +327,11 @@
 		
 	<aon:lookupButtonPopup lookup="#{delegacionLookup}" />	
 	<aon:lookupButtonPopup lookup="#{empresarioLookup}" />   
-   <!-- <aon:lookupButtonPopup lookup="#{divisaLookup}" />   -->
-	<aon:lookupButtonPopup lookup="#{paisLookup}" />   
+	 <!--  <aon:lookupButtonPopup lookup="#{divisaLookup}" />   -->
+	<aon:lookupButtonPopup lookup="#{paisLookup}" />  
 	<aon:lookupButtonPopup lookup="#{documentoLookup}" />  
-  <!--  <aon:lookupButtonPopup lookup="#{tipoviaLookup}" /> 
-	 <aon:lookupButtonPopup lookup="#{provinciaLookup}" />-->
+    <aon:lookupButtonPopup lookup="#{tipoviaLookup}" /> 
+	<aon:lookupButtonPopup lookup="#{provinciaLookup}" />
 	
 	</ui:define>
 </ui:composition>
