@@ -243,7 +243,8 @@ public class FolderController implements WebMailConstants {
 			this.folder.close(false);
 			Folder newFolder = getWebMailController().getServer().getRoot().getFolder(renameFolderName);
 			this.folder.getFolder().renameTo(newFolder);
-			this.folder = webMailController.getServer().getAonFolder(renameFolderName);
+			nodeSelected( webMailController.getServer().getAonFolder(renameFolderName) );
+	    	getTreeController().setCurrent(this.folder);			
 	    	getTreeController().loadTree();
 		} catch (MessagingException e) {
 			AonUtil.addErrorMessage(e.getMessage());
