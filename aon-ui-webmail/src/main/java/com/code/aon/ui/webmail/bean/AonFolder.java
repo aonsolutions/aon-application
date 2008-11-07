@@ -13,6 +13,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.ui.webmail.exception.WebmailException;
 
@@ -54,7 +55,6 @@ public class AonFolder extends AonMessageSortableList {
 	public ArrayList<AonFolder> getFolderList() throws WebmailException {
 		ArrayList<AonFolder> folderList = null;
 		try {
-			open(Folder.READ_ONLY);
             Folder[] folders = folder.list();
             folderList = new ArrayList<AonFolder>(folders.length);
             for (int i = 0; i < folders.length; i++) {
@@ -267,4 +267,18 @@ public class AonFolder extends AonMessageSortableList {
     	return (AonMessage) getModel().getRowData();
     }
     
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj instanceof AonFolder) {
+			AonFolder f = (AonFolder) obj;
+			if (!StringUtils.equals(getName(), f.getName())) {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}    
 }
