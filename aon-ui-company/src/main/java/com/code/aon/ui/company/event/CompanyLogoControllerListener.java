@@ -97,8 +97,6 @@ public class CompanyLogoControllerListener extends CompanyLogoParentControllerLi
 				attach.setData(aonFile.getData());
 				attach.setDescription("");
 				attach.setRegistry((Company) event.getController().getTo());
-				attach.setMimeType(MimeType.getByExtension(aonFile.getFileName().substring(
-						aonFile.getFileName().lastIndexOf(".") + 1)));
 				IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 				if (attach.getId() == null) {
 					companyController.setAttach((RegistryAttachment) attachBean.insert(attach));
