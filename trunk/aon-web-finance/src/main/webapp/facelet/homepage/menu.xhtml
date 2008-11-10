@@ -94,21 +94,51 @@
 						value="#{financeBundle.finance_checking_module}" action="util_checking" />
 				</aon:menuGroup>			
 			</aon:dropDownMenu>
-			
-		<!-- 
-			<aon:dropDownMenu value="#{appBundle.account_masters}">
-				<aon:menuItem value="#{accountBundle.account_entry_module}" action="account_entry_search"/>
-				<aon:menuSeparator/>
-				<aon:menuItem action="account_list" value="#{accountBundle.account_module}"/>
-				<aon:menuItem action="autConcept" value="#{accountBundle.account_aut_concept_module}"/>
-				<aon:menuSeparator/>
-				<aon:menuItem actionListener="#{customer.onEditSearch}" action="customer_search" value="#{customerBundle.customer_module}"/>
-				<aon:menuItem actionListener="#{supplier.onEditSearch}" action="supplier_search" value="#{supplierBundle.supplier_module}"/>
-				<aon:menuItem actionListener="#{creditor.onEditSearch}" action="creditor_search" value="#{financeBundle.finance_creditor_module}"/>
-				<aon:menuSeparator/>
-				<aon:menuItem action="geozone_list" value="#{geozoneBundle.geozone_module}"/>
-			</aon:dropDownMenu>
-			--> 
+			<!-- role="MenuAuxiliares" -->
+			<aon:dropDownMenu id="aon_auxiliar" value="#{financeBundle.finance_auxiliar_module}">
+				<!-- role="MenuAuxiliaresFacturacion" -->	
+				<aon:menuGroup id="aon_invoicing_concepts" value="#{financeBundle.finance_invoicing_concepts_module}">
+					<!-- role="AuxiliaresProductos" -->
+					<aon:menuItem id="aon_item"
+						value="#{financeBundle.finance_item_module}" action="item">
+						<f:actionListener action="#{item.onReset}"/>
+					</aon:menuItem>
+					<!-- role="AuxiliaresCategorias" -->
+					<aon:menuItem id="aon_product_category"
+						value="#{financeBundle.finance_product_category_module}" action="productCategory" />
+				</aon:menuGroup>
+				<!-- role="AuxiliaresBancos" -->
+				<aon:menuItem id="aon_bank"
+					value="#{financeBundle.finance_banks}" action="bank" />
+				<!-- role="AuxiliaresFormasDePago" -->
+				<aon:menuItem id="aon_pay_method"
+					value="#{financeBundle.finance_pay_methods}" action="pay_method" />
+			</aon:dropDownMenu>			
+			<!-- role="MenuConfiguracion" -->
+			<aon:dropDownMenu id="aon_configuration" value="#{financeBundle.finance_configuration_module}">
+				<!-- role="DatosEmpresa" -->
+				<aon:menuItem id="aon_company"
+					value="#{companyBundle.company_data_module}" action="company">
+					<f:actionListener action="#{company.onLoad}"/>
+				</aon:menuItem>
+				<!-- role="CentrosFormacion" -->
+				<aon:menuItem id="aon_workplace"
+					value="#{companyBundle.company_workplace_module}" action="workplace">
+					<f:actionListener action="#{workplace.onSearch}"/>
+				</aon:menuItem>
+				<!-- role="ConfiguracionImpuestos" -->
+				<aon:menuItem id="aon_product_tax"
+					value="#{productBundle.product_tax_module}" action="tax" />
+				<!-- role="ConfiguracionSeries" -->
+				<aon:menuItem id="aon_series"
+					value="#{configBundle.config_series_module}" action="series" />
+				<!-- role="ConfiguracionProvincias" -->
+				<aon:menuItem id="aon_geozone"
+					value="#{geozoneBundle.geozone_module}" action="geozone">
+					<f:actionListener action="#{geotreeParent.onSearch}"/>
+				</aon:menuItem>
+			</aon:dropDownMenu>			
+
 		</aon:menuBar>
 	</aon:form>
 </ui:composition>
