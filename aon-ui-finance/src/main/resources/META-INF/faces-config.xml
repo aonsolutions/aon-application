@@ -96,6 +96,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.PayMethod</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>payMethod</value>
+		</managed-property>		
 	</managed-bean>
 	
 	<!-- ************* FBATCH ***************** -->
@@ -877,10 +881,6 @@
         <to-view-id>/facelet/homepage/firstContent.faces</to-view-id>
     </navigation-case>
 	<navigation-case>
-		<from-outcome>pay_method</from-outcome>
-		<to-view-id>/_finance/facelet/auxiliary/pay_method/grid.faces</to-view-id>
-	</navigation-case>
-	<navigation-case>
 		<from-outcome>fbatch</from-outcome>
 		<to-view-id>/_finance/facelet/fbatch/search.faces</to-view-id>
 	</navigation-case>
@@ -1134,6 +1134,14 @@
 		<navigation-case>
 			<from-outcome>bank</from-outcome>
 			<to-view-id>/com/code/aon/ui/finance/facelet/bank/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== PAY METHOD ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>payMethod</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/payMethod/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
