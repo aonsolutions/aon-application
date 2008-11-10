@@ -29,6 +29,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.Bank</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>bank</value>
+		</managed-property>
 	</managed-bean>
 	
 	<!-- ************* BANK LOOKUP ***************** -->
@@ -872,10 +876,6 @@
         <from-outcome>firstContent</from-outcome>
         <to-view-id>/facelet/homepage/firstContent.faces</to-view-id>
     </navigation-case>
-    <navigation-case>
-		<from-outcome>bank</from-outcome>
-		<to-view-id>/_finance/facelet/auxiliary/bank/grid.faces</to-view-id>
-	</navigation-case>
 	<navigation-case>
 		<from-outcome>pay_method</from-outcome>
 		<to-view-id>/_finance/facelet/auxiliary/pay_method/grid.faces</to-view-id>
@@ -1117,7 +1117,7 @@
 		</navigation-case>
 	</navigation-rule>
 
-  <!-- =================== VAT REPORT ================= -->
+	<!-- =================== VAT REPORT ================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>vat_report_search</from-outcome>
@@ -1126,6 +1126,14 @@
 		<navigation-case>
 			<from-outcome>vat_report_list</from-outcome>
 			<to-view-id>/com/code/aon/ui/finance/facelet/vat/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== BANK ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>bank</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/bank/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
