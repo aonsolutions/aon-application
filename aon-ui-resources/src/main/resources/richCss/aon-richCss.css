@@ -1331,7 +1331,7 @@ color:#000;
  	cursor:pointer;
  }
  .aon-menuGroup-styleClass{
-	background:transparent url(../images/aon-icon/aon-icon-menu-top-item-collapsible.png) left center no-repeat;
+	background:transparent url(images/aon-icon/aon-icon-menu-top-item-collapsible.png) left center no-repeat;
 }
 /* commanLink que no tienen desplegables */
 .aon-top-menu-item{
