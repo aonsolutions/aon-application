@@ -14,10 +14,12 @@ import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.divisa.Divisa;
 import com.code.aon.payroll.enumeration.Prorateo;
@@ -30,24 +32,9 @@ import com.code.aon.ui.util.AonUtil;
 public class DivisaController extends LinesController {
 
 
+	
+	
 
-	
-/*	
-	public String getnombreDivisa() {
-		
-		IManagerBean bean = BeanManager.getManagerBean(Divisa.class);
-		
-		
-            Criteria c = new Criteria();
-            String alias = bean.getFieldName(IPayrollAlias.LIN_DIVISA_ID_DIVISA_FINAL);
-            c.addEqualExpression(alias, this.getTo());
-             List<ITransferObject> list = bean.getList(c);
-			
-		return String name;
-                     
-	
-	}
-	*/
 	
 	
 	

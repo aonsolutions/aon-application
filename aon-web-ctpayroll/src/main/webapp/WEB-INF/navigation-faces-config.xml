@@ -746,14 +746,45 @@
 			<to-view-id>/facelet/principales/clientes/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>domicilio_form</from-outcome>
-			<to-view-id>/facelet/principales/clientes/domicilios.xhtml</to-view-id>
+			<from-outcome>cliente_search</from-outcome>
+			<to-view-id>/facelet/principales/clientes/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>cuenta_form</from-outcome>
-			<to-view-id>/facelet/principales/clientes/cuentas.xhtml</to-view-id>
+			<from-outcome>cliente_list</from-outcome>
+			<to-view-id>/facelet/principales/clientes/list.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
+		
+		
+		<navigation-case>
+			<from-outcome>domicilio_form</from-outcome>
+			<to-view-id>/facelet/principales/clientes/domicilios/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>domicilio_search</from-outcome>
+			<to-view-id>/facelet/principales/clientes/domicilios/search.xhtml</to-view-id>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>domicilio_list</from-outcome>
+			<to-view-id>/facelet/principales/clientes/domicilios/list.xhtml</to-view-id>
+		</navigation-case>
+		
+		
+		
+	    <navigation-case>
+			<from-outcome>cuenta_form</from-outcome>
+			<to-view-id>/facelet/principales/clientes/cuentas/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>cuenta_search</from-outcome>
+			<to-view-id>/facelet/principales/clientes/cuentas/search.xhtml</to-view-id>
+		</navigation-case>	
+		<navigation-case>
+			<from-outcome>cuenta_list</from-outcome>
+			<to-view-id>/facelet/principales/clientes/cuentas/list.xhtml</to-view-id>
+		</navigation-case>
+		
+		</navigation-rule>
 	
 </faces-config>
 

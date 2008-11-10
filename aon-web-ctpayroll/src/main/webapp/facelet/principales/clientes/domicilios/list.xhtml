@@ -13,22 +13,22 @@
 
 	<ui:define name="content">
 
-		<aon:form id="delegacionList">
+		<aon:form id="clienteList">
 			
-			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_organismos_entidades__delegacion}" />
-				<ui:param name="controller" value="#{delegacion}"/>
-				<ui:param name="reportKey" value="DelegacionList"/>
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_clientes}" />
+				<ui:param name="controller" value="#{domicilio}"/>
+				
 			</ui:include>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="delegacionData" value="#{delegacion.model}"
-					var="to" rows="20" rendered="#{delegacion.model.rowCount > 0}"
+				<aon:dataTable id="clienteData" value="#{domicilio.model}"
+					var="to" rows="20" rendered="#{domicilio.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
-					<aon:rowSelector action="delegacion_form" actionListener="#{delegacion.onSelect}" />
+					<aon:rowSelector action="domicilio_form" actionListener="#{domicilio.onSelect}" />
 					
 					<aon:column>
 						<f:facet name="header">
@@ -41,12 +41,19 @@
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.aon_payroll_description}" />
 						</f:facet>
-						<aon:outputText value="#{to.descripcion}"/>
+						<aon:outputText value="#{to.cliente.cdg}"/>
+					</aon:column>
+					
+						<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
+						</f:facet>
+						<aon:outputText value="#{to.nomvia}"/>
 					</aon:column>
 
  				</aon:dataTable>
 
-				<aon:dataScroller2 for="delegacionData"  showNote="true" />
+				<aon:dataScroller2 for="clienteData"  showNote="true" />
 
 			</aon:div>
 		</aon:form>
