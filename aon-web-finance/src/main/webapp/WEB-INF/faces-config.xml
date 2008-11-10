@@ -138,6 +138,10 @@
                     <value>com.code.aon.ui.geozone.i18n.messages</value>
 				</map-entry>
 				<map-entry>
+					<key>companyBundle</key>
+                    <value>com.code.aon.ui.company.i18n.messages</value>
+				</map-entry>
+				<map-entry>
 					<key>securityBundle</key>
                     <value>com.code.aon.bridge.i18n.messages</value>
 				</map-entry>
