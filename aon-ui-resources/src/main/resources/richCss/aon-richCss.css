@@ -151,6 +151,23 @@ color:#000;
  	text-transform:uppercase; 	
  	font-size:1em;
  	font-weight:bold;
+ 	padding:3px 6px;
+ 	display:inline;
+ 	text-align:left;
+	cursor:pointer;
+	width:auto;
+	overflow:visible;
+	border:transparent 1px solid;
+ } 
+ a.aon-top-menu-item:hover{
+	border:#ccc 1px solid;
+}
+
+.aon-top-menu-item-icon{
+ 	color:#000;
+ 	text-transform:uppercase; 	
+ 	font-size:1em;
+ 	font-weight:bold;
  	padding:0px 2em 0px 16px;
  	margin:0 0 0 5px;
  	display:inline;
@@ -160,8 +177,8 @@ color:#000;
 	overflow:visible;
 	border:transparent 1px solid;
  } 
- a.aon-top-menu-item:hover{
-	border:transparent 1px solid;
+ a.aon-top-menu-item-icon:hover{
+	border:#ccc 1px solid;
 }
 
 /* fin de opciones de menu top*/
