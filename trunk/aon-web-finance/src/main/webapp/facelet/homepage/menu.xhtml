@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:form>
+		<aon:menuBar id="mainMenu"> 
+		
+			<!-- role="Clientes" -->
+			<aon:commandLink id="customer"
+				value="#{customerBundle.customer_module}"
+				action="customer" immediate="true"
+				styleClass="aon-top-menu-item" >
+				<aon:actionListener method="#{customer.onReset}" />
+			</aon:commandLink>
+			<!-- role="Proveedores" -->
+			<aon:commandLink id="supplier"
+				value="#{supplierBundle.supplier_module}"
+				action="supplier" immediate="true"
+				styleClass="aon-top-menu-item" >
+				<aon:actionListener method="#{supplier.onReset}" />
+			</aon:commandLink>
+			<!-- role="MenuFacturas" -->
+			<aon:dropDownMenu id="aon_invoice" value="#{accountBundle.account_entry_invoice_module}">
+				<!-- role="FacturasVenta" -->
+				<aon:menuItem id="aon_invoice_management"
+					value="#{salesBundle.sales_invoice_management_module}" action="invoiceManagement"/>
+				<!-- role="FacturasCompra" -->
+				<aon:menuItem id="aon_purchase_invoice_management"
+					value="#{financeBundle.finance_purchase_invoice_management_module}" action="purchaseInvoiceManagement"/>
+				<!-- role="ImpresionFacturas" -->
+				<aon:menuItem id="aon_invoice_print"
+					value="#{financeBundle.finance_invoice_print_module}" action="invoicePrint">
+					<f:actionListener action="#{invoicePrint.onEditSearch}"/>
+				</aon:menuItem>
+				<!-- role="ContabilizacionFacturas" -->
+				<aon:menuItem id="aon_invoice_recording"
+					value="#{financeBundle.finance_invoice_recording_module}" action="invoiceRecording">
+					<f:actionListener action="#{invoiceRecording.onEditSearch}"/>
+				</aon:menuItem>
+				<!-- role="BorradoFacturas" -->
+				<aon:menuItem id="aon_invoice_removing"
+					value="#{financeBundle.finance_invoice_removing_module}" action="invoiceRemoving">
+					<f:actionListener action="#{invoiceRemover.onEditSearch}"/>
+				</aon:menuItem>				
+			</aon:dropDownMenu>
+			<!-- role="MenuCuotas" -->
+			<aon:dropDownMenu id="aon_fees" value="#{financeBundle.finance_fees_module}">
+				<!-- role="Prefacturacion" -->
+				<aon:menuItem id="aon_pre_invoicing"
+					value="#{salesBundle.sales_pre_invoicing_module}" action="feePreInvoicing">
+					<f:actionListener action="#{preInvoicing.onInitialize}"/>
+				</aon:menuItem>				
+				<!-- role="FacturacionCuotas" -->
+				<aon:menuItem id="aon_invoicing"
+					value="#{salesBundle.sales_invoicing_module}" action="feeInvoicing">
+					<f:actionListener action="#{feeInvoicing.onInitialize}"/>
+				</aon:menuItem>				
+				<!-- role="GruposFacturacion" -->
+				<aon:menuItem id="aon_invoicing_group"
+					value="#{financeBundle.finance_invoicing_group_module}" action="invoicingGroup"/>
+				<!-- role="ListadoCuotas" -->
+				<aon:menuItem id="aon_fee_print"
+					value="#{financeBundle.finance_fee_print_module}" action="util_fee_print">
+					<f:actionListener action="#{feePrint.onEditSearch}"/>
+				</aon:menuItem>				
+			</aon:dropDownMenu>
+			<!-- role="MenuTesoreria" -->
+			<aon:dropDownMenu id="finance" value="#{financeBundle.finance_menu_group}">
+				<!-- role="Vencimientos" -->
+				<aon:menuItem id="aon_finance"
+					value="#{financeBundle.finance_finance_module}" action="finance">
+					<f:actionListener action="#{finance.onEditSearch}"/>
+				</aon:menuItem>				
+				<!-- role="DevolucionVencimientos" -->
+				<aon:menuItem id="aon_finance_return"
+					value="#{financeBundle.finance_finance_return_module}" action="finance_return">
+					<f:actionListener action="#{financeReturn.onEditSearch}"/>
+				</aon:menuItem>				
+				<!-- role="GestionCartera" -->
+				<aon:menuItem id="aon_finance_payment"
+					value="#{financeBundle.finance_finance_payment_module}" action="finance_payment">
+					<f:actionListener action="#{financeReturn.onEditSearch}"/>
+				</aon:menuItem>				
+				<!-- role="Remesas" -->
+				<aon:menuItem id="aon_fbatch"
+					value="#{financeBundle.finance_fbatch_module}" action="fbatch" />
+				<!-- role="MenuUtilidadesTesoreria" -->	
+				<aon:menuGroup id="aon_finance_utilities" value="#{financeBundle.finance_finance_utilities_module}">
+					<!-- role="ChecksTesoreria" -->
+					<aon:menuItem id="checks"
+						value="#{financeBundle.finance_checking_module}" action="util_checking" />
+				</aon:menuGroup>			
+			</aon:dropDownMenu>
+			
+		<!-- 
+			<aon:dropDownMenu value="#{appBundle.account_masters}">
+				<aon:menuItem value="#{accountBundle.account_entry_module}" action="account_entry_search"/>
+				<aon:menuSeparator/>
+				<aon:menuItem action="account_list" value="#{accountBundle.account_module}"/>
+				<aon:menuItem action="autConcept" value="#{accountBundle.account_aut_concept_module}"/>
+				<aon:menuSeparator/>
+				<aon:menuItem actionListener="#{customer.onEditSearch}" action="customer_search" value="#{customerBundle.customer_module}"/>
+				<aon:menuItem actionListener="#{supplier.onEditSearch}" action="supplier_search" value="#{supplierBundle.supplier_module}"/>
+				<aon:menuItem actionListener="#{creditor.onEditSearch}" action="creditor_search" value="#{financeBundle.finance_creditor_module}"/>
+				<aon:menuSeparator/>
+				<aon:menuItem action="geozone_list" value="#{geozoneBundle.geozone_module}"/>
+			</aon:dropDownMenu>
+			--> 
+		</aon:menuBar>
+	</aon:form>
+</ui:composition>
