@@ -18,14 +18,14 @@
 			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_clientes}" />
 				<ui:param name="controller" value="#{cliente}"/>
-				<ui:param name="reportKey" value="ClienteList"/>
+			
 			</ui:include>	
       
 			<aon:div id="clientes" styleClass="aon-scroll-area">
 			
 			
 			  <aon:div id="datos1" styleClass="aon-scroll-area">
-				<aon:panelGrid columns="4" dir="true" width="100%" >
+				<aon:panelGrid  columns="4" dir="true" width="100%" >
 				
 				
 				<aon:outputLabel value="#{appBundle.aon_payroll_principales_clientes_cod}" />

@@ -8,6 +8,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.payroll.divisa.Divisa;
 import com.code.aon.payroll.enumeration.Divisas;
 import com.code.aon.ui.form.BasicController;
 
@@ -20,7 +21,7 @@ public class DivisaMaestroController extends PayrollBasicController {
 	
 private List<SelectItem> redondeos;
 
-
+          
 	
 	
 	/**
@@ -40,7 +41,9 @@ private List<SelectItem> redondeos;
 		}
 		return redondeos;
 	}
-	
+
+
+
 	
 	
 	

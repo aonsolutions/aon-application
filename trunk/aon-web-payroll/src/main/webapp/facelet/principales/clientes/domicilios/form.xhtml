@@ -17,7 +17,7 @@
 			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_domicilio}" />
 				<ui:param name="controller" value="#{domicilio}"/>
-				
+		     	<aon:methodParam name="backAction" value="cliente_form"/>	
 			</ui:include>	
 
 			<aon:div id="delegacion" styleClass="aon-scroll-area">
