@@ -28,7 +28,7 @@
 					<aon:editDataTable id="bonificacionData" var="to" rows="20"
 						rendered="#{(cotizacionBonificacion.model.rowCount > 0) or (cotizacionBonificacion.new)}" value="#{cotizacionBonificacion.model}"
 						columnClasses="aon-editDataTable-iconColumn, 
-						aon-editDataTable-numberColumn,	aon-editDataTable-textColumn,
+						aon-editDataTable-iconColumn,	aon-editDataTable-textColumn,
 						aon-editDataTable-numberColumn, aon-editDataTable-numberColumn,
 						aon-editDataTable-numberColumn, aon-editDataTable-numberColumn,
 						aon-editDataTable-iconColumn, aon-editDataTable-iconColumn,
@@ -96,11 +96,11 @@
 							</f:facet>
 							<aon:outputText value="#{to.description}" rendered="#{to!=cotizacionBonificacion.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==cotizacionBonificacion.to}" size="30"
+								rendered="#{to==cotizacionBonificacion.to}" size="50"
 								value="#{cotizacionBonificacion.to.description}" maxlength="50" />
 							<f:facet name="footer">
 								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{cotizacionBonificacion.new}" size="30"
+									rendered="#{cotizacionBonificacion.new}" size="50"
 									value="#{cotizacionBonificacion.to.description}" maxlength="50" />
 							</f:facet>
 						</aon:column>
@@ -126,13 +126,13 @@
 							</f:facet>
 							<aon:outputText value="#{to.prcCg}" rendered="#{to!=cotizacionBonificacion.to}" />
 							<aon:inputText id="cotizacionBonificacion_prcCg_edit" styleClass="aon-form-input-text " 
-								rendered="#{to==cotizacionBonificacion.to}" size="3"
+								rendered="#{to==cotizacionBonificacion.to}" size="5"
 								value="#{cotizacionBonificacion.to.prcCg}" maxlength="5" >
 								<f:validator validatorId="porcentajeValidator" />
 							</aon:inputText>
 							<f:facet name="footer">
 								<aon:inputText id="cotizacionBonificacion_prcCg_new" styleClass="aon-form-input-text" 
-									rendered="#{cotizacionBonificacion.new}" size="3"
+									rendered="#{cotizacionBonificacion.new}" size="5"
 									value="#{cotizacionBonificacion.to.prcCg}" maxlength="5" >
 									<f:validator validatorId="porcentajeValidator" />
 								</aon:inputText>
@@ -145,13 +145,13 @@
 							</f:facet>
 							<aon:outputText value="#{to.prcAcc}" rendered="#{to!=cotizacionBonificacion.to}" />
 							<aon:inputText id="cotizacionBonificacion_prcAcc_edit" styleClass="aon-form-input-text " 
-								rendered="#{to==cotizacionBonificacion.to}" size="3"
+								rendered="#{to==cotizacionBonificacion.to}" size="5"
 								value="#{cotizacionBonificacion.to.prcAcc}" maxlength="5" >
 								<f:validator validatorId="porcentajeValidator" />
 							</aon:inputText>
 							<f:facet name="footer">
 								<aon:inputText id="cotizacionBonificacion_prcAcc_new" styleClass="aon-form-input-text" 
-									rendered="#{cotizacionBonificacion.new}" size="3"
+									rendered="#{cotizacionBonificacion.new}" size="5"
 									value="#{cotizacionBonificacion.to.prcAcc}" maxlength="5" >
 									<f:validator validatorId="porcentajeValidator" />
 								</aon:inputText>
@@ -164,13 +164,13 @@
 							</f:facet>
 							<aon:outputText value="#{to.prcAccfgs}" rendered="#{to!=cotizacionBonificacion.to}" />
 							<aon:inputText id="cotizacionBonificacion_prcAccfgs_edit" styleClass="aon-form-input-text " 
-								rendered="#{to==cotizacionBonificacion.to}" size="3"
+								rendered="#{to==cotizacionBonificacion.to}" size="5"
 								value="#{cotizacionBonificacion.to.prcAccfgs}" maxlength="5" >
 								<f:validator validatorId="porcentajeValidator" />
 							</aon:inputText>
 							<f:facet name="footer">
 								<aon:inputText id="cotizacionBonificacion_prcAccfgs_new" styleClass="aon-form-input-text" 
-									rendered="#{cotizacionBonificacion.new}" size="3"
+									rendered="#{cotizacionBonificacion.new}" size="5"
 									value="#{cotizacionBonificacion.to.prcAccfgs}" maxlength="5" >
 									<f:validator validatorId="porcentajeValidator" />
 								</aon:inputText>

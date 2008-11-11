@@ -28,12 +28,12 @@
 	<parameter name="companyName" isForPrompting="false" class="java.lang.String"/>
 
 	<field name="cdg" class="java.lang.String"/>
-	<field name="tipcot" class="java.lang.String"/>
 	<field name="desabr" class="java.lang.String"/>
-	<field name="tipcom" class="java.lang.String"/>
-	<field name="dinesp" class="java.lang.String"/>
-	<field name="fijovar" class="java.lang.String"/>
-	<field name="indcom" class="java.lang.String"/>
+	<field name="tipcom" class="com.code.aon.payroll.enumeration.TipoComplemento"/>
+	<field name="dinesp" class="com.code.aon.payroll.enumeration.Retribuciones"/>
+	<field name="fijovar" class="com.code.aon.payroll.enumeration.FijoVariable"/>
+	<field name="indcom" class="com.code.aon.payroll.enumeration.IndiceComplemento"/>
+	<field name="tipcot" class="com.code.aon.payroll.enumeration.TipoCotizaciones"/>
 
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -232,7 +232,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{tipcot}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{tipcot}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -245,7 +245,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{tipcom}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{tipcom}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="MM/dd/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -271,7 +271,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{dinesp}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{dinesp}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -284,7 +284,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{fijovar}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{fijovar}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -297,7 +297,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{indcom}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{indcom}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>
