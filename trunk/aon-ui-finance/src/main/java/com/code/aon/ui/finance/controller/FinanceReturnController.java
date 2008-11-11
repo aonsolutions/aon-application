@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
@@ -30,7 +29,6 @@ import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.invoicing.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.PageDataModel;
 import com.code.aon.ui.util.AonUtil;
 
 public class FinanceReturnController extends BasicController {
@@ -39,19 +37,7 @@ public class FinanceReturnController extends BasicController {
 	
 	private Boolean payment;
 	
-	private Integer registryId;
-	
-	private String registryName;
-	
-	private String series;
-	
-	private String number;
-	
 	private Date returnDate;
-	
-	private Date fromDate;
-	
-	private Date toDate;
 	
 	private AccountEntryFinanceWriter writer;
 	
@@ -62,38 +48,6 @@ public class FinanceReturnController extends BasicController {
 	public void setPayment(Boolean payment) {
 		this.payment = payment;
 	}
-	
-	public Integer getRegistryId() {
-		return registryId;
-	}
-
-	public void setRegistryId(Integer registryId) {
-		this.registryId = registryId;
-	}
-
-	public String getRegistryName() {
-		return registryName;
-	}
-
-	public void setRegistryName(String registryName) {
-		this.registryName = registryName;
-	}
-
-	public String getSeries() {
-		return series;
-	}
-
-	public void setSeries(String series) {
-		this.series = series;
-	}
-
-	public String getNumber() {
-		return number;
-	}
-
-	public void setNumber(String number) {
-		this.number = number;
-	}
 
 	public Date getReturnDate() {
 		return returnDate;
@@ -103,22 +57,6 @@ public class FinanceReturnController extends BasicController {
 		this.returnDate = returnDate;
 	}
 
-	public Date getFromDate() {
-		return fromDate;
-	}
-
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
-
-	public Date getToDate() {
-		return toDate;
-	}
-
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
-
 	public AccountEntryFinanceWriter getWriter() {
 		if(writer == null){
 			writer = new AccountEntryFinanceWriter();
@@ -126,32 +64,10 @@ public class FinanceReturnController extends BasicController {
 		return writer;
 	}
 
-	public void onStartSearch(ActionEvent event) throws ManagerBeanException {
-		this.onEditSearch((ActionEvent)event);
-		initializeSearch();
-	}
-	
 	@Override
 	public void onEditSearch(ActionEvent event) {
+		setPayment(Boolean.FALSE);
 		super.onEditSearch(event);
-		initializeSearch();
-	}
-	
-	private void initializeSearch() {
-		try {
-			((PageDataModel)this.getModel()).resize(0);
-			payment = new Boolean(false);
-			registryId = null;
-			registryName = "";
-			series = "";
-			number = "";
-			returnDate =  new Date();
-			fromDate = null;
-			toDate = null;
-			getCriteria().addEqualExpression(getManagerBean().getFieldName(IFinanceAlias.FINANCE_PAYMENT), payment );
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error initializing search", e);
-		}
 	}
 	
 	@SuppressWarnings("unused")
@@ -170,7 +86,6 @@ public class FinanceReturnController extends BasicController {
 		ResourceBundle bundle = ResourceBundle.getBundle(AonUtil.getConfigurationController().getApplicationBundles().get("financeBundle"),FacesContext.getCurrentInstance().getViewRoot().getLocale());
 		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.RETURNED, bundle.getString("aon_finance_tracking_recorded") + " " + entry.getId());
 		insertAccountEntryFinanceTracking(entry, tracking);
-		initializeSearch();
 	}
 	
 	private AccountEntry returnFinance(Finance finance) throws ManagerBeanException {
