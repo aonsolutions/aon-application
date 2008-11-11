@@ -1387,7 +1387,25 @@
 		<managed-bean-class>com.code.aon.ui.finance.mailing.MailingController</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
+	
 	<!-- =================== Navigation Rules ================= -->
+	
+	<!-- =================== HOME ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>home</from-outcome>
+			<to-view-id>/homepage.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>logout</from-outcome>
+			<to-view-id>/home.jsf</to-view-id> 
+			<redirect/>
+		</navigation-case>
+	</navigation-rule>
+	
 	<!-- =================== Customer ========================== -->	
 	<navigation-rule>
 	    <navigation-case>
