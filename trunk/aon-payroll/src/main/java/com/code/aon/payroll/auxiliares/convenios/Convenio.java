@@ -52,7 +52,7 @@ public class Convenio implements ITransferObject {
 	}
 
 	/**
-	 * Devuleve el Indicador Dias Descuento
+	 * Devuelve el Indicador Dias Descuento
 	 * 
 	 * @return
 	 */
