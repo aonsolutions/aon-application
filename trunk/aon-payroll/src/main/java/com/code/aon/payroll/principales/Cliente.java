@@ -7,13 +7,17 @@ import com.code.aon.payroll.divisa.Divisa;
 import com.code.aon.payroll.enumeration.EnvioSS;
 import com.code.aon.payroll.geograficas.Pais;
 import com.code.aon.payroll.geograficas.Provincia;
+import com.code.aon.payroll.irpf.Linirpf;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Empresario;
 import com.code.aon.payroll.tipos.Tipovia;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -71,14 +75,36 @@ public class Cliente  implements ITransferObject {
      private Pais pais;
      private Provincia provincia;
      private Tipovia tipovia;
+	 private Set<Domicilio> domicilios = new HashSet<Domicilio>();
+	 private Set<Cuentas> cuentas = new HashSet<Cuentas>();
+	
+	 
+	 
+	@OneToMany(mappedBy = "cliente", cascade={CascadeType.REMOVE})
+	public Set<Domicilio> getDomicilios() {
+		return domicilios;
+	}
 
+	public void setDomicilios(Set<Domicilio> domicilio) {
+		this.domicilios = domicilio;
+	}
+	
+	@OneToMany(mappedBy = "cliente", cascade={CascadeType.REMOVE})
+	public Set<Cuentas> getCuentas() {
+		return cuentas;
+	}
+
+	public void setCuentas(Set<Cuentas> cuentas) {
+		this.cuentas = cuentas;
+	}
+	
     @Id     
     @Column(name="cdg", unique=true, nullable=false, length=4)
-    public int getCdg() {
+    public Integer getCdg() {
         return this.cdg;
     }
     
-    public void setCdg(int cdg) {
+    public void setCdg(Integer cdg) {
         this.cdg = cdg;
     }
     
@@ -402,7 +428,7 @@ public class Cliente  implements ITransferObject {
         this.pais = pais;
     }
     
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="provincia")
     public Provincia getProvincia() {
         return this.provincia;
@@ -412,7 +438,7 @@ public class Cliente  implements ITransferObject {
         this.provincia = provincia;
     }
     
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="tipovia")
     public Tipovia getTipovia() {
         return this.tipovia;

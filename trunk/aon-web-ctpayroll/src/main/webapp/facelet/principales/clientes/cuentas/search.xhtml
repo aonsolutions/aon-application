@@ -24,19 +24,20 @@
       
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
-					<aon:methodParam name="searchActionListener" value="#{cliente.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchActionListener" value="#{cuenta.onSearch}" type="actionListener" />
 					<aon:methodParam name="searchAction" value="cuenta_form" />	
 			
 			
 			  <aon:div id="datos2" styleClass="aon-scroll-area">		
 				<aon:panelGrid columns="2" dir="true" width="100%" style="margin-bottom=2px;">
 				
-	   
-				<!-- 		
-					<aon:outputLabel value="#{appBundle.aon_payroll_principales_cuenta_cdg}" />
-					<aon:inputText value="#{cuenta.to.cdg}" 
-						 size="50" maxlength="20" /> 
-						 
+				
+				
+	   	<aon:outputLabel for="Cuentas_cdg" value="#{appBundle.aon_payroll_principales_cuenta_cdg}" />
+					<aon:inputText id="Cuentas_cdg" valueChangeListener="#{cuenta.addExpression}"
+						 size="50" maxlength="3" />
+			 						 		
+				
 						 <aon:outputLabel for="Cliente_cdg" 
 						value="#{appBundle.aon_payroll_principales_domicilio_cli}" />
 					<aon:div styleClass="aon-lookup">
@@ -55,7 +56,7 @@
 							value="#{(cuenta.to.cliente.descripcion!=null)?(cuenta.to.cliente.descripcion):('')}"   
 							size="60" disabled="true" />
 					</aon:div>
-						-->
+						
 						
 							<aon:outputLabel value="#{appBundle.aon_payroll_principales_cuenta_entidad_nom}" />
 					<aon:inputText value="#{cuenta.to.entidad.description}" 

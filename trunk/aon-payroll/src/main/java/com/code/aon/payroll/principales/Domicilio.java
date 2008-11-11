@@ -45,11 +45,11 @@ public class Domicilio  implements ITransferObject {
 
     @Id     
     @Column(name="cdg", unique=true, nullable=false, length=4)
-    public int getCdg() {
+    public Integer getCdg() {
         return this.cdg;
     }
     
-    public void setCdg(int cdg) {
+    public void setCdg(Integer cdg) {
         this.cdg = cdg;
     }
     

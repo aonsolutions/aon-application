@@ -33,29 +33,30 @@
 			 	 <aon:div id="datos1" styleClass="aon-scroll-area">		
 				<aon:panelGrid columns="4" dir="true" width="100%" style="margin-bottom=2px;">
 				
-		<!--  		<aon:outputLabel value="#{appBundle.aon_payroll_principales_domicilio_cdg}" />
-					<aon:inputText value="#{domicilio.to.cdg}" 
-						 size="50" maxlength="20" />
-			 				
-			 		<aon:outputLabel for="Cliente_cdg" 
+		 		<aon:outputLabel for="Domicilio_cdg" value="#{appBundle.aon_payroll_principales_domicilio_cdg}" />
+					<aon:inputText id="Domicilio_cdg" valueChangeListener="#{domicilio.addExpression}"
+						 size="50" maxlength="3" />
+			 		
+			 	 			
+			 		<aon:outputLabel for="Domicilio_cliente_cdg" 
 						value="#{appBundle.aon_payroll_principales_domicilio_cli}" />
 					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="Cliente_cdg"
+						<aon:lookupInputText id="Domicilio_cliente_cdg"
 							lookup="#{clienteLookup}"
-							reRender="Cliente_description"
-							value="#{domicilio.to.cliente.cdg}" size="5">
+							reRender="Domicilio_cliente_descripcion"
+							value="#{domicilio.cliente.cdg}" size="5">
 						</aon:lookupInputText>
 						<aon:lookupButton id="Cliente_lookup"
 							windowTitle="#{appBundle.aon_payroll_principales_clientes}"
-							selectReRender="Cliente_cdg,Cliente_description"
+							selectReRender="Domicilio_cliente_cdg,Domicilio_cliente_descripcion"
 							lookup="#{clienteLookup}" minHeight="440"
-							property="#{domicilio.to.cliente}">
+							property="#{domicilio.cliente}">
 						</aon:lookupButton>
-						<aon:inputText id="Cliente_description"
-							value="#{(domicilio.to.cliente.descripcion!=null)?(domicilio.to.cliente.descripcion):('')}"   
+						<aon:inputText id="Domicilio_cliente_descripcion"
+							value="#{(domicilio.cliente.descripcion!=null)?(domicilio.to.cliente.descripcion):('')}"   
 							size="60" disabled="true" />
 					</aon:div>
-							 		-->
+							 	 	
 				
 	     	</aon:panelGrid>	
 				
