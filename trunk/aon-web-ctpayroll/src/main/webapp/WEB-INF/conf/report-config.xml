@@ -151,6 +151,7 @@
 		</params>
 	</report>
 	
+	<!--  *********  Impresion a PDF del Mantenimiento de Naciones ********* -->	
 	   <report id="tiposNacion" description="Listado de Nacionalidades">
 		<template path="/com/code/aon/ui/payroll/report/tiposNacion.jasper" />
 		<bean key="com.code.aon.payroll.geograficas.Nacion" />
@@ -161,6 +162,19 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
+	
+	<!--  *********  Impresion a PDF del Mantenimiento de Paises, Comunidades y Provincia ********* -->	
+	   <report id="paisList" description="Listado de Paises, Comunidades y Provincias">
+		<template path="/com/code/aon/ui/payroll/report/paisList.jasper" />
+		<bean key="com.code.aon.payroll.geograficas.Pais" />
+		<criteria provider="#{pais}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
  
        <report id="CuotaRetencionAlavaList" description="Listado de Cuotas de Retencion Alava">
 		<template path="/com/code/aon/ui/payroll/report/CuotaRetencionAlavaList.jasper" />

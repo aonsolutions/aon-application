@@ -31,11 +31,11 @@
 	<field name="description" class="java.lang.String"/>
 	<field name="porcentajeMaestro" class="com.code.aon.payroll.cotizacion.PorcentajeMaestro"/>
 	<field name="desemple" class="com.code.aon.payroll.enumeration.Desempleado"/>
-	<field name="mujersub" class="java.lang.String"/>
-	<field name="incaread" class="java.lang.String"/>
-	<field name="primertra" class="java.lang.String"/>
+	<field name="mujersub" class="java.lang.Boolean"/>
+	<field name="incaread" class="java.lang.Boolean"/>
+	<field name="primertra" class="java.lang.Boolean"/>
 	<field name="gradomin" class="java.math.BigDecimal"/>
-	<field name="excsocial" class="java.lang.String"/>
+	<field name="excsocial" class="java.lang.Boolean"/>
 
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -226,7 +226,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="576"
+						x="699"
 						y="16"
 						width="40"
 						height="16"
@@ -290,7 +290,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="701"
+						x="575"
 						y="16"
 						width="40"
 						height="16"
@@ -361,16 +361,16 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="MM/dd/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="576"
+						x="700"
 						y="14"
 						width="40"
 						height="14"
 						key="textField-30"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
-					<textElement verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{mujersub}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{mujersub}.booleanValue()? "SI":"NO")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="MM/dd/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -380,10 +380,10 @@
 						height="14"
 						key="textField-32"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
-					<textElement verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{primertra}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{primertra}.booleanValue()? "SI":"NO")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="MM/dd/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -393,10 +393,10 @@
 						height="14"
 						key="textField-34"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
-					<textElement verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{incaread}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{incaread}.booleanValue()? "SI":"NO")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="MM/dd/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -406,14 +406,14 @@
 						height="14"
 						key="textField-36"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
-					<textElement verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{excsocial}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{excsocial}.booleanValue()? "SI":"NO")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="###0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="701"
+						x="576"
 						y="14"
 						width="40"
 						height="14"
