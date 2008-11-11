@@ -403,6 +403,10 @@
 			<value>com.code.aon.finance.Finance</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>finance</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>
@@ -410,6 +414,7 @@
 				</value-class>
 				<value>#{financeTrackingListener}</value>
 				<value>#{financeControllerListener}</value>
+				<value>#{financeSearch}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -442,6 +447,14 @@
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>financeSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.FinanceSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
 	
 	<!-- ************* FINANCETRACKING ***************** -->
 	<managed-bean>
@@ -1029,51 +1042,47 @@
   <navigation-rule>
 	<navigation-case>
 		<from-outcome>content</from-outcome>
-		<to-view-id>/facelet/homepage/content.faces</to-view-id>
+		<to-view-id>/facelet/homepage/content.xhtml</to-view-id>
 	</navigation-case>
 	<navigation-case>
         <from-outcome>firstContent</from-outcome>
-        <to-view-id>/facelet/homepage/firstContent.faces</to-view-id>
+        <to-view-id>/facelet/homepage/firstContent.xhtml</to-view-id>
     </navigation-case>
 	<navigation-case>
 		<from-outcome>fbatch</from-outcome>
-		<to-view-id>/_finance/facelet/fbatch/search.faces</to-view-id>
-	</navigation-case>
-	<navigation-case>
- 		<from-outcome>finance</from-outcome>
-		<to-view-id>/_finance/facelet/finance/search.faces</to-view-id>
+		<to-view-id>/_finance/facelet/fbatch/search.xhtml</to-view-id>
 	</navigation-case>
 	<navigation-case>
  		<from-outcome>finance_return</from-outcome>
-		<to-view-id>/_finance/facelet/finance/return/search.faces</to-view-id>
+		<to-view-id>/_finance/facelet/finance/return/search.xhtml</to-view-id>
 	</navigation-case>
 	<navigation-case>
  		<from-outcome>finance_payment</from-outcome>
-		<to-view-id>/_finance/facelet/finance/payment/search.faces</to-view-id>
+		<to-view-id>/_finance/facelet/finance/payment/search.xhtml</to-view-id>
 	</navigation-case>
     <navigation-case>
       <from-outcome>invoicingGroup</from-outcome>
-      <to-view-id>/_finance/facelet/invoicing_group/list.faces</to-view-id>
+      <to-view-id>/_finance/facelet/invoicing_group/list.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>invoiceRecording</from-outcome>
-      <to-view-id>/_finance/facelet/invoice_recording/search.faces</to-view-id>
+      <to-view-id>/_finance/facelet/invoice_recording/search.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>invoiceRemoving</from-outcome>
-      <to-view-id>/_finance/facelet/invoice_removing/search.faces</to-view-id>
+      <to-view-id>/_finance/facelet/invoice_removing/search.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>invoicePrint</from-outcome>
-      <to-view-id>/facelet/finance/invoice_print/search.faces</to-view-id>
+      <to-view-id>/facelet/finance/invoice_print/search.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>util_checking</from-outcome>
-      <to-view-id>/_finance/facelet/util/checking/checking.faces</to-view-id>
+      <to-view-id>/_finance/facelet/util/checking/checking.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>util_fee_print</from-outcome>
-      <to-view-id>/_finance/facelet/util/fee_print/search.faces</to-view-id>
+      <to-view-id>/_finance/facelet/util/fee_print/search.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>
 -->  
@@ -1082,36 +1091,15 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>fbatch_list</from-outcome>
-			<to-view-id>/_finance/facelet/fbatch/list.faces</to-view-id>
+			<to-view-id>/_finance/facelet/fbatch/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>fbatch_search</from-outcome>
-			<to-view-id>/_finance/facelet/fbatch/search.faces</to-view-id>
+			<to-view-id>/_finance/facelet/fbatch/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>fbatch_form</from-outcome>
-			<to-view-id>/_finance/facelet/fbatch/form.faces</to-view-id>
-		</navigation-case>
-	</navigation-rule>
--->	
-	<!-- =================== Finance ================= -->
-<!--
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>finance_list</from-outcome>
-			<to-view-id>/_finance/facelet/finance/list.faces</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>finance_search</from-outcome>
-			<to-view-id>/_finance/facelet/finance/search.faces</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>finance_form</from-outcome>
-			<to-view-id>/_finance/facelet/finance/form.faces</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>finance_fraction</from-outcome>
-			<to-view-id>/_finance/facelet/finance/fraction/form.faces</to-view-id>
+			<to-view-id>/_finance/facelet/fbatch/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 -->	
@@ -1120,11 +1108,11 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>finance_return_search</from-outcome>
-			<to-view-id>/_finance/facelet/finance/return/search.faces</to-view-id>
+			<to-view-id>/_finance/facelet/finance/return/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>finance_return_return</from-outcome>
-			<to-view-id>/_finance/facelet/finance/return/return.faces</to-view-id>
+			<to-view-id>/_finance/facelet/finance/return/return.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 -->	
@@ -1133,11 +1121,11 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>finance_payment_search</from-outcome>
-			<to-view-id>/_finance/facelet/finance/payment/search.faces</to-view-id>
+			<to-view-id>/_finance/facelet/finance/payment/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>finance_payment_payment</from-outcome>
-			<to-view-id>/_finance/facelet/finance/payment/payment.faces</to-view-id>
+			<to-view-id>/_finance/facelet/finance/payment/payment.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 -->	
@@ -1147,15 +1135,15 @@
   <navigation-rule>
     <navigation-case>
       <from-outcome>invoicing_group_form</from-outcome>
-      <to-view-id>/_finance/facelet/invoicing_group/form.faces</to-view-id>
+      <to-view-id>/_finance/facelet/invoicing_group/form.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>invoicing_group_list</from-outcome>
-      <to-view-id>/_finance/facelet/invoicing_group/list.faces</to-view-id>
+      <to-view-id>/_finance/facelet/invoicing_group/list.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>invoicing_group_search</from-outcome>
-      <to-view-id>/_finance/facelet/invoicing_group/search.faces</to-view-id>
+      <to-view-id>/_finance/facelet/invoicing_group/search.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>
 -->
@@ -1164,11 +1152,11 @@
   <navigation-rule>
     <navigation-case>
       <from-outcome>invoice_recording_list</from-outcome>
-      <to-view-id>/_finance/facelet/invoice_recording/list.faces</to-view-id>
+      <to-view-id>/_finance/facelet/invoice_recording/list.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>invoice_recording_search</from-outcome>
-      <to-view-id>/_finance/facelet/invoice_recording/search.faces</to-view-id>
+      <to-view-id>/_finance/facelet/invoice_recording/search.xhtml</to-view-id>
     </navigation-case>
    </navigation-rule> 
 -->  
@@ -1177,11 +1165,11 @@
   <navigation-rule>
     <navigation-case>
       <from-outcome>invoice_remover_list</from-outcome>
-      <to-view-id>/_finance/facelet/invoice_removing/list.faces</to-view-id>
+      <to-view-id>/_finance/facelet/invoice_removing/list.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>invoice_remover_search</from-outcome>
-      <to-view-id>/_finance/facelet/invoice_removing/search.faces</to-view-id>
+      <to-view-id>/_finance/facelet/invoice_removing/search.xhtml</to-view-id>
     </navigation-case>
    </navigation-rule> 
 -->  
@@ -1190,11 +1178,11 @@
   <navigation-rule>
     <navigation-case>
       <from-outcome>invoice_print_search</from-outcome>
-      <to-view-id>/facelet/finance/invoice_print/search.faces</to-view-id>
+      <to-view-id>/facelet/finance/invoice_print/search.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>invoice_print_list</from-outcome>
-      <to-view-id>/facelet/finance/invoice_print/list.faces</to-view-id>
+      <to-view-id>/facelet/finance/invoice_print/list.xhtml</to-view-id>
     </navigation-case>
    </navigation-rule> 
 -->  
@@ -1203,11 +1191,11 @@
   <navigation-rule>
     <navigation-case>
       <from-outcome>fee_print_list</from-outcome>
-      <to-view-id>/_finance/facelet/util/fee_print/list.faces</to-view-id>
+      <to-view-id>/_finance/facelet/util/fee_print/list.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>fee_print_search</from-outcome>
-      <to-view-id>/_finance/facelet/util/fee_print/search.faces</to-view-id>
+      <to-view-id>/_finance/facelet/util/fee_print/search.xhtml</to-view-id>
     </navigation-case>
    </navigation-rule> 
 -->   
@@ -1254,6 +1242,10 @@
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/finance/facelet/lookup/bank/list.xhtml</value>
 		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/finance/facelet/lookup/bank/search.xhtml</value>
+		</managed-property>				
 	</managed-bean>
 	
   <!-- =================== ACCOUNT CREDITOR ================= -->
@@ -1299,5 +1291,27 @@
 			<to-view-id>/com/code/aon/ui/finance/facelet/payMethod/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+
+	<!-- =================== Finance ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>finance_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/finance/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>finance_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/finance/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>finance_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/finance/form.xhtml</to-view-id>
+		</navigation-case>
+		<!-- 
+		<navigation-case>
+			<from-outcome>finance_fraction</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/finance/fraction/form.xhtml</to-view-id>
+		</navigation-case>
+		-->
+	</navigation-rule>	
 
 </faces-config>
