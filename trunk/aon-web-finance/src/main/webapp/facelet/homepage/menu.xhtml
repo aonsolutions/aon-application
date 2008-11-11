@@ -33,17 +33,17 @@
 				<!-- role="ImpresionFacturas" -->
 				<aon:menuItem id="aon_invoice_print"
 					value="#{financeBundle.finance_invoice_print_module}" action="invoicePrint">
-					<f:actionListener action="#{invoicePrint.onEditSearch}"/>
+					<aon:actionListener method="#{invoicePrint.onEditSearch}"/>
 				</aon:menuItem>
 				<!-- role="ContabilizacionFacturas" -->
 				<aon:menuItem id="aon_invoice_recording"
 					value="#{financeBundle.finance_invoice_recording_module}" action="invoiceRecording">
-					<f:actionListener action="#{invoiceRecording.onEditSearch}"/>
+					<aon:actionListener method="#{invoiceRecording.onEditSearch}"/>
 				</aon:menuItem>
 				<!-- role="BorradoFacturas" -->
 				<aon:menuItem id="aon_invoice_removing"
 					value="#{financeBundle.finance_invoice_removing_module}" action="invoiceRemoving">
-					<f:actionListener action="#{invoiceRemover.onEditSearch}"/>
+					<aon:actionListener method="#{invoiceRemover.onEditSearch}"/>
 				</aon:menuItem>				
 			</aon:dropDownMenu>
 			<!-- role="MenuCuotas" -->
@@ -51,12 +51,12 @@
 				<!-- role="Prefacturacion" -->
 				<aon:menuItem id="aon_pre_invoicing"
 					value="#{salesBundle.sales_pre_invoicing_module}" action="feePreInvoicing">
-					<f:actionListener action="#{preInvoicing.onInitialize}"/>
+					<aon:actionListener method="#{preInvoicing.onInitialize}"/>
 				</aon:menuItem>				
 				<!-- role="FacturacionCuotas" -->
 				<aon:menuItem id="aon_invoicing"
 					value="#{salesBundle.sales_invoicing_module}" action="feeInvoicing">
-					<f:actionListener action="#{feeInvoicing.onInitialize}"/>
+					<aon:actionListener method="#{feeInvoicing.onInitialize}"/>
 				</aon:menuItem>				
 				<!-- role="GruposFacturacion" -->
 				<aon:menuItem id="aon_invoicing_group"
@@ -64,7 +64,7 @@
 				<!-- role="ListadoCuotas" -->
 				<aon:menuItem id="aon_fee_print"
 					value="#{financeBundle.finance_fee_print_module}" action="util_fee_print">
-					<f:actionListener action="#{feePrint.onEditSearch}"/>
+					<aon:actionListener method="#{feePrint.onEditSearch}"/>
 				</aon:menuItem>				
 			</aon:dropDownMenu>
 			<!-- role="MenuTesoreria" -->
@@ -72,17 +72,17 @@
 				<!-- role="Vencimientos" -->
 				<aon:menuItem id="aon_finance"
 					value="#{financeBundle.finance_finance_module}" action="finance_search">
-					<f:actionListener action="#{finance.onEditSearch}"/>
+					<aon:actionListener method="#{finance.onEditSearch}"/>
 				</aon:menuItem>				
 				<!-- role="DevolucionVencimientos" -->
 				<aon:menuItem id="aon_finance_return"
 					value="#{financeBundle.finance_finance_return_module}" action="finance_return">
-					<f:actionListener action="#{financeReturn.onEditSearch}"/>
+					<aon:actionListener method="#{financeReturn.onEditSearch}"/>
 				</aon:menuItem>				
 				<!-- role="GestionCartera" -->
 				<aon:menuItem id="aon_finance_payment"
 					value="#{financeBundle.finance_finance_payment_module}" action="finance_payment">
-					<f:actionListener action="#{financeReturn.onEditSearch}"/>
+					<aon:actionListener method="#{financeReturn.onEditSearch}"/>
 				</aon:menuItem>				
 				<!-- role="Remesas" -->
 				<aon:menuItem id="aon_fbatch"
@@ -101,7 +101,7 @@
 					<!-- role="AuxiliaresProductos" -->
 					<aon:menuItem id="aon_item"
 						value="#{financeBundle.finance_item_module}" action="item">
-						<f:actionListener action="#{item.onReset}"/>
+						<aon:actionListener method="#{item.onReset}"/>
 					</aon:menuItem>
 					<!-- role="AuxiliaresCategorias" -->
 					<aon:menuItem id="aon_product_category"
@@ -119,12 +119,12 @@
 				<!-- role="DatosEmpresa" -->
 				<aon:menuItem id="aon_company"
 					value="#{companyBundle.company_data_module}" action="company">
-					<f:actionListener action="#{company.onLoad}"/>
+					<aon:actionListener method="#{company.onLoad}"/>
 				</aon:menuItem>
 				<!-- role="CentrosFormacion" -->
 				<aon:menuItem id="aon_workplace"
 					value="#{companyBundle.company_workplace_module}" action="workplace">
-					<f:actionListener action="#{workplace.onSearch}"/>
+					<aon:actionListener method="#{workplace.onSearch}"/>
 				</aon:menuItem>
 				<!-- role="ConfiguracionImpuestos" -->
 				<aon:menuItem id="aon_product_tax"
@@ -135,7 +135,7 @@
 				<!-- role="ConfiguracionProvincias" -->
 				<aon:menuItem id="aon_geozone"
 					value="#{geozoneBundle.geozone_module}" action="geotreeParent_list">
-					<f:actionListener action="#{geotreeParent.onSearch}"/>
+					<aon:actionListener method="#{geotreeParent.onSearch}"/>
 				</aon:menuItem>
 			</aon:dropDownMenu>			
 
