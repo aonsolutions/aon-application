@@ -64,6 +64,10 @@ public class FinanceReturnSearchListener extends ControllerSearchListener {
 	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
 		FinanceReturnController controller = (FinanceReturnController) getController();
 		Criteria criteria = controller.getCriteria();
+		if( controller.getPayment() != null ){
+			String field = controller.getFieldName(IFinanceAlias.FINANCE_PAYMENT);
+			criteria.addEqualExpression(field, controller.getPayment());
+		}		
 		if ( controller.getPayment() ) {
 			if ( (getSupplier() != null) && (getSupplier().getId() != null) ) {
 				String field = controller.getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID);
