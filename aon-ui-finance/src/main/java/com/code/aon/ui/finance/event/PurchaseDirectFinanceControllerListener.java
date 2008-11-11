@@ -62,7 +62,7 @@ public class PurchaseDirectFinanceControllerListener extends ControllerAdapter {
 		RegistryBank rBank = obtainRegistryBank(registryBankId);
 		if(rBank == null){
 			finance.setBank(null);
-			finance.setBankAccount("");
+			finance.setBankAccount(null);
 		}else{
 			finance.setBank(rBank.getBank());
 			finance.setBankAccount(rBank.getBankAccount());

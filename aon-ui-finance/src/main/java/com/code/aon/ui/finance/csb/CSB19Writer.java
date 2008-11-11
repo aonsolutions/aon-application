@@ -65,13 +65,13 @@ public class CSB19Writer {
 		presenter.setSufix(companyRBank.getSufix());
 		presenter.setMakeDate(fbatch.getIssueDate());
 		presenter.setName(company.getName());
-		presenter.setEntity(companyRBank.getBankAccount().substring(0,4));
-		presenter.setOffice(companyRBank.getBankAccount().substring(4,8));
+		presenter.setEntity(companyRBank.getBankAccount().getEntity());
+		presenter.setOffice(companyRBank.getBankAccount().getOffice());
 		lot.setPresenter(presenter);
 
 		Orderer orderer = new Orderer();
 		Account companyAccount = new Account();
-		companyAccount.parse(companyRBank.getBankAccount());
+		companyAccount.parse(companyRBank.getBankAccount().getValue());
 		orderer.setAccount(companyAccount);
 		orderer.setCode(company.getDocument());
         orderer.setName(company.getName());
@@ -104,7 +104,7 @@ public class CSB19Writer {
 		Individual individual = new Individual();
 		individual.setAmount(new Double(fBatchDetail.getFinance().getTotalAmount()));
 		Account detailAccount = new Account();
-		detailAccount.parse(fBatchDetail.getFinance().getBankAccount());
+		detailAccount.parse(fBatchDetail.getFinance().getBankAccount().getValue());
 		individual.setAccount(detailAccount);
 		individual.setConcept(createIndividualConcept(fBatchDetail.getFinance()));
 		individual.setInternalCode(fBatchDetail.getFinance().getInvoice().getSeries() + "/" + fBatchDetail.getFinance().getInvoice().getNumber());

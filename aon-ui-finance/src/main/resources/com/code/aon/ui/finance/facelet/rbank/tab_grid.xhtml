@@ -15,46 +15,40 @@
 			aon-width-150 aon-nowrap aon-editDataTable-textColumn" />
 
 		<ui:define name="columns">
-			<aon:column>
+			<aon:column width="300">
 				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_name}" />
+					<aon:outputText value="#{financeBundle.finance_bank}" />
 				</f:facet>
 				<aon:outputText value="#{to.bank.name}"
 					rendered="#{to!=controller.to}" />
-				<aon:div rendered="#{to==controller.to}">
-					<aon:lookupInputText id="Bank_code-Edit" lookup="#{bankLookup}"
-						required="true" reRender="Bank_name-Edit"
-						value="#{controller.to.bank.code}" size="5">
-							<aon:joinProperty alias="Bank_code" value="#{controller.to.bank.code}" />
-					</aon:lookupInputText>
-					<aon:lookupButton id="Bank_lookup-Edit"
-						windowTitle="#{financeBundle.finance_bank_selection}"
-						selectReRender="Bank_code-Edit,Bank_name-Edit"
-						lookup="#{bankLookup}" minHeight="440"
-						property="#{controller.to.bank}">
-					</aon:lookupButton>
-					<aon:inputText id="Bank_name-Edit"
-						value="#{controller.to.bank.name}"
-						size="50" disabled="true" />
-				</aon:div>
 
+				<ui:include
+					src="/com/code/aon/ui/finance/facelet/lookup/bank/bankIdInput.xhtml">
+					<ui:param name="wizard" value="#{bankWizard}" />
+					<ui:param name="id" value="bankUpdateId" />
+					<ui:param name="required" value="#{true}" />
+					<ui:param name="size" value="5" />
+					<ui:param name="renderDescription" value="#{true}" />
+					<ui:param name="renderedAttr" value="#{to==controller.to}" />
+					<ui:param name="disabled" value="#{false}" />
+					<ui:param name="reRenderAttr" value="none" />
+					<ui:param name="entity" value="#{controller.to.bank}" />
+					<ui:param name="ELExpression" value="controller.to.bank" />
+				</ui:include>
 				<f:facet name="footer">
-					<aon:div rendered="#{controller.new}">
-						<aon:lookupInputText id="Bank_code-New" lookup="#{bankLookup}"
-							required="true" reRender="Bank_code-New,Bank_name-New"
-							value="#{controller.to.bank.code}" size="5">
-							<aon:joinProperty alias="Bank_code" value="#{controller.to.bank.code}" />
-						</aon:lookupInputText>
-						<aon:lookupButton id="Bank_lookup-New"
-							windowTitle="#{financeBundle.finance_bank_selection}"
-							selectReRender="Bank_code-New,Bank_name-New"
-							lookup="#{bankLookup}" minHeight="440"
-							property="#{controller.to.bank}">
-						</aon:lookupButton>
-						<aon:inputText id="Bank_name-New"
-							value="#{controller.to.bank.name}"
-							size="50" disabled="true" />
-					</aon:div>
+					<ui:include
+						src="/com/code/aon/ui/finance/facelet/lookup/bank/bankIdInput.xhtml">
+						<ui:param name="wizard" value="#{bankWizard}" />
+						<ui:param name="id" value="bankNewId" />
+						<ui:param name="required" value="#{true}" />
+						<ui:param name="size" value="5" />
+						<ui:param name="renderDescription" value="#{true}" />
+						<ui:param name="renderedAttr" value="#{controller.new}" />
+						<ui:param name="disabled" value="#{false}" />
+						<ui:param name="reRenderAttr" value="none" />
+						<ui:param name="entity" value="#{controller.to.bank}" />
+						<ui:param name="ELExpression" value="controller.to.bank" />
+					</ui:include>
 				</f:facet>
 			</aon:column>
 
@@ -62,18 +56,18 @@
 				<f:facet name="header">
 					<aon:outputText value="#{financeBundle.finance_bank_account}" />
 				</f:facet>
-				<aon:outputText value="#{to.formattedBankAccount}"
+				<aon:outputText value="#{to.bankAccount}"
 					rendered="#{to!=controller.to}" />
 				<aon:div rendered="#{to==controller.to}">
-					<aon:inputText value="#{controller.office}" required="true"
+					<aon:inputText value="#{controller.to.bankAccount.office}" required="true"
 						size="4" maxlength="4">
 						<f:validateLength minimum="4" maximum="4" />
 					</aon:inputText>
-					<aon:inputText value="#{controller.control}" required="true"
+					<aon:inputText value="#{controller.to.bankAccount.control}" required="true"
 						size="2" maxlength="2">
 						<f:validateLength minimum="2" maximum="2" />
 					</aon:inputText>
-					<aon:inputText value="#{controller.account}" required="true"
+					<aon:inputText value="#{controller.to.bankAccount.account}" required="true"
 						size="10" maxlength="10">
 						<f:validateLength minimum="10" maximum="10" />
 					</aon:inputText>
@@ -81,15 +75,15 @@
 
 				<f:facet name="footer">
 					<aon:div rendered="#{controller.new}">
-						<aon:inputText value="#{controller.office}" required="true"
+						<aon:inputText value="#{controller.to.bankAccount.office}" required="true"
 							size="4" maxlength="4">
 							<f:validateLength minimum="4" maximum="4" />
 						</aon:inputText>
-						<aon:inputText value="#{controller.control}" required="true"
+						<aon:inputText value="#{controller.to.bankAccount.control}" required="true"
 							size="2" maxlength="2">
 							<f:validateLength minimum="2" maximum="2" />
 						</aon:inputText>
-						<aon:inputText value="#{controller.account}" required="true"
+						<aon:inputText value="#{controller.to.bankAccount.account}" required="true"
 							size="10" maxlength="10">
 							<f:validateLength minimum="10" maximum="10" />
 						</aon:inputText>

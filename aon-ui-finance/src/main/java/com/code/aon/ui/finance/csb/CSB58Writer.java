@@ -47,13 +47,13 @@ public class CSB58Writer {
 		presenter.setSufix(companyRBank.getSufix());
 		presenter.setMakeDate(fbatch.getIssueDate());
 		presenter.setName(company.getName());
-		presenter.setEntity(companyRBank.getBankAccount().substring(0,3));
-		presenter.setOffice(companyRBank.getBankAccount().substring(4,7));
+		presenter.setEntity(companyRBank.getBankAccount().getEntity());
+		presenter.setOffice(companyRBank.getBankAccount().getOffice());
 		lot.setPresenter(presenter);
 
 		Orderer orderer = new Orderer();
 		Account companyAccount = new Account();
-		companyAccount.parse(companyRBank.getBankAccount());
+		companyAccount.parse(companyRBank.getBankAccount().getValue());
 		orderer.setAccount(companyAccount);
 		orderer.setCode(company.getDocument());
 		orderer.setName(company.getName());
@@ -85,7 +85,7 @@ public class CSB58Writer {
 		individual.setAmount(new Double(fBatchDetail.getFinance().getTotalAmount()));
 		Account ccc = new Account();
 		if (fBatchDetail.getFinance().getBankAccount() != null && !fBatchDetail.getFinance().getBankAccount().equals("")) {
-            ccc.parse(fBatchDetail.getFinance().getBankAccount());
+            ccc.parse(fBatchDetail.getFinance().getBankAccount().getValue());
             individual.setAccount(ccc);
         }
 		individual.setConcept("FRA:" + fBatchDetail.getFinance().getInvoice().getSeries() + "/" + fBatchDetail.getFinance().getInvoice().getNumber());
