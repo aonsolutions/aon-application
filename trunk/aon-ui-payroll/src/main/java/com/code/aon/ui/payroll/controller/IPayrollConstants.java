@@ -11,4 +11,5 @@ public interface IPayrollConstants {
 	String NIVEL_CONTROLLER_NAME = "nivel";
 	String CATEGORIA_CONTROLLER_NAME = "categoria";
 	String PERCEPCION_CONTROLLER_NAME = "percepcion";
+	String COMPLEMENTO_CONTROLLER_NAME = "complemento";
 }

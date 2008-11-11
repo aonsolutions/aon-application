@@ -16,9 +16,16 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
-import com.code.aon.payroll.cotizacion.Base;
-import com.code.aon.payroll.cotizacion.Epigrafe;
+import com.code.aon.payroll.enumeration.FijoVariable;
+import com.code.aon.payroll.enumeration.IndiceComplemento;
+import com.code.aon.payroll.enumeration.PagaExtra;
+import com.code.aon.payroll.enumeration.Retribuciones;
+import com.code.aon.payroll.enumeration.TipoComplemento;
+import com.code.aon.payroll.enumeration.TipoCotizaciones;
 
 /**
  * Percepciones
@@ -30,22 +37,22 @@ public class Percniv implements ITransferObject {
 	private PercnivPK id;
     private String descom;
     private String desabr;
-    private String tipcot;
+    private TipoCotizaciones tipcot;
     private String calculo;
     private int mes;
     private BigDecimal unidades;
     private BigDecimal impuni;
     private BigDecimal importe;
     private BigDecimal garilt;
-    private String redext;
-    private String fijovar;
+    private PagaExtra redext;
+    private FijoVariable fijovar;
     private Date fecnew;
     private Date hornew;
     private Date fecmod;
     private Date hormod;
-    private String indcom;
-    private String tipcom;
-    private String dinesp;
+    private IndiceComplemento indcom;
+    private TipoComplemento tipcom;
+    private Retribuciones dinesp;
     private Nivel nivel;
     private Complemento complemento;
     private Complemento complemento1;
@@ -94,12 +101,13 @@ public class Percniv implements ITransferObject {
      * Devuelve el Tipo Cotizacion
      * @return
      */
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.TipoCotizaciones")} )
     @Column(name="tipcot", nullable=false, length=1)
-    public String getTipcot() {
+    public TipoCotizaciones getTipcot() {
         return this.tipcot;
     }
     
-    public void setTipcot(String tipcot) {
+    public void setTipcot(TipoCotizaciones tipcot) {
         this.tipcot = tipcot;
     }
     
@@ -185,12 +193,13 @@ public class Percniv implements ITransferObject {
      * Devuelve el Redondeo Paga Extra
      * @return
      */
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.PagaExtra")} )
     @Column(name="redext", length=1)
-    public String getRedext() {
+    public PagaExtra getRedext() {
         return this.redext;
     }
     
-    public void setRedext(String redext) {
+    public void setRedext(PagaExtra redext) {
         this.redext = redext;
     }
     
@@ -198,12 +207,13 @@ public class Percniv implements ITransferObject {
      * Devuelve Fijo o Variable
      * @return
      */
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.FijoVariable")} )
     @Column(name="fijovar", nullable=false, length=1)
-    public String getFijovar() {
+    public FijoVariable getFijovar() {
         return this.fijovar;
     }
     
-    public void setFijovar(String fijovar) {
+    public void setFijovar(FijoVariable fijovar) {
         this.fijovar = fijovar;
     }
     
@@ -267,12 +277,13 @@ public class Percniv implements ITransferObject {
      * Devuelve el Indicador de Complemento
      * @return
      */
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.IndiceComplemento")} )
     @Column(name="indcom", length=1)
-    public String getIndcom() {
+    public IndiceComplemento getIndcom() {
         return this.indcom;
     }
     
-    public void setIndcom(String indcom) {
+    public void setIndcom(IndiceComplemento indcom) {
         this.indcom = indcom;
     }
     
@@ -280,12 +291,13 @@ public class Percniv implements ITransferObject {
      * Devuelve el Tipo de Complemento
      * @return
      */
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.TipoComplemento")} )
     @Column(name="tipcom", length=1)
-    public String getTipcom() {
+    public TipoComplemento getTipcom() {
         return this.tipcom;
     }
     
-    public void setTipcom(String tipcom) {
+    public void setTipcom(TipoComplemento tipcom) {
         this.tipcom = tipcom;
     }
     
@@ -293,12 +305,13 @@ public class Percniv implements ITransferObject {
      * Devuelve si es Dinerario o en Especie
      * @return
      */
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Retribuciones")} )
     @Column(name="dinesp", nullable=false, length=1)
-    public String getDinesp() {
+    public Retribuciones getDinesp() {
         return this.dinesp;
     }
     
-    public void setDinesp(String dinesp) {
+    public void setDinesp(Retribuciones dinesp) {
         this.dinesp = dinesp;
     }
     
@@ -325,7 +338,7 @@ public class Percniv implements ITransferObject {
         this.complemento = complemento;
     }
     
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="codcom", insertable=false, updatable=false)
     public Complemento getComplemento1() {
         return this.complemento1;

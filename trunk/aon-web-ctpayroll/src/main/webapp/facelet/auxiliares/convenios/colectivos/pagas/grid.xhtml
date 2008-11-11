@@ -17,10 +17,10 @@
 			var="to" rows="0"
 			rendered="#{(pagaext.model.rowCount > 0) or (pagaext.new)}" 
 			columnClasses="aon-editDataTable-iconColumn
-				, aon-editDataTable-dateColumn, aon-editDataTable-dateColumn
-				, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn
-				, aon-editDataTable-dateColumn, aon-editDataTable-dateColumn
-				, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn
+				, aon-editDataTable-textColumn, aon-editDataTable-textColumn
+				, aon-editDataTable-numberColumn, aon-editDataTable-textColumn
+				, aon-editDataTable-numberColumn, aon-editDataTable-textColumn
+				, aon-editDataTable-numberColumn, aon-editDataTable-textColumn
 				, aon-editDataTable-buttonsColumn">
 					
 			<aon:rowSelector toggleOnClick="#{pagaext.to == null}" actionListener="#{pagaext.onSelect}" />

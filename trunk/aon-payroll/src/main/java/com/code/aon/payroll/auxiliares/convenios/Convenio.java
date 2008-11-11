@@ -1,8 +1,13 @@
 package com.code.aon.payroll.auxiliares.convenios;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -21,6 +26,11 @@ public class Convenio implements ITransferObject {
 	private String description;
 	private String inddia;
 	private String tipcon;
+	
+	/** niveles. */
+	private Set<Nivel> niveles = new HashSet<Nivel>();
+	/** pagas. */
+	private Set<Pagaext> pagas = new HashSet<Pagaext>();
 
 	@Id
 	@Column(name = "cdg", unique = true, nullable = false, length = 2)
@@ -97,6 +107,24 @@ public class Convenio implements ITransferObject {
 	public void setTipconenum(TipoConvenio tipconenum) {
 		this.tipconenum = tipconenum;
 		setTipcon((this.tipconenum != null) ? this.tipconenum.name().substring(3) : null);
+	}
+	
+	@OneToMany(mappedBy = "convenio", cascade={CascadeType.REMOVE})
+	public Set<Nivel> getNiveles() {
+		return niveles;
+	}
+
+	public void setNiveles(Set<Nivel> niveles) {
+		this.niveles = niveles;
+	}
+	
+	@OneToMany(mappedBy = "convenio", cascade={CascadeType.REMOVE})
+	public Set<Pagaext> getPagas() {
+		return pagas;
+	}
+
+	public void setPagas(Set<Pagaext> pagas) {
+		this.pagas = pagas;
 	}
 
 }

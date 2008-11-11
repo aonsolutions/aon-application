@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
 	template="/facelet/templates/aon.ui.content.xhtml">
 	
 	<ui:define name="content">
@@ -21,15 +22,52 @@
 					<aon:methodParam name="searchActionListener" value="#{pais.onSearch}" type="actionListener" />
 					<aon:methodParam name="searchAction" value="pais_form" />
 				
+
 					<aon:outputLabel for="Pais_cdg" 
 						value="#{appBundle.aon_payroll_cdg}" />
 					<aon:inputText id="Pais_cdg" size="10" maxlength="8"
 						valueChangeListener="#{pais.addExpression}" />
-
+					
 					<aon:outputLabel for="Pais_descripcion"
 						value="#{appBundle.aon_payroll_description}" />
 					<aon:inputText id="Pais_descripcion" size="60" maxlength="50"
 						valueChangeListener="#{pais.addExpression}" />
+					
+					<aon:outputLabel value=" " />
+					<rich:panel>
+				        <f:facet name="header">
+				        	<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_geograficas__comunidad}" />
+				        </f:facet>
+				        <aon:panelGrid columns="2">
+					        <aon:outputLabel for="Pais_comunidades_cdg" 
+								value="#{appBundle.aon_payroll_cdg}" />
+							<aon:inputText id="Pais_comunidades_cdg" size="10" maxlength="8"
+								valueChangeListener="#{pais.addDirectExpression}" />
+							
+							<aon:outputLabel for="Pais_comunidades_descripcion"
+								value="#{appBundle.aon_payroll_description}" />
+							<aon:inputText id="Pais_comunidades_descripcion" size="60" maxlength="50"
+								valueChangeListener="#{pais.addDirectExpression}" />
+						</aon:panelGrid>
+				    </rich:panel>
+					
+					<aon:outputLabel value=" " />
+					<rich:panel>
+				        <f:facet name="header">
+				        	<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_geograficas__provincia}" />
+				        </f:facet>
+				        <aon:panelGrid columns="2">	
+							<aon:outputLabel for="Pais_comunidades_provincias_cdg" 
+								value="#{appBundle.aon_payroll_cdg}" />
+							<aon:inputText id="Pais_comunidades_provincias_cdg" size="10" maxlength="8"
+								valueChangeListener="#{pais.addDirectExpression}" />
+		
+							<aon:outputLabel for="Pais_comunidades_provincias_descripcion"
+								value="#{appBundle.aon_payroll_description}" />
+							<aon:inputText id="Pais_comunidades_provincias_descripcion" size="60" maxlength="50"
+								valueChangeListener="#{pais.addDirectExpression}" />
+						</aon:panelGrid>
+					</rich:panel>
 					
 				</ui:define>
 			</ui:decorate>

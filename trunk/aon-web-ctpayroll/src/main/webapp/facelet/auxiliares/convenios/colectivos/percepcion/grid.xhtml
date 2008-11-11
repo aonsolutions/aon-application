@@ -14,22 +14,22 @@
 			
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="to.id.cdg" />
+					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__comp}" />
 				</f:facet>
-				<aon:outputText value="#{to.id.cdg}" rendered="#{to!=percepcion.to}" />
+				<aon:outputText value="#{to.id.codcom}" rendered="#{to!=percepcion.to}" />
 				<aon:inputText id="cdg_edit" styleClass="aon-form-input-text"
 					rendered="#{to==percepcion.to}"  required="true"
-					value="#{percepcion.to.id.cdg}" maxlength="8" size="10" />
+					value="#{percepcion.to.id.codcom}" maxlength="8" size="10" />
 				<f:facet name="footer">
 					<aon:inputText id="cdg_new" styleClass="aon-form-input-text"  
 						rendered="#{percepcion.new}" required="true"
-						value="#{percepcion.to.id.cdg}" maxlength="8" size="10"  />
+						value="#{percepcion.to.id.codcom}" maxlength="8" size="10"  />
 				</f:facet>
 			</aon:column>
 
 			<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{appBundle.aon_payroll_description}" />
+						<aon:outputText value="#{appBundle.aon_payroll_description} #{appBundle.aon_payroll_auxiliares_convenios__comp}" />
 					</f:facet>
 					<aon:outputText value="#{to.descom}" rendered="#{to!=percepcion.to}" />
 					<aon:inputText id="descom_edit" styleClass="aon-form-input-text"
@@ -44,7 +44,7 @@
 			
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{appBundle.aon_payroll_cotizacion_dato2}" />
+					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__importe}" />
 				</f:facet>
 				<aon:outputText value="#{to.importe}" rendered="#{to!=percepcion.to}" >
 					<f:convertNumber minFractionDigits="2" />
