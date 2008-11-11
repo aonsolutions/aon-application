@@ -131,30 +131,22 @@
 						
 				</aon:panelGrid>
 					
-					<!-- 
-					<aon:div styleClass="aon-form-group"
-						rendered="#{!finance.new}">
-						<aon:div styleClass="aon-form-group-title">
-							<aon:outputLabel for="financeTrackingDataList"
-								value="#{financeBundle.aon_tracking}" />
+				<aon:div styleClass="aon-form-group" rendered="#{!finance.new}">
+					<aon:div styleClass="aon-form-group-title">
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputLabel for="financeTrackingData" value="#{financeBundle.finance_tracking}" />
 						</aon:div>
+					</aon:div>
+					<aon:div styleClass="aon-scroll-area">
+					
+						<aon:dataTable id="financeTrackingData" value="#{financeTracking.model}"
+							var="to" rows="20" rendered="#{financeTracking.model.rowCount > 0}"
+							columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+								aon-editDataTable-numberColumn, aon-editDataTable-iconColumn aon-vertical-align-top">
 
-						<aon:div styleClass="aon-form-group-body">
-							<aon:dataTable id="financeTrackingDataList"
-								value="#{financeTracking.model}" var="to"
-								styleClass="aon-edit-table" headerClass="aon-edit-table-header"
-								footerClass="aon-edit-table-footer"
-								rowIndexVar="rowIndex"
-								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
-								columnClasses="aon-edit-table-body aon-edit-table-body-string,
-												aon-edit-table-body aon-edit-table-body-string,
-												aon-edit-table-body aon-edit-table-body-string,
-												aon-edit-table-body aon-edit-table-body-number,
-												aon-edit-table-body-icon">
-						
 								<aon:column>
 									<f:facet name="header">
-										<aon:outputText value="#{financeBundle.aon_date}" />
+										<aon:outputText value="#{bundle.aon_date}" />
 									</f:facet>
 									<aon:outputText value="#{to.trackingDate}">
 										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -164,21 +156,21 @@
 						
 								<aon:column>
 									<f:facet name="header">
-										<aon:outputText value="#{financeBundle.aon_tracking_action}" />
+										<aon:outputText value="#{financeBundle.finance_tracking_action}" />
 									</f:facet>
 									<aon:outputText value="#{to.type}" />
 								</aon:column>
 						
 								<aon:column>
 									<f:facet name="header">
-										<aon:outputText value="#{financeBundle.aon_tracking_description}" />
+										<aon:outputText value="#{bundle.aon_description}" />
 									</f:facet>
 									<aon:outputText value="#{to.description}" />
 								</aon:column>
 						
 								<aon:column width="100">
 									<f:facet name="header">
-										<aon:outputText value="#{financeBundle.aon_amount}" />
+										<aon:outputText value="#{accountBundle.account_amount}" />
 									</f:facet>
 									<aon:outputText value="#{to.amount}">
 										<f:convertNumber pattern="#,##0.00" />
@@ -187,18 +179,23 @@
 								
 								<aon:column>
 									<f:facet name="header">
-										<f:verbatim>&#160;</f:verbatim>
+										<aon:outputText value="&#160;" />
 									</f:facet>
-									<aon:commandButton title="#{financeBundle.aon_finance_tracking_undo}"
-										actionListener="#{financeTracking.undoTracking}"
-										immediate="true" onclick="confirm('#{bundle.aon_remove_confirm}');"
-										styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete" value=""
-										rendered="#{financeTracking.unrecordable}" />
+									<aon:confirmButton id="cancel"
+										title="#{financeBundle.finance_tracking_undo}"
+										immediate="true" rendered="#{financeTracking.unrecordable}" 
+										confirmTitle="#{bundle.aon_confirm_title}"
+										confirmMessage="#{bundle.aon_remove_confirm}"
+										confirmActionListener="#{financeTracking.undoTracking}"
+										styleClass="aon-editDataTable-button aon-icon-delete"
+										accesskey="#{bundle.aon_key_remove_line}" />										
 								</aon:column>
-							</aon:dataTable>
-						</aon:div>
+
+						</aon:dataTable>
+						
+						<aon:dataScroller2 for="financeTrackingData" showNote="true" />
 					</aon:div>
-					 -->
+				</aon:div>
 			</aon:div>
 		</aon:form>
 	</ui:define>
