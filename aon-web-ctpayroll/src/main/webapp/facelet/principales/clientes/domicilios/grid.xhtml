@@ -3,6 +3,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich">
 
 <aon:div id="domiciliosDataDiv">
@@ -28,9 +29,9 @@
 								</aon:div>
 							<f:facet name="footer">
 								<aon:div>
-									<aon:commandButton alt="[#{bundle.aon_reset}]"
+									<h:commandButton alt="[#{bundle.aon_reset}]"
 										styleClass="aon-editDataTable-button aon-icon-reset"
-										actionListener="#{domicilio.onReset}" value="" action="domicilio_form"
+										actionListener="#{domicilio.onReset}" action="domicilio_form"
 										rendered="#{!domicilio.new}"
 										accesskey="#{bundle.aon_key_new_line}" />
 								</aon:div>
