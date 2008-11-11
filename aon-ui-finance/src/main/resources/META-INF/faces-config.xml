@@ -470,6 +470,10 @@
 			<value>com.code.aon.finance.FinanceTracking</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>financeTracking</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
@@ -504,23 +508,40 @@
 			<value>com.code.aon.finance.Finance</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>financeReturn</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Finance_invoice_series,Finance_invoice_number</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Finance_financeStatus</key>
+					<value>#{financeCollections.financeStatuses[3].value}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
-				<value>#{financeReturnControllerListener}</value>
+				<value>#{financeReturnSearch}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 	
 	<managed-bean>
-		<managed-bean-name>financeReturnControllerListener</managed-bean-name>
+		<managed-bean-name>financeReturnSearch</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.event.FinanceReturnControllerListener
+			com.code.aon.ui.finance.event.FinanceReturnSearchListener
 		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>			
 
 	<!-- ************* FINANCE PAYMENT ***************** -->
 	<managed-bean>
@@ -1041,20 +1062,8 @@
 <!--
   <navigation-rule>
 	<navigation-case>
-		<from-outcome>content</from-outcome>
-		<to-view-id>/facelet/homepage/content.xhtml</to-view-id>
-	</navigation-case>
-	<navigation-case>
-        <from-outcome>firstContent</from-outcome>
-        <to-view-id>/facelet/homepage/firstContent.xhtml</to-view-id>
-    </navigation-case>
-	<navigation-case>
 		<from-outcome>fbatch</from-outcome>
 		<to-view-id>/_finance/facelet/fbatch/search.xhtml</to-view-id>
-	</navigation-case>
-	<navigation-case>
- 		<from-outcome>finance_return</from-outcome>
-		<to-view-id>/_finance/facelet/finance/return/search.xhtml</to-view-id>
 	</navigation-case>
 	<navigation-case>
  		<from-outcome>finance_payment</from-outcome>
@@ -1102,20 +1111,7 @@
 			<to-view-id>/_finance/facelet/fbatch/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
--->	
-	<!-- =================== FinanceReturn ================= -->
-<!--
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>finance_return_search</from-outcome>
-			<to-view-id>/_finance/facelet/finance/return/search.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>finance_return_return</from-outcome>
-			<to-view-id>/_finance/facelet/finance/return/return.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
--->	
+-->		
 	<!-- =================== FinancePayment ================= -->
 <!--
 	<navigation-rule>
@@ -1313,5 +1309,21 @@
 		</navigation-case>
 		-->
 	</navigation-rule>	
+
+	<!-- =================== FinanceReturn ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>financeReturn_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/financeReturn/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>financeReturn_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/financeReturn/list.xhtml</to-view-id>
+		</navigation-case>		
+		<navigation-case>
+			<from-outcome>financeReturn_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/financeReturn/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 
 </faces-config>
