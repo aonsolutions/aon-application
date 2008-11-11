@@ -7,11 +7,6 @@
 <report-config>
 	<default-config>
 		<fetch-mode paginated="false" />
-		<!-- 
-		<params>
-			<param id="logoImageFile" value="com/code/aon/ui/marketplace/report/resources/logo.gif" />
-		</params>
-		 -->
 	</default-config>
 	<!--  **********************************************************
 						      ACADEMY
