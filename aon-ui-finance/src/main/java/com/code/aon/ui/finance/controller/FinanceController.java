@@ -21,7 +21,6 @@ import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.BasicController;
 
 /**
@@ -153,114 +152,8 @@ public class FinanceController extends BasicController {
 
 	@Override
 	public void onEditSearch(ActionEvent event) {
-		setPayment(new Boolean(false));
+		setPayment(Boolean.FALSE);
 		super.onEditSearch(event);
-	}
-
-	/**
-	 * Adds to criteria the finance status.
-	 * 
-	 * @param event the event that contains the new value
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	public void addStatusExpression(ValueChangeEvent event) throws ManagerBeanException{
-		Criteria criteria = getCriteria();
-		FinanceStatus status = (((Boolean)event.getNewValue()).booleanValue()?FinanceStatus.PENDING:FinanceStatus.PAID);
-		criteria.addEqualExpression(getManagerBean().getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), status);
-		setCriteria(criteria);
-	}
-	
-	/**
-	 * Adds to criteria the registry ident.
-	 * 
-	 * @param event the event that contains the new value
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 * @throws ExpressionException the expression exception
-	 */
-	public void addRegistryExpression(ValueChangeEvent event) throws ManagerBeanException, ExpressionException {
-		if(event.getNewValue() != null && !event.getNewValue().equals("")) {
-			Criteria c = getCriteria();
-			c.addExpression(getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID), event.getNewValue().toString());
-			setCriteria(c);
-		}
-	}
-	
-	/**
-	 * Adds to criteria the invoice issueDate. Greater than or equal
-	 * 
-	 * @param event the event that contains the new value
-	 * @throws ManagerBeanException
-	 */
-	public void addInvoiceIssueDate1Expression(ValueChangeEvent event) throws ManagerBeanException {
-	    if (event.getNewValue() != null) {
-	    	Criteria c = getCriteria();
-			Object value = event.getNewValue();
-			c.addGreaterThanOrEqualExpression(getFieldName(IFinanceAlias.FINANCE_INVOICE_ISSUE_DATE), value);
-			setCriteria(c);
-		}
-	}
-
-	/**
-	 * Adds to criteria the finance dueDate. Greater than or equal
-	 * 
-	 * @param event the event that contains the new value
-	 * @throws ManagerBeanException
-	 */
-	public void addFinanceDueDate1Expression(ValueChangeEvent event) throws ManagerBeanException {
-	    if (event.getNewValue() != null) {
-			Object value = event.getNewValue();
-			Criteria c = getCriteria();
-			c.addGreaterThanOrEqualExpression(getFieldName(IFinanceAlias.FINANCE_DUE_DATE), value);
-			setCriteria(c);
-		}
-	}
-	
-	/**
-	 * Adds to criteria the invoice issueDate. Less than or equal
-	 * 
-	 * @param event the event that contains the new value
-	 * @throws ManagerBeanException
-	 */
-	public void addInvoiceIssueDate2Expression(ValueChangeEvent event) throws ManagerBeanException {
-	    if (event.getNewValue() != null) {
-			Object value = event.getNewValue();
-			Criteria c = getCriteria();
-			c.addLessThanOrEqualExpression(getFieldName(IFinanceAlias.FINANCE_INVOICE_ISSUE_DATE), value);
-			setCriteria(c);
-		}
-	}
-	
-	/**
-	 * Adds to criteria the finance dueDate. Less than or equal
-	 * 
-	 * @param event the event that contains the new value
-	 * @throws ManagerBeanException
-	 */
-	public void addFinanceDueDate2Expression(ValueChangeEvent event) throws ManagerBeanException {
-	    if (event.getNewValue() != null) {
-			Object value = event.getNewValue();
-			Criteria c = getCriteria();
-			c.addLessThanOrEqualExpression(getFieldName(IFinanceAlias.FINANCE_DUE_DATE), value);
-			setCriteria(c);
-		}
-	}
-	
-	/**
-	 * Adds to criteria the bank.
-	 * 
-	 * @param event the event that contains the new value
-	 * @throws ManagerBeanException
-	 * @throws ExpressionException 
-	 */
-	public void addBankExpression(ValueChangeEvent event) throws ManagerBeanException, ExpressionException {
-	    if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-			Object value = event.getNewValue();
-			Criteria c = getCriteria();
-			c.addExpression(getFieldName(IFinanceAlias.FINANCE_BANK_ID), value.toString());
-			setCriteria(c);
-		}
 	}
 
 	@SuppressWarnings("unchecked")
