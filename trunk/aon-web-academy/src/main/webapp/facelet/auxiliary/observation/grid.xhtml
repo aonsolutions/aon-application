@@ -105,7 +105,7 @@
 								</f:facet>
 								<h:outputText value="#{to.description}" rendered="#{to.id!=observation.to.id}" />
 								<h:inputText rendered="#{to.id==observation.to.id}" 
-									styleClass="aon-form-input-text" size="100" maxlength="80"
+									styleClass="aon-form-input-text" size="100" maxlength="256"
 									value="#{observation.to.description}" required="#{true}" />
 								<f:verbatim>&#160;</f:verbatim>
 								<f:facet name="footer">
@@ -113,7 +113,7 @@
 										<h:inputText rendered="#{observation.new}" 
 											styleClass="aon-form-input-text"
 											value="#{observation.to.description}"
-											required="#{true}" size="100" maxlength="80" />
+											required="#{true}" size="100" maxlength="256" />
 									</t:div>
 								</f:facet>
 							</h:column>
