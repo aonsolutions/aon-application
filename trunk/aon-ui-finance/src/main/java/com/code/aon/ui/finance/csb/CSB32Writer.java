@@ -41,8 +41,8 @@ public class CSB32Writer {
 	public CSBOutput createCSB32(Company company, FinanceBatch fbatch, Collection fbatchDetailCollection) throws ManagerBeanException {
 		Lot lot = new Lot();
 		RegistryBank companyRBank = fbatch.getRegistryBank();
-		lot.setEntity(new Integer(companyRBank.getBankAccount().substring(0, 3)));
-		lot.setOffice(new Integer(companyRBank.getBankAccount().substring(4, 7)));
+		lot.setEntity(new Integer(companyRBank.getBankAccount().getEntity()));
+		lot.setOffice(new Integer(companyRBank.getBankAccount().getOffice()));
 		lot.setFileDate(new Date());
 		lot.setFileNumber(new Integer(1));
 
@@ -50,13 +50,13 @@ public class CSB32Writer {
 		delivery.setDeliveyNumber(fbatch.getId());
 		delivery.setGiverCode(company.getDocument());
 		Account ccc1 = new Account();
-		ccc1.parse(companyRBank.getBankAccount());
+		ccc1.parse(companyRBank.getBankAccount().getValue());
 		delivery.setNotPayedAccount(ccc1);
 		Account ccc2 = new Account();
-		ccc2.parse(companyRBank.getBankAccount());
+		ccc2.parse(companyRBank.getBankAccount().getValue());
 		delivery.setOweAccount(ccc2);
 		Account ccc3 = new Account();
-		ccc3.parse(companyRBank.getBankAccount());
+		ccc3.parse(companyRBank.getBankAccount().getValue());
 		delivery.setPaymentAccount(ccc3);
 		delivery.setTruncatedEffects(new Integer(1));
 
@@ -83,7 +83,7 @@ public class CSB32Writer {
 	private Individual createIndividual(Company company, FinanceBatchDetail fBatchDetail) throws ManagerBeanException {
 		Individual individual = new Individual();
 		Account ccc = new Account();
-		ccc.parse(fBatchDetail.getFinance().getBankAccount());
+		ccc.parse(fBatchDetail.getFinance().getBankAccount().getValue());
 		individual.setAccount(ccc);
 		individual.setAceptedCode(new Integer(2));
 		individual.setAditionalData(fBatchDetail.getFinance().getId().toString());
