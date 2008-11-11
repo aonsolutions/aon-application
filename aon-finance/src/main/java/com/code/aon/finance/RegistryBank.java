@@ -8,9 +8,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.registry.Registry;
@@ -23,7 +23,7 @@ import com.code.aon.registry.Registry;
  */
 @Entity
 @Table(name ="rbank")
-public class RegistryBank implements ITransferObject {
+public class RegistryBank implements ITransferObject,IBankAccountContainer {
 
 	private static final long serialVersionUID = -8532648329534533542L;
 
@@ -37,16 +37,10 @@ public class RegistryBank implements ITransferObject {
     private Bank bank;
 
     /** The bank account. */
-    private String bankAccount;
+    private BankAccount bankAccount;
 
     /** The sufix. */
     private String sufix;
-
-    /**
-     * The empty constructor.
-     */
-    public RegistryBank() {
-    }
 
     /**
      * Gets the id.
@@ -74,7 +68,8 @@ public class RegistryBank implements ITransferObject {
      * @return the bank account
      */
     @Column(name = "bank_account")
-    public String getBankAccount() {
+    @Type(type="com.code.aon.finance.hibernate.BankAccountType")
+    public BankAccount getBankAccount() {
         return bankAccount;
     }
 
@@ -83,7 +78,7 @@ public class RegistryBank implements ITransferObject {
      * 
      * @param bankAccount the bank account
      */
-    public void setBankAccount(String bankAccount) {
+    public void setBankAccount(BankAccount bankAccount) {
         this.bankAccount = bankAccount;
     }
 
@@ -145,17 +140,6 @@ public class RegistryBank implements ITransferObject {
 	public void setSufix(String sufix) {
 		this.sufix = sufix;
 	}
-    
-    @Transient
-    public String getFormattedBankAccount(){
-    	if(getBankAccount() != null && getBankAccount().length() == 20){
-        	return getBankAccount().substring(0,4) + "." + 
-        	getBankAccount().substring(4, 8) + "." + 
-        	getBankAccount().substring(8, 10) + "." +
-        	getBankAccount().substring(10,20);
-    	}
-    	return getBankAccount();
-    }
     
 	@Override
 	public boolean equals(Object obj) {
