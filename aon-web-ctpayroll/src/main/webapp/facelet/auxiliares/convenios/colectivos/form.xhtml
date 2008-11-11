@@ -50,27 +50,45 @@
 				<!-- rich:tabPanel switchType="client" selectedTab="#{(pagaext.to!=null)?'niveles':'pagas'}"-->
 				<rich:tabPanel switchType="ajax" >
 					<rich:tab id="niveles" label="#{appBundle.aon_payroll_auxiliares_convenios__niveles}">
-						<aon:commandButton id="categoriasButtom2" title="[#{bundle.aon_categorias}]"
+						<aon:commandButton id="categoriasButtom" title="[#{appBundle.aon_payroll_auxiliares_convenios__categoria}]"
 							rendered="#{!convenio.new}" immediate="true" disabled="#{convenio.new}"
-							action="convenios_colectivos_search" actionListener="#{convenio.onEditSearch}"
+							action="categoria_form" 
 							styleClass="aon-finding-toolbar-item aon-icon-category"
 							accesskey="#{bundle.aon_key_search}" />				
-						<aon:commandButton id="percepcionesButtom2" title="[#{bundle.aon_percepciones}]"
+						<aon:commandButton id="percepcionesButtom" title="[#{appBundle.aon_payroll_auxiliares_convenios__percepciones}]"
 							rendered="#{!convenio.new}" immediate="true" disabled="#{convenio.new}"
-							action="convenios_colectivos_search" actionListener="#{convenio.onEditSearch}"
+							action="percepcion_form" 
 							styleClass="aon-finding-toolbar-item aon-icon-notes"
 							accesskey="#{bundle.aon_key_search}" />
 							
 						<aon:div id="nivelDiv" style="width:15%; margin-right:5px; float: left;">	
-							<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__tabnivel}" />		
+							<aon:div styleClass="aon-form-group">
+								<aon:div styleClass="aon-form-group-title">
+									<aon:div styleClass="aon-form-group-title-internal">
+										<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__tabnivel}" />
+									</aon:div>
+								</aon:div>
+							</aon:div>		
 							<ui:include src="nivel/grid.xhtml" />
 						</aon:div>
 						<aon:div id="categoriaDiv" style="width:40%; margin-right:5px; float: left;">
-							<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__tabcat}" />
+							<aon:div styleClass="aon-form-group">
+								<aon:div styleClass="aon-form-group-title">
+									<aon:div styleClass="aon-form-group-title-internal">
+										<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__tabcat}" />
+									</aon:div>
+								</aon:div>
+							</aon:div>
 							<ui:include src="categoria/grid.xhtml" />
 						</aon:div>											
 						<aon:div id="percepcionDiv" style="width:40%; margin-right:5px; float: left;">
-							<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__tabperc}" />
+							<aon:div styleClass="aon-form-group">
+								<aon:div styleClass="aon-form-group-title">
+									<aon:div styleClass="aon-form-group-title-internal">
+										<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__tabperc}" />
+									</aon:div>
+								</aon:div>
+							</aon:div>
 							<ui:include src="percepcion/grid.xhtml" />
 						</aon:div>
 					</rich:tab>

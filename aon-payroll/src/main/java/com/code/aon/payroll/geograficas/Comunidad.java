@@ -16,7 +16,10 @@ import javax.persistence.Table;
 import com.code.aon.common.ITransferObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -32,6 +35,9 @@ public class Comunidad  implements ITransferObject {
      private String cdg;
      private String descripcion;
      private Pais pais;
+     
+     /** provincias. */
+  	private Set<Provincia> provincias = new HashSet<Provincia>();
 
     @Id     
     @Column(name="cdg", unique=true, nullable=false, length=2)
@@ -62,6 +68,15 @@ public class Comunidad  implements ITransferObject {
     public void setPais(Pais pais) {
         this.pais = pais;
     }
+    
+    @OneToMany(mappedBy = "comunidad", cascade={CascadeType.REMOVE})
+	public Set<Provincia> getProvincias() {
+		return provincias;
+	}
+
+	public void setProvincias(Set<Provincia> provincias) {
+		this.provincias = provincias;
+	}
 
 	
 }

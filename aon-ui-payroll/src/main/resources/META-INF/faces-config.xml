@@ -523,6 +523,21 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{provinciaControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>provinciaControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.ProvinciaControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 
@@ -1908,7 +1923,7 @@
 	<managed-bean>
 		<managed-bean-name>cnaeMaestro</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.payroll.controller.PayrollBasicController
+			com.code.aon.ui.payroll.controller.CnaeMaestroController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -1925,7 +1940,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>CnaeMaestro_cdg DESC</value>
+			<value>CnaeMaestro_cdg</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -2265,7 +2280,7 @@
 
 	<managed-bean>
 		<managed-bean-name>categoria</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.CategoriaLinesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -2295,8 +2310,8 @@
 			<property-name>propertyMap</property-name>
 			<map-entries>
 				<map-entry>
-					<key>cdg</key>
-					<value>id.cdg</value>
+					<key>id.cdg</key>
+					<value>nivel.id.cdg</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -2304,7 +2319,7 @@
 
 	<managed-bean>
 		<managed-bean-name>percepcion</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.PercepcionLinesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -2618,7 +2633,7 @@
 	</managed-bean>
 
 
-      <managed-bean>
+	<managed-bean>
 		<managed-bean-name>cliente</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.payroll.controller.ClienteController
@@ -2651,7 +2666,7 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
-
+	
 	<managed-bean>
 		<managed-bean-name>domicilioListener</managed-bean-name>
 		<managed-bean-class>

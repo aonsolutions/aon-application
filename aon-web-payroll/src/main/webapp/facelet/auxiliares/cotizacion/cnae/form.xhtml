@@ -35,11 +35,14 @@
 						</aon:inputText>
 						
 						<aon:outputLabel value="" />
-						<ui:include src="ocupacion/grid.xhtml" />
+						<aon:div>
+							
+			            </aon:div>
+						<!-- <ui:include src="ocupacion/grid.xhtml" /> -->
 						
 						<aon:outputLabel for="CnaeMaestro_description" value="#{appBundle.aon_payroll_description}" />
 						<aon:inputText id="CnaeMaestro_description" value="#{cnaeMaestro.to.description}" 
-							size="30" maxlength="50" >
+							size="150" maxlength="250" >
 						</aon:inputText>
 					
 					

@@ -83,7 +83,7 @@ public class Categoria implements ITransferObject {
 		this.cno = cno;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "codbas")
 	public Base getBase() {
 		return this.base;
@@ -103,7 +103,7 @@ public class Categoria implements ITransferObject {
 		this.convenio = convenio;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "codepi")
 	public Epigrafe getEpigrafe() {
 		return this.epigrafe;

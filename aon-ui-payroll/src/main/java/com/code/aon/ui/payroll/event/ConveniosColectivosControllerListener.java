@@ -7,6 +7,7 @@ import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.payroll.controller.ConveniosComplementoController;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
 import com.code.aon.ui.util.AonUtil;
 
@@ -16,12 +17,14 @@ public class ConveniosColectivosControllerListener extends ControllerAdapter imp
 	public void afterModelInitialized(ControllerEvent event)
 			throws ControllerListenerException {
 		resetNivelModel();
+		resetComplementosCotizaciones();
 	}
 	
 	@Override
 	public void afterBeanCanceled(ControllerEvent event)
 			throws ControllerListenerException {
 		resetNivelModel();
+		resetComplementosCotizaciones();
 	}
 
 	private void resetNivelModel() throws ControllerListenerException {
@@ -34,6 +37,18 @@ public class ConveniosColectivosControllerListener extends ControllerAdapter imp
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );			
 		}		
+	}
+	
+	private void resetComplementosCotizaciones() throws ControllerListenerException {
+		ConveniosComplementoController comlementoController = (ConveniosComplementoController) AonUtil.getController(COMPLEMENTO_CONTROLLER_NAME);
+		try {
+			comlementoController.refreshComplementos();
+			comlementoController.refreshCotizaciones();
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			throw new ControllerListenerException( e.getMessage(), e );
+		}
+			
 	}
 	
 }

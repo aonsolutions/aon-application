@@ -18,11 +18,8 @@
 					<f:facet name="header">
 						<aon:outputText value="#{appBundle.aon_payroll_cdg} #{appBundle.aon_payroll_auxiliares_geograficas__provincia}" />
 					</f:facet>
-					<aon:outputText value="#{to.cdg}" rendered="#{to!=provincia.to}" />
+					<aon:outputText value="#{to.cdg}" />
 					
-					<aon:inputText styleClass="aon-form-input-text " required="true"
-						rendered="#{to==provincia.to}" size="5"
-						value="#{provincia.to.cdg}" maxlength="2" />
 					<f:facet name="footer">
 						<aon:inputText styleClass="aon-form-input-text" required="true"
 							rendered="#{provincia.new}" size="5"

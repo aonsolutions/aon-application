@@ -21,7 +21,7 @@ public class NivelControllerListener extends ControllerAdapter implements IPayro
 	}
 	
 	@Override
-	public void afterBeanCanceled(ControllerEvent event)
+	public void beforeBeanCanceled(ControllerEvent event)
 			throws ControllerListenerException {
 		resetCategoriaModel();
 		resetPercepcionModel();

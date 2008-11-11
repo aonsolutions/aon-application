@@ -14,7 +14,7 @@
 
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="to.id.cdg" />
+						<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
 					</f:facet>
 					<aon:outputText value="#{to.id.cdg}" rendered="#{to!=categoria.to}" />
 					<aon:inputText id="cdg_edit" styleClass="aon-form-input-text"
@@ -27,21 +27,6 @@
 					</f:facet>
 				</aon:column>
 				
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputText value="to.nivel" />
-					</f:facet>
-					<aon:outputText value="#{to.nivel}" rendered="#{to!=categoria.to}" />
-					<aon:inputText id="nivel_edit" styleClass="aon-form-input-text"
-						rendered="#{to==categoria.to}"  required="true"
-						value="#{categoria.to.nivel}" maxlength="8" size="10" />
-					<f:facet name="footer">
-						<aon:inputText id="nivel_new" styleClass="aon-form-input-text"  
-							rendered="#{categoria.new}" required="true"
-							value="#{categoria.to.nivel}" maxlength="8" size="10"  />
-					</f:facet>
-				</aon:column>
-
 				<aon:column>
 					<f:facet name="header">
 						<aon:outputText value="#{appBundle.aon_payroll_description}" />
