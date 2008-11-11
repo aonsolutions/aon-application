@@ -25,11 +25,11 @@
 				<aon:panelGrid id="convenio" columns="2" dir="true" width="100%" style="margin-bottom=2px;">
 					<aon:outputLabel for="Convenio_cdg" value="#{appBundle.aon_payroll_cdg} #{appBundle.aon_payroll_auxiliares_convenios__convenio}"/>
 					<aon:inputText id="Convenio_cdg" value="#{convenio.to.cdg}" disabled="#{!convenio.new}" 
-						required="true" size="15" maxlength="10" />
+						required="true" size="10" maxlength="2" />
 				
 					<aon:outputLabel for="Convenio_description" value="#{appBundle.aon_payroll_description} #{appBundle.aon_payroll_auxiliares_convenios__convenio}" />
 					<aon:inputText id="Convenio_description" value="#{convenio.to.description}" 
-						size="70" maxlength="50" >
+						size="50" maxlength="35" >
 					</aon:inputText>
 					
 					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__indicador}" />
