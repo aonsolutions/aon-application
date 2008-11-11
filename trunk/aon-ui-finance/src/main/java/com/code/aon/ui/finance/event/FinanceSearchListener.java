@@ -1,7 +1,6 @@
 package com.code.aon.ui.finance.event;
 
 import java.util.Date;
-import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 
