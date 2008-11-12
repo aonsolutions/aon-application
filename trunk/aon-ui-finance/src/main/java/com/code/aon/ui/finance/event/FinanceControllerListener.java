@@ -23,43 +23,26 @@ public class FinanceControllerListener extends ControllerAdapter{
 	private static final Logger LOGGER = Logger.getLogger(FinanceControllerListener.class.getName());
 	
 	@Override
-	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
-		Criteria criteria;
-		FinanceController financeController = (FinanceController)event.getController();
-		try {
-			criteria = financeController.getCriteria();
-			if(financeController.getPayment() != null){
-				criteria.addEqualExpression(financeController.getFieldName(IFinanceAlias.FINANCE_PAYMENT), financeController.getPayment());
-			}
-			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
-			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.FINANCE_INVOICE_SERIES));
-			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER));
-		} catch (ManagerBeanException e) {
-			
-		}
-	}
-	
-	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		FinanceController feeFinanceController = (FinanceController)event.getController();
 		Finance finance = (Finance)feeFinanceController.getTo();
-		fillFinanceData(finance, feeFinanceController.getRegistryBankId());
+		fillFinanceData(finance, feeFinanceController.getRegistryBank());
 	}
 	
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		FinanceController feeFinanceController = (FinanceController)event.getController();
 		Finance finance = (Finance)feeFinanceController.getTo();
-		fillFinanceData(finance, feeFinanceController.getRegistryBankId());
+		fillFinanceData(finance, feeFinanceController.getRegistryBank());
 	}
 	
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-		FinanceController feeFinanceController = (FinanceController)event.getController();
-		feeFinanceController.setRegistryBankId(obtainRegistryBankId((Finance)feeFinanceController.getTo()));
+		FinanceController financeController = (FinanceController) event.getController();
+		financeController.setRegistryBank(obtainRegistryBank((Finance)financeController.getTo()));
 	}
 
-	private void fillFinanceData(Finance finance, Integer registryBankId) {
+	private void fillFinanceData(Finance finance, RegistryBank registryBank) {
 		finance.setInvoice(finance.getInvoice());
 		if(finance.getInvoice().getType().equals(InvoiceType.SALES)){
 			finance.setPayment(false);
@@ -69,18 +52,17 @@ public class FinanceControllerListener extends ControllerAdapter{
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		finance.setRegistry(finance.getInvoice().getRegistry());
 		finance.setSecurityLevel(finance.getInvoice().getSecurityLevel());
-		RegistryBank rBank = obtainRegistryBank(registryBankId);
-		if(rBank == null){
+		if(registryBank == null){
 			finance.setBank(null);
 			finance.setBankAccount(null);
 		}else{
-			finance.setBank(rBank.getBank());
-			finance.setBankAccount(rBank.getBankAccount());
+			finance.setBank(registryBank.getBank());
+			finance.setBankAccount(registryBank.getBankAccount());
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private Integer obtainRegistryBankId(Finance finance) {
+	private RegistryBank obtainRegistryBank(Finance finance) {
 		try {
 			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
 			Criteria criteria = new Criteria();
@@ -89,7 +71,7 @@ public class FinanceControllerListener extends ControllerAdapter{
 			Iterator iter = rBankBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				RegistryBank rBank = (RegistryBank)iter.next();
-				return rBank.getId();
+				return rBank;
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error obtaining registryBankId for Finance with id= " + finance.getId(), e);

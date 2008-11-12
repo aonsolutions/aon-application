@@ -33,17 +33,15 @@ public class ControllerSearchListener extends ControllerAdapter {
 	}
 
 	@Override
-	public void afterBeanReset(ControllerEvent event) throws ControllerListenerException {
-		if ( getController().getTo() != null ) {
-			try {			
-				this.criteria = null;
-				init();
-			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error initializing Task Model", e);
-			}
+	public void afterEditSearch(ControllerEvent event) throws ControllerListenerException {
+		this.criteria = null;
+		try {			
+			init();
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error initializing Task Model", e);
 		}
 	}
-	
+
 	protected void init() throws ManagerBeanException {
 	}
 

@@ -35,19 +35,9 @@ public class FinanceReturnController extends BasicController {
 	
 	private static final Logger LOGGER = Logger.getLogger(FinanceReturnController.class.getName());
 	
-	private Boolean payment;
-	
 	private Date returnDate;
 	
 	private AccountEntryFinanceWriter writer;
-	
-	public Boolean getPayment() {
-		return payment;
-	}
-
-	public void setPayment(Boolean payment) {
-		this.payment = payment;
-	}
 
 	public Date getReturnDate() {
 		return returnDate;
@@ -64,12 +54,6 @@ public class FinanceReturnController extends BasicController {
 		return writer;
 	}
 
-	@Override
-	public void onEditSearch(ActionEvent event) {
-		setPayment(Boolean.FALSE);
-		super.onEditSearch(event);
-	}
-	
 	@SuppressWarnings("unused")
 	public void onReturn(ActionEvent event) throws ManagerBeanException{
 		Finance finance = (Finance)this.getTo();

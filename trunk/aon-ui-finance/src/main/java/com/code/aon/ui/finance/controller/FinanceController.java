@@ -15,6 +15,7 @@ import javax.faces.model.SelectItem;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.finance.BankAccount;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.RegistryBank;
@@ -31,35 +32,14 @@ public class FinanceController extends BasicController {
 	
 	private static final Logger LOGGER = Logger.getLogger(FinanceController.class.getName());
 	
-	/** Determines if the finance is a payment or a charge. */
-	private Boolean payment;
-	
 	/**
 	 * A list of finances currently checked
 	 */
 	private ArrayList<Finance> checks= new ArrayList<Finance>();
 	
-	private Integer registryBankId;
+	private RegistryBank registryBank;
 	
 	private Date paymentDate;
-	
-	/**
-	 * Gets if the finance is a payment or a charge.
-	 * 
-	 * @return true if the finance is a payment
-	 */
-	public Boolean getPayment() {
-		return payment;
-	}
-
-	/**
-	 * Sets if the finance is a payment or a charge.
-	 * 
-	 * @param payment true if the finance is a payment
-	 */
-	public void setPayment(Boolean payment) {
-		this.payment = payment;
-	}
 	
 	public Date getPaymentDate() {
 		return paymentDate;
@@ -69,12 +49,18 @@ public class FinanceController extends BasicController {
 		this.paymentDate = paymentDate;
 	}
 
-	public Integer getRegistryBankId() {
-		return registryBankId;
+	public RegistryBank getRegistryBank() {
+		return registryBank;
 	}
 
-	public void setRegistryBankId(Integer registryBankId) {
-		this.registryBankId = registryBankId;
+	public void setRegistryBank(RegistryBank registryBank) {
+		this.registryBank = registryBank;
+	}
+	
+	public void onRegistryBankChanged( ValueChangeEvent event ) {
+		Finance finance = (Finance) getTo();
+		RegistryBank bank = (RegistryBank) event.getNewValue();
+		finance.setBankAccount( bank != null ? bank.getBankAccount() : null );
 	}
 
 	/**
@@ -150,12 +136,6 @@ public class FinanceController extends BasicController {
     	return ((Finance)this.getTo()).getFinanceStatus().equals(FinanceStatus.RETURNED);
     }
 
-	@Override
-	public void onEditSearch(ActionEvent event) {
-		setPayment(Boolean.FALSE);
-		super.onEditSearch(event);
-	}
-
 	@SuppressWarnings("unchecked")
 	public List getRegistryBanks(){
 		List<SelectItem> rBanks = new LinkedList<SelectItem>();
@@ -167,7 +147,7 @@ public class FinanceController extends BasicController {
 			Iterator iter = rBankBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				RegistryBank rBank = (RegistryBank)iter.next();
-				SelectItem item = new SelectItem(rBank.getId(), rBank.getBank().getName());
+				SelectItem item = new SelectItem(rBank, rBank.getBank().getName());
 				rBanks.add(item);
 			}
 		} catch (ManagerBeanException e) {

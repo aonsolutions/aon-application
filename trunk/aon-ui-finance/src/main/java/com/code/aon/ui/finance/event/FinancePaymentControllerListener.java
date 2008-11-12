@@ -35,32 +35,4 @@ public class FinancePaymentControllerListener extends ControllerAdapter {
 		financePaymentController.setPayedAmount(((Finance)financePaymentController.getTo()).getTotalAmount());
 	}
 
-	@Override
-	public void beforeBeanReset(ControllerEvent event) throws ControllerListenerException {
-		FinancePaymentController financePaymentController = (FinancePaymentController)event.getController();
-		try {
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(financePaymentController.getFieldName(IFinanceAlias.FINANCE_PAYMENT),financePaymentController.getPayment());
-			if(financePaymentController.getRegistryId() != null){
-				criteria.addEqualExpression(financePaymentController.getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID),financePaymentController.getRegistryId());
-			}
-			if(financePaymentController.getSeries() != null && !"".equals(financePaymentController.getSeries())){
-				criteria.addExpression(financePaymentController.getFieldName(IFinanceAlias.FINANCE_INVOICE_SERIES),financePaymentController.getSeries());
-			}
-			if(financePaymentController.getNumber() != null && !"".equals(financePaymentController.getNumber())){
-				criteria.addExpression(financePaymentController.getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER),financePaymentController.getNumber());
-			}
-			if(financePaymentController.getFromDate() != null){
-				criteria.addGreaterThanOrEqualExpression(financePaymentController.getFieldName(IFinanceAlias.FINANCE_DUE_DATE),financePaymentController.getFromDate());
-			}
-			if(financePaymentController.getToDate() != null){
-				criteria.addLessThanOrEqualExpression(financePaymentController.getFieldName(IFinanceAlias.FINANCE_DUE_DATE),financePaymentController.getToDate());
-			}
-			financePaymentController.setCriteria(criteria);
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException("Error creating criteria",e);
-		} catch (ExpressionException e) {
-			throw new ControllerListenerException("Error creating criteria",e);
-		}
-	}
 }
