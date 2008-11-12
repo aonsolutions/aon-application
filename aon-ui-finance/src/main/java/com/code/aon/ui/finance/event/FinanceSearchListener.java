@@ -12,10 +12,12 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.supplier.Supplier;
-import com.code.aon.ui.finance.controller.FinanceController;
 
 public class FinanceSearchListener extends ControllerSearchListener {
 
+	/** Determines if the finance is a payment or a charge. */
+	private Boolean payment;
+	
 	private Bank bank;
 	
 	private Customer customer;
@@ -32,6 +34,24 @@ public class FinanceSearchListener extends ControllerSearchListener {
 	
 	private PayMethod payMethod;
 	
+	/**
+	 * Gets if the finance is a payment or a charge.
+	 * 
+	 * @return true if the finance is a payment
+	 */
+	public Boolean getPayment() {
+		return payment;
+	}
+
+	/**
+	 * Sets if the finance is a payment or a charge.
+	 * 
+	 * @param payment true if the finance is a payment
+	 */
+	public void setPayment(Boolean payment) {
+		this.payment = payment;
+	}
+		
 	public Bank getBank() {
 		return bank;
 	}
@@ -98,6 +118,7 @@ public class FinanceSearchListener extends ControllerSearchListener {
 
 	@Override
 	protected void init() throws ManagerBeanException {
+		setPayment(Boolean.FALSE);
 		setBank( new Bank() );
 		setCustomer( new Customer() );
 		setSupplier( new Supplier() );
@@ -110,40 +131,41 @@ public class FinanceSearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		FinanceController controller = (FinanceController) getController();
-		Criteria criteria = controller.getCriteria();
+		Criteria criteria = getController().getCriteria();
+		String payment = getController().getFieldName(IFinanceAlias.FINANCE_PAYMENT);
+		criteria.addEqualExpression(payment, getPayment());
 		if ( (getBank() != null) && (!StringUtils.isEmpty(getBank().getCode())) ) {
 			criteria.addEqualExpression("Finance.bank.code", getBank().getCode());			
 		}
-		if ( controller.getPayment() ) {
+		if ( getPayment() ) {
 			if ( (getSupplier() != null) && (getSupplier().getId() != null) ) {
-				String field = controller.getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID);
+				String field = getController().getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID);
 				criteria.addEqualExpression(field, getSupplier().getId());			
 			}			
 		} else {
 			if ( (getCustomer() != null) && (getCustomer().getId() != null) ) {
-				String field = controller.getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID);
+				String field = getController().getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID);
 				criteria.addEqualExpression(field, getCustomer().getId());			
 			}			
 		}
 		if ( getDueDateFrom() != null ) {
-			String field = controller.getFieldName(IFinanceAlias.FINANCE_DUE_DATE);
+			String field = getController().getFieldName(IFinanceAlias.FINANCE_DUE_DATE);
 			criteria.addGreaterThanOrEqualExpression(field, getDueDateFrom());
 		}
 		if ( getDueDateTo() != null ) {
-			String field = controller.getFieldName(IFinanceAlias.FINANCE_DUE_DATE);
+			String field = getController().getFieldName(IFinanceAlias.FINANCE_DUE_DATE);
 			criteria.addLessThanOrEqualExpression(field, getDueDateTo());
 		}
 		if ( getInvoiceIssueDateFrom() != null ) {
-			String field = controller.getFieldName(IFinanceAlias.FINANCE_INVOICE_ISSUE_DATE);
+			String field = getController().getFieldName(IFinanceAlias.FINANCE_INVOICE_ISSUE_DATE);
 			criteria.addGreaterThanOrEqualExpression(field, getInvoiceIssueDateFrom());
 		}
 		if ( getInvoiceIssueDateTo() != null ) {
-			String field = controller.getFieldName(IFinanceAlias.FINANCE_INVOICE_ISSUE_DATE);
+			String field = getController().getFieldName(IFinanceAlias.FINANCE_INVOICE_ISSUE_DATE);
 			criteria.addLessThanOrEqualExpression(field, getInvoiceIssueDateTo());
 		}
 		if ( getPayMethod() != null ) {
-			String field = controller.getFieldName(IFinanceAlias.FINANCE_PAY_METHOD_ID);
+			String field = getController().getFieldName(IFinanceAlias.FINANCE_PAY_METHOD_ID);
 			criteria.addEqualExpression(field, getPayMethod().getId());
 		}
 	}	

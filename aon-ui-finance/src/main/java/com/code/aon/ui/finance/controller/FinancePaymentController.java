@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
@@ -30,75 +29,20 @@ import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.invoicing.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.PageDataModel;
 import com.code.aon.ui.util.AonUtil;
 
 public class FinancePaymentController extends BasicController {
 		
 	private static final Logger LOGGER = Logger.getLogger(FinancePaymentController.class.getName());
 	
-	private Boolean payment;
-	
-	private Integer registryId;
-	
-	private String registryName;
-	
-	private String series;
-	
-	private String number;
-	
 	private double payedAmount;
 	
 	private Date paymentDate;
-	
-	private Date fromDate;
-	
-	private Date toDate;
 	
 	private RegistryBank registryBank;
 	
 	private AccountEntryFinanceWriter writer;
 	
-	public Boolean getPayment() {
-		return payment;
-	}
-
-	public void setPayment(Boolean payment) {
-		this.payment = payment;
-	}
-	
-	public Integer getRegistryId() {
-		return registryId;
-	}
-
-	public void setRegistryId(Integer registryId) {
-		this.registryId = registryId;
-	}
-
-	public String getRegistryName() {
-		return registryName;
-	}
-
-	public void setRegistryName(String registryName) {
-		this.registryName = registryName;
-	}
-
-	public String getSeries() {
-		return series;
-	}
-
-	public void setSeries(String series) {
-		this.series = series;
-	}
-
-	public String getNumber() {
-		return number;
-	}
-
-	public void setNumber(String number) {
-		this.number = number;
-	}
-
 	public double getPayedAmount() {
 		return payedAmount;
 	}
@@ -113,22 +57,6 @@ public class FinancePaymentController extends BasicController {
 
 	public void setPaymentDate(Date paymentDate) {
 		this.paymentDate = paymentDate;
-	}
-
-	public Date getFromDate() {
-		return fromDate;
-	}
-
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
-
-	public Date getToDate() {
-		return toDate;
-	}
-
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
 	}
 
 	public RegistryBank getRegistryBank() {
@@ -158,22 +86,9 @@ public class FinancePaymentController extends BasicController {
 	}
 	
 	private void initializeSearch() {
-		try {
-			((PageDataModel)this.getModel()).resize(0);
-			payment = new Boolean(false);
-			registryId = null;
-			registryName = "";
-			series = "";
-			number = "";
-			payedAmount = 0.0; 
-			paymentDate = new Date();
-			fromDate = null;
-			toDate = null;
-			registryBank = new RegistryBank();
-			getCriteria().addEqualExpression(getManagerBean().getFieldName(IFinanceAlias.FINANCE_PAYMENT), payment );
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error initializing search", e);
-		}
+		payedAmount = 0.0; 
+		paymentDate = new Date();
+		registryBank = new RegistryBank();
 	}
 	
 	@SuppressWarnings("unused")
