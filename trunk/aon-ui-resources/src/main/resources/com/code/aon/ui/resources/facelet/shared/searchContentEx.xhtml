@@ -13,7 +13,7 @@
 					<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
 				</aon:div>			
 				
-				<aon:panelGrid columns="2">
+				<aon:panelGrid id="#{searchContentID}" columns="2">
 					<ui:insert name="searchContent" />
 					<c:if test="#{!skipSearchButton}">
 					<aon:outputText value="" />
