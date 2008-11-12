@@ -53,6 +53,12 @@ public class FinanceReturnController extends BasicController {
 		}
 		return writer;
 	}
+	
+	@Override
+	public void onSelect(ActionEvent event) {
+		super.onSelect(event);
+		setReturnDate( new Date() );
+	}
 
 	@SuppressWarnings("unused")
 	public void onReturn(ActionEvent event) throws ManagerBeanException{

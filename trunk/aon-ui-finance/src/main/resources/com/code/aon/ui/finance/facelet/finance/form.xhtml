@@ -21,7 +21,7 @@
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="fraction" value="#{financeBundle.finance_to_fraction}"
 						immediate="#{true}" rendered="#{!finance.pending and !finance.returned}"
-						styleClass="aon-finding-toolbar-item aon-icon-search"
+						styleClass="aon-finding-toolbar-item-no-icon"
 						actionListener="#{financeFraction.onFractionFinance}" action="finance_fraction"/>				
 				</ui:define>				
 				
@@ -74,7 +74,7 @@
 							value="#{finance.registryBank}" reRender="RegistryBank_Lookup_bankAccount"
 							valueChangeListener="#{finance.onRegistryBankChanged}"
 							disabled="#{!finance.pending and !finance.returned}">
-							<f:selectItem itemDisabled="true" itemLabel ="-" value="#{null}" />
+							<f:selectItem itemLabel ="-" value="#{null}" />
 							<f:selectItems value="#{finance.registryBanks}" />
 						</aon:selectOneMenu>
 					</aon:div>
