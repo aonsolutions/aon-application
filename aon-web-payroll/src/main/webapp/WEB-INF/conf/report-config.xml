@@ -539,4 +539,15 @@
 		</params>
 	</report>
 	
+	 <report id="ClienteList" description="Listado de Clientes">
+		<template path="/com/code/aon/ui/payroll/report/ClienteList.jasper" />
+		<bean key="com.code.aon.payroll.principales.Cliente" />
+		<criteria provider="#{cliente}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
 </report-config>
