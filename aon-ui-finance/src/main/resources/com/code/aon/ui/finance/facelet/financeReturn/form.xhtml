@@ -1,127 +1,94 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:t="http://myfaces.apache.org/tomahawk"
-	xmlns:h="http://java.sun.com/jsf/html">
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
 
-<body>
-
-<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
-
-	<ui:define name="head">
-		<ui:include src="/facelet/shared/head.xhtml" />
-	</ui:define>
-	
 	<ui:define name="content">
-	
-		<aon:form id="financeReturnForm" styleClass="aon-form">
-			<aon:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
-				>
-				<aon:div styleClass="aon-content-toolbar-internal">
-					<aon:div styleClass="aon-content-toolbar-item-group">
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
-							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
-							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
-							actionListener="#{financeReturn.onEditSearch}" action="finance_return_search"
-							accesskey="#{bundle.aon_key_search}" />
-						<aon:commandButton id="return" value="#{financeBundle.finance_to_return}"
-							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
-							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
-							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
-							actionListener="#{financeReturn.onReturn}" action="finance_return_search"
-							accesskey="#{bundle.aon_key_search}" />
-					</aon:div>
-				</aon:div>
-			</aon:div>
+		<aon:form id="financeList">
 
-			<aon:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
-				>
-				<aon:div styleClass="aon-content-subtitle-internal">
-					<aon:outputText
-						value="#{bundle.aon_editing}" />
-				</aon:div>
-			</aon:div>
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_finance_module}" />
+				<ui:param name="controller" value="#{financeReturn}" />
+				<ui:param name="skipSaveButton" value="true" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipRemoveButton" value="true" />
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="return" value="#{financeBundle.finance_to_return}"
+						styleClass="aon-finding-toolbar-item aon-icon-search"
+						actionListener="#{financeReturn.onEditSearch}" action="financeReturn_search"
+						accesskey="#{bundle.aon_key_search}" >
+						<aon:actionListener method="#{financeReturn.onReturn}" />
+					</aon:commandButton>						
+				</ui:define>				
+				
+			</ui:decorate>
 
-			<aon:div id="aon-scroll-area" >
-				<aon:div styleClass="aon-scroll-area-internal">
-					<!-- start of bag panel -->
-					<!-- start of flow layout -->
-					<aon:panelGrid columns="2" dir="true" styleClass="aon-form-table"
-						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="dataTable" columns="2">
 
-							<aon:outputLabel for="Finance_payment"
-								value="#{financeBundle.aon_payment} / #{financeBundle.aon_charge}" />
-							<aon:selectOneRadio id="Finance_payment" value="#{financeReturnSearch.payment}" disabled="true">
-								<f:selectItem itemLabel="#{financeBundle.aon_payment}" itemValue="#{true}" />
-								<f:selectItem itemLabel="#{financeBundle.aon_charge}" itemValue="#{false}" />
-							</aon:selectOneRadio>
-							
-							<aon:outputLabel for="Customer_Lookup_id"
-								rendered="#{!financeReturnSearch.payment}"
-								value="#{financeBundle.aon_customer}" />
-							<aon:inputText id="Customer_full_name" 
-								rendered="#{!financeReturnSearch.payment}"
-								disabled="true"
-								value="#{financeReturn.to.registry.name} #{financeReturn.to.registry.surname}" size="40" />
-							
-							<aon:outputLabel for="Supplier_Lookup_id"
-								rendered="#{financeReturnSearch.payment}"
-								value="#{financeBundle.aon_supplier}"/>
-							<aon:inputText id="Supplier_full_name" 
-								rendered="#{financeReturnSearch.payment}"
-								disabled="true"
-								value="#{financeReturn.to.registry.name} #{financeReturn.to.registry.surname}" size="40" />
-
-							<aon:outputLabel for="Finance_invoice_series"
-								value="#{financeBundle.aon_series_number}" />
-							<aon:panelGrid columns="2">
-								<aon:inputText id="Finance_invoice_series"
-									value="#{financeReturn.to.invoice.series}"
-									size="4"
-									maxlength="5" disabled="true" />
-								<aon:inputText id="Finance_invoice_number"
-									value="#{financeReturn.to.invoice.number}"
-									size="7" disabled="true"/>
-							</aon:panelGrid>
-
-							<aon:outputLabel for="Finance_date"
-								value="#{financeBundle.aon_finance_date}" />
-							<aon:inputCalendar size="10" id="Finance_date"
-								value="#{financeReturn.returnDate}"
-								monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
-								currentDayCellClass="currentDayCell" renderAsPopup="true"
-								popupButtonStyleClass="aon-form-calendar-button"
-								styleClass="aon-form-input-text"
-								popupTodayString="#{bundle.aon_popup_today}"
-								popupWeekString="#{bundle.aon_popup_week}" />
-
-							<aon:outputLabel for="Finance_amount"
-								value="#{financeBundle.finance_amount}"/>
-							<aon:inputText id="Finance_amount" size="10" 
-								disabled="true"
-								value="#{financeReturn.to.amount}">
-								<f:convertNumber pattern="#{financeBundle.finance_money_pattern}" />
-							</aon:inputText>
-
-							<aon:outputLabel for="Finance_expenses"
-								value="#{financeBundle.finance_expenses}"/>
-							<aon:inputText id="Finance_expenses" size="10" 
-								value="#{financeReturn.to.expenses}">
-								<f:validateDoubleRange />
-							</aon:inputText>
-						
-					</aon:panelGrid>
-					<!-- end of flow layout -->
-					<!-- end of bag panel -->
+					<aon:outputLabel for="Finance_payment"
+						value="#{financeBundle.finance_payment} / #{financeBundle.finance_charge}" />
+					<aon:selectOneRadio id="Finance_payment" value="#{financeReturnSearch.payment}" disabled="true">
+						<f:selectItem itemLabel="#{financeBundle.finance_payment}" itemValue="#{true}" />
+						<f:selectItem itemLabel="#{financeBundle.finance_charge}" itemValue="#{false}" />
+					</aon:selectOneRadio>
 					
-				</aon:div>
-			</aon:div>
+					<aon:outputLabel for="Customer_full_name"
+						rendered="#{!financeReturnSearch.payment}"
+						value="#{customerBundle.customer_customer}" />
+					<aon:inputText id="Customer_full_name" 
+						rendered="#{!financeReturnSearch.payment}" disabled="true"
+						value="#{financeReturn.to.registry.name} #{financeReturn.to.registry.surname}" size="50" />
+							
+					<aon:outputLabel for="Supplier_full_name"
+						rendered="#{financeReturnSearch.payment}"
+						value="#{supplierBundle.supplier_supplier}" />
+					<aon:inputText id="Supplier_full_name" 
+						rendered="#{financeReturnSearch.payment}" disabled="true"
+						value="#{financeReturn.to.registry.name} #{financeReturn.to.registry.surname}" size="50" />
 
+					<aon:outputLabel for="Finance_invoice_series"
+						value="#{financeBundle.finance_series_number}" />
+					<aon:div>
+						<aon:inputText id="Finance_invoice_series"
+							value="#{financeReturn.to.invoice.series}"
+							disabled="true" size="4" maxlength="5" />
+						<aon:div layout="inline" styleClass="aon-padding-left">							
+							<aon:inputText id="Finance_invoice_number"
+								value="#{financeReturn.to.invoice.number}" 
+								size="7" disabled="true"/>
+						</aon:div>
+					</aon:div>					
+
+					<aon:outputLabel for="Finance_date"
+						value="#{financeBundle.finance_finance_date}" />
+					<aon:selectInputDate id="Finance_date" 
+						value="#{financeReturn.returnDate}"
+						timeZone="#{timeZoneController.timeZone}"
+						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>												
+
+					<aon:outputLabel for="Finance_amount"
+						value="#{accountBundle.account_amount}"/>
+					<aon:inputText id="Finance_amount" size="10" 
+						disabled="true" value="#{financeReturn.to.amount}">
+						<f:convertNumber pattern="#{financeBundle.finance_money_pattern}" />
+					</aon:inputText>
+
+					<aon:outputLabel for="Finance_expenses"
+						value="#{financeBundle.finance_expenses}"/>
+					<aon:inputText id="Finance_expenses" size="10" 
+						value="#{financeReturn.to.expenses}">
+						<f:validateDoubleRange />
+					</aon:inputText>
+				</aon:panelGrid>
+			</aon:div>
 		</aon:form>
-		<aon:form id="placeList" target="list" />
 	</ui:define>
 </ui:composition>
-</body>
-</html>

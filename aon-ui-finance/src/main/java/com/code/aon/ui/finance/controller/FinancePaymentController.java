@@ -35,7 +35,7 @@ public class FinancePaymentController extends BasicController {
 		
 	private static final Logger LOGGER = Logger.getLogger(FinancePaymentController.class.getName());
 	
-	private double payedAmount;
+	private Double payedAmount;
 	
 	private Date paymentDate;
 	
@@ -43,11 +43,11 @@ public class FinancePaymentController extends BasicController {
 	
 	private AccountEntryFinanceWriter writer;
 	
-	public double getPayedAmount() {
+	public Double getPayedAmount() {
 		return payedAmount;
 	}
 
-	public void setPayedAmount(double payedAmount) {
+	public void setPayedAmount(Double payedAmount) {
 		this.payedAmount = payedAmount;
 	}
 
@@ -86,9 +86,9 @@ public class FinancePaymentController extends BasicController {
 	}
 	
 	private void initializeSearch() {
-		payedAmount = 0.0; 
-		paymentDate = new Date();
-		registryBank = new RegistryBank();
+		setPayedAmount(0.0);
+		setPaymentDate(new Date() );
+		setRegistryBank(new RegistryBank());
 	}
 	
 	@SuppressWarnings("unused")
@@ -108,13 +108,13 @@ public class FinancePaymentController extends BasicController {
 		if(finance.getTotalAmount() != getPayedAmount()){
 			createNewFinance(finance, round(finance.getAmount() - payedAmount + finance.getExpenses(), 2));
 			finance.setAmount(round(payedAmount - finance.getExpenses(), 2));
-			FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.FRACTIONED, bundle.getString("aon_finance_tracking_fractioned"));
+			FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.FRACTIONED, bundle.getString("finance_tracking_fractioned"));
 		}
 		finance.setFinanceStatus(FinanceStatus.PAID);
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		financeBean.update(finance);
 		AccountEntry entry = recordFinance(finance);
-		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.RECORDED, bundle.getString("aon_finance_tracking_recorded") + " " + entry.getId());
+		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.RECORDED, bundle.getString("finance_tracking_recorded") + " " + entry.getId());
 		insertAccountEntryFinanceTracking(entry, tracking);
 		initializeSearch();
 	}
