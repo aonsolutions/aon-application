@@ -84,16 +84,16 @@
 						<aon:div>
 							<aon:outputLabel for="Finance_invoice_issueDate-From" styleClass="aon-form-date-label"
 								value="#{bundle.aon_date_from}:" />
-							<aon:selectInputDate id="Finance_invoice_issueDate-From" ajaxRendered="false"
-								value="#{financeSearch.invoiceIssueDateFrom}"
-								popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+							<aon:selectInputDate id="Finance_invoice_issueDate-From"
+								value="#{financeSearch.invoiceIssueDateFrom}" timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}">
 							</aon:selectInputDate>
 	
 							<aon:outputLabel for="Finance_invoice_issueDate-To" styleClass="aon-form-date-label"
 								value="#{bundle.aon_date_to}:" />
-							<aon:selectInputDate id="Finance_invoice_issueDate-To" ajaxRendered="false"
-								value="#{financeSearch.invoiceIssueDateTo}"
-								popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+							<aon:selectInputDate id="Finance_invoice_issueDate-To"
+								value="#{financeSearch.invoiceIssueDateTo}" timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}">
 							</aon:selectInputDate>
 						</aon:div>
 						
@@ -102,16 +102,16 @@
 						<aon:div>
 							<aon:outputLabel for="Finance_dueDate-From" styleClass="aon-form-date-label"
 								value="#{bundle.aon_date_from}:" />
-							<aon:selectInputDate id="Finance_dueDate-From" ajaxRendered="false"
-								value="#{financeSearch.dueDateFrom}"
-								popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+							<aon:selectInputDate id="Finance_dueDate-From"
+								value="#{financeSearch.dueDateFrom}" timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}">
 							</aon:selectInputDate>
 	
 							<aon:outputLabel for="Finance_dueDate-To" styleClass="aon-form-date-label"
 								value="#{bundle.aon_date_to}:" />
 							<aon:selectInputDate id="Finance_dueDate-To"
-								value="#{financeSearch.dueDateTo}"
-								popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+								value="#{financeSearch.dueDateTo}" timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}">
 							</aon:selectInputDate>
 						</aon:div>
 						
@@ -121,7 +121,7 @@
 							<aon:lookupInputText id="Bank_code" lookup="#{bankLookup}"
 								reRender="Bank_name"
 								value="#{financeSearch.bank.code}" size="5">
-									<aon:joinProperty alias="Bank_code" value="#{financeSearch.bank.code}" />
+								<aon:joinProperty alias="Bank_code" value="#{financeSearch.bank.code}" />
 							</aon:lookupInputText>
 							<aon:lookupButton 
 								windowTitle="#{financeBundle.finance_bank_selection}"
@@ -144,7 +144,7 @@
 							value="#{financeBundle.finance_pay_method}" />
 						<aon:selectOneMenu id="Finance_payMethod_id"
 							value="#{financeSearch.payMethod}">
-							<f:selectItem itemDisabled="true" itemLabel="-" value="#{null}"/>
+							<f:selectItem itemLabel="-" value="#{null}"/>
 							<f:selectItems value="#{financeCollections.payMethods}" />
 						</aon:selectOneMenu>
 	
@@ -153,7 +153,7 @@
 						<aon:selectOneMenu id="Finance_financeStatus"
 							valueChangeListener="#{finance.addEqualExpression}">
 							<aon:enumConverter enum="com.code.aon.finance.enumeration.FinanceStatus" />
-							<f:selectItem itemDisabled="true" itemLabel="-" itemValue=""/>
+							<f:selectItem itemLabel="-" itemValue=""/>
 							<f:selectItems value="#{financeCollections.financeStatuses}" />
 						</aon:selectOneMenu>
 	

@@ -6,7 +6,6 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.finance.controller.FinancePaymentController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -22,8 +21,6 @@ public class FinancePaymentControllerListener extends ControllerAdapter {
 			Expression pendingExpr = ExpressionUtilities.getEqualExpression(event.getController().getManagerBean().getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
 			Expression returnedExpr = ExpressionUtilities.getEqualExpression(event.getController().getManagerBean().getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.RETURNED);
 			criteria.addExpression(ExpressionUtilities.getOrExpression(pendingExpr, returnedExpr));
-			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.FINANCE_INVOICE_SERIES));
-			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException("Cannot add criteria before model Initialized", e);
 		}

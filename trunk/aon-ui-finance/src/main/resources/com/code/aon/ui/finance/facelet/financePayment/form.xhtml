@@ -21,8 +21,10 @@
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="payment" value="#{financeBundle.finance_to_pay}"
 						styleClass="aon-finding-toolbar-item aon-icon-search"
-						actionListener="#{financePayment.onPayment}" action="finance_payment_search"
-						accesskey="#{bundle.aon_key_search}" />
+						actionListener="#{financePayment.onEditSearch}" action="financePayment_search"
+						accesskey="#{bundle.aon_key_search}" >
+						<aon:actionListener method="#{financePayment.onPayment}" />
+					</aon:commandButton>
 				</ui:define>				
 				
 			</ui:decorate>
@@ -70,8 +72,7 @@
 						value="#{financePayment.paymentDate}"
 						timeZone="#{timeZoneController.timeZone}"
 						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
-					</aon:selectInputDate>						
-						
+					</aon:selectInputDate>											
 
 					<aon:outputLabel for="Finance_amount"
 						value="#{accountBundle.account_amount}" />
