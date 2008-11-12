@@ -379,66 +379,64 @@ color:#000;
  .aon-icon-zip{
 	background:transparent url(images/aon-icon/aon-icon-zip.png) scroll left center no-repeat;
   }
-  .aon-icon-sincronize{
+ .aon-icon-sincronize{
 	background:transparent url(images/aon-icon/aon-icon-sincronize.png) scroll left center no-repeat;
   }
-  .aon-icon-new-phone{
+ .aon-icon-new-phone{
 	background:transparent url(images/aon-icon/aon-icon-new-phone.png) scroll left center no-repeat;
   }
-  .aon-icon-predetermine{
+ .aon-icon-predetermine{
 	background:transparent url(images/aon-icon/aon-icon-predetermine.png) scroll left center no-repeat;	
  }
 /* otros */
 .aon-icon-agenda{
 	background:transparent url(images/aon-icon/aon-icon-agenda.png) scroll left center no-repeat;
- }
+	}
 .aon-icon-agenda-newContact{
 	background:transparent url(images/aon-icon/aon-icon-agenda-newContact.png) scroll left center no-repeat;
 	}
- .aon-icon-signature{
+.aon-icon-signature{
 	background:transparent url(images/aon-icon/aon-icon-signature.png) scroll left center no-repeat;
- }
- .aon-icon-newSignature{
+	}
+.aon-icon-newSignature{
 	background:transparent url(images/aon-icon/aon-icon-newSignature.png) scroll left center no-repeat;
- }
- .aon-icon-move{
-	 background:transparent url(images/aon-icon/aon-icon-move.png) scroll left center no-repeat;
-	 cursor:pointer;
-  }
-  .aon-icon-drop-down{
+	}
+.aon-icon-move{
+	background:transparent url(images/aon-icon/aon-icon-move.png) scroll left center no-repeat;
+	cursor:pointer;
+	}
+.aon-icon-drop-down{
 	background:transparent url(images/aon-icon/aon-icon-drop-down.png) scroll left center no-repeat;
  }
-   .aon-icon-drop-up{
+.aon-icon-drop-up{
 	background:transparent url(images/aon-icon/aon-icon-drop-up.png) scroll left center no-repeat;
- }
- .aon-icon-rowSelector{
+}
+.aon-icon-rowSelector{
 	background:transparent url(images/aon-icon/aon-icon-rowSelector.png) scroll left center no-repeat;	
- }
+}
 .aon-icon-rubber{
 	background:transparent url(images/aon-icon/aon-icon-rubber.png) scroll left center no-repeat;	
- }
-
- 
+}
  
  /*folder icons*/
 .aon-icon-folder{
 	background:transparent url(images/aon-icon/aon-icon-folder.png) scroll left center no-repeat;
- }
+}
 .aon-icon-newFolder{
 	background:transparent url(images/aon-icon/aon-icon-newFolder.png) scroll left center no-repeat;
- }
+}
 .aon-icon-deleteFolder{
 	background:transparent url(images/aon-icon/aon-icon-deleteFolder.png) scroll left center no-repeat;
- }
- .aon-icon-deleteFolder-disabled{
+}
+.aon-icon-deleteFolder-disabled{
 	background:transparent url(images/aon-icon/aon-icon-deleteFolder-disabled.png) scroll left center no-repeat;
- }
+}
 .aon-icon-renameFolder{
 	background:transparent url(images/aon-icon/aon-icon-renameFolder.png) scroll left center no-repeat;
- }
+}
 .aon-icon-renameFolder-disabled{
 	background:transparent url(images/aon-icon/aon-icon-renameFolder-disabled.png) scroll left center no-repeat;
- }
+}
 
 /* account */
 .aon-icon-mailAccount{
@@ -600,21 +598,21 @@ color:#000;
 .aon-icon-task-finish{
 	background:transparent url(images/aon-icon/aon-icon-task-finish.png) scroll left center no-repeat;
 	}
-	/*  document  */
-	.aon-icon-document-lock{
+/*  document  */
+.aon-icon-document-lock{
 	background:transparent url(images/aon-icon/aon-icon-document-lock.png) scroll left center no-repeat;
 	}
-	.aon-icon-document-unlock{
+.aon-icon-document-unlock{
 	background:transparent url(images/aon-icon/aon-icon-document-unlock.png) scroll left center no-repeat;
 	}
-	.aon-icon-version-chekin{
+.aon-icon-version-chekin{
 	background:transparent url(images/aon-icon/aon-icon-version-chekin.png) scroll left center no-repeat;
 	}
-	.aon-icon-version-chekout{
+.aon-icon-version-chekout{
 	background:transparent url(images/aon-icon/aon-icon-version-chekout.png) scroll left center no-repeat;
 	}
-	.aon-icon-tree-root{
-		background:transparent url(images/aon-icon/aon-icon-tree-root.png) scroll left center no-repeat;
+.aon-icon-tree-root{
+	background:transparent url(images/aon-icon/aon-icon-tree-root.png) scroll left center no-repeat;
 	}
 
 /*  report icon  */
@@ -1596,6 +1594,22 @@ color:#000;
 	width:auto;
 	overflow:visible;
  } 
+.aon-finding-toolbar-item-no-icon{
+ 	color:#000;
+ 	text-transform:uppercase; 	
+ 	font-size:0.8em;
+ 	font-weight:bold;
+ 	padding:1px 5px 1px 1px;
+ 	margin:0 0 0 5px;
+ 	border:0;
+ 	border-right:#808080 1px solid;
+ 	text-align:left;
+	cursor:pointer;
+	width:auto;
+	overflow:visible;
+	background:transparent;
+ } 
+ 
 /***************************/
 /******* SECTION  **********/
 /***************************/
