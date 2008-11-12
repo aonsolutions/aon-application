@@ -407,6 +407,10 @@
 			<value>finance</value>
 		</managed-property>		
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Finance_dueDate,Finance_invoice_series,Finance_invoice_number</value>
+		</managed-property>				
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>
@@ -538,7 +542,7 @@
 	<managed-bean>
 		<managed-bean-name>financeReturnSearch</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.event.FinanceReturnSearchListener
+			com.code.aon.ui.finance.event.FinanceSearchListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>			
@@ -559,12 +563,17 @@
 			<value>com.code.aon.finance.Finance</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>financePayment</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{financePaymentControllerListener}</value>
+				<value>#{financePaymentSearch}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -576,6 +585,14 @@
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>financePaymentSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.FinanceSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>			
 	
 	<!-- ************* FINANCE FRACTION ***************** -->
 	<managed-bean>
@@ -1112,20 +1129,7 @@
 		</navigation-case>
 	</navigation-rule>
 -->		
-	<!-- =================== FinancePayment ================= -->
-<!--
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>finance_payment_search</from-outcome>
-			<to-view-id>/_finance/facelet/finance/payment/search.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>finance_payment_payment</from-outcome>
-			<to-view-id>/_finance/facelet/finance/payment/payment.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
--->	
-  
+
   <!-- =================== Invoicing Group ========================== -->
 <!--
   <navigation-rule>
@@ -1326,4 +1330,20 @@
 		</navigation-case>
 	</navigation-rule>
 
+	<!-- =================== FinancePayment ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>financePayment_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/financePayment/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>financePayment_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/financePayment/list.xhtml</to-view-id>
+		</navigation-case>		
+		<navigation-case>
+			<from-outcome>financePayment_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/financePayment/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+  
 </faces-config>
