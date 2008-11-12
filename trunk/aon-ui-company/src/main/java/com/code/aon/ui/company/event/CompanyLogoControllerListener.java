@@ -115,12 +115,14 @@ public class CompanyLogoControllerListener extends CompanyLogoParentControllerLi
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		RegistryAttachment attach = obtainRegistryAttachment(((Company) event.getController()
 				.getTo()).getId());
-		CompanyController companyController = (CompanyController) event.getController();
-		AonFile f = new AonFile();
-		f.setData(attach.getData());
-		f.setFileName(attach.getDescription());
-		f.addAonFileListener(companyController);
-		companyController.setAonFile(f);
+		if (attach!=null) {
+			AonFile f = new AonFile();
+			CompanyController companyController = (CompanyController) event.getController();
+			f.setData(attach.getData());
+			f.setFileName(attach.getDescription());
+			f.addAonFileListener(companyController);
+			companyController.setAonFile(f);
+		}
 	}
 
 }
