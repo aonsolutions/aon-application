@@ -9,7 +9,7 @@
 
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 			<ui:param name="controller" value="#{provincia}" />
-			<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
+			<ui:param name="columnClasses" value="aon-editDataTable-iconColumn, aon-editDataTable-textColumn" />
 			<ui:param name="showDataScroller" value="#{(!comunidad.new) and (comunidad.to != null)}" />			
 			<ui:param name="skipResetButton" value="#{comunidad.new or (comunidad.to == null)}" />			
 			<ui:define name="columns">
@@ -34,11 +34,11 @@
 					<aon:outputText value="#{to.descripcion}" rendered="#{to!=provincia.to}" />
 					
 					<aon:inputText styleClass="aon-form-input-text " required="true"
-						rendered="#{to==provincia.to}" size="20"
+						rendered="#{to==provincia.to}" size="30"
 						value="#{provincia.to.descripcion}" maxlength="30" />
 					<f:facet name="footer">
 						<aon:inputText styleClass="aon-form-input-text" required="true"
-							rendered="#{provincia.new}" size="20"
+							rendered="#{provincia.new}" size="30"
 							value="#{provincia.to.descripcion}" maxlength="30" />
 					</f:facet>
 				</aon:column>
