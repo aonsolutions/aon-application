@@ -38,14 +38,16 @@
 												
 					<aon:outputLabel for="Finance_invoice_series"
 						value="#{financeBundle.finance_invoice}" />
-					<aon:panelGrid columns="2" cellpadding="0" cellspacing="0"> 
+					<aon:div> 
 						<aon:inputText id="Finance_invoice_series"
 							value="#{finance.to.invoice.series}"
 							disabled="true" size="4" maxlength="5" />
-						<aon:inputText id="Finance_invoice_number"
-							value="#{finance.to.invoice.number}"
-							disabled="true" size="7" />
-					</aon:panelGrid>
+						<aon:div layout="inline" styleClass="aon-padding-left">							
+							<aon:inputText id="Finance_invoice_number"
+								value="#{finance.to.invoice.number}"
+								disabled="true" size="7" />
+						</aon:div>
+					</aon:div>
 					
 					<aon:outputLabel for="Finance_invoice_issueDate"
 						value="#{financeBundle.finance_invoice_date}" />
@@ -69,10 +71,10 @@
 						value="#{financeBundle.finance_bank}" />
 					<aon:div >
 						<aon:selectOneMenu id="RegistryBank_Lookup_id"
-							value="#{finance.registryBankId}"
-							disabled="#{!finance.pending and !finance.returned}"
-							onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','rBankLookup','RegistryBank_Lookup_id','RegistryBank_id|RegistryBank_Lookup_id,RegistryBank_bankAccount|RegistryBank_Lookup_bankAccount');">
-							<f:selectItem itemDisabled="true" itemLabel ="-" itemValue="" />
+							value="#{finance.registryBank}" reRender="RegistryBank_Lookup_bankAccount"
+							valueChangeListener="#{finance.onRegistryBankChanged}"
+							disabled="#{!finance.pending and !finance.returned}">
+							<f:selectItem itemDisabled="true" itemLabel ="-" value="#{null}" />
 							<f:selectItems value="#{finance.registryBanks}" />
 						</aon:selectOneMenu>
 					</aon:div>
@@ -98,21 +100,21 @@
 						value="#{accountBundle.account_amount}" />
 					<aon:inputText id="Finance_amount"
 						value="#{finance.to.amount}" size="10" disabled="true">
-						<f:convertNumber pattern="#,##0.00" />
+						<f:convertNumber pattern="#{financeBundle.finance_money_pattern}" />
 					</aon:inputText>	
 
 					<aon:outputLabel for="Finance_expenses"
 						value="#{accountBundle.account_expenses}" />
 					<aon:inputText id="Finance_expenses"
 						value="#{finance.to.expenses}" size="10" disabled="#{!finance.pending and !finance.returned}">
-						<f:convertNumber pattern="#,##0.00" />
+						<f:convertNumber pattern="#{financeBundle.finance_money_pattern}" />
 					</aon:inputText>
 					
 					<aon:outputLabel for="Finance_total"
 						value="#{financeBundle.finance_total}" />
 					<aon:inputText id="Finance_total"
 						value="#{finance.to.totalAmount}" size="10" disabled="true">
-						<f:convertNumber pattern="#,##0.00" />
+						<f:convertNumber pattern="#{financeBundle.finance_money_pattern}" />
 					</aon:inputText>	
 					
 					<aon:outputLabel for="Finance_financeStatus"
@@ -173,7 +175,7 @@
 										<aon:outputText value="#{accountBundle.account_amount}" />
 									</f:facet>
 									<aon:outputText value="#{to.amount}">
-										<f:convertNumber pattern="#,##0.00" />
+										<f:convertNumber pattern="#{financeBundle.finance_money_pattern}" />
 									</aon:outputText>	
 								</aon:column>
 								

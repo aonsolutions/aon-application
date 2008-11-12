@@ -14,6 +14,7 @@
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{financeBundle.finance_finance_module}" />
 				<ui:param name="controller" value="#{financeReturn}" />
+				<ui:param name="skipResetButton" value="true" />
 			</ui:include>
 
 			<aon:div layout="none" id="searchContent">
@@ -24,16 +25,16 @@
 
 						<aon:outputLabel for="Finance_payment"
 							value="#{financeBundle.finance_payment} / #{financeBundle.finance_charge}" />
-						<aon:selectOneRadio id="Finance_payment" value="#{financeReturn.payment}"
+						<aon:selectOneRadio id="Finance_payment" value="#{financeReturnSearch.payment}"
 							reRender="searchContent">
 							<f:selectItem itemLabel="#{financeBundle.finance_payment}" itemValue="#{true}" />
 							<f:selectItem itemLabel="#{financeBundle.finance_charge}" itemValue="#{false}" />
 						</aon:selectOneRadio>						
 						
 						<aon:outputLabel for="Customer_id"
-							rendered="#{!financeReturn.payment}"
+							rendered="#{!financeReturnSearch.payment}"
 							value="#{customerBundle.customer_customer}" />
-						<aon:div styleClass="aon-lookup" rendered="#{!financeReturn.payment}">
+						<aon:div styleClass="aon-lookup" rendered="#{!financeReturnSearch.payment}">
 							<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
 								reRender="Customer_full_name"
 								value="#{financeReturnSearch.customer.id}" size="5" />
@@ -49,9 +50,9 @@
 						</aon:div>
 						
 						<aon:outputLabel for="Supplier_id"
-							rendered="#{financeReturn.payment}"
+							rendered="#{financeReturnSearch.payment}"
 							value="#{supplierBundle.supplier_supplier}" />
-						<aon:div styleClass="aon-lookup" rendered="#{financeReturn.payment}">
+						<aon:div styleClass="aon-lookup" rendered="#{financeReturnSearch.payment}">
 							<aon:lookupInputText id="Supplier_id" lookup="#{supplierLookup}"
 								reRender="Supplier_full_name"
 								value="#{financeReturnSearch.supplier.id}" size="5" />
@@ -71,8 +72,10 @@
 						<aon:div>
 							<aon:inputText id="Finance_invoice_series"
 								valueChangeListener="#{financeReturn.addExpression}" size="4" />
-							<aon:inputText id="Finance_invoice_number"
-								valueChangeListener="#{financeReturn.addExpression}" size="7" />
+							<aon:div layout="inline" styleClass="aon-padding-left">								
+								<aon:inputText id="Finance_invoice_number"
+									valueChangeListener="#{financeReturn.addExpression}" size="7" />
+							</aon:div>
 						</aon:div>
 						
 						<aon:outputLabel 
