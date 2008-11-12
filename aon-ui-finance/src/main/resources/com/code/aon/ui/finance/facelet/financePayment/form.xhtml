@@ -20,7 +20,7 @@
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="payment" value="#{financeBundle.finance_to_pay}"
-						styleClass="aon-finding-toolbar-item aon-icon-search"
+						styleClass="aon-finding-toolbar-item-no-icon"
 						actionListener="#{financePayment.onEditSearch}" action="financePayment_search"
 						accesskey="#{bundle.aon_key_search}" >
 						<aon:actionListener method="#{financePayment.onPayment}" />
@@ -107,7 +107,7 @@
 					<aon:selectOneMenu id="RegistryBank_Lookup_id"
 						value="#{financePayment.registryBank}"
 						reRender="RegistryBank_Lookup_bankAccount">
-						<f:selectItem itemDisabled="true" itemLabel="-" value="#{null}"  />
+						<f:selectItem itemLabel="-" value="#{null}"  />
 						<f:selectItems value="#{financeCollections.companyBanks}" />
 					</aon:selectOneMenu>
 

@@ -78,20 +78,5 @@ public class FinanceControllerListener extends ControllerAdapter{
 		}
 		return null;
 	}
-	
-	@SuppressWarnings("unchecked")
-	private RegistryBank obtainRegistryBank(Integer registryBankId) {
-		try {
-			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rBankBean.getFieldName(IFinanceAlias.REGISTRY_BANK_ID), registryBankId);
-			Iterator iter = rBankBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				return (RegistryBank)iter.next();
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining registryBank with id= " + registryBankId, e);
-		}
-		return null;
-	}
+
 }

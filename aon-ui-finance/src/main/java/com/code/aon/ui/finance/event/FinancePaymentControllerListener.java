@@ -29,7 +29,7 @@ public class FinancePaymentControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		FinancePaymentController financePaymentController = (FinancePaymentController)event.getController();
-		financePaymentController.setPayedAmount(((Finance)financePaymentController.getTo()).getTotalAmount());
+		financePaymentController.init(((Finance)financePaymentController.getTo()).getTotalAmount());
 	}
 
 }
