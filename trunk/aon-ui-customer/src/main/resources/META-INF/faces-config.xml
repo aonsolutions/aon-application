@@ -42,6 +42,10 @@
 			<value>com.code.aon.customer.Customer</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Customer_registry_surname,Customer_registry_name</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<value>#{customerListeners}</value>
 		</managed-property>
@@ -55,19 +59,12 @@
 			<value-class>
 				com.code.aon.ui.form.event.IControllerListener
 			</value-class>
-				<value>#{customerControllerListener}</value>
 				<value>#{customerAddressListener}</value>
 				<value>#{customerMediaListener}</value>
 				<value>#{customerObservationListener}</value>
 		</list-entries>
 	</managed-bean>
 
-	<managed-bean>
-		<managed-bean-name>customerControllerListener</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.customer.event.CustomerControllerListener 
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>customerObservationListener</managed-bean-name>
 		<managed-bean-class> com.code.aon.ui.customer.event.CustomerObservationListener 
