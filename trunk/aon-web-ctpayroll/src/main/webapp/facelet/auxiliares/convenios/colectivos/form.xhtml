@@ -50,18 +50,36 @@
 				<!-- rich:tabPanel switchType="client" selectedTab="#{(pagaext.to!=null)?'niveles':'pagas'}"-->
 				<rich:tabPanel switchType="ajax" >
 					<rich:tab id="niveles" label="#{appBundle.aon_payroll_auxiliares_convenios__niveles}">
+						
 						<aon:commandButton id="categoriasButtom" title="[#{appBundle.aon_payroll_auxiliares_convenios__categoria}]"
-							rendered="#{!convenio.new}" immediate="true" disabled="#{convenio.new}"
-							action="categoria_form" 
+							rendered="#{!convenio.new}" 
+							action="categoria_form" value="FROGAKOA"
 							styleClass="aon-finding-toolbar-item aon-icon-category"
-							accesskey="#{bundle.aon_key_search}" />				
-						<aon:commandButton id="percepcionesButtom" title="[#{appBundle.aon_payroll_auxiliares_convenios__percepciones}]"
-							rendered="#{!convenio.new}" immediate="true" disabled="#{convenio.new}"
-							action="percepcion_form" 
-							styleClass="aon-finding-toolbar-item aon-icon-notes"
-							accesskey="#{bundle.aon_key_search}" />
+							actionListener="#{categoria.onReset}" />
 							
-						<aon:div id="nivelDiv" style="width:15%; margin-right:5px; float: left;">	
+							
+							
+						<aon:commandButton id="categoriasButtom2" title="[#{appBundle.aon_payroll_auxiliares_convenios__categoria}]"
+							rendered="#{!convenio.new}" 
+							action="categoria_form" value="CATEGORIAS"
+							styleClass="aon-finding-toolbar-item aon-icon-category" >
+							<aon:actionListener method="#{categoria.onReset}" />
+						</aon:commandButton>
+										
+						<aon:commandButton id="percepcionesButtom" title="[#{appBundle.aon_payroll_auxiliares_convenios__percepciones}]"
+							rendered="#{!convenio.new}"  disabled="#{convenio.new}"
+							action="percepcion_form" value="FROGAKOA" 
+							styleClass="aon-finding-toolbar-item aon-icon-notes" >
+							<!-- aon:actionListener method="#{(percepcion.to==null)?(percepcion.onReset):(null)}" /-->
+							<aon:actionListener method="#{percepcion.onReset}" />
+						</aon:commandButton>
+						
+						<aon:commandButton id="percepcionesButtom2" title="[#{appBundle.aon_payroll_auxiliares_convenios__percepciones}]"
+							rendered="#{!convenio.new}"  disabled="#{convenio.new}"
+							action="percepcion_form" value="PERCEPCIONES" 
+							styleClass="aon-finding-toolbar-item aon-icon-notes" />
+						
+						<aon:div id="nivelDiv" style="width:20%; margin-right:5px; float: left;">	
 							<aon:div styleClass="aon-form-group">
 								<aon:div styleClass="aon-form-group-title">
 									<aon:div styleClass="aon-form-group-title-internal">
