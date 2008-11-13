@@ -27,7 +27,10 @@ public class EnumConverter extends EnumLocaleConverter implements StateHolder {
 	
 	@Override
 	protected Class getEnumClass(FacesContext ctx, UIComponent comp) {
-		return this.enumClass;
+		if ( this.enumClass != null ) {
+			return this.enumClass;
+		}
+		return super.getEnumClass(ctx, comp);
 	}	
 	
     // ----------------------------------------------------- StateHolder Methods
