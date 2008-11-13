@@ -2226,11 +2226,11 @@
 			<property-name>aliasMap</property-name>
 			<map-entries>
 				<map-entry>
-					<key>Percniv_nivel_id_cdg</key>
+					<key>Percepcion_nivel_id_cdg</key>
 					<value>id.cdg</value>
 				</map-entry>
 				<map-entry>
-					<key>Percniv_convenio_cdg</key>
+					<key>Percepcion_convenio_cdg</key>
 					<value>convenio.cdg</value>
 				</map-entry>
 			</map-entries>
@@ -2315,6 +2315,23 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{categoriaControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>categoriaControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.CategoriaControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>
@@ -2327,7 +2344,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.auxiliares.convenios.Percniv</value>
+			<value>com.code.aon.payroll.auxiliares.convenios.Percepcion</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -2335,7 +2352,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Percniv_id_cdg</value>
+			<value>Percepcion_id_cdg</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
@@ -2354,6 +2371,23 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{percepcionControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>percepcionControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.PercepcionControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************* ENTIDADES Y SUCURSALES ***************** -->

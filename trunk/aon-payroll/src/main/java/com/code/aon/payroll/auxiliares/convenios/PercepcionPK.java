@@ -9,7 +9,7 @@ import javax.persistence.Embeddable;
  * Clave primaria de Categoria.
  */
 @Embeddable
-public class PercnivPK implements Serializable {
+public class PercepcionPK implements Serializable {
 
 	private String cdg;
 	private String nivel;
@@ -62,9 +62,9 @@ public class PercnivPK implements Serializable {
 			return true;
 		if ((other == null))
 			return false;
-		if (!(other instanceof PercnivPK))
+		if (!(other instanceof PercepcionPK))
 			return false;
-		PercnivPK castOther = (PercnivPK) other;
+		PercepcionPK castOther = (PercepcionPK) other;
 
 		return ((this.getCdg() == castOther.getCdg()) || (this.getCdg() != null
 				&& castOther.getCdg() != null && this.getCdg().equals(

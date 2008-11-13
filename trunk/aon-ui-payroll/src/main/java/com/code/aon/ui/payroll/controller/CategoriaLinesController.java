@@ -1,18 +1,14 @@
 package com.code.aon.ui.payroll.controller;
 
-import java.util.Date;
-
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.payroll.auxiliares.convenios.Convenio;
+import com.code.aon.payroll.auxiliares.convenios.Categoria;
 import com.code.aon.payroll.cotizacion.Base;
 import com.code.aon.payroll.cotizacion.Epigrafe;
 import com.code.aon.payroll.dao.IPayrollAlias;
-import com.code.aon.payroll.geograficas.Provincia;
-import com.code.aon.payroll.tipos.Tipovia;
 import com.code.aon.ui.form.LinesController;
 
 public class CategoriaLinesController extends LinesController {
@@ -60,6 +56,28 @@ public class CategoriaLinesController extends LinesController {
 		}
 		super.onSearch(event);
 	}
+	
+	@Override
+	public void onAccept(ActionEvent event) {
+		System.out.println("CATEGORIA  -->  onAccept");
+		
+		
+		if(getTo()!=null){
+			System.out.println("TO con algo");
+			//System.out.println(((Categoria)getTo()).getConvenio().getDescription());
+			//System.out.println(((Categoria)getTo()).getNivel());
+			//System.out.println(((Categoria)getTo()).getCno());
+		} else 
+			System.out.println("TO vacio");
+	}
+	
+	@Override
+	public void onReset(ActionEvent event) {
+		// TODO Auto-generated method stub
+		System.out.println("CATEGORIA  -->  onReset");
+		super.onReset(event);
+	}
+	
 
 
 
