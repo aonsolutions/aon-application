@@ -32,7 +32,7 @@
 	<!--  ********* SUPPLIER ***************** -->
 	<managed-bean>
 		<managed-bean-name>supplier</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.form.BasicController </managed-bean-class>
+		<managed-bean-class> com.code.aon.ui.form.BasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -49,7 +49,7 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class> com.code.aon.ui.form.event.IControllerListener </value-class>
+				<value-class>com.code.aon.ui.form.event.IControllerListener </value-class>
 				<value>#{invoiceRegistryVetoListener}</value>
 				<value>#{supplierScopeListener}</value>
 			</list-entries>
@@ -66,6 +66,28 @@
 		</managed-property>
 	</managed-bean>
 
+	<!-- ************ SUPPLIER LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>supplierLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>supplierLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.supplier.Supplier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/supplier/facelet/lookup/supplier/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/supplier/facelet/lookup/supplier/search.xhtml</value>
+		</managed-property>				
+	</managed-bean>
 
   <!--  ********* NAVIGATION ***************** -->
 	<navigation-rule>
