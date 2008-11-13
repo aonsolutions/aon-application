@@ -25,124 +25,56 @@ import com.code.aon.ui.util.AonUtil;
 
 public class TrialBalanceController implements ICollectionProvider {
 
-	private Period period;
-	private Date fromDate;
-	private Date toDate;
-	private Date date;
-	private String account;
-	private int level;
-	private boolean lowerLevelVisible;
-	private boolean zeroSumVisible;
-	private int rowsPerPage;
-
 	private static final String STATEMENT_CONTROLLER_NAME = "statement";
 	private static final String STATEMENT_DETAIL_CONTROLLER_NAME = "statementDetail";
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 
-	private SummaryProviderParameters summaryProviderParameters;
+	private SummaryProviderParameters parameters;
 	private SummaryCollection summaryCollection;
 	private DataModel model;
 
-	public Period getPeriod() {
-		return period;
+	public SummaryProviderParameters getParameters() {
+		if (parameters == null) {
+			SummaryProviderParameters p = new SummaryProviderParameters();
+			p.setPeriod(null);
+			p.setFromDate(null);
+			p.setToDate(null);
+			p.setDate(new Date());
+			p.setAccountExpression(null);
+			p.setLowerLevelVisible(false);
+			p.setZeroSumVisible(false);
+			p.setRowsPerPage(20);
+			p.setAccountLevel(4);
+			setParameters(p);
+		}
+		return parameters;
 	}
 
-	public void setPeriod(Period period) {
-		this.period = period;
+	public void setParameters(SummaryProviderParameters parameters) {
+		this.parameters = parameters;
 	}
 
-	public Date getFromDate() {
-		return fromDate;
-	}
-
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
-
-	public Date getToDate() {
-		return toDate;
-	}
-
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	public String getAccount() {
-		return account;
-	}
-
-	public void setAccount(String account) {
-		this.account = account;
-	}
-
-	public boolean isLowerLevelVisible() {
-		return lowerLevelVisible;
-	}
-
-	public void setLowerLevelVisible(boolean lowerLevelVisible) {
-		this.lowerLevelVisible = lowerLevelVisible;
-	}
-
-	public boolean isZeroSumVisible() {
-		return zeroSumVisible;
-	}
-
-	public void setZeroSumVisible(boolean zeroSumVisible) {
-		this.zeroSumVisible = zeroSumVisible;
-	}
-
-	public int getLevel() {
-		return level;
-	}
-
-	public void setLevel(int level) {
-		this.level = level;
-	}
 
 	public void onReset(ActionEvent event) {
-		setPeriod(null);
-		setFromDate(null);
-		setToDate(null);
-		setDate(new Date());
-		setAccount(null);
-		setLowerLevelVisible(false);
-		setZeroSumVisible(false);
-		setRowsPerPage(20);
-		setLevel(5);
+		setParameters(null);
+		setSummaryCollection(null);
 	}
 
 	public void onSearch(ActionEvent event) {
 		try {
-			setSummaryProviderParameters(new SummaryProviderParameters());
-			summaryProviderParameters.setAccountExpression(getAccount());
-			summaryProviderParameters.setAccountLevel(getLevel());
-			summaryProviderParameters.setDate(getDate());
-			if (getPeriod() == null) {
-				setPeriod(new Period());
+			if (getParameters().getPeriod() == null) {
+				getParameters().setPeriod(new Period());
 			}
-			if (getFromDate() == null && period.getInitiationDate() != null) {
-				setFromDate(period.getInitiationDate());
+			if (getParameters().getFromDate() == null && getParameters().getPeriod().getInitiationDate() != null) {
+				getParameters().setFromDate(getParameters().getPeriod().getInitiationDate());
 			}
-			if (getToDate() == null && period.getDeadline() != null) {
-				setToDate(period.getDeadline());
+			if (getParameters().getToDate() == null && getParameters().getPeriod().getDeadline() != null) {
+				getParameters().setToDate(getParameters().getPeriod().getDeadline());
 			}
-			summaryProviderParameters.setFromDate(getFromDate());
-			summaryProviderParameters.setToDate(getToDate());
-			summaryProviderParameters.setPeriod(period);
-			summaryProviderParameters.setLowerLevelVisible(isLowerLevelVisible());
-			summaryProviderParameters.setZeroSumVisible(isZeroSumVisible());
 			setSummaryCollection(null);
 			setModel(new ListDataModel(getSummaryCollection().getSummaryList()));
-			if (getLevel() == 5) {
-				setRowsPerPage(20);
+			if (getParameters().getAccountLevel() == 5) {
+				getParameters().setRowsPerPage(20);
 			}
 			if (getSummaryCollection().getSummaryList().size() == 1) {
 				getModel().setRowIndex(0);
@@ -153,18 +85,10 @@ public class TrialBalanceController implements ICollectionProvider {
 		}
 	}
 
-	public SummaryProviderParameters getSummaryProviderParameters() {
-		return summaryProviderParameters;
-	}
-
-	public void setSummaryProviderParameters(SummaryProviderParameters summaryProviderParameters) {
-		this.summaryProviderParameters = summaryProviderParameters;
-	}
-
 	public SummaryCollection getSummaryCollection() throws ManagerBeanException {
 		if (summaryCollection == null) {
 			SummaryProvider sp = new SummaryProvider();
-			setSummaryCollection(sp.getSummaryCollection(getSummaryProviderParameters()));
+			setSummaryCollection(sp.getSummaryCollection(getParameters()));
 		}
 		return summaryCollection;
 	}
@@ -184,14 +108,6 @@ public class TrialBalanceController implements ICollectionProvider {
 		this.model = model;
 	}
 
-	public int getRowsPerPage() {
-		return rowsPerPage;
-	}
-
-	public void setRowsPerPage(int rowsPerPage) {
-		this.rowsPerPage = rowsPerPage;
-	}
-
 	public void onStatement(ActionEvent event) {
 		try {
 			Summary summary = (Summary) getModel().getRowData();
@@ -203,7 +119,7 @@ public class TrialBalanceController implements ICollectionProvider {
 			criteria.addExpression(alias, summary.getId() + "*");
 			alias = c.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED);
 			criteria.addExpression(ExpressionUtilities.getEqualExpression(alias, true));
-			c.setParams(getSummaryProviderParameters());
+			c.setParams(getParameters());
 			c.onSearch(event);
 			if (c.getModel().getRowCount() > 0) {
 				c.getModel().setRowIndex(0);

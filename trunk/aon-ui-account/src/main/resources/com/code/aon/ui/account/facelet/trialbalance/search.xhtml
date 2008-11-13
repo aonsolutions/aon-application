@@ -27,12 +27,12 @@
 					<aon:outputLabel for="reportDate"
 						value="#{accountBundle.account_report_date}" />
 					<aon:selectInputDate size="8" id="reportDate"
-						value="#{trialBalance.date}" enableManualInput="true"
+						value="#{trialBalance.parameters.date}" enableManualInput="true"
 						datePattern="dd/MM/yyyy" timeZone="#{timeZoneController.timeZone}" />
 
 					<aon:outputLabel for="Account_id"
 						value="#{accountBundle.account_account}" />
-					<aon:inputText id="Account_id" value="#{trialBalance.account}"
+					<aon:inputText id="Account_id" value="#{trialBalance.parameters.accountExpression}"
 						size="14" />
 
 					<aon:outputLabel
@@ -40,7 +40,7 @@
 						value="#{accountBundle.account_period}" />
 					<aon:selectOneMenu required="true"
 						id="AccountEntryDetail_accountEntry_accountPeriod"
-						value="#{trialBalance.period}">
+						value="#{trialBalance.parameters.period}">
 						<f:selectItems value="#{accountCollections.accountPeriods}" />
 					</aon:selectOneMenu>
 
@@ -50,7 +50,7 @@
 					<aon:panelGrid columns="3">
 						<aon:selectInputDate size="8"
 							id="AccountEntryDetail_accountEntry_entryDate-From"
-							value="#{trialBalance.fromDate}" enableManualInput="true"
+							value="#{trialBalance.parameters.fromDate}" enableManualInput="true"
 							datePattern="dd/MM/yyyy"
 							timeZone="#{timeZoneController.timeZone}" />
 
@@ -59,7 +59,7 @@
 							value="#{bundle.aon_date_to}" />
 						<aon:selectInputDate size="8"
 							id="AccountEntryDetail_accountEntry_entryDate-To"
-							value="#{trialBalance.toDate}" enableManualInput="true"
+							value="#{trialBalance.parameters.toDate}" enableManualInput="true"
 							datePattern="dd/MM/yyyy"
 							timeZone="#{timeZoneController.timeZone}" />
 					</aon:panelGrid>
@@ -70,7 +70,7 @@
 						<aon:selectOneRadio id="Account_level"
 							ajaxSingle="true"
 							reRender="AccountEntryDetail_rowsPerPage_label, AccountEntryDetail_rowsPerPage"
-							value="#{trialBalance.level}">
+							value="#{trialBalance.parameters.accountLevel}">
 							<f:selectItem itemLabel="1" itemValue="1" />
 							<f:selectItem itemLabel="2"  itemValue="2" />
 							<f:selectItem itemLabel="3" itemValue="3" />
@@ -82,7 +82,7 @@
 					<aon:outputText value="&#160;" />
 					<aon:div>
 						<aon:selectBooleanCheckbox id="Account_lower_level"
-							value="#{trialBalance.lowerLevelVisible}" />
+							value="#{trialBalance.parameters.lowerLevelVisible}" />
 						<aon:outputLabel for="Account_lower_level"
 							value="#{accountBundle.account_lower_level}" />
 					</aon:div>
@@ -90,7 +90,7 @@
 					<aon:outputText value="&#160;" />
 					<aon:div>
 						<aon:selectBooleanCheckbox id="Account_zero_sum"
-							value="#{trialBalance.zeroSumVisible}" />
+							value="#{trialBalance.parameters.zeroSumVisible}" />
 						<aon:outputLabel for="Account_zero_sum"
 							value="#{accountBundle.account_zero_account}" />
 					</aon:div>
@@ -100,13 +100,23 @@
 						for="AccountEntryDetail_rowsPerPage"
 						value="#{accountBundle.account_lines_to_show}" />
 					<aon:selectOneMenu id="AccountEntryDetail_rowsPerPage"
-						value="#{trialBalance.rowsPerPage}"
-						disabled="#{trialBalance.level == 5}">
+						value="#{trialBalance.parameters.rowsPerPage}"
+						disabled="#{trialBalance.parameters.accountLevel == 5}">
 						<f:selectItem itemLabel="10" itemValue="10" />
 						<f:selectItem itemLabel="20" itemValue="20" />
 						<f:selectItem itemLabel="30" itemValue="30" />
 						<f:selectItem itemLabel="40" itemValue="40" />
 						<f:selectItem itemLabel="#{bundle.aon_common_all}" itemValue="0" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel
+						for="AccountEntryDetail_accountEntry_securityLevel"
+						value="#{bundle.aon_security_level}" />
+					<aon:selectOneMenu
+						id="AccountEntryDetail_accountEntry_securityLevel"
+						value="#{trialBalance.parameters.securityLevel}">
+						<f:selectItem itemValue="" itemLabel=" " />
+						<f:selectItems value="#{commonCollections.securityLevels}" />
 					</aon:selectOneMenu>
 
 				</ui:define>

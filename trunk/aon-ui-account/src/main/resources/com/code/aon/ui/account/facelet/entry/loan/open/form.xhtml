@@ -17,11 +17,11 @@
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton value="#{bundle.aon_save}"
 						accesskey="#{bundle.aon_key_save}"
-						actionListener="#{loanEntry.accept}" action="account_entry_form"
+						actionListener="#{loanEntry.accept}" action="accountEntry_form"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;" />
 					<aon:commandButton id="remove" value="#{bundle.aon_remove}"
-						accesskey="#{bundle.aon_key_remove}" action="account_entry_search"
+						accesskey="#{bundle.aon_key_remove}" action="accountEntry_search"
 						actionListener="#{loanEntry.onRemove}"
 						rendered="#{!loanEntry.new}" immediate="true"
 						styleClass="aon-finding-toolbar-item aon-icon-delete"

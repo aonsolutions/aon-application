@@ -20,7 +20,7 @@
 
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-						accesskey="#{bundle.aon_key_new}" action="account_entry_form"
+						accesskey="#{bundle.aon_key_new}" action="accountEntry_form"
 						actionListener="#{accountEntry.onReset}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"
 						rendered="#{!accountEntry.new}" />
@@ -32,7 +32,7 @@
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;" />
 					<aon:commandButton id="remove" value="#{bundle.aon_remove}"
-						accesskey="#{bundle.aon_key_remove}" action="account_entry_form"
+						accesskey="#{bundle.aon_key_remove}" action="accountEntry_form"
 						actionListener="#{accountEntry.onRemove}"
 						rendered="#{accountEntry.model.rowCount > 0 and !accountEntry.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-delete"
@@ -42,7 +42,7 @@
 disabled="#{!accountEntry.manual}" 
  -->
 					<aon:commandButton id="search" value="#{bundle.aon_search}"
-						accesskey="#{bundle.aon_key_search}" action="account_entry_search"
+						accesskey="#{bundle.aon_key_search}" action="accountEntry_search"
 						actionListener="#{accountEntry.onEditSearch}"
 						styleClass="aon-finding-toolbar-item aon-icon-search"
 						immediate="true" />
@@ -53,7 +53,7 @@ disabled="#{!accountEntry.manual}"
 						styleClass="aon-finding-toolbar-item aon-icon-refresh"
 						immediate="true" />
 
-					<aon:spin controller="#{accountEntry}" action="account_entry_form"
+					<aon:spin controller="#{accountEntry}" action="accountEntry_form"
 						rendered="#{!accountEntry.new}" />
 
 				</ui:define>

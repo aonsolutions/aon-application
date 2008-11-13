@@ -32,8 +32,8 @@
 				</f:facet>
 				<f:facet name="footer">
 					<aon:div>
-						<aon:commandButton id="newFinance" 
-							value="" reRender="FinancesData"
+						<aon:commandButton id="newFinance" value=""
+							reRender="FinancesData"
 							styleClass="aon-editDataTable-button aon-icon-new"
 							title="#{accountBundle.aon_newLine}"
 							disabled="#{!invoiceEntry.accountSource}"
@@ -55,14 +55,14 @@
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
-				
-				<aon:selectInputDate size="8" id="Account_Finance_DueDate-Edit"
+
+				<aon:selectInputDate id="Account_Finance_DueDate-Edit"
 					rendered="#{financeTo==invoiceEntry.currentFinance}"
 					value="#{invoiceEntry.currentFinance.dueDate}"
 					enableManualInput="true" datePattern="dd/MM/yyyy"
 					timeZone="#{timeZoneController.timeZone}" />
 				<f:facet name="footer">
-					<aon:selectInputDate size="8" id="Account_Finance_DueDate-New"
+					<aon:selectInputDate id="Account_Finance_DueDate-New"
 						rendered="#{invoiceEntry.newFinance}"
 						value="#{invoiceEntry.currentFinance.dueDate}"
 						enableManualInput="true" datePattern="dd/MM/yyyy"
@@ -107,11 +107,12 @@
 					<ui:param name="renderedAttr"
 						value="#{financeTo==invoiceEntry.currentFinance and invoiceEntry.sales}" />
 					<ui:param name="disabled" value="#{false}" />
-					<ui:param name="reRenderAttr" value="none" />
-					<ui:param name="entity"
-						value="#{invoiceEntry.currentFinance.bank}" />
+						<ui:param name="reRenderAttr" value="Finance_bankAccount_entity-EDIT" />
+					<ui:param name="entity" value="#{invoiceEntry.currentFinance.bank}" />
 					<ui:param name="ELExpression"
 						value="invoiceEntry.currentFinance.bank" />
+					<ui:param name="onLookupELExpression"
+						value="invoiceEntry.currentFinance.bankAccount.entity=code" />
 				</ui:include>
 				<f:facet name="footer">
 					<ui:include
@@ -121,14 +122,15 @@
 						<ui:param name="required" value="#{true}" />
 						<ui:param name="size" value="5" />
 						<ui:param name="renderDescription" value="#{true}" />
-						<ui:param name="renderedAttr"
-							value="#{invoiceEntry.newFinance}" />
+						<ui:param name="renderedAttr" value="#{invoiceEntry.newFinance}" />
 						<ui:param name="disabled" value="#{false}" />
-						<ui:param name="reRenderAttr" value="none" />
+						<ui:param name="reRenderAttr" value="Finance_bankAccount_entity-NEW" />
 						<ui:param name="entity"
 							value="#{invoiceEntry.currentFinance.bank}" />
 						<ui:param name="ELExpression"
 							value="invoiceEntry.currentFinance.bank" />
+					<ui:param name="onLookupELExpression"
+						value="invoiceEntry.currentFinance.bankAccount.entity=code" />
 					</ui:include>
 				</f:facet>
 			</aon:column>
@@ -137,19 +139,51 @@
 				<f:facet name="header">
 					<aon:outputText value="#{financeBundle.finance_bank_account}" />
 				</f:facet>
-				<aon:outputText id="RegistryBank_Lookup_bankAccount"
-					rendered="#{financeTo!=invoiceEntry.currentFinance}"
+				<aon:outputText rendered="#{financeTo!=invoiceEntry.currentFinance}"
 					value="#{financeTo.bankAccount}">
 				</aon:outputText>
-				<aon:inputText id="RegistryBank_Lookup_bankAccount-Edit"
-					rendered="#{financeTo==invoiceEntry.currentFinance}"
-					value="#{invoiceEntry.currentFinance.bankAccount}"
-					required="true" />
+				<aon:div style="text-align:right;"
+					rendered="#{financeTo==invoiceEntry.currentFinance}">
+					<aon:inputText id="Finance_bankAccount_entity-EDIT"
+						value="#{invoiceEntry.currentFinance.bankAccount.entity}"
+						disabled="true" size="4" maxlength="4" />
+					<aon:inputText
+						value="#{invoiceEntry.currentFinance.bankAccount.office}"
+						required="true" size="4" maxlength="4">
+						<f:validateLength minimum="4" maximum="4" />
+					</aon:inputText>
+					<aon:inputText
+						value="#{invoiceEntry.currentFinance.bankAccount.control}"
+						required="true" size="2" maxlength="2">
+						<f:validateLength minimum="2" maximum="2" />
+					</aon:inputText>
+					<aon:inputText
+						value="#{invoiceEntry.currentFinance.bankAccount.account}"
+						required="true" size="10" maxlength="10">
+						<f:validateLength minimum="10" maximum="10" />
+					</aon:inputText>
+				</aon:div>
+
 				<f:facet name="footer">
-					<aon:div style="text-align:right;">
-						<aon:inputText id="RegistryBank_Lookup_bankAccount-New"
-							rendered="#{invoiceEntry.newFinance}"
-							value="#{invoiceEntry.currentFinance.bankAccount}">
+					<aon:div style="text-align:right;"
+						rendered="#{invoiceEntry.newFinance}">
+						<aon:inputText id="Finance_bankAccount_entity-NEW"
+							value="#{invoiceEntry.currentFinance.bankAccount.entity}"
+							disabled="true" size="4" maxlength="4" />
+						<aon:inputText
+							value="#{invoiceEntry.currentFinance.bankAccount.office}"
+							required="true" size="4" maxlength="4">
+							<f:validateLength minimum="4" maximum="4" />
+						</aon:inputText>
+						<aon:inputText
+							value="#{invoiceEntry.currentFinance.bankAccount.control}"
+							required="true" size="2" maxlength="2">
+							<f:validateLength minimum="2" maximum="2" />
+						</aon:inputText>
+						<aon:inputText
+							value="#{invoiceEntry.currentFinance.bankAccount.account}"
+							required="true" size="10" maxlength="10">
+							<f:validateLength minimum="10" maximum="10" />
 						</aon:inputText>
 					</aon:div>
 				</f:facet>
@@ -182,21 +216,20 @@
 					<f:verbatim>&#160;</f:verbatim>
 				</f:facet>
 				<aon:div rendered="#{financeTo==invoiceEntry.currentFinance}">
-					<aon:commandButton title="#{bundle.aon_save}" reRender="FinancesData,aonToolbar"
+					<aon:commandButton title="#{bundle.aon_save}"
+						reRender="FinancesData,aonToolbar"
 						actionListener="#{invoiceEntry.onUpdateFinance}"
 						styleClass="aon-editDataTable-button aon-icon-accept" value=""
 						accesskey="#{bundle.aon_key_save_line}" />
 					<aon:commandButton title="#{bundle.aon_cancel}"
 						reRender="FinancesData,aonToolbar"
-						actionListener="#{invoiceEntry.onCancelFinance}"
-						immediate="true"
+						actionListener="#{invoiceEntry.onCancelFinance}" immediate="true"
 						onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
 						styleClass="aon-editDataTable-button aon-icon-cancel" value=""
 						accesskey="#{bundle.aon_key_cancel_line}" />
 					<aon:commandButton title="#{bundle.aon_remove}"
 						reRender="FinancesData,aonToolbar"
-						actionListener="#{invoiceEntry.onRemoveFinance}"
-						immediate="true"
+						actionListener="#{invoiceEntry.onRemoveFinance}" immediate="true"
 						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;"
 						styleClass="aon-editDataTable-button aon-icon-delete" value=""
 						accesskey="#{bundle.aon_key_remove_line}" />
@@ -205,8 +238,7 @@
 					<aon:div>
 						<aon:div rendered="#{invoiceEntry.newFinance}">
 							<aon:commandButton title="#{bundle.aon_save}"
-								reRender="FinancesData,aonToolbar" 
-								focus="saveInvoice"
+								reRender="FinancesData,aonToolbar" focus="saveInvoice"
 								actionListener="#{invoiceEntry.onAddFinance}"
 								onclick="if (!confirm('#{bundle.aon_accept_confirm}')) return false;"
 								styleClass="aon-editDataTable-button aon-icon-accept" value=""

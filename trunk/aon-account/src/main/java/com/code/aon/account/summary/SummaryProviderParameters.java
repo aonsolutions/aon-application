@@ -57,6 +57,8 @@ public class SummaryProviderParameters {
 	
 	private SecurityLevel securityLevel;
 	
+	private int rowsPerPage;
+
 	private boolean budgeted;
 
 	private boolean monthlyGrouping;
@@ -72,6 +74,7 @@ public class SummaryProviderParameters {
 		setDate( new Date() );
 		setPeriod(null);
 		setSecurityLevel(null);
+		setRowsPerPage(20);
 		setBudgeted(false);
 		setMonthlyGrouping(false);
 	}
@@ -147,6 +150,14 @@ public class SummaryProviderParameters {
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
 	}
+	public int getRowsPerPage() {
+		return rowsPerPage;
+	}
+
+	public void setRowsPerPage(int rowsPerPage) {
+		this.rowsPerPage = rowsPerPage;
+	}
+
 	public boolean isBudgeted() {
 		return budgeted;
 	}
