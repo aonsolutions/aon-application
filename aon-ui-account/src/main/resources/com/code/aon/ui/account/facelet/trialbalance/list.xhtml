@@ -38,7 +38,7 @@
 			<!--  aon-region-body -->
 			<aon:div id="accountEntryData" styleClass="aon-scroll-area">
 				<aon:dataTable id="statementList" value="#{trialBalance.model}"
-					rows="#{trialBalance.rowsPerPage}" var="to"
+					rows="#{trialBalance.parameters.rowsPerPage}" var="to"
 					rendered="#{trialBalance.model.rowCount > 0}">
 
 					<aon:column styleClass="#{to.lastLevel?'':'aon-row-auxiliary'}">

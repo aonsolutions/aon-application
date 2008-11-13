@@ -13,7 +13,7 @@
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{accountBundle.account_entry_module}" />
-				<ui:param name="controller" value="#{account}" />
+				<ui:param name="controller" value="#{accountEntry}" />
 			</ui:include>
 
 			<ui:decorate
@@ -22,7 +22,7 @@
 
 					<aon:methodParam name="searchActionListener"
 						value="#{accountEntry.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="account_entry_form" />
+					<aon:methodParam name="searchAction" value="accountEntry_form" />
 
 					<aon:outputLabel for="AccountEntry_id"
 						value="#{bundle.aon_id}" />

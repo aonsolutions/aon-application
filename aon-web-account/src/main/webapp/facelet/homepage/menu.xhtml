@@ -8,7 +8,7 @@
 	<aon:form>
 		<aon:menuBar id="mainMenu"> 
 			<aon:dropDownMenu value="#{appBundle.account_masters}">
-				<aon:menuItem value="#{accountBundle.account_entry_module}" action="account_entry_search"/>
+				<aon:menuItem value="#{accountBundle.account_entry_module}" action="accountEntry_search"/>
 				<aon:menuSeparator/>
 				<aon:menuItem action="account_list" value="#{accountBundle.account_module}"/>
 				<aon:menuItem action="autConcept" value="#{accountBundle.account_aut_concept_module}"/>
@@ -17,7 +17,9 @@
 				<aon:menuItem actionListener="#{supplier.onEditSearch}" action="supplier_search" value="#{supplierBundle.supplier_module}"/>
 				<aon:menuItem actionListener="#{creditor.onEditSearch}" action="creditor_search" value="#{financeBundle.finance_creditor_module}"/>
 				<aon:menuSeparator/>
-				<aon:menuItem action="geozone_list" value="#{geozoneBundle.geozone_module}"/>
+				<aon:menuItem action="geotreeParent_list" value="#{geozoneBundle.geozone_module}"/>
+				<aon:menuSeparator/>
+				<aon:menuItem action="payMethod" value="#{financeBundle.finance_pay_methods}"/>
 			</aon:dropDownMenu>
  
 			<aon:dropDownMenu value="#{appBundle.account_pred_entries}">
@@ -65,9 +67,12 @@
 			</aon:dropDownMenu>
 			
 			<aon:dropDownMenu value="#{appBundle.account_fixed_assets}">
-				<aon:menuItem disabled="true" value="#{appBundle.accoung_amortization_form}"/>
+				<aon:menuItem action="amortization_list" value="#{accountBundle.account_amortization_form_module}"/>
+				<aon:menuSeparator/>
 				<aon:menuItem disabled="true" value="#{appBundle.accoung_amortization_report}"/>
 				<aon:menuItem disabled="true" value="#{appBundle.accoung_amortization_entries}"/>
+				<aon:menuSeparator/>
+				<aon:menuItem action="amortizationType_list" value="#{accountBundle.account_amortization_type_module}"/>				
 			</aon:dropDownMenu>
 
 			<aon:dropDownMenu value="#{appBundle.account_budget}">
@@ -89,8 +94,7 @@
 				<aon:menuItem action="series" value="#{configBundle.config_series_module}"/>
 				<aon:menuItem action="tax" value="#{productBundle.product_tax_module}"/>
 				<aon:menuSeparator/>
-				<aon:menuItem disabled="true"  value="#{appBundle.account_official_balance_sheet}"/>
-				<aon:menuItem disabled="true" value="#{appBundle.account_official_trading_balance}" />
+				<aon:menuItem action="officialBalance_list" value="#{accountBundle.account_official_balance_configuration_module}"/>
 				<aon:menuSeparator/>
 				<aon:menuItem action="regenerateAccountSummary" value="#{accountBundle.account_regenerate_summary_module}"/>
 			</aon:dropDownMenu>

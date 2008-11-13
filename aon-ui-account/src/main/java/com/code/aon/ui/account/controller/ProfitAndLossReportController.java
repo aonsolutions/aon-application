@@ -85,11 +85,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		TrialBalanceController c = (TrialBalanceController) AonUtil
 				.getRegisteredBean(TRIAL_BALANCE_CONTROLLER_NAME);
 		c.onReset(event);
-		c.setAccount(getAccountStatement());
-		c.setDate(getParameters().getDate());
-		c.setFromDate(getParameters().getFromDate());
-		c.setToDate(getParameters().getToDate());
-		c.setPeriod(getParameters().getPeriod());
+		c.setParameters(getParameters());
 		c.onSearch(event);
 	}
 

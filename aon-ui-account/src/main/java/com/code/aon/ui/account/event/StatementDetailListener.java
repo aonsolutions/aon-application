@@ -23,7 +23,7 @@ public class StatementDetailListener extends ControllerAdapter {
 			IController c = event.getController();
 			TrialBalanceController asc = (TrialBalanceController) AonUtil
 					.getRegisteredBean(TRIAL_BALANCE_CONTROLLER_NAME);
-			SummaryProviderParameters params = asc.getSummaryProviderParameters();
+			SummaryProviderParameters params = asc.getParameters();
 			Criteria criteria = c.getCriteria();
 			
 			if (params.getPeriod() != null && params.getPeriod().getId() != null) {

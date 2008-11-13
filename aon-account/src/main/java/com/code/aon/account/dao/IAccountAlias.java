@@ -3,13 +3,15 @@ package com.code.aon.account.dao;
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.account.Account;
-import com.code.aon.account.Period;
+import com.code.aon.account.AccountBudget;
 import com.code.aon.account.AutoConcept;
 import com.code.aon.account.AccountEntry;
 import com.code.aon.account.AccountEntryDetail;
 import com.code.aon.account.AccountSummary;
+import com.code.aon.account.AmortizationType;
 import com.code.aon.account.Loan;
 import com.code.aon.account.Leasing;
+import com.code.aon.account.Period;
 
 /** 
 * Interface for holding entity properties constants.
@@ -56,27 +58,51 @@ public interface IAccountAlias {
 
 
 	/** 
-	* DAOConstantsEntry for Period entity.
+	* DAOConstantsEntry for AccountBudget entity.
 	*/ 
-	DAOConstantsEntry PERIOD_ENTRY = DAOConstants.getDAOConstant(Period.class);
+	DAOConstantsEntry ACCOUNT_BUDGET_ENTRY = DAOConstants.getDAOConstant(AccountBudget.class);
 
 	/** 
-	* Alias value: Period_deadline
-	* Hibernate value: Period.deadline
+	* Alias value: AccountBudget_account_id
+	* Hibernate value: AccountBudget.account.id
 	*/
-	String  PERIOD_DEADLINE = PERIOD_ENTRY.getAliasNames()[0];
+	String  ACCOUNT_BUDGET_ACCOUNT_ID = ACCOUNT_BUDGET_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: Period_id
-	* Hibernate value: Period.id
+	* Alias value: AccountBudget_credit
+	* Hibernate value: AccountBudget.credit
 	*/
-	String  PERIOD_ID = PERIOD_ENTRY.getAliasNames()[1];
+	String  ACCOUNT_BUDGET_CREDIT = ACCOUNT_BUDGET_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: Period_initiationDate
-	* Hibernate value: Period.initiationDate
+	* Alias value: AccountBudget_date
+	* Hibernate value: AccountBudget.date
 	*/
-	String  PERIOD_INITIATION_DATE = PERIOD_ENTRY.getAliasNames()[2];
+	String  ACCOUNT_BUDGET_DATE = ACCOUNT_BUDGET_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: AccountBudget_debit
+	* Hibernate value: AccountBudget.debit
+	*/
+	String  ACCOUNT_BUDGET_DEBIT = ACCOUNT_BUDGET_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: AccountBudget_id
+	* Hibernate value: AccountBudget.id
+	*/
+	String  ACCOUNT_BUDGET_ID = ACCOUNT_BUDGET_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: AccountBudget_period
+	* Hibernate value: AccountBudget.period
+	*/
+	String  ACCOUNT_BUDGET_PERIOD = ACCOUNT_BUDGET_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: AccountBudget_securityLevel
+	* Hibernate value: AccountBudget.securityLevel
+	*/
+	String  ACCOUNT_BUDGET_SECURITY_LEVEL = ACCOUNT_BUDGET_ENTRY.getAliasNames()[6];
 
 
 
@@ -172,46 +198,52 @@ public interface IAccountAlias {
 	String  ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[3];
 
 	/** 
+	* Alias value: AccountEntryDetail_accountEntry_securityLevel
+	* Hibernate value: AccountEntryDetail.accountEntry.securityLevel
+	*/
+	String  ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[4];
+
+	/** 
 	* Alias value: AccountEntryDetail_account_id
 	* Hibernate value: AccountEntryDetail.account.id
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[4];
+	String  ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: AccountEntryDetail_balancingAccount_id
 	* Hibernate value: AccountEntryDetail.balancingAccount.id
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_BALANCING_ACCOUNT_ID = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[5];
+	String  ACCOUNT_ENTRY_DETAIL_BALANCING_ACCOUNT_ID = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: AccountEntryDetail_concept
 	* Hibernate value: AccountEntryDetail.concept
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_CONCEPT = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[6];
+	String  ACCOUNT_ENTRY_DETAIL_CONCEPT = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: AccountEntryDetail_credit
 	* Hibernate value: AccountEntryDetail.credit
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_CREDIT = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[7];
+	String  ACCOUNT_ENTRY_DETAIL_CREDIT = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: AccountEntryDetail_debit
 	* Hibernate value: AccountEntryDetail.debit
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_DEBIT = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[8];
+	String  ACCOUNT_ENTRY_DETAIL_DEBIT = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: AccountEntryDetail_id
 	* Hibernate value: AccountEntryDetail.id
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_ID = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[9];
+	String  ACCOUNT_ENTRY_DETAIL_ID = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: AccountEntryDetail_line
 	* Hibernate value: AccountEntryDetail.line
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_LINE = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[10];
+	String  ACCOUNT_ENTRY_DETAIL_LINE = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[11];
 
 
 
@@ -261,6 +293,49 @@ public interface IAccountAlias {
 	* Hibernate value: AccountSummary.securityLevel
 	*/
 	String  ACCOUNT_SUMMARY_SECURITY_LEVEL = ACCOUNT_SUMMARY_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for AmortizationType entity.
+	*/ 
+	DAOConstantsEntry AMORTIZATION_TYPE_ENTRY = DAOConstants.getDAOConstant(AmortizationType.class);
+
+	/** 
+	* Alias value: AmortizationType_accumulatedAccount_id
+	* Hibernate value: AmortizationType.accumulatedAccount.id
+	*/
+	String  AMORTIZATION_TYPE_ACCUMULATED_ACCOUNT_ID = AMORTIZATION_TYPE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AmortizationType_allocationAccount_id
+	* Hibernate value: AmortizationType.allocationAccount.id
+	*/
+	String  AMORTIZATION_TYPE_ALLOCATION_ACCOUNT_ID = AMORTIZATION_TYPE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AmortizationType_description
+	* Hibernate value: AmortizationType.description
+	*/
+	String  AMORTIZATION_TYPE_DESCRIPTION = AMORTIZATION_TYPE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: AmortizationType_fixedAssetAccount_id
+	* Hibernate value: AmortizationType.fixedAssetAccount.id
+	*/
+	String  AMORTIZATION_TYPE_FIXED_ASSET_ACCOUNT_ID = AMORTIZATION_TYPE_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: AmortizationType_id
+	* Hibernate value: AmortizationType.id
+	*/
+	String  AMORTIZATION_TYPE_ID = AMORTIZATION_TYPE_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: AmortizationType_percentage
+	* Hibernate value: AmortizationType.percentage
+	*/
+	String  AMORTIZATION_TYPE_PERCENTAGE = AMORTIZATION_TYPE_ENTRY.getAliasNames()[5];
 
 
 
@@ -419,6 +494,31 @@ public interface IAccountAlias {
 	* Hibernate value: Leasing.securityLevel
 	*/
 	String  LEASING_SECURITY_LEVEL = LEASING_ENTRY.getAliasNames()[13];
+
+
+
+	/** 
+	* DAOConstantsEntry for Period entity.
+	*/ 
+	DAOConstantsEntry PERIOD_ENTRY = DAOConstants.getDAOConstant(Period.class);
+
+	/** 
+	* Alias value: Period_deadline
+	* Hibernate value: Period.deadline
+	*/
+	String  PERIOD_DEADLINE = PERIOD_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Period_id
+	* Hibernate value: Period.id
+	*/
+	String  PERIOD_ID = PERIOD_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Period_initiationDate
+	* Hibernate value: Period.initiationDate
+	*/
+	String  PERIOD_INITIATION_DATE = PERIOD_ENTRY.getAliasNames()[2];
 
 
 }

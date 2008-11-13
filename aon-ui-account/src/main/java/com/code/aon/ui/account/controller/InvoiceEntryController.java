@@ -35,6 +35,7 @@ import com.code.aon.company.Company;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
+import com.code.aon.finance.BankAccount;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -203,10 +204,14 @@ public class InvoiceEntryController {
 		this.header = new InvoiceEntryHeader();
 		initializeHeader();
 		header.setType(InvoiceType.SALES);
+
 		this.details = new ListDataModel(new LinkedList<InvoiceEntryDetail>());
-		this.finances = new ListDataModel(new LinkedList<Finance>());
 		this.currentDetail = null;
-		this.setNewDetail(false);		
+		this.setNewDetail(false);
+
+		this.finances = new ListDataModel(new LinkedList<Finance>());
+		this.currentFinance = null;
+		this.setNewFinance(false);
 	}
 
 	private void initializeHeader() {
@@ -358,6 +363,7 @@ public class InvoiceEntryController {
 		finance.setDueDate(new Date());
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		finance.setAmount(obtainInitialAmount());
+		finance.setBankAccount(new BankAccount());
 		return finance;
 	}
 	
@@ -779,7 +785,7 @@ public class InvoiceEntryController {
 		Iterator<?> iter = rBankBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			RegistryBank rBank = (RegistryBank) iter.next();
-			SelectItem item = new SelectItem(rBank.getBank(), rBank.getBank().getName() + " [" + rBank.getFormattedBankAccount() + "]");
+			SelectItem item = new SelectItem(rBank.getBank(), rBank.getBank().getName() + " [" + rBank.getBankAccount().toString() + "]");
 			rBanks.add(item);
 		}
 		return rBanks;

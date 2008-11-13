@@ -51,7 +51,7 @@ public class SummaryProvider {
 				sumStmt.append(" AND s.account_period = ?");
 			}
 			if (params.getSecurityLevel() != null) {
-				sumStmt.append(" AND s.securityLevel = ?");
+				sumStmt.append(" AND s.security_level = ?");
 			}
 			if (params.isMonthlyGrouping()) {
 				sumStmt.append("GROUP BY MONTH(s.entry_date)");

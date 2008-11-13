@@ -6,7 +6,7 @@
 
 	<session-factory>
 
-		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon_account?autoReconnect=true</property>		
+		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon-dini-es?autoReconnect=true</property>		
 		<property name="connection.username">dbuser</property>		
 		<property name="show_sql">true</property>		
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
@@ -16,13 +16,14 @@
 		<!-- Mapping files -->
 		<mapping class="com.code.aon.account.Account"/>
 		<mapping class="com.code.aon.account.AccountBudget"/>
-		<mapping class="com.code.aon.account.Period"/>
 		<mapping class="com.code.aon.account.AutoConcept"/>
 		<mapping class="com.code.aon.account.AccountEntry"/>
 		<mapping class="com.code.aon.account.AccountEntryDetail"/>
 		<mapping class="com.code.aon.account.AccountSummary"/>
+		<mapping class="com.code.aon.account.AmortizationType"/>
 		<mapping class="com.code.aon.account.Loan"/>
 		<mapping class="com.code.aon.account.Leasing"/>
+		<mapping class="com.code.aon.account.Period"/>
 		
 		<mapping class="com.code.aon.finance.RegistryBank"/>
 		<mapping class="com.code.aon.finance.Bank"/>

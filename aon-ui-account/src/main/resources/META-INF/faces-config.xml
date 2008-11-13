@@ -80,6 +80,85 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
+	<!-- **************** ACCOUNT BALANCE ************************** -->
+	<managed-bean>
+		<managed-bean-name>accountBalance</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.account.Balance</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>accountBalance</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{accountBalanceDetailListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>accountBalanceDetailListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>accountBalanceDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>BalanceDetail_balance_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>accountBalanceDetail</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.account.BalanceDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>accountBalanceDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>accountBalance</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>balance.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
 	<!-- **************** ACCOUNT BUDGET ************************** -->
 	<managed-bean>
 		<managed-bean-name>accountBudgetDetailListener</managed-bean-name>
@@ -99,7 +178,6 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-
 	<managed-bean>
 		<managed-bean-name>accountBudget</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.account.controller.AccountBudgetController</managed-bean-class>
@@ -151,6 +229,25 @@
 		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/account/facelet/lookup/account/list.xhtml</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- **************** AMORTIZATION TYPE ************************** -->
+	<managed-bean>
+		<managed-bean-name>amortizationType</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.account.AmortizationType</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>amortizationType</value>
 		</managed-property>
 	</managed-bean>
 
@@ -600,22 +697,6 @@
 		</navigation-case>
 	</navigation-rule>
 
-  <!-- ****************** ACCOUNT **************** -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>accountBudget_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/budget/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>accountBudget_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/budget/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>accountBudget_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/account/facelet/budget/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
   <!-- ****************** AUT CONCEPT **************** -->
 	<navigation-rule>
 		<navigation-case>
@@ -623,6 +704,23 @@
 			<to-view-id>/com/code/aon/ui/account/facelet/autConcept/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+  <!-- ****************** AMORTIZATION TYPE **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>amortizationType_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/amortization/type/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>amortizationType_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/amortization/type/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>amortizationType_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/amortization/type/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
   <!-- ****************** PERIOD **************** -->
 	<navigation-rule>
 		<navigation-case>
@@ -640,15 +738,15 @@
  	<!-- **************** ACCOUNT ENTRY ********************* -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>account_entry_form</from-outcome>
+			<from-outcome>accountEntry_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/account/facelet/entry/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>account_entry_list</from-outcome>
+			<from-outcome>accountEntry_list</from-outcome>
 			<to-view-id>/com/code/aon/ui/account/facelet/entry/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>account_entry_search</from-outcome>
+			<from-outcome>accountEntry_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/account/facelet/entry/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
@@ -767,6 +865,21 @@
 		<navigation-case>
 			<from-outcome>journal_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/account/facelet/journal/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+  <!-- ****************** ACCOUNT **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>accountBalance_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/balance/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>accountBalance_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/balance/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>accountBalance_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/account/facelet/balance/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 </faces-config>
