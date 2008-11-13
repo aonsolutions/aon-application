@@ -55,22 +55,20 @@ public class EnumLocaleConverter implements Converter {
 					UIComponent c = (UIComponent) child;
 					vb = c.getValueExpression("value");
 					Object val = vb == null ? null : vb.getValue(ctx.getELContext());
-					if (val == null) {
-						throw new ConverterException("Cannot get items");
-					}
-
-					Class t = val.getClass();
-					if (t.isArray() && t.getComponentType().isEnum()) {
-						return t;
-					} else if (val instanceof Collection) {
-						Object item = ((Collection) val).iterator().next();
-						if (item instanceof SelectItem) {
-							SelectItem si = (SelectItem) item;
-							return si.getValue().getClass();
-						} else {
-							t = item.getClass();
-							if (t.isArray() && t.getComponentType().isEnum()) {
-								return t;
+					if (val != null) {
+						Class t = val.getClass();
+						if (t.isArray() && t.getComponentType().isEnum()) {
+							return t;
+						} else if (val instanceof Collection) {
+							Object item = ((Collection) val).iterator().next();
+							if (item instanceof SelectItem) {
+								SelectItem si = (SelectItem) item;
+								return si.getValue().getClass();
+							} else {
+								t = item.getClass();
+								if (t.isArray() && t.getComponentType().isEnum()) {
+									return t;
+								}
 							}
 						}
 					}
