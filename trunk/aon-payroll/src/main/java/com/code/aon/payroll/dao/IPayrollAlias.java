@@ -48,7 +48,7 @@ import com.code.aon.payroll.auxiliares.convenios.Convenio;
 import com.code.aon.payroll.auxiliares.convenios.Nivel;
 import com.code.aon.payroll.auxiliares.convenios.Pagaext;
 import com.code.aon.payroll.auxiliares.convenios.Categoria;
-import com.code.aon.payroll.auxiliares.convenios.Percniv;
+import com.code.aon.payroll.auxiliares.convenios.Percepcion;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Entidad;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Mutua;
@@ -2051,165 +2051,171 @@ public interface IPayrollAlias {
 
 
 	/** 
-	* DAOConstantsEntry for Percniv entity.
+	* DAOConstantsEntry for Percepcion entity.
 	*/ 
-	DAOConstantsEntry PERCNIV_ENTRY = DAOConstants.getDAOConstant(Percniv.class);
+	DAOConstantsEntry PERCEPCION_ENTRY = DAOConstants.getDAOConstant(Percepcion.class);
 
 	/** 
-	* Alias value: Percniv_calculo
-	* Hibernate value: Percniv.calculo
+	* Alias value: Percepcion_calculo
+	* Hibernate value: Percepcion.calculo
 	*/
-	String  PERCNIV_CALCULO = PERCNIV_ENTRY.getAliasNames()[0];
+	String  PERCEPCION_CALCULO = PERCEPCION_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: Percniv_complemento1_cdg
-	* Hibernate value: Percniv.complemento1.cdg
+	* Alias value: Percepcion_complemento1_cdg
+	* Hibernate value: Percepcion.complemento1.cdg
 	*/
-	String  PERCNIV_COMPLEMENTO1_CDG = PERCNIV_ENTRY.getAliasNames()[1];
+	String  PERCEPCION_COMPLEMENTO1_CDG = PERCEPCION_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: Percniv_complemento_cdg
-	* Hibernate value: Percniv.complemento.cdg
+	* Alias value: Percepcion_complemento_cdg
+	* Hibernate value: Percepcion.complemento.cdg
 	*/
-	String  PERCNIV_COMPLEMENTO_CDG = PERCNIV_ENTRY.getAliasNames()[2];
+	String  PERCEPCION_COMPLEMENTO_CDG = PERCEPCION_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: Percniv_convenio_cdg
-	* Hibernate value: Percniv.convenio.cdg
+	* Alias value: Percepcion_convenio_cdg
+	* Hibernate value: Percepcion.convenio.cdg
 	*/
-	String  PERCNIV_CONVENIO_CDG = PERCNIV_ENTRY.getAliasNames()[3];
+	String  PERCEPCION_CONVENIO_CDG = PERCEPCION_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: Percniv_desabr
-	* Hibernate value: Percniv.desabr
+	* Alias value: Percepcion_convenio_description
+	* Hibernate value: Percepcion.convenio.description
 	*/
-	String  PERCNIV_DESABR = PERCNIV_ENTRY.getAliasNames()[4];
+	String  PERCEPCION_CONVENIO_DESCRIPTION = PERCEPCION_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: Percniv_descom
-	* Hibernate value: Percniv.descom
+	* Alias value: Percepcion_desabr
+	* Hibernate value: Percepcion.desabr
 	*/
-	String  PERCNIV_DESCOM = PERCNIV_ENTRY.getAliasNames()[5];
+	String  PERCEPCION_DESABR = PERCEPCION_ENTRY.getAliasNames()[5];
 
 	/** 
-	* Alias value: Percniv_dinesp
-	* Hibernate value: Percniv.dinesp
+	* Alias value: Percepcion_descom
+	* Hibernate value: Percepcion.descom
 	*/
-	String  PERCNIV_DINESP = PERCNIV_ENTRY.getAliasNames()[6];
+	String  PERCEPCION_DESCOM = PERCEPCION_ENTRY.getAliasNames()[6];
 
 	/** 
-	* Alias value: Percniv_fecmod
-	* Hibernate value: Percniv.fecmod
+	* Alias value: Percepcion_dinesp
+	* Hibernate value: Percepcion.dinesp
 	*/
-	String  PERCNIV_FECMOD = PERCNIV_ENTRY.getAliasNames()[7];
+	String  PERCEPCION_DINESP = PERCEPCION_ENTRY.getAliasNames()[7];
 
 	/** 
-	* Alias value: Percniv_fecnew
-	* Hibernate value: Percniv.fecnew
+	* Alias value: Percepcion_fecmod
+	* Hibernate value: Percepcion.fecmod
 	*/
-	String  PERCNIV_FECNEW = PERCNIV_ENTRY.getAliasNames()[8];
+	String  PERCEPCION_FECMOD = PERCEPCION_ENTRY.getAliasNames()[8];
 
 	/** 
-	* Alias value: Percniv_fijovar
-	* Hibernate value: Percniv.fijovar
+	* Alias value: Percepcion_fecnew
+	* Hibernate value: Percepcion.fecnew
 	*/
-	String  PERCNIV_FIJOVAR = PERCNIV_ENTRY.getAliasNames()[9];
+	String  PERCEPCION_FECNEW = PERCEPCION_ENTRY.getAliasNames()[9];
 
 	/** 
-	* Alias value: Percniv_garilt
-	* Hibernate value: Percniv.garilt
+	* Alias value: Percepcion_fijovar
+	* Hibernate value: Percepcion.fijovar
 	*/
-	String  PERCNIV_GARILT = PERCNIV_ENTRY.getAliasNames()[10];
+	String  PERCEPCION_FIJOVAR = PERCEPCION_ENTRY.getAliasNames()[10];
 
 	/** 
-	* Alias value: Percniv_hormod
-	* Hibernate value: Percniv.hormod
+	* Alias value: Percepcion_garilt
+	* Hibernate value: Percepcion.garilt
 	*/
-	String  PERCNIV_HORMOD = PERCNIV_ENTRY.getAliasNames()[11];
+	String  PERCEPCION_GARILT = PERCEPCION_ENTRY.getAliasNames()[11];
 
 	/** 
-	* Alias value: Percniv_hornew
-	* Hibernate value: Percniv.hornew
+	* Alias value: Percepcion_hormod
+	* Hibernate value: Percepcion.hormod
 	*/
-	String  PERCNIV_HORNEW = PERCNIV_ENTRY.getAliasNames()[12];
+	String  PERCEPCION_HORMOD = PERCEPCION_ENTRY.getAliasNames()[12];
 
 	/** 
-	* Alias value: Percniv_id_cdg
-	* Hibernate value: Percniv.id.cdg
+	* Alias value: Percepcion_hornew
+	* Hibernate value: Percepcion.hornew
 	*/
-	String  PERCNIV_ID_CDG = PERCNIV_ENTRY.getAliasNames()[13];
+	String  PERCEPCION_HORNEW = PERCEPCION_ENTRY.getAliasNames()[13];
 
 	/** 
-	* Alias value: Percniv_id_codcom
-	* Hibernate value: Percniv.id.codcom
+	* Alias value: Percepcion_id_cdg
+	* Hibernate value: Percepcion.id.cdg
 	*/
-	String  PERCNIV_ID_CODCOM = PERCNIV_ENTRY.getAliasNames()[14];
+	String  PERCEPCION_ID_CDG = PERCEPCION_ENTRY.getAliasNames()[14];
 
 	/** 
-	* Alias value: Percniv_id_nivel
-	* Hibernate value: Percniv.id.nivel
+	* Alias value: Percepcion_id_codcom
+	* Hibernate value: Percepcion.id.codcom
 	*/
-	String  PERCNIV_ID_NIVEL = PERCNIV_ENTRY.getAliasNames()[15];
+	String  PERCEPCION_ID_CODCOM = PERCEPCION_ENTRY.getAliasNames()[15];
 
 	/** 
-	* Alias value: Percniv_importe
-	* Hibernate value: Percniv.importe
+	* Alias value: Percepcion_id_nivel
+	* Hibernate value: Percepcion.id.nivel
 	*/
-	String  PERCNIV_IMPORTE = PERCNIV_ENTRY.getAliasNames()[16];
+	String  PERCEPCION_ID_NIVEL = PERCEPCION_ENTRY.getAliasNames()[16];
 
 	/** 
-	* Alias value: Percniv_impuni
-	* Hibernate value: Percniv.impuni
+	* Alias value: Percepcion_importe
+	* Hibernate value: Percepcion.importe
 	*/
-	String  PERCNIV_IMPUNI = PERCNIV_ENTRY.getAliasNames()[17];
+	String  PERCEPCION_IMPORTE = PERCEPCION_ENTRY.getAliasNames()[17];
 
 	/** 
-	* Alias value: Percniv_indcom
-	* Hibernate value: Percniv.indcom
+	* Alias value: Percepcion_impuni
+	* Hibernate value: Percepcion.impuni
 	*/
-	String  PERCNIV_INDCOM = PERCNIV_ENTRY.getAliasNames()[18];
+	String  PERCEPCION_IMPUNI = PERCEPCION_ENTRY.getAliasNames()[18];
 
 	/** 
-	* Alias value: Percniv_mes
-	* Hibernate value: Percniv.mes
+	* Alias value: Percepcion_indcom
+	* Hibernate value: Percepcion.indcom
 	*/
-	String  PERCNIV_MES = PERCNIV_ENTRY.getAliasNames()[19];
+	String  PERCEPCION_INDCOM = PERCEPCION_ENTRY.getAliasNames()[19];
 
 	/** 
-	* Alias value: Percniv_nivel_id_cdg
-	* Hibernate value: Percniv.nivel.id.cdg
+	* Alias value: Percepcion_mes
+	* Hibernate value: Percepcion.mes
 	*/
-	String  PERCNIV_NIVEL_ID_CDG = PERCNIV_ENTRY.getAliasNames()[20];
+	String  PERCEPCION_MES = PERCEPCION_ENTRY.getAliasNames()[20];
 
 	/** 
-	* Alias value: Percniv_nivel_id_codcon
-	* Hibernate value: Percniv.nivel.id.codcon
+	* Alias value: Percepcion_nivel_id_cdg
+	* Hibernate value: Percepcion.nivel.id.cdg
 	*/
-	String  PERCNIV_NIVEL_ID_CODCON = PERCNIV_ENTRY.getAliasNames()[21];
+	String  PERCEPCION_NIVEL_ID_CDG = PERCEPCION_ENTRY.getAliasNames()[21];
 
 	/** 
-	* Alias value: Percniv_redext
-	* Hibernate value: Percniv.redext
+	* Alias value: Percepcion_nivel_id_codcon
+	* Hibernate value: Percepcion.nivel.id.codcon
 	*/
-	String  PERCNIV_REDEXT = PERCNIV_ENTRY.getAliasNames()[22];
+	String  PERCEPCION_NIVEL_ID_CODCON = PERCEPCION_ENTRY.getAliasNames()[22];
 
 	/** 
-	* Alias value: Percniv_tipcom
-	* Hibernate value: Percniv.tipcom
+	* Alias value: Percepcion_redext
+	* Hibernate value: Percepcion.redext
 	*/
-	String  PERCNIV_TIPCOM = PERCNIV_ENTRY.getAliasNames()[23];
+	String  PERCEPCION_REDEXT = PERCEPCION_ENTRY.getAliasNames()[23];
 
 	/** 
-	* Alias value: Percniv_tipcot
-	* Hibernate value: Percniv.tipcot
+	* Alias value: Percepcion_tipcom
+	* Hibernate value: Percepcion.tipcom
 	*/
-	String  PERCNIV_TIPCOT = PERCNIV_ENTRY.getAliasNames()[24];
+	String  PERCEPCION_TIPCOM = PERCEPCION_ENTRY.getAliasNames()[24];
 
 	/** 
-	* Alias value: Percniv_unidades
-	* Hibernate value: Percniv.unidades
+	* Alias value: Percepcion_tipcot
+	* Hibernate value: Percepcion.tipcot
 	*/
-	String  PERCNIV_UNIDADES = PERCNIV_ENTRY.getAliasNames()[25];
+	String  PERCEPCION_TIPCOT = PERCEPCION_ENTRY.getAliasNames()[25];
+
+	/** 
+	* Alias value: Percepcion_unidades
+	* Hibernate value: Percepcion.unidades
+	*/
+	String  PERCEPCION_UNIDADES = PERCEPCION_ENTRY.getAliasNames()[26];
 
 
 

@@ -44,7 +44,7 @@ public class NivelControllerListener extends ControllerAdapter implements IPayro
 		try {
 			percepcionController.clearCriteria();
 			Criteria criteria = percepcionController.getCriteria();
-			criteria.addNullExpression(percepcionController.getFieldName(IPayrollAlias.PERCNIV_NIVEL_ID_CDG));
+			criteria.addNullExpression(percepcionController.getFieldName(IPayrollAlias.PERCEPCION_NIVEL_ID_CDG));
 			percepcionController.initializeModel();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );			
