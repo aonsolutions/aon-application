@@ -17,6 +17,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.geograficas.Provincia;
 import com.code.aon.payroll.principales.Cliente;
+import com.code.aon.payroll.principales.Domicilio;
 import com.code.aon.payroll.tipos.Tipovia;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
@@ -26,20 +27,33 @@ public class DomicilioController extends LinesController {
 	
 	
 private Cliente cliente;
-
+private Tipovia tipovia;
+private Provincia provincia;
 	@Override
    public void onEditSearch(ActionEvent arg0) {
 	   super.onEditSearch(arg0);
 	   setCliente( new Cliente() );
+       setTipovia( new Tipovia() );
+	   setProvincia( new Provincia() );
 
 }
 	
 	@Override
 	public void onSearch(ActionEvent event) {
-		System.out.println("------------"+cliente.getCdg());
+		System.out.println("----------c"+cliente.getCdg());
+		System.out.println("----------t"+tipovia.getCdg());
+		System.out.println("----------p"+provincia.getCdg());
 		try {
-			if  (cliente != null)  {
+			if  (cliente.getCdg() != null)  {
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.DOMICILIO_CLIENTE_CDG), getCliente().getCdg());
+			}
+			
+		    if  ( (tipovia.getCdg() != null) && (! StringUtils.isEmpty(tipovia.getCdg())) ) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.DOMICILIO_TIPOVIA_CDG), getTipovia().getCdg());
+			}
+			
+		     if  ( (provincia.getCdg() != null) && (! StringUtils.isEmpty(provincia.getCdg())) ) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.DOMICILIO_PROVINCIA_CDG), getProvincia().getCdg());
 			}
 			
 		} catch (ManagerBeanException e) {
@@ -57,17 +71,25 @@ private Cliente cliente;
 	public Cliente getCliente() {
 		return cliente;
 	}
-
-
-
 	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
 	}
 
+	public Tipovia getTipovia() {
+		return tipovia;
+	}
 
+	public void setTipovia(Tipovia tipovia) {
+		this.tipovia = tipovia;
+	}
 
+	public Provincia getProvincia() {
+		return provincia;
+	}
 
-
+	public void setProvincia(Provincia provincia) {
+		this.provincia = provincia;
+	}
 
 
 
