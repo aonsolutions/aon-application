@@ -1324,6 +1324,15 @@
 			<from-outcome>fbatch_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/finance/facelet/fbatch/form.xhtml</to-view-id>
 		</navigation-case>
+	</navigation-rule>  
+  
+  	<!-- =================== Util Checking ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>util_checking</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/financePrint/checking.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
+
   
 </faces-config>
