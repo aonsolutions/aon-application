@@ -282,11 +282,16 @@
 			<value>com.code.aon.finance.FinanceBatch</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>fbatch</value>
+		</managed-property>				
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
+				<value>#{fBatchSearch}</value>
 				<value>#{fBatchDetailListener}</value>
 				<value>#{fBatchControllerListener}</value>
 			</list-entries>
@@ -315,6 +320,14 @@
 	</managed-bean>
 	
 	<managed-bean>
+		<managed-bean-name>fBatchSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.FBatchSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
 		<managed-bean-name>fBatchControllerListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.finance.event.FBatchControllerListener
@@ -340,13 +353,13 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>20</value>
-		</managed-property>
-		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.FinanceBatchDetail</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>fBatchDetail</value>
+		</managed-property>				
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
@@ -393,10 +406,6 @@
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -1023,10 +1032,6 @@
 			<value>false</value>
 		</managed-property>
 		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>20</value>
-		</managed-property>
-		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.Invoice</value>
 		</managed-property>
@@ -1058,38 +1063,11 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	 
-	<!-- **************** CONVERTERS  *************** 
-	<converter>
-		<description>Conversor para FinanceBatchStatus</description>
-		<converter-id>fBatchStatusConverter</converter-id>
-		<converter-class>com.code.aon.ui.finance.converter.FinanceBatchStatusConverter</converter-class>
-	</converter>
-	
-	<converter>
-		<description>Conversor para FinanceBatchType</description>
-		<converter-id>fBatchTypeConverter</converter-id>
-		<converter-class>com.code.aon.ui.finance.converter.FinanceBatchTypeConverter</converter-class>
-	</converter>
-
-	<converter>
-		<description>Conversor para FinanceStatus</description>
-		<converter-id>financeStatusConverter</converter-id>
-		<converter-class>com.code.aon.ui.finance.converter.FinanceStatusConverter</converter-class>
-	</converter>
-	-->
   <!-- =================== Navigation Rules ================= -->
 	
   <!-- **************** MENU  *************** -->	
 <!--
   <navigation-rule>
-	<navigation-case>
-		<from-outcome>fbatch</from-outcome>
-		<to-view-id>/_finance/facelet/fbatch/search.xhtml</to-view-id>
-	</navigation-case>
-	<navigation-case>
- 		<from-outcome>finance_payment</from-outcome>
-		<to-view-id>/_finance/facelet/finance/payment/search.xhtml</to-view-id>
-	</navigation-case>
     <navigation-case>
       <from-outcome>invoicingGroup</from-outcome>
       <to-view-id>/_finance/facelet/invoicing_group/list.xhtml</to-view-id>
@@ -1116,24 +1094,6 @@
     </navigation-case>
   </navigation-rule>
 -->  
-  	<!-- =================== Finance Batch ================= -->
-<!--
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>fbatch_list</from-outcome>
-			<to-view-id>/_finance/facelet/fbatch/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>fbatch_search</from-outcome>
-			<to-view-id>/_finance/facelet/fbatch/search.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>fbatch_form</from-outcome>
-			<to-view-id>/_finance/facelet/fbatch/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
--->		
-
   <!-- =================== Invoicing Group ========================== -->
 <!--
   <navigation-rule>
@@ -1349,5 +1309,21 @@
 			<to-view-id>/com/code/aon/ui/finance/facelet/financePayment/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
+
+  	<!-- =================== Finance Batch ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>fbatch_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/fbatch/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>fbatch_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/fbatch/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>fbatch_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/fbatch/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
   
 </faces-config>

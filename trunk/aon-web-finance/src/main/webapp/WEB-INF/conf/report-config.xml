@@ -15,7 +15,7 @@
 		<bean key="com.code.aon.customer.Customer" />
 		<criteria provider="#{customer}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.customer.i18n.messages" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.customer.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 		</params>
@@ -30,7 +30,7 @@
 		<fetch-mode paginated="true" page-count="500" virtualizer-max-size="50"/>
 		 -->
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="PriceStrategy" value="#{feeInvoicing.getPriceStrategy}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
@@ -44,7 +44,7 @@
 		<criteria provider="#{purchaseDirectInvoicing}"/>
 
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="PriceStrategy" value="#{purchaseDirectInvoicing.getPriceStrategy}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
@@ -58,7 +58,7 @@
 		<template path="/com/code/aon/ui/finance/report/preInvoicing.jasper" />
 		<collection provider="#{preInvoicing}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="PriceStrategy" value="#{preInvoicing.getPriceStrategy}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
@@ -82,7 +82,7 @@
 		<collection provider="#{feeInvoicing}"/>
 
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="PriceStrategy" value="#{feeInvoicing.getPriceStrategy}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
@@ -117,7 +117,7 @@
 		<collection provider="#{invoicePrint}"/>
 
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="PriceStrategy" value="#{feeInvoicing.getPriceStrategy}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
@@ -140,7 +140,7 @@
 		<collection provider="#{invoicePrint}"/>
 
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="PriceStrategy" value="#{feeInvoicing.getPriceStrategy}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
@@ -155,10 +155,10 @@
 		<bean key="com.code.aon.finance.Finance" />
 		<criteria provider="#{finance}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="payment" value="#{finance.getPayment}" />
+			<param id="payment" value="#{financeSearch.getPayment}" />
 		</params>
 	</report>
 
@@ -167,7 +167,7 @@
 		<template path="/com/code/aon/ui/finance/report/fBatchList.jasper" />
 		<collection provider="#{fBatchPrinter}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
@@ -179,7 +179,7 @@
 		<collection provider="#{fbatch}"/>
 
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="total" value="#{fbatch.getToTotalAmount}" />
@@ -199,7 +199,7 @@
 		<collection provider="#{feeCheckingPrinter}"/>
 
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 		</params>
@@ -217,7 +217,7 @@
 		<collection provider="#{financeCheckingPrinter}"/>
 
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 		</params>
@@ -236,7 +236,7 @@
 		<criteria provider="#{feePrint}"/>
 
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 		</params>
@@ -250,7 +250,7 @@
 		<bean key="com.code.aon.product.Item" />
 		<criteria provider="#{item}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.product.i18n.messages" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.product.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
