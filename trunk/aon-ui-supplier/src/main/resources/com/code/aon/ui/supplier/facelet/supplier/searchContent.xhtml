@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:outputLabel for="Supplier_registry_document"
+		value="#{bundle.aon_company_document}" />
+	<aon:inputText id="Supplier_registry_document" size="20"
+		valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel for="Supplier_registry_name"
+		value="#{bundle.aon_company_name}" />
+	<aon:inputText id="Supplier_registry_name" size="40"
+		valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel for="Supplier_registry_surname"
+		value="#{registryBundle.registry_surname}" />
+	<aon:inputText id="Supplier_registry_surname" size="40"
+		valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel for="Supplier_registry_alias"
+		value="#{bundle.aon_company_alias}" />
+	<aon:inputText id="Supplier_registry_alias" size="40"
+		valueChangeListener="#{controller.addExpression}" />
+		
+	<aon:outputLabel for="Supplier_status"
+		value="#{bundle.aon_status}" />
+	<aon:selectOneMenu id="Supplier_status"
+		valueChangeListener="#{controller.addExpression}">
+		<aon:enumConverter enum="com.code.aon.supplier.enumeration.SupplierStatus" />
+		<f:selectItem itemLabel="-" value="#{null}"/>
+		<f:selectItems value="#{supplierCollections.supplierStatuses}" />
+	</aon:selectOneMenu>
+
+</ui:composition>
