@@ -32,9 +32,9 @@ import com.code.aon.payroll.enumeration.TipoCotizaciones;
  */
 @Entity
 @Table(name = "percniv")
-public class Percniv implements ITransferObject {
+public class Percepcion implements ITransferObject {
 
-	private PercnivPK id;
+	private PercepcionPK id;
     private String descom;
     private String desabr;
     private TipoCotizaciones tipcot;
@@ -63,11 +63,11 @@ public class Percniv implements ITransferObject {
         @AttributeOverride(name="cdg", column=@Column(name="cdg", nullable=false, length=2) ), 
         @AttributeOverride(name="nivel", column=@Column(name="nivel", nullable=false, length=2) ), 
         @AttributeOverride(name="codcom", column=@Column(name="codcom", nullable=false, length=2) ) } )
-    public PercnivPK getId() {
+    public PercepcionPK getId() {
         return this.id;
     }
     
-    public void setId(PercnivPK id) {
+    public void setId(PercepcionPK id) {
         this.id = id;
     }
     
@@ -316,7 +316,7 @@ public class Percniv implements ITransferObject {
     }
     
     
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumns( { 
         @JoinColumn(name="cdg", referencedColumnName="codcon", insertable=false, updatable=false), 
         @JoinColumn(name="nivel", referencedColumnName="cdg", insertable=false, updatable=false) } )
@@ -348,7 +348,7 @@ public class Percniv implements ITransferObject {
         this.complemento1 = complemento1;
     }
     
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="cdg", insertable=false, updatable=false)
     public Convenio getConvenio() {
         return this.convenio;

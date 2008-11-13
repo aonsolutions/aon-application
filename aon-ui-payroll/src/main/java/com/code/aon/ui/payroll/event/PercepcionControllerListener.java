@@ -1,6 +1,7 @@
 package com.code.aon.ui.payroll.event;
 
 import com.code.aon.payroll.auxiliares.convenios.Convenio;
+import com.code.aon.payroll.auxiliares.convenios.Nivel;
 import com.code.aon.payroll.auxiliares.convenios.Percepcion;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -19,12 +20,10 @@ public class PercepcionControllerListener extends ControllerAdapter implements I
 		// TODO Auto-generated method stub
 		System.out.println("PercepcionControllerListener -------> afterBeanCreated");
 		
-		String des = ((Convenio)(AonUtil.getController(IPayrollConstants.CONVENIO_CONTROLLER_NAME).getTo())).getDescription();
-		System.out.println(des);
 		
-		Convenio convenio = new Convenio();
-		convenio.setDescription(des);
-		((Percepcion)(event.getController().getTo())).setConvenio(convenio);
+		Nivel nivel = (Nivel)(AonUtil.getController(IPayrollConstants.NIVEL_CONTROLLER_NAME)).getTo();
+		((Percepcion)(event.getController().getTo())).setConvenio(nivel.getConvenio());
+		((Percepcion)(event.getController().getTo())).setNivel(nivel);
 	}
 	
 	
