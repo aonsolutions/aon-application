@@ -57,7 +57,7 @@
 							value="#{financeSearch.supplier.id}" size="5" />
 						<aon:lookupButton 
 							windowTitle="#{supplierBundle.supplier_selection}"
-							selectReRender="Supplier_id,Customer_full_name"
+							selectReRender="Supplier_id,Supplier_full_name" actionType="search"
 							lookup="#{supplierLookup}" minHeight="460" minWidth="650"
 							property="#{financeSearch.supplier}">
 						</aon:lookupButton>
@@ -152,7 +152,7 @@
 					<aon:selectOneMenu id="Finance_financeStatus"
 						valueChangeListener="#{finance.addEqualExpression}">
 						<aon:enumConverter enum="com.code.aon.finance.enumeration.FinanceStatus" />
-						<f:selectItem itemLabel="-" itemValue=""/>
+						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{financeCollections.financeStatuses}" />
 					</aon:selectOneMenu>
 
