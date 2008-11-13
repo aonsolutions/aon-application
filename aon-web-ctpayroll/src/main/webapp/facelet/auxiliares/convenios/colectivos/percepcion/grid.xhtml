@@ -5,61 +5,57 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:div id="percepcionDataDiv">
-		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+		<ui:decorate template="/facelet/templates/grid.xhtml" >
 			<ui:param name="controller" value="#{percepcion}" />
 			<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
 			<ui:param name="showDataScroller" value="#{(!nivel.new) and (nivel.to != null)}" />			
-			<ui:param name="skipResetButton" value="#{nivel.new or (nivel.to == null)}" />			
+			<ui:param name="skipResetButton" value="#{nivel.new or (nivel.to == null)}" />
+			<ui:param name="skipEditButton" value="#{nivel.new or (nivel.to == null)}" />	
+					
 			<ui:define name="columns">
-			
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__comp}" />
-				</f:facet>
-				<aon:outputText value="#{to.id.codcom}" rendered="#{to!=percepcion.to}" />
-				<aon:inputText id="cdg_edit" styleClass="aon-form-input-text"
-					rendered="#{to==percepcion.to}"  required="true"
-					value="#{percepcion.to.id.codcom}" maxlength="8" size="10" />
-				<f:facet name="footer">
-					<aon:inputText id="cdg_new" styleClass="aon-form-input-text"  
-						rendered="#{percepcion.new}" required="true"
-						value="#{percepcion.to.id.codcom}" maxlength="8" size="10"  />
-				</f:facet>
-			</aon:column>
-
-			<aon:column>
+				<ui:param name="editAction" value="percepcion_form" />
+				<ui:param name="resetAction" value="percepcion_form" />
+				<ui:param name="resetActionListener" value="#{percepcion.onReset}" />
+				<ui:param name="skipSaveButton" value="#{true}" />
+				<ui:param name="skipRemoveButton" value="#{true}" />
+				
+					
+				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{appBundle.aon_payroll_description} #{appBundle.aon_payroll_auxiliares_convenios__comp}" />
+						<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__comp}" />
 					</f:facet>
-					<aon:outputText value="#{to.descom}" rendered="#{to!=percepcion.to}" />
-					<aon:inputText id="descom_edit" styleClass="aon-form-input-text"
-						rendered="#{to==percepcion.to}"  required="true"
-						value="#{percepcion.to.descom}" maxlength="8" size="10" />
+					<aon:outputText value="#{to.id.codcom}"  />
+					
 					<f:facet name="footer">
-						<aon:inputText id="descom_new" styleClass="aon-form-input-text"  
-							rendered="#{percepcion.new}" required="true"
-							value="#{percepcion.to.descom}" maxlength="8" size="10"  />
+						
+					</f:facet>
+				</aon:column>
+	
+				<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_description} #{appBundle.aon_payroll_auxiliares_convenios__comp}" />
+						</f:facet>
+						<aon:outputText value="#{to.descom}"  />
+						
+						<f:facet name="footer">
+							
+						</f:facet>
+					</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__importe}" />
+					</f:facet>
+					<aon:outputText value="#{to.importe}"  >
+						<f:convertNumber minFractionDigits="2" />
+					</aon:outputText>
+					
+					<f:facet name="footer">
+						
 					</f:facet>
 				</aon:column>
 			
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__importe}" />
-				</f:facet>
-				<aon:outputText value="#{to.importe}" rendered="#{to!=percepcion.to}" >
-					<f:convertNumber minFractionDigits="2" />
-				</aon:outputText>
-				<aon:inputText id="dato2_edit" styleClass="aon-form-input-text"
-					rendered="#{to==percepcion.to}" required="true"
-					value="#{percepcion.to.importe}" maxlength="8" size="10" />
-				<f:facet name="footer">
-					<aon:inputText id="dato2_new" styleClass="aon-form-input-text"  
-						rendered="#{percepcion.new}" required="true"
-						value="#{percepcion.to.importe}" maxlength="8" size="10"  />
-				</f:facet>
-			</aon:column>
-			
-		</ui:define>
+			</ui:define>
 		</ui:decorate>
 					
 	</aon:div>
