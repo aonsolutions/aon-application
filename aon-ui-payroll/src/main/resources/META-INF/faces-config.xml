@@ -957,7 +957,7 @@
 			<property-name>aliasMap</property-name>
 			<map-entries>
 				<map-entry>
-					<key>LinDivisa_divisa1_cdg</key>
+					<key>LinDivisa_id_divisaFinal</key>
 					<value>cdg</value>
 				</map-entry>
 			</map-entries>
@@ -2789,7 +2789,7 @@
 	 <managed-bean>
 		<managed-bean-name>cuenta</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.LinesController
+			com.code.aon.ui.payroll.controller.CuentaController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>

@@ -13,4 +13,7 @@ public interface IPayrollConstants {
 	String PERCEPCION_CONTROLLER_NAME = "percepcion";
 	String COMPLEMENTO_CONTROLLER_NAME = "complemento";
 	String CONVENIO_CONTROLLER_NAME = "convenio";
+	String DIVISA_CONTROLLER_NAME = "divisa";
+	String DIVISAMAESTRO_CONTROLLER_NAME = "divisaMaestro";
+
 }
