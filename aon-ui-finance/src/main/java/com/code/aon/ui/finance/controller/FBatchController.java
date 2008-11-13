@@ -56,7 +56,6 @@ import com.code.aon.finance.invoicing.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.ui.finance.csb.CSB19Writer;
@@ -81,9 +80,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	private CSBOutput csbOutput;
 
-	/** Determines if the fbatch is a payment or a charge. */
-	private Boolean payment;
-
 	private Date recordDate;
 
 	public CSBOutput getCsbOutput() {
@@ -94,36 +90,12 @@ public class FBatchController extends BasicController implements ICollectionProv
 		this.csbOutput = csbOutput;
 	}
 
-	/**
-	 * Gets if the fbatch is a payment or a charge.
-	 * 
-	 * @return true if the fbatch is a payment
-	 */
-	public Boolean getPayment() {
-		return payment;
-	}
-
-	/**
-	 * Sets if the fbatch is a payment or a charge.
-	 * 
-	 * @param payment true if the fbatch is a payment
-	 */
-	public void setPayment(Boolean payment) {
-		this.payment = payment;
-	}
-
 	public Date getRecordDate() {
 		return recordDate;
 	}
 
 	public void setRecordDate(Date recordDate) {
 		this.recordDate = recordDate;
-	}
-
-	@Override
-	public void onEditSearch(ActionEvent event) {
-		setPayment(null);
-		super.onEditSearch(event);
 	}
 
     public boolean isTodo() {
@@ -164,44 +136,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 			}
     	}
     }
-    
-	public void addRBankExpression(ValueChangeEvent event) throws ManagerBeanException{
-		if(event.getNewValue() != null){
-			Criteria criteria = getCriteria();
-			criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_BATCH_REGISTRY_BANK_ID), event.getNewValue());
-			setCriteria(criteria);
-		}
-	}
-	
-	/**
-	 * Adds to criteria the invoice issueDate. Greater than or equal
-	 * 
-	 * @param event the event that contains the new value
-	 * @throws ManagerBeanException
-	 */
-	public void addIssueDate1Expression(ValueChangeEvent event) throws ManagerBeanException {
-	    if (event.getNewValue() != null) {
-	    	Criteria criteria = getCriteria();
-			Object value = event.getNewValue();
-            criteria.addGreaterThanOrEqualExpression(getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE), value);
-			setCriteria(criteria);
-		}
-	}
-	
-	/**
-	 * Adds to criteria the invoice issueDate. Less than or equal
-	 * 
-	 * @param event the event that contains the new value
-	 * @throws ManagerBeanException
-	 */
-	public void addIssueDate2Expression(ValueChangeEvent event) throws ManagerBeanException {
-	    if (event.getNewValue() != null) {
-			Object value = event.getNewValue();
-			Criteria criteria = getCriteria();
-            criteria.addLessThanOrEqualExpression(getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE), value);
-			setCriteria(criteria);
-		}
-	}
 
     public void loadAvailableFinances(boolean payment) {
         try {
@@ -630,7 +564,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 			IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), fbatch.getId());
-			return new Integer (fBatchDetailBean.getList(criteria).size());
+			return fBatchDetailBean.getCount(criteria);
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error obtaining fbatch total details", e);
 		}

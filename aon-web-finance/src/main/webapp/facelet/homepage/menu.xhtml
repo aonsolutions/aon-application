@@ -86,7 +86,9 @@
 				</aon:menuItem>				
 				<!-- role="Remesas" -->
 				<aon:menuItem id="aon_fbatch"
-					value="#{financeBundle.finance_fbatch_module}" action="fbatch" />
+					value="#{financeBundle.finance_fbatch_module}" action="fbatch_search" >
+					<aon:actionListener method="#{fbatch.onEditSearch}"/>
+				</aon:menuItem>
 				<!-- role="MenuUtilidadesTesoreria" -->	
 				<aon:menuGroup id="aon_finance_utilities" value="#{financeBundle.finance_finance_utilities_module}">
 					<!-- role="ChecksTesoreria" -->
