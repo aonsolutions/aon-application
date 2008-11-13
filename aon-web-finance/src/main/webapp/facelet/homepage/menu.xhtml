@@ -11,16 +11,16 @@
 			<!-- role="Clientes" -->
 			<aon:commandLink id="customer"
 				value="#{customerBundle.customer_module}"
-				action="customer" immediate="true"
+				action="customer_search" immediate="true"
 				styleClass="aon-top-menu-item" >
-				<aon:actionListener method="#{customer.onReset}" />
+				<aon:actionListener method="#{customer.onEditSearch}" />
 			</aon:commandLink>
 			<!-- role="Proveedores" -->
 			<aon:commandLink id="supplier"
 				value="#{supplierBundle.supplier_module}"
-				action="supplier" immediate="true"
+				action="supplier_search" immediate="true"
 				styleClass="aon-top-menu-item" >
-				<aon:actionListener method="#{supplier.onReset}" />
+				<aon:actionListener method="#{supplier.onEditSearch}" />
 			</aon:commandLink>
 			<!-- role="MenuFacturas" -->
 			<aon:dropDownMenu id="aon_invoice" value="#{accountBundle.account_entry_invoice_module}">
