@@ -64,7 +64,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.ui.company</artifactId>
-      <version>3.0.1</version>
+      <version>3.1.0</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
