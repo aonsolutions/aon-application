@@ -81,10 +81,6 @@
 					<value>com.code.aon.ui.web.finance.i18n.messages</value>
 				</map-entry>				
 				<map-entry>
-					<key>accountBundle</key>
-                    <value>com.code.aon.ui.account.i18n.messages</value>
-				</map-entry>
-				<map-entry>
 					<key>customerBundle</key>
                     <value>com.code.aon.ui.customer.i18n.messages</value>
 				</map-entry>
