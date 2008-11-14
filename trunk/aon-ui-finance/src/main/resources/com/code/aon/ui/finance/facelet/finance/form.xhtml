@@ -97,14 +97,14 @@
 					</aon:selectOneMenu>
 					
 					<aon:outputLabel for="Finance_amount"
-						value="#{accountBundle.account_amount}" />
+						value="#{financeBundle.finance_amount}" />
 					<aon:inputText id="Finance_amount"
 						value="#{finance.to.amount}" size="10" disabled="true">
 						<f:convertNumber pattern="#{financeBundle.finance_money_pattern}" />
 					</aon:inputText>	
 
 					<aon:outputLabel for="Finance_expenses"
-						value="#{accountBundle.account_expenses}" />
+						value="#{financeBundle.finance_expenses}" />
 					<aon:inputText id="Finance_expenses"
 						value="#{finance.to.expenses}" size="10" disabled="#{!finance.pending and !finance.returned}">
 						<f:convertNumber pattern="#{financeBundle.finance_money_pattern}" />
@@ -172,7 +172,7 @@
 						
 								<aon:column width="100">
 									<f:facet name="header">
-										<aon:outputText value="#{accountBundle.account_amount}" />
+										<aon:outputText value="#{financeBundle.finance_amount}" />
 									</f:facet>
 									<aon:outputText value="#{to.amount}">
 										<f:convertNumber pattern="#{financeBundle.finance_money_pattern}" />

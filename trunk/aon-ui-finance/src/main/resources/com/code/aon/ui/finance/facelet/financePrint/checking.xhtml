@@ -51,7 +51,7 @@
 					<aon:outputLabel for="Customer_status"
 						value="#{financeBundle.finance_checking_customer_status}" />
 					<aon:selectOneMenu id="Customer_status"
-						value="#{financePrint.customerStatus}" partialSubmit="true">
+						value="#{financePrint.customerStatus}">
 						<f:selectItem itemLabel="-" value="#{null}"/> 
 						<f:selectItems value="#{customerCollections.customerStatuses}" />
 					</aon:selectOneMenu>
@@ -59,7 +59,7 @@
 					<aon:outputLabel for="Finance_status"
 						value="#{financeBundle.finance_checking_finance_status}" />
 					<aon:selectOneMenu id="Finance_status"
-						value="#{financePrint.financeStatus}" partialSubmit="true">
+						value="#{financePrint.financeStatus}">
 						<f:selectItem itemLabel="-" value="#{null}"/> 
 						<f:selectItems value="#{financeCollections.financeStatuses}" />
 					</aon:selectOneMenu>
