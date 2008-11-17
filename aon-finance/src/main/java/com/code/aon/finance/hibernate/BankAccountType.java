@@ -33,8 +33,13 @@ public class BankAccountType extends StringType {
 	}
 
 	public String toString(Object value) {
-		BankAccount ba = (BankAccount) value;
-		return ba==null?null:ba.getValue();
+		if ( value == null ) {
+			return null;
+		}
+		if ( value instanceof BankAccount ) {
+			return ((BankAccount) value).getValue();
+		}
+		return value.toString();
 	}
 
 	public Object get(ResultSet rs, String name) throws SQLException {
