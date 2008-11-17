@@ -22,7 +22,7 @@
 				<ui:define name="searchContent">
 
 					<aon:outputLabel for="Finance_payment"
-						value="#{financeBundle.finance_payment} / #{financeBundle.finance_charge}" />
+						value="#{financeBundle.finance_fbatch_type}" />
 					<aon:selectOneRadio id="Finance_payment" value="#{fBatchSearch.payment}">
 						<f:selectItem itemLabel="#{financeBundle.finance_payment}" itemValue="#{true}" />
 						<f:selectItem itemLabel="#{financeBundle.finance_charge}" itemValue="#{false}" />

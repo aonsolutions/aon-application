@@ -150,8 +150,8 @@
 					<aon:outputLabel for="Finance_financeStatus"
 						value="#{bundle.aon_status}" />
 					<aon:selectOneMenu id="Finance_financeStatus"
+						converter="aon.EnumConverter"
 						valueChangeListener="#{finance.addEqualExpression}">
-						<aon:enumConverter enum="com.code.aon.finance.enumeration.FinanceStatus" />
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{financeCollections.financeStatuses}" />
 					</aon:selectOneMenu>
