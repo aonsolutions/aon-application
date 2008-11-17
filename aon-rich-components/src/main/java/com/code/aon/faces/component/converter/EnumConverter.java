@@ -6,7 +6,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 
 import com.code.aon.common.enumeration.IResourceable;
-import com.code.aon.ui.converter.EnumLocaleConverter;
+import com.code.aon.ui.common.converter.EnumLocaleConverter;
 import com.sun.facelets.util.ReflectionUtil;
 
 public class EnumConverter extends EnumLocaleConverter implements StateHolder {
