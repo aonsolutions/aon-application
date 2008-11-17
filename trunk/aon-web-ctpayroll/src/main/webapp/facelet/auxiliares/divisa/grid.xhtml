@@ -34,18 +34,17 @@
 			</aon:column>
 
 
-						
 			  <aon:column>
 				<f:facet name="header">
 					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_divisa_divdest}" />
 				</f:facet>
-			    	<aon:outputText value="#{to.divisa1.cdg}"   />	  
+			    	<aon:outputText value="#{to.divisa0.cdg}"   />	  
 					   					
 				  <f:facet name="footer">				
 						<aon:lookupInputText id="Divisa1_cdg"
 							lookup="#{divisaLookup}"
 							reRender="Divisa1_description" rendered="#{divisa.new}"
-							value="#{divisa.to.divisa1.cdg}" size="5">
+							value="#{divisa.to.divisa0.cdg}" size="5">
 						</aon:lookupInputText>	
 						
 				</f:facet>
@@ -58,7 +57,7 @@
 							windowTitle="#{appBundle.aon_payroll_auxiliares_tipos__tipovia}"
 							selectReRender="Divisa1_cdg,Divisa1_description" rendered="#{divisa.new}"
 							lookup="#{divisaLookup}" minHeight="440"
-							property="#{divisa.to.divisa1}">
+							property="#{divisa.to.divisa0}">
 						</aon:lookupButton>						
 			      	</f:facet>
 		        	</aon:column>
@@ -67,20 +66,19 @@
 				<f:facet name="header">
 					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_divisa_destdec}" />
 				</f:facet>
-			<aon:outputText value="#{to.divisa1.description}" />	  	
+			<aon:outputText value="#{to.divisa0.description}" />	  	
 										
 			    	<f:facet name="footer">
 				
 						<aon:inputText id="Divisa1_description" rendered="#{divisa.new}"
-							value="#{(divisa.to.divisa1.description!=null)?(divisa.to.divisa1.description):('')}"
+							value="#{(divisa.to.divisa0.description!=null)?(divisa.to.divisa0.description):('')}"
 							size="34" disabled="true" />
 								
 						
 			      	</f:facet>
 		     	</aon:column>
 
-         	
-
+         
             <aon:column>
 				<f:facet name="header">
 					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_divisa_fecini}" />
@@ -122,7 +120,7 @@
 				</f:facet>
 			</aon:column>
 			
-	 <!--  	<aon:column >
+ <!--  	<aon:column  >
 				<f:facet name="header">
 					<aon:outputText value="divisaf" />
 				</f:facet>
@@ -139,8 +137,7 @@
 						maxlength="8" size="10"/>
 				</f:facet>	
 			
-			</aon:column>
-			-->
+			</aon:column> -->
 			
 			
 			<aon:column>

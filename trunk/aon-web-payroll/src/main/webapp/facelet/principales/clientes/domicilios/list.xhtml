@@ -18,14 +18,15 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_clientes}" />
 				<ui:param name="controller" value="#{domicilio}"/>
-				
+				<ui:param name="skipBackButton" value="false" />
+				<aon:methodParam name="cancelAction" value="cliente_form"/>	
 			</ui:include>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
 				<aon:dataTable id="clienteData" value="#{domicilio.model}"
-					var="to" rows="20" rendered="#{domicilio.model.rowCount > 0}"
+					var="to" rows="20" 
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
 					<aon:rowSelector action="domicilio_form" actionListener="#{domicilio.onSelect}" />

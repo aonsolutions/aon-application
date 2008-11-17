@@ -15,5 +15,5 @@ public interface IPayrollConstants {
 	String CONVENIO_CONTROLLER_NAME = "convenio";
 	String DIVISA_CONTROLLER_NAME = "divisa";
 	String DIVISAMAESTRO_CONTROLLER_NAME = "divisaMaestro";
-
+	String CLIENTE_CONTROLLER_NAME = "cliente";
 }
