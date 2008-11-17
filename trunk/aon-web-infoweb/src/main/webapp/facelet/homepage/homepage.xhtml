@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+	
+	<ui:define name="content">
+	<aon:form id="main_form">
+		<rich:panel styleClass="aon-content-home">
+			<h:panelGrid columns="1">
+
+		        <rich:panel style="width:450px">
+		            <f:facet name="header">
+		                <aon:outputText value="#{appBundle.aon_web_info_options}"/>
+		            </f:facet>
+					<h:panelGrid columns="3" styleClass="aon-text-center" style="width:100%">
+						<aon:commandButton id="webinfo-icon-company"
+							value="#{companyBundle.company_data_module}"
+							image="/images/icons/webinfo-icon-company.png"
+							styleClass="aon-icon-commandButton" 
+							action="company">
+							<aon:actionListener method="#{company.onLoad}" />
+							<f:setPropertyActionListener value="#{false}" target="#{company.showFinanceRegistryBank}" />
+							<f:setPropertyActionListener value="#{false}" target="#{company.showCompanyOtherData}" />
+						</aon:commandButton> 
+						<aon:commandButton id="webinfo-icon-otherdata"
+							value="#{appBundle.aon_web_info_data}"
+							image="/images/icons/webinfo-icon-otherdata.png"
+							styleClass="aon-icon-commandButton" 
+							action="otherdata">
+							<aon:actionListener method="#{company.onLoad}" />
+						</aon:commandButton> 
+						<aon:commandButton id="webinfo-icon-images"
+							value="#{appBundle.aon_web_info_images}"
+							image="/images/icons/webinfo-icon-images.png"
+							styleClass="aon-icon-commandButton" 
+							action="images">
+							<aon:actionListener method="#{company.onLoad}" />
+						</aon:commandButton> 
+		                <aon:outputText value="#{companyBundle.company_data_module}"/>
+		                <aon:outputText value="#{appBundle.aon_web_info_data}"/>
+		                <aon:outputText value="#{appBundle.aon_web_info_images}"/>
+					</h:panelGrid>
+					<h:panelGrid columns="3" styleClass="aon-text-center" style="width:100%">
+						<aon:commandButton id="webinfo-icon-pages"
+							value="#{appBundle.aon_web_info_pages}"
+							image="/images/icons/webinfo-icon-pages.png"
+							styleClass="aon-icon-commandButton" 
+							action="pages">
+							<aon:actionListener method="#{company.onLoad}" />
+						</aon:commandButton> 
+						<aon:commandButton id="webinfo-icon-templates"
+							value="#{appBundle.aon_web_info_template}"
+							image="/images/icons/webinfo-icon-templates.png"
+							styleClass="aon-icon-commandButton" 
+							action="templates">
+							<aon:actionListener method="#{company.onLoad}" />
+						</aon:commandButton> 
+						<aon:commandButton id="webinfo-icon-generator"
+							value="#{appBundle.aon_web_info_generate}"
+							image="/images/icons/webinfo-icon-generator.png"
+							styleClass="aon-icon-commandButton" 
+							action="generate">
+							<aon:actionListener method="#{company.onLoad}" />
+						</aon:commandButton> 
+		                <aon:outputText value="#{appBundle.aon_web_info_pages}"/>
+		                <aon:outputText value="#{appBundle.aon_web_info_template}"/>
+		                <aon:outputText value="#{appBundle.aon_web_info_generate}"/>
+					</h:panelGrid>
+		        </rich:panel>
+		        
+			</h:panelGrid>
+		</rich:panel>
+	</aon:form>	
+
+	</ui:define>
+
+</ui:composition>
+
