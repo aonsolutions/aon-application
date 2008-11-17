@@ -15,34 +15,7 @@
 
 		<aon:form id="epigrafeMaestroList">
 		
-			<!--  <aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.aon_payroll_cotizacion_epigrafes}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{bundle.aon_listing}" />
-					</aon:div>
-
-				
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							action="cotizacion_epigrafe_search" actionListener="#{epigrafeMaestro.onEditSearch}"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}" />				
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="cotizacion_epigrafe_form" actionListener="#{epigrafeMaestro.onReset}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}" />
-					</aon:div>
-					
-				</aon:panelGrid>
-			</aon:div>-->
-			
-          <ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+		   <ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_cotizacion_epigrafes}" />
 				<ui:param name="controller" value="#{epigrafeMaestro}" />
 				
@@ -52,7 +25,7 @@
 
 				<aon:dataTable id="epigrafeMaestroData" value="#{epigrafeMaestro.model}"
 					var="to" rows="20" rendered="#{epigrafeMaestro.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
+					columnClasses="aon-width-150, aon-editDataTable-textColumn">
 
 					<aon:rowSelector action="epigrafeMaestro_form" actionListener="#{epigrafeMaestro.onSelect}" />
 					

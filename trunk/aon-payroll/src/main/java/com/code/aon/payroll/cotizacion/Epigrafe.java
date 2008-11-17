@@ -26,7 +26,7 @@ public class Epigrafe  implements ITransferObject {
      private String cdg;
      private String description;
 
- 	/** The porcentajes. */
+ 	/** The epigrafes. */
  	private Set<Linepigr> epigrafes = new HashSet<Linepigr>();
  	
     @Id     
@@ -34,6 +34,7 @@ public class Epigrafe  implements ITransferObject {
     public String getCdg() {
         return this.cdg;
     }
+   
     
     public void setCdg(String cdg) {
         this.cdg = cdg;

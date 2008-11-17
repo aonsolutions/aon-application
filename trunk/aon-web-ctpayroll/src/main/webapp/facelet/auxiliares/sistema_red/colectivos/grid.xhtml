@@ -29,7 +29,7 @@
 					
 					<aon:editDataTable id="colectivosData" var="to" rows="20"
 						rendered="#{(sistemaRedColectivos.model.rowCount > 0) or (sistemaRedColectivos.new)}" value="#{sistemaRedColectivos.model}"
-						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-numberColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+						columnClasses="aon-editDataTable-iconColumn, aon-width-150, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
 								
 						<aon:rowSelector toggleOnClick="#{sistemaRedColectivos.to == null}"
 							actionListener="#{sistemaRedColectivos.onSelect}" />

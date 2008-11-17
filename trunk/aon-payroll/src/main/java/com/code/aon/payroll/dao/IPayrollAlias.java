@@ -2383,7 +2383,24 @@ public interface IPayrollAlias {
 	* Hibernate value: Elemirpf.porcentaje
 	*/
 	String  ELEMIRPF_PORCENTAJE = ELEMIRPF_ENTRY.getAliasNames()[2];
+	
+	/** 
+	* Alias value: Elemirpf_elemirpfs_fecfin
+	* Hibernate value: Elemirpf.elemirpfs.fecfin
+	*/
+	//String  ELEMIRPF_ELEMIRPFS_FECFIN = ELEMIRPF_ENTRY.getAliasNames()[3];
+	
+	/** 
+	* Alias value: Elemirpf_elemirpfs_id_cdg
+	* Hibernate value: Elemirpf.elemirpfs.id.cdg
+	*/
+	//String  ELEMIRPF_ELEMIRPFS_ID_CDG = ELEMIRPF_ENTRY.getAliasNames()[4];
 
+	/** 
+	* Alias value: Elemirpf_elemirpfs_id_fecini
+	* Hibernate value: Elemirpf.elemirpfs.id.fecini
+	*/
+	//String  ELEMIRPF_ELEMIRPFS_ID_FECINI = ELEMIRPF_ENTRY.getAliasNames()[5];
 
 
 	/** 
@@ -2426,7 +2443,6 @@ public interface IPayrollAlias {
 	* Hibernate value: Linirpf.importe
 	*/
 	String  LINIRPF_IMPORTE = LINIRPF_ENTRY.getAliasNames()[5];
-
 
 
 	/** 
