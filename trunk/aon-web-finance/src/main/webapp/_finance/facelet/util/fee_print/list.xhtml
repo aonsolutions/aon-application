@@ -76,7 +76,7 @@
 									</h:panelGroup>
 								</f:facet>
 								<h:outputText value="#{to.quantity}"> 
-									<f:convertNumber pattern="#,##0.00" />
+									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 								</h:outputText>
 							</h:column>
 
@@ -87,7 +87,7 @@
 									</h:panelGroup>
 								</f:facet>
 								<h:outputText value="#{to.price}"> 
-									<f:convertNumber pattern="#,##0.00" />
+									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 								</h:outputText>
 							</h:column>
 

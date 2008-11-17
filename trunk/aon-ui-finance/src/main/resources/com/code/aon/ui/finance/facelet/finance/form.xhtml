@@ -100,21 +100,21 @@
 						value="#{financeBundle.finance_amount}" />
 					<aon:inputText id="Finance_amount"
 						value="#{finance.to.amount}" size="10" disabled="true">
-						<f:convertNumber pattern="#{financeBundle.finance_money_pattern}" />
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:inputText>	
 
 					<aon:outputLabel for="Finance_expenses"
 						value="#{financeBundle.finance_expenses}" />
 					<aon:inputText id="Finance_expenses"
 						value="#{finance.to.expenses}" size="10" disabled="#{!finance.pending and !finance.returned}">
-						<f:convertNumber pattern="#{financeBundle.finance_money_pattern}" />
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:inputText>
 					
 					<aon:outputLabel for="Finance_total"
 						value="#{financeBundle.finance_total}" />
 					<aon:inputText id="Finance_total"
 						value="#{finance.to.totalAmount}" size="10" disabled="true">
-						<f:convertNumber pattern="#{financeBundle.finance_money_pattern}" />
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:inputText>	
 					
 					<aon:outputLabel for="Finance_financeStatus"
@@ -175,7 +175,7 @@
 										<aon:outputText value="#{financeBundle.finance_amount}" />
 									</f:facet>
 									<aon:outputText value="#{to.amount}">
-										<f:convertNumber pattern="#{financeBundle.finance_money_pattern}" />
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 									</aon:outputText>	
 								</aon:column>
 								

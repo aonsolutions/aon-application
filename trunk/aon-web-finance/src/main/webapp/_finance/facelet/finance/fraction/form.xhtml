@@ -91,7 +91,7 @@
 						<t:inputText id="Finance_amount"
 							value="#{finance.to.amount}" size="10" disabled="true"
 							styleClass="aon-form-input-text-disabled" forceId="#{true}" >
-							<f:convertNumber pattern="#,##0.00" />
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</t:inputText>	
 
 						<h:outputLabel for="Finance_expenses"
@@ -100,7 +100,7 @@
 						<t:inputText id="Finance_expenses"
 							value="#{finance.to.expenses}" size="10" disabled="true"
 							styleClass="aon-form-input-text-disabled" forceId="#{true}" >
-							<f:convertNumber pattern="#,##0.00" />
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</t:inputText>	
 
 						<h:outputLabel for="Finance_totalAmount"
@@ -109,7 +109,7 @@
 						<t:inputText id="Finance_totalAmount"
 							value="#{finance.to.totalAmount}" size="10" disabled="true"
 							styleClass="aon-form-input-text-disabled" forceId="#{true}" >
-							<f:convertNumber pattern="#,##0.00" />
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</t:inputText>	
 						
 					</h:panelGrid>
@@ -192,7 +192,7 @@
 									</f:facet>
 									<t:outputText
 										value="#{to.expenses}" forceId="#{true}">
-										<f:convertNumber pattern="#,##0.00" />
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 									</t:outputText>
 								</h:column>
 								
@@ -203,7 +203,7 @@
 									<t:outputText id="Finance_amount"
 										rendered="#{to!=financeFraction.currentFinance}"
 										value="#{to.amount}" forceId="#{true}">
-										<f:convertNumber pattern="#,##0.00" />
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 									</t:outputText>
 									<t:inputText id="Finance_amount-Edit"
 										rendered="#{to==financeFraction.currentFinance}" forceId="#{true}"

@@ -128,7 +128,7 @@
 									<h:outputText value="#{financeBundle.aon_amount}" />
 								</f:facet>
 								<h:outputText value="#{fbatch.modelToTotalAmount}" >
-									<f:convertNumber pattern="#,##0.00" />
+									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 								</h:outputText>	
 							</h:column>
 						</t:dataTable>

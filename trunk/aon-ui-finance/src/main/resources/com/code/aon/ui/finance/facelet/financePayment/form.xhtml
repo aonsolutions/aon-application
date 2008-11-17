@@ -78,21 +78,21 @@
 						value="#{financeBundle.finance_amount}" />
 					<aon:inputText id="Finance_amount" size="10" 
 						value="#{financePayment.to.amount}" disabled="true">
-						<f:convertNumber pattern="#{financeBundle.finance_money_pattern}" />
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:inputText>
 
 					<aon:outputLabel for="Finance_expenses"
 						value="#{financeBundle.finance_expenses}" />
 					<aon:inputText id="Finance_expenses" size="10" 
 						value="#{financePayment.to.expenses}" disabled="true">
-						<f:convertNumber pattern="#{financeBundle.finance_money_pattern}" />
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:inputText>
 
 					<aon:outputLabel for="Finance_totalAmount"
 						value="#{financeBundle.finance_total}" />
 					<aon:inputText id="Finance_totalAmount" size="10" 
 						value="#{financePayment.to.totalAmount}" disabled="true">
-						<f:convertNumber pattern="#{financeBundle.finance_money_pattern}" />
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:inputText>
 
 					<aon:outputLabel for="Finance_payed_amount"
