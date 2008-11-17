@@ -233,7 +233,7 @@
 							<t:outputText id="Invoice_total" forceId="#{true}" size="15"
 								styleClass="aon-form-input-text-label"
 								value="#{feeInvoicing.toInvoiceTotalPrice}">
-								<f:convertNumber pattern="#,##0.00" />
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</t:outputText>
 
 						</h:panelGrid>
@@ -336,7 +336,7 @@
 									</f:facet>
 									<t:outputText value="#{to.quantity}"
 										rendered="#{to!=feeInvoicingDetail.to}">
-										<f:convertNumber pattern="#,###0.000" />
+										<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
 									</t:outputText>
 									<t:inputText id="Item_quantity-Edit"
 										rendered="#{to==feeInvoicingDetail.to}" forceId="#{true}"
@@ -360,7 +360,7 @@
 									</f:facet>
 									<t:outputText value="#{to.price}"
 										rendered="#{to!=feeInvoicingDetail.to}">
-										<f:convertNumber pattern="#,##0.00" />
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 									</t:outputText>
 									<t:inputText id="Item_Lookup_price-Edit" size="7" forceId="#{true}"
 										rendered="#{to==feeInvoicingDetail.to}"
@@ -384,7 +384,7 @@
 									<t:outputText id="Discount" forceId="#{true}"
 										rendered="#{to!=feeInvoicingDetail.to}"
 										value="#{to.discountExpression.discountExpr}">
-										<f:convertNumber pattern="#,##0.00" />
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 									</t:outputText>
 									<t:inputText id="Discount-Edit"
 										rendered="#{to==feeInvoicingDetail.to}" forceId="#{true}"
@@ -406,7 +406,7 @@
 									</f:facet>
 									<t:outputText id="Item_price_new-Edit"
 										value="#{to.taxableBase}" forceId="#{true}">
-										<f:convertNumber pattern="#,##0.00" />
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 									</t:outputText>
 									<f:facet name="footer">
 										<t:div style="text-align:right;">
@@ -417,7 +417,7 @@
 											<t:outputText id="Item_details_total"
 												rendered="#{!feeInvoicingDetail.new}"
 												value="#{feeInvoicingDetail.to.taxableBase}">
-												<f:convertNumber pattern="#,##0.00" />
+												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 											</t:outputText>
 										</t:div>
 									</f:facet>

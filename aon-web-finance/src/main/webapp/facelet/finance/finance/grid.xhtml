@@ -170,7 +170,7 @@
 					</f:facet>
 					<h:outputText value="#{to.amount}" 
 						rendered="#{to.id!=controllerAlias.to.id}" >
-						<f:convertNumber pattern="#,##0.00" />
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</h:outputText>	
 					<t:inputText id="Finance_amount-Edit" forceId="#{true}"
 						rendered="#{to.id==controllerAlias.to.id}" 

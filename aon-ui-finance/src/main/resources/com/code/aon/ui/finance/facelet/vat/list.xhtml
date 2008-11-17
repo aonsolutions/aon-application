@@ -104,7 +104,7 @@
 							<aon:outputText value="#{financeBundle.finance_taxable_base}" />
 						</f:facet>
 						<aon:outputText value="#{to.base}">
-							<f:convertNumber pattern="#{financeBundle.finance_money_pattern}" />
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 					</aon:column>
 
@@ -113,7 +113,7 @@
 							<aon:outputText value="%" />
 						</f:facet>
 						<aon:outputText value="#{to.percent}">
-							<f:convertNumber pattern="##0.00" />
+							<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 						</aon:outputText>
 					</aon:column>
 
@@ -122,7 +122,7 @@
 							<aon:outputText value="#{financeBundle.finance_surcharge}" />
 						</f:facet>
 						<aon:outputText value="#{to.surcharge}">
-							<f:convertNumber pattern="##0.00" />
+							<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 						</aon:outputText>
 					</aon:column>
 
@@ -131,7 +131,7 @@
 							<aon:outputText value="#{financeBundle.finance_vat_quota}" />
 						</f:facet>
 						<aon:outputText value="#{to.vatQuota}">
-							<f:convertNumber pattern="#{financeBundle.finance_money_pattern}" />
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 					</aon:column>
 
@@ -140,7 +140,7 @@
 							<aon:outputText value="#{financeBundle.finance_total}" />
 						</f:facet>
 						<aon:outputText value="#{to.total}">
-							<f:convertNumber pattern="#{financeBundle.finance_money_pattern}" />
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 					</aon:column>
 				</aon:dataTable>

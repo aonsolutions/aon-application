@@ -88,7 +88,7 @@
 							<aon:outputText value="#{financeBundle.finance_amount}" />
 						</f:facet>
 						<aon:outputText value="#{to.totalAmount}" >
-							<f:convertNumber pattern="#{financeBundle.finance_money_pattern}" />
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 					</aon:column>
 				</aon:dataTable>

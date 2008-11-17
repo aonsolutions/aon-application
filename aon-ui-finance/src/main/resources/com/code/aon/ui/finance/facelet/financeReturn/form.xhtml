@@ -78,7 +78,7 @@
 						value="#{financeBundle.finance_amount}"/>
 					<aon:inputText id="Finance_amount" size="10" 
 						disabled="true" value="#{financeReturn.to.amount}">
-						<f:convertNumber pattern="#{financeBundle.finance_money_pattern}" />
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:inputText>
 
 					<aon:outputLabel for="Finance_expenses"

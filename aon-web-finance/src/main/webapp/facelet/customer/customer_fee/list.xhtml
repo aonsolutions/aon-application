@@ -56,7 +56,7 @@
 						<h:outputText value="#{customerBundle.fee_quantity}" />
 					</f:facet>
 					<h:outputText value="#{to.quantity}">
-						<f:convertNumber pattern="#,##0.00" />
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</h:outputText>	
 				</t:column>
 				
@@ -65,7 +65,7 @@
 						<h:outputText value="#{customerBundle.aon_customer_fee_price}" />
 					</f:facet>
 					<h:outputText value="#{to.price}" >
-						<f:convertNumber pattern="#,##0.00" />
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</h:outputText>	
 				</t:column>
 				
