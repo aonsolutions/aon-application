@@ -26,7 +26,7 @@
 					
 					<aon:editDataTable id="tipoViaData" var="to" rows="20"
 						rendered="#{(tiposVia.model.rowCount > 0) or (tiposVia.new)}" value="#{tiposVia.model}"
-						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-numberColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+						columnClasses="aon-editDataTable-iconColumn, aon-width-150, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
 								
 						<aon:rowSelector toggleOnClick="#{tiposVia.to == null}"
 							actionListener="#{tiposVia.onSelect}" />

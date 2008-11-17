@@ -28,7 +28,7 @@
 					<aon:editDataTable id="documentoData" var="to" rows="20"
 						rendered="#{(tiposDocumento.model.rowCount > 0) or (tiposDocumento.new)}" 
 						value="#{tiposDocumento.model}"
-						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-numberColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+						columnClasses="aon-editDataTable-iconColumn, aon-width-150, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
 								
 						<aon:rowSelector toggleOnClick="#{tiposDocumento.to == null}"
 							actionListener="#{tiposDocumento.onSelect}" />

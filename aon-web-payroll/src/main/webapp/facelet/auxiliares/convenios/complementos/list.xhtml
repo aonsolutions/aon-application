@@ -25,8 +25,7 @@
 
 				<aon:dataTable id="complementoData" value="#{complemento.model}"
 					var="to" rows="20" rendered="#{complemento.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, 
-					aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+					columnClasses="aon-width-150, aon-editDataTable-textColumn">
 
 					<aon:rowSelector action="complemento_form" actionListener="#{complemento.onSelect}" />
 					

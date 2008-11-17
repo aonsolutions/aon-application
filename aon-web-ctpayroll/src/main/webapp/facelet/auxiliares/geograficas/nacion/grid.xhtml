@@ -28,7 +28,7 @@
 					<aon:editDataTable id="nacionData" var="to" rows="20"
 						rendered="#{(nacion.model.rowCount > 0) or (nacion.new)}"
 						value="#{nacion.model}"
-						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+						columnClasses="aon-editDataTable-iconColumn, aon-width-150, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
 
 						<aon:rowSelector toggleOnClick="#{nacion.to == null}"
 							actionListener="#{nacion.onSelect}" />

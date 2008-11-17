@@ -18,7 +18,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
 import com.code.aon.payroll.dao.IPayrollAlias;
-import com.code.aon.payroll.enumeration.Desempleado;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 
@@ -38,12 +37,20 @@ public class DatosIrpfController extends PayrollBasicController {
 		try {
 			if(searchPorcentaje){
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.ELEMIRPF_PORCENTAJE), "S");
-			}
-			if(searchFecini != null){
-				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.LINIRPF_ID_FECINI), searchFecini);
+			}			
+			
+			/*if(searchFecini != null){
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.ELEMIRPF_ELEMIRPFS_ID_FECINI), searchFecini);
 			}
 			if(searchFecfin != null){
-				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.LINIRPF_FECFIN), searchFecfin);
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.ELEMIRPF_ELEMIRPFS_FECFIN), searchFecfin);
+			}*/
+			
+			if(searchFecini != null){
+				getCriteria().addEqualExpression("Elemirpf.elemirpfs.id.fecini", searchFecini);
+			}
+			if(searchFecfin != null){
+				getCriteria().addEqualExpression("Elemirpf.elemirpfs.fecfin", searchFecfin);
 			}
 				
 		} catch (ManagerBeanException e) {

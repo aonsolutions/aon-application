@@ -1,7 +1,6 @@
 package com.code.aon.payroll.irpf;
 
 
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -19,8 +18,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.payroll.cotizacion.Ocupacion;
-
 
 
 @Entity
@@ -30,7 +27,8 @@ public class Elemirpf  implements  ITransferObject  {
      private String cdg;
      private String description;
      private String porcentaje;
-    
+     
+     private Set<Linirpf> elemirpfs = new HashSet<Linirpf>();    
 
  
 
@@ -70,19 +68,14 @@ public class Elemirpf  implements  ITransferObject  {
 	public void setPorcentajebol(Boolean bol) {
 		setPorcentaje( (bol!=null && bol)? "S":"N" );
 	}
-	
-	
-	private Set<Linirpf> linirpfs = new HashSet<Linirpf>();
-	
+		
 	@OneToMany(mappedBy = "elemirpf", cascade={CascadeType.REMOVE})
-	public Set<Linirpf> getLinirpfs() {
-		return linirpfs;
+	public Set<Linirpf> getElemirpfs() {
+		return elemirpfs;
 	}
 
-	public void setLinirpfs(Set<Linirpf> linirpfs) {
-		this.linirpfs = linirpfs;
+	public void setElemirpfs(Set<Linirpf> elemirpfs) {
+		this.elemirpfs = elemirpfs;
 	}
 	
 }
-
-
