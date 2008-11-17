@@ -957,7 +957,7 @@
 			<property-name>aliasMap</property-name>
 			<map-entries>
 				<map-entry>
-					<key>LinDivisa_id_divisaFinal</key>
+					<key>LinDivisa_divisa1_cdg</key>
 					<value>cdg</value>
 				</map-entry>
 			</map-entries>
@@ -996,7 +996,7 @@
 			<map-entries>
 				<map-entry>
 					<key>cdg</key>
-					<value>id.cdg</value>
+					<value>divisa1.cdg</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -2784,6 +2784,25 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>  
+		  <managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{DomicilioControllerListener}</value>			
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+		<managed-bean>
+		<managed-bean-name>
+			DomicilioControllerListener
+		</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.DomicilioControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
 	 <managed-bean>
@@ -2825,6 +2844,26 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+		  <managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{CuentaControllerListener}</value>			
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+		
+		<managed-bean>
+		<managed-bean-name>
+			CuentaControllerListener
+		</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.CuentaControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 </faces-config>

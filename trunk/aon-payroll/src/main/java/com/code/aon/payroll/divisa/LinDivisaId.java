@@ -39,7 +39,7 @@ public class LinDivisaId  implements  Serializable {
     }
 
 	
-    @Column(name="divisa_final", nullable=false, length=3)
+    @Column(name="divisa_final",  length=3)
     public String getDivisaFinal() {
         return this.divisaFinal;
     }
@@ -49,7 +49,7 @@ public class LinDivisaId  implements  Serializable {
     }
 
 	
-    @Column(name="fecini", nullable=false, length=10)
+    @Column(name="fecini",  length=10)
     public Date getFecini() {
         return this.fecini;
     }
