@@ -10,6 +10,13 @@
 	 <converter-class>com.code.aon.ui.common.converter.TransferObjectConverter</converter-class>
 	</converter>
 
+   	<!-- ************* ENUM CONVERTER ***************** -->
+	<converter>
+		<description>Conversor para intenacionalizar las opciones de los enumerados.</description>
+		<converter-for-class>com.code.aon.common.enumeration.IResourceable</converter-for-class>
+		<converter-class>com.code.aon.ui.common.converter.EnumLocaleConverter</converter-class>
+	</converter>
+	
 	<!-- ************ TIMEZONE CONTROLLER	************** -->
 	<managed-bean>
 		<managed-bean-name>timeZoneController</managed-bean-name>
