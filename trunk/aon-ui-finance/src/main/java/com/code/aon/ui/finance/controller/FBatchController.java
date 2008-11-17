@@ -38,6 +38,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.Company;
+import com.code.aon.finance.BankAccount;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
@@ -158,7 +159,7 @@ public class FBatchController extends BasicController implements ICollectionProv
                 criteria.addEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_PAY_METHOD_TYPE), PayMethodType.NEGOTIABLE_DOCUMENT);
                 if (!to.getFinanceBatchType().equals(FinanceBatchType.CSB_58)) {
                 	criteria.addNotNullExpression(controller.getFieldName(IFinanceAlias.FINANCE_BANK_ACCOUNT));
-                	criteria.addExpression(ExpressionUtilities.getNotEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_BANK_ACCOUNT), ""));
+                	criteria.addExpression(ExpressionUtilities.getNotEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_BANK_ACCOUNT), new BankAccount()));
                     if (!to.getFinanceBatchType().equals(FinanceBatchType.CSB_32)) {
                         criteria.addLessThanOrEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), to.getIssueDate());
                     }
@@ -206,7 +207,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 
         String bundleName = AonUtil.getConfigurationController().getApplicationBundles().get("financeBundle");
         ResourceBundle bundle = ResourceBundle.getBundle(bundleName, FacesContext.getCurrentInstance().getViewRoot().getLocale());
-        String trackingDescription = bundle.getString("aon_finance_tracking_batched") + " " + fBatch.getId() + " - " + fBatch.getDescription();
+        String trackingDescription = bundle.getString("finance_tracking_batched") + " " + fBatch.getId() + " - " + fBatch.getDescription();
 
         FinanceController financeController = (FinanceController)AonUtil.getController(FINANCE_CONTROLLER_NAME);
         try {
@@ -318,7 +319,7 @@ public class FBatchController extends BasicController implements ICollectionProv
         	if (csbOutput.getErrors().size() > 0) {
                 String bundleName = AonUtil.getConfigurationController().getApplicationBundles().get("financeBundle");
         		ResourceBundle bundle = ResourceBundle.getBundle(bundleName, FacesContext.getCurrentInstance().getViewRoot().getLocale());
-        		AonUtil.addErrorMessage(bundle.getString("aon_finance_batch_disk_error"));
+        		AonUtil.addErrorMessage(bundle.getString("finance_batch_disk_error"));
         	} else {
                 fbatch.setFinanceBatchStatus(FinanceBatchStatus.DONE);
                 getManagerBean().update(fbatch);
@@ -416,7 +417,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 
         String bundleName = AonUtil.getConfigurationController().getApplicationBundles().get("financeBundle");
         ResourceBundle bundle = ResourceBundle.getBundle(bundleName, FacesContext.getCurrentInstance().getViewRoot().getLocale());
-        String trackingDescription = bundle.getString("aon_finance_tracking_recorded") + " " + entry.getId();
+        String trackingDescription = bundle.getString("finance_tracking_recorded") + " " + entry.getId();
 
         IManagerBean fbatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
         IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
@@ -451,7 +452,7 @@ public class FBatchController extends BasicController implements ICollectionProv
         criteria.addEqualExpression(fbatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), fbatch.getId());
         criteria.addEqualExpression(fbatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.RETURNED);
         if (fbatchDetailBean.getList(criteria).size() > 0) {
-            AonUtil.addErrorMessage(bundle.getString("aon_finance_batch_unrecord_error"));
+            AonUtil.addErrorMessage(bundle.getString("finance_batch_unrecord_error"));
             throw new AbortProcessingException();
         }
 
