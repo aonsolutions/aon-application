@@ -32,7 +32,7 @@ import com.code.aon.ui.util.AonUtil;
 public class DivisaControllerListener extends ControllerAdapter {
 
 	@Override
-	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+	public void  beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		
 		/*	 LinDivisa Div = (LinDivisa)event.getController().getTo();
 		Divisa d = (Divisa)event.getController().getTo();
@@ -65,11 +65,15 @@ public class DivisaControllerListener extends ControllerAdapter {
 		System.out.println(dF);	
 		String cdgg = ((LinDivisa)(AonUtil.getController(IPayrollConstants.DIVISA_CONTROLLER_NAME)).getTo()).getDivisa1().getCdg();
         System.out.println("-----------"+cdgg);	
-		String desc = ((LinDivisa)(AonUtil.getController(IPayrollConstants.DIVISA_CONTROLLER_NAME)).getTo()).getDivisa1().getDescription();
-        System.out.println("-----------"+desc);			
-	    ((LinDivisa)(event.getController().getTo())).getId().setDivisaFinal(dF);
-	    ((LinDivisa)(event.getController().getTo())).getDivisa1().setCdg(cdgg);
-	    ((LinDivisa)(event.getController().getTo())).getDivisa1().setDescription(desc);
+		String desc = ((LinDivisa)(AonUtil.getController(IPayrollConstants.DIVISA_CONTROLLER_NAME)).getTo()).getDivisa0().getDescription();
+        System.out.println("-----------"+desc);		
+        
+        
+         String s = ((LinDivisa)(event.getController().getTo())).getDivisa0().getCdg();	   
+        ((LinDivisa)(event.getController().getTo())).getId().setCdg(cdgg);	   
+	    ((LinDivisa)(event.getController().getTo())).getId().setDivisaFinal(s);
+	   // ((LinDivisa)(event.getController().getTo())).getDivisa1().setCdg(cdgg);
+	   //((LinDivisa)(event.getController().getTo())).getDivisa1().setDescription(desc);
 	
 	
 	}
@@ -105,16 +109,7 @@ public class DivisaControllerListener extends ControllerAdapter {
 	*/
 		
 		
-		String dF = ((Divisa)(AonUtil.getController(IPayrollConstants.DIVISAMAESTRO_CONTROLLER_NAME).getTo())).getCdg();
-		System.out.println(dF);	
-		String cdgg = ((LinDivisa)(AonUtil.getController(IPayrollConstants.DIVISA_CONTROLLER_NAME)).getTo()).getDivisa1().getCdg();
-        System.out.println("-----------"+cdgg);	
-		String desc = ((LinDivisa)(AonUtil.getController(IPayrollConstants.DIVISA_CONTROLLER_NAME)).getTo()).getDivisa1().getDescription();
-        System.out.println("-----------"+desc);			
-	    ((LinDivisa)(event.getController().getTo())).getId().setDivisaFinal(dF);
-	    ((LinDivisa)(event.getController().getTo())).getDivisa1().setCdg(cdgg);
-	    ((LinDivisa)(event.getController().getTo())).getDivisa1().setDescription(desc);
-	
+
 	
 	}
 

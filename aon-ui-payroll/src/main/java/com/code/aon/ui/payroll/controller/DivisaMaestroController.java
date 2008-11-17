@@ -17,12 +17,18 @@ public class DivisaMaestroController extends PayrollBasicController {
 	public void onExit(ActionEvent event) {
 		// TODO Auto-generated method stub
 	}
+Divisa d;
 
 	
 private List<SelectItem> redondeos;
 
-          
-	
+     String maestro;
+     
+     public void getCodigo() {
+    	 
+    	 
+    	this.setMaestro(((Divisa)getTo()).getCdg());
+     }
 	
 	/**
 	 * Recupera los tipos de retribuciones 
@@ -40,6 +46,22 @@ private List<SelectItem> redondeos;
 			}
 		}
 		return redondeos;
+	}
+
+	public String getMaestro() {
+		return maestro;
+	}
+
+	public void setMaestro(String maestro) {
+		this.maestro = maestro;
+	}
+
+	public Divisa getD() {
+		return d;
+	}
+
+	public void setD(Divisa d) {
+		this.d = d;
 	}
 
 
