@@ -35,6 +35,8 @@ public class FaceletUtil {
 	
 	public final static Class[] VALIDATOR_SIG = new Class[] { FacesContext.class, UIComponent.class, Object.class };
 	
+	private static final String RENDERED = "rendered";
+	
 	public static URL getTemplate(String resource) {
 		ClassLoader loader = FaceletUtil.class.getClassLoader();
 		URL url = loader.getResource(resource);
@@ -150,5 +152,14 @@ public class FaceletUtil {
         } 
         return vb.getValue(ctx);
 	}
+	
+	public static boolean isRendered( FaceletContext ctx, Tag tag ) {
+		boolean rendered = true;
+		TagAttribute renderedTag = getAttribute(tag, RENDERED);
+		if ( renderedTag != null ) {
+			rendered = renderedTag.getBoolean(ctx);
+		}
+		return rendered;
+	}	
 	
 }
