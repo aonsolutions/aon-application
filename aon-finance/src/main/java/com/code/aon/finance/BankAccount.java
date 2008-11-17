@@ -44,11 +44,17 @@ public class BankAccount implements Serializable {
 	}
 
 	public String toString() {
-		return getEntity() + '.' + getOffice() + '.' + getControl() + '.' + getAccount();
+		if ( (getEntity() != null) && (getOffice() != null) && (getControl() != null) && (getAccount() != null) ) {
+			return getEntity() + '.' + getOffice() + '.' + getControl() + '.' + getAccount();			
+		}
+		return "";
 	}
 
 	public String getValue() {
-		return getEntity() + getOffice() + getControl() + getAccount();
+		if ( (getEntity() != null) && (getOffice() != null) && (getControl() != null) && (getAccount() != null) ) {
+			return getEntity()+ getOffice() + getControl() + getAccount();			
+		}
+		return "";
 	}
 
 	public boolean isValid() {
