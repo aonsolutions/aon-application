@@ -1543,6 +1543,16 @@ color:#000;
 	}	
 .aon-popupWindow-content-internal{
 	}
+	
+.aon-timer-title{
+	background-color:#ccc;
+	color:#000;
+	margin:1px;
+	font-size:1.1em;
+	font-weight:bold;
+	text-align:center;
+	text-transform:uppercase;
+	}
 
 /**********************************************/
 /*****   LOCALIZACION Y TOOLBAR DE PAGINA ******/

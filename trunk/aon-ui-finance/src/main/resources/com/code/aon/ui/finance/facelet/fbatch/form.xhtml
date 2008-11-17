@@ -34,18 +34,21 @@
 					<aon:commandButton id="csb" value="#{financeBundle.finance_create_disk}"
 						rendered="#{!fbatch.new and !fbatch.recorded and fbatch.diskMode and fbatch.filled and fbatch.to.registryBank.id != null}"
 						styleClass="aon-finding-toolbar-item-no-icon"
-						onclick="viewDialog.show();"
-						action="fbatch_form" actionListener="#{fbatch.onCreateDisk}" />	
+						action="fbatch_form" actionListener="#{fbatch.onCreateDisk}"
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
 					<aon:commandButton id="record" value="#{financeBundle.finance_record}"
 						rendered="#{!fbatch.new and !fbatch.recorded and (fbatch.done or !fbatch.diskMode)}"
 						styleClass="aon-finding-toolbar-item-no-icon"
-						onclick="viewDialog.show();"
-						action="fbatch_form" actionListener="#{fbatch.onRecord}" />
+						action="fbatch_form" actionListener="#{fbatch.onRecord}"
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
 					<aon:commandButton id="unrecord" value="#{financeBundle.finance_unrecord}"
 						rendered="#{fbatch.recorded}"
 						styleClass="aon-finding-toolbar-item-no-icon"
-						onclick="viewDialog.show();"
-						action="fbatch_form" actionListener="#{fbatch.onUnrecord}" />
+						action="fbatch_form" actionListener="#{fbatch.onUnrecord}"
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
 					<!-- 
 						<aon:outputLabel for="FinanceBatch_recordDate"
 							styleClass="aon-content-toolbar-item" style="cursor:auto;" value="#{financeBundle.aon_record_date}" 
@@ -150,6 +153,7 @@
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 	</ui:define>
 </ui:composition>
 					
