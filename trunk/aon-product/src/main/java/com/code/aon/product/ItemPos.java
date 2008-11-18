@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.product.enumeration.PluProductType;
 
@@ -23,6 +25,8 @@ import com.code.aon.product.enumeration.PluProductType;
 @Entity
 @Table(name = "item_pos")
 public class ItemPos implements ITransferObject {
+
+	private static final long serialVersionUID = -7573760718031081757L;
 
 	/**
 	 * Unique key.
@@ -176,5 +180,22 @@ public class ItemPos implements ITransferObject {
 		this.pluProductType = pluProductType;
 	}
 
-	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj instanceof ItemPos) {
+			ItemPos itemPos = (ItemPos) obj;
+			if (ObjectUtils.equals(getId(), itemPos.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}	
 }

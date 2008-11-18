@@ -1,23 +1,17 @@
 package com.code.aon.product;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
-import com.code.aon.common.ILookupObject;
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
-import com.code.aon.product.dao.IProductAlias;
 
 /**
  * Transfer Object that represents product's categories.
@@ -28,9 +22,11 @@ import com.code.aon.product.dao.IProductAlias;
  */
 @Entity
 @Table(name="pcategory")
-public final class ProductCategory implements ITransferObject, ILookupObject  {
+public final class ProductCategory implements ITransferObject {
 
-    /**
+	private static final long serialVersionUID = 5868168904695715154L;
+
+	/**
      * Unique key.
      */
     private Integer id;
@@ -154,18 +150,22 @@ public final class ProductCategory implements ITransferObject, ILookupObject  {
         this.group = group;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.code.aon.common.ILookupObject#lookups()
-     */
-    @Transient
-    public Map<String,Object> getLookups() {
-        Map<String,Object> map = new HashMap<String,Object>();
-        map.put(IProductAlias.PRODUCT_CATEGORY_ID, getId());
-        map.put(IProductAlias.PRODUCT_CATEGORY_NAME, getName());
-        return map;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj instanceof ProductCategory) {
+			ProductCategory productCategory = (ProductCategory) obj;
+			if (ObjectUtils.equals(getId(), productCategory.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-
+	@Override
+	public int hashCode() {
+		return 0;
+	}
 }
