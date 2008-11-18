@@ -167,8 +167,6 @@ public class Percepcion implements ITransferObject {
     
     public void setImpuni(BigDecimal impuni) {
         this.impuni = impuni;
-        if(getImpuni()!=null)
-        	setImporte(getImpuni().multiply(getUnidades()));
     }
     
     /**
