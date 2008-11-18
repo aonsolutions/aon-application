@@ -11,7 +11,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.VatType;
-import com.code.aon.product.enumeration.TaxType;
+import com.code.aon.config.enumeration.TaxType;
 
 public class VatCollection {
 
