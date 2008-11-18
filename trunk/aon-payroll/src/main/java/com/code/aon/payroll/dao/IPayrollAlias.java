@@ -2043,10 +2043,16 @@ public interface IPayrollAlias {
 	String  CATEGORIA_ID_CODCON = CATEGORIA_ENTRY.getAliasNames()[6];
 
 	/** 
-	* Alias value: Categoria_nivel
-	* Hibernate value: Categoria.nivel
+	* Alias value: Categoria_nivel_id_cdg
+	* Hibernate value: Categoria.nivel.id.cdg
 	*/
-	String  CATEGORIA_NIVEL = CATEGORIA_ENTRY.getAliasNames()[7];
+	String  CATEGORIA_NIVEL_ID_CDG = CATEGORIA_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Categoria_nivel_id_codcon
+	* Hibernate value: Categoria.nivel.id.codcon
+	*/
+	String  CATEGORIA_NIVEL_ID_CODCON = CATEGORIA_ENTRY.getAliasNames()[8];
 
 
 
@@ -2383,24 +2389,7 @@ public interface IPayrollAlias {
 	* Hibernate value: Elemirpf.porcentaje
 	*/
 	String  ELEMIRPF_PORCENTAJE = ELEMIRPF_ENTRY.getAliasNames()[2];
-	
-	/** 
-	* Alias value: Elemirpf_elemirpfs_fecfin
-	* Hibernate value: Elemirpf.elemirpfs.fecfin
-	*/
-	//String  ELEMIRPF_ELEMIRPFS_FECFIN = ELEMIRPF_ENTRY.getAliasNames()[3];
-	
-	/** 
-	* Alias value: Elemirpf_elemirpfs_id_cdg
-	* Hibernate value: Elemirpf.elemirpfs.id.cdg
-	*/
-	//String  ELEMIRPF_ELEMIRPFS_ID_CDG = ELEMIRPF_ENTRY.getAliasNames()[4];
 
-	/** 
-	* Alias value: Elemirpf_elemirpfs_id_fecini
-	* Hibernate value: Elemirpf.elemirpfs.id.fecini
-	*/
-	//String  ELEMIRPF_ELEMIRPFS_ID_FECINI = ELEMIRPF_ENTRY.getAliasNames()[5];
 
 
 	/** 
@@ -2443,6 +2432,7 @@ public interface IPayrollAlias {
 	* Hibernate value: Linirpf.importe
 	*/
 	String  LINIRPF_IMPORTE = LINIRPF_ENTRY.getAliasNames()[5];
+
 
 
 	/** 
