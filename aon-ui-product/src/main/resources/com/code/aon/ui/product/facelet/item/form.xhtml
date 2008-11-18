@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="itemForm">
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{productBundle.product_module}" />
+				<ui:param name="controller" value="#{item}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="dataTable" columns="2">
+
+					<aon:outputLabel for="Item_product_code" value="#{bundle.aon_id}" />
+					<aon:inputText id="Item_product_code" value="#{item.to.product.code}"
+						required="true" size="15" onblur="toUpperCase(this);">
+						<f:validateLength minimum="1" maximum="64" />
+					</aon:inputText>
+
+					<aon:outputLabel for="Item_status" value="#{bundle.aon_status}" />
+					<aon:selectOneMenu id="Item_status" value="#{item.to.status}">
+						<f:selectItems value="#{productCollections.productStatuses}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Item_product_name" value="#{bundle.aon_description}" />
+					<aon:inputText id="Item_product_name" value="#{item.to.product.name}"
+						required="true" size="64">
+						<f:validateLength minimum="1" maximum="64" />
+					</aon:inputText>
+
+					<aon:outputLabel for="Item_product_category" value="#{productBundle.product_category}" />
+					<aon:selectOneMenu id="Item_product_category" value="#{item.to.product.category}">
+						<f:selectItems value="#{productCollections.categories}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Item_product_brand" value="#{productBundle.product_brand}" />
+					<aon:selectOneMenu id="Item_product_brand" value="#{item.to.product.brand}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{productCollections.brands}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Item_product_type" value="#{bundle.aon_type}" />
+					<aon:selectOneMenu id="Item_product_type" value="#{item.to.product.type}">
+						<f:selectItems value="#{productCollections.productTypes}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Item_purchase_price" value="#{productBundle.product_purchase_price}" />
+					<aon:inputText id="Item_purchase_price" value="#{item.to.purchasePrice}"
+						size="10">
+						<f:validateDoubleRange />
+					</aon:inputText>
+
+					<aon:outputLabel for="Item_price" value="#{bundle.aon_taxable_base}" />
+					<aon:inputText id="Item_price" value="#{item.to.price}"
+						ajaxSingle="true" reRender="Item_sales_price"
+						required="true" size="10">
+<!-- 						<f:validateDoubleRange /> -->
+					</aon:inputText>
+
+					<aon:outputLabel for="Item_product_vat" value="#{bundle.aon_vat}" />
+					<aon:div>
+						<aon:selectOneMenu id="Item_product_vat" value="#{item.to.product.vat}"
+							ajaxSingle="true" reRender="Item_product_vat_percentage,Item_sales_price">
+							<f:selectItems value="#{configCollections.vatTaxes}" />
+						</aon:selectOneMenu>
+						<aon:outputText id="Item_product_vat_percentage" value="#{item.to.product.vat.percentage}" />
+						<aon:outputLabel value="%" />
+					</aon:div>
+
+					<aon:outputLabel for="Item_product_retention" value="#{bundle.aon_retention}" />
+					<aon:div>
+						<aon:selectOneMenu id="Item_product_retention" value="#{item.to.product.retention}"
+							ajaxSingle="true" reRender="Item_product_retention_percentage,Item_sales_price">
+							<f:selectItem itemLabel="-" itemValue="" />
+							<f:selectItems value="#{configCollections.retentionTaxes}" />
+						</aon:selectOneMenu>
+						<aon:panelGroup id="Item_product_retention_percentage">
+							<aon:outputText value="#{item.to.product.retention.percentage}" />
+							<aon:outputLabel value="%" rendered="#{item.to.product.retention!=null}" />
+						</aon:panelGroup>
+					</aon:div>
+
+					<aon:outputLabel for="Item_sales_price" value="#{bundle.aon_sales_price}" />
+					<aon:div>
+						<aon:inputText id="Item_sales_price" value="#{item.salesPrice}"
+							ajaxSingle="true" reRender="Item_price"
+							valueChangeListener="#{item.onSalesPriceChanged}"
+							size="10">
+	<!-- 						<f:validateDoubleRange /> -->
+						</aon:inputText>
+						<aon:selectBooleanCheckbox id="Item_product_inventoriable" value="#{item.to.product.inventoriable}" />
+						<aon:outputLabel value="#{productBundle.product_inventoriable}" />
+					</aon:div>
+
+					<aon:outputLabel for="Item_product_sales_account" value="#{productBundle.product_sales_account}" />
+					<aon:inputText id="Item_product_sales_account" value="#{item.to.product.salesAccount}"
+						size="12">
+						<f:validateLength minimum="1" maximum="12" />
+					</aon:inputText>
+
+					<aon:outputLabel for="Item_product_purchase_account" value="#{productBundle.product_purchase_account}" />
+					<aon:inputText id="Item_product_purchase_account" value="#{item.to.product.purchaseAccount}"
+						size="12">
+						<f:validateLength minimum="1" maximum="12" />
+					</aon:inputText>
+<!-- 
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="Item_product_sales_account" lookup="#{accountBridgeLookup}"
+							reRender="Item_product_sales_account_description"
+							value="#{item.to.bank.code}" size="5">
+							<aon:joinProperty alias="Bank_code" value="#{financeSearch.bank.code}" />
+						</aon:lookupInputText>
+						<aon:lookupButton 
+							windowTitle="#{financeBundle.finance_bank_selection}"
+							selectReRender="Bank_code,Bank_name" actionType="search"
+							lookup="#{bankLookup}" minHeight="460" minWidth="650"
+							property="#{financeSearch.bank}">
+						</aon:lookupButton>
+						<aon:inputText id="Bank_name"
+							value="#{financeSearch.bank.name}"
+							size="50" disabled="true" />							
+					</aon:div>
+ -->
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+<!-- 		<aon:lookupButtonPopup lookup="#{accountBridgeLookup}" /> -->
+	</ui:define>
+</ui:composition>
