@@ -862,6 +862,10 @@
 			<value>com.code.aon.finance.InvoicingGroup</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>invoicingGroup</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>
@@ -906,6 +910,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.InvoicingGroupDetail</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>invoicingGroupDetail</value>
+		</managed-property>				
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
@@ -1069,10 +1077,6 @@
 <!--
   <navigation-rule>
     <navigation-case>
-      <from-outcome>invoicingGroup</from-outcome>
-      <to-view-id>/_finance/facelet/invoicing_group/list.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
       <from-outcome>invoiceRecording</from-outcome>
       <to-view-id>/_finance/facelet/invoice_recording/search.xhtml</to-view-id>
     </navigation-case>
@@ -1094,23 +1098,6 @@
     </navigation-case>
   </navigation-rule>
 -->  
-  <!-- =================== Invoicing Group ========================== -->
-<!--
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>invoicing_group_form</from-outcome>
-      <to-view-id>/_finance/facelet/invoicing_group/form.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>invoicing_group_list</from-outcome>
-      <to-view-id>/_finance/facelet/invoicing_group/list.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>invoicing_group_search</from-outcome>
-      <to-view-id>/_finance/facelet/invoicing_group/search.xhtml</to-view-id>
-    </navigation-case>
-  </navigation-rule>
--->
   <!-- =================== Invoice Recording ========================== -->
 <!--
   <navigation-rule>
@@ -1334,5 +1321,20 @@
 		</navigation-case>
 	</navigation-rule>
 
+	<!-- =================== Invoicing Group ========================== -->
+	<navigation-rule>
+	    <navigation-case>
+	      <from-outcome>invoicingGroup_list</from-outcome>
+	      <to-view-id>/com/code/aon/ui/finance/facelet/invoicingGroup/list.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>invoicingGroup_search</from-outcome>
+	      <to-view-id>/com/code/aon/ui/finance/facelet/invoicingGroup/search.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>invoicingGroup_form</from-outcome>
+	      <to-view-id>/com/code/aon/ui/finance/facelet/invoicingGroup/form.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
   
 </faces-config>
