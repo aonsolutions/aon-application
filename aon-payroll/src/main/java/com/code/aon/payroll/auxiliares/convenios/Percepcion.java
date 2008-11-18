@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -148,6 +149,11 @@ public class Percepcion implements ITransferObject {
     
     public void setUnidades(BigDecimal unidades) {
         this.unidades = unidades;
+        if(getImpuni()!=null && getImpuni().intValue()!=0)
+        	setImporte(getImpuni().multiply(getUnidades()));
+        if(unidades.intValue()==0)
+        	setImpuni(unidades);
+        	
     }
     
     /**
@@ -161,6 +167,8 @@ public class Percepcion implements ITransferObject {
     
     public void setImpuni(BigDecimal impuni) {
         this.impuni = impuni;
+        if(getImpuni()!=null)
+        	setImporte(getImpuni().multiply(getUnidades()));
     }
     
     /**
@@ -208,7 +216,7 @@ public class Percepcion implements ITransferObject {
      * @return
      */
     @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.FijoVariable")} )
-    @Column(name="fijovar", nullable=false, length=1)
+    @Column(name="fijovar", length=1)
     public FijoVariable getFijovar() {
         return this.fijovar;
     }
@@ -285,6 +293,10 @@ public class Percepcion implements ITransferObject {
     
     public void setIndcom(IndiceComplemento indcom) {
         this.indcom = indcom;
+        if(indcom == IndiceComplemento.HORAS)
+        	disableRedondeo = true;
+        else
+        	disableRedondeo = false;
     }
     
     /**
@@ -327,7 +339,11 @@ public class Percepcion implements ITransferObject {
     public void setNivel(Nivel nivel) {
         this.nivel = nivel;
     }
-    
+
+    /**
+     * Devuelve el complemento sobre el que se aplica
+     * @return
+     */
 	@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="codcomapl")
     public Complemento getComplemento() {
@@ -336,8 +352,13 @@ public class Percepcion implements ITransferObject {
     
     public void setComplemento(Complemento complemento) {
         this.complemento = complemento;
+       
     }
     
+    /**
+     * Devuelve el complemento
+     * @return
+     */
 	@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="codcom", insertable=false, updatable=false)
     public Complemento getComplemento1() {
@@ -346,6 +367,15 @@ public class Percepcion implements ITransferObject {
     
     public void setComplemento1(Complemento complemento1) {
         this.complemento1 = complemento1;
+        setDescom(complemento1.getDescription());
+        setDesabr(complemento1.getDesabr());
+        setTipcom(complemento1.getTipcom());
+        setTipcot(complemento1.getTipcot());
+        if(complemento1.getDinesp() != null)	
+        	setDinesp(complemento1.getDinesp());
+        if(complemento1.getFijovar() != null)
+        	setFijovar(complemento1.getFijovar());
+        setIndcom(complemento1.getIndcom());
     }
     
 	@ManyToOne(fetch=FetchType.EAGER)
@@ -357,5 +387,19 @@ public class Percepcion implements ITransferObject {
     public void setConvenio(Convenio convenio) {
         this.convenio = convenio;
     }
+    
+    //
+    // Comprueba si el radio butom 'horas complementarias' esta seleccionado
+    // 
+    private boolean disableRedondeo;
+    
+    @Transient
+	public boolean isDisableRedondeo() {
+		return disableRedondeo;
+	}
+
+	public void setDisableRedondeo(boolean disableRedondeo) {
+		this.disableRedondeo = disableRedondeo;
+	}
 
 }

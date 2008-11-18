@@ -34,13 +34,13 @@ public class Utils {
 			for(int i=0;i<pDato.length();i++){
 				switch (pMask.charAt(i)){
 					case '#': 
-						if(pDato.charAt(i)<'9' && pDato.charAt(i)>'0') valido=true;
+						if(pDato.charAt(i)<='9' && pDato.charAt(i)>='0') valido=true;
 					break;
 					case 'A': 
-						if((pDato.charAt(i)>'A' && pDato.charAt(i)<'Z') || (pDato.charAt(i)>'a' && pDato.charAt(i)<'z')) valido=true;
+						if((pDato.charAt(i)>='A' && pDato.charAt(i)<='Z') || (pDato.charAt(i)>='a' && pDato.charAt(i)<='z')) valido=true;
 					break;
 					case 'X': 
-						if((pDato.charAt(i)>'A' && pDato.charAt(i)<'Z') || (pDato.charAt(i)>'a' && pDato.charAt(i)<'z') || (pDato.charAt(i)<'9' && pDato.charAt(i)>'0')) valido=true;
+						if((pDato.charAt(i)>='A' && pDato.charAt(i)<='Z') || (pDato.charAt(i)>='a' && pDato.charAt(i)<='z') || (pDato.charAt(i)<='9' && pDato.charAt(i)>='0')) valido=true;
 					break;
 					default: valido=false;
 				}

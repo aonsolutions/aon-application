@@ -41,13 +41,13 @@
 						size="20" maxlength="15" />
 						
 					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_tipcom}" />
-					<aon:selectOneMenu id="TipoComplemento" value="#{complemento.to.tipcom}" >	
+					<aon:selectOneMenu id="TipoComplemento" value="#{complemento.to.tipcom}" required="true">	
 						<f:selectItem value="#{null}" itemLabel=" -  " />											
 						<f:selectItems value="#{complemento.listaComplementos}"/>
 					</aon:selectOneMenu>
 
 					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_dinesp}" />
-					<aon:selectOneRadio id="Retribucion" value="#{complemento.to.dinesp}" >	
+					<aon:selectOneRadio id="Retribucion" value="#{complemento.to.dinesp}" required="true">	
 						<f:selectItems value="#{complemento.listaRetribuciones}"/>											
 					</aon:selectOneRadio>
 					
