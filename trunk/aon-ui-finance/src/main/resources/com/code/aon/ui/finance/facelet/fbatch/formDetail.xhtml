@@ -23,15 +23,14 @@
 		<aon:commandButton title="#{financeBundle.finance_remove_batch}"
 			styleClass="aon-finding-toolbar-item aon-icon-delete"
 			value="#{financeBundle.finance_remove_batch}"
-			actionListener="#{fbatch.onRemoveSelected}"  reRender="fBatchDetailData"
+			actionListener="#{fbatch.onRemoveSelected}" reRender="fBatchDetailData"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
-		<aon:commandButton title="#{fbatch.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
-			styleClass="aon-finding-toolbar-item aon-icon-file-download"
-			rendered="#{fbatch.csbOutput!=null}"
+		<h:commandLink target="_blank"
+			title="#{fbatch.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
 			value="#{fbatch.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
-			actionListener="#{fbatch.downloadDisk}" />
-
+			actionListener="#{fbatch.downloadDisk}" rendered="#{fbatch.csbOutput!=null}"
+			styleClass="aon-finding-toolbar-item aon-icon-file-download" />
 	</aon:div>
 
 	<aon:dataTable id="fBatchDetailData" value="#{fBatchDetail.model}"

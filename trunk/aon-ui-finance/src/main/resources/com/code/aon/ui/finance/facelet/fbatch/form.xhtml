@@ -20,13 +20,13 @@
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<h:commandLink value="#{bundle.aon_listing}" target="_blank"
-						action="#{report.onExecute}"
+						action="#{report.onExecute}" rendered="#{!fbatch.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="fBatch" />
 					</h:commandLink>
 					<h:commandLink value="#{bundle.aon_listing}" target="_blank"
-						action="#{report.onExecute}"
+						action="#{report.onExecute}" rendered="#{!fbatch.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel"
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="fBatch" />
@@ -78,6 +78,12 @@
 					<aon:inputText id="FinanceBatch_id" value="#{fbatch.to.id}"
 						required="true" size="8" disabled="true" />
 
+					<aon:outputLabel for="FinanceBatch_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="FinanceBatch_description"
+						value="#{fbatch.to.description}" disabled="#{fbatch.recorded}"
+						required="true" size="45" />
+
 					<aon:outputLabel for="FinanceBatch_issueDate"
 						value="#{bundle.aon_date}" />
 					<aon:selectInputDate id="FinanceBatch_issueDate" 
@@ -87,6 +93,15 @@
 						popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>																	
 
+					<aon:outputLabel for="RegistryBank_Lookup_id"
+						value="#{financeBundle.finance_bank}" />
+					<aon:selectOneMenu id="RegistryBank_Lookup_id"
+						value="#{fbatch.to.registryBank}" disabled="#{!fbatch.todo}"
+						reRender="RegistryBank_Lookup_bankAccount">
+						<f:selectItem itemLabel="-" value="#{null}"  />
+						<f:selectItems value="#{financeCollections.companyBanks}" />
+					</aon:selectOneMenu>
+
 					<aon:outputLabel for="FinanceBatch_payment"
 						value="#{financeBundle.finance_fbatch_type}" />
 					<aon:selectOneMenu id="FinanceBatch_payment"
@@ -95,6 +110,12 @@
 						<f:selectItem itemLabel="#{financeBundle.finance_charge}" itemValue="#{false}" />
 					</aon:selectOneMenu>
 
+					<aon:outputLabel for="RegistryBank_Lookup_bankAccount"
+						value="#{financeBundle.finance_bank_account}" />
+					<aon:inputText id="RegistryBank_Lookup_bankAccount"
+						value="#{fbatch.to.registryBank.bankAccount}"
+						disabled="true" size="40" />
+
 					<aon:outputLabel for="FinanceBatch_financeBatchType"
 						value="#{financeBundle.finance_disk_type}" />
 					<aon:selectOneMenu id="FinanceBatch_financeBatchType"
@@ -102,35 +123,6 @@
 						value="#{fbatch.to.financeBatchType}">
 						<f:selectItems value="#{financeCollections.financeBatchTypes}" />
 					</aon:selectOneMenu>
-
-					<aon:outputLabel for="FinanceBatch_totalRegs"
-						value="#{financeBundle.finance_total_regs}" />
-					<aon:inputText id="FinanceBatch_totalRegs"
-						disabled="true" size="8"
-						value="#{fbatch.toTotalDetails}" >
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:inputText>	
-
-					<aon:outputLabel for="FinanceBatch_description"
-						value="#{bundle.aon_description}" />
-					<aon:inputText id="FinanceBatch_description"
-						value="#{fbatch.to.description}" disabled="#{fbatch.recorded}"
-						required="true" size="45" />
-
-					<aon:outputLabel for="RegistryBank_Lookup_id"
-						value="#{financeBundle.finance_bank}" />
-					<aon:selectOneMenu id="RegistryBank_Lookup_id"
-						onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','rBankLookup','RegistryBank_Lookup_id','RegistryBank_id|RegistryBank_Lookup_id,RegistryBank_bankAccount|RegistryBank_Lookup_bankAccount');"
-						value="#{fbatch.to.registryBank.id}" disabled="#{!fbatch.todo}"
-						valueChangeListener="#{fbatch.onRBankChanged}">
-						<f:selectItem itemDisabled="true" itemValue="" itemLabel="-" />
-						<f:selectItems value="#{financeCollections.companyBanks}" />
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="RegistryBank_Lookup_bankAccount"
-						value="#{financeBundle.finance_bank_account}" />
-					<aon:inputText id="RegistryBank_Lookup_bankAccount" value="#{fbatch.to.registryBank.bankAccount}"
-						disabled="true" size="35" />
 
 					<aon:outputLabel for="FinanceBatch_financeBatchStatus"
 						value="#{bundle.aon_status}" />
@@ -144,6 +136,14 @@
 							value="#{financeBundle.aon_account_entry}: #{fbatch.accountEntryId}"
 							rendered="#{fbatch.recorded}" />
 					</aon:div>
+
+					<aon:outputLabel for="FinanceBatch_totalRegs"
+						value="#{financeBundle.finance_total_regs}" />
+					<aon:inputText id="FinanceBatch_totalRegs"
+						disabled="true" size="8"
+						value="#{fbatch.toTotalDetails}" >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:inputText>	
 
 					<aon:outputLabel for="FinanceBatch_totalAmount"
 						value="#{financeBundle.finance_total_amount}" />
