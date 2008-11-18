@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 
 /**
@@ -19,6 +21,8 @@ import com.code.aon.common.ITransferObject;
 @Entity
 @Table(name="tariff_catalogue")
 public class TariffCatalogue implements ITransferObject {
+
+	private static final long serialVersionUID = 3292328259769166649L;
 
 	/** The Id. */
 	private Integer Id;
@@ -90,4 +94,22 @@ public class TariffCatalogue implements ITransferObject {
 		this.catalogue = catalogue;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj instanceof TariffCatalogue) {
+			TariffCatalogue tariffCatalogue = (TariffCatalogue) obj;
+			if (ObjectUtils.equals(getId(), tariffCatalogue.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}
 }
