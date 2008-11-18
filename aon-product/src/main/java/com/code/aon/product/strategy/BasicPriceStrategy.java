@@ -12,11 +12,14 @@ import java.util.logging.Logger;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.Tax;
+import com.code.aon.config.TaxDetail;
+import com.code.aon.config.dao.IConfigAlias;
+import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.product.Tariff;
-import com.code.aon.product.Tax;
-import com.code.aon.product.TaxDetail;
+import com.code.aon.product.TariffCatalogue;
 import com.code.aon.product.dao.IProductAlias;
-import com.code.aon.product.enumeration.TaxType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.ITaxInfo;
 
@@ -55,7 +58,7 @@ public class BasicPriceStrategy implements IPriceStrategy {
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error obtaining basePrice", e);
 		}
-		return round(price,2);
+		return CommonUtil.round(price);
 	}
 	
 	/* (non-Javadoc)
@@ -104,9 +107,9 @@ public class BasicPriceStrategy implements IPriceStrategy {
 			Iterator<TaxBreakDown> iterator = map.values().iterator();
 			while(iterator.hasNext()){
 				TaxBreakDown tbd = iterator.next();
-				tbd.setTaxQuota(round(tbd.getBase() * tbd.getTaxPercent()/100 , 2));
+				tbd.setTaxQuota(CommonUtil.round(tbd.getBase() * tbd.getTaxPercent()/100));
 				if(iti.isSurcharge()){
-					tbd.setSurchargeQuota(round(tbd.getBase() * tbd.getSurchargePercent()/100 , 2));
+					tbd.setSurchargeQuota(CommonUtil.round(tbd.getBase() * tbd.getSurchargePercent()/100));
 				}else{
 					tbd.setSurchargeQuota(0.0);
 					tbd.setSurchargePercent(0.0);
@@ -145,10 +148,23 @@ public class BasicPriceStrategy implements IPriceStrategy {
 	/* (non-Javadoc)
 	 * @see com.code.aon.product.strategy.IPriceStrategy#getUnitPrice(com.code.aon.product.strategy.ICalculable, com.code.aon.product.Tariff)
 	 */
-	public double getUnitPrice(ICalculable calc, Tariff tariff) {
-		double unitPrice = calc.getItem().getPrice();
-		return unitPrice;
+	public double getUnitPrice(ICalculable calc, ICalculableContainer icc, Tariff tariff) {
+		try {
+			if (tariff != null) {
+				IManagerBean tariffCatalogueBean = BeanManager.getManagerBean(TariffCatalogue.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(tariffCatalogueBean.getFieldName(IProductAlias.TARIFF_CATALOGUE_TARIFF_ID), tariff.getId());
+				criteria.addLessThanOrEqualExpression(tariffCatalogueBean.getFieldName(IProductAlias.TARIFF_CATALOGUE_CATALOGUE_START_DATE), icc.getDate());
+
+
+				criteria.addOrder(tariffCatalogueBean.getFieldName(IProductAlias.TARIFF_CATALOGUE_CATALOGUE_END_DATE), false);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining unitPrice for tariff = " + tariff.getName(), e);
+		}
+		return getUnitPrice(calc);
 	}
+	
 	/* (non-Javadoc)
 	 * @see com.code.aon.product.strategy.IPriceStrategy#getTotalPrice(com.code.aon.product.strategy.ICalculableContainer, com.code.aon.registry.ITaxInfo)
 	 */
@@ -165,7 +181,7 @@ public class BasicPriceStrategy implements IPriceStrategy {
 				total = total - taxBreakDown.getTaxQuota();
 			}
 		}
-		return round(total,2);
+		return CommonUtil.round(total);
 	}
 	
 	/**
@@ -179,9 +195,9 @@ public class BasicPriceStrategy implements IPriceStrategy {
 		try {
 			IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(taxDetailBean.getFieldName(IProductAlias.TAX_DETAIL_TAX_ID), vat.getId());
-			criteria.addGreaterThanExpression(taxDetailBean.getFieldName(IProductAlias.TAX_DETAIL_START_DATE), date);
-			criteria.addLessThanExpression(taxDetailBean.getFieldName(IProductAlias.TAX_DETAIL_END_DATE), date);
+			criteria.addEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_TAX_ID), vat.getId());
+			criteria.addGreaterThanExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_START_DATE), date);
+			criteria.addLessThanExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_END_DATE), date);
 			Iterator iter = taxDetailBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				return (TaxDetail)iter.next();
@@ -192,15 +208,4 @@ public class BasicPriceStrategy implements IPriceStrategy {
 		return null;
 	}
 	
-	/**
-	 * Return the value rounded with this precision
-	 * 
-	 * @param value the value to round
-	 * @param precision the number of decimals
-	 * @return the rounded value
-	 */
-	protected double round(double value, int precision) {
-        double decimal = Math.pow(10, precision);
-        return Math.round(decimal*value) / decimal;
-    }
 }
