@@ -22,16 +22,16 @@
 
 /* --------- MENU INICIO --------- */
 
-.aon-portlets-column{
+.aon-scroll-area-menu .aon-portlets-column{
 	vertical-align: top;
 	}
 
 
-.aon-portlets-column + .aon-portlets-column {
+.aon-scroll-area-menu .aon-portlets-column + .aon-portlets-column {
 	padding-left: 25px;
 	}
 	
-.aon-direct-access-list{
+.aon-scroll-area-menu .aon-direct-access-list{
 	margin:0;
 	padding:0;
 	padding-bottom:3px;
@@ -39,26 +39,26 @@
 	display:block;
 	width:100%;
 }
-.aon-direct-access-list div{
+.aon-scroll-area-menu .aon-direct-access-list div{
  	background:transparent url(../images/aon-ul-list.png) scroll left 4px no-repeat;
  	padding:1px 0 5px 15px;
  	border-bottom:#f2f2f2 1px solid;
 }
 
-#aon-content .aon-group{
+.aon-scroll-area-menu #aon-content .aon-group{
 	padding-bottom: 0;
 	}
 
-.aon-group-body {
+.aon-scroll-area-menu .aon-group-body {
 	margin-top: -5px;
 	padding: 0 8px;
 	}
 	
-.aon-direct-access-list div {
+.aon-scroll-area-menu .aon-direct-access-list div {
 	border: none;
 	}
 	
-.aon-direct-access-list div a.aon-commandLink:hover {
+.aon-scroll-area-menu .aon-direct-access-list div a.aon-commandLink:hover {
 	color: #619BDF;
 	}
 	
