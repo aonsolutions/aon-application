@@ -21,19 +21,45 @@
 }
 
 .aon-portlets-column{
-	vertical-align:top;
-	padding: 0 5px;
+	vertical-align: top;
+	}
+
+
+.aon-portlets-column + .aon-portlets-column {
+	padding-left: 20px;
 	}
 	
 .aon-direct-access-list{
 	margin:0;
 	padding:0;
+	padding-bottom:3px;
 	list-style-type:none;
 	display:block;
 	width:100%;
 }
 .aon-direct-access-list div{
- 	background:transparent url(../images/aon-ul-list.png) scroll left 6px no-repeat;
- 	padding:5px 0 5px 12px;
+ 	background:transparent url(../images/aon-ul-list.png) scroll left 4px no-repeat;
+ 	padding:1px 0 5px 15px;
  	border-bottom:#f2f2f2 1px solid;
 }
+
+#aon-content .aon-group{
+	padding-bottom: 0;
+	}
+
+.aon-group-body {
+	margin-top: -5px;
+	padding: 0 8px;
+	}
+	
+.aon-direct-access-list div {
+	border: none;
+	}
+	
+.aon-direct-access-list div a.aon-commandLink:hover {
+	color: #619BDF;
+	}
+	
+.aon-scroll-area {
+	padding:15px 25px;
+	}
