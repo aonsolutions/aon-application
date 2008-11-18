@@ -907,7 +907,7 @@ color:#000;
 	}
 .aon-inputText-disabled{
 	border:#808080 1px solid;
-	background-color:#f2f2f2;
+	background-color:#f2f2f2 !important;
 	}
 .aon-inputTextarea{
 	border:#808080 1px solid;
