@@ -1,5 +1,7 @@
 package com.code.aon.account;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,6 +13,7 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
 
+import com.code.aon.account.enumeration.AmortizationPeriod;
 import com.code.aon.common.ITransferObject;
 
 /**
@@ -20,103 +23,105 @@ import com.code.aon.common.ITransferObject;
  * 
  */
 @Entity
-@Table(name = "amortization_type")
+@Table(name = "amortization")
 public class Amortization implements ITransferObject {
 
-	private static final long serialVersionUID = -4744515826050552526L;
+	private static final long serialVersionUID = 7370145682918674752L;
 
-	private String id;
+	private Integer id;
 	private String description;
-    private Account fixedAssetAccount;
-    private Account accumulatedAccount;
-    private Account allocationAccount;
-    private double percentage;
-/*
-    id
-    description
-    amortizationType
-    initialDate
-    deadline
-    amount
-    feePeriod
-    saleAmount
-    comments
-*/
-    
-    
+    private AmortizationType amortizationType;
+    private Date initialDate;
+    private Date deadline;
+    private Double amount;
+    private AmortizationPeriod feePeriod;
+    private Double saleAmount;
+	private String comments;
+
+	
     @Id
     @GeneratedValue	
-	public String getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	/**
-	 * Sets the ID of this account.
-	 * 
-	 * @param id
-	 *            The ID of this account.
-	 */
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	/**
-	 * Gets the description of this account.
-	 * 
-	 * @return The description of this account
-	 */
 	@Column(nullable = false, length = 64)
 	public String getDescription() {
 		return description;
 	}
 
-	/**
-	 * Sets the description of this account.
-	 * 
-	 * @param description
-	 *            The description of this account.
-	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
 
 	@ManyToOne (fetch=FetchType.EAGER)
-	@JoinColumn( name="fixed_asset_account", nullable=false )
-	public Account getFixedAssetAccount() {
-		return fixedAssetAccount;
+	@JoinColumn( name="amortization_type", nullable=false )
+	public AmortizationType getAmortizationType() {
+		return amortizationType;
 	}
 
-	public void setFixedAssetAccount(Account fixedAssetAccount) {
-		this.fixedAssetAccount = fixedAssetAccount;
+	public void setAmortizationType(AmortizationType amortizationType) {
+		this.amortizationType = amortizationType;
 	}
 
-	@ManyToOne (fetch=FetchType.EAGER)
-	@JoinColumn( name="accumulated_account", nullable=false )
-	public Account getAccumulatedAccount() {
-		return accumulatedAccount;
+	@Column(name = "initial_date", nullable = false)
+	public Date getInitialDate() {
+		return initialDate;
 	}
 
-	public void setAccumulatedAccount(Account accumulatedAccount) {
-		this.accumulatedAccount = accumulatedAccount;
+	public void setInitialDate(Date initialDate) {
+		this.initialDate = initialDate;
 	}
 
-	@ManyToOne (fetch=FetchType.EAGER)
-	@JoinColumn( name="allocation_account", nullable=false )
-	public Account getAllocationAccount() {
-		return allocationAccount;
+	@Column
+	public Date getDeadline() {
+		return deadline;
 	}
 
-	public void setAllocationAccount(Account allocationAccount) {
-		this.allocationAccount = allocationAccount;
+	public void setDeadline(Date deadline) {
+		this.deadline = deadline;
 	}
 
-    public double getPercentage() {
-		return percentage;
+	@Column(nullable = false)
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+	
+	@Column(name = "fee_period", nullable = false)
+    public AmortizationPeriod getFeePeriod() {
+        return feePeriod;
+    }
+
+    public void setFeePeriod(AmortizationPeriod feePeriod) {
+        this.feePeriod = feePeriod;
+    }
+	
+	@Column(name = "sale_amount")
+    public Double getSaleAmount() {
+        return saleAmount;
+    }
+
+    public void setSaleAmount(Double saleAmount) {
+        this.saleAmount = saleAmount;
+    }
+	
+	
+	@Column(name="comments",length=65535)
+	public String getComments() {
+		return comments;
 	}
 
-	public void setPercentage(double percentage) {
-		this.percentage = percentage;
+	public void setComments(String comments) {
+		this.comments = comments;
 	}
 
 	@Override
