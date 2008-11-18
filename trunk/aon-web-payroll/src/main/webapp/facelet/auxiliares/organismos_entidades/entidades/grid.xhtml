@@ -9,9 +9,8 @@
 			var="to" rows="20"
 			rendered="#{(sucursal.model.rowCount > 0) or (sucursal.new)}" 
 			columnClasses="aon-editDataTable-iconColumn
-				, aon-width-150, aon-editDataTable-dateColumn
-				, aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-textColumn
-				,aon-editDataTable-numberColumn, aon-editDataTable-buttonsColumn">
+				, aon-width-150, aon-editDataTable-textColumn, aon-editDataTable-textColumn
+				,aon-width-150, aon-editDataTable-buttonsColumn">
 					
 			<aon:rowSelector toggleOnClick="#{sucursal.to == null}" actionListener="#{sucursal.onSelect}" />
 
