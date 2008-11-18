@@ -41,7 +41,7 @@ public class ConveniosComplementoControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		Complemento to = (Complemento) event.getController().getTo();
 		
-		if(!Utils.validarMascara(to.getCdg(),"#X")){
+		if(!(Utils.validarMascara(to.getCdg(),"#X"))){
 			FacesMessage fm = 
 	    		AonUtil.getMessage( FacesContext.getCurrentInstance(), "aon_payroll_1481", null );
 			throw new ControllerListenerException( fm.getSummary() );

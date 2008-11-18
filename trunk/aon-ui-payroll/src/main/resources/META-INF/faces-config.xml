@@ -2163,8 +2163,8 @@
 			<property-name>propertyMap</property-name>
 			<map-entries>
 				<map-entry>
-					<key>codcon</key>
-					<value>id.codcon</value>
+					<key>cdg</key>
+					<value>convenio.cdg</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -2201,7 +2201,7 @@
 			<property-name>aliasMap</property-name>
 			<map-entries>
 				<map-entry>
-					<key>Categoria_nivel</key>
+					<key>Categoria_nivel_id_cdg</key>
 					<value>id.cdg</value>
 				</map-entry>
 				<map-entry>
@@ -2313,6 +2313,10 @@
 					<key>id.cdg</key>
 					<value>nivel.id.cdg</value>
 				</map-entry>
+				<map-entry>
+					<key>convenio.cdg</key>
+					<value>convenio.cdg</value>
+				</map-entry>
 			</map-entries>
 		</managed-property>
 		<managed-property>
@@ -2366,7 +2370,7 @@
 			<property-name>propertyMap</property-name>
 			<map-entries>
 				<map-entry>
-					<key>id_cdg</key>
+					<key>id.cdg</key>
 					<value>nivel.id.cdg</value>
 				</map-entry>
 			</map-entries>
