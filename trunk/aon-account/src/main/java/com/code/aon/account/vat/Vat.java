@@ -3,7 +3,7 @@ package com.code.aon.account.vat;
 import java.util.Calendar;
 import java.util.Date;
 
-import com.code.aon.product.enumeration.TaxType;
+import com.code.aon.config.enumeration.TaxType;
 
 public class Vat {
 	TaxType taxType;

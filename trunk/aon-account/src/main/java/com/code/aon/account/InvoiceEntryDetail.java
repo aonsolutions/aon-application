@@ -1,8 +1,8 @@
 package com.code.aon.account;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.product.Tax;
-import com.code.aon.product.enumeration.TaxType;
+import com.code.aon.config.Tax;
+import com.code.aon.config.enumeration.TaxType;
 
 public class InvoiceEntryDetail implements ITransferObject {
 
