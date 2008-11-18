@@ -38,7 +38,7 @@ public class Admon implements ITransferObject {
  }
  
  /**
-  * Devuleve la descripción de Administraciones
+  * Devuelve la descripción de Administraciones
   * 
   * @return
   */
