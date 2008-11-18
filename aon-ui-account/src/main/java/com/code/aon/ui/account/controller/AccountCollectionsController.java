@@ -9,12 +9,14 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.account.Account;
+import com.code.aon.account.AmortizationType;
 import com.code.aon.account.AutoConcept;
 import com.code.aon.account.Leasing;
 import com.code.aon.account.Loan;
 import com.code.aon.account.Period;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.account.enumeration.AccountEntryType;
+import com.code.aon.account.enumeration.AmortizationPeriod;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -435,5 +437,30 @@ public class AccountCollectionsController {
 		item = new SelectItem(InvoiceType.EXPENSES, InvoiceType.EXPENSES.getName(locale));
 		types.add(item);
 		return types;
+	}
+
+	public List<SelectItem> getAmortizationTypes() throws ManagerBeanException, ExpressionException {
+		List<SelectItem> ats = new LinkedList<SelectItem>();
+		IManagerBean atBean = BeanManager.getManagerBean(AmortizationType.class);
+		Iterator<?> iter = atBean.getList(null).iterator();
+		while (iter.hasNext()) {
+			AmortizationType at = (AmortizationType) iter.next();
+			SelectItem item = new SelectItem(at, at.getDescription());
+			ats.add(item);
+		}
+		return ats;
+	}
+	
+	public List<SelectItem> getAmortizationPeriods() {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		LinkedList<SelectItem> list = new LinkedList<SelectItem>();
+		AmortizationPeriod[] periods = AmortizationPeriod.values();
+		for (int i = 0; i < periods.length; i++) {
+			AmortizationPeriod type = periods[i];
+			String name = type.getName(locale);
+			SelectItem item = new SelectItem(type, name);
+			list.add(item);
+		}
+		return list;
 	}
 }

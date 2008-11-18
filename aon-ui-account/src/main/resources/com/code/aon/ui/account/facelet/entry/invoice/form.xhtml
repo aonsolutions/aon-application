@@ -23,9 +23,9 @@
 
 					<aon:commandButton value="#{bundle.aon_save}"
 						id="saveInvoice"
+						reRender="invoiceEntryForm"
 						accesskey="#{bundle.aon_key_save}"
 						actionListener="#{invoiceEntry.accept}"
-						action="accountEntry_form"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						disabled="#{invoiceEntry.details.rowCount == 0 or !invoiceEntry.accountSource}"
 						onclick="if (!confirm('#{bundle.aon_save_confirm}'))  return false;" />
@@ -45,6 +45,7 @@
 					<aon:commandButton id="finances" reRender="FinancesData"
 						value="#{accountBundle.account_generate_finances}"
 						actionListener="#{invoiceEntry.generateFinances}"
+						accesskey="W"
 						disabled="#{!invoiceEntry.accountSource}"
 						styleClass="aon-finding-toolbar-item aon-icon-sincronize"
 						rendered="#{invoiceEntry.details.rowCount > 0 and invoiceEntry.finances.rowCount==0}" />

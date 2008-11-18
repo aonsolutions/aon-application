@@ -8,25 +8,23 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import com.code.aon.account.AccountEntryDetail;
 import com.code.aon.account.Period;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.account.summary.Summary;
 import com.code.aon.account.summary.SummaryCollection;
 import com.code.aon.account.summary.SummaryProvider;
 import com.code.aon.account.summary.SummaryProviderParameters;
+import com.code.aon.account.util.Balance;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
 public class TrialBalanceController implements ICollectionProvider {
 
 	private static final String STATEMENT_CONTROLLER_NAME = "statement";
-	private static final String STATEMENT_DETAIL_CONTROLLER_NAME = "statementDetail";
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 
 	private SummaryProviderParameters parameters;
@@ -139,13 +137,13 @@ public class TrialBalanceController implements ICollectionProvider {
 
 	public void onAccountEntry(ActionEvent event) {
 		try {
-			IController c = AonUtil.getController(STATEMENT_DETAIL_CONTROLLER_NAME);
-			AccountEntryDetail aed = (AccountEntryDetail) c.getModel().getRowData();
+			StatementController c = (StatementController) AonUtil.getRegisteredBean(STATEMENT_CONTROLLER_NAME);
+			Balance aed = (Balance) c.getDetailModel().getRowData();
 			AccountEntryController entryController = (AccountEntryController) AonUtil
 					.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(
-					IAccountAlias.ACCOUNT_ENTRY_ID), aed.getAccountEntry().getId());
+					IAccountAlias.ACCOUNT_ENTRY_ID), aed.getAccountEntry());
 			entryController.setCriteria(criteria);
 			entryController.onSearch(null);
 			entryController.getModel().setRowIndex(0);
