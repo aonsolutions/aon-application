@@ -50,7 +50,7 @@
 					<aon:actionListener method="#{feeInvoicing.onInitialize}"/>
 				</aon:menuItem>				
 				<aon:menuItem id="aon_invoicing_group" renderedOnUserRole="GruposFacturacion"
-					value="#{financeBundle.finance_invoicing_group_module}" action="invoicingGroup"/>
+					value="#{financeBundle.finance_invoicing_group_module}" action="invoicingGroup_list"/>
 				<aon:menuItem id="aon_fee_print" renderedOnUserRole="ListadoCuotas"
 					value="#{financeBundle.finance_fee_print_module}" action="util_fee_print">
 					<aon:actionListener method="#{feePrint.onEditSearch}"/>
@@ -85,11 +85,11 @@
 				<aon:menuGroup id="aon_invoicing_concepts"
 					value="#{financeBundle.finance_invoicing_concepts_module}">
 					<aon:menuItem id="aon_item" renderedOnUserRole="AuxiliaresProductos"
-						value="#{financeBundle.finance_item_module}" action="item">
-						<aon:actionListener method="#{item.onReset}"/>
+						value="#{productBundle.product_module}" action="item_search">
+						<aon:actionListener method="#{item.onEditSearch}"/>
 					</aon:menuItem>
 					<aon:menuItem id="aon_product_category" renderedOnUserRole="AuxiliaresCategorias"
-						value="#{financeBundle.finance_product_category_module}" action="productCategory" />
+						value="#{productBundle.product_category_module}" action="productCategory" />
 				</aon:menuGroup>
 				<aon:menuItem id="aon_bank" renderedOnUserRole="AuxiliaresBancos"
 					value="#{financeBundle.finance_banks}" action="bank" />
@@ -106,8 +106,8 @@
 					value="#{companyBundle.company_workplace_module}" action="workplace">
 					<aon:actionListener method="#{workplace.onSearch}"/>
 				</aon:menuItem>
-				<aon:menuItem id="aon_product_tax" renderedOnUserRole="ConfiguracionImpuestos"
-					value="#{productBundle.product_tax_module}" action="tax" />
+				<aon:menuItem id="aon_config_tax" renderedOnUserRole="ConfiguracionImpuestos"
+					value="#{configBundle.config_tax_module}" action="tax" />
 				<aon:menuItem id="aon_series" renderedOnUserRole="ConfiguracionSeries"
 					value="#{configBundle.config_series_module}" action="series" />
 				<aon:menuItem id="aon_geozone" renderedOnUserRole="ConfiguracionProvincias"

@@ -49,10 +49,7 @@
 		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
 		<mapping class="com.code.aon.product.ProductCategoryTree"/>
 		<mapping class="com.code.aon.product.Tariff"/>
-		<mapping class="com.code.aon.product.TariffCatalogue"/>
-		<mapping class="com.code.aon.product.Tax"/>
-		<mapping class="com.code.aon.product.TaxDetail"/>
-		
+		<mapping class="com.code.aon.product.TariffCatalogue"/>	
 		
 		<!-- AON-REGISTRY Mapping files -->	
 		<mapping class="com.code.aon.registry.Registry"/>
@@ -106,6 +103,8 @@
 		<mapping class="com.code.aon.config.UserScope"/>
 		<mapping class="com.code.aon.config.Series"/>
 		<mapping class="com.code.aon.config.WorkGroup"/>
+		<mapping class="com.code.aon.config.Tax"/>
+		<mapping class="com.code.aon.config.TaxDetail"/>		
 		
 		<!-- AON-ACCOUNT Mapping files -->
 		<mapping class="com.code.aon.account.Account"/>
