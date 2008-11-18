@@ -2,9 +2,10 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -49,26 +50,28 @@
 						action="fbatch_form" actionListener="#{fbatch.onUnrecord}"
 						onclick="Richfaces.showModalPanel('waitProccess')" 
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
-					<!-- 
-						<aon:outputLabel for="FinanceBatch_recordDate"
-							styleClass="aon-content-toolbar-item" style="cursor:auto;" value="#{financeBundle.aon_record_date}" 
-							rendered="#{!fbatch.new and !fbatch.recorded and (fbatch.done or !fbatch.diskMode)}" />
-						<aon:inputCalendar size="8" id="FinanceBatch_recordDate" value="#{fbatch.recordDate}"
-							rendered="#{!fbatch.new and !fbatch.recorded and (fbatch.done or !fbatch.diskMode)}"
-							monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
-							currentDayCellClass="currentDayCell" renderAsPopup="true"
-							popupButtonStyleClass="aon-form-calendar-button"
-							styleClass="aon-form-input-text"
-							popupTodayString="#{bundle.aon_popup_today}"
-							popupWeekString="#{bundle.aon_popup_week}" />
-						-->
 
 				</ui:define>				
 				
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="dataTable" columns="2">
+			
+				<aon:div styleClass="aon-padding-bottom">
+					<aon:panelGrid columns="2">
+						<aon:outputLabel for="FinanceBatch_recordDate"
+							value="#{financeBundle.finance_record_date}" 
+							rendered="#{!fbatch.new and !fbatch.recorded and (fbatch.done or !fbatch.diskMode)}" />
+						<aon:selectInputDate id="FinanceBatch_recordDate" 
+							value="#{fbatch.recordDate}"
+							rendered="#{!fbatch.new and !fbatch.recorded and (fbatch.done or !fbatch.diskMode)}" 
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}">
+						</aon:selectInputDate>																							
+					</aon:panelGrid>
+				</aon:div>
+
+				<aon:panelGrid columns="4">
 	
 					<aon:outputLabel for="FinanceBatch_id"
 						value="#{bundle.aon_id}" />
@@ -151,267 +154,25 @@
 					</aon:inputText>
 	
 				</aon:panelGrid>
+				
+				<aon:panelTabSet rendered="#{!fbatch.new}">
+
+					<c:if test="#{fBatchDetail.model.rowCount > 0}" >
+						<aon:panelTab name="fBatchDetail" label="#{financeBundle.finance_included_finance}">
+							<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/formDetail.xhtml" />
+						</aon:panelTab>
+					</c:if>
+
+					<c:if test="#{!fbatch.recorded}" >
+						<aon:panelTab name="finance" label="#{financeBundle.finance_not_batched_finances}">
+							<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/formFinance.xhtml" />
+						</aon:panelTab>
+					</c:if>
+
+				</aon:panelTabSet>
+				
 			</aon:div>
 		</aon:form>
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 	</ui:define>
 </ui:composition>
-					
-					<!-- 
-					<aon:div styleClass="aon-form-group"
-						rendered="#{!fbatch.new and fBatchDetail.model.rowCount >0}">
-						<aon:div styleClass="aon-form-group-title">
-							<aon:outputLabel for="fBatchDetailData"
-								value="#{financeBundle.aon_included_finance}" />
-						</aon:div>
-						<aon:div styleClass="aon-form-group-body">
-							<aon:div rendered="#{!fbatch.recorded}">
-								<aon:commandButton title="#{financeBundle.aon_select_all}"
-									styleClass="aon-form-button-plus"
-									onclick="viewDialog.show();"
-									value="#{financeBundle.aon_select_all}"
-									actionListener="#{fBatchDetail.checkAll}"/>
-								<aon:commandButton title="#{financeBundle.aon_select_none}"
-									styleClass="aon-form-button-minus"
-									onclick="viewDialog.show();"
-									value="#{financeBundle.aon_select_none}"
-									actionListener="#{fBatchDetail.checkNone}"/>
-								<aon:commandButton title="#{financeBundle.aon_remove_batch}"
-									styleClass="aon-form-button-delete"
-									value="#{financeBundle.aon_remove_batch}"
-									onclick="viewDialog.show();"
-									actionListener="#{fbatch.onRemoveSelected}" />
-								<aon:commandButton title="#{fbatch.diskOk?(financeBundle.aon_download_disk):(financeBundle.aon_download_error)}"
-									styleClass="aon-form-button-download" rendered="#{fbatch.csbOutput!=null}"
-									value="#{fbatch.diskOk?(financeBundle.aon_download_disk):(financeBundle.aon_download_error)}"
-									actionListener="#{fbatch.downloadDisk}" />
-							</aon:div>
-							<aon:dataTable id="fBatchDetailData" var="to" value="#{fBatchDetail.model}"
-								rendered="#{fBatchDetail.model.rowCount > 0}"
-								styleClass="aon-edit-table" headerClass="aon-edit-table-header"
-								footerClass="aon-edit-table-footer" rows="20"
-								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
-								columnClasses="aon-edit-table-body-icon,
-									aon-edit-table-body aon-edit-table-body-string,
-									aon-edit-table-body aon-edit-table-body-string,
-									aon-edit-table-body aon-edit-table-body-string,
-									aon-edit-table-body aon-edit-table-body-string,
-									aon-edit-table-body aon-edit-table-body-string,
-									aon-edit-table-body aon-edit-table-body-string,
-									aon-edit-table-body aon-edit-table-body-number"
-								cellpadding="0" cellspacing="0">
-								
-								<aon:column>
-									<f:facet name="header">
-										<f:verbatim>&#160;</f:verbatim>
-									</f:facet>
-									<aon:selectBooleanCheckbox id="Included_Row_checked"
-										value="#{fBatchDetail.rowChecked}"
-										rendered="#{!fbatch.recorded}"
-										valueChangeListener="#{fBatchDetail.rowSelected}"
-										onmouseover="enableRowSubmit(false)"
-										onmouseout="enableRowSubmit(true)"
-										styleClass="aon-form-selectBooleanCheckbox-field" />	
-								</aon:column>
-
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{financeBundle.aon_invoice}" />
-									</f:facet>
-									<aon:outputText value="#{to.finance.invoice.series} / #{to.finance.invoice.number}" />
-								</aon:column>
-								
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{financeBundle.aon_finance_batch_description}" />
-									</f:facet>
-									<aon:outputText value="#{to.finance.registry.surname}, " rendered="#{to.finance.registry.surname != null and to.finance.registry.surname != ''}"/>								
-									<aon:outputText value="#{to.finance.registry.name}" />
-								</aon:column>
-
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{financeBundle.aon_finance_date}" />
-									</f:facet>
-									<aon:outputText value="#{to.finance.dueDate}">
-										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-											timeZone="#{timeZoneController.timeZoneId}" />
-									</aon:outputText>
-								</aon:column>
-								
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{financeBundle.aon_pay_method}" />
-									</f:facet>
-									<aon:outputText value="#{to.finance.payMethod.name}"/>
-								</aon:column>
-
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{financeBundle.aon_bank_account}" />
-									</f:facet>
-									<aon:outputText value="#{to.finance.formattedBankAccount}"/>
-								</aon:column>
-
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{financeBundle.aon_status}" />
-									</f:facet>
-									<aon:outputText value="#{to.status}"/>
-								</aon:column>
-
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.aon_amount}" />
-									</f:facet>
-									<aon:outputText value="#{to.amount}" >
-										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-									</aon:outputText>
-								</aon:column>
-							</aon:dataTable>
-							
-						</aon:div>
-
-						<ui:include src="/facelet/shared/dataScroller.xhtml">
-							<ui:param name="dataTable" value="fBatchDetailData" />
-							<ui:param name="model" value="#{fBatchDetail.model}" />
-							<ui:param name="showNote" value="#{false}" />
-						</ui:include>
-
-					</aon:div>
-
-					<aon:div styleClass="aon-form-group"
-						rendered="#{!fbatch.new and !fbatch.recorded}">
-						<aon:div styleClass="aon-form-group-title">
-							<aon:outputLabel for="financeData"
-								value="#{financeBundle.aon_not_batched_finances}" />
-						</aon:div>
-
-						<aon:div styleClass="aon-form-group-body"
-							rendered="#{finance.model.rowCount > 0}">
-							<aon:div>
-								<aon:commandButton title="#{financeBundle.aon_select_all}"
-									styleClass="aon-form-button-plus"
-									value="#{financeBundle.aon_select_all}"
-									onclick="viewDialog.show();"
-									actionListener="#{finance.checkAll}"/>
-								<aon:commandButton title="#{financeBundle.aon_select_none}"
-									styleClass="aon-form-button-minus"
-									value="#{financeBundle.aon_select_none}"
-									onclick="viewDialog.show();"
-									actionListener="#{finance.checkNone}"/>
-								<aon:commandButton title="#{financeBundle.aon_add_batch}"
-									styleClass="aon-form-button"
-									value="#{financeBundle.aon_add_batch}"
-									onclick="viewDialog.show();"
-									actionListener="#{fbatch.onBatchSelected}" />
-							</aon:div>
-							<aon:dataTable id="financeData" var="to" value="#{finance.model}"
-								rendered="#{finance.model.rowCount > 0}" rows="20"
-								styleClass="aon-edit-table" headerClass="aon-edit-table-header"
-								footerClass="aon-edit-table-footer"
-								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
-								columnClasses="aon-edit-table-body-icon,
-									aon-edit-table-body aon-edit-table-body-string,
-									aon-edit-table-body aon-edit-table-body-string,
-									aon-edit-table-body aon-edit-table-body-string,
-									aon-edit-table-body aon-edit-table-body-string,
-									aon-edit-table-body aon-edit-table-body-string,
-									aon-edit-table-body aon-edit-table-body-string,
-									aon-edit-table-body aon-edit-table-body-number"
-								cellpadding="0" cellspacing="0">
-								
-								<aon:column>
-									<f:facet name="header">
-										<f:verbatim>&#160;</f:verbatim>
-									</f:facet>
-									<aon:selectBooleanCheckbox id="Row_checked"
-										value="#{finance.rowChecked}"
-										valueChangeListener="#{finance.rowSelected}"
-										onmouseover="enableRowSubmit(false)"
-										onmouseout="enableRowSubmit(true)"
-										styleClass="aon-form-selectBooleanCheckbox-field" />	
-								</aon:column>
-
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{financeBundle.aon_invoice}" />
-									</f:facet>
-									<aon:outputText value="#{to.invoice.series} / #{to.invoice.number}" />
-								</aon:column>
-								
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{financeBundle.aon_finance_batch_description}" />
-									</f:facet>
-									<aon:outputText value="#{to.registry.surname}, " rendered="#{to.registry.surname != null and to.registry.surname != ''}"/>								
-									<aon:outputText value="#{to.registry.name}" />
-								</aon:column>
-
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{financeBundle.aon_finance_date}" />
-									</f:facet>
-									<aon:outputText value="#{to.dueDate}">
-										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-											timeZone="#{timeZoneController.timeZoneId}" />
-									</aon:outputText>
-								</aon:column>
-
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{financeBundle.aon_pay_method}" />
-									</f:facet>
-									<aon:outputText value="#{to.payMethod.name}">
-										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-											timeZone="#{timeZoneController.timeZoneId}" />
-									</aon:outputText>
-								</aon:column>
-
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{financeBundle.aon_bank_account}" />
-									</f:facet>
-									<aon:outputText value="#{to.formattedBankAccount}"/>
-								</aon:column>
-
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{financeBundle.aon_status}" />
-									</f:facet>
-									<aon:outputText value="#{to.financeStatus}"/>
-								</aon:column>
-
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.aon_amount}" />
-									</f:facet>
-									<aon:outputText value="#{to.totalAmount}" >
-										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-									</aon:outputText>
-								</aon:column>
-							</aon:dataTable>
-						</aon:div>
-						
-						<ui:include src="/facelet/shared/dataScroller.xhtml">
-							<ui:param name="dataTable" value="financeData" />
-							<ui:param name="model" value="#{finance.model}" />
-							<ui:param name="showNote" value="true" />
-						</ui:include>
-						
-					</aon:div>
-				</aon:div>
-			</aon:div>
-
-			<s:modalDialog
-		       dialogId="viewDialog"
-		       dialogVar="viewDialog"
-		       closeButton="false">
-		       <aon:div styleClass="aon-timer">		       		
-		       		<aon:graphicImage value="/css/images/content/aon-timer.gif" />
-		       		<aon:div styleClass="aon-timer-title" >
-		       			<aon:outputText value="#{appBundle.aon_in_progress}" /> 
-		       		</aon:div>
-  			   </aon:div>
-			</s:modalDialog>
-			-->
