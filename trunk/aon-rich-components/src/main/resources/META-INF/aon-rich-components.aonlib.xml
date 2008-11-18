@@ -85,11 +85,13 @@
 	</component>
 	
 	<component localName="inputText">
-    	<attribute name="styleClass" value="aon-inputText" />			
+    	<attribute name="styleClass" value="aon-inputText" />
+		<attribute name="disabledStyleClass" value="aon-inputText-disabled" />
 	</component>
 
 	<component localName="inputTextarea">
-    	<attribute name="styleClass" value="aon-inputTextarea" />			
+    	<attribute name="styleClass" value="aon-inputTextarea" />
+    	<attribute name="disabledStyleClass" value="aon-inputText-disabled" />			
 	</component>
 
 	<component localName="inputRichText">
@@ -98,7 +100,8 @@
 	</component>
 
 	<component localName="inputSecret">
-    	<attribute name="styleClass" value="aon-inputSecret" />			
+    	<attribute name="styleClass" value="aon-inputSecret" />
+    	<attribute name="disabledStyleClass" value="aon-inputText-disabled" />			
 	</component>
 
 	<component localName="selectOneMenu">
