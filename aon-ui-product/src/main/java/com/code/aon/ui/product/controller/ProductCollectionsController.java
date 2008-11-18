@@ -15,15 +15,14 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.product.Brand;
+import com.code.aon.product.Catalogue;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.ProductCategoryGroup;
 import com.code.aon.product.Tariff;
-import com.code.aon.product.Tax;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.enumeration.PluProductType;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
-import com.code.aon.product.enumeration.TaxType;
 import com.code.aon.ql.Criteria;
 
 /**
@@ -52,7 +51,7 @@ public class ProductCollectionsController {
 			Iterator<ITransferObject> iter = brandBean.getList(criteria).iterator();
 			while (iter.hasNext()) {
 				Brand brand = (Brand) iter.next();
-				SelectItem item = new SelectItem(brand,brand.getName());
+				SelectItem item = new SelectItem(brand, brand.getName());
 				brands.add(item);
 			}
 		}
@@ -97,7 +96,7 @@ public class ProductCollectionsController {
 			Iterator iter = pCategoryGroupBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				ProductCategoryGroup catGroup = (ProductCategoryGroup)iter.next();
-				SelectItemGroup itemGroup = new SelectItemGroup(catGroup.getName(),catGroup.getName(),true,obtainGroupCateogries(catGroup.getId()));
+				SelectItemGroup itemGroup = new SelectItemGroup(catGroup.getName(), catGroup.getName(), true, obtainGroupCateogries(catGroup.getId()));
 				pCategoriesByGroup.add(itemGroup);
 			}
 		}
@@ -114,7 +113,7 @@ public class ProductCollectionsController {
 		Iterator iter = pcategoryBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			ProductCategory category = (ProductCategory)iter.next();
-			SelectItem item = new SelectItem(category,category.getName());
+			SelectItem item = new SelectItem(category, category.getName());
 			items.add(item);
 		}
 		return items.toArray(new SelectItem[items.size()]);
@@ -137,102 +136,6 @@ public class ProductCollectionsController {
 			}
 		}
 		return pCategoryGroups;
-	}
-
-	/** The taxes list. */
-	private List<SelectItem> taxes;
-
-	/**
-	 * Gets the taxes.
-	 * 
-	 * @return the taxes
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	public List<SelectItem> getTaxes() throws ManagerBeanException {
-		if (taxes == null) {
-			taxes = new LinkedList<SelectItem>();
-			List<ITransferObject> c = BeanManager.getManagerBean(Tax.class).getList(null);
-			Iterator<ITransferObject> iter = c.iterator();
-			while (iter.hasNext()) {
-				Tax tax = (Tax) iter.next();
-				SelectItem item = new SelectItem(tax, tax.getName());
-				taxes.add(item);
-			}
-		}
-		return taxes;
-	}
-
-	/** The vat taxes list. */
-	private List<SelectItem> vatTaxes;
-
-	/**
-	 * Gets the vat taxes.
-	 * 
-	 * @return the vat taxes
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	public List<SelectItem> getVatTaxes() throws ManagerBeanException {
-		if (vatTaxes == null) {
-			vatTaxes = new LinkedList<SelectItem>();
-			IManagerBean managerBean = BeanManager.getManagerBean(Tax.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(managerBean.getFieldName(IProductAlias.TAX_TYPE),TaxType.VAT);
-			List<ITransferObject> c = managerBean.getList(criteria);  
-			Iterator<ITransferObject> iter = c.iterator();
-			while (iter.hasNext()) {
-				Tax tax = (Tax) iter.next();
-				SelectItem item = new SelectItem(tax, tax.getName());
-				vatTaxes.add(item);
-			}
-		}
-		return vatTaxes;
-	}
-	
-	/** The retention taxes list. */
-	private List<SelectItem> retentionTaxes;
-	
-	/**
-	 * Gets the retention taxes.
-	 * 
-	 * @return the retention taxes
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	public List<SelectItem> getRetentionTaxes() throws ManagerBeanException {
-		if (retentionTaxes == null) {
-			retentionTaxes = new LinkedList<SelectItem>();
-			IManagerBean managerBean = BeanManager.getManagerBean(Tax.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(managerBean.getFieldName(IProductAlias.TAX_TYPE),TaxType.RETENTION);
-			List<ITransferObject> c = managerBean.getList(criteria);  
-			Iterator<ITransferObject> iter = c.iterator();
-			while (iter.hasNext()) {
-				Tax tax = (Tax) iter.next();
-				SelectItem item = new SelectItem(tax, tax.getName());
-				retentionTaxes.add(item);
-			}
-		}
-		return retentionTaxes;
-	}
-
-	/**
-	 * Gets the tax types
-	 * 
-	 * @return the tax types
-	 */
-	public List<SelectItem> getTaxTypes() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-		TaxType[] taxTypes = TaxType.values();
-		for (int i = 0; i < taxTypes.length; i++) {
-			TaxType type = taxTypes[i];
-			String name = type.getName(locale);
-			SelectItem item = new SelectItem(type, name);
-			types.add(item);
-		}
-		return types;
 	}
 
 	/**
@@ -293,6 +196,32 @@ public class ProductCollectionsController {
 		return mimeTypes;
 	}
 
+	/** The catalogues list. */
+	private List<SelectItem> catalogues;
+
+	/**
+	 * Gets the catalogues.
+	 * 
+	 * @return the catalogues
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 */
+	public List<SelectItem> getCatalogues() throws ManagerBeanException {
+		if (catalogues == null) {
+			catalogues = new LinkedList<SelectItem>();
+			IManagerBean catalogueBean = BeanManager.getManagerBean(Catalogue.class);
+			Criteria criteria = new Criteria();
+			criteria.addOrder(catalogueBean.getFieldName(IProductAlias.CATALOGUE_NAME));
+			Iterator<ITransferObject> iter = catalogueBean.getList(criteria).iterator();
+			while (iter.hasNext()) {
+				Catalogue catalogue = (Catalogue) iter.next();
+				SelectItem item = new SelectItem(catalogue,catalogue.getName());
+				catalogues.add(item);
+			}
+		}
+		return catalogues;
+	}
+	
 	/** The tariffs list. */
 	private List<SelectItem> tariffs;
 
@@ -312,7 +241,7 @@ public class ProductCollectionsController {
 			Iterator<ITransferObject> iter = tariffBean.getList(criteria).iterator();
 			while (iter.hasNext()) {
 				Tariff tariff = (Tariff) iter.next();
-				SelectItem item = new SelectItem(tariff,tariff.getName());
+				SelectItem item = new SelectItem(tariff, tariff.getName());
 				tariffs.add(item);
 			}
 		}
