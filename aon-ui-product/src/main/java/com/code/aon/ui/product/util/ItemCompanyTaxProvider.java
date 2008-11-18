@@ -12,8 +12,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
+import com.code.aon.config.Tax;
 import com.code.aon.product.Item;
-import com.code.aon.product.Tax;
 
 /**
  * Provider to obtain tax related info.
