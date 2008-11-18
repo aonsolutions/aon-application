@@ -8,6 +8,8 @@ import com.code.aon.account.AutoConcept;
 import com.code.aon.account.AccountEntry;
 import com.code.aon.account.AccountEntryDetail;
 import com.code.aon.account.AccountSummary;
+import com.code.aon.account.Amortization;
+import com.code.aon.account.AmortizationDetail;
 import com.code.aon.account.AmortizationType;
 import com.code.aon.account.Loan;
 import com.code.aon.account.Leasing;
@@ -293,6 +295,122 @@ public interface IAccountAlias {
 	* Hibernate value: AccountSummary.securityLevel
 	*/
 	String  ACCOUNT_SUMMARY_SECURITY_LEVEL = ACCOUNT_SUMMARY_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for Amortization entity.
+	*/ 
+	DAOConstantsEntry AMORTIZATION_ENTRY = DAOConstants.getDAOConstant(Amortization.class);
+
+	/** 
+	* Alias value: Amortization_amortizationType_id
+	* Hibernate value: Amortization.amortizationType.id
+	*/
+	String  AMORTIZATION_AMORTIZATION_TYPE_ID = AMORTIZATION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Amortization_amount
+	* Hibernate value: Amortization.amount
+	*/
+	String  AMORTIZATION_AMOUNT = AMORTIZATION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Amortization_comments
+	* Hibernate value: Amortization.comments
+	*/
+	String  AMORTIZATION_COMMENTS = AMORTIZATION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Amortization_deadline
+	* Hibernate value: Amortization.deadline
+	*/
+	String  AMORTIZATION_DEADLINE = AMORTIZATION_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Amortization_description
+	* Hibernate value: Amortization.description
+	*/
+	String  AMORTIZATION_DESCRIPTION = AMORTIZATION_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Amortization_feePeriod
+	* Hibernate value: Amortization.feePeriod
+	*/
+	String  AMORTIZATION_FEE_PERIOD = AMORTIZATION_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Amortization_id
+	* Hibernate value: Amortization.id
+	*/
+	String  AMORTIZATION_ID = AMORTIZATION_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Amortization_initialDate
+	* Hibernate value: Amortization.initialDate
+	*/
+	String  AMORTIZATION_INITIAL_DATE = AMORTIZATION_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Amortization_saleAmount
+	* Hibernate value: Amortization.saleAmount
+	*/
+	String  AMORTIZATION_SALE_AMOUNT = AMORTIZATION_ENTRY.getAliasNames()[8];
+
+
+
+	/** 
+	* DAOConstantsEntry for AmortizationDetail entity.
+	*/ 
+	DAOConstantsEntry AMORTIZATION_DETAIL_ENTRY = DAOConstants.getDAOConstant(AmortizationDetail.class);
+
+	/** 
+	* Alias value: AmortizationDetail_accountEntry_id
+	* Hibernate value: AmortizationDetail.accountEntry.id
+	*/
+	String  AMORTIZATION_DETAIL_ACCOUNT_ENTRY_ID = AMORTIZATION_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AmortizationDetail_allocation
+	* Hibernate value: AmortizationDetail.allocation
+	*/
+	String  AMORTIZATION_DETAIL_ALLOCATION = AMORTIZATION_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AmortizationDetail_amortization_id
+	* Hibernate value: AmortizationDetail.amortization.id
+	*/
+	String  AMORTIZATION_DETAIL_AMORTIZATION_ID = AMORTIZATION_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: AmortizationDetail_coefficient
+	* Hibernate value: AmortizationDetail.coefficient
+	*/
+	String  AMORTIZATION_DETAIL_COEFFICIENT = AMORTIZATION_DETAIL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: AmortizationDetail_fromDate
+	* Hibernate value: AmortizationDetail.fromDate
+	*/
+	String  AMORTIZATION_DETAIL_FROM_DATE = AMORTIZATION_DETAIL_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: AmortizationDetail_id
+	* Hibernate value: AmortizationDetail.id
+	*/
+	String  AMORTIZATION_DETAIL_ID = AMORTIZATION_DETAIL_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: AmortizationDetail_status
+	* Hibernate value: AmortizationDetail.status
+	*/
+	String  AMORTIZATION_DETAIL_STATUS = AMORTIZATION_DETAIL_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: AmortizationDetail_toDate
+	* Hibernate value: AmortizationDetail.toDate
+	*/
+	String  AMORTIZATION_DETAIL_TO_DATE = AMORTIZATION_DETAIL_ENTRY.getAliasNames()[7];
 
 
 
