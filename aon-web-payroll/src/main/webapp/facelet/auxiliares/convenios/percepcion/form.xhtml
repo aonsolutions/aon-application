@@ -96,14 +96,15 @@
 					<aon:outputLabel for="Percepcion_unidades" 
 						value="#{appBundle.aon_payroll_auxiliares_convenios__unid_comp}"/>
 					<aon:inputText id="Percepcion_unidades" size="11" maxlength="8"
-						value="#{percepcion.to.unidades}" >
+						value="#{percepcion.to.unidades}"  >
 						<a4j:support event="onkeyup" reRender="Percepcion_importe,Percepcion_impuni" ajaxSingle="true"/>
 					</aon:inputText>	
 					
 					<aon:outputLabel for="Percepcion_impuni" 
 						value="#{appBundle.aon_payroll_auxiliares_convenios__importe_unit}"/>
 					<aon:inputText id="Percepcion_impuni" size="15" maxlength="11"
-						value="#{percepcion.to.impuni}" readonly="#{(percepcion.to.unidades!=0)?(false):(true)}" >
+						value="#{percepcion.to.impuni}" valueChangeListener="#{percepcion.impuniChange}" 
+						readonly="#{(percepcion.to.unidades!=0)?(false):(true)}" >
 						<a4j:support event="onkeyup" reRender="Percepcion_importe" ajaxSingle="true"/>
 					</aon:inputText>
 						
