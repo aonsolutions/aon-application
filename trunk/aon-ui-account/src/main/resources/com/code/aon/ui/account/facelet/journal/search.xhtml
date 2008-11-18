@@ -63,7 +63,7 @@
 					<aon:outputLabel
 						for="AccountEntryDetail_accountEntry_securityLevel"
 						value="#{bundle.aon_security_level}" />
-					<aon:selectOneMenu
+					<aon:selectOneMenu value="#{journalReport.securityLevel}" 
 						id="AccountEntryDetail_accountEntry_securityLevel">
 						<f:selectItem value="#{nullItem.value}" />
 						<f:selectItems value="#{commonCollections.securityLevels}" />
