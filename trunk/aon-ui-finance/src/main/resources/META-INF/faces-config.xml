@@ -850,7 +850,7 @@
 	<managed-bean>
 		<managed-bean-name>invoicingGroup</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.controller.InvoicingGroupController
+			com.code.aon.ui.form.BasicController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -871,9 +871,18 @@
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
+				<value>#{invoicingGroupSearch}</value>
 				<value>#{invoicingGroupDetailListener}</value>
 			</list-entries>
 		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>invoicingGroupSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.InvoicingGroupSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<managed-bean>
