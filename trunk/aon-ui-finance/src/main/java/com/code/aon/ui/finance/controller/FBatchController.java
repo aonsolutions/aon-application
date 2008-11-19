@@ -361,7 +361,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	        response.setContentType(MimeType.MIME_TXT.getName());
 	        response.setContentLength(data.length);
-	        response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "\"");
+	        response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\"");
 	        faces.responseComplete();
 		} catch (IOException e) {
 			throw new ManagerBeanException(e);
