@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.infoweb.enumeration.WebInfoPageType;
@@ -95,5 +96,13 @@ public class WebInfoPage implements ITransferObject {
 	public void setResources(Set<WebInfoPageResource> resources) {
 		this.resources = resources;
 	}
+
+    @Transient
+	public boolean isDetailed() {
+		if (getType()== WebInfoPageType.GALLERY) return true;
+		if (getType()== WebInfoPageType.GENERIC) return true;
+		if (getType()== WebInfoPageType.LOCATION) return true;
+		return false;
+    }
 
 }
