@@ -18,6 +18,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.net.DummyHandler;
+import com.code.aon.faces.component.richfaces.lookup.LookupChangeEvent;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.Tag;
 import com.sun.facelets.tag.TagAttribute;
@@ -32,6 +33,8 @@ public class FaceletUtil {
 	public final static Class[] ACTION_LISTENER_SIG = new Class[] { ActionEvent.class };
 	
 	public final static Class[] VALUE_CHANGE_LISTENER_SIG = new Class[] { ValueChangeEvent.class };
+	
+	public final static Class[] LOOKUP_CHANGE_LISTENER_SIG = new Class[] { LookupChangeEvent.class };
 	
 	public final static Class[] VALIDATOR_SIG = new Class[] { FacesContext.class, UIComponent.class, Object.class };
 	
