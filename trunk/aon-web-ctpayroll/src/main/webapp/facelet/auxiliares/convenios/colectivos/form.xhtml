@@ -45,41 +45,19 @@
 					</aon:selectOneMenu>
 					
 				</aon:panelGrid>
-
-
-				<!-- rich:tabPanel switchType="client" selectedTab="#{(pagaext.to!=null)?'niveles':'pagas'}"-->
-				<rich:tabPanel switchType="ajax" >
+<!-- 
+				<rich:tabPanel switchType="ajax" 
+					ontabchange="#{convenio.changeTabValue}" 
+					selectedTab="#{convenio.tabName}" value="" 
+					valueChangeListener="" >
+-->
+				<rich:tabPanel switchType="ajax" 
+					
+					 >
+		
 					<rich:tab id="niveles" label="#{appBundle.aon_payroll_auxiliares_convenios__niveles}">
 						
-						<aon:commandButton id="categoriasButtom" title="[#{appBundle.aon_payroll_auxiliares_convenios__categoria}]"
-							rendered="#{!convenio.new}" 
-							action="categoria_form" value="FROGAKOA"
-							styleClass="aon-finding-toolbar-item aon-icon-category"
-							actionListener="#{categoria.onReset}" />
-							
-							
-							
-						<aon:commandButton id="categoriasButtom2" title="[#{appBundle.aon_payroll_auxiliares_convenios__categoria}]"
-							rendered="#{!convenio.new}" 
-							action="categoria_form" value="CATEGORIAS"
-							styleClass="aon-finding-toolbar-item aon-icon-category" >
-							<aon:actionListener method="#{categoria.onReset}" />
-						</aon:commandButton>
-										
-						<aon:commandButton id="percepcionesButtom" title="[#{appBundle.aon_payroll_auxiliares_convenios__percepciones}]"
-							rendered="#{!convenio.new}"  disabled="#{convenio.new}"
-							action="percepcion_form" value="FROGAKOA" 
-							styleClass="aon-finding-toolbar-item aon-icon-notes" >
-							<!-- aon:actionListener method="#{(percepcion.to==null)?(percepcion.onReset):(null)}" /-->
-							<aon:actionListener method="#{percepcion.onReset}" />
-						</aon:commandButton>
-						
-						<aon:commandButton id="percepcionesButtom2" title="[#{appBundle.aon_payroll_auxiliares_convenios__percepciones}]"
-							rendered="#{!convenio.new}"  disabled="#{convenio.new}"
-							action="percepcion_form" value="PERCEPCIONES" 
-							styleClass="aon-finding-toolbar-item aon-icon-notes" />
-						
-						<aon:div id="nivelDiv" style="width:20%; margin-right:5px; float: left;">	
+						<aon:div id="nivelDiv" style="width:18%; margin-right:5px; float: left;">	
 							<aon:div styleClass="aon-form-group">
 								<aon:div styleClass="aon-form-group-title">
 									<aon:div styleClass="aon-form-group-title-internal">
@@ -89,7 +67,7 @@
 							</aon:div>		
 							<ui:include src="nivel/grid.xhtml" />
 						</aon:div>
-						<aon:div id="categoriaDiv" style="width:40%; margin-right:5px; float: left;">
+						<aon:div id="categoriaDiv" style="width:30%; margin-right:5px; float: left;">
 							<aon:div styleClass="aon-form-group">
 								<aon:div styleClass="aon-form-group-title">
 									<aon:div styleClass="aon-form-group-title-internal">
@@ -99,7 +77,7 @@
 							</aon:div>
 							<ui:include src="categoria/grid.xhtml" />
 						</aon:div>											
-						<aon:div id="percepcionDiv" style="width:40%; margin-right:5px; float: left;">
+						<aon:div id="percepcionDiv" style="width:50%; float: left;">
 							<aon:div styleClass="aon-form-group">
 								<aon:div styleClass="aon-form-group-title">
 									<aon:div styleClass="aon-form-group-title-internal">
