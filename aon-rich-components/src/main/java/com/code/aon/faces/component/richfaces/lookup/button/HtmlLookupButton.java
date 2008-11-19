@@ -27,7 +27,9 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTa
     
     private ValueBinding lookup;
     
-    private MethodBinding valueChangeListener;
+    private String lookupProperty;
+    
+    private MethodBinding lookupChangeListener;
     
     private String windowTitle;
     
@@ -63,12 +65,12 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTa
 		this.lookup = lookup;
 	}
 
-	public MethodBinding getValueChangeListener() {
-		return this.valueChangeListener;
+	public MethodBinding getLookupChangeListener() {
+		return this.lookupChangeListener;
 	}
 
-	public void setValueChangeListener(MethodBinding valueChangeListener) {
-		this.valueChangeListener = valueChangeListener;
+	public void setLookupChangeListener(MethodBinding lookupChangeListener) {
+		this.lookupChangeListener = lookupChangeListener;
 	}
 
 	public ValueBinding getProperty() {
@@ -129,6 +131,18 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTa
 	public void setMinHeight(String minHeight) {
 		this.minHeight = minHeight;
 	}
+
+	public String getLookupProperty() {
+    	if (null != this.lookupProperty) {
+            return this.lookupProperty;
+        }
+        ValueBinding _vb = getValueBinding(LOOKUP_PROPERTY);
+        return ((_vb != null) ? (String)_vb.getValue(getFacesContext()) : null);
+	}
+
+	public void setLookupProperty(String lookupProperty) {
+		this.lookupProperty = lookupProperty;
+	}
 	
 	/**
      * <p>Gets the state of the instance as a <code>Serializable</code>
@@ -143,11 +157,12 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTa
   		lookup = (ValueBinding) this._state[1];
   		property = (ValueBinding) this._state[2];  
   		actionType = (LookupButtonType) this._state[3];  		
-  		valueChangeListener = (MethodBinding) this._state[4];  	
+  		lookupChangeListener = (MethodBinding) this._state[4];  	
   		windowTitle = (String) this._state[5];
   		selectReRender = (String) this._state[6];
   		minWidth = (String) this._state[7];
   		minHeight = (String) this._state[8];
+  		lookupProperty = (String) this._state[9];
   	}  
    
     /**
@@ -159,17 +174,18 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTa
      */
   	public Object saveState(FacesContext _context) {  
   		if (_state == null) {  
-  			_state = new Object[9];  
+  			_state = new Object[10];  
   		}  
   		_state[0] = super.saveState(_context);  
   		_state[1] = lookup;
   		_state[2] = property;
   		_state[3] = actionType;  
-  		_state[4] = valueChangeListener;  
+  		_state[4] = lookupChangeListener;  
   		_state[5] = windowTitle;
   		_state[6] = selectReRender;
   		_state[7] = minWidth;
   		_state[8] = minHeight;
+  		_state[9] = lookupProperty;
   		return _state;  
   	}
 	
