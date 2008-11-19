@@ -9,6 +9,8 @@ public interface ILookupComponent {
 
 	ValueBinding getProperty();
 	
-	MethodBinding getValueChangeListener();
+	String getLookupProperty();
+	
+	MethodBinding getLookupChangeListener();
 	
 }
