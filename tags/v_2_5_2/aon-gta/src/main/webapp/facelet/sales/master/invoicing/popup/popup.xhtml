@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:jstl="http://java.sun.com/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<t:div id="popup" forceId="#{true}" styleClass="aon-popup-window"
+		style="position: absolute;left: 290px;_left:110px; top: 125px;display:none;"
+		rendered="#{!salesInvoicing.new}">
+		<t:div styleClass="aon-popup-window-title">
+
+			<t:commandButton id="popupClose" value=" "
+				styleClass="aon-popup-window-close"
+				accesskey="#{bundle.aon_key_close}" />
+
+			<t:outputLabel value="#{registryBundle.aon_addresses}" />
+
+		</t:div>
+		<t:div styleClass="aon-popup-window-body">
+			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:commandButton id="popupSave" value="#{bundle.aon_save}"
+						forceId="#{true}" actionListener="#{salesInvoicingAddress.accept}"
+						onclick="return validate();"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" />
+					<t:commandButton id="popupRemove" value="#{bundle.aon_remove}"
+						forceId="#{true}" actionListener="#{salesInvoicingAddress.remove}"
+						onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
+						disabled="#{salesInvoicingAddress.new}" />
+				</t:div>
+			</t:div>
+			<t:div styleClass="aon-popup-window-scroll-area">
+				<h:panelGrid columns="2" styleClass="aon-form-table"
+					columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+						<t:outputLabel for="InvoiceAddress_address"
+							styleClass="aon-form-input-text-label"
+							value="#{financeBundle.invoice_address}" />
+						<t:div styleClass="aon-form-nowrap">
+							<t:inputText id="InvoiceAddress_address" styleClass="aon-form-input-text"
+								forceId="#{true}" value="#{salesInvoicingAddress.to.address}"
+								size="45" maxlength="45">
+							</t:inputText>
+							<t:outputText id="Address_required" forceId="#{true}"
+								value="#{financeBundle.invoice_address_required}"
+								style="display:none;color:#cc3333" />
+						</t:div>
+
+						<t:outputLabel for="InvoiceAddress_address2"
+							styleClass="aon-form-input-text-label"/>
+						<t:inputText id="InvoiceAddress_address2" styleClass="aon-form-input-text"
+							forceId="#{true}" value="#{salesInvoicingAddress.to.address2}"
+							size="45" maxlength="45">
+						</t:inputText>
+
+						<t:outputLabel for="InvoiceAddress_zip"
+							styleClass="aon-form-input-text-label"
+							value="#{financeBundle.invoice_zip}" />
+						<t:div styleClass="aon-form-nowrap">
+							<t:inputText id="InvoiceAddress_zip" styleClass="aon-form-input-text"
+								forceId="#{true}" value="#{salesInvoicingAddress.to.zip}"
+								size="16" maxlength="16">
+							</t:inputText>
+							<t:outputText id="Zip_required" forceId="#{true}"
+								value="#{financeBundle.invoice_zip_required}"
+								style="display:none;color:#cc3333" />
+						</t:div>
+
+						<t:outputLabel for="InvoiceAddress_city"
+							styleClass="aon-form-input-text-label"
+							value="#{financeBundle.invoice_city}" />
+						<t:div styleClass="aon-form-nowrap">
+							<t:inputText id="InvoiceAddress_city" styleClass="aon-form-input-text"
+								forceId="#{true}" value="#{salesInvoicingAddress.to.city}"
+								size="45" maxlength="45">
+							</t:inputText>
+							<t:outputText id="City_required" forceId="#{true}"
+								value="#{financeBundle.invoice_city_required}"
+								style="display:none;color:#cc3333" />
+						</t:div>
+
+						<t:outputLabel for="InvoiceAddress_geozone_id"
+							styleClass="aon-form-input-text-label"
+							value="#{financeBundle.invoice_geozone}" />
+						<t:div styleClass="aon-form-nowrap">
+							<t:selectOneMenu id="InvoiceAddress_geozone_id"
+								forceId="#{true}" value="#{salesInvoicingAddress.to.geozone.id}"
+								styleClass="aon-form-selectOneMenu-field">
+								<f:selectItem itemValue="" itemLabel=" " />
+								<f:selectItems value="#{geozoneCollections.geoTrees}" />
+							</t:selectOneMenu>
+							<t:outputText id="Geozone_required" forceId="#{true}"
+								value="#{financeBundle.invoice_geozone_required}"
+								style="display:none;color:#cc3333" />
+						</t:div>
+				</h:panelGrid>
+			</t:div>
+		</t:div>
+	</t:div>
+	<script>
+		function hidePopup(){
+			document.getElementById( "popup" ).style.display='none';
+			document.getElementById( "Address_required" ).style.display = 'none';
+			document.getElementById( "Zip_required" ).style.display = 'none';
+			document.getElementById( "City_required" ).style.display = 'none';
+			document.getElementById( "Geozone_required" ).style.display = 'none';
+		}
+		function validate(isNew){ 
+			if(document.getElementById( "InvoiceAddress_address" ).value == ""){
+				document.getElementById( "Address_required" ).style.display = 'block';
+				document.getElementById( "Zip_required" ).style.display = 'none';
+				document.getElementById( "City_required" ).style.display = 'none';
+				document.getElementById( "Geozone_required" ).style.display = 'none';
+				document.getElementById( "InvoiceAddress_address" ).focus();
+				return false;
+			}
+			if(document.getElementById( "InvoiceAddress_zip" ).value == ""){
+				document.getElementById( "Zip_required" ).style.display = 'block';
+				document.getElementById( "Address_required" ).style.display = 'none';
+				document.getElementById( "City_required" ).style.display = 'none';
+				document.getElementById( "Geozone_required" ).style.display = 'none';
+				document.getElementById( "InvoiceAddress_zip" ).focus();
+				return false;
+			}
+			if(document.getElementById( "InvoiceAddress_city" ).value == ""){
+				document.getElementById( "City_required" ).style.display = 'block';
+				document.getElementById( "Address_required" ).style.display = 'none';
+				document.getElementById( "Zip_required" ).style.display = 'none';
+				document.getElementById( "Geozone_required" ).style.display = 'none';
+				document.getElementById( "InvoiceAddress_city" ).focus();
+				return false;
+			}
+			if(document.getElementById( "InvoiceAddress_geozone_id" ).value == ""){
+				document.getElementById( "Geozone_required" ).style.display = 'block';
+				document.getElementById( "Address_required" ).style.display = 'none';
+				document.getElementById( "Zip_required" ).style.display = 'none';
+				document.getElementById( "City_required" ).style.display = 'none';
+				document.getElementById( "InvoiceAddress_geozone_id" ).focus();
+				return false;
+			}
+			document.getElementById( "Address_required" ).style.display = 'none';
+			document.getElementById( "Zip_required" ).style.display = 'none';
+			document.getElementById( "City_required" ).style.display = 'none';
+			document.getElementById( "Geozone_required" ).style.display = 'none';
+			return true;
+		}
+		function isUnsignedInteger(number) {
+			var Template = /^\d+$/ 
+			res = (Template.test(number)) ? true : false
+			return res;
+		}
+	</script>
+</ui:composition>
+
+</body>
+</html>
