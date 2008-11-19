@@ -7,6 +7,7 @@ import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.form.event.ControllerSearchListener;
 
 public class FBatchSearchListener extends ControllerSearchListener {
 
