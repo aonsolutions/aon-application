@@ -207,7 +207,6 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
     
     public WebInfoVariableType getRowVariableType() {
 		try {
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 000000000000000000000000000000000000000000000000");
 			WebInfoStyle style = (WebInfoStyle)getModel().getRowData();
 			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 111111111111111111111111111111111111111111111111");
 			return getVariableType(style.getVariable());
