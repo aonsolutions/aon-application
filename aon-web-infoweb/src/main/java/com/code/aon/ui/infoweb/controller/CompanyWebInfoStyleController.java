@@ -13,6 +13,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -25,6 +27,10 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.dao.IConfigAlias;
+import com.code.aon.infoweb.WebInfoStyle;
+import com.code.aon.infoweb.dao.IWebInfoAlias;
+import com.code.aon.infoweb.enumeration.WebInfoFontType;
+import com.code.aon.infoweb.enumeration.WebInfoVariableType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
@@ -32,12 +38,10 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.infoweb.velocity.VelocityConstants;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.infoweb.WebInfoStyle;
-import com.code.aon.infoweb.dao.IWebInfoAlias;
-import com.code.aon.infoweb.enumeration.WebInfoFontType;
-import com.code.aon.infoweb.enumeration.WebInfoVariableType;
 
 public class CompanyWebInfoStyleController extends BasicController implements VelocityConstants {
+	
+	private static final Logger LOGGER = Logger.getLogger(CompanyWebInfoStyleController.class.getName());
 	
 	public String template;
 	
@@ -98,7 +102,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 			}
 			model = new ListDataModel(vars);
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 	}
 
@@ -125,9 +129,9 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 			    }
 			
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				LOGGER.log( Level.SEVERE, e.getMessage(), e );
 			} catch (IOException e) {
-				e.printStackTrace();
+				LOGGER.log( Level.SEVERE, e.getMessage(), e );
 			}
 		}
 		return styleMap;
@@ -163,7 +167,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 			if (list.size() > 0) apBean.update(ap);
 			else apBean.insert(ap);
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 		//Cargar valores del template actual
 		chargeValues();
@@ -182,10 +186,10 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 					chargeValues();
 				}
 			} catch (ManagerBeanException e) {
-				e.printStackTrace();
+				LOGGER.log( Level.SEVERE, e.getMessage(), e );
 			}
-			
 		}
+		this.model.setRowIndex(0);
 		return template;
 	}
 
@@ -206,13 +210,15 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
     }
     
     public WebInfoVariableType getRowVariableType() {
-		try {
-			WebInfoStyle style = (WebInfoStyle)getModel().getRowData();
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 111111111111111111111111111111111111111111111111");
-			return getVariableType(style.getVariable());
-		} catch (Exception e) {
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ERROR OBTENIENDO getRowData de "+this.model+"");
-		}
+    	try {
+	    	if ( getModel().isRowAvailable() ) {
+	    		WebInfoStyle style = (WebInfoStyle)getModel().getRowData();
+	    		return getVariableType(style.getVariable());
+	    	}
+    	} catch (ManagerBeanException e ) {
+    		LOGGER.log( Level.SEVERE, e.getMessage(), e );
+    	}
+    	LOGGER.severe( ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ERROR OBTENIENDO getRowData de "+this.model+"" );	
 		return WebInfoVariableType.IMAGE;
     }
 
@@ -240,7 +246,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
     		if (defaultValue == null) return getDefaultValueByType(type);
     		return defaultValue;
         } catch (IOException e) {
-        	e.printStackTrace();
+        	LOGGER.log( Level.SEVERE, e.getMessage(), e );
         	return getDefaultValueByType(type);
         }
     }
@@ -331,7 +337,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 		} catch (NumberFormatException n) {
 			name = "blank.jpg";
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 		return name;
 	}
@@ -352,8 +358,8 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 				return WebInfoFontType.VERDANA.getName();
 			}
 
-		} catch (NumberFormatException n) {
-			n.printStackTrace();
+		} catch (NumberFormatException e) {
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 		return "Sin tipo";
 	}
@@ -374,10 +380,14 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 				return WebInfoFontType.VERDANA.getValue();
 			}
 
-		} catch (NumberFormatException n) {
-			n.printStackTrace();
+		} catch (NumberFormatException e) {
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 		return "Verdana";
 	}
 
+	public void onLoad( ActionEvent event ) {
+		getTemplate();
+	}
+	
 }
