@@ -4,6 +4,8 @@
 	<comment></comment>
 	<projects>
 		<project>aon-ui-company</project>
+		<project>aon-ui-resources</project>
+		<project>aon-infoweb</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

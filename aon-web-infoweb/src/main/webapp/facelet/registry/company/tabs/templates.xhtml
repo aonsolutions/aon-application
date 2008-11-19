@@ -37,6 +37,7 @@
 		
 				<aon:div id="variables" style="margin-top:20px">
 					<aon:div layout="none" ajaxRendered="true" rendered="#{webPageStyle.templateSelected}">
+						<aon:outputText value="#{webPageStyle}"/>
 						<aon:editDataTable id="WebInfoStyle_datatable" value="#{webPageStyle.model}" var="to" rows="20" 
 								columnClasses ="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
 												aon-editDataTable-textColumn aon-width-auto, aon-editDataTable-buttonsColumn">
