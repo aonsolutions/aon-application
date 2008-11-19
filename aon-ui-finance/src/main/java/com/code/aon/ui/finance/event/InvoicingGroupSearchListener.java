@@ -7,6 +7,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.form.event.ControllerSearchListener;
 
 public class InvoicingGroupSearchListener extends ControllerSearchListener {
 

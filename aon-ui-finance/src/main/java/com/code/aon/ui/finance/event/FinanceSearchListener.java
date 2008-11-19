@@ -12,6 +12,7 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.supplier.Supplier;
+import com.code.aon.ui.form.event.ControllerSearchListener;
 
 public class FinanceSearchListener extends ControllerSearchListener {
 
