@@ -387,6 +387,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 	}
 
 	public void onLoad( ActionEvent event ) {
+		initializeModel();
 		getTemplate();
 	}
 	
