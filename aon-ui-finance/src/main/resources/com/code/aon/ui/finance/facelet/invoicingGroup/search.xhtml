@@ -26,7 +26,8 @@
 					<aon:div styleClass="aon-lookup">
 						<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
 							reRender="Customer_full_name"
-							value="#{invoicingGroupSearch.customer.id}" size="5" />
+							value="#{invoicingGroupSearch.customer.id}" size="5" >
+						</aon:lookupInputText>
 						<aon:lookupButton 
 							windowTitle="#{customerBundle.customer_selection}"
 							selectReRender="Customer_id,Customer_full_name" actionType="search"

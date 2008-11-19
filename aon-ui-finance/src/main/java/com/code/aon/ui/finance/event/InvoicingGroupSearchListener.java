@@ -1,7 +1,10 @@
 package com.code.aon.ui.finance.event;
 
+import javax.faces.event.ValueChangeEvent;
+
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
+import com.code.aon.faces.component.richfaces.lookup.LookupChangeEvent;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
