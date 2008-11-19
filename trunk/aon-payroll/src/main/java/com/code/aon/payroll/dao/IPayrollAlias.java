@@ -2803,22 +2803,28 @@ public interface IPayrollAlias {
 	String  CUENTAS_ENTIDAD_CDG = CUENTAS_ENTRY.getAliasNames()[3];
 
 	/** 
+	* Alias value: Cuentas_entidad_description
+	* Hibernate value: Cuentas.entidad.description
+	*/
+	String  CUENTAS_ENTIDAD_DESCRIPTION = CUENTAS_ENTRY.getAliasNames()[4];
+
+	/** 
 	* Alias value: Cuentas_numcta
 	* Hibernate value: Cuentas.numcta
 	*/
-	String  CUENTAS_NUMCTA = CUENTAS_ENTRY.getAliasNames()[4];
+	String  CUENTAS_NUMCTA = CUENTAS_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Cuentas_sucursal_id_cdg
 	* Hibernate value: Cuentas.sucursal.id.cdg
 	*/
-	String  CUENTAS_SUCURSAL_ID_CDG = CUENTAS_ENTRY.getAliasNames()[5];
+	String  CUENTAS_SUCURSAL_ID_CDG = CUENTAS_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Cuentas_sucursal_id_codent
 	* Hibernate value: Cuentas.sucursal.id.codent
 	*/
-	String  CUENTAS_SUCURSAL_ID_CODENT = CUENTAS_ENTRY.getAliasNames()[6];
+	String  CUENTAS_SUCURSAL_ID_CODENT = CUENTAS_ENTRY.getAliasNames()[7];
 
 
 }
