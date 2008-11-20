@@ -125,7 +125,7 @@ public class Pagaext implements ITransferObject {
         this.proratenum = (this.prorat != null) ? TipoProrrateo.valueOf("Tpro" + this.prorat) : null;
     }
     
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="codcom", insertable=false, updatable=false)
     public Complemento getComplemento() {
         return this.complemento;

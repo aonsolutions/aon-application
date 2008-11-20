@@ -1,5 +1,6 @@
 package com.code.aon.ui.payroll.controller;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -48,6 +49,31 @@ public class Utils {
 		}
 		System.out.println(valido);
 		return valido;
+	}
+	
+	/**
+	 * Funcion que recibida una fecha Char en formato DDMM comprueba que sea valida 0101 a 3112
+	 * 
+	 * @param pFecha
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static final boolean isFechaDDMM(String pFecha) {
+		int fecha, mes, dia;
+		fecha = Integer.parseInt(pFecha);
+		dia=fecha/100;
+		mes=fecha%100;
+		
+		Calendar cal=Calendar.getInstance();
+		
+		if(mes-1<=cal.getActualMaximum(Calendar.MONTH) && mes>0){
+			cal.set(Calendar.MONTH, mes);
+			if(dia<=cal.getActualMaximum(Calendar.DAY_OF_MONTH) && dia>0)
+				return true;
+			else
+				return false;
+		} else
+			return false;
 	}
 	
 }

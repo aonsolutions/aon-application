@@ -7,6 +7,7 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -22,7 +23,8 @@ import com.code.aon.payroll.cotizacion.Epigrafe;
 public class Categoria implements ITransferObject {
 
 	private CategoriaPK id;
-	private String nivel;
+	private String cdgnivel;
+	private Nivel nivel;
 	private String description;
 	private String cno;
 	private Base base;
@@ -42,16 +44,20 @@ public class Categoria implements ITransferObject {
 	}
 
 	/**
-	 * Devuleve el Codigo de Nivel Retributivo
+	 * Devuleve el Nivel Retributivo
 	 * 
 	 * @return
 	 */
-	@Column(name = "nivel", nullable = false, length = 2)
-	public String getNivel() {
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumns({
+		@JoinColumn(name="codcon", referencedColumnName="codcon", insertable=false, updatable=false),
+		@JoinColumn(name="nivel", referencedColumnName="cdg", insertable=false, updatable=false)
+	})
+	public Nivel getNivel() {
 		return this.nivel;
 	}
 
-	public void setNivel(String nivel) {
+	public void setNivel(Nivel nivel) {
 		this.nivel = nivel;
 	}
 
@@ -93,6 +99,7 @@ public class Categoria implements ITransferObject {
 		this.base = base;
 	}
 
+	//A la espera de implementar clave primaria compuesta con objeto no primitivos
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "codcon", insertable = false, updatable = false)
 	public Convenio getConvenio() {
@@ -111,6 +118,21 @@ public class Categoria implements ITransferObject {
 
 	public void setEpigrafe(Epigrafe epigrafe) {
 		this.epigrafe = epigrafe;
+	}
+
+	//A la espera de implementar clave primaria compuesta con objeto no primitivos
+	/**
+	 * Devuelve el código de nivel
+	 * 
+	 * @return
+	 */
+	@Column(name = "nivel", length = 2)
+	public String getCdgnivel() {
+		return cdgnivel;
+	}
+
+	public void setCdgnivel(String cdgnivel) {
+		this.cdgnivel = cdgnivel;
 	}
 
 }
