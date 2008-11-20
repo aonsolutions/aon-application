@@ -1139,10 +1139,6 @@
       <from-outcome>invoiceRemoving</from-outcome>
       <to-view-id>/_finance/facelet/invoice_removing/search.xhtml</to-view-id>
     </navigation-case>
-    <navigation-case>
-      <from-outcome>util_checking</from-outcome>
-      <to-view-id>/_finance/facelet/util/checking/checking.xhtml</to-view-id>
-    </navigation-case>
   </navigation-rule>
 -->  
   <!-- =================== Invoice Recording ========================== -->
