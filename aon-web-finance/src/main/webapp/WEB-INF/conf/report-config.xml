@@ -236,7 +236,7 @@
 		<criteria provider="#{feePrint}"/>
 
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.sales.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 		</params>

@@ -142,7 +142,8 @@
 					<aon:outputLabel for="Finance_payMethod_id"
 						value="#{financeBundle.finance_pay_method}" />
 					<aon:selectOneMenu id="Finance_payMethod_id"
-						value="#{financeSearch.payMethod}">
+						value="#{financeCollections.payMethod}"
+						valueChangeListener="#{finance.addDirectIdEqualExpression}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{financeCollections.payMethods}" />
 					</aon:selectOneMenu>
