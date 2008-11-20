@@ -13,8 +13,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
-				<ui:param name="toolbarTitle"
-					value="#{accountBundle.account_entry_module}" />
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_entry_module}" />
 				<ui:param name="toolbarDescription"
 					value="#{account_entry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 
@@ -67,12 +66,12 @@ disabled="#{!accountEntry.manual}"
 						rowClasses="aon-panelGrid-odd,aon-panelGrid-even">
 
 						<aon:div>
-							<aon:outputText value="#{accountBundle.account_period}: " />
+							<aon:outputText value="#{accountingBundle.accounting_period}: " />
 							<aon:selectOneMenu id="AccountEntry_accountPeriod"
 								styleClass="aon-form-selectOneMenu-field"
 								value="#{accountEntry.to.accountPeriod}"
 								rendered="#{accountEntry.manual and accountEntry.new}">
-								<f:selectItems value="#{accountCollections.accountPeriodKeys}" />
+								<f:selectItems value="#{accountingCollections.accountPeriodKeys}" />
 							</aon:selectOneMenu>
 							<aon:outputText value="#{accountEntry.to.accountPeriod}"
 								rendered="#{!accountEntry.manual or !accountEntry.new}" />
@@ -118,7 +117,7 @@ disabled="#{!accountEntry.manual}"
 					</aon:panelGrid>
 
 					<ui:include
-						src="/com/code/aon/ui/account/facelet/entry/linesForm.xhtml" />
+						src="/com/code/aon/ui/accounting/facelet/entry/linesForm.xhtml" />
 				</aon:div>
 			</aon:div>
 		</aon:form>

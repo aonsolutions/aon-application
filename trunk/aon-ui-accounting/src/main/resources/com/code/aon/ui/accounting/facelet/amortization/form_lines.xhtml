@@ -33,7 +33,7 @@
 
 			<aon:column styleClass="aon-editDataTable-numberColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{accountBundle.account_percentage}" />
+					<aon:outputText value="#{bundle.aon_percentage}" />
 				</f:facet>
 				<aon:outputText value="#{to.coefficient}">
 					<f:convertNumber pattern="#,##0.00" />
@@ -42,7 +42,7 @@
 
 			<aon:column styleClass="aon-editDataTable-numberColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{accountBundle.account_allocation}" />
+					<aon:outputText value="#{accountingBundle.accounting_allocation}" />
 				</f:facet>
 				<aon:outputText value="#{to.allocation}">
 					<f:convertNumber pattern="#,##0.00" />
@@ -51,7 +51,7 @@
 
 			<aon:column styleClass="aon-editDataTable-numberColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{accountBundle.account_accumulated}" />
+					<aon:outputText value="#{accountingBundle.accounting_accumulated}" />
 				</f:facet>
 				<aon:outputText value="#{to.accumulated}">
 					<f:convertNumber pattern="#,##0.00" />
@@ -60,7 +60,7 @@
 
 			<aon:column styleClass="aon-editDataTable-numberColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{accountBundle.account_pending}" />
+					<aon:outputText value="#{accountingBundle.accounting_pending}" />
 				</f:facet>
 				<aon:outputText value="#{to.pending}">
 					<f:convertNumber pattern="#,##0.00" />

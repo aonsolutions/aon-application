@@ -8,7 +8,7 @@
 
 	<aon:panel>
 		<f:facet name="header">
-			<aon:outputText value="#{accountBundle.account_concepts}" />
+			<aon:outputText value="#{accountingBundle.accounting_concepts}" />
 		</f:facet>
 
 		<aon:editDataTable id="TaxesData" var="to" rows="0"
@@ -40,7 +40,7 @@
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-column-10">
 				<f:facet name="header">
-					<aon:outputText value="#{accountBundle.account_taxableBase}" />
+					<aon:outputText value="#{bundle.aon_taxable_base}" />
 				</f:facet>
 				<aon:outputText id="Account_Taxable_Base"
 					rendered="#{to!=invoiceEntry.currentDetail}"
@@ -73,7 +73,7 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-column-10">
 				<f:facet name="header">
-					<aon:outputText value="#{accountBundle.account_retention}" />
+					<aon:outputText value="#{bundle.aon_retention}" />
 				</f:facet>
 				<aon:outputText value="#{to.retention.percentage}"
 					rendered="#{to!=invoiceEntry.currentDetail}">
@@ -102,7 +102,7 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-column-15">
 				<f:facet name="header">
-					<aon:outputText value="#{accountBundle.account_vat}" />
+					<aon:outputText value="#{bundle.aon_vat}" />
 				</f:facet>
 				<aon:outputText value="#{to.vat.percentage}"
 					rendered="#{to!=invoiceEntry.currentDetail}">
@@ -128,7 +128,7 @@
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-column-10">
 				<f:facet name="header">
-					<aon:outputText value="#{accountBundle.account_retention_quota}" />
+					<aon:outputText value="#{bundle.aon_retention_quota}" />
 				</f:facet>
 				<aon:outputText value="#{to.retentionQuota}">
 					<f:convertNumber pattern="#,##0.00" />
@@ -145,7 +145,7 @@
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-column-10">
 				<f:facet name="header">
-					<aon:outputText value="#{accountBundle.account_vat_quota}" />
+					<aon:outputText value="#{bundle.aon_vat_quota}" />
 				</f:facet>
 				<aon:outputText value="#{to.vatQuota}">
 					<f:convertNumber pattern="#,##0.00" />
@@ -161,7 +161,7 @@
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-column-5">
 				<f:facet name="header">
-					<aon:outputText value="#{accountBundle.account_surcharge}" />
+					<aon:outputText value="#{bundle.aon_surcharge}" />
 				</f:facet>
 				<aon:outputText value="#{to.surcharge}">
 					<f:convertNumber pattern="#,##0.00" />
@@ -177,7 +177,7 @@
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-column-10">
 				<f:facet name="header">
-					<aon:outputText value="#{accountBundle.account_total}" />
+					<aon:outputText value="#{bundle.aon_total}" />
 				</f:facet>
 				<aon:outputText value="#{to.total}">
 					<f:convertNumber pattern="#,##0.00" />

@@ -12,16 +12,16 @@
 		<aon:form id="accountEntryForm" styleClass="aon-form">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{accountBundle.account_entry_module}" />
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_entry_module}" />
 				<ui:param name="controller" value="#{accountEntry}" />
 			</ui:include>
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
-				<ui:define name="searchContent">
 
-					<aon:methodParam name="searchActionListener"
-						value="#{accountEntry.onSearch}" type="actionListener" />
+				<ui:param name="controller" value="#{accountEntry}" />
+				
+				<ui:define name="searchContent">
 					<aon:methodParam name="searchAction" value="accountEntry_form" />
 
 					<aon:outputLabel for="AccountEntry_id"
@@ -30,7 +30,7 @@
 						valueChangeListener="#{accountEntry.addExpression}" />
 
 					<aon:outputLabel for="AccountEntry_accountPeriod"
-						value="#{accountBundle.account_period}" />
+						value="#{accountingBundle.accounting_period}" />
 					<aon:inputText id="AccountEntry_accountPeriod" size="10"
 						valueChangeListener="#{accountEntry.addExpression}" />
 
@@ -40,7 +40,7 @@
 						valueChangeListener="#{accountEntry.addEqualExpression}">
 						<aon:enumConverter enum="com.code.aon.account.enumeration.AccountEntryType" />
 						<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
-						<f:selectItems value="#{accountCollections.accountTypes}" />
+						<f:selectItems value="#{accountingCollections.accountTypes}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel value="#{bundle.aon_date}" />

@@ -19,7 +19,7 @@ import com.code.aon.ui.util.AonUtil;
 public class ProfitAndLossReportController implements ICollectionProvider {
 
 	private static final String TRIAL_BALANCE_CONTROLLER_NAME = "trialBalance";
-
+	private static final String ACCOUNTING_BUNDLE = "accountingBundle";
 	private String accountStatement;
 
 	private SummaryCollection grossMargin;
@@ -121,28 +121,28 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		Collection<Summary> list = new LinkedList<Summary>();
 		list.addAll(getGrossMargin().getSummaryList());
 		Summary gmTotal = new Summary();
-		gmTotal.setDescription(AonUtil.getMessage("accountBundle", "account_gross_margin"));
+		gmTotal.setDescription(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_gross_margin"));
 		gmTotal.setCredit(getGrossMargin().getCredit());
 		gmTotal.setDebit(getGrossMargin().getDebit());
 		list.add(gmTotal);
 
 		list.addAll(getTotalExpenses().getSummaryList());
 		Summary teTotal = new Summary();
-		teTotal.setDescription(AonUtil.getMessage("accountBundle", "account_total_expenses"));
+		teTotal.setDescription(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_total_expenses"));
 		teTotal.setCredit(getTotalExpenses().getCredit());
 		teTotal.setDebit(getTotalExpenses().getDebit());
 		list.add(teTotal);
 
 		Summary result = new Summary();
 		StringBuilder r = new StringBuilder();
-		r.append(AonUtil.getMessage("accountBundle", "account_total_result"));
+		r.append(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_total_result"));
 		r.append(" (");
 		if (getTotalResult() > 0) {
-			r.append(AonUtil.getMessage("accountBundle", "account_total_result_profit"));
+			r.append(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_total_result_profit"));
 		} else if (getTotalResult() < 0) {
-			r.append(AonUtil.getMessage("accountBundle", "account_total_result_loss"));
+			r.append(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_total_result_loss"));
 		} else {
-			r.append(AonUtil.getMessage("accountBundle", "account_total_result_null"));
+			r.append(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_total_result_null"));
 		}
 		r.append(")");
 		result.setDescription(r.toString());
@@ -179,7 +179,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 
 	public String getReportTitle() {
 		return budgeted ? 
-				AonUtil.getMessage("accountBundle","account_budgeted_balance_sheet_module") : 
-				AonUtil.getMessage("accountBundle","account_profit_and_loss_module");
+				AonUtil.getMessage(ACCOUNTING_BUNDLE,"accounting_budgeted_balance_sheet_module") : 
+				AonUtil.getMessage(ACCOUNTING_BUNDLE,"accounting_profit_and_loss_module");
 	}
 }

@@ -13,7 +13,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbarEx.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{accountBundle.account_profit_and_loss_module}" />
+					value="#{accountingBundle.accounting_profit_and_loss_module}" />
 				<ui:param name="skipResetButton" value="true" />
 
 				<ui:define name="toolbarActions">
@@ -30,7 +30,7 @@
 					</h:commandLink>
 					<h:commandLink target="_blank"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
-						value="#{accountBundle.account_monthly_report}"
+						value="#{accountingBundle.accounting_monthly_report}"
 						action="#{report.onExecute}">
 						<f:param name="reportKey" value="profitAndLossMonthly" />
 						<f:param name="outputFormat" value="PDF" />
@@ -52,10 +52,10 @@
 								<aon:outputText value="#{bundle.aon_description}" />
 							</aon:column>
 							<aon:column styleClass="aon-dataTable-header">
-								<aon:outputText value="#{accountBundle.account_debit_balance}" />
+								<aon:outputText value="#{accountingBundle.accounting_debit_balance}" />
 							</aon:column>
 							<aon:column styleClass="aon-dataTable-header">
-								<aon:outputText value="#{accountBundle.account_credit_balance}" />
+								<aon:outputText value="#{accountingBundle.accounting_credit_balance}" />
 							</aon:column>
 						</rich:columnGroup>
 					</f:facet>
@@ -64,7 +64,7 @@
 						var="to">
 						<aon:column styleClass="aon-width-100">
 							<aon:commandLink immediate="true"
-								title="#{accountBundle.account_statement_module}"
+								title="#{accountingBundle.accounting_statement_module}"
 								styleClass="aon-dataTable-link" action="account_statement_list">
 								<f:setPropertyActionListener value="#{to.id}"
 									target="#{profitAndLossReport.accountStatement}" />
@@ -95,7 +95,7 @@
 					</rich:subTable>
 
 					<aon:column colspan="2" styleClass="aon-text-right">
-						<aon:outputText value="#{accountBundle.account_gross_margin}" />
+						<aon:outputText value="#{accountingBundle.accounting_gross_margin}" />
 					</aon:column>
 					<aon:column styleClass="aon-text-right">
 						<aon:outputText value="#{controller.grossMargin.unpaidBalance}">
@@ -112,7 +112,7 @@
 						var="to">
 						<aon:column>
 							<aon:commandLink immediate="true"
-								title="#{accountBundle.account_statement_module}"
+								title="#{accountingBundle.accounting_statement_module}"
 								styleClass="aon-dataTable-link" action="account_statement_list">
 								<f:setPropertyActionListener value="#{to.id}"
 									target="#{profitAndLossReport.accountStatement}" />
@@ -142,7 +142,7 @@
 					</rich:subTable>
 
 					<aon:column colspan="2" styleClass="aon-text-right">
-						<aon:outputText value="#{accountBundle.account_total_expenses}" />
+						<aon:outputText value="#{accountingBundle.accounting_total_expenses}" />
 					</aon:column>
 
 					<aon:column styleClass="aon-editDataTable-numberColumn">
@@ -158,15 +158,15 @@
 					</aon:column>
 
 					<aon:column breakBefore="true" colspan="2" styleClass="aon-text-right">
-						<aon:outputText value="#{accountBundle.account_total_result}" />
+						<aon:outputText value="#{accountingBundle.accounting_total_result}" />
 						<aon:outputText
-							value=" ( #{accountBundle.account_total_result_profit} )"
+							value=" ( #{accountingBundle.accounting_total_result_profit} )"
 							rendered="#{profitAndLossReport.totalResult gt 0}" />
 						<aon:outputText
-							value=" ( #{accountBundle.account_total_result_loss} )"
+							value=" ( #{accountingBundle.accounting_total_result_loss} )"
 							rendered="#{profitAndLossReport.totalResult lt 0}" />
 						<aon:outputText
-							value=" ( #{accountBundle.account_total_result_null} )"
+							value=" ( #{accountingBundle.accounting_total_result_null} )"
 							rendered="#{profitAndLossReport.totalResult == 0}" />
 					</aon:column>
 

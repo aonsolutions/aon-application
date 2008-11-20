@@ -25,13 +25,13 @@
 						<aon:selectOneMenu id="accountBudget_accountPeriod-Edit"
 							rendered="#{to.id==accountBudget.to.id}"
 							value="#{accountBudget.to.period}">
-							<f:selectItems value="#{accountCollections.accountPeriodKeys}" />
+							<f:selectItems value="#{accountingCollections.accountPeriodKeys}" />
 						</aon:selectOneMenu>
 						<f:facet name="footer">
 							<aon:selectOneMenu id="accountBudget_accountPeriod-New"
 								rendered="#{accountBudget.new}"
 								value="#{accountBudget.to.period}">
-								<f:selectItems value="#{accountCollections.accountPeriodKeys}" />
+								<f:selectItems value="#{accountingCollections.accountPeriodKeys}" />
 							</aon:selectOneMenu>
 						</f:facet>
 					</aon:column>

@@ -12,7 +12,7 @@
 
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
-				<ui:param name="toolbarTitle" value="#{accountBundle.account_trial_balance_module}" />
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_trial_balance_module}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
 			</ui:include>
@@ -25,7 +25,7 @@
 					<aon:methodParam name="searchAction" value="trialBalance_list" />
 
 					<aon:outputLabel for="reportDate"
-						value="#{accountBundle.account_report_date}" />
+						value="#{accountingBundle.accounting_report_date}" />
 					<aon:selectInputDate size="8" id="reportDate"
 						value="#{trialBalance.parameters.date}" enableManualInput="true"
 						datePattern="dd/MM/yyyy" timeZone="#{timeZoneController.timeZone}" />
@@ -37,11 +37,11 @@
 
 					<aon:outputLabel
 						for="AccountEntryDetail_accountEntry_accountPeriod"
-						value="#{accountBundle.account_period}" />
+						value="#{accountingBundle.accounting_period}" />
 					<aon:selectOneMenu required="true"
 						id="AccountEntryDetail_accountEntry_accountPeriod"
 						value="#{trialBalance.parameters.period}">
-						<f:selectItems value="#{accountCollections.accountPeriods}" />
+						<f:selectItems value="#{accountingCollections.accountPeriods}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel
@@ -65,7 +65,7 @@
 					</aon:panelGrid>
 
 					<aon:outputLabel for="Account_level"
-						value="#{accountBundle.account_level}" />
+						value="#{accountingBundle.accounting_level}" />
 					<aon:div>
 						<aon:selectOneRadio id="Account_level"
 							ajaxSingle="true"
@@ -84,7 +84,7 @@
 						<aon:selectBooleanCheckbox id="Account_lower_level"
 							value="#{trialBalance.parameters.lowerLevelVisible}" />
 						<aon:outputLabel for="Account_lower_level"
-							value="#{accountBundle.account_lower_level}" />
+							value="#{accountingBundle.accounting_lower_level}" />
 					</aon:div>
 
 					<aon:outputText value="&#160;" />
@@ -92,13 +92,13 @@
 						<aon:selectBooleanCheckbox id="Account_zero_sum"
 							value="#{trialBalance.parameters.zeroSumVisible}" />
 						<aon:outputLabel for="Account_zero_sum"
-							value="#{accountBundle.account_zero_account}" />
+							value="#{accountingBundle.accounting_zero_account}" />
 					</aon:div>
 
 
 					<aon:outputLabel id="AccountEntryDetail_rowsPerPage_label"
 						for="AccountEntryDetail_rowsPerPage"
-						value="#{accountBundle.account_lines_to_show}" />
+						value="#{accountingBundle.accounting_lines_to_show}" />
 					<aon:selectOneMenu id="AccountEntryDetail_rowsPerPage"
 						value="#{trialBalance.parameters.rowsPerPage}"
 						disabled="#{trialBalance.parameters.accountLevel == 5}">

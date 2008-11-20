@@ -10,7 +10,7 @@
 		<aon:form id="autConceptList">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{accountBundle.account_leasing_entry_module}" />
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_leasing_entry_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 
 				<ui:define name="additionalToolbarContent">
@@ -63,18 +63,18 @@
 						maxlength="32" />
 
 					<aon:outputLabel for="Account_term"
-						value="#{accountBundle.account_term}" />
+						value="#{accountingBundle.accounting_term}" />
 					<aon:inputText id="Account_term"
 						value="#{leasingEntry.leasing.term}" size="16" maxlength="16" />
 
 					<aon:outputLabel for="Account_interest_percent"
-						value="#{accountBundle.account_interest}" />
+						value="#{accountingBundle.accounting_interest}" />
 					<aon:inputText id="Account_interest_percent"
 						value="#{leasingEntry.leasing.interestPercent}" size="10"
 						maxlength="16" />
 
 					<aon:outputLabel for="Account_review"
-						value="#{accountBundle.account_review}" />
+						value="#{accountingBundle.accounting_review}" />
 					<aon:inputText id="Account_review"
 						value="#{leasingEntry.leasing.review}" size="16" maxlength="16" />
 
@@ -95,24 +95,24 @@
 						size="35" />
 
 					<aon:outputLabel for="Account_amount"
-						value="#{accountBundle.account_amount}" />
+						value="#{bundle.aon_amount}" />
 					<aon:inputText id="Account_amount"
 						value="#{leasingEntry.leasing.amount}" size="16">
 						<f:validateDoubleRange />
 					</aon:inputText>
 
 					<aon:outputLabel for="Fixed_asset_account"
-						value="#{accountBundle.account_fixed_asset_account}" />
+						value="#{accountingBundle.accounting_fixed_asset_account}" />
 					<aon:selectOneMenu id="Fixed_asset_account" required="true"
 						value="#{leasingEntry.leasing.fixedAssetAccount.id}">
 						<f:selectItems value="#{accountCollections.fixedAssestsAccounts}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Leasing_vat"
-						value="#{accountBundle.account_vat}" />
+						value="#{bundle.aon_vat}" />
 					<aon:selectOneMenu id="Leasing_vat"
 						value="#{leasingEntry.leasing.vat.id}">
-						<f:selectItems value="#{productCollections.vatTaxes}" />
+						<f:selectItems value="#{configCollections.vatTaxes}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Leasing_securityLevel"

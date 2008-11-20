@@ -12,7 +12,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{accountBundle.account_journal_module}" />
+					value="#{accountingBundle.accounting_journal_module}" />
 				<ui:param name="skipResetButton" value="true" />
 
 				<aon:methodParam name="searchActionListener"
@@ -28,22 +28,6 @@
 					</h:commandLink>
 				</ui:define>					
 			</ui:decorate>
-			<!-- 			
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							accesskey="#{bundle.aon_key_search}" action="daybook_search"
-							actionListener="#{accountEntryReport.onEditSearch}"
-							styleClass="aon-content-toolbar-item"
-							onmouseout="this.className='aon-content-toolbar-item'"
-							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
-						</aon:commandButton>
-						<aon:commandButton id="diary" value="#{bundle.aon_listing}"
-							forceId="#{true}"
-							onclick="reportWindow(this, 'placeList', '${facesContext.externalContext.requestContextPath}/facelet/report/preferences.faces');return false;"
-							styleClass="aon-content-toolbar-item aon-content-toolbar-item-print"
-							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-print'"
-							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-print'"
-							accesskey="#{bundle.aon_key_print}" />
- -->
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:dataTable id="journalReportList" value="#{journalReport.model}"
@@ -81,14 +65,14 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{accountBundle.account_concept}" />
+							<aon:outputText value="#{bundle.aon_concept}" />
 						</f:facet>
 						<aon:outputText value="#{to.concept}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{accountBundle.account_debit}" />
+							<aon:outputText value="#{accountingBundle.accounting_debit}" />
 						</f:facet>
 						<aon:outputText value="#{to.debit}">
 							<f:convertNumber pattern="#,##0.00" />
@@ -97,7 +81,7 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{accountBundle.account_credit}" />
+							<aon:outputText value="#{accountingBundle.accounting_credit}" />
 						</f:facet>
 						<aon:outputText value="#{to.credit}">
 							<f:convertNumber pattern="#,##0.00" />
@@ -107,7 +91,7 @@
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText
-								value="#{accountBundle.account_balancing_account}" />
+								value="#{accountingBundle.accounting_balancing_account}" />
 						</f:facet>
 						<aon:outputText value="#{to.balancingAccount.id}" />
 					</aon:column>

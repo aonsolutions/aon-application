@@ -16,10 +16,10 @@
 			</ui:include>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:param name="controller" value="#{account}" />
+
 				<ui:define name="searchContent">
-					<aon:methodParam name="searchActionListener" value="#{account.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="account_list" />				
-				
+		
 					<aon:outputLabel for="Account_id"
 						value="#{bundle.aon_id}" />
 					<aon:inputText id="Account_id" size="50"

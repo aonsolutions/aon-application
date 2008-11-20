@@ -11,7 +11,7 @@
 		<aon:form id="amortizationForm">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{accountBundle.account_amortization_form_module}" />
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_amortization_form_module}" />
 				<ui:param name="controller" value="#{amortization}" />
 			</ui:include>
 
@@ -31,7 +31,7 @@
 						valueChangeListener="#{amortization.addExpression}" />
 
 					<aon:outputLabel for="Amortization_comment"
-						value="#{bundle.aon_comments}" />
+						value="#{bundle.aon_comment}" />
 					<aon:inputText id="Amortization_comments" size="80"
 						valueChangeListener="#{amortization.addExpression}" />
 				</ui:define>

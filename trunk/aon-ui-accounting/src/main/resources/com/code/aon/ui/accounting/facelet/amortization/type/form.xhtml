@@ -12,7 +12,7 @@
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{accountBundle.account_amortization_type_module}" />
+					value="#{accountingBundle.accounting_amortization_type_module}" />
 				<ui:param name="controller" value="#{amortizationType}" />
 			</ui:include>
 
@@ -32,7 +32,7 @@
 					</aon:inputText>
 
 					<aon:outputLabel for="fixedAccountId"
-						value="#{accountBundle.account_fixed_asset_account}" />
+						value="#{accountingBundle.accounting_fixed_asset_account}" />
 					<ui:decorate
 						template="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
 						<ui:param name="wizard" value="#{accountWizard}" />
@@ -50,7 +50,7 @@
 					</ui:decorate>
 
 					<aon:outputLabel for="accumulatedAccountId"
-						value="#{accountBundle.account_accumulated_account}" />
+						value="#{accountingBundle.accounting_accumulated_account}" />
 					<ui:decorate
 						template="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
 						<ui:param name="wizard" value="#{accountWizard}" />
@@ -68,7 +68,7 @@
 					</ui:decorate>
 
 					<aon:outputLabel for="allocationAccountId"
-						value="#{accountBundle.account_allocation_account}" />
+						value="#{accountingBundle.accounting_allocation_account}" />
 					<ui:decorate
 						template="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
 						<ui:param name="wizard" value="#{accountWizard}" />
@@ -86,7 +86,7 @@
 					</ui:decorate>
 
 					<aon:outputLabel for="AmortizationType_percentage"
-						value="#{accountBundle.account_percentage}" />
+						value="#{bundle.aon_percentage}" />
 					<aon:div>
 						<aon:inputText id="AmortizationType_percentage"
 							value="#{amortizationType.to.percentage}" size="5"/>

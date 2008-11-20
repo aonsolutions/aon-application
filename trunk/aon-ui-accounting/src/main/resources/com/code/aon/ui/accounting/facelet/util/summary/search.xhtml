@@ -12,12 +12,12 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{accountBundle.account_regenerate_summary_module}" />
+					value="#{accountingBundle.accounting_regenerate_summary_module}" />
 				<ui:param name="toolbarDescription" value="" />
 
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="regenerate"
-						value="#{accountBundle.account_regenerate}"
+						value="#{accountingBundle.accounting_regenerate}"
 						accesskey="#{bundle.aon_key_search}"
 						actionListener="#{accountSummaryRegenerator.regenerateAccountSummary}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
@@ -34,18 +34,18 @@
 
 					<aon:outputLabel
 						for="AccountEntryDetail_accountEntry_accountPeriod"
-						value="#{accountBundle.account_period}" />
+						value="#{accountingBundle.accounting_period}" />
 					<aon:selectOneMenu
 						id="AccountEntryDetail_accountEntry_accountPeriod"
 						value="#{accountSummaryRegenerator.period}">
-						<f:selectItems value="#{accountCollections.accountPeriods}" />
+						<f:selectItems value="#{accountingCollections.accountPeriods}" />
 					</aon:selectOneMenu>
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
 		<ui:include src="/facelet/shared/wait.xhtml">
 			<ui:param name="progressLabel"
-				value="#{accountBundle.account_regenerate_summary_module} ..." />
+				value="#{accountingBundle.accounting_regenerate_summary_module} ..." />
 			<ui:param name="progressBarBean" value="#{accountSummaryRegenerator}" />
 		</ui:include>
 	</ui:define>
