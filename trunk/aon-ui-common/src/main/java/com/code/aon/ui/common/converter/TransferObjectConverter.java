@@ -1,6 +1,6 @@
 package com.code.aon.ui.common.converter;
 
-import java.lang.reflect.Field;
+import java.io.Serializable;
 
 import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
@@ -8,15 +8,14 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.ClassUtils;
-import org.hibernate.metadata.ClassMetadata;
+import org.apache.commons.lang.SerializationUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 
 /**
  * 
@@ -24,43 +23,22 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
  */
 public class TransferObjectConverter implements Converter {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * javax.faces.convert.Converter#getAsObject(javax.faces.context.FacesContext
-	 * , javax.faces.component.UIComponent, java.lang.String)
-	 */
+	@Override
 	public Object getAsObject(FacesContext context, UIComponent component, String value) {
 		ValueExpression vb = component.getValueExpression("value");
-		Class<?> toType = vb == null ? null : vb.getType(context.getELContext());
+		Class<?> toType = (vb != null) ? vb.getType(context.getELContext()) : null;
 		if (toType != null) {
 			if (value != null) {
 				try {
 					IManagerBean bean = BeanManager.getManagerBean(toType);
-					ClassMetadata cm = HibernateUtil.getSessionFactory().getClassMetadata(toType);
-					String id = cm.getIdentifierPropertyName();
-					Field field = toType.getDeclaredField(id);
-					Class<?> typeClass = field.getType();
-					ITransferObject to = null;
-					if (typeClass.equals(String.class)) {
-						to = bean.get(value);
-					} else if (typeClass.equals(Integer.class)) {
-						to = bean.get(Integer.valueOf(value));
-					} else {
-						throw new ConverterException(
-								"Unsupported PK type, types supported: " 
-								+"java.lang.String and java.lang.Integer. Found "
-								+ toType.getName());
-					}
+			        byte[] data = Base64.decodeBase64(value.getBytes());
+			        Serializable id = (Serializable) SerializationUtils.deserialize(data);
+					ITransferObject to = bean.get(id);
 					return to;
 				} catch (ManagerBeanException e) {
 					throw new ConverterException("Unable to find "
 							+ ClassUtils.getShortClassName(toType) + " with id " + value);
 				} catch (SecurityException e) {
-					throw new ConverterException("Unable to find "
-							+ ClassUtils.getShortClassName(toType) + " with id " + value);
-				} catch (NoSuchFieldException e) {
 					throw new ConverterException("Unable to find "
 							+ ClassUtils.getShortClassName(toType) + " with id " + value);
 				}
@@ -70,27 +48,24 @@ public class TransferObjectConverter implements Converter {
 		throw new ConverterException("Unable to find selectItems with TransferObject values.");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * javax.faces.convert.Converter#getAsString(javax.faces.context.FacesContext
-	 * , javax.faces.component.UIComponent, java.lang.Object)
-	 */
+	@Override
 	public String getAsString(FacesContext context, UIComponent component, Object value) {
 		if (value == null) {
 			return null;
 		}
-		String id = null;
+		String string = null;
 		try {
-			Class<?> type = value.getClass();
-			ClassMetadata cm = HibernateUtil.getSessionFactory().getClassMetadata(type);
-			String idName = cm.getIdentifierPropertyName();
-			id = BeanUtils.getProperty(value, idName);
+			Class<?> toType = value.getClass();
+			IManagerBean bean = BeanManager.getManagerBean(toType);
+			Serializable id = bean.getId( (ITransferObject) value );
+			if ( id != null ) {
+				byte[] data = SerializationUtils.serialize(id);
+				string = new String( Base64.encodeBase64(data) );
+			}
 		} catch (Throwable th) {
 			throw new ConverterException("Unable to get id from " + value);
 		}
-		return id;
+		return string;		
 	}
 
 }
