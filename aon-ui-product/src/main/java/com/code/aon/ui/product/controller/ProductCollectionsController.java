@@ -61,6 +61,13 @@ public class ProductCollectionsController {
 	/** The productCategories list. */
 	private List<SelectItem> pCategories;
 
+	public ProductCategory getCategory() {
+		return null;
+	}
+	
+	public void setCategory( ProductCategory productCategory ) {
+	}
+	
 	/**
 	 * Gets the productCategories.
 	 * 
