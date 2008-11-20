@@ -574,4 +574,5 @@ public class AccountEntryController extends BasicController {
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
 	}
+	
 }

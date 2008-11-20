@@ -11,8 +11,8 @@
 		<aon:form id="accountEntryList">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{accountBundle.account_entry_module}" />
-				<ui:param name="controller" value="#{account_entry}" />
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_entry_module}" />
+				<ui:param name="controller" value="#{accountEntry}" />
 			</ui:include>
 
 			<aon:div id="accountEntryData" styleClass="aon-scroll-area">
@@ -20,15 +20,8 @@
 					value="#{accountEntry.model}" rows="20" var="to"
 					rendered="#{accountEntry.model.rowCount > 0}">
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="&#160;XXX" />
-						</f:facet>
-						<h:commandButton
-							styleClass="aon-icon-commandButton aon-icon-rowSelector"
-							action="#{accountEntry.onNavigate}"
-							actionListener="#{accountEntry.onSelectEntry}" />
-					</aon:column>
+					<aon:rowSelector action="#{accountEntry.onNavigate}" 
+						actionListener="#{accountEntry.onSelectEntry}" />
 
 					<aon:column>
 						<f:facet name="header">
@@ -39,7 +32,7 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{accountBundle.account_period}" />
+							<aon:outputText value="#{accountingBundle.accounting_period}" />
 						</f:facet>
 						<aon:outputText value="#{to.accountPeriod}" />
 					</aon:column>

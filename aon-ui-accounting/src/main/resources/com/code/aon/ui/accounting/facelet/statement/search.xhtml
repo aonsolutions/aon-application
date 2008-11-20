@@ -13,7 +13,7 @@
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{accountBundle.account_statement_module}" />
+					value="#{accountingBundle.accounting_statement_module}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
 			</ui:include>
@@ -24,7 +24,7 @@
 					<ui:param name="skipSearchButton" value="true" />
 
 					<aon:outputLabel for="reportDate"
-						value="#{accountBundle.account_report_date}" />
+						value="#{accountingBundle.accounting_report_date}" />
 					<aon:selectInputDate size="8" id="reportDate"
 						value="#{trialBalance.parameters.date}" enableManualInput="true"
 						datePattern="dd/MM/yyyy" timeZone="#{timeZoneController.timeZone}" />
@@ -36,12 +36,12 @@
 
 					<aon:outputLabel
 						for="AccountEntryDetail_accountEntry_accountPeriod"
-						value="#{accountBundle.account_period}" />
+						value="#{accountingBundle.accounting_period}" />
 					<aon:selectOneMenu reRender="SearchButton" ajaxSingle="true"
 						id="AccountEntryDetail_accountEntry_accountPeriod"
 						value="#{trialBalance.parameters.period}">
 						<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
-						<f:selectItems value="#{accountCollections.accountPeriods}" />
+						<f:selectItems value="#{accountingCollections.accountPeriods}" />
 					</aon:selectOneMenu>
 
 					<aon:outputText value="#{bundle.aon_date}" />
@@ -76,7 +76,7 @@
 						<aon:selectBooleanCheckbox id="Account_zero_sum"
 							value="#{trialBalance.parameters.zeroSumVisible}" />
 						<aon:outputLabel for="Account_zero_sum" styleClass="aon-bold"
-							value="#{accountBundle.account_zero_account}" />
+							value="#{accountingBundle.accounting_zero_account}" />
 					</aon:div>
 
 					<aon:outputLabel

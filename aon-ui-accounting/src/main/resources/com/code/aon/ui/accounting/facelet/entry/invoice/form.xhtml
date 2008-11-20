@@ -15,7 +15,7 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
 				<ui:param name="toolbarTitle"
-					value="#{accountBundle.account_entry_invoice_module}" />
+					value="#{accountingBundle.accounting_entry_invoice_module}" />
 				<ui:param name="toolbarDescription"
 					value="#{invoiceEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 
@@ -61,11 +61,11 @@
 					,aon-panelGrid-even aon-width-auto">
 
 						<aon:outputLabel for="AccountEntry_accountPeriod"
-							value="#{accountBundle.account_period}" />
+							value="#{accountingBundle.accounting_period}" />
 						<aon:selectOneMenu id="Account_Period"
 							disabled="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}"
 							value="#{invoiceEntry.header.period}">
-							<f:selectItems value="#{accountCollections.accountPeriods}" />
+							<f:selectItems value="#{accountingCollections.accountPeriods}" />
 						</aon:selectOneMenu>
 
 						<aon:outputLabel for="AccountEntry_type"
@@ -74,7 +74,7 @@
 							<aon:selectOneMenu id="Account_invoiceType"
 								disabled="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}"
 								value="#{invoiceEntry.header.type}">
-								<f:selectItems value="#{accountCollections.invoiceTypes}" />
+								<f:selectItems value="#{accountingCollections.invoiceTypes}" />
 								<a4j:support event="onchange" ajaxSingle="true"
 									actionListener="#{invoiceEntry.onTypeChanged}"
 									reRender="invoiceTables">
@@ -94,12 +94,12 @@
 									value="#{invoiceEntry.header.investment}" />
 								<aon:outputLabel for="Account_investment"
 									rendered="#{invoiceEntry.purchase}"
-									value="#{accountBundle.account_investment}" />
+									value="#{accountingBundle.accounting_investment}" />
 							</aon:div>
 						</aon:div>
 
 						<aon:outputLabel for="Account_invoice_series"
-							value="#{accountBundle.account_series_number}" />
+							value="#{bundle.aon_series}/#{bundle.aon_number}" />
 						<aon:div>
 							<aon:selectOneMenu id="Account_invoice_series"
 								rendered="#{invoiceEntry.sales}" 
@@ -226,18 +226,13 @@
 						</ui:decorate>
 					</aon:panelGrid>
 				</aon:div>
-<!-- 
-				<rich:spacer height="5" style="display:block" />
- -->
+
 				<ui:include
-					src="/com/code/aon/ui/account/facelet/entry/invoice/form_lines.xhtml" />
-<!--
-				<rich:spacer height="5" style="display:block" />
- -->
+					src="/com/code/aon/ui/accounting/facelet/entry/invoice/form_lines.xhtml" />
+
 				<ui:include
-					src="/com/code/aon/ui/account/facelet/entry/invoice/form_finances.xhtml" />
+					src="/com/code/aon/ui/accounting/facelet/entry/invoice/form_finances.xhtml" />
 			</aon:div>
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 	</ui:define>
 </ui:composition>

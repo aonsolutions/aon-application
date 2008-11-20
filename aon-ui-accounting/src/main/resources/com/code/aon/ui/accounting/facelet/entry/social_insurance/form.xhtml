@@ -14,7 +14,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 
-				<ui:param name="toolbarTitle" value="#{accountBundle.account_social_insurance_entry_module}" />
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_social_insurance_entry_module}" />
 				<ui:param name="toolbarDescription" value="#{socialInsuranceEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 						
 				<ui:define name="toolbarContent">
@@ -50,10 +50,10 @@
 					</aon:selectInputDate>
 
 					<aon:outputLabel for="Account_Period"
-						value="#{accountBundle.account_period}" />
+						value="#{accountingBundle.accounting_period}" />
 					<aon:selectOneMenu id="Account_Period"
 						value="#{socialInsuranceEntry.header.period}">
-						<f:selectItems value="#{accountCollections.accountPeriods}" />
+						<f:selectItems value="#{accountingCollections.accountPeriods}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Account_description"
@@ -62,7 +62,7 @@
 						value="#{socialInsuranceEntry.header.description}" size="60" />
 
 					<aon:outputLabel for="Account_amount"
-						value="#{accountBundle.account_amount}" />
+						value="#{bundle.aon_amount}" />
 					<aon:inputText id="Account_amount"
 						value="#{socialInsuranceEntry.header.amount}" size="15">
 						<f:validateDoubleRange />

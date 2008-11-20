@@ -75,7 +75,7 @@
 
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{accountBundle.account_concept}" />
+						<aon:outputText value="#{bundle.aon_concept}" />
 					</f:facet>
 					<aon:outputText value="#{to.concept}"
 						rendered="#{to!=accountEntryDetail.to}" />
@@ -91,7 +91,7 @@
 
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{accountBundle.account_debit}" />
+						<aon:outputText value="#{accountingBundle.accounting_debit}" />
 					</f:facet>
 					<aon:outputText value="#{to.debit}"
 						rendered="#{to!=accountEntryDetail.to}">
@@ -117,7 +117,7 @@
 
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{accountBundle.account_credit}" />
+						<aon:outputText value="#{accountingBundle.accounting_credit}" />
 					</f:facet>
 					<aon:outputText value="#{to.credit}"
 						rendered="#{to!=accountEntryDetail.to}">
@@ -143,7 +143,7 @@
 
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{accountBundle.account_balancing_account}" />
+						<aon:outputText value="#{accountingBundle.accounting_balancing_account}" />
 					</f:facet>
 					<aon:outputText value="#{to.balancingAccount.id}"
 						rendered="#{to!=accountEntryDetail.to}" />

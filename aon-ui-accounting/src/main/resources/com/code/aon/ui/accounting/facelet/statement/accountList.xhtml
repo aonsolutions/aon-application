@@ -9,7 +9,7 @@
 	<ui:define name="content">
 		<aon:form id="accountEntryList">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbarEx.xhtml">
-				<ui:param name="toolbarTitle" value="#{accountBundle.account_statement_module}" />
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_statement_module}" />
 				<ui:param name="skipResetButton" value="true" />
 				
 				<ui:define name="toolbarActions">
@@ -31,7 +31,7 @@
 							style="margin-left: #{(to.level-1)/2}em;" 
 							styleClass="aon-dataTable-link"
 							actionListener="#{trialBalance.onStatement}"
-							title="#{accountBundle.account_statement_module}"
+							title="#{accountingBundle.accounting_statement_module}"
 							action="account_statement_list">
 							<aon:outputText value="#{to.id}" />
 							<f:setPropertyActionListener 
@@ -55,7 +55,7 @@
 					<aon:column
 						styleClass="aon-editDataTable-numberColumn #{to.lastLevel?'':'aon-row-auxiliary'}">
 						<f:facet name="header">
-							<aon:outputText value="#{accountBundle.account_debit}" />
+							<aon:outputText value="#{accountingBundle.accounting_debit}" />
 						</f:facet>
 						<aon:outputText value="#{to.debit}">
 							<f:convertNumber pattern="#,##0.00" />
@@ -72,7 +72,7 @@
 					<aon:column
 						styleClass="aon-editDataTable-numberColumn #{to.lastLevel?'':'aon-row-auxiliary'}">
 						<f:facet name="header">
-							<aon:outputText value="#{accountBundle.account_credit}" />
+							<aon:outputText value="#{accountingBundle.accounting_credit}" />
 						</f:facet>
 						<aon:outputText value="#{to.credit}">
 							<f:convertNumber pattern="#,##0.00" />
@@ -89,7 +89,7 @@
 					<aon:column
 						styleClass="aon-editDataTable-numberColumn #{to.lastLevel?'':'aon-row-auxiliary'}">
 						<f:facet name="header">
-							<aon:outputText value="#{accountBundle.account_debit_balance}" />
+							<aon:outputText value="#{accountingBundle.accounting_debit_balance}" />
 						</f:facet>
 						<aon:outputText value="#{to.unpaidBalance}">
 							<f:convertNumber pattern="#,##0.00" />
@@ -106,7 +106,7 @@
 					<aon:column
 						styleClass="aon-editDataTable-numberColumn #{to.lastLevel?'':'aon-row-auxiliary'}">
 						<f:facet name="header">
-							<aon:outputText value="#{accountBundle.account_credit_balance}" />
+							<aon:outputText value="#{accountingBundle.accounting_credit_balance}" />
 						</f:facet>
 						<aon:outputText value="#{to.creditBalance}">
 							<f:convertNumber pattern="#,##0.00" />

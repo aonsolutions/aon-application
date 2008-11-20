@@ -13,7 +13,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 
-				<ui:param name="toolbarTitle" value="#{accountBundle.account_salary_entry_module}" />
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_salary_entry_module}" />
 				<ui:param name="toolbarDescription" value="#{salaryEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 
 				<ui:define name="toolbarContent">
@@ -50,10 +50,10 @@
 					</aon:selectInputDate>
 
 					<aon:outputLabel for="Account_Period"
-						value="#{accountBundle.account_period}" />
+						value="#{accountingBundle.accounting_period}" />
 					<aon:selectOneMenu id="Account_Period"
 						value="#{salaryEntry.header.period}">
-						<f:selectItems value="#{accountCollections.accountPeriods}" />
+						<f:selectItems value="#{accountingCollections.accountPeriods}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Account_description"
@@ -62,7 +62,7 @@
 						value="#{salaryEntry.header.description}" size="60" />
 
 					<aon:outputLabel for="Account_gross_salary"
-						value="#{accountBundle.account_gross_salary}" />
+						value="#{accountingBundle.accounting_gross_salary}" />
 					<aon:inputText id="Account_gross_salary"
 						value="#{salaryEntry.header.grossSalary}" size="15"
 						ajaxSingle="true" reRender="Account_net_salary">
@@ -70,7 +70,7 @@
 					</aon:inputText>
 
 					<aon:outputLabel for="Account_retention"
-						value="#{accountBundle.account_retention}" />
+						value="#{bundle.aon_retention}" />
 					<aon:inputText id="Account_retention"
 						value="#{salaryEntry.header.retention}" size="15"
 						ajaxSingle="true" reRender="Account_net_salary">
@@ -78,7 +78,7 @@
 					</aon:inputText>
 
 					<h:outputLabel for="Account_social_insurance"
-						value="#{accountBundle.account_social_insurance}" />
+						value="#{accountingBundle.accounting_social_insurance}" />
 					<aon:inputText id="Account_social_insurance"
 						value="#{salaryEntry.header.socialInsurance}" size="15"
 						ajaxSingle="true" reRender="Account_net_salary">
@@ -86,7 +86,7 @@
 					</aon:inputText>
 
 					<aon:outputLabel for="Account_net_salary"
-						value="#{accountBundle.account_net_salary}" />
+						value="#{accountingBundle.accounting_net_salary}" />
 					<aon:inputText id="Account_net_salary"
 						value="#{salaryEntry.header.netSalary}" disabled="true"
 						size="15">

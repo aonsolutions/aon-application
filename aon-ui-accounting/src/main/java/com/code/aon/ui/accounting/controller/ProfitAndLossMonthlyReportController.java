@@ -19,7 +19,7 @@ import com.code.aon.ui.util.AonUtil;
 public class ProfitAndLossMonthlyReportController implements ICollectionProvider {
 
 	private static final String PROFIT_AND_LOSS_CONTROLLER_NAME = "profitAndLossReport";
-
+	private static final String ACCOUNTING_BUNDLE = "accountingBundle";
 	@Override
 	public Collection<?> getCollection() {
 		ProfitAndLossReportController c = (ProfitAndLossReportController) AonUtil
@@ -33,7 +33,7 @@ public class ProfitAndLossMonthlyReportController implements ICollectionProvider
 			SummaryCollection grossMargin = sp.getGrossMarginSummaryCollection(params);
 			list.addAll(grossMargin.getSummaryList());
 			SummaryMonthly gmTotal = new SummaryMonthly();
-			gmTotal.setDescription(AonUtil.getMessage("accountBundle", "account_gross_margin"));
+			gmTotal.setDescription(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_gross_margin"));
 			gmTotal.setCredit(grossMargin.getCredit());
 			gmTotal.setDebit(grossMargin.getDebit());
 			List<Double> months = new ArrayList<Double>(12);
@@ -52,7 +52,7 @@ public class ProfitAndLossMonthlyReportController implements ICollectionProvider
 			SummaryCollection totalExpenses = sp.getTotalExpensesSummaryCollection(params);
 			list.addAll(totalExpenses.getSummaryList());
 			SummaryMonthly teTotal = new SummaryMonthly();
-			teTotal.setDescription(AonUtil.getMessage("accountBundle", "account_total_expenses"));
+			teTotal.setDescription(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_total_expenses"));
 			teTotal.setCredit(totalExpenses.getCredit());
 			teTotal.setDebit(totalExpenses.getDebit());
 			months = new ArrayList<Double>(12);
@@ -80,15 +80,15 @@ public class ProfitAndLossMonthlyReportController implements ICollectionProvider
 			result.setMonths(months);
 
 			StringBuilder r = new StringBuilder();
-			r.append(AonUtil.getMessage("accountBundle", "account_total_result"));
+			r.append(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_total_result"));
 			r.append(" (");
 			double total = result.getTotal();
 			if (total > 0) {
-				r.append(AonUtil.getMessage("accountBundle", "account_total_result_profit"));
+				r.append(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_total_result_profit"));
 			} else if (total < 0) {
-				r.append(AonUtil.getMessage("accountBundle", "account_total_result_loss"));
+				r.append(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_total_result_loss"));
 			} else {
-				r.append(AonUtil.getMessage("accountBundle", "account_total_result_null"));
+				r.append(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_total_result_null"));
 			}
 			r.append(")");
 			result.setDescription(r.toString());

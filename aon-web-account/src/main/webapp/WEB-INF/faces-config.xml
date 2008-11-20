@@ -80,6 +80,10 @@
 					<value>com.code.aon.ui.account.i18n.messages</value>
 				</map-entry>
 				<map-entry>
+					<key>accountingBundle</key>
+					<value>com.code.aon.ui.accounting.i18n.messages</value>
+				</map-entry>
+				<map-entry>
 					<key>configBundle</key>
 					<value>com.code.aon.ui.config.i18n.messages</value>
 				</map-entry>

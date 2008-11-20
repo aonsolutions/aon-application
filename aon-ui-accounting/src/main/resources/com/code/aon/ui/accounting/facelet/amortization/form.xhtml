@@ -12,7 +12,7 @@
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{accountBundle.account_amortization_form_module}" />
+					value="#{accountingBundle.accounting_amortization_form_module}" />
 				<ui:param name="controller" value="#{amortization}" />
 			</ui:include>
 
@@ -39,49 +39,49 @@
 						datePattern="dd/MM/yyyy" timeZone="#{timeZoneController.timeZone}" />
 
 					<aon:outputLabel for="Amortization_amortizationType"
-						value="#{accountBundle.account_amortization_type}" />
+						value="#{accountingBundle.accounting_amortization_type}" />
 					<aon:selectOneMenu id="Amortization_amortizationType"
 						value="#{amortization.to.amortizationType}"
 						limitToList="true"
 						reRender="fixedAccountId,accumulatedAccountId,allocationAccountId,AmortizationType_percentage"
 						ajaxSingle="true">
 						<f:selectItem value="#{nullItem.value}" />
-						<f:selectItems value="#{accountCollections.amortizationTypes}" />
+						<f:selectItems value="#{accountingCollections.amortizationTypes}" />
 					</aon:selectOneMenu>
 
 
 					<aon:outputLabel for="Amortization_amount"
-						value="#{accountBundle.account_amount}" />
+						value="#{bundle.aon_amount}" />
 					<aon:inputText id="Amortization_amount" required="true"
 						value="#{amortization.to.amount}" size="15" />
 
 					<aon:outputText
-						value="#{accountBundle.account_fixed_asset_account}" />
+						value="#{accountingBundle.accounting_fixed_asset_account}" />
 					<aon:outputText id="fixedAccountId"
 						value="#{amortization.to.amortizationType.fixedAssetAccount.fullDescription}" />
 
 
 					<aon:outputLabel for="Amortization_amortizationPeriod"
-						value="#{accountBundle.account_amortization_period}" />
+						value="#{accountingBundle.accounting_amortization_period}" />
 					<aon:selectOneMenu id="Amortization_amortizationPeriod"
 						value="#{amortization.to.feePeriod}">
 						<f:selectItem value="#{nullItem.value}" />
-						<f:selectItems value="#{accountCollections.amortizationPeriods}" />
+						<f:selectItems value="#{accountingCollections.amortizationPeriods}" />
 					</aon:selectOneMenu>
 
 					<aon:outputText
-						value="#{accountBundle.account_accumulated_account}" />
+						value="#{accountingBundle.accounting_accumulated_account}" />
 					<aon:outputText id="accumulatedAccountId"
 						value="#{amortization.to.amortizationType.accumulatedAccount.fullDescription}" />
 
 
-					<aon:outputText value="#{accountBundle.account_percentage}" />
+					<aon:outputText value="#{bundle.aon_percentage}" />
 					<aon:outputText id="AmortizationType_percentage"
 						value="#{amortization.to.amortizationType.percentage}">
 						<f:convertNumber pattern="#,##0.00" />
 					</aon:outputText>
 
-					<aon:outputText value="#{accountBundle.account_allocation_account}" />
+					<aon:outputText value="#{accountingBundle.accounting_allocation_account}" />
 					<aon:outputText id="allocationAccountId"
 						value="#{amortization.to.amortizationType.allocationAccount.fullDescription}" />
 
@@ -92,7 +92,7 @@
 						datePattern="dd/MM/yyyy" timeZone="#{timeZoneController.timeZone}" />
 
 					<aon:outputLabel for="Amortization_saleAmount"
-						value="#{accountBundle.account_sale_amount}" />
+						value="#{accountingBundle.accounting_sale_amount}" />
 					<aon:inputText id="Amortization_saleAmount" 
 						value="#{amortization.to.saleAmount}" size="15" />
 				</aon:panelGrid>
@@ -107,7 +107,7 @@
 				</aon:panelGrid>
 
 				<ui:include
-					src="/com/code/aon/ui/account/facelet/amortization/form_lines.xhtml" />
+					src="/com/code/aon/ui/accounting/facelet/amortization/form_lines.xhtml" />
 			</aon:div>
 		</aon:form>
 	</ui:define>
