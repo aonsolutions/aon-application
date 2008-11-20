@@ -21,7 +21,8 @@
 	<aon:outputLabel for="Item_product_category_id"
 		value="#{productBundle.product_category}" />
 	<aon:selectOneMenu id="Item_product_category_id"
-		valueChangeListener="#{lookup.addExpression}">
+		value="#{productCollections.category}"
+		valueChangeListener="#{lookup.addDirectIdEqualExpression}">
 		<f:selectItem itemLabel="-" value="#{null}"/>
 		<f:selectItems value="#{productCollections.categories}" />
 	</aon:selectOneMenu>
