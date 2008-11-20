@@ -114,7 +114,8 @@
 	<!--  *********  InvoicePrint  ********* -->
 	<report id="invoicePrint" description="Invoice's Report">
 		<template path="/com/code/aon/ui/finance/report/feeInvoicing.jasper"/>
-		<collection provider="#{invoicePrint}"/>
+		<bean key="com.code.aon.finance.Invoice" />
+		<criteria provider="#{invoicePrint}"/>
 
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
@@ -137,7 +138,8 @@
 	<!--  *********  Receipt  ********* -->
 	<report id="receipt" description="Receipt's Report">
 		<template path="/com/code/aon/ui/finance/report/receipt.jasper"/>
-		<collection provider="#{invoicePrint}"/>
+		<bean key="com.code.aon.finance.Invoice" />
+		<criteria provider="#{invoicePrint}"/>
 
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
