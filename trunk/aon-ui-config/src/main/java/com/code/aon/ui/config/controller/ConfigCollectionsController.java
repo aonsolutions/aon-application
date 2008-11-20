@@ -42,6 +42,13 @@ public class ConfigCollectionsController {
 		return series;
 	}
 
+	public Scope getScope() {
+		return null;
+	}
+
+	public void setScope( Scope scope ) {
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getScopes() throws ManagerBeanException {
 		List<SelectItem> scopes = new LinkedList<SelectItem>();
