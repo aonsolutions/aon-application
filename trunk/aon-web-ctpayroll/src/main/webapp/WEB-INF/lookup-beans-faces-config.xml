@@ -215,4 +215,42 @@
 			<value>/facelet/auxiliares/convenios/percepcion/complementoLookup/list.xhtml</value>
 		</managed-property>
 	</managed-bean>	
+	
+	<!--  ************ entidad LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>entidadLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>entidadLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.auxiliares.organismosyentidades.Entidad</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/auxiliares/organismos_entidades/entidadLookup/list.xhtm</value>
+		</managed-property>
+	</managed-bean>	
+	
+	<!--  ************ sucursal LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>sucursalLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>sucursalLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/auxiliares/organismos_entidades/sucursalLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
 </faces-config>

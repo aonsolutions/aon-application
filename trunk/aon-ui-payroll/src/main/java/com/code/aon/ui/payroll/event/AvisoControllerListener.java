@@ -3,6 +3,7 @@ package com.code.aon.ui.payroll.event;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.divisa.LinDivisa;
+import com.code.aon.payroll.principales.Avisos;
 import com.code.aon.payroll.principales.Cliente;
 import com.code.aon.payroll.principales.Domicilio;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -13,11 +14,23 @@ import com.code.aon.ui.payroll.controller.DomicilioController;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class DomicilioControllerListener extends ControllerAdapter implements IPayrollConstants {
+public class AvisoControllerListener extends ControllerAdapter implements IPayrollConstants {
 	
-	
+	@Override
+	public void afterEditSearch(ControllerEvent event)
+			throws ControllerListenerException {
+		
+		
+		Integer cdg = ((Cliente)(AonUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME)).getTo()).getCdg();
+		String desc = ((Cliente)(AonUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME)).getTo()).getDescripcion();
+		((Avisos)(event.getController().getTo())).getCliente().setCdg(cdg);
+		((Avisos)(event.getController().getTo())).getCliente().setDescripcion(desc);
+		
+		super.afterEditSearch(event);
+	}
 	
 
+	/*	
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
@@ -25,36 +38,20 @@ public class DomicilioControllerListener extends ControllerAdapter implements IP
 
 		Integer cdg = ((Cliente)(AonUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME)).getTo()).getCdg();
 		String desc = ((Cliente)(AonUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME)).getTo()).getDescripcion();
-		((Domicilio)(event.getController().getTo())).getCliente().setCdg(cdg);
-		((Domicilio)(event.getController().getTo())).getCliente().setDescripcion(desc);
+		((Avisos)(event.getController().getTo())).getCliente().setCdg(cdg);
+		((Avisos)(event.getController().getTo())).getCliente().setDescripcion(desc);
 		
-		DomicilioController controller = (DomicilioController)AonUtil.getController(IPayrollConstants.DOMICILIO_CONTROLLER_NAME);
+		DomicilioController controller = (DomicilioController)AonUtil.getController("Domicilio");
 		
-		 try {			 
-			 
+		 try {
+			 System.out.println("------------" + controller.getCode());
 			 ((Domicilio)(event.getController().getTo())).setCdg(controller.getCode());
 			 
 			} catch (ManagerBeanException e) {
 			}	
-		
-		
-	
-	
-	
-	}
-@Override
-public void beforeBeanAdded(ControllerEvent event)
-		throws ControllerListenerException {
-	
-	DomicilioController controller = (DomicilioController)AonUtil.getController(IPayrollConstants.DOMICILIO_CONTROLLER_NAME);
-	
-	 try {			 
-		
-		 ((Domicilio)(event.getController().getTo())).setCdg(controller.getCode());
-		 
-		} catch (ManagerBeanException e) {
-		}	
-	
 
-}
+	
+	
+	}	*/
+
 }

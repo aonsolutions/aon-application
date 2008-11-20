@@ -61,7 +61,7 @@
 	           <aon:outputLabel for="Tipoviaa_cdg" 
 						value="#{appBundle.aon_payroll_principales_clientes_tipovia}" />
 					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="Tipovia_cdg"
+						<aon:lookupInputText required="true" id="Tipovia_cdg"
 							lookup="#{tipoviaLookup}"
 							reRender="Tipovia_description"
 							value="#{domicilio.to.tipovia.cdg}" size="5">
@@ -97,10 +97,10 @@
 					<aon:inputText value="#{domicilio.to.localidad}" 
 						 size="50" maxlength="20" />
 					
-			       <aon:outputLabel for="Provincia_cdg" 
+			       <aon:outputLabel  for="Provincia_cdg" 
 						value="#{appBundle.aon_payroll_principales_clientes_provincia}" />
 					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="Pro_cdg"
+						<aon:lookupInputText required="true" id="Pro_cdg"
 							lookup="#{provinciaLookup}"
 							reRender="Pro_description"
 							value="#{domicilio.to.provincia.cdg}" size="5">

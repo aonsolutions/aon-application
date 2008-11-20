@@ -3,6 +3,8 @@ package com.code.aon.ui.payroll.controller;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -12,13 +14,20 @@ import javax.faces.validator.ValidatorException;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.payroll.dao.IPayrollAlias;
+import com.code.aon.payroll.divisa.LinDivisa;
 import com.code.aon.payroll.geograficas.Provincia;
 import com.code.aon.payroll.principales.Cliente;
 import com.code.aon.payroll.principales.Domicilio;
 import com.code.aon.payroll.tipos.Tipovia;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -35,14 +44,15 @@ private Provincia provincia;
 	   setCliente( new Cliente() );
        setTipovia( new Tipovia() );
 	   setProvincia( new Provincia() );
-
+      
+       
 }
 	
 	@Override
 	public void onSearch(ActionEvent event) {
-		System.out.println("----------c"+cliente.getCdg());
-		System.out.println("----------t"+tipovia.getCdg());
-		System.out.println("----------p"+provincia.getCdg());
+		
+		
+		
 		try {
 			if  (cliente.getCdg() != null)  {
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.DOMICILIO_CLIENTE_CDG), getCliente().getCdg());
@@ -60,13 +70,27 @@ private Provincia provincia;
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
+		
+
 	
 		
 		super.onSearch(event);
 	}
-
-
+	
+	Integer code ;
+    public Integer getCode() throws ManagerBeanException {	
+    	
+    	
+	       	code = 0;		
+			String consulta = "select max(cdg) from Domicilio";			
+			Query q = HibernateUtil.getSession().createQuery(consulta);			
+			List results = q.list();
+			System.out.println("Max Code: " + results.get(0));   
+			code= (Integer)results.get(0) +1;
+			System.out.println("New Code: " + code);
+			return code;		      
+	     				
+		}
 
 	public Cliente getCliente() {
 		return cliente;
@@ -89,6 +113,10 @@ private Provincia provincia;
 
 	public void setProvincia(Provincia provincia) {
 		this.provincia = provincia;
+	}
+
+	public void setCode(Integer code) {
+		this.code = code;
 	}
 
 

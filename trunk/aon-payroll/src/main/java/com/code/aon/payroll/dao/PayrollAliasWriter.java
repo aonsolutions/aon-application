@@ -53,6 +53,7 @@ import com.code.aon.payroll.auxiliares.organismosyentidades.Entidad;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Linmutua;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Mutua;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal;
+import com.code.aon.payroll.principales.Avisos;
 import com.code.aon.payroll.principales.Cliente;
 import com.code.aon.payroll.principales.Cuentas;
 import com.code.aon.payroll.principales.Domicilio;
@@ -124,7 +125,8 @@ public class PayrollAliasWriter {
 		        Linirpf.class.getName(),
 		        Cliente.class.getName(),
 		        Domicilio.class.getName(),
-		        Cuentas.class.getName()
+		        Cuentas.class.getName(),
+		        Avisos.class.getName()
 		        };		
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");
 		HibernateUtil.getSessionFactory();
