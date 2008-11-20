@@ -40,7 +40,7 @@
 	<variable name="invoiceTotal" class="java.lang.Double" resetType="Group" resetGroup="invoiceGroup" calculation="Nothing">
 	</variable>
 	<variable name="currentPreInvoice" class="com.code.aon.finance.invoicing.PreInvoice" resetType="Group" resetGroup="invoiceGroup" calculation="Nothing">
-		<variableExpression><![CDATA[(com.code.aon.finance.invoicing.PreInvoice)((com.code.aon.ui.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()]]></variableExpression>
+		<variableExpression><![CDATA[(com.code.aon.finance.invoicing.PreInvoice)((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()]]></variableExpression>
 	</variable>
 	<variable name="taxTotal" class="java.lang.Double" resetType="Group" resetGroup="invoiceGroup" calculation="Nothing">
 	</variable>
