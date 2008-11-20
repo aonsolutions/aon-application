@@ -55,11 +55,11 @@
 							</f:facet>
 							<aon:outputText value="#{to.cdg}" rendered="#{to!=tiposDocumento.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==tiposDocumento.to}" size="2"
+								rendered="#{to==tiposDocumento.to}" size="1"
 								value="#{tiposDocumento.to.cdg}" maxlength="1" />
 							<f:facet name="footer">
 								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{tiposDocumento.new}" size="2"
+									rendered="#{tiposDocumento.new}" size="1"
 									value="#{tiposDocumento.to.cdg}" maxlength="1" />
 							</f:facet>
 						</aon:column>
@@ -71,11 +71,11 @@
 							<aon:outputText value="#{to.description}" rendered="#{to!=tiposDocumento.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==tiposDocumento.to}" size="60"
-								value="#{tiposDocumento.to.description}" maxlength="45" />
+								value="#{tiposDocumento.to.description}" maxlength="60" />
 							<f:facet name="footer">
 								<aon:inputText styleClass="aon-form-input-text" required="true"
 									rendered="#{tiposDocumento.new}" size="60"
-									value="#{tiposDocumento.to.description}" maxlength="45" />
+									value="#{tiposDocumento.to.description}" maxlength="60" />
 							</f:facet>
 						</aon:column>
 	
