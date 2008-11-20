@@ -325,7 +325,7 @@ public class Percepcion implements ITransferObject {
         this.dinesp = dinesp;
     }
     
-    
+    //A la espera de implementar clave primaria compuesta con objeto no primitivos
 	@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumns( { 
         @JoinColumn(name="cdg", referencedColumnName="codcon", insertable=false, updatable=false), 
@@ -343,7 +343,7 @@ public class Percepcion implements ITransferObject {
      * @return
      */
 	@ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="codcomapl")
+    @JoinColumn(name="codcomapl", insertable=false, updatable=false)
     public Complemento getComplemento() {
         return this.complemento;
     }
@@ -353,6 +353,7 @@ public class Percepcion implements ITransferObject {
        
     }
     
+    //A la espera de implementar clave primaria compuesta con objeto no primitivos
     /**
      * Devuelve el complemento
      * @return
@@ -376,6 +377,7 @@ public class Percepcion implements ITransferObject {
         setIndcom(complemento1.getIndcom());
     }
     
+    //A la espera de implementar clave primaria compuesta con objeto no primitivos
 	@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="cdg", insertable=false, updatable=false)
     public Convenio getConvenio() {
@@ -386,9 +388,9 @@ public class Percepcion implements ITransferObject {
         this.convenio = convenio;
     }
     
-    //
-    // Comprueba si el radio butom 'horas complementarias' esta seleccionado
-    // 
+
+    // Comprueba si el radio buttom 'horas complementarias' esta seleccionado
+    // para habilitar/desabilitar otros radio buttom
     private boolean disableRedondeo;
     
     @Transient

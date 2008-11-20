@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.payroll.enumeration.IndicadorDias;
@@ -51,5 +52,23 @@ public class ConveniosColectivoController extends PayrollBasicController {
 		}
 		return tipoCon;
 	}
+	
+	private String tabName;
 
+	/**
+	 * Devuelve el tab seleccionado
+	 * @return
+	 */
+	public String getTabName() {
+		return tabName;
+	}
+
+	public void setTabName(String tabName) {
+		this.tabName = tabName;
+	}
+	
+	public void changeTabValue(ValueChangeEvent event){
+		setTabName(event.getNewValue().toString());
+	}
+	
 }

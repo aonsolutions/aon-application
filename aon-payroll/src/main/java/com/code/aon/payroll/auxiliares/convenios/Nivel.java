@@ -1,18 +1,13 @@
 package com.code.aon.payroll.auxiliares.convenios;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.code.aon.common.ITransferObject;
@@ -44,7 +39,7 @@ public class Nivel implements ITransferObject {
 		this.id = id;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "codcon", insertable = false, updatable = false)
 	public Convenio getConvenio() {
 		return this.convenio;
