@@ -46,6 +46,13 @@ public class FinanceCollectionsController {
 		throw new AbortProcessingException("Usar el método #{commonCollections.securityLevels}");
 	}
 
+	public PayMethod getPayMethod() {
+		return null;
+	}
+
+	public void setPayMethod( PayMethod payMethod ) {
+	}
+	
 	/**
 	 * Fills and Returns PayMethod collection
 	 * 

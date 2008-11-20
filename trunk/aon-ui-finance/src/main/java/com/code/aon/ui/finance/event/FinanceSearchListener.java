@@ -7,7 +7,6 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Bank;
-import com.code.aon.finance.PayMethod;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
@@ -32,8 +31,6 @@ public class FinanceSearchListener extends ControllerSearchListener {
 	private Date invoiceIssueDateFrom;
 	
 	private Date invoiceIssueDateTo;
-	
-	private PayMethod payMethod;
 	
 	/**
 	 * Gets if the finance is a payment or a charge.
@@ -109,14 +106,6 @@ public class FinanceSearchListener extends ControllerSearchListener {
 		this.invoiceIssueDateTo = invoiceIssueDateTo;
 	}
 
-	public PayMethod getPayMethod() {
-		return payMethod;
-	}
-
-	public void setPayMethod(PayMethod payMethod) {
-		this.payMethod = payMethod;
-	}
-
 	@Override
 	protected void init() throws ManagerBeanException {
 		setPayment(Boolean.FALSE);
@@ -127,7 +116,6 @@ public class FinanceSearchListener extends ControllerSearchListener {
 		setDueDateTo(null);
 		setInvoiceIssueDateFrom(null);
 		setInvoiceIssueDateTo(null);
-		setPayMethod(null);
 	}
 	
 	@Override
@@ -166,10 +154,6 @@ public class FinanceSearchListener extends ControllerSearchListener {
 		if ( getInvoiceIssueDateTo() != null ) {
 			String field = getController().getFieldName(IFinanceAlias.FINANCE_INVOICE_ISSUE_DATE);
 			criteria.addLessThanOrEqualExpression(field, getInvoiceIssueDateTo());
-		}
-		if ( getPayMethod() != null ) {
-			String field = getController().getFieldName(IFinanceAlias.FINANCE_PAY_METHOD_ID);
-			criteria.addEqualExpression(field, getPayMethod().getId());
 		}
 	}	
 }

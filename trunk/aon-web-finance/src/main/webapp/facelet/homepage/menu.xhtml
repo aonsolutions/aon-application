@@ -52,7 +52,7 @@
 				<aon:menuItem id="aon_invoicing_group" renderedOnUserRole="GruposFacturacion"
 					value="#{financeBundle.finance_invoicing_group_module}" action="invoicingGroup_list"/>
 				<aon:menuItem id="aon_fee_print" renderedOnUserRole="ListadoCuotas"
-					value="#{financeBundle.finance_fee_print_module}" action="util_fee_print">
+					value="#{financeBundle.finance_fee_print_module}" action="feePrint_search">
 					<aon:actionListener method="#{feePrint.onEditSearch}"/>
 				</aon:menuItem>				
 			</aon:dropDownMenu>
