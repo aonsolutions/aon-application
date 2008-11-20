@@ -83,8 +83,7 @@ public class ClienteController extends PayrollBasicController {
 		@Override
 		public void onSearch(ActionEvent event) {
 			
-			System.out.println("----------t"+tipovia.getCdg());
-			System.out.println("----------p"+provincia.getCdg());
+
 			try {
 				if   (delegacion.getCdg() != null)  {
 					getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CLIENTE_DELEGACION_CDG), getDelegacion().getCdg());

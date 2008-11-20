@@ -1,5 +1,6 @@
 package com.code.aon.ui.payroll.event;
 
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.auxiliares.convenios.Convenio;
 import com.code.aon.payroll.auxiliares.convenios.Nivel;
 import com.code.aon.payroll.auxiliares.convenios.Percepcion;
@@ -9,6 +10,8 @@ import com.code.aon.payroll.principales.Domicilio;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.payroll.controller.CuentaController;
+import com.code.aon.ui.payroll.controller.DomicilioController;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
 import com.code.aon.ui.util.AonUtil;
 
@@ -26,6 +29,16 @@ public class CuentaControllerListener extends ControllerAdapter implements IPayr
 		String desc = ((Cliente)(AonUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME)).getTo()).getDescripcion();
 		((Cuentas)(event.getController().getTo())).getCliente().setCdg(cdg);
 		((Cuentas)(event.getController().getTo())).getCliente().setDescripcion(desc);
+		
+		CuentaController controller = (CuentaController)AonUtil.getController(IPayrollConstants.CUENTA_CONTROLLER_NAME);
+		
+		 try {			 
+			 
+			 ((Cuentas)(event.getController().getTo())).setCdg(controller.getCode());
+			 
+			} catch (ManagerBeanException e) {
+			}	
+		
 	}
 	
 	

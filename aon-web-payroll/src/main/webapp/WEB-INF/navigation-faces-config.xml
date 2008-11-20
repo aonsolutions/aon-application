@@ -783,6 +783,21 @@
 			<from-outcome>cuenta_list</from-outcome>
 			<to-view-id>/facelet/principales/clientes/cuentas/list.xhtml</to-view-id>
 		</navigation-case>
+		</navigation-rule>
+		
+    	<navigation-rule>	
+		   <navigation-case>
+			<from-outcome>aviso_form</from-outcome>
+			<to-view-id>/facelet/principales/clientes/avisos/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>aviso_search</from-outcome>
+			<to-view-id>/facelet/principales/clientes/avisos/search.xhtml</to-view-id>
+		</navigation-case>	
+		<navigation-case>
+			<from-outcome>aviso_list</from-outcome>
+			<to-view-id>/facelet/principales/clientes/avisos/list.xhtml</to-view-id>
+		</navigation-case>
 		
 		</navigation-rule>
 	

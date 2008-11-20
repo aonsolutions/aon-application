@@ -146,10 +146,10 @@
 							size="60" disabled="true" />
 					</aon:div>
 					
-		
+		<aon:outputLabel value="   " />
 	     
-	
-				
+			<aon:panelCollapsible expanded="false" label="Direccion">  
+				 <aon:panelGrid columns="2">
 	              <aon:outputLabel for="Tipoviaa_cdg" 
 						value="#{appBundle.aon_payroll_principales_clientes_tipovia}" />
 					<aon:div styleClass="aon-lookup">
@@ -207,7 +207,8 @@
 							value="#{(cliente.provincia.descripcion!=null)?(cliente.provincia.descripcion):('')}"   
 							size="60" disabled="true" />
 					</aon:div>
-					
+					 </aon:panelGrid>
+				</aon:panelCollapsible>	
 				
 				    <aon:outputLabel for="Cliente_persona" value="#{appBundle.aon_payroll_principales_clientes_perconta}" />
 					<aon:inputText  id="Cliente_persona" valueChangeListener="#{cliente.addExpression}"
@@ -276,7 +277,7 @@
 							</aon:div>
 														  
 						      </aon:div>
-					</aon:panelGroup>	
+					  </aon:panelGroup>	
 					 <aon:panelGroup>
 					<aon:outputLabel  for="Cliente_envioss" value="#{appBundle.aon_payroll_principales_clientes_envioss}" />
 					<aon:selectOneMenu  id="Cliente_envioss" 
@@ -285,30 +286,205 @@
 					    <f:selectItem value="#{null}" itemLabel="    " />
 						<f:selectItems value="#{cliente.listaEnvioss}"/>								
 					</aon:selectOneMenu>
-					</aon:panelGroup>
-	<!--		
-	         <aon:div> 
-	      <aon:panelGrid columns="2">
-				<aon:panelCollapsible expanded="false" label="Busqueda avanzada por Domicilio">
-				
-				
-			    	
-				</aon:panelCollapsible>	
-				 
-				<aon:panelCollapsible expanded="false" label="Busqueda avanzada por Cuentas Bancarias">
+		            </aon:panelGroup>
+		
+		
+			<!-- BUSQUEDA POR LINEAS: DOMCILIOS Y CUENTAS BANCARIAS -->	
 			
+	       <aon:outputLabel  value="   "/>
+		<aon:panelCollapsible expanded="false" label="Busqueda avanzada por Domicilios">                                        
 				
-			    	
+				
+		<aon:panelGrid columns="2">
+				
+		 		<aon:outputLabel for="Cliente_domicilios_cdg" value="#{appBundle.aon_payroll_principales_domicilio_cdg}" />
+					<aon:inputText id="Cliente_domicilios_cdg" valueChangeListener="#{cliente.addDirectExpression}"
+						 size="50" maxlength="3" />
+			 	<!--	
+			 	 			
+			 	 	<aon:outputLabel for="Domicilio_cliente_cdg" 
+						value="#{appBundle.aon_payroll_principales_domicilio_cli}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="Domicilio_cliente_cdg"
+							lookup="#{clienteLookup}"
+							reRender="Domicilio_cliente_descripcion"
+							value="#{domicilio.cliente.cdg}" size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton id="Cliente_lookup"
+							windowTitle="#{appBundle.aon_payroll_principales_clientes}"
+							selectReRender="Domicilio_cliente_cdg,Domicilio_cliente_descripcion"
+							lookup="#{clienteLookup}" minHeight="440"
+							property="#{domicilio.cliente}">
+						</aon:lookupButton>
+						<aon:inputText id="Domicilio_cliente_descripcion"
+							value="#{(domicilio.cliente.descripcion!=null)?(domicilio.to.cliente.descripcion):('')}"   
+							size="34" disabled="true" />
+					</aon:div>
+				 	 	
+				
+	     				
+	                  <aon:outputLabel for="Domicilio_tipovia_cdg" 
+						value="#{appBundle.aon_payroll_principales_clientes_tipovia}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="Domicilio_tipovia_cdg"
+							lookup="#{tipoviaLookup}"
+							reRender="Domicilio_tipovia_description"
+							value="#{domicilio.tipovia.cdg}" size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton id="Tipovia_lookup"
+							windowTitle="#{appBundle.aon_payroll_auxiliares_tipos__tipovia}"
+							selectReRender="Domicilio_tipovia_cdg,Domicilio_tipovia_description"
+							lookup="#{tipoviaLookup}" minHeight="440"
+							property="#{domicilio.tipovia}">
+						</aon:lookupButton>
+						<aon:inputText id="Domicilio_tipovia_description"
+							value="#{(domicilio.tipovia.description!=null)?(domicilio.tipovia.description):('')}"
+							size="34" disabled="true" />
+					</aon:div> -->
+					
+	
+					<aon:outputLabel for="Cliente_domicilios_nomvia" value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_nomvia}" />
+					<aon:inputText id="Cliente_domicilios_nomvia" valueChangeListener="#{cliente.addDirectExpression}"
+						 size="50" maxlength="20" />
+						
+				    <aon:outputLabel for="Cliente_domicilios_numero" value="#{appBundle.aon_payroll_principales_clientes_num}" />
+					<aon:inputText id="Cliente_domicilios_numero" valueChangeListener="#{cliente.addDirectExpression}"
+						 size="50" maxlength="20" />
+						
+					<aon:outputLabel  for="Cliente_domicilios_otrdir" value="#{appBundle.aon_payroll_principales_clientes_otros}" />
+					<aon:inputText id="Cliente_domicilios_otrdir" valueChangeListener="#{cliente.addDirectExpression}"
+						 size="50" maxlength="20" />
+						
+							<aon:outputLabel for="Cliente_domicilios_codpos" value="#{appBundle.aon_payroll_principales_clientes_codpos}" />
+					<aon:inputText id="Cliente_domicilios_codpos" valueChangeListener="#{cliente.addDirectExpression}"
+						 size="50" maxlength="20" />
+						
+							<aon:outputLabel for="Cliente_domicilios_localidad" value="#{appBundle.aon_payroll_principales_clientes_localidad}" />
+					<aon:inputText id="Cliente_domicilios_localidad" valueChangeListener="#{cliente.addDirectExpression}" 
+						 size="50" maxlength="20" />
+					
+		<!-- 	       <aon:outputLabel for="Domicilio_provincia_cdg" 
+						value="#{appBundle.aon_payroll_principales_clientes_provincia}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="Domicilio_provincia_cdg"
+							lookup="#{provinciaLookup}"
+							reRender="Pro_description"
+							value="#{domicilio.provincia.cdg}" size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton id="Pro_lookup"
+							windowTitle="#{appBundle.aon_payroll_principales_clientes_provincia}"
+							selectReRender="Domicilio_provincia_cdg,Domicilio_provincia_description"
+							lookup="#{provinciaLookup}" minHeight="440"
+							property="#{domicilio.provincia}">
+						</aon:lookupButton>
+						<aon:inputText id="Domicilio_provincia_description"
+							value="#{(domicilio.provincia.descripcion!=null)?(domicilio.provincia.descripcion):('')}"   
+							size="34" disabled="true" />
+					</aon:div>
+					
+			 -->		
+						
+	     	           
+					 
+						<aon:outputLabel for="Cliente_domicilios_telefono" value="#{appBundle.aon_payroll_principales_clientes_telefono}" />
+					<aon:inputText id="Cliente_domicilios_telefono" valueChangeListener="#{cliente.addDirectExpression}"
+						 size="50" maxlength="20" />
+						
+							<aon:outputLabel for="Cliente_domicilios_fax" value="#{appBundle.aon_payroll_principales_clientes_fax}" />
+					<aon:inputText id="Cliente_domicilios_fax" valueChangeListener="#{cliente.addDirectExpression}"
+						 size="50" maxlength="20" />
+						
+							<aon:outputLabel for="Cliente_domicilios_email" value="#{appBundle.aon_payroll_principales_clientes_email}" />
+					<aon:inputText id="Cliente_domicilios_email" valueChangeListener="#{cliente.addDirectExpression}" 
+						 size="50" maxlength="20" />
+						
+							<aon:outputLabel for="Cliente_domicilios_linea1" value="#{appBundle.aon_payroll_principales_domicilio_lin1}" />
+					<aon:inputText id="Cliente_domicilios_linea1" valueChangeListener="#{cliente.addDirectExpression}" 
+						 size="50" maxlength="20" />
+						
+							<aon:outputLabel for="Cliente_domicilios_linea2" value="#{appBundle.aon_payroll_principales_domicilio_lin2}" />
+					<aon:inputText id="Cliente_domicilios_linea2"  valueChangeListener="#{cliente.addDirectExpression}" 
+						 size="50" maxlength="20" />
+					
+			     	<aon:outputLabel for="Cliente_domicilios_persona" value="#{appBundle.aon_payroll_principales_domicilio_persona}" />
+					   <aon:inputText id="Cliente_domicilios_persona" valueChangeListener="#{cliente.addDirectExpression}" 
+						 size="50" maxlength="20" />
+					
+					  	<aon:outputLabel for="Cliente_domicilios_aclaracion" value="#{appBundle.aon_payroll_principales_domicilio_aclaracion}" />
+					   <aon:inputText id="Cliente_domicilios_aclaracion" valueChangeListener="#{domicilio.addExpression}" 
+						 size="50" maxlength="20" />
+					
+						</aon:panelGrid>  			    	
+				</aon:panelCollapsible>				
+				
+			 <aon:outputLabel  value="   " />
+				<aon:panelCollapsible   expanded="false" label="Busqueda avanzada por Cuentas Bancarias">
+				
+				<aon:panelGrid columns="2" style="margin-bottom=2px;">
+				
+				
+				
+	   	<aon:outputLabel for="Cliente_cuentas_cdg" value="#{appBundle.aon_payroll_principales_cuenta_cdg}" />
+					<aon:inputText id="Cliente_cuentas_cdg" valueChangeListener="#{cliente.addDirectExpression}"
+						 size="50" maxlength="3" />
+			 						 		
+				
+	 	 			
+			<!--  		<aon:outputLabel for="Cuentas_cliente_cdg" 
+						value="#{appBundle.aon_payroll_principales_domicilio_cli}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="Cuentas_cliente_cdg"
+							lookup="#{clienteLookup}"
+							reRender="Cuentas_cliente_descripcion"
+							value="#{cuenta.cliente.cdg}" size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton id="Cliente_lookup"
+							windowTitle="#{appBundle.aon_payroll_principales_clientes}"
+							selectReRender="Cuentas_cliente_cdg,Cuentas_cliente_descripcion"
+							lookup="#{clienteLookup}" minHeight="440"
+							property="#{cuenta.cliente}">
+						</aon:lookupButton>
+						<aon:inputText id="Cuentas_cliente_descripcion"
+							value="#{(cuenta.cliente.descripcion!=null)?(cuenta.to.cliente.descripcion):('')}"   
+							size="34" disabled="true" />
+					</aon:div>
+						 -->
+						
+							<aon:outputLabel for="Cliente_cuentas_entidad_description" value="#{appBundle.aon_payroll_principales_cuenta_entidad_nom}" />
+					<aon:inputText id="Cliente_cuentas_entidad_description" valueChangeListener="#{cliente.addDirectExpression}"
+						 size="50" maxlength="20" />
+						 
+							<aon:outputLabel for="Cliente_cuentas_entidad_cdg" value="#{appBundle.aon_payroll_principales_cuenta_entidad}" />
+					<aon:inputText id="Cliente_cuentas_entidad_cdg" valueChangeListener="#{cliente.addDirectExpression}"
+						 size="50" maxlength="20" />
+						
+							<aon:outputLabel for="Cliente_cuentas_sucursal_id_cdg" value="#{appBundle.aon_payroll_principales_cuenta_sucursal}" />
+					<aon:inputText id="Cliente_cuentas_sucursal_id_cdg" valueChangeListener="#{cliente.addDirectExpression}"
+						 size="50" maxlength="20" />
+						
+							<aon:outputLabel for="Cliente_cuentas_dc"  value="#{appBundle.aon_payroll_principales_cuenta_dc}" />
+					<aon:inputText id="Cliente_cuentas_dc" valueChangeListener="#{cliente.addDirectExpression}"
+						 size="50" maxlength="20" />
+			  		
+		            <aon:outputLabel for="Cliente_cuentas_numcta" value="#{appBundle.aon_payroll_principales_cuenta_numcta}" />
+					<aon:inputText id="Cliente_cuentas_numcta" valueChangeListener="#{cliente.addDirectExpression}"
+						 size="50" maxlength="20" />
+			  		
+						
+	     	</aon:panelGrid>	
+				
+				
+				
 				</aon:panelCollapsible>	
-			</aon:panelGrid>
-				 </aon:div>-->
+		
+
 	        </ui:define>
 			</ui:decorate>
 		</aon:form>
 		
 	<aon:lookupButtonPopup lookup="#{delegacionLookup}" />	
 	<aon:lookupButtonPopup lookup="#{empresarioLookup}" />   
- <!-- <aon:lookupButtonPopup lookup="#{divisaLookup}" />   -->
+    <!--   <aon:lookupButtonPopup lookup="#{divisaLookup}" />   -->
 	<aon:lookupButtonPopup lookup="#{paisLookup}" />  
 	<aon:lookupButtonPopup lookup="#{documentoLookup}" />  
     <aon:lookupButtonPopup lookup="#{tipoviaLookup}" /> 
