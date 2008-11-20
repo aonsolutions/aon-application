@@ -21,6 +21,17 @@ public class ControllerSearchListener extends ControllerAdapter {
 	
 	private Criteria criteria;
 	
+	/**
+	 * Return the name of the field that corresponds to the parameter alias.
+	 * 
+	 * @param alias
+	 * @return String
+	 * @throws ManagerBeanException
+	 */
+	public String getFieldName(String alias) throws ManagerBeanException {
+		return getController().getFieldName(alias);
+	}	
+	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
