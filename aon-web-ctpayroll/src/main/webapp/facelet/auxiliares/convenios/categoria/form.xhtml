@@ -12,7 +12,7 @@
 
 	<ui:define name="content">
 
-		<aon:form id="conveniosForm">
+		<aon:form id="categoriaForm">
 			
 			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_auxiliares_convenios__categoria}" />				
@@ -20,6 +20,7 @@
 				<ui:param name="reportKey" value="categoriaList"/>
 				<ui:param name="reportKeyXls" value="categoriaListXls"/>
 				<aon:methodParam name="backAction" value="convenio_form"/>
+				<aon:methodParam name="cancelAction" value="convenio_form"/>
 			</ui:include>
 			
 			<aon:div styleClass="aon-scroll-area">
@@ -27,18 +28,18 @@
 					<aon:outputLabel for="Categoria_convenio_description" 
 						value="#{appBundle.aon_payroll_auxiliares_convenios__convenio}"/>
 					<aon:outputText id="Categoria_convenio_description"  size="15" maxlength="10" 
-						value="#{categoria.to.convenio.description}" />
+						value="#{convenio.to.description}" />
 						
 					<aon:outputLabel for="Categoria_nivel" 
 						value="#{appBundle.aon_payroll_auxiliares_convenios__categoria_nivel}"/>
-					<aon:inputText id="Categoria_nivel" size="15" maxlength="10"
-						value="#{categoria.to.nivel}" disabled="true"/>
+					<aon:outputText id="Categoria_nivel" size="15" maxlength="10"
+						value="#{nivel.to.id.cdg}" />
 						
 					<aon:outputLabel for="Categoria_id_cdg" 
 						value="#{appBundle.aon_payroll_auxiliares_convenios__categoria_categoria}"/>
 					<aon:inputText id="Categoria_id_cdg" size="15" maxlength="10"
-						value="#{categoria.to.id.cdg}" disabled="true"/>
-						
+						value="#{categoria.to.id.cdg}" />
+					  						
 					<aon:outputLabel for="Categoria_description" 
 						value="#{appBundle.aon_payroll_auxiliares_convenios__categoria_descripcion}"/>
 					<aon:inputText id="Categoria_description" size="40" maxlength="35"

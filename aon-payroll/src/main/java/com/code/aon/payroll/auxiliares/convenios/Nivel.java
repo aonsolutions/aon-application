@@ -1,13 +1,18 @@
 package com.code.aon.payroll.auxiliares.convenios;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.code.aon.common.ITransferObject;
@@ -23,9 +28,9 @@ public class Nivel implements ITransferObject {
 	private Convenio convenio;
 	
 	/** categorias. */
-	//private Set<Categoria> categorias = new HashSet<Categoria>();
+	private Set<Categoria> categorias = new HashSet<Categoria>();
 	/** percepciones. */
-	//private Set<Percniv> percepciones = new HashSet<Percniv>();
+	private Set<Percepcion> percepciones = new HashSet<Percepcion>();
 
 	@EmbeddedId
 	@AttributeOverrides( {
@@ -49,22 +54,21 @@ public class Nivel implements ITransferObject {
 		this.convenio = convenio;
 	}
 	
-	/*@OneToMany(mappedBy = "convenio", cascade={CascadeType.REMOVE})
+	@OneToMany(mappedBy = "nivel", cascade={CascadeType.REMOVE})
 	public Set<Categoria> getCategorias() {
 		return categorias;
 	}
 
 	public void setCategorias(Set<Categoria> categorias) {
 		this.categorias = categorias;
-	}*/
+	}
 	
-	/*@OneToMany(mappedBy = "convenio", cascade={CascadeType.REMOVE})
-	public Set<Percniv> getPercepciones() {
+	@OneToMany(mappedBy = "nivel", cascade={CascadeType.REMOVE})
+	public Set<Percepcion> getPercepciones() {
 		return percepciones;
 	}
 
-	public void setPercepciones(Set<Percniv> percepciones) {
+	public void setPercepciones(Set<Percepcion> percepciones) {
 		this.percepciones = percepciones;
-	}*/
-
+	}
 }

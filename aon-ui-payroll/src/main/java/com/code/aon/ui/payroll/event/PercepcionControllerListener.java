@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 
-import com.code.aon.payroll.auxiliares.convenios.Convenio;
 import com.code.aon.payroll.auxiliares.convenios.Nivel;
 import com.code.aon.payroll.auxiliares.convenios.Percepcion;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -21,7 +20,6 @@ public class PercepcionControllerListener extends ControllerAdapter implements I
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
-		// TODO Auto-generated method stub
 		System.out.println("PercepcionControllerListener -------> afterBeanCreated");
 		
 		
@@ -43,7 +41,6 @@ public class PercepcionControllerListener extends ControllerAdapter implements I
 	@Override
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
-		// TODO Auto-generated method stub
 		System.out.println("PercepcionControllerListener -------> beforeBeanAdded");
 		
 		setRequiredData(event);

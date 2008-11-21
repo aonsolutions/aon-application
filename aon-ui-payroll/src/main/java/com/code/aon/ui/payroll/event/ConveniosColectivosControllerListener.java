@@ -1,18 +1,12 @@
 package com.code.aon.ui.payroll.event;
 
-import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.payroll.auxiliares.convenios.Categoria;
-import com.code.aon.payroll.auxiliares.convenios.Convenio;
-import com.code.aon.payroll.auxiliares.convenios.Nivel;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.payroll.controller.CategoriaLinesController;
-import com.code.aon.ui.payroll.controller.ConveniosColectivoController;
 import com.code.aon.ui.payroll.controller.ConveniosComplementoController;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
 import com.code.aon.ui.util.AonUtil;
@@ -51,7 +45,6 @@ public class ConveniosColectivosControllerListener extends ControllerAdapter imp
 			comlementoController.refreshComplementos();
 			comlementoController.refreshCotizaciones();
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
 			throw new ControllerListenerException( e.getMessage(), e );
 		}
 			

@@ -45,18 +45,11 @@
 					</aon:selectOneMenu>
 					
 				</aon:panelGrid>
-<!-- 
-				<rich:tabPanel switchType="ajax" 
-					ontabchange="#{convenio.changeTabValue}" 
-					selectedTab="#{convenio.tabName}" value="" 
-					valueChangeListener="" >
--->
-				<rich:tabPanel switchType="ajax" 
-					
-					 >
+				
+				<rich:tabPanel switchType="ajax" selectedTab="#{convenio.tabName}"
+					valueChangeListener="#{convenio.changeTabValue}" >
 		
 					<rich:tab id="niveles" label="#{appBundle.aon_payroll_auxiliares_convenios__niveles}">
-						
 						<aon:div id="nivelDiv" style="width:18%; margin-right:5px; float: left;">	
 							<aon:div styleClass="aon-form-group">
 								<aon:div styleClass="aon-form-group-title">
@@ -89,12 +82,25 @@
 						</aon:div>
 					</rich:tab>
 					<rich:tab id="pagas" label="#{appBundle.aon_payroll_auxiliares_convenios__pagas}">
+						<aon:commandButton id="resetPagaext" value="#{bundle.aon_reset}"
+							rendered="#{(pagaext.model.rowCount == 0) and (!pagaext.new)}"
+							reRender="conveniosForm"
+							
+							actionListener="#{pagaext.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}" />
+						
 						<ui:include src="pagas/grid.xhtml" />
+						<aon:div>
+							
+						</aon:div>
 					</rich:tab>
 				</rich:tabPanel>
 			
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{complementoLookup}" />
+		
 	</ui:define>
 </ui:composition>
 
