@@ -53,11 +53,11 @@
 							</f:facet>
 							<aon:outputText value="#{to.cdg}" rendered="#{to!=tiposCnae.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==tiposCnae.to}" size="2"
+								rendered="#{to==tiposCnae.to}" size="5"
 								value="#{tiposCnae.to.cdg}" maxlength="5" />
 							<f:facet name="footer">
 								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{tiposCnae.new}" size="2"
+									rendered="#{tiposCnae.new}" size="5"
 									value="#{tiposCnae.to.cdg}" maxlength="5" />
 							</f:facet>
 						</aon:column>
@@ -68,12 +68,12 @@
 							</f:facet>
 							<aon:outputText value="#{to.description}" rendered="#{to!=tiposCnae.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==tiposCnae.to}" size="60"
-								value="#{tiposCnae.to.description}" maxlength="60" />
+								rendered="#{to==tiposCnae.to}" size="140"
+								value="#{tiposCnae.to.description}" maxlength="250" />
 							<f:facet name="footer">
 								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{tiposCnae.new}" size="60"
-									value="#{tiposCnae.to.description}" maxlength="60" />
+									rendered="#{tiposCnae.new}" size="140"
+									value="#{tiposCnae.to.description}" maxlength="250" />
 							</f:facet>
 						</aon:column>
 	
