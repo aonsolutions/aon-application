@@ -65,3 +65,13 @@
 .aon-scroll-area-menu {
 	padding:15px 26px;
 	}
+	
+/* ---------- CLIENTES ---------*/
+
+.aon-scroll-area-clientes td.aon-panelGrid-odd{
+	width: 145px;
+	}
+.aon-scroll-area-clientes td.aon-panelGrid-even{
+	width: 450px;
+	}
+
