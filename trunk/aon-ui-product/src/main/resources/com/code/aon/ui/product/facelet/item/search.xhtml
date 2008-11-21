@@ -15,14 +15,9 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:param name="controller" value="#{item}" />
 				<ui:define name="searchContent">
-					<aon:methodParam name="searchActionListener"
-						value="#{item.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="item_list" />
-
-					<ui:include src="/com/code/aon/ui/product/facelet/item/searchContent.xhtml" >
-						<ui:param name="controller" value="#{item}" />
-					</ui:include>
+					<ui:include src="/com/code/aon/ui/product/facelet/item/searchContent.xhtml" />
 				</ui:define>
 			</ui:decorate>
 		</aon:form>

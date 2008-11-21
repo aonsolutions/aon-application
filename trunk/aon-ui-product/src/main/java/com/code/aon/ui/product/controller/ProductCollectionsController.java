@@ -35,6 +35,13 @@ public class ProductCollectionsController {
 	/** The brands list. */
 	private List<SelectItem> brands;
 
+	public Brand getBrand() {
+		return null;
+	}
+	
+	public void setBrand(Brand brand ) {
+	}
+	
 	/**
 	 * Gets the brands.
 	 * 
@@ -65,7 +72,7 @@ public class ProductCollectionsController {
 		return null;
 	}
 	
-	public void setCategory( ProductCategory productCategory ) {
+	public void setCategory(ProductCategory productCategory) {
 	}
 	
 	/**
