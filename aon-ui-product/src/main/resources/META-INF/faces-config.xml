@@ -40,6 +40,7 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+
 	<managed-bean>
 		<managed-bean-name>itemControllerListener</managed-bean-name>
 		<managed-bean-class>
@@ -98,6 +99,29 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ****** BRAND ****** -->
+	<managed-bean>
+		<managed-bean-name>brand</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.product.Brand</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>brand</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Brand_name</value>
+		</managed-property>
+	</managed-bean>
+	
    	<!-- ************* NAVIGATION RULES ***************** -->
 	<navigation-rule>
 		<navigation-case>
@@ -115,6 +139,10 @@
 	    <navigation-case>
 	      <from-outcome>productCategory</from-outcome>
 	      <to-view-id>/com/code/aon/ui/product/facelet/category/grid.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>brand</from-outcome>
+	      <to-view-id>/com/code/aon/ui/product/facelet/brand/grid.xhtml</to-view-id>
 	    </navigation-case>
    </navigation-rule>
 </faces-config>
