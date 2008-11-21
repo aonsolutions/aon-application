@@ -37,6 +37,7 @@ public class NivelControllerListener extends ControllerAdapter implements IPayro
 		ConveniosColectivoController convenioController = (ConveniosColectivoController)AonUtil.getController(IPayrollConstants.CONVENIO_CONTROLLER_NAME);
 		
 		((Nivel)(event.getController().getTo())).setConvenio(((Convenio)convenioController.getTo()));
+		((Nivel)(event.getController().getTo())).getId().setCodcon(((Convenio)convenioController.getTo()).getCdg());
 		
 	}
 

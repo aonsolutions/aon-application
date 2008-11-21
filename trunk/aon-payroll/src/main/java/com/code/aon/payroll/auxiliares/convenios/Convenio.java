@@ -31,6 +31,7 @@ public class Convenio implements ITransferObject {
 	private Set<Nivel> niveles = new HashSet<Nivel>();
 	/** pagas. */
 	private Set<Pagaext> pagas = new HashSet<Pagaext>();
+	
 
 	@Id
 	@Column(name = "cdg", unique = true, nullable = false, length = 2)
@@ -126,5 +127,4 @@ public class Convenio implements ITransferObject {
 	public void setPagas(Set<Pagaext> pagas) {
 		this.pagas = pagas;
 	}
-
 }

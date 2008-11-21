@@ -1,18 +1,15 @@
 package com.code.aon.ui.payroll.event;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+
 import com.code.aon.payroll.auxiliares.convenios.Categoria;
-import com.code.aon.payroll.auxiliares.convenios.Convenio;
 import com.code.aon.payroll.auxiliares.convenios.Nivel;
-import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.payroll.controller.CategoriaLinesController;
-import com.code.aon.ui.payroll.controller.ConveniosColectivoController;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
+import com.code.aon.ui.payroll.controller.Utils;
 import com.code.aon.ui.util.AonUtil;
 
 public class CategoriaControllerListener extends ControllerAdapter implements IPayrollConstants {
@@ -22,45 +19,18 @@ public class CategoriaControllerListener extends ControllerAdapter implements IP
 	public void beforeBeanReset(ControllerEvent event)
 			throws ControllerListenerException {
 		System.out.println("CategoriaControllerListener -------> beforeBeanReset");
-		
-		CategoriaLinesController categoria = (CategoriaLinesController)event.getController();
-		//CategoriaLinesController categoria  = (CategoriaLinesController)AonUtil.getController(IPayrollConstants.CATEGORIA_CONTROLLER_NAME);
-		//Categoria to = (Categoria)categoria.getTo();
-		
-		if(categoria.getTo()==null) {
-			System.out.println("to vacio");
-			/*
-			try {
-				BeanManager.getManagerBean(Nivel.class);
-				ConveniosColectivoController convenio = (ConveniosColectivoController)AonUtil.getController(IPayrollConstants.CONVENIO_CONTROLLER_NAME);
-				LinesController nivel = (LinesController)AonUtil.getController(IPayrollConstants.NIVEL_CONTROLLER_NAME);
-				
-				categoria.onReset(null);
-				
-				Convenio con = (Convenio)convenio.getTo();
-				((Categoria)(categoria.getTo())).setConvenio(con);
-				((Categoria)(categoria.getTo())).setNivel(((Nivel)nivel.getTo()).getId().getCdg());
-				//((Categoria)(categoria.getTo())).g
-			} catch (ManagerBeanException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			*/
-			
-		} else
-			System.out.println("to con algo "+categoria);
-		
-		
-		
-		
-		
 	}
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
-		// TODO Auto-generated method stub
 		 beforeBeanReset(event);
+		 
+		 Nivel nivel = (Nivel)(AonUtil.getController(IPayrollConstants.NIVEL_CONTROLLER_NAME)).getTo();
+		 Categoria c = (Categoria)(event.getController().getTo());
+		 c.setNivel(nivel);
+		 c.setCdgnivel(nivel.getId().getCdg());
+		 c.setConvenio(nivel.getConvenio());
 	}
 	
 	
@@ -75,6 +45,32 @@ public class CategoriaControllerListener extends ControllerAdapter implements IP
 	public void beforeBeanCanceled(ControllerEvent event)
 			throws ControllerListenerException {
 		System.out.println("CategoriaControllerListener -------> beforeBeanCanceled");
+	}
+	
+	@Override
+	public void beforeBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
+		Categoria to = (Categoria) event.getController().getTo();
+		
+		setRequiredData(event);
+		
+		if(!(Utils.validarMascara(to.getId().getCdg(),"#X"))){
+			FacesMessage fm = 
+	    		AonUtil.getMessage( FacesContext.getCurrentInstance(), "aon_payroll_1481", null );
+			throw new ControllerListenerException( fm.getSummary() );
+		}
+		
+	}
+	
+	/**
+	 * Establece atributos necesarios para la clave principal obtenidos del maestro
+	 * @param event
+	 */
+	private void setRequiredData(ControllerEvent event){
+		Nivel nivel = (Nivel)(AonUtil.getController(IPayrollConstants.NIVEL_CONTROLLER_NAME)).getTo();
+		Categoria c = (Categoria)(event.getController().getTo());
+		
+		c.getId().setCodcon(nivel.getConvenio().getCdg());
 	}
 
 
