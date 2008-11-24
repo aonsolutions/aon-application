@@ -37,19 +37,9 @@ public class InvoiceRemover extends BasicController {
 
 	private static final Logger LOGGER = Logger.getLogger(InvoiceRemover.class.getName());
 	
-	private InvoiceRemovingParameters removingParams;
-
 	private AccountEntryInvoiceWriter accountEntryInvoiceWriter;
 	
 	private ArrayList<Invoice> checks = new ArrayList<Invoice>();
-
-	public InvoiceRemovingParameters getRemovingParams() {
-		return removingParams;
-	}
-
-	public void setRemovingParams(InvoiceRemovingParameters removingParams) {
-		this.removingParams = removingParams;
-	}
 
 	public AccountEntryInvoiceWriter getAccountEntryInvoiceWriter() {
 		if(accountEntryInvoiceWriter == null){
@@ -118,7 +108,6 @@ public class InvoiceRemover extends BasicController {
 	private void initializeSearch() {
 		try {
 			((PageDataModel)this.getModel()).resize(0);
-			removingParams = new InvoiceRemovingParameters();
 			clearCheckedInvoices();
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("Error initializing search");

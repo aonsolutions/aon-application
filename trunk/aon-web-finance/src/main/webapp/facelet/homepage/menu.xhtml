@@ -22,30 +22,30 @@
 			</aon:commandLink>
 			<aon:dropDownMenu id="aon_invoice" 
 				value="#{financeBundle.finance_invoice_module}">
-				<aon:menuItem id="aon_invoice_management" renderedOnUserRole="FacturasVenta"
+				<aon:menuItem id="aon_invoice_management" renderedOnUserRole="FacturasVenta" disabled="true"
 					value="#{salesBundle.sales_invoice_management_module}" action="invoiceManagement"/>
-				<aon:menuItem id="aon_purchase_invoice_management" renderedOnUserRole="FacturasCompra"
+				<aon:menuItem id="aon_purchase_invoice_management" renderedOnUserRole="FacturasCompra" disabled="true"
 					value="#{financeBundle.finance_purchase_invoice_management_module}" action="purchaseInvoiceManagement"/>
 				<aon:menuItem id="aon_invoice_print" renderedOnUserRole="ImpresionFacturas"
 					value="#{financeBundle.finance_invoice_print_module}" action="invoicePrint_search">
 					<aon:actionListener method="#{invoicePrint.onEditSearch}"/>
 				</aon:menuItem>
-				<aon:menuItem id="aon_invoice_recording" renderedOnUserRole="ContabilizacionFacturas"
+				<aon:menuItem id="aon_invoice_recording" renderedOnUserRole="ContabilizacionFacturas" disabled="true"
 					value="#{financeBundle.finance_invoice_recording_module}" action="invoiceRecording">
 					<aon:actionListener method="#{invoiceRecording.onEditSearch}"/>
 				</aon:menuItem>
 				<aon:menuItem id="aon_invoice_removing" renderedOnUserRole="BorradoFacturas"
-					value="#{financeBundle.finance_invoice_removing_module}" action="invoiceRemoving">
+					value="#{financeBundle.finance_invoice_removing_module}" action="invoiceRemover_search">
 					<aon:actionListener method="#{invoiceRemover.onEditSearch}"/>
 				</aon:menuItem>				
 			</aon:dropDownMenu>
 			<aon:dropDownMenu id="aon_fees"
 				value="#{financeBundle.finance_fees_module}">
-				<aon:menuItem id="aon_pre_invoicing" renderedOnUserRole="Prefacturacion"
+				<aon:menuItem id="aon_pre_invoicing" renderedOnUserRole="Prefacturacion" disabled="true"
 					value="#{salesBundle.sales_pre_invoicing_module}" action="feePreInvoicing">
 					<aon:actionListener method="#{preInvoicing.onInitialize}"/>
 				</aon:menuItem>				
-				<aon:menuItem id="aon_invoicing" renderedOnUserRole="FacturacionCuotas"
+				<aon:menuItem id="aon_invoicing" renderedOnUserRole="FacturacionCuotas" disabled="true"
 					value="#{salesBundle.sales_invoicing_module}" action="feeInvoicing">
 					<aon:actionListener method="#{feeInvoicing.onInitialize}"/>
 				</aon:menuItem>				
