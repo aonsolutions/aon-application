@@ -1,13 +1,14 @@
-package com.code.aon.finance.recording;
+package com.code.aon.finance.invoicing;
 
 import java.util.Date;
 
-import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.registry.Registry;
 
-public class RecordingParameters {
+public class InvoiceSearchContext {
 
-	private String series;
+	private Registry registry;
 	
 	private Integer fromNumber;
 	
@@ -18,17 +19,10 @@ public class RecordingParameters {
 	private Date toDate;
 	
 	private InvoiceType invoiceType;
-	
-	private Integer registryId;
-	
-	private SecurityLevel securityLevel;
 
-	public String getSeries() {
-		return series;
-	}
-
-	public void setSeries(String series) {
-		this.series = series;
+	public InvoiceSearchContext() {
+		this.registry = new Registry();
+		setInvoiceType(InvoiceType.SALES);
 	}
 
 	public Integer getFromNumber() {
@@ -71,19 +65,12 @@ public class RecordingParameters {
 		this.invoiceType = invoiceType;
 	}
 
-	public Integer getRegistryId() {
-		return registryId;
+	public Registry getRegistry() {
+		return registry;
 	}
 
-	public void setRegistryId(Integer registryId) {
-		this.registryId = registryId;
+	public void setRegistry(Registry registry) {
+		this.registry = registry;
 	}
 
-	public SecurityLevel getSecurityLevel() {
-		return securityLevel;
-	}
-
-	public void setSecurityLevel(SecurityLevel securityLevel) {
-		this.securityLevel = securityLevel;
-	}
 }

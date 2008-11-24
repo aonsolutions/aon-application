@@ -20,6 +20,7 @@
 				<ui:define name="additionalToolbarContent">
 					<aon:confirmButton id="remove_selected"
 						value="#{financeBundle.finance_remove_selected}"
+						rendered="#{invoiceRemover.model.rowCount > 0}"
 						reRender="invoiceRemovergDataDiv"
 						styleClass="aon-finding-toolbar-item aon-icon-delete"
 						confirmTitle="#{bundle.aon_confirm_title}"
@@ -33,7 +34,7 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:div styleClass="aon-toolbar">
+				<aon:div styleClass="aon-toolbar" rendered="#{invoiceRemover.model.rowCount > 0}">
 					<aon:commandButton title="#{bundle.aon_check_all}"
 						styleClass="aon-finding-toolbar-item aon-icon-checkAll"
 						value="#{bundle.aon_check_all}"
