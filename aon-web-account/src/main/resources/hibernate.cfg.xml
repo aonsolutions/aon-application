@@ -33,17 +33,19 @@
 
 		<!-- AON-ACCOUNT Mapping files -->
 		<mapping class="com.code.aon.account.Account"/>
-		<mapping class="com.code.aon.account.AccountBudget"/>
-		<mapping class="com.code.aon.account.AutoConcept"/>
-		<mapping class="com.code.aon.account.AccountEntry"/>
-		<mapping class="com.code.aon.account.AccountEntryDetail"/>
-		<mapping class="com.code.aon.account.AccountSummary"/>
-		<mapping class="com.code.aon.account.Amortization"/>
-		<mapping class="com.code.aon.account.AmortizationDetail"/>
-		<mapping class="com.code.aon.account.AmortizationType"/>
-		<mapping class="com.code.aon.account.Loan"/>
-		<mapping class="com.code.aon.account.Leasing"/>
-		<mapping class="com.code.aon.account.Period"/>
+
+		<!-- AON-ACCOUNTING Mapping files -->
+		<mapping class="com.code.aon.accounting.AccountBudget"/>
+		<mapping class="com.code.aon.accounting.AutoConcept"/>
+		<mapping class="com.code.aon.accounting.AccountEntry"/>
+		<mapping class="com.code.aon.accounting.AccountEntryDetail"/>
+		<mapping class="com.code.aon.accounting.AccountSummary"/>
+		<mapping class="com.code.aon.accounting.Amortization"/>
+		<mapping class="com.code.aon.accounting.AmortizationDetail"/>
+		<mapping class="com.code.aon.accounting.AmortizationType"/>
+		<mapping class="com.code.aon.accounting.Loan"/>
+		<mapping class="com.code.aon.accounting.Leasing"/>
+		<mapping class="com.code.aon.accounting.Period"/>
 		
 		<!-- AON-ACCOUNT-BRIDGE Mapping files -->
 		<mapping class="com.code.aon.account.bridge.CustomerAccount"/>

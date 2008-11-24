@@ -41,9 +41,8 @@
 					<aon:outputLabel for="Amortization_amortizationType"
 						value="#{accountingBundle.accounting_amortization_type}" />
 					<aon:selectOneMenu id="Amortization_amortizationType"
-						value="#{amortization.to.amortizationType}"
-						limitToList="true"
-						reRender="fixedAccountId,accumulatedAccountId,allocationAccountId,AmortizationType_percentage"
+						value="#{amortization.to.amortizationType}" limitToList="true"
+						reRender="fixedAccountId,accumulatedAccountId,allocationAccountId,AmortizationType_percentage,AmortizationDetails"
 						ajaxSingle="true">
 						<f:selectItem value="#{nullItem.value}" />
 						<f:selectItems value="#{accountingCollections.amortizationTypes}" />
@@ -66,7 +65,8 @@
 					<aon:selectOneMenu id="Amortization_amortizationPeriod"
 						value="#{amortization.to.feePeriod}">
 						<f:selectItem value="#{nullItem.value}" />
-						<f:selectItems value="#{accountingCollections.amortizationPeriods}" />
+						<f:selectItems
+							value="#{accountingCollections.amortizationPeriods}" />
 					</aon:selectOneMenu>
 
 					<aon:outputText
@@ -75,13 +75,17 @@
 						value="#{amortization.to.amortizationType.accumulatedAccount.fullDescription}" />
 
 
-					<aon:outputText value="#{bundle.aon_percentage}" />
-					<aon:outputText id="AmortizationType_percentage"
-						value="#{amortization.to.amortizationType.percentage}">
-						<f:convertNumber pattern="#,##0.00" />
-					</aon:outputText>
+					<aon:outputText value="#{accountingBundle.accounting_coefficient}" />
+					<aon:panelGroup>
+						<aon:outputText id="AmortizationType_percentage"
+							value="#{amortization.to.amortizationType.percentage}">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+						<aon:outputText value="%" />
+					</aon:panelGroup>
 
-					<aon:outputText value="#{accountingBundle.accounting_allocation_account}" />
+					<aon:outputText
+						value="#{accountingBundle.accounting_allocation_account}" />
 					<aon:outputText id="allocationAccountId"
 						value="#{amortization.to.amortizationType.allocationAccount.fullDescription}" />
 
@@ -93,7 +97,7 @@
 
 					<aon:outputLabel for="Amortization_saleAmount"
 						value="#{accountingBundle.accounting_sale_amount}" />
-					<aon:inputText id="Amortization_saleAmount" 
+					<aon:inputText id="Amortization_saleAmount"
 						value="#{amortization.to.saleAmount}" size="15" />
 				</aon:panelGrid>
 
@@ -102,12 +106,15 @@
 					<aon:outputLabel for="Amortization_comments"
 						value="#{bundle.aon_comment}" />
 					<aon:inputText id="Amortization_comments"
-						value="#{amortization.to.comments}" size="70" />
+						value="#{amortization.to.comments}" size="140" />
 
 				</aon:panelGrid>
 
-				<ui:include
-					src="/com/code/aon/ui/accounting/facelet/amortization/form_lines.xhtml" />
+				<aon:panel id="AmortizationDetails" rendereed="#{!amortization.new}">
+					<ui:include
+						src="/com/code/aon/ui/accounting/facelet/amortization/form_lines.xhtml" />
+				</aon:panel>
+
 			</aon:div>
 		</aon:form>
 	</ui:define>

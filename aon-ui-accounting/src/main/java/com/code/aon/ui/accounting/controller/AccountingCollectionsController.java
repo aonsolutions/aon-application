@@ -8,14 +8,14 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
-import com.code.aon.account.AmortizationType;
-import com.code.aon.account.AutoConcept;
-import com.code.aon.account.Leasing;
-import com.code.aon.account.Loan;
-import com.code.aon.account.Period;
-import com.code.aon.account.dao.IAccountAlias;
-import com.code.aon.account.enumeration.AccountEntryType;
-import com.code.aon.account.enumeration.AmortizationPeriod;
+import com.code.aon.accounting.AmortizationType;
+import com.code.aon.accounting.AutoConcept;
+import com.code.aon.accounting.Leasing;
+import com.code.aon.accounting.Loan;
+import com.code.aon.accounting.Period;
+import com.code.aon.accounting.dao.IAccountingAlias;
+import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.enumeration.AmortizationPeriod;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -44,7 +44,7 @@ public class AccountingCollectionsController {
 		List<SelectItem> accountPeriods = new LinkedList<SelectItem>();
 		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(periodBean.getFieldName(IAccountAlias.PERIOD_ID), false);
+		criteria.addOrder(periodBean.getFieldName(IAccountingAlias.PERIOD_ID), false);
 		Iterator<?> iter = periodBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			Period period = (Period) iter.next();
@@ -66,7 +66,7 @@ public class AccountingCollectionsController {
 		List<SelectItem> autoConcepts = new LinkedList<SelectItem>();
 		IManagerBean conceptBean = BeanManager.getManagerBean(AutoConcept.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(conceptBean.getFieldName(IAccountAlias.AUTO_CONCEPT_DESCRIPTION), false);
+		criteria.addOrder(conceptBean.getFieldName(IAccountingAlias.AUTO_CONCEPT_DESCRIPTION), false);
 		Iterator<?> iter = conceptBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			AutoConcept concept = (AutoConcept) iter.next();
@@ -87,7 +87,7 @@ public class AccountingCollectionsController {
 		List<SelectItem> accountPeriods = new LinkedList<SelectItem>();
 		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(periodBean.getFieldName(IAccountAlias.PERIOD_ID), false);
+		criteria.addOrder(periodBean.getFieldName(IAccountingAlias.PERIOD_ID), false);
 		Iterator<?> iter = periodBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			Period period = (Period) iter.next();

@@ -5,8 +5,8 @@ import java.util.Date;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.account.Period;
-import com.code.aon.account.dao.IAccountAlias;
+import com.code.aon.accounting.Period;
+import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
@@ -84,19 +84,19 @@ public class JournalReportController extends BasicController {
 		try {
 			Criteria criteria = getCriteria();
 			if (period != null) {
-				criteria.addEqualExpression(getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD), period.getId());
+				criteria.addEqualExpression(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD), period.getId());
 			}
 			if (getFromDate() != null) {
-				criteria.addGreaterThanOrEqualExpression(getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE), getFromDate());
+				criteria.addGreaterThanOrEqualExpression(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE), getFromDate());
 			}
 			if (getToDate() != null) {
-				criteria.addLessThanOrEqualExpression(getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE), getToDate());
+				criteria.addLessThanOrEqualExpression(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE), getToDate());
 			}
 			if (getSecurityLevel() != null) {
 				//TODO Alias para el securityLevel
 				criteria.addEqualExpression("AccountEntryDetail.accountEntry.securityLevel", getSecurityLevel());
 			}
-			getCriteria().addOrder(getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID));
+			getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID));
 			super.onSearch(event);
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());

@@ -2,9 +2,9 @@ package com.code.aon.ui.accounting.event;
 
 import java.util.Date;
 
-import com.code.aon.account.AccountEntry;
-import com.code.aon.account.dao.IAccountAlias;
-import com.code.aon.account.enumeration.AccountEntryType;
+import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.dao.IAccountingAlias;
+import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -56,7 +56,7 @@ public class AccountEntryControllerListener extends ControllerAdapter {
             Integer id = ((AccountEntry)event.getController().getTo()).getId();
             IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
             Criteria criteria = new Criteria();
-            criteria.addEqualExpression(entryBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ID), id);
+            criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), id);
             event.getController().setCriteria(criteria);
             event.getController().onSearch(null);
         } catch (ManagerBeanException e) {

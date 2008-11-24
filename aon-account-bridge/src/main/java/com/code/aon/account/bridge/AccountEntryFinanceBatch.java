@@ -8,7 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.code.aon.account.AccountEntry;
+import com.code.aon.accounting.AccountEntry;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.finance.FinanceBatch;
 
@@ -18,6 +18,8 @@ import com.code.aon.finance.FinanceBatch;
 @Entity
 @Table(name="account_entry_fbatch")
 public class AccountEntryFinanceBatch implements ITransferObject {
+
+	private static final long serialVersionUID = 7131853142761580207L;
 
 	/** The id. */
 	private Integer id;

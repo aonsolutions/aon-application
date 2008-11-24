@@ -5,17 +5,15 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-
-	<aon:panel>
-
-		<aon:editDataTable id="AmortizationDetails" var="to" rows="0"
-			value="#{amortizationDetail.model}">
+	<aon:outputText value="#{to.details}" />
+		<aon:editDataTable id="AmortizationDetailsList" var="detail" rows="0"
+			value="#{amortization.to.informedDetails}">
 
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_date_from}" />
 				</f:facet>
-				<aon:outputText value="#{to.fromDate}">
+				<aon:outputText value="#{detail.fromDate}">
 					<f:convertDateTime type="date" pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
@@ -25,7 +23,7 @@
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_date_to}" />
 				</f:facet>
-				<aon:outputText value="#{to.toDate}">
+				<aon:outputText value="#{detail.toDate}">
 					<f:convertDateTime type="date" pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
@@ -35,16 +33,17 @@
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_percentage}" />
 				</f:facet>
-				<aon:outputText value="#{to.coefficient}">
+				<aon:outputText value="#{detail.coefficient}">
 					<f:convertNumber pattern="#,##0.00" />
 				</aon:outputText>
+				<aon:outputText value="%" />
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-numberColumn">
 				<f:facet name="header">
 					<aon:outputText value="#{accountingBundle.accounting_allocation}" />
 				</f:facet>
-				<aon:outputText value="#{to.allocation}">
+				<aon:outputText value="#{detail.allocation}">
 					<f:convertNumber pattern="#,##0.00" />
 				</aon:outputText>
 			</aon:column>
@@ -53,7 +52,7 @@
 				<f:facet name="header">
 					<aon:outputText value="#{accountingBundle.accounting_accumulated}" />
 				</f:facet>
-				<aon:outputText value="#{to.accumulated}">
+				<aon:outputText value="#{detail.accumulated}">
 					<f:convertNumber pattern="#,##0.00" />
 				</aon:outputText>
 			</aon:column>
@@ -62,7 +61,7 @@
 				<f:facet name="header">
 					<aon:outputText value="#{accountingBundle.accounting_pending}" />
 				</f:facet>
-				<aon:outputText value="#{to.pending}">
+				<aon:outputText value="#{detail.pending}">
 					<f:convertNumber pattern="#,##0.00" />
 				</aon:outputText>
 			</aon:column>
@@ -71,9 +70,8 @@
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_status}" />
 				</f:facet>
-				<aon:outputText value="#{to.status}" />
+				<aon:outputText value="#{detail.status}" />
 			</aon:column>
 
 		</aon:editDataTable>
-	</aon:panel>
 </ui:composition>

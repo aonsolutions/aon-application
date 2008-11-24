@@ -16,20 +16,19 @@ import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import com.code.aon.account.AccountEntry;
-import com.code.aon.account.AccountEntryDetail;
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
 import com.code.aon.account.bridge.writer.FinanceRecordingTo;
-import com.code.aon.account.dao.IAccountAlias;
-import com.code.aon.account.enumeration.AccountEntryType;
+import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.dao.IAccountingAlias;
+import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -173,7 +172,7 @@ public class FBatchController extends BasicController implements ICollectionProv
         }
     }
 
-    @SuppressWarnings({"unused","unchecked"})
+    @SuppressWarnings("unchecked")
 	public void onBatchSelected(ActionEvent event) {
         FinanceBatch fBatch = (FinanceBatch)getTo();
         if (!FinanceBatchStatus.TODO.equals(fBatch.getFinanceBatchStatus())) {
@@ -219,7 +218,7 @@ public class FBatchController extends BasicController implements ICollectionProv
         loadAvailableFinances(fBatch.isPayment());
 	}
 
-	@SuppressWarnings({"unused","unchecked"})
+	@SuppressWarnings("unchecked")
 	public void onRemoveSelected(ActionEvent event) {
         FinanceBatch fBatch = (FinanceBatch)getTo();
         if (!FinanceBatchStatus.TODO.equals(fBatch.getFinanceBatchStatus())) {
@@ -277,7 +276,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 		return false;
 	}
 
-	@SuppressWarnings({"unused","unchecked"})
+	@SuppressWarnings("unchecked")
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
     	FinanceBatch fbatch = (FinanceBatch)this.getTo();
 
@@ -329,7 +328,6 @@ public class FBatchController extends BasicController implements ICollectionProv
     	return query.list(); 
 	}
 
-	@SuppressWarnings({"unused"})
 	public boolean isDiskOk() throws ManagerBeanException {
 		int errors = 0;
 		if (csbOutput != null) {
@@ -338,7 +336,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 		return (errors==0);
 	}
 
-	@SuppressWarnings({"unused"})
 	public void downloadDisk(ActionEvent event) throws ManagerBeanException {
 		try {
 			FacesContext faces = FacesContext.getCurrentInstance();
@@ -421,7 +418,7 @@ public class FBatchController extends BasicController implements ICollectionProv
         fbatch.setRegistryBank(fbatch.getRegistryBank() == null?new RegistryBank():fbatch.getRegistryBank());
     }
 
-	@SuppressWarnings({"unused","unchecked"})
+	@SuppressWarnings("unchecked")
     public void onUnrecord(ActionEvent event) throws ManagerBeanException {
         FinanceBatch fbatch = (FinanceBatch)this.getTo();
 
@@ -450,7 +447,7 @@ public class FBatchController extends BasicController implements ICollectionProv
             accountEntryFbatchBean.remove(accountEntryFinanceBatch);
 
             criteria = new Criteria();
-            criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
+            criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
             Iterator iterator = accountEntryDetailBean.getList(criteria).iterator();
             while (iterator.hasNext()) {
                 AccountEntryDetail accountEntryDetail = (AccountEntryDetail)iterator.next();
@@ -573,7 +570,6 @@ public class FBatchController extends BasicController implements ICollectionProv
     	return null;
 	}
 
-	@SuppressWarnings("unused")
     public void onReport(ActionEvent event) {
         ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
         manager.setReportKey("fBatch");

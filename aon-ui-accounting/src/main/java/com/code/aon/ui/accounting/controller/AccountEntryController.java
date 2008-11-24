@@ -11,19 +11,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.ListDataModel;
 
-import com.code.aon.account.AccountEntry;
-import com.code.aon.account.AccountEntryDetail;
-import com.code.aon.account.DefaultAccounts;
-import com.code.aon.account.ExpenseEntryHeader;
-import com.code.aon.account.InvoiceEntryDetail;
-import com.code.aon.account.InvoiceEntryHeader;
-import com.code.aon.account.Leasing;
-import com.code.aon.account.LeasingFeeEntryHeader;
-import com.code.aon.account.Loan;
-import com.code.aon.account.LoanFeeEntryHeader;
-import com.code.aon.account.Period;
-import com.code.aon.account.SalaryEntryHeader;
-import com.code.aon.account.SocialInsuranceEntryHeader;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.InvoiceDetailAccount;
 import com.code.aon.account.bridge.LeasingAccount;
@@ -32,11 +19,25 @@ import com.code.aon.account.bridge.RegistryBankAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.util.AccountConstants;
 import com.code.aon.account.bridge.util.AccountUtil;
-import com.code.aon.account.dao.IAccountAlias;
-import com.code.aon.account.enumeration.AccountEntryType;
+import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.DefaultAccounts;
+import com.code.aon.accounting.ExpenseEntryHeader;
+import com.code.aon.accounting.InvoiceEntryDetail;
+import com.code.aon.accounting.InvoiceEntryHeader;
+import com.code.aon.accounting.Leasing;
+import com.code.aon.accounting.LeasingFeeEntryHeader;
+import com.code.aon.accounting.Loan;
+import com.code.aon.accounting.LoanFeeEntryHeader;
+import com.code.aon.accounting.Period;
+import com.code.aon.accounting.SalaryEntryHeader;
+import com.code.aon.accounting.SocialInsuranceEntryHeader;
+import com.code.aon.accounting.dao.IAccountingAlias;
+import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -44,7 +45,6 @@ import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceType;
-import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.BasicController;
@@ -425,8 +425,8 @@ public class AccountEntryController extends BasicController {
 		try {
 			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
-			criteria.addExpression(accountEntryDetailBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), accountPattern);
+			criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
+			criteria.addExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), accountPattern);
 			Iterator iter = accountEntryDetailBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				return (AccountEntryDetail)iter.next();
@@ -495,7 +495,7 @@ public class AccountEntryController extends BasicController {
 		if(event.getNewValue() != null && fromDate != null){
 			try {
 				IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
-				getCriteria().addGreaterThanOrEqualExpression(accountEntryBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENTRY_DATE), event.getNewValue());
+				getCriteria().addGreaterThanOrEqualExpression(accountEntryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ENTRY_DATE), event.getNewValue());
 			} catch (ManagerBeanException e) {
 				LOGGER.log(Level.SEVERE, "Error adding FROM date expression", e);
 			}
@@ -506,7 +506,7 @@ public class AccountEntryController extends BasicController {
 		if(event.getNewValue() != null && toDate != null){
 			try {
 				IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
-				getCriteria().addLessThanOrEqualExpression(accountEntryBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENTRY_DATE), event.getNewValue());
+				getCriteria().addLessThanOrEqualExpression(accountEntryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ENTRY_DATE), event.getNewValue());
 			} catch (ManagerBeanException e) {
 				LOGGER.log(Level.SEVERE, "Error adding TO date expression", e);
 			}
@@ -525,7 +525,7 @@ public class AccountEntryController extends BasicController {
 	            Integer id = ((AccountEntry)this.getTo()).getId();
 	            IManagerBean detailsBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 	            Criteria criteria = new Criteria();
-	            criteria.addEqualExpression(detailsBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), id);
+	            criteria.addEqualExpression(detailsBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), id);
 	            Iterator iterator = detailsBean.getList(criteria).iterator();
 	            while (iterator.hasNext()) {
 	                AccountEntryDetail detail = (AccountEntryDetail)iterator.next();
@@ -546,7 +546,7 @@ public class AccountEntryController extends BasicController {
 	            Integer id = ((AccountEntry)this.getTo()).getId();
 	            IManagerBean detailsBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 	            Criteria criteria = new Criteria();
-	            criteria.addEqualExpression(detailsBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), id);
+	            criteria.addEqualExpression(detailsBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), id);
 	            Iterator iterator = detailsBean.getList(criteria).iterator();
 	            while (iterator.hasNext()) {
 	                AccountEntryDetail detail = (AccountEntryDetail)iterator.next();

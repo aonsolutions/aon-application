@@ -9,7 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.Leasing;
+import com.code.aon.accounting.Leasing;
 import com.code.aon.common.ITransferObject;
 
 /**
@@ -18,6 +18,8 @@ import com.code.aon.common.ITransferObject;
 @Entity
 @Table(name="leasing_account")
 public class LeasingAccount implements ITransferObject {
+
+	private static final long serialVersionUID = -6484054146467508922L;
 
 	/** The id. */
 	private Integer id;

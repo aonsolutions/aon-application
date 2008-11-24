@@ -7,8 +7,8 @@ import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 
-import com.code.aon.account.Period;
-import com.code.aon.account.dao.IAccountAlias;
+import com.code.aon.accounting.Period;
+import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -23,8 +23,8 @@ public class AccountPeriodValidator {
 	public static void validateAccountPeriod(Date date) throws ManagerBeanException{
 		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 		Criteria criteria = new Criteria();
-		criteria.addGreaterThanOrEqualExpression(periodBean.getFieldName(IAccountAlias.PERIOD_DEADLINE), date);
-		criteria.addLessThanOrEqualExpression(periodBean.getFieldName(IAccountAlias.PERIOD_INITIATION_DATE), date);
+		criteria.addGreaterThanOrEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_DEADLINE), date);
+		criteria.addLessThanOrEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE), date);
 		Iterator iter = periodBean.getList(criteria).iterator();
 		if(!iter.hasNext()){
 			String msg = "No hay ejercicio contable definido para la fecha indicada";

@@ -19,6 +19,8 @@ import com.code.aon.customer.Customer;
 @Table(name="customer_account")
 public class CustomerAccount implements ITransferObject {
 	
+	private static final long serialVersionUID = 5965646601798660054L;
+
 	/** The id. */
 	private Integer id;
 	

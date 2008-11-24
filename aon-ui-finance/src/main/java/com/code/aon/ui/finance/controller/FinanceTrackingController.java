@@ -4,11 +4,11 @@ import java.util.Iterator;
 
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.account.AccountEntry;
-import com.code.aon.account.AccountEntryDetail;
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
-import com.code.aon.account.dao.IAccountAlias;
+import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -31,7 +31,7 @@ public class FinanceTrackingController extends LinesController {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(accEntryFinanceTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_FINANCE_ID), tracking.getFinance().getId());
 		criteria.addOrder(accEntryFinanceTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ID),false);
-		Iterator iter = accEntryFinanceTrackingBean.getList(criteria).iterator();
+		Iterator<?> iter = accEntryFinanceTrackingBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			AccountEntryFinanceTracking accEntryFinanceTracking = (AccountEntryFinanceTracking)iter.next();
 			return accEntryFinanceTracking.getFinanceTracking().getId().equals(tracking.getId());
@@ -39,7 +39,6 @@ public class FinanceTrackingController extends LinesController {
 		return false;
 	}
 	
-	@SuppressWarnings("unused")
 	public void undoTracking(ActionEvent event) throws ManagerBeanException{
 		FinanceTracking tracking = (FinanceTracking)this.getModel().getRowData();
 		AccountEntryFinanceTracking accFinanceTracking = deleteAccEntryFinanceTracking(tracking);
@@ -54,7 +53,7 @@ public class FinanceTrackingController extends LinesController {
 		IManagerBean accEntryFinanceTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(accEntryFinanceTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_ID), tracking.getId());
-		Iterator iter = accEntryFinanceTrackingBean.getList(criteria).iterator();
+		Iterator<?> iter = accEntryFinanceTrackingBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			AccountEntryFinanceTracking accEntryFinanceTracking = (AccountEntryFinanceTracking)iter.next();
 			accEntryFinanceTrackingBean.remove(accEntryFinanceTracking);
@@ -67,8 +66,8 @@ public class FinanceTrackingController extends LinesController {
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
-		Iterator iter = accountEntryDetailBean.getList(criteria).iterator();
+		criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
+		Iterator<?> iter = accountEntryDetailBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			AccountEntryDetail detail = (AccountEntryDetail)iter.next();
 			accountEntryDetailBean.remove(detail);

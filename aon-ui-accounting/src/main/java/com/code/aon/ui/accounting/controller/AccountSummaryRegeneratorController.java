@@ -2,9 +2,9 @@ package com.code.aon.ui.accounting.controller;
 
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.account.Period;
-import com.code.aon.account.event.AccountSummaryManager;
-import com.code.aon.account.event.IProgressionBean;
+import com.code.aon.accounting.Period;
+import com.code.aon.accounting.event.AccountSummaryManager;
+import com.code.aon.accounting.event.IProgressionBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;

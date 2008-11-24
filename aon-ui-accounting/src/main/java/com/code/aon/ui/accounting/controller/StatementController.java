@@ -13,10 +13,10 @@ import javax.faces.model.ListDataModel;
 import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.AccountEntryDetail;
-import com.code.aon.account.summary.SummaryProviderParameters;
-import com.code.aon.account.util.AccountUtils;
-import com.code.aon.account.util.Balance;
+import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.summary.SummaryProviderParameters;
+import com.code.aon.accounting.util.AccountUtils;
+import com.code.aon.accounting.util.Balance;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;

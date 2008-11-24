@@ -1,7 +1,7 @@
 package com.code.aon.ui.accounting.event;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.AccountEntryDetail;
+import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;

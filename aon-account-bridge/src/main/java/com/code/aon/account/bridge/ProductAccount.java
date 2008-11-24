@@ -20,6 +20,8 @@ import com.code.aon.product.Product;
 @Table(name="product_account")
 public class ProductAccount implements ITransferObject {
 	
+	private static final long serialVersionUID = 1809456459170682443L;
+
 	/** The id. */
 	private Integer id;
 	

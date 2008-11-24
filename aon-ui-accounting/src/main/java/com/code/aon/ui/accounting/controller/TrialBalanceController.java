@@ -8,13 +8,14 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import com.code.aon.account.Period;
 import com.code.aon.account.dao.IAccountAlias;
-import com.code.aon.account.summary.Summary;
-import com.code.aon.account.summary.SummaryCollection;
-import com.code.aon.account.summary.SummaryProvider;
-import com.code.aon.account.summary.SummaryProviderParameters;
-import com.code.aon.account.util.Balance;
+import com.code.aon.accounting.Period;
+import com.code.aon.accounting.dao.IAccountingAlias;
+import com.code.aon.accounting.summary.Summary;
+import com.code.aon.accounting.summary.SummaryCollection;
+import com.code.aon.accounting.summary.SummaryProvider;
+import com.code.aon.accounting.summary.SummaryProviderParameters;
+import com.code.aon.accounting.util.Balance;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -143,7 +144,7 @@ public class TrialBalanceController implements ICollectionProvider {
 					.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(
-					IAccountAlias.ACCOUNT_ENTRY_ID), aed.getAccountEntry());
+					IAccountingAlias.ACCOUNT_ENTRY_ID), aed.getAccountEntry());
 			entryController.setCriteria(criteria);
 			entryController.onSearch(null);
 			entryController.getModel().setRowIndex(0);

@@ -11,6 +11,30 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
+	<!-- **************** ACCOUNT LISTENERS ************************** -->
+	<managed-bean>
+		<managed-bean-name>accountListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<list-entries>
+			<value-class>
+				com.code.aon.ui.form.event.IControllerListener
+			</value-class>
+			<value>#{accountControllerListener}</value>
+			<value>#{accountAppParamsControllerListener}</value>
+		</list-entries>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>accountControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.accounting.event.AccountControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>accountAppParamsControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.accounting.event.AccountAppParamsControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 	<!-- **************** ACCOUNTING PERIOD ************************** -->
 	<managed-bean>
 		<managed-bean-name>accPeriod</managed-bean-name>
@@ -22,44 +46,13 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.account.Period</value>
+			<value>com.code.aon.accounting.Period</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>accPeriod</value>
 		</managed-property>
 	</managed-bean>
-
-	<!-- **************** ACCOUNT ************************** 
-	<managed-bean>
-		<managed-bean-name>account</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.account.Account</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>account</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{accountControllerLevelListener}</value>
-				<value>#{accountControllerListener}</value>
-				<value>#{accountControllerCascadeListener}</value>
-				<value>#{accountAppParamsControllerListener}</value>
-				<value>#{accountBudgetDetailListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
--->	
 
 	<!-- **************** ACCOUNT BUDGET ************************** -->
 	<managed-bean>
@@ -91,7 +84,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.account.AccountBudget</value>
+			<value>com.code.aon.accounting.AccountBudget</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -127,66 +120,11 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.account.Amortization</value>
+			<value>com.code.aon.accounting.Amortization</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>amortization</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{amortizationDetailListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>amortizationDetailListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.accounting.event.AmortizationListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>amortizationDetail</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>AmortizationDetail_amortization_id</key>
-					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>amortizationDetail</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.account.AmortizationDetail</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>amortization</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>amortization.id</value>
-				</map-entry>
-			</map-entries>
 		</managed-property>
 	</managed-bean>
 
@@ -201,7 +139,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.account.AmortizationType</value>
+			<value>com.code.aon.accounting.AmortizationType</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -227,7 +165,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.account.AutoConcept</value>
+			<value>com.code.aon.accounting.AutoConcept</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -246,7 +184,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.account.AccountEntry</value>
+			<value>com.code.aon.accounting.AccountEntry</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -302,7 +240,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.account.AccountEntryDetail</value>
+			<value>com.code.aon.accounting.AccountEntryDetail</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
@@ -422,7 +360,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.account.AccountEntryDetail</value>
+			<value>com.code.aon.accounting.AccountEntryDetail</value>
 		</managed-property>
 	</managed-bean>
 	
@@ -592,7 +530,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.account.AccountEntryDetail</value>
+			<value>com.code.aon.accounting.AccountEntryDetail</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>

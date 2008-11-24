@@ -19,6 +19,8 @@ import com.code.aon.finance.RegistryBank;
 @Table(name="rbank_account")
 public class RegistryBankAccount implements ITransferObject {
 	
+	private static final long serialVersionUID = -327952223428600895L;
+
 	/** The id. */
 	private Integer id;
 	

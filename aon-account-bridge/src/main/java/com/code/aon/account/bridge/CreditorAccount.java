@@ -19,6 +19,8 @@ import com.code.aon.finance.Creditor;
 @Table(name="creditor_account")
 public class CreditorAccount implements ITransferObject {
 	
+	private static final long serialVersionUID = -1065423464446184552L;
+
 	/** The id. */
 	private Integer id;
 	

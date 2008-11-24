@@ -19,6 +19,8 @@ import com.code.aon.finance.InvoiceDetail;
 @Table(name="invoice_detail_account")
 public class InvoiceDetailAccount implements ITransferObject {
 	
+	private static final long serialVersionUID = -7929315870651403627L;
+
 	/** The id. */
 	private Integer id;
 	

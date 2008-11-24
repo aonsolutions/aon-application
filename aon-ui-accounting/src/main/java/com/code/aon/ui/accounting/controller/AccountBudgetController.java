@@ -1,7 +1,7 @@
 package com.code.aon.ui.accounting.controller;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.Period;
+import com.code.aon.accounting.Period;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ui.form.LinesController;
 

@@ -3,9 +3,9 @@ package com.code.aon.ui.accounting.event;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.code.aon.account.AccountEntry;
-import com.code.aon.account.Period;
-import com.code.aon.account.dao.IAccountAlias;
+import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.Period;
+import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -38,7 +38,7 @@ public class AccountEntryControllerValidatorListener extends ControllerAdapter {
         try {
             IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
             Criteria criteria = new Criteria();
-            criteria.addEqualExpression(periodBean.getFieldName(IAccountAlias.PERIOD_ID), entry.getAccountPeriod());
+            criteria.addEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_ID), entry.getAccountPeriod());
             Period period = (Period)periodBean.getList(criteria).get(0);
             return (entry.getEntryDate().compareTo(period.getInitiationDate()) >= 0 && entry.getEntryDate().compareTo(period.getDeadline()) <= 0);
         } catch (ManagerBeanException e) {

@@ -5,16 +5,15 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.account.AccountEntry;
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
 import com.code.aon.account.bridge.writer.FinanceRecordingTo;
-import com.code.aon.account.enumeration.AccountEntryType;
+import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -32,8 +31,6 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 public class FinanceReturnController extends BasicController {
-	
-	private static final Logger LOGGER = Logger.getLogger(FinanceReturnController.class.getName());
 	
 	private Date returnDate;
 	
@@ -60,7 +57,6 @@ public class FinanceReturnController extends BasicController {
 		setReturnDate( new Date() );
 	}
 
-	@SuppressWarnings("unused")
 	public void onReturn(ActionEvent event) throws ManagerBeanException{
 		Finance finance = (Finance)this.getTo();
 		finance.setFinanceStatus(FinanceStatus.RETURNED);
