@@ -2,23 +2,23 @@ package com.code.aon.finance.invoicing;
 
 import java.util.Date;
 
-import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.registry.Registry;
 
 public class InvoiceRemovingParameters {
 	
 	private Date fromDate;
 
 	private Date toDate;
-
-	private String series;
 	
 	private Integer fromNumber;
 	
 	private Integer toNumber;
 	
-	private Integer customerId;
-	
-	private SecurityLevel securityLevel;
+	private Registry registry;
+
+	public InvoiceRemovingParameters() {
+		this.registry = new Registry();
+	}
 
 	public Date getFromDate() {
 		return fromDate;
@@ -34,14 +34,6 @@ public class InvoiceRemovingParameters {
 
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
-	}
-
-	public String getSeries() {
-		return series;
-	}
-
-	public void setSeries(String series) {
-		this.series = series;
 	}
 
 	public Integer getFromNumber() {
@@ -60,19 +52,12 @@ public class InvoiceRemovingParameters {
 		this.toNumber = toNumber;
 	}
 
-	public Integer getCustomerId() {
-		return customerId;
+	public Registry getRegistry() {
+		return registry;
 	}
 
-	public void setCustomerId(Integer customerId) {
-		this.customerId = customerId;
+	public void setRegistry(Registry registry) {
+		this.registry = registry;
 	}
 
-	public SecurityLevel getSecurityLevel() {
-		return securityLevel;
-	}
-
-	public void setSecurityLevel(SecurityLevel securityLevel) {
-		this.securityLevel = securityLevel;
-	}
 }
