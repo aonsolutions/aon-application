@@ -12,10 +12,10 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.AccountEntry;
-import com.code.aon.account.AccountEntryDetail;
-import com.code.aon.account.dao.IAccountAlias;
-import com.code.aon.account.enumeration.AccountEntryType;
+import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.dao.IAccountingAlias;
+import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -139,11 +139,11 @@ public class EndPeriodEntriesController {
 		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(entryBean
-				.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), period);
-		criteria.addEqualExpression(entryBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_TYPE),
+				.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), period);
+		criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_TYPE),
 				accountEntryType);
 		criteria.addEqualExpression(entryBean
-				.getFieldName(IAccountAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel);
+				.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel);
 		List<ITransferObject> list = entryBean.getList(criteria);
 		return (list.size() > 0);
 	}
@@ -156,11 +156,11 @@ public class EndPeriodEntriesController {
 
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(entryBean
-					.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), getPreviousPeriod());
-			criteria.addEqualExpression(entryBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_TYPE),
+					.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), getPreviousPeriod());
+			criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_TYPE),
 					AccountEntryType.CLOSING);
 			criteria.addEqualExpression(entryBean
-					.getFieldName(IAccountAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), getSecurityLevel());
+					.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), getSecurityLevel());
 			List<ITransferObject> list = entryBean.getList(criteria);
 			if (list.size() <= 0) {
 				String msg = "No existe asiento de cierre en el ejercicio " + getPreviousPeriod()
@@ -172,10 +172,10 @@ public class EndPeriodEntriesController {
 			IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 			Criteria detailCriteria = new Criteria();
 			detailCriteria.addEqualExpression(entryDetailBean
-					.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), previous
+					.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), previous
 					.getId());
 			detailCriteria.addOrder(entryDetailBean
-					.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_LINE));
+					.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_LINE));
 			List<ITransferObject> details = entryDetailBean.getList(detailCriteria);
 			if (details.size() <= 0) {
 				String msg = "El asiento de cierre en el ejercicio " + getPreviousPeriod()

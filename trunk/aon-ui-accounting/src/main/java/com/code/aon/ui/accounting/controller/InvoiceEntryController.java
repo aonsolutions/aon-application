@@ -15,17 +15,18 @@ import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.AccountEntry;
-import com.code.aon.account.AccountEntryDetail;
-import com.code.aon.account.InvoiceEntryDetail;
-import com.code.aon.account.InvoiceEntryHeader;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.InvoiceDetailAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.account.dao.IAccountAlias;
-import com.code.aon.account.enumeration.AccountEntryType;
+import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.InvoiceEntryDetail;
+import com.code.aon.accounting.InvoiceEntryHeader;
+import com.code.aon.accounting.dao.IAccountingAlias;
+import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -33,6 +34,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.Company;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.finance.BankAccount;
@@ -48,7 +50,6 @@ import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.FinanceGenerator;
-import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
@@ -59,7 +60,7 @@ public class InvoiceEntryController {
 	
 	private static final Logger LOGGER = Logger.getLogger(InvoiceEntryController.class.getName());
 	
-	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
+//	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 	
 	private AccountEntryInvoiceWriter writer;
 	
@@ -685,7 +686,7 @@ public class InvoiceEntryController {
 		try {
 			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
+			criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
 			Iterator<ITransferObject> iter = accountEntryDetailBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				accountEntryDetailBean.remove((AccountEntryDetail)iter.next());
@@ -756,12 +757,12 @@ public class InvoiceEntryController {
 			LOGGER.log(Level.SEVERE,"Error deleting accountEntryInvoice with id= " + accountEntryInvoice.getId(), e);
 		}
 	}
-	
+/*	
 	private void loadAccountEntryController(AccountEntry entry) {
 		try {
 			AccountEntryController entryController = (AccountEntryController)AonUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountAlias.ACCOUNT_ENTRY_ID), entry.getId());
+			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
 			entryController.setCriteria(criteria);
 			entryController.onSearch(null);
 			entryController.getModel().setRowIndex(0);
@@ -770,7 +771,7 @@ public class InvoiceEntryController {
 			LOGGER.log(Level.SEVERE, "Error loading AccountEntryController", e);
 		}
 	}
-	
+*/	
     private double round(double value, int precision) {
         double decimal = Math.pow(10, precision);
         return Math.round(decimal*value) / decimal;

@@ -8,20 +8,21 @@ import java.util.logging.Logger;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.AccountEntry;
-import com.code.aon.account.AccountEntryDetail;
-import com.code.aon.account.LeasingFeeEntryHeader;
-import com.code.aon.account.DefaultAccounts;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.util.AccountUtil;
-import com.code.aon.account.dao.IAccountAlias;
-import com.code.aon.account.enumeration.AccountEntryType;
+import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.DefaultAccounts;
+import com.code.aon.accounting.LeasingFeeEntryHeader;
+import com.code.aon.accounting.dao.IAccountingAlias;
+import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.Company;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
@@ -29,7 +30,6 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
-import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.utils.AccountPeriodValidator;
@@ -281,7 +281,7 @@ public class LeasingFeeEntryController {
 		try {
 			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
+			criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
 			Iterator iter = accountEntryDetailBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				accountEntryDetailBean.remove((AccountEntryDetail)iter.next());
@@ -346,7 +346,7 @@ public class LeasingFeeEntryController {
 		try {
 			AccountEntryController entryController = (AccountEntryController)AonUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountAlias.ACCOUNT_ENTRY_ID), entry.getId());
+			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
 			entryController.setCriteria(criteria);
 			entryController.onSearch(null);
 			entryController.getModel().setRowIndex(0);

@@ -10,9 +10,9 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import com.code.aon.account.vat.Vat;
-import com.code.aon.account.vat.VatCollection;
-import com.code.aon.account.vat.VatCollectionParameters;
+import com.code.aon.accounting.vat.Vat;
+import com.code.aon.accounting.vat.VatCollection;
+import com.code.aon.accounting.vat.VatCollectionParameters;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;

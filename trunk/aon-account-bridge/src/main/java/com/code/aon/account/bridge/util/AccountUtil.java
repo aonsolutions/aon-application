@@ -7,10 +7,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.DefaultAccounts;
-import com.code.aon.account.Leasing;
-import com.code.aon.account.Loan;
-import com.code.aon.account.Period;
+import com.code.aon.accounting.DefaultAccounts;
+import com.code.aon.accounting.Leasing;
+import com.code.aon.accounting.Loan;
+import com.code.aon.accounting.Period;
+import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.account.bridge.CreditorAccount;
 import com.code.aon.account.bridge.CustomerAccount;
 import com.code.aon.account.bridge.LeasingAccount;
@@ -34,6 +35,7 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Registry;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.supplier.dao.ISupplierAlias;
+
 
 public class AccountUtil {
 	
@@ -266,8 +268,8 @@ public class AccountUtil {
 	public static Period obtainPeriod(Date date) throws ManagerBeanException {
 		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 		Criteria criteria = new Criteria();
-		criteria.addGreaterThanOrEqualExpression(periodBean.getFieldName(IAccountAlias.PERIOD_DEADLINE), date);
-		criteria.addLessThanOrEqualExpression(periodBean.getFieldName(IAccountAlias.PERIOD_INITIATION_DATE), date);
+		criteria.addGreaterThanOrEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_DEADLINE), date);
+		criteria.addLessThanOrEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE), date);
 		Iterator iter = periodBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			return (Period)iter.next();

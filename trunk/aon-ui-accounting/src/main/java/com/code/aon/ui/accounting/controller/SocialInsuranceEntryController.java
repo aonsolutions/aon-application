@@ -10,15 +10,15 @@ import java.util.logging.Logger;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.AccountEntry;
-import com.code.aon.account.AccountEntryDetail;
-import com.code.aon.account.SocialInsuranceEntryHeader;
-import com.code.aon.account.AccountSummary;
-import com.code.aon.account.DefaultAccounts;
-import com.code.aon.account.Period;
 import com.code.aon.account.bridge.util.AccountUtil;
-import com.code.aon.account.dao.IAccountAlias;
-import com.code.aon.account.enumeration.AccountEntryType;
+import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.AccountSummary;
+import com.code.aon.accounting.DefaultAccounts;
+import com.code.aon.accounting.Period;
+import com.code.aon.accounting.SocialInsuranceEntryHeader;
+import com.code.aon.accounting.dao.IAccountingAlias;
+import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -179,10 +179,10 @@ private static final Logger LOGGER = Logger.getLogger(SocialInsuranceEntryContro
 
 		IManagerBean accountSummaryBean = BeanManager.getManagerBean(AccountSummary.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(accountSummaryBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_ACCOUNT_PERIOD), entry.getAccountPeriod());
-		criteria.addEqualExpression(accountSummaryBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_ACCOUNT_ID), account.getId());
-		criteria.addGreaterThanOrEqualExpression(accountSummaryBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_ENTRY_DATE), fromDate.getTime());
-		criteria.addLessThanOrEqualExpression(accountSummaryBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_ENTRY_DATE), toDate.getTime());
+		criteria.addEqualExpression(accountSummaryBean.getFieldName(IAccountingAlias.ACCOUNT_SUMMARY_ACCOUNT_PERIOD), entry.getAccountPeriod());
+		criteria.addEqualExpression(accountSummaryBean.getFieldName(IAccountingAlias.ACCOUNT_SUMMARY_ACCOUNT_ID), account.getId());
+		criteria.addGreaterThanOrEqualExpression(accountSummaryBean.getFieldName(IAccountingAlias.ACCOUNT_SUMMARY_ENTRY_DATE), fromDate.getTime());
+		criteria.addLessThanOrEqualExpression(accountSummaryBean.getFieldName(IAccountingAlias.ACCOUNT_SUMMARY_ENTRY_DATE), toDate.getTime());
 		Iterator iter = accountSummaryBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			AccountSummary accSum = (AccountSummary)iter.next();
@@ -196,7 +196,7 @@ private static final Logger LOGGER = Logger.getLogger(SocialInsuranceEntryContro
 		try {
 			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
+			criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
 			Iterator iter = accountEntryDetailBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				accountEntryDetailBean.remove((AccountEntryDetail)iter.next());
@@ -219,7 +219,7 @@ private static final Logger LOGGER = Logger.getLogger(SocialInsuranceEntryContro
 		try {
 			AccountEntryController entryController = (AccountEntryController)AonUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountAlias.ACCOUNT_ENTRY_ID), entry.getId());
+			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
 			entryController.setCriteria(criteria);
 			entryController.onSearch(null);
 			entryController.getModel().setRowIndex(0);

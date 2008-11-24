@@ -1,8 +1,8 @@
 package com.code.aon.ui.accounting.event;
 
-import com.code.aon.account.dao.IAccountAlias;
-import com.code.aon.account.enumeration.AccountEntryType;
-import com.code.aon.account.summary.SummaryProviderParameters;
+import com.code.aon.accounting.dao.IAccountingAlias;
+import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -27,17 +27,17 @@ public class StatementDetailListener extends ControllerAdapter {
 			Criteria criteria = c.getCriteria();
 			
 			if (params.getPeriod() != null && params.getPeriod().getId() != null) {
-				criteria.addEqualExpression(c.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD), params.getPeriod().getId());
+				criteria.addEqualExpression(c.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD), params.getPeriod().getId());
 			}
-			String alias = c.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE);
+			String alias = c.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE);
 			if (params.getFromDate() != null) {
 				criteria.addGreaterThanOrEqualExpression(alias,params.getFromDate()); 
 			}
 			if (params.getToDate() != null) {
 				criteria.addLessThanOrEqualExpression(alias,params.getToDate()); 
 			}
-			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(c.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE), AccountEntryType.OPENING));
-			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(c.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE), AccountEntryType.CLOSING));
+			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(c.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE), AccountEntryType.OPENING));
+			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(c.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE), AccountEntryType.CLOSING));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}

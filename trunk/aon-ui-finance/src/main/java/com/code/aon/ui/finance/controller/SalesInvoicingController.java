@@ -15,8 +15,6 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.AccountEntry;
-import com.code.aon.account.DefaultAccounts;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.InvoiceDetailAccount;
 import com.code.aon.account.bridge.ProductAccount;
@@ -25,7 +23,9 @@ import com.code.aon.account.bridge.enumeration.ProductAccountType;
 import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.account.dao.IAccountAlias;
-import com.code.aon.account.enumeration.AccountEntryType;
+import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.DefaultAccounts;
+import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -92,8 +92,6 @@ public class SalesInvoicingController extends BasicController {
 	/** SalesFinance controllers name. */
 	private static final String SALES_FINANCE_CONTROLLER_NAME = "salesFinance";
 	
-	private static final String MENU_MANAGER_NAME = "menuManager";
-
 	/** The price strategy. */
 	private IPriceStrategy priceStrategy;
 	

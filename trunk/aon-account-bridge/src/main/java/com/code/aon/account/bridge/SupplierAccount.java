@@ -19,6 +19,8 @@ import com.code.aon.supplier.Supplier;
 @Table(name="supplier_account")
 public class SupplierAccount implements ITransferObject {
 	
+	private static final long serialVersionUID = -4360062076830311608L;
+
 	/** The id. */
 	private Integer id;
 	

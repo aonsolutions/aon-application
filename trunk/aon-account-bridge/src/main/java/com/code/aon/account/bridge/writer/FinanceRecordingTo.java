@@ -3,13 +3,15 @@ package com.code.aon.account.bridge.writer;
 import java.util.Date;
 import java.util.List;
 
-import com.code.aon.account.enumeration.AccountEntryType;
+import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.RegistryBank;
 
 public class FinanceRecordingTo implements ITransferObject {
+
+	private static final long serialVersionUID = -7892480587508670847L;
 
 	private RegistryBank registryBank;
 	

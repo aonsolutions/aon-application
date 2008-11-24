@@ -1,6 +1,6 @@
 package com.code.aon.ui.accounting.controller;
 
-import com.code.aon.account.Period;
+import com.code.aon.accounting.Period;
 
 public class AccountConfigurationController {
 	

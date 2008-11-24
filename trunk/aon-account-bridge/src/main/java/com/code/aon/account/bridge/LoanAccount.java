@@ -9,12 +9,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.Loan;
+import com.code.aon.accounting.Loan;
 import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name="loan_account")
 public class LoanAccount implements ITransferObject {
+
+	private static final long serialVersionUID = 4415920212702994723L;
 
 	private Integer id;
 	

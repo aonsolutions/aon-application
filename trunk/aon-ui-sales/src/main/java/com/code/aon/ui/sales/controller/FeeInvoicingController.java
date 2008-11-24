@@ -16,9 +16,6 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.AccountEntry;
-import com.code.aon.account.DefaultAccounts;
-import com.code.aon.account.Period;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.InvoiceDetailAccount;
 import com.code.aon.account.bridge.ProductAccount;
@@ -27,7 +24,11 @@ import com.code.aon.account.bridge.enumeration.ProductAccountType;
 import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.account.dao.IAccountAlias;
-import com.code.aon.account.enumeration.AccountEntryType;
+import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.DefaultAccounts;
+import com.code.aon.accounting.Period;
+import com.code.aon.accounting.dao.IAccountingAlias;
+import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -197,8 +198,8 @@ public class FeeInvoicingController extends BasicController {
 	public void onInvoice(ActionEvent event) throws InvoicingException, ManagerBeanException, ExpressionException {
 	    IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
         Criteria criteria = new Criteria();
-        criteria.addLessThanOrEqualExpression(periodBean.getFieldName(IAccountAlias.PERIOD_INITIATION_DATE), invoicingParams.getInvoiceDate());
-        criteria.addGreaterThanOrEqualExpression(periodBean.getFieldName(IAccountAlias.PERIOD_DEADLINE), invoicingParams.getInvoiceDate());
+        criteria.addLessThanOrEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE), invoicingParams.getInvoiceDate());
+        criteria.addGreaterThanOrEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_DEADLINE), invoicingParams.getInvoiceDate());
         if (periodBean.getList(criteria).size() == 0) {
             addMessage("There is no Account Period defined for this Invoicing Date");
         } else {

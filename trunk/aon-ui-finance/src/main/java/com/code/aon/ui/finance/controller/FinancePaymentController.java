@@ -1,21 +1,19 @@
 package com.code.aon.ui.finance.controller;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.account.AccountEntry;
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
 import com.code.aon.account.bridge.writer.FinanceRecordingTo;
-import com.code.aon.account.enumeration.AccountEntryType;
+import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -23,18 +21,14 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.RegistryBank;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.invoicing.FinanceTrackingWriter;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 public class FinancePaymentController extends BasicController {
 		
-	private static final Logger LOGGER = Logger.getLogger(FinancePaymentController.class.getName());
-	
 	private Double payedAmount;
 	
 	private Date paymentDate;
@@ -80,7 +74,6 @@ public class FinancePaymentController extends BasicController {
 		setRegistryBank(new RegistryBank());
 	}
 	
-	@SuppressWarnings("unused")
 	public void onPayment(ActionEvent event) throws ManagerBeanException{
 		if(getPayedAmount()==0){
 			AonUtil.addInfoMessage("No se puede realizar un pago de importe 0.0");

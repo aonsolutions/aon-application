@@ -7,11 +7,11 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 
-import com.code.aon.account.summary.Summary;
-import com.code.aon.account.summary.SummaryCollection;
-import com.code.aon.account.summary.SummaryMonthly;
-import com.code.aon.account.summary.SummaryProvider;
-import com.code.aon.account.summary.SummaryProviderParameters;
+import com.code.aon.accounting.summary.Summary;
+import com.code.aon.accounting.summary.SummaryCollection;
+import com.code.aon.accounting.summary.SummaryMonthly;
+import com.code.aon.accounting.summary.SummaryProvider;
+import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.util.AonUtil;

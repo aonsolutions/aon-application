@@ -37,8 +37,8 @@
 					<aon:outputLabel for="AccountEntry_type"
 						value="#{bundle.aon_type}" />
 					<aon:selectOneMenu id="AccountEntry_type"
+						converter="aon.EnumConverter"
 						valueChangeListener="#{accountEntry.addEqualExpression}">
-						<aon:enumConverter enum="com.code.aon.account.enumeration.AccountEntryType" />
 						<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
 						<f:selectItems value="#{accountingCollections.accountTypes}" />
 					</aon:selectOneMenu>
