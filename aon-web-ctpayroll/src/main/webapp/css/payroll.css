@@ -68,15 +68,15 @@
 	
 /* ---------- CLIENTES --------- */
 
-.aon-scroll-area-clientes td.aon-panelGrid-odd{
+.aon-scroll-area-principales td.aon-panelGrid-odd{
 	width: 140px;
 	min-width: 140px;
 	}
-.aon-scroll-area-clientes td.aon-panelGrid-even{
+.aon-scroll-area-principales td.aon-panelGrid-even{
 	width: 435px;
 	min-width: 435px;
 	}
-.aon-scroll-area-clientes table.aon-panelGrid {
+.aon-scroll-area-principales table.aon-panelGrid {
 	width: 1150px; 
 	}
 
