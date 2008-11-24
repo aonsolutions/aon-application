@@ -11,6 +11,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.enumeration.IndicadorDias;
 import com.code.aon.payroll.enumeration.TipoConvenio;
@@ -24,8 +27,8 @@ public class Convenio implements ITransferObject {
 
 	private String cdg;
 	private String description;
-	private String inddia;
-	private String tipcon;
+	private IndicadorDias inddia;
+	private TipoConvenio tipcon;
 	
 	/** niveles. */
 	private Set<Nivel> niveles = new HashSet<Nivel>();
@@ -57,15 +60,14 @@ public class Convenio implements ITransferObject {
 	 * 
 	 * @return
 	 */
+	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.IndicadorDias")} )
 	@Column(name = "inddia", nullable = false, length = 1)
-	public String getInddia() {
+	public IndicadorDias getInddia() {
 		return this.inddia;
 	}
 
-	public void setInddia(String inddia) {
+	public void setInddia(IndicadorDias inddia) {
 		this.inddia = inddia;
-		this.inddiaenum = (this.inddia != null) ? IndicadorDias
-				.valueOf("Ind" + this.inddia) : null;
 	}
 
 	/**
@@ -73,43 +75,16 @@ public class Convenio implements ITransferObject {
 	 * 
 	 * @return
 	 */
+	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.TipoConvenio")} )
 	@Column(name = "tipcon", length = 1)
-	public String getTipcon() {
+	public TipoConvenio getTipcon() {
 		return this.tipcon;
 	}
 
-	public void setTipcon(String tipcon) {
+	public void setTipcon(TipoConvenio tipcon) {
 		this.tipcon = tipcon;
-		this.tipconenum = (this.tipcon != null) ? TipoConvenio
-				.valueOf("Con" + this.tipcon) : null;
 	}
 
-	// TODO Problemas en la creacion del enumerado a partir de un String.
-	private IndicadorDias inddiaenum;
-
-	@Transient
-	public IndicadorDias getInddiaenum() {
-		return inddiaenum;
-	}
-
-	public void setInddiaenum(IndicadorDias inddiaenum) {
-		this.inddiaenum = inddiaenum;
-		setInddia((this.inddiaenum != null) ? this.inddiaenum.name().substring(3) : null);
-	}
-
-	// TODO Problemas en la creacion del enumerado a partir de un String.
-	private TipoConvenio tipconenum;
-
-	@Transient
-	public TipoConvenio getTipconenum() {
-		return tipconenum;
-	}
-
-	public void setTipconenum(TipoConvenio tipconenum) {
-		this.tipconenum = tipconenum;
-		setTipcon((this.tipconenum != null) ? this.tipconenum.name().substring(3) : null);
-	}
-	
 	@OneToMany(mappedBy = "convenio", cascade={CascadeType.REMOVE})
 	public Set<Nivel> getNiveles() {
 		return niveles;

@@ -106,9 +106,11 @@
 								<aon:inputText id="Convenio_pagas_perini" size="10" maxlength="8"
 									valueChangeListener="#{convenio.addDirectExpression}" />
 									
-								<aon:outputLabel for="Convenio_pagas_indinienum"
+								<aon:outputLabel for="Convenio_pagas_indini"
 									value="#{appBundle.aon_payroll_auxiliares_convenios__indini}" />
-								<aon:selectOneMenu id="Convenio_pagas_indinienum" >												
+								<aon:selectOneMenu id="Convenio_pagas_indini" 
+									valueChangeListener="#{convenio.addDirectExpression}" >
+									<aon:enumConverter enum="com.code.aon.payroll.enumeration.IndicadorAnio" /> 												
 									<f:selectItem value="#{null}" itemLabel=" -  " />
 									<f:selectItems value="#{pagaext.listaIndicadorAnio}" />
 								</aon:selectOneMenu>
@@ -118,9 +120,11 @@
 								<aon:inputText id="Convenio_pagas_perfin" size="10" maxlength="8"
 									valueChangeListener="#{convenio.addDirectExpression}" />
 									
-								<aon:outputLabel for="Convenio_pagas_indfinenum"
+								<aon:outputLabel for="Convenio_pagas_indfin"
 									value="#{appBundle.aon_payroll_auxiliares_convenios__indfin}" />
-								<aon:selectOneMenu id="Convenio_pagas_indfinenum" >												
+								<aon:selectOneMenu id="Convenio_pagas_indfin" 
+									valueChangeListener="#{convenio.addDirectExpression}" >
+									<aon:enumConverter enum="com.code.aon.payroll.enumeration.IndicadorAnio" />												
 									<f:selectItem value="#{null}" itemLabel=" -  " />
 									<f:selectItems value="#{pagaext.listaIndicadorAnio}" />
 								</aon:selectOneMenu>
@@ -130,9 +134,11 @@
 								<aon:inputText id="Convenio_pagas_feccob" size="10" maxlength="8"
 									valueChangeListener="#{convenio.addDirectExpression}" />
 									
-								<aon:outputLabel for="Convenio_pagas_proratenum"
+								<aon:outputLabel for="Convenio_pagas_prorat"
 									value="#{appBundle.aon_payroll_auxiliares_convenios__prorat}" />
-								<aon:selectOneMenu id="Convenio_pagas_proratenum" >												
+								<aon:selectOneMenu id="Convenio_pagas_prorat" 
+									valueChangeListener="#{convenio.addDirectExpression}" >
+									<aon:enumConverter enum="com.code.aon.payroll.enumeration.TipoProrrateo" />												
 									<f:selectItem value="#{null}" itemLabel=" -  " />
 									<f:selectItems value="#{pagaext.listaTipoProrrateo}" />
 								</aon:selectOneMenu>

@@ -136,13 +136,13 @@
 				<f:facet name="header">
 					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__indini}" />
 				</f:facet>
-				<aon:outputText value="#{to.indinienum}" rendered="#{to!=pagaext.to}" />
-				<aon:selectOneMenu id="IndAnioDesdeUpdate" value="#{pagaext.to.indinienum}" rendered="#{to==pagaext.to}">												
+				<aon:outputText value="#{to.indini}" rendered="#{to!=pagaext.to}" />
+				<aon:selectOneMenu id="IndAnioDesdeUpdate" value="#{pagaext.to.indini}" rendered="#{to==pagaext.to}">												
 					<f:selectItem value="#{null}" itemLabel=" -  " />
 					<f:selectItems value="#{pagaext.listaIndicadorAnio}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
-					<aon:selectOneMenu id="IndAnioDesdeNew" value="#{pagaext.to.indinienum}" rendered="#{pagaext.new}">												
+					<aon:selectOneMenu id="IndAnioDesdeNew" value="#{pagaext.to.indini}" rendered="#{pagaext.new}">												
 						<f:selectItem value="#{null}" itemLabel=" -  " />
 						<f:selectItems value="#{pagaext.listaIndicadorAnio}" />
 					</aon:selectOneMenu>
@@ -168,13 +168,13 @@
 				<f:facet name="header">
 					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__indfin}" />
 				</f:facet>
-				<aon:outputText value="#{to.indfinenum}" rendered="#{to!=pagaext.to}" />
-				<aon:selectOneMenu id="IndAnioHastaUpdate" value="#{pagaext.to.indfinenum}" rendered="#{to==pagaext.to}">												
+				<aon:outputText value="#{to.indfin}" rendered="#{to!=pagaext.to}" />
+				<aon:selectOneMenu id="IndAnioHastaUpdate" value="#{pagaext.to.indfin}" rendered="#{to==pagaext.to}">												
 					<f:selectItem value="#{null}" itemLabel=" -  " />
 					<f:selectItems value="#{pagaext.listaIndicadorAnio}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
-					<aon:selectOneMenu id="IndAnioHastaNew" value="#{pagaext.to.indfinenum}" rendered="#{pagaext.new}">												
+					<aon:selectOneMenu id="IndAnioHastaNew" value="#{pagaext.to.indfin}" rendered="#{pagaext.new}">												
 						<f:selectItem value="#{null}" itemLabel=" -  " />
 						<f:selectItems value="#{pagaext.listaIndicadorAnio}" />
 					</aon:selectOneMenu>
@@ -200,13 +200,13 @@
 				<f:facet name="header">
 					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__prorat}" />
 				</f:facet>
-				<aon:outputText value="#{to.proratenum}" rendered="#{to!=pagaext.to}" />
-				<aon:selectOneMenu id="TipoProUpdate" value="#{pagaext.to.proratenum}" rendered="#{to==pagaext.to}">												
+				<aon:outputText value="#{to.prorat}" rendered="#{to!=pagaext.to}" />
+				<aon:selectOneMenu id="TipoProUpdate" value="#{pagaext.to.prorat}" rendered="#{to==pagaext.to}">												
 					<f:selectItem value="#{null}" itemLabel=" -  " />
 					<f:selectItems value="#{pagaext.listaTipoProrrateo}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
-					<aon:selectOneMenu id="TipoProNew" value="#{pagaext.to.proratenum}" rendered="#{pagaext.new}">												
+					<aon:selectOneMenu id="TipoProNew" value="#{pagaext.to.prorat}" rendered="#{pagaext.new}">												
 						<f:selectItem value="#{null}" itemLabel=" -  " />
 						<f:selectItems value="#{pagaext.listaTipoProrrateo}" />
 					</aon:selectOneMenu>
@@ -381,13 +381,13 @@
 				<f:facet name="header">
 					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__indini}" />
 				</f:facet>
-				<aon:outputText value="#{to.indinienum}" rendered="#{to!=pagaext.to}" />
-				<aon:selectOneMenu id="IndAnioDesdeUpdate" value="#{pagaext.to.indinienum}" rendered="#{to==pagaext.to}">												
+				<aon:outputText value="#{to.indini}" rendered="#{to!=pagaext.to}" />
+				<aon:selectOneMenu id="IndAnioDesdeUpdate" value="#{pagaext.to.indini}" rendered="#{to==pagaext.to}">												
 					<f:selectItem value="#{null}" itemLabel=" -  " />
 					<f:selectItems value="#{pagaext.listaIndicadorAnio}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
-					<aon:selectOneMenu id="IndAnioDesdeNew" value="#{pagaext.to.indinienum}" rendered="#{pagaext.new}">												
+					<aon:selectOneMenu id="IndAnioDesdeNew" value="#{pagaext.to.indini}" rendered="#{pagaext.new}">												
 						<f:selectItem value="#{null}" itemLabel=" -  " />
 						<f:selectItems value="#{pagaext.listaIndicadorAnio}" />
 					</aon:selectOneMenu>
@@ -413,13 +413,13 @@
 				<f:facet name="header">
 					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__indfin}" />
 				</f:facet>
-				<aon:outputText value="#{to.indfinenum}" rendered="#{to!=pagaext.to}" />
-				<aon:selectOneMenu id="IndAnioHastaUpdate" value="#{pagaext.to.indfinenum}" rendered="#{to==pagaext.to}">												
+				<aon:outputText value="#{to.indfin}" rendered="#{to!=pagaext.to}" />
+				<aon:selectOneMenu id="IndAnioHastaUpdate" value="#{pagaext.to.indfin}" rendered="#{to==pagaext.to}">												
 					<f:selectItem value="#{null}" itemLabel=" -  " />
 					<f:selectItems value="#{pagaext.listaIndicadorAnio}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
-					<aon:selectOneMenu id="IndAnioHastaNew" value="#{pagaext.to.indfinenum}" rendered="#{pagaext.new}">												
+					<aon:selectOneMenu id="IndAnioHastaNew" value="#{pagaext.to.indfin}" rendered="#{pagaext.new}">												
 						<f:selectItem value="#{null}" itemLabel=" -  " />
 						<f:selectItems value="#{pagaext.listaIndicadorAnio}" />
 					</aon:selectOneMenu>
@@ -445,13 +445,13 @@
 				<f:facet name="header">
 					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_convenios__prorat}" />
 				</f:facet>
-				<aon:outputText value="#{to.proratenum}" rendered="#{to!=pagaext.to}" />
-				<aon:selectOneMenu id="TipoProUpdate" value="#{pagaext.to.proratenum}" rendered="#{to==pagaext.to}">												
+				<aon:outputText value="#{to.prorat}" rendered="#{to!=pagaext.to}" />
+				<aon:selectOneMenu id="TipoProUpdate" value="#{pagaext.to.prorat}" rendered="#{to==pagaext.to}">												
 					<f:selectItem value="#{null}" itemLabel=" -  " />
 					<f:selectItems value="#{pagaext.listaTipoProrrateo}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
-					<aon:selectOneMenu id="TipoProNew" value="#{pagaext.to.proratenum}" rendered="#{pagaext.new}">												
+					<aon:selectOneMenu id="TipoProNew" value="#{pagaext.to.prorat}" rendered="#{pagaext.new}">												
 						<f:selectItem value="#{null}" itemLabel=" -  " />
 						<f:selectItems value="#{pagaext.listaTipoProrrateo}" />
 					</aon:selectOneMenu>

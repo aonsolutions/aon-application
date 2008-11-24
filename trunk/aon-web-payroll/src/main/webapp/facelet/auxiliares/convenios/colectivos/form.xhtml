@@ -33,13 +33,13 @@
 					</aon:inputText>
 					
 					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__indicador}" />
-					<aon:selectOneMenu id="IndicadorDias" value="#{convenio.to.inddiaenum}" >						
+					<aon:selectOneMenu id="IndicadorDias" value="#{convenio.to.inddia}" >						
 						<f:selectItem value="#{null}" itemLabel=" -  " />
 						<f:selectItems value="#{convenio.listaIndicadorDias}"/>
 					</aon:selectOneMenu>
 					
 					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__tipo}" />
-					<aon:selectOneMenu id="TipoConvenio" value="#{convenio.to.tipconenum}" >												
+					<aon:selectOneMenu id="TipoConvenio" value="#{convenio.to.tipcon}" >												
 						<f:selectItem value="#{null}" itemLabel=" -  " />
 						<f:selectItems value="#{convenio.listaTipoConvenios}" />
 					</aon:selectOneMenu>
