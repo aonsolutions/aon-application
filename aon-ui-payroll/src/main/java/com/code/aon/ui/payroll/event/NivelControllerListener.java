@@ -30,7 +30,7 @@ public class NivelControllerListener extends ControllerAdapter implements IPayro
 		resetCategoriaModel();
 		resetPercepcionModel();
 	}
-	
+	 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {

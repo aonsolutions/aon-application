@@ -2754,6 +2754,10 @@
 			<property-name>beanName</property-name>
 			<value>cliente</value>
 		</managed-property>
+			<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Cliente_cdg</value>
+		</managed-property>
 	  <managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -2853,6 +2857,10 @@
 			<value>domicilio</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Domicilio_cdg</value>
+		</managed-property>
+		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
@@ -2912,6 +2920,10 @@
 			<property-name>beanName</property-name>
 			<value>cuenta</value>
 			</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Cuentas_cdg</value>
+		</managed-property>
      	<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>

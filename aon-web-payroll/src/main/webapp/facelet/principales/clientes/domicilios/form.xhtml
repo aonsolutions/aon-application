@@ -19,7 +19,7 @@
 				<ui:param name="controller" value="#{domicilio}"/>
 		     	<aon:methodParam name="backAction" value="cliente_form"/>	
 			</ui:include>	
-
+          <aon:div id="domicilios" styleClass="aon-scroll-area aon-scroll-area-clientes">
 			<aon:div id="delegacion" styleClass="aon-scroll-area">
 			 
 			 	
@@ -28,7 +28,7 @@
 				
 				<aon:outputLabel value="#{appBundle.aon_payroll_principales_domicilio_cdg}" />
 					<aon:inputText value="#{domicilio.to.cdg}" 
-						 size="30" maxlength="6" />
+						 size="32" maxlength="6" />
 			 				
 			 		<aon:outputLabel for="Cliente_cdg" 
 						value="#{appBundle.aon_payroll_principales_domicilio_cli}" />
@@ -46,7 +46,7 @@
 						</aon:lookupButton>
 						<aon:inputText id="Cliente_description"
 							value="#{(domicilio.to.cliente.descripcion!=null)?(domicilio.to.cliente.descripcion):('')}"   
-							size="60" disabled="true" />
+							size="55" disabled="true" />
 					</aon:div>
 							 		
 				
@@ -113,7 +113,7 @@
 						</aon:lookupButton>
 						<aon:inputText id="Pro_description"
 							value="#{(domicilio.to.provincia.descripcion!=null)?(domicilio.to.provincia.descripcion):('')}"   
-							size="60" disabled="true" />
+							size="34" disabled="true" />
 					</aon:div>
 					
 					
@@ -159,6 +159,7 @@
 				
 	         </aon:div>
 			</aon:div>
+		   </aon:div>
 		</aon:form>
 		
 	    <aon:lookupButtonPopup lookup="#{clienteLookup}" />	

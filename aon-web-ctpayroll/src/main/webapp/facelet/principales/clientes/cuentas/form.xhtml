@@ -22,10 +22,12 @@
 				<ui:param name="controller" value="#{cuenta}"/>
 				<aon:methodParam name="backAction" value="cliente_form"/>	
 			</ui:include>
+			 <aon:div id="cuentas" styleClass="aon-scroll-area aon-scroll-area-clientes">
+			
 			  <aon:div id="datos2" styleClass="aon-scroll-area">		
 				<aon:panelGrid columns="2" dir="true" width="100%" style="margin-bottom=2px;">
 				
-	   
+	
 						
 					<aon:outputLabel value="#{appBundle.aon_payroll_principales_cuenta_cdg}" />
 					<aon:inputText value="#{cuenta.to.cdg}" 
@@ -50,16 +52,16 @@
 							size="60" disabled="true" />
 					</aon:div>
 						
-							 <aon:outputLabel for="Cuenta_entidad" 
-						value="#{appBundle.aon_payroll_principales_domicilio_cli}" />
+			  <aon:outputLabel for="Cuenta_entidad" 
+						value="#{appBundle.aon_payroll_principales_cuenta_entidad_nom}" />
 					<aon:div styleClass="aon-lookup">
 						<aon:lookupInputText id="Cuenta_ent"
 							lookup="#{entidadLookup}"
-							reRender="Cuenta_desc"
-							value="#{cuenta.to.entidadcdg}" size="5">
+							reRender="Cuenta_entdesc,sucursalLookupDiv"
+							value="#{cuenta.to.entidad.cdg}" size="5">
 						</aon:lookupInputText>
 						<aon:lookupButton id="Cuenta_lookup"
-							windowTitle="#{appBundle.aon_payroll_principales_clientes}"
+							windowTitle="#{appBundle.aon_payroll_principales_cuenta_entidad_nom}"
 							selectReRender="Cuenta_ent,Cuenta_entdesc"
 							lookup="#{entidadLookup}" minHeight="440"
 							property="#{cuenta.to.entidad}">
@@ -69,16 +71,16 @@
 							size="60" disabled="true" />
 					</aon:div>
 						
-								 <aon:outputLabel for="Cuenta_sucursal" 
-						value="#{appBundle.aon_payroll_principales_domicilio_cli}" />
-					<aon:div styleClass="aon-lookup">
+					 <aon:outputLabel for="Cuenta_sucursal" 
+						value="#{appBundle.aon_payroll_principales_cuenta_sucursal}" />
+					<aon:div id="sucursalLookupDiv" styleClass="aon-lookup">
 						<aon:lookupInputText id="Cuenta_suc"
 							lookup="#{sucursalLookup}"
 							reRender="Cuenta_sucdesc"
 							value="#{cuenta.to.sucursal.id.cdg}" size="5">
 						</aon:lookupInputText>
 						<aon:lookupButton id="Cuentasuc_lookup"
-							windowTitle="#{appBundle.aon_payroll_principales_clientes}"
+							windowTitle="#{appBundle.aon_payroll_principales_cuenta_sucursal}"
 							selectReRender="Cuenta_suc,Cuenta_sucdesc"
 							lookup="#{sucursalLookup}" minHeight="440"
 							property="#{cuenta.to.sucursal}">
@@ -86,21 +88,9 @@
 						<aon:inputText id="Cuenta_sucdesc"
 							value="#{(cuenta.to.sucursal.id.codent!=null)?(cuenta.to.sucursal.id.codent):('')}"   
 							size="60" disabled="true" />
-					</aon:div>
+					</aon:div>		
 							
-							<aon:outputLabel value="#{appBundle.aon_payroll_principales_cuenta_entidad_nom}" />
-					<aon:inputText value="#{cuenta.to.entidad.description}" 
-						 size="50" maxlength="20" />
-						 
-							<aon:outputLabel value="#{appBundle.aon_payroll_principales_cuenta_entidad}" />
-					<aon:inputText value="#{cuenta.to.entidad.cdg}" 
-						 size="50" maxlength="20" />
-						
-							<aon:outputLabel value="#{appBundle.aon_payroll_principales_cuenta_sucursal}" />
-					<aon:inputText value="#{cuenta.to.sucursal.id.cdg}" 
-						 size="50" maxlength="20" />
-						
-							<aon:outputLabel value="#{appBundle.aon_payroll_principales_cuenta_dc}" />
+					<aon:outputLabel value="#{appBundle.aon_payroll_principales_cuenta_dc}" />
 					<aon:inputText value="#{cuenta.to.dc}" 
 						 size="50" maxlength="20" />
 			  		
@@ -114,7 +104,7 @@
 	         </aon:div> 
 	         
 		
-		
+		</aon:div>
 		</aon:form>
        <aon:lookupButtonPopup lookup="#{clienteLookup}" />	
 	   <aon:lookupButtonPopup lookup="#{entidadLookup}" />
