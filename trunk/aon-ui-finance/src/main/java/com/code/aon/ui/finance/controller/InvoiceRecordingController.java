@@ -9,9 +9,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.account.Account;
@@ -37,33 +35,21 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.InvoicePriceStrategy;
-import com.code.aon.finance.recording.RecordingParameters;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.PageDataModel;
 import com.code.aon.ui.util.AonUtil;
 
 public class InvoiceRecordingController extends BasicController{
 	
 	private static final Logger LOGGER = Logger.getLogger(InvoiceRecordingController.class.getName());
 	
-	private RecordingParameters recordingParams;
-
 	private AccountEntryInvoiceWriter accountEntryInvoiceWriter;
 
 	private ArrayList<Invoice> checks = new ArrayList<Invoice>();
 
 	private IPriceStrategy priceStrategy;
-
-	public RecordingParameters getRecordingParams() {
-		return recordingParams;
-	}
-
-	public void setRecordingParams(RecordingParameters recordingParams) {
-		this.recordingParams = recordingParams;
-	}
 
 	public AccountEntryInvoiceWriter getAccountEntryInvoiceWriter() {
 		if(accountEntryInvoiceWriter == null){
@@ -77,12 +63,6 @@ public class InvoiceRecordingController extends BasicController{
 			priceStrategy = new InvoicePriceStrategy();
 		}
 		return priceStrategy;
-	}
-	
-	public void rowSelected(ValueChangeEvent event) {
-		if (event.getNewValue() != null) {
-			setRowChecked(((Boolean) event.getNewValue()).booleanValue());
-		}
 	}
 
 	@SuppressWarnings({"unused","unchecked"})
@@ -133,25 +113,15 @@ public class InvoiceRecordingController extends BasicController{
 	@Override
 	public void onEditSearch(ActionEvent event) {
 		super.onEditSearch(event);
-		initializeSearch();
-	}
-	
-	private void initializeSearch() {
-		try {
-			((PageDataModel)this.getModel()).resize(0);
-			recordingParams = new RecordingParameters();
-			recordingParams.setInvoiceType(InvoiceType.SALES);
-			clearCheckedInvoices();
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage("Error initializing search");
-			LOGGER.log(Level.SEVERE, "Error initializing search", e);
-			throw new AbortProcessingException(e.getMessage());
-		}
+		clearCheckedInvoices();
 	}
 	
 	public boolean isModelToRecordable() throws ManagerBeanException{
-		Invoice invoice = (Invoice)this.getModel().getRowData();
-		return isRecordable(invoice);
+		if ( getModel().isRowAvailable() ) {
+			Invoice invoice = (Invoice)this.getModel().getRowData();
+			return isRecordable(invoice);
+		}
+		return false;
 	}
 	
 	private boolean isRecordable(Invoice invoice) throws ManagerBeanException {
@@ -167,10 +137,6 @@ public class InvoiceRecordingController extends BasicController{
 		return types;
 	}
 
-	public boolean isSales(){
-		return getRecordingParams().getInvoiceType().equals(InvoiceType.SALES);
-	}
-	
 	@SuppressWarnings("unchecked")
 	public void onRecordSelected(ActionEvent event){
 		Iterator<Invoice> iter = getCheckedInvoices().iterator();

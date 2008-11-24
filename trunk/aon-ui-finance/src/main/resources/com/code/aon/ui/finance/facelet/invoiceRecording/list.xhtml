@@ -9,7 +9,7 @@
 
 	<ui:define name="content">
 	
-		<aon:form id="invoiceRemoverList">
+		<aon:form id="invoiceRecordingList">
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
@@ -18,15 +18,12 @@
 				<ui:param name="skipResetButton" value="true" />
 				
 				<ui:define name="additionalToolbarContent">
-					<aon:confirmButton id="remove_selected"
-						value="#{financeBundle.finance_remove_selected}"
-						rendered="#{invoiceRemover.model.rowCount > 0}"
-						reRender="invoiceRemoverDataDiv"
-						styleClass="aon-finding-toolbar-item aon-icon-delete"
-						confirmTitle="#{bundle.aon_confirm_title}"
-						confirmMessage="#{bundle.aon_remove_confirm}"
-						confirmActionListener="#{invoiceRemover.onRemoveSelected}"
-						accesskey="#{bundle.aon_key_remove}" />
+					<aon:commandButton id="record_selected"
+						value="#{financeBundle.finance_record_selected}"
+						rendered="#{invoiceRecording.model.rowCount > 0}"
+						reRender="invoiceRecordingDataDiv"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						actionListener="#{invoiceRecording.onRecordSelected}" />
 				</ui:define>				
 				
 			</ui:decorate>
@@ -34,34 +31,34 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:div styleClass="aon-toolbar" rendered="#{invoiceRemover.model.rowCount > 0}">
+				<aon:div styleClass="aon-toolbar" rendered="#{invoiceRecording.model.rowCount > 0}">
 					<aon:commandButton title="#{bundle.aon_check_all}"
 						styleClass="aon-finding-toolbar-item aon-icon-checkAll"
 						value="#{bundle.aon_check_all}"
-						actionListener="#{invoiceRemover.checkAll}" reRender="invoiceRemoverDataDiv"
+						actionListener="#{invoiceRecording.checkAll}" reRender="invoiceRecordingDataDiv"
 						onclick="Richfaces.showModalPanel('waitProccess')" 
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
 					<aon:commandButton title="#{bundle.aon_uncheck_all}"
 						styleClass="aon-finding-toolbar-item aon-icon-checkNone"
 						value="#{bundle.aon_uncheck_all}"
-						actionListener="#{invoiceRemover.checkNone}" reRender="invoiceRemoverDataDiv"
+						actionListener="#{invoiceRecording.checkNone}" reRender="invoiceRecordingDataDiv"
 						onclick="Richfaces.showModalPanel('waitProccess')" 
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 				</aon:div>
 
-				<aon:div id="invoiceRemoverDataDiv" >
-					<aon:dataTable id="invoiceRemoverData" value="#{invoiceRemover.model}"
-						var="to" rows="20" rendered="#{invoiceRemover.model.rowCount > 0}"
+				<aon:div id="invoiceRecordingDataDiv" rendered="#{invoiceRecording.model.rowCount > 0}">
+					<aon:dataTable id="invoiceRecordingData" value="#{invoiceRecording.model}"
+						var="to" rows="20"
 						columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
 							 aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
-	
+
 						<aon:column>
 							<f:facet name="header">
 								<aon:outputText value="&#160;" />
 							</f:facet>
 							<aon:selectBooleanCheckbox id="Included_Row_checked"
-								value="#{invoiceRemover.rowChecked}"
-								rendered="#{invoiceRemover.modelToRemovable}" />	
+								value="#{invoiceRecording.rowChecked}"
+								rendered="#{invoiceRecording.modelToRecordable}"/>	
 						</aon:column>
 	
 						<aon:column>
@@ -70,7 +67,7 @@
 							</f:facet>
 							<aon:outputText value="#{to.series} / #{to.number}" />
 						</aon:column>
-	
+
 						<aon:column>
 							<f:facet name="header">
 								<aon:outputText value="#{customerBundle.customer_customer}" />
@@ -87,7 +84,7 @@
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
 						</aon:column>
-	
+
 						<aon:column>
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_status}" />
@@ -95,7 +92,7 @@
 							<aon:outputText value="#{to.status}" />
 						</aon:column>
 					</aon:dataTable>
-					<aon:dataScroller2 for="invoiceRemoverData" showNote="true" />
+					<aon:dataScroller2 for="invoiceRecordingData" showNote="true" />
 				</aon:div>
 			</aon:div>
 		</aon:form>
