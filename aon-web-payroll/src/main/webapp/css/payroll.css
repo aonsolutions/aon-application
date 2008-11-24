@@ -66,17 +66,17 @@
 	padding:15px 26px;
 	}
 	
-/* ---------- CLIENTES --------- */
+/* ---------- FORMS PRINCIPALES --------- */
 
 .aon-scroll-area-principales td.aon-panelGrid-odd{
-	width: 140px;
-	min-width: 140px;
+	width: 145px;
+	min-width: 145px;
 	}
 .aon-scroll-area-principales td.aon-panelGrid-even{
 	width: 435px;
 	min-width: 435px;
 	}
 .aon-scroll-area-principales table.aon-panelGrid {
-	width: 1150px; 
+	width: 1160px; 
 	}
 
