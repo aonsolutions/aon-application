@@ -4,22 +4,29 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
+import com.code.aon.common.enumeration.IStringEnum;
 
 
-public enum TipoProrrateo implements IResourceable {
+public enum TipoProrrateo implements IResourceable, IStringEnum {
 
-	Tpro0,
-	Tpro1,
-	Tpro2,
-	Tpro3,
-	Tpro4,
-	Tpro5;
+	ANUAL("0"),
+	SEMESTRE1("1"),
+	SEMESTRE2("2"),
+	CUATRIMESTRE1("3"),
+	CUATRIMESTRE2("4"),
+	CUATRIMESTRE3("5");
 	
 	private static final String BASE_NAME = "com.code.aon.payroll.i18n.messages";
 
 	/** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_colectivos_";
 	
+    private String value;
+    
+    TipoProrrateo( String value ) {
+      	this.value = value;
+  	}
+    
 	/**
 	 * Returns a <code>String</code> with the transalation <code>Locale</code>
 	 * for the locale.
@@ -32,4 +39,9 @@ public enum TipoProrrateo implements IResourceable {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
+    
+    @Override
+	public String getValue() {
+		return value;
+	}
 }

@@ -11,6 +11,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.enumeration.IndicadorAnio;
 import com.code.aon.payroll.enumeration.TipoProrrateo;
@@ -24,11 +27,11 @@ public class Pagaext implements ITransferObject {
 
 	private PagaextPK id;
     private String perini;
-    private String indini;
+    private IndicadorAnio indini;
     private String perfin;
-    private String indfin;
+    private IndicadorAnio indfin;
     private String feccob;
-    private String prorat;
+    private TipoProrrateo prorat;
     private Complemento complemento;
     private Convenio convenio;
 
@@ -61,14 +64,15 @@ public class Pagaext implements ITransferObject {
      * Devuelve el Indicador Anio Desde
      * @return
      */
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.IndicadorAnio")} )
     @Column(name="indini", nullable=false, length=1)
-    public String getIndini() {
+    public IndicadorAnio getIndini() {
         return this.indini;
     }
     
-    public void setIndini(String indini) {
+    public void setIndini(IndicadorAnio indini) {
         this.indini = indini;
-        this.indinienum = (this.indini != null) ? IndicadorAnio.valueOf("IndA" + this.indini) : null;
+        //this.indinienum = (this.indini != null) ? IndicadorAnio.valueOf("IndA" + this.indini) : null;
     }
     
     /**
@@ -88,14 +92,15 @@ public class Pagaext implements ITransferObject {
      * Devuelve el Indicador Anio Hasta
      * @return
      */
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.IndicadorAnio")} )
     @Column(name="indfin", nullable=false, length=1)
-    public String getIndfin() {
+    public IndicadorAnio getIndfin() {
         return this.indfin;
     }
     
-    public void setIndfin(String indfin) {
+    public void setIndfin(IndicadorAnio indfin) {
         this.indfin = indfin;
-        this.indfinenum = (this.indfin != null) ? IndicadorAnio.valueOf("IndA" + this.indfin) : null;
+        //this.indfinenum = (this.indfin != null) ? IndicadorAnio.valueOf("IndA" + this.indfin) : null;
     }
     
     /**
@@ -115,14 +120,15 @@ public class Pagaext implements ITransferObject {
      * Devuelve el Tipo de Prorrateo
      * @return
      */
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.TipoProrrateo")} )
     @Column(name="prorat", nullable=false, length=1)
-    public String getProrat() {
+    public TipoProrrateo getProrat() {
         return this.prorat;
     }
     
-    public void setProrat(String prorat) {
+    public void setProrat(TipoProrrateo prorat) {
         this.prorat = prorat;
-        this.proratenum = (this.prorat != null) ? TipoProrrateo.valueOf("Tpro" + this.prorat) : null;
+        //this.proratenum = (this.prorat != null) ? TipoProrrateo.valueOf("Tpro" + this.prorat) : null;
     }
     
 	@ManyToOne(fetch=FetchType.EAGER)
@@ -145,6 +151,13 @@ public class Pagaext implements ITransferObject {
         this.convenio = convenio;
     }
     
+    
+    
+    
+    
+    
+    
+    
  // TODO Problemas en la creacion del enumerado a partir de un String.
 	private IndicadorAnio indinienum;
 
@@ -155,8 +168,13 @@ public class Pagaext implements ITransferObject {
 
 	public void setIndinienum(IndicadorAnio indinienum) {
 		this.indinienum = indinienum;
-		setIndini((this.indinienum != null) ? this.indinienum.name().substring(4) : null);
+		//setIndini((this.indinienum != null) ? this.indinienum.name().substring(4) : null);
 	}
+	
+	
+	
+	
+	
 	
 	// TODO Problemas en la creacion del enumerado a partir de un String.
 	private IndicadorAnio indfinenum;
@@ -168,8 +186,11 @@ public class Pagaext implements ITransferObject {
 
 	public void setIndfinenum(IndicadorAnio indfinenum) {
 		this.indfinenum = indfinenum;
-		setIndfin((this.indfinenum != null) ? this.indfinenum.name().substring(4) : null);
+		//setIndfin((this.indfinenum != null) ? this.indfinenum.name().substring(4) : null);
 	}
+	
+	
+	
 	
 	// TODO Problemas en la creacion del enumerado a partir de un String.
 	private TipoProrrateo proratenum;
@@ -181,7 +202,7 @@ public class Pagaext implements ITransferObject {
 
 	public void setProratenum(TipoProrrateo proratenum) {
 		this.proratenum = proratenum;
-		setProrat((this.proratenum != null) ? this.proratenum.name().substring(4) : null);
+		//setProrat((this.proratenum != null) ? this.proratenum.name().substring(4) : null);
 	}
 	
 	

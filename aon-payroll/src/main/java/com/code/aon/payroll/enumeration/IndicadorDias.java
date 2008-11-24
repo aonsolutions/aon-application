@@ -4,23 +4,30 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
+import com.code.aon.common.enumeration.IStringEnum;
 
 /**
  * Enumeración de Indicador de dias descuento, de Convenios Colectivos.
  */
-public enum IndicadorDias implements IResourceable {
+public enum IndicadorDias implements IResourceable, IStringEnum {
 
-	Ind0,
-	Ind1,
-	Ind2,
-	Ind3,
-	Ind4;
+	IND0("0"),
+	IND1("1"),
+	IND2("2"),
+	IND3("3"),
+	IND4("4"),;
     
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.payroll.i18n.messages";
 
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_colectivos_";
+    
+    private String value;
+    
+    IndicadorDias( String value ) {
+      	this.value = value;
+  	}
     
     /**
      * Returns a <code>String</code> with the transalation <code>Locale</code>
@@ -34,4 +41,9 @@ public enum IndicadorDias implements IResourceable {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
+    
+    @Override
+	public String getValue() {
+		return value;
+	}
 }
