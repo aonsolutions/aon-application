@@ -109,6 +109,15 @@
 								</aon:commandLink>							
 							</aon:div>
 							<aon:div>
+								<aon:commandLink id="cnae2009_form" action="cnae2009Maestro_form"
+										value="#{menuBundle.auxiliares_cotizacion__cnae2009}" disabled="true">
+									<aon:actionListener method="#{cnae2009Maestro.onEditSearch}" />
+									<aon:actionListener method="#{cnae2009Maestro.onSearch}" />
+									<aon:actionListener method="#{cnae2009Maestro.onSelectFirst}" />
+								</aon:commandLink>							
+							</aon:div>
+							
+							<aon:div>
 								<aon:commandLink id="cotizacion_Bonificacion" action="cotizacionBonificacion_form"
 									value="#{menuBundle.auxiliares_cotizacion__tipboni}" />
 							</aon:div>
@@ -155,6 +164,10 @@
 							<aon:div>
 								<aon:commandLink id="tiposCnae" action="tiposCnae_form"
 									value="#{menuBundle.auxiliares_tipos__tipocnae}"/>
+							</aon:div>
+							<aon:div>
+								<aon:commandLink id="tiposCnae2009" action="tiposCnae2009_form"
+									value="#{menuBundle.auxiliares_tipos__tipocnae2009}"/>
 							</aon:div>
 						</aon:div>
 					</aon:panel>

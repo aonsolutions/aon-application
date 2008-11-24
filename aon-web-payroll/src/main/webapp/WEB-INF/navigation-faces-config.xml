@@ -315,6 +315,17 @@
 	
 	<navigation-rule>
 		<navigation-case>
+			<from-outcome>tiposCnae2009_form</from-outcome>
+			<to-view-id>/facelet/auxiliares/tipos/cnae2009/grid.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>tiposCnae2009_search</from-outcome>
+			<to-view-id>/facelet/auxiliares/tipos/cnae2009/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
 			<from-outcome>admon_form</from-outcome>
 			<to-view-id>/facelet/auxiliares/organismos_entidades/admon/grid.xhtml</to-view-id>
 		</navigation-case>

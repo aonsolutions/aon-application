@@ -25,6 +25,7 @@ hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN
     <mapping class="com.code.aon.payroll.tipos.Documento" />
     <mapping class="com.code.aon.payroll.tipos.Empresario" />
     <mapping class="com.code.aon.payroll.tipos.TipoCnae" />
+    <mapping class="com.code.aon.payroll.tipos.TipoCnae2009" />
     <mapping class="com.code.aon.payroll.tipos.Registro" />
     <mapping class="com.code.aon.payroll.tipos.Incidencia" />
     <mapping class="com.code.aon.payroll.tipos.Autorizacion" />

@@ -45,13 +45,6 @@ public class DatosIrpfController extends PayrollBasicController {
 			if(searchFecfin != null){
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.ELEMIRPF_ELEMIRPFS_FECFIN), searchFecfin);
 			}*/
-			
-			if(searchFecini != null){
-				getCriteria().addEqualExpression("Elemirpf.elemirpfs.id.fecini", searchFecini);
-			}
-			if(searchFecfin != null){
-				getCriteria().addEqualExpression("Elemirpf.elemirpfs.fecfin", searchFecfin);
-			}
 				
 		} catch (ManagerBeanException e) {
 			LOGGER.log( Level.SEVERE, e.getMessage(), e );
