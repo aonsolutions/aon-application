@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.account.bridge.InvoiceDetailAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
@@ -24,13 +23,11 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceStatus;
-import com.code.aon.finance.invoicing.InvoiceRemovingParameters;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.finance.remover.IInvoiceDetailRemover;
 import com.code.aon.ui.finance.remover.InvoiceRemoverFactory;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.PageDataModel;
 import com.code.aon.ui.util.AonUtil;
 
 public class InvoiceRemover extends BasicController {
@@ -46,12 +43,6 @@ public class InvoiceRemover extends BasicController {
 			accountEntryInvoiceWriter = new AccountEntryInvoiceWriter();
 		}
 		return accountEntryInvoiceWriter;
-	}
-
-	public void rowSelected(ValueChangeEvent event) {
-		if (event.getNewValue() != null) {
-			setRowChecked(((Boolean) event.getNewValue()).booleanValue());
-		}
 	}
 
 	@SuppressWarnings({"unused","unchecked"})
@@ -102,23 +93,15 @@ public class InvoiceRemover extends BasicController {
 	@Override
 	public void onEditSearch(ActionEvent event) {
 		super.onEditSearch(event);
-		initializeSearch();
-	}
-	
-	private void initializeSearch() {
-		try {
-			((PageDataModel)this.getModel()).resize(0);
-			clearCheckedInvoices();
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage("Error initializing search");
-			LOGGER.log(Level.SEVERE, "Error initializing search", e);
-			throw new AbortProcessingException(e.getMessage());
-		}
+		clearCheckedInvoices();
 	}
 	
 	public boolean isModelToRemovable() throws ManagerBeanException{
-		Invoice invoice = (Invoice)this.getModel().getRowData();
-		return isRemovable(invoice);
+		if ( getModel().isRowAvailable() ) {
+			Invoice invoice = (Invoice)this.getModel().getRowData();
+			return isRemovable(invoice);
+		}
+		return false;
 	}
 	
 	private boolean isRemovable(Invoice invoice) throws ManagerBeanException {

@@ -27,19 +27,19 @@
 					<aon:div>
 						<aon:inputText id="Invoice_series"
 							onblur="toUpperCase(this);"
-							valueChangeListener="#{invoicePrint.addExpression}"
+							valueChangeListener="#{invoiceRemover.addExpression}"
 							size="5" maxlength="5">
 						</aon:inputText>
 						<aon:outputLabel for="Invoice_fromNumber"
 							styleClass="aon-form-date-label aon-padding-right"
 							value="#{bundle.aon_date_from}:" />
 						<aon:inputText id="Invoice_fromNumber" maxlength="10"
-							value="#{invoiceRemoverSearch.removingParams.fromNumber}" size="7" />
+							value="#{invoiceRemoverSearch.context.fromNumber}" size="7" />
 						<aon:outputLabel for="Invoice_toNumber"
 							styleClass="aon-form-date-label aon-padding-right"
 							value="#{bundle.aon_date_to}:" />							
 						<aon:inputText id="Invoice_toNumber" maxlength="10"
-							value="#{invoiceRemoverSearch.removingParams.fromNumber}" size="7" />
+							value="#{invoiceRemoverSearch.context.fromNumber}" size="7" />
 					</aon:div>
 
 					<aon:outputLabel for="Customer_id"
@@ -47,31 +47,31 @@
 					<aon:div styleClass="aon-lookup">
 						<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
 							reRender="Customer_full_name" lookupProperty="registry"
-							value="#{invoiceRemoverSearch.removingParams.registry.id}" size="5" />
+							value="#{invoiceRemoverSearch.context.registry.id}" size="5" />
 						<aon:lookupButton 
 							windowTitle="#{customerBundle.customer_selection}"
 							selectReRender="Customer_id,Customer_full_name" actionType="search"
 							lookup="#{customerLookup}" minHeight="460" minWidth="650"
-							property="#{invoiceRemoverSearch.removingParams.registry}" lookupProperty="registry">
+							property="#{invoiceRemoverSearch.context.registry}" lookupProperty="registry">
 						</aon:lookupButton>
 						<aon:inputText id="Customer_full_name"
-							value="#{(invoiceRemoverSearch.removingParams.registry.name!=null)?(invoiceRemoverSearch.removingParams.registry.fullName):('')}"
+							value="#{(invoiceRemoverSearch.context.registry.name!=null)?(invoiceRemoverSearch.context.registry.fullName):('')}"
 							size="50" disabled="true" />							
 					</aon:div>
 
-					<aon:outputLabel value="#{bundle.aon_date}" />
+					<aon:outputLabel value="#{financeBundle.finance_invoice_date}" />
 					<aon:div>
 						<aon:outputLabel for="Invoice_issueDate-From" styleClass="aon-form-date-label"
 							value="#{bundle.aon_date_from}:" />
 						<aon:selectInputDate id="Invoice_issueDate-From"
-							value="#{invoiceRemoverSearch.removingParams.fromDate}" timeZone="#{timeZoneController.timeZone}"
+							value="#{invoiceRemoverSearch.context.fromDate}" timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}">
 						</aon:selectInputDate>
 
 						<aon:outputLabel for="Invoice_issueDate-To" styleClass="aon-form-date-label"
 							value="#{bundle.aon_date_to}:" />
 						<aon:selectInputDate id="Invoice_issueDate-To"
-							value="#{invoiceRemoverSearch.removingParams.toDate}" timeZone="#{timeZoneController.timeZone}"
+							value="#{invoiceRemoverSearch.context.toDate}" timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}">
 						</aon:selectInputDate>
 					</aon:div>
