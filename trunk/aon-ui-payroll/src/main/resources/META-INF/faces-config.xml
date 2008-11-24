@@ -159,6 +159,31 @@
 			<value>tiposCnae</value>
 		</managed-property>
 	</managed-bean>
+	
+	<!-- ************* TIPOS DE CNAE2009 ***************** -->
+	<managed-bean>
+		<managed-bean-name>tiposCnae2009</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PayrollBasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.tipos.TipoCnae2009</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>tiposCnae2009</value>
+		</managed-property>
+	</managed-bean>
 
 	<!-- ************* COTIZACIONES - BONIFICACION ***************** -->
 	<managed-bean>
