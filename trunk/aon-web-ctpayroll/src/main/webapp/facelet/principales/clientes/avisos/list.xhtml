@@ -16,8 +16,8 @@
 		<aon:form id="clienteList">
 			
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_cuenta}" />
-				<ui:param name="controller" value="#{cuenta}"/>
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_aviso}" />
+				<ui:param name="controller" value="#{aviso}"/>
 				
 			</ui:include>
 
@@ -28,7 +28,7 @@
 					var="to" rows="20" 
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
-					<aon:rowSelector action="cuenta_form" actionListener="#{cuenta.onSelect}" />
+					<aon:rowSelector action="aviso_form" actionListener="#{aviso.onSelect}" />
 					
 					<aon:column>
 						<f:facet name="header">

@@ -231,7 +231,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
-			<value>/facelet/auxiliares/organismos_entidades/entidadLookup/list.xhtm</value>
+			<value>/facelet/auxiliares/organismos_entidades/entidades/entidadLookup/list.xhtml</value>
 		</managed-property>
 	</managed-bean>	
 	
@@ -250,7 +250,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
-			<value>/facelet/auxiliares/organismos_entidades/sucursalLookup/list.xhtml</value>
+			<value>/facelet/auxiliares/organismos_entidades/entidades/sucursalLookup/list.xhtml</value>
 		</managed-property>
-	</managed-bean>	
+		</managed-bean>	
 </faces-config>
