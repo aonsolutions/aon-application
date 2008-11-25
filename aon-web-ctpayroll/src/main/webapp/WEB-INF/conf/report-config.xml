@@ -550,4 +550,36 @@
 		</params>
 	</report>
 	
+	 <report id="ClienteListXLS" description="Listado de Clientes">
+		<template path="/com/code/aon/ui/payroll/report/ClienteListXLS.jasper" />
+		<bean key="com.code.aon.payroll.principales.Cliente" />
+		<criteria provider="#{cliente}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+		 <report id="DomicilioList" description="Listado de DOMICILIO">
+		<template path="/com/code/aon/ui/payroll/report/DomicilioList.jasper" />
+		<bean key="com.code.aon.payroll.principales.Domicilio" />
+		<criteria provider="#{domicilio}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	 <report id="DomicilioListXLS" description="Listado de Domiclios">
+		<template path="/com/code/aon/ui/payroll/report/DomicilioListXLS.jasper" />
+		<bean key="com.code.aon.payroll.principales.Domicilio" />
+		<criteria provider="#{domicilio}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
 </report-config>
