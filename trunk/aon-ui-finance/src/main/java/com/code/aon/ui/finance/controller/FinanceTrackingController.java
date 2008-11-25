@@ -26,15 +26,17 @@ public class FinanceTrackingController extends LinesController {
 	private static final String FINANCE_CONTROLLER_NAME = "finance";
 	
 	public boolean isUnrecordable() throws ManagerBeanException{
-		FinanceTracking tracking = (FinanceTracking)this.getModel().getRowData();
-		IManagerBean accEntryFinanceTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(accEntryFinanceTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_FINANCE_ID), tracking.getFinance().getId());
-		criteria.addOrder(accEntryFinanceTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ID),false);
-		Iterator<?> iter = accEntryFinanceTrackingBean.getList(criteria).iterator();
-		if(iter.hasNext()){
-			AccountEntryFinanceTracking accEntryFinanceTracking = (AccountEntryFinanceTracking)iter.next();
-			return accEntryFinanceTracking.getFinanceTracking().getId().equals(tracking.getId());
+		if ( getModel().isRowAvailable() ) {
+			FinanceTracking tracking = (FinanceTracking)this.getModel().getRowData();
+			IManagerBean accEntryFinanceTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(accEntryFinanceTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_FINANCE_ID), tracking.getFinance().getId());
+			criteria.addOrder(accEntryFinanceTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ID),false);
+			Iterator<?> iter = accEntryFinanceTrackingBean.getList(criteria).iterator();
+			if(iter.hasNext()){
+				AccountEntryFinanceTracking accEntryFinanceTracking = (AccountEntryFinanceTracking)iter.next();
+				return accEntryFinanceTracking.getFinanceTracking().getId().equals(tracking.getId());
+			}
 		}
 		return false;
 	}
