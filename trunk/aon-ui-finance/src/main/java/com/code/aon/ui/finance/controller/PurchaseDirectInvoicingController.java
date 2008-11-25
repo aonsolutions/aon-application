@@ -350,33 +350,6 @@ public class PurchaseDirectInvoicingController extends BasicController {
 		}
 	}
 
-	public void addSupplierEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
-		if (event.getNewValue() != null && !((String) event.getNewValue()).trim().equals("")) {
-			Integer id = new Integer((String) event.getNewValue());
-			Criteria criteria = getCriteria();
-			criteria.addEqualExpression(getManagerBean().getFieldName(IFinanceAlias.INVOICE_REGISTRY_ID), id);
-			setCriteria(criteria);
-		}
-	}
-
-	public void addIssuedateFromExpression(ValueChangeEvent event)throws ManagerBeanException {
-		if (event.getNewValue() != null) {
-			Criteria c = getCriteria();
-			Object value = event.getNewValue();
-			c.addGreaterThanOrEqualExpression(getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), value);
-			setCriteria(c);
-		}
-	}
-	
-	public void addIssuedateToExpression(ValueChangeEvent event)	throws ManagerBeanException {
-	    if (event.getNewValue() != null) {
-	    	Criteria c = getCriteria();
-			Object value = event.getNewValue();
-			c.addLessThanOrEqualExpression(getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), value);
-			setCriteria(c);
-		}
-	}
-
 	@SuppressWarnings("unchecked")
 	public Integer getAccountEntryId() throws ManagerBeanException {
     	Invoice invoice = (Invoice)this.getTo();
