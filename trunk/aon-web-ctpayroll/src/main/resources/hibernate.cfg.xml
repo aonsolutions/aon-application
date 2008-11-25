@@ -95,5 +95,7 @@ hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN
     <mapping class="com.code.aon.payroll.principales.Cliente" />
     <mapping class="com.code.aon.payroll.principales.Domicilio" />
     <mapping class="com.code.aon.payroll.principales.Cuentas" />
+	<!-- Empresa -->			
+	<mapping class="com.code.aon.payroll.principales.empresa.Empresa"/>
   </session-factory>
 </hibernate-configuration>

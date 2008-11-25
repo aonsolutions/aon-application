@@ -252,5 +252,24 @@
 			<property-name>listPagePath</property-name>
 			<value>/facelet/auxiliares/organismos_entidades/entidades/sucursalLookup/list.xhtml</value>
 		</managed-property>
-		</managed-bean>	
+	</managed-bean>	
+	
+	<!--  ************ admon LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>admonLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>admonLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.auxiliares.Admon</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/empresas/admonLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
 </faces-config>

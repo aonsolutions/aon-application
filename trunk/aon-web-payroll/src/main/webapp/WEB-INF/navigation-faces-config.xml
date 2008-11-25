@@ -833,6 +833,22 @@
 		</navigation-case>
 		
 		</navigation-rule>
+		
+	<!-- ================= Principales/Empresa ================ -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>empresa_form</from-outcome>
+			<to-view-id>/facelet/principales/empresas/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>empresa_search</from-outcome>
+			<to-view-id>/facelet/principales/empresas/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>empresa_list</from-outcome>
+			<to-view-id>/facelet/principales/empresas/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	
 </faces-config>
 
