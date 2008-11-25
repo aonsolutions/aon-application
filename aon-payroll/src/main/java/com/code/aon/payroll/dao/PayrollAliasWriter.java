@@ -3,8 +3,6 @@ package com.code.aon.payroll.dao;
 import java.io.File;
 import java.io.IOException;
 
-import org.hibernate.Hibernate;
-
 import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.payroll.auxiliares.Admon;
@@ -17,6 +15,11 @@ import com.code.aon.payroll.auxiliares.convenios.Convenio;
 import com.code.aon.payroll.auxiliares.convenios.Nivel;
 import com.code.aon.payroll.auxiliares.convenios.Pagaext;
 import com.code.aon.payroll.auxiliares.convenios.Percepcion;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Entidad;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Linmutua;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Mutua;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal;
 import com.code.aon.payroll.cotizacion.Base;
 import com.code.aon.payroll.cotizacion.Bonificacion;
 import com.code.aon.payroll.cotizacion.Cnae;
@@ -50,15 +53,11 @@ import com.code.aon.payroll.irpfforal.MinoracionesAlava;
 import com.code.aon.payroll.irpfforal.MinoracionesGuipuzcoa;
 import com.code.aon.payroll.irpfforal.MinoracionesNavarra;
 import com.code.aon.payroll.irpfforal.MinoracionesVizcaya;
-import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
-import com.code.aon.payroll.auxiliares.organismosyentidades.Entidad;
-import com.code.aon.payroll.auxiliares.organismosyentidades.Linmutua;
-import com.code.aon.payroll.auxiliares.organismosyentidades.Mutua;
-import com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal;
 import com.code.aon.payroll.principales.Avisos;
 import com.code.aon.payroll.principales.Cliente;
 import com.code.aon.payroll.principales.Cuentas;
 import com.code.aon.payroll.principales.Domicilio;
+import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.payroll.tipos.Autorizacion;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Empresario;
@@ -132,7 +131,8 @@ public class PayrollAliasWriter {
 		        Cliente.class.getName(),
 		        Domicilio.class.getName(),
 		        Cuentas.class.getName(),
-		        Avisos.class.getName()
+		        Avisos.class.getName(),
+		        Empresa.class.getName()
 		        };		
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");
 		HibernateUtil.getSessionFactory();
