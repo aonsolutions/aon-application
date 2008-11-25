@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.supplier.Supplier;
@@ -51,6 +52,7 @@ public class PurchaseDirectInvoicingSearchListener extends ControllerSearchListe
 	@Override
 	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
 		Criteria criteria = getController().getCriteria();
+		criteria.addEqualExpression(getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.PURCHASE);
 		if ( (getSupplier() != null) && (getSupplier().getId() != null) ) {
 			String field = getController().getFieldName(IFinanceAlias.INVOICE_REGISTRY_ID);
 			criteria.addEqualExpression(field, getSupplier().getId());			
