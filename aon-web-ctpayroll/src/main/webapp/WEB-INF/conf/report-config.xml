@@ -175,9 +175,8 @@
 		</params>
 	</report>
 	
-	<!--  *********  Impresion a PDF del Mantenimiento de Paises, Comunidades y Provincia ********* -->	
-	   <report id="paisList" description="Listado de Paises, Comunidades y Provincias">
-		<template path="/com/code/aon/ui/payroll/report/paisList.jasper" />
+	<report id="paisList" description="Listado de paises, comunidades y provincias">
+		<template path="/com/code/aon/ui/payroll/report/geograficasPais.jasper" />
 		<bean key="com.code.aon.payroll.geograficas.Pais" />
 		<criteria provider="#{pais}" />
 		<params>
@@ -187,8 +186,18 @@
 		</params>
 	</report>
 	
- 
-       <report id="CuotaRetencionAlavaList" description="Listado de Cuotas de Retencion Alava">
+	 <report id="paisListXls" description="Listado de paises, comunidades y provincias">
+		<template path="/com/code/aon/ui/payroll/report/geograficasPaisXls.jasper" />
+		<bean key="com.code.aon.payroll.geograficas.Pais" />
+		<criteria provider="#{pais}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+     <report id="CuotaRetencionAlavaList" description="Listado de Cuotas de Retencion Alava">
 		<template path="/com/code/aon/ui/payroll/report/CuotaRetencionAlavaList.jasper" />
 		<bean key="com.code.aon.payroll.irpfforal.CuotaRetencionAlava" />
 		<criteria provider="#{cuotaRetencionAlava}" />
@@ -562,7 +571,7 @@
 		</params>
 	</report>
 	
-	 <report id="ClienteListXLS" description="Listado de Clientes">
+	<report id="ClienteListXLS" description="Listado de Clientes">
 		<template path="/com/code/aon/ui/payroll/report/ClienteListXLS.jasper" />
 		<bean key="com.code.aon.payroll.principales.Cliente" />
 		<criteria provider="#{cliente}" />
