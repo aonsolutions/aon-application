@@ -17,10 +17,10 @@
 				<ui:define name="toolbarContent">
 					<aon:confirmButton id="save"
 						value="#{bundle.aon_accept}"
-						rendered="#{!financeFraction.fractionable}"
+						rendered="#{financeFraction.fractionable}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						confirmTitle="#{bundle.aon_confirm_title}"
-						confirmMessage="#{bundle.aon_cancel_confirm}"
+						confirmMessage="#{bundle.aon_accept_confirm}"
 						confirmActionListener="#{financeFraction.onAcceptFractions}"
 						confirmAction="finance_list"						
 						accesskey="#{bundle.aon_key_save}" />
@@ -91,10 +91,75 @@
 				<aon:div styleClass="aon-form-group">
 					<aon:div styleClass="aon-form-group-title">
 						<aon:div styleClass="aon-form-group-title-internal">
-							<aon:outputLabel for="financeTrackingData" value="#{financeBundle.finance_resulting_finances}" />
+							<aon:outputLabel for="financeFractionData" value="#{financeBundle.finance_resulting_finances}" />
 						</aon:div>
 					</aon:div>
 					<aon:div styleClass="aon-scroll-area">
+					
+						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+							<ui:param name="controller" value="#{financeFraction}" />
+							<ui:param name="columnClasses" value="aon-editDataTable-text,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn" />
+							<ui:param name="skipRemoveButton" value="#{!financeFraction.removableFraction}" />
+							<ui:param name="saveButtonReRender" value="aonToolbar" />
+							<ui:param name="removeButtonReRender" value="aonToolbar" />
+							<ui:param name="newSaveButtonReRender" value="aonToolbar" />
+	
+							<ui:define name="columns">
+
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{bundle.aon_date}" />
+									</f:facet>
+									<aon:outputText value="#{to.dueDate}" rendered="#{formList}">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</aon:outputText>
+									<aon:selectInputDate  required="true"
+										value="#{financeFraction.to.dueDate}"
+										rendered="#{formEdit}"
+										timeZone="#{timeZoneController.timeZone}"
+										popupDateFormat="#{bundle.aon_date_pattern}">
+									</aon:selectInputDate>												
+									<f:facet name="footer">
+										<aon:selectInputDate  required="true"
+											value="#{financeFraction.to.dueDate}"
+											rendered="#{formNew}"
+											timeZone="#{timeZoneController.timeZone}"
+											popupDateFormat="#{bundle.aon_date_pattern}">
+										</aon:selectInputDate>												
+									</f:facet>
+								</aon:column>
+								
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{financeBundle.finance_expenses}" />
+									</f:facet>
+									<aon:outputText value="#{to.expenses}">
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									</aon:outputText>
+								</aon:column>
+								
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{bundle.aon_amount}" />
+									</f:facet>
+									<aon:outputText value="#{to.amount}" 
+										rendered="#{formList}" >
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									</aon:outputText>
+									<aon:inputText required="true"
+										rendered="#{formEdit}"
+										value="#{financeFraction.to.amount}" />
+									<f:facet name="footer">
+										<aon:inputText rendered="#{formNew}" required="true"
+											value="#{financeFraction.to.amount}">
+										</aon:inputText>
+									</f:facet>
+								</aon:column>
+
+							</ui:define>
+						</ui:decorate>
+					
 					</aon:div>
 				</aon:div>
 									

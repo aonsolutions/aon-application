@@ -614,6 +614,10 @@
 			com.code.aon.ui.finance.controller.FinanceFractionController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>financeFraction</value>
+		</managed-property>		
 	</managed-bean>
 	
 	<!--  **** CREDITOR **** -->
