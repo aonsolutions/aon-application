@@ -20,6 +20,8 @@ import com.code.aon.payroll.auxiliares.convenios.Percepcion;
 import com.code.aon.payroll.cotizacion.Base;
 import com.code.aon.payroll.cotizacion.Bonificacion;
 import com.code.aon.payroll.cotizacion.Cnae;
+import com.code.aon.payroll.cotizacion.Cnae2009;
+import com.code.aon.payroll.cotizacion.Cnae2009Maestro;
 import com.code.aon.payroll.cotizacion.CnaeMaestro;
 import com.code.aon.payroll.cotizacion.Elemento;
 import com.code.aon.payroll.cotizacion.ElementoMaestro;
@@ -63,6 +65,7 @@ import com.code.aon.payroll.tipos.Empresario;
 import com.code.aon.payroll.tipos.Incidencia;
 import com.code.aon.payroll.tipos.Registro;
 import com.code.aon.payroll.tipos.TipoCnae;
+import com.code.aon.payroll.tipos.TipoCnae2009;
 import com.code.aon.payroll.tipos.Tipovia;
 
 public class PayrollAliasWriter {
@@ -81,6 +84,8 @@ public class PayrollAliasWriter {
 				Ocupacion.class.getName(),
 				CnaeMaestro.class.getName(), 
 				Cnae.class.getName(),
+				Cnae2009Maestro.class.getName(), 
+				Cnae2009.class.getName(),
 				Documento.class.getName(),
 				Autorizacion.class.getName(),
 				Base.class.getName(),
@@ -89,6 +94,7 @@ public class PayrollAliasWriter {
 				Registro.class.getName(),
 				Empresario.class.getName(),
 				TipoCnae.class.getName(),
+				TipoCnae2009.class.getName(),
 				Bonificacion.class.getName(),
 				Cuota.class.getName(),
 				Tipovia.class.getName(),

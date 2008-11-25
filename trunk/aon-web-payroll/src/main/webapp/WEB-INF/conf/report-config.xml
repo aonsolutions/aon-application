@@ -57,6 +57,18 @@
 		</params>
 	</report>
 	
+	<!--  *********  Impresion a PDF de los Tipos de Cnae 2009  ********* -->
+	<report id="tiposCnae2009List" description="Listado de Tipos de Cnae 2009">
+		<template path="/com/code/aon/ui/payroll/report/tiposCnae2009List.jasper" />
+		<bean key="com.code.aon.payroll.tipos.TipoCnae2009" />
+		<criteria provider="#{tiposCnae2009}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
 	<!--  *********  Impresion a PDF de los Organismos de Mantenimiento de Administraciones de Hacienda  ********* -->
 	<report id="organismosAdmonList" description="Listado de Administraciones de Hacienda">
 		<template path="/com/code/aon/ui/payroll/report/organismosAdmonList.jasper" />

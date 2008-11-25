@@ -38,7 +38,9 @@
 		<mapping class="com.code.aon.payroll.cotizacion.Epigrafe"/>
 		<mapping class="com.code.aon.payroll.cotizacion.Linepigr"/>	
 		<mapping class="com.code.aon.payroll.cotizacion.CnaeMaestro"/>			
-		<mapping class="com.code.aon.payroll.cotizacion.Cnae"/>	
+		<mapping class="com.code.aon.payroll.cotizacion.Cnae"/>
+		<mapping class="com.code.aon.payroll.cotizacion.Cnae2009Maestro"/>			
+		<mapping class="com.code.aon.payroll.cotizacion.Cnae2009"/>		
 	
 	    <!--DIVISAS -->		
 	    <mapping class="com.code.aon.payroll.divisa.Divisa"/>			
