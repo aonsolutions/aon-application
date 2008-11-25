@@ -20,6 +20,8 @@
 			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_cuenta}" />
 				<ui:param name="controller" value="#{cuenta}"/>
+				<ui:param name="reportKey" value="CuentaList"/>
+				<ui:param name="reportKeyXls" value="CuentaListXLS"/>
 				<aon:methodParam name="backAction" value="cliente_form"/>	
 			</ui:include>
 			 <aon:div id="cuentas" styleClass="aon-scroll-area aon-scroll-area-principales">

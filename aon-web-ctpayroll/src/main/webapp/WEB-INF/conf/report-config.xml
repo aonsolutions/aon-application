@@ -594,4 +594,27 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
+	
+		 <report id="CuentaList" description="Listado de Cuentas">
+		<template path="/com/code/aon/ui/payroll/report/CuentaList.jasper" />
+		<bean key="com.code.aon.payroll.principales.Cuentas" />
+		<criteria provider="#{cuenta}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	 <report id="CuentaListXLS" description="Listado de Cuentas">
+		<template path="/com/code/aon/ui/payroll/report/CuentaListXLS.jasper" />
+		<bean key="com.code.aon.payroll.principales.Cuentas" />
+		<criteria provider="#{cuenta}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
 </report-config>
