@@ -39,7 +39,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/1.6.5</value>
+			<value>/aonResource/3.3.0</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -53,7 +53,8 @@
 		<managed-property>
 			<property-name>styleSheets</property-name>
 			<list-entries>
-				<value>/aonResource/aon-richCss.css</value>
+				<value>#{aonResource.resolve['/aon-richCss.css']}</value>
+				<value>#{aonResource.resolveLocal['/css/enterprise.css']}</value>
 			</list-entries>
 		</managed-property>
 		<managed-property>
