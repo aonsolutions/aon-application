@@ -180,9 +180,10 @@ public class BasicPriceStrategy implements IPriceStrategy {
 						CatalogueItem catalogueItem = (CatalogueItem)itemIterator.next();
 						if (catalogueItem.getPrice() > 0) {
 							return catalogueItem.getPrice();
+						} else {
+							calc.getDiscountExpression().setDiscountExpr(Double.toString(catalogueItem.getDiscount()));
 						}
-						//else aplicarle el descuento correspondiente: se aplica sobre el precio o se pone en el campo descuento?
-						//break; retornar precio de articulo normal
+						break;
 					}
 
 					criteria = new Criteria();
@@ -193,8 +194,8 @@ public class BasicPriceStrategy implements IPriceStrategy {
 					Iterator categoryIterator = catalogueCategoryBean.getList(criteria, 0, 1).iterator();
 					if (categoryIterator.hasNext()) {
 						CatalogueCategory catalogueCategory = (CatalogueCategory)categoryIterator.next();
-						//aplicarle el descuento correspondiente: se aplica sobre el precio o se pone en el campo descuento?
-						//break; retornar precio de articulo normal
+						calc.getDiscountExpression().setDiscountExpr(Double.toString(catalogueCategory.getDiscount()));
+						break;
 					}
 				}
 			}
