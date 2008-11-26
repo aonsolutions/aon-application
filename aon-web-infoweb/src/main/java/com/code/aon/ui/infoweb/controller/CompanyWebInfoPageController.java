@@ -2,9 +2,9 @@ package com.code.aon.ui.infoweb.controller;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
@@ -12,20 +12,21 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ql.OrderByList;
-import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.registry.enumeration.RegistryAttachmentType;
-import com.code.aon.ui.form.GridController;
 import com.code.aon.infoweb.WebInfoPage;
 import com.code.aon.infoweb.WebInfoPageDetail;
 import com.code.aon.infoweb.WebInfoPageResource;
 import com.code.aon.infoweb.dao.IWebInfoAlias;
 import com.code.aon.infoweb.enumeration.WebInfoPageType;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.form.GridController;
 
 public class CompanyWebInfoPageController extends GridController {
+	
+	private static final Logger LOGGER = Logger.getLogger(CompanyWebInfoPageController.class.getName());
 
 	public boolean showGenericModalPanel = false;
 
@@ -191,11 +192,10 @@ public class CompanyWebInfoPageController extends GridController {
 			criteria.addEqualExpression(wiprBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_RESOURCE_WEB_INFO_PAGE_ID), wip.getId());
 			List<ITransferObject> listWipr = wiprBean.getList(criteria);
 			resources = new ListDataModel(listWipr);
-		}
-		catch (ManagerBeanException e) {
+			resetResource();
+		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	public WebInfoPageDetail getDetail() {
@@ -223,9 +223,9 @@ public class CompanyWebInfoPageController extends GridController {
     }
 
     public void onCancelResource(ActionEvent event) {
-		System.out.println(">>>>>>>>>>>> RESOURCE: " + resource.getContent() + " CANCELED.");
+		LOGGER.fine(">>>>>>>>>>>> RESOURCE: " + resource.getContent() + " CANCELED.");
 		resource = new WebInfoPageResource();
-    	setNewResource(false);
+		resetResource();
     }
 
 	@SuppressWarnings("unused")
@@ -234,7 +234,7 @@ public class CompanyWebInfoPageController extends GridController {
 		resource = wipr;
 		rattachId = ""+resource.getRattach().getId();
 		setNewResource(false);
-		System.out.println(">>>>>>>>>>>> RESOURCE: " + resource.getContent() + " WITH IMAGE " + resource.getRattach().getId() + " SELECTED.");
+		LOGGER.fine(">>>>>>>>>>>> RESOURCE: " + resource.getContent() + " WITH IMAGE " + resource.getRattach().getId() + " SELECTED.");
 	}
 
 	/* (non-Javadoc)
@@ -243,7 +243,7 @@ public class CompanyWebInfoPageController extends GridController {
     public void onAcceptResource(ActionEvent event) {
 		try {
 			IManagerBean wiprBean = BeanManager.getManagerBean(WebInfoPageResource.class);
-			System.out.println(">>>>>> INSERTANDO EN BASE DE DATOS " + resource.getContent() + " CON LA IMAGEN "+ rattachId + ".");
+			LOGGER.fine(">>>>>> INSERTANDO EN BASE DE DATOS " + resource.getContent() + " CON LA IMAGEN "+ rattachId + ".");
 			resource.setWebInfoPage(current);
 			RegistryAttachment ra = new RegistryAttachment();
 			ra.setId(Integer.parseInt(rattachId));
@@ -251,7 +251,7 @@ public class CompanyWebInfoPageController extends GridController {
 			if (resource.getId() != null) wiprBean.update(resource);
 			else wiprBean.insert(resource);
 			setSelectedData(current);
-			setNewResource(false);
+			resetResource();
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
@@ -264,9 +264,8 @@ public class CompanyWebInfoPageController extends GridController {
 		try {
 			IManagerBean wiprBean = BeanManager.getManagerBean(WebInfoPageResource.class);
 			wiprBean.remove(resource);
-			resource = new WebInfoPageResource();
 			setSelectedData(current);
-			setNewResource(false);
+			resetResource();
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
@@ -282,7 +281,7 @@ public class CompanyWebInfoPageController extends GridController {
 			RegistryAttachment rattach = (RegistryAttachment)list.get(i);
 			Integer id = rattach.getId();
 			String name = rattach.getDescription();
-			System.out.println(">>>>>>>>>>>>>> " + id + " --- " + name + " <<<<<<<<<<<<<<<<");
+			LOGGER.fine(">>>>>>>>>>>>>> " + id + " --- " + name + " <<<<<<<<<<<<<<<<");
 			SelectItem item = new SelectItem(id, name);
 			images.add(item);
 		}
@@ -310,12 +309,12 @@ public class CompanyWebInfoPageController extends GridController {
 	}
 
 	public String getRattachId() {
-		System.out.println(">>>>>>>>>>>>>> GETTING RATTACH ID: " + rattachId);
+		LOGGER.fine(">>>>>>>>>>>>>> GETTING RATTACH ID: " + rattachId);
 		return rattachId;
 	}
 
 	public void setRattachId(String rattachId) {
-		System.out.println(">>>>>>>>>>>>>> SETTING RATTACH ID: " + rattachId);
+		LOGGER.fine(">>>>>>>>>>>>>> SETTING RATTACH ID: " + rattachId);
 		this.rattachId = rattachId;
 	}
 
@@ -327,4 +326,9 @@ public class CompanyWebInfoPageController extends GridController {
 		this.richTextEnabled = richTextEnabled;
 	}
 
+	private void resetResource() {
+		setResource(null);
+		setNewResource(false);
+	}
+	
 }
