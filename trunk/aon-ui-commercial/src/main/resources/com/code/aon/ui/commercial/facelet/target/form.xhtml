@@ -50,6 +50,14 @@
 							<ui:include src="/com/code/aon/ui/commercial/facelet/targetSegment/tab_grid.xhtml" />
 						</aon:panelTab>
 
+						<aon:panelTab id="targetItem" label="#{productBundle.product_module}">
+							<ui:include src="/com/code/aon/ui/commercial/facelet/targetItem/tab_grid.xhtml" />
+						</aon:panelTab>
+
+						<aon:panelTab id="targetSeller" label="#{salesBundle.sales_seller}">
+							<ui:include src="/com/code/aon/ui/commercial/facelet/targetSeller/tab_grid.xhtml" />
+						</aon:panelTab>
+
 						<aon:panelTab id="targetTracking" label="#{commercialBundle.commercial_target_tracking_module}">
 							<ui:include src="/com/code/aon/ui/commercial/facelet/targetTracking/tab_list.xhtml" />
 						</aon:panelTab>
@@ -71,10 +79,8 @@
 				-->
 			</aon:div>
 		</aon:form>
-		<!-- 
-		<aon:lookupButtonPopup lookup="#{itemLookup}" />
-		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
-		-->		
+		<aon:lookupButtonPopup lookup="#{itemLookup}" />	
+		<aon:lookupButtonPopup lookup="#{sellerLookup}" />	
 	</ui:define>
 </ui:composition>
 

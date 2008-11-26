@@ -11,7 +11,7 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{productBundle.itempos_item}" />
+					<aon:outputText value="#{productBundle.product_item}" />
 				</f:facet>
 				<aon:outputText value="#{to.item.product.name} #{to.item.detail}"
 					rendered="#{to!=targetItem.to}" />
@@ -22,7 +22,7 @@
 						value="#{targetItem.to.item.id}" size="5">
 					</aon:lookupInputText>
 					<aon:lookupButton
-						windowTitle="#{appBundle.aon_lookup_item}" actionType="search"
+						windowTitle="#{productBundle.product_item_selection}" actionType="search"
 						selectReRender="targetItemData"
 						lookup="#{itemLookup}" minHeight="460" minWidth="650"
 						property="#{targetItem.to.item}">
@@ -39,7 +39,7 @@
 							value="#{targetItem.to.item.id}" size="5">
 						</aon:lookupInputText>
 						<aon:lookupButton id="TargetItem_item_id_lookup-New"
-							windowTitle="#{appBundle.aon_lookup_item}" actionType="search"
+							windowTitle="#{productBundle.product_item_selection}" actionType="search"
 							selectReRender="TargetItem_item_id-New,TargetItem_item_detail-New"
 							lookup="#{itemLookup}" minHeight="460" minWidth="650"
 							property="#{targetItem.to.item}">
@@ -59,13 +59,13 @@
 					rendered="#{to!=targetItem.to}" />
 				<aon:selectOneMenu rendered="#{to==targetItem.to}"
 					required="true" value="#{to.status}">
-					<f:selectItem value="#{null}" itemLabel="    " />
+					<f:selectItem itemLabel="-" value="#{null}"/>
 					<f:selectItems value="#{commercialCollections.targetItemStatuses}" />
 				</aon:selectOneMenu>								
 				<f:facet name="footer">
 					<aon:selectOneMenu rendered="#{targetItem.new}"
 						required="true" value="#{targetItem.to.status}">
-						<f:selectItem value="#{null}" itemLabel="    " />
+						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{commercialCollections.targetItemStatuses}" />
 					</aon:selectOneMenu>								
 				</f:facet>

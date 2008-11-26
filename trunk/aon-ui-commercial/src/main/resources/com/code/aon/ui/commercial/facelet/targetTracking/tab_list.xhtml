@@ -11,7 +11,7 @@
 	
 		<aon:column>
 			<f:facet name="header">
-				<aon:outputText value="#{appBundle.aon_commercial_tracking_date}" />
+				<aon:outputText value="#{vundle.aon_date}" />
 			</f:facet>
 			<aon:outputText value="#{to.date}" >
 				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -21,14 +21,14 @@
 	
 		<aon:column>
 			<f:facet name="header">
-				<aon:outputText value="#{appBundle.aon_commercial_tracking_seller}" />
+				<aon:outputText value="#{salesBundle.sales_seller}" />
 			</f:facet>
 			<aon:outputText value="#{to.seller.registry.fullName}"/>
 		</aon:column>
 	
 		<aon:column>
 			<f:facet name="header">
-				<aon:outputText value="#{appBundle.aon_commercial_tracking_activity}" />
+				<aon:outputText value="#{commercialBundle.commercial_tracking_activity}" />
 			</f:facet>
 			<aon:outputText value="#{to.activity.name}"/>
 		</aon:column>
