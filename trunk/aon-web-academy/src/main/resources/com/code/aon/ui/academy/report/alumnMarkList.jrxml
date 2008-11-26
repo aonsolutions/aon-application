@@ -327,7 +327,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($P{encode}.booleanValue() == true?($V{code}!=null?$V{code}:$V{mark}.toString()):$V{mark}.toString())]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($P{encode}.booleanValue() == true?($V{code}!=null?$V{code}:($V{mark}.doubleValue()!=0?$V{mark}.toString():"")):($V{mark}.doubleValue()!=0?$V{mark}.toString():""))]]></textFieldExpression>
 				</textField>
 						</cellContents>
 					</crosstabCell>
