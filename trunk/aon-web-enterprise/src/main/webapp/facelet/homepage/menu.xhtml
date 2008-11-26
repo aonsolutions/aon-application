@@ -6,13 +6,17 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:form>
-		<aon:menuBar id="mainMenu"> 
-			<aon:dropDownMenu value="EL RESTO">
+		<aon:menuBar id="mainMenu">
+			<aon:dropDownMenu value="#{appBundle.menu_master}">
 				<aon:menuItem value="#{customerBundle.customer_module}" action="customer_search" actionListener="#{customer.onEditSearch}" />
 				<aon:menuItem value="#{supplierBundle.supplier_module}" action="supplier_search" actionListener="#{supplier.onEditSearch}" />
-				<aon:menuItem value="#{financeBundle.finance_creditor_module}" action="creditor_search" actionListener="#{creditor.onEditSearch}" />
 				<aon:menuItem value="#{productBundle.product_module}" action="item_search" actionListener="#{item.onEditSearch}" />
-				<aon:menuItem value="#{productBundle.product_category_module}" action="productCategory" />
+			</aon:dropDownMenu>		 
+			<aon:dropDownMenu value="#{appBundle.menu_auxiliar}">
+				<aon:menuItem value="#{productBundle.product_category_module}" action="productCategory" />			
+			</aon:dropDownMenu>
+			<aon:dropDownMenu value="EL RESTO">
+				<aon:menuItem value="#{financeBundle.finance_creditor_module}" action="creditor_search" actionListener="#{creditor.onEditSearch}" />
 				<aon:menuItem value="#{productBundle.product_brand_module}" action="brand" />
 				<aon:menuItem value="#{productBundle.product_catalogue_module}" action="catalogue_search" actionListener="#{catalogue.onEditSearch}" />
 				<aon:menuItem value="#{productBundle.product_tariff_module}" action="tariff_list" actionListener="#{tariff.onSearch}" />
