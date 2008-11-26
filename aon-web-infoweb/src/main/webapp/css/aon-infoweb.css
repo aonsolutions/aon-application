@@ -17,3 +17,9 @@
 	background:#fff url(images/aon-home/aon-home.jpg) scroll left top no-repeat;
 	height:400px;
 }	
+
+.aon-modal-panel-resource-body {
+	height: 300px;
+	width: 96%;
+	overflow: auto;
+}
