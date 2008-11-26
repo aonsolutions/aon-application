@@ -16,6 +16,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 
+import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.Tax;
 import com.code.aon.product.enumeration.ProductStatus;
@@ -94,12 +95,12 @@ public class Product implements ITransferObject {
     /**
      * Sales account. 
      */
-    private String salesAccount;
+    private Account salesAccount;
 
     /**
      * Purchase account. 
      */
-    private String purchaseAccount;
+    private Account purchaseAccount;
 
     /**
      * The set of items linked to this product. 
@@ -356,7 +357,7 @@ public class Product implements ITransferObject {
      * 
      */
 	@Transient
-	public String getSalesAccount() {
+	public Account getSalesAccount() {
 		return salesAccount;
 	}
 
@@ -367,7 +368,7 @@ public class Product implements ITransferObject {
      *            the sales account.
      */
 	@Transient
-	public void setSalesAccount(String salesAccount) {
+	public void setSalesAccount(Account salesAccount) {
 		this.salesAccount = salesAccount;
 	}
 
@@ -378,7 +379,7 @@ public class Product implements ITransferObject {
      * 
      */
 	@Transient
-	public String getPurchaseAccount() {
+	public Account getPurchaseAccount() {
 		return purchaseAccount;
 	}
 
@@ -389,7 +390,7 @@ public class Product implements ITransferObject {
      *            the purchase account.
      */
 	@Transient
-	public void setPurchaseAccount(String purchaseAccount) {
+	public void setPurchaseAccount(Account purchaseAccount) {
 		this.purchaseAccount = purchaseAccount;
 	}
 

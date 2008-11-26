@@ -9,16 +9,16 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.composition.Composition;
 import com.code.aon.composition.dao.ICompositionAlias;
-import com.code.aon.product.Tax;
-import com.code.aon.product.dao.IProductAlias;
+import com.code.aon.config.Tax;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.composition.controller.CompositionController;
 import com.code.aon.ui.composition.controller.CompositionDetailController;
 import com.code.aon.ui.composition.controller.CompositionExpenseController;
+import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.product.controller.ProductCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 
 public class CompositionControllerListener extends ControllerAdapter {
@@ -33,7 +33,7 @@ public class CompositionControllerListener extends ControllerAdapter {
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
         double percentage = 0;
 
-        ProductCollectionsController collections = (ProductCollectionsController)AonUtil.getRegisteredBean("productCollections");
+        ConfigCollectionsController collections = (ConfigCollectionsController)AonUtil.getRegisteredBean("configCollections");
         IManagerBean bean;
         try {
             List vats = collections.getVatTaxes();
@@ -41,7 +41,7 @@ public class CompositionControllerListener extends ControllerAdapter {
 
             bean = BeanManager.getManagerBean(Tax.class);
             Criteria criteria = new Criteria();
-            criteria.addEqualExpression(bean.getFieldName(IProductAlias.TAX_ID), new Integer(vatId));
+            criteria.addEqualExpression(bean.getFieldName(IConfigAlias.TAX_ID), new Integer(vatId));
             percentage = ((Tax)bean.getList(criteria).get(0)).getPercentage();
         } catch (ManagerBeanException e) {
             throw new ControllerListenerException(e.getMessage(), e);
