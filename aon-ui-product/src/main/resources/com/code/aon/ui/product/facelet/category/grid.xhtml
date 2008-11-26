@@ -32,11 +32,11 @@
 								</f:facet>
 								<aon:outputText value="#{to.name}"
 									rendered="#{to.id!=productCategory.to.id}" />
-								<aon:inputText rendered="#{to.id==productCategory.to.id}"
-									value="#{productCategory.to.name}" required="true" />
+								<aon:inputText value="#{productCategory.to.name}"
+									rendered="#{to.id==productCategory.to.id}" required="true" />
 								<f:facet name="footer">
-									<aon:inputText rendered="#{productCategory.new}" value="#{productCategory.to.name}"
-										required="true" />
+									<aon:inputText value="#{productCategory.to.name}"
+										rendered="#{productCategory.new}" required="true" />
 								</f:facet>
 							</aon:column>
 

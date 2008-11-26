@@ -17,13 +17,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>3.0.0</version>
+			<version>3.2.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.commercial</artifactId>
-			<version>2.2.4</version>
+			<version>3.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -35,19 +35,19 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.finance</artifactId>
-			<version>2.5.1</version>
+			<version>3.2.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.product</artifactId>
-			<version>2.2.0</version>
+			<version>3.1.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.product</artifactId>
-			<version>3.0.0</version>
+			<artifactId>aon.ui.config</artifactId>
+			<version>3.1.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -59,7 +59,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.warehouse</artifactId>
-			<version>2.1.2</version>
+			<version>3.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

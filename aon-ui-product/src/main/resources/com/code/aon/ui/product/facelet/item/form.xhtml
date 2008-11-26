@@ -112,11 +112,11 @@
 						size="12">
 						<f:validateLength minimum="1" maximum="12" />
 					</aon:inputText>
-<!-- 
+
 					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="Item_product_sales_account" lookup="#{accountBridgeLookup}"
-							reRender="Item_product_sales_account_description"
-							value="#{item.to.bank.code}" size="5">
+						<aon:lookupInputText id="Item_product_sales_account_id" value="#{item.to.salesAccount.id}"
+							lookup="#{accountLookup}" reRender="Item_product_sales_account_description"
+							 size="10">
 							<aon:joinProperty alias="Bank_code" value="#{financeSearch.bank.code}" />
 						</aon:lookupInputText>
 						<aon:lookupButton 
@@ -125,14 +125,13 @@
 							lookup="#{bankLookup}" minHeight="460" minWidth="650"
 							property="#{financeSearch.bank}">
 						</aon:lookupButton>
-						<aon:inputText id="Bank_name"
-							value="#{financeSearch.bank.name}"
-							size="50" disabled="true" />							
+						<aon:inputText id="Item_product_sales_account_description" value="#{item.to.salesAccount.name}"
+							size="40" disabled="true" />
 					</aon:div>
- -->
+
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
-<!-- 		<aon:lookupButtonPopup lookup="#{accountBridgeLookup}" /> -->
+		<aon:lookupButtonPopup lookup="#{accountLookup}" />
 	</ui:define>
 </ui:composition>

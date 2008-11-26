@@ -13,7 +13,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.invoicing.FinanceGenerator;
@@ -84,19 +83,6 @@ public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 		}
 	}
 
-	public void insetFinance(Finance finance) {
-		try {
-			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			double amount = getPriceStrategy().getTotalPrice(finance.getInvoice(), finance.getInvoice());
-			if(amount != 0.0){
-				finance.setAmount(amount);
-				financeBean.insert(finance);
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error inserting finance for invoice with id= " + finance.getInvoice().getId(), e);
-		}
-	}
-	
 	public void createFinances(Invoice invoice) throws ManagerBeanException {
 		double amount = getPriceStrategy().getTotalPrice(invoice, invoice);
 		if(amount != 0.0){

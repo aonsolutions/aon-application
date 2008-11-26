@@ -12,8 +12,8 @@ import com.code.aon.composition.Composition;
 import com.code.aon.composition.CompositionDetail;
 import com.code.aon.composition.CompositionExpense;
 import com.code.aon.composition.dao.ICompositionAlias;
+import com.code.aon.config.Tax;
 import com.code.aon.product.Item;
-import com.code.aon.product.Tax;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.product.util.ItemCompanyTaxProvider;
 

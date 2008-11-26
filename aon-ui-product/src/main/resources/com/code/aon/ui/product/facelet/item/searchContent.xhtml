@@ -7,7 +7,8 @@
 
 	<aon:outputLabel for="Item_product_code" value="#{bundle.aon_id}" />
 	<aon:inputText id="Item_product_code" size="10"
-		valueChangeListener="#{controller.addExpression}" />
+		valueChangeListener="#{controller.addExpression}"
+		onblur="toUpperCase(this);" />
 
 	<aon:outputLabel for="Item_product_name"
 		value="#{bundle.aon_description}" />
