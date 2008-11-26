@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="sidebar">
+		<t:div id="aon-sidebar-region" forceId="#{true}" style="height:100%;"
+			styleClass="aon-sidebar-region-visible">
+			<h:form id="treeMenuForm">
+				<t:div styleClass="aon-sidebar-visibility aon-sidebar-visibility-visible">
+					<t:commandLink id="_menu" forceId="#{true}" immediate="true">
+						<f:verbatim>&#160;</f:verbatim>
+					</t:commandLink>
+				</t:div>
+				<t:div styleClass="aon-sidebar-tree" style="height:100%;">
+					<t:div styleClass="aon-sidebar-tree-title">
+						<h:outputText value="#{treeMenu.title}" />
+					</t:div>
+					<t:div styleClass="aon-sidebar-tree-body" style="height:300px;">
+						<f:verbatim>&#160;</f:verbatim>
+					</t:div>
+				</t:div>
+			</h:form>
+		</t:div>
+
+	</ui:define>
+
+
+	<ui:define name="head">
+		<script>
+				function hideDetails() {
+					e = document.getElementById("exception_details");
+					e.style.display="none";
+					e = document.getElementById("exception_vd");
+					e.style.display="block";
+					e = document.getElementById("exception_hd");
+					e.style.display="none";
+				}
+				
+				function viewDetails() {
+					e = document.getElementById("exception_details");
+					e.style.display="block";
+					e = document.getElementById("exception_vd");
+					e.style.display="none";
+					e = document.getElementById("exception_hd");
+					e.style.display="block";
+				}
+
+				function hideFullDetails() {
+					e = document.getElementById("exception_full_details");
+					e.style.display="none";
+					e = document.getElementById("exception_vfd");
+					e.style.display="block";
+					e = document.getElementById("exception_hfd");
+					e.style.display="none";
+				}
+				
+				function viewFullDetails() {
+					e = document.getElementById("exception_full_details");
+					e.style.display="block";
+					e = document.getElementById("exception_vfd");
+					e.style.display="none";
+					e = document.getElementById("exception_hfd");
+					e.style.display="block";
+				}
+				
+ 			</script>
+	</ui:define>
+	<ui:define name="content">
+
+		<f:loadBundle basename="com.code.aon.ui.common.i18n.error_messages"
+			var="errorBundle" />
+
+		<t:div id="aon-scroll-area" forceId="#{true}">
+			<t:div
+				style="font-size: 1.5em; color:red; margin-top: 15px; padding-left:5px;">
+				<h:outputText value="#{errorBundle.aon_exception}" />
+				<f:verbatim>&#160;(</f:verbatim>
+				<h:outputText value="#{exceptionBean.errorCode}" />
+				<f:verbatim>)&#160;</f:verbatim>
+				<h:outputText value="#{exceptionBean.errorMessage}" />
+			</t:div>
+
+			<t:div style="margin-top: 5px; padding-left:5px;"
+				rendered="#{exceptionBean.cause != null}">
+				<h:outputText value="#{errorBundle.aon_exception_message}" />
+			</t:div>
+
+			<t:div style="font-size: 1.1em; color:red; padding-left:10px;"
+				rendered="#{exceptionBean.cause != null}">
+				<h:outputText value="#{exceptionBean.exceptionMessage}" />
+			</t:div>
+
+			<t:div styleClass="aon-form-collapsiblePanel"
+				rendered="#{exceptionBean.cause != null}">
+				<h:outputLink value="#" id="exception_vd"
+					onclick="javascript:viewDetails()" style="display:block">
+					<t:outputText forceId="#{true}"
+						value="#{errorBundle.aon_exception_view_details}" />
+				</h:outputLink>
+				<h:outputLink value="#" id="exception_hd"
+					onclick="javascript:hideDetails()" style="display:none">
+					<t:outputText forceId="#{true}"
+						value="#{errorBundle.aon_exception_hide_details}" />
+				</h:outputLink>
+
+				<t:div id="exception_details" forceId="#{true}"
+					styleClass="aon-form-collapsiblePanel-body" style="display:none;">
+					<t:div style="padding-left: 15px;font-family: Courier;">
+						<t:dataList value="#{exceptionBean.messages}" var="em"
+							layout="unorderedList">
+							<t:div>
+								<h:outputText value="#{em.clazz}" style="font-weight: bold;" />
+								<f:verbatim>:</f:verbatim>
+								<h:outputText value="#{em.message}"
+									style="padding-left: 15px;font-size: 0.6em; line-height: 1.8em;" />
+							</t:div>
+						</t:dataList>
+					</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div styleClass="aon-form-collapsiblePanel"
+				rendered="#{exceptionBean.cause != null}">
+				<h:outputLink value="#" id="exception_vfd"
+					onclick="javascript:viewFullDetails()" style="display:block">
+					<t:outputText forceId="#{true}"
+						value="#{errorBundle.aon_exception_view_stack_trace}" />
+				</h:outputLink>
+				<h:outputLink value="#" id="exception_hfd"
+					onclick="javascript:hideFullDetails()" style="display:none">
+					<t:outputText forceId="#{true}"
+						value="#{errorBundle.aon_exception_view_stack_trace}" />
+				</h:outputLink>
+
+				<t:div id="exception_full_details" forceId="#{true}"
+					styleClass="aon-form-collapsiblePanel-body" style="display:none;">
+					<t:div
+						style="padding-left: 15px; font-family: Courier; font-size: 0.8em; white-space: nowrap;">
+						<h:outputText value="#{exceptionBean.prettyFullStackTrace}"
+							escape="#{false}" />
+					</t:div>
+				</t:div>
+			</t:div>
+		</t:div>
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>
