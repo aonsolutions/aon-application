@@ -538,6 +538,8 @@
 		</params>
 	</report>
 	
+	<!--  *********  Impresion a PDF del mantenimiento de Cnae 1993 Rev.1 ********* -->
+	
 	 <report id="CnaeList" description="Listado de Cnae">
 		<template path="/com/code/aon/ui/payroll/report/CnaeList.jasper" />
 		<bean key="com.code.aon.payroll.cotizacion.Cnae" />
@@ -549,10 +551,38 @@
 		</params>
 	</report>
 	
+	<!--  *********  Impresion a Excel del mantenimiento de Cnae 1993 Rev.1 ********* -->
+	
 	 <report id="CnaeListXls" description="Listado de Cnae">
 		<template path="/com/code/aon/ui/payroll/report/CnaeListXls.jasper" />
 		<bean key="com.code.aon.payroll.cotizacion.Cnae" />
 		<criteria provider="#{cnae}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	<!--  *********  Impresion a PDF del mantenimiento de Cnae 2009 ********* -->
+	
+	 <report id="Cnae2009List" description="Listado de Cnae 2009">
+		<template path="/com/code/aon/ui/payroll/report/Cnae2009List.jasper" />
+		<bean key="com.code.aon.payroll.cotizacion.Cnae2009" />
+		<criteria provider="#{cnae2009}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	<!--  *********  Impresion a Excel del mantenimiento de Cnae 2009 ********* -->
+	
+	 <report id="Cnae2009ListXls" description="Listado de Cnae 2009">
+		<template path="/com/code/aon/ui/payroll/report/Cnae2009ListXls.jasper" />
+		<bean key="com.code.aon.payroll.cotizacion.Cnae2009" />
+		<criteria provider="#{cnae2009}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />
