@@ -302,7 +302,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 			RegistryAttachment rattach = (RegistryAttachment)list.get(i);
 			Integer id = rattach.getId();
 			String name = rattach.getDescription();
-			System.out.println(">>>>>>>>>>>>>> " + id + " --- " + name + " <<<<<<<<<<<<<<<<");
+			LOGGER.fine(">>>>>>>>>>>>>> " + id + " --- " + name + " <<<<<<<<<<<<<<<<");
 			SelectItem item = new SelectItem(id, name);
 			images.add(item);
 		}
