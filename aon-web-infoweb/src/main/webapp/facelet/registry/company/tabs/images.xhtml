@@ -77,9 +77,9 @@
 										actionListener="#{companyImages.onAccept}" reRender="imagesPanel"/>
 									<aon:commandButton id="remove_image" value="#{bundle.aon_remove}"
 										styleClass="aon-icon-delete aon-finding-toolbar-item"
-										rendered="#{!companyImages.new}"
+										rendered="#{!companyImages.new}" immediate="true"
 										actionListener="#{companyImages.onRemove}" reRender="imagesPanel"/>
-									<aon:commandButton id="cancel_image" value="#{bundle.aon_cancel}"
+									<aon:commandButton id="cancel_image" value="#{bundle.aon_cancel}" immediate="true"
 										styleClass="aon-icon-cancel aon-finding-toolbar-item" reRender="imagesPanel"
 										actionListener="#{companyImages.onCancel}"/>	
 								</aon:div>	
@@ -88,7 +88,7 @@
 									cellpadding="0" cellspacing="0" width="100%"
 									rendered="#{companyImages.to != null}">	
 									<aon:outputLabel for="RegistryAttachment_description" value="#{bundle.aon_description}" />
-									<aon:inputText id="RegistryAttachment_description" size="45"
+									<aon:inputText id="RegistryAttachment_description" size="45" required="true"
 										maxlength="50" value="#{companyImages.to.description}" />		
 			
 									<aon:outputLabel for="RegistryAttachment_inputFile" value="#{appBundle.aon_web_info_images_file}" />
