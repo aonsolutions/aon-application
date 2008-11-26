@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="targetForm">
+		
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_target_module}" />
+				<ui:param name="controller" value="#{target}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="menuGrid" columns="2" dir="true">
+
+					<ui:include src="/com/code/aon/ui/commercial/facelet/target/formContent.xhtml">
+						<ui:param name="targetController" value="#{target}"/>
+					</ui:include>
+
+				</aon:panelGrid>
+
+				<c:if test="#{!target.new}">
+					<aon:panelTabSet id="targetTab" selectedTab="#{target.selectedTab}" valueChangeListener="#{target.tabChanged}">
+
+						<aon:panelTab id="customer_address" label="#{registryBundle.registry_address_module}">
+							<ui:include src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
+								<ui:param name="controllerAlias" value="#{targetAddress}" />
+								<ui:param name="dataTableId" value="targetAddressDataList" />
+							</ui:include>
+						</aon:panelTab>
+
+						<aon:panelTab id="medias" label="#{registryBundle.registry_media_module}">
+							<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
+								<ui:param name="controllerAlias" value="#{targetMedia}" />
+								<ui:param name="dataTableId" value="targetMediaDataList" />
+							</ui:include>
+						</aon:panelTab>
+
+						<aon:panelTab id="targetSegment" label="#{commercialBundle.commercial_target_segment_module}">
+							<ui:include src="/com/code/aon/ui/commercial/facelet/targetSegment/tab_grid.xhtml" />
+						</aon:panelTab>
+
+						<aon:panelTab id="targetTracking" label="#{commercialBundle.commercial_target_tracking_module}">
+							<ui:include src="/com/code/aon/ui/commercial/facelet/targetTracking/tab_list.xhtml" />
+						</aon:panelTab>
+
+					</aon:panelTabSet>
+				</c:if>
+				<!-- 
+				<aon:panelTabSet rendered="#{!target.new}" selectedTab="#{target.selectedTab}" valueChangeListener="#{target.tabChanged}">
+
+					<aon:panelTab name="targetItem" label="#{appBundle.aon_target_item}">
+						<ui:include src="/commercial/target/item/grid.xhtml" />
+                    </aon:panelTab>
+
+					<aon:panelTab name="targetSeller" label="#{appBundle.aon_target_seller}">
+						<ui:include src="/commercial/target/seller/grid.xhtml" />
+                    </aon:panelTab>
+
+				</aon:panelTabSet>
+				-->
+			</aon:div>
+		</aon:form>
+		<!-- 
+		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
+		-->		
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

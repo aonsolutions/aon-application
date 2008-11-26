@@ -6,5 +6,15 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:f="http://java.sun.com/jsf/core">
 
-escribe algo
+	<aon:div id="aon-scroll-area">
+		<aon:div>
+			<aon:div style="text-align:center;padding-top: 100px;">
+				<aon:graphicImage rendered="#{company.withLogo}" url="company.logo"/>
+				<aon:div style="font-weight: bold;font-size:14px;padding:2em;">
+					<aon:outputText value="#{company.companyLabel}" />
+				</aon:div>
+			</aon:div>
+		</aon:div>
+	</aon:div>
+	
 </ui:composition>

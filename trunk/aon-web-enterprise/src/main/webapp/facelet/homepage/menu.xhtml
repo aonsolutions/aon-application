@@ -11,6 +11,8 @@
 				<aon:menuItem value="#{customerBundle.customer_module}" action="customer_search" actionListener="#{customer.onEditSearch}" />
 				<aon:menuItem value="#{supplierBundle.supplier_module}" action="supplier_search" actionListener="#{supplier.onEditSearch}" />
 				<aon:menuItem value="#{productBundle.product_module}" action="item_search" actionListener="#{item.onEditSearch}" />
+				<aon:menuItem id="target"
+					value="#{commercialBundle.commercial_target_module}" action="target_search" actionListener="#{target.onEditSearch}" />
 			</aon:dropDownMenu>		 
 			<aon:dropDownMenu value="#{appBundle.menu_auxiliar}">
 				<aon:menuItem value="#{productBundle.product_category_module}" action="productCategory" />			

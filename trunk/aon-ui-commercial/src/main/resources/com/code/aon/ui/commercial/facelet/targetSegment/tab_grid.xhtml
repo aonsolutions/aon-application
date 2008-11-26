@@ -1,0 +1,36 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+		<ui:param name="controller" value="#{targetSegment}" />
+		<ui:param name="columnClasses" value="aon-editDataTable-textColumn" />
+		
+		<ui:define name="columns">
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_name}" />
+				</f:facet>
+				<aon:outputText value="#{to.segment.name}"
+					rendered="#{to!=controller.to}" />
+				<aon:selectOneMenu rendered="#{to==controller.to}"
+					required="true" value="#{controller.to.segment.id}">
+					<f:selectItem itemLabel="-" value="#{null}"/>
+					<f:selectItems value="#{target.segments}" />
+				</aon:selectOneMenu>								
+				<f:facet name="footer">
+					<aon:selectOneMenu rendered="#{controller.new}"
+						required="true" value="#{controller.to.segment.id}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{target.segments}" />
+					</aon:selectOneMenu>								
+				</f:facet>
+			</aon:column>
+
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>
