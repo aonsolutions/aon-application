@@ -12,6 +12,8 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -158,12 +160,14 @@ public class GeneratorController extends BasicController implements VelocityCons
 				attachList = (List<ITransferObject>)attachBean.getList(attachCriteria);
 				for (int i=0; i<attachList.size(); i++) {
 					RegistryAttachment ra = (RegistryAttachment)attachList.get(i);
-					String filename = ra.getDescription() + "." + ra.getMimeType().getExtension();
-					if (!ImageUtil.copyRegistryBlobToFile(ra, images_temporal_path, 200, 200, filename)) {
-						AonUtil.addErrorMessage("ERROR: Se produjo un error al intentar copiar la imagen " + filename + "."); 
+					if ( (ra.getData() != null) && (!StringUtils.isEmpty(ra.getDescription())) ) {
+						String filename = ra.getDescription() + "." + ra.getMimeType().getExtension();
+						if (!ImageUtil.copyRegistryBlobToFile(ra, images_temporal_path, 200, 200, filename)) {
+							AonUtil.addErrorMessage("ERROR: Se produjo un error al intentar copiar la imagen " + filename + "."); 
+						}
+						ImageHandler ih = new ImageHandler(filename, getPageName(ra.getDescription()), ra.getDescription());
+						all_images.add(ih);
 					}
-					ImageHandler ih = new ImageHandler(filename, getPageName(ra.getDescription()), ra.getDescription());
-					all_images.add(ih);
 				}
 				vu.put("all_images", all_images);
 
