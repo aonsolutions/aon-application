@@ -95,10 +95,10 @@
 		<bean key="com.code.aon.finance.Finance" />
 		<criteria provider="#{finance}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="payment" value="#{finance.getPayment}" />
+			<param id="payment" value="#{financeSearch.getPayment}" />
 		</params>
 	</report>
 
@@ -107,7 +107,7 @@
 		<template path="/com/code/aon/ui/finance/report/fBatchList.jasper" />
 		<collection provider="#{fBatchPrinter}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
@@ -119,7 +119,7 @@
 		<collection provider="#{fbatch}"/>
 
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="total" value="#{fbatch.getToTotalAmount}" />
@@ -139,7 +139,7 @@
 		<collection provider="#{financeCheckingPrinter}"/>
 
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 		</params>
