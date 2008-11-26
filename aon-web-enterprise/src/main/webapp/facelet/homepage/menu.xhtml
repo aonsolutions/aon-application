@@ -17,6 +17,29 @@
 				<aon:menuItem value="#{productBundle.product_catalogue_module}" action="catalogue_search" actionListener="#{catalogue.onEditSearch}" />
 				<aon:menuItem value="#{productBundle.product_tariff_module}" action="tariff_list" actionListener="#{tariff.onSearch}" />
 			</aon:dropDownMenu>
+			<aon:dropDownMenu id="finance" value="#{financeBundle.finance_menu_group}">
+				<aon:menuItem id="aon_finance"
+					value="#{financeBundle.finance_finance_module}" action="finance_search">
+					<aon:actionListener method="#{finance.onEditSearch}"/>
+				</aon:menuItem>				
+				<aon:menuItem id="aon_finance_return"
+					value="#{financeBundle.finance_finance_return_module}" action="financeReturn_search">
+					<aon:actionListener method="#{financeReturn.onEditSearch}"/>
+				</aon:menuItem>				
+				<aon:menuItem id="aon_finance_payment"
+					value="#{financeBundle.finance_finance_payment_module}" action="financePayment_search">
+					<aon:actionListener method="#{financePayment.onEditSearch}"/>
+				</aon:menuItem>				
+				<aon:menuItem id="aon_fbatch"
+					value="#{financeBundle.finance_fbatch_module}" action="fbatch_search" >
+					<aon:actionListener method="#{fbatch.onEditSearch}"/>
+				</aon:menuItem>
+				<aon:menuGroup id="aon_finance_utilities"
+					value="#{financeBundle.finance_finance_utilities_module}">
+					<aon:menuItem id="checks"
+						value="#{financeBundle.finance_checking_module}" action="util_checking" />
+				</aon:menuGroup>			
+			</aon:dropDownMenu>			
 			<aon:dropDownMenu value="#{appBundle.menu_configuration}">
 				<aon:menuItem value="#{companyBundle.company_data_module}" action="company" actionListener="#{company.onLoad}" />
 				<aon:menuItem value="#{companyBundle.company_workplace_module}" action="workplace" />
