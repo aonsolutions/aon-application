@@ -27,7 +27,7 @@
 	</bean>
 
 	<bean class="com.code.aon.product.TariffCatalogue" sqlName="tariff_catalogue">
-		<alias names="id,tariff_id,catalogue_id,catalogue_startDate,catalogue_endDate" />
-		<hibernate names="id,tariff.id,catalogue.id,catalogue.startDate,catalogue.endDate" />
+		<alias names="id,tariff_id,catalogue_id,catalogue_name,catalogue_startDate,catalogue_endDate" />
+		<hibernate names="id,tariff.id,catalogue.id,catalogue.name,catalogue.startDate,catalogue.endDate" />
 	</bean>
 </dao>

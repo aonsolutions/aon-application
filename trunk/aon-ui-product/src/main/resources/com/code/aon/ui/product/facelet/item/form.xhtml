@@ -22,9 +22,7 @@
 
 					<aon:outputLabel for="Item_product_code" value="#{bundle.aon_id}" />
 					<aon:inputText id="Item_product_code" value="#{item.to.product.code}"
-						required="true" size="15" onblur="toUpperCase(this);">
-						<f:validateLength minimum="1" maximum="64" />
-					</aon:inputText>
+						required="true" size="15" maxLength="15" onblur="toUpperCase(this);" />
 
 					<aon:outputLabel for="Item_status" value="#{bundle.aon_status}" />
 					<aon:selectOneMenu id="Item_status" value="#{item.to.status}">
@@ -33,9 +31,7 @@
 
 					<aon:outputLabel for="Item_product_name" value="#{bundle.aon_description}" />
 					<aon:inputText id="Item_product_name" value="#{item.to.product.name}"
-						required="true" size="64">
-						<f:validateLength minimum="1" maximum="64" />
-					</aon:inputText>
+						required="true" size="64" maxLength="64" />
 
 					<aon:outputLabel for="Item_product_category" value="#{productBundle.product_category}" />
 					<aon:selectOneMenu id="Item_product_category" value="#{item.to.product.category}">
@@ -101,19 +97,16 @@
 						<aon:outputLabel value="#{productBundle.product_inventoriable}" />
 					</aon:div>
 
+<!-- 
 					<aon:outputLabel for="Item_product_sales_account" value="#{productBundle.product_sales_account}" />
 					<aon:inputText id="Item_product_sales_account" value="#{item.to.product.salesAccount}"
-						size="12">
-						<f:validateLength minimum="1" maximum="12" />
-					</aon:inputText>
+						size="12" maxLength="12" />
 
 					<aon:outputLabel for="Item_product_purchase_account" value="#{productBundle.product_purchase_account}" />
 					<aon:inputText id="Item_product_purchase_account" value="#{item.to.product.purchaseAccount}"
-						size="12">
-						<f:validateLength minimum="1" maximum="12" />
-					</aon:inputText>
-
-					<aon:div styleClass="aon-lookup">
+						size="12" maxLength="12" />
+ 
+ 					<aon:div styleClass="aon-lookup">
 						<aon:lookupInputText id="Item_product_sales_account_id" value="#{item.to.salesAccount.id}"
 							lookup="#{accountLookup}" reRender="Item_product_sales_account_description"
 							 size="10">
@@ -128,6 +121,7 @@
 						<aon:inputText id="Item_product_sales_account_description" value="#{item.to.salesAccount.name}"
 							size="40" disabled="true" />
 					</aon:div>
+-->
 
 				</aon:panelGrid>
 			</aon:div>

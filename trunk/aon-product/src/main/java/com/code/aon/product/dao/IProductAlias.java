@@ -545,16 +545,22 @@ public interface IProductAlias {
 	String  TARIFF_CATALOGUE_CATALOGUE_ID = TARIFF_CATALOGUE_ENTRY.getAliasNames()[2];
 
 	/** 
+	* Alias value: TariffCatalogue_catalogue_name
+	* Hibernate value: TariffCatalogue.catalogue.name
+	*/
+	String  TARIFF_CATALOGUE_CATALOGUE_NAME = TARIFF_CATALOGUE_ENTRY.getAliasNames()[3];
+
+	/** 
 	* Alias value: TariffCatalogue_catalogue_startDate
 	* Hibernate value: TariffCatalogue.catalogue.startDate
 	*/
-	String  TARIFF_CATALOGUE_CATALOGUE_START_DATE = TARIFF_CATALOGUE_ENTRY.getAliasNames()[3];
+	String  TARIFF_CATALOGUE_CATALOGUE_START_DATE = TARIFF_CATALOGUE_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: TariffCatalogue_catalogue_endDate
 	* Hibernate value: TariffCatalogue.catalogue.endDate
 	*/
-	String  TARIFF_CATALOGUE_CATALOGUE_END_DATE = TARIFF_CATALOGUE_ENTRY.getAliasNames()[4];
+	String  TARIFF_CATALOGUE_CATALOGUE_END_DATE = TARIFF_CATALOGUE_ENTRY.getAliasNames()[5];
 
 
 }

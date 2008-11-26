@@ -16,6 +16,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.sales.PointOfSale;
 import com.code.aon.sales.dao.ISalesAlias;
 import com.code.aon.sales.enumeration.BillingPeriod;
+import com.code.aon.sales.enumeration.SellerStatus;
 
 /**
  * Controller used to get Collections related with clasess in <code>com.code.aon.sales</code>
@@ -71,4 +72,18 @@ public class SalesCollectionsController {
 		}
 		return monthList;
 	}
+
+	public List<SelectItem> getSellerStatuses() {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
+		SellerStatus[] statuses = SellerStatus.values();
+		for (int i = 0; i < statuses.length; i++) {
+			SellerStatus status = statuses[i];
+			String name = status.getName(locale);
+			SelectItem item = new SelectItem(status, name);
+			types.add(item);
+		}
+		return types;
+	}
+
 }

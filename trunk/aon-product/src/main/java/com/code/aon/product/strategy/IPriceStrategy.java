@@ -1,5 +1,6 @@
 package com.code.aon.product.strategy;
 
+import java.util.Date;
 import java.util.List;
 
 import com.code.aon.product.Tariff;
@@ -32,7 +33,7 @@ public interface IPriceStrategy {
 	 * @param tariff the tariff to be applied to the ICalculabe object
 	 * @return the unit price
 	 */
-	public double getUnitPrice(ICalculable calc, ICalculableContainer icc, Tariff tariff);
+	public double getUnitPrice(ICalculable calc, Date date, Tariff tariff);
 	
 	/**
 	 * Returns the base price of the ICalculable object.
