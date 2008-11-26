@@ -15,7 +15,7 @@
 	<description>APLICACION WEB DE ACADEMIAS</description>
 	<name>APLICACION WEB DE ACADEMIAS</name>
 	<properties>
-		<dbVersion>1.10.3</dbVersion>
+		<dbVersion>1.10.4</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-academy</finalName>
