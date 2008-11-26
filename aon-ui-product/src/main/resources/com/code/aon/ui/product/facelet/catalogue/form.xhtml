@@ -22,9 +22,7 @@
 
 					<aon:outputLabel for="Catalogue_name" value="#{bundle.aon_description}" />
 					<aon:inputText id="Catalogue_name" value="#{catalogue.to.name}"
-						required="true" size="32">
-						<f:validateLength minimum="1" maximum="32" />
-					</aon:inputText>
+						required="true" size="32" maxLength="32" />
 
 					<aon:outputLabel for="Catalogue_startDate" value="#{productBundle.product_catalogue_start_date}" />
 					<aon:selectInputDate id="Catalogue_startDate" value="#{catalogue.to.startDate}" 

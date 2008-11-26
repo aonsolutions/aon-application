@@ -15,6 +15,7 @@ import org.hibernate.annotations.Parameter;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
+import com.code.aon.sales.enumeration.SellerStatus;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -35,6 +36,9 @@ public class Seller implements ITransferObject, IRegistry {
 	
 	/** The description. */
 	private String description;
+
+	/** The status. */
+	private SellerStatus status;
 
 	/**
 	 * Gets the id.
@@ -60,25 +64,6 @@ public class Seller implements ITransferObject, IRegistry {
 	}	
 	
 	/**
-	 * Gets the description.
-	 * 
-	 * @return the description
-	 */
-	@Column(length=20)
-	public String getDescription() {
-		return description;
-	}
-
-	/**
-	 * Sets the description.
-	 * 
-	 * @param description the description
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	/**
 	 * Gets the registry.
 	 * 
 	 * @return the registry
@@ -98,4 +83,42 @@ public class Seller implements ITransferObject, IRegistry {
 	public void setRegistry(Registry registry) {
 		this.registry = registry;
 	}
+
+	/**
+	 * Gets the description.
+	 * 
+	 * @return the description
+	 */
+	@Column(length=64)
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * Sets the description.
+	 * 
+	 * @param description the description
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * Gets the status.
+	 * 
+	 * @return the status
+	 */
+	public SellerStatus getStatus() {
+		return status;
+	}
+
+	/**
+	 * Sets the status.
+	 * 
+	 * @param status the status
+	 */
+	public void setStatus(SellerStatus status) {
+		this.status = status;
+	}
+
 }
