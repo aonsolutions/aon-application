@@ -382,6 +382,8 @@ public class GeneratorController extends BasicController implements VelocityCons
 		IManagerBean wiprBean = BeanManager.getManagerBean(WebInfoPageResource.class);
 		Criteria wiprCriteria = new Criteria();
 		wiprCriteria.addEqualExpression(wiprBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_RESOURCE_WEB_INFO_PAGE_ID), wip.getId());
+		wiprCriteria.addNotNullExpression("WebInfoPageResource.rattach.description");
+		wiprCriteria.addNotNullExpression("WebInfoPageResource.rattach.data");
 		List<ITransferObject> wiprList = (List<ITransferObject>)wiprBean.getList(wiprCriteria);
 		String previous_link = "";
 		String next_link = "";
