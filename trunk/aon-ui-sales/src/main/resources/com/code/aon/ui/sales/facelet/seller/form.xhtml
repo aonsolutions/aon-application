@@ -16,7 +16,7 @@
 		<aon:form id="sellerForm">
 		
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{menuBundle.aon_sellers}" />
+				<ui:param name="toolbarTitle" value="#{salesBundle.sales_seller_module}" />
 				<ui:param name="controller" value="#{seller}" />
 			</ui:include>
 
@@ -37,7 +37,7 @@
 					<aon:outputLabel for="Seller_status"
 						value="#{bundle.aon_status}" />
 					<aon:selectOneMenu id="Seller_status" required="true"
-						value="#{seller.to.advertising}">
+						value="#{seller.to.status}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{salesCollections.sellerStatuses}" />
 					</aon:selectOneMenu>
