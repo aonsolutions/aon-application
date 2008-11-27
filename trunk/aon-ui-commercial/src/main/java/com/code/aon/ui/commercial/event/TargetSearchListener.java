@@ -104,21 +104,21 @@ public class TargetSearchListener extends ControllerSearchListener implements IC
 	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
 		Criteria criteria = getController().getCriteria();
 		if (getTrackingDateFrom() != null) {
-			criteria.addGreaterThanOrEqualExpression("MarketingTarget.target.trackings.date", getTrackingDateFrom());
+			criteria.addGreaterThanOrEqualExpression("Target.trackings.date", getTrackingDateFrom());
 		}
 		if (getTrackingDateTo() != null) {
-			criteria.addLessThanOrEqualExpression("MarketingTarget.target.trackings.date", getTrackingDateTo());
+			criteria.addLessThanOrEqualExpression("Target.trackings.date", getTrackingDateTo());
 		}
 		if ( (getSeller() != null) && (getSeller().getId() != null) ) {
-			criteria.addEqualExpression("MarketingTarget.target.trackings.seller.id", getSeller().getId());			
+			criteria.addEqualExpression("Target.trackings.seller.id", getSeller().getId());			
 		}
 		if (getActivity() != null) {
-			criteria.addEqualExpression("MarketingTarget.target.trackings.activity.id", getActivity().getId());			
+			criteria.addEqualExpression("Target.trackings.activity.id", getActivity().getId());			
 		}		
 		if (! ArrayUtils.isEmpty(getTrackingStatuses()) ) {
-			addEnumToCriteria( criteria, "MarketingTarget.target.trackings.status", getTrackingStatuses() );
+			addEnumToCriteria( criteria, "Target.trackings.status", getTrackingStatuses() );
 		}
-		addEnumToCriteria( criteria, "MarketingTarget.target.registry.medias.mediaType", getMediaTypes().toArray() );
+		addEnumToCriteria( criteria, "Target.registry.medias.mediaType", getMediaTypes().toArray() );
 	}
 	
 	public void onAddMediaType( ActionEvent event ) {

@@ -11,7 +11,6 @@ import javax.faces.model.SelectItem;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
 import com.code.aon.sales.PointOfSale;
 import com.code.aon.sales.dao.ISalesAlias;
@@ -41,7 +40,7 @@ public class SalesCollectionsController {
 		Iterator iter = pointOfSaleBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			PointOfSale pos = (PointOfSale)iter.next();
-			SelectItem item = new SelectItem(pos.getId(), pos.getDescription());
+			SelectItem item = new SelectItem(pos, pos.getDescription());
 			pointsOfSale.add(item);
 		}
 		return pointsOfSale;
@@ -50,35 +49,18 @@ public class SalesCollectionsController {
 	public List<SelectItem> getBillingPeriods() {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		LinkedList<SelectItem> periods = new LinkedList<SelectItem>();
-		BillingPeriod[] billingPeriods = BillingPeriod.values();
-		for (int i = 0; i < billingPeriods.length; i++) {
-			BillingPeriod period = billingPeriods[i];
+		for( BillingPeriod period : BillingPeriod.values() ) {
 			String name = period.getName(locale);
 			SelectItem item = new SelectItem(period, name);
-			periods.add(item);
+			periods.add(item);			
 		}
 		return periods;
-	}
-	
-	public List<SelectItem> getMonths(){
-		List<SelectItem> monthList = new LinkedList<SelectItem>();
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		Month[] months = Month.values();
-		for (int i = 0; i < months.length; i++) {
-			Month month = months[i];
-			String name = month.getName(locale);
-			SelectItem item = new SelectItem(month, name);
-			monthList.add(item);
-		}
-		return monthList;
 	}
 
 	public List<SelectItem> getSellerStatuses() {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-		SellerStatus[] statuses = SellerStatus.values();
-		for (int i = 0; i < statuses.length; i++) {
-			SellerStatus status = statuses[i];
+		for( SellerStatus status : SellerStatus.values() ) {
 			String name = status.getName(locale);
 			SelectItem item = new SelectItem(status, name);
 			types.add(item);
