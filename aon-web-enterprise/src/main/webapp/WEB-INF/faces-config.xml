@@ -116,6 +116,10 @@
 					<key>supplierBundle</key>
                     <value>com.code.aon.ui.supplier.i18n.messages</value>
 				</map-entry>
+				<map-entry>
+					<key>warehouseBundle</key>
+                    <value>com.code.aon.ui.warehouse.i18n.messages</value>
+				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>
