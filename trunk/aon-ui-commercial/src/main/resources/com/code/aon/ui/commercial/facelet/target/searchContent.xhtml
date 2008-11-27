@@ -33,7 +33,8 @@
 				<aon:outputLabel for="Target_registry_addresses_geozone_id"
 					value="#{registryBundle.registry_geozone}" />
 				<aon:selectOneMenu id="Target_registry_addresses_geozone_id" 
-					valueChangeListener="#{controller.addDirectExpression}">
+					value="#{geozoneCollections.geoZone}"
+					valueChangeListener="#{controller.addDirectIdEqualExpression}">
 					<f:selectItem itemLabel="-" value="#{null}"/>
 					<f:selectItems value="#{geozoneCollections.geoTrees}" />
 				</aon:selectOneMenu>			
@@ -47,9 +48,9 @@
 				<aon:div id="mediaTypeDiv">
 					<a4j:repeat value="#{targetSearch.mediaTypes}" rowKeyVar="index" var="mediaType">
 						<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
-							<aon:selectOneMenu id="Target_registry_medias_mediaType" 
+							<aon:selectOneMenu id="Target_registry_medias_mediaType"
+								converter="aon.EnumConverter" 
 								value="#{targetSearch.mediaTypes[index]}">
-								<aon:enumConverter enum="com.code.aon.registry.enumeration.MediaType" />
 								<f:selectItem itemLabel="-" value="#{null}"/>
 								<f:selectItems value="#{registryCollections.mediaTypes}" />
 								<a4j:support event="onchange" reRender="mediaTypeDiv"/>
@@ -61,7 +62,7 @@
 							</aon:commandButton>
 							<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="mediaTypeDiv"
 								actionListener="#{targetSearch.onAddMediaType}"
-								rendered="#{(mediaType != null) and (index == (targetSearch.mediaTypesSize-1))}"/>
+								rendered="#{(mediaType != null) and (index == (targetSearch.mediaTypesSize-1))}"/>					
 						</aon:div>						
 					</a4j:repeat>
 				</aon:div>			
