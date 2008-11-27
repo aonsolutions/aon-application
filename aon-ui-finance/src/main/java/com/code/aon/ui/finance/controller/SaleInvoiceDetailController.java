@@ -7,6 +7,7 @@ import com.code.aon.customer.Customer;
 import com.code.aon.faces.component.richfaces.lookup.LookupChangeEvent;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.invoicing.InvoicePriceStrategy;
+import com.code.aon.product.Item;
 import com.code.aon.product.Tariff;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ui.form.LinesController;
@@ -40,17 +41,23 @@ public class SaleInvoiceDetailController extends LinesController {
 		return priceStrategy;
 	}
 
-	public void itemChanged(LookupChangeEvent event) {
+	public void onItemChanged(LookupChangeEvent event) {
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
-		try {
+		double price = 0;
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			invoiceDetail.setItem((Item)event.getNewValue());
+
 			Date date = invoiceDetail.getInvoice().getIssueDate();
-			SaleInvoiceController master = (SaleInvoiceController) getMasterController();
-			Customer customer = master.getCustomer();
-			Tariff tariff = customer.getTariff(); 
-			double price = getPriceStrategy().getUnitPrice(invoiceDetail, date,tariff);
-			invoiceDetail.setPrice(price);
-		} catch (ManagerBeanException e) {
-			invoiceDetail.setPrice(0);
+			Tariff tariff;
+			try {
+				SaleInvoiceController master = (SaleInvoiceController) getMasterController();
+				Customer customer = master.getCustomer();
+				tariff = customer.getTariff();
+			} catch (ManagerBeanException e) {
+				tariff = null;
+			}
+			price = getPriceStrategy().getUnitPrice(invoiceDetail, date, tariff);
 		}
+		invoiceDetail.setPrice(price);
 	}
 }
