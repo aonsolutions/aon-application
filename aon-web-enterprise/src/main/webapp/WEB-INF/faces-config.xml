@@ -69,6 +69,14 @@
 					<value>com.code.aon.ui.enterprise.i18n.messages</value>
 				</map-entry>
 				<map-entry>
+					<key>accountBundle</key>
+					<value>com.code.aon.ui.account.i18n.messages</value>
+				</map-entry>
+				<map-entry>
+				<map-entry>
+					<key>commercialBundle</key>
+					<value>com.code.aon.ui.commercial.i18n.messages</value>
+				</map-entry>				
 					<key>companyBundle</key>
                     <value>com.code.aon.ui.company.i18n.messages</value>
 				</map-entry>
@@ -108,10 +116,6 @@
 					<key>supplierBundle</key>
                     <value>com.code.aon.ui.supplier.i18n.messages</value>
 				</map-entry>
-				<map-entry>
-					<key>commercialBundle</key>
-					<value>com.code.aon.ui.commercial.i18n.messages</value>
-				</map-entry>				
 			</map-entries>
 		</managed-property>
 	</managed-bean>
