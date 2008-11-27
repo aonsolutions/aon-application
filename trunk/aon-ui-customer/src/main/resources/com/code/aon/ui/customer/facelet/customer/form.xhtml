@@ -50,6 +50,14 @@
 						<f:validateLength minimum="1" maximum="32" />
 					</aon:inputText>
 
+					<h:outputLabel for="Customer_tariff_id"
+						value="#{productBundle.product_tariff}" />
+					<h:selectOneMenu id="Customer_tariff_id"
+						value="#{customer.to.tariff}">
+						<f:selectItem value="#{nullItem.value}" />
+						<f:selectItems value="#{productCollections.tariffs}" />
+					</h:selectOneMenu>
+
 					<h:outputLabel for="Customer_scope_id"
 						value="#{bundle.aon_scope}" />
 					<h:selectOneMenu id="Customer_scope_id"
