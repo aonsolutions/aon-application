@@ -1129,6 +1129,261 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************ SALE INVOICE ************* -->
+	<managed-bean>
+		<managed-bean-name>saleInvoice</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.SaleInvoiceController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.Invoice</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>saleInvoice</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{saleInvoiceControllerListener}</value>
+				<value>#{saleInvoiceAddressListener}</value>
+				<value>#{saleInvoiceDetailListener}</value>
+				<value>#{saleInvoiceFinanceListener}</value>
+				<value>#{saleInvoiceHeaderControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>saleInvoiceControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.SaleInvoiceControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>saleInvoiceHeaderControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.event.InvoiceHeaderControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>table</property-name>
+			<value>Invoice</value>
+		</managed-property>
+	</managed-bean>
+	<!-- ************ SALE INVOICE ADDRESS ************* -->
+	<managed-bean>
+		<managed-bean-name>saleInvoiceAddressListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>saleInvoiceAddress</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>InvoiceAddress_invoice_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>saleInvoiceAddress</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.InvoiceAddress</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>saleInvoice</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>invoice.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+
+	<!-- ************ SALE INVOICE DETAIL ************* -->
+	<managed-bean>
+		<managed-bean-name>saleInvoiceDetailListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>saleInvoiceDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>InvoiceDetail_invoice_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>saleInvoiceDetail</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.SaleInvoiceDetailController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.InvoiceDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>saleInvoice</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>invoice.id</value>
+				</map-entry>
+				<map-entry>
+					<key>surcharge</key>
+					<value>invoice.surcharge</value>
+				</map-entry>
+				<map-entry>
+					<key>taxFree</key>
+					<value>invoice.taxFree</value>
+				</map-entry>
+				<map-entry>
+					<key>withholding</key>
+					<value>invoice.withholding</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{saleInvoiceDetailControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>saleInvoiceDetailControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.SaleInvoiceDetailControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- **************** SALE INVOICE FINANCE  *************** -->
+	<managed-bean>
+		<managed-bean-name>saleInvoiceFinanceListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>saleInvoiceFinance</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Finance_invoice_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>saleInvoiceFinance</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.SaleInvoiceFinanceController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.Finance</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>saleInvoice</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>invoice.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{saleInvoiceFinanceControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>saleInvoiceFinanceControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.SaleInvoiceFinanceControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- **************** VAT REPORT  *************** -->
 	<managed-bean>
 		<managed-bean-name>vatReport</managed-bean-name>
@@ -1573,5 +1828,21 @@
 			<to-view-id>/com/code/aon/ui/finance/facelet/purchaseDirectInvoicing/form.xhtml</to-view-id>			
 		</navigation-case>
 	</navigation-rule> 
-  
+
+	<!-- =================== Sale Invoice Management========================== -->
+	<navigation-rule>
+	    <navigation-case>
+    	  	<from-outcome>saleInvoice_search</from-outcome>
+    		<to-view-id>/com/code/aon/ui/finance/facelet/saleInvoice/search.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>saleInvoice_list</from-outcome>
+    		<to-view-id>/com/code/aon/ui/finance/facelet/saleInvoice/list.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>saleInvoice_form</from-outcome>
+    		<to-view-id>/com/code/aon/ui/finance/facelet/saleInvoice/form.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	
 </faces-config>

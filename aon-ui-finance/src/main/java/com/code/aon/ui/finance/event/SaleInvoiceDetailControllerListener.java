@@ -1,4 +1,4 @@
-package com.code.aon.ui.sales.event;
+package com.code.aon.ui.finance.event;
 
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -21,19 +21,18 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.sales.CustomerFee;
 import com.code.aon.sales.enumeration.BillingPeriod;
+import com.code.aon.ui.finance.controller.SaleInvoiceController;
+import com.code.aon.ui.finance.controller.SaleInvoiceDetailController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.sales.controller.FeeInvoicingController;
-import com.code.aon.ui.sales.controller.FeeInvoicingDetailController;
 import com.code.aon.ui.util.AonUtil;
 
-@Deprecated
-public class FeeInvoicingDetailControllerListener extends ControllerAdapter {
+public class SaleInvoiceDetailControllerListener extends ControllerAdapter {
 
-	private static final Logger LOGGER = Logger.getLogger(FeeInvoicingDetailControllerListener.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(SaleInvoiceDetailControllerListener.class.getName());
 	
-	private static final String FEE_INVOICING_CONTROLLER_NAME = "feeInvoicing";
+	private static final String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
 
 	private IPriceStrategy priceStrategy;
 
@@ -79,32 +78,32 @@ public class FeeInvoicingDetailControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		try {
-			FeeInvoicingDetailController detailController = (FeeInvoicingDetailController)event.getController();
+			SaleInvoiceDetailController detailController = (SaleInvoiceDetailController)event.getController();
 			InvoiceDetail detail = (InvoiceDetail) detailController.getTo();
-			if (detailController.getWorkPlace() != null) {
-				detail.setWorkPlace(detailController.getWorkPlace());
-			} else {
-				FeeInvoicingController feeInvoicingController = (FeeInvoicingController)AonUtil.getController(FEE_INVOICING_CONTROLLER_NAME);
-				detail.setWorkPlace(obtainSeriesWorkplace(((Invoice)feeInvoicingController.getTo()).getSeries()));
-			}
+//			if (detailController.getWorkPlace() != null) {
+//				detail.setWorkPlace(detailController.getWorkPlace());
+//			} else {
+				SaleInvoiceController saleInvoiceController = (SaleInvoiceController)AonUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
+				detail.setWorkPlace(obtainSeriesWorkplace(((Invoice)saleInvoiceController.getTo()).getSeries()));
+//			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException("Error obtaining workplace related with the selected serie");
 		}
 	}
 
-	@Override
-	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		FeeInvoicingDetailController detailController = (FeeInvoicingDetailController)event.getController();
-		InvoiceDetail invoiceDetail = (InvoiceDetail) detailController.getTo();
-		detailController.setWorkPlace(invoiceDetail.getWorkPlace());
-	}
+//	@Override
+//	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+//		SaleInvoiceDetailController detailController = (SaleInvoiceDetailController)event.getController();
+//		InvoiceDetail invoiceDetail = (InvoiceDetail) detailController.getTo();
+//		detailController.setWorkPlace(invoiceDetail.getWorkPlace());
+//	}
 
-	@Override
-	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		FeeInvoicingDetailController detailController = (FeeInvoicingDetailController)event.getController();
-		InvoiceDetail invoiceDetail = (InvoiceDetail) detailController.getTo();
-		detailController.setWorkPlace(invoiceDetail.getWorkPlace());
-	}
+//	@Override
+//	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+//		SaleInvoiceDetailController detailController = (SaleInvoiceDetailController)event.getController();
+//		InvoiceDetail invoiceDetail = (InvoiceDetail) detailController.getTo();
+//		detailController.setWorkPlace(invoiceDetail.getWorkPlace());
+//	}
 
 	@SuppressWarnings("unchecked")
 	private Customer obtainCustomer(Registry registry) {
@@ -124,7 +123,7 @@ public class FeeInvoicingDetailControllerListener extends ControllerAdapter {
 
 	@SuppressWarnings("unchecked")
 	private WorkPlace obtainSeriesWorkplace(String series) throws ManagerBeanException {
-		WorkPlace workPlace = new WorkPlace();
+		WorkPlace workPlace = null;
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), series);
@@ -140,7 +139,7 @@ public class FeeInvoicingDetailControllerListener extends ControllerAdapter {
 		invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
 	}
 
-	public IPriceStrategy getPriceStrategy() {
+	private IPriceStrategy getPriceStrategy() {
 		if (priceStrategy == null) {
 			priceStrategy = new InvoicePriceStrategy();
 		}

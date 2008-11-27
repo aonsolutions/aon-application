@@ -14,40 +14,40 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.finance.controller.FeeFinanceController;
+import com.code.aon.ui.finance.controller.SaleInvoiceFinanceController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 
-public class FeeFinanceControllerListener extends ControllerAdapter {
+public class SaleInvoiceFinanceControllerListener extends ControllerAdapter {
 	
-	private static final Logger LOGGER = Logger.getLogger(FeeFinanceControllerListener.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(SaleInvoiceFinanceControllerListener.class.getName());
 	
-	private static final String FEE_INVOICING_CONTROLLER_NAME = "feeInvoicing";
+	private static final String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		FeeFinanceController feeFinanceController = (FeeFinanceController)event.getController();
-		Finance finance = (Finance)feeFinanceController.getTo();
-		fillFinanceData(finance, feeFinanceController.getRegistryBankId());
+		SaleInvoiceFinanceController saleInvoiceFinanceController = (SaleInvoiceFinanceController)event.getController();
+		Finance finance = (Finance)saleInvoiceFinanceController.getTo();
+		fillFinanceData(finance, saleInvoiceFinanceController.getRegistryBankId());
 	}
 	
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		FeeFinanceController feeFinanceController = (FeeFinanceController)event.getController();
-		Finance finance = (Finance)feeFinanceController.getTo();
-		fillFinanceData(finance, feeFinanceController.getRegistryBankId());
+		SaleInvoiceFinanceController saleInvoiceFinanceController = (SaleInvoiceFinanceController)event.getController();
+		Finance finance = (Finance)saleInvoiceFinanceController.getTo();
+		fillFinanceData(finance, saleInvoiceFinanceController.getRegistryBankId());
 	}
 	
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-		FeeFinanceController feeFinanceController = (FeeFinanceController)event.getController();
-		feeFinanceController.setRegistryBankId(obtainRegistryBankId((Finance)feeFinanceController.getTo()));
+		SaleInvoiceFinanceController saleInvoiceFinanceController = (SaleInvoiceFinanceController)event.getController();
+		saleInvoiceFinanceController.setRegistryBankId(obtainRegistryBankId((Finance)saleInvoiceFinanceController.getTo()));
 	}
 
 	private void fillFinanceData(Finance finance, Integer registryBankId) {
-		Invoice invoice = (Invoice)AonUtil.getController(FEE_INVOICING_CONTROLLER_NAME).getTo();
+		Invoice invoice = (Invoice)AonUtil.getController(SALE_INVOICE_CONTROLLER_NAME).getTo();
 		finance.setInvoice(invoice);
 		if(invoice.getType().equals(InvoiceType.SALES)){
 			finance.setPayment(false);
@@ -67,6 +67,7 @@ public class FeeFinanceControllerListener extends ControllerAdapter {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private Integer obtainRegistryBankId(Finance finance) {
 		try {
 			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
@@ -84,6 +85,7 @@ public class FeeFinanceControllerListener extends ControllerAdapter {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private RegistryBank obtainRegistryBank(Integer registryBankId) {
 		try {
 			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);

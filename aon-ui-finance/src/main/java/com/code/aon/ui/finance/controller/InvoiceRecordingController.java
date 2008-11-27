@@ -157,7 +157,7 @@ public class InvoiceRecordingController extends BasicController{
 			entry.setJournal(null);
 			entry.setType((invoice.getType().equals(InvoiceType.SALES)?AccountEntryType.SALES_INVOICE:AccountEntryType.PURCHASE_INVOICE));
 			entry.setSecurityLevel(invoice.getSecurityLevel());
-			entry = getAccountEntryInvoiceWriter().insertorUpdateAccountEntry(entry, true);
+			entry = getAccountEntryInvoiceWriter().insertOrUpdateAccountEntry(entry, true);
 			List taxBreakDown = getPriceStrategy().getTaxBreakDowns(invoice, invoice);
 			getAccountEntryInvoiceWriter().insertEntryDetails(entry, (invoice.getType().equals(InvoiceType.SALES)?AccountUtil.obtainCustomerAccount(invoice.getRegistry()):AccountUtil.obtainSupplierAccount(invoice.getRegistry())), invoice.getSeries(), invoice.getNumber(), getPriceStrategy().getTotalPrice(invoice, invoice), getRetentionTotal(taxBreakDown), getTaxQuota(taxBreakDown), obtainBasesPerAccount(invoice));
 			getAccountEntryInvoiceWriter().insertAccountEntryInvoice(entry, invoice);

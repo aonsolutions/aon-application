@@ -420,7 +420,7 @@ public class InvoiceEntryController {
 		insertInvoiceDetails(invoice);
 		insertFinances(invoice);
 		
-		entry = getWriter().insertorUpdateAccountEntry(entry, this.isNew);
+		entry = getWriter().insertOrUpdateAccountEntry(entry, this.isNew);
 		getWriter().insertEntryDetails(entry, account, invoice.getSeries(), invoice.getNumber(), getInvoiceTotal(), obtainTotalRetention(), obtainVATandSurchargeQuota(), obtainBasesPerAccount(details));
 		this.setAccountEntryInvoice(getWriter().insertAccountEntryInvoice(entry, invoice));
 		

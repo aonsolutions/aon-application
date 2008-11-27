@@ -1,4 +1,4 @@
-package com.code.aon.ui.sales.controller;
+package com.code.aon.ui.finance.controller;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -40,6 +40,7 @@ import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
+import com.code.aon.faces.component.richfaces.lookup.LookupChangeEvent;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
@@ -55,6 +56,7 @@ import com.code.aon.finance.invoicing.InvoicePriceStrategy;
 import com.code.aon.finance.invoicing.InvoicingEngineFactory;
 import com.code.aon.finance.invoicing.InvoicingException;
 import com.code.aon.finance.invoicing.InvoicingParameters;
+import com.code.aon.product.Item;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
@@ -62,20 +64,17 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.report.OutputFormat;
 import com.code.aon.sales.CustomerFeeInvoicingDAO;
 import com.code.aon.sales.CustomerFeeInvoicingEngine;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 
-@Deprecated
-public class FeeInvoicingController extends BasicController {
+public class SaleInvoiceController extends BasicController {
 	
-	private static final String FEE_INVOICING_ADDRESS_CONTROLLER_NAME = "feeInvoicingAddress";
-	private static final String FEE_INVOICING_DETAIL_CONTROLLER_NAME = "feeInvoicingDetail";
-	private static final String FEE_FINANCE_CONTROLLER_NAME = "feeFinance";
+	private static final String SALE_INVOICE_ADDRESS_CONTROLLER_NAME = "saleInvoiceAddress";
+	private static final String SALE_INVOICE_DETAIL_CONTROLLER_NAME = "saleInvoiceDetail";
+	private static final String SALE_INVOICE_FINANCE_CONTROLLER_NAME = "saleInvoiceFinance";
 
 	private InvoicingParameters invoicingParams;
 
@@ -89,16 +88,16 @@ public class FeeInvoicingController extends BasicController {
 	
 	private List<SelectItem> addresses;
 	
-	private String seriesDescripition;
+//	private String seriesDescripition;
 
-	public FeeInvoicingController() {
+	public SaleInvoiceController() {
 		this.invoicingParams = new InvoicingParameters();
 	}
 
 	public InvoicingParameters getInvoicingParams() {
 		return invoicingParams;
 	}
-
+/*
 	public String getSeriesDescripition() {
 		return seriesDescripition;
 	}
@@ -106,7 +105,7 @@ public class FeeInvoicingController extends BasicController {
 	public void setSeriesDescripition(String seriesDescripition) {
 		this.seriesDescripition = seriesDescripition;
 	}
-
+*/
 	public void setInvoicingParams(InvoicingParameters invoicingParams) {
 		this.invoicingParams = invoicingParams;
 	}
@@ -264,7 +263,7 @@ public class FeeInvoicingController extends BasicController {
 	public String getAddress() throws ManagerBeanException {
 		RegistryAddress rAddress = ((Invoice)this.getTo()).getRegistryAddress();
 		String address = (rAddress!=null)?rAddress.getAddress()+" "+rAddress.getAddress2()+" "+rAddress.getAddress3():"";
-		BasicController addressController = (BasicController)AonUtil.getController(FEE_INVOICING_ADDRESS_CONTROLLER_NAME);
+		BasicController addressController = (BasicController)AonUtil.getController(SALE_INVOICE_ADDRESS_CONTROLLER_NAME);
 		if (addressController.getTo() != null && ((InvoiceAddress)addressController.getTo()).getId() != null) {
 			InvoiceAddress invoiceAddress = (InvoiceAddress)addressController.getTo();
 			address = invoiceAddress.getAddress() + " " + invoiceAddress.getAddress2();
@@ -275,7 +274,7 @@ public class FeeInvoicingController extends BasicController {
 	public String getCity() throws ManagerBeanException {
 		RegistryAddress rAddress = ((Invoice)this.getTo()).getRegistryAddress();
 		String city = (rAddress!=null)?rAddress.getCity():"";
-		BasicController addressController = (BasicController)AonUtil.getController(FEE_INVOICING_ADDRESS_CONTROLLER_NAME);
+		BasicController addressController = (BasicController)AonUtil.getController(SALE_INVOICE_ADDRESS_CONTROLLER_NAME);
 		if (addressController.getTo() != null && ((InvoiceAddress)addressController.getTo()).getId() != null) {
 			InvoiceAddress invoiceAddress = (InvoiceAddress)addressController.getTo();
 			city = invoiceAddress.getCity();
@@ -283,25 +282,23 @@ public class FeeInvoicingController extends BasicController {
 		return city;
 	}
 
-	@SuppressWarnings("unchecked")
-	public void customerData(ValueChangeEvent event) throws ManagerBeanException, ExpressionException{
+	public void customerData(LookupChangeEvent event) throws ManagerBeanException{
 		if(event.getNewValue() != null && !event.getNewValue().equals("")){
-			IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
-			Criteria criteria = new Criteria();
-			criteria.addExpression(customerBean.getFieldName(ICustomerAlias.CUSTOMER_ID), event.getNewValue().toString());
-			Iterator iter = customerBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				Customer customer = (Customer)iter.next();
-				((Invoice)this.getTo()).setRegistryName(customer.getRegistry().getName() + " " + customer.getRegistry().getSurname());
-				((Invoice)this.getTo()).setRegistryDocument(customer.getRegistry().getDocument());
-				((Invoice)this.getTo()).setRegistry(customer.getRegistry());
-			}
-			loadAddresses(new Integer(event.getNewValue().toString()));
+			Customer customer = (Customer) event.getNewValue();
+			((Invoice)this.getTo()).setRegistryName(customer.getRegistry().getFullName());
+			((Invoice)this.getTo()).setRegistryDocument(customer.getRegistry().getDocument());
+			((Invoice)this.getTo()).setRegistry(customer.getRegistry());
+			loadAddresses(customer.getId());
 		}
 	}
 	
 	public double getToInvoiceTotalPrice(){
 		Invoice invoice = (Invoice)this.getTo();
+		return getPriceStrategy().getTotalPrice(invoice,invoice);
+	}
+	
+	public double getInvoiceTotalPrice() throws ManagerBeanException{
+		Invoice invoice = (Invoice)this.getModel().getRowData();
 		return getPriceStrategy().getTotalPrice(invoice,invoice);
 	}
 
@@ -353,11 +350,6 @@ public class FeeInvoicingController extends BasicController {
 		return priceStrategy;
 	}
 	
-	public double getInvoiceTotalPrice() throws ManagerBeanException{
-		Invoice invoice = (Invoice)this.getModel().getRowData();
-		return getPriceStrategy().getTotalPrice(invoice,invoice);
-	}
-	
 	public FinanceGenerator getFinanceGenerator() {
 		if(financeGenerator == null){
 			financeGenerator = new FinanceGenerator();
@@ -379,15 +371,15 @@ public class FeeInvoicingController extends BasicController {
 		}
 		return null;
 	}
-	
+/*	
     public void onReport(ActionEvent event) {
         ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
         manager.setReportKey("feeInvoice");
         manager.setOutputFormat(OutputFormat.PDF);
     }
-	
+*/	
 	public boolean isRemovable(){
-		FeeInvoicingDetailController feeInvoicingDetailController = (FeeInvoicingDetailController)AonUtil.getController(FEE_INVOICING_DETAIL_CONTROLLER_NAME);
+		SaleInvoiceDetailController feeInvoicingDetailController = (SaleInvoiceDetailController)AonUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
 		Invoice invoice = (Invoice)this.getTo();
 		if(feeInvoicingDetailController.getTo() == null && invoice.getStatus().equals(InvoiceStatus.PENDING)){
 			return true;
@@ -400,7 +392,7 @@ public class FeeInvoicingController extends BasicController {
 		Invoice invoice = (Invoice)this.getTo();
 		try {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			IController feeFinanceController = AonUtil.getController(FEE_FINANCE_CONTROLLER_NAME);
+			IController feeFinanceController = AonUtil.getController(SALE_INVOICE_FINANCE_CONTROLLER_NAME);
 			List financeList = ((List)feeFinanceController.getModel().getWrappedData());
 			if(existFinanceTrackings(financeList)){
 				AonUtil.addInfoMessage("No se puede generar vencimientos automaticamente. Alguno de ellos tiene operaciones anteriores.");
@@ -473,7 +465,12 @@ public class FeeInvoicingController extends BasicController {
 		entry.setSecurityLevel(invoice.getSecurityLevel());
 		entry = getAccountEntryInvoiceWriter().insertOrUpdateAccountEntry(entry, true);
 		List taxBreakDown = getPriceStrategy().getTaxBreakDowns(invoice, invoice);
-		getAccountEntryInvoiceWriter().insertEntryDetails(entry, AccountUtil.obtainCustomerAccount(invoice.getRegistry()), invoice.getSeries(), invoice.getNumber(), getPriceStrategy().getTotalPrice(invoice, invoice), getRetentionTotal(taxBreakDown), getTaxQuota(taxBreakDown), obtainBasesPerAccount(invoice));
+		Account customerAccount = AccountUtil.obtainCustomerAccount(invoice.getRegistry());
+		double total = getPriceStrategy().getTotalPrice(invoice, invoice);
+		double retentitonTotal = getRetentionTotal(taxBreakDown);
+		double taxQuota = getTaxQuota(taxBreakDown);
+		Map<Account,Double> bases = obtainBasesPerAccount(invoice);
+		getAccountEntryInvoiceWriter().insertEntryDetails(entry,customerAccount, invoice.getSeries(), invoice.getNumber(), total, retentitonTotal , taxQuota, bases);
 		getAccountEntryInvoiceWriter().insertAccountEntryInvoice(entry, invoice);
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		invoice.setStatus(InvoiceStatus.SCORED);
@@ -517,8 +514,8 @@ public class FeeInvoicingController extends BasicController {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Map obtainBasesPerAccount(Invoice invoice) throws ManagerBeanException {
-		Map basesPerAccount = new HashMap();
+	private Map<Account,Double> obtainBasesPerAccount(Invoice invoice) throws ManagerBeanException {
+		Map<Account,Double> basesPerAccount = new HashMap<Account,Double>();
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
@@ -598,5 +595,4 @@ public class FeeInvoicingController extends BasicController {
 		}
     	return null;
 	}
-
 }
