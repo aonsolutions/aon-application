@@ -39,8 +39,10 @@ public class GeozoneCollectionsController {
 	
 	/**
 	 * Sets the geo zone.
+	 * 
+	 * @param geoZone the new geo zone
 	 */
-	public void setGeoZone() {
+	public void setGeoZone( GeoZone geoZone ) {
 	}
 	
     /**
