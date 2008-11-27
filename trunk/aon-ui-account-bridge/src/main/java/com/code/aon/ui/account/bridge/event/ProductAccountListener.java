@@ -20,6 +20,13 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 public class ProductAccountListener extends ControllerAdapter {
 
 	@Override
+	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		Item item = (Item)event.getController().getTo();
+		item.getProduct().setSalesAccount(new Account());
+		item.getProduct().setPurchaseAccount(new Account());
+	}
+
+	@Override
 	@SuppressWarnings("unchecked")
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		Item item = (Item)event.getController().getTo();
@@ -31,67 +38,66 @@ public class ProductAccountListener extends ControllerAdapter {
 			while (iterator.hasNext()) {
 				ProductAccount productAccount = (ProductAccount)iterator.next();
 				if (ProductAccountType.SALES.equals(productAccount.getType())) {
-					item.getProduct().setSalesAccount(productAccount.getAccount().getId());
+					item.getProduct().setSalesAccount(productAccount.getAccount());
 				} else if (ProductAccountType.PURCHASE.equals(productAccount.getType())) {
-					item.getProduct().setPurchaseAccount(productAccount.getAccount().getId());
+					item.getProduct().setPurchaseAccount(productAccount.getAccount());
 				}
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
+		}
+
+		if (item.getProduct().getSalesAccount() == null) {
+			item.getProduct().setSalesAccount(new Account());
+		}
+		if (item.getProduct().getPurchaseAccount() == null) {
+			item.getProduct().setPurchaseAccount(new Account());
 		}
 	}
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		Item item = (Item)event.getController().getTo();
-		if (item.getProduct().getSalesAccount() != null && !item.getProduct().getSalesAccount().equals("")) {
-			validateAccount(item.getProduct().getSalesAccount());
+		if (item.getProduct().getSalesAccount() != null && item.getProduct().getSalesAccount().getId() != null) {
+			validateAccount(item.getProduct().getSalesAccount().getId());
 		}
-		if (item.getProduct().getPurchaseAccount() != null && !item.getProduct().getPurchaseAccount().equals("")) {
-			validateAccount(item.getProduct().getPurchaseAccount());
+		if (item.getProduct().getPurchaseAccount() != null && item.getProduct().getPurchaseAccount().getId() != null) {
+			validateAccount(item.getProduct().getPurchaseAccount().getId());
 		}
 	}
 
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		Item item = (Item)event.getController().getTo();
-		if (item.getProduct().getSalesAccount() != null && !item.getProduct().getSalesAccount().equals("")) {
-			Account salesAccount = new Account();
-			salesAccount.setId(item.getProduct().getSalesAccount());
-			insertProductAccount(item.getProduct(), salesAccount, ProductAccountType.SALES);
+		if (item.getProduct().getSalesAccount() != null && item.getProduct().getSalesAccount().getId() != null) {
+			insertProductAccount(item.getProduct(), item.getProduct().getSalesAccount(), ProductAccountType.SALES);
 		}
-		if (item.getProduct().getPurchaseAccount() != null && !item.getProduct().getPurchaseAccount().equals("")) {
-			Account purchaseAccount = new Account();
-			purchaseAccount.setId(item.getProduct().getPurchaseAccount());
-			insertProductAccount(item.getProduct(), purchaseAccount, ProductAccountType.PURCHASE);
+		if (item.getProduct().getPurchaseAccount() != null && item.getProduct().getPurchaseAccount().getId() != null) {
+			insertProductAccount(item.getProduct(), item.getProduct().getPurchaseAccount(), ProductAccountType.PURCHASE);
 		}
 	}
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		Item item = (Item)event.getController().getTo();
-		if (item.getProduct().getSalesAccount() != null && !item.getProduct().getSalesAccount().equals("")) {
-			validateAccount(item.getProduct().getSalesAccount());
+		if (item.getProduct().getSalesAccount() != null && item.getProduct().getSalesAccount().getId() != null) {
+			validateAccount(item.getProduct().getSalesAccount().getId());
 		}
-		if (item.getProduct().getPurchaseAccount() != null && !item.getProduct().getPurchaseAccount().equals("")) {
-			validateAccount(item.getProduct().getPurchaseAccount());
+		if (item.getProduct().getPurchaseAccount() != null && item.getProduct().getPurchaseAccount().getId() != null) {
+			validateAccount(item.getProduct().getPurchaseAccount().getId());
 		}
 	}
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		Item item = (Item)event.getController().getTo();
-		if (item.getProduct().getSalesAccount() != null && !item.getProduct().getSalesAccount().equals("")) {
-			Account salesAccount = new Account();
-			salesAccount.setId(item.getProduct().getSalesAccount());
-			updateProductAccount(item.getProduct(), salesAccount, ProductAccountType.SALES);
+		if (item.getProduct().getSalesAccount() != null && item.getProduct().getSalesAccount().getId() != null) {
+			updateProductAccount(item.getProduct(), item.getProduct().getSalesAccount(), ProductAccountType.SALES);
 		} else {
 			removeProductAccount(item.getProduct(), ProductAccountType.SALES);
 		}
-		if (item.getProduct().getPurchaseAccount() != null && !item.getProduct().getPurchaseAccount().equals("")) {
-			Account purchaseAccount = new Account();
-			purchaseAccount.setId(item.getProduct().getPurchaseAccount());
-			updateProductAccount(item.getProduct(), purchaseAccount, ProductAccountType.PURCHASE);
+		if (item.getProduct().getPurchaseAccount() != null && item.getProduct().getPurchaseAccount().getId() != null) {
+			updateProductAccount(item.getProduct(), item.getProduct().getPurchaseAccount(), ProductAccountType.PURCHASE);
 		} else {
 			removeProductAccount(item.getProduct(), ProductAccountType.PURCHASE);
 		}
