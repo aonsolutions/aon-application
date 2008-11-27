@@ -7,44 +7,17 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-
 		<aon:form id="accountForm">
-
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{accountBundle.account_module}" />
 				<ui:param name="controller" value="#{account}" />
 			</ui:include>
 
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{account}" />
-
 				<ui:define name="searchContent">
-		
-					<aon:outputLabel for="Account_id"
-						value="#{bundle.aon_id}" />
-					<aon:inputText id="Account_id" size="50"
-						valueChangeListener="#{account.addExpression}" />
-
-					<aon:outputLabel for="Account_description"
-						value="#{bundle.aon_description}" />
-					<aon:inputText id="Account_description" size="50"
-						valueChangeListener="#{account.addExpression}" />
-
-					<aon:outputLabel for="Account_alias"
-						value="#{bundle.aon_alias}" />
-					<aon:inputText id="Account_alias" size="50"
-						valueChangeListener="#{account.addExpression}" />
-
-					<aon:outputLabel for="Account_entryEnabled"
-						value="#{accountBundle.account_entryEnabled}" />
-					<aon:selectOneMenu id="Account_entryEnabled"
-						valueChangeListener="#{account.addExpression}">
-						<f:selectItem itemLabel="-" itemDisabled="true" itemValue="" />
-						<f:selectItem itemLabel="#{bundle.aon_yes}"
-							itemValue="true" />
-						<f:selectItem itemLabel="#{bundle.aon_no}"
-							itemValue="false" />
-					</aon:selectOneMenu>
+					<ui:include src="/com/code/aon/ui/account/facelet/account/searchContent.xhtml" />
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
