@@ -30,7 +30,7 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{productBundle.product_catalogue_start_date}" />
+							<aon:outputText value="#{bundle.aon_start_date}" />
 						</f:facet>
 						<aon:outputText value="#{to.startDate}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -40,7 +40,7 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{productBundle.product_catalogue_end_date}" />
+							<aon:outputText value="#{bundle.aon_end_date}" />
 						</f:facet>
 						<aon:outputText value="#{to.endDate}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"

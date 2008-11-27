@@ -173,12 +173,13 @@ public class BasicPriceStrategy implements IPriceStrategy {
 					criteria = new Criteria();
 					criteria.addEqualExpression(catalogueItemBean.getFieldName(IProductAlias.CATALOGUE_ITEM_CATALOGUE_ID), tariffCatalogue.getCatalogue().getId());
 					criteria.addEqualExpression(catalogueItemBean.getFieldName(IProductAlias.CATALOGUE_ITEM_ITEM_ID), calc.getItem().getId());
-					criteria.addGreaterThanOrEqualExpression(catalogueItemBean.getFieldName(IProductAlias.CATALOGUE_ITEM_QUANTITY), calc.getQuantity());
-					criteria.addOrder(catalogueItemBean.getFieldName(IProductAlias.CATALOGUE_ITEM_QUANTITY));
+					criteria.addLessThanOrEqualExpression(catalogueItemBean.getFieldName(IProductAlias.CATALOGUE_ITEM_QUANTITY), calc.getQuantity());
+					criteria.addOrder(catalogueItemBean.getFieldName(IProductAlias.CATALOGUE_ITEM_QUANTITY), false);
 					Iterator itemIterator = catalogueItemBean.getList(criteria, 0, 1).iterator();
 					if (itemIterator.hasNext()) {
 						CatalogueItem catalogueItem = (CatalogueItem)itemIterator.next();
 						if (catalogueItem.getPrice() > 0) {
+							calc.getDiscountExpression().setDiscountExpr("0.0");
 							return catalogueItem.getPrice();
 						} else {
 							calc.getDiscountExpression().setDiscountExpr(Double.toString(catalogueItem.getDiscount()));
@@ -189,8 +190,8 @@ public class BasicPriceStrategy implements IPriceStrategy {
 					criteria = new Criteria();
 					criteria.addEqualExpression(catalogueCategoryBean.getFieldName(IProductAlias.CATALOGUE_CATEGORY_CATALOGUE_ID), tariffCatalogue.getCatalogue().getId());
 					criteria.addEqualExpression(catalogueCategoryBean.getFieldName(IProductAlias.CATALOGUE_CATEGORY_CATALOGUE_ID), calc.getItem().getProduct().getCategory().getId());
-					criteria.addGreaterThanOrEqualExpression(catalogueCategoryBean.getFieldName(IProductAlias.CATALOGUE_CATEGORY_QUANTITY), calc.getQuantity());
-					criteria.addOrder(catalogueCategoryBean.getFieldName(IProductAlias.CATALOGUE_CATEGORY_QUANTITY));
+					criteria.addLessThanOrEqualExpression(catalogueCategoryBean.getFieldName(IProductAlias.CATALOGUE_CATEGORY_QUANTITY), calc.getQuantity());
+					criteria.addOrder(catalogueCategoryBean.getFieldName(IProductAlias.CATALOGUE_CATEGORY_QUANTITY), false);
 					Iterator categoryIterator = catalogueCategoryBean.getList(criteria, 0, 1).iterator();
 					if (categoryIterator.hasNext()) {
 						CatalogueCategory catalogueCategory = (CatalogueCategory)categoryIterator.next();

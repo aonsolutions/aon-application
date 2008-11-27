@@ -209,21 +209,20 @@
 								rendered="#{to==saleInvoiceDetail.to}">
 								<aon:lookupInputText id="InvoiceDetail_item_product_code-Edit"
 									value="#{saleInvoiceDetail.to.item.product.code}"
-									lookup="#{itemLookup}" 
-									lookupChangeListener="#{saleInvoiceDetail.itemChanged}"
+									lookup="#{itemLookup}" lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
 									reRender="saleInvoiceDetailData" required="true"
 									size="10">
 									<aon:joinProperty alias="InvoiceDetail_item_product_code"
 										value="#{saleInvoiceDetail.to.item.product.code}" />
 								</aon:lookupInputText>
 								<aon:lookupButton windowTitle="#{productBundle.product_module}"
-									actionType="search" lookupChangeListener="#{saleInvoiceDetail.itemChanged}"
+									actionType="search" lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
 									selectReRender="InvoiceDetail_item_product_code-Edit,InvoiceDetail_item_product_name-Edit"
 									lookup="#{itemLookup}" minHeight="460" minWidth="650"
 									property="#{saleInvoiceDetail.to.item}">
 								</aon:lookupButton>
 								<aon:inputText id="InvoiceDetail_item_product_name-Edit"
-									value="#{(saleInvoiceDetail.to.item.product.name!=null)?(saleInvoiceDetail.to.item.product.name):('')}"
+									value="#{saleInvoiceDetail.to.description}"
 									disabled="true" size="40" />
 							</aon:div>
 
@@ -232,20 +231,20 @@
 									rendered="#{saleInvoiceDetail.new}">
 									<aon:lookupInputText id="InvoiceDetail_item_product_code-New"
 										value="#{saleInvoiceDetail.to.item.product.code}"
-										lookup="#{itemLookup}" lookupChangeListener="#{saleInvoiceDetail.itemChanged}"
-										reRender="InvoiceDetail_item_product_name-New,Item_Lookup_price-New" required="true"
+										lookup="#{itemLookup}" lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
+										reRender="InvoiceDetail_item_product_name-New,Item_Lookup_price-New,Discount-New" required="true"
 										size="10">
 										<aon:joinProperty alias="Item_product_code"
 											value="#{saleInvoiceDetail.to.item.product.code}" />
 									</aon:lookupInputText>
 									<aon:lookupButton windowTitle="#{productBundle.product_module}"
-										actionType="search" lookupChangeListener="#{saleInvoiceDetail.itemChanged}"
-										selectReRender="InvoiceDetail_item_product_code-New,InvoiceDetail_item_product_name-New,,Item_Lookup_price-New"
+										actionType="search" lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
+										selectReRender="InvoiceDetail_item_product_code-New,InvoiceDetail_item_product_name-New,Item_Lookup_price-New,Discount-New"
 										lookup="#{itemLookup}" minHeight="460" minWidth="650"
 										property="#{saleInvoiceDetail.to.item}">
 									</aon:lookupButton>
 									<aon:inputText id="InvoiceDetail_item_product_name-New"
-										value="#{(saleInvoiceDetail.to.item.product.name!=null)?(saleInvoiceDetail.to.item.product.name):('')}"
+										value="#{saleInvoiceDetail.to.description}"
 										disabled="true" size="60" />
 								</aon:div>
 							</f:facet>
@@ -265,7 +264,8 @@
 							<f:facet name="footer">
 								<aon:inputText id="Item_quantity-New"
 									rendered="#{controller.new}" size="7"
-									value="#{controller.to.quantity}" required="true" />
+									value="#{controller.to.quantity}" required="true"
+									valueChangeListener="#{controller.onQuantityChanged}" reRender="Item_Lookup_price-New,Discount-New"/>
 							</f:facet>
 						</aon:column>
 

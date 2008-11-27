@@ -30,7 +30,7 @@
 						<aon:joinProperty alias="Item_product_code" value="#{catalogueItem.to.item.product.code}" />
 					</aon:lookupInputText>
 					<aon:lookupButton
-						windowTitle="#{productBundle.product_module}" actionType="search"
+						windowTitle="#{productBundle.product_item_selection}" actionType="search"
 						property="#{catalogueItem.to.item}"	selectReRender="#{dataTableId}"
 						lookup="#{itemLookup}" minHeight="460" minWidth="650"
 						lookupChangeListener="#{catalogueItem.itemData}">
@@ -48,7 +48,7 @@
 							<aon:joinProperty alias="Item_product_code" value="#{catalogueItem.to.item.product.code}" />
 						</aon:lookupInputText>
 						<aon:lookupButton
-							windowTitle="#{productBundle.product_module}" actionType="search"
+							windowTitle="#{productBundle.product_item_selection}" actionType="search"
 							property="#{catalogueItem.to.item}" selectReRender="#{dataTableId}"
 							lookup="#{itemLookup}" minHeight="460" minWidth="650"
 							lookupChangeListener="#{catalogueItem.itemData}">
