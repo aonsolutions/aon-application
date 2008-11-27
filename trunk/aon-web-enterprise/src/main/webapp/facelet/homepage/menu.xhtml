@@ -40,6 +40,13 @@
 					action="saleInvoice_search"/>
 			</aon:dropDownMenu>
 
+			<aon:dropDownMenu id="inventory" value="#{warehouseBundle.warehouse_inventory_module}">
+				<aon:menuItem id="inventory_remake"
+					value="#{warehouseBundle.warehouse_inventory_remake_module}" action="inventoryClose">
+					<aon:actionListener method="#{inventory.onReset}"/>
+				</aon:menuItem>
+			</aon:dropDownMenu>
+			
 			<aon:dropDownMenu id="finance" value="#{financeBundle.finance_menu_group}">
 				<aon:menuItem id="aon_finance"
 					value="#{financeBundle.finance_finance_module}" action="finance_search">
