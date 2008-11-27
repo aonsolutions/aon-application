@@ -499,22 +499,28 @@ public interface IFinanceAlias {
 	String  INVOICE_DETAIL_ITEM_PRODUCT_TYPE = INVOICE_DETAIL_ENTRY.getAliasNames()[10];
 
 	/** 
+	* Alias value: InvoiceDetail_item_product_code
+	* Hibernate value: InvoiceDetail.item.product.code
+	*/
+	String  INVOICE_DETAIL_ITEM_PRODUCT_CODE = INVOICE_DETAIL_ENTRY.getAliasNames()[11];
+
+	/** 
 	* Alias value: InvoiceDetail_taxableBase
 	* Hibernate value: InvoiceDetail.taxableBase
 	*/
-	String  INVOICE_DETAIL_TAXABLE_BASE = INVOICE_DETAIL_ENTRY.getAliasNames()[11];
+	String  INVOICE_DETAIL_TAXABLE_BASE = INVOICE_DETAIL_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: InvoiceDetail_taxes
 	* Hibernate value: InvoiceDetail.taxes
 	*/
-	String  INVOICE_DETAIL_TAXES = INVOICE_DETAIL_ENTRY.getAliasNames()[12];
+	String  INVOICE_DETAIL_TAXES = INVOICE_DETAIL_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: InvoiceDetail_workPlace_id
 	* Hibernate value: InvoiceDetail.workPlace.id
 	*/
-	String  INVOICE_DETAIL_WORK_PLACE_ID = INVOICE_DETAIL_ENTRY.getAliasNames()[13];
+	String  INVOICE_DETAIL_WORK_PLACE_ID = INVOICE_DETAIL_ENTRY.getAliasNames()[14];
 
 
 
