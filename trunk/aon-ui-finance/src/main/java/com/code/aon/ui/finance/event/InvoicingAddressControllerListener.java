@@ -6,6 +6,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
+@Deprecated
 public class InvoicingAddressControllerListener extends ControllerAdapter {
 
 	@Override

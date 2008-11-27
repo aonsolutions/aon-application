@@ -310,7 +310,7 @@ public class SalesInvoicingController extends BasicController {
 		entry.setEntryDate(invoice.getIssueDate());
 		entry.setJournal(null);
 		entry.setType(AccountEntryType.SALES_INVOICE);
-		entry = getAccountEntryInvoiceWriter().insertorUpdateAccountEntry(entry, true);
+		entry = getAccountEntryInvoiceWriter().insertOrUpdateAccountEntry(entry, true);
 		List taxBreakDown = getPriceStrategy().getTaxBreakDowns(invoice, invoice);
 		getAccountEntryInvoiceWriter().insertEntryDetails(entry, AccountUtil.obtainCustomerAccount(invoice.getRegistry()), invoice.getSeries(), invoice.getNumber(), getPriceStrategy().getTotalPrice(invoice, invoice), getRetentionTotal(taxBreakDown), getTaxQuota(taxBreakDown), obtainBasesPerAccount(invoice));
 		getAccountEntryInvoiceWriter().insertAccountEntryInvoice(entry, invoice);

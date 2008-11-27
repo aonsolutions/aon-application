@@ -15,6 +15,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.LinesController;
 
+@Deprecated
 public class FeeInvoicingDetailController extends LinesController {
 	
 	private WorkPlace workPlace;

@@ -16,15 +16,22 @@
 				<aon:menuItem id="seller"
 					value="#{salesBundle.sales_seller_module}" action="seller_search" actionListener="#{seller.onEditSearch}" />
 			</aon:dropDownMenu>		 
+
 			<aon:dropDownMenu value="#{appBundle.menu_auxiliar}">
 				<aon:menuItem value="#{productBundle.product_category_module}" action="productCategory" />			
-			</aon:dropDownMenu>
-			<aon:dropDownMenu value="EL RESTO">
 				<aon:menuItem value="#{financeBundle.finance_creditor_module}" action="creditor_search" actionListener="#{creditor.onEditSearch}" />
 				<aon:menuItem value="#{productBundle.product_brand_module}" action="brand" />
 				<aon:menuItem value="#{productBundle.product_catalogue_module}" action="catalogue_search" actionListener="#{catalogue.onEditSearch}" />
 				<aon:menuItem value="#{productBundle.product_tariff_module}" action="tariff_list" actionListener="#{tariff.onSearch}" />
 			</aon:dropDownMenu>
+
+			<aon:dropDownMenu value="#{appBundle.menu_sales}">
+				<aon:menuItem id="aon_invoice_management"
+					value="#{financeBundle.finance_sale_invoice_management_module}" 
+					actionListener="#{saleInvoice.onEditSearch}"
+					action="saleInvoice_search"/>
+			</aon:dropDownMenu>
+
 			<aon:dropDownMenu id="finance" value="#{financeBundle.finance_menu_group}">
 				<aon:menuItem id="aon_finance"
 					value="#{financeBundle.finance_finance_module}" action="finance_search">

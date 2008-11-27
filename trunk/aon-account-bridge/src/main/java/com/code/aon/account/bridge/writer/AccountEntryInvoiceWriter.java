@@ -36,7 +36,7 @@ public class AccountEntryInvoiceWriter {
 	 * @throws ManagerBeanException
 	 *             the manager bean exception
 	 */
-	public AccountEntry insertorUpdateAccountEntry(AccountEntry entry, boolean isNew)
+	public AccountEntry insertOrUpdateAccountEntry(AccountEntry entry, boolean isNew)
 			throws ManagerBeanException {
 		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 		if (isNew) {
@@ -72,9 +72,8 @@ public class AccountEntryInvoiceWriter {
 	 * @throws ManagerBeanException
 	 *             the manager bean exception
 	 */
-	@SuppressWarnings("unchecked")
 	public void insertEntryDetails(AccountEntry entry, Account account, String series, int number,
-			double invoiceTotal, double retentionTotal, double taxQuota, Map basesPerAccount)
+			double invoiceTotal, double retentionTotal, double taxQuota, Map<Account,Double> basesPerAccount)
 			throws ManagerBeanException {
 		IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		// Primer Apunte
@@ -82,7 +81,7 @@ public class AccountEntryInvoiceWriter {
 		entryDetail.setAccount(account);
 		entryDetail.setAccountEntry(entry);
 		if (basesPerAccount.size() == 1) {
-			entryDetail.setBalancingAccount((Account) basesPerAccount.keySet().iterator().next());
+			entryDetail.setBalancingAccount(basesPerAccount.keySet().iterator().next());
 		}
 		if (entry.getType().equals(AccountEntryType.SALES_INVOICE)) {
 			entryDetail.setDebit(invoiceTotal);
@@ -131,19 +130,17 @@ public class AccountEntryInvoiceWriter {
 		}
 		// Cuarto Apunte (o varios Apuntes en funcion del Mapa de bases por
 		// cuenta)
-		Iterator iterator = basesPerAccount.keySet().iterator();
+		Iterator<Account> iterator = basesPerAccount.keySet().iterator();
 		while (iterator.hasNext()) {
 			entryDetail = new AccountEntryDetail();
-			entryDetail.setAccount((Account) iterator.next());
+			entryDetail.setAccount(iterator.next());
 			entryDetail.setAccountEntry(entry);
 			entryDetail.setBalancingAccount(account);
 			entryDetail.setConcept("N/Fra: " + series + "/" + number);
 			if (entry.getType().equals(AccountEntryType.SALES_INVOICE)) {
-				entryDetail.setCredit(((Double) basesPerAccount.get(entryDetail.getAccount()))
-						.doubleValue());
+				entryDetail.setCredit((basesPerAccount.get(entryDetail.getAccount())).doubleValue());
 			} else {
-				entryDetail.setDebit(((Double) basesPerAccount.get(entryDetail.getAccount()))
-						.doubleValue());
+				entryDetail.setDebit((basesPerAccount.get(entryDetail.getAccount())).doubleValue());
 			}
 			entryDetailBean.insert(entryDetail);
 		}

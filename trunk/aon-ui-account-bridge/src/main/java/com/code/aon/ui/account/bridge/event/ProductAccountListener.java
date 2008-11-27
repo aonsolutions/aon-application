@@ -6,7 +6,6 @@ import com.code.aon.account.Account;
 import com.code.aon.account.bridge.ProductAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.enumeration.ProductAccountType;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -59,10 +58,10 @@ public class ProductAccountListener extends ControllerAdapter {
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		Item item = (Item)event.getController().getTo();
 		if (item.getProduct().getSalesAccount() != null && item.getProduct().getSalesAccount().getId() != null) {
-			validateAccount(item.getProduct().getSalesAccount().getId());
+			validateAccount(item.getProduct().getSalesAccount());
 		}
 		if (item.getProduct().getPurchaseAccount() != null && item.getProduct().getPurchaseAccount().getId() != null) {
-			validateAccount(item.getProduct().getPurchaseAccount().getId());
+			validateAccount(item.getProduct().getPurchaseAccount());
 		}
 	}
 
@@ -81,10 +80,10 @@ public class ProductAccountListener extends ControllerAdapter {
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		Item item = (Item)event.getController().getTo();
 		if (item.getProduct().getSalesAccount() != null && item.getProduct().getSalesAccount().getId() != null) {
-			validateAccount(item.getProduct().getSalesAccount().getId());
+			validateAccount(item.getProduct().getSalesAccount());
 		}
 		if (item.getProduct().getPurchaseAccount() != null && item.getProduct().getPurchaseAccount().getId() != null) {
-			validateAccount(item.getProduct().getPurchaseAccount().getId());
+			validateAccount(item.getProduct().getPurchaseAccount());
 		}
 	}
 
@@ -110,23 +109,12 @@ public class ProductAccountListener extends ControllerAdapter {
 		removeProductAccount(item.getProduct(), ProductAccountType.PURCHASE);
 	}
 
-	@SuppressWarnings("unchecked")
-	private void validateAccount(String accountId) throws ControllerListenerException {
-		try {
-			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), accountId);
-			Iterator iterator = accountBean.getList(criteria).iterator();
-			if (iterator.hasNext()) {
-				Account account = (Account)iterator.next();
-				if (!account.isEntryEnabled()) {
-					throw new ControllerListenerException("La Cuenta Contable " + accountId + " no permite apuntes.");
-				}
-			} else {
-				throw new ControllerListenerException("La Cuenta Contable " + accountId + " no existe.");
-			}
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e.getMessage(), e);
+	private void validateAccount(Account account) throws ControllerListenerException {
+		if (account == null) {
+			throw new ControllerListenerException("La Cuenta Contable no es válida.");
+		}
+		if (!account.isEntryEnabled()) {
+			throw new ControllerListenerException("La Cuenta Contable " + account.getId() + " no permite apuntes.");
 		}
 	}
 

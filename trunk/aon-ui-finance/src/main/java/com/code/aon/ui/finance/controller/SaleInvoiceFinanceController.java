@@ -20,14 +20,13 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.sales.controller.FeeInvoicingController;
 import com.code.aon.ui.util.AonUtil;
 
-public class FeeFinanceController extends LinesController {
+public class SaleInvoiceFinanceController extends LinesController {
 	
-	private static final Logger LOGGER = Logger.getLogger(FeeFinanceController.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(SaleInvoiceFinanceController.class.getName());
 
-	private static final String FEE_INVOICING_CONTROLLER_NAME = "feeInvoicing";
+	private static final String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
 	
 	private Integer registryBankId;
 
@@ -77,7 +76,7 @@ public class FeeFinanceController extends LinesController {
 	@SuppressWarnings("unchecked")
 	public List getRegistryBanks(){
 		List<SelectItem> rBanks = new LinkedList<SelectItem>();
-		FeeInvoicingController feeInvoicingController = (FeeInvoicingController)AonUtil.getController(FEE_INVOICING_CONTROLLER_NAME);
+		SaleInvoiceController feeInvoicingController = (SaleInvoiceController) AonUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
 		Invoice invoice = (Invoice)feeInvoicingController.getTo(); 
 		try {
 			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
