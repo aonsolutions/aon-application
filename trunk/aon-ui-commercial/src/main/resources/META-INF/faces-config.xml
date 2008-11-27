@@ -446,6 +446,22 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- =================== Commercial Segment ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>commercialSegment</from-outcome>
+			<to-view-id>/com/code/aon/ui/commercial/facelet/commercialSegment/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== Commercial Activity ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>commercialActivity</from-outcome>
+			<to-view-id>/com/code/aon/ui/commercial/facelet/commercialActivity/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 	<!-- =================== Target ================= -->	
 	<navigation-rule>
 		<navigation-case>

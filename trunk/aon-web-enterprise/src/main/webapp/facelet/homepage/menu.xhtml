@@ -23,6 +23,11 @@
 				<aon:menuItem value="#{productBundle.product_brand_module}" action="brand" />
 				<aon:menuItem value="#{productBundle.product_catalogue_module}" action="catalogue_search" actionListener="#{catalogue.onEditSearch}" />
 				<aon:menuItem value="#{productBundle.product_tariff_module}" action="tariff_list" actionListener="#{tariff.onSearch}" />
+				<aon:menuSeparator/>
+				<aon:menuItem id="commercialActivity" 
+					value="#{commercialBundle.commercial_activity_module}" action="commercialActivity" actionListener="#{commercialActivity.onSearch}" />				
+				<aon:menuItem id="commercialSegment"
+					value="#{commercialBundle.commercial_segment_module}" action="commercialSegment" actionListener="#{commercialSegment.onSearch}" />
 			</aon:dropDownMenu>
 
 			<aon:dropDownMenu value="#{appBundle.menu_sales}">
