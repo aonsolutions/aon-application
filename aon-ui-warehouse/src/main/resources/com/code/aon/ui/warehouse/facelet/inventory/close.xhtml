@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="head">
+		<aon:stylesheet path="/jscalendar-1.0/calendar-system.css" />
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/lang/calendar-es.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar-setup.js">
+			// nothing
+		</script>
+	</ui:define>		
+				
+	<ui:define name="content">
+		<aon:form id="inventoryForm" styleClass="aon-form">
+
+			<aon:div styleClass="aon-content-toolbar">
+				<aon:div styleClass="aon-content-toolbar-internal">
+				<aon:div styleClass="aon-content-toolbar-item-group">
+					<aon:commandButton id="accept" 
+						actionListener="#{inventory.onClosing}" 
+						action="inventory_form"
+						value="#{warehouseBundle.inventory_close}" 
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-accept"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-accept'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-accept'" 
+						accesskey="#{bundle.aon_key_accept}"/>
+					<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						actionListener="#{inventory.onCancel}" action="inventory_list"
+						immediate="true"
+						onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+						accesskey="#{bundle.aon_key_cancel}"/>
+					<aon:commandButton id="search" value="#{bundle.aon_search}"
+						immediate="true"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
+						actionListener="#{inventory.onEditSearch}" action="inventory_search" 
+						accesskey="#{bundle.aon_key_search}"/>
+				</aon:div>
+				</aon:div>
+			</aon:div>
+
+			<aon:div id="aon-scroll-area">
+				<aon:div styleClass="aon-scroll-area-internal">
+					<aon:panelGrid columns="2" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+					<aon:outputLabel for="Inventory_warehouse"
+						styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+						value="#{warehouseBundle.inventory_warehouse}" />
+					<aon:selectOneMenu id="Inventory_warehouse" 
+						valueChangeListener="#{inventory.addWarehouseCriteria}"
+						styleClass="aon-form-input-text" 
+						converter="IntegerEmptyConverter">
+						<f:selectItems value="#{warehouseCollections.warehouses}" />
+					</aon:selectOneMenu>
+<!-- 
+					<aon:outputLabel for="Inventory_category"
+						styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+						value="#{warehouseBundle.inventory_category}" />
+					<aon:selectOneMenu id="Inventory_category" valueChangeListener="#{inventory.addCategoryCriteria}"
+						styleClass="aon-form-input-text"
+						>
+						<f:selectItem itemDisabled="true" itemLabel="-" itemValue=""/>
+						<f:selectItems value="#{productCollections.categories}" />
+					</aon:selectOneMenu>
+ -->
+					<aon:outputLabel for="Inventory_inventory_date"
+						styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+						value="#{warehouseBundle.inventory_date}" 
+						/>
+					<aon:div>
+						<aon:inputText styleClass="aon-form-input-text"
+							id="Inventory_inventory_date" 
+							
+							required="true"
+							value="#{inventory.to.inventoryDate}"
+							size="10" maxlength="12">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:inputText>
+						<aon:commandButton styleClass="aon-form-calendar-button"
+							id="Inventory_inventory_date_button" value=""
+							immediate="true" />
+						<script type="text/javascript">
+						  Calendar.setup( {
+							inputField  : "Inventory_inventory_date", button : "Inventory_inventory_date_button",
+							ifFormat    : "%d/%m/%Y" } );
+						</script>
+					</aon:div>
+							
+					<aon:outputLabel for="Inventory_description"
+						styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+						value="#{warehouseBundle.inventory_description}" />
+					<aon:inputText id="Inventory_description" size="64"
+						styleClass="aon-form-input-text"
+						required="true"
+						value="#{inventory.to.description}"
+						/>
+
+					<aon:outputLabel for="Inventory_init"
+						styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+						value="#{warehouseBundle.inventory_init_stock}" />
+					<aon:selectOneMenu id="Inventory_init" 
+						valueChangeListener="#{inventory.hasToInitStock}"
+						styleClass="aon-form-input-text"
+						>
+						<f:selectItem itemLabel="#{warehouseBundle.inventory_init_stock_false}" itemValue="FALSE"/>
+						<f:selectItem itemLabel="#{warehouseBundle.inventory_init_stock_true}" itemValue="TRUE"/>
+					</aon:selectOneMenu>
+
+					</aon:panelGrid>
+				</aon:div>
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

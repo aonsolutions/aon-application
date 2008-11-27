@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="inventoryForm">
+		
+			<aon:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
+				>
+				<aon:div styleClass="aon-content-toolbar-internal">
+				<aon:div styleClass="aon-content-toolbar-item-group">
+					<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						actionListener="#{inventory.onCancel}" action="inventory_list"
+						immediate="true"
+						onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+						accesskey="#{bundle.aon_key_cancel}"/>
+					<aon:commandButton id="remove" value="#{bundle.aon_remove}"
+						 actionListener="#{inventory.onRemove}"
+						action="inventory_list" rendered="#{!inventory.new}"
+						onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-delete'" 
+						accesskey="#{bundle.aon_key_remove}"/>
+					<aon:commandButton id="inventory_close" value="#{warehouseBundle.inventory_report_title}" 
+						
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-print"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-print'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-print'" 
+						onclick="reportWindow(this, 'placeList', '${facesContext.externalContext.requestContextPath}/facelet/report/preferences.faces');return false;"
+						accesskey="#{bundle.aon_key_print}"/>
+					<aon:commandButton id="inventory_valued" 
+						value="#{warehouseBundle.inventory_valued_title}" 
+						
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-print"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-print'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-print'" 
+						onclick="reportWindow(this, 'placeList', '${facesContext.externalContext.requestContextPath}/facelet/report/preferences.faces');return false;"/>
+				</aon:div>
+				</aon:div>
+			</aon:div>
+	
+			<aon:div id="aon-scroll-area" >
+				<aon:div styleClass="aon-scroll-area-internal">
+					<!-- start of bag panel -->
+					<!-- start of flow layout -->
+					<aon:panelGrid columns="2" 
+						dir="true" 
+						styleClass="aon-form-table" 
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+						<aon:outputLabel for="Inventory_id"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							value="#{warehouseBundle.inventory_id}" />
+						<aon:outputText value="#{inventory.to.id}" size="14" />
+	
+						<aon:outputLabel for="Inventory_inventoryDate"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							value="#{warehouseBundle.inventory_date}" />
+						<aon:outputText value="#{inventory.to.inventoryDate}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								type="both" timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+						
+						<aon:outputLabel for="Inventory_description"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							value="#{warehouseBundle.inventory_description}" />
+						<aon:outputText value="#{inventory.to.description}" size="64" />
+					</aon:panelGrid>
+								
+					<aon:div styleClass="aon-form-breakline">
+						<f:verbatim>&#160;</f:verbatim>
+					</aon:div>
+					
+					<aon:panelGrid columns="2" 
+						dir="true" 
+						styleClass="aon-form-table" 
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+						<aon:outputLabel for="Inventory_category"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							value="#{warehouseBundle.inventory_category}"  />
+						<aon:div>
+							<aon:selectOneMenu id="Inventory_category" 
+								valueChangeListener="#{inventoryDetail.addCategoryCriteria}"
+								value="#{inventoryDetail.categoryId}"
+								styleClass="aon-form-input-text"
+								>
+								<f:selectItem itemDisabled="true" itemLabel="--------" itemValue=""/>
+								<f:selectItems value="#{productCollections.categories}" />
+							</aon:selectOneMenu>
+							<aon:commandButton title="#{bundle.aon_accept}"
+								actionListener="#{inventoryDetail.loadDetailModel}" 
+								styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+								value="" accesskey="#{bundle.aon_key_save_line}" />
+						</aon:div>
+					</aon:panelGrid>
+								
+					<aon:div styleClass="aon-form-breakline">
+						<f:verbatim>&#160;</f:verbatim>
+					</aon:div>
+					<aon:dataTable id="inventoryDetailDataList" 
+						var="to" value="#{inventoryDetail.model}" rows="20" 
+						styleClass="aon-table" headerClass="aon-table-header"
+						rowClasses="aon-table-row-odd,aon-table-row-even"
+						columnClasses="aon-table-body aon-table-body-string,aon-edit-table-mainColumn aon-table-body aon-table-body-string,aon-table-body aon-table-body-number,aon-table-body aon-table-body-number,aon-table-body aon-table-body-number,aon-table-body aon-table-body-string"
+						rowOnMouseOver="selectRow( this )"
+						rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )">
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{warehouseBundle.inventoryDetail_id}" />
+							</f:facet>
+							<aon:div>
+								<aon:commandLink immediate="true"  
+									styleClass="aon-table-row-selected"
+									rendered="#{to.id!=inventoryDetail.to.id}"
+									actionListener="#{inventoryDetail.onSelect}" />
+								<aon:outputText value="#{to.item.product.code}" />
+							</aon:div>
+							<f:facet name="footer">
+								<f:verbatim>&#160;</f:verbatim>
+							</f:facet>
+						</aon:column>
+		
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{warehouseBundle.inventoryDetail_item}" />
+							</f:facet>
+							<aon:div>
+								<aon:outputText value="#{to.item.product.name} #{to.item.detail}" />
+							</aon:div>
+							<f:facet name="footer">
+								<f:verbatim>&#160;</f:verbatim>
+							</f:facet>
+						</aon:column>
+						
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{warehouseBundle.inventoryDetail_real_inventory}" 
+								/>
+							</f:facet>
+							<aon:div>
+								<aon:outputText value="#{to.realQuantity}" rendered="#{to.id!=inventoryDetail.to.id}">
+									<f:convertNumber pattern="#,##0.000" />
+								</aon:outputText>
+								<aon:inputText rendered="#{to.id==inventoryDetail.to.id}"
+									value="#{inventoryDetail.to.realQuantity}" required="true" />
+							</aon:div>
+							<f:facet name="footer">
+								<f:verbatim>&#160;</f:verbatim>
+							</f:facet>
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{warehouseBundle.inventoryDetail_cost}" 
+								/>
+							</f:facet>
+							<aon:div>
+								<aon:outputText value="#{to.cost}" rendered="#{to.id!=inventoryDetail.to.id}">
+									<f:convertNumber pattern="#,##0.000" />
+								</aon:outputText>
+								<aon:outputText value="#{inventoryDetail.to.cost}" rendered="#{to.id==inventoryDetail.to.id}">
+									<f:convertNumber pattern="#,##0.000" />
+								</aon:outputText>
+							</aon:div>
+							<f:facet name="footer">
+								<f:verbatim>&#160;</f:verbatim>
+							</f:facet>
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{warehouseBundle.inventoryDetail_total}" 
+								/>
+							</f:facet>
+							<aon:div>
+								<aon:outputText value="#{to.realQuantity * to.cost}">
+									<f:convertNumber pattern="#,##0.000" />
+								</aon:outputText>
+							</aon:div>
+							<f:facet name="footer">
+								<f:verbatim>&#160;</f:verbatim>
+							</f:facet>
+						</aon:column>
+						
+						<aon:column>
+							<f:facet name="header">
+								<f:verbatim>&#160;</f:verbatim>
+							</f:facet>
+							<aon:div>
+								<aon:commandButton title="#{bundle.aon_accept}" 
+								actionListener="#{inventoryDetail.onAcceptNext}"
+								onclick="return (confirm('#{bundle.aon_accept_confirm}'));" 
+								styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+								value="" accesskey="#{bundle.aon_key_save_line}"
+								rendered="#{to.id==inventoryDetail.to.id}" />
+						
+								<aon:commandButton title="#{bundle.aon_cancel}" 
+								actionListener="#{inventoryDetail.onCancel}"
+								immediate="true" 
+								onclick="return (confirm('#{bundle.aon_cancel_confirm}'));" 
+								styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+								value="" accesskey="#{bundle.aon_key_cancel_line}"
+								rendered="#{to.id==inventoryDetail.to.id}" />
+							</aon:div>
+							<f:facet name="footer">
+								<f:verbatim>&#160;</f:verbatim>
+							</f:facet>
+						</aon:column>
+						
+					</aon:dataTable>
+					
+					<ui:include src="/facelet/shared/dataScroller.xhtml">
+						<ui:param name="dataTable" value="inventoryDetailDataList" />
+						<ui:param name="model" value="#{inventoryDetail.model}" />
+						<ui:param name="showNote" value="true" />
+					</ui:include>
+					
+					<!-- end of flow layout -->
+					<!-- end of bag panel -->
+					<aon:inputText id="pojoName" value="SupportOrder" 
+						style="display: none" />
+				</aon:div>
+			</aon:div>
+		</aon:form>
+		<aon:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+</body>
+</html>					
