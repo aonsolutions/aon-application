@@ -28,6 +28,9 @@
 					value="#{commercialBundle.commercial_activity_module}" action="commercialActivity" actionListener="#{commercialActivity.onSearch}" />				
 				<aon:menuItem id="commercialSegment"
 					value="#{commercialBundle.commercial_segment_module}" action="commercialSegment" actionListener="#{commercialSegment.onSearch}" />
+				<aon:menuSeparator/>
+				<aon:menuItem id="warehouse" 
+					value="#{warehouseBundle.warehouse_warehouse_module}" action="warehouse" actionListener="#{warehouse.onSearch}" />				
 			</aon:dropDownMenu>
 
 			<aon:dropDownMenu value="#{appBundle.menu_sales}">
