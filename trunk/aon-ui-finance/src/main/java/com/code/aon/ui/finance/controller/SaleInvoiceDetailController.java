@@ -18,24 +18,6 @@ public class SaleInvoiceDetailController extends LinesController {
 
 	private IPriceStrategy priceStrategy;
 
-	/*
-	 * private WorkPlace workPlace;
-	 * 
-	 * public WorkPlace getWorkPlace() { return workPlace; }
-	 * 
-	 * public void setWorkPlace(WorkPlace workPlace) { this.workPlace =
-	 * workPlace; }
-	 * 
-	 * @SuppressWarnings("unchecked") public void itemData(ValueChangeEvent
-	 * event) throws ManagerBeanException, ExpressionException{
-	 * if(event.getNewValue() != null && !event.getNewValue().equals("")){
-	 * IManagerBean itemBean = BeanManager.getManagerBean(Item.class); Criteria
-	 * criteria = new Criteria();
-	 * criteria.addExpression(itemBean.getFieldName(IProductAlias.ITEM_ID),
-	 * event.getNewValue().toString()); Iterator iter =
-	 * itemBean.getList(criteria).iterator(); if(iter.hasNext()){ Item item =
-	 * (Item)iter.next(); ((InvoiceDetail)this.getTo()).setItem(item); } } }
-	 */
 	public IPriceStrategy getPriceStrategy() {
 		if (priceStrategy == null) {
 			priceStrategy = new InvoicePriceStrategy();
@@ -63,6 +45,10 @@ public class SaleInvoiceDetailController extends LinesController {
 			price = getPriceStrategy().getUnitPrice(invoiceDetail, date, tariff);
 		}
 		invoiceDetail.setPrice(price);
+	}	
+	public double getTaxableBase() {
+		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
+		return getPriceStrategy().getBasePrice(invoiceDetail);
 	}
 
 	public void onQuantityChanged(ValueChangeEvent event) {
@@ -86,5 +72,4 @@ public class SaleInvoiceDetailController extends LinesController {
 			invoiceDetail.setPrice(price);
 		}
 	}
-
 }
