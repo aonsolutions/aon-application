@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.code.aon.common.dao.AliasWriter;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.finance.Bank;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Finance;
@@ -48,6 +49,7 @@ public class FinanceAliasWriter {
 		classes[12] = FinanceTracking.class.getName();
 		classes[13] = InvoicingGroup.class.getName();
 		classes[14] = InvoicingGroupDetail.class.getName();
+		HibernateUtil.getSessionFactory();
 		AliasWriter writer = new AliasWriter("com.code.aon.finance.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );
