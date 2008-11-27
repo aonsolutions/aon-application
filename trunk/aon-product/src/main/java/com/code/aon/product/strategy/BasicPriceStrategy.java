@@ -161,9 +161,9 @@ public class BasicPriceStrategy implements IPriceStrategy {
 
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(tariffCatalogueBean.getFieldName(IProductAlias.TARIFF_CATALOGUE_TARIFF_ID), tariff.getId());
-				criteria.addGreaterThanOrEqualExpression(tariffCatalogueBean.getFieldName(IProductAlias.TARIFF_CATALOGUE_CATALOGUE_START_DATE), date);
-				Expression dateExpr = ExpressionUtilities.getLessThanOrEqualExpression(IProductAlias.TARIFF_CATALOGUE_CATALOGUE_END_DATE, date);
-				Expression nullExpr = ExpressionUtilities.getNullExpression(IProductAlias.TARIFF_CATALOGUE_CATALOGUE_END_DATE);
+				criteria.addLessThanOrEqualExpression(tariffCatalogueBean.getFieldName(IProductAlias.TARIFF_CATALOGUE_CATALOGUE_START_DATE), date);
+				Expression dateExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(tariffCatalogueBean.getFieldName(IProductAlias.TARIFF_CATALOGUE_CATALOGUE_END_DATE), date);
+				Expression nullExpr = ExpressionUtilities.getNullExpression(tariffCatalogueBean.getFieldName(IProductAlias.TARIFF_CATALOGUE_CATALOGUE_END_DATE));
 				criteria.addExpression(ExpressionUtilities.getOrExpression(dateExpr, nullExpr));
 				criteria.addOrder(tariffCatalogueBean.getFieldName(IProductAlias.TARIFF_CATALOGUE_CATALOGUE_START_DATE), false);
 				Iterator iterator = tariffCatalogueBean.getList(criteria).iterator();
@@ -171,10 +171,10 @@ public class BasicPriceStrategy implements IPriceStrategy {
 					TariffCatalogue tariffCatalogue = (TariffCatalogue)iterator.next();
 
 					criteria = new Criteria();
-					criteria.addEqualExpression(IProductAlias.CATALOGUE_ITEM_CATALOGUE_ID, tariffCatalogue.getCatalogue().getId());
-					criteria.addEqualExpression(IProductAlias.CATALOGUE_ITEM_ITEM_ID, calc.getItem().getId());
-					criteria.addGreaterThanOrEqualExpression(IProductAlias.CATALOGUE_ITEM_QUANTITY, calc.getQuantity());
-					criteria.addOrder(IProductAlias.CATALOGUE_ITEM_QUANTITY);
+					criteria.addEqualExpression(catalogueItemBean.getFieldName(IProductAlias.CATALOGUE_ITEM_CATALOGUE_ID), tariffCatalogue.getCatalogue().getId());
+					criteria.addEqualExpression(catalogueItemBean.getFieldName(IProductAlias.CATALOGUE_ITEM_ITEM_ID), calc.getItem().getId());
+					criteria.addGreaterThanOrEqualExpression(catalogueItemBean.getFieldName(IProductAlias.CATALOGUE_ITEM_QUANTITY), calc.getQuantity());
+					criteria.addOrder(catalogueItemBean.getFieldName(IProductAlias.CATALOGUE_ITEM_QUANTITY));
 					Iterator itemIterator = catalogueItemBean.getList(criteria, 0, 1).iterator();
 					if (itemIterator.hasNext()) {
 						CatalogueItem catalogueItem = (CatalogueItem)itemIterator.next();
@@ -187,10 +187,10 @@ public class BasicPriceStrategy implements IPriceStrategy {
 					}
 
 					criteria = new Criteria();
-					criteria.addEqualExpression(IProductAlias.CATALOGUE_CATEGORY_CATALOGUE_ID, tariffCatalogue.getCatalogue().getId());
-					criteria.addEqualExpression(IProductAlias.CATALOGUE_CATEGORY_CATALOGUE_ID, calc.getItem().getProduct().getCategory().getId());
-					criteria.addGreaterThanOrEqualExpression(IProductAlias.CATALOGUE_CATEGORY_QUANTITY, calc.getQuantity());
-					criteria.addOrder(IProductAlias.CATALOGUE_CATEGORY_QUANTITY);
+					criteria.addEqualExpression(catalogueCategoryBean.getFieldName(IProductAlias.CATALOGUE_CATEGORY_CATALOGUE_ID), tariffCatalogue.getCatalogue().getId());
+					criteria.addEqualExpression(catalogueCategoryBean.getFieldName(IProductAlias.CATALOGUE_CATEGORY_CATALOGUE_ID), calc.getItem().getProduct().getCategory().getId());
+					criteria.addGreaterThanOrEqualExpression(catalogueCategoryBean.getFieldName(IProductAlias.CATALOGUE_CATEGORY_QUANTITY), calc.getQuantity());
+					criteria.addOrder(catalogueCategoryBean.getFieldName(IProductAlias.CATALOGUE_CATEGORY_QUANTITY));
 					Iterator categoryIterator = catalogueCategoryBean.getList(criteria, 0, 1).iterator();
 					if (categoryIterator.hasNext()) {
 						CatalogueCategory catalogueCategory = (CatalogueCategory)categoryIterator.next();
