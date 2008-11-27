@@ -97,31 +97,35 @@
 						<aon:outputLabel value="#{productBundle.product_inventoriable}" />
 					</aon:div>
 
-<!-- 
 					<aon:outputLabel for="Item_product_sales_account" value="#{productBundle.product_sales_account}" />
-					<aon:inputText id="Item_product_sales_account" value="#{item.to.product.salesAccount}"
-						size="12" maxLength="12" />
+					<aon:div>
+						<aon:lookupInputText id="Item_product_sales_account_id" value="#{item.to.product.salesAccount.id}"
+							lookup="#{accountLookup}" reRender="Item_product_sales_account_description"
+							size="12" maxlength="12" />
+						<aon:lookupButton
+							windowTitle="#{accountBundle.account_selection}" actionType="search"
+							property="#{item.to.product.salesAccount}" selectReRender="Item_product_sales_account_id,Item_product_sales_account_description"
+							lookup="#{accountLookup}" minHeight="460" minWidth="650">
+						</aon:lookupButton>
+						<aon:inputText id="Item_product_sales_account_description" 
+							value="#{(item.to.product.salesAccount.description!=null)?(item.to.product.salesAccount.description):('')}"
+							disabled="true" size="60" />
+					</aon:div>
 
 					<aon:outputLabel for="Item_product_purchase_account" value="#{productBundle.product_purchase_account}" />
-					<aon:inputText id="Item_product_purchase_account" value="#{item.to.product.purchaseAccount}"
-						size="12" maxLength="12" />
- 
- 					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="Item_product_sales_account_id" value="#{item.to.salesAccount.id}"
-							lookup="#{accountLookup}" reRender="Item_product_sales_account_description"
-							 size="10">
-							<aon:joinProperty alias="Bank_code" value="#{financeSearch.bank.code}" />
-						</aon:lookupInputText>
-						<aon:lookupButton 
-							windowTitle="#{financeBundle.finance_bank_selection}"
-							selectReRender="Bank_code,Bank_name" actionType="search"
-							lookup="#{bankLookup}" minHeight="460" minWidth="650"
-							property="#{financeSearch.bank}">
+					<aon:div>
+						<aon:lookupInputText id="Item_product_purchase_account_id" value="#{item.to.product.purchaseAccount.id}"
+							lookup="#{accountLookup}" reRender="Item_product_purchase_account_description"
+							size="12" maxlength="12" />
+						<aon:lookupButton
+							windowTitle="#{accountBundle.account_selection}" actionType="search"
+							property="#{item.to.product.purchaseAccount}" selectReRender="Item_product_purchase_account_id,Item_product_purchase_account_description"
+							lookup="#{accountLookup}" minHeight="460" minWidth="650">
 						</aon:lookupButton>
-						<aon:inputText id="Item_product_sales_account_description" value="#{item.to.salesAccount.name}"
-							size="40" disabled="true" />
+						<aon:inputText id="Item_product_purchase_account_description" 
+							value="#{(item.to.product.purchaseAccount.description!=null)?(item.to.product.purchaseAccount.description):('')}"
+							disabled="true" size="60" />
 					</aon:div>
--->
 
 				</aon:panelGrid>
 			</aon:div>
