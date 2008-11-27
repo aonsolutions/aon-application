@@ -630,6 +630,21 @@ color:#000;
 }
 .aon-icon-csv{
 	background:transparent url(images/aon-icon/aon-icon-csv-file.png) scroll left center no-repeat;
+	
+.aon-search-add{
+	background:transparent url(images/aon-icon-search-add.png) scroll left center no-repeat;
+	position: relative;
+	top: -5px;	
+	border: 0;	
+ }
+
+.aon-search-minus{
+	background:transparent url(images/aon-icon-search-minus.png) scroll left center no-repeat;
+	position: relative;
+	top: -5px;	
+	border: 0;
+ }
+	
 }
 /******* GROUP  **********/
 #aon-content  .aon-form-group{
