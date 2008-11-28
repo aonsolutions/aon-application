@@ -15,6 +15,8 @@ import com.code.aon.company.resources.Employee;
 @Table(name="delivery_detail_labour")
 public class DeliveryDetailLabour implements ITransferObject{
 
+	private static final long serialVersionUID = 1830895777162249227L;
+
 	private Integer id;
 	
 	private DeliveryDetail deliveryDetail;
@@ -61,4 +63,16 @@ public class DeliveryDetailLabour implements ITransferObject{
 	public void setQuantity(double quantity) {
 		this.quantity = quantity;
 	}
+
+    @Override
+    public boolean equals(Object obj) {
+    	if(id == null){
+    		return super.equals(obj);
+    	}
+        if (obj instanceof DeliveryDetailLabour) {
+            return (this.id.equals(((DeliveryDetailLabour)obj).getId()));
+        }
+        return false;
+    }
+
 }

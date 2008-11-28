@@ -43,6 +43,8 @@ import com.code.aon.warehouse.enumeration.DeliveryStatus;
 @Table(name="delivery")
 public class Delivery implements ITransferObject, IHeaderObject, ICalculableContainer{
 	
+	private static final long serialVersionUID = 5865460388758611455L;
+
 	/**
 	 * The logger of this class
 	 */

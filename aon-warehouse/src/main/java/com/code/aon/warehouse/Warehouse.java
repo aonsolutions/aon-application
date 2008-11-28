@@ -6,6 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 
 /**
@@ -18,6 +20,8 @@ import com.code.aon.common.ITransferObject;
 @Table(name="warehouse")
 public class Warehouse implements ITransferObject{
 	
+	private static final long serialVersionUID = 6558594692980896245L;
+
 	/**
 	 * Unique key
 	 */
@@ -70,4 +74,18 @@ public class Warehouse implements ITransferObject{
         this.name = name;
     }
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj instanceof Warehouse) {
+			Warehouse warehouse = (Warehouse) obj;
+			if (ObjectUtils.equals(getId(), warehouse.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 }

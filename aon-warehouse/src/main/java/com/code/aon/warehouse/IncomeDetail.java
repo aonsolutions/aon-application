@@ -29,6 +29,8 @@ import com.code.aon.purchase.PurchaseDetail;
 @Table(name="income_detail")
 public class IncomeDetail implements ITransferObject, ICalculable, IStockable {
 	
+	private static final long serialVersionUID = 3100497435533821492L;
+
 	/**
 	 * Unique Key
 	 */
@@ -271,4 +273,16 @@ public class IncomeDetail implements ITransferObject, ICalculable, IStockable {
 	public double getTaxes() throws ManagerBeanException{
 		return getPurchaseDetail().getTaxes();
 	}
+
+    @Override
+    public boolean equals(Object obj) {
+    	if(id == null){
+    		return super.equals(obj);
+    	}
+        if (obj instanceof IncomeDetail) {
+            return (this.id.equals(((IncomeDetail)obj).getId()));
+        }
+        return false;
+    }
+
 }

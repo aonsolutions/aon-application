@@ -43,6 +43,8 @@ import com.code.aon.warehouse.enumeration.IncomeStatus;
 @Table(name="income")
 public class Income implements ITransferObject, ICalculableContainer, IHeaderObject {
 	
+	private static final long serialVersionUID = -2473825467680303195L;
+
 	/**
 	 * The logger of the class
 	 */
