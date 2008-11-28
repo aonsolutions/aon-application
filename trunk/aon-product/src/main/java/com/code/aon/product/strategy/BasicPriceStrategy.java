@@ -237,8 +237,8 @@ public class BasicPriceStrategy implements IPriceStrategy {
 			IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_TAX_ID), vat.getId());
-			criteria.addGreaterThanExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_START_DATE), date);
-			criteria.addLessThanExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_END_DATE), date);
+			criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_START_DATE), date);
+			criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_END_DATE), date);
 			Iterator iter = taxDetailBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				return (TaxDetail)iter.next();

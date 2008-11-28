@@ -1,8 +1,6 @@
 package com.code.aon.commercial;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -19,9 +17,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.Advertising;
-import com.code.aon.common.ILookupObject;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.ITaxInfo;
@@ -35,7 +31,7 @@ import com.code.aon.registry.Registry;
  */
 @Entity
 @Table(name="target")
-public class Target implements ITransferObject, ILookupObject, ITaxInfo, IRegistry{
+public class Target implements ITransferObject, ITaxInfo, IRegistry{
 	
 	private static final long serialVersionUID = -7492435795404962788L;
 
@@ -44,7 +40,6 @@ public class Target implements ITransferObject, ILookupObject, ITaxInfo, IRegist
 	
 	/** The registry. */
 	private Registry registry;
-	
 	
 	/** The advertising. */
 	private Advertising advertising;
@@ -139,22 +134,6 @@ public class Target implements ITransferObject, ILookupObject, ITaxInfo, IRegist
 	 */
 	public void setAdvertising(Advertising advertising) {
 		this.advertising = advertising;
-	}
-
-	/**
-	 * Gets the map of values used by the lookup.
-	 * 
-	 * @return the map
-	 */
-	@Transient
-	public Map<String, Object> getLookups() {
-		Map<String,Object> map = new HashMap<String,Object>();
-        map.put(ICommercialAlias.TARGET_REGISTRY_ID, getId());
-        map.put(ICommercialAlias.TARGET_REGISTRY_DOCUMENT, getRegistry().getDocument());
-        map.put(ICommercialAlias.TARGET_REGISTRY_NAME, getRegistry().getName());
-        map.put(ICommercialAlias.TARGET_REGISTRY_SURNAME, getRegistry().getSurname());
-        map.put(ICommercialAlias.TARGET_REGISTRY_ALIAS, getRegistry().getAlias());
-        return map;
 	}
 
 	/**

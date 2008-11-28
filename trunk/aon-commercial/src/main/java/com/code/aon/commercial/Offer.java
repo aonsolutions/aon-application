@@ -34,6 +34,7 @@ import com.code.aon.finance.PayMethod;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryAddress;
 import com.code.aon.sales.Seller;
 
 /**
@@ -65,6 +66,9 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
     /** The target. */
     private Target target;
     
+    /** The address. */
+    private RegistryAddress address;
+
     /** The seller. */
     private Seller seller;
     
@@ -77,6 +81,9 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
     /** The pay method. */
     private PayMethod payMethod;
     
+    /** The security level. */
+    private SecurityLevel securityLevel;
+
     /** The status of the offer. */
     private OfferStatus status;
     
@@ -153,7 +160,7 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	 * @return the target
 	 */
 	@ManyToOne
-	@JoinColumn( name="target", nullable = false)
+	@JoinColumn( name="target", nullable = false )
 	public Target getTarget() {
 		return target;
 	}
@@ -165,6 +172,26 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	 */
 	public void setTarget(Target target) {
 		this.target = target;
+	}
+
+	/**
+	 * Gets the address.
+	 * 
+	 * @return the address
+	 */
+	@ManyToOne
+	@JoinColumn( name="address" )
+	public RegistryAddress getAddress() {
+		return address;
+	}
+
+	/**
+	 * Sets the address.
+	 * 
+	 * @param address the address
+	 */
+	public void setAddress(RegistryAddress address) {
+		this.address = address;
 	}
 
 	/**
@@ -232,7 +259,7 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	 * @return the pay method
 	 */
 	@ManyToOne
-	@JoinColumn( name="pay_method")
+	@JoinColumn( name="pay_method" )
 	public PayMethod getPayMethod() {
 		return payMethod;
 	}
@@ -244,6 +271,25 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	 */
 	public void setPayMethod(PayMethod payMethod) {
 		this.payMethod = payMethod;
+	}
+
+	/**
+	 * Gets the security level.
+	 * 
+	 * @return the security level
+	 */
+	@Column(name="security_level")
+	public SecurityLevel getSecurityLevel() {
+		return securityLevel;
+	}
+
+	/**
+	 * Sets the security level.
+	 * 
+	 * @param securityLevel the security level
+	 */
+	public void setSecurityLevel(SecurityLevel securityLevel) {
+		this.securityLevel = securityLevel;
 	}
 
 	/**
@@ -311,16 +357,6 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 		this.lines = lines;
 	}
 	
-	/**
-	 * Gets the security level.
-	 * 
-	 * @return the security level
-	 */
-	@Transient
-	public SecurityLevel getSecurityLevel() {
-		return SecurityLevel.OFFICIAL;
-	}
-
 	/**
 	 * Gets the date. Necessary to implement <code>ICalculableContainer</code>
 	 * 
