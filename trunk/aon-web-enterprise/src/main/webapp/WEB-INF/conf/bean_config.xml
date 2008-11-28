@@ -36,6 +36,13 @@
 		</vetoListeners>
 	</bean>
 	
+	<bean description="Listener que se encarga de recalcular las dotaciones.">
+		<pojo>com.code.aon.accounting.Amortization</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.accounting.event.AmortizationVetoableBeanListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
 	<bean description="">
 		<pojo>com.code.aon.finance.Invoice</pojo>
 		<listeners>

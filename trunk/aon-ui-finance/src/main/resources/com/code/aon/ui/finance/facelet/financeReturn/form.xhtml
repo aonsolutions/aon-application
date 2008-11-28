@@ -54,7 +54,7 @@
 						value="#{financeReturn.to.registry.name} #{financeReturn.to.registry.surname}" size="50" />
 
 					<aon:outputLabel for="Finance_invoice_series"
-						value="#{financeBundle.finance_series_number}" />
+						value="#{bundle.aon_series}/#{bundle.aon_number}" />
 					<aon:div>
 						<aon:inputText id="Finance_invoice_series"
 							value="#{financeReturn.to.invoice.series}"

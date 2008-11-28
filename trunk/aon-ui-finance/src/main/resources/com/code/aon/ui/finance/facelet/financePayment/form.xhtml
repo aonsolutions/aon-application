@@ -54,7 +54,7 @@
 						value="#{financePayment.to.registry.name} #{financePayment.to.registry.surname}" size="50" />
 
 					<aon:outputLabel for="Finance_invoice_series"
-						value="#{financeBundle.finance_series_number}" />
+						value="#{bundle.aon_series}/#{bundle.aon_number}" />
 					<aon:div>
 						<aon:inputText id="Finance_invoice_series"
 							value="#{financePayment.to.invoice.series}"
@@ -89,7 +89,7 @@
 					</aon:inputText>
 
 					<aon:outputLabel for="Finance_totalAmount"
-						value="#{financeBundle.finance_total}" />
+						value="#{bundle.aon_total}" />
 					<aon:inputText id="Finance_totalAmount" size="10" 
 						value="#{financePayment.to.totalAmount}" disabled="true">
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />

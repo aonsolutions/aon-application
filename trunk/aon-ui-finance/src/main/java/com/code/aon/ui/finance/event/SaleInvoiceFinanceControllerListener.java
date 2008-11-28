@@ -30,23 +30,23 @@ public class SaleInvoiceFinanceControllerListener extends ControllerAdapter {
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		SaleInvoiceFinanceController saleInvoiceFinanceController = (SaleInvoiceFinanceController)event.getController();
 		Finance finance = (Finance)saleInvoiceFinanceController.getTo();
-		fillFinanceData(finance, saleInvoiceFinanceController.getRegistryBankId());
+		fillFinanceData(finance, saleInvoiceFinanceController.getRegistryBank());
 	}
 	
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		SaleInvoiceFinanceController saleInvoiceFinanceController = (SaleInvoiceFinanceController)event.getController();
 		Finance finance = (Finance)saleInvoiceFinanceController.getTo();
-		fillFinanceData(finance, saleInvoiceFinanceController.getRegistryBankId());
+		fillFinanceData(finance, saleInvoiceFinanceController.getRegistryBank());
 	}
 	
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		SaleInvoiceFinanceController saleInvoiceFinanceController = (SaleInvoiceFinanceController)event.getController();
-		saleInvoiceFinanceController.setRegistryBankId(obtainRegistryBankId((Finance)saleInvoiceFinanceController.getTo()));
+		saleInvoiceFinanceController.setRegistryBank(obtainRegistryBank((Finance)saleInvoiceFinanceController.getTo()));
 	}
 
-	private void fillFinanceData(Finance finance, Integer registryBankId) {
+	private void fillFinanceData(Finance finance, RegistryBank registryBank) {
 		Invoice invoice = (Invoice)AonUtil.getController(SALE_INVOICE_CONTROLLER_NAME).getTo();
 		finance.setInvoice(invoice);
 		if(invoice.getType().equals(InvoiceType.SALES)){
@@ -57,18 +57,17 @@ public class SaleInvoiceFinanceControllerListener extends ControllerAdapter {
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		finance.setRegistry(invoice.getRegistry());
 		finance.setSecurityLevel(invoice.getSecurityLevel());
-		RegistryBank rBank = obtainRegistryBank(registryBankId);
-		if(rBank == null){
+		if(registryBank == null){
 			finance.setBank(null);
 			finance.setBankAccount(null);
 		}else{
-			finance.setBank(rBank.getBank());
-			finance.setBankAccount(rBank.getBankAccount());
+			finance.setBank(registryBank.getBank());
+			finance.setBankAccount(registryBank.getBankAccount());
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private Integer obtainRegistryBankId(Finance finance) {
+	private RegistryBank obtainRegistryBank(Finance finance) {
 		try {
 			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
 			Criteria criteria = new Criteria();
@@ -76,8 +75,7 @@ public class SaleInvoiceFinanceControllerListener extends ControllerAdapter {
 			criteria.addEqualExpression(rBankBean.getFieldName(IFinanceAlias.REGISTRY_BANK_BANK_ID), finance.getBank().getId());
 			Iterator iter = rBankBean.getList(criteria).iterator();
 			if(iter.hasNext()){
-				RegistryBank rBank = (RegistryBank)iter.next();
-				return rBank.getId();
+				return (RegistryBank)iter.next();
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error obtaining registryBankId for Finance with id= " + finance.getId(), e);
@@ -85,19 +83,4 @@ public class SaleInvoiceFinanceControllerListener extends ControllerAdapter {
 		return null;
 	}
 	
-	@SuppressWarnings("unchecked")
-	private RegistryBank obtainRegistryBank(Integer registryBankId) {
-		try {
-			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rBankBean.getFieldName(IFinanceAlias.REGISTRY_BANK_ID), registryBankId);
-			Iterator iter = rBankBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				return (RegistryBank)iter.next();
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining registryBank with id= " + registryBankId, e);
-		}
-		return null;
-	}
 }
