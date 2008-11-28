@@ -75,7 +75,7 @@ public class Sucursal  implements ITransferObject {
         this.cpsuc = cpsuc;
     }
     
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="codent", insertable=false, updatable=false)
     public Entidad getEntidad() {
         return this.entidad;

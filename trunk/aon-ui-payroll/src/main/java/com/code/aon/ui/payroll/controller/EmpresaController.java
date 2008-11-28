@@ -5,12 +5,10 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-
+import org.apache.commons.lang.StringUtils;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
-
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.payroll.enumeration.ConciertoEconomico;
 import com.code.aon.payroll.enumeration.EnvioSS;
@@ -18,9 +16,9 @@ import com.code.aon.payroll.enumeration.IndicadorIrpf;
 import com.code.aon.payroll.enumeration.PagoImpuestos;
 import com.code.aon.payroll.enumeration.Sexo;
 import com.code.aon.payroll.principales.empresa.Empresa;
+import com.code.aon.ui.form.LinesController;
 
-
-public class EmpresaController extends PayrollBasicController implements IPayrollBackAction {
+public class EmpresaController extends LinesController  implements IPayrollBackAction   {
 
 	private String edad;
 
@@ -144,8 +142,7 @@ public class EmpresaController extends PayrollBasicController implements IPayrol
 		}
 		return pagoImpuestos;
 	}
-
-	@Override
+@Override
 	public String returnAction() {
 		
 		return null;
@@ -186,7 +183,6 @@ public class EmpresaController extends PayrollBasicController implements IPayrol
 			((Empresa)getTo()).setPais1(null);
 		
 	}
-
 	
 }
 

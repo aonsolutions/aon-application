@@ -33,11 +33,17 @@
 										<aon:actionListener method="#{cliente.onEditSearch}" />
 										<aon:actionListener method="#{cliente.onSearch}" />
 										<aon:actionListener method="#{cliente.onSelectFirst}" />
+								
 									</aon:commandLink>
 								</aon:div>
 								<aon:div>
 									<aon:commandLink value="#{menuBundle.principales_clientes__integral_clientes}" 
-										disabled="true" />
+										action="integral_form" >
+										<aon:actionListener method="#{cliente.onEditSearch}" />
+										<aon:actionListener method="#{cliente.onSearch}" />
+										<aon:actionListener method="#{cliente.onSelectFirst}" />
+										<aon:actionListener method="#{tipdomicilio.onSelectFirst}" />
+									</aon:commandLink>
 								</aon:div>
 								<aon:div>
 									<aon:commandLink value="#{menuBundle.principales_clientes__empresa}" 

@@ -106,6 +106,9 @@
         
         <!-- Empresa -->			
         <mapping class="com.code.aon.payroll.principales.empresa.Empresa"/>
+        <mapping class="com.code.aon.payroll.principales.empresa.Actividad"/>
+        <mapping class="com.code.aon.payroll.principales.empresa.Emprdom"/>
+         <mapping class="com.code.aon.payroll.principales.empresa.Emprlban"/>
 	</session-factory>
 
 </hibernate-configuration>
