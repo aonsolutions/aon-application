@@ -31,6 +31,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.finance.PayMethod;
+import com.code.aon.product.Tariff;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
@@ -68,6 +69,9 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
     
     /** The address. */
     private RegistryAddress address;
+
+    /** The tariff. */
+    private Tariff tariff;
 
     /** The seller. */
     private Seller seller;
@@ -192,6 +196,26 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	 */
 	public void setAddress(RegistryAddress address) {
 		this.address = address;
+	}
+
+	/**
+	 * Gets the tariff.
+	 * 
+	 * @return the tariff
+	 */
+	@ManyToOne
+	@JoinColumn( name="tariff" )
+	public Tariff getTariff() {
+		return tariff;
+	}
+
+	/**
+	 * Sets the tariff.
+	 * 
+	 * @param tariff the tariff
+	 */
+	public void setTariff(Tariff tariff) {
+		this.tariff = tariff;
 	}
 
 	/**

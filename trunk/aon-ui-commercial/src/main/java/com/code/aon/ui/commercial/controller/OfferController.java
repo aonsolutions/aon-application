@@ -37,7 +37,7 @@ public class OfferController extends BasicController {
 
 	private List<SelectItem> addresses;
 
-    public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
+	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
 		int number = obtainMaxNumber((String)event.getNewValue());
 		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String)event.getNewValue());
 		WorkPlace workPlace = obtainSeriesWorkPlace((String)event.getNewValue());
@@ -149,8 +149,8 @@ public class OfferController extends BasicController {
 			((Offer)this.getTo()).setSeller(seller);
 		}
 	}
-	
-    @SuppressWarnings("unused")
+
+	@SuppressWarnings("unused")
     public void onReport(ActionEvent event) {
         ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
         manager.setReportKey("offer");
