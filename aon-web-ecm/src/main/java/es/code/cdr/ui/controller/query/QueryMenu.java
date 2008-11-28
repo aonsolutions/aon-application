@@ -6,9 +6,9 @@ package es.code.cdr.ui.controller.query;
 import javax.faces.event.ActionEvent;
 import javax.jcr.RepositoryException;
 
-import es.code.cdr.beans.CDRNode;
-import es.code.cdr.core.AbstractWidget;
-import es.code.cdr.core.Widget;
+import es.code.ecm.AbstractWidget;
+import es.code.ecm.Widget;
+import es.code.ecm.nodes.ECMNode;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 12/07/2007
@@ -48,7 +48,7 @@ public class QueryMenu extends AbstractWidget {
 	/* (non-Javadoc)
 	 * @see es.code.cdr.ui.controller.Widget#getSelected()
 	 */
-	public CDRNode getSelectedNode() {
+	public ECMNode getSelectedNode() {
 		// TODO Auto-generated method stub
 		return null;
 	}

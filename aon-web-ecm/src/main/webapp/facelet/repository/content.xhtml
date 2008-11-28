@@ -13,25 +13,27 @@
 	
 		<aon:div styleClass="aon-scroll-area" style="padding-top:0;">		
 			<aon:div styleClass="aon-section-title" style="padding-top:0;">
-				<aon:outputText value="#{menuBundle.aon_ecm_repository}" />
+				<aon:outputText value="#{menuBundle.aon_repository}" />
 			</aon:div>	
 			
 			<aon:form id="adminForm">
 				<aon:div>
 					<aon:panelGrid style="width:100%;border:0;" columns="2" cellspacing="2" cellpadding="2" 
-					columnClasses="aon-width-240 aon-vertical-align-top aon-noborder,aon-noborder aon-width-auto aon-vertical-align-top">
-	
+							columnClasses="aon-width-240 aon-vertical-align-top aon-noborder
+										,aon-noborder aon-width-auto aon-vertical-align-top">
 						<aon:panelGroup id="folderPanel" style="border:0;">
-							<aon:div styleClass="aon-toolbar">
+							<aon:div styleClass="aon-toolbar" rendered="#{manager.administrator}">
 								<aon:commandButton id="folderNew" value="" title="#{menuBundle.aon_ecm_add}"
 									reRender="showFolderModalPanel"
 									styleClass="aon-finding-toolbar-item aon-icon-newFolder"
-									actionListener="#{manager.onNewFolder}" />
+									actionListener="#{manager.onNewFolder}" 
+									 />
 								<aon:confirmButton id="folderDelete" value="" title="#{menuBundle.aon_ecm_delete}"
 									reRender="folderPanel, documentPanel"
 									confirmTitle="Confirmar" confirmMessage="#{bundle.aon_remove_confirm}"
 									confirmActionListener="#{manager.folders.remove}"
-									styleClass="aon-finding-toolbar-item aon-icon-deleteFolder" />
+									styleClass="aon-finding-toolbar-item aon-icon-deleteFolder" 
+									 />
 							</aon:div> 
 				
 							<rich:tree id="tree" value="#{manager.folders.rootTreeNode}" var="item" 
@@ -50,10 +52,12 @@
 					            </rich:treeNode>
 							</rich:tree>
 						</aon:panelGroup>
-	
+
 						<aon:div id="documentPanel">
-							<aon:div styleClass="aon-toolbar" style="margin-top:0;">
-								<aon:commandButton id="documentAdd" value="#{menuBundle.aon_ecm_add} #{menuBundle.aon_admin_document}"
+							<aon:div styleClass="aon-toolbar" style="margin-top:0;" 
+									rendered="#{manager.contentManagement}">
+								<aon:commandButton id="documentAdd" 
+									value="#{menuBundle.aon_ecm_add} #{menuBundle.aon_admin_document}"
 									title="#{menuBundle.aon_ecm_new}"
 									reRender="showDocumentModalPanel"
 									actionListener="#{manager.onNewDocument}"
@@ -84,7 +88,7 @@
 										<f:facet name="header">
 											<aon:outputText value="#{appBundle.aon_cdr_author}" />
 										</f:facet>
-										<aon:outputText value="#{to.authorName}"/>
+										<aon:outputText value="#{to.userName}"/>
 									</aon:column>
 			
 									<aon:column>
@@ -98,8 +102,8 @@
 										<f:facet name="header">
 											<aon:outputText value="#{appBundle.aon_cdr_entrydate}" />
 										</f:facet>
-										<aon:outputText value="#{to.entryDate}">
-											<f:convertDateTime pattern="dd/MM/yyyy"/>
+										<aon:outputText value="#{to.created}">
+											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"/>
 										</aon:outputText>
 									</aon:column>
 								</aon:dataTable>							
@@ -113,7 +117,8 @@
 								
 								<aon:div styleClass="aon-group-body">
 									<aon:div styleClass="aon-group-body-internal">
-										<aon:div styleClass="aon-toolbar aon-toolbar-inner">				
+										<aon:div styleClass="aon-toolbar aon-toolbar-inner" 
+												rendered="#{manager.contentManagement}">				
 			
 											<h:commandLink id="documentDownload"
 												title="#{menuBundle.aon_admin_document_download}"
@@ -163,14 +168,14 @@
 												actionListener="#{manager.onStartCheckin}"
 												styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 												rendered="#{manager.menu.visible and manager.documents.checkedOut}" 
-												reRender="showCheckinModalPanel" />
+												reRender="showCheckinModalPanel, documentPanel" />
 											
 											<h:commandLink id="documentVersionCheckOut"
 													title="#{menuBundle.aon_version_checkout}"
 													actionListener="#{manager.documents.checkout}"
 													styleClass="aon-finding-toolbar-item aon-icon-file-exit"
 													rendered="#{manager.menu.visible and !manager.documents.checkedOut}"
-													target="_blank"
+													target="_blank" onclick="return true;"
 													value="#{menuBundle.aon_version_checkout}" />
 					
 											<aon:commandButton id="restore"
@@ -189,6 +194,9 @@
 											</rich:tab>
 											<rich:tab label="#{menuBundle.aon_admin_document_versions}">
 												<ui:include src="/facelet/repository/actions/documentVersionHistory.xhtml" />	
+											</rich:tab>
+											<rich:tab label="#{menuBundle.aon_admin_document_permissions}">
+												<ui:include src="/facelet/repository/actions/documentPermissions.xhtml" />	
 											</rich:tab>
 										</rich:tabPanel>
 									</aon:div>

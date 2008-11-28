@@ -5,8 +5,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 <f:view>
-<c:forEach items="#{aonConfiguration.applicationBundleList}" var="appBundle">
-	<f:loadBundle basename="#{appBundle.value}" var="#{appBundle.key}" />
+<c:forEach items="#{aonConfiguration.applicationBundleList}" var="aBundle">
+	<f:loadBundle basename="#{aBundle.value}" var="#{aBundle.key}" />
 </c:forEach>
 <head>
 	<title><ui:insert name="title">Title</ui:insert></title>
@@ -20,13 +20,10 @@
 	</c:forEach>
 
 	<script type='text/javascript'
-		src="#{facesContext.externalContext.requestContextPath}/js/Window.js">
-		// nothing
-	</script>
-	<script type='text/javascript'
 		src="#{facesContext.externalContext.requestContextPath}/js/richFaces.js">
 		// nothing
 	</script>
+	<link rel="shortcut icon" type="image/x-icon" href="#{facesContext.externalContext.requestContextPath}/#{aonResource.resolve['/images/favicon.ico']}" />
 	<ui:insert name="head" />
 </head>
 <body>

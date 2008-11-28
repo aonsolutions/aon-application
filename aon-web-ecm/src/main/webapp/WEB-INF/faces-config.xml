@@ -5,61 +5,74 @@
 
 <faces-config>
 	<application>
-		<message-bundle>com.code.aon.ui.common.i18n.messages</message-bundle>
+		<message-bundle>
+			es.code.ecm.ui.i18n.messages
+		</message-bundle>
 		<locale-config>
 			<default-locale>es</default-locale>
 		</locale-config>
 	</application>
 
-	<!--  *************** ERROR MESSAGES ***************** -->
-	<managed-bean>
-		<managed-bean-name>errorMessages</managed-bean-name>
-		<managed-bean-class>es.code.cdr.ui.controller.ErrorMessageController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	
+	<lifecycle>
+		<phase-listener>
+			com.code.aon.faces.component.sandbox.ValueChangePhaseListener
+		</phase-listener>
+	</lifecycle>
 
-	<!--  *************** AON CONFIGURATION ***************** -->
+	<!-- *************** RESOURCE RESOLVER ***************** --> 
+	<managed-bean>
+		<managed-bean-name>aonResource</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.resources.bean.ResourceResolver
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>resourceContextPath</property-name>
+			<value>aon-desktop</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>resourceURIPreffix</property-name>
+			<value>/aonResource/1.4.0</value>
+		</managed-property>		
+	</managed-bean>
+
+	<!--  *************** 
+		AON CONFIGURATION
+		***************** -->
 	<managed-bean>
 		<managed-bean-name>aonConfiguration</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.common.controller.ConfigurationController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.common.controller.ConfigurationController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>applicationLogoContextRelativePath</property-name>
-			<value>/images/logo.gif</value>
-		</managed-property>
-		<managed-property>
-			<property-name>applicationWelcomeContextRelativePath</property-name>
-			<value>/images/aon-home.jpg</value>
-		</managed-property>
 		<managed-property>
 			<property-name>styleSheets</property-name>
 			<list-entries>
-				<value>/aonResource/aon-richCss.css</value>
-				<value>/css/ecm.css</value>
+				<value>/#{aonResource.resolve['/aon-richCss.css']}</value>
+				<value>#{aonResource.resolveLocal['/css/ecm.css']}</value>
 			</list-entries>
 		</managed-property>
 		<managed-property>
 			<property-name>applicationBundles</property-name>
 			<map-entries>
-		        <map-entry>
-		          <key>bundle</key>
-		          <value>com.code.aon.ui.common.i18n.messages</value>
-		        </map-entry>
+				<map-entry>
+					<key>bundle</key>
+					<value>com.code.aon.ui.common.i18n.messages</value>
+				</map-entry>
 				<map-entry>
 					<key>appBundle</key>
-					<value>es.code.cdr.ui.i18n.messages</value>
+					<value>es.code.ecm.ui.i18n.messages</value>
 				</map-entry>
 				<map-entry>
 					<key>menuBundle</key>
-					<value>es.code.cdr.ui.i18n.menu</value>
+					<value>es.code.ecm.ui.i18n.menu</value>
 				</map-entry>
 				<map-entry>
 					<key>securityBundle</key>
 					<value>com.code.aon.bridge.i18n.messages</value>
 				</map-entry>
 			</map-entries>
-		</managed-property>		
+		</managed-property>
 	</managed-bean>
 
 	<!-- ************** EXCEPTION HANDLER ****************** -->
@@ -67,6 +80,20 @@
 		<managed-bean-name>exceptionBean</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.common.controller.ExceptionBean</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+
+	<!-- **************** TIMEZONE CONTROLLER ************* -->
+	<managed-bean>
+		<managed-bean-name>timeZoneController</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.common.controller.TimeZoneController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ***************** LOGGED USER ******************** --> 
+	<managed-bean>
+		<managed-bean-name>loggedUser</managed-bean-name>
+		<managed-bean-class>com.code.aon.bridge.session.LoggedUser</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ***************** FAILED LOGIN ******************** -->
@@ -88,8 +115,8 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
-		<managed-bean-name>permissions</managed-bean-name>
-		<managed-bean-class>es.code.cdr.ui.controller.Permissions</managed-bean-class>
+		<managed-bean-name>errorMessages</managed-bean-name>
+		<managed-bean-class>es.code.cdr.ui.controller.ErrorMessageController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -104,6 +131,10 @@
 		<to-view-id>/facelet/repository/content.xhtml</to-view-id>
 	</navigation-case>
 	<navigation-case>
+		<from-outcome>admin_category</from-outcome>
+		<to-view-id>/facelet/category/grid.xhtml</to-view-id>
+	</navigation-case>
+	<navigation-case>
 		<from-outcome>search_by_content</from-outcome>
 		<to-view-id>/facelet/search/bycontent.xhtml</to-view-id>
 	</navigation-case>
@@ -112,8 +143,8 @@
 		<to-view-id>/facelet/search/advanced.xhtml</to-view-id>
 	</navigation-case>
 	<navigation-case>
-		<from-outcome>permissions_list</from-outcome>
-		<to-view-id>/facelet/permissions/list.xhtml</to-view-id>
+		<from-outcome>user_list</from-outcome>
+		<to-view-id>/facelet/permissions/user/grid.xhtml</to-view-id>
 	</navigation-case>
   </navigation-rule>
 

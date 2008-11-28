@@ -1,14 +1,7 @@
 <?xml version="1.0"?> 
-
-<web-app version="2.4" 
-	xmlns="http://java.sun.com/xml/ns/j2ee" 
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
-						http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
-
-	<session-config>
-		<session-timeout>33</session-timeout>
-	</session-config>
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
 	<context-param>
 		<param-name>javax.faces.CONFIG_FILES</param-name>
@@ -21,7 +14,7 @@
 		<description>
 			State saving method: "client" or "server" (= default) See
 			JSF Specification 2.5.2
-	</description>
+		</description>
 		<param-name>javax.faces.STATE_SAVING_METHOD</param-name>
 		<param-value>server</param-value>
 	</context-param>
@@ -47,17 +40,20 @@
 		<param-name>facelets.SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
 	</context-param>
-
+ <!-- 
 	<context-param>
 		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>-1</param-value>
 	</context-param>
-
+ -->
 	<context-param>
 		<param-name>facelets.BUFFER_SIZE</param-name>
 		<param-value>500000</param-value>
 	</context-param>
-
+	<context-param>
+		<param-name>facelets.RESOURCE_RESOLVER</param-name>
+		<param-value>com.code.aon.ui.resources.TemplateResolver</param-value>
+	</context-param>		
 	<context-param>
 		<description>
 			Set this flag to true if you want the JavaServer Faces
@@ -99,24 +95,26 @@
 	<context-param>
 		<param-name>com.sun.faces.numberOfLogicalViews</param-name>
 		<param-value>10</param-value>
-	</context-param>	
-	
+	</context-param>
+
 	<context-param>
 		<param-name>org.ajax4jsf.VIEW_HANDLERS</param-name>
 		<param-value>com.sun.facelets.FaceletViewHandler</param-value>
 	</context-param>
-	
+ 
 	<context-param>
-		<description>Define que los recursos no expiren en 100 dias</description>
+		<description>
+			Define que los recursos no expiren en 100 dias
+		</description>
 		<param-name>org.ajax4jsf.DEFAULT_EXPIRE</param-name>
 		<param-value>8640000</param-value>
 	</context-param>
-	
+
 	<context-param>
 		<param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
 		<param-value>../aon-desktop/richFaces3.2.1/</param-value>
 	</context-param>
-	
+ 	
 	<context-param>
 		<param-name>org.richfaces.SKIN</param-name>
 		<param-value>aon</param-value>
@@ -127,13 +125,18 @@
 		<param-value>org.jboss.web.jsf.integration.serialization.JBossSerializationProvider</param-value>
 	</context-param> 
 
+	<!-- Listener, that does all the startup work (configuration, init). -->
+	<listener>
+		<listener-class>com.sun.faces.config.ConfigureListener</listener-class>
+	</listener>
+
 	<listener>
 		<listener-class>org.jboss.web.tomcat.service.session.NonSerializableAttributeTester</listener-class>
 	</listener>
 
 	<!-- Listener, initializes the application. -->
 	<listener>
-		<listener-class>es.code.cdr.ui.servlets.CDRInitializer</listener-class>
+		<listener-class>es.code.ecm.servlets.ECMInitializer</listener-class>
 	</listener>
 
 	<!-- Listener, that enables Concurrent Sessions per User. -->
@@ -161,17 +164,35 @@
 		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
 
-	<!-- Sessions Filter -->
+	<!-- Login Sessions Filter -->
 	<filter>
 	   <filter-name>LoginSessionFilter</filter-name>
-	   <filter-class>es.code.cdr.ui.servlets.LoginSessionFilter</filter-class>
+	   <filter-class>es.code.ecm.servlets.LoginSessionFilter</filter-class>
 	</filter>
 	<filter-mapping>
 	   <filter-name>LoginSessionFilter</filter-name>
 		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
 
-	<!-- Rich Faces Ajax Filter -->
+	<!-- Faces Servlet -->
+	<servlet>
+		<servlet-name>Faces Servlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.jsf</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.sjsf</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.jspx</url-pattern>
+	</servlet-mapping>
+
 	<filter>
 		<display-name>RichFaces Filter</display-name>
 		<filter-name>richfaces</filter-name>
@@ -189,6 +210,7 @@
 			<param-value>false</param-value>
 		</init-param>				
 	</filter>
+
 	<filter-mapping>
 		<filter-name>richfaces</filter-name>
 		<servlet-name>Faces Servlet</servlet-name>
@@ -197,21 +219,6 @@
 		<dispatcher>INCLUDE</dispatcher>
 		<dispatcher>ERROR</dispatcher>
 	</filter-mapping>
-
-	<!-- Faces Servlet -->
-	<servlet>
-		<servlet-name>Faces Servlet</servlet-name>
-		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Faces Servlet</servlet-name>
-		<url-pattern>*.jsf</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>Faces Servlet</servlet-name>
-		<url-pattern>*.jspx</url-pattern>
-	</servlet-mapping>
 
 	<!-- Resource Servlet -->
 	<servlet>
@@ -243,22 +250,26 @@
 			<url-pattern>*.jsp</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
+			<role-name>Administrator</role-name>
 			<role-name>Manager</role-name>
-			<role-name>User</role-name>
-			<role-name>Guest</role-name>
+			<role-name>ContentManagement</role-name>
+			<role-name>Consultant</role-name>
+			<role-name>Anonymous</role-name>
 		</auth-constraint>
 	</security-constraint>
 
 	<login-config>
 		<auth-method>FORM</auth-method>
 		<form-login-config>
-			<form-login-page>/login/login.jspx</form-login-page>
-			<form-error-page>/login/errorlogin.jspx</form-error-page>
+			<form-login-page>/com/code/aon/ui/resources/facelet/login/login.jspx</form-login-page>
+			<form-error-page>/com/code/aon/ui/resources/facelet/login/errorlogin.jspx</form-error-page>
 		</form-login-config>
 	</login-config>
 
+	<security-role><role-name>Administrator</role-name></security-role>
 	<security-role><role-name>Manager</role-name></security-role>
-	<security-role><role-name>User</role-name></security-role>
-	<security-role><role-name>Guest</role-name></security-role>
+	<security-role><role-name>ContentManagement</role-name></security-role>
+	<security-role><role-name>Consultant</role-name></security-role>
+	<security-role><role-name>Anonymous</role-name></security-role>
 
 </web-app>

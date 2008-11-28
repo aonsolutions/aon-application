@@ -10,23 +10,23 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.ldap.Entry;
-import com.code.aon.ldap.ILdapConstants;
-
-import es.code.cdr.core.HierarchyManager;
-import es.code.cdr.core.SessionManager;
-import es.code.cdr.core.Widget;
-import es.code.cdr.event.WidgetEvent;
-import es.code.cdr.event.WidgetListener;
-import es.code.cdr.ui.util.CDRUtils;
+import es.code.ecm.ECMQName;
+import es.code.ecm.HierarchyManager;
+import es.code.ecm.SessionManager;
+import es.code.ecm.Widget;
+import es.code.ecm.event.WidgetEvent;
+import es.code.ecm.event.WidgetListener;
+import es.code.ecm.nodes.User;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 10/07/2007
@@ -38,13 +38,14 @@ public class CDRMediator implements WidgetListener, Serializable {
 
 	/** CDRMediator class Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger( CDRMediator.class.getName() );
-	private static final String LDAP_ORGANIZATION_NAME_ATTRIBUTE = "o";
 
 	FoldersTree folders;
 	DocumentsList documents;
+	CategoryList categories;
+	UserList users;
 	CDRMenu menu;
 	InfoTabbedPane info;
-	Entry user;
+	User user;
 	/** Application message bundle. */
 	transient ResourceBundle bundle;
 	
@@ -84,6 +85,20 @@ public class CDRMediator implements WidgetListener, Serializable {
 	}
 
 	/**
+	 * @return the categories
+	 */
+	public CategoryList getCategories() {
+		return categories;
+	}
+
+	/**
+	 * @return the users
+	 */
+	public UserList getUsers() {
+		return users;
+	}
+
+	/**
 	 * @return the menu
 	 */
 	public CDRMenu getMenu() {
@@ -101,41 +116,40 @@ public class CDRMediator implements WidgetListener, Serializable {
 	 * Returns the authenticated user name.
 	 * 
 	 * @return
+	 * @throws RepositoryException 
 	 */
-	public String getUserName() {
+	public String getUserName() throws RepositoryException {
 		if ( this.user == null ) {
 			HttpSession session = 
 				(HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession( false );
 			HierarchyManager hm = SessionManager.getInstance().getHierarchyManager( session.getId() );
-			String userId = hm.getUserId();
-			String domain = hm.getWorkspace().getName();
-			this.user = CDRUtils.getAonUser( domain, userId );
+			String groupRelPath = hm.getWorkspace().getName() + "_" + ECMQName.AON_GROUP_SUFFIX;
+			NodeIterator ni = hm.getRootNode().getNode( groupRelPath ).getNodes( hm.getUserId() );
+			if ( ni.getSize() > 0 ) {
+				this.user = new User( ni.nextNode() );
+			}
 		}
-    	String userName = this.user.getAsString( ILdapConstants.COMMON_NAME_ATTRIBUTE );
-    	if ( this.user.containsKey( ILdapConstants.SURNAME_ATTRIBUTE ) ) {
-    		userName += " " + this.user.getAsString( ILdapConstants.SURNAME_ATTRIBUTE );
-    	}
-        return userName;
+        return (this.user != null)? this.user.getName(): "";
 	}
 
 	/**
 	 * Returns the authenticated user name.
 	 * 
 	 * @return
+	 * @throws RepositoryException 
 	 */
-	public String getDomainName() {
+	public String getDomainName() throws RepositoryException {
 		if ( this.user == null ) {
 			HttpSession session = 
 				(HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession( false );
 			HierarchyManager hm = SessionManager.getInstance().getHierarchyManager( session.getId() );
-			String userId = hm.getUserId();
-			String domain = hm.getWorkspace().getName();
-			this.user = CDRUtils.getAonUser( domain, userId );
+			String groupRelPath = hm.getWorkspace().getName() + "_" + ECMQName.AON_GROUP_SUFFIX;
+			NodeIterator ni = hm.getRootNode().getNode( groupRelPath ).getNodes( hm.getUserId() );
+			if ( ni.getSize() > 0 ) {
+				this.user = new User( ni.nextNode() );
+			}
 		}
-    	if ( this.user.containsKey( LDAP_ORGANIZATION_NAME_ATTRIBUTE ) ) {
-    		return this.user.getAsString( LDAP_ORGANIZATION_NAME_ATTRIBUTE );
-    	}    	
-    	return null;
+        return (this.user != null)? this.user.getDomain(): "";
 	}
 
 	/**
@@ -182,8 +196,9 @@ public class CDRMediator implements WidgetListener, Serializable {
 
 	/**
 	 * @param event
+	 * @throws RepositoryException 
 	 */
-	public void onCheckin(ActionEvent event) {
+	public void onCheckin(ActionEvent event) throws RepositoryException {
 		try {
 			documents.getUpload().setSelected( 0 );
 			documents.checkin( event );
@@ -192,8 +207,24 @@ public class CDRMediator implements WidgetListener, Serializable {
 		}
 	}
 
-    public boolean isRoleManager() {
-    	return FacesContext.getCurrentInstance().getExternalContext().isUserInRole( "Manager" );
+    /**
+     * Check if the user has <b>Administrator</b> role.
+     * 
+     * @return
+     */
+    public boolean isAdministrator() {
+    	ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+    	return ec.isUserInRole( "Administrator" );
+    }
+
+    /**
+     * Check if the user has <b>Manager</b> or <b>ContentManagement</b> role.
+     * 
+     * @return
+     */
+    public boolean isContentManagement() {
+    	ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+    	return ec.isUserInRole( "Manager" ) || ec.isUserInRole( "ContentManagement" );
     }
 
 // *********************************** WidgetListener methods implementation **********************************
@@ -219,6 +250,10 @@ public class CDRMediator implements WidgetListener, Serializable {
 		folders.addWidgetListener( this );
 		documents = new DocumentsList();
 		documents.addWidgetListener( this );
+		categories = new CategoryList();
+		categories.addWidgetListener( this );
+		users = new UserList();
+		users.addWidgetListener( this );
 		menu = new CDRMenu();
 		menu.addWidgetListener( this );
 		info = new InfoTabbedPane();

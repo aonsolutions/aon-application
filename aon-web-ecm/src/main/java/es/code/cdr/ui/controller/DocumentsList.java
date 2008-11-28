@@ -4,9 +4,8 @@
 package es.code.cdr.ui.controller;
 
 import java.io.IOException;
-import java.security.Principal;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -21,28 +20,25 @@ import javax.jcr.RepositoryException;
 import javax.jcr.lock.LockException;
 import javax.jcr.version.Version;
 
-import org.apache.jackrabbit.core.security.AnonymousPrincipal;
-
-import es.code.cdr.CDRQName;
-import es.code.cdr.IConstants;
-import es.code.cdr.beans.CDRNode;
-import es.code.cdr.beans.Document;
-import es.code.cdr.core.ContentRepository;
-import es.code.cdr.core.Widget;
-import es.code.cdr.core.WidgetSupport;
-import es.code.cdr.event.WidgetListener;
 import es.code.cdr.ui.controller.query.QueryMenu;
 import es.code.cdr.ui.util.CDRDataModel;
-import es.code.cdr.ui.util.CDRUtils;
-import es.code.cdr.ui.util.DocumentUpload;
+import es.code.ecm.ContentRepository;
+import es.code.ecm.ECMQName;
+import es.code.ecm.IConstants;
+import es.code.ecm.Widget;
+import es.code.ecm.WidgetSupport;
+import es.code.ecm.event.WidgetListener;
+import es.code.ecm.nodes.Document;
+import es.code.ecm.nodes.ECMNode;
+import es.code.ecm.util.DocumentUpload;
+import es.code.ecm.util.ECMUtil;
+import es.code.ecm.util.JCRUtils;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 11/07/2007
  *
  */
 public class DocumentsList implements Widget {
-
-	private static final long serialVersionUID = -8856985254062000747L;
 
 	/** A description of any WidgetListeners which have been registered. */
 	WidgetSupport support;
@@ -84,7 +80,7 @@ public class DocumentsList implements Widget {
 			versionHistoryModel = new CDRDataModel( selected.getVersionHistory() );
 		} catch (RepositoryException e) {
 			versionHistoryModel = new CDRDataModel();
-			CDRUtils.addErrorMessage( e.getMessage() );
+			ECMUtil.addErrorMessage( e.getMessage() );
 		}
 		return versionHistoryModel;
 	}
@@ -149,11 +145,12 @@ public class DocumentsList implements Widget {
 	public synchronized void add(Node folderNode) throws RepositoryException, IOException {
 		DocumentUpload dup = upload.getSelectedDocument();
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-		String author = getAuthor( ec );
 		try {
-			Document document = new Document( folderNode.addNode( dup.getName(), ContentRepository.getNodeName( CDRQName.AON_DOCUMENT ) ) );
-			document.setAuthor( author );
-			document.setEntryDate( Calendar.getInstance() );
+			String primaryNodeTypeName = ContentRepository.getNodeName( ECMQName.AON_DOCUMENT );
+			Node documentNode = folderNode.addNode( dup.getName(), primaryNodeTypeName );
+			Document document = new Document( documentNode );
+			String userUUID = JCRUtils.getUserUUID( ec.getUserPrincipal(), documentNode.getSession() );
+			document.setUser( userUUID );
 			document.add( dup );
 			folderNode.save();
 			document.checkin();
@@ -164,10 +161,10 @@ public class DocumentsList implements Widget {
 			setSelected( document );
 			upload.clearSelectedUploadData();
 		} catch (AccessDeniedException e) {
-			CDRUtils.addWarningMessage( e.getMessage() );
+			ECMUtil.addWarningMessage( e.getMessage() );
 			folderNode.refresh( false );
 		} catch (RepositoryException e) {
-			CDRUtils.addWarningMessage( e.getMessage() );
+			ECMUtil.addWarningMessage( e.getMessage() );
 			folderNode.refresh( false );
 		}
 	}
@@ -183,7 +180,7 @@ public class DocumentsList implements Widget {
 		try {
 			selected.save();
 		} catch (RepositoryException e) {
-			CDRUtils.addWarningMessage( e.getMessage() );
+			ECMUtil.addWarningMessage( e.getMessage() );
 		}
 	}
 
@@ -197,10 +194,10 @@ public class DocumentsList implements Widget {
 	public synchronized void remove(ActionEvent event) throws RepositoryException, WidgetLoadingException {
 		if( selected.getNode().isLocked() ) {
 			String messageId = "aon_cdr_remove_a_locked_document_exception";
-			Locale locale = CDRUtils.getCurrentLocale( FacesContext.getCurrentInstance() );
+			Locale locale = ECMUtil.getCurrentLocale( FacesContext.getCurrentInstance() );
 			String msg = 
-				CDRUtils.getMessage( IConstants.CDR_BUNDLE_NAME, locale, messageId, new String[] {selected.getName()} ).getSummary();
-			CDRUtils.addErrorMessage( msg );
+				ECMUtil.getMessage( IConstants.ECM_BUNDLE_NAME, locale, messageId, new String[] {selected.getName()} ).getSummary();
+			ECMUtil.addErrorMessage( msg );
 			return;
 		}
 
@@ -212,7 +209,7 @@ public class DocumentsList implements Widget {
 			setSelected( null );
 			load( parent );
 		} catch (AccessDeniedException e) {
-			CDRUtils.addWarningMessage( e.getMessage() );
+			ECMUtil.addWarningMessage( e.getMessage() );
 			parent.refresh( false );
 		} catch (RepositoryException e) {
 			if ( parent != null )
@@ -227,11 +224,13 @@ public class DocumentsList implements Widget {
 	 */
 	public void download(ActionEvent event) {
 		try {
-			CDRUtils.download( FacesContext.getCurrentInstance(), getSelected() );
+			FacesContext ctx = FacesContext.getCurrentInstance();
+			Document d = getSelected();
+			ECMUtil.download( ctx, d.getName(), d.getMimeType(), d.getContent() );
 		} catch (IOException e) {
-			CDRUtils.addErrorMessage( e.getMessage() );
+			ECMUtil.addErrorMessage( e.getMessage() );
 		} catch (RepositoryException e) {
-			CDRUtils.addErrorMessage( e.getMessage() );
+			ECMUtil.addErrorMessage( e.getMessage() );
 		}
 	}
 
@@ -243,11 +242,13 @@ public class DocumentsList implements Widget {
 	public void downloadVersion(ActionEvent event) {
 		try {
 			Version version = (Version) versionHistoryModel.getRowData();
-			CDRUtils.download( FacesContext.getCurrentInstance(), selected.getDocument4Version( version ) );
+			Document d = getSelected();
+			InputStream is = selected.getDocument4Version( version );
+			ECMUtil.download( FacesContext.getCurrentInstance(), d.getName(), d.getMimeType(), is );
 		} catch (IOException e) {
-			CDRUtils.addErrorMessage( e.getMessage() );
+			ECMUtil.addErrorMessage( e.getMessage() );
 		} catch (RepositoryException e) {
-			CDRUtils.addErrorMessage( e.getMessage() );
+			ECMUtil.addErrorMessage( e.getMessage() );
 		}
 	}
 
@@ -257,14 +258,15 @@ public class DocumentsList implements Widget {
 	 * @param event
 	 * @throws IOException 
 	 */
-	public synchronized void checkin(ActionEvent event) throws IOException {
+	public synchronized void checkin(ActionEvent event) throws IOException, RepositoryException {
 		try {
 			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-			selected.setAuthor( getAuthor( ec ) );
+			String userUUID = JCRUtils.getUserUUID( ec.getUserPrincipal(), selected.getNode().getSession() );
+			selected.setUser( userUUID );
 			selected.checkin( upload.getSelectedDocument() );
 			upload.clearUploadData( event );
 		} catch (RepositoryException e) {
-			CDRUtils.addErrorMessage( e.getMessage() );
+			ECMUtil.addErrorMessage( e.getMessage() );
 		}
 	}
 
@@ -279,9 +281,9 @@ public class DocumentsList implements Widget {
 			selected.checkout();
 			download( event );
 		} catch (LockException e) {
-			CDRUtils.addErrorMessage( CDRUtils.parseJackrabbitException( e.getMessage() ) );
+			ECMUtil.addErrorMessage( ECMUtil.parseJackrabbitException( e.getMessage() ) );
 		} catch (RepositoryException e) {
-			CDRUtils.addFatalMessage( e.getMessage() );
+			ECMUtil.addFatalMessage( e.getMessage() );
 		}
 	}
 
@@ -305,7 +307,7 @@ public class DocumentsList implements Widget {
 			selected.refresh( false );
 			selected.restore();
 		} catch (RepositoryException e) {
-			CDRUtils.addErrorMessage( e.getMessage() );
+			ECMUtil.addErrorMessage( e.getMessage() );
 		}
 	}
 
@@ -320,7 +322,7 @@ public class DocumentsList implements Widget {
 			selected.refresh( false );
 			selected.restoreVersion( version.getName() );
 		} catch (RepositoryException e) {
-			CDRUtils.addErrorMessage( e.getMessage() );
+			ECMUtil.addErrorMessage( e.getMessage() );
 		}
 	}
 
@@ -335,9 +337,9 @@ public class DocumentsList implements Widget {
 			selected.refresh( false );
 			selected.lock();
 		} catch (LockException e) {
-			CDRUtils.addErrorMessage( CDRUtils.parseJackrabbitException( e.getMessage() ) );
+			ECMUtil.addErrorMessage( ECMUtil.parseJackrabbitException( e.getMessage() ) );
 		} catch (RepositoryException e) {
-			CDRUtils.addFatalMessage( e.getMessage() );
+			ECMUtil.addFatalMessage( e.getMessage() );
 		}
 	}
 
@@ -353,15 +355,13 @@ public class DocumentsList implements Widget {
 			selected.refresh( false );
 			selected.unlock();
 		} catch (LockException e) {
-			CDRUtils.addErrorMessage( CDRUtils.parseJackrabbitException( e.getMessage() ) );
+			ECMUtil.addErrorMessage( ECMUtil.parseJackrabbitException( e.getMessage() ) );
 		} catch (RepositoryException e) {
-			CDRUtils.addFatalMessage( e.getMessage() );
+			ECMUtil.addFatalMessage( e.getMessage() );
 		}		
 	}
 
-	/* (non-Javadoc)
-	 * @see es.code.cdr.ui.controller.Widget#addWidgetListener(es.code.cdr.ui.controller.event.WidgetListener)
-	 */
+//****************** Widget interface methods implementation ******************************************* 
 	public void addWidgetListener(WidgetListener l) {
 		if ( l != null ) {
 			synchronized (this) {
@@ -373,9 +373,6 @@ public class DocumentsList implements Widget {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see es.code.cdr.ui.controller.Widget#removeWidgetListener(es.code.cdr.ui.controller.event.WidgetListener)
-	 */
 	public void removeWidgetListener(WidgetListener l) {
 		if ( l != null ) {
 			synchronized (this) {
@@ -386,19 +383,13 @@ public class DocumentsList implements Widget {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see es.code.cdr.ui.controller.Widget#getSelected()
-	 */
-	public CDRNode getSelectedNode() {
+	public ECMNode getSelectedNode() {
 		return selected;
 	}
 
-	/* (non-Javadoc)
-	 * @see es.code.cdr.ui.controller.Widget#perform(es.code.cdr.ui.controller.Widget)
-	 */
 	public void perform(Widget dependentWidget) {
 		if ( dependentWidget instanceof FoldersTree ) {
-			CDRNode parentNode = dependentWidget.getSelectedNode();
+			ECMNode parentNode = dependentWidget.getSelectedNode();
 			load( parentNode.getNode() );
 	        setSelected( null );
 		}
@@ -407,6 +398,7 @@ public class DocumentsList implements Widget {
 	        setSelected( null );
 		}
 	}
+//****************** End of Widget interface methods implementation ************************************ 
 
 	/**
 	 * Loads parent child document nodes inside <code>DataModel</code>.
@@ -420,7 +412,7 @@ public class DocumentsList implements Widget {
 				NodeIterator iter = parent.getNodes();
 		        while ( iter.hasNext() ) {
 		        	Node node = (Node) iter.next();
-		        	String name = ContentRepository.getNodeName( CDRQName.AON_DOCUMENT );
+		        	String name = ContentRepository.getNodeName( ECMQName.AON_DOCUMENT );
 		        	if ( node.getPrimaryNodeType().isNodeType( name ) ) {
 		        		l.add( new Document( node ) );
 		        	}
@@ -429,21 +421,6 @@ public class DocumentsList implements Widget {
 			}
 		}
         model = new CDRDataModel( l );
-	}
-
-	/**
-	 * Returns author name from requested principal, otherwise returns an anonimous one.
-	 * 
-	 * @param ec
-	 * @return
-	 */
-	private String getAuthor(ExternalContext ec) {
-		Principal p = ec.getUserPrincipal();
-		String author = new AnonymousPrincipal().getName();
-		if ( p != null ) {
-			author = p.getName();
-		}
-		return author;
 	}
 
 }

@@ -13,7 +13,7 @@
 			<rich:modalPanel id="folderModalPanel"
 					rendered="#{manager.menu.showFolderModalPanel}" showWhenRendered="true"
 					headerClass="aon-popupWindow-title"
-					minHeight="110" height="110" width="400" top="50" left="200" zindex="2000">
+					minHeight="120" height="120" width="400" top="50" left="200" zindex="2000">
 				<f:facet name="header">
 	            	<h:outputText value="#{appBundle.aon_cdr_add_folder}"/>
 				</f:facet>
@@ -32,20 +32,21 @@
 					<aon:inputText id="folder_name" value="#{manager.folders.name}" size="45" />
 				</aon:panelGrid>
 				<aon:div style="text-align:right;padding-top:2px;">
-		            <aon:panelGrid columns="2" cellpadding="0" cellspacing="0" styleClass="aon-panelGrid-formatting" style="width:auto">
+					<aon:div styleClass="aon-toolbar" 
+							style="padding:1px 1em;margin-bottom:2px;margin-top:1em;float:right">
 						<aon:commandButton id="acceptFolder" value="#{menuBundle.aon_ecm_accept}" 
 								reRender="folderPanel, documentPanel"
 								actionListener="#{manager.folders.add}"
-								styleClass="aon-icon-commandButton aon-icon-accept">
+								styleClass="aon-finding-toolbar-item aon-icon-accept">
 							<f:setPropertyActionListener target="#{manager.menu.showFolderModalPanel}" value="#{false}" />
 							<rich:componentControl for="folderModalPanel" operation="hide" event="onclick" />
 						</aon:commandButton>
 						<aon:commandButton id="closeFolder" value="#{menuBundle.aon_ecm_close}" immediate="true" 
-								styleClass="aon-icon-commandButton aon-icon-cancel">
+								styleClass="aon-finding-toolbar-item aon-icon-cancel" style="border-right:0;" >
 							<f:setPropertyActionListener target="#{manager.menu.showFolderModalPanel}" value="#{false}" />
 							<rich:componentControl for="folderModalPanel" operation="hide" event="onclick" />
 						</aon:commandButton>
-					</aon:panelGrid>
+					</aon:div>
 				</aon:div>
 			</rich:modalPanel>
 		</aon:panelGroup>

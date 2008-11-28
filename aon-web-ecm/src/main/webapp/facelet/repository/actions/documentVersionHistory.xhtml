@@ -12,7 +12,7 @@
 
 		<aon:dataTable id="docVersionList" value="#{manager.documents.versionHistoryModel}" var="to">
 
-			<aon:column>
+			<aon:column rendered="#{manager.contentManagement}">
 				<f:facet name="header">
 					<aon:outputText value="" />
 				</f:facet>
