@@ -59,7 +59,6 @@
 							<f:selectItems value="#{configCollections.series}" />
 						</aon:selectOneMenu>
 						<aon:inputText id="Invoice_series-Edit" 
-							styleClass="aon-margin-left"
 							value="#{saleInvoice.to.series}" rendered="#{!saleInvoice.new}"
 							disabled="true" size="4" />
 						<aon:inputText id="Invoice_number" styleClass="aon-margin-left"
@@ -203,7 +202,7 @@
 
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{productBundle.product_module}" />
+								<aon:outputText value="#{productBundle.product_item}" />
 							</f:facet>
 							<aon:outputText value="#{to.description}"
 								rendered="#{to!=controller.to}" />

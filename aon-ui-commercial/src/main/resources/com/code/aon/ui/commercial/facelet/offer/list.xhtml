@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="offerList">
+
+			<ui:include	src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_offer_module}" />
+				<ui:param name="controller" value="#{offer}" />
+			</ui:include>
+
+			<aon:div id="offerData" styleClass="aon-scroll-area">
+				<aon:dataTable id="offerDataList" value="#{offer.model}"
+					rows="20" var="to" rendered="#{offer.model.rowCount > 0}">
+
+					<aon:rowSelector action="offer_form"
+						actionListener="#{offer.onSelect}" />
+
+					<aon:column>
+						<f:facet name="header">
+							<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
+						</f:facet>
+						<aon:outputText value="#{to.series} / #{to.number}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<h:outputText value="#{commercialBundle.commercial_target}" />
+						</f:facet>
+						<aon:outputText value="#{to.target.registry.fullName}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.issueDate}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_status}" />
+						</f:facet>
+						<aon:outputText value="#{to.status}" />
+					</aon:column>
+
+				</aon:dataTable>
+				<aon:dataScroller2 for="offerDataList" showNote="true" />
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

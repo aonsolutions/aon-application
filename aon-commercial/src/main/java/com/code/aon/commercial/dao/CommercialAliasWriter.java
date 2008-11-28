@@ -13,6 +13,7 @@ import com.code.aon.commercial.TargetItem;
 import com.code.aon.commercial.TargetSegment;
 import com.code.aon.commercial.TargetSeller;
 import com.code.aon.common.dao.AliasWriter;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 
 /**
  * @author Consulting & Development. ecastellano - 22/01/2007
@@ -26,7 +27,6 @@ public class CommercialAliasWriter {
 	 */
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-PROJECT/aon-commercial/src/main/java/com/code/aon/commercial/dao/ICommercialAlias.java");
-//		File file = new File("c:/ICommercialAlias.java");
 		String[] classes = new String[] { 
 				Offer.class.getName(),
 				OfferDetail.class.getName(),
@@ -37,6 +37,7 @@ public class CommercialAliasWriter {
 				TargetItem.class.getName(),
 				TargetSegment.class.getName(),
 				TargetSeller.class.getName() };
+		HibernateUtil.getSessionFactory();
 		AliasWriter writer = new AliasWriter("com.code.aon.commercial.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

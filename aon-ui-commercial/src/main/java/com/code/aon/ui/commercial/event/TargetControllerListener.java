@@ -3,6 +3,7 @@ package com.code.aon.ui.commercial.event;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.dao.ICommercialAlias;
+import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -23,6 +24,7 @@ public class TargetControllerListener extends ControllerAdapter implements IComm
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
 		TargetController controller = (TargetController) event.getController();
+		((Target)controller.getTo()).setAdvertising(Advertising.ALLOWED);
 		try {
 			controller.refreshSegments();
 		} catch (ManagerBeanException e) {
@@ -45,8 +47,7 @@ public class TargetControllerListener extends ControllerAdapter implements IComm
 	}
 	
 	@Override
-	public void afterBeanReset(ControllerEvent event)
-			throws ControllerListenerException {
+	public void afterBeanReset(ControllerEvent event) throws ControllerListenerException {
 		TargetController controller = (TargetController) event.getController();
 		if ( controller.getTo() != null ) {
 			try {
@@ -80,20 +81,37 @@ public class TargetControllerListener extends ControllerAdapter implements IComm
 	}
 	
 	private void cancelChildControllers() {
-    	AonUtil.getController(TARGET_ADDRESS_CONTROLLER_NAME).onCancel(null);
-       	AonUtil.getController(TARGET_MEDIA_CONTROLLER_NAME).onCancel(null);
-       	AonUtil.getController(TARGET_SEGMENT_CONTROLLER_NAME).onCancel(null);
-       	AonUtil.getController(TARGET_ITEM_CONTROLLER_NAME).onCancel(null);
-       	AonUtil.getController(TARGET_SELLER_CONTROLLER_NAME).onCancel(null);
+		IController targetAddressController = AonUtil.getController(TARGET_ADDRESS_CONTROLLER_NAME);
+		if (targetAddressController != null) {
+			targetAddressController.onCancel(null);
+		}
+		IController targetMediaController = AonUtil.getController(TARGET_MEDIA_CONTROLLER_NAME);
+		if (targetMediaController != null) {
+			targetMediaController.onCancel(null);
+		}
+		IController targetSegmentController = AonUtil.getController(TARGET_SEGMENT_CONTROLLER_NAME);
+		if (targetSegmentController != null) {
+			targetSegmentController.onCancel(null);
+		}
+		IController targetItemController = AonUtil.getController(TARGET_ITEM_CONTROLLER_NAME);
+		if (targetItemController != null) {
+			targetItemController.onCancel(null);
+		}
+		IController targetSellerController = AonUtil.getController(TARGET_SELLER_CONTROLLER_NAME);
+		if (targetSellerController != null) {
+			targetSellerController.onCancel(null);
+		}
 	}
 
 	private void resetTargetTracking( Target target ) throws ManagerBeanException {
 		IController controller = AonUtil.getController(TARGET_TRACKING_CONTROLLER_NAME);
-		controller.clearCriteria();
-		Criteria criteria = controller.getCriteria();
-		String field = controller.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_TARGET_ID);
-		criteria.addEqualExpression( field, target.getId() );
-		controller.onSearch(null);
+		if (controller != null) {
+			controller.clearCriteria();
+			Criteria criteria = controller.getCriteria();
+			String field = controller.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_TARGET_ID);
+			criteria.addEqualExpression( field, target.getId() );
+			controller.onSearch(null);
+		}
 	}
 	
 }

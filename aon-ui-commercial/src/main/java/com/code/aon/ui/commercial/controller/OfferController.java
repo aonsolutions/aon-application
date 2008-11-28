@@ -1,11 +1,12 @@
 package com.code.aon.ui.commercial.controller;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.event.PhaseId;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.SelectItem;
 
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.Target;
@@ -14,10 +15,17 @@ import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.company.WorkPlace;
+import com.code.aon.config.Series;
+import com.code.aon.config.dao.IConfigAlias;
+import com.code.aon.faces.component.richfaces.lookup.LookupChangeEvent;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
-import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.registry.RegistryAddress;
+import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.report.OutputFormat;
+import com.code.aon.sales.Seller;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
@@ -26,186 +34,17 @@ import com.code.aon.ui.util.AonUtil;
  * Controller used in the offer maintenance.
  */
 public class OfferController extends BasicController {
-	
-	/** The id of the support order related with the current offer. */
-	private Integer supportOrderId;
 
-    /**
-     * Description
-     */
-    private String description;
-	
-	/**
-	 * Gets the support order id.
-	 * 
-	 * @return the support order id
-	 */
-	public Integer getSupportOrderId() {
-		return supportOrderId;
-	}
+	private List<SelectItem> addresses;
 
-	/**
-	 * Sets the support order id.
-	 * 
-	 * @param supportOrderId the support order id
-	 */
-	public void setSupportOrderId(Integer supportOrderId) {
-		this.supportOrderId = supportOrderId;
-	}
-	
-    /**
-     * Returns the desciption
-     * 
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Assigns the desciption
-     * 
-     * @param description the description
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-	/**
-	 * Checks if the current offer is editable or not.
-	 * 
-	 * @return true, if the current offer editable
-	 */
-	public boolean isEditable(){
-		if((Offer)this.getTo() != null && ((Offer)this.getTo()).getStatus() != null){
-			if(((Offer)this.getTo()).getStatus().equals(OfferStatus.PROCESSED)){
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	/**
-	 * Adds a greaterThan expression of the field issueDate to the <code>criteria</code>.
-	 * 
-	 * @param event the event
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	public void addIssueDateGreaterThanExpression(ValueChangeEvent event)
-		throws ManagerBeanException {
-	    if (event.getNewValue() != null) {
-	    	Criteria c = getCriteria();
-			Object value = event.getNewValue();
-			c.addGreaterThanOrEqualExpression(getFieldName(ICommercialAlias.OFFER_ISSUE_DATE), value);
-			setCriteria(c);
-		}
-	}
-	
-	/**
-	 * Adds a lessThan expression of the field issueDate to the <code>criteria</code>.
-	 * 
-	 * @param event the event
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	public void addIssueDateLessThanExpression(ValueChangeEvent event)
-		throws ManagerBeanException {
-	    if (event.getNewValue() != null) {
-	    	Criteria c = getCriteria();
-			Object value = event.getNewValue();
-			c.addLessThanOrEqualExpression(getFieldName(ICommercialAlias.OFFER_ISSUE_DATE), value);
-			setCriteria(c);
-		}
-	}
-	
-	/**
-	 * Adds an equal expression of the field target to the <code>criteria</code>.
-	 * 
-	 * @param event the event
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 * @throws ExpressionException the expression exception
-	 */
-	public void addTargetExpression(ValueChangeEvent event)
-		throws ManagerBeanException, ExpressionException {
-	    if ((event.getNewValue() != null)
-	    		&& (!"".equals(event.getNewValue().toString().trim()))
-	    		) {
-			Criteria criteria = new Criteria();
-			IManagerBean bean = BeanManager.getManagerBean(Target.class);
-			String identifier = bean.getFieldName(ICommercialAlias.TARGET_REGISTRY_DOCUMENT);
-			criteria.addEqualExpression(identifier, event.getNewValue());
-			List list = bean.getList(criteria);
-			Iterator iter = list.iterator();
-	    	Criteria c = getCriteria();
-	    	if (iter.hasNext()){
-				while (iter.hasNext()){
-					Target t = (Target)iter.next();
-					Object value = t.getId(); 
-					c.addEqualExpression(getFieldName(ICommercialAlias.OFFER_TARGET_ID), value);
-					setCriteria(c);
-				}
-	    	}else{
-				Object value = new Integer(-1); 
-				c.addEqualExpression(getFieldName(ICommercialAlias.OFFER_TARGET_ID), value);
-				setCriteria(c);
-	    	}
-		}
-	}
-	
-	/**
-	 * Adds an equal expression to the <code>criteria</code> retrieving the field name from the <code>event</code>.
-	 * 
-	 * @param event the event
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	public void addEqualExpression(ValueChangeEvent event)
-		throws ManagerBeanException {
-	    if (event.getNewValue() != null) {
-	    	Criteria c = getCriteria();
-			Object value = event.getNewValue();
-			c.addEqualExpression(getFieldName(event.getComponent().getId()), value);
-			setCriteria(c);
-		}
-	}
-
-	/**
-     * Sets default parameters to report.
-     * 
-     * @param event that launched report
-     */
-    @SuppressWarnings("unused")
-    public void onReport(ActionEvent event) {
-        ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
-        manager.setReportKey("offer");
-        manager.setOutputFormat(OutputFormat.PDF);
-    }
-    
-	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException{
-		if (event.getPhaseId() == PhaseId.ANY_PHASE) {
-			event.setPhaseId(PhaseId.INVOKE_APPLICATION );
-			event.queue();
-		}
-		if (event.getPhaseId() == PhaseId.INVOKE_APPLICATION) {
-			int number = obtainMaxNumber((String)event.getNewValue());
-			if(this.getTo() != null){
-				((Offer)this.getTo()).setNumber(number);	
-			}
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void targetChanged(ValueChangeEvent event) throws ManagerBeanException{
-		if(event.getNewValue() != null){
-			IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(targetBean.getFieldName(ICommercialAlias.TARGET_ID), event.getNewValue());
-			Iterator iter = targetBean.getList(criteria, 0, 1).iterator();
-			if(iter.hasNext()){
-				((Offer)getTo()).setTarget((Target)iter.next());
-			}
+    public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
+		int number = obtainMaxNumber((String)event.getNewValue());
+		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String)event.getNewValue());
+		WorkPlace workPlace = obtainSeriesWorkPlace((String)event.getNewValue());
+		if (this.getTo() != null) {
+			((Offer)this.getTo()).setNumber(number);	
+			((Offer)this.getTo()).setSecurityLevel(securityLevel);
+			((Offer)this.getTo()).setWorkPlace(workPlace);
 		}
 	}
 
@@ -215,9 +54,107 @@ public class OfferController extends BasicController {
 		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_SERIES), seriesId);
 		Projection projection = Projection.max(offerBean.getFieldName(ICommercialAlias.OFFER_NUMBER));
 		Object value = offerBean.getUniqueResult(projection, criteria);
-		if(value != null){
+		if (value != null) {
 			return ((Integer)value).intValue() + 1;
 		}
 		return 1;
 	}
+
+	@SuppressWarnings("unchecked")
+	private SecurityLevel obtainSeriesSecurityLevel(String seriesId) throws ManagerBeanException {
+		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
+		Iterator iter = seriesBean.getList(criteria).iterator();
+		if (iter.hasNext()) {
+			Series series = (Series)iter.next(); 
+			if (series.getSecurityLevel() != null){
+				return series.getSecurityLevel();
+			}
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	private WorkPlace obtainSeriesWorkPlace(String seriesId) throws ManagerBeanException {
+		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
+		Iterator iter = seriesBean.getList(criteria).iterator();
+		if (iter.hasNext()) {
+			Series series = (Series)iter.next(); 
+			if (series.getWorkPlace() != null){
+				return series.getWorkPlace();
+			}
+		}
+		return null;
+	}
+
+	public boolean isProcessed(){
+		Offer offer = (Offer)this.getTo();
+		if (offer.getStatus() != null) {
+			return offer.getStatus().equals(OfferStatus.PROCESSED);
+		}
+		return false;
+	}
+
+	public void targetData(LookupChangeEvent event) throws ManagerBeanException {
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			Target target = (Target)event.getNewValue();
+			((Offer)this.getTo()).setTarget(target);
+			loadAddresses(target.getId());
+		} else {
+			setAddresses(null);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void loadAddresses(Integer id) throws ManagerBeanException {
+		List<SelectItem> addresses = new LinkedList<SelectItem>();
+		if (id != null) {
+			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
+			Iterator iter = rAddressBean.getList(criteria).iterator();
+			while(iter.hasNext()){
+				RegistryAddress address = (RegistryAddress)iter.next();
+				String addressLabel = address.getAddress() + " " + address.getAddress2() + " " + address.getAddress3();
+				addressLabel = ((addressLabel.length()>30)?addressLabel.substring(0,27)+"...":addressLabel) + " - " + address.getCity();
+				addressLabel = ((addressLabel.length()>48)?addressLabel.substring(0,45)+"...":addressLabel);
+				SelectItem item = new SelectItem(address.getId(), addressLabel);
+				addresses.add(item);
+			}
+		}
+		this.addresses = addresses;
+	}
+
+    public List<SelectItem> getAddresses() {
+		return addresses;
+	}
+	
+	public void setAddresses(List<SelectItem> addresses) {
+		this.addresses = addresses;
+	}
+	
+	public int getAddressCount() {
+		if (addresses != null){
+			return addresses.size();
+		}
+		return 0;
+	}
+	
+	public void sellerData(LookupChangeEvent event) throws ManagerBeanException {
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			Seller seller = (Seller)event.getNewValue();
+			((Offer)this.getTo()).setSeller(seller);
+		}
+	}
+	
+    @SuppressWarnings("unused")
+    public void onReport(ActionEvent event) {
+        ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
+        manager.setReportKey("offer");
+        manager.setOutputFormat(OutputFormat.PDF);
+    }
+
 }
