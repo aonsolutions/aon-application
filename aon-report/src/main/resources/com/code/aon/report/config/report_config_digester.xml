@@ -29,12 +29,14 @@
 		<pattern value="criteria">
 			<set-properties-rule>
     	  		<alias attr-name="provider" prop-name="criteriaProvider" />
+    	  		<alias attr-name="forceRefresh" prop-name="forceRefresh" />
 		    </set-properties-rule>
 		</pattern>
 		
 		<pattern value="collection">
 			<set-properties-rule>
     	  		<alias attr-name="provider" prop-name="collectionProvider" />
+    	  		<alias attr-name="forceRefresh" prop-name="forceRefresh" />
 		    </set-properties-rule>
 		</pattern>
 		
