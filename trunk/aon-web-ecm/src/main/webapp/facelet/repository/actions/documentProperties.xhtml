@@ -10,7 +10,10 @@
 	<aon:panelGrid columns="2" dir="true">
 
 		<aon:outputLabel value="#{appBundle.aon_cdr_name}" />
-		<aon:outputText value="#{manager.documents.selected.name}" />
+		<aon:outputText value="#{manager.documents.selected.jcrName}"/>
+
+		<aon:outputLabel value="#{appBundle.aon_cdr_title}" />
+  		<rich:inplaceInput value="#{manager.documents.selected.name}"/>
  
 		<aon:outputLabel value="#{appBundle.aon_cdr_keywords}" />
   		<rich:inplaceInput value="#{manager.documents.selected.keywords}"/>
@@ -19,12 +22,12 @@
   		<rich:inplaceInput value="#{manager.documents.selected.nowords}" />
 
 		<aon:outputLabel value="#{appBundle.aon_cdr_category}" />
-		<aon:selectOneMenu value="#{manager.documents.selected.category}" styleClass="aon-inputText-disabled">
-			<f:selectItems value="#{search.parameters.categories}"/>
+		<aon:selectOneMenu value="#{manager.documents.selected.category}" >
+			<f:selectItems value="#{manager.categories.categoryItems}"/>
 		</aon:selectOneMenu>						
 	
 		<aon:outputLabel value="#{appBundle.aon_cdr_language}" />
-		<aon:selectOneMenu styleClass="aon-inputText-disabled" value="#{manager.documents.selected.language}" >
+		<aon:selectOneMenu value="#{manager.documents.selected.language}" >
 			<f:selectItems value="#{search.parameters.languages}"/>
 		</aon:selectOneMenu>						
 

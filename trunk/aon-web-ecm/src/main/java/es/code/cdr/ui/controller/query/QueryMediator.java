@@ -19,19 +19,19 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.servlet.http.HttpSession;
 
-import es.code.cdr.IConstants;
-import es.code.cdr.beans.Document;
-import es.code.cdr.core.InvalidStatementException;
-import es.code.cdr.core.QueryManager;
-import es.code.cdr.core.QueryParameters;
-import es.code.cdr.core.SessionManager;
-import es.code.cdr.core.Widget;
-import es.code.cdr.event.WidgetEvent;
-import es.code.cdr.event.WidgetListener;
 import es.code.cdr.ui.controller.DocumentsList;
 import es.code.cdr.ui.controller.WidgetLoadingException;
 import es.code.cdr.ui.util.CDRDataModel;
-import es.code.cdr.ui.util.CDRUtils;
+import es.code.ecm.IConstants;
+import es.code.ecm.InvalidStatementException;
+import es.code.ecm.QueryManager;
+import es.code.ecm.QueryParameters;
+import es.code.ecm.SessionManager;
+import es.code.ecm.Widget;
+import es.code.ecm.event.WidgetEvent;
+import es.code.ecm.event.WidgetListener;
+import es.code.ecm.nodes.Document;
+import es.code.ecm.util.ECMUtil;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 17/07/2007
@@ -83,8 +83,8 @@ public class QueryMediator implements WidgetListener, Serializable {
 	 */
 	public ResourceBundle getBundle() {
 		if ( bundle == null ) {
-    		Locale locale = CDRUtils.getCurrentLocale( FacesContext.getCurrentInstance() );
-			bundle = ResourceBundle.getBundle( IConstants.CDR_BUNDLE_NAME, locale );
+    		Locale locale = ECMUtil.getCurrentLocale( FacesContext.getCurrentInstance() );
+			bundle = ResourceBundle.getBundle( IConstants.ECM_BUNDLE_NAME, locale );
 		}
 		return bundle;
 	}
@@ -125,11 +125,11 @@ public class QueryMediator implements WidgetListener, Serializable {
 				l.add( new Document( n ) );
 			}
 			if ( l.size() == 0 )
-				CDRUtils.addErrorMessage( getBundle().getString( "aon_cdr_document_not_found" ) );
+				ECMUtil.addErrorMessage( getBundle().getString( "aon_cdr_document_not_found" ) );
 		} catch (RepositoryException e) {
-			CDRUtils.addErrorMessage( getBundle().getString( "aon_cdr_document_not_found" ) );
+			ECMUtil.addErrorMessage( getBundle().getString( "aon_cdr_document_not_found" ) );
 		} catch (InvalidStatementException e) {
-			CDRUtils.addErrorMessage( getBundle().getString( "aon_cdr_empty_expression" ) );
+			ECMUtil.addErrorMessage( getBundle().getString( "aon_cdr_empty_expression" ) );
 		}
 		documents.setModel( new CDRDataModel( l ) );
 	}

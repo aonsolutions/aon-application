@@ -13,7 +13,7 @@ import javax.faces.event.ActionEvent;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
-import es.code.cdr.ui.util.DocumentUpload;
+import es.code.ecm.util.DocumentUpload;
 
 public class DocumentUploadBean implements Serializable {
 	
@@ -84,7 +84,9 @@ public class DocumentUploadBean implements Serializable {
 	}
 
 	private String getFileName(String path) {
-		int index = path.lastIndexOf( File.separatorChar ) + 1;
-		return path.substring( index, path.length() );
+		int index = path.lastIndexOf( "\\" );
+		if ( index == -1 )
+			index = path.lastIndexOf( "/" );
+		return path.substring( index + 1, path.length() );
 	}
 }

@@ -55,7 +55,7 @@
   
 .aon-group{
 	border-top:#ccc 1px solid;
-	margin:2em 0 2em 0;
+	margin:0em 0 2em 0;
 	padding:0;
 	width:96%;
 }
@@ -73,10 +73,10 @@
 .aon-group-body-internal{
 	width:100%;
 	}
-	
+
 /*se utiliza en la ventana emergente de añadir, para poner un scroll en el texto delos documentos */
 .info-scroll{
-	height: 420px;
+	height: 450px;
 	overflow: auto;
 	width:100%;
 	}
