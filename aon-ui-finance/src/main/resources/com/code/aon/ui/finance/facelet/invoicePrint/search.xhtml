@@ -23,7 +23,7 @@
 				<ui:define name="searchContent">
 
 					<aon:outputLabel for="Invoice_series"
-						value="#{financeBundle.finance_series_number}" />
+						value="#{bundle.aon_series}/#{bundle.aon_number}" />
 					<aon:div>
 						<aon:inputText id="Invoice_series"
 							onblur="toUpperCase(this);"

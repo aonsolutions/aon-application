@@ -67,7 +67,7 @@
 					</aon:div>
 
 					<aon:outputLabel for="Finance_invoice_series"
-						value="#{financeBundle.finance_series_number}" />
+						value="#{bundle.aon_series}/#{bundle.aon_number}" />
 					<aon:div>
 						<aon:inputText id="Finance_invoice_series"
 							valueChangeListener="#{financePayment.addExpression}" size="4" />
