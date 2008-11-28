@@ -88,7 +88,21 @@
 	padding: 0 5px;
 	}
 
-  	
+#homepage\3A cnaeForm\3A listaOcupaciones .rich-shuttle-source-items td, #homepage\3A cnaeForm\3A listaOcupacionestlTable td{
+	border:1px solid #CCC;
+	border-right: none;
+	
+	
+}
+
+table#homepage\3A cnaeForm\3A listaOcupaciones, table#homepage\3A cnaeForm\3A listaOcupaciones table{
+	border-collapse:collapse;
+}
+
+#homepage\3A cnaeForm\3A listaOcupaciones{
+	margin: 10px auto;
+}
+
 .tablasmini  {
 	
 width:500px;
