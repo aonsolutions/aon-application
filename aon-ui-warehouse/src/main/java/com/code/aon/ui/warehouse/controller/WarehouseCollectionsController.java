@@ -28,26 +28,29 @@ import com.code.aon.warehouse.enumeration.IncomeStatus;
  */
 public class WarehouseCollectionsController {
 
+	private List<SelectItem> incomeStatuses;
+
+	private List<SelectItem> warehouses;
+	
+	private List<SelectItem> deliveryStatuses;
+	
 	/**
 	 * Returns a list of income statuses
 	 * 
 	 * @return IncomeStatus list
 	 */
 	public List<SelectItem> getIncomeStatuses() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-		for (IncomeStatus type : IncomeStatus.values()) {
-			String name = type.getName(locale);
-			SelectItem item = new SelectItem(type, name);
-			types.add(item);
+		if ( incomeStatuses == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			incomeStatuses = new LinkedList<SelectItem>();
+			for (IncomeStatus type : IncomeStatus.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				incomeStatuses.add(item);
+			}
 		}
-		return types;
+		return incomeStatuses;
 	}
-
-	/**
-	 * The list of warehouses 
-	 */
-	private List<SelectItem> warehouses;
 
 	/**
 	 * Returns the list of warehouses
@@ -65,7 +68,7 @@ public class WarehouseCollectionsController {
 			Iterator<ITransferObject> iter = c.iterator();
 			while (iter.hasNext()) {
 				Warehouse warehouse = (Warehouse) iter.next();
-				SelectItem item = new SelectItem(warehouse.getId(),warehouse.getName());
+				SelectItem item = new SelectItem(warehouse, warehouse.getName());
 				warehouses.add(item);
 			}
 		}
@@ -78,14 +81,16 @@ public class WarehouseCollectionsController {
 	 * @return list of DeliveryStatus
 	 */
 	public List<SelectItem> getDeliveryStatuses() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-		for (DeliveryStatus type : DeliveryStatus.values()) {
-			String name = type.getName(locale);
-			SelectItem item = new SelectItem(type, name);
-			types.add(item);
+		if ( deliveryStatuses == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			deliveryStatuses = new LinkedList<SelectItem>();
+			for (DeliveryStatus type : DeliveryStatus.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				deliveryStatuses.add(item);
+			}
 		}
-		return types;
+		return deliveryStatuses;
 	}
 	
 	/**
