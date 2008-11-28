@@ -23,12 +23,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.resources</artifactId>
-			<version>3.3.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
 			<version>3.3.0</version>
 			<scope>compile</scope>
@@ -41,13 +35,31 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.resources</artifactId>
+			<version>3.3.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security.bridge</artifactId>
 			<version>1.7.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.report</artifactId>
+			<version>3.3.0</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.accounting</artifactId>
+			<version>3.0.0</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.account.bridge</artifactId>
 			<version>3.0.0</version>
 			<scope>runtime</scope>
 		</dependency>
@@ -95,12 +107,6 @@
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.product</artifactId>
 			<version>3.1.0</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.report</artifactId>
-			<version>3.3.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
