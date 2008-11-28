@@ -83,7 +83,7 @@ public class Cuentas  implements ITransferObject {
         this.entidad = entidad;
     }
     
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumns( { 
         @JoinColumn(name="codent", referencedColumnName="codent"), 
         @JoinColumn(name="codsuc", referencedColumnName="cdg") } )

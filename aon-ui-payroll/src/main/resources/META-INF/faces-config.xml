@@ -2549,7 +2549,8 @@
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>percepcionControllerListener</managed-bean-name>
+		<managed-bean-name>
+ControllerListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.payroll.event.PercepcionControllerListener
 		</managed-bean-class>
@@ -2891,8 +2892,30 @@
 				<value>#{domicilioListener}</value>
 				<value>#{cuentaListener}</value>
 				<value>#{avisoListener}</value>
+				<value>#{empresaListener}</value>
 			</list-entries>
 		</managed-property>
+	</managed-bean>
+	
+		<managed-bean>
+		<managed-bean-name>empresaListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>empresa</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Empresa_cliente_cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property> 
 	</managed-bean>
 	
 	<managed-bean>
@@ -3177,12 +3200,31 @@
 			<property-name>defaultOrder</property-name>
 			<value>Empresa_cdg</value>
 		</managed-property>
-     	
+			<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>cliente</value>
+		</managed-property>
+     	<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>  
 	 	<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{empresaControllerListener}</value>			
+				<value>#{empresaControllerListener}</value>		
+				<value>#{actividadListener}</value>	
+				<value>#{tipdomicilioListener}</value>
+				<value>#{tipcuentaListener}</value>			
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -3193,5 +3235,273 @@
 		<managed-bean-class>com.code.aon.ui.payroll.event.EmpresaControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
+
+
+    <managed-bean>
+		<managed-bean-name>actividad</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.principales.empresa.Actividad</value>
+		</managed-property>
+      	<managed-property>
+			<property-name>beanName</property-name>
+			<value>actividad</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Actividad_cdg</value>
+		</managed-property>
+			<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>empresa</value>
+		</managed-property>
+     	<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>  
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>actividadListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>actividad</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Actividad_empresa_cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property> 
+	</managed-bean>
+
+
+	<managed-bean>
+		<managed-bean-name>tipdomicilioListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>tipdomicilio</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Emprdom_empresa_cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property> 
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>tipcuentaListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>tipcuenta</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Emprlban_empresa_cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property> 
+	</managed-bean>
+
+
+  <managed-bean>
+		<managed-bean-name>tipdomicilio</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.principales.empresa.Emprdom</value>
+		</managed-property>
+      	<managed-property>
+			<property-name>beanName</property-name>
+			<value>tipdomicilio</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Emprdom_empresa_cdg,Emprdom_cdg</value>
+		</managed-property>	
+			<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>empresa</value>
+		</managed-property>
+     	<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>  
+			<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{tipdomiListener}</value>
+				</list-entries>
+		</managed-property>
+		</managed-bean>
+		
+		<managed-bean>
+		<managed-bean-name>tipdomiListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>tipdomi</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Emprdom_cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property> 
+	</managed-bean>
+		
+		
+		<managed-bean>
+		<managed-bean-name>tipdomi</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.principales.empresa.Emprdom</value>
+		</managed-property>
+      	<managed-property>
+			<property-name>beanName</property-name>
+			<value>tipdomi</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Emprdom_empresa_cdg,Emprdom_cdg</value>
+		</managed-property>	
+			<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>tipdomicilio</value>
+		</managed-property>
+     	<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>  
+		</managed-bean>
+		
+		<managed-bean>
+		<managed-bean-name>tipcuenta</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.principales.empresa.Emprlban</value>
+		</managed-property>
+      	<managed-property>
+			<property-name>beanName</property-name>
+			<value>tipcuenta</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Emprlban_empresa_cdg,Emprlban_cdg</value>
+		</managed-property>	
+			<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>empresa</value>
+		</managed-property>
+     	<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>  
+		</managed-bean>
+
 
 </faces-config>
