@@ -24,9 +24,11 @@
 <!ATTLIST bean xmlns CDATA #FIXED ''
   key CDATA #REQUIRED>
 <!ATTLIST criteria xmlns CDATA #FIXED ''
-  provider CDATA #REQUIRED>
+  provider CDATA #REQUIRED
+  forceRefresh CDATA #IMPLIED>
 <!ATTLIST collection xmlns CDATA #FIXED ''
-  provider CDATA #REQUIRED>
+  provider CDATA #REQUIRED
+  forceRefresh CDATA #IMPLIED>
 <!ATTLIST nested-report xmlns CDATA #FIXED ''
   report NMTOKEN #REQUIRED>
 <!ATTLIST fetch-mode xmlns CDATA #FIXED ''

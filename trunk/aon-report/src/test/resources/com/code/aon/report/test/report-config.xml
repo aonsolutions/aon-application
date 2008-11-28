@@ -33,7 +33,7 @@
 		<template
 			path="/com/transtools/stock/resources/report/customer.jasper" />
 		<bean key="Customer" />
-		<criteria provider="#{customer}" />
+		<criteria provider="#{customer}" forceRefresh="true"/>
 		<fetch-mode paginated="true" page-count="500" virtualizer-max-size="50"/>
 	</report>
 
@@ -47,8 +47,7 @@
 	<report id="item" description="Items's report">
 		<template
 			path="/com/transtools/stock/resources/report/item.jasper" />
-		<bean key="Item" />
-		<criteria provider="#{item}" />
+		<collection provider="#{item}" forceRefresh="true"/>
 	</report>
 
 	<report id="order" description="Order's report">
