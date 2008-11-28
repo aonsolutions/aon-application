@@ -8,6 +8,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.product.Item;
 
@@ -22,6 +24,8 @@ import com.code.aon.product.Item;
 @Table(name="inventory_detail")
 public class InventoryDetail implements ITransferObject {
 	
+	private static final long serialVersionUID = -8584837639559704341L;
+
 	/**
 	 * Unique key
 	 */
@@ -99,7 +103,7 @@ public class InventoryDetail implements ITransferObject {
 	 * @return Item
 	 */
 	@ManyToOne
-    @JoinColumn(name="item", updatable = false)
+    @JoinColumn(name="item", nullable = false, updatable = false)
 	public Item getItem() {
 		return item;
 	}
@@ -170,5 +174,18 @@ public class InventoryDetail implements ITransferObject {
 		this.cost = cost;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj instanceof InventoryDetail) {
+			InventoryDetail id = (InventoryDetail) obj;
+			if (ObjectUtils.equals(getId(), id.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 }

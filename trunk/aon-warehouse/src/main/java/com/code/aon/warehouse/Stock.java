@@ -8,6 +8,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.product.Item;
 
@@ -21,6 +23,8 @@ import com.code.aon.product.Item;
 @Table(name="stock")
 public class Stock implements ITransferObject{
 	
+	private static final long serialVersionUID = -6415420632921077499L;
+
 	/**
 	 * Unique key
 	 */
@@ -108,6 +112,7 @@ public class Stock implements ITransferObject{
 	public Warehouse getWarehouse() {
 		return warehouse;
 	}
+
 	/**
 	 * Assigns the warehouse
 	 * 
@@ -116,4 +121,19 @@ public class Stock implements ITransferObject{
 	public void setWarehouse(Warehouse warehouse) {
 		this.warehouse = warehouse;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj instanceof Stock) {
+			Stock stock = (Stock) obj;
+			if (ObjectUtils.equals(getId(), stock.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 }

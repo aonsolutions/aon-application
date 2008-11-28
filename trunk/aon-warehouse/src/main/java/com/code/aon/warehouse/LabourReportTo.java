@@ -5,6 +5,8 @@ import com.code.aon.company.resources.Employee;
 
 public class LabourReportTo implements ITransferObject {
 
+	private static final long serialVersionUID = -4050625039676371251L;
+
 	private Employee employee;
 	
 	private double estimatedHours;

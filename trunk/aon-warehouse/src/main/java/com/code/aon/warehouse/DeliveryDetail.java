@@ -28,6 +28,8 @@ import com.code.aon.sales.SalesDetail;
 @Table(name="delivery_detail")
 public class DeliveryDetail implements ITransferObject, ICalculable, IStockable{
 	
+	private static final long serialVersionUID = -5085790386141702008L;
+
 	/**
 	 * Unique key
 	 */
@@ -314,4 +316,16 @@ public class DeliveryDetail implements ITransferObject, ICalculable, IStockable{
 	public double getTaxes() throws ManagerBeanException {
 		return 0;
 	}
+
+    @Override
+    public boolean equals(Object obj) {
+    	if(id == null){
+    		return super.equals(obj);
+    	}
+        if (obj instanceof DeliveryDetail) {
+            return (this.id.equals(((DeliveryDetail)obj).getId()));
+        }
+        return false;
+    }
+
 }

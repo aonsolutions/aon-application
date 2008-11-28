@@ -10,6 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 
 /**
@@ -23,6 +25,8 @@ import com.code.aon.common.ITransferObject;
 @Table(name="inventory")
 public class Inventory implements ITransferObject {
 	
+	private static final long serialVersionUID = 5398894889661223054L;
+
 	/**
 	 * Unique key
 	 */
@@ -108,7 +112,7 @@ public class Inventory implements ITransferObject {
 	 * 
 	 * @return the description.
 	 */
-	@Column(name="description")
+	@Column(name="description", length=64)
 	public String getDescription() {
 		return description;
 	}
@@ -122,5 +126,18 @@ public class Inventory implements ITransferObject {
 		this.description = description;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj instanceof Inventory) {
+			Inventory inventory = (Inventory) obj;
+			if (ObjectUtils.equals(getId(), inventory.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 }
