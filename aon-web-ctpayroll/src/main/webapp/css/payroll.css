@@ -71,6 +71,7 @@
 .aon-scroll-area-principales td.aon-panelGrid-odd{
 	width: 145px;
 	min-width: 145px;
+	white-space: normal;
 	}
 .aon-scroll-area-principales td.aon-panelGrid-even{
 	width: 435px;
@@ -80,3 +81,24 @@
 	width: 1160px; 
 	}
 
+/* ---- tabla mantenimiento empresas ---- */
+
+#homepage\3A empresaForm\3A datos5 td{
+	vertical-align: top;
+	padding: 0 5px;
+	}
+
+#homepage\3A cnaeForm\3A listaOcupaciones .rich-shuttle-source-items td, #homepage\3A cnaeForm\3A listaOcupacionestlTable td{
+	border:1px solid #CCC;
+	border-right: none;
+	
+	
+}
+
+table#homepage\3A cnaeForm\3A listaOcupaciones, table#homepage\3A cnaeForm\3A listaOcupaciones table{
+	border-collapse:collapse;
+}
+
+#homepage\3A cnaeForm\3A listaOcupaciones{
+	margin: 10px auto;
+}

@@ -3,6 +3,9 @@ package com.code.aon.ui.payroll.event;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -12,13 +15,13 @@ import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.form.PageDataModel;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.payroll.controller.CnaeMaestroController;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
-import com.code.aon.ui.payroll.controller.PayrollBasicController;
 
 
 public class CnaeMaestroControllerListener extends ControllerAdapter implements IPayrollConstants {
@@ -44,6 +47,7 @@ public class CnaeMaestroControllerListener extends ControllerAdapter implements 
 			throws ControllerListenerException {
 		// TODO Auto-generated method stub
 		System.out.println("afterModelInitialized");
+		((CnaeMaestroController) getController()).initializeOcupacionesList();
 		super.afterModelInitialized(event);
 	}
 	
@@ -56,43 +60,18 @@ public class CnaeMaestroControllerListener extends ControllerAdapter implements 
 	@Override
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
-		PayrollBasicController cnaeMaestro = (PayrollBasicController) event.getController();
-		CnaeMaestro cm = (CnaeMaestro)event.getController().getTo();
-		String ocupaciones = cm.getOcupacion();
+		//event.getController().getTo().
+		//CnaeMaestroController cnaeMaestro = (CnaeMaestroController) event.getController();
+		//((CnaeMaestroController) getController()).initializeOcupacionesList();
+		((CnaeMaestroController) getController()).initializeAsignedLists();
 		
-		try {
-			Criteria criteria = new Criteria();
-			
-			IManagerBean ocupacionBean = BeanManager.getManagerBean( Ocupacion.class );
-			IController ocupacion = AonUtil.getController(OCUPACION_CONTROLLER_NAME);
-			
-			if(ocupaciones!=null){
-				IManagerBean bean = BeanManager.getManagerBean( Ocupacion.class );
-				List<Ocupacion> o = new ArrayList<Ocupacion>();
-				for (int i = 0; i < ocupaciones.length(); i++) {
-					criteria.addOrExpression(ocupacionBean.getFieldName(IPayrollAlias.OCUPACION_OCUPACION_MAESTRO_CDG), ocupaciones.substring(i, i + 1));
-					 List l = bean.getList( criteria );
-					 if ( l != null ) {
-						 o.add( (Ocupacion)l.iterator().next() );
-					 }
-				}
-				
-				criteria.addEqualExpression(ocupacionBean.getFieldName(IPayrollAlias.OCUPACION_OCUPACION_MAESTRO_EXCLUSIVO), "S");
-			} else {
-				criteria.addEqualExpression(ocupacionBean.getFieldName(IPayrollAlias.OCUPACION_ID_CDG), "");
-			}
-			
-			ocupacion.setCriteria(criteria);
-			ocupacion.onSearch(null);
-			
-		} catch (ManagerBeanException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+	}
+	
+	@Override
+	public void beforeBeanCreated(ControllerEvent event)
+			throws ControllerListenerException {
+		// TODO Auto-generated method stub
+		super.beforeBeanCreated(event);
 	}
 
 }

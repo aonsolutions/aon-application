@@ -4,15 +4,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
-
-import org.apache.tomcat.util.modeler.ManagedBean;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -23,51 +22,12 @@ import com.code.aon.payroll.cotizacion.Ocupacion;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.form.event.ControllerEvent;
-import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 
 public class CnaeMaestroController extends PayrollBasicController implements IPayrollConstants {
 
-	private List<SelectItem> listaOcupaciones;
-	private IController ocupacionesController;
-	private DataModel ocupacionesModel;
-	private String ocupacion;
-
-	/**
-	 * Recupera las ocupaciones exclusivas a cnae
-	 * 
-	 * @return
-	 */
-	public List<SelectItem> getListaOcupaciones() {
-		IController ocupacion = AonUtil.getController(OCUPACION_CONTROLLER_NAME);
-		Criteria criteria = new Criteria();
-		List<ITransferObject> ocupacionesCnae=null;
-		
-		try {
-			//criteria.addEqualExpression(getFieldName(IPayrollAlias.OCUPACION_OCUPACION_MAESTRO_EXCLUSIVO), "S");
-			ocupacionesCnae = ocupacion.getManagerBean().getList(null);
-		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.out.println("sin lista de ocupaciones cnae");
-		}
-		
-		if(listaOcupaciones==null){
-			//Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			listaOcupaciones = new LinkedList<SelectItem>();
-			for (ITransferObject oc : ocupacionesCnae) {
-				String name = ((Ocupacion)oc).getId().getCdg();
-				SelectItem item = new SelectItem( oc, name );
-				listaOcupaciones.add(item);
-			}
-		}
-		return listaOcupaciones;
-	}
-	
-
+	private static final Logger LOGGER = Logger.getLogger(CotizacionBonificacionController.class.getName());
 	
 	private Date searchFecini;
 	private Date searchFecfin;
@@ -88,7 +48,10 @@ public class CnaeMaestroController extends PayrollBasicController implements IPa
 		this.searchFecfin = searchFecfin;
 	}
 
-	//añade la fecha al criteria para realizar busquedas
+	/**
+	 * añade la fecha al criteria para realizar busquedas
+	 * y llama al metodo onSearch de la superclase
+	 */
 	@Override
 	public void onSearch(ActionEvent event) {
 		try {
@@ -100,8 +63,8 @@ public class CnaeMaestroController extends PayrollBasicController implements IPa
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.LINBASEC_FECFIN), searchFecfin);
 			}
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
+			//e.printStackTrace();
 		}
 		searchFecini=null;
 		searchFecfin=null;
@@ -109,95 +72,175 @@ public class CnaeMaestroController extends PayrollBasicController implements IPa
 		super.onSearch(event);
 	}
 
-	public DataModel getOcupacionesModel() {
-		return ocupacionesModel;
-	}
-
-	public void setOcupacionesModel(DataModel ocupacionesModel) {
-		this.ocupacionesModel = ocupacionesModel;
-	}
-
-	public IController getOcupacionesController() {
-		return ocupacionesController;
-	}
-
-	public void setOcupacionesController(IController ocupacionesController) {
-		this.ocupacionesController = ocupacionesController;
+	
+	/*
+	 * ***********************************************
+	 * ***********************************************
+	 *     ^|^| ZAHARRA  ^|^|
+	 * ***********************************************
+	 * ***********************************************
+	 */
+	
+	private List<ITransferObject> listaOcupaciones;
+	/**
+	 * inicializa la lista de ocupaciones exclusivas a CNAE.
+	 * se obtiene unicamente la primera ocurrencia por cada codigo de ocupacion.
+	 */
+	public void initializeOcupacionesList(){
+		
+		if(listaOcupaciones==null){
+			try {
+				IManagerBean ocupacionBean = BeanManager.getManagerBean( Ocupacion.class );
+				
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(ocupacionBean.getFieldName(IPayrollAlias.OCUPACION_OCUPACION_MAESTRO_EXCLUSIVO), "S");
+				
+				List<ITransferObject> ocupacionesBean;
+				ocupacionesBean = ocupacionBean.getList(criteria);
+				listaOcupaciones = new LinkedList<ITransferObject>();
+				
+				List<String> listaCdg = new ArrayList<String>();
+				
+				for (ITransferObject o : ocupacionesBean) {
+					if(!listaCdg.contains(((Ocupacion)o).getId().getCdg())) {
+						listaOcupaciones.add(o);
+						listaCdg.add(((Ocupacion)o).getId().getCdg());
+					}
+				}
+			} catch (ManagerBeanException e) {
+				LOGGER.log( Level.SEVERE, e.getMessage(), e );
+				e.printStackTrace();
+			}
+		}
 	}
 	
-	public void initializeOcupacionesModel(){
-		//CnaeMaestroController cnaeMaestro = (CnaeMaestroController) event.getController();
+	
+	
+	private List<ITransferObject> listaOcuLibre;
+	private List<ITransferObject> listaOcuAsig;
+	/**
+	 * inicializa las listas con las ocupaciones asignadas en una y las libres en otra
+	 */
+	public void initializeAsignedLists(){
+		CnaeMaestro cm = (CnaeMaestro)getTo();
+		String ocupaciones = " ";
+		ocupaciones = cm.getOcupacion();
+		
+		//ocupaciones.substring(i, i + 1)
+		
+		listaOcuLibre = new LinkedList<ITransferObject> ();
+		listaOcuAsig = new LinkedList<ITransferObject> ();
+		
+		if(ocupaciones!=null){
+			for (ITransferObject o : listaOcupaciones) {
+		
+				if(ocupaciones.contains(((Ocupacion)o).getId().getCdg())) {
+					String name = ((Ocupacion)o).getId().getCdg();
+					SelectItem item = new SelectItem( ((Ocupacion)o), name );
+					listaOcuAsig.add(o);
+				} else {
+					String name = ((Ocupacion)o).getId().getCdg();
+					SelectItem item = new SelectItem( ((Ocupacion)o), name );
+					listaOcuLibre.add(o);
+				}
+			
+			}
+		} else {
+			for (ITransferObject o : listaOcupaciones) {
+				String name = ((Ocupacion)o).getId().getCdg();
+				SelectItem item = new SelectItem( ((Ocupacion)o), name );
+				listaOcuLibre.add(o);
+			}
+			
+		}
+			
+
+			
+			
+		
+		
+		
+		
+		
+		
+		/*
 		CnaeMaestro cm = (CnaeMaestro)getTo();
 		String ocupaciones = cm.getOcupacion();
 		
 		try {
+			IManagerBean ocupacionBean = BeanManager.getManagerBean( Ocupacion.class );
+			//IController ocupacion = AonUtil.getController(OCUPACION_CONTROLLER_NAME);
+			
+			
+			IManagerBean beanOcupacion = BeanManager.getManagerBean( Ocupacion.class );
+			List<Ocupacion> listaOcupaciones = new ArrayList<Ocupacion>();
+			//DataModel dm;
+			
 			Criteria criteria = new Criteria();
 			
-			IManagerBean ocupacionBean = BeanManager.getManagerBean( Ocupacion.class );
-			IController ocupacion = AonUtil.getController(OCUPACION_CONTROLLER_NAME);
-			
-			IManagerBean bean = BeanManager.getManagerBean( Ocupacion.class );
-			List<Ocupacion> o = new ArrayList<Ocupacion>();
-			DataModel dm;
-			
 			if(ocupaciones!=null){
-				for (int i = 0; i < ocupaciones.length(); i++) {
-					criteria.addOrExpression(ocupacionBean.getFieldName(IPayrollAlias.OCUPACION_OCUPACION_MAESTRO_CDG), ocupaciones.substring(i, i + 1));
-					 List l = bean.getList( criteria );
-					 if ( l != null ) {
-						 o.add( (Ocupacion)l.iterator().next() );
-					 }
-					 criteria = new Criteria();
-				}
-				
 				criteria.addEqualExpression(ocupacionBean.getFieldName(IPayrollAlias.OCUPACION_OCUPACION_MAESTRO_EXCLUSIVO), "S");
+				List<ITransferObject> toList = beanOcupacion.getList( criteria );
+				
+				for (int i = 0; i < ocupaciones.length(); i++) {
+					//criteria.addOrExpression(ocupacionBean.getFieldName(IPayrollAlias.OCUPACION_OCUPACION_MAESTRO_CDG), ocupaciones.substring(i, i + 1));
+					
+					
+					
+					if ( toList != null ) {
+						listaOcupaciones.add( (Ocupacion)toList.iterator().next() );
+					}
+					
+					
+					if(listaOcuAsig==null){
+						//Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+						listaOcuAsig = new LinkedList<SelectItem>();
+						for (ITransferObject oc : listaOcupaciones) {
+							String name = ((Ocupacion)oc).getId().getCdg();
+							SelectItem item = new SelectItem( oc, name );
+							listaOcuAsig.add(item);
+						}
+					}
+					
+					
+					
+				}	
+				
 			} else {
+				listaOcuAsig=null;
+				listaOcuLibre=null;
 				criteria.addEqualExpression(ocupacionBean.getFieldName(IPayrollAlias.OCUPACION_ID_CDG), "");
 			}
 			
-			dm = new ListDataModel(o);
-			setOcupacionesModel(dm);
-			
-			
-			//ocupacion.setCriteria(criteria);
-			//ocupacion.onSearch(null);
 			
 		} catch (ManagerBeanException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public void initializeOcupacionesController(){
-		initializeOcupacionesModel();
-		
-		ocupacionesController = new BasicController();
-		
-		//ocupacionesController.
-		ocupacionesController.setModel(ocupacionesModel);
+			LOGGER.log( Level.SEVERE, e1.getMessage(), e1 );
+			//e1.printStackTrace();
+		} */
 	}
 	
-	public void onOcupacionRemove(ValueChangeEvent event) {
-		ocupacion = (String)event.getOldValue();
-		String ocupacionesCnae =((CnaeMaestro)getTo()).getOcupacion();
-		System.out.println("ocupacion: " + ocupacion);
-		System.out.println("ocupacionesCnae: " + ocupacionesCnae);
-		if(ocupacionesCnae.contains(ocupacion))
-			System.out.println("Ocupacion ya asignada");
-		else {
-			//ocupacionesCnae.
-			
-		}
+	
+	
+	public List<ITransferObject> getListaOcupacionesLibres() {
 		
+		return listaOcuLibre;
 	}
 	
-	public void onOcupacionAdd(ValueChangeEvent event) {
-		ocupacion = (String)event.getOldValue();
-		((CnaeMaestro)getTo()).setOcupacion(((CnaeMaestro)getTo()).getOcupacion()+ocupacion);
+	public List<ITransferObject> getListaOcupacionesAsignadas() {
 		
+		return listaOcuAsig;
 	}
+	
+	public List<ITransferObject> getListaOcupaciones() {
+		
+		return listaOcupaciones;
+	}
+	
+	public void refreshOcupaciones(ValueChangeEvent event){
+		((CnaeMaestro)getTo()).setOcupacion(((Ocupacion)listaOcuAsig).getId().getCdg());
+	}
+	
+	
+	
 
 }

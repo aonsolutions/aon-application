@@ -466,7 +466,7 @@ public class Empresa implements ITransferObject {
 		this.divisa = divisa;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "inddoc")
 	public Documento getTipdoc() {
 		return this.tipdoc;
@@ -477,7 +477,7 @@ public class Empresa implements ITransferObject {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "tipdocrep")
+	@JoinColumn(name = "tipdocrep", nullable=true)
 	public Documento getTipdoc1() {
 		return this.tipdoc1;
 	}
@@ -506,7 +506,7 @@ public class Empresa implements ITransferObject {
 		this.pais = pais;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "paidocrep")
 	public Pais getPais1() {
 		return this.pais1;
