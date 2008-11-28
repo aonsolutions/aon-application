@@ -34,6 +34,7 @@
 			</aon:dropDownMenu>
 
 			<aon:dropDownMenu value="#{appBundle.menu_sales}">
+				<aon:menuItem value="#{commercialBundle.commercial_offer_module}" action="offer_form" actionListener="#{offer.onReset}" />
 				<aon:menuItem id="aon_invoice_management"
 					value="#{financeBundle.finance_sale_invoice_management_module}" 
 					actionListener="#{saleInvoice.onEditSearch}"
