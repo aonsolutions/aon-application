@@ -96,7 +96,7 @@ public class Ocupacion  implements ITransferObject {
         this.pcttotal = pcttotal;
     }
     
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="cdg", insertable=false, updatable=false)
     public OcupacionMaestro getOcupacionMaestro() {
         return this.ocupacionMaestro;

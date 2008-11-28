@@ -41,7 +41,11 @@
 								</aon:div>
 								<aon:div>
 									<aon:commandLink value="#{menuBundle.principales_clientes__empresa}" 
-										disabled="true" />
+										action="empresa_form" >
+										<aon:actionListener method="#{empresa.onEditSearch}" />
+										<aon:actionListener method="#{empresa.onSearch}" />
+										<aon:actionListener method="#{empresa.onSelectFirst}" />
+									</aon:commandLink>
 								</aon:div>
 								<aon:div>
 									<aon:commandLink value="#{menuBundle.principales_clientes__actividad}" 
