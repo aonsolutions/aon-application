@@ -55,10 +55,6 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.report.OutputFormat;
-import com.code.aon.tas.SupportOrderInsurance;
-import com.code.aon.tas.dao.ITASAlias;
-import com.code.aon.tasDelivery.TasDelivery;
-import com.code.aon.tasDelivery.dao.ITasDeliveryAlias;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.report.controller.ReportManager;
@@ -744,27 +740,6 @@ public class SalesInvoicingController extends BasicController {
 	}
 
 	/**
-	 * Returns the tasdelivery instead of delivery ident.
-	 * 
-	 * @return tasdelivery
-	 */
-	@SuppressWarnings("unchecked")
-	public TasDelivery obtainTasDelivery(){
-		try {
-			IManagerBean tasDeliveryBean = BeanManager.getManagerBean(TasDelivery.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(tasDeliveryBean.getFieldName(ITasDeliveryAlias.TAS_DELIVERY_DELIVERY_ID), obtainDeliveryId());
-			Iterator iter = tasDeliveryBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				return (TasDelivery)iter.next();
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining associated tasDelivery", e);
-		}
-		return null;
-	}
-	
-	/**
 	 * Returns the Delivery ident instead of this controllers invoice.
 	 * 
 	 * @return the delivery ident
@@ -792,23 +767,7 @@ public class SalesInvoicingController extends BasicController {
 			LOGGER.log(Level.SEVERE, "Error obtaining associated deliveryId", e);
 		}
 		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	public SupportOrderInsurance obtainSupportOrderInsurance() throws ManagerBeanException{
-		TasDelivery tasDelivery = obtainTasDelivery();
-		if(tasDelivery != null && tasDelivery.getSupportOrder() != null){
-			IManagerBean supportOrderInsuranceBean = BeanManager.getManagerBean(SupportOrderInsurance.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(supportOrderInsuranceBean.getFieldName(ITASAlias.SUPPORT_ORDER_INSURANCE_SUPPORT_ORDER_ID), tasDelivery.getSupportOrder().getId());
-			Iterator iter = supportOrderInsuranceBean.getList(criteria,0,1).iterator();
-			if(iter.hasNext()){
-				return (SupportOrderInsurance)iter.next();
-			}
-		}
-		return null;
-	}
-	
+	}	
 	
 	/**
 	 * Returns addresses list.
@@ -926,4 +885,45 @@ public class SalesInvoicingController extends BasicController {
 		}
     	return null;
 	}
+
+	/**
+	 * Returns the tasdelivery instead of delivery ident.
+	 * 
+	 * @return tasdelivery
+	 */
+	/*
+	@SuppressWarnings("unchecked")
+	public TasDelivery obtainTasDelivery(){
+		try {
+			IManagerBean tasDeliveryBean = BeanManager.getManagerBean(TasDelivery.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(tasDeliveryBean.getFieldName(ITasDeliveryAlias.TAS_DELIVERY_DELIVERY_ID), obtainDeliveryId());
+			Iterator iter = tasDeliveryBean.getList(criteria).iterator();
+			if(iter.hasNext()){
+				return (TasDelivery)iter.next();
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining associated tasDelivery", e);
+		}
+		return null;
+	}
+	*/
+	
+	/*
+	@SuppressWarnings("unchecked")
+	public SupportOrderInsurance obtainSupportOrderInsurance() throws ManagerBeanException{
+		TasDelivery tasDelivery = obtainTasDelivery();
+		if(tasDelivery != null && tasDelivery.getSupportOrder() != null){
+			IManagerBean supportOrderInsuranceBean = BeanManager.getManagerBean(SupportOrderInsurance.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(supportOrderInsuranceBean.getFieldName(ITASAlias.SUPPORT_ORDER_INSURANCE_SUPPORT_ORDER_ID), tasDelivery.getSupportOrder().getId());
+			Iterator iter = supportOrderInsuranceBean.getList(criteria,0,1).iterator();
+			if(iter.hasNext()){
+				return (SupportOrderInsurance)iter.next();
+			}
+		}
+		return null;
+	}
+	*/
+	
 }
