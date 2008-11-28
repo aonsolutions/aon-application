@@ -15,10 +15,10 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import es.code.cdr.core.ContentRepository;
-import es.code.cdr.ui.util.CDRUtils;
-import es.code.repository.IProvider;
-import es.code.repository.util.Path;
+import es.code.ecm.ContentRepository;
+import es.code.ecm.repository.IProvider;
+import es.code.ecm.repository.util.Path;
+import es.code.ecm.util.ECMUtil;
 
 public class BootstrapTest extends TestCase {
 
@@ -63,7 +63,7 @@ public class BootstrapTest extends TestCase {
             	LOGGER.info("Please make sure JAAS config has all necessary modules (refer config/jaas.config) configured"); //$NON-NLS-1$
             }
         }
-		ContentRepository.init( CDRUtils.getRepositoryInfo( bootstrap ) );
+		ContentRepository.init( ECMUtil.getRepositoryInfo( bootstrap ) );
     }
 
 	/**
