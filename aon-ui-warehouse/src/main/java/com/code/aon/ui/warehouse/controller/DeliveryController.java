@@ -30,10 +30,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.report.OutputFormat;
-import com.code.aon.tasCommercial.TasOffer;
-import com.code.aon.tasCommercial.dao.ITasCommercialAlias;
-import com.code.aon.tasDelivery.TasDelivery;
-import com.code.aon.tasDelivery.dao.ITasDeliveryAlias;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.PageDataModel;
 import com.code.aon.ui.report.controller.ReportManager;
@@ -409,15 +405,6 @@ public class DeliveryController extends BasicController {
 		return total;
 	}
 
-	public String getSupportOrderData() throws ManagerBeanException {
-		TasDelivery tasDelivery = obtainTasDelivery(((Delivery)this.getModel().getRowData()).getId());
-		String supportOrderData = "";
-		if (tasDelivery != null) {
-			supportOrderData = tasDelivery.getSupportOrder().getTasItem().getPublicCode() + " / " + tasDelivery.getSupportOrder().getTasItem().getModel().getMake().getName()+ " " + tasDelivery.getSupportOrder().getTasItem().getModel().getName();			
-		}
-		return supportOrderData;
-	}
-
 	/**
 	 * Searches and assigns a customer instead of the value of the event
 	 * that is customer's ident
@@ -483,31 +470,6 @@ public class DeliveryController extends BasicController {
 		return null;
 	}
 	
-	/**
-	 * Returns the TasDelivery related to the Delivery of the controller 
-	 * 
-	 * @return the tasdelivery
-	 */
-	public TasDelivery obtainTasDelivery(){
-		return obtainTasDelivery(((Delivery)this.getTo()).getId());
-	}
-	
-	@SuppressWarnings("unchecked")
-	private TasDelivery obtainTasDelivery(Integer deliveryId) {
-		try {
-			IManagerBean tasDeliveryBean = BeanManager.getManagerBean(TasDelivery.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(tasDeliveryBean.getFieldName(ITasDeliveryAlias.TAS_DELIVERY_DELIVERY_ID), deliveryId);
-			Iterator iter = tasDeliveryBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				return (TasDelivery)iter.next();
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining associated tasDelivery", e);
-		}
-		return null;
-	}
-
 	/**
 	 * Adds a criteria greater than or equal to the issue date
 	 * 
@@ -610,32 +572,6 @@ public class DeliveryController extends BasicController {
 	}
 
     /**
-     * Recovers all offers related with supportOrderId
-     * 
-     * @return offers List
-     * @throws ManagerBeanException
-     */
-	@SuppressWarnings("unchecked")
-    public List<SelectItem> getRelatedTASOffers() throws ManagerBeanException {
-        LinkedList<SelectItem> offers = new LinkedList<SelectItem>();
-        offerId = null;
-        if (supportOrderId != null) {
-            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            Criteria criteria = new Criteria();
-            IManagerBean tasOfferBean = BeanManager.getManagerBean(TasOffer.class);
-            criteria.addEqualExpression(tasOfferBean.getFieldName(ITasCommercialAlias.TAS_OFFER_SUPPORT_ORDER_ID), supportOrderId);
-            Iterator iter = tasOfferBean.getList(criteria).iterator();
-            while(iter.hasNext()){
-                TasOffer tasOffer = (TasOffer)iter.next();
-                Offer offer = tasOffer.getOffer();
-                SelectItem item = new SelectItem(offer.getId(), (offer.getSeries()==null?"":offer.getSeries()+"/")+offer.getNumber()+ " - " +formatter.format(offer.getIssueDate()));
-                offers.add(item);
-            }
-        }
-        return offers;
-    }
-
-    /**
      * Sets default parameters to report.
      * 
      * @param event that launched report
@@ -670,5 +606,73 @@ public class DeliveryController extends BasicController {
 		}
 		return 1;
 	}
+
+	/*
+	public String getSupportOrderData() throws ManagerBeanException {
+		TasDelivery tasDelivery = obtainTasDelivery(((Delivery)this.getModel().getRowData()).getId());
+		String supportOrderData = "";
+		if (tasDelivery != null) {
+			supportOrderData = tasDelivery.getSupportOrder().getTasItem().getPublicCode() + " / " + tasDelivery.getSupportOrder().getTasItem().getModel().getMake().getName()+ " " + tasDelivery.getSupportOrder().getTasItem().getModel().getName();			
+		}
+		return supportOrderData;
+	}
+	*/
+
+	/**
+	 * Returns the TasDelivery related to the Delivery of the controller 
+	 * 
+	 * @return the tasdelivery
+	 */
+	/*
+	public TasDelivery obtainTasDelivery(){
+		return obtainTasDelivery(((Delivery)this.getTo()).getId());
+	}
+	*/
+	
+	/*
+	@SuppressWarnings("unchecked")
+	private TasDelivery obtainTasDelivery(Integer deliveryId) {
+		try {
+			IManagerBean tasDeliveryBean = BeanManager.getManagerBean(TasDelivery.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(tasDeliveryBean.getFieldName(ITasDeliveryAlias.TAS_DELIVERY_DELIVERY_ID), deliveryId);
+			Iterator iter = tasDeliveryBean.getList(criteria).iterator();
+			if(iter.hasNext()){
+				return (TasDelivery)iter.next();
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining associated tasDelivery", e);
+		}
+		return null;
+	}
+	*/
+
+    /**
+     * Recovers all offers related with supportOrderId
+     * 
+     * @return offers List
+     * @throws ManagerBeanException
+     */
+	/*
+	@SuppressWarnings("unchecked")
+    public List<SelectItem> getRelatedTASOffers() throws ManagerBeanException {
+        LinkedList<SelectItem> offers = new LinkedList<SelectItem>();
+        offerId = null;
+        if (supportOrderId != null) {
+            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            Criteria criteria = new Criteria();
+            IManagerBean tasOfferBean = BeanManager.getManagerBean(TasOffer.class);
+            criteria.addEqualExpression(tasOfferBean.getFieldName(ITasCommercialAlias.TAS_OFFER_SUPPORT_ORDER_ID), supportOrderId);
+            Iterator iter = tasOfferBean.getList(criteria).iterator();
+            while(iter.hasNext()){
+                TasOffer tasOffer = (TasOffer)iter.next();
+                Offer offer = tasOffer.getOffer();
+                SelectItem item = new SelectItem(offer.getId(), (offer.getSeries()==null?"":offer.getSeries()+"/")+offer.getNumber()+ " - " +formatter.format(offer.getIssueDate()));
+                offers.add(item);
+            }
+        }
+        return offers;
+    }
+	*/
 
 }
