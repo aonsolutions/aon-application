@@ -44,7 +44,7 @@
 			<aon:dropDownMenu id="inventory" value="#{warehouseBundle.warehouse_inventory_module}">
 				<aon:menuItem id="inventory_remake"
 					value="#{warehouseBundle.warehouse_inventory_remake_module}" action="inventoryClose">
-					<aon:actionListener method="#{inventory.onReset}"/>
+					<aon:actionListener method="#{inventory.onStartClosing}"/>
 				</aon:menuItem>
 			</aon:dropDownMenu>
 			
