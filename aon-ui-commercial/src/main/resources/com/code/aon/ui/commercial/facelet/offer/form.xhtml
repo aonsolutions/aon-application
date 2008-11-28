@@ -37,7 +37,7 @@
 					<aon:outputLabel for="Offer_series"
 						value="#{bundle.aon_series}/#{bundle.aon_number}" />
 					<aon:div>
-						<aon:selectOneMenu id="Offer_series-New" value="#{offer.to.series}"
+						<aon:selectOneMenu id="Offer_series" value="#{offer.to.series}"
 							rendered="#{offer.new}"
 							valueChangeListener="#{offer.onSeriesChanged}" reRender="Offer_number">
 							<f:selectItem itemValue="" itemLabel=" " />
@@ -124,9 +124,23 @@
 							disabled="true" size="50" />
 					</aon:div>
 
+					<aon:outputLabel for="Offer_type" value="#{bundle.aon_type}" />
+					<aon:selectOneMenu id="Offer_type" value="#{offer.to.type}"
+						disabled="#{offer.processed}">
+						<f:selectItems value="#{commercialCollections.offerTypes}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Offer_tariff" value="#{productBundle.product_tariff}" />
+					<aon:selectOneMenu id="Offer_tariff" value="#{offer.to.tariff}"
+						disabled="#{offer.processed}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{productCollections.tariffs}" />
+					</aon:selectOneMenu>
+
 					<aon:outputLabel for="Offer_payMethod" value="#{financeBundle.finance_pay_method}" />
 					<aon:selectOneMenu id="Offer_payMethod" value="#{offer.to.payMethod}"
 						disabled="#{offer.processed}">
+						<f:selectItem itemLabel="-" itemValue="" />
 						<f:selectItems value="#{financeCollections.payMethods}" />
 					</aon:selectOneMenu>
 

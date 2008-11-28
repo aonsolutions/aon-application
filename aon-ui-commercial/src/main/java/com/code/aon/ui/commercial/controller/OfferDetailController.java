@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.faces.event.ValueChangeEvent;
 
+import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.faces.component.richfaces.lookup.LookupChangeEvent;
@@ -35,7 +36,8 @@ public class OfferDetailController extends LinesController {
 			offerDetail.setDescription(item.getProduct().getName() + " " + (item.getDetail()!=null?item.getDetail():""));
 
 			Date date = offerDetail.getOffer().getIssueDate();
-			Tariff tariff = null;
+			OfferController master = (OfferController)getMasterController();
+			Tariff tariff = ((Offer)master.getTo()).getTariff();
 			price = getPriceStrategy().getUnitPrice(offerDetail, date, tariff);
 		}
 		offerDetail.setPrice(price);
@@ -49,7 +51,8 @@ public class OfferDetailController extends LinesController {
 				offerDetail.setQuantity((Double)event.getNewValue());
 	
 				Date date = offerDetail.getOffer().getIssueDate();
-				Tariff tariff = null;
+				OfferController master = (OfferController)getMasterController();
+				Tariff tariff = ((Offer)master.getTo()).getTariff();
 				price = getPriceStrategy().getUnitPrice(offerDetail, date, tariff);
 			}
 			offerDetail.setPrice(price);

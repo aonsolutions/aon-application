@@ -91,16 +91,22 @@ public interface ICommercialAlias {
 	String  OFFER_TARGET_ID = OFFER_ENTRY.getAliasNames()[10];
 
 	/** 
+	* Alias value: Offer_tariff_id
+	* Hibernate value: Offer.tariff.id
+	*/
+	String  OFFER_TARIFF_ID = OFFER_ENTRY.getAliasNames()[11];
+
+	/** 
 	* Alias value: Offer_type
 	* Hibernate value: Offer.type
 	*/
-	String  OFFER_TYPE = OFFER_ENTRY.getAliasNames()[11];
+	String  OFFER_TYPE = OFFER_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: Offer_workPlace_id
 	* Hibernate value: Offer.workPlace.id
 	*/
-	String  OFFER_WORK_PLACE_ID = OFFER_ENTRY.getAliasNames()[12];
+	String  OFFER_WORK_PLACE_ID = OFFER_ENTRY.getAliasNames()[13];
 
 
 
