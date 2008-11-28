@@ -39,7 +39,7 @@ public class InventoryController extends BasicController {
 	/**
 	 * The ident of the warehouse
 	 */
-	private Integer warehouseId; 
+	private Warehouse warehouse; 
 	
 	/**
 	 * The ident of the category
@@ -89,18 +89,20 @@ public class InventoryController extends BasicController {
 		return INIT_STOCK_TRUE;
 	}
 	
+	public boolean isInitStock() {
+		return initStock;
+	}
 
-	/**
-	 * Assigns the warehouse ident
-	 * 
-	 * @param event the event that contains the warehouse ident
-	 * @throws ManagerBeanException
-	 */
-	public void addWarehouseCriteria(ValueChangeEvent event)
-		throws ManagerBeanException {
-		if (event.getNewValue() != null) {
-			warehouseId = new Integer(event.getNewValue().toString()); 
-		}
+	public void setInitStock(boolean initStock) {
+		this.initStock = initStock;
+	}
+	
+	public Warehouse getWarehouse() {
+		return warehouse;
+	}
+
+	public void setWarehouse(Warehouse warehouse) {
+		this.warehouse = warehouse;
 	}
 
 	/**
@@ -114,26 +116,6 @@ public class InventoryController extends BasicController {
 		if (event.getNewValue() != null) {
 			try{
 				categoryId = new Integer(event.getNewValue().toString());
-			}catch (Exception e) {
-			} 
-		}
-	}
-
-	/**
-	 * Assigns if has to initialice stock
-	 * 
-	 * @param event contains the value to assign
-	 * @throws ManagerBeanException
-	 */
-	public void hasToInitStock(ValueChangeEvent event)
-		throws ManagerBeanException {
-		if (event.getNewValue() != null) {
-			try{
-				if (InventoryController.INIT_STOCK_TRUE.equals(event.getNewValue().toString())){
-					this.initStock = true;
-				}else{
-					this.initStock = false;
-				}
 			}catch (Exception e) {
 			} 
 		}
@@ -160,6 +142,18 @@ public class InventoryController extends BasicController {
 		super.onEditSearch(null);
 	}
 
+	/**
+	 * EditSearch event with no category selected 
+	 * 
+	 * @param event menu event
+	 * @throws Exception
+	 */
+	public void onStartClosing(ActionEvent event) throws Exception {
+		this.initStock = false;
+		this.warehouse = null;
+		super.onReset(event);
+	}
+	
 	/**
 	 * Closes the inventary
 	 * 
@@ -191,7 +185,7 @@ public class InventoryController extends BasicController {
 			inventory.setDescription(((Inventory)this.getTo()).getDescription());
 			
 			Criteria warehouseCriteria = new Criteria();
-			warehouseCriteria.addEqualExpression(warehouseBean.getFieldName(IWarehouseAlias.WAREHOUSE_ID),warehouseId);
+			warehouseCriteria.addEqualExpression(warehouseBean.getFieldName(IWarehouseAlias.WAREHOUSE_ID),warehouse.getId());
 			List warehouseList = warehouseBean.getList(warehouseCriteria);
 			Warehouse warehouse = (Warehouse)warehouseList.iterator().next();
 			
