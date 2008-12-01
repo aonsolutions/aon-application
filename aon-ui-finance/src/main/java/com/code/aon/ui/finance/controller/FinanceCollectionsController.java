@@ -6,16 +6,15 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
-import com.code.aon.finance.PayMethod;
 import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.BillingPeriod;
 import com.code.aon.finance.enumeration.CreditorStatus;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.finance.enumeration.FinanceBatchType;
@@ -24,7 +23,6 @@ import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
-import com.code.aon.finance.enumeration.PayMethodType;
 import com.code.aon.finance.enumeration.VatType;
 import com.code.aon.ql.Criteria;
 
@@ -36,175 +34,145 @@ import com.code.aon.ql.Criteria;
  */
 public class FinanceCollectionsController {
 
-	/**
-	 * Returns Security Level collection.
-	 * 
-	 * @return Security Level collection.
-	 */
-	@Deprecated
-	public List<SelectItem> getSecurityLevels() {
-		throw new AbortProcessingException("Usar el método #{commonCollections.securityLevels}");
-	}
+	private List<SelectItem> billingPeriods;
+	private List<SelectItem> creditorStatuses;
+	private List<SelectItem> financeTrackingTypes;
+	private List<SelectItem> financeBatchStatus;
+	private List<SelectItem> financeBatchTypes;
+	private List<SelectItem> financeStatuses;
+	private List<SelectItem> vatTypes;
+	private List<SelectItem> invoiceTransactionTypes;
+	private List<SelectItem> invoiceTypes;
+	private List<SelectItem> invoiceStatuses;
 
-	public PayMethod getPayMethod() {
-		return null;
-	}
-
-	public void setPayMethod( PayMethod payMethod ) {
-	}
-	
-	/**
-	 * Fills and Returns PayMethod collection
-	 * 
-	 * @return PayMethod collection
-	 * @throws ManagerBeanException
-	 */
-	public List<SelectItem> getPayMethods() throws ManagerBeanException {
-		List<SelectItem> payMethods = new LinkedList<SelectItem>();
-		IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
-		Criteria criteria = new Criteria();
-		criteria.addOrder(payMethodBean.getFieldName(IFinanceAlias.PAY_METHOD_NAME));
-		Iterator<?> iter = payMethodBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			PayMethod pMethod = (PayMethod) iter.next();
-			SelectItem item = new SelectItem(pMethod, pMethod.getName());
-			payMethods.add(item);
+	public List<SelectItem> getBillingPeriods() {
+		if (billingPeriods == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			billingPeriods = new LinkedList<SelectItem>();
+			for( BillingPeriod period : BillingPeriod.values() ) {
+				String name = period.getName(locale);
+				SelectItem item = new SelectItem(period, name);
+				billingPeriods.add(item);			
+			}
 		}
-		return payMethods;
+		return billingPeriods;
 	}
 
-	/**
-	 * Returns a list of PayMethodType
-	 * 
-	 * @return list of PayMethodType
-	 */
-	public List<SelectItem> getPayMethodTypes() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-		PayMethodType[] payMethodType = PayMethodType.values();
-		for (int i = 0; i < payMethodType.length; i++) {
-			PayMethodType type = payMethodType[i];
-			String name = type.getName(locale);
-			SelectItem item = new SelectItem(type, name);
-			types.add(item);
+	public List<SelectItem> getCreditorStatuses() {
+		if (creditorStatuses == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			creditorStatuses = new LinkedList<SelectItem>();
+			for (CreditorStatus status:CreditorStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				creditorStatuses.add(item);
+			}
 		}
-		return types;
+		return creditorStatuses;
 	}
 
-	/**
-	 * Returns a list of InvoiceStatus
-	 * 
-	 * @return list of InvoiceStatus
-	 */
-	public List<SelectItem> getInvoiceStatuses() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> statuses = new LinkedList<SelectItem>();
-		InvoiceStatus[] invoiceStatus = InvoiceStatus.values();
-		for (int i = 0; i < invoiceStatus.length; i++) {
-			InvoiceStatus type = invoiceStatus[i];
-			String name = type.getName(locale);
-			SelectItem item = new SelectItem(type, name);
-			statuses.add(item);
+	public List<SelectItem> getFinanceTrackingTypes() {
+		if (financeTrackingTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			financeTrackingTypes = new LinkedList<SelectItem>();
+			for (FinanceTrackingType type:FinanceTrackingType.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				financeTrackingTypes.add(item);
+			}
 		}
-		return statuses;
-	}
-
-	/**
-	 * Returns a list of InvoiceTypes
-	 * 
-	 * @return list of InvoiceTypes
-	 */
-	public List<SelectItem> getInvoiceTypes() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-		InvoiceType[] invoiceTypes = InvoiceType.values();
-		for (int i = 0; i < invoiceTypes.length; i++) {
-			InvoiceType type = invoiceTypes[i];
-			String name = type.getName(locale);
-			SelectItem item = new SelectItem(type, name);
-			types.add(item);
-		}
-		return types;
-	}
-
-	/**
-	 * Returns a list of InvoiceTransactionTypes
-	 * 
-	 * @return list of InvoiceTransactionTypes
-	 */
-	public List<SelectItem> getInvoiceTransactionTypes() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-		InvoiceTransactionType[] invoiceTypes = InvoiceTransactionType.values();
-		for (int i = 0; i < invoiceTypes.length; i++) {
-			InvoiceTransactionType type = invoiceTypes[i];
-			String name = type.getName(locale);
-			SelectItem item = new SelectItem(type, name);
-			types.add(item);
-		}
-		return types;
-	}
-
-	/**
-	 * Returns a list of VatTypes
-	 * 
-	 * @return list of VatTypes
-	 */
-	public List<SelectItem> getVatTypes() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-		VatType[] vatTypes = VatType.values();
-		for (int i = 0; i < vatTypes.length; i++) {
-			VatType type = vatTypes[i];
-			String name = type.getName(locale);
-			SelectItem item = new SelectItem(type, name);
-			types.add(item);
-		}
-		return types;
-	}
-
-	/**
-	 * Returns a list of FinanceStatus
-	 * 
-	 * @return list of FinanceStatus
-	 */
-	public List<SelectItem> getFinanceStatuses() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> statuses = new LinkedList<SelectItem>();
-		FinanceStatus[] financeStatus = FinanceStatus.values();
-		for (int i = 0; i < financeStatus.length; i++) {
-			FinanceStatus type = financeStatus[i];
-			String name = type.getName(locale);
-			SelectItem item = new SelectItem(type, name);
-			statuses.add(item);
-		}
-		return statuses;
-	}
-
-	public List<SelectItem> getFinanceBatchTypes() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-		FinanceBatchType[] financeBatchTypes = FinanceBatchType.values();
-		for (int i = 0; i < financeBatchTypes.length; i++) {
-			FinanceBatchType type = financeBatchTypes[i];
-			String name = type.getName(locale);
-			SelectItem item = new SelectItem(type, name);
-			types.add(item);
-		}
-		return types;
+		return financeTrackingTypes;
 	}
 
 	public List<SelectItem> getFinanceBatchStatus() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> statuses = new LinkedList<SelectItem>();
-		FinanceBatchStatus[] financeBatchStatuses = FinanceBatchStatus.values();
-		for (int i = 0; i < financeBatchStatuses.length; i++) {
-			FinanceBatchStatus type = financeBatchStatuses[i];
-			String name = type.getName(locale);
-			SelectItem item = new SelectItem(type, name);
-			statuses.add(item);
+		if (financeBatchStatus == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			financeBatchStatus = new LinkedList<SelectItem>();
+			for (FinanceBatchStatus type:FinanceBatchStatus.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				financeBatchStatus.add(item);
+			}
 		}
-		return statuses;
+		return financeBatchStatus;
+	}
+
+	public List<SelectItem> getFinanceBatchTypes() {
+		if (financeBatchTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			financeBatchTypes = new LinkedList<SelectItem>();
+			for (FinanceBatchType type:FinanceBatchType.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				financeBatchTypes.add(item);
+			}
+		}
+		return financeBatchTypes;
+	}
+
+	public List<SelectItem> getFinanceStatuses() {
+		if (financeStatuses == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			financeStatuses = new LinkedList<SelectItem>();
+			for (FinanceStatus type:FinanceStatus.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				financeStatuses.add(item);
+			}
+		}
+		return financeStatuses;
+	}
+
+	public List<SelectItem> getVatTypes() {
+		if (vatTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			vatTypes = new LinkedList<SelectItem>();
+			for (VatType type:VatType.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				vatTypes.add(item);
+			}
+		}
+		return vatTypes;
+	}
+
+	public List<SelectItem> getInvoiceTransactionTypes() {
+		if (invoiceTransactionTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			invoiceTransactionTypes = new LinkedList<SelectItem>();
+			for (InvoiceTransactionType type:InvoiceTransactionType.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				invoiceTransactionTypes.add(item);
+			}
+		}
+		return invoiceTransactionTypes;
+	}
+
+	public List<SelectItem> getInvoiceTypes() {
+		if (invoiceTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			LinkedList<SelectItem> invoiceTypes = new LinkedList<SelectItem>();
+			for (InvoiceType type: InvoiceType.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				invoiceTypes.add(item);
+			}
+		}
+		return invoiceTypes;
+	}
+
+	public List<SelectItem> getInvoiceStatuses() {
+		if (invoiceStatuses == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			invoiceStatuses = new LinkedList<SelectItem>();
+			for (InvoiceStatus type:InvoiceStatus.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				invoiceStatuses.add(item);
+			}
+		}
+		return invoiceStatuses;
 	}
 
 	public List<SelectItem> getCompanyBanks() throws ManagerBeanException {
@@ -227,29 +195,4 @@ public class FinanceCollectionsController {
 		return rBanks;
 	}
 
-	public List<SelectItem> getFinanceTrackingTypes() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> statuses = new LinkedList<SelectItem>();
-		FinanceTrackingType[] financeTrackingTypes = FinanceTrackingType.values();
-		for (int i = 0; i < financeTrackingTypes.length; i++) {
-			FinanceTrackingType type = financeTrackingTypes[i];
-			String name = type.getName(locale);
-			SelectItem item = new SelectItem(type, name);
-			statuses.add(item);
-		}
-		return statuses;
-	}
-
-	public List<SelectItem> getCreditorStatuses() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> statuses = new LinkedList<SelectItem>();
-		CreditorStatus[] creditorStatuses = CreditorStatus.values();
-		for (int i = 0; i < creditorStatuses.length; i++) {
-			CreditorStatus status = creditorStatuses[i];
-			String name = status.getName(locale);
-			SelectItem item = new SelectItem(status, name);
-			statuses.add(item);
-		}
-		return statuses;
-	}
 }

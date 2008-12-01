@@ -27,8 +27,8 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.PayMethod;
 import com.code.aon.customer.Customer;
-import com.code.aon.finance.PayMethod;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
@@ -56,7 +56,9 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 		this.issueDate = new Date();
 	}
 	
-    /** The id. */
+	private static final long serialVersionUID = 2635528648512356470L;
+
+	/** The id. */
     private Integer id;
 
     /** The serie. */

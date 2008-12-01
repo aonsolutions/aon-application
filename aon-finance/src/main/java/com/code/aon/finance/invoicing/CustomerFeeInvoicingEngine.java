@@ -1,4 +1,4 @@
-package com.code.aon.sales;
+package com.code.aon.finance.invoicing;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -15,6 +15,7 @@ import com.code.aon.common.enumeration.Month;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.customer.enumeration.CustomerStatus;
+import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoicingGroup;
@@ -23,16 +24,11 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
-import com.code.aon.finance.invoicing.IInvoicingDAO;
-import com.code.aon.finance.invoicing.IInvoicingEngine;
-import com.code.aon.finance.invoicing.IInvoicingFeedBack;
-import com.code.aon.finance.invoicing.InvoicingParameters;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
-import com.code.aon.sales.dao.ISalesAlias;
 
 public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 	
@@ -72,7 +68,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 	private Criteria completeCriteriaWithCustomerData(Criteria criteria,InvoicingParameters params) throws ManagerBeanException {
 		IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
 		if(params.getCustomerId() != null){
-			criteria.addEqualExpression(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_ID), params.getCustomerId());
+			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_ID), params.getCustomerId());
 		}
 		return criteria;
 	}
@@ -83,14 +79,14 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		Expression dateExpression = createFromToExpression(params.getMonth(), params.getYear());
 		criteria.addExpression(dateExpression);
 		if(params.getSecurityLevel() != null){
-			criteria.addEqualExpression(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_SECURITY_LEVEL), params.getSecurityLevel());
+			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_SECURITY_LEVEL), params.getSecurityLevel());
 		}
 		if(params.getWorkPlaceId() != null){
-			criteria.addEqualExpression(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_WORK_PLACE_ID), params.getWorkPlaceId());
+			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_WORK_PLACE_ID), params.getWorkPlaceId());
 		}
-		criteria.addEqualExpression(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_STATUS), CustomerStatus.ACTIVE);
-		criteria.addOrder(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_SURNAME));
-		criteria.addOrder(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_NAME));
+		criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_STATUS), CustomerStatus.ACTIVE);
+		criteria.addOrder(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_SURNAME));
+		criteria.addOrder(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_NAME));
 		return criteria;
 	}
 
@@ -151,13 +147,13 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
 		Criteria groupCriteria = new Criteria();
 		Expression exp = null;
-		exp = ExpressionUtilities.getOrExpression(exp, ExpressionUtilities.getEqualExpression(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_ID), group.getParent().getId()));
+		exp = ExpressionUtilities.getOrExpression(exp, ExpressionUtilities.getEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_ID), group.getParent().getId()));
 		Criteria parentCriteria = new Criteria();
 		parentCriteria.addEqualExpression(invoicingGroupDetailBean.getFieldName(IFinanceAlias.INVOICING_GROUP_DETAIL_INVOICING_GROUP_ID), group.getId());
 		Iterator iter = invoicingGroupDetailBean.getList(parentCriteria).iterator();
 		while(iter.hasNext()){
 			InvoicingGroupDetail detail = (InvoicingGroupDetail)iter.next();
-			exp = ExpressionUtilities.getOrExpression(exp, ExpressionUtilities.getEqualExpression(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_ID), detail.getChild().getId()));
+			exp = ExpressionUtilities.getOrExpression(exp, ExpressionUtilities.getEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_ID), detail.getChild().getId()));
 		}
 		groupCriteria.addExpression(ExpressionUtilities.getAndExpression(criteria.getExpression(), exp));
 		// Cuotas tanto del padre como de los hijos
@@ -212,7 +208,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		Expression exp =  null;
 		while(iter.hasNext()){
 			Integer id = (Integer)iter.next();
-			exp = ExpressionUtilities.getAndExpression(exp, ExpressionUtilities.getNotEqualExpression(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_ID), id));
+			exp = ExpressionUtilities.getAndExpression(exp, ExpressionUtilities.getNotEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_ID), id));
 		}
 		if(exp != null){
 			criteria.addExpression(exp);
@@ -234,10 +230,10 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		calendar.set(Calendar.SECOND, 59);
 		Date to = calendar.getTime();
 		IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
-		Expression billingExpr = ExpressionUtilities.getBetweenExpression(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_BILLING_DATE), from, to);
-		Expression initialExpr = ExpressionUtilities.getLessThanOrEqualExpression(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_INITIAL_DATE), to);
-        Expression finalExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_FINAL_DATE), from);
-        Expression finalNullExpr = ExpressionUtilities.getNullExpression(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_FINAL_DATE));
+		Expression billingExpr = ExpressionUtilities.getBetweenExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_BILLING_DATE), from, to);
+		Expression initialExpr = ExpressionUtilities.getLessThanOrEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_INITIAL_DATE), to);
+        Expression finalExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_FINAL_DATE), from);
+        Expression finalNullExpr = ExpressionUtilities.getNullExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_FINAL_DATE));
         return ExpressionUtilities.getAndExpression(ExpressionUtilities.getAndExpression(billingExpr, initialExpr), ExpressionUtilities.getOrExpression(finalExpr, finalNullExpr));
 	}
 

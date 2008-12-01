@@ -25,7 +25,7 @@
 
 	<parameter name="printHeaders" isForPrompting="false" class="java.lang.Boolean"/>
 	<parameter name="company" isForPrompting="false" class="com.code.aon.company.Company"/>
-	<parameter name="params" isForPrompting="false" class="com.code.aon.account.summary.SummaryProviderParameters"/>
+	<parameter name="params" isForPrompting="false" class="com.code.aon.accounting.summary.SummaryProviderParameters"/>
 
 	<field name="id" class="java.lang.String"/>
 	<field name="description" class="java.lang.String"/>

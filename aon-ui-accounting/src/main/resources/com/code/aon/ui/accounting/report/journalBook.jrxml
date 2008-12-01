@@ -27,10 +27,10 @@
 	<parameter name="company" isForPrompting="false" class="com.code.aon.company.Company"/>
 	<parameter name="fromDate" isForPrompting="false" class="java.util.Date"/>
 	<parameter name="toDate" isForPrompting="false" class="java.util.Date"/>
-	<parameter name="period" isForPrompting="false" class="com.code.aon.account.Period"/>
+	<parameter name="period" isForPrompting="false" class="com.code.aon.accounting.Period"/>
 	<parameter name="date" isForPrompting="false" class="java.util.Date"/>
 
-	<field name="accountEntry" class="com.code.aon.account.AccountEntry"/>
+	<field name="accountEntry" class="com.code.aon.accounting.AccountEntry"/>
 	<field name="account" class="com.code.aon.account.Account"/>
 	<field name="concept" class="java.lang.String"/>
 	<field name="debit" class="java.lang.Double"/>

@@ -1,4 +1,4 @@
-package com.code.aon.sales;
+package com.code.aon.finance.invoicing;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -13,16 +13,14 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.invoicing.FinanceGenerator;
-import com.code.aon.finance.invoicing.IInvoicingDAO;
-import com.code.aon.finance.invoicing.InvoicePriceStrategy;
+import com.code.aon.finance.enumeration.BillingPeriod;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.sales.enumeration.BillingPeriod;
 
 public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 	

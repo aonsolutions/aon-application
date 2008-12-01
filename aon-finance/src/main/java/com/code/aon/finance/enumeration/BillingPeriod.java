@@ -1,4 +1,4 @@
-package com.code.aon.sales.enumeration;
+package com.code.aon.finance.enumeration;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -36,7 +36,7 @@ public enum BillingPeriod implements IResourceable {
     YEARLY(12);
 
     /** Message file base path. */
-    private static final String BASE_NAME = "com.code.aon.sales.i18n.messages";
+    private static final String BASE_NAME = "com.code.aon.finance.i18n.messages";
 
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_billing_period_";

@@ -12,9 +12,10 @@ import javax.faces.model.SelectItem;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.PayMethod;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.PayMethod;
 import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
@@ -65,7 +66,7 @@ public class SalesFinanceController extends LinesController {
 		if(event.getNewValue() != null){
 			IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(payMethodBean.getFieldName(IFinanceAlias.PAY_METHOD_ID), event.getNewValue());
+			criteria.addEqualExpression(payMethodBean.getFieldName(IConfigAlias.PAY_METHOD_ID), event.getNewValue());
 			Iterator iter = payMethodBean.getList(criteria,0,1).iterator();
 			if(iter.hasNext()){
 				((Finance)this.getTo()).setPayMethod((PayMethod)iter.next());

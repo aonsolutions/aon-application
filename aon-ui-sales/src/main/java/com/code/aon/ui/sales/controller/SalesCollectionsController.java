@@ -14,7 +14,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.sales.PointOfSale;
 import com.code.aon.sales.dao.ISalesAlias;
-import com.code.aon.sales.enumeration.BillingPeriod;
 import com.code.aon.sales.enumeration.SellerStatus;
 
 /**
@@ -46,17 +45,6 @@ public class SalesCollectionsController {
 		return pointsOfSale;
 	}
 	
-	public List<SelectItem> getBillingPeriods() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> periods = new LinkedList<SelectItem>();
-		for( BillingPeriod period : BillingPeriod.values() ) {
-			String name = period.getName(locale);
-			SelectItem item = new SelectItem(period, name);
-			periods.add(item);			
-		}
-		return periods;
-	}
-
 	public List<SelectItem> getSellerStatuses() {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		LinkedList<SelectItem> types = new LinkedList<SelectItem>();

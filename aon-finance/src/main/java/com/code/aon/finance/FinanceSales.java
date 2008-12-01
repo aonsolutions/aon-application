@@ -1,4 +1,4 @@
-package com.code.aon.sales;
+package com.code.aon.finance;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,7 +9,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.finance.Finance;
 import com.code.aon.sales.Sales;
 
 /**
@@ -19,7 +18,8 @@ import com.code.aon.sales.Sales;
 @Table(name = "finance_sales")
 public class FinanceSales implements ITransferObject {
 
-	
+	private static final long serialVersionUID = -8297977676119686982L;
+
 	/** The id. */
 	private Integer id;
 	

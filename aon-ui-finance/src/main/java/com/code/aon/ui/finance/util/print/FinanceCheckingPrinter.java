@@ -11,9 +11,10 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.finance.enumeration.PayMethodType;
+import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.print.CheckingTo;
 import com.code.aon.ui.util.AonUtil;
+
 
 public class FinanceCheckingPrinter implements ICollectionProvider {
 

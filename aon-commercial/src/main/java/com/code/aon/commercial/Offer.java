@@ -30,7 +30,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.finance.PayMethod;
+import com.code.aon.config.PayMethod;
 import com.code.aon.product.Tariff;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
@@ -45,6 +45,8 @@ import com.code.aon.sales.Seller;
 @Table(name="offer")
 public class Offer implements ITransferObject, IHeaderObject, ICalculableContainer {
 	
+	private static final long serialVersionUID = 851446217271328802L;
+
 	/** The Constant LOGGER. */
 	private static final Logger LOGGER = Logger.getLogger(Offer.class.getName());
 	

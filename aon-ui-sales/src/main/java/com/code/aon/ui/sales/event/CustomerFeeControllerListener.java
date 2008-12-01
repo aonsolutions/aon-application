@@ -5,7 +5,7 @@ import java.util.GregorianCalendar;
 
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.customer.Customer;
-import com.code.aon.sales.CustomerFee;
+import com.code.aon.finance.CustomerFee;
 import com.code.aon.ui.customer.controller.CustomerController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;

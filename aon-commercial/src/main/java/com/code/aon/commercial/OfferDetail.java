@@ -26,6 +26,8 @@ import com.code.aon.product.util.DiscountExpression;
 @Table(name="offer_detail")
 public class OfferDetail implements ITransferObject, ICalculable {
 	
+	private static final long serialVersionUID = -3195621161952952987L;
+
 	/** The Id. */
 	private Integer Id;
 	
