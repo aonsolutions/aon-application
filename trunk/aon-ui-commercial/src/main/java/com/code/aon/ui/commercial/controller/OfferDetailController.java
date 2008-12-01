@@ -68,8 +68,8 @@ public class OfferDetailController extends LinesController {
 	}
 
 	public double getTaxableBase(){
-		OfferController offerController = (OfferController)getMasterController();
-		return getPriceStrategy().getTaxableBase((ICalculableContainer)offerController.getTo());
+		OfferController master = (OfferController)getMasterController();
+		return getPriceStrategy().getTaxableBase((ICalculableContainer)master.getTo());
 	}
 
 }
