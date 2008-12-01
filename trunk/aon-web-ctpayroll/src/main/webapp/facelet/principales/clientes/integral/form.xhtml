@@ -89,7 +89,7 @@
 
 	         
 	         <aon:div>
-	       <rich:tabPanel id="tabs" switchType="ajax" >
+	       <rich:tabPanel id="tabs" switchType="ajax" style="tabs" >
 					<rich:tab  label="#{appBundle.aon_payroll_principales_actividades}">
 						
 							  <aon:div id="ctasDiv" >	
@@ -143,11 +143,12 @@
 		
 	<aon:lookupButtonPopup lookup="#{delegacionLookup}" />	
 	<aon:lookupButtonPopup lookup="#{empresarioLookup}" />   
-	 <!--  <aon:lookupButtonPopup lookup="#{divisaLookup}" />   -->
 	<aon:lookupButtonPopup lookup="#{paisLookup}" />  
 	<aon:lookupButtonPopup lookup="#{documentoLookup}" />  
     <aon:lookupButtonPopup lookup="#{tipoviaLookup}" /> 
 	<aon:lookupButtonPopup lookup="#{provinciaLookup}" />
+     <aon:lookupButtonPopup lookup="#{empresaLookup}" />	
+    <aon:lookupButtonPopup lookup="#{actividadLookup}" />
 	
 	</ui:define>
 </ui:composition>
