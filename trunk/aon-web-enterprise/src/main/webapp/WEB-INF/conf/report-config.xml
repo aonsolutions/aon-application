@@ -309,4 +309,39 @@
 		</params>
 	</report>
 	
+	<!--  **********************************************************
+						INVENTORY 
+		  ********************************************************** -->
+
+	<report id="inventory" description="Inventory Report">
+		<template path="/com/code/aon/ui/warehouse/report/inventory.jasper" />
+		<bean key="com.code.aon.warehouse.Inventory" />
+		<criteria provider="#{inventory}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+	
+	<report id="inventory_close" description="Inventory Count report">
+		<template path="/com/code/aon/ui/warehouse/report/count.jasper" />
+		<collection provider="#{inventoryDetail}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+	
+	<report id="inventory_valued" description="Valued Inventory report">
+		<template path="/com/code/aon/ui/warehouse/report/valued.jasper" />
+		<collection provider="#{inventoryDetail}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />			
+		</params>
+	</report>
+	
 </report-config>
