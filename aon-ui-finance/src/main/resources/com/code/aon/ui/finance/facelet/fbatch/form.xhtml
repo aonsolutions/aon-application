@@ -131,9 +131,9 @@
 							value="#{fbatch.to.financeBatchStatus}" disabled="true" >
 							<f:selectItems value="#{financeCollections.financeBatchStatus}" />
 						</aon:selectOneMenu>
-						<f:verbatim>&#160;</f:verbatim>
+						<aon:outputText value="&#160;" />
 						<aon:outputLabel
-							value="#{financeBundle.aon_account_entry}: #{fbatch.accountEntryId}"
+							value="#{accountingBundle.accounting_account_entry}: #{fbatch.accountEntryId}"
 							rendered="#{fbatch.recorded}" />
 					</aon:div>
 
