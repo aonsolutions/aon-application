@@ -14,6 +14,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.sales.PointOfSale;
 import com.code.aon.sales.dao.ISalesAlias;
+import com.code.aon.sales.enumeration.DocumentType;
+import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.sales.enumeration.SellerStatus;
 
 /**
@@ -44,13 +46,35 @@ public class SalesCollectionsController {
 		}
 		return pointsOfSale;
 	}
-	
+
 	public List<SelectItem> getSellerStatuses() {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
+		LinkedList<SelectItem> statuses = new LinkedList<SelectItem>();
 		for( SellerStatus status : SellerStatus.values() ) {
 			String name = status.getName(locale);
 			SelectItem item = new SelectItem(status, name);
+			statuses.add(item);
+		}
+		return statuses;
+	}
+
+	public List<SelectItem> getSalesStatuses() {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		LinkedList<SelectItem> statuses = new LinkedList<SelectItem>();
+		for( SalesStatus status : SalesStatus.values() ) {
+			String name = status.getName(locale);
+			SelectItem item = new SelectItem(status, name);
+			statuses.add(item);
+		}
+		return statuses;
+	}
+
+	public List<SelectItem> getDocumentTypes() {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
+		for( DocumentType type : DocumentType.values() ) {
+			String name = type.getName(locale);
+			SelectItem item = new SelectItem(type, name);
 			types.add(item);
 		}
 		return types;
