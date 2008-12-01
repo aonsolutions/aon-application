@@ -108,7 +108,7 @@ public class ClienteController extends PayrollBasicController {
 					getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CLIENTE_PROVINCIA_CDG), getProvincia().getCdg());
 				}
 			     if  ( (pais.getCdg() != null) && (! StringUtils.isEmpty(pais.getCdg())) ) {
-						getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CLIENTE_PAIS_CDG), getProvincia().getCdg());
+						getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CLIENTE_PAIS_CDG), getPais().getCdg());
 					}
 			     
 			    if    (fecnew != null){

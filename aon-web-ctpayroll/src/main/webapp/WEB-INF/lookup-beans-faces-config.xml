@@ -272,4 +272,43 @@
 			<value>/facelet/principales/empresas/admonLookup/list.xhtml</value>
 		</managed-property>
 	</managed-bean>	
+	
+		<!--  ************ empresa LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>empresaLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>empresaLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.principales.empresa.Empresa</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/clientes/integral/empresaLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+		<!--  ************ actividades  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>actividadLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>actividadLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.principales.empresa.Actividad</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/clientes/integral/actividadLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
 </faces-config>

@@ -7,78 +7,136 @@
 
 <aon:div id="tipcuentasasigDataDiv">
 
-	<aon:editDataTable id="tipcuentasasigData" var="to" rows="4"
-	               styleClass="tablasmini"
-						rendered="#{(tipcuenta.model.rowCount > 0) or (tipcuenta.new)}" value="#{tipcuenta.model}"
-						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
-								
+		<aon:panelGrid columns="2">
+			<aon:div>
+				<aon:editDataTable id="tipcuentasasigData" var="to" rows="5"
+					styleClass="tablasmini"
+					rendered="#{(tipcuenta.model.rowCount > 0) or (tipcuenta.new)}"
+					value="#{tipcuenta.model}"
+					columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+
 					<!-- 	<aon:rowSelector action="tipcuenta_form"
 							actionListener="#{tipcuenta.onSelect}" /> -->
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+
+						<aon:div>
+							<aon:commandButton alt="[#{bundle.aon_reset}]"
+								styleClass="aon-editDataTable-button aon-icon-rowSelector "
+								actionListener="#{tipcuenta.onSelect}" action="tipcuenta_form"
+								accesskey="#{bundle.aon_key_new_line}" />
+						</aon:div>
+
+						<f:facet name="footer">
+							<aon:div>
+								<aon:commandButton alt="[#{bundle.aon_reset}]"
+									styleClass="aon-editDataTable-button aon-icon-reset"
+									actionListener="#{tipcuenta.onReset}" action="tipcuenta_form"
+									rendered="#{!tipcuenta.new}"
+									accesskey="#{bundle.aon_key_new_line}" />
+							</aon:div>
+						</f:facet>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
+						</f:facet>
+						<aon:outputText value="#{to.cdg}" />
+
+					</aon:column>
+
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText
+								value="#{appBundle.aon_payroll_principales_cuenta_cdg}" />
+						</f:facet>
+						<aon:outputText value="#{to.cuenta.cdg}" />
+
+					</aon:column>
+
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText
+								value="#{appBundle.aon_payroll_principales_cuenta_entidad_nom}" />
+						</f:facet>
+						<aon:outputText value="#{to.cuenta.entidad.cdg}" />
+
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText
+								value="#{appBundle.aon_payroll_principales_cuenta_sucursal2}" />
+						</f:facet>
+						<aon:outputText value="#{to.cuenta.sucursal.id.cdg}" />
+
+					</aon:column>
+				</aon:editDataTable>
+			</aon:div>
+			<aon:div>
+
+			<aon:panelGrid styleClass="tablasmini" columns="2" dir="true"
+					width="100%" style="margin-bottom=2px;">
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_tipocuenta}" />
+					<aon:outputText value="#{tipcuenta.to.tipcta}" disabled="true"
+						size="50" maxlength="20" />
+                  
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_empresa_descripcion}" />
+					<aon:outputText value="#{tipcuenta.to.empresa.descripcion}"
+						disabled="true" size="50" maxlength="20" />
+
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_actividades_nombre}" />
+					<aon:outputText value="#{tipcuenta.to.actividad.descripcion}"
+						disabled="true" size="50" maxlength="20" />
+            
+                	
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_cuenta_entidad_nom}" />
+					<aon:outputText value="#{tipcuenta.to.cuenta.entidad.description}"
+						disabled="true" size="50" maxlength="20" />
+
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_cuenta_sucursal}" />
+					<aon:outputText value="#{tipcuenta.to.cuenta.sucursal.domsuc}"
+						disabled="true" size="50" maxlength="20" />
+
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_clientes_codpos}" />
+					<aon:outputText value="#{tipcuenta.to.cliente.codpos}"
+						disabled="true" size="50" maxlength="20" />
+
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_clientes_localidad}" />
+					<aon:outputText value="#{tipcuenta.to.cliente.localidad}"
+						disabled="true" size="50" maxlength="20" />
+
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_clientes_provincia}" />
+					<aon:outputText
+						value="#{tipcuenta.to.cliente.provincia.descripcion}"
+						disabled="true" size="50" maxlength="20" />
+
+
+				</aon:panelGrid>
+
+
+
+			</aon:div>
+
+		</aon:panelGrid>
+
 	
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="&#160;" />
-							</f:facet>
-							
-								<aon:div>
-									<aon:commandButton alt="[#{bundle.aon_reset}]"
-										styleClass="aon-editDataTable-button aon-icon-rowSelector "
-										actionListener="#{tipcuenta.onSelect}" action="tipcuenta_form"
-										
-										accesskey="#{bundle.aon_key_new_line}" />
-								</aon:div>
-							
-							<f:facet name="footer">
-								<aon:div>
-									<aon:commandButton alt="[#{bundle.aon_reset}]"
-										styleClass="aon-editDataTable-button aon-icon-reset"
-										actionListener="#{tipcuenta.onReset}" action="tipcuenta_form"
-										rendered="#{!tipcuenta.new}"
-										accesskey="#{bundle.aon_key_new_line}" />
-								</aon:div>
-							</f:facet>
-						</aon:column>
-	
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
-							</f:facet>
-							<aon:outputText value="#{to.cdg}"  />
-							
-						</aon:column>
-						
-						
-						<aon:column  >
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_principales_cuenta_cdg}" />
-							</f:facet>
-							<aon:outputText value="#{to.cuenta.cdg}"  />
-							
-						</aon:column>
-												
-										
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_principales_cuenta_entidad_nom}" />
-							</f:facet>
-							<aon:outputText value="#{to.cuenta.entidad.cdg}"  />
-							
-						</aon:column>
-						
-								<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_principales_cuenta_sucursal2}" />
-							</f:facet>
-							<aon:outputText value="#{to.cuenta.sucursal.id.cdg}"  />
-							
-						</aon:column>
-							
-						
-				
-						
-					</aon:editDataTable>
-					<aon:dataScroller2 for="tipcuentasasigData" showNote="true" />
-	
-</aon:div>
+		<aon:dataScroller2 for="tipcuentasasigData" showNote="true" />
+
+	</aon:div>
 
 </ui:composition>
