@@ -2,6 +2,8 @@ package com.code.aon.ui.account.bridge.event;
 
 import java.util.Iterator;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.ProductAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
@@ -57,10 +59,10 @@ public class ProductAccountListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		Item item = (Item)event.getController().getTo();
-		if (item.getProduct().getSalesAccount() != null && item.getProduct().getSalesAccount().getId() != null) {
+		if (item.getProduct().getSalesAccount() != null && !StringUtils.isEmpty(item.getProduct().getSalesAccount().getId())) {
 			validateAccount(item.getProduct().getSalesAccount());
 		}
-		if (item.getProduct().getPurchaseAccount() != null && item.getProduct().getPurchaseAccount().getId() != null) {
+		if (item.getProduct().getPurchaseAccount() != null && !StringUtils.isEmpty(item.getProduct().getPurchaseAccount().getId())) {
 			validateAccount(item.getProduct().getPurchaseAccount());
 		}
 	}
@@ -68,10 +70,10 @@ public class ProductAccountListener extends ControllerAdapter {
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		Item item = (Item)event.getController().getTo();
-		if (item.getProduct().getSalesAccount() != null && item.getProduct().getSalesAccount().getId() != null) {
+		if (item.getProduct().getSalesAccount() != null && !StringUtils.isEmpty(item.getProduct().getSalesAccount().getId())) {
 			insertProductAccount(item.getProduct(), item.getProduct().getSalesAccount(), ProductAccountType.SALES);
 		}
-		if (item.getProduct().getPurchaseAccount() != null && item.getProduct().getPurchaseAccount().getId() != null) {
+		if (item.getProduct().getPurchaseAccount() != null && !StringUtils.isEmpty(item.getProduct().getPurchaseAccount().getId())) {
 			insertProductAccount(item.getProduct(), item.getProduct().getPurchaseAccount(), ProductAccountType.PURCHASE);
 		}
 	}
@@ -79,10 +81,10 @@ public class ProductAccountListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		Item item = (Item)event.getController().getTo();
-		if (item.getProduct().getSalesAccount() != null && item.getProduct().getSalesAccount().getId() != null) {
+		if (item.getProduct().getSalesAccount() != null && !StringUtils.isEmpty(item.getProduct().getSalesAccount().getId())) {
 			validateAccount(item.getProduct().getSalesAccount());
 		}
-		if (item.getProduct().getPurchaseAccount() != null && item.getProduct().getPurchaseAccount().getId() != null) {
+		if (item.getProduct().getPurchaseAccount() != null && !StringUtils.isEmpty(item.getProduct().getPurchaseAccount().getId())) {
 			validateAccount(item.getProduct().getPurchaseAccount());
 		}
 	}
@@ -90,12 +92,12 @@ public class ProductAccountListener extends ControllerAdapter {
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		Item item = (Item)event.getController().getTo();
-		if (item.getProduct().getSalesAccount() != null && item.getProduct().getSalesAccount().getId() != null) {
+		if (item.getProduct().getSalesAccount() != null && !StringUtils.isEmpty(item.getProduct().getSalesAccount().getId())) {
 			updateProductAccount(item.getProduct(), item.getProduct().getSalesAccount(), ProductAccountType.SALES);
 		} else {
 			removeProductAccount(item.getProduct(), ProductAccountType.SALES);
 		}
-		if (item.getProduct().getPurchaseAccount() != null && item.getProduct().getPurchaseAccount().getId() != null) {
+		if (item.getProduct().getPurchaseAccount() != null && !StringUtils.isEmpty(item.getProduct().getPurchaseAccount().getId())) {
 			updateProductAccount(item.getProduct(), item.getProduct().getPurchaseAccount(), ProductAccountType.PURCHASE);
 		} else {
 			removeProductAccount(item.getProduct(), ProductAccountType.PURCHASE);
