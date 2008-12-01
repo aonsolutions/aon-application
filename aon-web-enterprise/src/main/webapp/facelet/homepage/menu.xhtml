@@ -44,7 +44,6 @@
 
 			<aon:dropDownMenu id="inventory" value="#{warehouseBundle.warehouse_inventory_module}">
 				<aon:menuItem id="inventory_remake"
-					style="color:red;"
 					value="#{warehouseBundle.warehouse_inventory_remake_module}" action="inventoryClose">
 					<aon:actionListener method="#{inventory.onStartClosing}"/>
 				</aon:menuItem>
@@ -197,8 +196,6 @@
 				<aon:menuItem value="#{configBundle.config_tax_module}" action="tax" />
 				<aon:menuItem value="#{configBundle.config_series_module}" action="series" />
 				<aon:menuItem value="#{geozoneBundle.geozone_module}" action="geotreeParent_list" actionListener="#{geotreeParent.onSearch}" />
-				<aon:menuSeparator/>
-				<aon:menuItem value="#{configBundle.config_paymethod_module}" action="payMethod" actionListener="#{payMethod.onSearch}" />
 			</aon:dropDownMenu>
  		</aon:menuBar>
 	</aon:form>

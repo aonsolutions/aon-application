@@ -1,31 +1,22 @@
 package com.code.aon.ui.warehouse.controller;
 
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
-
-import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
-import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.product.ProductCategory;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.BasicController;
+import com.code.aon.ql.OrderByList;
+import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Inventory;
+import com.code.aon.warehouse.dao.IWarehouseAlias;
 
 /**
  * Controller for inventory detail.
@@ -33,7 +24,7 @@ import com.code.aon.warehouse.Inventory;
  * @author Consulting & Development.
  * @since 1.0
  */
-public class InventoryDetailController extends BasicController implements ICollectionProvider {
+public class InventoryDetailController extends LinesController implements ICollectionProvider {
 	
 	/** The Constant LOGGER. */
 	private static final Logger LOGGER = Logger.getLogger(InventoryDetailController.class.getName());
@@ -44,64 +35,12 @@ public class InventoryDetailController extends BasicController implements IColle
 	/** Category identifier. */
 	private ProductCategory category;
 	
-	/** CategoryGroup identifier. */
-	private Integer categoryGroupId = new Integer(-1);
-	
-	/** The category list. */
-	private List<SelectItem> categoryList = new LinkedList<SelectItem>();
-	
 	public ProductCategory getCategory() {
 		return category;
 	}
 
 	public void setCategory(ProductCategory category) {
 		this.category = category;
-	}
-
-	/**
-	 * Gets the category group id.
-	 * 
-	 * @return the category group id
-	 */
-	public Integer getCategoryGroupId() {
-		return categoryGroupId;
-	}
-
-	/**
-	 * Sets the category group id.
-	 * 
-	 * @param categoryGroupId the category group id
-	 */
-	public void setCategoryGroupId(Integer categoryGroupId) {
-		this.categoryGroupId = categoryGroupId;
-	}
-
-	/**
-	 * Gets the category list.
-	 * 
-	 * @return the category list
-	 */
-	public List<SelectItem> getCategoryList() {
-		return categoryList;
-	}
-
-	/**
-	 * Sets the category list.
-	 * 
-	 * @param categoryList the category list
-	 */
-	public void setCategoryList(List<SelectItem> categoryList) {
-		this.categoryList = categoryList;
-	}
-
-	/**
-	 * Resets the controller.
-	 * 
-	 * @param event a menu event
-	 */
-	public void onStart(ActionEvent event){
-		this.model = null;
-		super.onReset(null);
 	}
 
 	/**
@@ -119,78 +58,26 @@ public class InventoryDetailController extends BasicController implements IColle
 		}
 	}
 	
+	private Inventory getCurrentInventory() {
+		InventoryController inventoryController = (InventoryController)AonUtil.getController(INVENTORY_CONTROLLER_NAME);
+		return (Inventory)inventoryController.getTo();
+	}
+	
 	/**
 	 * Assigns a new list of inventory detail.
+	 * @throws ManagerBeanException 
 	 */
-	public void loadDetailModel(ActionEvent event) {
-		this.setModel(new ListDataModel(getDetailList(false)));
-	}
-	
-	/**
-	 * Queries an inventory detail list for this inventory.id and category if needed
-	 * 
-	 * @return the list of inventory detail
-	 */
-	@SuppressWarnings("unchecked")
-	private List getDetailList(boolean reportOrder){
-		InventoryController inventoryController = (InventoryController)AonUtil.getController(INVENTORY_CONTROLLER_NAME);
-		Integer inventoryId = ((Inventory)inventoryController.getTo()).getId();
-		Session session = HibernateUtil.getSession();
-		String query = "select inventoryDetail " +
-	        "from InventoryDetail inventoryDetail, " +
-	        "Item item, " + 
-	        "Product prod, " + 
-	        "ProductCategory cat " +
-	        ((categoryGroupId==null||categoryGroupId.equals(new Integer(-1)))?"":", ProductCategoryGroup catGroup ") +
-	        "where inventoryDetail.item.id = item.id " +
-	        "and item.product.id = prod.id " +
-	        "and prod.category.id = cat.id " +
-	        ((categoryGroupId==null||categoryGroupId.equals(new Integer(-1)))?"":"and cat.group.id = catGroup.id ") +
-	        "and inventoryDetail.inventory.id=" + inventoryId.intValue() +
-	        (category==null?"":" and cat.id=" + category.getId()) + 
-	        (categoryGroupId==null || categoryGroupId.equals(new Integer(-1))?"":" and catGroup.id=" + categoryGroupId.intValue()) +
-	        " order by " + (reportOrder?"prod.category.name, ":"") +
-	        "item.product.name";
-        Query q = session.createQuery(query);
-        return q.list();
-	}
-
-	/**
-	 * On category group changed.
-	 * 
-	 * @param event the event
-	 */
-	public void onCategoryGroupChanged(ValueChangeEvent event){
-		if(event.getNewValue() != null){
-			categoryGroupId = (Integer)event.getNewValue();
-			categoryList = new LinkedList<SelectItem>();
-			loadCategoryList();
+	public void loadDetailModel(ActionEvent event) throws ManagerBeanException {
+		clearCriteria();
+		Criteria criteria = getCriteria();
+		criteria.addEqualExpression(getFieldName(IWarehouseAlias.INVENTORY_DETAIL_INVENTORY_ID), getCurrentInventory().getId());
+		if ( getCategory() != null ) {
+			String field = getFieldName(IWarehouseAlias.INVENTORY_DETAIL_ITEM_PRODUCT_CATEGORY_ID);
+			criteria.addEqualExpression(field, category.getId());
 		}
+		onSearch(event);
 	}
 	
-	/**
-	 * Load category list.
-	 */
-	@SuppressWarnings("unchecked")
-	private void loadCategoryList(){
-		try {
-			IManagerBean pCategoryBean = BeanManager.getManagerBean(ProductCategory.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(pCategoryBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_CATEGORY_GROUP_ID), categoryGroupId);
-			Iterator iter = pCategoryBean.getList(criteria).iterator();
-			while(iter.hasNext()){
-				ProductCategory category = (ProductCategory)iter.next();
-				SelectItem item = new SelectItem(category.getId(), category.getName());
-				categoryList.add(item);
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining categories with categoryGroup = " + categoryGroupId, e);
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see com.code.aon.ui.form.BasicController#getCollection()
-	 */
 	/**
 	 * Gets the collection.
 	 * 
@@ -199,6 +86,19 @@ public class InventoryDetailController extends BasicController implements IColle
 	@Override
 	@SuppressWarnings("unchecked")
 	public Collection getCollection() {
-		return getDetailList(true);
+		try {
+			Criteria criteria = getCriteria();
+			OrderByList oldOrderList = criteria.getOrderByList();
+			criteria.setOrderByList(null);
+			criteria.addOrder(getFieldName(IWarehouseAlias.INVENTORY_DETAIL_ITEM_PRODUCT_CATEGORY_NAME));
+			criteria.addOrder(getFieldName(IWarehouseAlias.INVENTORY_DETAIL_ITEM_PRODUCT_NAME));
+			int count = getManagerBean().getCount(getCriteria());
+			List<ITransferObject> collection = search(0, count);
+			criteria.setOrderByList( oldOrderList );
+			return collection;
+		} catch (ManagerBeanException e) {
+			LOGGER.severe( e.getMessage() );
+		}
+		return Collections.emptyList();
 	}
 }

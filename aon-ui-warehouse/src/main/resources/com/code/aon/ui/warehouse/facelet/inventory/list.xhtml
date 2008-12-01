@@ -11,6 +11,9 @@
 	
 		<aon:form id="inventoryList">
 
+			<aon:methodParam name="resetActionListener" value="#{inventory.onStartClosing}" type="actionListener" />
+			<aon:methodParam name="resetAction" value="inventoryClose"/>
+
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_inventory_remake_module}" />
@@ -42,7 +45,7 @@
 					columnClasses="aon-editDataTable-numberColumn, aon-editDataTable-textColumn,
 						aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
 
-					<aon:rowSelector action="inventory_form" actionListener="#{inventory.onInitDetailAndSelect}" />
+					<aon:rowSelector action="inventory_form" actionListener="#{inventory.onSelect}" />
 
 					<aon:column>
 						<f:facet name="header">

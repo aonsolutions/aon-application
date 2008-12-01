@@ -23,10 +23,22 @@
 						<aon:inputText id="Inventory_id" size="14"
 							valueChangeListener="#{inventory.addExpression}" />
 	
-						<aon:outputLabel for="Inventory_inventoryDate"
-							value="#{bundle.aon_date}" />
-						<aon:inputText id="Inventory_inventoryDate" size="15"
-							valueChangeListener="#{inventory.addExpression}" />
+						<aon:outputLabel value="#{bundle.aon_date}" />
+						<aon:div>
+							<aon:outputLabel for="Inventory_inventoryDate-From" styleClass="aon-form-date-label"
+								value="#{bundle.aon_date_from}:" />
+							<aon:selectInputDate id="Inventory_inventoryDate-From"
+								value="#{inventorySearch.inventoryDateFrom}" timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}">
+							</aon:selectInputDate>
+	
+							<aon:outputLabel for="Inventory_inventoryDate-To" styleClass="aon-form-date-label"
+								value="#{bundle.aon_date_to}:" />
+							<aon:selectInputDate id="Inventory_inventoryDate-To"
+								value="#{inventorySearch.inventoryDateTo}" timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}">
+							</aon:selectInputDate>
+						</aon:div>							
 							
 						<aon:outputLabel for="Inventory_description"
 							value="#{bundle.aon_description}" />
