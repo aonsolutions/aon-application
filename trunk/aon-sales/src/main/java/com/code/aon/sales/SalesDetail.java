@@ -26,7 +26,9 @@ import com.code.aon.sales.enumeration.SalesDetailStatus;
 @Table(name="sales_detail")
 public class SalesDetail implements ITransferObject, ICalculable {
 
-    /** The id. */
+	private static final long serialVersionUID = -5739011618986227394L;
+
+	/** The id. */
     private Integer id;
 
     /** The sale. */

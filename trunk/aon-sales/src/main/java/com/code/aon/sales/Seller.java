@@ -28,6 +28,8 @@ import com.code.aon.sales.enumeration.SellerStatus;
 @Table(name="seller")
 public class Seller implements ITransferObject, IRegistry {
 
+	private static final long serialVersionUID = -5570727365136434306L;
+
 	/** The id. */
 	private Integer id;
 	

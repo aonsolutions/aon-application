@@ -18,6 +18,8 @@ import com.code.aon.registry.RegistryAddress;
 @Table(name="pos")
 public class PointOfSale implements ITransferObject {
 	
+	private static final long serialVersionUID = 9089534063605964455L;
+
 	/** The id. */
 	private Integer id;
 	

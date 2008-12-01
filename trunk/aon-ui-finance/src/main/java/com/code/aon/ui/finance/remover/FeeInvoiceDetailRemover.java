@@ -11,11 +11,11 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
+import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.enumeration.BillingPeriod;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
-import com.code.aon.sales.CustomerFee;
-import com.code.aon.sales.enumeration.BillingPeriod;
 import com.code.aon.ui.util.AonUtil;
 
 public class FeeInvoiceDetailRemover implements IInvoiceDetailRemover {

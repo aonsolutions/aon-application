@@ -27,8 +27,8 @@
 	<parameter name="printHeaders" isForPrompting="false" class="java.lang.Boolean"/>
 	<parameter name="logoImageFile" isForPrompting="true" class="java.io.InputStream"/>
 	<parameter name="company" isForPrompting="false" class="com.code.aon.company.Company"/>
-	<parameter name="summaryCollection" isForPrompting="false" class="com.code.aon.account.summary.SummaryCollection"/>
-	<parameter name="params" isForPrompting="false" class="com.code.aon.account.summary.SummaryProviderParameters"/>
+	<parameter name="summaryCollection" isForPrompting="false" class="com.code.aon.accounting.summary.SummaryCollection"/>
+	<parameter name="params" isForPrompting="false" class="com.code.aon.accounting.summary.SummaryProviderParameters"/>
 
 	<field name="indentedId" class="java.lang.String"/>
 	<field name="shortDescription" class="java.lang.String"/>

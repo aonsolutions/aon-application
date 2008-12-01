@@ -25,10 +25,10 @@
 
 	<parameter name="printHeaders" isForPrompting="false" class="java.lang.Boolean"/>
 	<parameter name="company" isForPrompting="false" class="com.code.aon.company.Company"/>
-	<parameter name="params" isForPrompting="false" class="com.code.aon.account.summary.SummaryProviderParameters"/>
-	<parameter name="openingEntry" isForPrompting="false" class="com.code.aon.account.util.Balance"/>
-	<parameter name="fromOpeningEntry" isForPrompting="false" class="com.code.aon.account.util.Balance"/>
-	<parameter name="periodBalance" isForPrompting="false" class="com.code.aon.account.util.Balance"/>
+	<parameter name="params" isForPrompting="false" class="com.code.aon.accounting.summary.SummaryProviderParameters"/>
+	<parameter name="openingEntry" isForPrompting="false" class="com.code.aon.accounting.util.Balance"/>
+	<parameter name="fromOpeningEntry" isForPrompting="false" class="com.code.aon.accounting.util.Balance"/>
+	<parameter name="periodBalance" isForPrompting="false" class="com.code.aon.accounting.util.Balance"/>
 
 	<field name="accountEntry" class="java.lang.Integer"/>
 	<field name="account" class="java.lang.String"/>

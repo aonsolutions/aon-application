@@ -1,4 +1,4 @@
-package com.code.aon.sales;
+package com.code.aon.finance;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -23,7 +23,7 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
-import com.code.aon.sales.enumeration.BillingPeriod;
+import com.code.aon.finance.enumeration.BillingPeriod;
 
 /**
  * Transfer Object that represents a customer fee.
@@ -34,6 +34,11 @@ import com.code.aon.sales.enumeration.BillingPeriod;
 @Entity
 @Table(name="customer_fee")
 public class CustomerFee implements ITransferObject {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 113912434021805866L;
 
 	/** The id. */
     private Integer id;

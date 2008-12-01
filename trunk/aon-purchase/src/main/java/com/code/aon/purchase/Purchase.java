@@ -16,7 +16,7 @@ import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.finance.PayMethod;
+import com.code.aon.config.PayMethod;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.purchase.enumeration.PurchaseDocumentType;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
@@ -31,6 +31,8 @@ import com.code.aon.supplier.Supplier;
 @Table(name="purchase")
 public class Purchase implements ITransferObject, IHeaderObject{
 	
+	private static final long serialVersionUID = -7426746100676646853L;
+
 	/** The id. */
 	private Integer id;
 	

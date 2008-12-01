@@ -8,9 +8,10 @@ import java.util.logging.Logger;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.PayMethod;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.PayMethod;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
@@ -100,7 +101,7 @@ public class SalesFinanceControllerVetoListener extends ControllerAdapter{
 		try {
 			IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(payMethodBean.getFieldName(IFinanceAlias.PAY_METHOD_ID), finance.getPayMethod().getId());
+			criteria.addEqualExpression(payMethodBean.getFieldName(IConfigAlias.PAY_METHOD_ID), finance.getPayMethod().getId());
 			Iterator iter = payMethodBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				finance.setPayMethod((PayMethod)iter.next());

@@ -13,6 +13,8 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.invoicing.ConsoleInvoicingFeedBack;
+import com.code.aon.finance.invoicing.CustomerFeeInvoicingEngine;
+import com.code.aon.finance.invoicing.CustomerFeePreInvoicingDAO;
 import com.code.aon.finance.invoicing.IInvoicingEngine;
 import com.code.aon.finance.invoicing.InvoicePriceStrategy;
 import com.code.aon.finance.invoicing.InvoicingEngineFactory;
@@ -21,8 +23,6 @@ import com.code.aon.finance.invoicing.InvoicingParameters;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
-import com.code.aon.sales.CustomerFeeInvoicingEngine;
-import com.code.aon.sales.CustomerFeePreInvoicingDAO;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 
