@@ -15,7 +15,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.product.Item;
-import com.code.aon.product.ProductCategory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.PageDataModel;
@@ -40,11 +39,6 @@ public class InventoryController extends BasicController {
 	 * The ident of the warehouse
 	 */
 	private Warehouse warehouse; 
-	
-	/**
-	 * The ident of the category
-	 */
-	private ProductCategory category; 
 	
 	/**
 	 * Inicialize stock
@@ -87,17 +81,6 @@ public class InventoryController extends BasicController {
 		closeInventary();
 	}
 	
-	/**
-	 * EditSearch event with no category selected 
-	 * 
-	 * @param event menu event
-	 * @throws Exception
-	 */
-	public void onStartSearch(ActionEvent event) throws Exception {
-		this.category = null;
-		super.onEditSearch(null);
-	}
-
 	/**
 	 * EditSearch event with no category selected 
 	 * 
@@ -150,7 +133,6 @@ public class InventoryController extends BasicController {
 	                "where item.product=prod.id " +
 	                "and prod.category=cat.id " +
 	                "and prod.inventoriable=true " +
-	                (category==null?"":"and cat.id="+category.getId())+
 	                " order by prod.category,item.detail");
 			Iterator iter = q.list().iterator();
 			while (iter.hasNext()){
@@ -215,11 +197,10 @@ public class InventoryController extends BasicController {
 	 */
 	@SuppressWarnings("unchecked")
 	public boolean isInventaryDone() throws ManagerBeanException{
-		List list = getTodayList();
-		if (list.size()>0){
-			return true;
-		}
-		return false;
+		IManagerBean inventoryBean = BeanManager.getManagerBean(Inventory.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(inventoryBean.getFieldName(IWarehouseAlias.INVENTORY_INVENTORY_DATE) ,new Date());
+		return (inventoryBean.getCount(criteria) > 0);
 	}
 	
 	/**
@@ -246,18 +227,13 @@ public class InventoryController extends BasicController {
 		resetTo();
 	}
 
-	/**
-	 * Resets the inventory detail controller and selects this controlles
-	 * 
-	 * @param event the action event
-	 * @throws ManagerBeanException
-	 */
-	public void onInitDetailAndSelect(ActionEvent event) throws ManagerBeanException{
+	@Override
+	public void onSelect(ActionEvent event) {
 		InventoryDetailController idc = (InventoryDetailController)AonUtil.getController(INVENTORY_DETAIL_CONTROLLER_NAME);
 		idc.setCategory(null);
-		this.onSelect(null);
+		super.onSelect(event);
 	}
-	
+
 	/**
 	 * Returns the price provider
 	 * 
