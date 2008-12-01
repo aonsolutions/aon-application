@@ -36,45 +36,55 @@
 			</ui:decorate>
 	
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid columns="2">
 
-					<aon:outputLabel for="Inventory_id"
-						value="#{bundle.aon_id}" />
-					<aon:outputText value="#{inventory.to.id}" size="14" />
-
-					<aon:outputLabel for="Inventory_inventoryDate"
-						value="#{bundle.aon_date}" />
-					<aon:outputText value="#{inventory.to.inventoryDate}">
-						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-							type="both" timeZone="#{timeZoneController.timeZoneId}" />
-					</aon:outputText>
-					
-					<aon:outputLabel for="Inventory_description"
-						value="#{bundle.aon_description}" />
-					<aon:outputText value="#{inventory.to.description}" size="64" />
-				</aon:panelGrid>
+				<aon:div styleClass="aon-padding-bottom">
+					<aon:panelGrid columns="2">
+						<aon:outputLabel for="Inventory_id"
+							value="#{bundle.aon_id}" />
+						<aon:outputText id="Inventory_id"
+							value="#{inventory.to.id}" size="14" />
+	
+						<aon:outputLabel for="Inventory_inventoryDate"
+							value="#{bundle.aon_date}" />
+						<aon:outputText id="Inventory_inventoryDate" value="#{inventory.to.inventoryDate}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								type="both" timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+						
+						<aon:outputLabel for="Inventory_description"
+							value="#{bundle.aon_description}" />
+						<aon:outputText id="Inventory_description"
+							value="#{inventory.to.description}" size="64" />
+					</aon:panelGrid>
+				</aon:div>
 								
-				<aon:panelGrid columns="2"> 
-					<aon:outputLabel for="Inventory_category"
-						value="#{productBundle.product_category}"  />
-					<aon:div>
-						<aon:selectOneMenu id="Inventory_category" 
-							value="#{inventoryDetail.categoryId}">
-							<f:selectItem itemLabel="-" value="#{null}"/>
-							<f:selectItems value="#{productCollections.categories}" />
-						</aon:selectOneMenu>
-						<aon:commandButton title="#{bundle.aon_accept}"
-							actionListener="#{inventoryDetail.loadDetailModel}" 
-							value="" accesskey="#{bundle.aon_key_save_line}" />
-					</aon:div>
-				</aon:panelGrid>
+				<aon:div styleClass="aon-padding-bottom">								
+					<aon:panelGrid columns="2"> 
+						<aon:outputLabel for="Inventory_category"
+							value="#{productBundle.product_category}"  />
+						<aon:div>
+							<aon:selectOneMenu id="Inventory_category" 
+								value="#{inventoryDetail.category}">
+								<f:selectItem itemLabel="-" value="#{null}"/>
+								<f:selectItems value="#{productCollections.categories}" />
+							</aon:selectOneMenu>
+							<aon:commandButton title="#{bundle.aon_accept}"
+								actionListener="#{inventoryDetail.loadDetailModel}"
+								reRender="inventoryDetailData" value="" 
+								styleClass="aon-editDataTable-button aon-icon-accept aon-margin-left" 
+								accesskey="#{bundle.aon_key_save_line}" />
+						</aon:div>
+					</aon:panelGrid>
+				</aon:div>
 
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
-					<ui:param name="controller" value="#{inventoryDetail}" />					
+					<ui:param name="controller" value="#{inventoryDetail}" />				
 					<ui:param name="skipResetButton" value="true" />
 					<ui:param name="skipRemoveButton" value="true" />
 					<ui:define name="columns">
-						<aon:column styleClass="aon-width-60">
+						<aon:methodParam name="saveActionListener" value="#{inventoryDetail.onAcceptNext}" type="actionListener" />					
+					
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_id}" />
 							</f:facet>
@@ -130,123 +140,6 @@
 					
 					</ui:define>
 				</ui:decorate>
-								
-					<!-- 
-					<aon:div styleClass="aon-form-breakline">
-						<f:verbatim>&#160;</f:verbatim>
-					</aon:div>
-					<aon:dataTable id="inventoryDetailDataList" 
-						var="to" value="#{inventoryDetail.model}" rows="20" 
-						styleClass="aon-table" headerClass="aon-table-header"
-						rowClasses="aon-table-row-odd,aon-table-row-even"
-						columnClasses="aon-table-body aon-table-body-string,aon-edit-table-mainColumn aon-table-body aon-table-body-string,aon-table-body aon-table-body-number,aon-table-body aon-table-body-number,aon-table-body aon-table-body-number,aon-table-body aon-table-body-string"
-						rowOnMouseOver="selectRow( this )"
-						rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )">
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{warehouseBundle.inventoryDetail_id}" />
-							</f:facet>
-							<aon:div>
-								<aon:commandLink immediate="true"  
-									styleClass="aon-table-row-selected"
-									rendered="#{to.id!=inventoryDetail.to.id}"
-									actionListener="#{inventoryDetail.onSelect}" />
-								<aon:outputText value="#{to.item.product.code}" />
-							</aon:div>
-							<f:facet name="footer">
-								<f:verbatim>&#160;</f:verbatim>
-							</f:facet>
-						</aon:column>
-		
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{warehouseBundle.inventoryDetail_item}" />
-							</f:facet>
-							<aon:div>
-								<aon:outputText value="#{to.item.product.name} #{to.item.detail}" />
-							</aon:div>
-							<f:facet name="footer">
-								<f:verbatim>&#160;</f:verbatim>
-							</f:facet>
-						</aon:column>
-						
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{warehouseBundle.inventoryDetail_real_inventory}" 
-								/>
-							</f:facet>
-							<aon:div>
-								<aon:outputText value="#{to.realQuantity}" rendered="#{to.id!=inventoryDetail.to.id}">
-									<f:convertNumber pattern="#,##0.000" />
-								</aon:outputText>
-								<aon:inputText rendered="#{to.id==inventoryDetail.to.id}"
-									value="#{inventoryDetail.to.realQuantity}" required="true" />
-							</aon:div>
-							<f:facet name="footer">
-								<f:verbatim>&#160;</f:verbatim>
-							</f:facet>
-						</aon:column>
-	
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{warehouseBundle.inventoryDetail_cost}" 
-								/>
-							</f:facet>
-							<aon:div>
-								<aon:outputText value="#{to.cost}" rendered="#{to.id!=inventoryDetail.to.id}">
-									<f:convertNumber pattern="#,##0.000" />
-								</aon:outputText>
-								<aon:outputText value="#{inventoryDetail.to.cost}" rendered="#{to.id==inventoryDetail.to.id}">
-									<f:convertNumber pattern="#,##0.000" />
-								</aon:outputText>
-							</aon:div>
-							<f:facet name="footer">
-								<f:verbatim>&#160;</f:verbatim>
-							</f:facet>
-						</aon:column>
-	
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{warehouseBundle.inventoryDetail_total}" 
-								/>
-							</f:facet>
-							<aon:div>
-								<aon:outputText value="#{to.realQuantity * to.cost}">
-									<f:convertNumber pattern="#,##0.000" />
-								</aon:outputText>
-							</aon:div>
-							<f:facet name="footer">
-								<f:verbatim>&#160;</f:verbatim>
-							</f:facet>
-						</aon:column>
-						
-						<aon:column>
-							<f:facet name="header">
-								<f:verbatim>&#160;</f:verbatim>
-							</f:facet>
-							<aon:div>
-								<aon:commandButton title="#{bundle.aon_accept}" 
-								actionListener="#{inventoryDetail.onAcceptNext}"
-								onclick="return (confirm('#{bundle.aon_accept_confirm}'));" 
-								styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
-								value="" accesskey="#{bundle.aon_key_save_line}"
-								rendered="#{to.id==inventoryDetail.to.id}" />
-						
-								<aon:commandButton title="#{bundle.aon_cancel}" 
-								actionListener="#{inventoryDetail.onCancel}"
-								immediate="true" 
-								onclick="return (confirm('#{bundle.aon_cancel_confirm}'));" 
-								styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
-								value="" accesskey="#{bundle.aon_key_cancel_line}"
-								rendered="#{to.id==inventoryDetail.to.id}" />
-							</aon:div>
-							<f:facet name="footer">
-								<f:verbatim>&#160;</f:verbatim>
-							</f:facet>
-						</aon:column>
-						
-					</aon:dataTable>
-					-->
 			</aon:div>
 		</aon:form>
 	</ui:define>

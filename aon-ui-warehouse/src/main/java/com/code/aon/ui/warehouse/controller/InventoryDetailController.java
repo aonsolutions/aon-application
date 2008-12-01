@@ -42,7 +42,7 @@ public class InventoryDetailController extends BasicController implements IColle
 	private static final String INVENTORY_CONTROLLER_NAME = "inventory";
 	
 	/** Category identifier. */
-	private Integer categoryId = new Integer(-1);
+	private ProductCategory category;
 	
 	/** CategoryGroup identifier. */
 	private Integer categoryGroupId = new Integer(-1);
@@ -50,24 +50,14 @@ public class InventoryDetailController extends BasicController implements IColle
 	/** The category list. */
 	private List<SelectItem> categoryList = new LinkedList<SelectItem>();
 	
-	/**
-	 * Returns the categoy ident.
-	 * 
-	 * @return the categoryId
-	 */
-	public Integer getCategoryId() {
-		return categoryId;
+	public ProductCategory getCategory() {
+		return category;
 	}
 
-	/**
-	 * Assigns the category ident.
-	 * 
-	 * @param categoryId the categoryId to set
-	 */
-	public void setCategoryId(Integer categoryId) {
-		this.categoryId = categoryId;
+	public void setCategory(ProductCategory category) {
+		this.category = category;
 	}
-	
+
 	/**
 	 * Gets the category group id.
 	 * 
@@ -115,20 +105,6 @@ public class InventoryDetailController extends BasicController implements IColle
 	}
 
 	/**
-	 * If needed reloads the detail model.
-	 * 
-	 * @param event contains the new value
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	public void addCategoryCriteria(ValueChangeEvent event)
-		throws ManagerBeanException {
-		if (event.getNewValue() != null) {
-			categoryId = (Integer)event.getNewValue();
-		}
-	}
-
-	/**
 	 * Accepts current row and selects the next.
 	 * 
 	 * @param event an action event
@@ -171,7 +147,7 @@ public class InventoryDetailController extends BasicController implements IColle
 	        "and prod.category.id = cat.id " +
 	        ((categoryGroupId==null||categoryGroupId.equals(new Integer(-1)))?"":"and cat.group.id = catGroup.id ") +
 	        "and inventoryDetail.inventory.id=" + inventoryId.intValue() +
-	        (categoryId==null || categoryId.equals(new Integer(-1))?"":" and cat.id=" + categoryId.intValue()) + 
+	        (category==null?"":" and cat.id=" + category.getId()) + 
 	        (categoryGroupId==null || categoryGroupId.equals(new Integer(-1))?"":" and catGroup.id=" + categoryGroupId.intValue()) +
 	        " order by " + (reportOrder?"prod.category.name, ":"") +
 	        "item.product.name";

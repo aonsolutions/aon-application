@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -16,6 +15,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.product.Item;
+import com.code.aon.product.ProductCategory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.PageDataModel;
@@ -44,7 +44,7 @@ public class InventoryController extends BasicController {
 	/**
 	 * The ident of the category
 	 */
-	private Integer categoryId; 
+	private ProductCategory category; 
 	
 	/**
 	 * Inicialize stock
@@ -57,37 +57,9 @@ public class InventoryController extends BasicController {
 	private static final String INVENTORY_DETAIL_CONTROLLER_NAME = "inventoryDetail";
 	
 	/**
-	 * Init stock True string  
-	 */
-	private static final String INIT_STOCK_TRUE = "TRUE";
-	
-	/**
-	 * Init stock False string  
-	 */
-	private static final String INIT_STOCK_FALSE = "FALSE";
-	
-	/**
 	 * Price provider
 	 */
 	private ItemPriceProvider provider;
-	
-	/**
-	 * Returns false string for init stock
-	 * 
-	 * @return the iNIT_STOCK_FALSE
-	 */
-	public static String getINIT_STOCK_FALSE() {
-		return INIT_STOCK_FALSE;
-	}
-
-	/**
-	 * Returns true string for init stock
-	 * 
-	 * @return the iNIT_STOCK_TRUE
-	 */
-	public static String getINIT_STOCK_TRUE() {
-		return INIT_STOCK_TRUE;
-	}
 	
 	public boolean isInitStock() {
 		return initStock;
@@ -103,22 +75,6 @@ public class InventoryController extends BasicController {
 
 	public void setWarehouse(Warehouse warehouse) {
 		this.warehouse = warehouse;
-	}
-
-	/**
-	 * Assigns the category ident
-	 * 
-	 * @param event the event that contains the category ident
-	 * @throws ManagerBeanException
-	 */
-	public void addCategoryCriteria(ValueChangeEvent event)
-		throws ManagerBeanException {
-		if (event.getNewValue() != null) {
-			try{
-				categoryId = new Integer(event.getNewValue().toString());
-			}catch (Exception e) {
-			} 
-		}
 	}
 
 	/**
@@ -138,7 +94,7 @@ public class InventoryController extends BasicController {
 	 * @throws Exception
 	 */
 	public void onStartSearch(ActionEvent event) throws Exception {
-		categoryId = null;
+		this.category = null;
 		super.onEditSearch(null);
 	}
 
@@ -194,7 +150,7 @@ public class InventoryController extends BasicController {
 	                "where item.product=prod.id " +
 	                "and prod.category=cat.id " +
 	                "and prod.inventoriable=true " +
-	                (categoryId==null?"":"and cat.id="+categoryId.intValue())+
+	                (category==null?"":"and cat.id="+category.getId())+
 	                " order by prod.category,item.detail");
 			Iterator iter = q.list().iterator();
 			while (iter.hasNext()){
@@ -298,7 +254,7 @@ public class InventoryController extends BasicController {
 	 */
 	public void onInitDetailAndSelect(ActionEvent event) throws ManagerBeanException{
 		InventoryDetailController idc = (InventoryDetailController)AonUtil.getController(INVENTORY_DETAIL_CONTROLLER_NAME);
-		idc.setCategoryId(new Integer(-1));
+		idc.setCategory(null);
 		this.onSelect(null);
 	}
 	
