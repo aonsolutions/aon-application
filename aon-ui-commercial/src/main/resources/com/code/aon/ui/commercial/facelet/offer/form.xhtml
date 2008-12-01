@@ -39,7 +39,7 @@
 					<aon:div>
 						<aon:selectOneMenu id="Offer_series" value="#{offer.to.series}"
 							rendered="#{offer.new}"
-							valueChangeListener="#{offer.onSeriesChanged}" reRender="Offer_number">
+							valueChangeListener="#{offer.onSeriesChanged}" reRender="Offer_number,Offer_securityLevel,Offer_workPlace">
 							<f:selectItem itemValue="" itemLabel=" " />
 							<f:selectItems value="#{configCollections.series}" />
 						</aon:selectOneMenu>

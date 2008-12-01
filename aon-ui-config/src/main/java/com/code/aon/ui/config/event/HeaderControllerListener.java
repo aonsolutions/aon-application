@@ -1,4 +1,4 @@
-package com.code.aon.ui.finance.event;
+package com.code.aon.ui.config.event;
 
 import com.code.aon.common.IHeaderObject;
 import com.code.aon.config.util.SeriesNumberUtil;

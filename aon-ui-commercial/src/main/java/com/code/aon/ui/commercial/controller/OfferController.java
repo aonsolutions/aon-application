@@ -8,20 +8,18 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.Target;
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Series;
-import com.code.aon.config.dao.IConfigAlias;
+import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.faces.component.richfaces.lookup.LookupChangeEvent;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.Projection;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.report.OutputFormat;
@@ -38,56 +36,12 @@ public class OfferController extends BasicController {
 	private List<SelectItem> addresses;
 
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		int number = obtainMaxNumber((String)event.getNewValue());
-		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String)event.getNewValue());
-		WorkPlace workPlace = obtainSeriesWorkPlace((String)event.getNewValue());
+		Series series = SeriesNumberUtil.obtainSeries((String)event.getNewValue());
 		if (this.getTo() != null) {
-			((Offer)this.getTo()).setNumber(number);	
-			((Offer)this.getTo()).setSecurityLevel(securityLevel);
-			((Offer)this.getTo()).setWorkPlace(workPlace);
+			((Offer)this.getTo()).setNumber(SeriesNumberUtil.obtainNumber((String)event.getNewValue(), StringUtils.capitalize(this.getBeanName())));
+			((Offer)this.getTo()).setSecurityLevel((series!=null)?series.getSecurityLevel():null);
+			((Offer)this.getTo()).setWorkPlace((series!=null)?series.getWorkPlace():null);
 		}
-	}
-
-	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
-		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_SERIES), seriesId);
-		Projection projection = Projection.max(offerBean.getFieldName(ICommercialAlias.OFFER_NUMBER));
-		Object value = offerBean.getUniqueResult(projection, criteria);
-		if (value != null) {
-			return ((Integer)value).intValue() + 1;
-		}
-		return 1;
-	}
-
-	@SuppressWarnings("unchecked")
-	private SecurityLevel obtainSeriesSecurityLevel(String seriesId) throws ManagerBeanException {
-		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
-		Iterator iter = seriesBean.getList(criteria).iterator();
-		if (iter.hasNext()) {
-			Series series = (Series)iter.next(); 
-			if (series.getSecurityLevel() != null){
-				return series.getSecurityLevel();
-			}
-		}
-		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	private WorkPlace obtainSeriesWorkPlace(String seriesId) throws ManagerBeanException {
-		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
-		Iterator iter = seriesBean.getList(criteria).iterator();
-		if (iter.hasNext()) {
-			Series series = (Series)iter.next(); 
-			if (series.getWorkPlace() != null){
-				return series.getWorkPlace();
-			}
-		}
-		return null;
 	}
 
 	public boolean isProcessed(){
