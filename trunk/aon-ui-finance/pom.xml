@@ -106,6 +106,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.config</artifactId>
+			<version>3.2.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.sales</artifactId>
 			<version>3.0.0</version>
 			<scope>compile</scope>
