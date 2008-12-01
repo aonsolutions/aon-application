@@ -135,6 +135,51 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************ STOCK ************* -->
+	<managed-bean>
+		<managed-bean-name>stock</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.warehouse.controller.StockController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.warehouse.Stock</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>stock</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Stock_warehouse_id,Stock_item_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{stockControllerListener}</value>
+				<value>#{stockSearch}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>stockControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.warehouse.event.StockControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>stockSearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.warehouse.event.StockSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- =================== Warehouse ========================== -->
 	<navigation-rule>
 		<navigation-case>
@@ -161,6 +206,22 @@
 			<from-outcome>inventoryClose</from-outcome>
 			<to-view-id>/com/code/aon/ui/warehouse/facelet/inventory/close.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>	
+	</navigation-rule>
 	
+	<!-- =================== Stock ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>stock_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/warehouse/facelet/stock/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>stock_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/warehouse/facelet/stock/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>stock_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/warehouse/facelet/stock/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
 </faces-config>
