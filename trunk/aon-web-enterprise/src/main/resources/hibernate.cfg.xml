@@ -1,3 +1,4 @@
+
 <!DOCTYPE hibernate-configuration PUBLIC
 	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
 	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
@@ -26,6 +27,7 @@
 		<mapping class="com.code.aon.finance.Finance"/>
 		<mapping class="com.code.aon.finance.FinanceBatch"/>
 		<mapping class="com.code.aon.finance.FinanceBatchDetail"/>
+		<mapping class="com.code.aon.finance.FinanceSales"/>
 		<mapping class="com.code.aon.finance.FinanceTracking"/>
 		<mapping class="com.code.aon.finance.Invoice"/>
 		<mapping class="com.code.aon.finance.InvoiceAddress"/>
@@ -68,7 +70,6 @@
 		<mapping class="com.code.aon.customer.CustomerSegment"/>
 
 		<!-- AON-SALES Mapping files -->	
-		<mapping class="com.code.aon.sales.FinanceSales"/>
 		<mapping class="com.code.aon.sales.PointOfSale"/>
 		<mapping class="com.code.aon.sales.Sales"/>
 		<mapping class="com.code.aon.sales.SalesAttachment"/>

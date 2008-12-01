@@ -196,6 +196,8 @@
 				<aon:menuItem value="#{configBundle.config_tax_module}" action="tax" />
 				<aon:menuItem value="#{configBundle.config_series_module}" action="series" />
 				<aon:menuItem value="#{geozoneBundle.geozone_module}" action="geotreeParent_list" actionListener="#{geotreeParent.onSearch}" />
+				<aon:menuSeparator/>
+				<aon:menuItem value="#{configBundle.config_paymethod_module}" action="payMethod" actionListener="#{payMethod.onSearch}" />
 			</aon:dropDownMenu>
  		</aon:menuBar>
 	</aon:form>
