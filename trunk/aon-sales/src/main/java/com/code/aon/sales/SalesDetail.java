@@ -13,6 +13,7 @@ import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.product.Item;
+import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
 
@@ -23,7 +24,7 @@ import com.code.aon.sales.enumeration.SalesDetailStatus;
  */
 @Entity
 @Table(name="sales_detail")
-public class SalesDetail implements ITransferObject {
+public class SalesDetail implements ITransferObject, ICalculable {
 
     /** The id. */
     private Integer id;

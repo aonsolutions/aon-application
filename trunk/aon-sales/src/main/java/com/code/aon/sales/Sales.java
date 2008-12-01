@@ -2,7 +2,10 @@ package com.code.aon.sales;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,16 +16,24 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IHeaderObject;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.PayMethod;
+import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
+import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
+import com.code.aon.sales.dao.ISalesAlias;
 import com.code.aon.sales.enumeration.DocumentType;
 import com.code.aon.sales.enumeration.SalesStatus;
 
@@ -33,7 +44,17 @@ import com.code.aon.sales.enumeration.SalesStatus;
  */
 @Entity
 @Table(name="sales")
-public class Sales implements ITransferObject {
+public class Sales implements ITransferObject, IHeaderObject, ICalculableContainer {
+	
+	/** The Constant LOGGER. */
+	private static final Logger LOGGER = Logger.getLogger(Sales.class.getName());
+	
+	/**
+	 * The Constructor. Sets TODAY to issueDate
+	 */
+	public Sales() {
+		this.issueDate = new Date();
+	}
 	
     /** The id. */
     private Integer id;
@@ -361,4 +382,34 @@ public class Sales implements ITransferObject {
 	public void setLines( Set<SalesDetail> lines ) {
 		this.lines = lines;
 	}
+
+	/**
+	 * Gets the date. Necessary to implement <code>ICalculableContainer</code>
+	 * 
+	 * @return the date
+	 */
+	@Transient
+	public Date getDate() {
+		return issueDate;
+	}
+
+	/**
+	 * Gets the detail list. Used in the reports
+	 * 
+	 * @return the detail list
+	 */
+	@Transient
+	@SuppressWarnings("unchecked")
+	public List getDetailList() {
+		try {
+			IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_SALES_ID), getId());
+			return salesDetailBean.getList(criteria);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining salesDetail list", e);
+		}
+		return null;
+	}
+	
 }
