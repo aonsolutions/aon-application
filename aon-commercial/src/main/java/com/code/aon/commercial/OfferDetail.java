@@ -24,7 +24,7 @@ import com.code.aon.product.util.DiscountExpression;
  */
 @Entity
 @Table(name="offer_detail")
-public class OfferDetail implements ITransferObject,ICalculable {
+public class OfferDetail implements ITransferObject, ICalculable {
 	
 	/** The Id. */
 	private Integer Id;
