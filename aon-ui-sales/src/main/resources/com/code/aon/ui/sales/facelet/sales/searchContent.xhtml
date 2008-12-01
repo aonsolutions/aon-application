@@ -33,7 +33,7 @@
 	<aon:outputLabel for="Sales_customer_id"
 		value="#{customerBundle.customer_customer}" />
 	<aon:div styleClass="aon-lookup">
-		<aon:lookupInputText id="Sales_customer_id" value="#{salesSearch.target.id}"
+		<aon:lookupInputText id="Sales_customer_id" value="#{salesSearch.customer.id}"
 			lookup="#{customerLookup}" reRender="Sales_customer_full_name"
 			size="5" />
 		<aon:lookupButton 
