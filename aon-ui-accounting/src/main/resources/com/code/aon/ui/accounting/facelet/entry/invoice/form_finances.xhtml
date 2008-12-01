@@ -72,20 +72,20 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_pay_method}" />
+					<aon:outputText value="#{configBundle.config_pay_method}" />
 				</f:facet>
 				<aon:outputText value="#{financeTo.payMethod.name}"
 					rendered="#{financeTo!=invoiceEntry.currentFinance}" />
 				<aon:selectOneMenu styleClass="aon-form-selectOneMenu-field"
 					rendered="#{financeTo==invoiceEntry.currentFinance}"
 					value="#{invoiceEntry.currentFinance.payMethod}">
-					<f:selectItems value="#{financeCollections.payMethods}" />
+					<f:selectItems value="#{configCollections.payMethods}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
 					<aon:selectOneMenu styleClass="aon-form-selectOneMenu-field"
 						rendered="#{invoiceEntry.newFinance}"
 						value="#{invoiceEntry.currentFinance.payMethod}">
-						<f:selectItems value="#{financeCollections.payMethods}" />
+						<f:selectItems value="#{configCollections.payMethods}" />
 					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>

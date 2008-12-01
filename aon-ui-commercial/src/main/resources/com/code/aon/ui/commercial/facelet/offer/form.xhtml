@@ -137,11 +137,11 @@
 						<f:selectItems value="#{productCollections.tariffs}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Offer_payMethod" value="#{financeBundle.finance_pay_method}" />
+					<aon:outputLabel for="Offer_payMethod" value="#{configBundle.config_pay_method}" />
 					<aon:selectOneMenu id="Offer_payMethod" value="#{offer.to.payMethod}"
 						disabled="#{offer.processed}">
 						<f:selectItem itemLabel="-" itemValue="" />
-						<f:selectItems value="#{financeCollections.payMethods}" />
+						<f:selectItems value="#{configCollections.payMethods}" />
 					</aon:selectOneMenu>
 
 				</aon:panelGrid>

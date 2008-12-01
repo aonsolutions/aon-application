@@ -40,18 +40,18 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{financeBundle.finance_pay_method}" />
+							<aon:outputText value="#{configBundle.config_pay_method}" />
 						</f:facet>
 						<aon:outputText value="#{to.payMethod.name}"
 							rendered="#{to.id!=saleInvoiceFinance.to.id}" />
 						<aon:selectOneMenu value="#{saleInvoiceFinance.to.payMethod}"
 							rendered="#{to==saleInvoiceFinance.to}">
-							<f:selectItems value="#{financeCollections.payMethods}" />
+							<f:selectItems value="#{configCollections.payMethods}" />
 						</aon:selectOneMenu>
 						<f:facet name="footer">
 							<aon:selectOneMenu value="#{saleInvoiceFinance.to.payMethod}"
 								rendered="#{saleInvoiceFinance.new}">
-								<f:selectItems value="#{financeCollections.payMethods}" />
+								<f:selectItems value="#{configCollections.payMethods}" />
 							</aon:selectOneMenu>
 						</f:facet>
 					</aon:column>

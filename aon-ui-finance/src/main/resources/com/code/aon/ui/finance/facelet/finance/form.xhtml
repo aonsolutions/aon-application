@@ -89,11 +89,11 @@
 					</aon:inputText>
 						
 					<aon:outputLabel for="Finance_payMethod_id"
-						value="#{financeBundle.finance_pay_method}" />
+						value="#{configBundle.config_pay_method}" />
 					<aon:selectOneMenu id="Finance_payMethod_id"
 						disabled="#{!finance.pending and !finance.returned}"
 						value="#{finance.to.payMethod.id}">
-						<f:selectItems value="#{financeCollections.payMethods}" />
+						<f:selectItems value="#{configCollections.payMethods}" />
 					</aon:selectOneMenu>
 					
 					<aon:outputLabel for="Finance_amount"
