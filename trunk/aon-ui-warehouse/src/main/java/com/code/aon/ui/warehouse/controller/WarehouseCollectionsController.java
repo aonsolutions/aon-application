@@ -51,7 +51,14 @@ public class WarehouseCollectionsController {
 		}
 		return incomeStatuses;
 	}
+	
+	public Warehouse getWarehouse() {
+		return null;
+	}
 
+	public void setWarehouse( Warehouse warehouse ) {
+	}
+	
 	/**
 	 * Returns the list of warehouses
 	 * 
