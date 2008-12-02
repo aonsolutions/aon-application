@@ -10,7 +10,8 @@
 
 		<c:if test="#{!skipLineEdition}">
 			<aon:rowSelector id="#{dataTableId}-select" toggleOnClick="#{controller.to == null}"
-				actionListener="#{controller.onSelect}" reRender="#{rowSelectorReRender}"/>
+				actionListener="#{controller.onSelect}" reRender="#{rowSelectorReRender}"
+				focus="#{(focusOnSelect != null)?(focusOnSelect):''}"/>
 		</c:if>
 
 		<c:if test="#{!skipResetButton}">
@@ -27,7 +28,8 @@
 							action="#{resetAction}" actionListener="#{resetActionListener}"
 							rendered="#{!formNew}" reRender="#{resetButtonReRender}"
 							styleClass="aon-editDataTable-button aon-icon-reset"
-							accesskey="#{bundle.aon_key_new_line}" />
+							accesskey="#{bundle.aon_key_new_line}" 
+							focus="#{(focusOnAdd != null)?(focusOnAdd):''}"/>
 
 					</aon:div>
 				</f:facet>
