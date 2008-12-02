@@ -407,6 +407,7 @@
 				<value>#{financeTrackingListener}</value>
 				<value>#{financeControllerListener}</value>
 				<value>#{financeSearch}</value>
+				<value>#{bankAccountValidatorListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>

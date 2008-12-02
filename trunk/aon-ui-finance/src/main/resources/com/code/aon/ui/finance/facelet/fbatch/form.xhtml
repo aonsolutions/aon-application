@@ -131,10 +131,10 @@
 							value="#{fbatch.to.financeBatchStatus}" disabled="true" >
 							<f:selectItems value="#{financeCollections.financeBatchStatus}" />
 						</aon:selectOneMenu>
-						<aon:outputText value="&#160;" />
-						<aon:outputLabel
-							value="#{accountingBundle.accounting_account_entry}: #{fbatch.accountEntryId}"
-							rendered="#{fbatch.recorded}" />
+						<aon:div styleClass="aon-padding-left" layout="inline" rendered="#{fbatch.recorded}">
+							<aon:outputLabel
+								value="#{accountingBundle.accounting_account_entry}: #{fbatch.accountEntryId}" />
+						</aon:div>
 					</aon:div>
 
 					<aon:outputLabel for="FinanceBatch_totalRegs"
