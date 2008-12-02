@@ -60,6 +60,7 @@ import com.code.aon.payroll.principales.Domicilio;
 import com.code.aon.payroll.principales.empresa.Actividad;
 import com.code.aon.payroll.principales.empresa.Emprdom;
 import com.code.aon.payroll.principales.empresa.Empresa;
+import com.code.aon.payroll.principales.empresa.Emprlban;
 import com.code.aon.payroll.tipos.Autorizacion;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Empresario;
@@ -136,7 +137,8 @@ public class PayrollAliasWriter {
 		        Avisos.class.getName(),
 		        Empresa.class.getName(),
 		        Actividad.class.getName(),
-		        Emprdom.class.getName()
+		        Emprdom.class.getName(),
+		        Emprlban.class.getName()
 		        };		
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");
 		HibernateUtil.getSessionFactory();
