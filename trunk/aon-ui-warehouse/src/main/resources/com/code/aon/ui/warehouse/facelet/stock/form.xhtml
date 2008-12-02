@@ -17,78 +17,70 @@
 				<ui:param name="skipSaveButton" value="true" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipRemoveButton" value="true" />
-				<ui:param name="skipBackButton" value="true" />
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="dataTable" columns="2">
-								
-					<aon:outputLabel for="Item_product_code"
-						value="#{bundle.aon_id}" />
-					<aon:inputText id="Item_product_code"
-						disabled="true" size="20"
-						value="#{stock.movingStock.item.product.code}" />
+				<aon:div styleClass="aon-padding-bottom">
+					<aon:panelGrid columns="2">
+									
+						<aon:outputLabel for="Item_product_code"
+							value="#{bundle.aon_id}" />
+						<aon:inputText id="Item_product_code"
+							disabled="true" size="20"
+							value="#{stock.to.item.product.code}" />
+	
+						<aon:outputLabel for="Item_full_name"
+							value="#{productBundle.product_item}" />
+						<aon:inputText id="Item_full_name" 
+							disabled="true" size="64"
+							value="#{stock.to.item.product.name} #{stock.to.item.detail}" />
+					</aon:panelGrid>
+				</aon:div>
 
-					<aon:outputLabel for="Item_full_name"
-						value="#{productBundle.product_item}" />
-					<aon:inputText id="Item_full_name" 
-						disabled="true" size="64"
-						value="#{stock.movingStock.item.product.name} #{stock.movingStock.item.detail}" />
-				</aon:panelGrid>
+				<aon:div id="transferDiv" styleClass="aon-padding-bottom" >
+					<aon:panelGrid columns="4" rendered="#{stock.moveEnabled}" > 
 
-				<!-- 
-				<aon:panelGrid columns="4" cellpadding="0" cellspacing="0"
-					styleClass="aon-form-table"
-					columnClasses="aon-form-table-column-odd,aon-form-table-column-even,
-								   aon-form-table-column-odd,aon-form-table-column-even">
-							
-					<aon:outputLabel for="Source_warehouse"
-						styleClass="aon-form-input-text-label"
-						value="#{warehouseBundle.stock_source}" />
-					<aon:selectOneMenu id="Source_warehouse" required="true"
-						styleClass="aon-form-selectOneMenu-field"
-						forceId="#{true}" value="#{stock.sourceWarehouseId}">
-						<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
-						<f:selectItems value="#{stock.availableSourceWarehouses}" />
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Target_warehouse"
-						styleClass="aon-form-input-text-label"
-						value="#{warehouseBundle.stock_target}" />
-					<aon:selectOneMenu id="Target_warehouse" required="true"
-						styleClass="aon-form-selectOneMenu-field"
-						forceId="#{true}" value="#{stock.targetWarehouseId}">
-						<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
-						<f:selectItems value="#{warehouseCollections.warehouses}" />
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Moving_Quantity"
-						styleClass="aon-form-input-text-label"
-						value="#{warehouseBundle.stock_quantity}" />
-					<aon:inputText id="Moving_Quantity" forceId="#{true}"
-						size="5" styleClass="aon-form-input-text"
-						value="#{stock.movingQuantity}" >
-						<f:validateDoubleRange minimum="0" />
-					</aon:inputText>	
-
-					<aon:div/>
-					<aon:commandButton styleClass="aon-form-button" 
-						value="#{warehouseBundle.stock_move}"
-						actionListener="#{stock.move}" />
-						
-				</aon:panelGrid>
-				-->
+						<aon:outputLabel for="Source_warehouse"
+							value="#{warehouseBundle.warehouse_stock_source}" />
+						<aon:selectOneMenu id="Source_warehouse" required="true"
+							value="#{stock.sourceWarehouse}" reRender="Moving_Quantity">
+							<f:selectItem itemLabel="-" value="#{null}"/>
+							<f:selectItems value="#{stock.availableSourceWarehouses}" />
+						</aon:selectOneMenu>
+	
+						<aon:outputLabel for="Target_warehouse"
+							value="#{warehouseBundle.warehouse_stock_target}" />
+						<aon:selectOneMenu id="Target_warehouse" required="true"
+							value="#{stock.targetWarehouse}">
+							<f:selectItem itemLabel="-" value="#{null}"/>
+							<f:selectItems value="#{warehouseCollections.warehouses}" />
+						</aon:selectOneMenu>
+	
+						<aon:outputLabel for="Moving_Quantity"
+							value="#{bundle.aon_quantity}" />
+						<aon:inputText id="Moving_Quantity"
+							size="5" value="#{stock.movingQuantity}" >
+							<f:validateDoubleRange minimum="0" maximum="#{stock.maximumQuantity}" />
+						</aon:inputText>	
+	
+						<aon:div/>
+						<aon:commandButton style="border-right: 0;" reRender="stockDataDiv,transferDiv"
+							styleClass="aon-finding-toolbar-item aon-icon-accept" 
+							value="#{warehouseBundle.warehouse_stock_move}"
+							actionListener="#{stock.move}" />
+					</aon:panelGrid>
+				</aon:div>
 				
-				<aon:div styleClass="aon-form-group" rendered="#{!finance.new}">
+				<aon:div styleClass="aon-form-group">
 					<aon:div styleClass="aon-form-group-title">
 						<aon:div styleClass="aon-form-group-title-internal">
 							<aon:outputLabel for="stockData" value="#{warehouseBundle.warehouse_warehouse_module}" />
 						</aon:div>
 					</aon:div>
-					<aon:div styleClass="aon-scroll-area">
+					<aon:div id="stockDataDiv" styleClass="aon-scroll-area">
 					
-						<aon:dataTable id="stockData" value="#{stock.model}"
-							var="to" rows="20" rendered="#{stock.model.rowCount > 0}"
+						<aon:dataTable id="stockData" value="#{stock.stockModel}"
+							var="to" rows="20" rendered="#{stock.stockModel.rowCount > 0}"
 							columnClasses="aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
 
 							<aon:column>

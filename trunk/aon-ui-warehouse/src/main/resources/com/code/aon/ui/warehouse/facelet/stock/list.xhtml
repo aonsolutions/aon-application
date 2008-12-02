@@ -38,7 +38,7 @@
 
 				<aon:dataTable id="stockData" value="#{stock.model}"
 					var="to" rows="20" rendered="#{stock.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-textColumn,
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn aon-width-100,
 						aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
 
 					<aon:rowSelector action="stock_form" actionListener="#{stock.onSelect}" />
@@ -48,6 +48,13 @@
 							<aon:outputText value="#{warehouseBundle.warehouse_warehouse}" />
 						</f:facet>
 						<aon:outputText value="#{to.warehouse.name}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_id}" />
+						</f:facet>
+						<aon:outputText value="#{to.item.product.code}" />
 					</aon:column>
 
 					<aon:column>

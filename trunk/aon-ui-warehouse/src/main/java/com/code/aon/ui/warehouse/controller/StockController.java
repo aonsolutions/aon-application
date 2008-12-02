@@ -1,6 +1,5 @@
 package com.code.aon.ui.warehouse.controller;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -9,14 +8,14 @@ import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Stock;
@@ -29,39 +28,46 @@ public class StockController extends BasicController {
 
 	private static final String BASE_NAME = "com.code.aon.ui.warehouse.i18n.messages";
 	
-	private Stock movingStock;
+	private Warehouse sourceWarehouse;
 	
-	private Integer sourceWarehouseId;
-	
-	private Integer targetWarehouseId;
+	private Warehouse targetWarehouse;
 	
 	private double movingQuantity;
 	
-	private List<SelectItem> availableSourceWarehouses;
-
+	private double maximumQuantity;
 	
-	public Stock getMovingStock() {
-		return movingStock;
+	private List<Stock> stocks;
+	
+	private DataModel stockModel;
+	
+	private List<SelectItem> availableSourceWarehouses;
+	
+	private Stock getStock() {
+		return (Stock) getTo();
+	}
+	
+	public DataModel getStockModel() {
+		return stockModel;
 	}
 
-	public void setMovingStock(Stock movingStock) {
-		this.movingStock = movingStock;
+	public void setStockModel(DataModel stockModel) {
+		this.stockModel = stockModel;
 	}
 
-	public Integer getSourceWarehouseId() {
-		return sourceWarehouseId;
+	public Warehouse getSourceWarehouse() {
+		return sourceWarehouse;
 	}
 
-	public void setSourceWarehouseId(Integer sourceWarehouseId) {
-		this.sourceWarehouseId = sourceWarehouseId;
+	public void setSourceWarehouse(Warehouse sourceWarehouse) {
+		this.sourceWarehouse = sourceWarehouse;
 	}
 
-	public Integer getTargetWarehouseId() {
-		return targetWarehouseId;
+	public Warehouse getTargetWarehouse() {
+		return targetWarehouse;
 	}
 
-	public void setTargetWarehouseId(Integer targetWarehouseId) {
-		this.targetWarehouseId = targetWarehouseId;
+	public void setTargetWarehouse(Warehouse targetWarehouse) {
+		this.targetWarehouse = targetWarehouse;
 	}
 
 	public double getMovingQuantity() {
@@ -71,47 +77,61 @@ public class StockController extends BasicController {
 	public void setMovingQuantity(double movingQuantity) {
 		this.movingQuantity = movingQuantity;
 	}
+	
+	private Stock getStock( Warehouse warehouse ) {
+		for( Stock stock : this.stocks ) {
+			if ( stock.getWarehouse().equals(warehouse) ) {
+				return stock;
+			}
+		}
+		return null;
+	}
+	
+	public double getMaximumQuantity() {
+		if ( getSourceWarehouse() != null ) {
+			return getStock(getSourceWarehouse()).getQuantity();
+		}
+		return maximumQuantity;
+	}
 
+	public boolean isMoveEnabled() {
+		if ( this.maximumQuantity > 0 ) {
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(Warehouse.class);
+				return bean.getCount(null) > 1;
+			} catch (ManagerBeanException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			}
+		}
+		return false;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void move(ActionEvent event){
 		try {
 			IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
-			Criteria criteria = new Criteria();
-			Expression itemExp = ExpressionUtilities.getEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_ITEM_ID), movingStock.getItem().getId());
-			criteria.addExpression(itemExp);
-			criteria.addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_WAREHOUSE_ID), this.getSourceWarehouseId());
-			Iterator iter = stockBean.getList(criteria, 0, 1).iterator();
-			if(iter.hasNext()){
-				Stock dbSourceStock = (Stock)iter.next();
-				if(dbSourceStock.getQuantity() < movingQuantity){
-					ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME); 
-					AonUtil.addErrorMessage(bundle.getString("stock_impossible_moving"));
-					throw new AbortProcessingException(bundle.getString("stock_impossible_moving"));
-				}else{
-					dbSourceStock.setQuantity(dbSourceStock.getQuantity() - movingQuantity);
-					stockBean.update(dbSourceStock);
-				}
+			Stock sourceStock = getStock(getSourceWarehouse());
+			if (sourceStock.getQuantity() < movingQuantity) {
+				ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME); 
+				String message = bundle.getString("warehouse_stock_impossible_moving");
+				AonUtil.addErrorMessage( message );
+				throw new AbortProcessingException( message );
+			} else {
+				sourceStock.setQuantity(sourceStock.getQuantity() - movingQuantity);
+				stockBean.update(sourceStock);
 			}
-			criteria = new Criteria();
-			criteria.addExpression(itemExp);
-			criteria.addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_WAREHOUSE_ID), this.getTargetWarehouseId());
-			iter = stockBean.getList(criteria, 0, 1).iterator();
-			if(iter.hasNext()){
-				Stock dbTargetStock = (Stock)iter.next();
-				dbTargetStock.setQuantity(dbTargetStock.getQuantity() + movingQuantity);
-				stockBean.update(dbTargetStock);
+			Stock targetStock = getStock(getTargetWarehouse());
+			if ( targetStock != null ) {
+				targetStock.setQuantity(targetStock.getQuantity() + movingQuantity);
+				stockBean.update(targetStock);
 			}else{
 				Stock newTargetStock = new Stock();
-				newTargetStock.setItem(movingStock.getItem());
+				newTargetStock.setItem(getStock().getItem());
 				newTargetStock.setQuantity(movingQuantity);
-				newTargetStock.setWarehouse(obtainWarehouse(targetWarehouseId));
+				newTargetStock.setWarehouse(getTargetWarehouse());
 				stockBean.insert(newTargetStock);
 			}
-			this.onSearch(event);
-			loadAvailableSourceWarehouses();
-			setSourceWarehouseId(null);
-			setTargetWarehouseId(null);
-			setMovingQuantity(0.0);
+			initTransferData();
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -124,29 +144,31 @@ public class StockController extends BasicController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void loadAvailableSourceWarehouses()  throws ManagerBeanException{
+	private void updateAvailableSourceWarehouses()  throws ManagerBeanException{
 		this.availableSourceWarehouses = new LinkedList<SelectItem>();
-		IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_ITEM_ID), movingStock.getItem().getId());
-		Iterator iter = stockBean.getList(criteria).iterator();
-		while(iter.hasNext()){
-			Stock stock = (Stock)iter.next();
-			SelectItem item = new SelectItem(stock.getWarehouse().getId(), stock.getWarehouse().getName());
+		for( Stock stock : stocks ) {
+			SelectItem item = new SelectItem(stock.getWarehouse(), stock.getWarehouse().getName());
 			this.availableSourceWarehouses.add(item);
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Warehouse obtainWarehouse(Integer targetId) throws ManagerBeanException {
-		IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
+	public void loadStockkModel() throws ManagerBeanException {
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(warehouseBean.getFieldName(IWarehouseAlias.WAREHOUSE_ID), targetId);
-		Iterator iter = warehouseBean.getList(criteria,0,1).iterator();
-		if(iter.hasNext()){
-			return (Warehouse)iter.next();
+		criteria.addEqualExpression(getFieldName(IWarehouseAlias.STOCK_ITEM_ID), getStock().getItem().getId());
+		this.stocks = (List) getManagerBean().getList(criteria);
+		this.maximumQuantity = 0;
+		for( Stock stock : stocks ) {
+			this.maximumQuantity = Math.max(this.maximumQuantity, stock.getQuantity());
 		}
-		return null;
+		this.stockModel = new ListDataModel( this.stocks );
 	}
 	
+	public void initTransferData() throws ManagerBeanException {
+		setSourceWarehouse(null);
+		setTargetWarehouse(null);
+		setMovingQuantity(0.0);
+		loadStockkModel();
+		updateAvailableSourceWarehouses();		
+	}
 }
