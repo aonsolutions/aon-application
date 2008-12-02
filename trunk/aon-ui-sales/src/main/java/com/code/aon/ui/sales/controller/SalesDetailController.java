@@ -9,7 +9,6 @@ import com.code.aon.faces.component.richfaces.lookup.LookupChangeEvent;
 import com.code.aon.product.Item;
 import com.code.aon.product.Tariff;
 import com.code.aon.product.strategy.ICalculable;
-import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.sales.Sales;
@@ -65,11 +64,6 @@ public class SalesDetailController extends LinesController {
 
 	public double getModelAmount() throws ManagerBeanException {
 		return getPriceStrategy().getBasePrice((ICalculable)this.getModel().getRowData());
-	}
-
-	public double getTaxableBase(){
-		SalesController master = (SalesController)getMasterController();
-		return getPriceStrategy().getTaxableBase((ICalculableContainer)master.getTo());
 	}
 
 }

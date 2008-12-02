@@ -17,6 +17,9 @@ import com.code.aon.config.Series;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.faces.component.richfaces.lookup.LookupChangeEvent;
+import com.code.aon.product.strategy.ICalculableContainer;
+import com.code.aon.product.strategy.IPriceStrategy;
+import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
@@ -34,6 +37,15 @@ import com.code.aon.ui.util.AonUtil;
 public class SalesController extends BasicController {
 
 	private List<SelectItem> addresses;
+
+	private IPriceStrategy priceStrategy;
+	
+	public IPriceStrategy getPriceStrategy(){
+		if(priceStrategy == null){
+			priceStrategy = PriceStrategyFactory.getPriceStrategy();
+		}
+		return priceStrategy;
+	}
 
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
 		Series series = SeriesNumberUtil.obtainSeries((String)event.getNewValue());
@@ -102,6 +114,14 @@ public class SalesController extends BasicController {
 			Seller seller = (Seller)event.getNewValue();
 			((Sales)this.getTo()).setSeller(seller);
 		}
+	}
+
+	public double getTaxableBase(){
+		return getPriceStrategy().getTaxableBase((ICalculableContainer)getTo());
+	}
+
+	public double getTotalPrice(){
+		return getPriceStrategy().getTotalPrice((ICalculableContainer)getTo(), ((Sales)getTo()).getCustomer());
 	}
 
 	@SuppressWarnings("unused")

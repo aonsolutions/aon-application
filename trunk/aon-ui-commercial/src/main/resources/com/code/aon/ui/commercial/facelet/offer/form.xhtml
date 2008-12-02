@@ -124,10 +124,11 @@
 							disabled="true" size="50" />
 					</aon:div>
 
-					<aon:outputLabel for="Offer_type" value="#{bundle.aon_type}" />
-					<aon:selectOneMenu id="Offer_type" value="#{offer.to.type}"
+					<aon:outputLabel for="Offer_payMethod" value="#{configBundle.config_pay_method}" />
+					<aon:selectOneMenu id="Offer_payMethod" value="#{offer.to.payMethod}"
 						disabled="#{offer.processed}">
-						<f:selectItems value="#{commercialCollections.offerTypes}" />
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{configCollections.payMethods}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Offer_tariff" value="#{productBundle.product_tariff}" />
@@ -137,13 +138,12 @@
 						<f:selectItems value="#{productCollections.tariffs}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Offer_payMethod" value="#{configBundle.config_pay_method}" />
-					<aon:selectOneMenu id="Offer_payMethod" value="#{offer.to.payMethod}"
-						disabled="#{offer.processed}">
-						<f:selectItem itemLabel="-" itemValue="" />
-						<f:selectItems value="#{configCollections.payMethods}" />
-					</aon:selectOneMenu>
-
+					<aon:outputLabel for="Offer_total_price" value="#{bundle.aon_total}" />
+					<aon:outputText id="Offer_total_price" value="#{offer.totalPrice}" 
+						styleClass="aon-bold">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+ 
 				</aon:panelGrid>
 			</aon:div>
 
@@ -284,7 +284,7 @@
 										rendered="#{controller.new}">
 										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 									</aon:outputText>
-									<aon:outputText id="OfferDetail_taxableBase" value="#{controller.taxableBase}"
+									<aon:outputText id="Offer_taxableBase" value="#{offer.taxableBase}"
 										rendered="#{!controller.new}">
 										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 									</aon:outputText>
