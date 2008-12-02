@@ -9,20 +9,15 @@ import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.report.OutputFormat;
-import com.code.aon.report.ReportException;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Stock;
 import com.code.aon.warehouse.Warehouse;
@@ -142,20 +137,6 @@ public class StockController extends BasicController {
 		}
 	}
 	
-	public void addWarehouseExpression(ValueChangeEvent event) throws ManagerBeanException{
-		if(event.getNewValue() != null){
-			IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
-			this.getCriteria().addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_WAREHOUSE_ID), event.getNewValue());
-		}
-	}
-
-	public void addItemExpression(ValueChangeEvent event) throws ManagerBeanException{
-		if(event.getNewValue() != null && !event.getNewValue().toString().trim().equals("")){
-			IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
-			this.getCriteria().addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_ITEM_ID), new Integer(event.getNewValue().toString()));
-		}
-	}
-	
 	@SuppressWarnings("unchecked")
 	private Warehouse obtainWarehouse(Integer targetId) throws ManagerBeanException {
 		IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
@@ -168,20 +149,4 @@ public class StockController extends BasicController {
 		return null;
 	}
 	
-	public String onReportByWarehouse() throws ReportException, DAOException{
-    	ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
-        manager.setReportKey("stockWarehouseList");
-        manager.setOutputFormat(OutputFormat.PDF);
-        String outcome = manager.onExecute();
-        return outcome;
-    }
-
-	public String onReportByItem() throws ReportException, DAOException, ManagerBeanException{
-		this.getCriteria().addOrder(this.getFieldName(IWarehouseAlias.STOCK_ITEM_ID));
-    	ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
-        manager.setReportKey("stockItemList");
-        manager.setOutputFormat(OutputFormat.PDF);
-        String outcome = manager.onExecute();
-        return outcome;
-    }
 }
