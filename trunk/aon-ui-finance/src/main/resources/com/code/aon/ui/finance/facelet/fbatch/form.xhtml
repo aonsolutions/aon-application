@@ -155,21 +155,23 @@
 	
 				</aon:panelGrid>
 				
-				<aon:panelTabSet rendered="#{!fbatch.new}">
-
-					<c:if test="#{fBatchDetail.model.rowCount > 0}" >
-						<aon:panelTab name="fBatchDetail" label="#{financeBundle.finance_included_finance}">
-							<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/formDetail.xhtml" />
-						</aon:panelTab>
-					</c:if>
-
-					<c:if test="#{!fbatch.recorded}" >
-						<aon:panelTab name="finance" label="#{financeBundle.finance_not_batched_finances}">
-							<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/formFinance.xhtml" />
-						</aon:panelTab>
-					</c:if>
-
-				</aon:panelTabSet>
+				<aon:div id="fbatchPanelTabSet" >
+					<aon:panelTabSet rendered="#{!fbatch.new}">
+	
+						<c:if test="#{fBatchDetail.model.rowCount > 0}" >
+							<aon:panelTab name="fBatchDetail" label="#{financeBundle.finance_included_finance}">
+								<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/formDetail.xhtml" />
+							</aon:panelTab>
+						</c:if>
+	
+						<c:if test="#{!fbatch.recorded}" >
+							<aon:panelTab name="finance" label="#{financeBundle.finance_not_batched_finances}">
+								<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/formFinance.xhtml" />
+							</aon:panelTab>
+						</c:if>
+	
+					</aon:panelTabSet>
+				</aon:div>
 				
 			</aon:div>
 		</aon:form>
