@@ -81,18 +81,30 @@
 					
 					<aon:outputLabel for="RegistryBank_Lookup_bankAccount"
 						value="#{financeBundle.finance_bank_account}" />
-					<aon:inputText id="RegistryBank_Lookup_bankAccount"
-						value="#{finance.to.bankAccount}"
-						disabled="#{!finance.pending and !finance.returned}"
-						size="35" maxlength="23">
-						<f:validateLength minimum="20" maximum="23"/>
-					</aon:inputText>
+					<aon:div id="RegistryBank_Lookup_bankAccount">
+						<aon:inputText disabled="#{!finance.pending and !finance.returned}"
+							value="#{finance.to.bankAccount.entity}" size="4" maxlength="4">
+							<f:validateLength minimum="4" maximum="4" />
+						</aon:inputText>
+						<aon:inputText disabled="#{!finance.pending and !finance.returned}"
+							value="#{finance.to.bankAccount.office}" size="4" maxlength="4">
+							<f:validateLength minimum="4" maximum="4" />
+						</aon:inputText>
+						<aon:inputText disabled="#{!finance.pending and !finance.returned}"
+							value="#{finance.to.bankAccount.control}" size="2" maxlength="2">
+							<f:validateLength minimum="2" maximum="2" />
+						</aon:inputText>
+						<aon:inputText disabled="#{!finance.pending and !finance.returned}"
+							value="#{finance.to.bankAccount.account}" size="10"	maxlength="10">
+							<f:validateLength minimum="10" maximum="10" />
+						</aon:inputText>
+					</aon:div>						
 						
 					<aon:outputLabel for="Finance_payMethod_id"
 						value="#{configBundle.config_pay_method}" />
 					<aon:selectOneMenu id="Finance_payMethod_id"
 						disabled="#{!finance.pending and !finance.returned}"
-						value="#{finance.to.payMethod.id}">
+						value="#{finance.to.payMethod}">
 						<f:selectItems value="#{configCollections.payMethods}" />
 					</aon:selectOneMenu>
 					
