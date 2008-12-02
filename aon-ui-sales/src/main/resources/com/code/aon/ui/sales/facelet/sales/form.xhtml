@@ -95,7 +95,7 @@
 							disabled="#{!sales.pending}">
 							<f:selectItems value="#{sales.addresses}" />
 						</aon:selectOneMenu>
-						<aon:outputLabel value="#{financeBundle.finance_no_available_address}"
+						<aon:outputLabel value="#{registryBundle.registry_no_address_available}"
 							rendered="#{sales.addressCount == 0}"
 							styleClass="aon-italic" />
 					</aon:div>
@@ -137,8 +137,8 @@
 						<f:selectItems value="#{salesCollections.documentTypes}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Sales_total_price" value="#{bundle.aon_total}" />
-					<aon:outputText id="Sales_total_price" value="#{sales.totalPrice}" 
+					<aon:outputLabel for="Sales_total" value="#{bundle.aon_total}" />
+					<aon:outputText id="Sales_total" value="#{sales.totalPrice}" 
 						styleClass="aon-bold">
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>
@@ -158,6 +158,11 @@
 					<ui:param name="showNote" value="false" />
 					<ui:param name="skipResetButton" value="#{!sales.pending}" />
 					<ui:param name="skipLineEdition" value="#{!sales.pending}" />
+					<ui:param name="newSaveButtonReRender" value="Sales_total" />
+					<ui:param name="saveButtonReRender" value="Sales_total" />
+					<ui:param name="removeButtonReRender" value="Sales_total" />
+					<ui:param name="focusOnAdd" value="SalesDetail_item_product_code-New" />
+					<ui:param name="focusOnSelect" value="SalesDetail_item_product_code-Edit" />
 					<ui:param name="columnClasses"
 						value="aon-editDataTable-textColumn,
 							aon-editDataTable-numberColumn aon-width-80,

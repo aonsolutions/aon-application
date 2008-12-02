@@ -49,7 +49,7 @@ public class DeliveryDetailListener extends ControllerAdapter {
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		Delivery delivery = (Delivery)event.getController().getTo();
 		Criteria criteria = new Criteria();
-		try {
+		/*try {
 			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 			criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID),delivery.getId());
 			Iterator iter = deliveryDetailBean.getList(criteria).iterator();
@@ -61,7 +61,7 @@ public class DeliveryDetailListener extends ControllerAdapter {
 			deliveryDetailController.setSales(sales);
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE,"Error obtaining sales for delivery with id: " + delivery.getId(),e);
-		}
+		}*/
 	}
 	
 	/**
@@ -73,7 +73,7 @@ public class DeliveryDetailListener extends ControllerAdapter {
 	@SuppressWarnings("unchecked")
 	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
 		DeliveryDetailController deliveryDetailController = (DeliveryDetailController)AonUtil.getController(DELIVERY_DETAIL_CONTROLLER_NAME);
-		Sales sales = deliveryDetailController.getSales();
+		/*Sales sales = deliveryDetailController.getSales();
 		if(sales != null){
 			try {
 				Criteria criteria = new Criteria();
@@ -89,6 +89,6 @@ public class DeliveryDetailListener extends ControllerAdapter {
 			} catch (ManagerBeanException e) {
 				LOGGER.log(Level.SEVERE,"Error deleting sales for delivery with id: " + ((Delivery)event.getController().getTo()).getId(),e);
 			}
-		}
+		}*/
 	}
 }

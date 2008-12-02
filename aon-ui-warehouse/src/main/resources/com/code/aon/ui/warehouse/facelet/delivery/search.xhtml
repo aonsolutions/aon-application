@@ -7,17 +7,17 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="salesSearch">
+		<aon:form id="deliverySearch">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{salesBundle.sales_module}" />
-				<ui:param name="controller" value="#{sales}" />
+				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_delivery_module}" />
+				<ui:param name="controller" value="#{delivery}" />
 			</ui:include>
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
-				<ui:param name="controller" value="#{sales}" />
+				<ui:param name="controller" value="#{delivery}" />
 				<ui:define name="searchContent">
-					<ui:include src="/com/code/aon/ui/sales/facelet/sales/searchContent.xhtml" />
+					<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/searchContent.xhtml" />
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
