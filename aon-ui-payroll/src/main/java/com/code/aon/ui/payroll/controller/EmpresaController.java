@@ -10,15 +10,26 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.payroll.auxiliares.Admon;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
+import com.code.aon.payroll.dao.IPayrollAlias;
+import com.code.aon.payroll.divisa.Divisa;
 import com.code.aon.payroll.enumeration.ConciertoEconomico;
 import com.code.aon.payroll.enumeration.EnvioSS;
 import com.code.aon.payroll.enumeration.IndicadorIrpf;
 import com.code.aon.payroll.enumeration.PagoImpuestos;
 import com.code.aon.payroll.enumeration.Sexo;
+import com.code.aon.payroll.geograficas.Pais;
+import com.code.aon.payroll.geograficas.Provincia;
+import com.code.aon.payroll.principales.Cliente;
 import com.code.aon.payroll.principales.empresa.Empresa;
+import com.code.aon.payroll.tipos.Documento;
+import com.code.aon.payroll.tipos.Empresario;
+import com.code.aon.payroll.tipos.Tipovia;
 import com.code.aon.ui.form.LinesController;
 
-public class EmpresaController extends LinesController  implements IPayrollBackAction   {
+public class EmpresaController extends LinesController  implements IPayrollAlias, IPayrollBackAction   {
 
 	private String edad;
 
@@ -182,6 +193,233 @@ public class EmpresaController extends LinesController  implements IPayrollBackA
 		if(StringUtils.isEmpty(((Empresa)getTo()).getPais1().getCdg()))
 			((Empresa)getTo()).setPais1(null);
 		
+	}
+	
+	
+	private Date fecini;
+	private Date fecfin;
+	private Date fecnac;
+	private Date feccon;
+	private Date cliente_fecini;
+	private Date cliente_fecfin;
+	private Admon admon;
+	private Cliente cliente;
+	private Divisa divisa;
+	private Documento tipdoc;
+	private Documento tipdoc1;
+	private Empresario tipempr;
+	private Pais pais;
+	private Pais pais1;
+
+	public Date getFecini() {
+		return fecini;
+	}
+
+	public void setFecini(Date fecini) {
+		this.fecini = fecini;
+	}
+
+	public Date getFecfin() {
+		return fecfin;
+	}
+
+	public void setFecfin(Date fecfin) {
+		this.fecfin = fecfin;
+	}
+
+	public Date getFecnac() {
+		return fecnac;
+	}
+
+	public void setFecnac(Date fecnac) {
+		this.fecnac = fecnac;
+	}
+
+	public Date getFeccon() {
+		return feccon;
+	}
+
+	public void setFeccon(Date feccon) {
+		this.feccon = feccon;
+	}
+	
+	public Date getCliente_fecini() {
+		return cliente_fecini;
+	}
+
+	public void setCliente_fecini(Date cliente_fecini) {
+		this.cliente_fecini = cliente_fecini;
+	}
+	
+	public Date getCliente_fecfin() {
+		return cliente_fecfin;
+	}
+
+	public void setCliente_fecfin(Date cliente_fecfin) {
+		this.cliente_fecfin = cliente_fecfin;
+	}
+
+	public Admon getAdmon() {
+		return admon;
+	}
+
+	public void setAdmon(Admon admon) {
+		this.admon = admon;
+	}
+
+	public Cliente getCliente() {
+		return cliente;
+	}
+
+	public void setCliente(Cliente cliente) {
+		this.cliente = cliente;
+	}
+
+	public Divisa getDivisa() {
+		return divisa;
+	}
+
+	public void setDivisa(Divisa divisa) {
+		this.divisa = divisa;
+	}
+
+	public Documento getTipdoc() {
+		return tipdoc;
+	}
+
+	public void setTipdoc(Documento tipdoc) {
+		this.tipdoc = tipdoc;
+	}
+
+	public Documento getTipdoc1() {
+		return tipdoc1;
+	}
+
+	public void setTipdoc1(Documento tipdoc1) {
+		this.tipdoc1 = tipdoc1;
+	}
+
+	public Empresario getTipempr() {
+		return tipempr;
+	}
+
+	public void setTipempr(Empresario tipempr) {
+		this.tipempr = tipempr;
+	}
+
+	public Pais getPais() {
+		return pais;
+	}
+
+	public void setPais(Pais pais) {
+		this.pais = pais;
+	}
+
+	public Pais getPais1() {
+		return pais1;
+	}
+
+	public void setPais1(Pais pais1) {
+		this.pais1 = pais1;
+	}
+	
+	
+	@Override
+	public void onEditSearch(ActionEvent arg0) {
+		
+		super.onEditSearch(arg0);
+
+		admon = new Admon();
+		cliente = new Cliente();
+		divisa = new Divisa();
+		tipdoc = new Documento();
+		tipdoc1 = new Documento();
+		tipempr = new Empresario();
+		pais = new Pais();
+		pais1 = new Pais();
+
+	}
+	
+	/**
+	 * Se incluyen manualmente a las búsquedas los campos lookup y de fechas 
+	 */
+	@Override
+	public void onSearch(ActionEvent event) {
+		try {
+			
+			/*
+			 * Búsqueda por campos lookup
+			 */
+			if ((admon.getCdg() != null) && (! StringUtils.isEmpty(admon.getCdg()))) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.EMPRESA_ADMON_CDG), admon.getCdg());
+			}
+			if (cliente.getCdg() != null) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.EMPRESA_CLIENTE_CDG), cliente.getCdg());
+			}
+			if ((divisa.getCdg() != null) && (! StringUtils.isEmpty(divisa.getCdg()))) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.EMPRESA_DIVISA_CDG), divisa.getCdg());
+			}
+			if ((tipdoc.getCdg() != null) && (! StringUtils.isEmpty(tipdoc.getCdg()))) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.EMPRESA_TIPDOC_CDG), tipdoc.getCdg());
+			}
+			if ((tipdoc1.getCdg() != null) && (! StringUtils.isEmpty(tipdoc1.getCdg()))) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.EMPRESA_TIPDOC1_CDG), tipdoc1.getCdg());
+			}
+			if ((tipempr.getCdg() != null) && (! StringUtils.isEmpty(tipempr.getCdg()))) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.EMPRESA_TIPEMPR_CDG), tipempr.getCdg());
+			}
+			if ((pais.getCdg() != null) && (! StringUtils.isEmpty(pais.getCdg()))) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.EMPRESA_PAIS_CDG), pais.getCdg());
+			}
+			if ((pais1.getCdg() != null) && (! StringUtils.isEmpty(pais1.getCdg()))) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.EMPRESA_PAIS1_CDG), pais1.getCdg());
+			}
+			
+			/*
+			 * Búsqueda por campos Date
+			 */
+			if (fecini != null) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.EMPRESA_FECINI), fecini);
+			}
+			if (fecfin != null) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.EMPRESA_FECFIN), fecfin);
+			}
+			if (fecnac != null) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.EMPRESA_FECNAC), fecnac);
+			}
+			if (feccon != null) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.EMPRESA_FECCON), feccon);
+			}
+			if (cliente_fecfin != null) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.EMPRESA_CLIENTE_FECFIN), cliente_fecfin);
+			}
+			if (cliente_fecini != null) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.EMPRESA_CLIENTE_FECINI), cliente_fecini);
+			}
+			
+			
+			
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		super.onSearch(event);
+		
+	}
+	
+	private Boolean editionMode;
+
+	/**
+	 * Atributo que comprueba si se accede desde el mantenimiento cliente (editable)
+	 * o desde el mnto. empresa (no editable)
+	 */
+	public Boolean getEditionMode() {
+		return editionMode;
+	}
+
+	public void setEditionMode(Boolean editionMode) {
+		this.editionMode = editionMode;
 	}
 	
 }
