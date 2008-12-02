@@ -23,7 +23,7 @@
 		<aon:commandButton title="#{financeBundle.finance_remove_batch}"
 			styleClass="aon-finding-toolbar-item aon-icon-delete"
 			value="#{financeBundle.finance_remove_batch}"
-			actionListener="#{fbatch.onRemoveSelected}" reRender="fBatchDetailDataDiv"
+			actionListener="#{fbatch.onRemoveSelected}" reRender="fbatchPanelTabSet"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 		<h:commandLink target="_blank"
