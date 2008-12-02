@@ -168,6 +168,24 @@
 		<template path="/com/code/aon/ui/finance/report/fBatchDetail.jasper"/>
 	</report>
 
+	<!--  *********  feeCheckingPrint  ********* -->
+	<report id="customeFeeChecking" description="Fee Checking">
+		<template path="/com/code/aon/ui/finance/report/feeChecking.jasper"/>
+		<collection provider="#{feeCheckingPrinter}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+		
+		<nested-report report="feeCheckingDetail"/>
+	</report>
+	
+	<report id="feeCheckingDetail" description="feeCheckingDetail">
+		<template path="/com/code/aon/ui/finance/report/feeCheckingDetail.jasper"/>
+	</report>
+
 	<!--  *********  financeCheckingPrint  ********* -->
 	<report id="financeChecking" description="Finance Checking">
 		<template path="/com/code/aon/ui/finance/report/financeChecking.jasper"/>
