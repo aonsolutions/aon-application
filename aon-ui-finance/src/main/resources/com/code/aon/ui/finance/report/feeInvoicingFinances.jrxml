@@ -24,7 +24,7 @@
 	<import value="net.sf.jasperreports.engine.data.*" />
 
 
-	<field name="payMethod" class="com.code.aon.finance.PayMethod"/>
+	<field name="payMethod" class="com.code.aon.config.PayMethod"/>
 	<field name="bank" class="com.code.aon.finance.Bank"/>
 	<field name="bankAccount" class="com.code.aon.finance.BankAccount"/>
 	<field name="dueDate" class="java.util.Date"/>

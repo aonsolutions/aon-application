@@ -32,9 +32,12 @@ import com.code.aon.ql.Criteria;
  */
 public class ProductCollectionsController {
 
-	/** The brands list. */
-	private List<SelectItem> brands;
-
+	/** The mime types list. */
+	private List<SelectItem> mimeTypes;
+	private List<SelectItem> productStatuses;
+	private List<SelectItem> productTypes;
+	private List<SelectItem> pluProductTypes;
+	
 	public Brand getBrand() {
 		return null;
 	}
@@ -50,23 +53,18 @@ public class ProductCollectionsController {
 	 * @throws ManagerBeanException the manager bean exception
 	 */
 	public List<SelectItem> getBrands() throws ManagerBeanException {
-		if (brands == null) {
-			brands = new LinkedList<SelectItem>();
-			IManagerBean brandBean = BeanManager.getManagerBean(Brand.class);
-			Criteria criteria = new Criteria();
-			criteria.addOrder(brandBean.getFieldName(IProductAlias.BRAND_NAME));
-			Iterator<ITransferObject> iter = brandBean.getList(criteria).iterator();
-			while (iter.hasNext()) {
-				Brand brand = (Brand) iter.next();
-				SelectItem item = new SelectItem(brand, brand.getName());
-				brands.add(item);
-			}
+		List<SelectItem> brands = new LinkedList<SelectItem>();
+		IManagerBean brandBean = BeanManager.getManagerBean(Brand.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(brandBean.getFieldName(IProductAlias.BRAND_NAME));
+		Iterator<ITransferObject> iter = brandBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			Brand brand = (Brand) iter.next();
+			SelectItem item = new SelectItem(brand, brand.getName());
+			brands.add(item);
 		}
 		return brands;
 	}
-
-	/** The productCategories list. */
-	private List<SelectItem> pCategories;
 
 	public ProductCategory getCategory() {
 		return null;
@@ -83,36 +81,30 @@ public class ProductCollectionsController {
 	 * @throws ManagerBeanException the manager bean exception
 	 */
 	public List<SelectItem> getCategories() throws ManagerBeanException {
-		if (pCategories == null) {
-			pCategories = new LinkedList<SelectItem>();
-			IManagerBean productCategoryBean = BeanManager.getManagerBean(ProductCategory.class);
-			Criteria criteria = new Criteria();
-			criteria.addOrder(productCategoryBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_NAME));
-			Iterator<ITransferObject> iter = productCategoryBean.getList(criteria).iterator();
-			while (iter.hasNext()) {
-				ProductCategory pCategory = (ProductCategory) iter.next();
-				SelectItem item = new SelectItem(pCategory, pCategory.getName());
-				pCategories.add(item);
-			}
+		List<SelectItem> pCategories = new LinkedList<SelectItem>();
+		IManagerBean productCategoryBean = BeanManager.getManagerBean(ProductCategory.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(productCategoryBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_NAME));
+		Iterator<ITransferObject> iter = productCategoryBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			ProductCategory pCategory = (ProductCategory) iter.next();
+			SelectItem item = new SelectItem(pCategory, pCategory.getName());
+			pCategories.add(item);
 		}
 		return pCategories;
 	}
 	
-	private List<SelectItem> pCategoriesByGroup;
-	
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getCategoriesByGroup() throws ManagerBeanException {
-		if(pCategoriesByGroup == null){
-			pCategoriesByGroup = new LinkedList<SelectItem>();
-			IManagerBean pCategoryGroupBean = BeanManager.getManagerBean(ProductCategoryGroup.class);
-			Criteria criteria = new Criteria();
-			criteria.addOrder(pCategoryGroupBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_GROUP_NAME));
-			Iterator iter = pCategoryGroupBean.getList(criteria).iterator();
-			while(iter.hasNext()){
-				ProductCategoryGroup catGroup = (ProductCategoryGroup)iter.next();
-				SelectItemGroup itemGroup = new SelectItemGroup(catGroup.getName(), catGroup.getName(), true, obtainGroupCateogries(catGroup.getId()));
-				pCategoriesByGroup.add(itemGroup);
-			}
+		List<SelectItem> pCategoriesByGroup = new LinkedList<SelectItem>();
+		IManagerBean pCategoryGroupBean = BeanManager.getManagerBean(ProductCategoryGroup.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(pCategoryGroupBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_GROUP_NAME));
+		Iterator iter = pCategoryGroupBean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			ProductCategoryGroup catGroup = (ProductCategoryGroup)iter.next();
+			SelectItemGroup itemGroup = new SelectItemGroup(catGroup.getName(), catGroup.getName(), true, obtainGroupCateogries(catGroup.getId()));
+			pCategoriesByGroup.add(itemGroup);
 		}
 		return pCategoriesByGroup;
 	}
@@ -133,21 +125,18 @@ public class ProductCollectionsController {
 		return items.toArray(new SelectItem[items.size()]);
 	}
 	
-	private List<SelectItem> pCategoryGroups;
-	
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getPCategoryGroups() throws ManagerBeanException {
-		if(pCategoryGroups == null){
-			pCategoryGroups = new LinkedList<SelectItem>();
-			IManagerBean pCategoryGroupBean = BeanManager.getManagerBean(ProductCategoryGroup.class);
-			Criteria criteria = new Criteria();
-			criteria.addOrder(pCategoryGroupBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_GROUP_NAME));
-			Iterator iter = pCategoryGroupBean.getList(criteria).iterator();
-			while(iter.hasNext()){
-				ProductCategoryGroup group = (ProductCategoryGroup)iter.next();
-				SelectItem item = new SelectItem(group, group.getName());
-				pCategoryGroups.add(item);
-			}
+
+		List<SelectItem> pCategoryGroups = new LinkedList<SelectItem>();
+		IManagerBean pCategoryGroupBean = BeanManager.getManagerBean(ProductCategoryGroup.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(pCategoryGroupBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_GROUP_NAME));
+		Iterator iter = pCategoryGroupBean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			ProductCategoryGroup group = (ProductCategoryGroup)iter.next();
+			SelectItem item = new SelectItem(group, group.getName());
+			pCategoryGroups.add(item);
 		}
 		return pCategoryGroups;
 	}
@@ -158,16 +147,16 @@ public class ProductCollectionsController {
 	 * @return the product statuses
 	 */
 	public List<SelectItem> getProductStatuses() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-		ProductStatus[] pStatuses = ProductStatus.values();
-		for (int i = 0; i < pStatuses.length; i++) {
-			ProductStatus status = pStatuses[i];
-			String name = status.getName(locale);
-			SelectItem item = new SelectItem(status, name);
-			types.add(item);
+		if (productStatuses == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			productStatuses = new LinkedList<SelectItem>();
+			for (ProductStatus status:ProductStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				productStatuses.add(item);
+			}
 		}
-		return types;
+		return productStatuses;
 	}
 	
 	/**
@@ -176,21 +165,19 @@ public class ProductCollectionsController {
 	 * @return the product types
 	 */
 	public List<SelectItem> getProductTypes() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-		ProductType[] pTypes = ProductType.values();
-		for (int i = 0; i < pTypes.length; i++) {
-			ProductType status = pTypes[i];
-			String name = status.getName(locale);
-			SelectItem item = new SelectItem(status, name);
-			types.add(item);
+		if (productTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			productTypes = new LinkedList<SelectItem>();
+			for (ProductType status:ProductType.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				productTypes .add(item);
+			}
 		}
-		return types;
+		return productTypes;
 	}
 	
 
-	/** The mime types list. */
-	private List<SelectItem> mimeTypes;
 
 	/**
 	 * Gets the MIME types
@@ -210,8 +197,6 @@ public class ProductCollectionsController {
 		return mimeTypes;
 	}
 
-	/** The catalogues list. */
-	private List<SelectItem> catalogues;
 
 	/**
 	 * Gets the catalogues.
@@ -221,23 +206,19 @@ public class ProductCollectionsController {
 	 * @throws ManagerBeanException the manager bean exception
 	 */
 	public List<SelectItem> getCatalogues() throws ManagerBeanException {
-		if (catalogues == null) {
-			catalogues = new LinkedList<SelectItem>();
-			IManagerBean catalogueBean = BeanManager.getManagerBean(Catalogue.class);
-			Criteria criteria = new Criteria();
-			criteria.addOrder(catalogueBean.getFieldName(IProductAlias.CATALOGUE_NAME));
-			Iterator<ITransferObject> iter = catalogueBean.getList(criteria).iterator();
-			while (iter.hasNext()) {
-				Catalogue catalogue = (Catalogue) iter.next();
-				SelectItem item = new SelectItem(catalogue,catalogue.getName());
-				catalogues.add(item);
-			}
+		List<SelectItem> catalogues = new LinkedList<SelectItem>();
+		IManagerBean catalogueBean = BeanManager.getManagerBean(Catalogue.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(catalogueBean.getFieldName(IProductAlias.CATALOGUE_NAME));
+		Iterator<ITransferObject> iter = catalogueBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			Catalogue catalogue = (Catalogue) iter.next();
+			SelectItem item = new SelectItem(catalogue,catalogue.getName());
+			catalogues.add(item);
 		}
 		return catalogues;
 	}
 	
-	/** The tariffs list. */
-	private List<SelectItem> tariffs;
 
 	/**
 	 * Gets the tariffs.
@@ -247,17 +228,15 @@ public class ProductCollectionsController {
 	 * @throws ManagerBeanException the manager bean exception
 	 */
 	public List<SelectItem> getTariffs() throws ManagerBeanException {
-		if (tariffs == null) {
-			tariffs = new LinkedList<SelectItem>();
-			IManagerBean tariffBean = BeanManager.getManagerBean(Tariff.class);
-			Criteria criteria = new Criteria();
-			criteria.addOrder(tariffBean.getFieldName(IProductAlias.TARIFF_NAME));
-			Iterator<ITransferObject> iter = tariffBean.getList(criteria).iterator();
-			while (iter.hasNext()) {
-				Tariff tariff = (Tariff) iter.next();
-				SelectItem item = new SelectItem(tariff, tariff.getName());
-				tariffs.add(item);
-			}
+		List<SelectItem> tariffs = new LinkedList<SelectItem>();
+		IManagerBean tariffBean = BeanManager.getManagerBean(Tariff.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(tariffBean.getFieldName(IProductAlias.TARIFF_NAME));
+		Iterator<ITransferObject> iter = tariffBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			Tariff tariff = (Tariff) iter.next();
+			SelectItem item = new SelectItem(tariff, tariff.getName());
+			tariffs.add(item);
 		}
 		return tariffs;
 	}
@@ -268,16 +247,16 @@ public class ProductCollectionsController {
 	 * @return the plu product types
 	 */
 	public List<SelectItem> getPluProductTypes() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-		PluProductType[] pStatuses = PluProductType.values();
-		for (int i = 0; i < pStatuses.length; i++) {
-			PluProductType status = pStatuses[i];
-			String name = status.getName(locale);
-			SelectItem item = new SelectItem(status, name);
-			types.add(item);
+		if (pluProductTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			pluProductTypes = new LinkedList<SelectItem>();
+			for (PluProductType status:PluProductType.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				pluProductTypes.add(item);
+			}
 		}
-		return types;
+		return pluProductTypes;
 	}
 	
 }
