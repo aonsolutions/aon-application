@@ -124,12 +124,6 @@
 							disabled="true" size="50" />
 					</aon:div>
 
-					<aon:outputLabel for="Sales_type" value="#{bundle.aon_type}" />
-					<aon:selectOneMenu id="Sales_type" value="#{sales.to.documentType}"
-						disabled="#{!sales.pending}">
-						<f:selectItems value="#{salesCollections.documentTypes}" />
-					</aon:selectOneMenu>
-
 					<aon:outputLabel for="Sales_payMethod" value="#{configBundle.config_pay_method}" />
 					<aon:selectOneMenu id="Sales_payMethod" value="#{sales.to.payMethod}"
 						disabled="#{!sales.pending}">
@@ -137,6 +131,18 @@
 						<f:selectItems value="#{configCollections.payMethods}" />
 					</aon:selectOneMenu>
 
+					<aon:outputLabel for="Sales_type" value="#{bundle.aon_type}" />
+					<aon:selectOneMenu id="Sales_type" value="#{sales.to.documentType}"
+						disabled="#{!sales.pending}">
+						<f:selectItems value="#{salesCollections.documentTypes}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Sales_total_price" value="#{bundle.aon_total}" />
+					<aon:outputText id="Sales_total_price" value="#{sales.totalPrice}" 
+						styleClass="aon-bold">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+ 
 				</aon:panelGrid>
 			</aon:div>
 
@@ -277,7 +283,7 @@
 										rendered="#{controller.new}">
 										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 									</aon:outputText>
-									<aon:outputText id="SalesDetail_taxableBase" value="#{controller.taxableBase}"
+									<aon:outputText id="Sales_taxableBase" value="#{sales.taxableBase}"
 										rendered="#{!controller.new}">
 										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 									</aon:outputText>
