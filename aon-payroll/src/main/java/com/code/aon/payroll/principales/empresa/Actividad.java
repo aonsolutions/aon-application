@@ -68,7 +68,7 @@ public class Actividad  implements ITransferObject {
         return this.cdg;
     }
     
-    public void setCdg(int cdg) {
+    public void setCdg(Integer cdg) {
         this.cdg = cdg;
     }
     
