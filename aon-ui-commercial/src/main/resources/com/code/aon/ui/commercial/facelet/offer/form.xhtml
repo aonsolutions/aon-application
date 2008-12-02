@@ -14,6 +14,8 @@
 				<ui:param name="toolbarTitle"
 					value="#{commercialBundle.commercial_offer_module}" />
 				<ui:param name="controller" value="#{offer}" />
+				<ui:param name="skipSaveButton" value="#{offer.processed}" />
+				<ui:param name="skipRemoveButton" value="#{offer.processed}" />
 				<ui:define name="beforeSpinToolbarContent">
 					<h:commandLink id="offer" value="#{bundle.aon_report}"
 						target="_new" rendered="#{!offer.new}"
