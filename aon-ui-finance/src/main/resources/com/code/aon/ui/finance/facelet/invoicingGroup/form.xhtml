@@ -10,12 +10,11 @@
 	<ui:define name="content">
 		<aon:form id="invoicingGroupForm">
 
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+			<ui:incluide
+				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{financeBundle.finance_invoicing_group_module}" />
 				<ui:param name="controller" value="#{invoicingGroup}" />
-				
-			</ui:decorate>
+			</ui:incluide>
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="dataTable" columns="2">
