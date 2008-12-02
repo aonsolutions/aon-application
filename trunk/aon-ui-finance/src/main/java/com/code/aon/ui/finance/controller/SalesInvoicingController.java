@@ -424,8 +424,8 @@ public class SalesInvoicingController extends BasicController {
 		this.onReset(null);
 		DeliveryController deliveryController = (DeliveryController)AonUtil.getController(DELIVERY_CONTROLLER_NAME);
 		Delivery delivery = (Delivery)deliveryController.getTo();
-		this.setPosId(deliveryController.getPosId());
-		this.setWarehouseId(deliveryController.getWarehouseId());
+		//this.setPosId(deliveryController.getPosId());
+		this.setWarehouseId(deliveryController.getWarehouse().getId());
 		((Invoice)this.getTo()).setIssueDate(delivery.getIssueTime());
 		((Invoice)this.getTo()).setSeries(delivery.getSeries());
 		((Invoice)this.getTo()).setNumber(0);

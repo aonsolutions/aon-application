@@ -95,7 +95,7 @@
 							disabled="#{offer.processed}">
 							<f:selectItems value="#{offer.addresses}" />
 						</aon:selectOneMenu>
-						<aon:outputLabel value="#{financeBundle.finance_no_available_address}"
+						<aon:outputLabel value="#{registryBundle.registry_no_address_available}"
 							rendered="#{offer.addressCount == 0}"
 							styleClass="aon-italic" />
 					</aon:div>
@@ -138,8 +138,8 @@
 						<f:selectItems value="#{productCollections.tariffs}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Offer_total_price" value="#{bundle.aon_total}" />
-					<aon:outputText id="Offer_total_price" value="#{offer.totalPrice}" 
+					<aon:outputLabel for="Offer_total" value="#{bundle.aon_total}" />
+					<aon:outputText id="Offer_total" value="#{offer.totalPrice}" 
 						styleClass="aon-bold">
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>
@@ -159,7 +159,9 @@
 					<ui:param name="showNote" value="false" />
 					<ui:param name="skipResetButton" value="#{offer.processed}" />
 					<ui:param name="skipLineEdition" value="#{offer.processed}" />
-					<ui:param name="saveButtonReRender" value="Offer_total_price" />
+					<ui:param name="newSaveButtonReRender" value="Offer_total" />
+					<ui:param name="saveButtonReRender" value="Offer_total" />
+					<ui:param name="removeButtonReRender" value="Offer_total" />
 					<ui:param name="focusOnAdd" value="OfferDetail_item_product_code-New" />
 					<ui:param name="focusOnSelect" value="OfferDetail_item_product_code-Edit" />
 					<ui:param name="columnClasses"

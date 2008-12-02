@@ -128,7 +128,7 @@
 							<f:selectItems value="#{saleInvoice.addresses}" />
 						</aon:selectOneMenu>
 						<aon:outputLabel styleClass="aon-italic"
-							value="#{financeBundle.finance_no_available_address}"
+							value="#{registryBundle.registry_no_address_available}"
 							rendered="#{(saleInvoice.new or saleInvoiceAddress.to.id == null) and saleInvoice.addressCount == 0}" />
 						<aon:inputText id="Invoice_registryAddress_address"
 							rendered="#{!saleInvoice.new and saleInvoiceAddress.to.id != null}"

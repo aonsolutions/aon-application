@@ -5,7 +5,7 @@
 
 <faces-config>
 
-	<!-- ************ COLLECTION **************** -->
+	<!-- ************ COLLECTIONS **************** -->
 	<managed-bean>
 		<managed-bean-name>warehouseCollections</managed-bean-name>
 		<managed-bean-class>
@@ -180,16 +180,130 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- =================== Warehouse ========================== -->
+	<!-- ****** DELIVERY ****** -->
+	<managed-bean>
+		<managed-bean-name>delivery</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.warehouse.controller.DeliveryController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.warehouse.Delivery</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>delivery</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{deliverySearch}</value>
+				<value>#{deliveryHeaderControllerListener}</value>
+				<value>#{deliveryControllerListener}</value>
+				<value>#{deliveryDetailChildListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>deliverySearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.warehouse.event.DeliverySearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+ 	<managed-bean>
+		<managed-bean-name>deliveryHeaderControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.HeaderControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>table</property-name>
+			<value>Delivery</value>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>deliveryControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.warehouse.event.DeliveryControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>deliveryDetailChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>deliveryDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>DeliveryDetail_delivery_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ****** DELIVERY DETAIL ****** -->
+	<managed-bean>
+		<managed-bean-name>deliveryDetail</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.warehouse.controller.DeliveryDetailController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.warehouse.DeliveryDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>deliveryDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>delivery</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>delivery.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+	</managed-bean>
+	
+   	<!-- ************* NAVIGATION RULES ***************** -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>warehouse</from-outcome>
 			<to-view-id>/com/code/aon/ui/warehouse/facelet/warehouse/grid.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	
-	<!-- =================== Inventory ========================== -->
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>inventory_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/warehouse/facelet/inventory/search.xhtml</to-view-id>
@@ -206,10 +320,6 @@
 			<from-outcome>inventoryClose</from-outcome>
 			<to-view-id>/com/code/aon/ui/warehouse/facelet/inventory/close.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-	
-	<!-- =================== Stock ========================== -->
-	<navigation-rule>
 		<navigation-case>
 			<from-outcome>stock_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/warehouse/facelet/stock/search.xhtml</to-view-id>
@@ -221,6 +331,18 @@
 		<navigation-case>
 			<from-outcome>stock_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/warehouse/facelet/stock/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>delivery_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/warehouse/facelet/delivery/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>delivery_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/warehouse/facelet/delivery/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>delivery_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/warehouse/facelet/delivery/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
