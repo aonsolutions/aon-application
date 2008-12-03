@@ -59,16 +59,12 @@
 								<ui:param name="controllerAlias" value="#{supplierMedia}" />
 							</ui:include>
 						</aon:panelTab>
-						<!-- 
-						<aon:panelTab id="customer_finance"
-							label="#{financeBundle.finance_data_module}">
-							<ui:include
-								src="/com/code/aon/ui/finance/facelet/rbank/tab_grid.xhtml">
-								<ui:param name="controllerAlias" value="#{customerRbank}" />
-								<ui:param name="dataTableId" value="customerRbankData" />
-							</ui:include>
+ 
+						<aon:panelTab label="#{financeBundle.finance_data_module}">
+							<ui:include src="/com/code/aon/ui/finance/facelet/rbank/tab_grid.xhtml">
+								<ui:param name="controllerAlias" value="#{supplierRbank}" />							</ui:include>
 						</aon:panelTab>
-						-->
+
 					</aon:panelTabSet>
 				</c:if>
 				
