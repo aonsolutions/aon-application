@@ -16,12 +16,12 @@
 	<managed-bean>
 		<managed-bean-name>seller</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.BasicController
+			com.code.aon.ui.sales.controller.SellerController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
+			<value>false</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>

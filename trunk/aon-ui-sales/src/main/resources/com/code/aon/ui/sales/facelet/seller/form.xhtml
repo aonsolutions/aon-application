@@ -45,7 +45,7 @@
 				</aon:panelGrid>
 
 				<c:if test="#{!seller.new}">
-					<aon:panelTabSet id="targetTab" selectedTab="#{target.selectedTab}" valueChangeListener="#{target.tabChanged}">
+					<aon:panelTabSet id="sellerTab" selectedTab="#{seller.selectedTab}">
 
 						<aon:panelTab id="sellerAddress" label="#{registryBundle.registry_address_module}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
@@ -55,7 +55,7 @@
 
 						<aon:panelTab id="sellerMedia" label="#{registryBundle.registry_media_module}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
-								<ui:param name="controllerAlias" value="#{targetMedia}" />
+								<ui:param name="controllerAlias" value="#{sellerMedia}" />
 							</ui:include>
 						</aon:panelTab>
 

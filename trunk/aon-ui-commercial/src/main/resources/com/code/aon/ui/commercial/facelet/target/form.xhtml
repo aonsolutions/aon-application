@@ -30,7 +30,7 @@
 				</aon:panelGrid>
 
 				<c:if test="#{!target.new}">
-					<aon:panelTabSet id="targetTab" selectedTab="#{target.selectedTab}" valueChangeListener="#{target.tabChanged}">
+					<aon:panelTabSet id="targetTab" selectedTab="#{target.selectedTab}">
 
 						<aon:panelTab id="targetAddress" label="#{registryBundle.registry_address_module}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
