@@ -17,6 +17,11 @@
 				<ui:param name="skipSaveButton" value="#{offer.processed}" />
 				<ui:param name="skipRemoveButton" value="#{offer.processed}" />
 				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="sales"
+						value="Hacer Pedido"
+						actionListener="#{offer.createSales}" action="sales_list"
+						rendered="#{!offer.processed and offerDetail.model.rowCount > 0}"
+						styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
 					<h:commandLink id="offer" value="#{bundle.aon_report}"
 						target="_new" rendered="#{!offer.new}"
 						action="#{report.onExecute}"
@@ -95,6 +100,7 @@
 						<aon:selectOneMenu id="Offer_address" value="#{offer.to.address.id}"
 							rendered="#{offer.addressCount > 0}"
 							disabled="#{offer.processed}">
+							<f:selectItem itemLabel="-" itemValue="" />
 							<f:selectItems value="#{offer.addresses}" />
 						</aon:selectOneMenu>
 						<aon:outputLabel value="#{registryBundle.registry_no_address_available}"
