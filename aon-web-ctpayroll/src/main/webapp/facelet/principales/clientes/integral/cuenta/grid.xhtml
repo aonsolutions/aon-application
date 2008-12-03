@@ -20,12 +20,6 @@
 					<aon:outputText value="&#160;" />
 				</f:facet>
 
-				<aon:div>
-					<aon:commandButton alt="[#{bundle.aon_reset}]"
-						styleClass="aon-editDataTable-button aon-icon-rowSelector "
-						actionListener="#{cuenta.onSelect}" action="cuenta_form"
-						accesskey="#{bundle.aon_key_new_line}" />
-				</aon:div>
 
 				<f:facet name="footer">
 					<aon:div>
@@ -73,7 +67,26 @@
 		</aon:editDataTable>
 		<aon:dataScroller2 for="cuentasData" showNote="true" />
 
+
 		<aon:panelGrid columns="2">
+
+			<aon:outputLabel for="Cliente_cdg"
+				value="#{appBundle.aon_payroll_principales_domicilio_cli}" />
+			<aon:div styleClass="aon-lookup">
+				<aon:lookupInputText id="Client_cdg" lookup="#{clienteLookup}"
+					reRender="Client_description" value="#{tipcuenta.to.cliente.cdg}"
+					size="5">
+				</aon:lookupInputText>
+				<aon:lookupButton id="Client_lookup"
+					windowTitle="#{appBundle.aon_payroll_principales_clientes}"
+					selectReRender="Client_cdg,Client_description"
+					lookup="#{clienteLookup}" minHeight="440"
+					property="#{tipcuenta.to.cliente}">
+				</aon:lookupButton>
+				<aon:inputText id="Client_description"
+					value="#{(tipcuenta.to.cliente.descripcion!=null)?(tipcuenta.to.cliente.descripcion):('')}"
+					size="55" disabled="true" />
+			</aon:div>
 			<aon:outputLabel for="Empresa_cdg"
 				value="#{appBundle.aon_payroll_principales_tipocuenta_empresa}" />
 			<aon:div styleClass="aon-lookup">
@@ -110,20 +123,38 @@
 					value="#{(tipcuenta.to.actividad.descripcion!=null)?(tipcuenta.to.actividad.descripcion):('')}"
 					size="60" disabled="true" />
 			</aon:div>
-			
-				<aon:outputLabel
-					value="#{appBundle.aon_payroll_principales_tipocuenta}" />
-                <aon:div>
+
+			<aon:outputLabel for="Cuenta_cdg"
+				value="#{appBundle.aon_payroll_principales_cuenta}" />
+			<aon:div styleClass="aon-lookup">
+				<aon:lookupInputText id="Cuenta_cdg" lookup="#{cuentaLookup}"
+					reRender="Cuenta_description" value="#{tipcuenta.to.cuenta.cdg}"
+					size="5">
+				</aon:lookupInputText>
+				<aon:lookupButton id="Cuenta_lookup"
+					windowTitle="#{appBundle.aon_payroll_principales_tipodomcilio_domicilio}"
+					selectReRender="Cuenta_cdg,Cuenta_description"
+					lookup="#{cuentaLookup}" minHeight="440"
+					property="#{tipcuenta.to.cuenta}">
+				</aon:lookupButton>
+				<aon:inputText id="Cuenta_description"
+					value="#{(tipcuenta.to.cuenta.entidad.description!=null)?(tipcuenta.to.cuenta.entidad.description):('')}"
+					size="60" disabled="true" />
+			</aon:div>
+
+			<aon:outputLabel
+				value="#{appBundle.aon_payroll_principales_tipocuenta}" />
+			<aon:div>
 				<aon:selectOneMenu id="TipoCtas" value="#{tipcuenta.to.tipcta}">
 					<f:selectItem value="#{null}" itemLabel=" -  " />
 					<f:selectItems value="#{tipcuenta.listaTipos}" />
 				</aon:selectOneMenu>
-                <aon:outputLabel
-				value="                                               " />
+				<aon:outputLabel
+					value="                                               " />
 				<aon:commandButton id="asignarcta"
 					value="#{appBundle.aon_payroll_principales_tipocuenta_asignar}"
-					styleClass="aon-icon-transfer"
-					action="integral_form" rendered="#{!controller.new}"
+					styleClass="aon-icon-transfer" action="integral_form"
+					rendered="#{!controller.new}"
 					actionListener="#{tipcuenta.onAccept}">
 				</aon:commandButton>
 

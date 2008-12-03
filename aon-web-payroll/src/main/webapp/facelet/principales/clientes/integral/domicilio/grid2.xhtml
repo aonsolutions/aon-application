@@ -14,13 +14,10 @@
 					styleClass="tablasmini"
 					rendered="#{(tipdomicilio.model.rowCount > 0) or (tipdomicilio.new)}"
 					value="#{tipdomicilio.model}"
-					columnClasses="aon-editDataTable-iconColumn, 
-						aon-editDataTable-numberColumn,aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+					columnClasses="aon-editDataTable-iconColumn,aon-editDataTable-numberColumn, 
+						aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-width-150">
 
-					<aon:rowSelector toggleOnClick="#{tipdomicilio.to == null}"
-						actionListener="#{tipdomicilio.onSelect}" reRender="tabs" />
-
-
+					
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="&#160;" />
@@ -30,17 +27,11 @@
 							<aon:commandButton alt="[#{bundle.aon_reset}]"
 								styleClass="aon-editDataTable-button aon-icon-rowSelector "
 								actionListener="#{tipdomicilio.onSelect}"
-								action="tipdomicilio_form"
+								reRender="datos"
 								accesskey="#{bundle.aon_key_new_line}" />
 						</aon:div>
 						<f:facet name="footer">
-							<aon:div>
-								<h:commandButton alt="[#{bundle.aon_reset}]"
-									styleClass="aon-editDataTable-button aon-icon-reset"
-									actionListener="#{tipdomicilio.onReset}"
-									action="tipdomicilio_form" rendered="#{!tipdomicilio.new}"
-									accesskey="#{bundle.aon_key_new_line}" />
-							</aon:div>
+						
 						</f:facet>
 					</aon:column>
 
@@ -63,66 +54,93 @@
 
 					</aon:column>
 
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_domicilio_tipodomicilio}" />
+						</f:facet>
+						<aon:outputText value="#{to.tipdom}"
+							rendered="#{to!=tipdomicilio.to}" disabled="true" size="50"
+							maxlength="20" />
+
+						<aon:selectOneMenu id="TipoDoms" value="#{tipdomicilio.to.tipdom}"
+							rendered="#{to==tipdomicilio.to}">
+							<f:selectItem value="#{null}" itemLabel=" -  " />
+							<f:selectItems value="#{tipdomicilio.listaTipos}" />
+						</aon:selectOneMenu>
+					
+						<aon:commandButton title="[#{bundle.aon_accept}]"
+							rendered="#{to==tipdomicilio.to}"
+							styleClass="aon-editDataTable-button aon-icon-accept"
+							actionListener="#{tipdomicilio.onAccept}"
+							accesskey="#{bundle.aon_key_save_line}" />
+						<aon:commandButton title="[#{bundle.aon_cancel}]"
+							styleClass="aon-editDataTable-button aon-icon-cancel"
+							rendered="#{to==tipdomicilio.to}"
+							actionListener="#{tipdomicilio.onCancel}" immediate="true" reRender="datos"
+							accesskey="#{bundle.aon_key_cancel_line}" />
+						<aon:confirmButton id="remove-Porcentaje"
+							title="[#{bundle.aon_remove}]"
+							styleClass="aon-editDataTable-button aon-icon-delete"
+							rendered="#{to==tipdomicilio.to}"
+							confirmTitle="#{bundle.aon_confirm_title}"
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{tipdomicilio.onRemove}" immediate="true"
+							accesskey="#{bundle.aon_key_remove_line}" />
+
+					</aon:column>
+
+
 				</aon:editDataTable>
 			</aon:div>
 
-			<aon:div>
+			<aon:div id="datos">
 
 				<aon:panelGrid styleClass="tablasmini" columns="2" dir="true"
 					width="100%" style="margin-bottom=2px;">
-					<aon:outputLabel
-						value="#{appBundle.aon_payroll_principales_domicilio_tipodomicilio}" />
-					<aon:outputText value="#{tipdomicilio.to.tipdom}" disabled="true"
-						size="50" maxlength="20" />
+					
+					
 
 					<aon:outputLabel
-						value="#{appBundle.aon_payroll_principales_empresa_descripcion}" />
+						value="#{appBundle.aon_payroll_principales_tipocuenta_empresa}" />
 					<aon:outputText value="#{tipdomicilio.to.empresa.descripcion}"
 						disabled="true" size="50" maxlength="20" />
 
 					<aon:outputLabel
-						value="#{appBundle.aon_payroll_principales_actividades_nombre}" />
+						value="#{appBundle.aon_payroll_principales_tipocuenta_actividad}" />
 					<aon:outputText value="#{tipdomicilio.to.actividad.descripcion}"
 						disabled="true" size="50" maxlength="20" />
 
 					<aon:outputLabel
-						value="#{appBundle.aon_payroll_principales_clientes_tipovia}" />
-					<aon:outputText value="#{tipdomicilio.to.domicilio.tipovia.cdg}"
-						disabled="true" size="50" maxlength="20" />
+						value="#{appBundle.aon_payroll_principales_tipodomcilio_direccion}" />
+					<aon:div>
+						<aon:outputText value="#{tipdomicilio.to.domicilio.tipovia.cdg}       "
+							disabled="true" size="50" maxlength="20" />
 
-					<aon:outputLabel
-						value="#{appBundle.aon_payroll_principales_clientes_tipovia2}" />
-					<aon:outputText
-						value="#{tipdomicilio.to.domicilio.tipovia.description}"
-						disabled="true" size="50" maxlength="20" />
+						<aon:outputText value="#{tipdomicilio.to.domicilio.nomvia}    "
+							disabled="true" size="50" maxlength="20" />
+						
+						<aon:outputText value="#{tipdomicilio.to.domicilio.numero}     "
+							disabled="true" size="50" maxlength="20" />
+					
+						<aon:outputText value="#{tipdomicilio.to.domicilio.otrdir}"
+							disabled="true" size="50" maxlength="20" />
+					</aon:div>
+					<aon:outputText value="   " />
+					<aon:div>
+						<aon:outputText value="#{tipdomicilio.to.domicilio.codpos}     "
+							disabled="true" size="50" maxlength="20" />
+						
 
-					<aon:outputLabel
-						value="#{appBundle.aon_payroll_principales_clientes_num}" />
-					<aon:outputText value="#{tipdomicilio.to.domicilio.numero}"
-						disabled="true" size="50" maxlength="20" />
+						<aon:outputText value="#{tipdomicilio.to.domicilio.localidad}         "
+							disabled="true" size="50" maxlength="20" />
+					
 
-					<aon:outputLabel
-						value="#{appBundle.aon_payroll_principales_clientes_otros}" />
-					<aon:outputText value="#{tipdomicilio.to.domicilio.otrdir}"
-						disabled="true" size="50" maxlength="20" />
+						<aon:outputText
+							value="#{tipdomicilio.to.domicilio.provincia.descripcion}"
+							disabled="true" size="50" maxlength="20" />
 
-					<aon:outputLabel
-						value="#{appBundle.aon_payroll_principales_clientes_codpos}" />
-					<aon:outputText value="#{tipdomicilio.to.domicilio.codpos}"
-						disabled="true" size="50" maxlength="20" />
-
-
-					<aon:outputLabel
-						value="#{appBundle.aon_payroll_principales_clientes_localidad}" />
-					<aon:outputText value="#{tipdomicilio.to.domicilio.localidad}"
-						disabled="true" size="50" maxlength="20" />
-
-					<aon:outputLabel
-						value="#{appBundle.aon_payroll_principales_clientes_provincia}" />
-					<aon:outputText
-						value="#{tipdomicilio.to.domicilio.provincia.descripcion}"
-						disabled="true" size="50" maxlength="20" />
-
+					</aon:div>
 					<aon:outputLabel
 						value="#{appBundle.aon_payroll_principales_clientes_perconta}" />
 					<aon:outputText value="#{tipdomicilio.to.domicilio.persona}"

@@ -20,14 +20,7 @@
 								<aon:outputText value="&#160;" />
 							</f:facet>
 							
-							<aon:div>
-									<aon:commandButton alt="[#{bundle.aon_reset}]"
-										styleClass="aon-editDataTable-button aon-icon-rowSelector "
-										actionListener="#{domicilio.onSelect}" action="domicilio_form"
-										
-										accesskey="#{bundle.aon_key_new_line}" />
-								</aon:div>
-							<f:facet name="footer">
+								<f:facet name="footer">
 								<aon:div>
 									<h:commandButton alt="[#{bundle.aon_reset}]"
 										styleClass="aon-editDataTable-button aon-icon-reset"
@@ -105,7 +98,30 @@
 						
 					</aon:editDataTable>
 					<aon:dataScroller2 for="domiciliosData" showNote="true" />
-					<aon:panelGrid columns="2">					
+					<aon:panelGrid columns="2">		
+					
+					
+								
+			 		<aon:outputLabel for="Cliente_cdg" 
+						value="#{appBundle.aon_payroll_principales_domicilio_cli}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="Cliente_cdg"
+							lookup="#{clienteLookup}"
+							reRender="Cliente_description"
+							value="#{tipdomicilio.to.cliente.cdg}" size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton id="Cliente_lookup"
+							windowTitle="#{appBundle.aon_payroll_principales_clientes}"
+							selectReRender="Cliente_cdg,Cliente_description"
+							lookup="#{clienteLookup}" minHeight="440"
+							property="#{tipdomicilio.to.cliente}">
+						</aon:lookupButton>
+						<aon:inputText id="Cliente_description"
+							value="#{(tipdomicilio.to.cliente.descripcion!=null)?(tipdomicilio.to.cliente.descripcion):('')}"   
+							size="55" disabled="true" />
+					</aon:div>
+					
+								
 			      <aon:outputLabel for="Empresa_cdg" 
 						value="#{appBundle.aon_payroll_principales_tipocuenta_empresa}" />
 					<aon:div styleClass="aon-lookup">
@@ -116,7 +132,7 @@
 						</aon:lookupInputText>
 						<aon:lookupButton id="Empre_lookup"
 							windowTitle="#{appBundle.aon_payroll_principales_tipocuenta_empresa}"
-							selectReRender="Empr_cdg,Empr_description"
+							selectReRender="Empre_cdg,Empre_description"
 							lookup="#{empresaLookup}" minHeight="440"
 							property="#{tipdomicilio.to.empresa}">
 						</aon:lookupButton>
@@ -131,12 +147,12 @@
 					<aon:div styleClass="aon-lookup">
 						<aon:lookupInputText id="Acti_cdg"
 							lookup="#{actividadLookup}"
-							reRender="Act_description"
+							reRender="Acti_description"
 							value="#{tipdomicilio.to.actividad.cdg}" size="5">
 						</aon:lookupInputText>
 						<aon:lookupButton id="Acti_lookup"
 							windowTitle="#{appBundle.aon_payroll_principales_tipocuenta_actividad}"
-							selectReRender="Act_cdg,Act_description"
+							selectReRender="Acti_cdg,Acti_description"
 							lookup="#{actividadLookup}" minHeight="440"
 							property="#{tipdomicilio.to.actividad}">
 						</aon:lookupButton>
@@ -144,6 +160,26 @@
 							value="#{(tipdomicilio.to.actividad.descripcion!=null)?(tipcuenta.to.actividad.descripcion):('')}"   
 							size="60" disabled="true" />
 					</aon:div>
+					
+			  <aon:outputLabel for="Domicilio_cdg" 
+						value="#{appBundle.aon_payroll_principales_tipodomcilio_domicilio}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="Dom_cdg"
+							lookup="#{domicilioLookup}"
+							reRender="Dom_description"
+							value="#{tipdomicilio.to.domicilio.cdg}" size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton id="Dom_lookup"
+							windowTitle="#{appBundle.aon_payroll_principales_tipodomcilio_domicilio}"
+							selectReRender="Dom_cdg,Dom_description"
+							lookup="#{domicilioLookup}" minHeight="440"
+							property="#{tipdomicilio.to.domicilio}">
+						</aon:lookupButton>
+						<aon:inputText id="Dom_description"
+							value="#{(tipdomicilio.to.domicilio.nomvia!=null)?(tipdomicilio.to.domicilio.nomvia):('')}"   
+							size="60" disabled="true" />
+					</aon:div>
+					
 
 			<aon:outputLabel
 				value="#{appBundle.aon_payroll_principales_domicilio_tipodomicilio}" />
@@ -161,8 +197,9 @@
 				<aon:commandButton id="asignardom"
 					value="#{appBundle.aon_payroll_principales_tipodomcilio_asignar}"
 					styleClass=" aon-icon-transfer"
-					action="integral_form" rendered="#{!controller.new}"
-					actionListener="#{cliente.onEditSearch}">
+					rendered="#{!controller.new}"
+					 action="integral_form"			
+					actionListener="#{tipdomicilio.onAccept}">
 				</aon:commandButton>
 			</aon:div>
 
