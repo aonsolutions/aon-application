@@ -128,16 +128,45 @@
 		</managed-property>
 	</managed-bean>
 
-  <!-- *************************************** -->
-  <!-- ************ NAVIGATION *************** -->
-  <!-- *************************************** -->
-  
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>logout</from-outcome>
-      <to-view-id>/home.jsf</to-view-id>
-      <redirect />
-    </navigation-case>
-  </navigation-rule>
+	<!-- *************************************** -->
+	<!-- ************ NAVIGATION *************** -->
+	<!-- *************************************** -->
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>logout</from-outcome>
+			<to-view-id>/home.jsf</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== Application Menu Navigation Rules ================= -->	
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>sales</from-outcome>
+			<to-view-id>/facelet/menu/sales.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>purchase</from-outcome>
+			<to-view-id>/facelet/menu/purchase.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>warehouse</from-outcome>
+			<to-view-id>/facelet/menu/warehouse.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>treasury</from-outcome>
+			<to-view-id>/facelet/menu/treasury.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>accounting</from-outcome>
+			<to-view-id>/facelet/menu/accounting.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>config</from-outcome>
+			<to-view-id>/facelet/menu/config.xhtml</to-view-id> 
+		</navigation-case>
+	</navigation-rule>
 
 </faces-config>
