@@ -107,12 +107,15 @@
 	<!--  **** ADDRESS **** -->
 	<managed-bean>
 		<managed-bean-name>customerAddress</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.customer.controller.CustomerAddressController 
-		</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.registry.RegistryAddress</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>customerAddress</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -123,6 +126,7 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+	
 	<managed-bean>
 		<managed-bean-name>customerAddressListener</managed-bean-name>
 		<managed-bean-class> com.code.aon.ui.form.listener.MasterControllerListener</managed-bean-class>
@@ -145,13 +149,16 @@
 	<!--  **** MEDIA **** -->
 	<managed-bean>
 		<managed-bean-name>customerMedia</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.customer.controller.CustomerMediaController 
-		</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class> 
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.registry.RegistryMedia</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>customerMedia</value>
+		</managed-property>		
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -161,6 +168,7 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+	
 	<managed-bean>
 		<managed-bean-name>customerMediaListener</managed-bean-name>
 		<managed-bean-class> com.code.aon.ui.form.listener.MasterControllerListener</managed-bean-class>
