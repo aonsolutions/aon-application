@@ -20,22 +20,39 @@
 				<aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting"
 					columnClasses="aon-portlets-column,aon-portlets-column">
 	
-					<aon:panel>
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:div>
-								<aon:commandLink disabled="true" 
-									value="Pedidos" />
+					<aon:panelGroup>
+						<aon:panel>
+							<f:facet name="header">
+								<aon:outputText value="Compras" />
+							</f:facet>											
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div>
+									<aon:commandLink disabled="true" 
+										value="Pedidos" />
+								</aon:div>
+								<aon:div>
+									<aon:commandLink disabled="true" 
+										value="Albaranes" />
+								</aon:div>
+								<aon:div>
+									<aon:commandLink disabled="true" 
+										value="Facturas" />
+								</aon:div>
 							</aon:div>
-							<aon:div>
-								<aon:commandLink disabled="true" 
-									value="Albaranes" />
+						</aon:panel>
+	
+						<aon:panel>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.menu_utilities}"/>
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div>
+									<aon:commandLink disabled="true" 
+										value="Propuesta de Pedidos" />
+								</aon:div>
 							</aon:div>
-							<aon:div>
-								<aon:commandLink disabled="true" 
-									value="Facturas" />
-							</aon:div>
-						</aon:div>
-					</aon:panel>
+						</aon:panel>
+					</aon:panelGroup>
 	
 					<aon:panel>
 						<f:facet name="header">
@@ -69,18 +86,6 @@
 							<aon:div>
 								<aon:commandLink disabled="true" 
 									value="ABC" />
-							</aon:div>
-						</aon:div>
-					</aon:panel>
-
-					<aon:panel>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.menu_utilities}"/>
-						</f:facet>
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:div>
-								<aon:commandLink disabled="true" 
-									value="Propuesta de Pedidos" />
 							</aon:div>
 						</aon:div>
 					</aon:panel>

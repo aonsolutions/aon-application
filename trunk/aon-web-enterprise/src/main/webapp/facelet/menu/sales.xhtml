@@ -19,27 +19,69 @@
 		
 				<aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting"
 					columnClasses="aon-portlets-column,aon-portlets-column">
-	
-					<aon:panel>
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:div>
-								<aon:commandLink id="offer_form" 
-									action="offer_form" actionListener="#{offer.onReset}"
-									value="#{commercialBundle.commercial_offer_module}" />
+
+					<aon:panelGroup>
+						<aon:panel>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.menu_sales}"/>
+							</f:facet>						
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div>
+									<aon:commandLink id="offer_form" 
+										action="offer_form" actionListener="#{offer.onReset}"
+										value="#{commercialBundle.commercial_offer_module}" />
+								</aon:div>
+								<aon:div>
+									<aon:commandLink id="sales" 
+										action="sales_form" actionListener="#{sales.onReset}"
+										value="#{salesBundle.sales_module}" />
+								</aon:div>
+								<aon:div>
+									<aon:commandLink id="delivery" 
+										action="delivery_form" actionListener="#{delivery.onReset}"
+										value="#{warehouseBundle.warehouse_delivery_module}" />
+								</aon:div>
 							</aon:div>
-							<aon:div>
-								<aon:commandLink id="sales" 
-									action="sales_form" actionListener="#{sales.onReset}"
-									value="#{salesBundle.sales_module}" />
+						</aon:panel>
+		
+						<aon:panel>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.menu_invoices}"/>
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div>
+									<aon:commandLink id="aon_invoice_management" 
+										action="saleInvoice_search" actionListener="#{saleInvoice.onEditSearch}"
+										value="#{financeBundle.finance_sale_invoice_management_module}" />
+								</aon:div>
+								<aon:div>
+									<aon:commandLink disabled="true" 
+										value="Impresión de Facturas" />
+								</aon:div>
+								<aon:div>
+									<aon:commandLink disabled="true" 
+										value="Proceso Facturación" />
+								</aon:div>
 							</aon:div>
-							<aon:div>
-								<aon:commandLink id="delivery" 
-									action="delivery_form" actionListener="#{delivery.onReset}"
-									value="#{warehouseBundle.warehouse_delivery_module}" />
+						</aon:panel>
+						
+						<aon:panel>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.menu_utilities}"/>
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div>
+									<aon:commandLink disabled="true" 
+										value="Borrado Masivo" />
+								</aon:div>
+								<aon:div>
+									<aon:commandLink disabled="true" 
+										value="Contabilización Masiva" />
+								</aon:div>
 							</aon:div>
-						</aon:div>
-					</aon:panel>
-	
+						</aon:panel>
+					</aon:panelGroup>
+
 					<aon:panel>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.menu_reports}"/>
@@ -72,43 +114,6 @@
 							<aon:div>
 								<aon:commandLink disabled="true" 
 									value="ABC" />
-							</aon:div>
-						</aon:div>
-					</aon:panel>
-
-					<aon:panel>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.menu_invoices}"/>
-						</f:facet>
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:div>
-								<aon:commandLink id="aon_invoice_management" 
-									action="saleInvoice_search" actionListener="#{saleInvoice.onEditSearch}"
-									value="#{financeBundle.finance_sale_invoice_management_module}" />
-							</aon:div>
-							<aon:div>
-								<aon:commandLink disabled="true" 
-									value="Impresión de Facturas" />
-							</aon:div>
-							<aon:div>
-								<aon:commandLink disabled="true" 
-									value="Proceso Facturación" />
-							</aon:div>
-						</aon:div>
-					</aon:panel>
-					
-					<aon:panel>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.menu_utilities}"/>
-						</f:facet>
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:div>
-								<aon:commandLink disabled="true" 
-									value="Borrado Masivo" />
-							</aon:div>
-							<aon:div>
-								<aon:commandLink disabled="true" 
-									value="Contabilización Masiva" />
 							</aon:div>
 						</aon:div>
 					</aon:panel>
