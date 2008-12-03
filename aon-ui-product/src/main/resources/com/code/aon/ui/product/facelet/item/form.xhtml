@@ -96,6 +96,31 @@
 						<aon:selectBooleanCheckbox id="Item_product_inventoriable" value="#{item.to.product.inventoriable}" />
 						<aon:outputLabel value="#{productBundle.product_inventoriable}" />
 					</aon:div>
+<!--	************************* REPATRIAR **************************** -->
+					<aon:outputLabel for="Item_stockMin" value="Stock Minimo" />
+					<aon:inputText id="Item_stockMin" disabled= "true" size="10">
+					</aon:inputText>
+
+					<aon:outputLabel for="Item_stockMax" value="Stock Maximo" />
+					<aon:inputText id="Item_stockMax" disabled= "true" size="10">
+					</aon:inputText>
+
+					<aon:outputLabel for="Item_codigoBArras" value="Codigo de Barras" />
+					<aon:inputText id="Item_codigoBArras" disabled= "true" size="10">
+					</aon:inputText>
+					
+					<aon:outputLabel for="Item_alterproduct" value="Producto alternativo" />
+					<aon:div>
+						<aon:inputText id="Item_alterproduct" disabled= "true" size="10" />
+						<aon:lookupButton
+							windowTitle="#{accountBundle.account_selection}" actionType="search"
+							disabled="true" property="#{item.to.product.salesAccount}" 
+							lookup="#{accountLookup}" minHeight="460" minWidth="650">
+						</aon:lookupButton>
+						<aon:inputText disabled="true" size="60" />
+					</aon:div>
+
+<!--	************************* FIN REPATRIAR **************************** -->
 
 					<aon:outputLabel for="Item_product_sales_account" value="#{productBundle.product_sales_account}" />
 					<aon:div>

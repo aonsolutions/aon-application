@@ -44,7 +44,6 @@
 	<field name="address" class="com.code.aon.registry.IAddress"/>
 	<field name="payMethod" class="com.code.aon.config.PayMethod"/>
 	<field name="seller" class="com.code.aon.sales.Seller"/>
-	<field name="orderedDetailList" class="java.util.List"/>
 	<field name="lines" class="java.util.Set"/>
 
 	<variable name="currentOffer" class="com.code.aon.commercial.Offer" resetType="Group" resetGroup="offerGroup" calculation="Nothing">
