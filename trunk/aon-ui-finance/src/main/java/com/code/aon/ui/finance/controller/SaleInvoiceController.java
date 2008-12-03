@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -31,9 +32,11 @@ import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Series;
 import com.code.aon.config.dao.IConfigAlias;
@@ -47,6 +50,7 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.ConsoleInvoicingFeedBack;
@@ -70,6 +74,11 @@ import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.warehouse.controller.DeliveryController;
+import com.code.aon.warehouse.Delivery;
+import com.code.aon.warehouse.DeliveryDetail;
+import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.code.aon.warehouse.enumeration.DeliveryStatus;
 
 public class SaleInvoiceController extends BasicController {
 	
@@ -626,6 +635,100 @@ public class SaleInvoiceController extends BasicController {
 				" No se puede resolver la dirección del servidor de correo saliente (pop3.esferalia.com)."
 				);
 	}
+
+	@SuppressWarnings({"unused","unchecked"})
+	public void onImportDelivery(ActionEvent event) throws ManagerBeanException{
+		this.onReset(null);
+		DeliveryController deliveryController = (DeliveryController)AonUtil.getController("delivery");
+		Delivery delivery = (Delivery)deliveryController.getTo();
+		((Invoice)this.getTo()).setIssueDate(delivery.getIssueTime());
+		((Invoice)this.getTo()).setSeries(delivery.getSeries());
+		((Invoice)this.getTo()).setNumber(0);
+		((Invoice)this.getTo()).setRegistry(delivery.getCustomer().getRegistry());
+		((Invoice)this.getTo()).setRegistryName(delivery.getCustomer().getRegistry().getName() + " " + delivery.getCustomer().getRegistry().getSurname());
+		((Invoice)this.getTo()).setRegistryDocument(delivery.getCustomer().getRegistry().getDocument());
+		((Invoice)this.getTo()).setSecurityLevel(delivery.getSecurityLevel());
+		((Invoice)this.getTo()).setStatus(InvoiceStatus.PENDING);
+		((Invoice)this.getTo()).setType(InvoiceType.SALES);
+		((Invoice)this.getTo()).setRegistryAddress(delivery.getRaddress());
+		this.accept(null);
+		Iterator iter = ((List)deliveryController.getModel().getWrappedData()).iterator();
+		while(iter.hasNext()){
+			Delivery del = (Delivery)iter.next();
+			if(delivery.getId().equals(del.getId())){
+				deliveryController.addToCheckList(del);
+				break;
+			}
+		}
+		this.onInvoiceDelivery(null);
+	}
+	
+	@SuppressWarnings({"unused","unchecked"})
+	public void onInvoiceDelivery(ActionEvent event) throws ManagerBeanException{
+		DeliveryController deliveryController = (DeliveryController)AonUtil.getController("delivery");
+		Iterator iter = ((List)deliveryController.getModel().getWrappedData()).iterator();
+		while(iter.hasNext()){
+			Delivery delivery = (Delivery)iter.next();
+			if(deliveryController.isChecked(delivery)){
+				IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
+				insertInvoiceDetails((Invoice)this.getTo(), delivery);
+				delivery.setStatus(DeliveryStatus.CLOSED);
+				deliveryBean.update(delivery);
+			}
+		}
+		generateFinances(null);
+		deliveryController.clearCheckList();
+		SaleInvoiceController saleInvoiceController = (SaleInvoiceController) AonUtil.getController("saleInvoice");
+		saleInvoiceController.clearCriteria();
+		saleInvoiceController.getCriteria().addEqualExpression(saleInvoiceController.getFieldName(IFinanceAlias.INVOICE_ID), ((Invoice)saleInvoiceController.getTo()).getId());
+		saleInvoiceController.onSearch(null);
+	}
+	
+	private void insertInvoiceDetails(Invoice invoice, Delivery delivery) {
+		try {
+			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
+			Iterator iter = deliveryDetailBean.getList(criteria).iterator();
+			while(iter.hasNext()){
+				DeliveryDetail deliveryDetail = (DeliveryDetail)iter.next();
+				InvoiceDetail invoiceDetail = new InvoiceDetail();
+				invoiceDetail.setDeliveryDetail(deliveryDetail.getId());
+				invoiceDetail.setDescription(deliveryDetail.getDescription());
+				invoiceDetail.setDiscountExpression(deliveryDetail.getDiscountExpression());
+				invoiceDetail.setInvoice(invoice);
+				invoiceDetail.setItem(deliveryDetail.getItem());
+				invoiceDetail.setPrice(deliveryDetail.getPrice());
+				invoiceDetail.setQuantity(deliveryDetail.getQuantity());
+				invoiceDetail.setSource(InvoiceSource.DELIVERY);
+				invoiceDetail.setTaxableBase(obtainTaxableBase(invoiceDetail));
+				invoiceDetail.setWorkPlace(obtainWorkPlace());
+				invoiceDetailBean.insert(invoiceDetail);
+			}
+		} catch (ManagerBeanException e) {
+		}
+	}
+
+	private double obtainTaxableBase(InvoiceDetail invoiceDetail) {
+		return getPriceStrategy().getBasePrice(invoiceDetail);
+	}
+
+	private WorkPlace obtainWorkPlace() {
+		try {
+			IManagerBean wpBean = BeanManager.getManagerBean(WorkPlace.class);
+			List<ITransferObject> wpLst = wpBean.getList(null);
+			if (wpLst.size() > 0) {
+				WorkPlace wp = (WorkPlace)wpLst.get(0);
+				return wp;
+			}
+		}
+		catch (ManagerBeanException mbe) {
+			mbe.printStackTrace();
+		}
+		return null;
+	}
+
 	// ***************************************
 	
 }
