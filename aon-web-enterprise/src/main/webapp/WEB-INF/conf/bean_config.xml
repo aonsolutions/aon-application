@@ -70,4 +70,11 @@
 		</vetoListeners>
 	</bean>
 
+	<bean description="">
+		<pojo>com.code.aon.customer.Customer</pojo>
+		<listeners>
+	        <listener>com.code.aon.commercial.event.TargetFromCustomerBeanListener</listener>
+		</listeners>
+	</bean>
+
 </bean-config>

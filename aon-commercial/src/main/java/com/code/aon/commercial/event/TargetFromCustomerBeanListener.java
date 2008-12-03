@@ -1,6 +1,7 @@
 package com.code.aon.commercial.event;
 
 import com.code.aon.commercial.Target;
+import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -27,6 +28,7 @@ public class TargetFromCustomerBeanListener extends ManagerBeanListenerAdapter {
 		IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
 		Target target = new Target();
 		target.setRegistry(customer.getRegistry());
+		target.setAdvertising(Advertising.ALLOWED);
 		targetBean.insert(target);
 	}
 }
