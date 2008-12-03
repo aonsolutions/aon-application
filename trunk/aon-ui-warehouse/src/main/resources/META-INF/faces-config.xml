@@ -200,6 +200,10 @@
 			<value>delivery</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Delivery_issueTime,Delivery_series,Delivery_number</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>

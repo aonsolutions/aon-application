@@ -14,6 +14,8 @@
 				<ui:param name="toolbarTitle"
 					value="#{warehouseBundle.warehouse_delivery_module}" />
 				<ui:param name="controller" value="#{delivery}" />
+				<ui:param name="skipSaveButton" value="#{!delivery.pending}" />
+				<ui:param name="skipRemoveButton" value="#{!delivery.pending}" />
 				<ui:define name="beforeSpinToolbarContent">
 					<h:commandLink id="delivery" value="#{bundle.aon_report}"
 						target="_new" rendered="#{!delivery.new}"
