@@ -1062,7 +1062,7 @@
 		</managed-property>				
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.sales.CustomerFee</value>
+			<value>com.code.aon.finance.CustomerFee</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
