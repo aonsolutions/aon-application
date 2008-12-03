@@ -65,6 +65,7 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.sales.Sales;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
@@ -611,5 +612,20 @@ public class SaleInvoiceController extends BasicController {
 		}
 		return cvm;
 	}
+	// ***************************************	
+	public void sendFarsaMail(ActionEvent event ) {
+		Invoice invoice = (Invoice)getTo();
+		String email = "cliente@esferalia.com";
+		try {
+			email = invoice.getRegistry().getEmail().getValue(); 
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+		}	
+		AonUtil.addErrorMessage("No se pudo enviar el correo electrónico a " +
+				email + "." +
+				" No se puede resolver la dirección del servidor de correo saliente (pop3.esferalia.com)."
+				);
+	}
+	// ***************************************
 	
 }
