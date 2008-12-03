@@ -114,6 +114,10 @@
 			<value>com.code.aon.finance.RegistryBank</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>customerRbank</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
@@ -649,13 +653,17 @@
 	<managed-bean>
 		<managed-bean-name>creditorAddress</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.controller.CreditorAddressController
+			com.code.aon.ui.form.BasicController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.registry.RegistryAddress</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>creditorAddress</value>
+		</managed-property>				
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -691,13 +699,17 @@
 	<managed-bean>
 		<managed-bean-name>creditorMedia</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.controller.CreditorMediaController
+			com.code.aon.ui.form.BasicController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.registry.RegistryMedia</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>creditorMedia</value>
+		</managed-property>						
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -739,6 +751,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.RegistryBank</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>creditorRbank</value>
+		</managed-property>								
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
