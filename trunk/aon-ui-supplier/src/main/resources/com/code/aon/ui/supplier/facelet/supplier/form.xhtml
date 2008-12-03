@@ -60,16 +60,21 @@
 							</ui:include>
 						</aon:panelTab>
  
-						<aon:panelTab label="#{financeBundle.finance_data_module}">
-							<ui:include src="/com/code/aon/ui/finance/facelet/rbank/tab_grid.xhtml">
-								<ui:param name="controllerAlias" value="#{supplierRbank}" />							</ui:include>
-						</aon:panelTab>
+ 						<c:if test="#{supplier.showFinanceRegistryBank}">
+							<aon:panelTab label="#{financeBundle.finance_data_module}">
+								<ui:include src="/com/code/aon/ui/finance/facelet/rbank/tab_grid.xhtml">
+									<ui:param name="controllerAlias" value="#{supplierRbank}" />							</ui:include>
+							</aon:panelTab>
+						</c:if>
 
 					</aon:panelTabSet>
 				</c:if>
 				
 			</aon:div>
 		</aon:form>
+		<c:if test="#{supplier.showFinanceRegistryBank}">
+			<aon:lookupButtonPopup lookup="#{bankLookup}" />
+		</c:if>
 	</ui:define>
 </ui:composition>
 
