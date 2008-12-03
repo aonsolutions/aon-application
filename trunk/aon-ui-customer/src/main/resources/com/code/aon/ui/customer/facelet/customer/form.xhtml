@@ -82,33 +82,33 @@
 				</aon:panelGrid>
 
 				<c:if test="#{!customer.new}">
-					<aon:panelTabSet id="customerTab">
+					<aon:panelTabSet>
 
-						<aon:panelTab id="customer_address"
-							label="#{registryBundle.registry_address_module}">
-							<ui:include
-								src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
+						<aon:panelTab label="#{registryBundle.registry_address_module}">
+							<ui:include src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
 								<ui:param name="controllerAlias" value="#{customerAddress}" />
 							</ui:include>
 						</aon:panelTab>
 
-						<aon:panelTab id="medias" label="#{registryBundle.registry_media_module}">
-							<ui:include
-								src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
+						<aon:panelTab label="#{registryBundle.registry_media_module}">
+							<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
 								<ui:param name="controllerAlias" value="#{customerMedia}" />
 							</ui:include>
 						</aon:panelTab>
 
-						<aon:panelTab id="customer_finance"
-							label="#{financeBundle.finance_data_module}">
-							<ui:include
-								src="/com/code/aon/ui/finance/facelet/rbank/tab_grid.xhtml">
-								<ui:param name="controllerAlias" value="#{customerRbank}" />
-							</ui:include>
-						</aon:panelTab>
+						<c:if test="#{customer.showFinanceRegistryBank}">
+							<aon:panelTab label="#{financeBundle.finance_data_module}">
+								<ui:include	src="/com/code/aon/ui/finance/facelet/rbank/tab_grid.xhtml">
+									<ui:param name="controllerAlias" value="#{customerRbank}" />
+								</ui:include>
+							</aon:panelTab>
+						</c:if>
 					</aon:panelTabSet>
 				</c:if>
 			</aon:div>
 		</aon:form>
+		<c:if test="#{customer.showFinanceRegistryBank}">
+			<aon:lookupButtonPopup lookup="#{bankLookup}" />
+		</c:if>
 	</ui:define>
 </ui:composition>
