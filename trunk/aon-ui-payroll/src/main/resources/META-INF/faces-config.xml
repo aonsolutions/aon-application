@@ -3213,7 +3213,7 @@ ControllerListener</managed-bean-name>
 			<map-entries>
 				<map-entry>
 					<key>cdg</key>
-					<value>cdg</value>
+					<value>cliente.cdg</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>  

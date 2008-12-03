@@ -15,31 +15,61 @@
 
 				<aon:form id="empresaForm">
 
-					<ui:include
-						src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 						<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_empresa}" />
 						<ui:param name="controller" value="#{empresa}" />
 						<!--  
 						<ui:param name="reportKey" value="" />
 						<ui:param name="reportKeyXls" value="" />
 						-->
-					</ui:include>
+						
+						
+						<ui:define name="beforeSpinToolbarContent">
+							<aon:commandButton id="actividadesButton" title="#{appBundle.aon_payroll_principales_button_actividades}"	
+								styleClass="aon-finding-toolbar-item aon-icon-tree"
+								action="actividades_form" rendered="#{!controller.new}" 
+								actionListener="#{actividades.onEditSearch}" disabled="#{true}" >
+							
+							</aon:commandButton>
+							<aon:commandButton id="domiciliosButton" title="#{appBundle.aon_payroll_principales_button_domicilios}"	
+								styleClass="aon-finding-toolbar-item aon-icon-agenda"
+								action="domicilio_form" rendered="#{!controller.new}" 
+								actionListener="#{domicilio.onEditSearch}" disabled="#{true}" >
+							
+							</aon:commandButton>
+							<aon:commandButton id="cuentasButton" title="#{appBundle.aon_payroll_principales_button_cuentas}"	
+								styleClass="aon-finding-toolbar-item aon-icon-category"
+								action="cuenta_form" rendered="#{!controller.new}" 
+								actionListener="#{cuenta.onEditSearch}" disabled="#{true}" >
+							
+							</aon:commandButton>
+							<aon:commandButton id="avisosButton" title="#{appBundle.aon_payroll_principales_button_avisos}"	
+								styleClass="aon-finding-toolbar-item aon-icon-attach-file"
+								action="aviso_form" rendered="#{!controller.new}" 
+								actionListener="#{aviso.onEditSearch}" disabled="#{true}" >
+							
+							</aon:commandButton>
+							
+							
+							
+						</ui:define>
+						
+					</ui:decorate>
 
-					<aon:div id="empresaData"
-						styleClass="aon-scroll-area aon-scroll-area-principales">
+					<aon:div id="empresaData" styleClass="aon-scroll-area aon-scroll-area-principales">
 
 						<aon:div id="datos1" styleClass="aon-scroll-area">
 							<aon:panelGrid columns="4" dir="true" width="100%">
 
 								<aon:outputLabel
-									value="#{appBundle.aon_payroll_cdg}" />
-								<aon:inputText value="#{empresa.to.cdg}"
-									maxlength="4" />
-
-								<aon:outputLabel
-									value="#{appBundle.aon_payroll_principales_empresa_descripcion}" />
-								<aon:inputText
-									value="#{empresa.to.descripcion}" size="60" maxlength="40" />
+									value="#{appBundle.aon_payroll_principales_empresa_cdg_descripcion}" />
+								<aon:div>
+									<aon:inputText value="#{empresa.to.cdg}" 
+										size="4" maxlength="4" readonly="#{true}" disabled="#{true}" />
+									<rich:spacer />
+									<aon:inputText value="#{empresa.to.descripcion}" id="NombreEmpresa" 
+										size="60" maxlength="40" required="#{true}" />
+								</aon:div>
 
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_principales_empresa_alias}" />
@@ -48,30 +78,33 @@
 
 								<aon:outputLabel for="Cliente_cdg"
 									value="#{appBundle.aon_payroll_principales_empresa_cliente}" />
-								<aon:outputText
-									value="#{empresa.to.cliente.descripcion}" size="40" />
-								<!-- aon:div styleClass="aon-lookup">
-									<aon:lookupInputText id="Cliente_cdg"
-										lookup="#{empresarioLookup}" reRender="Cliente_descripcion"
-										value="#{empresa.to.cliente.cdg}" size="5">
-									</aon:lookupInputText>
-									<aon:lookupButton id="Cliente_lookup"
-										windowTitle="#{appBundle.aon_payroll_principales_clientes_empre}"
-										selectReRender="Cliente_cdg,Cliente_descripcion"
-										lookup="#{clienteLookup}" minHeight="440"
-										property="#{empresa.to.cliente}">
-									</aon:lookupButton>
-									<aon:inputText id="Cliente_descripcion"
-										value="#{(empresa.to.cliente.descripcion!=null)?(empresa.to.cliente.descripcion):('')}"
-										size="34" disabled="true" />
-								</aon:div-->
-
+								<aon:div>
+									<!-- aon:outputText
+										value="#{empresa.to.cliente.descripcion}" size="40" /-->
+									<aon:div styleClass="aon-lookup">
+										<aon:lookupInputText id="Cliente_cdg" rendered="#{true}"
+											lookup="#{clienteLookup}" reRender="Cliente_descripcion"
+											value="#{empresa.to.cliente.cdg}" size="5">
+										</aon:lookupInputText>
+										<aon:lookupButton id="Cliente_lookup"
+											windowTitle="#{appBundle.aon_payroll_principales_empresa_cliente}"
+											selectReRender="Cliente_cdg,Cliente_descripcion"
+											lookup="#{clienteLookup}" minHeight="440"
+											property="#{empresa.to.cliente}">
+										</aon:lookupButton>
+										<aon:inputText id="Cliente_descripcion"
+											value="#{(empresa.to.cliente.descripcion!=null)?(empresa.to.cliente.descripcion):('')}"
+											size="45" disabled="true" />
+									</aon:div>
+								</aon:div>
+								
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_principales_empresa_feccon}" />
 								<aon:selectInputDate value="#{empresa.to.feccon}"
 									renderAsPopup="true" enableManualInput="true"
 									popupDateFormat="#{bundle.aon_date_pattern}">
 								</aon:selectInputDate>
+												
 
 							</aon:panelGrid>
 						</aon:div>
@@ -88,7 +121,7 @@
 								<aon:div styleClass="aon-lookup">
 									<aon:lookupInputText id="Documento_cdg"
 										lookup="#{documentoLookup}" reRender="Documento_description"
-										value="#{empresa.to.tipdoc.cdg}" size="5">
+										value="#{empresa.to.tipdoc.cdg}" size="5" required="#{true}">
 									</aon:lookupInputText>
 									<aon:lookupButton id="Documento_lookup"
 										windowTitle="#{appBundle.aon_payroll_principales_empresa_tipdoc}"
@@ -103,23 +136,23 @@
 								
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_principales_empresa_numdoc}" />
-								<aon:inputText
-									value="#{empresa.to.numdoc}" size="10" maxlength="10" />
+								<aon:inputText id="NumeroDocumento"
+									value="#{empresa.to.numdoc}" size="10" maxlength="10" required="#{true}" />
 
-								<aon:outputLabel for="Divi_cdg"
+								<aon:outputLabel for="Divisa_cdg"
 									value="#{appBundle.aon_payroll_principales_divisa}" />
 								<aon:div styleClass="aon-lookup">
-									<aon:lookupInputText id="Divi_cdg"
-										lookup="#{divisaLookup}" reRender="Div_description"
+									<aon:lookupInputText id="Divisa_cdg"
+										lookup="#{divisaLookup}" reRender="Divisa_description"
 										value="#{empresa.to.divisa.cdg}" size="5">
 									</aon:lookupInputText>
 									<aon:lookupButton id="Divi_lookup"
 										windowTitle="#{appBundle.aon_payroll_principales_divisa}"
-										selectReRender="Divi_cdg,Divi_description"
+										selectReRender="Divisa_cdg,Divisa_description"
 										lookup="#{divisaLookup}" minHeight="440"
 										property="#{empresa.to.divisa}">
 									</aon:lookupButton>
-									<aon:inputText id="Divi_description"
+									<aon:inputText id="Divisa_description"
 										value="#{(empresa.to.divisa.description!=null)?(empresa.to.divisa.description):('')}"
 										size="60" disabled="true" />
 								</aon:div>
@@ -245,14 +278,14 @@
 									value="#{appBundle.aon_payroll_principales_empresa_tipempr}" />
 								<aon:div styleClass="aon-lookup">
 									<aon:lookupInputText id="Tipempr_cdg"
-										lookup="#{tipemprLookup}" reRender="Tipempr_description"
+										lookup="#{empresarioLookup}" reRender="Tipempr_description"
 										value="#{empresa.to.tipempr.cdg}" size="5">
 									</aon:lookupInputText>
-									<aon:lookupButton id="Tipempr_lookup"
+									<aon:lookupButton id="Empresario_lookup"
 										windowTitle="#{appBundle.aon_payroll_principales_empresa_tipempr}"
 										selectReRender="Tipempr_cdg,Tipempr_description"
-										lookup="#{tipemprLookup}" minHeight="440"
-										property="#{empresa.to.Tipempr}">
+										lookup="#{empresarioLookup}" minHeight="440"
+										property="#{empresa.to.tipempr}">
 									</aon:lookupButton>
 									<aon:inputText id="Tipempr_description"
 										value="#{(empresa.to.tipempr.description!=null)?(empresa.to.tipempr.description):('')}"
@@ -273,40 +306,35 @@
 								</aon:selectOneRadio>
 								
 								
-								<aon:div>
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_empresa_ini_rel}" />
-									<br />
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_empresa_con_cliente}" />
-									<br />
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_empresa_fin_rel}" />
-									<br />
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_empresa_con_cliente}" />
-								</aon:div>
-								<aon:div>
-									<aon:selectInputDate value="#{empresa.to.fecini}"
-										renderAsPopup="true" enableManualInput="true"
-										popupDateFormat="#{bundle.aon_date_pattern}">
-									</aon:selectInputDate>
-									<br />
-									<aon:selectInputDate value="#{empresa.to.cliente.fecini}" 
-										disabled="true"
-										popupDateFormat="#{bundle.aon_date_pattern}">
-									</aon:selectInputDate>
-									<br />
-									<aon:selectInputDate value="#{empresa.to.fecfin}"
-										renderAsPopup="true" enableManualInput="true" 
-										popupDateFormat="#{bundle.aon_date_pattern}">
-									</aon:selectInputDate>
-									<br />
-									<aon:selectInputDate value="#{empresa.to.cliente.fecfin}" 
-										disabled="true"
-										popupDateFormat="#{bundle.aon_date_pattern}">
-									</aon:selectInputDate>							
-								</aon:div>
+								
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_principales_empresa_ini_rel}" />
+								<aon:selectInputDate value="#{empresa.to.fecini}"
+									renderAsPopup="true" enableManualInput="true"
+									popupDateFormat="#{bundle.aon_date_pattern}">
+								</aon:selectInputDate>
+								
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_principales_empresa_con_cliente}" />
+								<aon:selectInputDate value="#{empresa.to.cliente.fecini}" 
+									disabled="true"
+									popupDateFormat="#{bundle.aon_date_pattern}">
+								</aon:selectInputDate>
+								
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_principales_empresa_fin_rel}" />
+								<aon:selectInputDate value="#{empresa.to.fecfin}"
+									renderAsPopup="true" enableManualInput="true" 
+									popupDateFormat="#{bundle.aon_date_pattern}">
+								</aon:selectInputDate>
+								
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_principales_empresa_con_cliente}" />
+								<aon:selectInputDate value="#{empresa.to.cliente.fecfin}" 
+									disabled="true"
+									popupDateFormat="#{bundle.aon_date_pattern}">
+								</aon:selectInputDate>							
+								
 								
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_principales_empresa_obsnif}" />
@@ -399,6 +427,7 @@
 				<aon:lookupButtonPopup lookup="#{divisaLookup}" />
 				<aon:lookupButtonPopup lookup="#{paisLookup}" />
 				<aon:lookupButtonPopup lookup="#{admonLookup}" />
+				<aon:lookupButtonPopup lookup="#{empresarioLookup}" />
 
 			</ui:define>
 		</ui:composition>
