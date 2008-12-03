@@ -7,73 +7,29 @@
 
 	<aon:form>
 		<aon:menuBar id="mainMenu">
-			<aon:dropDownMenu value="#{appBundle.menu_master}">
-				<aon:menuItem value="#{customerBundle.customer_module}" action="customer_search" actionListener="#{customer.onEditSearch}" />
-				<aon:menuItem value="#{supplierBundle.supplier_module}" action="supplier_search" actionListener="#{supplier.onEditSearch}" />
-				<aon:menuItem value="#{productBundle.product_module}" action="item_search" actionListener="#{item.onEditSearch}" />
-				<aon:menuItem id="target"
-					value="#{commercialBundle.commercial_target_module}" action="target_search" actionListener="#{target.onEditSearch}" />
-				<aon:menuItem id="seller"
-					value="#{salesBundle.sales_seller_module}" action="seller_search" actionListener="#{seller.onEditSearch}" />
-			</aon:dropDownMenu>		 
 
-			<aon:dropDownMenu value="#{appBundle.menu_auxiliar}">
-				<aon:menuItem value="#{productBundle.product_category_module}" action="productCategory" />			
-				<aon:menuItem value="#{financeBundle.finance_creditor_module}" action="creditor_search" actionListener="#{creditor.onEditSearch}" />
-				<aon:menuItem value="#{productBundle.product_brand_module}" action="brand" />
-				<aon:menuItem value="#{productBundle.product_catalogue_module}" action="catalogue_search" actionListener="#{catalogue.onEditSearch}" />
-				<aon:menuItem value="#{productBundle.product_tariff_module}" action="tariff_list" actionListener="#{tariff.onSearch}" />
-				<aon:menuSeparator/>
-				<aon:menuItem id="commercialActivity" 
-					value="#{commercialBundle.commercial_activity_module}" action="commercialActivity" actionListener="#{commercialActivity.onSearch}" />				
-				<aon:menuItem id="commercialSegment"
-					value="#{commercialBundle.commercial_segment_module}" action="commercialSegment" actionListener="#{commercialSegment.onSearch}" />
-				<aon:menuSeparator/>
-				<aon:menuItem id="warehouse" 
-					value="#{warehouseBundle.warehouse_warehouse_module}" action="warehouse" actionListener="#{warehouse.onSearch}" />				
-			</aon:dropDownMenu>
-
-			<aon:dropDownMenu value="#{appBundle.menu_sales}">
-				<aon:menuItem value="#{commercialBundle.commercial_offer_module}" action="offer_form" actionListener="#{offer.onReset}" />
-				<aon:menuItem value="#{salesBundle.sales_module}" action="sales_form" actionListener="#{sales.onReset}" />
-				<aon:menuItem value="#{warehouseBundle.warehouse_delivery_module}" action="delivery_form" actionListener="#{delivery.onReset}" />
-				<aon:menuItem id="aon_invoice_management"
-					value="#{financeBundle.finance_sale_invoice_management_module}" 
-					actionListener="#{saleInvoice.onEditSearch}"
-					action="saleInvoice_search"/>
-			</aon:dropDownMenu>
-
-			<aon:dropDownMenu id="inventory" value="#{warehouseBundle.warehouse_inventory_module}">
-				<aon:menuItem id="inventory_remake"
-					value="#{warehouseBundle.warehouse_inventory_remake_module}" action="inventoryClose" actionListener="#{inventory.onStartClosing}" />
-				<aon:menuItem id="stock"
-					value="#{warehouseBundle.warehouse_stock_module}" action="stock_search" actionListener="#{stock.onEditSearch}" />
-			</aon:dropDownMenu>
-			
-			<aon:dropDownMenu id="finance" value="#{financeBundle.finance_menu_group}">
-				<aon:menuItem id="aon_finance"
-					value="#{financeBundle.finance_finance_module}" action="finance_search">
-					<aon:actionListener method="#{finance.onEditSearch}"/>
-				</aon:menuItem>				
-				<aon:menuItem id="aon_finance_return"
-					value="#{financeBundle.finance_finance_return_module}" action="financeReturn_search">
-					<aon:actionListener method="#{financeReturn.onEditSearch}"/>
-				</aon:menuItem>				
-				<aon:menuItem id="aon_finance_payment"
-					value="#{financeBundle.finance_finance_payment_module}" action="financePayment_search">
-					<aon:actionListener method="#{financePayment.onEditSearch}"/>
-				</aon:menuItem>				
-				<aon:menuItem id="aon_fbatch"
-					value="#{financeBundle.finance_fbatch_module}" action="fbatch_search" >
-					<aon:actionListener method="#{fbatch.onEditSearch}"/>
-				</aon:menuItem>
-				<aon:menuGroup id="aon_finance_utilities"
-					value="#{financeBundle.finance_finance_utilities_module}">
-					<aon:menuItem id="checks"
-						value="#{financeBundle.finance_checking_module}" action="util_checking" />
-				</aon:menuGroup>			
-			</aon:dropDownMenu>			
-
+			<aon:commandLink id="sales"
+				value="#{appBundle.menu_sales}"
+				action="sales" immediate="true"
+				styleClass="aon-top-menu-item" />
+			<aon:commandLink id="purchase"
+				value="Compras"
+				action="purchase" immediate="true"
+				styleClass="aon-top-menu-item" />
+			<aon:commandLink id="warehouse"
+				value="#{warehouseBundle.warehouse_menu_group}"
+				action="warehouse" immediate="true"
+				styleClass="aon-top-menu-item" />
+			<aon:commandLink id="treasury"
+				value="#{financeBundle.finance_menu_group}"
+				action="treasury" immediate="true"
+				styleClass="aon-top-menu-item" />
+			<!-- 
+			<aon:commandLink id="accounting"
+				value="#{accountingBundle.menu_accounting}"
+				action="accounting" immediate="true"
+				styleClass="aon-top-menu-item" />
+			-->
 			<aon:dropDownMenu value="#{accountingBundle.menu_accounting}">
 				<aon:menuGroup value="#{accountingBundle.menu_masters}">
 					<aon:menuItem value="#{accountingBundle.accounting_entry_module}"
@@ -189,15 +145,11 @@
 						value="#{accountingBundle.accounting_regenerate_summary_module}" />
 				</aon:menuGroup>
 			</aon:dropDownMenu>
-
-			<aon:dropDownMenu value="#{appBundle.menu_configuration}">
-				<aon:menuItem value="#{companyBundle.company_data_module}" action="company" actionListener="#{company.onLoad}" />
-				<aon:menuItem value="#{companyBundle.company_workplace_module}" action="workplace" />
-				<aon:menuSeparator/>
-				<aon:menuItem value="#{configBundle.config_tax_module}" action="tax" />
-				<aon:menuItem value="#{configBundle.config_series_module}" action="series" />
-				<aon:menuItem value="#{geozoneBundle.geozone_module}" action="geotreeParent_list" actionListener="#{geotreeParent.onSearch}" />
-			</aon:dropDownMenu>
+			
+			<aon:commandLink id="config"
+				value="#{appBundle.menu_configuration}"
+				action="config" immediate="true"
+				styleClass="aon-top-menu-item" />
  		</aon:menuBar>
 	</aon:form>
  </ui:composition>
