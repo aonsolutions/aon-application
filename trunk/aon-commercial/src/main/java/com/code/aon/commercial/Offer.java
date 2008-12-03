@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -370,6 +371,7 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	 * @return the lines
 	 */
 	@OneToMany(mappedBy = "offer", cascade={CascadeType.REMOVE})
+	@OrderBy("id")
 	public Set<OfferDetail> getLines() {
 		return this.lines;
 	}
@@ -417,19 +419,19 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	 * 
 	 * @return the ordered detail list
 	 */
-	@Transient
-	@SuppressWarnings("unchecked")
-	public List getOrderedDetailList() {
-		try {
-			IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), getId());
-			criteria.addOrder(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ITEM_PRODUCT_TYPE));
-			criteria.addOrder(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ID));
-			return offerDetailBean.getList(criteria);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining offerDetail list", e);
-		}
-		return null;
-	}
+//	@Transient
+//	@SuppressWarnings("unchecked")
+//	public List getOrderedDetailList() {
+//		try {
+//			IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
+//			Criteria criteria = new Criteria();
+//			criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), getId());
+//			criteria.addOrder(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ITEM_PRODUCT_TYPE));
+//			criteria.addOrder(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ID));
+//			return offerDetailBean.getList(criteria);
+//		} catch (ManagerBeanException e) {
+//			LOGGER.log(Level.SEVERE, "Error obtaining offerDetail list", e);
+//		}
+//		return null;
+//	}
 }
