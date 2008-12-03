@@ -214,6 +214,20 @@ public class OfferController extends BasicController {
 		return scope;
 	}
 
+	
+	public void sendFarsaMail(ActionEvent event ) {
+		Offer offer = (Offer)getTo();
+		String email = "cliente@esferalia.com";
+		try {
+			email = offer.getTarget().getRegistry().getEmail().getValue(); 
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+		}	
+		AonUtil.addErrorMessage("No se pudo enviar el correo electrónico a " +
+				email + "." +
+				" No se puede resolver la dirección del servidor de correo saliente (pop3.esferalia.com)."
+				);
+	}
 	/***************************************************************************************
 	 *	BOTON DE TRASPASO A PEDIDO CREADO PARA DEMO DEL 03/12/2008. BORRAR POSTERIORMENTE 
 	 ***************************************************************************************/
