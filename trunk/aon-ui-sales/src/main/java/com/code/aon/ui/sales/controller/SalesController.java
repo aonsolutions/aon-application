@@ -27,6 +27,7 @@ import com.code.aon.report.OutputFormat;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.Seller;
 import com.code.aon.sales.enumeration.SalesStatus;
+import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
@@ -39,6 +40,8 @@ public class SalesController extends BasicController {
 	private List<SelectItem> addresses;
 
 	private IPriceStrategy priceStrategy;
+	
+	private CustomerValidationManager cvm;
 	
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
@@ -67,13 +70,17 @@ public class SalesController extends BasicController {
 	public void customerData(LookupChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Customer customer = (Customer)event.getNewValue();
-			((Sales)this.getTo()).setCustomer(customer);
-			loadAddresses(customer.getId());
+			if (!isBlocked(customer)) {
+				((Sales)this.getTo()).setCustomer(customer);
+				loadAddresses(customer.getId());
+			} else {
+				setAddresses(null);	
+			}
 		} else {
 			setAddresses(null);
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void loadAddresses(Integer id) throws ManagerBeanException {
 		List<SelectItem> addresses = new LinkedList<SelectItem>();
@@ -124,11 +131,22 @@ public class SalesController extends BasicController {
 		return getPriceStrategy().getTotalPrice((ICalculableContainer)getTo(), ((Sales)getTo()).getCustomer());
 	}
 
-	@SuppressWarnings("unused")
     public void onReport(ActionEvent event) {
         ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
         manager.setReportKey("sales");
         manager.setOutputFormat(OutputFormat.PDF);
     }
+
+	private boolean isBlocked(Customer customer) {
+		return getCustomerValidationManager().isBlocked(customer);
+	}
+
+	private CustomerValidationManager getCustomerValidationManager() {
+		if (cvm == null) {
+			cvm = new CustomerValidationManager(); 
+		}
+		return cvm;
+	}
+	
 
 }
