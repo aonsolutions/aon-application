@@ -17,6 +17,7 @@ public interface IPayrollConstants {
 	String DIVISAMAESTRO_CONTROLLER_NAME = "divisaMaestro";
 	String CLIENTE_CONTROLLER_NAME = "cliente";
 	String DOMICILIO_CONTROLLER_NAME = "domicilio";
+	String TIPDOMICILIO_CONTROLLER_NAME = "emprdom";
 	String CUENTA_CONTROLLER_NAME = "cuenta";
 	String AVISOS_CONTROLLER_NAME = "aviso";
 }
