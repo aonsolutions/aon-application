@@ -107,6 +107,7 @@
 						
 					</rich:tab>
 						<rich:tab  label="#{appBundle.aon_payroll_principales_clientes_dom}">
+										<aon:actionListener method="#{tipdomicilio.onReset}" />
 						
 						  <aon:div id="domDiv" >	
 							
@@ -126,7 +127,7 @@
 						
 					</rich:tab>
 						<rich:tab  label="#{appBundle.aon_payroll_principales_cuentasbancarias}">
-						
+										<aon:actionListener method="#{tipcuenta.onReset}" />
 							  <aon:div id="cuentaDiv" >	
 							
 						    <ui:include src="cuenta/grid.xhtml" rendered="#{!cliente.new}" />
@@ -147,8 +148,11 @@
 	<aon:lookupButtonPopup lookup="#{documentoLookup}" />  
     <aon:lookupButtonPopup lookup="#{tipoviaLookup}" /> 
 	<aon:lookupButtonPopup lookup="#{provinciaLookup}" />
-     <aon:lookupButtonPopup lookup="#{empresaLookup}" />	
+    <aon:lookupButtonPopup lookup="#{empresaLookup}" />	
     <aon:lookupButtonPopup lookup="#{actividadLookup}" />
+    <aon:lookupButtonPopup lookup="#{domicilioLookup}" />
+    <aon:lookupButtonPopup lookup="#{cuentaLookup}" />
+    <aon:lookupButtonPopup lookup="#{clienteLookup}" />
 	
 	</ui:define>
 </ui:composition>

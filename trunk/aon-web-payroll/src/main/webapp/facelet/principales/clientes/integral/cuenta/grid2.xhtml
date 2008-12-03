@@ -26,19 +26,11 @@
 						<aon:div>
 							<aon:commandButton alt="[#{bundle.aon_reset}]"
 								styleClass="aon-editDataTable-button aon-icon-rowSelector "
-								actionListener="#{tipcuenta.onSelect}" action="tipcuenta_form"
+								actionListener="#{tipcuenta.onSelect}" 
+								reRender="datos2"
 								accesskey="#{bundle.aon_key_new_line}" />
 						</aon:div>
-
-						<f:facet name="footer">
-							<aon:div>
-								<aon:commandButton alt="[#{bundle.aon_reset}]"
-									styleClass="aon-editDataTable-button aon-icon-reset"
-									actionListener="#{tipcuenta.onReset}" action="tipcuenta_form"
-									rendered="#{!tipcuenta.new}"
-									accesskey="#{bundle.aon_key_new_line}" />
-							</aon:div>
-						</f:facet>
+						
 					</aon:column>
 
 					<aon:column>
@@ -77,24 +69,56 @@
 						<aon:outputText value="#{to.cuenta.sucursal.id.cdg}" />
 
 					</aon:column>
+					
+							<aon:column>
+						<f:facet name="header">
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_tipocuenta}" />
+						</f:facet>
+						<aon:outputText value="#{to.tipcta}" rendered="#{to!=tipcuenta.to}" disabled="true" size="50"
+							maxlength="20" />
+
+						<aon:selectOneMenu id="Tipoctas" value="#{tipcuenta.to.tipcta}" 	rendered="#{to==tipcuenta.to}">
+							<f:selectItem value="#{null}" itemLabel=" -  " />
+							<f:selectItems value="#{tipcuenta.listaTipos}" />
+						</aon:selectOneMenu>
+						
+							<aon:commandButton title="[#{bundle.aon_accept}]"
+							rendered="#{to==tipcuenta.to}"
+							styleClass="aon-editDataTable-button aon-icon-accept"
+							actionListener="#{tipcuenta.onAccept}"
+							accesskey="#{bundle.aon_key_save_line}" />
+						<aon:commandButton title="[#{bundle.aon_cancel}]"
+							styleClass="aon-editDataTable-button aon-icon-cancel"
+							rendered="#{to==tipcuenta.to}"
+							actionListener="#{tipcuenta.onCancel}" immediate="true" reRender="datos"
+							accesskey="#{bundle.aon_key_cancel_line}" />
+						<aon:confirmButton id="remove-Porcentaje"
+							title="[#{bundle.aon_remove}]"
+							styleClass="aon-editDataTable-button aon-icon-delete"
+							rendered="#{to==tipcuenta.to}"
+							confirmTitle="#{bundle.aon_confirm_title}"
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{tipcuenta.onRemove}" immediate="true"
+							accesskey="#{bundle.aon_key_remove_line}" />
+					</aon:column>
+						
+					
+					
 				</aon:editDataTable>
 			</aon:div>
-			<aon:div>
+			<aon:div id="datos2">
 
 			<aon:panelGrid styleClass="tablasmini" columns="2" dir="true"
 					width="100%" style="margin-bottom=2px;">
+					                  
 					<aon:outputLabel
-						value="#{appBundle.aon_payroll_principales_tipocuenta}" />
-					<aon:outputText value="#{tipcuenta.to.tipcta}" disabled="true"
-						size="50" maxlength="20" />
-                  
-					<aon:outputLabel
-						value="#{appBundle.aon_payroll_principales_empresa_descripcion}" />
+						value="#{appBundle.aon_payroll_principales_tipocuenta_empresa}" />
 					<aon:outputText value="#{tipcuenta.to.empresa.descripcion}"
 						disabled="true" size="50" maxlength="20" />
 
 					<aon:outputLabel
-						value="#{appBundle.aon_payroll_principales_actividades_nombre}" />
+						value="#{appBundle.aon_payroll_principales_tipocuenta_actividad}" />
 					<aon:outputText value="#{tipcuenta.to.actividad.descripcion}"
 						disabled="true" size="50" maxlength="20" />
             
