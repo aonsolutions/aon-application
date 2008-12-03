@@ -25,11 +25,20 @@
 	<aon:inputText id="Supplier_registry_alias" size="40"
 		valueChangeListener="#{controller.addExpression}" />
 		
+	<aon:outputLabel for="Supplier_scope_id"
+		value="#{bundle.aon_scope}" />
+	<aon:selectOneMenu id="Supplier_scope_id"
+		value="#{configCollections.scope}"
+		valueChangeListener="#{controller.addDirectIdEqualExpression}">
+		<f:selectItem itemLabel="-" value="#{null}"/>		
+		<f:selectItems value="#{configCollections.scopes}" />
+	</aon:selectOneMenu>
+		
 	<aon:outputLabel for="Supplier_status"
 		value="#{bundle.aon_status}" />
 	<aon:selectOneMenu id="Supplier_status"
+		converter="aon.EnumConverter"
 		valueChangeListener="#{controller.addExpression}">
-		<aon:enumConverter enum="com.code.aon.supplier.enumeration.SupplierStatus" />
 		<f:selectItem itemLabel="-" value="#{null}"/>
 		<f:selectItems value="#{supplierCollections.supplierStatuses}" />
 	</aon:selectOneMenu>
