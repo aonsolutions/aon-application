@@ -125,7 +125,7 @@ public class EmpresaControllerListener extends ControllerAdapter implements IPay
 		/*
 		 * Crea dos tipos de domicilio (social y fiscal) para el cliente de la empresa seleccionada
 		 */
-			TipDomicilioController tipdomicilioController = (TipDomicilioController)AonUtil.getController(IPayrollConstants.TIPDOMICILIO_CONTROLLER_NAME);
+			/*TipDomicilioController tipdomicilioController = (TipDomicilioController)AonUtil.getController(IPayrollConstants.TIPDOMICILIO_CONTROLLER_NAME);
 			tipdomicilioController.onReset(null);
 			
 			Emprdom tipdomicilio = (Emprdom)tipdomicilioController.getTo();
@@ -139,7 +139,7 @@ public class EmpresaControllerListener extends ControllerAdapter implements IPay
 			tipdomicilioController.onAccept(null);
 			
 			tipdomicilio.setTipdom(Tipdom.FISCAL);
-			tipdomicilioController.onAccept(null);
+			tipdomicilioController.onAccept(null);*/
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -147,7 +147,7 @@ public class EmpresaControllerListener extends ControllerAdapter implements IPay
 	}
 	
 	/**
-	 * Añade un domicilio para el cliente de la empresa seleccionada y
+	 * Actualiza un domicilio para el cliente de la empresa seleccionada y
 	 */
 	private void updateDomicilio(){
 	
@@ -186,7 +186,40 @@ public class EmpresaControllerListener extends ControllerAdapter implements IPay
     end
 	 */
 		
+		Cliente cliente = ((Empresa)getController().getTo()).getCliente();
 		
+		try{
+			/*
+			 * Añade un domicilio para el cliente de la empresa seleccionada
+			 */
+				DomicilioController domicilioController = (DomicilioController)AonUtil.getController(IPayrollConstants.DOMICILIO_CONTROLLER_NAME);
+				domicilioController.onReset(null);
+				
+				Domicilio domicilio = (Domicilio)domicilioController.getTo();
+				
+		    	domicilio.setCliente(cliente);
+		    	//domicilio.setCdg(cdg); --> generado automaticamente
+		    	domicilio.setTipovia(cliente.getTipovia());
+		    	domicilio.setNomvia(cliente.getNomvia());
+		    	domicilio.setNumero(cliente.getNumero());
+		    	domicilio.setOtrdir(cliente.getOtrdir());
+		        domicilio.setCodpos(cliente.getCodpos());
+		        domicilio.setLocalidad(cliente.getLocalidad());
+		        domicilio.setProvincia(cliente.getProvincia());
+		        domicilio.setPersona(cliente.getPersona());
+		        domicilio.setTelefono(cliente.getTelefono());
+		        domicilio.setTelefono2(cliente.getTelefono2());
+		        domicilio.setTelefono3(cliente.getTelefono3());
+		        domicilio.setFax(cliente.getFax());
+				domicilio.setEmail(cliente.getEmail()); 
+				domicilio.setLinea1("");
+				domicilio.setLinea2("");		
+				domicilio.setAclaracion("");
+				//y ..... a jugarsela
+				domicilioController.onAccept(null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}	
 		
 		
 		
