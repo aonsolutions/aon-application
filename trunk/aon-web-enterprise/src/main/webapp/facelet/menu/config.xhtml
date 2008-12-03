@@ -62,7 +62,7 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="item" 
 										action="item_search" actionListener="#{item.onEditSearch}"
-										value="Articulos" />
+										value="#{productBundle.product_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="productCategory" 
@@ -77,7 +77,7 @@
 								
 								<aon:panel>
 									<f:facet name="header">
-										<aon:outputText value="Precios"/>
+										<aon:outputText value="#{productBundle.product_price_module}"/>
 									</f:facet>					
 									<aon:div styleClass="aon-direct-access-list">
 										<aon:div styleClass="aon-direct-access-list-element">
@@ -101,7 +101,7 @@
 					<aon:panelGroup>
 						<aon:panel>
 							<f:facet name="header">
-								<aon:outputText value="Empresa"/>
+								<aon:outputText value="#{companyBundle.company_menu_group}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
