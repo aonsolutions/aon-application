@@ -148,5 +148,19 @@ public class SalesController extends BasicController {
 		return cvm;
 	}
 	
-
+	// ***************************************	
+	public void sendFarsaMail(ActionEvent event ) {
+		Sales sales = (Sales)getTo();
+		String email = "cliente@esferalia.com";
+		try {
+			email = sales.getCustomer().getRegistry().getEmail().getValue(); 
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+		}	
+		AonUtil.addErrorMessage("No se pudo enviar el correo electrónico a " +
+				email + "." +
+				" No se puede resolver la dirección del servidor de correo saliente (pop3.esferalia.com)."
+				);
+	}
+	// ***************************************
 }

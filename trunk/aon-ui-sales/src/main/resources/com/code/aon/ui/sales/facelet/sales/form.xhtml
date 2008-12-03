@@ -83,6 +83,21 @@
 						<aon:inputText id="Sales_customer_full_name" 
 							value="#{(sales.to.customer.registry.name!=null)?(sales.to.customer.registry.fullName):('')}"
 							disabled="true" size="50" />
+						<!-- FARSA BOTON -->
+						<aon:commandButton
+							value="Enviar"
+							style="margin-left: 0.7em;"
+							rendered="#{!sales.new and sales.to.customer.registry.email != null}"
+							title="Enviar Mail a #{sales.to.customer.registry.email.value}"
+							actionListener="#{sales.sendFarsaMail}"
+							styleClass="aon-icon-commandButton aon-icon-mailForward"/>
+						<aon:commandButton
+							value="Sin Email"
+							style="margin-left: 0.7em;"
+							rendered="#{!sales.new and sales.to.customer.registry.email == null}"
+							title="#{sales.to.customer.registry.fullName} no tiene eMail definido."
+							styleClass="aon-icon-commandButton aon-icon-mailDelete"/>
+						<!-- END FARSA BOTON -->
 					</aon:div>
 
 					<aon:outputLabel for="Sales_customer_registry_document" value="#{bundle.aon_company_document}" />
