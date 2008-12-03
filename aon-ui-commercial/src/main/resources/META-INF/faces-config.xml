@@ -489,6 +489,10 @@
 			<value>offer</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Offer_issueDate,Offer_series,Offer_number</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>

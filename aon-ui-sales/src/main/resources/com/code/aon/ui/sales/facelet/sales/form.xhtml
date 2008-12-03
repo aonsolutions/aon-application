@@ -14,6 +14,8 @@
 				<ui:param name="toolbarTitle"
 					value="#{salesBundle.sales_module}" />
 				<ui:param name="controller" value="#{sales}" />
+				<ui:param name="skipSaveButton" value="#{!sales.pending}" />
+				<ui:param name="skipRemoveButton" value="#{!sales.pending}" />
 				<ui:define name="beforeSpinToolbarContent">
 					<h:commandLink id="sales" value="#{bundle.aon_report}"
 						target="_new" rendered="#{!sales.new}"
