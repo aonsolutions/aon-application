@@ -10,7 +10,11 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
+
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.payroll.cotizacion.Linepigr;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.Epigrafes;
@@ -36,6 +40,23 @@ public class TipDomicilioController extends LinesController {
 		}
 		return listatiposdomicilio;
 	}
+	
+
+	Integer code ;
+    public Integer getCode() throws ManagerBeanException {	
+    	
+    	
+	       	code = 0;		
+			String consulta = "select max(cdg) from Emprdom";			
+			Query q = HibernateUtil.getSession().createQuery(consulta);			
+			List results = q.list();
+			System.out.println("Max Code: " + results.get(0));   
+			code= (Integer)results.get(0) +1;
+			System.out.println("New Code: " + code);
+			return code;		      
+	     				
+		}
+	
 	
 
 	
