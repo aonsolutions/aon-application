@@ -32,7 +32,7 @@
 	<!--  ********* SUPPLIER ***************** -->
 	<managed-bean>
 		<managed-bean-name>supplier</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.supplier.controller.SupplierController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>

@@ -25,13 +25,13 @@
 	<aon:inputText id="Supplier_registry_alias" size="40"
 		valueChangeListener="#{controller.addExpression}" />
 		
-	<aon:outputLabel for="Supplier_scope_id"
-		value="#{bundle.aon_scope}" />
-	<aon:selectOneMenu id="Supplier_scope_id"
-		value="#{configCollections.scope}"
+	<aon:outputLabel for="Supplier_supplierSegment_id"
+		value="#{supplierBundle.supplier_segment}" />
+	<aon:selectOneMenu id="Supplier_supplierSegment_id"
+		value="#{supplierCollections.supplierSegment}"
 		valueChangeListener="#{controller.addDirectIdEqualExpression}">
 		<f:selectItem itemLabel="-" value="#{null}"/>		
-		<f:selectItems value="#{configCollections.scopes}" />
+		<f:selectItems value="#{supplierCollections.supplierSegments}" />
 	</aon:selectOneMenu>
 		
 	<aon:outputLabel for="Supplier_status"

@@ -38,6 +38,13 @@ public class SupplierCollectionsController {
         return supplierStatuses;
     }
     
+    public SupplierSegment getSupplierSegment() {
+    	return null;
+    }
+    
+    public void setSupplierSegment( SupplierSegment supplierSegment ) {
+    }
+    
     @SuppressWarnings("unchecked")
     public List<SelectItem> getSupplierSegments() throws ManagerBeanException {
 		List<SelectItem>supplierSegments = new LinkedList<SelectItem>();

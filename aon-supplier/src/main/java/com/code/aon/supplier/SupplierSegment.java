@@ -71,7 +71,7 @@ public class SupplierSegment implements ITransferObject {
 		if (obj == null) {
     		return super.equals(obj);
 		}
-		if (obj instanceof Supplier) {
+		if (obj instanceof SupplierSegment) {
 			SupplierSegment o = (SupplierSegment) obj;
 			if (o.getId() == null && id == null) {
 				return super.equals(obj);	
