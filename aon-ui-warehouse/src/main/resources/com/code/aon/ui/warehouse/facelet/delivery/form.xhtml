@@ -17,12 +17,17 @@
 				<ui:param name="skipSaveButton" value="#{!delivery.pending}" />
 				<ui:param name="skipRemoveButton" value="#{!delivery.pending}" />
 				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="invoice" 
+						value="FACTURAR"
+						actionListener="#{saleInvoice.onImportDelivery}" action="saleInvoice_list"
+						rendered="#{delivery.pending and deliveryDetail.model.rowCount > 0}"
+						styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
 					<h:commandLink id="delivery" value="#{bundle.aon_report}"
 						target="_new" rendered="#{!delivery.new}"
 						action="#{report.onExecute}"
 						disabled="#{deliveryDetail.to != null}"
 						accesskey="#{bundle.aon_key_print}"
-						styleClass="aon-finding-toolbar-item aon-icon-print">
+						styleClass="aon-finding-toolbar-item aon-icon-printer">
 						<f:param name="reportKey" value="delivery" />
 						<f:param name="outputFormat" value="PDF" />
 					</h:commandLink>
