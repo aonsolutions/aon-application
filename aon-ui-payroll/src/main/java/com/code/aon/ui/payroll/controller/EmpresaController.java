@@ -6,11 +6,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
+
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.payroll.auxiliares.Admon;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
 import com.code.aon.payroll.dao.IPayrollAlias;
@@ -166,9 +169,15 @@ public class EmpresaController extends LinesController  implements IPayrollAlias
 		super.accept(event);
 	}
 	
+	@Override
+	public void onAccept(ActionEvent event) {
+		// TODO Auto-generated method stub
+		super.onAccept(event);
+	}
+	
 	/**
 	 * comprueba los nulos del los campos que son lookup
-	 * para ponerlos a null en el caso de que estes vacios
+	 * para ponerlos a null en el caso de que esten vacios
 	 */
 	private void verifyNullFields(){
 		
@@ -192,6 +201,24 @@ public class EmpresaController extends LinesController  implements IPayrollAlias
 		
 		if(StringUtils.isEmpty(((Empresa)getTo()).getPais1().getCdg()))
 			((Empresa)getTo()).setPais1(null);
+		
+	}
+	
+	/**
+	 * Establece los valores por defecto de campos
+	 * Campos check y radio.
+	 */
+	private void setDefaultFields(){
+		
+		Empresa empresa = (Empresa)getTo(); 
+		
+		empresa.setSexo(Sexo.EMPRESA);
+		empresa.setIndcal(true);
+		empresa.setIndnom(true);
+		empresa.setIndcoste(true);
+		empresa.setIndirpf(IndicadorIrpf.TRIMESTRAL);
+		empresa.setCecon(ConciertoEconomico.NO);
+		empresa.setEnvioss(EnvioSS.ENVIO1);
 		
 	}
 	
@@ -408,18 +435,29 @@ public class EmpresaController extends LinesController  implements IPayrollAlias
 		
 	}
 	
-	private Boolean editionMode;
-
-	/**
-	 * Atributo que comprueba si se accede desde el mantenimiento cliente (editable)
-	 * o desde el mnto. empresa (no editable)
-	 */
-	public Boolean getEditionMode() {
-		return editionMode;
+	@Override
+	public void onReset(ActionEvent event) {
+		
+		super.onReset(event);
+		
+		generateCdg();
+		setDefaultFields();
 	}
-
-	public void setEditionMode(Boolean editionMode) {
-		this.editionMode = editionMode;
+	
+	/**
+	 * Aswigna al código un número autonumerico
+	 * @throws ManagerBeanException
+	 */
+    public void generateCdg() {	
+    	Integer code ;
+    			
+		String consulta = "select max(cdg) from Empresa";			
+		Query q = HibernateUtil.getSession().createQuery(consulta);			
+		List results = q.list();
+		   
+		code = (Integer)results.get(0)+1;
+		
+		((Empresa)getTo()).setCdg(code);
 	}
 	
 }
