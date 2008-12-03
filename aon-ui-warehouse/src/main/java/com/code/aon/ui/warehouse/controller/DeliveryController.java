@@ -27,6 +27,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.report.OutputFormat;
+import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
@@ -48,6 +49,8 @@ public class DeliveryController extends BasicController {
 	
 	private IPriceStrategy priceStrategy;
 	
+	private CustomerValidationManager cvm;
+
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
@@ -74,6 +77,7 @@ public class DeliveryController extends BasicController {
 	public void customerData(LookupChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Customer customer = (Customer)event.getNewValue();
+			isBlocked(customer); // Saca el mensaje de bloqueo.
 			((Delivery)this.getTo()).setCustomer(customer);
 			loadAddresses(customer.getId());
 		} else {
@@ -300,6 +304,17 @@ public class DeliveryController extends BasicController {
 			//LOGGER.log(Level.SEVERE, "Error obtaining delivery with id= " + deliveryId, e);
 		}
 		return null;
+	}
+
+	private boolean isBlocked(Customer customer) {
+		return getCustomerValidationManager().isBlocked(customer);
+	}
+
+	private CustomerValidationManager getCustomerValidationManager() {
+		if (cvm == null) {
+			cvm = new CustomerValidationManager(); 
+		}
+		return cvm;
 	}
 
 }
