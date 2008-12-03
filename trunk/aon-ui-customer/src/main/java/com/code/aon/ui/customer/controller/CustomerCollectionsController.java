@@ -18,22 +18,24 @@ import com.code.aon.ql.Criteria;
 
 public class CustomerCollectionsController {
 
+	private List<SelectItem> customerStatuses;
+	
 	/**
 	 * Gets the customer statuses.
 	 * 
 	 * @return the customer statuses
 	 */
 	public List<SelectItem> getCustomerStatuses() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-		CustomerStatus[] cStatuses = CustomerStatus.values();
-		for (int i = 0; i < cStatuses.length; i++) {
-			CustomerStatus status = cStatuses[i];
-			String name = status.getName(locale);
-			SelectItem item = new SelectItem(status, name);
-			types.add(item);
+		if ( customerStatuses == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			customerStatuses = new LinkedList<SelectItem>();
+			for( CustomerStatus status : CustomerStatus.values() ) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				customerStatuses.add(item);
+			}			
 		}
-		return types;
+		return customerStatuses;
 	}
 
 	@SuppressWarnings("unchecked")
