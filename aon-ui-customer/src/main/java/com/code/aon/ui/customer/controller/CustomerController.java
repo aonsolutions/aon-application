@@ -14,6 +14,7 @@ public class CustomerController extends BasicController {
 	
 	private boolean newPerson;
 	
+	private boolean showFinanceRegistryBank = true;
 	
 	public Person getPerson() {
 		return person;
@@ -35,5 +36,13 @@ public class CustomerController extends BasicController {
     	Customer customer = (Customer)getTo();
     	return customer.getRegistry().getType().equals(RegistryType.NATURAL);
     }
+    
+	public boolean isShowFinanceRegistryBank() {
+		return showFinanceRegistryBank;
+	}
+
+	public void setShowFinanceRegistryBank(boolean showFinanceRegistryBank) {
+		this.showFinanceRegistryBank = showFinanceRegistryBank;
+	}
     
 }
