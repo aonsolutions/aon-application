@@ -5,7 +5,6 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 		<ui:param name="controller" value="#{controllerAlias}" />
@@ -19,36 +18,41 @@
 				<f:facet name="header">
 					<aon:outputText value="#{financeBundle.finance_bank}" />
 				</f:facet>
-				<aon:outputText value="#{to.bank.name}"
-					rendered="#{to!=controller.to}" />
+				<aon:outputText value="#{to.bank.name}" rendered="#{formList}" />
 
-				<ui:include
-					src="/com/code/aon/ui/finance/facelet/lookup/bank/bankIdInput.xhtml">
-					<ui:param name="wizard" value="#{bankWizard}" />
-					<ui:param name="id" value="bankUpdateId" />
-					<ui:param name="required" value="#{true}" />
-					<ui:param name="size" value="5" />
-					<ui:param name="renderDescription" value="#{true}" />
-					<ui:param name="renderedAttr" value="#{to==controller.to}" />
-					<ui:param name="disabled" value="#{false}" />
-					<ui:param name="reRenderAttr" value="none" />
-					<ui:param name="entity" value="#{controller.to.bank}" />
-					<ui:param name="ELExpression" value="controller.to.bank" />
-				</ui:include>
+				<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
+					<aon:lookupInputText id="Bank_code"
+						reRender="Bank_name" lookup="#{bankLookup}"
+						value="#{controller.to.bank.code}" size="5">
+						<aon:joinProperty alias="Bank_code" value="#{controller.to.bank.code}" />
+					</aon:lookupInputText>
+					<aon:lookupButton 
+						windowTitle="#{financeBundle.finance_bank_selection}"
+						selectReRender="#{dataTableId}" actionType="search"
+						lookup="#{bankLookup}" minHeight="460" minWidth="650"
+						property="#{controller.to.bank}">
+					</aon:lookupButton>
+					<aon:inputText id="Bank_name"
+						value="#{controller.to.bank.name}"
+						size="50" disabled="true" />							
+				</aon:div>
 				<f:facet name="footer">
-					<ui:include
-						src="/com/code/aon/ui/finance/facelet/lookup/bank/bankIdInput.xhtml">
-						<ui:param name="wizard" value="#{bankWizard}" />
-						<ui:param name="id" value="bankNewId" />
-						<ui:param name="required" value="#{true}" />
-						<ui:param name="size" value="5" />
-						<ui:param name="renderDescription" value="#{true}" />
-						<ui:param name="renderedAttr" value="#{controller.new}" />
-						<ui:param name="disabled" value="#{false}" />
-						<ui:param name="reRenderAttr" value="none" />
-						<ui:param name="entity" value="#{controller.to.bank}" />
-						<ui:param name="ELExpression" value="controller.to.bank" />
-					</ui:include>
+					<aon:div styleClass="aon-lookup" rendered="#{formNew}">
+						<aon:lookupInputText id="Bank_code-New"
+							reRender="Bank_name-New" lookup="#{bankLookup}"
+							value="#{controller.to.bank.code}" size="5">
+							<aon:joinProperty alias="Bank_code" value="#{controller.to.bank.code}" />
+						</aon:lookupInputText>
+						<aon:lookupButton 
+							windowTitle="#{financeBundle.finance_bank_selection}"
+							selectReRender="Bank_code-New,Bank_name-New" actionType="search"
+							lookup="#{bankLookup}" minHeight="460" minWidth="650"
+							property="#{controller.to.bank}">
+						</aon:lookupButton>
+						<aon:inputText id="Bank_name-New"
+							value="#{controller.to.bank.name}"
+							size="50" disabled="true" />							
+					</aon:div>
 				</f:facet>
 			</aon:column>
 
@@ -56,9 +60,8 @@
 				<f:facet name="header">
 					<aon:outputText value="#{financeBundle.finance_bank_account}" />
 				</f:facet>
-				<aon:outputText value="#{to.bankAccount}"
-					rendered="#{to!=controller.to}" />
-				<aon:div rendered="#{to==controller.to}">
+				<aon:outputText value="#{to.bankAccount}" rendered="#{formList}" />
+				<aon:div rendered="#{formEdit}">
 					<aon:inputText value="#{controller.to.bankAccount.office}" required="true"
 						size="4" maxlength="4">
 						<f:validateLength minimum="4" maximum="4" />
@@ -74,7 +77,7 @@
 				</aon:div>
 
 				<f:facet name="footer">
-					<aon:div rendered="#{controller.new}">
+					<aon:div rendered="#{formNew}">
 						<aon:inputText value="#{controller.to.bankAccount.office}" required="true"
 							size="4" maxlength="4">
 							<f:validateLength minimum="4" maximum="4" />
@@ -95,12 +98,12 @@
 				<f:facet name="header">
 					<aon:outputText value="#{financeBundle.finance_bank_sufix}" />
 				</f:facet>
-				<aon:outputText value="#{to.sufix}" rendered="#{to!=controller.to}" />
-				<aon:inputText value="#{to.sufix}" rendered="#{to==controller.to}"
+				<aon:outputText value="#{to.sufix}" rendered="#{formList}" />
+				<aon:inputText value="#{to.sufix}" rendered="#{formEdit}"
 					size="5" maxlength="3" />
 				<f:facet name="footer">
 					<aon:inputText value="#{controller.to.sufix}"
-						rendered="#{controller.new}" size="5" maxlength="3" />
+						rendered="#{formNew}" size="5" maxlength="3" />
 				</f:facet>
 			</aon:column>
 
