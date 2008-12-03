@@ -25,12 +25,12 @@
 							<aon:outputText value="#{warehouseBundle.warehouse_menu_group}"/>
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
-							<aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="inventory_remake" 
 									action="inventoryClose" actionListener="#{inventory.onStartClosing}"
 									value="#{warehouseBundle.warehouse_inventory_remake_module}" />
 							</aon:div>
-							<aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="stock" 
 									action="stock_search" actionListener="#{stock.onEditSearch}"
 									value="#{warehouseBundle.warehouse_stock_module}" />
@@ -43,7 +43,7 @@
 							<aon:outputText value="#{appBundle.menu_reports}"/>
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
-							<aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink disabled="true" 
 									value="Rotación de Productos" />
 							</aon:div>

@@ -26,27 +26,27 @@
 								<aon:outputText value="#{appBundle.menu_master}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
-								<aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="customer" 
 										action="customer_search" actionListener="#{customer.onEditSearch}"
 										value="#{customerBundle.customer_module}" />
 								</aon:div>
-								<aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="supplier" 
 										action="supplier_search" actionListener="#{supplier.onEditSearch}"
 										value="#{supplierBundle.supplier_module}" />
 								</aon:div>
-								<aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="creditor" 
 										action="creditor_search" actionListener="#{creditor.onEditSearch}"
 										value="#{financeBundle.finance_creditor_module}" />
 								</aon:div>						
-								<aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="target" 
 										action="target_search" actionListener="#{target.onEditSearch}"
 										value="#{commercialBundle.commercial_target_module}" />
 								</aon:div>
-								<aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="seller" 
 										action="seller_search" actionListener="#{seller.onEditSearch}"
 										value="#{salesBundle.sales_seller_module}" />
@@ -59,41 +59,43 @@
 								<aon:outputText value="#{productBundle.product_module}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
-								<aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="item" 
 										action="item_search" actionListener="#{item.onEditSearch}"
 										value="Articulos" />
 								</aon:div>
-								<aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="productCategory" 
 										action="productCategory" 
 										value="#{productBundle.product_category_module}" />
 								</aon:div>
-								<aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="brand" 
 										action="brand"
 										value="#{productBundle.product_brand_module}" />
 								</aon:div>
+								
+								<aon:panel>
+									<f:facet name="header">
+										<aon:outputText value="Precios"/>
+									</f:facet>					
+									<aon:div styleClass="aon-direct-access-list">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="tariff" 
+												action="tariff_list" actionListener="#{tariff.onSearch}"
+												value="#{productBundle.product_tariff_module}" />
+										</aon:div>
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="catalogue" 
+												action="catalogue_search" actionListener="#{catalogue.onEditSearch}"
+												value="#{productBundle.product_catalogue_module}" />
+										</aon:div>
+									</aon:div>
+								</aon:panel>
+							
 							</aon:div>
 						</aon:panel>
 	
-						<aon:panel>
-							<f:facet name="header">
-								<aon:outputText value="Precios"/>
-							</f:facet>					
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div>
-									<aon:commandLink id="tariff" 
-										action="tariff_list" actionListener="#{tariff.onSearch}"
-										value="#{productBundle.product_tariff_module}" />
-								</aon:div>
-								<aon:div>
-									<aon:commandLink id="catalogue" 
-										action="catalogue_search" actionListener="#{catalogue.onEditSearch}"
-										value="#{productBundle.product_catalogue_module}" />
-								</aon:div>
-							</aon:div>
-						</aon:panel>
 					</aon:panelGroup>
 
 					<aon:panelGroup>
@@ -102,17 +104,17 @@
 								<aon:outputText value="Empresa"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
-								<aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="company" 
 										action="company" actionListener="#{company.onLoad}"
 										value="#{companyBundle.company_data_module}" />
 								</aon:div>
-								<aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="workplace" 
 										action="workplace" 
 										value="#{companyBundle.company_workplace_module}" />
 								</aon:div>
-								<aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="warehouse" 
 										action="warehouse" actionListener="#{warehouse.onSearch}"
 										value="#{warehouseBundle.warehouse_warehouse_module}" />
@@ -125,27 +127,27 @@
 								<aon:outputText value="#{appBundle.menu_configuration}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
-								<aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="series" 
 										action="series" 
 										value="#{configBundle.config_series_module}" />
 								</aon:div>
-								<aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="tax" 
 										action="tax" 
 										value="#{configBundle.config_tax_module}" />
 								</aon:div>
-								<aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="commercialActivity" 
 										action="commercialActivity" actionListener="#{commercialActivity.onSearch}"
 										value="#{commercialBundle.commercial_activity_module}" />
 								</aon:div>
-								<aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="commercialSegment" 
 										action="commercialSegment" actionListener="#{commercialSegment.onSearch}"
 										value="#{commercialBundle.commercial_segment_module}" />
 								</aon:div>
-								<aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="geotreeParent" 
 										action="geotreeParent_list" actionListener="#{geotreeParent.onSearch}"
 										value="#{geozoneBundle.geozone_module}" />
@@ -158,7 +160,7 @@
 								<aon:outputText value="#{appBundle.menu_utilities}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
-								<aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink disabled="true" 
 										value="Importar Catálogo de Proveedores" />
 								</aon:div>
