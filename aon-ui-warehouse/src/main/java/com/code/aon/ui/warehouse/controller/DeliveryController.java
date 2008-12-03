@@ -98,7 +98,7 @@ public class DeliveryController extends BasicController {
 				String addressLabel = address.getAddress() + " " + address.getAddress2() + " " + address.getAddress3();
 				addressLabel = ((addressLabel.length()>30)?addressLabel.substring(0,27)+"...":addressLabel) + " - " + address.getCity();
 				addressLabel = ((addressLabel.length()>48)?addressLabel.substring(0,45)+"...":addressLabel);
-				SelectItem item = new SelectItem(address.getId(), addressLabel);
+				SelectItem item = new SelectItem(address, addressLabel);
 				addresses.add(item);
 			}
 		}

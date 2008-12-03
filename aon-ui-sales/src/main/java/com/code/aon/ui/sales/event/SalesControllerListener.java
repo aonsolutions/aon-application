@@ -1,5 +1,6 @@
 package com.code.aon.ui.sales.event;
 
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.enumeration.DocumentType;
 import com.code.aon.sales.enumeration.SalesStatus;
@@ -24,4 +25,13 @@ public class SalesControllerListener extends ControllerAdapter {
 		controller.setAddresses(null);
 	}
 
+	@Override
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		SalesController controller = (SalesController)event.getController();
+		try {
+			controller.loadAddresses(((Sales)controller.getTo()).getCustomer().getRegistry().getId());
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage());
+		}
+	}
 }

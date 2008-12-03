@@ -17,6 +17,11 @@
 				<ui:param name="skipSaveButton" value="#{!sales.pending}" />
 				<ui:param name="skipRemoveButton" value="#{!sales.pending}" />
 				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="delivery"
+						value="Hacer Albaran"
+						actionListener="#{sales.createDelivery}" action="delivery_list"
+						rendered="#{sales.pending and salesDetail.model.rowCount > 0}"
+						styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
 					<h:commandLink id="sales" value="#{bundle.aon_report}"
 						target="_new" rendered="#{!sales.new}"
 						action="#{report.onExecute}"
@@ -107,7 +112,7 @@
 					<aon:outputLabel for="Sales_address"
 						value="#{registryBundle.registry_address}" />
 					<aon:div id="SalesAddress">
-						<aon:selectOneMenu id="Sales_address" value="#{sales.to.shippingAddress.id}"
+						<aon:selectOneMenu id="Sales_address" value="#{sales.to.shippingAddress}"
 							rendered="#{sales.addressCount > 0}"
 							disabled="#{!sales.pending}">
 							<f:selectItems value="#{sales.addresses}" />

@@ -25,12 +25,19 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.sales.Sales;
+import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.Seller;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.warehouse.Delivery;
+import com.code.aon.warehouse.DeliveryDetail;
+import com.code.aon.warehouse.Warehouse;
+import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.code.aon.warehouse.enumeration.DeliveryStatus;
 
 /**
  * Controller used in the sales maintenance.
@@ -50,6 +57,13 @@ public class SalesController extends BasicController {
 		return priceStrategy;
 	}
 
+	private CustomerValidationManager getCustomerValidationManager() {
+		if (cvm == null) {
+			cvm = new CustomerValidationManager(); 
+		}
+		return cvm;
+	}
+	
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
 		Series series = SeriesNumberUtil.obtainSeries((String)event.getNewValue());
 		if (this.getTo() != null) {
@@ -70,12 +84,9 @@ public class SalesController extends BasicController {
 	public void customerData(LookupChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Customer customer = (Customer)event.getNewValue();
-			if (!isBlocked(customer)) {
-				((Sales)this.getTo()).setCustomer(customer);
-				loadAddresses(customer.getId());
-			} else {
-				setAddresses(null);	
-			}
+			isBlocked(customer); //Sacar la ventanita de los bloqueos. REVISAR
+			((Sales)this.getTo()).setCustomer(customer);
+			loadAddresses(customer.getId());
 		} else {
 			setAddresses(null);
 		}
@@ -94,7 +105,7 @@ public class SalesController extends BasicController {
 				String addressLabel = address.getAddress() + " " + address.getAddress2() + " " + address.getAddress3();
 				addressLabel = ((addressLabel.length()>30)?addressLabel.substring(0,27)+"...":addressLabel) + " - " + address.getCity();
 				addressLabel = ((addressLabel.length()>48)?addressLabel.substring(0,45)+"...":addressLabel);
-				SelectItem item = new SelectItem(address.getId(), addressLabel);
+				SelectItem item = new SelectItem(address, addressLabel);
 				addresses.add(item);
 			}
 		}
@@ -141,13 +152,62 @@ public class SalesController extends BasicController {
 		return getCustomerValidationManager().isBlocked(customer);
 	}
 
-	private CustomerValidationManager getCustomerValidationManager() {
-		if (cvm == null) {
-			cvm = new CustomerValidationManager(); 
+	/***************************************************************************************
+	 *	BOTON DE TRASPASO A PEDIDO CREADO PARA DEMO DEL 03/12/2008. BORRAR POSTERIORMENTE 
+	 ***************************************************************************************/
+
+	public void createDelivery(ActionEvent event) throws ManagerBeanException {
+		Sales sales = (Sales)getTo();
+		IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
+		IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
+		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+
+		Delivery delivery = new Delivery();
+		delivery.setSeries(sales.getSeries());
+		delivery.setNumber(SeriesNumberUtil.obtainNumber(sales.getSeries(), "Delivery"));
+		delivery.setCustomer(sales.getCustomer());
+		delivery.setRaddress(sales.getShippingAddress());
+		delivery.setIssueTime(sales.getIssueDate());
+		delivery.setSecurityLevel(sales.getSecurityLevel());
+		delivery.setStatus(DeliveryStatus.PENDING);
+		delivery = (Delivery)deliveryBean.insert(delivery);
+
+		Iterator iterator = sales.getDetailList().iterator();
+		while (iterator.hasNext()) {
+			SalesDetail salesDetail = (SalesDetail)iterator.next();
+
+			DeliveryDetail deliveryDetail = new DeliveryDetail();
+			deliveryDetail.setDelivery(delivery);
+			deliveryDetail.setItem(salesDetail.getItem());
+			deliveryDetail.setDescription(salesDetail.getDescription());
+			deliveryDetail.setWarehouse(obtainGenericWarehouse());
+			deliveryDetail.setQuantity(salesDetail.getQuantity());
+			deliveryDetail.setPrice(salesDetail.getPrice());
+			deliveryDetail.setDiscountExpression(salesDetail.getDiscountExpression());
+			deliveryDetail.setSalesDetail(salesDetail);
+			deliveryDetailBean.insert(deliveryDetail);
 		}
-		return cvm;
+
+		sales.setPos(null);
+		sales.setStatus(SalesStatus.CLOSED);
+		salesBean.update(sales);
+
+		IController deliveryController = AonUtil.getController("delivery");
+		deliveryController.clearCriteria();
+		deliveryController.getCriteria().addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_ID), delivery.getId());
+		deliveryController.onSearch(null);
 	}
-	
+
+	private Warehouse obtainGenericWarehouse() {
+		Warehouse warehouse = new Warehouse();
+		warehouse.setId(1);
+		return warehouse;
+	}
+
+	/***************************************************************************************
+	 *	BOTON DE TRASPASO A PEDIDO CREADO PARA DEMO DEL 03/12/2008. BORRAR POSTERIORMENTE 
+	 ***************************************************************************************/
+
 	// ***************************************	
 	public void sendFarsaMail(ActionEvent event ) {
 		Sales sales = (Sales)getTo();
@@ -163,4 +223,5 @@ public class SalesController extends BasicController {
 				);
 	}
 	// ***************************************
+
 }

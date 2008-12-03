@@ -97,10 +97,9 @@
 					<aon:outputLabel for="Offer_address"
 						value="#{registryBundle.registry_address}" />
 					<aon:div id="OfferAddress">
-						<aon:selectOneMenu id="Offer_address" value="#{offer.to.address.id}"
+						<aon:selectOneMenu id="Offer_address" value="#{offer.to.address}"
 							rendered="#{offer.addressCount > 0}"
 							disabled="#{offer.processed}">
-							<f:selectItem itemLabel="-" itemValue="" />
 							<f:selectItems value="#{offer.addresses}" />
 						</aon:selectOneMenu>
 						<aon:outputLabel value="#{registryBundle.registry_no_address_available}"
