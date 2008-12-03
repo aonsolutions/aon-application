@@ -18,20 +18,24 @@ import com.code.aon.supplier.enumeration.SupplierStatus;
 
 public class SupplierCollectionsController {
 
+	private List<SelectItem> supplierStatuses;
+	
     /**
      * Gets the supplier statuses.
      * 
      * @return the supplier statuses
      */
     public List<SelectItem> getSupplierStatuses() {
-        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-	    LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-        for( SupplierStatus type : SupplierStatus.values() ) {
-            String name = type.getName(locale); 
-            SelectItem item = new SelectItem(type, name);
-            types.add( item );
-        }
-        return types;
+    	if ( this.supplierStatuses == null ) {
+	        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+	        supplierStatuses = new LinkedList<SelectItem>();
+	        for( SupplierStatus type : SupplierStatus.values() ) {
+	            String name = type.getName(locale); 
+	            SelectItem item = new SelectItem(type, name);
+	            supplierStatuses.add( item );
+	        }
+    	}
+        return supplierStatuses;
     }
     
     @SuppressWarnings("unchecked")
@@ -43,7 +47,7 @@ public class SupplierCollectionsController {
 		Iterator iter = supplierSegmentBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			SupplierSegment segment = (SupplierSegment)iter.next();
-			SelectItem item = new SelectItem(segment.getId(), segment.getDescription());
+			SelectItem item = new SelectItem(segment, segment.getDescription());
 			supplierSegments.add(item);
 		}
 		return supplierSegments;

@@ -62,6 +62,8 @@
 			</value-class>
 			<value>#{invoiceRegistryVetoListener}</value>
 			<value>#{supplierScopeListener}</value>
+			<value>#{supplierAddressListener}</value>
+			<value>#{supplierMediaListener}</value>			
 		</list-entries>
 	</managed-bean>
 
@@ -95,7 +97,7 @@
 	<managed-bean>
 		<managed-bean-name>supplierAddress</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.supplier.controller.SupplierAddressController
+			com.code.aon.ui.form.BasicController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -140,7 +142,7 @@
 	<managed-bean>
 		<managed-bean-name>supplierMedia</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.supplier.controller.SupplierMediaController
+			com.code.aon.ui.form.BasicController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
