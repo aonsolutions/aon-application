@@ -187,7 +187,7 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 	 * @return the shipping address
 	 */
 	@ManyToOne
-	@JoinColumn( name="shipping_address", updatable=false )
+	@JoinColumn( name="shipping_address" )
 	public RegistryAddress getShippingAddress() {
 		return shippingAddress;
 	}
@@ -266,7 +266,7 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 	 * @return the pay method
 	 */
 	@ManyToOne
-	@JoinColumn( name="pay_method", updatable=false )
+	@JoinColumn( name="pay_method" )
 	public PayMethod getPayMethod() {
 		return payMethod;
 	}
