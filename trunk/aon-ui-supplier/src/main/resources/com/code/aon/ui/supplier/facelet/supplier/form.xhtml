@@ -34,7 +34,7 @@
 						value="#{bundle.aon_scope}" />
 					<aon:selectOneMenu id="Supplier_scope_id"
 						value="#{supplier.to.scope}">
-						<f:selectItems value="#{configCollections.scopes}" />
+						<f:selectItems value="#{configCollections.currentUserScopes}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Supplier_status"
