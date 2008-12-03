@@ -1,9 +1,6 @@
 package com.code.aon.supplier;
 
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,31 +11,27 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import com.code.aon.common.ILookupObject;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
-import com.code.aon.supplier.dao.ISupplierAlias;
 import com.code.aon.supplier.enumeration.SupplierStatus;
 
-// TODO: Auto-generated Javadoc
 /**
  * Transfer Object that represents a supplier.
  */
 @Entity
 @Table(name="supplier")
 @PrimaryKeyJoinColumn(name="registry")
-public class Supplier implements ITransferObject, ILookupObject, IScopable, IRegistry{
+public class Supplier implements ITransferObject, IScopable, IRegistry {
 	
-	/** The Constant SUPPLIER_FULL_NAME used to retrieve the complete name of the supplier using the lookup. */
-	private static final String SUPPLIER_FULL_NAME = "Supplier_full_name";
+	private static final long serialVersionUID = -5482729597797009950L;
 
 	/** The id. */
 	private Integer id;
@@ -56,8 +49,6 @@ public class Supplier implements ITransferObject, ILookupObject, IScopable, IReg
 	private SupplierSegment supplierSegment;
 	
 	private Scope scope;
-	
-
 	
     @Id
 	@Column(name="registry")
@@ -139,7 +130,6 @@ public class Supplier implements ITransferObject, ILookupObject, IScopable, IReg
 	public void setSupplierSegment(SupplierSegment supplierSegment) {
 		this.supplierSegment = supplierSegment;
 	}
-	
 
 	@ManyToOne
 	@JoinColumn(name="scope", nullable=false)
@@ -151,19 +141,26 @@ public class Supplier implements ITransferObject, ILookupObject, IScopable, IReg
 		this.scope = scope;
 	}
 
-	/**
-	 * Gets the a map that will be used by the lookup.
-	 * 
-	 * @return the map
-	 */
-	@Transient
-    public Map<String,Object> getLookups() {
-        Map<String,Object> map = new HashMap<String,Object>();
-        map.put(ISupplierAlias.SUPPLIER_ID, getId());
-        map.put(ISupplierAlias.SUPPLIER_REGISTRY_NAME, getRegistry().getName() );
-        map.put(ISupplierAlias.SUPPLIER_REGISTRY_SURNAME, getRegistry().getSurname());
-        map.put(ISupplierAlias.SUPPLIER_REGISTRY_DOCUMENT, getRegistry().getDocument());
-        map.put(SUPPLIER_FULL_NAME, getRegistry().getName() + " " + ((getRegistry().getSurname() == null) ? "" : getRegistry().getSurname()) );
-        return map;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof Supplier) {
+			Supplier o = (Supplier) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return getId().hashCode();
+	}
+
 }
