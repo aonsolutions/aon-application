@@ -58,7 +58,6 @@ import com.code.aon.finance.invoicing.InvoicePriceStrategy;
 import com.code.aon.finance.invoicing.InvoicingEngineFactory;
 import com.code.aon.finance.invoicing.InvoicingException;
 import com.code.aon.finance.invoicing.InvoicingParameters;
-import com.code.aon.product.Item;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
@@ -66,6 +65,7 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -88,7 +88,9 @@ public class SaleInvoiceController extends BasicController {
 	
 	private List<SelectItem> addresses;
 	
-//	private String seriesDescripition;
+	private CustomerValidationManager cvm;
+
+	//	private String seriesDescripition;
 
 	public SaleInvoiceController() {
 		this.invoicingParams = new InvoicingParameters();
@@ -285,10 +287,22 @@ public class SaleInvoiceController extends BasicController {
 	public void customerData(LookupChangeEvent event) throws ManagerBeanException{
 		if(event.getNewValue() != null && !event.getNewValue().equals("")){
 			Customer customer = (Customer) event.getNewValue();
-			((Invoice)this.getTo()).setRegistryName(customer.getRegistry().getFullName());
-			((Invoice)this.getTo()).setRegistryDocument(customer.getRegistry().getDocument());
-			((Invoice)this.getTo()).setRegistry(customer.getRegistry());
-			loadAddresses(customer.getId());
+			if (!isBlocked(customer)) {
+				((Invoice)this.getTo()).setRegistryName(customer.getRegistry().getFullName());
+				((Invoice)this.getTo()).setRegistryDocument(customer.getRegistry().getDocument());
+				((Invoice)this.getTo()).setRegistry(customer.getRegistry());
+				loadAddresses(customer.getId());
+			} else {
+				((Invoice)this.getTo()).setRegistryName(null);
+				((Invoice)this.getTo()).setRegistryDocument(null);
+				((Invoice)this.getTo()).setRegistry(null);
+				setAddresses(null);	
+			}
+		} else {
+			((Invoice)this.getTo()).setRegistryName(null);
+			((Invoice)this.getTo()).setRegistryDocument(null);
+			((Invoice)this.getTo()).setRegistry(null);
+			setAddresses(null);	
 		}
 	}
 	
@@ -595,4 +609,16 @@ public class SaleInvoiceController extends BasicController {
 		}
     	return null;
 	}
+	
+	private boolean isBlocked(Customer customer) {
+		return getCustomerValidationManager().isBlocked(customer);
+	}
+
+	private CustomerValidationManager getCustomerValidationManager() {
+		if (cvm == null) {
+			cvm = new CustomerValidationManager(); 
+		}
+		return cvm;
+	}
+	
 }
