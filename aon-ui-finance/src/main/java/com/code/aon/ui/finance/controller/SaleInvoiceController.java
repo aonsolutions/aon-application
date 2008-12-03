@@ -287,21 +287,12 @@ public class SaleInvoiceController extends BasicController {
 	public void customerData(LookupChangeEvent event) throws ManagerBeanException{
 		if(event.getNewValue() != null && !event.getNewValue().equals("")){
 			Customer customer = (Customer) event.getNewValue();
-			if (!isBlocked(customer)) {
-				((Invoice)this.getTo()).setRegistryName(customer.getRegistry().getFullName());
-				((Invoice)this.getTo()).setRegistryDocument(customer.getRegistry().getDocument());
-				((Invoice)this.getTo()).setRegistry(customer.getRegistry());
-				loadAddresses(customer.getId());
-			} else {
-				((Invoice)this.getTo()).setRegistryName(null);
-				((Invoice)this.getTo()).setRegistryDocument(null);
-				((Invoice)this.getTo()).setRegistry(null);
-				setAddresses(null);	
-			}
+			isBlocked(customer); // Saca el mensaje de bloqueo.
+			((Invoice)this.getTo()).setRegistryName(customer.getRegistry().getFullName());
+			((Invoice)this.getTo()).setRegistryDocument(customer.getRegistry().getDocument());
+			((Invoice)this.getTo()).setRegistry(customer.getRegistry());
+			loadAddresses(customer.getId());
 		} else {
-			((Invoice)this.getTo()).setRegistryName(null);
-			((Invoice)this.getTo()).setRegistryDocument(null);
-			((Invoice)this.getTo()).setRegistry(null);
 			setAddresses(null);	
 		}
 	}
