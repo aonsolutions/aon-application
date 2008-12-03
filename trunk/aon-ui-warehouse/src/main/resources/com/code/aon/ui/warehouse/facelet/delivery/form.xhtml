@@ -95,6 +95,7 @@
 						<aon:selectOneMenu id="Delivery_address" value="#{delivery.to.raddress.id}"
 							rendered="#{delivery.addressCount > 0}"
 							disabled="#{!delivery.pending}">
+							<f:selectItem itemLabel="-" itemValue="" />
 							<f:selectItems value="#{delivery.addresses}" />
 						</aon:selectOneMenu>
 						<aon:outputLabel value="#{registryBundle.registry_no_address_available}"

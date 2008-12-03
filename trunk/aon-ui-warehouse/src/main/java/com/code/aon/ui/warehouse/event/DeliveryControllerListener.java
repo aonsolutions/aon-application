@@ -36,6 +36,11 @@ public class DeliveryControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		DeliveryController controller = (DeliveryController)event.getController();
+		try {
+			controller.loadAddresses(((Delivery)controller.getTo()).getCustomer().getRegistry().getId());
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage());
+		}
         controller.setWarehouse(obtainWarehouseId((Delivery)controller.getTo()));
 	}
 	

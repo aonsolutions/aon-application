@@ -11,13 +11,18 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.commercial.Offer;
+import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
 import com.code.aon.config.util.SeriesNumberUtil;
+import com.code.aon.customer.Customer;
+import com.code.aon.customer.dao.ICustomerAlias;
+import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.faces.component.richfaces.lookup.LookupChangeEvent;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -26,8 +31,15 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.report.OutputFormat;
+import com.code.aon.sales.Sales;
+import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.Seller;
+import com.code.aon.sales.dao.ISalesAlias;
+import com.code.aon.sales.enumeration.DocumentType;
+import com.code.aon.sales.enumeration.SalesDetailStatus;
+import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 
@@ -94,7 +106,7 @@ public class OfferController extends BasicController {
 		this.addresses = addresses;
 	}
 
-    public List<SelectItem> getAddresses() {
+	public List<SelectItem> getAddresses() {
 		return addresses;
 	}
 	
@@ -130,5 +142,80 @@ public class OfferController extends BasicController {
         manager.setReportKey("offer");
         manager.setOutputFormat(OutputFormat.PDF);
     }
+
+	/***************************************************************************************
+	 *	BOTON DE TRASPASO A PEDIDO CREADO PARA DEMO DEL 03/12/2008. BORRAR POSTERIORMENTE 
+	 ***************************************************************************************/
+
+	public void createSales(ActionEvent event) throws ManagerBeanException {
+		Offer offer = (Offer)getTo();
+		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
+		IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
+		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
+
+		Sales sales = new Sales();
+		sales.setSeries(offer.getSeries());
+		sales.setNumber(SeriesNumberUtil.obtainNumber(offer.getSeries(), "Sales"));
+		sales.setCustomer(obtainCustomer(offer));
+		sales.setShippingAddress(offer.getAddress());
+		sales.setSeller(offer.getSeller());
+		sales.setIssueDate(offer.getIssueDate());
+		sales.setPayMethod(offer.getPayMethod());
+		sales.setDocumentType(DocumentType.NORMAL);
+		sales.setSecurityLevel(offer.getSecurityLevel());
+		sales.setStatus(SalesStatus.PENDING);
+		sales.setWorkPlace(offer.getWorkPlace());
+		sales = (Sales)salesBean.insert(sales);
+
+		Iterator iterator = offer.getDetailList().iterator();
+		while (iterator.hasNext()) {
+			OfferDetail offerDetail = (OfferDetail)iterator.next();
+
+			SalesDetail salesDetail = new SalesDetail();
+			salesDetail.setSales(sales);
+			salesDetail.setItem(offerDetail.getItem());
+			salesDetail.setDescription(offerDetail.getDescription());
+			salesDetail.setQuantity(offerDetail.getQuantity());
+			salesDetail.setPrice(offerDetail.getPrice());
+			salesDetail.setDiscountExpression(offerDetail.getDiscountExpression());
+			salesDetail.setSalesDetailStatus(SalesDetailStatus.PENDING);
+			salesDetailBean.insert(salesDetail);
+		}
+
+		offer.setStatus(OfferStatus.PROCESSED);
+		offerBean.update(offer);
+
+		IController salesController = AonUtil.getController("sales");
+		salesController.clearCriteria();
+		salesController.getCriteria().addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_ID), sales.getId());
+		salesController.onSearch(null);
+	}
+
+	private Customer obtainCustomer(Offer offer) throws ManagerBeanException {
+		IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(customerBean.getFieldName(ICustomerAlias.CUSTOMER_REGISTRY_ID), offer.getTarget().getRegistry().getId());
+		Iterator iterator = customerBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			return (Customer)iterator.next();
+		} else {
+			Customer customer = new Customer();
+			customer.setRegistry(offer.getTarget().getRegistry());
+			customer.setTariff(offer.getTariff());
+			customer.setStatus(CustomerStatus.ACTIVE);
+			customer.setScope(obtainGenericScope());
+			return (Customer)customerBean.insert(customer);
+		}
+	}
+
+	private Scope obtainGenericScope() {
+		Scope scope = new Scope();
+		scope.setId(1);
+		return scope;
+	}
+
+	/***************************************************************************************
+	 *	BOTON DE TRASPASO A PEDIDO CREADO PARA DEMO DEL 03/12/2008. BORRAR POSTERIORMENTE 
+	 ***************************************************************************************/
 
 }
