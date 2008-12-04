@@ -38,6 +38,13 @@ public class CustomerCollectionsController {
 		return customerStatuses;
 	}
 
+    public CustomerSegment getCustomerSegment() {
+    	return null;
+    }
+    
+    public void setCustomerSegment( CustomerSegment customerSegment ) {
+    }
+	
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getCustomerSegments() throws ManagerBeanException {
 		List<SelectItem>customerSegments = new LinkedList<SelectItem>();
@@ -47,7 +54,7 @@ public class CustomerCollectionsController {
 		Iterator iter = customerSegmentBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			CustomerSegment segment = (CustomerSegment)iter.next();
-			SelectItem item = new SelectItem(segment.getId(), segment.getDescription());
+			SelectItem item = new SelectItem(segment, segment.getDescription());
 			customerSegments.add(item);
 		}
 		return customerSegments;
