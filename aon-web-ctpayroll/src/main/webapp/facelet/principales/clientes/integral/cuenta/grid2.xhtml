@@ -3,6 +3,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
 <aon:div id="tipcuentasasigDataDiv">
@@ -106,6 +107,21 @@
 					
 					
 				</aon:editDataTable>
+				<rich:spacer>
+				
+				</rich:spacer>
+				<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_tipocuenta_ver}    " />
+				<aon:selectOneMenu id="TipoCta" valueChangeListener="#{tipcuenta.typeChanged}">
+                <a4j:support event="onchange" reRender="typeChanged" />
+					<f:selectItem value="#{null}" itemLabel=" -  " />
+					<f:selectItems value="#{tipcuenta.listaTipos}" />
+				</aon:selectOneMenu>
+				
+				<aon:outputText id="typeChanged" value="#{tipcuenta.typeChanged}"
+					 />
+				
+				
 			</aon:div>
 			<aon:div id="datos2">
 
