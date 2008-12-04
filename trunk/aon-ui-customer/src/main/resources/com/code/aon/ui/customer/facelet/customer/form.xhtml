@@ -64,18 +64,18 @@
 
 				<c:if test="#{!customer.new}">				
 					<aon:panelTabSet selectedTab="#{customer.selectedTab}"> 
-						<aon:panelTab label="#{registryBundle.registry_address_module}">
+						<aon:panelTab id="adddress" label="#{registryBundle.registry_address_module}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
 								<ui:param name="controller" value="#{customerAddress}" />
 							</ui:include>
 						</aon:panelTab>
-						<aon:panelTab label="#{registryBundle.registry_media_module}">
+						<aon:panelTab id="media" label="#{registryBundle.registry_media_module}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
 								<ui:param name="controller" value="#{customerMedia}" />
 							</ui:include>
 						</aon:panelTab>
 						<c:if test="#{customer.showFinanceData}">
-							<aon:panelTab label="#{financeBundle.finance_data_module}">
+							<aon:panelTab id="finance" label="#{financeBundle.finance_data_module}">
 								<aon:panel>
 									<f:facet name="header">
 										<aon:outputText value="#{financeBundle.finance_banks}"/>
