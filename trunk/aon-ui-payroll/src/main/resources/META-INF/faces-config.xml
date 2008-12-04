@@ -3278,6 +3278,14 @@ ControllerListener</managed-bean-name>
 				</map-entry>
 			</map-entries>
 		</managed-property>  
+			<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{tipdomicilioListener}</value>	
+				<value>#{tipcuentaListener}</value>				
+			</list-entries>
+		</managed-property>
 	</managed-bean>
 	
 	<managed-bean>
@@ -3377,6 +3385,10 @@ ControllerListener</managed-bean-name>
 			<property-name>masterControllerName</property-name>
 			<value>empresa</value>
 		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>actividad</value>
+		</managed-property>
      	<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>
@@ -3437,6 +3449,10 @@ ControllerListener</managed-bean-name>
 			<property-name>masterControllerName</property-name>
 			<value>empresa</value>
 		</managed-property>
+			<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>actividad</value>
+		</managed-property>
      	<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>
@@ -3446,7 +3462,21 @@ ControllerListener</managed-bean-name>
 				</map-entry>
 			</map-entries>
 		</managed-property>  
+				<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{tipcuentaControllerListener}</value>		
+					
+			</list-entries>
+		</managed-property>  		
 		</managed-bean>
+		
+	<managed-bean>
+		<managed-bean-name>tipcuentaControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.payroll.event.TipCuentaControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
 
 
 </faces-config>

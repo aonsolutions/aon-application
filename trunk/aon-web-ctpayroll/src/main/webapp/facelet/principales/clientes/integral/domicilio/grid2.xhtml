@@ -92,6 +92,15 @@
 
 
 				</aon:editDataTable>
+					<rich:spacer>
+				
+				</rich:spacer>
+				<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_tipodomcilio_ver}" />
+				<aon:selectOneMenu id="Tipodomi" >
+					<f:selectItem value="#{null}" itemLabel=" -  " />
+					<f:selectItems value="#{tipdomicilio.listaTipos}" />
+				</aon:selectOneMenu>
 			</aon:div>
 
 			<aon:div id="datos">
