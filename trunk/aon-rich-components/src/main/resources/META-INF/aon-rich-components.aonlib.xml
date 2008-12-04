@@ -23,7 +23,9 @@
     	<attribute name="todayControlMode" value="hidden"/>    	
     	<attribute name="partialSubmit" value="ondateselected" ignore="true" />
     	<attribute name="inputClass" value="aon-selectInputDate-inputClass" />
-    	<attribute name="buttonClass" value="aon-selectInputDate-buttonClass" />    	
+    	<attribute name="disabledStyleClass" value="aon-selectInputDate-inputClass-disabled" />
+    	<attribute name="buttonClass" value="aon-selectInputDate-buttonClass" />
+    	<attribute name="enableManualInput" value="true" type="1" />    	
 	</component>
 	
 	<component localName="div">
