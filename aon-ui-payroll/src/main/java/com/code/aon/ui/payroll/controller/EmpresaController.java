@@ -23,14 +23,18 @@ import com.code.aon.payroll.enumeration.EnvioSS;
 import com.code.aon.payroll.enumeration.IndicadorIrpf;
 import com.code.aon.payroll.enumeration.PagoImpuestos;
 import com.code.aon.payroll.enumeration.Sexo;
+import com.code.aon.payroll.enumeration.Tipdom;
 import com.code.aon.payroll.geograficas.Pais;
 import com.code.aon.payroll.geograficas.Provincia;
 import com.code.aon.payroll.principales.Cliente;
+import com.code.aon.payroll.principales.Domicilio;
+import com.code.aon.payroll.principales.empresa.Emprdom;
 import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Empresario;
 import com.code.aon.payroll.tipos.Tipovia;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.util.AonUtil;
 
 public class EmpresaController extends LinesController  implements IPayrollAlias, IPayrollBackAction   {
 
@@ -156,7 +160,8 @@ public class EmpresaController extends LinesController  implements IPayrollAlias
 		}
 		return pagoImpuestos;
 	}
-@Override
+	
+	@Override
 	public String returnAction() {
 		
 		return null;
@@ -167,12 +172,16 @@ public class EmpresaController extends LinesController  implements IPayrollAlias
 
 		verifyNullFields();
 		super.accept(event);
+		
+		
 	}
 	
 	@Override
 	public void onAccept(ActionEvent event) {
 		// TODO Auto-generated method stub
 		super.onAccept(event);
+		
+		
 	}
 	
 	/**
@@ -208,7 +217,7 @@ public class EmpresaController extends LinesController  implements IPayrollAlias
 	 * Establece los valores por defecto de campos
 	 * Campos check y radio.
 	 */
-	private void setDefaultFields(){
+	public void setDefaultFields(){
 		
 		Empresa empresa = (Empresa)getTo(); 
 		
@@ -440,8 +449,7 @@ public class EmpresaController extends LinesController  implements IPayrollAlias
 		
 		super.onReset(event);
 		
-		generateCdg();
-		setDefaultFields();
+		
 	}
 	
 	/**
@@ -460,6 +468,8 @@ public class EmpresaController extends LinesController  implements IPayrollAlias
 		((Empresa)getTo()).setCdg(code);
 	}
 	
+   
+    
 }
 
 
