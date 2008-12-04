@@ -14,7 +14,7 @@ import javax.persistence.Embeddable;
 public class LinpercepcionPK implements Serializable {
 
 	private String cdg;
-	private Date fecinicio;
+	private Date fecini;
 
 	/**
 	 * Devuelve el Código Percepción 
@@ -34,12 +34,12 @@ public class LinpercepcionPK implements Serializable {
 	 * @return
 	 */
 	@Column(name = "fecinicio", nullable = false, length = 10)
-	public Date getFecinicio() {
-		return this.fecinicio;
+	public Date getFecini() {
+		return this.fecini;
 	}
 
-	public void setFecinicio(Date fecinicio) {
-		this.fecinicio = fecinicio;
+	public void setFecini(Date fecini) {
+		this.fecini = fecini;
 	}
 
 	public boolean equals(Object other) {
@@ -54,10 +54,10 @@ public class LinpercepcionPK implements Serializable {
 		return ((this.getCdg() == castOther.getCdg()) || (this.getCdg() != null
 				&& castOther.getCdg() != null && this.getCdg().equals(
 				castOther.getCdg())))
-				&& ((this.getFecinicio() == castOther.getFecinicio()) || (this
-						.getFecinicio() != null
-						&& castOther.getFecinicio() != null && this
-						.getFecinicio().equals(castOther.getFecinicio())));
+				&& ((this.getFecini() == castOther.getFecini()) || (this
+						.getFecini() != null
+						&& castOther.getFecini() != null && this
+						.getFecini().equals(castOther.getFecini())));
 	}
 
 	public int hashCode() {
@@ -66,7 +66,7 @@ public class LinpercepcionPK implements Serializable {
 		result = 37 * result
 				+ (getCdg() == null ? 0 : this.getCdg().hashCode());
 		result = 37 * result
-				+ (getFecinicio() == null ? 0 : this.getFecinicio().hashCode());
+				+ (getFecini() == null ? 0 : this.getFecini().hashCode());
 		return result;
 	}
 }

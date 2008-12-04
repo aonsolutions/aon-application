@@ -23,8 +23,7 @@
 		<mapping class="com.code.aon.payroll.tipos.Registro"/>
 		<mapping class="com.code.aon.payroll.tipos.Incidencia"/>
 		<mapping class="com.code.aon.payroll.tipos.Autorizacion"/>				
-        <mapping class="com.code.aon.payroll.tipos.Tipovia"/>
-		
+        <mapping class="com.code.aon.payroll.tipos.Tipovia"/>		
 		<!-- COTIZACIONES -->		
 		<mapping class="com.code.aon.payroll.cotizacion.PorcentajeMaestro"/>			
 		<mapping class="com.code.aon.payroll.cotizacion.Porcentaje"/>
@@ -41,11 +40,9 @@
 		<mapping class="com.code.aon.payroll.cotizacion.Cnae"/>
 		<mapping class="com.code.aon.payroll.cotizacion.Cnae2009Maestro"/>			
 		<mapping class="com.code.aon.payroll.cotizacion.Cnae2009"/>		
-	
 	    <!--DIVISAS -->		
 	    <mapping class="com.code.aon.payroll.divisa.Divisa"/>			
-		<mapping class="com.code.aon.payroll.divisa.LinDivisa"/>	 		 	
-        
+		<mapping class="com.code.aon.payroll.divisa.LinDivisa"/>	 		 	        
         <!-- ORGANISMOS Y ENTIDADES-->		
 	  	<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion"/>		
 		<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Mutua"/>		
@@ -54,13 +51,9 @@
 		<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal"/>			
         <mapping class="com.code.aon.payroll.cotizacion.CnaeMaestro"/>			
 		<mapping class="com.code.aon.payroll.cotizacion.Cnae"/>	
-
-		
-		
 		<!-- CONTRATOS -->		
 		<mapping class="com.code.aon.payroll.auxiliares.contratos.ContratosInternos"/>
 		<mapping class="com.code.aon.payroll.auxiliares.contratos.ContratosTc2"/>	
-		
 		<!-- CONVENIOS -->		
 		<mapping class="com.code.aon.payroll.auxiliares.convenios.Complemento"/>
 		<mapping class="com.code.aon.payroll.auxiliares.convenios.Convenio"/>
@@ -68,19 +61,16 @@
 		<mapping class="com.code.aon.payroll.auxiliares.convenios.Pagaext"/>
 		<mapping class="com.code.aon.payroll.auxiliares.convenios.Categoria"/>
 		<mapping class="com.code.aon.payroll.auxiliares.convenios.Percniv"/>
-
         <!-- GEOGRAFICAS -->		
         <mapping class="com.code.aon.payroll.geograficas.Nacion"/>
         <mapping class="com.code.aon.payroll.geograficas.Pais"/>
 		<mapping class="com.code.aon.payroll.geograficas.Provincia"/>		
-		<mapping class="com.code.aon.payroll.geograficas.Comunidad"/>
-        
+		<mapping class="com.code.aon.payroll.geograficas.Comunidad"/>        
         <!-- IRPF -->
 		<mapping class="com.code.aon.payroll.irpf.Cuota"/>
 		<mapping class="com.code.aon.payroll.irpf.Exclusion"/>
 		<mapping class="com.code.aon.payroll.irpf.Elemirpf"/>
-		<mapping class="com.code.aon.payroll.irpf.Linirpf"/>	
-		
+		<mapping class="com.code.aon.payroll.irpf.Linirpf"/>			
 		<!-- IRPF FORAL -->			
         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionAlava"/>
         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionVizcaya"/>	
@@ -89,26 +79,24 @@
         <mapping class="com.code.aon.payroll.irpfforal.MinoracionesAlava"/> 
         <mapping class="com.code.aon.payroll.irpfforal.MinoracionesGuipuzcoa"/> 
         <mapping class="com.code.aon.payroll.irpfforal.MinoracionesVizcaya"/> 
-        <mapping class="com.code.aon.payroll.irpfforal.MinoracionesNavarra"/>
-            
+        <mapping class="com.code.aon.payroll.irpfforal.MinoracionesNavarra"/>            
         <!-- SISTEMA RED -->			
-        <mapping class="com.code.aon.payroll.auxiliares.Colectivos"/>	   	
-           
-
+        <mapping class="com.code.aon.payroll.auxiliares.Colectivos"/>	   	           
         <!-- ORGANISMOS Y ENTIDADES -->			
         <mapping class="com.code.aon.payroll.auxiliares.Admon"/>
-
-         <!-- Clientes -->			
-         <mapping class="com.code.aon.payroll.principales.Avisos"/>
+        <!-- Clientes -->			
+        <mapping class="com.code.aon.payroll.principales.Avisos"/>
         <mapping class="com.code.aon.payroll.principales.Cliente"/>
         <mapping class="com.code.aon.payroll.principales.Domicilio"/>
         <mapping class="com.code.aon.payroll.principales.Cuentas"/>
-        
         <!-- Empresa -->			
         <mapping class="com.code.aon.payroll.principales.empresa.Empresa"/>
         <mapping class="com.code.aon.payroll.principales.empresa.Actividad"/>
         <mapping class="com.code.aon.payroll.principales.empresa.Emprdom"/>
-         <mapping class="com.code.aon.payroll.principales.empresa.Emprlban"/>
+        <mapping class="com.code.aon.payroll.principales.empresa.Emprlban"/>
+        <!-- AVANZADAS - KARTEL -->			
+        <mapping class="com.code.aon.payroll.avanzadas.kartel.Percepcion"/>
+        <mapping class="com.code.aon.payroll.avanzadas.kartel.Linpercepcion"/>
 	</session-factory>
 
 </hibernate-configuration>
