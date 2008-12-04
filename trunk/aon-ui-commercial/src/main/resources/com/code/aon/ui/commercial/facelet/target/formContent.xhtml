@@ -5,14 +5,12 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml">
-		<ui:param name="controller" value="#{targetController}" />
-	</ui:include>
+	<ui:include src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" />
 
 	<aon:outputLabel for="Target_advertising"
 		value="#{commercialBundle.commercial_target_advertising}" />
 	<aon:selectOneMenu id="Target_advertising" required="true"
-		value="#{targetController.to.advertising}">
+		value="#{controller.to.advertising}">
 		<f:selectItem itemLabel="-" value="#{null}"/>
 		<f:selectItems value="#{commercialCollections.advertisings}" />
 	</aon:selectOneMenu>

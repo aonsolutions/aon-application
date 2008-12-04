@@ -12,11 +12,9 @@ import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.commercial.controller.TargetController;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
 
 public class TargetControllerListener extends ControllerAdapter implements ICommercialConstants {
 	
@@ -30,7 +28,6 @@ public class TargetControllerListener extends ControllerAdapter implements IComm
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}	
-		cancelChildControllers();
 	}
 
 	@Override
@@ -39,11 +36,9 @@ public class TargetControllerListener extends ControllerAdapter implements IComm
 		TargetController controller = (TargetController) event.getController();
 		try {
 			controller.refreshSegments();
-			resetTargetTracking( (Target) controller.getTo() );
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}
-		cancelChildControllers();
 	}
 	
 	@Override
@@ -77,40 +72,6 @@ public class TargetControllerListener extends ControllerAdapter implements IComm
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
-		}
-	}
-	
-	private void cancelChildControllers() {
-		IController targetAddressController = AonUtil.getController(TARGET_ADDRESS_CONTROLLER_NAME);
-		if (targetAddressController != null) {
-			targetAddressController.onCancel(null);
-		}
-		IController targetMediaController = AonUtil.getController(TARGET_MEDIA_CONTROLLER_NAME);
-		if (targetMediaController != null) {
-			targetMediaController.onCancel(null);
-		}
-		IController targetSegmentController = AonUtil.getController(TARGET_SEGMENT_CONTROLLER_NAME);
-		if (targetSegmentController != null) {
-			targetSegmentController.onCancel(null);
-		}
-		IController targetItemController = AonUtil.getController(TARGET_ITEM_CONTROLLER_NAME);
-		if (targetItemController != null) {
-			targetItemController.onCancel(null);
-		}
-		IController targetSellerController = AonUtil.getController(TARGET_SELLER_CONTROLLER_NAME);
-		if (targetSellerController != null) {
-			targetSellerController.onCancel(null);
-		}
-	}
-
-	private void resetTargetTracking( Target target ) throws ManagerBeanException {
-		IController controller = AonUtil.getController(TARGET_TRACKING_CONTROLLER_NAME);
-		if (controller != null) {
-			controller.clearCriteria();
-			Criteria criteria = controller.getCriteria();
-			String field = controller.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_TARGET_ID);
-			criteria.addEqualExpression( field, target.getId() );
-			controller.onSearch(null);
 		}
 	}
 	
