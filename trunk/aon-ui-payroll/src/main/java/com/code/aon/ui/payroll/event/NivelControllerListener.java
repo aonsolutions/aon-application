@@ -6,7 +6,6 @@ import com.code.aon.payroll.auxiliares.convenios.Convenio;
 import com.code.aon.payroll.auxiliares.convenios.Nivel;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -54,11 +53,11 @@ public class NivelControllerListener extends ControllerAdapter implements IPayro
 	}
 	
 	private void resetPercepcionModel() throws ControllerListenerException {
-		LinesController percepcionController = (LinesController) AonUtil.getController(PERCEPCION_CONTROLLER_NAME);
+		LinesController percepcionController = (LinesController) AonUtil.getController(PERCNIV_CONTROLLER_NAME);
 		try {
 			percepcionController.clearCriteria();
 			Criteria criteria = percepcionController.getCriteria();
-			criteria.addNullExpression(percepcionController.getFieldName(IPayrollAlias.PERCEPCION_NIVEL_ID_CDG));
+			criteria.addNullExpression(percepcionController.getFieldName(IPayrollAlias.PERCNIV_NIVEL_ID_CDG));
 			percepcionController.initializeModel();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );			

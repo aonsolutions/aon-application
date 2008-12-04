@@ -30,7 +30,7 @@ public class Nivel implements ITransferObject {
 	/** categorias. */
 	private Set<Categoria> categorias = new HashSet<Categoria>();
 	/** percepciones. */
-	private Set<Percepcion> percepciones = new HashSet<Percepcion>();
+	private Set<Percniv> percepciones = new HashSet<Percniv>();
 
 	@EmbeddedId
 	@AttributeOverrides( {
@@ -64,11 +64,11 @@ public class Nivel implements ITransferObject {
 	}
 	
 	@OneToMany(mappedBy = "nivel", cascade={CascadeType.REMOVE})
-	public Set<Percepcion> getPercepciones() {
+	public Set<Percniv> getPercepciones() {
 		return percepciones;
 	}
 
-	public void setPercepciones(Set<Percepcion> percepciones) {
+	public void setPercepciones(Set<Percniv> percepciones) {
 		this.percepciones = percepciones;
 	}
 }

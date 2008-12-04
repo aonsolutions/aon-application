@@ -14,14 +14,14 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.auxiliares.convenios.Complemento;
-import com.code.aon.payroll.auxiliares.convenios.Percepcion;
+import com.code.aon.payroll.auxiliares.convenios.Percniv;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.PagaExtra;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class PercepcionLinesController extends LinesController implements IPayrollConstants{
+public class PercnivLinesController extends LinesController implements IPayrollConstants{
 
 	private List<SelectItem> pagas;
 	private Complemento complemento;
@@ -45,7 +45,7 @@ public class PercepcionLinesController extends LinesController implements IPayro
 		
 		try {
 			if( (complemento != null) && (! StringUtils.isEmpty(complemento.getCdg())) ) {
-				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.PERCEPCION_COMPLEMENTO_CDG), getComplemento().getCdg());
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.PERCNIV_COMPLEMENTO_CDG), getComplemento().getCdg());
 			}
 			
 		} catch (ManagerBeanException e) {
@@ -76,7 +76,7 @@ public class PercepcionLinesController extends LinesController implements IPayro
 	
 	public void impuniChange(ValueChangeEvent event){
 		
-		Percepcion p = (Percepcion)AonUtil.getController(IPayrollConstants.PERCEPCION_CONTROLLER_NAME).getTo();
+		Percniv p = (Percniv)AonUtil.getController(IPayrollConstants.PERCNIV_CONTROLLER_NAME).getTo();
 		
 		p.setImporte(((BigDecimal)event.getNewValue()).multiply(p.getUnidades()));
 		

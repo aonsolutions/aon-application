@@ -13,15 +13,15 @@
 
 	<ui:define name="content">
 
-		<aon:form id="percepcionList">
+		<aon:form id="percnivList">
 			
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_auxiliares_convenios__percepciones}" />
-				<ui:param name="controller" value="#{percepcion}" />
+				<ui:param name="controller" value="#{percniv}" />
 				
 				<ui:define name="additionalToolbarContent">
 					<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-						<ui:param name="controller" value="#{percepcion}"/>
+						<ui:param name="controller" value="#{percniv}"/>
 						<ui:param name="reportKey" value=""/>
 						<ui:param name="reportKeyXls" value=""/>
 					</ui:include>	
@@ -31,11 +31,11 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="percepcionData" value="#{percepcion.model}"
-					var="to" rows="20" rendered="#{percepcion.model.rowCount > 0}"
+				<aon:dataTable id="percnivData" value="#{percniv.model}"
+					var="to" rows="20" rendered="#{percniv.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
 
-					<aon:rowSelector action="percepcion_form" actionListener="#{percepcion.onSelect}" />
+					<aon:rowSelector action="percniv_form" actionListener="#{percniv.onSelect}" />
 					
 					<aon:column>
 						<f:facet name="header">
@@ -60,7 +60,7 @@
 
 				</aon:dataTable>
 
-				<aon:dataScroller2 for="percepcionData" showNote="true" />
+				<aon:dataScroller2 for="percnivData" showNote="true" />
 
 			</aon:div>
 		</aon:form>

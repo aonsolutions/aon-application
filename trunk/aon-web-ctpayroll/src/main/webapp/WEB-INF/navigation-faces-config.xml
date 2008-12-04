@@ -558,19 +558,19 @@
 	<!-- =================== Convenios - Colectivos - Percepciones ================= -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>percepcion_form</from-outcome>
+			<from-outcome>percniv_form</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/convenios/percepcion/form.xhtml
 			</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>percepcion_list</from-outcome>
+			<from-outcome>percniv_list</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/convenios/percepcion/list.xhtml
 			</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>percepcion_search</from-outcome>
+			<from-outcome>percniv_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/convenios/percepcion/search.xhtml
 			</to-view-id>

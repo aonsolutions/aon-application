@@ -5,14 +5,14 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.code.aon.payroll.auxiliares.convenios.Nivel;
-import com.code.aon.payroll.auxiliares.convenios.Percepcion;
+import com.code.aon.payroll.auxiliares.convenios.Percniv;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
 import com.code.aon.ui.util.AonUtil;
 
-public class PercepcionControllerListener extends ControllerAdapter implements IPayrollConstants {
+public class PercnivControllerListener extends ControllerAdapter implements IPayrollConstants {
 	
 	
 	
@@ -20,14 +20,14 @@ public class PercepcionControllerListener extends ControllerAdapter implements I
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
-		System.out.println("PercepcionControllerListener -------> afterBeanCreated");
+		System.out.println("PercnivControllerListener -------> afterBeanCreated");
 		
 		
 		Nivel nivel = (Nivel)(AonUtil.getController(IPayrollConstants.NIVEL_CONTROLLER_NAME)).getTo();
-		((Percepcion)(event.getController().getTo())).getId().setCdg(nivel.getConvenio().getCdg());
+		((Percniv)(event.getController().getTo())).getId().setCdg(nivel.getConvenio().getCdg());
 		
 		
-		Percepcion p = (Percepcion)(event.getController().getTo());
+		Percniv p = (Percniv)(event.getController().getTo());
 		BigDecimal zero = new BigDecimal(0);
 		p.setNivel(nivel);
 		p.setConvenio(nivel.getConvenio());
@@ -41,11 +41,11 @@ public class PercepcionControllerListener extends ControllerAdapter implements I
 	@Override
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
-		System.out.println("PercepcionControllerListener -------> beforeBeanAdded");
+		System.out.println("PercnivControllerListener -------> beforeBeanAdded");
 		
 		setRequiredData(event);
 		
-		Percepcion p = (Percepcion)(event.getController().getTo());
+		Percniv p = (Percniv)(event.getController().getTo());
 		
 		p.setFecnew(currentDate());
 		p.setHornew(currentDate());
@@ -58,7 +58,7 @@ public class PercepcionControllerListener extends ControllerAdapter implements I
 			throws ControllerListenerException {
 		setRequiredData(event);
 		
-		Percepcion p = (Percepcion)(event.getController().getTo());
+		Percniv p = (Percniv)(event.getController().getTo());
 		
 		p.setFecmod(currentDate());
 		p.setHormod(currentDate());
@@ -67,13 +67,13 @@ public class PercepcionControllerListener extends ControllerAdapter implements I
 	@Override
 	public void afterBeanCanceled(ControllerEvent event)
 			throws ControllerListenerException {
-		System.out.println("PercepcionControllerListener -------> afterBeanCanceled");
+		System.out.println("PercnivControllerListener -------> afterBeanCanceled");
 	}
 	
 	@Override
 	public void beforeBeanCanceled(ControllerEvent event)
 			throws ControllerListenerException {
-		System.out.println("PercepcionControllerListener -------> beforeBeanCanceled");
+		System.out.println("PercnivControllerListener -------> beforeBeanCanceled");
 	}
 	
 	/**
@@ -82,10 +82,10 @@ public class PercepcionControllerListener extends ControllerAdapter implements I
 	 */
 	private void setRequiredData(ControllerEvent event){
 		Nivel nivel = (Nivel)(AonUtil.getController(IPayrollConstants.NIVEL_CONTROLLER_NAME)).getTo();
-		Percepcion p = (Percepcion)(event.getController().getTo());
+		Percniv p = (Percniv)(event.getController().getTo());
 		
 		p.getId().setNivel(nivel.getId().getCdg());
-		p.getId().setCodcom(((Percepcion)(event.getController().getTo())).getComplemento1().getCdg());
+		p.getId().setCodcom(((Percniv)(event.getController().getTo())).getComplemento1().getCdg());
 		
 		if(p.getComplemento().getCdg()=="")
 			p.setComplemento(null);

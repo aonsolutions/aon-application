@@ -14,7 +14,7 @@ import com.code.aon.payroll.auxiliares.convenios.Complemento;
 import com.code.aon.payroll.auxiliares.convenios.Convenio;
 import com.code.aon.payroll.auxiliares.convenios.Nivel;
 import com.code.aon.payroll.auxiliares.convenios.Pagaext;
-import com.code.aon.payroll.auxiliares.convenios.Percepcion;
+import com.code.aon.payroll.auxiliares.convenios.Percniv;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Entidad;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Linmutua;
@@ -124,7 +124,7 @@ public class PayrollAliasWriter {
 		        Nivel.class.getName(),
 		        Pagaext.class.getName(),
 		        Categoria.class.getName(),
-		        Percepcion.class.getName(),
+		        Percniv.class.getName(),
 		        Entidad.class.getName(),
 		        Sucursal.class.getName(),
 		        Mutua.class.getName(),
