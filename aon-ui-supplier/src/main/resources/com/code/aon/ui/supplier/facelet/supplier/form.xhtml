@@ -46,24 +46,24 @@
 				</aon:panelGrid>
 				
 				<c:if test="#{!supplier.new}">
-					<aon:panelTabSet>
+					<aon:panelTabSet selectedTab="#{supplier.selectedTab}">
 
-						<aon:panelTab label="#{registryBundle.registry_address_module}">
+						<aon:panelTab id="adddress" label="#{registryBundle.registry_address_module}">
 							<ui:include	src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
-								<ui:param name="controllerAlias" value="#{supplierAddress}" />
+								<ui:param name="controller" value="#{supplierAddress}" />
 							</ui:include>
 						</aon:panelTab>
 
-						<aon:panelTab label="#{registryBundle.registry_media_module}">
+						<aon:panelTab id="media" label="#{registryBundle.registry_media_module}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
-								<ui:param name="controllerAlias" value="#{supplierMedia}" />
+								<ui:param name="controller" value="#{supplierMedia}" />
 							</ui:include>
 						</aon:panelTab>
  
  						<c:if test="#{supplier.showFinanceRegistryBank}">
-							<aon:panelTab label="#{financeBundle.finance_data_module}">
+							<aon:panelTab id="finance" label="#{financeBundle.finance_data_module}">
 								<ui:include src="/com/code/aon/ui/finance/facelet/rbank/tab_grid.xhtml">
-									<ui:param name="controllerAlias" value="#{supplierRbank}" />							</ui:include>
+									<ui:param name="controller" value="#{supplierRbank}" />							</ui:include>
 							</aon:panelTab>
 						</c:if>
 
