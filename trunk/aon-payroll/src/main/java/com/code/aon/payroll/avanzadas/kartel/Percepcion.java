@@ -1,8 +1,13 @@
 package com.code.aon.payroll.avanzadas.kartel;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.code.aon.common.ITransferObject;
@@ -17,6 +22,8 @@ public class Percepcion implements ITransferObject {
 	private String cdg;
 	private String descripcion;
 	private String tipo;
+	
+	private Set<Linpercepcion> linpercepciones = new HashSet<Linpercepcion>();
 
 	/**
 	 * Devuelve el Código Percepción
@@ -55,6 +62,15 @@ public class Percepcion implements ITransferObject {
 
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
+	}
+
+	@OneToMany(mappedBy = "percepcion", cascade={CascadeType.REMOVE})
+	public Set<Linpercepcion> getLinpercepciones() {
+		return linpercepciones;
+	}
+
+	public void setLinpercepciones(Set<Linpercepcion> linpercepciones) {
+		this.linpercepciones = linpercepciones;
 	}
 
 }
