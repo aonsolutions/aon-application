@@ -16,31 +16,11 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:param name="controller" value="#{creditor}" />
 				<ui:define name="searchContent">
 
-					<aon:methodParam name="searchActionListener"
-						value="#{creditor.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="creditor_list" />
+					<ui:include src="/com/code/aon/ui/finance/facelet/creditor/searchContent.xhtml" />
 
-					<aon:outputLabel for="Creditor_registry_document"
-						value="#{bundle.aon_company_document}" />
-					<aon:inputText id="Creditor_registry_document" size="20"
-						valueChangeListener="#{creditor.addExpression}" />
-
-					<aon:outputLabel for="Creditor_registry_name"
-						value="#{bundle.aon_company_name}" />
-					<aon:inputText id="Creditor_registry_name" size="40"
-						valueChangeListener="#{creditor.addExpression}" />
-
-					<aon:outputLabel for="Creditor_registry_surname"
-						value="#{registryBundle.registry_surname}" />
-					<aon:inputText id="Creditor_registry_surname" size="40"
-						valueChangeListener="#{creditor.addExpression}" />
-
-					<aon:outputLabel for="Creditor_registry_alias"
-						value="#{bundle.aon_company_alias}" />
-					<aon:inputText id="Creditor_registry_alias" size="40"
-						valueChangeListener="#{creditor.addExpression}" />
 				</ui:define>
 			</ui:decorate>
 		</aon:form>

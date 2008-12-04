@@ -1,55 +1,30 @@
 package com.code.aon.ui.finance.controller;
 
-import javax.faces.event.ActionEvent;
-
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.IController;
-import com.code.aon.ui.util.AonUtil;
 
 /**
  * Controller used in the creditor maintenance.
  */
 public class CreditorController extends BasicController {
 	
-	/** Addres Controller name. */
-	private static final String ADDRESS_CONTROLLER_NAME = "creditorAddress";
+	private String selectedTab;
 	
-	/** Media Controller name. */
-	private static final String MEDIA_CONTROLLER_NAME = "creditorMedia";
+	private boolean showFinanceData = true;
 	
-    /**
-     * On reset. Sends a cancel to the media and address controllers to avoid having editing any of them
-     * 
-     * @param event the event
-     * 
-     * @see com.code.aon.ui.form.BasicController#onReset(javax.faces.event.ActionEvent)
-     */
-    @Override
-    public void onReset(ActionEvent event) {
-    	IController addressController = AonUtil.getController(ADDRESS_CONTROLLER_NAME);
-        addressController.onCancel(event);
+	public boolean isShowFinanceData() {
+		return showFinanceData;
+	}
 
-        IController mediaController = AonUtil.getController(MEDIA_CONTROLLER_NAME);
-        mediaController.onCancel(event);
+	public void setShowFinanceData(boolean showFinanceData) {
+		this.showFinanceData = showFinanceData;
+	}
+        
+	public String getSelectedTab() {
+		return selectedTab;
+	}
 
-        super.onReset(event);
-    }
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
+	}
 
-    /**
-     * On select. Sends a cancel to the media and address controllers to avoid having editing any of them
-     * 
-     * @param event the event
-     * 
-     * @see com.code.aon.ui.form.BasicController#onSelect(javax.faces.event.ActionEvent)
-     */
-    @Override
-    public void onSelect(ActionEvent event) {
-    	IController addressController = AonUtil.getController(ADDRESS_CONTROLLER_NAME);
-        addressController.onCancel(event);
-
-        IController mediaController = AonUtil.getController(MEDIA_CONTROLLER_NAME);
-        mediaController.onCancel(event);
-
-        super.onSelect(event);
-    }
 }
