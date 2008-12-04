@@ -7,7 +7,7 @@ import com.code.aon.ui.form.BasicController;
  */
 public class SupplierController extends BasicController {
 	
-	private boolean showFinanceRegistryBank;
+	private boolean showFinanceRegistryBank = true;
 	
 	public boolean isShowFinanceRegistryBank() {
 		return showFinanceRegistryBank;
