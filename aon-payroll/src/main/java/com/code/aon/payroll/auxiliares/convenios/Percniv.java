@@ -33,9 +33,9 @@ import com.code.aon.payroll.enumeration.TipoCotizaciones;
  */
 @Entity
 @Table(name = "percniv")
-public class Percepcion implements ITransferObject {
+public class Percniv implements ITransferObject {
 
-	private PercepcionPK id;
+	private PercnivPK id;
     private String descom;
     private String desabr;
     private TipoCotizaciones tipcot;
@@ -64,11 +64,11 @@ public class Percepcion implements ITransferObject {
         @AttributeOverride(name="cdg", column=@Column(name="cdg", nullable=false, length=2) ), 
         @AttributeOverride(name="nivel", column=@Column(name="nivel", nullable=false, length=2) ), 
         @AttributeOverride(name="codcom", column=@Column(name="codcom", nullable=false, length=2) ) } )
-    public PercepcionPK getId() {
+    public PercnivPK getId() {
         return this.id;
     }
     
-    public void setId(PercepcionPK id) {
+    public void setId(PercnivPK id) {
         this.id = id;
     }
     
