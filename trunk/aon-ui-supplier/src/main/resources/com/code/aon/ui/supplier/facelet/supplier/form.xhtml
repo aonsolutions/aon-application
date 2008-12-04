@@ -22,13 +22,13 @@
 						<ui:param name="controller" value="#{supplier}" />
 					</ui:include>
 
-					<h:outputLabel for="SupplierSegment_id"
-						value="#{supplierBundle.supplier_segment}" />
-					<h:selectOneMenu id="SupplierSegment_id"
+					<aon:outputLabel for="Supplier_supplierSegment_id"
+						value="#{bundle.aon_segment}" />
+					<aon:selectOneMenu id="Supplier_supplierSegment_id"
 						value="#{supplier.to.supplierSegment}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{supplierCollections.supplierSegments}" />
-					</h:selectOneMenu>
+					</aon:selectOneMenu>
 				
 					<aon:outputLabel for="Supplier_scope_id"
 						value="#{bundle.aon_scope}" />
