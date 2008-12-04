@@ -20,6 +20,8 @@ import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.Epigrafes;
 import com.code.aon.payroll.enumeration.Tipcuenta;
 import com.code.aon.payroll.enumeration.Tipdom;
+import com.code.aon.payroll.principales.empresa.Emprdom;
+import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.ui.form.LinesController;
 
 public class TipDomicilioController extends LinesController {
@@ -41,6 +43,20 @@ public class TipDomicilioController extends LinesController {
 		return listatiposdomicilio;
 	}
 	
+	@Override
+	public void onReset(ActionEvent event) {
+		
+		super.onReset(event);
+		
+		try {
+			((Emprdom)(getTo())).setCdg(getCode());
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
 
 	Integer code ;
     public Integer getCode() throws ManagerBeanException {	
@@ -59,7 +75,23 @@ public class TipDomicilioController extends LinesController {
 	
 	
 
+	@Override
+	public void onAccept(ActionEvent event) {
+		verifyNullFields();
+		super.onAccept(event);
+	}
 	
+	
+	/**
+	 * comprueba los nulos de los objetos complejos
+	 * para ponerlos a null en el caso de que esten vacios
+	 */
+	private void verifyNullFields(){
+		
+		if(((Emprdom)getTo()).getActividad()!=null  && ((Emprdom)getTo()).getActividad().getCdg() == null)
+			((Emprdom)getTo()).setActividad(null);
+		
+	}
 
 
 

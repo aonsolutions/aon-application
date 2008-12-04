@@ -2,17 +2,15 @@ package com.code.aon.ui.payroll.event;
 
 
 import com.code.aon.payroll.enumeration.Tipdom;
-import com.code.aon.payroll.geograficas.Provincia;
 import com.code.aon.payroll.principales.Cliente;
 import com.code.aon.payroll.principales.Domicilio;
-import com.code.aon.payroll.principales.empresa.Actividad;
 import com.code.aon.payroll.principales.empresa.Emprdom;
 import com.code.aon.payroll.principales.empresa.Empresa;
-import com.code.aon.payroll.tipos.Tipovia;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.payroll.controller.DomicilioController;
+import com.code.aon.ui.payroll.controller.EmpresaController;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
 import com.code.aon.ui.payroll.controller.TipDomicilioController;
 import com.code.aon.ui.util.AonUtil;
@@ -24,6 +22,7 @@ public class EmpresaControllerListener extends ControllerAdapter implements IPay
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
 		// TODO Auto-generated method stub
+		//((Empresa)(getController().getTo())).setCliente(((EmpresaController)getController()).getCliente());
 		super.beforeBeanAdded(event);
 	}
 	
@@ -37,54 +36,31 @@ public class EmpresaControllerListener extends ControllerAdapter implements IPay
 	@Override
 	public void afterBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
+		
+		getController().setNew(false);
 		addDomicilio();
+		
 		super.afterBeanAdded(event);
+	}
+	
+	@Override
+	public void afterBeanCreated(ControllerEvent event)
+			throws ControllerListenerException {
+		((EmpresaController)getController()).generateCdg();
+		((EmpresaController)getController()).setDefaultFields();
+		super.afterBeanCreated(event);
 	}
 	
 	@Override
 	public void afterBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
-		updateDomicilio();
-		
-		/*
-		 else if (vBolNuevo == false) then begin
-	        Sql.SqlExec ("UPDATE domicilio " + 
-	                         "SET tipovia   = ?, "+
-	                             "nomvia    = ?, "+
-	                             "numero    = ?, "+
-	                             "otrdir    = ?, "+ 
-	                             "codpos    = ?, "+
-	                             "localidad = ?, "+
-	                             "provincia = ?, "+
-	                             "persona   = ?, "+
-	                             "telefono  = ?, "+
-	                             "fax       = ?, "+
-	                             "email     = ?, "+
-	                             "linea1    = '', "+
-	                             "linea2    = '', "+
-	                             "aclaracion= ''  "+
-	                        "WHERE codcli = ? "+ 
-	                        "AND cdg= ?",
-	                            lChTipovia,
-	                            lChNomvia,
-	                            lChNumero,
-	                            lChOtrodir,
-	                            lChCodpos,
-	                            lChLocalidad,
-	                            lChProvincia,
-	                            lChPersona,
-	                            lChTelefono,
-	                            lChFax,
-	                            lChEmail,
-	                            vIntCodCli,
-	                            lIntDomicilio);
-	    end
-		 */
-		
+				
 		super.afterBeanUpdated(event);
 	}
 	
-	/**
+	
+	
+	 /**
 	 * Añade un domicilio para el cliente de la empresa seleccionada y
 	 * Crea dos tipos de domicilio (social y fiscal) para el cliente de la empresa seleccionada
 	 */
@@ -125,23 +101,34 @@ public class EmpresaControllerListener extends ControllerAdapter implements IPay
 		/*
 		 * Crea dos tipos de domicilio (social y fiscal) para el cliente de la empresa seleccionada
 		 */
-			/*TipDomicilioController tipdomicilioController = (TipDomicilioController)AonUtil.getController(IPayrollConstants.TIPDOMICILIO_CONTROLLER_NAME);
-			tipdomicilioController.onReset(null);
+			TipDomicilioController tipdomicilioController = (TipDomicilioController)AonUtil.getController(IPayrollConstants.TIPDOMICILIO_CONTROLLER_NAME);
+			Emprdom tipdomicilio;
 			
-			Emprdom tipdomicilio = (Emprdom)tipdomicilioController.getTo();
+			//tipo domicilio social en tipdomicilio
+			tipdomicilioController.onReset(null);
+			tipdomicilio = (Emprdom)tipdomicilioController.getTo();
 			
 			tipdomicilio.setTipdom(Tipdom.SOCIAL);
 			tipdomicilio.setCliente(cliente);
 			tipdomicilio.setDomicilio(domicilio);
 			tipdomicilio.setActividad(null);
-			tipdomicilio.setEmpresa((Empresa)this.getController().getTo());
+			tipdomicilio.setEmpresa((Empresa)getController().getTo());
 		
 			tipdomicilioController.onAccept(null);
 			
+			//tipo domicilio fiscal en tipdomicilio
+			tipdomicilioController.onReset(null);
+			tipdomicilio = (Emprdom)tipdomicilioController.getTo();
+			
 			tipdomicilio.setTipdom(Tipdom.FISCAL);
-			tipdomicilioController.onAccept(null);*/
+			tipdomicilio.setCliente(cliente);
+			tipdomicilio.setDomicilio(domicilio);
+			//tipdomicilio.setActividad(null);
+			tipdomicilio.setEmpresa((Empresa)getController().getTo());
+			tipdomicilioController.onAccept(null);
 			
 		} catch (Exception e) {
+			System.out.println("FALLOOOOO");
 			e.printStackTrace();
 		}	
 	}
@@ -220,10 +207,6 @@ public class EmpresaControllerListener extends ControllerAdapter implements IPay
 		} catch (Exception e) {
 			e.printStackTrace();
 		}	
-		
-		
-		
-		
 		
 	}
 	
