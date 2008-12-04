@@ -37,7 +37,6 @@
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
-				<value>#{sellerControllerListener}</value>
 				<value>#{sellerAddressListener}</value>
 				<value>#{sellerMediaListener}</value>
 			</list-entries>
@@ -45,18 +44,8 @@
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>sellerControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.sales.event.SellerControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
 		<managed-bean-name>sellerAddressListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.MasterControllerListener
-		</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>		
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -75,9 +64,7 @@
 
 	<managed-bean>
 		<managed-bean-name>sellerMediaListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.MasterControllerListener
-		</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -91,22 +78,6 @@
 					<value>id</value>
 				</map-entry>
 			</map-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>sellerChildListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.ChildControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>masterBean</property-name>
-			<value>seller.registry</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterPropertyName</property-name>
-			<value>registry</value>
 		</managed-property>
 	</managed-bean>
 
@@ -127,14 +98,22 @@
 			<value>sellerAddress</value>
 		</managed-property>
 		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>
-					com.code.aon.ui.form.event.IControllerListener
-				</value-class>
-				<value>#{sellerChildListener}</value>
-			</list-entries>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
 		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>seller</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
 	</managed-bean>
 
 	<!--  **** SELLER MEDIA **** -->
@@ -154,14 +133,22 @@
 			<value>sellerMedia</value>
 		</managed-property>
 		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>
-					com.code.aon.ui.form.event.IControllerListener
-				</value-class>
-				<value>#{sellerChildListener}</value>
-			</list-entries>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
 		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>seller</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
 	</managed-bean>
 	
 	<!-- ************ SELLER LOOKUP ************** -->
