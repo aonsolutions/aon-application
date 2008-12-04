@@ -1480,10 +1480,11 @@ color:#000;
 	cursor:pointer;
 	}
 .aon-selectInputDate-inputClass{																																																																																												
+	border:#808080 1px solid;	
+	}
+.aon-selectInputDate-inputClass-disabled{																																																																																												
 	background-color:#f2f2f2;
 	border:#808080 1px solid;	
-	color:#808080;
-	margin-left:5px;
 	}
 
 /**********************************************/
