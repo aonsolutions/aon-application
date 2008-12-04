@@ -93,8 +93,8 @@
 				</aon:div>
 
 
-				<aon:div>
-					<rich:tabPanel id="tabs" switchType="ajax" style="tabs">
+				<aon:div  id="tabsInfo" >
+					<rich:tabPanel  switchType="ajax" style="tabs">
 						<rich:tab label="#{appBundle.aon_payroll_principales_actividades}">
 
 							<aon:div id="ctasDiv">
@@ -107,6 +107,7 @@
 						</rich:tab>
 						<rich:tab
 							label="#{appBundle.aon_payroll_principales_domicilio_domiasin}" >
+							<aon:actionListener method="#{tipdomicilio.initialiceTiposDomicilio}" />
 						<aon:div>
 							<ui:include src="domicilio/grid2.xhtml"
 								rendered="#{!cliente.new}" />
