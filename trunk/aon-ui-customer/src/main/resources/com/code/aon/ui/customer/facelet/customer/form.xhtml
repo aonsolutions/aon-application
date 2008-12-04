@@ -50,25 +50,33 @@
 						<f:validateLength minimum="1" maximum="32" />
 					</aon:inputText>
 
-					<h:outputLabel for="Customer_tariff_id"
+					<aon:outputLabel for="Customer_tariff_id"
 						value="#{productBundle.product_tariff}" />
-					<h:selectOneMenu id="Customer_tariff_id"
+					<aon:selectOneMenu id="Customer_tariff_id"
 						value="#{customer.to.tariff}">
-						<f:selectItem value="#{nullItem.value}" />
+						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{productCollections.tariffs}" />
-					</h:selectOneMenu>
+					</aon:selectOneMenu>
 
-					<h:outputLabel for="Customer_scope_id"
+					<aon:outputLabel for="Customer_customerSegment_id"
+						value="#{bundle.aon_segment}" />
+					<aon:selectOneMenu id="Customer_customerSegment_id"
+						value="#{customer.to.customerSegment}">
+						<f:selectItem itemLabel="-" value="#{null}"/>		
+						<f:selectItems value="#{customerCollections.customerSegments}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Customer_scope_id"
 						value="#{bundle.aon_scope}" />
-					<h:selectOneMenu id="Customer_scope_id"
+					<aon:selectOneMenu id="Customer_scope_id"
 						value="#{customer.to.scope}">
 						<f:selectItems value="#{configCollections.scopes}" />
-					</h:selectOneMenu>
+					</aon:selectOneMenu>
 
-					<h:outputLabel for="Customer_status" value="#{bundle.aon_status}" />
-					<h:selectOneMenu id="Customer_status" value="#{customer.to.status}">
+					<aon:outputLabel for="Customer_status" value="#{bundle.aon_status}" />
+					<aon:selectOneMenu id="Customer_status" value="#{customer.to.status}">
 						<f:selectItems value="#{customerCollections.customerStatuses}" />
-					</h:selectOneMenu>
+					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Customer_surcharge"
 						value="#{customerBundle.customer_surcharge}" />
@@ -81,33 +89,44 @@
 						value="#{customerObservation.observation.comments}" />
 				</aon:panelGrid>
 
-				<c:if test="#{!customer.new}">
-					<aon:panelTabSet>
-
+				<c:if test="#{!customer.new}">				
+					<aon:panelTabSet selectedTab="#{customer.selectedTab}"> 
 						<aon:panelTab label="#{registryBundle.registry_address_module}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
-								<ui:param name="controllerAlias" value="#{customerAddress}" />
+								<ui:param name="controller" value="#{customerAddress}" />
 							</ui:include>
 						</aon:panelTab>
 
 						<aon:panelTab label="#{registryBundle.registry_media_module}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
-								<ui:param name="controllerAlias" value="#{customerMedia}" />
+								<ui:param name="controller" value="#{customerMedia}" />
 							</ui:include>
 						</aon:panelTab>
-
-						<c:if test="#{customer.showFinanceRegistryBank}">
+						<c:if test="#{customer.showFinanceData}">
 							<aon:panelTab label="#{financeBundle.finance_data_module}">
-								<ui:include	src="/com/code/aon/ui/finance/facelet/rbank/tab_grid.xhtml">
-									<ui:param name="controllerAlias" value="#{customerRbank}" />
-								</ui:include>
+								<aon:panel>
+									<f:facet name="header">
+										<aon:outputText value="#{financeBundle.finance_banks}"/>
+									</f:facet>					
+									<ui:include	src="/com/code/aon/ui/finance/facelet/rbank/tab_grid.xhtml">
+										<ui:param name="controller" value="#{customerRbank}" />
+									</ui:include>
+								</aon:panel>
+								<aon:panel>
+									<f:facet name="header">
+										<aon:outputText value="#{configBundle.config_pay_methods}"/>
+									</f:facet>					
+									<ui:include	src="/com/code/aon/ui/finance/facelet/rpayMethod/tab_grid.xhtml">
+										<ui:param name="controller" value="#{customerRPayMethod}" />
+									</ui:include>
+								</aon:panel>
 							</aon:panelTab>
 						</c:if>
 					</aon:panelTabSet>
 				</c:if>
 			</aon:div>
 		</aon:form>
-		<c:if test="#{customer.showFinanceRegistryBank}">
+		<c:if test="#{customer.showFinanceData}">
 			<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		</c:if>
 	</ui:define>
