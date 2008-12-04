@@ -24,23 +24,23 @@
 				<aon:panelGrid id="menuGrid" columns="2" dir="true">
 
 					<ui:include src="/com/code/aon/ui/commercial/facelet/target/formContent.xhtml">
-						<ui:param name="targetController" value="#{target}"/>
+						<ui:param name="controller" value="#{target}"/>
 					</ui:include>
 
 				</aon:panelGrid>
 
 				<c:if test="#{!target.new}">
-					<aon:panelTabSet id="targetTab" selectedTab="#{target.selectedTab}">
+					<aon:panelTabSet selectedTab="#{target.selectedTab}">
 
 						<aon:panelTab id="targetAddress" label="#{registryBundle.registry_address_module}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
-								<ui:param name="controllerAlias" value="#{targetAddress}" />
+								<ui:param name="controller" value="#{targetAddress}" />
 							</ui:include>
 						</aon:panelTab>
 
 						<aon:panelTab id="targetMedia" label="#{registryBundle.registry_media_module}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
-								<ui:param name="controllerAlias" value="#{targetMedia}" />
+								<ui:param name="controller" value="#{targetMedia}" />
 							</ui:include>
 						</aon:panelTab>
 
@@ -56,9 +56,11 @@
 							<ui:include src="/com/code/aon/ui/commercial/facelet/targetSeller/tab_grid.xhtml" />
 						</aon:panelTab>
 
-						<aon:panelTab id="targetTracking" label="#{commercialBundle.commercial_target_tracking_module}">
-							<ui:include src="/com/code/aon/ui/commercial/facelet/targetTracking/tab_list.xhtml" />
-						</aon:panelTab>
+						<c:if test="#{target.showCommercialTracking}">
+							<aon:panelTab id="targetTracking" label="#{commercialBundle.commercial_target_tracking_module}">
+								<ui:include src="/com/code/aon/ui/commercial/facelet/targetTracking/tab_list.xhtml" />
+							</aon:panelTab>
+						</c:if>
 
 					</aon:panelTabSet>
 				</c:if>

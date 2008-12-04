@@ -24,6 +24,8 @@ public class TargetController extends BasicController {
 	
 	private String selectedTab;
 	
+	private boolean showCommercialTracking;
+	
 	public List<SelectItem> getSegments() {
 		return segments;
 	}
@@ -48,6 +50,14 @@ public class TargetController extends BasicController {
 
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
+	}
+
+	public boolean isShowCommercialTracking() {
+		return showCommercialTracking;
+	}
+
+	public void setShowCommercialTracking(boolean showCommercialTracking) {
+		this.showCommercialTracking = showCommercialTracking;
 	}
 	
 }
