@@ -8,19 +8,12 @@
 
 	<aon:div ajaxRendered="true">
 
-		<c:if test="#{controllerAlias.to != null}">
-			<ui:include
-				src="/com/code/aon/ui/registry/facelet/record_data/form.xhtml">
-				<ui:param name="controllerAlias" value="#{controllerAlias}" />
-			</ui:include>
+		<c:if test="#{controller.to != null}">
+			<ui:include src="/com/code/aon/ui/registry/facelet/record_data/form.xhtml" />
 		</c:if>
 
-		<c:if test="#{controllerAlias.to == null}">
-			<ui:include
-				src="/com/code/aon/ui/registry/facelet/record_data/list.xhtml">
-				<ui:param name="controllerAlias" value="#{controllerAlias}" />
-				<ui:param name="dataTableId" value="recordDataDataTable" />
-			</ui:include>
+		<c:if test="#{controller.to == null}">
+			<ui:include src="/com/code/aon/ui/registry/facelet/record_data/list.xhtml" />
 		</c:if>
 	</aon:div>
 </ui:composition>

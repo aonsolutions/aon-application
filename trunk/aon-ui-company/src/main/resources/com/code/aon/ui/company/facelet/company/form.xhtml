@@ -170,29 +170,28 @@
 					</c:if>
 				</aon:div>
 			</aon:panelGrid>
-	
+	 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelTabSet>
 
 					<aon:panelTab label="#{registryBundle.registry_addresses}">
 						<ui:include src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
 							<ui:param name="skipTypeColumn" value="true" />
-							<ui:param name="controllerAlias" value="#{companyAddress}" />
-							<ui:param name="dataTableId" value="companyAddressData" />
+							<ui:param name="controller" value="#{companyAddress}" />
 						</ui:include>
 					</aon:panelTab>
 					<c:if test="#{company.showFinanceRegistryBank}">
 						<aon:panelTab label="#{financeBundle.finance_data_module}">
 							<ui:include src="/com/code/aon/ui/finance/facelet/rbank/tab_grid.xhtml">
-								<ui:param name="controllerAlias" value="#{companyRbank}" />
+								<ui:param name="controller" value="#{companyRbank}" />
 							</ui:include>
 						</aon:panelTab>
-					</c:if>
+					</c:if>				
 					<aon:panelTab label="#{registryBundle.registry_rd_module}">
 						<ui:include src="/com/code/aon/ui/registry/facelet/record_data/tab_include.xhtml">
-							<ui:param name="controllerAlias" value="#{companyRecordData}" />
+							<ui:param name="controller" value="#{companyRecordData}" />
 						</ui:include>
-					</aon:panelTab>
+					</aon:panelTab>				
 				</aon:panelTabSet>
 			</aon:div>
 		</aon:form>
