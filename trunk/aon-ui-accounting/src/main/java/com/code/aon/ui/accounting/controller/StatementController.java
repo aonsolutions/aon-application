@@ -19,8 +19,8 @@ import com.code.aon.accounting.util.AccountUtils;
 import com.code.aon.accounting.util.Balance;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.util.AonUtil;
 
 public class StatementController extends BasicController {
 
@@ -107,7 +107,7 @@ public class StatementController extends BasicController {
 	}
 
 	private void transformDetailModel() throws ManagerBeanException {
-		IController c = AonUtil.getController(STATEMENT_DETAIL_CONTROLLER_NAME);
+		IController c = FormUtil.getController(STATEMENT_DETAIL_CONTROLLER_NAME);
 		DataModel model = c.getModel();
 		Balance previous = null;
 		if (isOpeningEntryPresent()) {

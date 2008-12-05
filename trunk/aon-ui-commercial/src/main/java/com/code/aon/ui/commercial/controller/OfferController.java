@@ -39,6 +39,7 @@ import com.code.aon.sales.enumeration.DocumentType;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
@@ -185,7 +186,7 @@ public class OfferController extends BasicController {
 		offer.setStatus(OfferStatus.PROCESSED);
 		offerBean.update(offer);
 
-		IController salesController = AonUtil.getController("sales");
+		IController salesController = FormUtil.getController("sales");
 		salesController.clearCriteria();
 		salesController.getCriteria().addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_ID), sales.getId());
 		salesController.onSearch(null);

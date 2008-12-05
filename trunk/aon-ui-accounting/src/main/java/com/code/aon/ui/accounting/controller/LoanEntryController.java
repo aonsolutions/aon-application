@@ -22,7 +22,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.utils.AccountPeriodValidator;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 
 public class LoanEntryController {
 
@@ -204,7 +204,7 @@ public class LoanEntryController {
 
 	private void loadAccountEntryController(AccountEntry entry) {
 		try {
-			AccountEntryController entryController = (AccountEntryController)AonUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
+			AccountEntryController entryController = (AccountEntryController)FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
 			entryController.setCriteria(criteria);

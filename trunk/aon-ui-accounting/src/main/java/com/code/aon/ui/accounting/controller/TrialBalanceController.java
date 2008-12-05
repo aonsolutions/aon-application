@@ -21,6 +21,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class TrialBalanceController implements ICollectionProvider {
@@ -110,7 +111,7 @@ public class TrialBalanceController implements ICollectionProvider {
 	public void onStatement(ActionEvent event) {
 		try {
 			Summary summary = (Summary) getModel().getRowData();
-			StatementController c = (StatementController) AonUtil
+			StatementController c = (StatementController) FormUtil
 					.getController(STATEMENT_CONTROLLER_NAME);
 			c.onEditSearch(event);
 			Criteria criteria = c.getCriteria();
@@ -140,7 +141,7 @@ public class TrialBalanceController implements ICollectionProvider {
 		try {
 			StatementController c = (StatementController) AonUtil.getRegisteredBean(STATEMENT_CONTROLLER_NAME);
 			Balance aed = (Balance) c.getDetailModel().getRowData();
-			AccountEntryController entryController = (AccountEntryController) AonUtil
+			AccountEntryController entryController = (AccountEntryController) FormUtil
 					.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(
