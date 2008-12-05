@@ -30,6 +30,7 @@ import com.code.aon.sales.Seller;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
@@ -192,7 +193,7 @@ public class SalesController extends BasicController {
 		sales.setStatus(SalesStatus.CLOSED);
 		salesBean.update(sales);
 
-		IController deliveryController = AonUtil.getController("delivery");
+		IController deliveryController = FormUtil.getController("delivery");
 		deliveryController.clearCriteria();
 		deliveryController.getCriteria().addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_ID), delivery.getId());
 		deliveryController.onSearch(null);

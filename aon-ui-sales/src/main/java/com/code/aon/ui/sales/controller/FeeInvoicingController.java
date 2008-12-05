@@ -66,6 +66,7 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
@@ -264,7 +265,7 @@ public class FeeInvoicingController extends BasicController {
 	public String getAddress() throws ManagerBeanException {
 		RegistryAddress rAddress = ((Invoice)this.getTo()).getRegistryAddress();
 		String address = (rAddress!=null)?rAddress.getAddress()+" "+rAddress.getAddress2()+" "+rAddress.getAddress3():"";
-		BasicController addressController = (BasicController)AonUtil.getController(FEE_INVOICING_ADDRESS_CONTROLLER_NAME);
+		BasicController addressController = (BasicController)FormUtil.getController(FEE_INVOICING_ADDRESS_CONTROLLER_NAME);
 		if (addressController.getTo() != null && ((InvoiceAddress)addressController.getTo()).getId() != null) {
 			InvoiceAddress invoiceAddress = (InvoiceAddress)addressController.getTo();
 			address = invoiceAddress.getAddress() + " " + invoiceAddress.getAddress2();
@@ -275,7 +276,7 @@ public class FeeInvoicingController extends BasicController {
 	public String getCity() throws ManagerBeanException {
 		RegistryAddress rAddress = ((Invoice)this.getTo()).getRegistryAddress();
 		String city = (rAddress!=null)?rAddress.getCity():"";
-		BasicController addressController = (BasicController)AonUtil.getController(FEE_INVOICING_ADDRESS_CONTROLLER_NAME);
+		BasicController addressController = (BasicController)FormUtil.getController(FEE_INVOICING_ADDRESS_CONTROLLER_NAME);
 		if (addressController.getTo() != null && ((InvoiceAddress)addressController.getTo()).getId() != null) {
 			InvoiceAddress invoiceAddress = (InvoiceAddress)addressController.getTo();
 			city = invoiceAddress.getCity();
@@ -387,7 +388,7 @@ public class FeeInvoicingController extends BasicController {
     }
 	
 	public boolean isRemovable(){
-		FeeInvoicingDetailController feeInvoicingDetailController = (FeeInvoicingDetailController)AonUtil.getController(FEE_INVOICING_DETAIL_CONTROLLER_NAME);
+		FeeInvoicingDetailController feeInvoicingDetailController = (FeeInvoicingDetailController)FormUtil.getController(FEE_INVOICING_DETAIL_CONTROLLER_NAME);
 		Invoice invoice = (Invoice)this.getTo();
 		if(feeInvoicingDetailController.getTo() == null && invoice.getStatus().equals(InvoiceStatus.PENDING)){
 			return true;
@@ -400,7 +401,7 @@ public class FeeInvoicingController extends BasicController {
 		Invoice invoice = (Invoice)this.getTo();
 		try {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			IController feeFinanceController = AonUtil.getController(FEE_FINANCE_CONTROLLER_NAME);
+			IController feeFinanceController = FormUtil.getController(FEE_FINANCE_CONTROLLER_NAME);
 			List financeList = ((List)feeFinanceController.getModel().getWrappedData());
 			if(existFinanceTrackings(financeList)){
 				AonUtil.addInfoMessage("No se puede generar vencimientos automaticamente. Alguno de ellos tiene operaciones anteriores.");

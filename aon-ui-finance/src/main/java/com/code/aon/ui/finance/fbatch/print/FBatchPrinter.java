@@ -12,7 +12,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.print.ReportFinanceBatch;
 import com.code.aon.ui.finance.controller.FBatchController;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 
 public class FBatchPrinter implements ICollectionProvider {
 	
@@ -23,7 +23,7 @@ public class FBatchPrinter implements ICollectionProvider {
 	public Collection getCollection() {
 		List<ReportFinanceBatch> reportFBatchList = new LinkedList<ReportFinanceBatch>();
 		try {
-			FBatchController fBatchController = (FBatchController)AonUtil.getController(FINANCE_BATCH_CONTROLLER_NAME);
+			FBatchController fBatchController = (FBatchController)FormUtil.getController(FINANCE_BATCH_CONTROLLER_NAME);
 			Iterator iter = ((List)fBatchController.getModel().getWrappedData()).iterator();
 			while(iter.hasNext()){
 				FinanceBatch fBatch = (FinanceBatch)iter.next();

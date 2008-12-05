@@ -47,6 +47,7 @@ import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.supplier.dao.ISupplierAlias;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -117,7 +118,7 @@ public class PurchaseDirectInvoicingController extends BasicController {
 		Invoice invoice = (Invoice)this.getTo();
 		try {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			IController purchaseDirectFinanceController = AonUtil.getController(PURCHASE_DIRECT_FINANCE_CONTROLLER_NAME);
+			IController purchaseDirectFinanceController = FormUtil.getController(PURCHASE_DIRECT_FINANCE_CONTROLLER_NAME);
 			List financeList = ((List)purchaseDirectFinanceController.getModel().getWrappedData());
 			if(existFinanceTrackings(financeList)){
 				AonUtil.addInfoMessage("No se puede generar vencimientos automaticamente. Alguno de ellos tiene operaciones anteriores.");

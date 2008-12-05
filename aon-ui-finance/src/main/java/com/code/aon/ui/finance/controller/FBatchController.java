@@ -62,6 +62,7 @@ import com.code.aon.ui.finance.csb.CSB19Writer;
 import com.code.aon.ui.finance.csb.CSB32Writer;
 import com.code.aon.ui.finance.csb.CSB58Writer;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
@@ -120,7 +121,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 
     public void loadAvailableFinances(boolean payment) {
         try {
-            FinanceController controller = (FinanceController)AonUtil.getController(FINANCE_CONTROLLER_NAME);
+            FinanceController controller = (FinanceController)FormUtil.getController(FINANCE_CONTROLLER_NAME);
             FinanceBatch to = (FinanceBatch)this.getTo();
 
             Criteria criteria = new Criteria();
@@ -158,7 +159,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 
     public void loadDetails(FinanceBatch fbatch) {
         try {
-            LinesController fBatchDetailController = (LinesController)AonUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
+            LinesController fBatchDetailController = (LinesController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
             Criteria criteria = new Criteria();
             criteria.addEqualExpression(fBatchDetailController.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), fbatch.getId());
             criteria.addOrder(fBatchDetailController.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_INVOICE_SERIES));
@@ -185,11 +186,10 @@ public class FBatchController extends BasicController implements ICollectionProv
             }
         }
 
-        String bundleName = AonUtil.getConfigurationController().getApplicationBundles().get("financeBundle");
-        ResourceBundle bundle = ResourceBundle.getBundle(bundleName, FacesContext.getCurrentInstance().getViewRoot().getLocale());
+        ResourceBundle bundle = AonUtil.getResourceBundle("financeBundle");
         String trackingDescription = bundle.getString("finance_tracking_batched") + " " + fBatch.getId() + " - " + fBatch.getDescription();
 
-        FinanceController financeController = (FinanceController)AonUtil.getController(FINANCE_CONTROLLER_NAME);
+        FinanceController financeController = (FinanceController)FormUtil.getController(FINANCE_CONTROLLER_NAME);
         try {
             IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 			IManagerBean financeBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
@@ -231,7 +231,7 @@ public class FBatchController extends BasicController implements ICollectionProv
             }
         }
 
-        FBatchDetailController fBatchDetailController = (FBatchDetailController)AonUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
+        FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
         try {
 			IManagerBean financeBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
 
@@ -297,8 +297,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 
         if (csbOutput != null) {
         	if (csbOutput.getErrors().size() > 0) {
-                String bundleName = AonUtil.getConfigurationController().getApplicationBundles().get("financeBundle");
-        		ResourceBundle bundle = ResourceBundle.getBundle(bundleName, FacesContext.getCurrentInstance().getViewRoot().getLocale());
+        		ResourceBundle bundle = AonUtil.getResourceBundle("financeBundle");
         		AonUtil.addErrorMessage(bundle.getString("finance_batch_disk_error"));
         	} else {
                 fbatch.setFinanceBatchStatus(FinanceBatchStatus.DONE);
@@ -393,8 +392,7 @@ public class FBatchController extends BasicController implements ICollectionProv
         accountEntryFinanceBatch.setAccountEntry(entry);
         accountEntryFbatchBean.insert(accountEntryFinanceBatch);
 
-        String bundleName = AonUtil.getConfigurationController().getApplicationBundles().get("financeBundle");
-        ResourceBundle bundle = ResourceBundle.getBundle(bundleName, FacesContext.getCurrentInstance().getViewRoot().getLocale());
+        ResourceBundle bundle = AonUtil.getResourceBundle("financeBundle");
         String trackingDescription = bundle.getString("finance_tracking_recorded") + " " + entry.getId();
 
         IManagerBean fbatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
@@ -422,8 +420,7 @@ public class FBatchController extends BasicController implements ICollectionProv
     public void onUnrecord(ActionEvent event) throws ManagerBeanException {
         FinanceBatch fbatch = (FinanceBatch)this.getTo();
 
-        String bundleName = AonUtil.getConfigurationController().getApplicationBundles().get("financeBundle");
-        ResourceBundle bundle = ResourceBundle.getBundle(bundleName, FacesContext.getCurrentInstance().getViewRoot().getLocale());
+        ResourceBundle bundle = AonUtil.getResourceBundle("financeBundle");
 
         IManagerBean fbatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
         Criteria criteria = new Criteria();

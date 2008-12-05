@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
@@ -22,6 +21,7 @@ import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.invoicing.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.PageDataModel;
 import com.code.aon.ui.util.AonUtil;
 
@@ -89,7 +89,7 @@ public class FinanceFractionController {
 	@SuppressWarnings({"unused","unchecked"})
 	public void onFractionFinance(ActionEvent event) throws ManagerBeanException{
 		initializeController();
-		FinanceController financeController = (FinanceController)AonUtil.getController(FINANCE_CONTROLLER_NAME);
+		FinanceController financeController = (FinanceController)FormUtil.getController(FINANCE_CONTROLLER_NAME);
 		List list = (List)getModel().getWrappedData();
 		targetFinance = (Finance)financeController.getTo();
 		Finance finance = initializeFinance();
@@ -110,7 +110,7 @@ public class FinanceFractionController {
 			targetFinance.setBank((targetFinance.getBank().getId() == null?null:targetFinance.getBank()));
 			targetFinance.setPayMethod((targetFinance.getPayMethod().getId() == null?null:targetFinance.getPayMethod()));
 			financeBean.update(targetFinance);
-			ResourceBundle bundle = ResourceBundle.getBundle(AonUtil.getConfigurationController().getApplicationBundles().get("financeBundle"),FacesContext.getCurrentInstance().getViewRoot().getLocale());
+			ResourceBundle bundle = AonUtil.getResourceBundle("financeBundle");
 			FinanceTrackingWriter.addFinanceTracking(targetFinance, FinanceTrackingType.FRACTIONED, bundle.getString("finance_tracking_fractioned"));
 			for(int i = 1;i<list.size();i++){
 				finance = (Finance)list.get(i);
@@ -134,7 +134,7 @@ public class FinanceFractionController {
 	@SuppressWarnings("unchecked")
 	private void initializeFinanceControllerList(List list) throws ManagerBeanException {
 		try {
-			FinanceController financeController = (FinanceController)AonUtil.getController(FINANCE_CONTROLLER_NAME);
+			FinanceController financeController = (FinanceController)FormUtil.getController(FINANCE_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
 			Iterator iter = list.iterator();
 			while(iter.hasNext()){

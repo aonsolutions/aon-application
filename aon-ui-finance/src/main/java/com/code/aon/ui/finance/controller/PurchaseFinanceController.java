@@ -20,8 +20,8 @@ import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.util.AonUtil;
 
 public class PurchaseFinanceController extends LinesController {
 
@@ -78,7 +78,7 @@ public class PurchaseFinanceController extends LinesController {
 	public List getRegistryBanks(){
 		List<SelectItem> rBanks = new LinkedList<SelectItem>();
 		try {
-			InvoicingController invoicingController = (InvoicingController)AonUtil.getController(PURCHASE_INVOICING_CONTROLLER);
+			InvoicingController invoicingController = (InvoicingController)FormUtil.getController(PURCHASE_INVOICING_CONTROLLER);
 			Company company = invoicingController.obtainCompany();
 			if(company != null){
 				IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);

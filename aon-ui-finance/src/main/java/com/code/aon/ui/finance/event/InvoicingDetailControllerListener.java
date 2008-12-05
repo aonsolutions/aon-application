@@ -26,7 +26,7 @@ import com.code.aon.ui.finance.controller.InvoicingDetailController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Warehouse;
@@ -65,7 +65,7 @@ public class InvoicingDetailControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		InvoicingDetailController invoicingDetailController = (InvoicingDetailController)event.getController();
-		InvoicingController invoicingController = (InvoicingController)AonUtil.getController(INVOICING_CONTROLLER_NAME);
+		InvoicingController invoicingController = (InvoicingController)FormUtil.getController(INVOICING_CONTROLLER_NAME);
 		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();  
 		invoiceDetail.setInvoice((Invoice)invoicingController.getTo());
 		obtainTaxableBase(invoiceDetail);
@@ -158,7 +158,7 @@ public class InvoicingDetailControllerListener extends ControllerAdapter {
         incomeDetail.setDescription(invoiceDetail.getDescription());
 		incomeDetail.setPrice(invoiceDetail.getPrice());
 		incomeDetail.setQuantity(invoiceDetail.getQuantity());
-		InvoicingController invoicingController = (InvoicingController)AonUtil.getController(INVOICING_CONTROLLER_NAME);
+		InvoicingController invoicingController = (InvoicingController)FormUtil.getController(INVOICING_CONTROLLER_NAME);
 		incomeDetail.setWarehouse(new Warehouse());
 		incomeDetail.getWarehouse().setId(invoicingController.getWarehouseId());
 		incomeDetail.setPurchaseDetail(insertPurchaseDetail(invoiceDetail,invoicingDetailController));

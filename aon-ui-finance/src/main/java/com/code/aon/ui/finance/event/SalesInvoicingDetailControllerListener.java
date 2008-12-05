@@ -29,7 +29,7 @@ import com.code.aon.ui.finance.controller.SalesInvoicingDetailController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
@@ -69,7 +69,7 @@ public class SalesInvoicingDetailControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		SalesInvoicingDetailController salesInvoicingDetailController = (SalesInvoicingDetailController)event.getController();
-		SalesInvoicingController salesInvoicingController = (SalesInvoicingController)AonUtil.getController(SALES_INVOICING_CONTROLLER_NAME);
+		SalesInvoicingController salesInvoicingController = (SalesInvoicingController)FormUtil.getController(SALES_INVOICING_CONTROLLER_NAME);
 		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();  
 		invoiceDetail.setInvoice((Invoice)salesInvoicingController.getTo());
 		obtainTaxableBase(invoiceDetail);
@@ -165,7 +165,7 @@ public class SalesInvoicingDetailControllerListener extends ControllerAdapter {
         deliveryDetail.setDescription(invoiceDetail.getDescription());
 		deliveryDetail.setPrice(invoiceDetail.getPrice());
 		deliveryDetail.setQuantity(invoiceDetail.getQuantity());
-		SalesInvoicingController salesInvoicingController = (SalesInvoicingController)AonUtil.getController(SALES_INVOICING_CONTROLLER_NAME);
+		SalesInvoicingController salesInvoicingController = (SalesInvoicingController)FormUtil.getController(SALES_INVOICING_CONTROLLER_NAME);
 		deliveryDetail.setWarehouse(new Warehouse());
 		deliveryDetail.getWarehouse().setId(salesInvoicingController.getWarehouseId());
 		deliveryDetail.setSalesDetail(insertSalesDetail(invoiceDetail,salesInvoicingDetailController));
@@ -222,7 +222,7 @@ public class SalesInvoicingDetailControllerListener extends ControllerAdapter {
 	 */
 	private Sales insertSales(Invoice invoice, SalesInvoicingDetailController salesInvoicingDetailController) {
 		Sales sales = new Sales();
-		SalesInvoicingController salesInvoicingController = (SalesInvoicingController)AonUtil.getController(SALES_INVOICING_CONTROLLER_NAME);
+		SalesInvoicingController salesInvoicingController = (SalesInvoicingController)FormUtil.getController(SALES_INVOICING_CONTROLLER_NAME);
 		sales.setPos(obtainPos(salesInvoicingController.getPosId()));
 		sales.setCustomer(new Customer());
 		sales.getCustomer().setRegistry(new Registry());

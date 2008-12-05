@@ -18,8 +18,8 @@ import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.util.AonUtil;
 
 public class SaleInvoiceFinanceController extends LinesController {
 	
@@ -65,7 +65,7 @@ public class SaleInvoiceFinanceController extends LinesController {
 	@SuppressWarnings("unchecked")
 	public List getRegistryBanks(){
 		List<SelectItem> rBanks = new LinkedList<SelectItem>();
-		SaleInvoiceController feeInvoicingController = (SaleInvoiceController) AonUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
+		SaleInvoiceController feeInvoicingController = (SaleInvoiceController) FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
 		Invoice invoice = (Invoice)feeInvoicingController.getTo(); 
 		try {
 			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);

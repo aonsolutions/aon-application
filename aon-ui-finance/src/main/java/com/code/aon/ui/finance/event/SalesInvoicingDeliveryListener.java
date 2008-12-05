@@ -30,7 +30,7 @@ import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.warehouse.controller.DeliveryController;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
@@ -74,8 +74,8 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 	 */
 	@Override
 	public void beforeBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		SalesInvoicingDetailController salesInvoicingDetailController = (SalesInvoicingDetailController)AonUtil.getController(SALES_INVOICING_DETAIL_CONTROLLER_NAME);
-		LinesController salesFinanceController = (LinesController)AonUtil.getController(SALES_FINANCE_CONTROLLER);
+		SalesInvoicingDetailController salesInvoicingDetailController = (SalesInvoicingDetailController)FormUtil.getController(SALES_INVOICING_DETAIL_CONTROLLER_NAME);
+		LinesController salesFinanceController = (LinesController)FormUtil.getController(SALES_FINANCE_CONTROLLER);
 		salesFinanceController.onCancel(null);
 		salesInvoicingDetailController.setDelivery(null);
 		salesInvoicingDetailController.setSales(null);
@@ -107,7 +107,7 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_CUSTOMER_ID), invoice.getRegistry().getId());
 			criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_STATUS), DeliveryStatus.PENDING);
-			DeliveryController deliveryController = (DeliveryController)AonUtil.getController(DELIVERY_CONTROLLER_NAME);
+			DeliveryController deliveryController = (DeliveryController)FormUtil.getController(DELIVERY_CONTROLLER_NAME);
 			deliveryController.clearCheckList();
 			deliveryController.setCriteria(criteria);
 			deliveryController.onSearch(null);
@@ -141,7 +141,7 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 			}
 			criteria.addExpression(expression);
 			criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_STATUS), false);
-			DeliveryController deliveryController = (DeliveryController)AonUtil.getController(DELIVERY_CONTROLLER_NAME);
+			DeliveryController deliveryController = (DeliveryController)FormUtil.getController(DELIVERY_CONTROLLER_NAME);
 			deliveryController.clearCheckList();
 			deliveryController.setCriteria(criteria);
 			deliveryController.onSearch(null);
@@ -162,7 +162,7 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 	 * @param invoice
 	 */
 	private void updateDetailControllerReferences(Invoice invoice) {
-		SalesInvoicingDetailController salesInvoicingDetailController = (SalesInvoicingDetailController)AonUtil.getController(SALES_INVOICING_DETAIL_CONTROLLER_NAME);
+		SalesInvoicingDetailController salesInvoicingDetailController = (SalesInvoicingDetailController)FormUtil.getController(SALES_INVOICING_DETAIL_CONTROLLER_NAME);
 		DeliveryDetail deliveryDetail = obtainDeliveryDetail(invoice);
 		if(deliveryDetail != null){
 			salesInvoicingDetailController.setDelivery(deliveryDetail.getDelivery());
@@ -222,7 +222,7 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanRemoved(ControllerEvent event){
 		try {
-			SalesInvoicingDetailController salesInvoicingDetailController = (SalesInvoicingDetailController) AonUtil.getController(SALES_INVOICING_DETAIL_CONTROLLER_NAME);
+			SalesInvoicingDetailController salesInvoicingDetailController = (SalesInvoicingDetailController) FormUtil.getController(SALES_INVOICING_DETAIL_CONTROLLER_NAME);
 			Iterator iter = ((List)salesInvoicingDetailController.getModel().getWrappedData()).iterator();
 			while(iter.hasNext()){
 				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
@@ -251,7 +251,7 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 	 */
 	@Override
 	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
-		DeliveryController deliveryController = (DeliveryController)AonUtil.getController(DELIVERY_CONTROLLER_NAME);
+		DeliveryController deliveryController = (DeliveryController)FormUtil.getController(DELIVERY_CONTROLLER_NAME);
 		deliveryController.onReset(null);
 	}
 	

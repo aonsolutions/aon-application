@@ -56,6 +56,7 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
@@ -223,7 +224,7 @@ public class SalesInvoicingController extends BasicController {
 	public String getAddress() throws ManagerBeanException {
 		RegistryAddress rAddress = ((Invoice)this.getTo()).getRegistryAddress();
 		String address = (rAddress!=null)?rAddress.getAddress()+" "+rAddress.getAddress2()+" "+rAddress.getAddress3():"";
-		BasicController addressController = (BasicController)AonUtil.getController(SALES_INVOICING_ADDRESS_CONTROLLER_NAME);
+		BasicController addressController = (BasicController)FormUtil.getController(SALES_INVOICING_ADDRESS_CONTROLLER_NAME);
 		if (addressController.getTo() != null && ((InvoiceAddress)addressController.getTo()).getId() != null) {
 			InvoiceAddress invoiceAddress = (InvoiceAddress)addressController.getTo();
 			address = invoiceAddress.getAddress() + " " + invoiceAddress.getAddress2();
@@ -234,7 +235,7 @@ public class SalesInvoicingController extends BasicController {
 	public String getCity() throws ManagerBeanException {
 		RegistryAddress rAddress = ((Invoice)this.getTo()).getRegistryAddress();
 		String city = (rAddress!=null)?rAddress.getCity():"";
-		BasicController addressController = (BasicController)AonUtil.getController(SALES_INVOICING_ADDRESS_CONTROLLER_NAME);
+		BasicController addressController = (BasicController)FormUtil.getController(SALES_INVOICING_ADDRESS_CONTROLLER_NAME);
 		if (addressController.getTo() != null && ((InvoiceAddress)addressController.getTo()).getId() != null) {
 			InvoiceAddress invoiceAddress = (InvoiceAddress)addressController.getTo();
 			city = invoiceAddress.getCity();
@@ -251,7 +252,7 @@ public class SalesInvoicingController extends BasicController {
 	 */
 	@SuppressWarnings({"unused","unchecked"})
 	public void onInvoice(ActionEvent event) throws ManagerBeanException{
-		DeliveryController deliveryController = (DeliveryController)AonUtil.getController(DELIVERY_CONTROLLER_NAME);
+		DeliveryController deliveryController = (DeliveryController)FormUtil.getController(DELIVERY_CONTROLLER_NAME);
 		Iterator iter = ((List)deliveryController.getModel().getWrappedData()).iterator();
 		while(iter.hasNext()){
 			Delivery delivery = (Delivery)iter.next();
@@ -264,7 +265,7 @@ public class SalesInvoicingController extends BasicController {
 		}
 		generateFinances(null);
 		deliveryController.clearCheckList();
-		SalesInvoicingDetailController salesInvoicingDetailController = (SalesInvoicingDetailController) AonUtil.getController(SALES_INVOICING_DETAIL_CONTROLLER_NAME);
+		SalesInvoicingDetailController salesInvoicingDetailController = (SalesInvoicingDetailController) FormUtil.getController(SALES_INVOICING_DETAIL_CONTROLLER_NAME);
 		salesInvoicingDetailController.onSearch(null);
 	}
 	
@@ -422,7 +423,7 @@ public class SalesInvoicingController extends BasicController {
 	@SuppressWarnings({"unused","unchecked"})
 	public void onImportDelivery(ActionEvent event) throws ManagerBeanException{
 		this.onReset(null);
-		DeliveryController deliveryController = (DeliveryController)AonUtil.getController(DELIVERY_CONTROLLER_NAME);
+		DeliveryController deliveryController = (DeliveryController)FormUtil.getController(DELIVERY_CONTROLLER_NAME);
 		Delivery delivery = (Delivery)deliveryController.getTo();
 		//this.setPosId(deliveryController.getPosId());
 		this.setWarehouseId(deliveryController.getWarehouse().getId());
@@ -449,7 +450,7 @@ public class SalesInvoicingController extends BasicController {
 			}
 		}
 		this.onInvoice(null);
-		IController salesFinanceController = AonUtil.getController(SALES_FINANCE_CONTROLLER_NAME);
+		IController salesFinanceController = FormUtil.getController(SALES_FINANCE_CONTROLLER_NAME);
 		salesFinanceController.onSearch(null);
 	}
 	
@@ -487,14 +488,14 @@ public class SalesInvoicingController extends BasicController {
 	 */
 	@SuppressWarnings("unused")
 	public void onRemoveDelivery(ActionEvent event) throws ManagerBeanException{
-		DeliveryController deliveryController = (DeliveryController)AonUtil.getController(DELIVERY_CONTROLLER_NAME);
+		DeliveryController deliveryController = (DeliveryController)FormUtil.getController(DELIVERY_CONTROLLER_NAME);
 		Delivery delivery = (Delivery)deliveryController.getModel().getRowData();
 		removeInvoiceDetails(delivery.getId());
 		IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
 		delivery.setStatus(DeliveryStatus.PENDING);
 		deliveryBean.update(delivery);
 		generateFinances(null);
-		SalesInvoicingDetailController salesInvoicingDetailController = (SalesInvoicingDetailController) AonUtil.getController(SALES_INVOICING_DETAIL_CONTROLLER_NAME);
+		SalesInvoicingDetailController salesInvoicingDetailController = (SalesInvoicingDetailController) FormUtil.getController(SALES_INVOICING_DETAIL_CONTROLLER_NAME);
 		salesInvoicingDetailController.onSearch(null);
 		deliveryController.clearCheckList();
 	}
@@ -617,7 +618,7 @@ public class SalesInvoicingController extends BasicController {
 		Invoice invoice = (Invoice)this.getTo();
 		try {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			IController salesFinanceController = AonUtil.getController(SALES_FINANCE_CONTROLLER_NAME);
+			IController salesFinanceController = FormUtil.getController(SALES_FINANCE_CONTROLLER_NAME);
 			Iterator iter = ((List)salesFinanceController.getModel().getWrappedData()).iterator();
 			while(iter.hasNext()){
 				Finance finance = (Finance)iter.next();

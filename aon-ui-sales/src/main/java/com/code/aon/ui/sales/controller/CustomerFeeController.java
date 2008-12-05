@@ -13,7 +13,7 @@ import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ui.customer.controller.CustomerController;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 
 public class CustomerFeeController extends BasicController {
 
@@ -22,7 +22,7 @@ public class CustomerFeeController extends BasicController {
 	private static final String CUSTOMER_CONTROLLER_NAME = "customer";
 	
 	public void onCustomerFee(ActionEvent event){
-		CustomerController customerController = (CustomerController)AonUtil.getController(CUSTOMER_CONTROLLER_NAME);
+		CustomerController customerController = (CustomerController)FormUtil.getController(CUSTOMER_CONTROLLER_NAME);
 		Customer customer = (Customer)customerController.getTo();
 		try {
 			IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);

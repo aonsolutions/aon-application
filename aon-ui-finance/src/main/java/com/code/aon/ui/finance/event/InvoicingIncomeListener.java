@@ -30,7 +30,7 @@ import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.warehouse.controller.IncomeController;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
@@ -73,8 +73,8 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 	 */
 	@Override
 	public void beforeBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		InvoicingDetailController invoicingDetailController = (InvoicingDetailController)AonUtil.getController(INVOICING_DETAIL_CONTROLLER_NAME);
-		LinesController financeController = (LinesController)AonUtil.getController(FINANCE_CONTROLLER_NAME);
+		InvoicingDetailController invoicingDetailController = (InvoicingDetailController)FormUtil.getController(INVOICING_DETAIL_CONTROLLER_NAME);
+		LinesController financeController = (LinesController)FormUtil.getController(FINANCE_CONTROLLER_NAME);
 		financeController.onCancel(null);
 		invoicingDetailController.setIncome(null);
 		invoicingDetailController.setPurchase(null);
@@ -127,7 +127,7 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(incomeBean.getFieldName(IWarehouseAlias.INCOME_SUPPLIER_ID), invoice.getRegistry().getId());
 			criteria.addEqualExpression(incomeBean.getFieldName(IWarehouseAlias.INCOME_INCOME_STATUS), IncomeStatus.PENDING);
-			IncomeController incomeController = (IncomeController)AonUtil.getController(INCOME_CONTROLLER_NAME);
+			IncomeController incomeController = (IncomeController)FormUtil.getController(INCOME_CONTROLLER_NAME);
 			incomeController.clearCheckList();
 			incomeController.setCriteria(criteria);
 			incomeController.onSearch(null);
@@ -158,7 +158,7 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 			}
 			criteria.addExpression(expression);
 			criteria.addOrder(incomeBean.getFieldName(IWarehouseAlias.INCOME_INCOME_STATUS), false);
-			IncomeController incomeController = (IncomeController)AonUtil.getController(INCOME_CONTROLLER_NAME);
+			IncomeController incomeController = (IncomeController)FormUtil.getController(INCOME_CONTROLLER_NAME);
 			incomeController.clearCheckList();
 			incomeController.setCriteria(criteria);
 			incomeController.onSearch(null);
@@ -176,7 +176,7 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 	 * @param invoice related invoice
 	 */
 	private void updateDetailControllerReferences(Invoice invoice) {
-		InvoicingDetailController invoicingDetailController = (InvoicingDetailController)AonUtil.getController(INVOICING_DETAIL_CONTROLLER_NAME);
+		InvoicingDetailController invoicingDetailController = (InvoicingDetailController)FormUtil.getController(INVOICING_DETAIL_CONTROLLER_NAME);
 		IncomeDetail incomeDetail = obtainIncomeDetail(invoice);
 		if(incomeDetail != null){
 			invoicingDetailController.setIncome(incomeDetail.getIncome());
@@ -238,7 +238,7 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanRemoved(ControllerEvent event){
 		try {
-			InvoicingDetailController invoicingDetailController = (InvoicingDetailController) AonUtil.getController(INVOICING_DETAIL_CONTROLLER_NAME);
+			InvoicingDetailController invoicingDetailController = (InvoicingDetailController) FormUtil.getController(INVOICING_DETAIL_CONTROLLER_NAME);
 			Iterator iter = ((List)invoicingDetailController.getModel().getWrappedData()).iterator();
 			while(iter.hasNext()){
 				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
@@ -267,7 +267,7 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 	 */
 	@Override
 	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
-		IncomeController incomeController = (IncomeController)AonUtil.getController(INCOME_CONTROLLER_NAME);
+		IncomeController incomeController = (IncomeController)FormUtil.getController(INCOME_CONTROLLER_NAME);
 		incomeController.onReset(null);
 	}
 	

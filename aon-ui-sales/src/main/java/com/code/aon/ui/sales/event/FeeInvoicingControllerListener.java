@@ -26,7 +26,7 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.sales.controller.FeeInvoicingController;
 import com.code.aon.ui.sales.controller.FeeInvoicingDetailController;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 
 @Deprecated
 public class FeeInvoicingControllerListener extends ControllerAdapter {
@@ -114,19 +114,19 @@ public class FeeInvoicingControllerListener extends ControllerAdapter {
 			throw new ControllerListenerException(e.getMessage());
 		}
 
-		FeeInvoicingDetailController detailController = (FeeInvoicingDetailController)AonUtil.getController(FEE_INVOINCING_DETAIL_CONTROLLER_NAME);
+		FeeInvoicingDetailController detailController = (FeeInvoicingDetailController)FormUtil.getController(FEE_INVOINCING_DETAIL_CONTROLLER_NAME);
 		detailController.setWorkPlace(null);
 	}
 	
 	@Override
 	public void afterBeanCanceled(ControllerEvent event) throws ControllerListenerException {
-		FeeInvoicingDetailController detailController = (FeeInvoicingDetailController)AonUtil.getController(FEE_INVOINCING_DETAIL_CONTROLLER_NAME);
+		FeeInvoicingDetailController detailController = (FeeInvoicingDetailController)FormUtil.getController(FEE_INVOINCING_DETAIL_CONTROLLER_NAME);
 		detailController.setWorkPlace(null);
 	}
 
 	@Override
 	public void afterBeanReset(ControllerEvent event) throws ControllerListenerException {
-		FeeInvoicingDetailController detailController = (FeeInvoicingDetailController)AonUtil.getController(FEE_INVOINCING_DETAIL_CONTROLLER_NAME);
+		FeeInvoicingDetailController detailController = (FeeInvoicingDetailController)FormUtil.getController(FEE_INVOINCING_DETAIL_CONTROLLER_NAME);
 		detailController.setWorkPlace(null);
 	}
 	
@@ -144,7 +144,7 @@ public class FeeInvoicingControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
-		FeeInvoicingDetailController detailController = (FeeInvoicingDetailController)AonUtil.getController(FEE_INVOINCING_DETAIL_CONTROLLER_NAME);
+		FeeInvoicingDetailController detailController = (FeeInvoicingDetailController)FormUtil.getController(FEE_INVOINCING_DETAIL_CONTROLLER_NAME);
 		detailController.setWorkPlace(null);
 	}
 

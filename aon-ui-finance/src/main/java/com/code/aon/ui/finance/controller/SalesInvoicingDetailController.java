@@ -19,8 +19,8 @@ import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.sales.Sales;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
@@ -165,7 +165,7 @@ public class SalesInvoicingDetailController extends LinesController {
 	 * @throws ManagerBeanException
 	 */
 	public double getTaxableBase(){
-		SalesInvoicingController salesInvoicingController = (SalesInvoicingController)AonUtil.getController(SALES_INVOICING_CONTROLLER_NAME);
+		SalesInvoicingController salesInvoicingController = (SalesInvoicingController)FormUtil.getController(SALES_INVOICING_CONTROLLER_NAME);
 		return getPriceStrategy().getTaxableBase((ICalculableContainer)salesInvoicingController.getTo());
 	}
 

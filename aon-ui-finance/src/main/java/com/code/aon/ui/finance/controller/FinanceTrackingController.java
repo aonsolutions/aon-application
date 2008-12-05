@@ -18,8 +18,8 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.util.AonUtil;
 
 public class FinanceTrackingController extends LinesController {
 
@@ -84,7 +84,7 @@ public class FinanceTrackingController extends LinesController {
 		}else {
 			tracking.getFinance().setFinanceStatus((wasFinanceReturned(tracking.getFinance())?FinanceStatus.RETURNED:FinanceStatus.PENDING));
 		}
-		FinanceController financeController = (FinanceController)AonUtil.getController(FINANCE_CONTROLLER_NAME);
+		FinanceController financeController = (FinanceController)FormUtil.getController(FINANCE_CONTROLLER_NAME);
 		Finance finance = (Finance)financeBean.update(tracking.getFinance());
 		((Finance)financeController.getTo()).setFinanceStatus(finance.getFinanceStatus());
 	}

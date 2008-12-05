@@ -6,8 +6,6 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.faces.context.FacesContext;
-
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
@@ -17,6 +15,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.finance.controller.FBatchController;
 import com.code.aon.ui.finance.controller.FBatchDetailController;
 import com.code.aon.ui.finance.controller.FinanceController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -55,8 +54,7 @@ public class FBatchControllerListener extends ControllerAdapter {
             if (oldDate.after(fBatch.getIssueDate())) {
                 fBatch.setIssueDate(oldDate);
 
-                String bundleName = AonUtil.getConfigurationController().getApplicationBundles().get("financeBundle");
-                ResourceBundle bundle = ResourceBundle.getBundle(bundleName, FacesContext.getCurrentInstance().getViewRoot().getLocale());
+                ResourceBundle bundle = AonUtil.getResourceBundle("financeBundle");
                 throw new ControllerListenerException(bundle.getString("aon_finance_batch_date_error"));
             }
         } catch (ManagerBeanException e) {
@@ -83,16 +81,16 @@ public class FBatchControllerListener extends ControllerAdapter {
 		fBatchController.setRecordDate(fBatch.getIssueDate());
 		fBatchController.setCsbOutput(null);
 
-        FBatchDetailController fBatchDetailController = (FBatchDetailController)AonUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER);
+        FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER);
         fBatchDetailController.clearCheckedFinanceBatchDetails();
-        FinanceController financeController = (FinanceController)AonUtil.getController(FINANCE_CONTROLLER);
+        FinanceController financeController = (FinanceController)FormUtil.getController(FINANCE_CONTROLLER);
         financeController.clearCheckedFinances();
     }
 
     @Override
     @SuppressWarnings("unchecked")
 	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
-        FBatchDetailController fBatchDetailController = (FBatchDetailController)AonUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER);
+        FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER);
         Iterator iter = fBatchDetailController.getWrappedList().iterator();
 		while (iter.hasNext()) {
 			FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iter.next();

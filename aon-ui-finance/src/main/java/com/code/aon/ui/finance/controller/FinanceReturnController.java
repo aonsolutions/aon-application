@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
@@ -69,7 +68,7 @@ public class FinanceReturnController extends BasicController {
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		financeBean.update(finance);
 		AccountEntry entry = returnFinance(finance);
-		ResourceBundle bundle = ResourceBundle.getBundle(AonUtil.getConfigurationController().getApplicationBundles().get("financeBundle"),FacesContext.getCurrentInstance().getViewRoot().getLocale());
+		ResourceBundle bundle = AonUtil.getResourceBundle("financeBundle");
 		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.RETURNED, bundle.getString("finance_tracking_recorded") + " " + entry.getId());
 		insertAccountEntryFinanceTracking(entry, tracking);
 	}

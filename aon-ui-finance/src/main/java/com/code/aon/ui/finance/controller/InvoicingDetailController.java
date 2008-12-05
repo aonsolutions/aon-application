@@ -17,8 +17,8 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Income;
 
 /**
@@ -154,7 +154,7 @@ public class InvoicingDetailController extends LinesController {
 	 * @return taxable base
 	 */
 	public double getTaxableBase(){
-		InvoicingController invoicingController = (InvoicingController)AonUtil.getController(INVOICING_CONTROLLER_NAME);
+		InvoicingController invoicingController = (InvoicingController)FormUtil.getController(INVOICING_CONTROLLER_NAME);
 		return getPriceStrategy().getTaxableBase((ICalculableContainer)invoicingController.getTo());
 	}
 
