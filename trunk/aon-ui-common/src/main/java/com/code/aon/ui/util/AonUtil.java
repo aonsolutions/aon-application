@@ -1,6 +1,5 @@
 package com.code.aon.ui.util;
 
-import java.sql.Connection;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -18,7 +17,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.controller.ConfigurationController;
 
@@ -76,15 +74,6 @@ public class AonUtil {
 	 */
 	private static ConfigurationController getConfigurationController(String name) {
 		return (ConfigurationController) AonUtil.getRegisteredBean(name);
-	}
-
-	/**
-	 * Gets the SQL connection.
-	 * 
-	 * @return the SQL connection
-	 */
-	public static Connection getSQLConnection() {
-		return HibernateUtil.getSQLConnection();
 	}
 
 	/**
