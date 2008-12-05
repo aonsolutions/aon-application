@@ -3476,6 +3476,120 @@
 		<managed-bean-class>com.code.aon.ui.payroll.event.TipCuentaControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
+	
+	<!-- ************* Avanzadas - Kartel - Percepcion ***************** -->
+	<managed-bean>
+		<managed-bean-name>percepcion</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PercepcionController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.avanzadas.kartel.Percepcion</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>percepcion</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Percepcion_cdg</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<!-- <value>#{percepcionControllerListener}</value> -->
+				<value>#{percepcionListener}</value> 
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+<!-- 
+	<managed-bean>
+		<managed-bean-name>percepcionControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.payroll.event.PercepcionControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+ -->
+	<managed-bean>
+		<managed-bean-name>percepcionListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>linpercepcion</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Linpercepcion_percepcion_cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>linpercepcion</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.LinpercepcionController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.avanzadas.kartel.Linpercepcion</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Linpercepcion_fecfin DESC</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>percepcion</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>cdg</key>
+					<value>percepcion.cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<!-- 
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{linpercepcionControllerListener}</value>
+			</list-entries>
+		</managed-property>
+		 -->
+	</managed-bean>
+<!-- 
+	<managed-bean>
+		<managed-bean-name>linpercepcionControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.LinpercepcionControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+ -->
 
 </faces-config>

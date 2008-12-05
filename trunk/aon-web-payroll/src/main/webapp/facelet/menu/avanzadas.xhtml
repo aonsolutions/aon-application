@@ -62,7 +62,12 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div>
-								<aon:commandLink value="#{menuBundle.avanzadas_kartel__percepcion}" disabled="true" />
+								<aon:commandLink value="#{menuBundle.avanzadas_kartel__percepcion}" 
+									action="percepcion_form" >
+									<aon:actionListener method="#{percepcion.onEditSearch}" />
+									<aon:actionListener method="#{percepcion.onSearch}" />
+									<aon:actionListener method="#{percepcion.onSelectFirst}" />
+								</aon:commandLink>							
 							</aon:div>
 							<aon:div>
 								<aon:commandLink value="#{menuBundle.avanzadas_kartel__kartel}" disabled="true" />

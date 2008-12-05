@@ -6,19 +6,19 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:div>
-	 <rich:spacer />
-		<aon:editDataTable id="linbaseData" value="#{linbase.model}" 
-			var="to" rows="0"
-			rendered="#{(linbase.model.rowCount > 0) or (linbase.new)}" 
+		<aon:editDataTable id="linpercepcionData"
+			value="#{linpercepcion.model}" var="to" rows="0"
+			rendered="#{(linpercepcion.model.rowCount > 0) or (linpercepcion.new)}"
 			columnClasses="aon-editDataTable-iconColumn
 				, aon-editDataTable-dateColumn, aon-editDataTable-dateColumn
-				, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn
-				,aon-editDataTable-numberColumn, aon-editDataTable-numberColumn
-				,aon-editDataTable-numberColumn, aon-editDataTable-numberColumn
-				,aon-editDataTable-numberColumn, aon-editDataTable-buttonsColumn">
-					
-			<aon:rowSelector toggleOnClick="#{linbase.to == null}" actionListener="#{linbase.onSelect}" />
-			
+				, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn
+				, aon-editDataTable-numberColumn, 
+				, aon-editDataTable-buttonsColumn">
+
+			<aon:rowSelector toggleOnClick="#{linpercepcion.to == null}"
+				actionListener="#{linpercepcion.onSelect}" />
+
+			<!-- 
                 <f:facet name="header">
                         
 	                        
@@ -64,6 +64,8 @@
 	                            
 	                          </rich:columnGroup>
 	                    </f:facet>
+	                     -->
+
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText value="&#160;" />
@@ -73,29 +75,31 @@
 					<aon:div>
 						<aon:commandButton alt="[#{bundle.aon_reset}]"
 							styleClass="aon-editDataTable-button aon-icon-reset"
-							actionListener="#{linbase.onReset}" value=""
-							rendered="#{!linbase.new}"
+							actionListener="#{linpercepcion.onReset}" value=""
+							rendered="#{!linpercepcion.new}"
 							accesskey="#{bundle.aon_key_new_line}" />
 					</aon:div>
-					
+
 				</f:facet>
 			</aon:column>
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{appBundle.aon_payroll_cotizacion_fecini}" />
+					<aon:outputText value="#{appBundle.aon_payroll_inicio}" />
 				</f:facet>
-				<aon:outputText value="#{to.id.fecini}" rendered="#{to!=linbase.to}" >
+				<aon:outputText value="#{to.id.fecini}"
+					rendered="#{to!=linpercepcion.to}">
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
-				<aon:selectInputDate value="#{linbase.to.id.fecini}" inputSize="10"
-					rendered="#{to==linbase.to}" disabled="#{to==linbase.to}"
-					renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+				<aon:selectInputDate value="#{linpercepcion.to.id.fecini}"
+					inputSize="10" rendered="#{to==linpercepcion.to}"
+					disabled="#{to==linpercepcion.to}" renderAsPopup="true"
+					popupDateFormat="#{bundle.aon_date_pattern}">
 				</aon:selectInputDate>
 				<f:facet name="footer">
-					<aon:selectInputDate value="#{linbase.to.id.fecini}"
-						rendered="#{linbase.new}" inputSize="10"
+					<aon:selectInputDate value="#{linpercepcion.to.id.fecini}"
+						rendered="#{linpercepcion.new}" inputSize="10"
 						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>
 				</f:facet>
@@ -103,212 +107,132 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{appBundle.aon_payroll_cotizacion_fecfin}" />
+					<aon:outputText value="#{appBundle.aon_payroll_fin}" />
 				</f:facet>
-				<aon:outputText value="#{to.fecfin}" rendered="#{to!=linbase.to}" >
+				<aon:outputText value="#{to.fecfin}"
+					rendered="#{to!=linpercepcion.to}">
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
-				<aon:selectInputDate value="#{linbase.to.fecfin}"
-					rendered="#{to==linbase.to}" inputSize="10"
+				<aon:selectInputDate value="#{linpercepcion.to.fecfin}"
+					rendered="#{to==linpercepcion.to}" inputSize="10"
 					renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 				</aon:selectInputDate>
 				<f:facet name="footer">
-					<aon:selectInputDate value="#{linbase.to.fecfin}"
-						rendered="#{linbase.new}" inputSize="10"
+					<aon:selectInputDate value="#{linpercepcion.to.fecfin}"
+						rendered="#{linpercepcion.new}" inputSize="10"
 						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>
 				</f:facet>
-		     	</aon:column>
-			
-			     	    <aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__mincot}" />
-							</f:facet>
-							<aon:outputText value="#{to.mincot}" rendered="#{to!=linbase.to}" >
-								<f:convertNumber type="number" minFractionDigits="2" pattern="###,###.###" />
-								</aon:outputText>
-							
-							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==linbase.to}" size="5"
-								value="#{linbase.to.mincot}" maxlength="10" />
-							<f:facet name="footer">
-								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{linbase.new}" size="5"
-									value="#{linbase.to.mincot}" maxlength="10" />
-							</f:facet>
-						</aon:column>
-					
-		  				      <aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__maxcot}" />
-							</f:facet>
-							<aon:outputText value="#{to.maxcot}" rendered="#{to!=linbase.to}" >
-								<f:convertNumber type="number"  minFractionDigits="2" pattern="###,###.###" />
-								</aon:outputText>
-							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==linbase.to}" size="5"
-								value="#{linbase.to.maxcot}" maxlength="10" />
-							<f:facet name="footer">
-								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{linbase.new}" size="5"
-									value="#{linbase.to.maxcot}" maxlength="10" />
-							</f:facet>
-						</aon:column>
-						
-						
-						      <aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__minhor}" />
-							</f:facet>
-							<aon:outputText value="#{to.minhor}" rendered="#{to!=linbase.to}" >
-								<f:convertNumber type="number" minFractionDigits="2" pattern="###,###.###" />
-								</aon:outputText>
-							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==linbase.to}" size="5"
-								value="#{linbase.to.minhor}" maxlength="10" />
-							<f:facet name="footer">
-								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{linbase.new}" size="5"
-									value="#{linbase.to.minhor}" maxlength="10" />
-							</f:facet>
-						</aon:column>
-									
-						      <aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__mindia}" />
-							</f:facet>
-							<aon:outputText value="#{to.mindia}" rendered="#{to!=linbase.to}" >
-								<f:convertNumber type="number"  minFractionDigits="2" pattern="###,###.###" />
-								</aon:outputText>
-							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==linbase.to}" size="5"
-								value="#{linbase.to.mindia}" maxlength="10" />
-							<f:facet name="footer">
-								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{linbase.new}" size="5"
-									value="#{linbase.to.mindia}" maxlength="10" />
-							</f:facet>
-						</aon:column>
-						
-							
-									
-						      <aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__jordiaagr}" />
-							</f:facet>
-							<aon:outputText value="#{to.jordiaagr}" rendered="#{to!=linbase.to}" >
-								<f:convertNumber type="number" minFractionDigits="2" pattern="###,###.###" />
-								</aon:outputText>
-							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==linbase.to}" size="5"
-								value="#{linbase.to.jordiaagr}" maxlength="10" />
-							<f:facet name="footer">
-								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{linbase.new}" size="5"
-									value="#{linbase.to.jordiaagr}" maxlength="10" />
-							</f:facet>
-						</aon:column>
-								
-						      <aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__mindiaart1}" />
-							</f:facet>
-							<aon:outputText value="#{to.mindiaart1}" rendered="#{to!=linbase.to}" >
-								<f:convertNumber type="number" minFractionDigits="2" pattern="###,###.###" />
-								</aon:outputText>
-							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==linbase.to}" size="5"
-								value="#{linbase.to.mindiaart1}" maxlength="10" />
-							<f:facet name="footer">
-								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{linbase.new}" size="5"
-									value="#{linbase.to.mindiaart1}" maxlength="10" />
-							</f:facet>
-						</aon:column>
-						
- 	                       <aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__mindiaart2}" />
-							</f:facet>
-							<aon:outputText value="#{to.mindiaart2}" rendered="#{to!=linbase.to}" >
-								<f:convertNumber type="number"  minFractionDigits="2" pattern="###,###.###" />
-								</aon:outputText>
-							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==linbase.to}" size="5"
-								value="#{linbase.to.mindiaart2}" maxlength="10" />
-							<f:facet name="footer">
-								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{linbase.new}" size="5"
-									value="#{linbase.to.mindiaart2}" maxlength="10" />
-							</f:facet>
-						</aon:column>
- 
-						 <aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__acdiaart}" />
-							</f:facet>
-							<aon:outputText value="#{to.acdiaart}" rendered="#{to!=linbase.to}" >
-								<f:convertNumber type="number"  minFractionDigits="2" pattern="###,###.###" />
-								</aon:outputText>
-							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==linbase.to}" size="5"
-								value="#{linbase.to.acdiaart}" maxlength="10" />
-							<f:facet name="footer">
-								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{linbase.new}" size="5"
-									value="#{linbase.to.acdiaart}" maxlength="10" />
-							</f:facet>
-						</aon:column>
- 
- 
+			</aon:column>
 
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{appBundle.aon_payroll_avanzadas_kartel_percepcion_salario}" />
+				</f:facet>
+				<aon:outputText value="#{to.importe}"
+					rendered="#{to!=linpercepcion.to}">
+					<f:convertNumber type="number" minFractionDigits="2"
+						pattern="###,###.###" />
+				</aon:outputText>
 
+				<aon:inputText styleClass="aon-form-input-text " required="true"
+					rendered="#{to==linpercepcion.to}" size="5"
+					value="#{linpercepcion.to.importe}" maxlength="10" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{linpercepcion.new}" size="5"
+						value="#{linpercepcion.to.importe}" maxlength="10" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{appBundle.aon_payroll_avanzadas_kartel_percepcion_comp_empresa}" />
+				</f:facet>
+				<aon:outputText value="#{to.empresa}"
+					rendered="#{to!=linpercepcion.to}">
+					<f:convertNumber type="number" minFractionDigits="2"
+						pattern="###,###.###" />
+				</aon:outputText>
+				<aon:inputText styleClass="aon-form-input-text " required="true"
+					rendered="#{to==linpercepcion.to}" size="5"
+					value="#{linpercepcion.to.empresa}" maxlength="10" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{linpercepcion.new}" size="5"
+						value="#{linpercepcion.to.empresa}" maxlength="10" />
+				</f:facet>
+			</aon:column>
 			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText
+						value="#{appBundle.aon_payroll_avanzadas_kartel_percepcion_comp_nocturno}" />
+				</f:facet>
+				<aon:outputText value="#{to.nocturno}"
+					rendered="#{to!=linpercepcion.to}">
+					<f:convertNumber type="number" minFractionDigits="2"
+						pattern="###,###.###" />
+				</aon:outputText>
+				<aon:inputText styleClass="aon-form-input-text " required="true"
+					rendered="#{to==linpercepcion.to}" size="5"
+					value="#{linpercepcion.to.nocturno}" maxlength="10" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{linpercepcion.new}" size="5"
+						value="#{linpercepcion.to.nocturno}" maxlength="10" />
+				</f:facet>
+			</aon:column>
+
 
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText value="&#160;" />
 				</f:facet>
 				<aon:div>
-					<f:verbatim rendered="#{to!=linbase.to}">&#160;</f:verbatim>
-					<aon:commandButton title="[#{bundle.aon_accept}]" 
-						rendered="#{to==linbase.to}"
+					<f:verbatim rendered="#{to!=linpercepcion.to}">&#160;</f:verbatim>
+					<aon:commandButton title="[#{bundle.aon_accept}]"
+						rendered="#{to==linpercepcion.to}"
 						styleClass="aon-editDataTable-button aon-icon-accept"
-						actionListener="#{linbase.onAccept}"
+						actionListener="#{linpercepcion.onAccept}"
 						accesskey="#{bundle.aon_key_save_line}" />
 					<aon:commandButton title="[#{bundle.aon_cancel}]"
 						styleClass="aon-editDataTable-button aon-icon-cancel"
-						rendered="#{to==linbase.to}"
-						actionListener="#{linbase.onCancel}" immediate="true"
+						rendered="#{to==linpercepcion.to}"
+						actionListener="#{linpercepcion.onCancel}" immediate="true"
 						accesskey="#{bundle.aon_key_cancel_line}" />
-					<aon:confirmButton id="remove-Porcentaje" title="[#{bundle.aon_remove}]"
+					<aon:confirmButton id="remove-Porcentaje"
+						title="[#{bundle.aon_remove}]"
 						styleClass="aon-editDataTable-button aon-icon-delete"
-						rendered="#{to==linbase.to}"
-						confirmTitle="#{bundle.aon_confirm_title}" 
+						rendered="#{to==linpercepcion.to}"
+						confirmTitle="#{bundle.aon_confirm_title}"
 						confirmMessage="#{bundle.aon_remove_confirm}"
-						confirmActionListener="#{linbase.onRemove}" immediate="true"
-						accesskey="#{bundle.aon_key_remove_line}" />								
+						confirmActionListener="#{linpercepcion.onRemove}" immediate="true"
+						accesskey="#{bundle.aon_key_remove_line}" />
 				</aon:div>
 				<f:facet name="footer">
 					<aon:div>
-						<f:verbatim rendered="#{!linbase.new}">&#160;</f:verbatim>
-						<aon:commandButton title="[#{bundle.aon_accept}]" 
+						<f:verbatim rendered="#{!linpercepcion.new}">&#160;</f:verbatim>
+						<aon:commandButton title="[#{bundle.aon_accept}]"
 							styleClass="aon-editDataTable-button aon-icon-accept"
-							rendered="#{linbase.new}"
-							actionListener="#{linbase.onAccept}"
+							rendered="#{linpercepcion.new}"
+							actionListener="#{linpercepcion.onAccept}"
 							accesskey="#{bundle.aon_key_save_line}" />
-						<aon:confirmButton id="cancel-Porcentaje" title="[#{bundle.aon_cancel}]"
+						<aon:confirmButton id="cancel-Porcentaje"
+							title="[#{bundle.aon_cancel}]"
 							styleClass="aon-editDataTable-button aon-icon-cancel"
-							rendered="#{linbase.new}"
-							confirmTitle="#{bundle.aon_confirm_title}" 
+							rendered="#{linpercepcion.new}"
+							confirmTitle="#{bundle.aon_confirm_title}"
 							confirmMessage="#{bundle.aon_cancel_confirm}"
-							confirmActionListener="#{linbase.onCancel}" immediate="true"
-							accesskey="#{bundle.aon_key_cancel_line}" />
+							confirmActionListener="#{linpercepcion.onCancel}"
+							immediate="true" accesskey="#{bundle.aon_key_cancel_line}" />
 					</aon:div>
 				</f:facet>
 			</aon:column>
-			
+
 		</aon:editDataTable>
 	</aon:div>
 
