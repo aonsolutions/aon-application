@@ -13,21 +13,21 @@
 
 	<ui:define name="content">
 
-		<aon:form id="baseMaestroList">
+		<aon:form id="percepcionList">
 		
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_cotizacion_bases}" />
-				<ui:param name="controller" value="#{baseMaestro}" />
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_avanzadas_kartel_percepcion}" />
+				<ui:param name="controller" value="#{percepcion}" />
 				
 			</ui:include>
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="baseMaestroData" value="#{baseMaestro.model}"
-					var="to" rows="20" rendered="#{baseMaestro.model.rowCount > 0}"
+				<aon:dataTable id="percepcionData" value="#{percepcion.model}"
+					var="to" rows="20" rendered="#{percepcion.model.rowCount > 0}"
 					columnClasses="aon-width-150, aon-editDataTable-textColumn">
 
-					<aon:rowSelector action="baseMaestro_form" actionListener="#{baseMaestro.onSelect}" />
+					<aon:rowSelector action="percepcion_form" actionListener="#{percepcion.onSelect}" />
 					
 					<aon:column>
 						<f:facet name="header">
@@ -46,7 +46,7 @@
  				
 				</aon:dataTable>
 
-				<aon:dataScroller2 for="baseMaestroData"  />
+				<aon:dataScroller2 for="percepcionData"  />
 
 			</aon:div>
 		</aon:form>

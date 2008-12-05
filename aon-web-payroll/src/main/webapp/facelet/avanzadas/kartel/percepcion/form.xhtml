@@ -17,33 +17,33 @@
 			
 			
 			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_cotizacion_bases}" />				
-				<ui:param name="controller" value="#{baseMaestro}" />
-					<ui:param name="reportKey" value="BasesList"/>
-						<ui:param name="reportKeyXls" value="BasesList2"/>
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_avanzadas_kartel_percepcion}" />				
+				<ui:param name="controller" value="#{percepcion}" />
+					<ui:param name="reportKey" value="percepcionList"/>
+						<ui:param name="reportKeyXls" value="percepcionXlsList"/>
 			</ui:include>
 			
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="baseMaestro" columns="2" dir="true" width="100%" style="margin-bottom=2px;">
+				<aon:panelGrid id="percepcion" columns="2" dir="true" width="100%" style="margin-bottom=2px;">
 				
 					<aon:outputLabel value="#{appBundle.aon_payroll_cdg}" />
-					<aon:inputText value="#{baseMaestro.to.cdg}" disabled="#{!baseMaestro.new}" 
-						required="true" size="5" maxlength="2" />
+					<aon:inputText value="#{percepcion.to.cdg}" disabled="#{!percepcion.new}" 
+						required="true" size="5" maxlength="8" />
 				
-					<aon:outputLabel  value="#{appBundle.aon_payroll_description}" />
-					<aon:inputText value="#{baseMaestro.to.description}" 
-						required="true" size="50" maxlength="50" >
+					<aon:outputLabel  value="#{appBundle.aon_payroll_descripcion}" />
+					<aon:inputText value="#{percepcion.to.descripcion}" 
+						size="50" maxlength="35" >
 					</aon:inputText>
 						
-						<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_cotizacion__pro}" />
-					<aon:selectOneMenu id="Prorateo" value="#{baseMaestro.to.indpro}" >	
-						<f:selectItems value="#{baseMaestro.listaProrateos}"/>											
-					</aon:selectOneMenu>
+					<aon:outputLabel  value="#{appBundle.aon_payroll_avanzadas_kartel_percepcion_tipo}" />
+					<aon:inputText value="#{percepcion.to.tipo}" 
+						required="true" size="4" maxlength="1" >
+					</aon:inputText>
 				 
 				</aon:panelGrid>
 
-			 	<ui:include src="grid.xhtml" rendered="#{!baseMaestro.new}" />		 		
+			 	<ui:include src="grid.xhtml" rendered="#{!percepcion.new}" />		 		
 			</aon:div>
 		</aon:form>
 	</ui:define>
