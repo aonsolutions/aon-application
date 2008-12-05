@@ -20,7 +20,7 @@ import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 
 /**
  * Finance controller listener
@@ -48,7 +48,7 @@ public class FinanceControllerVetoListener extends ControllerAdapter{
 	 */
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		InvoicingController invoicingController = (InvoicingController)AonUtil.getController(INVOICING_CONTROLLER_NAME);
+		InvoicingController invoicingController = (InvoicingController)FormUtil.getController(INVOICING_CONTROLLER_NAME);
 		loadPayMethodData(((Finance)event.getController().getTo()));
 		((Finance)event.getController().getTo()).setRegistry(((Invoice)invoicingController.getTo()).getRegistry());
 		((Finance)event.getController().getTo()).setBank(null);
@@ -63,7 +63,7 @@ public class FinanceControllerVetoListener extends ControllerAdapter{
 	 */
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		InvoicingController invoicingController = (InvoicingController)AonUtil.getController(INVOICING_CONTROLLER_NAME);
+		InvoicingController invoicingController = (InvoicingController)FormUtil.getController(INVOICING_CONTROLLER_NAME);
 		loadPayMethodData(((Finance)event.getController().getTo()));
 		((Finance)event.getController().getTo()).setRegistry(((Invoice)invoicingController.getTo()).getRegistry());
 		((Finance)event.getController().getTo()).setBank(null);
@@ -78,7 +78,7 @@ public class FinanceControllerVetoListener extends ControllerAdapter{
 	@Override
 	public void beforeBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		try {
-			InvoicingController invoicingController = (InvoicingController)AonUtil.getController(INVOICING_CONTROLLER_NAME);
+			InvoicingController invoicingController = (InvoicingController)FormUtil.getController(INVOICING_CONTROLLER_NAME);
 			double total = invoicingController.getToInvoiceTotalPrice();
 			LinesController financeController = (LinesController)event.getController();
 			Iterator iter = ((List)financeController.getModel().getWrappedData()).iterator();

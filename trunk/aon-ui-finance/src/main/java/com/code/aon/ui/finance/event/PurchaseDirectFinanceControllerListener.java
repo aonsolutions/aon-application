@@ -20,7 +20,7 @@ import com.code.aon.ui.finance.controller.PurchaseDirectInvoicingController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 
 public class PurchaseDirectFinanceControllerListener extends ControllerAdapter {
 
@@ -49,7 +49,7 @@ public class PurchaseDirectFinanceControllerListener extends ControllerAdapter {
 	}
 
 	private void fillFinanceData(Finance finance, Integer registryBankId) {
-		Invoice invoice = (Invoice)AonUtil.getController(PURCHASE_DIRECT_INVOICING_CONTROLLER_NAME).getTo();
+		Invoice invoice = (Invoice)FormUtil.getController(PURCHASE_DIRECT_INVOICING_CONTROLLER_NAME).getTo();
 		finance.setInvoice(invoice);
 		if(invoice.getType().equals(InvoiceType.SALES)){
 			finance.setPayment(false);
@@ -72,7 +72,7 @@ public class PurchaseDirectFinanceControllerListener extends ControllerAdapter {
 	@SuppressWarnings("unchecked")
 	private Integer obtainRegistryBankId(Finance finance) {
 		try {
-			PurchaseDirectInvoicingController invoicingController = (PurchaseDirectInvoicingController)AonUtil.getController(PURCHASE_DIRECT_INVOICING_CONTROLLER_NAME);
+			PurchaseDirectInvoicingController invoicingController = (PurchaseDirectInvoicingController)FormUtil.getController(PURCHASE_DIRECT_INVOICING_CONTROLLER_NAME);
 			Company company = invoicingController.obtainCompany();
 			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
 			Criteria criteria = new Criteria();

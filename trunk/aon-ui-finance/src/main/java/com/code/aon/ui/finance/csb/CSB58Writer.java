@@ -26,7 +26,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.finance.controller.FBatchDetailController;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 
 public class CSB58Writer {
 
@@ -34,7 +34,7 @@ public class CSB58Writer {
 
 	@SuppressWarnings("unchecked")
 	public CSBOutput createCSB58(Company company, FinanceBatch fbatch) throws ManagerBeanException {
-		FBatchDetailController fBatchDetailController = (FBatchDetailController)AonUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
+		FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
 		return createCSB58(company, fbatch, (List)fBatchDetailController.getModel().getWrappedData());
 	}
 	

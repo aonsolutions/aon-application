@@ -26,7 +26,7 @@ import com.code.aon.ui.finance.controller.SaleInvoiceDetailController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 
 public class SaleInvoiceDetailControllerListener extends ControllerAdapter {
 
@@ -83,7 +83,7 @@ public class SaleInvoiceDetailControllerListener extends ControllerAdapter {
 //			if (detailController.getWorkPlace() != null) {
 //				detail.setWorkPlace(detailController.getWorkPlace());
 //			} else {
-				SaleInvoiceController saleInvoiceController = (SaleInvoiceController)AonUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
+				SaleInvoiceController saleInvoiceController = (SaleInvoiceController)FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
 				detail.setWorkPlace(obtainSeriesWorkplace(((Invoice)saleInvoiceController.getTo()).getSeries()));
 //			}
 		} catch (ManagerBeanException e) {

@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
@@ -79,7 +78,7 @@ public class FinancePaymentController extends BasicController {
 			AonUtil.addInfoMessage("No se puede realizar un pago de importe 0.0");
 			throw new AbortProcessingException();
 		}
-		ResourceBundle bundle = ResourceBundle.getBundle(AonUtil.getConfigurationController().getApplicationBundles().get("financeBundle"),FacesContext.getCurrentInstance().getViewRoot().getLocale());
+		ResourceBundle bundle = AonUtil.getResourceBundle("financeBundle");
 		Finance finance = (Finance)this.getTo();
 		if(finance.getPayMethod().getId() == null){
 			finance.setPayMethod(null);

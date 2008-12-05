@@ -18,7 +18,7 @@ import com.code.aon.ui.finance.controller.SaleInvoiceFinanceController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 
 public class SaleInvoiceFinanceControllerListener extends ControllerAdapter {
 	
@@ -47,7 +47,7 @@ public class SaleInvoiceFinanceControllerListener extends ControllerAdapter {
 	}
 
 	private void fillFinanceData(Finance finance, RegistryBank registryBank) {
-		Invoice invoice = (Invoice)AonUtil.getController(SALE_INVOICE_CONTROLLER_NAME).getTo();
+		Invoice invoice = (Invoice)FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME).getTo();
 		finance.setInvoice(invoice);
 		if(invoice.getType().equals(InvoiceType.SALES)){
 			finance.setPayment(false);

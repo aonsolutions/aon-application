@@ -10,7 +10,7 @@ import com.code.aon.ui.customer.controller.CustomerController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 
 public class CustomerFeeControllerListener extends ControllerAdapter {
 	
@@ -18,7 +18,7 @@ public class CustomerFeeControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		CustomerController customerController = (CustomerController)AonUtil.getController(CUSTOMER_CONTROLLER_NAME);
+		CustomerController customerController = (CustomerController)FormUtil.getController(CUSTOMER_CONTROLLER_NAME);
 		Customer customer = (Customer)customerController.getTo();
 		((CustomerFee)event.getController().getTo()).setCustomer(customer);
 		((CustomerFee)event.getController().getTo()).setSecurityLevel(SecurityLevel.OFFICIAL);

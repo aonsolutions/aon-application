@@ -50,6 +50,7 @@ import com.code.aon.report.OutputFormat;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.supplier.dao.ISupplierAlias;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
@@ -168,7 +169,7 @@ public class InvoicingController extends BasicController {
 	 */
 	@SuppressWarnings({"unused","unchecked"})
 	public void onInvoice(ActionEvent event) throws ManagerBeanException{
-		IncomeController incomeController = (IncomeController)AonUtil.getController(INCOME_CONTROLLER_NAME);
+		IncomeController incomeController = (IncomeController)FormUtil.getController(INCOME_CONTROLLER_NAME);
 		Iterator iter = ((List)incomeController.getModel().getWrappedData()).iterator();
 		while(iter.hasNext()){
 			Income income = (Income)iter.next();
@@ -181,7 +182,7 @@ public class InvoicingController extends BasicController {
 		}
 		generateFinances(null);
 		incomeController.clearCheckList();
-		InvoicingDetailController invoicingDetailController = (InvoicingDetailController) AonUtil.getController(INVOICING_DETAIL_CONTROLLER_NAME);
+		InvoicingDetailController invoicingDetailController = (InvoicingDetailController) FormUtil.getController(INVOICING_DETAIL_CONTROLLER_NAME);
 		invoicingDetailController.onSearch(null);
 	}
 	
@@ -337,14 +338,14 @@ public class InvoicingController extends BasicController {
 	 */
 	@SuppressWarnings("unused")
 	public void onRemoveIncome(ActionEvent event) throws ManagerBeanException{
-		IncomeController incomeController = (IncomeController)AonUtil.getController(INCOME_CONTROLLER_NAME);
+		IncomeController incomeController = (IncomeController)FormUtil.getController(INCOME_CONTROLLER_NAME);
 		Income income = (Income)incomeController.getModel().getRowData();
 		removeInvoiceDetails(income.getId());
 		IManagerBean incomeBean = BeanManager.getManagerBean(Income.class);
 		income.setIncomeStatus(IncomeStatus.PENDING);
 		incomeBean.update(income);
 		generateFinances(null);
-		InvoicingDetailController invoicingDetailController = (InvoicingDetailController) AonUtil.getController(INVOICING_DETAIL_CONTROLLER_NAME);
+		InvoicingDetailController invoicingDetailController = (InvoicingDetailController) FormUtil.getController(INVOICING_DETAIL_CONTROLLER_NAME);
 		invoicingDetailController.onSearch(null);
 		incomeController.clearCheckList();
 	}
@@ -466,7 +467,7 @@ public class InvoicingController extends BasicController {
 		Invoice invoice = (Invoice)this.getTo();
 		try {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			IController purchaseFinanceController = AonUtil.getController(PURCHASE_FINANCE_CONTROLLER_NAME);
+			IController purchaseFinanceController = FormUtil.getController(PURCHASE_FINANCE_CONTROLLER_NAME);
 			Iterator iter = ((List)purchaseFinanceController.getModel().getWrappedData()).iterator();
 			while(iter.hasNext()){
 				Finance finance = (Finance)iter.next();

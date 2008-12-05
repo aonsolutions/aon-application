@@ -13,7 +13,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.print.CheckingTo;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 
 public class FeeCheckingPrinter implements ICollectionProvider {
 	
@@ -82,7 +82,7 @@ public class FeeCheckingPrinter implements ICollectionProvider {
 	}
 
 	private String obtainPrintCondition() { 
-		FinancePrinter printer = (FinancePrinter)AonUtil.getController(FINANCE_PRINTER_CONTROLLER);
+		FinancePrinter printer = (FinancePrinter)FormUtil.getController(FINANCE_PRINTER_CONTROLLER);
 		String condition = "";
 		if (printer.getCustomerStatus() != null) {
 			condition += "AND customer.status = " + printer.getCustomerStatus().ordinal() + " ";

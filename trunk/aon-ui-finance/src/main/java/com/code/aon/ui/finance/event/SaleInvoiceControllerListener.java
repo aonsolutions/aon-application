@@ -109,25 +109,25 @@ public class SaleInvoiceControllerListener extends ControllerAdapter {
 			throw new ControllerListenerException(e.getMessage());
 		}
 
-//		SaleInvoiceDetailController detailController = (SaleInvoiceDetailController)AonUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
+//		SaleInvoiceDetailController detailController = (SaleInvoiceDetailController)FormUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
 //		detailController.setWorkPlace(null);
 	}
 /*	
 	@Override
 	public void afterBeanCanceled(ControllerEvent event) throws ControllerListenerException {
-		SaleInvoiceDetailController detailController = (SaleInvoiceDetailController)AonUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
+		SaleInvoiceDetailController detailController = (SaleInvoiceDetailController)FormUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
 		detailController.setWorkPlace(null);
 	}
 
 	@Override
 	public void afterBeanReset(ControllerEvent event) throws ControllerListenerException {
-		SaleInvoiceDetailController detailController = (SaleInvoiceDetailController)AonUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
+		SaleInvoiceDetailController detailController = (SaleInvoiceDetailController)FormUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
 		detailController.setWorkPlace(null);
 	}
 
 	@Override
 	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
-		SaleInvoiceDetailController detailController = (SaleInvoiceDetailController)AonUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
+		SaleInvoiceDetailController detailController = (SaleInvoiceDetailController)FormUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
 		detailController.setWorkPlace(null);
 	}
 */	
