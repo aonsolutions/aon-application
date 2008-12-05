@@ -143,33 +143,6 @@ public class DeliveryController extends BasicController {
         manager.setOutputFormat(OutputFormat.PDF);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	/**
 	 * A list of deliveries currently checked
 	 */
