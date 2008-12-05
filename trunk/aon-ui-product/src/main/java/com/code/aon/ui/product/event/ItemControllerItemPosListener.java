@@ -14,6 +14,7 @@ import com.code.aon.product.ItemPos;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.enumeration.PluProductType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -65,7 +66,7 @@ public class ItemControllerItemPosListener extends ControllerAdapter {
 	 * @param id the id
 	 */
 	private void reloadItemPosModel(Integer id) {
-		IController itemPosController = AonUtil.getController(ITEMPOS_CONTROLLER_NAME);
+		IController itemPosController = FormUtil.getController(ITEMPOS_CONTROLLER_NAME);
 		try {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(itemPosController.getManagerBean().getFieldName(IProductAlias.ITEM_POS_ITEM_ID), id);
