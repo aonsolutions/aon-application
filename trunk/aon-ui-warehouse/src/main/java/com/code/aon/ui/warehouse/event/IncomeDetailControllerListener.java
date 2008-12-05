@@ -15,10 +15,10 @@ import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.dao.IPurchaseAlias;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.warehouse.controller.IncomeController;
 import com.code.aon.ui.warehouse.controller.IncomeDetailController;
 import com.code.aon.warehouse.Income;
@@ -53,7 +53,7 @@ public class IncomeDetailControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		IncomeDetailController incomeDetailController = (IncomeDetailController)event.getController();
-		IncomeController incomeController = (IncomeController)AonUtil.getController(INCOME_CONTROLLER_NAME);
+		IncomeController incomeController = (IncomeController)FormUtil.getController(INCOME_CONTROLLER_NAME);
 		IncomeDetail incomeDetail = (IncomeDetail)incomeDetailController.getTo();
 		Warehouse warehouse = new Warehouse();
 		warehouse.setId(incomeController.getWarehouseId());
@@ -82,7 +82,7 @@ public class IncomeDetailControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		IncomeDetail incomeDetail = (IncomeDetail)event.getController().getTo();
-		IncomeController incomeController = (IncomeController)AonUtil.getController(INCOME_CONTROLLER_NAME);
+		IncomeController incomeController = (IncomeController)FormUtil.getController(INCOME_CONTROLLER_NAME);
 		Warehouse warehouse = new Warehouse();
 		warehouse.setId(incomeController.getWarehouseId());
 		incomeDetail.setWarehouse(warehouse);

@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.composition.Composition;
 import com.code.aon.composition.CompositionDetail;
@@ -14,10 +15,10 @@ import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.composition.controller.CompositionController;
 import com.code.aon.ui.composition.controller.CompositionDetailController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
 
 public class CompositionDetailLoopListener extends ControllerAdapter {
 	
@@ -34,7 +35,7 @@ public class CompositionDetailLoopListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		CompositionDetail compositionDetail = (CompositionDetail)event.getController().getTo();
-		CompositionController compositionController = (CompositionController)AonUtil.getController(COMPOSITION_CONTROLLER_NAME);
+		CompositionController compositionController = (CompositionController)FormUtil.getController(COMPOSITION_CONTROLLER_NAME);
 		if(compositionDetail.getItem().getProduct().isComposition()){
 			Composition childComposition = obtainItemComposition(compositionDetail.getItem());
 			if(checkloop((Composition)compositionController.getTo(),childComposition)){
@@ -54,7 +55,7 @@ public class CompositionDetailLoopListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		CompositionDetail compositionDetail = (CompositionDetail)event.getController().getTo();
-		CompositionController compositionController = (CompositionController)AonUtil.getController(COMPOSITION_CONTROLLER_NAME);
+		CompositionController compositionController = (CompositionController)FormUtil.getController(COMPOSITION_CONTROLLER_NAME);
 		if(compositionDetail.getItem().getProduct().isComposition()){
 			Composition childComposition = obtainItemComposition(compositionDetail.getItem());
 			if(checkloop((Composition)compositionController.getTo(),childComposition)){
@@ -77,7 +78,7 @@ public class CompositionDetailLoopListener extends ControllerAdapter {
 			IManagerBean compositionBean = BeanManager.getManagerBean(Composition.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(compositionBean.getFieldName(ICompositionAlias.COMPOSITION_ITEM), item.getId());
-			Iterator iter = compositionBean.getList(criteria).iterator();
+			Iterator<ITransferObject> iter = compositionBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				return (Composition)iter.next();
 			}
@@ -102,7 +103,7 @@ public class CompositionDetailLoopListener extends ControllerAdapter {
 			IManagerBean compositionDetailBean = BeanManager.getManagerBean(CompositionDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(compositionDetailBean.getFieldName(ICompositionAlias.COMPOSITION_DETAIL_COMPOSITION_ID), childComposition.getId());
-			Iterator iter = compositionDetailBean.getList(criteria).iterator();
+			Iterator<ITransferObject> iter = compositionDetailBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				CompositionDetail compositionDetail = (CompositionDetail)iter.next();
 				if(compositionDetail.getItem().getId().equals(composition.getItem().getId())){

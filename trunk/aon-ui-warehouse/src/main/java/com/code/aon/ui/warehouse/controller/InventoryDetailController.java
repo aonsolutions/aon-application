@@ -13,8 +13,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Inventory;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
 
@@ -59,7 +59,7 @@ public class InventoryDetailController extends LinesController implements IColle
 	}
 	
 	private Inventory getCurrentInventory() {
-		InventoryController inventoryController = (InventoryController)AonUtil.getController(INVENTORY_CONTROLLER_NAME);
+		InventoryController inventoryController = (InventoryController)FormUtil.getController(INVENTORY_CONTROLLER_NAME);
 		return (Inventory)inventoryController.getTo();
 	}
 	

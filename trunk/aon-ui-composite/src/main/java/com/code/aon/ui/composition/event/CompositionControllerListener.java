@@ -16,6 +16,7 @@ import com.code.aon.ui.composition.controller.CompositionController;
 import com.code.aon.ui.composition.controller.CompositionDetailController;
 import com.code.aon.ui.composition.controller.CompositionExpenseController;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -36,8 +37,8 @@ public class CompositionControllerListener extends ControllerAdapter {
         ConfigCollectionsController collections = (ConfigCollectionsController)AonUtil.getRegisteredBean("configCollections");
         IManagerBean bean;
         try {
-            List vats = collections.getVatTaxes();
-            int vatId = ((Integer)((SelectItem)vats.get(0)).getValue()).intValue();
+            List<SelectItem> vats = collections.getVatTaxes();
+            int vatId = ((Integer)vats.get(0).getValue()).intValue();
 
             bean = BeanManager.getManagerBean(Tax.class);
             Criteria criteria = new Criteria();
@@ -73,10 +74,10 @@ public class CompositionControllerListener extends ControllerAdapter {
      */
     @Override
     public void afterBeanCanceled(ControllerEvent event) throws ControllerListenerException {
-        CompositionExpenseController expenseController = (CompositionExpenseController)AonUtil.getController("compositionExpense");
+        CompositionExpenseController expenseController = (CompositionExpenseController)FormUtil.getController("compositionExpense");
         expenseController.onCancel(null);
 
-        CompositionDetailController detailController = (CompositionDetailController)AonUtil.getController("compositionDetail");
+        CompositionDetailController detailController = (CompositionDetailController)FormUtil.getController("compositionDetail");
         detailController.onCancel(null);
     }
 
