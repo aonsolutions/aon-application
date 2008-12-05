@@ -64,11 +64,9 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.report.OutputFormat;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 
 @Deprecated
@@ -381,11 +379,13 @@ public class FeeInvoicingController extends BasicController {
 		return null;
 	}
 	
+	/*
     public void onReport(ActionEvent event) {
         ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
         manager.setReportKey("feeInvoice");
         manager.setOutputFormat(OutputFormat.PDF);
     }
+    */
 	
 	public boolean isRemovable(){
 		FeeInvoicingDetailController feeInvoicingDetailController = (FeeInvoicingDetailController)FormUtil.getController(FEE_INVOICING_DETAIL_CONTROLLER_NAME);
