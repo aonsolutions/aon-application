@@ -293,6 +293,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 					}
 				}
 				vu.put(name, value);
+				vu.put(name.toLowerCase(), value);
 			}
 			vu.generateCSS();
 			

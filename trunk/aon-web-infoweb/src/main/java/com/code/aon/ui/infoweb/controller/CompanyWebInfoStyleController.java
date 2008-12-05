@@ -121,7 +121,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 			    	ArrayList<String> found = parseLine(line);
 			    	for (int i = 0; i < found.size(); i++) {
 			    		String var = found.get(i);
-			    		if (!styleMap.containsKey(var)) {
+			    		if (!styleMap.containsKey(var) && !styleMap.containsKey(var.toLowerCase())) {
 			    			styleMap.put(var, "");
 			    		}
 			    	}
@@ -387,7 +387,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 	}
 
 	public void onLoad( ActionEvent event ) {
-		initializeModel();
+		if (this.model == null) this.model = new ListDataModel();
 		getTemplate();
 	}
 	
