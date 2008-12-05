@@ -1,5 +1,8 @@
 package com.code.aon.ui.groupware.event;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import com.code.aon.config.User;
 import com.code.aon.groupware.Favorite;
 import com.code.aon.ui.config.util.UserUtils;
@@ -24,8 +27,13 @@ public class FavoriteControllerListener extends ControllerAdapter {
 	}
 
 	private String validateUrl(String url) {
-		if(!url.startsWith("http://")){
-			url = "http://" + url;
+		try {
+			URI uri = new URI(url);
+			if(uri.getScheme() == null){
+				url = "http://" + url;
+			}
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
 		}
 		return url;
 	}
