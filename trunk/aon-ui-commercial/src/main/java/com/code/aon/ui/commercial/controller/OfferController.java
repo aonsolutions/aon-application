@@ -30,7 +30,6 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.report.OutputFormat;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.Seller;
@@ -41,7 +40,6 @@ import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -138,11 +136,13 @@ public class OfferController extends BasicController {
 	}
 
 	@SuppressWarnings("unused")
+	/*
     public void onReport(ActionEvent event) {
         ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
         manager.setReportKey("offer");
         manager.setOutputFormat(OutputFormat.PDF);
     }
+    */
 
 	/***************************************************************************************
 	 *	BOTON DE TRASPASO A PEDIDO CREADO PARA DEMO DEL 03/12/2008. BORRAR POSTERIORMENTE 

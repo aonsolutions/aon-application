@@ -9,7 +9,6 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.invoicing.ConsoleInvoicingFeedBack;
@@ -21,10 +20,6 @@ import com.code.aon.finance.invoicing.InvoicingEngineFactory;
 import com.code.aon.finance.invoicing.InvoicingException;
 import com.code.aon.finance.invoicing.InvoicingParameters;
 import com.code.aon.product.strategy.IPriceStrategy;
-import com.code.aon.report.OutputFormat;
-import com.code.aon.report.ReportException;
-import com.code.aon.ui.report.controller.ReportManager;
-import com.code.aon.ui.util.AonUtil;
 
 public class PreinvoicingController implements ICollectionProvider{
 
@@ -78,16 +73,18 @@ public class PreinvoicingController implements ICollectionProvider{
 		return this.getCollection();
 	}
 	
+	/*
 	public String onExecute() throws ReportException, DAOException{
 		ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
         manager.setReportKey("preInvoicing");
         manager.setOutputFormat(OutputFormat.PDF);
         String outcome = manager.onExecute();
-        /* PARA ELIMINAR LA COLECCION GENERADA DE MEMORIA */
+        // PARA ELIMINAR LA COLECCION GENERADA DE MEMORIA
         engine.setInvoicingDAO(null);
         engine = null;
         return outcome;
 	}
+	*/
 	
 	public IPriceStrategy getPriceStrategy(){
 		return new InvoicePriceStrategy();
