@@ -19,15 +19,17 @@
 	<aon:div>
 		<aon:outputLabel for="Offer_issueDate-From" styleClass="aon-form-date-label"
 			value="#{bundle.aon_date_from}:" />
-		<aon:selectInputDate id="Offer_issueDate-From" value="#{offerSearch.issueDateFrom}" 
-			timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}">
-		</aon:selectInputDate>
+		<aon:selectInputDate id="Offer_issueDate-From"
+			value="#{offerSearch.issueDateFrom}" 
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 		<aon:outputLabel for="Offer_issueDate-To" styleClass="aon-form-date-label"
 			value="#{bundle.aon_date_to}:" />
-		<aon:selectInputDate id="Offer_issueDate-To" value="#{offerSearch.issueDateTo}"
-			timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}">
-		</aon:selectInputDate>
+		<aon:selectInputDate id="Offer_issueDate-To"
+			value="#{offerSearch.issueDateTo}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
 							
 	<aon:outputLabel for="Offer_target_id"

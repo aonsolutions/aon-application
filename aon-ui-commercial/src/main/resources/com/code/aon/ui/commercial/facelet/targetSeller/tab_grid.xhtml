@@ -64,14 +64,12 @@
 				<aon:selectInputDate rendered="#{to==controller.to}"
 					value="#{controller.to.startDate}" required="true"
 					timeZone="#{timeZoneController.timeZone}"
-					renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
-				</aon:selectInputDate>
+					popupDateFormat="#{bundle.aon_date_pattern}"/>
 				<f:facet name="footer">
 					<aon:selectInputDate rendered="#{controller.new}"
 						value="#{controller.to.startDate}" required="true"
 						timeZone="#{timeZoneController.timeZone}"
-						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
-					</aon:selectInputDate>
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
 				</f:facet>
 			</aon:column>
 
@@ -84,14 +82,14 @@
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
 				<aon:selectInputDate rendered="#{to==controller.to}"
-					value="#{controller.to.endDate}" timeZone="#{timeZoneController.timeZone}"
-					renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
-				</aon:selectInputDate>
+					value="#{controller.to.endDate}"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}"/>
 				<f:facet name="footer">
 					<aon:selectInputDate rendered="#{controller.new}"
-						value="#{controller.to.endDate}" timeZone="#{timeZoneController.timeZone}"
-						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
-					</aon:selectInputDate>
+						value="#{controller.to.endDate}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
 				</f:facet>
 			</aon:column>
 					

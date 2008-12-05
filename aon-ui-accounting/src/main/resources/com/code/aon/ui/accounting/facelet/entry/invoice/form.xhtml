@@ -129,9 +129,9 @@
 						<aon:outputLabel for="Account_date" value="#{bundle.aon_date}" />
 						<aon:selectInputDate size="8" id="Account_date"
 							disabled="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}"
-							value="#{invoiceEntry.header.date}" enableManualInput="true"
-							datePattern="dd/MM/yyyy"
-							timeZone="#{timeZoneController.timeZone}" />
+							value="#{invoiceEntry.header.date}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 						<aon:outputLabel for="AccountEntry_securityLevel"
 							value="#{bundle.aon_security_level}" />

@@ -65,10 +65,10 @@
 
 					<aon:outputLabel for="date"
 						value="#{bundle.aon_date}" />
-					<aon:selectInputDate size="8" id="date" required="true"
+					<aon:selectInputDate id="date" required="true"
 						value="#{leasingFeeEntry.header.leasingFeeDate}"
-						enableManualInput="true" datePattern="dd/MM/yyyy"
-						timeZone="#{timeZoneController.timeZone}" />
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 					<aon:outputLabel for="leasing"
 						value="#{accountingBundle.accounting_leasing}" />

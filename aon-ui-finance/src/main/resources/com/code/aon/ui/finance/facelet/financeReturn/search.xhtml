@@ -84,15 +84,15 @@
 							value="#{bundle.aon_date_from}:" />
 						<aon:selectInputDate id="Finance_dueDate-From"
 							value="#{financeReturnSearch.dueDateFrom}"
-							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
-						</aon:selectInputDate>
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 						<aon:outputLabel for="Finance_dueDate-To" styleClass="aon-form-date-label"
 							value="#{bundle.aon_date_to}:" />
 						<aon:selectInputDate id="Finance_dueDate-To"
 							value="#{financeReturnSearch.dueDateTo}"
-							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
-						</aon:selectInputDate>
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
 
 				</ui:define>

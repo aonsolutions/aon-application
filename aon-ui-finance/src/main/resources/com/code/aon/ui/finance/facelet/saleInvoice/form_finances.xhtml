@@ -154,15 +154,13 @@
 							value="#{saleInvoiceFinance.to.dueDate}"
 							rendered="#{to.id==saleInvoiceFinance.to.id}"
 							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}">
-						</aon:selectInputDate>
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
 						<f:facet name="footer">
 							<aon:selectInputDate id="Finance_dueDate-New"
 								value="#{saleInvoiceFinance.to.dueDate}"
 								rendered="#{saleInvoiceFinance.new}"
 								timeZone="#{timeZoneController.timeZone}"
-								popupDateFormat="#{bundle.aon_date_pattern}">
-							</aon:selectInputDate>
+								popupDateFormat="#{bundle.aon_date_pattern}"/>
 						</f:facet>
 					</aon:column>
 

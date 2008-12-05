@@ -39,9 +39,10 @@
 
 					<aon:outputLabel for="Account_date"
 						value="#{bundle.aon_date}" />
-					<aon:selectInputDate size="8" id="Account_date" required="true"
-						value="#{loanEntry.loan.loanDate}" enableManualInput="true"
-						datePattern="dd/MM/yyyy" timeZone="#{timeZoneController.timeZone}" />
+					<aon:selectInputDate id="Account_date" required="true"
+						value="#{loanEntry.loan.loanDate}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 					<aon:outputLabel for="Account_description"
 						value="#{bundle.aon_description}" />

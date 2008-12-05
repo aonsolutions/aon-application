@@ -15,30 +15,34 @@
 	<aon:div>
 		<aon:outputLabel for="Catalogue_startDate-From" styleClass="aon-form-date-label"
 			value="#{bundle.aon_date_from}:" />
-		<aon:selectInputDate id="Catalogue_startDate-From" value="#{catalogueSearch.startDateFrom}" 
-			timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}">
-		</aon:selectInputDate>
+		<aon:selectInputDate id="Catalogue_startDate-From"
+			value="#{catalogueSearch.startDateFrom}" 
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 		<aon:outputLabel for="Catalogue_startDate-To" styleClass="aon-form-date-label"
 			value="#{bundle.aon_date_to}:" />
-		<aon:selectInputDate id="Catalogue_startDate-To" value="#{catalogueSearch.startDateTo}"
-			timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}">
-		</aon:selectInputDate>
+		<aon:selectInputDate id="Catalogue_startDate-To"
+			value="#{catalogueSearch.startDateTo}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
 							
 	<aon:outputLabel value="#{bundle.aon_end_date}" />
 	<aon:div>
 		<aon:outputLabel for="Catalogue_endDate-From" styleClass="aon-form-date-label"
 			value="#{bundle.aon_date_from}:" />
-		<aon:selectInputDate id="Catalogue_endDate-From" value="#{catalogueSearch.endDateFrom}" 
-			timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}">
-		</aon:selectInputDate>
+		<aon:selectInputDate id="Catalogue_endDate-From"
+			value="#{catalogueSearch.endDateFrom}" 
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 		<aon:outputLabel for="Catalogue_endDate-To" styleClass="aon-form-date-label"
 			value="#{bundle.aon_date_to}:" />
-		<aon:selectInputDate id="Catalogue_endDate-To" value="#{catalogueSearch.endDateTo}"
-			timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}">
-		</aon:selectInputDate>
+		<aon:selectInputDate id="Catalogue_endDate-To"
+			value="#{catalogueSearch.endDateTo}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
 							
 </ui:composition>

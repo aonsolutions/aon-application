@@ -84,12 +84,11 @@ disabled="#{!accountEntry.manual}"
 
 						<aon:div>
 							<aon:outputText value="#{bundle.aon_date}: " />
-							<aon:selectInputDate size="8" required="true"
+							<aon:selectInputDate required="true"
 								id="AccountEntry_entryDate" value="#{accountEntry.to.entryDate}"
-								enableManualInput="true" rendered="#{accountEntry.manual}"
-								datePattern="dd/MM/yyyy"
-								timeZone="#{timeZoneController.timeZone}">
-							</aon:selectInputDate>
+								rendered="#{accountEntry.manual}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}"/>
 							<aon:outputText value="#{accountEntry.to.entryDate}"
 								rendered="#{!accountEntry.manual}">
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"

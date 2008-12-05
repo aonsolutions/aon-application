@@ -59,14 +59,14 @@
 				<aon:selectInputDate id="Account_Finance_DueDate-Edit"
 					rendered="#{financeTo==invoiceEntry.currentFinance}"
 					value="#{invoiceEntry.currentFinance.dueDate}"
-					enableManualInput="true" datePattern="dd/MM/yyyy"
-					timeZone="#{timeZoneController.timeZone}" />
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}"/>
 				<f:facet name="footer">
 					<aon:selectInputDate id="Account_Finance_DueDate-New"
 						rendered="#{invoiceEntry.newFinance}"
 						value="#{invoiceEntry.currentFinance.dueDate}"
-						enableManualInput="true" datePattern="dd/MM/yyyy"
-						timeZone="#{timeZoneController.timeZone}" />
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
 				</f:facet>
 			</aon:column>
 

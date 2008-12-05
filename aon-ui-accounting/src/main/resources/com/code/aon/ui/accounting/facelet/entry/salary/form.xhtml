@@ -43,11 +43,10 @@
 
 					<aon:outputLabel for="Account_date"
 						value="#{bundle.aon_date}" />
-					<aon:selectInputDate size="8" required="true" id="Account_date"
-						value="#{salaryEntry.header.date}" enableManualInput="true"
-						datePattern="dd/MM/yyyy"
-						timeZone="#{timeZoneController.timeZone}">
-					</aon:selectInputDate>
+					<aon:selectInputDate required="true" id="Account_date"
+						value="#{salaryEntry.header.date}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 					<aon:outputLabel for="Account_Period"
 						value="#{accountingBundle.accounting_period}" />
