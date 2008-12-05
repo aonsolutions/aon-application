@@ -46,15 +46,15 @@
 							<f:convertDateTime pattern="MMMMMMMMMMMM yyyy"
 								timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
-						<aon:selectInputDate size="8" id="accountBudget_date-Edit"
+						<aon:selectInputDate id="accountBudget_date-Edit"
 							rendered="#{to.id==accountBudget.to.id}"
-							value="#{accountBudget.to.date}" enableManualInput="true"
+							value="#{accountBudget.to.date}"
 							datePattern="MMMMMMMMMMMM yyyy"
 							timeZone="#{timeZoneController.timeZone}" />
 						<f:facet name="footer">
-							<aon:selectInputDate size="8" id="accountBudget_date-New"
+							<aon:selectInputDate id="accountBudget_date-New"
 								rendered="#{accountBudget.new}" value="#{accountBudget.to.date}"
-								enableManualInput="true" datePattern="MMMMMMMMMMMM yyyy"
+								datePattern="MMMMMMMMMMMM yyyy"
 								timeZone="#{timeZoneController.timeZone}" />
 						</f:facet>
 					</aon:column>

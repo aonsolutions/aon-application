@@ -24,9 +24,10 @@
 
 			<aon:outputLabel for="RecordData_creationDate"
 				value="#{registryBundle.registry_rd_creation_date}" />
-			<aon:selectInputDate size="8" id="RecordData_creationDate"
-				value="#{controller.to.creationDate}" enableManualInput="true"
-				datePattern="dd/MM/yyyy" timeZone="#{timeZoneController.timeZone}" />
+			<aon:selectInputDate id="RecordData_creationDate"
+				value="#{controller.to.creationDate}"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 			<aon:outputLabel for="RecordData_description"
 				value="#{bundle.aon_description}" />
@@ -45,9 +46,10 @@
 
 			<aon:outputLabel for="RecordData_recordDate"
 				value="#{registryBundle.registry_rd_record_date}" />
-			<aon:selectInputDate size="8" id="RecordData_recordDate"
-				value="#{controller.to.recordDate}" enableManualInput="true"
-				datePattern="dd/MM/yyyy" timeZone="#{timeZoneController.timeZone}" />
+			<aon:selectInputDate id="RecordData_recordDate"
+				value="#{controller.to.recordDate}"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 			<aon:outputLabel for="RecordData_volume"
 				value="#{registryBundle.registry_rd_volume}" />

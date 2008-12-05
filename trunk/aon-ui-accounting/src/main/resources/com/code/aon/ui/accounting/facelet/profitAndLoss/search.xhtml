@@ -26,9 +26,10 @@
 
 					<aon:outputLabel for="reportDate"
 						value="#{accountingBundle.accounting_report_date}" />
-					<aon:selectInputDate size="8" id="reportDate"
-						value="#{profitAndLossReport.parameters.date}" enableManualInput="true"
-						datePattern="dd/MM/yyyy" timeZone="#{timeZoneController.timeZone}" />
+					<aon:selectInputDate id="reportDate"
+						value="#{profitAndLossReport.parameters.date}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 					<aon:outputLabel
 						for="AccountEntryDetail_accountEntry_accountPeriod"
@@ -44,21 +45,21 @@
 						<aon:outputLabel
 							for="AccountEntryDetail_accountEntry_entryDate-From"
 							value="#{bundle.aon_date_from}" />
-						<aon:selectInputDate size="8"
+						<aon:selectInputDate
 							id="AccountEntryDetail_accountEntry_entryDate-From"
-							value="#{profitAndLossReport.parameters.fromDate}" enableManualInput="true"
-							datePattern="dd/MM/yyyy"
-							timeZone="#{timeZoneController.timeZone}" />
+							value="#{profitAndLossReport.parameters.fromDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 
 						<aon:outputLabel
 							for="AccountEntryDetail_accountEntry_entryDate-To"
 							value="#{bundle.aon_date_to}" />
-						<aon:selectInputDate size="8"
+						<aon:selectInputDate
 							id="AccountEntryDetail_accountEntry_entryDate-To"
-							value="#{profitAndLossReport.parameters.toDate}" enableManualInput="true"
-							datePattern="dd/MM/yyyy"
-							timeZone="#{timeZoneController.timeZone}" />
+							value="#{profitAndLossReport.parameters.toDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:panelGrid>
 
 					<aon:outputLabel for="Account_level"

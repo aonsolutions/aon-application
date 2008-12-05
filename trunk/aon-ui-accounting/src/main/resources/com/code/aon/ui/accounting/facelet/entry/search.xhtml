@@ -47,16 +47,18 @@
 					<aon:div>
 						<aon:outputLabel for="AccountEntry_entryDate-From"
 							styleClass="aon-tip" value="#{bundle.aon_date_from}" />
-						<aon:selectInputDate size="8" id="AccountEntry_entryDate-From"
+						<aon:selectInputDate id="AccountEntry_entryDate-From"
 							value="#{accountEntry.fromDate}"
-							valueChangeListener="#{accountEntry.addEntryDateFromExpression}">
-						</aon:selectInputDate>
+							valueChangeListener="#{accountEntry.addEntryDateFromExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
 						<aon:outputLabel for="AccountEntry_entryDate-To"
 							styleClass="aon-tip" value="#{bundle.aon_date_to}" />
-						<aon:selectInputDate size="8" id="AccountEntry_entryDate-To"
+						<aon:selectInputDate id="AccountEntry_entryDate-To"
 							value="#{accountEntry.toDate}"
-							valueChangeListener="#{accountEntry.addEntryDateToExpression}">
-						</aon:selectInputDate>
+							valueChangeListener="#{accountEntry.addEntryDateToExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
 
 					<aon:outputLabel for="AccountEntry_securityLevel"

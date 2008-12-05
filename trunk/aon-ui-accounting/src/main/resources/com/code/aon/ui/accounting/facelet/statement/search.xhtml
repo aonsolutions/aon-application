@@ -25,9 +25,10 @@
 
 					<aon:outputLabel for="reportDate"
 						value="#{accountingBundle.accounting_report_date}" />
-					<aon:selectInputDate size="8" id="reportDate"
-						value="#{trialBalance.parameters.date}" enableManualInput="true"
-						datePattern="dd/MM/yyyy" timeZone="#{timeZoneController.timeZone}" />
+					<aon:selectInputDate id="reportDate"
+						value="#{trialBalance.parameters.date}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 					<aon:outputLabel for="Account_id"
 						value="#{accountBundle.account_account}" />
@@ -49,11 +50,11 @@
 						<aon:outputLabel
 							for="AccountEntryDetail_accountEntry_entryDate-From"
 							styleClass="aon-form-date-label" value="#{bundle.aon_date_from}" />
-						<aon:selectInputDate size="8" 
+						<aon:selectInputDate 
 							id="AccountEntryDetail_accountEntry_entryDate-From"
-							value="#{trialBalance.parameters.fromDate}" enableManualInput="true"
-							datePattern="dd/MM/yyyy"
-							timeZone="#{timeZoneController.timeZone}">
+							value="#{trialBalance.parameters.fromDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}">
 							<a4j:support event="oninputchange" reRender="SearchButton" ajaxSingle="true" />
 							<a4j:support event="onchanged" reRender="SearchButton" ajaxSingle="true" />
 						</aon:selectInputDate>
@@ -61,11 +62,11 @@
 						<aon:outputLabel
 							for="AccountEntryDetail_accountEntry_entryDate-To"
 							styleClass="aon-form-date-label" value="#{bundle.aon_date_to}" />
-						<aon:selectInputDate size="8" 
+						<aon:selectInputDate 
 							id="AccountEntryDetail_accountEntry_entryDate-To"
-							value="#{trialBalance.parameters.toDate}" enableManualInput="true"
-							datePattern="dd/MM/yyyy"
-							timeZone="#{timeZoneController.timeZone}">
+							value="#{trialBalance.parameters.toDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}">
 							<a4j:support event="oninputchange" reRender="SearchButton" ajaxSingle="true" />
 							<a4j:support event="onchanged" reRender="SearchButton" ajaxSingle="true" />
 						</aon:selectInputDate>

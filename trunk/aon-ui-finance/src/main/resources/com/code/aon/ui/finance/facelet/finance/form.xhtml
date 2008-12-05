@@ -64,8 +64,7 @@
 						value="#{finance.to.dueDate}"
 						disabled="#{!finance.pending and !finance.returned}"
 						timeZone="#{timeZoneController.timeZone}"
-						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
-					</aon:selectInputDate>						
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
 						
 					<aon:outputLabel for="RegistryBank_Lookup_id"
 						value="#{financeBundle.finance_bank}" />

@@ -67,10 +67,11 @@
  					</aon:div>
 
 					<aon:outputLabel for="Delivery_issueTime" value="#{bundle.aon_date}" />
-					<aon:selectInputDate id="Delivery_issueTime" value="#{delivery.to.issueTime}" 
+					<aon:selectInputDate id="Delivery_issueTime"
+						value="#{delivery.to.issueTime}" 
 						required="true" disabled="#{!delivery.pending}"
-						timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}">
-					</aon:selectInputDate>
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 					<aon:outputLabel for="Delivery_customer_id" value="#{customerBundle.customer_customer}" />
 					<aon:div styleClass="aon-lookup">

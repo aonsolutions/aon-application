@@ -66,8 +66,7 @@
 							value="#{fbatch.recordDate}"
 							rendered="#{!fbatch.new and !fbatch.recorded and (fbatch.done or !fbatch.diskMode)}" 
 							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}">
-						</aon:selectInputDate>																							
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:panelGrid>
 				</aon:div>
 
@@ -90,8 +89,7 @@
 						value="#{fbatch.to.issueDate}" 
 						disabled="#{fbatch.recorded}" required="true"
 						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}">
-					</aon:selectInputDate>																	
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 					<aon:outputLabel for="RegistryBank_Lookup_id"
 						value="#{financeBundle.finance_bank}" />

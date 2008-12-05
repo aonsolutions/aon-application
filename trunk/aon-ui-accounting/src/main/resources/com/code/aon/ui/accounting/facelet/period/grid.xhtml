@@ -54,19 +54,19 @@
 										pattern="#{bundle.aon_date_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
 								</aon:outputText>
-								<aon:selectInputDate size="8" required="true"
+								<aon:selectInputDate required="true"
 									id="Period_initiationDate-EDIT"
 									rendered="#{to.id==accPeriod.to.id}"
-									value="#{accPeriod.to.initiationDate}" enableManualInput="true"
-									datePattern="dd/MM/yyyy"
-									timeZone="#{timeZoneController.timeZone}" />
+									value="#{accPeriod.to.initiationDate}"
+									timeZone="#{timeZoneController.timeZone}"
+									popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 								<f:facet name="footer">
-									<aon:selectInputDate size="8" required="true"
+									<aon:selectInputDate required="true"
 										id="Period_initiationDate-NEW" rendered="#{accPeriod.new}"
 										value="#{accPeriod.to.initiationDate}"
-										enableManualInput="true" datePattern="dd/MM/yyyy"
-										timeZone="#{timeZoneController.timeZone}" />
+										timeZone="#{timeZoneController.timeZone}"
+										popupDateFormat="#{bundle.aon_date_pattern}"/>
 								</f:facet>
 							</aon:column>
 
@@ -81,17 +81,17 @@
 										pattern="#{bundle.aon_date_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
 								</aon:outputText>
-								<aon:selectInputDate size="8" required="true"
+								<aon:selectInputDate required="true"
 									id="Period_deadline-EDIT" rendered="#{to.id==accPeriod.to.id}"
-									value="#{accPeriod.to.deadline}" enableManualInput="true"
-									datePattern="dd/MM/yyyy"
-									timeZone="#{timeZoneController.timeZone}" />
+									value="#{accPeriod.to.deadline}"
+									timeZone="#{timeZoneController.timeZone}"
+									popupDateFormat="#{bundle.aon_date_pattern}"/>
 								<f:facet name="footer">
-									<aon:selectInputDate size="8" required="true"
+									<aon:selectInputDate required="true"
 										id="Period_deadline-NEW" rendered="#{accPeriod.new}"
-										value="#{accPeriod.to.deadline}" enableManualInput="true"
-										datePattern="dd/MM/yyyy"
-										timeZone="#{timeZoneController.timeZone}" />
+										value="#{accPeriod.to.deadline}"
+										timeZone="#{timeZoneController.timeZone}"
+										popupDateFormat="#{bundle.aon_date_pattern}"/>
 								</f:facet>
 							</aon:column>
 						</ui:define>

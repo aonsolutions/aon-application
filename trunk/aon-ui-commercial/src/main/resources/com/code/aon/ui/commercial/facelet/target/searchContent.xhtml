@@ -157,16 +157,16 @@
 					<aon:outputLabel for="Target_trackings_date-From" styleClass="aon-form-date-label"
 						value="#{bundle.aon_date_from}:" />
 					<aon:selectInputDate id="Target_trackings_date-From"
-						value="#{targetSearch.trackingDateFrom}" inputSize="10"
-						popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
-					</aon:selectInputDate>
+						value="#{targetSearch.trackingDateFrom}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
 		
 					<aon:outputLabel for="Target_trackings_date-To" styleClass="aon-form-date-label"
 						value="#{bundle.aon_date_to}:" />
 					<aon:selectInputDate id="Target_trackings_date-To"
-						value="#{targetSearch.trackingDateTo}" inputSize="10"
-						popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
-					</aon:selectInputDate>
+						value="#{targetSearch.trackingDateTo}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
 				</aon:div>
 		
 				<aon:outputLabel for="Target_trackings_seller_id"
