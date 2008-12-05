@@ -10,7 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.payroll.enumeration.TipoPercepcion;
 
 /**
  * Percepcion
@@ -21,7 +25,7 @@ public class Percepcion implements ITransferObject {
 
 	private String cdg;
 	private String descripcion;
-	private String tipo;
+	private TipoPercepcion tipo;
 	
 	private Set<Linpercepcion> linpercepciones = new HashSet<Linpercepcion>();
 
@@ -55,12 +59,13 @@ public class Percepcion implements ITransferObject {
 	 * Devuelve el Tipo Percepción
 	 * @return
 	 */
+	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.TipoPercepcion")} )
 	@Column(name = "tipo", nullable = false, length = 1)
-	public String getTipo() {
+	public TipoPercepcion getTipo() {
 		return this.tipo;
 	}
 
-	public void setTipo(String tipo) {
+	public void setTipo(TipoPercepcion tipo) {
 		this.tipo = tipo;
 	}
 
