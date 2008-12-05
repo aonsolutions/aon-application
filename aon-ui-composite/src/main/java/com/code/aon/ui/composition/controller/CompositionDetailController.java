@@ -15,8 +15,8 @@ import com.code.aon.product.Item;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.composition.util.CompositionPriceProvider;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.util.AonUtil;
 
 /**
  * Controller for Product Composition Details.
@@ -101,13 +101,11 @@ public class CompositionDetailController extends LinesController {
     public void updateItemPrices(ActionEvent event) throws ManagerBeanException {
         IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 
-        CompositionController compositionController = (CompositionController)AonUtil.getController("composition");
+        CompositionController compositionController = (CompositionController)FormUtil.getController("composition");
         Composition composition = (Composition)compositionController.getTo();
 
-        List list = (List)this.model.getWrappedData();
-        Iterator iterator = list.iterator();
-        while (iterator.hasNext()) {
-            CompositionDetail detail = (CompositionDetail)iterator.next();
+        List<CompositionDetail> list = (List)this.model.getWrappedData();
+        for( CompositionDetail detail : list ) {
             Item item = detail.getItem();
             item.setPurchasePrice(getPriceProvider().obtainItemPurchasePrice(detail.getItem(), getPriceProvider().getListCost(detail)));
             item.setPrice(getPriceProvider().obtainItemTaxableBase(detail.getItem(), detail.getPrice()));
@@ -127,10 +125,8 @@ public class CompositionDetailController extends LinesController {
     public void reloadDetailPrices(ActionEvent event) throws ManagerBeanException {
         IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 
-        List list = (List)this.model.getWrappedData();
-        Iterator iterator = list.iterator();
-        while (iterator.hasNext()) {
-            CompositionDetail detail = (CompositionDetail)iterator.next();
+        List<CompositionDetail> list = (List)this.model.getWrappedData();
+        for( CompositionDetail detail : list ) {
             Criteria criteria = new Criteria();
             criteria.addEqualExpression(itemBean.getFieldName(IProductAlias.ITEM_ID), detail.getItem().getId());
             Item item = (Item)itemBean.getList(criteria).get(0);
@@ -148,7 +144,7 @@ public class CompositionDetailController extends LinesController {
      */
     @Override
     public void onReset(ActionEvent event) {
-        CompositionExpenseController expenseController = (CompositionExpenseController)AonUtil.getController("compositionExpense");
+        CompositionExpenseController expenseController = (CompositionExpenseController)FormUtil.getController("compositionExpense");
         expenseController.onCancel(event);
 
         super.onReset(event);
@@ -162,7 +158,7 @@ public class CompositionDetailController extends LinesController {
      */
     @Override
     public void onSelect(ActionEvent event) {
-        CompositionExpenseController expenseController = (CompositionExpenseController)AonUtil.getController("compositionExpense");
+        CompositionExpenseController expenseController = (CompositionExpenseController)FormUtil.getController("compositionExpense");
         expenseController.onCancel(event);
 
         super.onSelect(event);

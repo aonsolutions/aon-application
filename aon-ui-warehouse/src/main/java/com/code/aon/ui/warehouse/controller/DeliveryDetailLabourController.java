@@ -13,6 +13,7 @@ import com.code.aon.company.resources.Employee;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
@@ -26,7 +27,7 @@ public class DeliveryDetailLabourController extends BasicController {
 	@SuppressWarnings("unchecked")
 	public int getRelatedDeliveryDetailRowIndex() throws ManagerBeanException{
 		DeliveryDetailLabour detailLabour = (DeliveryDetailLabour)this.getModel().getRowData();
-		DeliveryController deliveryController = (DeliveryController)AonUtil.getController(DELIVERY_CONTROLLER_NAME);
+		DeliveryController deliveryController = (DeliveryController)FormUtil.getController(DELIVERY_CONTROLLER_NAME);
 		Iterator iter = obtainDeliveryDetailList((Delivery)deliveryController.getTo()).iterator();
 		int index = 0;
 		while(iter.hasNext()){

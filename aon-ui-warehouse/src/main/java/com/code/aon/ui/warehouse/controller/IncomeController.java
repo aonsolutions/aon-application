@@ -26,6 +26,7 @@ import com.code.aon.supplier.Supplier;
 import com.code.aon.supplier.dao.ISupplierAlias;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.PageDataModel;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
@@ -246,7 +247,7 @@ public class IncomeController extends BasicController {
 	 * @throws ManagerBeanException
 	 */
 	public double getIncomeTotalPrice() throws ManagerBeanException{
-		CompanyController companyController = (CompanyController)AonUtil.getController(COMPANY_CONTROLLER_NAME);
+		CompanyController companyController = (CompanyController)FormUtil.getController(COMPANY_CONTROLLER_NAME);
 		return getPriceStrategy().getTotalPrice((ICalculableContainer)this.getModel().getRowData(),companyController.obtainCompany());
 	}
 	
@@ -257,7 +258,7 @@ public class IncomeController extends BasicController {
 	 * @throws ManagerBeanException
 	 */
 	public double getIncomeTotalTaxRate() throws ManagerBeanException {
-		CompanyController companyController = (CompanyController)AonUtil.getController(COMPANY_CONTROLLER_NAME);
+		CompanyController companyController = (CompanyController)FormUtil.getController(COMPANY_CONTROLLER_NAME);
 		Income income = (Income)this.getModel().getRowData();
 		Iterator<TaxBreakDown> iter = getPriceStrategy().getTaxBreakDowns(income,companyController.obtainCompany()).iterator();
 		double total = 0;
@@ -274,7 +275,7 @@ public class IncomeController extends BasicController {
 	 * @throws ManagerBeanException
 	 */
 	public double getIncomeTotalSurchargeRate() throws ManagerBeanException {
-		CompanyController companyController = (CompanyController)AonUtil.getController(COMPANY_CONTROLLER_NAME);
+		CompanyController companyController = (CompanyController)FormUtil.getController(COMPANY_CONTROLLER_NAME);
 		Income income = (Income)this.getModel().getRowData();
 		Iterator<TaxBreakDown> iter = getPriceStrategy().getTaxBreakDowns(income,companyController.obtainCompany()).iterator();
 		double total = 0;

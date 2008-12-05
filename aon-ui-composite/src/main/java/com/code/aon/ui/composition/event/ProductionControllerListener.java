@@ -11,10 +11,10 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.composition.controller.ProductionController;
 import com.code.aon.ui.composition.controller.ProductionDetailController;
 import com.code.aon.ui.composition.controller.ProductionExpenseController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
 
 public class ProductionControllerListener extends ControllerAdapter {
 
@@ -50,10 +50,10 @@ public class ProductionControllerListener extends ControllerAdapter {
      */
     @Override
     public void afterBeanCanceled(ControllerEvent event) throws ControllerListenerException {
-        ProductionExpenseController expenseController = (ProductionExpenseController)AonUtil.getController("productionExpense");
+        ProductionExpenseController expenseController = (ProductionExpenseController)FormUtil.getController("productionExpense");
         expenseController.onCancel(null);
 
-        ProductionDetailController detailController = (ProductionDetailController)AonUtil.getController("productionDetail");
+        ProductionDetailController detailController = (ProductionDetailController)FormUtil.getController("productionDetail");
         detailController.onCancel(null);
     }
 
@@ -64,8 +64,8 @@ public class ProductionControllerListener extends ControllerAdapter {
      * @throws ControllerListenerException
      */
     private void reloadDetail(Production to) throws ControllerListenerException {
-        ProductionExpenseController expenseController = (ProductionExpenseController)AonUtil.getController("productionExpense");
-        ProductionDetailController detailController = (ProductionDetailController)AonUtil.getController("productionDetail");
+        ProductionExpenseController expenseController = (ProductionExpenseController)FormUtil.getController("productionExpense");
+        ProductionDetailController detailController = (ProductionDetailController)FormUtil.getController("productionDetail");
 
         IManagerBean bean;
         try {

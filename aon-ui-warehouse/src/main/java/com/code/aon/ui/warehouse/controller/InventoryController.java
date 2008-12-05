@@ -17,9 +17,9 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.PageDataModel;
 import com.code.aon.ui.product.util.ItemPriceProvider;
-import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Inventory;
 import com.code.aon.warehouse.InventoryDetail;
 import com.code.aon.warehouse.Stock;
@@ -229,7 +229,7 @@ public class InventoryController extends BasicController {
 
 	@Override
 	public void onSelect(ActionEvent event) {
-		InventoryDetailController idc = (InventoryDetailController)AonUtil.getController(INVENTORY_DETAIL_CONTROLLER_NAME);
+		InventoryDetailController idc = (InventoryDetailController)FormUtil.getController(INVENTORY_DETAIL_CONTROLLER_NAME);
 		idc.setCategory(null);
 		super.onSelect(event);
 	}

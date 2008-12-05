@@ -1,24 +1,14 @@
 package com.code.aon.ui.warehouse.event;
 
-import java.util.Iterator;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.sales.Sales;
-import com.code.aon.sales.SalesDetail;
-import com.code.aon.sales.dao.ISalesAlias;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.warehouse.controller.DeliveryDetailController;
 import com.code.aon.warehouse.Delivery;
-import com.code.aon.warehouse.DeliveryDetail;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
 
 /**
  * DeliveryDetail listener 
@@ -57,7 +47,7 @@ public class DeliveryDetailListener extends ControllerAdapter {
 			if(iter.hasNext()){
 				sales = ((DeliveryDetail)iter.next()).getSalesDetail().getSales();
 			}
-			DeliveryDetailController deliveryDetailController = (DeliveryDetailController)AonUtil.getController(DELIVERY_DETAIL_CONTROLLER_NAME);
+			DeliveryDetailController deliveryDetailController = (DeliveryDetailController)FormUtil.getController(DELIVERY_DETAIL_CONTROLLER_NAME);
 			deliveryDetailController.setSales(sales);
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE,"Error obtaining sales for delivery with id: " + delivery.getId(),e);
@@ -72,7 +62,7 @@ public class DeliveryDetailListener extends ControllerAdapter {
 	@Override
 	@SuppressWarnings("unchecked")
 	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
-		DeliveryDetailController deliveryDetailController = (DeliveryDetailController)AonUtil.getController(DELIVERY_DETAIL_CONTROLLER_NAME);
+		DeliveryDetailController deliveryDetailController = (DeliveryDetailController)FormUtil.getController(DELIVERY_DETAIL_CONTROLLER_NAME);
 		/*Sales sales = deliveryDetailController.getSales();
 		if(sales != null){
 			try {

@@ -24,7 +24,7 @@ import com.code.aon.composition.dao.ICompositionAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.composition.util.ProductionPriceProvider;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 
 /**
  * Controller for Product Productions.
@@ -154,10 +154,10 @@ public class ProductionController extends BasicController {
      */
     @Override
     public void onReset(ActionEvent event) {
-        ProductionDetailController detailController = (ProductionDetailController)AonUtil.getController("productionDetail");
+        ProductionDetailController detailController = (ProductionDetailController)FormUtil.getController("productionDetail");
         detailController.onCancel(event);
 
-        ProductionExpenseController expenseController = (ProductionExpenseController)AonUtil.getController("productionExpense");
+        ProductionExpenseController expenseController = (ProductionExpenseController)FormUtil.getController("productionExpense");
         expenseController.onCancel(event);
 
         super.onReset(event);
@@ -171,10 +171,10 @@ public class ProductionController extends BasicController {
      */
     @Override
     public void onSelect(ActionEvent event) {
-        ProductionDetailController detailController = (ProductionDetailController)AonUtil.getController("productionDetail");
+        ProductionDetailController detailController = (ProductionDetailController)FormUtil.getController("productionDetail");
         detailController.onCancel(event);
 
-        ProductionExpenseController expenseController = (ProductionExpenseController)AonUtil.getController("productionExpense");
+        ProductionExpenseController expenseController = (ProductionExpenseController)FormUtil.getController("productionExpense");
         expenseController.onCancel(event);
 
         super.onSelect(event);
@@ -236,7 +236,7 @@ public class ProductionController extends BasicController {
      * @return Production
      */
     private Production getProduction() {
-        CompositionController controller = (CompositionController)AonUtil.getController("composition");
+        CompositionController controller = (CompositionController)FormUtil.getController("composition");
         Composition composition = (Composition)controller.getTo();
 
         Production production = new Production();
@@ -256,7 +256,7 @@ public class ProductionController extends BasicController {
     private void insertProductionDetail() throws ManagerBeanException {
         IManagerBean detailsBean = BeanManager.getManagerBean(ProductionDetail.class);
 
-        CompositionController controller = (CompositionController)AonUtil.getController("composition");
+        CompositionController controller = (CompositionController)FormUtil.getController("composition");
         Composition composition = (Composition)controller.getTo();
 
         Iterator iterator = composition.getDetailList().iterator();
@@ -283,7 +283,7 @@ public class ProductionController extends BasicController {
     private void insertProductionExpense() throws ManagerBeanException {
         IManagerBean expenseBean = BeanManager.getManagerBean(ProductionExpense.class);
 
-        CompositionController controller = (CompositionController)AonUtil.getController("composition");
+        CompositionController controller = (CompositionController)FormUtil.getController("composition");
         Composition composition = (Composition)controller.getTo();
 
         Iterator iterator = composition.getExpensesList().iterator();

@@ -11,10 +11,10 @@ import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.dao.IPurchaseAlias;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.warehouse.controller.IncomeDetailController;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
@@ -58,7 +58,7 @@ public class IncomeDetailListener extends ControllerAdapter {
 			if(iter.hasNext()){
 				purchase = ((IncomeDetail)iter.next()).getPurchaseDetail().getPurchase();
 			}
-			IncomeDetailController incomeDetailController = (IncomeDetailController)AonUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
+			IncomeDetailController incomeDetailController = (IncomeDetailController)FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
 			incomeDetailController.setPurchase(purchase);
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE,"Error obtaining purchase for imcome with id: " + income.getId(),e);
@@ -74,7 +74,7 @@ public class IncomeDetailListener extends ControllerAdapter {
 	@Override
 	@SuppressWarnings("unchecked")
 	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
-		IncomeDetailController incomeDetailController = (IncomeDetailController)AonUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
+		IncomeDetailController incomeDetailController = (IncomeDetailController)FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
 		Purchase purchase = incomeDetailController.getPurchase();
 		if(purchase != null){
 			try {

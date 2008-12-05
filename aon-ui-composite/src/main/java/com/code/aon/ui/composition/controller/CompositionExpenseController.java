@@ -5,6 +5,7 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.composition.CompositionExpense;
 import com.code.aon.ui.composition.util.CompositionPriceProvider;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -49,7 +50,7 @@ public class CompositionExpenseController extends LinesController {
      */
     @Override
     public void onReset(ActionEvent event) {
-        CompositionDetailController detailController = (CompositionDetailController)AonUtil.getController("compositionDetail");
+        CompositionDetailController detailController = (CompositionDetailController)FormUtil.getController("compositionDetail");
         detailController.onCancel(event);
 
         super.onReset(event);
@@ -63,7 +64,7 @@ public class CompositionExpenseController extends LinesController {
      */
     @Override
     public void onSelect(ActionEvent event) {
-        CompositionDetailController detailController = (CompositionDetailController)AonUtil.getController("compositionDetail");
+        CompositionDetailController detailController = (CompositionDetailController)FormUtil.getController("compositionDetail");
         detailController.onCancel(event);
 
         super.onSelect(event);

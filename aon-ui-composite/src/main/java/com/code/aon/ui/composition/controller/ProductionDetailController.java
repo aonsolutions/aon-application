@@ -5,8 +5,8 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.composition.ProductionDetail;
 import com.code.aon.ui.composition.util.ProductionPriceProvider;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.util.AonUtil;
 
 /**
  * Controller for Product Production Details.
@@ -60,7 +60,7 @@ public class ProductionDetailController extends LinesController {
      */
     @Override
     public void onReset(ActionEvent event) {
-        ProductionExpenseController expenseController = (ProductionExpenseController)AonUtil.getController("productionExpense");
+        ProductionExpenseController expenseController = (ProductionExpenseController)FormUtil.getController("productionExpense");
         expenseController.onCancel(event);
 
         super.onReset(event);
@@ -74,7 +74,7 @@ public class ProductionDetailController extends LinesController {
      */
     @Override
     public void onSelect(ActionEvent event) {
-        ProductionExpenseController expenseController = (ProductionExpenseController)AonUtil.getController("productionExpense");
+        ProductionExpenseController expenseController = (ProductionExpenseController)FormUtil.getController("productionExpense");
         expenseController.onCancel(event);
 
         super.onSelect(event);

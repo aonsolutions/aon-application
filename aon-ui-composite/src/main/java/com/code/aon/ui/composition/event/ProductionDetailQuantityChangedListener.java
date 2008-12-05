@@ -5,10 +5,10 @@ import com.code.aon.composition.Production;
 import com.code.aon.composition.ProductionDetail;
 import com.code.aon.ui.composition.controller.ProductionController;
 import com.code.aon.ui.composition.controller.ProductionDetailController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
 
 public class ProductionDetailQuantityChangedListener extends ControllerAdapter {
 
@@ -39,7 +39,7 @@ public class ProductionDetailQuantityChangedListener extends ControllerAdapter {
      * @param coefficient
      */
     private void productionDetailQuantityChanged(double coefficient) throws ManagerBeanException {
-    	ProductionController controller = (ProductionController)AonUtil.getController("production");
+    	ProductionController controller = (ProductionController)FormUtil.getController("production");
         controller.changeProductionDetailQuantity(coefficient);
 
         double quantity = ((Production)controller.getTo()).getInitialQuantity();

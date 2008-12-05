@@ -20,7 +20,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.composition.util.CompositionPriceProvider;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 
 /**
  * Controller for Product Compositions.
@@ -253,10 +253,10 @@ public class CompositionController extends BasicController {
      */
     @Override
     public void onReset(ActionEvent event) {
-        CompositionDetailController detailController = (CompositionDetailController)AonUtil.getController("compositionDetail");
+        CompositionDetailController detailController = (CompositionDetailController)FormUtil.getController("compositionDetail");
         detailController.onCancel(event);
 
-        CompositionExpenseController expenseController = (CompositionExpenseController)AonUtil.getController("compositionExpense");
+        CompositionExpenseController expenseController = (CompositionExpenseController)FormUtil.getController("compositionExpense");
         expenseController.onCancel(event);
 
         super.onReset(event);
@@ -270,10 +270,10 @@ public class CompositionController extends BasicController {
      */
     @Override
     public void onSelect(ActionEvent event) {
-        CompositionDetailController detailController = (CompositionDetailController)AonUtil.getController("compositionDetail");
+        CompositionDetailController detailController = (CompositionDetailController)FormUtil.getController("compositionDetail");
         detailController.onCancel(event);
 
-        CompositionExpenseController expenseController = (CompositionExpenseController)AonUtil.getController("compositionExpense");
+        CompositionExpenseController expenseController = (CompositionExpenseController)FormUtil.getController("compositionExpense");
         expenseController.onCancel(event);
 
         super.onSelect(event);
