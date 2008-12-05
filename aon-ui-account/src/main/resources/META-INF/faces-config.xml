@@ -5,8 +5,8 @@
 
 	<application>
 		<resource-bundle>
-			<base-name>com.code.aon.ui.common.i18n.messages</base-name>
-			<var>bundle</var>
+			<base-name>com.code.aon.ui.account.i18n.messages</base-name>
+			<var>accountBundle</var>
 		</resource-bundle>
 	</application>
 
