@@ -145,7 +145,6 @@ public class PayrollAliasWriter {
 		        Emprdom.class.getName(),
 		        Emprlban.class.getName(),
 		        Variable.class.getName(),
-		        LinvariableId.class.getName(),
 		        Linvariable.class.getName(),
 		        Percepcion.class.getName(),
 		        Linpercepcion.class.getName()	        

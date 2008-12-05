@@ -66,6 +66,8 @@ import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.payroll.principales.empresa.Actividad;
 import com.code.aon.payroll.principales.empresa.Emprdom;
 import com.code.aon.payroll.principales.empresa.Emprlban;
+import com.code.aon.payroll.avanzadas.gestel.Variable;
+import com.code.aon.payroll.avanzadas.gestel.Linvariable;
 import com.code.aon.payroll.avanzadas.kartel.Percepcion;
 import com.code.aon.payroll.avanzadas.kartel.Linpercepcion;
 
@@ -2949,34 +2951,46 @@ public interface IPayrollAlias {
 	DAOConstantsEntry AVISOS_ENTRY = DAOConstants.getDAOConstant(Avisos.class);
 
 	/** 
+	* Alias value: Avisos_actividad_cdg
+	* Hibernate value: Avisos.actividad.cdg
+	*/
+	String  AVISOS_ACTIVIDAD_CDG = AVISOS_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: Avisos_cdg
 	* Hibernate value: Avisos.cdg
 	*/
-	String  AVISOS_CDG = AVISOS_ENTRY.getAliasNames()[0];
+	String  AVISOS_CDG = AVISOS_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: Avisos_cliente_cdg
 	* Hibernate value: Avisos.cliente.cdg
 	*/
-	String  AVISOS_CLIENTE_CDG = AVISOS_ENTRY.getAliasNames()[1];
+	String  AVISOS_CLIENTE_CDG = AVISOS_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Avisos_descripcion
 	* Hibernate value: Avisos.descripcion
 	*/
-	String  AVISOS_DESCRIPCION = AVISOS_ENTRY.getAliasNames()[2];
+	String  AVISOS_DESCRIPCION = AVISOS_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Avisos_empresa_cdg
+	* Hibernate value: Avisos.empresa.cdg
+	*/
+	String  AVISOS_EMPRESA_CDG = AVISOS_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Avisos_fecha
 	* Hibernate value: Avisos.fecha
 	*/
-	String  AVISOS_FECHA = AVISOS_ENTRY.getAliasNames()[3];
+	String  AVISOS_FECHA = AVISOS_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Avisos_tipo
 	* Hibernate value: Avisos.tipo
 	*/
-	String  AVISOS_TIPO = AVISOS_ENTRY.getAliasNames()[4];
+	String  AVISOS_TIPO = AVISOS_ENTRY.getAliasNames()[6];
 
 
 
@@ -3473,6 +3487,110 @@ public interface IPayrollAlias {
 	* Hibernate value: Emprlban.tipcta
 	*/
 	String  EMPRLBAN_TIPCTA = EMPRLBAN_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for Variable entity.
+	*/ 
+	DAOConstantsEntry VARIABLE_ENTRY = DAOConstants.getDAOConstant(Variable.class);
+
+	/** 
+	* Alias value: Variable_cdg
+	* Hibernate value: Variable.cdg
+	*/
+	String  VARIABLE_CDG = VARIABLE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Variable_descripcion
+	* Hibernate value: Variable.descripcion
+	*/
+	String  VARIABLE_DESCRIPCION = VARIABLE_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for Linvariable entity.
+	*/ 
+	DAOConstantsEntry LINVARIABLE_ENTRY = DAOConstants.getDAOConstant(Linvariable.class);
+
+	/** 
+	* Alias value: Linvariable_diurna
+	* Hibernate value: Linvariable.diurna
+	*/
+	String  LINVARIABLE_DIURNA = LINVARIABLE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Linvariable_domingo
+	* Hibernate value: Linvariable.domingo
+	*/
+	String  LINVARIABLE_DOMINGO = LINVARIABLE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Linvariable_fecfin
+	* Hibernate value: Linvariable.fecfin
+	*/
+	String  LINVARIABLE_FECFIN = LINVARIABLE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Linvariable_festdiurna
+	* Hibernate value: Linvariable.festdiurna
+	*/
+	String  LINVARIABLE_FESTDIURNA = LINVARIABLE_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Linvariable_festivo
+	* Hibernate value: Linvariable.festivo
+	*/
+	String  LINVARIABLE_FESTIVO = LINVARIABLE_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Linvariable_festivoesp
+	* Hibernate value: Linvariable.festivoesp
+	*/
+	String  LINVARIABLE_FESTIVOESP = LINVARIABLE_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Linvariable_festnocturna
+	* Hibernate value: Linvariable.festnocturna
+	*/
+	String  LINVARIABLE_FESTNOCTURNA = LINVARIABLE_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Linvariable_id_cdg
+	* Hibernate value: Linvariable.id.cdg
+	*/
+	String  LINVARIABLE_ID_CDG = LINVARIABLE_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Linvariable_id_fecinicio
+	* Hibernate value: Linvariable.id.fecinicio
+	*/
+	String  LINVARIABLE_ID_FECINICIO = LINVARIABLE_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Linvariable_nocturna
+	* Hibernate value: Linvariable.nocturna
+	*/
+	String  LINVARIABLE_NOCTURNA = LINVARIABLE_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Linvariable_nocturnidad
+	* Hibernate value: Linvariable.nocturnidad
+	*/
+	String  LINVARIABLE_NOCTURNIDAD = LINVARIABLE_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: Linvariable_transporte
+	* Hibernate value: Linvariable.transporte
+	*/
+	String  LINVARIABLE_TRANSPORTE = LINVARIABLE_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: Linvariable_variable_cdg
+	* Hibernate value: Linvariable.variable.cdg
+	*/
+	String  LINVARIABLE_VARIABLE_CDG = LINVARIABLE_ENTRY.getAliasNames()[12];
 
 
 
