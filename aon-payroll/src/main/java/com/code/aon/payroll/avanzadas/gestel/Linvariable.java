@@ -35,7 +35,7 @@ public class Linvariable  implements ITransferObject {
      private BigDecimal nocturna;
      private BigDecimal festdiurna;
      private BigDecimal festnocturna;
-     private Variable variables;
+     private Variable variable;
 
 
     @EmbeddedId    
@@ -149,12 +149,12 @@ public class Linvariable  implements ITransferObject {
     
 	@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="cdg", insertable=false, updatable=false)
-    public Variable getVariables() {
-        return this.variables;
+    public Variable getVariable() {
+        return this.variable;
     }
     
-    public void setVariables(Variable variables) {
-        this.variables = variables;
+    public void setVariable(Variable variable) {
+        this.variable = variable;
     }
 
 
