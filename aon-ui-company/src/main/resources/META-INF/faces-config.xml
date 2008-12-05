@@ -1,7 +1,14 @@
-<faces-config xmlns="http://java.sun.com/xml/ns/javaee"
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-facesconfig_1_2.xsd"
-	version="1.2">
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<application>
+		<resource-bundle>
+			<base-name>com.code.aon.ui.company.i18n.messages</base-name>
+			<var>companyBundle</var>
+		</resource-bundle>
+	</application>
 
 	<!-- ************** EXTERNAL COLLECTIONS (RELOCATE) ****************** -->
 	<managed-bean>
