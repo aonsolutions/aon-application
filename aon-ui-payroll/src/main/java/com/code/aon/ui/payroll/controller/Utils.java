@@ -20,6 +20,15 @@ public class Utils {
 		return hasOverlap;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static final boolean startEndDateschecker(Date fecini, Date fecfin) {
+		boolean hasOverlap = false;
+		if ( fecfin.before( fecini ) ) {
+			hasOverlap = true;
+		}
+		return hasOverlap;
+	}
+	
 	/**
 	 * Valida el parametro pDato segun el tipo de mascara indicado.
 	 * 
