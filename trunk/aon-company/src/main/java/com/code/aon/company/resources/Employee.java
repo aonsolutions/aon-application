@@ -1,8 +1,5 @@
 package com.code.aon.company.resources;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,18 +7,14 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import com.code.aon.common.ILookupObject;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.company.IEntity;
 import com.code.aon.company.IEntityVisitor;
-import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.registry.Registry;
-import com.code.aon.registry.dao.IRegistryAlias;
 
 /**
  * Transfer Object que representa un empleado.
@@ -33,7 +26,9 @@ import com.code.aon.registry.dao.IRegistryAlias;
  */
 @Entity
 @Table(name="employee")
-public class Employee implements ITransferObject, IEntity, ILookupObject {
+public class Employee implements ITransferObject, IEntity {
+
+	private static final long serialVersionUID = 1244821002402216187L;
 
 	/** Employee identifier that is equal to the registry one. */
 	private Integer id;
@@ -153,18 +148,6 @@ public class Employee implements ITransferObject, IEntity, ILookupObject {
      */
 	public void accept(IEntityVisitor visitor) {
 		visitor.visitEmployee( this );
-	}
-
-	@Transient
-	public Map<String, Object> getLookups() {
-		Map<String,Object> map = new HashMap<String,Object>();
-        map.put(ICompanyAlias.EMPLOYEE_ID, getId());
-        map.put(ICompanyAlias.EMPLOYEE_REGISTRY_ID, getRegistry().getId());
-        map.put(IRegistryAlias.REGISTRY_NAME, getRegistry().getName());
-        map.put(IRegistryAlias.REGISTRY_SURNAME, getRegistry().getSurname());
-        map.put(IRegistryAlias.REGISTRY_DOCUMENT, getRegistry().getDocument());
-        map.put(IRegistryAlias.REGISTRY_ALIAS, getRegistry().getAlias());
-        return map;
 	}
 
 }
