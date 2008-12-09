@@ -3687,4 +3687,69 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+ 
+ 
+ 
+        <managed-bean>
+		<managed-bean-name>persona</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PersonaController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>
+				com.code.aon.payroll.principales.personas.Persona
+			</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>
+				Persona_cdg			
+			</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>persona</value>
+		</managed-property>
+		</managed-bean>
+		
+		
+		
+		
+		     <managed-bean>
+		<managed-bean-name>otrperc</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.OtrpercepController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>
+				com.code.aon.payroll.principales.personas.Otrperc
+			</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>
+				Otrperc_cdg			
+			</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>otrperc</value>
+		</managed-property>
+		</managed-bean>
+		
+
+
+
 </faces-config>
