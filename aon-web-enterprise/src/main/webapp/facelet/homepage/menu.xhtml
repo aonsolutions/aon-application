@@ -10,24 +10,24 @@
 
 			<aon:commandLink id="sales"
 				value="#{appBundle.menu_sales}"
-				action="sales" immediate="true"
+				action="menu_sales" immediate="true"
 				styleClass="aon-top-menu-item" />
 			<aon:commandLink id="purchase"
 				value="Compras"
-				action="purchase" immediate="true"
+				action="menu_purchase" immediate="true"
 				styleClass="aon-top-menu-item" />
 			<aon:commandLink id="warehouse"
 				value="#{warehouseBundle.warehouse_menu_group}"
-				action="warehouse" immediate="true"
+				action="menu_warehouse" immediate="true"
 				styleClass="aon-top-menu-item" />
 			<aon:commandLink id="treasury"
 				value="#{financeBundle.finance_menu_group}"
-				action="treasury" immediate="true"
+				action="menu_treasury" immediate="true"
 				styleClass="aon-top-menu-item" />
 			<!-- 
 			<aon:commandLink id="accounting"
 				value="#{accountingBundle.menu_accounting}"
-				action="accounting" immediate="true"
+				action="menu_accounting" immediate="true"
 				styleClass="aon-top-menu-item" />
 			-->
 			<aon:dropDownMenu value="#{accountingBundle.menu_accounting}">
@@ -148,7 +148,7 @@
 			
 			<aon:commandLink id="config"
 				value="#{bundle.aon_configuration}"
-				action="config" immediate="true"
+				action="menu_config" immediate="true"
 				styleClass="aon-top-menu-item" />
  		</aon:menuBar>
 	</aon:form>
