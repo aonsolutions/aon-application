@@ -127,12 +127,15 @@ public class ProductCategoryTree implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
+		if (obj == null) {
+    		return super.equals(obj);
 		}
 		if (obj instanceof ProductCategoryTree) {
-			ProductCategoryTree productCategoryTree = (ProductCategoryTree) obj;
-			if (ObjectUtils.equals(getId(), productCategoryTree.getId())) {
+			ProductCategoryTree o = (ProductCategoryTree) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
 				return true;
 			}
 		}
@@ -141,6 +144,7 @@ public class ProductCategoryTree implements ITransferObject {
 
 	@Override
 	public int hashCode() {
-		return 0;
+		return super.hashCode();
 	}
+
 }

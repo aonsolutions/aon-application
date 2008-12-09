@@ -427,12 +427,15 @@ public class Product implements ITransferObject {
     
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
+		if (obj == null) {
+    		return super.equals(obj);
 		}
 		if (obj instanceof Product) {
-			Product product = (Product) obj;
-			if (ObjectUtils.equals(getId(), product.getId())) {
+			Product o = (Product) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
 				return true;
 			}
 		}
@@ -441,6 +444,7 @@ public class Product implements ITransferObject {
 
 	@Override
 	public int hashCode() {
-		return 0;
+		return super.hashCode();
 	}
+
 }

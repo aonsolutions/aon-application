@@ -198,12 +198,15 @@ public class ItemAttachment implements IAttachment, Cloneable {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
+		if (obj == null) {
+    		return super.equals(obj);
 		}
 		if (obj instanceof ItemAttachment) {
-			ItemAttachment itemAttachment = (ItemAttachment) obj;
-			if (ObjectUtils.equals(getId(), itemAttachment.getId())) {
+			ItemAttachment o = (ItemAttachment) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
 				return true;
 			}
 		}
@@ -212,6 +215,7 @@ public class ItemAttachment implements IAttachment, Cloneable {
 
 	@Override
 	public int hashCode() {
-		return 0;
+		return super.hashCode();
 	}
+
 }
