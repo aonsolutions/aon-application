@@ -48,7 +48,11 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div>
-								<aon:commandLink value="#{menuBundle.avanzadas_gestel__variable}" disabled="true" />
+								<aon:commandLink value="#{menuBundle.avanzadas_gestel__variable}" action="variableMaestro_form" >
+									<aon:actionListener method="#{variableMaestro.onEditSearch}" />
+									<aon:actionListener method="#{variableMaestro.onSearch}" />
+									<aon:actionListener method="#{variableMaestro.onSelectFirst}" />
+									</aon:commandLink>
 							</aon:div>
 							<aon:div>
 								<aon:commandLink value="#{menuBundle.avanzadas_gestel__gestel}" disabled="true" />

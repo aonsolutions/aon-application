@@ -3507,6 +3507,78 @@ public interface IPayrollAlias {
 	*/
 	String  VARIABLE_DESCRIPCION = VARIABLE_ENTRY.getAliasNames()[1];
 
+	/** 
+	* Alias value: Variable_linvariable_diurna
+	* Hibernate value: Variable.linvariable.diurna
+	*/
+	String  VARIABLE_LINVARIABLE_DIURNA = VARIABLE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Variable_linvariable_domingo
+	* Hibernate value: Variable.linvariable.domingo
+	*/
+	String  VARIABLE_LINVARIABLE_DOMINGO = VARIABLE_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Variable_linvariable_fecfin
+	* Hibernate value: Variable.linvariable.fecfin
+	*/
+	String  VARIABLE_LINVARIABLE_FECFIN = VARIABLE_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Variable_linvariable_festdiurna
+	* Hibernate value: Variable.linvariable.festdiurna
+	*/
+	String  VARIABLE_LINVARIABLE_FESTDIURNA = VARIABLE_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Variable_linvariable_festivo
+	* Hibernate value: Variable.linvariable.festivo
+	*/
+	String  VARIABLE_LINVARIABLE_FESTIVO = VARIABLE_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Variable_linvariable_festivoesp
+	* Hibernate value: Variable.linvariable.festivoesp
+	*/
+	String  VARIABLE_LINVARIABLE_FESTIVOESP = VARIABLE_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Variable_linvariable_festnocturna
+	* Hibernate value: Variable.linvariable.festnocturna
+	*/
+	String  VARIABLE_LINVARIABLE_FESTNOCTURNA = VARIABLE_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Variable_linvariable_id_cdg
+	* Hibernate value: Variable.linvariable.id.cdg
+	*/
+	String  VARIABLE_LINVARIABLE_ID_CDG = VARIABLE_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Variable_linvariable_id_fecini
+	* Hibernate value: Variable.linvariable.id.fecini
+	*/
+	String  VARIABLE_LINVARIABLE_ID_FECINI = VARIABLE_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: Variable_Linvariable_nocturna
+	* Hibernate value: Variable.Linvariable.nocturna
+	*/
+	String  VARIABLE_LINVARIABLE_NOCTURNA = VARIABLE_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: Variable_Linvariable_nocturnidad
+	* Hibernate value: Variable.Linvariable.nocturnidad
+	*/
+	String  VARIABLE_LINVARIABLE_NOCTURNIDAD = VARIABLE_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: Variable_Linvariable_transporte
+	* Hibernate value: Variable.Linvariable.transporte
+	*/
+	String  VARIABLE_LINVARIABLE_TRANSPORTE = VARIABLE_ENTRY.getAliasNames()[13];
+
 
 
 	/** 
@@ -3563,10 +3635,10 @@ public interface IPayrollAlias {
 	String  LINVARIABLE_ID_CDG = LINVARIABLE_ENTRY.getAliasNames()[7];
 
 	/** 
-	* Alias value: Linvariable_id_fecinicio
-	* Hibernate value: Linvariable.id.fecinicio
+	* Alias value: Linvariable_id_fecini
+	* Hibernate value: Linvariable.id.fecini
 	*/
-	String  LINVARIABLE_ID_FECINICIO = LINVARIABLE_ENTRY.getAliasNames()[8];
+	String  LINVARIABLE_ID_FECINI = LINVARIABLE_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Linvariable_nocturna
