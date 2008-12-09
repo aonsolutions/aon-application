@@ -8,7 +8,7 @@
 	<aon:div>
 		<aon:editDataTable id="linpercepcionData"
 			value="#{linpercepcion.model}" var="to" rows="0"
-			rendered="#{(linpercepcion.model.rowCount > 0) or (linpercepcion.new)}"
+			rendered="#{!percepcion.new}"
 			columnClasses="aon-editDataTable-iconColumn
 				, aon-editDataTable-dateColumn, aon-editDataTable-dateColumn
 				, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn
@@ -17,54 +17,6 @@
 
 			<aon:rowSelector toggleOnClick="#{linpercepcion.to == null}"
 				actionListener="#{linpercepcion.onSelect}" />
-
-			<!-- 
-                <f:facet name="header">
-                        
-	                        
-	                        <rich:columnGroup >
-	                        
-	                             <rich:column colspan="3" >
-                               
-                                 </rich:column>
-                                 
-                                 <rich:column colspan="4">
-                                  <aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion_rg}" />
-                                 </rich:column>
-                                 
-                                 
-                                 <rich:column colspan="1" rowspan="2">
-                               <aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion_ra}" />
-                                </rich:column>
-                                 <rich:column colspan="4">
-                               <aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion_rag}" />
-                                </rich:column>
-                                
-	                            <rich:column breakBefore="true" colspan="1">
-	                                <rich:spacer />
-	                            </rich:column>
-	                            <rich:column colspan="2">
-	                                <aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion_peri}" />
-	                            </rich:column>
-	                             <rich:column colspan="2" >
-	                                <aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion_cc}" />
-	                            </rich:column>
-	                            <rich:column colspan="2">
-	                                <aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion_ccp}" />
-	                            </rich:column>
-	                            
-	                             <rich:column colspan="2">
-	                                <aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion_min}" />
-	                            </rich:column>
-	                           <rich:column colspan="2">
-	                       
-	                            </rich:column>
-	                            
-	                       
-	                            
-	                          </rich:columnGroup>
-	                    </f:facet>
-	                     -->
 
 			<aon:column>
 				<f:facet name="header">
@@ -92,14 +44,14 @@
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
-				<aon:selectInputDate value="#{linpercepcion.to.id.fecini}"
-					inputSize="10" rendered="#{to==linpercepcion.to}"
+				<aon:selectInputDate id="FachaInicio" value="#{linpercepcion.to.id.fecini}"
+					inputSize="10" rendered="#{to==linpercepcion.to}" required="#{true}"
 					disabled="#{to==linpercepcion.to}" renderAsPopup="true"
 					popupDateFormat="#{bundle.aon_date_pattern}">
 				</aon:selectInputDate>
 				<f:facet name="footer">
-					<aon:selectInputDate value="#{linpercepcion.to.id.fecini}"
-						rendered="#{linpercepcion.new}" inputSize="10"
+					<aon:selectInputDate id="FachaInicioNew" value="#{linpercepcion.to.id.fecini}"
+						rendered="#{linpercepcion.new}" inputSize="10" required="#{true}"
 						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>
 				</f:facet>
@@ -114,12 +66,12 @@
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
-				<aon:selectInputDate value="#{linpercepcion.to.fecfin}"
+				<aon:selectInputDate id="FachaFin" value="#{linpercepcion.to.fecfin}"
 					rendered="#{to==linpercepcion.to}" inputSize="10"
 					renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 				</aon:selectInputDate>
 				<f:facet name="footer">
-					<aon:selectInputDate value="#{linpercepcion.to.fecfin}"
+					<aon:selectInputDate id="FachaFinNew" value="#{linpercepcion.to.fecfin}"
 						rendered="#{linpercepcion.new}" inputSize="10"
 						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>
@@ -137,11 +89,11 @@
 						pattern="###,###.###" />
 				</aon:outputText>
 
-				<aon:inputText styleClass="aon-form-input-text " required="true"
+				<aon:inputText styleClass="aon-form-input-text " 
 					rendered="#{to==linpercepcion.to}" size="5"
 					value="#{linpercepcion.to.importe}" maxlength="10" />
 				<f:facet name="footer">
-					<aon:inputText styleClass="aon-form-input-text" required="true"
+					<aon:inputText styleClass="aon-form-input-text" 
 						rendered="#{linpercepcion.new}" size="5"
 						value="#{linpercepcion.to.importe}" maxlength="10" />
 				</f:facet>
@@ -157,11 +109,11 @@
 					<f:convertNumber type="number" minFractionDigits="2"
 						pattern="###,###.###" />
 				</aon:outputText>
-				<aon:inputText styleClass="aon-form-input-text " required="true"
+				<aon:inputText styleClass="aon-form-input-text " 
 					rendered="#{to==linpercepcion.to}" size="5"
 					value="#{linpercepcion.to.empresa}" maxlength="10" />
 				<f:facet name="footer">
-					<aon:inputText styleClass="aon-form-input-text" required="true"
+					<aon:inputText styleClass="aon-form-input-text" 
 						rendered="#{linpercepcion.new}" size="5"
 						value="#{linpercepcion.to.empresa}" maxlength="10" />
 				</f:facet>
@@ -177,11 +129,11 @@
 					<f:convertNumber type="number" minFractionDigits="2"
 						pattern="###,###.###" />
 				</aon:outputText>
-				<aon:inputText styleClass="aon-form-input-text " required="true"
+				<aon:inputText styleClass="aon-form-input-text " 
 					rendered="#{to==linpercepcion.to}" size="5"
 					value="#{linpercepcion.to.nocturno}" maxlength="10" />
 				<f:facet name="footer">
-					<aon:inputText styleClass="aon-form-input-text" required="true"
+					<aon:inputText styleClass="aon-form-input-text" 
 						rendered="#{linpercepcion.new}" size="5"
 						value="#{linpercepcion.to.nocturno}" maxlength="10" />
 				</f:facet>
