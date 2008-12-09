@@ -6,6 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 
 /**
@@ -14,6 +16,8 @@ import com.code.aon.common.ITransferObject;
 @Entity
 @Table(name="customer_segment")
 public class CustomerSegment implements ITransferObject {
+
+	private static final long serialVersionUID = 7033076582842421725L;
 
 	/** The id. */
 	private Integer id;
@@ -60,4 +64,24 @@ public class CustomerSegment implements ITransferObject {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj instanceof CustomerSegment) {
+			CustomerSegment cs = (CustomerSegment) obj;
+			if (ObjectUtils.equals(getId(), cs.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return getId().hashCode();
+	}
+
 }
