@@ -634,7 +634,7 @@
 		</params>
 	</report>
 	
-		 <report id="CuentaList" description="Listado de Cuentas">
+	<report id="CuentaList" description="Listado de Cuentas">
 		<template path="/com/code/aon/ui/payroll/report/CuentaList.jasper" />
 		<bean key="com.code.aon.payroll.principales.Cuentas" />
 		<criteria provider="#{cuenta}" />
@@ -656,10 +656,8 @@
 		</params>
 	</report>
 	
-	
-	
-	
-		 <report id="VariableList" description="Listado de Variables">
+	<!--  *********  Impresion a PDF del manto. de Avanzadas - Gestel - Variables ********* -->
+	<report id="VariableList" description="Listado de Variables">
 		<template path="/com/code/aon/ui/payroll/report/VariableList.jasper" />
 		<bean key="com.code.aon.payroll.avanzadas.gestel.Linvariable" />
 		<criteria provider="#{variable}" />
@@ -669,11 +667,34 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
-	
-	 <report id="VariableListXLS" description="Listado de Variables">
+	<!--  *********  Impresion a Excel del manto. de Avanzadas - Gestel - Variables ********* -->
+	<report id="VariableListXLS" description="Listado de Variables">
 		<template path="/com/code/aon/ui/payroll/report/VariableListXLS.jasper" />
 		<bean key="com.code.aon.payroll.avanzadas.gestel.Linvariable" />
 		<criteria provider="#{variable}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	<!--  *********  Impresion a PDF del manto. de Avanzadas - Kartel - Percepciones ********* -->
+	<report id="percepcionList" description="Listado de Percepciones">
+		<template path="/com/code/aon/ui/payroll/report/percepcionList.jasper" />
+		<bean key="com.code.aon.payroll.avanzadas.kartel.Linpercepcion" />
+		<criteria provider="#{linpercepcion}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	<!--  *********  Impresion a Excel del manto. de Avanzadas - Kartel - Percepciones ********* -->
+	<report id="percepcionXlsList" description="Listado de Percepciones">
+		<template path="/com/code/aon/ui/payroll/report/percepcionXlsList.jasper" />
+		<bean key="com.code.aon.payroll.avanzadas.kartel.Linpercepcion" />
+		<criteria provider="#{linpercepcion}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />
