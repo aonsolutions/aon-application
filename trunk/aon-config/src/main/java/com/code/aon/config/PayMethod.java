@@ -107,7 +107,7 @@ public class PayMethod implements ITransferObject{
 
 	@Override
 	public int hashCode() {
-		return 0;
+		return super.hashCode();
 	}
 
 }

@@ -28,8 +28,11 @@ public enum PayMethodType implements IResourceable {
 	CREDIT_CARD,
 
 	/** CHEQUE. */
-	CHEQUE;
+	CHEQUE,
     
+	/** BANK TRANSFER. */
+	BANK_TRANSFER;
+
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.config.i18n.messages";
 

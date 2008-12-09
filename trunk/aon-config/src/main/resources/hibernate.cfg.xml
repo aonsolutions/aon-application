@@ -23,8 +23,8 @@
 		<mapping class="com.code.aon.config.TaxDetail"/>
 		<mapping class="com.code.aon.config.User"/>
 		<mapping class="com.code.aon.config.UserScope"/>
-		<mapping class="com.code.aon.config.WorkGroup"/>
 		<mapping class="com.code.aon.config.UserWorkGroup"/>
+		<mapping class="com.code.aon.config.WorkGroup"/>
 		
 	</session-factory>
 
