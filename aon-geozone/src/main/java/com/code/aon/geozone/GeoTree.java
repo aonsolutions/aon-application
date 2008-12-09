@@ -11,6 +11,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 
 @Entity
@@ -93,13 +95,24 @@ public class GeoTree implements ITransferObject {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (id == null) {
-			return super.equals(obj);
+		if (obj == null) {
+    		return super.equals(obj);
 		}
 		if (obj instanceof GeoTree) {
-			return (this.id.equals(((GeoTree) obj).getId()));
+			GeoTree o = (GeoTree) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
 		}
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
 	}
 
 }
