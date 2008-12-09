@@ -15,7 +15,7 @@ import javax.servlet.ServletContextListener;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.bean.BeanConfigParser;
-import com.sun.facelets.util.Classpath;
+import com.code.aon.common.util.Classpath;
 
 /**
  * BeanRegisterContextListener is used to parse the configuration file bean-config.xml. 
