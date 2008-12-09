@@ -21,5 +21,6 @@ public interface IPayrollConstants {
 	String TIPCUENTA_CONTROLLER_NAME = "tipcuenta";
 	String CUENTA_CONTROLLER_NAME = "cuenta";
 	String AVISOS_CONTROLLER_NAME = "aviso";
+	String LINPERCEPCION_CONTROLLER_NAME = "linpercepcion";
 	String ACTIVIDAD_CONTROLLER_NAME = "actividad";
 }

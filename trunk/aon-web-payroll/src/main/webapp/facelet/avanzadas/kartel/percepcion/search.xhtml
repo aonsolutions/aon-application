@@ -31,15 +31,18 @@
 					<aon:inputText id="Percepcion_cdg" size="10" maxlength="15"
 						valueChangeListener="#{percepcion.addExpression}" />
 
-					<aon:outputLabel for="Percepcion_description"
+					<aon:outputLabel for="Percepcion_descripcion"
 						value="#{appBundle.aon_payroll_description}" />
-					<aon:inputText id="Percepcion_description" size="60" maxlength="40"
+					<aon:inputText id="Percepcion_descripcion" size="60" maxlength="40"
 						valueChangeListener="#{percepcion.addExpression}" />
 						
 					<aon:outputLabel for="Percepcion_tipo"
 						value="#{appBundle.aon_payroll_avanzadas_kartel_percepcion_tipo}" />
-					<aon:inputText id="Percepcion_tipo" size="60" maxlength="40"
-						valueChangeListener="#{percepcion.addExpression}" />
+					<aon:selectOneMenu id="Percepcion_tipo" valueChangeListener="#{percepcion.addExpression}" >
+						<aon:enumConverter enum="com.code.aon.payroll.enumeration.TipoPercepcion" />
+						<f:selectItem value="#{null}" itemLabel="    " />
+						<f:selectItems value="#{percepcion.listaTipos}" />
+					</aon:selectOneMenu>
 
 					<!-- Lineas de percepcion -->
 					
