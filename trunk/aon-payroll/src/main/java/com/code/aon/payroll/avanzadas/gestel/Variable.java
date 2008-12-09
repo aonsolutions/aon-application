@@ -3,7 +3,10 @@ package com.code.aon.payroll.avanzadas.gestel;
 
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.payroll.cotizacion.Linbasec;
 
 
 
@@ -23,7 +27,7 @@ public class Variable  implements ITransferObject {
 
      private String cdg;
      private String descripcion;
-  
+     private Set<Linvariable> linvariable = new HashSet<Linvariable>();
 
    
 
@@ -46,6 +50,14 @@ public class Variable  implements ITransferObject {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
+	@OneToMany(mappedBy = "variable", cascade={CascadeType.REMOVE})
+	public Set<Linvariable> getLinvariable() {
+		return linvariable;
+	}
+
+	public void setLinvariable(Set<Linvariable> linvariable) {
+		this.linvariable = linvariable;
+	}
 
 
 

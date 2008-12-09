@@ -18,7 +18,7 @@ import com.code.aon.common.ITransferObject;
 public class LinvariableId  implements Serializable {
 
      private String cdg;
-     private Date fecinicio;
+     private Date fecini;
 
 
 
@@ -33,12 +33,12 @@ public class LinvariableId  implements Serializable {
 
 
     @Column(name="fecinicio", nullable=false, length=10)
-    public Date getFecinicio() {
-        return this.fecinicio;
+    public Date getFecini() {
+        return this.fecini;
     }
     
-    public void setFecinicio(Date fecinicio) {
-        this.fecinicio = fecinicio;
+    public void setFecini(Date fecinicio) {
+        this.fecini = fecinicio;
     }
 
 

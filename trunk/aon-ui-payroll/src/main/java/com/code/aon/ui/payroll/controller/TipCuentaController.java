@@ -12,21 +12,38 @@ import javax.faces.model.SelectItem;
 
 import org.hibernate.Query;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.payroll.cotizacion.Linepigr;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.Epigrafes;
 import com.code.aon.payroll.enumeration.Tipcuenta;
+import com.code.aon.payroll.principales.empresa.Emprdom;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
 
 public class TipCuentaController extends LinesController {
 
 
-	
+	private List<ITransferObject> tiposcta;
+	private Tipcuenta typeChanged;
 	private List<SelectItem> listatiposcuentas;
 
+	
+	public void loadTypes()
+	throws ManagerBeanException {
+		
+        IManagerBean bean = BeanManager.getManagerBean(Emprdom.class);
+        List<ITransferObject> list = bean.getList(null);
+        tiposcta =list;			
+}
+	
+	
+	
 	public List<SelectItem> getListaTipos() {
 		if(listatiposcuentas==null){
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -58,24 +75,30 @@ public class TipCuentaController extends LinesController {
 		this.code = code;
 	}
 
-	/*
-	@Override
-	public void onAccept(ActionEvent event) {
-	
-		IController c = event.getController();
-		Cliente c = (Cliente) c.getTo();
-			
-	(Cliente)getSelectedTo();
-		
-		
-		
+
+	public Tipcuenta getTypeChanged() {
+		return typeChanged;
 	}
+
+
+	public void setTypeChanged(Tipcuenta typeChanged) {
+		this.typeChanged = typeChanged;
+	}
+
+
+
+	public List<ITransferObject> getTiposcta() {
+		return tiposcta;
+	}
+
+
+
+	public void setTiposcta(List<ITransferObject> tiposcta) {
+		this.tiposcta = tiposcta;
+	}
+
+
 	
-*/
-
-
-
-
 
 
 

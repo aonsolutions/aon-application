@@ -868,8 +868,31 @@
 	</navigation-rule>
 	
 	
+		<!-- =================== Avanzadas/GESTEL================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>variableMaestro_search</from-outcome>
+			<to-view-id>
+				/facelet/avanzadas/gestel/variable/search.xhtml
+			</to-view-id>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>variableMaestro_form</from-outcome>
+			<to-view-id>
+				/facelet/avanzadas/gestel/variable/form.xhtml
+			</to-view-id>
+		</navigation-case>
+				
+		<navigation-case>
+		<from-outcome>variableMaestro_list</from-outcome>
+			<to-view-id>
+				/facelet/avanzadas/gestel/variable/list.xhtml
+			</to-view-id>
+		</navigation-case>		
+	</navigation-rule>
 	
-	<!-- =================== Avanzadas - Kartel - Percepcion ================= -->
+		<!-- =================== Avanzadas - Kartel - Percepcion ================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>percepcion_form</from-outcome>
