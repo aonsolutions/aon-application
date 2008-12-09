@@ -93,15 +93,14 @@
         <mapping class="com.code.aon.payroll.principales.empresa.Empresa"/>
         <mapping class="com.code.aon.payroll.principales.empresa.Actividad"/>
         <mapping class="com.code.aon.payroll.principales.empresa.Emprdom"/>
-         <mapping class="com.code.aon.payroll.principales.empresa.Emprlban"/>
-         
-          <!--AVANZADAS-GESTEL -->			
+        <mapping class="com.code.aon.payroll.principales.empresa.Emprlban"/>
+        <!-- AVANZADAS - KARTEL -->			
+        <mapping class="com.code.aon.payroll.avanzadas.kartel.Percepcion"/>
+        <mapping class="com.code.aon.payroll.avanzadas.kartel.Linpercepcion"/> 
+        <!--AVANZADAS-GESTEL -->			
         <mapping class="com.code.aon.payroll.avanzadas.gestel.Variable"/>
         <mapping class="com.code.aon.payroll.avanzadas.gestel.Linvariable"/>
-        <mapping class="com.code.aon.payroll.avanzadas.gestel.LinvariableId"/>
-      <!-- AVANZADAS - KARTEL -->			
-        <mapping class="com.code.aon.payroll.avanzadas.kartel.Percepcion"/>
-        <mapping class="com.code.aon.payroll.avanzadas.kartel.Linpercepcion"/>
+		
 	</session-factory>
 
 </hibernate-configuration>
