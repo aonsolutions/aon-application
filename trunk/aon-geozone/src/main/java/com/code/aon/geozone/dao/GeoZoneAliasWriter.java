@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.code.aon.common.dao.AliasWriter;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.geozone.GeoTree;
 import com.code.aon.geozone.GeoZone;
 
@@ -22,6 +23,7 @@ public class GeoZoneAliasWriter {
 		String[] classes = new String[2]; 
 		classes[0] = GeoTree.class.getName();
 		classes[1] = GeoZone.class.getName();
+		HibernateUtil.getSessionFactory();
 		AliasWriter writer = new AliasWriter("com.code.aon.geozone.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );
