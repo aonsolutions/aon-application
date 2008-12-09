@@ -63,7 +63,6 @@ public class OfferController extends BasicController {
 		if (this.getTo() != null) {
 			((Offer)this.getTo()).setNumber(SeriesNumberUtil.obtainNumber((String)event.getNewValue(), StringUtils.capitalize(this.getBeanName())));
 			((Offer)this.getTo()).setSecurityLevel((series!=null)?series.getSecurityLevel():null);
-			((Offer)this.getTo()).setWorkPlace((series!=null)?series.getWorkPlace():null);
 		}
 	}
 

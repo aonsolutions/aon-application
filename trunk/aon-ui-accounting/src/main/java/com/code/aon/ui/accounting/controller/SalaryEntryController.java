@@ -19,9 +19,9 @@ import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.finance.Bank;
-import com.code.aon.finance.RegistryBank;
+import com.code.aon.config.Bank;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.form.FormUtil;
 
 public class SalaryEntryController {
