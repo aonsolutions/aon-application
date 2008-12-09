@@ -6,6 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 
 /**
@@ -20,17 +22,13 @@ import com.code.aon.common.ITransferObject;
 @Table(name = "relationship")
 public class Relationship implements ITransferObject{
 
+	private static final long serialVersionUID = 125408603468358886L;
+
 	/** The id. */
 	private Integer id;
 
 	/** The name. */
 	private String description;
-
-	/**
-	 * The empty constructor.
-	 */
-	public Relationship() {
-	}
 
 	/**
 	 * The constructor using the id.
@@ -84,4 +82,26 @@ public class Relationship implements ITransferObject{
 		this.description = description;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof Relationship) {
+			Relationship o = (Relationship) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+    
 }
