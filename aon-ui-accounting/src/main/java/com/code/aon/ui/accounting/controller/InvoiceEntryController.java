@@ -34,15 +34,14 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.Company;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.BankAccount;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
-import com.code.aon.finance.BankAccount;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
-import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceSource;
@@ -54,6 +53,8 @@ import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryBank;
+import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.util.AonUtil;
 
 public class InvoiceEntryController {
@@ -785,7 +786,7 @@ public class InvoiceEntryController {
 		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
-				rBankBean.getFieldName(IFinanceAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
+				rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
 		LinkedList<SelectItem> rBanks = new LinkedList<SelectItem>();
 		Iterator<?> iter = rBankBean.getList(criteria).iterator();
 		while (iter.hasNext()) {

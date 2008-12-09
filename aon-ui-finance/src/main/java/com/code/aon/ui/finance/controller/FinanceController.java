@@ -15,7 +15,7 @@ import javax.faces.model.SelectItem;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.finance.BankAccount;
+import com.code.aon.config.BankAccount;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.RegistryBank;
