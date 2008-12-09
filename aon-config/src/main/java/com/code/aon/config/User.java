@@ -6,6 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 
 @Entity
@@ -94,12 +96,24 @@ public class User implements ITransferObject{
 
 	@Override
 	public boolean equals(Object obj) {
-		if (id == null) {
-			return super.equals(obj);
+		if (obj == null) {
+    		return super.equals(obj);
 		}
 		if (obj instanceof User) {
-			return (this.id.equals(((User) obj).getId()));
+			User o = (User) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
 		}
 		return false;
 	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+
 }

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 import com.code.aon.common.dao.AliasWriter;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Bank;
 import com.code.aon.config.PayMethod;
@@ -37,7 +36,6 @@ public class ConfigAliasWriter {
 		classes[8] = Tax.class.getName();
 		classes[9] = TaxDetail.class.getName();
 		classes[10] = WorkGroup.class.getName();
-		HibernateUtil.getSessionFactory();
 		AliasWriter writer = new AliasWriter("com.code.aon.config.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

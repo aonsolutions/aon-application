@@ -29,6 +29,7 @@ public class SeriesNumberUtil {
 	 * @param seriesId Id de la serie hay que devolver.
 	 * @return la Serie.
 	 */
+	@SuppressWarnings("unchecked")
 	public static Series obtainSeries(String seriesId) throws ManagerBeanException {
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
@@ -77,4 +78,5 @@ public class SeriesNumberUtil {
 		return 1;
 
 	}
+
 }

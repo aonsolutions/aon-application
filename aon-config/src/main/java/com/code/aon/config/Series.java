@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
 
@@ -59,13 +61,24 @@ public class Series implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (id == null) {
-			return super.equals(obj);
+		if (obj == null) {
+    		return super.equals(obj);
 		}
 		if (obj instanceof Series) {
-			return (this.id.equals(((Series) obj).getId()));
+			Series o = (Series) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
 		}
 		return false;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+
 }
