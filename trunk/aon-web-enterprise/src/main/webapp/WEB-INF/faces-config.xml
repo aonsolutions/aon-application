@@ -79,27 +79,27 @@
 
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>sales</from-outcome>
+			<from-outcome>menu_sales</from-outcome>
 			<to-view-id>/facelet/menu/sales.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>purchase</from-outcome>
+			<from-outcome>menu_purchase</from-outcome>
 			<to-view-id>/facelet/menu/purchase.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>warehouse</from-outcome>
+			<from-outcome>menu_warehouse</from-outcome>
 			<to-view-id>/facelet/menu/warehouse.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>treasury</from-outcome>
+			<from-outcome>menu_treasury</from-outcome>
 			<to-view-id>/facelet/menu/treasury.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>accounting</from-outcome>
+			<from-outcome>menu_accounting</from-outcome>
 			<to-view-id>/facelet/menu/accounting.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>config</from-outcome>
+			<from-outcome>menu_config</from-outcome>
 			<to-view-id>/facelet/menu/config.xhtml</to-view-id> 
 		</navigation-case>
 	</navigation-rule>
