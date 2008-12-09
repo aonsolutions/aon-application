@@ -1,7 +1,5 @@
 package com.code.aon.report.test;
 
-import java.net.URL;
-
 import junit.framework.TestCase;
 
 import com.code.aon.report.config.ReportConfig;
@@ -20,8 +18,7 @@ public class ReportConfigLoaderTest extends TestCase {
 	public void testReadConfiguration() {
         try {
 			ReportConfigurationParser parser = ReportConfigurationParser.getInstance();
-			URL url = ReportConfigLoaderTest.class.getResource( "report-config.xml" );
-			ReportConfigurationManager rc = parser.getConfiguration(url.openStream());
+			ReportConfigurationManager rc = parser.getConfigurationManager();
 			System.out.println( rc );
 			ReportConfig rcg= rc.getReport( "salesInvoiceList" );
 			System.out.println( rcg );
