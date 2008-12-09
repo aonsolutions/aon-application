@@ -94,12 +94,15 @@ public class ProductCategoryGroup implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
+		if (obj == null) {
+    		return super.equals(obj);
 		}
 		if (obj instanceof ProductCategoryGroup) {
-			ProductCategoryGroup productCategoryGroup = (ProductCategoryGroup) obj;
-			if (ObjectUtils.equals(getId(), productCategoryGroup.getId())) {
+			ProductCategoryGroup o = (ProductCategoryGroup) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
 				return true;
 			}
 		}
@@ -108,6 +111,7 @@ public class ProductCategoryGroup implements ITransferObject {
 
 	@Override
 	public int hashCode() {
-		return 0;
+		return super.hashCode();
 	}
+
 }

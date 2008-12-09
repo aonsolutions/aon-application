@@ -95,12 +95,15 @@ public class Brand implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
+		if (obj == null) {
+    		return super.equals(obj);
 		}
 		if (obj instanceof Brand) {
-			Brand brand = (Brand) obj;
-			if (ObjectUtils.equals(getId(), brand.getId())) {
+			Brand o = (Brand) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
 				return true;
 			}
 		}
@@ -109,6 +112,7 @@ public class Brand implements ITransferObject {
 
 	@Override
 	public int hashCode() {
-		return 0;
+		return super.hashCode();
 	}
+
 }

@@ -182,12 +182,15 @@ public class ItemPos implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
+		if (obj == null) {
+    		return super.equals(obj);
 		}
 		if (obj instanceof ItemPos) {
-			ItemPos itemPos = (ItemPos) obj;
-			if (ObjectUtils.equals(getId(), itemPos.getId())) {
+			ItemPos o = (ItemPos) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
 				return true;
 			}
 		}
@@ -196,6 +199,7 @@ public class ItemPos implements ITransferObject {
 
 	@Override
 	public int hashCode() {
-		return 0;
-	}	
+		return super.hashCode();
+	}
+
 }
