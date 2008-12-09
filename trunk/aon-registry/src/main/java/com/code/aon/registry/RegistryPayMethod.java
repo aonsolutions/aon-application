@@ -52,11 +52,6 @@ public class RegistryPayMethod implements ITransferObject {
     private String paymentDays;
 
     private int[] paymentDaysArray;
-    /**
-     * The empty constructor.
-     */
-    public RegistryPayMethod() {
-    }
 
     /**
      * Gets the id.
@@ -184,13 +179,15 @@ public class RegistryPayMethod implements ITransferObject {
     public String getPaymentDays() {
         return paymentDays;
     }
-
+    
+    /** The DELIM. */
+    private final String DELIM = " ";
+    
     /**
      * Sets the payment days.
      * 
      * @param paymentDays the payment days
      */
-    
     public void setPaymentDays(String paymentDays) {
         this.paymentDays = paymentDays;
         StringTokenizer strTknzr = new StringTokenizer(this.paymentDays,DELIM);
@@ -206,9 +203,6 @@ public class RegistryPayMethod implements ITransferObject {
     	return paymentDaysArray;
     }
 
-    /** The DELIM. */
-    private final String DELIM = " ";
-    
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {
@@ -228,7 +222,7 @@ public class RegistryPayMethod implements ITransferObject {
 
 	@Override
 	public int hashCode() {
-		return 0;
+		return super.hashCode();
 	}
     
 }

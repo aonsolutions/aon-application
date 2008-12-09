@@ -163,7 +163,7 @@ public class RegistryBank implements ITransferObject,IBankAccountContainer {
 
 	@Override
 	public int hashCode() {
-		return 0;
+		return super.hashCode();
 	}
     
 }
