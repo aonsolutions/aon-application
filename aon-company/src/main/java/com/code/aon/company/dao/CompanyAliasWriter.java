@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.code.aon.common.dao.AliasWriter;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.company.Company;
 import com.code.aon.company.WorkActivity;
 import com.code.aon.company.WorkPlace;
@@ -28,6 +29,7 @@ public class CompanyAliasWriter {
 		classes[2] = Resource.class.getName();
 		classes[3] = WorkPlace.class.getName();
 		classes[4] = WorkActivity.class.getName();
+		HibernateUtil.getSessionFactory();
 		AliasWriter writer = new AliasWriter("com.code.aon.company.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );
