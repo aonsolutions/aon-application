@@ -28,6 +28,7 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryBank;
 
 /**
  * Transfer Object that represents a Finance Batch.

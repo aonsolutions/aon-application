@@ -1,4 +1,4 @@
-package com.code.aon.finance;
+package com.code.aon.sales.bridge;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.finance.Finance;
 import com.code.aon.sales.Sales;
 
 /**

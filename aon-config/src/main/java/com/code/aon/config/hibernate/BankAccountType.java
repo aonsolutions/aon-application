@@ -1,4 +1,4 @@
-package com.code.aon.finance.hibernate;
+package com.code.aon.config.hibernate;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,7 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.type.StringType;
 
-import com.code.aon.finance.BankAccount;
+import com.code.aon.config.BankAccount;
 
 public class BankAccountType extends StringType {
 
