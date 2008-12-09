@@ -3,6 +3,7 @@ package com.code.aon.config.dao;
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.Bank;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
@@ -36,6 +37,31 @@ public interface IConfigAlias {
 	* Hibernate value: ApplicationParameter.value
 	*/
 	String  APPLICATION_PARAMETER_VALUE = APPLICATION_PARAMETER_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for Bank entity.
+	*/ 
+	DAOConstantsEntry BANK_ENTRY = DAOConstants.getDAOConstant(Bank.class);
+
+	/** 
+	* Alias value: Bank_code
+	* Hibernate value: Bank.code
+	*/
+	String  BANK_CODE = BANK_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Bank_id
+	* Hibernate value: Bank.id
+	*/
+	String  BANK_ID = BANK_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Bank_name
+	* Hibernate value: Bank.name
+	*/
+	String  BANK_NAME = BANK_ENTRY.getAliasNames()[2];
 
 
 
@@ -111,12 +137,6 @@ public interface IConfigAlias {
 	* Hibernate value: Series.securityLevel
 	*/
 	String  SERIES_SECURITY_LEVEL = SERIES_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: Series_workPlace_id
-	* Hibernate value: Series.workPlace.id
-	*/
-	String  SERIES_WORK_PLACE_ID = SERIES_ENTRY.getAliasNames()[4];
 
 
 

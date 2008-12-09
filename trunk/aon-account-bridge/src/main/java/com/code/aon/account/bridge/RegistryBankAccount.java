@@ -10,7 +10,7 @@ import javax.persistence.Table;
 
 import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.finance.RegistryBank;
+import com.code.aon.registry.RegistryBank;
 
 /**
  * The Class BankAccount.

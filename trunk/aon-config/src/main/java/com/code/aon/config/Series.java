@@ -3,13 +3,10 @@ package com.code.aon.config;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.company.WorkPlace;
 
 @SuppressWarnings("serial")
 @Entity
@@ -19,8 +16,6 @@ public class Series implements ITransferObject {
 	private String id;
 	
 	private String description;
-	
-	private WorkPlace workPlace;
 	
 	private SecurityLevel securityLevel;
 	
@@ -43,16 +38,6 @@ public class Series implements ITransferObject {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	@ManyToOne
-	@JoinColumn(name="workplace")
-	public WorkPlace getWorkPlace() {
-		return workPlace;
-	}
-
-	public void setWorkPlace(WorkPlace workPlace) {
-		this.workPlace = workPlace;
 	}
 
 	@Column(name="security_level")

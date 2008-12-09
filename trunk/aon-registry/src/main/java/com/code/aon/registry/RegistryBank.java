@@ -1,4 +1,4 @@
-package com.code.aon.finance;
+package com.code.aon.registry;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +13,9 @@ import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.config.Bank;
+import com.code.aon.config.BankAccount;
+import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.registry.Registry;
 
 /**
@@ -68,7 +71,7 @@ public class RegistryBank implements ITransferObject,IBankAccountContainer {
      * @return the bank account
      */
     @Column(name = "bank_account")
-    @Type(type="com.code.aon.finance.hibernate.BankAccountType")
+    @Type(type="com.code.aon.config.hibernate.BankAccountType")
     public BankAccount getBankAccount() {
         return bankAccount;
     }

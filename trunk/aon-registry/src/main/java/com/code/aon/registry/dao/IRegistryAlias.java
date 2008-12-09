@@ -6,6 +6,8 @@ import com.code.aon.registry.Category;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.registry.RegistryBank;
+import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.Relationship;
 import com.code.aon.registry.RegistryRelationship;
@@ -207,6 +209,92 @@ public interface IRegistryAlias {
 	* Hibernate value: RegistryAttachment.size
 	*/
 	String  REGISTRY_ATTACHMENT_SIZE = REGISTRY_ATTACHMENT_ENTRY.getAliasNames()[7];
+
+
+
+	/** 
+	* DAOConstantsEntry for RegistryBank entity.
+	*/ 
+	DAOConstantsEntry REGISTRY_BANK_ENTRY = DAOConstants.getDAOConstant(RegistryBank.class);
+
+	/** 
+	* Alias value: RegistryBank_bankAccount
+	* Hibernate value: RegistryBank.bankAccount
+	*/
+	String  REGISTRY_BANK_BANK_ACCOUNT = REGISTRY_BANK_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: RegistryBank_bank_id
+	* Hibernate value: RegistryBank.bank.id
+	*/
+	String  REGISTRY_BANK_BANK_ID = REGISTRY_BANK_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: RegistryBank_id
+	* Hibernate value: RegistryBank.id
+	*/
+	String  REGISTRY_BANK_ID = REGISTRY_BANK_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: RegistryBank_registry_id
+	* Hibernate value: RegistryBank.registry.id
+	*/
+	String  REGISTRY_BANK_REGISTRY_ID = REGISTRY_BANK_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: RegistryBank_sufix
+	* Hibernate value: RegistryBank.sufix
+	*/
+	String  REGISTRY_BANK_SUFIX = REGISTRY_BANK_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for RegistryPayMethod entity.
+	*/ 
+	DAOConstantsEntry REGISTRY_PAY_METHOD_ENTRY = DAOConstants.getDAOConstant(RegistryPayMethod.class);
+
+	/** 
+	* Alias value: RegistryPayMethod_daysBetweenPayments
+	* Hibernate value: RegistryPayMethod.daysBetweenPayments
+	*/
+	String  REGISTRY_PAY_METHOD_DAYS_BETWEEN_PAYMENTS = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: RegistryPayMethod_daysToFirstPayment
+	* Hibernate value: RegistryPayMethod.daysToFirstPayment
+	*/
+	String  REGISTRY_PAY_METHOD_DAYS_TO_FIRST_PAYMENT = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: RegistryPayMethod_id
+	* Hibernate value: RegistryPayMethod.id
+	*/
+	String  REGISTRY_PAY_METHOD_ID = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: RegistryPayMethod_numberOfPayments
+	* Hibernate value: RegistryPayMethod.numberOfPayments
+	*/
+	String  REGISTRY_PAY_METHOD_NUMBER_OF_PAYMENTS = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: RegistryPayMethod_paymentDays
+	* Hibernate value: RegistryPayMethod.paymentDays
+	*/
+	String  REGISTRY_PAY_METHOD_PAYMENT_DAYS = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: RegistryPayMethod_payment_id
+	* Hibernate value: RegistryPayMethod.payment.id
+	*/
+	String  REGISTRY_PAY_METHOD_PAYMENT_ID = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: RegistryPayMethod_registry_id
+	* Hibernate value: RegistryPayMethod.registry.id
+	*/
+	String  REGISTRY_PAY_METHOD_REGISTRY_ID = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[6];
 
 
 
