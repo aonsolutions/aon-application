@@ -132,17 +132,9 @@ public class LinpercepcionControllerListener extends ControllerAdapter {
 		Date fecfin = linp.getFecfin();
 
 		try {
-			
-			// IManagerBean bean = BeanManager.getManagerBean(CuotaRetencionAlava.class);
-			
-			// String alias = bean.getFieldName(IPayrollAlias.CUOTA_RETENCION_ALAVA_ID_NUM_TRAMO);
 			IManagerBean bean = BeanManager.getManagerBean(Linpercepcion.class);
-			
-			
-			//String bb = IPayrollAlias.CONVENIO_CDG;
 			String alias = bean.getFieldName(IPayrollAlias.LINPERCEPCION_ID_CDG);
 			
-			//alias = getController().getManagerBean().getFieldName(IPayrollAlias.LINPERCEPCION_ID_CDG);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(alias, linp.getId().getCdg());
 			alias = bean.getFieldName(IPayrollAlias.LINPERCEPCION_ID_FECINI);
