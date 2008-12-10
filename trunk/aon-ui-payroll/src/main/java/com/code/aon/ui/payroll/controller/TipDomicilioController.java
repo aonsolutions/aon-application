@@ -31,6 +31,7 @@ import com.code.aon.payroll.principales.empresa.Actividad;
 import com.code.aon.payroll.principales.empresa.Emprdom;
 import com.code.aon.ql.Criteria;
 import com.code.aon.payroll.principales.empresa.Empresa;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -121,8 +122,8 @@ public class TipDomicilioController extends LinesController {
 
 	public void  initialiceTiposDomicilio() throws ManagerBeanException {
 
-		Integer cdg = ((Cliente)(AonUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME)).getTo()).getCdg();
-		Integer cdg2 = ((Actividad)(AonUtil.getController(IPayrollConstants.ACTIVIDAD_CONTROLLER_NAME)).getTo()).getCdg();
+		Integer cdg = ((Cliente)(FormUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME)).getTo()).getCdg();
+		Integer cdg2 = ((Actividad)(FormUtil.getController(IPayrollConstants.ACTIVIDAD_CONTROLLER_NAME)).getTo()).getCdg();
 
 		
 		IManagerBean bean = BeanManager.getManagerBean(Emprdom.class);

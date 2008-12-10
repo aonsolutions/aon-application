@@ -1,6 +1,7 @@
 package com.code.aon.ui.payroll.event;
 
 
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.enumeration.Tipdom;
 import com.code.aon.payroll.principales.Cliente;
 import com.code.aon.payroll.principales.Domicilio;
@@ -14,6 +15,7 @@ import com.code.aon.ui.payroll.controller.DomicilioController;
 import com.code.aon.ui.payroll.controller.EmpresaController;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
 import com.code.aon.ui.payroll.controller.TipDomicilioController;
+import com.code.aon.ui.util.AonUtil;
 
 
 public class EmpresaControllerListener extends ControllerAdapter implements IPayrollConstants {
@@ -48,6 +50,17 @@ public class EmpresaControllerListener extends ControllerAdapter implements IPay
 			throws ControllerListenerException {
 		((EmpresaController)getController()).generateCdg();
 		((EmpresaController)getController()).setDefaultFields();
+		
+		//Lo siguiente se hace para poner el cliente cuando se quiere crear una nueva empresa
+		Integer cdg = ((Cliente)(FormUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME)).getTo()).getCdg();
+		String desc = ((Cliente)(FormUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME)).getTo()).getDescripcion();
+		((Empresa)(event.getController().getTo())).getCliente().setCdg(cdg);
+		((Empresa)(event.getController().getTo())).getCliente().setDescripcion(desc);
+		
+		
+		
+		
+		
 		super.afterBeanCreated(event);
 	}
 	
@@ -209,6 +222,8 @@ public class EmpresaControllerListener extends ControllerAdapter implements IPay
 		}	
 		
 	}
+	
+
 	
 	
 }
