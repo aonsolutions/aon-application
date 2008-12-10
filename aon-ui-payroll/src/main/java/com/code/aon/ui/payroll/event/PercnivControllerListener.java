@@ -6,11 +6,11 @@ import java.util.Date;
 
 import com.code.aon.payroll.auxiliares.convenios.Nivel;
 import com.code.aon.payroll.auxiliares.convenios.Percniv;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
-import com.code.aon.ui.util.AonUtil;
 
 public class PercnivControllerListener extends ControllerAdapter implements IPayrollConstants {
 	
@@ -23,7 +23,7 @@ public class PercnivControllerListener extends ControllerAdapter implements IPay
 		System.out.println("PercnivControllerListener -------> afterBeanCreated");
 		
 		
-		Nivel nivel = (Nivel)(AonUtil.getController(IPayrollConstants.NIVEL_CONTROLLER_NAME)).getTo();
+		Nivel nivel = (Nivel)(FormUtil.getController(IPayrollConstants.NIVEL_CONTROLLER_NAME)).getTo();
 		((Percniv)(event.getController().getTo())).getId().setCdg(nivel.getConvenio().getCdg());
 		
 		
@@ -81,7 +81,7 @@ public class PercnivControllerListener extends ControllerAdapter implements IPay
 	 * @param event
 	 */
 	private void setRequiredData(ControllerEvent event){
-		Nivel nivel = (Nivel)(AonUtil.getController(IPayrollConstants.NIVEL_CONTROLLER_NAME)).getTo();
+		Nivel nivel = (Nivel)(FormUtil.getController(IPayrollConstants.NIVEL_CONTROLLER_NAME)).getTo();
 		Percniv p = (Percniv)(event.getController().getTo());
 		
 		p.getId().setNivel(nivel.getId().getCdg());

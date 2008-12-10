@@ -11,12 +11,11 @@ import com.code.aon.payroll.cotizacion.Ocupacion;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.payroll.controller.Cnae2009MaestroController;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
 import com.code.aon.ui.payroll.controller.PayrollBasicController;
 
@@ -64,7 +63,7 @@ public class Cnae2009MaestroControllerListener extends ControllerAdapter impleme
 			Criteria criteria = new Criteria();
 			
 			IManagerBean ocupacionBean = BeanManager.getManagerBean( Ocupacion.class );
-			IController ocupacion = AonUtil.getController(OCUPACION_CONTROLLER_NAME);
+			IController ocupacion = FormUtil.getController(OCUPACION_CONTROLLER_NAME);
 			
 			if(ocupaciones!=null){
 				IManagerBean bean = BeanManager.getManagerBean( Ocupacion.class );

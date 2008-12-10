@@ -17,8 +17,8 @@ import com.code.aon.payroll.auxiliares.convenios.Complemento;
 import com.code.aon.payroll.auxiliares.convenios.Percniv;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.PagaExtra;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.util.AonUtil;
 
 
 public class PercnivLinesController extends LinesController implements IPayrollConstants{
@@ -76,7 +76,7 @@ public class PercnivLinesController extends LinesController implements IPayrollC
 	
 	public void impuniChange(ValueChangeEvent event){
 		
-		Percniv p = (Percniv)AonUtil.getController(IPayrollConstants.PERCNIV_CONTROLLER_NAME).getTo();
+		Percniv p = (Percniv)FormUtil.getController(IPayrollConstants.PERCNIV_CONTROLLER_NAME).getTo();
 		
 		p.setImporte(((BigDecimal)event.getNewValue()).multiply(p.getUnidades()));
 		

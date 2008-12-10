@@ -6,13 +6,13 @@ import com.code.aon.payroll.auxiliares.convenios.Convenio;
 import com.code.aon.payroll.auxiliares.convenios.Nivel;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.payroll.controller.ConveniosColectivoController;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
-import com.code.aon.ui.util.AonUtil;
 
 public class NivelControllerListener extends ControllerAdapter implements IPayrollConstants {
 	
@@ -33,7 +33,7 @@ public class NivelControllerListener extends ControllerAdapter implements IPayro
 	@Override
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
-		ConveniosColectivoController convenioController = (ConveniosColectivoController)AonUtil.getController(IPayrollConstants.CONVENIO_CONTROLLER_NAME);
+		ConveniosColectivoController convenioController = (ConveniosColectivoController)FormUtil.getController(IPayrollConstants.CONVENIO_CONTROLLER_NAME);
 		
 		((Nivel)(event.getController().getTo())).setConvenio(((Convenio)convenioController.getTo()));
 		((Nivel)(event.getController().getTo())).getId().setCodcon(((Convenio)convenioController.getTo()).getCdg());
@@ -41,7 +41,7 @@ public class NivelControllerListener extends ControllerAdapter implements IPayro
 	}
 
 	private void resetCategoriaModel() throws ControllerListenerException {
-		LinesController categoriaController = (LinesController) AonUtil.getController(CATEGORIA_CONTROLLER_NAME);
+		LinesController categoriaController = (LinesController) FormUtil.getController(CATEGORIA_CONTROLLER_NAME);
 		try {
 			categoriaController.clearCriteria();
 			Criteria criteria = categoriaController.getCriteria();
@@ -53,7 +53,7 @@ public class NivelControllerListener extends ControllerAdapter implements IPayro
 	}
 	
 	private void resetPercepcionModel() throws ControllerListenerException {
-		LinesController percepcionController = (LinesController) AonUtil.getController(PERCNIV_CONTROLLER_NAME);
+		LinesController percepcionController = (LinesController) FormUtil.getController(PERCNIV_CONTROLLER_NAME);
 		try {
 			percepcionController.clearCriteria();
 			Criteria criteria = percepcionController.getCriteria();

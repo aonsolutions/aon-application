@@ -2,15 +2,14 @@ package com.code.aon.ui.payroll.event;
 
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.payroll.divisa.LinDivisa;
 import com.code.aon.payroll.principales.Cliente;
 import com.code.aon.payroll.principales.Domicilio;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.payroll.controller.IPayrollConstants;
 import com.code.aon.ui.payroll.controller.DomicilioController;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.payroll.controller.IPayrollConstants;
 
 
 public class DomicilioControllerListener extends ControllerAdapter implements IPayrollConstants {
@@ -23,12 +22,12 @@ public class DomicilioControllerListener extends ControllerAdapter implements IP
 			throws ControllerListenerException {
 		// TODO Auto-generated method stub
 
-		Integer cdg = ((Cliente)(AonUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME)).getTo()).getCdg();
-		String desc = ((Cliente)(AonUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME)).getTo()).getDescripcion();
+		Integer cdg = ((Cliente)(FormUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME)).getTo()).getCdg();
+		String desc = ((Cliente)(FormUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME)).getTo()).getDescripcion();
 		((Domicilio)(event.getController().getTo())).getCliente().setCdg(cdg);
 		((Domicilio)(event.getController().getTo())).getCliente().setDescripcion(desc);
 		
-		DomicilioController controller = (DomicilioController)AonUtil.getController(IPayrollConstants.DOMICILIO_CONTROLLER_NAME);
+		DomicilioController controller = (DomicilioController)FormUtil.getController(IPayrollConstants.DOMICILIO_CONTROLLER_NAME);
 		
 		 try {			 
 			 
@@ -46,7 +45,7 @@ public class DomicilioControllerListener extends ControllerAdapter implements IP
 public void beforeBeanAdded(ControllerEvent event)
 		throws ControllerListenerException {
 	
-	DomicilioController controller = (DomicilioController)AonUtil.getController(IPayrollConstants.DOMICILIO_CONTROLLER_NAME);
+	DomicilioController controller = (DomicilioController)FormUtil.getController(IPayrollConstants.DOMICILIO_CONTROLLER_NAME);
 	
 	 try {			 
 		
