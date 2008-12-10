@@ -9,15 +9,12 @@ import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
-import sun.security.action.GetBooleanAction;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.avanzadas.kartel.Linpercepcion;
 import com.code.aon.payroll.dao.IPayrollAlias;
-import com.code.aon.payroll.irpfforal.CuotaRetencionAlava;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;

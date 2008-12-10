@@ -12,6 +12,7 @@ import javax.faces.validator.ValidatorException;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class PorcentajeValidator implements Validator {
@@ -33,7 +34,7 @@ public class PorcentajeValidator implements Validator {
 			String cId = uiComponent.getId();
 			cId = cId.substring( 0, cId.indexOf( '_' ) );
 			BigDecimal value = (BigDecimal) object;
-			ITransferObject to = AonUtil.getController( cId ).getTo();
+			ITransferObject to = FormUtil.getController( cId ).getTo();
 			
 			if(to == null){
 		    	FacesMessage fm = AonUtil.getMessage( ctx, "aon_payroll_null_to", null );

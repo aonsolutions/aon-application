@@ -5,6 +5,7 @@ import javax.faces.context.FacesContext;
 
 import com.code.aon.payroll.auxiliares.convenios.Convenio;
 import com.code.aon.payroll.auxiliares.convenios.Pagaext;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -25,7 +26,7 @@ public class PagaextControllerListener extends ControllerAdapter {
 			throw new ControllerListenerException( fm.getSummary() );
 		}
 		
-		Convenio convenio = (Convenio)AonUtil.getController(IPayrollConstants.CONVENIO_CONTROLLER_NAME).getTo();
+		Convenio convenio = (Convenio)FormUtil.getController(IPayrollConstants.CONVENIO_CONTROLLER_NAME).getTo();
 		
 		p.getId().setCodcom(p.getComplemento().getCdg());
 		

@@ -5,6 +5,7 @@ import javax.faces.context.FacesContext;
 
 import com.code.aon.payroll.auxiliares.convenios.Categoria;
 import com.code.aon.payroll.auxiliares.convenios.Nivel;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -26,7 +27,7 @@ public class CategoriaControllerListener extends ControllerAdapter implements IP
 			throws ControllerListenerException {
 		 beforeBeanReset(event);
 		 
-		 Nivel nivel = (Nivel)(AonUtil.getController(IPayrollConstants.NIVEL_CONTROLLER_NAME)).getTo();
+		 Nivel nivel = (Nivel)(FormUtil.getController(IPayrollConstants.NIVEL_CONTROLLER_NAME)).getTo();
 		 Categoria c = (Categoria)(event.getController().getTo());
 		 c.setNivel(nivel);
 		 c.setCdgnivel(nivel.getId().getCdg());
@@ -67,7 +68,7 @@ public class CategoriaControllerListener extends ControllerAdapter implements IP
 	 * @param event
 	 */
 	private void setRequiredData(ControllerEvent event){
-		Nivel nivel = (Nivel)(AonUtil.getController(IPayrollConstants.NIVEL_CONTROLLER_NAME)).getTo();
+		Nivel nivel = (Nivel)(FormUtil.getController(IPayrollConstants.NIVEL_CONTROLLER_NAME)).getTo();
 		Categoria c = (Categoria)(event.getController().getTo());
 		
 		c.getId().setCodcon(nivel.getConvenio().getCdg());

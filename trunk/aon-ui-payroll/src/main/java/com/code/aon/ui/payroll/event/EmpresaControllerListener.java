@@ -6,6 +6,7 @@ import com.code.aon.payroll.principales.Cliente;
 import com.code.aon.payroll.principales.Domicilio;
 import com.code.aon.payroll.principales.empresa.Emprdom;
 import com.code.aon.payroll.principales.empresa.Empresa;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -13,7 +14,6 @@ import com.code.aon.ui.payroll.controller.DomicilioController;
 import com.code.aon.ui.payroll.controller.EmpresaController;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
 import com.code.aon.ui.payroll.controller.TipDomicilioController;
-import com.code.aon.ui.util.AonUtil;
 
 
 public class EmpresaControllerListener extends ControllerAdapter implements IPayrollConstants {
@@ -72,7 +72,7 @@ public class EmpresaControllerListener extends ControllerAdapter implements IPay
 		/*
 		 * Añade un domicilio para el cliente de la empresa seleccionada
 		 */
-			DomicilioController domicilioController = (DomicilioController)AonUtil.getController(IPayrollConstants.DOMICILIO_CONTROLLER_NAME);
+			DomicilioController domicilioController = (DomicilioController)FormUtil.getController(IPayrollConstants.DOMICILIO_CONTROLLER_NAME);
 			domicilioController.onReset(null);
 			
 			Domicilio domicilio = (Domicilio)domicilioController.getTo();
@@ -101,7 +101,7 @@ public class EmpresaControllerListener extends ControllerAdapter implements IPay
 		/*
 		 * Crea dos tipos de domicilio (social y fiscal) para el cliente de la empresa seleccionada
 		 */
-			TipDomicilioController tipdomicilioController = (TipDomicilioController)AonUtil.getController(IPayrollConstants.TIPDOMICILIO_CONTROLLER_NAME);
+			TipDomicilioController tipdomicilioController = (TipDomicilioController)FormUtil.getController(IPayrollConstants.TIPDOMICILIO_CONTROLLER_NAME);
 			Emprdom tipdomicilio;
 			
 			//tipo domicilio social en tipdomicilio
@@ -179,7 +179,7 @@ public class EmpresaControllerListener extends ControllerAdapter implements IPay
 			/*
 			 * Añade un domicilio para el cliente de la empresa seleccionada
 			 */
-				DomicilioController domicilioController = (DomicilioController)AonUtil.getController(IPayrollConstants.DOMICILIO_CONTROLLER_NAME);
+				DomicilioController domicilioController = (DomicilioController)FormUtil.getController(IPayrollConstants.DOMICILIO_CONTROLLER_NAME);
 				domicilioController.onReset(null);
 				
 				Domicilio domicilio = (Domicilio)domicilioController.getTo();

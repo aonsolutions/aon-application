@@ -2,17 +2,13 @@ package com.code.aon.ui.payroll.event;
 
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.payroll.divisa.LinDivisa;
-import com.code.aon.payroll.principales.Cliente;
-import com.code.aon.payroll.principales.Domicilio;
 import com.code.aon.payroll.principales.empresa.Emprdom;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
-import com.code.aon.ui.payroll.controller.DomicilioController;
 import com.code.aon.ui.payroll.controller.TipDomicilioController;
-import com.code.aon.ui.util.AonUtil;
 
 
 public class TipDomicilioControllerListener extends ControllerAdapter implements IPayrollConstants {
@@ -24,7 +20,7 @@ public class TipDomicilioControllerListener extends ControllerAdapter implements
 public void beforeBeanAdded(ControllerEvent event)
 		throws ControllerListenerException {
 	
-	TipDomicilioController controller = (TipDomicilioController)AonUtil.getController(IPayrollConstants.TIPDOMICILIO_CONTROLLER_NAME);
+	TipDomicilioController controller = (TipDomicilioController)FormUtil.getController(IPayrollConstants.TIPDOMICILIO_CONTROLLER_NAME);
 	
 	 try {			 
 		

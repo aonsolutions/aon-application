@@ -24,6 +24,7 @@ import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -42,7 +43,7 @@ public class Cnae2009MaestroController extends PayrollBasicController implements
 	 * @return
 	 */
 	public List<SelectItem> getListaOcupaciones() {
-		IController ocupacion = AonUtil.getController(OCUPACION_CONTROLLER_NAME);
+		IController ocupacion = FormUtil.getController(OCUPACION_CONTROLLER_NAME);
 		Criteria criteria = new Criteria();
 		List<ITransferObject> ocupacionesCnae=null;
 		
@@ -134,7 +135,7 @@ public class Cnae2009MaestroController extends PayrollBasicController implements
 			Criteria criteria = new Criteria();
 			
 			IManagerBean ocupacionBean = BeanManager.getManagerBean( Ocupacion.class );
-			IController ocupacion = AonUtil.getController(OCUPACION_CONTROLLER_NAME);
+			IController ocupacion = FormUtil.getController(OCUPACION_CONTROLLER_NAME);
 			
 			IManagerBean bean = BeanManager.getManagerBean( Ocupacion.class );
 			List<Ocupacion> o = new ArrayList<Ocupacion>();

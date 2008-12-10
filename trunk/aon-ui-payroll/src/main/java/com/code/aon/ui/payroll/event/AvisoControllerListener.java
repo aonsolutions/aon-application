@@ -2,19 +2,14 @@ package com.code.aon.ui.payroll.event;
 
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.payroll.divisa.LinDivisa;
 import com.code.aon.payroll.principales.Avisos;
 import com.code.aon.payroll.principales.Cliente;
-import com.code.aon.payroll.principales.Cuentas;
-import com.code.aon.payroll.principales.Domicilio;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.payroll.controller.AvisoController;
-import com.code.aon.ui.payroll.controller.CuentaController;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
-import com.code.aon.ui.payroll.controller.DomicilioController;
-import com.code.aon.ui.util.AonUtil;
 
 
 public class AvisoControllerListener extends ControllerAdapter implements IPayrollConstants {
@@ -24,8 +19,8 @@ public class AvisoControllerListener extends ControllerAdapter implements IPayro
 			throws ControllerListenerException {
 		
 		
-		Integer cdg = ((Cliente)(AonUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME)).getTo()).getCdg();
-		String desc = ((Cliente)(AonUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME)).getTo()).getDescripcion();
+		Integer cdg = ((Cliente)(FormUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME)).getTo()).getCdg();
+		String desc = ((Cliente)(FormUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME)).getTo()).getDescripcion();
 		((Avisos)(event.getController().getTo())).getCliente().setCdg(cdg);
 		((Avisos)(event.getController().getTo())).getCliente().setDescripcion(desc);
 		
@@ -39,11 +34,11 @@ public class AvisoControllerListener extends ControllerAdapter implements IPayro
 			throws ControllerListenerException {
 		// TODO Auto-generated method stub
 
-		Integer cdg = ((Cliente)(AonUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME)).getTo()).getCdg();
-		String desc = ((Cliente)(AonUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME)).getTo()).getDescripcion();
+		Integer cdg = ((Cliente)(FormUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME)).getTo()).getCdg();
+		String desc = ((Cliente)(FormUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME)).getTo()).getDescripcion();
 		((Avisos)(event.getController().getTo())).getCliente().setCdg(cdg);
 		((Avisos)(event.getController().getTo())).getCliente().setDescripcion(desc);
-		AvisoController controller = (AvisoController)AonUtil.getController(IPayrollConstants.AVISOS_CONTROLLER_NAME);
+		AvisoController controller = (AvisoController)FormUtil.getController(IPayrollConstants.AVISOS_CONTROLLER_NAME);
 		
 		
      try {			 
@@ -59,7 +54,7 @@ public class AvisoControllerListener extends ControllerAdapter implements IPayro
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
 		
-		AvisoController controller = (AvisoController)AonUtil.getController(IPayrollConstants.AVISOS_CONTROLLER_NAME);
+		AvisoController controller = (AvisoController)FormUtil.getController(IPayrollConstants.AVISOS_CONTROLLER_NAME);
 		
 		
 	     try {			 

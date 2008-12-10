@@ -5,12 +5,12 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.geograficas.Pais;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
-import com.code.aon.ui.util.AonUtil;
 
 public class PaisControllerListener extends ControllerAdapter implements IPayrollConstants {
 	
@@ -39,7 +39,7 @@ public class PaisControllerListener extends ControllerAdapter implements IPayrol
 	}
 
 	private void resetComunidadModel() throws ControllerListenerException {
-		LinesController comunidadController = (LinesController) AonUtil.getController(COMUNIDAD_CONTROLLER_NAME);
+		LinesController comunidadController = (LinesController) FormUtil.getController(COMUNIDAD_CONTROLLER_NAME);
 		try {
 			comunidadController.clearCriteria();
 			Criteria criteria = comunidadController.getCriteria();
