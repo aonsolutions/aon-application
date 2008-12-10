@@ -70,6 +70,8 @@ import com.code.aon.payroll.avanzadas.gestel.Variable;
 import com.code.aon.payroll.avanzadas.gestel.Linvariable;
 import com.code.aon.payroll.avanzadas.kartel.Percepcion;
 import com.code.aon.payroll.avanzadas.kartel.Linpercepcion;
+import com.code.aon.payroll.principales.persona.Embargo;
+import com.code.aon.payroll.principales.persona.Trabajador;
 
 /** 
 * Interface for holding entity properties constants.
@@ -3755,6 +3757,170 @@ public interface IPayrollAlias {
 	* Hibernate value: Linpercepcion.percepcion.cdg
 	*/
 	String  LINPERCEPCION_PERCEPCION_CDG = LINPERCEPCION_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for Embargo entity.
+	*/ 
+	DAOConstantsEntry EMBARGO_ENTRY = DAOConstants.getDAOConstant(Embargo.class);
+
+	/** 
+	* Alias value: Embargo_afecta
+	* Hibernate value: Embargo.afecta
+	*/
+	String  EMBARGO_AFECTA = EMBARGO_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Embargo_codper
+	* Hibernate value: Embargo.codper
+	*/
+	String  EMBARGO_CODPER = EMBARGO_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Embargo_concepto
+	* Hibernate value: Embargo.concepto
+	*/
+	String  EMBARGO_CONCEPTO = EMBARGO_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Embargo_fecmod
+	* Hibernate value: Embargo.fecmod
+	*/
+	String  EMBARGO_FECMOD = EMBARGO_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Embargo_fecnew
+	* Hibernate value: Embargo.fecnew
+	*/
+	String  EMBARGO_FECNEW = EMBARGO_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Embargo_hormod
+	* Hibernate value: Embargo.hormod
+	*/
+	String  EMBARGO_HORMOD = EMBARGO_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Embargo_hornew
+	* Hibernate value: Embargo.hornew
+	*/
+	String  EMBARGO_HORNEW = EMBARGO_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Embargo_id_cdg
+	* Hibernate value: Embargo.id.cdg
+	*/
+	String  EMBARGO_ID_CDG = EMBARGO_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Embargo_id_fecha
+	* Hibernate value: Embargo.id.fecha
+	*/
+	String  EMBARGO_ID_FECHA = EMBARGO_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Embargo_importe
+	* Hibernate value: Embargo.importe
+	*/
+	String  EMBARGO_IMPORTE = EMBARGO_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Embargo_trabajador_cdg
+	* Hibernate value: Embargo.trabajador.cdg
+	*/
+	String  EMBARGO_TRABAJADOR_CDG = EMBARGO_ENTRY.getAliasNames()[10];
+
+
+
+	/** 
+	* DAOConstantsEntry for Trabajador entity.
+	*/ 
+	DAOConstantsEntry TRABAJADOR_ENTRY = DAOConstants.getDAOConstant(Trabajador.class);
+
+	/** 
+	* Alias value: Trabajador_afi
+	* Hibernate value: Trabajador.afi
+	*/
+	String  TRABAJADOR_AFI = TRABAJADOR_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Trabajador_cdg
+	* Hibernate value: Trabajador.cdg
+	*/
+	String  TRABAJADOR_CDG = TRABAJADOR_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Trabajador_codnsz
+	* Hibernate value: Trabajador.codnsz
+	*/
+	String  TRABAJADOR_CODNSZ = TRABAJADOR_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Trabajador_contrTemp
+	* Hibernate value: Trabajador.contrTemp
+	*/
+	String  TRABAJADOR_CONTR_TEMP = TRABAJADOR_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Trabajador_fecalt
+	* Hibernate value: Trabajador.fecalt
+	*/
+	String  TRABAJADOR_FECALT = TRABAJADOR_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Trabajador_fecbaj
+	* Hibernate value: Trabajador.fecbaj
+	*/
+	String  TRABAJADOR_FECBAJ = TRABAJADOR_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Trabajador_fecmod
+	* Hibernate value: Trabajador.fecmod
+	*/
+	String  TRABAJADOR_FECMOD = TRABAJADOR_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Trabajador_fecnew
+	* Hibernate value: Trabajador.fecnew
+	*/
+	String  TRABAJADOR_FECNEW = TRABAJADOR_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Trabajador_hormod
+	* Hibernate value: Trabajador.hormod
+	*/
+	String  TRABAJADOR_HORMOD = TRABAJADOR_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Trabajador_hornew
+	* Hibernate value: Trabajador.hornew
+	*/
+	String  TRABAJADOR_HORNEW = TRABAJADOR_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Trabajador_indagrario
+	* Hibernate value: Trabajador.indagrario
+	*/
+	String  TRABAJADOR_INDAGRARIO = TRABAJADOR_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: Trabajador_indgrupo
+	* Hibernate value: Trabajador.indgrupo
+	*/
+	String  TRABAJADOR_INDGRUPO = TRABAJADOR_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: Trabajador_mayor65
+	* Hibernate value: Trabajador.mayor65
+	*/
+	String  TRABAJADOR_MAYOR65 = TRABAJADOR_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: Trabajador_pariente
+	* Hibernate value: Trabajador.pariente
+	*/
+	String  TRABAJADOR_PARIENTE = TRABAJADOR_ENTRY.getAliasNames()[13];
 
 
 }
