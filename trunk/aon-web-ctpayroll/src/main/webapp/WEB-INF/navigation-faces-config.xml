@@ -892,7 +892,7 @@
 		</navigation-case>		
 	</navigation-rule>
 	
-		<!-- =================== Avanzadas - Kartel - Percepcion ================= -->
+	<!-- =================== Avanzadas - Kartel - Percepcion ================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>percepcion_form</from-outcome>
@@ -910,6 +910,28 @@
 			<from-outcome>percepcion_search</from-outcome>
 			<to-view-id>
 				/facelet/avanzadas/kartel/percepcion/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+
+	<!-- =================== Principales - Personas - Embargo ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>embargo_form</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/embargos/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>embargo_list</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/embargos/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>embargo_search</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/embargos/search.xhtml
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule> 
