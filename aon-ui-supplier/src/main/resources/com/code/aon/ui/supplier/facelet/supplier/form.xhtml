@@ -61,8 +61,8 @@
 						</aon:panelTab>
  
  						<c:if test="#{supplier.showFinanceRegistryBank}">
-							<aon:panelTab id="finance" label="#{financeBundle.finance_data_module}">
-								<ui:include src="/com/code/aon/ui/finance/facelet/rbank/tab_grid.xhtml">
+							<aon:panelTab id="finance" label="#{registryBundle.registry_banks_module}">
+								<ui:include src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
 									<ui:param name="controller" value="#{supplierRbank}" />							</ui:include>
 							</aon:panelTab>
 						</c:if>

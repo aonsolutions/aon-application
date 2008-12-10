@@ -81,7 +81,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 	private boolean printRecordData;
 	
-	private boolean showFinanceRegistryBank = true;
+	private boolean showRegistryBank = true;
 
 	private boolean showCompanyOtherData = true;
 
@@ -636,12 +636,12 @@ public class CompanyParentController extends BasicController implements ICompany
 		return null;
 	}
 
-	public boolean isShowFinanceRegistryBank() {
-		return showFinanceRegistryBank;
+	public boolean isShowRegistryBank() {
+		return showRegistryBank;
 	}
 
-	public void setShowFinanceRegistryBank(boolean showFinanceRegistryBank) {
-		this.showFinanceRegistryBank = showFinanceRegistryBank;
+	public void setShowRegistryBank(boolean showRegistryBank) {
+		this.showRegistryBank = showRegistryBank;
 	}
 
 	public boolean isShowCompanyOtherData() {

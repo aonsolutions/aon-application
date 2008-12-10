@@ -12,7 +12,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class BankAccountValidationListener extends ControllerAdapter {
 
-	private final String FINANCE_BUNDLE = "configBundle";
+	private final String CONFIG_BUNDLE = "configBundle";
 	private final String ERROR_MESSAGE = "config_invalid_bank_account";
 	
 	@Override
@@ -30,19 +30,19 @@ public class BankAccountValidationListener extends ControllerAdapter {
 	private void checkBankAccount(IBankAccountContainer bac) throws ControllerListenerException {
 		BankAccount bankAccount = bac.getBankAccount();
 		if (bankAccount == null) {
-			String msg = AonUtil.getMessage(FINANCE_BUNDLE, ERROR_MESSAGE);
+			String msg = AonUtil.getMessage(CONFIG_BUNDLE, ERROR_MESSAGE);
 			throw new ControllerListenerException(msg);
 		}
 		if (StringUtils.isEmpty(bankAccount.getEntity())) {
 			Bank bank = bac.getBank();
 			if (bank == null) {
-				String msg = AonUtil.getMessage(FINANCE_BUNDLE, ERROR_MESSAGE);
+				String msg = AonUtil.getMessage(CONFIG_BUNDLE, ERROR_MESSAGE);
 				throw new ControllerListenerException(msg);
 			}
 			bankAccount.setEntity( bank.getCode());	
 		}
 		if (!bankAccount.isValid()) {
-			String msg = AonUtil.getMessage(FINANCE_BUNDLE, ERROR_MESSAGE);
+			String msg = AonUtil.getMessage(CONFIG_BUNDLE, ERROR_MESSAGE);
 			throw new ControllerListenerException(msg);
 		}
 	}
