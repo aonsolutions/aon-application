@@ -134,8 +134,8 @@ public class LinpercepcionControllerListener extends ControllerAdapter {
 			
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(alias, linp.getId().getCdg());
-			alias = bean.getFieldName(IPayrollAlias.LINPERCEPCION_ID_FECINI);
-			criteria.addEqualExpression(alias, linp.getId().getFecini());
+			// alias = bean.getFieldName(IPayrollAlias.LINPERCEPCION_ID_FECINI);
+			// criteria.addEqualExpression(alias, linp.getId().getFecini());
 
 
 			List<ITransferObject> lista = getController().getManagerBean().getList(criteria);
@@ -143,11 +143,12 @@ public class LinpercepcionControllerListener extends ControllerAdapter {
 			
 			while (iter.hasNext()) {
 				Linpercepcion l = (Linpercepcion) iter.next();
-				if ((fecini.after(l.getId().getFecini()) && fecfin.before(l.getFecfin()))
-				|| (fecini.after(l.getId().getFecini()) && fecfin.after(l.getFecfin()))
-				|| (fecini.before(l.getId().getFecini()) && fecfin.before(l.getFecfin()))) {
-					FacesMessage fm = AonUtil.getMessage( FacesContext.getCurrentInstance(), "aon_payroll_1480", null );
-					throw new ControllerListenerException( fm.getSummary() );
+				if(!(l.getId().equals(linp.getId()))){
+					if ((fecini.before(l.getFecfin()) && fecini.after(l.getId().getFecini()))
+							|| (fecfin.before(l.getFecfin()) && fecfin.after(l.getId().getFecini()))) {
+						FacesMessage fm = AonUtil.getMessage( FacesContext.getCurrentInstance(), "aon_payroll_1480", null );
+						throw new ControllerListenerException( fm.getSummary() );
+					}
 				}
 			}
 		} catch (ManagerBeanException e) {
