@@ -18,7 +18,10 @@ public enum RegistryAttachmentType implements IResourceable {
 	ADDITIONAL_IMAGE,
 	
 	/** The BANNER. */
-	BANNER;
+	BANNER,
+	
+	/** Corporate Identity DOCUMENTS **/
+	CORPORATE_IDENTITY;
 	
 	
 	/** Message file base path. */
