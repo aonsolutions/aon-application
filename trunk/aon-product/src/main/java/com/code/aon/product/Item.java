@@ -79,19 +79,6 @@ public class Item implements ITransferObject {
     private double purchasePrice;
 
     /**
-     * Constructor for this unique key and product.
-     * 
-     * @param pk
-     *            Unique key.
-     * @param product
-     *            Product that references this item.
-     */
-    public Item(Integer pk, Product product) {
-        this.id = pk;
-        this.setProduct(product);
-    }
-
-    /**
      * Returns the unique key.
      * 
      * @return Unique key.
