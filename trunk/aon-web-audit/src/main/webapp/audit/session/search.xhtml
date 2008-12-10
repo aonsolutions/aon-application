@@ -16,11 +16,8 @@
 			</ui:include>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
-
+				<ui:param name="controller" value="#{auditSession}" />
 				<ui:define name="searchContent">
-					<aon:methodParam name="searchActionListener" value="#{auditSession.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="auditSession_list" />		
-
 					<aon:outputLabel for="Session_id"
 						value="#{bundle.aon_id}" />
 					<aon:inputText id="Session_id" size="60"

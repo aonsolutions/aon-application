@@ -5,7 +5,7 @@
 	<classpathentry kind="con" path="org.jboss.ide.eclipse.as.classpath.core.runtime.ProjectRuntimeInitializer/JBoss 4.2 Runtime"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
-	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER">
+	<classpathentry kind="con" path="org.devzuz.q.maven.jdt.core.mavenClasspathContainer">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
