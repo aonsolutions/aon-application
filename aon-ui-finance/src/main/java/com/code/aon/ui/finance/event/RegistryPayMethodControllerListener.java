@@ -1,6 +1,6 @@
 package com.code.aon.ui.finance.event;
 
-import com.code.aon.finance.RegistryPayMethod;
+import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;

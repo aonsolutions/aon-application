@@ -21,13 +21,11 @@
 		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
 	
 		<!-- AON-FINANCE Mapping files -->	
-		<mapping class="com.code.aon.finance.Bank"/>
 		<mapping class="com.code.aon.finance.Creditor"/>
 		<mapping class="com.code.aon.finance.CustomerFee"/>
 		<mapping class="com.code.aon.finance.Finance"/>
 		<mapping class="com.code.aon.finance.FinanceBatch"/>
 		<mapping class="com.code.aon.finance.FinanceBatchDetail"/>
-		<mapping class="com.code.aon.finance.FinanceSales"/>
 		<mapping class="com.code.aon.finance.FinanceTracking"/>
 		<mapping class="com.code.aon.finance.Invoice"/>
 		<mapping class="com.code.aon.finance.InvoiceAddress"/>
@@ -35,8 +33,6 @@
 		<mapping class="com.code.aon.finance.InvoiceTax"/>
 		<mapping class="com.code.aon.finance.InvoicingGroup"/>
 		<mapping class="com.code.aon.finance.InvoicingGroupDetail"/>
-		<mapping class="com.code.aon.finance.RegistryBank"/>
-		<mapping class="com.code.aon.finance.RegistryPayMethod"/>
 		
 		<!-- AON-PRODUCT Mapping files -->	
 		<mapping class="com.code.aon.product.Brand"/>
@@ -55,6 +51,7 @@
 		
 		<!-- AON-REGISTRY Mapping files -->	
 		<mapping class="com.code.aon.registry.Category"/>
+		<mapping class="com.code.aon.registry.RegistryBank"/>
 		<mapping class="com.code.aon.registry.RecordData"/>
 		<mapping class="com.code.aon.registry.Registry"/>
 		<mapping class="com.code.aon.registry.RegistryAddress"/>
@@ -62,6 +59,7 @@
 		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
 		<mapping class="com.code.aon.registry.RegistryMedia"/>
 		<mapping class="com.code.aon.registry.RegistryNote"/>
+		<mapping class="com.code.aon.registry.RegistryPayMethod"/>
 		<mapping class="com.code.aon.registry.RegistryRelationship"/>
 		<mapping class="com.code.aon.registry.Relationship"/>
 		
@@ -109,6 +107,7 @@
 		
 		<!-- AON-CONFIG Mapping files -->
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
+		<mapping class="com.code.aon.config.Bank"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.Series"/>
 		<mapping class="com.code.aon.config.Scope"/>

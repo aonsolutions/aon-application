@@ -149,7 +149,7 @@ public class FeeInvoicingController extends BasicController {
 			if(getInvoicingParams() != null){
 				getInvoicingParams().setNumber(number);
 				getInvoicingParams().setSecurityLevel(securityLevel);
-				getInvoicingParams().setWorkPlaceId(obtainSeriesWorkPlace((String)event.getNewValue()));
+//				getInvoicingParams().setWorkPlaceId(obtainSeriesWorkPlace((String)event.getNewValue()));
 			}
 		}
 	}
@@ -178,7 +178,7 @@ public class FeeInvoicingController extends BasicController {
 		}
 		return null;
 	}
-
+/*
 	@SuppressWarnings("unchecked")
 	private Integer obtainSeriesWorkPlace(String seriesId) throws ManagerBeanException {
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
@@ -193,7 +193,7 @@ public class FeeInvoicingController extends BasicController {
 		}
 		return null;
 	}
-
+*/
 	@SuppressWarnings("unchecked")
 	public void onInvoice(ActionEvent event) throws InvoicingException, ManagerBeanException, ExpressionException {
 	    IManagerBean periodBean = BeanManager.getManagerBean(Period.class);

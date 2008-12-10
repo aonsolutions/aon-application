@@ -5,8 +5,8 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Bank;
 import com.code.aon.customer.Customer;
-import com.code.aon.finance.Bank;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;

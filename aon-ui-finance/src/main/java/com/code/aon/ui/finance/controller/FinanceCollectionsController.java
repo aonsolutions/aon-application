@@ -12,8 +12,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
-import com.code.aon.finance.RegistryBank;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.BillingPeriod;
 import com.code.aon.finance.enumeration.CreditorStatus;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
@@ -25,6 +23,8 @@ import com.code.aon.finance.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.VatType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryBank;
+import com.code.aon.registry.dao.IRegistryAlias;
 
 /**
  * Collections controller
@@ -184,7 +184,7 @@ public class FinanceCollectionsController {
 			Company company = (Company) iter.next();
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(rBankBean
-					.getFieldName(IFinanceAlias.REGISTRY_BANK_REGISTRY_ID), company.getId());
+					.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), company.getId());
 			iter = rBankBean.getList(criteria).iterator();
 			while (iter.hasNext()) {
 				RegistryBank rBank = (RegistryBank) iter.next();

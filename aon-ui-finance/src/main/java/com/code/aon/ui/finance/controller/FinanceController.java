@@ -15,13 +15,12 @@ import javax.faces.model.SelectItem;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.BankAccount;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.RegistryBank;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryBank;
+import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.form.BasicController;
 
 /**
@@ -75,7 +74,7 @@ public class FinanceController extends BasicController {
 		}
 	}
 	
-	@SuppressWarnings({"unused","unchecked"})
+	@SuppressWarnings("unchecked")
 	public void checkAll(ActionEvent event) throws ManagerBeanException{
 		Iterator iter = this.getManagerBean().getList(this.getCriteria()).iterator();
 		while(iter.hasNext()){
@@ -86,7 +85,6 @@ public class FinanceController extends BasicController {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	public void checkNone(ActionEvent event) {
 		clearCheckedFinances();
 	}
@@ -143,7 +141,7 @@ public class FinanceController extends BasicController {
 		try {
 			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rBankBean.getFieldName(IFinanceAlias.REGISTRY_BANK_REGISTRY_ID), invoice.getRegistry().getId());
+			criteria.addEqualExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), invoice.getRegistry().getId());
 			Iterator iter = rBankBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				RegistryBank rBank = (RegistryBank)iter.next();
