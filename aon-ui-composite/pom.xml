@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.composite</artifactId>
-	<version>3.1.0</version>
+	<version>3.1.1</version>
 	<description>AON UI COMPOSITE</description>
 	<name>AON UI COMPOSITE</name>
 	<dependencies>
