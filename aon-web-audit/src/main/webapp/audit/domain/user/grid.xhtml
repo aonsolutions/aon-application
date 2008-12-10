@@ -17,13 +17,13 @@
 						<aon:outputText value="#{bundle.aon_name}" />
 					</f:facet>
 					<aon:outputText value="#{to.login}"
-						rendered="#{to!=user.to}" />
+						rendered="#{formList}" />
 					<aon:inputText value="#{user.to.login}"
-						rendered="#{to==user.to}"
+						rendered="#{formEdit}"
 						required="true" size="40" maxlength="16" />					
 					<f:facet name="footer">
 						<aon:inputText value="#{user.to.login}"
-							rendered="#{user.new}"
+							rendered="#{formNew}"
 							required="true" size="40" maxlength="16" />					
 					</f:facet>
 				</aon:column>
