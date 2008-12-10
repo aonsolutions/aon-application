@@ -41,12 +41,6 @@ public class ProductCategoryTree implements ITransferObject {
     private ProductCategory child;
 
     /**
-     * Void contructor.
-     */
-    public ProductCategoryTree() {
-    }
-
-    /**
      * Constructor for this node.
      * 
      * @param pk
@@ -143,8 +137,8 @@ public class ProductCategoryTree implements ITransferObject {
 	}
 
 	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
 
 }

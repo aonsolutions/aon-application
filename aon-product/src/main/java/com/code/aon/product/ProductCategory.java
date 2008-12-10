@@ -51,23 +51,6 @@ public final class ProductCategory implements ITransferObject {
     private ProductCategoryGroup group;
 
     /**
-     * Void contructor.
-     * 
-     */
-    public ProductCategory() {
-    }
-
-    /**
-     * Constructor for this unique key.
-     * 
-     * @param pk
-     *            Unique key.
-     */
-    public ProductCategory(Integer pk) {
-        this.id = pk;
-    }
-
-    /**
      * Return the unique key.
      * 
      * @return unique key.
@@ -168,8 +151,8 @@ public final class ProductCategory implements ITransferObject {
 	}
 
 	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
 
 }

@@ -58,13 +58,6 @@ public class ItemAttachment implements IAttachment, Cloneable {
     private Integer size;
     
     /**
-     * Default contructor.
-     * 
-     */
-    public ItemAttachment() {
-    }
-
-    /**
      * Returns the unique key of the item attachment.
      *
      * @return unique key. 
@@ -214,8 +207,8 @@ public class ItemAttachment implements IAttachment, Cloneable {
 	}
 
 	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
 
 }

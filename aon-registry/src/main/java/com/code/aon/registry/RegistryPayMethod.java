@@ -221,8 +221,8 @@ public class RegistryPayMethod implements ITransferObject {
 	}
 
 	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
     
 }

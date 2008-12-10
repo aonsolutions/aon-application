@@ -31,16 +31,6 @@ public class Relationship implements ITransferObject{
 	private String description;
 
 	/**
-	 * The constructor using the id.
-	 * 
-	 * @param id
-	 *            the id
-	 */
-	public Relationship(Integer id) {
-		this.id = id;
-	}
-
-	/**
 	 * Gets the id.
 	 * 
 	 * @return the id
@@ -100,8 +90,8 @@ public class Relationship implements ITransferObject{
 	}
 
 	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
     
 }

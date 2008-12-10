@@ -79,13 +79,6 @@ public class Item implements ITransferObject {
     private double purchasePrice;
 
     /**
-     * Default contructor.
-     * 
-     */
-    public Item() {
-    }
-
-    /**
      * Constructor for this unique key and product.
      * 
      * @param pk
@@ -316,8 +309,8 @@ public class Item implements ITransferObject {
 	}
 
 	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
 
 }
