@@ -6,13 +6,19 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.payroll.cotizacion.Linepigr;
@@ -20,13 +26,22 @@ import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.Epigrafes;
 import com.code.aon.payroll.enumeration.Tipcuenta;
 import com.code.aon.payroll.enumeration.Tipdom;
+import com.code.aon.payroll.principales.Cliente;
+import com.code.aon.payroll.principales.empresa.Actividad;
 import com.code.aon.payroll.principales.empresa.Emprdom;
+import com.code.aon.ql.Criteria;
 import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.util.AonUtil;
+
 
 public class TipDomicilioController extends LinesController {
 
 
+	private String tipo;
+	List<ITransferObject> tiposdomicilio;
+	DataModel modeldomicilios;
+	
 	
 	private List<SelectItem> listatiposdomicilio;
 
@@ -72,10 +87,72 @@ public class TipDomicilioController extends LinesController {
 			return code;		      
 	     				
 		}
+    
+    
+    public void getTypes() throws ManagerBeanException {	
+    	
+    		IManagerBean bean = BeanManager.getManagerBean(Emprdom.class);
+     		Criteria criteria = new Criteria();    		
+    		String alias = bean.getFieldName(IPayrollAlias.EMPRDOM_TIPDOM);
+    		criteria.addEqualExpression(alias,tipo);
+    		List<ITransferObject> list = bean.getList(criteria);
+    		setTiposdomicilio(list);
+        	modeldomicilios    = new ListDataModel( getTiposDomicilio() );
+             
+    		
 	
+	}
 	
 
-	@Override
+
+	public List<ITransferObject> getTiposDomicilio() {
+
+		try {
+			if (tiposdomicilio == null) {
+				initialiceTiposDomicilio();
+			}
+			return tiposdomicilio;
+		} catch (ManagerBeanException e) {
+			String msg = "Error cargando tipos de domicilio";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+
+	public void  initialiceTiposDomicilio() throws ManagerBeanException {
+
+		Integer cdg = ((Cliente)(AonUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME)).getTo()).getCdg();
+		Integer cdg2 = ((Actividad)(AonUtil.getController(IPayrollConstants.ACTIVIDAD_CONTROLLER_NAME)).getTo()).getCdg();
+
+		
+		IManagerBean bean = BeanManager.getManagerBean(Emprdom.class);
+ 		Criteria criteria = new Criteria();   
+ 		
+ 		String alias = bean.getFieldName(IPayrollAlias.EMPRDOM_CLIENTE_CDG);
+ 		String alias2 = bean.getFieldName(IPayrollAlias.EMPRDOM_ACTIVIDAD_CDG);
+        
+ 		criteria.addEqualExpression(alias, cdg);      
+        criteria.addEqualExpression(alias2, cdg2);
+        List<ITransferObject> list = bean.getList(criteria);
+    	setTiposdomicilio(list);
+    	modeldomicilios    = new ListDataModel( getTiposDomicilio() );
+         
+    	
+    
+	
+	}
+
+
+        public List<ITransferObject> getTiposdomicilio() {
+               return tiposdomicilio;
+        }
+
+
+       public void setTiposdomicilio(List<ITransferObject> tiposdomicilio) {
+	          this.tiposdomicilio = tiposdomicilio;
+        }
+
+@Override
 	public void onAccept(ActionEvent event) {
 		verifyNullFields();
 		super.onAccept(event);
@@ -93,6 +170,9 @@ public class TipDomicilioController extends LinesController {
 		
 	}
 
+
+
+	
 
 
 	

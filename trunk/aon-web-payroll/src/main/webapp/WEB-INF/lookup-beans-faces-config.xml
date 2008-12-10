@@ -350,4 +350,23 @@
 		</managed-property>
 	</managed-bean>	
 	
+					<!--  ************ persona  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>personaLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>personaLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.principales.personas.Persona</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/personas/otrperc/personaLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
 </faces-config>
