@@ -70,8 +70,8 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.report</artifactId>
-			<version>3.3.0</version>
-			<scope>compile</scope>
+			<version>3.4.0</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
