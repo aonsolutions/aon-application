@@ -15,7 +15,7 @@
 		<ui:define name="columns">
 			<aon:column width="300">
 				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_bank}" />
+					<aon:outputText value="#{configBundle.config_bank}" />
 				</f:facet>
 				<aon:outputText value="#{to.bank.name}" rendered="#{formList}" />
 
@@ -26,7 +26,7 @@
 						<aon:joinProperty alias="Bank_code" value="#{controller.to.bank.code}" />
 					</aon:lookupInputText>
 					<aon:lookupButton 
-						windowTitle="#{financeBundle.finance_bank_selection}"
+						windowTitle="#{configBundle.config_bank_selection}"
 						selectReRender="#{dataTableId}" actionType="search"
 						lookup="#{bankLookup}" minHeight="460" minWidth="650"
 						property="#{controller.to.bank}">
@@ -43,7 +43,7 @@
 							<aon:joinProperty alias="Bank_code" value="#{controller.to.bank.code}" />
 						</aon:lookupInputText>
 						<aon:lookupButton 
-							windowTitle="#{financeBundle.finance_bank_selection}"
+							windowTitle="#{configBundle.config_bank_selection}"
 							selectReRender="Bank_code-New,Bank_name-New" actionType="search"
 							lookup="#{bankLookup}" minHeight="460" minWidth="650"
 							property="#{controller.to.bank}">
@@ -57,7 +57,7 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_bank_account}" />
+					<aon:outputText value="#{configBundle.config_bank_account}" />
 				</f:facet>
 				<aon:outputText value="#{to.bankAccount}" rendered="#{formList}" />
 				<aon:div rendered="#{formEdit}">
@@ -95,7 +95,7 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_bank_sufix}" />
+					<aon:outputText value="#{configBundle.config_bank_sufix}" />
 				</f:facet>
 				<aon:outputText value="#{to.sufix}" rendered="#{formList}" />
 				<aon:inputText value="#{to.sufix}" rendered="#{formEdit}"

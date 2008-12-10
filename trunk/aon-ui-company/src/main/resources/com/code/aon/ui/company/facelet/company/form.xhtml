@@ -180,9 +180,9 @@
 							<ui:param name="controller" value="#{companyAddress}" />
 						</ui:include>
 					</aon:panelTab>
-					<c:if test="#{company.showFinanceRegistryBank}">
-						<aon:panelTab label="#{financeBundle.finance_data_module}">
-							<ui:include src="/com/code/aon/ui/finance/facelet/rbank/tab_grid.xhtml">
+					<c:if test="#{company.showRegistryBank}">
+						<aon:panelTab label="#{registryBundle.registry_banks_module}">
+							<ui:include src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
 								<ui:param name="controller" value="#{companyRbank}" />
 							</ui:include>
 						</aon:panelTab>
@@ -195,7 +195,7 @@
 				</aon:panelTabSet>
 			</aon:div>
 		</aon:form>
-		<c:if test="#{company.showFinanceRegistryBank}">
+		<c:if test="#{company.showRegistryBank}">
 			<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		</c:if>
 
