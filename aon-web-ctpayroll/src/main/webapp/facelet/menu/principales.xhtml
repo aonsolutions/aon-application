@@ -107,7 +107,11 @@
 								<aon:commandLink value="#{menuBundle.principales_personas__percep}" disabled="true" />
 							</aon:div>
 							<aon:div>
-								<aon:commandLink value="#{menuBundle.principales_personas__otrperc}" disabled="true" />
+								<aon:commandLink value="#{menuBundle.principales_personas__otrperc}" action="otrperc_form" >
+										<aon:actionListener method="#{otrperc.onEditSearch}" />
+										<aon:actionListener method="#{otrperc.onSearch}" />
+										<aon:actionListener method="#{otrperc.onSelectFirst}" />
+									</aon:commandLink>
 							</aon:div>
 							<aon:div>
 								<aon:commandLink value="#{menuBundle.principales_personas__embargo}" disabled="true" />
