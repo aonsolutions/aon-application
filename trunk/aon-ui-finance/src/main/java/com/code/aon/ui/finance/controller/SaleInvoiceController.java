@@ -160,7 +160,7 @@ public class SaleInvoiceController extends BasicController {
 			if(getInvoicingParams() != null){
 				getInvoicingParams().setNumber(number);
 				getInvoicingParams().setSecurityLevel(securityLevel);
-				getInvoicingParams().setWorkPlaceId(obtainSeriesWorkPlace((String)event.getNewValue()));
+//				getInvoicingParams().setWorkPlaceId(obtainSeriesWorkPlace((String)event.getNewValue()));
 			}
 		}
 	}
@@ -190,7 +190,9 @@ public class SaleInvoiceController extends BasicController {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
+	
+/*	
+    @SuppressWarnings("unchecked")
 	private Integer obtainSeriesWorkPlace(String seriesId) throws ManagerBeanException {
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
@@ -204,7 +206,7 @@ public class SaleInvoiceController extends BasicController {
 		}
 		return null;
 	}
-
+*/
 	@SuppressWarnings("unchecked")
 	public void onInvoice(ActionEvent event) throws InvoicingException, ManagerBeanException, ExpressionException {
 	    IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
@@ -627,7 +629,7 @@ public class SaleInvoiceController extends BasicController {
 		try {
 			email = invoice.getRegistry().getEmail().getValue(); 
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
+			// Nothing
 		}	
 		AonUtil.addErrorMessage("No se pudo enviar el correo electrónico a " +
 				email + "." +
@@ -635,7 +637,7 @@ public class SaleInvoiceController extends BasicController {
 				);
 	}
 
-	@SuppressWarnings({"unused","unchecked"})
+	@SuppressWarnings("unchecked")
 	public void onImportDelivery(ActionEvent event) throws ManagerBeanException{
 		this.onReset(null);
 		DeliveryController deliveryController = (DeliveryController)FormUtil.getController("delivery");
@@ -662,7 +664,7 @@ public class SaleInvoiceController extends BasicController {
 		this.onInvoiceDelivery(null);
 	}
 	
-	@SuppressWarnings({"unused","unchecked"})
+	@SuppressWarnings("unchecked")
 	public void onInvoiceDelivery(ActionEvent event) throws ManagerBeanException{
 		DeliveryController deliveryController = (DeliveryController)FormUtil.getController("delivery");
 		Iterator iter = ((List)deliveryController.getModel().getWrappedData()).iterator();

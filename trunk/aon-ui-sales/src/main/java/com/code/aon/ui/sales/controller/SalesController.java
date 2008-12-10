@@ -68,7 +68,7 @@ public class SalesController extends BasicController {
 		if (this.getTo() != null) {
 			((Sales)this.getTo()).setNumber(SeriesNumberUtil.obtainNumber((String)event.getNewValue(), StringUtils.capitalize(this.getBeanName())));
 			((Sales)this.getTo()).setSecurityLevel((series!=null)?series.getSecurityLevel():null);
-			((Sales)this.getTo()).setWorkPlace((series!=null)?series.getWorkPlace():null);
+//			((Sales)this.getTo()).setWorkPlace((series!=null)?series.getWorkPlace():null);
 		}
 	}
 

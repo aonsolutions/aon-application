@@ -1,10 +1,10 @@
-package com.code.aon.ui.finance.event;
+package com.code.aon.ui.config.event;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.finance.Bank;
-import com.code.aon.finance.BankAccount;
-import com.code.aon.finance.IBankAccountContainer;
+import com.code.aon.config.BankAccount;
+import com.code.aon.config.Bank;
+import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -12,8 +12,8 @@ import com.code.aon.ui.util.AonUtil;
 
 public class BankAccountValidationListener extends ControllerAdapter {
 
-	private final String FINANCE_BUNDLE = "financeBundle";
-	private final String ERROR_MESSAGE = "finance_invalid_bank_account";
+	private final String FINANCE_BUNDLE = "configBundle";
+	private final String ERROR_MESSAGE = "config_invalid_bank_account";
 	
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {

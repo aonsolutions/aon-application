@@ -75,7 +75,7 @@ public class FeeInvoicingDetailControllerListener extends ControllerAdapter {
 			}
 		}
 	}
-
+/*
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		try {
@@ -91,7 +91,7 @@ public class FeeInvoicingDetailControllerListener extends ControllerAdapter {
 			throw new ControllerListenerException("Error obtaining workplace related with the selected serie");
 		}
 	}
-
+*/
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		FeeInvoicingDetailController detailController = (FeeInvoicingDetailController)event.getController();
@@ -121,7 +121,7 @@ public class FeeInvoicingDetailControllerListener extends ControllerAdapter {
 		}
 		return null;
 	}
-
+/*
 	@SuppressWarnings("unchecked")
 	private WorkPlace obtainSeriesWorkplace(String series) throws ManagerBeanException {
 		WorkPlace workPlace = new WorkPlace();
@@ -135,7 +135,7 @@ public class FeeInvoicingDetailControllerListener extends ControllerAdapter {
 		}
 		return workPlace;
 	}
-
+*/
 	private void obtainTaxableBase(InvoiceDetail invoiceDetail) {
 		invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
 	}
