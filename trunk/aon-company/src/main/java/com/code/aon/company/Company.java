@@ -114,8 +114,8 @@ public class Company extends Registry implements ITaxInfo{
 	}
 
 	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
+    public int hashCode() {
+        return getId() != null ? this.getClass().hashCode() + getId().hashCode() : super.hashCode();
+    }
 
 }

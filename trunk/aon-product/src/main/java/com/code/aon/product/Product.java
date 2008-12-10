@@ -108,23 +108,6 @@ public class Product implements ITransferObject {
 	private Set<Item> items = new HashSet<Item>();
 
     /**
-     * Void contructor.
-     * 
-     */
-    public Product() {
-    }
-
-    /**
-     * Contructor for this unique key.
-     * 
-     * @param pk
-     *            unique key.
-     */
-    public Product(Integer pk) {
-        this.id = pk;
-    }
-
-    /**
      * Returns the unique key.
      * 
      * @return unique key.
@@ -443,8 +426,8 @@ public class Product implements ITransferObject {
 	}
 
 	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
 
 }

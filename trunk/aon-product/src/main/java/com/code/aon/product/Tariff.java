@@ -34,23 +34,6 @@ public class Tariff implements ITransferObject {
     private String name;
 
     /**
-     * Void constructor.
-     * 
-     */
-    public Tariff() {
-    }
-
-    /**
-     * Constructor for this unique key.
-     * 
-     * @param pk
-     *            Unique key.
-     */
-    public Tariff(Integer pk) {
-        this.id = pk;
-    }
-
-    /**
      * Returns unique key.
      * 
      * @return unique key.
@@ -110,8 +93,8 @@ public class Tariff implements ITransferObject {
 	}
 
 	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
 
 }
