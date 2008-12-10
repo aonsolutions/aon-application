@@ -1,9 +1,8 @@
-<?xml version="1.0"?>
-<!DOCTYPE faces-config PUBLIC
-  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
-  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
-<faces-config>
 	<application>
 		<message-bundle>
 			com.code.aon.ui.payroll.i18n.messages
@@ -12,20 +11,17 @@
 			<default-locale>es</default-locale>
 		</locale-config>
 		<navigation-handler>com.code.aon.ui.audit.AuditNavigationHandler</navigation-handler>
+		<resource-bundle>
+			<base-name>com.code.aon.ui.payroll.i18n.messages</base-name>
+			<var>appBundle</var>
+		</resource-bundle>		
+		<resource-bundle>
+			<base-name>com.code.aon.ui.payroll.i18n.menu</base-name>
+			<var>menuBundle</var>
+		</resource-bundle>		
 	</application>
 
-	<lifecycle>
-		<phase-listener>
-			com.code.aon.faces.component.sandbox.ValueChangePhaseListener
-		</phase-listener>
-	</lifecycle>
-
 	<!--  *************** CONVERTERS ***************** -->
-	<converter>
-		<description>Conversor para los Enum</description>
-		<converter-for-class>java.lang.Enum</converter-for-class>
-		<converter-class>com.code.aon.ui.converter.EnumLocaleConverter</converter-class>
-	</converter>
 	<converter>
     	<converter-id>toConverter</converter-id>
     	<converter-class>com.code.aon.ui.payroll.converter.ITransferObjectConverter</converter-class>
@@ -52,7 +48,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/3.2.0</value>
+			<value>/aonResource/3.4.0</value>
 		</managed-property>		
 	</managed-bean>
 	
@@ -72,55 +68,6 @@
 				<value>#{aonResource.resolveLocal['/css/payroll.css']}</value>
 			</list-entries>
 		</managed-property>
-		<managed-property>
-			<property-name>applicationBundles</property-name>
-			<map-entries>
-				<map-entry>
-					<key>bundle</key>
-					<value>com.code.aon.ui.common.i18n.messages</value>
-				</map-entry>
-				<map-entry>
-					<key>appBundle</key>
-					<value>com.code.aon.ui.payroll.i18n.messages</value>
-				</map-entry>
-				<map-entry>
-					<key>menuBundle</key>
-					<value>com.code.aon.ui.payroll.i18n.menu</value>
-				</map-entry>
-				<map-entry>
-					<key>securityBundle</key>
-					<value>com.code.aon.bridge.i18n.messages</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-
-	<!-- **************** TIMEZONE CONTROLLER ************* -->
-	<managed-bean>
-		<managed-bean-name>timeZoneController</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.common.controller.TimeZoneController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<!-- ***************** LOGGED USER ******************** --> 
-	<managed-bean>
-		<managed-bean-name>loggedUser</managed-bean-name>
-		<managed-bean-class>com.code.aon.bridge.session.LoggedUser</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	
-	<!-- **************** FAILED LOGIN ******************** --> 
-	<managed-bean>
-		<managed-bean-name>failedLogin</managed-bean-name>
-		<managed-bean-class>com.code.aon.bridge.session.FailedLogin</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
-	</managed-bean>
-
-   	<!-- **************** REPORT ************************** -->
-	<managed-bean>
-		<managed-bean-name>report</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.report.controller.ReportManager</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
 
 </faces-config>
