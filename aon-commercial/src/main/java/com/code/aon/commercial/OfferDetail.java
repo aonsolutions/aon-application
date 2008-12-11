@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
@@ -28,8 +29,8 @@ public class OfferDetail implements ITransferObject, ICalculable {
 	
 	private static final long serialVersionUID = -3195621161952952987L;
 
-	/** The Id. */
-	private Integer Id;
+	/** The id. */
+	private Integer id;
 	
 	/** The offer. */
 	private Offer offer;
@@ -61,7 +62,7 @@ public class OfferDetail implements ITransferObject, ICalculable {
 	@GeneratedValue
 	@Column(nullable=false)
     public Integer getId() {
-		return Id;
+		return id;
 	}
 
 	/**
@@ -70,7 +71,7 @@ public class OfferDetail implements ITransferObject, ICalculable {
 	 * @param id the id
 	 */
 	public void setId(Integer id) {
-		Id = id;
+		this.id = id;
 	}
 
 	/**
@@ -218,4 +219,27 @@ public class OfferDetail implements ITransferObject, ICalculable {
 	public double getTaxes() throws ManagerBeanException {
 		return 0;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof OfferDetail) {
+			OfferDetail o = (OfferDetail) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
+
 }

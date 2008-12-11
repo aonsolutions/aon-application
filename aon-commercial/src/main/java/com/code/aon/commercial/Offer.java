@@ -19,6 +19,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.commercial.dao.ICommercialAlias;
@@ -37,7 +38,7 @@ import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
-import com.code.aon.sales.Seller;
+import com.code.aon.seller.Seller;
 
 /**
  * Transfer Object that represents a Offer.
@@ -413,25 +414,27 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 		}
 		return null;
 	}
-	
-	/**
-	 * Gets the ordered detail list. Used in the reports
-	 * 
-	 * @return the ordered detail list
-	 */
-//	@Transient
-//	@SuppressWarnings("unchecked")
-//	public List getOrderedDetailList() {
-//		try {
-//			IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
-//			Criteria criteria = new Criteria();
-//			criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), getId());
-//			criteria.addOrder(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ITEM_PRODUCT_TYPE));
-//			criteria.addOrder(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ID));
-//			return offerDetailBean.getList(criteria);
-//		} catch (ManagerBeanException e) {
-//			LOGGER.log(Level.SEVERE, "Error obtaining offerDetail list", e);
-//		}
-//		return null;
-//	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof Offer) {
+			Offer o = (Offer) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
+
 }
