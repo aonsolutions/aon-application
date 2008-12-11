@@ -61,12 +61,15 @@ import com.code.aon.payroll.principales.Avisos;
 import com.code.aon.payroll.principales.Cliente;
 import com.code.aon.payroll.principales.Cuentas;
 import com.code.aon.payroll.principales.Domicilio;
+import com.code.aon.payroll.principales.autonomos.Autbases;
+import com.code.aon.payroll.principales.autonomos.Autonomos;
 import com.code.aon.payroll.principales.empresa.Actividad;
 import com.code.aon.payroll.principales.empresa.Emprdom;
 import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.payroll.principales.empresa.Emprlban;
 import com.code.aon.payroll.principales.persona.Embargo;
 import com.code.aon.payroll.principales.persona.Trabajador;
+import com.code.aon.payroll.principales.personas.Otrperc;
 import com.code.aon.payroll.tipos.Autorizacion;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Empresario;
@@ -150,7 +153,10 @@ public class PayrollAliasWriter {
 		        Percepcion.class.getName(),
 		        Linpercepcion.class.getName(),
 		        Embargo.class.getName(),
-		        Trabajador.class.getName()
+		        Trabajador.class.getName(),
+		        Otrperc.class.getName(),
+		        Autonomos.class.getName(),
+		        Autbases.class.getName()
 		        };		
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");
 		HibernateUtil.getSessionFactory();

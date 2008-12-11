@@ -69,7 +69,11 @@
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div>
-										<aon:commandLink value="#{menuBundle.principales_autonomos__autonomos}" disabled="true" />
+										<aon:commandLink value="#{menuBundle.principales_autonomos__autonomos}" action="autonomo_form" >
+										<aon:actionListener method="#{autonomo.onEditSearch}" />
+										<aon:actionListener method="#{autonomo.onSearch}" />
+										<aon:actionListener method="#{autonomo.onSelectFirst}" />
+									</aon:commandLink>
 									</aon:div>
 								</aon:div>
 							</aon:panel>

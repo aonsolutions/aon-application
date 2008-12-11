@@ -107,6 +107,9 @@
         <mapping class="com.code.aon.payroll.principales.persona.Embargo"/>
         <mapping class="com.code.aon.payroll.principales.persona.Trabajador"/>
         
+           <!-- PRINCIPALES-PERSONA -->			
+        <mapping class="com.code.aon.payroll.principales.autonomos.Autonomos"/>
+        <mapping class="com.code.aon.payroll.principales.autonomos.Autbases"/>
 	</session-factory>
 
 </hibernate-configuration>

@@ -958,6 +958,29 @@
 		</navigation-case>
 	</navigation-rule> 
 	
+	
+			<!-- =================== Autonomo - ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>autonomo_form</from-outcome>
+			<to-view-id>
+				/facelet/principales/autonomo/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>autonomo_list</from-outcome>
+			<to-view-id>
+				/facelet/principales/autonomo/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>autonomo_search</from-outcome>
+			<to-view-id>
+				/facelet/principales/autonomo/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
 </faces-config>
 
 
