@@ -311,6 +311,7 @@ public class Production implements ITransferObject {
      * @return List
      */
     @Transient
+    @SuppressWarnings("unchecked")
 	public List getDetailList() {
 		try {
 			IManagerBean productionDetailBean = BeanManager.getManagerBean(ProductionDetail.class);
@@ -328,7 +329,8 @@ public class Production implements ITransferObject {
      *
      * @return List
      */
-    @Transient
+	@Transient
+    @SuppressWarnings("unchecked")
     public List getExpensesList() {
         try {
             IManagerBean productionDetailBean = BeanManager.getManagerBean(ProductionExpense.class);
@@ -359,8 +361,8 @@ public class Production implements ITransferObject {
 	}
 
 	@Override
-	public int hashCode() {
-		return getId().hashCode();
-	}
-    
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
+
 }

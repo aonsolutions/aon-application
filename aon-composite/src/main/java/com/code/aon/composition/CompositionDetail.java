@@ -59,13 +59,6 @@ public class CompositionDetail implements ITransferObject {
     private double price;
 
     /**
-     * Constructor.
-     * 
-     */
-    public CompositionDetail() {
-    }
-
-    /**
      * Returns the unique key.
      * 
      * @return Integer
@@ -205,8 +198,8 @@ public class CompositionDetail implements ITransferObject {
 	}
 
 	@Override
-	public int hashCode() {
-		return getId().hashCode();
-	}
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
 
 }
