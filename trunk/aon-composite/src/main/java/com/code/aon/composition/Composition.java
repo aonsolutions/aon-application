@@ -101,13 +101,6 @@ public class Composition implements ITransferObject {
 	private Set<CompositionExpense> expenses = new HashSet<CompositionExpense>();
 
     /**
-     * Constructor.
-     * 
-     */
-    public Composition() {
-    }
-
-    /**
      * Returns the unique key.
      * 
      * @return Integer
@@ -335,6 +328,7 @@ public class Composition implements ITransferObject {
      * @return List
      */
 	@Transient
+	@SuppressWarnings("unchecked")
 	public List getDetailList() {
 		try {
 			IManagerBean compositionDetailBean = BeanManager.getManagerBean(CompositionDetail.class);
@@ -353,6 +347,7 @@ public class Composition implements ITransferObject {
      * @return List
      */
 	@Transient
+	@SuppressWarnings("unchecked")
 	public List getExpensesList() {
 		try {
 			IManagerBean compositionDetailBean = BeanManager.getManagerBean(CompositionExpense.class);
@@ -383,8 +378,8 @@ public class Composition implements ITransferObject {
 	}
 
 	@Override
-	public int hashCode() {
-		return getId().hashCode();
-	}
-	
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
+
 }
