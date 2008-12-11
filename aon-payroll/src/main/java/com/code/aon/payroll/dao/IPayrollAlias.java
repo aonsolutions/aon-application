@@ -72,6 +72,9 @@ import com.code.aon.payroll.avanzadas.kartel.Percepcion;
 import com.code.aon.payroll.avanzadas.kartel.Linpercepcion;
 import com.code.aon.payroll.principales.persona.Embargo;
 import com.code.aon.payroll.principales.persona.Trabajador;
+import com.code.aon.payroll.principales.personas.Otrperc;
+import com.code.aon.payroll.principales.autonomos.Autonomos;
+import com.code.aon.payroll.principales.autonomos.Autbases;
 
 /** 
 * Interface for holding entity properties constants.
@@ -3921,6 +3924,405 @@ public interface IPayrollAlias {
 	* Hibernate value: Trabajador.pariente
 	*/
 	String  TRABAJADOR_PARIENTE = TRABAJADOR_ENTRY.getAliasNames()[13];
+
+
+
+	/** 
+	* DAOConstantsEntry for Otrperc entity.
+	*/ 
+	DAOConstantsEntry OTRPERC_ENTRY = DAOConstants.getDAOConstant(Otrperc.class);
+
+	/** 
+	* Alias value: Otrperc_anio
+	* Hibernate value: Otrperc.anio
+	*/
+	String  OTRPERC_ANIO = OTRPERC_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Otrperc_aportaSs
+	* Hibernate value: Otrperc.aportaSs
+	*/
+	String  OTRPERC_APORTA_SS = OTRPERC_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Otrperc_base
+	* Hibernate value: Otrperc.base
+	*/
+	String  OTRPERC_BASE = OTRPERC_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Otrperc_cdg
+	* Hibernate value: Otrperc.cdg
+	*/
+	String  OTRPERC_CDG = OTRPERC_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Otrperc_clave
+	* Hibernate value: Otrperc.clave
+	*/
+	String  OTRPERC_CLAVE = OTRPERC_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Otrperc_concepto
+	* Hibernate value: Otrperc.concepto
+	*/
+	String  OTRPERC_CONCEPTO = OTRPERC_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Otrperc_empresa_cdg
+	* Hibernate value: Otrperc.empresa.cdg
+	*/
+	String  OTRPERC_EMPRESA_CDG = OTRPERC_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Otrperc_fecha
+	* Hibernate value: Otrperc.fecha
+	*/
+	String  OTRPERC_FECHA = OTRPERC_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Otrperc_importe
+	* Hibernate value: Otrperc.importe
+	*/
+	String  OTRPERC_IMPORTE = OTRPERC_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Otrperc_ingreso
+	* Hibernate value: Otrperc.ingreso
+	*/
+	String  OTRPERC_INGRESO = OTRPERC_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Otrperc_natret
+	* Hibernate value: Otrperc.natret
+	*/
+	String  OTRPERC_NATRET = OTRPERC_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: Otrperc_persona_apellido2
+	* Hibernate value: Otrperc.persona.apellido2
+	*/
+	String  OTRPERC_PERSONA_APELLIDO2 = OTRPERC_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: Otrperc_persona_cdg
+	* Hibernate value: Otrperc.persona.cdg
+	*/
+	String  OTRPERC_PERSONA_CDG = OTRPERC_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: Otrperc_persona_descripcion
+	* Hibernate value: Otrperc.persona.descripcion
+	*/
+	String  OTRPERC_PERSONA_DESCRIPCION = OTRPERC_ENTRY.getAliasNames()[13];
+
+	/** 
+	* Alias value: Otrperc_persona_nombre
+	* Hibernate value: Otrperc..persona.nombre
+	*/
+	String  OTRPERC_PERSONA_NOMBRE = OTRPERC_ENTRY.getAliasNames()[14];
+
+	/** 
+	* Alias value: Otrperc_prcret
+	* Hibernate value: Otrperc.prcret
+	*/
+	String  OTRPERC_PRCRET = OTRPERC_ENTRY.getAliasNames()[15];
+
+	/** 
+	* Alias value: Otrperc_retencion
+	* Hibernate value: Otrperc.retencion
+	*/
+	String  OTRPERC_RETENCION = OTRPERC_ENTRY.getAliasNames()[16];
+
+	/** 
+	* Alias value: Otrperc_subclave
+	* Hibernate value: Otrperc.subclave
+	*/
+	String  OTRPERC_SUBCLAVE = OTRPERC_ENTRY.getAliasNames()[17];
+
+
+
+	/** 
+	* DAOConstantsEntry for Autonomos entity.
+	*/ 
+	DAOConstantsEntry AUTONOMOS_ENTRY = DAOConstants.getDAOConstant(Autonomos.class);
+
+	/** 
+	* Alias value: Autonomos_baseelegida
+	* Hibernate value: Autonomos.baseelegida
+	*/
+	String  AUTONOMOS_BASEELEGIDA = AUTONOMOS_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Autonomos_basemaxima
+	* Hibernate value: Autonomos.basemaxima
+	*/
+	String  AUTONOMOS_BASEMAXIMA = AUTONOMOS_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Autonomos_baseminima
+	* Hibernate value: Autonomos.baseminima
+	*/
+	String  AUTONOMOS_BASEMINIMA = AUTONOMOS_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Autonomos_cdg
+	* Hibernate value: Autonomos.cdg
+	*/
+	String  AUTONOMOS_CDG = AUTONOMOS_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Autonomos_codpos
+	* Hibernate value: Autonomos.codpos
+	*/
+	String  AUTONOMOS_CODPOS = AUTONOMOS_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Autonomos_codregistro
+	* Hibernate value: Autonomos.codregistro
+	*/
+	String  AUTONOMOS_CODREGISTRO = AUTONOMOS_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Autonomos_cuenta
+	* Hibernate value: Autonomos.cuenta
+	*/
+	String  AUTONOMOS_CUENTA = AUTONOMOS_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Autonomos_dc
+	* Hibernate value: Autonomos.dc
+	*/
+	String  AUTONOMOS_DC = AUTONOMOS_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Autonomos_desregistro
+	* Hibernate value: Autonomos.desregistro
+	*/
+	String  AUTONOMOS_DESREGISTRO = AUTONOMOS_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Autonomos_entidad_cdg
+	* Hibernate value: Autonomos.entidad.cdg
+	*/
+	String  AUTONOMOS_ENTIDAD_CDG = AUTONOMOS_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Autonomos_fecalta
+	* Hibernate value: Autonomos.fecalta
+	*/
+	String  AUTONOMOS_FECALTA = AUTONOMOS_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: Autonomos_fecconstitucion
+	* Hibernate value: Autonomos.fecconstitucion
+	*/
+	String  AUTONOMOS_FECCONSTITUCION = AUTONOMOS_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: Autonomos_fecfingestion
+	* Hibernate value: Autonomos.fecfingestion
+	*/
+	String  AUTONOMOS_FECFINGESTION = AUTONOMOS_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: Autonomos_fecinigestion
+	* Hibernate value: Autonomos.fecinigestion
+	*/
+	String  AUTONOMOS_FECINIGESTION = AUTONOMOS_ENTRY.getAliasNames()[13];
+
+	/** 
+	* Alias value: Autonomos_fecmod
+	* Hibernate value: Autonomos.fecmod
+	*/
+	String  AUTONOMOS_FECMOD = AUTONOMOS_ENTRY.getAliasNames()[14];
+
+	/** 
+	* Alias value: Autonomos_fecnew
+	* Hibernate value: Autonomos.fecnew
+	*/
+	String  AUTONOMOS_FECNEW = AUTONOMOS_ENTRY.getAliasNames()[15];
+
+	/** 
+	* Alias value: Autonomos_folio
+	* Hibernate value: Autonomos.folio
+	*/
+	String  AUTONOMOS_FOLIO = AUTONOMOS_ENTRY.getAliasNames()[16];
+
+	/** 
+	* Alias value: Autonomos_hoja
+	* Hibernate value: Autonomos.hoja
+	*/
+	String  AUTONOMOS_HOJA = AUTONOMOS_ENTRY.getAliasNames()[17];
+
+	/** 
+	* Alias value: Autonomos_honorarios
+	* Hibernate value: Autonomos.honorarios
+	*/
+	String  AUTONOMOS_HONORARIOS = AUTONOMOS_ENTRY.getAliasNames()[18];
+
+	/** 
+	* Alias value: Autonomos_hormod
+	* Hibernate value: Autonomos.hormod
+	*/
+	String  AUTONOMOS_HORMOD = AUTONOMOS_ENTRY.getAliasNames()[19];
+
+	/** 
+	* Alias value: Autonomos_hornew
+	* Hibernate value: Autonomos.hornew
+	*/
+	String  AUTONOMOS_HORNEW = AUTONOMOS_ENTRY.getAliasNames()[20];
+
+	/** 
+	* Alias value: Autonomos_incapacidad
+	* Hibernate value: Autonomos.incapacidad
+	*/
+	String  AUTONOMOS_INCAPACIDAD = AUTONOMOS_ENTRY.getAliasNames()[21];
+
+	/** 
+	* Alias value: Autonomos_incremento
+	* Hibernate value: Autonomos.incremento
+	*/
+	String  AUTONOMOS_INCREMENTO = AUTONOMOS_ENTRY.getAliasNames()[22];
+
+	/** 
+	* Alias value: Autonomos_libro
+	* Hibernate value: Autonomos.libro
+	*/
+	String  AUTONOMOS_LIBRO = AUTONOMOS_ENTRY.getAliasNames()[23];
+
+	/** 
+	* Alias value: Autonomos_localidad
+	* Hibernate value: Autonomos.localidad
+	*/
+	String  AUTONOMOS_LOCALIDAD = AUTONOMOS_ENTRY.getAliasNames()[24];
+
+	/** 
+	* Alias value: Autonomos_mutua_cdg
+	* Hibernate value: Autonomos.mutua.cdg
+	*/
+	String  AUTONOMOS_MUTUA_CDG = AUTONOMOS_ENTRY.getAliasNames()[25];
+
+	/** 
+	* Alias value: Autonomos_nomvia
+	* Hibernate value: Autonomos.nomvia
+	*/
+	String  AUTONOMOS_NOMVIA = AUTONOMOS_ENTRY.getAliasNames()[26];
+
+	/** 
+	* Alias value: Autonomos_numero
+	* Hibernate value: Autonomos.numero
+	*/
+	String  AUTONOMOS_NUMERO = AUTONOMOS_ENTRY.getAliasNames()[27];
+
+	/** 
+	* Alias value: Autonomos_observaciones
+	* Hibernate value: Autonomos.observaciones
+	*/
+	String  AUTONOMOS_OBSERVACIONES = AUTONOMOS_ENTRY.getAliasNames()[28];
+
+	/** 
+	* Alias value: Autonomos_otrdir
+	* Hibernate value: Autonomos.otrdir
+	*/
+	String  AUTONOMOS_OTRDIR = AUTONOMOS_ENTRY.getAliasNames()[29];
+
+	/** 
+	* Alias value: Autonomos_otros
+	* Hibernate value: Autonomos.otros
+	*/
+	String  AUTONOMOS_OTROS = AUTONOMOS_ENTRY.getAliasNames()[30];
+
+	/** 
+	* Alias value: Autonomos_persona_cdg
+	* Hibernate value: Autonomos.persona.cdg
+	*/
+	String  AUTONOMOS_PERSONA_CDG = AUTONOMOS_ENTRY.getAliasNames()[31];
+
+	/** 
+	* Alias value: Autonomos_provincia_cdg
+	* Hibernate value: Autonomos.provincia.cdg
+	*/
+	String  AUTONOMOS_PROVINCIA_CDG = AUTONOMOS_ENTRY.getAliasNames()[32];
+
+	/** 
+	* Alias value: Autonomos_seccion
+	* Hibernate value: Autonomos.seccion
+	*/
+	String  AUTONOMOS_SECCION = AUTONOMOS_ENTRY.getAliasNames()[33];
+
+	/** 
+	* Alias value: Autonomos_sucursal1_id_cdg
+	* Hibernate value: Autonomos.sucursal1.id.cdg
+	*/
+	String  AUTONOMOS_SUCURSAL1_ID_CDG = AUTONOMOS_ENTRY.getAliasNames()[34];
+
+	/** 
+	* Alias value: Autonomos_sucursal1_id_codent
+	* Hibernate value: Autonomos.sucursal1.id.codent
+	*/
+	String  AUTONOMOS_SUCURSAL1_ID_CODENT = AUTONOMOS_ENTRY.getAliasNames()[35];
+
+	/** 
+	* Alias value: Autonomos_tipautonomo
+	* Hibernate value: Autonomos.tipautonomo
+	*/
+	String  AUTONOMOS_TIPAUTONOMO = AUTONOMOS_ENTRY.getAliasNames()[36];
+
+	/** 
+	* Alias value: Autonomos_tipovia_cdg
+	* Hibernate value: Autonomos.tipovia.cdg
+	*/
+	String  AUTONOMOS_TIPOVIA_CDG = AUTONOMOS_ENTRY.getAliasNames()[37];
+
+	/** 
+	* Alias value: Autonomos_tomo
+	* Hibernate value: Autonomos.tomo
+	*/
+	String  AUTONOMOS_TOMO = AUTONOMOS_ENTRY.getAliasNames()[38];
+
+
+
+	/** 
+	* DAOConstantsEntry for Autbases entity.
+	*/ 
+	DAOConstantsEntry AUTBASES_ENTRY = DAOConstants.getDAOConstant(Autbases.class);
+
+	/** 
+	* Alias value: Autbases_autonomos_cdg
+	* Hibernate value: Autbases.autonomos.cdg
+	*/
+	String  AUTBASES_AUTONOMOS_CDG = AUTBASES_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Autbases_base
+	* Hibernate value: Autbases.base
+	*/
+	String  AUTBASES_BASE = AUTBASES_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Autbases_cuota
+	* Hibernate value: Autbases.cuota
+	*/
+	String  AUTBASES_CUOTA = AUTBASES_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Autbases_fecfin
+	* Hibernate value: Autbases.fecfin
+	*/
+	String  AUTBASES_FECFIN = AUTBASES_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Autbases_id_cdg
+	* Hibernate value: Autbases.id.cdg
+	*/
+	String  AUTBASES_ID_CDG = AUTBASES_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Autbases_id_fecini
+	* Hibernate value: Autbases.id.fecini
+	*/
+	String  AUTBASES_ID_FECINI = AUTBASES_ENTRY.getAliasNames()[5];
 
 
 }

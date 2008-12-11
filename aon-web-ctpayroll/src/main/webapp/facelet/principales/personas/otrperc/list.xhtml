@@ -13,40 +13,52 @@
 
 	<ui:define name="content">
 
-		<aon:form id="delegacionList">
+		<aon:form id="otrpercList">
 			
-			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_organismos_entidades__delegacion}" />
-				<ui:param name="controller" value="#{delegacion}"/>
-				<ui:param name="reportKey" value="DelegacionList"/>
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_personas_otrperc}" />
+				<ui:param name="controller" value="#{otrperc}"/>
+			
 			</ui:include>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="delegacionData" value="#{delegacion.model}"
-					var="to" rows="20" rendered="#{delegacion.model.rowCount > 0}"
-					columnClasses="aon-width-150, aon-editDataTable-textColumn">
+				<aon:dataTable id="otrpercData" value="#{otrperc.model}"
+					var="to" rows="20" rendered="#{otrperc.model.rowCount > 0}"
+					columnClasses="aon-width-150, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
-					<aon:rowSelector action="delegacion_form" actionListener="#{delegacion.onSelect}" />
-					
+					<aon:rowSelector action="otrperc_form"
+						actionListener="#{otrperc.onSelect}" />
+
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
 						</f:facet>
-						<aon:outputText value="#{to.cdg}"/>
+						<aon:outputText value="#{to.cdg}" />
 					</aon:column>
 
- 					<aon:column>
+					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.aon_payroll_description}" />
+							<aon:outputText value="#{appBundle.aon_payroll_principales_empresa_cdg}" />
 						</f:facet>
-						<aon:outputText value="#{to.descripcion}"/>
+						<aon:outputText value="#{to.empresa.cdg}" />
 					</aon:column>
 
- 				</aon:dataTable>
 
-				<aon:dataScroller2 for="delegacionData"  showNote="true" />
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_principales_personas_otrperc_per}" />
+						</f:facet>
+						<aon:outputText value="#{to.persona.cdg}" />
+					</aon:column>
+
+
+
+				</aon:dataTable>
+
+				<aon:dataScroller2 for="otrpercData"  showNote="true" />
 
 			</aon:div>
 		</aon:form>

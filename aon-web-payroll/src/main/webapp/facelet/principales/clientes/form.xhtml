@@ -224,10 +224,11 @@
 											</aon:lookupButton>
 											<aon:inputText id="Pro_description"
 												value="#{(cliente.to.provincia.descripcion!=null)?(cliente.to.provincia.descripcion):('')}"
-												size="60" disabled="true" />
+												size="34" disabled="true" />
 										</aon:div>
 
-
+	                                    <aon:outputLabel
+											value="   " />
 
 									</aon:panelGrid>
 
@@ -284,8 +285,8 @@
 
 										<aon:outputLabel
 											value="#{appBundle.aon_payroll_principales_clientes_obser}" />
-										<h:inputTextarea value="#{cliente.to.obscli}" cols="76"
-											rows="4" size="200" maxlength="20" />
+										<h:inputTextarea value="#{cliente.to.obscli}" cols="50"
+											rows="4" size="150" maxlength="20" />
 
 
 

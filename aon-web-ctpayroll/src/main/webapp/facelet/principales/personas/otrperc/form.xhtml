@@ -13,19 +13,21 @@
 	<ui:define name="content">
 
 		<aon:form id="otrpercForm">
+             
 
-			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{appBundle.auxiliares_organismos_entidades__otrperc}" />
+					value="#{appBundle.aon_payroll_principales_personas_otrperc}" />
 				<ui:param name="controller" value="#{otrperc}" />
 				<ui:param name="reportKey" value="DelegacionList" />
 			</ui:include>
-
+  <aon:div id="clientes"
+				styleClass="aon-scroll-area aon-scroll-area-principales">
 			<aon:div id="otrperc" styleClass="aon-scroll-area">
 
 
-				<aon:div>
-					<aon:panelGrid columns="2" dir="true" width="100%"
+				<aon:div styleClass="aon-scroll-area">
+					<aon:panelGrid columns="4" dir="true" width="100%"
 						style="margin-bottom=2px;">
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_principales_personas_otrperc_num}" />
@@ -70,8 +72,8 @@
 				</aon:div>
 				<rich:spacer />
 
-				<aon:div>
-					<aon:panelGrid columns="2" dir="true" width="100%"
+				<aon:div styleClass="aon-scroll-area">
+					<aon:panelGrid columns="4" dir="true" width="100%"
 						style="margin-bottom=2px;">
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_principales_personas_otrperc_nom}" />
@@ -90,7 +92,7 @@
 					</aon:panelGrid>
 				</aon:div>
 
-				<aon:div>
+				<aon:div styleClass="aon-scroll-area">
 					<aon:panelGrid columns="4" dir="true" width="100%">
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_principales_personas_otrperc_fecha}" />
@@ -104,8 +106,12 @@
 							maxlength="20" />
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_principales_personas_otrperc_claveper}" />
-						<aon:inputText value="#{otrperc.to.clave}" size="60"
-							maxlength="20" />
+					
+							<aon:selectOneMenu 
+										value="#{otrperc.to.clave}">
+										<f:selectItems
+											value="#{otrperc.listaClaves}" />
+									</aon:selectOneMenu>
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_principales_personas_otrperc_subclave}" />
@@ -146,24 +152,32 @@
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_principales_personas_otrperc_nat}" />
-						<aon:inputText value="#{otrperc.to.natret}" size="60"
-							maxlength="20" />
+							<aon:selectOneRadio layout="pageDirection"
+										value="#{otrperc.to.natret}">
+										<f:selectItems
+											value="#{otrperc.listaRetribuciones}" />
+									</aon:selectOneRadio>
 
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_principales_personas_otrperc_ingresocuenta}" />
-						<aon:inputText value="#{otrperc.to.ingreso}" size="60"
-							maxlength="20" />
+											<aon:selectOneRadio layout="pageDirection"
+										value="#{otrperc.to.ingreso}">
+										<f:selectItems
+											value="#{otrperc.listaIngreso}" />
+									</aon:selectOneRadio>
+
 
 
 						</aon:panelGrid>
 							</aon:div>
 
 
-
+</aon:div>
 							</aon:div></aon:form>
 		<aon:lookupButtonPopup lookup="#{personaLookup}" />
-
+        	<aon:lookupButtonPopup lookup="#{empresaLookup}" />
+           
 	</ui:define>
 </ui:composition>
 

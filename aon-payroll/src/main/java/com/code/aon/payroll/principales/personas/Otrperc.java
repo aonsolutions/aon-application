@@ -13,7 +13,13 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.payroll.enumeration.Claveper;
+import com.code.aon.payroll.enumeration.Ingreso;
+import com.code.aon.payroll.enumeration.Retribuciones;
 import com.code.aon.payroll.principales.empresa.Empresa;
 
 /**
@@ -26,16 +32,16 @@ public class Otrperc  implements ITransferObject {
      private Integer cdg;
      private Date fecha;
      private String concepto;
-     private String clave;
+     private Claveper clave;
      private BigDecimal importe;
      private BigDecimal base;
      private BigDecimal prcret;
      private BigDecimal retencion;
      private BigDecimal aportaSs;
      private Integer anio;
-     private String ingreso;
+     private Ingreso ingreso;
      private String subclave;
-     private String natret;
+     private Retribuciones natret;
      private Empresa empresa;
      private Persona persona;
 
@@ -68,13 +74,13 @@ public class Otrperc  implements ITransferObject {
         this.concepto = concepto;
     }
     
-
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Claveper")} )
     @Column(name="clave", nullable=false, length=1)
-    public String getClave() {
+    public Claveper getClave() {
         return this.clave;
     }
     
-    public void setClave(String clave) {
+    public void setClave(Claveper clave) {
         this.clave = clave;
     }
     
@@ -138,13 +144,13 @@ public class Otrperc  implements ITransferObject {
         this.anio = anio;
     }
     
-	
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Ingreso")} )
     @Column(name="ingreso", length=1)
-    public String getIngreso() {
+    public Ingreso getIngreso() {
         return this.ingreso;
     }
     
-    public void setIngreso(String ingreso) {
+    public void setIngreso(Ingreso ingreso) {
         this.ingreso = ingreso;
     }
     
@@ -158,13 +164,13 @@ public class Otrperc  implements ITransferObject {
         this.subclave = subclave;
     }
     
-
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Retribuciones")} )
     @Column(name="natret", length=1)
-    public String getNatret() {
+    public Retribuciones getNatret() {
         return this.natret;
     }
     
-    public void setNatret(String natret) {
+    public void setNatret(Retribuciones natret) {
         this.natret = natret;
     }
     
