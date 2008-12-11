@@ -251,5 +251,4 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
         return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
     }
 
-	
 }

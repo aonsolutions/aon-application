@@ -87,5 +87,4 @@ public class CustomerSegment implements ITransferObject {
         return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
     }
 
-
 }
