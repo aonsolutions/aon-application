@@ -85,20 +85,24 @@ public class CommercialActivity implements ITransferObject {
         this.name = name;
     }
     
+	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-    	    return true;
-    	}
-    	if (obj instanceof CommercialActivity) {
-    		CommercialActivity d = (CommercialActivity) obj;
-    		if (! ObjectUtils.equals(getId(), d.getId()) ) {
-    			return false;
-    		}
-    		return true;
-    	}
-    	return false;
-	}    
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof CommercialActivity) {
+			CommercialActivity o = (CommercialActivity) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
 
+	@Override
     public int hashCode() {
         return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
     }

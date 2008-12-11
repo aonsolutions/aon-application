@@ -24,7 +24,7 @@
 		<mapping class="com.code.aon.commercial.TargetSegment"/>
 		<mapping class="com.code.aon.commercial.TargetSeller"/>
 		
-		<mapping class="com.code.aon.sales.Seller"/>
+		<mapping class="com.code.aon.seller.Seller"/>
 
 		<mapping class="com.code.aon.registry.Registry"/>
 		<mapping class="com.code.aon.registry.RegistryAddress"/>

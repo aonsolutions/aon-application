@@ -11,11 +11,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.ForeignKey;
 
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.sales.Seller;
+import com.code.aon.seller.Seller;
 
 /**
  * Transfer Object that represents a Commercail Tracking.
@@ -28,8 +29,8 @@ public class CommercialTracking implements ITransferObject {
 	
 	private static final long serialVersionUID = -3912751271868799471L;
 
-	/** The Id. */
-	private Integer Id;
+	/** The id. */
+	private Integer id;
 	
 	/** The date. */
 	private Date date;
@@ -65,7 +66,7 @@ public class CommercialTracking implements ITransferObject {
 	@GeneratedValue
 	@Column(nullable=false)
     public Integer getId() {
-		return Id;
+		return id;
 	}
 
 	/**
@@ -74,7 +75,7 @@ public class CommercialTracking implements ITransferObject {
 	 * @param id the id
 	 */
 	public void setId(Integer id) {
-		Id = id;
+		this.id = id;
 	}
 	
 	/**
@@ -217,4 +218,26 @@ public class CommercialTracking implements ITransferObject {
 		this.next = next;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof CommercialTracking) {
+			CommercialTracking o = (CommercialTracking) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
+
 }
