@@ -18,7 +18,9 @@
 		<mapping class="com.code.aon.sales.SalesAttachment"/>
 		<mapping class="com.code.aon.sales.SalesDetail"/>
 		<mapping class="com.code.aon.sales.SalesType"/>
-		<mapping class="com.code.aon.sales.Seller"/>
+
+		<!-- AON-SELLER Mapping files -->	
+		<mapping class="com.code.aon.seller.Seller"/>
 
 		<!-- AON-CUSTOMER Mapping files -->	
 		<mapping class="com.code.aon.customer.Customer"/>

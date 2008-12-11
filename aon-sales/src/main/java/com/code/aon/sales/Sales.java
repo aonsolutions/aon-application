@@ -36,6 +36,7 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.sales.dao.ISalesAlias;
 import com.code.aon.sales.enumeration.DocumentType;
 import com.code.aon.sales.enumeration.SalesStatus;
+import com.code.aon.seller.Seller;
 
 /**
  * Transfer Object that represents a Sale.
@@ -48,13 +49,6 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 	
 	/** The Constant LOGGER. */
 	private static final Logger LOGGER = Logger.getLogger(Sales.class.getName());
-	
-	/**
-	 * The Constructor. Sets TODAY to issueDate
-	 */
-	public Sales() {
-		this.issueDate = new Date();
-	}
 	
 	private static final long serialVersionUID = 2635528648512356470L;
 
@@ -101,6 +95,13 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 	private Set<SalesDetail> lines = new HashSet<SalesDetail>();
 
 	private WorkPlace workPlace;
+	
+	/**
+	 * The Constructor. Sets TODAY to issueDate
+	 */
+	public Sales() {
+		this.issueDate = new Date();
+	}
 	
 	/**
 	 * Gets the id.
