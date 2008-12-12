@@ -237,14 +237,6 @@
 			<value>company</value>
 		</managed-property>
 		<managed-property>
-			<property-name>listNavigation</property-name>
-			<value>company_record_data_list</value>
-		</managed-property>
-		<managed-property>
-			<property-name>formNavigation</property-name>
-			<value>company_record_data_form</value>
-		</managed-property>
-		<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>
 				<map-entry>

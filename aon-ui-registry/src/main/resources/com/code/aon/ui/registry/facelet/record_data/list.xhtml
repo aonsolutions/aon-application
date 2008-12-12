@@ -23,7 +23,7 @@
 		<aon:dataTable id="recordDataDataList" value="#{controller.model}"
 			rows="20" var="to" rendered="#{controller.model.rowCount > 0}">
 
-			<aon:rowSelector actionListener="#{controller.onSelect}" />
+			<aon:rowSelector actionListener="#{controller.onSelect}" reRender="recordDataContent" />
 			<aon:column width="85">
 				<f:facet name="header">
 					<aon:outputText
