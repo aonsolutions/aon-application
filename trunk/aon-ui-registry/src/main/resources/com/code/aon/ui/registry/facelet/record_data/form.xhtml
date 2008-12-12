@@ -10,13 +10,18 @@
 		src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 		<ui:param name="toolbarID" value="rdFormToolbar" />
 		<ui:param name="toolbarTitle" value="#{registryBundle.registry_rd_module}" />
+		<ui:param name="skipSearchButton" value="true" />
 
-		<aon:methodParam name="saveAction" value="force_refresh" />
-		<aon:methodParam name="cancelAction" value="force_refresh" />
-		<aon:methodParam name="removeAction" value="force_refresh" />
-		<aon:methodParam name="searchAction" value="force_refresh" />
-		<aon:methodParam name="resetAction" value="force_refresh" />
-		<aon:methodParam name="backAction" value="force_refresh" />
+		<aon:methodParam name="saveAction" value="" />
+		<ui:param name="saveButtonReRender" value="recordDataContent" />
+		<aon:methodParam name="cancelAction" value="" />
+		<ui:param name="cancelButtonReRender" value="recordDataContent" />
+		<aon:methodParam name="removeAction" value="" />
+		<ui:param name="removeButtonReRender" value="recordDataContent" />
+		<aon:methodParam name="resetAction" value="" />
+		<ui:param name="resetButtonReRender" value="recordDataContent" />
+		<aon:methodParam name="backAction" value="" />
+		<ui:param name="backButtonReRender" value="recordDataContent" />
 
 	</ui:include>
 	
