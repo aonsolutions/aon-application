@@ -45,6 +45,10 @@ public class ConfigurationController implements Serializable {
 	/** The properties. */
 	private Map<String, String> properties;
 	
+	private boolean versionChecked;
+	
+	private String version;
+	
 	/**
 	 * The Constructor.
 	 */
@@ -174,22 +178,24 @@ public class ConfigurationController implements Serializable {
 	 * @return the application version number
 	 */
 	public String getApplicationVersion() {
-		try {
-			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-			InputStream in = ec.getResourceAsStream("META-INF/MANIFEST.MF");
-			Manifest m = new Manifest(in);
-			Attributes attrs = m.getMainAttributes();
-			String version = attrs.getValue("Implementation-Version");
-			if(version != null){
-				LOGGER.info(version);
-			}else{
-				LOGGER.warning("Imposible determinar la versión");
+		if (! versionChecked ) {
+			this.versionChecked = true;
+			try {
+				ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+				InputStream in = ec.getResourceAsStream("META-INF/MANIFEST.MF");
+				Manifest m = new Manifest(in);
+				Attributes attrs = m.getMainAttributes();
+				String version = attrs.getValue("Implementation-Version");
+				if(version != null){
+					LOGGER.info(version);
+				} else {
+					LOGGER.warning("Imposible determinar la versión");
+				}
+			} catch (Throwable e) {
+				LOGGER.warning("Imposible determinar la versión" + e.getMessage());
 			}
-			return version;
-		} catch (Throwable e) {
-			LOGGER.warning("Imposible determinar la versión" + e.getMessage());
-			return null;
 		}
+		return version;
 	}
 	
     /**
