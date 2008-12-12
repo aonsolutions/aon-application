@@ -16,6 +16,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.rich.components</artifactId>
+			<version>3.4.0</version>
+			<scope>compile</scope>
+		</dependency>	
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
 			<version>3.3.0</version>
 			<scope>compile</scope>
