@@ -1,12 +1,8 @@
 package com.code.aon.payroll.principales.persona;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -17,6 +13,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.payroll.principales.personas.Persona;
 
 /**
  * Trabajador
@@ -46,8 +43,8 @@ public class Trabajador implements ITransferObject {
 	private Emprccc emprccc;
 	private Emprccos emprccos;
 	private Emprnif emprnif;
-	private Persona persona;
 	*/
+	private Persona persona;
 	
 	/**
 	 * Devuelve el Codigo de Trabajador
@@ -289,8 +286,8 @@ public class Trabajador implements ITransferObject {
 	public void setEmprnif(Emprnif emprnif) {
 		this.emprnif = emprnif;
 	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
+*/
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "codper", nullable = false)
 	public Persona getPersona() {
 		return this.persona;
@@ -298,7 +295,7 @@ public class Trabajador implements ITransferObject {
 
 	public void setPersona(Persona persona) {
 		this.persona = persona;
-	}*/
+	}
 
 	
 }

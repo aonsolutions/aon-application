@@ -118,7 +118,11 @@
 									</aon:commandLink>
 							</aon:div>
 							<aon:div>
-								<aon:commandLink value="#{menuBundle.principales_personas__embargo}" disabled="true" />
+								<aon:commandLink value="#{menuBundle.principales_personas__embargo}" action="embargo_form" >
+									<aon:actionListener method="#{embargo.onEditSearch}" />
+									<aon:actionListener method="#{embargo.onSearch}" />
+									<aon:actionListener method="#{embargo.onSelectFirst}" />
+								</aon:commandLink>
 							</aon:div>
 						</aon:div>
 					</aon:panel>

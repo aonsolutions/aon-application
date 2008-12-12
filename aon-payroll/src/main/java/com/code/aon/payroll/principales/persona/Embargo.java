@@ -15,7 +15,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.payroll.enumeration.Afectados;
 
 /**
  * Embargo
@@ -25,9 +29,9 @@ import com.code.aon.common.ITransferObject;
 public class Embargo implements ITransferObject {
 
 	private EmbargoPK id;
-	private int codper;
+	private Integer codper;
 	private String concepto;
-	private String afecta;
+	private Afectados afecta;
 	private BigDecimal importe;
 	private Date fecnew;
 	private Date hornew;
@@ -52,11 +56,11 @@ public class Embargo implements ITransferObject {
 	 * @return
 	 */
 	@Column(name = "codper", nullable = false, length = 4)
-	public int getCodper() {
+	public Integer getCodper() {
 		return this.codper;
 	}
 
-	public void setCodper(int codper) {
+	public void setCodper(Integer codper) {
 		this.codper = codper;
 	}
 
@@ -77,12 +81,13 @@ public class Embargo implements ITransferObject {
 	 * Devuelve las Nóminas a las que afecta
 	 * @return
 	 */
+	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Afectados")} )
 	@Column(name = "afecta", nullable = false, length = 1)
-	public String getAfecta() {
+	public Afectados getAfecta() {
 		return this.afecta;
 	}
 
-	public void setAfecta(String afecta) {
+	public void setAfecta(Afectados afecta) {
 		this.afecta = afecta;
 	}
 
@@ -155,7 +160,7 @@ public class Embargo implements ITransferObject {
 		this.hormod = hormod;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "cdg", insertable = false, updatable = false)
 	public Trabajador getTrabajador() {
 		return this.trabajador;

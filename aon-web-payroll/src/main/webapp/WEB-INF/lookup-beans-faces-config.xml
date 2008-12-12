@@ -369,4 +369,23 @@
 		</managed-property>
 	</managed-bean>	
 	
+				<!--  ************ trabajador  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>trabajadorLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>trabajadorLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.principales.persona.Trabajador</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/personas/embargos/trabajadorLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
 </faces-config>
