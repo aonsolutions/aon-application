@@ -103,17 +103,21 @@ hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN
 	<!--AVANZADAS-GESTEL -->			
     <mapping class="com.code.aon.payroll.avanzadas.gestel.Variable"/>
     <mapping class="com.code.aon.payroll.avanzadas.gestel.Linvariable"/>
-    <mapping class="com.code.aon.payroll.avanzadas.gestel.LinvariableId"/>
     <!-- AVANZADAS - KARTEL -->
     <mapping class="com.code.aon.payroll.avanzadas.kartel.Percepcion" />
     <mapping class="com.code.aon.payroll.avanzadas.kartel.Linpercepcion" />
     <!-- PRINCIPALES-PERSONA -->
     <mapping class="com.code.aon.payroll.principales.persona.Embargo" />
     <mapping class="com.code.aon.payroll.principales.persona.Trabajador" />
-    <mapping class="com.code.aon.payroll.principales.personas.Otrperc"/>
-    <mapping class="com.code.aon.payroll.principales.personas.Persona"/>
-     <!-- PRINCIPALES-PERSONA -->			
-     <mapping class="com.code.aon.payroll.principales.autonomos.Autonomos"/>
-     <mapping class="com.code.aon.payroll.principales.autonomos.Autbases"/>
+	<!-- Personas -->			
+	<mapping class="com.code.aon.payroll.principales.personas.Persona"/>
+	<mapping class="com.code.aon.payroll.principales.personas.Otrperc"/>
+	<!-- PRINCIPALES-PERSONA -->			
+    <mapping class="com.code.aon.payroll.principales.autonomos.Autonomos"/>
+    <mapping class="com.code.aon.payroll.principales.autonomos.Autbases"/>
+  
+        
+    
+    
   </session-factory>
 </hibernate-configuration>
