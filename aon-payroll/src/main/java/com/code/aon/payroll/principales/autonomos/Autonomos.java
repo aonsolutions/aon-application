@@ -10,10 +10,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Entidad;
@@ -315,7 +318,7 @@ public class Autonomos  implements ITransferObject {
     public void setBasemaxima(BigDecimal basemaxima) {
         this.basemaxima = basemaxima;
     }
-    
+
     @Column(name="incremento", length=1)
     public String getIncremento() {
         return this.incremento;
@@ -324,7 +327,7 @@ public class Autonomos  implements ITransferObject {
     public void setIncremento(String incremento) {
         this.incremento = incremento;
     }
-    
+
     @Column(name="incapacidad", length=1)
     public String getIncapacidad() {
         return this.incapacidad;
@@ -333,6 +336,25 @@ public class Autonomos  implements ITransferObject {
     public void setIncapacidad(String incapacidad) {
         this.incapacidad = incapacidad;
     }
+    
+    
+    
+	@Transient 
+	public Boolean getIncrementobol() {
+		return (getIncremento() != null && getIncremento().equals("N")?true:false );
+	}
+
+	public void setIncrementobol(Boolean bol) {
+		setIncremento( (bol!=null && bol)? "N":"" );
+	}
+	@Transient 
+	public Boolean getIncapacidadbol() {
+		return (getIncapacidad() != null && getIncapacidad().equals("N")?true:false );
+	}
+
+	public void setIncapacidadbol(Boolean bol) {
+		setIncapacidad( (bol!=null && bol)? "N":"" );
+	}
     
     
     @Temporal(TemporalType.DATE)
