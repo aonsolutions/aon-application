@@ -8,7 +8,7 @@
 		<ui:define name="toolbarContent">
 			<c:if test="#{!skipSaveButton}">		
 				<aon:commandButton id="#{toolbarID}-save"
-					value="#{bundle.aon_save}"
+					value="#{bundle.aon_save}" reRender="#{saveButtonReRender}"
 					action="#{saveAction}"
 					actionListener="#{saveActionListener}"
 					styleClass="aon-finding-toolbar-item aon-icon-accept"
@@ -16,7 +16,7 @@
 			</c:if>
 			<c:if test="#{!skipCancelButton}">			
 				<aon:confirmButton id="#{toolbarID}-cancel"
-					value="#{bundle.aon_cancel}"
+					value="#{bundle.aon_cancel}" reRender="#{cancelButtonReRender}"
 					rendered="#{formNew}" immediate="true" 
 					styleClass="aon-finding-toolbar-item aon-icon-cancel"
 					confirmTitle="#{bundle.aon_confirm_title}"
@@ -27,7 +27,7 @@
 			</c:if>								
 			<c:if test="#{!skipRemoveButton}">				
 				<aon:confirmButton id="#{toolbarID}-remove"
-					value="#{bundle.aon_remove}"
+					value="#{bundle.aon_remove}" reRender="#{removeButtonReRender}"
 					rendered="#{!formNew}" immediate="true"
 					styleClass="aon-finding-toolbar-item aon-icon-delete"
 					confirmTitle="#{bundle.aon_confirm_title}"
@@ -38,7 +38,7 @@
 			</c:if>
 			<c:if test="#{!skipSearchButton}">			
 				<aon:commandButton id="#{toolbarID}-search" 
-					value="#{bundle.aon_search}"
+					value="#{bundle.aon_search}" reRender="#{searchButtonReRender}"
 					rendered="#{!formNew}" immediate="true"
 					action="#{searchAction}" actionListener="#{searchActionListener}"
 					styleClass="aon-finding-toolbar-item aon-icon-search"
@@ -46,14 +46,15 @@
 			</c:if>
 			<c:if test="#{!skipResetButton}">								
 				<aon:commandButton id="#{toolbarID}-reset"
-					value="#{bundle.aon_reset}" rendered="#{!formNew}"
+					value="#{bundle.aon_reset}" reRender="#{resetButtonReRender}"
+					rendered="#{!formNew}"
 					action="#{resetAction}" actionListener="#{resetActionListener}"
 					styleClass="aon-finding-toolbar-item aon-icon-new"
 					accesskey="#{bundle.aon_key_new}" />
 			</c:if>															
 			<c:if test="#{!skipBackButton}">								
 				<aon:commandButton id="#{toolbarID}-back"
-					value="#{bundle.aon_back}"
+					value="#{bundle.aon_back}" reRender="#{backButtonReRender}"
 					rendered="#{!formNew}" immediate="true"
 					styleClass="aon-finding-toolbar-item aon-icon-cancel"
 					actionListener="#{backActionListener}"

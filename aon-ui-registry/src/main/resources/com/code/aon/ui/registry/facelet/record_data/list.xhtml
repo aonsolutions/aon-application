@@ -4,20 +4,14 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:f="http://java.sun.com/jsf/core">
 
-	<ui:decorate
-		template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+	<ui:include
+		src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 		<ui:param name="toolbarID" value="rdListToolbar" />		
-		<ui:param name="toolbarTitle"
-			value="#{registryBundle.registry_rd_module}" />
+		<ui:param name="toolbarTitle" value="#{registryBundle.registry_rd_module}" />
 		<ui:param name="skipSearchButton" value="true" />
-		<ui:param name="skipResetButton" value="true" />
-		<ui:define name="additionalToolbarContent">
-			<aon:commandButton value="#{bundle.aon_reset}"
-				actionListener="#{controller.onReset}"
-				styleClass="aon-finding-toolbar-item aon-icon-new"
-				accesskey="#{bundle.aon_key_new}" />
-		</ui:define>		
-	</ui:decorate>
+		<aon:methodParam name="resetAction" value="" />
+		<ui:param name="resetButtonReRender" value="recordDataContent" />		
+	</ui:include>
 	
 	<aon:div id="recordDataDiv" styleClass="aon-scroll-area">
 		<aon:dataTable id="recordDataDataList" value="#{controller.model}"
