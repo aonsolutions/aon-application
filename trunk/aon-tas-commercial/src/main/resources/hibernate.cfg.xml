@@ -27,7 +27,7 @@
 		
 		<mapping class="com.code.aon.company.resources.Employee"/>
 		
-		<mapping class="com.code.aon.sales.Seller"/>
+		<mapping class="com.code.aon.seller.Seller"/>
 		
 		<mapping class="com.code.aon.product.Item"/>
 		<mapping class="com.code.aon.product.Product"/>

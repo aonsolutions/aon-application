@@ -14,7 +14,7 @@ import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.sales.Seller;
+import com.code.aon.seller.Seller;
 import com.code.aon.ui.form.BasicController;
 
 /**

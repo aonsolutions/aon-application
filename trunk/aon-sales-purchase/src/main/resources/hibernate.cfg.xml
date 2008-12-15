@@ -19,10 +19,11 @@
 		<mapping class="com.code.aon.sales.Sales"/>
 		<mapping class="com.code.aon.sales.SalesDetail"/>
 		<mapping class="com.code.aon.sales.SalesType"/>
-		<mapping class="com.code.aon.sales.Seller"/>
 		<mapping class="com.code.aon.sales.PointOfSale"/>
 		<mapping class="com.code.aon.customer.Customer"/>
-		
+
+		<mapping class="com.code.aon.seller.Seller"/>
+
 		<mapping class="com.code.aon.purchase.Purchase"/>
 		<mapping class="com.code.aon.purchase.PurchaseDetail"/>
 		<mapping class="com.code.aon.purchase.Supplier"/>

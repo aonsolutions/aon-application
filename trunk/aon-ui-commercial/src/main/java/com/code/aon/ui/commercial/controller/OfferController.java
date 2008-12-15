@@ -32,7 +32,7 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
-import com.code.aon.sales.Seller;
+import com.code.aon.seller.Seller;
 import com.code.aon.sales.dao.ISalesAlias;
 import com.code.aon.sales.enumeration.DocumentType;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
