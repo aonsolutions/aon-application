@@ -12,7 +12,6 @@ import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.BillingPeriod;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
@@ -28,22 +27,6 @@ public class SaleInvoiceControllerListener extends ControllerAdapter {
 	
 	private static final Logger LOGGER = Logger.getLogger(SaleInvoiceControllerListener.class.getName());
 
-//	private static final String SALE_INVOICE_DETAIL_CONTROLLER_NAME = "saleInvoiceDetail";
-	
-	@Override
-	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
-		Criteria criteria;
-		try {
-			criteria = event.getController().getCriteria();
-			criteria.addEqualExpression(event.getController().getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);
-			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE));
-			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.INVOICE_SERIES));
-			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.INVOICE_NUMBER));
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e);
-		}
-	}
-	
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		Invoice invoice = (Invoice)event.getController().getTo();
