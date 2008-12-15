@@ -152,7 +152,7 @@ public class FinanceCollectionsController {
 	public List<SelectItem> getInvoiceTypes() {
 		if (invoiceTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			LinkedList<SelectItem> invoiceTypes = new LinkedList<SelectItem>();
+			invoiceTypes = new LinkedList<SelectItem>();
 			for (InvoiceType type: InvoiceType.values()) {
 				String name = type.getName(locale);
 				SelectItem item = new SelectItem(type, name);
