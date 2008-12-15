@@ -121,26 +121,4 @@
 		</aon:div>
 	</aon:div>
 
-	<!-- 
-	<aon:outputLabel for="RecordData_attach_id"
-		value="#{bundle.aon_fileupload_element}" />
-	<aon:inputFileUpload styleClass="aon-form-input-text"
-		id="RecordData_attach_id"
-		rendered="#{recordData.to.attach.id == null}"
-		value="#{recordData.file}" storage="file" size="40" />
-	<aon:panelGrid rendered="#{recordData.to.attach.id != null}">
-		<aon:inputText id="RecordData_attach"
-			value="#{recordData.to.attach.description}" size="64" disabled="true"
-			rendered="#{recordData.to.attach.id != null}" />
-		<aon:div>
-			<aon:commandButton id="download_lnk" styleClass="aon-form-button"
-				onclick="downloadWindow('placeList', '${facesContext.externalContext.requestContextPath}${downloadPage}'); return false;"
-				value="#{bundle.aon_fileupload_download}" />
-			<aon:commandButton id="remove_lnk" styleClass="aon-form-button"
-				actionListener="#{recordData.onAttachRemove}"
-				value="#{bundle.aon_fileupload_remove}" />
-		</aon:div>
-	</aon:panelGrid>
-	-->
-
 </ui:composition>
