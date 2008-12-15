@@ -4,25 +4,19 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.commercial.Offer;
-import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
 import com.code.aon.config.util.SeriesNumberUtil;
-import com.code.aon.customer.Customer;
-import com.code.aon.customer.dao.ICustomerAlias;
-import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.faces.component.richfaces.lookup.LookupChangeEvent;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -30,17 +24,8 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.sales.Sales;
-import com.code.aon.sales.SalesDetail;
 import com.code.aon.seller.Seller;
-import com.code.aon.sales.dao.ISalesAlias;
-import com.code.aon.sales.enumeration.DocumentType;
-import com.code.aon.sales.enumeration.SalesDetailStatus;
-import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
-import com.code.aon.ui.util.AonUtil;
 
 /**
  * Controller used in the offer maintenance.
@@ -119,7 +104,7 @@ public class OfferController extends BasicController {
 		return 0;
 	}
 	
-	public void sellerData(LookupChangeEvent event) throws ManagerBeanException {
+	public void sellerData(LookupChangeEvent event) {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Seller seller = (Seller)event.getNewValue();
 			((Offer)this.getTo()).setSeller(seller);
@@ -134,8 +119,9 @@ public class OfferController extends BasicController {
 		return getPriceStrategy().getTotalPrice((ICalculableContainer)getTo(), ((Offer)getTo()).getTarget());
 	}
 
-	@SuppressWarnings("unused")
+	
 	/*
+	@SuppressWarnings("unused")
     public void onReport(ActionEvent event) {
         ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
         manager.setReportKey("offer");
@@ -146,7 +132,7 @@ public class OfferController extends BasicController {
 	/***************************************************************************************
 	 *	BOTON DE TRASPASO A PEDIDO CREADO PARA DEMO DEL 03/12/2008. BORRAR POSTERIORMENTE 
 	 ***************************************************************************************/
-
+/*
 	public void createSales(ActionEvent event) throws ManagerBeanException {
 		Offer offer = (Offer)getTo();
 		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
@@ -228,6 +214,7 @@ public class OfferController extends BasicController {
 				" No se puede resolver la dirección del servidor de correo saliente (pop3.esferalia.com)."
 				);
 	}
+*/
 	/***************************************************************************************
 	 *	BOTON DE TRASPASO A PEDIDO CREADO PARA DEMO DEL 03/12/2008. BORRAR POSTERIORMENTE 
 	 ***************************************************************************************/

@@ -487,7 +487,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	}
 
 	@SuppressWarnings("unchecked")
-	public RecordData getCompanyRecordData() throws IOException, ManagerBeanException{
+	public RecordData getCompanyRecordData() throws ManagerBeanException{
 		IManagerBean recordDataBean = BeanManager.getManagerBean(RecordData.class);
 		Company company = (Company)getTo();
 		Criteria criteria = new Criteria();
