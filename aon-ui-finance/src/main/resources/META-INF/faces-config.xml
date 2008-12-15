@@ -940,6 +940,7 @@
 				<value>#{saleInvoiceDetailListener}</value>
 				<value>#{saleInvoiceFinanceListener}</value>
 				<value>#{saleInvoiceHeaderControllerListener}</value>
+				<value>#{saleInvoiceSearch}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -948,6 +949,14 @@
 		<managed-bean-name>saleInvoiceControllerListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.finance.event.SaleInvoiceControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>saleInvoiceSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.SaleInvoiceSearchListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
