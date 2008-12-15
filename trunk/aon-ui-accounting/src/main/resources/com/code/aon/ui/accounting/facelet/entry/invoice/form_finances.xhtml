@@ -92,7 +92,7 @@
 
 			<aon:column width="300">
 				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_bank}" />
+					<aon:outputText value="#{configBundle.config_bank}" />
 				</f:facet>
 				<aon:outputText value="#{financeTo.bank.name}"
 					rendered="#{financeTo!=invoiceEntry.currentFinance}" />
@@ -137,7 +137,7 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_bank_account}" />
+					<aon:outputText value="#{configBundle.config_bank_account}" />
 				</f:facet>
 				<aon:outputText rendered="#{financeTo!=invoiceEntry.currentFinance}"
 					value="#{financeTo.bankAccount}">

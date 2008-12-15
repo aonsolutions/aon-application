@@ -78,7 +78,7 @@
 						value="#{leasingEntry.leasing.review}" size="16" maxlength="16" />
 
 					<aon:outputLabel for="RegistryBank_id"
-						value="#{financeBundle.finance_bank}" />
+						value="#{configBundle.config_bank}" />
 					<aon:selectOneMenu id="RegistryBank_id"
 						value="#{leasingEntry.leasing.registryBank.id}"
 						reRender="RegistryBank_bankAccount"
@@ -88,7 +88,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="RegistryBank_bankAccount"
-						value="#{financeBundle.finance_bank_account}" />
+						value="#{configBundle.config_bank_account}" />
 					<aon:inputText id="RegistryBank_bankAccount" disabled="true"
 						value="#{leasingEntry.leasing.registryBank.bankAccount}"
 						size="35" />
