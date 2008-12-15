@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.customer.Customer;
 
 public class InvoicingParameters {
@@ -22,7 +23,7 @@ public class InvoicingParameters {
 	
 	private SecurityLevel securityLevel;
 	
-	private Integer workPlaceId;
+	private WorkPlace workPlace;
 	
 	
 	public Month getMonth() {
@@ -81,11 +82,11 @@ public class InvoicingParameters {
 		this.securityLevel = securityLevel;
 	}
 
-	public Integer getWorkPlaceId() {
-		return workPlaceId;
+	public WorkPlace getWorkPlace() {
+		return workPlace;
 	}
 
-	public void setWorkPlaceId(Integer workPlaceId) {
-		this.workPlaceId = workPlaceId;
+	public void setWorkPlace(WorkPlace workPlace) {
+		this.workPlace = workPlace;
 	}
 }
