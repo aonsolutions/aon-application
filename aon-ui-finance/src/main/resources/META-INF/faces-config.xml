@@ -913,6 +913,19 @@
 			<value>saleInvoice</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Invoice_issueDate,Invoice_series,Invoice_number</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Invoice_type</key>
+					<value>#{financeCollections.invoiceTypes[1].value}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>				
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
