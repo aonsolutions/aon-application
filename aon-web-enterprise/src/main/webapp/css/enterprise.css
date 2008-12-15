@@ -46,3 +46,8 @@
  	padding:5px 0 5px 12px;
  	border-bottom:#f2f2f2 1px solid;
 }
+
+.aon-panel-title {
+	text-transform:uppercase;
+	margin-bottom:0.5em;	
+}
