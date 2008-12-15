@@ -102,7 +102,7 @@
 					</aon:inputText>
 
 					<aon:outputLabel for="RegistryBank_Lookup_id"
-						value="#{financeBundle.finance_bank}" />
+						value="#{configBundle.config_bank}" />
 					<aon:selectOneMenu id="RegistryBank_Lookup_id"
 						value="#{financePayment.registryBank}"
 						reRender="RegistryBank_Lookup_bankAccount">
@@ -111,7 +111,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="RegistryBank_Lookup_bankAccount"
-						value="#{financeBundle.finance_bank_account}" />
+						value="#{configBundle.config_bank_account}" />
 					<aon:inputText id="RegistryBank_Lookup_bankAccount"
 						value="#{financePayment.registryBank.bankAccount}"
 						disabled="true" size="40" />
