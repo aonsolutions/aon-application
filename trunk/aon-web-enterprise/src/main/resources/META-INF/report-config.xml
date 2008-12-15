@@ -8,4 +8,8 @@
 	<default-config>
 		<fetch-mode paginated="false" />
 	</default-config>
+
+	<report id="dummyReport" description="Report para cumplir con la DTD">
+		<template path=""/>
+	</report>
 </report-config>

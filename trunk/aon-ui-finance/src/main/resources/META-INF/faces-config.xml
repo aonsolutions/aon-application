@@ -20,7 +20,7 @@
 	</managed-bean>
 
 
-	<!-- **** CUSTOMER LISTENERS **** -->
+	<!-- **** CUSTOMER LISTENERS ****  
 	<managed-bean>
 		<managed-bean-name>customerListeners</managed-bean-name>
 	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
@@ -32,8 +32,9 @@
 			<value>#{invoiceRegistryVetoListener}</value>
 		</list-entries>
 	</managed-bean>
-
-	<!-- **** SUPPLIER LISTENERS **** -->
+	-->
+	
+	<!-- **** SUPPLIER LISTENERS ****   
 	<managed-bean>
 		<managed-bean-name>supplierListeners</managed-bean-name>
 	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
@@ -45,9 +46,9 @@
 			<value>#{invoiceRegistryVetoListener}</value>
 		</list-entries>
 	</managed-bean>
+	-->
 	
-
-	<!-- ********* INVOICE REGISTRY VETO-LISTENER ************** -->
+	<!-- ********* INVOICE REGISTRY VETO-LISTENER ************** 
 	<managed-bean>
 		<managed-bean-name>invoiceRegistryVetoListener</managed-bean-name>
 		<managed-bean-class>
@@ -55,17 +56,7 @@
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-
-	<!-- ********* CREDITOR SCOPE LISTENER ************** -->
-	<managed-bean>
-		<managed-bean-name>creditorScopeListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>aliasName</property-name>
-			<value>Creditor_scope_id</value>
-		</managed-property>
-	</managed-bean>
+	-->
 	
 	<!-- ************* FBATCH ***************** -->
 	<managed-bean>
@@ -445,7 +436,9 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+<!-- 				
 				<value>#{invoiceRegistryVetoListener}</value>
+ -->
 				<value>#{creditorScopeListener}</value>
 				<value>#{creditorAddressListener}</value>
 				<value>#{creditorMediaListener}</value>
@@ -454,6 +447,17 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ********* CREDITOR SCOPE LISTENER ************** --> 
+	<managed-bean>
+		<managed-bean-name>creditorScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>Creditor_scope_id</value>
+		</managed-property>
+	</managed-bean>
+
 	<!--  **** CREDITOR ADDRESS **** -->
 	<managed-bean>
 		<managed-bean-name>creditorAddress</managed-bean-name>
@@ -674,10 +678,10 @@
 		</managed-property>
 	</managed-bean>
 	
-	<!-- ************* INVOICINGGROUPDETAIL ***************** -->
+	<!-- ************* INVOICING GROUP DETAIL ***************** -->
 	<managed-bean>
 		<managed-bean-name>invoicingGroupDetail</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.finance.controller.InvoicingGroupDetailController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -714,7 +718,7 @@
 	<managed-bean>
 		<managed-bean-name>invoiceRemover</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.controller.InvoiceRemover
+			com.code.aon.ui.finance.controller.InvoiceRemoverController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -802,6 +806,38 @@
 			com.code.aon.ui.finance.util.print.FinancePrinter
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************* CUSTOMER FEE ***************** -->
+	<managed-bean>
+		<managed-bean-name>customerFee</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.CustomerFeeController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.CustomerFee</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{customerFeeControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>customerFeeControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.CustomerFeeControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************ FEE CHECKING PRINTER ************* -->

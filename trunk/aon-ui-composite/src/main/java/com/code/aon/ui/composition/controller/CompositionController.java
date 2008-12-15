@@ -145,7 +145,7 @@ public class CompositionController extends BasicController {
      * 
      * @return double
      */
-    public double getTotalSale() throws ManagerBeanException {
+    public double getTotalSale()  {
         return (this.getTo() != null) ? getPriceProvider().getTotalSale((Composition)this.getTo()) : 0;
     }
 
@@ -154,7 +154,7 @@ public class CompositionController extends BasicController {
      * 
      * @return double
      */
-    public double getProfit() throws ManagerBeanException {
+    public double getProfit() {
         return (this.getTo() != null) ? getPriceProvider().getProfit((Composition)this.getTo()) : 0;
     }
 
@@ -163,7 +163,7 @@ public class CompositionController extends BasicController {
      * 
      * @return double
      */
-    public double getPurchaseProfit() throws ManagerBeanException {
+    public double getPurchaseProfit() {
         return (this.getTo() != null) ? getPriceProvider().getPurchaseProfit((Composition)this.getTo()) : 0;
     }
 
@@ -172,7 +172,7 @@ public class CompositionController extends BasicController {
      * 
      * @return double
      */
-    public double getSaleProfit() throws ManagerBeanException {
+    public double getSaleProfit() {
         return (this.getTo() != null) ? getPriceProvider().getSaleProfit((Composition)this.getTo()) : 0;
     }
 
@@ -181,7 +181,7 @@ public class CompositionController extends BasicController {
      * 
      * @return double
      */
-    public double getSaleQuantity() throws ManagerBeanException {
+    public double getSaleQuantity() {
         return (this.getTo() != null) ? getPriceProvider().getSaleQuantity((Composition)this.getTo()) : 0;
     }
 
@@ -190,7 +190,7 @@ public class CompositionController extends BasicController {
      * 
      * @return double
      */
-    public double getSalePercentage() throws ManagerBeanException {
+    public double getSalePercentage() {
         return (this.getTo() != null) ? getPriceProvider().getSalePercentage((Composition)this.getTo()) : 0;
     }
 

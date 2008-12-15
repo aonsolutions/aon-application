@@ -51,20 +51,18 @@ import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.InvoiceStatus;
-import com.code.aon.finance.invoicing.FinanceTrackingWriter;
+import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
-import com.code.aon.report.OutputFormat;
 import com.code.aon.ui.finance.csb.CSB19Writer;
 import com.code.aon.ui.finance.csb.CSB32Writer;
 import com.code.aon.ui.finance.csb.CSB58Writer;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -327,7 +325,7 @@ public class FBatchController extends BasicController implements ICollectionProv
     	return query.list(); 
 	}
 
-	public boolean isDiskOk() throws ManagerBeanException {
+	public boolean isDiskOk() {
 		int errors = 0;
 		if (csbOutput != null) {
 			errors = csbOutput.getErrors().size();
@@ -567,9 +565,10 @@ public class FBatchController extends BasicController implements ICollectionProv
     	return null;
 	}
 
-    public void onReport(ActionEvent event) {
-        ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
-        manager.setReportKey("fBatch");
-        manager.setOutputFormat(OutputFormat.PDF);
-    }
+//    public void onReport(ActionEvent event) {
+//        ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
+//        manager.setReportKey("fBatch");
+//        manager.setOutputFormat(OutputFormat.PDF);
+//    }
+	
 }

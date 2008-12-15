@@ -25,8 +25,8 @@
 
 
 	<field name="payMethod" class="com.code.aon.config.PayMethod"/>
-	<field name="bank" class="com.code.aon.finance.Bank"/>
-	<field name="bankAccount" class="com.code.aon.finance.BankAccount"/>
+	<field name="bank" class="com.code.aon.config.Bank"/>
+	<field name="bankAccount" class="com.code.aon.config.BankAccount"/>
 	<field name="dueDate" class="java.util.Date"/>
 	<field name="amount" class="java.lang.Double"/>
 

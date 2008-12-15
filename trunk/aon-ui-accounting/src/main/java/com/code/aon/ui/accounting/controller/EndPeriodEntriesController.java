@@ -334,8 +334,7 @@ public class EndPeriodEntriesController {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List getUnbalancedAccounts(String period, AccountEntryType accountEntryType)
-			throws ManagerBeanException {
+	private List getUnbalancedAccounts(String period, AccountEntryType accountEntryType) {
 		Session session = HibernateUtil.getSession();
 		StringWriter sw = new StringWriter();
 		sw

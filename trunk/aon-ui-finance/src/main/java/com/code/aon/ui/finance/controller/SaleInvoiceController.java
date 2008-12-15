@@ -1,8 +1,5 @@
 package com.code.aon.ui.finance.controller;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -26,16 +23,11 @@ import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.DefaultAccounts;
-import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.company.WorkPlace;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Series;
 import com.code.aon.config.dao.IConfigAlias;
@@ -49,23 +41,14 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
-import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
-import com.code.aon.finance.invoicing.ConsoleInvoicingFeedBack;
-import com.code.aon.finance.invoicing.CustomerFeeInvoicingDAO;
-import com.code.aon.finance.invoicing.CustomerFeeInvoicingEngine;
-import com.code.aon.finance.invoicing.FinanceGenerator;
-import com.code.aon.finance.invoicing.IInvoicingEngine;
-import com.code.aon.finance.invoicing.InvoicePriceStrategy;
-import com.code.aon.finance.invoicing.InvoicingEngineFactory;
-import com.code.aon.finance.invoicing.InvoicingException;
-import com.code.aon.finance.invoicing.InvoicingParameters;
+import com.code.aon.finance.invoicing.finance.FinanceGenerator;
+import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
-import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
@@ -73,11 +56,6 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.warehouse.controller.DeliveryController;
-import com.code.aon.warehouse.Delivery;
-import com.code.aon.warehouse.DeliveryDetail;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
-import com.code.aon.warehouse.enumeration.DeliveryStatus;
 
 public class SaleInvoiceController extends BasicController {
 	
@@ -85,9 +63,9 @@ public class SaleInvoiceController extends BasicController {
 	private static final String SALE_INVOICE_DETAIL_CONTROLLER_NAME = "saleInvoiceDetail";
 	private static final String SALE_INVOICE_FINANCE_CONTROLLER_NAME = "saleInvoiceFinance";
 
-	private InvoicingParameters invoicingParams;
+//	private InvoicingParameters invoicingParams;
 
-	private IInvoicingEngine engine;
+//	private IInvoicingEngine engine;
 	
 	private IPriceStrategy priceStrategy;
 	
@@ -99,7 +77,9 @@ public class SaleInvoiceController extends BasicController {
 	
 	private CustomerValidationManager cvm;
 
-	//	private String seriesDescripition;
+
+	/*
+	private String seriesDescripition;
 
 	public SaleInvoiceController() {
 		this.invoicingParams = new InvoicingParameters();
@@ -108,7 +88,7 @@ public class SaleInvoiceController extends BasicController {
 	public InvoicingParameters getInvoicingParams() {
 		return invoicingParams;
 	}
-/*
+
 	public String getSeriesDescripition() {
 		return seriesDescripition;
 	}
@@ -116,10 +96,11 @@ public class SaleInvoiceController extends BasicController {
 	public void setSeriesDescripition(String seriesDescripition) {
 		this.seriesDescripition = seriesDescripition;
 	}
-*/
+
 	public void setInvoicingParams(InvoicingParameters invoicingParams) {
 		this.invoicingParams = invoicingParams;
 	}
+
 	
 	public void onInitialize(ActionEvent event) throws ManagerBeanException{
 		this.invoicingParams = new InvoicingParameters();
@@ -131,7 +112,8 @@ public class SaleInvoiceController extends BasicController {
 		invoicingParams.setMonth(Month.getMonthByValue(calendar.get(Calendar.MONTH)));
 		invoicingParams.setYear(calendar.get(Calendar.YEAR));
 	}
-
+	 */
+	
 	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new Criteria();
@@ -157,14 +139,16 @@ public class SaleInvoiceController extends BasicController {
 				((Invoice)this.getTo()).setNumber(number);
 				((Invoice)this.getTo()).setSecurityLevel(securityLevel);
 			}
+/*			
 			if(getInvoicingParams() != null){
 				getInvoicingParams().setNumber(number);
 				getInvoicingParams().setSecurityLevel(securityLevel);
-//				getInvoicingParams().setWorkPlaceId(obtainSeriesWorkPlace((String)event.getNewValue()));
+				getInvoicingParams().setWorkPlaceId(obtainSeriesWorkPlace((String)event.getNewValue()));
 			}
+*/
 		}
 	}
-
+/*
 	public void onSeriesChangedInvoicing(ValueChangeEvent event) throws ManagerBeanException{
 		if (event.getPhaseId() == PhaseId.ANY_PHASE) {
 			event.setPhaseId(PhaseId.INVOKE_APPLICATION );
@@ -174,7 +158,7 @@ public class SaleInvoiceController extends BasicController {
 			getInvoicingParams().setNumber(obtainMaxNumber((String)event.getNewValue()));	
 		}
 	}
-
+*/
 	@SuppressWarnings("unchecked")
 	private SecurityLevel obtainSeriesSecurityLevel(String seriesId) throws ManagerBeanException {
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
@@ -206,7 +190,7 @@ public class SaleInvoiceController extends BasicController {
 		}
 		return null;
 	}
-*/
+
 	@SuppressWarnings("unchecked")
 	public void onInvoice(ActionEvent event) throws InvoicingException, ManagerBeanException, ExpressionException {
 	    IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
@@ -237,6 +221,7 @@ public class SaleInvoiceController extends BasicController {
     		this.onSearch(null);
         }
     }
+*/
 
     public List<SelectItem> getAddresses() {
 		return addresses;
@@ -273,7 +258,7 @@ public class SaleInvoiceController extends BasicController {
 		this.addresses = addresses;
 	}
 
-	public String getAddress() throws ManagerBeanException {
+	public String getAddress() {
 		RegistryAddress rAddress = ((Invoice)this.getTo()).getRegistryAddress();
 		String address = (rAddress!=null)?rAddress.getAddress()+" "+rAddress.getAddress2()+" "+rAddress.getAddress3():"";
 		BasicController addressController = (BasicController)FormUtil.getController(SALE_INVOICE_ADDRESS_CONTROLLER_NAME);
@@ -284,7 +269,7 @@ public class SaleInvoiceController extends BasicController {
 		return address;
 	}
 
-	public String getCity() throws ManagerBeanException {
+	public String getCity() {
 		RegistryAddress rAddress = ((Invoice)this.getTo()).getRegistryAddress();
 		String city = (rAddress!=null)?rAddress.getCity():"";
 		BasicController addressController = (BasicController)FormUtil.getController(SALE_INVOICE_ADDRESS_CONTROLLER_NAME);
@@ -413,15 +398,14 @@ public class SaleInvoiceController extends BasicController {
 			if(existFinanceTrackings(financeList)){
 				AonUtil.addInfoMessage("No se puede generar vencimientos automaticamente. Alguno de ellos tiene operaciones anteriores.");
 				throw new AbortProcessingException();
-			}else{
-				Iterator iter = financeList.iterator();
-				while(iter.hasNext()){
-					Finance finance = (Finance)iter.next();
-					financeBean.remove(finance);
-				}
-				getFinanceGenerator().generateFinances(invoice, invoice.getRegistry(), getPriceStrategy().getTotalPrice(invoice, invoice));
-				feeFinanceController.onSearch(null);
 			}
+			Iterator iter = financeList.iterator();
+			while(iter.hasNext()){
+				Finance finance = (Finance)iter.next();
+				financeBean.remove(finance);
+			}
+			getFinanceGenerator().generateFinances(invoice, invoice.getRegistry(), getPriceStrategy().getTotalPrice(invoice, invoice));
+			feeFinanceController.onSearch(null);
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanException("Error generating finances for invoice with id= " + invoice.getId(),e);
 		}
@@ -442,12 +426,12 @@ public class SaleInvoiceController extends BasicController {
 		return false;
 	}
 
-	public void onRecordInvoice(ActionEvent event) throws ManagerBeanException, ExpressionException{
+	public void onRecordInvoice(ActionEvent event) throws ManagerBeanException{
 		Invoice invoice = (Invoice)this.getTo();
 		recordInvoice(invoice);
 	}
 	
-	public void onUnrecordInvoice(ActionEvent event) throws ManagerBeanException, ExpressionException{
+	public void onUnrecordInvoice(ActionEvent event) throws ManagerBeanException{
 		Invoice invoice = (Invoice)this.getTo();
 		removeInvoiceDetailAccount(invoice);
 		getAccountEntryInvoiceWriter().unrecordInvoice(invoice);
@@ -472,7 +456,7 @@ public class SaleInvoiceController extends BasicController {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void recordInvoice(Invoice invoice) throws ManagerBeanException, ExpressionException {
+	private void recordInvoice(Invoice invoice) throws ManagerBeanException{
 		AccountEntry entry = new AccountEntry();
 		entry.setAccountPeriod(AccountUtil.obtainPeriod(invoice.getIssueDate()).getId());
 		entry.setEntryDate(invoice.getIssueDate());
@@ -553,7 +537,7 @@ public class SaleInvoiceController extends BasicController {
 			account = (account==null)?account = obtainDefaultAccount():account;
 
 			double base = invoiceDetail.getTaxableBase();
-			base += (basesPerAccount.containsKey(account))?((Double)basesPerAccount.get(account)).doubleValue():0;
+			base += (basesPerAccount.containsKey(account))?basesPerAccount.get(account).doubleValue():0;
 			basesPerAccount.put(account, new Double(base));
 
 			insertInvoiceDetailAccount(invoiceDetail, account);
@@ -622,114 +606,115 @@ public class SaleInvoiceController extends BasicController {
 		}
 		return cvm;
 	}
+
 	// ***************************************	
-	public void sendFarsaMail(ActionEvent event ) {
-		Invoice invoice = (Invoice)getTo();
-		String email = "cliente@esferalia.com";
-		try {
-			email = invoice.getRegistry().getEmail().getValue(); 
-		} catch (ManagerBeanException e) {
-			// Nothing
-		}	
-		AonUtil.addErrorMessage("No se pudo enviar el correo electrónico a " +
-				email + "." +
-				" No se puede resolver la dirección del servidor de correo saliente (pop3.esferalia.com)."
-				);
-	}
-
-	@SuppressWarnings("unchecked")
-	public void onImportDelivery(ActionEvent event) throws ManagerBeanException{
-		this.onReset(null);
-		DeliveryController deliveryController = (DeliveryController)FormUtil.getController("delivery");
-		Delivery delivery = (Delivery)deliveryController.getTo();
-		((Invoice)this.getTo()).setIssueDate(delivery.getIssueTime());
-		((Invoice)this.getTo()).setSeries(delivery.getSeries());
-		((Invoice)this.getTo()).setNumber(0);
-		((Invoice)this.getTo()).setRegistry(delivery.getCustomer().getRegistry());
-		((Invoice)this.getTo()).setRegistryName(delivery.getCustomer().getRegistry().getName() + " " + delivery.getCustomer().getRegistry().getSurname());
-		((Invoice)this.getTo()).setRegistryDocument(delivery.getCustomer().getRegistry().getDocument());
-		((Invoice)this.getTo()).setSecurityLevel(delivery.getSecurityLevel());
-		((Invoice)this.getTo()).setStatus(InvoiceStatus.PENDING);
-		((Invoice)this.getTo()).setType(InvoiceType.SALES);
-		((Invoice)this.getTo()).setRegistryAddress(delivery.getRaddress());
-		this.accept(null);
-		Iterator iter = ((List)deliveryController.getModel().getWrappedData()).iterator();
-		while(iter.hasNext()){
-			Delivery del = (Delivery)iter.next();
-			if(delivery.getId().equals(del.getId())){
-				deliveryController.addToCheckList(del);
-				break;
-			}
-		}
-		this.onInvoiceDelivery(null);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void onInvoiceDelivery(ActionEvent event) throws ManagerBeanException{
-		DeliveryController deliveryController = (DeliveryController)FormUtil.getController("delivery");
-		Iterator iter = ((List)deliveryController.getModel().getWrappedData()).iterator();
-		while(iter.hasNext()){
-			Delivery delivery = (Delivery)iter.next();
-			if(deliveryController.isChecked(delivery)){
-				IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
-				insertInvoiceDetails((Invoice)this.getTo(), delivery);
-				delivery.setStatus(DeliveryStatus.CLOSED);
-				deliveryBean.update(delivery);
-			}
-		}
-		generateFinances(null);
-		deliveryController.clearCheckList();
-		SaleInvoiceController saleInvoiceController = (SaleInvoiceController) FormUtil.getController("saleInvoice");
-		saleInvoiceController.clearCriteria();
-		saleInvoiceController.getCriteria().addEqualExpression(saleInvoiceController.getFieldName(IFinanceAlias.INVOICE_ID), ((Invoice)saleInvoiceController.getTo()).getId());
-		saleInvoiceController.onSearch(null);
-	}
-	
-	private void insertInvoiceDetails(Invoice invoice, Delivery delivery) {
-		try {
-			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
-			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
-			Iterator<ITransferObject> iter = deliveryDetailBean.getList(criteria).iterator();
-			while(iter.hasNext()){
-				DeliveryDetail deliveryDetail = (DeliveryDetail)iter.next();
-				InvoiceDetail invoiceDetail = new InvoiceDetail();
-				invoiceDetail.setDeliveryDetail(deliveryDetail.getId());
-				invoiceDetail.setDescription(deliveryDetail.getDescription());
-				invoiceDetail.setDiscountExpression(deliveryDetail.getDiscountExpression());
-				invoiceDetail.setInvoice(invoice);
-				invoiceDetail.setItem(deliveryDetail.getItem());
-				invoiceDetail.setPrice(deliveryDetail.getPrice());
-				invoiceDetail.setQuantity(deliveryDetail.getQuantity());
-				invoiceDetail.setSource(InvoiceSource.DELIVERY);
-				invoiceDetail.setTaxableBase(obtainTaxableBase(invoiceDetail));
-				invoiceDetail.setWorkPlace(obtainWorkPlace());
-				invoiceDetailBean.insert(invoiceDetail);
-			}
-		} catch (ManagerBeanException e) {
-		}
-	}
-
-	private double obtainTaxableBase(InvoiceDetail invoiceDetail) {
-		return getPriceStrategy().getBasePrice(invoiceDetail);
-	}
-
-	private WorkPlace obtainWorkPlace() {
-		try {
-			IManagerBean wpBean = BeanManager.getManagerBean(WorkPlace.class);
-			List<ITransferObject> wpLst = wpBean.getList(null);
-			if (wpLst.size() > 0) {
-				WorkPlace wp = (WorkPlace)wpLst.get(0);
-				return wp;
-			}
-		}
-		catch (ManagerBeanException mbe) {
-			mbe.printStackTrace();
-		}
-		return null;
-	}
-
+//	public void sendFarsaMail(ActionEvent event ) {
+//		Invoice invoice = (Invoice)getTo();
+//		String email = "cliente@esferalia.com";
+//		try {
+//			email = invoice.getRegistry().getEmail().getValue(); 
+//		} catch (ManagerBeanException e) {
+//			// Nothing
+//		}	
+//		AonUtil.addErrorMessage("No se pudo enviar el correo electrónico a " +
+//				email + "." +
+//				" No se puede resolver la dirección del servidor de correo saliente (pop3.esferalia.com)."
+//				);
+//	}
+//
+//	@SuppressWarnings("unchecked")
+//	public void onImportDelivery(ActionEvent event) throws ManagerBeanException{
+//		this.onReset(null);
+//		DeliveryController deliveryController = (DeliveryController)FormUtil.getController("delivery");
+//		Delivery delivery = (Delivery)deliveryController.getTo();
+//		((Invoice)this.getTo()).setIssueDate(delivery.getIssueTime());
+//		((Invoice)this.getTo()).setSeries(delivery.getSeries());
+//		((Invoice)this.getTo()).setNumber(0);
+//		((Invoice)this.getTo()).setRegistry(delivery.getCustomer().getRegistry());
+//		((Invoice)this.getTo()).setRegistryName(delivery.getCustomer().getRegistry().getName() + " " + delivery.getCustomer().getRegistry().getSurname());
+//		((Invoice)this.getTo()).setRegistryDocument(delivery.getCustomer().getRegistry().getDocument());
+//		((Invoice)this.getTo()).setSecurityLevel(delivery.getSecurityLevel());
+//		((Invoice)this.getTo()).setStatus(InvoiceStatus.PENDING);
+//		((Invoice)this.getTo()).setType(InvoiceType.SALES);
+//		((Invoice)this.getTo()).setRegistryAddress(delivery.getRaddress());
+//		this.accept(null);
+//		Iterator iter = ((List)deliveryController.getModel().getWrappedData()).iterator();
+//		while(iter.hasNext()){
+//			Delivery del = (Delivery)iter.next();
+//			if(delivery.getId().equals(del.getId())){
+//				deliveryController.addToCheckList(del);
+//				break;
+//			}
+//		}
+//		this.onInvoiceDelivery(null);
+//	}
+//	
+//	@SuppressWarnings("unchecked")
+//	public void onInvoiceDelivery(ActionEvent event) throws ManagerBeanException{
+//		DeliveryController deliveryController = (DeliveryController)FormUtil.getController("delivery");
+//		Iterator iter = ((List)deliveryController.getModel().getWrappedData()).iterator();
+//		while(iter.hasNext()){
+//			Delivery delivery = (Delivery)iter.next();
+//			if(deliveryController.isChecked(delivery)){
+//				IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
+//				insertInvoiceDetails((Invoice)this.getTo(), delivery);
+//				delivery.setStatus(DeliveryStatus.CLOSED);
+//				deliveryBean.update(delivery);
+//			}
+//		}
+//		generateFinances(null);
+//		deliveryController.clearCheckList();
+//		SaleInvoiceController saleInvoiceController = (SaleInvoiceController) FormUtil.getController("saleInvoice");
+//		saleInvoiceController.clearCriteria();
+//		saleInvoiceController.getCriteria().addEqualExpression(saleInvoiceController.getFieldName(IFinanceAlias.INVOICE_ID), ((Invoice)saleInvoiceController.getTo()).getId());
+//		saleInvoiceController.onSearch(null);
+//	}
+//	
+//	private void insertInvoiceDetails(Invoice invoice, Delivery delivery) {
+//		try {
+//			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+//			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+//			Criteria criteria = new Criteria();
+//			criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
+//			Iterator<ITransferObject> iter = deliveryDetailBean.getList(criteria).iterator();
+//			while(iter.hasNext()){
+//				DeliveryDetail deliveryDetail = (DeliveryDetail)iter.next();
+//				InvoiceDetail invoiceDetail = new InvoiceDetail();
+//				invoiceDetail.setDeliveryDetail(deliveryDetail.getId());
+//				invoiceDetail.setDescription(deliveryDetail.getDescription());
+//				invoiceDetail.setDiscountExpression(deliveryDetail.getDiscountExpression());
+//				invoiceDetail.setInvoice(invoice);
+//				invoiceDetail.setItem(deliveryDetail.getItem());
+//				invoiceDetail.setPrice(deliveryDetail.getPrice());
+//				invoiceDetail.setQuantity(deliveryDetail.getQuantity());
+//				invoiceDetail.setSource(InvoiceSource.DELIVERY);
+//				invoiceDetail.setTaxableBase(obtainTaxableBase(invoiceDetail));
+//				invoiceDetail.setWorkPlace(obtainWorkPlace());
+//				invoiceDetailBean.insert(invoiceDetail);
+//			}
+//		} catch (ManagerBeanException e) {
+//		}
+//	}
+//
+//	private double obtainTaxableBase(InvoiceDetail invoiceDetail) {
+//		return getPriceStrategy().getBasePrice(invoiceDetail);
+//	}
+//
+//	private WorkPlace obtainWorkPlace() {
+//		try {
+//			IManagerBean wpBean = BeanManager.getManagerBean(WorkPlace.class);
+//			List<ITransferObject> wpLst = wpBean.getList(null);
+//			if (wpLst.size() > 0) {
+//				WorkPlace wp = (WorkPlace)wpLst.get(0);
+//				return wp;
+//			}
+//		}
+//		catch (ManagerBeanException mbe) {
+//			mbe.printStackTrace();
+//		}
+//		return null;
+//	}
+//
 	// ***************************************
 	
 }

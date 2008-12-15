@@ -122,7 +122,7 @@ public class AccountingCollectionsController {
 		return accountLevels;
 	}
 
-	public List<SelectItem> getLoans() throws ManagerBeanException, ExpressionException {
+	public List<SelectItem> getLoans() throws ManagerBeanException {
 		List<SelectItem> loans = new LinkedList<SelectItem>();
 		IManagerBean loanBean = BeanManager.getManagerBean(Loan.class);
 		Iterator<?> iter = loanBean.getList(null).iterator();
@@ -134,7 +134,7 @@ public class AccountingCollectionsController {
 		return loans;
 	}
 
-	public List<SelectItem> getLeasings() throws ManagerBeanException, ExpressionException {
+	public List<SelectItem> getLeasings() throws ManagerBeanException{
 		List<SelectItem> loans = new LinkedList<SelectItem>();
 		IManagerBean leasingBean = BeanManager.getManagerBean(Leasing.class);
 		Iterator<?> iter = leasingBean.getList(null).iterator();
@@ -158,7 +158,7 @@ public class AccountingCollectionsController {
 		return types;
 	}
 
-	public List<SelectItem> getAmortizationTypes() throws ManagerBeanException, ExpressionException {
+	public List<SelectItem> getAmortizationTypes() throws ManagerBeanException {
 		List<SelectItem> ats = new LinkedList<SelectItem>();
 		IManagerBean atBean = BeanManager.getManagerBean(AmortizationType.class);
 		Iterator<?> iter = atBean.getList(null).iterator();

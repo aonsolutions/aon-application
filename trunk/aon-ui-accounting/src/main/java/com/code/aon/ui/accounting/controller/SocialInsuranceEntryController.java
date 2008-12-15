@@ -80,7 +80,7 @@ private static final Logger LOGGER = Logger.getLogger(SocialInsuranceEntryContro
 		return header;
 	}
 	
-	public void accept(ActionEvent event) throws ManagerBeanException {
+	public void accept(ActionEvent event) {
 		AccountEntry entry = new AccountEntry();
 		if(!this.isNew){
 			deleteAccountEntryDetails(getAccountEntry());

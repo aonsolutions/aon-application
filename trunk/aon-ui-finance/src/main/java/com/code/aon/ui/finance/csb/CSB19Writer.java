@@ -31,7 +31,7 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.csb.CSBOutput;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchType;
-import com.code.aon.finance.invoicing.InvoicePriceStrategy;
+import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
