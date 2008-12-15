@@ -23,7 +23,6 @@
 						<ui:param name="controller" value="#{series}" />
 						<ui:param name="columnClasses"
 							value="aon-editDataTable-textColumn aon-width-80,
-									aon-editDataTable-textColumn aon-width-150,
 									aon-editDataTable-textColumn,
 									aon-editDataTable-textColumn aon-width-150,
 									aon-editDataTable-textColumn aon-width-60" />
@@ -50,24 +49,6 @@
 								<f:facet name="footer">
 									<aon:inputText rendered="#{series.new}" size="40" maxlength="32" 
 										value="#{series.to.description}" required="#{true}" />
-								</f:facet>
-							</aon:column>
-
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{configBundle.config_series_workplace}" />
-								</f:facet>
-								<aon:outputText rendered="#{to.id!=series.to.id}"
-									value="#{to.workPlace.description}" />
-								<aon:selectOneMenu rendered="#{to.id==series.to.id}"
-									value="#{series.to.workPlace}">
-									<f:selectItems value="#{companyCollections.workPlaces}" />
-								</aon:selectOneMenu>
-								<f:facet name="footer">
-									<aon:selectOneMenu rendered="#{series.new}"
-										value="#{series.to.workPlace}">
-										<f:selectItems value="#{companyCollections.workPlaces}" />
-									</aon:selectOneMenu>
 								</f:facet>
 							</aon:column>
 
