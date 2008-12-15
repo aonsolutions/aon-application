@@ -9,11 +9,19 @@
 		value="#{bundle.aon_series}/#{bundle.aon_number}" />
 	<aon:div>
 		<aon:inputText id="Invoice_series"
-			valueChangeListener="#{saleInvoice.addExpression}" size="4" />
-		<aon:div layout="inline" styleClass="aon-padding-left">
-			<aon:inputText id="Invoice_number"
-				valueChangeListener="#{saleInvoice.addExpression}" size="7" />
-		</aon:div>
+			onblur="toUpperCase(this);"
+			valueChangeListener="#{controller.addExpression}"
+			size="4" maxlength="5" />
+		<aon:outputLabel for="Invoice_number_from"
+			styleClass="aon-form-date-label aon-padding-right"
+			value="#{bundle.aon_date_from}:" />
+		<aon:inputText id="Invoice_number_from"
+			value="#{saleInvoiceSearch.fromNumber}" size="7" />
+		<aon:outputLabel for="Invoice_number_to"
+			styleClass="aon-form-date-label aon-padding-right"
+			value="#{bundle.aon_date_to}:" />							
+		<aon:inputText id="Invoice_number_to"
+			value="#{saleInvoiceSearch.toNumber}" size="7" />
 	</aon:div>
 
 	<aon:outputLabel for="Customer_id"
@@ -35,14 +43,14 @@
 	<aon:outputLabel value="#{bundle.aon_date}" />
 	<aon:div>
 		<aon:outputLabel for="Invoice_issueDate-From"
-			styleClass="aon-form-date-label" value="#{bundle.aon_date_from}" />
+			styleClass="aon-form-date-label" value="#{bundle.aon_date_from}:" />
 		<aon:selectInputDate id="Invoice_issueDate-From"
 			value="#{saleInvoiceSearch.issueDateFrom}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}" />
 
 		<aon:outputLabel for="Invoice_issueDate-To"
-			styleClass="aon-form-date-label" value="#{bundle.aon_date_to}" />
+			styleClass="aon-form-date-label" value="#{bundle.aon_date_to}:" />
 		<aon:selectInputDate id="Invoice_issueDate-To"
 			value="#{saleInvoiceSearch.issueDateTo}"
 			timeZone="#{timeZoneController.timeZone}"

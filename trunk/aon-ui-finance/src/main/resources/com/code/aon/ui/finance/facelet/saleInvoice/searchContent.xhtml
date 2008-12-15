@@ -66,6 +66,68 @@
 
 		<aon:panelCollapsible expanded="false" label="#{financeBundle.finance_finances}" >
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">
+
+				<aon:outputLabel 
+					value="#{financeBundle.finance_finance_date}" />
+				<aon:div>
+					<aon:outputLabel for="Invoice_finances_dueDate-From" styleClass="aon-form-date-label"
+						value="#{bundle.aon_date_from}:" />
+					<aon:selectInputDate id="Invoice_finances_dueDate-From"
+						value="#{saleInvoiceSearch.dueDateFrom}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+					<aon:outputLabel for="Invoice_finances_dueDate-To" styleClass="aon-form-date-label"
+						value="#{bundle.aon_date_to}:" />
+					<aon:selectInputDate id="Invoice_finances_dueDate-To"
+						value="#{saleInvoiceSearch.dueDateTo}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+				</aon:div>
+				
+				<aon:outputLabel for="Bank_code"
+					value="#{configBundle.config_bank}" />
+				<aon:div styleClass="aon-lookup">
+					<aon:lookupInputText id="Bank_code" lookup="#{bankLookup}"
+						reRender="Bank_name"
+						value="#{saleInvoiceSearch.bank.code}" size="5">
+						<aon:joinProperty alias="Bank_code" value="#{saleInvoiceSearch.bank.code}" />
+					</aon:lookupInputText>
+					<aon:lookupButton 
+						windowTitle="#{configBundle.config_bank_selection}"
+						selectReRender="Bank_code,Bank_name" actionType="search"
+						lookup="#{bankLookup}" minHeight="460" minWidth="650"
+						property="#{saleInvoiceSearch.bank}">
+					</aon:lookupButton>
+					<aon:inputText id="Bank_name"
+						value="#{saleInvoiceSearch.bank.name}"
+						size="50" disabled="true" />							
+				</aon:div>
+				
+				<aon:outputLabel for="Invoice_finances_amount"
+					value="#{bundle.aon_amount}" />
+				<aon:inputText id="Invoice_finances_amount"
+					valueChangeListener="#{controller.addDirectExpression}"
+					size="10" />
+				
+				<aon:outputLabel for="Invoice_finances_payMethod_id"
+					value="#{configBundle.config_pay_method}" />
+				<aon:selectOneMenu id="Invoice_finances_payMethod_id"
+					value="#{configCollections.payMethod}"
+					valueChangeListener="#{controller.addDirectIdEqualExpression}">
+					<f:selectItem itemLabel="-" value="#{null}"/>
+					<f:selectItems value="#{configCollections.payMethods}" />
+				</aon:selectOneMenu>
+
+				<aon:outputLabel for="Invoice_finances_financeStatus"
+					value="#{bundle.aon_status}" />
+				<aon:selectOneMenu id="Invoice_finances_financeStatus"
+					converter="aon.EnumConverter"
+					valueChangeListener="#{controller.addDirectEqualExpression}">
+					<f:selectItem itemLabel="-" value="#{null}"/>
+					<f:selectItems value="#{financeCollections.financeStatuses}" />
+				</aon:selectOneMenu>
+
 			</aon:panelGrid>
 		</aon:panelCollapsible>
 
