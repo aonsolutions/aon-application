@@ -11,7 +11,6 @@ import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.account.Account;
@@ -302,47 +301,6 @@ public class SaleInvoiceController extends BasicController {
 		return getPriceStrategy().getTotalPrice(invoice,invoice);
 	}
 
-	/**
-	 * Adds registry to the criteria
-	 * 
-	 * @param event
-	 *            contains criteria ident
-	 * @throws ManagerBeanException
-	 */
-	public void addCustomerExpression(ValueChangeEvent event)
-			throws ManagerBeanException {
-		if (event.getNewValue() != null
-				&& !((String) event.getNewValue()).trim().equals("")) {
-			try {
-				Integer id = new Integer((String) event.getNewValue());
-				Criteria criteria = getCriteria();
-				criteria.addEqualExpression(getManagerBean().getFieldName(IFinanceAlias.INVOICE_REGISTRY_ID), id);
-				setCriteria(criteria);
-			} catch (Exception e) {
-			}
-		}
-	}
-
-	public void addFromIssueDateExpression(ValueChangeEvent event)
-			throws ManagerBeanException {
-		if (event.getNewValue() != null) {
-			Criteria c = getCriteria();
-			Object value = event.getNewValue();
-			c.addGreaterThanOrEqualExpression(getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), value);
-			setCriteria(c);
-		}
-	}
-
-	public void addToIssueDateExpression(ValueChangeEvent event)
-			throws ManagerBeanException {
-		if (event.getNewValue() != null) {
-			Criteria c = getCriteria();
-			Object value = event.getNewValue();
-			c.addLessThanOrEqualExpression(getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), value);
-			setCriteria(c);
-		}
-	}
-	
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
 			priceStrategy = new InvoicePriceStrategy();
