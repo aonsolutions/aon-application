@@ -190,13 +190,14 @@
 						value="#{saleInvoice.to.comments}" />
 
 				</aon:panelGrid>
+
+				<ui:include
+					src="/com/code/aon/ui/finance/facelet/saleInvoice/form_detail.xhtml" />
+	
+				<ui:include
+					src="/com/code/aon/ui/finance/facelet/saleInvoice/form_finances.xhtml" />
+
 			</aon:div>
-
-			<ui:include
-				src="/com/code/aon/ui/finance/facelet/saleInvoice/form_detail.xhtml" />
-
-			<ui:include
-				src="/com/code/aon/ui/finance/facelet/saleInvoice/form_finances.xhtml" />
 
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
