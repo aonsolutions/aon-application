@@ -32,7 +32,7 @@
 	<field name="dueDate" class="java.util.Date"/>
 	<field name="financeStatus" class="com.code.aon.finance.enumeration.FinanceStatus"/>
 	<field name="amount" class="java.lang.Double"/>
-	<field name="payMethod" class="com.code.aon.finance.PayMethod"/>
+	<field name="payMethod" class="com.code.aon.config.PayMethod"/>
 
 		<background>
 			<band height="0"  isSplitAllowed="true" >
