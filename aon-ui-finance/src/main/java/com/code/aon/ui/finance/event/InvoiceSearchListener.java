@@ -2,10 +2,10 @@ package com.code.aon.ui.finance.event;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.dao.IFinanceAlias;
-import com.code.aon.finance.invoicing.InvoiceSearchContext;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Registry;
+import com.code.aon.ui.finance.controller.InvoiceSearchContext;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 
 public class InvoiceSearchListener extends ControllerSearchListener {

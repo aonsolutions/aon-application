@@ -144,7 +144,7 @@ public class StockController extends BasicController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void updateAvailableSourceWarehouses()  throws ManagerBeanException{
+	private void updateAvailableSourceWarehouses() {
 		this.availableSourceWarehouses = new LinkedList<SelectItem>();
 		for( Stock stock : stocks ) {
 			SelectItem item = new SelectItem(stock.getWarehouse(), stock.getWarehouse().getName());

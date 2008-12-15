@@ -74,7 +74,7 @@ public class ExpenseEntryController {
 		return header;
 	}
 	
-	public void accept(ActionEvent event) throws ManagerBeanException {
+	public void accept(ActionEvent event){
 		AccountEntry entry = new AccountEntry();
 		if(!this.isNew){
 			deleteAccountEntryDetails(getAccountEntry());

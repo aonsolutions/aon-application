@@ -15,6 +15,8 @@ import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
@@ -23,16 +25,17 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceStatus;
+import com.code.aon.finance.invoicing.InvoicingException;
+import com.code.aon.finance.invoicing.remover.IInvoiceDetailRemover;
+import com.code.aon.finance.invoicing.remover.InvoiceRemoverFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.finance.remover.IInvoiceDetailRemover;
-import com.code.aon.ui.finance.remover.InvoiceRemoverFactory;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
-public class InvoiceRemover extends BasicController {
+public class InvoiceRemoverController extends BasicController {
 
-	private static final Logger LOGGER = Logger.getLogger(InvoiceRemover.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(InvoiceRemoverController.class.getName());
 	
 	private AccountEntryInvoiceWriter accountEntryInvoiceWriter;
 	
@@ -45,7 +48,7 @@ public class InvoiceRemover extends BasicController {
 		return accountEntryInvoiceWriter;
 	}
 
-	@SuppressWarnings({"unused","unchecked"})
+	@SuppressWarnings("unchecked")
 	public void checkAll(ActionEvent event) throws ManagerBeanException{
 		Iterator iter = this.getManagerBean().getList(this.getCriteria()).iterator();
 		while(iter.hasNext()){
@@ -58,7 +61,6 @@ public class InvoiceRemover extends BasicController {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	public void checkNone(ActionEvent event) {
 		clearCheckedInvoices();
 	}
@@ -116,27 +118,49 @@ public class InvoiceRemover extends BasicController {
 	}
 
 	public void onRemoveSelected(ActionEvent event){
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Iterator<Invoice> iter = getCheckedInvoices().iterator();
-		while(iter.hasNext()){
-			Invoice invoice = iter.next();
-			try {
-				if(invoice.getStatus().equals(InvoiceStatus.SCORED)){
-					getAccountEntryInvoiceWriter().unrecordInvoice(invoice);
+		try {
+			HibernateUtil.setBeginTransaction( false );
+			HibernateUtil.setCloseSession( false );
+			while(iter.hasNext()){
+				Invoice invoice = iter.next();
+				try {
+					HibernateUtil.beginTransaction(sessionName);
+					if(invoice.getStatus().equals(InvoiceStatus.SCORED)){
+						getAccountEntryInvoiceWriter().unrecordInvoice(invoice);
+					}
+					removeFinanceTrackings(invoice);
+					removeFinances(invoice);
+					removeInvoiceDetailAccounts(invoice);
+					removeInvoiceDetails(invoice);
+					removeInvoiceAddress(invoice);
+					getManagerBean().remove(invoice);
+					HibernateUtil.getSession(sessionName).flush();					
+					HibernateUtil.commitTransaction(sessionName);
+				} catch (Exception e) {
+					try {
+						HibernateUtil.rollbackTransaction(sessionName);
+					} catch (DAOException daoe) {
+						String msg =  "Unable to rollback transaction!";
+						LOGGER.log(Level.SEVERE, msg, e);
+					}
+					String msg =  "Error deleting invoice:  " + invoice.getSeries()+"/"+ invoice.getNumber();
+					LOGGER.log(Level.SEVERE, msg, e);
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				} finally {
+					HibernateUtil.closeSession(sessionName);
 				}
-				removeFinanceTrackings(invoice);
-				removeFinances(invoice);
-				removeInvoiceDetailAccounts(invoice);
-				removeInvoiceDetails(invoice);
-				removeInvoiceAddress(invoice);
-				getManagerBean().remove(invoice);
-			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error deleting invoice with id=" + invoice.getId(), e);
-				AonUtil.addErrorMessage("Error deleting invoice with id=" + invoice.getId());
-				throw new AbortProcessingException("Error deleting invoice with id=" + invoice.getId());
 			}
+			clearCheckedInvoices();
+			this.onSearch(null);
+		} finally {
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
-		clearCheckedInvoices();
-		this.onSearch(null);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -173,22 +197,12 @@ public class InvoiceRemover extends BasicController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void removeInvoiceDetails(Invoice invoice) {
-		try {
-			Iterator iter = obtainInvoiceDetails(invoice).iterator();
-			while(iter.hasNext()){
-				InvoiceDetail detail = (InvoiceDetail)iter.next();
-				IInvoiceDetailRemover remover = InvoiceRemoverFactory.getInvoiceDetailRemover(detail.getSource()); 
-				if(remover != null){
-					remover.removeDetail(detail);
-				}else{
-					AonUtil.addErrorMessage("No remover available for invoiceDetails with source=" + detail.getSource().toString());
-				}
-			}
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage("Error removing details for invoice with id=" + invoice.getId());
-			LOGGER.log(Level.SEVERE, "Error removing details for invoice with id=" + invoice.getId(), e);
-			throw new AbortProcessingException(e.getMessage());
+	private void removeInvoiceDetails(Invoice invoice) throws InvoicingException, ManagerBeanException {
+		Iterator iter = obtainInvoiceDetails(invoice).iterator();
+		while(iter.hasNext()){
+			InvoiceDetail detail = (InvoiceDetail)iter.next();
+			IInvoiceDetailRemover remover = InvoiceRemoverFactory.getInvoiceDetailRemover(detail.getSource()); 
+			remover.removeDetail(detail);
 		}
 	}
 

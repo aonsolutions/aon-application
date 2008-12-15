@@ -100,33 +100,30 @@ public class DeliveryDetailControllerListener extends ControllerAdapter {
 			}
 		}
 	}
+
+
 	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	private Sales insertSales(Delivery delivery) throws ControllerListenerException {
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	private Sales insertSales(Delivery delivery) {
 		Sales sales = new Sales();
 		sales.setCustomer((delivery.getCustomer()));
 		sales.setStatus(SalesStatus.CLOSED);

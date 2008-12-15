@@ -48,7 +48,7 @@ import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
-import com.code.aon.finance.invoicing.FinanceGenerator;
+import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
@@ -321,7 +321,7 @@ public class InvoiceEntryController {
 		this.currentFinance = initializeFinance();
 	}
 	
-	public void onSelectFinance(ActionEvent event) throws ManagerBeanException{
+	public void onSelectFinance(ActionEvent event) {
 		this.currentFinance = (Finance)finances.getRowData();
 	}
 	

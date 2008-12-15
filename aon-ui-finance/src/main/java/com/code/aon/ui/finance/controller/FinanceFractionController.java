@@ -18,7 +18,7 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
-import com.code.aon.finance.invoicing.FinanceTrackingWriter;
+import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.FormUtil;
@@ -86,8 +86,8 @@ public class FinanceFractionController {
 		return PageDataModel.LIMIT;
 	}	
 
-	@SuppressWarnings({"unused","unchecked"})
-	public void onFractionFinance(ActionEvent event) throws ManagerBeanException{
+	@SuppressWarnings("unchecked")
+	public void onFractionFinance(ActionEvent event) {
 		initializeController();
 		FinanceController financeController = (FinanceController)FormUtil.getController(FINANCE_CONTROLLER_NAME);
 		List list = (List)getModel().getWrappedData();
@@ -100,8 +100,9 @@ public class FinanceFractionController {
 		getModel().setWrappedData(list);
 	}
 	
-	@SuppressWarnings({"unused","unchecked"})
-	public void onAcceptFractions(ActionEvent event) throws ManagerBeanException{
+
+	@SuppressWarnings("unchecked")
+	public void onAcceptFractions(ActionEvent event) {
 		try{
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 			List list = (List)getModel().getWrappedData();
@@ -150,14 +151,12 @@ public class FinanceFractionController {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	public void onReset(ActionEvent event){
 		this.isNew = true;
 		this.currentFinance = initializeFinance();
 		this.currentFinance.setAmount(obtainPendingAmount());
 	}
 	
-	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event){
 		this.currentFinance = (Finance)getModel().getRowData();
 	}
@@ -170,27 +169,26 @@ public class FinanceFractionController {
 		}
 	}
 	
-	@SuppressWarnings({"unchecked", "unused"})
+	@SuppressWarnings("unchecked")
 	private void onAddFraction(ActionEvent event){
 		((LinkedList)getModel().getWrappedData()).add(this.currentFinance);
 		this.currentFinance = null;
 		this.setNew(false);
 	}
 	
-	@SuppressWarnings({"unused","unchecked"})
+	@SuppressWarnings("unchecked")
 	public void onRemove(ActionEvent event){
 		((LinkedList)getModel().getWrappedData()).remove(this.currentFinance);
 		this.currentFinance = null;
 		this.setNew(false);
 	}
 
-	@SuppressWarnings("unused")
 	public void onCancel(ActionEvent event){
 		this.currentFinance = null;
 		this.setNew(false);
 	}
 	
-	@SuppressWarnings({"unused", "unchecked"})
+	@SuppressWarnings("unchecked")
 	private void onUpdateFraction(ActionEvent event){
 		int i = ((LinkedList)getModel().getWrappedData()).indexOf(this.currentFinance);
 		((LinkedList)getModel().getWrappedData()).remove(i);

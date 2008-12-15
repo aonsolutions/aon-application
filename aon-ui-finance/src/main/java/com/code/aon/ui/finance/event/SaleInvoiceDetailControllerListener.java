@@ -13,7 +13,7 @@ import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.BillingPeriod;
 import com.code.aon.finance.enumeration.InvoiceSource;
-import com.code.aon.finance.invoicing.InvoicePriceStrategy;
+import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;

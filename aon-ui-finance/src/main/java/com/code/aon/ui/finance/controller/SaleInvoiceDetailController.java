@@ -8,7 +8,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.faces.component.richfaces.lookup.LookupChangeEvent;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.invoicing.InvoicePriceStrategy;
+import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.Item;
 import com.code.aon.product.Tariff;
 import com.code.aon.product.strategy.IPriceStrategy;
