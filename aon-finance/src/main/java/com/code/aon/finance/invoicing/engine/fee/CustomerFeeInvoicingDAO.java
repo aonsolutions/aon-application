@@ -1,4 +1,4 @@
-package com.code.aon.finance.invoicing;
+package com.code.aon.finance.invoicing.engine.fee;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -17,6 +17,9 @@ import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.BillingPeriod;
+import com.code.aon.finance.invoicing.engine.IInvoicingDAO;
+import com.code.aon.finance.invoicing.finance.FinanceGenerator;
+import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
