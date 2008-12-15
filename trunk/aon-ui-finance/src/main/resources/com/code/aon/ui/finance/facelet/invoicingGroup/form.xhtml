@@ -10,11 +10,11 @@
 	<ui:define name="content">
 		<aon:form id="invoicingGroupForm">
 
-			<ui:incluide
+			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{financeBundle.finance_invoicing_group_module}" />
 				<ui:param name="controller" value="#{invoicingGroup}" />
-			</ui:incluide>
+			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="dataTable" columns="2">
@@ -61,8 +61,8 @@
 											reRender="Customer_name-Edit" size="5"
 											value="#{invoicingGroupDetail.to.child.id}" lookupProperty="registry">
 										</aon:lookupInputText>
-										<aon:lookupButton 
-											windowTitle="#{appBundle.aon_lookup_target}" actionType="search"
+										<aon:lookupButton actionType="search"
+											windowTitle="#{customerBundle.customer_selection}"
 											selectReRender="invoicingGroupDetailData"
 											lookup="#{customerLookup}" minHeight="460" minWidth="650"
 											property="#{controller.to.child}" lookupProperty="registry">

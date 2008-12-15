@@ -1,4 +1,4 @@
-package com.code.aon.finance.invoicing;
+package com.code.aon.finance.invoicing.engine.fee;
 
 import java.util.LinkedList;
 import java.util.List;

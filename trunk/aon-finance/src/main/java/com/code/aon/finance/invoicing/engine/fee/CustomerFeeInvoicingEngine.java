@@ -1,4 +1,4 @@
-package com.code.aon.finance.invoicing;
+package com.code.aon.finance.invoicing.engine.fee;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -24,9 +24,12 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.invoicing.IInvoicingFeedBack;
+import com.code.aon.finance.invoicing.InvoicingParameters;
+import com.code.aon.finance.invoicing.engine.IInvoicingDAO;
+import com.code.aon.finance.invoicing.engine.IInvoicingEngine;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 
@@ -54,15 +57,11 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 
 	@SuppressWarnings("unchecked")
 	public void invoice(InvoicingParameters params) throws ManagerBeanException {
-		try {
-			Criteria criteria = createInvoicingCriteria(params);
-			List invoicedList = invoiceGroupFees(criteria, params);
-			criteria = completeCriteriaWithCustomerData(criteria, params);
-			List feeList = obtainFeeList(updateCriteria(criteria,invoicedList));
-			invoiceFees(feeList, params);
-		} catch (ExpressionException e) {
-			throw new ManagerBeanException(e);
-		}
+		Criteria criteria = createInvoicingCriteria(params);
+		List invoicedList = invoiceGroupFees(criteria, params);
+		criteria = completeCriteriaWithCustomerData(criteria, params);
+		List feeList = obtainFeeList(updateCriteria(criteria,invoicedList));
+		invoiceFees(feeList, params);
 	}
 
 	private Criteria completeCriteriaWithCustomerData(Criteria criteria,InvoicingParameters params) throws ManagerBeanException {
@@ -122,7 +121,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List invoiceGroupFees(Criteria criteria, InvoicingParameters params) throws ManagerBeanException, ExpressionException {
+	private List invoiceGroupFees(Criteria criteria, InvoicingParameters params) throws ManagerBeanException {
 		List<Integer> invoicedList = new LinkedList<Integer>();
 		IManagerBean invoicingGroupBean = BeanManager.getManagerBean(InvoicingGroup.class);
 		Criteria groupCriteria = new Criteria();
@@ -141,7 +140,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List invoiceGroup(InvoicingGroup group, Criteria criteria, InvoicingParameters params) throws ManagerBeanException, ExpressionException {
+	private List invoiceGroup(InvoicingGroup group, Criteria criteria, InvoicingParameters params) throws ManagerBeanException {
 		List<Integer> invoicedList = new LinkedList<Integer>();
 		IManagerBean invoicingGroupDetailBean = BeanManager.getManagerBean(InvoicingGroupDetail.class);
 		IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
@@ -237,7 +236,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
         return ExpressionUtilities.getAndExpression(ExpressionUtilities.getAndExpression(billingExpr, initialExpr), ExpressionUtilities.getOrExpression(finalExpr, finalNullExpr));
 	}
 
-	private Invoice createInvoice(CustomerFee customerFee, int counter, InvoicingParameters params) throws ManagerBeanException {
+	private Invoice createInvoice(CustomerFee customerFee, int counter, InvoicingParameters params) {
 		Invoice invoice = new Invoice();
 		invoice.setNumber(counter);
 		invoice.setIssueDate(params.getInvoiceDate());

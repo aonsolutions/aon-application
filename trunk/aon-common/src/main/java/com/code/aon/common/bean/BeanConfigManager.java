@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.metadata.ClassMetadata;
 
 import com.code.aon.common.BasicManagerBean;
@@ -47,7 +48,31 @@ public class BeanConfigManager {
         if (!beans.containsKey(config.getPojoClass())) {
             beans.put(config.getPojoClass(), config);
             LOGGER.info("Registered bean configuration " + config.getPojoClass());
+        } else {
+        	mergeListeners(beans.get(config.getPojoClass()),config);
         }
+	}
+
+	private void mergeListeners(BeanConfig original, BeanConfig target) throws ManagerBeanException {
+		// Si los beans tiene especificado un DAO diferente se lanza la excepcion.
+		if (!ObjectUtils.equals(original.getDaoFactory(), target.getDaoFactory()) ||
+			!ObjectUtils.equals(original.getDaoMethod(), target.getDaoMethod())) {
+			throw new ManagerBeanException(
+					original.getPojoClass() + " has incompatible DAO Factories or incompatible DAO methods ["
+					+ original.getDaoFactory() +  "," + original.getDaoMethod() + "] -- ["
+					+ target.getDaoFactory() +  "," + target.getDaoMethod() + "]."
+					);
+		}
+		if (target.getListeners() != null) {
+			for (String listener:target.getListeners() ) {
+				original.addListener(listener);
+			}
+		}
+		if (target.getVetoListeners() != null) {
+			for (String vetoListener:target.getVetoListeners() ) {
+				original.addVetoListener(vetoListener);
+			}
+		}
 	}
 
 	/**

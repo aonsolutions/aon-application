@@ -1,4 +1,4 @@
-package com.code.aon.finance.invoicing;
+package com.code.aon.finance.invoicing.engine.fee;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +10,8 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.invoicing.engine.IInvoicingDAO;
+import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 
 public class CustomerFeePreInvoicingDAO implements IInvoicingDAO {

@@ -1,4 +1,4 @@
-package com.code.aon.finance.invoicing;
+package com.code.aon.finance.invoicing.pricing;
 
 import java.util.HashMap;
 import java.util.Iterator;

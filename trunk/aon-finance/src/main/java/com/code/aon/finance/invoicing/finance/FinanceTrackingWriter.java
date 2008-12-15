@@ -1,4 +1,4 @@
-package com.code.aon.finance.invoicing;
+package com.code.aon.finance.invoicing.finance;
 
 import java.util.Date;
 import java.util.Iterator;
