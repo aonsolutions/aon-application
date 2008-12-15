@@ -25,8 +25,8 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
-import com.code.aon.sales.Seller;
 import com.code.aon.sales.enumeration.SalesStatus;
+import com.code.aon.seller.Seller;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -126,7 +126,7 @@ public class SalesController extends BasicController {
 		return 0;
 	}
 	
-	public void sellerData(LookupChangeEvent event) throws ManagerBeanException {
+	public void sellerData(LookupChangeEvent event) {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Seller seller = (Seller)event.getNewValue();
 			((Sales)this.getTo()).setSeller(seller);
@@ -189,7 +189,7 @@ public class SalesController extends BasicController {
 			deliveryDetailBean.insert(deliveryDetail);
 		}
 
-		sales.setPos(null);
+//		sales.setPos(null);
 		sales.setStatus(SalesStatus.CLOSED);
 		salesBean.update(sales);
 
