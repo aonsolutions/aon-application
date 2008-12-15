@@ -80,8 +80,8 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		if(params.getSecurityLevel() != null){
 			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_SECURITY_LEVEL), params.getSecurityLevel());
 		}
-		if(params.getWorkPlaceId() != null){
-			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_WORK_PLACE_ID), params.getWorkPlaceId());
+		if(params.getWorkPlace() != null){
+			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_WORK_PLACE_ID), params.getWorkPlace().getId());
 		}
 		criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_STATUS), CustomerStatus.ACTIVE);
 		criteria.addOrder(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_SURNAME));
