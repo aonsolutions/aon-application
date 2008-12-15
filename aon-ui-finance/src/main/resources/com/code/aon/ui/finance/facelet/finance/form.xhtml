@@ -67,7 +67,7 @@
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 						
 					<aon:outputLabel for="RegistryBank_Lookup_id"
-						value="#{financeBundle.finance_bank}" />
+						value="#{configBundle.config_bank}" />
 					<aon:div >
 						<aon:selectOneMenu id="RegistryBank_Lookup_id"
 							value="#{finance.registryBank}" reRender="RegistryBank_Lookup_bankAccount"
@@ -79,7 +79,7 @@
 					</aon:div>
 					
 					<aon:outputLabel for="RegistryBank_Lookup_bankAccount"
-						value="#{financeBundle.finance_bank_account}" />
+						value="#{configBundle.config_bank_account}" />
 					<aon:div id="RegistryBank_Lookup_bankAccount">
 						<aon:inputText disabled="#{!finance.pending and !finance.returned}"
 							value="#{finance.to.bankAccount.entity}" size="4" maxlength="4">

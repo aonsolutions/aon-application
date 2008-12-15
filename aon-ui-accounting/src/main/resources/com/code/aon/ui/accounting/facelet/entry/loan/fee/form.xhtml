@@ -86,7 +86,7 @@
 						value="#{loanFeeEntry.header.fee}" disabled="true" size="7"/>
 
 					<aon:outputLabel for="RegistryBank_Lookup_id"
-						value="#{financeBundle.finance_bank}" />
+						value="#{configBundle.config_bank}" />
 					<aon:selectOneMenu id="RegistryBank_Lookup_id" required="true"
 						value="#{loanFeeEntry.header.registryBank}"
 						reRender="RegistryBank_bankAccount">
@@ -94,7 +94,7 @@
 						<f:selectItems value="#{financeCollections.companyBanks}" />
 					</aon:selectOneMenu>
 
-					<aon:outputText value="#{financeBundle.finance_bank_account}" />
+					<aon:outputText value="#{configBundle.config_bank_account}" />
 					<aon:div id="RegistryBank_bankAccount">
 						<aon:outputText value="#{loanFeeEntry.header.registryBank.bankAccount}" />
 						<aon:outputText value="&#160;" />
