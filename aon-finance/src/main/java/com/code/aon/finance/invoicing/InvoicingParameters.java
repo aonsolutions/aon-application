@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.customer.Customer;
 
 public class InvoicingParameters {
 	
@@ -17,7 +18,7 @@ public class InvoicingParameters {
 	
 	private Date invoiceDate;
 	
-	private Integer customerId;
+	private Customer customer;
 	
 	private SecurityLevel securityLevel;
 	
@@ -64,12 +65,12 @@ public class InvoicingParameters {
 		this.invoiceDate = invoiceDate;
 	}
 
-	public Integer getCustomerId() {
-		return customerId;
+	public Customer getCustomer() {
+		return customer;
 	}
 
-	public void setCustomerId(Integer customerId) {
-		this.customerId = customerId;
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 
 	public SecurityLevel getSecurityLevel() {

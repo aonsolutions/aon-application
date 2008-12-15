@@ -193,7 +193,6 @@ public class HibernateUtil {
      * 
      * @return The SessionFactory. 
      */
-    @Deprecated
     public static String getSessionFactoryName() {
     	return getSessionFactoryName(null);
     }

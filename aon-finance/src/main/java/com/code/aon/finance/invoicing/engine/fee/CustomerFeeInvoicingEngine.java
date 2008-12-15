@@ -66,8 +66,8 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 
 	private Criteria completeCriteriaWithCustomerData(Criteria criteria,InvoicingParameters params) throws ManagerBeanException {
 		IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
-		if(params.getCustomerId() != null){
-			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_ID), params.getCustomerId());
+		if(params.getCustomer() != null){
+			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_ID), params.getCustomer().getId());
 		}
 		return criteria;
 	}
@@ -125,8 +125,8 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		List<Integer> invoicedList = new LinkedList<Integer>();
 		IManagerBean invoicingGroupBean = BeanManager.getManagerBean(InvoicingGroup.class);
 		Criteria groupCriteria = new Criteria();
-		if(params.getCustomerId() != null){
-			groupCriteria.addEqualExpression(invoicingGroupBean.getFieldName(IFinanceAlias.INVOICING_GROUP_PARENT_ID), params.getCustomerId());
+		if(params.getCustomer() != null){
+			groupCriteria.addEqualExpression(invoicingGroupBean.getFieldName(IFinanceAlias.INVOICING_GROUP_PARENT_ID), params.getCustomer().getId());
 		}
 		groupCriteria.addOrder(invoicingGroupBean.getFieldName(IFinanceAlias.INVOICING_GROUP_PARENT_SURNAME));
 		groupCriteria.addOrder(invoicingGroupBean.getFieldName(IFinanceAlias.INVOICING_GROUP_PARENT_NAME));
@@ -303,18 +303,17 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 	private double calculateCorrectionFactor(CustomerFee customerFee, InvoicingParameters params) {
 		if (customerFee.getPeriod().getValue() == 0) {
 			return 1;
-		} else {
-			Calendar calendar = new GregorianCalendar(params.getYear(), params.getMonth().getValue(), 1, 0, 0, 0);
-			Date fromInv = calendar.getTime();
-			calendar.add(Calendar.MONTH, customerFee.getPeriod().getValue());
-			calendar.add(Calendar.DATE, -1);
-			Date toInv = calendar.getTime();
+		} 
+		Calendar calendar = new GregorianCalendar(params.getYear(), params.getMonth().getValue(), 1, 0, 0, 0);
+		Date fromInv = calendar.getTime();
+		calendar.add(Calendar.MONTH, customerFee.getPeriod().getValue());
+		calendar.add(Calendar.DATE, -1);
+		Date toInv = calendar.getTime();
 
-			Date iniFee = (customerFee.getInitialDate().before(fromInv)) ? fromInv : customerFee.getInitialDate();
-			Date endFee = (customerFee.getFinalDate() == null || customerFee.getFinalDate().after(toInv)) ? toInv : customerFee.getFinalDate();
+		Date iniFee = (customerFee.getInitialDate().before(fromInv)) ? fromInv : customerFee.getInitialDate();
+		Date endFee = (customerFee.getFinalDate() == null || customerFee.getFinalDate().after(toInv)) ? toInv : customerFee.getFinalDate();
 
-			return (double)daysBetween(iniFee, endFee) / (double)daysBetween(fromInv, toInv);
-		}
+		return (double)daysBetween(iniFee, endFee) / (double)daysBetween(fromInv, toInv);
 	}
 
 	private long daysBetween(Date from, Date to) {

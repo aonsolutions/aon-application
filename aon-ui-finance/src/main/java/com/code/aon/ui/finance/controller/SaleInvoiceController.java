@@ -1,5 +1,8 @@
 package com.code.aon.ui.finance.controller;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -8,7 +11,6 @@ import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.PhaseId;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
@@ -27,9 +29,9 @@ import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.ApplicationParameter;
-import com.code.aon.config.Series;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.customer.Customer;
@@ -43,6 +45,7 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.invoicing.InvoicingParameters;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -63,7 +66,7 @@ public class SaleInvoiceController extends BasicController {
 	private static final String SALE_INVOICE_DETAIL_CONTROLLER_NAME = "saleInvoiceDetail";
 	private static final String SALE_INVOICE_FINANCE_CONTROLLER_NAME = "saleInvoiceFinance";
 
-//	private InvoicingParameters invoicingParams;
+	private InvoicingParameters invoicingParams;
 
 //	private IInvoicingEngine engine;
 	
@@ -85,10 +88,6 @@ public class SaleInvoiceController extends BasicController {
 		this.invoicingParams = new InvoicingParameters();
 	}
 
-	public InvoicingParameters getInvoicingParams() {
-		return invoicingParams;
-	}
-
 	public String getSeriesDescripition() {
 		return seriesDescripition;
 	}
@@ -96,11 +95,15 @@ public class SaleInvoiceController extends BasicController {
 	public void setSeriesDescripition(String seriesDescripition) {
 		this.seriesDescripition = seriesDescripition;
 	}
+	 */
+
+	public InvoicingParameters getInvoicingParams() {
+		return invoicingParams;
+	}
 
 	public void setInvoicingParams(InvoicingParameters invoicingParams) {
 		this.invoicingParams = invoicingParams;
 	}
-
 	
 	public void onInitialize(ActionEvent event) throws ManagerBeanException{
 		this.invoicingParams = new InvoicingParameters();
@@ -112,7 +115,6 @@ public class SaleInvoiceController extends BasicController {
 		invoicingParams.setMonth(Month.getMonthByValue(calendar.get(Calendar.MONTH)));
 		invoicingParams.setYear(calendar.get(Calendar.YEAR));
 	}
-	 */
 	
 	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
@@ -127,6 +129,7 @@ public class SaleInvoiceController extends BasicController {
 		return 1;
 	}
 	
+	/*			
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException{
 		if (event.getPhaseId() == PhaseId.ANY_PHASE) {
 			event.setPhaseId(PhaseId.INVOKE_APPLICATION);
@@ -139,16 +142,14 @@ public class SaleInvoiceController extends BasicController {
 				((Invoice)this.getTo()).setNumber(number);
 				((Invoice)this.getTo()).setSecurityLevel(securityLevel);
 			}
-/*			
 			if(getInvoicingParams() != null){
 				getInvoicingParams().setNumber(number);
 				getInvoicingParams().setSecurityLevel(securityLevel);
 				getInvoicingParams().setWorkPlaceId(obtainSeriesWorkPlace((String)event.getNewValue()));
 			}
-*/
 		}
 	}
-/*
+
 	public void onSeriesChangedInvoicing(ValueChangeEvent event) throws ManagerBeanException{
 		if (event.getPhaseId() == PhaseId.ANY_PHASE) {
 			event.setPhaseId(PhaseId.INVOKE_APPLICATION );
@@ -158,7 +159,7 @@ public class SaleInvoiceController extends BasicController {
 			getInvoicingParams().setNumber(obtainMaxNumber((String)event.getNewValue()));	
 		}
 	}
-*/
+
 	@SuppressWarnings("unchecked")
 	private SecurityLevel obtainSeriesSecurityLevel(String seriesId) throws ManagerBeanException {
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
@@ -174,8 +175,6 @@ public class SaleInvoiceController extends BasicController {
 		return null;
 	}
 
-	
-/*	
     @SuppressWarnings("unchecked")
 	private Integer obtainSeriesWorkPlace(String seriesId) throws ManagerBeanException {
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
