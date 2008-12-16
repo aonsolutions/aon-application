@@ -39,7 +39,7 @@
 							</aon:lookupInputText>
 							<aon:lookupButton id="Persona_lookup"
 								windowTitle="#{appBundle.aon_payroll_auxiliares_tipos__tipovia}"
-								selectReRender="Persona_cdg,Persona_description"
+								selectReRender="per_localidad,per_codpos,per_numero,per_otros,per_prvcdg,Pr_description,per_nomvia,Tipovi_cdg,Tipovi_description,Persona_cdg,Persona_ape2,Persona_nom,Persona_nuss,Persona_description"
 								lookup="#{personaLookup}" minHeight="440"
 								property="#{autonomo.to.persona}">
 							</aon:lookupButton>
@@ -47,22 +47,26 @@
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_principales_autonomos_ape1}" />
-						<aon:inputText value="#{autonomo.to.persona.descripcion}"
-							size="30" maxlength="20" />
+						<aon:inputText id="Persona_description"
+							value="#{(autonomo.to.persona.descripcion!=null)?(autonomo.to.persona.descripcion):('')}"
+							disabled="true" size="30" maxlength="20" />
 
-						<aon:outputLabel
+						<aon:outputLabel 
 							value="#{appBundle.aon_payroll_principales_autonomos_ape2}" />
-						<aon:inputText value="#{autonomo.to.persona.apellido2}" size="30"
-							maxlength="20" />
+						<aon:inputText  id="Persona_ape2"  size="30"
+							value="#{(autonomo.to.persona.apellido2!=null)?(autonomo.to.persona.apellido2):('')}"
+							disabled="true" maxlength="20" />
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_principales_autonomos_nom}" />
-						<aon:inputText value="#{autonomo.to.persona.nombre}" size="30"
-							maxlength="20" />
+						<aon:inputText id="Persona_nom"
+							value="#{(autonomo.to.persona.nombre!=null)?(autonomo.to.persona.nombre):('')}"
+							disabled="true" size="30" maxlength="20" />
 
-						<aon:outputLabel
+						<aon:outputLabel 
 							value="#{appBundle.aon_payroll_principales_autonomos_nuss}" />
-						<aon:inputText value="#{autonomo.to.persona.numss}" size="30"
-							maxlength="20" />
+						<aon:inputText id="Persona_nuss"
+							value="#{(autonomo.to.persona.numss!=null)?(autonomo.to.persona.numss):('')}"
+							disabled="true" size="30" maxlength="20" />
 					</aon:panelGrid>
 
 				</aon:div>
@@ -102,6 +106,8 @@
 					</aon:panelGrid>
 				</aon:div>
 			</aon:div>
+			
+				<aon:div  id="tabsinfo" >
 			<rich:tabPanel switchType="ajax">
 
 				<rich:tab id="datos"
@@ -111,8 +117,14 @@
 							style="margin-bottom=2px;">
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_autonomos_tipoautonomo}" />
-							<aon:inputText value="#{autonomo.to.tipautonomo}" size="30"
-								maxlength="20" />
+						
+								<aon:selectOneMenu 
+										value="#{autonomo.to.tipautonomo}">
+										<f:selectItem value="#{null}" itemLabel="    " />
+										<f:selectItems
+											value="#{autonomo.listaAutonomos}" />
+									</aon:selectOneMenu>
+								
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_autonomos_fecconst}" />
@@ -298,7 +310,7 @@
 							<aon:outputText
 								value="#{appBundle.aon_payroll_principales_autonomos_domper}" />
 						</f:facet>
-						<aon:div styleClass="aon-scroll-area">
+						<aon:div id="domiper" styleClass="aon-scroll-area">
 							<aon:panelGrid columns="4" dir="true" width="100%"
 								style="margin-bottom=2px;">
 
@@ -307,7 +319,8 @@
 								<aon:div styleClass="aon-lookup">
 									<aon:lookupInputText id="Tipovi_cdg" lookup="#{tipoviaLookup}"
 										reRender="Tipovia_description"
-										value="#{autonomo.to.persona.tipovia.cdg}" size="5">
+										value="#{(autonomo.to.persona.tipovia.cdg!=null)?(autonomo.to.persona.tipovia.cdg):('')}"
+							disabled="true" size="5">
 									</aon:lookupInputText>
 									<aon:lookupButton id="Tipovi_lookup"
 										windowTitle="#{appBundle.aon_payroll_auxiliares_tipos__tipovia}"
@@ -322,35 +335,41 @@
 
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_nomvia}" />
-								<aon:inputText value="#{autonomo.to.persona.nomvia}" size="50"
+								<aon:inputText id="per_nomvia" value="#{(autonomo.to.persona.nomvia!=null)?(autonomo.to.persona.nomvia):('')}"
+							disabled="true" size="50"
 									maxlength="20" />
 
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_principales_clientes_num}" />
-								<aon:inputText value="#{autonomo.to.persona.numero}" size="50"
+								<aon:inputText id="per_numero" value="#{(autonomo.to.persona.numero!=null)?(autonomo.to.persona.numero):('')}"
+							    disabled="true" size="50"
 									maxlength="20" />
 
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_principales_clientes_otros}" />
-								<aon:inputText value="#{autonomo.to.persona.otrdir}" size="50"
+								<aon:inputText id="per_otros" value="#{(autonomo.to.persona.otrdir!=null)?(autonomo.to.persona.otrdir):('')}"
+							disabled="true" size="50"
 									maxlength="20" />
 
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_principales_clientes_codpos}" />
-								<aon:inputText value="#{autonomo.to.persona.codpos}" size="50"
+								<aon:inputText id="per_codpos" value="#{(autonomo.to.persona.codpos!=null)?(autonomo.to.persona.codpos):('')}"
+							disabled="true" size="50"
 									maxlength="20" />
 
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_principales_clientes_localidad}" />
-								<aon:inputText value="#{autonomo.to.persona.localidad}"
+								<aon:inputText id="per_localidad" value="#{(autonomo.to.persona.localidad!=null)?(autonomo.to.persona.localidad):('')}"
+							disabled="true"
 									size="50" maxlength="20" />
 
 								<aon:outputLabel for="Provinci_cdg"
 									value="#{appBundle.aon_payroll_principales_clientes_provincia}" />
 								<aon:div styleClass="aon-lookup">
-									<aon:lookupInputText id="Pr_cdg" lookup="#{provinciaLookup}"
+									<aon:lookupInputText  lookup="#{provinciaLookup}"
 										reRender="Pro_description"
-										value="#{autonomo.to.persona.provincia.cdg}" size="5">
+										id="per_prvcdg" value="#{(autonomo.to.persona.provincia.cdg!=null)?(autonomo.to.persona.provincia.cdg):('')}"
+							disabled="true" size="5">
 									</aon:lookupInputText>
 									<aon:lookupButton id="Pr_lookup"
 										windowTitle="#{appBundle.aon_payroll_principales_clientes_provincia}"
@@ -568,7 +587,7 @@
 									value="#{autbase.to.cuota}" maxlength="10" />
 								<f:facet name="footer">
 									<aon:inputText styleClass="aon-form-input-text" required="true"
-										rendered="#{autbase.new}" size="5" value="#{autbase.to.cuota}"
+										rendered="#{autbase.new}" size="20" value="#{autbase.to.cuota}"
 										maxlength="10" />
 								</f:facet>
 							</aon:column>
@@ -636,6 +655,7 @@
 
 
 			</rich:tabPanel>
+			</aon:div>
 
 
 		</aon:form>

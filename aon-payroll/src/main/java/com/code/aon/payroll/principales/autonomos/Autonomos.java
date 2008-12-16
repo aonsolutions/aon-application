@@ -3,6 +3,10 @@ package com.code.aon.payroll.principales.autonomos;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,18 +14,21 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Entidad;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Mutua;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal;
+import com.code.aon.payroll.enumeration.TipAutonomo;
 import com.code.aon.payroll.geograficas.Provincia;
 import com.code.aon.payroll.principales.personas.Persona;
 import com.code.aon.payroll.tipos.Tipovia;
@@ -45,7 +52,7 @@ public class Autonomos  implements ITransferObject {
      private String localidad;
      private String dc;
      private String cuenta;
-     private String tipautonomo;
+     private TipAutonomo tipautonomo;
      private Date fecconstitucion;
      private Date fecalta;
      private String codregistro;
@@ -71,7 +78,7 @@ public class Autonomos  implements ITransferObject {
      private Provincia provincia;
      private Sucursal sucursal1;
      private Tipovia tipovia;
- 
+     private Set<Autbases> autbases = new HashSet<Autbases>();
 
    
 
@@ -191,12 +198,13 @@ public class Autonomos  implements ITransferObject {
         this.cuenta = cuenta;
     }
     
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.TipAutonomo")} )
     @Column(name="tipautonomo", length=1)
-    public String getTipautonomo() {
+    public TipAutonomo getTipautonomo() {
         return this.tipautonomo;
     }
     
-    public void setTipautonomo(String tipautonomo) {
+    public void setTipautonomo(TipAutonomo tipautonomo) {
         this.tipautonomo = tipautonomo;
     }
     @Temporal(TemporalType.DATE)
@@ -461,6 +469,17 @@ public class Autonomos  implements ITransferObject {
     public void setTipovia(Tipovia tipovia) {
         this.tipovia = tipovia;
     }
+
+    
+    
+	@OneToMany(mappedBy = "autonomos", cascade={CascadeType.REMOVE})
+	public Set<Autbases> getAutbases() {
+		return autbases;
+	}
+
+	public void setAutbases(Set<Autbases> autbases) {
+		this.autbases = autbases;
+	}
 
 
 

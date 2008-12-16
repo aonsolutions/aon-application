@@ -11,9 +11,11 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
 
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.divisa.Divisa;
@@ -311,6 +313,25 @@ public class ClienteController extends PayrollBasicController {
 		public void setSoloases(boolean soloases) {
 			this.soloases = soloases;
 		}
+
+		Integer code ;
+	    public Integer getCode() throws ManagerBeanException {	
+	    	
+	    	
+		       	code = 0;		
+				String consulta = "select max(cdg) from Cliente";			
+				Query q = HibernateUtil.getSession().createQuery(consulta);			
+				List results = q.list();
+				System.out.println("Max Code: " + results.get(0));   
+				code= (Integer)results.get(0) +1;
+				System.out.println("New Code: " + code);
+				return code;		      
+		     				
+			}
+	    public void setCode(Integer code) {
+			this.code = code;
+		}
+
 
 
 
