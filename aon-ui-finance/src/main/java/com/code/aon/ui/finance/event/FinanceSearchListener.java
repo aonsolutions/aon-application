@@ -32,6 +32,10 @@ public class FinanceSearchListener extends ControllerSearchListener {
 	
 	private Date invoiceIssueDateTo;
 	
+	private Integer fromNumber;
+	
+	private Integer toNumber;	
+	
 	/**
 	 * Gets if the finance is a payment or a charge.
 	 * 
@@ -106,6 +110,22 @@ public class FinanceSearchListener extends ControllerSearchListener {
 		this.invoiceIssueDateTo = invoiceIssueDateTo;
 	}
 
+	public Integer getFromNumber() {
+		return fromNumber;
+	}
+
+	public void setFromNumber(Integer fromNumber) {
+		this.fromNumber = fromNumber;
+	}
+
+	public Integer getToNumber() {
+		return toNumber;
+	}
+
+	public void setToNumber(Integer toNumber) {
+		this.toNumber = toNumber;
+	}
+	
 	@Override
 	protected void init() throws ManagerBeanException {
 		setPayment(Boolean.FALSE);
@@ -116,6 +136,8 @@ public class FinanceSearchListener extends ControllerSearchListener {
 		setDueDateTo(null);
 		setInvoiceIssueDateFrom(null);
 		setInvoiceIssueDateTo(null);
+		setFromNumber(null);
+		setToNumber(null);				
 	}
 	
 	@Override
@@ -155,5 +177,12 @@ public class FinanceSearchListener extends ControllerSearchListener {
 			String field = getController().getFieldName(IFinanceAlias.FINANCE_INVOICE_ISSUE_DATE);
 			criteria.addLessThanOrEqualExpression(field, getInvoiceIssueDateTo());
 		}
-	}	
+		if(getFromNumber() != null){
+			criteria.addGreaterThanOrEqualExpression(getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER), getFromNumber());
+		}
+		if(getToNumber() !=  null){
+			criteria.addLessThanOrEqualExpression(getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER), getToNumber());
+		}				
+	}
+	
 }
