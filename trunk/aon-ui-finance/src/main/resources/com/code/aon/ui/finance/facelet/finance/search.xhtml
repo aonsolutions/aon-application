@@ -70,14 +70,20 @@
 						value="#{bundle.aon_series}/#{bundle.aon_number}" />
 					<aon:div>
 						<aon:inputText id="Finance_invoice_series"
+							onblur="toUpperCase(this);"
 							valueChangeListener="#{finance.addExpression}"
-							size="4" />
-						<aon:div layout="inline" styleClass="aon-padding-left">
-							<aon:inputText id="Finance_invoice_number"
-								valueChangeListener="#{finance.addExpression}"
-								size="7" />
-						</aon:div>
-					</aon:div>
+							size="4" maxlength="5" />
+						<aon:outputLabel for="Finance_invoice_number_from"
+							styleClass="aon-form-date-label aon-padding-right"
+							value="#{bundle.aon_date_from}:" />
+						<aon:inputText id="Finance_invoice_number_from"
+							value="#{financeSearch.fromNumber}" size="7" />
+						<aon:outputLabel for="Finance_invoice_number_to"
+							styleClass="aon-form-date-label aon-padding-right"
+							value="#{bundle.aon_date_to}:" />							
+						<aon:inputText id="Finance_invoice_number_to"
+							value="#{financeSearch.toNumber}" size="7" />
+					</aon:div>					
 					
 					<aon:outputLabel value="#{financeBundle.finance_invoice_date}" />
 					<aon:div>
