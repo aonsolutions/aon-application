@@ -3925,6 +3925,12 @@ public interface IPayrollAlias {
 	*/
 	String  TRABAJADOR_PARIENTE = TRABAJADOR_ENTRY.getAliasNames()[13];
 
+	/** 
+	* Alias value: Trabajador_persona_cdg
+	* Hibernate value: Trabajador.persona.cdg
+	*/
+	String  TRABAJADOR_PERSONA_CDG = TRABAJADOR_ENTRY.getAliasNames()[14];
+
 
 
 	/** 
@@ -4234,52 +4240,136 @@ public interface IPayrollAlias {
 	String  AUTONOMOS_OTROS = AUTONOMOS_ENTRY.getAliasNames()[30];
 
 	/** 
+	* Alias value: Autonomos_persona_apellido2
+	* Hibernate value: Autonomos.persona.apellido2
+	*/
+	String  AUTONOMOS_PERSONA_APELLIDO2 = AUTONOMOS_ENTRY.getAliasNames()[31];
+
+	/** 
 	* Alias value: Autonomos_persona_cdg
 	* Hibernate value: Autonomos.persona.cdg
 	*/
-	String  AUTONOMOS_PERSONA_CDG = AUTONOMOS_ENTRY.getAliasNames()[31];
+	String  AUTONOMOS_PERSONA_CDG = AUTONOMOS_ENTRY.getAliasNames()[32];
+
+	/** 
+	* Alias value: Autonomos_persona_codpos
+	* Hibernate value: Autonomos.persona.codpos
+	*/
+	String  AUTONOMOS_PERSONA_CODPOS = AUTONOMOS_ENTRY.getAliasNames()[33];
+
+	/** 
+	* Alias value: Autonomos_persona_descripcion
+	* Hibernate value: Autonomos.persona.descripcion
+	*/
+	String  AUTONOMOS_PERSONA_DESCRIPCION = AUTONOMOS_ENTRY.getAliasNames()[34];
+
+	/** 
+	* Alias value: Autonomos_persona_localidad
+	* Hibernate value: Autonomos.persona.localidad
+	*/
+	String  AUTONOMOS_PERSONA_LOCALIDAD = AUTONOMOS_ENTRY.getAliasNames()[35];
+
+	/** 
+	* Alias value: Autonomos_persona_nombre
+	* Hibernate value: Autonomos.persona.nombre
+	*/
+	String  AUTONOMOS_PERSONA_NOMBRE = AUTONOMOS_ENTRY.getAliasNames()[36];
+
+	/** 
+	* Alias value: Autonomos_persona_nomvia
+	* Hibernate value: Autonomos.persona.nomvia
+	*/
+	String  AUTONOMOS_PERSONA_NOMVIA = AUTONOMOS_ENTRY.getAliasNames()[37];
+
+	/** 
+	* Alias value: Autonomos_persona_numero
+	* Hibernate value: Autonomos.persona.numero
+	*/
+	String  AUTONOMOS_PERSONA_NUMERO = AUTONOMOS_ENTRY.getAliasNames()[38];
+
+	/** 
+	* Alias value: Autonomos_persona_numss
+	* Hibernate value: Autonomos.persona.numss
+	*/
+	String  AUTONOMOS_PERSONA_NUMSS = AUTONOMOS_ENTRY.getAliasNames()[39];
+
+	/** 
+	* Alias value: Autonomos_persona_otrdir
+	* Hibernate value: Autonomos.persona.otrdir
+	*/
+	String  AUTONOMOS_PERSONA_OTRDIR = AUTONOMOS_ENTRY.getAliasNames()[40];
+
+	/** 
+	* Alias value: Autonomos_persona_provincia_cdg
+	* Hibernate value: Autonomos.persona.provincia.cdg
+	*/
+	String  AUTONOMOS_PERSONA_PROVINCIA_CDG = AUTONOMOS_ENTRY.getAliasNames()[41];
+
+	/** 
+	* Alias value: Autonomos_persona_tipovia_cdg
+	* Hibernate value: Autonomos.persona.tipovia.cdg
+	*/
+	String  AUTONOMOS_PERSONA_TIPOVIA_CDG = AUTONOMOS_ENTRY.getAliasNames()[42];
 
 	/** 
 	* Alias value: Autonomos_provincia_cdg
 	* Hibernate value: Autonomos.provincia.cdg
 	*/
-	String  AUTONOMOS_PROVINCIA_CDG = AUTONOMOS_ENTRY.getAliasNames()[32];
+	String  AUTONOMOS_PROVINCIA_CDG = AUTONOMOS_ENTRY.getAliasNames()[43];
 
 	/** 
 	* Alias value: Autonomos_seccion
 	* Hibernate value: Autonomos.seccion
 	*/
-	String  AUTONOMOS_SECCION = AUTONOMOS_ENTRY.getAliasNames()[33];
+	String  AUTONOMOS_SECCION = AUTONOMOS_ENTRY.getAliasNames()[44];
+
+	/** 
+	* Alias value: Autonomos_sucursal1_cpsuc
+	* Hibernate value: Autonomos.sucursal1.cpsuc
+	*/
+	String  AUTONOMOS_SUCURSAL1_CPSUC = AUTONOMOS_ENTRY.getAliasNames()[45];
 
 	/** 
 	* Alias value: Autonomos_sucursal1_id_cdg
 	* Hibernate value: Autonomos.sucursal1.id.cdg
 	*/
-	String  AUTONOMOS_SUCURSAL1_ID_CDG = AUTONOMOS_ENTRY.getAliasNames()[34];
+	String  AUTONOMOS_SUCURSAL1_ID_CDG = AUTONOMOS_ENTRY.getAliasNames()[46];
 
 	/** 
 	* Alias value: Autonomos_sucursal1_id_codent
 	* Hibernate value: Autonomos.sucursal1.id.codent
 	*/
-	String  AUTONOMOS_SUCURSAL1_ID_CODENT = AUTONOMOS_ENTRY.getAliasNames()[35];
+	String  AUTONOMOS_SUCURSAL1_ID_CODENT = AUTONOMOS_ENTRY.getAliasNames()[47];
+
+	/** 
+	* Alias value: Autonomos_sucursal1_domsuc
+	* Hibernate value: Autonomos.sucursal1.domsuc
+	*/
+	String  AUTONOMOS_SUCURSAL1_DOMSUC = AUTONOMOS_ENTRY.getAliasNames()[48];
+
+	/** 
+	* Alias value: Autonomos_sucursal1_munsuc
+	* Hibernate value: Autonomos.sucursal1.munsuc
+	*/
+	String  AUTONOMOS_SUCURSAL1_MUNSUC = AUTONOMOS_ENTRY.getAliasNames()[49];
 
 	/** 
 	* Alias value: Autonomos_tipautonomo
 	* Hibernate value: Autonomos.tipautonomo
 	*/
-	String  AUTONOMOS_TIPAUTONOMO = AUTONOMOS_ENTRY.getAliasNames()[36];
+	String  AUTONOMOS_TIPAUTONOMO = AUTONOMOS_ENTRY.getAliasNames()[50];
 
 	/** 
 	* Alias value: Autonomos_tipovia_cdg
 	* Hibernate value: Autonomos.tipovia.cdg
 	*/
-	String  AUTONOMOS_TIPOVIA_CDG = AUTONOMOS_ENTRY.getAliasNames()[37];
+	String  AUTONOMOS_TIPOVIA_CDG = AUTONOMOS_ENTRY.getAliasNames()[51];
 
 	/** 
 	* Alias value: Autonomos_tomo
 	* Hibernate value: Autonomos.tomo
 	*/
-	String  AUTONOMOS_TOMO = AUTONOMOS_ENTRY.getAliasNames()[38];
+	String  AUTONOMOS_TOMO = AUTONOMOS_ENTRY.getAliasNames()[52];
 
 
 
