@@ -25,6 +25,7 @@ import com.code.aon.ldap.LdapSession;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.UserController;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -95,7 +96,7 @@ public class AonUserController extends UserController implements ILdapConstants,
 	public void onLoadUser(ActionEvent event)  {
 		try {
 			this.managerChangingPassword = true;
-			IController userController = AonUtil.getController(ConfigConstants.USER);
+			IController userController = FormUtil.getController(ConfigConstants.USER);
 			loadUser( (User) userController.getTo() );
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
@@ -190,7 +191,7 @@ public class AonUserController extends UserController implements ILdapConstants,
 			if ( ctx.getMaximumSeverity() == null ) {
 				updateExpirationTimestamp( user.getLogin(), managerChangingPassword );
 				changeDefaultMailAccountPassword( user.getLogin(), getUserManager().getPassword() );				
-				AonDomainController domainController = (AonDomainController) AonUtil.getController("domain");
+				AonDomainController domainController = (AonDomainController) FormUtil.getController("domain");
 				domainController.flushAuthenticationCache( user.getLogin() );
 				setShowPasswordChangedWindow(true);
 			}

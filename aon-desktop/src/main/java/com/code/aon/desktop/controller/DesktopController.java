@@ -36,6 +36,7 @@ import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.groupware.controller.AlarmController;
 import com.code.aon.ui.groupware.controller.NoteController;
 import com.code.aon.ui.groupware.controller.NoticeController;
@@ -203,7 +204,7 @@ public class DesktopController extends BasicController {
 
     @SuppressWarnings("unused")
     public void onSelectNote(ActionEvent event) throws ManagerBeanException{
-        NoteController noteController = (NoteController)AonUtil.getController(NOTE_CONTROLLER_NAME);
+        NoteController noteController = (NoteController)FormUtil.getController(NOTE_CONTROLLER_NAME);
         Note note = (Note)recentNoteModel.getRowData();
         Criteria criteria = new Criteria();
         try {
@@ -244,7 +245,7 @@ public class DesktopController extends BasicController {
     }
 
     private void onSelectAlarm(ListDataModel model) throws ManagerBeanException{
-        AlarmController alarmController = (AlarmController)AonUtil.getController(ALARM_CONTROLLER_NAME);
+        AlarmController alarmController = (AlarmController)FormUtil.getController(ALARM_CONTROLLER_NAME);
         DesktopAlarm alarm = (DesktopAlarm)model.getRowData();
         Criteria criteria = new Criteria();
         try {
@@ -268,7 +269,7 @@ public class DesktopController extends BasicController {
         to.set(Calendar.MINUTE, 59);
         to.set(Calendar.SECOND, 59);
 
-        NoticeController noticeController = (NoticeController)AonUtil.getController(NOTICE_CONTROLLER_NAME);
+        NoticeController noticeController = (NoticeController)FormUtil.getController(NOTICE_CONTROLLER_NAME);
         Criteria criteria = new Criteria();
         try {
             criteria.addEqualExpression(noticeController.getFieldName(IGroupWareAlias.NOTICE_RECIPIENT_ID), UserUtils.getInstance().getLoggedUser().getId());

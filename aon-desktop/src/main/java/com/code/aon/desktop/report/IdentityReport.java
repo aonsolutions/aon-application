@@ -1,6 +1,7 @@
 package com.code.aon.desktop.report;
 
 import com.code.aon.company.Company;
+import com.code.aon.registry.RecordData;
 import com.code.aon.registry.RegistryAddress;
 
 public class IdentityReport {
@@ -9,9 +10,15 @@ public class IdentityReport {
 	
 	private Company company;
 
+	private RecordData recordData;
+
 	private RegistryAddress address;
 
 	private String addressStr;
+
+	private String addressLine1;
+	
+	private String addressLine2;
 
 	private String phone;
 	
@@ -33,13 +40,25 @@ public class IdentityReport {
 	
 	private String fax_content;
 
+	private String fax_number;
+
+	private String fax_phone_number;
+
+	private String fax_page_number;
+
 	// LETTER
 
-	private String letter_to;
+	private String letter_date;
 	
-	private String letter_from;
+	private String letter_salutation;
 	
 	private String letter_content;
+	
+	private String letter_goodbye;
+	
+	private String letter_signature;
+	
+	private boolean printRegistryData;
 
 	// PAGARE
 
@@ -65,6 +84,14 @@ public class IdentityReport {
 		this.company = company;
 	}
 
+	public RecordData getRecordData() {
+		return recordData;
+	}
+
+	public void setRecordData(RecordData recordData) {
+		this.recordData = recordData;
+	}
+
 	public RegistryAddress getAddress() {
 		return address;
 	}
@@ -75,19 +102,46 @@ public class IdentityReport {
 		if (address.getStreetType()!=null)
 			addressStr += address.getStreetType().toString()+" ";
 		if (address.getAddress()!=null)
-			addressStr += address.getAddress()+" ";
+			addressStr += "" + address.getAddress()+"";
 		if (address.getAddress2()!=null)
-			addressStr += address.getAddress2()+" ";
+			addressStr += " " + address.getAddress2()+"";
 		if (address.getAddress3()!=null)
-			addressStr += address.getAddress3()+" ";
-		if (address.getCity()!=null)
-			addressStr += address.getCity()+" ";
+			addressStr += " " + address.getAddress3()+"";
 		if (address.getZip()!=null)
-			addressStr += address.getZip()+" ";
+			addressStr += " " + address.getZip().trim()+"";
+		if (address.getCity()!=null)
+			addressStr += " " + address.getCity().trim()+"";
+		if (address.getGeozone() != null)
+			addressStr += " - " + address.getGeozone().getName().trim() + "";
+		
+		addressLine1 = "";
+		addressLine2 = "";
+		if (address.getStreetType()!=null)
+			addressLine1 += address.getStreetType().toString().trim() +" ";
+		if (address.getAddress()!=null)
+			addressLine1 += "" + address.getAddress().trim()+"";
+		if (address.getAddress2()!=null)
+			addressLine1 += " " + address.getAddress2().trim()+"";
+		if (address.getAddress3()!=null)
+			addressLine1 += " " + address.getAddress3().trim()+"";
+		if (address.getZip()!=null)
+			addressLine2 += address.getZip().trim()+"";
+		if (address.getCity()!=null)
+			addressLine2 += " " + address.getCity().trim()+"";
+		if (address.getGeozone() != null)
+			addressLine2 += " - " + address.getGeozone().getName().trim() + "";
 	}
 
 	public String getAddressStr() {
 		return addressStr;
+	}
+
+	public String getAddressLine1() {
+		return addressLine1;
+	}
+
+	public String getAddressLine2() {
+		return addressLine2;
 	}
 
 	public String getPhone() {
@@ -164,22 +218,46 @@ public class IdentityReport {
 		this.fax_content = fax_content;
 	}
 
+	public String getFax_number() {
+		return fax_number;
+	}
+
+	public void setFax_number(String fax_number) {
+		this.fax_number = fax_number;
+	}
+
+	public String getFax_phone_number() {
+		return fax_phone_number;
+	}
+
+	public void setFax_phone_number(String fax_phone_number) {
+		this.fax_phone_number = fax_phone_number;
+	}
+
+	public String getFax_page_number() {
+		return fax_page_number;
+	}
+
+	public void setFax_page_number(String fax_page_number) {
+		this.fax_page_number = fax_page_number;
+	}
+
 	// LETTER
 
-	public String getLetter_to() {
-		return letter_to;
+	public String getLetter_date() {
+		return letter_date;
 	}
 
-	public void setLetter_to(String letter_to) {
-		this.letter_to = letter_to;
+	public void setLetter_date(String letter_date) {
+		this.letter_date = letter_date;
 	}
 
-	public String getLetter_from() {
-		return letter_from;
+	public String getLetter_salutation() {
+		return letter_salutation;
 	}
 
-	public void setLetter_from(String letter_from) {
-		this.letter_from = letter_from;
+	public void setLetter_salutation(String letter_salutation) {
+		this.letter_salutation = letter_salutation;
 	}
 
 	public String getLetter_content() {
@@ -187,7 +265,24 @@ public class IdentityReport {
 	}
 
 	public void setLetter_content(String letter_content) {
-		this.letter_content = letter_content;
+		letter_content = letter_content.trim();
+		this.letter_content = "     " + letter_content;
+	}
+
+	public String getLetter_goodbye() {
+		return letter_goodbye;
+	}
+
+	public void setLetter_goodbye(String letter_goodbye) {
+		this.letter_goodbye = letter_goodbye;
+	}
+
+	public String getLetter_signature() {
+		return letter_signature;
+	}
+
+	public void setLetter_signature(String letter_signature) {
+		this.letter_signature = letter_signature;
 	}
 
 	// PAGARE
@@ -259,5 +354,13 @@ public class IdentityReport {
 	public void setPagare_fecha_ano(String pagare_fecha_ano) {
 		this.pagare_fecha_ano = pagare_fecha_ano;
 	}
-	
+
+	public boolean isPrintRegistryData() {
+		return printRegistryData;
+	}
+
+	public void setPrintRegistryData(boolean printRegistryData) {
+		this.printRegistryData = printRegistryData;
+	}
+
 }

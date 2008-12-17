@@ -22,6 +22,7 @@ import com.code.aon.ui.config.controller.UserController;
 import com.code.aon.ui.config.event.UserSecurityActivationListener;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -203,7 +204,7 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 			LOGGER.severe( "No existe en LDAP el usuario " + user.getLogin() + " para el dominio " + domain );
 		}			
 		try {
-			AonDomainController domainController = (AonDomainController) AonUtil.getController("domain");
+			AonDomainController domainController = (AonDomainController) FormUtil.getController("domain");
 			domainController.flushAuthenticationCache( user.getLogin() );
 		} catch (DeploymentException e) {
 			LOGGER.severe( "Error refrescando la cache de autentificacion" );			

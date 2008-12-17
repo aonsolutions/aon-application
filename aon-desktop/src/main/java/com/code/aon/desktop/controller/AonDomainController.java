@@ -40,6 +40,7 @@ import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class AonDomainController extends BasicController implements IAonObjectClasses, ILdapConstants {
@@ -397,7 +398,7 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 	public boolean isUserManagement() {
 		if ( userManagement == null ) {
 			userManagement = Boolean.FALSE;
-			AonUserController userController = (AonUserController) AonUtil.getController("currentUser");
+			AonUserController userController = (AonUserController) FormUtil.getController("currentUser");
 			DistinguishedName dn = AonDN.getDomainDN(userController.getDomain());			
 			BasicLdap ldap = new BasicLdap();
 			try {
