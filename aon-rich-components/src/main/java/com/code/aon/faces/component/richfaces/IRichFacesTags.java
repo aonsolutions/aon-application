@@ -6,4 +6,8 @@ public interface IRichFacesTags {
 	
 	String EVENT = "event";
 	
+	String LIMIT_TO_LIST = "limitToList";
+	
+	String AJAX_SINGLE = "ajaxSingle";
+	
 }
