@@ -3966,5 +3966,47 @@
 
 	</managed-bean>
   
-
+		
+		     <managed-bean>
+		<managed-bean-name>percep</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PercepController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>
+				com.code.aon.payroll.principales.personas.Percep
+			</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>
+				Percep_cdg			
+			</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>percep</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{percepControllerListener}</value>							
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+		<managed-bean>
+		<managed-bean-name>percepControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.PercepControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
 </faces-config>
