@@ -117,7 +117,10 @@ hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN
 	<!-- PRINCIPALES-PERSONA -->			
     <mapping class="com.code.aon.payroll.principales.autonomos.Autonomos"/>
     <mapping class="com.code.aon.payroll.principales.autonomos.Autbases"/>
-  
+	<!-- RESULTADOS - SALARIO -->			
+    <mapping class="com.code.aon.payroll.resultados.salarios.Nominaex"/>
+    <mapping class="com.code.aon.payroll.resultados.salarios.Nomdtoex"/>
+          
         
     
     

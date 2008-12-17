@@ -14,6 +14,7 @@ import javax.persistence.TemporalType;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.principales.empresa.Actividad;
+import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.payroll.principales.personas.Persona;
 
 /**
@@ -44,8 +45,8 @@ public class Trabajador implements ITransferObject {
 	
 	private Emprccc emprccc;
 	private Emprccos emprccos;
-	private Emprnif emprnif;
 	*/
+	private Empresa emprnif;
 	private Persona persona;
 	
 	/**
@@ -282,17 +283,17 @@ public class Trabajador implements ITransferObject {
 	public void setEmprccos(Emprccos emprccos) {
 		this.emprccos = emprccos;
 	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
+*/
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "codemp", nullable = false)
-	public Emprnif getEmprnif() {
+	public Empresa getEmprnif() {
 		return this.emprnif;
 	}
 
-	public void setEmprnif(Emprnif emprnif) {
+	public void setEmprnif(Empresa emprnif) {
 		this.emprnif = emprnif;
 	}
-*/
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "codper", nullable = false)
 	public Persona getPersona() {
