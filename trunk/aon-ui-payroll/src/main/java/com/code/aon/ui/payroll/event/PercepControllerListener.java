@@ -8,51 +8,34 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.payroll.controller.ConveniosComplementoController;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
 import com.code.aon.ui.payroll.controller.OtrpercepController;
+import com.code.aon.ui.payroll.controller.PercepController;
 
 
 public class PercepControllerListener extends ControllerAdapter implements IPayrollConstants {
 	
-	/*
-	
+	@Override
+	public void beforeBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		PercepController controller = (PercepController) event.getController();
+		try {
+
+			controller.refreshComplementos();
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException( e.getMessage(), e );
+		}
+	}
 
 	@Override
-	public void afterBeanCreated(ControllerEvent event)
-			throws ControllerListenerException {
-		// TODO Auto-generated method stub
-
-
-		
-		OtrpercepController controller = (OtrpercepController)FormUtil.getController(IPayrollConstants.OTRPER_CONTROLLER_NAME);
-		
-		 try {			 
-			 
-			 ((Otrperc)(event.getController().getTo())).setCdg(controller.getCode());
-			 
-			} catch (ManagerBeanException e) {
-			}	
-		
-		
+	public void beforeBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		PercepController controller = (PercepController) event.getController();
+		try {
 	
-	
-	
-	}
-@Override
-public void beforeBeanAdded(ControllerEvent event)
-		throws ControllerListenerException {
-	
-	
-	OtrpercepController controller = (OtrpercepController)FormUtil.getController(IPayrollConstants.OTRPER_CONTROLLER_NAME);
-	
-	 try {			 
-		 
-		 ((Otrperc)(event.getController().getTo())).setCdg(controller.getCode());
-		 
+			controller.refreshComplementos();
 		} catch (ManagerBeanException e) {
-		}	
+			throw new ControllerListenerException( e.getMessage(), e );
+		}
+	}
 	
-	
-
-}*/
 }

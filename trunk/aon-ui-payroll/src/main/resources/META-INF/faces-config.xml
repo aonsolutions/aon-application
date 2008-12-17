@@ -3985,9 +3985,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>
-				Percep_cdg			
-			</value>
+			<value>Percep_id_numero,Percep_id_cdg</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>

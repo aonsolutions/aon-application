@@ -14,8 +14,15 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.auxiliares.convenios.Complemento;
+import com.code.aon.payroll.enumeration.FijoVariable;
+import com.code.aon.payroll.enumeration.IndiceComplemento;
+import com.code.aon.payroll.enumeration.Retribuciones;
+import com.code.aon.payroll.enumeration.TipoComplemento;
 import com.code.aon.payroll.principales.persona.Trabajador;
 
 /**
@@ -39,14 +46,14 @@ public class Percep  implements ITransferObject {
      private Integer mes;
      private BigDecimal garilt;
      private String redext;
-     private String fijovar;
+     private FijoVariable fijovar;
      private Date fecnew;
      private Date hornew;
      private Date fecmod;
      private Date hormod;
-     private String indcom;
-     private String tipcom;
-     private String dinesp;
+     private IndiceComplemento indcom;
+     private TipoComplemento tipcom;
+     private Retribuciones dinesp;
      private Complemento complemento;
      private Complemento complemento1;
      private Trabajador trabajador;
@@ -181,13 +188,13 @@ public class Percep  implements ITransferObject {
     public void setRedext(String redext) {
         this.redext = redext;
     }
-    
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.FijoVariable")} )
     @Column(name="fijovar", nullable=false, length=1)
-    public String getFijovar() {
+    public FijoVariable getFijovar() {
         return this.fijovar;
     }
     
-    public void setFijovar(String fijovar) {
+    public void setFijovar(FijoVariable fijovar) {
         this.fijovar = fijovar;
     }
     @Temporal(TemporalType.DATE)
@@ -226,31 +233,31 @@ public class Percep  implements ITransferObject {
     public void setHormod(Date hormod) {
         this.hormod = hormod;
     }
-    
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.IndiceComplemento")} )
     @Column(name="indcom", length=1)
-    public String getIndcom() {
+    public IndiceComplemento getIndcom() {
         return this.indcom;
     }
     
-    public void setIndcom(String indcom) {
+    public void setIndcom(IndiceComplemento indcom) {
         this.indcom = indcom;
     }
-    
+   @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.TipoComplemento")} )
     @Column(name="tipcom", length=1)
-    public String getTipcom() {
+    public TipoComplemento getTipcom() {
         return this.tipcom;
     }
     
-    public void setTipcom(String tipcom) {
+    public void setTipcom(TipoComplemento tipcom) {
         this.tipcom = tipcom;
     }
-    
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Retribuciones")} )
     @Column(name="dinesp", nullable=false, length=1)
-    public String getDinesp() {
+    public Retribuciones getDinesp() {
         return this.dinesp;
     }
     
-    public void setDinesp(String dinesp) {
+    public void setDinesp(Retribuciones dinesp) {
         this.dinesp = dinesp;
     }
     
