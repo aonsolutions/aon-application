@@ -128,6 +128,7 @@
 			com.code.aon.bridge.session.ConcurrentSessionListener
 		</listener-class>
 	</listener>
+	
 	<!-- Attachment Servlet -->
 	<servlet>
 		<servlet-name>CompanyLogo</servlet-name>
@@ -144,6 +145,24 @@
 	<servlet-mapping>
 		<servlet-name>CompanyLogo</servlet-name>
 		<url-pattern>*.logo</url-pattern>
+	</servlet-mapping>
+
+	<!-- Attachment Servlet -->
+	<servlet>
+		<servlet-name>CorporateIdentityDocument</servlet-name>
+		<servlet-class>
+			com.code.aon.desktop.servlet.CorporateIdentityDocumentServlet
+		</servlet-class>
+		<init-param>
+			<param-name>pojo</param-name>
+			<param-value>
+				com.code.aon.registry.RegistryAttachment
+			</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CorporateIdentityDocument</servlet-name>
+		<url-pattern>*.cidocument</url-pattern>
 	</servlet-mapping>
 	<filter>
 		<filter-name>Expires Filter</filter-name>

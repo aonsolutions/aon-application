@@ -14,7 +14,7 @@ import com.code.aon.desktop.controller.AonUserController;
 import com.code.aon.jaas.auth.util.Util;
 import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.deployment.DeploymentException;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 
 public class ApplicationsManager {
 
@@ -33,7 +33,7 @@ public class ApplicationsManager {
 		String thisIp = InetAddress.getLocalHost().getHostAddress();
 
 		
-		AonUserController aonUserController = (AonUserController) AonUtil.getController( "currentUser" );
+		AonUserController aonUserController = (AonUserController) FormUtil.getController( "currentUser" );
 		List list = aonUserController.getUserManager().getUserApplications();
         for (int i = 0; i < list.size(); i++) {
 			IApplication app = (IApplication) list.get(i);

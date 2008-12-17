@@ -28,65 +28,78 @@
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<h:commandLink id="export2pdf_fax" value="PDF" title="PDF"
+							styleClass="aon-finding-toolbar-item aon-icon-pdf"
+							action="#{report.onExecute}" target="_blank">
+							<f:param name="reportKey" value="fax_to" />
+						</h:commandLink>
+						<aon:commandButton id="remove" value="#{bundle.aon_clear}"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							actionListener="#{corporateIdentity.onClear}" 
+							action="corporate_identity_fax"
+							immediate="true" accesskey="#{bundle.aon_key_remove}" />
 						<aon:commandButton id="cancel" value="#{bundle.aon_back}"
 							action="corporate_identity"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							immediate="true"
-							accesskey="#{bundle.aon_key_cancel}" />
+							accesskey="#{bundle.aon_key_cancel}" /> 
 					</aon:div>
+
 				</aon:panelGrid>
 			</aon:div>
 			
-			<aon:panelGrid columns="1" styleClass="aon-panelGrid-formatting"
-				columnClasses="aon-portlets-column1,aon-portlets-column1,aon-portlets-column1">
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="4" dir="true">
 
-				<aon:div styleClass="aon-portlet">
-					<aon:div styleClass="aon-portlet-title">
-						<aon:outputText value="#{appBundle.aon_corporate_identity_fax}" styleClass="aon-portlet-title-text"/>
-					</aon:div>
-					<aon:div styleClass="aon-portlet-body">
-						<a4j:htmlCommandLink id="print" target="_blank"
-							actionListener="#{corporateIdentity.onPrintFax}"
-							styleClass="aon-finding-toolbar-item aon-icon-html"
-							style="line-height:16px;">
-							<aon:outputText value="HTML" />
-						</a4j:htmlCommandLink> 					
-						<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-fax.png']}" />
-					</aon:div>
+					<aon:outputLabel for="fax_to"
+						value="#{appBundle.aon_corporate_identity_to}" />
+					<aon:inputText id="fax_to" 
+						size="50" 
+						value="#{corporateIdentity.identityReport.fax_to}" />
+	
+					<aon:outputLabel for="fax_from"
+						value="#{appBundle.aon_corporate_identity_from}" />
+					<aon:inputText id="fax_from" 
+						size="50" 
+						value="#{corporateIdentity.identityReport.fax_from}" />
+
+					<aon:outputLabel for="fax_number"
+						value="#{appBundle.aon_corporate_identity_fax_number}" />
+					<aon:inputText id="fax_number" 
+						size="50" 
+						value="#{corporateIdentity.identityReport.fax_number}" />
+	
+					<aon:outputLabel for="fax_page_number"
+						value="#{appBundle.aon_corporate_identity_fax_page_number}" />
+					<aon:inputText id="fax_page_number" 
+						size="5" 
+						value="#{corporateIdentity.identityReport.fax_page_number}" />
+
+					<aon:outputLabel for="fax_phone_number"
+						value="#{appBundle.aon_corporate_identity_fax_phone_number}" />
+					<aon:inputText id="fax_phone_number" 
+						size="50" 
+						value="#{corporateIdentity.identityReport.fax_phone_number}" />
+	
+				</aon:panelGrid>
+				<aon:div styleClass="aon-scroll-area">
 				</aon:div>
-	
-			</aon:panelGrid>
+				<aon:panelGrid columns="2" dir="true">
 
-			<aon:panelGrid columns="2" dir="true" style="width:90%;">
-
-				<aon:outputLabel for="fax_from"
-					value="#{appBundle.aon_corporate_identity_from}" />
-				<aon:inputText id="fax_from" 
-					size="85" 
-					value="#{corporateIdentity.identityReport.fax_from}" />
-
-				<aon:outputLabel for="fax_to"
-					value="#{appBundle.aon_corporate_identity_to}" />
-				<aon:inputText id="fax_to" 
-					size="85" 
-					value="#{corporateIdentity.identityReport.fax_to}" />
-
-				<aon:outputLabel for="fax_subject"
-					value="#{appBundle.aon_corporate_identity_subject}" />
-				<aon:inputText id="fax_subject" 
-					size="85" 
-					value="#{corporateIdentity.identityReport.fax_subject}" />
-	
-				<aon:outputLabel for="fax_content"
-					value="#{appBundle.aon_corporate_identity_content}" />
-				<aon:panelGroup scrollWidth="90%">
-					<aon:inputRichText style="width:90%" 
-						id="fax_content" 
-						toolbarSet="AonDesktop"
+					<aon:outputLabel for="fax_subject"
+						value="#{appBundle.aon_corporate_identity_subject}" />
+					<aon:inputText id="fax_subject" 
+						size="120" 
+						value="#{corporateIdentity.identityReport.fax_subject}" />
+		
+					<aon:outputLabel for="fax_content"
+						value="#{appBundle.aon_corporate_identity_content}" />
+					<aon:inputTextarea id="letter_content"
 						value="#{corporateIdentity.identityReport.fax_content}"
-						cols="80" rows="20"/>
-				</aon:panelGroup>
-			</aon:panelGrid>
+						cols="120" rows="25"/>
+						
+				</aon:panelGrid>
+			</aon:div>
 	
 		</aon:form>
 	</ui:define>

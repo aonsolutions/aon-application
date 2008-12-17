@@ -8,8 +8,10 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,18 +29,22 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.velocity.TemplateHelper;
 import com.code.aon.common.velocity.VelocityHelper;
 import com.code.aon.company.Company;
+import com.code.aon.config.User;
 import com.code.aon.desktop.report.IdentityReport;
 import com.code.aon.desktop.utils.identity.n2t;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RecordData;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -63,6 +69,12 @@ public class CorporateIdentity implements ICollectionProvider{
         	Company company = recoverCompany();
         	if (company!=null){
         		identityReport.setCompany(company);
+        		
+        		RecordData recordData = recoverRecordData(company);
+            	if (recordData!=null){
+            		identityReport.setRecordData(recordData);
+            	}
+        		
         		identityReport.setAddress(recoverCompanyAddress(company));
         		identityReport.setCellular(recoverCompanyMediasString(company,MediaType.CELLULAR));
         		identityReport.setEmail(recoverCompanyMediasString(company,MediaType.EMAIL));
@@ -76,14 +88,19 @@ public class CorporateIdentity implements ICollectionProvider{
         }
 	}
 	
-    public void onInit(ActionEvent event) throws ManagerBeanException{
+    public void onClear(ActionEvent event) throws ManagerBeanException{
     	identityReport.setFax_to("");
     	identityReport.setFax_from("");
     	identityReport.setFax_subject("");
     	identityReport.setFax_content("");
-    	identityReport.setLetter_to("");
-    	identityReport.setLetter_from("");
+    	identityReport.setFax_number("");
+    	identityReport.setFax_phone_number("");
+    	identityReport.setFax_page_number("");
+    	identityReport.setLetter_date("");
+    	identityReport.setLetter_salutation("");
     	identityReport.setLetter_content("");
+    	identityReport.setLetter_goodbye("");
+    	identityReport.setLetter_signature("");
     	identityReport.setPagare_num("");
     	identityReport.setPagare_de("");
     	identityReport.setPagare_cantidad("");
@@ -91,6 +108,50 @@ public class CorporateIdentity implements ICollectionProvider{
     	identityReport.setPagare_fecha_dia("");
     	identityReport.setPagare_fecha_mes("");
     	identityReport.setPagare_fecha_ano("");
+    	identityReport.setPrintRegistryData(false);
+    }
+
+    public void onInit(ActionEvent event) throws ManagerBeanException{
+    	String city = "Madrid";
+        Calendar date = new GregorianCalendar();
+
+        String day = "" + date.get( Calendar.DATE );
+        Month m = Month.getMonthByValue(date.get(Calendar.MONTH));
+        
+        String month = m.getName(new Locale("es"));
+        String year = "" + date.get( Calendar.YEAR );
+
+    	Company company = recoverCompany();
+    	RegistryAddress address = recoverCompanyAddress(company);
+    	if (company!=null){
+    		if (address.getCity() != null) city = address.getCity();
+    	}
+
+		User loggedUser = UserUtils.getInstance().getLoggedUser();
+		String name = loggedUser.getName();
+		
+		String registryData = "";
+
+    	identityReport.setFax_to("");
+    	identityReport.setFax_from("");
+    	identityReport.setFax_subject("");
+    	identityReport.setFax_content("");
+    	identityReport.setFax_number("");
+    	identityReport.setFax_phone_number("");
+    	identityReport.setFax_page_number("1");
+    	identityReport.setLetter_date("En " + city + " a " + day +" de " + month + " de " + year + "");
+    	identityReport.setLetter_salutation("Estimado señor:");
+    	identityReport.setLetter_content("");
+    	identityReport.setLetter_goodbye("Atentamente,");
+    	identityReport.setLetter_signature("" + name + "\n");
+    	identityReport.setPagare_num("");
+    	identityReport.setPagare_de("");
+    	identityReport.setPagare_cantidad("");
+    	identityReport.setPagare_cantidad_num("");
+    	identityReport.setPagare_fecha_dia(day);
+    	identityReport.setPagare_fecha_mes(month);
+    	identityReport.setPagare_fecha_ano(year);
+    	identityReport.setPrintRegistryData(false);
     }
 
 	private Company recoverCompany() throws ManagerBeanException{
@@ -98,6 +159,17 @@ public class CorporateIdentity implements ICollectionProvider{
         List list = bean.getList(null);
         if (list.size() > 0) {
             return (Company)list.get(0);
+        }
+        return null;
+	}
+
+	private RecordData recoverRecordData(Company company) throws ManagerBeanException{
+    	IManagerBean bean = BeanManager.getManagerBean(RecordData.class);
+    	Criteria criteria = new Criteria();
+    	criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.RECORD_DATA_REGISTRY_ID), company.getId());
+        List list = bean.getList(criteria);
+        if (list.size() > 0) {
+            return (RecordData)list.get(0);
         }
         return null;
 	}
@@ -208,7 +280,7 @@ public class CorporateIdentity implements ICollectionProvider{
 		} catch (AonException e) {
 			System.out.println(e);
 		} 	
-		context.responseComplete();    	
+		context.responseComplete();
     }
 	
     public void onN2T(ActionEvent event){
@@ -216,16 +288,19 @@ public class CorporateIdentity implements ICollectionProvider{
 			String res;
 			n2t numero;
 			String num = identityReport.getPagare_cantidad_num();
-			if (num.lastIndexOf(".")!= -1){
-				String str1 = num.substring(0,num.lastIndexOf("."));
-				String str2 = num.substring(num.lastIndexOf(".")+1);
+			String decimalChar = ".";
+			if (num.lastIndexOf(",") != -1) decimalChar = ",";
+			if (num.lastIndexOf(decimalChar) != -1){
+				String str1 = num.substring(0,num.lastIndexOf(decimalChar));
+				String str2 = num.substring(num.lastIndexOf(decimalChar)+1);
 		        int num_ = Integer.parseInt(str1);
 		        int dec_ = Integer.parseInt(str2);
 		        numero = new n2t();
 		        res = numero.convertirLetras(num_);
 		        res += " con ";
 		        res += numero.convertirLetras(dec_);
-			}else{
+			}
+			else {
 		        int num_ = Integer.parseInt(num);
 		        numero = new n2t();
 		        res = numero.convertirLetras(num_);
@@ -235,4 +310,12 @@ public class CorporateIdentity implements ICollectionProvider{
 		}
     }
     
+    public Company getCompany() {
+    	return identityReport.getCompany();
+    }
+
+    public RecordData getRecordData() {
+    	return identityReport.getRecordData();
+    }
+
 }

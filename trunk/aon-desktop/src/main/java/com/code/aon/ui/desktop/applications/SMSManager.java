@@ -31,6 +31,7 @@ import com.code.aon.messaging.sms.Message;
 import com.code.aon.messaging.sms.Sender;
 import com.code.aon.messaging.util.Utils;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class SMSManager implements ISenderListener, Serializable, IServices {
@@ -63,7 +64,9 @@ public class SMSManager implements ISenderListener, Serializable, IServices {
 		"WHERE msg.username = :username AND msg.sentDate BETWEEN :fromDate AND :toDate";
     String companyMessages = "SELECT count(*) FROM Message as msg " +
 		"WHERE msg.sentDate BETWEEN :fromDate AND :toDate";
-	private List<PriceTariff> priceList;
+    String totalMessages = "SELECT count(*) FROM Message as msg " +
+		"WHERE msg.sentDate BETWEEN :fromDate AND :toDate";
+    private List<PriceTariff> priceList;
 	private Long userTotalSentMessages;
 	private Long companyTotalSentMessages;
 	private Double companyMessageUnitPrice;
@@ -240,7 +243,7 @@ public class SMSManager implements ISenderListener, Serializable, IServices {
 		this.selected = -1;
 		String organization;
 		try {
-			organization = ( (DesktopController) AonUtil.getController( "desktop" ) ).getCompanyAlias();
+			organization = ( (DesktopController) FormUtil.getController( "desktop" ) ).getCompanyAlias();
 			this.message.getInfo().setOrganization( organization );
 			this.message.getInfo().setOriginator( organization );
 		} catch (ManagerBeanException e) {
@@ -339,17 +342,9 @@ public class SMSManager implements ISenderListener, Serializable, IServices {
 // ************************************** IServices methods implementation *************************************
 	public boolean isExecutable() {
 		if ( app == null ) {
-			try {
-				IManagerBean bean = BeanManager.getManagerBean( com.code.aon.groupware.Message.class );
-				int sent = bean.getCount( null );
-				if ( sent >= 5 )
-					return false;
-
-				return true;
-			} catch (ManagerBeanException e) {
-				LOGGER.severe( e.getMessage() );
-				return false;
-			}
+			int sent = (int)getCurrentMonthMessageSent();
+			if ( sent >= 5 ) return false;
+			return true;
 		}
 		return app.isExecutable();
 	}
@@ -365,6 +360,11 @@ public class SMSManager implements ISenderListener, Serializable, IServices {
 	public boolean isToolbarEnabled() {
 		return app != null && app.isToolbarEnabled();
 	}
+
+	public boolean isNoticeEnabled() {
+		return app != null;
+	}
+
 // ********************************** End of IServices methods implementation **********************************
 	
 	public class PriceTariff {
@@ -416,7 +416,7 @@ public class SMSManager implements ISenderListener, Serializable, IServices {
 
 	private void loadPriceTariff() {
 		priceList = new ArrayList<PriceTariff>();
-		priceList.add( new PriceTariff( "<", 6, 0d, "Promocion Lanzamiento. Gratis" ) );
+		priceList.add( new PriceTariff( "<=", 5, 0d, "Promocion Lanzamiento. Gratis" ) );
 		priceList.add( new PriceTariff( "<", 100, 0.14d, "\u20AC + IVA" ) );
 		priceList.add( new PriceTariff( "<", 500, 0.13d, "\u20AC + IVA" ) );
 		priceList.add( new PriceTariff( "<", 1000, 0.12d, "\u20AC + IVA" ) );
@@ -426,19 +426,38 @@ public class SMSManager implements ISenderListener, Serializable, IServices {
 	}
 
 	private void smsEnabling(String domain) throws SOAPException {
+		long sent = getCurrentMonthMessageSent();
+        
 		if ( app == null ) {
-			try {
-				IManagerBean bean = BeanManager.getManagerBean( com.code.aon.groupware.Message.class );
-				int sent = bean.getCount( null );
-				if ( sent < 6 )
-					this.sender.init();
-			} catch (ManagerBeanException e) {
-				LOGGER.severe( e.getMessage() );
+			if ( sent < 6 )
 				this.sender.init();
-			}
 			return;
 		}
 		this.sender.init( domain );
+	}
+
+	private long getCurrentMonthMessageSent() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime( new Date() );
+		Month current_month = Month.getMonthByValue( calendar.get( Calendar.MONTH ) );
+		int current_year = calendar.get( Calendar.YEAR );
+
+        Calendar fromDate = Calendar.getInstance();
+        fromDate.set( Calendar.DATE, 1 );
+        fromDate.set( Calendar.MONTH, current_month.getValue() );
+        fromDate.set( Calendar.YEAR, current_year );
+        Calendar toDate = Calendar.getInstance();
+        toDate.set( Calendar.DATE, 1 );
+        toDate.set( Calendar.MONTH, current_month.getValue() + 1 );
+        toDate.set( Calendar.YEAR, current_year );
+        //Ahora restamos un dia
+        toDate.add(Calendar.DATE, -1);
+        Session session = HibernateUtil.getSession();
+        Query query = session.createQuery( totalMessages );
+        query.setDate( "fromDate", fromDate.getTime() );
+        query.setDate( "toDate", toDate.getTime() );
+        long sent = (Long) query.uniqueResult();
+        return sent;
 	}
 
 }

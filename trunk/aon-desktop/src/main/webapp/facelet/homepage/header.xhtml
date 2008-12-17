@@ -1,13 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components">
-<body>
 
-<ui:composition>
-	<aon:div id="aon-header">
+	<aon:div id="aon-header" rendered="#{!currentUser.passwordExpired}">
 		<aon:panelGrid columns="3" width="100%" 
 			columnClasses="aon-header-name,aon-header-slogan,aon-header-info">
 			<aon:div>
@@ -66,5 +64,3 @@
 	</aon:div>
 
 </ui:composition>
-</body>
-</html>
