@@ -21,7 +21,7 @@
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.aon_webmail_main}" />
+						<aon:outputText value="#{webmailBundle.aon_webmail_main}" />
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-subtitle-internal">
@@ -69,25 +69,25 @@
 				        </aon:div>
 			           
 						<aon:outputLabel for="SearchMail_from" 
-							value="#{appBundle.aon_webmail_from}: " />
+							value="#{webmailBundle.aon_webmail_from}: " />
 						<aon:inputText id="SearchMail_from"
 							size="80"
 							value="#{search.address_from}"/>
 		
 						<aon:outputLabel for="SearchMail_to" 
-							value="#{appBundle.aon_webmail_to}: " />
+							value="#{webmailBundle.aon_webmail_to}: " />
 						<aon:inputText id="SearchMail_to"
 							size="80"
 							value="#{search.address_cc}"/>
 		
 						<aon:outputLabel for="SearchMail_subject" 
-							value="#{appBundle.aon_webmail_subject}: " />
+							value="#{webmailBundle.aon_webmail_subject}: " />
 						<aon:inputText id="SearchMail_subject"
 							size="80"
 							value="#{search.subject}"/>
 		
 						<aon:outputLabel for="SearchMail_bodyText" 
-							value="#{appBundle.aon_webmail_content}: " />
+							value="#{webmailBundle.aon_webmail_content}: " />
 						<aon:inputText id="SearchMail_bodyText"
 							size="80"
 							value="#{search.bodyText}"/>						
@@ -99,7 +99,7 @@
 					<aon:div rendered="#{search.resultSelected}">
 						<aon:div rendered="#{!search.resultFound}" styleClass="aon-box aon-box-outstanding2">
 							<aon:div styleClass="aon-icon aon-icon-info" style="padding-top:2px;padding-bottom:2px;font-weight:bold;">
-								<aon:outputText value="#{appBundle.aon_webmail_search_none}"/>
+								<aon:outputText value="#{webmailBundle.aon_webmail_search_none}"/>
 							</aon:div>
 						</aon:div>
 						<aon:div rendered="#{search.resultFound}">
@@ -115,21 +115,21 @@
 																				
 								<aon:column>
 									<f:facet name="header">
-										<aon:outputText value="#{appBundle.aon_webmail_from}"/>
+										<aon:outputText value="#{webmailBundle.aon_webmail_from}"/>
 									</f:facet>
 									<aon:outputText escape="false" converter="longString" value="#{to.sender}"/>
 								</aon:column>
 								
 								<aon:column>
 									<f:facet name="header">
-										<aon:outputText value="#{appBundle.aon_webmail_subject}"/>
+										<aon:outputText value="#{webmailBundle.aon_webmail_subject}"/>
 									</f:facet>
 									<aon:outputText value="#{to.subject}" />
 								</aon:column>
 										  
 								<aon:column>
 									<f:facet name="header">
-										<aon:outputText value="#{appBundle.aon_webmail_date}"/>
+										<aon:outputText value="#{webmailBundle.aon_webmail_date}"/>
 									</f:facet>
 									<aon:outputText value="#{to.sentDate}"/>
 								</aon:column>		  

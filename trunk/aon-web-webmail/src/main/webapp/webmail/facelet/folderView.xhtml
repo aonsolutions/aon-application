@@ -29,35 +29,35 @@
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 					
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.aon_webmail_main}" />
+						<aon:outputText value="#{webmailBundle.aon_webmail_main}" />
 					</aon:div>
 					
 					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{appBundle.aon_webmail_messages}" />
+						<aon:outputText value="#{webmailBundle.aon_webmail_messages}" />
 					</aon:div>
 					
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="newMailMessage"
-							title="#{appBundle.aon_webmail_newmail}" action="messageNew"
+							title="#{webmailBundle.aon_webmail_newmail}" action="messageNew"
 							actionListener="#{message.createNewMessage}"
-							value="#{appBundle.aon_webmail_newmail}"
+							value="#{webmailBundle.aon_webmail_newmail}"
 							styleClass="aon-finding-toolbar-item aon-icon-newMail">
 						</aon:commandButton>
 		
 						<aon:confirmButton id="deleteButton_n"
 							rendered="#{folder.folder.deleteableAllMessages}"
-							title="#{appBundle.aon_webmail_deletemail}"
-							confirmTitle="#{appBundle.aon_webmail_advice}"
+							title="#{webmailBundle.aon_webmail_deletemail}"
+							confirmTitle="#{webmailBundle.aon_webmail_advice}"
 							confirmMessage="#{bundle.aon_remove_confirm}"
 							accesskey="#{bundle.aon_key_remove}" confirmAction="folder"
 							confirmActionListener="#{folder.deleteCheckedMessages}"
-							value="#{appBundle.aon_webmail_deletemail}"
+							value="#{webmailBundle.aon_webmail_deletemail}"
 							styleClass="aon-icon-mailDelete aon-finding-toolbar-item" />
 						<aon:commandButton
 							rendered="#{!folder.folder.deleteableAllMessages}"
-							title="#{appBundle.aon_webmail_deletemail}" action="folder"
+							title="#{webmailBundle.aon_webmail_deletemail}" action="folder"
 							actionListener="#{folder.deleteCheckedMessages}"
-							value="#{appBundle.aon_webmail_deletemail}"
+							value="#{webmailBundle.aon_webmail_deletemail}"
 							styleClass="aon-icon-mailDelete aon-finding-toolbar-item">
 						</aon:commandButton>
 		
@@ -70,18 +70,18 @@
 		
 						<aon:confirmButton id="deleteAllButton"
 							rendered="#{folder.folder.deleteableAllMessages}"
-							title="#{appBundle.aon_webmail_deleteallmail}"
-							confirmTitle="#{appBundle.aon_webmail_advice}"
-							confirmMessage="#{appBundle.aon_remove_all_confirm}"
+							title="#{webmailBundle.aon_webmail_deleteallmail}"
+							confirmTitle="#{webmailBundle.aon_webmail_advice}"
+							confirmMessage="#{webmailBundle.aon_remove_all_confirm}"
 							accesskey="#{bundle.aon_key_remove}" confirmAction="folder"
 							confirmActionListener="#{folder.deleteAllMessages}"
-							value="#{appBundle.aon_webmail_deleteallmail}"
+							value="#{webmailBundle.aon_webmail_deleteallmail}"
 							styleClass="aon-icon-mailDelete aon-finding-toolbar-item" />
 		
 						<!-- Move button  -->
 						<aon:commandButton id="moveButton"
-							title="#{appBundle.aon_webmail_movemail}"
-							value="#{appBundle.aon_webmail_movemail}"
+							title="#{webmailBundle.aon_webmail_movemail}"
+							value="#{webmailBundle.aon_webmail_movemail}"
 							styleClass="aon-finding-toolbar-item aon-icon-mail-move">
 							<rich:componentControl for="msgMoveModalPanel" operation="show"
 								event="onclick" />
@@ -90,8 +90,8 @@
 						<!--  Refresh button -->
 						<aon:commandButton id="refreshAccounts" action="folder" 
 							actionListener="#{folder.refresh}"
-							title="#{appBundle.aon_webmail_refresh}"
-							value="#{appBundle.aon_webmail_refresh}"
+							title="#{webmailBundle.aon_webmail_refresh}"
+							value="#{webmailBundle.aon_webmail_refresh}"
 							styleClass="aon-finding-toolbar-item aon-icon-refresh">
 						</aon:commandButton> 
 			

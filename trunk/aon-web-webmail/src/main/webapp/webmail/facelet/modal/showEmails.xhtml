@@ -20,16 +20,16 @@
 						<aon:div styleClass="aon-popupWindow-title">
 							<aon:outputText
 								rendered="#{message.selectedDestinyContainer=='To'}"
-								value="#{appBundle.aon_webmail_to}" />
+								value="#{webmailBundle.aon_webmail_to}" />
 							<aon:outputText
 								rendered="#{message.selectedDestinyContainer=='Cc'}"
-								value="#{appBundle.aon_webmail_cc}" />
+								value="#{webmailBundle.aon_webmail_cc}" />
 							<aon:outputText
 								rendered="#{message.selectedDestinyContainer=='Bcc'}"
-								value="#{appBundle.aon_webmail_bcc}" />
+								value="#{webmailBundle.aon_webmail_bcc}" />
 							<aon:outputText value="-" />
 							<aon:outputText
-								value="#{appBundle.aon_webmail_message_selectEmail}" />
+								value="#{webmailBundle.aon_webmail_message_selectEmail}" />
 						</aon:div>
 					</f:facet>
 					<f:facet name="controls">
@@ -46,7 +46,7 @@
 					<aon:div styleClass="aon-toolbar">
 						<aon:commandButton id="selectEmail" action="messageNew"
 							actionListener="#{message.acceptAllEmailItems}"
-							value="#{appBundle.aon_webmail_accept}"
+							value="#{webmailBundle.aon_webmail_accept}"
 							styleClass="aon-icon-commandButton aon-icon-accept">
 							<f:setPropertyActionListener target="#{message.showEmailsWindow}"
 								value="#{false}" />
@@ -80,7 +80,7 @@
 							</aon:column>
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText value="#{appBundle.aon_webmail_email_email}" />
+									<aon:outputText value="#{webmailBundle.aon_webmail_email_email}" />
 								</f:facet>
 								<aon:outputText value="#{to.email.email}" />
 							</aon:column>

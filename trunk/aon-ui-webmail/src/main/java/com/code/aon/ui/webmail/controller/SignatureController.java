@@ -24,6 +24,7 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.GridController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
@@ -124,7 +125,7 @@ public class SignatureController extends GridController {
 	private List<MailAccount> getReferences( String id ) {
 		List<MailAccount> list = null;
 		try {
-			IManagerBean mailAccountBean = AonUtil.getController(WebMailConstants.BEAN_MAIL_ACCOUNT).getManagerBean();
+			IManagerBean mailAccountBean = FormUtil.getController(WebMailConstants.BEAN_MAIL_ACCOUNT).getManagerBean();
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(mailAccountBean.getFieldName(IWebMailAlias.MAIL_ACCOUNT_SIGNATURE_ID), id);
 			list = (List) mailAccountBean.getList(criteria);
@@ -136,7 +137,7 @@ public class SignatureController extends GridController {
 
 	private void updateReferences( String id, Signature signature ) {
 		try {
-			IManagerBean mailAccountBean = AonUtil.getController(WebMailConstants.BEAN_MAIL_ACCOUNT).getManagerBean();
+			IManagerBean mailAccountBean = FormUtil.getController(WebMailConstants.BEAN_MAIL_ACCOUNT).getManagerBean();
 			for( MailAccount mailAccount : getReferences(id) ) {
 				mailAccount.setSignature( signature );
 				mailAccountBean.update( mailAccount );

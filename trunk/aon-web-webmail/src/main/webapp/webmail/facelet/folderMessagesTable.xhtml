@@ -34,7 +34,7 @@
 
 				<aon:div styleClass="aon-box aon-box-outstanding2"
 					rendered="#{folder.folder.messageCount==0}">
-					<aon:outputText value="#{appBundle.aon_webmail_nomessages}" />
+					<aon:outputText value="#{webmailBundle.aon_webmail_nomessages}" />
 				</aon:div>
 			
 				<aon:div style="width:99%" rendered="#{folder.folder.messageCount>0}">
@@ -93,12 +93,12 @@
 									<aon:commandLink action="folder"
 										actionListener="#{folder.orderByFrom}"
 										rendered="#{!folder.sentItemColumn}">
-										<aon:outputText value="#{appBundle.aon_webmail_from}" />
+										<aon:outputText value="#{webmailBundle.aon_webmail_from}" />
 									</aon:commandLink>
 									<aon:commandLink action="folder"
 										actionListener="#{folder.orderByTo}"
 										rendered="#{folder.sentItemColumn}">
-										<aon:outputText value="#{appBundle.aon_webmail_to}" />
+										<aon:outputText value="#{webmailBundle.aon_webmail_to}" />
 									</aon:commandLink>
 								</aon:div>
 							</f:facet>
@@ -119,7 +119,7 @@
 							<f:facet name="header">
 								<aon:commandLink action="folder"
 									actionListener="#{folder.orderBySubject}">
-									<aon:outputText value="#{appBundle.aon_webmail_subject}" />
+									<aon:outputText value="#{webmailBundle.aon_webmail_subject}" />
 								</aon:commandLink>
 							</f:facet>
 							<aon:outputText escape="false" value="#{to.subjectShort}"
@@ -131,7 +131,7 @@
 							<f:facet name="header">
 								<aon:commandLink action="folder"
 									actionListener="#{folder.orderByDate}">
-									<aon:outputText value="#{appBundle.aon_webmail_date}" />
+									<aon:outputText value="#{webmailBundle.aon_webmail_date}" />
 								</aon:commandLink>
 							</f:facet>
 							<aon:div style="white-space:nowrap">
