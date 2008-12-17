@@ -28,6 +28,7 @@ import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.bean.AonFolder;
@@ -220,7 +221,7 @@ public class SpamController extends BasicLdap implements WebMailConstants {
 	private void addContactsToWhiteList(){
 	    List contacts = null;
 		try {
-			IManagerBean bean = AonUtil.getController(BEAN_CONTACT).getManagerBean();
+			IManagerBean bean = FormUtil.getController(BEAN_CONTACT).getManagerBean();
 			contacts = bean.getList(null);
 		}catch (ManagerBeanException e) {
 			e.printStackTrace();

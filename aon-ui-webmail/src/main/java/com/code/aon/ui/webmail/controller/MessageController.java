@@ -54,6 +54,7 @@ import com.code.aon.common.velocity.VelocityHelper;
 import com.code.aon.groupware.Contact;
 import com.code.aon.groupware.dao.IContactAlias;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonAttachment;
@@ -467,7 +468,7 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 	}
 
 	private AonMessage compoundMessage() throws ManagerBeanException, UnsupportedEncodingException, MessagingException, WebmailException {
-		IManagerBean mailAccountBean = AonUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();	
+		IManagerBean mailAccountBean = FormUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();	
 		MailAccount mailAccount = (MailAccount) mailAccountBean.get( senderMailAccountId );   		
     	AonMessage aonMessage = compoundMessage(
     			mailAccount.getEmail(),
@@ -930,7 +931,7 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 
 	public void saveToContacts(ActionEvent event) throws WebmailException, ManagerBeanException {
 		String email = message.getSenderEmail();
-		IController contactController = AonUtil.getController(BEAN_CONTACT);
+		IController contactController = FormUtil.getController(BEAN_CONTACT);
 		IManagerBean contactsBean = contactController.getManagerBean();
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(contactsBean.getFieldName(IContactAlias.CONTACT_EMAIL), email);
@@ -964,7 +965,7 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 	@SuppressWarnings("unchecked")
 	public void onMailAccountChanged(ValueChangeEvent event) throws ManagerBeanException {
 		if(event.getNewValue() != null) {
-			IManagerBean mailAccountBean = AonUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();	
+			IManagerBean mailAccountBean = FormUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();	
 			MailAccount mailAccount = (MailAccount) mailAccountBean.get( event.getNewValue().toString() );
 			if ( mailAccount.getSignature() != null ) {
 				content = mailAccount.getSignature().getSignature() + StringUtils.defaultString(messageBody);

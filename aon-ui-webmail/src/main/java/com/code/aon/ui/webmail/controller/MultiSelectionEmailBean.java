@@ -12,7 +12,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.groupware.Contact;
 import com.code.aon.groupware.dao.IContactAlias;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 
 public class MultiSelectionEmailBean {
@@ -24,7 +24,7 @@ public class MultiSelectionEmailBean {
 	public void reload() {
         emails = new ArrayList<SelectionEmail>();
     	try{
-			IManagerBean bean = AonUtil.getController(WebMailConstants.BEAN_CONTACT).getManagerBean();
+			IManagerBean bean = FormUtil.getController(WebMailConstants.BEAN_CONTACT).getManagerBean();
 			Criteria criteria = new Criteria();
 			criteria.addOrder(bean.getFieldName(IContactAlias.CONTACT_NAME));
 			List<ITransferObject> lst = bean.getList(criteria);

@@ -17,6 +17,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonFolder;
 import com.code.aon.ui.webmail.bean.AonServer;
@@ -86,7 +87,7 @@ public class WebMailController implements WebMailConstants {
 	}
 
     private MailAccount getAccount(AuthPrincipal mailUser) throws ManagerBeanException {
-		IManagerBean beanAccount = AonUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();
+		IManagerBean beanAccount = FormUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();
 		Criteria criteriaAccount = new Criteria();
 		criteriaAccount.addEqualExpression(beanAccount.getFieldName(IWebMailAlias.MAIL_ACCOUNT_NAME), MailAccount.DEFAULT_MAIL_ACCOUNT_NAME);
 		Iterator<ITransferObject> iterAccount = beanAccount.getList(criteriaAccount).iterator();
@@ -110,7 +111,7 @@ public class WebMailController implements WebMailConstants {
     		try {
     			Signature signature = null;
     			String name = Utils.getAuthPrincipal().getDomain();
-				IManagerBean signatureBean = AonUtil.getController(BEAN_SIGNATURE).getManagerBean();
+				IManagerBean signatureBean = FormUtil.getController(BEAN_SIGNATURE).getManagerBean();
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(signatureBean.getFieldName(IWebMailAlias.SIGNATURE_NAME), name);
 				List<ITransferObject> list = signatureBean.getList(criteria);
@@ -129,7 +130,7 @@ public class WebMailController implements WebMailConstants {
 		        			"<i>"+bundle.getString("aon_webmail_signature_deftext")+"</i>");
 					signatureBean.insert(signature);					
 				}
-				IManagerBean mailAccountBean = AonUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();
+				IManagerBean mailAccountBean = FormUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();
 				mailAccount.setSignature(signature);
 				mailAccountBean.update(mailAccount);
     		} catch (ManagerBeanException e) {
