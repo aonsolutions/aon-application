@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.groupware</artifactId>
-	<version>3.0.0</version>
+	<version>3.0.1</version>
 	<description>AON GROUPWARE</description>
 	<name>AON GROUPWARE</name>
 	<dependencies>
@@ -23,7 +23,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.common.ldap</artifactId>
-			<version>0.9.1</version>
+			<version>0.9.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
