@@ -117,7 +117,7 @@
 								value="#{appBundle.aon_payroll_principales_personas_percep_cocom}" />
 							<aon:div styleClass="aon-lookup">
 								<aon:lookupInputText id="Percepcion_id_codcom"
-									lookup="#{complementoLookup}" required="true"
+									lookup="#{complementoLookup}" 
 									reRender="Percepcion_complemento_description"
 									value="#{percep.to.complemento.cdg}" size="5">
 								</aon:lookupInputText>
@@ -162,32 +162,36 @@
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_personas_percep_tip}" />
-							<aon:inputText value="#{percep.to.tipcom}" required="true"
-								size="10" maxlength="6" />
+							
+							<aon:selectOneMenu  id="tipcom"
+								value="#{percep.to.tipcom}" >
+								<f:selectItem value="#{null}" itemLabel="  " />
+								<f:selectItems value="#{percep.listaComplementos}" />
+							</aon:selectOneMenu>
 
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_personas_percep_uds}" />
-							<aon:inputText value="#{percep.to.unidades}" required="true"
+							<aon:inputText value="#{percep.to.unidades}"
 								size="10" maxlength="6" />
 
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_personas_percep_impuni}" />
-							<aon:inputText value="#{percep.to.impuni}" required="true"
+							<aon:inputText value="#{percep.to.impuni}" 
 								size="10" maxlength="6" />
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_personas_percep_desc}" />
-							<aon:inputText value="#{percep.to.descom}" required="true"
-								size="10" maxlength="6" />
+							<aon:inputText value="#{percep.to.descom}" 
+								size="50" maxlength="40" />
 
 
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_personas_percep_descabre}" />
-							<aon:inputText value="#{percep.to.desabr}" required="true"
-								size="10" maxlength="6" />
+							<aon:inputText value="#{percep.to.desabr}" 
+								size="50" maxlength="40" />
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_personas_percep_fechaini}" />
@@ -211,7 +215,7 @@
 								value="#{appBundle.aon_payroll_principales_personas_percep_comp}" />
 							<aon:div styleClass="aon-lookup">
 								<aon:lookupInputText id="Percepcion_id_codcom1"
-									lookup="#{complementoLookup}" required="true"
+									lookup="#{complementoLookup}" 
 									reRender="Percepcion_complemento1_description"
 									value="#{percep.to.complemento1.cdg}" size="5">
 								</aon:lookupInputText>
@@ -226,6 +230,52 @@
 									size="34" disabled="true" />
 							</aon:div>
 						</aon:panelGrid>
+						
+		
+
+						<aon:panelGrid id="percep_right" columns="1" dir="true"
+							width="100%" style="margin-bottom=2px;">
+							<aon:panel>
+								<f:facet name="header">
+									<aon:outputText
+										value="#{appBundle.aon_payroll_auxiliares_convenios__ind_comp}" />
+								</f:facet>
+								<aon:div styleClass="">
+									<aon:selectOneRadio id="IndComplemento"
+										value="#{percep.to.indcom}">
+										<f:selectItems value="#{percep.listaIndiceComplemento}" />
+									</aon:selectOneRadio>
+								</aon:div>
+							</aon:panel>
+
+
+							<aon:panel>
+								<f:facet name="header">
+									<aon:outputText
+										value="#{appBundle.aon_payroll_auxiliares_convenios__fijo_var}" />
+								</f:facet>
+								<aon:div styleClass="">
+									<aon:selectOneRadio id="FijoVar" value="#{percep.to.fijovar}">
+										<f:selectItems value="#{percep.listaFijoVariable}" />
+									</aon:selectOneRadio>
+								</aon:div>
+							</aon:panel>
+
+							<aon:panel>
+								<f:facet name="header">
+									<aon:outputText
+										value="#{appBundle.aon_payroll_auxiliares_convenios__retrib}" />
+								</f:facet>
+								<aon:div styleClass="">
+									<aon:selectOneRadio id="Retribucion"
+										value="#{percep.to.dinesp}">
+										<f:selectItems value="#{percep.listaRetribuciones}" />
+									</aon:selectOneRadio>
+								</aon:div>
+							</aon:panel>
+						</aon:panelGrid>
+
+
 					</aon:div>
 
 				</aon:div>

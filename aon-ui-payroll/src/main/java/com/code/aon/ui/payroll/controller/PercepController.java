@@ -18,9 +18,13 @@ import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.divisa.Divisa;
 import com.code.aon.payroll.enumeration.Claveper;
+import com.code.aon.payroll.enumeration.FijoVariable;
 import com.code.aon.payroll.enumeration.IndicadorAnio;
+import com.code.aon.payroll.enumeration.IndiceComplemento;
 import com.code.aon.payroll.enumeration.Ingreso;
 import com.code.aon.payroll.enumeration.Retribuciones;
+import com.code.aon.payroll.enumeration.TipoComplemento;
+import com.code.aon.payroll.enumeration.TipoCotizaciones;
 import com.code.aon.payroll.enumeration.TipoProrrateo;
 import com.code.aon.payroll.geograficas.Pais;
 import com.code.aon.payroll.geograficas.Provincia;
@@ -32,144 +36,82 @@ import com.code.aon.payroll.tipos.Tipovia;
 
 public class PercepController extends PayrollBasicController {
 
-/*	private Date fecha;
-	private Persona persona;
-	private Empresa empresa;
-	private List<SelectItem> clavesper;
+	private List<SelectItem> complementos;
 	private List<SelectItem> retribuciones;
-	private List<SelectItem> ingresos;
+	private List<SelectItem> fijoVariable;
+	private List<SelectItem> indComp;
+
 	
 	
-	public List<SelectItem> getListaClaves() {
-		if(clavesper==null){
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			clavesper = new LinkedList<SelectItem>();
-			for (Claveper ia : Claveper.values()) {
-				String name = ia.getName( locale );
-				SelectItem item = new SelectItem( ia, name );
-				clavesper.add(item);
-			}
-		}
-		return clavesper;
+	
+	public List<SelectItem> getListaComplementos() {
+		return complementos;
 	}
 	
 
+	
+	@SuppressWarnings("unchecked")
+	public void refreshComplementos() throws ManagerBeanException {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		complementos = new LinkedList<SelectItem>();
+		for (TipoComplemento complemento : TipoComplemento.values()) {
+			String name = complemento.getName( locale );
+			SelectItem item = new SelectItem( complemento, name );
+			complementos.add(item);
+		}
+	}
+
+	/**
+	 * Recupera los tipos de retribuciones 
+	 * 
+	 * @return
+	 */
 	public List<SelectItem> getListaRetribuciones() {
 		if(retribuciones==null){
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			retribuciones = new LinkedList<SelectItem>();
-			for (Retribuciones tp : Retribuciones.values()) {
-				String name = tp.getName( locale );
-				SelectItem item = new SelectItem( tp, name );
+			for (Retribuciones retribucion : Retribuciones.values()) {
+				String name = retribucion.getName( locale );
+				SelectItem item = new SelectItem( retribucion, name );
 				retribuciones.add(item);
 			}
 		}
 		return retribuciones;
 	}
 	
-	
-	
-	public List<SelectItem> getListaIngreso() {
-		if(ingresos==null){
+	/**
+	 * Recupera el listado de fijo o variable 
+	 * 
+	 * @return
+	 */
+	public List<SelectItem> getListaFijoVariable() {
+		if(fijoVariable==null){
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			ingresos = new LinkedList<SelectItem>();
-			for (Ingreso tp : Ingreso.values()) {
-				String name = tp.getName( locale );
-				SelectItem item = new SelectItem( tp, name );
-				ingresos.add(item);
+			fijoVariable = new LinkedList<SelectItem>();
+			for (FijoVariable ret : FijoVariable.values()) {
+				String name = ret.getName( locale );
+				SelectItem item = new SelectItem( ret, name );
+				fijoVariable.add(item);
 			}
 		}
-		return ingresos;
+		return fijoVariable;
 	}
-
-	@Override
-	   public void onEditSearch(ActionEvent arg0) {
-		   super.onEditSearch(arg0);
-		   
-	       setPersona( new Persona() );
-		   setEmpresa( new Empresa() );
-		
-		  
-
-	}
-	@Override
-	public void onSearch(ActionEvent event) {
-		
-
-		try {
-			if   (empresa.getCdg() != null)  {
-				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.OTRPERC_EMPRESA_CDG), getEmpresa().getCdg());
+	
+	/**
+	 * Recupera el listado de indices de complementos 
+	 * 
+	 * @return
+	 */
+	public List<SelectItem> getListaIndiceComplemento() {
+		if(indComp==null){
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			indComp = new LinkedList<SelectItem>();
+			for (IndiceComplemento ic : IndiceComplemento.values()) {
+				String name = ic.getName( locale );
+				SelectItem item = new SelectItem( ic, name );
+				indComp.add(item);
 			}
-			if   (persona.getCdg() != null) {
-				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.OTRPERC_PERSONA_CDG), getPersona().getCdg());
-			}
-		     
-		    if    (fecha != null){
-					getCriteria().addEqualExpression(getFieldName(IPayrollAlias.OTRPERC_FECHA), getFecha());
-				}
-		    
-		
-		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		
-		
-		super.onSearch(event);
+		return indComp;
 	}
-
-
-	public Date getFecha() {
-		return fecha;
-	}
-
-
-	public void setFecha(Date fecha) {
-		this.fecha = fecha;
-	}
-
-
-	public Persona getPersona() {
-		return persona;
-	}
-
-
-	public void setPersona(Persona persona) {
-		this.persona = persona;
-	}
-
-
-	public Empresa getEmpresa() {
-		return empresa;
-	}
-
-
-	public void setEmpresa(Empresa empresa) {
-		this.empresa = empresa;
-	}
-
-
-	
-	Integer code ;
-    public Integer getCode() throws ManagerBeanException {	
-    	
-    	
-	       	code = 0;		
-			String consulta = "select max(cdg) from Otrperc";			
-			Query q = HibernateUtil.getSession().createQuery(consulta);			
-			List results = q.list();
-			System.out.println("Max Code: " + results.get(0));   
-			code= (Integer)results.get(0) +1;
-			System.out.println("New Code: " + code);
-			return code;		      
-	     				
-		}
-    public void setCode(Integer code) {
-		this.code = code;
-	}
-
-
-	
-	
-*/
 }
