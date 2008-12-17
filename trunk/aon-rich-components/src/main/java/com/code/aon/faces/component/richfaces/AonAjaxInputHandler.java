@@ -113,6 +113,7 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 					}
 				}
 				attributes.add( BasicComponentConfig.newAttribute(tag, EVENT, event) );
+				attributes.add( BasicComponentConfig.newAttribute(tag, AJAX_SINGLE, "true") );
 				if ( reRender != null ) {
 					String value = reRender.getValue(ctx);
 					attributes.add( BasicComponentConfig.newAttribute(tag, RERENDER, value) );
