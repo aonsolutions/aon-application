@@ -75,6 +75,7 @@ import com.code.aon.payroll.principales.persona.Trabajador;
 import com.code.aon.payroll.principales.personas.Otrperc;
 import com.code.aon.payroll.principales.autonomos.Autonomos;
 import com.code.aon.payroll.principales.autonomos.Autbases;
+import com.code.aon.payroll.principales.personas.Percep;
 
 /** 
 * Interface for holding entity properties constants.
@@ -4413,6 +4414,169 @@ public interface IPayrollAlias {
 	* Hibernate value: Autbases.id.fecini
 	*/
 	String  AUTBASES_ID_FECINI = AUTBASES_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for Percep entity.
+	*/ 
+	DAOConstantsEntry PERCEP_ENTRY = DAOConstants.getDAOConstant(Percep.class);
+
+	/** 
+	* Alias value: Percep_calculo
+	* Hibernate value: Percep.calculo
+	*/
+	String  PERCEP_CALCULO = PERCEP_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Percep_complemento1_cdg
+	* Hibernate value: Percep.complemento1.cdg
+	*/
+	String  PERCEP_COMPLEMENTO1_CDG = PERCEP_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Percep_complemento_cdg
+	* Hibernate value: Percep.complemento.cdg
+	*/
+	String  PERCEP_COMPLEMENTO_CDG = PERCEP_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Percep_desabr
+	* Hibernate value: Percep.desabr
+	*/
+	String  PERCEP_DESABR = PERCEP_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Percep_descom
+	* Hibernate value: Percep.descom
+	*/
+	String  PERCEP_DESCOM = PERCEP_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Percep_dinesp
+	* Hibernate value: Percep.dinesp
+	*/
+	String  PERCEP_DINESP = PERCEP_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Percep_fecfin
+	* Hibernate value: Percep.fecfin
+	*/
+	String  PERCEP_FECFIN = PERCEP_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Percep_fecini
+	* Hibernate value: Percep.fecini
+	*/
+	String  PERCEP_FECINI = PERCEP_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Percep_fecmod
+	* Hibernate value: Percep.fecmod
+	*/
+	String  PERCEP_FECMOD = PERCEP_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Percep_fecnew
+	* Hibernate value: Percep.fecnew
+	*/
+	String  PERCEP_FECNEW = PERCEP_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Percep_fecret
+	* Hibernate value: Percep.fecret
+	*/
+	String  PERCEP_FECRET = PERCEP_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: Percep_fijovar
+	* Hibernate value: Percep.fijovar
+	*/
+	String  PERCEP_FIJOVAR = PERCEP_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: Percep_garilt
+	* Hibernate value: Percep.garilt
+	*/
+	String  PERCEP_GARILT = PERCEP_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: Percep_hormod
+	* Hibernate value: Percep.hormod
+	*/
+	String  PERCEP_HORMOD = PERCEP_ENTRY.getAliasNames()[13];
+
+	/** 
+	* Alias value: Percep_hornew
+	* Hibernate value: Percep.hornew
+	*/
+	String  PERCEP_HORNEW = PERCEP_ENTRY.getAliasNames()[14];
+
+	/** 
+	* Alias value: Percep_id_cdg
+	* Hibernate value: Percep.id.cdg
+	*/
+	String  PERCEP_ID_CDG = PERCEP_ENTRY.getAliasNames()[15];
+
+	/** 
+	* Alias value: Percep_id_numero
+	* Hibernate value: Percep.id.numero
+	*/
+	String  PERCEP_ID_NUMERO = PERCEP_ENTRY.getAliasNames()[16];
+
+	/** 
+	* Alias value: Percep_importe
+	* Hibernate value: Percep.importe
+	*/
+	String  PERCEP_IMPORTE = PERCEP_ENTRY.getAliasNames()[17];
+
+	/** 
+	* Alias value: Percep_impuni
+	* Hibernate value: Percep.impuni
+	*/
+	String  PERCEP_IMPUNI = PERCEP_ENTRY.getAliasNames()[18];
+
+	/** 
+	* Alias value: Percep_indcom
+	* Hibernate value: Percep.indcom
+	*/
+	String  PERCEP_INDCOM = PERCEP_ENTRY.getAliasNames()[19];
+
+	/** 
+	* Alias value: Percep_mes
+	* Hibernate value: Percep.mes
+	*/
+	String  PERCEP_MES = PERCEP_ENTRY.getAliasNames()[20];
+
+	/** 
+	* Alias value: Percep_redext
+	* Hibernate value: Percep.redext
+	*/
+	String  PERCEP_REDEXT = PERCEP_ENTRY.getAliasNames()[21];
+
+	/** 
+	* Alias value: Percep_tipcom
+	* Hibernate value: Percep.tipcom
+	*/
+	String  PERCEP_TIPCOM = PERCEP_ENTRY.getAliasNames()[22];
+
+	/** 
+	* Alias value: Percep_tipcot
+	* Hibernate value: Percep.tipcot
+	*/
+	String  PERCEP_TIPCOT = PERCEP_ENTRY.getAliasNames()[23];
+
+	/** 
+	* Alias value: Percep_trabajador_cdg
+	* Hibernate value: Percep.trabajador.cdg
+	*/
+	String  PERCEP_TRABAJADOR_CDG = PERCEP_ENTRY.getAliasNames()[24];
+
+	/** 
+	* Alias value: Percep_unidades
+	* Hibernate value: Percep.unidades
+	*/
+	String  PERCEP_UNIDADES = PERCEP_ENTRY.getAliasNames()[25];
 
 
 }

@@ -70,6 +70,7 @@ import com.code.aon.payroll.principales.empresa.Emprlban;
 import com.code.aon.payroll.principales.persona.Embargo;
 import com.code.aon.payroll.principales.persona.Trabajador;
 import com.code.aon.payroll.principales.personas.Otrperc;
+import com.code.aon.payroll.principales.personas.Percep;
 import com.code.aon.payroll.tipos.Autorizacion;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Empresario;
@@ -156,7 +157,8 @@ public class PayrollAliasWriter {
 		        Trabajador.class.getName(),
 		        Otrperc.class.getName(),
 		        Autonomos.class.getName(),
-		        Autbases.class.getName()
+		        Autbases.class.getName(),
+		        Percep.class.getName()
 		        };		
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");
 		HibernateUtil.getSessionFactory();

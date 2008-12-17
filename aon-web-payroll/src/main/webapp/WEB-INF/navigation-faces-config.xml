@@ -981,6 +981,29 @@
 		</navigation-case>
 	</navigation-rule> 
 	
+	
+				<!-- =================== Percepciones ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>percep_form</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/percep/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>percep_list</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/percep/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>percep_search</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/percep/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
 </faces-config>
 
 

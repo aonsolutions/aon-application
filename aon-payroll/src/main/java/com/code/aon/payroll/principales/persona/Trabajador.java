@@ -13,6 +13,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.payroll.principales.empresa.Actividad;
 import com.code.aon.payroll.principales.personas.Persona;
 
 /**
@@ -36,10 +37,11 @@ public class Trabajador implements ITransferObject {
 	private String indagrario;
 	private String indgrupo;
 	private String pariente;
+	private Actividad actividad;
 	//no necesario para mantenimiento de embargo
 	/*
 	private Domicilio domicilio;
-	private Empract empract;
+	
 	private Emprccc emprccc;
 	private Emprccos emprccos;
 	private Emprnif emprnif;
@@ -234,6 +236,18 @@ public class Trabajador implements ITransferObject {
 		this.pariente = pariente;
 	}
 
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "codact", nullable = false, insertable = false, updatable = false)
+	public Actividad getActividad() {
+		return this.actividad;
+	}
+
+	public void setActividad(Actividad actividad) {
+		this.actividad = actividad;
+	}
+
+	
 	/*
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "domicilio", nullable = false)
@@ -245,15 +259,7 @@ public class Trabajador implements ITransferObject {
 		this.domicilio = domicilio;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "codact", nullable = false, insertable = false, updatable = false)
-	public Empract getEmpract() {
-		return this.empract;
-	}
 
-	public void setEmpract(Empract empract) {
-		this.empract = empract;
-	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumns( {
