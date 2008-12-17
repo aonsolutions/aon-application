@@ -981,8 +981,7 @@
 		</navigation-case>
 	</navigation-rule> 
 	
-	
-				<!-- =================== Percepciones ================= -->
+	<!-- =================== Percepciones ================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>percep_form</from-outcome>
@@ -1000,6 +999,28 @@
 			<from-outcome>percep_search</from-outcome>
 			<to-view-id>
 				/facelet/principales/personas/percep/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
+	<!-- =================== Resultados - Salarios - Paga extra ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>nominaex_form</from-outcome>
+			<to-view-id>
+				/facelet/resultados/salarios/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>nominaex_list</from-outcome>
+			<to-view-id>
+				/facelet/resultados/salarios/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>nominaex_search</from-outcome>
+			<to-view-id>
+				/facelet/resultados/salarios/search.xhtml
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule> 

@@ -29,7 +29,11 @@
 								<aon:commandLink value="#{menuBundle.resultados_recibos_salarios__nomina}" disabled="true" />
 							</aon:div>
 							<aon:div>
-								<aon:commandLink value="#{menuBundle.resultados_recibos_salarios__nominaex}" disabled="true" />
+								<aon:commandLink value="#{menuBundle.resultados_recibos_salarios__nominaex}" action="nominaex_form" >
+									
+									<aon:actionListener method="#{nominaex.onEditSearch}" />
+									<aon:actionListener method="#{nominaex.onSelectFirst}" />
+								</aon:commandLink>
 							</aon:div>
 							<aon:div>
 								<aon:commandLink value="#{menuBundle.resultados_recibos_salarios__finiquitos}" disabled="true" />

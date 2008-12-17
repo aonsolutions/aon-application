@@ -71,6 +71,8 @@ import com.code.aon.payroll.principales.persona.Embargo;
 import com.code.aon.payroll.principales.persona.Trabajador;
 import com.code.aon.payroll.principales.personas.Otrperc;
 import com.code.aon.payroll.principales.personas.Percep;
+import com.code.aon.payroll.resultados.salarios.Nomdtoex;
+import com.code.aon.payroll.resultados.salarios.Nominaex;
 import com.code.aon.payroll.tipos.Autorizacion;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Empresario;
@@ -157,6 +159,8 @@ public class PayrollAliasWriter {
 		        Trabajador.class.getName(),
 		        Otrperc.class.getName(),
 		        Autonomos.class.getName(),
+		        Nominaex.class.getName(),
+		        Nomdtoex.class.getName(),
 		        Autbases.class.getName(),
 		        Percep.class.getName()
 		        };		
