@@ -17,7 +17,7 @@
 			rendered="#{tree.treeLoaded}" style="padding-bottom:0;">					
 							
 			<aon:commandButton
-				id="newFolder"
+				id="newFolder" reRender="aonStatus"
 				title="#{webmailBundle.aon_webmail_newfolder}"
 				styleClass="aon-icon-commandButton aon-icon-newFolder"
 				actionListener="#{folder.openNewFolderPanelPopup}">
@@ -41,7 +41,7 @@
 			</aon:commandButton>
 		
 			<aon:commandButton
-				id="renameFolder_n"
+				id="renameFolder_n" reRender="aonStatus"
 				rendered="#{folder.folder.renameable}"
 				title="#{webmailBundle.aon_webmail_renamefolder}"
 				actionListener="#{folder.openRenameFolderPanelPopup}"

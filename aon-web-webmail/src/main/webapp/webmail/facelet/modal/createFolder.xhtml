@@ -21,14 +21,14 @@
 			</f:facet>
 			<f:facet name="controls">
 				<aon:commandButton type="button" styleClass="aon-popupWindow-close"
-					immediate="true">
+					immediate="true" reRender="aonStatus">
 					<rich:componentControl for="newFolderModalPanel" operation="hide"
 						event="onclick" />
 				</aon:commandButton>
 			</f:facet>
 
 
-			<aon:outputText value="#{webmailBundle.aon_webmail_folder_name}:" />
+			<aon:outputLabel for="newFolderName" value="#{webmailBundle.aon_webmail_folder_name}:" />
 			<h:panelGrid width="100%" cellpadding="2" cellspacing="0" columns="2"
 				styleClass="aon-panelGrid-formatting">
 				<aon:inputText id="newFolderName" size="27" required="true"
