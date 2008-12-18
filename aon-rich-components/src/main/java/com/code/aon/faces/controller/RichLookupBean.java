@@ -311,18 +311,6 @@ public class RichLookupBean {
 
 	/**
 	 * Add a new expression to the criteria to condition the following searches.
-	 * The id component is managed as the property path, replacing
-	 * <code>_</code> with <code>.</code>.
-	 * 
-	 * @param event
-	 * @throws ManagerBeanException
-	 */
-	public void addDirectExpression(ValueChangeEvent event) throws ManagerBeanException {
-		getController().addDirectExpression(event);
-	}
-
-	/**
-	 * Add a new expression to the criteria to condition the following searches.
 	 * The id component is managed as an alias to resolve the real property
 	 * path.
 	 * 
@@ -341,21 +329,34 @@ public class RichLookupBean {
 	 * @param event
 	 * @throws ManagerBeanException
 	 */
-	public void addDirectEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
-		getController().addDirectEqualExpression(event);
+	public void addIdEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
+		getController().addIdEqualExpression(event);
 	}
-		
+	
 	/**
-	 * Add a new expression to the criteria to condition the following searches.
+	 * Add a new >= expression to the criteria to condition the following searches.
 	 * The id component is managed as an alias to resolve the real property
 	 * path.
 	 * 
 	 * @param event
 	 * @throws ManagerBeanException
 	 */
-	public void addDirectIdEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
-		getController().addDirectIdEqualExpression(event);
+	public void addGreaterThanOrEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
+		getController().addGreaterThanOrEqualExpression(event);
 	}
+
+	/**
+	 * Add a new <= expression to the criteria to condition the following searches.
+	 * The id component is managed as an alias to resolve the real property
+	 * path.
+	 * 
+	 * @param event
+	 * @throws ManagerBeanException
+	 */
+	public void addLessThanOrEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
+		getController().addLessThanOrEqualExpression(event);
+	}
+	
 	
 	/**
 	 * Execute cancel action.
