@@ -24,12 +24,10 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.MailAccount;
-import com.code.aon.webmail.Signature;
 
 public class MailAccountController extends BasicController {
 
@@ -131,9 +129,12 @@ public class MailAccountController extends BasicController {
 		return account.isDefault();
 	}
 
-	public boolean isCurrentToDefaultAccount(){
-		MailAccount account = (MailAccount)getSelectedTO();
-		return account.isDefault();
+	public boolean isCurrentToDefaultAccount() throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			MailAccount account = (MailAccount)getSelectedTO();
+			return account.isDefault();
+		}
+		return false;
 	}
 
 	public List<SelectItem> getMailAccounts() {
