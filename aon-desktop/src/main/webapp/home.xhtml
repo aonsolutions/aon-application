@@ -10,12 +10,13 @@
 
 	<ui:define name="mainContent">
 		<aon:div rendered="#{!currentUser.passwordExpired}">
-			<a4j:include id="homepage" viewId="/homepage.xhtml" />
+			<a4j:include id="aonContent" ajaxRendered="false"
+				viewId="/homepage.xhtml" />
 		</aon:div>
 		<aon:div rendered="#{currentUser.passwordExpired}"> 
-			<a4j:include id="expiredPassword" viewId="/facelet/user/expiredPasswordContent.xhtml" />
+			<a4j:include id="expiredPassword" ajaxRendered="false"
+				viewId="/facelet/user/expiredPasswordContent.xhtml" />
 		</aon:div>
-		
 	</ui:define>
   
 </ui:composition>

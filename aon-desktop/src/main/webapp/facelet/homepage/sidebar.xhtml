@@ -91,7 +91,7 @@
 				<aon:commandLink action="company" actionListener="#{company.onLoad}">
 					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-enterprise-configure.png']}" />
 					<aon:div><aon:outputText value="#{companyBundle.company_data_module}"/></aon:div>
-					<f:setPropertyActionListener value="#{false}" target="#{company.showFinanceRegistryBank}" />
+					<f:setPropertyActionListener value="#{false}" target="#{company.showRegistryBank}" />
 					<f:setPropertyActionListener value="#{false}" target="#{company.showCompanyOtherData}" />
 				</aon:commandLink>
 			</aon:div>
