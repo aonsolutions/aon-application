@@ -37,7 +37,7 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:editDataTable id="dataTable" value="#{signature.model}" var="to"
+				<aon:dataTable id="dataTable" value="#{signature.model}" var="to"
 					rows="#{signature.pageLimit}"
 					columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
 								aon-editDataTable-textColumn">
@@ -66,7 +66,7 @@
 						<aon:outputText value="#{to.name}" />
 					</aon:column>
 
-				</aon:editDataTable>
+				</aon:dataTable>
 
 				<aon:dataScroller2 for="dataTable" showNote="true" />
 
