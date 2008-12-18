@@ -6,8 +6,7 @@
 	<context-param>
 		<param-name>javax.faces.CONFIG_FILES</param-name>
 		<param-value>
-			/WEB-INF/lookup-beans-faces-config.xml
-			,/WEB-INF/navigation-faces-config.xml
+			/WEB-INF/navigation-faces-config.xml
 		</param-value>
 	</context-param>
 	<context-param>
@@ -36,12 +35,10 @@
 		<param-name>facelets.SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
 	</context-param>
-	<!-- 
 	<context-param>
 		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>-1</param-value>
 	</context-param>
-	 -->
 	<context-param>
 		<param-name>facelets.BUFFER_SIZE</param-name>
 		<param-value>500000</param-value>
@@ -98,16 +95,12 @@
 	</context-param>
 	<context-param>
 		<param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
-		<param-value>richFaces3.2.1/</param-value>
+		<param-value>richFaces3.3.0/</param-value>
 	</context-param>	
 	<context-param>
 		<param-name>org.richfaces.SKIN</param-name>
 		<param-value>aon</param-value>
 	</context-param>
-	<context-param>
-        <param-name>com.code.aon.report.config.file</param-name>
-        <param-value>/WEB-INF/conf/report-config.xml</param-value>
-    </context-param>
 
 	<!-- Sessions Filter -->
 	<filter>
