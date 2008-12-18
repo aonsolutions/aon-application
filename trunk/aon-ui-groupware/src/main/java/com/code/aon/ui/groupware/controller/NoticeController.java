@@ -1,7 +1,6 @@
 package com.code.aon.ui.groupware.controller;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,7 +21,6 @@ import com.code.aon.config.WorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.groupware.Notice;
-import com.code.aon.groupware.dao.IGroupWareAlias;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.BasicLdap;
@@ -64,10 +62,6 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	private String recipient;
 	
 	private int selected = -1;
-
-	private Date fromDate;
-	
-	private Date toDate;
 	
 	private Integer workGroupId;
 
@@ -155,51 +149,6 @@ public class NoticeController extends BasicController implements IAonObjectClass
         }
     }
     
-    public Date getFromDate() {
-		return fromDate;
-	}
-
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
-
-	public Date getToDate() {
-		return toDate;
-	}
-
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
-
-	@Override
-	public void onSearch(ActionEvent event) {
-		addFromDateExpression();
-		addToDateExpression();
-		super.onSearch(event);
-	}
-
-	public void addFromDateExpression(){
-        if(this.fromDate != null) {
-            try {
-                getCriteria().addGreaterThanOrEqualExpression(getFieldName(IGroupWareAlias.NOTICE_DATE), this.fromDate);
-            } catch (ManagerBeanException e) {
-                LOGGER.log(Level.SEVERE, "Error adding FROM due date expression", e);
-            }
-    		setFromDate(null);
-        }
-    }
-    
-    public void addToDateExpression(){
-        if(this.toDate != null) {
-            try {
-                getCriteria().addLessThanOrEqualExpression(getFieldName(IGroupWareAlias.NOTICE_DATE), this.toDate);
-            } catch (ManagerBeanException e) {
-                LOGGER.log(Level.SEVERE, "Error adding TO due date expression", e);
-            }
-            setToDate(null);
-        }
-    }
-
 	public Integer getWorkGroupId() {
 		return workGroupId;
 	}
