@@ -15,9 +15,8 @@
 			</ui:include>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:param name="controller" value="#{contact}" />
 				<ui:define name="searchContent">
-					<aon:methodParam name="searchActionListener" value="#{contact.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="contact_list" />		
 
 					<aon:outputLabel for="Contact_displayName"
 						value="#{groupwareBundle.contact_displayName}" />

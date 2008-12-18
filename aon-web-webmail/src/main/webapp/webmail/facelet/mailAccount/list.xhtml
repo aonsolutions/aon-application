@@ -24,7 +24,7 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:editDataTable id="dataTable" value="#{mailAccount.model}" var="to"
+				<aon:dataTable id="dataTable" value="#{mailAccount.model}" var="to"
 					rows="20" styleClass="dr-table rich-table aon-editDataTable"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
 								aon-editDataTable-textColumn, aon-editDataTable-textColumn">
@@ -84,7 +84,7 @@
 						</aon:commandButton>
 					</aon:column>
 
-				</aon:editDataTable>
+				</aon:dataTable>
 
 				<aon:dataScroller2 for="dataTable" showNote="true" />
 
