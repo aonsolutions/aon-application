@@ -26,7 +26,7 @@
 						value="#{warehouseBundle.warehouse_warehouse}" />
 					<aon:selectOneMenu id="Stock_warehouse_id"
 						value="#{warehouseCollections.warehouse}"
-						valueChangeListener="#{stock.addDirectIdEqualExpression}">
+						valueChangeListener="#{stock.addIdEqualExpression}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{warehouseCollections.warehouses}" />
 					</aon:selectOneMenu>
