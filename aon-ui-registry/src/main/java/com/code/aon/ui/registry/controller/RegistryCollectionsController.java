@@ -31,20 +31,36 @@ import com.code.aon.registry.enumeration.StreetType;
  */
 public class RegistryCollectionsController {
 
+	private List<SelectItem> addressTypes;
+	
+	private List<SelectItem> streetTypes;
+	
+	private List<SelectItem> registryTypes;
+	
+	private List<SelectItem> genders;
+	
+	private List<SelectItem> maritalStatuses;
+	
+	private List<SelectItem> registryAttachmentTypes;
+	
+	private List<SelectItem> noteTypes;
+	
 	/**
      * Gets the address types.
      * 
      * @return the address types
      */
     public List<SelectItem> getAddressTypes() {
-        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-	    LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-        for( AddressType type : AddressType.values() ) {
-            String name = type.getName(locale); 
-            SelectItem item = new SelectItem(type, name);
-            types.add( item );
+    	if ( addressTypes == null ) {
+    		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+    		addressTypes = new LinkedList<SelectItem>();
+    		for( AddressType type : AddressType.values() ) {
+	            String name = type.getName(locale); 
+	            SelectItem item = new SelectItem(type, name);
+	            addressTypes.add( item );
+    		}
         }
-        return types;
+        return addressTypes;
     }
 
     /**
@@ -70,14 +86,16 @@ public class RegistryCollectionsController {
      */
     @SuppressWarnings("unchecked")
     public List getMediaTypes() {
-        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-	    LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-        for( MediaType type : MediaType.values() ) {
-            String name = type.getName(locale); 
-            SelectItem item = new SelectItem(type, name);
-            types.add( item );
-        }
-        return types;
+    	if ( streetTypes == null ) {
+	        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+	        streetTypes = new LinkedList<SelectItem>();
+	        for( MediaType type : MediaType.values() ) {
+	            String name = type.getName(locale); 
+	            SelectItem item = new SelectItem(type, name);
+	            streetTypes.add( item );
+	        }
+    	}
+        return streetTypes;
     }
     
     /**
@@ -86,14 +104,16 @@ public class RegistryCollectionsController {
      * @return the registry types
      */
     public List<SelectItem> getRegistryTypes() {
-        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-	    LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-        for( RegistryType type : RegistryType.values() ) {
-            String name = type.getName(locale); 
-            SelectItem item = new SelectItem(type, name);
-            types.add( item );
-        }
-        return types;
+    	if ( registryTypes == null) {
+	        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+	        registryTypes = new LinkedList<SelectItem>();
+	        for( RegistryType type : RegistryType.values() ) {
+	            String name = type.getName(locale); 
+	            SelectItem item = new SelectItem(type, name);
+	            registryTypes.add( item );
+	        }
+    	}
+        return registryTypes;
     }
     
     /**
@@ -118,48 +138,54 @@ public class RegistryCollectionsController {
     }
     
     public List<SelectItem> getGenders() {
-        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-	    LinkedList<SelectItem> genders = new LinkedList<SelectItem>();
-        for( Gender gender : Gender.values() ) {
-            String name = gender.getName(locale); 
-            SelectItem item = new SelectItem(gender, name);
-            genders.add( item );
-        }
+    	if ( genders == null ) {
+	        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+	        genders = new LinkedList<SelectItem>();
+	        for( Gender gender : Gender.values() ) {
+	            String name = gender.getName(locale); 
+	            SelectItem item = new SelectItem(gender, name);
+	            genders.add( item );
+	        }
+    	}
         return genders;
     }
     
     public List<SelectItem> getMaritalStatuses() {
-    	Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-	    LinkedList<SelectItem> maritalStatuses = new LinkedList<SelectItem>();
-        for( MaritalStatus status : MaritalStatus.values() ) {
-            String name = status.getName(locale); 
-            SelectItem item = new SelectItem(status, name);
-            maritalStatuses.add( item );
-        }
+    	if ( maritalStatuses == null ) {
+	    	Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		    maritalStatuses = new LinkedList<SelectItem>();
+	        for( MaritalStatus status : MaritalStatus.values() ) {
+	            String name = status.getName(locale); 
+	            SelectItem item = new SelectItem(status, name);
+	            maritalStatuses.add( item );
+	        }
+    	}
         return maritalStatuses;
     }
     
     public List<SelectItem> getRegistryAttachmentTypes() {
-    	Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-	    LinkedList<SelectItem> rAttachTypes = new LinkedList<SelectItem>();
-        for( RegistryAttachmentType status : RegistryAttachmentType.values() ) {
-            String name = status.getName(locale); 
-            SelectItem item = new SelectItem(status, name);
-            rAttachTypes.add( item );
-        }
-        return rAttachTypes;
+    	if ( registryAttachmentTypes == null ) {
+	    	Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+	    	registryAttachmentTypes = new LinkedList<SelectItem>();
+	        for( RegistryAttachmentType status : RegistryAttachmentType.values() ) {
+	            String name = status.getName(locale); 
+	            SelectItem item = new SelectItem(status, name);
+	            registryAttachmentTypes.add( item );
+	        }
+    	}
+        return registryAttachmentTypes;
     }
     
 	public List<SelectItem> getNoteTypes() {
-		List<SelectItem> noteTypes = new LinkedList<SelectItem>();
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		NoteType[] types = NoteType.values();
-		for (int i = 0; i < types.length; i++) {
-			NoteType type = types[i];
-			if (type.compareTo(NoteType.OBSERVATION)!=0){
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				noteTypes.add(item);
+		if ( noteTypes == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			noteTypes = new LinkedList<SelectItem>();
+			for( NoteType type : NoteType.values() ) {
+				if (type.compareTo(NoteType.OBSERVATION)!=0){
+					String name = type.getName(locale);
+					SelectItem item = new SelectItem(type, name);
+					noteTypes.add(item);
+				}
 			}
 		}
 		return noteTypes;
