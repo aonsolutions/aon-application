@@ -17,7 +17,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>3.3.0</version>
+			<version>3.4.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -95,7 +95,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
-			<version>3.3.0</version>
+			<version>3.3.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
