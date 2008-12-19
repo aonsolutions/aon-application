@@ -64,7 +64,7 @@
 					<aon:outputLabel for="AccountEntry_securityLevel"
 						value="#{bundle.aon_security_level}" />
 					<aon:selectOneMenu id="AccountEntry_securityLevel"
-						valueChangeListener="#{accountEntry.addDirectExpression}">
+						valueChangeListener="#{accountEntry.addExpression}">
 						<f:selectItem value="#{nullItem.value}" />
 						<f:selectItems value="#{commonCollections.securityLevels}" />
 					</aon:selectOneMenu>

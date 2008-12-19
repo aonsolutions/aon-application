@@ -13,7 +13,7 @@
 		value="#{bundle.aon_segment}" />
 	<aon:selectOneMenu id="Supplier_supplierSegment_id"
 		value="#{supplierCollections.supplierSegment}"
-		valueChangeListener="#{controller.addDirectIdEqualExpression}">
+		valueChangeListener="#{controller.addIdEqualExpression}">
 		<f:selectItem itemLabel="-" value="#{null}"/>		
 		<f:selectItems value="#{supplierCollections.supplierSegments}" />
 	</aon:selectOneMenu>

@@ -68,7 +68,7 @@
 						value="#{bundle.aon_scope}" />
 					<aon:selectOneMenu id="Customer_scope_id"
 						value="#{configCollections.scope}"
-						valueChangeListener="#{finance.addDirectIdEqualExpression}">
+						valueChangeListener="#{finance.addIdEqualExpression}">
 						<f:selectItem itemLabel="-" value="#{null}"/> 
 						<f:selectItems value="#{configCollections.currentUserScopes}" />
 					</aon:selectOneMenu>

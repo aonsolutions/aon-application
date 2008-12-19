@@ -19,7 +19,7 @@
 		value="#{productBundle.product_category}" />
 	<aon:selectOneMenu id="Item_product_category_id"
 		value="#{productCollections.category}"
-		valueChangeListener="#{controller.addDirectIdEqualExpression}">
+		valueChangeListener="#{controller.addIdEqualExpression}">
 		<f:selectItem itemLabel="-" value="#{null}"/>
 		<f:selectItems value="#{productCollections.categories}" />
 	</aon:selectOneMenu>
@@ -28,7 +28,7 @@
 		value="#{productBundle.product_brand}" />
 	<aon:selectOneMenu id="Item_product_brand_id"
 		value="#{productCollections.brand}"
-		valueChangeListener="#{controller.addDirectIdEqualExpression}">
+		valueChangeListener="#{controller.addIdEqualExpression}">
 		<f:selectItem itemLabel="-" value="#{null}" itemDisabled="true" />
 		<f:selectItems value="#{productCollections.brands}" />
 	</aon:selectOneMenu>

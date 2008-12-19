@@ -11,7 +11,7 @@
 		value="#{commercialBundle.commercial_target_advertising}" />
 	<aon:selectOneMenu id="Target_advertising"
 		converter="aon.EnumConverter"
-		valueChangeListener="#{controller.addDirectExpression}">
+		valueChangeListener="#{controller.addExpression}">
 		<f:selectItem itemLabel="-" value="#{null}"/>
 		<f:selectItems value="#{commercialCollections.advertisings}" />		
 	</aon:selectOneMenu>	
