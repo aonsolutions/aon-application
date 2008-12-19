@@ -17,6 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -53,6 +55,9 @@ import com.code.aon.ui.util.AonUtil;
  */
 public class CorporateIdentity implements ICollectionProvider{
 
+	/** Obtiene un logger apropiado. */
+	private static final Logger LOGGER = Logger.getLogger(CorporateIdentity.class.getName());	
+	
 	private IdentityReport identityReport;
 
 	public IdentityReport getIdentityReport() {
@@ -82,9 +87,8 @@ public class CorporateIdentity implements ICollectionProvider{
         		identityReport.setPhone(recoverCompanyMediasString(company,MediaType.FIXED_PHONE));
         		identityReport.setWeb(recoverCompanyMediasString(company,MediaType.WEB));
         	}
-        }
-        catch (Exception e) {
-        	e.printStackTrace();
+        } catch (Exception e) {
+        	LOGGER.log(Level.SEVERE, e.getMessage(), e );
         }
 	}
 	
@@ -204,14 +208,22 @@ public class CorporateIdentity implements ICollectionProvider{
 	}
 
 	public Collection getCollection() {
-		List<IdentityReport> list = new LinkedList<IdentityReport>();
-		list.add(identityReport);
-		return list;
+		try {
+			return getCollection(false);
+		} catch (ManagerBeanException e) {
+        	LOGGER.log(Level.SEVERE, e.getMessage(), e );			
+		}
+		return null;
 	}
 
-	public Collection getCollection(boolean arg0) throws ManagerBeanException {
-		// TODO Auto-generated method stub
-		return null;
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+		if (! forceRefresh) {
+			List<IdentityReport> list = new LinkedList<IdentityReport>();
+			list.add(identityReport);
+			return list;
+		} else {
+			throw new IllegalArgumentException( "forceRefresh not supported" );
+		}
 	}
 
 	public InputStream getAttachAsInputStream() throws IOException, ManagerBeanException{
@@ -276,9 +288,9 @@ public class CorporateIdentity implements ICollectionProvider{
 			response.flushBuffer();
 			out.close();
 		} catch (IOException e) {
-			System.out.println(e);
+        	LOGGER.log(Level.SEVERE, e.getMessage(), e );
 		} catch (AonException e) {
-			System.out.println(e);
+        	LOGGER.log(Level.SEVERE, e.getMessage(), e );
 		} 	
 		context.responseComplete();
     }
@@ -306,7 +318,8 @@ public class CorporateIdentity implements ICollectionProvider{
 		        res = numero.convertirLetras(num_);
 			}
 			identityReport.setPagare_cantidad(res);
-    	}catch (Exception e) {
+    	} catch (Exception e) {
+        	LOGGER.log(Level.SEVERE, e.getMessage(), e );
 		}
     }
     
