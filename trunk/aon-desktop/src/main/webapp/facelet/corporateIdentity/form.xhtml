@@ -125,7 +125,7 @@
 							<f:facet name="header">
 								<aon:outputText value="&#160;"/>
 							</f:facet>
-							<a4j:support actionListener="#{corporateIdentityAttach.onSelect}" event="onclick" reRender="identityForm" rendered="#{desktop.roleManager}" />
+							<a4j:support actionListener="#{corporateIdentityAttach.onSelect}" event="onclick" reRender="identityForm" renderedOnUserRole="Manager" />
 							<aon:outputText value="&#160;"/>
 							<f:facet name="footer">
 								<aon:div rendered="#{desktop.roleManager}">
@@ -154,7 +154,7 @@
 									required="#{true}" size="40" />
 							</aon:div>
 							<f:facet name="footer">
-								<aon:div rendered="#{desktop.roleManager}">
+								<aon:div renderedOnUserRole="Manager">
 									<aon:div rendered="#{corporateIdentityAttach.new}">				
 										<aon:inputText value="#{corporateIdentityAttach.to.description}" styleClass="aon-float-left"
 											required="#{true}" size="20" />
