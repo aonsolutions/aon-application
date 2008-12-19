@@ -139,6 +139,25 @@
 		</managed-property>
 	</managed-bean>	
 	
+	<!--  ************ Pais LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>nacionLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>nacionLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.geograficas.Nacion</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/personas/personas/nacionLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
 	<!--  ************ Base LOOKUP **************  -->	
 	<managed-bean>
 		<managed-bean-name>baseLookup</managed-bean-name>

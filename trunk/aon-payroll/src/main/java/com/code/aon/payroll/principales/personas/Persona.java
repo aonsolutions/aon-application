@@ -1,22 +1,24 @@
 package com.code.aon.payroll.principales.personas;
 
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import javax.persistence.CascadeType;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.payroll.enumeration.EstadoCivil;
+import com.code.aon.payroll.enumeration.Sexo;
 import com.code.aon.payroll.geograficas.Nacion;
 import com.code.aon.payroll.geograficas.Pais;
 import com.code.aon.payroll.geograficas.Provincia;
@@ -49,13 +51,13 @@ public class Persona  implements ITransferObject  {
      private String padre;
      private String madre;
      private String numss;
-     private String estciv;
+     private EstadoCivil estciv;
      private String obsper;
      private Date fecnew;
      private Date hornew;
      private Date fecmod;
      private Date hormod;
-     private String sexo;
+     private Sexo sexo;
      private Documento tipdoc;
      private Nacion nacion;
      private Pais pais;
@@ -266,13 +268,13 @@ public class Persona  implements ITransferObject  {
         this.numss = numss;
     }
     
-
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.EstadoCivil")} )
     @Column(name="estciv", length=1)
-    public String getEstciv() {
+    public EstadoCivil getEstciv() {
         return this.estciv;
     }
     
-    public void setEstciv(String estciv) {
+    public void setEstciv(EstadoCivil estciv) {
         this.estciv = estciv;
     }
     
@@ -330,13 +332,13 @@ public class Persona  implements ITransferObject  {
         this.hormod = hormod;
     }
     
-	
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Sexo")} )
     @Column(name="sexo", length=1)
-    public String getSexo() {
+    public Sexo getSexo() {
         return this.sexo;
     }
     
-    public void setSexo(String sexo) {
+    public void setSexo(Sexo sexo) {
         this.sexo = sexo;
     }
     

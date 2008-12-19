@@ -102,17 +102,21 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div>
-								<aon:commandLink value="#{menuBundle.principales_personas__personas}" disabled="true" />
+								<aon:commandLink value="#{menuBundle.principales_personas__personas}" action="persona_form" >
+									<aon:actionListener method="#{persona.onEditSearch}" />
+									<aon:actionListener method="#{persona.onSearch}" />
+									<aon:actionListener method="#{persona.onSelectFirst}" />
+								</aon:commandLink>
 							</aon:div>
 							<aon:div>
 								<aon:commandLink value="#{menuBundle.principales_personas__integral_per}" disabled="true" />
 							</aon:div>
 							<aon:div>
 								<aon:commandLink value="#{menuBundle.principales_personas__percep}" action="percep_form" >
-										<aon:actionListener method="#{percep.onEditSearch}" />
-										<aon:actionListener method="#{percep.onSearch}" />
-										<aon:actionListener method="#{percep.onSelectFirst}" />
-									</aon:commandLink>
+									<aon:actionListener method="#{percep.onEditSearch}" />
+									<aon:actionListener method="#{percep.onSearch}" />
+									<aon:actionListener method="#{percep.onSelectFirst}" />
+								</aon:commandLink>
 							</aon:div>
 							<aon:div>
 								<aon:commandLink value="#{menuBundle.principales_personas__otrperc}" action="otrperc_form" >
