@@ -149,7 +149,7 @@
 						value="#{configBundle.config_pay_method}" />
 					<aon:selectOneMenu id="Finance_payMethod_id"
 						value="#{configCollections.payMethod}"
-						valueChangeListener="#{finance.addDirectIdEqualExpression}">
+						valueChangeListener="#{finance.addIdEqualExpression}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{configCollections.payMethods}" />
 					</aon:selectOneMenu>
