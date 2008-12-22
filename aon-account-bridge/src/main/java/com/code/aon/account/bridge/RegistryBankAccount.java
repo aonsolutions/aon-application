@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.code.aon.account.Account;
+import com.code.aon.account.IAccount;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.registry.RegistryBank;
 
@@ -17,7 +18,7 @@ import com.code.aon.registry.RegistryBank;
  */
 @Entity
 @Table(name="rbank_account")
-public class RegistryBankAccount implements ITransferObject {
+public class RegistryBankAccount implements ITransferObject, IAccount {
 	
 	private static final long serialVersionUID = -327952223428600895L;
 
