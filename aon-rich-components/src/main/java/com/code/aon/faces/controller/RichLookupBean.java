@@ -7,7 +7,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import javax.faces.application.Application;
+import javax.el.ExpressionFactory;
+import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.el.ValueBinding;
@@ -147,14 +148,14 @@ public class RichLookupBean {
 		this.searchPagePath = pagePath;
 	}
 
-	private Map<String, ValueBinding> calculateJoinBindings() {
-		Map<String, ValueBinding> joinBindingsMap = new HashMap<String, ValueBinding>();
+	private Map<String, ValueExpression> calculateJoinBindings() {
+		Map<String, ValueExpression> joinBindingsMap = new HashMap<String, ValueExpression>();
 		DAOConstantsResolver resolver = new DAOConstantsResolver();
 		String expression = this.sourcePojoBinding.getExpressionString();
-		Application app = FacesContext.getCurrentInstance().getApplication();
+		ExpressionFactory factory = FacesContext.getCurrentInstance().getApplication().getExpressionFactory();
 		for (AliasEntry entry : resolver.getIdentifierAliasEntryList(getController().getPojo())) {
 			String value = FaceletUtil.appendExpression(expression, entry.getAccessPath());
-			joinBindingsMap.put(entry.getAlias(), app.createValueBinding(value));
+			joinBindingsMap.put(entry.getAlias(), factory.createValueExpression(value, Object.class));
 		}
 		return joinBindingsMap;
 	}
@@ -167,8 +168,8 @@ public class RichLookupBean {
 	 * 
 	 * @return the join bindings map
 	 */
-	public Map<String, ValueBinding> getJoinBindingsMap(ValueChangeEvent event) {
-		Map<String, ValueBinding> joinBindingsMap = Collections.emptyMap();
+	public Map<String, ValueExpression> getJoinBindingsMap(ValueChangeEvent event) {
+		Map<String, ValueExpression> joinBindingsMap = Collections.emptyMap();
 		if (event.getComponent() instanceof HtmlLookupInputText) {
 			HtmlLookupInputText lookupComponent = (HtmlLookupInputText) event.getComponent();
 			joinBindingsMap = lookupComponent.getJoinBindingsMap();
@@ -466,11 +467,11 @@ public class RichLookupBean {
 	 * 
 	 * @return the values map
 	 */
-	private Map<String, Object> getValuesMap(Map<String, ValueBinding> joinBindingsMap) {
+	private Map<String, Object> getValuesMap(Map<String, ValueExpression> joinBindingsMap) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		FacesContext ctx = FacesContext.getCurrentInstance();
-		for (Entry<String, ValueBinding> entry : joinBindingsMap.entrySet()) {
-			Object value = entry.getValue().getValue(ctx);
+		for (Entry<String, ValueExpression> entry : joinBindingsMap.entrySet()) {
+			Object value = entry.getValue().getValue(ctx.getELContext());
 			map.put(entry.getKey(), value);
 		}
 		return map;
@@ -496,11 +497,11 @@ public class RichLookupBean {
 		return criteria;
 	}
 
-	private void restoreValues(Map<String, ValueBinding> joinBindingsMap, Map<String, Object> valuesMap) {
+	private void restoreValues(Map<String, ValueExpression> joinBindingsMap, Map<String, Object> valuesMap) {
 		FacesContext ctx = FacesContext.getCurrentInstance();
-		for (Entry<String, ValueBinding> entry : joinBindingsMap.entrySet()) {
+		for (Entry<String, ValueExpression> entry : joinBindingsMap.entrySet()) {
 			Object value = valuesMap.get(entry.getKey());
-			entry.getValue().setValue(ctx, value);
+			entry.getValue().setValue(ctx.getELContext(), value);
 		}
 	}
 	
@@ -583,7 +584,7 @@ public class RichLookupBean {
 		LOGGER.info("lookupChanged: " + event.getNewValue() + " old: " + event.getOldValue());
 		boolean restoreValues = false;
 		setBindings(event.getComponent());
-		Map<String, ValueBinding> joinBindingsMap = getJoinBindingsMap(event);
+		Map<String, ValueExpression> joinBindingsMap = getJoinBindingsMap(event);
 		Map<String, Object> valuesMap = getValuesMap(joinBindingsMap);
 		Criteria criteria = getCriteria(valuesMap);
 		getController().setCriteria(criteria);
