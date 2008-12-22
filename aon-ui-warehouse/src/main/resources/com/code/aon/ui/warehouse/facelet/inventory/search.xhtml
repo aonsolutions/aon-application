@@ -28,14 +28,14 @@
 							<aon:outputLabel for="Inventory_inventoryDate-From" styleClass="aon-form-date-label"
 								value="#{bundle.aon_date_from}:" />
 							<aon:selectInputDate id="Inventory_inventoryDate-From"
-								value="#{inventorySearch.inventoryDateFrom}"
+								valueChangeListener="#{inventory.addGreaterThanOrEqualExpression}"
 								timeZone="#{timeZoneController.timeZone}"
 								popupDateFormat="#{bundle.aon_date_pattern}"/>
 	
 							<aon:outputLabel for="Inventory_inventoryDate-To" styleClass="aon-form-date-label"
 								value="#{bundle.aon_date_to}:" />
 							<aon:selectInputDate id="Inventory_inventoryDate-To"
-								value="#{inventorySearch.inventoryDateTo}"
+								valueChangeListener="#{inventory.addLessThanOrEqualExpression}"
 								timeZone="#{timeZoneController.timeZone}"
 								popupDateFormat="#{bundle.aon_date_pattern}"/>
 						</aon:div>							

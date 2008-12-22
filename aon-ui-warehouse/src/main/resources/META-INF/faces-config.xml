@@ -60,7 +60,6 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{inventoryDetailListener}</value>
-				<value>#{inventorySearch}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -83,14 +82,6 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>inventorySearch</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.warehouse.event.InventorySearchListener
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
 
 	<!--  **** INVENTORYDETAIL **** -->
 
@@ -214,20 +205,11 @@
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
-				<value>#{deliverySearch}</value>
 				<value>#{deliveryHeaderControllerListener}</value>
 				<value>#{deliveryControllerListener}</value>
 				<value>#{deliveryDetailChildListener}</value>
 			</list-entries>
 		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>deliverySearch</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.warehouse.event.DeliverySearchListener
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
  	<managed-bean>
