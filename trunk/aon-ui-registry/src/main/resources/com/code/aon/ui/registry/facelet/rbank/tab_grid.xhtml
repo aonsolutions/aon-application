@@ -20,7 +20,7 @@
 				<aon:outputText value="#{to.bank.name}" rendered="#{formList}" />
 
 				<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
-					<aon:lookupInputText id="Bank_code"
+					<aon:lookupInputText id="Bank_code" property="#{controller.to.bank}"
 						reRender="Bank_name" lookup="#{bankLookup}"
 						value="#{controller.to.bank.code}" size="5">
 						<aon:joinProperty alias="Bank_code" value="#{controller.to.bank.code}" />
@@ -37,7 +37,7 @@
 				</aon:div>
 				<f:facet name="footer">
 					<aon:div styleClass="aon-lookup" rendered="#{formNew}">
-						<aon:lookupInputText id="Bank_code-New"
+						<aon:lookupInputText id="Bank_code-New" property="#{controller.to.bank}"
 							reRender="Bank_name-New" lookup="#{bankLookup}"
 							value="#{controller.to.bank.code}" size="5">
 							<aon:joinProperty alias="Bank_code" value="#{controller.to.bank.code}" />
