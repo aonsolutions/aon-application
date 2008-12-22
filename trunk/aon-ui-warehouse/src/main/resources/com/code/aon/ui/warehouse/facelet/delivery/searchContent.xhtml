@@ -20,14 +20,14 @@
 		<aon:outputLabel for="Delivery_issueTime-From" styleClass="aon-form-date-label"
 			value="#{bundle.aon_date_from}:" />
 		<aon:selectInputDate id="Delivery_issueTime-From"
-			value="#{deliverySearch.issueTimeFrom}" 
+			valueChangeListener="#{delivery.addGreaterThanOrEqualExpression}" 
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 		<aon:outputLabel for="Delivery_issueTime-To" styleClass="aon-form-date-label"
 			value="#{bundle.aon_date_to}:" />
 		<aon:selectInputDate id="Delivery_issueTime-To"
-			value="#{deliverySearch.issueTimeTo}"
+			valueChangeListener="#{delivery.addLessThanOrEqualExpression}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
