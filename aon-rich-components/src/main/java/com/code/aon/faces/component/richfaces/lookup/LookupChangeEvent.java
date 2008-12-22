@@ -7,8 +7,10 @@ import javax.faces.event.FacesListener;
 import javax.faces.event.PhaseId;
 
 public class LookupChangeEvent extends FacesEvent {
+	
+	private static final long serialVersionUID = 6511778964744467134L;
 
-    // ------------------------------------------------------------ Constructors
+	// ------------------------------------------------------------ Constructors
 
 
     /**
