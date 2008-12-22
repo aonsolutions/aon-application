@@ -152,10 +152,11 @@ public class RichLookupBean {
 		Map<String, ValueExpression> joinBindingsMap = new HashMap<String, ValueExpression>();
 		DAOConstantsResolver resolver = new DAOConstantsResolver();
 		String expression = this.sourcePojoBinding.getExpressionString();
-		ExpressionFactory factory = FacesContext.getCurrentInstance().getApplication().getExpressionFactory();
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		ExpressionFactory factory = ctx.getApplication().getExpressionFactory();
 		for (AliasEntry entry : resolver.getIdentifierAliasEntryList(getController().getPojo())) {
 			String value = FaceletUtil.appendExpression(expression, entry.getAccessPath());
-			joinBindingsMap.put(entry.getAlias(), factory.createValueExpression(value, Object.class));
+			joinBindingsMap.put(entry.getAlias(), factory.createValueExpression(ctx.getELContext(),value, Object.class));
 		}
 		return joinBindingsMap;
 	}
