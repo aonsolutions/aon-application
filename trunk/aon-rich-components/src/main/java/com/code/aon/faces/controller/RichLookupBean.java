@@ -11,7 +11,6 @@ import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
@@ -63,7 +62,7 @@ public class RichLookupBean {
 	private String newPagePath;
 
 	/** The value binding of foreign Pojo. */
-	private ValueBinding sourcePojoBinding;
+	private ValueExpression sourcePojoBinding;
 
 	private ILookupComponent component;
 	
@@ -506,16 +505,6 @@ public class RichLookupBean {
 		}
 	}
 	
-	private Object getCurrentSourcePojo() {
-		FacesContext ctx = FacesContext.getCurrentInstance();
-		try {
-			return this.sourcePojoBinding.getValue(ctx);
-		} catch ( Throwable th ) {
-			LOGGER.fine( this.sourcePojoBinding + " is possibly null" );
-		}
-		return null;
-	}
-	
 	private void fireLookupChangeListener(UIComponent component, boolean resolved) {
 		if ( getComponent().getLookupChangeListener() != null ) {
 			LookupChangeEvent event = null;
@@ -533,7 +522,7 @@ public class RichLookupBean {
 				}				
 			}
 			event = new LookupChangeEvent(component, newValue );
-			getComponent().getLookupChangeListener().invoke(ctx, new Object[]{event});
+			getComponent().getLookupChangeListener().invoke(ctx.getELContext(), new Object[]{event});
 		}
 	}
 
@@ -555,7 +544,7 @@ public class RichLookupBean {
 		if ( getComponent().getLookupProperty() != null ) {
 			try {
 				Object value = this.controller.getManagerBean().createNewTo();
-				Class _class = PropertyUtils.getPropertyType( value, getComponent().getLookupProperty() );
+				Class<?> _class = PropertyUtils.getPropertyType( value, getComponent().getLookupProperty() );
 				if ( _class != null ) {
 					pojo = _class.getName();
 				}
@@ -571,7 +560,7 @@ public class RichLookupBean {
 	
 	private void updateSourcePojo() {
 		FacesContext ctx = FacesContext.getCurrentInstance();
-		sourcePojoBinding.setValue(ctx, getLookupValue());
+		sourcePojoBinding.setValue(ctx.getELContext(), getLookupValue());
 	}
 	
 	/**
@@ -614,12 +603,12 @@ public class RichLookupBean {
 	 * 
 	 * @return the parent binding
 	 */
-	private ValueBinding getParentBinding(FacesContext ctx, ValueBinding vb) {
-		String parentExpression = vb.getExpressionString();
+	private ValueExpression getParentBinding(FacesContext ctx, ValueExpression ve) {
+		String parentExpression = ve.getExpressionString();
 		int pos = parentExpression.lastIndexOf('.');
 		if (pos != -1) {
 			String expression = parentExpression.substring(0, pos) + "}";
-			return ctx.getApplication().createValueBinding(expression);
+			return ctx.getApplication().getExpressionFactory().createValueExpression(ctx.getELContext(),expression, Object.class);
 		}
 		return null;
 	}
@@ -632,16 +621,16 @@ public class RichLookupBean {
 	 * 
 	 * @return the foreign binding
 	 */
-	private ValueBinding getSourcePojoBinding(UIComponent component) {
+	private ValueExpression getSourcePojoBinding(UIComponent component) {
 		FacesContext ctx = FacesContext.getCurrentInstance();
-		ValueBinding vb = component.getValueBinding("value");
+		ValueExpression ve = component.getValueExpression("value");
 		String pojo = getLookupPojo();
-		while (vb != null) {
-			String type = vb.getType(ctx).getName();
+		while (ve != null) {
+			String type = ve.getType(ctx.getELContext()).getName();
 			if (type.equals(pojo)) {
-				return vb;
+				return ve;
 			} else {
-				vb = getParentBinding(ctx, vb);
+				ve = getParentBinding(ctx, ve);
 			}
 		}
 		return null;

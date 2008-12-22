@@ -4,11 +4,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.el.MethodExpression;
 import javax.el.ValueExpression;
 import javax.faces.component.html.HtmlInputText;
 import javax.faces.context.FacesContext;
-import javax.faces.el.MethodBinding;
-import javax.faces.el.ValueBinding;
 
 import com.code.aon.faces.component.richfaces.lookup.ILookupComponent;
 import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
@@ -21,13 +20,13 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
     public static final String COMPONENT_TYPE =
             "com.code.aon.faces.HtmlLookupInputText";
     
-    private ValueBinding property;
+    private ValueExpression property;
     
-    private ValueBinding lookup;
+    private ValueExpression lookup;
     
     private String lookupProperty;
     
-    private MethodBinding lookupChangeListener;    
+    private MethodExpression lookupChangeListener;    
     
 	/** The map of join value bindings. */
 	private Map<String,ValueExpression> joinBindingsMap;
@@ -41,34 +40,34 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
         this.joinBindingsMap = Collections.emptyMap();
     }
     
-	public ValueBinding getLookup() {
+	public ValueExpression getLookup() {
     	if (null != this.lookup) {
             return this.lookup;
         }
-        ValueBinding _vb = getValueBinding(LOOKUP);
-        return (_vb != null) ? (ValueBinding) _vb.getValue(getFacesContext()) : null;
+    	ValueExpression _vb = getValueExpression(LOOKUP);
+        return (_vb != null) ? (ValueExpression) _vb.getValue(getFacesContext().getELContext()) : null;
 	}
 
-	public void setLookup(ValueBinding lookup) {
+	public void setLookup(ValueExpression lookup) {
 		this.lookup = lookup;
 	}
 
-	public ValueBinding getProperty() {
+	public ValueExpression getProperty() {
     	if (null != this.property) {
             return this.property;
         }
-        return getValueBinding(PROPERTY);
+        return getValueExpression(PROPERTY);
 	}
 
-	public void setProperty(ValueBinding property) {
+	public void setProperty(ValueExpression property) {
 		this.property = property;
 	}
 	
-	public MethodBinding getLookupChangeListener() {
+	public MethodExpression getLookupChangeListener() {
 		return this.lookupChangeListener;
 	}
 
-	public void setLookupChangeListener(MethodBinding lookupChangeListener) {
+	public void setLookupChangeListener(MethodExpression lookupChangeListener) {
 		this.lookupChangeListener = lookupChangeListener;
 	}
 
@@ -76,8 +75,8 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
     	if (null != this.lookupProperty) {
             return this.lookupProperty;
         }
-        ValueBinding _vb = getValueBinding(LOOKUP_PROPERTY);
-        return ((_vb != null) ? (String)_vb.getValue(getFacesContext()) : null);
+    	ValueExpression _vb = getValueExpression(LOOKUP_PROPERTY);
+        return ((_vb != null) ? (String)_vb.getValue(getFacesContext().getELContext()) : null);
 	}	
 
 	public void setLookupProperty(String lookupProperty) {
@@ -110,10 +109,10 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
   	public void restoreState(FacesContext context, Object value) {  
   		this._state = (Object[]) value;  
   		super.restoreState(context, this._state[0]);  
-  		lookup = (ValueBinding) this._state[1];
-  		property = (ValueBinding) this._state[2];
+  		lookup = (ValueExpression) this._state[1];
+  		property = (ValueExpression) this._state[2];
   		joinBindingsMap = (Map<String, ValueExpression>) this._state[3];
-  		lookupChangeListener = (MethodBinding) this._state[4];  	
+  		lookupChangeListener = (MethodExpression) this._state[4];  	
   		lookupProperty = (String) this._state[5];  		
   	}  
    

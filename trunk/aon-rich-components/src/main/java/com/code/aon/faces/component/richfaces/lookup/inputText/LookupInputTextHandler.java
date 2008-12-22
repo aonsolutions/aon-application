@@ -8,7 +8,6 @@ import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
 import com.code.aon.faces.component.sandbox.ValueChangeNotifierHandler;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
-import com.sun.facelets.el.LegacyMethodBinding;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.jsf.ComponentConfig;
 
@@ -41,7 +40,7 @@ public class LookupInputTextHandler extends AonAjaxInputHandler implements ILook
 		TagAttribute vcl = getAttribute(LOOKUP_CHANGE_LISTENER);
 		if ( vcl != null ) {
 			MethodExpression me = vcl.getMethodExpression(ctx, null, FaceletUtil.LOOKUP_CHANGE_LISTENER_SIG);
-			text.setLookupChangeListener( new LegacyMethodBinding(me) );
+			text.setLookupChangeListener( me );
 		}
 	}
 	
