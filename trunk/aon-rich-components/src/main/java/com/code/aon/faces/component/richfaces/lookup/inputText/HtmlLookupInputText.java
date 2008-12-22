@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.el.ValueExpression;
 import javax.faces.component.html.HtmlInputText;
 import javax.faces.context.FacesContext;
 import javax.faces.el.MethodBinding;
@@ -29,7 +30,7 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
     private MethodBinding lookupChangeListener;    
     
 	/** The map of join value bindings. */
-	private Map<String,ValueBinding> joinBindingsMap;
+	private Map<String,ValueExpression> joinBindingsMap;
     
 	private Object[] _state;    
     
@@ -83,11 +84,11 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
 		this.lookupProperty = lookupProperty;
 	}
 	
-	public void addJoinProperty( String alias, ValueBinding vb ) {
+	public void addJoinProperty( String alias, ValueExpression ve ) {
 		if ( this.joinBindingsMap.isEmpty() ) {
-			this.joinBindingsMap = new HashMap<String, ValueBinding>();
+			this.joinBindingsMap = new HashMap<String, ValueExpression>();
 		}
-		this.joinBindingsMap.put( alias, vb );
+		this.joinBindingsMap.put( alias, ve );
 	}
 	
 	/**
@@ -95,7 +96,7 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
 	 * 
 	 * @return the join bindings map
 	 */
-	public Map<String, ValueBinding> getJoinBindingsMap() {
+	public Map<String, ValueExpression> getJoinBindingsMap() {
 		return this.joinBindingsMap;
 	}
 	
@@ -111,7 +112,7 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
   		super.restoreState(context, this._state[0]);  
   		lookup = (ValueBinding) this._state[1];
   		property = (ValueBinding) this._state[2];
-  		joinBindingsMap = (Map<String, ValueBinding>) this._state[3];
+  		joinBindingsMap = (Map<String, ValueExpression>) this._state[3];
   		lookupChangeListener = (MethodBinding) this._state[4];  	
   		lookupProperty = (String) this._state[5];  		
   	}  
