@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.code.aon.account.Account;
+import com.code.aon.account.IAccount;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.finance.Creditor;
 
@@ -17,7 +18,7 @@ import com.code.aon.finance.Creditor;
  */
 @Entity
 @Table(name="creditor_account")
-public class CreditorAccount implements ITransferObject {
+public class CreditorAccount implements ITransferObject, IAccount {
 	
 	private static final long serialVersionUID = -1065423464446184552L;
 

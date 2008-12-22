@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.code.aon.account.Account;
+import com.code.aon.account.IAccount;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.supplier.Supplier;
 
@@ -17,7 +18,7 @@ import com.code.aon.supplier.Supplier;
  */
 @Entity
 @Table(name="supplier_account")
-public class SupplierAccount implements ITransferObject {
+public class SupplierAccount implements ITransferObject, IAccount {
 	
 	private static final long serialVersionUID = -4360062076830311608L;
 
