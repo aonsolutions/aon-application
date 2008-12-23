@@ -24,18 +24,6 @@ public class FinanceSearchListener extends ControllerSearchListener {
 	
 	private Supplier supplier;
 	
-	private Date dueDateFrom;
-	
-	private Date dueDateTo;
-	
-	private Date invoiceIssueDateFrom;
-	
-	private Date invoiceIssueDateTo;
-	
-	private Integer fromNumber;
-	
-	private Integer toNumber;	
-	
 	/**
 	 * Gets if the finance is a payment or a charge.
 	 * 
@@ -78,66 +66,12 @@ public class FinanceSearchListener extends ControllerSearchListener {
 		this.supplier = supplier;
 	}
 	
-	public Date getDueDateFrom() {
-		return dueDateFrom;
-	}
-
-	public void setDueDateFrom(Date dueDateFrom) {
-		this.dueDateFrom = dueDateFrom;
-	}
-
-	public Date getDueDateTo() {
-		return dueDateTo;
-	}
-
-	public void setDueDateTo(Date dueDateTo) {
-		this.dueDateTo = dueDateTo;
-	}
-
-	public Date getInvoiceIssueDateFrom() {
-		return invoiceIssueDateFrom;
-	}
-
-	public void setInvoiceIssueDateFrom(Date invoiceIssueDateFrom) {
-		this.invoiceIssueDateFrom = invoiceIssueDateFrom;
-	}
-
-	public Date getInvoiceIssueDateTo() {
-		return invoiceIssueDateTo;
-	}
-
-	public void setInvoiceIssueDateTo(Date invoiceIssueDateTo) {
-		this.invoiceIssueDateTo = invoiceIssueDateTo;
-	}
-
-	public Integer getFromNumber() {
-		return fromNumber;
-	}
-
-	public void setFromNumber(Integer fromNumber) {
-		this.fromNumber = fromNumber;
-	}
-
-	public Integer getToNumber() {
-		return toNumber;
-	}
-
-	public void setToNumber(Integer toNumber) {
-		this.toNumber = toNumber;
-	}
-	
 	@Override
 	protected void init() throws ManagerBeanException {
 		setPayment(Boolean.FALSE);
 		setBank( new Bank() );
 		setCustomer( new Customer() );
 		setSupplier( new Supplier() );
-		setDueDateFrom(null);
-		setDueDateTo(null);
-		setInvoiceIssueDateFrom(null);
-		setInvoiceIssueDateTo(null);
-		setFromNumber(null);
-		setToNumber(null);				
 	}
 	
 	@Override
@@ -161,28 +95,6 @@ public class FinanceSearchListener extends ControllerSearchListener {
 			String payment = getController().getFieldName(IFinanceAlias.FINANCE_PAYMENT);
 			criteria.addEqualExpression(payment, getPayment());
 		}
-		if ( getDueDateFrom() != null ) {
-			String field = getController().getFieldName(IFinanceAlias.FINANCE_DUE_DATE);
-			criteria.addGreaterThanOrEqualExpression(field, getDueDateFrom());
-		}
-		if ( getDueDateTo() != null ) {
-			String field = getController().getFieldName(IFinanceAlias.FINANCE_DUE_DATE);
-			criteria.addLessThanOrEqualExpression(field, getDueDateTo());
-		}
-		if ( getInvoiceIssueDateFrom() != null ) {
-			String field = getController().getFieldName(IFinanceAlias.FINANCE_INVOICE_ISSUE_DATE);
-			criteria.addGreaterThanOrEqualExpression(field, getInvoiceIssueDateFrom());
-		}
-		if ( getInvoiceIssueDateTo() != null ) {
-			String field = getController().getFieldName(IFinanceAlias.FINANCE_INVOICE_ISSUE_DATE);
-			criteria.addLessThanOrEqualExpression(field, getInvoiceIssueDateTo());
-		}
-		if(getFromNumber() != null){
-			criteria.addGreaterThanOrEqualExpression(getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER), getFromNumber());
-		}
-		if(getToNumber() !=  null){
-			criteria.addLessThanOrEqualExpression(getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER), getToNumber());
-		}				
 	}
 	
 }
