@@ -94,7 +94,7 @@ public class NominaexController extends PayrollBasicController {
 
 		try {
 			//Búsqueda por campos LookUp
-			if ((emprper.getCdg() != null)) {
+			if (emprper!=null && (emprper.getCdg() != null)) {
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.NOMINAEX_EMPRPER_CDG), emprper.getCdg());
 			}
 			//Búsqueda por campos Date
