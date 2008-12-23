@@ -43,7 +43,7 @@
 										<aon:actionListener method="#{cliente.onSearch}" />
 										<aon:actionListener method="#{cliente.onSelectFirst}" />
 										<aon:actionListener method="#{empresa.onSelectFirst}" />
-									<!--  <aon:actionListener method="#{tipdomicilio.onSelectFirst}" />
+									<!--<aon:actionListener method="#{tipdomicilio.onSelectFirst}" />
 										<aon:actionListener method="#{tipcuenta.onSelectFirst}" />-->
 									</aon:commandLink>
 								</aon:div>
@@ -57,10 +57,16 @@
 								</aon:div>
 								<aon:div>
 									<aon:commandLink value="#{menuBundle.principales_clientes__actividad}" 
-										disabled="true" />
+										action="actividad_form" >
+										<aon:actionListener method="#{actividad.onEditSearch}" />
+										<aon:actionListener method="#{actividad.onSearch}" />
+										<aon:actionListener method="#{actividad.onSelectFirst}" />
+									
+									</aon:commandLink>
 								</aon:div>
 							</aon:div>
 						</aon:panel>
+						
 				
 						<aon:div styleClass="aon-padding-top">
 							<aon:panel>

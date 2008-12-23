@@ -64,6 +64,9 @@ import com.code.aon.payroll.principales.Domicilio;
 import com.code.aon.payroll.principales.autonomos.Autbases;
 import com.code.aon.payroll.principales.autonomos.Autonomos;
 import com.code.aon.payroll.principales.empresa.Actividad;
+import com.code.aon.payroll.principales.empresa.Emprccc;
+import com.code.aon.payroll.principales.empresa.Emprccos;
+import com.code.aon.payroll.principales.empresa.Emprctra;
 import com.code.aon.payroll.principales.empresa.Emprdom;
 import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.payroll.principales.empresa.Emprlban;
@@ -164,6 +167,9 @@ public class PayrollAliasWriter {
 		        Nomdtoex.class.getName(),
 		        Autbases.class.getName(),
 		        Percep.class.getName(),
+		        Emprctra.class.getName(),
+		        Emprccc.class.getName(),
+		        Emprccos.class.getName(),
 		        Persona.class.getName()
 		        };		
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");

@@ -74,8 +74,11 @@ import com.code.aon.payroll.principales.persona.Embargo;
 import com.code.aon.payroll.principales.persona.Trabajador;
 import com.code.aon.payroll.principales.personas.Otrperc;
 import com.code.aon.payroll.principales.autonomos.Autonomos;
+import com.code.aon.payroll.resultados.salarios.Nominaex;
+import com.code.aon.payroll.resultados.salarios.Nomdtoex;
 import com.code.aon.payroll.principales.autonomos.Autbases;
 import com.code.aon.payroll.principales.personas.Percep;
+import com.code.aon.payroll.principales.empresa.Emprctra;
 
 /** 
 * Interface for holding entity properties constants.
@@ -3247,166 +3250,172 @@ public interface IPayrollAlias {
 	String  ACTIVIDAD_CNAE = ACTIVIDAD_ENTRY.getAliasNames()[3];
 
 	/** 
+	* Alias value: Actividad_cnae2009
+	* Hibernate value: Actividad.cnae2009
+	*/
+	String  ACTIVIDAD_CNAE2009 = ACTIVIDAD_ENTRY.getAliasNames()[4];
+
+	/** 
 	* Alias value: Actividad_codnsz
 	* Hibernate value: Actividad.codnsz
 	*/
-	String  ACTIVIDAD_CODNSZ = ACTIVIDAD_ENTRY.getAliasNames()[4];
+	String  ACTIVIDAD_CODNSZ = ACTIVIDAD_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Actividad_colss
 	* Hibernate value: Actividad.colss
 	*/
-	String  ACTIVIDAD_COLSS = ACTIVIDAD_ENTRY.getAliasNames()[5];
+	String  ACTIVIDAD_COLSS = ACTIVIDAD_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Actividad_convenio_cdg
 	* Hibernate value: Actividad.convenio.cdg
 	*/
-	String  ACTIVIDAD_CONVENIO_CDG = ACTIVIDAD_ENTRY.getAliasNames()[6];
+	String  ACTIVIDAD_CONVENIO_CDG = ACTIVIDAD_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Actividad_descripcion
 	* Hibernate value: Actividad.descripcion
 	*/
-	String  ACTIVIDAD_DESCRIPCION = ACTIVIDAD_ENTRY.getAliasNames()[7];
+	String  ACTIVIDAD_DESCRIPCION = ACTIVIDAD_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Actividad_empresa_cdg
 	* Hibernate value: Actividad.empresa.cdg
 	*/
-	String  ACTIVIDAD_EMPRESA_CDG = ACTIVIDAD_ENTRY.getAliasNames()[8];
+	String  ACTIVIDAD_EMPRESA_CDG = ACTIVIDAD_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Actividad_envioss
 	* Hibernate value: Actividad.envioss
 	*/
-	String  ACTIVIDAD_ENVIOSS = ACTIVIDAD_ENTRY.getAliasNames()[9];
+	String  ACTIVIDAD_ENVIOSS = ACTIVIDAD_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Actividad_epiiae
 	* Hibernate value: Actividad.epiiae
 	*/
-	String  ACTIVIDAD_EPIIAE = ACTIVIDAD_ENTRY.getAliasNames()[10];
+	String  ACTIVIDAD_EPIIAE = ACTIVIDAD_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Actividad_fecfin
 	* Hibernate value: Actividad.fecfin
 	*/
-	String  ACTIVIDAD_FECFIN = ACTIVIDAD_ENTRY.getAliasNames()[11];
+	String  ACTIVIDAD_FECFIN = ACTIVIDAD_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: Actividad_fecini
 	* Hibernate value: Actividad.fecini
 	*/
-	String  ACTIVIDAD_FECINI = ACTIVIDAD_ENTRY.getAliasNames()[12];
+	String  ACTIVIDAD_FECINI = ACTIVIDAD_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: Actividad_fecmod
 	* Hibernate value: Actividad.fecmod
 	*/
-	String  ACTIVIDAD_FECMOD = ACTIVIDAD_ENTRY.getAliasNames()[13];
+	String  ACTIVIDAD_FECMOD = ACTIVIDAD_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: Actividad_fecnew
 	* Hibernate value: Actividad.fecnew
 	*/
-	String  ACTIVIDAD_FECNEW = ACTIVIDAD_ENTRY.getAliasNames()[14];
+	String  ACTIVIDAD_FECNEW = ACTIVIDAD_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: Actividad_flc
 	* Hibernate value: Actividad.flc
 	*/
-	String  ACTIVIDAD_FLC = ACTIVIDAD_ENTRY.getAliasNames()[15];
+	String  ACTIVIDAD_FLC = ACTIVIDAD_ENTRY.getAliasNames()[16];
 
 	/** 
 	* Alias value: Actividad_hormod
 	* Hibernate value: Actividad.hormod
 	*/
-	String  ACTIVIDAD_HORMOD = ACTIVIDAD_ENTRY.getAliasNames()[16];
+	String  ACTIVIDAD_HORMOD = ACTIVIDAD_ENTRY.getAliasNames()[17];
 
 	/** 
 	* Alias value: Actividad_hornew
 	* Hibernate value: Actividad.hornew
 	*/
-	String  ACTIVIDAD_HORNEW = ACTIVIDAD_ENTRY.getAliasNames()[17];
+	String  ACTIVIDAD_HORNEW = ACTIVIDAD_ENTRY.getAliasNames()[18];
 
 	/** 
 	* Alias value: Actividad_indcal
 	* Hibernate value: Actividad.indcal
 	*/
-	String  ACTIVIDAD_INDCAL = ACTIVIDAD_ENTRY.getAliasNames()[18];
+	String  ACTIVIDAD_INDCAL = ACTIVIDAD_ENTRY.getAliasNames()[19];
 
 	/** 
 	* Alias value: Actividad_indcoste
 	* Hibernate value: Actividad.indcoste
 	*/
-	String  ACTIVIDAD_INDCOSTE = ACTIVIDAD_ENTRY.getAliasNames()[19];
+	String  ACTIVIDAD_INDCOSTE = ACTIVIDAD_ENTRY.getAliasNames()[20];
 
 	/** 
 	* Alias value: Actividad_indfirma
 	* Hibernate value: Actividad.indfirma
 	*/
-	String  ACTIVIDAD_INDFIRMA = ACTIVIDAD_ENTRY.getAliasNames()[20];
+	String  ACTIVIDAD_INDFIRMA = ACTIVIDAD_ENTRY.getAliasNames()[21];
 
 	/** 
 	* Alias value: Actividad_indlogo
 	* Hibernate value: Actividad.indlogo
 	*/
-	String  ACTIVIDAD_INDLOGO = ACTIVIDAD_ENTRY.getAliasNames()[21];
+	String  ACTIVIDAD_INDLOGO = ACTIVIDAD_ENTRY.getAliasNames()[22];
 
 	/** 
 	* Alias value: Actividad_indmutua
 	* Hibernate value: Actividad.indmutua
 	*/
-	String  ACTIVIDAD_INDMUTUA = ACTIVIDAD_ENTRY.getAliasNames()[22];
+	String  ACTIVIDAD_INDMUTUA = ACTIVIDAD_ENTRY.getAliasNames()[23];
 
 	/** 
 	* Alias value: Actividad_indnom
 	* Hibernate value: Actividad.indnom
 	*/
-	String  ACTIVIDAD_INDNOM = ACTIVIDAD_ENTRY.getAliasNames()[23];
+	String  ACTIVIDAD_INDNOM = ACTIVIDAD_ENTRY.getAliasNames()[24];
 
 	/** 
 	* Alias value: Actividad_indred
 	* Hibernate value: Actividad.indred
 	*/
-	String  ACTIVIDAD_INDRED = ACTIVIDAD_ENTRY.getAliasNames()[24];
+	String  ACTIVIDAD_INDRED = ACTIVIDAD_ENTRY.getAliasNames()[25];
 
 	/** 
 	* Alias value: Actividad_indregimen
 	* Hibernate value: Actividad.indregimen
 	*/
-	String  ACTIVIDAD_INDREGIMEN = ACTIVIDAD_ENTRY.getAliasNames()[25];
+	String  ACTIVIDAD_INDREGIMEN = ACTIVIDAD_ENTRY.getAliasNames()[26];
 
 	/** 
 	* Alias value: Actividad_indtc1
 	* Hibernate value: Actividad.indtc1
 	*/
-	String  ACTIVIDAD_INDTC1 = ACTIVIDAD_ENTRY.getAliasNames()[26];
+	String  ACTIVIDAD_INDTC1 = ACTIVIDAD_ENTRY.getAliasNames()[27];
 
 	/** 
 	* Alias value: Actividad_ingespemp
 	* Hibernate value: Actividad.ingespemp
 	*/
-	String  ACTIVIDAD_INGESPEMP = ACTIVIDAD_ENTRY.getAliasNames()[27];
+	String  ACTIVIDAD_INGESPEMP = ACTIVIDAD_ENTRY.getAliasNames()[28];
 
 	/** 
 	* Alias value: Actividad_modpago
 	* Hibernate value: Actividad.modpago
 	*/
-	String  ACTIVIDAD_MODPAGO = ACTIVIDAD_ENTRY.getAliasNames()[28];
+	String  ACTIVIDAD_MODPAGO = ACTIVIDAD_ENTRY.getAliasNames()[29];
 
 	/** 
 	* Alias value: Actividad_prevencion
 	* Hibernate value: Actividad.prevencion
 	*/
-	String  ACTIVIDAD_PREVENCION = ACTIVIDAD_ENTRY.getAliasNames()[29];
+	String  ACTIVIDAD_PREVENCION = ACTIVIDAD_ENTRY.getAliasNames()[30];
 
 	/** 
 	* Alias value: Actividad_tiponomina
 	* Hibernate value: Actividad.tiponomina
 	*/
-	String  ACTIVIDAD_TIPONOMINA = ACTIVIDAD_ENTRY.getAliasNames()[30];
+	String  ACTIVIDAD_TIPONOMINA = ACTIVIDAD_ENTRY.getAliasNames()[31];
 
 
 
@@ -3843,94 +3852,106 @@ public interface IPayrollAlias {
 	DAOConstantsEntry TRABAJADOR_ENTRY = DAOConstants.getDAOConstant(Trabajador.class);
 
 	/** 
+	* Alias value: Trabajador_actividad_cdg
+	* Hibernate value: Trabajador.actividad.cdg
+	*/
+	String  TRABAJADOR_ACTIVIDAD_CDG = TRABAJADOR_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: Trabajador_afi
 	* Hibernate value: Trabajador.afi
 	*/
-	String  TRABAJADOR_AFI = TRABAJADOR_ENTRY.getAliasNames()[0];
+	String  TRABAJADOR_AFI = TRABAJADOR_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: Trabajador_cdg
 	* Hibernate value: Trabajador.cdg
 	*/
-	String  TRABAJADOR_CDG = TRABAJADOR_ENTRY.getAliasNames()[1];
+	String  TRABAJADOR_CDG = TRABAJADOR_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Trabajador_codnsz
 	* Hibernate value: Trabajador.codnsz
 	*/
-	String  TRABAJADOR_CODNSZ = TRABAJADOR_ENTRY.getAliasNames()[2];
+	String  TRABAJADOR_CODNSZ = TRABAJADOR_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Trabajador_contrTemp
 	* Hibernate value: Trabajador.contrTemp
 	*/
-	String  TRABAJADOR_CONTR_TEMP = TRABAJADOR_ENTRY.getAliasNames()[3];
+	String  TRABAJADOR_CONTR_TEMP = TRABAJADOR_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Trabajador_emprnif_cdg
+	* Hibernate value: Trabajador.emprnif.cdg
+	*/
+	String  TRABAJADOR_EMPRNIF_CDG = TRABAJADOR_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Trabajador_fecalt
 	* Hibernate value: Trabajador.fecalt
 	*/
-	String  TRABAJADOR_FECALT = TRABAJADOR_ENTRY.getAliasNames()[4];
+	String  TRABAJADOR_FECALT = TRABAJADOR_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Trabajador_fecbaj
 	* Hibernate value: Trabajador.fecbaj
 	*/
-	String  TRABAJADOR_FECBAJ = TRABAJADOR_ENTRY.getAliasNames()[5];
+	String  TRABAJADOR_FECBAJ = TRABAJADOR_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Trabajador_fecmod
 	* Hibernate value: Trabajador.fecmod
 	*/
-	String  TRABAJADOR_FECMOD = TRABAJADOR_ENTRY.getAliasNames()[6];
+	String  TRABAJADOR_FECMOD = TRABAJADOR_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Trabajador_fecnew
 	* Hibernate value: Trabajador.fecnew
 	*/
-	String  TRABAJADOR_FECNEW = TRABAJADOR_ENTRY.getAliasNames()[7];
+	String  TRABAJADOR_FECNEW = TRABAJADOR_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Trabajador_hormod
 	* Hibernate value: Trabajador.hormod
 	*/
-	String  TRABAJADOR_HORMOD = TRABAJADOR_ENTRY.getAliasNames()[8];
+	String  TRABAJADOR_HORMOD = TRABAJADOR_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Trabajador_hornew
 	* Hibernate value: Trabajador.hornew
 	*/
-	String  TRABAJADOR_HORNEW = TRABAJADOR_ENTRY.getAliasNames()[9];
+	String  TRABAJADOR_HORNEW = TRABAJADOR_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Trabajador_indagrario
 	* Hibernate value: Trabajador.indagrario
 	*/
-	String  TRABAJADOR_INDAGRARIO = TRABAJADOR_ENTRY.getAliasNames()[10];
+	String  TRABAJADOR_INDAGRARIO = TRABAJADOR_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: Trabajador_indgrupo
 	* Hibernate value: Trabajador.indgrupo
 	*/
-	String  TRABAJADOR_INDGRUPO = TRABAJADOR_ENTRY.getAliasNames()[11];
+	String  TRABAJADOR_INDGRUPO = TRABAJADOR_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: Trabajador_mayor65
 	* Hibernate value: Trabajador.mayor65
 	*/
-	String  TRABAJADOR_MAYOR65 = TRABAJADOR_ENTRY.getAliasNames()[12];
+	String  TRABAJADOR_MAYOR65 = TRABAJADOR_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: Trabajador_pariente
 	* Hibernate value: Trabajador.pariente
 	*/
-	String  TRABAJADOR_PARIENTE = TRABAJADOR_ENTRY.getAliasNames()[13];
+	String  TRABAJADOR_PARIENTE = TRABAJADOR_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: Trabajador_persona_cdg
 	* Hibernate value: Trabajador.persona.cdg
 	*/
-	String  TRABAJADOR_PERSONA_CDG = TRABAJADOR_ENTRY.getAliasNames()[14];
+	String  TRABAJADOR_PERSONA_CDG = TRABAJADOR_ENTRY.getAliasNames()[16];
 
 
 
@@ -4375,6 +4396,332 @@ public interface IPayrollAlias {
 
 
 	/** 
+	* DAOConstantsEntry for Nominaex entity.
+	*/ 
+	DAOConstantsEntry NOMINAEX_ENTRY = DAOConstants.getDAOConstant(Nominaex.class);
+
+	/** 
+	* Alias value: Nominaex_anio
+	* Hibernate value: Nominaex.anio
+	*/
+	String  NOMINAEX_ANIO = NOMINAEX_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Nominaex_complemento_cdg
+	* Hibernate value: Nominaex.complemento.cdg
+	*/
+	String  NOMINAEX_COMPLEMENTO_CDG = NOMINAEX_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Nominaex_descat
+	* Hibernate value: Nominaex.descat
+	*/
+	String  NOMINAEX_DESCAT = NOMINAEX_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Nominaex_descom
+	* Hibernate value: Nominaex.descom
+	*/
+	String  NOMINAEX_DESCOM = NOMINAEX_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Nominaex_direccion
+	* Hibernate value: Nominaex.direccion
+	*/
+	String  NOMINAEX_DIRECCION = NOMINAEX_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Nominaex_divisa_cdg
+	* Hibernate value: Nominaex.divisa.cdg
+	*/
+	String  NOMINAEX_DIVISA_CDG = NOMINAEX_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Nominaex_divisa_description
+	* Hibernate value: Nominaex.divisa.description
+	*/
+	String  NOMINAEX_DIVISA_DESCRIPTION = NOMINAEX_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Nominaex_emprper_cdg
+	* Hibernate value: Nominaex.emprper.cdg
+	*/
+	String  NOMINAEX_EMPRPER_CDG = NOMINAEX_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Nominaex_fecant
+	* Hibernate value: Nominaex.fecant
+	*/
+	String  NOMINAEX_FECANT = NOMINAEX_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Nominaex_feccob
+	* Hibernate value: Nominaex.feccob
+	*/
+	String  NOMINAEX_FECCOB = NOMINAEX_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Nominaex_feccobreal
+	* Hibernate value: Nominaex.feccobreal
+	*/
+	String  NOMINAEX_FECCOBREAL = NOMINAEX_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: Nominaex_fecemi
+	* Hibernate value: Nominaex.fecemi
+	*/
+	String  NOMINAEX_FECEMI = NOMINAEX_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: Nominaex_fecfin
+	* Hibernate value: Nominaex.fecfin
+	*/
+	String  NOMINAEX_FECFIN = NOMINAEX_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: Nominaex_fecini
+	* Hibernate value: Nominaex.fecini
+	*/
+	String  NOMINAEX_FECINI = NOMINAEX_ENTRY.getAliasNames()[13];
+
+	/** 
+	* Alias value: Nominaex_fecmod
+	* Hibernate value: Nominaex.fecmod
+	*/
+	String  NOMINAEX_FECMOD = NOMINAEX_ENTRY.getAliasNames()[14];
+
+	/** 
+	* Alias value: Nominaex_fecnew
+	* Hibernate value: Nominaex.fecnew
+	*/
+	String  NOMINAEX_FECNEW = NOMINAEX_ENTRY.getAliasNames()[15];
+
+	/** 
+	* Alias value: Nominaex_fijovar
+	* Hibernate value: Nominaex.fijovar
+	*/
+	String  NOMINAEX_FIJOVAR = NOMINAEX_ENTRY.getAliasNames()[16];
+
+	/** 
+	* Alias value: Nominaex_hormod
+	* Hibernate value: Nominaex.hormod
+	*/
+	String  NOMINAEX_HORMOD = NOMINAEX_ENTRY.getAliasNames()[17];
+
+	/** 
+	* Alias value: Nominaex_hornew
+	* Hibernate value: Nominaex.hornew
+	*/
+	String  NOMINAEX_HORNEW = NOMINAEX_ENTRY.getAliasNames()[18];
+
+	/** 
+	* Alias value: Nominaex_id_cdg
+	* Hibernate value: Nominaex.id.cdg
+	*/
+	String  NOMINAEX_ID_CDG = NOMINAEX_ENTRY.getAliasNames()[19];
+
+	/** 
+	* Alias value: Nominaex_id_numero
+	* Hibernate value: Nominaex.id.numero
+	*/
+	String  NOMINAEX_ID_NUMERO = NOMINAEX_ENTRY.getAliasNames()[20];
+
+	/** 
+	* Alias value: Nominaex_impirpf
+	* Hibernate value: Nominaex.impirpf
+	*/
+	String  NOMINAEX_IMPIRPF = NOMINAEX_ENTRY.getAliasNames()[21];
+
+	/** 
+	* Alias value: Nominaex_importe
+	* Hibernate value: Nominaex.importe
+	*/
+	String  NOMINAEX_IMPORTE = NOMINAEX_ENTRY.getAliasNames()[22];
+
+	/** 
+	* Alias value: Nominaex_irpf
+	* Hibernate value: Nominaex.irpf
+	*/
+	String  NOMINAEX_IRPF = NOMINAEX_ENTRY.getAliasNames()[23];
+
+	/** 
+	* Alias value: Nominaex_liquido
+	* Hibernate value: Nominaex.liquido
+	*/
+	String  NOMINAEX_LIQUIDO = NOMINAEX_ENTRY.getAliasNames()[24];
+
+	/** 
+	* Alias value: Nominaex_localidad
+	* Hibernate value: Nominaex.localidad
+	*/
+	String  NOMINAEX_LOCALIDAD = NOMINAEX_ENTRY.getAliasNames()[25];
+
+	/** 
+	* Alias value: Nominaex_mes
+	* Hibernate value: Nominaex.mes
+	*/
+	String  NOMINAEX_MES = NOMINAEX_ENTRY.getAliasNames()[26];
+
+	/** 
+	* Alias value: Nominaex_nomdtoex_concepto
+	* Hibernate value: Nominaex.nomdtoex.concepto
+	*/
+	String  NOMINAEX_NOMDTOEX_CONCEPTO = NOMINAEX_ENTRY.getAliasNames()[27];
+
+	/** 
+	* Alias value: Nominaex_nomdtoex_fecmod
+	* Hibernate value: Nominaex.nomdtoex.fecmod
+	*/
+	String  NOMINAEX_NOMDTOEX_FECMOD = NOMINAEX_ENTRY.getAliasNames()[28];
+
+	/** 
+	* Alias value: Nominaex_nomdtoex_fecnew
+	* Hibernate value: Nominaex.nomdtoex.fecnew
+	*/
+	String  NOMINAEX_NOMDTOEX_FECNEW = NOMINAEX_ENTRY.getAliasNames()[29];
+
+	/** 
+	* Alias value: Nominaex_nomdtoex_hormod
+	* Hibernate value: Nominaex.nomdtoex.hormod
+	*/
+	String  NOMINAEX_NOMDTOEX_HORMOD = NOMINAEX_ENTRY.getAliasNames()[30];
+
+	/** 
+	* Alias value: Nominaex_nomdtoex_hornew
+	* Hibernate value: Nominaex.nomdtoex.hornew
+	*/
+	String  NOMINAEX_NOMDTOEX_HORNEW = NOMINAEX_ENTRY.getAliasNames()[31];
+
+	/** 
+	* Alias value: Nominaex_nomdtoex_id_cdg
+	* Hibernate value: Nominaex.nomdtoex.id.cdg
+	*/
+	String  NOMINAEX_NOMDTOEX_ID_CDG = NOMINAEX_ENTRY.getAliasNames()[32];
+
+	/** 
+	* Alias value: Nominaex_nomdtoex_id_linea
+	* Hibernate value: Nominaex.nomdtoex.id.linea
+	*/
+	String  NOMINAEX_NOMDTOEX_ID_LINEA = NOMINAEX_ENTRY.getAliasNames()[33];
+
+	/** 
+	* Alias value: Nominaex_nomdtoex_id_numero
+	* Hibernate value: Nominaex.nomdtoex.id.numero
+	*/
+	String  NOMINAEX_NOMDTOEX_ID_NUMERO = NOMINAEX_ENTRY.getAliasNames()[34];
+
+	/** 
+	* Alias value: Nominaex_nomdtoex_importe
+	* Hibernate value: Nominaex.nomdtoex.importe
+	*/
+	String  NOMINAEX_NOMDTOEX_IMPORTE = NOMINAEX_ENTRY.getAliasNames()[35];
+
+	/** 
+	* Alias value: Nominaex_nomemp
+	* Hibernate value: Nominaex.nomemp
+	*/
+	String  NOMINAEX_NOMEMP = NOMINAEX_ENTRY.getAliasNames()[36];
+
+	/** 
+	* Alias value: Nominaex_nomper
+	* Hibernate value: Nominaex.nomper
+	*/
+	String  NOMINAEX_NOMPER = NOMINAEX_ENTRY.getAliasNames()[37];
+
+	/** 
+	* Alias value: Nominaex_nummat
+	* Hibernate value: Nominaex.nummat
+	*/
+	String  NOMINAEX_NUMMAT = NOMINAEX_ENTRY.getAliasNames()[38];
+
+	/** 
+	* Alias value: Nominaex_profesion
+	* Hibernate value: Nominaex.profesion
+	*/
+	String  NOMINAEX_PROFESION = NOMINAEX_ENTRY.getAliasNames()[39];
+
+	/** 
+	* Alias value: Nominaex_totalDeducir
+	* Hibernate value: Nominaex.totalDeducir
+	*/
+	String  NOMINAEX_TOTAL_DEDUCIR = NOMINAEX_ENTRY.getAliasNames()[40];
+
+
+
+	/** 
+	* DAOConstantsEntry for Nomdtoex entity.
+	*/ 
+	DAOConstantsEntry NOMDTOEX_ENTRY = DAOConstants.getDAOConstant(Nomdtoex.class);
+
+	/** 
+	* Alias value: Nomdtoex_concepto
+	* Hibernate value: Nomdtoex.concepto
+	*/
+	String  NOMDTOEX_CONCEPTO = NOMDTOEX_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Nomdtoex_fecmod
+	* Hibernate value: Nomdtoex.fecmod
+	*/
+	String  NOMDTOEX_FECMOD = NOMDTOEX_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Nomdtoex_fecnew
+	* Hibernate value: Nomdtoex.fecnew
+	*/
+	String  NOMDTOEX_FECNEW = NOMDTOEX_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Nomdtoex_hormod
+	* Hibernate value: Nomdtoex.hormod
+	*/
+	String  NOMDTOEX_HORMOD = NOMDTOEX_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Nomdtoex_hornew
+	* Hibernate value: Nomdtoex.hornew
+	*/
+	String  NOMDTOEX_HORNEW = NOMDTOEX_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Nomdtoex_id_cdg
+	* Hibernate value: Nomdtoex.id.cdg
+	*/
+	String  NOMDTOEX_ID_CDG = NOMDTOEX_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Nomdtoex_id_linea
+	* Hibernate value: Nomdtoex.id.linea
+	*/
+	String  NOMDTOEX_ID_LINEA = NOMDTOEX_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Nomdtoex_id_numero
+	* Hibernate value: Nomdtoex.id.numero
+	*/
+	String  NOMDTOEX_ID_NUMERO = NOMDTOEX_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Nomdtoex_importe
+	* Hibernate value: Nomdtoex.importe
+	*/
+	String  NOMDTOEX_IMPORTE = NOMDTOEX_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Nomdtoex_nominaex_id_cdg
+	* Hibernate value: Nomdtoex.nominaex.id.cdg
+	*/
+	String  NOMDTOEX_NOMINAEX_ID_CDG = NOMDTOEX_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Nomdtoex_nominaex_id_numero
+	* Hibernate value: Nomdtoex.nominaex.id.numero
+	*/
+	String  NOMDTOEX_NOMINAEX_ID_NUMERO = NOMDTOEX_ENTRY.getAliasNames()[10];
+
+
+
+	/** 
 	* DAOConstantsEntry for Autbases entity.
 	*/ 
 	DAOConstantsEntry AUTBASES_ENTRY = DAOConstants.getDAOConstant(Autbases.class);
@@ -4577,6 +4924,133 @@ public interface IPayrollAlias {
 	* Hibernate value: Percep.unidades
 	*/
 	String  PERCEP_UNIDADES = PERCEP_ENTRY.getAliasNames()[25];
+
+
+
+	/** 
+	* DAOConstantsEntry for Emprctra entity.
+	*/ 
+	DAOConstantsEntry EMPRCTRA_ENTRY = DAOConstants.getDAOConstant(Emprctra.class);
+
+	/** 
+	* Alias value: Emprctra_actividad_cdg
+	* Hibernate value: Emprctra.actividad.cdg
+	*/
+	String  EMPRCTRA_ACTIVIDAD_CDG = EMPRCTRA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Emprctra_convenio_cdg
+	* Hibernate value: Emprctra.convenio.cdg
+	*/
+	String  EMPRCTRA_CONVENIO_CDG = EMPRCTRA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Emprctra_domicilio_cdg
+	* Hibernate value: Emprctra.domicilio.cdg
+	*/
+	String  EMPRCTRA_DOMICILIO_CDG = EMPRCTRA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Emprctra_empresa_cdg
+	* Hibernate value: Emprctra.empresa.cdg
+	*/
+	String  EMPRCTRA_EMPRESA_CDG = EMPRCTRA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Emprctra_envioss
+	* Hibernate value: Emprctra.envioss
+	*/
+	String  EMPRCTRA_ENVIOSS = EMPRCTRA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Emprctra_fiestas
+	* Hibernate value: Emprctra.fiestas
+	*/
+	String  EMPRCTRA_FIESTAS = EMPRCTRA_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Emprctra_horario
+	* Hibernate value: Emprctra.horario
+	*/
+	String  EMPRCTRA_HORARIO = EMPRCTRA_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Emprctra_id_cdg
+	* Hibernate value: Emprctra.id.cdg
+	*/
+	String  EMPRCTRA_ID_CDG = EMPRCTRA_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Emprctra_id_codact
+	* Hibernate value: Emprctra.id.codact
+	*/
+	String  EMPRCTRA_ID_CODACT = EMPRCTRA_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Emprctra_id_domicilio
+	* Hibernate value: Emprctra.id.domicilio
+	*/
+	String  EMPRCTRA_ID_DOMICILIO = EMPRCTRA_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Emprctra_indcal
+	* Hibernate value: Emprctra.indcal
+	*/
+	String  EMPRCTRA_INDCAL = EMPRCTRA_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: Emprctra_indcoste
+	* Hibernate value: Emprctra.indcoste
+	*/
+	String  EMPRCTRA_INDCOSTE = EMPRCTRA_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: Emprctra_inddia
+	* Hibernate value: Emprctra.inddia
+	*/
+	String  EMPRCTRA_INDDIA = EMPRCTRA_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: Emprctra_indnom
+	* Hibernate value: Emprctra.indnom
+	*/
+	String  EMPRCTRA_INDNOM = EMPRCTRA_ENTRY.getAliasNames()[13];
+
+	/** 
+	* Alias value: Emprctra_jornada
+	* Hibernate value: Emprctra.jornada
+	*/
+	String  EMPRCTRA_JORNADA = EMPRCTRA_ENTRY.getAliasNames()[14];
+
+	/** 
+	* Alias value: Emprctra_maquina
+	* Hibernate value: Emprctra.maquina
+	*/
+	String  EMPRCTRA_MAQUINA = EMPRCTRA_ENTRY.getAliasNames()[15];
+
+	/** 
+	* Alias value: Emprctra_pelectri
+	* Hibernate value: Emprctra.pelectri
+	*/
+	String  EMPRCTRA_PELECTRI = EMPRCTRA_ENTRY.getAliasNames()[16];
+
+	/** 
+	* Alias value: Emprctra_represen
+	* Hibernate value: Emprctra.represen
+	*/
+	String  EMPRCTRA_REPRESEN = EMPRCTRA_ENTRY.getAliasNames()[17];
+
+	/** 
+	* Alias value: Emprctra_superficie
+	* Hibernate value: Emprctra.superficie
+	*/
+	String  EMPRCTRA_SUPERFICIE = EMPRCTRA_ENTRY.getAliasNames()[18];
+
+	/** 
+	* Alias value: Emprctra_toxicos
+	* Hibernate value: Emprctra.toxicos
+	*/
+	String  EMPRCTRA_TOXICOS = EMPRCTRA_ENTRY.getAliasNames()[19];
 
 
 }

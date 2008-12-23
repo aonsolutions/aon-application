@@ -20,6 +20,7 @@ import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.divisa.Divisa;
 import com.code.aon.payroll.enumeration.EnvioSS;
+import com.code.aon.payroll.enumeration.EnvioSS2;
 import com.code.aon.payroll.geograficas.Pais;
 import com.code.aon.payroll.geograficas.Provincia;
 import com.code.aon.payroll.principales.Cliente;
@@ -56,7 +57,7 @@ public class ClienteController extends PayrollBasicController {
 		if(envioss==null){
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			envioss = new LinkedList<SelectItem>();
-			for (EnvioSS p : EnvioSS.values()) {
+			for (EnvioSS2 p : EnvioSS2.values()) {
 				String name = p.getName( locale );
 				SelectItem item = new SelectItem( p, name );
 				envioss.add(item);

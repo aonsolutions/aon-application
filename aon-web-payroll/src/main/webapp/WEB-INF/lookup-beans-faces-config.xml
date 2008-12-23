@@ -426,4 +426,66 @@
 		</managed-property>
 	</managed-bean>	
 	
+						<!--  ************ convenio  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>convenioLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>convenioLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.auxiliares.convenio.Convenio</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/principales/actividad/convenioLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	
+				<!--  ************ cnae93  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>cnae93Lookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cnae93Lookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.cotizacion.CnaeMaestro</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>facelet/principales/actividad/cnae93Lookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+					<!--  ************ cnae09  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>cnae09Lookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cnae93Lookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.cotizacion.Cnae2009Maestro</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>facelet/principales/actividad/cnae09Lookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	
+	
+	
+	
 </faces-config>

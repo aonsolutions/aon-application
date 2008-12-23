@@ -87,6 +87,11 @@
 	vertical-align: top;
 	padding: 0 5px;
 	}
+#homepage\3A actividadForm\3A datos5 td{
+	vertical-align: top;
+	padding: 0 5px;
+	}	
+	
 
 #homepage\3A cnaeForm\3A listaOcupaciones .rich-shuttle-source-items td, #homepage\3A cnaeForm\3A listaOcupacionestlTable td{
 	border:1px solid #CCC;
@@ -120,3 +125,7 @@ table#homepage\3A cnaeForm\3A listaOcupaciones, table#homepage\3A cnaeForm\3A li
 	}
 .aon-scroll-area-search table.aon-panelGrid {
 	width: 1100px; 
+	
+	
+
+	

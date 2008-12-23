@@ -14,6 +14,7 @@ import org.hibernate.Query;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.payroll.auxiliares.convenios.Complemento;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.divisa.Divisa;
@@ -29,7 +30,10 @@ import com.code.aon.payroll.enumeration.TipoProrrateo;
 import com.code.aon.payroll.geograficas.Pais;
 import com.code.aon.payroll.geograficas.Provincia;
 import com.code.aon.payroll.principales.empresa.Empresa;
+import com.code.aon.payroll.principales.persona.Trabajador;
+import com.code.aon.payroll.principales.personas.Percep;
 import com.code.aon.payroll.principales.personas.Persona;
+import com.code.aon.payroll.resultados.salarios.Nominaex;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Empresario;
 import com.code.aon.payroll.tipos.Tipovia;
@@ -41,8 +45,12 @@ public class PercepController extends PayrollBasicController {
 	private List<SelectItem> fijoVariable;
 	private List<SelectItem> indComp;
 
-	
-	
+	private Date fecini;
+	private Date fecfin;
+	private Date fecret;
+	private Complemento complemento;
+	private Complemento complemento1;
+	private Trabajador trabajador;
 	
 	public List<SelectItem> getListaComplementos() {
 		return complementos;
@@ -114,4 +122,157 @@ public class PercepController extends PayrollBasicController {
 		}
 		return indComp;
 	}
+	
+	
+	
+	
+	@Override
+	   public void onEditSearch(ActionEvent arg0) {
+		   super.onEditSearch(arg0);
+		   
+	       setComplemento( new Complemento() );
+		   setComplemento1( new Complemento() );
+		   setTrabajador( new Trabajador() );
+		
+		  
+
+	}
+	@Override
+	public void onSearch(ActionEvent event) {
+		
+
+		try {
+			if   (complemento1.getCdg() != null && (! StringUtils.isEmpty(complemento.getCdg())))  {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.PERCEP_COMPLEMENTO1_CDG), getComplemento1().getCdg());
+			}
+			if   (complemento.getCdg() != null && (! StringUtils.isEmpty(complemento1.getCdg()))) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.PERCEP_COMPLEMENTO_CDG), getComplemento().getCdg());
+			}
+			if   (trabajador.getCdg() != null ) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.PERCEP_TRABAJADOR_CDG), getTrabajador().getCdg());
+			}
+		     
+		    if    (fecini != null){
+					getCriteria().addEqualExpression(getFieldName(IPayrollAlias.PERCEP_FECINI), getFecini());
+				}
+		    if    (fecfin != null){
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.PERCEP_FECFIN), getFecfin());
+			}
+		    if    (fecret != null){
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.PERCEP_FECRET), getFecret());
+			}
+		    
+		
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		super.onSearch(event);
+	}
+
+public void generarNumero(ActionEvent event){
+		
+		((Percep)getTo()).getId().setCdg(((Percep)getTo()).getTrabajador().getCdg());
+		String num = Utils.maxCode("Percep", "id.numero", "id.cdg="+((Percep)getTo()).getId().getCdg());
+		((Percep)getTo()).getId().setNumero(Integer.parseInt(num)+1);
+	}
+	
+
+
+	
+	Integer code ;
+ public Integer getCode() throws ManagerBeanException {	
+ 	
+ 	
+	       	code = 0;		
+			String consulta = "select max cdg from PercepId";			
+			Query q = HibernateUtil.getSession().createQuery(consulta);			
+			List results = q.list();
+			System.out.println("Max Code: " + results.get(0));   
+			code= (Integer)results.get(0) +1;
+			System.out.println("New Code: " + code);
+			return code;		      
+	     				
+		}
+ public void setCode(Integer code) {
+		this.code = code;
+	}
+
+
+
+public Date getFecini() {
+	return fecini;
+}
+
+
+
+public void setFecini(Date fecini) {
+	this.fecini = fecini;
+}
+
+
+
+public Date getFecfin() {
+	return fecfin;
+}
+
+
+
+public void setFecfin(Date fecfin) {
+	this.fecfin = fecfin;
+}
+
+
+
+public Date getFecret() {
+	return fecret;
+}
+
+
+
+public void setFecret(Date fecret) {
+	this.fecret = fecret;
+}
+
+
+
+public Complemento getComplemento() {
+	return complemento;
+}
+
+
+
+public void setComplemento(Complemento complemento) {
+	this.complemento = complemento;
+}
+
+
+
+public Complemento getComplemento1() {
+	return complemento1;
+}
+
+
+
+public void setComplemento1(Complemento complemento1) {
+	this.complemento1 = complemento1;
+}
+
+
+
+public Trabajador getTrabajador() {
+	return trabajador;
+}
+
+
+
+public void setTrabajador(Trabajador trabajador) {
+	this.trabajador = trabajador;
+}
+
+
+	
+	
 }

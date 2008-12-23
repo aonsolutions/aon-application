@@ -25,4 +25,5 @@ public interface IPayrollConstants {
 	String ACTIVIDAD_CONTROLLER_NAME = "actividad";
 	String OTRPER_CONTROLLER_NAME = "otrperc";
 	String AUTONOMO_CONTROLLER_NAME = "autonomo";
+	String PERCEP_CONTROLLER_NAME = "percep";
 }

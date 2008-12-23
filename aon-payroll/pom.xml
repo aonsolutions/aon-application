@@ -12,7 +12,7 @@
 	<artifactId>aon-payroll</artifactId>
 	<version>0.15.0</version>
 	<description>AON PAYROLL</description>
-	<dependencies>
+		<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.common</artifactId>

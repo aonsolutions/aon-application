@@ -100,6 +100,9 @@ hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN
 	<mapping class="com.code.aon.payroll.principales.empresa.Actividad"/>
 	<mapping class="com.code.aon.payroll.principales.empresa.Emprdom"/>
 	<mapping class="com.code.aon.payroll.principales.empresa.Emprlban"/>
+	<mapping class="com.code.aon.payroll.principales.empresa.Emprccc"/>
+    <mapping class="com.code.aon.payroll.principales.empresa.Emprccos"/>
+    <mapping class="com.code.aon.payroll.principales.empresa.Emprctra"/>
 	<!--AVANZADAS-GESTEL -->			
     <mapping class="com.code.aon.payroll.avanzadas.gestel.Variable"/>
     <mapping class="com.code.aon.payroll.avanzadas.gestel.Linvariable"/>

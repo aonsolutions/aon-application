@@ -3252,7 +3252,7 @@
 
     <managed-bean>
 		<managed-bean-name>actividad</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.ActividadController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -3297,7 +3297,9 @@
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{tipdomicilioListener}</value>	
 				<value>#{tipcuentaListener}</value>
-                <value>#{avisoListener}</value>			
+                <value>#{avisoListener}</value>	
+                <value>#{cuentaListener}</value>
+				<value>#{avisoListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -3360,6 +3362,27 @@
 			<map-entries>
 				<map-entry>
 					<key>Emprlban_empresa_cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property> 
+	</managed-bean>
+	
+		<managed-bean>
+		<managed-bean-name>emprctraListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>emprctra</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Emprctra_actividad_cdg</key>
 					<value>cdg</value>
 				</map-entry>
 			</map-entries>
@@ -3493,7 +3516,74 @@
 	</managed-bean>
 
 
-<managed-bean>
+  <managed-bean>
+		<managed-bean-name>emprctra</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.EmprctraController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.principales.empresa.Emprctra</value>
+		</managed-property>
+      	<managed-property>
+			<property-name>beanName</property-name>
+			<value>emprctra</value>
+		</managed-property>					
+		</managed-bean>
+
+
+  <managed-bean>
+		<managed-bean-name>emprccc</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.EmprcccController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.principales.empresa.Emprccc</value>
+		</managed-property>
+      	<managed-property>
+			<property-name>beanName</property-name>
+			<value>emprccc</value>
+		</managed-property>					
+		</managed-bean>
+		
+		  <managed-bean>
+		<managed-bean-name>emprccos</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.principales.empresa.Emprccos</value>
+		</managed-property>
+      	<managed-property>
+			<property-name>beanName</property-name>
+			<value>emprccos</value>
+		</managed-property>					
+		</managed-bean>
+
+     <managed-bean>
 		<managed-bean-name>variableMaestro</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.payroll.controller.VariableController

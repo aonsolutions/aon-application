@@ -1025,7 +1025,98 @@
 		</navigation-case>
 	</navigation-rule> 
 	
-	<!-- =================== Personas ================= -->
+	
+		
+			<!-- =================== Actividad ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>actividad_form</from-outcome>
+			<to-view-id>
+				/facelet/principales/actividad/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>actividad_list</from-outcome>
+			<to-view-id>
+				/facelet/principales/actividad/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>actividad_search</from-outcome>
+			<to-view-id>
+				/facelet/principales/actividad/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
+	
+				<!-- ===================centros de trabajo ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>emprctra_form</from-outcome>
+			<to-view-id>
+				/facelet/principales/actividad/ctrab/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>emprctra_list</from-outcome>
+			<to-view-id>
+				/facelet/principales/actividad/ctrab/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>emprctra_search</from-outcome>
+			<to-view-id>
+				/facelet/principales/actividad/ctrab/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
+					<!-- =================== cuentas de cotizacion ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>emprccc_form</from-outcome>
+			<to-view-id>
+				/facelet/principales/actividad/ccc/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>emprccc_list</from-outcome>
+			<to-view-id>
+				/facelet/principales/actividad/ccc/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>emprccc_search</from-outcome>
+			<to-view-id>
+				/facelet/principales/actividad/ccc/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
+	
+						<!-- =================== cuentas de cotizacion ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>emprccos_form</from-outcome>
+			<to-view-id>
+				/facelet/principales/actividad/ccos/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>emprccos_list</from-outcome>
+			<to-view-id>
+				/facelet/principales/actividad/ccos/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>emprccos_search</from-outcome>
+			<to-view-id>
+				/facelet/principales/actividad/ccos/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+		<!-- =================== Personas ================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>persona_form</from-outcome>
