@@ -9,12 +9,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import net.sf.cglib.beans.ImmutableBean;
-
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.EstadoCivil;
@@ -22,12 +18,9 @@ import com.code.aon.payroll.enumeration.Sexo;
 import com.code.aon.payroll.geograficas.Nacion;
 import com.code.aon.payroll.geograficas.Pais;
 import com.code.aon.payroll.geograficas.Provincia;
-import com.code.aon.payroll.principales.personas.Otrperc;
 import com.code.aon.payroll.principales.personas.Persona;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Tipovia;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.FormUtil;
 
 
 public class PersonaController extends PayrollBasicController {

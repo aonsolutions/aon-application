@@ -30,7 +30,7 @@
 							</aon:div>
 							<aon:div>
 								<aon:commandLink value="#{menuBundle.resultados_recibos_salarios__nominaex}" action="nominaex_form" >
-									
+									<aon:actionListener method="#{nominaex.onSearch}" />
 									<aon:actionListener method="#{nominaex.onEditSearch}" />
 									<aon:actionListener method="#{nominaex.onSelectFirst}" />
 								</aon:commandLink>
@@ -47,7 +47,11 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div>
-								<aon:commandLink value="#{menuBundle.resultados_irpf__m110calc}" disabled="true" />
+								<aon:commandLink value="#{menuBundle.resultados_irpf__m110calc}" action="impresos11x_form" >
+									<aon:actionListener method="#{impresos11x.onSearch}" />
+									<aon:actionListener method="#{impresos11x.onEditSearch}" />
+									<aon:actionListener method="#{impresos11x.onSelectFirst}" />
+								</aon:commandLink>
 							</aon:div>
 							<aon:div>
 								<aon:commandLink value="#{menuBundle.resultados_irpf__m190calc}" disabled="true" />

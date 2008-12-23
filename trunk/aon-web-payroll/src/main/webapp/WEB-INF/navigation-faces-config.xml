@@ -1136,7 +1136,32 @@
 				/facelet/principales/personas/personas/search.xhtml
 			</to-view-id>
 		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== Resultados - irpf - impresos11x ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>impresos11x_form</from-outcome>
+			<to-view-id>
+				/facelet/resultados/irpf/impresos11x/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>impresos11x_list</from-outcome>
+			<to-view-id>
+				/facelet/resultados/irpf/impresos11x/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>impresos11x_search</from-outcome>
+			<to-view-id>
+				/facelet/resultados/irpf/impresos11x/search.xhtml
+			</to-view-id>
+		</navigation-case>
 	</navigation-rule> 
+	
+	
+	
 	
 </faces-config>
 
