@@ -5,6 +5,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
 import com.code.aon.payroll.divisa.Divisa;
 import com.code.aon.payroll.enumeration.EnvioSS;
+import com.code.aon.payroll.enumeration.EnvioSS2;
 import com.code.aon.payroll.geograficas.Pais;
 import com.code.aon.payroll.geograficas.Provincia;
 import com.code.aon.payroll.irpf.Linirpf;
@@ -67,7 +68,7 @@ public class Cliente  implements ITransferObject {
      private Boolean indnom;
      private Boolean indcoste;
      private Boolean soloases;
-     private EnvioSS envioss;
+     private EnvioSS2 envioss;
      private Delegacion delegacion;
      private Divisa divisa;
      private Documento tipdoc;
@@ -368,13 +369,13 @@ public class Cliente  implements ITransferObject {
         this.soloases = soloases;
     }
     
-    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.EnvioSS")} )
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.EnvioSS2")} )
     @Column(name="envioss", length=1)
-    public EnvioSS getEnvioss() {
+    public EnvioSS2 getEnvioss() {
         return this.envioss;
     }
     
-    public void setEnvioss(EnvioSS envioss) {
+    public void setEnvioss(EnvioSS2 envioss) {
         this.envioss = envioss;
     }
     
