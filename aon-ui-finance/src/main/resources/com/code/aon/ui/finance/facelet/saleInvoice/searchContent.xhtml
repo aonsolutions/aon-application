@@ -89,7 +89,7 @@
 					value="#{configBundle.config_bank}" />
 				<aon:div styleClass="aon-lookup">
 					<aon:lookupInputText id="Bank_code" lookup="#{bankLookup}"
-						reRender="Bank_name"
+						reRender="Bank_name" converter="aon.EmptyStringConverter"
 						value="#{saleInvoiceSearch.bank.code}" size="5">
 						<aon:joinProperty alias="Bank_code" value="#{saleInvoiceSearch.bank.code}" />
 					</aon:lookupInputText>
