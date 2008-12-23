@@ -1,7 +1,5 @@
 package com.code.aon.ui.finance.event;
 
-import java.util.Date;
-
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
@@ -15,10 +13,6 @@ public class FBatchSearchListener extends ControllerSearchListener {
 	private Boolean payment;
 	
 	private RegistryBank registryBank;
-	
-	private Date issueDateFrom;
-	
-	private Date issueDateTo;
 	
 	/**
 	 * Gets if the finance is a payment or a charge.
@@ -46,27 +40,9 @@ public class FBatchSearchListener extends ControllerSearchListener {
 		this.registryBank = registryBank;
 	}
 
-	public Date getIssueDateFrom() {
-		return issueDateFrom;
-	}
-
-	public void setIssueDateFrom(Date issueDateFrom) {
-		this.issueDateFrom = issueDateFrom;
-	}
-
-	public Date getIssueDateTo() {
-		return issueDateTo;
-	}
-
-	public void setIssueDateTo(Date issueDateTo) {
-		this.issueDateTo = issueDateTo;
-	}
-
 	@Override
 	protected void init() throws ManagerBeanException {
 		setPayment(null);
-		setIssueDateFrom(null);
-		setIssueDateTo(null);
 		setRegistryBank(null);
 	}
 	
@@ -80,14 +56,6 @@ public class FBatchSearchListener extends ControllerSearchListener {
 		if ( getRegistryBank() != null ) {
 			String field = getController().getFieldName(IFinanceAlias.FINANCE_BATCH_REGISTRY_BANK_ID);
 			criteria.addEqualExpression(field, getRegistryBank().getId());
-		}
-		if ( getIssueDateFrom() != null ) {
-			String field = getController().getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE);
-			criteria.addGreaterThanOrEqualExpression(field, getIssueDateFrom());
-		}
-		if ( getIssueDateTo() != null ) {
-			String field = getController().getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE);
-			criteria.addLessThanOrEqualExpression(field, getIssueDateTo());
 		}
 	}	
 }
