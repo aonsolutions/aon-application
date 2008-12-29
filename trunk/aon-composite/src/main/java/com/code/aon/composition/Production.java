@@ -278,7 +278,7 @@ public class Production implements ITransferObject {
     /**
      * Assigns a Set containing the details of the production.
      *
-     * @param Set<ProductionDetail>
+     * @param lines
      *          A Set containing the details of the production.
      */
 	public void setLines(Set<ProductionDetail> lines) {
@@ -298,7 +298,7 @@ public class Production implements ITransferObject {
     /**
      * Assigns a Set containing the expenses of the production.
      *
-     * @param Set<ProductionDetail>
+     * @param expenses
      *          A Set containing the expenses of the production.
      */
     public void setExpenses(Set<ProductionExpense> expenses) {

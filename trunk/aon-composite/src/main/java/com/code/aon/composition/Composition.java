@@ -295,7 +295,7 @@ public class Composition implements ITransferObject {
     /**
      * Assigns a Set containing the details of the composition.
      *
-     * @param Set<CompositionDetail>
+     * @param lines
      *          A Set containing the details of the composition.
      */
 	public void setLines(Set<CompositionDetail> lines) {
@@ -315,7 +315,7 @@ public class Composition implements ITransferObject {
     /**
      * Assigns a Set containing the expenses of the composition.
      *
-     * @param Set<CompositionDetail>
+     * @param expenses
      *          A Set containing the expenses of the composition.
      */
 	public void setExpenses(Set<CompositionExpense> expenses) {

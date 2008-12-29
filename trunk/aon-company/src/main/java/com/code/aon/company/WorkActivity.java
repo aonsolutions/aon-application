@@ -83,7 +83,7 @@ public class WorkActivity implements ITransferObject, IEntity {
 	/**
 	 * Return calendar identifier.
 	 * 
-	 * @return
+	 * @return calendar
 	 */
 	public Integer getCalendar() {
 		return calendar;
