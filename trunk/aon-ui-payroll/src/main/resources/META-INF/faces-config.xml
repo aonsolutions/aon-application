@@ -4262,12 +4262,12 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>
-				com.code.aon.payroll.resultados.irpf.Impr11x
+				com.code.aon.payroll.resultados.irpf.Impresos11x
 			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Impr11x_cdg</value>
+			<value>Impresos11x_cdg</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>

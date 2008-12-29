@@ -32,7 +32,7 @@
 						styleClass="aon-scroll-area aon-scroll-area-clientes">
 
 
-						<rich:panel>
+						<rich:panel id="panel1">
 							<f:facet name="header">
 								<aon:outputText
 								value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_id}" size="60" maxlength="60" />
@@ -42,7 +42,7 @@
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_cod_secuencial}" />
 								<aon:inputText value="#{impresos11x.to.cdg}"
-									size="5" maxlength="4" />
+									size="5" maxlength="4" readonly="#{true}"/>
 								
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_empresa_nif}" />
@@ -74,7 +74,7 @@
 										windowTitle="#{appBundle.aon_payroll_resultados_irpf_impresos11x_admon_hacienda}"
 										selectReRender="Impresos11x_admon_cdg,Impresos11x_admon_descripcion"
 										lookup="#{admonLookup}" minHeight="440"
-										property="#{impresos11x.to.emprnif}">
+										property="#{impresos11x.to.admon}">
 									</aon:lookupButton>
 									<aon:inputText id="Impresos11x_admon_descripcion"
 										value="#{(impresos11x.to.admon.description!=null)?(impresos11x.to.admon.description):('')}"
@@ -87,17 +87,27 @@
 									value="#{impresos11x.to.tipo}">
 									<f:selectItems
 										value="#{impresos11x.listaTipoImpreso}" />
+									<a4j:support event="onclick" reRender="label_impresos, impresos"  />
 								</aon:selectOneRadio>
 									
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_anio_devengo}" />
 								<aon:inputText value="#{impresos11x.to.anio}"
 									size="3" maxlength="2" />
-																	
-								<aon:outputLabel
-									value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_mes}" />
-								<aon:inputText value="#{impresos11x.to.mes}"
-									size="3" maxlength="2" />
+													
+								<aon:div id="label_impresos">
+									<aon:outputLabel id="label_impreso111" rendered="#{impresos11x.impreso111}"
+										value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_mes}" />
+									<aon:outputLabel rendered="#{impresos11x.impreso110}"
+										value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_trimestre}" />	
+								</aon:div>
+								
+								<aon:div id="impresos">
+									<aon:inputText id="impreso111" value="#{impresos11x.to.mes}"
+										size="3" maxlength="2" rendered="#{impresos11x.impreso111}" />
+									<aon:inputText value="#{impresos11x.to.trimestre}"
+										size="3" maxlength="2" rendered="#{impresos11x.impreso110}" />
+								</aon:div>
 									
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_provincia}" />
@@ -257,15 +267,17 @@
 							</aon:panel>
 							<aon:panel >
 								<f:facet name="header">
-									<aon:outputText value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_mod4}"/>
+									<aon:outputText value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_mod4}" />
 								</f:facet>
-								<aon:panelGrid columns="7" dir="true"
+								<aon:panelGrid columns="7" dir="true" 
 									width="100%" style="margin-bottom=2px;" >
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_dinerario}" />
-									
-								<aon:outputLabel
+								
+								<aon:div >	
+								<aon:outputLabel 
 									value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_perceptores}" />
+								</aon:div>
 								<aon:inputText value="" disabled="#{true}"
 									size="3" maxlength="2" />
 									
@@ -346,42 +358,42 @@
 								value="#{impresos11x.to.modimpuesto}">
 								<f:selectItems
 									value="#{impresos11x.listaModimpuesto}" />
-									<a4j:support event="onclick" reRender="Impreso11x_domiciliacion,Impreso11x_ventanilla" />
+									<a4j:support event="onclick" reRender="Impreso11x_domiciliacion,Impreso11x_ventanilla,Impreso11x_trasmiteCliente" />
 							</aon:selectOneRadio>
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_domiciliacion}" />
 							
-							<aon:div id="Impreso11x_domiciliacion" disabled="#{!impreso11x.domiciliacion}">
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_entidad}" />
-							<aon:inputText value="#{impresos11x.to.entidad}"
-								size="5" maxlength="4" readonly="#{!impreso11x.domiciliacion}"/>
+							<aon:div id="Impreso11x_domiciliacion" disabled="#{!impresos11x.domiciliacion}">
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_entidad}" />
+								<aon:inputText value="#{impresos11x.to.entidad}"
+									size="5" maxlength="4" readonly="#{!impresos11x.domiciliacion}"/>
+									
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_sucursal}" />
+								<aon:inputText value="#{impresos11x.to.sucursal}"
+									size="5" maxlength="4" readonly="#{!impresos11x.domiciliacion}"/>
 								
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_sucursal}" />
-							<aon:inputText value="#{impresos11x.to.sucursal}"
-								size="5" maxlength="4" readonly="#{!impreso11x.isDomiciliacion}"/>
-							
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_dc}" />
-							<aon:inputText value="#{impresos11x.to.dc}"
-								size="3" maxlength="2" readonly="#{!impreso11x.isDomiciliacion}"/>
-							
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_cuenta}" />	
-							<aon:inputText value="#{impresos11x.to.cuenta}"
-								size="12" maxlength="10" readonly="#{!impreso11x.isDomiciliacion}"/>
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_dc}" />
+								<aon:inputText value="#{impresos11x.to.dc}"
+									size="3" maxlength="2" readonly="#{!impresos11x.domiciliacion}"/>
+								
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_cuenta}" />	
+								<aon:inputText value="#{impresos11x.to.cuenta}"
+									size="12" maxlength="10" readonly="#{!impresos11x.domiciliacion}"/>
 							</aon:div>
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_ventanilla}" />
 							
-							<aon:div id="Impreso11x_ventanilla" disabled="#{!impreso11x.isVentanilla}">
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_referencia}" />
-							<aon:inputText value="#{impresos11x.to.nrc}"
-								size="10" maxlength="10" readonly="#{!impreso11x.isVentanilla}"/>
+							<aon:div id="Impreso11x_ventanilla" disabled="#{!impresos11x.ventanilla}">
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_referencia}" />
+								<aon:inputText value="#{impresos11x.to.nrc}"
+									size="25" maxlength="22" readonly="#{!impresos11x.ventanilla}"/>
 							</aon:div>
 							</aon:panelGrid>
 						</rich:panel>
@@ -408,14 +420,16 @@
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_remesa}" />
-							<aon:selectInputDate renderAsPopup="true"
-								readonly="#{(impresos11x.to.modimpuesto==null)}"
-								popupDateFormat="#{appBundle.aon_date_pattern}"
-								value="#{impresos11x.to.fecremimp}" enableManualInput="true" />
+							<aon:div id="Impreso11x_trasmiteCliente" >
+								<aon:selectInputDate renderAsPopup="#{true}"
+									disabled="#{impresos11x.trasmiteCliente}"
+									popupDateFormat="#{appBundle.aon_date_pattern}"
+									value="#{impresos11x.to.fecremimp}" enableManualInput="true" />
+							</aon:div>
 								
 							<aon:outputLabel
 								value=" " />
-							<aon:inputText value="" disabled="#{true}"
+							<aon:inputText value="#{impresos11x.to.divisa.description}" disabled="#{true}"
 								size="10" maxlength="10" />
 							</aon:panelGrid>
 						</rich:panel>

@@ -1,4 +1,15 @@
 /*************************/
+/******  GENERICS  ******/
+/*************************/
+label[disabled], label[readonly],input[disabled], input[readonly], select[disabled], select[readonly], checkbox[disabled], checkbox[readonly], textarea[disabled], textarea[readonly]
+{
+ background-color: #dcdcdc;
+ border: #bbbbbb 1px solid;
+
+ cursor: default;
+} 
+
+/*************************/
 /******  EDITTABLE  ******/
 /*************************/
 .aon-editDataTable-dateColumn{

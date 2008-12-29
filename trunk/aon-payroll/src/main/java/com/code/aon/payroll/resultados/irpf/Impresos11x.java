@@ -25,11 +25,11 @@ import com.code.aon.payroll.geograficas.Provincia;
 import com.code.aon.payroll.principales.empresa.Empresa;
 
 /**
- * Impr11x
+ * Impresos11x
  */
 @Entity
 @Table(name = "impr11x")
-public class Impr11x implements ITransferObject {
+public class Impresos11x implements ITransferObject {
 
 	private Integer cdg;
 	private TipoImpreso tipo;
