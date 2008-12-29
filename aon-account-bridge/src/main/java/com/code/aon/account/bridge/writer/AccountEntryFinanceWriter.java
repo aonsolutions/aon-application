@@ -18,14 +18,6 @@ import com.code.aon.finance.enumeration.InvoiceType;
  */
 public class AccountEntryFinanceWriter {
 
-	/**
-	 * Record finances.
-	 * 
-	 * @param rBankAccount the r bank account
-	 * @param financeList the finance list
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
 	@SuppressWarnings("unchecked")
 	public AccountEntry recordFinances(FinanceRecordingTo to) throws ManagerBeanException{
 		AccountEntry entry = createAccountEntry(to);

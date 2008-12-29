@@ -50,24 +50,22 @@ public class AccountEntryInvoiceWriter {
 	/**
 	 * Insert entry details.
 	 * 
-	 * @param retentionTotal
-	 *            the retention total
-	 * @param taxQuota
-	 *            the tax quota
-	 * @param balancingAccount
-	 *            the balancing account
-	 * @param account
-	 *            the account
 	 * @param entry
 	 *            the entry
-	 * @param invoiceTotal
-	 *            the invoice total
-	 * @param taxableBase
-	 *            the taxable base
+	 * @param account
+	 *            the account
 	 * @param series
 	 *            invoice series
 	 * @param number
 	 *            invoice number
+	 * @param invoiceTotal
+	 *            the invoice total
+	 * @param retentionTotal
+	 *            the retention total
+	 * @param taxQuota
+	 *            the tax quota
+	 * @param basesPerAccount
+	 *            the bases per account
 	 * 
 	 * @throws ManagerBeanException
 	 *             the manager bean exception
