@@ -75,7 +75,7 @@ public class Expenditures implements ITransferObject {
 	}
 
 	/**
-	 * @return
+	 * @return date
 	 */
 	public Date getDate() {
 		return date;
@@ -89,7 +89,7 @@ public class Expenditures implements ITransferObject {
 	}
 
 	/**
-	 * @return
+	 * @return amount
 	 */
 	public Double getAmount() {
 		return amount;

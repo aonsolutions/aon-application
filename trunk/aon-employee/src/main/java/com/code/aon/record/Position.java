@@ -117,7 +117,7 @@ public class Position implements ITransferObject {
 	/**
 	 * Return calendar identifier.
 	 * 
-	 * @return
+	 * @return calendar
 	 */
 	public Integer getCalendar() {
 		return calendar;
