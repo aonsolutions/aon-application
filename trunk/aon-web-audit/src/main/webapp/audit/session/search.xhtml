@@ -24,35 +24,69 @@
 						valueChangeListener="#{auditSession.addExpression}" />
 
 					<aon:outputLabel for="Session_user_domain_id"
-						value="#{appBundle.aon_domain}" />
+						value="#{auditBundle.audit_domain}" />
 					<aon:selectOneMenu id="Session_user_domain_id"
-						valueChangeListener="#{auditSession.addDirectExpression}">
-						<f:selectItem value="#{null}" itemLabel="    " />
+						valueChangeListener="#{auditSession.addExpression}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{auditCollections.domains}" />
 					</aon:selectOneMenu>					
 
 					<aon:outputLabel for="Session_application_id"
-						value="#{appBundle.aon_application}" />
+						value="#{auditBundle.audit_application}" />
 					<aon:selectOneMenu id="Session_application_id"
-						valueChangeListener="#{auditSession.addDirectExpression}">
-						<f:selectItem value="#{null}" itemLabel="    " />
+						valueChangeListener="#{auditSession.addExpression}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{auditCollections.applications}" />
 					</aon:selectOneMenu>					
 
+					<aon:outputLabel value="#{bundle.aon_start_date}" />
+					<aon:div>
+						<aon:outputLabel for="Session_startDate-From" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_from}:" />
+						<aon:selectInputDate id="Session_startDate-From"
+							valueChangeListener="#{auditSession.addGreaterThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+						<aon:outputLabel for="Session_startDate-To" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_to}:" />
+						<aon:selectInputDate id="Session_startDate-To"
+							valueChangeListener="#{auditSession.addLessThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+					</aon:div>
+
+					<aon:outputLabel value="#{bundle.aon_end_date}" />
+					<aon:div>
+						<aon:outputLabel for="Session_endDate-From" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_from}:" />
+						<aon:selectInputDate id="Session_endDate-From"
+							valueChangeListener="#{auditSession.addGreaterThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+						<aon:outputLabel for="Session_endDate-To" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_to}:" />
+						<aon:selectInputDate id="Session_endDate-To"
+							valueChangeListener="#{auditSession.addLessThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+					</aon:div>
+
 					<aon:outputLabel for="Session_user_login"
-						value="#{appBundle.aon_user}" />
+						value="#{bundle.aon_login_user}" />
 					<aon:inputText id="Session_user_login" size="60"
-						valueChangeListener="#{auditSession.addDirectExpression}" />
+						valueChangeListener="#{auditSession.addExpression}" />
 						
 					<aon:outputLabel for="Session_remoteAddress"
-						value="#{appBundle.aon_session_remoteAddress}" />
+						value="#{auditBundle.audit_session_remoteAddress}" />
 					<aon:inputText id="Session_remoteAddress" size="60"
-						valueChangeListener="#{auditSession.addDirectExpression}" />
+						valueChangeListener="#{auditSession.addExpression}" />
 
 					<aon:outputLabel for="Session_remoteHost"
-						value="#{appBundle.aon_session_remoteHost}" />
+						value="#{auditBundle.audit_session_remoteHost}" />
 					<aon:inputText id="Session_remoteHost" size="60"
-						valueChangeListener="#{auditSession.addDirectExpression}" />						
+						valueChangeListener="#{auditSession.addExpression}" />						
 						
 				</ui:define>
 			</ui:decorate>
