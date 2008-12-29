@@ -2,6 +2,7 @@ package com.code.aon.ui.payroll.controller;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -12,16 +13,21 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.payroll.auxiliares.Admon;
+import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.ModalidadImpuesto;
 import com.code.aon.payroll.enumeration.TipoImpreso;
-import com.code.aon.payroll.resultados.irpf.Impr11x;
+import com.code.aon.payroll.geograficas.Provincia;
+import com.code.aon.payroll.principales.empresa.Empresa;
+import com.code.aon.payroll.resultados.irpf.Impresos11x;
 
 public class Impresos11xController extends PayrollBasicController {
 
 	// Falta implementacion imprimir formulario "Informativa 11X"
 	// Falta implementacion enviar email
 
-	private List<SelectItem> tipo;
+	private List<SelectItem> listaTipo;
 
 	/**
 	 * Recupera los tipos de impreso
@@ -29,20 +35,20 @@ public class Impresos11xController extends PayrollBasicController {
 	 * @return
 	 */
 	public List<SelectItem> getListaTipoImpreso() {
-		if (tipo == null) {
+		if (listaTipo == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
 					.getLocale();
-			tipo = new LinkedList<SelectItem>();
+			listaTipo = new LinkedList<SelectItem>();
 			for (TipoImpreso p : TipoImpreso.values()) {
 				String name = p.getName(locale);
 				SelectItem item = new SelectItem(p, name);
-				tipo.add(item);
+				listaTipo.add(item);
 			}
 		}
-		return tipo;
+		return listaTipo;
 	}
 
-	private List<SelectItem> modimpuesto;
+	private List<SelectItem> listaModimpuesto;
 
 	/**
 	 * Recupera las modalidades de impreso
@@ -50,43 +56,27 @@ public class Impresos11xController extends PayrollBasicController {
 	 * @return
 	 */
 	public List<SelectItem> getListaModimpuesto() {
-		if (modimpuesto == null) {
+		if (listaModimpuesto == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
 					.getLocale();
-			modimpuesto = new LinkedList<SelectItem>();
+			listaModimpuesto = new LinkedList<SelectItem>();
 			for (ModalidadImpuesto p : ModalidadImpuesto.values()) {
 				String name = p.getName(locale);
 				SelectItem item = new SelectItem(p, name);
-				modimpuesto.add(item);
+				listaModimpuesto.add(item);
 			}
 		}
-		return modimpuesto;
+		return listaModimpuesto;
 	}
 
 	/**
-	 * Devuelve si la modalidad es de ventanilla o no
-	 * 
-	 * @return
+	 * Genera un numero autonumerico para el codigo de la paga extra
+	 * @param event
 	 */
-	public boolean isVentanilla() {
-		System.out.println("isVentanilla");
-		return ((Impr11x) getTo()).getModimpuesto() == ModalidadImpuesto.VENTANILLA;
-	}
-
-	/**
-	 * Devuelve si la modalidad es de domiciliacion o no
-	 * 
-	 * @return
-	 */
-	public boolean isDomiciliacion() {
-		System.out.println("isDomiciliacion");
-		return ((Impr11x) getTo()).getModimpuesto() == ModalidadImpuesto.DOMICILIACION;
-	}
-
 	public void generarNumero(ActionEvent event) {
 
 		String num = Utils.maxCode("Impr11x", "cdg");
-		((Impr11x) getTo()).setCdg(Integer.parseInt(num) + 1);
+		((Impresos11x) getTo()).setCdg(Integer.parseInt(num) + 1);
 	}
 
 	
@@ -95,7 +85,7 @@ public class Impresos11xController extends PayrollBasicController {
 	 */
 	public void setDefaultFields() {
 		
-		Impr11x to =(Impr11x) getTo();
+		Impresos11x to =(Impresos11x) getTo();
 		Calendar calendar = Calendar.getInstance();
 		
 		if(to.getTradinper()==null)
@@ -148,8 +138,178 @@ public class Impresos11xController extends PayrollBasicController {
 			to.setAdmon(null);
 		if(StringUtils.isEmpty(to.getProvincia().getCdg()))
 			to.setProvincia(null);
+	}
+	
+	private Empresa emprnif;
+	private Admon admon;
+	private Provincia provincia;
+	private Date fecha;
+	private Date fecremimp;
+	private TipoImpreso tipo;
+	private ModalidadImpuesto modimpuesto;
+	
+	@Override
+	public void onEditSearch(ActionEvent arg0) {
 		
+		super.onEditSearch(arg0);
 		
+		emprnif = new Empresa();
+		admon = new Admon();
+		provincia = new Provincia();
+		tipo=null;
+		modimpuesto=null;
+		fecha=null;
+		fecremimp=null;
 	}
 
+	/**
+	 * Se incluyen manualmente a las búsquedas los campos lookup y de fechas 
+	 */
+	@Override
+	public void onSearch(ActionEvent event) {
+
+		try {
+			//Búsqueda por campos LookUp
+			if (emprnif!=null && (emprnif.getCdg() != null)) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.IMPRESOS11X_EMPRNIF_CDG), emprnif.getCdg());
+			}
+			if (admon!=null && StringUtils.isNotEmpty(admon.getCdg())) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.IMPRESOS11X_ADMON_CDG), admon.getCdg());
+			}
+			if (provincia!=null && StringUtils.isNotEmpty(provincia.getCdg())) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.IMPRESOS11X_PROVINCIA_CDG), provincia.getCdg());
+			}
+			//Búsqueda por campos Date
+			if (fecha != null) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.IMPRESOS11X_FECHA), fecha);
+			}
+			if (fecremimp != null) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.IMPRESOS11X_FECREMIMP), fecremimp);
+			}
+			//Búsqueda por campos selectOneMenu
+			if (tipo!= null) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.IMPRESOS11X_TIPO), tipo);
+			}
+			if (modimpuesto!= null) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.IMPRESOS11X_MODIMPUESTO), modimpuesto);
+			}
+			
+		} catch (ManagerBeanException e) {
+			
+			e.printStackTrace();
+		}
+
+		super.onSearch(event);
+	}
+
+	public Empresa getEmprnif() {
+		return emprnif;
+	}
+
+	public void setEmprnif(Empresa emprnif) {
+		this.emprnif = emprnif;
+	}
+
+	public Admon getAdmon() {
+		return admon;
+	}
+
+	public void setAdmon(Admon admon) {
+		this.admon = admon;
+	}
+
+	public Provincia getProvincia() {
+		return provincia;
+	}
+
+	public void setProvincia(Provincia provincia) {
+		this.provincia = provincia;
+	}
+
+	public Date getFecha() {
+		return fecha;
+	}
+
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
+	}
+
+	public Date getFecremimp() {
+		return fecremimp;
+	}
+
+	public void setFecremimp(Date fecremimp) {
+		this.fecremimp = fecremimp;
+	}
+	
+	public TipoImpreso getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(TipoImpreso tipo) {
+		this.tipo = tipo;
+		((Impresos11x)getTo()).setTipo(tipo);
+	}
+	
+	public ModalidadImpuesto getModimpuesto() {
+		return modimpuesto;
+	}
+
+	public void setModimpuesto(ModalidadImpuesto modimpuesto) {
+		this.modimpuesto = modimpuesto;
+		((Impresos11x)getTo()).setModimpuesto(modimpuesto);
+	}
+	
+	
+	
+	/**
+	 * Devuelve si el tipo es 110
+	 * @return
+	 */
+	public boolean isImpreso110(){
+		return((Impresos11x)getTo()).getTipo() == TipoImpreso.IMPRESO110;
+	}
+	
+	/**
+	 * Devuelve si el tipo es 111
+	 * @return
+	 */
+	public boolean isImpreso111(){
+		return((Impresos11x)getTo()).getTipo() == TipoImpreso.IMPRESO111;
+	}
+	
+	/**
+	 * Devuelve si la modalidad es de ventanilla o no
+	 * 
+	 * @return
+	 */
+	public boolean isVentanilla() {
+		System.out.println("isVentanilla");
+		return ((Impresos11x) getTo()).getModimpuesto() == ModalidadImpuesto.VENTANILLA;
+	}
+
+	/**
+	 * Devuelve si la modalidad es de domiciliacion o no
+	 * 
+	 * @return
+	 */
+	public boolean isDomiciliacion() {
+		System.out.println("isDomiciliacion");
+		return ((Impresos11x) getTo()).getModimpuesto() == ModalidadImpuesto.DOMICILIACION;
+	}
+	
+	/**
+	 * Devuelve si la modalidad es de domiciliacion o no
+	 * 
+	 * @return
+	 */
+	public boolean isTrasmiteCliente() {
+		System.out.println("isTrasmiteCliente");
+		return ((Impresos11x) getTo()).getModimpuesto() == ModalidadImpuesto.CLIENTE;
+	}
+
+	
+	
+
+	
 }

@@ -20,6 +20,7 @@ public class Impresos11xControllerListener extends ControllerAdapter {
 	public void beforeBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
 		System.out.println("beforeBeanUpdated");
+		((Impresos11xController)getController()).setDefaultFields();
 	}
 
 	@Override
