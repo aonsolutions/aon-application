@@ -41,11 +41,11 @@
 				
 				<aon:panelTabSet rendered="#{!domain.new}" valueChangeListener="#{domain.tabChanged}">
 					<aon:panelTab name="user" label="#{auditBundle.audit_users}">
-						<ui:include src="/audit/domain/user/grid.xhtml" />
+						<ui:include src="/com/code/aon/ui/audit/facelet/user/tab_grid.xhtml" />
                     </aon:panelTab>
 
 					<aon:panelTab name="domainApplication" label="#{auditBundle.audit_applications_module}">
-						<ui:include src="/audit/domain/application/grid.xhtml" />
+						<ui:include src="/com/code/aon/ui/audit/facelet/domainApplication/tab_grid.xhtml" />
                     </aon:panelTab>
 				</aon:panelTabSet>				
 				
