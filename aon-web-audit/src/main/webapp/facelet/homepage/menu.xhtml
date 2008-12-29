@@ -15,13 +15,13 @@
 				columnClasses="aon-finding-toolbar">
 
 				<aon:div id="toolbar" styleClass="aon-finding-toolbar-item-group">
-					<aon:commandButton id="domain" value="#{menuBundle.aon_domains}"
+					<aon:commandButton id="domain" value="#{auditBundle.audit_domains_module}"
 						immediate="true" action="domain" actionListener="#{domain.onSearch}"
 						styleClass="aon-finding-toolbar-item aon-icon-domains" />
-					<aon:commandButton id="application" value="#{menuBundle.aon_applications}"
+					<aon:commandButton id="application" value="#{auditBundle.audit_applications_module}"
 						immediate="true" action="auditApplication" actionListener="#{auditApplication.onSearch}"
 						styleClass="aon-finding-toolbar-item aon-icon-applications" />
-					<aon:commandButton id="session" value="#{menuBundle.aon_sessions}"
+					<aon:commandButton id="session" value="#{auditBundle.audit_sessions_module}"
 						immediate="true" action="auditSession" actionListener="#{auditSession.onSearch}"
 						styleClass="aon-finding-toolbar-item aon-icon-sessions" />
 				</aon:div>

@@ -2,6 +2,13 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-facesconfig_1_2.xsd"
 	version="1.2">
 
+	<application>
+		<resource-bundle>
+		   <base-name>com.code.aon.ui.audit.i18n.messages</base-name>
+		   <var>auditBundle</var>
+		</resource-bundle>
+	</application>
+
 	<!--  *************** COLLECTIONS ***************** -->
 
 	<managed-bean>
@@ -29,6 +36,10 @@
 			<property-name>beanName</property-name>
 			<value>auditApplication</value>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Application_name</value>
+		</managed-property>				
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -92,6 +103,10 @@
 			<property-name>beanName</property-name>
 			<value>domain</value> 
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Domain_name</value>
+		</managed-property>				
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -187,6 +202,10 @@
 			<value>auditSession</value> 
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Session_startDate</value>
+		</managed-property>						
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
@@ -242,6 +261,10 @@
 			<property-name>beanName</property-name>
 			<value>actionExecution</value> 
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ActionExecution_executionDate</value>
+		</managed-property>										
 	</managed-bean>
 
 	<!-- ************ ACTION ************** -->
@@ -261,6 +284,10 @@
 			<property-name>beanName</property-name>
 			<value>applicationAction</value> 
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Action_name</value>
+		</managed-property>						
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -287,6 +314,10 @@
 			<property-name>beanName</property-name>
 			<value>user</value> 
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>User_login</value>
+		</managed-property>								
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
