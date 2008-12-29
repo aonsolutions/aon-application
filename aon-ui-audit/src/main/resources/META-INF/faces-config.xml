@@ -353,4 +353,54 @@
 		</managed-property>		
 	</managed-bean>	
 
+	<!-- =================== Domain ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>domain_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/domain/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>domain_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/domain/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>domain_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/domain/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>		
+
+
+	<!-- =================== Session ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>auditSession_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/auditSession/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>auditSession_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/auditSession/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>auditSession_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/auditSession/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>		
+	
+	
+	<!-- =================== Application ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>auditApplication_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/auditApplication/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>auditApplication_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/auditApplication/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>auditApplication_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/audit/facelet/auditApplication/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>		
+	
 </faces-config>
