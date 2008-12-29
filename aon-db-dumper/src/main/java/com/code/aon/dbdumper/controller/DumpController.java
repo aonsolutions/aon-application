@@ -1,13 +1,11 @@
 package com.code.aon.dbdumper.controller;
 
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.GregorianCalendar;
-import java.util.logging.Logger;
 
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 
