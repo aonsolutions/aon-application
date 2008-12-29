@@ -41,6 +41,7 @@ public class MOD347  extends AbstractFileFiller{
 	 * @param deponent the deponent data object
 	 * @param filePath the file path
 	 * @throws FileNotFoundException
+	 * @throws UnsupportedEncodingException
 	 */
 	public MOD347(Deponent deponent, String filePath) throws FileNotFoundException, UnsupportedEncodingException {
 		super(filePath);

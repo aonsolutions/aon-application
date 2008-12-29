@@ -56,6 +56,7 @@ public class CSB34 extends AbstractFileFiller{
 	 * @param master the main data object
 	 * @param filePath the file path
 	 * @throws FileNotFoundException
+	 * @throws UnsupportedEncodingException
 	 */
 	public CSB34(Master master, String filePath) throws FileNotFoundException, UnsupportedEncodingException {
 		super(filePath);

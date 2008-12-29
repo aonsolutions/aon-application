@@ -11,9 +11,6 @@ import java.util.ArrayList;
  */
 public interface FileFiller {
 
-	/**
-	 * Create the file
-	 */
 	public ArrayList<Exception> create();
 	
 }

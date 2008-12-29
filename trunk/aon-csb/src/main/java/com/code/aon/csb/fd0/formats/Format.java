@@ -33,7 +33,7 @@ public interface Format {
 	 * Recovers the value formated in a string
 	 * 
 	 * @param value
-	 * @return
+	 * @return value formatted
 	 */
 	public String format(Object value);
 
