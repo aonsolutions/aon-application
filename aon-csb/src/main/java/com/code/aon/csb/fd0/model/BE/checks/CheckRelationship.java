@@ -18,7 +18,7 @@ public class CheckRelationship extends Check{
 	/**
 	 * Parses data
 	 * 
-	 * @param transfer the object to parse
+	 * @param relationship the object to parse
 	 * @param exceptions errors founds
 	 * @return true if no errors
 	 */

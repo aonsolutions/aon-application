@@ -43,6 +43,7 @@ public class BE extends AbstractFileFiller{
 	 * @param lot the lot data object
 	 * @param filePath the file path
 	 * @throws FileNotFoundException
+	 * @throws UnsupportedEncodingException
 	 */
 	public BE(Lot lot, String filePath) throws FileNotFoundException, UnsupportedEncodingException {
 		super(filePath);

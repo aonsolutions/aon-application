@@ -47,6 +47,7 @@ public abstract class AbstractFileFiller implements FileFiller {
 	 * 
 	 * @param filePath destination file path
 	 * @throws FileNotFoundException
+	 * @throws UnsupportedEncodingException
 	 */
 	protected AbstractFileFiller(String filePath) throws FileNotFoundException, UnsupportedEncodingException{
 		this.filePath = filePath;
@@ -68,6 +69,7 @@ public abstract class AbstractFileFiller implements FileFiller {
 	 * @param filePath the destination file path
 	 * @return a PrintWriter for this file path
 	 * @throws FileNotFoundException
+	 * @throws UnsupportedEncodingException
 	 */
 	protected PrintWriter assignPrintWriter(String filePath) throws FileNotFoundException, UnsupportedEncodingException{
 		return new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(filePath)), "iso-8859-1"));
@@ -79,6 +81,7 @@ public abstract class AbstractFileFiller implements FileFiller {
 	 * @param filePath the destination file path
 	 * @return the lines generator
 	 * @throws FileNotFoundException
+	 * @throws UnsupportedEncodingException
 	 */
 	protected LinesOutput assignFileOutputStream(String filePath) throws FileNotFoundException, UnsupportedEncodingException{
 		return new LinesOutput(assignPrintWriter(filePath));

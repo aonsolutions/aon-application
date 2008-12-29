@@ -15,7 +15,7 @@ public class FormatFactory {
 	/**
 	 * Returns true if is the correct factory
 	 * 
-	 * @return
+	 * @return boolean
 	 */
 	protected boolean accept() {
 		return true;
