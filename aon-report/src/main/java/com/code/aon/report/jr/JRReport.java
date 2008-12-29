@@ -88,6 +88,8 @@ public class JRReport {
 	 * 
 	 * @param criteria
 	 *            The criteria of th query.
+	 * @param count
+	 *            The count of th query.
 	 * @return A Paged DataSource Provider.
 	 * @throws ReportException
 	 *             If an error ocurred.
@@ -168,6 +170,8 @@ public class JRReport {
 	 *            The resource Bundle used in i18n.
 	 * @param criteria
 	 *            The criteria of the data.
+	 * @param collection
+	 *            The collection of the data.
 	 * 
 	 * @return The outcome.
 	 * @throws ReportException
