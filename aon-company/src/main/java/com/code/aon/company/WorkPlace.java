@@ -121,7 +121,7 @@ public class WorkPlace implements ITransferObject, IEntity {
 	/**
 	 * Return calendar identifier.
 	 * 
-	 * @return
+	 * @return calendar
 	 */
 	public Integer getCalendar() {
 		return calendar;
@@ -176,7 +176,7 @@ public class WorkPlace implements ITransferObject, IEntity {
 	/**
 	 * Add an activity.
 	 * 
-	 * @param activitiy
+	 * @param activity
 	 */
 	public void addActivity(WorkActivity activity) {
 		this.activities.add( activity );

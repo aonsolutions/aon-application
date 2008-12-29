@@ -64,6 +64,8 @@ public class Resource implements ITransferObject {
 
 	/**
 	 * Return the employee 
+	 * 
+	 * @return employee
 	 */
 	@OneToOne
 	@JoinColumn(name="employee")
@@ -82,6 +84,8 @@ public class Resource implements ITransferObject {
 
 	/**
 	 * Return the working place 
+	 * 
+	 * @return workPlace
 	 */
 	@OneToOne
 	@JoinColumn(name="workplace")
@@ -100,6 +104,8 @@ public class Resource implements ITransferObject {
 
 	/**
 	 * Return the working activity.  
+	 * 
+	 * @return workActivity
 	 */
 	@OneToOne
 	@JoinColumn(name="workactivity")
@@ -118,6 +124,8 @@ public class Resource implements ITransferObject {
 
 	/**
 	 * Return the ending date while the employee is working in this place and activity.  
+	 * 
+	 * @return endingDate
 	 */
 	@Column(name="endingdate")
 	public Date getEndingDate() {
@@ -135,6 +143,8 @@ public class Resource implements ITransferObject {
 
 	/**
 	 * Return the starting date from the employee is working in this place and activity.  
+	 * 
+	 * @return startingDate
 	 */
 	@Column(name="startingdate", nullable=false)
 	public Date getStartingDate() {
@@ -153,7 +163,7 @@ public class Resource implements ITransferObject {
 	/**
 	 * Returns the calendar identifier.
 	 * 
-	 * @return
+	 * @return calendar
 	 */
 	@Transient
 	public Integer getCalendar() {
@@ -163,7 +173,7 @@ public class Resource implements ITransferObject {
 	/**
 	 * Returns the event identifier.
 	 * 
-	 * @return
+	 * @return owner
 	 */
 	@Transient
 	public String getOwner() {

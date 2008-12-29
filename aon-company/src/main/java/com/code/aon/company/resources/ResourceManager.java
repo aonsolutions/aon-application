@@ -33,7 +33,7 @@ public final class ResourceManager {
 	/**
 	 * Return the company resources list.
 	 * 
-	 * @return
+	 * @return resources
 	 * @throws ManagerBeanException
 	 */
 	@SuppressWarnings("unchecked")
@@ -49,7 +49,7 @@ public final class ResourceManager {
 	/**
 	 * Return the company active resources list.
 	 * 
-	 * @return
+	 * @return activityResources
 	 * @throws ManagerBeanException
 	 */
 	@SuppressWarnings("unchecked")
@@ -63,7 +63,7 @@ public final class ResourceManager {
 	/**
 	 * Return the company inactive resources list.
 	 * 
-	 * @return
+	 * @return inActiveResources
 	 * @throws ManagerBeanException
 	 */
 	@SuppressWarnings("unchecked")
@@ -81,7 +81,7 @@ public final class ResourceManager {
 	 * Return the company resource.
 	 * 
 	 * @param id
-	 * @return
+	 * @return resource
 	 * @throws ManagerBeanException
 	 */
 	public Resource getResource(Integer id) throws ManagerBeanException {
@@ -95,7 +95,7 @@ public final class ResourceManager {
 	 * Return the current employee resource.
 	 * 
 	 * @param employee
-	 * @return
+	 * @return resource
 	 * @throws ManagerBeanException
 	 */
 	@SuppressWarnings("unchecked")
@@ -115,7 +115,7 @@ public final class ResourceManager {
 	 * Return a new employee resource.
 	 * 
 	 * @param employee
-	 * @return
+	 * @return resource
 	 * @throws ManagerBeanException
 	 */
 	public Resource createResource(Employee employee) throws ManagerBeanException {
