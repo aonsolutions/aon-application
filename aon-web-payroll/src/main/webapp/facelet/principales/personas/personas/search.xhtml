@@ -236,7 +236,7 @@
 					<aon:outputLabel for="Persona_estciv"
 						value="#{appBundle.aon_payroll_pricipales_personas_estado_civil}" />
 					<aon:selectOneMenu id="Persona_estciv" 
-						valueChangeListener="#{persona.addDirectExpression}" >
+						valueChangeListener="#{persona.addExpression}" >
 						<aon:enumConverter enum="com.code.aon.payroll.enumeration.EstadoCivil" />
 						<f:selectItem value="#{null}" itemLabel="    " />
 						<f:selectItems value="#{persona.listaEstciv}" />

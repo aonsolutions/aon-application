@@ -40,7 +40,7 @@
 								 <aon:outputLabel for="Convenio_niveles_id_cdg"
 									value="#{appBundle.aon_payroll_cdg}" />
 								 <aon:inputText id="Convenio_niveles_id_cdg" size="10" maxlength="8"
-									valueChangeListener="#{convenio.addDirectExpression}" />
+									valueChangeListener="#{convenio.addExpression}" />
 							</aon:panelGrid>
 					</aon:panel>
 					 
@@ -53,12 +53,12 @@
 								 <aon:outputLabel for="Convenio_niveles_categorias_id_cdg"
 									value="#{appBundle.aon_payroll_cdg}" />
 								 <aon:inputText id="Convenio_niveles_categorias_id_cdg" size="10" maxlength="8"
-									valueChangeListener="#{convenio.addDirectExpression}" />
+									valueChangeListener="#{convenio.addExpression}" />
 									
 								<aon:outputLabel for="Convenio_niveles_categorias_description"
 									value="#{appBundle.aon_payroll_description}" />
 								 <aon:inputText id="Convenio_niveles_categorias_description" size="10" maxlength="8"
-									valueChangeListener="#{convenio.addDirectExpression}" />
+									valueChangeListener="#{convenio.addExpression}" />
 							</aon:panelGrid>
 					 </aon:panel>
 					 
@@ -71,17 +71,17 @@
 								 <aon:outputLabel for="Convenio_niveles_percepciones_id_codcom"
 									value="#{appBundle.aon_payroll_auxiliares_convenios__comp}" />
 								 <aon:inputText id="Convenio_niveles_percepciones_id_codcom" size="10" maxlength="8"
-									valueChangeListener="#{convenio.addDirectExpression}" />
+									valueChangeListener="#{convenio.addExpression}" />
 									
 								<aon:outputLabel for="Convenio_niveles_percepciones_descom"
 									value="#{appBundle.aon_payroll_description}" />
 								 <aon:inputText id="Convenio_niveles_percepciones_descom" size="10" maxlength="8"
-									valueChangeListener="#{convenio.addDirectExpression}" />
+									valueChangeListener="#{convenio.addExpression}" />
 									
 								<aon:outputLabel for="Convenio_niveles_percepciones_importe"
 									value="#{appBundle.aon_payroll_auxiliares_convenios__importe}" />
 								 <aon:inputText id="Convenio_niveles_percepciones_importe" size="10" maxlength="8"
-									valueChangeListener="#{convenio.addDirectExpression}" />
+									valueChangeListener="#{convenio.addExpression}" />
 							</aon:panelGrid>
 					 </aon:panel>
 					 
@@ -94,22 +94,22 @@
 								<aon:outputLabel for="Convenio_pagas_complemento_cdg"
 									value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_cdg}" />
 								<aon:inputText id="Convenio_pagas_complemento_cdg" size="10" maxlength="8"
-									valueChangeListener="#{convenio.addDirectExpression}" />
+									valueChangeListener="#{convenio.addExpression}" />
 								
 								<aon:outputLabel for="Convenio_pagas_complemento_description"
 									value="#{appBundle.aon_payroll_description}" />
 								<aon:inputText id="Convenio_pagas_complemento_description" size="10" maxlength="8"
-									valueChangeListener="#{convenio.addDirectExpression}" />
+									valueChangeListener="#{convenio.addExpression}" />
 								
 								<aon:outputLabel for="Convenio_pagas_perini"
 									value="#{appBundle.aon_payroll_desde}" />
 								<aon:inputText id="Convenio_pagas_perini" size="10" maxlength="8"
-									valueChangeListener="#{convenio.addDirectExpression}" />
+									valueChangeListener="#{convenio.addExpression}" />
 									
 								<aon:outputLabel for="Convenio_pagas_indini"
 									value="#{appBundle.aon_payroll_auxiliares_convenios__indini}" />
 								<aon:selectOneMenu id="Convenio_pagas_indini" 
-									valueChangeListener="#{convenio.addDirectExpression}" >
+									valueChangeListener="#{convenio.addExpression}" >
 									<aon:enumConverter enum="com.code.aon.payroll.enumeration.IndicadorAnio" /> 												
 									<f:selectItem value="#{null}" itemLabel=" -  " />
 									<f:selectItems value="#{pagaext.listaIndicadorAnio}" />
@@ -118,12 +118,12 @@
 								<aon:outputLabel for="Convenio_pagas_perfin"
 									value="#{appBundle.aon_payroll_hasta}" />
 								<aon:inputText id="Convenio_pagas_perfin" size="10" maxlength="8"
-									valueChangeListener="#{convenio.addDirectExpression}" />
+									valueChangeListener="#{convenio.addExpression}" />
 									
 								<aon:outputLabel for="Convenio_pagas_indfin"
 									value="#{appBundle.aon_payroll_auxiliares_convenios__indfin}" />
 								<aon:selectOneMenu id="Convenio_pagas_indfin" 
-									valueChangeListener="#{convenio.addDirectExpression}" >
+									valueChangeListener="#{convenio.addExpression}" >
 									<aon:enumConverter enum="com.code.aon.payroll.enumeration.IndicadorAnio" />												
 									<f:selectItem value="#{null}" itemLabel=" -  " />
 									<f:selectItems value="#{pagaext.listaIndicadorAnio}" />
@@ -132,12 +132,12 @@
 								<aon:outputLabel for="Convenio_pagas_feccob"
 									value="#{appBundle.aon_payroll_auxiliares_convenios__feccob}" />
 								<aon:inputText id="Convenio_pagas_feccob" size="10" maxlength="8"
-									valueChangeListener="#{convenio.addDirectExpression}" />
+									valueChangeListener="#{convenio.addExpression}" />
 									
 								<aon:outputLabel for="Convenio_pagas_prorat"
 									value="#{appBundle.aon_payroll_auxiliares_convenios__prorat}" />
 								<aon:selectOneMenu id="Convenio_pagas_prorat" 
-									valueChangeListener="#{convenio.addDirectExpression}" >
+									valueChangeListener="#{convenio.addExpression}" >
 									<aon:enumConverter enum="com.code.aon.payroll.enumeration.TipoProrrateo" />												
 									<f:selectItem value="#{null}" itemLabel=" -  " />
 									<f:selectItems value="#{pagaext.listaTipoProrrateo}" />

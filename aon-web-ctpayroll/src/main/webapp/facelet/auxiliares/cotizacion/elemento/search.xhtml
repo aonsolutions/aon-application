@@ -38,7 +38,7 @@
 						value="#{appBundle.aon_payroll_cotizacion_fecini}" />
 					<aon:selectInputDate id="ElementoMaestro_elementos_id_fecini" 
 						inputSize="10" renderAsPopup="true"
-						valueChangeListener="#{elementoMaestro.addDirectExpression}" 
+						valueChangeListener="#{elementoMaestro.addExpression}" 
 						popupDateFormat="#{appBundle.aon_date_pattern}">
 					</aon:selectInputDate>
 					
@@ -46,7 +46,7 @@
 						value="#{appBundle.aon_payroll_cotizacion_fecfin}" />
 					<aon:selectInputDate id="ElementoMaestro_elementos_fecfin" 
 						inputSize="10" renderAsPopup="true"
-						valueChangeListener="#{elementoMaestro.addDirectExpression}" 
+						valueChangeListener="#{elementoMaestro.addExpression}" 
 						popupDateFormat="#{appBundle.aon_date_pattern}">
 					</aon:selectInputDate>
 					-->
@@ -54,12 +54,12 @@
 					<aon:outputLabel for="ElementoMaestro_elementos_dato1"
 						value="#{appBundle.aon_payroll_cotizacion_dato1}" />
 					<aon:inputText id="ElementoMaestro_elementos_dato1" size="60" maxlength="50"
-						valueChangeListener="#{elementoMaestro.addDirectExpression}" />
+						valueChangeListener="#{elementoMaestro.addExpression}" />
 						
 					<aon:outputLabel for="ElementoMaestro_elementos_dato2"
 						value="#{appBundle.aon_payroll_cotizacion_dato2}" />
 					<aon:inputText id="ElementoMaestro_elementos_dato2" size="60" maxlength="50"
-						valueChangeListener="#{elementoMaestro.addDirectExpression}" />					
+						valueChangeListener="#{elementoMaestro.addExpression}" />					
 						
 				</ui:define>
 			</ui:decorate>

@@ -33,7 +33,7 @@
 						valueChangeListener="#{baseMaestro.addExpression}" />
 						
 							<aon:outputLabel for="Base_indpro" value="#{appBundle.aon_payroll_auxiliares_cotizacion__pro}" />
-					<aon:selectOneMenu id="Base_indpro" value="#{baseMaestro.to.indpro}" valueChangeListener="#{baseMaestro.addDirectEqualExpression}" >	
+					<aon:selectOneMenu id="Base_indpro" value="#{baseMaestro.to.indpro}" valueChangeListener="#{baseMaestro.addEqualExpression}" >	
 					   <aon:enumConverter enum="com.code.aon.payroll.enumeration.Prorateo" />	
 					    <f:selectItem value="#{null}" itemLabel="    " />
 						<f:selectItems value="#{baseMaestro.listaProrateos}"/>											
@@ -63,42 +63,42 @@
                     		<aon:outputLabel for="Base_linbases_mincot"
 						value="#{appBundle.aon_payroll_auxiliares_cotizacion__mincot}" />
 					<aon:inputText id="Base_linbases_mincot" size="60" maxlength="60"
-						valueChangeListener="#{baseMaestro.addDirectExpression}" />
+						valueChangeListener="#{baseMaestro.addExpression}" />
 						
 								<aon:outputLabel for="Base_linbases_maxcot"
 						value="#{appBundle.aon_payroll_auxiliares_cotizacion__maxcot}" />
 					<aon:inputText id="Base_linbases_maxcot" size="60" maxlength="60"
-						valueChangeListener="#{baseMaestro.addDirectExpression}" />
+						valueChangeListener="#{baseMaestro.addExpression}" />
                      				
 								<aon:outputLabel for="Base_linbases_mindia"
 						value="#{appBundle.aon_payroll_auxiliares_cotizacion__mindia}" />
 					<aon:inputText id="Base_linbases_mindia" size="60" maxlength="60"
-						valueChangeListener="#{baseMaestro.addDirectExpression}" />
+						valueChangeListener="#{baseMaestro.addExpression}" />
 						
 								<aon:outputLabel for="Base_linbases_minhor"
 						value="#{appBundle.aon_payroll_auxiliares_cotizacion__minhor}" />
 					<aon:inputText id="Base_linbases_minhor" size="60" maxlength="60"
-						valueChangeListener="#{baseMaestro.addDirectExpression}" />
+						valueChangeListener="#{baseMaestro.addExpression}" />
                   	
 								<aon:outputLabel for="Base_linbases_jordiaagr"
 						value="#{appBundle.aon_payroll_auxiliares_cotizacion__jordiaagr}" />
 					<aon:inputText id="Base_linbases_jordiaagr" size="60" maxlength="60"
-						valueChangeListener="#{baseMaestro.addDirectExpression}" />
+						valueChangeListener="#{baseMaestro.addExpression}" />
 					
 					<aon:outputLabel for="Base_linbases_mindiaart1"
 						value="#{appBundle.aon_payroll_auxiliares_cotizacion__mindiaart1}" />
 					<aon:inputText id="Base_linbases_mindiaart1" size="60" maxlength="60"
-						valueChangeListener="#{baseMaestro.addDirectExpression}" />
+						valueChangeListener="#{baseMaestro.addExpression}" />
 					
 					<aon:outputLabel for="Base_linbases_mindiaart2"
 						value="#{appBundle.aon_payroll_auxiliares_cotizacion__mindiaart2}" />
 					<aon:inputText id="Base_linbases_mindiaart2" size="60" maxlength="60"
-						valueChangeListener="#{baseMaestro.addDirectExpression}" />
+						valueChangeListener="#{baseMaestro.addExpression}" />
 				
 					<aon:outputLabel for="Base_linbases_acdiaart"
 						value="#{appBundle.aon_payroll_auxiliares_cotizacion__acdiaart}" />
 					<aon:inputText id="Base_linbases_acdiaart" size="60" maxlength="60"
-						valueChangeListener="#{baseMaestro.addDirectExpression}" />
+						valueChangeListener="#{baseMaestro.addExpression}" />
 						</aon:panelGrid>
 				</aon:panelCollapsible>	
 				 

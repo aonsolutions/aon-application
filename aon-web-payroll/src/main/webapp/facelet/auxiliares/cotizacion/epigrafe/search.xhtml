@@ -50,7 +50,7 @@
 					<aon:outputLabel for="Epigrafe_epigrafes_indit"
 						value="#{appBundle.aon_payroll_cotizacion_epigrafes_indiIT}" />	
 					<aon:selectOneMenu id="Epigrafe_epigrafes_indit"					
-					   valueChangeListener="#{epigrafeMaestro.addDirectEqualExpression}" >	
+					   valueChangeListener="#{epigrafeMaestro.addEqualExpression}" >	
 					   <aon:enumConverter enum="com.code.aon.payroll.enumeration.Epigrafes" />
 					    <f:selectItem value="#{null}" itemLabel="    " />
 						<f:selectItems value="#{epigrafe.listaEpigrafes}" />
@@ -59,12 +59,12 @@
 					<aon:outputLabel for="Epigrafe_epigrafes_canit"
 						value="#{appBundle.aon_payroll_cotizacion_epigrafes_impIT}" />
 					<aon:inputText id="Epigrafe_epigrafes_canit" size="20" maxlength="15"
-						valueChangeListener="#{epigrafeMaestro.addDirectExpression}" />
+						valueChangeListener="#{epigrafeMaestro.addExpression}" />
 				 	
 					<aon:outputLabel for="Epigrafe_epigrafes_indipm"
 						value="#{appBundle.aon_payroll_cotizacion_epigrafes_indIMS}" />
 					<aon:selectOneMenu id="Epigrafe_epigrafes_indipm"
-					    valueChangeListener="#{epigrafeMaestro.addDirectEqualExpression}" >			
+					    valueChangeListener="#{epigrafeMaestro.addEqualExpression}" >			
 						<aon:enumConverter enum="com.code.aon.payroll.enumeration.Epigrafes" />
 						<f:selectItem value="#{null}" itemLabel="    " />
 						<f:selectItems value="#{epigrafe.listaEpigrafes}" />
@@ -73,7 +73,7 @@
 					<aon:outputLabel for="Epigrafe_epigrafes_canipm"
 						value="#{appBundle.aon_payroll_cotizacion_epigrafes_impIMS}" />
 					<aon:inputText id="Epigrafe_epigrafes_canipm" size="20" maxlength="15"
-						valueChangeListener="#{epigrafeMaestro.addDirectExpression}" />
+						valueChangeListener="#{epigrafeMaestro.addExpression}" />
 					
 					
 				</ui:define>

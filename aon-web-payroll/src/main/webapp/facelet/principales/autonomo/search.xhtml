@@ -519,25 +519,25 @@
 									<aon:selectInputDate renderAsPopup="true"
 										popupDateFormat="#{appBundle.aon_date_pattern}"
 										enableManualInput="true" id="Autonomos_autbases_fecinigestion"
-										valueChangeListener="#{autonomo.addDirectExpression}" />
+										valueChangeListener="#{autonomo.addExpression}" />
 
 									<aon:outputLabel for="Autonomos_autbases_fecfingestion"
 										value="#{appBundle.aon_payroll_principales_autonomos_fecfin}" />
 									<aon:selectInputDate renderAsPopup="true"
 										popupDateFormat="#{appBundle.aon_date_pattern}"
 										id="Autonomos_autbases_fecfingestion"
-										valueChangeListener="#{autonomo.addDirectExpression}"
+										valueChangeListener="#{autonomo.addExpression}"
 										enableManualInput="true" />
 									<aon:outputLabel for="Autonomos_autbases_base"
 										value="#{appBundle.aon_payroll_principales_autonomos_base}" />
 									<aon:inputText id="Autonomos_autbases_base"
-										valueChangeListener="#{autonomo.addDirectExpression}"
+										valueChangeListener="#{autonomo.addExpression}"
 										size="50" maxlength="20" />
 
 									<aon:outputLabel for="Autonomos_autbases_cuota"
 										value="#{appBundle.aon_payroll_principales_autonomos_cuo}" />
 									<aon:inputText id="Autonomos_autbases_cuota"
-										valueChangeListener="#{autonomo.addDirectExpression}"
+										valueChangeListener="#{autonomo.addExpression}"
 										size="50" maxlength="20" />
 								</aon:panelGrid>
 							</aon:div>

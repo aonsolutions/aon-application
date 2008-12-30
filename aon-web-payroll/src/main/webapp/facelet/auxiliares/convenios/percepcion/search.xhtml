@@ -49,7 +49,7 @@
 					<aon:outputLabel for="Percniv_tipcom" 
 						value="#{appBundle.aon_payroll_auxiliares_convenios__tip_comp}"/>
 					<aon:selectOneMenu id="Percniv_tipcom" 
-						valueChangeListener="#{percniv.addDirectEqualExpression}" >	
+						valueChangeListener="#{percniv.addEqualExpression}" >	
 						<aon:enumConverter enum="com.code.aon.payroll.enumeration.TipoComplemento" />	
 						<f:selectItem value="#{null}" itemLabel="  " />											
 						<f:selectItems value="#{complemento.listaComplementos}"/>
@@ -58,7 +58,7 @@
 					<aon:outputLabel for="Percniv_tipcot" 
 						value="#{appBundle.aon_payroll_auxiliares_convenios__tip_coti}"/>	
 					<aon:selectOneMenu id="Percniv_tipcot" 
-						valueChangeListener="#{percniv.addDirectEqualExpression}" >	
+						valueChangeListener="#{percniv.addEqualExpression}" >	
 						<aon:enumConverter enum="com.code.aon.payroll.enumeration.TipoCotizaciones" />
 						<f:selectItem value="#{null}" itemLabel="  " />
 						<f:selectItems value="#{complemento.listaCotizaciones}" />
@@ -121,7 +121,7 @@
 						</f:facet>
 						<aon:div styleClass="">
 							<aon:selectOneRadio id="Percniv_indcom" 
-								valueChangeListener="#{percniv.addDirectEqualExpression}" >	
+								valueChangeListener="#{percniv.addEqualExpression}" >	
 					    		<aon:enumConverter enum="com.code.aon.payroll.enumeration.IndiceComplemento" />	
 								<f:selectItems value="#{complemento.listaIndiceComplemento}"  />											
 							</aon:selectOneRadio>
@@ -135,7 +135,7 @@
 						</f:facet>
 						<aon:div styleClass="">
 							<aon:selectOneRadio id="Percniv_redext" 
-								valueChangeListener="#{percniv.addDirectEqualExpression}" >	
+								valueChangeListener="#{percniv.addEqualExpression}" >	
 					    		<aon:enumConverter enum="com.code.aon.payroll.enumeration.PagaExtra" />	
 								<f:selectItems value="#{percniv.listaPagaExtra}"/>											
 							</aon:selectOneRadio>
@@ -149,7 +149,7 @@
 						</f:facet>
 						<aon:div styleClass="">
 							<aon:selectOneRadio id="Percniv_fijovar" 
-								valueChangeListener="#{percniv.addDirectEqualExpression}" >	
+								valueChangeListener="#{percniv.addEqualExpression}" >	
 					    		<aon:enumConverter enum="com.code.aon.payroll.enumeration.FijoVariable" />
 								<f:selectItems value="#{complemento.listaFijoVariable}"/>											
 							</aon:selectOneRadio>
@@ -163,7 +163,7 @@
 						</f:facet>
 						<aon:div styleClass="">
 							<aon:selectOneRadio id="Percniv_dinesp" 
-								valueChangeListener="#{percniv.addDirectEqualExpression}" >	
+								valueChangeListener="#{percniv.addEqualExpression}" >	
 					    		<aon:enumConverter enum="com.code.aon.payroll.enumeration.Retribuciones" />	
 								<f:selectItems value="#{complemento.listaRetribuciones}"/>											
 							</aon:selectOneRadio>

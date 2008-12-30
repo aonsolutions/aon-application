@@ -41,7 +41,7 @@
 					<aon:outputLabel for="ContratosInternos_desemple" 
 						value="#{appBundle.aon_payroll_desempleado}" />
 					<aon:selectOneMenu id="ContratosInternos_desemple" 
-						 valueChangeListener="#{contratosInternos.addDirectEqualExpression}" >	
+						 valueChangeListener="#{contratosInternos.addEqualExpression}" >	
 					    <aon:enumConverter enum="com.code.aon.payroll.enumeration.Desempleado" />
 						<f:selectItem value="#{null}" itemLabel="    " />
 						<f:selectItems value="#{contratosInternos.desempleados}" />
