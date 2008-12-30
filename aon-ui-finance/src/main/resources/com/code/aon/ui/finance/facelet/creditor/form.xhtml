@@ -36,6 +36,17 @@
 						value="#{creditor.to.status}">
 						<f:selectItems value="#{financeCollections.creditorStatuses}" />
 					</aon:selectOneMenu>
+					
+					<c:if test="#{creditor.showAccount}">
+						<aon:outputLabel for="Creditor_account"
+							value="#{accountingBundle.accounting_account}" />
+						<aon:inputText id="Creditor_account" 
+							rendered="#{creditorAccount.account != null}"
+							value="#{creditorAccount.account.id} - #{creditorAccount.account.description}"
+							disabled="true" size="60" />
+						<aon:inputText rendered="#{creditorAccount.account == null}"
+							value="" disabled="true" size="60" />
+					</c:if>										
 				</aon:panelGrid>
 			</aon:div>
 			<c:if test="#{!creditor.new}">
