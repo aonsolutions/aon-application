@@ -44,7 +44,7 @@ public class TaxBreakDown {
 	/**
 	 * Returns the tax type 
 	 * 
-	 * @return
+	 * @return taxType
 	 */
 	public TaxType getTaxType() {
 		return taxType;
@@ -62,7 +62,7 @@ public class TaxBreakDown {
 	/**
 	 * Returns the tax percent 
 	 * 
-	 * @return
+	 * @return taxPercent
 	 */
 	public double getTaxPercent() {
 		return taxPercent;

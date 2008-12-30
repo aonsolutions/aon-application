@@ -30,6 +30,7 @@ public interface IPriceStrategy {
 	 * appling a concrete tariff.
 	 * 
 	 * @param calc ICalculable object
+	 * @param date the date
 	 * @param tariff the tariff to be applied to the ICalculabe object
 	 * @return the unit price
 	 */
@@ -67,7 +68,7 @@ public interface IPriceStrategy {
 	 * 
 	 * @param icc ICalculableContainer a list of ICalculables
 	 * @param iti tax aplicability info
-	 * @return
+	 * @return breakDowns
 	 */
 	public List<TaxBreakDown> getTaxBreakDowns(ICalculableContainer icc, ITaxInfo iti);
 	
