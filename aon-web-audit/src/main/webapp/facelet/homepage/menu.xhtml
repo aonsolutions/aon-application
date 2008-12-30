@@ -10,24 +10,32 @@
 
 	<aon:form id="menuForm">
 	
-		<aon:div styleClass="aon-finding-title-toolbar">
-			<aon:panelGrid dir="true"
-				columnClasses="aon-finding-toolbar">
-
-				<aon:div id="toolbar" styleClass="aon-finding-toolbar-item-group">
-					<aon:commandButton id="domain" value="#{auditBundle.audit_domains_module}"
-						immediate="true" action="domain_list" actionListener="#{domain.onSearch}"
-						styleClass="aon-finding-toolbar-item aon-icon-domains" />
-					<aon:commandButton id="application" value="#{auditBundle.audit_applications_module}"
-						immediate="true" action="auditApplication_list" actionListener="#{auditApplication.onSearch}"
-						styleClass="aon-finding-toolbar-item aon-icon-applications" />
-					<aon:commandButton id="session" value="#{auditBundle.audit_sessions_module}"
-						immediate="true" action="auditSession_list" actionListener="#{auditSession.onSearch}"
-						styleClass="aon-finding-toolbar-item aon-icon-sessions" />
-				</aon:div>
-
-			</aon:panelGrid>
-		</aon:div>
+		<!-- 
+		<aon:commandButton id="domain" value="#{auditBundle.audit_domains_module}"
+			immediate="true" action="domain_list" actionListener="#{domain.onSearch}"
+			styleClass="aon-finding-toolbar-item aon-icon-domains" />
+		<aon:commandButton id="application" value="#{auditBundle.audit_applications_module}"
+			immediate="true" action="auditApplication_list" actionListener="#{auditApplication.onSearch}"
+			styleClass="aon-finding-toolbar-item aon-icon-applications" />
+		<aon:commandButton id="session" value="#{auditBundle.audit_sessions_module}"
+			immediate="true" action="auditSession_list" actionListener="#{auditSession.onSearch}"
+			styleClass="aon-finding-toolbar-item aon-icon-sessions" />
+		-->
+		<aon:menuBar> 
+			<aon:commandLink id="domain"
+				value="#{auditBundle.audit_domains_module}"
+				styleClass="aon-top-menu-item aon-icon-domains" immediate="true" 
+				action="domain_list" actionListener="#{domain.onSearch}" />
+			<aon:commandLink id="application"
+				value="#{auditBundle.audit_applications_module}"
+				styleClass="aon-top-menu-item aon-icon-applications" immediate="true" 
+				action="auditApplication_list" actionListener="#{auditApplication.onSearch}" />
+			<aon:commandLink id="session"
+				value="#{auditBundle.audit_sessions_module}"
+				styleClass="aon-top-menu-item aon-icon-sessions" immediate="true" 
+				action="auditSession_list" actionListener="#{auditSession.onSearch}" />
+		</aon:menuBar>
+		
 
 	</aon:form>
 
