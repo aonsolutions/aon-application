@@ -50,7 +50,7 @@ public enum ScaleModel implements IResourceable {
 	 * Return the <code>Scale Model</code>
 	 * 
 	 * @param value
-	 * @return
+	 * @return ScaleModel
 	 */
     public static ScaleModel get(String value) {
     	for( ScaleModel _enum : values() ) {

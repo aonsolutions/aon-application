@@ -115,7 +115,7 @@ public class Ticket{
 	}
 
 	/**
-	 * @param seler the seler to set
+	 * @param customer the customer to set
 	 */
 	public void setCustomer(int customer) {
 		this.customer = customer;
