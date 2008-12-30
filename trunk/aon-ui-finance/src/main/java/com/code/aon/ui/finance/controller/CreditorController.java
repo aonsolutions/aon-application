@@ -11,6 +11,8 @@ public class CreditorController extends BasicController {
 	
 	private boolean showFinanceData = true;
 	
+	private boolean showAccount;
+	
 	public boolean isShowFinanceData() {
 		return showFinanceData;
 	}
@@ -27,4 +29,12 @@ public class CreditorController extends BasicController {
 		this.selectedTab = selectedTab;
 	}
 
+	public boolean isShowAccount() {
+		return showAccount;
+	}
+
+	public void setShowAccount(boolean showAccount) {
+		this.showAccount = showAccount;
+	}
+	
 }

@@ -62,6 +62,17 @@
 					<aon:selectBooleanCheckbox id="Customer_surcharge"
 						value="#{customer.to.surcharge}" />
 
+					<c:if test="#{customer.showAccount}">
+						<aon:outputLabel for="Customer_account"
+							value="#{accountingBundle.accounting_account}" />
+						<aon:inputText id="Customer_account" 
+							rendered="#{customerAccount.account != null}"
+							value="#{customerAccount.account.id} - #{customerAccount.account.description}"
+							disabled="true" size="60" />
+						<aon:inputText rendered="#{customerAccount.account == null}"
+							value="" disabled="true" size="60" />
+					</c:if>
+
 				</aon:panelGrid>
 
 				<aon:panelGrid id="observationDataTable" styleClass="aon-margin-top"
