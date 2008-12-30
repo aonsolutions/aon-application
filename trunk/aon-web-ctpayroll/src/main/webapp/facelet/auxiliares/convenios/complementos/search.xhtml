@@ -28,7 +28,7 @@
 					<aon:outputLabel for="Complemento_tipcot"
 						value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_tipcot}" />
 					<aon:selectOneMenu id="Complemento_tipcot" 
-						valueChangeListener="#{complemento.addDirectEqualExpression}" >	
+						valueChangeListener="#{complemento.addEqualExpression}" >	
 					    <aon:enumConverter enum="com.code.aon.payroll.enumeration.TipoCotizaciones" />
 						<f:selectItem value="#{null}" itemLabel="   " />
 						<f:selectItems value="#{complemento.listaCotizaciones}" />
@@ -42,7 +42,7 @@
 					<aon:outputLabel for="Complemento_tipcom"
 						value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_tipcom}" />
 					<aon:selectOneMenu id="Complemento_tipcom" 
-						valueChangeListener="#{complemento.addDirectEqualExpression}" >	
+						valueChangeListener="#{complemento.addEqualExpression}" >	
 					    <aon:enumConverter enum="com.code.aon.payroll.enumeration.TipoComplemento" />	
 						<f:selectItem value="#{null}" itemLabel="   " />											
 						<f:selectItems value="#{complemento.listaComplementos}"/>
@@ -51,7 +51,7 @@
 					<aon:outputLabel for="Complemento_dinesp"
 						value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_dinesp}" />
 					<aon:selectOneRadio id="Complemento_dinesp" 
-						valueChangeListener="#{complemento.addDirectEqualExpression}" >	
+						valueChangeListener="#{complemento.addEqualExpression}" >	
 					    <aon:enumConverter enum="com.code.aon.payroll.enumeration.Retribuciones" />	
 						<f:selectItems value="#{complemento.listaRetribuciones}"/>											
 					</aon:selectOneRadio>
@@ -59,7 +59,7 @@
 					<aon:outputLabel for="Complemento_fijovar"
 						value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_fijovar}" />
 					<aon:selectOneRadio id="Complemento_fijovar" 
-						valueChangeListener="#{complemento.addDirectEqualExpression}" >	
+						valueChangeListener="#{complemento.addEqualExpression}" >	
 					    <aon:enumConverter enum="com.code.aon.payroll.enumeration.FijoVariable" />	
 						<f:selectItems value="#{complemento.listaFijoVariable}"/>											
 					</aon:selectOneRadio>
@@ -67,7 +67,7 @@
 					<aon:outputLabel for="Complemento_indcom"
 						value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_indcom}" />
 					<aon:selectOneRadio id="Complemento_indcom" 
-						valueChangeListener="#{complemento.addDirectEqualExpression}" >	
+						valueChangeListener="#{complemento.addEqualExpression}" >	
 					    <aon:enumConverter enum="com.code.aon.payroll.enumeration.IndiceComplemento" />	
 						<f:selectItems value="#{complemento.listaIndiceComplemento}"/>											
 					</aon:selectOneRadio>

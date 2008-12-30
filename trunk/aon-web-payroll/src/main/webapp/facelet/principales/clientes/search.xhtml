@@ -281,7 +281,7 @@
 									value="#{appBundle.aon_payroll_principales_clientes_envioss}" />
 
 								<aon:selectOneMenu id="Cliente_envioss"
-									valueChangeListener="#{cliente.addDirectEqualExpression}">
+									valueChangeListener="#{cliente.addEqualExpression}">
 									<aon:enumConverter
 										enum="com.code.aon.payroll.enumeration.EnvioSS" />
 									<f:selectItem value="#{null}" itemLabel="    " />
@@ -336,7 +336,7 @@
 		<aon:panelGrid columns="2">
 				
 		 		<aon:outputLabel for="Cliente_domicilios_cdg" value="#{appBundle.aon_payroll_principales_domicilio_cdg}" />
-					<aon:inputText id="Cliente_domicilios_cdg" valueChangeListener="#{cliente.addDirectExpression}"
+					<aon:inputText id="Cliente_domicilios_cdg" valueChangeListener="#{cliente.addExpression}"
 						 size="50" maxlength="3" />
 			 		
 			 	 			
@@ -382,23 +382,23 @@
 					
 	
 					<aon:outputLabel for="Cliente_domicilios_nomvia" value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_nomvia}" />
-					<aon:inputText id="Cliente_domicilios_nomvia" valueChangeListener="#{cliente.addDirectExpression}"
+					<aon:inputText id="Cliente_domicilios_nomvia" valueChangeListener="#{cliente.addExpression}"
 						 size="50" maxlength="20" />
 						
 				    <aon:outputLabel for="Cliente_domicilios_numero" value="#{appBundle.aon_payroll_principales_clientes_num}" />
-					<aon:inputText id="Cliente_domicilios_numero" valueChangeListener="#{cliente.addDirectExpression}"
+					<aon:inputText id="Cliente_domicilios_numero" valueChangeListener="#{cliente.addExpression}"
 						 size="50" maxlength="20" />
 						
 					<aon:outputLabel  for="Cliente_domicilios_otrdir" value="#{appBundle.aon_payroll_principales_clientes_otros}" />
-					<aon:inputText id="Cliente_domicilios_otrdir" valueChangeListener="#{cliente.addDirectExpression}"
+					<aon:inputText id="Cliente_domicilios_otrdir" valueChangeListener="#{cliente.addExpression}"
 						 size="50" maxlength="20" />
 						
 							<aon:outputLabel for="Cliente_domicilios_codpos" value="#{appBundle.aon_payroll_principales_clientes_codpos}" />
-					<aon:inputText id="Cliente_domicilios_codpos" valueChangeListener="#{cliente.addDirectExpression}"
+					<aon:inputText id="Cliente_domicilios_codpos" valueChangeListener="#{cliente.addExpression}"
 						 size="50" maxlength="20" />
 						
 							<aon:outputLabel for="Cliente_domicilios_localidad" value="#{appBundle.aon_payroll_principales_clientes_localidad}" />
-					<aon:inputText id="Cliente_domicilios_localidad" valueChangeListener="#{cliente.addDirectExpression}" 
+					<aon:inputText id="Cliente_domicilios_localidad" valueChangeListener="#{cliente.addExpression}" 
 						 size="50" maxlength="20" />
 					
 		 	       <aon:outputLabel for="Domicilio_provincia_cdg" 
@@ -424,27 +424,27 @@
 	     	           
 					 
 						<aon:outputLabel for="Cliente_domicilios_telefono" value="#{appBundle.aon_payroll_principales_clientes_telefono}" />
-					<aon:inputText id="Cliente_domicilios_telefono" valueChangeListener="#{cliente.addDirectExpression}"
+					<aon:inputText id="Cliente_domicilios_telefono" valueChangeListener="#{cliente.addExpression}"
 						 size="50" maxlength="20" />
 						
 							<aon:outputLabel for="Cliente_domicilios_fax" value="#{appBundle.aon_payroll_principales_clientes_fax}" />
-					<aon:inputText id="Cliente_domicilios_fax" valueChangeListener="#{cliente.addDirectExpression}"
+					<aon:inputText id="Cliente_domicilios_fax" valueChangeListener="#{cliente.addExpression}"
 						 size="50" maxlength="20" />
 						
 							<aon:outputLabel for="Cliente_domicilios_email" value="#{appBundle.aon_payroll_principales_clientes_email}" />
-					<aon:inputText id="Cliente_domicilios_email" valueChangeListener="#{cliente.addDirectExpression}" 
+					<aon:inputText id="Cliente_domicilios_email" valueChangeListener="#{cliente.addExpression}" 
 						 size="50" maxlength="20" />
 						
 							<aon:outputLabel for="Cliente_domicilios_linea1" value="#{appBundle.aon_payroll_principales_domicilio_lin1}" />
-					<aon:inputText id="Cliente_domicilios_linea1" valueChangeListener="#{cliente.addDirectExpression}" 
+					<aon:inputText id="Cliente_domicilios_linea1" valueChangeListener="#{cliente.addExpression}" 
 						 size="50" maxlength="20" />
 						
 							<aon:outputLabel for="Cliente_domicilios_linea2" value="#{appBundle.aon_payroll_principales_domicilio_lin2}" />
-					<aon:inputText id="Cliente_domicilios_linea2"  valueChangeListener="#{cliente.addDirectExpression}" 
+					<aon:inputText id="Cliente_domicilios_linea2"  valueChangeListener="#{cliente.addExpression}" 
 						 size="50" maxlength="20" />
 					
 			     	<aon:outputLabel for="Cliente_domicilios_persona" value="#{appBundle.aon_payroll_principales_domicilio_persona}" />
-					   <aon:inputText id="Cliente_domicilios_persona" valueChangeListener="#{cliente.addDirectExpression}" 
+					   <aon:inputText id="Cliente_domicilios_persona" valueChangeListener="#{cliente.addExpression}" 
 						 size="50" maxlength="20" />
 					
 					  	<aon:outputLabel for="Cliente_domicilios_aclaracion" value="#{appBundle.aon_payroll_principales_domicilio_aclaracion}" />
@@ -462,7 +462,7 @@
 				
 				
 	   	<aon:outputLabel for="Cliente_cuentas_cdg" value="#{appBundle.aon_payroll_principales_cuenta_cdg}" />
-					<aon:inputText id="Cliente_cuentas_cdg" valueChangeListener="#{cliente.addDirectExpression}"
+					<aon:inputText id="Cliente_cuentas_cdg" valueChangeListener="#{cliente.addExpression}"
 						 size="50" maxlength="3" />
 			 						 		
 				
@@ -488,23 +488,23 @@
 					
 						
 							<aon:outputLabel for="Cliente_cuentas_entidad_description" value="#{appBundle.aon_payroll_principales_cuenta_entidad_nom}" />
-					<aon:inputText id="Cliente_cuentas_entidad_description" valueChangeListener="#{cliente.addDirectExpression}"
+					<aon:inputText id="Cliente_cuentas_entidad_description" valueChangeListener="#{cliente.addExpression}"
 						 size="50" maxlength="20" />
 						 
 							<aon:outputLabel for="Cliente_cuentas_entidad_cdg" value="#{appBundle.aon_payroll_principales_cuenta_entidad}" />
-					<aon:inputText id="Cliente_cuentas_entidad_cdg" valueChangeListener="#{cliente.addDirectExpression}"
+					<aon:inputText id="Cliente_cuentas_entidad_cdg" valueChangeListener="#{cliente.addExpression}"
 						 size="50" maxlength="20" />
 						
 							<aon:outputLabel for="Cliente_cuentas_sucursal_id_cdg" value="#{appBundle.aon_payroll_principales_cuenta_sucursal}" />
-					<aon:inputText id="Cliente_cuentas_sucursal_id_cdg" valueChangeListener="#{cliente.addDirectExpression}"
+					<aon:inputText id="Cliente_cuentas_sucursal_id_cdg" valueChangeListener="#{cliente.addExpression}"
 						 size="50" maxlength="20" />
 						
 							<aon:outputLabel for="Cliente_cuentas_dc"  value="#{appBundle.aon_payroll_principales_cuenta_dc}" />
-					<aon:inputText id="Cliente_cuentas_dc" valueChangeListener="#{cliente.addDirectExpression}"
+					<aon:inputText id="Cliente_cuentas_dc" valueChangeListener="#{cliente.addExpression}"
 						 size="50" maxlength="20" />
 			  		
 		            <aon:outputLabel for="Cliente_cuentas_numcta" value="#{appBundle.aon_payroll_principales_cuenta_numcta}" />
-					<aon:inputText id="Cliente_cuentas_numcta" valueChangeListener="#{cliente.addDirectExpression}"
+					<aon:inputText id="Cliente_cuentas_numcta" valueChangeListener="#{cliente.addExpression}"
 						 size="50" maxlength="20" />
 			  		
 						

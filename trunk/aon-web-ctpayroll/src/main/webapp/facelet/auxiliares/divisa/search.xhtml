@@ -32,7 +32,7 @@
 						valueChangeListener="#{divisaMaestro.addExpression}" />
 						
 					<aon:outputLabel for="Divisa_redondeo" value="#{appBundle.aon_payroll_auxiliares_cotizacion__pro}" />
-					<aon:selectOneMenu id="Divisa_redondeo" value="#{divisaMaestro.to.redondeo}" valueChangeListener="#{divisaMaestro.addDirectEqualExpression}" >	
+					<aon:selectOneMenu id="Divisa_redondeo" value="#{divisaMaestro.to.redondeo}" valueChangeListener="#{divisaMaestro.addEqualExpression}" >	
 					   <aon:enumConverter enum="com.code.aon.payroll.enumeration.Divisas" />	
 					    <f:selectItem value="#{null}" itemLabel="    " />
 						<f:selectItems value="#{divisaMaestro.listaRedondeos}"/>											
