@@ -2,6 +2,8 @@ package com.code.aon.faces.component.richfaces;
 
 public interface IRichFacesTags {
 
+	String RENDERED = "rendered";
+	
 	String RERENDER = "reRender";
 	
 	String EVENT = "event";
