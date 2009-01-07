@@ -19,6 +19,7 @@ import com.code.aon.faces.component.ComponentManager;
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.richfaces.outputLabel.OutputLabelHandler;
 import com.code.aon.faces.component.util.BasicComponentConfig;
+import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.faces.component.util.HTML;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.MetaRuleset;
@@ -84,7 +85,7 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 	}
 	
 	public TagAttribute getRendered() {
-		return getAttribute("rendered");
+		return getAttribute(RENDERED);
 	}
 
 	private String getAjaxEvent() {
@@ -121,6 +122,7 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 				BasicComponentConfig config = new BasicComponentConfig(getConfig(), attributes );
 				config.setComponentType(SUPPORT_COMPONENT_TYPE);
 				config.setRendererType(SUPPORT_RENDERER_TYPE);
+				config.setNextHandler(FaceletUtil.LEAF_HANDLER);
 				ajaxSupportHandler = new AjaxSupportHandler(config);
 			}
 			ajaxSupportHandler.apply(ctx, c);
