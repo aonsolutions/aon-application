@@ -27,8 +27,6 @@ public class SpinHandler extends TagHandler {
 	
 	private static final String SPIN_ID = "spinId";
 	
-	private static final String RENDERED = "rendered";
-	
    	private static final String ACTION = "action";
    	
    	private TagAttribute controllerTag;
@@ -70,19 +68,10 @@ public class SpinHandler extends TagHandler {
 		newMapper.setVariable(SPIN_ID, id);
 		FaceletUtil.insertTemplate(ctx, tag, component, FaceletUtil.getTemplate(TEMPLATE), newMapper);
 	}
-
-	private boolean isRendered( FaceletContext ctx ) {
-		boolean rendered = true;
-		TagAttribute renderedTag = getAttribute(RENDERED);
-		if ( renderedTag != null ) {
-			rendered = renderedTag.getBoolean(ctx);
-		}
-		return rendered;
-	}
 	
 	@Override
 	public void apply(FaceletContext ctx, UIComponent parent) {
-		if ( isRendered(ctx) ) {
+		if ( FaceletUtil.isRendered(ctx, tag) && parent.isRendered() ) {
 			insertTemplate( ctx, parent );
 		}
 	}
