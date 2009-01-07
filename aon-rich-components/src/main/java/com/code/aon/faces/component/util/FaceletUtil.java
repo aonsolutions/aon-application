@@ -1,13 +1,16 @@
 package com.code.aon.faces.component.util;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
 
+import javax.el.ELException;
 import javax.el.ExpressionFactory;
 import javax.el.MethodExpression;
 import javax.el.ValueExpression;
 import javax.el.VariableMapper;
+import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.el.ValueBinding;
@@ -18,8 +21,11 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.net.DummyHandler;
+import com.code.aon.faces.component.richfaces.IRichFacesTags;
 import com.code.aon.faces.component.richfaces.lookup.LookupChangeEvent;
 import com.sun.facelets.FaceletContext;
+import com.sun.facelets.FaceletException;
+import com.sun.facelets.FaceletHandler;
 import com.sun.facelets.tag.Tag;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.TagException;
@@ -38,7 +44,15 @@ public class FaceletUtil {
 	
 	public final static Class[] VALIDATOR_SIG = new Class[] { FacesContext.class, UIComponent.class, Object.class };
 	
-	private static final String RENDERED = "rendered";
+    public final static FaceletHandler LEAF_HANDLER = new FaceletHandler() {
+        public void apply(FaceletContext ctx, UIComponent parent)
+                throws IOException, FacesException, FaceletException,
+                ELException {
+        }
+        public String toString() {
+            return "FaceletHandler Aon Leaf";
+        }
+    };
 	
 	public static URL getTemplate(String resource) {
 		ClassLoader loader = FaceletUtil.class.getClassLoader();
@@ -158,7 +172,7 @@ public class FaceletUtil {
 	
 	public static boolean isRendered( FaceletContext ctx, Tag tag ) {
 		boolean rendered = true;
-		TagAttribute renderedTag = getAttribute(tag, RENDERED);
+		TagAttribute renderedTag = getAttribute(tag, IRichFacesTags.RENDERED);
 		if ( renderedTag != null ) {
 			rendered = renderedTag.getBoolean(ctx);
 		}
