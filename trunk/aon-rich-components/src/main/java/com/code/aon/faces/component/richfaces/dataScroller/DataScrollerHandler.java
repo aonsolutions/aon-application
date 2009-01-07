@@ -5,6 +5,7 @@ import javax.el.VariableMapper;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIData;
 
+import com.code.aon.faces.component.richfaces.IRichFacesTags;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.el.VariableMapperWrapper;
@@ -23,8 +24,6 @@ public class DataScrollerHandler extends TagHandler {
 	private static final String TEMPLATE_PATH = "com/code/aon/faces/component/richfaces/dataScroller/";
 
 	private static final String TEMPLATE = TEMPLATE_PATH + "dataScroller.xhtml";
-	
-	private static final String RENDERED = "rendered";
 	
 	private static final String DATA_TABLE = "dataTable";
 	
@@ -101,19 +100,10 @@ public class DataScrollerHandler extends TagHandler {
 		newMapper.setVariable(ACTION, action);		
 		FaceletUtil.insertTemplate(ctx, tag, component, FaceletUtil.getTemplate(TEMPLATE), newMapper);
 	}
-
-	private boolean isRendered( FaceletContext ctx ) {
-		boolean rendered = true;
-		TagAttribute renderedTag = getAttribute(RENDERED);
-		if ( renderedTag != null ) {
-			rendered = renderedTag.getBoolean(ctx);
-		}
-		return rendered;
-	}
 	
 	@Override
 	public void apply(FaceletContext ctx, UIComponent parent) {
-		if ( isRendered(ctx) ) {
+		if ( FaceletUtil.isRendered(ctx, tag) && parent.isRendered() ) {
 			insertTemplate( ctx, parent );
 		}
 	}
