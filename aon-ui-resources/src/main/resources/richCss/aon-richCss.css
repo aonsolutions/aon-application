@@ -1248,7 +1248,7 @@ color:#000;
 /**********************/
 /****  HEADER SECTION ******/
 /**********************/
-#aon-header{
+.aon-header{
 	background:#304055 url(images/aon-header/aon-header.png) scroll left top repeat-x;
 	border-bottom:#717e88 1px solid;
 	text-alin:right;
