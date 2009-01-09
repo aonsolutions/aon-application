@@ -49,16 +49,16 @@
 				<aon:div styleClass="aon-lookup">
 					<aon:lookupInputText id="impresos190_emprnif_cdg" 
 						lookup="#{empresaLookup}" reRender="impresos190_emprnif_descripcion"
-						value="#{impresos190.to.emprnif.cdg}" size="5" >
+						value="#{impresos190.emprnif.cdg}" size="5" >
 					</aon:lookupInputText>
 					<aon:lookupButton id="impresos190_emprnif_lookup"
 						windowTitle="#{appBundle.aon_payroll_resultados_irpf_impresos190_empresa_nif}"
 						selectReRender="impresos190_emprnif_cdg,impresos190_emprnif_descripcion"
 						lookup="#{empresaLookup}" minHeight="440"
-						property="#{impresos190.to.emprnif}">
+						property="#{impresos190.emprnif}">
 					</aon:lookupButton>
 					<aon:inputText id="impresos190_emprnif_descripcion"
-						value="#{(impresos190.to.emprnif.descripcion!=null)?(impresos190.to.emprnif.descripcion):('')}"
+						value="#{(impresos190.emprnif.descripcion!=null)?(impresos190.emprnif.descripcion):('')}"
 						size="45" disabled="true" />
 				</aon:div>
 				
@@ -67,16 +67,16 @@
 				<aon:div styleClass="aon-lookup">
 					<aon:lookupInputText id="impresos190_admon_cdg"
 						lookup="#{admonLookup}" reRender="impresos190_admon_descripcion"
-						value="#{impresos190.to.admon.cdg}" size="5">
+						value="#{impresos190.admon.cdg}" size="5">
 					</aon:lookupInputText>
 					<aon:lookupButton id="impresos190_admon_lookup"
 						windowTitle="#{appBundle.aon_payroll_resultados_irpf_impresos190_empresa_nif}"
 						selectReRender="impresos190_admon_cdg,impresos190_admon_descripcion"
 						lookup="#{admonLookup}" minHeight="440"
-						property="#{impresos190.to.admon}">
+						property="#{impresos190.admon}">
 					</aon:lookupButton>
 					<aon:inputText id="impresos190_admon_descripcion"
-						value="#{(impresos190.to.admon.description!=null)?(impresos190.to.admon.description):('')}"
+						value="#{(impresos190.admon.description!=null)?(impresos190.admon.description):('')}"
 						size="45" disabled="true" />
 				</aon:div>
 				
@@ -85,22 +85,23 @@
 				<aon:div styleClass="aon-lookup">
 					<aon:lookupInputText id="impresos190_provincia_cdg" 
 						lookup="#{provinciaLookup}" reRender="impresos190_provincia_descripcion"
-						value="#{impresos190.to.provincia.cdg}" size="5">
+						value="#{impresos190.provincia.cdg}" size="5">
 					</aon:lookupInputText>
 					<aon:lookupButton id="impresos190_provincia_lookup"
 						windowTitle="#{appBundle.aon_payroll_resultados_irpf_impresos190_provincia}"
 						selectReRender="impresos190_provincia_cdg,impresos190_provincia_descripcion"
 						lookup="#{provinciaLookup}" minHeight="440"
-						property="#{impresos190.to.provincia}">
+						property="#{impresos190.provincia}">
 					</aon:lookupButton>
 					<aon:inputText id="impresos190_provincia_descripcion"
-						value="#{(impresos190.to.provincia.descripcion!=null)?(impresos190.to.provincia.descripcion):('')}"
+						value="#{(impresos190.provincia.descripcion!=null)?(impresos190.provincia.descripcion):('')}"
 						size="45" disabled="true" />
 				</aon:div>
 				
-				<aon:outputLabel value="#{appBundle.aon_payroll_resultados_irpf_impresos190_descuadro}" />
-				
-				<aon:selectBooleanCheckbox value="#{linimpresos190_prolongacion}" />
+				<aon:outputLabel for="Impresos190_descuadrado"
+					value="#{appBundle.aon_payroll_resultados_irpf_impresos190_descuadro}" />
+				<aon:selectBooleanCheckbox id="Impresos190_descuadrado" 
+					valueChangeListener="#{impresos190.addEqualExpression}"/>
 				
 						<!-- *********************************** -->
 						
