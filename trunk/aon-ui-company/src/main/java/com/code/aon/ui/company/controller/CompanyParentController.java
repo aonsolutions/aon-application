@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Iterator;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -84,6 +83,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	private boolean showRegistryBank = true;
 
 	private boolean showCompanyOtherData = true;
+	
+	private boolean showPanelTabSet = true;
 
     /**
      * The empty constructor.
@@ -593,22 +594,11 @@ public class CompanyParentController extends BasicController implements ICompany
 		return IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID;
 	}
 	
-	/**
-	 * If the company has been defined navigates to the homepage, 
-	 * otherwise navigates to the company maintenance.
-	 * 
-	 * @return The url of the page that will be loaded
-	 * 
-	 * @throws ManagerBeanException
-	 */
-	public String getCompanyNavigation() throws ManagerBeanException {
-		String context = 
-			FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
-		if ( this.getModel().getRowCount() > 0 ) {
-			return context + "/facelet/homepage/firstContent.faces";
+	public String getOnNew() throws ManagerBeanException {
+		if(this.getTo() == null) {
+			this.onLoad();
 		}
-		this.onLoad();
-		return context + "/facelet/registry/company/init.faces";
+		return "";
 	}
 
 	/** COMPANY_ADDRESS_CONTROLLER_NAME. */
@@ -651,4 +641,13 @@ public class CompanyParentController extends BasicController implements ICompany
 	public void setShowCompanyOtherData(boolean showCompanyOtherData) {
 		this.showCompanyOtherData = showCompanyOtherData;
 	}
+
+	public boolean isShowPanelTabSet() {
+		return showPanelTabSet;
+	}
+
+	public void setShowPanelTabSet(boolean showPanelTabSet) {
+		this.showPanelTabSet = showPanelTabSet;
+	}
+
 }
