@@ -30,7 +30,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>3.5.0-SNAPSHOT</version>
+			<version>3.5.0</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.accounting</artifactId>
-			<version>3.2.0</version>
+			<version>3.2.0-SNAPSHOT</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -72,13 +72,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.commercial</artifactId>
-			<version>3.2.0</version>
+			<version>3.2.0-SNAPSHOT</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.composite</artifactId>
-			<version>3.2.0</version>
+			<version>3.2.0-SNAPSHOT</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -90,7 +90,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.finance</artifactId>
-			<version>3.2.0</version>
+			<version>3.2.0-SNAPSHOT</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -112,7 +112,7 @@
  		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.product</artifactId>
-			<version>3.1.2</version>
+			<version>3.1.3</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
