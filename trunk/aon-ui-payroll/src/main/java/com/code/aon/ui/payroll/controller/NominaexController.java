@@ -10,12 +10,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.payroll.auxiliares.Admon;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.divisa.Divisa;
 import com.code.aon.payroll.enumeration.FijoVariable;

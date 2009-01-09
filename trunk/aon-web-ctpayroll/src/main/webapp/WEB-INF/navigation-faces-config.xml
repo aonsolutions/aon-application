@@ -1160,6 +1160,34 @@
 		</navigation-case>
 	</navigation-rule> 
 	
+	<!-- =================== Resultados - irpf - impresos190 ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>impresos190_form</from-outcome>
+			<to-view-id>
+				/facelet/resultados/irpf/impresos190/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>impresos190_list</from-outcome>
+			<to-view-id>
+				/facelet/resultados/irpf/impresos190/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>impresos190_search</from-outcome>
+			<to-view-id>
+				/facelet/resultados/irpf/impresos190/search.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>linimpresos190_form</from-outcome>
+			<to-view-id>
+				/facelet/resultados/irpf/impresos190/interior/form.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
 	
 	
 	

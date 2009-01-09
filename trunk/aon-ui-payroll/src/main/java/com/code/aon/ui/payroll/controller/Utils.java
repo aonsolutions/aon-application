@@ -108,7 +108,7 @@ public class Utils {
 	
 	/**
 	 * Dado el nombre de una tabla, un campo de la tabla y una clausula where, 
-	 * devuelve el valor maximo
+	 * devuelve su valor maximo
 	 * @param tableName
 	 * @param fieldName
 	 * @return
@@ -116,7 +116,7 @@ public class Utils {
 	public static final String maxCode(String tableName, String fieldName, String where){
 		
 		if(tableName!=null && fieldName!=null && where!=null){
-			String sql = "select max("+fieldName+") from "+tableName+" where "+where;	
+			String sql = "select max("+fieldName.toString()+") from "+tableName+" where "+where;	
 			Query query = HibernateUtil.getSession().createQuery(sql);			
 			List results = query.list();
 				

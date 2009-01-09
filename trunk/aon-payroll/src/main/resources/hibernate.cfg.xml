@@ -118,6 +118,8 @@
         <mapping class="com.code.aon.payroll.resultados.salarios.Nomdtoex"/>
         <!-- RESULTADOS - IRPF -->			
         <mapping class="com.code.aon.payroll.resultados.irpf.Impresos11x"/>
+        <mapping class="com.code.aon.payroll.resultados.irpf.Impresos190"/>
+        <mapping class="com.code.aon.payroll.resultados.irpf.LinImpresos190"/>
         
 	</session-factory>
 

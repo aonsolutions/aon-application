@@ -76,6 +76,8 @@ import com.code.aon.payroll.principales.personas.Otrperc;
 import com.code.aon.payroll.principales.personas.Percep;
 import com.code.aon.payroll.principales.personas.Persona;
 import com.code.aon.payroll.resultados.irpf.Impresos11x;
+import com.code.aon.payroll.resultados.irpf.Impresos190;
+import com.code.aon.payroll.resultados.irpf.LinImpresos190;
 import com.code.aon.payroll.resultados.salarios.Nomdtoex;
 import com.code.aon.payroll.resultados.salarios.Nominaex;
 import com.code.aon.payroll.tipos.Autorizacion;
@@ -172,7 +174,9 @@ public class PayrollAliasWriter {
 		        Emprccc.class.getName(),
 		        Emprccos.class.getName(),
 		        Persona.class.getName(),
-		        Impresos11x.class.getName()
+		        Impresos11x.class.getName(),
+		        Impresos190.class.getName(),
+		        LinImpresos190.class.getName()
 		        };		
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");
 		HibernateUtil.getSessionFactory();

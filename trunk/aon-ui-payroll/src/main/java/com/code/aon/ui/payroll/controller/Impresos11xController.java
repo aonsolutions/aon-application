@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -26,6 +28,8 @@ public class Impresos11xController extends PayrollBasicController {
 
 	// Falta implementacion imprimir formulario "Informativa 11X"
 	// Falta implementacion enviar email
+	
+	private static final Logger LOGGER = Logger.getLogger(CotizacionBonificacionController.class.getName());
 
 	private List<SelectItem> listaTipo;
 
@@ -75,7 +79,7 @@ public class Impresos11xController extends PayrollBasicController {
 	 */
 	public void generarNumero(ActionEvent event) {
 
-		String num = Utils.maxCode("Impr11x", "cdg");
+		String num = Utils.maxCode("Impresos11x", "cdg");
 		((Impresos11x) getTo()).setCdg(Integer.parseInt(num) + 1);
 	}
 
@@ -138,6 +142,13 @@ public class Impresos11xController extends PayrollBasicController {
 			to.setAdmon(null);
 		if(StringUtils.isEmpty(to.getProvincia().getCdg()))
 			to.setProvincia(null);
+		if(to.getMes()==null)
+			to.setMes(calendar.get(Calendar.MONTH)+1);
+		if(to.getTrimestre()==null)
+			to.setTrimestre((calendar.get((Calendar.MONTH))/3)+1);
+		if(to.getAnio()==null)
+			to.setAnio(calendar.get(Calendar.YEAR));
+		
 	}
 	
 	private Empresa emprnif;
@@ -195,7 +206,7 @@ public class Impresos11xController extends PayrollBasicController {
 			}
 			
 		} catch (ManagerBeanException e) {
-			
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 			e.printStackTrace();
 		}
 
@@ -308,8 +319,37 @@ public class Impresos11xController extends PayrollBasicController {
 		return ((Impresos11x) getTo()).getModimpuesto() == ModalidadImpuesto.CLIENTE;
 	}
 
+	/**
+	 * Establece el valor por defecto de la administracion de hacienda 
+	 */
+	public void setDefaultAdmon(ActionEvent event) {
+		((Impresos11x) getTo()).setAdmon(((Impresos11x) getTo()).getEmprnif().getAdmon());
+	}
+	
+	/**
+	 * Establece el valor por defecto de la provincia 
+	 */
+	public void setDefaultProvincia(ActionEvent event) {
+		System.out.println("setDefaultProvincia");
+		
+		String cdg = ((Impresos11x) getTo()).getEmprnif().getAdmon().getCdg().substring(0, 2);
+		((Impresos11x) getTo()).getProvincia().setCdg(cdg);
+	}
 	
 	
-
+	
+	/**
+	 * Comprueba que los valores de mes y trimestre este dentro de los rangos 
+	 * @throws Exception 
+	 */
+	public void verifyMonthFields(ActionEvent event) throws Exception {
+		System.out.println("verifyMonthFields");
+		
+		if(((Impresos11x) getTo()).getMes()>12 || ((Impresos11x) getTo()).getMes()<1)
+			throw new Exception("Mes fuera de rango"); 
+		if(((Impresos11x) getTo()).getTrimestre()>4 || ((Impresos11x) getTo()).getTrimestre()<1)
+			throw new Exception("Trimestre fuera de rango");
+	}
+	
 	
 }

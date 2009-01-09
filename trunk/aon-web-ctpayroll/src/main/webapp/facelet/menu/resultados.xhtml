@@ -54,7 +54,12 @@
 								</aon:commandLink>
 							</aon:div>
 							<aon:div>
-								<aon:commandLink value="#{menuBundle.resultados_irpf__m190calc}" disabled="true" />
+								<aon:commandLink value="#{menuBundle.resultados_irpf__m190calc}" action="impresos190_form" >
+									<aon:actionListener method="#{impresos190.onSearch}" />
+									<aon:actionListener method="#{impresos190.onEditSearch}" />
+									<aon:actionListener method="#{impresos190.onSelectFirst}" />
+									
+								</aon:commandLink>
 							</aon:div>
 							<aon:div>
 								<aon:commandLink value="#{menuBundle.resultados_irpf__result_irpf}" disabled="true" />
