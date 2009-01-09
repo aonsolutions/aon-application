@@ -562,4 +562,10 @@
          <converter-id>aon.EnumConverter</converter-id>
       </converter>
    </tag>
+	<tag>
+		<tag-name>set</tag-name>
+		<handler-class>
+			com.code.aon.faces.component.richfaces.set.SetHandler
+		</handler-class>
+	</tag>
 </facelet-taglib>
