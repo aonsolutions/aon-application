@@ -50,6 +50,10 @@
 									<aon:lookupInputText id="Impresos11x_emprnif_cdg" required="#{true}"
 										lookup="#{empresaLookup}" reRender="Impresos11x_emprnif_descripcion"
 										value="#{impresos11x.to.emprnif.cdg}" size="5">
+										<a4j:support event="onchange" reRender="admon_lookup, provincia_lookup" >
+											<aon:actionListener method="#{impresos11x.setDefaultAdmon}" />
+											<aon:actionListener method="#{impresos11x.setDefaultProvincia}" />
+										</a4j:support>
 									</aon:lookupInputText>
 									<aon:lookupButton id="Impresos11x_emprnif_lookup"
 										windowTitle="#{appBundle.aon_payroll_resultados_irpf_impresos11x_empresa_nif}"
@@ -65,10 +69,10 @@
 								
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_admon_hacienda}" />
-								<aon:div styleClass="aon-lookup">
+								<aon:div id="admon_lookup" styleClass="aon-lookup">
 									<aon:lookupInputText id="Impresos11x_admon_cdg" rendered="#{true}"
 										lookup="#{admonLookup}" reRender="Impresos11x_admon_descripcion"
-										value="#{impresos11x.to.admon.cdg}" size="5">
+										value="#{impresos11x.to.admon.cdg}" size="5" >
 									</aon:lookupInputText>
 									<aon:lookupButton id="Impresos11x_admon_lookup"
 										windowTitle="#{appBundle.aon_payroll_resultados_irpf_impresos11x_admon_hacienda}"
@@ -104,14 +108,21 @@
 								
 								<aon:div id="impresos">
 									<aon:inputText id="impreso111" value="#{impresos11x.to.mes}"
-										size="3" maxlength="2" rendered="#{impresos11x.impreso111}" />
+										size="3" maxlength="2" rendered="#{impresos11x.impreso111}"
+										 >
+										 <f:validator validatorId="monthValidator" />
+									</aon:inputText>
 									<aon:inputText value="#{impresos11x.to.trimestre}"
-										size="3" maxlength="2" rendered="#{impresos11x.impreso110}" />
+										size="3" maxlength="2" rendered="#{impresos11x.impreso110}"
+											 >
+										 <f:validator validatorId="trimestreValidator" />
+									</aon:inputText>
+										<!-- <f:validator validatorId="porcentajeValidator" /> -->
 								</aon:div>
 									
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_resultados_irpf_impresos11x_provincia}" />
-								<aon:div styleClass="aon-lookup">
+								<aon:div id="provincia_lookup" styleClass="aon-lookup">
 									<aon:lookupInputText id="Impresos11x_provincia_cdg" rendered="#{true}"
 										lookup="#{provinciaLookup}" reRender="Impresos11x_provincia_descripcion"
 										value="#{impresos11x.to.provincia.cdg}" size="5">

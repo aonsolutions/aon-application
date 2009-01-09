@@ -4280,13 +4280,142 @@
 				<value>#{impresos11xControllerListener}</value>
 			</list-entries>
 		</managed-property>
-
 	</managed-bean>
 	
 	<managed-bean>
 		<managed-bean-name>impresos11xControllerListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.payroll.event.Impresos11xControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************* Resultados - IRPF - Mantenimiento de impresos 190 ***************** -->
+	<managed-bean>
+		<managed-bean-name>impresos190</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.Impresos190Controller
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>5</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>
+				com.code.aon.payroll.resultados.irpf.Impresos190
+			</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Impresos190_cdg</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>impresos190</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{impresos190ControllerListener}</value>
+				<value>#{impresos190LinesControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>impresos190ControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.Impresos190ControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>impresos190LinesControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>linimpresos190</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>LinImpresos190_impresos190_cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************* Resultados - IRPF - Mantenimiento de impresos 190 ***************** -->
+	<managed-bean>
+		<managed-bean-name>linimpresos190</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.Linimpresos190Controller
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>5</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>
+				com.code.aon.payroll.resultados.irpf.LinImpresos190
+			</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>LinImpresos190_numdoc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>linimpresos190</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>impresos190</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>cdg</key>
+					<value>id.cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{linimpresos190ControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>linimpresos190ControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.Linimpresos190ControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
