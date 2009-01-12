@@ -121,6 +121,14 @@
         <mapping class="com.code.aon.payroll.resultados.irpf.Impresos190"/>
         <mapping class="com.code.aon.payroll.resultados.irpf.LinImpresos190"/>
         
+        <!--AVANZADAS-HOJAS TRABAJO -->			
+        <mapping class="com.code.aon.payroll.avanzadas.hojastrabajo.Httrabajador"/>
+        <mapping class="com.code.aon.payroll.avanzadas.hojastrabajo.Httaviso"/>
+        <mapping class="com.code.aon.payroll.avanzadas.hojastrabajo.Httincidencia"/>
+        <mapping class="com.code.aon.payroll.avanzadas.hojastrabajo.Httcomplemento"/>
+        <mapping class="com.code.aon.payroll.avanzadas.hojastrabajo.Httbonificacion"/>
+    
+        
 	</session-factory>
 
 </hibernate-configuration>

@@ -1182,6 +1182,27 @@
 		</navigation-case>
 	</navigation-rule> 
 	
+		<!-- =================== Avanzadas -Hojas trabajo ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>httrabajador_form</from-outcome>
+			<to-view-id>
+				/facelet/avanzadas/hojastrabajo/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>httrabajador_list</from-outcome>
+			<to-view-id>
+				/facelet/avanzadas/hojastrabajo/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>httrabajador_search</from-outcome>
+			<to-view-id>
+				/facelet/avanzadas/hojastrabajo/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
 	
 	<navigation-rule>
 		<navigation-case>

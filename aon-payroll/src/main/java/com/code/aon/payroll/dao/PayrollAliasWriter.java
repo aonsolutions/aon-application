@@ -22,6 +22,11 @@ import com.code.aon.payroll.auxiliares.organismosyentidades.Mutua;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal;
 import com.code.aon.payroll.avanzadas.gestel.Linvariable;
 import com.code.aon.payroll.avanzadas.gestel.Variable;
+import com.code.aon.payroll.avanzadas.hojastrabajo.Httaviso;
+import com.code.aon.payroll.avanzadas.hojastrabajo.Httbonificacion;
+import com.code.aon.payroll.avanzadas.hojastrabajo.Httcomplemento;
+import com.code.aon.payroll.avanzadas.hojastrabajo.Httincidencia;
+import com.code.aon.payroll.avanzadas.hojastrabajo.Httrabajador;
 import com.code.aon.payroll.avanzadas.kartel.Linpercepcion;
 import com.code.aon.payroll.avanzadas.kartel.Percepcion;
 import com.code.aon.payroll.cotizacion.Base;
@@ -176,7 +181,12 @@ public class PayrollAliasWriter {
 		        Persona.class.getName(),
 		        Impresos11x.class.getName(),
 		        Impresos190.class.getName(),
-		        LinImpresos190.class.getName()
+		        LinImpresos190.class.getName(),
+		        Httaviso.class.getName(),
+		        Httbonificacion.class.getName(),
+		        Httcomplemento.class.getName(),
+		        Httrabajador.class.getName(),
+		        Httincidencia.class.getName()		       
 		        };		
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");
 		HibernateUtil.getSessionFactory();

@@ -11,8 +11,8 @@ import com.code.aon.common.enumeration.IStringEnum;
  */
 public enum Prorateo implements IResourceable, IStringEnum {
 
-    PROMENSUAL("D"),
-	PRODIARIO("M");
+    PROMENSUAL("M"),
+	PRODIARIO("D");
 	
 
 	private static final String BASE_NAME = "com.code.aon.payroll.i18n.messages";

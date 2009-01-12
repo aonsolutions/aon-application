@@ -173,7 +173,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
-			<value>/facelet/auxiliares/convenios/categoria/categoriaLookup/list.xhtml</value>
+			<value>/facelet/auxiliares/convenios/categoria/baseLookup/list.xhtml</value>
 		</managed-property>
 	</managed-bean>	
 	
@@ -437,7 +437,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>foreignPojo</property-name>
-			<value>com.code.aon.payroll.auxiliares.convenio.Convenio</value>
+			<value>com.code.aon.payroll.auxiliares.convenios.Convenio</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
@@ -485,6 +485,64 @@
 	</managed-bean>	
 	
 	
+						<!--  ************ categoria  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>categoriaLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>categoriaLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.auxiliares.convenios.Categoria</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>facelet/avanzadas/hojastrabajo/categoriaLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+		
+						<!--  ************ ccontratos  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>contratosLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>categoriaLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.auxiliares.contratos.ContratosInternos</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>facelet/avanzadas/hojastrabajo/contratosLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+		
+						<!--  ************ ctc2  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>contratostc2Lookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>categoriaLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.auxiliares.contratos.ContratosTc2</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>facelet/avanzadas/hojastrabajo/contratostc2Lookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
 	
 	
 	

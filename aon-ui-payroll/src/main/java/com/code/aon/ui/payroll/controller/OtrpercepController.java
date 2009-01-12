@@ -9,15 +9,19 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.Claveper;
+import com.code.aon.payroll.enumeration.EnvioSS2;
 import com.code.aon.payroll.enumeration.Ingreso;
 import com.code.aon.payroll.enumeration.Retribuciones;
+import com.code.aon.payroll.principales.Cliente;
 import com.code.aon.payroll.principales.empresa.Empresa;
+import com.code.aon.payroll.principales.personas.Otrperc;
 import com.code.aon.payroll.principales.personas.Persona;
 import com.code.aon.ui.form.LinesController;
 
@@ -160,6 +164,16 @@ public class OtrpercepController extends LinesController {
 	}
 
 
+	
+	public void setDefaultFields(){		
+		Otrperc c = (Otrperc)getTo();		
+		c.setClave(Claveper.CLAVE7);
+		c.setNatret(Retribuciones.DINERARIA);
+		c.setIngreso(Ingreso.ING1);
+	
+		
+
+	}
 	
 	
 

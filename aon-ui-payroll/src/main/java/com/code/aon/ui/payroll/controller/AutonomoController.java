@@ -21,12 +21,15 @@ import com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.divisa.Divisa;
 import com.code.aon.payroll.enumeration.Claveper;
+import com.code.aon.payroll.enumeration.EnvioSS2;
 import com.code.aon.payroll.enumeration.IndicadorAnio;
 import com.code.aon.payroll.enumeration.Ingreso;
 import com.code.aon.payroll.enumeration.Retribuciones;
 import com.code.aon.payroll.enumeration.TipoProrrateo;
 import com.code.aon.payroll.geograficas.Pais;
 import com.code.aon.payroll.geograficas.Provincia;
+import com.code.aon.payroll.principales.Cliente;
+import com.code.aon.payroll.principales.autonomos.Autonomos;
 import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.payroll.principales.personas.Persona;
 import com.code.aon.payroll.tipos.Documento;
@@ -273,4 +276,34 @@ public class AutonomoController extends PayrollBasicController {
 	    public void setCode(Integer code) {
 			this.code = code;
 		}
+	    
+	    
+	    
+	    
+		public void verifyNullFields(){
+			if (StringUtils.isEmpty(((Autonomos)getTo()).getTipovia().getCdg()))
+			((Autonomos) getTo()).getTipovia().setCdg("CL");
+
+		if (StringUtils.isEmpty(((Autonomos)getTo()).getMutua().getCdg()))
+			((Autonomos) getTo()).setMutua(null);
+
+		if (StringUtils.isEmpty(((Autonomos)getTo()).getProvincia().getCdg()))
+			((Autonomos) getTo()).setProvincia(null);
+
+		if (StringUtils.isEmpty(((Autonomos)getTo()).getTipovia().getCdg()))
+			((Autonomos) getTo()).setTipovia(null);
+	}
+		
+		public void setDefaultFields(){		
+			Autonomos  c = (Autonomos)getTo();		
+			c.getTipovia().setCdg("CL");
+		
+
+		}
+	    
+	    
+	    
+	    
+	    
+	    
 }
