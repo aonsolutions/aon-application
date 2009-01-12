@@ -25,23 +25,17 @@
 			<artifactId>aon.messaging</artifactId>
 			<version>0.1.1</version>
 			<scope>compile</scope>
-		</dependency>		
+		</dependency>			
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security</artifactId>
 			<version>1.7.0</version>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.security.bridge</artifactId>
-			<version>3.0.3</version>
-			<scope>compile</scope>
-		</dependency>		
+		</dependency> 
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
-			<version>3.3.2</version>
+			<version>3.3.3</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
