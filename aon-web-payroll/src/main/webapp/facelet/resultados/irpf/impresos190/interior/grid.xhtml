@@ -1,6 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich">
@@ -25,7 +26,7 @@
 				</f:facet>
 
 				<aon:div>
-					<aon:commandButton alt="[#{bundle.aon_reset}]"
+					<h:commandButton alt="[#{bundle.aon_reset}]"
 						styleClass="aon-editDataTable-button aon-icon-rowSelector "
 						actionListener="#{linimpresos190.onSelect}" action="linimpresos190_form"
 						reRender="formDiv"
@@ -34,10 +35,11 @@
 
 				<f:facet name="footer">
 					<aon:div>
-						<aon:commandButton alt="[#{bundle.aon_reset}]"
+						<h:commandButton alt="[#{bundle.aon_reset}]"
 							styleClass="aon-editDataTable-button aon-icon-reset"
 							actionListener="#{linimpresos190.onReset}"
 							rendered="#{!linimpresos190.new}"
+							action="linimpresos190_form"
 							accesskey="#{bundle.aon_key_new_line}" />
 					</aon:div>
 				</f:facet>
