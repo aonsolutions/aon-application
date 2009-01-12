@@ -16,28 +16,16 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.form</artifactId>
-			<version>3.4.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
 			<artifactId>aon.groupware</artifactId>
 			<version>3.0.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.config</artifactId>
-			<version>3.3.2</version>
+			<artifactId>aon.messaging</artifactId>
+			<version>0.1.1</version>
 			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.faces</groupId>
-			<artifactId>jsf-api</artifactId>
-			<version>1.2_02</version>
-			<scope>provided</scope>
-		</dependency>
+		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security</artifactId>
@@ -49,6 +37,18 @@
 			<artifactId>aon.security.bridge</artifactId>
 			<version>3.0.3</version>
 			<scope>compile</scope>
+		</dependency>		
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.config</artifactId>
+			<version>3.3.2</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.form</artifactId>
+			<version>3.4.0</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
@@ -57,10 +57,10 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.messaging</artifactId>
-			<version>0.1.0</version>
-			<scope>compile</scope>
+			<groupId>javax.faces</groupId>
+			<artifactId>jsf-api</artifactId>
+			<version>1.2_02</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>
