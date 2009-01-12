@@ -3300,9 +3300,21 @@
                 <value>#{avisoListener}</value>	
                 <value>#{cuentaListener}</value>
 				<value>#{avisoListener}</value>
+				<value>#{avisoListener}</value>
+				<value>#{emprcccListener}</value>
+			    <value>#{emprccosListener}</value>
+			    <value>#{emprctraListener}</value>
+			     <value>#{actividadControllerListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+	
+			<managed-bean>
+		<managed-bean-name>actividadControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.payroll.event.ActividadControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
 	
 	<managed-bean>
 		<managed-bean-name>actividadListener</managed-bean-name>
@@ -3384,11 +3396,52 @@
 				<map-entry>
 					<key>Emprctra_actividad_cdg</key>
 					<value>cdg</value>
+				</map-entry>			
+			</map-entries>
+		</managed-property>
+		</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>emprcccListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>emprccc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Emprccc_actividad_cdg</key>
+					<value>cdg</value>
 				</map-entry>
 			</map-entries>
 		</managed-property> 
 	</managed-bean>
-
+	
+		<managed-bean>
+		<managed-bean-name>emprccosListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>emprccos</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Emprccos_actividad_cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property> 
+	</managed-bean>
 
   <managed-bean>
 		<managed-bean-name>tipdomicilio</managed-bean-name>
@@ -3535,8 +3588,36 @@
       	<managed-property>
 			<property-name>beanName</property-name>
 			<value>emprctra</value>
-		</managed-property>					
+		</managed-property>	
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>actividad</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>cdg</key>
+					<value>id.cdg</value>
+				</map-entry>		
+			</map-entries>
+		</managed-property>				
+				<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{emprctraControllerListener}</value>		
+					
+			</list-entries>
+		</managed-property>  		
 		</managed-bean>
+		
+	<managed-bean>
+		<managed-bean-name>emprctraControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.payroll.event.EmprctraControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 
 
   <managed-bean>
@@ -3553,17 +3634,46 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.principales.empresa.Emprccc</value>
+			<value>
+				com.code.aon.payroll.principales.empresa.Emprccc
+			</value>
 		</managed-property>
-      	<managed-property>
+		<managed-property>
 			<property-name>beanName</property-name>
 			<value>emprccc</value>
-		</managed-property>					
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>actividad</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+ 		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{emprcccControllerListener}</value>		
+					
+			</list-entries>
+		</managed-property>  		
 		</managed-bean>
+		
+	<managed-bean>
+		<managed-bean-name>emprcccControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.payroll.event.EmprcccControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
 		
 		  <managed-bean>
 		<managed-bean-name>emprccos</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.EmprccosController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -3579,9 +3689,36 @@
 		</managed-property>
       	<managed-property>
 			<property-name>beanName</property-name>
-			<value>emprccos</value>
-		</managed-property>					
+			<value>emprccos</value>				
+		</managed-property>
+			<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>actividad</value>
+		</managed-property>
+     	<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>  		
+				<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{emprccosControllerListener}</value>		
+					
+			</list-entries>
+		</managed-property>  		
 		</managed-bean>
+		
+	<managed-bean>
+		<managed-bean-name>emprccosControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.payroll.event.EmprccosControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
 
 <managed-bean>
 		<managed-bean-name>variableMaestro</managed-bean-name>
@@ -4244,6 +4381,350 @@
 
 	</managed-bean>
 
+	<!-- ************* Resultados - IRPF - Mantenimiento de impresos 11X ***************** -->
+	<managed-bean>
+		<managed-bean-name>impresos11x</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.Impresos11xController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>5</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>
+				com.code.aon.payroll.resultados.irpf.Impr11x
+			</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Impr11x_cdg</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>impresos11x</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{impresos11xControllerListener}</value>
+			</list-entries>
+		</managed-property>
+
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>impresos11xControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.Impresos11xControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+
+	<!-- ************* Avanzadas - Hojas Trabajo ***************** -->
+
+	<managed-bean>
+		<managed-bean-name>httrabajador</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.HttrabajadorController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>5</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.avanzadas.hojastrabajo.Httrabajador</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Httrabajador_cdg</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>httrabajador</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+		      <!--<value>#{httavisoLinesListener}</value> 
+		         <value>#{httbonificacionLinesListener}</value> 
+		         <value>#{httcomplementoLinesListener}</value>
+		             <value>#{httincidenciaLinesListener}</value> -->
+			</list-entries>
+		</managed-property>
+
+	</managed-bean>
+	
+	
+	<managed-bean>
+		<managed-bean-name>httavisoLinesListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>httaviso</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Httaviso_httrabajador_cdg</key>
+					<value>cdg</value>
+				</map-entry>				
+				</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+		<managed-bean>
+		<managed-bean-name>httbonificacionLinesListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>httbonificacion</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Httbonificacion_httrabajador_cdg</key>
+					<value>cdg</value>
+				</map-entry>				
+				</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+			<managed-bean>
+		<managed-bean-name>httcomplementoLinesListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>httcomplemento</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Httcomplemento_httrabajador_cdg</key>
+					<value>cdg</value>
+				</map-entry>				
+				</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>httincidenciaLinesListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>httincidencia</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Httincidencia_httrabajador_cdg</key>
+					<value>cdg</value>
+				</map-entry>				
+				</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	
+	<!-- ************* Avanzadas - Hojas Trabajo avisos ***************** -->
+
+	<managed-bean>
+		<managed-bean-name>httaviso</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>5</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.avanzadas.hojastrabajo.Httaviso</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Httaviso_id_cdg</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>httaviso</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>httrabajador</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>cdg</key>
+					<value>id.cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************* Avanzadas - Hojas Trabajo bonificacion ***************** -->
+
+	<managed-bean>
+		<managed-bean-name>httbonificacion</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>5</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.avanzadas.hojastrabajo.Httbonificacion</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Httbonificacion_id_cdg</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>httbonificacion</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>httrabajador</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>cdg</key>
+					<value>id.cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************* Avanzadas - Hojas Trabajo complemento ***************** -->
+
+	<managed-bean>
+		<managed-bean-name>httcomplemento</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.HttcomplementoController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>5</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.avanzadas.hojastrabajo.Httcomplemento</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Httcomplemento_id_cdg</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>httcomplemento</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>httrabajador</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>cdg</key>
+					<value>id.cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************* Avanzadas - Hojas Trabajo incidencia ***************** -->
+
+	<managed-bean>
+		<managed-bean-name>httincidencia</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>5</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.avanzadas.hojastrabajo.Httincidencia</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Httincidencia_id_cdg</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>httincidencia</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>httrabajador</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>cdg</key>
+					<value>id.cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
 	<!-- ************* Resultados - IRPF - Mantenimiento de impresos 11X ***************** -->
 	<managed-bean>
 		<managed-bean-name>impresos11x</managed-bean-name>
