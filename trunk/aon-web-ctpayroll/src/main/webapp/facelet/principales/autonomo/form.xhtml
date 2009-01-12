@@ -34,7 +34,7 @@
 							value="#{appBundle.aon_payroll_principales_personas_otrperc_per}" />
 						<aon:div styleClass="aon-lookup">
 							<aon:lookupInputText id="Persona_cdg" lookup="#{personaLookup}"
-								reRender="Persona_description"
+								reRender="Persona_description"  required="true"
 								value="#{autonomo.to.persona.cdg}" size="5">
 							</aon:lookupInputText>
 							<aon:lookupButton id="Persona_lookup"
@@ -77,7 +77,7 @@
 						style="margin-bottom=2px;">
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_principales_autonomos_cdg}" />
-						<aon:inputText value="#{autonomo.to.cdg}" size="30" maxlength="20" />
+						<aon:inputText value="#{autonomo.to.cdg}" size="30" maxlength="20"  required="true" />
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_principales_autonomos_inigest}" />
@@ -158,12 +158,12 @@
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_autonomos_codreg}" />
-							<aon:inputText value="#{autonomo.to.codregistro}" size="30"
+							<aon:inputText  id="cod_registro" value="#{autonomo.to.codregistro}" size="30"  required="true"
 								maxlength="20" />
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_autonomos_descreg}" />
-							<aon:inputText value="#{autonomo.to.desregistro}" size="30"
+							<aon:inputText id="descripcion_registro" value="#{autonomo.to.desregistro}" size="30"  required="true"
 								maxlength="20" />
 
 							<aon:outputLabel
@@ -440,12 +440,12 @@
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_cuenta_dc}" />
-							<aon:inputText value="#{autonomo.to.dc}" size="50" maxlength="20" />
+							<aon:inputText value="#{autonomo.to.dc}" size="50" maxlength="2" />
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_cuenta_numcta}" />
 							<aon:inputText value="#{autonomo.to.cuenta}" size="50"
-								maxlength="20" />
+								maxlength="10" />
 
 
 							<aon:outputLabel

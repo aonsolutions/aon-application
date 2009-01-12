@@ -38,7 +38,7 @@
 								disabled="true" />
 
 							<aon:inputText id="Acti_description"
-								value="#{actividad.to.descripcion}" size="60" disabled="true" />
+								value="#{actividad.to.descripcion}" size="60"  />
 						</aon:div>
 
 						<aon:outputLabel
@@ -119,13 +119,7 @@
 				</aon:div>
 
 				<rich:spacer />
-				<aon:div styleClass="aon-scroll-area">
-
-					<aon:panelGrid columns="4" dir="true" width="100%"
-						style="margin-bottom=2px;">
-
-					</aon:panelGrid>
-				</aon:div>
+				
 			</aon:div>
 
 			<aon:div id="tabsinfo">
@@ -163,12 +157,11 @@
 									</aon:div>
 
 
-									<aon:outputLabel
+	                               <aon:outputLabel for="Cnae_cdg"
 										value="#{appBundle.aon_payroll_principales_actividad_cnae93}" />
-
-									<aon:inputText value="#{actividad.to.cnae}" size="10" />
-
-
+								
+	                               <aon:inputText value="#{actividad.to.cnae}" size="10" />
+			 
 									<aon:outputLabel
 										value="#{appBundle.aon_payroll_principales_actividad_cnae2009}" />
 
@@ -705,6 +698,7 @@
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{empresaLookup}" />
 		<aon:lookupButtonPopup lookup="#{convenioLookup}" />
+		<aon:lookupButtonPopup lookup="#{cnae93Lookup}" />
 
 
 	</ui:define>

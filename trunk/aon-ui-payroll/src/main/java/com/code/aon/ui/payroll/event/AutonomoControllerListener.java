@@ -32,7 +32,7 @@ public class AutonomoControllerListener extends ControllerAdapter implements IPa
 		 try {			 
 			 
 			 ((Autonomos)(event.getController().getTo())).setCdg(controller.getCode());
-			 
+			 ((AutonomoController)getController()).setDefaultFields();
 			} catch (ManagerBeanException e) {
 			}	
 		
@@ -51,6 +51,8 @@ public void beforeBeanAdded(ControllerEvent event)
 	 try {			 
 		 
 		 ((Autonomos)(event.getController().getTo())).setCdg(controller.getCode());
+	     ((AutonomoController)getController()).verifyNullFields();
+
 		 
 		} catch (ManagerBeanException e) {
 		}	

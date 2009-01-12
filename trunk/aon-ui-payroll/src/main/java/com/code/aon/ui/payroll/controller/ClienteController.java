@@ -1,6 +1,5 @@
 package com.code.aon.ui.payroll.controller;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,14 +12,15 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 
-
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.divisa.Divisa;
+import com.code.aon.payroll.enumeration.ConciertoEconomico;
 import com.code.aon.payroll.enumeration.EnvioSS;
 import com.code.aon.payroll.enumeration.EnvioSS2;
+import com.code.aon.payroll.enumeration.IndicadorIrpf;
 import com.code.aon.payroll.geograficas.Pais;
 import com.code.aon.payroll.geograficas.Provincia;
 import com.code.aon.payroll.principales.Cliente;
@@ -66,6 +66,32 @@ public class ClienteController extends PayrollBasicController {
 		return envioss;
 	}
 
+	
+	public void verifyNullFields(){
+		if(StringUtils.isEmpty(((Cliente)getTo()).getTipovia().getCdg()))
+			((Cliente)getTo()).getTipovia().setCdg("CL");
+		if(StringUtils.isEmpty(((Cliente)getTo()).getDivisa().getCdg()))
+			((Cliente)getTo()).getDivisa().setCdg("2");
+		if(StringUtils.isEmpty(((Cliente)getTo()).getPais().getCdg()))
+			 ((Cliente)getTo()).setPais(null);
+		if(StringUtils.isEmpty(((Cliente)getTo()).getTipdoc().getCdg()))
+			((Cliente)getTo()).setTipdoc(null);
+		if(StringUtils.isEmpty(((Cliente)getTo()).getTipempr().getCdg()))
+			((Cliente)getTo()).setTipempr(null);
+		if(StringUtils.isEmpty(((Cliente)getTo()).getProvincia().getCdg()))
+			((Cliente)getTo()).setProvincia(null);
+	
+	}
+	
+	public void setDefaultFields(){		
+		Cliente c = (Cliente)getTo();		
+		c.getTipovia().setCdg("CL");
+		c.setIndcal(true);
+		c.setIndcoste(true);
+		c.setIndnom(true);
+		c.setEnvioss(EnvioSS2.ENVIO1);
+
+	}
 	
 
 		@Override

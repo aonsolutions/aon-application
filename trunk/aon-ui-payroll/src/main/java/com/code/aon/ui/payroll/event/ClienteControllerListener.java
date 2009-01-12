@@ -10,7 +10,9 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.payroll.controller.ClienteController;
 import com.code.aon.ui.payroll.controller.DomicilioController;
+import com.code.aon.ui.payroll.controller.EmpresaController;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
+import com.code.aon.ui.payroll.controller.PersonaController;
 
 
 public class ClienteControllerListener extends ControllerAdapter implements IPayrollConstants {
@@ -30,7 +32,7 @@ public class ClienteControllerListener extends ControllerAdapter implements IPay
 		 try {			 
 			 
 			 ((Cliente)(event.getController().getTo())).setCdg(controller.getCode());
-			 
+			 ((ClienteController)getController()).setDefaultFields();
 			} catch (ManagerBeanException e) {
 			}	
 		
@@ -39,6 +41,11 @@ public class ClienteControllerListener extends ControllerAdapter implements IPay
 	
 	
 	}
+	
+	
+
+
+	
 @Override
 public void beforeBeanAdded(ControllerEvent event)
 		throws ControllerListenerException {
@@ -48,7 +55,8 @@ public void beforeBeanAdded(ControllerEvent event)
 	 try {			 
 		
 		 ((Cliente)(event.getController().getTo())).setCdg(controller.getCode());
-		 
+	     ((ClienteController)getController()).verifyNullFields();
+
 		} catch (ManagerBeanException e) {
 		}	
 	

@@ -10,6 +10,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 
 import com.code.aon.common.BeanManager;
@@ -17,6 +18,9 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.payroll.auxiliares.convenios.Convenio;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Mutua;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal;
 import com.code.aon.payroll.cotizacion.Linepigr;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.EnvioSS2;
@@ -25,7 +29,12 @@ import com.code.aon.payroll.enumeration.IndRegimen;
 import com.code.aon.payroll.enumeration.Modpago;
 import com.code.aon.payroll.enumeration.Tipcuenta;
 import com.code.aon.payroll.enumeration.Tiponomina;
+import com.code.aon.payroll.geograficas.Provincia;
+import com.code.aon.payroll.principales.empresa.Actividad;
 import com.code.aon.payroll.principales.empresa.Emprdom;
+import com.code.aon.payroll.principales.empresa.Empresa;
+import com.code.aon.payroll.principales.personas.Persona;
+import com.code.aon.payroll.tipos.Tipovia;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
@@ -38,10 +47,31 @@ public class ActividadController extends LinesController {
 	private List<SelectItem> listamodpago;
 	private List<SelectItem> listaindregimen;
 	private List<SelectItem> listatiponom;
-
+	private Actividad actividad;
+	private Empresa empresa;
+	private Convenio convenio;
+    private Date fecini;
+    private Date fecfin;
+	private boolean indred;
+	private boolean indmutua;
+	private boolean indtc1;
+	private boolean indcal;
+	private boolean indnom;
+	private boolean indcoste;
+	private boolean flc;
+	private boolean colss;
+	private boolean ingespemp;
+	private boolean indlogo;
+	private boolean indfirma; 
 
 	
 
+	/**
+	 * genera un cdg siguiendo al maximo 
+	 */
+	public void generateCdg(){
+		((Actividad)getTo()).setCdg(Integer.parseInt(Utils.maxCode("Actividad", "cdg"))+1);
+	}
 	
 	
 	
@@ -100,6 +130,135 @@ public class ActividadController extends LinesController {
 
 
 
+	
+	@Override
+	   public void onEditSearch(ActionEvent arg0) {
+		   super.onEditSearch(arg0);
+		   
+	       setActividad( new Actividad() );
+	       setEmpresa( new Empresa() );
+	       setConvenio( new Convenio() );
+		   }
+		
+	
+	
+		@Override
+		public void onSearch(ActionEvent event) {
+			
+
+			try {
+			if (empresa.getCdg() != null) {
+				getCriteria().addEqualExpression(
+						getFieldName(IPayrollAlias.ACTIVIDAD_EMPRESA_CDG),
+						getEmpresa().getCdg());
+			}
+			if (actividad.getCdg() != null) {
+				getCriteria().addEqualExpression(
+						getFieldName(IPayrollAlias.ACTIVIDAD_CDG),
+						getActividad().getCdg());
+			}
+			
+			if ((convenio.getCdg() != null) &&  (!StringUtils.isEmpty(convenio.getCdg())) ) {
+				getCriteria().addEqualExpression(
+						getFieldName(IPayrollAlias.ACTIVIDAD_CONVENIO_CDG),
+						getConvenio().getCdg());
+			}
+
+
+			if (fecini != null) {
+				getCriteria().addEqualExpression(
+						getFieldName(IPayrollAlias.ACTIVIDAD_FECINI),
+						getFecini());
+			}
+			if (fecfin != null) {
+				getCriteria().addEqualExpression(
+						getFieldName(IPayrollAlias.ACTIVIDAD_FECFIN),
+						getFecfin());
+			}
+			  
+			if(indred){
+				
+				getCriteria().addEqualExpression(
+						getFieldName(IPayrollAlias.ACTIVIDAD_INDRED), true);
+			}
+
+			if (indmutua) {
+
+				getCriteria().addEqualExpression(
+						getFieldName(IPayrollAlias.ACTIVIDAD_INDMUTUA), true);
+			}
+			if (indtc1) {
+
+				getCriteria().addEqualExpression(
+						getFieldName(IPayrollAlias.ACTIVIDAD_INDTC1), true);
+			}
+			if (indcal) {
+
+				getCriteria().addEqualExpression(
+						getFieldName(IPayrollAlias.ACTIVIDAD_INDCAL), true);
+			}
+			if (indnom) {
+
+				getCriteria().addEqualExpression(
+						getFieldName(IPayrollAlias.ACTIVIDAD_INDNOM), true);
+			}
+			if (indcoste) {
+
+				getCriteria().addEqualExpression(
+						getFieldName(IPayrollAlias.ACTIVIDAD_INDCOSTE), true);
+			}
+			if (flc) {
+
+				getCriteria().addEqualExpression(
+						getFieldName(IPayrollAlias.ACTIVIDAD_FLC), true);
+			}
+			if (colss) {
+
+				getCriteria().addEqualExpression(
+						getFieldName(IPayrollAlias.ACTIVIDAD_COLSS), true);
+			}
+			if (ingespemp) {
+
+				getCriteria().addEqualExpression(
+						getFieldName(IPayrollAlias.ACTIVIDAD_INGESPEMP), true);
+			}
+			if (indfirma) {
+
+				getCriteria().addEqualExpression(
+						getFieldName(IPayrollAlias.ACTIVIDAD_INDFIRMA), true);
+			}
+			
+			if (indlogo) {
+
+				getCriteria().addEqualExpression(
+						getFieldName(IPayrollAlias.ACTIVIDAD_INDRED), true);
+			}
+			
+			
+			    
+
+			} catch (ManagerBeanException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+	    indred = false;
+		indmutua = false;
+		indtc1 = false;
+		indcal = false;
+		indnom = false;
+		indcoste = false;
+		flc = false;
+		colss = false;
+		ingespemp = false;
+		indlogo = false;
+		indfirma = false; 
+			
+		
+			
+			super.onSearch(event);
+		}
 
 
 
@@ -175,6 +334,134 @@ public class ActividadController extends LinesController {
 
 	public void setListatiponom(List<SelectItem> listatiponom) {
 		this.listatiponom = listatiponom;
+	}
+
+	public Actividad getActividad() {
+		return actividad;
+	}
+
+	public void setActividad(Actividad actividad) {
+		this.actividad = actividad;
+	}
+
+	public Empresa getEmpresa() {
+		return empresa;
+	}
+
+	public void setEmpresa(Empresa empresa) {
+		this.empresa = empresa;
+	}
+
+	public Date getFecini() {
+		return fecini;
+	}
+
+	public void setFecini(Date fecini) {
+		this.fecini = fecini;
+	}
+
+	public Date getFecfin() {
+		return fecfin;
+	}
+
+	public void setFecfin(Date fecfin) {
+		this.fecfin = fecfin;
+	}
+
+	public Convenio getConvenio() {
+		return convenio;
+	}
+
+	public void setConvenio(Convenio convenio) {
+		this.convenio = convenio;
+	}
+
+	public boolean getIndred() {
+		return indred;
+	}
+
+	public void setIndred(boolean indred) {
+		this.indred = indred;
+	}
+
+	public boolean getIndmutua() {
+		return indmutua;
+	}
+
+	public void setIndmutua(boolean indmutua) {
+		this.indmutua = indmutua;
+	}
+
+	public boolean getIndtc1() {
+		return indtc1;
+	}
+
+	public void setIndtc1(boolean indtc1) {
+		this.indtc1 = indtc1;
+	}
+
+	public boolean getIndcal() {
+		return indcal;
+	}
+
+	public void setIndcal(boolean indcal) {
+		this.indcal = indcal;
+	}
+
+	public boolean getIndnom() {
+		return indnom;
+	}
+
+	public void setIndnom(boolean indnom) {
+		this.indnom = indnom;
+	}
+
+	public boolean getIndcoste() {
+		return indcoste;
+	}
+
+	public void setIndcoste(boolean indcoste) {
+		this.indcoste = indcoste;
+	}
+
+	public boolean getFlc() {
+		return flc;
+	}
+
+	public void setFlc(boolean flc) {
+		this.flc = flc;
+	}
+
+	public boolean getColss() {
+		return colss;
+	}
+
+	public void setColss(boolean colss) {
+		this.colss = colss;
+	}
+
+	public boolean getIngespemp() {
+		return ingespemp;
+	}
+
+	public void setIngespemp(boolean ingespemp) {
+		this.ingespemp = ingespemp;
+	}
+
+	public boolean getIndlogo() {
+		return indlogo;
+	}
+
+	public void setIndlogo(boolean indlogo) {
+		this.indlogo = indlogo;
+	}
+
+	public boolean getIndfirma() {
+		return indfirma;
+	}
+
+	public void setIndfirma(boolean indfirma) {
+		this.indfirma = indfirma;
 	}
 	
 

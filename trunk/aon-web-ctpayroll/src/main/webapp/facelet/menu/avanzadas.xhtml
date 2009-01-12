@@ -26,7 +26,11 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div>
-								<aon:commandLink value="#{menuBundle.avanzadas_hojas_trabajo__htt}" disabled="true" />
+								<aon:commandLink value="#{menuBundle.avanzadas_hojas_trabajo__htt}" action="httrabajador_form" >
+									<aon:actionListener method="#{httrabajador.onEditSearch}" />
+									<aon:actionListener method="#{httrabajador.onSearch}" />
+									<aon:actionListener method="#{httrabajador.onSelectFirst}" />
+									</aon:commandLink>
 							</aon:div>
 						</aon:div>
 					</aon:panel>

@@ -18,7 +18,7 @@
 			<ui:include src="/facelet/templates/formPrintToolbarCliente.xhtml">
 				<ui:param name="toolbarTitle"
 					value="#{appBundle.aon_payroll_principales_clientes}" />
-				<ui:param name="controller" value="#{cliente}" />
+				<ui:param name="controller" value="#{cliente}" />							
 				<ui:param name="reportKey" value="ClienteList" />
 				<ui:param name="reportKeyXls" value="ClienteListXLS" />
 			</ui:include>
@@ -38,7 +38,7 @@
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_principales_clientes_nom}" />
-						<aon:inputText value="#{cliente.to.descripcion}" size="60"
+						<aon:inputText   id="nombre" value="#{cliente.to.descripcion}" size="60" required="true"
 							maxlength="60" />
 
 						<aon:outputLabel
@@ -50,7 +50,7 @@
 							value="#{appBundle.aon_payroll_principales_clientes_deleg}" />
 						<aon:div styleClass="aon-lookup">
 							<aon:lookupInputText id="Del_cdg" lookup="#{delegacionLookup}"
-								reRender="Del_description" value="#{cliente.to.delegacion.cdg}"
+								reRender="Del_description" value="#{cliente.to.delegacion.cdg}" required="true"
 								size="5">
 							</aon:lookupInputText>
 							<aon:lookupButton id="Del_lookup"
@@ -119,7 +119,7 @@
 
 										<aon:outputLabel
 											value="#{appBundle.aon_payroll_principales_clientes_numdoc}" />
-										<aon:inputText value="#{cliente.to.numdoc}" size="60"
+										<aon:inputText  id="numDocu" value="#{cliente.to.numdoc}" size="60" required="true"
 											maxlength="20" />
 
 										<aon:outputLabel for="Divi_cdg"
@@ -144,7 +144,7 @@
 											value="#{appBundle.aon_payroll_principales_clientes_paisemi}" />
 										<aon:div styleClass="aon-lookup">
 											<aon:lookupInputText id="Pais_cdg" lookup="#{paisLookup}"
-												reRender="Pais_description" value="#{cliente.to.pais.cdg}"
+												reRender="Pais_description" value="#{cliente.to.pais.cdg}" required="true"
 												size="5">
 											</aon:lookupInputText>
 											<aon:lookupButton id="Pais_lookup"
@@ -508,7 +508,7 @@
 
 		<aon:lookupButtonPopup lookup="#{delegacionLookup}" />
 		<aon:lookupButtonPopup lookup="#{empresarioLookup}" />
-		<!--  <aon:lookupButtonPopup lookup="#{divisaLookup}" />   -->
+		<!--  <aon:lookupButtonPopup lookup="#{divisaLookup}" />-->
 		<aon:lookupButtonPopup lookup="#{paisLookup}" />
 		<aon:lookupButtonPopup lookup="#{documentoLookup}" />
 		<aon:lookupButtonPopup lookup="#{tipoviaLookup}" />
