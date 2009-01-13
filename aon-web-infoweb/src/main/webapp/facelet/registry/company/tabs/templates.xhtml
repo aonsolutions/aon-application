@@ -17,7 +17,7 @@
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{appBundle.aon_web_info_template}" />
+					value="#{appBundle.infoweb_template}" />
 				<ui:param name="controller" value="#{webPageStyle}" />
 				<ui:param name="skipSaveButton" value="true" />
 				<ui:param name="skipCancelButton" value="true" />
@@ -29,7 +29,7 @@
 			</ui:include>
 			<rich:panel styleClass="aon-content-home">
 				<aon:div style="text-align:center;margin-top:20px">
-					<aon:outputText value="#{appBundle.aon_web_info_sytle_template} "/>
+					<aon:outputText value="#{appBundle.infoweb_sytle_template} "/>
 					<aon:selectOneMenu value="#{webPageStyle.template}" style="width:200px">
 						<f:selectItems value="#{webPageStyle.templates}" />
 						<a4j:support actionListener="#{webPageStyle.onChangeTemplate}" event="onchange" reRender="variables"/> 
@@ -59,7 +59,7 @@
 					
 								<aon:column style="aon-editDataTable-textColumn aon-width-300">
 									<f:facet name="header">
-										<aon:outputText value="#{appBundle.aon_web_info_sytle_variable}" />
+										<aon:outputText value="#{appBundle.infoweb_sytle_variable}" />
 									</f:facet>
 									<aon:div rendered="#{to != webPageStyle.to}">
 										<aon:outputText value="#{webPageStyle.rowVariableName}" />
@@ -76,7 +76,7 @@
 					
 								<aon:column style="aon-editDataTable-textColumn">
 									<f:facet name="header">
-										<aon:outputText value="#{appBundle.aon_web_info_sytle_value}" />
+										<aon:outputText value="#{bundle.aon_value}" />
 									</f:facet>
 									<aon:div rendered="#{to!=webPageStyle.to}">
 										<aon:div value="&#160;" style="width:64px;height:17px;border:1px black solid;background-color:#{to.value}" rendered="#{webPageStyle.color}" />

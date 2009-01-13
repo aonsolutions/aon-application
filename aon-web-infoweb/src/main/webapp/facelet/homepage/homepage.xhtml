@@ -13,7 +13,7 @@
 
 		        <rich:panel style="width:450px">
 		            <f:facet name="header">
-		                <aon:outputText value="#{appBundle.aon_web_info_options}"/>
+		                <aon:outputText value="#{appBundle.infoweb_options}"/>
 		            </f:facet>
 					<h:panelGrid columns="3" styleClass="aon-text-center" style="width:100%">
 						<aon:commandButton id="webinfo-icon-company"
@@ -26,33 +26,33 @@
 							<f:setPropertyActionListener value="#{false}" target="#{company.showCompanyOtherData}" />
 						</aon:commandButton> 
 						<aon:commandButton id="webinfo-icon-otherdata"
-							value="#{appBundle.aon_web_info_data}"
+							value="#{appBundle.infoweb_data}"
 							image="/images/icons/webinfo-icon-otherdata.png"
 							styleClass="aon-icon-commandButton" 
 							action="otherdata">
 							<aon:actionListener method="#{company.onLoad}" />
 						</aon:commandButton> 
 						<aon:commandButton id="webinfo-icon-images"
-							value="#{appBundle.aon_web_info_images}"
+							value="#{appBundle.infoweb_images}"
 							image="/images/icons/webinfo-icon-images.png"
 							styleClass="aon-icon-commandButton" 
 							action="images">
 							<aon:actionListener method="#{company.onLoad}" />
 						</aon:commandButton> 
 		                <aon:outputText value="#{companyBundle.company_data_module}"/>
-		                <aon:outputText value="#{appBundle.aon_web_info_data}"/>
-		                <aon:outputText value="#{appBundle.aon_web_info_images}"/>
+		                <aon:outputText value="#{appBundle.infoweb_data}"/>
+		                <aon:outputText value="#{appBundle.infoweb_images}"/>
 					</h:panelGrid>
 					<h:panelGrid columns="3" styleClass="aon-text-center" style="width:100%">
 						<aon:commandButton id="webinfo-icon-pages"
-							value="#{appBundle.aon_web_info_pages}"
+							value="#{appBundle.infoweb_pages}"
 							image="/images/icons/webinfo-icon-pages.png"
 							styleClass="aon-icon-commandButton" 
 							action="pages">
 							<aon:actionListener method="#{company.onLoad}" />
 						</aon:commandButton> 
 						<aon:commandButton id="webinfo-icon-templates"
-							value="#{appBundle.aon_web_info_template}"
+							value="#{appBundle.infoweb_template}"
 							image="/images/icons/webinfo-icon-templates.png"
 							styleClass="aon-icon-commandButton" 
 							action="templates">
@@ -60,15 +60,15 @@
 							<aon:actionListener method="#{webPageStyle.onLoad}" />
 						</aon:commandButton> 
 						<aon:commandButton id="webinfo-icon-generator"
-							value="#{appBundle.aon_web_info_generate}"
+							value="#{appBundle.infoweb_generate}"
 							image="/images/icons/webinfo-icon-generator.png"
 							styleClass="aon-icon-commandButton" 
 							action="generate">
 							<aon:actionListener method="#{company.onLoad}" />
 						</aon:commandButton> 
-		                <aon:outputText value="#{appBundle.aon_web_info_pages}"/>
-		                <aon:outputText value="#{appBundle.aon_web_info_template}"/>
-		                <aon:outputText value="#{appBundle.aon_web_info_generate}"/>
+		                <aon:outputText value="#{appBundle.infoweb_pages}"/>
+		                <aon:outputText value="#{appBundle.infoweb_template}"/>
+		                <aon:outputText value="#{appBundle.infoweb_generate}"/>
 					</h:panelGrid>
 		        </rich:panel>
 		        

@@ -13,7 +13,7 @@
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{appBundle.aon_web_info_data}" />
+					value="#{appBundle.infoweb_data}" />
 				<ui:param name="controller" value="#{companyWebInfo}" />
 				<ui:param name="skipCancelButton" value="true" />
 				<ui:param name="skipRemoveButton" value="true" />
@@ -25,15 +25,15 @@
 			<rich:panel styleClass="aon-content-home">
 				<aon:panelGrid columns="2" dir="true" style="width:100%">
 			
-					<aon:outputLabel for="WebInfo_slogan" value="#{appBundle.aon_web_info_data_slogan}" />
+					<aon:outputLabel for="WebInfo_slogan" value="#{appBundle.infoweb_data_slogan}" />
 					<aon:inputText id="WebInfo_slogan" 
 						size="64" maxlength="64" value="#{companyWebInfo.to.slogan}" />
 			
-					<aon:outputLabel for="WebInfo_schedule" value="#{appBundle.aon_web_info_data_schedule}" />
+					<aon:outputLabel for="WebInfo_schedule" value="#{appBundle.infoweb_data_schedule}" />
 					<aon:inputTextarea id="WebInfo_schedule" styleClass="aon-inputText"
 						cols="90" rows="3" value="#{companyWebInfo.to.schedule}" />
 			
-					<aon:outputLabel for="WebInfo_commercialDescription" value="#{appBundle.aon_web_info_data_short_description}" />
+					<aon:outputLabel for="WebInfo_commercialDescription" value="#{appBundle.infoweb_data_short_description}" />
 					<aon:inputTextarea id="WebInfo_commercialDescription"
 						value="#{companyWebInfo.to.commercialDescription}" cols="90" rows="15"/>
 				</aon:panelGrid>
