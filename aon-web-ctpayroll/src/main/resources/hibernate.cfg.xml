@@ -123,9 +123,13 @@ hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN
     <mapping class="com.code.aon.payroll.resultados.salarios.Nominaex"/>
     <mapping class="com.code.aon.payroll.resultados.salarios.Nomdtoex"/>
 	<!-- RESULTADOS - IRPF -->			
-   <mapping class="com.code.aon.payroll.resultados.irpf.Impresos11x"/>
+    <mapping class="com.code.aon.payroll.resultados.irpf.Impresos11x"/>
     <mapping class="com.code.aon.payroll.resultados.irpf.Impresos190"/>
     <mapping class="com.code.aon.payroll.resultados.irpf.LinImpresos190"/>
+    <mapping class="com.code.aon.payroll.resultados.nomina.Nomina"/>
+    <mapping class="com.code.aon.payroll.resultados.nomina.Nominadev"/>
+    <mapping class="com.code.aon.payroll.resultados.nomina.Nomdto"/>
+    
     
     <!--AVANZADAS-HOJAS TRABAJO -->
     <mapping class="com.code.aon.payroll.avanzadas.hojastrabajo.Httrabajador" />

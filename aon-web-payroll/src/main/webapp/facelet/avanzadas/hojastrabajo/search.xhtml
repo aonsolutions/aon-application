@@ -141,7 +141,7 @@
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_avanzadas_hojas_num}" />
 								<aon:inputText id="Httrabajador_numdoc"
-									valueChangeListener="#{httrabajador.addExpression}"
+								required="true"	valueChangeListener="#{httrabajador.addExpression}"
 									size="60"  maxlength="20" />
 
 
@@ -166,7 +166,10 @@
 
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_avanzadas_hojas_est}" />
-								<aon:selectOneMenu value="#{httrabajador.to.estado}">
+								<aon:selectOneMenu id="Httrabajador_estado"
+									valueChangeListener="#{httrabajador.addExpression}">
+									<aon:enumConverter
+										enum="com.code.aon.payroll.enumeration.EstadoCivil" />
 								    <f:selectItem value="#{null}" itemLabel="    " />
 									<f:selectItems value="#{httrabajador.listaEstciv}" />
 								</aon:selectOneMenu>
@@ -317,16 +320,16 @@
 								<aon:div styleClass="aon-lookup">
 									<aon:lookupInputText id="Cat_cdg" lookup="#{baseLookup}"
 										reRender="Cat_descripcion"
-										value="#{httrabajador.categoria}" size="5">
+										value="#{httrabajador.to.categoria}" size="5">
 									</aon:lookupInputText>
 									<aon:lookupButton id="Cat_lookup"
 										windowTitle="#{appBundle.aon_payroll_avanzadas_hojas_cat}"
 										selectReRender="Cat_cdg,Cat_descripcion"
 										lookup="#{categoriaLookup}" minHeight="440"
-										property="#{httrabajador.categoria}">
+										property="#{httrabajador.to.categoria}">
 									</aon:lookupButton>
 									<aon:inputText id="Cat_descripcion"
-										value="#{(httrabajador.descategoria!=null)?(httrabajador.descategoria):('')}"
+										value="#{(httrabajador.to.descategoria!=null)?(httrabajador.to.descategoria):('')}"
 										size="34" disabled="true" />
 								</aon:div>
 								<aon:outputLabel
@@ -380,8 +383,11 @@
 
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_avanzadas_hojas_prorra}" />
-								<aon:selectOneMenu value="#{httrabajador.to.cotizacion}"
-									layout="pageDirection">
+								<aon:selectOneMenu  id="Httrabajador_cotizacion"
+									valueChangeListener="#{httrabajador.addExpression}">
+									<aon:enumConverter
+										enum="com.code.aon.payroll.enumeration.Prorateo" />
+										  <f:selectItem value="#{null}" itemLabel="    " />
 									<f:selectItems value="#{httrabajador.listaprorateos}" />
 								</aon:selectOneMenu>
 
@@ -390,8 +396,11 @@
 
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_avanzadas_hojas_ret}" />
-								<aon:selectOneMenu value="#{httrabajador.to.retribucion}"
-									layout="pageDirection">
+								<aon:selectOneMenu  id="Httrabajador_retribucion"
+									valueChangeListener="#{httrabajador.addExpression}">
+									<aon:enumConverter
+										enum="com.code.aon.payroll.enumeration.Prorateo" />
+										  <f:selectItem value="#{null}" itemLabel="    " />
 									<f:selectItems value="#{httrabajador.listaprorateos}" />
 								</aon:selectOneMenu>
 
@@ -400,7 +409,11 @@
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_avanzadas_hojas_cuenta}" />
 
-								<aon:selectOneRadio value="#{httrabajador.to.ccc}">
+								<aon:selectOneRadio  id="Httrabajador_ccc"
+									valueChangeListener="#{httrabajador.addExpression}">
+									<aon:enumConverter
+										enum="com.code.aon.payroll.enumeration.Tipccc" />
+										  <f:selectItem value="#{null}" itemLabel="    " />
 									<f:selectItems value="#{httrabajador.listatipos}" />
 								</aon:selectOneRadio>
 
@@ -524,16 +537,16 @@
 						<aon:lookupInputText id="Cuenta_suc"
 							lookup="#{sucursalLookup}"
 							reRender="Cuenta_sucdesc"
-							value="#{httrabajador.sucursal1.id.cdg}" size="5">
+							value="#{httrabajador.to.sucursal1.id.cdg}" size="5">
 						</aon:lookupInputText>
 						<aon:lookupButton id="Cuentasuc_lookup"
 							windowTitle="#{appBundle.aon_payroll_principales_cuenta_sucursal}"
 							selectReRender="Cuenta_suc,Cuenta_sucdesc"
 							lookup="#{sucursalLookup}" minHeight="440"
-							property="#{httrabajador.sucursal1}">
+							property="#{httrabajador.to.sucursal1}">
 						</aon:lookupButton>
 						<aon:inputText id="Cuenta_sucdesc"
-							value="#{(httrabajador.sucursal1.id.codent!=null)?(httrabajador.sucursal1.id.codent):('')}"   
+							value="#{(httrabajador.to.sucursal1.id.codent!=null)?(httrabajador.to.sucursal1.id.codent):('')}"   
 							size="40" disabled="true" />
 					</aon:div>
 
@@ -553,7 +566,11 @@
 
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_avanzadas_hojas_irpf}" />
-								<aon:selectOneMenu value="#{httrabajador.to.indirpf}">
+								<aon:selectOneMenu id="Httrabajador_indirpf"
+									valueChangeListener="#{httrabajador.addExpression}">
+									<aon:enumConverter
+										enum="com.code.aon.payroll.enumeration.TipIrpf" />
+										  <f:selectItem value="#{null}" itemLabel="    " />
 									<f:selectItems value="#{httrabajador.listatipirpf}" />
 								</aon:selectOneMenu>
 
@@ -597,7 +614,11 @@
 
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_avanzadas_hojas_ind}" />
-								<aon:selectOneMenu value="#{httrabajador.to.tiempoparcial}">
+								<aon:selectOneMenu id="Httrabajador_tiempoparcial"
+									valueChangeListener="#{httrabajador.addExpression}">
+									<aon:enumConverter
+										enum="com.code.aon.payroll.enumeration.Timecont" />
+										  <f:selectItem value="#{null}" itemLabel="    " />
 									<f:selectItems value="#{httrabajador.listatimecont}" />
 								</aon:selectOneMenu>
 

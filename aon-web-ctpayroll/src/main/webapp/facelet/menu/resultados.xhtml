@@ -26,7 +26,11 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div>
-								<aon:commandLink value="#{menuBundle.resultados_recibos_salarios__nomina}" disabled="true" />
+								<aon:commandLink value="#{menuBundle.resultados_recibos_salarios__nomina}" action="nomina_form" >
+									<aon:actionListener method="#{nomina.onSearch}" />
+									<aon:actionListener method="#{nomina.onEditSearch}" />
+									<aon:actionListener method="#{nomina.onSelectFirst}" />
+								</aon:commandLink>
 							</aon:div>
 							<aon:div>
 								<aon:commandLink value="#{menuBundle.resultados_recibos_salarios__nominaex}" action="nominaex_form" >
