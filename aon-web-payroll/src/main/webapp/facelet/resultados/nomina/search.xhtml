@@ -9,559 +9,452 @@
 
 	<ui:define name="content">
 
-		<aon:form id="otrpercSearch">
+		<aon:form id="nominaForm">
+
+
+
 
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{appBundle.aon_payroll_principales_autonomos}" />
-				<ui:param name="controller" value="#{autonomo}" />
+					value="#{appBundle.aon_payroll_resultados_irpf_impresos190_mnto_impresos}" />
+				<ui:param name="controller" value="#{nomina}" />
+				<ui:param name="skipResetButton" value="true" />
 			</ui:include>
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:define name="searchContent">
 					<aon:methodParam name="searchActionListener"
-						value="#{autonomo.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="autonomo_list" />
+						value="#{nomina.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="nomina_list" />
+
+					<aon:div id="nomina" width="80%"
+						styleClass="aon-scroll-area aon-scroll-area-principales">
 
 
-					<aon:div id="cliente"
-						styleClass="aon-scroll-area aon-scroll-area-search">
 
-						<aon:div styleClass="aon-scroll-area">
-							<aon:panelGrid columns="4" dir="true" width="100%"
-								style="margin-bottom=2px;">
+						<aon:div id="tabsinfo">
+							<rich:tabPanel switchType="ajax">
 
-								<aon:outputLabel for="Persona_cdg"
-									value="#{appBundle.aon_payroll_principales_personas_otrperc_per}" />
-								<aon:div styleClass="aon-lookup">
-									<aon:lookupInputText id="Persona_cdg" lookup="#{personaLookup}"
-										reRender="Persona_description"
-										value="#{autonomo.persona.cdg}" size="5">
-									</aon:lookupInputText>
-									<aon:lookupButton id="Persona_lookup"
-										windowTitle="#{appBundle.aon_payroll_auxiliares_tipos__tipovia}"
-										selectReRender="Persona_cdg,Persona_description"
-										lookup="#{personaLookup}" minHeight="440"
-										property="#{autonomo.persona}">
-									</aon:lookupButton>
-								</aon:div>
 
-								<aon:outputLabel
-									value="#{appBundle.aon_payroll_principales_autonomos_ape1}" />
-								<aon:inputText id="Autonomos_persona_descripcion" 
-											valueChangeListener="#{autonomo.addExpression}"
-									size="30" maxlength="20" />
 
-								<aon:outputLabel
-									value="#{appBundle.aon_payroll_principales_autonomos_ape2}" />
-								<aon:inputText id="Autonomos_persona_apellido2" 
-											valueChangeListener="#{autonomo.addExpression}"
-									size="30" maxlength="20" />
-								<aon:outputLabel
-									value="#{appBundle.aon_payroll_principales_autonomos_nom}" />
-								<aon:inputText id="Autonomos_persona_nombre" 
-											valueChangeListener="#{autonomo.addExpression}" size="30"
-									maxlength="20" />
 
-								<aon:outputLabel
-									value="#{appBundle.aon_payroll_principales_autonomos_nuss}" />
-								<aon:inputText id="Autonomos_persona_numss" 
-											valueChangeListener="#{autonomo.addExpression}" size="30" maxlength="20" />
-							</aon:panelGrid>
+								<rich:tab id="badses"
+									label="#{appBundle.aon_payroll_resultados_nomina_tab1}">
 
+									<h:panelGrid columns="4" dir="true" width="100%">
+										<aon:div>
+											<aon:outputLabel for="Actividad_cdg"
+												value="#{appBundle.aon_payroll_resultados_nomina_cod}" />
+
+											<aon:inputText value="#{nomina.to.cdg}" size="5" />
+										</aon:div>
+
+										<aon:div>
+											<aon:outputLabel for="Tra_cdg"
+												value="#{appBundle.aon_payroll_resultados_nomina_tra}" />
+											<aon:div styleClass="aon-lookup">
+												<aon:lookupInputText id="Tra_cdg"
+													lookup="#{trabajadorLookup}"
+													value="#{nomina.to.trabajador.cdg}" size="3">
+												</aon:lookupInputText>
+												<aon:lookupButton id="Tra_lookup"
+													windowTitle="#{appBundle.aon_payroll_resultados_nomina_tra}"
+													selectReRender="Tra_cdg" lookup="#{trabajadorLookup}"
+													minHeight="440" property="#{nomina.to.trabajador}">
+												</aon:lookupButton>
+											</aon:div>
+											<aon:outputLabel for="Tra_cdg"
+												value="#{appBundle.aon_payroll_resultados_nomina_tipo}" />
+											<aon:inputText
+												value="#{nomina.to.trabajador.emprccc.id.tipccc}"
+												disabled="true" size="10" />
+										</aon:div>
+
+
+										<aon:inputText value="#{nomina.to.nomemp}" size="45" />
+										<aon:inputText value="#{nomina.to.nomper}" size="45" />
+										<aon:inputText value="#{nomina.to.descat}" size="45" />
+										<aon:inputText value="#{nomina.to.profesion}" size="45" />
+										<aon:inputText value="#{nomina.to.direccion}" size="45" />
+										<aon:inputText value="#{nomina.to.localidad}" size="45" />
+										<aon:inputText
+											value="#{nomina.to.trabajador.emprccc.descripcion}" size="45" />
+										<aon:selectInputDate value="#{nomina.to.fecant}"
+											inputSize="40" renderAsPopup="true"
+											popupDateFormat="#{bundle.aon_date_pattern}">
+										</aon:selectInputDate>
+										<aon:inputText value="#{nomina.to.nummat}" size="45" />
+										<aon:inputText value="#{nomina.to.trabajador.persona.numss}"
+											size="45" />
+
+
+									</h:panelGrid>
+
+									<h:panelGrid columns="10" dir="true" width="100%">
+										<aon:outputLabel for="Tra_cdg"
+											value="#{appBundle.aon_payroll_resultados_nomina_dev}" />
+
+
+										<aon:selectInputDate value="#{nomina.to.fecini}"
+											inputSize="10" renderAsPopup="true"
+											popupDateFormat="#{bundle.aon_date_pattern}">
+										</aon:selectInputDate>
+										<aon:outputLabel for="Tra_cdg"
+											value="#{appBundle.aon_payroll_resultados_nomina_de}" />
+
+										<aon:inputText value="#{nomina.to.mes}" size="3" />
+
+										<aon:outputLabel for="Tra_cdg"
+											value="#{appBundle.aon_payroll_resultados_nomina_al}" />
+
+										<aon:selectInputDate value="#{nomina.to.fecfin}"
+											inputSize="10" renderAsPopup="true"
+											popupDateFormat="#{bundle.aon_date_pattern}">
+										</aon:selectInputDate>
+
+										<aon:outputLabel for="Tra_cdg"
+											value="#{appBundle.aon_payroll_resultados_nomina_de}" />
+
+										<aon:inputText value="#{nomina.to.anio}" size="3" />
+
+										<!-- 	<aon:outputLabel for="Tra_cdg"
+									value="#{appBundle.aon_payroll_resultados_nomina_totdias}" />
+
+								<aon:inputText value="#{nomina.to.diasnomina}" size="3" />
+ -->
+									</h:panelGrid>
+									<aon:div heigth="200">
+
+										<aon:editDataTable disabled="true" id="nominadevData" var="to"
+											rows="3" value="#{nominadev.model}"
+											columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+
+
+
+											<aon:column>
+												<f:facet name="header">
+													<aon:outputText value="&#160;" />
+												</f:facet>
+
+												<aon:div>
+													<h:commandButton alt="[#{bundle.aon_reset}]"
+														styleClass="aon-editDataTable-button aon-icon-rowSelector "
+														actionListener="#{nominadev.onSelect}"
+														action="nominadev_form"
+														accesskey="#{bundle.aon_key_new_line}" />
+												</aon:div>
+
+												<f:facet name="footer">
+													<aon:div>
+														<aon:commandButton alt="[#{bundle.aon_reset}]"
+															styleClass="aon-editDataTable-button aon-icon-reset"
+															actionListener="#{nominadev.onReset}"
+															action="nominadev_form" rendered="#{!nominadev.new}"
+															accesskey="#{bundle.aon_key_new_line}" />
+													</aon:div>
+												</f:facet>
+											</aon:column>
+
+											<aon:column>
+												<f:facet name="header">
+													<aon:outputText
+														value="#{appBundle.aon_payroll_resultados_nomina_devv}" />
+												</f:facet>
+												<aon:outputText value="#{to.codcom}" />
+
+											</aon:column>
+
+											<aon:column>
+												<f:facet name="header">
+													<aon:outputText
+														value="#{appBundle.aon_payroll_resultados_nomina_desc}" />
+												</f:facet>
+												<aon:outputText value="#{to.descom}" />
+
+											</aon:column>
+
+
+											<aon:column>
+												<f:facet name="header">
+													<aon:outputText
+														value="#{appBundle.aon_payroll_resultados_nomina_uni}" />
+												</f:facet>
+												<aon:outputText value="#{to.unidades}" />
+
+											</aon:column>
+
+
+											<aon:column>
+												<f:facet name="header">
+													<aon:outputText
+														value="#{appBundle.aon_payroll_resultados_nomina_impuni}" />
+												</f:facet>
+												<aon:outputText value="#{to.impuni}" />
+
+											</aon:column>
+
+
+
+											<aon:column>
+												<f:facet name="header">
+													<aon:outputText
+														value="#{appBundle.aon_payroll_resultados_nomina_imp}" />
+												</f:facet>
+												<aon:outputText value="#{to.importe}" />
+
+											</aon:column>
+
+
+
+
+										</aon:editDataTable>
+
+
+										<aon:dataScroller2 for="nominadevData" showNote="true" />
+
+										<h:panelGrid style="float:right" columns="2" dir="true">
+											<aon:outputLabel for="Tra_cdg" font-weight="bold"
+												value="#{appBundle.aon_payroll_resultados_nomina_tot1}" />
+
+											<aon:inputText value="#{nomina.to.totalDevengos}" size="3" />
+										</h:panelGrid>
+
+
+									</aon:div>
+
+
+									<aon:outputLabel for="Tra_cdg"
+										value="#{appBundle.aon_payroll_resultados_nomina_deter}" />
+									<aon:panelGrid columns="7" dir="true" width="100%">
+
+
+										<aon:outputLabel for="Tra_cdg"
+											value="#{appBundle.aon_payroll_resultados_nomina_rem}" />
+										<aon:inputText value="#{nomina.to.remuneracion}" size="5" />
+										<aon:outputLabel for="Tra_cdg"
+											value="#{appBundle.aon_payroll_resultados_nomina_basecg}" />
+
+										<aon:inputText value="#{nomina.to.codbas}" size="5" />
+										<aon:inputText value="#{nomina.to.baseCg}" size="5" />
+										<aon:inputText value="#{nomina.to.prcCg}" size="5" />
+										<aon:inputText value="#{nomina.to.importeCg}" size="5" />
+
+
+										<aon:outputLabel for="Tra_cdg"
+											value="#{appBundle.aon_payroll_resultados_nomina_por}" />
+										<aon:inputText value="#{nomina.to.baseProext}" size="5" />
+										<aon:outputLabel for="Tra_cdg"
+											value="#{appBundle.aon_payroll_resultados_nomina_des}" />
+										<aon:outputLabel for="Tra_cdg" value=" " />
+										<aon:inputText value="#{nomina.to.baseAcc}" size="5" />
+										<aon:inputText value="#{nomina.to.prcAcc}" size="5" />
+										<aon:inputText value="#{nomina.to.importeAcc}" size="5" />
+
+
+										<aon:outputLabel for="Tra_cdg"
+											value="#{appBundle.aon_payroll_resultados_nomina_baseit}" />
+										<aon:inputText value="#{nomina.to.baseIt}" size="5" />
+										<aon:outputLabel for="Tra_cdg"
+											value="#{appBundle.aon_payroll_resultados_nomina_horasext}" />
+										<aon:outputLabel for="Tra_cdg" value=" " />
+										<aon:inputText value="#{nomina.to.baseHextras}" size="5" />
+										<aon:inputText value="#{nomina.to.prcHex}" size="5" />
+										<aon:inputText value="#{nomina.to.importeHex}" size="5" />
+
+
+										<aon:outputLabel for="Tra_cdg"
+											value="#{appBundle.aon_payroll_resultados_nomina_toti}" />
+										<aon:inputText value="#{nomina.to.total1}" size="5" />
+										<aon:outputLabel for="Tra_cdg"
+											value="#{appBundle.aon_payroll_resultados_nomina_horasextno}" />
+										<aon:outputLabel for="Tra_cdg" value=" " />
+										<aon:inputText value="#{nomina.to.baseHextrasNo}" size="5" />
+										<aon:inputText value="#{nomina.to.prcHexno}" size="5" />
+										<aon:inputText value="#{nomina.to.importeHexno}" size="5" />
+
+									</aon:panelGrid>
+									<aon:outputLabel for="Tra_cdg"
+										value="#{appBundle.aon_payroll_resultados_nomina_deduc}" />
+
+
+									<h:panelGrid style="float:right" columns="2" dir="true">
+
+
+
+										<aon:outputLabel for="Tra_cdg"
+											value="#{appBundle.aon_payroll_resultados_nomina_ded1}" />
+
+										<aon:inputText value="#{nomina.to.importeCuotas}" size="3" />
+
+
+
+										<aon:outputLabel for="Tra_cdg"
+											value="#{appBundle.aon_payroll_resultados_nomina_ret}" />
+										<aon:div>
+											<aon:inputText value="#{nomina.to.prcIrpf}" size="3" />
+
+											<aon:outputLabel for="Tra_cdg"
+												value="#{appBundle.aon_payroll_resultados_nomina_s}" />
+
+											<aon:inputText value="#{nomina.to.baseIrpf}" size="3" />
+											<aon:inputText value="#{nomina.to.importeIrpf}" size="3" />
+										</aon:div>
+
+									</h:panelGrid>
+
+									<aon:div heigth="200">
+
+										<aon:editDataTable disabled="true" id="nominadtoData" var="to"
+											rows="1" value="#{nomdto.model}"
+											columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+
+
+
+											<aon:column>
+												<f:facet name="header">
+													<aon:outputText value="&#160;" />
+												</f:facet>
+
+												<aon:div>
+													<h:commandButton alt="[#{bundle.aon_reset}]"
+														styleClass="aon-editDataTable-button aon-icon-rowSelector "
+														actionListener="#{nomdto.onSelect}" action="nomdto_form"
+														accesskey="#{bundle.aon_key_new_line}" />
+												</aon:div>
+
+												<f:facet name="footer">
+													<aon:div>
+														<aon:commandButton alt="[#{bundle.aon_reset}]"
+															styleClass="aon-editDataTable-button aon-icon-reset"
+															actionListener="#{nomdto.onReset}" action="nomdto_form"
+															rendered="#{!nomdto.new}"
+															accesskey="#{bundle.aon_key_new_line}" />
+													</aon:div>
+												</f:facet>
+											</aon:column>
+
+											<aon:column>
+												<f:facet name="header">
+													<aon:outputText
+														value="#{appBundle.aon_payroll_resultados_nomina_lin}" />
+												</f:facet>
+												<aon:outputText value="#{to.id.cdg}" />
+
+											</aon:column>
+
+											<aon:column>
+												<f:facet name="header">
+													<aon:outputText
+														value="#{appBundle.aon_payroll_resultados_nomina_con}" />
+												</f:facet>
+												<aon:outputText value="#{to.concepto}" />
+
+											</aon:column>
+
+
+											<aon:column>
+												<f:facet name="header">
+													<aon:outputText
+														value="#{appBundle.aon_payroll_resultados_nomina_imp}" />
+												</f:facet>
+												<aon:outputText value="#{to.importe}" />
+
+											</aon:column>
+
+
+
+
+
+
+
+										</aon:editDataTable>
+										<aon:dataScroller2 for="nominadtoData" showNote="true" />
+
+									</aon:div>
+
+
+									<aon:div>
+
+
+
+
+										<h:panelGrid style="float:right" columns="2" dir="true"
+											width="50%">
+											<aon:div style="float:left">
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_div}" />
+
+												<aon:inputText value="#{nomina.to.divisa.description}"
+													size="3" />
+											</aon:div>
+											<aon:div>
+												<h:panelGrid style="float:right" columns="2" dir="true">
+													<aon:outputLabel for="Tra_cdg"
+														value="#{appBundle.aon_payroll_resultados_nomina_totalded}" />
+
+													<aon:inputText value="#{nomina.to.totalDeducir}" size="3" />
+													<aon:outputLabel for="Tra_cdg"
+														value="#{appBundle.aon_payroll_resultados_nomina_totii}" />
+
+													<aon:inputText value="#{nomina.to.totalLiquido}" size="3" />
+												</h:panelGrid>
+											</aon:div>
+										</h:panelGrid>
+
+									</aon:div>
+
+								</rich:tab>
+
+
+
+
+
+								<rich:tab id="bases"
+									label="#{appBundle.aon_payroll_resultados_nomina_tab2}"
+									disabled="true">
+
+									<aon:panelGrid columns="2" dir="true" width="100%">
+
+										<aon:panelGrid columns="2" dir="true" width="100%">
+											<aon:outputLabel for="Tra_cdg"
+												value="#{appBundle.aon_payroll_principales_tipocuenta_empresa}" />
+											<aon:inputText value="#{nomina.to.remuneracion}" size="5" />
+											<aon:outputLabel for="Tra_cdg"
+												value="#{appBundle.aon_payroll_principales_tipocuenta_empresa}" />
+
+											<aon:inputText value="#{nomina.to.codbas}" size="5" />
+
+
+										</aon:panelGrid>
+
+										<aon:panelGrid columns="2" dir="true" width="100%">
+											<aon:outputLabel for="Tra_cdg"
+												value="#{appBundle.aon_payroll_principales_tipocuenta_empresa}" />
+											<aon:inputText value="#{nomina.to.remuneracion}" size="5" />
+											<aon:outputLabel for="Tra_cdg"
+												value="#{appBundle.aon_payroll_principales_tipocuenta_empresa}" />
+
+											<aon:inputText value="#{nomina.to.codbas}" size="5" />
+										</aon:panelGrid>
+
+									</aon:panelGrid>
+
+								</rich:tab>
+
+
+							</rich:tabPanel>
 						</aon:div>
-						<rich:spacer />
-						<aon:div styleClass="aon-scroll-area">
-
-							<aon:panelGrid columns="4" dir="true" width="100%"
-								style="margin-bottom=2px;">
-								<aon:outputLabel
-									value="#{appBundle.aon_payroll_principales_autonomos_cdg}" />
-								<aon:inputText id="Autonomos_cdg" 
-											valueChangeListener="#{autonomo.addExpression}" size="30"
-									maxlength="20" />
-
-								<aon:outputLabel
-									value="#{appBundle.aon_payroll_principales_autonomos_inigest}" />
-
-								<aon:selectInputDate renderAsPopup="true"
-									popupDateFormat="#{appBundle.aon_date_pattern}" 
-									value="#{autonomo.fecinigestion}" enableManualInput="true" />
-
-								<aon:outputLabel
-									value="#{appBundle.aon_payroll_principales_autonomos_fingest}" />
-								<aon:selectInputDate renderAsPopup="true"
-									popupDateFormat="#{appBundle.aon_date_pattern}"
-									value="#{autonomo.fecfingestion}" enableManualInput="true" />
-
-								<aon:outputLabel
-									value="#{appBundle.aon_payroll_principales_autonomos_hono}" />
-								<aon:inputText id="Autonomos_honorarios" 
-											valueChangeListener="#{autonomo.addExpression}"  size="30"
-									maxlength="20" />
-
-						  		<aon:outputLabel
-									value="#{appBundle.aon_payroll_principales_autonomos_obs}" />
-								<h:inputTextarea  id="Autonomos_observaciones" 
-											valueChangeListener="#{autonomo.addExpression}"  cols="50"
-									rows="4" size="150" maxlength="20" />
 
 
-
-							</aon:panelGrid>
-						</aon:div>
 					</aon:div>
-
-					<aon:outputLabel value=" " />
-
-					<rich:tabPanel switchType="ajax">
-
-						<rich:tab id="datos"
-							label="#{appBundle.aon_payroll_principales_clientes_datos}">
-							<aon:div id="datosDiv">
-								<aon:panelGrid columns="4" dir="true" width="100%"
-									style="margin-bottom=2px;">
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_autonomos_tipoautonomo}" />
-
-
-									<aon:selectOneMenu id="Autonomos_tipautonomo"
-										valueChangeListener="#{autonomo.addExpression}">
-										<aon:enumConverter
-											enum="com.code.aon.payroll.enumeration.TipAutonomo" />
-										<f:selectItem value="#{null}" itemLabel="    " />
-										<f:selectItems value="#{autonomo.listaAutonomos}" />
-									</aon:selectOneMenu>
-
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_autonomos_fecconst}" />
-									<aon:selectInputDate renderAsPopup="true"
-										popupDateFormat="#{appBundle.aon_date_pattern}"
-										value="#{autonomo.fecconstitucion}"
-										enableManualInput="true" />
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_autonomos_fecalta}" />
-									<aon:selectInputDate renderAsPopup="true"
-										popupDateFormat="#{appBundle.aon_date_pattern}"
-										value="#{autonomo.fecalta}" enableManualInput="true" />
-
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_autonomos_mutua}" />
-
-								  	<aon:div styleClass="aon-lookup">
-										<aon:lookupInputText id="Mutua_cdg" lookup="#{mutuaLookup}"
-											reRender="Mutua_description" value="#{autonomo.mutua.cdg}"
-											size="5">
-										</aon:lookupInputText>
-										<aon:lookupButton id="Mut_lookup"
-											windowTitle="#{appBundle.aon_payroll_principales_autonomos_mutua}"
-											selectReRender="Mutua_cdg,Mutua_description"
-											lookup="#{mutuaLookup}" minHeight="440"
-											property="#{autonomo.mutua}">
-										</aon:lookupButton>
-										<aon:inputText id="Mutua_description"
-											value="#{(autonomo.mutua.description!=null)?(autonomo.mutua.description):('')}"
-											size="34" disabled="true" />
-									</aon:div>
-
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_autonomos_codreg}" />
-									<aon:inputText id="Autonomos_codregistro" 
-											valueChangeListener="#{autonomo.addExpression}"  size="30"
-										maxlength="20" />
-
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_autonomos_descreg}" />
-									<aon:inputText id="Autonomos_desregistro" 
-											valueChangeListener="#{autonomo.addExpression}"   size="30"
-										maxlength="20" />
-
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_autonomos_tom}" />
-									<aon:inputText  id="Autonomos_tomo" 
-											valueChangeListener="#{autonomo.addExpression}" size="30"
-										maxlength="20" />
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_autonomos_lib}" />
-									<aon:inputText id="Autonomos_libro" 
-											valueChangeListener="#{autonomo.addExpression}" size="30"
-										maxlength="20" />
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_autonomos_fol}" />
-									<aon:inputText id="Autonomos_folio" 
-											valueChangeListener="#{autonomo.addExpression}" size="30"
-										maxlength="20" />
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_autonomos_sec}" />
-									<aon:inputText id="Autonomos_seccion" 
-											valueChangeListener="#{autonomo.addExpression}" size="30"
-										maxlength="20" />
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_autonomos_hoja}" />
-									<aon:inputText id="Autonomos_hoja" 
-											valueChangeListener="#{autonomo.addExpression}" size="30"
-										maxlength="20" />
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_autonomos_otro}" />
-									<aon:inputText id="Autonomos_otros" 
-											valueChangeListener="#{autonomo.addExpression}" size="30"
-										maxlength="20" />
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_autonomos_bmin}" />
-									<aon:inputText id="Autonomos_baseminima" 
-											valueChangeListener="#{autonomo.addExpression}" size="30"
-										maxlength="20" />
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_autonomos_bele}" />
-									<aon:inputText id="Autonomos_baseelegida" 
-											valueChangeListener="#{autonomo.addExpression}" size="30"
-										maxlength="20" />
-
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_autonomos_bmax}" />
-									<aon:inputText id="Autonomos_basemaxima" 
-											valueChangeListener="#{autonomo.addExpression}" size="30"
-										maxlength="20" />
-
-
-									<aon:div>
-										<aon:selectBooleanCheckbox id="Autonomos_incremento"
-											value="#{autonomo.incremento}" />
-										<aon:outputLabel for="Autonomos_incremento"
-											value="#{appBundle.aon_payroll_principales_autonomos_inc}" />
-									</aon:div>
-
-									<aon:div>
-										<aon:selectBooleanCheckbox  id="Autonomos_incapacidad"
-											value="#{autonomo.incapacidad}" />
-										<aon:outputLabel  for="Autonomos_incapacidad"
-											value="#{appBundle.aon_payroll_principales_autonomos_it}" />
-									</aon:div>
-
-
-
-								</aon:panelGrid>
-
-							</aon:div>
-						</rich:tab>
-
-
-						<rich:tab
-							label="#{appBundle.aon_payroll_principales_autonomos_dom}">
-
-							<aon:panel>
-								<f:facet name="header">
-									<aon:outputText
-										value="#{appBundle.aon_payroll_principales_autonomos_domaut}" />
-								</f:facet>
-
-
-								<aon:div styleClass="aon-scroll-area">
-									<aon:panelGrid columns="4" dir="true" width="100%"
-										style="margin-bottom=2px;">
-
-										<aon:outputLabel for="Tipoviaa_cdg"
-											value="#{appBundle.aon_payroll_principales_clientes_tipovia}" />
-										<aon:div styleClass="aon-lookup">
-											<aon:lookupInputText id="Tipovia_cdg"
-												lookup="#{tipoviaLookup}" reRender="Tipovia_description"
-												value="#{autonomo.tipovia1.cdg}" size="5">
-											</aon:lookupInputText>
-											<aon:lookupButton id="Tipovia_lookup"
-												windowTitle="#{appBundle.aon_payroll_auxiliares_tipos__tipovia}"
-												selectReRender="Tipovia_cdg,Tipovia_description"
-												lookup="#{tipoviaLookup}" minHeight="440"
-												property="#{autonomo.tipovia1}">
-											</aon:lookupButton>
-											<aon:inputText id="Tipovia_description"
-												value="#{(autonomo.tipovia1.description!=null)?(autonomo.tipovia1.description):('')}"
-												size="34" disabled="true" />
-										</aon:div>
-
-										<aon:outputLabel
-											value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_nomvia}" />
-										<aon:inputText id="Autonomos_nomvia" 
-											valueChangeListener="#{autonomo.addExpression}" size="50"
-											maxlength="20" />
-
-										<aon:outputLabel
-											value="#{appBundle.aon_payroll_principales_clientes_num}" />
-										<aon:inputText id="Autonomos_numero" 
-											valueChangeListener="#{autonomo.addExpression}" size="50"
-											maxlength="20" />
-
-										<aon:outputLabel
-											value="#{appBundle.aon_payroll_principales_clientes_otros}" />
-										<aon:inputText id="Autonomos_otrdir" 
-											valueChangeListener="#{autonomo.addExpression}" size="50"
-											maxlength="20" />
-
-										<aon:outputLabel
-											value="#{appBundle.aon_payroll_principales_clientes_codpos}" />
-										<aon:inputText id="Autonomos_codpos" 
-											valueChangeListener="#{autonomo.addExpression}" size="50"
-											maxlength="20" />
-
-										<aon:outputLabel
-											value="#{appBundle.aon_payroll_principales_clientes_localidad}" />
-										<aon:inputText id="Autonomos_localidad" 
-											valueChangeListener="#{autonomo.addExpression}" size="50"
-											maxlength="20" />
-
-										<aon:outputLabel for="Provincia_cdg"
-											value="#{appBundle.aon_payroll_principales_clientes_provincia}" />
-										<aon:div styleClass="aon-lookup">
-											<aon:lookupInputText id="Pro_cdg" lookup="#{provinciaLookup}"
-												reRender="Pro_description"
-												value="#{autonomo.provincia1.cdg}" size="5">
-											</aon:lookupInputText>
-											<aon:lookupButton id="Pro_lookup"
-												windowTitle="#{appBundle.aon_payroll_principales_clientes_provincia}"
-												selectReRender="Pro_cdg,Pro_description"
-												lookup="#{provinciaLookup}" minHeight="440"
-												property="#{autonomo.provincia1}">
-											</aon:lookupButton>
-											<aon:inputText id="Pro_description"
-												value="#{(autonomo.provincia1.descripcion!=null)?(autonomo.provincia1.descripcion):('')}"
-												size="34" disabled="true" />
-										</aon:div>
-
-										<aon:outputLabel value="   " />
-
-									</aon:panelGrid>
-
-								</aon:div>
-							</aon:panel>
-							<aon:panel>
-								<f:facet name="header">
-									<aon:outputText
-										value="#{appBundle.aon_payroll_principales_autonomos_domper}" />
-								</f:facet>
-								<aon:div styleClass="aon-scroll-area">
-									<aon:panelGrid columns="4" dir="true" width="100%"
-										style="margin-bottom=2px;">
-
-										<aon:outputLabel for="Tipovi_cdg"
-											value="#{appBundle.aon_payroll_principales_clientes_tipovia}" />
-										<aon:div styleClass="aon-lookup">
-											<aon:lookupInputText id="Tipovi_cdg"
-												lookup="#{tipoviaLookup}" reRender="Tipovia_description"
-												value="#{autonomo.tipovia2.cdg}" size="5">
-											</aon:lookupInputText>
-											<aon:lookupButton id="Tipovi_lookup"
-												windowTitle="#{appBundle.aon_payroll_auxiliares_tipos__tipovia}"
-												selectReRender="Tipovi_cdg,Tipovi_description"
-												lookup="#{tipoviaLookup}" minHeight="440"
-												property="#{autonomo.tipovia2}">
-											</aon:lookupButton>
-											<aon:inputText id="Tipovi_description"
-												value="#{(autonomo.tipovia2.description!=null)?(autonomo.tipovia2.description):('')}"
-												size="34" disabled="true" />
-										</aon:div>
-
-										<aon:outputLabel
-											value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_nomvia}" />
-										<aon:inputText id="Autonomos_persona_nomvia" 
-											valueChangeListener="#{autonomo.addExpression}"  size="50"
-											maxlength="20" />
-
-										<aon:outputLabel
-											value="#{appBundle.aon_payroll_principales_clientes_num}" />
-										<aon:inputText  id="Autonomos_persona_numero" 
-											valueChangeListener="#{autonomo.addExpression}"  size="50"
-											maxlength="20" />
-
-										<aon:outputLabel
-											value="#{appBundle.aon_payroll_principales_clientes_otros}" />
-										<aon:inputText  id="Autonomos_persona_otrdir" 
-											valueChangeListener="#{autonomo.addExpression}"  size="50"
-											maxlength="20" />
-
-										<aon:outputLabel
-											value="#{appBundle.aon_payroll_principales_clientes_codpos}" />
-										<aon:inputText  id="Autonomos_persona_codpos" 
-											valueChangeListener="#{autonomo.addExpression}"  size="50"
-											maxlength="20" />
-
-										<aon:outputLabel
-											value="#{appBundle.aon_payroll_principales_clientes_localidad}" />
-										<aon:inputText  id="Autonomos_persona_loaclidad" 
-											valueChangeListener="#{autonomo.addExpression}" 
-											size="50" maxlength="20" />
-
-										<aon:outputLabel for="Provinci_cdg"
-											value="#{appBundle.aon_payroll_principales_clientes_provincia}" />
-										<aon:div styleClass="aon-lookup">
-											<aon:lookupInputText id="Pr_cdg" lookup="#{provinciaLookup}"
-												reRender="Pro_description"
-												value="#{autonomo.provincia2.cdg}" size="5">
-											</aon:lookupInputText>
-											<aon:lookupButton id="Pr_lookup"
-												windowTitle="#{appBundle.aon_payroll_principales_clientes_provincia}"
-												selectReRender="Pr_cdg,Pr_description"
-												lookup="#{provinciaLookup}" minHeight="440"
-												property="#{autonomo.provincia2}">
-											</aon:lookupButton>
-											<aon:inputText id="Pr_description"
-												value="#{(autonomo.provincia2.descripcion!=null)?(autonomo.provincia2.descripcion):('')}"
-												size="34" disabled="true" />
-										</aon:div>
-
-										<aon:outputLabel value="   " />
-
-									</aon:panelGrid>
-
-								</aon:div>
-							</aon:panel>
-
-						</rich:tab>
-
-						<rich:tab
-							label="#{appBundle.aon_payroll_principales_autonomos_datban}">
-
-							<aon:div id="datos2" styleClass="aon-scroll-area">
-								<aon:panelGrid columns="2" dir="true" width="100%"
-									style="margin-bottom=2px;">
-
-
-
-
-<!--  
-									<aon:outputLabel for="Cuenta_entidad"
-										value="#{appBundle.aon_payroll_principales_cuenta_entidad_nom}" />
-									<aon:div styleClass="aon-lookup">
-										<aon:lookupInputText id="Cuenta_ent" lookup="#{entidadLookup}"
-											reRender="Cuenta_entdesc,sucursalLookupDiv"
-											value="#{autonomo.sucursal1.entidad.cdg}" size="5">
-										</aon:lookupInputText>
-										<aon:lookupButton id="Cuenta_lookup"
-											windowTitle="#{appBundle.aon_payroll_principales_cuenta_entidad_nom}"
-											selectReRender="Cuenta_ent,Cuenta_entdesc"
-											lookup="#{entidadLookup}" minHeight="440"
-											property="#{autonomo.sucursal1.entidad}">
-										</aon:lookupButton>
-										<aon:inputText id="Cuenta_entdesc"
-											value="#{(autonomo.sucursal1.entidad.description!=null)?(autonomo.sucursal1.entidad.description):('')}"
-											size="60" disabled="true" />
-									</aon:div>
-
-									<aon:outputLabel for="Cuenta_sucursal"
-										value="#{appBundle.aon_payroll_principales_cuenta_sucursal}" />
-									<aon:div id="sucursalLookupDiv" styleClass="aon-lookup">
-										<aon:lookupInputText id="Cuenta_suc"
-											lookup="#{sucursalLookup}" reRender="Cuenta_sucdesc"
-											value="#{autonomo.to.sucursal1.id.cdg}" size="5">
-										</aon:lookupInputText>
-										<aon:lookupButton id="Cuentasuc_lookup"
-											windowTitle="#{appBundle.aon_payroll_principales_cuenta_sucursal}"
-											selectReRender="Cuenta_suc,Cuenta_sucdesc"
-											lookup="#{sucursalLookup}" minHeight="440"
-											property="#{autonomo.to.sucursal1}">
-										</aon:lookupButton>
-										<aon:inputText id="Cuenta_sucdesc"
-											value="#{(autonomo.to.sucursal1.id.codent!=null)?(autonomo.to.sucursal1.id.codent):('')}"
-											size="60" disabled="true" />
-									</aon:div>-->
-                  
-
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_cuenta_dc}" />
-									<aon:inputText id="Autonomos_dc" 
-											valueChangeListener="#{autonomo.addExpression}"  size="50"
-										maxlength="2" />
-
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_cuenta_numcta}" />
-									<aon:inputText  id="Autonomos_cuenta" 
-											valueChangeListener="#{autonomo.addExpression}"  size="50"
-										maxlength="20" />
-
-
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_autonomos_domsuc}" />
-									<aon:inputText  id="Autonomos_sucursal1_domsuc" 
-											valueChangeListener="#{autonomo.addExpression}" 
-										size="50" maxlength="20" />
-
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_autonomos_munsuc}" />
-									<aon:inputText  id="Autonomos_sucursal1_munsuc" 
-											valueChangeListener="#{autonomo.addExpression}" 
-										size="50" maxlength="20" />
-
-
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_autonomos_cpsuc}" />
-									<aon:inputText  id="Autonomos_sucursal1_cpsuc" 
-											valueChangeListener="#{autonomo.addExpression}"  size="50"
-										maxlength="20" />
-								</aon:panelGrid>
-
-							</aon:div>
-
-
-						</rich:tab>
-
-
-
-						<rich:tab id="bases"
-							label="#{appBundle.aon_payroll_principales_autonomos_bases}">
-
-							<aon:div>
-								<rich:spacer />
-								<aon:panelGrid columns="4" dir="true" width="100%"
-									style="margin-bottom=2px;">
-									<aon:outputLabel for="Autonomos_autbases_fecinigestion"
-										value="#{appBundle.aon_payroll_principales_autonomos_fecini}" />
-
-									<aon:selectInputDate renderAsPopup="true"
-										popupDateFormat="#{appBundle.aon_date_pattern}"
-										enableManualInput="true" id="Autonomos_autbases_fecinigestion"
-										valueChangeListener="#{autonomo.addExpression}" />
-
-									<aon:outputLabel for="Autonomos_autbases_fecfingestion"
-										value="#{appBundle.aon_payroll_principales_autonomos_fecfin}" />
-									<aon:selectInputDate renderAsPopup="true"
-										popupDateFormat="#{appBundle.aon_date_pattern}"
-										id="Autonomos_autbases_fecfingestion"
-										valueChangeListener="#{autonomo.addExpression}"
-										enableManualInput="true" />
-									<aon:outputLabel for="Autonomos_autbases_base"
-										value="#{appBundle.aon_payroll_principales_autonomos_base}" />
-									<aon:inputText id="Autonomos_autbases_base"
-										valueChangeListener="#{autonomo.addExpression}"
-										size="50" maxlength="20" />
-
-									<aon:outputLabel for="Autonomos_autbases_cuota"
-										value="#{appBundle.aon_payroll_principales_autonomos_cuo}" />
-									<aon:inputText id="Autonomos_autbases_cuota"
-										valueChangeListener="#{autonomo.addExpression}"
-										size="50" maxlength="20" />
-								</aon:panelGrid>
-							</aon:div>
-
-
-
-
-						</rich:tab>
-
-
-					</rich:tabPanel>
-
-
-
 				</ui:define>
 			</ui:decorate>
-
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{personaLookup}" />
-		<aon:lookupButtonPopup lookup="#{tipoviaLookup}" />
-        <aon:lookupButtonPopup lookup="#{provinciaLookup}" />
-		<aon:lookupButtonPopup lookup="#{mutuaLookup}" />
-		<aon:lookupButtonPopup lookup="#{sucursalLookup}" />
-				
+
+		<aon:lookupButtonPopup lookup="#{trabajadorLookup}" />
+
 
 	</ui:define>
 
