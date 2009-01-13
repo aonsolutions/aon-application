@@ -4,10 +4,15 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 <body>
 
-<ui:composition>
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 
-	<aon:rowSelector selectionListener="#{lookup.onListSelect}" />
+	<ui:define name="content">
+		<aon:div>
+			<ui:include src="/facelet/homepage/homepage.xhtml" />
+		</aon:div>
 
+	</ui:define>
+	
 </ui:composition>
 
 </body>
