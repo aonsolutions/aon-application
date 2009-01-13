@@ -26,9 +26,9 @@
 				<aon:panelGrid cellpadding="5" cellspacing="0" border="0" columns="2" style="width:100%"
 					styleClass="aon-noborder"
 					columnClasses="aon-midle-width  aon-vertical-align-top,aon-midle-width" id="imagesPanel">	
-					<aon:div>
-						<aon:editDataTable id="companyImages" value="#{companyImages.model}"
-							var="to" style="width:300px" 
+					<aon:div styleClass="aon-width-300">
+						<aon:editDataTable id="companyImages"
+							var="to" value="#{companyImages.model}"
 							columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn">
 			
 							<aon:rowSelector toggleOnClick="#{true}" actionListener="#{companyImages.onSelect}" reRender="image_form"/>
@@ -61,8 +61,7 @@
 					
 						</aon:editDataTable>
 					
-						<aon:dataScroller dataTable="companyImages" for="companyImages" style="width:300px"
-							model="#{companyImages.model}" showNote="true" rowCount="20"/>
+						<aon:dataScroller2 for="companyImages" showNote="true" />
 					</aon:div>	
 					
 					<aon:div id="image_form" >	
