@@ -203,7 +203,7 @@ public class NominaexController extends PayrollBasicController {
 		if(to.getImpirpf() == null)
 			to.setImpirpf(new BigDecimal(0));
 		
-		to.setDivisa(to.getEmprper().getEmprnif().getDivisa());
+		to.setDivisa(to.getEmprper().getEmpresa().getDivisa());
 		if(to.getDivisa() == null){
 			Criteria criteria = new Criteria();
 			try {

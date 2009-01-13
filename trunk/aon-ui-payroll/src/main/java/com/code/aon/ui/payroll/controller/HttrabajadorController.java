@@ -17,6 +17,7 @@ import com.code.aon.payroll.auxiliares.contratos.ContratosTc2;
 import com.code.aon.payroll.auxiliares.convenios.Categoria;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Entidad;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal;
+import com.code.aon.payroll.avanzadas.hojastrabajo.Httrabajador;
 import com.code.aon.payroll.cotizacion.Base;
 import com.code.aon.payroll.cotizacion.Epigrafe;
 import com.code.aon.payroll.dao.IPayrollAlias;
@@ -34,7 +35,34 @@ import com.code.aon.payroll.tipos.Tipovia;
 
 public class HttrabajadorController extends PayrollBasicController {
 
+		
+	
+	private Documento documento;
+	private Actividad actividad;
+	private Domicilio domicilio;
+	private Pais pais;
+	private Provincia provincia;
+	private Provincia provincia1;
+	private Tipovia tipovia;
+	private Date fecnac;
+	private ContratosInternos tipocont;
+	private ContratosTc2 tipcotc2;
+	private Entidad entidad;
+	private Epigrafe epigrafe;
+	private Sucursal sucursal1;
+	private Base basecoti;
 	private Categoria categoria;
+	
+	
+
+	/**
+	 * genera un cdg siguiendo al maximo 
+	 */
+	public void generateCdg(){
+		((Httrabajador)getTo()).setCdg(Integer.parseInt(Utils.maxCode("Httrabajador", "cdg"))+1);
+	}
+	
+	
 
 	private List<SelectItem> estciv;
 
@@ -161,20 +189,6 @@ public class HttrabajadorController extends PayrollBasicController {
 		this.timeconts = timeconts;
 	}
 
-	private Documento documento;
-	private Actividad actividad;
-	private Domicilio domicilio;
-	private Pais pais;
-	private Provincia provincia;
-	private Provincia provincia1;
-	private Tipovia tipovia;
-	private Date fecnac;
-	private ContratosInternos tipocont;
-	private ContratosTc2 tipcotc2;
-	private Entidad entidad;
-	private Epigrafe epigrafe;
-	private Sucursal sucursal1;
-	private Base basecoti;
 
 	@Override
 	public void onEditSearch(ActionEvent arg0) {
@@ -410,21 +424,18 @@ public class HttrabajadorController extends PayrollBasicController {
 		this.fecnac = fecnac;
 	}
 
-	/*
-	 * public void verifyNullFields(){
-	 * if(StringUtils.isEmpty(((Persona)getTo()).getTipovia().getCdg()))
-	 * ((Persona)getTo()).getTipovia().setCdg("CL");
-	 * if(StringUtils.isEmpty(((Persona)getTo()).getTipdoc().getCdg()))
-	 * ((Persona)getTo()).setTipdoc(null);
-	 * if(StringUtils.isEmpty(((Persona)getTo()).getPais().getCdg()))
-	 * ((Persona)getTo()).setPais(null);
-	 * if(StringUtils.isEmpty(((Persona)getTo()).getPais1().getCdg()))
-	 * ((Persona)getTo()).setPais1(null);
-	 * if(StringUtils.isEmpty(((Persona)getTo()).getProvincia().getCdg()))
-	 * ((Persona)getTo()).setProvincia(null);
-	 * if(StringUtils.isEmpty(((Persona)getTo()).getProvincia1().getCdg()))
-	 * ((Persona)getTo()).setProvincia1(null);
-	 * if(StringUtils.isEmpty(((Persona)getTo()).getNacion().getCdg()))
-	 * ((Persona)getTo()).setNacion(null); }
-	 */
+	
+	  public void verifyNullFields(){
+	 if(StringUtils.isEmpty(((Httrabajador)getTo()).getTipovia().getCdg()))
+	 ((Httrabajador)getTo()).getTipovia().setCdg("CL");
+	 
+	  if(StringUtils.isEmpty(((Httrabajador)getTo()).getDocumento().getCdg()))
+	  ((Httrabajador)getTo()).setDocumento(null);
+	  if(StringUtils.isEmpty(((Httrabajador)getTo()).getPais().getCdg()))
+	  ((Httrabajador)getTo()).setPais(null);
+	 if(StringUtils.isEmpty(((Httrabajador)getTo()).getProvincia().getCdg()))
+	  ((Httrabajador)getTo()).setProvincia(null);
+	  if(StringUtils.isEmpty(((Httrabajador)getTo()).getProvincia1().getCdg()))
+	  ((Httrabajador)getTo()).setProvincia1(null);
+	  }
 }

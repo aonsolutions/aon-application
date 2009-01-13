@@ -7,13 +7,17 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.payroll.principales.Domicilio;
 import com.code.aon.payroll.principales.empresa.Actividad;
+import com.code.aon.payroll.principales.empresa.Emprccc;
+import com.code.aon.payroll.principales.empresa.Emprccos;
 import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.payroll.principales.personas.Persona;
 
@@ -39,14 +43,10 @@ public class Trabajador implements ITransferObject {
 	private String indgrupo;
 	private String pariente;
 	private Actividad actividad;
-	//no necesario para mantenimiento de embargo
-	/*
-	private Domicilio domicilio;
-	
+	private Domicilio domicilio;	
 	private Emprccc emprccc;
-	private Emprccos emprccos;
-	*/
-	private Empresa emprnif;
+	private Emprccos emprccos;	
+	private Empresa empresa;
 	private Persona persona;
 	
 	/**
@@ -249,7 +249,7 @@ public class Trabajador implements ITransferObject {
 	}
 
 	
-	/*
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "domicilio", nullable = false)
 	public Domicilio getDomicilio() {
@@ -262,7 +262,7 @@ public class Trabajador implements ITransferObject {
 
 
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumns( {
 			@JoinColumn(name = "codact", referencedColumnName = "cdg", nullable = false),
 			@JoinColumn(name = "codccc", referencedColumnName = "tipccc", nullable = false) })
@@ -274,7 +274,7 @@ public class Trabajador implements ITransferObject {
 		this.emprccc = emprccc;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "codcco")
 	public Emprccos getEmprccos() {
 		return this.emprccos;
@@ -283,15 +283,15 @@ public class Trabajador implements ITransferObject {
 	public void setEmprccos(Emprccos emprccos) {
 		this.emprccos = emprccos;
 	}
-*/
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "codemp", nullable = false)
-	public Empresa getEmprnif() {
-		return this.emprnif;
+	public Empresa getEmpresa() {
+		return this.empresa;
 	}
 
-	public void setEmprnif(Empresa emprnif) {
-		this.emprnif = emprnif;
+	public void setEmpresa(Empresa emprnif) {
+		this.empresa = emprnif;
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
