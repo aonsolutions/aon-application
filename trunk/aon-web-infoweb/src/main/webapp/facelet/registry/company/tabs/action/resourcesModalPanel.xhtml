@@ -18,7 +18,7 @@
 
 				<f:facet name="header">
 					<h:outputText
-						value="#{appBundle.aon_web_info_page_resource}" />
+						value="#{appBundle.infoweb_page_resource}" />
 				</f:facet>
 
 				<aon:form id="pagesResourcesForm">
@@ -54,7 +54,7 @@
 								<aon:column style="width:140px">
 									<f:facet name="header">
 										<aon:outputText
-											value="#{appBundle.aon_web_info_page_resource}" />
+											value="#{appBundle.infoweb_page_resource}" />
 									</f:facet>
 									<aon:outputText
 										value="#{to.rattach.description}"
@@ -79,7 +79,7 @@
 								<aon:column>
 									<f:facet name="header">
 										<aon:outputText
-											value="#{appBundle.aon_web_info_page_resource_description}" />
+											value="#{bundle.aon_description}" />
 									</f:facet>
 									<aon:outputText
 										value="#{to.content}" rendered="#{to!=webPage.resource}" />
@@ -155,7 +155,7 @@
 								<aon:commandButton
 									reRender="infoR, closeResourceModalPanel"
 									style="padding-right:15px"
-									value="#{appBundle.aon_web_info_close}" immediate="true"
+									value="#{appBundle.infoweb_close}" immediate="true"
 									styleClass="aon-icon-commandButton aon-icon-cancel">
 									<f:setPropertyActionListener
 										target="#{webPage.showResourceModalPanel}" value="#{false}" />

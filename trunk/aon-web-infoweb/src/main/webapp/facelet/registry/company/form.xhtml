@@ -18,18 +18,18 @@
 					columnClasses="aon-finding-title,aon-finding-toolbar">
 	
 					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{appBundle.aon_web_info}" />
+						<aon:outputText value="#{appBundle.aon_application_title}" />
 					</aon:div>
 		
 					<aon:div styleClass="aon-finding-toolbar-item-group" ajaxRendered="true">
 						<aon:commandButton id="generate"
-							value="#{appBundle.aon_web_info_generate}"
+							value="#{appBundle.infoweb_generate}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							actionListener="#{generator.onGenerate}"/>
 						<h:outputLink id="web" value="#{generator.webPage}" target="_new"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							rendered="#{generator.generate}">
-							<aon:outputText value="#{appBundle.aon_web_info_view}"/>
+							<aon:outputText value="#{appBundle.infoweb_view}"/>
 						</h:outputLink>
 					</aon:div>
 				</aon:panelGrid>
