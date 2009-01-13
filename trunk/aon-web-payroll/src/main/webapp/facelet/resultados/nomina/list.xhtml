@@ -24,12 +24,12 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="otrpercData" value="#{autonomo.model}"
-					var="to" rows="20" rendered="#{autonomo.model.rowCount > 0}"
+				<aon:dataTable id="otrpercData" value="#{nomina.model}"
+					var="to" rows="20" 
 					columnClasses="aon-width-150, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
-					<aon:rowSelector action="autonomo_form"
-						actionListener="#{autonomo.onSelect}" />
+					<aon:rowSelector action="nomina_form"
+						actionListener="#{nomina.onSelect}" />
 
 					<aon:column>
 						<f:facet name="header">
@@ -42,11 +42,49 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.aon_payroll_principales_personas_otrperc_per}" />
+							<aon:outputText value="#{appBundle.aon_payroll_resultados_nomina_tra}" />
 						</f:facet>
-						<aon:outputText value="#{to.persona.cdg}" />
+						<aon:outputText value="#{to.trabajador.cdg}" />
+					</aon:column>
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf__cuota_fecini}" />
+						</f:facet>
+						<aon:outputText value="#{to.fecini}" />
+					</aon:column>
+					
+										<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf__cuota_fecfin}" />
+						</f:facet>
+						<aon:outputText value="#{to.fecfin}" />
 					</aon:column>
 
+
+		              <aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_resultados_salarios_nominaex_nombre_trabajador}" />
+						</f:facet>
+						<aon:outputText value="#{to.trabajador.persona.nombre}" />
+					</aon:column>
+
+
+
+		              <aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_avanzadas_hojas_ape1}" />
+						</f:facet>
+						<aon:outputText value="#{to.trabajador.persona.descripcion}" />
+					</aon:column>
+
+
+                     <aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_avanzadas_hojas_ape2}" />
+						</f:facet>
+						<aon:outputText value="#{to.trabajador.persona.apellido2}" />
+					</aon:column>
 
 
 				</aon:dataTable>
