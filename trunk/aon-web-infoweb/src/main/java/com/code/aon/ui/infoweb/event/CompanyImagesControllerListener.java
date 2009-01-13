@@ -15,11 +15,11 @@ import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.infoweb.controller.FileController;
-import com.code.aon.ui.util.AonUtil;
 
 public class CompanyImagesControllerListener extends ControllerAdapter {
 	
@@ -50,7 +50,7 @@ public class CompanyImagesControllerListener extends ControllerAdapter {
 					throw new ControllerListenerException(bundle.getString("aon_company_image_max_size_error"));
 				}
 				RegistryAttachment attach = (RegistryAttachment)imagesController.getTo();
-				CompanyController companyController = (CompanyController)AonUtil.getController(COMPANY_CONTROLLER_NAME);
+				CompanyController companyController = (CompanyController)FormUtil.getController(COMPANY_CONTROLLER_NAME);
 				attach.setRegistry((Company)companyController.getTo());
 				attach.setCategory(null);
 				attach.setData(aonFile.getData());

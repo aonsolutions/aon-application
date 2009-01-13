@@ -30,7 +30,7 @@ public class WebInfoControllerListener extends ControllerAdapter {
 		IController companyController = (IController) FormUtil.getController(COMPANY_CONTROLLER_NAME);
 		Company company = ((Company)companyController.getTo());
 
-		CompanyWebInfoController webInfoController = (CompanyWebInfoController) AonUtil.getController(WEB_INFO_CONTROLLER_NAME);
+		CompanyWebInfoController webInfoController = (CompanyWebInfoController) FormUtil.getController(WEB_INFO_CONTROLLER_NAME);
 		WebInfo wi = (WebInfo)webInfoController.getTo();
 		wi.setCompany(company);
 	}

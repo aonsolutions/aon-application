@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,7 +13,6 @@ import javax.faces.el.ValueBinding;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.servlet.http.HttpSession;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -33,8 +31,8 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.util.AonUtil;
 
 public class CompanyController extends FileController {
 
@@ -508,7 +506,7 @@ public class CompanyController extends FileController {
     		criteria.addEqualExpression(geoZoneBean.getFieldName(IGeoZoneAlias.GEO_ZONE_ID), event.getNewValue());
     		Iterator iter = geoZoneBean.getList(criteria).iterator();
     		if(iter.hasNext()){
-    			((RegistryAddress)AonUtil.getController(COMPANY_ADDRESS_CONTROLLER_NAME).getTo()).setGeozone((GeoZone)iter.next());
+    			((RegistryAddress)FormUtil.getController(COMPANY_ADDRESS_CONTROLLER_NAME).getTo()).setGeozone((GeoZone)iter.next());
     		}
     	}
     }
