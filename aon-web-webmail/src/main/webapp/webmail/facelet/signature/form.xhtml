@@ -20,7 +20,7 @@
 			</ui:include>			
 			
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="menuGrid" columns="2" dir="true"  width="100%" columnClasses="aon-panelGrid-odd aon-width-100,aon-panelGrid-even">
+				<aon:panelGrid id="menuGrid" columns="2" dir="true" width="100%" columnClasses="aon-panelGrid-odd aon-width-100,aon-panelGrid-even">
 	
 					<aon:outputLabel for="Signature_name"
 						value="#{webmailBundle.aon_webmail_signature_name}" />
@@ -31,9 +31,11 @@
 					<aon:outputLabel for="Signature_signature"
 						value="#{webmailBundle.aon_webmail_signature_signature}" />
 					<aon:div style="width:98%">
-						<aon:inputRichText id="Signature_signature" height="400" toolbarSet="AonWebMail"
-							value="#{signature.to.signature}" />
-					</aon:div>
+						<rich:editor id="Signature_signature"
+							value="#{signature.to.signature}"
+							height="400" configuration="tinyMCE"
+							language="#{facesContext.application.defaultLocale.language}" />
+					</aon:div>							
 							
 				</aon:panelGrid>
 			</aon:div>
