@@ -93,6 +93,11 @@
 		<param-name>org.ajax4jsf.DEFAULT_EXPIRE</param-name>
 		<param-value>8640000</param-value>
 	</context-param>
+	<!-- RichFaces 3.3.0.GA: Necesario para que funcione el rich:editor -->
+	<context-param>
+		<param-name>org.richfaces.LoadScriptStrategy</param-name>
+		<param-value>ALL</param-value>
+    </context-param>	
 	<context-param>
 		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
 		<param-value>richFaces3.3.0/</param-value>
@@ -226,7 +231,6 @@
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>INCLUDE</dispatcher>
-		<dispatcher>ERROR</dispatcher>
 	</filter-mapping>
 
 	<session-config>
@@ -257,10 +261,6 @@
 		<web-resource-collection>
 			<web-resource-name>facelet</web-resource-name>
 			<url-pattern>/facelet/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>groupware</web-resource-name>
-			<url-pattern>/groupware/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
