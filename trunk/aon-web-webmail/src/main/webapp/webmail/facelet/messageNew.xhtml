@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 
@@ -147,9 +148,10 @@
 				
 				<!-- Message Body -->
 				<aon:div id="messageContent" styleClass="padding-top">
-					<aon:panelGroup scrollWidth="90%">
-						<aon:inputRichText id="messageEditor" height="400" toolbarSet="AonWebMail" value="#{message.content}" />
-					</aon:panelGroup>
+					<rich:editor id="messageEditor"
+						value="#{message.content}" 
+						height="400" configuration="tinyMCE"
+						language="#{facesContext.application.defaultLocale.language}" />													
 				</aon:div>
 			</aon:div>
 
