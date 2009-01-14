@@ -41,9 +41,9 @@
 	    <managed-property>
 	      <property-name>styleSheets</property-name>
 			<list-entries>
-				<value>#{aonResource.resolveLocal['/aon-richCss.css']}</value>
-			    <value>/css/colorpicker.css</value>
-			    <value>/css/aon-infoweb.css</value>
+				<value>#{aonResource.resolve['/aon-richCss.css']}</value>
+				<value>#{aonResource.resolveLocal['/css/colorpicker.css']}</value>
+				<value>#{aonResource.resolveLocal['/css/aon-infoweb.css']}</value>
 			</list-entries>
 	    </managed-property>
 	</managed-bean>
