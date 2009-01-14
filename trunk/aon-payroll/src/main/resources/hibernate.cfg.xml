@@ -116,13 +116,17 @@
         <!-- RESULTADOS - SALARIO -->			
         <mapping class="com.code.aon.payroll.resultados.salarios.Nominaex"/>
         <mapping class="com.code.aon.payroll.resultados.salarios.Nomdtoex"/>
+        <mapping class="com.code.aon.payroll.resultados.salarios.Finidto"/>
+		<mapping class="com.code.aon.payroll.resultados.salarios.Finindem"/>
+		<mapping class="com.code.aon.payroll.resultados.salarios.Finipext"/>
+		<mapping class="com.code.aon.payroll.resultados.salarios.Finiquito"/>
         <!-- RESULTADOS - IRPF -->			
         <mapping class="com.code.aon.payroll.resultados.irpf.Impresos11x"/>
         <mapping class="com.code.aon.payroll.resultados.irpf.Impresos190"/>
         <mapping class="com.code.aon.payroll.resultados.irpf.LinImpresos190"/>
         <mapping class="com.code.aon.payroll.resultados.nomina.Nomina"/>
         <mapping class="com.code.aon.payroll.resultados.nomina.Nominadev"/>
-          <mapping class="com.code.aon.payroll.resultados.nomina.Nomdto"/>
+        <mapping class="com.code.aon.payroll.resultados.nomina.Nomdto"/>
         <!--AVANZADAS-HOJAS TRABAJO -->			
         <mapping class="com.code.aon.payroll.avanzadas.hojastrabajo.Httrabajador"/>
         <mapping class="com.code.aon.payroll.avanzadas.hojastrabajo.Httaviso"/>
