@@ -220,6 +220,17 @@
 		<servlet-name>InputRichText Servlet</servlet-name>
 		<url-pattern>/fckfaces/*</url-pattern>
 	</servlet-mapping>
+	<servlet>
+		<servlet-name>TemplatePreview</servlet-name>
+		<servlet-class>
+			com.code.aon.ui.infoweb.servlet.TemplateImageServlet
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>TemplatePreview</servlet-name>
+		<url-pattern>*.template</url-pattern>
+	</servlet-mapping>
+
 	<context-param>
 		<param-name>org.fckfaces.CUSTOM_CONFIGURATIONS_PATH</param-name>
 		<param-value>/js/fckconfig.js</param-value>
