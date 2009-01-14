@@ -94,7 +94,7 @@
 		<param-value>8640000</param-value>
 	</context-param>
 	<context-param>
-		<param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
+		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
 		<param-value>richFaces3.3.0/</param-value>
 	</context-param>	
 	<context-param>
@@ -233,22 +233,6 @@
 		<session-timeout>240</session-timeout>
 	</session-config>
 
-	<!-- FCK Faces Servlet -->
-	<servlet>
-		<servlet-name>InputRichText Servlet</servlet-name>
-		<servlet-class>
-			com.code.aon.faces.component.richfaces.inputRichText.InputRichTextServlet
-		</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>InputRichText Servlet</servlet-name>
-		<url-pattern>/fckfaces/*</url-pattern>
-	</servlet-mapping>
-	<context-param>
-		<param-name>org.fckfaces.CUSTOM_CONFIGURATIONS_PATH</param-name>
-		<param-value>/js/fckconfig.js</param-value>
-	</context-param>
-	
 	<!-- Resource Servlet -->
 	<servlet>
 		<servlet-name>ResourceServlet</servlet-name>
