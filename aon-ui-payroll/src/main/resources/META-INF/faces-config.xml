@@ -3588,8 +3588,8 @@
       	<managed-property>
 			<property-name>beanName</property-name>
 			<value>emprctra</value>
-		</managed-property>	
-		<managed-property>
+		</managed-property>
+			<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>actividad</value>
 		</managed-property>
@@ -4380,55 +4380,7 @@
 		</managed-property>
 
 	</managed-bean>
-
-	<!-- ************* Resultados - IRPF - Mantenimiento de impresos 11X ***************** -->
-	<managed-bean>
-		<managed-bean-name>impresos11x</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.payroll.controller.Impresos11xController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>5</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>
-				com.code.aon.payroll.resultados.irpf.Impr11x
-			</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Impr11x_cdg</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>impresos11x</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{impresos11xControllerListener}</value>
-			</list-entries>
-		</managed-property>
-
-	</managed-bean>
 	
-	<managed-bean>
-		<managed-bean-name>impresos11xControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.payroll.event.Impresos11xControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
-
 	<!-- ************* Avanzadas - Hojas Trabajo ***************** -->
 
 	<managed-bean>
@@ -4732,6 +4684,7 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
+
 	<!-- ************* Resultados - IRPF - Mantenimiento de impresos 11X ***************** -->
 	<managed-bean>
 		<managed-bean-name>impresos11x</managed-bean-name>
@@ -4907,9 +4860,284 @@
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-
-
-
+	
+	<!-- ************* Resultados - Salarios - Mantenimiento de finiquitos ***************** -->
+	<managed-bean>
+		<managed-bean-name>finidto</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>5</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>
+				com.code.aon.payroll.resultados.salarios.Finidto
+			</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Finidto_cdg</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>finidto</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>finiquito</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>cdg</key>
+					<value>id.cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		 <!-- 
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{linimpresos190ControllerListener}</value>
+			</list-entries>
+		</managed-property>
+		 -->
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>finindem</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>5</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>
+				com.code.aon.payroll.resultados.salarios.Finindem
+			</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Finindem_cdg</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>finindem</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>finiquito</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>cdg</key>
+					<value>id.cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		 <!-- 
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{linimpresos190ControllerListener}</value>
+			</list-entries>
+		</managed-property>
+		 -->
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>finipext</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>5</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>
+				com.code.aon.payroll.resultados.salarios.Finipext
+			</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Finipext_cdg</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>finipext</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>finiquito</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>cdg</key>
+					<value>id.cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		 <!-- 
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{linimpresos190ControllerListener}</value>
+			</list-entries>
+		</managed-property>
+		 -->
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>finiquito</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.FiniquitoController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>5</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>
+				com.code.aon.payroll.resultados.salarios.Finiquito
+			</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Finiquito_cdg</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>finiquito</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{finiquitoControllerListener}</value>
+				<value>#{finiquitoPagasLinesListener}</value>
+				<value>#{finiquitoIndemnizacionesLinesListener}</value>
+				<value>#{finiquitoDescuentosLinesListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>finiquitoControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.FiniquitoControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>finiquitoPagasLinesListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>finipext</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Finipext_finiquito_cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>finiquitoIndemnizacionesLinesListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>finindem</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Finindem_finiquito_cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>finiquitoDescuentosLinesListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>finidto</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Finidto_finiquito_cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
 	<!-- ************* Resultados - NOMINA ***************** -->
 	<managed-bean>
 		<managed-bean-name>nomina</managed-bean-name>

@@ -1213,9 +1213,29 @@
 		</navigation-case>
 	</navigation-rule> 
 	
+	<!-- =================== Resultados - salarios - finiquito ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>finiquito_form</from-outcome>
+			<to-view-id>
+				/facelet/resultados/salarios/finiquito/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>finiquito_list</from-outcome>
+			<to-view-id>
+				/facelet/resultados/salarios/finiquito/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>finiquito_search</from-outcome>
+			<to-view-id>
+				/facelet/resultados/salarios/finiquito/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
 	
-	
-		<!-- =================== Resultados - Nomina0 ================= -->
+	<!-- =================== Resultados - Nomina0 ================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>nomina_form</from-outcome>

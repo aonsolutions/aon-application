@@ -40,7 +40,11 @@
 								</aon:commandLink>
 							</aon:div>
 							<aon:div>
-								<aon:commandLink value="#{menuBundle.resultados_recibos_salarios__finiquitos}" disabled="true" />
+								<aon:commandLink value="#{menuBundle.resultados_recibos_salarios__finiquitos}" action="finiquito_form" >
+									<aon:actionListener method="#{finiquito.onSearch}" />
+									<aon:actionListener method="#{finiquito.onEditSearch}" />
+									<aon:actionListener method="#{finiquito.onSelectFirst}" />
+								</aon:commandLink>
 							</aon:div>
 						</aon:div>
 					</aon:panel>

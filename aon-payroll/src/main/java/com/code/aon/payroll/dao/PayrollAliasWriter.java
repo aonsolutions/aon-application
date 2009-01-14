@@ -88,6 +88,10 @@ import com.code.aon.payroll.resultados.nomina.Nomina;
 import com.code.aon.payroll.resultados.nomina.Nominadev;
 import com.code.aon.payroll.resultados.salarios.Nomdtoex;
 import com.code.aon.payroll.resultados.salarios.Nominaex;
+import com.code.aon.payroll.resultados.salarios.Finidto;
+import com.code.aon.payroll.resultados.salarios.Finindem;
+import com.code.aon.payroll.resultados.salarios.Finipext;
+import com.code.aon.payroll.resultados.salarios.Finiquito;
 import com.code.aon.payroll.tipos.Autorizacion;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Empresario;
@@ -190,6 +194,10 @@ public class PayrollAliasWriter {
 		        Httcomplemento.class.getName(),
 		        Httrabajador.class.getName(),
 		        Httincidencia.class.getName(),
+		        Finidto.class.getName(),
+				Finindem.class.getName(),
+				Finipext.class.getName(),
+				Finiquito.class.getName(),
 		        Nomina.class.getName(),
 		        Nominadev.class.getName(),
 		        Nomdto.class.getName()
