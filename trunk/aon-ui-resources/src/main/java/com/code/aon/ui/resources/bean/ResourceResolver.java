@@ -3,6 +3,8 @@ package com.code.aon.ui.resources.bean;
 import java.util.AbstractMap;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+
 public class ResourceResolver {
 	
 	private String resourceContextPath;
@@ -58,10 +60,13 @@ public class ResourceResolver {
 		
 		@Override
 		public Object get(Object key) {
+			String result;
 			if ( local ) {
-				return resourceURIPreffix + key;
+				result = StringUtils.join( new Object[] {resourceURIPreffix, key} );
+			} else {
+				result = StringUtils.join( new Object[] {resourceContextPath, resourceURIPreffix, key} );	
 			}
-			return resourceContextPath + resourceURIPreffix + key;
+			return StringUtils.removeStart( result, "/");
 		}
 		
 	}
