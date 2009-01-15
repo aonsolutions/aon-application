@@ -11,9 +11,6 @@
 
 		<aon:form id="nominaForm">
 
-
-
-
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
 				<ui:param name="toolbarTitle"
@@ -29,16 +26,13 @@
 						value="#{nomina.onSearch}" type="actionListener" />
 					<aon:methodParam name="searchAction" value="nomina_list" />
 
-					<aon:div id="nomina" width="80%"
+					<aon:div id="nomina"
 						styleClass="aon-scroll-area aon-scroll-area-principales">
 
 
 
 						<aon:div id="tabsinfo">
 							<rich:tabPanel switchType="ajax">
-
-
-
 
 								<rich:tab id="badses"
 									label="#{appBundle.aon_payroll_resultados_nomina_tab1}">
@@ -48,7 +42,8 @@
 											<aon:outputLabel for="Actividad_cdg"
 												value="#{appBundle.aon_payroll_resultados_nomina_cod}" />
 
-											<aon:inputText value="#{nomina.to.cdg}" size="5" />
+											<aon:inputText id="Nomina_cdg"
+												valueChangeListener="#{nomina.addExpression}" size="5" />
 										</aon:div>
 
 										<aon:div>
@@ -73,20 +68,28 @@
 										</aon:div>
 
 
-										<aon:inputText value="#{nomina.to.nomemp}" size="45" />
-										<aon:inputText value="#{nomina.to.nomper}" size="45" />
-										<aon:inputText value="#{nomina.to.descat}" size="45" />
-										<aon:inputText value="#{nomina.to.profesion}" size="45" />
-										<aon:inputText value="#{nomina.to.direccion}" size="45" />
-										<aon:inputText value="#{nomina.to.localidad}" size="45" />
-										<aon:inputText
+										<aon:inputText id="Nomina_nomemp"
+											valueChangeListener="#{nomina.addExpression}" size="45" />
+										<aon:inputText id="Nomina_nomper"
+											valueChangeListener="#{nomina.addExpression}" size="45" />
+										<aon:inputText id="Nomina_descat"
+											valueChangeListener="#{nomina.addExpression}" size="45" />
+										<aon:inputText id="Nomina_profesion"
+											valueChangeListener="#{nomina.addExpression}" size="45" />
+										<aon:inputText id="Nomina_direccion"
+											valueChangeListener="#{nomina.addExpression}" size="45" />
+										<aon:inputText id="Nomina_localidad"
+											valueChangeListener="#{nomina.addExpression}" size="45" />
+										<aon:inputText disabled="true"
 											value="#{nomina.to.trabajador.emprccc.descripcion}" size="45" />
-										<aon:selectInputDate value="#{nomina.to.fecant}"
+										<aon:selectInputDate  id="Nomina_fecant"
+												valueChangeListener="#{nomina.addEqualExpression}"
 											inputSize="40" renderAsPopup="true"
 											popupDateFormat="#{bundle.aon_date_pattern}">
 										</aon:selectInputDate>
-										<aon:inputText value="#{nomina.to.nummat}" size="45" />
-										<aon:inputText value="#{nomina.to.trabajador.persona.numss}"
+										<aon:inputText id="Nomina_numat"
+											valueChangeListener="#{nomina.addExpression}" size="45" />
+										<aon:inputText value="#{nomina.to.trabajador.persona.numss}" disabled="true"
 											size="45" />
 
 
@@ -97,19 +100,22 @@
 											value="#{appBundle.aon_payroll_resultados_nomina_dev}" />
 
 
-										<aon:selectInputDate value="#{nomina.to.fecini}"
+										<aon:selectInputDate  id="Nomina_fecini"
+												valueChangeListener="#{nomina.addEqualExpression}"
 											inputSize="10" renderAsPopup="true"
 											popupDateFormat="#{bundle.aon_date_pattern}">
 										</aon:selectInputDate>
 										<aon:outputLabel for="Tra_cdg"
 											value="#{appBundle.aon_payroll_resultados_nomina_de}" />
 
-										<aon:inputText value="#{nomina.to.mes}" size="3" />
+										<aon:inputText id="Nomina_mes"
+											valueChangeListener="#{nomina.addExpression}" size="3" />
 
 										<aon:outputLabel for="Tra_cdg"
 											value="#{appBundle.aon_payroll_resultados_nomina_al}" />
 
-										<aon:selectInputDate value="#{nomina.to.fecfin}"
+										<aon:selectInputDate id="Nomina_fecfin"
+												valueChangeListener="#{nomina.addEqualExpression}"
 											inputSize="10" renderAsPopup="true"
 											popupDateFormat="#{bundle.aon_date_pattern}">
 										</aon:selectInputDate>
@@ -117,13 +123,15 @@
 										<aon:outputLabel for="Tra_cdg"
 											value="#{appBundle.aon_payroll_resultados_nomina_de}" />
 
-										<aon:inputText value="#{nomina.to.anio}" size="3" />
+										<aon:inputText id="Nomina_anio"
+											valueChangeListener="#{nomina.addExpression}" size="3" />
 
-										<!-- 	<aon:outputLabel for="Tra_cdg"
-									value="#{appBundle.aon_payroll_resultados_nomina_totdias}" />
+										<aon:outputLabel for="Tra_cdg"
+											value="#{appBundle.aon_payroll_resultados_nomina_totdias}" />
 
-								<aon:inputText value="#{nomina.to.diasnomina}" size="3" />
- -->
+										<aon:inputText id="Nomina_diasnomina"
+											valueChangeListener="#{nomina.addExpression}" size="3" />
+
 									</h:panelGrid>
 									<aon:div heigth="200">
 
@@ -232,47 +240,64 @@
 
 										<aon:outputLabel for="Tra_cdg"
 											value="#{appBundle.aon_payroll_resultados_nomina_rem}" />
-										<aon:inputText value="#{nomina.to.remuneracion}" size="5" />
+										<aon:inputText id="Nomina_remuneracion"
+											valueChangeListener="#{nomina.addExpression}" size="5" />
 										<aon:outputLabel for="Tra_cdg"
 											value="#{appBundle.aon_payroll_resultados_nomina_basecg}" />
 
-										<aon:inputText value="#{nomina.to.codbas}" size="5" />
-										<aon:inputText value="#{nomina.to.baseCg}" size="5" />
-										<aon:inputText value="#{nomina.to.prcCg}" size="5" />
-										<aon:inputText value="#{nomina.to.importeCg}" size="5" />
+										<aon:inputText id="Nomina_codbas"
+											valueChangeListener="#{nomina.addExpression}" size="5" />
+										<aon:inputText id="Nomina_baseCg"
+											valueChangeListener="#{nomina.addExpression}" size="5" />
+										<aon:inputText id="Nomina_prcCg"
+											valueChangeListener="#{nomina.addExpression}" size="5" />
+										<aon:inputText id="Nomina_importeCg"
+											valueChangeListener="#{nomina.addExpression}" size="5" />
 
 
 										<aon:outputLabel for="Tra_cdg"
 											value="#{appBundle.aon_payroll_resultados_nomina_por}" />
-										<aon:inputText value="#{nomina.to.baseProext}" size="5" />
+										<aon:inputText id="Nomina_baseProext"
+											valueChangeListener="#{nomina.addExpression}" size="5" />
 										<aon:outputLabel for="Tra_cdg"
 											value="#{appBundle.aon_payroll_resultados_nomina_des}" />
 										<aon:outputLabel for="Tra_cdg" value=" " />
-										<aon:inputText value="#{nomina.to.baseAcc}" size="5" />
-										<aon:inputText value="#{nomina.to.prcAcc}" size="5" />
-										<aon:inputText value="#{nomina.to.importeAcc}" size="5" />
+										<aon:inputText id="Nomina_baseAcc"
+											valueChangeListener="#{nomina.addExpression}" size="5" />
+										<aon:inputText id="Nomina_prcAcc"
+											valueChangeListener="#{nomina.addExpression}" size="5" />
+										<aon:inputText id="Nomina_importeAcc"
+											valueChangeListener="#{nomina.addExpression}" size="5" />
 
 
 										<aon:outputLabel for="Tra_cdg"
 											value="#{appBundle.aon_payroll_resultados_nomina_baseit}" />
-										<aon:inputText value="#{nomina.to.baseIt}" size="5" />
+										<aon:inputText id="Nomina_baseIt"
+											valueChangeListener="#{nomina.addExpression}" size="5" />
 										<aon:outputLabel for="Tra_cdg"
 											value="#{appBundle.aon_payroll_resultados_nomina_horasext}" />
 										<aon:outputLabel for="Tra_cdg" value=" " />
-										<aon:inputText value="#{nomina.to.baseHextras}" size="5" />
-										<aon:inputText value="#{nomina.to.prcHex}" size="5" />
-										<aon:inputText value="#{nomina.to.importeHex}" size="5" />
+										<aon:inputText id="Nomina_baseHextras"
+											valueChangeListener="#{nomina.addExpression}" size="5" />
+										<aon:inputText id="Nomina_prcHex"
+											valueChangeListener="#{nomina.addExpression}" size="5" />
+										<aon:inputText id="Nomina_importeHex"
+											valueChangeListener="#{nomina.addExpression}" size="5" />
 
 
 										<aon:outputLabel for="Tra_cdg"
 											value="#{appBundle.aon_payroll_resultados_nomina_toti}" />
-										<aon:inputText value="#{nomina.to.total1}" size="5" />
+										<aon:inputText id="Nomina_total1"
+											valueChangeListener="#{nomina.addExpression}" size="5" />
 										<aon:outputLabel for="Tra_cdg"
 											value="#{appBundle.aon_payroll_resultados_nomina_horasextno}" />
 										<aon:outputLabel for="Tra_cdg" value=" " />
-										<aon:inputText value="#{nomina.to.baseHextrasNo}" size="5" />
-										<aon:inputText value="#{nomina.to.prcHexno}" size="5" />
-										<aon:inputText value="#{nomina.to.importeHexno}" size="5" />
+										<aon:inputText id="Nomina_baseHextrasNo"
+											valueChangeListener="#{nomina.addExpression}" size="5" />
+										<aon:inputText id="Nomina_prcHexno"
+											valueChangeListener="#{nomina.addExpression}" size="5" />
+										<aon:inputText id="Nomina_importeHexno"
+											valueChangeListener="#{nomina.addExpression}" size="5" />
 
 									</aon:panelGrid>
 									<aon:outputLabel for="Tra_cdg"
@@ -286,20 +311,24 @@
 										<aon:outputLabel for="Tra_cdg"
 											value="#{appBundle.aon_payroll_resultados_nomina_ded1}" />
 
-										<aon:inputText value="#{nomina.to.importeCuotas}" size="3" />
+										<aon:inputText id="Nomina_importeCuotas"
+											valueChangeListener="#{nomina.addExpression}" size="3" />
 
 
 
 										<aon:outputLabel for="Tra_cdg"
 											value="#{appBundle.aon_payroll_resultados_nomina_ret}" />
 										<aon:div>
-											<aon:inputText value="#{nomina.to.prcIrpf}" size="3" />
+											<aon:inputText id="Nomina_prcIrpf"
+												valueChangeListener="#{nomina.addExpression}" size="3" />
 
 											<aon:outputLabel for="Tra_cdg"
 												value="#{appBundle.aon_payroll_resultados_nomina_s}" />
 
-											<aon:inputText value="#{nomina.to.baseIrpf}" size="3" />
-											<aon:inputText value="#{nomina.to.importeIrpf}" size="3" />
+											<aon:inputText id="Nomina_baseIrpf"
+												valueChangeListener="#{nomina.addExpression}" size="3" />
+											<aon:inputText id="Nomina_importeIrpf"
+												valueChangeListener="#{nomina.addExpression}" size="3" />
 										</aon:div>
 
 									</h:panelGrid>
@@ -386,7 +415,7 @@
 												<aon:outputLabel for="Tra_cdg"
 													value="#{appBundle.aon_payroll_resultados_nomina_div}" />
 
-												<aon:inputText value="#{nomina.to.divisa.description}"
+												<aon:inputText value="#{nomina.to.divisa.description}" disabled="true"
 													size="3" />
 											</aon:div>
 											<aon:div>
@@ -394,11 +423,13 @@
 													<aon:outputLabel for="Tra_cdg"
 														value="#{appBundle.aon_payroll_resultados_nomina_totalded}" />
 
-													<aon:inputText value="#{nomina.to.totalDeducir}" size="3" />
+													<aon:inputText id="Nomina_totalDeducir"
+												valueChangeListener="#{nomina.addExpression}" size="3" />
 													<aon:outputLabel for="Tra_cdg"
 														value="#{appBundle.aon_payroll_resultados_nomina_totii}" />
 
-													<aon:inputText value="#{nomina.to.totalLiquido}" size="3" />
+													<aon:inputText id="Nomina_totalLiquido"
+												valueChangeListener="#{nomina.addExpression}" size="3" />
 												</h:panelGrid>
 											</aon:div>
 										</h:panelGrid>
@@ -412,35 +443,373 @@
 
 
 								<rich:tab id="bases"
-									label="#{appBundle.aon_payroll_resultados_nomina_tab2}"
-									disabled="true">
-
-									<aon:panelGrid columns="2" dir="true" width="100%">
-
-										<aon:panelGrid columns="2" dir="true" width="100%">
-											<aon:outputLabel for="Tra_cdg"
-												value="#{appBundle.aon_payroll_principales_tipocuenta_empresa}" />
-											<aon:inputText value="#{nomina.to.remuneracion}" size="5" />
-											<aon:outputLabel for="Tra_cdg"
-												value="#{appBundle.aon_payroll_principales_tipocuenta_empresa}" />
-
-											<aon:inputText value="#{nomina.to.codbas}" size="5" />
+									label="#{appBundle.aon_payroll_resultados_nomina_tab2}">
+									<aon:div id="nomina2"
+										styleClass="aon-scroll-area aon-scroll-area-nom">
 
 
-										</aon:panelGrid>
+										<aon:div id="nna2"
+											styleClass="aon-scroll-area aon-scroll-area-nom">
 
-										<aon:panelGrid columns="2" dir="true" width="100%">
-											<aon:outputLabel for="Tra_cdg"
-												value="#{appBundle.aon_payroll_principales_tipocuenta_empresa}" />
-											<aon:inputText value="#{nomina.to.remuneracion}" size="5" />
-											<aon:outputLabel for="Tra_cdg"
-												value="#{appBundle.aon_payroll_principales_tipocuenta_empresa}" />
+											<aon:outputText
+												value="#{appBundle.aon_payroll_resultados_nomina_basedef}" />
 
-											<aon:inputText value="#{nomina.to.codbas}" size="5" />
-										</aon:panelGrid>
+											<aon:panelGrid columns="8" dir="true" width="100%">
 
-									</aon:panelGrid>
 
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_fp}" />
+												<aon:inputText id="Nomina_baseFp"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_Desempleo}" />
+
+												<aon:inputText id="Nomina_baseDesempleo"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_base}" />
+												<aon:inputText id="Nomina_baseEspecie"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_iesp}" />
+
+												<aon:inputText id="Nomina_baseIrpfEspecie"
+												valueChangeListener="#{nomina.addExpression}"  size="8" />
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_ino}" />
+
+												<aon:inputText  id="Nomina_baseIrpfNocotiza"
+												valueChangeListener="#{nomina.addExpression}"  
+													size="8" />
+
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_fon}" />
+
+												<aon:inputText  id="Nomina_baseFogasa"
+												valueChangeListener="#{nomina.addExpression}"  size="8" />
+
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_acc}" />
+
+												<aon:inputText   id="Nomina_baseAccSinHex"
+												valueChangeListener="#{nomina.addExpression}"   size="8" />
+
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_horascom}" />
+
+												<aon:inputText  id="Nomina_baseHorascom"
+												valueChangeListener="#{nomina.addExpression}"  size="8" />
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_perce}" />
+
+												<aon:inputText id="Nomina_basePerdes"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+
+
+
+											</aon:panelGrid>
+										</aon:div>
+
+
+										<rich:spacer></rich:spacer>
+
+										<aon:div id="noina"
+											styleClass="aon-scroll-area aon-scroll-area-nom">
+
+											<aon:outputText
+												value="#{appBundle.aon_payroll_resultados_nomina_datosaux}" />
+
+											<aon:panelGrid columns="8" dir="true" width="100%">
+
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_dias}" />
+												<aon:inputText id="Nomina_diastrab"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_diasefec}" />
+
+												<aon:inputText id="Nomina_diasefec"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_cuota}" />
+												<aon:inputText id="Nomina_cuotaEmpresa"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_baseanti}" />
+
+												<aon:inputText id="Nomina_baseAnt"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_asi}" />
+
+												<aon:inputText id="Nomina_codpct"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_retrib}" />
+
+												<aon:inputText id="Nomina_proret"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_procoti}" />
+
+												<aon:inputText id="Nomina_procot"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_codcon}" />
+
+												<aon:inputText id="Nomina_codcon"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+
+
+											</aon:panelGrid>
+										</aon:div>
+										<rich:spacer></rich:spacer>
+										<aon:div id="nomin"
+											styleClass="aon-scroll-area aon-scroll-area-nom">
+
+											<aon:outputText
+												value="#{appBundle.aon_payroll_resultados_nomina_bases}" />
+
+											<aon:panelGrid columns="6" dir="true" width="100%">
+
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_ant}" />
+												<aon:inputText id="Nomina_baseIrpfAnt"
+												valueChangeListener="#{nomina.addExpression}"   size="8" />
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_retant}" />
+
+												<aon:inputText id="Nomina_importeIrpfAnt"
+												valueChangeListener="#{nomina.addExpression}"  size="8" />
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_impss}" />
+												<aon:inputText id="Nomina_importeCuotasAnt"
+												valueChangeListener="#{nomina.addExpression}"  
+													size="8" />
+
+
+
+											</aon:panelGrid>
+										</aon:div>
+										<rich:spacer></rich:spacer>
+										<aon:div id="nona2"
+											styleClass="aon-scroll-area aon-scroll-area-nom">
+											<aon:outputText
+												value="#{appBundle.aon_payroll_resultados_nomina_baseprinss}" />
+
+											<aon:panelGrid columns="6" dir="true" width="100%">
+
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_cg}" />
+												<aon:inputText id="Nomina_baseCgPts"
+												valueChangeListener="#{nomina.addExpression}"   size="8" />
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_desfp}" />
+
+												<aon:inputText id="Nomina_baseAccPts"
+												valueChangeListener="#{nomina.addExpression}"  size="8" />
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_acceuros}" />
+												<aon:inputText id="Nomina_baseAccSinHPts"
+												valueChangeListener="#{nomina.addExpression}" 
+													size="8" />
+
+
+
+											</aon:panelGrid>
+										</aon:div>
+
+
+										<rich:spacer></rich:spacer>
+										<aon:div id="mina2"
+											styleClass="aon-scroll-area aon-scroll-area-nom">
+
+											<aon:outputText
+												value="#{appBundle.aon_payroll_resultados_nomina_fechass}" />
+
+											<aon:panelGrid columns="8" dir="true" width="100%">
+
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_fecemi}" />
+												<aon:selectInputDate id="Nomina_fecemi"
+												valueChangeListener="#{nomina.addEqualExpression}"
+													inputSize="10" renderAsPopup="true"
+													popupDateFormat="#{bundle.aon_date_pattern}">
+												</aon:selectInputDate>
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_feccobro}" />
+
+												<aon:selectInputDate id="Nomina_feccob"
+												valueChangeListener="#{nomina.addEqualExpression}"
+													inputSize="10" renderAsPopup="true"
+													popupDateFormat="#{bundle.aon_date_pattern}">
+												</aon:selectInputDate>
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_fecoreal}" />
+												<aon:selectInputDate id="Nomina_feccobreal"
+												valueChangeListener="#{nomina.addEqualExpression}"
+													inputSize="10" renderAsPopup="true"
+													popupDateFormat="#{bundle.aon_date_pattern}">
+												</aon:selectInputDate>
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_feccrefila}" />
+
+												<aon:selectInputDate id="Nomina_fecnew"
+												valueChangeListener="#{nomina.addEqualExpression}"
+													inputSize="10" renderAsPopup="true"
+													popupDateFormat="#{bundle.aon_date_pattern}">
+												</aon:selectInputDate>
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_horcre}" />
+
+													<aon:inputText id="Nomina_hornew"
+												valueChangeListener="#{nomina.hornew}" 
+													size="8" />
+
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_fecmod}" />
+
+												<aon:selectInputDate id="Nomina_fecmod"
+												valueChangeListener="#{nomina.addEqualExpression}"
+													inputSize="10" renderAsPopup="true"
+													popupDateFormat="#{bundle.aon_date_pattern}">
+												</aon:selectInputDate>
+
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_hormod}" />
+
+												<aon:inputText id="Nomina_hormod"
+												valueChangeListener="#{nomina.hormod}" 
+													size="8" />
+
+
+											</aon:panelGrid>
+										</aon:div>
+										<rich:spacer></rich:spacer>
+
+										<aon:div id="n2"
+											styleClass="aon-scroll-area aon-scroll-area-nom">
+
+											<aon:outputText
+												value="#{appBundle.aon_payroll_resultados_nomina_baseaux}" />
+
+											<aon:panelGrid columns="8" dir="true" width="100%">
+
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_excext}" />
+												<aon:inputText id="Nomina_baseExceso"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_noss}" />
+
+												<aon:inputText id="Nomina_baseNocotiza"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_cc}" />
+													
+												<aon:inputText id="Nomina_baseConcom"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_at}" />
+
+												<aon:inputText id="Nomina_baseAcctra"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_conit}" />
+
+												<aon:inputText id="Nomina_baseConIt"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_acit}" />
+
+												<aon:inputText id="Nomina_baseAccIt"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_ccnoma}" />
+
+												<aon:inputText id="Nomina_baseConMat"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_accnoma}" />
+
+												<aon:inputText id="Nomina_baseAccMat"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_ccma}" />
+
+												<aon:inputText id="Nomina_baseConMatNo"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_accma}" />
+
+												<aon:inputText  id="Nomina_baseAccMatNo"
+												valueChangeListener="#{nomina.addExpression}"  size="8" />
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_topcg}" />
+
+												<aon:inputText id="Nomina_maxcg"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_topmincg}" />
+
+												<aon:inputText id="Nomina_mincg"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_topacc}" />
+
+												<aon:inputText id="Nomina_maxacc"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+
+												<aon:outputLabel for="Tra_cdg"
+													value="#{appBundle.aon_payroll_resultados_nomina_minacc}" />
+
+												<aon:inputText id="Nomina_minacc"
+												valueChangeListener="#{nomina.addExpression}" size="8" />
+
+
+											</aon:panelGrid>
+										</aon:div>
+									</aon:div>
 								</rich:tab>
 
 

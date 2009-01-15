@@ -14,8 +14,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.divisa.Divisa;
+import com.code.aon.payroll.enumeration.Tipnomina;
 import com.code.aon.payroll.principales.persona.Trabajador;
 
 @Entity
@@ -26,7 +30,7 @@ public class Nomina  implements ITransferObject {
      private Integer mes;
      private Integer anio;
      private Integer orden;
-     private String tipo;
+     private Tipnomina tipo;
      private String nomemp;
      private Date fecemi;
      private String nomper;
@@ -146,13 +150,13 @@ public class Nomina  implements ITransferObject {
     public void setOrden(Integer orden) {
         this.orden = orden;
     }
-    
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Tipnomina")} )
     @Column(name="tipo", nullable=false, length=1)
-    public String getTipo() {
+    public Tipnomina getTipo() {
         return this.tipo;
     }
     
-    public void setTipo(String tipo) {
+    public void setTipo(Tipnomina tipo) {
         this.tipo = tipo;
     }
     
@@ -256,11 +260,11 @@ public class Nomina  implements ITransferObject {
     }
     
     @Column(name="diasnomina", nullable=false, length=2)
-    public int getDiasnomina() {
+    public Integer getDiasnomina() {
         return this.diasnomina;
     }
     
-    public void setDiasnomina(int diasnomina) {
+    public void setDiasnomina(Integer diasnomina) {
         this.diasnomina = diasnomina;
     }
     
