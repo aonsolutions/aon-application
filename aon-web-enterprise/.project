@@ -28,14 +28,19 @@
 		<project>aon-common</project>
 		<project>aon-ui-account</project>
 		<project>aon-ui-account-bridge</project>
+		<project>aon-accounting</project>
+		<project>aon-report</project>
 		<project>aon-ui-report</project>
 		<project>aon-ui-accounting</project>
-		<project>aon-report</project>
+		<project>aon-commercial</project>
+		<project>aon-registry</project>
+		<project>aon-purchase</project>
 		<project>aon-warehouse</project>
-		<project>aon-rich-components</project>
+		<project>aon-composite</project>
+		<project>aon-customer</project>
+		<project>aon-supplier</project>
 		<project>aon-finance-bridge</project>
-		<project>aon-ldap</project>
-		<project>aon-security-bridge</project>
+		<project>aon-rich-components</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -62,7 +67,6 @@
 	<natures>
 		<nature>org.devzuz.q.maven.jdt.core.mavenNature</nature>
 		<nature>org.eclipse.wst.common.modulecore.ModuleCoreNature</nature>
-		<nature>org.maven.ide.eclipse.maven2Nature</nature>
 		<nature>org.eclipse.jem.workbench.JavaEMFNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
