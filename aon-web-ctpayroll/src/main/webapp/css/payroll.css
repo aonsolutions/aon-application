@@ -136,7 +136,27 @@ table#homepage\3A cnaeForm\3A listaOcupaciones, table#homepage\3A cnaeForm\3A li
 	}
 .aon-scroll-area-search table.aon-panelGrid {
 	width: 1100px; 
-	
+}
+
+/* ---------- FORMS NOMINAS --------- */
+
+.aon-scroll-area-nom td.aon-panelGrid-odd{
+	width:450px;
+	min-width: 450px;
+	max-width: 450px;
+	white-space: normal;
+	}
+.aon-scroll-area-nom td.aon-panelGrid-even{
+	width: 150px;
+	min-width: 150px;
+	max-width: 150px;
+	}
+.aon-scroll-area-nom table.aon-panelGrid {
+	width: 1150px; 
+
+}
+
+
 	
 
 	

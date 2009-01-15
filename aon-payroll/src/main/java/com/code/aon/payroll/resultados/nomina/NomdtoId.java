@@ -18,20 +18,20 @@ public class NomdtoId  implements java.io.Serializable {
     
 
     @Column(name="cdg", nullable=false, length=4)
-    public int getCdg() {
+    public Integer getCdg() {
         return this.cdg;
     }
     
-    public void setCdg(int cdg) {
+    public void setCdg(Integer cdg) {
         this.cdg = cdg;
     }
 
     @Column(name="linea", nullable=false, length=2)
-    public int getLinea() {
+    public Integer getLinea() {
         return this.linea;
     }
     
-    public void setLinea(int linea) {
+    public void setLinea(Integer linea) {
         this.linea = linea;
     }
 

@@ -1257,6 +1257,52 @@
 		</navigation-case>
 	</navigation-rule> 
 	
+			<!-- =================== Resultados - Nominadev ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>nominadev_form</from-outcome>
+			<to-view-id>
+				/facelet/resultados/nomina/devengos/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>nominadev_list</from-outcome>
+			<to-view-id>
+				/facelet/resultados/nomina/devengos/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>nominadev_search</from-outcome>
+			<to-view-id>
+				/facelet/resultados/nomina/devengos/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
+	
+				<!-- =================== Resultados - Nominadto ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>nomdto_form</from-outcome>
+			<to-view-id>
+				/facelet/resultados/nomina/nomdto/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>nomdto_list</from-outcome>
+			<to-view-id>
+				/facelet/resultados/nomina/nomdto/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>nomdto_search</from-outcome>
+			<to-view-id>
+				/facelet/resultados/nomina/nomdto/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
+	
 </faces-config>
 
 
