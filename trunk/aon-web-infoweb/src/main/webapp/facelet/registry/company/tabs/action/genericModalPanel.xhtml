@@ -73,8 +73,10 @@
 										value="#{webPage.detail.content}" cols="100" rows="12" />
 									<aon:div style="width:600px"
 										rendered="#{webPage.richTextEnabled}">
-										<aon:inputRichText style="width:100%"
-											id="Generic_content_HTML" value="#{webPage.detail.content}" />
+										<rich:editor 
+											id="Generic_content_HTML" value="#{webPage.detail.content}"
+											configuration="tinyMCE" height="280"
+											language="#{facesContext.application.defaultLocale.language}" />
 									</aon:div>
 
 								</aon:panelGrid>
