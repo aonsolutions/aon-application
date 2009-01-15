@@ -32,7 +32,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.selller.Seller</value>
+			<value>com.code.aon.seller.Seller</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -165,7 +165,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>foreignPojo</property-name>
-			<value>com.code.aon.selller.Seller</value>
+			<value>com.code.aon.seller.Seller</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
