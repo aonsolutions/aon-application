@@ -6,12 +6,12 @@ import com.code.aon.marketing.SurveyQuestion;
 import com.code.aon.marketing.dao.IMarketingAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.marketing.controller.IMarketingConstants;
-import com.code.aon.ui.util.AonUtil;
 
 public class SurveyQuestionControllerListener extends ControllerAdapter implements IMarketingConstants {
 
@@ -21,7 +21,7 @@ public class SurveyQuestionControllerListener extends ControllerAdapter implemen
 		IController controller = event.getController();
 		SurveyQuestion surveyQuestion = (SurveyQuestion) controller.getTo();
 		surveyQuestion.setPosition(1);
-		IController surveyController = AonUtil.getController(SURVEY_CONTROLLER_NAME);
+		IController surveyController = FormUtil.getController(SURVEY_CONTROLLER_NAME);
 		Survey survey = (Survey) surveyController.getTo();
 		try {
 			Criteria criteria = new Criteria();
