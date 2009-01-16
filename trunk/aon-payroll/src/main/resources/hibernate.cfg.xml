@@ -124,6 +124,8 @@
         <mapping class="com.code.aon.payroll.resultados.irpf.Impresos11x"/>
         <mapping class="com.code.aon.payroll.resultados.irpf.Impresos190"/>
         <mapping class="com.code.aon.payroll.resultados.irpf.LinImpresos190"/>
+        <mapping class="com.code.aon.payroll.resultados.irpf.Calculo"/>
+        <mapping class="com.code.aon.payroll.resultados.irpf.Lincalcu"/>
         <mapping class="com.code.aon.payroll.resultados.nomina.Nomina"/>
         <mapping class="com.code.aon.payroll.resultados.nomina.Nominadev"/>
         <mapping class="com.code.aon.payroll.resultados.nomina.Nomdto"/>

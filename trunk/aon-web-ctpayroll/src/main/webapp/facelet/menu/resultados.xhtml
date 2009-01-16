@@ -66,11 +66,14 @@
 									<aon:actionListener method="#{impresos190.onSearch}" />
 									<aon:actionListener method="#{impresos190.onEditSearch}" />
 									<aon:actionListener method="#{impresos190.onSelectFirst}" />
-									
 								</aon:commandLink>
 							</aon:div>
 							<aon:div>
-								<aon:commandLink value="#{menuBundle.resultados_irpf__result_irpf}" disabled="true" />
+								<aon:commandLink value="#{menuBundle.resultados_irpf__result_irpf}" action="calculo_form" >
+									<aon:actionListener method="#{calculo.onSearch}" />
+									<aon:actionListener method="#{calculo.onEditSearch}" />
+									<aon:actionListener method="#{calculo.onSelectFirst}" />
+								</aon:commandLink>
 							</aon:div>
 						</aon:div>
 					</aon:panel>

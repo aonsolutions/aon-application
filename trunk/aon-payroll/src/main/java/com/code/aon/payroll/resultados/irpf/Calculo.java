@@ -14,13 +14,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.enumeration.Indirpf;
+import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.payroll.principales.persona.Trabajador;
+import com.code.aon.payroll.principales.personas.Persona;
 
 /**
  * Calculo
@@ -78,6 +81,8 @@ public class Calculo implements ITransferObject {
 	private BigDecimal difret;
 	private BigDecimal irpfanual;
 	private Trabajador emprper;
+	private Empresa empresa;
+	private Persona persona;
 	
 	public Calculo(){
 		
@@ -783,7 +788,7 @@ public class Calculo implements ITransferObject {
 		this.irpfanual = irpfanual;
 	}
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cdg", insertable = false, updatable = false)
 	public Trabajador getEmprper() {
 		return this.emprper;
@@ -791,6 +796,28 @@ public class Calculo implements ITransferObject {
 
 	public void setEmprper(Trabajador emprper) {
 		this.emprper = emprper;
+		this.empresa = emprper.getEmpresa();
+		this.persona = emprper.getPersona();
+	}
+
+	@Transient
+	public Empresa getEmpresa() {
+		return empresa;
+	}
+
+	public void setEmpresa(Empresa empresa) {
+		this.empresa = empresa;
+		this.emprper.setEmpresa(empresa);
+	}
+
+	@Transient
+	public Persona getPersona() {
+		return persona;
+	}
+
+	public void setPersona(Persona persona) {
+		this.persona = persona;
+		this.emprper.setPersona(persona);
 	}
 
 }

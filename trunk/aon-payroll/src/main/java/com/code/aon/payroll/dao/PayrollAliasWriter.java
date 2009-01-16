@@ -80,18 +80,20 @@ import com.code.aon.payroll.principales.persona.Trabajador;
 import com.code.aon.payroll.principales.personas.Otrperc;
 import com.code.aon.payroll.principales.personas.Percep;
 import com.code.aon.payroll.principales.personas.Persona;
+import com.code.aon.payroll.resultados.irpf.Calculo;
 import com.code.aon.payroll.resultados.irpf.Impresos11x;
 import com.code.aon.payroll.resultados.irpf.Impresos190;
 import com.code.aon.payroll.resultados.irpf.LinImpresos190;
+import com.code.aon.payroll.resultados.irpf.Lincalcu;
 import com.code.aon.payroll.resultados.nomina.Nomdto;
 import com.code.aon.payroll.resultados.nomina.Nomina;
 import com.code.aon.payroll.resultados.nomina.Nominadev;
-import com.code.aon.payroll.resultados.salarios.Nomdtoex;
-import com.code.aon.payroll.resultados.salarios.Nominaex;
 import com.code.aon.payroll.resultados.salarios.Finidto;
 import com.code.aon.payroll.resultados.salarios.Finindem;
 import com.code.aon.payroll.resultados.salarios.Finipext;
 import com.code.aon.payroll.resultados.salarios.Finiquito;
+import com.code.aon.payroll.resultados.salarios.Nomdtoex;
+import com.code.aon.payroll.resultados.salarios.Nominaex;
 import com.code.aon.payroll.tipos.Autorizacion;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Empresario;
@@ -200,7 +202,9 @@ public class PayrollAliasWriter {
 				Finiquito.class.getName(),
 		        Nomina.class.getName(),
 		        Nominadev.class.getName(),
-		        Nomdto.class.getName()
+		        Nomdto.class.getName(),
+		        Calculo.class.getName(),
+		        Lincalcu.class.getName()
 		        };		
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");
 		HibernateUtil.getSessionFactory();

@@ -106,6 +106,20 @@ public class Utils {
 		return results.get(0).toString();
 	}
 	
+	/*
+	 // MODIFICACION HECHA POR EUKE, HECHAR UN VISTAZO CON MAS TIEMPO
+	public static final String maxCode(String tableName, String fieldName){
+		
+		String sql = "select max("+fieldName.toString()+") from "+tableName.toString();
+		System.out.println(sql);
+		String factoryName = HibernateUtil.getSessionFactoryName(null);
+		Query query = HibernateUtil.getSession(factoryName).createQuery(sql);			
+		List results = query.list();
+		
+		return results.get(0).toString();
+	}
+	*/
+	
 	/**
 	 * Dado el nombre de una tabla, un campo de la tabla y una clausula where, 
 	 * devuelve su valor maximo
