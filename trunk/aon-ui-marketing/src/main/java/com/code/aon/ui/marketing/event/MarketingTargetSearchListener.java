@@ -21,7 +21,7 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.enumeration.MediaType;
-import com.code.aon.sales.Seller;
+import com.code.aon.seller.Seller;
 import com.code.aon.ui.commercial.controller.CommercialCollectionsController;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.form.event.ControllerAdapter;

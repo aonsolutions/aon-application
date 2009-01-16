@@ -172,6 +172,13 @@ public class CommercialCollectionsController {
 		return advertisings;
 	}
 
+	public CommercialActivity getActivity() {
+		return null;
+	}
+
+	public void setActivity( CommercialActivity activity ) {
+	}
+	
 	public List<SelectItem> getActivities() throws ManagerBeanException {
 		if ( activities == null ) {
 			refreshActivities();
