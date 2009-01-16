@@ -92,6 +92,7 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{commercialTrackingListener}</value>
+				<value>#{commercialTrackingSearch}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -102,6 +103,14 @@
 			com.code.aon.ui.commercial.event.CommercialTrackingListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>commercialTrackingSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.event.CommercialTrackingSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- ************ TARGET ************** -->
@@ -633,4 +642,20 @@
 		</navigation-case>
 	</navigation-rule>		
 	
+	<!-- =================== Commercial Tracking ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>commercialTracking_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/commercial/facelet/commercialTracking/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>commercialTracking_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/commercial/facelet/commercialTracking/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>commercialTracking_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/commercial/facelet/commercialTracking/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>		
+
 </faces-config>
