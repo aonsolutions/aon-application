@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -65,6 +66,7 @@ public class Persona  implements ITransferObject  {
      private Provincia provincia;
      private Provincia provincia1;
      private Tipovia tipovia;
+     private String nombreComp;
 
 
   
@@ -411,6 +413,17 @@ public class Persona  implements ITransferObject  {
     public void setTipovia(Tipovia tipovia) {
         this.tipovia = tipovia;
     }
+
+    @Transient
+	public String getNombreComp() {
+		//return nombreComp;
+    	return this.descripcion + " " + this.apellido2 + ", " + this.nombre;
+	}
+
+	public void setNombreComp(String nombreComp) {
+		//this.nombreComp = nombreComp;
+		this.nombreComp = this.descripcion + " " + this.apellido2 + ", " + this.nombre; 
+	}
 
 
 

@@ -1257,7 +1257,29 @@
 		</navigation-case>
 	</navigation-rule> 
 	
-			<!-- =================== Resultados - Nominadev ================= -->
+	<!-- =================== Resultados - irpf - calculo ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>calculo_form</from-outcome>
+			<to-view-id>
+				/facelet/resultados/irpf/calculo/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>calculo_list</from-outcome>
+			<to-view-id>
+				/facelet/resultados/irpf/calculo/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>calculo_search</from-outcome>
+			<to-view-id>
+				/facelet/resultados/irpf/calculo/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
+	<!-- =================== Resultados - Nominadev ================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>nominadev_form</from-outcome>
@@ -1300,8 +1322,7 @@
 				/facelet/resultados/nomina/nomdto/search.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule> 
-	
+	</navigation-rule>
 	
 </faces-config>
 

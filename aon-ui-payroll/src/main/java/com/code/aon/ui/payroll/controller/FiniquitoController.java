@@ -6,13 +6,22 @@ import java.util.logging.Logger;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.payroll.divisa.Divisa;
+import com.code.aon.payroll.principales.persona.Trabajador;
 import com.code.aon.payroll.resultados.salarios.Finiquito;
 
 public class FiniquitoController extends PayrollBasicController {
 
 	
 	//private static final Logger LOGGER = Logger.getLogger(CotizacionBonificacionController.class.getName());
+	private Trabajador emprper;
+	
+	public Trabajador getEmprper() {
+		return emprper;
+	}
 
+	public void setEmprper(Trabajador emprper) {
+		this.emprper = emprper;
+	}
 	
 	/**
 	 * Genera un numero autonumerico para el codigo 
