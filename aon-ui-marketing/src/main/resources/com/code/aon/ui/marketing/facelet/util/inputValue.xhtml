@@ -1,0 +1,23 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<c:if test="#{valueHolder.question.type == 'TEXT'}" >
+		<aon:inputText value="#{valueHolder.text}" required="true" size="45" maxlength="64" />
+	</c:if>
+	<c:if test="#{valueHolder.question.type == 'NUMBER'}" >		
+		<aon:inputText value="#{valueHolder.number}" required="true" size="45" maxlength="64" />
+	</c:if>
+	<c:if test="#{valueHolder.question.type == 'BOOLEAN'}" >
+		<aon:selectBooleanCheckbox value="#{valueHolder.boolean}" required="true" />
+	</c:if>
+	<c:if test="#{valueHolder.question.type == 'DATE'}" >
+		<aon:selectInputDate value="#{valueHolder.date}" required="true"
+			timeZone="#{timeZoneController.timeZone}"
+			renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+		</aon:selectInputDate>
+	</c:if>					
+
+</ui:composition>
