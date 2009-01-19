@@ -125,8 +125,7 @@ hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN
 	<mapping class="com.code.aon.payroll.resultados.salarios.Finidto"/>
 	<mapping class="com.code.aon.payroll.resultados.salarios.Finindem"/>
 	<mapping class="com.code.aon.payroll.resultados.salarios.Finipext"/>
-	<mapping class="com.code.aon.payroll.resultados.salarios.Finiquito"/>
-   
+	<mapping class="com.code.aon.payroll.resultados.salarios.Finiquito"/>   
 	<!-- RESULTADOS - IRPF -->			
     <mapping class="com.code.aon.payroll.resultados.irpf.Impresos11x"/>
     <mapping class="com.code.aon.payroll.resultados.irpf.Impresos190"/>
@@ -135,8 +134,7 @@ hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN
     <mapping class="com.code.aon.payroll.resultados.irpf.Lincalcu"/>
     <mapping class="com.code.aon.payroll.resultados.nomina.Nomina"/>
     <mapping class="com.code.aon.payroll.resultados.nomina.Nominadev"/>
-    <mapping class="com.code.aon.payroll.resultados.nomina.Nomdto"/>
-    
+    <mapping class="com.code.aon.payroll.resultados.nomina.Nomdto"/>  
     
     <!--AVANZADAS-HOJAS TRABAJO -->
     <mapping class="com.code.aon.payroll.avanzadas.hojastrabajo.Httrabajador" />
@@ -144,6 +142,12 @@ hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN
     <mapping class="com.code.aon.payroll.avanzadas.hojastrabajo.Httincidencia" />
     <mapping class="com.code.aon.payroll.avanzadas.hojastrabajo.Httcomplemento" />
     <mapping class="com.code.aon.payroll.avanzadas.hojastrabajo.Httbonificacion" />
+    <!-- RESULTADOS -SEGUROS SOCIALES-->			
+    <mapping class="com.code.aon.payroll.resultados.seguros.Lintc2"/>
+    <mapping class="com.code.aon.payroll.resultados.seguros.Tc2"/>
+    <!--AVANZADAS-COSTES -->			
+    <mapping class="com.code.aon.payroll.avanzadas.simulacion.Costes"/>
+    <mapping class="com.code.aon.payroll.avanzadas.simulacion.Lbonifica"/>
 
 
   </session-factory>

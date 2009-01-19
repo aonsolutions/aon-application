@@ -8,17 +8,24 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.payroll.auxiliares.convenios.Convenio;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.Tipnomina;
 import com.code.aon.payroll.principales.empresa.Actividad;
+import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.payroll.principales.persona.Trabajador;
 import com.code.aon.payroll.resultados.nomina.Nomina;
 
-public class NominaController extends PayrollBasicController {
+public class Tc2Controller extends PayrollBasicController {
 
+	
+	
+	private Actividad actividad;
+	
 	private List<SelectItem> tipnomina;
-	private Trabajador trabajador;
 
 	public List<SelectItem> getTipnomina() {
 		if(tipnomina==null){
@@ -39,14 +46,20 @@ public class NominaController extends PayrollBasicController {
 	public void generateCdg(){
 		((Nomina)getTo()).setCdg(Integer.parseInt(Utils.maxCode("Nomina", "cdg"))+1);
 	}
-	
-	
-	
-	
+
+
+	public Actividad getActividad() {
+		return actividad;
+	}
+
+	public void setActividad(Actividad actividad) {
+		this.actividad = actividad;
+	}
+
 	@Override
 	public void onEditSearch(ActionEvent arg0) {
 		
-		setTrabajador(new Trabajador());
+		setActividad(new Actividad());
 		
 		super.onEditSearch(arg0);
 	}
@@ -62,10 +75,10 @@ public class NominaController extends PayrollBasicController {
 			try {
 		
 			
-			if ((trabajador!=null) && (trabajador.getCdg() != null)) {
+			if ((actividad!=null) && (actividad.getCdg() != null)) {
 				getCriteria().addEqualExpression(
-						getFieldName(IPayrollAlias.NOMINA_TRABAJADOR_CDG),
-						getTrabajador().getCdg());
+						getFieldName(IPayrollAlias.TC2_CODACT_CDG),
+						getActividad().getCdg());
 			}
 			
 			
@@ -84,13 +97,6 @@ public class NominaController extends PayrollBasicController {
 			super.onSearch(event);
 		}
 
-		public Trabajador getTrabajador() {
-			return trabajador;
-		}
-
-		public void setTrabajador(Trabajador trabajador) {
-			this.trabajador = trabajador;
-		}
 
 	
 	

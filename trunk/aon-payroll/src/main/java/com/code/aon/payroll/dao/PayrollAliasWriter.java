@@ -29,6 +29,9 @@ import com.code.aon.payroll.avanzadas.hojastrabajo.Httincidencia;
 import com.code.aon.payroll.avanzadas.hojastrabajo.Httrabajador;
 import com.code.aon.payroll.avanzadas.kartel.Linpercepcion;
 import com.code.aon.payroll.avanzadas.kartel.Percepcion;
+import com.code.aon.payroll.avanzadas.simulacion.Costes;
+import com.code.aon.payroll.avanzadas.simulacion.Lbonifica;
+import com.code.aon.payroll.avanzadas.simulacion.Lcomunica;
 import com.code.aon.payroll.cotizacion.Base;
 import com.code.aon.payroll.cotizacion.Bonificacion;
 import com.code.aon.payroll.cotizacion.Cnae;
@@ -94,6 +97,8 @@ import com.code.aon.payroll.resultados.salarios.Finipext;
 import com.code.aon.payroll.resultados.salarios.Finiquito;
 import com.code.aon.payroll.resultados.salarios.Nomdtoex;
 import com.code.aon.payroll.resultados.salarios.Nominaex;
+import com.code.aon.payroll.resultados.seguros.Lintc2;
+import com.code.aon.payroll.resultados.seguros.Tc2;
 import com.code.aon.payroll.tipos.Autorizacion;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Empresario;
@@ -204,7 +209,12 @@ public class PayrollAliasWriter {
 		        Nominadev.class.getName(),
 		        Nomdto.class.getName(),
 		        Calculo.class.getName(),
-		        Lincalcu.class.getName()
+		        Lincalcu.class.getName(),
+		        Tc2.class.getName(),
+		        Lintc2.class.getName(),
+		        Costes.class.getName(),
+		        Lbonifica.class.getName(),
+		        Lcomunica.class.getName()
 		        };		
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");
 		HibernateUtil.getSessionFactory();

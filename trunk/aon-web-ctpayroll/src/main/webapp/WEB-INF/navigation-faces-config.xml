@@ -1324,6 +1324,56 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	
+		
+				<!-- =================== Resultados - Nominadto ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>tc2_form</from-outcome>
+			<to-view-id>
+				/facelet/resultados/seguros/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>tc2_list</from-outcome>
+			<to-view-id>
+				/facelet/resultados/seguros/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>tc2_search</from-outcome>
+			<to-view-id>
+				/facelet/resultados/seguros/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
+	
+	<!-- =================== Avanzadas -Simulacion ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>costes_form</from-outcome>
+			<to-view-id>
+				/facelet/avanzadas/simulacion/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>costes_list</from-outcome>
+			<to-view-id>
+				/facelet/avanzadas/simulacion/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>costes_search</from-outcome>
+			<to-view-id>
+				/facelet/avanzadas/simulacion/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 		
+
+	
+	
+	
 </faces-config>
 
 
