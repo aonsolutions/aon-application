@@ -46,16 +46,6 @@
 				
 					<aon:outputLabel for="Question_active"				
 						value="#{bundle.aon_status}"/>
-					<!-- 
-					<aon:div>
-						<aon:selectBooleanCheckbox id="st0" value="#{question.statusActive}" />
-						<aon:outputLabel for="st0"
-							value="#{marketingBundle.marketing_active}" />
-						<aon:selectBooleanCheckbox id="st1" value="#{question.statusInactive}" />
-						<aon:outputLabel for="st1"
-							value="#{marketingBundle.marketing_inactive}" />
-					</aon:div>
-					-->
 					<aon:selectOneMenu id="Question_active"
 						valueChangeListener="#{question.addExpression}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
