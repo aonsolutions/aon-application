@@ -5489,4 +5489,150 @@
 	</managed-bean>
 	
 	
+	<!-- ************* Resultados - TC2 ***************** -->
+	<managed-bean>
+		<managed-bean-name>tc2</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.Tc2Controller
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>5</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>
+				com.code.aon.payroll.resultados.seguros.Tc2
+			</value>
+		</managed-property>
+				<managed-property>
+			<property-name>beanName</property-name>
+			<value>tc2</value>
+		</managed-property>
+				<managed-property>
+					<property-name>listenerClasses</property-name>
+					<list-entries>
+						<value-class>
+							com.code.aon.ui.form.event.IControllerListener
+						</value-class>
+						<value>#{lintc2LinesControllerListener}</value>  
+						<value>#{tc2ControllerListener}</value>					
+					</list-entries>
+				</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>tc2ControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.Tc2ControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>lintc2LinesControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>lintc2</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Lintc2_tc2_cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+
+	<!-- ************* Resultados - Lintc2 ***************** -->
+	<managed-bean>
+		<managed-bean-name>lintc2</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.Lintc2Controller
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>5</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>
+				com.code.aon.payroll.resultados.seguros.Lintc2
+			</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>lintc2</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>tc2</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>cdg</key>
+					<value>id.cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>	
+	</managed-bean>
+	
+	
+		
+	<!-- *************  Avanzadas - Simulacion ***************** -->
+	<managed-bean>
+		<managed-bean-name>costes</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.CostesController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>5</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>
+				com.code.aon.payroll.avanzadas.simulacion.Costes
+			</value>
+		</managed-property>
+				<managed-property>
+			<property-name>beanName</property-name>
+			<value>costes</value>
+		</managed-property>
+		
+	</managed-bean>
+
+	
+
+
+	
+	
 </faces-config>

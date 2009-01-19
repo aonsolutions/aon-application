@@ -84,7 +84,12 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div>
-								<aon:commandLink value="#{menuBundle.resultados_seguros_sociales__tc2calc}" disabled="true" />
+								<aon:commandLink value="#{menuBundle.resultados_seguros_sociales__tc2calc}" action="tc2_form" >
+									<aon:actionListener method="#{tc2.onSearch}" />
+									<aon:actionListener method="#{tc2.onEditSearch}" />
+									<aon:actionListener method="#{tc2.onSelectFirst}" />
+									
+								</aon:commandLink>
 							</aon:div>
 							<aon:div>
 								<aon:commandLink value="#{menuBundle.resultados_seguros_sociales__tc1calc}" disabled="true" />

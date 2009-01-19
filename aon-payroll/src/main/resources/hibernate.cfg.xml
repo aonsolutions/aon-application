@@ -134,9 +134,15 @@
         <mapping class="com.code.aon.payroll.avanzadas.hojastrabajo.Httaviso"/>
         <mapping class="com.code.aon.payroll.avanzadas.hojastrabajo.Httincidencia"/>
         <mapping class="com.code.aon.payroll.avanzadas.hojastrabajo.Httcomplemento"/>
-        <mapping class="com.code.aon.payroll.avanzadas.hojastrabajo.Httbonificacion"/>
-    
-        
+        <mapping class="com.code.aon.payroll.avanzadas.hojastrabajo.Httbonificacion"/>        
+        <!-- RESULTADOS -SEGUROS SOCIALES-->			
+        <mapping class="com.code.aon.payroll.resultados.seguros.Lintc2"/>
+        <mapping class="com.code.aon.payroll.resultados.seguros.Tc2"/>
+        <!--AVANZADAS-COSTES -->			
+        <mapping class="com.code.aon.payroll.avanzadas.simulacion.Costes"/>
+        <mapping class="com.code.aon.payroll.avanzadas.simulacion.Lbonifica"/>
+       
 	</session-factory>
+	
 
 </hibernate-configuration>
