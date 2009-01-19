@@ -155,7 +155,7 @@
 	<managed-bean>
 		<managed-bean-name>survey</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.marketing.controller.SurveyController
+			com.code.aon.ui.form.BasicController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
