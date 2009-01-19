@@ -44,16 +44,24 @@
 					<aon:inputText id="Question_argument" size="60"
 						valueChangeListener="#{question.addExpression}" />
 				
-					<aon:outputText value="#{bundle.aon_status}"/>
+					<aon:outputLabel for="Question_active"				
+						value="#{bundle.aon_status}"/>
+					<!-- 
 					<aon:div>
 						<aon:selectBooleanCheckbox id="st0" value="#{question.statusActive}" />
 						<aon:outputLabel for="st0"
-							value="#{marketingBundle.aon_active}" />
+							value="#{marketingBundle.marketing_active}" />
 						<aon:selectBooleanCheckbox id="st1" value="#{question.statusInactive}" />
 						<aon:outputLabel for="st1"
-							value="#{marketingBundle.aon_inactive}" />
+							value="#{marketingBundle.marketing_inactive}" />
 					</aon:div>
-
+					-->
+					<aon:selectOneMenu id="Question_active"
+						valueChangeListener="#{question.addExpression}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItem itemLabel="#{marketingBundle.marketing_active}" itemValue="#{true}"/>
+						<f:selectItem itemLabel="#{marketingBundle.marketing_inactive}" itemValue="#{false}"/>
+					</aon:selectOneMenu>
 				</ui:define>
 			
 			</ui:decorate>
