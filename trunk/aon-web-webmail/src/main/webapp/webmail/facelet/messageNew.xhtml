@@ -119,12 +119,11 @@
 								uploadControlLabel="#{bundle.aon_fileUpload_upload}"
 								fileUploadListener="#{message.fileUploaded}"
 								maxFilesQuantity="20" listHeight="0px"
-								immediateUpload="true" autoclear="true"
-								onupload="startUpload();" onuploadcanceled="endUpload();" onerror="endUpload();">
+								immediateUpload="true" autoclear="true">
 								<f:facet name="label">
 									<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
 								</f:facet>								
-								<a4j:support event="onuploadcomplete" oncomplete="endUpload();" reRender="attachDataTable" />
+								<a4j:support event="onuploadcomplete" reRender="attachDataTable" />
 							</aon:fileUpload>								
 							<aon:div id="attachDataTable">					
 								<aon:dataTable value="#{message.files}" 
