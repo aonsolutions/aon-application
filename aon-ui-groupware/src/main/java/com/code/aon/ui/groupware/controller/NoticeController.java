@@ -66,7 +66,6 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	private Integer workGroupId;
 
 	public List<SelectItem> getUsers() {
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>GET USERS<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 		if (users.size() == 0 && workGroupId == null) loadUsers(); 
 		return users;
 	}
@@ -76,7 +75,6 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	}
 	
 	public void workGroupChange(ValueChangeEvent event) {
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>GROUP CHANGE<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 		mailList = null;
 		resetSMS();
         if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
@@ -90,7 +88,6 @@ public class NoticeController extends BasicController implements IAonObjectClass
     }
 
 	public void recipientChange(ValueChangeEvent event) {
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>RECIPIENT CHANGE<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 		mailList = null;
 		resetSMS();
 		if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
@@ -115,7 +112,6 @@ public class NoticeController extends BasicController implements IAonObjectClass
 
     @SuppressWarnings("unchecked")
     public void loadUsers() {
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>LOAD USERS<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     	users = new LinkedList<SelectItem>();
         try {
 	    	if (workGroupId == null) {
