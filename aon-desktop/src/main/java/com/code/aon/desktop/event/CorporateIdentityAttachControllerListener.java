@@ -26,7 +26,7 @@ public class CorporateIdentityAttachControllerListener extends ControllerAdapter
 	private static final String COMPANY_CONTROLLER_NAME = "company"; 
 
     /** BASE_NAME. */
-    private static final String BASE_NAME = "com.code.aon.ui.registry.i18n.messages";
+    private static final String BASE_NAME = "com.code.aon.desktop.i18n.messages";
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
@@ -54,8 +54,9 @@ public class CorporateIdentityAttachControllerListener extends ControllerAdapter
 				attach.setRegistry((Company)companyController.getTo());
 				attach.setCategory(null);
 				attach.setData(aonFile.getData());
-				// attach.setDescription(aonFile.getFileName().substring(aonFile.getFileName().lastIndexOf("\\")
-				// + 1, aonFile.getFileName().lastIndexOf(".")));
+				if (attach.getDescription() == null || attach.getDescription().trim().equals("")) {
+					attach.setDescription(aonFile.getFileName().substring(aonFile.getFileName().lastIndexOf("\\") + 1, aonFile.getFileName().lastIndexOf(".")));
+				}
 				attach.setRegistryAttachmentType(RegistryAttachmentType.CORPORATE_IDENTITY);
 				attach.setMimeType(MimeType.getByExtension(aonFile.getFileName().substring(aonFile.getFileName().lastIndexOf(".") + 1)));
 			}	

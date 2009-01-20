@@ -151,27 +151,32 @@
 							</aon:div>
 							<aon:div rendered="#{to==corporateIdentityAttach.to}" >
 								<aon:inputText value="#{corporateIdentityAttach.to.description}"
-									required="#{true}" size="40" />
+									size="40" />
 							</aon:div>
 							<f:facet name="footer">
 								<aon:div renderedOnUserRole="Manager">
-									<aon:div rendered="#{corporateIdentityAttach.new}">				
-										<aon:inputText value="#{corporateIdentityAttach.to.description}" styleClass="aon-float-left"
-											required="#{true}" size="20" />
-										<aon:fileUpload id="attach_file" required="#{true}"
-											addControlLabel="#{bundle.aon_fileUpload_add}"
-											stopControlLabel="#{bundle.aon_fileUpload_stop}"
-											stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
-											uploadControlLabel="#{bundle.aon_fileUpload_upload}"
-											fileUploadListener="#{corporateIdentityAttach.fileUploaded}"
-											immediateUpload="true" autoclear="true" listWidth="0px"
-											listHeight="0px">
-											<f:facet name="label">
-												<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
-											</f:facet>
-											<a4j:support event="onuploadcomplete" reRender="identityForm" />
-										</aon:fileUpload>
-									</aon:div>
+									<aon:panelGrid columns="2" columnClasses="aon-portlets-column1,aon-portlets-column1">
+										<aon:div rendered="#{corporateIdentityAttach.new}">
+											<aon:outputText value="#{bundle.aon_name}" />
+											<aon:inputText value="#{corporateIdentityAttach.to.description}" styleClass="aon-float-left"
+												size="40" />
+										</aon:div>
+										<aon:div rendered="#{corporateIdentityAttach.new}">
+											<aon:fileUpload id="attach_file" required="#{true}"
+												addControlLabel="#{bundle.aon_fileUpload_add}"
+												stopControlLabel="#{bundle.aon_fileUpload_stop}"
+												stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+												uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+												fileUploadListener="#{corporateIdentityAttach.fileUploaded}"
+												immediateUpload="true" autoclear="true" listWidth="0px"
+												listHeight="0px">
+												<f:facet name="label">
+													<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+												</f:facet>
+												<a4j:support event="onuploadcomplete" reRender="identityForm" />
+											</aon:fileUpload>
+										</aon:div>
+									</aon:panelGrid>
 								</aon:div>
 							</f:facet>
 						</aon:column>
