@@ -33,7 +33,7 @@
 						<aon:outputLabel for="Notice_workGroup_id"
 							value="#{groupwareBundle.notice_work_group}" />
 						<aon:selectOneMenu id="Notice_workGroup_id" 
-							value="#{notice.to.workGroup.id}" reRender="Notice_recipient_area, Notice_sendEmail, Notice_sendSMS"
+							value="#{notice.to.workGroup.id}" 
 							valueChangeListener="#{notice.workGroupChange}" > 
 							<f:selectItem value="#{desktop.allValue}" />
 							<f:selectItems value="#{notice.workgroups}" />
@@ -44,7 +44,7 @@
 							value="#{groupwareBundle.notice_recipient}" />
 						<aon:div id="Notice_recipient_area">
 							<aon:selectOneMenu id="Notice_recipient_id"
-								value="#{notice.to.recipient.id}" reRender="Notice_sendEmail, Notice_sendSMS"
+								value="#{notice.to.recipient.id}"
 								valueChangeListener="#{notice.recipientChange}">
 								<f:selectItem value="#{desktop.allValue}" />
 								<f:selectItems value="#{notice.users}" />
@@ -96,44 +96,48 @@
 						<aon:inputTextarea id="Notice_subject"
 							value="#{notice.to.subject}" cols="100" rows="7" />	
 
-						<aon:outputLabel for="Notice_sendEmail" value="#{groupwareBundle.notice_send_email}" rendered="#{notice.new}"/>
-						<aon:div id="Notice_sendEmail" style="vertical-align:top" rendered="#{notice.new}">
-							<aon:selectBooleanCheckbox id="Notice_sendEmail_checkbox" value="#{notice.sendMail}" style="vertical-align:top">
- 								<a4j:support event="onclick" reRender="Notice_sendEmail" />
-							</aon:selectBooleanCheckbox>
-							<aon:inputTextarea id="Notice_sendEmail_list" value="#{notice.mailList}" cols="97" rows="4" rendered="#{notice.sendMail}"/>	
+						<aon:outputLabel value="#{groupwareBundle.notice_send_email}" rendered="#{notice.new}"/>
+						<aon:div id="Notice_sendEmail">
+							<aon:div rendered="#{notice.new}" style="vertical-align:top">
+								<aon:selectBooleanCheckbox id="Notice_sendEmail_checkbox" value="#{notice.sendMail}" style="vertical-align:top">
+	 								<a4j:support event="onclick" reRender="Notice_sendEmail_list"/>
+								</aon:selectBooleanCheckbox>
+								<aon:inputTextarea id="Notice_sendEmail_list" value="#{notice.mailList}" cols="97" rows="4" rendered="#{notice.sendMail}"/>
+							</aon:div>	
 						</aon:div>
-
-						<aon:outputLabel for="Notice_sendSMS" value="#{groupwareBundle.notice_send_sms}" rendered="#{notice.new and sms.noticeEnabled}"/>
-						<aon:div id="Notice_sendSMS" style="vertical-align:top" rendered="#{notice.new and sms.noticeEnabled}">
-							<aon:selectBooleanCheckbox id="Notice_sendSMS_checkbox" value="#{notice.sendSMS}" style="vertical-align:top" disabled="#{!sms.sidebarEnabled}">
- 								<a4j:support event="onclick" reRender="Notice_sendSMS" />
-							</aon:selectBooleanCheckbox>
-
-							<aon:div id="Notice_sendSMS_list" rendered="#{notice.sendSMS}">
-								<aon:inputText id="SMS_recipient" maxlength="13" size="13" value="#{notice.recipient}" >
-									<f:validateLength maximum="13" />
-									<f:validateLongRange maximum="0099999999999" />
-								</aon:inputText>
-								<aon:commandButton id="add2List" value="#{appBundle.aon_sms_add2list}" title="#{appBundle.aon_sms_add2list}"
-									styleClass="aon-commandButton aon-icon-new-phone aon-icon-button"
-									actionListener="#{notice.add2List}"
-									reRender="SMS_recipient, recipientList"
-									accesskey="#{bundle.aon_key_save}" />
-								<aon:div styleClass="aon-dataList-scroll">
-									<rich:dataList id="recipientList" var="recipient" value="#{notice.recipients}"
-											style="margin-left:1.1em;" rowKeyVar="row" >
-				           				<h:outputText value="#{recipient}"/>
-										<a4j:commandButton id="removeFromList" value="" 
-												title="#{appBundle.aon_sms_removeFromlist}"
-												styleClass="aon-margin-left aon-icon-commandButton aon-icon-delete"
-												actionListener="#{notice.removeFromList}"
-												reRender="SMS_recipient, recipientList"
-												accesskey="#{bundle.aon_key_save}" >
-								            <a4j:actionparam name="selected" value="#{row}" assignTo="#{notice.selected}"/>
-										</a4j:commandButton>
-							        </rich:dataList>
-						        </aon:div>
+ 
+						<aon:outputLabel value="#{groupwareBundle.notice_send_sms}" rendered="#{notice.new and sms.noticeEnabled}"/>
+						<aon:div id="Notice_sendSMS">
+							<aon:div rendered="#{notice.new and sms.noticeEnabled}" style="vertical-align:top">
+								<aon:selectBooleanCheckbox id="Notice_sendSMS_checkbox" value="#{notice.sendSMS}" style="vertical-align:top" disabled="#{!sms.sidebarEnabled}">
+	 								<a4j:support event="onclick" reRender="Notice_sendSMS_list" />
+								</aon:selectBooleanCheckbox>
+	
+								<aon:div id="Notice_sendSMS_list" rendered="#{notice.sendSMS}">
+									<aon:inputText id="SMS_recipient" maxlength="13" size="13" value="#{notice.recipient}" >
+										<f:validateLength maximum="13" />
+										<f:validateLongRange maximum="0099999999999" />
+									</aon:inputText>
+									<aon:commandButton id="add2List" value="#{appBundle.aon_sms_add2list}" title="#{appBundle.aon_sms_add2list}"
+										styleClass="aon-commandButton aon-icon-new-phone aon-icon-button"
+										actionListener="#{notice.add2List}"
+										reRender="SMS_recipient, recipientList"
+										accesskey="#{bundle.aon_key_save}" />
+									<aon:div styleClass="aon-dataList-scroll">
+										<rich:dataList id="recipientList" var="recipient" value="#{notice.recipients}"
+												style="margin-left:1.1em;" rowKeyVar="row" >
+					           				<h:outputText value="#{recipient}"/>
+											<a4j:commandButton id="removeFromList" value="" 
+													title="#{appBundle.aon_sms_removeFromlist}"
+													styleClass="aon-margin-left aon-icon-commandButton aon-icon-delete"
+													actionListener="#{notice.removeFromList}"
+													reRender="SMS_recipient, recipientList"
+													accesskey="#{bundle.aon_key_save}" >
+									            <a4j:actionparam name="selected" value="#{row}" assignTo="#{notice.selected}"/>
+											</a4j:commandButton>
+								        </rich:dataList>
+							        </aon:div>
+								</aon:div>
 							</aon:div>
 
 						</aon:div>
