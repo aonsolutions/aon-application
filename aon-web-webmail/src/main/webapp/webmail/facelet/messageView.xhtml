@@ -150,19 +150,19 @@
 				<aon:div>
 					<aon:outputText escape="false" converter="longString" value="#{message.message.sender}" />
 					<aon:commandButton
-						id="addToContacts"
+						id="addToContacts" reRender="aonStatus"
 						title="#{webmailBundle.aon_webmail_email_add}"
 						styleClass="aon-icon-commandButton aon-icon-agenda aon-italic aon-bold">
 						<rich:componentControl for="addContactModalPanel" operation="show" event="onclick"/>
 					</aon:commandButton>
 					<aon:commandButton id="add_white_list"
-						reRender="webmailForm"
+						reRender="aonStatus"
 						rendered="#{spam.whiteListEmail}"
 						title="#{webmailBundle.aon_webmail_add_white_list}" 
 						styleClass="aon-icon-commandButton aon-icon-white-list aon-italic aon-bold"
 						actionListener="#{spam.onAddWhiteMessageFrom}" />
 					<aon:commandButton id="add_black_list"
-						reRender="webmailForm"
+						reRender="aonStatus"
 						rendered="#{spam.blackListEmail}"
 						title="#{webmailBundle.aon_webmail_add_black_list}" 
 						styleClass="aon-icon-commandButton aon-icon-black-list aon-italic aon-bold"
