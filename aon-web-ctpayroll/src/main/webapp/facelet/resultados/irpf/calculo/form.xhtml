@@ -41,19 +41,28 @@
 									<aon:div>
 									<aon:panelGrid columns="2" dir="true"
 										style="margin-bottom=5px;float:left;">
+										
+										
+										<aon:outputLabel
+											value="CDG:" />
+										<aon:inputText id="cdg" value="#{calculo.to.id.cdg}" 
+											size="5" maxlength="4" disabled="#{true}" />
+										
+										
+											
 										<aon:outputLabel
 											value="#{appBundle.aon_payroll_resultados_irpf_calculo_anio}" />
-										<aon:inputText value="#{calculo.to.id.anio}" required="#{true}"
+										<aon:inputText id="Anio" value="#{calculo.to.id.anio}" required="#{true}"
 											size="5" maxlength="4" disabled="#{!calculo.new}" />
 											
 										<aon:outputLabel
 											value="#{appBundle.aon_payroll_resultados_irpf_calculo_mes}" />
-										<aon:inputText value="#{calculo.to.id.mes}" width="25%"
+										<aon:inputText id="Mes" value="#{calculo.to.id.mes}" required="#{true}"
 											size="5" maxlength="2" disabled="#{!calculo.new}" />
 											
 										<aon:outputLabel
 											value="#{appBundle.aon_payroll_resultados_irpf_calculo_dia}" />
-										<aon:inputText value="#{calculo.to.id.dia}" width="25%"
+										<aon:inputText id="Dia" value="#{calculo.to.id.dia}" required="#{true}"
 											size="5" maxlength="2" disabled="#{!calculo.new}" />
 									</aon:panelGrid>
 										

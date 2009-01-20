@@ -113,6 +113,16 @@
         <!-- PRINCIPALES-PERSONA -->			
         <mapping class="com.code.aon.payroll.principales.autonomos.Autonomos"/>
         <mapping class="com.code.aon.payroll.principales.autonomos.Autbases"/>
+        <mapping class="com.code.aon.payroll.principales.personas.Bonifica"/>
+        <mapping class="com.code.aon.payroll.principales.personas.Nominait"/>
+        <mapping class="com.code.aon.payroll.principales.personas.Parteit"/>
+        <mapping class="com.code.aon.payroll.principales.personas.Prcdivtrab"/>
+        <mapping class="com.code.aon.payroll.principales.personas.Tipaut"/>
+        <mapping class="com.code.aon.payroll.principales.personas.Tipinc"/>
+        <mapping class="com.code.aon.payroll.principales.personas.Tipocont"/>
+        <mapping class="com.code.aon.payroll.principales.personas.Trabajo"/>
+        <mapping class="com.code.aon.payroll.principales.personas.Trabdto"/>
+        <mapping class="com.code.aon.payroll.principales.personas.Trabinci"/>
         <!-- RESULTADOS - SALARIO -->			
         <mapping class="com.code.aon.payroll.resultados.salarios.Nominaex"/>
         <mapping class="com.code.aon.payroll.resultados.salarios.Nomdtoex"/>
@@ -143,6 +153,5 @@
         <mapping class="com.code.aon.payroll.avanzadas.simulacion.Lbonifica"/>
        
 	</session-factory>
-	
 
 </hibernate-configuration>

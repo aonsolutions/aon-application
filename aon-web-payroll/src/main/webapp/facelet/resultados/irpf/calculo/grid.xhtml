@@ -15,7 +15,9 @@
 			aon-editDataTable-numberColumn, aon-editDataTable-numberColumn" />
 			<!--  
 			<ui:param name="showDataScroller" value="#{(!comunidad.new) and (comunidad.to != null)}" />			
-			-->	
+			-->
+			<ui:param name="skipResetButton" value="#{true}" />	
+			
 
 			<ui:define name="columns">
 
@@ -75,7 +77,9 @@
 					<f:facet name="header">
 						<aon:outputText value="#{appBundle.aon_payroll_resultados_irpf_calculo_importe_unit}" />
 					</f:facet>
-					<aon:outputText value="#{to.importeUni}" rendered="#{to!=lincalcu.to}" />
+					<aon:outputText value="#{to.importeUni}" rendered="#{to!=lincalcu.to}" >
+						<f:convertNumber type="number" pattern="###,###.###" />
+					</aon:outputText>
 					
 					<aon:inputText styleClass="aon-form-input-text" required="true"
 						rendered="#{to==lincalcu.to}" size="15"
@@ -91,7 +95,9 @@
 					<f:facet name="header">
 						<aon:outputText value="#{appBundle.aon_payroll_resultados_irpf_calculo_meses_dias}" />
 					</f:facet>
-					<aon:outputText value="#{to.unidades}" rendered="#{to!=lincalcu.to}" />
+					<aon:outputText value="#{to.unidades}" rendered="#{to!=lincalcu.to}" >
+						<f:convertNumber type="number" pattern="###,###.###" />
+					</aon:outputText>
 					
 					<aon:inputText styleClass="aon-form-input-text" required="true"
 						rendered="#{to==lincalcu.to}" size="13"
@@ -107,7 +113,9 @@
 					<f:facet name="header">
 						<aon:outputText value="#{appBundle.aon_payroll_resultados_irpf_calculo_importe}" />
 					</f:facet>
-					<aon:outputText value="#{to.importe}" rendered="#{to!=lincalcu.to}" />
+					<aon:outputText value="#{to.importe}" rendered="#{to!=lincalcu.to}" >
+						<f:convertNumber type="number" pattern="###,###.###" />
+					</aon:outputText>
 					
 					<aon:inputText styleClass="aon-form-input-text" required="true"
 						rendered="#{to==lincalcu.to}" size="15"

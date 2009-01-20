@@ -130,7 +130,8 @@ public class Utils {
 	public static final String maxCode(String tableName, String fieldName, String where){
 		
 		if(tableName!=null && fieldName!=null && where!=null){
-			String sql = "select max("+fieldName.toString()+") from "+tableName+" where "+where;	
+			String sql = "select max("+fieldName.toString()+") from "+tableName.toString()+" where "+where.toString();	
+			System.out.println(sql);
 			Query query = HibernateUtil.getSession().createQuery(sql);			
 			List results = query.list();
 				

@@ -80,9 +80,19 @@ import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.payroll.principales.empresa.Emprlban;
 import com.code.aon.payroll.principales.persona.Embargo;
 import com.code.aon.payroll.principales.persona.Trabajador;
+import com.code.aon.payroll.principales.personas.Bonifica;
+import com.code.aon.payroll.principales.personas.Nominait;
 import com.code.aon.payroll.principales.personas.Otrperc;
+import com.code.aon.payroll.principales.personas.Parteit;
 import com.code.aon.payroll.principales.personas.Percep;
 import com.code.aon.payroll.principales.personas.Persona;
+import com.code.aon.payroll.principales.personas.Prcdivtrab;
+import com.code.aon.payroll.principales.personas.Tipaut;
+import com.code.aon.payroll.principales.personas.Tipinc;
+import com.code.aon.payroll.principales.personas.Tipocont;
+import com.code.aon.payroll.principales.personas.Trabajo;
+import com.code.aon.payroll.principales.personas.Trabdto;
+import com.code.aon.payroll.principales.personas.Trabinci;
 import com.code.aon.payroll.resultados.irpf.Calculo;
 import com.code.aon.payroll.resultados.irpf.Impresos11x;
 import com.code.aon.payroll.resultados.irpf.Impresos190;
@@ -210,11 +220,21 @@ public class PayrollAliasWriter {
 		        Nomdto.class.getName(),
 		        Calculo.class.getName(),
 		        Lincalcu.class.getName(),
+		        Bonifica.class.getName(),
+		        Nominait.class.getName(),
+		        Parteit.class.getName(),
+		        Prcdivtrab.class.getName(),
+		        Tipaut.class.getName(),
+		        Tipinc.class.getName(),
+		        Tipocont.class.getName(),
+		        Trabajo.class.getName(),
+		        Trabdto.class.getName(),
+		        Trabinci.class.getName(),
 		        Tc2.class.getName(),
 		        Lintc2.class.getName(),
 		        Costes.class.getName(),
 		        Lbonifica.class.getName()
-		        };		
+		        };
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");
 		HibernateUtil.getSessionFactory();
 		writer.write(classes, file);

@@ -1,6 +1,5 @@
 package com.code.aon.ui.payroll.controller;
 
-import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -9,10 +8,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.payroll.auxiliares.convenios.Complemento;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.Indirpf;
 import com.code.aon.payroll.principales.persona.Trabajador;
@@ -83,11 +79,18 @@ public class CalculoController extends PayrollBasicController {
 		super.onSearch(event);
 	}
 	
-	public void setDefaultFields(){		
-		
+	/**
+	 * Genera un numero autonumerico para el codigo de la paga extra
+	 * @param event
+	 */
+	public void generarNumero(ActionEvent event) {
+
 		Calculo to = (Calculo) getTo();
-
-
+		 
+		//String where = "anio= "+to.getId().getAnio()+" and mes= "+to.getId().getMes()+" and dia= "+to.getId().getDia();
+		//String num = Utils.maxCode("Calculo", "cdg",where);
+		((Calculo) getTo()).getId().setCdg(((Calculo) getTo()).getEmprper().getCdg());
+		
 	}
 
 

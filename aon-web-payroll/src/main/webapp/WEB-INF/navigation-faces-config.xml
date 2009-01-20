@@ -1323,10 +1323,30 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+
+	<!-- =================== Principales - Personas - Integral trabajadores ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>integralTrab_form</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>integralTrab_list</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>integralTrab_search</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	
-	
-		
-				<!-- =================== Resultados - Nominadto ================= -->
+	<!-- =================== Resultados - Nominadto ================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>tc2_form</from-outcome>
@@ -1348,8 +1368,7 @@
 		</navigation-case>
 	</navigation-rule> 
 	
-	
-	<!-- =================== Avanzadas -Simulacion ================= -->
+	<!-- =================== Avanzadas - Simulacion ================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>costes_form</from-outcome>
@@ -1371,8 +1390,6 @@
 		</navigation-case>
 	</navigation-rule> 		
 
-	
-	
 	
 </faces-config>
 
