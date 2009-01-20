@@ -27,25 +27,27 @@
 							value="personaListXls" />
 
 						<ui:define name="beforeSpinToolbarContent">
-							<aon:commandButton id="actividadesButton"
+							<aon:commandButton 
 								title="#{appBundle.aon_payroll_principales_integral_trabajadores}"
 								styleClass="aon-finding-toolbar-item aon-icon-tree"
 								action="actividades_form" rendered="#{!controller.new}"
 								actionListener="#{actividades.onEditSearch}"
 								disabled="#{true}">
 							</aon:commandButton>
-							<aon:commandButton id="domiciliosButton"
+							<aon:commandButton 
 								title="#{appBundle.aon_payroll_principales_personas_otrperc}"
 								styleClass="aon-finding-toolbar-item aon-icon-agenda"
 								action="otrperc_form" rendered="#{!controller.new}"
 								actionListener="#{otrperc.onSelectFirst}">
 							</aon:commandButton>
-							<aon:commandButton id="cuentasButton"
+							<!-- 
+							<aon:commandButton 
 								title="#{appBundle.aon_payroll_principales_fichero_contrato}"
 								styleClass="aon-finding-toolbar-item aon-icon-category"
 								action="cuenta_form" rendered="#{!controller.new}"
 								actionListener="#{cuenta.onSelectFirst}" disabled="#{true}">
 							</aon:commandButton>
+							-->
 						</ui:define>
 					</ui:decorate>
 
