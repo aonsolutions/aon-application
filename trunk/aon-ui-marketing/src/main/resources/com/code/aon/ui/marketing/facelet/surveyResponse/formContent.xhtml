@@ -20,7 +20,7 @@
 
 			<c:if test="#{surveyResponse.to.action.id != null}" >
 				<aon:outputLabel for="SurveyResponse_action_id" 
-					value="#{marketingBundle.aon_campaign_action}" />
+					value="#{marketingBundle.marketing_campaign_action}" />
 				<aon:outputText id="SurveyResponse_action_id"
 					value="#{surveyResponse.to.action.id} (#{surveyResponse.to.action.campaign.description})" />
 			</c:if>
