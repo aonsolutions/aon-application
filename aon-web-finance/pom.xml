@@ -11,7 +11,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
   <groupId>com.code.aon</groupId>
   <artifactId>aon.web.finance</artifactId>
   <packaging>war</packaging>
-  <version>3.0.0</version>
+  <version>3.0.0-SNAPSHOT</version>
   <description>AON WEB FINANCE</description>
   <name>AON WEB FINANCE</name>
   <build>
@@ -24,7 +24,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.ui.resources</artifactId>
-      <version>3.3.0</version>
+      <version>3.5.0</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -40,13 +40,13 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.security.bridge</artifactId>
-      <version>3.0.1</version>
+      <version>3.1.0</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.rich.components</artifactId>
-      <version>3.3.0</version>
+      <version>3.5.1</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -58,25 +58,25 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.ui.account.bridge</artifactId>
-      <version>3.0.0</version>
+      <version>3.2.0-SNAPSHOT</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.ui.company</artifactId>
-      <version>3.1.1</version>
+      <version>3.5.1</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.ui.config</artifactId>
-      <version>3.1.1</version>
+      <version>3.3.4</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.ui.finance</artifactId>
-      <version>3.0.0</version>
+      <version>3.2.0-SNAPSHOT</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -92,31 +92,31 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.ui.geozone</artifactId>
-      <version>3.1.1</version>
+      <version>3.1.5</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.ui.product</artifactId>
-      <version>3.0.0</version>
+      <version>3.1.4</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.ui.supplier</artifactId>
-      <version>3.1.0</version>
+      <version>3.2.2</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.ui.report</artifactId>
-      <version>3.2.1</version>
+      <version>3.4.1</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.ui.mailing</artifactId>
-      <version>1.0.3</version>
+      <version>3.0.1</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

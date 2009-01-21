@@ -61,7 +61,7 @@
 						styleClass="aon-form-selectOneMenu-field"
 						rendered="#{to==controllerAlias.to}"
 						valueChangeListener="#{controllerAlias.payMethodChanged}">
-						<f:selectItems value="#{financeCollections.payMethods}" />
+						<f:selectItems value="#{configCollections.payMethods}" />
 					</h:selectOneMenu>
 					<f:verbatim>&#160;</f:verbatim>
 					<f:facet name="footer">
@@ -69,7 +69,7 @@
 							styleClass="aon-form-selectOneMenu-field"
 							rendered="#{controllerAlias.new}"
 							valueChangeListener="#{controllerAlias.payMethodChanged}">
-							<f:selectItems value="#{financeCollections.payMethods}" />
+							<f:selectItems value="#{configCollections.payMethods}" />
 						</h:selectOneMenu>
 					</f:facet>
 				</t:column>
