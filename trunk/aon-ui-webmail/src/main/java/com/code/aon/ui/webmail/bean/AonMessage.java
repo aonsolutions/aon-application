@@ -1,6 +1,7 @@
 package com.code.aon.ui.webmail.bean;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,6 +26,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimeUtility;
 import javax.mail.search.SearchTerm;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -337,10 +339,15 @@ public class AonMessage implements IMimeType {
 		return sender;
 	}
 
-	public void setRecipients(String to, RecipientType type) throws WebmailException {
+	public void setRecipients(String recipients, RecipientType type) throws WebmailException {
 		try {
-			InternetAddress[] address = InternetAddress.parse(to, true);
-			setRecipients(address, type);
+			String value = StringUtils.replace(recipients, ";", ",");
+			InternetAddress[] addresses = InternetAddress.parse(value, true);
+			for( InternetAddress address : addresses ) {
+				String personal = MimeUtility.encodeText(address.getPersonal());
+				address.setPersonal(personal);
+			}
+			setRecipients(addresses, type);
 		} catch (javax.mail.MessagingException e) {
 			LOGGER.log(Level.SEVERE,
 					"Could decode from string, maynot be in RFC822 format", e);
@@ -348,6 +355,10 @@ public class AonMessage implements IMimeType {
 		} catch (IndexOutOfBoundsException e) {
 			LOGGER.log(Level.SEVERE,
 					"Invalid sender, could not par internet address", e);
+			throw new WebmailException(e);
+		} catch (UnsupportedEncodingException e) {
+			LOGGER.log(Level.SEVERE,
+					"Error enconding addresses " + recipients, e);
 			throw new WebmailException(e);
 		}
 	}
