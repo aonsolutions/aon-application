@@ -302,9 +302,13 @@
 
 					<aon:div>
 						<aon:div styleClass="aon-company-logo">
-							<aon:graphicImage id="Logo_preview" 
-								rendered="#{desktop.logoAttached}"
-								url="desktop.logo" style="width:140px"/>	
+							<a4j:mediaOutput element="img" cacheable="false"
+								rendered="#{company.withLogo}" 
+								value="#{company.aonFile.key}"
+								createContent="#{company.createLogoContent}">
+								<f:param value="#{company.timeStamp}" name="time" />
+							</a4j:mediaOutput>
+
 						</aon:div>
 						<!--  soporte -->
 						<aon:div styleClass="aon-support">
