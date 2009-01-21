@@ -16,7 +16,7 @@
 	<version>1.2.0</version>
 	<description>AON WEB COMMERCIAL</description>
 	<properties>
-		<dbVersion>1.10.1</dbVersion>
+		<dbVersion>1.10.5</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-commercial</finalName>
@@ -25,31 +25,31 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security.bridge</artifactId>
-			<version>3.0.0</version>
+			<version>3.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId> 
 			<artifactId>aon.security</artifactId>
-			<version>1.6.0</version>
+			<version>1.7.0</version>
 			<scope>provided</scope>
 		</dependency>	
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>3.0.0</version>
+			<version>3.4.1</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>3.0.0</version>
+			<version>3.5.1</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>3.0.0</version>
+			<version>3.5.0</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -69,43 +69,42 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.commercial</artifactId>
-			<version>3.0.0</version>
+			<version>3.2.0-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.registry</artifactId>
-			<version>2.1.8</version>
+			<version>3.4.2</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.product</artifactId>
-			<version>2.1.1</version>			
+			<version>3.1.4</version>			
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>2.3.5</version>			
+			<version>3.5.1</version>			
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.geozone</artifactId>
-			<version>3.0.0</version>
+			<version>3.1.5</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.marketing</artifactId>
-			<version>3.0.0</version>
+			<artifactId>aon.ui.sales</artifactId>
+			<version>3.2.0-SNAPSHOT</version>
 		</dependency>		
 		<dependency>
-		    <groupId>commons-el</groupId>
-		    <artifactId>commons-el</artifactId>
-		    <version>1.0</version>
-			<scope>runtime</scope>
-		</dependency>					
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.marketing</artifactId>
+			<version>3.1.0-SNAPSHOT</version>
+		</dependency>		
 	</dependencies>
 </project>

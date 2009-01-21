@@ -70,6 +70,7 @@
 							<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="mediaTypeDiv"
 								actionListener="#{targetSearch.onAddMediaType}"
 								rendered="#{(mediaType != null) and (index == (targetSearch.mediaTypesSize-1))}"/>
+							<aon:outputText value="#{mediaType}" />
 						</aon:div>						
 					</a4j:repeat>
 				</aon:div>			
