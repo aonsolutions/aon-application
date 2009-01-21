@@ -34,7 +34,7 @@
 					</f:facet>
 					<f:facet name="controls">
 						<aon:commandButton type="button" styleClass="aon-popupWindow-close"
-							immediate="true">
+							immediate="true" reRender="showEmailWindow,newMessageHeader">
 							<f:setPropertyActionListener target="#{message.showEmailsWindow}"
 								value="#{false}" />
 							<rich:componentControl for="showEmailsModalPanel" operation="hide"
@@ -47,6 +47,7 @@
 						<aon:commandButton id="selectEmail" action="messageNew"
 							actionListener="#{message.acceptAllEmailItems}"
 							value="#{webmailBundle.aon_webmail_accept}"
+							reRender="showEmailWindow,newMessageHeader"
 							styleClass="aon-icon-commandButton aon-icon-accept">
 							<f:setPropertyActionListener target="#{message.showEmailsWindow}"
 								value="#{false}" />
