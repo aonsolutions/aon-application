@@ -41,6 +41,10 @@
 		<project>aon-supplier</project>
 		<project>aon-finance-bridge</project>
 		<project>aon-rich-components</project>
+		<project>aon-csb</project>
+		<project>aon-geozone</project>
+		<project>aon-ql</project>
+		<project>aon-seller</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
