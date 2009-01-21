@@ -44,7 +44,6 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	/**
 	 * Instantiates a new ldap dao.
 	 * 
-	 * @param properties the properties
 	 * @param pojoClass the pojo class
 	 */
 	public LdapDAO( Class<? extends ITransferObject> pojoClass ) {

@@ -18,7 +18,6 @@ public class EntityMetadataManager {
 	 * 
 	 * @param pojoClass
 	 * @return The requested <code>IManagerBean</code>.
-	 * @throws ManagerBeanException
 	 */
 	public static EntityMetadata getMetadata(Class<? extends ITransferObject> pojoClass) {
         EntityMetadata metadata = metadastas.get( pojoClass );
