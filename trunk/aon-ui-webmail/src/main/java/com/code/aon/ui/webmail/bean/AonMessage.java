@@ -341,7 +341,7 @@ public class AonMessage implements IMimeType {
 
 	public void setRecipients(String recipients, RecipientType type) throws WebmailException {
 		try {
-			String value = StringUtils.replace(recipients, ";", ",");
+			String value = StringUtils.replace(recipients, ";", AonMessageUtils.EMAIL_SEPARATOR);
 			InternetAddress[] addresses = InternetAddress.parse(value, true);
 			for( InternetAddress address : addresses ) {
 				String personal = MimeUtility.encodeText(address.getPersonal());

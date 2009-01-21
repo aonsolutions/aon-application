@@ -631,56 +631,40 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 	public void acceptAllEmailItems(ActionEvent event){
 		MultiSelectionEmailBean bean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(BEAN_MULTISELECTIONEMAIL);
 		List<Contact> lst = bean.getSelectedRows();
-		email = "";
+		String emails = "";
         for (int i = 0, max = lst.size(); i < max; i++) {
         	Contact e = lst.get(i);
-        	email += StringEscapeUtils.unescapeHtml(e.getEmailLarge());
+        	emails += StringEscapeUtils.unescapeHtml(e.getEmailLarge());
         	if (i+1 < max) {
-        		email += AonMessageUtils.EMAIL_SEPARATOR + " ";
+        		emails += AonMessageUtils.EMAIL_SEPARATOR + " ";
         	}
 		}
         if (CONTAINER_TO.equals(selectedDestinyContainer)){
-            recipientsTo = acceptEmailItem(recipientsTo);
+            recipientsTo = acceptEmailItem(emails, recipientsTo);
         }else if (CONTAINER_CC.equals(selectedDestinyContainer)){
-            recipientsCc = acceptEmailItem(recipientsCc);
+            recipientsCc = acceptEmailItem(emails, recipientsCc);
         }else if (CONTAINER_BCC.equals(selectedDestinyContainer)){
-            recipientsBcc = acceptEmailItem(recipientsBcc);
+            recipientsBcc = acceptEmailItem(emails, recipientsBcc);
         } 
-        email = null;
 	}
 
 	private static final String CONTAINER_TO = "To";
 	private static final String CONTAINER_CC = "Cc";
 	private static final String CONTAINER_BCC = "Bcc";
-	
-	private String email = null;
-	
-	/**
-	 * @return the email
-	 */
-	public String getEmail() {
-		return email;
-	}
 
-	/**
-	 * @param email the email to set
-	 */
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	private String acceptEmailItem(String recipient){
+	private String acceptEmailItem(String emails, String recipient){
 		String result = StringUtils.trimToEmpty(recipient);
 		if (! StringUtils.isEmpty(result) ) {
+			result = StringUtils.replace(result, ";", AonMessageUtils.EMAIL_SEPARATOR);
 			if (!result.endsWith(AonMessageUtils.EMAIL_SEPARATOR)) {
 				result += AonMessageUtils.EMAIL_SEPARATOR;
 			}
 			result += " ";
 		}
-		if (! StringUtils.isBlank(email) ) {
-			result += email + AonMessageUtils.EMAIL_SEPARATOR;
+		if (! StringUtils.isBlank(emails) ) {
+			result += emails + AonMessageUtils.EMAIL_SEPARATOR;
 		}
-		email = null;
+		emails = null;
 		return result;
 	}
 	
