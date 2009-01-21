@@ -10,6 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -40,6 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
@@ -47,6 +49,7 @@ import org.richfaces.model.UploadItem;
 import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.AonException;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.velocity.TemplateHelper;
@@ -54,6 +57,8 @@ import com.code.aon.common.velocity.VelocityHelper;
 import com.code.aon.groupware.Contact;
 import com.code.aon.groupware.dao.IContactAlias;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -625,9 +630,10 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 		email = "";
         for (int i = 0, max = lst.size(); i < max; i++) {
         	Contact e = lst.get(i);
-        	email += e.getEmail();
-        	if (i+1 < max)
+        	email += StringEscapeUtils.unescapeHtml(e.getEmailLarge());
+        	if (i+1 < max) {
         		email += AonMessageUtils.EMAIL_SEPARATOR + " ";
+        	}
 		}
         if (CONTAINER_TO.equals(selectedDestinyContainer)){
             recipientsTo = acceptEmailItem(recipientsTo);
@@ -915,7 +921,7 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 		this.contactName = "";
 		try {
 			if ( this.message != null ) {
-				String sender = message.getSender(-1);
+				String sender = message.getSenderSummary();
 				String email = message.getSenderEmail();
 				if ( StringUtils.equals(sender, email) ) {
 					int pos = email.indexOf('@');
@@ -935,7 +941,7 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 		IManagerBean contactsBean = contactController.getManagerBean();
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(contactsBean.getFieldName(IContactAlias.CONTACT_EMAIL), email);
-		List list = contactsBean.getList(criteria);
+		List<ITransferObject> list = contactsBean.getList(criteria);
 		if (list.size()==0){
 			Contact contact = new Contact();
 			contact.setEmail(email);
@@ -1039,6 +1045,24 @@ public class MessageController implements WebMailConstants, IAonFileListener {
         HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
         save(response);
         context.responseComplete();    	
+    }
+    
+	public List<ITransferObject> suggestionEmails( Object text ) {
+    	try{
+			IManagerBean bean = FormUtil.getController(WebMailConstants.BEAN_CONTACT).getManagerBean();
+			Criteria criteria = new Criteria();
+			String displayName = bean.getFieldName(IContactAlias.CONTACT_DISPLAY_NAME);
+			String email = bean.getFieldName(IContactAlias.CONTACT_EMAIL);
+			Expression exp1 = ExpressionUtilities.getLikeExpression(displayName, text + "*");
+			Expression exp2 = ExpressionUtilities.getLikeExpression(email, text + "*");
+			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
+			criteria.addNotNullExpression(email);
+			criteria.addOrder(displayName);
+			return bean.getList(criteria);
+    	} catch (ManagerBeanException e) {
+    		LOGGER.log( Level.SEVERE, "Error getting suggestion emails", e );
+		}
+    	return Collections.emptyList();
     }
     
 }

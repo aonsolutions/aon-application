@@ -27,6 +27,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.search.SearchTerm;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -227,15 +228,6 @@ public class AonMessage implements IMimeType {
 		String subject = message.getSubject();
 		return StringUtils.defaultString(StringEscapeUtils.escapeHtml(subject));
 	}
-	
-	public String getDisplaySubject() throws MessagingException {
-		return getDisplaySubject(message);
-	}
-	
-	public String getSubjectShort() throws WebmailException {
-		String subject = StringUtils.abbreviate( getSubject(), 50 );
-		return StringUtils.defaultString(StringEscapeUtils.escapeHtml(subject));
-	}
 
 	/**
 	 * Set the subject of the wrapped message.
@@ -315,7 +307,7 @@ public class AonMessage implements IMimeType {
 		}
 	}
 
-	public String getSender( int maxWidth ) throws WebmailException {
+	public String getSenderSummary() throws WebmailException {
 		Address[] addresses = null;
 		try {
 			addresses = message.getFrom();
@@ -324,14 +316,10 @@ public class AonMessage implements IMimeType {
 			throw new WebmailException(e);
 		}
 		String sender = "";
-		if (addresses!=null && addresses.length>0){
+		if (! ArrayUtils.isEmpty(addresses)) {
 			sender = getDisplayAddressShort( addresses[0] );
 		}
-		return (maxWidth != -1) ? StringUtils.abbreviate(sender, maxWidth) : sender;
-	}
-	
-	public String getSenderShort() throws WebmailException {
-		return getSender(25);
+		return sender;
 	}
 
 	public String getSenderEmail() throws WebmailException {
@@ -343,7 +331,7 @@ public class AonMessage implements IMimeType {
 			throw new WebmailException(e);
 		}
 		String sender = "";
-		if (addresses!=null && addresses.length>0){
+		if (! ArrayUtils.isEmpty(addresses)) {
 			sender = getDisplayEmail( addresses[0] );
 		}
 		return sender;
@@ -384,10 +372,26 @@ public class AonMessage implements IMimeType {
 		}
 	}
 
-	public String getRecipientsToShort() throws WebmailException {
-		return StringUtils.abbreviate(getRecipientsToEmail(), 25);
+	public String getRecipientsToSummary() throws WebmailException {
+		Address[] addresses = null;
+		try {
+			addresses = message.getRecipients(RecipientType.TO);
+		} catch (MessagingException e) {
+			LOGGER.log(Level.SEVERE,"Can not recover address.",e);
+			throw new WebmailException(e);
+		}
+		StringBuffer addressBuffer = new StringBuffer();
+		if (! ArrayUtils.isEmpty(addresses)) {
+			for (int i = 0; i < addresses.length; i++) {
+				addressBuffer.append(getDisplayAddressShort(addresses[i]));
+				if ( i+1 < addresses.length ) {
+					addressBuffer.append(AonMessageUtils.EMAIL_SEPARATOR);
+				}
+			}
+		}
+		return addressBuffer.toString();
 	}
-
+	
 	public String getRecipientsToEmail() throws WebmailException {
 		Address[] addresses = null;
 		try {
@@ -397,7 +401,7 @@ public class AonMessage implements IMimeType {
 			throw new WebmailException(e);
 		}
 		StringBuffer addressBuffer = new StringBuffer();
-		if (addresses != null && addresses.length > 0) {
+		if (! ArrayUtils.isEmpty(addresses)) {
 			for (int i = 0; i < addresses.length; i++) {
 				addressBuffer.append(getDisplayEmail(addresses[i]));
 				if ( i+1 < addresses.length ) {
