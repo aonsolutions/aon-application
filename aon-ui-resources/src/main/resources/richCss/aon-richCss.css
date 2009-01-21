@@ -1540,15 +1540,17 @@ color:#000;
 .aon-popupWindow-content-internal{
 	}
 	
-.aon-timer-title{
-	background-color:#ccc;
-	color:#000;
-	margin:1px;
-	font-size:1.1em;
-	font-weight:bold;
-	text-align:center;
+.aon-timer{
+	background:transparent url(images/aon-content/aon-timer.gif) left center no-repeat;
+	height: 141px;
+	padding-left: 145px;
+}
+.aon-timer-internal {
+	margin-top: 65px;
+	text-align: center;
 	text-transform:uppercase;
-	}
+	font-weight:bold;
+}	
 
 /**********************************************/
 /*****   LOCALIZACION Y TOOLBAR DE PAGINA ******/
