@@ -310,33 +310,33 @@ public class AonMessage implements IMimeType {
 	}
 
 	public String getSenderSummary() throws WebmailException {
-		Address[] addresses = null;
-		try {
-			addresses = message.getFrom();
-		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,"Can not recover address.",e);
-			throw new WebmailException(e);
+		Address sender = getSenderAddress();
+		if (sender != null) {
+			return getDisplayAddressShort( sender );
 		}
-		String sender = "";
-		if (! ArrayUtils.isEmpty(addresses)) {
-			sender = getDisplayAddressShort( addresses[0] );
-		}
-		return sender;
+		return "";		
 	}
 
-	public String getSenderEmail() throws WebmailException {
+	public Address getSenderAddress() throws WebmailException {
 		Address[] addresses = null;
 		try {
 			addresses = message.getFrom();
+			if (! ArrayUtils.isEmpty(addresses)) {
+				return addresses[0];
+			}
 		} catch (MessagingException e) {
 			LOGGER.log(Level.SEVERE,"Can not recover address.",e);
 			throw new WebmailException(e);
 		}
-		String sender = "";
-		if (! ArrayUtils.isEmpty(addresses)) {
-			sender = getDisplayEmail( addresses[0] );
+		return null;
+	}	
+	
+	public String getSenderEmail() throws WebmailException {
+		Address sender = getSenderAddress();
+		if (sender != null) {
+			return getDisplayEmail( sender );
 		}
-		return sender;
+		return "";
 	}
 
 	public void setRecipients(String recipients, RecipientType type) throws WebmailException {
@@ -383,6 +383,22 @@ public class AonMessage implements IMimeType {
 		}
 	}
 
+	/**
+	 * Gets the recipients specifiedy by the "TO" header.
+	 * 
+	 * @return Address[] representing all the addresses that make up the "To"
+	 *         header
+	 * @throws WebmailException 
+	 */
+	public Address[] getRecipientsToAddress() throws WebmailException {
+		try {
+			return getRecipientAddress(message, MimeMessage.RecipientType.TO);
+		} catch (MessagingException e) {
+			LOGGER.log(Level.SEVERE, "Error getting message recepients ", e);
+			throw new WebmailException(e);
+		}
+	}
+	
 	public String getRecipientsToSummary() throws WebmailException {
 		Address[] addresses = null;
 		try {
@@ -447,6 +463,22 @@ public class AonMessage implements IMimeType {
 		}
 	}
 
+	/**
+	 * Gets the recipients specifiedy by the "CC" header.
+	 * 
+	 * @return Address[] representing all the addresses that make up the "CC"
+	 *         header
+	 * @throws WebmailException 
+	 */
+	public Address[] getRecipientsCcAddress() throws WebmailException {
+		try {
+			return getRecipientAddress(message, MimeMessage.RecipientType.CC);
+		} catch (MessagingException e) {
+			LOGGER.log(Level.SEVERE, "Error getting message recepients ", e);
+			throw new WebmailException(e);
+		}
+	}	
+	
 	public void setRecipientsBcc(String addresses) throws WebmailException {
 		setRecipients(addresses, MimeMessage.RecipientType.BCC);
 	}
@@ -480,8 +512,8 @@ public class AonMessage implements IMimeType {
 	 */
 	private static String getRecipient(Message message, RecipientType type) throws MessagingException {
 		StringBuffer recipients = new StringBuffer();
-		Address[] addresses = message.getRecipients(type);
-		if (addresses != null && addresses.length > 0) {
+		Address[] addresses = getRecipientAddress(message, type);
+		if (addresses != null) {
 			// Write out the addres in the order they are found.
 			for (int i = 0; i < addresses.length; i++) {
 				recipients.append(getDisplayAddressFull(addresses[i]) + AonMessageUtils.EMAIL_SEPARATOR);
@@ -491,8 +523,14 @@ public class AonMessage implements IMimeType {
 		return "";
 	}
 
-		
-		
+	private static Address[] getRecipientAddress(Message message, RecipientType type) throws MessagingException {
+		Address[] addresses = message.getRecipients(type);
+		if (ArrayUtils.isEmpty(addresses)) {
+			return null;
+		}
+		return addresses;
+	}
+	
 	/**
 	 * Set the "TO" recipient type to the given addresses. If the address
 	 * parameter is null, the corresponding recipient field is removed.
@@ -762,7 +800,7 @@ public class AonMessage implements IMimeType {
 		return addr;
 	}
 	
-	private static String getDisplayAddressFull(Address a) {
+	public static String getDisplayAddressFull(Address a) {
 		String pers = null;
 		String addr = null;
 		if (a instanceof InternetAddress
@@ -775,7 +813,7 @@ public class AonMessage implements IMimeType {
 		return addr;
 	}
 
-	private static String getDisplayEmail(Address a) {
+	public static String getDisplayEmail(Address a) {
 		String addr = null;
 		if (a instanceof InternetAddress) {
 			addr = ""+((InternetAddress)a).getAddress();

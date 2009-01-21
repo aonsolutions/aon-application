@@ -10,10 +10,12 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -26,6 +28,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Flags;
 import javax.mail.Folder;
@@ -193,14 +196,37 @@ public class MessageController implements WebMailConstants, IAonFileListener {
     		throw new AbortProcessingException(e);
 		}
 	}
+	
+	private String getReplyToAllRecipients( AonMessage message ) throws WebmailException {
+		List<Address> addresses = new LinkedList<Address>();
+		addresses.add(message.getSenderAddress());
+		Address[] to = message.getRecipientsToAddress();
+		if (! ArrayUtils.isEmpty(to) ) {
+			addresses.addAll(Arrays.asList(to));
+		}
+		Address[] cc = message.getRecipientsCcAddress();
+		if (! ArrayUtils.isEmpty(cc) ) {
+			addresses.addAll(Arrays.asList(cc));
+		}
+		for( int i = addresses.size()-1; i >= 0; i-- ) {
+			String email = AonMessage.getDisplayEmail(addresses.get(i));
+			if ( StringUtils.equalsIgnoreCase(sender, email) ) {
+				addresses.remove(i);
+			}
+		}
+		StringBuffer recipients = new StringBuffer();
+		for ( Address address : addresses ) {
+			String email = AonMessage.getDisplayAddressFull(address);
+			recipients.append(email).append(AonMessageUtils.EMAIL_SEPARATOR);
+		}
+		return recipients.substring(0, recipients.length() - 1).toString();		
+	}
 
 	public void replyToAllMessage(ActionEvent event) {
 		initVars();
 		parentMessage = message;
 		try{
-	       	String dest = message.getSender()+AonMessageUtils.EMAIL_SEPARATOR;
-	       	dest += message.getRecipientsTo()+AonMessageUtils.EMAIL_SEPARATOR;
-	       	dest += message.getRecipientsCc()+AonMessageUtils.EMAIL_SEPARATOR;
+	       	String dest = getReplyToAllRecipients(message);
 			recipientsTo = AonMessage.parseDisplayAddress(dest);
 	       	subject = "ReplyALL: "+message.getSubject();
 	       	messageBody = AonMessage.getMessageEnvelope(message.getMessage(), message.getContent(), REPLIED_MESSAGE);
