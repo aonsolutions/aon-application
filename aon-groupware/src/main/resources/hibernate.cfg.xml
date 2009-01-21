@@ -6,7 +6,7 @@
 
 	<session-factory>
 
-		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon_task?autoReconnect=true</property>
+		<property name="connection.url">jdbc:mysql://192.168.2.190:3306/aon_master</property>
 		<property name="connection.username">dbuser</property>		
 		<property name="show_sql">false</property>		
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
@@ -17,13 +17,12 @@
 		<mapping class="com.code.aon.groupware.Alarm"/>
 		<mapping class="com.code.aon.groupware.Note"/>
 		<mapping class="com.code.aon.groupware.Notice"/>
-		<mapping class="com.code.aon.groupware.Contact"/>
 		<mapping class="com.code.aon.groupware.FavoriteCategory"/>
 		<mapping class="com.code.aon.groupware.Favorite"/>
 
 		<mapping class="com.code.aon.company.resources.Employee"/>
-		
-		<mapping class="com.code.aon.employee.WorkGroup"/>
+ 		
+		<mapping class="com.code.aon.config.WorkGroup"/>
 
 		<mapping class="com.code.aon.registry.Registry"/>
 		<mapping class="com.code.aon.registry.RegistryAddress"/>
@@ -34,7 +33,7 @@
 		<mapping class="com.code.aon.config.User"/>
 		
 		<mapping class="com.code.aon.geozone.GeoZone"/>
-		
+		 
 	</session-factory>
 
 </hibernate-configuration>

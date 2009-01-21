@@ -150,7 +150,7 @@ public class InventoryDetailController extends BasicController implements IColle
 	 */
 	@SuppressWarnings("unused")
 	public void loadDetailModel(ActionEvent event) {
-        this.setModel(new ListDataModel(getDetailList()));
+		this.setModel(new ListDataModel(getDetailList(false)));
 	}
 	
 	/**
@@ -159,7 +159,7 @@ public class InventoryDetailController extends BasicController implements IColle
 	 * @return the list of inventory detail
 	 */
 	@SuppressWarnings("unchecked")
-	private List getDetailList(){
+	private List getDetailList(boolean reportOrder){
 		InventoryController inventoryController = (InventoryController)AonUtil.getController(INVENTORY_CONTROLLER_NAME);
 		Integer inventoryId = ((Inventory)inventoryController.getTo()).getId();
 		Session session = HibernateUtil.getSession();
@@ -176,7 +176,8 @@ public class InventoryDetailController extends BasicController implements IColle
 	        "and inventoryDetail.inventory.id=" + inventoryId.intValue() +
 	        (categoryId==null || categoryId.equals(new Integer(-1))?"":" and cat.id=" + categoryId.intValue()) + 
 	        (categoryGroupId==null || categoryGroupId.equals(new Integer(-1))?"":" and catGroup.id=" + categoryGroupId.intValue()) +
-	        " order by item.product.name";
+	        " order by " + (reportOrder?"prod.category.name, ":"") +
+	        "item.product.name";
         Query q = session.createQuery(query);
         return q.list();
 	}
@@ -225,6 +226,6 @@ public class InventoryDetailController extends BasicController implements IColle
 	@Override
 	@SuppressWarnings("unchecked")
 	public Collection getCollection() {
-		return getDetailList();
+		return getDetailList(true);
 	}
 }

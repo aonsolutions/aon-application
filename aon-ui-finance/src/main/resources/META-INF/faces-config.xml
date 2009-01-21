@@ -66,12 +66,12 @@
 		<managed-property>
 			<description>Needed for Search Select Window</description>
 			<property-name>searchPagePath</property-name>
-			<value>/_finance/facelet/sw/bankSearch.faces</value>
+			<value>/finance/facelet/sw/bankSearch.faces</value>
 		</managed-property>
 		<managed-property>
 			<description>Needed for Add Select Window</description>
 			<property-name>newPagePath</property-name>
-			<value>/_finance/facelet/sw/bankNew.faces</value>
+			<value>/finance/facelet/sw/bankNew.faces</value>
 		</managed-property>
 	</managed-bean>
 	
@@ -861,35 +861,35 @@
     </navigation-case>
     <navigation-case>
 		<from-outcome>bank</from-outcome>
-		<to-view-id>/_finance/facelet/auxiliary/bank/grid.faces</to-view-id>
+		<to-view-id>/finance/facelet/auxiliary/bank/grid.faces</to-view-id>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>pay_method</from-outcome>
-		<to-view-id>/_finance/facelet/auxiliary/pay_method/grid.faces</to-view-id>
+		<to-view-id>/finance/facelet/auxiliary/pay_method/grid.faces</to-view-id>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>fbatch</from-outcome>
-		<to-view-id>/_finance/facelet/fbatch/search.faces</to-view-id>
+		<to-view-id>/finance/facelet/fbatch/search.faces</to-view-id>
 	</navigation-case>
 	<navigation-case>
  		<from-outcome>finance</from-outcome>
-		<to-view-id>/_finance/facelet/finance/search.faces</to-view-id>
+		<to-view-id>/finance/facelet/finance/search.faces</to-view-id>
 	</navigation-case>
 	<navigation-case>
  		<from-outcome>finance_return</from-outcome>
-		<to-view-id>/_finance/facelet/finance/return/search.faces</to-view-id>
+		<to-view-id>/finance/facelet/finance/return/search.faces</to-view-id>
 	</navigation-case>
 	<navigation-case>
  		<from-outcome>finance_payment</from-outcome>
-		<to-view-id>/_finance/facelet/finance/payment/search.faces</to-view-id>
+		<to-view-id>/finance/facelet/finance/payment/search.faces</to-view-id>
 	</navigation-case>
 	<navigation-case>
       <from-outcome>creditor</from-outcome>
-      <to-view-id>/_finance/facelet/creditor/form.faces</to-view-id>
+      <to-view-id>/finance/facelet/creditor/form.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>invoicingGroup</from-outcome>
-      <to-view-id>/_finance/facelet/invoicing_group/list.faces</to-view-id>
+      <to-view-id>/finance/facelet/invoicing_group/list.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>invoicePrint</from-outcome>
@@ -897,11 +897,11 @@
     </navigation-case>
     <navigation-case>
       <from-outcome>util_checking</from-outcome>
-      <to-view-id>/_finance/facelet/util/checking/checking.faces</to-view-id>
+      <to-view-id>/finance/facelet/util/checking/checking.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>util_fee_print</from-outcome>
-      <to-view-id>/_finance/facelet/util/fee_print/search.faces</to-view-id>
+      <to-view-id>/finance/facelet/util/fee_print/search.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
   
@@ -909,15 +909,15 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>fbatch_list</from-outcome>
-			<to-view-id>/_finance/facelet/fbatch/list.faces</to-view-id>
+			<to-view-id>/finance/facelet/fbatch/list.faces</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>fbatch_search</from-outcome>
-			<to-view-id>/_finance/facelet/fbatch/search.faces</to-view-id>
+			<to-view-id>/finance/facelet/fbatch/search.faces</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>fbatch_form</from-outcome>
-			<to-view-id>/_finance/facelet/fbatch/form.faces</to-view-id>
+			<to-view-id>/finance/facelet/fbatch/form.faces</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
@@ -925,19 +925,19 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>finance_list</from-outcome>
-			<to-view-id>/_finance/facelet/finance/list.faces</to-view-id>
+			<to-view-id>/finance/facelet/finance/list.faces</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>finance_search</from-outcome>
-			<to-view-id>/_finance/facelet/finance/search.faces</to-view-id>
+			<to-view-id>/finance/facelet/finance/search.faces</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>finance_form</from-outcome>
-			<to-view-id>/_finance/facelet/finance/form.faces</to-view-id>
+			<to-view-id>/finance/facelet/finance/form.faces</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>finance_fraction</from-outcome>
-			<to-view-id>/_finance/facelet/finance/fraction/form.faces</to-view-id>
+			<to-view-id>/finance/facelet/finance/fraction/form.faces</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
@@ -945,11 +945,11 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>finance_return_search</from-outcome>
-			<to-view-id>/_finance/facelet/finance/return/search.faces</to-view-id>
+			<to-view-id>/finance/facelet/finance/return/search.faces</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>finance_return_return</from-outcome>
-			<to-view-id>/_finance/facelet/finance/return/return.faces</to-view-id>
+			<to-view-id>/finance/facelet/finance/return/return.faces</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
@@ -957,11 +957,11 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>finance_payment_search</from-outcome>
-			<to-view-id>/_finance/facelet/finance/payment/search.faces</to-view-id>
+			<to-view-id>/finance/facelet/finance/payment/search.faces</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>finance_payment_payment</from-outcome>
-			<to-view-id>/_finance/facelet/finance/payment/payment.faces</to-view-id>
+			<to-view-id>/finance/facelet/finance/payment/payment.faces</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
@@ -969,15 +969,15 @@
   <navigation-rule>
     <navigation-case>
       <from-outcome>creditor_form</from-outcome>
-      <to-view-id>/_finance/facelet/creditor/form.faces</to-view-id>
+      <to-view-id>/finance/facelet/creditor/form.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>creditor_list</from-outcome>
-      <to-view-id>/_finance/facelet/creditor/list.faces</to-view-id>
+      <to-view-id>/finance/facelet/creditor/list.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>creditor_search</from-outcome>
-      <to-view-id>/_finance/facelet/creditor/search.faces</to-view-id>
+      <to-view-id>/finance/facelet/creditor/search.faces</to-view-id>
     </navigation-case>
 	<navigation-case>
 		<from-outcome>creditor_sw</from-outcome>
@@ -993,15 +993,15 @@
   <navigation-rule>
     <navigation-case>
       <from-outcome>invoicing_group_form</from-outcome>
-      <to-view-id>/_finance/facelet/invoicing_group/form.faces</to-view-id>
+      <to-view-id>/finance/facelet/invoicing_group/form.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>invoicing_group_list</from-outcome>
-      <to-view-id>/_finance/facelet/invoicing_group/list.faces</to-view-id>
+      <to-view-id>/finance/facelet/invoicing_group/list.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>invoicing_group_search</from-outcome>
-      <to-view-id>/_finance/facelet/invoicing_group/search.faces</to-view-id>
+      <to-view-id>/finance/facelet/invoicing_group/search.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
   
@@ -1021,11 +1021,11 @@
   <navigation-rule>
     <navigation-case>
       <from-outcome>fee_print_list</from-outcome>
-      <to-view-id>/_finance/facelet/util/fee_print/list.faces</to-view-id>
+      <to-view-id>/finance/facelet/util/fee_print/list.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>fee_print_search</from-outcome>
-      <to-view-id>/_finance/facelet/util/fee_print/search.faces</to-view-id>
+      <to-view-id>/finance/facelet/util/fee_print/search.faces</to-view-id>
     </navigation-case>
    </navigation-rule> 
    
@@ -1033,11 +1033,11 @@
   <navigation-rule>
 		<navigation-case>
 			<from-outcome>bank_sw</from-outcome>
-			<to-view-id>/_finance/facelet/sw/bank.faces</to-view-id>
+			<to-view-id>/finance/facelet/sw/bank.faces</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>bank_sw_search</from-outcome>
-			<to-view-id>/_finance/facelet/sw/bankSearch.faces</to-view-id>
+			<to-view-id>/finance/facelet/sw/bankSearch.faces</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

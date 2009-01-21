@@ -43,9 +43,17 @@ public class HeaderControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		IHeaderObject header = (IHeaderObject)event.getController().getTo();
-        if(header.getNumber() == 0) {
-        	header.setNumber(SeriesNumberUtil.obtainNumber(header.getSeries(), this.table));
+
+        String series = header.getSeries();
+        series = SeriesNumberUtil.obtainSeries(series, header.getSecurityLevel()); 
+        	
+        int number = header.getNumber();
+        if(number == 0) {
+            number = SeriesNumberUtil.obtainNumber(series, this.table);
 		}
+
+        header.setSeries(series);
+        header.setNumber(number);
     }
 
 }
