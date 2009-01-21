@@ -24,9 +24,6 @@
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-accounting/aon-ui-accounting">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-company/aon-ui-company">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-account-bridge/aon-ui-account-bridge">
             <dependency-type>uses</dependency-type>
         </dependent-module>
@@ -42,19 +39,37 @@
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-finance-bridge/aon-finance-bridge">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-resources/aon-ui-resources">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-common/aon-common">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-registry/aon-ui-registry">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-account/aon-account">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-commercial/aon-commercial">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-common/aon-ui-common">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-purchase/aon-purchase">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-sales/aon-sales">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-company/aon-ui-company">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-warehouse/aon-warehouse">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-product/aon-ui-product">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-config/aon-ui-config">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-supplier/aon-ui-supplier">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-geozone/aon-ui-geozone">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-seller/aon-seller">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="java-output-path" value="build/classes"/>
