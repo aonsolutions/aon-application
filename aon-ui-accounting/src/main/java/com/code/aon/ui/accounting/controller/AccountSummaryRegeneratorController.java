@@ -4,16 +4,17 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.event.AccountSummaryManager;
-import com.code.aon.accounting.event.IProgressionBean;
+import com.code.aon.common.IProgression;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 public class AccountSummaryRegeneratorController extends BasicController implements
-		IProgressionBean {
+		IProgression {
 
 	private Period period;
 	private Long progressionCurrentValue = -1L;
+	private boolean progressionEnabled;
 
 	public Period getPeriod() {
 		return period;
@@ -48,6 +49,16 @@ public class AccountSummaryRegeneratorController extends BasicController impleme
 	@Override
 	public void setProgressionCurrentValue(Long currentValue) {
 		progressionCurrentValue = currentValue;
+	}
+
+	@Override
+	public boolean isProgressionEnabled() {
+		return progressionEnabled;
+	}
+
+	@Override
+	public void setProgressionEnabled(boolean enabled) {
+		this.progressionEnabled = enabled;
 	}
 
 }
