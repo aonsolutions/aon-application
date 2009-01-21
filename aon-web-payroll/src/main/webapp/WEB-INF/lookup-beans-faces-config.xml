@@ -545,5 +545,25 @@
 	</managed-bean>	
 	
 	
+							<!--  ************ porcentaje  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>porcentajeLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>porcentajeLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.cotizacion.PorcentajeMaestro</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>facelet/avanzadas/simulacion/porcentajeLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	
 	
 </faces-config>

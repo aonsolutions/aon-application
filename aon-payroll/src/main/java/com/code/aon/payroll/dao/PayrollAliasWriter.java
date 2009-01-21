@@ -233,7 +233,8 @@ public class PayrollAliasWriter {
 		        Tc2.class.getName(),
 		        Lintc2.class.getName(),
 		        Costes.class.getName(),
-		        Lbonifica.class.getName()
+		        Lbonifica.class.getName(),
+		        Lcomunica.class.getName()
 		        };
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");
 		HibernateUtil.getSessionFactory();

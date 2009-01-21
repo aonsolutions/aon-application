@@ -41,7 +41,11 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div>
-								<aon:commandLink value="#{menuBundle.avanzadas_costes__costes}" disabled="true" />
+								<aon:commandLink value="#{menuBundle.avanzadas_costes__costes}" action="costes_form" >
+									<aon:actionListener method="#{costes.onEditSearch}" />
+									<aon:actionListener method="#{costes.onSearch}" />
+									<aon:actionListener method="#{costes.onSelectFirst}" />
+									</aon:commandLink>
 							</aon:div>
 						</aon:div>
 					</aon:panel>

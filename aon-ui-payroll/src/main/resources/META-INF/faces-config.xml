@@ -5620,12 +5620,163 @@
 			<property-name>beanName</property-name>
 			<value>costes</value>
 		</managed-property>
-		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			        <value>#{boniLinesListener}</value>
+			        <value>#{comuLinesListener}</value>
+			</list-entries>
+		</managed-property>
 	</managed-bean>
 
 	
-
-
+<managed-bean>
+		<managed-bean-name>boniLinesListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>lbonifica</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Lbonifica_costes_id_cdg</key>
+					<value>id.cdg</value>
+				</map-entry>
+				<map-entry>
+					<key>Lbonifica_costes_id_numero</key>
+					<value>id.numero</value>
+				</map-entry>
+			
+			</map-entries>
+		</managed-property>
+	</managed-bean>
 	
+	<managed-bean>
+		<managed-bean-name>lbonifica</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.LbonificaController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>10</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>
+				com.code.aon.payroll.avanzadas.simulacion.Lbonifica
+			</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>lbonifica</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>costes</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id.numero</key>
+				    <value>id.numero</value>
+				</map-entry>
+				<map-entry>
+					<key>id.cdg</key>
+					<value>id.cdg</value>
+				</map-entry>
+						
+			</map-entries>
+		</managed-property>		 
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>comuLinesListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>lcomunica</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Lcomunica_costes_id_cdg</key>
+					<value>id.cdg</value>
+				</map-entry>
+				<map-entry>
+					<key>Lcomunica_costes_id_numero</key>
+					<value>id.numero</value>
+				</map-entry>
+			
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>lcomunica</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.LcomunicaController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>10</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>
+				com.code.aon.payroll.avanzadas.simulacion.Lcomunica
+			</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>lcomunica</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>costes</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id.numero</key>
+				    <value>id.numero</value>
+				</map-entry>
+				<map-entry>
+					<key>id.cdg</key>
+					<value>id.cdg</value>
+				</map-entry>
+						
+			</map-entries>
+		</managed-property>		 
+	</managed-bean>
 	
 </faces-config>
