@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
@@ -284,4 +286,17 @@ public class Contact implements ITransferObject {
 	public void setWeb(String web) {
 		this.web = web;
 	}
+	
+	@Transient
+	public String getEmailLarge() {
+		if ( getEmail() != null ) {
+			String name = getDisplayName();
+			if (! StringUtils.isAsciiPrintable(name) ) {
+				name = "\"" + name + "\"";
+			}
+			return name + " &lt;" + getEmail() + "&gt;";			
+		}
+		return null;
+	}
+
 }
