@@ -23,7 +23,9 @@
 						rendered="#{invoiceRecording.model.rowCount > 0}"
 						reRender="invoiceRecordingDataDiv"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						actionListener="#{invoiceRecording.onRecordSelected}" />
+						actionListener="#{invoiceRecording.onRecordSelected}" 
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 				</ui:define>				
 				
 			</ui:decorate>

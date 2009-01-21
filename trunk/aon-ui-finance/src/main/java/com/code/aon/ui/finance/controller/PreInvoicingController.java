@@ -11,6 +11,7 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.customer.Customer;
 import com.code.aon.finance.invoicing.ConsoleInvoicingFeedBack;
 import com.code.aon.finance.invoicing.InvoicingException;
 import com.code.aon.finance.invoicing.InvoicingParameters;
@@ -21,12 +22,12 @@ import com.code.aon.finance.invoicing.engine.fee.CustomerFeePreInvoicingDAO;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 
-public class PreInvoicingController implements ICollectionProvider{
+public class PreInvoicingController implements ICollectionProvider {
 
 	private InvoicingParameters invoicingParams;
-	
+
 	private IInvoicingEngine engine;
-	
+
 	public PreInvoicingController() {
 		this.invoicingParams = new InvoicingParameters();
 	}
@@ -38,18 +39,19 @@ public class PreInvoicingController implements ICollectionProvider{
 	public void setInvoicingParams(InvoicingParameters invoicingParams) {
 		this.invoicingParams = invoicingParams;
 	}
-	
-	public void onInitialize(ActionEvent event){
+
+	public void onInitialize(ActionEvent event) {
 		this.invoicingParams = new InvoicingParameters();
 		this.invoicingParams.setSecurityLevel(SecurityLevel.OFFICIAL);
 		this.invoicingParams.setInvoiceDate(new Date());
+		this.invoicingParams.setCustomer(new Customer());
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(new Date());
 		invoicingParams.setMonth(Month.getMonthByValue(calendar.get(Calendar.MONTH)));
 		invoicingParams.setYear(calendar.get(Calendar.YEAR));
 	}
 
-	public void onReport(ActionEvent event) throws InvoicingException, ManagerBeanException{
+	public void onReport(ActionEvent event) throws InvoicingException, ManagerBeanException {
 		InvoicingEngineFactory.register("customerFeeEngine", new CustomerFeeInvoicingEngine());
 		engine = InvoicingEngineFactory.getInvoicingEngine("customerFeeEngine");
 		engine.setInvoicingDAO(new CustomerFeePreInvoicingDAO());
@@ -59,9 +61,9 @@ public class PreInvoicingController implements ICollectionProvider{
 		invoicingParams.setInvoiceDate(new Date());
 		engine.invoice(invoicingParams);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public Collection getCollection(){
+	public Collection getCollection() {
 		return engine.getInvoicingDAO().getCollection();
 	}
 
@@ -70,23 +72,9 @@ public class PreInvoicingController implements ICollectionProvider{
 	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return this.getCollection();
 	}
-	
-	/*
-	public String onExecute() throws ReportException, DAOException{
-		ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
-        manager.setReportKey("preInvoicing");
-        manager.setOutputFormat(OutputFormat.PDF);
-        String outcome = manager.onExecute();
-        // PARA ELIMINAR LA COLECCION GENERADA DE MEMORIA
-        engine.setInvoicingDAO(null);
-        engine = null;
-        return outcome;
-	}
-	*/
-	
-	public IPriceStrategy getPriceStrategy(){
+
+	public IPriceStrategy getPriceStrategy() {
 		return new InvoicePriceStrategy();
 	}
-
 
 }

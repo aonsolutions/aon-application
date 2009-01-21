@@ -7,13 +7,11 @@
 <report-config>
 
 	<!--  *********  InvoiceList  ********* -->
-	<report id="salesInvoiceList" description="Sales Invoice's List">
-		<template path="/com/code/aon/ui/finance/report/salesInvoiceList.jasper"/>
+	<report id="saleInvoiceList" description="Sales Invoice's List">
+		<template path="/com/code/aon/ui/finance/report/saleInvoiceList.jasper"/>
 		<bean key="com.code.aon.finance.Invoice" />
 		<criteria provider="#{saleInvoice}"/>
-		<!-- 
 		<fetch-mode paginated="true" page-count="500" virtualizer-max-size="50"/>
-		 -->
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
@@ -153,6 +151,30 @@
 	
 	<report id="fBatchDetail" description="Finance Batch Details">
 		<template path="/com/code/aon/ui/finance/report/fBatchDetail.jasper"/>
+	</report>
+
+	<!--  *********  LISTADO DE PREFACTURACION DE CUOTAS  ********* -->
+	<report id="preInvoicing" description="PreInvoicing report">
+		<template path="/com/code/aon/ui/finance/report/preInvoicing.jasper" />
+		<collection provider="#{preInvoicing}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="PriceStrategy" value="#{preInvoicing.getPriceStrategy}" />
+			<param id="params" value="#{preInvoicing.getInvoicingParams}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+		
+		<nested-report report="preInvoicingDetail"/>
+		<nested-report report="preInvoicingTaxBreakDown"/>
+	</report>	  
+	
+	<report id="preInvoicingDetail" description="preInvoicing Details">
+		<template path="/com/code/aon/ui/finance/report/preInvoicingDetail.jasper"/>
+	</report>
+	
+	<report id="preInvoicingTaxBreakDown" description="preInvoicing TaxBreakDown">
+		<template path="/com/code/aon/ui/finance/report/preInvoicingTaxBreakDown.jasper"/>
 	</report>
 
 	<!--  *********  feePrintList  ********* -->

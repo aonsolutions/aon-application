@@ -721,6 +721,10 @@
 			com.code.aon.ui.finance.event.InvoiceSearchListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>defaultType</property-name>
+			<value>SALES</value>
+		</managed-property>		
 	</managed-bean>
 
 	<!-- ************ INVOICE PRINT ************* -->
@@ -756,9 +760,13 @@
 	<managed-bean>
 		<managed-bean-name>invoicePrintSearch</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.event.InvoicePrintSearchListener
+			com.code.aon.ui.finance.event.InvoiceSearchListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>defaultType</property-name>
+			<value>SALES</value>
+		</managed-property>		
 	</managed-bean>
 
 	<!-- ************ FINANCE CHECKING PRINTER ************* -->
@@ -813,6 +821,15 @@
 
 	<!-- ************ FEE CHECKING PRINTER ************* -->
 	<managed-bean>
+		<managed-bean-name>feeInvoicing</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.FeeInvoicingController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ FEE CHECKING PRINTER ************* -->
+	<managed-bean>
 		<managed-bean-name>feeCheckingPrinter</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.finance.util.print.FeeCheckingPrinter
@@ -841,7 +858,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>CustomerFee_customer_registry_surname,CustomerFee_customer_registry_name</value>
+			<value>CustomerFee_customer_registry_surname,CustomerFee_customer_registry_name,CustomerFee_customer_registry_id</value>
 		</managed-property>						
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -907,6 +924,10 @@
 			com.code.aon.ui.finance.event.InvoiceRecordingSearchListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>defaultType</property-name>
+			<value>SALES</value>
+		</managed-property>		
 	</managed-bean>
 
 	<!-- ************ SALE INVOICE ************* -->
@@ -966,9 +987,13 @@
 	<managed-bean>
 		<managed-bean-name>saleInvoiceSearch</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.event.SaleInvoiceSearchListener
+			com.code.aon.ui.finance.event.InvoiceSearchListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>defaultType</property-name>
+			<value>SALES</value>
+		</managed-property>		
 	</managed-bean>
 
 	<managed-bean>

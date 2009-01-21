@@ -2,51 +2,37 @@ package com.code.aon.ui.finance.controller;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.account.bridge.InvoiceDetailAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
-import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.IProgression;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.finance.Finance;
-import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.InvoiceAddress;
-import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
-import com.code.aon.finance.enumeration.InvoiceStatus;
-import com.code.aon.finance.invoicing.InvoicingException;
-import com.code.aon.finance.invoicing.remover.IInvoiceDetailRemover;
-import com.code.aon.finance.invoicing.remover.InvoiceRemoverFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
-public class InvoiceRemoverController extends BasicController {
+public class InvoiceRemoverController extends BasicController implements IProgression{
 
 	private static final Logger LOGGER = Logger.getLogger(InvoiceRemoverController.class.getName());
 	
-	private AccountEntryInvoiceWriter accountEntryInvoiceWriter;
-	
 	private ArrayList<Invoice> checks = new ArrayList<Invoice>();
+	
+	private Long progressionCurrentValue = -1L;
+	private boolean progressionEnabled = false;
 
-	public AccountEntryInvoiceWriter getAccountEntryInvoiceWriter() {
-		if(accountEntryInvoiceWriter == null){
-			accountEntryInvoiceWriter = new AccountEntryInvoiceWriter();
-		}
-		return accountEntryInvoiceWriter;
-	}
 
 	@SuppressWarnings("unchecked")
 	public void checkAll(ActionEvent event) throws ManagerBeanException{
@@ -118,6 +104,13 @@ public class InvoiceRemoverController extends BasicController {
 	}
 
 	public void onRemoveSelected(ActionEvent event){
+		int count = getCheckedInvoices().size();
+		if (count == 0) {
+			String msg = AonUtil.addWarningMessageFromBundle(IFinanceMessages.BUNDLE_KEY,IFinanceMessages.EMPTY_INVOICE_LIST_ERROR_KEY);
+			throw new AbortProcessingException(msg);
+		}
+		setProgressionCurrentValue(0L);
+		setProgressionEnabled(true);
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
@@ -125,21 +118,16 @@ public class InvoiceRemoverController extends BasicController {
 		try {
 			HibernateUtil.setBeginTransaction( false );
 			HibernateUtil.setCloseSession( false );
+			long i = 0;
 			while(iter.hasNext()){
 				Invoice invoice = iter.next();
 				try {
 					HibernateUtil.beginTransaction(sessionName);
-					if(invoice.getStatus().equals(InvoiceStatus.SCORED)){
-						getAccountEntryInvoiceWriter().unrecordInvoice(invoice);
-					}
-					removeFinanceTrackings(invoice);
-					removeFinances(invoice);
-					removeInvoiceDetailAccounts(invoice);
-					removeInvoiceDetails(invoice);
-					removeInvoiceAddress(invoice);
 					getManagerBean().remove(invoice);
 					HibernateUtil.getSession(sessionName).flush();					
 					HibernateUtil.commitTransaction(sessionName);
+					i++;
+					setProgressionCurrentValue(( i * 100 / count));
 				} catch (Exception e) {
 					try {
 						HibernateUtil.rollbackTransaction(sessionName);
@@ -155,73 +143,34 @@ public class InvoiceRemoverController extends BasicController {
 					HibernateUtil.closeSession(sessionName);
 				}
 			}
-			clearCheckedInvoices();
-			this.onSearch(null);
 		} finally {
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+			setProgressionEnabled(false);
+			clearCheckedInvoices();
+			this.onSearch(null);
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private void removeFinanceTrackings(Invoice invoice) throws ManagerBeanException {
-		IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_INVOICE_ID), invoice.getId());
-		Iterator iter = financeTrackingBean.getList(criteria).iterator();
-		while(iter.hasNext()){
-			financeTrackingBean.remove((FinanceTracking)iter.next());
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private void removeFinances(Invoice invoice) throws ManagerBeanException {
-		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
-		Iterator iter = financeBean.getList(criteria).iterator();
-		while(iter.hasNext()){
-			financeBean.remove((Finance)iter.next());
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private void removeInvoiceDetailAccounts(Invoice invoice) throws ManagerBeanException {
-		IManagerBean invoiceAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceAccountBean.getFieldName(IAccountBridgeAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-		Iterator iter = invoiceAccountBean.getList(criteria).iterator();
-		while(iter.hasNext()){
-			invoiceAccountBean.remove((InvoiceDetailAccount)iter.next());
-		}
-	}
 	
-	@SuppressWarnings("unchecked")
-	private void removeInvoiceDetails(Invoice invoice) throws InvoicingException, ManagerBeanException {
-		Iterator iter = obtainInvoiceDetails(invoice).iterator();
-		while(iter.hasNext()){
-			InvoiceDetail detail = (InvoiceDetail)iter.next();
-			IInvoiceDetailRemover remover = InvoiceRemoverFactory.getInvoiceDetailRemover(detail.getSource()); 
-			remover.removeDetail(detail);
-		}
+
+	@Override
+	public Long getProgressionCurrentValue() {
+		return progressionCurrentValue;
 	}
 
-	@SuppressWarnings("unchecked")
-	private void removeInvoiceAddress(Invoice invoice) throws ManagerBeanException {
-		IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceAddressBean.getFieldName(IFinanceAlias.INVOICE_ADDRESS_INVOICE_ID), invoice.getId());
-		Iterator iter = invoiceAddressBean.getList(criteria, 0, 1).iterator();
-		if(iter.hasNext()){
-			invoiceAddressBean.remove((InvoiceAddress)iter.next());
-		}
+	@Override
+	public void setProgressionCurrentValue(Long currentValue) {
+		progressionCurrentValue = currentValue;
 	}
-	
-	@SuppressWarnings("unchecked")
-	private List obtainInvoiceDetails(Invoice invoice) throws ManagerBeanException {
-		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-		return invoiceDetailBean.getList(criteria);
+
+	@Override
+	public boolean isProgressionEnabled() {
+		return this.progressionEnabled;
+	}
+
+	@Override
+	public void setProgressionEnabled(boolean enabled) {
+		this.progressionEnabled = enabled;
 	}
 }

@@ -8,16 +8,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 
 public class InvoiceRecordingSearchListener extends InvoiceSearchListener {
-
-	public boolean isSales(){
-		return getContext().getInvoiceType().equals(InvoiceType.SALES);
-	}
-	
-	@Override
-	protected void init() throws ManagerBeanException {
-		super.init();
-		getContext().setInvoiceType(InvoiceType.SALES);
-	}
 	
 	@Override
 	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
@@ -26,4 +16,7 @@ public class InvoiceRecordingSearchListener extends InvoiceSearchListener {
 		criteria.addEqualExpression(getFieldName(IFinanceAlias.INVOICE_STATUS), InvoiceStatus.PENDING);
 	}	
 
+	public boolean isSales(){
+		return (getType() == InvoiceType.SALES);
+	}
 }

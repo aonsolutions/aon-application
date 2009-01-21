@@ -8,20 +8,27 @@
 
 	<ui:define name="content">
 		<aon:form id="saleInvoiceForm">
-			<ui:include
-				src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{financeBundle.finance_sale_invoice_management_module}" />
 				<ui:param name="controller" value="#{saleInvoice}" />
-<!-- 
-					<t:commandButton id="salesInvoiceList" value="#{bundle.aon_listing}"
-						forceId="#{true}"
-						onclick="reportWindow(this, 'placeList', '${facesContext.externalContext.requestContextPath}/facelet/report/preferences.faces');return false;"
-						styleClass="aon-content-toolbar-item aon-content-toolbar-item-print"
-						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-print'"
-						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-print'"
-						accesskey="#{bundle.aon_key_print}" />
- -->
-			</ui:include>
+
+				<ui:define name="additionalToolbarContent">
+					<h:commandLink value="&#160;" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+						<f:param name="reportKey" value="saleInvoiceList" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</h:commandLink>							
+					<h:commandLink value="#{bundle.aon_listing}" target="_blank"
+						action="#{report.onExecute}" rendered="#{!fbatch.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="saleInvoiceList" />
+					</h:commandLink>
+				</ui:define>
+
+			</ui:decorate>
 
 			<aon:div id="saleInvoiceData" styleClass="aon-scroll-area">
 				<aon:dataTable id="saleInvoiceDataList" value="#{saleInvoice.model}"
