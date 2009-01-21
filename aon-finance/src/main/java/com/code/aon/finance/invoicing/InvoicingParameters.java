@@ -25,6 +25,7 @@ public class InvoicingParameters {
 	
 	private WorkPlace workPlace;
 	
+	private boolean invoiceRecordable;
 	
 	public Month getMonth() {
 		return month;
@@ -88,5 +89,13 @@ public class InvoicingParameters {
 
 	public void setWorkPlace(WorkPlace workPlace) {
 		this.workPlace = workPlace;
+	}
+
+	public boolean isInvoiceRecordable() {
+		return invoiceRecordable;
+	}
+
+	public void setInvoiceRecordable(boolean invoiceRecordable) {
+		this.invoiceRecordable = invoiceRecordable;
 	}
 }

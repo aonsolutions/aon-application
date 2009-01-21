@@ -1,20 +1,18 @@
 package com.code.aon.finance.invoicing;
 
-import java.util.Collections;
 import java.util.List;
 
-public class ConsoleInvoicingFeedBack implements IInvoicingFeedBack {
+public class ProgressionInvoicingFeedBack implements IInvoicingFeedBack {
 
 	private int currentRow;
 	private int rowCount;
 
 	public void addMessage(String message) {
-		System.out.println(message);
 	}
 
 	@SuppressWarnings("unchecked")
 	public List getMessages() {
-		return Collections.EMPTY_LIST;
+		return null;
 	}
 
 	@Override

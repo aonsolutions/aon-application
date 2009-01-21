@@ -8,6 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -66,7 +68,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 
 	private Criteria completeCriteriaWithCustomerData(Criteria criteria,InvoicingParameters params) throws ManagerBeanException {
 		IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
-		if(params.getCustomer() != null){
+		if(params.getCustomer() != null && params.getCustomer().getId() != null){
 			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_ID), params.getCustomer().getId());
 		}
 		return criteria;
@@ -91,10 +93,14 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 
 	@SuppressWarnings("unchecked")
 	private void invoiceFees(List feeList, InvoicingParameters params) throws ManagerBeanException {
+		int size = feeList.size();
+		getInvoicingFeedBack().setRowCount(size);
+		getInvoicingFeedBack().setCurrentRow(0);
 		int counter = params.getNumber();
 		Invoice invoice = null;
 		Integer previousCustomerId = new Integer(Integer.MIN_VALUE);
 		Iterator iter = feeList.iterator();
+		int i = 0;
 		while(iter.hasNext()){
 			CustomerFee customerFee = (CustomerFee)iter.next();
 			if(!previousCustomerId.equals(customerFee.getCustomer().getId())){
@@ -113,11 +119,19 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 			getInvoicingDAO().insertInvoiceDetail(invoiceDetail);
 			getInvoicingDAO().updateSource(customerFee);
 			getInvoicingFeedBack().addMessage("\t \t" + "InvoiceDetail: " + invoiceDetail.getDescription() + " price= " + invoiceDetail.getTaxableBase());
+			i++;
+			if (i < size) {
+				// La última vuelta se ignora para que el progreso se quede 
+				// incompleto porque falta el calculo de vencimientos. 
+				getInvoicingFeedBack().setCurrentRow(i);	
+			} 
 		}
 		// se crea finance asociado al ultimo invoice, que ya no tiene más detalles
 		if(invoice != null){
 			getInvoicingDAO().createFinances(invoice);
 		}
+		// Finalizado el calculo de vtos. se fija el progreso.
+		getInvoicingFeedBack().setCurrentRow(size);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -289,8 +303,12 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		counter = (counter == 0?1:counter);
 		while(true){
 			Criteria criteria = new Criteria();
+			if (StringUtils.isEmpty(series) ) {
+				criteria.addNullExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES));
+			} else {
+				criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), series);
+			}
 			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER), new Integer(counter));
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), series);
 			Iterator iter = invoiceBean.getList(criteria).iterator();
 			if(!iter.hasNext()){
 				break;
