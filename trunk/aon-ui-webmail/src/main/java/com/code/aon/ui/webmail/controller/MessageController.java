@@ -422,14 +422,18 @@ public class MessageController implements WebMailConstants, IAonFileListener {
     	String personal = loggedUser.getLoggedUserName();
     	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);    	
     	AonMessage newMessage = webMailController.getServer().createAonMessage(sender, personal);
-       	if (recipientsTo!=null)
+       	if (! StringUtils.isEmpty(recipientsTo)) {
        		newMessage.setRecipientsTo(recipientsTo);
-       	if (recipientsCC!=null)
+       	}
+       	if (! StringUtils.isEmpty(recipientsCC)) {       	
        		newMessage.setRecipientsCc(recipientsCC);
-       	if (recipientsBCC!=null)
+       	}
+       	if (! StringUtils.isEmpty(recipientsBCC)) {       	
        		newMessage.setRecipientsBcc(recipientsBCC);
-       	if (subject!=null)
+       	}
+       	if (! StringUtils.isEmpty(subject)) {       	
        		newMessage.setSubject(subject);
+       	}
        	newMessage.getMessage().setHeader("X-Mailer", "OfficeWeb - AonWebMail 1.0");
 
        	MimeMultipart multipart1 =new MimeMultipart("related");
