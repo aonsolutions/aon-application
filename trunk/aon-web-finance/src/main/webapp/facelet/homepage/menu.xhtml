@@ -22,8 +22,10 @@
 			</aon:commandLink>
 			<aon:dropDownMenu id="aon_invoice" 
 				value="#{financeBundle.finance_invoice_module}">
-				<aon:menuItem id="aon_invoice_management" renderedOnUserRole="FacturasVenta" disabled="true"
-					value="#{salesBundle.sales_invoice_management_module}" action="invoiceManagement"/>
+				<aon:menuItem id="aon_invoice_management" renderedOnUserRole="FacturasVenta"
+					value="#{financeBundle.finance_sale_invoice_management_module}" 
+					actionListener="#{saleInvoice.onEditSearch}"
+					action="saleInvoice_search"/>
 				<aon:menuItem id="aon_purchase_invoice_management" renderedOnUserRole="FacturasCompra" 
 					value="#{financeBundle.finance_purchase_invoice_management_module}" action="purchaseDirectInvoicing_search">
 					<aon:actionListener method="#{purchaseDirectInvoicing.onEditSearch}"/>
