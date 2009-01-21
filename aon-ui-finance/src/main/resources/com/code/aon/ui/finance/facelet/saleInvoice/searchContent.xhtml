@@ -18,19 +18,23 @@
 		<aon:panelCollapsible expanded="false" label="#{financeBundle.finance_invoice_lines}" >
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 			
-				<aon:outputLabel for="InvoiceDetail_item_id"
+				<aon:outputLabel for="InvoiceDetail_item_code"
 					value="#{productBundle.product_item}" />						
 				<aon:div styleClass="aon-lookup">
-					<aon:lookupInputText id="InvoiceDetail_item_id" 
+					<aon:lookupInputText id="InvoiceDetail_item_code" 
 						lookup="#{itemLookup}"
 						reRender="InvoiceDetail_item_detail"
-						value="#{saleInvoiceSearch.item.id}" size="5">
+						value="#{saleInvoiceSearch.item.product.code}" size="10">
+						<aon:joinProperty alias="Item_product_code"
+							value="#{saleInvoiceSearch.item.product.code}" />
 					</aon:lookupInputText>
 					<aon:lookupButton
 						windowTitle="#{productBundle.product_item_selection}" actionType="search"
-						selectReRender="InvoiceDetail_item_id,InvoiceDetail_item_detail"
+						selectReRender="InvoiceDetail_item_code,InvoiceDetail_item_detail"
 						lookup="#{itemLookup}" minHeight="460" minWidth="650"
 						property="#{saleInvoiceSearch.item}">
+						<aon:joinProperty alias="Item_product_code"
+							value="#{saleInvoiceDetail.to.item.product.code}" />
 					</aon:lookupButton>
 					<aon:inputText id="InvoiceDetail_item_detail"
 						value="#{(saleInvoiceSearch.item.product.name!=null)?(saleInvoiceSearch.item.product.name):('')}"
@@ -89,7 +93,7 @@
 					value="#{configBundle.config_bank}" />
 				<aon:div styleClass="aon-lookup">
 					<aon:lookupInputText id="Bank_code" lookup="#{bankLookup}"
-						reRender="Bank_name" converter="aon.EmptyStringConverter"
+						reRender="Bank_name"
 						value="#{saleInvoiceSearch.bank.code}" size="5">
 						<aon:joinProperty alias="Bank_code" value="#{saleInvoiceSearch.bank.code}" />
 					</aon:lookupInputText>

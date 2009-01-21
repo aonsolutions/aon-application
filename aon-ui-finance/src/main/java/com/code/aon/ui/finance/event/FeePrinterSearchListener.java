@@ -20,7 +20,7 @@ public class FeePrinterSearchListener extends ControllerSearchListener {
 	
 	private Month billingDateMonth;
 	
-	private int billingDateYear;	
+	private Integer billingDateYear;	
 	
 	public Item getItem() {
 		return item;
@@ -38,11 +38,11 @@ public class FeePrinterSearchListener extends ControllerSearchListener {
 		this.billingDateMonth = billingDateMonth;
 	}
 
-	public int getBillingDateYear() {
+	public Integer getBillingDateYear() {
 		return billingDateYear;
 	}
 
-	public void setBillingDateYear(int billingDateYear) {
+	public void setBillingDateYear(Integer billingDateYear) {
 		this.billingDateYear = billingDateYear;
 	}
 	

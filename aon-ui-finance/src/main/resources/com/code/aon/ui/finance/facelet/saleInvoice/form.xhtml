@@ -7,7 +7,7 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form>
+		<aon:form id="saleInvoiceForm">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle"
@@ -23,12 +23,18 @@
 						value="#{financeBundle.finance_record}"
 						actionListener="#{saleInvoice.onRecordInvoice}"
 						rendered="#{saleInvoiceDetail.model.rowCount > 0 and !saleInvoice.recorded}"
-						styleClass="aon-finding-toolbar-item aon-icon-task-assume" />
+						styleClass="aon-finding-toolbar-item aon-icon-task-assume"
+						reRender="saleInvoiceForm" 
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 					<aon:commandButton id="unrecord"
 						value="#{financeBundle.finance_unrecord}"
 						actionListener="#{saleInvoice.onUnrecordInvoice}"
 						rendered="#{saleInvoice.recorded}"
-						styleClass="aon-finding-toolbar-item aon-icon-task-liberate" />
+						styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
+						reRender="saleInvoiceForm"
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 					<h:commandLink id="saleInvoice" value="#{bundle.aon_report}"
 						target="_new" rendered="#{!saleInvoice.new}"
 						action="#{report.onExecute}"
@@ -193,14 +199,15 @@
 
 				<ui:include
 					src="/com/code/aon/ui/finance/facelet/saleInvoice/form_detail.xhtml" />
-	
+
 				<ui:include
 					src="/com/code/aon/ui/finance/facelet/saleInvoice/form_finances.xhtml" />
-
+					
 			</aon:div>
 
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 	</ui:define>
 </ui:composition>

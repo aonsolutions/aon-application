@@ -29,7 +29,7 @@
 	<field name="surchargePercent" class="java.lang.Double"/>
 	<field name="surchargeQuota" class="java.lang.Double"/>
 	<field name="base" class="java.lang.Double"/>
-	<field name="taxType" class="com.code.aon.product.enumeration.TaxType"/>
+	<field name="taxType" class="com.code.aon.config.enumeration.TaxType"/>
 
 	<variable name="taxTotal" class="java.lang.Double" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[($F{taxType}.ordinal() == 2?new Double(0):$F{taxQuota})]]></variableExpression>
@@ -69,7 +69,11 @@
 						width="50"
 						height="14"
 						key="textField-16"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="SansSerif" pdfFontName="Helvetica-Oblique" size="8" isBold="false" isItalic="true"/>
 					</textElement>
@@ -83,7 +87,11 @@
 						width="97"
 						height="14"
 						key="textField-18"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="SansSerif" pdfFontName="Helvetica-Oblique" size="8" isBold="false" isItalic="true"/>
 					</textElement>
@@ -97,7 +105,11 @@
 						width="40"
 						height="14"
 						key="textField-22"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="SansSerif" pdfFontName="Helvetica-Oblique" size="8" isBold="false" isItalic="true"/>
 					</textElement>
@@ -111,7 +123,11 @@
 						width="40"
 						height="14"
 						key="textField-23"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="SansSerif" pdfFontName="Helvetica-Oblique" size="8" isBold="false" isItalic="true"/>
 					</textElement>
@@ -125,7 +141,11 @@
 						width="20"
 						height="14"
 						key="textField-24"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="SansSerif" pdfFontName="Helvetica-Oblique" size="8" isItalic="true"/>
 					</textElement>
