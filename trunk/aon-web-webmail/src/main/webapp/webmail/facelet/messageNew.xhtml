@@ -51,7 +51,7 @@
 			</aon:div>
 			<aon:div styleClass="aon-scroll-area">
 		
-				<aon:div>
+				<aon:div id="newMessageHeader">
 					<aon:panelGrid columns="2" cellpadding="0" cellspacing="0" style="width:100%;"
 					columnClasses="aon-panelGrid-odd aon-width-130 aon-text-right,aon-panelGrid-even">
 
@@ -75,17 +75,9 @@
 							<aon:inputText id="NewMail_to"
 								size="120"
 								value="#{message.recipientsTo}"/>
-							<rich:suggestionbox for="NewMail_to"
-								width="400" height="150" usingSuggestObjects="true"
-								suggestionAction="#{message.suggestionEmails}" var="contact"
-								fetchValue="#{contact.emailLarge}, " tokens=",;"> 
-								<h:column>
-									<h:outputText value="#{contact.displayName}"/>
-								</h:column>
-								<h:column>
-									<h:outputText value="&lt;#{contact.email}>" styleClass="aon-italic" />
-								</h:column>
-							</rich:suggestionbox>							
+							<ui:include src="/webmail/facelet/suggestEmail.xhtml">
+								<ui:param name="inputId" value="NewMail_to" />
+							</ui:include>								
 						</aon:div>
 	
 						<aon:div styleClass="aon-text-right">						
@@ -97,6 +89,9 @@
 							<aon:inputText id="NewMail_cc"
 							size="120"
 							value="#{message.recipientsCc}"/>								
+							<ui:include src="/webmail/facelet/suggestEmail.xhtml">
+								<ui:param name="inputId" value="NewMail_cc" />
+							</ui:include>								
 						</aon:div>
 						
 						<aon:div styleClass="aon-text-right">							
@@ -109,6 +104,9 @@
 							<aon:inputText id="NewMail_Bcc"
 								size="120"
 								value="#{message.recipientsBcc}"/>											
+							<ui:include src="/webmail/facelet/suggestEmail.xhtml">
+								<ui:param name="inputId" value="NewMail_Bcc" />
+							</ui:include>								
 						</aon:div>
 						
 						<aon:div>

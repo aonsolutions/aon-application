@@ -23,7 +23,7 @@
 	
 			<f:facet name="controls">
 				<aon:commandButton type="button" styleClass="aon-popupWindow-close"
-					immediate="true">
+					immediate="true" reRender="aonStatus">
 					<rich:componentControl for="addContactModalPanel" operation="hide"
 						event="onclick" />
 				</aon:commandButton>
@@ -36,7 +36,7 @@
 					styleClass="aon-form-input-text" size="30" maxlength="128"
 					value="#{message.contactName}" />
 				<aon:commandButton id="closeModalAddContact"
-					styleClass="aon-commandButton"
+					styleClass="aon-commandButton" reRender="aonStatus"
 					actionListener="#{message.saveToContacts}"
 					value="#{bundle.aon_accept}">
 					<rich:componentControl for="addContactModalPanel" operation="hide"
