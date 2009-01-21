@@ -16,6 +16,7 @@ import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.IProgression;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -85,7 +86,7 @@ public class AccountSummaryManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void regenerateAccountSummary(Period accountPeriod, IProgressionBean progressionBean) throws ManagerBeanException {
+	public static void regenerateAccountSummary(Period accountPeriod, IProgression progressionBean) throws ManagerBeanException {
 		deleteAccountSummary(accountPeriod);
 
 		String select = "select entryDetail.account, entry.securityLevel, entry.entryDate, " +
