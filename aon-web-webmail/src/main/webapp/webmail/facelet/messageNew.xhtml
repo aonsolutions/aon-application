@@ -75,7 +75,17 @@
 							<aon:inputText id="NewMail_to"
 								size="120"
 								value="#{message.recipientsTo}"/>
-							
+							<rich:suggestionbox for="NewMail_to"
+								width="400" height="150" usingSuggestObjects="true"
+								suggestionAction="#{message.suggestionEmails}" var="contact"
+								fetchValue="#{contact.emailLarge}, " tokens=",;"> 
+								<h:column>
+									<h:outputText value="#{contact.displayName}"/>
+								</h:column>
+								<h:column>
+									<h:outputText value="&lt;#{contact.email}>" styleClass="aon-italic" />
+								</h:column>
+							</rich:suggestionbox>							
 						</aon:div>
 	
 						<aon:div styleClass="aon-text-right">						
