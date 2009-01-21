@@ -158,6 +158,7 @@ hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN
     <!--AVANZADAS-COSTES -->			
     <mapping class="com.code.aon.payroll.avanzadas.simulacion.Costes"/>
     <mapping class="com.code.aon.payroll.avanzadas.simulacion.Lbonifica"/>
+    <mapping class="com.code.aon.payroll.avanzadas.simulacion.Lcomunica"/>
 
 
   </session-factory>

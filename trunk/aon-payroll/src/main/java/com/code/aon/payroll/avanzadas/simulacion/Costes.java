@@ -301,7 +301,7 @@ public class Costes  implements ITransferObject {
     
 	//@DataDefinition(label="Minutos Jornada Semanal Real")
     @Column(name="semana", nullable=false, length=2)
-    public int getSemana() {
+    public Integer getSemana() {
         return this.semana;
     }
     
