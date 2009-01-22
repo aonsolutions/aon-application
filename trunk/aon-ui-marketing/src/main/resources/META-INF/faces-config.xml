@@ -244,20 +244,7 @@
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/marketing/facelet/lookup/survey/list.xhtml</value>
 		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{communicationCenterSurveyListener}</value>
-			</list-entries>
-		</managed-property>						
 	</managed-bean>	
-
-	<managed-bean>
-		<managed-bean-name>communicationCenterSurveyListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.marketing.event.CommunicationCenterSurveyListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>		
 
 	<!--  **** SURVEY QUESTION **** -->
 
@@ -610,19 +597,6 @@
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/marketing/facelet/lookup/campaignAction/list.xhtml</value>
 		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{communicationCenterActionListener}</value>
-			</list-entries>
-		</managed-property>				
-	</managed-bean>	
-
-	<managed-bean>
-		<managed-bean-name>communicationCenterActionListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.marketing.event.CommunicationCenterActionListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>	
 
 	<!-- ************ CAMPAIGN ACTION TARGET ************** -->

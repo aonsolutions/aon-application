@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
@@ -38,7 +39,9 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.util.AonUtil;
 
 public class CommunicationCenterController implements IMarketingConstants {
 	
@@ -455,6 +458,44 @@ public class CommunicationCenterController implements IMarketingConstants {
 		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
 		bean.update(this.actionTarget);
 		onNextTarget(event);
+	}
+
+	public void onActionLookupChange(LookupChangeEvent event) {
+		this.actionSelected = (event.getNewValue() != null);
+		if (this.actionSelected) {
+			Action action = (Action) event.getNewValue();
+			setAction(action);
+			try {
+				if (action.getSurvey() != null) {
+					IManagerBean bean = BeanManager.getManagerBean(Survey.class);
+					Survey survey = (Survey) bean.get(action.getSurvey().getId());
+					setSurvey(survey);
+				}
+				onNextTarget(null);
+			} catch (ManagerBeanException e) {
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(e);
+			}
+		} else {
+			setActionTarget(null);
+		}
+	}
+
+	public void onTargetLookupChange(LookupChangeEvent event) {
+		this.targetSelected = (event.getNewValue() != null);
+		if (this.targetSelected) {
+			try {
+				Target newTarget = (Target) event.getNewValue();
+				initTarget(newTarget);
+			} catch (ManagerBeanException e) {
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(e);
+			}
+		}
+	}
+
+	public void onSurveyLookupChange(LookupChangeEvent event) {
+		this.surveySelected = (event.getNewValue() != null);
 	}
 	
 }
