@@ -14,7 +14,7 @@
 
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{marketingBundle.aon_target_profile_lastUpdate}" />
+						<aon:outputText value="#{marketingBundle.marketing_target_profile_lastUpdate}" />
 					</f:facet>
 					<aon:outputText value="#{to.lastUpdate}" rendered="#{to!=controller.to}">
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -22,19 +22,19 @@
 					</aon:outputText>				
 					<aon:selectInputDate value="#{controller.to.lastUpdate}" required="true"
 						timeZone="#{timeZoneController.timeZone}" rendered="#{to==controller.to}"
-						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+						popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>
 					<f:facet name="footer">
 						<aon:selectInputDate value="#{controller.to.lastUpdate}" required="true"
 							timeZone="#{timeZoneController.timeZone}" rendered="#{controller.new}"
-							renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+							popupDateFormat="#{bundle.aon_date_pattern}">
 						</aon:selectInputDate>
 					</f:facet>
 				</aon:column>
 	
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{marketingBundle.aon_marketing_question}" />
+						<aon:outputText value="#{marketingBundle.marketing_question}" />
 					</f:facet>
 					<aon:outputText value="#{to.question.text}"
 						rendered="#{!controller.new}" />
@@ -45,7 +45,7 @@
 								reRender="TargetProfile_question_detail-New,TargetProfile_response-New"
 								value="#{targetProfile.to.question.id}" size="5">
 							</aon:lookupInputText>
-							<aon:lookupButton windowTitle="#{marketingBundle.aon_lookup_question}" 
+							<aon:lookupButton windowTitle="#{marketingBundle.marketing_question_selection}" 
 								selectReRender="TargetProfile_question_id-New,TargetProfile_question_detail-New,TargetProfile_response-New"
 								lookup="#{questionLookup}" minHeight="460" minWidth="650"
 								property="#{targetProfile.to.question}">
@@ -60,22 +60,22 @@
 				<aon:column>
 					<f:facet name="header">
 						<aon:outputText
-							value="#{marketingBundle.aon_marketing_response}" />
+							value="#{marketingBundle.marketing_response}" />
 					</f:facet>
 					<aon:div layout="none" rendered="#{to!=controller.to}">
-						<ui:include src="/marketing/outputValue.xhtml" >
+						<ui:include src="/com/code/aon/ui/marketing/facelet/util/outputValue.xhtml" >
 							<ui:param name="valueHolder" value="#{to}" />
 						</ui:include>
 					</aon:div>
 					<aon:div layout="none" rendered="#{to==controller.to}">
-						<ui:include src="/marketing/inputValue.xhtml" >
+						<ui:include src="/com/code/aon/ui/marketing/facelet/util/inputValue.xhtml" >
 							<ui:param name="valueHolder" value="#{controller.to}" />
 						</ui:include>
 					</aon:div>			
 					<f:facet name="footer">
 						<aon:div id="TargetProfile_response-New">
 							<aon:div layout="none" rendered="#{controller.new}">
-								<ui:include src="/marketing/inputValue.xhtml" >
+								<ui:include src="/com/code/aon/ui/marketing/facelet/util/inputValue.xhtml" >
 									<ui:param name="valueHolder" value="#{controller.to}" />
 								</ui:include>
 							</aon:div>
