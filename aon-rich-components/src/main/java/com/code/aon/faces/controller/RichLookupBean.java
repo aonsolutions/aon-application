@@ -218,6 +218,15 @@ public class RichLookupBean {
 	}
 
 	/**
+	 * Return the POJO class short name associated to controller.
+	 * 
+	 * @return String
+	 */
+	public String getPojoShortName() {
+		return getController().getPojoShortName();
+	}
+	
+	/**
 	 * Set the limit of page in the model associated to controller.
 	 * 
 	 * @param pageLimit
