@@ -44,9 +44,9 @@
 						value="#{commercialBundle.commercial_tracking_module}" 
 						iconClass="aon-commercial-tracking-iconClass"
 						action="commercialTracking_form" actionListener="#{commercialTracking.onReset}" />
-					<aon:menuItem id="offer"
-						value="#{commercialBundle.commercial_offers_module}" 
-						action="offer" disabled="true" />					
+					<aon:menuItem id="offer_form"
+						value="#{commercialBundle.commercial_offer_module}" 
+						action="offer_form" actionListener="#{offer.onReset}" />
 				</aon:dropDownMenu>
 				<aon:dropDownMenu value="#{marketingBundle.marketing_marketing}">
 					<aon:menuItem id="campaign"
