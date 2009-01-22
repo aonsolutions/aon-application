@@ -359,18 +359,9 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 	    	dest.close(false);
 	    	deleteDraftMessage();
 	    	refreshDraftFolder();
-		} catch (WebmailException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		} catch (MessagingException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		} catch (UnsupportedEncodingException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
+		} catch (Throwable th) {
+			AonUtil.addErrorMessage(th.getMessage());
+			throw new AbortProcessingException(th);
 		}
     }
     
@@ -407,18 +398,9 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 	    	desfFolder.expunge();
 	    	dest.close(false);
 	    	refreshDraftFolder();
-		} catch (WebmailException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		} catch (MessagingException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		} catch (UnsupportedEncodingException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
+		} catch (Throwable th) {
+			AonUtil.addErrorMessage(th.getMessage());
+			throw new AbortProcessingException(th);
 		}
     }
     
