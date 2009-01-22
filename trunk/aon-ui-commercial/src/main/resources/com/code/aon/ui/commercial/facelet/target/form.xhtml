@@ -62,12 +62,21 @@
 							</aon:panelTab>
 						</c:if>
 
+						<c:if test="#{target.showProfile}">
+							<aon:panelTab id="targetProfile" label="#{marketingBundle.marketing_target_profile}">
+								<ui:include src="/com/code/aon/ui/marketing/facelet/targetProfile/tab_grid.xhtml" />
+							</aon:panelTab>
+						</c:if>
+						
 					</aon:panelTabSet>
 				</c:if>
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />	
-		<aon:lookupButtonPopup lookup="#{sellerLookup}" />	
+		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
+		<c:if test="#{target.showProfile}">
+			<aon:lookupButtonPopup lookup="#{questionLookup}" />
+		</c:if>	
 	</ui:define>
 </ui:composition>
 

@@ -24,6 +24,10 @@ public class TargetController extends BasicController {
 	
 	private String selectedTab;
 	
+	private boolean showProfile;
+	
+	private boolean showSearchOnlyCustomers;
+	
 	private boolean showCommercialTracking;
 	
 	public List<SelectItem> getSegments() {
@@ -58,6 +62,22 @@ public class TargetController extends BasicController {
 
 	public void setShowCommercialTracking(boolean showCommercialTracking) {
 		this.showCommercialTracking = showCommercialTracking;
+	}
+
+	public boolean isShowProfile() {
+		return showProfile;
+	}
+
+	public void setShowProfile(boolean showProfile) {
+		this.showProfile = showProfile;
+	}
+
+	public boolean isShowSearchOnlyCustomers() {
+		return showSearchOnlyCustomers;
+	}
+
+	public void setShowSearchOnlyCustomers(boolean showSearchOnlyCustomers) {
+		this.showSearchOnlyCustomers = showSearchOnlyCustomers;
 	}
 	
 }

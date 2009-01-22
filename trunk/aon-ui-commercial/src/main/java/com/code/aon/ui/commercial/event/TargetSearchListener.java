@@ -1,6 +1,5 @@
 package com.code.aon.ui.commercial.event;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,10 +22,6 @@ import com.code.aon.ui.util.AonUtil;
 
 public class TargetSearchListener extends ControllerSearchListener implements ICommercialConstants {
 
-	private Date trackingDateFrom;
-	
-	private Date trackingDateTo;
-
 	private Seller seller;
 	
 	private CommercialActivity activity;
@@ -34,22 +29,6 @@ public class TargetSearchListener extends ControllerSearchListener implements IC
 	private CommercialTrackingStatus[] trackingStatuses;
 	
 	private List<MediaType> mediaTypes;
-	
-	public Date getTrackingDateFrom() {
-		return trackingDateFrom;
-	}
-
-	public void setTrackingDateFrom(Date trackingDateFrom) {
-		this.trackingDateFrom = trackingDateFrom;
-	}
-
-	public Date getTrackingDateTo() {
-		return trackingDateTo;
-	}
-
-	public void setTrackingDateTo(Date trackingDateTo) {
-		this.trackingDateTo = trackingDateTo;
-	}
 
 	public Seller getSeller() {
 		return seller;
@@ -89,8 +68,6 @@ public class TargetSearchListener extends ControllerSearchListener implements IC
 	
 	@Override
 	protected void init() throws ManagerBeanException {
-		setTrackingDateFrom(null);
-		setTrackingDateTo(null);
 		setActivity(null);
 		setTrackingStatuses( new CommercialTrackingStatus[0] );
 		setSeller( new Seller() );
@@ -103,12 +80,6 @@ public class TargetSearchListener extends ControllerSearchListener implements IC
 	@Override
 	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
 		Criteria criteria = getController().getCriteria();
-		if (getTrackingDateFrom() != null) {
-			criteria.addGreaterThanOrEqualExpression("Target.trackings.date", getTrackingDateFrom());
-		}
-		if (getTrackingDateTo() != null) {
-			criteria.addLessThanOrEqualExpression("Target.trackings.date", getTrackingDateTo());
-		}
 		if ( (getSeller() != null) && (getSeller().getId() != null) ) {
 			criteria.addEqualExpression("Target.trackings.seller.id", getSeller().getId());			
 		}

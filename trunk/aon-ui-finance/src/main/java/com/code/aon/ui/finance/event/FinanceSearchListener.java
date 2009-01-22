@@ -1,7 +1,5 @@
 package com.code.aon.ui.finance.event;
 
-import java.util.Date;
-
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
