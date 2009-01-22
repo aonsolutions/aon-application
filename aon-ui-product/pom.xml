@@ -16,18 +16,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.rich.components</artifactId>
-			<version>3.5.1</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>el-api</artifactId>
-					<groupId>javax.el</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
 			<version>3.4.1</version>
 			<scope>compile</scope>
