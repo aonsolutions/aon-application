@@ -44,23 +44,23 @@
 				<aon:outputLabel for="Invoice_lines_quantity"
 					value="#{bundle.aon_quantity}" />
 				<aon:inputText id="Invoice_lines_quantity"
-					valueChangeListener="#{controller.addDirectExpression}" size="40" />
+					valueChangeListener="#{controller.addExpression}" size="40" />
 
 				<aon:outputLabel for="Invoice_lines_price"
 					value="#{bundle.aon_price}" />
 				<aon:inputText id="Invoice_lines_price"
-					valueChangeListener="#{controller.addDirectExpression}" size="40" />
+					valueChangeListener="#{controller.addExpression}" size="40" />
 
 				<aon:outputLabel for="Invoice_lines_taxableBase"
 					value="#{bundle.aon_amount}" />
 				<aon:inputText id="Invoice_lines_taxableBase"
-					valueChangeListener="#{controller.addDirectExpression}" size="40" />
+					valueChangeListener="#{controller.addExpression}" size="40" />
 					
 				<aon:outputLabel for="Invoice_lines_workPlace_id"
 					value="#{companyBundle.company_workplace}" />
 				<aon:selectOneMenu id="Invoice_lines_workPlace_id"
 					value="#{companyCollections.workPlace}"
-					valueChangeListener="#{controller.addDirectIdEqualExpression}">
+					valueChangeListener="#{controller.addIdEqualExpression}">
 					<f:selectItem itemLabel="-" value="#{null}" />		
 					<f:selectItems value="#{companyCollections.workPlaces}" />
 				</aon:selectOneMenu>					
@@ -111,14 +111,14 @@
 				<aon:outputLabel for="Invoice_finances_amount"
 					value="#{bundle.aon_amount}" />
 				<aon:inputText id="Invoice_finances_amount"
-					valueChangeListener="#{controller.addDirectExpression}"
+					valueChangeListener="#{controller.addExpression}"
 					size="10" />
 				
 				<aon:outputLabel for="Invoice_finances_payMethod_id"
 					value="#{configBundle.config_pay_method}" />
 				<aon:selectOneMenu id="Invoice_finances_payMethod_id"
 					value="#{configCollections.payMethod}"
-					valueChangeListener="#{controller.addDirectIdEqualExpression}">
+					valueChangeListener="#{controller.addIdEqualExpression}">
 					<f:selectItem itemLabel="-" value="#{null}"/>
 					<f:selectItems value="#{configCollections.payMethods}" />
 				</aon:selectOneMenu>
@@ -127,7 +127,7 @@
 					value="#{bundle.aon_status}" />
 				<aon:selectOneMenu id="Invoice_finances_financeStatus"
 					converter="aon.EnumConverter"
-					valueChangeListener="#{controller.addDirectEqualExpression}">
+					valueChangeListener="#{controller.addEqualExpression}">
 					<f:selectItem itemLabel="-" value="#{null}"/>
 					<f:selectItems value="#{financeCollections.financeStatuses}" />
 				</aon:selectOneMenu>
