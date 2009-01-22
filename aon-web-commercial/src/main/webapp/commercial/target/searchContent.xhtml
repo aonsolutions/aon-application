@@ -16,7 +16,7 @@
 				<aon:outputLabel for="MarketingTarget_customer"
 					value="#{appBundle.aon_customer}" />
 				<aon:selectOneMenu id="MarketingTarget_customer" 
-					valueChangeListener="#{controller.addDirectExpression}">
+					valueChangeListener="#{controller.addExpression}">
 					<f:selectItem value="#{null}" itemLabel="" />
 					<f:selectItem itemValue="#{true}" itemLabel="#{bundle.aon_yes}" />
 					<f:selectItem itemValue="#{false}" itemLabel="#{bundle.aon_no}" />
@@ -29,19 +29,19 @@
 				<aon:outputLabel for="Target_registry_addresses_address"
 					value="#{registryBundle.aon_address}" />
 				<aon:inputText id="Target_registry_addresses_address" size="60"
-					valueChangeListener="#{controller.addDirectExpression}" />
+					valueChangeListener="#{controller.addExpression}" />
 				<aon:outputLabel for="Target_registry_addresses_zip"
 					value="#{registryBundle.aon_zip}" />
 				<aon:inputText id="Target_registry_addresses_zip" size="60"
-					valueChangeListener="#{controller.addDirectExpression}" />
+					valueChangeListener="#{controller.addExpression}" />
 				<aon:outputLabel for="Target_registry_addresses_city"
 					value="#{registryBundle.aon_city}" />
 				<aon:inputText id="Target_registry_addresses_city" size="60"
-					valueChangeListener="#{controller.addDirectExpression}" />
+					valueChangeListener="#{controller.addExpression}" />
 				<aon:outputLabel for="Target_registry_addresses_geozone_id"
 					value="#{registryBundle.aon_geozone}" />
 				<aon:selectOneMenu id="Target_registry_addresses_geozone_id" 
-					valueChangeListener="#{controller.addDirectExpression}">
+					valueChangeListener="#{controller.addExpression}">
 					<f:selectItem value="#{null}" itemLabel="    " />
 					<f:selectItems value="#{geozoneCollections.geoTrees}" />
 				</aon:selectOneMenu>			
@@ -77,11 +77,11 @@
 				<aon:outputLabel for="Target_registry_medias_value"
 					value="#{bundle.aon_value}" />
 				<aon:inputText id="Target_registry_medias_value" size="60"
-					valueChangeListener="#{controller.addDirectExpression}" />
+					valueChangeListener="#{controller.addExpression}" />
 				<aon:outputLabel for="Target_registry_medias_comment"
 					value="#{bundle.aon_comment}" />
 				<aon:inputText id="Target_registry_medias_comment" size="60"
-					valueChangeListener="#{controller.addDirectExpression}" />
+					valueChangeListener="#{controller.addExpression}" />
 			</aon:panelGrid>
 		</aon:panelCollapsible>
 				
@@ -90,7 +90,7 @@
 				<aon:outputLabel for="Target_segments_segment_id"
 					value="#{bundle.aon_name}" />
 				<aon:selectOneMenu id="Target_segments_segment_id"
-					valueChangeListener="#{controller.addDirectExpression}">
+					valueChangeListener="#{controller.addExpression}">
 					<f:selectItem value="#{null}" itemLabel="    " />
 					<f:selectItems value="#{controller.segments}" />
 				</aon:selectOneMenu>
@@ -102,17 +102,17 @@
 				<aon:outputLabel for="Target_items_item_product_code"
 					value="#{productBundle.item_code}" />
 				<aon:inputText id="Target_items_item_product_code"
-					size="20" valueChangeListener="#{controller.addDirectExpression}" />
+					size="20" valueChangeListener="#{controller.addExpression}" />
 				
 				<aon:outputLabel for="Target_items_item_product_name"
 					value="#{productBundle.item_description}" />
 				<aon:inputText id="Target_items_item_product_name"
-					size="60" valueChangeListener="#{controller.addDirectExpression}" />
+					size="60" valueChangeListener="#{controller.addExpression}" />
 				 
 				<aon:outputLabel for="Target_items_item_product_category_id"
 					value="#{productBundle.item_category}" />
 				<aon:selectOneMenu id="Target_items_item_product_category_id"
-					valueChangeListener="#{controller.addDirectExpression}">
+					valueChangeListener="#{controller.addExpression}">
 					<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
 					<f:selectItems value="#{productCollections.categories}" />
 				</aon:selectOneMenu>
@@ -120,7 +120,7 @@
 				<aon:outputLabel for="Target_items_item_status"
 					value="#{productBundle.item_status}" />
 				<aon:selectOneMenu id="Target_items_item_status"
-					valueChangeListener="#{controller.addDirectExpression}">
+					valueChangeListener="#{controller.addExpression}">
 					<aon:enumConverter enum="com.code.aon.product.enumeration.ProductStatus" />
 					<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
 					<f:selectItems value="#{productCollections.productStatuses}" />
@@ -133,27 +133,27 @@
 				<aon:outputLabel for="Target_sellers_seller_id"
 					value="#{registryBundle.aon_id}" />
 				<aon:inputText id="Target_sellers_seller_id" size="60"
-					valueChangeListener="#{controller.addDirectExpression}" />
+					valueChangeListener="#{controller.addExpression}" />
 			
 				<aon:outputLabel for="Target_sellers_seller_registry_document"
 					value="#{registryBundle.aon_nif}" />
 				<aon:inputText id="Target_sellers_seller_registry_document" size="60"
-					valueChangeListener="#{controller.addDirectExpression}" />
+					valueChangeListener="#{controller.addExpression}" />
 			
 				<aon:outputLabel for="Target_sellers_seller_registry_name"
 					value="#{registryBundle.aon_name}" />
 				<aon:inputText id="Target_sellers_seller_registry_name" size="60"
-					valueChangeListener="#{controller.addDirectExpression}" />
+					valueChangeListener="#{controller.addExpression}" />
 			
 				<aon:outputLabel for="Target_sellers_seller_registry_surname"
 					value="#{registryBundle.aon_surname}" />
 				<aon:inputText id="Target_sellers_seller_registry_surname" size="60"
-					valueChangeListener="#{controller.addDirectExpression}" />
+					valueChangeListener="#{controller.addExpression}" />
 			
 				<aon:outputLabel for="Target_sellers_seller_registry_alias"
 					value="#{registryBundle.aon_alias}" />
 				<aon:inputText id="Target_sellers_seller_registry_alias" size="60"
-					valueChangeListener="#{controller.addDirectExpression}" />
+					valueChangeListener="#{controller.addExpression}" />
 			</aon:panelGrid>
 		</aon:panelCollapsible>
 
@@ -273,7 +273,7 @@
 				<aon:outputLabel for="Target_trackings_comments"
 					value="#{appBundle.aon_commercial_tracking_comments}" />
 				<aon:inputText id="Target_trackings_comments" size="60"
-					valueChangeListener="#{controller.addDirectExpression}" />													
+					valueChangeListener="#{controller.addExpression}" />													
 			</aon:panelGrid>
 		</aon:panelCollapsible>						
 	</aon:div>

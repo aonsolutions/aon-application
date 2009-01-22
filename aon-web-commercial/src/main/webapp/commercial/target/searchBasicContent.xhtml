@@ -8,32 +8,32 @@
 	<aon:outputLabel for="Target_id"
 		value="#{registryBundle.aon_id}" />
 	<aon:inputText id="Target_id" size="60"
-		valueChangeListener="#{controller.addDirectExpression}" />
+		valueChangeListener="#{controller.addExpression}" />
 
 	<aon:outputLabel for="Target_registry_document"
 		value="#{registryBundle.aon_nif}" />
 	<aon:inputText id="Target_registry_document" size="60"
-		valueChangeListener="#{controller.addDirectExpression}" onblur="toUpperCase(this);" />
+		valueChangeListener="#{controller.addExpression}" onblur="toUpperCase(this);" />
 
 	<aon:outputLabel for="Target_registry_name"
 		value="#{registryBundle.aon_name}" />
 	<aon:inputText id="Target_registry_name" size="60"
-		valueChangeListener="#{controller.addDirectExpression}" />
+		valueChangeListener="#{controller.addExpression}" />
 
 	<aon:outputLabel for="Target_registry_surname"
 		value="#{registryBundle.aon_surname}" />
 	<aon:inputText id="Target_registry_surname" size="60"
-		valueChangeListener="#{controller.addDirectExpression}" />
+		valueChangeListener="#{controller.addExpression}" />
 
 	<aon:outputLabel for="Target_registry_alias"
 		value="#{registryBundle.aon_alias}" />
 	<aon:inputText id="Target_registry_alias" size="60"
-		valueChangeListener="#{controller.addDirectExpression}" onblur="toUpperCase(this);" />
+		valueChangeListener="#{controller.addExpression}" onblur="toUpperCase(this);" />
 		
 	<aon:outputLabel for="Target_advertising"
 		value="#{appBundle.aon_target_advertising}" />
 	<aon:selectOneMenu id="Target_advertising"
-		valueChangeListener="#{controller.addDirectExpression}">
+		valueChangeListener="#{controller.addExpression}">
 		<aon:enumConverter enum="com.code.aon.commercial.enumeration.Advertising" />
 		<f:selectItems value="#{commercialCollections.advertisings}" />
 		<f:selectItem value="#{null}" itemLabel="    " />		
