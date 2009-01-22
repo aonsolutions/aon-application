@@ -24,11 +24,11 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.AliasEntry;
 import com.code.aon.common.dao.DAOConstantsResolver;
 import com.code.aon.faces.component.richfaces.lookup.ILookupComponent;
-import com.code.aon.faces.component.richfaces.lookup.LookupChangeEvent;
 import com.code.aon.faces.component.richfaces.lookup.button.HtmlLookupButton;
 import com.code.aon.faces.component.richfaces.lookup.inputText.HtmlLookupInputText;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.IControllerListener;
 
@@ -561,9 +561,8 @@ public class RichLookupBean {
 				LOGGER.severe( e.getMessage() );
 			}
 			return pojo;
-		} else {
-			pojo = getController().getPojo();			
-		}
+		} 
+		pojo = getController().getPojo();			
 		return pojo;
 	}
 	
@@ -638,9 +637,8 @@ public class RichLookupBean {
 			String type = ve.getType(ctx.getELContext()).getName();
 			if (type.equals(pojo)) {
 				return ve;
-			} else {
-				ve = getParentBinding(ctx, ve);
-			}
+			} 
+			ve = getParentBinding(ctx, ve);
 		}
 		return null;
 	}
