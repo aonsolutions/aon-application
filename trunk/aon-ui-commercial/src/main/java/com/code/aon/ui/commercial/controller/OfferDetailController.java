@@ -7,12 +7,12 @@ import javax.faces.event.ValueChangeEvent;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.faces.component.richfaces.lookup.LookupChangeEvent;
 import com.code.aon.product.Item;
 import com.code.aon.product.Tariff;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.LinesController;
 
 public class OfferDetailController extends LinesController {
