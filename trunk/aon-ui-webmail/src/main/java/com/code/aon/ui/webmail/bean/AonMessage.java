@@ -344,8 +344,10 @@ public class AonMessage implements IMimeType {
 			String value = StringUtils.replace(recipients, ";", AonMessageUtils.EMAIL_SEPARATOR);
 			InternetAddress[] addresses = InternetAddress.parse(value, true);
 			for( InternetAddress address : addresses ) {
-				String personal = MimeUtility.encodeText(address.getPersonal());
-				address.setPersonal(personal);
+				String personal = address.getPersonal();
+				if (! StringUtils.isEmpty(personal) ) {
+					address.setPersonal(MimeUtility.encodeText(personal));
+				}
 			}
 			setRecipients(addresses, type);
 		} catch (javax.mail.MessagingException e) {
