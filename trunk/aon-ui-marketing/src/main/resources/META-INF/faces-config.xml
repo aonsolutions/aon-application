@@ -390,8 +390,15 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{surveyResponseDetailListener}</value>
+				<value>#{surveyResponseSearch}</value>
 			</list-entries>
 		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>surveyResponseSearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.marketing.event.SurveyResponseSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>
