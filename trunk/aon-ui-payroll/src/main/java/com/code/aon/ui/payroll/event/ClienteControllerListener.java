@@ -41,6 +41,22 @@ public class ClienteControllerListener extends ControllerAdapter implements IPay
 	
 	
 	}
+	@Override
+	public void afterBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+	
+		ClienteController controller = (ClienteController)FormUtil.getController(IPayrollConstants.CLIENTE_CONTROLLER_NAME);
+		
+		 try {			 
+	
+			 ((ClienteController)getController()).getListaemp();
+			 ((ClienteController)getController()).getListaact();
+			} catch (ManagerBeanException e) {
+			}
+		
+		
+		
+	}
 	
 	
 

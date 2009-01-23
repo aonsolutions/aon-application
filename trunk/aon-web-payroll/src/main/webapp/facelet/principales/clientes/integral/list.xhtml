@@ -18,7 +18,8 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_integral}" />
 				<ui:param name="controller" value="#{cliente}"/>
-				
+				<ui:param name="skipResetButton" value="true" />
+				<aon:methodParam name="searchAction" value="integral_search" />		
 			</ui:include>
 
 			<!--  aon-region-body -->
@@ -43,6 +44,28 @@
 							<aon:outputText value="#{appBundle.aon_payroll_description}" />
 						</f:facet>
 						<aon:outputText value="#{to.descripcion}"/>
+					</aon:column>
+
+	                  <aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_principales_clientes_alias}" />
+						</f:facet>
+						<aon:outputText value="#{to.alias}"/>
+					</aon:column>
+					
+						<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_principales_clientes_numdoc}" />
+						</f:facet>
+						<aon:outputText value="#{to.numdoc}"/>
+					</aon:column>
+					
+					
+						<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_principales_clientes_deleg}" />
+						</f:facet>
+						<aon:outputText value="#{to.delegacion.descripcion}"/>
 					</aon:column>
 
  				</aon:dataTable>

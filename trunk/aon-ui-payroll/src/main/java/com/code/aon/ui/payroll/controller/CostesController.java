@@ -37,6 +37,7 @@ import com.code.aon.payroll.enumeration.Timecont;
 import com.code.aon.payroll.enumeration.Tipcuenta;
 import com.code.aon.payroll.enumeration.Tiponomina;
 import com.code.aon.payroll.geograficas.Provincia;
+import com.code.aon.payroll.principales.Cliente;
 import com.code.aon.payroll.principales.empresa.Actividad;
 import com.code.aon.payroll.principales.empresa.Emprdom;
 import com.code.aon.payroll.principales.empresa.Empresa;
@@ -246,4 +247,7 @@ public class CostesController extends PayrollBasicController	 {
 			super.onSearch(event);
 		}
 	*/
+	
+
+	
 }

@@ -19,6 +19,7 @@
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_integral}" />
 				<ui:param name="controller" value="#{cliente}"/>
 				<ui:param name="skipResetButton" value="true" />
+				<aon:methodParam name="backAction" value="integral_list"/>
 						
 			</ui:include>	
       
@@ -29,34 +30,66 @@
 					
 									
 									
-				   <aon:outputLabel for="Cliente_cdg" value="#{appBundle.aon_payroll_principales_clientes_cod}" />
-					<aon:inputText id="Cliente_cdg" valueChangeListener="#{cliente.addExpression}"
-						  maxlength="4" /> 
+				   <aon:outputLabel for="Cliente_cdg" 
+						value="#{appBundle.aon_payroll_principales_domicilio_cli}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="Cliente_cdg"
+							lookup="#{clienteLookup}"
+							reRender="Cliente_description"
+							value="#{cliente.cliente.cdg}" size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton id="Cliente_lookup"
+							windowTitle="#{appBundle.aon_payroll_principales_clientes}"
+							selectReRender="Cliente_cdg,Cliente_description"
+							lookup="#{clienteLookup}" minHeight="440"
+							property="#{cliente.cliente}">
+						</aon:lookupButton>
+						<aon:inputText id="Cliente_description"
+							value="#{(cliente.cliente.descripcion!=null)?(cliente.cliente.descripcion):('')}"   
+							size="55" disabled="true" />
+					</aon:div>
 				 
 				      <aon:outputLabel for="Cliente_descripcion" value="#{appBundle.aon_payroll_principales_clientes_nom}" />
 					<aon:inputText id="Cliente_descripcion" valueChangeListener="#{cliente.addExpression}" 
+						 size="60" maxlength="40" />
+				
+				
+				   <aon:outputLabel for="Cliente_descripcion" value="#{appBundle.aon_payroll_principales_clientes_alias}" />
+					<aon:inputText id="Cliente_alias" valueChangeListener="#{cliente.addExpression}" 
 						 size="60" maxlength="40" />
 				
 				  
 					  <aon:outputLabel for="Cliente_numdoc" value="#{appBundle.aon_payroll_principales_clientes_numdoc}" />
 					<aon:inputText id="Cliente_numdoc" valueChangeListener="#{cliente.addExpression}"
 						 size="60" maxlength="20" />
-					
-					
-					
-		
 
-	        </ui:define>
+					<aon:outputLabel for="Dele_cdg"
+						value="#{appBundle.aon_payroll_principales_clientes_deleg}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="Del_cdg" lookup="#{delegacionLookup}"
+							reRender="Del_description" value="#{cliente.delegacion.cdg}"
+							size="5">
+						</aon:lookupInputText>
+						<aon:lookupButton id="Del_lookup"
+							windowTitle="#{appBundle.aon_payroll_principales_clientes_deleg}"
+							selectReRender="Del_cdg,Del_description"
+							lookup="#{delegacionLookup}" minHeight="440"
+							property="#{cliente.delegacion}">
+						</aon:lookupButton>
+						<aon:inputText id="Del_description"
+							value="#{(cliente.delegacion.descripcion!=null)?(cliente.delegacion.descripcion):('')}"
+							size="34" disabled="true" />
+					</aon:div>
+
+
+
+
+				</ui:define>
 			</ui:decorate>
 		</aon:form>
 		
 	<aon:lookupButtonPopup lookup="#{delegacionLookup}" />	
-	<aon:lookupButtonPopup lookup="#{empresarioLookup}" />   
-    <!--   <aon:lookupButtonPopup lookup="#{divisaLookup}" />   -->
-	<aon:lookupButtonPopup lookup="#{paisLookup}" />  
-	<aon:lookupButtonPopup lookup="#{documentoLookup}" />  
-    <aon:lookupButtonPopup lookup="#{tipoviaLookup}" /> 
-	<aon:lookupButtonPopup lookup="#{provinciaLookup}" />
+		<aon:lookupButtonPopup lookup="#{clienteLookup}" />
 	
 	</ui:define>
 </ui:composition>

@@ -14,6 +14,24 @@
 		</f:facet>
 		<aon:outputText value="#{to.cdg}"/>
 	</aon:column>
+	
+	
+	
+		<aon:column>
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_id}" />
+		</f:facet>
+		<aon:outputText value="#{to.entidad.description} "/>
+	</aon:column>
+	
+	
+
+		<aon:column>
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_id}" />
+		</f:facet>
+		<aon:outputText value=" #{to.entidad.cdg} #{to.sucursal.id.cdg} #{to.dc} #{to.numcta}"/>
+	</aon:column>
 
 	
 

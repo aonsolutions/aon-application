@@ -2,43 +2,48 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 
 <aon:div id="empresasDataDiv">
 
-		<aon:editDataTable id="empresasData" var="to" rows="4"
-			value="#{empresa.model}"
-			columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,">
 
-			<aon:rowSelector toggleOnClick="#{empresa.to == null}"
-				actionListener="#{empresa.onSelect}" reRender="tabsInfo" />
+ 
+		<aon:editDataTable id="empresasData" var="to" rows="3"
+			value="#{empresa.model}"
+			columnClasses=" aon-editDataTable-textColumn, aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,">
+   		
+			
+			 <aon:rowSelector 
+			 reRender="actDataDiv,tabsInfo">
+			<aon:actionListener method="#{empresa.onSelect}" />
+			
+			</aon:rowSelector>  
 
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="&#160;" />
+					<aon:outputText value="&#160;&#160;&#160;" />
 				</f:facet>
 
-				
-					<aon:commandButton alt="[#{bundle.aon_reset}]"
-						styleClass="aon-editDataTable-button aon-icon-rowSelector "
-						actionListener="#{empresa.onSelect}" reRender="tabsInfo"
-						ondblclick="empresa_form" accesskey="#{bundle.aon_key_new_line}"/>
-						 <a4j:support event="ondblclick" 
-								action="empresa_form"/>
-						
-					
-				<f:facet name="footer">
-					<aon:div>
-						<aon:commandButton alt="[#{bundle.aon_reset}]"
-							styleClass="aon-editDataTable-button aon-icon-reset"
-							actionListener="#{empresa.onReset}" action="empresa_form"
-							rendered="#{!empresa.new}" accesskey="#{bundle.aon_key_new_line}" />
-							
-					
-					</aon:div>
+				<h:commandButton alt="[#{bundle.aon_reset}]"
+					rendered="#{to==empresa.to}"
+					styleClass="aon-editDataTable-button aon-icon-rowSelector "
+					actionListener="#{empresa.onSelect}" action="empresa_form" />
+
+			<!--  	<aon:commandButton
+					styleClass="aon-editDataTable-button aon-icon-cancel"
+					rendered="#{to==empresa.to}" reRender="actDataDiv" immediate="true">
+					<aon:actionListener method="#{empresa.onCancel}" />
+				</aon:commandButton>-->
+
+				<f:facet name="footer">				
+				<h:commandButton alt="[#{bundle.aon_reset}]"
+					styleClass="aon-editDataTable-button aon-icon-reset"
+					actionListener="#{empresa.onReset}" action="empresa_form"
+					rendered="#{!empresa.new}" accesskey="#{bundle.aon_key_new_line}" />				
 				</f:facet>
 			</aon:column>
 
@@ -78,10 +83,8 @@
 
 			</aon:column>
 
-	
-
-		</aon:editDataTable>
-		<aon:dataScroller2 for="empresasData" showNote="true" />
+	 	</aon:editDataTable>
+		<aon:dataScroller2 for="empresasData" showNote="true" />  
 
 	</aon:div>
 
