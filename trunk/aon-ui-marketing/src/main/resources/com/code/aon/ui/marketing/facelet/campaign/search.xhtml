@@ -30,15 +30,14 @@
 					<aon:inputText id="Campaign_description" size="60"
 						valueChangeListener="#{campaign.addExpression}" />
 				
-					<aon:outputText value="#{bundle.aon_status}"/>
-					<aon:div>
-						<aon:selectBooleanCheckbox id="st0" value="#{campaign.statusActive}" />
-						<aon:outputLabel for="st0"
-							value="#{marketingBundle.aon_active}" />
-						<aon:selectBooleanCheckbox id="st1" value="#{campaign.statusInactive}" />
-						<aon:outputLabel for="st1"
-							value="#{marketingBundle.aon_inactive}" />
-					</aon:div>
+					<aon:outputLabel for="Campaign_active"				
+						value="#{bundle.aon_status}"/>
+					<aon:selectOneMenu id="Campaign_active"
+						valueChangeListener="#{campaign.addExpression}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItem itemLabel="#{marketingBundle.marketing_active}" itemValue="#{true}"/>
+						<f:selectItem itemLabel="#{marketingBundle.marketing_inactive}" itemValue="#{false}"/>
+					</aon:selectOneMenu>
 
 				</ui:define>
 			
