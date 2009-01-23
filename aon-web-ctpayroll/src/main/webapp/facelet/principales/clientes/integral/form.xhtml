@@ -5,7 +5,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:rich="http://richfaces.org/rich"
+		xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 
@@ -24,7 +24,9 @@
 		        <ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipDeleteButton" value="true" />
 				<ui:param name="skipSaveButton" value="true" />	
-				<ui:param name="skipBackButton" value="true" />		
+				<ui:param name="skipBackButton" value="true" />	
+				<ui:param name="skipRemoveButton" value="true" />	
+				<aon:methodParam name="saveAction" value="integral_form" />			
 			</ui:include>
 
 
@@ -38,79 +40,104 @@
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_principales_clientes_cod}" />
-						<aon:inputText value="#{cliente.to.cdg}" maxlength="4" />
+						<aon:outputText value="#{cliente.to.cdg}" maxlength="4" />
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_principales_clientes_nom}" />
-						<aon:inputText value="#{cliente.to.descripcion}" size="60"
+						<aon:outputText value="#{cliente.to.descripcion}" size="60"
 							maxlength="40" />
+							
+							<aon:outputLabel
+							value="#{appBundle.aon_payroll_principales_clientes_numdoc}" />
+						<aon:outputText value="#{cliente.to.numdoc}" size="60"
+							maxlength="20" />
+							
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_principales_clientes_alias}" />
-						<aon:inputText value="#{cliente.to.alias}" size="60"
+						<aon:outputText value="#{cliente.to.alias}" size="60"
 							maxlength="20" />
-
-						<aon:outputLabel for="Dele_cdg"
-							value="#{appBundle.aon_payroll_principales_clientes_deleg}" />
-						<aon:div styleClass="aon-lookup">
-							<aon:lookupInputText id="Del_cdg" lookup="#{delegacionLookup}"
-								reRender="Del_description" value="#{cliente.to.delegacion.cdg}"
-								size="5">
-							</aon:lookupInputText>
-							<aon:lookupButton id="Del_lookup"
-								windowTitle="#{appBundle.aon_payroll_principales_clientes_deleg}"
-								selectReRender="Del_cdg,Del_description"
-								lookup="#{delegacionLookup}" minHeight="440"
-								property="#{cliente.to.delegacion}">
-							</aon:lookupButton>
-							<aon:inputText id="Del_description"
-								value="#{(cliente.to.delegacion.descripcion!=null)?(cliente.to.delegacion.descripcion):('')}"
-								size="34" disabled="true" />
-						</aon:div>
-
-						<aon:outputLabel
-							value="#{appBundle.aon_payroll_principales_clientes_numdoc}" />
-						<aon:inputText value="#{cliente.to.numdoc}" size="60"
-							maxlength="20" />
-
-						<aon:outputLabel
+							
+									<aon:outputLabel
 							value="#{appBundle.aon_payroll_principales_clientes_inirel}" />
-						<aon:selectInputDate renderAsPopup="true"
+						<aon:selectInputDate renderAsPopup="true" disabled="true"
 							popupDateFormat="#{appBundle.aon_date_pattern}"
 							value="#{cliente.to.fecini}" enableManualInput="true" />
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_principales_clientes_finrel}" />
-						<aon:selectInputDate renderAsPopup="true"
+						<aon:selectInputDate renderAsPopup="true" disabled="true"
 							popupDateFormat="#{appBundle.aon_date_pattern}"
 							value="#{cliente.to.fecfin}" enableManualInput="true" />
+							
 
+						<aon:outputLabel for="Dele_cdg"
+							value="#{appBundle.aon_payroll_principales_clientes_deleg}" />
+						<aon:div styleClass="aon-lookup"> 
+							<!--  <aon:lookupInputText id="Del_cdg" lookup="#{delegacionLookup}" disabled="true"
+								reRender="Del_description" value="#{cliente.to.delegacion.cdg}"
+								size="5">
+							</aon:lookupInputText>
+							<aon:lookupButton id="Del_lookup" disabled="true"
+								windowTitle="#{appBundle.aon_payroll_principales_clientes_deleg}"
+								selectReRender="Del_cdg,Del_description"
+								lookup="#{delegacionLookup}" minHeight="440"
+								property="#{cliente.to.delegacion}">
+							</aon:lookupButton>-->
+							<aon:outputText id="Del_description"
+								value="#{(cliente.to.delegacion.descripcion!=null)?(cliente.to.delegacion.descripcion):('')}"
+								size="34" disabled="true" />
+						</aon:div>
+
+						
+				
 
 					</aon:panelGrid>
 				</aon:div>
 				<rich:spacer />
 
+ 
+	<!--  	<aon:div id="dato1" styleClass="aon-scroll-area">
+					<aon:panelGrid columns="4" dir="true" width="100%">
+	
+							<aon:outputText
+								value="#{appBundle.aon_payroll_principales_clientes_empresa}" />
+
+							<aon:selectOneMenu layout="pageDirection"
+								>
+								<f:selectItem value="#{null}" itemLabel="    " />
+								<f:selectItems value="#{cliente.listaemp}" />
+							</aon:selectOneMenu>
+
+							<aon:outputText
+								value="#{appBundle.aon_payroll_principales_tipocuenta_actividad}" />
+
+							<aon:selectOneMenu layout="pageDirection"
+							  >
+								<f:selectItem value="#{null}" itemLabel="    " />
+								<f:selectItems value="#{cliente.listaact}" />
+							</aon:selectOneMenu>
+
+					</aon:panelGrid>
+</aon:div>
+-->
 
 				<aon:div id="empreDiv">
 					<ui:include src="grid.xhtml" rendered="#{!cliente.new}" />
 				</aon:div>
 
+				<aon:div id="actiDiv">
+
+					<ui:include src="actividad/grid.xhtml" rendered="#{!cliente.new}" />
+				</aon:div>
+
 
 				<aon:div  id="tabsInfo" >
 					<rich:tabPanel  switchType="ajax" style="tabs">
-						<rich:tab label="#{appBundle.aon_payroll_principales_actividades}">
-
-							<aon:div id="ctasDiv">
-
-								<ui:include src="actividad/grid.xhtml"
-									rendered="#{!cliente.new}" />
-							</aon:div>
-
-
-						</rich:tab>
+					
 						<rich:tab
 							label="#{appBundle.aon_payroll_principales_domicilio_domiasin}" >
-							<aon:actionListener method="#{tipdomicilio.initialiceTiposDomicilio}" />
+							
 						<aon:div>
 							<ui:include src="domicilio/grid2.xhtml"
 								rendered="#{!cliente.new}" />
@@ -118,21 +145,8 @@
 						</aon:div>
 
 						</rich:tab>
-						<rich:tab
-							label="#{appBundle.aon_payroll_principales_clientes_dom}">
-							<aon:actionListener method="#{tipdomicilio.onReset}" />
-
-							<aon:div id="domDiv">
-
-								<ui:include src="domicilio/grid.xhtml"
-									rendered="#{!cliente.new}" />
-							</aon:div>
-
-
-						</rich:tab>
-						
-						
-						<rich:tab
+				  	
+							<rich:tab
 							label="#{appBundle.aon_payroll_principales_cuentasasign}" >
 
 						<aon:div id="cuenta">
@@ -141,6 +155,10 @@
 						</aon:div>
 						</rich:tab>
 						
+					
+					
+				<!--  		
+				
 						
 						<rich:tab
 							label="#{appBundle.aon_payroll_principales_cuentasbancarias}">
@@ -150,7 +168,7 @@
 								<ui:include src="cuenta/grid.xhtml" rendered="#{!cliente.new}" />
 							</aon:div>
 						</rich:tab>
-						
+				-->
 					</rich:tabPanel>
 
 				</aon:div>

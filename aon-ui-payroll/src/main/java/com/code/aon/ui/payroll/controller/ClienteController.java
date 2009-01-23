@@ -7,11 +7,16 @@ import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
@@ -24,9 +29,12 @@ import com.code.aon.payroll.enumeration.IndicadorIrpf;
 import com.code.aon.payroll.geograficas.Pais;
 import com.code.aon.payroll.geograficas.Provincia;
 import com.code.aon.payroll.principales.Cliente;
+import com.code.aon.payroll.principales.empresa.Actividad;
+import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Empresario;
 import com.code.aon.payroll.tipos.Tipovia;
+import com.code.aon.ui.form.FormUtil;
 
 
 public class ClienteController extends PayrollBasicController {
@@ -34,12 +42,14 @@ public class ClienteController extends PayrollBasicController {
 	
 	private List<SelectItem> envioss;
 	
+	
 	private Delegacion delegacion;
 	private Empresario empresario;
 	private Documento documento;
 	private Divisa divisa;	
 	private Tipovia tipovia;
 	private Provincia provincia;
+	private Cliente cliente;
     private Pais pais;
 	private Date fecnew;
 	private Date hornew;
@@ -105,6 +115,7 @@ public class ClienteController extends PayrollBasicController {
 		   setDocumento( new Documento() );
 		   setDivisa( new Divisa() );
 		   setPais( new Pais() );
+		   setCliente( new Cliente() );
 		  
 
 	}
@@ -112,8 +123,24 @@ public class ClienteController extends PayrollBasicController {
 		@Override
 		public void onSearch(ActionEvent event) {
 			
-
 			try {
+				getListaemp();
+			} catch (ManagerBeanException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				getListaact();
+			} catch (ManagerBeanException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+				
+			try {
+				if   ((cliente.getCdg() != null) &&  (cliente!= null)) {
+					getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CLIENTE_CDG), getCliente().getCdg());
+				}
+				
 				if   (delegacion.getCdg() != null)  {
 					getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CLIENTE_DELEGACION_CDG), getDelegacion().getCdg());
 				}
@@ -360,15 +387,72 @@ public class ClienteController extends PayrollBasicController {
 		}
 
 
+	    private List<SelectItem> empresas;
+	    private List<SelectItem> actividades;
+	    
+
+		public List<SelectItem> getListaemp() throws ManagerBeanException  {
+			if(empresas==null){
+				
+			empresas = new LinkedList<SelectItem>();
+			EmpresaController controller = (EmpresaController)FormUtil.getController(IPayrollConstants.EMPRESA_CONTROLLER_NAME);
+			List<ITransferObject> empresa  =  controller.getManagerBean().getList(controller.getCriteria());
+			for (ITransferObject to: empresa) {
+				Empresa e = (Empresa) to;	
+				SelectItem item = new SelectItem(e.getCdg(),e.getDescripcion());
+				empresas.add(item);
+			}
+			}
+			
+			return empresas;
+		}
+			
+		
+		public List<SelectItem> getListaact() throws ManagerBeanException  {
+			if(actividades==null){			
+			
+			actividades = new LinkedList<SelectItem>();
+			ActividadController controller = (ActividadController)FormUtil.getController(IPayrollConstants.ACTIVIDAD_CONTROLLER_NAME);
+			List<ITransferObject> actividad  =  controller.getManagerBean().getList(controller.getCriteria());
+			for (ITransferObject to: actividad) {
+				Actividad a = (Actividad) to;	
+				SelectItem item = new SelectItem(a.getCdg(),a.getDescripcion());
+				actividades.add(item);
+			}
+			}
+			
+			return actividades;
+		}
+			
+		
+		
+
+		public List<SelectItem> getEmpresas() {
+			return empresas;
+		}
 
 
-
-	}
-
-
-
+		public void setEmpresas(List<SelectItem> empresas) {
+			this.empresas = empresas;
+		}
 
 
+		public List<SelectItem> getActividades() {
+			return actividades;
+		}
 
 
+		public void setActividades(List<SelectItem> actividades) {
+			this.actividades = actividades;
+		}
 
+
+		public Cliente getCliente() {
+			return cliente;
+		}
+
+
+		public void setCliente(Cliente cliente) {
+			this.cliente = cliente;
+		}
+}

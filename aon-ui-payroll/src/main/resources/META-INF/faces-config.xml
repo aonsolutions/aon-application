@@ -3236,8 +3236,7 @@
 				<value>#{empresaControllerListener}</value>		
 				<value>#{actividadListener}</value>
 				<value>#{avisoListener}</value>
-				<value>#{tipdomicilioListener}</value>
-				<value>#{tipcuentaListener}</value>			
+				
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -3352,7 +3351,7 @@
 			<property-name>aliasMap</property-name>
 			<map-entries>
 				<map-entry>
-					<key>Emprdom_empresa_cdg</key>
+					<key>Emprdom_actividad_cdg</key>
 					<value>cdg</value>
 				</map-entry>
 			</map-entries>
@@ -3373,7 +3372,7 @@
 			<property-name>aliasMap</property-name>
 			<map-entries>
 				<map-entry>
-					<key>Emprlban_empresa_cdg</key>
+					<key>Emprlban_actividad_cdg</key>
 					<value>cdg</value>
 				</map-entry>
 			</map-entries>
@@ -3534,10 +3533,6 @@
 			<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>empresa</value>
 		</managed-property>
 			<managed-property>
 			<property-name>masterControllerName</property-name>

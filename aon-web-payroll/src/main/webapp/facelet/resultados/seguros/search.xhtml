@@ -31,7 +31,7 @@
 					<aon:div id="cliente"
 						styleClass="aon-scroll-area aon-scroll-area-nom">
 
-						<aon:div styleClass="aon-scroll-area aon-scroll-area-nom">
+						<aon:div styleClass="aon-scroll-area aon-scroll-area-search">
 							<aon:panelGrid columns="6" dir="true" width="100%"
 								style="margin-bottom=2px;">
 
@@ -87,7 +87,7 @@
 
 							</aon:panelGrid>
 						</aon:div>
-						<aon:div styleClass="aon-scroll-area aon-scroll-area-nom">
+						<aon:div styleClass="aon-scroll-area aon-scroll-area-search">
 							<aon:panelGrid columns="6" dir="true" width="100%"
 								style="margin-bottom=2px;">
 
@@ -173,6 +173,15 @@
 									value="#{appBundle.aon_payroll_resultados_tc2_exp}" />
 								<aon:inputText disabled="true" size="30" />
 
+		<aon:outputLabel
+								value="#{appBundle.aon_payroll_resultados_tc2_fan}" />
+							<aon:selectBooleanCheckbox id="tc2_tc2red"
+											valueChangeListener="#{tc2.addEqualExpression}" />
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_resultados_tc2_impre}" />
+							<aon:inputText id="tc2_imprime"
+											valueChangeListener="#{tc2.addExpression}" size="50" maxlength="20" />
+
 
 
 							</aon:panelGrid>
@@ -180,10 +189,7 @@
 
 
 
-						<aon:div disabled="true" id="linDiv">
-
-							<ui:include src="grid.xhtml" />
-						</aon:div>
+						
 
 						<aon:panel>
 							<f:facet name="header">
@@ -287,23 +293,11 @@
 						</aon:panel>
 
 					</aon:div>
-					<aon:div styleClass="aon-scroll-area aon-scroll-area-nom">
-						<aon:panelGrid columns="4" dir="true" width="100%"
-							style="margin-bottom=2px;">
+					
+						
+					
 
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_resultados_tc2_fan}" />
-							<aon:selectBooleanCheckbox id="tc2_tc2red"
-											valueChangeListener="#{tc2.addEqualExpression}" />
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_resultados_tc2_impre}" />
-							<aon:inputText id="tc2_imprime"
-											valueChangeListener="#{tc2.addExpression}" size="50" maxlength="20" />
-
-
-
-						</aon:panelGrid>
-					</aon:div>
+			
 
 				</ui:define>
 			</ui:decorate>

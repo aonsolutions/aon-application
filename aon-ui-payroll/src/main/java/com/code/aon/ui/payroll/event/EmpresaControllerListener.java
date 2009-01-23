@@ -2,12 +2,15 @@ package com.code.aon.ui.payroll.event;
 
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.Tipdom;
 import com.code.aon.payroll.principales.Cliente;
 import com.code.aon.payroll.principales.Domicilio;
 import com.code.aon.payroll.principales.empresa.Emprdom;
 import com.code.aon.payroll.principales.empresa.Empresa;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -224,6 +227,30 @@ public class EmpresaControllerListener extends ControllerAdapter implements IPay
 	}
 	
 
+	
+	@Override
+	public void afterModelInitialized(ControllerEvent event)
+			throws ControllerListenerException {
+		resetActividadModel();
+	}
+	
+	@Override
+	public void afterBeanCanceled(ControllerEvent event)
+			throws ControllerListenerException {
+		resetActividadModel();
+	}
+
+	private void resetActividadModel() throws ControllerListenerException {
+		LinesController actividadController = (LinesController) FormUtil.getController(ACTIVIDAD_CONTROLLER_NAME);
+		try {
+			actividadController.clearCriteria();
+			Criteria criteria = actividadController.getCriteria();
+			criteria.addNullExpression(actividadController.getFieldName(IPayrollAlias.ACTIVIDAD_EMPRESA_CDG));
+			actividadController.initializeModel();
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException( e.getMessage(), e );			
+		}		
+	}
 	
 	
 }
