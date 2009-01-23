@@ -35,63 +35,7 @@
 				</ui:define>				
 			</ui:decorate>		
 			
-			<!--  aon-region-body -->
-			<aon:div styleClass="aon-scroll-area">
-		
-				<aon:dataTable id="targetData" value="#{target.model}"
-					var="to" rows="20" rendered="#{target.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-numberColumn aon-width-70, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
-		
-					<aon:rowSelector action="target_form" actionListener="#{target.onSelect}" />
-					
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_id}" />
-						</f:facet>
-						<aon:outputText value="#{to.id}"/>
-					</aon:column>
-		
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_company_document}" />
-						</f:facet>
-						<aon:outputText value="#{to.registry.document}" />
-					</aon:column>
-		
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_name}" />
-						</f:facet>
-						<aon:outputText value="#{to.registry.name}" />
-					</aon:column>
-		
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{registryBundle.registry_surname}" />
-						</f:facet>
-						<aon:outputText value="#{to.registry.surname}" />
-					</aon:column>
-		
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_company_alias}" />
-						</f:facet>
-						<aon:outputText value="#{to.registry.alias}" />
-					</aon:column>
-		
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{commercialBundle.commercial_target_advertising}" />
-						</f:facet>
-						<aon:outputText value="#{to.advertising}"/>
-					</aon:column>
-		
-				</aon:dataTable>
-		
-				<aon:dataScroller2 for="targetData" showNote="true" />
-		
-			</aon:div>
+			<ui:include src="/com/code/aon/ui/commercial/facelet/target/listContent.xhtml" />
 
 		</aon:form>
 
