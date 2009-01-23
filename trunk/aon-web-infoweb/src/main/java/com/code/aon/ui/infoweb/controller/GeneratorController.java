@@ -424,6 +424,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 	}
 
 	private void generatePage(String template, String name) {
+		vu.put("pagename", name);
 		String page = getPageName(name);
 		vu.put("content", template);
 		vu.generate(page);

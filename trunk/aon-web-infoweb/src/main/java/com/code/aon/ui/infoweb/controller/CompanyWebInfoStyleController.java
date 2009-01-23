@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -27,9 +28,11 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.dao.IConfigAlias;
+import com.code.aon.infoweb.WebInfoPage;
 import com.code.aon.infoweb.WebInfoStyle;
 import com.code.aon.infoweb.dao.IWebInfoAlias;
 import com.code.aon.infoweb.enumeration.WebInfoFontType;
+import com.code.aon.infoweb.enumeration.WebInfoPageType;
 import com.code.aon.infoweb.enumeration.WebInfoVariableType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
@@ -42,7 +45,9 @@ import com.code.aon.ui.util.AonUtil;
 public class CompanyWebInfoStyleController extends BasicController implements VelocityConstants {
 	
 	private static final Logger LOGGER = Logger.getLogger(CompanyWebInfoStyleController.class.getName());
-	
+
+	public boolean showPreviewModalPanel = false;
+
 	public String template;
 	
 	@SuppressWarnings("unused")
@@ -61,6 +66,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 		}
 		else {
 			File directories[] = f.listFiles();
+			Arrays.sort(directories);
 			SelectItem item = new SelectItem("","");
 			templates.add(item);
 			for (int i=0;i<directories.length;i++) {
@@ -390,5 +396,17 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 		if (this.model == null) this.model = new ListDataModel();
 		getTemplate();
 	}
-	
+
+	public void onShowPreview(ActionEvent event) {
+		setShowPreviewModalPanel(true);
+	}
+
+	public boolean isShowPreviewModalPanel() {
+		return showPreviewModalPanel;
+	}
+
+	public void setShowPreviewModalPanel(boolean showPreviewModalPanel) {
+		this.showPreviewModalPanel = showPreviewModalPanel;
+	}
+
 }
