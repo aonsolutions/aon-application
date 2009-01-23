@@ -10,7 +10,7 @@
 			<ui:param name="controller" value="#{surveyQuestion}" />
 			<ui:param name="columnClasses" value="aon-editDataTable-numberColumn aon-width-80, aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
 			<ui:param name="formEdit" value="#{(to==surveyQuestion.to) and (!surveyQuestion.showSurveyWorkflowWindow)}" />		
-			<ui:param name="formList" value="#{(to!=surveyQuestion.to) or surveyQuestion.showSurveyWorkflowWindow}" />	
+			<ui:param name="formList" value="#{(to!=surveyQuestion.to) or surveyQuestion.showSurveyWorkflowWindow}" />
 			<ui:define name="columns">
 				<aon:column>
 					<f:facet name="header">
@@ -35,22 +35,22 @@
 					<aon:outputText value="#{to.question.text}"
 						rendered="#{formList}" >
 						<aon:abbreviateConverter maxWidth="80" />
-					</aon:outputText>
+					</aon:outputText>					
 					<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
-						<aon:lookupInputText
+						<aon:lookupInputText id="SurveyQuestion_question_id"
 							lookup="#{questionLookup}" required="true"
 							reRender="SurveyQuestion_question_detail"
 							value="#{surveyQuestion.to.question.id}" size="5">
 						</aon:lookupInputText>
 						<aon:lookupButton windowTitle="#{marketingBundle.marketing_question_selection}" 
-							selectReRender="surveyQuestionData"
+							selectReRender="SurveyQuestion_question_id,SurveyQuestion_question_detail"
 							lookup="#{questionLookup}" minHeight="460" minWidth="650"
 							property="#{surveyQuestion.to.question}">
 						</aon:lookupButton>
 						<aon:inputText id="SurveyQuestion_question_detail"
 							value="#{controller.to.question.text}"
 							size="80" disabled="true" />
-					</aon:div>
+					</aon:div>				
 					<f:facet name="footer">
 						<aon:div styleClass="aon-lookup" rendered="#{formNew}">
 							<aon:lookupInputText id="SurveyQuestion_question_id-New"
@@ -67,9 +67,9 @@
 								value="#{controller.to.question.text}"
 								size="80" disabled="true" />
 						</aon:div>
-					</f:facet>
+					</f:facet>				
 				</aon:column>
-				
+								
 				<aon:column width="80">
 					<f:facet name="header">
 						<aon:outputText value="#{marketingBundle.marketing_survey_workflow}" />
@@ -82,7 +82,7 @@
 						<aon:outputText value="&#160;" />
 					</aon:commandButton>					
 				</aon:column>
-										
+														
 			</ui:define>
 		</ui:decorate>
 
