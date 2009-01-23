@@ -36,8 +36,10 @@
 							<a4j:support actionListener="#{webPageStyle.onChangeTemplate}" event="onchange" reRender="variables, preview"/> 
 						</aon:selectOneMenu>
 					</aon:div>
-					<aon:div id="preview" style="text-align:left;float:left;padding:5px"> 
-						<aon:graphicImage value="preview.template?tpl=#{webPageStyle.template}" style="border:1px #CCC solid;"/>
+					<aon:div id="preview" style="text-align:left;float:left;padding:5px">
+						<aon:commandLink actionListener="#{webPageStyle.onShowPreview}" reRender="showPreviewModalPanel">
+							<aon:graphicImage value="preview.template?tpl=#{webPageStyle.template}" style="border:1px #CCC solid;"/>
+						</aon:commandLink>
 					</aon:div>
 				</aon:div>
 		
@@ -113,6 +115,8 @@
 			</rich:panel>
 		</aon:div>	
 		</aon:form>
+
+		<ui:include src="/facelet/registry/company/tabs/action/previewModalPanel.xhtml" />	
 
 	</ui:define>
 </ui:composition>
