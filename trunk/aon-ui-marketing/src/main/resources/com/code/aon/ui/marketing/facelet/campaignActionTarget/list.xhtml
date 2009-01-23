@@ -16,7 +16,7 @@
 		<aon:form id="targetList">
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{menuBundle.aon_targets}" />
+				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_target_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_listing}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="accept" value="#{bundle.aon_accept}"
@@ -34,7 +34,7 @@
 				</ui:define>
 			</ui:decorate>			
 
-			<ui:include src="/commercial/target/listContent.xhtml">
+			<ui:include src="/com/code/aon/ui/commercial/facelet/target/listContent.xhtml" >
 				<ui:param name="skipRowSelector" value="#{true}" />
 			</ui:include>
 

@@ -66,9 +66,15 @@
 							lookup="#{campaignActionLookup}" minHeight="440"
 							property="#{communicationCenter.action}">
 						</aon:lookupButton>
-						<aon:inputText id="CommunicationCenter_action_detail"
-							value="#{communicationCenter.action.campaign.description}"
-							size="80" disabled="true" />
+						<aon:div id="CommunicationCenter_action_detail" layout="inline">
+							<aon:inputText 
+								value="#{communicationCenter.action.campaign.description}"
+								size="80" disabled="true" />
+							<rich:spacer width="0.7em" />
+							<aon:inputText 
+								value="#{communicationCenter.action.mediaType}"
+								size="20" disabled="true" />
+						</aon:div>
 					</aon:div>
 					
 					<aon:outputLabel for="CommunicationCenter_survey_id" 
