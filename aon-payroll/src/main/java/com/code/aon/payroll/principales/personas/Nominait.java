@@ -15,7 +15,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.payroll.enumeration.Tipoit;
 import com.code.aon.payroll.principales.persona.Trabajador;
 
 /**
@@ -28,7 +32,7 @@ public class Nominait implements ITransferObject {
 
 	private NominaitPK id;
 	private Date fecfin;
-	private String tipoit;
+	private Tipoit tipoit;
 	private int diasit;
 	private int diasSs;
 	private int diasemp;
@@ -71,12 +75,13 @@ public class Nominait implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Tipo de I.T.")
+	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Tipoit")} )
 	@Column(name = "tipoit", nullable = false, length = 1)
-	public String getTipoit() {
+	public Tipoit getTipoit() {
 		return this.tipoit;
 	}
 
-	public void setTipoit(String tipoit) {
+	public void setTipoit(Tipoit tipoit) {
 		this.tipoit = tipoit;
 	}
 

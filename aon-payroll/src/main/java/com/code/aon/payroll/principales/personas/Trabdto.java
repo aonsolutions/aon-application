@@ -15,7 +15,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.payroll.enumeration.Afectados;
 import com.code.aon.payroll.principales.persona.Trabajador;
 
 /**
@@ -31,7 +35,7 @@ public class Trabdto implements ITransferObject {
 	private Date fecfin;
 	private Integer linea;
 	private String concepto;
-	private String afecta;
+	private Afectados afecta;
 	private BigDecimal importe;
 	private String indimp;
 	private Date fecnew;
@@ -95,12 +99,13 @@ public class Trabdto implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Nominas a las que afecta")
+	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Afectados")} )
 	@Column(name = "afecta", nullable = false, length = 1)
-	public String getAfecta() {
+	public Afectados getAfecta() {
 		return this.afecta;
 	}
 
-	public void setAfecta(String afecta) {
+	public void setAfecta(Afectados afecta) {
 		this.afecta = afecta;
 	}
 

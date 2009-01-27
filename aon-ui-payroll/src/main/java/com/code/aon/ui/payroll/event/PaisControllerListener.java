@@ -39,7 +39,7 @@ public class PaisControllerListener extends ControllerAdapter implements IPayrol
 	}
 
 	private void resetComunidadModel() throws ControllerListenerException {
-		LinesController comunidadController = (LinesController) FormUtil.getController(COMUNIDAD_CONTROLLER_NAME);
+		LinesController comunidadController = (LinesController) FormUtil.getController(IPayrollConstants.COMUNIDAD_CONTROLLER_NAME);
 		try {
 			comunidadController.clearCriteria();
 			Criteria criteria = comunidadController.getCriteria();

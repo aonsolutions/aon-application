@@ -1,0 +1,100 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div id="avisoDataDiv">
+
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+			<ui:param name="controller" value="#{aviso}" />
+			<ui:param name="columnClasses" value="
+			aon-editDataTable-dateColumn, aon-editDataTable-dateColumn,
+			aon-editDataTable-textColumn" />
+			<!--  
+			<ui:param name="showDataScroller" value="#{(!comunidad.new) and (comunidad.to != null)}" />			
+			-->
+			
+			<ui:param name="skipSaveButton" value="#{true}" />
+			<ui:param name="skipRemoveButton" value="#{true}" />
+			<!-- <aon:methodParam name="resetAction" value="aviso_form" /> -->
+			<!-- <ui:param name="skipResetButton" value="#{trabajador.new or (trabajador.to == null)}" /> -->
+			
+			
+			
+			
+			<ui:define name="columns">
+				 
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_cod_trab}" />
+					</f:facet>
+					<aon:outputText value="#{to.cdg}" rendered="#{to!=aviso.to}" />
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{to==aviso.to}" size="30"
+						value="#{aviso.to.cdg}" maxlength="50" />
+					<f:facet name="footer">
+						<aon:inputText styleClass="aon-form-input-text" required="true"
+							rendered="#{aviso.new}" size="30"
+							value="#{aviso.to.cdg}" maxlength="50" />
+					</f:facet>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_cod_trab}" />
+					</f:facet>
+					<aon:outputText value="#{to.descripcion}" rendered="#{to!=aviso.to}" />
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{to==aviso.to}" size="30"
+						value="#{aviso.to.descripcion}" maxlength="50" />
+					<f:facet name="footer">
+						<aon:inputText styleClass="aon-form-input-text" required="true"
+							rendered="#{aviso.new}" size="30"
+							value="#{aviso.to.descripcion}" maxlength="50" />
+					</f:facet>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecha_baja}" />
+					</f:facet>
+					<aon:outputText value="#{to.fecha}" rendered="#{to!=aviso.to}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+					<aon:selectInputDate renderAsPopup="true" required="true"
+						rendered="#{to==aviso.to}"
+						popupDateFormat="#{appBundle.aon_date_pattern}"
+						value="#{aviso.to.fecha}" enableManualInput="true" />
+					<f:facet name="footer">
+						<aon:selectInputDate renderAsPopup="true" required="true"
+							rendered="#{aviso.new}"
+							popupDateFormat="#{appBundle.aon_date_pattern}"
+							value="#{aviso.to.fecha}" enableManualInput="true" />
+					</f:facet>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_cod_trab}" />
+					</f:facet>
+					<aon:outputText value="#{to.tipo}" rendered="#{to!=aviso.to}" />
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{to==aviso.to}" size="30"
+						value="#{aviso.to.tipo}" maxlength="50" />
+					<f:facet name="footer">
+						<aon:inputText styleClass="aon-form-input-text" required="true"
+							rendered="#{aviso.new}" size="30"
+							value="#{aviso.to.tipo}" maxlength="50" />
+					</f:facet>
+				</aon:column>
+				
+			</ui:define>
+		</ui:decorate>
+					
+	</aon:div>
+
+</ui:composition>

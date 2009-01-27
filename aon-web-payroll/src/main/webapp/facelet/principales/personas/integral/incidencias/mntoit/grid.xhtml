@@ -1,0 +1,154 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div id="parteitDataDiv">
+
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+			<ui:param name="controller" value="#{parteit}" />
+			<ui:param name="columnClasses" value="
+			aon-editDataTable-dateColumn, aon-editDataTable-dateColumn,
+			aon-editDataTable-textColumn, aon-editDataTable-numberColumn" />
+			<!--  
+			<ui:param name="showDataScroller" value="#{(!comunidad.new) and (comunidad.to != null)}" />			
+			-->
+			
+			<ui:param name="skipSaveButton" value="#{true}" />
+			<ui:param name="skipRemoveButton" value="#{true}" />
+			<!-- <aon:methodParam name="resetAction" value="parteit_form" /> -->
+			<!-- <ui:param name="skipResetButton" value="#{trabajador.new or (trabajador.to == null)}" /> -->
+			
+			
+			
+			
+			<ui:define name="columns">
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecha_alta}" />
+					</f:facet>
+					<aon:outputText value="#{to.id.fecini}" rendered="#{to!=parteit.to}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+					<aon:selectInputDate renderAsPopup="true" required="true"
+						rendered="#{to==parteit.to}"
+						popupDateFormat="#{appBundle.aon_date_pattern}"
+						value="#{parteit.to.id.fecini}" enableManualInput="true" />
+					<f:facet name="footer">
+						<aon:selectInputDate renderAsPopup="true" required="true"
+							rendered="#{parteit.new}"
+							popupDateFormat="#{appBundle.aon_date_pattern}"
+							value="#{parteit.to.id.fecini}" enableManualInput="true" />
+					</f:facet>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecha_baja}" />
+					</f:facet>
+					<aon:outputText value="#{to.fecfin}" rendered="#{to!=parteit.to}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+					<aon:selectInputDate renderAsPopup="true" required="true"
+						rendered="#{to==parteit.to}"
+						popupDateFormat="#{appBundle.aon_date_pattern}"
+						value="#{parteit.to.fecfin}" enableManualInput="true" />
+					<f:facet name="footer">
+						<aon:selectInputDate renderAsPopup="true" required="true"
+							rendered="#{parteit.new}"
+							popupDateFormat="#{appBundle.aon_date_pattern}"
+							value="#{parteit.to.fecfin}" enableManualInput="true" />
+					</f:facet>
+				</aon:column>
+				 
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_cod_trab}" />
+					</f:facet>
+					<aon:outputText value="#{to.tipoit}" rendered="#{to!=parteit.to}" />
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{to==parteit.to}" size="30"
+						value="#{parteit.to.tipoit}" maxlength="50" />
+					<f:facet name="footer">
+						<aon:inputText styleClass="aon-form-input-text" required="true"
+							rendered="#{parteit.new}" size="30"
+							value="#{parteit.to.tipoit}" maxlength="50" />
+					</f:facet>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_cod_trab}" />
+					</f:facet>
+					<aon:selectBooleanCheckbox value="#{to.recaida}" rendered="#{to!=parteit.to}" disabled="#{true}"/>
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{to==parteit.to}" size="13"
+						value="#{parteit.to.recaida}" maxlength="11" />
+					<f:facet name="footer">
+						<aon:inputText styleClass="aon-form-input-text" required="true"
+							rendered="#{parteit.new}" size="13"
+							value="#{parteit.to.recaida}" maxlength="11" />
+					</f:facet>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecha_baja}" />
+					</f:facet>
+					<aon:outputText value="#{to.feciniori}" rendered="#{to!=parteit.to}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+					<aon:selectInputDate renderAsPopup="true" required="true"
+						rendered="#{to==parteit.to}"
+						popupDateFormat="#{appBundle.aon_date_pattern}"
+						value="#{parteit.to.feciniori}" enableManualInput="true" />
+					<f:facet name="footer">
+						<aon:selectInputDate renderAsPopup="true" required="true"
+							rendered="#{parteit.new}"
+							popupDateFormat="#{appBundle.aon_date_pattern}"
+							value="#{parteit.to.feciniori}" enableManualInput="true" />
+					</f:facet>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_cod_trab}" />
+					</f:facet>
+					<aon:outputText value="#{to.proret}" rendered="#{to!=parteit.to}" />
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{to==parteit.to}" size="13"
+						value="#{parteit.to.proret}" maxlength="11" />
+					<f:facet name="footer">
+						<aon:inputText styleClass="aon-form-input-text" required="true"
+							rendered="#{parteit.new}" size="13"
+							value="#{parteit.to.proret}" maxlength="11" />
+					</f:facet>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_cod_trab}" />
+					</f:facet>
+					<aon:selectBooleanCheckbox value="#{to.procesado}" rendered="#{to!=parteit.to}" disabled="#{true}"/>
+					<aon:selectBooleanCheckbox value="#{actividad.to.indcal}" rendered="#{to==parteit.to}"/>
+					<f:facet name="footer">
+						<aon:selectBooleanCheckbox value="#{actividad.to.indcal}" rendered="#{parteit.new}"/>
+					</f:facet>
+				</aon:column>
+				
+				
+
+				
+			</ui:define>
+		</ui:decorate>
+					
+	</aon:div>
+
+</ui:composition>

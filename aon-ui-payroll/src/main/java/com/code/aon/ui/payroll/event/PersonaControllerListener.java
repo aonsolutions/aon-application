@@ -22,4 +22,13 @@ public class PersonaControllerListener extends ControllerAdapter implements
 
 		((PersonaController)getController()).verifyNullFields();
 	}
+	
+	@Override
+	public void beforeBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		// TODO Auto-generated method stub
+		System.out.println(" beforeBeanSelected ");
+		
+		super.beforeBeanSelected(event);
+	}
 }

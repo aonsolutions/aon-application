@@ -1345,6 +1345,46 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>trabajador_form</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/trabajador/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>trabajador_search</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/trabajador/search.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>trabajador_list</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/trabajador/list.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>trabajo_form</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/trabajo/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>trabajo_search</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/trabajo/search.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>trabajo_list</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/trabajo/list.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	
 	<!-- =================== Seguros TC2 ================= -->
 	<navigation-rule>
