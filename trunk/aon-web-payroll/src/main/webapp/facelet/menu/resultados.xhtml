@@ -92,7 +92,12 @@
 								</aon:commandLink>
 							</aon:div>
 							<aon:div>
-								<aon:commandLink value="#{menuBundle.resultados_seguros_sociales__tc1calc}" disabled="true" />
+								<aon:commandLink value="#{menuBundle.resultados_seguros_sociales__tc1calc}" action="tc1_form" >
+									<aon:actionListener method="#{tc1.onSearch}" />
+									<aon:actionListener method="#{tc1.onEditSearch}" />
+									<aon:actionListener method="#{tc1.onSelectFirst}" />
+									
+								</aon:commandLink>
 							</aon:div>
 						</aon:div>
 					</aon:panel>

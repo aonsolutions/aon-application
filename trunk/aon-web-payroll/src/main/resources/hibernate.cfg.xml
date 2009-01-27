@@ -155,6 +155,7 @@ hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN
     <!-- RESULTADOS -SEGUROS SOCIALES-->			
     <mapping class="com.code.aon.payroll.resultados.seguros.Lintc2"/>
     <mapping class="com.code.aon.payroll.resultados.seguros.Tc2"/>
+    <mapping class="com.code.aon.payroll.resultados.seguros.Tc1"/>
     <!--AVANZADAS-COSTES -->			
     <mapping class="com.code.aon.payroll.avanzadas.simulacion.Costes"/>
     <mapping class="com.code.aon.payroll.avanzadas.simulacion.Lbonifica"/>
