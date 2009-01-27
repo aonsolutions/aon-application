@@ -47,8 +47,7 @@
 						lookupChangeListener="#{customerFee.onItemChanged}">
 					</aon:lookupButton>
 					<aon:inputText id="item_product_name-Edit"
-						value="#{(customerFee.to.item.product.name!=null)?(customerFee.to.item.product.name):('')}"
-						disabled="true" size="30" />
+						value="#{customerFee.to.description}" size="30" />
 				</aon:div>
 				<f:facet name="footer">
 					<aon:div styleClass="aon-lookup" rendered="#{customerFee.new}">
@@ -69,8 +68,7 @@
 							lookupChangeListener="#{customerFee.onItemChanged}">
 						</aon:lookupButton>
 						<aon:inputText id="item_product_name-New"
-							value="#{(customerFee.to.item.product.name!=null)?(customerFee.to.item.product.name):('')}"
-							disabled="true" size="30" />
+							value="#{customerFee.to.description}" size="30" />
 					</aon:div>
 				</f:facet>
 			</aon:column>
