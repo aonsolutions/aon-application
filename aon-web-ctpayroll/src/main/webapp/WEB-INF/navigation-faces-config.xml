@@ -1346,7 +1346,7 @@
 		</navigation-case>
 	</navigation-rule>
 	
-	<!-- =================== Resultados - Nominadto ================= -->
+	<!-- =================== Seguros TC2 ================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>tc2_form</from-outcome>
@@ -1388,8 +1388,30 @@
 				/facelet/avanzadas/simulacion/search.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule> 		
-
+	</navigation-rule> 	
+	
+	
+		<!-- =================== Seguros- TC1 ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>tc1_form</from-outcome>
+			<to-view-id>
+				/facelet/resultados/seguros/tc1/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>tc1_list</from-outcome>
+			<to-view-id>
+				/facelet/resultados/seguros/tc1/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>tc1_search</from-outcome>
+			<to-view-id>
+				/facelet/resultados/seguros/tc1/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
 	
 </faces-config>
 

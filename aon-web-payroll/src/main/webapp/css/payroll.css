@@ -173,6 +173,26 @@ table#homepage\3A cnaeForm\3A listaOcupaciones, table#homepage\3A cnaeForm\3A li
 	width: 300px; 
 
 }
+
+
+	/* ---------- FORMSSIMU --------- */
+
+.aon-scroll-area-sim2 td.aon-panelGrid-odd{
+	width:200px;
+	min-width: 200px;
+	max-width: 200px;
+	white-space: normal;
+	}
+.aon-scroll-area-sim2 td.aon-panelGrid-even{
+	width: 150px;
+	min-width: 150px;
+	max-width: 150px;
+	}
+.aon-scroll-area-sim2 table.aon-panelGrid {
+	width: 300px; 
+
+}
+	
 	
 
 	

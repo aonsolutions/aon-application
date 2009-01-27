@@ -108,6 +108,7 @@ import com.code.aon.payroll.resultados.salarios.Finiquito;
 import com.code.aon.payroll.resultados.salarios.Nomdtoex;
 import com.code.aon.payroll.resultados.salarios.Nominaex;
 import com.code.aon.payroll.resultados.seguros.Lintc2;
+import com.code.aon.payroll.resultados.seguros.Tc1;
 import com.code.aon.payroll.resultados.seguros.Tc2;
 import com.code.aon.payroll.tipos.Autorizacion;
 import com.code.aon.payroll.tipos.Documento;
@@ -232,6 +233,7 @@ public class PayrollAliasWriter {
 		        Trabinci.class.getName(),
 		        Tc2.class.getName(),
 		        Lintc2.class.getName(),
+		        Tc1.class.getName(),
 		        Costes.class.getName(),
 		        Lbonifica.class.getName(),
 		        Lcomunica.class.getName()
