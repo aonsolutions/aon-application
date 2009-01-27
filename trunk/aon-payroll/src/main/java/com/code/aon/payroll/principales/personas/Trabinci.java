@@ -131,7 +131,7 @@ public class Trabinci implements ITransferObject {
 		this.importe = importe;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "codinc", insertable = false, updatable = false)
 	public Tipinc getTipinc() {
 		return this.tipinc;

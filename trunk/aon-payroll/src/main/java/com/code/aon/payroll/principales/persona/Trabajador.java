@@ -12,8 +12,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.payroll.enumeration.IndiceAgrario;
+import com.code.aon.payroll.enumeration.IndiceGrupo;
 import com.code.aon.payroll.principales.Domicilio;
 import com.code.aon.payroll.principales.empresa.Actividad;
 import com.code.aon.payroll.principales.empresa.Emprccc;
@@ -36,18 +42,25 @@ public class Trabajador implements ITransferObject {
 	private Date hornew;
 	private Date fecmod;
 	private Date hormod;
-	private String contrTemp;
-	private String mayor65;
-	private String afi;
-	private String indagrario;
-	private String indgrupo;
-	private String pariente;
+	private Boolean contrTemp;
+	private Boolean mayor65;
+	private Boolean afi;
+	private IndiceAgrario indagrario;
+	private IndiceGrupo indgrupo;
+	private Boolean pariente;
 	private Actividad actividad;
 	private Domicilio domicilio;	
 	private Emprccc emprccc;
 	private Emprccos emprccos;	
 	private Empresa empresa;
 	private Persona persona;
+	
+	// unknown message error -1016, al poner fetchType a EAGER
+	//private Domicilio domicilio;
+	
+	public Trabajador() {
+		domicilio = new Domicilio();
+	}
 	
 	/**
 	 * Devuelve el Codigo de Trabajador
@@ -163,12 +176,13 @@ public class Trabajador implements ITransferObject {
 	 * Devuelve el Contrato temporal
 	 * @return
 	 */
+	@Type(type="siNoType" )
 	@Column(name = "contr_temp", length = 1)
-	public String getContrTemp() {
-		return this.contrTemp;
+	public Boolean getContrTemp() {
+		return this.contrTemp==null?false:this.contrTemp;
 	}
 
-	public void setContrTemp(String contrTemp) {
+	public void setContrTemp(Boolean contrTemp) {
 		this.contrTemp = contrTemp;
 	}
 
@@ -176,12 +190,13 @@ public class Trabajador implements ITransferObject {
 	 * Devuelve si Mayores de 65 años y mas de 35 años Cotizados 
 	 * @return
 	 */
+	@Type(type="siNoType" )
 	@Column(name = "mayor65", length = 1)
-	public String getMayor65() {
-		return this.mayor65;
+	public Boolean getMayor65() {
+		return this.mayor65==null?false:this.mayor65;
 	}
 
-	public void setMayor65(String mayor65) {
+	public void setMayor65(Boolean mayor65) {
 		this.mayor65 = mayor65;
 	}
 
@@ -189,12 +204,13 @@ public class Trabajador implements ITransferObject {
 	 * Devuelve si Insertado en AFI 
 	 * @return
 	 */
+	@Type(type="siNoType" )
 	@Column(name = "afi", length = 1)
-	public String getAfi() {
-		return this.afi;
+	public Boolean getAfi() {
+		return this.afi==null?false:this.afi;
 	}
 
-	public void setAfi(String afi) {
+	public void setAfi(Boolean afi) {
 		this.afi = afi;
 	}
 
@@ -202,12 +218,13 @@ public class Trabajador implements ITransferObject {
 	 * Devuelve el Tipo Contrato Agrario 
 	 * @return
 	 */
+	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.IndiceAgrario")} )
 	@Column(name = "indagrario", length = 1)
-	public String getIndagrario() {
+	public IndiceAgrario getIndagrario() {
 		return this.indagrario;
 	}
 
-	public void setIndagrario(String indagrario) {
+	public void setIndagrario(IndiceAgrario indagrario) {
 		this.indagrario = indagrario;
 	}
 
@@ -215,12 +232,13 @@ public class Trabajador implements ITransferObject {
 	 * Devuelve el Artista 
 	 * @return
 	 */
+	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.IndiceGrupo")} )
 	@Column(name = "indgrupo", length = 1)
-	public String getIndgrupo() {
+	public IndiceGrupo getIndgrupo() {
 		return this.indgrupo;
 	}
 
-	public void setIndgrupo(String indgrupo) {
+	public void setIndgrupo(IndiceGrupo indgrupo) {
 		this.indgrupo = indgrupo;
 	}
 
@@ -228,12 +246,14 @@ public class Trabajador implements ITransferObject {
 	 * Devuelve el Pariente 1º o 2º Grado 
 	 * @return
 	 */
+	@Type(type="siNoType" )
 	@Column(name = "pariente", length = 1)
-	public String getPariente() {
-		return this.pariente;
+	public Boolean getPariente() {
+		return this.pariente==null?false:this.pariente;
+		
 	}
 
-	public void setPariente(String pariente) {
+	public void setPariente(Boolean pariente) {
 		this.pariente = pariente;
 	}
 
@@ -251,7 +271,7 @@ public class Trabajador implements ITransferObject {
 	
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "domicilio", nullable = false)
+	@JoinColumn(name = "domicilio", referencedColumnName = "cdg", nullable = false)
 	public Domicilio getDomicilio() {
 		return this.domicilio;
 	}
@@ -259,9 +279,7 @@ public class Trabajador implements ITransferObject {
 	public void setDomicilio(Domicilio domicilio) {
 		this.domicilio = domicilio;
 	}
-
-
-
+	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumns( {
 			@JoinColumn(name = "codact", referencedColumnName = "cdg", nullable = false),
@@ -275,7 +293,7 @@ public class Trabajador implements ITransferObject {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "codcco")
+	@JoinColumn(name = "codcco", referencedColumnName = "cdg")
 	public Emprccos getEmprccos() {
 		return this.emprccos;
 	}
@@ -285,7 +303,7 @@ public class Trabajador implements ITransferObject {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "codemp", nullable = false)
+	@JoinColumn(name = "codemp", referencedColumnName = "cdg", nullable = false)
 	public Empresa getEmpresa() {
 		return this.empresa;
 	}
@@ -295,7 +313,7 @@ public class Trabajador implements ITransferObject {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "codper", nullable = false)
+	@JoinColumn(name = "codper", referencedColumnName = "cdg", nullable = false)
 	public Persona getPersona() {
 		return this.persona;
 	}

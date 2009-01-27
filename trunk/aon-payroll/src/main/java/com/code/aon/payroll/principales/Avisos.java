@@ -3,6 +3,7 @@ package com.code.aon.payroll.principales;
 
 
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,7 +14,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.payroll.enumeration.TipoAviso;
 import com.code.aon.payroll.principales.empresa.Actividad;
 import com.code.aon.payroll.principales.empresa.Empresa;
 
@@ -27,7 +32,7 @@ public class Avisos  implements ITransferObject {
      private Integer cdg;
      private String descripcion;
      private Date fecha;
-     private String tipo;
+     private TipoAviso tipo;
      private Cliente cliente;
      private Empresa empresa;
      private Actividad actividad;
@@ -64,13 +69,13 @@ public class Avisos  implements ITransferObject {
         this.fecha = fecha;
     }
     
-	
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.TipoAviso")} )
     @Column(name="tipo", length=1)
-    public String getTipo() {
+    public TipoAviso getTipo() {
         return this.tipo;
     }
     
-    public void setTipo(String tipo) {
+    public void setTipo(TipoAviso tipo) {
         this.tipo = tipo;
     }
     

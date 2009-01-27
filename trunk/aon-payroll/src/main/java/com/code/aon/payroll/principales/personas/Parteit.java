@@ -15,7 +15,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.payroll.enumeration.Prorateo;
+import com.code.aon.payroll.enumeration.Tipoit;
 import com.code.aon.payroll.principales.persona.Trabajador;
 
 /**
@@ -34,10 +39,10 @@ public class Parteit implements ITransferObject {
 	private String numcolalt;
 	private String ciasalt;
 	private String altproc;
-	private String tipoit;
-	private String recaida;
+	private Tipoit tipoit;
+	private Boolean recaida;
 	private Date feciniori;
-	private String proret;
+	private Prorateo proret;
 	private BigDecimal baseant;
 	private Integer diasant;
 	private BigDecimal baseregdia;
@@ -45,7 +50,7 @@ public class Parteit implements ITransferObject {
 	private BigDecimal basediaacc;
 	private BigDecimal prest60;
 	private BigDecimal prest75;
-	private String procesado;
+	private Boolean procesado;
 	private String riesgo;
 	private Trabajador emprper;
 
@@ -135,22 +140,24 @@ public class Parteit implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Tipo de I.T.")
+	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Tipoit")} )
 	@Column(name = "tipoit", nullable = false, length = 1)
-	public String getTipoit() {
+	public Tipoit getTipoit() {
 		return this.tipoit;
 	}
 
-	public void setTipoit(String tipoit) {
+	public void setTipoit(Tipoit tipoit) {
 		this.tipoit = tipoit;
 	}
 
 	// @DataDefinition(label="Recaida de Anterior I.T.")
+	@Type(type="siNoType" )
 	@Column(name = "recaida", length = 1)
-	public String getRecaida() {
+	public Boolean getRecaida() {
 		return this.recaida;
 	}
 
-	public void setRecaida(String recaida) {
+	public void setRecaida(Boolean recaida) {
 		this.recaida = recaida;
 	}
 
@@ -166,12 +173,13 @@ public class Parteit implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Prorrateo Cotizacion")
+	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Prorateo")} )
 	@Column(name = "proret", nullable = false, length = 1)
-	public String getProret() {
+	public Prorateo getProret() {
 		return this.proret;
 	}
 
-	public void setProret(String proret) {
+	public void setProret(Prorateo proret) {
 		this.proret = proret;
 	}
 
@@ -246,12 +254,13 @@ public class Parteit implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Parte Procesado (S/N)")
+	@Type(type="siNoType" )
 	@Column(name = "procesado", length = 1)
-	public String getProcesado() {
+	public Boolean getProcesado() {
 		return this.procesado;
 	}
 
-	public void setProcesado(String procesado) {
+	public void setProcesado(Boolean procesado) {
 		this.procesado = procesado;
 	}
 

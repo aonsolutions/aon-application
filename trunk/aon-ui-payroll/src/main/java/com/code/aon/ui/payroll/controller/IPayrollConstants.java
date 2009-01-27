@@ -28,5 +28,8 @@ public interface IPayrollConstants {
 	String PERCEP_CONTROLLER_NAME = "percep";
 	String LINIMPRESOS190_CONTROLLER_NAME = "linimpresos190";
 	String IMPRESOS190_CONTROLLER_NAME = "impresos190";
+	String TRABAJADOR_CONTROLLER_NAME = "trabajador";
+	String TRABAJO_CONTROLLER_NAME = "trabajo";
 	String EMPRESA_CONTROLLER_NAME = "empresa";
+	
 }

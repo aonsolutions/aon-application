@@ -1,0 +1,104 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div id="embargosDataDiv">
+
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+			<ui:param name="controller" value="#{embargo}" />
+			<ui:param name="columnClasses" value="
+			aon-editDataTable-dateColumn, aon-editDataTable-dateColumn,
+			aon-editDataTable-textColumn" />
+			<!--  
+			<ui:param name="showDataScroller" value="#{(!comunidad.new) and (comunidad.to != null)}" />			
+			-->
+			
+			<ui:param name="skipSaveButton" value="#{true}" />
+			<ui:param name="skipRemoveButton" value="#{true}" />
+			<!-- <aon:methodParam name="resetAction" value="embargo_form" /> -->
+			<!-- <ui:param name="skipResetButton" value="#{trabajador.new or (trabajador.to == null)}" /> -->
+			
+			
+			
+			
+			<ui:define name="columns">
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecha_alta}" />
+					</f:facet>
+					<aon:outputText value="#{to.id.fecha}" rendered="#{to!=embargo.to}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+					<aon:selectInputDate renderAsPopup="true" required="true"
+						rendered="#{to==embargo.to}"
+						popupDateFormat="#{appBundle.aon_date_pattern}"
+						value="#{embargo.to.id.fecha}" enableManualInput="true" />
+					<f:facet name="footer">
+						<aon:selectInputDate renderAsPopup="true" required="true"
+							rendered="#{embargo.new}"
+							popupDateFormat="#{appBundle.aon_date_pattern}"
+							value="#{embargo.to.id.fecha}" enableManualInput="true" />
+					</f:facet>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_cod_trab}" />
+					</f:facet>
+					<aon:outputText value="#{to.concepto}" rendered="#{to!=embargo.to}" />
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{to==embargo.to}" size="30"
+						value="#{embargo.to.concepto}" maxlength="50" />
+					<f:facet name="footer">
+						<aon:inputText styleClass="aon-form-input-text" required="true"
+							rendered="#{embargo.new}" size="30"
+							value="#{embargo.to.concepto}" maxlength="50" />
+					</f:facet>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_cod_trab}" />
+					</f:facet>
+					<aon:outputText value="#{to.importe}" rendered="#{to!=embargo.to}" />
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{to==embargo.to}" size="30"
+						value="#{embargo.to.importe}" maxlength="50" />
+					<f:facet name="footer">
+						<aon:inputText styleClass="aon-form-input-text" required="true"
+							rendered="#{embargo.new}" size="30"
+							value="#{embargo.to.importe}" maxlength="50" />
+					</f:facet>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_cod_trab}" />
+					</f:facet>
+					<aon:outputText value="#{to.afecta}" rendered="#{to!=embargo.to}" />
+					<!--  
+						<aon:enumConverter enum="com.code.aon.payroll.enumeration.Afectados" />
+					</aon:outputText>
+					-->
+					<aon:inputText styleClass="aon-form-input-text" required="true"
+						rendered="#{to==embargo.to}" size="30"
+						value="#{embargo.to.afecta}" maxlength="50" />
+					<f:facet name="footer">
+						<aon:inputText styleClass="aon-form-input-text" required="true"
+							rendered="#{embargo.new}" size="30"
+							value="#{embargo.to.afecta}" maxlength="50" />
+					</f:facet>
+				</aon:column>
+				
+			</ui:define>
+		</ui:decorate>
+					
+	</aon:div>
+
+</ui:composition>

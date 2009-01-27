@@ -109,7 +109,7 @@ public class Bonifica implements ITransferObject {
 		this.emprper = emprper;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "cdg", insertable = false, updatable = false)
 	public Bonificacion getTipboni() {
 		return this.tipboni;
