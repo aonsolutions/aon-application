@@ -182,4 +182,11 @@ public class InvoiceSearchListener extends ControllerSearchListener {
 		}		
 	}	
 
+	public boolean isPurchase() {
+		return getType() == InvoiceType.PURCHASE;
+	}
+	public boolean isSales() {
+		return getType() == InvoiceType.SALES;
+	}
+	
 }
