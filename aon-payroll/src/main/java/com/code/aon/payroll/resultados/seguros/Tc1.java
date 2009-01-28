@@ -14,6 +14,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.principales.empresa.Actividad;
 import com.code.aon.payroll.principales.empresa.Emprccc;
@@ -83,7 +85,7 @@ public class Tc1  implements ITransferObject {
      private String mostrar;
      private String cdgred;
      private String desglose;
-     private String comision;
+     private Boolean comision;
      private String tipotc1;
      private Integer tc2;
      private String divisa;
@@ -707,12 +709,13 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Comision Mutua")
+	@Type(type="siNoType" )
     @Column(name="comision", length=1)
-    public String getComision() {
+    public Boolean getComision() {
         return this.comision;
     }
     
-    public void setComision(String comision) {
+    public void setComision(Boolean comision) {
         this.comision = comision;
     }
     
