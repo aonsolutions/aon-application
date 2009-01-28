@@ -27,12 +27,15 @@ public class WebInfoControllerListener extends ControllerAdapter {
 	}
 	
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		IController companyController = (IController) FormUtil.getController(COMPANY_CONTROLLER_NAME);
-		Company company = ((Company)companyController.getTo());
-
-		CompanyWebInfoController webInfoController = (CompanyWebInfoController) FormUtil.getController(WEB_INFO_CONTROLLER_NAME);
-		WebInfo wi = (WebInfo)webInfoController.getTo();
-		wi.setCompany(company);
+		try {
+			IController companyController = (IController) FormUtil.getController(COMPANY_CONTROLLER_NAME);
+			Company company = ((Company)companyController.getTo());
+	
+			CompanyWebInfoController webInfoController = (CompanyWebInfoController) FormUtil.getController(WEB_INFO_CONTROLLER_NAME);
+			WebInfo wi = (WebInfo)webInfoController.getTo();
+			wi.setCompany(company);
+		}
+		catch (Exception e) {}
 	}
 
 }
