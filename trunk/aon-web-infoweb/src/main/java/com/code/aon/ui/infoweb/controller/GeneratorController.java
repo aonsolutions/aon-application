@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.faces.event.ActionEvent;
 
@@ -22,6 +23,15 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.dao.IConfigAlias;
+import com.code.aon.infoweb.WebInfo;
+import com.code.aon.infoweb.WebInfoPage;
+import com.code.aon.infoweb.WebInfoPageDetail;
+import com.code.aon.infoweb.WebInfoPageResource;
+import com.code.aon.infoweb.WebInfoStyle;
+import com.code.aon.infoweb.dao.IWebInfoAlias;
+import com.code.aon.infoweb.enumeration.WebInfoFontType;
+import com.code.aon.infoweb.enumeration.WebInfoPageType;
+import com.code.aon.infoweb.enumeration.WebInfoVariableType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
@@ -37,15 +47,6 @@ import com.code.aon.ui.infoweb.velocity.ImageHandler;
 import com.code.aon.ui.infoweb.velocity.MenuOptionHandler;
 import com.code.aon.ui.infoweb.velocity.VelocityConstants;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.infoweb.WebInfo;
-import com.code.aon.infoweb.WebInfoPage;
-import com.code.aon.infoweb.WebInfoPageDetail;
-import com.code.aon.infoweb.WebInfoPageResource;
-import com.code.aon.infoweb.WebInfoStyle;
-import com.code.aon.infoweb.dao.IWebInfoAlias;
-import com.code.aon.infoweb.enumeration.WebInfoFontType;
-import com.code.aon.infoweb.enumeration.WebInfoPageType;
-import com.code.aon.infoweb.enumeration.WebInfoVariableType;
 
 public class GeneratorController extends BasicController implements VelocityConstants  {
 
@@ -355,7 +356,21 @@ public class GeneratorController extends BasicController implements VelocityCons
 		else template = "generic" + wipd.getLayout().ordinal() + ".vm";
 		vu.put("title", wipd.getTitle());
 		vu.put("text", wipd.getContent());
-		if (wip.getType() == WebInfoPageType.LOCATION) vu.put("coords", wipd.getExtra());
+		if (wip.getType() == WebInfoPageType.LOCATION) {
+			//Primero miramos si el extra tiene |
+			String extra = wipd.getExtra();
+			if (extra.indexOf("|") >= 0) {
+				int num = 0;
+				StringTokenizer st = new StringTokenizer(extra, "|");
+				while (st.hasMoreTokens()) {
+					String coords = st.nextToken();
+					if (num == 0) vu.put("coords", coords);
+					else vu.put("coords"+num, coords);
+					num++;
+				}
+			}
+			else vu.put("coords", wipd.getExtra());
+		}
 		
 		//Ahora las imagenes
 		ArrayList<ImageHandler> images = new ArrayList<ImageHandler>();
