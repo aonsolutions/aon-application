@@ -6,7 +6,10 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
@@ -14,6 +17,9 @@ import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.config.Series;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.finance.Finance;
@@ -22,10 +28,12 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.common.components.LookupChangeEvent;
@@ -51,24 +59,23 @@ public class SaleInvoiceController extends InvoiceController {
 	private CustomerValidationManager cvm;
 
 	private List<SelectItem> addresses;
-	
 
-	public IPriceStrategy getPriceStrategy(){
-		if(priceStrategy == null){
+	public IPriceStrategy getPriceStrategy() {
+		if (priceStrategy == null) {
 			priceStrategy = new InvoicePriceStrategy();
 		}
 		return priceStrategy;
 	}
 
 	public FinanceGenerator getFinanceGenerator() {
-		if(financeGenerator == null){
+		if (financeGenerator == null) {
 			financeGenerator = new FinanceGenerator();
 		}
 		return financeGenerator;
 	}
 
 	public AccountEntryInvoiceWriter getAccountWriter() {
-		if(accountWriter == null){
+		if (accountWriter == null) {
 			accountWriter = new AccountEntryInvoiceWriter();
 		}
 		return accountWriter;
@@ -90,7 +97,7 @@ public class SaleInvoiceController extends InvoiceController {
 	}
 	
 	public int getAddressCount() {
-		if(addresses != null){
+		if (addresses != null) {
 			return addresses.size();
 		}
 		return 0;
@@ -103,7 +110,7 @@ public class SaleInvoiceController extends InvoiceController {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
 			Iterator<?> iter = rAddressBean.getList(criteria).iterator();
-			while(iter.hasNext()){
+			while(iter.hasNext()) {
 				RegistryAddress address = (RegistryAddress)iter.next();
 				String addressLabel = address.getAddress() + " " + address.getAddress2() + " " + address.getAddress3();
 				addressLabel = ((addressLabel.length()>30)?addressLabel.substring(0,27)+"...":addressLabel) + " - " + address.getCity();
@@ -137,8 +144,49 @@ public class SaleInvoiceController extends InvoiceController {
 		return city;
 	}
 
+	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
+		int number = obtainMaxNumber((String)event.getNewValue());
+		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String)event.getNewValue());
+		if (this.getTo() != null) {
+			((Invoice)this.getTo()).setNumber(number);
+			((Invoice)this.getTo()).setSecurityLevel(securityLevel);
+		}
+	}
+
+	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		Criteria criteria = new Criteria();
+		if (StringUtils.isEmpty(seriesId)) {
+			criteria.addNullExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES));
+		} else {
+			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), seriesId);
+		}
+		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);
+		Projection projection = Projection.max(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER));
+		Object value = invoiceBean.getUniqueResult(projection, criteria);
+		if (value != null) {
+			return ((Integer) value).intValue() + 1;
+		}
+		return 1;
+	}
+
+	@SuppressWarnings("unchecked")
+	private SecurityLevel obtainSeriesSecurityLevel(String seriesId) throws ManagerBeanException {
+		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
+		Iterator iter = seriesBean.getList(criteria).iterator();
+		if (iter.hasNext()) {
+			Series series = (Series)iter.next(); 
+			if (series.getSecurityLevel() != null) {
+				return series.getSecurityLevel();
+			}
+		}
+		return null;
+	}
+
 	public void customerData(LookupChangeEvent event) throws ManagerBeanException{
-		if(event.getNewValue() != null && !event.getNewValue().equals("")){
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Customer customer = (Customer) event.getNewValue();
 			isBlocked(customer); // Saca el mensaje de bloqueo.
 			((Invoice)this.getTo()).setRegistryName(customer.getRegistry().getFullName());
@@ -149,9 +197,8 @@ public class SaleInvoiceController extends InvoiceController {
 			setAddresses(null);	
 		}
 	}
-	
 
-	public double getToInvoiceTotalPrice(){
+	public double getToInvoiceTotalPrice() {
 		Invoice invoice = (Invoice)this.getTo();
 		return getPriceStrategy().getTotalPrice(invoice,invoice);
 	}
@@ -164,10 +211,10 @@ public class SaleInvoiceController extends InvoiceController {
 	public Customer getCustomer() throws ManagerBeanException{
 		IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
 		Criteria criteria = new Criteria();
-		if((Invoice)this.getTo() != null){
+		if ((Invoice)this.getTo() != null) {
 			criteria.addEqualExpression(customerBean.getFieldName(ICustomerAlias.CUSTOMER_REGISTRY_ID), ((Invoice)this.getTo()).getRegistry().getId());
 			Iterator<?> iter = customerBean.getList(criteria).iterator();
-			if(iter.hasNext()){
+			if (iter.hasNext()) {
 				return (Customer)iter.next();
 			}
 			
@@ -175,10 +222,10 @@ public class SaleInvoiceController extends InvoiceController {
 		return null;
 	}
 
-	public boolean isRemovable(){
+	public boolean isRemovable() {
 		SaleInvoiceDetailController feeInvoicingDetailController = (SaleInvoiceDetailController)FormUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
 		Invoice invoice = (Invoice)this.getTo();
-		if(feeInvoicingDetailController.getTo() == null && invoice.getStatus().equals(InvoiceStatus.PENDING)){
+		if (feeInvoicingDetailController.getTo() == null && invoice.getStatus().equals(InvoiceStatus.PENDING)) {
 			return true;
 		}
 		return false;
@@ -190,12 +237,12 @@ public class SaleInvoiceController extends InvoiceController {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 			IController feeFinanceController = FormUtil.getController(SALE_INVOICE_FINANCE_CONTROLLER_NAME);
 			List<?> financeList = (List<?>) feeFinanceController.getModel().getWrappedData();
-			if(existFinanceTrackings(financeList)){
+			if (existFinanceTrackings(financeList)) {
 				AonUtil.addInfoMessageFromBundle(IFinanceMessages.BUNDLE_KEY,IFinanceMessages.VALIDATE_FINANCES_GENERATION_ERROR_KEY);
 				throw new AbortProcessingException();
 			}
 			Iterator<?> iter = financeList.iterator();
-			while(iter.hasNext()){
+			while(iter.hasNext()) {
 				Finance finance = (Finance)iter.next();
 				financeBean.remove(finance);
 			}
@@ -210,11 +257,11 @@ public class SaleInvoiceController extends InvoiceController {
 	private boolean existFinanceTrackings(List<?> financeList) throws ManagerBeanException {
 		IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 		Iterator<?> iter = financeList.iterator();
-		while(iter.hasNext()){
+		while(iter.hasNext()) {
 			Criteria criteria = new Criteria();
 			Finance finance = (Finance)iter.next();
 			criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
-			if(financeTrackingBean.getCount(criteria) > 0){
+			if (financeTrackingBean.getCount(criteria) > 0) {
 				return true;
 			}
 		}
@@ -231,9 +278,9 @@ public class SaleInvoiceController extends InvoiceController {
 		getAccountWriter().unrecordAndUpdateInvoice(invoice);
 	}
 
-	public boolean isRecorded(){
+	public boolean isRecorded() {
 		Invoice invoice = (Invoice)this.getTo();
-		if(invoice.getStatus() != null){
+		if (invoice.getStatus() != null) {
 			return invoice.getStatus().equals(InvoiceStatus.SCORED);
 		}
 		return false;

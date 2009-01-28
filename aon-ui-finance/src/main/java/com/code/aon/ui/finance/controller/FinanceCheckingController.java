@@ -82,7 +82,6 @@ public class FinanceCheckingController extends GridController {
 	 * 
 	 * @param event the menu event
 	 */
-	@SuppressWarnings("unused")	
 	public void setPurchaseMode(ActionEvent event){
 		try {
 			this.clearCriteria();
@@ -97,7 +96,6 @@ public class FinanceCheckingController extends GridController {
 	 * 
 	 * @param event the menu event
 	 */
-	@SuppressWarnings("unused")	
 	public void setSalesMode(ActionEvent event){
 		try {
 			this.clearCriteria();
@@ -128,7 +126,6 @@ public class FinanceCheckingController extends GridController {
 	 * 
 	 * @param event an action event
 	 */
-	@SuppressWarnings("unused")
 	public void onMark(ActionEvent event){
 		if(this.getPending().booleanValue()){
 			markAsPaid(getCheckList());

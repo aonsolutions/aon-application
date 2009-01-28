@@ -23,21 +23,21 @@
 				<ui:define name="searchContent">
 
 					<aon:outputLabel for="Invoice_series"
-						value="#{bundle.aon_series}/#{bundle.aon_number}" />
+						value="#{bundle.aon_series}" />
 					<aon:div>
 						<aon:inputText id="Invoice_series"
 							onblur="toUpperCase(this);"
 							valueChangeListener="#{invoicePrint.addExpression}"
-							size="4" maxlength="5">
+							size="5" maxlength="5">
 						</aon:inputText>
 						<aon:outputLabel for="Invoice_number_from"
 							styleClass="aon-form-date-label aon-padding-right"
-							value="#{bundle.aon_date_from}:" />
+							value="#{bundle.aon_date_from} #{bundle.aon_number}:" />
 						<aon:inputText id="Invoice_number_from"
 							value="#{invoicePrintSearch.fromNumber}" size="7" />
 						<aon:outputLabel for="Invoice_number_to"
 							styleClass="aon-form-date-label aon-padding-right"
-							value="#{bundle.aon_date_to}:" />							
+							value="#{bundle.aon_date_to} #{bundle.aon_number}:" />							
 						<aon:inputText id="Invoice_number_to"
 							value="#{invoicePrintSearch.toNumber}" size="7" />
 					</aon:div>
