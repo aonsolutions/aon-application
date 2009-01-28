@@ -1,31 +1,22 @@
 package com.code.aon.ui.finance.controller;
 
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.CustomerFee;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.product.Item;
 import com.code.aon.product.Tariff;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.customer.controller.CustomerController;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.LinesController;
 
-public class CustomerFeeController extends BasicController {
+public class CustomerFeeController extends LinesController {
 
-	private static final Logger LOGGER = Logger.getLogger(CustomerFeeController.class.getName());
-	
 	private static final String CUSTOMER_CONTROLLER_NAME = "customer";
 	
 	private IPriceStrategy priceStrategy;
@@ -35,19 +26,6 @@ public class CustomerFeeController extends BasicController {
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
 		}
 		return priceStrategy;
-	}
-
-	public void onCustomerFee(ActionEvent event){
-		CustomerController customerController = (CustomerController)FormUtil.getController(CUSTOMER_CONTROLLER_NAME);
-		Customer customer = (Customer)customerController.getTo();
-		try {
-			IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
-			this.clearCriteria();
-			getCriteria().addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_ID), customer.getId());
-			this.onSearch(null);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading fees related with customer with id= " + customer.getId(), e);
-		}
 	}
 
 	public void onItemChanged(LookupChangeEvent event) {
@@ -65,7 +43,6 @@ public class CustomerFeeController extends BasicController {
 			price = getPriceStrategy().getUnitPrice(fee, date, tariff);
 		}
 		fee.setPrice(price);
-		
 	}	
 
 	public void onQuantityChanged(ValueChangeEvent event) {

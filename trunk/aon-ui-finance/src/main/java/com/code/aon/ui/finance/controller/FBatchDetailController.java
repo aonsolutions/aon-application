@@ -20,7 +20,7 @@ public class FBatchDetailController extends LinesController {
 		}
 	}
 
-	@SuppressWarnings({"unused","unchecked"})
+	@SuppressWarnings("unchecked")
 	public void checkAll(ActionEvent event) throws ManagerBeanException{
 		Iterator iter = this.getManagerBean().getList(this.getCriteria()).iterator();
 		while(iter.hasNext()){
@@ -31,7 +31,6 @@ public class FBatchDetailController extends LinesController {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	public void checkNone(ActionEvent event) {
 		clearCheckedFinanceBatchDetails();
 	}

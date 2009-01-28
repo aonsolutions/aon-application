@@ -30,6 +30,8 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.Series;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.dao.IFinanceAlias;
@@ -58,7 +60,6 @@ public class FeeInvoicingController  implements IProgression{
 	private final static String PERIOD_ERROR_KEY = "finance_invoicing_period_error";
 	private final static String NO_INVOICE_KEY = "finance_invoicing_no_invoice";
 	private final static String SALE_INVOICE_CONTROLLER = "saleInvoice";
-	
 
 	private InvoicingParameters invoicingParams;
 	private IInvoicingEngine engine;
@@ -73,7 +74,7 @@ public class FeeInvoicingController  implements IProgression{
 	private boolean redirect;
 	private int invoicesToRecord;
 	private int recordingInvoice;
-	
+
 	public InvoicingParameters getParams() {
 		return invoicingParams;
 	}
@@ -84,10 +85,8 @@ public class FeeInvoicingController  implements IProgression{
 
 	public IInvoicingEngine getEngine() throws InvoicingException {
 		if (engine == null) {
-			InvoicingEngineFactory.register(InvoicingEngineFactory.CUSTOMER_FEE_ENGINE_KEY,
-					new CustomerFeeInvoicingEngine());
-			engine = InvoicingEngineFactory
-					.getInvoicingEngine(InvoicingEngineFactory.CUSTOMER_FEE_ENGINE_KEY);
+			InvoicingEngineFactory.register(InvoicingEngineFactory.CUSTOMER_FEE_ENGINE_KEY, new CustomerFeeInvoicingEngine());
+			engine = InvoicingEngineFactory.getInvoicingEngine(InvoicingEngineFactory.CUSTOMER_FEE_ENGINE_KEY);
 		}
 		return engine;
 	}
@@ -113,29 +112,83 @@ public class FeeInvoicingController  implements IProgression{
 		return feedBack;
 	}
 
+	public void onInitialize(ActionEvent event) throws ManagerBeanException {
+		setParams(new InvoicingParameters());
+		getParams().setNumber(obtainMaxNumber(null));
+		getParams().setSecurityLevel(SecurityLevel.OFFICIAL);
+		getParams().setInvoiceDate(new Date());
+		getParams().setCustomer(new Customer());
+		getParams().setInvoiceRecordable(true);
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(new Date());
+		invoicingParams.setMonth(Month.getMonthByValue(calendar.get(Calendar.MONTH)));
+		invoicingParams.setYear(calendar.get(Calendar.YEAR));
+		setProgressionPanelVisible(false);
+		setProgressionEnabled(false);
+		setProgressionValue(-1L);
+		recording = false;
+		invoicesToRecord = 0;
+		recordingInvoice = 0;
+	}
+
+	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
+		String seriesId = (String) event.getNewValue();
+		getParams().setNumber(obtainMaxNumber(seriesId));
+		getParams().setSecurityLevel(obtainSeriesSecurityLevel(seriesId));
+	}
+
+	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		Criteria criteria = new Criteria();
+		if (StringUtils.isEmpty(seriesId)) {
+			criteria.addNullExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES));
+		} else {
+			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), seriesId);
+		}
+		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);
+		Projection projection = Projection.max(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER));
+		Object value = invoiceBean.getUniqueResult(projection, criteria);
+		if (value != null) {
+			return ((Integer) value).intValue() + 1;
+		}
+		return 1;
+	}
+
+	@SuppressWarnings("unchecked")
+	private SecurityLevel obtainSeriesSecurityLevel(String seriesId) throws ManagerBeanException {
+		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
+		Iterator iter = seriesBean.getList(criteria).iterator();
+		if (iter.hasNext()) {
+			Series series = (Series)iter.next(); 
+			if (series.getSecurityLevel() != null) {
+				return series.getSecurityLevel();
+			}
+		}
+		return null;
+	}
+
 	@SuppressWarnings("unchecked")
 	public void onInvoice(ActionEvent event) {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		try {
-			HibernateUtil.setBeginTransaction( false );
-			HibernateUtil.setCloseSession( false );
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
 
 			recording = false;
 			setProgressionEnabled(true);
 			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 			Criteria criteria = new Criteria();
-			criteria.addLessThanOrEqualExpression(periodBean
-					.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE), getParams()
-					.getInvoiceDate());
-			criteria.addGreaterThanOrEqualExpression(periodBean
-					.getFieldName(IAccountingAlias.PERIOD_DEADLINE), getParams().getInvoiceDate());
+			criteria.addLessThanOrEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE), getParams().getInvoiceDate());
+			criteria.addGreaterThanOrEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_DEADLINE), getParams().getInvoiceDate());
 			if (periodBean.getList(criteria).size() == 0) {
 				AonUtil.addErrorMessageFromBundle(BUNDLE_KEY, PERIOD_ERROR_KEY);
 			} else {
 				getEngine().setInvoicingDAO(new CustomerFeeInvoicingDAO());
-				getEngine().setInvoicingFeedBack( getInvoicingFeedBack() );
+				getEngine().setInvoicingFeedBack(getInvoicingFeedBack());
 				
 				HibernateUtil.beginTransaction(sessionName);
 				getEngine().invoice(getParams());
@@ -152,8 +205,7 @@ public class FeeInvoicingController  implements IProgression{
 						Iterator<Invoice> iter = invoicedList.iterator();
 						while (iter.hasNext()) {
 							Invoice invoice = iter.next();
-							getAccountEntryInvoiceWriter().recordAndUpdateInvoice(invoice,
-									getPriceStrategy());
+							getAccountEntryInvoiceWriter().recordAndUpdateInvoice(invoice, getPriceStrategy());
 							recordingInvoice++;
 						}
 						HibernateUtil.getSession(sessionName).flush();
@@ -190,7 +242,7 @@ public class FeeInvoicingController  implements IProgression{
 			HibernateUtil.closeSession(sessionName);
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
-			setProgressionValue( 101L );
+			setProgressionValue(101L);
 			setProgressionEnabled(false);
 			setProgressionPanelVisible(false);
 		}
@@ -199,55 +251,11 @@ public class FeeInvoicingController  implements IProgression{
 	public String invoice() {
 		return isRedirect()?"saleInvoice_list":null;	
 	}
-	
-	public void onInitialize(ActionEvent event) throws ManagerBeanException {
-		setParams(new InvoicingParameters());
-		getParams().setNumber(obtainMaxNumber(null));
-		getParams().setSecurityLevel(SecurityLevel.OFFICIAL);
-		getParams().setInvoiceDate(new Date());
-		getParams().setCustomer(new Customer());
-		getParams().setInvoiceRecordable(true);
-		Calendar calendar = new GregorianCalendar();
-		calendar.setTime(new Date());
-		invoicingParams.setMonth(Month.getMonthByValue(calendar.get(Calendar.MONTH)));
-		invoicingParams.setYear(calendar.get(Calendar.YEAR));
-		setProgressionPanelVisible(false);
-		setProgressionEnabled(false);
-		setProgressionValue( -1L );
-		recording = false;
-		invoicesToRecord = 0;
-		recordingInvoice = 0;
-	}
-
-	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
-		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-		Criteria criteria = new Criteria();
-		if (StringUtils.isEmpty(seriesId)) {
-			criteria.addNullExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES));
-		} else {
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES),
-					seriesId);
-		}
-		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE),
-				InvoiceType.SALES);
-		Projection projection = Projection.max(invoiceBean
-				.getFieldName(IFinanceAlias.INVOICE_NUMBER));
-		Object value = invoiceBean.getUniqueResult(projection, criteria);
-		if (value != null) {
-			return ((Integer) value).intValue() + 1;
-		}
-		return 1;
-	}
-
-	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		String seriesId = (String) event.getNewValue();
-		getParams().setNumber(obtainMaxNumber(seriesId));
-	}
 
 	public void onShowPanel(ActionEvent event) {
 		setProgressionPanelVisible(true);
 		setProgressionEnabled(true);
-		setProgressionValue( -1L );
+		setProgressionValue(-1L);
 		recording = false;
 		invoicesToRecord = 0;
 		recordingInvoice = 0;
@@ -255,7 +263,7 @@ public class FeeInvoicingController  implements IProgression{
 	public void onClosePanel(ActionEvent event) {
 		setProgressionPanelVisible(false);
 		setProgressionEnabled(false);
-		setProgressionValue( -101L );
+		setProgressionValue(-101L);
 		recording = false;
 		invoicesToRecord = 0;
 		recordingInvoice = 0;
@@ -283,8 +291,8 @@ public class FeeInvoicingController  implements IProgression{
 		if (!recording) {
 			int row = getInvoicingFeedBack().getCurrentRow();
 			int count = getInvoicingFeedBack().getRowCount();
-			if (count > 0 ) {
-				int pro = (int) CommonUtil.round( row * 100 / count);
+			if (count > 0) {
+				int pro = (int) CommonUtil.round(row * 100 / count);
 				if (getParams().isInvoiceRecordable()) {
 					pro = pro / 2;
 				}
@@ -292,7 +300,7 @@ public class FeeInvoicingController  implements IProgression{
 			}
 		} else {
 			if (invoicesToRecord > 0) {
-				int pro = (int) CommonUtil.round(((recordingInvoice* 100 / invoicesToRecord ) / 2)+50);
+				int pro = (int) CommonUtil.round(((recordingInvoice* 100 / invoicesToRecord) / 2)+50);
 				setProgressionValue(new Long(pro));
 			}
 		}
