@@ -20,8 +20,7 @@
 			<ui:param name="skipSaveButton" value="#{true}" />
 			<ui:param name="skipRemoveButton" value="#{true}" />
 			<!-- <aon:methodParam name="resetAction" value="percep_form" /> -->
-			<!-- <ui:param name="skipResetButton" value="#{trabajador.new or (trabajador.to == null)}" /> -->
-			
+			<!-- <ui:param name="skipResetButton" value="#{true}" /> -->
 			
 			
 			
@@ -29,77 +28,38 @@
 				
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecha_alta}" />
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecini_comp}" />
 					</f:facet>
-					<aon:outputText value="#{to.fecini}" rendered="#{to!=percep.to}" >
+					<aon:outputText value="#{to.fecini}" >
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>
-					<aon:selectInputDate renderAsPopup="true" required="true"
-						rendered="#{to==percep.to}"
-						popupDateFormat="#{appBundle.aon_date_pattern}"
-						value="#{percep.to.fecini}" enableManualInput="true" />
-					<f:facet name="footer">
-						<aon:selectInputDate renderAsPopup="true" required="true"
-							rendered="#{percep.new}"
-							popupDateFormat="#{appBundle.aon_date_pattern}"
-							value="#{percep.to.fecini}" enableManualInput="true" />
-					</f:facet>
 				</aon:column>
 				
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecha_baja}" />
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecfin_comp}" />
 					</f:facet>
-					<aon:outputText value="#{to.fecfin}" rendered="#{to!=percep.to}" >
+					<aon:outputText value="#{to.fecfin}" >
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>
-					<aon:selectInputDate renderAsPopup="true" required="true"
-						rendered="#{to==percep.to}"
-						popupDateFormat="#{appBundle.aon_date_pattern}"
-						value="#{percep.to.fecfin}" enableManualInput="true" />
-					<f:facet name="footer">
-						<aon:selectInputDate renderAsPopup="true" required="true"
-							rendered="#{percep.new}"
-							popupDateFormat="#{appBundle.aon_date_pattern}"
-							value="#{percep.to.fecfin}" enableManualInput="true" />
-					</f:facet>
 				</aon:column>
 				 
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_cod_trab}" />
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_desc_completa_comp}" />
 					</f:facet>
-					<aon:outputText value="#{to.descom}" rendered="#{to!=percep.to}" />
-					<aon:inputText styleClass="aon-form-input-text" required="true"
-						rendered="#{to==percep.to}" size="30"
-						value="#{percep.to.descom}" maxlength="50" />
-					<f:facet name="footer">
-						<aon:inputText styleClass="aon-form-input-text" required="true"
-							rendered="#{percep.new}" size="30"
-							value="#{percep.to.descom}" maxlength="50" />
-					</f:facet>
+					<aon:outputText value="#{to.descom}" />
 				</aon:column>
 				
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_cod_trab}" />
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_importe_comp}" />
 					</f:facet>
-					<aon:outputText value="#{to.importe}" rendered="#{to!=percep.to}" />
-					<aon:inputText styleClass="aon-form-input-text" required="true"
-						rendered="#{to==percep.to}" size="13"
-						value="#{percep.to.importe}" maxlength="11" />
-					<f:facet name="footer">
-						<aon:inputText styleClass="aon-form-input-text" required="true"
-							rendered="#{percep.new}" size="13"
-							value="#{percep.to.importe}" maxlength="11" />
-					</f:facet>
+					<aon:outputText value="#{to.importe}" />
 				</aon:column>
-				
-				
-
-				
+								
 			</ui:define>
 		</ui:decorate>
 					

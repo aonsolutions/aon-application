@@ -23,7 +23,7 @@
 			<ui:param name="rowSelectorReRender" value="trabajadorTabs" />
 			<ui:param name="cancelButtonReRender" value="trabajadorTabs" />
 			
-			<!-- <aon:methodParam name="resetAction" value="trabajador_form" /> -->
+			<aon:methodParam name="resetAction" value="trabajador_form" />
 			<!-- <ui:param name="skipResetButton" value="#{trabajador.new or (trabajador.to == null)}" /> -->
 			
 			<!-- 
@@ -58,88 +58,42 @@
 					<f:facet name="header">
 						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecha_alta}" />
 					</f:facet>
-					<aon:outputText value="#{to.fecalt}" rendered="#{to!=trabajador.to}" >
+					<aon:outputText value="#{to.fecalt}" >
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>
-					<aon:selectInputDate renderAsPopup="true" required="true"
-						rendered="#{to==trabajador.to}"
-						popupDateFormat="#{appBundle.aon_date_pattern}"
-						value="#{trabajador.to.fecalt}" enableManualInput="true" />
-					<f:facet name="footer">
-						<aon:selectInputDate renderAsPopup="true" required="true"
-							rendered="#{trabajador.new}"
-							popupDateFormat="#{appBundle.aon_date_pattern}"
-							value="#{trabajador.to.fecalt}" enableManualInput="true" />
-					</f:facet>
 				</aon:column>
 				
 				<aon:column>
 					<f:facet name="header">
 						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecha_baja}" />
 					</f:facet>
-					<aon:outputText value="#{to.fecbaj}" rendered="#{to!=trabajador.to}" >
+					<aon:outputText value="#{to.fecbaj}" >
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>
-					<aon:selectInputDate renderAsPopup="true" required="true"
-						rendered="#{to==trabajador.to}"
-						popupDateFormat="#{appBundle.aon_date_pattern}"
-						value="#{trabajador.to.fecbaj}" enableManualInput="true" />
-					<f:facet name="footer">
-						<aon:selectInputDate renderAsPopup="true" required="true"
-							rendered="#{trabajador.new}"
-							popupDateFormat="#{appBundle.aon_date_pattern}"
-							value="#{trabajador.to.fecbaj}" enableManualInput="true" />
-					</f:facet>
 				</aon:column>
 				
 				<aon:column>
 					<f:facet name="header">
 						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_cod_trab}" />
 					</f:facet>
-					<aon:outputText value="#{to.cdg}" rendered="#{to!=trabajador.to}" />
-					<aon:inputText styleClass="aon-form-input-text" required="true"
-						rendered="#{to==trabajador.to}" size="6"
-						value="#{trabajador.to.cdg}" maxlength="4" />
-					<f:facet name="footer">
-						<aon:inputText styleClass="aon-form-input-text" required="true"
-							rendered="#{trabajador.new}" size="6"
-							value="#{trabajador.to.cdg}" maxlength="4" />
-					</f:facet>
+					<aon:outputText value="#{to.cdg}" />
 				</aon:column>
 				
 				<aon:column>
 					<f:facet name="header">
 						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_desc_act}" />
 					</f:facet>
-					<aon:outputText value="#{to.actividad.descripcion}" rendered="#{to!=trabajador.to}" />
-					<aon:inputText styleClass="aon-form-input-text" required="true"
-						rendered="#{to==trabajador.to}" size="40"
-						value="#{trabajador.to.actividad.descripcion}" maxlength="60" />
-					<f:facet name="footer">
-						<aon:inputText styleClass="aon-form-input-text" required="true"
-							rendered="#{trabajador.new}" size="40"
-							value="#{trabajador.to.actividad.descripcion}" maxlength="60" />
-					</f:facet>
+					<aon:outputText value="#{to.actividad.descripcion}"  />
 				</aon:column>
 				
 				<aon:column>
 					<f:facet name="header">
 						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_cod_act}" />
 					</f:facet>
-					<aon:outputText value="#{to.actividad.cdg}" rendered="#{to!=trabajador.to}" />
-					<aon:inputText styleClass="aon-form-input-text" required="true"
-						rendered="#{to==trabajador.to}" size="5"
-						value="#{trabajador.to.actividad.cdg}" maxlength="4" />
-					<f:facet name="footer">
-						<aon:inputText styleClass="aon-form-input-text" required="true"
-							rendered="#{trabajador.new}" size="5"
-							value="#{trabajador.to.actividad.cdg}" maxlength="4" />
-					</f:facet>
+					<aon:outputText value="#{to.actividad.cdg}"  />
 				</aon:column>
-				
-
 				
 			</ui:define>
 		</ui:decorate>

@@ -20,7 +20,7 @@
 			<ui:param name="skipSaveButton" value="#{true}" />
 			<ui:param name="skipRemoveButton" value="#{true}" />
 			<!-- <aon:methodParam name="resetAction" value="bonifica_form" /> -->
-			<!-- <ui:param name="skipResetButton" value="#{trabajador.new or (trabajador.to == null)}" /> -->
+			<!--  <ui:param name="skipResetButton" value="#{true}" /> -->
 			
 			
 			
@@ -29,57 +29,29 @@
 				
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecha_alta}" />
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fec_concesion}" />
 					</f:facet>
-					<aon:outputText value="#{to.id.fecini}" rendered="#{to!=bonifica.to}" >
+					<aon:outputText value="#{to.id.fecini}" >
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>
-					<aon:selectInputDate renderAsPopup="true" required="true"
-						rendered="#{to==bonifica.to}"
-						popupDateFormat="#{appBundle.aon_date_pattern}"
-						value="#{bonifica.to.id.fecini}" enableManualInput="true" />
-					<f:facet name="footer">
-						<aon:selectInputDate renderAsPopup="true" required="true"
-							rendered="#{bonifica.new}"
-							popupDateFormat="#{appBundle.aon_date_pattern}"
-							value="#{bonifica.to.id.fecini}" enableManualInput="true" />
-					</f:facet>
 				</aon:column>
 				
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecha_baja}" />
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fec_terminacion}" />
 					</f:facet>
-					<aon:outputText value="#{to.fecfin}" rendered="#{to!=bonifica.to}" >
+					<aon:outputText value="#{to.fecfin}" >
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>
-					<aon:selectInputDate renderAsPopup="true" required="true"
-						rendered="#{to==bonifica.to}"
-						popupDateFormat="#{appBundle.aon_date_pattern}"
-						value="#{bonifica.to.fecfin}" enableManualInput="true" />
-					<f:facet name="footer">
-						<aon:selectInputDate renderAsPopup="true" required="true"
-							rendered="#{bonifica.new}"
-							popupDateFormat="#{appBundle.aon_date_pattern}"
-							value="#{bonifica.to.fecfin}" enableManualInput="true" />
-					</f:facet>
 				</aon:column>
 				 
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_cod_trab}" />
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_desc_boni}" />
 					</f:facet>
-					<aon:outputText value="#{to.tipboni.description}" rendered="#{to!=bonifica.to}" />
-					<aon:inputText styleClass="aon-form-input-text" required="true"
-						rendered="#{to==bonifica.to}" size="30"
-						value="#{bonifica.to.tipboni.description}" maxlength="50" />
-					<f:facet name="footer">
-						<aon:inputText styleClass="aon-form-input-text" required="true"
-							rendered="#{bonifica.new}" size="30"
-							value="#{bonifica.to.tipboni.description}" maxlength="50" />
-					</f:facet>
+					<aon:outputText value="#{to.tipboni.description}" />
 				</aon:column>
 				
 			</ui:define>
