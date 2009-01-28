@@ -103,7 +103,7 @@ public class TrabajadorController extends LinesController {
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.TRABAJADOR_ACTIVIDAD_CDG), actividad.getCdg());
 			}
 			if (domicilio!=null && (domicilio.getCdg() != null)) {
-				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.TRABAJADOR_DOMICILIO_BD_CDG), domicilio.getCdg());
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.TRABAJADOR_DOMICILIO_CDG), domicilio.getCdg());
 			}
 			if (emprccos!=null && (emprccos.getCdg() != null)) {
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.TRABAJADOR_EMPRCCOS_CDG), emprccos.getCdg());
