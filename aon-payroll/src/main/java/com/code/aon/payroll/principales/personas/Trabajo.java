@@ -16,6 +16,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.auxiliares.Colectivos;
 import com.code.aon.payroll.auxiliares.contratos.ContratosTc2;
@@ -25,6 +28,7 @@ import com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal;
 import com.code.aon.payroll.cotizacion.Base;
 import com.code.aon.payroll.cotizacion.Epigrafe;
 import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
+import com.code.aon.payroll.enumeration.Timecont;
 import com.code.aon.payroll.principales.persona.Trabajador;
 
 /**
@@ -66,7 +70,7 @@ public class Trabajo implements ITransferObject {
 	private String indalt;
 	private String inddtoit;
 	private String inddtootr;
-	private String indtp;
+	private Timecont indtp;
 	private String indirpf;
 	private Integer concol;
 	private String indactcon;
@@ -447,12 +451,13 @@ public class Trabajo implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Indicador Tiempo de Contrato")
+	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Timecont")} )
 	@Column(name = "indtp", length = 1)
-	public String getIndtp() {
+	public Timecont getIndtp() {
 		return this.indtp;
 	}
 
-	public void setIndtp(String indtp) {
+	public void setIndtp(Timecont indtp) {
 		this.indtp = indtp;
 	}
 

@@ -6548,7 +6548,7 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
-<!-- ************* TIPOS DE REGISTRO ***************** -->
+	<!-- ************* TIPOS DE REGISTRO - TC1***************** -->
 	<managed-bean>
 		<managed-bean-name>tc1</managed-bean-name>
 		<managed-bean-class>

@@ -12,6 +12,7 @@
 			<ui:param name="controller" value="#{prcdivtrab}" />
 			<ui:param name="columnClasses" value="
 			aon-editDataTable-dateColumn, aon-editDataTable-dateColumn,
+			aon-editDataTable-numberColumn, aon-editDataTable-numberColumn,
 			aon-editDataTable-textColumn" />
 			<!--  
 			<ui:param name="showDataScroller" value="#{(!comunidad.new) and (comunidad.to != null)}" />			
@@ -22,94 +23,49 @@
 			<!-- <aon:methodParam name="resetAction" value="prcdivtrab_form" /> -->
 			<!-- <ui:param name="skipResetButton" value="#{trabajador.new or (trabajador.to == null)}" /> -->
 			
-			
-			
+						
 			
 			<ui:define name="columns">
 			
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecha_alta}" />
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecini}" />
 					</f:facet>
-					<aon:outputText value="#{to.id.fecini}" rendered="#{to!=prcdivtrab.to}" >
+					<aon:outputText value="#{to.id.fecini}" >
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>
-					<aon:selectInputDate renderAsPopup="true" required="true"
-						rendered="#{to==prcdivtrab.to}"
-						popupDateFormat="#{appBundle.aon_date_pattern}"
-						value="#{prcdivtrab.to.id.fecini}" enableManualInput="true" />
-					<f:facet name="footer">
-						<aon:selectInputDate renderAsPopup="true" required="true"
-							rendered="#{prcdivtrab.new}"
-							popupDateFormat="#{appBundle.aon_date_pattern}"
-							value="#{prcdivtrab.to.id.fecini}" enableManualInput="true" />
-					</f:facet>
 				</aon:column>
 				
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecha_baja}" />
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecfin}" />
 					</f:facet>
-					<aon:outputText value="#{to.fecfin}" rendered="#{to!=prcdivtrab.to}" >
+					<aon:outputText value="#{to.fecfin}" >
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>
-					<aon:selectInputDate renderAsPopup="true" required="true"
-						rendered="#{to==prcdivtrab.to}"
-						popupDateFormat="#{appBundle.aon_date_pattern}"
-						value="#{prcdivtrab.to.fecfin}" enableManualInput="true" />
-					<f:facet name="footer">
-						<aon:selectInputDate renderAsPopup="true" required="true"
-							rendered="#{prcdivtrab.new}"
-							popupDateFormat="#{appBundle.aon_date_pattern}"
-							value="#{prcdivtrab.to.fecfin}" enableManualInput="true" />
-					</f:facet>
 				</aon:column>
 				 
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_cod_trab}" />
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_orden}" />
 					</f:facet>
-					<aon:outputText value="#{to.orden}" rendered="#{to!=prcdivtrab.to}" />
-					<aon:inputText styleClass="aon-form-input-text" required="true"
-						rendered="#{to==prcdivtrab.to}" size="30"
-						value="#{prcdivtrab.to.orden}" maxlength="50" />
-					<f:facet name="footer">
-						<aon:inputText styleClass="aon-form-input-text" required="true"
-							rendered="#{prcdivtrab.new}" size="30"
-							value="#{prcdivtrab.to.orden}" maxlength="50" />
-					</f:facet>
+					<aon:outputText value="#{to.orden}" />
 				</aon:column>
 				
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_cod_trab}" />
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_porcentaje}" />
 					</f:facet>
-					<aon:outputText value="#{to.prc}" rendered="#{to!=prcdivtrab.to}" />
-					<aon:inputText styleClass="aon-form-input-text" required="true"
-						rendered="#{to==prcdivtrab.to}" size="30"
-						value="#{prcdivtrab.to.prc}" maxlength="50" />
-					<f:facet name="footer">
-						<aon:inputText styleClass="aon-form-input-text" required="true"
-							rendered="#{prcdivtrab.new}" size="30"
-							value="#{prcdivtrab.to.prc}" maxlength="50" />
-					</f:facet>
+					<aon:outputText value="#{to.prc}" />
 				</aon:column>
 				
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_cod_trab}" />
+						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_texto}" />
 					</f:facet>
-					<aon:outputText value="#{to.texto}" rendered="#{to!=prcdivtrab.to}" />
-					<aon:inputText styleClass="aon-form-input-text" required="true"
-						rendered="#{to==prcdivtrab.to}" size="30"
-						value="#{prcdivtrab.to.texto}" maxlength="50" />
-					<f:facet name="footer">
-						<aon:inputText styleClass="aon-form-input-text" required="true"
-							rendered="#{prcdivtrab.new}" size="30"
-							value="#{prcdivtrab.to.texto}" maxlength="50" />
-					</f:facet>
+					<aon:outputText value="#{to.texto}" />
 				</aon:column>
 			</ui:define>
 		</ui:decorate>
