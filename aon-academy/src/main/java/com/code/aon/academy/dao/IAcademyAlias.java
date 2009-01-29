@@ -254,6 +254,12 @@ public interface IAcademyAlias {
 	*/
 	String  COURSE_ACADEMIC_SKILL_ID = COURSE_ACADEMIC_SKILL_ENTRY.getAliasNames()[2];
 
+	/** 
+	* Alias value: CourseAcademicSkill_weight
+	* Hibernate value: CourseAcademicSkill.weight
+	*/
+	String  COURSE_ACADEMIC_SKILL_WEIGHT = COURSE_ACADEMIC_SKILL_ENTRY.getAliasNames()[3];
+
 
 
 	/** 
