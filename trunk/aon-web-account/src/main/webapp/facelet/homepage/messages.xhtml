@@ -3,24 +3,27 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:div id="aonMessagesContainer" ajaxRendered="true" layout="none" styleClass="aon-popupWindow">
-		<aon:form rendered="#{facesContext.maximumSeverity != null}">
-			<aon:panelGroup styleClass="aon-popup-panel aon-confirm-box">
-		
-				<rich:modalPanel minWidth="300" top="190px" left="350"
-					id="messagesModalPanel" showWhenRendered="true">
+	<aon:div id="aonMessagesContainer" ajaxRendered="true" styleClass="aon-popupWindow">
+		<c:if test="#{facesContext.maximumSeverity != null}">	
+			<aon:form>
+				<rich:modalPanel id="messagesModalPanel" 
+					rendered="#{facesContext.maximumSeverity != null}" 
+					minWidth="400" height="200" top="190px" left="350"
+					showWhenRendered="true">
 	
 					<f:facet name="header">
 						<aon:div styleClass="aon-popupWindow-title">
-							<aon:outputText value="MENSAJES" />
+							<aon:outputText value="#{bundle.aon_error_title}" />
 						</aon:div>
 					</f:facet>
 					<f:facet name="controls">
-						<aon:commandButton type="button" 
-							styleClass="aon-popupWindow-close"  immediate="true"							
-							onclick="Richfaces.hideModalPanel('messagesModalPanel');">
+						<aon:commandButton type="button" styleClass="aon-popupWindow-close"
+							reRender="aonMessagesContainer" immediate="true">
+							<rich:componentControl for="messagesModalPanel" event="onclick"
+								disableDefault="true" operation="hide" />
 						</aon:commandButton>	
 					</f:facet>				
 	
@@ -29,10 +32,8 @@
 					</aon:div>
 	
 				</rich:modalPanel>
-				
-			</aon:panelGroup>
-			
-		</aon:form>
+			</aon:form>
+		</c:if>
 	</aon:div>
 
 </ui:composition>

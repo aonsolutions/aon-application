@@ -83,7 +83,7 @@ public class AccountEntryInvoiceWriter {
 		}
 		entry.setType(accountEntryType);
 		entry.setSecurityLevel(invoice.getSecurityLevel());
-		entry = insertOrUpdateAccountEntry(entry, true);
+		entry = insertAccountEntry(entry);
 		List<TaxBreakDown> taxBreakDown = priceStrategy.getTaxBreakDowns(invoice, invoice);
 		Account account = (invoice.getType().equals(InvoiceType.SALES) ? AccountUtil
 				.obtainCustomerAccount(invoice.getRegistry()) : AccountUtil
@@ -200,15 +200,10 @@ public class AccountEntryInvoiceWriter {
 	 * @throws ManagerBeanException
 	 *             the manager bean exception
 	 */
-	public AccountEntry insertOrUpdateAccountEntry(AccountEntry entry, boolean isNew)
+	public AccountEntry insertAccountEntry(AccountEntry entry)
 			throws ManagerBeanException {
 		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
-		if (isNew) {
-			entry = (AccountEntry) entryBean.insert(entry);
-		} else {
-			entry = (AccountEntry) entryBean.update(entry);
-		}
-		return entry;
+		return  (AccountEntry) entryBean.insert(entry);
 	}
 
 	/**

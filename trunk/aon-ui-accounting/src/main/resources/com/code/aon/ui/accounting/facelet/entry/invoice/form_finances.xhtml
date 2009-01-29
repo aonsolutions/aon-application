@@ -96,7 +96,7 @@
 				</f:facet>
 				<aon:outputText value="#{financeTo.bank.name}"
 					rendered="#{financeTo!=invoiceEntry.currentFinance}" />
-
+<!-- 
 				<ui:include
 					src="/com/code/aon/ui/finance/facelet/lookup/bank/bankIdInput.xhtml">
 					<ui:param name="wizard" value="#{bankWizard}" />
@@ -114,7 +114,9 @@
 					<ui:param name="onLookupELExpression"
 						value="invoiceEntry.currentFinance.bankAccount.entity=code" />
 				</ui:include>
+ -->
 				<f:facet name="footer">
+<!-- 				
 					<ui:include
 						src="/com/code/aon/ui/finance/facelet/lookup/bank/bankIdInput.xhtml">
 						<ui:param name="wizard" value="#{bankWizard}" />
@@ -132,6 +134,7 @@
 					<ui:param name="onLookupELExpression"
 						value="invoiceEntry.currentFinance.bankAccount.entity=code" />
 					</ui:include>
+ -->
 				</f:facet>
 			</aon:column>
 
