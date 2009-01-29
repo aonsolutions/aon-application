@@ -21,10 +21,8 @@
 
 				<ui:define name="toolbarContent">
 
-					<aon:commandButton value="#{bundle.aon_save}"
-						id="saveInvoice"
-						reRender="invoiceEntryForm"
-						accesskey="#{bundle.aon_key_save}"
+					<aon:commandButton value="#{bundle.aon_save}" id="saveInvoice"
+						reRender="invoiceEntryForm" accesskey="#{bundle.aon_key_save}"
 						actionListener="#{invoiceEntry.accept}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						disabled="#{invoiceEntry.details.rowCount == 0 or !invoiceEntry.accountSource}"
@@ -43,9 +41,8 @@
 						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;"
 						disabled="#{!invoiceEntry.accountSource}" />
 					<aon:commandButton id="finances" reRender="FinancesData"
-						value="#{accountBundle.account_generate_finances}"
-						actionListener="#{invoiceEntry.generateFinances}"
-						accesskey="W"
+						value="#{accountingBundle.accounting_generate_finances}"
+						actionListener="#{invoiceEntry.generateFinances}" accesskey="W"
 						disabled="#{!invoiceEntry.accountSource}"
 						styleClass="aon-finding-toolbar-item aon-icon-sincronize"
 						rendered="#{invoiceEntry.details.rowCount > 0 and invoiceEntry.finances.rowCount==0}" />
@@ -62,11 +59,26 @@
 
 						<aon:outputLabel for="AccountEntry_accountPeriod"
 							value="#{accountingBundle.accounting_period}" />
-						<aon:selectOneMenu id="Account_Period"
-							disabled="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}"
-							value="#{invoiceEntry.header.period}">
-							<f:selectItems value="#{accountingCollections.accountPeriods}" />
-						</aon:selectOneMenu>
+						<aon:div>
+							<aon:selectOneMenu id="Account_Period"
+								disabled="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}"
+								value="#{invoiceEntry.header.period}">
+								<f:selectItems value="#{accountingCollections.accountPeriods}" />
+							</aon:selectOneMenu>
+							<h:commandLink immediate="true" target="_blank"
+								rendered="#{!invoiceEntry.new}" 
+								styleClass="aon-dataTable-link"
+								title="#{accountingBundle.accounting_lookup_account_entry}"
+								actionListener="#{invoiceEntry.onViewAccountEntry}"
+								action="accountEntry_form">
+								<aon:outputText styleClass="aon-italic aon-margin-left"
+								value="(#{financeBundle.finance_account_entry}: "/>
+								<aon:outputText styleClass="aon-bold"
+									value="#{invoiceEntry.header.accountEntryId}"/>
+								<aon:outputText styleClass="aon-italic" value=")"/>
+							</h:commandLink>
+							
+						</aon:div>
 
 						<aon:outputLabel for="AccountEntry_type"
 							value="#{bundle.aon_type}" />
@@ -77,15 +89,16 @@
 								<f:selectItems value="#{accountingCollections.invoiceTypes}" />
 								<a4j:support event="onchange" ajaxSingle="true"
 									actionListener="#{invoiceEntry.onTypeChanged}"
-									reRender="invoiceTables">
+									reRender="invoiceTables,TaxesData">
 								</a4j:support>
 							</aon:selectOneMenu>
 							<aon:div style="display:inline; margin-left: 5px;">
-							<aon:selectOneMenu id="Account_invoiceTransactionType"
-								disabled="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}"
-								value="#{invoiceEntry.header.transaction}">
-								<f:selectItems value="#{financeCollections.invoiceTransactionTypes}" />
-							</aon:selectOneMenu>
+								<aon:selectOneMenu id="Account_invoiceTransactionType"
+									disabled="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}"
+									value="#{invoiceEntry.header.transaction}">
+									<f:selectItems
+										value="#{financeCollections.invoiceTransactionTypes}" />
+								</aon:selectOneMenu>
 							</aon:div>
 							<aon:div style="display:inline; margin-left: 5px;">
 								<aon:selectBooleanCheckbox id="Account_investment"
@@ -102,7 +115,7 @@
 							value="#{bundle.aon_series}/#{bundle.aon_number}" />
 						<aon:div>
 							<aon:selectOneMenu id="Account_invoice_series"
-								rendered="#{invoiceEntry.sales}" 
+								rendered="#{invoiceEntry.sales}"
 								disabled="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}"
 								value="#{invoiceEntry.header.series}">
 								<f:selectItem itemValue="" itemLabel=" " />
@@ -131,7 +144,7 @@
 							disabled="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}"
 							value="#{invoiceEntry.header.date}"
 							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
+							popupDateFormat="#{bundle.aon_date_pattern}" />
 
 						<aon:outputLabel for="AccountEntry_securityLevel"
 							value="#{bundle.aon_security_level}" />
@@ -149,56 +162,58 @@
 						<aon:outputText value="#{financeBundle.finance_creditor}"
 							rendered="#{invoiceEntry.expense}" />
 
-						<ui:include
-							src="/com/code/aon/ui/customer/facelet/lookup/customer/registryFromCustomerIdInput.xhtml">
-							<ui:param name="id" value="customerId" />
-							<ui:param name="wizard" value="#{customerWizard}" />
-							<ui:param name="renderedAttr" value="#{invoiceEntry.sales}" />
-							<ui:param name="disabled"
-								value="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}" />
-							<ui:param name="size" value="5" />
-							<ui:param name="reRenderAttr" value="Invoice_document" />
-							<ui:param name="required" value="#{true}" />
-							<ui:param name="entity" value="#{invoiceEntry.header.registry}" />
-							<ui:param name="ELExpression"
-								value="invoiceEntry.header.registry" />
-							<ui:param name="onLookupELExpression"
-								value="invoiceEntry.header.document=document;invoiceEntry.header.name=fullName" />
-						</ui:include>
-
-						<ui:include
-							src="/com/code/aon/ui/supplier/facelet/lookup/supplier/registryFromSupplierIdInput.xhtml">
-							<ui:param name="id" value="supplierId" />
-							<ui:param name="wizard" value="#{supplierWizard}" />
-							<ui:param name="renderedAttr" value="#{invoiceEntry.purchase}" />
-							<ui:param name="size" value="5" />
-							<ui:param name="disabled"
-								value="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}" />
-							<ui:param name="reRenderAttr" value="Invoice_document" />
-							<ui:param name="required" value="#{true}" />
-							<ui:param name="entity" value="#{invoiceEntry.header.registry}" />
-							<ui:param name="ELExpression"
-								value="invoiceEntry.header.registry" />
-							<ui:param name="onLookupELExpression"
-								value="invoiceEntry.header.document=document;invoiceEntry.header.name=fullName" />
-						</ui:include>
-
-						<ui:include
-							src="/com/code/aon/ui/finance/facelet/lookup/creditor/registryFromCreditorIdInput.xhtml">
-							<ui:param name="id" value="creditorId" />
-							<ui:param name="wizard" value="#{creditorWizard}" />
-							<ui:param name="renderedAttr" value="#{invoiceEntry.expense}" />
-							<ui:param name="disabled"
-								value="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}" />
-							<ui:param name="size" value="5" />
-							<ui:param name="reRenderAttr" value="Invoice_document" />
-							<ui:param name="required" value="#{true}" />
-							<ui:param name="entity" value="#{invoiceEntry.header.registry}" />
-							<ui:param name="ELExpression"
-								value="invoiceEntry.header.registry" />
-							<ui:param name="onLookupELExpression"
-								value="invoiceEntry.header.document=document;invoiceEntry.header.name=fullName" />
-						</ui:include>
+						<aon:div styleClass="aon-lookup">
+							<aon:panelGroup rendered="#{invoiceEntry.sales}">
+								<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
+									reRender="Registry_full_name,Invoice_document,TaxesData"
+									lookupProperty="registry"
+									lookupChangeListener="#{invoiceEntry.registryChanged}"
+									value="#{invoiceEntry.header.registry.id}" size="5" />
+								<aon:lookupButton
+									windowTitle="#{customerBundle.customer_selection}"
+									selectReRender="Customer_id,Registry_full_name,Invoice_document,TaxesData"
+									lookupChangeListener="#{invoiceEntry.registryChanged}"
+									actionType="search" lookup="#{customerLookup}" minHeight="460"
+									minWidth="650" property="#{invoiceEntry.header.registry}"
+									lookupProperty="registry">
+								</aon:lookupButton>
+							</aon:panelGroup>
+							
+							<aon:panelGroup rendered="#{invoiceEntry.purchase}">
+								<aon:lookupInputText id="Supplier_id" lookup="#{supplierLookup}"
+									reRender="Registry_full_name,Invoice_document"
+									lookupProperty="registry"
+									lookupChangeListener="#{invoiceEntry.registryChanged}"
+									value="#{invoiceEntry.header.registry.id}" size="5" />
+								<aon:lookupButton
+									windowTitle="#{supplierBundle.supplier_selection}"
+									selectReRender="Supplier_id,Registry_full_name,Invoice_document"
+									lookupChangeListener="#{invoiceEntry.registryChanged}"
+									actionType="search" lookup="#{supplierLookup}" minHeight="460"
+									minWidth="650" property="#{invoiceEntry.header.registry}"
+									lookupProperty="registry">
+								</aon:lookupButton>
+							</aon:panelGroup>
+							
+							<aon:panelGroup rendered="#{invoiceEntry.expense}">
+								<aon:lookupInputText id="Creditor_id" lookup="#{creditorLookup}"
+									reRender="Registry_full_name,Invoice_document"
+									lookupProperty="registry"
+									lookupChangeListener="#{invoiceEntry.registryChanged}"
+									value="#{invoiceEntry.header.registry.id}" size="5" />
+								<aon:lookupButton
+									windowTitle="#{financeBundle.finance_creditor_selection}"
+									selectReRender="Supplier_id,Registry_full_name,Invoice_document"
+									lookupChangeListener="#{invoiceEntry.registryChanged}"
+									actionType="search" lookup="#{creditorLookup}" minHeight="460"
+									minWidth="650" property="#{invoiceEntry.header.registry}"
+									lookupProperty="registry">
+								</aon:lookupButton>
+							</aon:panelGroup>
+							<aon:inputText id="Registry_full_name"
+								value="#{invoiceEntry.header.registry.name==null?'':invoiceEntry.header.registry.fullName}"
+								size="50" disabled="true" />
+						</aon:div>
 
 						<aon:outputLabel for="Invoice_document"
 							value="#{bundle.aon_company_document}" />
@@ -224,6 +239,7 @@
 							<ui:param name="ELExpression"
 								value="invoiceEntry.header.account" />
 						</ui:decorate>
+
 					</aon:panelGrid>
 				</aon:div>
 
@@ -232,7 +248,11 @@
 
 				<ui:include
 					src="/com/code/aon/ui/accounting/facelet/entry/invoice/form_finances.xhtml" />
+
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
+		<aon:lookupButtonPopup lookup="#{creditorLookup}" />
 	</ui:define>
 </ui:composition>

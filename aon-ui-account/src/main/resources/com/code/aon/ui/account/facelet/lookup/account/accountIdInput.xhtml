@@ -56,8 +56,7 @@
 			disabled="#{disabled}" actionListener="#{wizard.onShow}"
 			immediate="true" oncomplete="searchFieldForFocus('#{id}searchName')"
 			reRender="#{id}Container" />
-		<aon:div id="#{id}Name" style="display:inline"
-			rendered="#{renderDescription}">
+		<aon:div id="#{id}Name" style="display:inline" rendered="#{renderDescription}">
 			<aon:outputText rendered="#{entity.description != null}"
 				value="#{entity.description}">
 				<aon:abbreviateConverter maxWidth="35" />
@@ -145,7 +144,7 @@
 						<aon:column>
 							<aon:commandButton id="#{id}RowSelector"
 								styleClass="aon-editDataTable-button aon-icon-rowSelector"
-								actionListener="#{wizard.onSelect}" immediate="true"
+								immediate="true"
 								ajaxSingle="true" eventsQueue="#{id}SelectQueue"
 								requestDelay="100" ignoreDupResponses="true"
 								onkeyup="tableKeyUp(event.keyCode)"
@@ -161,6 +160,7 @@
 									value="#{valueChangeListener}"
 									assignTo="#{wizard.valueChangeListener}">
 								</a4j:actionparam>
+								<aon:actionListener method="#{wizard.onSelect}" />
 							</aon:commandButton>
 						</aon:column>
 

@@ -51,6 +51,8 @@ public class InvoiceEntryHeader implements ITransferObject {
 	
 	/** The security level. */
 	private SecurityLevel securityLevel;
+	
+	private Integer accountEntryId;
 
 	/**
 	 * Gets the type.
@@ -264,5 +266,13 @@ public class InvoiceEntryHeader implements ITransferObject {
 
 	public void setTransaction(InvoiceTransactionType transaction) {
 		this.transaction = transaction;
+	}
+
+	public Integer getAccountEntryId() {
+		return accountEntryId;
+	}
+
+	public void setAccountEntryId(Integer accountEntryId) {
+		this.accountEntryId = accountEntryId;
 	}
 }
