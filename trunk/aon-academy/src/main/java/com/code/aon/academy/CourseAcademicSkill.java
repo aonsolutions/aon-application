@@ -26,6 +26,9 @@ public class CourseAcademicSkill implements ITransferObject {
 	/** The AcademicSkill. */
 	private AcademicSkill academicSkill;
 	
+	/** The weight. */
+	private Integer weight;
+
 	/**
 	 * Gets the id.
 	 * 
@@ -83,5 +86,13 @@ public class CourseAcademicSkill implements ITransferObject {
 		this.academicSkill = academicSkill;
 	}
 
-	
+	@Column(nullable=false)
+	public Integer getWeight() {
+		return weight;
+	}
+
+	public void setWeight(Integer weight) {
+		this.weight = weight;
+	}
+
 }
