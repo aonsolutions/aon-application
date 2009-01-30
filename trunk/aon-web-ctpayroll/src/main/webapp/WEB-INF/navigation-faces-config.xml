@@ -1453,6 +1453,31 @@
 		</navigation-case>
 	</navigation-rule> 
 	
+	
+	
+	<!-- =================== Convenios - Colectivos ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>calendar_form</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/convenios/calendar/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>calendar_search</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/convenios/calendar/search.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>calendar_list</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/convenios/calendar/list.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
+	
 </faces-config>
 
 

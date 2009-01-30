@@ -13,7 +13,7 @@
 
 	<ui:define name="content">
 
-		<aon:form id="tc2Search">
+		<aon:form id="tc1Search">
 
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
@@ -42,12 +42,12 @@
 							value="#{appBundle.aon_payroll_resultados_tc2_act}" />
 						<aon:div styleClass="aon-lookup">
 							<aon:lookupInputText id="Acti_cdg" lookup="#{actividadLookup}"
-								value="#{tc1.to.codact.cdg}" size="5"></aon:lookupInputText>
+								value="#{tc1.actividad.cdg}" size="5"></aon:lookupInputText>
 							<aon:lookupButton id="Act_lookup"
 								windowTitle="#{appBundle.aon_payroll_resultados_tc2_act}"
 								selectReRender="Acti_cdg,Acti_descripcion,Acti1_descripcion,Acti2_descripcion,Acti3_descripcion,Acti4_descripcion,Acti5_descripcion,Acti6_descripcion,Acti7_descripcion,Acti8_descripcion"
 								lookup="#{actividadLookup}" minHeight="440"
-								property="#{tc1.to.codact}">
+								property="#{tc1.actividad}">
 							</aon:lookupButton>
 
 						</aon:div>
@@ -97,7 +97,8 @@
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_resultados_tc1_comision}" />
 
-						<aon:selectBooleanCheckbox value="#{tc1.to.comision}" />
+						<aon:selectBooleanCheckbox id="tc1_comision"
+											valueChangeListener="#{tc1.addEqualExpression}"  />
 
 
 					</aon:panelGrid>
@@ -142,25 +143,29 @@
 							disabled="true" />
 
 
-						<aon:outputLabel
+					<!--  	<aon:outputLabel
 							value="#{appBundle.aon_payroll_resultados_tc2_numtra}" />
 
-						<aon:inputText value="#{tc1.to.numtra}" size="30" />
+						<aon:inputText value="#{tc1.to.numtra}" size="30" />-->
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_resultados_tc1_desde}" />
 
 
 						<aon:div>
-							<aon:inputText value="#{tc1.to.desdeMes}" size="10" />
-							<aon:inputText value="#{tc1.to.desdeAnio}" size="10" />
+							<aon:inputText id="tc1_desdeMes"
+											valueChangeListener="#{tc1.addExpression}"  size="10" />
+							<aon:inputText   id="tc1_desdeAnio"
+											valueChangeListener="#{tc1.addExpression}"   size="10" />
 						</aon:div>
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_resultados_tc1_hasta}" />
 						<aon:div>
-							<aon:inputText value="#{tc1.to.hastaMes}" size="10" />
-							<aon:inputText value="#{tc1.to.hastaAnio}" size="10" />
+							<aon:inputText  id="tc1_hastaMes"
+											valueChangeListener="#{tc1.addExpression}"  size="10" />
+							<aon:inputText  id="tc1_hastaAnio"
+											valueChangeListener="#{tc1.addExpression}"  size="10" />
 						</aon:div>
 
 
@@ -189,66 +194,88 @@
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_resultados_tc1_coco}" />
 
-						<aon:inputText value="#{tc1.to.baseConcom}" size="40" />
-						<aon:inputText value="#{tc1.to.prcConcom}" size="40" />
+						<aon:inputText   id="tc1_baseConcom"
+											valueChangeListener="#{tc1.addExpression}"   size="40" />
+						<aon:inputText id="tc1_prcConcom"
+											valueChangeListener="#{tc1.addExpression}"   size="40" />
 
-						<aon:inputText value="#{tc1.to.cuotaConcom}" size="40" />
+						<aon:inputText id="tc1_cuotaConcom"
+											valueChangeListener="#{tc1.addExpression}"   size="40" />
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_resultados_tc1_hot}" />
 
-						<aon:inputText value="#{tc1.to.baseHexest}" size="40" />
+						<aon:inputText  id="tc1_baseHexest"
+											valueChangeListener="#{tc1.addExpression}"  size="40" />
 
-						<aon:inputText value="#{tc1.to.prcHexest}" size="40" />
+						<aon:inputText id="tc1_prcHexest"
+											valueChangeListener="#{tc1.addExpression}"   size="40" />
 
-						<aon:inputText value="#{tc1.to.cuotaHexest}" size="40" />
+						<aon:inputText id="tc1_cuotaHexest"
+											valueChangeListener="#{tc1.addExpression}"   size="40" />
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_resultados_tc1_otrhor}" />
 
-						<aon:inputText value="#{tc1.to.baseHexno}" size="40" />
+						<aon:inputText  id="tc1_baseHexno"
+											valueChangeListener="#{tc1.addExpression}"  size="40" />
 
-						<aon:inputText value="#{tc1.to.prcHexno}" size="40" />
+						<aon:inputText  id="tc1_prcHexno"
+											valueChangeListener="#{tc1.addExpression}"  size="40" />
 
-						<aon:inputText value="#{tc1.to.cuotaHexno}" size="40" />
+						<aon:inputText  id="tc1_cuotaHexno"
+											valueChangeListener="#{tc1.addExpression}"   size="40" />
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_resultados_tc1_apor}" />
 
-						<aon:inputText value="#{tc1.to.baseServcom}" size="40" />
+						<aon:inputText  id="tc1_baseServcom"
+											valueChangeListener="#{tc1.addExpression}"  size="40" />
 
-						<aon:inputText value="#{tc1.to.prcServcom}" size="40" />
+						<aon:inputText   id="tc1_prcServcom"
+											valueChangeListener="#{tc1.addExpression}"  size="40" />
 
-						<aon:inputText value="#{tc1.to.cuotaServcom}" size="40" />
+						<aon:inputText id="tc1_cuotaServcom"
+											valueChangeListener="#{tc1.addExpression}"  size="40" />
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_resultados_tc1_cotcon}" />
 
-						<aon:inputText value="#{tc1.to.baseConcomCe}" size="40" />
+						<aon:inputText  id="tc1_baseConcomCe"
+											valueChangeListener="#{tc1.addExpression}"   size="40" />
 
-						<aon:inputText value="#{tc1.to.prcConcomCe}" size="40" />
+						<aon:inputText   id="tc1_prcConcomCe"
+											valueChangeListener="#{tc1.addExpression}"  size="40" />
 
-						<aon:inputText value="#{tc1.to.cuotaConcomCe}" size="40" />
+						<aon:inputText   id="tc1_cuotaConcomC"
+											valueChangeListener="#{tc1.addExpression}"  size="40" />
 
 						<aon:div>
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_resultados_tc1_otro}" />
-							<aon:inputText value="#{tc1.to.cdgOtrcon}" size="5" />
+							<aon:inputText   id="tc1_cdgOtrcon"
+											valueChangeListener="#{tc1.addExpression}"   size="5" />
 						</aon:div>
 
-						<aon:inputText value="#{tc1.to.baseOtrcon}" size="40" />
+						<aon:inputText id="tc1_baseOtrcon"
+											valueChangeListener="#{tc1.addExpression}"   size="40" />
 
-						<aon:inputText value="#{tc1.to.prcOtrcon}" size="40" />
+						<aon:inputText   id="tc1_prcOtrcon"
+											valueChangeListener="#{tc1.addExpression}"  size="40" />
 
-						<aon:inputText value="#{tc1.to.cuotaOtrcon}" size="40" />
+						<aon:inputText id="tc1_cuotaOtrcon"
+											valueChangeListener="#{tc1.addExpression}"  size="40" />
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_resultados_tc1_dedu}" />
 
-						<aon:inputText value="#{tc1.to.baseDedcol}" size="40" />
+						<aon:inputText  id="tc1_baseDedcol"
+											valueChangeListener="#{tc1.addExpression}"   size="40" />
 
-						<aon:inputText value="#{tc1.to.prcDedcol}" size="40" />
+						<aon:inputText id="tc1_prcDedcol"
+											valueChangeListener="#{tc1.addExpression}"   size="40" />
 
-						<aon:inputText value="#{tc1.to.cuotaDedcol}" size="40" />
+						<aon:inputText id="tc1_cuotaDedcol"
+											valueChangeListener="#{tc1.addExpression}"   size="40" />
 
 					</aon:panelGrid>
 				
@@ -262,15 +289,19 @@
 									value="#{appBundle.aon_payroll_resultados_tc1_comp}" />
 								<aon:div>
 
-									<aon:inputText style="float:right" value="#{tc1.to.baseReducc}"
+									<aon:inputText style="float:right" id="tc1_baseReducc"
+											valueChangeListener="#{tc1.addExpression}"   
 										size="10" />
 									<aon:outputLabel style="float:right" value="=" />
-									<aon:inputText style="float:right" value="#{tc1.to.baseRedcc}"
+									<aon:inputText style="float:right" id="tc1_baseRedcc"
+											valueChangeListener="#{tc1.addExpression}"   
 										size="10" />
 									<aon:outputLabel style="float:right" value="+" />
-									<aon:inputText style="float:right" value="#{tc1.to.cdgred}"
+									<aon:inputText style="float:right"  id="tc1_cdgred"
+											valueChangeListener="#{tc1.addExpression}"   
 										size="5" />
-									<aon:inputText style="float:right" value="#{tc1.to.baseRedit}"
+									<aon:inputText style="float:right" id="tc1_baseRedit"
+											valueChangeListener="#{tc1.addExpression}"  
 										size="5" />
 
 								</aon:div>
@@ -280,7 +311,8 @@
 									value="#{appBundle.aon_payroll_resultados_tc1_lkuido}" />
 
 
-								<aon:inputText style="float:right" value="#{tc1.to.liqCotgen}"
+								<aon:inputText style="float:right"   id="tc1_liqCotgen"
+											valueChangeListener="#{tc1.addExpression}"  
 									size="40" />
 
 								<aon:outputLabel style="float:left;font-weight:bold"
@@ -293,15 +325,19 @@
 								<aon:outputLabel style="float:right"
 									value="#{appBundle.aon_payroll_resultados_tc1_sumatot}" />
 								<aon:div>
-									<aon:inputText style="float:right" value="#{tc1.to.cuotasAcc}"
+									<aon:inputText style="float:right" id="tc1_cuotasAcc"
+											valueChangeListener="#{tc1.addExpression}"  
 										size="10" />
 									<aon:outputLabel style="float:right" value="=" />
-									<aon:inputText style="float:right" value="#{tc1.to.cuotasIms}"
+									<aon:inputText style="float:right"  id="tc1_cuotasIms"
+											valueChangeListener="#{tc1.addExpression}"  
 										size="10" />
 									<aon:outputLabel style="float:right" value="+" />
-									<aon:inputText style="float:right" value="#{tc1.to.cuotasIt}"
+									<aon:inputText style="float:right" id="tc1_cuotasIt"
+											valueChangeListener="#{tc1.addExpression}"   
 										size="5" />
-									<aon:inputText style="float:right" value="#{tc1.to.baseAcctra}"
+									<aon:inputText style="float:right" id="tc1_baseAcctra"
+											valueChangeListener="#{tc1.addExpression}" 
 										size="5" />
 								</aon:div>
 
@@ -311,14 +347,16 @@
 									value="#{appBundle.aon_payroll_resultados_tc1_compen}" />
 
 
-								<aon:inputText style="float:right" value="#{tc1.to.compIt}"
+								<aon:inputText style="float:right" id="tc1_compIt"
+											valueChangeListener="#{tc1.addExpression}" 
 									size="40" />
 
 								<aon:outputLabel style="float:right"
 									value="#{appBundle.aon_payroll_resultados_tc1_liqu}" />
 
 
-								<aon:inputText style="float:right" value="#{tc1.to.liqAcc}"
+								<aon:inputText style="float:right" id="tc1_liqAcc"
+											valueChangeListener="#{tc1.addExpression}"  
 									size="40" />
 							</h:panelGrid>
 
@@ -338,12 +376,15 @@
 								<aon:outputLabel style="float:right"
 									value="#{appBundle.aon_payroll_resultados_tc1_desem}" />
 
-								<aon:inputText style="float:right" value="#{tc1.to.baseDesem}"
+								<aon:inputText style="float:right" id="tc1_baseDesem"
+											valueChangeListener="#{tc1.addExpression}" 
 									size="10" />
-								<aon:inputText style="float:right" value="#{tc1.to.prcDesem}"
+								<aon:inputText style="float:right" id="tc1_prcDesem"
+											valueChangeListener="#{tc1.addExpression}"  
 									size="10" />
 
-								<aon:inputText style="float:right" value="#{tc1.to.cuotaDesem}"
+								<aon:inputText style="float:right" id="tc1_cuotaDesem"
+											valueChangeListener="#{tc1.addExpression}"  
 									size="10" />
 
 
@@ -351,14 +392,17 @@
 								<aon:outputLabel style="float:right"
 									value="#{appBundle.aon_payroll_resultados_tc1_cotiemp}" />
 
-								<aon:inputText style="float:right" value="#{tc1.to.baseDesemCe}"
+								<aon:inputText style="float:right"  id="tc1_baseDesemCe"
+											valueChangeListener="#{tc1.addExpression}"  
 									size="10" />
 
-								<aon:inputText style="float:right" value="#{tc1.to.prcDesemCe}"
+								<aon:inputText style="float:right" id="tc1_prcDesemCe"
+											valueChangeListener="#{tc1.addExpression}" 
 									size="10" />
 
-								<aon:inputText style="float:right"
-									value="#{tc1.to.cuotaDesemCe}" size="10" />
+								<aon:inputText style="float:right" id="tc1_cuotaDesemCe"
+											valueChangeListener="#{tc1.addExpression}" 
+									 size="10" />
 
 
 
@@ -378,7 +422,8 @@
 
 
 								<aon:div>
-									<aon:inputText style="float:right" value="#{tc1.to.redInem}"
+									<aon:inputText style="float:right" id="tc1_redInem"
+											valueChangeListener="#{tc1.addExpression}" 
 										size="10" />
 
 								</aon:div>
@@ -395,7 +440,7 @@
 
 								<aon:div>
 
-									<aon:inputText style="float:right" value=" " disabled="true"
+									<aon:inputText   style="float:right" value=" " disabled="true"
 										size="10" />
 									<aon:outputLabel style="float:right" value="=" />
 
@@ -413,7 +458,8 @@
 									value="#{appBundle.aon_payroll_resultados_tc1_liki}" />
 
 
-								<aon:inputText style="float:right" value="#{tc1.to.liqOtras}"
+								<aon:inputText style="float:right"  id="tc1_liqOtras"
+											valueChangeListener="#{tc1.addExpression}" 
 									size="25" />
 
 
@@ -440,13 +486,16 @@
 
 								<aon:outputLabel style="float:right"
 									value="#{appBundle.aon_payroll_resultados_tc1_ingreso}" />
-								<aon:inputText style="float:right" value="#{tc1.to.baseMora}"
+								<aon:inputText style="float:right" id="tc1_baseMora"
+											valueChangeListener="#{tc1.addExpression}"  
 									size="20" />
-								<aon:inputText style="float:right" value="#{tc1.to.prcMora}"
+								<aon:inputText style="float:right" id="tc1_prcMora"
+											valueChangeListener="#{tc1.addExpression}"   
 									size="20" />
 								<aon:outputLabel style="float:right"
 									value="#{appBundle.aon_payroll_resultados_tc1_recdemm}" />
-								<aon:inputText style="float:right" value="#{tc1.to.cuotaMora}"
+								<aon:inputText style="float:right" id="tc1_cuotaMora"
+											valueChangeListener="#{tc1.addExpression}"  
 									size="20" />
 
 
@@ -460,7 +509,8 @@
 
 								<aon:outputLabel style="float:right"
 									value="#{appBundle.aon_payroll_resultados_tc1_aper}" />
-								<aon:inputText style="float:right" value="#{tc1.to.importeTc1}"
+								<aon:inputText style="float:right" id="tc1_importeTc1"
+											valueChangeListener="#{tc1.addExpression}"  
 									size="20" />
 
 

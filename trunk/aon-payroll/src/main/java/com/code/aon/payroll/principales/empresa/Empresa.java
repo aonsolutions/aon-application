@@ -68,7 +68,7 @@ public class Empresa implements ITransferObject {
 	private Empresario tipempr;
 	private Pais pais;
 	private Pais pais1;
-	
+
 	/**
 	 * Devuelve el Codigo de Empresa
 	 * 
@@ -218,7 +218,7 @@ public class Empresa implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Sexo")} )
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.Sexo") })
 	@Column(name = "sexo", length = 1)
 	public Sexo getSexo() {
 		return this.sexo;
@@ -336,7 +336,7 @@ public class Empresa implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.IndicadorIrpf")} )
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.IndicadorIrpf") })
 	@Column(name = "indirpf", length = 1)
 	public IndicadorIrpf getIndirpf() {
 		return this.indirpf;
@@ -351,7 +351,7 @@ public class Empresa implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Type(type="siNoType" )
+	@Type(type = "siNoType")
 	@Column(name = "indcal", length = 1)
 	public Boolean getIndcal() {
 		return this.indcal;
@@ -366,7 +366,7 @@ public class Empresa implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Type(type="siNoType" )
+	@Type(type = "siNoType")
 	@Column(name = "indnom", length = 1)
 	public Boolean getIndnom() {
 		return this.indnom;
@@ -381,7 +381,7 @@ public class Empresa implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Type(type="siNoType" )
+	@Type(type = "siNoType")
 	@Column(name = "indcoste", length = 1)
 	public Boolean getIndcoste() {
 		return this.indcoste;
@@ -396,7 +396,7 @@ public class Empresa implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.EnvioSS")} )
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.EnvioSS") })
 	@Column(name = "envioss", length = 1)
 	public EnvioSS getEnvioss() {
 		return this.envioss;
@@ -411,7 +411,7 @@ public class Empresa implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.ConciertoEconomico")} )
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.ConciertoEconomico") })
 	@Column(name = "cecon", nullable = false, length = 1)
 	public ConciertoEconomico getCecon() {
 		return this.cecon;
@@ -420,13 +420,13 @@ public class Empresa implements ITransferObject {
 	public void setCecon(ConciertoEconomico cecon) {
 		this.cecon = cecon;
 	}
-	
+
 	/**
 	 * Devuelve la Modalidad declaraciones de impuestos
 	 * 
 	 * @return
 	 */
-	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.PagoImpuestos")} )
+	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.payroll.enumeration.PagoImpuestos") })
 	@Column(name = "modimpuesto", length = 1)
 	public PagoImpuestos getModimpuesto() {
 		return this.modimpuesto;
@@ -477,7 +477,7 @@ public class Empresa implements ITransferObject {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "tipdocrep", nullable=true)
+	@JoinColumn(name = "tipdocrep", nullable = true)
 	public Documento getTipdoc1() {
 		return this.tipdoc1;
 	}

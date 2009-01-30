@@ -15,6 +15,7 @@ import com.code.aon.payroll.auxiliares.convenios.Convenio;
 import com.code.aon.payroll.auxiliares.convenios.Nivel;
 import com.code.aon.payroll.auxiliares.convenios.Pagaext;
 import com.code.aon.payroll.auxiliares.convenios.Percniv;
+import com.code.aon.payroll.auxiliares.convenios.calendar.Calendario;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Entidad;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Linmutua;
@@ -236,7 +237,8 @@ public class PayrollAliasWriter {
 		        Tc1.class.getName(),
 		        Costes.class.getName(),
 		        Lbonifica.class.getName(),
-		        Lcomunica.class.getName()
+		        Lcomunica.class.getName(),
+		        Calendario.class.getName()
 		        };
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");
 		HibernateUtil.getSessionFactory();
