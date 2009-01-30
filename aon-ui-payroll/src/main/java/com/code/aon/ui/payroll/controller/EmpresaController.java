@@ -39,11 +39,16 @@ import com.code.aon.ui.util.AonUtil;
 public class EmpresaController extends LinesController  implements IPayrollAlias, IPayrollBackAction   {
 
 	private String edad;
+	private Integer year;
+	
 
-	public String getEdad() {
-		calcularEdad();
-		return edad;
+	public Integer getYear() {
+		Calendar calendar = Calendar.getInstance();
+		year = (calendar.get(Calendar.YEAR));
+	return year;
 	}
+
+
 
 	public void setEdad(String edad) {
 		this.edad = edad;
@@ -358,6 +363,10 @@ public class EmpresaController extends LinesController  implements IPayrollAlias
 	public void setPais1(Pais pais1) {
 		this.pais1 = pais1;
 	}
+	
+	
+	
+	
 	
 	
 	@Override

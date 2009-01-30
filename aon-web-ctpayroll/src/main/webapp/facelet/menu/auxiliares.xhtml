@@ -174,12 +174,18 @@
 
 					<aon:panel>
 						<f:facet name="header">
+						
 							<aon:outputText value="#{menuBundle.auxiliares_convenios}"/>
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div>
-								<aon:commandLink value="#{menuBundle.auxiliares_convenios__calendar}" disabled="true" />
-							</aon:div>
+								<aon:commandLink value="#{menuBundle.auxiliares_convenios__calendar}" action="calendar_form"
+								 >
+									<aon:actionListener method="#{empresa.onEditSearch}" />
+									<aon:actionListener method="#{empresa.onSearch}" />
+									<aon:actionListener method="#{empresa.onSelectFirst}" />
+								</aon:commandLink>
+								</aon:div>
 							<aon:div>
 								<aon:commandLink id="complemento" action="complemento_form"
 									value="#{menuBundle.auxiliares_convenios__complemento}" >

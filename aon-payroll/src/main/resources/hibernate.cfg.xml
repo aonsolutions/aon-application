@@ -152,7 +152,10 @@
         <!--AVANZADAS-COSTES -->			
         <mapping class="com.code.aon.payroll.avanzadas.simulacion.Costes"/>
         <mapping class="com.code.aon.payroll.avanzadas.simulacion.Lbonifica"/>
-        <mapping class="com.code.aon.payroll.avanzadas.simulacion.Lcomunica"/>
+        <mapping class="com.code.aon.payroll.avanzadas.simulacion.Lcomunica"/>       
+        <!--CALENDAR -->			
+        <mapping class="com.code.aon.payroll.auxiliares.convenios.calendar.Calendario"/>
+       
        
 	</session-factory>
 
