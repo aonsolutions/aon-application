@@ -101,7 +101,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.customer</artifactId>
-			<version>3.5.0</version>
+			<version>3.5.1-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
