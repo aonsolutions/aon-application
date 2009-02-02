@@ -31,7 +31,6 @@ import com.code.aon.ui.cms.velocity.MenuGenerator;
 import com.code.aon.ui.cms.velocity.ModularPageGenerator;
 import com.code.aon.ui.cms.velocity.ProductGenerator;
 import com.code.aon.ui.cms.velocity.SportGenerator;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 public class GeneratorController implements Constants {
@@ -85,13 +84,13 @@ public class GeneratorController implements Constants {
 		//Generar articulo
 		DownloadsGenerator.generate();
 		System.gc();
-		//Generar articulo
+		//Generar cursos
 		HiruGenerator.generate();
 		System.gc();
 		//Generar productos
 		ProductGenerator.generate();
 		System.gc();
-		//Generar productos
+		//Generar sports
 		SportGenerator.generate();
 		System.gc();
 		finalizeGenerator();
@@ -256,7 +255,9 @@ public class GeneratorController implements Constants {
 	}
 
 	private void finalizeGenerator(){
-		status.addMessage("¡¡¡¡¡ YOUR WEB IS DONE !!!!! ;-DDDD");
+		status.addMessage("END: --------------------------------------------------------------------------------------------------------------------------------------------");
+		status.addMessage("END: --------------------------------------------------- LA GENERACION A TERMINADO ---------------------------------------------------");
+		status.addMessage("END: --------------------------------------------------------------------------------------------------------------------------------------------");
 		status.finalized();
 		System.gc();
 	}

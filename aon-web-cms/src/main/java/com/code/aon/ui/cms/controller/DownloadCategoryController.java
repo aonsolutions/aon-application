@@ -7,6 +7,7 @@ import com.code.aon.cms.DownloadCategoryDetail;
 import com.code.aon.cms.DownloadConfig;
 import com.code.aon.cms.Image;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class DownloadCategoryController extends BasicI18nController {
@@ -66,7 +67,7 @@ public class DownloadCategoryController extends BasicI18nController {
 	}
 	
 	public String getBack(){
-		if (AonUtil.getController("download").getTo()==null)
+		if (FormUtil.getController("download").getTo()==null)
 			return "download_list";
 		return "download_form";
 	}

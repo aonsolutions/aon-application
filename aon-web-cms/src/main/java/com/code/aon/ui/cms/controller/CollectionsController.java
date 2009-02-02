@@ -108,7 +108,8 @@ public class CollectionsController {
 		criteria.addEqualExpression(brandBean.getFieldName(ICMSAlias.BRAND_ACTIVE), true);
 		criteria.addOrder(brandBean.getFieldName(ICMSAlias.BRAND_ALIAS));
 		List<ITransferObject> list = (List<ITransferObject>)brandBean.getList(criteria);
-		SelectItem item;
+		SelectItem item = new SelectItem(null, "");
+		brands.add(item);
 		for (int i = 0; i < list.size(); i++) {
 			Brand brand = (Brand)list.get(i);
 			int id = brand.getId();

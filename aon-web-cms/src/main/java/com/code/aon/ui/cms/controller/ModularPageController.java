@@ -17,7 +17,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 
 public class ModularPageController extends BasicI18nController {
 
@@ -34,7 +34,7 @@ public class ModularPageController extends BasicI18nController {
 	}
 
 	public void onSelectOptions(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		ModularPageOptionController mpc = (ModularPageOptionController)AonUtil.getController("modular_page_option");
+		ModularPageOptionController mpc = (ModularPageOptionController)FormUtil.getController("modular_page_option");
 		IManagerBean mpBean = BeanManager.getManagerBean(ModularPageOption.class);
 		ModularPage modularPage = (ModularPage) this.getTo();
 		Criteria criteria = new Criteria();

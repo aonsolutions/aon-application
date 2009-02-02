@@ -6,8 +6,8 @@ import com.code.aon.cms.ArticleCategory;
 import com.code.aon.cms.ArticleCategoryDetail;
 import com.code.aon.cms.ArticleConfig;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
-
 
 public class ArticleCategoryController extends BasicI18nController {
 
@@ -54,7 +54,7 @@ public class ArticleCategoryController extends BasicI18nController {
 	}
 
 	public String getBack(){
-		if (AonUtil.getController("article").getTo()==null)
+		if (FormUtil.getController("article").getTo()==null)
 			return "article_list";
 		return "article_form";
 	}

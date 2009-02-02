@@ -6,6 +6,7 @@ import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.LinkCategoryDetail;
 import com.code.aon.cms.LinkConfig;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 
@@ -53,7 +54,7 @@ public class LinkCategoryController extends BasicI18nController {
 	}
 
 	public String getBack(){
-		if (AonUtil.getController("link").getTo()==null)
+		if (FormUtil.getController("link").getTo()==null)
 			return "link_list";
 		return "link_form";
 	}

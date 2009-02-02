@@ -1,15 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:rich="http://richfaces.org/rich">
-<body>
-
-<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
 
@@ -142,28 +140,20 @@
 								value="#{appBundle.product_price}" />
 							<aon:inputText id="productDetail_price"
 								size="20" maxlength="15"
-								required="true" 
 								value="#{product.to.price}" />
 
 							<aon:outputLabel for="productDetail_price2"
 								value="#{appBundle.product_offer_price}" />
 							<aon:inputText id="productDetail_price2"
 								size="20" maxlength="15"
-								required="true" 
 								value="#{product.to.offerPrice}" />
 
 							<aon:outputLabel 
 								value="#{appBundle.albumImage_image}" />
 							<aon:panelGroup id="thumbnail_preview">
-								<aon:graphicImage 
+								<aon:graphicImage styleClass="aon-padding aon-border"
 									url="#{product.to.image}.thumbnail" 
 									alt="#{product.to.image}"/>
-				                <aon:commandLink
-				                	immediate="#{true}"
-				                	reRender="thumbnail_preview"
-				                    actionListener="#{product.onDelImage}">
-									<aon:graphicImage url="/images/cms/inactive.png" />
-				        		</aon:commandLink>
 								<ui:include src="/facelet/content/utils/image_modal.xhtml">
 									<ui:param name="modalPanelName" value="mp" />
 									<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
@@ -173,6 +163,12 @@
 									<ui:param name="image" value="#{true}" />
 									<ui:param name="thumbnail" value="#{false}" />
 								</ui:include>
+				                <aon:commandLink style="padding:2px"
+				                	immediate="#{true}"
+				                	reRender="thumbnail_preview"
+				                    actionListener="#{product.onDelImage}">
+									<aon:graphicImage url="/images/cms/inactive.png"  alt="#{bundle.aon_remove}" />
+				        		</aon:commandLink>
 							</aon:panelGroup>
 
 							<aon:outputLabel for="ProductDetail_alt"
@@ -194,6 +190,3 @@
 
 	</ui:define>
 </ui:composition>
-
-</body>
-</html>

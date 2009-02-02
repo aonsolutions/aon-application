@@ -11,9 +11,8 @@ import com.code.aon.cms.Album;
 import com.code.aon.cms.AlbumCategory;
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleCategory;
-import com.code.aon.cms.DirectAccessDetail;
+import com.code.aon.cms.Brand;
 import com.code.aon.cms.DirectAccessGroupDetail;
-import com.code.aon.cms.Download;
 import com.code.aon.cms.DownloadCategory;
 import com.code.aon.cms.DownloadDetail;
 import com.code.aon.cms.FaqCategory;
@@ -21,6 +20,7 @@ import com.code.aon.cms.GenericPageDetail;
 import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.MenuOption;
 import com.code.aon.cms.ModularPage;
+import com.code.aon.cms.ProductCategory;
 import com.code.aon.cms.SportCategory;
 import com.code.aon.cms.SportClub;
 import com.code.aon.cms.dao.ICMSAlias;
@@ -33,11 +33,10 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.cms.Constants;
+import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.controller.CollectionsController;
 import com.code.aon.ui.cms.velocity.AlbumGenerator;
 import com.code.aon.ui.cms.velocity.ArticleCalendarGenerator;
-import com.code.aon.ui.cms.velocity.ArticleGenerator;
 import com.code.aon.ui.cms.velocity.DownloadsGenerator;
 import com.code.aon.ui.cms.velocity.FaqGenerator;
 import com.code.aon.ui.cms.velocity.HiruGenerator;
@@ -60,6 +59,8 @@ public class MenuOptionUtil {
 			if (type.equals(PageType.ARTICLE_OTHER)) return true;
 			if (type.equals(PageType.DOWNLOAD)) return true;
 			if (type.equals(PageType.SPORT)) return true;
+			if (type.equals(PageType.PRODUCT_CATEGORIES)) return true;
+			if (type.equals(PageType.BRANDS)) return true;
 		}
 		return false;
 	}
@@ -120,6 +121,16 @@ public class MenuOptionUtil {
 					return true;
 				if (ContentLevel.CATEGORY.equals(level))
 					return true;
+				if (ContentLevel.ELEMENT.equals(level))
+					return true;
+			}
+			if (type.equals(PageType.PRODUCT_CATEGORIES)){
+				if (ContentLevel.CATEGORY.equals(level))
+					return true;
+				if (ContentLevel.ELEMENT.equals(level))
+					return true;
+			}
+			if (type.equals(PageType.BRANDS)){
 				if (ContentLevel.ELEMENT.equals(level))
 					return true;
 			}
@@ -269,11 +280,44 @@ public class MenuOptionUtil {
 			if (ContentLevel.ELEMENT.equals(level)){
 				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getSportClubList();
 			}
+		}else if (type.equals(PageType.PRODUCT_CATEGORIES)){
+			try {
+				if (ContentLevel.TOP.equals(level)){
+					idents.add(new SelectItem(null,"NO VALID"));
+				}
+				if (ContentLevel.SECTION.equals(level)){
+					idents.add(new SelectItem(null,"NO VALID"));
+				}
+				if (ContentLevel.CATEGORY.equals(level)){
+					idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getParentCategories();
+				}
+				if (ContentLevel.ELEMENT.equals(level)){
+						idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getCategories();
+				}
+			} catch (ExpressionException e) {
+				e.printStackTrace();
+			}
+		}else if (type.equals(PageType.BRANDS)){
+			try {
+				if (ContentLevel.TOP.equals(level)){
+					idents.add(new SelectItem(null,"NO VALID"));
+				}
+				if (ContentLevel.SECTION.equals(level)){
+					idents.add(new SelectItem(null,"NO VALID"));
+				}
+				if (ContentLevel.CATEGORY.equals(level)){
+					idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getParentCategories();
+				}
+				if (ContentLevel.ELEMENT.equals(level)){
+					idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getBrands();
+				}
+			} catch (ExpressionException e) {
+				e.printStackTrace();
+			}
 		}
 		return idents;
 	}
 
-	
 	public static String getMenuOptionLink(Integer ident, PageType pageType, ContentLevel level, String url) {
 		if (pageType == PageType.EXTERNAL) {
 			if (url != null && !url.trim().equals("")) return url;
@@ -542,14 +586,52 @@ public class MenuOptionUtil {
 			return link;
 		}
 		if (pageType == PageType.PRODUCT_CATEGORIES) {
-			String link = Templates.PRODUCT_CATEGORY.getHtmlName();
-			link = link.replaceAll("%NAME%", ProductGenerator.MAIN_PAGE);
-			return link;
+			try {
+				if (level.equals(ContentLevel.TOP)){
+					String link = Templates.PRODUCT_CATEGORY.getHtmlName();
+					link = link.replaceAll("%NAME%", ProductGenerator.MAIN_PAGE);
+					return link;
+				}else if (level.equals(ContentLevel.CATEGORY) || level.equals(ContentLevel.ELEMENT)){
+					IManagerBean bean = BeanManager.getManagerBean(ProductCategory.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_ID), ident);
+					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_ACTIVE), true);
+					List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+					if (l.size() > 0) {
+						ProductCategory pc = (ProductCategory)l.get(0);
+						String link = Templates.PRODUCT_CATEGORY.getHtmlName();
+						link = link.replaceAll("%NAME%", pc.getAlias());
+						return link;
+					}
+				}
+			} catch (ManagerBeanException e) {
+				e.printStackTrace();
+			}
+			return null;
 		}
 		if (pageType == PageType.BRANDS) {
-			String link = Templates.BRAND.getHtmlName();
-			link = link.replaceAll("%NAME%", ProductGenerator.MAIN_PAGE);
-			return link;
+			try {
+				if (level.equals(ContentLevel.TOP)){
+					String link = Templates.BRAND.getHtmlName();
+					link = link.replaceAll("%NAME%", ProductGenerator.MAIN_PAGE);
+					return link;
+				}else if (level.equals(ContentLevel.CATEGORY) || level.equals(ContentLevel.ELEMENT)){
+					IManagerBean bean = BeanManager.getManagerBean(Brand.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.BRAND_ID), ident);
+					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.BRAND_ACTIVE), true);
+					List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+					if (l.size() > 0) {
+						Brand b = (Brand)l.get(0);
+						String link = Templates.BRAND.getHtmlName();
+						link = link.replaceAll("%NAME%", b.getAlias());
+						return link;
+					}
+				}
+			} catch (ManagerBeanException e) {
+				e.printStackTrace();
+			}
+			return null;
 		}
 		if (pageType == PageType.HIRU) {
 			String link = Templates.HIRU_COURSES.getHtmlName();

@@ -9,10 +9,10 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.controller.SportCareerPathController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
 
 public class SportPlayerControllerListener extends ControllerAdapter {
 
@@ -34,7 +34,7 @@ public class SportPlayerControllerListener extends ControllerAdapter {
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
 		try{
-			SportCareerPathController c = (SportCareerPathController)AonUtil.getController("sport_career_path");
+			SportCareerPathController c = (SportCareerPathController)FormUtil.getController("sport_career_path");
 			IManagerBean moBean = BeanManager.getManagerBean(SportCareerPath.class);
 			SportPlayer sportPlayer = (SportPlayer) event.getController().getTo();
 			Criteria criteria = new Criteria();

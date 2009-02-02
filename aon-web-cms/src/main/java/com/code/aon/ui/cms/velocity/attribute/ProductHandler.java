@@ -32,8 +32,8 @@ public class ProductHandler {
 		this.short_label = detail.getShortLabel();
 		this.label = detail.getLabel();
 		this.active = detail.getProduct().isActive();
-		this.price = detail.getProduct().getPrice().toString();
-		this.offerPrice = detail.getProduct().getOfferPrice().toString();
+		this.price = detail.getProduct().getPrice()==null?"":detail.getProduct().getPrice().toString();
+		this.offerPrice = detail.getProduct().getOfferPrice()==null?"":detail.getProduct().getOfferPrice().toString();
 		this.brand = new BrandHandler(detail.getProduct().getBrand());
 		this.productCategory = new ProductCategoryHandler(detail.getProduct().getProductCategory());
 		this.url = Templates.PRODUCT.getHtmlName();

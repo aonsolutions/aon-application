@@ -5,7 +5,7 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.cms.Brand;
 import com.code.aon.cms.BrandDetail;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 
 
 public class BrandController extends BasicI18nController {
@@ -48,7 +48,7 @@ public class BrandController extends BasicI18nController {
 	}
 
 	public String getBack(){
-		if (AonUtil.getController("product").getTo()==null)
+		if (FormUtil.getController("product").getTo()==null)
 			return "product_list";
 		return "product_form";
 	}

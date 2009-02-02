@@ -7,7 +7,7 @@
 	<context-param>
 		<param-name>javax.faces.CONFIG_FILES</param-name>
 		<param-value>
-			/WEB-INF/faces-config.xml
+			 /WEB-INF/faces-config.xml
 			,/WEB-INF/beans-faces-config.xml
 			,/WEB-INF/lookup-beans-faces-config.xml
 			,/WEB-INF/navigation-faces-config.xml
@@ -44,12 +44,10 @@
 		<param-name>facelets.SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
 	</context-param>
-<!-- 
-	<context-param>
+	<!-- context-param>
 		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>-1</param-value>
-	</context-param>
--->
+	</context-param> -->
 	<context-param>
 		<param-name>facelets.BUFFER_SIZE</param-name>
 		<param-value>500000</param-value>
@@ -119,14 +117,22 @@
 		<param-value>aon</param-value>
 	</context-param>
 	
-	<!--  
    <context-param>
       <param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
-      <param-value>../richFaces3.2.1/</param-value>
+      <param-value>richFaces3.2.1/</param-value>
    </context-param>
-   -->
    
-	<!-- Sessions Filter --> 
+	<!-- BackDoorAuthentication Filter -->
+	<filter>
+		<filter-name>BackDoorAuthenticationFilter</filter-name>
+		<filter-class>com.code.aon.bridge.session.BackDoorAuthenticationFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>BackDoorAuthenticationFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+
+	<!-- Sessions Filter -->
 	<filter>
 		<filter-name>SessionFilter</filter-name>
 		<filter-class>
@@ -134,27 +140,25 @@
 		</filter-class>
 	</filter>
 	
-	<!-- Enables and Registers session for concurrent sessions --> 
+	<!-- Enables and Registers session for concurrent sessions -->
 	<filter-mapping>
 		<filter-name>SessionFilter</filter-name>
 		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
 	
-
 	<!-- Listener, that does all the startup work (configuration, init). -->
 	<listener>
 		<listener-class>
 			com.sun.faces.config.ConfigureListener
 		</listener-class>
 	</listener>
-
-	<!-- Listener, that enables Concurrent Sessions per User. --> 
+	
+	<!-- Listener, that enables Concurrent Sessions per User. -->
 	<listener>
 		<listener-class>
 			com.code.aon.bridge.session.ConcurrentSessionListener
 		</listener-class>
 	</listener>
-	
 	
 	<!-- Faces Servlet -->
 	<servlet>
@@ -272,6 +276,10 @@
       <servlet-class>
          com.code.aon.ui.resources.servlet.ResourceServlet
       </servlet-class>
+		<init-param>
+			<param-name>debug</param-name>
+			<param-value>false</param-value>
+		</init-param>
    </servlet>
    <servlet-mapping>
       <servlet-name>ResourceServlet</servlet-name>
@@ -294,7 +302,7 @@
 
 	<!-- Welcome File List -->
 	<welcome-file-list>
-		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 
 	<!-- Security Constraint -->

@@ -5,7 +5,7 @@ import java.io.FilenameFilter;
 
 public interface IGalleryController {
 
-	public String revoverFilesPath();
+	public String recoverFilesPath();
 	
 	public FilenameFilter getFilenameFilter();
 }

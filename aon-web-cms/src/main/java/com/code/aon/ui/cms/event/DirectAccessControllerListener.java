@@ -3,10 +3,10 @@ package com.code.aon.ui.cms.event;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.cms.controller.DirectAccessController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
 
 public class DirectAccessControllerListener extends ControllerAdapter {
 
@@ -24,6 +24,6 @@ public class DirectAccessControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
-		AonUtil.getController("direct_access").onSearch(null);
+		FormUtil.getController("direct_access").onSearch(null);
 	}
 }
