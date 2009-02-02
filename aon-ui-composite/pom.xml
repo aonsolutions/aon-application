@@ -53,7 +53,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.warehouse</artifactId>
-			<version>3.2.0</version>
+			<version>3.2.1-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
