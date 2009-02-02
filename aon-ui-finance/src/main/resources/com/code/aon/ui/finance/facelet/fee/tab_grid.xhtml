@@ -33,7 +33,7 @@
 				<aon:div styleClass="aon-lookup" rendered="#{to==customerFee.to}">
 					<aon:lookupInputText id="item_product_code-Edit"
 						value="#{customerFee.to.item.product.code}" lookup="#{itemLookup}"
-						reRender="item_product_name-Edit,price-Edit,discount-Edit,amount-Edit"
+						reRender="item_product_name-Edit,price-Edit,discount-Edit"
 						lookupChangeListener="#{customerFee.onItemChanged}"
 						onblur="toUpperCase(this);" required="true" size="10">
 						<aon:joinProperty alias="Item_product_code"
@@ -42,7 +42,7 @@
 					<aon:lookupButton
 						windowTitle="#{productBundle.product_item_selection}"
 						actionType="search" property="#{customerFee.to.item}"
-						selectReRender="item_product_code-Edit,item_product_name-Edit,price-Edit,discount-Edit,amount-Edit"
+						selectReRender="item_product_code-Edit,item_product_name-Edit,price-Edit,discount-Edit"
 						lookup="#{itemLookup}" minHeight="460" minWidth="650"
 						lookupChangeListener="#{customerFee.onItemChanged}">
 					</aon:lookupButton>
@@ -54,7 +54,7 @@
 						<aon:lookupInputText id="item_product_code-New"
 							value="#{customerFee.to.item.product.code}"
 							lookup="#{itemLookup}"
-							reRender="item_product_name-New,price-New,discount-New,amount-New"
+							reRender="item_product_name-New,price-New,discount-New"
 							lookupChangeListener="#{customerFee.onItemChanged}"
 							onblur="toUpperCase(this);" required="true" size="10">
 							<aon:joinProperty alias="Item_product_code"
@@ -63,7 +63,7 @@
 						<aon:lookupButton
 							windowTitle="#{productBundle.product_item_selection}"
 							actionType="search" property="#{customerFee.to.item}"
-							selectReRender="item_product_code-New,item_product_name-New,price-New,discount-New,amount-New"
+							selectReRender="item_product_code-New,item_product_name-New,price-New,discount-New"
 							lookup="#{itemLookup}" minHeight="460" minWidth="650"
 							lookupChangeListener="#{customerFee.onItemChanged}">
 						</aon:lookupButton>
@@ -134,13 +134,13 @@
 				</aon:outputText>
 				<aon:selectInputDate rendered="#{to.id==customerFee.to.id}"
 					value="#{customerFee.to.initialDate}"
-					inputSize="7"
+					inputSize="7" required="true"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}" />
 				<f:facet name="footer">
 					<aon:selectInputDate rendered="#{customerFee.new}"
 						value="#{customerFee.to.initialDate}"
-						inputSize="7"
+						inputSize="7" required="true"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}" />
 				</f:facet>
