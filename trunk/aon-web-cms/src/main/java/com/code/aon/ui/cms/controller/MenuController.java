@@ -16,7 +16,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 
 public class MenuController extends BasicController {
 
@@ -124,7 +124,7 @@ public class MenuController extends BasicController {
 	}
 	
 	public void onSelectOptions(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		MenuOptionController moc = (MenuOptionController)AonUtil.getController("menu_option");
+		MenuOptionController moc = (MenuOptionController)FormUtil.getController("menu_option");
 		IManagerBean moBean = BeanManager.getManagerBean(MenuOption.class);
 		Menu menu = (Menu) this.getTo();
 		Criteria criteria = new Criteria();

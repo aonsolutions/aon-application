@@ -13,8 +13,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.util.AonUtil;
-
+import com.code.aon.ui.form.FormUtil;
 
 public class FooterController extends BasicI18nController {
 
@@ -43,7 +42,7 @@ public class FooterController extends BasicI18nController {
 	}
 
 	public void onSelectBannerCategories(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		FooterBannerCategoryController c = (FooterBannerCategoryController)AonUtil.getController("footer_banner_category");
+		FooterBannerCategoryController c = (FooterBannerCategoryController)FormUtil.getController("footer_banner_category");
 		IManagerBean moBean = BeanManager.getManagerBean(FooterBannerCategory.class);
 		Footer footer = (Footer) this.getTo();
 		Criteria criteria = new Criteria();

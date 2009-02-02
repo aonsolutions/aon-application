@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.code.aon.cms.Config;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.ImageUtil;
 
@@ -47,17 +48,69 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
 			String basePath = getImagesPath(session);
 			String path = basePath + servlet;
 			String file = path.replaceAll(".thumbnail", "");
+			boolean document = false;
+			//Comprobamos la extension...
+			String ext = file.substring(file.lastIndexOf(".")+1);
+			if (ext != null && !ext.trim().equals("")) {
+				if (ext.equals("doc") || ext.equals("docx") || ext.equals("wps")) {
+					ext = "word.png";
+					document = true;
+				}
+				else {
+					if (ext.equals("xls") || ext.equals("xlsx")) {
+						ext = "excel.png";
+						document = true;
+					}
+					else {
+						if (ext.equals("pps") || ext.equals("pptx") || ext.equals("ppt")) {
+							ext = "powerpoint.png";
+							document = true;
+						}
+						else {
+							if (ext.equals("wmv") || ext.equals("avi") || ext.equals("mov")) {
+								ext = "video.png";
+								document = true;
+							}
+							else {
+								if (ext.equals("wma") || ext.equals("mp3") || ext.equals("rm")) {
+									ext = "audio.png";
+									document = true;
+								}
+								else {
+									if (ext.equals("html") || ext.equals("htm")) {
+										ext = "html.png";
+										document = true;
+									}
+									else {
+										if (ext.equals("pdf")) {
+											ext = "pdf.png";
+											document = true;
+										}
+
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 			File f = new File(file);
         	res.setContentType( "image/jpeg" );
         	res.setHeader("Expires", "0");
         	res.setHeader("Pragma", "no-cache");
         	res.setHeader("Cache-Control", "no-store");
             res.setCharacterEncoding("ISO-8859-1"); //$NON-NLS-1$
-			if(f.exists() && f.isFile()){
-                ImageUtil.resize(file, res.getOutputStream(), maxDim);
+			if (!document && f.exists() && f.isFile()) {
+				ImageUtil.resize(file, res.getOutputStream(), maxDim);
             }
             else {
-        		is = ThumbnailServlet.class.getResourceAsStream(BLANK_IMAGE);
+            	String image = OTHER_IMAGE;
+            	if (!f.exists() || !f.isFile()) {
+            		image = BLANK_IMAGE;
+            	}
+            	res.setContentType( "image/png" );
+            	if (document) image = ext;
+        		is = ThumbnailServlet.class.getResourceAsStream(image);
         		bis = new BufferedInputStream(is);
                 os = res.getOutputStream();
         		bos = new BufferedOutputStream(os);

@@ -2,10 +2,10 @@ package com.code.aon.ui.cms.event;
 
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
 
 public class AlbumControllerListener extends ControllerAdapter {
 
@@ -21,6 +21,6 @@ public class AlbumControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
-		AonUtil.getController("albumImage").onSearch(null);
+		FormUtil.getController("albumImage").onSearch(null);
 	}
 }

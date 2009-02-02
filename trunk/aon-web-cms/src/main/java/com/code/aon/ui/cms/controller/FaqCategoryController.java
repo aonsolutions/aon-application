@@ -6,8 +6,8 @@ import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.FaqCategoryDetail;
 import com.code.aon.cms.FaqConfig;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
-
 
 public class FaqCategoryController extends BasicI18nController{
 
@@ -53,7 +53,7 @@ public class FaqCategoryController extends BasicI18nController{
 	}
 
 	public String getBack(){
-		if (AonUtil.getController("faq").getTo()==null)
+		if (FormUtil.getController("faq").getTo()==null)
 			return "faq_list";
 		return "faq_form";
 	}

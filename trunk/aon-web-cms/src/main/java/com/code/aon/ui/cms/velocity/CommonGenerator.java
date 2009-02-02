@@ -93,7 +93,8 @@ public class CommonGenerator extends Generator {
 			section = GeneratorConfigController.defaultSection();
 		}
 		
-		VelocityUtil.addMessage("Cargando sección... ["+section.getAlias()+"]", VelocityUtil.INFO);
+		VelocityUtil.addMessage(". . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ." +
+								" . . . . . . . . . . . . . . . . . . Cargando sección... ["+section.getAlias()+"]", VelocityUtil.INFO);
 		
 		if (previousSection==null ||
 				section.getId().intValue()!=previousSection.getId().intValue()){

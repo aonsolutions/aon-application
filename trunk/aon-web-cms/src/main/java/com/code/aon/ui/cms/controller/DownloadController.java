@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.cms.ArticleDetail;
 import com.code.aon.cms.Download;
 import com.code.aon.cms.DownloadDetail;
 import com.code.aon.cms.Image;

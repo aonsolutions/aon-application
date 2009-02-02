@@ -5,8 +5,10 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.cms.BrandDetail;
 import com.code.aon.cms.Image;
 import com.code.aon.cms.Product;
+import com.code.aon.cms.ProductCategoryDetail;
 import com.code.aon.cms.ProductDetail;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
@@ -82,7 +84,39 @@ public class ProductController extends BasicI18nController {
 		}
 		return title;
 	}
-	
+
+	public String getI18nCategory() throws ManagerBeanException {
+		String category = "";
+		Product p = (Product)this.model.getRowData();
+		IManagerBean bean = BeanManager.getManagerBean(ProductCategoryDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_DETAIL_PRODUCT_CATEGORY_ID), p.getProductCategory().getId());
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+		if (list.size() > 0) {
+			ProductCategoryDetail pcd = (ProductCategoryDetail)list.get(0);
+			category = pcd.getLabel();
+		}
+		return category;
+	}
+
+	public String getI18nBrand() throws ManagerBeanException {
+		String brand = "";
+		Product p = (Product)this.model.getRowData();
+		if (p.getBrand() != null) {
+			IManagerBean bean = BeanManager.getManagerBean(BrandDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.BRAND_DETAIL_BRAND_ID), p.getBrand().getId());
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.BRAND_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+			List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+			if (list.size() > 0) {
+				BrandDetail bd = (BrandDetail)list.get(0);
+				brand = bd.getLabel();
+			}
+		}
+		return brand;
+	}
+
 	public void onDelImage(ActionEvent event) {
 		Product current = (Product)getTo();
 		current.setImage(null);

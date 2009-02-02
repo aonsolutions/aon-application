@@ -16,15 +16,16 @@ import org.richfaces.model.UploadItem;
 import com.code.aon.cms.Image;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.cms.IGalleryController;
+import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.ImageComparator;
 import com.code.aon.ui.form.BasicController;
 
 public abstract class GalleryController extends BasicController implements IGalleryController{
 
-	private String currentPath = revoverFilesPath();
+	private String currentPath = recoverFilesPath();
 
 	private String getRelativePath(String path) {
-		String base = new File(revoverFilesPath()).getAbsolutePath(); 
+		String base = new File(recoverFilesPath()).getAbsolutePath(); 
 		if (path.startsWith(base)) {
 			if (path.length() == base.length()) return "/";
 			else return path.substring(base.length()).replace('\\', '/');
@@ -124,7 +125,7 @@ public abstract class GalleryController extends BasicController implements IGall
 	public void deleteFolder( ActionEvent event ) throws IOException {
 		File file = new File( currentPath );
 		file.delete();
-		currentPath = revoverFilesPath();
+		currentPath = recoverFilesPath();
 		chargeImageList();
 	}
 
@@ -133,6 +134,11 @@ public abstract class GalleryController extends BasicController implements IGall
 		if (file.listFiles().length==0)
 			return true;
 		return false;
+	}
+	
+	public String getPreviewCurrentUrl() {
+		String url = ControllerUtil.getPreviewURL() + "/" + ControllerUtil.IMAGES_PATH + getCurrentRelativePath();
+		return url;
 	}
 	
 	public static void main(String[] args) {

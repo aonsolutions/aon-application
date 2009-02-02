@@ -1,15 +1,19 @@
 package com.code.aon.ui.cms.controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.zip.DataFormatException;
 
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.FTPUtil;
-
 
 public class GeneratorStatusController  {
 
@@ -43,11 +47,15 @@ public class GeneratorStatusController  {
 	}
 	
 	public void addMessage(String msg) {
-		this.status.add(0,GregorianCalendar.getInstance().getTime()+": "+msg);
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		String time = sdf.format(new Date());
+		this.status.add(0,time+" "+msg);
 	}	
 	
 	public void addErrorMessage(String msg) {
-		this.errors.add(0,GregorianCalendar.getInstance().getTime()+": "+msg);
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		String time = sdf.format(new Date());
+		this.errors.add(0, time+" "+msg);
 	}	
 
 	public boolean isActivePoll() {

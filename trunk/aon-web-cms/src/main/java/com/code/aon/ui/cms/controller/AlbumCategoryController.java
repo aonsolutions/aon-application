@@ -6,6 +6,7 @@ import com.code.aon.cms.AlbumCategory;
 import com.code.aon.cms.AlbumCategoryDetail;
 import com.code.aon.cms.AlbumConfig;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class AlbumCategoryController extends BasicI18nController {
@@ -52,7 +53,7 @@ public class AlbumCategoryController extends BasicI18nController {
 	}
 
 	public String getBack(){
-		if (AonUtil.getController("album").getTo()==null)
+		if (FormUtil.getController("album").getTo()==null)
 			return "album_list";
 		return "album_form";
 	}

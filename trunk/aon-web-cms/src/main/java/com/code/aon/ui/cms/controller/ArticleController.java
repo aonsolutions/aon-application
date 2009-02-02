@@ -21,6 +21,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class ArticleController extends BasicI18nController {
@@ -123,7 +124,7 @@ public class ArticleController extends BasicI18nController {
 	}
 
 	public void onSelectRelatedArticles(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		ArticleRelatedController c = (ArticleRelatedController)AonUtil.getController("articleRelated");
+		ArticleRelatedController c = (ArticleRelatedController)FormUtil.getController("articleRelated");
 		IManagerBean moBean = BeanManager.getManagerBean(ArticleRelated.class);
 		Article article = (Article) this.getTo();
 		Criteria criteria = new Criteria();
@@ -134,7 +135,7 @@ public class ArticleController extends BasicI18nController {
 	}
 
 	public void onSelectArticleDocuments(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		ArticleDocumentController c = (ArticleDocumentController)AonUtil.getController("articleDocument");
+		ArticleDocumentController c = (ArticleDocumentController)FormUtil.getController("articleDocument");
 		IManagerBean moBean = BeanManager.getManagerBean(ArticleDocument.class);
 		Article article = (Article) this.getTo();
 		Criteria criteria = new Criteria();

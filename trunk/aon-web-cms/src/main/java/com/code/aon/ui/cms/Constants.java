@@ -24,7 +24,8 @@ public interface Constants {
 	CONFIG_PATH					= "config",
 
 	//RESOURCES CONSTANTS
-	BLANK_IMAGE					= "spacer.gif",
+	OTHER_IMAGE					= "otro.png",
+	BLANK_IMAGE					= "spacer.png",
 	IMAGES_PATH 				= "images",
 	DOCUMENTS_PATH				= "documents",
 

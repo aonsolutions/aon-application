@@ -23,6 +23,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.ImageUtil;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class AlbumController extends BasicI18nController {
@@ -78,7 +79,7 @@ public class AlbumController extends BasicI18nController {
 	}
 
 	public String getBack(){
-		if (AonUtil.getController("albumImage").getTo()==null)
+		if (FormUtil.getController("albumImage").getTo()==null)
 			return "home";
 		return "album_image_form";
 	}

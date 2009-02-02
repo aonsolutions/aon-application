@@ -24,23 +24,27 @@ public class BrandHandler {
 	}
 
 	public BrandHandler(BrandDetail detail){
-		this.alias = detail.getBrand().getAlias();
-		this.label = detail==null?null:detail.getLabel();
-		this.url = Templates.BRAND.getHtmlName();
-		this.url = this.url.replaceAll("%NAME%", this.alias);
+		if (detail != null) {
+			this.alias = detail.getBrand()==null?"":detail.getBrand().getAlias();
+			this.label = detail==null?null:detail.getLabel();
+			this.url = Templates.BRAND.getHtmlName();
+			this.url = this.url.replaceAll("%NAME%", this.alias);
+		}
 	}
 
 	private static BrandDetail recoverBranDetail(Brand object){
-		Session s = HibernateUtil.getSession();
-		String stmt = "SELECT bd FROM BrandDetail bd " +
-				"WHERE bd.brand.id = ? " +
-				"AND bd.language.id = ?";
-		Query query = s.createQuery(stmt);
-		query.setInteger(0, object.getId());
-		query.setInteger(1, ControllerUtil.getCurrentLanguage().getId());
-		List<BrandDetail> list = query.list();
-		if (!list.isEmpty())
-			return list.get(0);
+		if (object != null) {
+			Session s = HibernateUtil.getSession();
+			String stmt = "SELECT bd FROM BrandDetail bd " +
+					"WHERE bd.brand.id = ? " +
+					"AND bd.language.id = ?";
+			Query query = s.createQuery(stmt);
+			query.setInteger(0, object.getId());
+			query.setInteger(1, ControllerUtil.getCurrentLanguage().getId());
+			List<BrandDetail> list = query.list();
+			if (!list.isEmpty())
+				return list.get(0);
+		}
 		return null;
 	}
 

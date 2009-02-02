@@ -34,6 +34,7 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.CommonGenerator;
 import com.code.aon.ui.cms.velocity.attribute.ArticleHandler;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 
@@ -97,7 +98,7 @@ public class BulletinController extends BasicI18nController {
 	}
 
 	public void onSelectArticles(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		BulletinArticleController c = (BulletinArticleController)AonUtil.getController("bulletin_article");
+		BulletinArticleController c = (BulletinArticleController)FormUtil.getController("bulletin_article");
 		IManagerBean moBean = BeanManager.getManagerBean(BulletinArticle.class);
 		Bulletin bulletin = (Bulletin) this.getTo();
 		Criteria criteria = new Criteria();

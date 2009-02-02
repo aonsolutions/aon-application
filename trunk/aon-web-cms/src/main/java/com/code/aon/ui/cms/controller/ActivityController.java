@@ -4,7 +4,7 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.ActivityDetail;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 
 
 public class ActivityController extends BasicI18nController {
@@ -33,7 +33,7 @@ public class ActivityController extends BasicI18nController {
 	}
 
 	public String getBack(){
-		if (AonUtil.getController("company").getTo()==null)
+		if (FormUtil.getController("company").getTo()==null)
 			return "company_list";
 		return "company_form";
 	}

@@ -108,7 +108,7 @@
 				</aon:panelGrid>
 			</aon:div>
 								
-						<aon:panelGrid id="main_panel" columns="2" dir="true">
+						<aon:panelGrid id="main_panel" columns="2" dir="true" style="width:100%">
 	
 							<aon:outputLabel for="Article_alias" style="width:100px"
 								value="#{appBundle.article_alias}" />
@@ -223,14 +223,14 @@
 								style="width:100px"
 								value="#{appBundle.article_content}" />
 							<aon:div id="article_richtext">		
-								<aon:div style="width:600px" rendered="#{article.richTextEnabled}">
-									<aon:inputRichText style="width:100%" 
+								<aon:div sytle="width:100%" rendered="#{article.richTextEnabled}">
+									<aon:inputRichText style="width:800px" 
 										id="ArticleDetail_content" 
 										value="#{article.toI18n.content}" />
 								</aon:div>
 								<aon:inputTextarea id="Article_content_TA"
 									rendered="#{!article.richTextEnabled}" 
-									cols="80" rows="20" 
+									rows="20" style="width:98%" 
 									value="#{article.toI18n.content}"/>
 							</aon:div>
 		

@@ -16,7 +16,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 
 
 public class DirectAccessGroupController extends BasicI18nController {
@@ -61,7 +61,7 @@ public class DirectAccessGroupController extends BasicI18nController {
 	}
 
 	public String getBack(){
-		if (AonUtil.getController("direct_access").getTo()==null)
+		if (FormUtil.getController("direct_access").getTo()==null)
 			return "direct_access_list";
 		return "direct_access_form";
 	}

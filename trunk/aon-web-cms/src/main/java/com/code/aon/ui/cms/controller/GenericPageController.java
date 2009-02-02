@@ -23,7 +23,6 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 
-
 public class GenericPageController extends BasicI18nController {
 
 	private String title;

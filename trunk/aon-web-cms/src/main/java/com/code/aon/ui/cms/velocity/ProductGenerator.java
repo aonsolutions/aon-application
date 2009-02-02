@@ -81,7 +81,7 @@ public class ProductGenerator extends Generator {
 					vu.put("category", categoryHandler);
 					vu.put("subCategory", subCategoryHandler);
 					vu.put("productList", listProductHandler);
-					VelocityUtil.addMessage(" Generando subcategory " + productSubCategoryDetail.getProductCategory().getAlias() + ".", VelocityUtil.INFO);
+					VelocityUtil.addMessage(" Generando Subcategoria " + productSubCategoryDetail.getProductCategory().getAlias() + ".", VelocityUtil.INFO);
 					generate(vu, Templates.PRODUCT_CATEGORY, productSubCategoryDetail.getProductCategory().getAlias());
 					vu.remove("productList");
 					vu.remove("subCategory");
@@ -92,7 +92,7 @@ public class ProductGenerator extends Generator {
 
 				vu.put("category", categoryHandler);
 				vu.put("subCategoryList", listSubCategoryHandler);
-				VelocityUtil.addMessage(" Generando category " + productCategoryDetail.getProductCategory().getAlias() + ".", VelocityUtil.INFO);
+				VelocityUtil.addMessage(" Generando Categoria " + productCategoryDetail.getProductCategory().getAlias() + ".", VelocityUtil.INFO);
 				generate(vu, Templates.PRODUCT_CATEGORY, productCategoryDetail.getProductCategory().getAlias());
 				vu.remove("subCategoryList");
 				vu.remove("category");
@@ -163,6 +163,7 @@ public class ProductGenerator extends Generator {
 			vu = null;		
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
 		} finally {
 			productCategoryDetailList = null;
@@ -203,7 +204,7 @@ public class ProductGenerator extends Generator {
 			
 			if (generate){
 				vu.put("product", productHandler);
-				VelocityUtil.addMessage(" Generando article " + productDetail.getProduct().getAlias() + ".", VelocityUtil.INFO);
+				VelocityUtil.addMessage(" Generando producto " + productDetail.getProduct().getAlias() + ".", VelocityUtil.INFO);
 				generate(vu, Templates.PRODUCT, productDetail.getProduct().getAlias());
 				vu.remove("product");
 			}
@@ -234,7 +235,7 @@ public class ProductGenerator extends Generator {
 			ProductHandler productHandler = new ProductHandler(productDetail);
 			if (generate){
 				vu.put("product", productHandler);
-				VelocityUtil.addMessage(" Generando article " + productDetail.getProduct().getAlias() + ".", VelocityUtil.INFO);
+				VelocityUtil.addMessage(" Generando producto " + productDetail.getProduct().getAlias() + ".", VelocityUtil.INFO);
 				generate(vu, Templates.PRODUCT, productDetail.getProduct().getAlias());
 				vu.remove("product");
 			}
@@ -272,5 +273,6 @@ public class ProductGenerator extends Generator {
 	}
 	
 	public static final String MAIN_PAGE = "main_page"; 
-	
+
+
 }

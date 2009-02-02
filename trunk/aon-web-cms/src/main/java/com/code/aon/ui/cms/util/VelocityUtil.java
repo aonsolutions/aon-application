@@ -64,11 +64,11 @@ public class VelocityUtil extends VelocityEngine implements Constants {
 			status.addMessage(" INFO: " + msg);
 		}else if (type == ERROR){
 			//AonUtil.addErrorMessage(" ERROR: " + msg);
-			status.addMessage(" ERROR: " + msg);
+			//status.addMessage(" ERROR: " + msg);
 			status.addErrorMessage(" ******* ERROR: " + msg + "***********");
 		}else if (type == WARN){
 			//AonUtil.addWarningMessage(" WARNING: " + msg);
-			status.addMessage(" ******* WARNING: " + msg + "***********");
+			//status.addMessage(" ******* WARNING: " + msg + "***********");
 			status.addErrorMessage(" ******* WARNING: " + msg + "***********");
 		}else{
 			//AonUtil.addFatalMessage(msg);

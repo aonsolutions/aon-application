@@ -17,7 +17,6 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 
-
 public class FaqController extends BasicI18nController {
 
 	private String question;
