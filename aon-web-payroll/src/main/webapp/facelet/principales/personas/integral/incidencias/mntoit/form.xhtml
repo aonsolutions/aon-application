@@ -144,6 +144,82 @@ aon_payroll_principales_mntoit_procesado=Procesado
 
 -->
 
+	       <aon:editDataTable id="pconfData" var="to" rows="20"
+					 value="#{parteconf.model}"
+						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+								
+						
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+						
+							
+							<f:facet name="footer">
+								<aon:div>
+									<aon:commandButton alt="[#{bundle.aon_reset}]"
+										styleClass="aon-editDataTable-button aon-icon-reset"
+										actionListener="#{parteconf.onReset}" 
+										rendered="#{!cuenta.new}"
+										accesskey="#{bundle.aon_key_new_line}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_principales_mntoit_numero}" />
+							</f:facet>
+							<aon:outputText value="#{to.id.cdg}"  />
+							
+						</aon:column>
+						
+						
+						<aon:column  >
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_principales_mntoit_colegiado}" />
+							</f:facet>
+							<aon:outputText value="#{to.numcol}"  />
+							
+						</aon:column>
+						
+						
+								<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_principales_mntoit_cias}" />
+							</f:facet>
+							<aon:outputText value="#{to.cias}"  />
+							
+						</aon:column>
+						
+								<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_principales_mntoit_fecha}" />
+							</f:facet>
+							<aon:selectInputDate required="true" requiredMessage="fecini"
+								rendered="#{to==cuotaRetencionGuipuzcoa.to}"
+								value="#{to.fecconf}" inputSize="10"
+								renderAsPopup="true"
+								popupDateFormat="#{appBundle.aon_date_pattern}">
+							
+						</aon:column>
+						
+								<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_principales_mntoit_procesado}" />
+							</f:facet>
+							<aon:outputText value="#{to.parproc}"  />
+							
+						</aon:column>
+						
+							
+						
+						
+						
+						
+					</aon:editDataTable>
+					<aon:dataScroller2 for="pconfData" showNote="true" />
+
 						<rich:spacer />
 						<aon:panelGrid columns="4" dir="true"
 							width="100%">
