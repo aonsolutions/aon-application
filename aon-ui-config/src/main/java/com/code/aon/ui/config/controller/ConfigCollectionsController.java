@@ -38,7 +38,7 @@ public class ConfigCollectionsController {
 		Iterator iter = seriesBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Series serie = (Series)iter.next();
-			SelectItem item = new SelectItem(serie.getId(),serie.getId().toString());
+			SelectItem item = new SelectItem(serie, serie.getId());
 			series.add(item);
 		}
 		return series;
