@@ -11,6 +11,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 
 import org.ajax4jsf.taglib.html.facelets.AjaxSupportHandler;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.faces.component.AonComponentHandler;
 import com.code.aon.faces.component.AttributeInfo;
@@ -69,7 +70,8 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 		UIViewRoot root = ComponentSupport.getViewRoot(ctx, c);		
 		Map map = (Map) root.getAttributes().get(OutputLabelHandler.LABELS_MAP);
 		if (map != null) {
-			Object value = map.get(getId(ctx));
+			String id = StringUtils.substringBefore(getId(ctx), "-");
+			Object value = map.get(id);
 			if ( value != null ) {
 				UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), c, LABEL_ATTR, value.toString());				
 			}
