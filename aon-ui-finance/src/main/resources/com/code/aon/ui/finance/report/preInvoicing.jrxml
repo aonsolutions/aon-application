@@ -60,7 +60,7 @@
 	<variable name="reportTotal" class="java.lang.Double" resetType="None" calculation="Sum">
 		<variableExpression><![CDATA[$V{invoiceTotal}]]></variableExpression>
 	</variable>
-	<variable name="invoiceTotalAmount" class="java.lang.Double" resetType="None" incrementType="Report" calculation="Sum">
+	<variable name="invoiceTotalAmount" class="java.lang.Double" resetType="None" incrementType="Report" calculation="Nothing">
 		<variableExpression><![CDATA[$V{invoiceTotalAmount}]]></variableExpression>
 	</variable>
 
