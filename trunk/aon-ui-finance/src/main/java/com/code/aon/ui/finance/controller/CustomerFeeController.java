@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.faces.event.ValueChangeEvent;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.CustomerFee;
 import com.code.aon.product.Item;
@@ -34,7 +36,11 @@ public class CustomerFeeController extends LinesController {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
 			fee.setItem(item);
-			fee.setDescription(item.getProduct().getName() + " " + (item.getDetail()!=null?item.getDetail():""));
+			String description = item.getProduct().getName();
+			if (! StringUtils.isBlank(item.getDetail()) ) {
+				description += " " + item.getDetail();
+			}
+			fee.setDescription( description );
 
 			Date date = fee.getInitialDate();
 			CustomerController customerController = (CustomerController)FormUtil.getController(CUSTOMER_CONTROLLER_NAME);
