@@ -15,8 +15,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.cotizacion.Bonificacion;
+import com.code.aon.payroll.enumeration.TipoImporte;
 import com.code.aon.payroll.principales.persona.Trabajador;
 
 /**
@@ -30,8 +34,8 @@ public class Bonifica implements ITransferObject {
 	private Date fecfin;
 	private Integer horas;
 	private BigDecimal importe;
-	private String tipo;
-	private String prorrateo;
+	private TipoImporte tipo;
+	private Boolean prorrateo;
 	private Trabajador emprper;
 	private Bonificacion tipboni;
 
@@ -80,22 +84,24 @@ public class Bonifica implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Tipo importe")
+	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.TipoImporte")} )
 	@Column(name = "tipo", length = 1)
-	public String getTipo() {
+	public TipoImporte getTipo() {
 		return this.tipo;
 	}
 
-	public void setTipo(String tipo) {
+	public void setTipo(TipoImporte tipo) {
 		this.tipo = tipo;
 	}
 
 	// @DataDefinition(label="Prorrateo")
+	@Type(type="siNoType" )
 	@Column(name = "prorrateo", nullable = false, length = 1)
-	public String getProrrateo() {
+	public Boolean getProrrateo() {
 		return this.prorrateo;
 	}
 
-	public void setProrrateo(String prorrateo) {
+	public void setProrrateo(Boolean prorrateo) {
 		this.prorrateo = prorrateo;
 	}
 

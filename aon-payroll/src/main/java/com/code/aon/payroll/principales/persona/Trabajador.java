@@ -313,7 +313,7 @@ public class Trabajador implements ITransferObject {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "codper", referencedColumnName = "cdg", nullable = false)
+	@JoinColumn(name = "codper", nullable = false)
 	public Persona getPersona() {
 		return this.persona;
 	}

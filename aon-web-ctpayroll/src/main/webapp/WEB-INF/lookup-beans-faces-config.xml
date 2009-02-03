@@ -139,7 +139,7 @@
 		</managed-property>
 	</managed-bean>	
 	
-	<!--  ************ Pais LOOKUP **************  -->	
+	<!--  ************ Nacion LOOKUP **************  -->	
 	<managed-bean>
 		<managed-bean-name>nacionLookup</managed-bean-name>
 		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
@@ -369,7 +369,7 @@
 		</managed-property>
 	</managed-bean>	
 	
-					<!--  ************ persona  LOOKUP **************  -->	
+				<!--  ************ persona  LOOKUP **************  -->	
 	<managed-bean>
 		<managed-bean-name>personaLookup</managed-bean-name>
 		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
@@ -388,7 +388,7 @@
 		</managed-property>
 	</managed-bean>	
 	
-						<!--  ************ persona  LOOKUP **************  -->	
+				<!--  ************ mutua LOOKUP **************  -->	
 	<managed-bean>
 		<managed-bean-name>mutuaLookup</managed-bean-name>
 		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
@@ -407,7 +407,7 @@
 		</managed-property>
 	</managed-bean>	
 	
-					<!--  ************ trabajador  LOOKUP **************  -->	
+				<!--  ************ trabajador  LOOKUP **************  -->	
 	<managed-bean>
 		<managed-bean-name>trabajadorLookup</managed-bean-name>
 		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
@@ -426,7 +426,7 @@
 		</managed-property>
 	</managed-bean>	
 	
-						<!--  ************ convenio  LOOKUP **************  -->	
+				<!--  ************ convenio  LOOKUP **************  -->	
 	<managed-bean>
 		<managed-bean-name>convenioLookup</managed-bean-name>
 		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
@@ -505,7 +505,7 @@
 	</managed-bean>	
 	
 		
-						<!--  ************ ccontratos  LOOKUP **************  -->	
+				<!--  ************ ccontratos  LOOKUP **************  -->	
 	<managed-bean>
 		<managed-bean-name>contratosLookup</managed-bean-name>
 		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
@@ -525,7 +525,7 @@
 	</managed-bean>	
 	
 		
-						<!--  ************ ctc2  LOOKUP **************  -->	
+				<!--  ************ ctc2  LOOKUP **************  -->	
 	<managed-bean>
 		<managed-bean-name>contratostc2Lookup</managed-bean-name>
 		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
@@ -545,7 +545,7 @@
 	</managed-bean>	
 	
 	
-							<!--  ************ porcentaje  LOOKUP **************  -->	
+				<!--  ************ porcentaje  LOOKUP **************  -->	
 	<managed-bean>
 		<managed-bean-name>porcentajeLookup</managed-bean-name>
 		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
@@ -561,6 +561,83 @@
 		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>facelet/avanzadas/simulacion/porcentajeLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	<!--  ************ ccontratos  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>tipocontratoLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>tipocontratoLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.principales.personas.Tipocont</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>facelet/principales/personas/integral/trabajo/tipocontratoLookup/list.xhtml</value>
+			<!-- <value>facelet/avanzadas/hojastrabajo/contratostc2Lookup/list.xhtml</value> -->
+		</managed-property>
+	</managed-bean>
+	
+	<!--  ************ colectivos  LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>colectivosLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>colectivosLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.auxiliares.Colectivos</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>facelet/principales/personas/integral/trabajo/colectivosLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
+	<!--  ************ bonificacion LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>bonificacionLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>bonificacionLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.cotizacion.Bonificacion</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>facelet/principales/personas/integral/bonificaciones/bonificacionLookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+
+<!--  ************ tipo incidencia LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>tipincLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>tipincLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.principales.personas.Tipinc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>facelet/principales/personas/integral/incidencias/otras/tipincLookup/list.xhtml</value>
 		</managed-property>
 	</managed-bean>	
 	

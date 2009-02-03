@@ -1,5 +1,8 @@
 package com.code.aon.ui.payroll.event;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.ql.Criteria;
@@ -41,7 +44,7 @@ public class TrabajadorControllerListener extends ControllerAdapter implements
 			throws ControllerListenerException {
 		// TODO Auto-generated method stub
 		
-		resetTrabajoModel();
+		resetLinesModel();
 		super.beforeModelInitialized(event);
 	}
 	
@@ -50,22 +53,97 @@ public class TrabajadorControllerListener extends ControllerAdapter implements
 			throws ControllerListenerException {
 		// TODO Auto-generated method stub
 		
-		resetTrabajoModel();
+		resetLinesModel();
 		super.afterBeanCanceled(event);
 	}
 	
 	
-	private void resetTrabajoModel() throws ControllerListenerException {
-		/*
-		LinesController trabajoController = (LinesController) FormUtil.getController(IPayrollConstants.TRABAJO_CONTROLLER_NAME);
+	private void resetLinesModel() throws ControllerListenerException {
+		System.out.println("  **********************************  resetLinesModel");
+		
+		//LinesController controller = (LinesController) FormUtil.getController(IPayrollConstants.TRABAJO_CONTROLLER_NAME);
+		List<LinesController> controllers = new ArrayList<LinesController>();
+		
+		controllers.add((LinesController) FormUtil.getController(IPayrollConstants.TRABAJO_CONTROLLER_NAME));
+		controllers.add((LinesController) FormUtil.getController(IPayrollConstants.BONIFICA_CONTROLLER_NAME));
+		controllers.add((LinesController) FormUtil.getController(IPayrollConstants.PERCEP_CONTROLLER_NAME));
+		controllers.add((LinesController) FormUtil.getController(IPayrollConstants.TRABDTO_CONTROLLER_NAME));
+		controllers.add((LinesController) FormUtil.getController(IPayrollConstants.EMBARGO_CONTROLLER_NAME));
+		controllers.add((LinesController) FormUtil.getController(IPayrollConstants.PARTEIT_CONTROLLER_NAME));
+		controllers.add((LinesController) FormUtil.getController(IPayrollConstants.TRABINCI_CONTROLLER_NAME));
+		controllers.add((LinesController) FormUtil.getController(IPayrollConstants.NOMINAIT_CONTROLLER_NAME));
+		controllers.add((LinesController) FormUtil.getController(IPayrollConstants.AVISO_CONTROLLER_NAME));
+		controllers.add((LinesController) FormUtil.getController(IPayrollConstants.PRCDIVTRAB_CONTROLLER_NAME));
+		
+		
 		try {
-			trabajoController.clearCriteria();
-			Criteria criteria = trabajoController.getCriteria();
-			criteria.addNullExpression(trabajoController.getFieldName(IPayrollAlias.TRABAJO_EMPRPER_CDG));
-			trabajoController.initializeModel();
+			for(LinesController lc:controllers){
+				lc.clearCriteria();
+				
+				if(lc.getBeanName().equals("trabajo"))
+					lc.getCriteria().addNullExpression(lc.getFieldName(IPayrollAlias.TRABAJO_EMPRPER_CDG));
+				else if(lc.getBeanName().equals("bonifica"))
+					lc.getCriteria().addNullExpression(lc.getFieldName(IPayrollAlias.BONIFICA_EMPRPER_CDG));
+				else if(lc.getBeanName().equals("percep"))
+					lc.getCriteria().addNullExpression(lc.getFieldName(IPayrollAlias.PERCEP_TRABAJADOR_CDG));
+				else if(lc.getBeanName().equals("trabdto"))
+					lc.getCriteria().addNullExpression(lc.getFieldName(IPayrollAlias.TRABDTO_EMPRPER_CDG));
+				else if(lc.getBeanName().equals("embargo"))
+					lc.getCriteria().addNullExpression(lc.getFieldName(IPayrollAlias.EMBARGO_TRABAJADOR_CDG));
+				else if(lc.getBeanName().equals("parteit"))
+					lc.getCriteria().addNullExpression(lc.getFieldName(IPayrollAlias.PARTEIT_EMPRPER_CDG));
+				else if(lc.getBeanName().equals("trabinci"))
+					lc.getCriteria().addNullExpression(lc.getFieldName(IPayrollAlias.TRABINCI_EMPRPER_CDG));
+				else if(lc.getBeanName().equals("nominait"))
+					lc.getCriteria().addNullExpression(lc.getFieldName(IPayrollAlias.NOMINAIT_EMPRPER_CDG));
+				else if(lc.getBeanName().equals("aviso"))
+					lc.getCriteria().addNullExpression(lc.getFieldName(IPayrollAlias.AVISOS_EMPRPER_CDG));
+				else if(lc.getBeanName().equals("prcdivtrab"))
+					lc.getCriteria().addNullExpression(lc.getFieldName(IPayrollAlias.PRCDIVTRAB_EMPRPER_CDG));
+				
+				
+				lc.initializeModel();
+			}
+			
+			
+			
+			//Criteria criteria = controller.getCriteria();
+			//criteria.addNullExpression(controller.getFieldName(IPayrollAlias.TRABAJO_EMPRPER_CDG));
+			
+			//controller.initializeModel();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );			
 		}
-		*/		
+				
+		
+		
+		//IPayrollAlias.BONIFICA_EMPRPER_CDG;
+		
+		/*
+		 * trabajo
+		 * bonifica
+		 * trabdto
+		 * embargo  **
+		 * parteit
+		 * trabinci
+		 * nominait
+		 * aviso  **
+		 * prcdivtrab
+		 */
+		
+		
 	}
+	
+	/*
+	private void resetComunidadModel() throws ControllerListenerException {
+		LinesController comunidadController = (LinesController) FormUtil.getController(IPayrollConstants.COMUNIDAD_CONTROLLER_NAME);
+		try {
+			comunidadController.clearCriteria();
+			Criteria criteria = comunidadController.getCriteria();
+			criteria.addNullExpression(comunidadController.getFieldName(IPayrollAlias.COMUNIDAD_PAIS_CDG));
+			comunidadController.initializeModel();
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException( e.getMessage(), e );			
+		}		
+	}*/
 }

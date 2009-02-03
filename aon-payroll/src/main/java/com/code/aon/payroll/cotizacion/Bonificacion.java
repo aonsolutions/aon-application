@@ -1,13 +1,18 @@
 package com.code.aon.payroll.cotizacion;
 
 import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.payroll.enumeration.FormaCalculo;
 
 
 /**
@@ -22,7 +27,7 @@ public class Bonificacion  implements ITransferObject {
 
      private int cdg;
      private String description;
-     private String calculo;
+     private FormaCalculo calculo;
      private BigDecimal prcCg;
      private BigDecimal prcAcc;
      private BigDecimal prcAccfgs;
@@ -67,12 +72,13 @@ public class Bonificacion  implements ITransferObject {
      * 
      * @return
      */
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.FormaCalculo")} )
 	@Column(name="calculo", length=1)
-    public String getCalculo() {
+    public FormaCalculo getCalculo() {
         return this.calculo;
     }
     
-    public void setCalculo(String calculo) {
+    public void setCalculo(FormaCalculo calculo) {
         this.calculo = calculo;
     }
     

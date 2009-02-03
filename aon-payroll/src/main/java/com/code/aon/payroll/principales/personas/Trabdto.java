@@ -20,6 +20,7 @@ import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.enumeration.Afectados;
+import com.code.aon.payroll.enumeration.ImporteIndicar;
 import com.code.aon.payroll.principales.persona.Trabajador;
 
 /**
@@ -37,7 +38,7 @@ public class Trabdto implements ITransferObject {
 	private String concepto;
 	private Afectados afecta;
 	private BigDecimal importe;
-	private String indimp;
+	private ImporteIndicar indimp;
 	private Date fecnew;
 	private Date hornew;
 	private Date fecmod;
@@ -120,12 +121,13 @@ public class Trabdto implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Importe a Indicar")
+	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.ImporteIndicar")} )
 	@Column(name = "indimp", length = 1)
-	public String getIndimp() {
+	public ImporteIndicar getIndimp() {
 		return this.indimp;
 	}
 
-	public void setIndimp(String indimp) {
+	public void setIndimp(ImporteIndicar indimp) {
 		this.indimp = indimp;
 	}
 

@@ -19,11 +19,37 @@
 			
 			<ui:param name="skipSaveButton" value="#{true}" />
 			<ui:param name="skipRemoveButton" value="#{true}" />
-			<!-- <aon:methodParam name="resetAction" value="embargo_form" /> -->
-			<!-- <ui:param name="skipResetButton" value="#{trabajador.new or (trabajador.to == null)}" /> -->
+			<!-- <aon:methodParam name="resetAction" value="trabajo_form" /> -->
+			<ui:param name="skipResetButton" value="#{true}" />
+			
+			
 			
 
 			<ui:define name="columns">
+			
+				<aon:column  
+					styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+					<f:facet name="header">
+						<aon:outputText value="&#160;" />
+					</f:facet>
+					<h:commandButton alt="[#{bundle.aon_reset}]" title="[Ir a mnto descuentos]"
+						styleClass="aon-editDataTable-button aon-icon-rowSelector"
+						reRender="integralPresonasData"
+						rendered="#{trabdto.to==to}"
+						action="trabdto_form" accesskey="#{bundle.aon_key_new_line}"/>
+							
+					<f:facet name="footer">
+						<aon:div>
+							<h:commandButton
+								id="embargo-reset" title="#{bundle.aon_reset}"
+								action="embargo_form" actionListener="#{trabdto.onReset}"
+								rendered="#{trabajador.to!=null}" 
+								styleClass="aon-editDataTable-button aon-icon-reset"
+								accesskey="#{bundle.aon_key_new_line}" />
+	
+						</aon:div>
+					</f:facet>
+				</aon:column>
 				
 				<aon:column>
 					<f:facet name="header">

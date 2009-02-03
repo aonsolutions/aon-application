@@ -12,12 +12,12 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.payroll.auxiliares.Admon;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.Afectados;
 import com.code.aon.payroll.principales.persona.Trabajador;
+import com.code.aon.ui.form.LinesController;
 
-public class EmbargoController extends PayrollBasicController {
+public class EmbargoController extends LinesController {
 
 	private List<SelectItem> afectados;
 

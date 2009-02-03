@@ -22,38 +22,50 @@
 			<ui:param name="skipRemoveButton" value="#{true}" />
 			<ui:param name="rowSelectorReRender" value="trabajadorTabs" />
 			<ui:param name="cancelButtonReRender" value="trabajadorTabs" />
+			<!-- 
+			<ui:param name="saveButtonReRender" value="trabajadorTabs" />
+			<ui:param name="removeButtonReRender" value="trabajadorTabs" />
+			-->
 			
 			<aon:methodParam name="resetAction" value="trabajador_form" />
 			<!-- <ui:param name="skipResetButton" value="#{trabajador.new or (trabajador.to == null)}" /> -->
+			<ui:param name="skipResetButton" value="#{true}" />
 			
-			<!-- 
-			<ui:param name="skipLineEdition" value="#{true}" /> 
+			
+			
+			 
+			<!-- <ui:param name="skipLineEdition" value="#{true}" /> --> 
+			
 			<aon:rowSelector actionListener="#{trabajador.onSelect}"  />
 			
 			
-			<aon:column id="trabajador-selectColumn" 
-				styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
-				<f:facet name="header">
-					<aon:outputText value="&#160;" />
-				</f:facet>
-				<aon:outputText value="&#160;" />
-				<f:facet name="footer">
-					<aon:div>
-						<h:commandButton
-							id="trabajador-reset" title="#{bundle.aon_reset}"
-							action="#{trabajador_form}" actionListener="#{trabajador.onReset}"
-							rendered="#{!trabajador.new}" 
-							styleClass="aon-editDataTable-button aon-icon-reset"
-							accesskey="#{bundle.aon_key_new_line}" />
-
-					</aon:div>
-				</f:facet>
-			</aon:column>
-			 -->
-				 
-				
 			<ui:define name="columns">
+			
+				<aon:column id="trabajador-selectColumn" 
+					styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+					<f:facet name="header">
+						<aon:outputText value="&#160;" />
+					</f:facet>
+					<h:commandButton alt="[#{bundle.aon_reset}]" title="[Ir a mnto trabajador]"
+						styleClass="aon-editDataTable-button aon-icon-rowSelector "
+						reRender="integralPresonasData"
+						rendered="#{trabajador.to==to}"
+						action="trabajador_form" accesskey="#{bundle.aon_key_new_line}"/>
+							
+					<f:facet name="footer">
+						<aon:div>
+							<h:commandButton
+								id="trabajador-reset" title="#{bundle.aon_reset}"
+								action="trabajador_form" actionListener="#{trabajador.onReset}"
+								rendered="#{!trabajador.new}" 
+								styleClass="aon-editDataTable-button aon-icon-reset"
+								accesskey="#{bundle.aon_key_new_line}" />
+	
+						</aon:div>
+					</f:facet>
+				</aon:column>
 				
+		
 				<aon:column>
 					<f:facet name="header">
 						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecha_alta}" />

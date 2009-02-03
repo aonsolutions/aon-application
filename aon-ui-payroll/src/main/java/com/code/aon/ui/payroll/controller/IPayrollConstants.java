@@ -31,5 +31,14 @@ public interface IPayrollConstants {
 	String TRABAJADOR_CONTROLLER_NAME = "trabajador";
 	String TRABAJO_CONTROLLER_NAME = "trabajo";
 	String EMPRESA_CONTROLLER_NAME = "empresa";
+	String BONIFICA_CONTROLLER_NAME = "bonifica";
+	String TRABDTO_CONTROLLER_NAME = "trabdto";
+	String EMBARGO_CONTROLLER_NAME = "embargo";
+	String PARTEIT_CONTROLLER_NAME = "parteit";
+	String TRABINCI_CONTROLLER_NAME = "trabinci";
+	String NOMINAIT_CONTROLLER_NAME = "nominait";
+	String AVISO_CONTROLLER_NAME = "aviso";
+	String PRCDIVTRAB_CONTROLLER_NAME = "prcdivtrab";
+	
 	
 }
