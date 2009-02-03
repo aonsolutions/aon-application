@@ -8,21 +8,22 @@ import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
-
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.IndiceAgrario;
 import com.code.aon.payroll.enumeration.IndiceGrupo;
+import com.code.aon.payroll.enumeration.Prorateo;
+import com.code.aon.payroll.enumeration.RelacionLaboral;
 import com.code.aon.payroll.principales.Domicilio;
 import com.code.aon.payroll.principales.empresa.Actividad;
 import com.code.aon.payroll.principales.empresa.Emprccos;
 import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.ui.form.LinesController;
 
-public class TrabajoController extends PayrollBasicController {
+public class TrabajoController extends LinesController {
 	
 	private static final Logger LOGGER = Logger.getLogger(CotizacionBonificacionController.class.getName());
 
@@ -94,6 +95,7 @@ public class TrabajoController extends PayrollBasicController {
 		
 		try {
 			//Búsqueda por campos LookUp
+			
 			if (empresa!=null && (empresa.getCdg() != null)) {
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.TRABAJADOR_EMPRESA_CDG), empresa.getCdg());
 			}
@@ -145,6 +147,88 @@ public class TrabajoController extends PayrollBasicController {
 	public void setEmprccos(Emprccos emprccos) {
 		this.emprccos = emprccos;
 	}
+	
+	
+	
+	private String tabName;
+
+	/**
+	 * Devuelve el tab seleccionado.
+	 * El objetvo es mantener la pestaña activa entre navegaciones.
+	 * 
+	 * @return
+	 */
+	public String getTabName() {
+		return tabName;
+	}
+
+	public void setTabName(String tabName) {
+		this.tabName = tabName;
+	}
+	
+	public void changeTabValue(ValueChangeEvent event){
+		setTabName(event.getNewValue().toString());
+	}
+	
+	
+	private List<SelectItem> relacion;
+	private List<SelectItem> procot;
+	private List<SelectItem> proret;
+
+	/**
+	 * Recupera los tipo de relacion laboral.
+	 * 
+	 * @return
+	 */
+	public List<SelectItem> getRelacion() {
+		if ( relacion == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			relacion = new LinkedList<SelectItem>();
+			for (RelacionLaboral rl : RelacionLaboral.values()) {
+				String name = rl.getName( locale );
+				SelectItem item = new SelectItem( rl, name );
+				relacion.add(item);
+			}
+		}
+		return relacion;
+	}
+	
+	/**
+	 * Recupera los tipo de prorrateo de cotizacion.
+	 * 
+	 * @return
+	 */
+	public List<SelectItem> getProcot() {
+		if ( procot == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			procot = new LinkedList<SelectItem>();
+			for (Prorateo p : Prorateo.values()) {
+				String name = p.getName( locale );
+				SelectItem item = new SelectItem( p, name );
+				procot.add(item);
+			}
+		}
+		return procot;
+	}
+	
+	/**
+	 * Recupera los tipo de prorrateo de retribucion.
+	 * 
+	 * @return
+	 */
+	public List<SelectItem> getProret() {
+		if ( proret == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			proret = new LinkedList<SelectItem>();
+			for (Prorateo p : Prorateo.values()) {
+				String name = p.getName( locale );
+				SelectItem item = new SelectItem( p, name );
+				proret.add(item);
+			}
+		}
+		return proret;
+	}
+	
 
 
 	

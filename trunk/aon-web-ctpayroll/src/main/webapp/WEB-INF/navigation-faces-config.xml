@@ -1385,6 +1385,126 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>bonifica_form</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/bonificaciones/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>bonifica_search</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/bonificaciones/search.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>bonifica_list</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/bonificaciones/list.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>trabdto_form</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/minoraciones/descuentos/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>trabdto_search</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/minoraciones/descuentos/search.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>trabdto_list</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/minoraciones/descuentos/list.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>nominait_form</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/incidencias/incidenciasit/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>nominait_search</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/incidencias/incidenciasit/search.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>nominait_list</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/incidencias/incidenciasit/list.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>trabinci_form</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/incidencias/otras/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>trabinci_search</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/incidencias/otras/search.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>trabinci_list</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/incidencias/otras/list.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>parteit_form</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/incidencias/mntoit/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>parteit_search</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/incidencias/mntoit/search.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>parteit_list</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/incidencias/mntoit/list.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>prcdivtrab_form</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/division/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>prcdivtrab_search</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/division/search.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>prcdivtrab_list</from-outcome>
+			<to-view-id>
+				/facelet/principales/personas/integral/division/list.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	
 	<!-- =================== Seguros TC2 ================= -->
 	<navigation-rule>
@@ -1452,8 +1572,6 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule> 
-	
-	
 	
 	<!-- =================== Convenios - Colectivos ================= -->
 	<navigation-rule>

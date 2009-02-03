@@ -26,6 +26,7 @@
 						<ui:param name="controller"	value="#{trabajador}" />
 							
 						<aon:methodParam name="backAction" value="integralTrab_form" />
+						<aon:methodParam name="cancelAction" value="integralTrab_form" />
 							
 					</ui:include>
 					
@@ -47,9 +48,9 @@
 							value="#{appBundle.aon_payroll_principales_trabajador_cod_trab_bbx}" />
 						<aon:inputText value="#{trabajador.to.codnsz}" />
 
-						<aon:outputLabel
+						<aon:outputLabel 
 							value="#{appBundle.aon_payroll_principales_trabajador_fecalta}" />
-						<aon:selectInputDate renderAsPopup="true" required="#{true}"
+						<aon:selectInputDate id="fecha_alta" renderAsPopup="true" required="#{true}"
 							popupDateFormat="#{appBundle.aon_date_pattern}"
 							value="#{trabajador.to.fecalt}" enableManualInput="true" />
 
@@ -168,7 +169,8 @@
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_principales_trabajador_cuenta_coti}" />
-						<aon:selectOneRadio value="#{trabajador.to.emprccc.id.tipccc}" required="#{true}" >
+						<aon:selectOneRadio id="cuenta_cotizacion" required="#{true}"
+							value="#{trabajador.to.emprccc.id.tipccc}" >
 							<f:selectItems value="#{emprccc.listatipos}" />
 						</aon:selectOneRadio>
 												

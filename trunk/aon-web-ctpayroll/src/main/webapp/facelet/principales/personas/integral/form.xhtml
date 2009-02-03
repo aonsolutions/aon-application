@@ -69,39 +69,43 @@
 				
 				<aon:div>
 					<ui:include	src="trabajador/grid.xhtml" />
-					
+					<!-- 
 					<h:commandButton alt="[#{bundle.aon_reset}]" value="[Ir a mnto trabajador]"
 						styleClass="aon-editDataTable-button aon-icon-rowSelector "
 						reRender="integralPresonasData"
 						action="trabajador_form" accesskey="#{bundle.aon_key_new_line}"/>
-						
+					-->
 					
 				</aon:div>
 
 					<aon:div id="integralPresonasData"
 						styleClass="aon-scroll-area aon-scroll-area-clientes">
 
-						<rich:tabPanel switchType="ajax" style="tabs" id="trabajadorTabs">
-							
-							<rich:tab
+				<!-- <rich:tabPanel switchType="ajax" style="tabs" id="trabajadorTabs"> -->
+						
+						<rich:tabPanel switchType="ajax" id="trabajadorTabs"
+							selectedTab="#{persona.tabName}"
+							valueChangeListener="#{persona.changeTabValue}" >
+		
+							<rich:tab id="tabTrabajo"
 								label="#{appBundle.aon_payroll_principales_integralTra_tab1}" >
 								<aon:div id="trabajo">									 
 									<ui:include	src="trabajo/grid.xhtml" />
 								</aon:div>
 							</rich:tab>
-							<rich:tab
+							<rich:tab id="tabBoni"
 								label="#{appBundle.aon_payroll_principales_integralTra_tab2}" >
 								<aon:div id="bonificaciones">									 
 									<ui:include	src="bonificaciones/grid.xhtml" />
 								</aon:div>
 							</rich:tab>
-							<rich:tab
+							<rich:tab id="tabPercep"
 								label="#{appBundle.aon_payroll_principales_integralTra_tab3}" >
 								<aon:div id="percepciones">									 
 									<ui:include	src="percepciones/grid.xhtml" />
 								</aon:div>
 							</rich:tab>
-							<rich:tab
+							<rich:tab id="tabMinor"
 								label="#{appBundle.aon_payroll_principales_integralTra_tab4}" >
 								<aon:div id="minoraciones">									 
 									<aon:outputLabel
@@ -112,7 +116,7 @@
 									<ui:include	src="minoraciones/embargos/grid.xhtml" />
 								</aon:div>
 							</rich:tab>
-							<rich:tab
+							<rich:tab id="tabInci"
 								label="#{appBundle.aon_payroll_principales_integralTra_tab5}" >
 								<aon:div id="incidencias">									 
 									<aon:outputLabel
@@ -126,7 +130,7 @@
 									<ui:include	src="incidencias/incidenciasit/grid.xhtml" />
 								</aon:div>
 							</rich:tab>
-							<rich:tab
+							<rich:tab id="tabAvisos"
 								label="#{appBundle.aon_payroll_principales_integralTra_tab6}" >
 								<aon:div id="avisos">									 
 									<aon:outputLabel
@@ -134,7 +138,7 @@
 									<ui:include	src="avisos/grid.xhtml" />
 								</aon:div>
 							</rich:tab>
-							<rich:tab
+							<rich:tab  id="tabDivi"
 								label="#{appBundle.aon_payroll_principales_integralTra_tab7}" >
 								<aon:div id="division">									 
 									<aon:outputLabel

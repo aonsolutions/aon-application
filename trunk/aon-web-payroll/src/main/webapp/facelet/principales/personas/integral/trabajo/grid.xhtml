@@ -21,12 +21,36 @@
 			<ui:param name="skipSaveButton" value="#{true}" />
 			<ui:param name="skipRemoveButton" value="#{true}" />
 			<!-- <aon:methodParam name="resetAction" value="trabajo_form" /> -->
-			<!-- <ui:param name="skipResetButton" value="#{true}" /> -->
+			<ui:param name="skipResetButton" value="#{true}" />
 			
 			
 			
 			
 			<ui:define name="columns">
+				
+				<aon:column id="trabajador-selectColumn" 
+					styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+					<f:facet name="header">
+						<aon:outputText value="&#160;" />
+					</f:facet>
+					<h:commandButton alt="[#{bundle.aon_reset}]" title="[Ir a mnto trabajo]"
+						styleClass="aon-editDataTable-button aon-icon-rowSelector "
+						reRender="integralPresonasData"
+						rendered="#{trabajo.to==to}"
+						action="trabajo_form" accesskey="#{bundle.aon_key_new_line}"/>
+							
+					<f:facet name="footer">
+						<aon:div>
+							<h:commandButton
+								id="trabajador-reset" title="#{bundle.aon_reset}"
+								action="trabajo_form" actionListener="#{trabajo.onReset}"
+								rendered="#{trabajador.to!=null}" 
+								styleClass="aon-editDataTable-button aon-icon-reset"
+								accesskey="#{bundle.aon_key_new_line}" />
+	
+						</aon:div>
+					</f:facet>
+				</aon:column>
 				
 				<aon:column>
 					<f:facet name="header">

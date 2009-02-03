@@ -47,7 +47,7 @@ public class Nominait implements ITransferObject {
 	private String simula;
 	private BigDecimal baseconTotal;
 	private BigDecimal baseaccTotal;
-	private String riesgo;
+	private Boolean riesgo;
 	private Trabajador emprper;
 
 	@EmbeddedId
@@ -226,12 +226,13 @@ public class Nominait implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Riesgo Embarazo")
+	@Type(type="siNoType")
 	@Column(name = "riesgo", length = 1)
-	public String getRiesgo() {
+	public Boolean getRiesgo() {
 		return this.riesgo;
 	}
 
-	public void setRiesgo(String riesgo) {
+	public void setRiesgo(Boolean riesgo) {
 		this.riesgo = riesgo;
 	}
 

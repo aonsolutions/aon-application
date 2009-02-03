@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+	<body>
+
+		<ui:composition
+			template="/facelet/templates/aon.ui.content.xhtml">
+
+			<ui:define name="content">
+
+				<aon:form id="parteitForm">
+
+					<!-- 
+						<ui:include
+						src="/facelet/templates/formPrintToolbar.xhtml">
+					-->
+					<ui:include
+						src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+						<ui:param name="toolbarTitle"
+							value="#{appBundle.aon_payroll_principales_mntoit_mnto}" />
+						<ui:param name="controller" value="#{parteit}" />
+
+						<aon:methodParam name="backAction"
+							value="integralTrab_form" />
+						<aon:methodParam name="cancelAction"
+							value="integralTrab_form" />
+
+					</ui:include>
+
+					<!--	FIN HEADER & TOOLBAR	-->
+
+					<aon:div id="bonificaData"
+						styleClass="aon-scroll-area">
+
+						<aon:panelGrid columns="4" dir="true"
+							width="100%">
+							
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_inciit_codtra}" />
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_inciit_datos_tra}" />
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_mntoit_alta}" />
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_mntoit_baja}" />
+							
+							<aon:inputText value="#{trabajador.to.cdg}" readonly="#{!bonifica.new}"
+								size="" maxlength="" />
+							<aon:div>
+								<aon:outputText value="#{trabajador.to.persona.descripcion} " />
+								<aon:outputText value="#{trabajador.to.persona.apellido2}, " />
+								<aon:outputText value="#{trabajador.to.persona.nombre} " />
+							</aon:div>
+							<aon:selectInputDate renderAsPopup="true" readonly="#{!trabinci.new}"
+								popupDateFormat="#{appBundle.aon_date_pattern}"
+								value="#{trabajador.to.fecalt}" enableManualInput="true" />
+							<aon:selectInputDate renderAsPopup="true" readonly="#{!trabinci.new}"
+								popupDateFormat="#{appBundle.aon_date_pattern}"
+								value="#{trabajador.to.fecbaj}" enableManualInput="true" />
+							
+						</aon:panelGrid>
+						
+						<rich:spacer />
+						
+						<aon:panelGrid columns="2" dir="true"
+							width="100%">
+
+							<f:facet name="header">
+								<aon:outputText
+									value="#{appBundle.aon_payroll_principales_mntoit_alta}" />
+							</f:facet>
+							
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_mntoit_inicio_it}" />
+							<aon:inputText value="#{trabajador.to.cdg}"
+								readonly="#{!bonifica.new}" size="" maxlength="" />
+							
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_mntoit_colegiado}" />
+							<aon:inputText value="#{trabajador.to.cdg}"
+								readonly="#{!bonifica.new}" size="" maxlength="" />
+							
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_mntoit_cias}" />
+							<aon:inputText value="#{trabajador.to.cdg}"
+								readonly="#{!bonifica.new}" size="" maxlength="" />
+							
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_mntoit_baja_proces}" />
+							<aon:inputText value="#{trabajador.to.cdg}"
+								readonly="#{!bonifica.new}" size="" maxlength="" />
+
+						</aon:panelGrid>
+						<rich:spacer />
+						<aon:panelGrid columns="2" dir="true"
+							width="100%">
+
+							<f:facet name="header">
+								<aon:outputText
+									value="#{appBundle.aon_payroll_principales_mntoit_baja}" />
+							</f:facet>
+							
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_mntoit_final_it}" />
+							<aon:inputText value="#{trabajador.to.cdg}"
+								readonly="#{!bonifica.new}" size="" maxlength="" />
+							
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_mntoit_colegiado}" />
+							<aon:inputText value="#{trabajador.to.cdg}"
+								readonly="#{!bonifica.new}" size="" maxlength="" />
+							
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_mntoit_cias}" />
+							<aon:inputText value="#{trabajador.to.cdg}"
+								readonly="#{!bonifica.new}" size="" maxlength="" />
+							
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_mntoit_alta_proces}" />
+							<aon:inputText value="#{trabajador.to.cdg}"
+								readonly="#{!bonifica.new}" size="" maxlength="" />
+
+						</aon:panelGrid>
+						<rich:spacer />
+						<aon:panelGrid columns="4" dir="true"
+							width="100%">
+
+
+
+
+
+
+aon_payroll_principales_mntoit_partes_confirm=PARTES DE CONFIRMACIÓN
+aon_payroll_principales_mntoit_numero=Número
+aon_payroll_principales_mntoit_fecha=Fecha
+aon_payroll_principales_mntoit_procesado=Procesado
+
+
+aon_payroll_principales_mntoit_bases=B A S E S
+aon_payroll_principales_mntoit_retrib_periodo_ant=Retribución Periodo Anterior
+aon_payroll_principales_mntoit_diaria_accid=Diaria Accidentes Trabajo I.T.
+
+aon_payroll_principales_mntoit_diaria_conting=Diaria contingencias Generales I.T.
+aon_payroll_principales_mntoit_regulad_diaria=Reguladora Diaria
+aon_payroll_principales_mntoit_dias_periodo_ant=Días Periodo Anterior
+aon_payroll_principales_mntoit_prest_60=Prestación Diaria 60 %
+aon_payroll_principales_mntoit_prest_75=Prestación Diaria 75 %
+aon_payroll_principales_mntoit_tipo_it=Tipo de I.T.
+aon_payroll_principales_mntoit_riesgo_embarazo=Riesgo durante embarazo
+aon_payroll_principales_mntoit_recaida_ant_it=Recaída de Anterior I.T.
+aon_payroll_principales_mntoit_prorrat_coti=Prorrateo cotización
+aon_payroll_principales_mntoit_parte_proces=Parte Procesado (S/N)
+
+
+
+
+
+
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_inciit_codtra}" />
+							<aon:inputText value="#{trabajador.to.cdg}" readonly="#{!bonifica.new}"
+								size="" maxlength="" />
+							
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_inciit_datos_tra}" />
+							<aon:div>
+								<aon:outputText value="#{trabajador.to.persona.descripcion} " />
+								<aon:outputText value="#{trabajador.to.persona.apellido2}, " />
+								<aon:outputText value="#{trabajador.to.persona.nombre} " />
+							</aon:div>
+							
+							
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_inciit_fecini_inci}" />
+							<aon:selectInputDate renderAsPopup="true" readonly="#{!trabinci.new}"
+								popupDateFormat="#{appBundle.aon_date_pattern}"
+								value="#{trabinci.to.id.fecini}" enableManualInput="true" />
+							
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_inciit_fecfin_inci}" />
+							<aon:selectInputDate renderAsPopup="true"
+								popupDateFormat="#{appBundle.aon_date_pattern}"
+								value="#{trabinci.to.fecfin}" enableManualInput="true" />
+					
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_otrasinci_tipo_inci}" />
+							<aon:div styleClass="aon-lookup">
+								<aon:lookupInputText id="tipinc_cdg" readonly="#{!trabinci.new}"
+									lookup="#{tipincLookup}" reRender="tipinc_descripcion"
+									value="#{trabinci.to.tipinc.cdg}" size="5">
+								</aon:lookupInputText>
+								<aon:lookupButton id="tipinc_lookup" disabled="#{!trabinci.new}"
+									windowTitle="#{appBundle.aon_payroll_principales_otrasinci_tipo_inci}"
+									selectReRender="tipinc_cdg,tipinc_descripcion"
+									lookup="#{tipincLookup}" minHeight="440"
+									property="#{trabinci.to.tipinc}">
+								</aon:lookupButton>
+								<aon:inputText id="tipinc_descripcion"
+									value="#{(trabinci.to.tipinc.descripcion!=null)?(trabinci.to.tipinc.descripcion):('')}"
+									size="45" disabled="true" />
+							</aon:div>	
+							
+							
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_otrasinci_importe}" />
+							<aon:inputText value="#{trabinci.to.importe}"
+								size="" maxlength="" />
+							
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_otrasinci_horas_dias}" />
+							<aon:inputText value="#{trabinci.to.cantidad}"
+								size="" maxlength="" />
+							
+						</aon:panelGrid>
+
+					</aon:div>
+				</aon:form>
+				
+				<aon:lookupButtonPopup lookup="#{trabinciLookup}" />
+				
+			</ui:define>
+		</ui:composition>
+	</body>
+</html>

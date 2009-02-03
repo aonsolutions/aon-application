@@ -28,6 +28,8 @@ import com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal;
 import com.code.aon.payroll.cotizacion.Base;
 import com.code.aon.payroll.cotizacion.Epigrafe;
 import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
+import com.code.aon.payroll.enumeration.Prorateo;
+import com.code.aon.payroll.enumeration.RelacionLaboral;
 import com.code.aon.payroll.enumeration.Timecont;
 import com.code.aon.payroll.principales.persona.Trabajador;
 
@@ -49,8 +51,8 @@ public class Trabajo implements ITransferObject {
 	private String descat;
 	private BigDecimal irpf;
 	private String cno;
-	private String procot;
-	private String proret;
+	private Prorateo procot;
+	private Prorateo proret;
 	private Integer nummat;
 	private String destc2;
 	private Date fecinicont;
@@ -82,7 +84,7 @@ public class Trabajo implements ITransferObject {
 	private String dc;
 	private String historico;
 	private String indceutamelilla;
-	private String relacion;
+	private RelacionLaboral relacion;
 	private String ocupacion;
 	private Tipaut tipaut;
 	private Base basecoti;
@@ -95,42 +97,6 @@ public class Trabajo implements ITransferObject {
 	private Sucursal sucursal;
 	private ContratosTc2 tipcotc2;
 	private Trabajador emprper;
-
-	/*
-	 * public Trabajo(TrabajoId id, Date fecfin, Date fecant, String ctacar,
-	 * String profesion, String codcat, String nivel, String descat, BigDecimal
-	 * irpf, String cno, String procot, String proret, Integer nummat, String
-	 * destc2, Date fecinicont, Date fecfincont, Integer diascont, Date fecaut,
-	 * String numcta, String plunumaut, Date plufecaut, BigDecimal pluprcmin,
-	 * BigDecimal pluprcmax, BigDecimal coered, Integer semana, Integer
-	 * semanatp, Integer cantp, BigDecimal baseant, String indalt, String
-	 * inddtoit, String inddtootr, String indtp, String indirpf, Integer concol,
-	 * String indactcon, String especial, Date fecnew, Date hornew, Date fecmod,
-	 * Date hormod, String dc, String historico, String indceutamelilla, String
-	 * relacion, String ocupacion, Tipaut tipaut, Basecoti basecoti, Colectivos
-	 * colectivos, Convenio convenio, Tipocont tipocont, Entidad entidad,
-	 * Epigrafe epigrafe, Porcoti porcoti, Sucursal sucursal, Tipcotc2 tipcotc2,
-	 * Emprper emprper) { this.id = id; this.fecfin = fecfin; this.fecant =
-	 * fecant; this.ctacar = ctacar; this.profesion = profesion; this.codcat =
-	 * codcat; this.nivel = nivel; this.descat = descat; this.irpf = irpf;
-	 * this.cno = cno; this.procot = procot; this.proret = proret; this.nummat =
-	 * nummat; this.destc2 = destc2; this.fecinicont = fecinicont;
-	 * this.fecfincont = fecfincont; this.diascont = diascont; this.fecaut =
-	 * fecaut; this.numcta = numcta; this.plunumaut = plunumaut; this.plufecaut =
-	 * plufecaut; this.pluprcmin = pluprcmin; this.pluprcmax = pluprcmax;
-	 * this.coered = coered; this.semana = semana; this.semanatp = semanatp;
-	 * this.cantp = cantp; this.baseant = baseant; this.indalt = indalt;
-	 * this.inddtoit = inddtoit; this.inddtootr = inddtootr; this.indtp = indtp;
-	 * this.indirpf = indirpf; this.concol = concol; this.indactcon = indactcon;
-	 * this.especial = especial; this.fecnew = fecnew; this.hornew = hornew;
-	 * this.fecmod = fecmod; this.hormod = hormod; this.dc = dc; this.historico =
-	 * historico; this.indceutamelilla = indceutamelilla; this.relacion =
-	 * relacion; this.ocupacion = ocupacion; this.tipaut = tipaut; this.basecoti =
-	 * basecoti; this.colectivos = colectivos; this.convenio = convenio;
-	 * this.tipocont = tipocont; this.entidad = entidad; this.epigrafe =
-	 * epigrafe; this.porcoti = porcoti; this.sucursal = sucursal; this.tipcotc2 =
-	 * tipcotc2; this.emprper = emprper; }
-	 */
 
 	@EmbeddedId
 	@AttributeOverrides( {
@@ -237,22 +203,24 @@ public class Trabajo implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Prorrateo Cotizacion")
+	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Prorateo")} )
 	@Column(name = "procot", nullable = false, length = 1)
-	public String getProcot() {
+	public Prorateo getProcot() {
 		return this.procot;
 	}
 
-	public void setProcot(String procot) {
+	public void setProcot(Prorateo procot) {
 		this.procot = procot;
 	}
 
 	// @DataDefinition(label="Prorrateo Retribucion")
+	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Prorateo")} )
 	@Column(name = "proret", nullable = false, length = 1)
-	public String getProret() {
+	public Prorateo getProret() {
 		return this.proret;
 	}
 
-	public void setProret(String proret) {
+	public void setProret(Prorateo proret) {
 		this.proret = proret;
 	}
 
@@ -576,12 +544,13 @@ public class Trabajo implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Relación Laboral")
+	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.RelacionLaboral")} )
 	@Column(name = "relacion", nullable = false, length = 4)
-	public String getRelacion() {
+	public RelacionLaboral getRelacion() {
 		return this.relacion;
 	}
 
-	public void setRelacion(String relacion) {
+	public void setRelacion(RelacionLaboral relacion) {
 		this.relacion = relacion;
 	}
 
@@ -605,7 +574,7 @@ public class Trabajo implements ITransferObject {
 		this.tipaut = tipaut;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "codbas", nullable = false)
 	public Base getBasecoti() {
 		return this.basecoti;
@@ -635,7 +604,7 @@ public class Trabajo implements ITransferObject {
 		this.convenio = convenio;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "codcont")
 	public Tipocont getTipocont() {
 		return this.tipocont;
@@ -655,7 +624,7 @@ public class Trabajo implements ITransferObject {
 		this.entidad = entidad;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "codepi")
 	public Epigrafe getEpigrafe() {
 		return this.epigrafe;
@@ -687,7 +656,7 @@ public class Trabajo implements ITransferObject {
 		this.sucursal = sucursal;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "codtc2")
 	public ContratosTc2 getTipcotc2() {
 		return this.tipcotc2;

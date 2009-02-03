@@ -14,19 +14,45 @@
 			aon-editDataTable-dateColumn, aon-editDataTable-dateColumn,
 			aon-editDataTable-numberColumn, aon-editDataTable-numberColumn,
 			aon-editDataTable-textColumn" />
+			
 			<!--  
 			<ui:param name="showDataScroller" value="#{(!comunidad.new) and (comunidad.to != null)}" />			
 			-->
 			
 			<ui:param name="skipSaveButton" value="#{true}" />
 			<ui:param name="skipRemoveButton" value="#{true}" />
-			<!-- <aon:methodParam name="resetAction" value="prcdivtrab_form" /> -->
-			<!-- <ui:param name="skipResetButton" value="#{trabajador.new or (trabajador.to == null)}" /> -->
+			<!-- <aon:methodParam name="resetAction" value="trabajo_form" /> -->
+			<ui:param name="skipResetButton" value="#{true}" />
 			
-						
+			
+			
+			
 			
 			<ui:define name="columns">
-			
+				<aon:column  
+					styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+					<f:facet name="header">
+						<aon:outputText value="&#160;" />
+					</f:facet>
+					<h:commandButton alt="[#{bundle.aon_reset}]" title="[Ir a mnto IT]"
+						styleClass="aon-editDataTable-button aon-icon-rowSelector"
+						reRender="integralPresonasData"
+						rendered="#{prcdivtrab.to==to}"
+						action="prcdivtrab_form" accesskey="#{bundle.aon_key_new_line}"/>
+							
+					<f:facet name="footer">
+						<aon:div>
+							<h:commandButton
+								id="prcdivtrab-reset" title="#{bundle.aon_reset}"
+								action="prcdivtrab_form" actionListener="#{prcdivtrab.onReset}"
+								rendered="#{trabajador.to!=null}" 
+								styleClass="aon-editDataTable-button aon-icon-reset"
+								accesskey="#{bundle.aon_key_new_line}" />
+	
+						</aon:div>
+					</f:facet>
+				</aon:column>
+				
 				<aon:column>
 					<f:facet name="header">
 						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_fecini}" />
@@ -51,7 +77,7 @@
 					<f:facet name="header">
 						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_orden}" />
 					</f:facet>
-					<aon:outputText value="#{to.orden}" />
+					<aon:outputText value="#{to.id.orden}" />
 				</aon:column>
 				
 				<aon:column>

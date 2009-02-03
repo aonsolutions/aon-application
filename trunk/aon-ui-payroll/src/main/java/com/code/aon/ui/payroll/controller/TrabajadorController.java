@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.hibernate.Query;
@@ -179,7 +180,5 @@ public class TrabajadorController extends LinesController {
 		// return results.get(0).toString();
 	}
 	
-
-
 	
 }

@@ -2928,7 +2928,7 @@
 				</value-class>
 				<value>#{clienteControllerListener}</value>
 				<value>#{cuentaListener}</value>
-				<value>#{avisoListener}</value>
+				<value>#{avisoListener}</value> 
 				<value>#{empresaListener}</value>
 			</list-entries>
 		</managed-property>
@@ -3179,24 +3179,26 @@
 			<property-name>beanName</property-name>
 			<value>aviso</value>
 		</managed-property>
+	    <!-- 		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Avisos_fecha DESC</value>
 		</managed-property>
+		-->
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
 		<managed-property>
 			<property-name>masterControllerName</property-name>
-			<value>cliente</value>
+			<value>trabajador</value>
 		</managed-property>
 		<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>
 				<map-entry>
 					<key>cdg</key>
-					<value>cdg</value>
+					<value>emprper.cdg</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -4066,6 +4068,23 @@
 			<property-name>beanName</property-name>
 			<value>embargo</value>
 		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>trabajador</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>cdg</key>
+					<value>trabajador.cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
 	</managed-bean>
 
 	<!-- ************* Principales - Persona - Trabajador ***************** -->
@@ -4122,7 +4141,16 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{trabajadorControllerListener}</value>
-				<!-- <value>#{trabajoListener}</value> -->
+				<value>#{trabajoListener}</value>
+				<value>#{bonificaListener}</value>
+				<value>#{percepListener}</value>
+				<value>#{trabdtoListener}</value>
+				<value>#{embargoListener}</value>
+				<value>#{trabinciListener}</value>
+				<value>#{parteitListener}</value>
+				<value>#{nominaitListener}</value>
+				<value>#{prcdivtrabListener}</value>
+				
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -4157,7 +4185,175 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-
+	
+	<managed-bean>
+		<managed-bean-name>bonificaListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>bonifica</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Bonifica_emprper_cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>percepListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>percep</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Percep_trabajador_cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>trabdtoListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>trabdto</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Trabdto_emprper_cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>embargoListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>embargo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Embargo_trabajador_cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>trabinciListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>trabinci</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Trabinci_emprper_cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>parteitListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>parteit</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Parteit_emprper_cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>nominaitListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>nominait</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Nominait_emprper_cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>prcdivtrabListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>prcdivtrab</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Prcdivtrab_emprper_cdg</key>
+					<value>cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
 	<!-- ************* Principales - Persona - Personas ***************** -->
 	<managed-bean>
 		<managed-bean-name>persona</managed-bean-name>
@@ -4175,11 +4371,11 @@
 				com.code.aon.payroll.principales.personas.Persona
 			</value>
 		</managed-property>
-		<!-- 
-			<managed-property>
+		<!--   
+		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Persona_cdg</value>
-			</managed-property>
+		</managed-property>
 		-->
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -4191,8 +4387,8 @@
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
-				<value>#{otrpercListener}</value>
 				<value>#{personaControllerListener}</value>
+				<value>#{otrpercListener}</value>
 				<value>#{trabajadorListener}</value>
 			</list-entries>
 		</managed-property>
@@ -4443,13 +4639,32 @@
 				com.code.aon.payroll.principales.personas.Percep
 			</value>
 		</managed-property>
+		<!-- 
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Percep_id_numero,Percep_id_cdg</value>
 		</managed-property>
+		-->
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>percep</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>trabajador</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>cdg</key>
+					<value>trabajador.cdg</value>
+				</map-entry>
+			</map-entries>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -6090,15 +6305,17 @@
 				com.code.aon.payroll.principales.personas.Trabajo
 			</value>
 		</managed-property>
+		<!--  
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Trabajo_id_cdg</value>
 		</managed-property>
+		-->
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>trabajo</value>
 		</managed-property>
-		<!--  
+		  
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
@@ -6116,7 +6333,7 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
-		 -->
+		 
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -6166,11 +6383,12 @@
 			<property-name>beanName</property-name>
 			<value>bonifica</value>
 		</managed-property>
-		<!--  
+		  
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
+		 
 		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>trabajador</value>
@@ -6184,7 +6402,7 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
-		 -->
+		 
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -6204,7 +6422,7 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- ************* Principales - Persona - Trabajador - percep ***************** -->
+	<!-- ************* Principales - Persona - Trabajador - descuentos ***************** -->
 
 	<managed-bean>
 		<managed-bean-name>trabdto</managed-bean-name>
@@ -6234,7 +6452,7 @@
 			<property-name>beanName</property-name>
 			<value>trabdto</value>
 		</managed-property>
-		<!--  
+		
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
@@ -6252,7 +6470,7 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
-		 -->
+		
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -6303,7 +6521,7 @@
 			<property-name>beanName</property-name>
 			<value>parteit</value>
 		</managed-property>
-		<!--  
+		  
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
@@ -6321,7 +6539,7 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
-		 -->
+		 
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -6371,7 +6589,7 @@
 			<property-name>beanName</property-name>
 			<value>trabinci</value>
 		</managed-property>
-		<!--  
+		  
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
@@ -6389,7 +6607,7 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
-		 -->
+		 
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -6439,7 +6657,7 @@
 			<property-name>beanName</property-name>
 			<value>nominait</value>
 		</managed-property>
-		<!--  
+		  
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
@@ -6457,7 +6675,7 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
-		 -->
+		 
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -6507,7 +6725,7 @@
 			<property-name>beanName</property-name>
 			<value>prcdivtrab</value>
 		</managed-property>
-		<!--  
+		
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
@@ -6525,7 +6743,7 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
-		 -->
+		
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -6570,9 +6788,7 @@
 		</managed-property>
 	</managed-bean>
 	
-	
-	
-   <!-- ************* CALENDAR ***************** -->
+	<!-- ************* CALENDAR ***************** -->
 	<managed-bean>
 		<managed-bean-name>calendar</managed-bean-name>
 		<managed-bean-class>
@@ -6636,7 +6852,5 @@
 		</managed-property>
 		
 	</managed-bean>
-	
-
 
 </faces-config>

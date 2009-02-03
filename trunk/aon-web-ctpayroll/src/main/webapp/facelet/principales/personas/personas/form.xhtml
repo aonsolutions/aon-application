@@ -30,9 +30,8 @@
 							<aon:commandButton 
 								title="#{appBundle.aon_payroll_principales_integral_trabajadores}"
 								styleClass="aon-finding-toolbar-item aon-icon-tree"
-								action="actividades_form" rendered="#{!controller.new}"
-								actionListener="#{actividades.onEditSearch}"
-								disabled="#{true}">
+								action="integralTrab_form" rendered="#{!controller.new}"
+								actionListener="#{persona.onSelect}" >
 							</aon:commandButton>
 							<aon:commandButton 
 								title="#{appBundle.aon_payroll_principales_personas_otrperc}"

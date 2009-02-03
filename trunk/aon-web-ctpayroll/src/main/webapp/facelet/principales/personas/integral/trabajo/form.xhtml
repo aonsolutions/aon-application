@@ -13,7 +13,7 @@
 
 			<ui:define name="content">
 
-				<aon:form id="trabajadorForm">
+				<aon:form id="trabajoForm">
 
 					<!-- 
 						<ui:include
@@ -22,192 +22,120 @@
 					<ui:include
 						src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 						<ui:param name="toolbarTitle" 
-							value="#{menuBundle.principales_personas__integral_per}" />
-						<ui:param name="controller"	value="#{trabajador}" />
+							value="#{appBundle.aon_payroll_principales_trabajo_mnto}" />
+						<ui:param name="controller"	value="#{trabajo}" />
 							
 						<aon:methodParam name="backAction" value="integralTrab_form" />
+						<aon:methodParam name="cancelAction" value="integralTrab_form" />
 							
 					</ui:include>
 					
 					<!--	FIN HEADER & TOOLBAR	-->
-					
-					<aon:div id="trabajadorData" styleClass="aon-scroll-area">
-					
-					<aon:panelGrid columns="2" dir="true" width="100%">
-					
-						<aon:outputLabel
-							value="#{appBundle.aon_payroll_principales_trabajador_cod_persona}" />
-						<aon:outputText value="#{trabajador.to.persona.cdg}"  disabled="#{true}" />
 
+					
+
+
+
+
+
+					<aon:panelGrid columns="4" dir="true" width="100%">
+					
 						<aon:outputLabel
-							value="#{appBundle.aon_payroll_principales_trabajador_cod_trab}" />
-						<aon:outputText value="#{trabajador.to.cdg}" disabled="#{true}" />
+							value="#{appBundle.aon_payroll_principales_trabajo_act}" />
+						<aon:div>
+							<aon:inputText value="#{trabajador.to.actividad.cdg}"
+								readonly="#{true}" size="1" />
+							<aon:inputText value="#{trabajador.to.actividad.descripcion}"
+								readonly="#{true}" size="50" />
+						</aon:div>
 						
 						<aon:outputLabel
-							value="#{appBundle.aon_payroll_principales_trabajador_cod_trab_bbx}" />
-						<aon:inputText value="#{trabajador.to.codnsz}" />
-
+							value="#{appBundle.aon_payroll_principales_trabajo_profesion}" />
+						<aon:inputText value="#{trabajo.to.profesion}" size="25"
+							maxlength="" />
+						
 						<aon:outputLabel
-							value="#{appBundle.aon_payroll_principales_trabajador_fecalta}" />
-						<aon:selectInputDate renderAsPopup="true" required="#{true}"
-							popupDateFormat="#{appBundle.aon_date_pattern}"
-							value="#{trabajador.to.fecalt}" enableManualInput="true" />
-
+							value="#{appBundle.aon_payroll_principales_trabajo_cod_trab}" />
+						<aon:inputText value="#{trabajador.to.cdg}" 
+							readonly="#{true}" size="7" />
+							
 						<aon:outputLabel
-							value="#{appBundle.aon_payroll_principales_trabajador_fecbaja}" />
-						<aon:selectInputDate renderAsPopup="true"
-							popupDateFormat="#{appBundle.aon_date_pattern}"
-							value="#{trabajador.to.fecbaj}" enableManualInput="true" />
-
-						<aon:outputLabel
-							value="#{appBundle.aon_payroll_principales_trabajador_datos_trab}" />
+							value="#{appBundle.aon_payroll_principales_trabajo_datos_trab}" />
 						<aon:div>
 							<aon:outputText value="#{trabajador.to.persona.nombre} " />
 							<aon:outputText value="#{trabajador.to.persona.descripcion} " />
 							<aon:outputText value="#{trabajador.to.persona.apellido2}" />
 						</aon:div>
-
-						<aon:outputLabel
-							value="#{appBundle.aon_payroll_principales_trabajador_empresa}" />
-						<aon:div styleClass="aon-lookup">
-							<aon:lookupInputText id="empresa_cdg" required="#{true}"
-								lookup="#{empresaLookup}" reRender="empresa_descripcion"
-								value="#{trabajador.to.empresa.cdg}" size="5">
-							</aon:lookupInputText>
-							<aon:lookupButton id="empresa_lookup"
-								windowTitle="#{appBundle.aon_payroll_principales_trabajador_empresa}"
-								selectReRender="empresa_cdg,empresa_descripcion"
-								lookup="#{empresaLookup}" minHeight="440"
-								property="#{trabajador.to.empresa}">
-							</aon:lookupButton>
-							<aon:inputText id="empresa_descripcion"
-								value="#{(trabajador.to.empresa.descripcion!=null)?(trabajador.to.empresa.descripcion):('')}"
-								size="45" disabled="true" />
-						</aon:div>	
-						
-
-						<aon:outputLabel
-							value="#{appBundle.aon_payroll_principales_trabajador_activ}" />
-						<aon:div styleClass="aon-lookup">
-							<aon:lookupInputText id="actividad_cdg" required="#{true}"
-								lookup="#{actividadLookup}" reRender="actividad_descripcion"
-								value="#{trabajador.to.actividad.cdg}" size="5">
-							</aon:lookupInputText>
-							<aon:lookupButton id="actividad_lookup"
-								windowTitle="#{appBundle.aon_payroll_principales_trabajador_activ}"
-								selectReRender="actividad_cdg,actividad_descripcion"
-								lookup="#{actividadLookup}" minHeight="440"
-								property="#{trabajador.to.actividad}">
-							</aon:lookupButton>
-							<aon:inputText id="actividad_descripcion"
-								value="#{(trabajador.to.actividad.descripcion!=null)?(trabajador.to.actividad.descripcion):('')}"
-								size="45" disabled="true" />
-						</aon:div>
-
-						<aon:outputLabel
-							value="#{appBundle.aon_payroll_principales_trabajador_centro_trab}" />
-						<aon:div styleClass="aon-lookup">
-							<aon:panel>
-								<f:facet name="header">
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_trabajador_datos_centro_trab}" />
-								</f:facet>
-								<aon:lookupInputText id="domicilio_cdg" required="#{true}"
-									lookup="#{domicilioLookup}" reRender="domicilio_descripcion"
-									value="#{trabajador.to.domicilio.cdg}" size="5">
-									<!-- 
-									<a4j:support event="onchange" reRender="admon_lookup, provincia_lookup" >
-										<aon:actionListener method="#{impresos11x.setDefaultAdmon}" />
-										<aon:actionListener method="#{impresos11x.setDefaultProvincia}" />
-									</a4j:support>
-									 -->
-								</aon:lookupInputText>
-								<aon:lookupButton id="domicilio_lookup"
-									windowTitle="#{appBundle.aon_payroll_principales_trabajador_centro_trab}"
-									selectReRender="domicilio_cdg,domicilio_descripcion"
-									lookup="#{domicilioLookup}" minHeight="440"
-									property="#{trabajador.to.domicilioAux}">
-								</aon:lookupButton>
-								 <!-- 
-								<aon:inputText id="domicilio_descripcion"
-									value="#{(trabajador.to.domicilio.nomvia!=null)?(trabajador.to.domicilio.nomvia):('')}"
-									size="45" disabled="true" />
-								 -->
-							</aon:panel>
-						</aon:div>
-							
-						<aon:outputLabel
-							value="#{appBundle.aon_payroll_principales_trabajador_centro_coste}" />
-						<aon:div styleClass="aon-lookup">
-							<aon:panel>
-								<f:facet name="header">
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_principales_trabajador_datos_centro_coste}" />
-								</f:facet>
-								<aon:lookupInputText id="emprccos_cdg" 
-									lookup="#{emprccosLookup}" reRender="emprccos_descripcion"
-									value="#{trabajador.to.emprccos.cdg}" size="5">
-									<!-- 
-									<a4j:support event="onchange" reRender="admon_lookup, provincia_lookup" >
-										<aon:actionListener method="#{impresos11x.setDefaultAdmon}" />
-										<aon:actionListener method="#{impresos11x.setDefaultProvincia}" />
-									</a4j:support>
-									 -->
-								</aon:lookupInputText>
-								<aon:lookupButton id="emprccos_lookup"
-									windowTitle="#{appBundle.aon_payroll_principales_trabajador_centro_coste}"
-									selectReRender="emprccos_cdg,emprccos_descripcion"
-									lookup="#{emprccosLookup}" minHeight="440"
-									property="#{trabajador.to.emprccos}">
-								</aon:lookupButton>
-								<aon:inputText id="emprccos_descripcion"
-									value="#{(trabajador.to.emprccos.descripcion!=null)?(trabajador.to.emprccos.descripcion):('')}"
-									size="45" disabled="true" />
-							</aon:panel>
-						</aon:div>
-
-						<aon:outputLabel
-							value="#{appBundle.aon_payroll_principales_trabajador_cuenta_coti}" />
-						<aon:selectOneRadio value="#{trabajador.to.emprccc.id.tipccc}" required="#{true}" >
-							<f:selectItems value="#{emprccc.listatipos}" />
-						</aon:selectOneRadio>
-												
-						<aon:outputLabel
-							value="#{appBundle.aon_payroll_principales_trabajador_tipo_contr_agr}" />
-						<aon:selectOneRadio value="#{trabajador.to.indagrario}" >
-							<f:selectItems value="#{trabajador.listaIndiceAgrario}" />
-						</aon:selectOneRadio>
-
-						<aon:outputLabel
-							value="#{appBundle.aon_payroll_principales_trabajador_artista}" />
-						<aon:selectOneRadio value="#{trabajador.to.indgrupo}" >
-							<f:selectItems value="#{trabajador.listaIndiceGrupo}" />
-						</aon:selectOneRadio>
-
-						<aon:outputLabel
-							value="#{appBundle.aon_payroll_principales_trabajador_pariente_grado}" />
-						<aon:selectBooleanCheckbox value="#{trabajador.to.pariente}" />
 						
 						<aon:outputLabel
-							value="#{appBundle.aon_payroll_principales_trabajador_contr_temp}" />
-						<aon:selectBooleanCheckbox value="#{trabajador.to.contrTemp}" />
-
-						<aon:outputLabel
-							value="#{appBundle.aon_payroll_principales_trabajador_mas65}" />
-						<aon:selectBooleanCheckbox value="#{trabajador.to.mayor65}" />
-
-						<aon:outputLabel
-							value="#{appBundle.aon_payroll_principales_trabajador_insertado_fich_afi}" />
-						<aon:selectBooleanCheckbox value="#{trabajador.to.afi}" />
+							value="#{appBundle.aon_payroll_principales_trabajo_ini_vig_datos}" />
+						<aon:selectInputDate id="inicio_vigencia_datos" renderAsPopup="true" required="#{true}"
+							popupDateFormat="#{appBundle.aon_date_pattern}"
+							value="#{trabajo.to.id.fecini}" enableManualInput="true" />
 						
+						<aon:outputLabel
+							value="#{appBundle.aon_payroll_principales_trabajo_fin_vig_datos}" />
+						<aon:selectInputDate id="fin_vigencia_datos" renderAsPopup="true" required="#{true}"
+							popupDateFormat="#{appBundle.aon_date_pattern}"
+							value="#{trabajo.to.fecfin}" enableManualInput="true" />
+						
+						<aon:outputLabel
+							value="#{appBundle.aon_payroll_principales_trabajo_fecant}" />
+						<aon:selectInputDate id="fecha_antiguedad" renderAsPopup="true" required="#{true}"
+							popupDateFormat="#{appBundle.aon_date_pattern}"
+							value="#{trabajo.to.fecant}" enableManualInput="true" />
+						
+						<aon:outputLabel
+							value="#{appBundle.aon_payroll_principales_trabajo_cuenta_cargo}" />
+						<aon:inputText value="#{trabajo.to.ctacar}" size="12"
+							maxlength="" />
+						
+						<aon:outputLabel
+							value="#{appBundle.aon_payroll_principales_trabajo_nuevo_per_vig}" />
+						<aon:selectBooleanCheckbox  />
+										
 					</aon:panelGrid>
-				</aon:div>
+						
+						
+						
+					<rich:tabPanel switchType="ajax" id="trabajoTabs"
+						selectedTab="#{trabajo.tabName}"
+						valueChangeListener="#{trabajo.changeTabValue}" >
+	
+						<rich:tab id="tab1"
+							label="#{appBundle.aon_payroll_principales_trabajo_tab1}" >
+							<aon:div id="trabajo">									 
+								<ui:include src="tab1/form.xhtml" /> 
+							</aon:div>
+						</rich:tab>
+						<rich:tab id="tab2"
+							label="#{appBundle.aon_payroll_principales_trabajo_tab2}" >
+							<aon:div id="bonificaciones">									 
+								<!-- <ui:include src="tab2/form.xhtml" /> -->  
+							</aon:div>
+						</rich:tab>
+						<rich:tab id="tab3"
+							label="#{appBundle.aon_payroll_principales_trabajo_tab3}" >
+							<aon:div id="percepciones">									 
+								<!-- <ui:include src="tab3/form.xhtml" />  -->
+							</aon:div>
+						</rich:tab>
+						
+					</rich:tabPanel>
+					
 				</aon:form>
 				
-				<aon:lookupButtonPopup lookup="#{empresaLookup}" />
-				<aon:lookupButtonPopup lookup="#{actividadLookup}" />
-				<aon:lookupButtonPopup lookup="#{domicilioLookup}" />
-				<aon:lookupButtonPopup lookup="#{emprccosLookup}" />
+				<aon:lookupButtonPopup lookup="#{convenioLookup}" />
+				<aon:lookupButtonPopup lookup="#{baseLookup}" />
+				<aon:lookupButtonPopup lookup="#{epigrafeLookup}" />
+				<aon:lookupButtonPopup lookup="#{tipocontratoLookup}" />
+				<!-- 
+				<aon:lookupButtonPopup lookup="#{contratostc2Lookup}" />
+				-->
+				<aon:lookupButtonPopup lookup="#{colectivosLookup}" />
+				  
+				
+				
 				
 			</ui:define>
 		</ui:composition>

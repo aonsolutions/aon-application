@@ -2,7 +2,9 @@ package com.code.aon.ui.payroll.controller;
 
 import java.util.logging.Logger;
 
-public class PrcdivtrabController extends PayrollBasicController {
+import com.code.aon.ui.form.LinesController;
+
+public class PrcdivtrabController extends LinesController {
 	
 	private static final Logger LOGGER = Logger.getLogger(CotizacionBonificacionController.class.getName());
 
