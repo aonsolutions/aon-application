@@ -26,14 +26,14 @@
 
 			<aon:column width="345">
 				<f:facet name="header">
-					<aon:outputText value="#{productBundle.product_item}" />
+					<aon:outputLabel for="item_product_code" value="#{productBundle.product_item}" />
 				</f:facet>
 				<aon:outputText value="#{to.description}"
 					rendered="#{to!=customerFee.to}" />
 				<aon:div styleClass="aon-lookup" rendered="#{to==customerFee.to}">
 					<aon:lookupInputText id="item_product_code-Edit"
 						value="#{customerFee.to.item.product.code}" lookup="#{itemLookup}"
-						reRender="item_product_name-Edit,price-Edit,discount-Edit"
+						reRender="item_product_name-Edit,CustomerFee_price,CustomerFee_discount"
 						lookupChangeListener="#{customerFee.onItemChanged}"
 						onblur="toUpperCase(this);" required="true" size="10">
 						<aon:joinProperty alias="Item_product_code"
@@ -42,7 +42,7 @@
 					<aon:lookupButton
 						windowTitle="#{productBundle.product_item_selection}"
 						actionType="search" property="#{customerFee.to.item}"
-						selectReRender="item_product_code-Edit,item_product_name-Edit,price-Edit,discount-Edit"
+						selectReRender="item_product_code-Edit,item_product_name-Edit,CustomerFee_price,CustomerFee_discount"
 						lookup="#{itemLookup}" minHeight="460" minWidth="650"
 						lookupChangeListener="#{customerFee.onItemChanged}">
 					</aon:lookupButton>
@@ -54,7 +54,7 @@
 						<aon:lookupInputText id="item_product_code-New"
 							value="#{customerFee.to.item.product.code}"
 							lookup="#{itemLookup}"
-							reRender="item_product_name-New,price-New,discount-New"
+							reRender="item_product_name-New,CustomerFee_price-New,CustomerFee_discount-New"
 							lookupChangeListener="#{customerFee.onItemChanged}"
 							onblur="toUpperCase(this);" required="true" size="10">
 							<aon:joinProperty alias="Item_product_code"
@@ -63,7 +63,7 @@
 						<aon:lookupButton
 							windowTitle="#{productBundle.product_item_selection}"
 							actionType="search" property="#{customerFee.to.item}"
-							selectReRender="item_product_code-New,item_product_name-New,price-New,discount-New"
+							selectReRender="item_product_code-New,item_product_name-New,CustomerFee_price-New,CustomerFee_discount-New"
 							lookup="#{itemLookup}" minHeight="460" minWidth="650"
 							lookupChangeListener="#{customerFee.onItemChanged}">
 						</aon:lookupButton>
@@ -75,70 +75,75 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_quantity}" />
+					<aon:outputLabel for="CustomerFee_quantity" value="#{bundle.aon_quantity}" />
 				</f:facet>
 				<aon:outputText value="#{to.quantity}"
 					rendered="#{to.id!=customerFee.to.id}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
-				<aon:inputText rendered="#{to.id==customerFee.to.id}" size="4"
+				<aon:inputText id="CustomerFee_quantity" 
+					rendered="#{to.id==customerFee.to.id}" size="4"
 					value="#{customerFee.to.quantity}" />
 				<f:facet name="footer">
-					<aon:inputText rendered="#{customerFee.new}" size="4"
+					<aon:inputText id="CustomerFee_quantity-New"
+						rendered="#{customerFee.new}" size="4"
 						value="#{customerFee.to.quantity}" />
 				</f:facet>
 			</aon:column>
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_price}" />
+					<aon:outputLabel for="CustomerFee_price" value="#{bundle.aon_price}" />
 				</f:facet>
-				<aon:outputText value="#{to.price}"
+				<aon:outputText
+					value="#{to.price}"
 					rendered="#{to.id!=customerFee.to.id}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
-				<aon:inputText id="price-Edit"
+				<aon:inputText id="CustomerFee_price"
 					rendered="#{to.id==customerFee.to.id}" size="7"
 					value="#{customerFee.to.price}" />
 				<f:facet name="footer">
-					<aon:inputText id="price-New" rendered="#{customerFee.new}"
+					<aon:inputText id="CustomerFee_price-New" rendered="#{customerFee.new}"
 						size="7" value="#{customerFee.to.price}" />
 				</f:facet>
 			</aon:column>
 
 			<aon:column>
 				<f:facet name="header">
-					<h:outputText value="#{financeBundle.finance_fee_discount}" />
+					<aon:outputLabel for="CustomerFee_discount" value="#{financeBundle.finance_fee_discount}" />
 				</f:facet>
 				<aon:outputText value="#{to.discountExpression.discountExpr}"
 					rendered="#{to.id!=customerFee.to.id}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
-				<aon:inputText id="discount-Edit"
+				<aon:inputText id="CustomerFee_discount"
 					rendered="#{to.id==customerFee.to.id}" size="5"
 					value="#{customerFee.to.discountExpression.discountExpr}" />
 				<f:facet name="footer">
-					<aon:inputText id="discount-New" rendered="#{customerFee.new}"
+					<aon:inputText id="CustomerFee_discount-New" rendered="#{customerFee.new}"
 						size="5" value="#{customerFee.to.discountExpression.discountExpr}" />
 				</f:facet>
 			</aon:column>
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_date_from}" />
+					<aon:outputLabel for="CustomerFee_initialDate" value="#{bundle.aon_date_from}" />
 				</f:facet>
 				<aon:outputText value="#{to.initialDate}"
 					rendered="#{to.id!=customerFee.to.id}">
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
-				<aon:selectInputDate rendered="#{to.id==customerFee.to.id}"
+				<aon:selectInputDate id="CustomerFee_initialDate"
+					rendered="#{to.id==customerFee.to.id}"
 					value="#{customerFee.to.initialDate}"
 					inputSize="7" required="true"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}" />
 				<f:facet name="footer">
-					<aon:selectInputDate rendered="#{customerFee.new}"
+					<aon:selectInputDate id="CustomerFee_initialDate-New"
+						rendered="#{customerFee.new}"
 						value="#{customerFee.to.initialDate}"
 						inputSize="7" required="true"
 						timeZone="#{timeZoneController.timeZone}"
@@ -148,20 +153,22 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_date_to}" />
+					<aon:outputLabel for="CustomerFee_finalDate" value="#{bundle.aon_date_to}" />
 				</f:facet>
 				<aon:outputText value="#{to.finalDate}"
 					rendered="#{to.id!=customerFee.to.id}">
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
-				<aon:selectInputDate rendered="#{to.id==customerFee.to.id}"
+				<aon:selectInputDate id="CustomerFee_finalDate"
+					rendered="#{to.id==customerFee.to.id}"
 					value="#{customerFee.to.finalDate}"
 					inputSize="7"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}" />
 				<f:facet name="footer">
-					<aon:selectInputDate rendered="#{customerFee.new}"
+					<aon:selectInputDate id="CustomerFee_finalDate-New"
+						rendered="#{customerFee.new}"
 						value="#{customerFee.to.finalDate}"
 						inputSize="7"
 						timeZone="#{timeZoneController.timeZone}"
@@ -171,7 +178,7 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_fee_billing_date_abrv}" />
+					<aon:outputLabel for="CustomerFee_billingDateYear" value="#{financeBundle.finance_fee_billing_date_abrv}" />
 				</f:facet>
 				<aon:div rendered="#{to.id!=customerFee.to.id}"  styleClass="aon-nowrap">
 					<aon:outputText value="#{to.billingDateMonth}" />
@@ -181,7 +188,7 @@
 					<aon:selectOneMenu value="#{customerFee.to.billingDateMonth}">
 						<f:selectItems value="#{commonCollections.months}" />
 					</aon:selectOneMenu>
-					<aon:inputText id="BillingDate_Year-Edit" required="true" size="3"
+					<aon:inputText id="CustomerFee_billingDateYear" required="true" size="3"
 						value="#{customerFee.to.billingDateYear}" />
 				</aon:div>
 				<f:facet name="footer">
@@ -189,7 +196,7 @@
 						<aon:selectOneMenu value="#{customerFee.to.billingDateMonth}">
 							<f:selectItems value="#{commonCollections.months}" />
 						</aon:selectOneMenu>
-						<aon:inputText id="BillingDate_Year-New" required="true" size="3"
+						<aon:inputText id="CustomerFee_billingDateYear-New" required="true" size="3"
 							value="#{customerFee.to.billingDateYear}" />
 					</aon:div>
 				</f:facet>
@@ -197,16 +204,18 @@
 
 			<aon:column width="70">
 				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_fee_period}" />
+					<aon:outputLabel for="CustomerFee_period" value="#{financeBundle.finance_fee_period}" />
 				</f:facet>
 				<aon:outputText value="#{to.period}"
 					rendered="#{to.id!=customerFee.to.id}" />
-				<aon:selectOneMenu value="#{customerFee.to.period}"
+				<aon:selectOneMenu id="CustomerFee_period"
+					value="#{customerFee.to.period}"
 					rendered="#{to==customerFee.to}">
 					<f:selectItems value="#{financeCollections.billingPeriods}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
-					<aon:selectOneMenu value="#{customerFee.to.period}"
+					<aon:selectOneMenu id="CustomerFee_period-New"
+						value="#{customerFee.to.period}"
 						rendered="#{customerFee.new}">
 						<f:selectItems value="#{financeCollections.billingPeriods}" />
 					</aon:selectOneMenu>
@@ -215,16 +224,18 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{companyBundle.company_workplace}" />
+					<aon:outputLabel for="CustomerFee_workPlace" value="#{companyBundle.company_workplace}" />
 				</f:facet>
 				<aon:outputText value="#{to.workPlace.description}"
 					rendered="#{to.id!=customerFee.to.id}" />
-				<aon:selectOneMenu value="#{customerFee.to.workPlace}"
+				<aon:selectOneMenu id="CustomerFee_workPlace" 
+					value="#{customerFee.to.workPlace}"
 					rendered="#{to==customerFee.to}">
 					<f:selectItems value="#{companyCollections.workPlaces}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
-					<aon:selectOneMenu value="#{customerFee.to.workPlace}"
+					<aon:selectOneMenu id="CustomerFee_workPlace-New"
+						value="#{customerFee.to.workPlace}"
 						rendered="#{customerFee.new}">
 						<f:selectItems value="#{companyCollections.workPlaces}" />
 					</aon:selectOneMenu>
