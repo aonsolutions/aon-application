@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.company</artifactId>
-	<version>3.5.1</version>
+	<version>3.6.0</version>
 	<description>AON UI COMPANY</description>
 	<name>AON UI COMPANY</name>
 	<dependencies>
@@ -50,5 +50,28 @@
 			<version>1.2_02</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+    		<groupId>jmimemagic</groupId>
+    		<artifactId>jmimemagic</artifactId>
+    		<version>0.1.2</version>
+			<exclusions>
+				<exclusion>
+				      <groupId>xerces</groupId>
+				      <artifactId>xerces</artifactId>
+				</exclusion>
+				<exclusion>
+				      <groupId>xerces</groupId>
+				      <artifactId>xercesImpl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xmlParserAPIs</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>		
  	</dependencies>
 </project>
