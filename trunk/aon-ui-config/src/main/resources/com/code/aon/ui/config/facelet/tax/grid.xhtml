@@ -28,31 +28,31 @@
 
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_description}" />
+									<aon:outputLabel for="Tax_name" value="#{bundle.aon_description}" />
 								</f:facet>
 								<aon:outputText value="#{to.name}"
-									rendered="#{to.id!=tax.to.id}" />
-								<aon:inputText rendered="#{to.id==tax.to.id}"
+									rendered="#{formList}" />
+								<aon:inputText id="Tax_name" rendered="#{formEdit}"
 									value="#{tax.to.name}" required="true" />
 								<f:facet name="footer">
-									<aon:inputText rendered="#{tax.new}" value="#{tax.to.name}"
-										required="true" />
+									<aon:inputText id="Tax_name-New" rendered="#{formNew}"
+										value="#{tax.to.name}" required="true" />
 								</f:facet>
 							</aon:column>
 
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_type}" />
+									<aon:outputLabel for="Tax_type" value="#{bundle.aon_type}" />
 								</f:facet>
 								<aon:outputText value="#{to.type}"
-									rendered="#{to.id!=tax.to.id}" />
-								<aon:selectOneMenu rendered="#{to.id==tax.to.id}"
+									rendered="#{formList}" />
+								<aon:selectOneMenu id="Tax_type" rendered="#{formEdit}"
 									required="true" value="#{tax.to.type}">
 									<f:selectItems value="#{configCollections.taxTypes}" />
 								</aon:selectOneMenu>
 								<f:facet name="footer">
-									<aon:selectOneMenu rendered="#{tax.new}" required="true"
-										value="#{tax.to.type}">
+									<aon:selectOneMenu id="Tax_type-New" rendered="#{formNew}"
+										required="true" value="#{tax.to.type}">
 										<f:selectItems value="#{configCollections.taxTypes}" />
 									</aon:selectOneMenu>
 								</f:facet>
@@ -60,22 +60,20 @@
 
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_date_from}" />
+									<aon:outputLabel for="Tax_startDate" value="#{bundle.aon_date_from}" />
 								</f:facet>
 								<aon:outputText value="#{to.startDate}"
-									rendered="#{to.id!=tax.to.id}">
+									rendered="#{formList}">
 									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
 								</aon:outputText>
-								<aon:panelGrid columns="1" rendered="#{to.id==tax.to.id}">
-									<aon:selectInputDate id="Tax_start_date-Edit"
-										value="#{tax.to.startDate}"
-										timeZone="#{timeZoneController.timeZone}"
-										popupDateFormat="#{bundle.aon_date_pattern}"/>
-								</aon:panelGrid>
+								<aon:selectInputDate id="Tax_startDate"
+									value="#{tax.to.startDate}" rendered="#{formEdit}"
+									timeZone="#{timeZoneController.timeZone}"
+									popupDateFormat="#{bundle.aon_date_pattern}"/>
 								<f:facet name="footer">
-									<aon:selectInputDate id="Tax_start_date-New"
-										rendered="#{tax.new}" value="#{tax.to.startDate}"
+									<aon:selectInputDate id="Tax_startDate-New"
+										rendered="#{formNew}" value="#{tax.to.startDate}"
 										timeZone="#{timeZoneController.timeZone}"
 										popupDateFormat="#{bundle.aon_date_pattern}"/>
 								</f:facet>
@@ -83,28 +81,28 @@
 
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_percentage}" />
+									<aon:outputLabel for="Tax_percentage" value="#{bundle.aon_percentage}" />
 								</f:facet>
 								<aon:outputText value="#{to.percentage}"
-									rendered="#{to.id!=tax.to.id}" />
-								<aon:inputText rendered="#{to.id==tax.to.id}" size="6"
+									rendered="#{formList}" />
+								<aon:inputText id="Tax_percentage" rendered="#{formEdit}" size="6"
 									value="#{tax.to.percentage}" required="true" />
 								<f:facet name="footer">
-									<aon:inputText rendered="#{tax.new}"
+									<aon:inputText id="Tax_percentage-New" rendered="#{formNew}" size="6"
 										value="#{tax.to.percentage}" required="true" />
 								</f:facet>
 							</aon:column>
 
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_surcharge}" />
+									<aon:outputLabel for="Tax_surcharge" value="#{bundle.aon_surcharge}" />
 								</f:facet>
 								<aon:outputText value="#{to.surcharge}"
-									rendered="#{to.id!=tax.to.id}" />
-								<aon:inputText rendered="#{to.id==tax.to.id}"
+									rendered="#{formList}" />
+								<aon:inputText id="Tax_surcharge" rendered="#{formEdit}"
 									value="#{tax.to.surcharge}" required="true" />
 								<f:facet name="footer">
-									<aon:inputText rendered="#{tax.new}"
+									<aon:inputText id="Tax_surcharge-New" rendered="#{formNew}"
 										value="#{tax.to.surcharge}" required="true" />
 								</f:facet>
 							</aon:column>
