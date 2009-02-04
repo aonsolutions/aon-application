@@ -52,13 +52,14 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 		partialSubmit = getAttribute(PARTIAL_SUBMIT);
 		reRender = getAttribute(RERENDER);
 		ajaxSingle = getAttribute(AJAX_SINGLE);
-		ajaxNeeded = (partialSubmit != null) || (reRender != null);
+		ajaxNeeded = (partialSubmit != null) || (reRender != null) || (ajaxSingle != null);
 	}
 	
 	@Override
 	protected MetaRuleset createMetaRuleset(Class type) {
 		MetaRuleset set = super.createMetaRuleset(type);
-		set.ignore(RERENDER).ignore(PARTIAL_SUBMIT).ignore(AJAX_SINGLE);
+		set.ignore(RERENDER).ignore(PARTIAL_SUBMIT);
+		set.ignore(AJAX_SINGLE).ignore(FOCUS);
 		return set;
 	}
 
@@ -127,6 +128,11 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 				if ( reRender != null ) {
 					String value = reRender.getValue(ctx);
 					attributes.add( BasicComponentConfig.newAttribute(tag, RERENDER, value) );
+				}
+				TagAttribute focus = getAttribute(FOCUS);
+				if ( focus != null ) {
+					String value = focus.getValue(ctx);
+					attributes.add( BasicComponentConfig.newAttribute(tag, FOCUS, value) );					
 				}
 				BasicComponentConfig config = new BasicComponentConfig(getConfig(), attributes );
 				config.setComponentType(SUPPORT_COMPONENT_TYPE);
