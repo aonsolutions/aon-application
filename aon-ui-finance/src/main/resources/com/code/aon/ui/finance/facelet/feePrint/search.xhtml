@@ -54,18 +54,18 @@
 							size="5" value="#{feePrintSearch.billingDateYear}" />
 					</aon:div>
 					
-					<aon:outputLabel for="Customer_status"
+					<aon:outputLabel for="CustomerFee_customer_status"
 						value="#{bundle.aon_status}" />
-					<aon:selectOneMenu id="Customer_status"
+					<aon:selectOneMenu id="CustomerFee_customer_status"
 						converter="aon.EnumConverter"
 						valueChangeListener="#{feePrint.addEqualExpression}">						
 						<f:selectItem itemLabel="-" value="#{null}"/> 
 						<f:selectItems value="#{customerCollections.customerStatuses}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Customer_scope_id"
+					<aon:outputLabel for="CustomerFee_customer_scope_id"
 						value="#{bundle.aon_scope}" />
-					<aon:selectOneMenu id="Customer_scope_id"
+					<aon:selectOneMenu id="CustomerFee_customer_scope_id"
 						value="#{configCollections.scope}"
 						valueChangeListener="#{finance.addIdEqualExpression}">
 						<f:selectItem itemLabel="-" value="#{null}"/> 
