@@ -39,7 +39,7 @@
 	
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{productBundle.product_item}" />
+								<aon:outputLabel value="#{productBundle.product_item}" />
 							</f:facet>
 							<aon:outputText value="#{to.description}"
 								rendered="#{to!=controller.to}" />
@@ -51,7 +51,7 @@
 										value="#{saleInvoiceDetail.to.item.product.code}"
 										lookup="#{itemLookup}"
 										lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
-										reRender="InvoiceDetail_item_product_name-Edit,Item_price-Edit,Discount-Edit,Amount-Edit"
+										reRender="InvoiceDetail_item_product_name-Edit,InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_amount"
 										required="true" size="10" ajaxSingle="false">
 										<aon:joinProperty alias="Item_product_code"
 											value="#{saleInvoiceDetail.to.item.product.code}" />
@@ -59,7 +59,7 @@
 									<aon:lookupButton windowTitle="#{productBundle.product_module}"
 										actionType="search"
 										lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
-										selectReRender="InvoiceDetail_item_product_code-Edit,InvoiceDetail_item_product_name-Edit,Item_price-Edit,Discount-Edit,Amount-Edit"
+										selectReRender="InvoiceDetail_item_product_code-Edit,InvoiceDetail_item_product_name-Edit,InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_amount"
 										lookup="#{itemLookup}" minHeight="460" minWidth="650"
 										property="#{saleInvoiceDetail.to.item}">
 										<aon:joinProperty alias="Item_product_code"
@@ -76,17 +76,17 @@
 									<a4j:region>
 										<aon:lookupInputText id="InvoiceDetail_item_product_code-New"
 											value="#{saleInvoiceDetail.to.item.product.code}"
-											focus="Item_quantity-New" lookup="#{itemLookup}"
+											focus="InvoiceDetail_quantity-New" lookup="#{itemLookup}"
 											lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
-											reRender="InvoiceDetail_item_product_name-New,Item_price-New,Discount-New,Amount-New"
+											reRender="InvoiceDetail_item_product_name-New,InvoiceDetail_price-New,InvoiceDetail_discount-New,InvoiceDetail_amount-New"
 											required="true" size="10" ajaxSingle="false">
 											<aon:joinProperty alias="Item_product_code"
 												value="#{saleInvoiceDetail.to.item.product.code}" />
 										</aon:lookupInputText>
 										<aon:lookupButton windowTitle="#{productBundle.product_module}"
-											actionType="search"
+											actionType="search" tabindex="-1"
 											lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
-											selectReRender="InvoiceDetail_item_product_code-New,InvoiceDetail_item_product_name-New,Item_Lookup_price-New,Discount-New,Amount-New"
+											selectReRender="InvoiceDetail_item_product_code-New,InvoiceDetail_item_product_name-New,InvoiceDetail_price-New,InvoiceDetail_discount-New,InvoiceDetail_amount-New"
 											lookup="#{itemLookup}" minHeight="460" minWidth="650"
 											property="#{saleInvoiceDetail.to.item}">
 										</aon:lookupButton>
@@ -99,40 +99,40 @@
 	
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_quantity}" />
+								<aon:outputLabel for="InvoiceDetail_quantity" value="#{bundle.aon_quantity}" />
 							</f:facet>
 							<aon:outputText value="#{to.quantity}"
 								rendered="#{to!=controller.to}">
 								<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
 							</aon:outputText>
-							<aon:inputText id="Item_quantity-Edit"
+							<aon:inputText id="InvoiceDetail_quantity"
 								valueChangeListener="#{controller.onQuantityChanged}"
-								reRender="Item_price-Edit,Discount-Edit,Amount-Edit"
+								reRender="InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_amount"
 								rendered="#{to==controller.to}" value="#{controller.to.quantity}"
 								required="true" size="7" />
 							<f:facet name="footer">
-								<aon:inputText id="Item_quantity-New"
+								<aon:inputText id="InvoiceDetail_quantity-New"
 									rendered="#{controller.new}" size="7"
 									valueChangeListener="#{controller.onQuantityChanged}"
-									reRender="Item_price-New,Discount-New,Amount-New"
+									reRender="InvoiceDetail_price-New,InvoiceDetail_discount-New,InvoiceDetail_amount-New"
 									value="#{controller.to.quantity}" required="true"
-									focus="Item_price-New" />
+									focus="InvoiceDetail_price-New" />
 							</f:facet>
 						</aon:column>
 	
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_price}" />
+								<aon:outputLabel for="InvoiceDetail_price" value="#{bundle.aon_price}" />
 							</f:facet>
 							<aon:outputText value="#{to.price}"
 								rendered="#{to!=controller.to}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
-							<aon:inputText id="Item_price-Edit" size="7"
-								reRender="Amount-Edit" rendered="#{to==controller.to}"
+							<aon:inputText id="InvoiceDetail_price" size="7"
+								reRender="InvoiceDetail_amount" rendered="#{to==controller.to}"
 								value="#{controller.to.price}" required="true" />
 							<f:facet name="footer">
-								<aon:inputText id="Item_price-New" size="7" reRender="Amount-New"
+								<aon:inputText id="InvoiceDetail_price-New" size="7" reRender="InvoiceDetail_amount-New"
 									rendered="#{controller.new}" value="#{controller.to.price}"
 									required="true" />
 							</f:facet>
@@ -140,18 +140,18 @@
 	
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_discount}" />
+								<aon:outputLabel for="InvoiceDetail_discount" value="#{bundle.aon_discount}" />
 							</f:facet>
-							<aon:outputText id="Discount" rendered="#{to!=controller.to}"
+							<aon:outputText rendered="#{to!=controller.to}"
 								value="#{to.discountExpression.discountExpr}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
-							<aon:inputText id="Discount-Edit" rendered="#{to==controller.to}"
-								reRender="Amount-Edit" size="7" required="true"
+							<aon:inputText id="InvoiceDetail_discount" rendered="#{to==controller.to}"
+								reRender="InvoiceDetail_amount" size="7" required="true"
 								value="#{controller.to.discountExpression.discountExpr}" />
 							<f:facet name="footer">
-								<aon:inputText id="Discount-New" rendered="#{controller.new}"
-									size="7" reRender="Amount-New"
+								<aon:inputText id="InvoiceDetail_discount-New" rendered="#{controller.new}"
+									size="7" reRender="InvoiceDetail_amount-New"
 									value="#{controller.to.discountExpression.discountExpr}"
 									required="true" />
 							</f:facet>
@@ -159,19 +159,19 @@
 	
 						<aon:column width="60">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_amount}" />
+								<aon:outputLabel for="InvoiceDetail_amount" value="#{bundle.aon_amount}" />
 							</f:facet>
 							<aon:outputText rendered="#{to!=controller.to}"
 								value="#{to.taxableBase}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
-							<aon:outputText id="Amount-Edit" rendered="#{to==controller.to}"
+							<aon:outputText id="InvoiceDetail_amount" rendered="#{to==controller.to}"
 								value="#{controller.taxableBase}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 							<f:facet name="footer">
 								<aon:div style="text-align:right;">
-									<aon:outputText id="Amount-New" rendered="#{controller.new}"
+									<aon:outputText id="InvoiceDetail_amount-New" rendered="#{controller.new}"
 										value="#{controller.taxableBase}">
 										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 									</aon:outputText>
@@ -181,17 +181,19 @@
 	
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{companyBundle.company_workplace_module}" />
+								<aon:outputLabel for="InvoiceDetail_workPlace" value="#{companyBundle.company_workplace_module}" />
 							</f:facet>
-							<aon:outputText id="InvoiceDetail_workPlace_id"
+							<aon:outputText
 								rendered="#{to!=controller.to}"
 								value="#{to.workPlace.description}" />
-							<aon:selectOneMenu value="#{controller.to.workPlace}"
+							<aon:selectOneMenu id="InvoiceDetail_workPlace"
+								value="#{controller.to.workPlace}"
 								rendered="#{to==feeInvoicingDetail.to}">
 								<f:selectItems value="#{companyCollections.workPlaces}" />
 							</aon:selectOneMenu>
 							<f:facet name="footer">
-								<aon:selectOneMenu value="#{controller.to.workPlace}"
+								<aon:selectOneMenu id="InvoiceDetail_workPlace-New"
+									value="#{controller.to.workPlace}"
 									rendered="#{controller.new}">
 									<f:selectItems value="#{companyCollections.workPlaces}" />
 								</aon:selectOneMenu>
