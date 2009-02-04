@@ -31,30 +31,10 @@
 				<aon:outputText value="#{to.description}"
 					rendered="#{to!=customerFee.to}" />
 				<aon:div styleClass="aon-lookup" rendered="#{to==customerFee.to}">
-					<aon:lookupInputText id="item_product_code-Edit"
-						value="#{customerFee.to.item.product.code}" lookup="#{itemLookup}"
-						reRender="item_product_name-Edit,CustomerFee_price,CustomerFee_discount"
-						lookupChangeListener="#{customerFee.onItemChanged}"
-						onblur="toUpperCase(this);" required="true" size="10">
-						<aon:joinProperty alias="Item_product_code"
-							value="#{customerFee.to.item.product.code}" />
-					</aon:lookupInputText>
-					<aon:lookupButton
-						windowTitle="#{productBundle.product_item_selection}"
-						actionType="search" property="#{customerFee.to.item}"
-						selectReRender="item_product_code-Edit,item_product_name-Edit,CustomerFee_price,CustomerFee_discount"
-						lookup="#{itemLookup}" minHeight="460" minWidth="650"
-						lookupChangeListener="#{customerFee.onItemChanged}">
-					</aon:lookupButton>
-					<aon:inputText id="item_product_name-Edit"
-						value="#{customerFee.to.description}" size="30" />
-				</aon:div>
-				<f:facet name="footer">
-					<aon:div styleClass="aon-lookup" rendered="#{customerFee.new}">
-						<aon:lookupInputText id="item_product_code-New"
-							value="#{customerFee.to.item.product.code}"
-							lookup="#{itemLookup}"
-							reRender="item_product_name-New,CustomerFee_price-New,CustomerFee_discount-New"
+					<a4j:region>
+						<aon:lookupInputText id="item_product_code" ajaxSingle="false"
+							value="#{customerFee.to.item.product.code}" lookup="#{itemLookup}"
+							reRender="item_product_name-Edit,CustomerFee_price,CustomerFee_discount"
 							lookupChangeListener="#{customerFee.onItemChanged}"
 							onblur="toUpperCase(this);" required="true" size="10">
 							<aon:joinProperty alias="Item_product_code"
@@ -63,12 +43,36 @@
 						<aon:lookupButton
 							windowTitle="#{productBundle.product_item_selection}"
 							actionType="search" property="#{customerFee.to.item}"
-							selectReRender="item_product_code-New,item_product_name-New,CustomerFee_price-New,CustomerFee_discount-New"
+							selectReRender="item_product_code,item_product_name-Edit,CustomerFee_price,CustomerFee_discount"
 							lookup="#{itemLookup}" minHeight="460" minWidth="650"
 							lookupChangeListener="#{customerFee.onItemChanged}">
 						</aon:lookupButton>
-						<aon:inputText id="item_product_name-New"
+						<aon:inputText id="item_product_name-Edit"
 							value="#{customerFee.to.description}" size="30" />
+					</a4j:region>
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div styleClass="aon-lookup" rendered="#{customerFee.new}">
+						<a4j:region>
+							<aon:lookupInputText id="item_product_code-New"
+								value="#{customerFee.to.item.product.code}"
+								lookup="#{itemLookup}" ajaxSingle="false"
+								reRender="item_product_name-New,CustomerFee_price-New,CustomerFee_discount-New"
+								lookupChangeListener="#{customerFee.onItemChanged}"
+								onblur="toUpperCase(this);" required="true" size="10">
+								<aon:joinProperty alias="Item_product_code"
+									value="#{customerFee.to.item.product.code}" />
+							</aon:lookupInputText>
+							<aon:lookupButton
+								windowTitle="#{productBundle.product_item_selection}"
+								actionType="search" property="#{customerFee.to.item}"
+								selectReRender="item_product_code-New,item_product_name-New,CustomerFee_price-New,CustomerFee_discount-New"
+								lookup="#{itemLookup}" minHeight="460" minWidth="650"
+								lookupChangeListener="#{customerFee.onItemChanged}">
+							</aon:lookupButton>
+							<aon:inputText id="item_product_name-New"
+								value="#{customerFee.to.description}" size="30" />
+						</a4j:region>
 					</aon:div>
 				</f:facet>
 			</aon:column>
