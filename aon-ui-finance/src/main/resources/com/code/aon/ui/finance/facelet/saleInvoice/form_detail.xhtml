@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
@@ -45,49 +46,53 @@
 	
 							<aon:div styleClass="aon-lookup"
 								rendered="#{to==saleInvoiceDetail.to}">
-								<aon:lookupInputText id="InvoiceDetail_item_product_code-Edit"
-									value="#{saleInvoiceDetail.to.item.product.code}"
-									lookup="#{itemLookup}"
-									lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
-									reRender="InvoiceDetail_item_product_name-Edit,Item_price-Edit,Discount-Edit,Amount-Edit"
-									required="true" size="10">
-									<aon:joinProperty alias="Item_product_code"
-										value="#{saleInvoiceDetail.to.item.product.code}" />
-								</aon:lookupInputText>
-								<aon:lookupButton windowTitle="#{productBundle.product_module}"
-									actionType="search"
-									lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
-									selectReRender="InvoiceDetail_item_product_code-Edit,InvoiceDetail_item_product_name-Edit,Item_price-Edit,Discount-Edit,Amount-Edit"
-									lookup="#{itemLookup}" minHeight="460" minWidth="650"
-									property="#{saleInvoiceDetail.to.item}">
-									<aon:joinProperty alias="Item_product_code"
-										value="#{saleInvoiceDetail.to.item.product.code}" />
-								</aon:lookupButton>
-								<aon:inputText id="InvoiceDetail_item_product_name-Edit"
-									value="#{saleInvoiceDetail.to.description}" size="40" />
-							</aon:div>
-	
-							<f:facet name="footer">
-								<aon:div styleClass="aon-lookup"
-									rendered="#{saleInvoiceDetail.new}">
-									<aon:lookupInputText id="InvoiceDetail_item_product_code-New"
+								<a4j:region>
+									<aon:lookupInputText id="InvoiceDetail_item_product_code-Edit"
 										value="#{saleInvoiceDetail.to.item.product.code}"
-										focus="Item_quantity-New" lookup="#{itemLookup}"
+										lookup="#{itemLookup}"
 										lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
-										reRender="InvoiceDetail_item_product_name-New,Item_price-New,Discount-New,Amount-New"
-										required="true" size="10">
+										reRender="InvoiceDetail_item_product_name-Edit,Item_price-Edit,Discount-Edit,Amount-Edit"
+										required="true" size="10" ajaxSingle="false">
 										<aon:joinProperty alias="Item_product_code"
 											value="#{saleInvoiceDetail.to.item.product.code}" />
 									</aon:lookupInputText>
 									<aon:lookupButton windowTitle="#{productBundle.product_module}"
 										actionType="search"
 										lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
-										selectReRender="InvoiceDetail_item_product_code-New,InvoiceDetail_item_product_name-New,Item_Lookup_price-New,Discount-New,Amount-New"
+										selectReRender="InvoiceDetail_item_product_code-Edit,InvoiceDetail_item_product_name-Edit,Item_price-Edit,Discount-Edit,Amount-Edit"
 										lookup="#{itemLookup}" minHeight="460" minWidth="650"
 										property="#{saleInvoiceDetail.to.item}">
+										<aon:joinProperty alias="Item_product_code"
+											value="#{saleInvoiceDetail.to.item.product.code}" />
 									</aon:lookupButton>
-									<aon:inputText id="InvoiceDetail_item_product_name-New"
-										value="#{saleInvoiceDetail.to.description}"	size="60" />
+									<aon:inputText id="InvoiceDetail_item_product_name-Edit"
+										value="#{saleInvoiceDetail.to.description}" size="60" />
+								</a4j:region>
+							</aon:div>
+	
+							<f:facet name="footer">
+								<aon:div styleClass="aon-lookup"
+									rendered="#{saleInvoiceDetail.new}">
+									<a4j:region>
+										<aon:lookupInputText id="InvoiceDetail_item_product_code-New"
+											value="#{saleInvoiceDetail.to.item.product.code}"
+											focus="Item_quantity-New" lookup="#{itemLookup}"
+											lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
+											reRender="InvoiceDetail_item_product_name-New,Item_price-New,Discount-New,Amount-New"
+											required="true" size="10" ajaxSingle="false">
+											<aon:joinProperty alias="Item_product_code"
+												value="#{saleInvoiceDetail.to.item.product.code}" />
+										</aon:lookupInputText>
+										<aon:lookupButton windowTitle="#{productBundle.product_module}"
+											actionType="search"
+											lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
+											selectReRender="InvoiceDetail_item_product_code-New,InvoiceDetail_item_product_name-New,Item_Lookup_price-New,Discount-New,Amount-New"
+											lookup="#{itemLookup}" minHeight="460" minWidth="650"
+											property="#{saleInvoiceDetail.to.item}">
+										</aon:lookupButton>
+										<aon:inputText id="InvoiceDetail_item_product_name-New"
+											value="#{saleInvoiceDetail.to.description}"	size="60" />
+									</a4j:region>
 								</aon:div>
 							</f:facet>
 						</aon:column>
