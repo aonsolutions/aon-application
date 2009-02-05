@@ -99,7 +99,7 @@
 
 						<aon:panelGrid columns="2" style="width:100%;">
 							<aon:outputText value="#{bundle.aon_description}" />
-							<aon:inputText value="#{wizard.description}" size="40">
+							<aon:inputText id="#{id}searchName" value="#{wizard.description}" size="40">
 								<a4j:support event="onchange" ajaxSingle="true"
 									eventsQueue="#{id}nm" ignoreDupResponses="true"
 									requestDelay="100" actionListener="#{wizard.inputChanged}" />
