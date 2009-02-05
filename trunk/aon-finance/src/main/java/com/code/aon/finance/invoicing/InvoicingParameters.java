@@ -5,6 +5,7 @@ import java.util.Date;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.Series;
 import com.code.aon.customer.Customer;
 
 public class InvoicingParameters {
@@ -13,7 +14,7 @@ public class InvoicingParameters {
 	
 	private int year;
 	
-	private String series;
+	private Series series;
 	
 	private int number;
 	
@@ -43,11 +44,11 @@ public class InvoicingParameters {
 		this.year = year;
 	}
 
-	public String getSeries() {
+	public Series getSeries() {
 		return series;
 	}
 
-	public void setSeries(String series) {
+	public void setSeries(Series series) {
 		this.series = series;
 	}
 

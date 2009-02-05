@@ -11,6 +11,7 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.config.Series;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.invoicing.ConsoleInvoicingFeedBack;
 import com.code.aon.finance.invoicing.InvoicingException;
@@ -56,7 +57,9 @@ public class PreInvoicingController implements ICollectionProvider {
 		engine = InvoicingEngineFactory.getInvoicingEngine("customerFeeEngine");
 		engine.setInvoicingDAO(new CustomerFeePreInvoicingDAO());
 		engine.setInvoicingFeedBack(new ConsoleInvoicingFeedBack());
-		invoicingParams.setSeries("PRE");
+		Series series = new Series();
+		series.setId("PRE");
+		invoicingParams.setSeries(series);
 		invoicingParams.setNumber(0);
 		invoicingParams.setInvoiceDate(new Date());
 		engine.invoice(invoicingParams);

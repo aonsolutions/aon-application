@@ -8,12 +8,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.config.Series;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.customer.enumeration.CustomerStatus;
@@ -198,7 +197,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		invoice.setRegistry(group.getParent());
 		invoice.setRegistryDocument(group.getParent().getDocument());
 		invoice.setRegistryName((group.getParent().getName() == null?"":group.getParent().getName()) + " " + (group.getParent().getSurname()==null?"":group.getParent().getSurname()));
-		invoice.setSeries(params.getSeries());
+		invoice.setSeries(params.getSeries().getId());
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setSecurityLevel(params.getSecurityLevel());
@@ -258,7 +257,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		invoice.setRegistry(registry);
 		invoice.setRegistryDocument(registry.getDocument());
 		invoice.setRegistryName((registry.getName() == null?"":registry.getName()) + " " + (registry.getSurname()==null?"":registry.getSurname()));
-		invoice.setSeries(params.getSeries());
+		invoice.setSeries(params.getSeries().getId());
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setSecurityLevel(params.getSecurityLevel());
@@ -298,15 +297,15 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 	}
 
 	@SuppressWarnings("unchecked")
-	private int calculateNextNumber(int counter, String series) throws ManagerBeanException {
+	private int calculateNextNumber(int counter, Series series) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		counter = (counter == 0?1:counter);
 		while(true){
 			Criteria criteria = new Criteria();
-			if (StringUtils.isEmpty(series) ) {
+			if (series == null) {
 				criteria.addNullExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES));
 			} else {
-				criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), series);
+				criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), series.getId());
 			}
 			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER), new Integer(counter));
 			Iterator iter = invoiceBean.getList(criteria).iterator();

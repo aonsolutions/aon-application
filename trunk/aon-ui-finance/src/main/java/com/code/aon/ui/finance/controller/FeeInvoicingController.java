@@ -16,8 +16,6 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
@@ -31,7 +29,6 @@ import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Series;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.dao.IFinanceAlias;
@@ -132,18 +129,18 @@ public class FeeInvoicingController  implements IProgression{
 	}
 
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		String seriesId = (String) event.getNewValue();
-		getParams().setNumber(obtainMaxNumber(seriesId));
-		getParams().setSecurityLevel(obtainSeriesSecurityLevel(seriesId));
+		Series series = (Series) event.getNewValue();
+		getParams().setNumber(obtainMaxNumber(series));
+		getParams().setSecurityLevel(obtainSeriesSecurityLevel(series));
 	}
 
-	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
+	private int obtainMaxNumber(Series series) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new Criteria();
-		if (StringUtils.isEmpty(seriesId)) {
+		if (series == null) {
 			criteria.addNullExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES));
 		} else {
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), seriesId);
+			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), series.getId());
 		}
 		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);
 		Projection projection = Projection.max(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER));
@@ -155,16 +152,9 @@ public class FeeInvoicingController  implements IProgression{
 	}
 
 	@SuppressWarnings("unchecked")
-	private SecurityLevel obtainSeriesSecurityLevel(String seriesId) throws ManagerBeanException {
-		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
-		Iterator iter = seriesBean.getList(criteria).iterator();
-		if (iter.hasNext()) {
-			Series series = (Series)iter.next(); 
-			if (series.getSecurityLevel() != null) {
-				return series.getSecurityLevel();
-			}
+	private SecurityLevel obtainSeriesSecurityLevel(Series series) throws ManagerBeanException {
+		if (series != null) {
+			return series.getSecurityLevel();
 		}
 		return null;
 	}
