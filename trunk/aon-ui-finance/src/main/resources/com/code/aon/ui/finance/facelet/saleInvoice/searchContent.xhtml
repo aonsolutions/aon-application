@@ -77,14 +77,14 @@
 					<aon:outputLabel for="Invoice_finances_dueDate-From" styleClass="aon-form-date-label"
 						value="#{bundle.aon_date_from}:" />
 					<aon:selectInputDate id="Invoice_finances_dueDate-From"
-						value="#{saleInvoiceSearch.dueDateFrom}"
+						valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 					<aon:outputLabel for="Invoice_finances_dueDate-To" styleClass="aon-form-date-label"
 						value="#{bundle.aon_date_to}:" />
 					<aon:selectInputDate id="Invoice_finances_dueDate-To"
-						value="#{saleInvoiceSearch.dueDateTo}"
+						valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 				</aon:div>

@@ -63,7 +63,7 @@
 							value="#{saleInvoice.to.series}" rendered="#{saleInvoice.new}"
 							valueChangeListener="#{saleInvoice.onSeriesChanged}"
 							reRender="Invoice_number">
-							<f:selectItem itemValue="" itemLabel=" " />
+							<f:selectItem itemLabel=" " value="#{null}"/>
 							<f:selectItems value="#{configCollections.series}" />
 						</aon:selectOneMenu>
 						<aon:inputText id="Invoice_series-Edit" 
