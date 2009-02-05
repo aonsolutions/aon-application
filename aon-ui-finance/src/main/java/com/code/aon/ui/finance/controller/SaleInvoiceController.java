@@ -189,9 +189,10 @@ public class SaleInvoiceController extends InvoiceController {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Customer customer = (Customer) event.getNewValue();
 			isBlocked(customer); // Saca el mensaje de bloqueo.
-			((Invoice)this.getTo()).setRegistryName(customer.getRegistry().getFullName());
-			((Invoice)this.getTo()).setRegistryDocument(customer.getRegistry().getDocument());
-			((Invoice)this.getTo()).setRegistry(customer.getRegistry());
+			Invoice invoice = (Invoice) getTo();
+			invoice.setRegistryName(customer.getRegistry().getFullName());
+			invoice.setRegistryDocument(customer.getRegistry().getDocument());
+			invoice.setRegistry(customer.getRegistry());
 			loadAddresses(customer.getId());
 		} else {
 			setAddresses(null);	
