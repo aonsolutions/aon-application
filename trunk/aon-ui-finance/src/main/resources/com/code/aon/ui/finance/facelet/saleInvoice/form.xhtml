@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -102,21 +103,23 @@
 					<aon:outputLabel for="Customer_id"
 						value="#{customerBundle.customer_customer}" />
 					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
-							reRender="Customer_full_name,Customer_registry_document,InvoiceAddress"
-							lookupProperty="registry" value="#{saleInvoice.to.registry.id}"
-							size="5" lookupChangeListener="#{saleInvoice.customerData}" />
-						<aon:lookupButton
-							windowTitle="#{customerBundle.customer_selection}"
-							lookupChangeListener="#{saleInvoice.customerData}"
-							selectReRender="Customer_id,Customer_full_name,Customer_registry_document,InvoiceAddress"
-							actionType="search" lookup="#{customerLookup}" minHeight="460"
-							minWidth="650" property="#{saleInvoice.to.registry}"
-							lookupProperty="registry">
-						</aon:lookupButton>
-						<aon:inputText id="Customer_full_name"
-							value="#{(saleInvoice.to.registry.name!=null)?(saleInvoice.to.registry.fullName):('')}"
-							size="50" disabled="true" />
+						<a4j:region>
+							<aon:lookupInputText id="Customer_id"
+								lookup="#{customerLookup}" ajaxSingle="true" required="true"
+								reRender="Customer_full_name,Customer_registry_document,InvoiceAddress"
+								lookupProperty="registry" value="#{saleInvoice.to.registry.id}"
+								size="5" lookupChangeListener="#{saleInvoice.customerData}" />
+							<aon:lookupButton
+								windowTitle="#{customerBundle.customer_selection}"
+								lookupChangeListener="#{saleInvoice.customerData}"
+								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,InvoiceAddress"
+								actionType="search" lookup="#{customerLookup}" minHeight="460"
+								minWidth="650" property="#{saleInvoice.to.registry}"
+								lookupProperty="registry">
+							</aon:lookupButton>
+							<aon:inputText id="Customer_full_name" disabled="#{saleInvoice.recorded}"
+								value="#{saleInvoice.to.registryName}" size="50" />
+						</a4j:region>
 						<!-- FARSA BOTON -->
 						<aon:commandButton
 							value="Enviar"
