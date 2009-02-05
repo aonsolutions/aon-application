@@ -5,24 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:outputLabel for="Invoice_series"
-		value="#{bundle.aon_series}/#{bundle.aon_number}" />
-	<aon:div>
-		<aon:inputText id="Invoice_series"
-			onblur="toUpperCase(this);"
-			valueChangeListener="#{controller.addExpression}"
-			size="4" maxlength="5" />
-		<aon:outputLabel for="Invoice_number_from"
-			styleClass="aon-form-date-label aon-padding-right"
-			value="#{bundle.aon_date_from}:" />
-		<aon:inputText id="Invoice_number_from"
-			value="#{saleInvoiceSearch.fromNumber}" size="7" />
-		<aon:outputLabel for="Invoice_number_to"
-			styleClass="aon-form-date-label aon-padding-right"
-			value="#{bundle.aon_date_to}:" />							
-		<aon:inputText id="Invoice_number_to"
-			value="#{saleInvoiceSearch.toNumber}" size="7" />
-	</aon:div>
+	<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
 
 	<aon:outputLabel for="Customer_id"
 		value="#{customerBundle.customer_customer}" />
@@ -45,14 +28,14 @@
 		<aon:outputLabel for="Invoice_issueDate-From"
 			styleClass="aon-form-date-label" value="#{bundle.aon_date_from}:" />
 		<aon:selectInputDate id="Invoice_issueDate-From"
-			value="#{saleInvoiceSearch.issueDateFrom}"
+			valueChangeListener="#{finance.addGreaterThanOrEqualExpression}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}" />
 
 		<aon:outputLabel for="Invoice_issueDate-To"
 			styleClass="aon-form-date-label" value="#{bundle.aon_date_to}:" />
 		<aon:selectInputDate id="Invoice_issueDate-To"
-			value="#{saleInvoiceSearch.issueDateTo}"
+			valueChangeListener="#{finance.addLessThanOrEqualExpression}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}" />
 	</aon:div>

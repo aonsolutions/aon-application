@@ -69,26 +69,9 @@
 						</aon:div>
 					</aon:div>
 
-					<aon:outputLabel for="Finance_invoice_series"
-						value="#{bundle.aon_series}/#{bundle.aon_number}" />
-					<aon:div>
-						<aon:inputText id="Finance_invoice_series"
-							onblur="toUpperCase(this);"
-							valueChangeListener="#{finance.addExpression}"
-							size="4" maxlength="5" />
-						<aon:outputLabel for="Finance_invoice_number-From"
-							styleClass="aon-form-date-label aon-padding-right"
-							value="#{bundle.aon_date_from}:" />
-						<aon:inputText id="Finance_invoice_number-From"
-							converter="javax.faces.Integer" size="7"
-							valueChangeListener="#{finance.addGreaterThanOrEqualExpression}" />
-						<aon:outputLabel for="Finance_invoice_number-To"
-							styleClass="aon-form-date-label aon-padding-right"
-							value="#{bundle.aon_date_to}:" />							
-						<aon:inputText id="Finance_invoice_number-To"
-							converter="javax.faces.Integer" size="7"
-							valueChangeListener="#{finance.addLessThanOrEqualExpression}" />
-					</aon:div>					
+					<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml">
+						<ui:param name="aliasPreffix" value="Finance_invoice" />						
+					</ui:include>		
 					
 					<aon:outputLabel value="#{financeBundle.finance_invoice_date}" />
 					<aon:div>

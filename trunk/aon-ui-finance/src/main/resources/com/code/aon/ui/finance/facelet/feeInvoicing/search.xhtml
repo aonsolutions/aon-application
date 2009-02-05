@@ -43,7 +43,7 @@ action="fee_invoicing_list"
 							value="#{feeInvoicing.params.series}"
 							valueChangeListener="#{feeInvoicing.onSeriesChanged}"
 							reRender="Invoice_number">
-							<f:selectItem itemValue="" itemLabel=" " />
+							<f:selectItem itemLabel=" " value="#{null}"/>
 							<f:selectItems value="#{configCollections.series}" />
 						</aon:selectOneMenu>
 						<aon:inputText id="Invoice_number" required="true"
