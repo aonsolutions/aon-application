@@ -22,25 +22,7 @@
 				<ui:param name="controller" value="#{invoicePrint}" />
 				<ui:define name="searchContent">
 
-					<aon:outputLabel for="Invoice_series"
-						value="#{bundle.aon_series}" />
-					<aon:div>
-						<aon:inputText id="Invoice_series"
-							onblur="toUpperCase(this);"
-							valueChangeListener="#{invoicePrint.addExpression}"
-							size="5" maxlength="5">
-						</aon:inputText>
-						<aon:outputLabel for="Invoice_number_from"
-							styleClass="aon-form-date-label aon-padding-right"
-							value="#{bundle.aon_date_from} #{bundle.aon_number}:" />
-						<aon:inputText id="Invoice_number_from"
-							value="#{invoicePrintSearch.fromNumber}" size="7" />
-						<aon:outputLabel for="Invoice_number_to"
-							styleClass="aon-form-date-label aon-padding-right"
-							value="#{bundle.aon_date_to} #{bundle.aon_number}:" />							
-						<aon:inputText id="Invoice_number_to"
-							value="#{invoicePrintSearch.toNumber}" size="7" />
-					</aon:div>
+					<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
 					
 					<aon:outputLabel for="Customer_id"
 						rendered="#{invoicePrintSearch.sales}"
@@ -80,17 +62,17 @@
 
 					<aon:outputLabel value="#{bundle.aon_date}" />
 					<aon:div>
-						<aon:outputLabel for="Invoice_fromDate" styleClass="aon-form-date-label"
+						<aon:outputLabel for="Invoice_issueDate-From" styleClass="aon-form-date-label"
 							value="#{bundle.aon_date_from}:" />
-						<aon:selectInputDate id="Invoice_fromDate"
-							value="#{invoicePrintSearch.issueDateFrom}"
+						<aon:selectInputDate id="Invoice_issueDate-From"
+							valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 
-						<aon:outputLabel for="Invoice_toDate" styleClass="aon-form-date-label"
+						<aon:outputLabel for="Invoice_issueDate-To" styleClass="aon-form-date-label"
 							value="#{bundle.aon_date_to}:" />
-						<aon:selectInputDate id="Invoice_toDate"
-							value="#{invoicePrintSearch.issueDateTo}"
+						<aon:selectInputDate id="Invoice_issueDate-To"
+							valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>

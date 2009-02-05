@@ -6,27 +6,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<aon:outputLabel for="Offer_series"
-		value="#{bundle.aon_series}" />
-	<aon:div>
-		<aon:inputText id="Offer_series"
-			onblur="toUpperCase(this);"
-			valueChangeListener="#{controller.addExpression}"
-			size="5" maxlength="5">
-		</aon:inputText>
-		<aon:outputLabel for="Offer_number-From"
-			styleClass="aon-form-date-label aon-padding-right"
-			value="#{bundle.aon_date_from} #{bundle.aon_number}:" />
-		<aon:inputText id="Offer_number-From"
-			converter="javax.faces.Integer" size="7"
-			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}" />			
-		<aon:outputLabel for="Offer_number-To"
-			styleClass="aon-form-date-label aon-padding-right"
-			value="#{bundle.aon_date_to} #{bundle.aon_number}:" />							
-		<aon:inputText id="Offer_number-To"
-			converter="javax.faces.Integer" size="7"
-			valueChangeListener="#{controller.addLessThanOrEqualExpression}" />			
-	</aon:div>
+	<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
 
 	<aon:outputLabel value="#{bundle.aon_date}" />
 	<aon:div>

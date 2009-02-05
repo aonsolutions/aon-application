@@ -30,25 +30,7 @@
 						<f:selectItems value="#{invoiceRecording.invoiceTypes}" />
 					</aon:selectOneMenu>
 					
-					<aon:outputLabel for="Invoice_series"
-						value="#{bundle.aon_series}/#{bundle.aon_number}" />
-					<aon:div>
-						<aon:inputText id="Invoice_series"
-							onblur="toUpperCase(this);"
-							valueChangeListener="#{invoiceRecording.addExpression}"
-							size="5" maxlength="5">
-						</aon:inputText>
-						<aon:outputLabel for="Invoice_fromNumber"
-							styleClass="aon-form-date-label aon-padding-right"
-							value="#{bundle.aon_date_from}:" />
-						<aon:inputText id="Invoice_fromNumber" maxlength="10"
-							value="#{invoiceRecordingSearch.fromNumber}" size="7" />
-						<aon:outputLabel for="Invoice_toNumber"
-							styleClass="aon-form-date-label aon-padding-right"
-							value="#{bundle.aon_date_to}:" />							
-						<aon:inputText id="Invoice_toNumber" maxlength="10"
-							value="#{invoiceRecordingSearch.toNumber}" size="7" />
-					</aon:div>					
+					<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
 					
 					<aon:outputLabel for="Customer_id"
 						rendered="#{invoiceRecordingSearch.sales}"
