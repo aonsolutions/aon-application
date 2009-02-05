@@ -31,26 +31,25 @@
 						value="aon-editDataTable-textColumn aon-width-150
 						aon-editDataTable-textColumn aon-width-150
 						aon-editDataTable-textColumn aon-width-150
-						aon-editDataTable-textColumn aon-width-150
+						aon-editDataTable-textColumn
 						aon-editDataTable-textColumn aon-width-150
 						aon-editDataTable-numberColumn aon-width-80" />
 	
 					<ui:define name="columns">
 	
-	
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{configBundle.config_pay_method}" />
+								<aon:outputLabel for="Finance_payMethod" value="#{configBundle.config_pay_method}" />
 							</f:facet>
 							<aon:outputText value="#{to.payMethod.name}"
-								rendered="#{to.id!=saleInvoiceFinance.to.id}" />
-							<aon:selectOneMenu value="#{saleInvoiceFinance.to.payMethod}"
-								rendered="#{to==saleInvoiceFinance.to}">
+								rendered="#{formList}" />
+							<aon:selectOneMenu id="Finance_payMethod"
+								value="#{saleInvoiceFinance.to.payMethod}" rendered="#{formEdit}">
 								<f:selectItems value="#{configCollections.payMethods}" />
 							</aon:selectOneMenu>
 							<f:facet name="footer">
-								<aon:selectOneMenu value="#{saleInvoiceFinance.to.payMethod}"
-									rendered="#{saleInvoiceFinance.new}">
+								<aon:selectOneMenu id="Finance_payMethod-New"
+									value="#{saleInvoiceFinance.to.payMethod}" rendered="#{formNew}">
 									<f:selectItems value="#{configCollections.payMethods}" />
 								</aon:selectOneMenu>
 							</f:facet>
@@ -58,25 +57,25 @@
 	
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{configBundle.config_bank}" />
+								<aon:outputLabel for="Finance_registryBank" value="#{configBundle.config_bank}" />
 							</f:facet>
 							<aon:outputText value="#{to.bank.name}"
-								rendered="#{to.id!=saleInvoiceFinance.to.id}" />
-							<aon:selectOneMenu id="RegistryBank-Edit"
+								rendered="#{formList}" />
+							<aon:selectOneMenu id="Finance_registryBank"
 								value="#{saleInvoiceFinance.registryBank}"
-								rendered="#{to==saleInvoiceFinance.to}"
+								rendered="#{formEdit}"
 								valueChangeListener="#{saleInvoiceFinance.onBankChanged}"
 								reRender="BankAccount-Edit">
-								<f:selectItem value="#{nullItem.value}" />
+								<f:selectItem itemLabel="-" value="#{null}"/>
 								<f:selectItems value="#{saleInvoiceFinance.registryBanks}" />
 							</aon:selectOneMenu>
 							<f:facet name="footer">
-								<aon:selectOneMenu id="RegistryBank-New"
+								<aon:selectOneMenu id="Finance_registryBank-New"
 									value="#{saleInvoiceFinance.registryBank}"
-									rendered="#{saleInvoiceFinance.new}"
+									rendered="#{formNew}"
 									valueChangeListener="#{saleInvoiceFinance.onBankChanged}"
 									reRender="BankAccount-New">
-									<f:selectItem value="#{nullItem.value}" />
+									<f:selectItem itemLabel="-" value="#{null}"/>
 									<f:selectItems value="#{saleInvoiceFinance.registryBanks}" />
 								</aon:selectOneMenu>
 							</f:facet>
@@ -84,30 +83,29 @@
 	
 						<aon:column>
 							<f:facet name="header">
-								<h:outputText value="#{configBundle.config_bank_account}" />
+								<aon:outputLabel for="Finance_bankAccount" value="#{configBundle.config_bank_account}" />
 							</f:facet>
 							<aon:outputText value="#{to.bankAccount}"
-								rendered="#{to.id!=saleInvoiceFinance.to.id}" />
-	
+								rendered="#{formList}" />
 	
 							<aon:div id="BankAccount-Edit"
-								rendered="#{to==saleInvoiceFinance.to}">
-								<aon:inputText
+								rendered="#{formEdit}">
+								<aon:inputText label="#{configBundle.config_bank_code}"
 									value="#{saleInvoiceFinance.to.bankAccount.entity}" size="4"
 									maxlength="4">
 									<f:validateLength minimum="4" maximum="4" />
 								</aon:inputText>
-								<aon:inputText
+								<aon:inputText label="#{configBundle.config_bank_office}"
 									value="#{saleInvoiceFinance.to.bankAccount.office}" size="4"
 									maxlength="4">
 									<f:validateLength minimum="4" maximum="4" />
 								</aon:inputText>
-								<aon:inputText
+								<aon:inputText label="#{configBundle.config_bank_control}"
 									value="#{saleInvoiceFinance.to.bankAccount.control}" size="2"
 									maxlength="2">
 									<f:validateLength minimum="2" maximum="2" />
 								</aon:inputText>
-								<aon:inputText
+								<aon:inputText id="Finance_bankAccount"
 									value="#{saleInvoiceFinance.to.bankAccount.account}" size="10"
 									maxlength="10">
 									<f:validateLength minimum="10" maximum="10" />
@@ -116,23 +114,23 @@
 	
 							<f:facet name="footer">
 								<aon:div id="BankAccount-New"
-									rendered="#{saleInvoiceFinance.new}">
-									<aon:inputText
+									rendered="#{formNew}">
+									<aon:inputText label="#{configBundle.config_bank_code}"
 										value="#{saleInvoiceFinance.to.bankAccount.entity}" size="4"
 										maxlength="4">
 										<f:validateLength minimum="4" maximum="4" />
 									</aon:inputText>
-									<aon:inputText
+									<aon:inputText label="#{configBundle.config_bank_office}"
 										value="#{saleInvoiceFinance.to.bankAccount.office}" size="4"
 										maxlength="4">
 										<f:validateLength minimum="4" maximum="4" />
 									</aon:inputText>
-									<aon:inputText
+									<aon:inputText label="#{configBundle.config_bank_control}"
 										value="#{saleInvoiceFinance.to.bankAccount.control}" size="2"
 										maxlength="2">
 										<f:validateLength minimum="2" maximum="2" />
 									</aon:inputText>
-									<aon:inputText
+									<aon:inputText id="Finance_bankAccount-New"
 										value="#{saleInvoiceFinance.to.bankAccount.account}" size="10"
 										maxlength="10">
 										<f:validateLength minimum="10" maximum="10" />
@@ -143,22 +141,22 @@
 	
 						<aon:column>
 							<f:facet name="header">
-								<h:outputText value="#{financeBundle.finance_finance_date}" />
+								<aon:outputLabel for="Finance_dueDate" value="#{financeBundle.finance_finance_date}" />
 							</f:facet>
 							<aon:outputText value="#{to.dueDate}"
-								rendered="#{to.id!=saleInvoiceFinance.to.id}">
+								rendered="#{formList}">
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
-							<aon:selectInputDate id="Finance_dueDate-Edit"
+							<aon:selectInputDate id="Finance_dueDate"
 								value="#{saleInvoiceFinance.to.dueDate}"
-								rendered="#{to.id==saleInvoiceFinance.to.id}"
+								rendered="#{formEdit}"
 								timeZone="#{timeZoneController.timeZone}"
 								popupDateFormat="#{bundle.aon_date_pattern}"/>
 							<f:facet name="footer">
 								<aon:selectInputDate id="Finance_dueDate-New"
 									value="#{saleInvoiceFinance.to.dueDate}"
-									rendered="#{saleInvoiceFinance.new}"
+									rendered="#{formNew}"
 									timeZone="#{timeZoneController.timeZone}"
 									popupDateFormat="#{bundle.aon_date_pattern}"/>
 							</f:facet>
@@ -173,18 +171,18 @@
 	
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_amount}" />
+								<aon:outputLabel for="Finance_amount" value="#{bundle.aon_amount}" />
 							</f:facet>
 							<aon:outputText value="#{to.amount}"
-								rendered="#{to.id!=saleInvoiceFinance.to.id}">
+								rendered="#{formList}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
-							<aon:inputText id="Finance_amount-Edit"
-								rendered="#{to.id==saleInvoiceFinance.to.id}" size="10"
+							<aon:inputText id="Finance_amount"
+								rendered="#{formEdit}" size="10"
 								value="#{saleInvoiceFinance.to.amount}" />
 							<f:facet name="footer">
 								<aon:inputText id="Finance_amount-New"
-									rendered="#{saleInvoiceFinance.new}" size="10"
+									rendered="#{formNew}" size="10"
 									value="#{saleInvoiceFinance.to.amount}" />
 							</f:facet>
 						</aon:column>
