@@ -11,9 +11,12 @@ import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryInvoice;
@@ -38,6 +41,10 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.Company;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.BankAccount;
+import com.code.aon.config.PayMethod;
+import com.code.aon.config.Series;
+import com.code.aon.config.dao.IConfigAlias;
+import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
@@ -355,7 +362,19 @@ public class InvoiceEntryController {
 
 	public void onNewFinance(ActionEvent event) {
 		this.isNewFinance = true;
+		Registry registry = null;
+		if (getCurrentTaxInfo() instanceof Registry) {
+			registry = (Registry) getCurrentTaxInfo();
+		} else {
+			registry = ((IRegistry) getCurrentTaxInfo()).getRegistry();
+		}
+
 		this.currentFinance = initializeFinance();
+		try {
+			getFinanceGenerator().initializeFinanceData(this.currentFinance, registry);
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Error al inicializar el vencimiento");
+		}
 	}
 
 	public void onSelectFinance(ActionEvent event) {
@@ -442,7 +461,8 @@ public class InvoiceEntryController {
 			HibernateUtil.beginTransaction(sessionName);
 			AccountEntry entry = new AccountEntry();
 			if (!this.isNew) {
-				deleteInvoice(getAccountEntryInvoice().getInvoice());
+				deleteFinances(getAccountEntryInvoice().getInvoice());
+				deleteInvoiceDetails(getAccountEntryInvoice().getInvoice());
 				deleteAccountEntryDetails(getAccountEntryInvoice().getAccountEntry());
 				entry = this.getAccountEntryInvoice().getAccountEntry();
 			}
@@ -563,27 +583,51 @@ public class InvoiceEntryController {
 	}
 
 	public void onRemove(ActionEvent event) {
-		deleteAccountEntryInvoice(this.getAccountEntryInvoice());
-		deleteInvoice(getAccountEntryInvoice().getInvoice());
-		deleteAccountEntryDetails(getAccountEntryInvoice().getAccountEntry());
-		deleteAccountEntry(getAccountEntryInvoice().getAccountEntry());
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+
+			HibernateUtil.beginTransaction(sessionName);
+
+			deleteAccountEntryInvoice(this.getAccountEntryInvoice());
+			deleteFinances(getAccountEntryInvoice().getInvoice());
+			deleteInvoiceDetails(getAccountEntryInvoice().getInvoice());
+			deleteAccountEntryDetails(getAccountEntryInvoice().getAccountEntry());
+			deleteAccountEntry(getAccountEntryInvoice().getAccountEntry());
+
+			HibernateUtil.getSession(sessionName).flush();
+			HibernateUtil.commitTransaction(sessionName);
+		} catch (Exception e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.log(Level.SEVERE, msg, e);
+			}
+			String msg = "No se pudo borrar la factura. " + e.getMessage();
+			LOGGER.log(Level.SEVERE, msg, e);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
 	}
 
-	private Invoice insertOrUpdateInvoice() {
-		try {
-			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-			Invoice invoice = isNew() ? new Invoice() : getAccountEntryInvoice().getInvoice();
-			invoice = mergeInvoice(invoice);
-			if (isNew()) {
-				invoice = (Invoice) invoiceBean.insert(invoice);
-			}
-			// Al convertir el proceso en transaccional, el update
-			// de invoice se realiza al momento del session.flush()
-			return invoice;
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error inserting invoice", e);
+	private Invoice insertOrUpdateInvoice() throws ManagerBeanException {
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		Invoice invoice = isNew() ? new Invoice() : getAccountEntryInvoice().getInvoice();
+		invoice = mergeInvoice(invoice);
+		if (isNew()) {
+			invoice = (Invoice) invoiceBean.insert(invoice);
 		}
-		return null;
+		// Al convertir el proceso en transaccional, el update
+		// de invoice se realiza al momento del session.flush()
+		return invoice;
 	}
 
 	private Invoice mergeInvoice(Invoice invoice) throws ManagerBeanException {
@@ -591,8 +635,7 @@ public class InvoiceEntryController {
 		invoice.setSeries(getHeader().getSeries());
 		if (getHeader().getType().equals(InvoiceType.SALES)) {
 			if (getHeader().getNumber() == 0) {
-				invoice.setNumber(calculateNextNumber(getHeader().getSeries(), getHeader()
-						.getType()));
+				invoice.setNumber(calculateNextNumber(getHeader().getSeries(), getHeader() .getType()));
 			}
 		} else {
 			invoice.setNumber(getHeader().getNumber());
@@ -625,29 +668,24 @@ public class InvoiceEntryController {
 		return 1;
 	}
 
-	private void insertInvoiceDetails(Invoice invoice) {
-		try {
-			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-			Iterator<?> iter = ((List<?>) details.getWrappedData()).iterator();
-			while (iter.hasNext()) {
-				InvoiceEntryDetail detail = (InvoiceEntryDetail) iter.next();
-				InvoiceDetail invoiceDetail = new InvoiceDetail();
-				invoiceDetail.setDeliveryDetail(null);
-				invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
-				invoiceDetail.setInvoice(invoice);
-				invoiceDetail.setItem(null);
-				invoiceDetail.setSource(InvoiceSource.ACCOUNT);
-				invoiceDetail.setWorkPlace(obtainWorkPlace());
-				invoiceDetail.setTaxableBase(detail.getTaxableBase());
-				invoiceDetail.setPrice(detail.getTaxableBase());
-				invoiceDetail.setQuantity(1);
-				invoiceDetail = (InvoiceDetail) invoiceDetailBean.insert(invoiceDetail);
-				insertInvoiceTaxes(invoiceDetail, detail);
-				insertInvoiceAccounts(invoiceDetail, detail);
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error inserting invoiceDetails for invoice with id= "
-					+ invoice.getId(), e);
+	private void insertInvoiceDetails(Invoice invoice) throws ManagerBeanException {
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		Iterator<?> iter = ((List<?>) details.getWrappedData()).iterator();
+		while (iter.hasNext()) {
+			InvoiceEntryDetail detail = (InvoiceEntryDetail) iter.next();
+			InvoiceDetail invoiceDetail = new InvoiceDetail();
+			invoiceDetail.setDeliveryDetail(null);
+			invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
+			invoiceDetail.setInvoice(invoice);
+			invoiceDetail.setItem(null);
+			invoiceDetail.setSource(InvoiceSource.ACCOUNT);
+			invoiceDetail.setWorkPlace(obtainWorkPlace());
+			invoiceDetail.setTaxableBase(detail.getTaxableBase());
+			invoiceDetail.setPrice(detail.getTaxableBase());
+			invoiceDetail.setQuantity(1);
+			invoiceDetail = (InvoiceDetail) invoiceDetailBean.insert(invoiceDetail);
+			insertInvoiceTaxes(invoiceDetail, detail);
+			insertInvoiceAccounts(invoiceDetail, detail);
 		}
 	}
 
@@ -660,64 +698,50 @@ public class InvoiceEntryController {
 		return null;
 	}
 
-	private void insertInvoiceTaxes(InvoiceDetail invoiceDetail, InvoiceEntryDetail detail) {
-		try {
-			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
-			InvoiceTax invoiceTax = new InvoiceTax();
-			if (detail.getVatPercent() > 0) {
-				invoiceTax.setInvoiceDetail(invoiceDetail);
-				invoiceTax.setPercentage(detail.getVatPercent());
-				invoiceTax.setSurcharge(detail.getSurchargePercent());
-				invoiceTax.setTaxType(TaxType.VAT);
-				invoiceTaxBean.insert(invoiceTax);
-			}
-			if (detail.getRetentionPercent() > 0) {
-				invoiceTax = new InvoiceTax();
-				invoiceTax.setInvoiceDetail(invoiceDetail);
-				invoiceTax.setPercentage(detail.getRetentionPercent());
-				invoiceTax.setSurcharge(0);
-				invoiceTax.setTaxType(TaxType.RETENTION);
-				invoiceTaxBean.insert(invoiceTax);
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error inserting invoiceTaxes for InvoiceDetail with id= "
-					+ invoiceDetail.getId(), e);
+	private void insertInvoiceTaxes(InvoiceDetail invoiceDetail, InvoiceEntryDetail detail)
+			throws ManagerBeanException {
+		IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
+		InvoiceTax invoiceTax = new InvoiceTax();
+		if (detail.getVatPercent() > 0) {
+			invoiceTax.setInvoiceDetail(invoiceDetail);
+			invoiceTax.setPercentage(detail.getVatPercent());
+			invoiceTax.setSurcharge(detail.getSurchargePercent());
+			invoiceTax.setTaxType(TaxType.VAT);
+			invoiceTaxBean.insert(invoiceTax);
+		}
+		if (detail.getRetentionPercent() > 0) {
+			invoiceTax = new InvoiceTax();
+			invoiceTax.setInvoiceDetail(invoiceDetail);
+			invoiceTax.setPercentage(detail.getRetentionPercent());
+			invoiceTax.setSurcharge(0);
+			invoiceTax.setTaxType(TaxType.RETENTION);
+			invoiceTaxBean.insert(invoiceTax);
 		}
 	}
 
-	private void insertInvoiceAccounts(InvoiceDetail invoiceDetail, InvoiceEntryDetail detail) {
-		try {
-			IManagerBean invoiceAccountBean = BeanManager
-					.getManagerBean(InvoiceDetailAccount.class);
-			if (detail.getAccount() != null && !detail.getAccount().equals("")) {
-				Account account = detail.getAccount();
+	private void insertInvoiceAccounts(InvoiceDetail invoiceDetail, InvoiceEntryDetail detail)
+			throws ManagerBeanException {
+		IManagerBean invoiceAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
+		if (detail.getAccount() != null && !detail.getAccount().equals("")) {
+			Account account = detail.getAccount();
 
-				InvoiceDetailAccount invoiceDetailAccount = new InvoiceDetailAccount();
-				invoiceDetailAccount.setInvoiceDetail(invoiceDetail);
-				invoiceDetailAccount.setAccount(account);
-				invoiceAccountBean.insert(invoiceDetailAccount);
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error inserting invoiceAccounts for InvoiceDetail with id= "
-					+ invoiceDetail.getId(), e);
+			InvoiceDetailAccount invoiceDetailAccount = new InvoiceDetailAccount();
+			invoiceDetailAccount.setInvoiceDetail(invoiceDetail);
+			invoiceDetailAccount.setAccount(account);
+			invoiceAccountBean.insert(invoiceDetailAccount);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void insertFinances(Invoice invoice) {
-		try {
-			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			Iterator<Finance> iter = ((List<Finance>) finances.getWrappedData()).iterator();
-			while (iter.hasNext()) {
-				Finance finance = iter.next();
-				finance.setInvoice(invoice);
-				finance.setRegistry(invoice.getRegistry());
-				finance.setFinanceStatus(FinanceStatus.PENDING);
-				financeBean.insert(finance);
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error inserting finances for invoice with id= "
-					+ invoice.getId(), e);
+	private void insertFinances(Invoice invoice) throws ManagerBeanException {
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Iterator<Finance> iter = ((List<Finance>) finances.getWrappedData()).iterator();
+		while (iter.hasNext()) {
+			Finance finance = iter.next();
+			finance.setInvoice(invoice);
+			finance.setRegistry(invoice.getRegistry());
+			finance.setFinanceStatus(FinanceStatus.PENDING);
+			financeBean.insert(finance);
 		}
 	}
 
@@ -733,111 +757,71 @@ public class InvoiceEntryController {
 		this.finances = new ListDataModel(financeList);
 	}
 
-	private void deleteInvoice(Invoice invoice) {
-		deleteFinances(invoice);
-		deleteInvoiceDetails(invoice);
-		// try {
-		// IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-		// invoiceBean.remove(invoice);
-		// } catch (ManagerBeanException e) {
-		// LOGGER.log(Level.SEVERE, "Error deleting invoice with id=" +
-		// invoice.getId(), e);
-		// }
+	private void deleteAccountEntryDetails(AccountEntry accountEntry) throws ManagerBeanException {
+		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(accountEntryDetailBean
+				.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry
+				.getId());
+		Iterator<ITransferObject> iter = accountEntryDetailBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			accountEntryDetailBean.remove(iter.next());
+		}
 	}
 
-	private void deleteAccountEntryDetails(AccountEntry accountEntry) {
-		try {
-			IManagerBean accountEntryDetailBean = BeanManager
-					.getManagerBean(AccountEntryDetail.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(accountEntryDetailBean
-					.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID),
-					accountEntry.getId());
-			Iterator<ITransferObject> iter = accountEntryDetailBean.getList(criteria).iterator();
-			while (iter.hasNext()) {
-				accountEntryDetailBean.remove(iter.next());
+	private void deleteAccountEntry(AccountEntry accountEntry) throws ManagerBeanException {
+		IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
+		accountEntryBean.remove(accountEntry);
+	}
+
+	private void deleteInvoiceDetails(Invoice invoice) throws ManagerBeanException {
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
+		IManagerBean invoiceAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceDetailBean
+				.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+		Iterator<ITransferObject> iter = invoiceDetailBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			InvoiceDetail invoiceDetail = (InvoiceDetail) iter.next();
+			Criteria taxCriteria = new Criteria();
+			taxCriteria.addEqualExpression(invoiceTaxBean
+					.getFieldName(IFinanceAlias.INVOICE_TAX_INVOICE_DETAIL_ID), invoiceDetail
+					.getId());
+			Iterator<ITransferObject> taxIter = invoiceTaxBean.getList(taxCriteria).iterator();
+			while (taxIter.hasNext()) {
+				invoiceTaxBean.remove(taxIter.next());
 			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error removing details related with accountEntry with id= "
-					+ accountEntry.getId(), e);
-		}
-	}
 
-	private void deleteAccountEntry(AccountEntry accountEntry) {
-		try {
-			IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
-			accountEntryBean.remove(accountEntry);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error deleting AccountEntry with id=" + accountEntry.getId(),
-					e);
-		}
-	}
-
-	private void deleteInvoiceDetails(Invoice invoice) {
-		try {
-			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
-			IManagerBean invoiceAccountBean = BeanManager
-					.getManagerBean(InvoiceDetailAccount.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(invoiceDetailBean
-					.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-			Iterator<ITransferObject> iter = invoiceDetailBean.getList(criteria).iterator();
-			while (iter.hasNext()) {
-				InvoiceDetail invoiceDetail = (InvoiceDetail) iter.next();
-				Criteria taxCriteria = new Criteria();
-				taxCriteria.addEqualExpression(invoiceTaxBean
-						.getFieldName(IFinanceAlias.INVOICE_TAX_INVOICE_DETAIL_ID), invoiceDetail
-						.getId());
-				Iterator<ITransferObject> taxIter = invoiceTaxBean.getList(taxCriteria).iterator();
-				while (taxIter.hasNext()) {
-					invoiceTaxBean.remove(taxIter.next());
-				}
-
-				Criteria accountCriteria = new Criteria();
-				accountCriteria
-						.addEqualExpression(
-								invoiceAccountBean
-										.getFieldName(IAccountBridgeAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_ID),
-								invoiceDetail.getId());
-				Iterator<ITransferObject> accountIter = invoiceAccountBean.getList(accountCriteria)
-						.iterator();
-				while (accountIter.hasNext()) {
-					invoiceAccountBean.remove(accountIter.next());
-				}
-				invoiceDetailBean.remove(invoiceDetail);
+			Criteria accountCriteria = new Criteria();
+			accountCriteria.addEqualExpression(invoiceAccountBean
+					.getFieldName(IAccountBridgeAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_ID),
+					invoiceDetail.getId());
+			Iterator<ITransferObject> accountIter = invoiceAccountBean.getList(accountCriteria)
+					.iterator();
+			while (accountIter.hasNext()) {
+				invoiceAccountBean.remove(accountIter.next());
 			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error deleting invoiceDetails related with invoice with id= "
-					+ invoice.getId(), e);
+			invoiceDetailBean.remove(invoiceDetail);
 		}
 	}
 
-	private void deleteFinances(Invoice invoice) {
-		try {
-			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID),
-					invoice.getId());
-			Iterator<ITransferObject> iter = financeBean.getList(criteria).iterator();
-			while (iter.hasNext()) {
-				financeBean.remove(iter.next());
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error deleting finances related with invoice with id= "
-					+ invoice.getId(), e);
+	private void deleteFinances(Invoice invoice) throws ManagerBeanException {
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID),
+				invoice.getId());
+		Iterator<ITransferObject> iter = financeBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			financeBean.remove(iter.next());
 		}
 	}
 
-	private void deleteAccountEntryInvoice(AccountEntryInvoice accountEntryInvoice) {
-		try {
-			IManagerBean accountEntryInvoiceBean = BeanManager
-					.getManagerBean(AccountEntryInvoice.class);
-			accountEntryInvoiceBean.remove(accountEntryInvoice);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error deleting accountEntryInvoice with id= "
-					+ accountEntryInvoice.getId(), e);
-		}
+	private void deleteAccountEntryInvoice(AccountEntryInvoice accountEntryInvoice)
+			throws ManagerBeanException {
+		IManagerBean accountEntryInvoiceBean = BeanManager
+				.getManagerBean(AccountEntryInvoice.class);
+		accountEntryInvoiceBean.remove(accountEntryInvoice);
 	}
 
 	public void onViewAccountEntry(ActionEvent event) {
@@ -853,33 +837,15 @@ public class InvoiceEntryController {
 			entryController.getModel().setRowIndex(0);
 			entryController.onSelect(null);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading AccountEntryController", e);
+			String m = "Error loading AccountEntryController";
+			AonUtil.addErrorMessage(m);
+			LOGGER.log(Level.SEVERE, m, e);
 		}
 	}
 
 	private double round(double value, int precision) {
 		double decimal = Math.pow(10, precision);
 		return Math.round(decimal * value) / decimal;
-	}
-
-	public List<SelectItem> getRegistryBanks() throws ManagerBeanException {
-		return getRegistryBanks(header.getRegistry());
-	}
-
-	public List<SelectItem> getRegistryBanks(Registry registry) throws ManagerBeanException {
-		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rBankBean
-				.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
-		LinkedList<SelectItem> rBanks = new LinkedList<SelectItem>();
-		Iterator<?> iter = rBankBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			RegistryBank rBank = (RegistryBank) iter.next();
-			SelectItem item = new SelectItem(rBank.getBank(), rBank.getBank().getName() + " ["
-					+ rBank.getBankAccount().toString() + "]");
-			rBanks.add(item);
-		}
-		return rBanks;
 	}
 
 	public void registryChanged(LookupChangeEvent event) {
@@ -915,6 +881,91 @@ public class InvoiceEntryController {
 			return getCurrentTaxInfo().isSurcharge();
 		}
 		return false;
+	}
+
+	public void onPayMethodChanged(ValueChangeEvent event) {
+
+	}
+
+	public void onBankChanged(ValueChangeEvent event) {
+
+	}
+
+	public List<SelectItem> getBanks() {
+		try {
+			if (getCurrentFinance() != null && getCurrentFinance().getPayMethod() != null) {
+				PayMethod pm = getCurrentFinance().getPayMethod();
+				if (isSales() && pm.getType() != PayMethodType.BANK_TRANSFER) {
+					return getRegistryBanks(header.getRegistry());
+				}
+				return getRegistryBanks(getCompany());
+			}
+			return new LinkedList<SelectItem>();
+		} catch (ManagerBeanException e) {
+			String m = "Error obtaining Banks!";
+			AonUtil.addErrorMessage(m);
+			throw new AbortProcessingException(m);
+		}
+
+	}
+
+	private List<SelectItem> getRegistryBanks(Registry registry) throws ManagerBeanException {
+		LinkedList<SelectItem> rBanks = new LinkedList<SelectItem>();
+		if (isSales()) {
+		}
+		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(rBankBean
+				.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
+		Iterator<?> iter = rBankBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			RegistryBank rBank = (RegistryBank) iter.next();
+			SelectItem item = new SelectItem(rBank.getBank(), rBank.getBank().getName() + " ["
+					+ rBank.getBankAccount().toString() + "]");
+			rBanks.add(item);
+		}
+		return rBanks;
+	}
+
+	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
+		int number = obtainMaxNumber((String)event.getNewValue());
+		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String)event.getNewValue());
+		if (getHeader() != null) {
+			getHeader().setNumber(number);
+			getHeader().setSecurityLevel(securityLevel);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private SecurityLevel obtainSeriesSecurityLevel(String seriesId) throws ManagerBeanException {
+		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
+		Iterator iter = seriesBean.getList(criteria).iterator();
+		if (iter.hasNext()) {
+			Series series = (Series)iter.next(); 
+			if (series.getSecurityLevel() != null) {
+				return series.getSecurityLevel();
+			}
+		}
+		return null;
+	}
+
+	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		Criteria criteria = new Criteria();
+		if (StringUtils.isEmpty(seriesId)) {
+			criteria.addNullExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES));
+		} else {
+			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), seriesId);
+		}
+		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);
+		Projection projection = Projection.max(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER));
+		Object value = invoiceBean.getUniqueResult(projection, criteria);
+		if (value != null) {
+			return ((Integer) value).intValue() + 1;
+		}
+		return 1;
 	}
 
 }

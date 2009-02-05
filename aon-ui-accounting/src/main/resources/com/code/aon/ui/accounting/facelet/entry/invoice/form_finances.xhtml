@@ -17,7 +17,6 @@
 					aon-editDataTable-textColumn,
 					aon-editDataTable-textColumn,
 					aon-editDataTable-textColumn,
-					aon-editDataTable-textColumn,
 					aon-editDataTable-numberColumn,
 					aon-editDataTable-buttonsColumn">
 
@@ -39,7 +38,7 @@
 							disabled="#{!invoiceEntry.accountSource}"
 							actionListener="#{invoiceEntry.onNewFinance}"
 							rendered="#{!invoiceEntry.newFinance}"
-							focus="Account_Finance_DueDate-New"
+							focus="Account_Finance_DueDate"
 							accesskey="#{bundle.aon_key_new_line}" />
 					</aon:div>
 				</f:facet>
@@ -47,44 +46,52 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_date}" />
+					<aon:outputLabel value="#{bundle.aon_date}"
+						for="Account_Finance_DueDate" />
 				</f:facet>
-				<aon:outputText id="Account_Finance_DueDate"
-					rendered="#{financeTo!=invoiceEntry.currentFinance}"
+				<aon:outputText rendered="#{financeTo!=invoiceEntry.currentFinance}"
 					value="#{financeTo.dueDate}">
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
-
-				<aon:selectInputDate id="Account_Finance_DueDate-Edit"
+				<aon:selectInputDate id="Account_Finance_DueDate"
 					rendered="#{financeTo==invoiceEntry.currentFinance}"
-					value="#{invoiceEntry.currentFinance.dueDate}"
+					value="#{invoiceEntry.currentFinance.dueDate}" inputSize="10"
 					timeZone="#{timeZoneController.timeZone}"
-					popupDateFormat="#{bundle.aon_date_pattern}"/>
+					popupDateFormat="#{bundle.aon_date_pattern}" />
 				<f:facet name="footer">
 					<aon:selectInputDate id="Account_Finance_DueDate-New"
 						rendered="#{invoiceEntry.newFinance}"
-						value="#{invoiceEntry.currentFinance.dueDate}"
+						value="#{invoiceEntry.currentFinance.dueDate}" inputSize="10"
 						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}"/>
+						popupDateFormat="#{bundle.aon_date_pattern}" />
 				</f:facet>
 			</aon:column>
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{configBundle.config_pay_method}" />
+					<aon:outputLabel for="Account_Finance_PayMethod"
+						value="#{configBundle.config_pay_method}" />
 				</f:facet>
 				<aon:outputText value="#{financeTo.payMethod.name}"
 					rendered="#{financeTo!=invoiceEntry.currentFinance}" />
-				<aon:selectOneMenu styleClass="aon-form-selectOneMenu-field"
+				<aon:selectOneMenu id="Account_Finance_PayMethod"
+					styleClass="aon-form-selectOneMenu-field"
 					rendered="#{financeTo==invoiceEntry.currentFinance}"
+					valueChangeListener="#{invoiceEntry.onPayMethodChanged}"
+					reRender="Account_Finance_RegistryBank"
 					value="#{invoiceEntry.currentFinance.payMethod}">
+					<f:selectItem value="#{nullItem.value}" />
 					<f:selectItems value="#{configCollections.payMethods}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
-					<aon:selectOneMenu styleClass="aon-form-selectOneMenu-field"
+					<aon:selectOneMenu id="Account_Finance_PayMethod-New"
+						styleClass="aon-form-selectOneMenu-field"
 						rendered="#{invoiceEntry.newFinance}"
+						valueChangeListener="#{invoiceEntry.onPayMethodChanged}"
+						reRender="Account_Finance_RegistryBank-New"	
 						value="#{invoiceEntry.currentFinance.payMethod}">
+						<f:selectItem value="#{nullItem.value}" />
 						<f:selectItems value="#{configCollections.payMethods}" />
 					</aon:selectOneMenu>
 				</f:facet>
@@ -92,52 +99,39 @@
 
 			<aon:column width="300">
 				<f:facet name="header">
-					<aon:outputText value="#{configBundle.config_bank}" />
+					<aon:outputLabel for="Account_Finance_RegistryBank"
+						value="#{configBundle.config_bank}" />
 				</f:facet>
+
 				<aon:outputText value="#{financeTo.bank.name}"
 					rendered="#{financeTo!=invoiceEntry.currentFinance}" />
-<!-- 
-				<ui:include
-					src="/com/code/aon/ui/finance/facelet/lookup/bank/bankIdInput.xhtml">
-					<ui:param name="wizard" value="#{bankWizard}" />
-					<ui:param name="id" value="bankUpdateId" />
-					<ui:param name="required" value="#{true}" />
-					<ui:param name="size" value="5" />
-					<ui:param name="renderDescription" value="#{true}" />
-					<ui:param name="renderedAttr"
-						value="#{financeTo==invoiceEntry.currentFinance and invoiceEntry.sales}" />
-					<ui:param name="disabled" value="#{false}" />
-						<ui:param name="reRenderAttr" value="Finance_bankAccount_entity-EDIT" />
-					<ui:param name="entity" value="#{invoiceEntry.currentFinance.bank}" />
-					<ui:param name="ELExpression"
-						value="invoiceEntry.currentFinance.bank" />
-					<ui:param name="onLookupELExpression"
-						value="invoiceEntry.currentFinance.bankAccount.entity=code" />
-				</ui:include>
- -->
+				<aon:div
+					rendered="#{financeTo==invoiceEntry.currentFinance and invoiceEntry.sales}">
+					<aon:selectOneMenu id="Account_Finance_RegistryBank"
+						value="#{invoiceEntry.currentFinance.bank}"
+						valueChangeListener="#{invoiceEntry.onBankChanged}">
+						<f:selectItem value="#{nullItem.value}" />
+						<f:selectItems value="#{invoiceEntry.banks}" />
+					</aon:selectOneMenu>
+					<aon:commandLink styleClass="aon-lookupButton-new"
+						reRender="Account_Finance_RegistryBank" />
+				</aon:div>
+
 				<f:facet name="footer">
-<!-- 				
-					<ui:include
-						src="/com/code/aon/ui/finance/facelet/lookup/bank/bankIdInput.xhtml">
-						<ui:param name="wizard" value="#{bankWizard}" />
-						<ui:param name="id" value="bankNewId" />
-						<ui:param name="required" value="#{true}" />
-						<ui:param name="size" value="5" />
-						<ui:param name="renderDescription" value="#{true}" />
-						<ui:param name="renderedAttr" value="#{invoiceEntry.newFinance}" />
-						<ui:param name="disabled" value="#{false}" />
-						<ui:param name="reRenderAttr" value="Finance_bankAccount_entity-NEW" />
-						<ui:param name="entity"
-							value="#{invoiceEntry.currentFinance.bank}" />
-						<ui:param name="ELExpression"
-							value="invoiceEntry.currentFinance.bank" />
-					<ui:param name="onLookupELExpression"
-						value="invoiceEntry.currentFinance.bankAccount.entity=code" />
-					</ui:include>
- -->
+					<aon:div rendered="#{invoiceEntry.newFinance}">
+						<aon:selectOneMenu id="Account_Finance_RegistryBank-New"
+							value="#{invoiceEntry.currentFinance.bank}"
+							valueChangeListener="#{invoiceEntry.onBankChanged}"
+							reRender="BankAccount-New">
+							<f:selectItem value="#{nullItem.value}" />
+							<f:selectItems value="#{invoiceEntry.banks}" />
+						</aon:selectOneMenu>
+						<aon:commandLink styleClass="aon-lookupButton-new"
+							reRender="Account_Finance_RegistryBank" />
+					</aon:div>
 				</f:facet>
 			</aon:column>
-
+			<!-- 
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText value="#{configBundle.config_bank_account}" />
@@ -191,17 +185,17 @@
 					</aon:div>
 				</f:facet>
 			</aon:column>
-
+ -->
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_amount}" />
+					<aon:outputLabel for="Account_Finance_Amount"
+						value="#{bundle.aon_amount}" />
 				</f:facet>
-				<aon:outputText id="Account_Finance_Amount"
-					rendered="#{financeTo!=invoiceEntry.currentFinance}"
+				<aon:outputText rendered="#{financeTo!=invoiceEntry.currentFinance}"
 					value="#{financeTo.amount}">
 					<f:convertNumber pattern="#,##0.00" />
 				</aon:outputText>
-				<aon:inputText id="Account_Finance_Amount-Edit" size="10"
+				<aon:inputText id="Account_Finance_Amount" size="10"
 					rendered="#{financeTo==invoiceEntry.currentFinance}"
 					value="#{invoiceEntry.currentFinance.amount}" required="true" />
 				<f:facet name="footer">

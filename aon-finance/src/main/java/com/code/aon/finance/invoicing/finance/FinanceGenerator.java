@@ -23,6 +23,15 @@ import com.code.aon.registry.dao.IRegistryAlias;
 
 public class FinanceGenerator {
 
+	public Finance initializeFinanceData(Finance finance, Registry registry ) throws ManagerBeanException{
+		RegistryPayMethod rPayMethod = obtainRPayMethod(registry);
+		RegistryBank rBank = obtainRBank(registry);
+		finance.setBank((rBank==null?null:rBank.getBank()));
+		finance.setBankAccount( rBank==null?null:rBank.getBankAccount() );
+		finance.setPayMethod( rPayMethod==null?null:rPayMethod.getPayment() );
+		return finance;
+	}
+
 	public List<Finance> generateFinances(Invoice invoice, Registry registry, double totalPrice, boolean insert) throws ManagerBeanException{
 		List<Finance> financeList = new LinkedList<Finance>();
 		RegistryPayMethod rPayMethod = obtainRPayMethod(registry);
@@ -85,7 +94,7 @@ public class FinanceGenerator {
 		finance.setDueDate(date);
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		finance.setInvoice(invoice);
-        finance.setConcept("Factura: " + invoice.getSeries() + ((invoice.getSeries()!=null&&!invoice.getSeries().equals(""))?"/":"") + invoice.getNumber());
+        finance.setConcept("Factura: " + invoice.getSeriesNumber()); 
 		if(invoice.getType().equals(InvoiceType.SALES)){
 			finance.setPayment(false);
 		}else{
