@@ -1,7 +1,5 @@
 package com.code.aon.ui.finance.event;
 
-import java.util.Date;
-
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
@@ -23,21 +21,9 @@ public class InvoiceSearchListener extends ControllerSearchListener {
 	
 	private Registry registry;
 	
-	private Integer fromNumber;
-	
-	private Integer toNumber;
-	
-	private Date issueDateFrom;
-	
-	private Date issueDateTo;
-
     private Item item;
 
 	private Bank bank;
-    
-	private Date dueDateFrom;
-	
-	private Date dueDateTo;
     
 	public String getDefaultType() {
 		return defaultType;
@@ -63,54 +49,6 @@ public class InvoiceSearchListener extends ControllerSearchListener {
 		this.registry = registry;
 	}
 	
-	public Integer getFromNumber() {
-		return fromNumber;
-	}
-
-	public void setFromNumber(Integer fromNumber) {
-		this.fromNumber = fromNumber;
-	}
-
-	public Integer getToNumber() {
-		return toNumber;
-	}
-
-	public void setToNumber(Integer toNumber) {
-		this.toNumber = toNumber;
-	}
-	
-	public Date getIssueDateFrom() {
-		return issueDateFrom;
-	}
-
-	public void setIssueDateFrom(Date issueDateFrom) {
-		this.issueDateFrom = issueDateFrom;
-	}
-
-	public Date getIssueDateTo() {
-		return issueDateTo;
-	}
-
-	public void setIssueDateTo(Date issueDateTo) {
-		this.issueDateTo = issueDateTo;
-	}
-	
-	public Date getDueDateFrom() {
-		return dueDateFrom;
-	}
-
-	public void setDueDateFrom(Date dueDateFrom) {
-		this.dueDateFrom = dueDateFrom;
-	}
-
-	public Date getDueDateTo() {
-		return dueDateTo;
-	}
-
-	public void setDueDateTo(Date dueDateTo) {
-		this.dueDateTo = dueDateTo;
-	}
-
 	public Item getItem() {
 		return item;
 	}
@@ -141,15 +79,9 @@ public class InvoiceSearchListener extends ControllerSearchListener {
 		if (getDefaultType() != null) {
 			setType(InvoiceType.valueOf(getDefaultType()));
 		}
-		setFromNumber(null);
-		setToNumber(null);				
-		setIssueDateFrom(null);
-		setIssueDateTo(null);		
 		setRegistry(new Registry());
 		setItem(new Item());
 		getItem().setProduct(new Product());
-		setDueDateFrom(null);
-		setDueDateTo(null);
 		setBank(new Bank());
 	}
 	
@@ -162,27 +94,9 @@ public class InvoiceSearchListener extends ControllerSearchListener {
 		if ((getRegistry() != null) && (getRegistry().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IFinanceAlias.INVOICE_REGISTRY_ID), getRegistry().getId());
 		}		
-		if (getFromNumber() != null) {
-			criteria.addGreaterThanOrEqualExpression(getFieldName(IFinanceAlias.INVOICE_NUMBER), getFromNumber());
-		}
-		if (getToNumber() !=  null) {
-			criteria.addLessThanOrEqualExpression(getFieldName(IFinanceAlias.INVOICE_NUMBER), getToNumber());
-		}				
-		if (getIssueDateFrom() != null) {
-			criteria.addGreaterThanOrEqualExpression(getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), getIssueDateFrom());
-		}
-		if (getIssueDateTo() != null) {
-			criteria.addLessThanOrEqualExpression(getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), getIssueDateTo());
-		}		
 		if ((getItem() != null) && (getItem().getId() != null)) {
 			criteria.addEqualExpression("Invoice.lines.item.id", getItem().getId());
 		}		
-		if (getDueDateFrom() != null) {
-			criteria.addGreaterThanOrEqualExpression("Invoice.finances.dueDate", getDueDateFrom());
-		}
-		if (getDueDateTo() != null) {
-			criteria.addGreaterThanOrEqualExpression("Invoice.finances.dueDate", getDueDateTo());			
-		}
 		if ((getBank() != null) && (!StringUtils.isEmpty(getBank().getCode()))) {
 			criteria.addEqualExpression("Invoice.finances.bank.code", getBank().getCode());			
 		}		
