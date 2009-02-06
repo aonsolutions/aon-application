@@ -16,6 +16,7 @@ import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.Series;
@@ -59,6 +60,8 @@ public class SaleInvoiceController extends InvoiceController {
 	private CustomerValidationManager cvm;
 
 	private List<SelectItem> addresses;
+	
+	private boolean showInvoiceAddressWindow;
 
 	public IPriceStrategy getPriceStrategy() {
 		if (priceStrategy == null) {
@@ -104,7 +107,7 @@ public class SaleInvoiceController extends InvoiceController {
 	}
 	
 	public void loadAddresses(Integer id) throws ManagerBeanException {
-		List<SelectItem> addresses = new LinkedList<SelectItem>();
+		this.addresses = new LinkedList<SelectItem>();
 		if (id != null) {
 			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 			Criteria criteria = new Criteria();
@@ -112,14 +115,13 @@ public class SaleInvoiceController extends InvoiceController {
 			Iterator<?> iter = rAddressBean.getList(criteria).iterator();
 			while(iter.hasNext()) {
 				RegistryAddress address = (RegistryAddress)iter.next();
-				String addressLabel = address.getAddress() + " " + address.getAddress2() + " " + address.getAddress3();
-				addressLabel = ((addressLabel.length()>30)?addressLabel.substring(0,27)+"...":addressLabel) + " - " + address.getCity();
-				addressLabel = ((addressLabel.length()>48)?addressLabel.substring(0,45)+"...":addressLabel);
+				String addressLabel = StringUtils.join( new String[]{address.getAddress(),address.getAddress2(),address.getAddress3()}, " ");
+				addressLabel = StringUtils.abbreviate(StringUtils.trim(addressLabel),30) + " - " + address.getCity();
+				addressLabel = StringUtils.abbreviate(addressLabel, 50);
 				SelectItem item = new SelectItem(address.getId(), addressLabel);
 				addresses.add(item);
 			}
 		}
-		this.addresses = addresses;
 	}
 
 	public String getAddress() {
@@ -307,4 +309,12 @@ public class SaleInvoiceController extends InvoiceController {
 		return getCustomerValidationManager().isBlocked(customer);
 	}
 
+	public boolean isShowInvoiceAddressWindow() {
+		return showInvoiceAddressWindow;
+	}
+
+	public void setShowInvoiceAddressWindow(boolean value) {
+		this.showInvoiceAddressWindow = value;
+	}
+	
 }

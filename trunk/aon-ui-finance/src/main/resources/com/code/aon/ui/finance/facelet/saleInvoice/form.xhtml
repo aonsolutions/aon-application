@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -160,26 +161,17 @@
 							value="#{saleInvoice.address}" disabled="true" size="33" />
 						<aon:inputText id="Invoice_registryAddress_city"
 							rendered="#{!saleInvoice.new and saleInvoiceAddress.to.id != null}"
-							value="#{feeInvoicing.city}" disabled="true" size="16" />
-						<!--
-
-******************
-******************
-	// TODO Popup de direcciones
-******************
-******************
- 
-					<aon:commandButton id="popupButton"
-						rendered="#{!feeInvoicing.new and !feeInvoicing.recorded}"
-						styleClass="aon-navigation-link"
-						value="#{registryBundle.aon_address_other}"
-						onclick="showPopup();return false;" />
-******************
-******************
-	// TODO Popup de direcciones
-******************
-******************
- -->
+							value="#{saleInvoice.city}" disabled="true" size="16" />
+						<aon:div layout="inline" styleClass="aon-margin-left">
+							<aon:commandButton id="popupButton"
+								reRender="showInvoiceAddressWindow"
+								rendered="#{!saleInvoice.new and !saleInvoice.recorded}"
+								styleClass="aon-icon-commandButton aon-icon-file-entrance"
+								value="#{registryBundle.registry_address_other}" >
+								<f:setPropertyActionListener target="#{saleInvoice.showInvoiceAddressWindow}"
+									value="#{true}" />								
+							</aon:commandButton>
+						</aon:div>
 					</aon:div>
 					 
 					<aon:outputLabel for="Invoice_total" value="#{bundle.aon_total}" />
@@ -214,5 +206,6 @@
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoiceAddress/modalPanel.xhtml" />
 	</ui:define>
 </ui:composition>
