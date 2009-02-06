@@ -12,6 +12,7 @@ import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
 import com.code.aon.common.IAttachment;
+import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.common.io.IAonFileListener;
 import com.code.aon.ui.form.GridController;
@@ -70,6 +71,8 @@ public class CorporateIdentityAttachController extends GridController implements
 				f.setData(data);
 			}
 			f.setFileName(item.getFileName());
+			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + item.getFileName() + " <<<<<<<<<<<<<<<<<<");
+			getAttachment().setDescription(item.getFileName());
 			f.addAonFileListener(this);
 			setAonFile(f);
 		} catch (IOException e) {
@@ -87,6 +90,16 @@ public class CorporateIdentityAttachController extends GridController implements
 			attach.setData( null );
 			attach.setMimeType( null );
 		}
+	}
+
+	public void onAccept(ActionEvent event) {
+		super.accept(event);
+		super.onCancel(event);
+	}
+
+	public void onRemove(ActionEvent event) {
+		super.onRemove(event);
+		super.onCancel(event);
 	}
 
 }

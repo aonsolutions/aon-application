@@ -47,7 +47,7 @@ public class CorporateIdentityAttachControllerListener extends ControllerAdapter
 				AonFile aonFile = ciaController.getAonFile(); 
 				if (aonFile.getSize() > 1048576){
 			        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME); 
-					throw new ControllerListenerException(bundle.getString("aon_company_image_max_size_error"));
+					throw new ControllerListenerException(bundle.getString("company_image_max_size_error"));
 				}
 				RegistryAttachment attach = (RegistryAttachment)ciaController.getTo();
 				CompanyController companyController = (CompanyController)FormUtil.getController(COMPANY_CONTROLLER_NAME);
@@ -55,10 +55,11 @@ public class CorporateIdentityAttachControllerListener extends ControllerAdapter
 				attach.setCategory(null);
 				attach.setData(aonFile.getData());
 				if (attach.getDescription() == null || attach.getDescription().trim().equals("")) {
-					attach.setDescription(aonFile.getFileName().substring(aonFile.getFileName().lastIndexOf("\\") + 1, aonFile.getFileName().lastIndexOf(".")));
+					attach.setDescription(aonFile.getFileName().substring(aonFile.getFileName().lastIndexOf("\\") + 1));
 				}
 				attach.setRegistryAttachmentType(RegistryAttachmentType.CORPORATE_IDENTITY);
-				attach.setMimeType(MimeType.getByExtension(aonFile.getFileName().substring(aonFile.getFileName().lastIndexOf(".") + 1)));
+				MimeType mt = MimeType.getByExtension(aonFile.getFileName().substring(aonFile.getFileName().lastIndexOf(".") + 1));
+				attach.setMimeType(mt);
 			}	
 		} catch (IOException e) {
 			throw new ControllerListenerException("Error uploading file");

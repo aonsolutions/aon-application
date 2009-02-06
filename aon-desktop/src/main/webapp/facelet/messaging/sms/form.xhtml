@@ -43,13 +43,12 @@
 							<aon:outputLabel for="SMS_message" value="#{appBundle.aon_messaging_message}" />
 							<aon:div>
 								<aon:inputTextarea id="SMS_message" value="#{sms.message.info.message}" cols="80" rows="4"
-										onkeydown="CheckMessageLength()" onkeyup="UpdateMessageLength()" />
+										onkeyup="UpdateMessageLength()" />
 								<aon:div>
 									<aon:inputText id="messageLength" value="(max 160)" 
 										readonly="true" style="border:0;" size="25"/>
 								</aon:div>
 							</aon:div>
-
 
 							<aon:outputLabel for="SMS_recipient" value="#{appBundle.aon_messaging_recipient}s" />
 							<aon:div>
