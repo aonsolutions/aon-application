@@ -143,8 +143,9 @@ aon_payroll_principales_mntoit_fecha=Fecha
 aon_payroll_principales_mntoit_procesado=Procesado
 
 -->
-
-	       <aon:editDataTable id="pconfData" var="to" rows="20"
+						<aon:div>
+						
+						<aon:editDataTable id="pconfData" var="to" rows="20"
 					 value="#{parteconf.model}"
 						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
 								
@@ -196,11 +197,9 @@ aon_payroll_principales_mntoit_procesado=Procesado
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_principales_mntoit_fecha}" />
 							</f:facet>
-							<aon:selectInputDate required="true" requiredMessage="fecini"
-								rendered="#{to==cuotaRetencionGuipuzcoa.to}"
-								value="#{to.fecconf}" inputSize="10"
+							<aon:selectInputDate value="#{to.fecconf}" inputSize="10"
 								renderAsPopup="true"
-								popupDateFormat="#{appBundle.aon_date_pattern}">
+								popupDateFormat="#{appBundle.aon_date_pattern}" />
 							
 						</aon:column>
 						
@@ -219,51 +218,56 @@ aon_payroll_principales_mntoit_procesado=Procesado
 						
 					</aon:editDataTable>
 					<aon:dataScroller2 for="pconfData" showNote="true" />
-
+						
+						
+						
+						</aon:div>
+						
+						
 						<rich:spacer />
 						<aon:panelGrid columns="4" dir="true"
 							width="100%">
+							
+							<f:facet name="header">
+								<aon:outputText
+									value="#{appBundle.aon_payroll_principales_mntoit_bases}" />
+							</f:facet>
 
-
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_principales_mntoit_bases}" />
-							<aon:inputText value="#{trabajador.to.cdg}"
-								readonly="#{!bonifica.new}" size="" maxlength="" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_mntoit_retrib_periodo_ant}" />
-							<aon:inputText value="#{trabajador.to.cdg}"
-								readonly="#{!bonifica.new}" size="" maxlength="" />
+							<aon:inputText value="#{parteit.to.baseant}"
+								size="" maxlength="" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_mntoit_diaria_accid}" />
-							<aon:inputText value="#{trabajador.to.cdg}"
-								readonly="#{!bonifica.new}" size="" maxlength="" />
+							<aon:inputText value="#{parteit.to.basediaacc}"
+								size="" maxlength="" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_mntoit_regulad_diaria}" />
-							<aon:inputText value="#{trabajador.to.cdg}"
-								readonly="#{!bonifica.new}" size="" maxlength="" />
+							<aon:inputText value="#{parteit.to.baseregdia}"
+								size="" maxlength="" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_mntoit_diaria_conting}" />
-							<aon:inputText value="#{trabajador.to.cdg}"
-								readonly="#{!bonifica.new}" size="" maxlength="" />
+							<aon:inputText value="#{parteit.to.basediacg}"
+								size="" maxlength="" />
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_mntoit_dias_periodo_ant}" />
-							<aon:inputText value="#{trabajador.to.cdg}"
-								readonly="#{!bonifica.new}" size="" maxlength="" />
+							<aon:inputText value="#{parteit.to.diasant}"
+								size="" maxlength="" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_mntoit_prest_60}" />
-							<aon:inputText value="#{trabajador.to.cdg}"
-								readonly="#{!bonifica.new}" size="" maxlength="" />
+							<aon:inputText value="#{parteit.to.prest60}"
+								size="" maxlength="" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_mntoit_prest_75}" />
-							<aon:inputText value="#{trabajador.to.cdg}"
-								readonly="#{!bonifica.new}" size="" maxlength="" />
+							<aon:inputText value="#{parteit.to.prest75}"
+								size="" maxlength="" />
 
 						</aon:panelGrid>
 						<rich:spacer />
@@ -273,28 +277,28 @@ aon_payroll_principales_mntoit_procesado=Procesado
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_mntoit_tipo_it}" />
-							<aon:inputText value="#{trabajador.to.cdg}"
-								readonly="#{!bonifica.new}" size="" maxlength="" />
+							<aon:inputText value="#{parteit.to.tipoit}"
+								size="" maxlength="" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_mntoit_riesgo_embarazo}" />
-							<aon:inputText value="#{trabajador.to.cdg}"
-								readonly="#{!bonifica.new}" size="" maxlength="" />
+							<aon:inputText value="#{parteit.to.riesgo}"
+								size="" maxlength="" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_mntoit_recaida_ant_it}" />
-							<aon:inputText value="#{trabajador.to.cdg}"
-								readonly="#{!bonifica.new}" size="" maxlength="" />
+							<aon:inputText value="#{parteit.to.recaida}"
+								size="" maxlength="" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_mntoit_prorrat_coti}" />
-							<aon:inputText value="#{trabajador.to.cdg}"
-								readonly="#{!bonifica.new}" size="" maxlength="" />
+							<aon:inputText value="#{parteit.to.proret}"
+								size="" maxlength="" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_mntoit_parte_proces}" />
-							<aon:inputText value="#{trabajador.to.cdg}"
-								readonly="#{!bonifica.new}" size="" maxlength="" />
+							<aon:inputText value="#{parteit.to.procesado}"
+								size="" maxlength="" />
 
 
 
