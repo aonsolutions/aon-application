@@ -75,7 +75,7 @@
 					<f:facet name="header">
 						<aon:outputText value="#{marketingBundle.marketing_survey_response}" />
 					</f:facet>
-					<aon:commandButton style="border:0;"
+					<aon:commandButton style="border:0;" reRender="aonContent"
 						styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 						action="surveyResponse_action_form" actionListener="#{surveyResponse.onSelectSurveyResponse}"
 						onmouseover="disableRowSelector();" oncomplete="enableRowSelector();" onmouseout="enableRowSelector();"

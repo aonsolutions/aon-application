@@ -16,6 +16,8 @@
 		<aon:form id="campaignActionForm">		
 		
 			<aon:methodParam name="backAction" value="campaign_form" />
+			<aon:methodParam name="cancelAction" value="campaign_form" />
+			<aon:methodParam name="removeAction" value="campaign_form" />
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >			
 				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_actions}" />
 				<ui:param name="controller" value="#{campaignAction}" />
@@ -24,7 +26,7 @@
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton value="#{marketingBundle.marketing_action_add_targets}"
 						action="campaignActionTarget_search" actionListener="#{target.onEditSearch}"
-						styleClass="aon-finding-toolbar-item aon-icon-new" />
+						styleClass="aon-finding-toolbar-item aon-icon-new" rendered="#{!formNew}" />
 				</ui:define>				
 			</ui:decorate>		
 
