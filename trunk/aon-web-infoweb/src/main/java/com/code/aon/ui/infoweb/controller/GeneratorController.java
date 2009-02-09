@@ -121,7 +121,8 @@ public class GeneratorController extends BasicController implements VelocityCons
 				List<ITransferObject> attachList = (List<ITransferObject>)attachBean.getList(attachCriteria);
 				if (attachList.size() > 0) {
 					RegistryAttachment ra = (RegistryAttachment)attachList.get(0);
-					String filename = "logo." + ra.getMimeType().getExtension();
+					String extension = ra.getMimeType()==null?"jpg":ra.getMimeType().getExtension();
+					String filename = "logo." + extension;
 					if (ImageUtil.copyRegistryBlobToFile(ra, images_temporal_path, filename)) {
 						vu.put("logo", filename);
 					}
@@ -198,6 +199,9 @@ public class GeneratorController extends BasicController implements VelocityCons
 					else if (m.getMediaType() == MediaType.FIXED_PHONE) {
 						vu.put("phone", m.getValue());
 					}
+					else if (m.getMediaType() == MediaType.FAX) {
+						vu.put("fax", m.getValue());
+					}
 				}
 				companyBean = null;
 				attachBean = null;
@@ -223,6 +227,21 @@ public class GeneratorController extends BasicController implements VelocityCons
 				if (defaultAddress != null) vu.put("address", defaultAddress);
 			}
 
+			int homepage = 0;
+			/* 
+			 * Obtenemos si esta definida la pagina homepage seleccionada 
+			 */
+			try {
+				IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(apBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), HOMEPAGE_NAME_PARAM);
+				List<ITransferObject> list = apBean.getList(criteria);
+				if (list.size() > 0) {
+					ApplicationParameter ap = (ApplicationParameter)list.get(0);
+					homepage = Integer.parseInt(ap.getValue());
+				}
+			} catch (ManagerBeanException e) {}
+			
 			/* 
 			 * Sacamos el menu de las paginas y cada una de las pagina.
 			 */
@@ -236,13 +255,16 @@ public class GeneratorController extends BasicController implements VelocityCons
 			List<ITransferObject> wimList = (List<ITransferObject>)wimBean.getList(wimCriteria);
 			for (int i=0;i < wimList.size();i++) {
 				WebInfoPage wip = (WebInfoPage)wimList.get(i);
-				String label = wip.getName();
-				String link = wip.getName() + ".html";
-				link = link.replaceAll(" ", "_");
-				link = link.replaceAll("ñ", "n").replaceAll("á", "a").replaceAll("é", "e").replaceAll("í", "i").replaceAll("ó", "o").replaceAll("ú", "u");
-				link = link.replaceAll("Ñ", "N").replaceAll("Á", "A").replaceAll("É", "E").replaceAll("Í", "I").replaceAll("Ó", "O").replaceAll("Ú", "U");
-				moh = new MenuOptionHandler(label, link);
-				menu.add(moh);
+				int id = wip.getId();
+				if (homepage != id) {
+					String label = wip.getName();
+					String link = wip.getName() + ".html";
+					link = link.replaceAll(" ", "_");
+					link = link.replaceAll("ñ", "n").replaceAll("á", "a").replaceAll("é", "e").replaceAll("í", "i").replaceAll("ó", "o").replaceAll("ú", "u");
+					link = link.replaceAll("Ñ", "N").replaceAll("Á", "A").replaceAll("É", "E").replaceAll("Í", "I").replaceAll("Ó", "O").replaceAll("Ú", "U");
+					moh = new MenuOptionHandler(label, link);
+					menu.add(moh);
+				}
 			}
 			vu.put("menu", menu);
 
@@ -264,10 +286,17 @@ public class GeneratorController extends BasicController implements VelocityCons
 			List<ITransferObject> wipList = (List<ITransferObject>)wipBean.getList(wipCriteria);
 			for (int i=0;i < wipList.size();i++) {
 				WebInfoPage wip = (WebInfoPage)wipList.get(i);
-				if (wip.getType() == WebInfoPageType.CONTACT) generatePage("contact.vm", wip.getName());
-				else if (wip.getType() == WebInfoPageType.GENERIC) generateGenericPage(wip);
-				else if (wip.getType() == WebInfoPageType.LOCATION) generateGenericPage(wip);
-				else if (wip.getType() == WebInfoPageType.GALLERY) generateGalleryPage(wip);
+				int id = wip.getId();
+				String pagename = wip.getName();
+				boolean isIndex = false;
+				if (homepage == id) {
+					pagename = "index";
+					isIndex = true;
+				}
+				if (wip.getType() == WebInfoPageType.CONTACT) generatePage("contact.vm", pagename );
+				else if (wip.getType() == WebInfoPageType.GENERIC) generateGenericPage(wip, isIndex);
+				else if (wip.getType() == WebInfoPageType.LOCATION) generateGenericPage(wip, isIndex);
+				else if (wip.getType() == WebInfoPageType.GALLERY) generateGalleryPage(wip, isIndex);
 			}
 
 			//Parseamos los estilos
@@ -337,7 +366,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		
 	}
 
-	private void generateGenericPage(WebInfoPage wip) throws ManagerBeanException {
+	private void generateGenericPage(WebInfoPage wip, boolean isIndex) throws ManagerBeanException {
 		IManagerBean wipdBean = BeanManager.getManagerBean(WebInfoPageDetail.class);
 		Criteria wipdCriteria = new Criteria();
 		wipdCriteria.addEqualExpression(wipdBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_DETAIL_WEB_INFO_PAGE_ID), wip.getId());
@@ -385,15 +414,16 @@ public class GeneratorController extends BasicController implements VelocityCons
 			images.add(ih);
 		}
 		vu.put("images", images);
-		
-		generatePage(template, wip.getName());
+		String pagename = wip.getName();
+		if (isIndex) pagename = "index";
+		generatePage(template, pagename);
 		vu.remove("title");
 		vu.remove("text");
 		if (wip.getType() == WebInfoPageType.LOCATION) vu.remove("coords");
 		vu.remove("images");
 	}
 
-	private void generateGalleryPage(WebInfoPage wip) throws ManagerBeanException {
+	private void generateGalleryPage(WebInfoPage wip, boolean isIndex) throws ManagerBeanException {
 		ArrayList<ImageHandler> images = new ArrayList<ImageHandler>();
 		IManagerBean wiprBean = BeanManager.getManagerBean(WebInfoPageResource.class);
 		Criteria wiprCriteria = new Criteria();
@@ -433,7 +463,9 @@ public class GeneratorController extends BasicController implements VelocityCons
 		}
 		vu.put("gallery", images);
 		
-		generatePage("gallery.vm", wip.getName());
+		String pagename = wip.getName();
+		if (isIndex) pagename = "index";
+		generatePage("gallery.vm", pagename);
 		if (wip.getType() == WebInfoPageType.LOCATION) vu.remove("coords");
 		vu.remove("gallery");
 	}
