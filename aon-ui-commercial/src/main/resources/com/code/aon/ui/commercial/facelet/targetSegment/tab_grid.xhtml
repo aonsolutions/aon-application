@@ -12,17 +12,17 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_name}" />
+					<aon:outputLabel for="TargetSegment_name" value="#{bundle.aon_name}" />
 				</f:facet>
 				<aon:outputText value="#{to.segment.name}"
-					rendered="#{to!=controller.to}" />
-				<aon:selectOneMenu rendered="#{to==controller.to}"
+					rendered="#{formList}" />
+				<aon:selectOneMenu id="TargetSegment_name" rendered="#{formEdit}"
 					required="true" value="#{controller.to.segment.id}">
 					<f:selectItem itemLabel="-" value="#{null}"/>
 					<f:selectItems value="#{target.segments}" />
 				</aon:selectOneMenu>								
 				<f:facet name="footer">
-					<aon:selectOneMenu rendered="#{controller.new}"
+					<aon:selectOneMenu id="TargetSegment_name-New" rendered="#{formNew}"
 						required="true" value="#{controller.to.segment.id}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{target.segments}" />

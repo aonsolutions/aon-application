@@ -13,11 +13,11 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{salesBundle.sales_seller}" />
+					<aon:outputLabel for="TargetSeller_seller_id" value="#{salesBundle.sales_seller}" />
 				</f:facet>
 				<aon:outputText value="#{to.seller.registry.fullName}"
-					rendered="#{to!=controller.to}" />
-				<aon:div styleClass="aon-lookup" rendered="#{to==controller.to}">
+					rendered="#{formList}" />
+				<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
 					<aon:lookupInputText id="TargetSeller_seller_id"
 						lookup="#{sellerLookup}" required="true"
 						reRender="TargetSeller_seller_detail"
@@ -34,7 +34,7 @@
 						size="60" disabled="true" />
 				</aon:div>
 				<f:facet name="footer">
-					<aon:div styleClass="aon-lookup" rendered="#{controller.new}">
+					<aon:div styleClass="aon-lookup" rendered="#{formNew}">
 						<aon:lookupInputText id="TargetSeller_seller_id-New"
 							lookup="#{sellerLookup}" required="true"
 							reRender="TargetSeller_seller_detail-New"
@@ -55,18 +55,18 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_start_date}" />
+					<aon:outputLabel for="TargetSeller_startDate" value="#{bundle.aon_start_date}" />
 				</f:facet>
-				<aon:outputText value="#{to.startDate}"	rendered="#{to!=controller.to}" >
+				<aon:outputText value="#{to.startDate}"	rendered="#{formList}" >
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
-				<aon:selectInputDate rendered="#{to==controller.to}"
+				<aon:selectInputDate id="TargetSeller_startDate" rendered="#{formEdit}"
 					value="#{controller.to.startDate}" required="true"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}"/>
 				<f:facet name="footer">
-					<aon:selectInputDate rendered="#{controller.new}"
+					<aon:selectInputDate id="TargetSeller_startDate-New" rendered="#{formNew}"
 						value="#{controller.to.startDate}" required="true"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
@@ -75,18 +75,18 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_end_date}" />
+					<aon:outputLabel for="TargetSeller_endDate" value="#{bundle.aon_end_date}" />
 				</f:facet>
-				<aon:outputText value="#{to.endDate}" rendered="#{to!=controller.to}">
+				<aon:outputText value="#{to.endDate}" rendered="#{formList}">
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
-				<aon:selectInputDate rendered="#{to==controller.to}"
+				<aon:selectInputDate id="TargetSeller_endDate" rendered="#{formEdit}"
 					value="#{controller.to.endDate}"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}"/>
 				<f:facet name="footer">
-					<aon:selectInputDate rendered="#{controller.new}"
+					<aon:selectInputDate id="TargetSeller_endDate-New" rendered="#{formNew}"
 						value="#{controller.to.endDate}"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
@@ -95,17 +95,17 @@
 					
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_status}" />
+					<aon:outputLabel for="TargetSeller_status" value="#{bundle.aon_status}" />
 				</f:facet>
 				<aon:outputText value="#{to.status}"
-					rendered="#{to!=controller.to}" />
-				<aon:selectOneMenu rendered="#{to==controller.to}"
+					rendered="#{formList}" />
+				<aon:selectOneMenu id="TargetSeller_status" rendered="#{formEdit}"
 					required="true" value="#{controller.to.status}">
 					<f:selectItem value="#{null}" itemLabel="    " />
 					<f:selectItems value="#{commercialCollections.targetSellerStatuses}" />
 				</aon:selectOneMenu>								
 				<f:facet name="footer">
-					<aon:selectOneMenu rendered="#{controller.new}"
+					<aon:selectOneMenu id="TargetSeller_status-New" rendered="#{formNew}"
 						required="true" value="#{controller.to.status}">
 						<f:selectItem value="#{null}" itemLabel="    " />
 						<f:selectItems value="#{commercialCollections.targetSellerStatuses}" />

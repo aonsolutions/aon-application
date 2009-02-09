@@ -40,17 +40,17 @@
 	
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText
+									<aon:outputLabel for="CommercialActivity_name"
 										value="#{bundle.aon_name}" />
 								</f:facet>
 								<aon:outputText value="#{to.name}"
-									rendered="#{to!=commercialActivity.to}" />
-								<aon:inputText styleClass="aon-form-input-text " required="true"
-									rendered="#{to==commercialActivity.to}" size="32"
+									rendered="#{formList}" />
+								<aon:inputText id="CommercialActivity_name" required="true"
+									rendered="#{formEdit}" size="32"
 									value="#{commercialActivity.to.name}" maxlength="32" />
 								<f:facet name="footer">
-									<aon:inputText styleClass="aon-form-input-text" required="true"
-										rendered="#{commercialActivity.new}" size="32"
+									<aon:inputText id="CommercialActivity_name-New" required="true"
+										rendered="#{formNew}" size="32"
 										value="#{commercialActivity.to.name}" maxlength="32" />
 								</f:facet>
 							</aon:column>
