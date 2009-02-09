@@ -14,15 +14,15 @@
 			<ui:define name="columns">
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{marketingBundle.marketing_survey_question_position}" />
+						<aon:outputLabel for="SurveyQuestion_position" value="#{marketingBundle.marketing_survey_question_position}" />
 					</f:facet>
 					<aon:outputText value="#{to.position}"
 						rendered="#{formList}" />
-					<aon:inputText rendered="#{formEdit}"
+					<aon:inputText id="SurveyQuestion_position" rendered="#{formEdit}"
 						value="#{controller.to.position}"
 						size="5" required="true" maxlength="10" />
 					<f:facet name="footer">
-						<aon:inputText rendered="#{formNew}"
+						<aon:inputText id="SurveyQuestion_position-New" rendered="#{formNew}"
 							value="#{controller.to.position}"
 							required="true" size="5" maxlength="10" />
 					</f:facet>
@@ -30,7 +30,7 @@
 							
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{marketingBundle.marketing_question}" />
+						<aon:outputLabel for="SurveyQuestion_question_id" value="#{marketingBundle.marketing_question}" />
 					</f:facet>
 					<aon:outputText value="#{to.question.text}"
 						rendered="#{formList}" >

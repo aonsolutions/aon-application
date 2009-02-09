@@ -13,11 +13,11 @@
 
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{commercialBundle.commercial_target}" />
+						<aon:outputLabel for="ActionTarget_target_id" value="#{commercialBundle.commercial_target}" />
 					</f:facet>
 					<aon:outputText value="#{to.target.registry.fullName}"
-						rendered="#{to!=controller.to}" />
-					<aon:div styleClass="aon-lookup" rendered="#{to==controller.to}">
+						rendered="#{formList}" />
+					<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
 						<aon:lookupInputText id="ActionTarget_target_id"
 							lookup="#{targetLookup}" required="true"
 							reRender="ActionTarget_target_name"
@@ -34,7 +34,7 @@
 							size="80" disabled="true" />
 					</aon:div>
 					<f:facet name="footer">
-						<aon:div styleClass="aon-lookup" rendered="#{controller.new}">
+						<aon:div styleClass="aon-lookup" rendered="#{formNew}">
 							<aon:lookupInputText id="ActionTarget_target_id-New"
 								lookup="#{targetLookup}" required="true"
 								reRender="ActionTarget_target_name-New"
@@ -55,16 +55,16 @@
 				
 				<aon:column width="80">
 					<f:facet name="header">
-						<aon:outputText value="#{bundle.aon_status}" />
+						<aon:outputLabel for="ActionTarget_status" value="#{bundle.aon_status}" />
 					</f:facet>
 					<aon:outputText value="#{to.status}"
-						rendered="#{to!=controller.to}" />
-					<aon:selectOneMenu rendered="#{to==controller.to}"
+						rendered="#{formList}" />
+					<aon:selectOneMenu id="ActionTarget_status" rendered="#{formEdit}"
 						value="#{controller.to.status}">
 						<f:selectItems value="#{marketingCollections.actionTargetStatuses}" />
 					</aon:selectOneMenu>
 					<f:facet name="footer">
-						<aon:selectOneMenu rendered="#{controller.new}"
+						<aon:selectOneMenu id="ActionTarget_status-New" rendered="#{formNew}"
 							value="#{controller.to.status}">
 							<f:selectItems value="#{marketingCollections.actionTargetStatuses}" />
 						</aon:selectOneMenu>
