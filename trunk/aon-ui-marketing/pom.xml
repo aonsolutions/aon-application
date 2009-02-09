@@ -35,7 +35,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
-			<version>3.3.4</version>
+			<version>3.5.0</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
