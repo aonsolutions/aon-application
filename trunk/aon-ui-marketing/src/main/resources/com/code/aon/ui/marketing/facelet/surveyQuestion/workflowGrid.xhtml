@@ -39,7 +39,7 @@
 	
 								<aon:column>
 									<f:facet name="header">
-										<aon:outputText value="#{bundle.aon_value}" />
+										<aon:outputLabel for="SurveyWorkflow_value" value="#{bundle.aon_value}" />
 									</f:facet>
 									<aon:div layout="none" rendered="#{formList and (to.questionValue.id != null)}">
 										<ui:include src="/com/code/aon/ui/marketing/facelet/util/outputValue.xhtml">
@@ -52,26 +52,28 @@
 										</ui:include>
 									</aon:div>
 									<aon:div layout="none" rendered="#{formEdit and (!(empty surveyQuestion.questionValues))}">
-										<aon:selectOneMenu required="true"
+										<aon:selectOneMenu id="SurveyWorkflow_value-Collection" required="true"
 											value="#{controller.to.questionValue.id}">
 											<f:selectItems value="#{surveyQuestion.questionValues}" />
 										</aon:selectOneMenu>
 									</aon:div>
 									<aon:div layout="none" rendered="#{formEdit and (empty surveyQuestion.questionValues)}">
 										<ui:include src="/com/code/aon/ui/marketing/facelet/util/inputValue.xhtml">
+											<ui:param name="inputId" value="SurveyWorkflow_value" />
 											<ui:param name="valueHolder" value="#{controller.to}" />
 										</ui:include>
 									</aon:div>
 									<f:facet name="footer">
-										<aon:div layout="none" rendered="#{controller.new}">
+										<aon:div layout="none" rendered="#{formNew}">
 											<c:if test="#{!(empty surveyQuestion.questionValues)}">
-												<aon:selectOneMenu
+												<aon:selectOneMenu id="SurveyWorkflow_value-Collection-New"
 													required="true" value="#{controller.to.questionValue.id}">
 													<f:selectItems value="#{surveyQuestion.questionValues}" />
 												</aon:selectOneMenu>
 											</c:if>
 											<c:if test="#{empty surveyQuestion.questionValues}">
 												<ui:include src="/com/code/aon/ui/marketing/facelet/util/inputValue.xhtml">
+													<ui:param name="inputId" value="SurveyWorkflow_value-New" />
 													<ui:param name="valueHolder" value="#{controller.to}" />
 												</ui:include>
 											</c:if>
@@ -81,21 +83,21 @@
 	
 								<aon:column>
 									<f:facet name="header">
-										<aon:outputText
+										<aon:outputLabel for="SurveyWorkflow_nextSurveyQuestion"
 											value="#{marketingBundle.marketing_survey_workflow_next_question}" />
 									</f:facet>
 									<aon:outputText value="#{to.nextSurveyQuestion.question.text}"
-										rendered="#{to!=controller.to}">
+										rendered="#{formList}">
 										<aon:abbreviateConverter maxWidth="40" />
 									</aon:outputText>
-									<aon:selectOneMenu rendered="#{to==controller.to}"
+									<aon:selectOneMenu id="SurveyWorkflow_nextSurveyQuestion" rendered="#{formEdit}"
 										required="true" value="#{surveyWorkflow.to.nextSurveyQuestion.id}">
 										<f:selectItem value="#{null}" itemLabel="    " />
 										<f:selectItems value="#{surveyQuestion.questions}" />
 									</aon:selectOneMenu>
 									<f:facet name="footer">
-										<aon:selectOneMenu id="SurveyWorkflow_nextSurveyQuestion"
-											rendered="#{controller.new}" required="true"
+										<aon:selectOneMenu id="SurveyWorkflow_nextSurveyQuestion-New"
+											rendered="#{formNew}" required="true"
 											value="#{controller.to.nextSurveyQuestion.id}">
 											<f:selectItem value="#{null}" itemLabel="    " />
 											<f:selectItems value="#{surveyQuestion.questions}" />

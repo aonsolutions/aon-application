@@ -4,18 +4,20 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 
+	<aon:valueParam name="inputId" default="#{controller.pojoShortName}_value" />
+
 	<c:if test="#{valueHolder.question.type == 'TEXT'}" >
-		<aon:inputText value="#{valueHolder.text}" required="true" size="45" maxlength="64" />
+		<aon:inputText id="#{inputId}" value="#{valueHolder.text}" required="true" size="45" maxlength="64" />
 	</c:if>
 	<c:if test="#{valueHolder.question.type == 'NUMBER'}" >		
-		<aon:inputText value="#{valueHolder.number}" required="true" size="45" maxlength="64" />
+		<aon:inputText id="#{inputId}" value="#{valueHolder.number}" required="true" size="45" maxlength="64" />
 	</c:if>
 	<c:if test="#{valueHolder.question.type == 'BOOLEAN'}" >
-		<aon:selectBooleanCheckbox value="#{valueHolder.boolean}" required="true" />
+		<aon:selectBooleanCheckbox id="#{inputId}" value="#{valueHolder.boolean}" required="true" />
 	</c:if>
 	<c:if test="#{valueHolder.question.type == 'DATE'}" >
-		<aon:selectInputDate value="#{valueHolder.date}" required="true"
-			timeZone="#{timeZoneController.timeZone}"
+		<aon:selectInputDate  id="#{inputId}" value="#{valueHolder.date}"
+			timeZone="#{timeZoneController.timeZone}" required="true"
 			renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 		</aon:selectInputDate>
 	</c:if>					
