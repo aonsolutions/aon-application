@@ -317,4 +317,12 @@ public class SaleInvoiceController extends InvoiceController {
 		this.showInvoiceAddressWindow = value;
 	}
 	
+	public void onInvoiceAddressShow( ActionEvent event ) {
+		BasicController addressController = (BasicController)FormUtil.getController(SALE_INVOICE_ADDRESS_CONTROLLER_NAME);
+		ITransferObject to = addressController.getTo();
+		if ( to == null ) {
+			addressController.onReset(event);
+		}
+	}
+	
 }

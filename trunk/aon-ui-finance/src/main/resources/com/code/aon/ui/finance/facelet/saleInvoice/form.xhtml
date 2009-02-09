@@ -166,6 +166,7 @@
 							<aon:commandButton id="popupButton"
 								reRender="showInvoiceAddressWindow"
 								rendered="#{!saleInvoice.new and !saleInvoice.recorded}"
+								actionListener="#{saleInvoice.onInvoiceAddressShow}"
 								styleClass="aon-icon-commandButton aon-icon-file-entrance"
 								value="#{registryBundle.registry_address_other}" >
 								<f:setPropertyActionListener target="#{saleInvoice.showInvoiceAddressWindow}"
