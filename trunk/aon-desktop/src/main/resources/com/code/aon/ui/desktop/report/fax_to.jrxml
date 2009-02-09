@@ -218,8 +218,8 @@
 						height="92"
 						key="staticText-4"/>
 					<box></box>
-					<textElement>
-						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="80" isBold="true" isPdfEmbedded ="false"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="48" isBold="true" isPdfEmbedded ="false"/>
 					</textElement>
 				<text><![CDATA[FAX]]></text>
 				</staticText>
@@ -555,14 +555,14 @@
 					<reportElement
 						x="318"
 						y="161"
-						width="160"
+						width="177"
 						height="11"
 						key="textField"/>
 					<box></box>
 					<textElement>
 						<font fontName="Arial" size="9"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{fax_page_number}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{fax_page_number} + " (incluida esta)"]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>

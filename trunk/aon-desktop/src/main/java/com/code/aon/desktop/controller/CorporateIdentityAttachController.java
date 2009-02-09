@@ -12,7 +12,6 @@ import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
 import com.code.aon.common.IAttachment;
-import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.common.io.IAonFileListener;
 import com.code.aon.ui.form.GridController;
@@ -71,8 +70,7 @@ public class CorporateIdentityAttachController extends GridController implements
 				f.setData(data);
 			}
 			f.setFileName(item.getFileName());
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + item.getFileName() + " <<<<<<<<<<<<<<<<<<");
-			getAttachment().setDescription(item.getFileName());
+			getAttachment().setDescription(item.getFileName().substring(item.getFileName().lastIndexOf("\\") + 1));
 			f.addAonFileListener(this);
 			setAonFile(f);
 		} catch (IOException e) {
