@@ -8,26 +8,28 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-<aon:form id="invoiceAddressFrom">
 	<aon:panelGroup id="showInvoiceAddressWindow">
 		<c:if test="#{saleInvoice.showInvoiceAddressWindow}">
 			<rich:modalPanel id="invoiceAddressModalPanel" minHeight="220"
 				minWidth="460" rendered="#{saleInvoice.showInvoiceAddressWindow}"
-				showWhenRendered="true">
+				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{registryBundle.registry_addresses}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
-					<aon:commandButton type="button"
-						styleClass="aon-popupWindow-close"
-						reRender="showInvoiceAddressWindow" immediate="true">
-						<f:setPropertyActionListener
-							target="#{saleInvoice.showInvoiceAddressWindow}"
-							value="#{false}" />
-					</aon:commandButton>
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showInvoiceAddressWindow" immediate="true">
+							<f:setPropertyActionListener
+								target="#{saleInvoice.showInvoiceAddressWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
 				</f:facet>
+				<aon:form id="invoiceAddressFrom">
 				<aon:div styleClass="aon-popupWindow-content">
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
@@ -43,20 +45,18 @@
 											target="#{saleInvoice.showInvoiceAddressWindow}"
 											value="#{false}" />
 									</aon:commandButton>
-									<aon:confirmButton id="invoiceAddress-remove"
+									<aon:commandButton id="invoiceAddress-remove"
 										value="#{bundle.aon_remove}"
 										reRender="showInvoiceAddressWindow,InvoiceAddress"
 										rendered="#{saleInvoiceAddress.to.id != null}"
 										immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-delete"
-										confirmTitle="#{bundle.aon_confirm_title}"
-										confirmMessage="#{bundle.aon_remove_confirm}"
-										confirmActionListener="#{saleInvoiceAddress.onRemove}"
+										actionListener="#{saleInvoiceAddress.onRemove}"
 										accesskey="#{bundle.aon_key_remove}">
 										<f:setPropertyActionListener
 											target="#{saleInvoice.showInvoiceAddressWindow}"
 											value="#{false}" />
-									</aon:confirmButton>
+									</aon:commandButton>
 								</aon:div>
 								<aon:div styleClass="aon-scroll-area">
 									<aon:panelGrid id="menuGrid" columns="2" dir="true">
@@ -97,9 +97,9 @@
 						</aon:div>
 					</aon:div>
 				</aon:div>
+				</aon:form>
 			</rich:modalPanel>
 		</c:if>
 	</aon:panelGroup>
-</aon:form>
 
 </ui:composition>
