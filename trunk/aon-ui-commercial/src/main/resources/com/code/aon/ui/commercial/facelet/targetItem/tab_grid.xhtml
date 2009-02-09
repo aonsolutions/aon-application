@@ -11,12 +11,12 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{productBundle.product_item}" />
+					<aon:outputLabel for="TargetItem_item_id" value="#{productBundle.product_item}" />
 				</f:facet>
 				<aon:outputText value="#{to.item.product.name} #{to.item.detail}"
-					rendered="#{to!=targetItem.to}" />
-				<aon:div styleClass="aon-lookup" rendered="#{to==targetItem.to}">
-					<aon:lookupInputText 
+					rendered="#{formList}" />
+				<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
+					<aon:lookupInputText id="TargetItem_item_id"
 						lookup="#{itemLookup}" required="true"
 						reRender="TargetItem_item_detail"
 						value="#{targetItem.to.item.id}" size="5">
@@ -32,7 +32,7 @@
 						size="60" disabled="true" />
 				</aon:div>
 				<f:facet name="footer">
-					<aon:div styleClass="aon-lookup" rendered="#{targetItem.new}">
+					<aon:div styleClass="aon-lookup" rendered="#{formNew}">
 						<aon:lookupInputText id="TargetItem_item_id-New"
 							lookup="#{itemLookup}" required="true"
 							reRender="TargetItem_item_detail-New"
@@ -53,17 +53,17 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_status}" />
+					<aon:outputLabel for="TargetItem_status" value="#{bundle.aon_status}" />
 				</f:facet>
 				<aon:outputText value="#{to.status}"
-					rendered="#{to!=targetItem.to}" />
-				<aon:selectOneMenu rendered="#{to==targetItem.to}"
+					rendered="#{formList}" />
+				<aon:selectOneMenu id="TargetItem_status" rendered="#{formEdit}"
 					required="true" value="#{to.status}">
 					<f:selectItem itemLabel="-" value="#{null}"/>
 					<f:selectItems value="#{commercialCollections.targetItemStatuses}" />
 				</aon:selectOneMenu>								
 				<f:facet name="footer">
-					<aon:selectOneMenu rendered="#{targetItem.new}"
+					<aon:selectOneMenu id="TargetItem_status-New" rendered="#{formNew}"
 						required="true" value="#{targetItem.to.status}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{commercialCollections.targetItemStatuses}" />
