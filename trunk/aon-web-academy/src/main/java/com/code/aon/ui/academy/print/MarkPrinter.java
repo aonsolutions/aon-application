@@ -2,17 +2,24 @@ package com.code.aon.ui.academy.print;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 
 import com.code.aon.academy.Absence;
+import com.code.aon.academy.AcademicSkill;
 import com.code.aon.academy.Course;
+import com.code.aon.academy.CourseAcademicSkill;
 import com.code.aon.academy.CourseAlumn;
 import com.code.aon.academy.CourseSchedule;
 import com.code.aon.academy.EvaluationObservation;
@@ -34,20 +41,49 @@ import com.code.aon.ui.academy.controller.CourseController;
 import com.code.aon.ui.util.AonUtil;
 
 public class MarkPrinter implements ICollectionProvider{
-	
-	private static final Logger LOGGER = Logger.getLogger(MarkPrinter.class.getName());
-	
-	private static final String COURSE_CONTROLLER_NAME = "course";
-	
-	private boolean encodedMarks;
-	
 
-	public boolean isEncodedMarks() {
-		return encodedMarks;
+	private static final Logger LOGGER = Logger.getLogger(MarkPrinter.class.getName());
+
+	private static final String COURSE_CONTROLLER_NAME = "course";
+
+	private Integer printOption;
+
+	public Integer getPrintOption() {
+		return printOption;
 	}
 
-	public void setEncodedMarks(boolean encodedMarks) {
-		this.encodedMarks = encodedMarks;
+	public void setPrintOption(Integer printOption) {
+		this.printOption = printOption;
+	}
+
+	public List<SelectItem> getPrintOptions() throws ManagerBeanException {
+    	List<SelectItem> printTypes = new LinkedList<SelectItem>();
+        printTypes.add(new SelectItem(1, getMessageBundle("mark_qualitative")));
+        printTypes.add(new SelectItem(2, getMessageBundle("mark_quantitative")));
+        printTypes.add(new SelectItem(3, getMessageBundle("mark_quantitative_average")));
+        printTypes.add(new SelectItem(4, getMessageBundle("mark_quantitative_average_final")));
+        return printTypes;
+    }
+
+	public boolean isEncodedMarks() {
+		return (printOption == 1);
+	}
+
+	public boolean withAverageMark() {
+		return (printOption > 2);
+	}
+
+	public boolean withFinalMark() {
+		return (printOption > 3);
+	}
+
+	private String getMessageBundle(String key) {
+		try {
+			ResourceBundle bundle = ResourceBundle.getBundle("com.code.aon.ui.academy.i18n.messages", AonUtil.getCurrentLocale());
+			return bundle.getString(key);
+		} catch (MissingResourceException e) {
+			return null;
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -66,9 +102,12 @@ public class MarkPrinter implements ICollectionProvider{
 			Iterator<ITransferObject> courseAlumnListIter = courseAlumnList.iterator();
 			while (courseAlumnListIter.hasNext()){
 				CourseAlumn courseAlumn = (CourseAlumn)courseAlumnListIter.next();
+				Map<Integer, ReportMarkTo> averageMarksMap = new HashMap<Integer, ReportMarkTo>(); 
 				ReportMark reportMark = new ReportMark();
 				reportMark.setCourseAlumn(courseAlumn);
-				reportMark.setMarks(obtainMarks(courseAlumn));
+				reportMark.setMarks(obtainMarks(courseAlumn, averageMarksMap));
+				reportMark.setAverageMarks(obtainAverageMarks(averageMarksMap));
+				reportMark.setFinalMark(obtainFinalMark(averageMarksMap));
 				reportMark.setEvaluation(obtainMaxEvaluation(reportMark.getMarks()));
 				reportMark.setAbsences(obtainAbsences(courseAlumn, reportMark.getEvaluation()));
 				reportMark.setObservations(obtainObservations(courseAlumn, reportMark.getEvaluation()));
@@ -100,29 +139,84 @@ public class MarkPrinter implements ICollectionProvider{
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<ReportMarkTo> obtainMarks(CourseAlumn courseAlumn){
+	private List<ReportMarkTo> obtainMarks(CourseAlumn courseAlumn, Map<Integer, ReportMarkTo> averageMarksMap){
 		try {
+			List<ReportMarkTo> marksLst = new ArrayList<ReportMarkTo>();
+			int previousEval = -1;
+			Double averageMark = 0.0;
+			Double weightSum = 0.0;
+
 			IManagerBean markBean = BeanManager.getManagerBean(Mark.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(markBean.getFieldName(IAcademyAlias.MARK_ALUMN_ID), courseAlumn.getId());
 			criteria.addOrder(markBean.getFieldName(IAcademyAlias.MARK_EVALUATION));
 			criteria.addOrder(markBean.getFieldName(IAcademyAlias.MARK_SUBJECT_ID));
-			List<ReportMarkTo> marksLst = new ArrayList<ReportMarkTo>();
 			Iterator iter = markBean.getList(criteria).iterator();
 			while (iter.hasNext()){
 				Mark mark = (Mark)iter.next();
+				if (withAverageMark() && previousEval >= 0 && previousEval != mark.getEvaluation()) {
+					Mark avgMark = new Mark();
+					avgMark.setAlumn(courseAlumn);
+					avgMark.setEvaluation(previousEval);
+					avgMark.setMark(round(averageMark / weightSum, 2));
+					avgMark.setSubject(getAverageSubject(courseAlumn));
+
+					ReportMarkTo avgMarkTo = new ReportMarkTo();
+					avgMarkTo.setMark(avgMark);
+					averageMarksMap.put(avgMarkTo.getMark().getEvaluation(), avgMarkTo);
+
+					averageMark = 0.0;
+					weightSum = 0.0;
+				}
+
 				ReportMarkTo markTo = new ReportMarkTo();
 				markTo.setMark(mark);
 				marksLst.add(markTo);
+
+				if (withAverageMark()) {
+					previousEval = mark.getEvaluation();
+					if (mark.getMark() != null) {
+						averageMark += mark.getMark() * mark.getSubject().getWeight();
+						weightSum += mark.getSubject().getWeight();
+					}
+					if (!iter.hasNext()) {
+						Mark avgMark = new Mark();
+						avgMark.setAlumn(courseAlumn);
+						avgMark.setEvaluation(previousEval);
+						avgMark.setMark(round(averageMark / weightSum, 2));
+						avgMark.setSubject(getAverageSubject(courseAlumn));
+	
+						ReportMarkTo avgMarkTo = new ReportMarkTo();
+						avgMarkTo.setMark(avgMark);
+						averageMarksMap.put(avgMarkTo.getMark().getEvaluation(), avgMarkTo);
+					}
+				}
 			}
-			if(isEncodedMarks()){
+
+			if (isEncodedMarks()) {
 				marksLst = encodeMarks(marksLst);
 			}
+
 			return marksLst;
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error obtaining marks with course alumn = " + courseAlumn.getId(), e);
 		}
 		return null;
+	}
+
+	private double round(double value, int precision) {
+		return Math.round(value * Math.pow(10, precision)) / Math.pow(10, precision);
+	}
+
+	private CourseAcademicSkill getAverageSubject(CourseAlumn alumn) {
+		AcademicSkill academicSkill = new AcademicSkill();
+		academicSkill.setDescription(getMessageBundle("mark_average"));
+		academicSkill.setCode(getMessageBundle("mark_average_abrv"));
+
+		CourseAcademicSkill subject = new CourseAcademicSkill();
+		subject.setAcademicSkill(academicSkill);
+		subject.setCourse(alumn.getCourse());
+		return subject;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -141,19 +235,45 @@ public class MarkPrinter implements ICollectionProvider{
 		return returnList;
 	}
 
-	@SuppressWarnings("unchecked")
-	private Qualification obtainQualification(double mark) {
-		try {
-			IManagerBean qualificationBean = BeanManager.getManagerBean(Qualification.class);
-			Criteria criteria = new Criteria();
-			criteria.addLessThanOrEqualExpression(qualificationBean.getFieldName(IAcademyAlias.QUALIFICATION_MIN_VALUE), mark);
-			criteria.addGreaterThanOrEqualExpression(qualificationBean.getFieldName(IAcademyAlias.QUALIFICATION_MAX_VALUE), mark);
-			Iterator iter = qualificationBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				return ((Qualification)iter.next());
+	private List<ReportMarkTo> obtainAverageMarks(Map<Integer, ReportMarkTo> averageMarksMap) {
+		List<ReportMarkTo> averageMarksLst = new ArrayList<ReportMarkTo>();
+		if (withAverageMark() && averageMarksMap.size() > 0) {
+			Iterator<ReportMarkTo> iterator = averageMarksMap.values().iterator();
+			while (iterator.hasNext()) {
+				averageMarksLst.add(iterator.next());
 			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining code for mark: " + mark, e);
+		}
+		return averageMarksLst;
+	}
+
+	private Double obtainFinalMark(Map<Integer, ReportMarkTo> averageMarksMap) {
+		double finalMark = 0;
+		if (withAverageMark() && averageMarksMap.size() > 0) {
+			Iterator<ReportMarkTo> iterator = averageMarksMap.values().iterator();
+			while (iterator.hasNext()) {
+				ReportMarkTo markTo = iterator.next();
+				finalMark += markTo.getMark().getMark();
+			}
+			finalMark = finalMark / averageMarksMap.size();
+		}
+		return finalMark;
+	}
+
+	@SuppressWarnings("unchecked")
+	private Qualification obtainQualification(Double mark) {
+		if (mark != null) {
+			try {
+				IManagerBean qualificationBean = BeanManager.getManagerBean(Qualification.class);
+				Criteria criteria = new Criteria();
+				criteria.addLessThanOrEqualExpression(qualificationBean.getFieldName(IAcademyAlias.QUALIFICATION_MIN_VALUE), mark);
+				criteria.addGreaterThanOrEqualExpression(qualificationBean.getFieldName(IAcademyAlias.QUALIFICATION_MAX_VALUE), mark);
+				Iterator iter = qualificationBean.getList(criteria).iterator();
+				if(iter.hasNext()){
+					return ((Qualification)iter.next());
+				}
+			} catch (ManagerBeanException e) {
+				LOGGER.log(Level.SEVERE, "Error obtaining code for mark: " + mark, e);
+			}
 		}
 		return null;
 	}
@@ -249,4 +369,5 @@ public class MarkPrinter implements ICollectionProvider{
 		}
 		return qualificationLegend;
 	}
+
 }

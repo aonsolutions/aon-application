@@ -19,7 +19,6 @@ public class FeeCheckingPrinter implements ICollectionProvider {
 	
 	private static final String FINANCE_PRINTER_CONTROLLER = "financePrint";
 
-	@Override
 	@SuppressWarnings("unchecked")
 	public Collection getCollection() {
 		CheckingTo checkingTo = new CheckingTo();
@@ -31,7 +30,6 @@ public class FeeCheckingPrinter implements ICollectionProvider {
 		return list;
 	}
 
-	@Override
 	@SuppressWarnings("unchecked")
 	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return getCollection();

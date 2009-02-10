@@ -171,7 +171,7 @@ public class SalesInvoicingDetailController extends LinesController {
 	}
 
 	public String getDeliveryData() throws ManagerBeanException {
-		DeliveryDetail deliveryDetail = obtainDeliveryDetail(((InvoiceDetail)this.getModel().getRowData()).getDeliveryDetail());
+		DeliveryDetail deliveryDetail = obtainDeliveryDetail(((InvoiceDetail)this.getModel().getRowData()).getSourceId());
 		String deliveryData = "";
 		if (deliveryDetail != null) {
 			deliveryData = (deliveryDetail.getDelivery().getSeries()==null?"":deliveryDetail.getDelivery().getSeries()+"/")+deliveryDetail.getDelivery().getNumber();
@@ -200,7 +200,6 @@ public class SalesInvoicingDetailController extends LinesController {
 	 * 
 	 * @param event menu event
 	 */
-	@SuppressWarnings("unused")
     public void onCancel(MenuEvent event) {
         super.onCancel(null);
     }
