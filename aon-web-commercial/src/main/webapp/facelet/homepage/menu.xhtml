@@ -67,6 +67,11 @@
 						value="#{marketingBundle.marketing_question_module}"
 						action="question_list" actionListener="#{question.onSearch}" />
 				</aon:dropDownMenu>
+				<aon:dropDownMenu value="#{bundle.aon_configuration}">
+					<aon:menuItem id="company"
+						value="#{companyBundle.company_data_module}"
+						action="company" actionListener="#{company.onLoad}" />
+				</aon:dropDownMenu>
 				<aon:commandLink id="communicationCenter"
 					value="#{commercialBundle.commercial_communication_center_module}"
 					styleClass="aon-top-menu-item aon-icon-call" immediate="true" 

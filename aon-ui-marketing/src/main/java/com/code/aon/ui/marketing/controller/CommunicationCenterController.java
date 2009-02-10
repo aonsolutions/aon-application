@@ -1,6 +1,5 @@
 package com.code.aon.ui.marketing.controller;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -30,6 +29,7 @@ import com.code.aon.marketing.SurveyResponseDetail;
 import com.code.aon.marketing.SurveyWorkflow;
 import com.code.aon.marketing.TargetProfile;
 import com.code.aon.marketing.dao.IMarketingAlias;
+import com.code.aon.marketing.enumeration.ActionMediaType;
 import com.code.aon.marketing.enumeration.ActionTargetStatus;
 import com.code.aon.marketing.enumeration.QuestionType;
 import com.code.aon.ql.Criteria;
@@ -42,8 +42,6 @@ import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.config.util.UserUtils;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.mailing.MailingManager;
 import com.code.aon.ui.util.AonUtil;
 
@@ -88,6 +86,8 @@ public class CommunicationCenterController implements IMarketingConstants {
 	private boolean actionSelected;
 	
 	private boolean surveySelected;
+	
+	private int pendingTargets;
 	
 	public CommunicationCenterController() {
 		this.date = new Date();
@@ -147,6 +147,14 @@ public class CommunicationCenterController implements IMarketingConstants {
 	
 	public boolean isSurveySelected() {
 		return surveySelected;
+	}
+	
+	public int getPendingTargets() {
+		return pendingTargets;
+	}
+
+	public void setPendingTargets(int pendingTargets) {
+		this.pendingTargets = pendingTargets;
 	}
 
 	public boolean isRenderTargetAlias() {
@@ -435,14 +443,19 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}
 	
 	public void onNextTarget( ActionEvent event ) throws ManagerBeanException {
-		List<ActionTarget> targets = getActionTargets(true);
-		if (! targets.isEmpty() ) {
-			this.actionTarget = targets.get(0);
-			setTarget( this.actionTarget.getTarget() );
-			initTarget(this.target); 
+		if ( this.action.getMediaType() == ActionMediaType.PHONE ) {
+			List<ActionTarget> targets = getActionTargets(true);
+			if (! targets.isEmpty() ) {
+				this.actionTarget = targets.get(0);
+				setTarget( this.actionTarget.getTarget() );
+				initTarget(this.target);
+			} else {
+				onInit(event);
+			}
 		} else {
-			onInit(event);
+			setTarget(null);
 		}
+		refreshPendingTargets();		
 	}
 	
 	public void onUpdateActionTarget( ActionEvent event ) throws ManagerBeanException {
@@ -452,16 +465,17 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}
 
 	public void onActionLookupChange(LookupChangeEvent event) {
-		this.actionSelected = (event.getNewValue() != null);
+		this.actionSelected = (event.getNewValue() != null);	
 		if (this.actionSelected) {
 			Action action = (Action) event.getNewValue();
 			setAction(action);
-			try {
-				if (action.getSurvey() != null) {
+			try {				
+				Survey survey = null;
+				if (action.getSurvey().getId() != null) {
 					IManagerBean bean = BeanManager.getManagerBean(Survey.class);
-					Survey survey = (Survey) bean.get(action.getSurvey().getId());
-					setSurvey(survey);
+					survey = (Survey) bean.get(action.getSurvey().getId());
 				}
+				setSurvey(survey);
 				onNextTarget(null);
 			} catch (ManagerBeanException e) {
 				AonUtil.addErrorMessage(e.getMessage());
@@ -489,13 +503,11 @@ public class CommunicationCenterController implements IMarketingConstants {
 		this.surveySelected = (event.getNewValue() != null);
 	}
 
-	@SuppressWarnings("unchecked")
-	private List<ActionTarget> getActionTargets( boolean onlyFirst ) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+	private Criteria getPendingTargetsCriteria( IManagerBean bean, boolean onlyCount ) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		String id = bean.getFieldName(IMarketingAlias.ACTION_TARGET_ID);
 		criteria.addOrder( id );
-		if ( this.actionTarget != null ) {
+		if ( !onlyCount && (this.actionTarget != null) ) {
 			criteria.addGreaterThanExpression( id, this.actionTarget.getId() );	
 		}
 		criteria.addEqualExpression(bean.getFieldName(IMarketingAlias.ACTION_TARGET_ACTION_ID), this.action.getId());
@@ -504,8 +516,22 @@ public class CommunicationCenterController implements IMarketingConstants {
 		criteria.addExpression(expression1);
 		Expression expression2 = ExpressionUtilities.getNotEqualExpression(status, ActionTargetStatus.SENT);
 		criteria.addExpression(expression2);
+		return criteria;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<ActionTarget> getActionTargets( boolean onlyFirst ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+		Criteria criteria = getPendingTargetsCriteria(bean, false);
 		List list = onlyFirst ? bean.getList(criteria, 0, 1) : bean.getList(criteria);
 		return list;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void refreshPendingTargets() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+		Criteria criteria = getPendingTargetsCriteria(bean, true);
+		setPendingTargets(bean.getCount(criteria));
 	}
 	
 	@SuppressWarnings({"unchecked", "unused"})
