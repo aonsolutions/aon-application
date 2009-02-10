@@ -19,29 +19,32 @@
 				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_communication_center_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_reset}" />
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="save" value="#{bundle.aon_save}"
-						action="communicationCenter" actionListener="#{communicationCenter.onUpdateActionTarget}"
-						rendered="#{communicationCenter.actionSelected}"
-						reRender="CommunicationCenter_target,aonToolbar"
-						styleClass="aon-finding-toolbar-item aon-icon-save"
-						accesskey="#{bundle.aon_key_save}" />
-					<aon:commandButton id="accept" value="#{bundle.aon_accept}"
-						action="communicationCenter_response" actionListener="#{communicationCenter.onStartSurveyResponse}"
-						rendered="#{communicationCenter.surveySelected and communicationCenter.targetSelected}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						accesskey="#{bundle.aon_key_accept}" />				
-					<aon:commandButton id="skip" value="#{marketingBundle.marketing_skip}"
-						rendered="#{communicationCenter.actionSelected}"
-						action="communicationCenter" actionListener="#{communicationCenter.onNextTarget}"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-						accesskey="#{bundle.aon_key_cancel}"/>						
-					<a4j:htmlCommandLink id="mailing" value="#{marketingBundle.marketing_mailing}" target="_blank"
-						action="communicationCenter" actionListener="#{communicationCenter.onGenerateTargetMailing}"
-						rendered="#{communicationCenter.actionSelected and (communicationCenter.action.mediaType  == 'MAIL')}"
-						styleClass="aon-finding-toolbar-item aon-icon-webmail2" >
-						<a4j:support event="onclick" process="CommunicationCenter_action_id" 
-							reRender="aonContent" actionListener="#{communicationCenter.onInit}" />
-					</a4j:htmlCommandLink>						
+					<c:if test="#{(communicationCenter.actionSelected) and (communicationCenter.pendingTargets &gt; 0)}" >
+						<c:if test="#{communicationCenter.action.mediaType  == 'PHONE'}" >
+							<aon:commandButton id="accept" value="#{bundle.aon_accept}"
+								action="communicationCenter_response" actionListener="#{communicationCenter.onStartSurveyResponse}"
+								rendered="#{communicationCenter.surveySelected and communicationCenter.targetSelected}"
+								styleClass="aon-finding-toolbar-item aon-icon-accept"
+								accesskey="#{bundle.aon_key_accept}" />				
+							<aon:commandButton id="save" value="#{bundle.aon_save}"
+								action="communicationCenter" actionListener="#{communicationCenter.onUpdateActionTarget}"
+								reRender="CommunicationCenter_target,CommunicationCenter_action_detail,aonToolbar"
+								styleClass="aon-finding-toolbar-item aon-icon-save"
+								accesskey="#{bundle.aon_key_save}" />
+							<aon:commandButton id="skip" value="#{marketingBundle.marketing_skip}"
+								action="communicationCenter" actionListener="#{communicationCenter.onNextTarget}"
+								reRender="CommunicationCenter_target,aonToolbar"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+								accesskey="#{bundle.aon_key_cancel}"/>
+						</c:if>						
+						<a4j:htmlCommandLink id="mailing" value="#{marketingBundle.marketing_mailing}" target="_blank"
+							action="communicationCenter" actionListener="#{communicationCenter.onGenerateTargetMailing}"
+							rendered="#{communicationCenter.action.mediaType  == 'MAIL'}"
+							styleClass="aon-finding-toolbar-item aon-icon-webmail2" >
+							<a4j:support event="onclick" process="CommunicationCenter_action_id" 
+								reRender="aonContent" actionListener="#{communicationCenter.onInit}" />
+						</a4j:htmlCommandLink>
+					</c:if>						
 				</ui:define>
 			</ui:decorate>
 
@@ -59,28 +62,34 @@
 
 					<aon:outputLabel for="CommunicationCenter_action_id" 
 						value="#{marketingBundle.marketing_campaign_action}" />
-					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="CommunicationCenter_action_id"
-							lookup="#{campaignActionLookup}"
-							lookupChangeListener="#{communicationCenter.onActionLookupChange}"
-							reRender="CommunicationCenter_action_detail,CommunicationCenter_survey,CommunicationCenter_target,aonToolbar"
-							value="#{communicationCenter.action.id}" size="5">
-						</aon:lookupInputText>
-						<aon:lookupButton
-							windowTitle="#{marketingBundle.marketing_action_selection}"
-							selectReRender="CommunicationCenter_action_id,CommunicationCenter_action_detail,CommunicationCenter_survey,CommunicationCenter_target,aonToolbar"
-							lookupChangeListener="#{communicationCenter.onActionLookupChange}"
-							lookup="#{campaignActionLookup}" minHeight="440"
-							property="#{communicationCenter.action}">
-						</aon:lookupButton>
-						<aon:div id="CommunicationCenter_action_detail" layout="inline">
-							<aon:inputText 
-								value="#{communicationCenter.action.campaign.description}"
-								size="80" disabled="true" />
-							<rich:spacer width="0.7em" />
-							<aon:inputText 
-								value="#{communicationCenter.action.mediaType}"
-								size="20" disabled="true" />
+					<aon:div>
+						<aon:div styleClass="aon-lookup">
+							<aon:lookupInputText id="CommunicationCenter_action_id"
+								lookup="#{campaignActionLookup}"
+								lookupChangeListener="#{communicationCenter.onActionLookupChange}"
+								reRender="CommunicationCenter_action_detail,CommunicationCenter_survey,CommunicationCenter_target,aonToolbar"
+								value="#{communicationCenter.action.id}" size="5">
+							</aon:lookupInputText>
+							<aon:lookupButton
+								windowTitle="#{marketingBundle.marketing_action_selection}"
+								selectReRender="CommunicationCenter_action_id,CommunicationCenter_action_detail,CommunicationCenter_survey,CommunicationCenter_target,aonToolbar"
+								lookupChangeListener="#{communicationCenter.onActionLookupChange}"
+								lookup="#{campaignActionLookup}" minHeight="440"
+								property="#{communicationCenter.action}">
+							</aon:lookupButton>
+						</aon:div>
+						<aon:div id="CommunicationCenter_action_detail">
+							<aon:panelGrid rendered="#{communicationCenter.actionSelected}" columns="2" dir="true">
+								<aon:outputText value="#{bundle.aon_description}" />						
+								<aon:outputText size="64"
+									value="#{communicationCenter.action.campaign.description}" />
+								<aon:outputText value="#{bundle.aon_type}" />									
+								<aon:outputText size="40"
+									value="#{communicationCenter.action.mediaType}" />
+								<aon:outputText value="#{marketingBundle.marketing_action_pending_targets}" />									
+								<aon:outputText size="5"
+									value="#{communicationCenter.pendingTargets}" />
+							</aon:panelGrid>
 						</aon:div>
 					</aon:div>
 					
@@ -104,7 +113,7 @@
 						</aon:lookupButton>
 						<aon:inputText id="CommunicationCenter_survey_detail"
 							value="#{communicationCenter.survey.description}"
-							size="80" disabled="true" />
+							size="64" disabled="true" />
 					</aon:div>
 
 					<aon:outputLabel for="CommunicationCenter_target_id"
