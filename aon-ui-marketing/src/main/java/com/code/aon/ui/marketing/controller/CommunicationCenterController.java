@@ -1,5 +1,6 @@
 package com.code.aon.ui.marketing.controller;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -41,6 +42,9 @@ import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
+import com.code.aon.ui.mailing.MailingManager;
 import com.code.aon.ui.util.AonUtil;
 
 public class CommunicationCenterController implements IMarketingConstants {
@@ -197,9 +201,9 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}
 
 	public void onInit( ActionEvent event ) {
-		setAction( null );
+		setAction(null);
 		setTarget(null);
-		setSurvey( null );
+		setSurvey(null);
 		this.surveyResponse = null;
 		this.actionTarget = null;
 	}
@@ -431,22 +435,9 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}
 	
 	public void onNextTarget( ActionEvent event ) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
-		Criteria criteria = new Criteria();
-		String id = bean.getFieldName(IMarketingAlias.ACTION_TARGET_ID);
-		criteria.addOrder( id );
-		if ( this.actionTarget != null ) {
-			criteria.addGreaterThanExpression( id, this.actionTarget.getId() );	
-		}
-		criteria.addEqualExpression(bean.getFieldName(IMarketingAlias.ACTION_TARGET_ACTION_ID), this.action.getId());
-		String status = bean.getFieldName(IMarketingAlias.ACTION_TARGET_STATUS);
-		Expression expression1 = ExpressionUtilities.getNotEqualExpression(status, ActionTargetStatus.FINISHED);
-		criteria.addExpression(expression1);
-		Expression expression2 = ExpressionUtilities.getNotEqualExpression(status, ActionTargetStatus.SENT);
-		criteria.addExpression(expression2);
-		List<ITransferObject> list = bean.getList(criteria, 0, 1);
-		if (! list.isEmpty() ) {
-			this.actionTarget = (ActionTarget) list.get(0);
+		List<ActionTarget> targets = getActionTargets(true);
+		if (! targets.isEmpty() ) {
+			this.actionTarget = targets.get(0);
 			setTarget( this.actionTarget.getTarget() );
 			initTarget(this.target); 
 		} else {
@@ -497,5 +488,35 @@ public class CommunicationCenterController implements IMarketingConstants {
 	public void onSurveyLookupChange(LookupChangeEvent event) {
 		this.surveySelected = (event.getNewValue() != null);
 	}
+
+	@SuppressWarnings("unchecked")
+	private List<ActionTarget> getActionTargets( boolean onlyFirst ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+		Criteria criteria = new Criteria();
+		String id = bean.getFieldName(IMarketingAlias.ACTION_TARGET_ID);
+		criteria.addOrder( id );
+		if ( this.actionTarget != null ) {
+			criteria.addGreaterThanExpression( id, this.actionTarget.getId() );	
+		}
+		criteria.addEqualExpression(bean.getFieldName(IMarketingAlias.ACTION_TARGET_ACTION_ID), this.action.getId());
+		String status = bean.getFieldName(IMarketingAlias.ACTION_TARGET_STATUS);
+		Expression expression1 = ExpressionUtilities.getNotEqualExpression(status, ActionTargetStatus.FINISHED);
+		criteria.addExpression(expression1);
+		Expression expression2 = ExpressionUtilities.getNotEqualExpression(status, ActionTargetStatus.SENT);
+		criteria.addExpression(expression2);
+		List list = onlyFirst ? bean.getList(criteria, 0, 1) : bean.getList(criteria);
+		return list;
+	}
+	
+	@SuppressWarnings({"unchecked", "unused"})
+	public void onGenerateTargetMailing(ActionEvent event) throws ManagerBeanException {
+        List<ActionTarget> targets = getActionTargets(false);
+        MailingManager.generateMailing(targets);
+        IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+        for( ActionTarget target : targets ) {
+        	target.setStatus(ActionTargetStatus.FINISHED);
+        	bean.update(target);
+        }
+	}		
 	
 }

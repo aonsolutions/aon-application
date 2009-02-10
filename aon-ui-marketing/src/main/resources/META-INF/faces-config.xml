@@ -791,6 +791,10 @@
 			<to-view-id>/com/code/aon/ui/marketing/facelet/campaignAction/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>campaignAction_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/marketing/facelet/campaign/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>campaignActionTarget_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/marketing/facelet/campaignActionTarget/search.xhtml</to-view-id>
 		</navigation-case>
