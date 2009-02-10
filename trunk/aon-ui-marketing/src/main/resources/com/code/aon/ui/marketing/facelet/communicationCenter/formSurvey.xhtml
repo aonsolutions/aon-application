@@ -35,6 +35,13 @@
 						action="communicationCenter" actionListener="#{communicationCenter.onNextTarget}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 						accesskey="#{bundle.aon_key_cancel}"/>						
+					<a4j:htmlCommandLink id="mailing" value="#{marketingBundle.marketing_mailing}" target="_blank"
+						action="communicationCenter" actionListener="#{communicationCenter.onGenerateTargetMailing}"
+						rendered="#{communicationCenter.actionSelected and (communicationCenter.action.mediaType  == 'MAIL')}"
+						styleClass="aon-finding-toolbar-item aon-icon-webmail2" >
+						<a4j:support event="onclick" process="CommunicationCenter_action_id" 
+							reRender="aonContent" actionListener="#{communicationCenter.onInit}" />
+					</a4j:htmlCommandLink>						
 				</ui:define>
 			</ui:decorate>
 
