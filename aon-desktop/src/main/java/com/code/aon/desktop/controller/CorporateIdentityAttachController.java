@@ -59,6 +59,11 @@ public class CorporateIdentityAttachController extends GridController implements
 		this.aonFile = aonFile;
 	}
 
+	public boolean isUploaded() {
+		if (this.aonFile != null && this.aonFile.getData().length > 0) return true;
+		else return false;
+	}
+	
 	public void fileUploaded(UploadEvent event) {
 		try {
 			UploadItem item = event.getUploadItem();
@@ -78,6 +83,10 @@ public class CorporateIdentityAttachController extends GridController implements
 		}
 	}
 
+	public String getFilename() {
+		if (getAonFile() != null) return getAonFile().getFileName();
+		else return "Undefined.";
+	}
 	public void fileDeleted(AonFile aonFile) {
 		setAonFile(null);
 	}
@@ -93,6 +102,12 @@ public class CorporateIdentityAttachController extends GridController implements
 	public void onAccept(ActionEvent event) {
 		super.accept(event);
 		super.onCancel(event);
+		setAonFile(null);
+	}
+
+	public void onCancel(ActionEvent event) {
+		super.onCancel(event);
+		setAonFile(null);
 	}
 
 	public void onRemove(ActionEvent event) {
