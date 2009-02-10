@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<calendar-config>
+
+	<calendar id="default" year="2007" description="Default calendar"
+		path="/WEB-INF/conf/calendar/2007.ics"
+	/>
+
+</calendar-config>
+
