@@ -27,7 +27,7 @@ public class Mark implements ITransferObject{
 	private int evaluation;
 	
 	/** The mark. */
-	private double mark;
+	private Double mark;
 
 	/**
 	 * @return the id
@@ -65,14 +65,14 @@ public class Mark implements ITransferObject{
 	/**
 	 * @return the mark
 	 */
-	public double getMark() {
+	public Double getMark() {
 		return mark;
 	}
 
 	/**
 	 * @param mark the mark to set
 	 */
-	public void setMark(double mark) {
+	public void setMark(Double mark) {
 		this.mark = mark;
 	}
 
