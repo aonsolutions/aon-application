@@ -378,28 +378,40 @@ public interface IAcademyAlias {
 	DAOConstantsEntry COURSE_INSTRUCTOR_ENTRY = DAOConstants.getDAOConstant(CourseInstructor.class);
 
 	/** 
+	* Alias value: CourseInstructor_id
+	* Hibernate value: CourseInstructor.id
+	*/
+	String  COURSE_INSTRUCTOR_ID = COURSE_INSTRUCTOR_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: CourseInstructor_course_id
 	* Hibernate value: CourseInstructor.course.id
 	*/
-	String  COURSE_INSTRUCTOR_COURSE_ID = COURSE_INSTRUCTOR_ENTRY.getAliasNames()[0];
+	String  COURSE_INSTRUCTOR_COURSE_ID = COURSE_INSTRUCTOR_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: CourseInstructor_course_code
+	* Hibernate value: CourseInstructor.course.code
+	*/
+	String  COURSE_INSTRUCTOR_COURSE_CODE = COURSE_INSTRUCTOR_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: CourseInstructor_course_status
+	* Hibernate value: CourseInstructor.course.status
+	*/
+	String  COURSE_INSTRUCTOR_COURSE_STATUS = COURSE_INSTRUCTOR_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: CourseInstructor_employee_id
 	* Hibernate value: CourseInstructor.employee.id
 	*/
-	String  COURSE_INSTRUCTOR_EMPLOYEE_ID = COURSE_INSTRUCTOR_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: CourseInstructor_id
-	* Hibernate value: CourseInstructor.id
-	*/
-	String  COURSE_INSTRUCTOR_ID = COURSE_INSTRUCTOR_ENTRY.getAliasNames()[2];
+	String  COURSE_INSTRUCTOR_EMPLOYEE_ID = COURSE_INSTRUCTOR_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: CourseInstructor_type
 	* Hibernate value: CourseInstructor.type
 	*/
-	String  COURSE_INSTRUCTOR_TYPE = COURSE_INSTRUCTOR_ENTRY.getAliasNames()[3];
+	String  COURSE_INSTRUCTOR_TYPE = COURSE_INSTRUCTOR_ENTRY.getAliasNames()[5];
 
 
 
