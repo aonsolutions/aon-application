@@ -85,7 +85,7 @@ public class ZipUtil {
 					int count;
 					byte data[] = new byte[BUFFER];
 					String filename = entry.getName();
-					filename = filename.replaceAll("[^A-Za-z0-9._-]+", "");
+					filename = filename.replaceAll("[^A-Za-z0-9./_-]+", "");
 					File newfile = new File(df.getAbsolutePath() + "/" +  filename);
 					if (!newfile.getParentFile().exists()) newfile.getParentFile().mkdirs();
 					FileOutputStream fos = new FileOutputStream(newfile.getAbsolutePath());

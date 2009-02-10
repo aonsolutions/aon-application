@@ -81,14 +81,14 @@
 		            <aon:div id="GalleryList" styleClass="aon-padding">
 						<rich:dataGrid var="item" value="#{gallery.model}" columns="6">
 							<aon:div style="width:125px;text-align:center">
-								<aon:outputLink value="#{gallery.previewCurrentUrl}/#{item.name}" target="_blank">
-				            		<aon:div style="width:114px;height:114px;overflow:hidden;" styleClass="aon-border">
+			            		<aon:div style="width:114px;height:114px;overflow:hidden;" styleClass="aon-border">
+									<aon:outputLink value="#{gallery.previewCurrentUrl}/#{item.name}" target="_blank">
 					            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}" styleClass="aon-padding"/>
-				            		</aon:div>
-				            		<aon:div style="width:112px;overflow:hidden;">
-				            			<aon:outputText value="#{item.name}"/>
-				            		</aon:div>
-				            	</aon:outputLink>
+					            	</aon:outputLink>
+			            		</aon:div>
+			            		<aon:div style="width:112px;overflow:hidden;">
+			            			<aon:outputText value="#{item.name}"/>
+			            		</aon:div>
 			            		<aon:div styleClass="aon-padding aon-text-center">
 									<aon:commandButton styleClass="aon-noborder aon-padding"
 										image="/images/cms/icons/settings.png"
