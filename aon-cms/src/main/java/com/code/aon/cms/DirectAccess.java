@@ -35,7 +35,7 @@ public class DirectAccess implements ITransferObject, IPositionObject {
 
 	private boolean active = true;
 
-	private Integer position = new Integer(0);
+	private Integer position;
 
 	private String image;
 

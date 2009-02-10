@@ -25,7 +25,7 @@ public class LinkCategory implements ITransferObject, IPositionObject {
 
 	private boolean active = true;
 
-	private Integer position = new Integer(0);
+	private Integer position;
 
 	private Section section;
 	

@@ -37,7 +37,7 @@ public class MenuOption implements ITransferObject, IPositionObject {
 
 	private boolean active = true;
 
-	private Integer position = new Integer(0);
+	private Integer position;
 
 	private Set<MenuOptionDetail> details;
 

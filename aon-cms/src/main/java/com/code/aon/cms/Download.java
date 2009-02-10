@@ -24,9 +24,9 @@ public class Download implements ITransferObject, IPositionObject {
 	
 	private String alias;
 	
-	private boolean active = true;
+	private boolean active;
 	
-	private Integer position = new Integer(0);
+	private Integer position;
 	
 	private DownloadCategory downloadCategory;
 	

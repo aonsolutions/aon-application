@@ -23,9 +23,9 @@ public class AlbumImage implements ITransferObject, IPositionObject {
 	
 	private Album album;
 	
-	private boolean active = true;
+	private boolean active;
 	
-	private Integer position = new Integer(0);
+	private Integer position;
 	
 	private String image;
 	

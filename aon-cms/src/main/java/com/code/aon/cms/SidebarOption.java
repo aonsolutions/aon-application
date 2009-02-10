@@ -36,7 +36,7 @@ public class SidebarOption implements ITransferObject, IPositionObject {
 
 	private boolean active = true;
 
-	private Integer position = new Integer(0);
+	private Integer position;
 
 	private SidebarSide side;
 	

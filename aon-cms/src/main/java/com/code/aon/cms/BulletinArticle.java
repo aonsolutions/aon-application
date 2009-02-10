@@ -21,7 +21,7 @@ public class BulletinArticle implements ITransferObject, IPositionObject {
 	
 	private Article article;
 
-	private Integer position = new Integer(0);
+	private Integer position;
 
 	@Id
 	@GeneratedValue
