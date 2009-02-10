@@ -99,6 +99,7 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 	 * @param id related registry ident
 	 * @return the first address
 	 */
+	@SuppressWarnings("unchecked")
 	private RegistryAddress obtainRegistryAddress(Integer id) {
 		try {
 			IManagerBean registryAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
@@ -143,6 +144,7 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 	 * @see com.code.aon.ui.form.event.ControllerAdapter#afterBeanSelected(com.code.aon.ui.form.event.ControllerEvent)
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		Invoice invoice = (Invoice)event.getController().getTo();
 		try {
@@ -190,6 +192,7 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 	 * @param invoice related invoice
 	 * @return incomedetail
 	 */
+	@SuppressWarnings("unchecked")
 	private IncomeDetail obtainIncomeDetail(Invoice invoice) {
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
@@ -212,11 +215,12 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 	 * @param invoiceDetail related invoicedetail
 	 * @return invoiceDetail's incomedetail
 	 */
+	@SuppressWarnings("unchecked")
 	private IncomeDetail obtainIncomeDetail(InvoiceDetail invoiceDetail) {
 		try {
 			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_ID), invoiceDetail.getDeliveryDetail());
+			criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_ID), invoiceDetail.getSourceId());
 			Iterator iter = incomeDetailBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				return (IncomeDetail)iter.next();
@@ -236,6 +240,7 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 	 * @see com.code.aon.ui.form.event.ControllerAdapter#beforeBeanRemoved(com.code.aon.ui.form.event.ControllerEvent)
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	public void beforeBeanRemoved(ControllerEvent event){
 		try {
 			InvoicingDetailController invoicingDetailController = (InvoicingDetailController) AonUtil.getController(INVOICING_DETAIL_CONTROLLER_NAME);
@@ -281,11 +286,12 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 	 * 
 	 * @param invoiceDetail related invoicedetail
 	 */
+	@SuppressWarnings("unchecked")
 	private void removeIncomeDetails(InvoiceDetail invoiceDetail) {
 		try {
 			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_ID), invoiceDetail.getDeliveryDetail());
+			criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_ID), invoiceDetail.getSourceId());
 			Iterator iter = incomeDetailBean.getList(criteria).iterator();
 			int number = incomeDetailBean.getCount(criteria);
 			if(iter.hasNext()){
@@ -328,6 +334,7 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 	 * @param invoiceId related invoice ident
 	 * @return a list of closed incomes
 	 */
+	@SuppressWarnings("unchecked")
 	private List<ITransferObject> obtainClosedIncomes(Integer invoiceId) {
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
@@ -340,7 +347,7 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 			while(iter.hasNext()){
 				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
 				criteria = new Criteria();
-				criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_ID), invoiceDetail.getDeliveryDetail());
+				criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_ID), invoiceDetail.getSourceId());
 				Iterator iterator = incomeDetailBean.getList(criteria).iterator();
 				if(iterator.hasNext()){
 					IncomeDetail incomeDetail = (IncomeDetail)iterator.next();
