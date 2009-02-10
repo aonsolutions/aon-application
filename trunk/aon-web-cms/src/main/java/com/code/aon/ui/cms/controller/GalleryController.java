@@ -18,6 +18,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.cms.IGalleryController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.ImageComparator;
+import com.code.aon.ui.cms.util.ZipUtil;
 import com.code.aon.ui.form.BasicController;
 
 public abstract class GalleryController extends BasicController implements IGalleryController{
@@ -88,17 +89,26 @@ public abstract class GalleryController extends BasicController implements IGall
 			upload_name = upload_name.substring(upload_name.lastIndexOf('/'));
 		upload_name = upload_name.replaceAll("[^A-Za-z0-9._-]+", "");
 		String fileName = File.separator+upload_name;
-		File file = new File( currentPath+File.separator+fileName);
-		FileOutputStream outputStream = null; 
-		try{
-			byte[] data = item.getData();
-	        outputStream = new FileOutputStream(file);
-	        outputStream.write(data);
-			chargeImageList();
-		}catch (Exception e) {
-		}finally{
-	        try{outputStream.close();}catch (Exception e) {}			
-		}		
+		//Miramos si es un fichero zip, en ese caso creamos un directorio y descomprimimos ahi los archivos...
+		String ext = fileName.substring(fileName.indexOf(".") + 1);
+		if (ext != null && ext.trim().toLowerCase().equals("zip")) {
+			ZipUtil.uncompressZipData(item.getData(), currentPath+File.separator+fileName.substring(0, fileName.indexOf(".")));
+		}
+		else {
+			File file = new File( currentPath+File.separator+fileName);
+			FileOutputStream outputStream = null; 
+			try{
+				byte[] data = item.getData();
+		        outputStream = new FileOutputStream(file);
+		        outputStream.write(data);
+				chargeImageList();
+			}
+			catch (Exception e) {
+			}
+			finally {
+		        try{outputStream.close();} catch (Exception e) {}			
+			}
+		}
 	}
 
 	private String folderName;

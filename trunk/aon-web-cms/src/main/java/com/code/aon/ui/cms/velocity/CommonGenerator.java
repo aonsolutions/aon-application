@@ -94,7 +94,7 @@ public class CommonGenerator extends Generator {
 		}
 		
 		VelocityUtil.addMessage(". . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ." +
-								" . . . . . . . . . . . . . . . . . . Cargando sección... ["+section.getAlias()+"]", VelocityUtil.INFO);
+								" . . . . . . . . . . . . . . Cargando sección... ["+section.getAlias()+"]", VelocityUtil.INFO);
 		
 		if (previousSection==null ||
 				section.getId().intValue()!=previousSection.getId().intValue()){
@@ -341,6 +341,40 @@ public class CommonGenerator extends Generator {
 		vu.remove("password");
 		vu.remove("from");
 		vu.remove("name_from");
+		vu.finalize();
+		vu = null;
+	}
+
+	public void generateSearchPage() {
+		VelocityUtil vu = new VelocityUtil();
+		CommonGenerator.getCommonGenerator().init(vu);
+		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
+		vu.initialize();
+		File f = new File(ControllerUtil.getPreviewPath());
+		if (!f.exists()) f.mkdirs();
+		f = new File(ControllerUtil.getLanguagePreviewPath());
+		if (!f.exists()) f.mkdirs();
+		try {
+			CommonGenerator.getCommonGenerator().chargeContext(vu, null);
+		} catch (ManagerBeanException e) {
+		}
+		generate(vu, Templates.SEARCH);
+		vu.finalize();
+		vu = null;
+	}
+
+	public void generateCaptchaPage() {
+		VelocityUtil vu = new VelocityUtil();
+		CommonGenerator.getCommonGenerator().init(vu);
+		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
+		vu.initialize();
+
+		File f = new File(ControllerUtil.getPreviewPath());
+		if (!f.exists()) f.mkdirs();
+		f = new File(ControllerUtil.getLanguagePreviewPath());
+		if (!f.exists()) f.mkdirs();
+		generate(vu, Templates.CAPTCHA);
+		
 		vu.finalize();
 		vu = null;
 	}

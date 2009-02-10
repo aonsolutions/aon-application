@@ -32,6 +32,10 @@ public class CmsController {
     	return FacesContext.getCurrentInstance().getExternalContext().isUserInRole(PUBLISHER_ROLE);
     }
 
+    public boolean isAdministrator() {
+		return adminProfile;
+    }
+
     private static final String DESIGNER_ROLE = "Designer";
     private static final String EDITOR_ROLE = "Editor";
     private static final String REVISOR_ROLE = "Revisor";

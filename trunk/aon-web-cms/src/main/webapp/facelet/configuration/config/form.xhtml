@@ -101,6 +101,66 @@
 								</aon:div>
 							</aon:panelGrid>
 						</aon:panelTab>
+						<aon:panelTab id="smtp" label="#{appBundle.config_smtp_server}" rendered="#{cms.administrator}">
+							<aon:panelGrid columns="2" dir="true">
+								<aon:outputLabel for="Config_smtp_server"
+									value="#{appBundle.config_smtp_server}" />
+								<aon:inputText id="Config_smtp_server"
+									required="true" size="60" maxlength="128"
+									value="#{config.to.smtp_server}" />
+
+								<aon:outputLabel for="Config_smtp_user"
+									value="#{appBundle.config_smtp_user}" />
+								<aon:inputText id="Config_smtp_user"
+									required="true" size="20" maxlength="32"
+									value="#{config.to.smtp_user}" />
+
+								<aon:outputLabel for="Config_smtp_password"
+									value="#{appBundle.config_smtp_password}" />
+								<aon:inputText id="Config_smtp_password"
+									required="true" size="20" maxlength="32"
+									value="#{config.to.smtp_password}" />
+
+								<aon:outputLabel for="Config_from_name"
+									value="#{appBundle.config_from_name}" />
+								<aon:inputText id="Config_from_name"
+									required="true" size="32" maxlength="64"
+									value="#{config.to.from_name}" />
+
+								<aon:outputLabel for="Config_from_email"
+									value="#{appBundle.config_from_email}" />
+								<aon:inputText id="Config_from_email"
+									required="true" size="75" maxlength="128"
+									value="#{config.to.from_email}" />
+							</aon:panelGrid>
+						</aon:panelTab>
+						<aon:panelTab id="ftp" label="#{appBundle.config_ftp_server}" rendered="#{cms.administrator}">
+							<aon:panelGrid columns="2" dir="true">
+								<aon:outputLabel for="Config_ftp_server"
+									value="#{appBundle.config_ftp_server}" />
+								<aon:inputText id="Config_ftp_server"
+									required="true" size="60" maxlength="128"
+									value="#{config.to.ftp_server}" />
+
+								<aon:outputLabel for="Config_ftp_user"
+									value="#{appBundle.config_ftp_user}" />
+								<aon:inputText id="Config_ftp_user"
+									required="true" size="20" maxlength="32"
+									value="#{config.to.ftp_user}" />
+
+								<aon:outputLabel for="Config_ftp_password"
+									value="#{appBundle.config_ftp_password}" />
+								<aon:inputText id="Config_ftp_password"
+									required="true" size="20" maxlength="32"
+									value="#{config.to.ftp_password}" />
+
+								<aon:outputLabel for="Config_ftp_path"
+									value="#{appBundle.config_ftp_path}" />
+								<aon:inputText id="Config_ftp_path"
+									required="true" size="75" maxlength="128"
+									value="#{config.to.ftp_path}" />
+							</aon:panelGrid>
+						</aon:panelTab>
 					</aon:panelTabSet>
 
 			</aon:div>

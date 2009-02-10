@@ -20,6 +20,7 @@ public class Generator {
 	public static void generate(VelocityUtil vu, Templates type, String contentTemplate, String name) {
 		String template = getIndexTemplate();
 		if (type == Templates.LANGUAGE) template = getLanguageTemplate();
+		if (type == Templates.CAPTCHA) template = getCaptchaTemplate();
 		String content = contentTemplate;
 		String page = getPage(type);
 		page = page.replaceAll("%NAME%", name);
@@ -44,6 +45,12 @@ public class Generator {
 
 	private static String getLanguageTemplate() {
 		String template = Templates.LANGUAGE.getTemplateName();
+		if (validateTemplate(template)) return ControllerUtil.getCurrentVmTemplatePath() + "/" + template;
+		else return null;
+	}
+
+	private static String getCaptchaTemplate() {
+		String template = Templates.CAPTCHA.getTemplateName();
 		if (validateTemplate(template)) return ControllerUtil.getCurrentVmTemplatePath() + "/" + template;
 		else return null;
 	}

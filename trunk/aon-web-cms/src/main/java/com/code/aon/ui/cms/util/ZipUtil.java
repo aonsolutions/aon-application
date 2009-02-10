@@ -1,6 +1,7 @@
 package com.code.aon.ui.cms.util;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -10,8 +11,6 @@ import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-
-import javax.faces.application.FacesMessage;
 
 import com.code.aon.ui.util.AonUtil;
 
@@ -73,6 +72,37 @@ public class ZipUtil {
 		return false;
 	}
 
+	public static boolean uncompressZipData(byte[] source_zip_data, String destination_folder) {
+		File df = new File(destination_folder);
+		if (!df.exists()) df.mkdirs();
+		try {
+			InputStream is = new ByteArrayInputStream(source_zip_data);
+			BufferedOutputStream dest = null;
+			ZipInputStream zis = new ZipInputStream(is);
+			ZipEntry entry;
+			while ((entry = zis.getNextEntry()) != null) {
+				if (!entry.isDirectory()) {
+					int count;
+					byte data[] = new byte[BUFFER];
+					File newfile = new File(df.getAbsolutePath() + "/" +  entry.getName());
+					if (!newfile.getParentFile().exists()) newfile.getParentFile().mkdirs();
+					FileOutputStream fos = new FileOutputStream(newfile.getAbsolutePath());
+					dest = new BufferedOutputStream(fos, BUFFER);
+					while ((count = zis.read(data, 0, BUFFER)) != -1) {
+						dest.write(data, 0, count);
+					}
+					dest.flush();
+					dest.close();
+				}
+			}
+			zis.close();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 	public void createZip(String path, String name) {
 		boolean error = false;
 		System.setProperty("platform.file.encoding", "ISO-8859-1");

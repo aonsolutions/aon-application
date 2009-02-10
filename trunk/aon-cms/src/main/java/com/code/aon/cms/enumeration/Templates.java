@@ -150,7 +150,18 @@ public enum Templates implements IResourceable {
 	/**
 	 * SPORT
 	 */
-	SPORT;
+	SPORT,
+	
+	/**
+	 * SEARCH PHP
+	 */
+	SEARCH,
+	
+	/**
+	 * CAPTCHA PHP
+	 */
+	CAPTCHA;
+	
 	
 	/**
 	 * Ruta base del fichero de mensajes.

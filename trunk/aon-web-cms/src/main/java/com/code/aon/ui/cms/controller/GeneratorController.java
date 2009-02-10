@@ -252,12 +252,14 @@ public class GeneratorController implements Constants {
 		FileUtil.copyDir(ControllerUtil.getJsTemplatePath(), ControllerUtil.getPreviewPath());
 		CommonGenerator.getCommonGenerator().generateLanguagePage();
 		CommonGenerator.getCommonGenerator().generateEmailSendPage();
+		CommonGenerator.getCommonGenerator().generateSearchPage();
+		CommonGenerator.getCommonGenerator().generateCaptchaPage();
 	}
 
 	private void finalizeGenerator(){
-		status.addMessage("END: --------------------------------------------------------------------------------------------------------------------------------------------");
-		status.addMessage("END: --------------------------------------------------- LA GENERACION A TERMINADO ---------------------------------------------------");
-		status.addMessage("END: --------------------------------------------------------------------------------------------------------------------------------------------");
+		status.addMessage("END: ----------------------------------------------------------------------------------------------------------------------------------------");
+		status.addMessage("END: ------------------------------------------------- LA GENERACION A TERMINADO -------------------------------------------------");
+		status.addMessage("END: ----------------------------------------------------------------------------------------------------------------------------------------");
 		status.finalized();
 		System.gc();
 	}
