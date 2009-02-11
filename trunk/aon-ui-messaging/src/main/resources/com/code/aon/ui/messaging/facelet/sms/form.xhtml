@@ -55,35 +55,38 @@
 
 							<c:if test="#{sms.showContacts}">
 								<aon:outputLabel for="SMS_recipient" value="#{smsBundle.sms_recipients}" />
-								<aon:div>
-									<aon:inputText id="SMS_recipient" maxlength="13" size="13" value="#{sms.recipient}" >
-										<f:validateLength maximum="13" />
-										<f:validateLongRange maximum="0099999999999" />
-									</aon:inputText>
-									<aon:commandButton id="add2List" value="#{smsBundle.sms_add2list}" title="#{smsBundle.sms_add2list}"
-										styleClass="aon-commandButton aon-icon-new-phone aon-icon-button"
-										actionListener="#{sms.add2List}" immediate="true"
-										reRender="SMS_recipient, recipientList"
-										accesskey="#{bundle.aon_key_save}" />
-									<aon:commandButton id="findContact" value="#{smsBundle.sms_find_contacts}" title="#{smsBundle.sms_find_contacts}"
-										reRender="showWindow" immediate="true"
-										styleClass="aon-commandButton  aon-icon-search aon-icon-button"
-										actionListener="#{sms.openContacts}" />
-									<aon:div styleClass="aon-dataList-scroll">
-										<rich:dataList id="recipientList" var="recipient" value="#{sms.recipients}"
-												style="margin-left:1.1em;" rowKeyVar="row" >
-					           				<h:outputText value="#{recipient}"/>
-											<a4j:commandButton id="removeFromList" value="" 
+								<a4j:region>
+									<aon:div>
+										<aon:inputText id="SMS_recipient" maxlength="13" size="13" value="#{sms.recipient}" >
+											<f:validateLength maximum="13" />
+											<f:validateLongRange maximum="0099999999999" />
+										</aon:inputText>
+										<aon:commandButton id="add2List" value="#{smsBundle.sms_add2list}" title="#{smsBundle.sms_add2list}"
+											styleClass="aon-commandButton aon-icon-new-phone aon-icon-button"
+											actionListener="#{sms.add2List}"
+											reRender="SMS_recipient, recipientList"
+											accesskey="#{bundle.aon_key_save}" />
+										<aon:commandButton id="findContact" value="#{smsBundle.sms_find_contacts}" title="#{smsBundle.sms_find_contacts}"
+											reRender="showWindow" immediate="true"
+											styleClass="aon-commandButton  aon-icon-search aon-icon-button"
+											actionListener="#{sms.openContacts}" />
+										<aon:div styleClass="aon-dataList-scroll">
+											<rich:dataList id="recipientList" var="recipient" value="#{sms.recipients}"
+													style="margin-left:1.1em;" rowKeyVar="row" >
+						           				<aon:outputText value="#{recipient}"/>
+												<a4j:commandButton id="removeFromList" value="" 
 													title="#{smsBundle.sms_removeFromlist}"
-													styleClass="aon-margin-left aon-icon-commandButton aon-icon-delete"
-													actionListener="#{sms.removeFromList}"
+													styleClass="aon-margin-left aon-icon-commandButton aon-icon-delete"													
 													reRender="SMS_recipient, recipientList"
 													accesskey="#{bundle.aon_key_save}" >
-									            <a4j:actionparam name="selected" value="#{row}" assignTo="#{sms.selected}"/>
-											</a4j:commandButton>
-								        </rich:dataList>
-							        </aon:div>
-								</aon:div>
+										            <a4j:actionparam name="selected"
+										            	value="#{row}" assignTo="#{sms.selected}"
+										            	actionListener="#{sms.removeFromList}" />
+												</a4j:commandButton>
+									        </rich:dataList>
+								        </aon:div>
+									</aon:div>
+								</a4j:region>
 							</c:if>
 
 						</aon:panelGrid>

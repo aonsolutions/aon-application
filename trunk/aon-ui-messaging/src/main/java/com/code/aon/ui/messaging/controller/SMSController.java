@@ -199,7 +199,7 @@ public class SMSController implements Serializable {
 	}
 
 	public void add2List(ActionEvent event) {
-		if ( this.recipient != null && !this.recipient.equals( "" ) ) {
+		if (! StringUtils.isEmpty(this.recipient) ) {
 			this.message.add( this.recipient );
 			this.recipients.add( this.recipient );
 			this.recipient = null;
