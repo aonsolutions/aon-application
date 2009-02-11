@@ -46,7 +46,7 @@ public class SMSController implements Serializable {
     	"WHERE msg.sentDate BETWEEN :fromDate AND :toDate";
 
 	private boolean showWindow;
-	private boolean allowSending = true;
+	private boolean allowSending;
 
 	/** Message attributes. */
 	private Sender sender;
@@ -67,8 +67,12 @@ public class SMSController implements Serializable {
 	private Double companyMessageUnitPrice;
 	private Double companyTotalConsume;
 
+	private boolean showContacts;
+	
 	@SuppressWarnings("unchecked")
 	public SMSController() {
+		this.allowSending = true;
+		this.showContacts = true;
 		loadPriceTariff();
 		try {
 			this.message = new Message();
@@ -339,4 +343,12 @@ public class SMSController implements Serializable {
 		}
 	}
 
+	public boolean isShowContacts() {
+		return showContacts;
+	}
+
+	public void setShowContacts(boolean showContacts) {
+		this.showContacts = showContacts;
+	}
+	
 }
