@@ -119,6 +119,7 @@
 							rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
 							columnClasses="aon-edit-table-body aon-edit-table-body-icon,
 								aon-edit-table-body aon-edit-table-body-string,
+								aon-edit-table-body aon-edit-table-body-number,
 								aon-edit-table-body aon-edit-table-body-buttons">
 			
 							<h:column>
@@ -163,10 +164,32 @@
 											rendered="#{courseAcademicSkill.new}">
 											<f:selectItems value="#{academyCollections.academicSkills}" />
 										</h:selectOneMenu>
+										<t:outputText value="#{appBundle.academicSkill_weight_total}"
+											rendered="#{!courseAcademicSkill.new}" />
 									</t:div>
 								</f:facet>
 							</h:column>
 			
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{appBundle.academicSkill_weight}" />
+								</f:facet>
+								<t:outputText value="#{to.weight}"
+									rendered="#{to!=courseAcademicSkill.to}" />
+								<t:inputText value="#{courseAcademicSkill.to.weight}" required="#{true}"
+									styleClass="aon-form-input-text" size="5" 
+									rendered="#{to==courseAcademicSkill.to}" />
+								<f:facet name="footer">
+									<t:div style="text-align:right;">
+										<t:inputText value="#{courseAcademicSkill.to.weight}" required="#{true}"
+											styleClass="aon-form-input-text" size="5" 
+											rendered="#{courseAcademicSkill.new}" />
+										<t:outputText value="#{courseAcademicSkill.weightSum}"
+											rendered="#{!courseAcademicSkill.new}" />
+									</t:div>
+								</f:facet>
+							</h:column>
+
 							<h:column>
 								<f:facet name="header">
 									<f:verbatim>&#160;</f:verbatim>
