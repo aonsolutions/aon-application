@@ -95,26 +95,28 @@
 								<aon:outputText value="#{smsBundle.sms_summary}" />
 							</f:facet>
 							
-							<aon:div styleClass="aon-toolbar" >
-								<aon:outputLabel styleClass="aon-bold" value="#{bundle.aon_year}" />
-								<aon:inputText id="Summary_Year" value="#{sms.year}" size="2"
-										styleClass="aon-margin-left">
-									<f:validateLength maximum="4" />
-									<f:validateLongRange minimum="2000" maximum="2999" />
-								</aon:inputText>
-
-								<aon:outputLabel styleClass="aon-bold aon-margin-left" value="#{bundle.aon_month}" />
-								<aon:selectOneMenu id="Summary_Month" value="#{sms.month}" 
-										styleClass="aon-margin-left aon-form-selectOneMenu-field">
-									<f:selectItems value="#{commonCollections.months}" />
-								</aon:selectOneMenu>
-
-								<aon:commandButton id="Summary" value="" title="#{smsBundle.sms_filter}"
-									reRender="smsSummary" immediate="true"
-									styleClass="aon-margin-left aon-icon-commandButton aon-icon-advanced-search"
-									actionListener="#{sms.summary}"
-									accesskey="#{bundle.aon_key_save}" />
-							</aon:div>
+							<a4j:region>
+								<aon:div styleClass="aon-toolbar" >
+									<aon:outputLabel styleClass="aon-bold" value="#{bundle.aon_year}" />
+									<aon:inputText id="Summary_Year" value="#{sms.year}" size="2"
+											styleClass="aon-margin-left">
+										<f:validateLength maximum="4" />
+										<f:validateLongRange minimum="2000" maximum="2999" />
+									</aon:inputText>
+	
+									<aon:outputLabel styleClass="aon-bold aon-margin-left" value="#{bundle.aon_month}" />
+									<aon:selectOneMenu id="Summary_Month" value="#{sms.month}" 
+											styleClass="aon-margin-left aon-form-selectOneMenu-field">
+										<f:selectItems value="#{commonCollections.months}" />
+									</aon:selectOneMenu>
+	
+									<aon:commandButton id="Summary" value="" title="#{smsBundle.sms_filter}"
+										reRender="smsSummary"
+										styleClass="aon-margin-left aon-icon-commandButton aon-icon-advanced-search"
+										actionListener="#{sms.summary}"
+										accesskey="#{bundle.aon_key_save}" />
+								</aon:div>
+							</a4j:region>
 
 							<aon:panelGrid columns="2" width="100%;">
 								<aon:outputLabel value="#{smsBundle.sms_user_messages}:" />
