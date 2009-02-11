@@ -66,7 +66,7 @@
 						</aon:fileUpload>
 					</aon:div>
 				</aon:panelGrid>
-				<aon:panelGrid id="GalleryFolderTree" columns="2" style="width:100%" columnClasses="aon-width-200 aon-vertical-align-top aon-border, aon-width-auto" > 
+				<aon:panelGrid id="GalleryFolderTree" columns="2" style="width:100%" columnClasses="aon-width-200 aon-vertical-align-top aon-border, aon-width-auto aon-vertical-align-top" > 
 				    <rich:tree switchType="server" stateAdvisor="#{treeStateAdvisor}">
 				        <rich:recursiveTreeNodesAdaptor roots="#{fileSystemBean.imageRoots}" 
 				        	var="item" nodes="#{item.nodes}">
