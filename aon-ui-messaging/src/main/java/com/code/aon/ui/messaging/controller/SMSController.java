@@ -326,7 +326,7 @@ public class SMSController implements Serializable {
 
 	private void loadPriceTariff() {
 		priceList = new ArrayList<PriceTariff>();
-		priceList.add( new PriceTariff( "<=", 5, 0d, "Promocion Lanzamiento. Gratis" ) );
+		priceList.add( new PriceTariff( "<", 6, 0d, "Promocion Lanzamiento. Gratis" ) );
 		priceList.add( new PriceTariff( "<", 100, 0.14d, "\u20AC + IVA" ) );
 		priceList.add( new PriceTariff( "<", 500, 0.13d, "\u20AC + IVA" ) );
 		priceList.add( new PriceTariff( "<", 1000, 0.12d, "\u20AC + IVA" ) );
