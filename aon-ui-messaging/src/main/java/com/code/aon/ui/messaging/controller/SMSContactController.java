@@ -6,6 +6,8 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.groupware.Contact;
@@ -154,12 +156,15 @@ public class SMSContactController {
 	}
 
 	private void addExpressions() throws ManagerBeanException {
-		if ( displayName != null ) 
+		if (! StringUtils.isEmpty(displayName) ) { 
 			addExpression( "Contact_displayName", displayName );
-		if ( name != null ) 
+		}
+		if (! StringUtils.isEmpty(name) ) {
 			addExpression( "Contact_name", name );
-		if ( surname != null ) 
+		}
+		if (! StringUtils.isEmpty(surname) ) { 
 			addExpression( "Contact_surname", surname);
+		}
 	}
 
 	private void addExpression(String key, String value) throws ManagerBeanException {
