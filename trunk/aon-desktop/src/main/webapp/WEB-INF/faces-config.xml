@@ -114,13 +114,8 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
-		<managed-bean-name>sms</managed-bean-name>
+		<managed-bean-name>smsManager</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.desktop.applications.SMSManager</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>smsContact</managed-bean-name>
-		<managed-bean-class>com.code.aon.desktop.controller.SMSContactController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
