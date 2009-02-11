@@ -5,6 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 
@@ -52,36 +53,38 @@
 								</aon:div>
 							</aon:div>
 
-							<aon:outputLabel for="SMS_recipient" value="#{smsBundle.sms_recipients}" />
-							<aon:div>
-								<aon:inputText id="SMS_recipient" maxlength="13" size="13" value="#{sms.recipient}" >
-									<f:validateLength maximum="13" />
-									<f:validateLongRange maximum="0099999999999" />
-								</aon:inputText>
-								<aon:commandButton id="add2List" value="#{smsBundle.sms_add2list}" title="#{smsBundle.sms_add2list}"
-									styleClass="aon-commandButton aon-icon-new-phone aon-icon-button"
-									actionListener="#{sms.add2List}" immediate="true"
-									reRender="SMS_recipient, recipientList"
-									accesskey="#{bundle.aon_key_save}" />
-								<aon:commandButton id="findContact" value="#{smsBundle.sms_find_contacts}" title="#{smsBundle.sms_find_contacts}"
-									reRender="showWindow" immediate="true"
-									styleClass="aon-commandButton  aon-icon-search aon-icon-button"
-									actionListener="#{sms.openContacts}" />
-								<aon:div styleClass="aon-dataList-scroll">
-									<rich:dataList id="recipientList" var="recipient" value="#{sms.recipients}"
-											style="margin-left:1.1em;" rowKeyVar="row" >
-				           				<h:outputText value="#{recipient}"/>
-										<a4j:commandButton id="removeFromList" value="" 
-												title="#{smsBundle.sms_removeFromlist}"
-												styleClass="aon-margin-left aon-icon-commandButton aon-icon-delete"
-												actionListener="#{sms.removeFromList}"
-												reRender="SMS_recipient, recipientList"
-												accesskey="#{bundle.aon_key_save}" >
-								            <a4j:actionparam name="selected" value="#{row}" assignTo="#{sms.selected}"/>
-										</a4j:commandButton>
-							        </rich:dataList>
-						        </aon:div>
-							</aon:div>
+							<c:if test="#{sms.showContacts}">
+								<aon:outputLabel for="SMS_recipient" value="#{smsBundle.sms_recipients}" />
+								<aon:div>
+									<aon:inputText id="SMS_recipient" maxlength="13" size="13" value="#{sms.recipient}" >
+										<f:validateLength maximum="13" />
+										<f:validateLongRange maximum="0099999999999" />
+									</aon:inputText>
+									<aon:commandButton id="add2List" value="#{smsBundle.sms_add2list}" title="#{smsBundle.sms_add2list}"
+										styleClass="aon-commandButton aon-icon-new-phone aon-icon-button"
+										actionListener="#{sms.add2List}" immediate="true"
+										reRender="SMS_recipient, recipientList"
+										accesskey="#{bundle.aon_key_save}" />
+									<aon:commandButton id="findContact" value="#{smsBundle.sms_find_contacts}" title="#{smsBundle.sms_find_contacts}"
+										reRender="showWindow" immediate="true"
+										styleClass="aon-commandButton  aon-icon-search aon-icon-button"
+										actionListener="#{sms.openContacts}" />
+									<aon:div styleClass="aon-dataList-scroll">
+										<rich:dataList id="recipientList" var="recipient" value="#{sms.recipients}"
+												style="margin-left:1.1em;" rowKeyVar="row" >
+					           				<h:outputText value="#{recipient}"/>
+											<a4j:commandButton id="removeFromList" value="" 
+													title="#{smsBundle.sms_removeFromlist}"
+													styleClass="aon-margin-left aon-icon-commandButton aon-icon-delete"
+													actionListener="#{sms.removeFromList}"
+													reRender="SMS_recipient, recipientList"
+													accesskey="#{bundle.aon_key_save}" >
+									            <a4j:actionparam name="selected" value="#{row}" assignTo="#{sms.selected}"/>
+											</a4j:commandButton>
+								        </rich:dataList>
+							        </aon:div>
+								</aon:div>
+							</c:if>
 
 						</aon:panelGrid>
 					</aon:div>
@@ -175,8 +178,10 @@
 				</aon:div>
 			</aon:div>
    		</aon:form>
-		<ui:include src="/com/code/aon/ui/messaging/facelet/sms/contacts.xhtml" />
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		<c:if test="#{sms.showContacts}">
+			<ui:include src="/com/code/aon/ui/messaging/facelet/sms/contacts.xhtml" />
+		</c:if>
 	</ui:define>
 </ui:composition>
 
