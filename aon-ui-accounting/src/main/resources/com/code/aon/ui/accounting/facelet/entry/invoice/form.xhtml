@@ -168,13 +168,13 @@
 							<aon:panelGroup rendered="#{invoiceEntry.sales}">
 								 <a4j:region>
 									<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
-										reRender="Customer_name,Invoice_document,TaxesData"
+										reRender="Customer_name,Invoice_document,invoiceDetails"
 										lookupProperty="registry" ajaxSingle="false"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										value="#{invoiceEntry.header.registry.id}" size="5" />
 									<aon:lookupButton
 										windowTitle="#{customerBundle.customer_selection}"
-										selectReRender="Customer_id,Customer_name,Invoice_document,TaxesData"
+										selectReRender="Customer_id,Customer_name,Invoice_document,invoiceDetails"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										actionType="search" lookup="#{customerLookup}" minHeight="460"
 										minWidth="650" property="#{invoiceEntry.header.registry}"
@@ -189,13 +189,13 @@
 							<aon:panelGroup rendered="#{invoiceEntry.purchase}">
 								 <a4j:region>
 									<aon:lookupInputText id="Supplier_id" lookup="#{supplierLookup}"
-										reRender="Supplier_name,Invoice_document"
+										reRender="Supplier_name,Invoice_document,invoiceDetails"
 										lookupProperty="registry" ajaxSingle="false"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										value="#{invoiceEntry.header.registry.id}" size="5" />
 									<aon:lookupButton
 										windowTitle="#{supplierBundle.supplier_selection}"
-										selectReRender="Supplier_id,Supplier_name,Invoice_document"
+										selectReRender="Supplier_id,Supplier_name,Invoice_document,invoiceDetails"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										actionType="search" lookup="#{supplierLookup}" minHeight="460"
 										minWidth="650" property="#{invoiceEntry.header.registry}"
@@ -210,13 +210,13 @@
 							<aon:panelGroup rendered="#{invoiceEntry.expense}">
 								 <a4j:region>
 									<aon:lookupInputText id="Creditor_id" lookup="#{creditorLookup}"
-										reRender="Creditor_name,Invoice_document"
+										reRender="Creditor_name,Invoice_document,invoiceDetails"
 										lookupProperty="registry" ajaxSingle="false"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										value="#{invoiceEntry.header.registry.id}" size="5" />
 									<aon:lookupButton
 										windowTitle="#{financeBundle.finance_creditor_selection}"
-										selectReRender="Supplier_id,Creditor_name,Invoice_document"
+										selectReRender="Creditor_id,Creditor_name,Invoice_document,invoiceDetails"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										actionType="search" lookup="#{creditorLookup}" minHeight="460"
 										minWidth="650" property="#{invoiceEntry.header.registry}"
@@ -256,15 +256,16 @@
 
 					</aon:panelGrid>
 				</aon:div>
-
+				<aon:div id="invoiceDetails">
 				<ui:include
 					src="/com/code/aon/ui/accounting/facelet/entry/invoice/form_lines.xhtml" />
 
 				<ui:include
 					src="/com/code/aon/ui/accounting/facelet/entry/invoice/form_finances.xhtml" />
-
+				</aon:div>
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 		<aon:lookupButtonPopup lookup="#{creditorLookup}" />

@@ -9,13 +9,13 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="accountEntryForm">
+		<aon:form>
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
 				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_entry_module}" />
 				<ui:param name="toolbarDescription"
-					value="#{account_entry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+					value="#{accountEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
@@ -35,11 +35,9 @@
 						actionListener="#{accountEntry.onRemove}"
 						rendered="#{accountEntry.model.rowCount > 0 and !accountEntry.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-delete"
+						disabled="#{!accountEntry.manual}"
 						immediate="true"
 						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;" />
-					<!-- 
-disabled="#{!accountEntry.manual}" 
- -->
 					<aon:commandButton id="search" value="#{bundle.aon_search}"
 						accesskey="#{bundle.aon_key_search}" action="accountEntry_search"
 						actionListener="#{accountEntry.onEditSearch}"

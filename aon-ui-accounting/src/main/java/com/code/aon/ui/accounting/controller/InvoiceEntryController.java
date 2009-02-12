@@ -40,6 +40,7 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.Company;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Series;
@@ -131,6 +132,11 @@ public class InvoiceEntryController {
 
 	public void setNew(boolean isNew) {
 		this.isNew = isNew;
+	}
+
+	public boolean isRegistryFilled() {
+		return (getHeader() != null && getHeader().getRegistry() != null && getHeader()
+				.getRegistry().getId() != null);
 	}
 
 	public boolean isNewDetail() {
@@ -368,7 +374,6 @@ public class InvoiceEntryController {
 		} else {
 			registry = ((IRegistry) getCurrentTaxInfo()).getRegistry();
 		}
-
 		this.currentFinance = initializeFinance();
 		try {
 			getFinanceGenerator().initializeFinanceData(this.currentFinance, registry);
@@ -381,21 +386,15 @@ public class InvoiceEntryController {
 		this.currentFinance = (Finance) finances.getRowData();
 	}
 
-	// private void applySurcharge() {
-	// if (isSales()) {
-	// currentDetail.calculateSurcharge(getCurrentTaxInfo().isSurcharge());
-	// } else if (isPurchase()) {
-	// currentDetail.calculateSurcharge(getCompany().isSurcharge());
-	// } else if (isExpense()) {
-	// currentDetail.calculateSurcharge(false);
-	// }
-	// }
-
 	@SuppressWarnings("unchecked")
 	public void onAddFinance(ActionEvent event) {
+		validateFinance(this.currentFinance);
 		((List<Finance>) this.finances.getWrappedData()).add(this.currentFinance);
 		this.currentFinance = initializeFinance();
 		this.setNewFinance(false);
+	}
+
+	private void validateFinance(Finance currentFinance2) {
 	}
 
 	@SuppressWarnings("unchecked")
@@ -635,7 +634,8 @@ public class InvoiceEntryController {
 		invoice.setSeries(getHeader().getSeries());
 		if (getHeader().getType().equals(InvoiceType.SALES)) {
 			if (getHeader().getNumber() == 0) {
-				invoice.setNumber(calculateNextNumber(getHeader().getSeries(), getHeader() .getType()));
+				invoice.setNumber(calculateNextNumber(getHeader().getSeries(), getHeader()
+						.getType()));
 			}
 		} else {
 			invoice.setNumber(getHeader().getNumber());
@@ -749,7 +749,12 @@ public class InvoiceEntryController {
 		List<Finance> financeList = new LinkedList<Finance>();
 		Invoice invoice = isNew() ? new Invoice() : getAccountEntryInvoice().getInvoice();
 		invoice = mergeInvoice(invoice);
-		Registry registry = ((IRegistry) getCurrentTaxInfo()).getRegistry();
+		Registry registry = null;
+		if (getCurrentTaxInfo() instanceof Registry) {
+			registry = (Registry) getCurrentTaxInfo();
+		} else {
+			registry = ((IRegistry) getCurrentTaxInfo()).getRegistry();
+		}
 		if (registry != null && registry.getId() != null) {
 			financeList = getFinanceGenerator().generateFinances(invoice, registry,
 					this.getInvoiceTotal(), false);
@@ -884,11 +889,30 @@ public class InvoiceEntryController {
 	}
 
 	public void onPayMethodChanged(ValueChangeEvent event) {
-
+		PayMethod oldPay = (PayMethod) event.getOldValue();
+		PayMethod newPay = (PayMethod) event.getNewValue();
+		if (oldPay == null || newPay == null || oldPay.getType() != newPay.getType()) {
+			currentFinance.setBank(new Bank());
+			currentFinance.setBankAccount(new BankAccount());
+		}
 	}
 
-	public void onBankChanged(ValueChangeEvent event) {
-
+	public void onBankChanged(LookupChangeEvent event) {
+		currentFinance.setBankAccount(new BankAccount());
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			Bank bank = (Bank) event.getNewValue();
+			currentFinance.getBankAccount().setEntity( bank.getCode() );			
+		}
+	}
+	
+	public void onRBankChanged(ValueChangeEvent event) {
+		currentFinance.setBank(null);
+		currentFinance.setBankAccount(new BankAccount());
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			RegistryBank rbank = (RegistryBank) event.getNewValue();
+			currentFinance.setBank(rbank.getBank());
+			currentFinance.setBankAccount( rbank.getBankAccount() );			
+		}
 	}
 
 	public List<SelectItem> getBanks() {
@@ -920,16 +944,17 @@ public class InvoiceEntryController {
 		Iterator<?> iter = rBankBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			RegistryBank rBank = (RegistryBank) iter.next();
-			SelectItem item = new SelectItem(rBank.getBank(), rBank.getBank().getName() + " ["
-					+ rBank.getBankAccount().toString() + "]");
+			SelectItem item = new SelectItem(rBank, 
+					StringUtils.abbreviate(rBank.getBank().getName(), 30)
+					+ " [" + rBank.getBankAccount().toString() + "]");
 			rBanks.add(item);
 		}
 		return rBanks;
 	}
 
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		int number = obtainMaxNumber((String)event.getNewValue());
-		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String)event.getNewValue());
+		int number = obtainMaxNumber((String) event.getNewValue());
+		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String) event.getNewValue());
 		if (getHeader() != null) {
 			getHeader().setNumber(number);
 			getHeader().setSecurityLevel(securityLevel);
@@ -943,7 +968,7 @@ public class InvoiceEntryController {
 		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
 		Iterator iter = seriesBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
-			Series series = (Series)iter.next(); 
+			Series series = (Series) iter.next();
 			if (series.getSecurityLevel() != null) {
 				return series.getSecurityLevel();
 			}
@@ -957,10 +982,13 @@ public class InvoiceEntryController {
 		if (StringUtils.isEmpty(seriesId)) {
 			criteria.addNullExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES));
 		} else {
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), seriesId);
+			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES),
+					seriesId);
 		}
-		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);
-		Projection projection = Projection.max(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER));
+		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE),
+				InvoiceType.SALES);
+		Projection projection = Projection.max(invoiceBean
+				.getFieldName(IFinanceAlias.INVOICE_NUMBER));
 		Object value = invoiceBean.getUniqueResult(projection, criteria);
 		if (value != null) {
 			return ((Integer) value).intValue() + 1;
