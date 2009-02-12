@@ -19,6 +19,9 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.config.Bank;
+import com.code.aon.config.BankAccount;
+import com.code.aon.config.PayMethod;
 import com.code.aon.config.Series;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.customer.Customer;
@@ -226,9 +229,9 @@ public class SaleInvoiceController extends InvoiceController {
 	}
 
 	public boolean isRemovable() {
-		SaleInvoiceDetailController feeInvoicingDetailController = (SaleInvoiceDetailController)FormUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
+		SaleInvoiceDetailController saleInvoiceDetailController = (SaleInvoiceDetailController)FormUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
 		Invoice invoice = (Invoice)this.getTo();
-		if (feeInvoicingDetailController.getTo() == null && invoice.getStatus().equals(InvoiceStatus.PENDING)) {
+		if (saleInvoiceDetailController.getTo() == null && invoice.getStatus().equals(InvoiceStatus.PENDING)) {
 			return true;
 		}
 		return false;
@@ -324,5 +327,5 @@ public class SaleInvoiceController extends InvoiceController {
 			addressController.onReset(event);
 		}
 	}
-	
+
 }

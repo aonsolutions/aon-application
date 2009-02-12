@@ -14,7 +14,6 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.ui.finance.controller.SaleInvoiceFinanceController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -27,26 +26,8 @@ public class SaleInvoiceFinanceControllerListener extends ControllerAdapter {
 	private static final String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
 
 	@Override
-	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		SaleInvoiceFinanceController saleInvoiceFinanceController = (SaleInvoiceFinanceController)event.getController();
-		Finance finance = (Finance)saleInvoiceFinanceController.getTo();
-		fillFinanceData(finance, saleInvoiceFinanceController.getRegistryBank());
-	}
-	
-	@Override
-	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		SaleInvoiceFinanceController saleInvoiceFinanceController = (SaleInvoiceFinanceController)event.getController();
-		Finance finance = (Finance)saleInvoiceFinanceController.getTo();
-		fillFinanceData(finance, saleInvoiceFinanceController.getRegistryBank());
-	}
-	
-	@Override
-	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-		SaleInvoiceFinanceController saleInvoiceFinanceController = (SaleInvoiceFinanceController)event.getController();
-		saleInvoiceFinanceController.setRegistryBank(obtainRegistryBank((Finance)saleInvoiceFinanceController.getTo()));
-	}
-
-	private void fillFinanceData(Finance finance, RegistryBank registryBank) {
+	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		Finance finance = (Finance) event.getController().getTo();
 		Invoice invoice = (Invoice)FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME).getTo();
 		finance.setInvoice(invoice);
 		if(invoice.getType().equals(InvoiceType.SALES)){
@@ -57,12 +38,10 @@ public class SaleInvoiceFinanceControllerListener extends ControllerAdapter {
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		finance.setRegistry(invoice.getRegistry());
 		finance.setSecurityLevel(invoice.getSecurityLevel());
-		if(registryBank == null){
-			finance.setBank(null);
-			finance.setBankAccount(null);
-		}else{
-			finance.setBank(registryBank.getBank());
-			finance.setBankAccount(registryBank.getBankAccount());
+		RegistryBank rbank = obtainRegistryBank(finance);
+		if (rbank != null) {
+			finance.setBank(rbank.getBank());
+			finance.setBankAccount(rbank.getBankAccount());
 		}
 	}
 
@@ -72,7 +51,6 @@ public class SaleInvoiceFinanceControllerListener extends ControllerAdapter {
 			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), finance.getRegistry().getId());
-			criteria.addEqualExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_BANK_ID), finance.getBank().getId());
 			Iterator iter = rBankBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				return (RegistryBank)iter.next();
