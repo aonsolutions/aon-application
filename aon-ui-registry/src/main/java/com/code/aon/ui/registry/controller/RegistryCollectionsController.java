@@ -16,6 +16,7 @@ import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.Relationship;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
@@ -44,6 +45,10 @@ public class RegistryCollectionsController {
 	private List<SelectItem> registryAttachmentTypes;
 	
 	private List<SelectItem> noteTypes;
+	
+	private RegistryBank rBank; // No Borrar. Euke.
+								// Se utiliza como selector 
+								// en la pantalla de alta de vencimientos.
 	
 	/**
      * Gets the address types.
@@ -204,5 +209,13 @@ public class RegistryCollectionsController {
 			users.add(item);
 		}
 		return users;
+	}
+
+	public RegistryBank getRegistryBank() {
+		return rBank;
+	}
+
+	public void setRegistryBank(RegistryBank bank) {
+		// void
 	}
 }
