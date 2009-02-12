@@ -31,7 +31,7 @@ import com.code.aon.webmail.MailAccount;
 
 public class MailAccountController extends BasicController {
 
-	private static final String MAIL_ACCOUNT_DUPLICATED = "aon_webmail_mailAccount_duplicated";
+	private static final String MAIL_ACCOUNT_DUPLICATED = "webmail_mailAccount_duplicated";
 
 	private static final Logger LOGGER = Logger.getLogger(MailAccountController.class.getName());
 	

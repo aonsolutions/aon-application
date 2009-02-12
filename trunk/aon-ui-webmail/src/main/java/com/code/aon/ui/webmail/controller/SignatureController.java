@@ -34,7 +34,7 @@ import com.code.aon.webmail.dao.IWebMailAlias;
 
 public class SignatureController extends GridController {
 
-	private static final String SIGNATURE_DUPLICATED = "aon_webmail_signature_duplicated";
+	private static final String SIGNATURE_DUPLICATED = "webmail_signature_duplicated";
 
 	private static final Logger LOGGER = Logger.getLogger(SignatureController.class.getName());
 

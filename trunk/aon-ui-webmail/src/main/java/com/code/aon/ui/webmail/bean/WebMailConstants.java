@@ -21,11 +21,11 @@ public interface WebMailConstants {
 	String BEAN_USER = "user";
 	String BEAN_MAIL_ACCOUNT = "mailAccount";
 	String BEAN_WEBMAIL = "webmail";
-	String BEAN_TREE = "tree";
-	String BEAN_FOLDER = "folder";
-	String BEAN_MESSAGE = "message";
-	String BEAN_ATTACH = "attach";
-	String BEAN_SEARCH = "search";
+	String BEAN_TREE = "webmailTree";
+	String BEAN_FOLDER = "webmailFolder";
+	String BEAN_MESSAGE = "webmailMessage";
+	String BEAN_ATTACH = "webmailAttach";
+	String BEAN_SEARCH = "webmailSearch";
 	String BEAN_INPUTFILE = "inputFile";
 	String BEAN_CONTACT = "contact";
 	String BEAN_SIGNATURE = "signature";
@@ -35,6 +35,17 @@ public interface WebMailConstants {
 	String BEAN_SPAM = "spam";
 	String BEAN_LOGGED_USER = "loggedUser";
 	
+	// ************************************************************
+	// BUNDLE
+	// ************************************************************
 	String RESOURCE_BUNDLE = "com.code.aon.ui.webmail.i18n.messages";
+	
+	String SUBJECT_MESSAGE = "webmail_subject";
+	String DATE_MESSAGE = "webmail_date";
+	String CC_MESSAGE = "webmail_cc";
+	String TO_MESSAGE = "webmail_to";
+	String FROM_MESSAGE = "webmail_from";
+	String REPLIED_MESSAGE = "webmail_replied_message";
+	String FORWARDED_MESSAGE = "webmail_forwarded_message";	
 	
 }

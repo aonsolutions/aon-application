@@ -82,10 +82,6 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 
 	private static final int MAX_LENGTH_STRING = 120;
 
-	private static final String REPLIED_MESSAGE = "aon_webmail_replied_message";
-
-	private static final String FORWARDED_MESSAGE = "aon_webmail_forwarded_message";
-	
 	private static final String VM_PATH_DEFAULT = "com/code/aon/ui/webmail/";
 	
 	private static final String PRINT_TEMPLATE = "print.html.vm";
@@ -1003,18 +999,18 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 			th.putInContext("nowDate", df.format(new Date()));
 			Locale locale = AonUtil.getCurrentLocale();
 			ResourceBundle bundle = ResourceBundle.getBundle(WebMailConstants.RESOURCE_BUNDLE, locale);	
-			th.putInContext("fromLiteral", bundle.getString("aon_webmail_from"));
+			th.putInContext("fromLiteral", bundle.getString(FROM_MESSAGE));
 			th.putInContext("sender", message.getSender());
-			th.putInContext("toLiteral", bundle.getString("aon_webmail_to"));
+			th.putInContext("toLiteral", bundle.getString(TO_MESSAGE));
 			th.putInContext("recipientsTo", message.getRecipientsTo());
 			String cc = message.getRecipientsCc();
 			if (! StringUtils.isEmpty(cc) ) {
-				th.putInContext("ccLiteral", bundle.getString("aon_webmail_cc"));
+				th.putInContext("ccLiteral", bundle.getString(CC_MESSAGE));
 				th.putInContext("recipientsCc", cc );				
 			}
-			th.putInContext("dateLiteral", bundle.getString("aon_webmail_date"));
+			th.putInContext("dateLiteral", bundle.getString(DATE_MESSAGE));
 			th.putInContext("sentDateString", message.getSentDateString());
-			th.putInContext("subjectLiteral", bundle.getString("aon_webmail_subject"));
+			th.putInContext("subjectLiteral", bundle.getString(SUBJECT_MESSAGE));
 			th.putInContext("subject", message.getSubject());
 			th.putInContext("messageContent", message.getContent());
 			th.processTemplate(PRINT_TEMPLATE, out);

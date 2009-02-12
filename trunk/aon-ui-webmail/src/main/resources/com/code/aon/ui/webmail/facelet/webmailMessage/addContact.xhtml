@@ -17,7 +17,7 @@
 			
 			<f:facet name="header">
 				<aon:div styleClass="aon-popupWindow-title">
-					<aon:outputText value="#{webmailBundle.aon_webmail_email_add}" />
+					<aon:outputText value="#{webmailBundle.webmail_email_add}" />
 				</aon:div>
 			</f:facet>
 	
@@ -34,10 +34,10 @@
 				styleClass="aon-panelGrid-formatting">
 				<aon:inputText id="Contact_name" required="true"
 					styleClass="aon-form-input-text" size="30" maxlength="128"
-					value="#{message.contactName}" />
+					value="#{webmailMessage.contactName}" />
 				<aon:commandButton id="closeModalAddContact"
 					styleClass="aon-commandButton" reRender="aonStatus"
-					actionListener="#{message.saveToContacts}"
+					actionListener="#{webmailMessage.saveToContacts}"
 					value="#{bundle.aon_accept}">
 					<rich:componentControl for="addContactModalPanel" operation="hide"
 						event="onclick" />

@@ -14,64 +14,64 @@
 	<aon:div>
 		 
 		<aon:div styleClass="aon-toolbar"  id="buttonsGrid" 
-			rendered="#{tree.treeLoaded}" style="padding-bottom:0;">					
+			rendered="#{webmailTree.treeLoaded}" style="padding-bottom:0;">					
 							
 			<aon:commandButton
 				id="newFolder" reRender="aonStatus"
-				title="#{webmailBundle.aon_webmail_newfolder}"
+				title="#{webmailBundle.webmail_newfolder}"
 				styleClass="aon-icon-commandButton aon-icon-newFolder"
-				actionListener="#{folder.openNewFolderPanelPopup}">
+				actionListener="#{webmailFolder.openNewFolderPanelPopup}">
 				<rich:componentControl for="newFolderModalPanel" operation="show" event="onclick"/>
 			</aon:commandButton>
 				
 			<aon:commandButton
 				id="deleteFolder_n"
-				rendered="#{folder.folder.deleteable}"
-				title="#{webmailBundle.aon_webmail_delfolder}"
-				actionListener="#{folder.deleteFolder}"
+				rendered="#{webmailFolder.folder.deleteable}"
+				title="#{webmailBundle.webmail_delfolder}"
+				actionListener="#{webmailFolder.deleteFolder}"
 				reRender="foldersTree,buttonsGrid,messageGrid"
 				styleClass="aon-icon-commandButton aon-icon-deleteFolder">
 			</aon:commandButton>
 			
 			<aon:commandButton
 				id="deleteFolder_d" disabled="true"
-				rendered="#{!folder.folder.deleteable}"
-				title="#{webmailBundle.aon_webmail_delfolder}"
+				rendered="#{!webmailFolder.folder.deleteable}"
+				title="#{webmailBundle.webmail_delfolder}"
 				styleClass="aon-icon-commandButton-disabled aon-icon-deleteFolder-disabled">
 			</aon:commandButton>
 		
 			<aon:commandButton
 				id="renameFolder_n" reRender="aonStatus"
-				rendered="#{folder.folder.renameable}"
-				title="#{webmailBundle.aon_webmail_renamefolder}"
-				actionListener="#{folder.openRenameFolderPanelPopup}"
+				rendered="#{webmailFolder.folder.renameable}"
+				title="#{webmailBundle.webmail_renamefolder}"
+				actionListener="#{webmailFolder.openRenameFolderPanelPopup}"
 				styleClass="aon-icon-commandButton aon-icon-renameFolder">
 				<rich:componentControl for="renameFolderModalPanel" operation="show" event="onclick"/>
 			</aon:commandButton>
 			
 			<aon:commandButton
 				id="renameFolder_d" disabled="true"
-				rendered="#{!folder.folder.renameable}"
-				title="#{webmailBundle.aon_webmail_renamefolder}"					
+				rendered="#{!webmailFolder.folder.renameable}"
+				title="#{webmailBundle.webmail_renamefolder}"					
 				styleClass="aon-icon-commandButton-disabled aon-icon-renameFolder-disabled">
 			</aon:commandButton>
 			
 		</aon:div>
 
 	   <aon:div >
-			<h:outputText value="#{tree.account}" styleClass="aon-icon-tree-root aon-icon"/>
+			<h:outputText value="#{webmailTree.account}" styleClass="aon-icon-tree-root aon-icon"/>
 		</aon:div>	
 	    
-		<rich:tree nodeSelectListener="#{tree.processSelection}" selectedClass="aon-tree-node-active" 
-				id="foldersTree" styleClass="aon-normal" adviseNodeSelected="#{tree.adviseNodeSelected}"
+		<rich:tree nodeSelectListener="#{webmailTree.processSelection}" selectedClass="aon-tree-node-active" 
+				id="foldersTree" styleClass="aon-normal" adviseNodeSelected="#{webmailTree.adviseNodeSelected}"
 				reRender="buttonsGrid,folderButtonsGrid,messageGrid" ajaxSubmitSelection="true"  switchType="ajax"
-				value="#{tree.treeNode}" var="item"
+				value="#{webmailTree.treeNode}" var="item"
 				nodeFace="#{item.folderTypeName}">
 			<rich:treeNode type="INBOX" 
 				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-inbox.png']}" 
 				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-inbox.png']}">
 				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
-					dropListener="#{folder.messagesDrop}" reRender="messagesDiv,foldersTree" />							
+					dropListener="#{webmailFolder.messagesDrop}" reRender="messagesDiv,foldersTree" />							
 				<aon:outputText 
 	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
 					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
@@ -83,7 +83,7 @@
 				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-sent.png']}" 
 				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-sent.png']}">
 				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
-					dropListener="#{folder.messagesDrop}" reRender="messagesDiv,foldersTree" />							
+					dropListener="#{webmailFolder.messagesDrop}" reRender="messagesDiv,foldersTree" />							
 				<aon:outputText 
 	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
 					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
@@ -95,7 +95,7 @@
 				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-spam.png']}" 
 				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-spam.png']}">
 				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
-					dropListener="#{folder.messagesDrop}" reRender="messagesDiv,foldersTree" />							
+					dropListener="#{webmailFolder.messagesDrop}" reRender="messagesDiv,foldersTree" />							
 				<aon:outputText 
 	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
 					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
@@ -107,7 +107,7 @@
 				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-trash.png']}" 
 				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-trash.png']}">
 				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
-					dropListener="#{folder.messagesDrop}" reRender="messagesDiv,foldersTree" />							
+					dropListener="#{webmailFolder.messagesDrop}" reRender="messagesDiv,foldersTree" />							
 				<aon:outputText 
 	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
 					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
@@ -119,7 +119,7 @@
 				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-draft.png']}" 
 				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-draft.png']}">
 				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
-					dropListener="#{folder.messagesDrop}" reRender="messagesDiv,foldersTree" />			
+					dropListener="#{webmailFolder.messagesDrop}" reRender="messagesDiv,foldersTree" />			
 				<aon:outputText 
 	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
 					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
@@ -131,7 +131,7 @@
 				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-folder.png']}" 
 				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-folder.png']}">
 				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
-					dropListener="#{folder.messagesDrop}" reRender="messagesDiv,foldersTree" />			
+					dropListener="#{webmailFolder.messagesDrop}" reRender="messagesDiv,foldersTree" />			
 				<aon:outputText 
 					value="WebMail"
 					rendered="#{item.root}" />

@@ -127,7 +127,7 @@ public class WebMailController implements WebMailConstants {
 		        			"<b><font size='4'>"+ loggedUser.getLoggedUserName()+"</font></b><p>"+
 		        			"<b><font size='2'>"+ loggedUser.getCompanyName()+"</font></b><p>"+
 		        			"<br>"+
-		        			"<i>"+bundle.getString("aon_webmail_signature_deftext")+"</i>");
+		        			"<i>"+bundle.getString("webmail_signature_deftext")+"</i>");
 					signatureBean.insert(signature);					
 				}
 				IManagerBean mailAccountBean = FormUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();

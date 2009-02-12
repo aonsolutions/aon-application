@@ -35,8 +35,9 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.exception.WebmailException;
+import com.code.aon.ui.webmail.listener.IAonFileListener;
 
-public class AonMessage implements IMimeType {
+public class AonMessage implements IMimeType, WebMailConstants {
 
 	private static final Logger LOGGER = Logger.getLogger(AonMessage.class
 			.getName());
@@ -854,14 +855,14 @@ public class AonMessage implements IMimeType {
 		}
 		sb.append( "<DIV style='BACKGROUND: #e4e4e4'>" );
 		String from = getSender(message);
-		sb.append( "<b>" ).append(bundle.getString("aon_webmail_from")).append(":</b> ").append(from).append( "</DIV>" );
-		sb.append( "<b>" ).append(bundle.getString("aon_webmail_date")).append(":</b> ").append( message.getSentDate() );
+		sb.append( "<b>" ).append(bundle.getString(FROM_MESSAGE)).append(":</b> ").append(from).append( "</DIV>" );
+		sb.append( "<b>" ).append(bundle.getString(DATE_MESSAGE)).append(":</b> ").append( message.getSentDate() );
 		String cc = getRecipientsCc(message);
 		if (! StringUtils.isEmpty(cc) ) {
-			sb.append( "<br/><b>" ).append(bundle.getString("aon_webmail_cc")).append(":</b> ").append( cc );
+			sb.append( "<br/><b>" ).append(bundle.getString(CC_MESSAGE)).append(":</b> ").append( cc );
 		}
 		String subject = getDisplaySubject(message);
-		sb.append( "<br/><b>" ).append(bundle.getString("aon_webmail_subject")).append(":</b> ").append( subject );
+		sb.append( "<br/><b>" ).append(bundle.getString(SUBJECT_MESSAGE)).append(":</b> ").append( subject );
    		sb.append( "</font><br/><br/>" );
    		sb.append( content );
 		if ( headerId != null ) {

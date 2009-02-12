@@ -16,32 +16,32 @@
 		<aon:form id="emailList">
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{webmailBundle.aon_webmail_spam}" />
+				<ui:param name="toolbarTitle" value="#{webmailBundle.webmail_spam}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_listing}- #{bundle.aon_editing}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="save"
-						value="#{webmailBundle.aon_webmail_spam_save}" 
+						value="#{webmailBundle.webmail_spam_save}" 
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						actionListener="#{spam.onSave}"
 						reRender="mainData,listData"
-						accesskey="#{webmailBundle.aon_webmail_spam_save}"/>					
+						accesskey="#{webmailBundle.webmail_spam_save}"/>					
 					<aon:commandButton id="load"
-						value="#{webmailBundle.aon_webmail_spam_reload}" 
+						value="#{webmailBundle.webmail_spam_reload}" 
 						styleClass="aon-finding-toolbar-item aon-icon-refresh"
 						actionListener="#{spam.onLoad}"
 						reRender="mainData,listData"
-						accesskey="#{webmailBundle.aon_webmail_spam_reload}"/>
+						accesskey="#{webmailBundle.webmail_spam_reload}"/>
 					<aon:commandButton
 						id="addWhiteList" reRender="addBlackWhiteListWindow"
-						value="#{webmailBundle.aon_webmail_add_white_list}" 
+						value="#{webmailBundle.webmail_add_white_list}" 
 						styleClass="aon-finding-toolbar-item aon-icon-white-list"
-						title="#{webmailBundle.aon_webmail_add_white_list}"
+						title="#{webmailBundle.webmail_add_white_list}"
 						actionListener="#{spam.openNewWhitePanelPopup}" />
 					<aon:commandButton
 						id="addBlackList" reRender="addBlackWhiteListWindow"
-						value="#{webmailBundle.aon_webmail_add_black_list}" 
+						value="#{webmailBundle.webmail_add_black_list}" 
 						styleClass="aon-finding-toolbar-item aon-icon-black-list"
-						title="#{webmailBundle.aon_webmail_add_black_list}"
+						title="#{webmailBundle.webmail_add_black_list}"
 						actionListener="#{spam.openNewBlackPanelPopup}" />
 				</ui:define>
 			</ui:decorate>
@@ -50,14 +50,14 @@
 				<aon:panelGrid id="mainData" columns="2" dir="true" style="margin:1em;">
 
 					<aon:outputLabel for="spam_score"
-						value="#{webmailBundle.aon_webmail_spam_score}" />
+						value="#{webmailBundle.webmail_spam_score}" />
 					<aon:selectOneRadio id="spam_score" 
 						value="#{spam.spamScoreType}">
 						<f:selectItems value="#{spam.scoreTypes}" />
 					</aon:selectOneRadio>
 						
 					<aon:outputLabel for="spam_rewrite"
-						value="#{webmailBundle.aon_webmail_spam_rewrite}" />
+						value="#{webmailBundle.webmail_spam_rewrite}" />
 					<aon:inputText id="spam_rewrite"
 						size="45" maxlength="40"
 						value="#{spam.rewrite_1}" />
@@ -70,7 +70,7 @@
 			columnClasses="aon-width-50percent,aon-width-50percent">
 				<aon:div styleClass="aon-group">
 					<aon:div styleClass="aon-group-title">
-						<aon:outputText value="#{webmailBundle.aon_webmail_spam_white}"/>
+						<aon:outputText value="#{webmailBundle.webmail_spam_white}"/>
 					</aon:div>
 					<aon:div styleClass="aon-group-body"> 
 						<aon:div styleClass="aon-group-body-internal">
@@ -83,7 +83,7 @@
 								<aon:outputLabel for="spam_score"
 									escape="false" 
 									styleClass="aon-icon-agenda aon-icon"
-									value="#{webmailBundle.aon_webmail_add_contacts_to_white_list}" />
+									value="#{webmailBundle.webmail_add_contacts_to_white_list}" />
 							</aon:panelGrid> 
 	                    	<aon:dataTable id="whiteList" 
 				                    	var="whiteTo" 
@@ -105,7 +105,7 @@
 	                        
 	                        <aon:column>
 	                            <f:facet name="header">
-									   <aon:outputText value="#{webmailBundle.aon_webmail_spam_accounts}"/>
+									   <aon:outputText value="#{webmailBundle.webmail_spam_accounts}"/>
 							    </f:facet>
 		                        <aon:outputText value="#{whiteTo.email}" styleClass="aon-bold" rendered="#{whiteTo.added and !whiteTo.selected}" />
 		                        <aon:outputText value="#{whiteTo.email}" styleClass="aon-line-through"  rendered="#{whiteTo.selected}" />
@@ -117,7 +117,7 @@
 			</aon:div>
 			<aon:div styleClass="aon-group">
 					<aon:div styleClass="aon-group-title">
-						<aon:outputText value="#{webmailBundle.aon_webmail_spam_black}"/>
+						<aon:outputText value="#{webmailBundle.webmail_spam_black}"/>
 					</aon:div>
 					<aon:div styleClass="aon-group-body"> 	
 						<aon:div styleClass="aon-group-body-internal">
@@ -140,7 +140,7 @@
 		                        </aon:column>
 		                        <aon:column>
 		                            <f:facet name="header">											
-									   <aon:outputText value="#{webmailBundle.aon_webmail_spam_accounts}"/>
+									   <aon:outputText value="#{webmailBundle.webmail_spam_accounts}"/>
 								    </f:facet>															
 			                            <aon:outputText value="#{blackTo.email}" styleClass="aon-bold" rendered="#{blackTo.added and !blackTo.selected}" />
 			                            <aon:outputText value="#{blackTo.email}" styleClass="aon-line-through" rendered="#{blackTo.selected}" />
@@ -154,7 +154,7 @@
 				
 		</aon:form>
 
-		<ui:include src="/webmail/facelet/modal/blackWhiteList.xhtml" />
+		<ui:include src="/com/code/aon/ui/webmail/facelet/spam/blackWhiteList.xhtml" />
 		
 	</ui:define>
 
