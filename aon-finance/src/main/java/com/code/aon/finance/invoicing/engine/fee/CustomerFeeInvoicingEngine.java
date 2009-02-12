@@ -257,7 +257,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		invoice.setRegistry(registry);
 		invoice.setRegistryDocument(registry.getDocument());
 		invoice.setRegistryName((registry.getName() == null?"":registry.getName()) + " " + (registry.getSurname()==null?"":registry.getSurname()));
-		invoice.setSeries(params.getSeries().getId());
+		invoice.setSeries(params.getSeries()==null?"":params.getSeries().getId());
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setSecurityLevel(params.getSecurityLevel());
