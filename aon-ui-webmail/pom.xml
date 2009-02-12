@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.webmail</artifactId>
 	<name>AON UI WEBMAIL</name>
-	<version>4.3.1</version>
+	<version>4.4.0</version>
 	<description>AON UI WEBMAIL</description>
 	<dependencies>
 		<dependency>
@@ -35,7 +35,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.webmail</artifactId>
-			<version>2.0.11</version>
+			<version>3.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -49,12 +49,6 @@
 					<artifactId>aon.config</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
-			<version>1.4</version>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
