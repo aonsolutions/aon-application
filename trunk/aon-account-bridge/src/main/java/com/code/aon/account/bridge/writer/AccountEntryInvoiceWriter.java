@@ -38,6 +38,8 @@ import com.code.aon.ql.Criteria;
 public class AccountEntryInvoiceWriter {
 
 	private Account salesDefaultAccount;
+	private static final String N_FRA = "N/Fra: ";
+	private static final String S_FRA = "S/Fra: ";
 	
 	public void unrecordAndUpdateInvoice(Invoice invoice) throws ManagerBeanException {
 		unrecordInvoice(invoice);
@@ -233,6 +235,7 @@ public class AccountEntryInvoiceWriter {
 			double invoiceTotal, double retentionTotal, double taxQuota,
 			Map<Account, Double> basesPerAccount) throws ManagerBeanException {
 		IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+		String concept = (account.getId().startsWith("430"))?N_FRA:S_FRA; 
 		// Primer Apunte
 		AccountEntryDetail entryDetail = new AccountEntryDetail();
 		entryDetail.setAccount(account);
@@ -249,7 +252,7 @@ public class AccountEntryInvoiceWriter {
 		if (entry.getType().equals(AccountEntryType.EXPENSE_INVOICE)) {
 			entryDetail.setCredit(invoiceTotal);
 		}
-		entryDetail.setConcept("N/Fra: " + series + "/" + number);
+		entryDetail.setConcept(concept + (series==null?"":(series + "/")) + number);
 		entryDetailBean.insert(entryDetail);
 		// Segundo Apunte(Mirar si hay q crearlo o no)
 		entryDetail = new AccountEntryDetail();
@@ -265,7 +268,7 @@ public class AccountEntryInvoiceWriter {
 			}
 			entryDetail.setAccountEntry(entry);
 			entryDetail.setBalancingAccount(account);
-			entryDetail.setConcept("N/Fra: " + series + "/" + number);
+			entryDetail.setConcept(concept + (series==null?"":(series + "/")) + number);
 			entryDetailBean.insert(entryDetail);
 		}
 		// Tercer Apunte (Si I.V.A. es 0 no se crea)
@@ -282,7 +285,7 @@ public class AccountEntryInvoiceWriter {
 			}
 			entryDetail.setAccountEntry(entry);
 			entryDetail.setBalancingAccount(account);
-			entryDetail.setConcept("N/Fra: " + series + "/" + number);
+			entryDetail.setConcept(concept + (series==null?"":(series + "/")) + number);
 			entryDetailBean.insert(entryDetail);
 		}
 		// Cuarto Apunte (o varios Apuntes en funcion del Mapa de bases por
@@ -293,7 +296,7 @@ public class AccountEntryInvoiceWriter {
 			entryDetail.setAccount(iterator.next());
 			entryDetail.setAccountEntry(entry);
 			entryDetail.setBalancingAccount(account);
-			entryDetail.setConcept("N/Fra: " + series + "/" + number);
+			entryDetail.setConcept(concept + (series==null?"":(series + "/")) + number);
 			if (entry.getType().equals(AccountEntryType.SALES_INVOICE)) {
 				entryDetail
 						.setCredit((basesPerAccount.get(entryDetail.getAccount())).doubleValue());
