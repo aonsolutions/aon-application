@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-web-cms</artifactId>
 	<packaging>war</packaging>
-	<version>4.0.0</version>
+	<version>4.0.1</version>
 	<description>WEB CMS</description>
 	<name>WEB CMS</name>
 	<build>
@@ -86,18 +86,6 @@
 			<artifactId>commons-collections</artifactId>
 			<version>3.1</version>
 			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.velocity</groupId> 
-			<artifactId>velocity</artifactId> 
-			<version>1.5</version> 
-			<scope>compile</scope> 
-			<exclusions>
-				<exclusion>
-				<groupId>velocity</groupId> 
-				<artifactId>velocity-dep</artifactId> 
-				</exclusion>
-			</exclusions>
 		</dependency>
 	</dependencies>
 </project>
