@@ -8,6 +8,8 @@ import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
@@ -92,11 +94,19 @@ public class FBatchControllerListener extends ControllerAdapter {
     @Override
     @SuppressWarnings("unchecked")
 	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
-        FBatchDetailController fBatchDetailController = (FBatchDetailController)AonUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER);
-        Iterator iter = fBatchDetailController.getWrappedList().iterator();
-		while (iter.hasNext()) {
-			FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iter.next();
-			((FBatchController)event.getController()).updateRelatedInfo(fBatchDetail);
+        FBatchController fBatchController = (FBatchController)event.getController();
+		FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
+        try {
+        	IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
+        	Criteria criteria = new Criteria();
+        	criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), fBatch.getId());
+	        Iterator iter = fBatchDetailBean.getList(criteria).iterator();
+			while (iter.hasNext()) {
+				FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iter.next();
+				((FBatchController)event.getController()).updateRelatedInfo(fBatchDetail);
+	        }
+        } catch (ManagerBeanException e) {
+            LOGGER.log(Level.SEVERE, "Error obtaining FinanceBatchDetails from FinanceBatch with id=" + fBatch.getId(), e);
         }
 	}
 
