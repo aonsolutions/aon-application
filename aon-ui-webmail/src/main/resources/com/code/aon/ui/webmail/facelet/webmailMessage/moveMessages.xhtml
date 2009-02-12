@@ -14,7 +14,7 @@
 		width="440" top="100" zindex="2000">
 		<f:facet name="header">
 			<aon:div styleClass="aon-popupWindow-title">
-				<aon:outputText value="#{webmailBundle.aon_webmail_move_message}" />
+				<aon:outputText value="#{webmailBundle.webmail_move_message}" />
 			</aon:div>
 		</f:facet>
 		<f:facet name="controls">
@@ -25,9 +25,9 @@
 			</aon:commandButton>
 		</f:facet>
 		<aon:div styleClass="modalPanel-scroll1">
-			<rich:tree nodeSelectListener="#{tree.moveMessagesToFolder}"
+			<rich:tree nodeSelectListener="#{webmailTree.moveMessagesToFolder}"
 				id="foldersTree_modal" ajaxSubmitSelection="true"
-				switchType="server" value="#{tree.treeNode}" var="item">
+				switchType="server" value="#{webmailTree.treeNode}" var="item">
 				<rich:treeNode>
 					<aon:commandLink value="#{item.name}" action="folder"
 						rendered="#{!item.root}">

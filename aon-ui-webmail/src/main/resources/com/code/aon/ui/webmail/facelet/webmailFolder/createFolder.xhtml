@@ -16,7 +16,7 @@
 			top="100" zindex="2000">
 			<f:facet name="header">
 				<aon:div styleClass="aon-popupWindow-title">
-					<aon:outputText value="#{webmailBundle.aon_webmail_folder_create_new}" />
+					<aon:outputText value="#{webmailBundle.webmail_folder_create_new}" />
 				</aon:div>
 			</f:facet>
 			<f:facet name="controls">
@@ -28,13 +28,13 @@
 			</f:facet>
 
 
-			<aon:outputLabel for="newFolderName" value="#{webmailBundle.aon_webmail_folder_name}:" />
+			<aon:outputLabel for="newFolderName" value="#{webmailBundle.webmail_folder_name}:" />
 			<h:panelGrid width="100%" cellpadding="2" cellspacing="0" columns="2"
 				styleClass="aon-panelGrid-formatting">
 				<aon:inputText id="newFolderName" size="27" required="true"
-					value="#{folder.newFolderName}" />
+					value="#{webmailFolder.newFolderName}" />
 				<aon:commandButton styleClass="aon-commandButton"
-					reRender="foldersTree" actionListener="#{folder.createFolder}"
+					reRender="foldersTree" actionListener="#{webmailFolder.createFolder}"
 					value="#{bundle.aon_accept}">
 					<rich:componentControl for="newFolderModalPanel" operation="hide"
 						event="onclick" />
