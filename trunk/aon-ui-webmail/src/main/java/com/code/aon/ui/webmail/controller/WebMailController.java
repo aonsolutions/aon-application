@@ -1,7 +1,6 @@
 package com.code.aon.ui.webmail.controller;
 
 import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -19,15 +18,16 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.AonFolder;
-import com.code.aon.ui.webmail.bean.AonServer;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
+import com.code.aon.webmail.WebmailUtil;
+import com.code.aon.webmail.bean.AonServer;
+import com.code.aon.webmail.bean.BundleConstants;
 import com.code.aon.webmail.dao.IWebMailAlias;
 
-public class WebMailController implements WebMailConstants {
+public class WebMailController implements WebMailConstants, BundleConstants {
 
 	private static final Logger LOGGER = Logger.getLogger(WebMailController.class.getName());
 	
@@ -43,26 +43,12 @@ public class WebMailController implements WebMailConstants {
 		return server;
 	}
 
-	public void initDefault(AuthPrincipal mailUser){
+	public void initDefault(AuthPrincipal user){
 		
 		try {
-			MailAccount mailAccount = getAccount(mailUser);
+			MailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
 			if (mailAccount!=null) {
 				initFull(mailAccount);
-			}else{
-	    		AonUtil.addErrorMessage("NOT VALID ACCOUNT");
-			}
-    	}catch (ManagerBeanException e) {
-    		AonUtil.addErrorMessage(e.getMessage());
-    		throw new AbortProcessingException(e);
-		}
-	}
-
-	public void initDesktop(AuthPrincipal mailUser){
-		try {
-			MailAccount mailAccount = getAccount(mailUser);
-			if (mailAccount!=null){
-				initBasic(mailAccount);
 			}else{
 	    		AonUtil.addErrorMessage("NOT VALID ACCOUNT");
 			}
@@ -85,18 +71,6 @@ public class WebMailController implements WebMailConstants {
     	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(BEAN_TREE);
     	treeBean.initTree();
 	}
-
-    private MailAccount getAccount(AuthPrincipal mailUser) throws ManagerBeanException {
-		IManagerBean beanAccount = FormUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();
-		Criteria criteriaAccount = new Criteria();
-		criteriaAccount.addEqualExpression(beanAccount.getFieldName(IWebMailAlias.MAIL_ACCOUNT_NAME), MailAccount.DEFAULT_MAIL_ACCOUNT_NAME);
-		Iterator<ITransferObject> iterAccount = beanAccount.getList(criteriaAccount).iterator();
-		if (iterAccount.hasNext()){
-			MailAccount mailAccount = (MailAccount)iterAccount.next();
-			return mailAccount;
-		}
-		return null;
-    }
 
     public String getMillis() {
         return ""+new GregorianCalendar().getTimeInMillis();

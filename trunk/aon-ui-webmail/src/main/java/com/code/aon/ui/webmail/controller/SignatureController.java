@@ -21,8 +21,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.ldap.AonDN;
-import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.GridController;
@@ -30,6 +28,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
+import com.code.aon.webmail.WebmailUtil;
+import com.code.aon.webmail.bean.BundleConstants;
 import com.code.aon.webmail.dao.IWebMailAlias;
 
 public class SignatureController extends GridController {
@@ -43,19 +43,12 @@ public class SignatureController extends GridController {
 	private BasicManagerBean ldapManagerBean;
 	
 	private List<SelectItem> signatures;
-
-	public LdapDAO getDAO( AuthPrincipal principal ) {
-		LdapDAO dao = new LdapDAO(Signature.class);
-		DistinguishedName baseDN = AonDN.getUserSignaturesDN(principal.getDomain(), principal.getShortName());
-		LOGGER.info( "Signature DAO DN:" + baseDN );
-		dao.setBaseDN( baseDN.toString() );
-		return dao;
-	}
 	
 	@Override
 	public IManagerBean getManagerBean() throws ManagerBeanException {
 		if (this.ldapManagerBean == null) {
-			this.dao = getDAO(Utils.getAuthPrincipal());
+			AuthPrincipal auth = Utils.getAuthPrincipal();
+			this.dao = WebmailUtil.getSignatureDAO(auth.getDomain(), auth.getShortName());
 			this.ldapManagerBean = new BasicManagerBean(dao);
 		}
 		return this.ldapManagerBean;
@@ -63,7 +56,7 @@ public class SignatureController extends GridController {
 	
 	private void addMessageExpression( String messageId ) {
 		Locale locale = AonUtil.getCurrentLocale();
-		ResourceBundle bundle = ResourceBundle.getBundle(WebMailConstants.RESOURCE_BUNDLE, locale);
+		ResourceBundle bundle = ResourceBundle.getBundle(BundleConstants.RESOURCE_BUNDLE, locale);
 		addMessage( bundle.getString(messageId) );
 	}
 	
