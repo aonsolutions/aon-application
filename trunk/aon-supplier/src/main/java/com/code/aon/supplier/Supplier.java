@@ -160,7 +160,7 @@ public class Supplier implements ITransferObject, IScopable, IRegistry {
 
 	@Override
 	public int hashCode() {
-		return getId().hashCode();
+		return getId()==null?0:getId().hashCode();
 	}
 
 }
