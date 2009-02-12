@@ -10,6 +10,8 @@
 
 	<aon:div id="#{id}Container" rendered="#{renderedAttr}">
 		<a4j:region>
+			<aon:outputLabel for="#{id}" style="display:none"
+				value="#{accountBundle.account_account}" />
 			<aon:inputText id="#{id}" value="#{entity}" disabled="#{disabled}"
 				required="#{required}" size="#{size}">
 				<a4j:support event="onkeyup"
@@ -39,7 +41,8 @@
 		<rich:suggestionbox for="#{id}"
 			suggestionAction="#{wizard.autocompleteId}" var="result"
 			onsubmit="if (!activateSuggestionBox(this)) return false;"
-			immediate="true" eventsQueue="#{id}Sug" ignoreDupResponses="true"
+			immediate="true"
+			eventsQueue="#{id}Sug" ignoreDupResponses="true"
 			requestDelay="100" width="500" height="200"
 			nothingLabel="#{bundle.aon_search_no_results}">
 			<aon:column>
