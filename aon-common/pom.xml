@@ -99,6 +99,10 @@
 					<groupId>velocity</groupId> 
 					<artifactId>velocity-dep</artifactId> 
 				</exclusion>
+				<exclusion>
+					<groupId>commons-collections</groupId>
+					<artifactId>commons-collections</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>		
 		<dependency>
