@@ -20,7 +20,7 @@
 }
 
 .aon-dataTable-link {
-	background:#fff url(images/aon-icon/aon-icon-arrow-dataTable-item.png) scroll right center no-repeat;
+	background:transparent url(images/aon-icon/aon-icon-arrow-dataTable-item.png) scroll right center no-repeat;
 	padding-right: 10px;
 }
 
