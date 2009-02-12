@@ -45,10 +45,6 @@
 			<exclusions>
 				<exclusion>			
 					<groupId>com.code.aon</groupId>
-					<artifactId>aon.messaging</artifactId>
-				</exclusion>
-				<exclusion>			
-					<groupId>com.code.aon</groupId>
 					<artifactId>aon.ui.config</artifactId>
 				</exclusion>
 			</exclusions>			
