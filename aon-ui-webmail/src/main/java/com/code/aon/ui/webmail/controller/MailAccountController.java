@@ -21,13 +21,13 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.ldap.AonDN;
-import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.WebmailUtil;
+import com.code.aon.webmail.bean.BundleConstants;
 
 public class MailAccountController extends BasicController {
 
@@ -41,18 +41,11 @@ public class MailAccountController extends BasicController {
 	
 	private List<SelectItem> mailAccounts;
 
-	public LdapDAO getDAO( AuthPrincipal principal ) {
-		LdapDAO dao = new LdapDAO(MailAccount.class);
-		DistinguishedName baseDN = AonDN.getUserAccountsDN(principal.getDomain(), principal.getShortName());
-		LOGGER.info( "MailAccount DAO DN:" + baseDN );
-		dao.setBaseDN( baseDN.toString() );
-		return dao;
-	}
-	
 	@Override
 	public IManagerBean getManagerBean() throws ManagerBeanException {
 		if (this.ldapManagerBean == null) {
-			this.dao = getDAO(Utils.getAuthPrincipal());
+			AuthPrincipal auth = Utils.getAuthPrincipal();
+			this.dao = WebmailUtil.getMailAccountDAO(auth.getDomain(), auth.getShortName());
 			this.ldapManagerBean = new BasicManagerBean(dao);
 		}
 		return this.ldapManagerBean;
@@ -60,7 +53,7 @@ public class MailAccountController extends BasicController {
 	
 	private void addMessageExpression( String messageId ) {
 		Locale locale = AonUtil.getCurrentLocale();
-		ResourceBundle bundle = ResourceBundle.getBundle(WebMailConstants.RESOURCE_BUNDLE, locale);
+		ResourceBundle bundle = ResourceBundle.getBundle(BundleConstants.RESOURCE_BUNDLE, locale);
 		addMessage( bundle.getString(messageId) );
 	}
 	

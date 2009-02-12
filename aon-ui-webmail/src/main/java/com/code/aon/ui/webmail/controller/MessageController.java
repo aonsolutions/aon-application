@@ -65,20 +65,22 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.AonAttachment;
 import com.code.aon.ui.webmail.bean.AonFile;
-import com.code.aon.ui.webmail.bean.AonFolder;
-import com.code.aon.ui.webmail.bean.AonMessage;
-import com.code.aon.ui.webmail.bean.AonMessageUtils;
+import com.code.aon.ui.webmail.bean.AonMessageTracer;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
-import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.ui.webmail.listener.IAonFileListener;
 import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.WebmailException;
+import com.code.aon.webmail.bean.AonAttachment;
+import com.code.aon.webmail.bean.AonFolder;
+import com.code.aon.webmail.bean.AonMessage;
+import com.code.aon.webmail.bean.AonMessageUtils;
+import com.code.aon.webmail.bean.BundleConstants;
 import com.sun.mail.imap.AppendUID;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.util.LineOutputStream;
 
-public class MessageController implements WebMailConstants, IAonFileListener {
+public class MessageController implements WebMailConstants, BundleConstants, IAonFileListener {
 
 	private static final int MAX_LENGTH_STRING = 120;
 
@@ -91,6 +93,8 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 	private AonMessage message;
 
 	private AonMessage parentMessage;
+	
+	private String messageContent;
 	
 	private Long draftMessageUID;
 
@@ -128,6 +132,7 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 	 */
 	public void setMessage(AonMessage message) {
 		this.message = message;
+		this.messageContent = null;
 		afterSetMessage();
 		AttachController attachController = (AttachController) AonUtil.getRegisteredBean(BEAN_ATTACH);
 		attachController.update(this.message);
@@ -169,7 +174,7 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 			recipientsCc = message.getRecipientsCc();
 			recipientsBcc = message.getRecipientsBcc();
 	       	subject = message.getSubject();
-	       	content = message.getContent().toString();
+	       	content = getMessageContent();
 		} catch (WebmailException e) {
     		AonUtil.addErrorMessage(e.getMessage());
     		throw new AbortProcessingException(e);
@@ -182,7 +187,7 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 		try {
 			recipientsTo = AonMessage.parseDisplayAddress(message.getSender());
 	       	subject = "Reply: "+message.getSubject();
-	       	messageBody = AonMessage.getMessageEnvelope(message.getMessage(), message.getContent(), REPLIED_MESSAGE);
+	       	messageBody = AonMessage.getMessageEnvelope(message.getMessage(), getMessageContent(), REPLIED_MESSAGE, AonUtil.getCurrentLocale());
 	       	content += messageBody;
 		} catch (WebmailException e) {
     		AonUtil.addErrorMessage(e.getMessage());
@@ -225,7 +230,7 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 	       	String dest = getReplyToAllRecipients(message);
 			recipientsTo = AonMessage.parseDisplayAddress(dest);
 	       	subject = "ReplyALL: "+message.getSubject();
-	       	messageBody = AonMessage.getMessageEnvelope(message.getMessage(), message.getContent(), REPLIED_MESSAGE);
+	       	messageBody = AonMessage.getMessageEnvelope(message.getMessage(), getMessageContent(), REPLIED_MESSAGE, AonUtil.getCurrentLocale());
 	       	content += messageBody;
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
@@ -276,7 +281,7 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 		try {
 			copyAttachmentsToFileList( message );
 	       	subject = "Fwd: "+message.getSubject();
-	       	messageBody = AonMessage.getMessageEnvelope(message.getMessage(), message.getContent(), FORWARDED_MESSAGE);
+	       	messageBody = AonMessage.getMessageEnvelope(message.getMessage(), getMessageContent(), FORWARDED_MESSAGE, AonUtil.getCurrentLocale());
 	       	content += messageBody;
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
@@ -336,13 +341,15 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 	    	AonMessage aonMessage = compoundMessage();
 	    	AonFolder dest = null;
 	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-	    	if (webMailController.getServer().sendMessage(aonMessage)){
+	    	try {
+	    		webMailController.getServer().sendMessage(aonMessage);
 		    	dest = webMailController.getServer().getAonFolder(AonFolder.SENT_FOLDER_NAME);
 		    	if (parentMessage!=null){
 			    	parentMessage.getMessage().setFlag(Flag.ANSWERED, true);
 			    	parentMessage.getParent().getFolder().expunge();
 		    	}
-	    	}else{
+	    	} catch ( WebmailException e ) {
+	    		LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		    	dest = webMailController.getServer().getAonFolder(AonFolder.DRAFT_FOLDER_NAME);
 	    	}
 	    	Message[] messages = new Message[1];
@@ -445,9 +452,9 @@ public class MessageController implements WebMailConstants, IAonFileListener {
        	part=new MimeBodyPart();
        	part.setContent(text,"text/html");
        	multipart1.addBodyPart(part);
-       	if (parentAonMsg!=null && 
-       			parentAonMsg.getAmt() != null){
-	       	List<BodyPart> list = parentAonMsg.getAmt().getRelateds();
+       	if (parentAonMsg!=null){
+       		AonMessageTracer amt = new AonMessageTracer(parentAonMsg.getMessage());
+	       	List<BodyPart> list = amt.getRelateds();
 	       	Iterator<BodyPart> iter = list.iterator();
 	       	while (iter.hasNext()){
 		       	part=new MimeBodyPart();
@@ -998,7 +1005,7 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 			SimpleDateFormat df = new SimpleDateFormat("EEE, dd/MM/yy-HH:mm");
 			th.putInContext("nowDate", df.format(new Date()));
 			Locale locale = AonUtil.getCurrentLocale();
-			ResourceBundle bundle = ResourceBundle.getBundle(WebMailConstants.RESOURCE_BUNDLE, locale);	
+			ResourceBundle bundle = ResourceBundle.getBundle(BundleConstants.RESOURCE_BUNDLE, locale);	
 			th.putInContext("fromLiteral", bundle.getString(FROM_MESSAGE));
 			th.putInContext("sender", message.getSender());
 			th.putInContext("toLiteral", bundle.getString(TO_MESSAGE));
@@ -1012,7 +1019,7 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 			th.putInContext("sentDateString", message.getSentDateString());
 			th.putInContext("subjectLiteral", bundle.getString(SUBJECT_MESSAGE));
 			th.putInContext("subject", message.getSubject());
-			th.putInContext("messageContent", message.getContent());
+			th.putInContext("messageContent", getMessageContent());
 			th.processTemplate(PRINT_TEMPLATE, out);
 			response.flushBuffer();
 			out.close();
@@ -1056,5 +1063,19 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 		}
     	return Collections.emptyList();
     }
+	
+	public String getMessageContent() {
+		if ( messageContent == null ) {
+			AonMessageTracer amt = new AonMessageTracer(message.getMessage());
+			try {
+				this.messageContent = amt.getBodyHTML();
+			} catch (MessagingException e) {
+				this.messageContent = AonMessageUtils.HTML_LINE_BREAK;
+			} catch (IOException e) {
+				this.messageContent = AonMessageUtils.HTML_LINE_BREAK;
+			}		
+		}
+		return this.messageContent;
+	}
     
 }
