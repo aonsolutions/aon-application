@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
@@ -31,14 +33,16 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.groupware.controller.NoticeController;
-import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.AonMessage;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
-import com.code.aon.ui.webmail.controller.WebMailController;
-import com.code.aon.ui.webmail.exception.WebmailException;
+import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.WebmailException;
+import com.code.aon.webmail.WebmailUtil;
+import com.code.aon.webmail.bean.AonMessage;
+import com.code.aon.webmail.bean.AonServer;
 
-public class NoticeControllerListener extends ControllerAdapter implements WebMailConstants {
+public class NoticeControllerListener extends ControllerAdapter {
 
+	private static final Logger LOGGER = Logger.getLogger( NoticeControllerListener.class.getName() );
+	
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		Notice notice = (Notice)event.getController().getTo();
@@ -167,24 +171,27 @@ public class NoticeControllerListener extends ControllerAdapter implements WebMa
 		String subject = "[AVISO] - Notificacion de " + domain;
 		String content = "DE: " + notice.getSource() + "\nEMPRESA: " + notice.getCompany() + "\nTELEFONO: " + notice.getPhone() + "\nASUNTO: " + notice.getSubject();
 		
-		WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
 		try {
-			AonMessage aonMessage = webMailController.getServer().createAonMessage(from, username);
+			MailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
+			AonServer server = new AonServer(mailAccount);
+			server.createBasicFolders();
+			AonMessage aonMessage = server.createAonMessage(from, username);
 			InternetAddress iafrom = new InternetAddress(from, username);
 			aonMessage.setSender(iafrom);
 			aonMessage.setRecipientsTo(to);
 			aonMessage.setSubject(subject);
 			aonMessage.setContent(content);
-			webMailController.initDefault(user);
-			webMailController.getServer().sendMessage(aonMessage);
+			server.sendMessage(aonMessage);
 		} catch (AddressException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		} catch (MessagingException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		} catch (WebmailException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 
@@ -210,9 +217,9 @@ public class NoticeControllerListener extends ControllerAdapter implements WebMa
 			sender.init(domain);
 			sender.send(message);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		} catch (SOAPException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 }
