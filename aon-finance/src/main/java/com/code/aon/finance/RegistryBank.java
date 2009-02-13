@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.registry.Registry;
 
@@ -23,7 +25,9 @@ import com.code.aon.registry.Registry;
 @Table(name ="rbank")
 public class RegistryBank implements ITransferObject {
 
-    /** The id. */
+	private static final long serialVersionUID = -8532648329534533542L;
+
+	/** The id. */
     private Integer id;
 
     /** The registry. */
@@ -152,4 +156,24 @@ public class RegistryBank implements ITransferObject {
     	}
     	return getBankAccount();
     }
+    
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return super.equals(obj);
+		}
+		if (obj instanceof RegistryBank) {
+			RegistryBank o = (RegistryBank) obj;
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}
+    
 }

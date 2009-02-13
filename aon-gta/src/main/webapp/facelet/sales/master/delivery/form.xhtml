@@ -384,7 +384,7 @@
 											valueChangeListener="#{deliveryDetail.itemData}" />
 										<t:inputText size="10" id="Item_product_code-Edit"
 											required="true" forceId="#{true}"
-											styleClass="aon-form-input-text"
+											styleClass="aon-form-input-text" maxlength="15"
 											value="#{deliveryDetail.to.item.product.code}"
 											onchange="return findItemLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.product.Item','Item_id-Edit[#{rowIndex}],Item_product_code-Edit[#{rowIndex}],Item_full_name-Edit[#{rowIndex}],Item_price-Edit[#{rowIndex}]');" />
 										<h:commandButton id="findInvoice_item"
@@ -393,7 +393,7 @@
 										<h:commandButton id="addInvoice_item"
 											onclick="selectWindow(this, 'placeList', '#{itemAdd.encodedPagePath}','Item_id-Edit[#{rowIndex}],Item_product_code-Edit[#{rowIndex}],Item_full_name-Edit[#{rowIndex}],Item_price-Edit[#{rowIndex}]');return false;"
 											value="" immediate="true" styleClass="aon-form-new-button" />
-										<t:inputText id="Item_full_name-Edit" size="30"
+										<t:inputText id="Item_full_name-Edit" size="30" maxlength="64"
 											forceId="#{true}" styleClass="aon-form-input-text-disabled"
 											value="#{deliveryDetail.to.description}" />
 									</h:panelGroup>
@@ -413,7 +413,7 @@
 												<t:inputText size="10" id="Item_product_code-New"
 													disabled="#{salesPurchase.incomeRelated}"
 													required="true" forceId="#{true}"
-													styleClass="aon-form-input-text"
+													styleClass="aon-form-input-text" maxlength="15"
 													value="#{deliveryDetail.to.item.product.code}"
 													onchange="return findItemLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.product.Item','Item_id-New,Item_product_code-New,Item_full_name-New,Item_price-New');" />
 												<h:commandButton id="findInvoice_item_new"
@@ -426,7 +426,7 @@
 													onclick="selectWindow(this, 'placeList', '#{itemAdd.encodedPagePath}','Item_id-New,Item_product_code-New,Item_full_name-New,Item_price-New');return false;"
 													value="" immediate="true"
 													styleClass="aon_button aon-form-new-button" />
-												<t:inputText id="Item_full_name-New" size="30"
+												<t:inputText id="Item_full_name-New" size="30" maxlength="64"
 													forceId="#{true}" styleClass="aon-form-input-text-disabled"
 													value="#{deliveryDetail.to.description}" />
 											</h:panelGroup>

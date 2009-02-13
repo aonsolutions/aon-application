@@ -20,6 +20,8 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.IManagerBean;
@@ -48,6 +50,8 @@ import com.code.aon.registry.RegistryAddress;
 @Table(name = "invoice")
 public class Invoice implements ITransferObject, IHeaderObject, ICalculableContainer, ITaxInfo {
 	
+	private static final long serialVersionUID = 5692053383866684819L;
+
 	/** The Constant LOGGER. */
 	private static final Logger LOGGER = Logger.getLogger(Invoice.class.getName());
 	
@@ -516,13 +520,21 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	}
 	
     @Override
-    public boolean equals(Object obj) {
-    	if(id == null){
-    		return super.equals(obj);
-    	}
-        if (obj instanceof Invoice) {
-            return (this.id.equals(((Invoice)obj).getId()));
-        }
-        return false;
-    }
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return super.equals(obj);
+		}
+		if (obj instanceof Invoice) {
+			Invoice o = (Invoice) obj;
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}
 }

@@ -57,6 +57,7 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 		return taxBreakDowns;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public double getTotalVatQuota(ICalculableContainer icc, ITaxInfo iti) {
 		double total = 0;
 		Iterator iter = getTaxBreakDowns(icc, iti).iterator();
@@ -70,6 +71,7 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 		return round(total,2);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public double getTotalRetentionQuota(ICalculableContainer icc, ITaxInfo iti) {
 		double total = 0;
 		Iterator iter = getTaxBreakDowns(icc, iti).iterator();

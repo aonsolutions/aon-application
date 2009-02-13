@@ -17,8 +17,6 @@ import com.code.aon.project.ActivityType;
 import com.code.aon.project.Dossier;
 import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.customer.controller.CustomerController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
@@ -28,8 +26,8 @@ public class DossierController extends BasicController {
 	private static final Logger LOGGER = Logger.getLogger(DossierController.class.getName());
 	
 	private static final String CUSTOMER_CONTROLLER_NAME = "customer";
-	
 
+	@SuppressWarnings("unused")
 	public void onDossier(ActionEvent event){
 		CustomerController customerController = (CustomerController)AonUtil.getController(CUSTOMER_CONTROLLER_NAME);
 		Customer customer = (Customer)customerController.getTo();
@@ -42,18 +40,14 @@ public class DossierController extends BasicController {
 			LOGGER.log(Level.SEVERE, "Error loading dossiers related with customer with id= " + customer.getId(), e);
 		}
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	public List getActivityTypes() throws ManagerBeanException {
 		List<SelectItem> activityTypeList = new LinkedList<SelectItem>();
 		IManagerBean activityTypeBean = BeanManager.getManagerBean(ActivityType.class);
 		Dossier dossier = (Dossier)this.getTo();
 		Criteria criteria = new Criteria();
-		
-		Expression e1 =  ExpressionUtilities.getEqualExpression(activityTypeBean.getFieldName(IProjectAlias.ACTIVITY_TYPE_DOSSIER_TYPE_ID), dossier.getDossierType().getId());
-		Expression e2 =  ExpressionUtilities.getNullExpression(activityTypeBean.getFieldName(IProjectAlias.ACTIVITY_TYPE_DOSSIER_TYPE_ID));
-		criteria.addExpression(ExpressionUtilities.getOrExpression(e1, e2)); 
-		
+		criteria.addEqualExpression(activityTypeBean.getFieldName(IProjectAlias.ACTIVITY_TYPE_DOSSIER_TYPE_ID), dossier.getDossierType().getId());
 		Iterator iter = activityTypeBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			ActivityType type = (ActivityType)iter.next();
@@ -69,5 +63,4 @@ public class DossierController extends BasicController {
 		}
 		return false;
 	}
-
 }
