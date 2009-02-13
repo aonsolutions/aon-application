@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+	<ui:define name="content">
+
+		<h:form id="inventoryList">
+			<!--  toolbar navigation -->
+			<t:div styleClass="aon-content-toolbar" forceId="#{true}"
+				id="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton id="inventory_close" 
+						value="#{bundle.aon_report}" 
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-list"
+						rendered="#{inventory.inventaryDone}"
+						forceId="#{true}"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
+						onclick="reportWindow(this, 'placeList', '${facesContext.externalContext.requestContextPath}/facelet/report/preferences.faces');return false;"
+						accesskey="#{bundle.aon_key_print}"/>
+				</t:div>
+				</t:div>
+			</t:div>
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+					<!-- start of bag panel -->
+					<!-- start of flow layout -->
+					<h:panelGrid columns="1" cellpadding="0" cellspacing="0" dir="true"
+						styleClass="aon-table-formbox">
+						<h:panelGroup>
+							<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+								styleClass="aon-formbox"
+								columnClasses="aon-formbox-left-top,aon-formbox-right-top"
+								dir="true">
+								<h:panelGroup>
+									<f:verbatim>&#160;</f:verbatim>
+								</h:panelGroup>
+								<h:panelGroup>
+									<f:verbatim>&#160;</f:verbatim>
+								</h:panelGroup>
+							</h:panelGrid>
+						</h:panelGroup>
+						<h:panelGroup>
+							<t:div styleClass="aon-formbox-midlle">
+								<h:panelGrid columns="2" 
+									dir="true" 
+									styleClass="aon-form-table" 
+									columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+									<t:outputLabel for="Inventory_id"
+										styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+										value="#{warehouseBundle.inventory_id}" />
+									<h:outputText value="#{inventory.to.id}" size="14" />
+				
+									<t:outputLabel for="Inventory_inventoryDate"
+										styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+										value="#{warehouseBundle.inventory_date}" />
+									<h:outputText value="#{inventory.to.inventoryDate}">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											type="both" timeZone="#{timeZoneController.timeZoneId}" />
+									</h:outputText>
+									
+									<t:outputLabel for="Inventory_description"
+										styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+										value="#{warehouseBundle.inventory_description}" />
+									<h:outputText value="#{inventory.to.description}" size="64" />
+								</h:panelGrid>
+							</t:div>
+						</h:panelGroup>
+						<h:panelGroup>
+							<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+								styleClass="aon-formbox"
+								columnClasses="aon-formbox-left-bottom,aon-formbox-right-bottom"
+								dir="true">
+								<h:panelGroup>
+									<f:verbatim>&#160;</f:verbatim>
+								</h:panelGroup>
+								<h:panelGroup>
+									<f:verbatim>&#160;</f:verbatim>
+								</h:panelGroup>
+							</h:panelGrid>
+						</h:panelGroup>
+					</h:panelGrid>
+					
+					<t:dataTable id="inventoryDetailDataList" 
+						var="to" value="#{inventoryDetail.model}" rows="20" 
+						rendered="#{inventoryDetail.model.rowCount > 0}"
+						styleClass="aon-table" headerClass="aon-table-header"
+						columnClasses="aon-table-body aon-table-body-number,aon-table-body aon-table-body-string,aon-table-body aon-table-body-number,aon-table-body aon-table-body-number,aon-table-body aon-table-body-number,aon-table-body aon-table-body-string"
+						rowOnMouseOver="selectRow( this )"
+						rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )">
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{warehouseBundle.inventoryDetail_id}" />
+							</f:facet>
+							<h:outputText value="#{to.id}" />
+							<f:facet name="footer">
+								<f:verbatim>&#160;</f:verbatim>
+							</f:facet>
+						</h:column>
+		
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{warehouseBundle.inventoryDetail_item}" />
+							</f:facet>
+							<h:outputText value="#{to.item.product.name} #{to.item.detail}" />
+							<f:facet name="footer">
+								<f:verbatim>&#160;</f:verbatim>
+							</f:facet>
+						</h:column>
+						<!-- 
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{warehouseBundle.inventoryDetail_actual_inventory}" 
+								/>
+							</f:facet>
+							<h:outputText value="#{to.actualQuantity}">
+								<f:convertNumber pattern="#,##0.000" />
+							</h:outputText>
+							<f:facet name="footer">
+								<f:verbatim>&#160;</f:verbatim>
+							</f:facet>
+						</h:column>
+						 -->
+						
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{warehouseBundle.inventoryDetail_real_inventory}" 
+								/>
+							</f:facet>
+							<h:outputText value="#{to.realQuantity}">
+								<f:convertNumber pattern="#,##0.000" />
+							</h:outputText>
+							<f:facet name="footer">
+								<f:verbatim>&#160;</f:verbatim>
+							</f:facet>
+						</h:column>
+	
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{warehouseBundle.inventoryDetail_cost}" 
+								/>
+							</f:facet>
+							<h:outputText value="#{to.cost}" >
+								<f:convertNumber pattern="#,##0.000" />
+							</h:outputText>
+							<f:facet name="footer">
+								<f:verbatim>&#160;</f:verbatim>
+							</f:facet>
+						</h:column>
+	
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{warehouseBundle.inventoryDetail_total}" 
+								/>
+							</f:facet>
+							<h:outputText value="#{to.realQuantity * to.cost}">
+								<f:convertNumber pattern="#,##0.000" />
+							</h:outputText>
+							<f:facet name="footer">
+								<f:verbatim>&#160;</f:verbatim>
+							</f:facet>
+						</h:column>
+						
+					</t:dataTable>
+
+					<ui:include src="/facelet/shared/dataScroller.xhtml">
+						<ui:param name="dataTable" value="inventoryDetailDataList" />
+						<ui:param name="model" value="#{inventoryDetail.model}" />
+						<ui:param name="showNote" value="#{true}" />
+					</ui:include>
+
+					<!-- end of flow layout -->
+					<!-- end of bag panel -->
+					<t:inputText id="pojoName" value="SupportOrder" forceId="#{true}"
+						style="display: none" />
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+</body>
+</html>					

@@ -1,0 +1,448 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+	<!--  **** PRODUCT COLLECTIONS **** 
+		Controlador que proporciona colecciones del grupo de productos.
+	-->
+	<managed-bean>
+		<managed-bean-name>productCollections</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.product.controller.ProductCollectionsController</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+
+	<!--  **** BRAND **** 
+		Controlador para el mantenimiento de marcas comerciales
+	-->
+	<managed-bean>
+		<managed-bean-name>brand</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.product.controller.BrandController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.product.Brand</value>
+		</managed-property>
+	</managed-bean>
+
+	<!--  **** PRODUCT CATEGORY **** 
+			Controlador para el mantenimiento de categorias de productos
+	-->
+	<managed-bean>
+		<managed-bean-name>productCategory</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.product.controller.ProductCategoryController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.product.ProductCategory</value>
+		</managed-property>
+	</managed-bean>
+
+	<!--  **** TARIFF **** 
+			Controlador para el mantenimiento de tarifas
+	-->
+	<managed-bean>
+		<managed-bean-name>tariff</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.product.controller.TariffController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.product.Tariff</value>
+		</managed-property>
+	</managed-bean>
+
+	<!--  **** TAX **** 
+				Controlador para el mantenimiento de tipos de impuestos
+	-->
+	<managed-bean>
+		<managed-bean-name>tax</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.product.controller.TaxController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.product.Tax</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{taxDetailListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>taxDetailListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>taxDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>TaxDetail_tax_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>taxDetail</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.product.TaxDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>tax</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>tax.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+	</managed-bean>
+
+	<!--  **** PRODUCT **** 
+				Controlador para el mantenimiento de productos
+	-->
+	<managed-bean>
+		<managed-bean-name>product</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.product.Product</value>
+		</managed-property>
+	</managed-bean>
+
+	<!--  **** ITEM PRICE LIST **** 
+	-->
+	<managed-bean>
+		<managed-bean-name>itemPrices</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.product.controller.ItemController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.product.Item</value>
+		</managed-property>
+	</managed-bean>
+
+
+	<!--  **** ITEM **** 
+				Controlador para el mantenimiento de artículos
+	-->
+	<managed-bean>
+		<managed-bean-name>item</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.product.controller.ItemController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.product.Item</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{productAccountListener}</value>
+				<value>#{itemRetentionListener}</value>
+				<value>#{itemControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>itemRetentionListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.product.event.ItemRetentionListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>itemControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.product.event.ItemVetoListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>itemSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.product.sw.controller.ItemSelectWindowController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.product.Item</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pagePath</property-name>
+			<value>/facelet/sw/itemSearch.faces</value>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>itemAdd</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.product.sw.controller.ItemNewWindowController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.product.Item</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pagePath</property-name>
+			<value>/facelet/product/master/item/formWindow.faces</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{productAccountListener}</value>
+				<value>#{itemRetentionListener}</value>
+				<value>#{itemControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>itemChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.ChildControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>masterBean</property-name>
+			<value>item</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterPropertyName</property-name>
+			<value>item</value>
+		</managed-property>
+	</managed-bean>
+
+	<!--  **** COMPOSITION **** 
+				Controlador para el mantenimiento de la cabecera de composiciones
+	-->
+	<managed-bean>
+		<managed-bean-name>composition</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.composition.controller.CompositionController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.composition.Composition</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{compositionDetailListener}</value>
+				<value>#{compositionExpenseListener}</value>
+				<value>#{compositionControllerListener}</value>
+				<value>#{compositionUpdateItemListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>compositionDetailListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>compositionDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>CompositionDetail_composition_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>compositionExpenseListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>compositionExpense</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>CompositionExpense_composition_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>compositionControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.composition.event.CompositionControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>compositionUpdateItemListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.composition.event.CompositionUpdateItemListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!--  **** COMPOSITION_DETAIL **** 
+				Controlador para el mantenimiento de las lineas de composiciones
+	-->
+
+	<managed-bean>
+		<managed-bean-name>compositionDetail</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.composition.controller.CompositionDetailController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.composition.CompositionDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{compositionDetailLoopListener}</value>
+				<value>#{compositionDetailUpdateItemListener}</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>composition</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>composition.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>compositionDetailLoopListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.composition.event.CompositionDetailLoopListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>compositionDetailUpdateItemListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.composition.event.CompositionDetailUpdateItemListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!--  **** COMPOSITION_EXPENSE **** 
+				Controlador para el mantenimiento de las lineas de gastos de composiciones
+	-->
+
+	<managed-bean>
+		<managed-bean-name>compositionExpense</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.composition.controller.CompositionExpenseController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.composition.CompositionExpense</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>composition</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>composition.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+
+</faces-config>

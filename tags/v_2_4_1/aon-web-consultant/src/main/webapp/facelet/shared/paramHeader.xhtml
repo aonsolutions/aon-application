@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:t="http://myfaces.apache.org/tomahawk"      
+	xmlns:h="http://java.sun.com/jsf/html">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<t:stylesheet path="/css/aon.css" />
+	<t:stylesheet path="/css/layout.css" />
+</head>
+<body>
+
+<ui:composition>
+
+	<h:outputText style="display:none" value="#{enviroment.onFormLoad}"/>
+	<t:div styleClass="aon-content-title" forceId="#{true}"
+		id="aon-window-popup-title">
+		<h:outputText value="#{enviroment.controllerLabel}"/>
+	</t:div>
+	
+</ui:composition>
+
+</body>
+</html>
