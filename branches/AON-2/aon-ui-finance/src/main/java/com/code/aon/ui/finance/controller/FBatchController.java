@@ -41,7 +41,6 @@ import com.code.aon.company.Company;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
-import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.csb.CSBOutput;
@@ -256,7 +255,7 @@ public class FBatchController extends BasicController implements ICollectionProv
         }
     }
 
-    @SuppressWarnings({"unused","unchecked"})
+    @SuppressWarnings("unchecked")
 	public void onBatchSelected(ActionEvent event) {
         FinanceBatch fBatch = (FinanceBatch)getTo();
         if (!FinanceBatchStatus.TODO.equals(fBatch.getFinanceBatchStatus())) {
@@ -302,7 +301,7 @@ public class FBatchController extends BasicController implements ICollectionProv
         loadAvailableFinances(fBatch.isPayment());
 	}
 
-	@SuppressWarnings({"unused","unchecked"})
+	@SuppressWarnings("unchecked")
 	public void onRemoveSelected(ActionEvent event) {
         FinanceBatch fBatch = (FinanceBatch)getTo();
         if (!FinanceBatchStatus.TODO.equals(fBatch.getFinanceBatchStatus())) {
@@ -323,8 +322,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 	        while(iterator.hasNext()){
 	        	FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iterator.next();
 	        	financeBatchDetailBean.remove(fBatchDetail);
-
-	        	updateRelatedInfo(fBatchDetail);
 	        }
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error removing selected finances to the FinanceBatch with id=" + fBatch.getId(), e);
@@ -335,32 +332,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 		loadAvailableFinances(fBatch.isPayment());
     }
 
-	public void updateRelatedInfo(FinanceBatchDetail fBatchDetail) {
-		try {
-			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			FinanceStatus financeStatus = (wasFinanceReturned(fBatchDetail.getFinance()))?FinanceStatus.RETURNED:FinanceStatus.PENDING;
-			fBatchDetail.getFinance().setFinanceStatus(financeStatus);
-			financeBean.update(fBatchDetail.getFinance());
-			FinanceTrackingWriter.removeLastTrackingByType(fBatchDetail.getFinance(), FinanceTrackingType.BATCHED);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE,"Error updating finances in FinanceBatch with id="+ fBatchDetail.getFinanceBatch().getId(), e);
-		}
-	}
-
-	public boolean wasFinanceReturned(Finance finance) {
-		try {
-			IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_ID),finance.getId());
-			criteria.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TYPE),FinanceTrackingType.RETURNED);
-			return (trackingBean.getCount(criteria) > 0);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE,"Error obtaining FinanceTracking of Finance with id="+ finance.getId(), e);
-		}
-		return false;
-	}
-
-	@SuppressWarnings({"unused","unchecked"})
+	@SuppressWarnings("unchecked")
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
     	FinanceBatch fbatch = (FinanceBatch)this.getTo();
 
@@ -412,7 +384,6 @@ public class FBatchController extends BasicController implements ICollectionProv
     	return query.list(); 
 	}
 
-	@SuppressWarnings({"unused"})
 	public boolean isDiskOk() throws ManagerBeanException {
 		int errors = 0;
 		if (csbOutput != null) {
@@ -421,7 +392,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 		return (errors==0);
 	}
 
-	@SuppressWarnings({"unused"})
 	public void downloadDisk(ActionEvent event) throws ManagerBeanException {
 		try {
 			FacesContext faces = FacesContext.getCurrentInstance();
@@ -504,7 +474,7 @@ public class FBatchController extends BasicController implements ICollectionProv
         fbatch.setRegistryBank(fbatch.getRegistryBank() == null?new RegistryBank():fbatch.getRegistryBank());
     }
 
-	@SuppressWarnings({"unused","unchecked"})
+	@SuppressWarnings("unchecked")
     public void onUnrecord(ActionEvent event) throws ManagerBeanException {
         FinanceBatch fbatch = (FinanceBatch)this.getTo();
 
@@ -656,7 +626,6 @@ public class FBatchController extends BasicController implements ICollectionProv
     	return null;
 	}
 
-	@SuppressWarnings("unused")
     public void onReport(ActionEvent event) {
         ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
         manager.setReportKey("fBatch");
