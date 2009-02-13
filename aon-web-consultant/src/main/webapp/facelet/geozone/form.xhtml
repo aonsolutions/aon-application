@@ -45,6 +45,12 @@
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-delete'"
 							accesskey="#{bundle.aon_key_remove}" />
+						<t:commandButton id="reset" value="#{bundle.aon_reset}"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'"
+							actionListener="#{geotreeParent.onReset}"
+							accesskey="#{bundle.aon_key_new}"/>	
 						<h:commandButton id="search" value="#{bundle.aon_search}"
 							immediate="#{true}"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"

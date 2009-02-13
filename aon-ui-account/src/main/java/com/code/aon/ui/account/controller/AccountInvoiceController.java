@@ -212,12 +212,10 @@ public class AccountInvoiceController {
 		this.registryBankId = registryBankId;
 	}
 
-	@SuppressWarnings("unused")
 	public void onReset(MenuEvent event){
 		reset();
 	}
 	
-	@SuppressWarnings("unused")
 	public void onReset(ActionEvent event){
 		reset();
 	}
@@ -263,19 +261,17 @@ public class AccountInvoiceController {
 		return false;
 	}
 	
-	@SuppressWarnings("unused")
 	public void onNewDetail(ActionEvent event){
 		this.isNewDetail = true;
 		this.currentDetail = new AccountInvoiceDetail();
 		this.currentDetail.setAccount((header.getAccount()!=null)?header.getAccount().getId():null);
 	}
 	
-	@SuppressWarnings("unused")
 	public void onSelectDetail(ActionEvent event){
 		this.currentDetail = (AccountInvoiceDetail)details.getRowData();
 	}
 	
-	@SuppressWarnings({"unchecked", "unused"})
+	@SuppressWarnings("unchecked")
 	public void onAddDetail(ActionEvent event) throws ManagerBeanException{
 		if (validateDetail(this.currentDetail)) {
 			applySurcharge();
@@ -285,18 +281,17 @@ public class AccountInvoiceController {
 		}
 	}
 	
-	@SuppressWarnings({"unchecked", "unused"})
+	@SuppressWarnings("unchecked")
 	public void onRemoveDetail(ActionEvent event){
 		((LinkedList)this.details.getWrappedData()).remove(this.currentDetail);
 	}
 
-	@SuppressWarnings("unused")
 	public void onCancelDetail(ActionEvent event){
 		this.currentDetail = new AccountInvoiceDetail();
 		this.setNewDetail(false);
 	}
 	
-	@SuppressWarnings({"unchecked", "unused"})
+	@SuppressWarnings("unchecked")
 	public void onUpdateDetail(ActionEvent event) throws ManagerBeanException{
 		if (validateDetail(this.currentDetail)) {
 			applySurcharge();
@@ -333,13 +328,11 @@ public class AccountInvoiceController {
 		return true;
 	}
 
-	@SuppressWarnings("unused")
 	public void onNewFinance(ActionEvent event){
 		this.isNewFinance = true;
 		this.currentFinance = initializeFinance();
 	}
 	
-	@SuppressWarnings("unused")
 	public void onSelectFinance(ActionEvent event) throws ManagerBeanException{
 		this.currentFinance = (Finance)finances.getRowData();
 		if (currentFinance.getPayMethod() == null) {
@@ -381,7 +374,7 @@ public class AccountInvoiceController {
 		return null;
 	}
 	
-	@SuppressWarnings({"unchecked", "unused"})
+	@SuppressWarnings("unchecked")
 	public void onAddFinance(ActionEvent event){
 		if(!header.getType().equals(InvoiceType.SALES)){
 			RegistryBank rBank = obtainRBank(this.registryBankId);
@@ -408,18 +401,17 @@ public class AccountInvoiceController {
 		return null;
 	}
 
-	@SuppressWarnings({"unchecked", "unused"})
+	@SuppressWarnings("unchecked")
 	public void onRemoveFinance(ActionEvent event){
 		((LinkedList)this.finances.getWrappedData()).remove(this.currentFinance);
 	}
 
-	@SuppressWarnings("unused")
 	public void onCancelFinance(ActionEvent event){
 		this.currentFinance = initializeFinance();
 		this.setNewFinance(false);
 	}
 	
-	@SuppressWarnings({"unchecked", "unused"})
+	@SuppressWarnings("unchecked")
 	public void onUpdateFinance(ActionEvent event){
 		int i = ((LinkedList)this.finances.getWrappedData()).indexOf(this.currentFinance);
 		((LinkedList)this.finances.getWrappedData()).remove(i);
@@ -504,7 +496,6 @@ public class AccountInvoiceController {
 		initializeHeader();
 	}
 	
-	@SuppressWarnings("unused")
 	public void accept(ActionEvent event) throws ManagerBeanException{
 		AccountEntry entry = new AccountEntry();
 		if(!this.isNew){
@@ -610,7 +601,6 @@ public class AccountInvoiceController {
 		return total;
 	}
 	
-	@SuppressWarnings("unused")
 	public void onRemove(ActionEvent event){
 		deleteAccountEntryInvoice(this.getAccountEntryInvoice());
 		deleteInvoice(getAccountEntryInvoice().getInvoice());
@@ -669,7 +659,7 @@ public class AccountInvoiceController {
 			while(iter.hasNext()){
 				AccountInvoiceDetail detail = (AccountInvoiceDetail)iter.next();
 				InvoiceDetail invoiceDetail = new InvoiceDetail();
-				invoiceDetail.setDeliveryDetail(null);
+				invoiceDetail.setSourceId(null);
 				invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
 				invoiceDetail.setInvoice(invoice);
 				invoiceDetail.setItem(null);

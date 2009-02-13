@@ -1,8 +1,6 @@
 package com.code.aon.ui.finance.controller;
 
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.ValueChangeEvent;
 
@@ -23,8 +21,6 @@ import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
-import com.code.aon.warehouse.DeliveryDetail;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
 
 /**
  * Sales invoice details controller
@@ -35,11 +31,6 @@ import com.code.aon.warehouse.dao.IWarehouseAlias;
  */
 public class SalesInvoicingDetailController extends LinesController {
 
-	/**
-	 * Logger for this class
-	 */
-	private static final Logger LOGGER = Logger.getLogger(SalesInvoicingDetailController.class.getName());
-	
 	/**
 	 * Sales invoice controllers name
 	 */
@@ -112,7 +103,6 @@ public class SalesInvoicingDetailController extends LinesController {
 	 * @param event the event that contains item ident
 	 * @throws ManagerBeanException
 	 */
-	@SuppressWarnings("unchecked")
 	public void itemData(ValueChangeEvent event) throws ManagerBeanException{
 		if(event.getNewValue() != null){
 			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
@@ -169,32 +159,7 @@ public class SalesInvoicingDetailController extends LinesController {
 		SalesInvoicingController salesInvoicingController = (SalesInvoicingController)AonUtil.getController(SALES_INVOICING_CONTROLLER_NAME);
 		return getPriceStrategy().getTaxableBase((ICalculableContainer)salesInvoicingController.getTo());
 	}
-
-	public String getDeliveryData() throws ManagerBeanException {
-		DeliveryDetail deliveryDetail = obtainDeliveryDetail(((InvoiceDetail)this.getModel().getRowData()).getDeliveryDetail());
-		String deliveryData = "";
-		if (deliveryDetail != null) {
-			deliveryData = (deliveryDetail.getDelivery().getSeries()==null?"":deliveryDetail.getDelivery().getSeries()+"/")+deliveryDetail.getDelivery().getNumber();
-		}
-		return deliveryData;
-	}
-
-	@SuppressWarnings("unchecked")
-	private DeliveryDetail obtainDeliveryDetail(Integer deliveryDetailId) {
-		try {
-			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID), deliveryDetailId);
-			Iterator iter = deliveryDetailBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				return (DeliveryDetail)iter.next();
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining associated tasDelivery", e);
-		}
-		return null;
-	}
-
+	
 	/**
 	 * Calls onCancel action of the controller 
 	 * 

@@ -502,7 +502,7 @@ public class SalesInvoicingController extends BasicController {
 	private void updateBreadCrumb() {
 		MenuManager menuManager = (MenuManager)AonUtil.getRegisteredBean(MENU_MANAGER_NAME);
         menuManager.setCurrentMenu("AON_APP");
-        menuManager.getCurrentMenuModel().setSelectedNode(menuManager.getCurrentMenuModel().getOptionByKey("aon_sales_invoicing").getId());
+        menuManager.getCurrentMenuModel().setSelectedNode(menuManager.getCurrentMenuModel().getOptionByKey("salesInvoicing").getId());
 	}
 	
 	/**
@@ -652,10 +652,7 @@ public class SalesInvoicingController extends BasicController {
 				Finance finance = (Finance)iter.next();
 				financeBean.remove(finance);
 			}
-			double totalPrice = getPriceStrategy().getTotalPrice(invoice, invoice);
-			if (totalPrice > 0) {
-				getFinanceGenerator().generateFinances(invoice,invoice.getRegistry(), totalPrice);
-			}
+			getFinanceGenerator().generateFinances(invoice,invoice.getRegistry(), getPriceStrategy().getTotalPrice(invoice, invoice));
 			salesFinanceController.onSearch(null);
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanException("Error generating finances for invoice with id= " + invoice.getId(),e);
@@ -680,8 +677,8 @@ public class SalesInvoicingController extends BasicController {
 				criteria = new Criteria();
 				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_DELIVERY_DETAIL), deliveryDetail.getId());
 				Iterator iterator = invoiceDetailBean.getList(criteria).iterator();
-				while(iterator.hasNext()){
-					invoiceDetailBean.remove((InvoiceDetail)iterator.next());
+				if(iterator.hasNext()){
+					invoiceDetailBean.remove((ITransferObject)iterator.next());
 				}
 			}
 		} catch (ManagerBeanException e) {
