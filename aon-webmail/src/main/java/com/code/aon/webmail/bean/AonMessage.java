@@ -206,7 +206,8 @@ public class AonMessage implements IMimeType, BundleConstants {
 	 */
 	public String getSubject() throws WebmailException {
 		try {
-			return message.getSubject();
+			String subject = message.getSubject();
+			return AonMessageUtils.decodeText(subject);
 		} catch (MessagingException e) {
 			LOGGER.log(Level.SEVERE, "Error getting message subject", e);
 			throw new WebmailException(e);
