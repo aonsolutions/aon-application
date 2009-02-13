@@ -1,11 +1,18 @@
 package com.code.aon.webmail.bean;
 
+import java.io.UnsupportedEncodingException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.mail.internet.MimeUtility;
 
 import org.apache.commons.lang.StringUtils;
 
 public class AonMessageUtils {
+
+	private static final Logger LOGGER = Logger.getLogger(AonMessageUtils.class.getName());
 	
 	public static final String EMAIL_SEPARATOR = ",";
 	
@@ -145,6 +152,26 @@ public class AonMessageUtils {
 	
 	public static String parse_email(String data) {
 		return data.replaceAll(EMAIL_SEPARATOR, "");
+	}
+	
+	public static String decodeText( String text ) {
+		String result = text;
+		int pos = result.indexOf("=?");
+		while ( pos != -1 ) {
+			try {
+				StringBuffer fixedText = new StringBuffer(result);
+				fixedText.insert(pos, ' ');
+				String decodedText = MimeUtility.decodeText(fixedText.toString());
+				StringBuffer decodedTextTrimed = new StringBuffer(decodedText);
+				decodedTextTrimed.deleteCharAt(pos);
+				result = decodedTextTrimed.toString();
+				pos = result.indexOf("=?");
+			} catch (UnsupportedEncodingException e) {
+				LOGGER.log(Level.SEVERE,"Error decoding string" + text, e);
+				return text;
+			}
+		}		
+		return result;
 	}
 	
 }
