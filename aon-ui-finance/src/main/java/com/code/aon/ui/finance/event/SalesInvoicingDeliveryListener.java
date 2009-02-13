@@ -126,6 +126,7 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 	 * @see com.code.aon.ui.form.event.ControllerAdapter#afterBeanSelected(com.code.aon.ui.form.event.ControllerEvent)
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		Invoice invoice = (Invoice)event.getController().getTo();
 		try {
@@ -176,6 +177,7 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 	 * @param invoice related invoice
 	 * @return DeliveryDetail
 	 */ 
+	@SuppressWarnings("unchecked")
 	private DeliveryDetail obtainDeliveryDetail(Invoice invoice) {
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
@@ -198,11 +200,12 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 	 * @param invoiceDetail related InvoiceDetail
 	 * @return DeliveryDetail
 	 */
+	@SuppressWarnings("unchecked")
 	private DeliveryDetail obtainDeliveryDetail(InvoiceDetail invoiceDetail) {
 		try {
 			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID), invoiceDetail.getDeliveryDetail());
+			criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID), invoiceDetail.getSourceId());
 			Iterator iter = deliveryDetailBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				return (DeliveryDetail)iter.next();
@@ -220,6 +223,7 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 	 * @see com.code.aon.ui.form.event.ControllerAdapter#beforeBeanRemoved(com.code.aon.ui.form.event.ControllerEvent)
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	public void beforeBeanRemoved(ControllerEvent event){
 		try {
 			SalesInvoicingDetailController salesInvoicingDetailController = (SalesInvoicingDetailController) AonUtil.getController(SALES_INVOICING_DETAIL_CONTROLLER_NAME);
@@ -264,11 +268,12 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 	 * 
 	 * @param invoiceDetail related InvoiceDetail
 	 */
+	@SuppressWarnings("unchecked")
 	private void removeDeliveryDetails(InvoiceDetail invoiceDetail) {
 		try {
 			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID), invoiceDetail.getDeliveryDetail());
+			criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID), invoiceDetail.getSourceId());
 			Iterator iter = deliveryDetailBean.getList(criteria).iterator();
 			int number = deliveryDetailBean.getCount(criteria);
 			if(iter.hasNext()){
@@ -311,6 +316,7 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 	 * @param invoiceId invoice ident
 	 * @return list of Deliveries
 	 */
+	@SuppressWarnings("unchecked")
 	private List<ITransferObject> obtainClosedDeliveries(Integer invoiceId) {
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
@@ -323,7 +329,7 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 			while(iter.hasNext()){
 				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
 				criteria = new Criteria();
-				criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID), invoiceDetail.getDeliveryDetail());
+				criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID), invoiceDetail.getSourceId());
 				Iterator iterator = deliveryDetailBean.getList(criteria).iterator();
 				if(iterator.hasNext()){
 					DeliveryDetail deliveryDetail = (DeliveryDetail)iterator.next();
