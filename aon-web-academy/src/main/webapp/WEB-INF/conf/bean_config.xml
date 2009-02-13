@@ -63,6 +63,13 @@
 		</vetoListeners>
 	</bean>
 
+	<bean description="Listener para escribir los acumulados por cuenta">
+		<pojo>com.code.aon.finance.FinanceBatchDetail</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.finance.event.FinanceBatchDetailBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
 	<bean description="">
 		<pojo>com.code.aon.academy.Course</pojo>
 		<vetoListeners>
