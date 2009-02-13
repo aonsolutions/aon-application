@@ -46,7 +46,7 @@ public class InvoiceDetailPrinter {
 			Iterator iterator = invoiceDetailBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				InvoiceDetail invoiceDetail = (InvoiceDetail)iterator.next();
-				Delivery delivery = obtainDelivery(invoiceDetail.getDeliveryDetail());
+				Delivery delivery = obtainDelivery(invoiceDetail.getSourceId());
 				SupportOrder supportOrder = (delivery==null)?null:obtainSupportOrder(delivery.getId());
 
 				ReportInvoiceDetail reportInvoiceDetail = new ReportInvoiceDetail();
