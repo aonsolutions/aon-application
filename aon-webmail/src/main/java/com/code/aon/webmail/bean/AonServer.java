@@ -11,6 +11,7 @@ import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
+import javax.mail.Quota;
 import javax.mail.SendFailedException;
 import javax.mail.Session;
 import javax.mail.Store;
@@ -20,10 +21,12 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.WebmailException;
+import com.sun.mail.imap.IMAPStore;
 
 public class AonServer {
 	
@@ -39,12 +42,59 @@ public class AonServer {
     
     private boolean ensure_connection;
     
+    private boolean quotaAware;
+    
+    private Quota.Resource quotaResource;
+    
     /** Creates a new instance of Server */
     public AonServer(MailAccount account){
         setAccount( account );
         this.ensure_connection = true;
     }
+    
+    public boolean isQuotaAware() {
+    	return quotaAware;
+    }
+    
+    private boolean calculateQuotaAware() {
+    	if (store instanceof IMAPStore) {
+    		IMAPStore imapStore = (IMAPStore) store;
+        	try {    		
+				if ( imapStore.hasCapability("QUOTA") ) {
+					Quota[] quotas = imapStore.getQuota(AonFolder.INBOX_FOLDER_NAME);
+					return ! ArrayUtils.isEmpty(quotas);
+				}
+    		} catch (MessagingException e) {
+    			LOGGER.log(Level.SEVERE,"Error checking is QUOTA enabled" + account.toString(),e);
+    		}
+		}
+    	return false;
+    }
+    
+    private Quota.Resource getQuotaResource() {
+    	IMAPStore imapStore = (IMAPStore) store;
+    	try {
+			Quota[] quotas = imapStore.getQuota(AonFolder.INBOX_FOLDER_NAME);
+			for( Quota quota : quotas ) {
+				for( Quota.Resource resource : quota.resources ) {
+					return resource;	
+				}
+			}
+		} catch (MessagingException e) {
+			LOGGER.log(Level.SEVERE,"Error getting QUOTA" + account.toString(),e);
+		}
+		return null;
+    }
+    
+    public long getQuotaLimit() {
+    	return quotaResource.limit;
+    }
 
+    public long getQuotaUsage() {
+    	quotaResource = getQuotaResource();
+    	return quotaResource.usage;
+    }
+    
 	/**
      * Is this service currently connected?
      * @return true if the service is connected, false if it is not connected
@@ -88,7 +138,8 @@ public class AonServer {
             session = Session.getInstance(mailProperties, null);
             store = session.getStore(url);
             store.connect();
-
+            quotaAware = calculateQuotaAware();
+            quotaResource = getQuotaResource();
             return true;
         }catch (NoSuchProviderException e) {
         	LOGGER.log(Level.SEVERE,"Connection Error - No such provider for " + account.toString(),e);
