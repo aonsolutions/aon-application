@@ -14,7 +14,7 @@ public class Calendarpruebas {
 
 	public static void main(String[] args) throws IOException {
 		
-		System.out.println("año:");
+	/*	System.out.println("año:");
 		
 		Calendar now = Calendar.getInstance();
 		now.set(1950, 1, 1);
@@ -77,9 +77,9 @@ public class Calendarpruebas {
     }
 	
 	
-	
+	*/
 }
-	
+}
 	
 
 		

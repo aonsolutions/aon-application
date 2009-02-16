@@ -99,5 +99,25 @@ public class Calendario implements ITransferObject {
 	public void setDomicilio(Domicilio domicilio) {
 		this.domicilio = domicilio;
 	}
+	
+	public Tipdia updateDay(String tipo) {
+		if (tipo == "F") {
+			return Tipdia.TIP1;
+		}
+
+		if (tipo == "Z") {
+			return Tipdia.TIP2;
+		}
+
+		if (tipo == "W") {
+			return Tipdia.TIP3;
+		}
+
+		if (tipo == "L") {
+			return Tipdia.TIP4;
+		}
+		return null;
+
+	}
 
 }

@@ -14,151 +14,47 @@
 	<ui:define name="content">
 
 		<aon:form id="calendarForm">
-		  	
-		<!-- 	<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_auxiliares_convenios__categoria}" />				
-				<ui:param name="controller" value="#{empresa}"/>		
-			</ui:include> -->
-
-				
-	<!--  			
-     <table border="1"  class="dr-table rich-table">
 
 
-				
-					<tr>
-						<th>MES</th>									
-					</tr>
-			 <tbody>
-			      <rich:columns value="#{calendar.year.listaMeses}" var="mes" >     
-                    <tr align="center" >
-                      <aon:commandButton  styleClass="aon-editDataTable-button" value="#{mes.cdg}" />
-                    </tr> 
-                           
-                     </rich:columns>
+<aon:div id="tabla">
 
-				
-            
-		  </tbody>
-        </table>		-->
+			<rich:dataTable id="Calendar" value="#{calendar.yearModel}" var="m">
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="&#160;" />
+					</f:facet>
+					<aon:outputText value="#{m.desc}" />
+				</aon:column>
+				<rich:columns value="#{calendar.dias}" var="day" index="idx">
+					<f:facet name="header">
+						<aon:outputText value="#{day.diasem}" />
+					</f:facet>
+					<aon:div>
+						<aon:outputText id="pic#{m.desc}#{idx}" value="#{m.days[idx].cdg}"
+							style="width: 100%;text-align:center;background-color: #{m.days[idx].color};">
+							<a4j:support ajaxSingle="true" event="onclick"
+								actionListener="#{calendar.onChangeDay}" reRender="calendarForm" />
+						</aon:outputText>
+					</aon:div>
+				</rich:columns>
+			</rich:dataTable>
+</aon:div>
+			<h:panelGrid columns="2" dir="true" width="40%">
 
+				<aon:div styleClass="aon-lookup">
+					<aon:panelGrid columns="2" dir="true" width="50%"
+						style="margin-bottom=2px;">
 
+						<aon:outputLabel
+							value="#{appBundle.aon_payroll_convenios_calendario}" />
 
-      <table id="calendario" border="1"  class="dr-table rich-table">
+						<rich:inputNumberSpinner ajaxSingle="true" inputSize="4"
+							value="#{calendar.actual}" maxValue="3000">
+							<a4j:support event="onchange" actionListener="#{calendar.load}"
+								reRender="tabla" />
+						</rich:inputNumberSpinner>
 
-
-				
-					<tr>
-						<th>L</th><th>M</th> <th>M</th> <th>J</th> <th>V</th> <th>S</th><th>D</th><th>L</th><th>M</th> <th>M</th> <th>J</th> <th>V</th> <th>S</th><th>D</th><th>L</th><th>M</th> <th>M</th> <th>J</th> <th>V</th> <th>S</th><th>D</th><th>L</th><th>M</th> <th>M</th> <th>J</th> <th>V</th> <th>S</th><th>D</th><th>L</th><th>M</th> <th>M</th> <th>J</th> <th>V</th> <th>S</th><th>D</th><th>L</th><th>M</th> <th>M</th>
-									
-					</tr>
-			
-
-				<tbody>
-            
-            
-            
-                    
-                <rich:columns value="#{calendar.year.listaMeses}" var="mes" >
-                  
-                  <tr>
-
-							<a4j:repeat value="#{mes.listaDias}" var="dia">
-
-								<td align="center">
-								
-										
-							<aon:commandButton 
-									styleClass="aon-editDataTable-button" 
-									value="#{dia.cdg}" >									
-									   
-									</aon:commandButton>
-									
-							<!--    	<rich:inplaceSelect
-									id="select" rendered="#{to==calendar.to}" > 
-									 <a4j:support
-									event="onclick" reRender="calendario" />							
-									
-									<f:selectItems value="#{calendar.listatipos}" />                                 
-								 
-								</rich:inplaceSelect> 
-								
-								
- 
-                                     <c:choose>
-                                        <c:when test="#{dia.festivo}">
-										<td align="center"><aon:commandButton disabled="true"
-											styleClass="aon-editDataTable-button" value="#{dia.cdg}" />
-										</td>
-									</c:when>
-
-                               <c:otherwise>
-										<td align="center"><aon:commandButton
-											styleClass="aon-editDataTable-button" value="#{dia.tipdia.value}" />
-										</td>
-									</c:otherwise>
-                                </c:choose>
-                       
-                   
-                              <c:if test="#{dia.tipdia.value=='F'}">	                              							
-						            <td align="center" >
-                                       <aon:commandButton  disabled="true" styleClass="aon-editDataTable-button" value="#{dia.cdg}" />
-                                    </td> 
-					          </c:if>	
-					          
-					           <c:if test="#{dia.tipdia.value=='L'}">	                              							
-						            <td align="center" >
-                                       <aon:commandButton                  styleClass="aon-editDataTable-button" value="#{dia.cdg}" />
-                                    </td> 
-					          </c:if>	  				          
-					                      -->
-                                  </td>
-							</a4j:repeat>
-
-						</tr>
-                    
-                    
-                </rich:columns>
-            </tbody>
-        </table>
-        
-     
-
-			<!-- 	
-	        	<aon:div id="empreDiv">
-					<ui:include src="empresa/grid.xhtml"  />
-				</aon:div>
-
-				<aon:div id="actiDiv">
-
-					<ui:include src="actividad/grid.xhtml" />
-				</aon:div>
-				
-				 <aon:div id="domDiv">
-
-					<ui:include src="domicilio/grid.xhtml"  />
-				</aon:div> 
-										
-				 <aon:div id="calDiv">
-
-					<ui:include src="calendar/grid.xhtml"  />
-				</aon:div>  -->
-
-
-			<aon:panelGrid columns="2" dir="true" width="100%"
-				style="margin-bottom=2px;">
-
-
-
-				<aon:outputLabel
-					value="#{appBundle.aon_payroll_convenios_calendario}" />
-
-				<rich:inputNumberSpinner inputSize="4" value="#{calendar.actual}"
-					maxValue="3000" >
-					<a4j:support event="onchange"  actionListener="#{calendar.load}" reRender="calendarForm" />
-			</rich:inputNumberSpinner>
-
-				<aon:outputLabel value="#{appBundle.aon_payroll_resultados_tc2_emp}" />
+					 	<aon:outputLabel value="#{appBundle.aon_payroll_resultados_tc2_emp}" />
 				<aon:div styleClass="aon-lookup">
 					<aon:lookupInputText id="Emp_cdg" lookup="#{empresaLookup}"
 						reRender="Emp_description" value="#{calendar.empresa.cdg}"
@@ -210,18 +106,43 @@
 						value="#{(calendar.domicilio.nomvia!=null)?(calendar.domicilio.nomvia):('')}"
 						size="60" disabled="true" />
 				</aon:div>
-			</aon:panelGrid>
+					</aon:panelGrid>
+				</aon:div>
 
-			<aon:commandButton value="VER CALENDARIO" >
-				<a4j:support event="onclick" actionListener="#{calendar.insertDays}" reRender="calendarForm" />
+				<aon:div>
+					<aon:panel>
+						<aon:outputText value="Festivo"
+							style="width: 100%;text-align:center;background-color:#CC3333;" />
+						<br />
+						<aon:outputText value="No Laborable"
+							style="width: 100%;text-align:center;background-color:#99CC66;" />
+						<br />
+						<aon:outputText value="Otros Dias"
+							style="width: 100%;text-align:center;background-color:#0099FF;" />
+						<br />
+						<aon:outputText value="Laborable"
+							style="width: 100%;text-align:center;background-color:white;" />
+					</aon:panel>
+				</aon:div>
+
+
+			</h:panelGrid>
+
+			<aon:commandButton value="VER CALENDARIO">
+				<a4j:support event="onclick" actionListener="#{calendar.loadDays}"
+					reRender="tabla" />
+			</aon:commandButton>
+			<aon:commandButton value="GUARDAR CAMBIOS">
+				<a4j:support event="onclick"
+					actionListener="#{calendar.saveModelDays}" reRender="calendarForm" />
 			</aon:commandButton>
 
 
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{empresaLookup}" />	
-	   <aon:lookupButtonPopup lookup="#{actividadLookup}" />
-       <aon:lookupButtonPopup lookup="#{domicilioLookup}" />
-		
+		<aon:lookupButtonPopup lookup="#{empresaLookup}" />
+		<aon:lookupButtonPopup lookup="#{actividadLookup}" />
+		<aon:lookupButtonPopup lookup="#{domicilioLookup}" />
+
 
 	</ui:define>
 </ui:composition>
