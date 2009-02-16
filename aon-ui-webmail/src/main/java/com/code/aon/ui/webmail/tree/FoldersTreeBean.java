@@ -19,14 +19,13 @@ import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonFolder;
+import com.code.aon.webmail.bean.AonServer;
 
 public class FoldersTreeBean implements WebMailConstants {
 
 	private static final Logger LOGGER = Logger.getLogger(FoldersTreeBean.class.getName());
 	
-	private String account = null;
-	
-	private TreeNode rootNode = null;
+	private TreeNode rootNode;
 
 	private AonFolder current;
 
@@ -57,9 +56,8 @@ public class FoldersTreeBean implements WebMailConstants {
 	public void loadTree() {
 		WebMailController webMailController = (WebMailController) AonUtil
 				.getRegisteredBean(WebMailConstants.BEAN_WEBMAIL);
-		account = webMailController.getServer().getAccount().getEmail();
-		AonFolder folder = new AonFolder(webMailController.getServer()
-				.getRoot());
+		AonServer server = webMailController.getServer();
+		AonFolder folder = new AonFolder(server.getRoot(), server);
 		rootNode = new TreeNodeImpl();
 		rootNode.setData(folder);
 		addNodes(rootNode);
@@ -120,10 +118,6 @@ public class FoldersTreeBean implements WebMailConstants {
 		AonFolder destinyFolder = (AonFolder) tree.getRowData();
    		MessageController message = (MessageController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
    		message.moveSelectedMessageAndMove(destinyFolder);
-	}
-
-	public String getAccount() {
-		return account;
 	}
 	
 	public boolean isTreeLoaded(){

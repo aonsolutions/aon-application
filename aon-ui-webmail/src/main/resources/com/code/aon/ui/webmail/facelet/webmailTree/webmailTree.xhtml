@@ -59,7 +59,16 @@
 		</aon:div>
 
 	   <aon:div >
-			<h:outputText value="#{webmailTree.account}" styleClass="aon-icon-tree-root aon-icon"/>
+			<aon:outputText value="#{webmail.server.account.email}"
+				rendered="#{mailAccount.model.rowCount == 1}"
+				styleClass="aon-icon-tree-root aon-icon"/>
+			<rich:inplaceSelect value="#{mailAccount.accountId}"
+				styleClass="aon-icon-tree-root aon-icon"
+				valueChangeListener="#{mailAccount.onChangeMailAccount}"
+				rendered="#{mailAccount.model.rowCount &gt; 1}" >
+				<f:selectItems value="#{mailAccount.mailAccounts}" />
+				<a4j:support ajaxSingle="true" event="onviewactivated" reRender="aonContent" />
+			</rich:inplaceSelect>
 		</aon:div>	
 	    
 		<rich:tree nodeSelectListener="#{webmailTree.processSelection}" selectedClass="aon-tree-node-active" 

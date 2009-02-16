@@ -27,6 +27,7 @@ import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonMessageSortableList;
+import com.code.aon.webmail.bean.AonServer;
 import com.sun.mail.imap.IMAPFolder;
 
 public class FolderController implements WebMailConstants {
@@ -144,15 +145,16 @@ public class FolderController implements WebMailConstants {
     }
 
     private void deleteMessages(AonMessage[] messagesLst) throws MessagingException {
-		if ((folder.getFolder().getFullName().equals(AonFolder.TRASH_FOLDER_NAME))
-				|| (folder.getFolder().getFullName().equals(AonFolder.SPAM_FOLDER_NAME))){
+    	AonServer server = getWebMailController().getServer();
+		if (folder.isTrashFolder() || folder.isSpamFolder()) {
 			folder.deleteMessages(messagesLst);
 			try {
 				folder.refresh();
 			} catch (WebmailException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 		}else{
-	    	AonFolder dest = getWebMailController().getServer().getAonFolder(AonFolder.TRASH_FOLDER_NAME);
+	    	AonFolder dest = server.getAonFolder(server.getTrashFolderName());
 	    	AonFolder treeDest = getTreeController().recoverTreeNode(dest);
 	    	moveSelectedMessages(treeDest);
 	    	getTreeController().loadTree();

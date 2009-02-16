@@ -73,9 +73,9 @@
 						</f:facet>
 						<aon:outputText
 							value="#{webmailBundle.webmail_signature_active}"
-							rendered="#{webmail.server.account.name==to.name}" />
+							rendered="#{mailAccount.currentToActiveAccount}" />
 						<aon:commandButton id="mailAccountChange"
-							rendered="#{webmail.server.account.name!=to.name}"
+							rendered="#{!mailAccount.currentToActiveAccount}"
 							onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
 							title="#{webmailBundle.webmail_mailAccountChange}"
 							action="mailAccount_list" actionListener="#{mailAccount.onChangeServer}"
