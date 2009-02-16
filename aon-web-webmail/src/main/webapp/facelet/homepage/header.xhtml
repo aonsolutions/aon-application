@@ -25,19 +25,23 @@
 			</aon:div>
 	
 			<aon:div>
-				<aon:div rendered="#{aonConfiguration.properties.middleHeader == null}">
+				<aon:div
+					rendered="#{aonConfiguration.properties.middleHeader == null}">
 					<aon:outputText value="&#160;"/>
 				</aon:div>
-				<aon:div rendered="#{aonConfiguration.properties.middleHeader != null}">
-					<aon:outputText escape="false" value="#{aonConfiguration.properties.middleHeader}" />
+				<aon:div
+					rendered="#{aonConfiguration.properties.middleHeader != null}">
+					<aon:outputText escape="false"
+						value="#{aonConfiguration.properties.middleHeader}" />
 				</aon:div>
 			</aon:div>
 			
 			<aon:div styleClass="aon-nowrap">
-				<aon:div style="white-space:nowrap;" rendered="#{login.logged}">
+				<aon:div style="white-space:nowrap;" rendered="#{loggedUser.logged}">
 					<aon:outputText value="#{loggedUser.companyName}" />
 					<aon:outputText value=" / " />
-					<aon:outputText value="#{loggedUser.loggedUserName}" styleClass="aon-bold"/>
+					<aon:outputText value="#{loggedUser.loggedUserName}"
+						styleClass="aon-bold"/>
 				</aon:div>
 			</aon:div>				
 		
@@ -48,8 +52,7 @@
 				<aon:div styleClass="aon-float-right"
 					rendered="#{!aonConfiguration.properties.hideHeaderLinks}">
 					<aon:div styleClass="aon-header-menu-item">
-						<h:outputLink 
-							target="_top"
+						<h:outputLink target="_top"
 							value="${facesContext.externalContext.requestContextPath}">
 							<h:outputText value="#{bundle.aon_home}" />
 						</h:outputLink>
