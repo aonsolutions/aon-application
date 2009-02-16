@@ -133,7 +133,13 @@
 					<aon:inputText id="Link_url"
 						required="true" size="80" maxlength="255"
 						value="#{link.to.url}" />
-													
+
+					<aon:outputLabel for="Link_description" style="width:100px"
+						value="#{bundle.aon_description}" />
+					<aon:inputTextarea id="Link_description"
+						rows="3" style="width:98%" 
+						value="#{link.toI18n.description}"/>
+
 				</aon:panelGrid>
 			</aon:div>
 		
