@@ -44,6 +44,8 @@ public class MailAccountController extends BasicController implements WebMailCon
 	
 	private String accountId;
 	
+	private boolean showMailAccountList;
+	
 	private List<SelectItem> mailAccounts;
 	
 	public MailAccountController() {
@@ -152,8 +154,8 @@ public class MailAccountController extends BasicController implements WebMailCon
 
 	public boolean isCurrentToActiveAccount() throws ManagerBeanException {
 		if ( getModel().isRowAvailable() ) {
-			MailAccount account = (MailAccount)getSelectedTO();
-			return ObjectUtils.equals(accountId, account.getId());
+			MailAccount ma = (MailAccount)getSelectedTO();
+			return ObjectUtils.equals(accountId, ma.getId());
 		}
 		return false;
 	}
@@ -172,13 +174,25 @@ public class MailAccountController extends BasicController implements WebMailCon
 			this.mailAccounts.add(item);
 		}
 	}
-	
+
 	public String getAccountId() {
 		return accountId;
 	}
 
 	public void setAccountId(String accountId) {
 		this.accountId = accountId;
+	}
+
+	public boolean isShowMailAccountList() {
+		return showMailAccountList;
+	}
+
+	public void setShowMailAccountList(boolean showMailAccountList) {
+		this.showMailAccountList = showMailAccountList;
+	}
+	
+	public void onSelectMailAccount(ActionEvent event) {
+		setShowMailAccountList(false);
 	}
 
 	public void onChangeMailAccount( ValueChangeEvent event ) {
@@ -196,6 +210,7 @@ public class MailAccountController extends BasicController implements WebMailCon
 		}
 		super.onSelect(null);
 		changeMailAccount();
+		setShowMailAccountList(false);
 	}
 	
 }

@@ -58,17 +58,30 @@
 			
 		</aon:div>
 
-	   <aon:div >
+	   <aon:div id="mailAccountDiv" >
 			<aon:outputText value="#{webmail.server.account.email}"
-				rendered="#{mailAccount.model.rowCount == 1}"
+				rendered="#{!mailAccount.showMailAccountList}"
 				styleClass="aon-icon-tree-root aon-icon"/>
-			<rich:inplaceSelect value="#{mailAccount.accountId}"
-				styleClass="aon-icon-tree-root aon-icon"
+			<aon:selectOneMenu 
+				rendered="#{mailAccount.showMailAccountList}"
 				valueChangeListener="#{mailAccount.onChangeMailAccount}"
-				rendered="#{mailAccount.model.rowCount &gt; 1}" >
+				value="#{mailAccount.accountId}" >
 				<f:selectItems value="#{mailAccount.mailAccounts}" />
-				<a4j:support ajaxSingle="true" event="onviewactivated" reRender="aonContent" />
-			</rich:inplaceSelect>
+				<a4j:support ajaxSingle="true" event="onchange" reRender="aonContent"
+					onsubmit="Richfaces.showModalPanel('waitProccess')" />	
+			</aon:selectOneMenu>
+			<aon:commandButton reRender="mailAccountDiv" ajaxSingle="true"
+				rendered="#{(mailAccount.model.rowCount &gt; 1) and mailAccount.showMailAccountList}"
+				title="#{bundle.aon_cancel}"
+				styleClass="aon-icon-commandButton aon-icon-cancel aon-margin-left">
+				<f:setPropertyActionListener target="#{mailAccount.showMailAccountList}" value="#{false}" />
+			</aon:commandButton>			
+			<aon:commandButton reRender="mailAccountDiv" ajaxSingle="true"
+				rendered="#{(mailAccount.model.rowCount &gt; 1) and (!mailAccount.showMailAccountList)}"
+				title="#{webmailBundle.webmail_mailAccount_select}"
+				styleClass="aon-icon-commandButton aon-icon-dropDown">
+				<f:setPropertyActionListener target="#{mailAccount.showMailAccountList}" value="#{true}" />
+			</aon:commandButton>			
 		</aon:div>	
 	    
 		<rich:tree nodeSelectListener="#{webmailTree.processSelection}" selectedClass="aon-tree-node-active" 
