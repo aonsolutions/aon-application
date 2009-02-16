@@ -476,6 +476,12 @@ public class EmpresaController extends LinesController  implements IPayrollAlias
 		
 		((Empresa)getTo()).setCdg(code);
 	}
+
+
+
+	public String getEdad() {
+		return edad;
+	}
 	
    
     
