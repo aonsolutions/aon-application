@@ -5,13 +5,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.mail.MessagingException;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.bridge.plugin.Utils;
@@ -29,7 +32,7 @@ import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.WebmailUtil;
 import com.code.aon.webmail.bean.BundleConstants;
 
-public class MailAccountController extends BasicController {
+public class MailAccountController extends BasicController implements WebMailConstants {
 
 	private static final String MAIL_ACCOUNT_DUPLICATED = "webmail_mailAccount_duplicated";
 
@@ -39,7 +42,14 @@ public class MailAccountController extends BasicController {
 	
 	private BasicManagerBean ldapManagerBean;
 	
+	private String accountId;
+	
 	private List<SelectItem> mailAccounts;
+	
+	public MailAccountController() {
+		WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
+		this.accountId = webmail.getServer().getAccount().getId();
+	}
 
 	@Override
 	public IManagerBean getManagerBean() throws ManagerBeanException {
@@ -91,30 +101,40 @@ public class MailAccountController extends BasicController {
 		super.accept(event);
 	}
 	
-	@SuppressWarnings("unused")
-	public void onChangeServer(ActionEvent event){
+	private void resetFolderController() {
 		FolderController folderController = (FolderController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_FOLDER);
 		if (folderController.getFolder()!=null){
 			try {
 				folderController.getFolder().getFolder().expunge();
 				folderController.getFolder().getFolder().close(false);
 				folderController.setFolder(null);
-			} catch (MessagingException e1) {
-				e1.printStackTrace();
+			} catch (MessagingException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
-		}
-		super.onSelect(event);
+		}		
+	}
+	
+	private void changeMailAccount() {
 		WebMailController webmail = (WebMailController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_WEBMAIL);
 		webmail.getServer().disconnect();
 		MailAccount previous = webmail.getServer().getAccount();
 		try{
 			webmail.initFull((MailAccount)super.getSelectedTO());
-		}catch (Exception e) {
+		} catch (Throwable e) {
 			webmail.initFull((MailAccount)previous);
 			AonUtil.addErrorMessage( e.getMessage() );
+		} finally {
+			this.accountId = webmail.getServer().getAccount().getId();			
 		}
     	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(WebMailConstants.BEAN_TREE);
-    	treeBean.initTree();
+    	treeBean.initTree();		
+	}
+	
+	@SuppressWarnings("unused")
+	public void onChangeServer(ActionEvent event) {
+		resetFolderController();
+		super.onSelect(event);
+		changeMailAccount();
 	}
 
 	public boolean isToDefaultAccount(){
@@ -130,6 +150,14 @@ public class MailAccountController extends BasicController {
 		return false;
 	}
 
+	public boolean isCurrentToActiveAccount() throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			MailAccount account = (MailAccount)getSelectedTO();
+			return ObjectUtils.equals(accountId, account.getId());
+		}
+		return false;
+	}
+	
 	public List<SelectItem> getMailAccounts() {
 		return mailAccounts;
 	}
@@ -143,6 +171,31 @@ public class MailAccountController extends BasicController {
 			SelectItem item = new SelectItem(mailAccount.getId(),mailAccount.getEmail());
 			this.mailAccounts.add(item);
 		}
+	}
+	
+	public String getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(String accountId) {
+		this.accountId = accountId;
+	}
+
+	public void onChangeMailAccount( ValueChangeEvent event ) {
+		resetFolderController();
+		String newAccountId = (String) event.getNewValue();
+		for( int i = 0; i < this.mailAccounts.size(); i++ ) {
+			if ( ObjectUtils.equals(newAccountId, this.mailAccounts.get(i).getValue()) ) {
+				try {
+					getModel().setRowIndex(i);
+				} catch (ManagerBeanException e) {
+					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				}
+				break;
+			}
+		}
+		super.onSelect(null);
+		changeMailAccount();
 	}
 	
 }

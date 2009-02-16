@@ -331,8 +331,8 @@ public class SpamController extends BasicLdap implements WebMailConstants {
 			return false;
 		}
     	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(BEAN_MESSAGE);
-    	String aonFolderName = messageController.getMessage().getParent().getName();
-    	if (AonFolder.SPAM_FOLDER_NAME.equalsIgnoreCase(aonFolderName)) {
+    	AonFolder folder = messageController.getMessage().getParent();
+    	if (folder.isSpamFolder()) {
     		return true;
     	}
 		return false;
@@ -343,9 +343,8 @@ public class SpamController extends BasicLdap implements WebMailConstants {
 			return false;
 		}
     	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(BEAN_MESSAGE);
-    	String aonFolderName = messageController.getMessage().getParent().getName();
-    	if (!AonFolder.SPAM_FOLDER_NAME.equalsIgnoreCase(aonFolderName) &&
-    			!AonFolder.SENT_FOLDER_NAME.equalsIgnoreCase(aonFolderName)) {
+    	AonFolder folder = messageController.getMessage().getParent();
+   		if (!folder.isSpamFolder() && !folder.isSentFolder()) {    		
     		return true;
     	}
 		return false;

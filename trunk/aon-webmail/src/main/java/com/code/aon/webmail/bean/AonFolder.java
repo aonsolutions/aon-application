@@ -37,9 +37,16 @@ public class AonFolder extends AonMessageSortableList {
 	private static final Logger LOGGER = Logger.getLogger(AonFolder.class.getName());
 	
 	private int pageSize = 20;
+	
+	private AonServer server;
 
-	public AonFolder(Folder folder) {
+	public AonFolder(Folder folder, AonServer server) {
 		super(DATE_COLUMN,folder);
+		this.server = server;
+	}
+
+	public AonServer getServer() {
+		return server;
 	}
 
 	public int getPageSize() {
@@ -58,7 +65,7 @@ public class AonFolder extends AonMessageSortableList {
             folderList = new ArrayList<AonFolder>(folders.length);
             for (int i = 0; i < folders.length; i++) {
                 if (folders[i] != null) {
-                	folderList.add(new AonFolder(folders[i]));
+                	folderList.add(new AonFolder(folders[i],getServer()));
                 }
             }
 		} catch (MessagingException e) {
@@ -185,13 +192,7 @@ public class AonFolder extends AonMessageSortableList {
     		return false;
     	}else if (getMessageCount()!=0){
     		return false;
-    	}else if (TRASH_FOLDER_NAME.equals(folder.getName())){
-    		return false;
-    	}else if (INBOX_FOLDER_NAME.equals(folder.getName())){
-    		return false;
-    	}else if (SENT_FOLDER_NAME.equals(folder.getName())){
-    		return false;
-    	}else if (SPAM_FOLDER_NAME.equals(folder.getName())){
+    	} else if (isTrashFolder() || isInboxFolder() || isSentFolder() || isSpamFolder()) {
     		return false;
     	}
     	return true;
@@ -200,22 +201,14 @@ public class AonFolder extends AonMessageSortableList {
     public boolean isRenameable() {
     	if (isRoot()){
     		return false;
-    	}else if (TRASH_FOLDER_NAME.equals(folder.getName())){
-    		return false;
-    	}else if (INBOX_FOLDER_NAME.equals(folder.getName())){
-    		return false;
-    	}else if (SENT_FOLDER_NAME.equals(folder.getName())){
-    		return false;
-    	}else if (SPAM_FOLDER_NAME.equals(folder.getName())){
+    	} else if (isTrashFolder() || isInboxFolder() || isSentFolder() || isSpamFolder()) {
     		return false;
     	}
     	return true;
     }
 
     public boolean isDeleteableAllMessages() {
-    	if (TRASH_FOLDER_NAME.equals(folder.getName())){
-    		return true;
-    	}else if (SPAM_FOLDER_NAME.equals(folder.getName())){
+    	if ( isTrashFolder() || isSpamFolder() ) {
     		return true;
     	}
     	return false;
@@ -234,18 +227,38 @@ public class AonFolder extends AonMessageSortableList {
     //**************************************************************
 
     public String getFolderTypeName(){
-		if (TRASH_FOLDER_NAME.equals(folder.getName()) ||
-			INBOX_FOLDER_NAME.equals(folder.getName()) ||
-			SENT_FOLDER_NAME.equals(folder.getName()) ||
-			SPAM_FOLDER_NAME.equals(folder.getName()) ||
-			DRAFT_FOLDER_NAME.equals(folder.getName()) ){
-			return folder.getName();
+		if ( isInboxFolder() ) {
+			return INBOX_FOLDER_NAME;
+		} else if ( isTrashFolder() ) {
+			return TRASH_FOLDER_NAME;
+		} else if ( isSentFolder() ) {
+			return SENT_FOLDER_NAME;
+		} else if ( isSpamFolder() ) {
+			return SPAM_FOLDER_NAME;
+		} else if ( isSpamFolder() ) {
+			return DRAFT_FOLDER_NAME;
 		}
     	return "other";
     }
+
+    public boolean isInboxFolder() {
+    	return INBOX_FOLDER_NAME.equals( getFolder().getFullName() );	
+    }
     
     public boolean isDraftFolder() {
-    	return AonFolder.DRAFT_FOLDER_NAME.equals( getFolder().getFullName() );	
+    	return getServer().getDraftFolderName().equals( getFolder().getFullName() );	
+    }
+
+    public boolean isSentFolder() {
+    	return getServer().getSentFolderName().equals( getFolder().getFullName() );	
+    }
+
+    public boolean isSpamFolder() {
+    	return getServer().getSpamFolderName().equals( getFolder().getFullName() );	
+    }
+
+    public boolean isTrashFolder() {
+    	return getServer().getTrashFolderName().equals( getFolder().getFullName() );	
     }
     
     //**************************************************************

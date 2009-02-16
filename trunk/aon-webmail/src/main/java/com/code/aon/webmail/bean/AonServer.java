@@ -20,6 +20,8 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.WebmailException;
 
@@ -135,7 +137,7 @@ public class AonServer {
     public AonFolder getAonFolder(String folderName) {
     	ensureConnection();
         try {
-            return new AonFolder(store.getFolder(folderName));
+            return new AonFolder(store.getFolder(folderName), this);
         } catch (MessagingException e) {
         	LOGGER.log(Level.SEVERE,"getAonFolder failed " , e);
             return null;
@@ -156,7 +158,7 @@ public class AonServer {
 			} else {
 				LOGGER.log(Level.INFO, "Found folder : " + folderName);
 			}
-			return new AonFolder(new_folder);
+			return new AonFolder(new_folder, this);
 		} catch (MessagingException e) {
 			LOGGER.log(Level.SEVERE,
 					"Creating new folder failed ", e);
@@ -233,21 +235,39 @@ public class AonServer {
 
 	public void createBasicFolders(){
 		try{
-			if (!getRoot().getFolder(AonFolder.SENT_FOLDER_NAME).exists()){
-				createAonFolder(null, AonFolder.SENT_FOLDER_NAME, Folder.HOLDS_MESSAGES);
+			if (!getRoot().getFolder(getSentFolderName()).exists()){
+				createAonFolder(null, getSentFolderName(), Folder.HOLDS_MESSAGES);
 			}
-			if (!getRoot().getFolder(AonFolder.TRASH_FOLDER_NAME).exists()){
-				createAonFolder(null, AonFolder.TRASH_FOLDER_NAME, Folder.HOLDS_MESSAGES);
+			if (!getRoot().getFolder(getTrashFolderName()).exists()){
+				createAonFolder(null, getTrashFolderName(), Folder.HOLDS_MESSAGES);
 			}
-			if (!getRoot().getFolder(AonFolder.DRAFT_FOLDER_NAME).exists()){
-				createAonFolder(null, AonFolder.DRAFT_FOLDER_NAME, Folder.HOLDS_MESSAGES);
+			if (!getRoot().getFolder(getDraftFolderName()).exists()){
+				createAonFolder(null, getDraftFolderName(), Folder.HOLDS_MESSAGES);
 			}
-			if (!getRoot().getFolder(AonFolder.SPAM_FOLDER_NAME).exists()){
-				createAonFolder(null, AonFolder.SPAM_FOLDER_NAME, Folder.HOLDS_MESSAGES);
+			if ( account.isDefault() || (!StringUtils.isEmpty(account.getSpamFolder())) ) {
+				if (!getRoot().getFolder(getSpamFolderName()).exists()){
+					createAonFolder(null, getSpamFolderName(), Folder.HOLDS_MESSAGES);
+				}
 			}
 		} catch (MessagingException e) {
 			LOGGER.severe( e.getMessage() );
 		}
+	}
+	
+	public String getSentFolderName() {
+		return StringUtils.defaultIfEmpty(account.getSentFolder(), AonFolder.SENT_FOLDER_NAME);
+	}
+
+	public String getDraftFolderName() {
+		return StringUtils.defaultIfEmpty(account.getDraftFolder(), AonFolder.DRAFT_FOLDER_NAME);
+	}
+	
+	public String getTrashFolderName() {
+		return StringUtils.defaultIfEmpty(account.getTrashFolder(), AonFolder.TRASH_FOLDER_NAME);
+	}
+
+	public String getSpamFolderName() {
+		return StringUtils.defaultIfEmpty(account.getSpamFolder(), AonFolder.SPAM_FOLDER_NAME);
 	}
 	
 }

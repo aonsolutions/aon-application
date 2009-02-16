@@ -71,6 +71,14 @@ public class MailAccount implements ITransferObject{
     // Signature
     private Signature signature;
     
+    private String draftFolder;
+    
+    private String sentFolder;
+    
+    private String spamFolder;
+    
+    private String trashFolder;
+    
 	/**
 	 * Gets the name.
 	 * 
@@ -319,6 +327,42 @@ public class MailAccount implements ITransferObject{
 	@Transient
 	public boolean isDefault() {
 		return StringUtils.equalsIgnoreCase(DEFAULT_MAIL_ACCOUNT_NAME, getName());
+	}
+
+	@Attribute(name="draftFolder", length=64)
+	public String getDraftFolder() {
+		return draftFolder;
+	}
+
+	public void setDraftFolder(String draftFolder) {
+		this.draftFolder = draftFolder;
+	}
+
+	@Attribute(name="sentFolder", length=64)
+	public String getSentFolder() {
+		return sentFolder;
+	}
+
+	public void setSentFolder(String sentFolder) {
+		this.sentFolder = sentFolder;
+	}
+
+	@Attribute(name="spamFolder", length=64)
+	public String getSpamFolder() {
+		return spamFolder;
+	}
+
+	public void setSpamFolder(String spamFolder) {
+		this.spamFolder = spamFolder;
+	}
+
+	@Attribute(name="trashFolder", length=64)
+	public String getTrashFolder() {
+		return trashFolder;
+	}
+
+	public void setTrashFolder(String trashFolder) {
+		this.trashFolder = trashFolder;
 	}
 	
 }
