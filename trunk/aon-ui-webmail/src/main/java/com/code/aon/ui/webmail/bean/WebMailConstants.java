@@ -17,7 +17,7 @@ public interface WebMailConstants {
 	// ************************************************************
 	// BEAN
 	// ************************************************************
-	String BEAN_LOGIN = "login";
+	String BEAN_LOGIN = "webmailLogin";
 	String BEAN_USER = "user";
 	String BEAN_MAIL_ACCOUNT = "mailAccount";
 	String BEAN_WEBMAIL = "webmail";
