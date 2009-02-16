@@ -14,7 +14,7 @@
    <!-- ************ MANAGED BEANS ************** -->
    <!-- ***************************************** -->
 	<managed-bean>
-        <managed-bean-name>login</managed-bean-name>
+        <managed-bean-name>webmailLogin</managed-bean-name>
         <managed-bean-class>
             com.code.aon.ui.webmail.controller.LoginController
         </managed-bean-class>
