@@ -1,6 +1,7 @@
 package com.code.aon.webmail.bean;
 
 import java.io.UnsupportedEncodingException;
+import java.text.DecimalFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -11,6 +12,14 @@ import javax.mail.internet.MimeUtility;
 import org.apache.commons.lang.StringUtils;
 
 public class AonMessageUtils {
+
+	private static final long KB_BYTES = 1024;
+	
+	private static final long MB_BYTES = 1024 * KB_BYTES;
+	
+	private static final DecimalFormat KB_FORMAT = new DecimalFormat("0K");
+	
+	private static final DecimalFormat MB_FORMAT = new DecimalFormat("0.##MB");
 
 	private static final Logger LOGGER = Logger.getLogger(AonMessageUtils.class.getName());
 	
@@ -156,22 +165,38 @@ public class AonMessageUtils {
 	
 	public static String decodeText( String text ) {
 		String result = text;
-		int pos = result.indexOf("=?");
-		while ( pos != -1 ) {
-			try {
-				StringBuffer fixedText = new StringBuffer(result);
-				fixedText.insert(pos, ' ');
-				String decodedText = MimeUtility.decodeText(fixedText.toString());
-				StringBuffer decodedTextTrimed = new StringBuffer(decodedText);
-				decodedTextTrimed.deleteCharAt(pos);
-				result = decodedTextTrimed.toString();
-				pos = result.indexOf("=?");
-			} catch (UnsupportedEncodingException e) {
-				LOGGER.log(Level.SEVERE,"Error decoding string" + text, e);
-				return text;
+		if ( result != null ) {
+			int pos = result.indexOf("=?");
+			while ( pos != -1 ) {
+				try {
+					StringBuffer fixedText = new StringBuffer(result);
+					fixedText.insert(pos, ' ');
+					String decodedText = MimeUtility.decodeText(fixedText.toString());
+					StringBuffer decodedTextTrimed = new StringBuffer(decodedText);
+					decodedTextTrimed.deleteCharAt(pos);
+					result = decodedTextTrimed.toString();
+					pos = result.indexOf("=?");
+				} catch (UnsupportedEncodingException e) {
+					LOGGER.log(Level.SEVERE,"Error decoding string" + text, e);
+					return text;
+				}
 			}
-		}		
+		}
 		return result;
+	}
+	
+	public static String getDisplaySize( long value ) {
+		String result = "";
+		double size = value;
+		if ( size != -1 ) {
+			if ( size > MB_BYTES ) {
+				result = MB_FORMAT.format(size / MB_BYTES);
+			} else {
+				size = (size < KB_BYTES) ? 1 : size / KB_BYTES;
+				result = KB_FORMAT.format(size);
+			}
+		}
+		return result;		
 	}
 	
 }

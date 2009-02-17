@@ -1,5 +1,7 @@
 package com.code.aon.ui.webmail.controller;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
@@ -8,6 +10,7 @@ import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
+import javax.mail.Quota;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.bridge.session.LoggedUser;
@@ -17,6 +20,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.resources.bean.ResourceResolver;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
@@ -34,7 +38,6 @@ public class WebMailController implements WebMailConstants, BundleConstants {
 	private AonServer server;
 	
 	private FolderController folderController;
-
 	
 	/**
 	 * @return the server
@@ -122,6 +125,32 @@ public class WebMailController implements WebMailConstants, BundleConstants {
 
 	public void setFolderController(FolderController folderController) {
 		this.folderController = folderController;
+	}
+	
+	public double getQuotaPercent() {
+		Quota.Resource quota = getServer().getQuotaResource();
+		return ( quota.usage / (double) quota.limit );
+	}
+	
+	public double getQuotaLimit() {
+		return (getServer().getQuotaResource().limit / 1024.0);
+	}
+	
+	public String getQuotaImage() {
+		double percent = getQuotaPercent();
+		String suffix = "90";
+		if ( percent >= 1 ) {
+			suffix = "exceeded";
+		} else if ( percent < 0.20 ) {
+			suffix = "20";
+		} else if ( percent < 0.50 ) {
+			suffix = "50";
+		} else if ( percent < 0.70 ) {
+			suffix = "70";
+		}
+		ResourceResolver resolver = (ResourceResolver) AonUtil.getRegisteredBean("aonResource");
+		String filePath = "/images/quota-" + suffix + ".png";
+		return resolver.getResolveLocal().get(filePath );
 	}
 	
 }

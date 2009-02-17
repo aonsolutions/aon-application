@@ -75,6 +75,7 @@ import com.code.aon.webmail.bean.AonAttachment;
 import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonMessageUtils;
+import com.code.aon.webmail.bean.AonServer;
 import com.code.aon.webmail.bean.BundleConstants;
 import com.sun.mail.imap.AppendUID;
 import com.sun.mail.imap.IMAPFolder;
@@ -339,16 +340,17 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
 	    	AonMessage aonMessage = compoundMessage();
 	    	AonFolder dest = null;
 	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
+	    	AonServer server = webMailController.getServer();
 	    	try {
-	    		webMailController.getServer().sendMessage(aonMessage);
-		    	dest = webMailController.getServer().getAonFolder(AonFolder.SENT_FOLDER_NAME);
+	    		server.sendMessage(aonMessage);
+		    	dest = server.getAonFolder(server.getSentFolderName());
 		    	if (parentMessage!=null){
 			    	parentMessage.getMessage().setFlag(Flag.ANSWERED, true);
 			    	parentMessage.getParent().getFolder().expunge();
 		    	}
 	    	} catch ( WebmailException e ) {
 	    		LOGGER.log(Level.SEVERE, e.getMessage(), e);
-		    	dest = webMailController.getServer().getAonFolder(AonFolder.DRAFT_FOLDER_NAME);
+		    	dest = server.getAonFolder(server.getDraftFolderName());
 	    	}
 	    	Message[] messages = new Message[1];
     		messages[0] = aonMessage.getMessage();
@@ -369,7 +371,8 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
     private void deleteDraftMessage() throws MessagingException {
     	if ( this.draftMessageUID != null ) {
     		WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-    		AonFolder folder = webMailController.getServer().getAonFolder(AonFolder.DRAFT_FOLDER_NAME);
+    		AonServer server = webMailController.getServer();
+    		AonFolder folder = server.getAonFolder(server.getDraftFolderName());
     		IMAPFolder imapFolder = (IMAPFolder) folder.getFolder();
     		imapFolder.open(Folder.READ_WRITE);
     		Message message = imapFolder.getMessageByUID(this.draftMessageUID);
@@ -385,7 +388,8 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
     	try {
 	    	AonMessage aonMessage = compoundMessage();    		
 	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-	    	AonFolder dest = webMailController.getServer().getAonFolder(AonFolder.DRAFT_FOLDER_NAME);
+	    	AonServer server = webMailController.getServer();
+	    	AonFolder dest = server.getAonFolder(server.getDraftFolderName());
 	    	Message[] messages = new Message[1];
     		messages[0] = aonMessage.getMessage();
     		messages[0].setFlag(Flag.DRAFT, true);

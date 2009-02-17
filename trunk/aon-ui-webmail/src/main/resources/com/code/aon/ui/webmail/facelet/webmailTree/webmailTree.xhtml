@@ -55,16 +55,24 @@
 				title="#{webmailBundle.webmail_renamefolder}"					
 				styleClass="aon-icon-commandButton-disabled aon-icon-renameFolder-disabled">
 			</aon:commandButton>
-			
-			<h:outputText rendered="#{webmail.server.quotaAware}"
-				value="Quota: #{webmail.server.quotaUsage}/#{webmail.server.quotaLimit}"/>
+		</aon:div>
+		
+		<aon:div  rendered="#{webmail.server.quotaAware}" styleClass="aon-margin-bottom">
+			<aon:div>		
+				<aon:graphicImage value="#{webmail.quotaImage}" styleClass="aon-border"
+					width="200" height="10" />
+			</aon:div>
+			<aon:outputFormat value="#{webmailBundle.webmail_quota}" >
+				<f:param value="#{webmail.quotaPercent}"/>
+				<f:param value="#{webmail.quotaLimit}"/>
+			</aon:outputFormat>
 		</aon:div>
 
-	   <aon:div id="mailAccountDiv" >
+		<aon:div id="mailAccountDiv">
 			<aon:outputText value="#{webmail.server.account.email}"
 				rendered="#{!mailAccount.showMailAccountList}"
 				styleClass="aon-icon-tree-root aon-icon"/>
-			<aon:div rendered="#{mailAccount.showMailAccountList}">
+			<h:panelGrid columns="2" rendered="#{mailAccount.showMailAccountList}">
 				<aon:selectOneMenu 			
 					valueChangeListener="#{mailAccount.onChangeMailAccount}"
 					value="#{mailAccount.accountId}" >
@@ -77,7 +85,7 @@
 					styleClass="aon-icon-commandButton aon-icon-cancel aon-margin-left">
 					<f:setPropertyActionListener target="#{mailAccount.showMailAccountList}" value="#{false}" />
 				</aon:commandButton>
-			</aon:div>			
+			</h:panelGrid>			
 			<aon:commandButton reRender="mailAccountDiv" ajaxSingle="true"
 				rendered="#{(mailAccount.model.rowCount &gt; 1) and (!mailAccount.showMailAccountList)}"
 				title="#{webmailBundle.webmail_mailAccount_select}"
