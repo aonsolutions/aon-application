@@ -44,8 +44,6 @@ public class AonServer {
     
     private boolean quotaAware;
     
-    private Quota.Resource quotaResource;
-    
     /** Creates a new instance of Server */
     public AonServer(MailAccount account){
         setAccount( account );
@@ -71,7 +69,7 @@ public class AonServer {
     	return false;
     }
     
-    private Quota.Resource getQuotaResource() {
+    public Quota.Resource getQuotaResource() {
     	IMAPStore imapStore = (IMAPStore) store;
     	try {
 			Quota[] quotas = imapStore.getQuota(AonFolder.INBOX_FOLDER_NAME);
@@ -84,15 +82,6 @@ public class AonServer {
 			LOGGER.log(Level.SEVERE,"Error getting QUOTA" + account.toString(),e);
 		}
 		return null;
-    }
-    
-    public long getQuotaLimit() {
-    	return quotaResource.limit;
-    }
-
-    public long getQuotaUsage() {
-    	quotaResource = getQuotaResource();
-    	return quotaResource.usage;
     }
     
 	/**
@@ -139,7 +128,6 @@ public class AonServer {
             store = session.getStore(url);
             store.connect();
             quotaAware = calculateQuotaAware();
-            quotaResource = getQuotaResource();
             return true;
         }catch (NoSuchProviderException e) {
         	LOGGER.log(Level.SEVERE,"Connection Error - No such provider for " + account.toString(),e);
