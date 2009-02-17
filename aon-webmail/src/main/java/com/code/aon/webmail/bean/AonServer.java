@@ -83,6 +83,14 @@ public class AonServer {
 		}
 		return null;
     }
+
+    public boolean isQuotaExceeded() {
+    	if ( this.quotaAware ) {
+    		Quota.Resource quota = getQuotaResource();
+    		return ( quota.usage >= quota.limit );
+    	}
+    	return false;
+    }
     
 	/**
      * Is this service currently connected?

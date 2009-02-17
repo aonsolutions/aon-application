@@ -45,7 +45,7 @@ public class ResourceResolver {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private class FakeMap extends AbstractMap {
+	public class FakeMap extends AbstractMap<String,String> {
 		
 		private boolean local;
 		
@@ -59,7 +59,7 @@ public class ResourceResolver {
 		}
 		
 		@Override
-		public Object get(Object key) {
+		public String get(Object key) {
 			String result;
 			if ( local ) {
 				result = StringUtils.join( new Object[] {resourceURIPreffix, key} );

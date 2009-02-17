@@ -23,6 +23,8 @@ public class AonMessageComparator {
 			return new FromComparator( ascending );
 		} else if (AonMessageSortableList.TO_COLUMN.equals(column) ) {
 			return new ToComparator( ascending );
+		} else if (AonMessageSortableList.SIZE_COLUMN.equals(column) ) {
+			return new SizeComparator( ascending );
 		}
 		return new EmptyComparator();
 	}
@@ -56,7 +58,6 @@ public class AonMessageComparator {
 				return 0;
 			}
 		}
-
 	}
 
 	private static class FromComparator implements Comparator<AonMessage> {
@@ -145,6 +146,29 @@ public class AonMessageComparator {
 				LOGGER.log(Level.SEVERE, "Sort error", e);
 			}
 			return 0;
+		}
+
+	}
+
+	private static class SizeComparator implements Comparator<AonMessage> {
+
+		private boolean ascending;
+		
+		public SizeComparator(boolean ascending) {
+			this.ascending = ascending;
+		}
+
+		@Override
+		public int compare(AonMessage m1, AonMessage m2) {
+			try {
+				if (ascending) {
+					return new Integer(m1.getMessage().getSize()).compareTo(m2.getMessage().getSize());
+				}
+				return new Integer(m2.getMessage().getSize()).compareTo(m1.getMessage().getSize());
+			} catch (MessagingException e) {
+				LOGGER.log(Level.SEVERE, "Sort error", e);
+				return 0;
+			}
 		}
 
 	}

@@ -29,6 +29,8 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
     
     public static String DATE_COLUMN = "date";
     
+    public static String SIZE_COLUMN = "size";
+    
     private AonMessage[] messageList;
 
 	protected Folder folder;

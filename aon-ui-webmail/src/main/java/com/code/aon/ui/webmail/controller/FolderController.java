@@ -146,7 +146,7 @@ public class FolderController implements WebMailConstants {
 
     private void deleteMessages(AonMessage[] messagesLst) throws MessagingException {
     	AonServer server = getWebMailController().getServer();
-		if (folder.isTrashFolder() || folder.isSpamFolder()) {
+		if (folder.isTrashFolder() || folder.isSpamFolder() || server.isQuotaExceeded() ) {
 			folder.deleteMessages(messagesLst);
 			try {
 				folder.refresh();
@@ -308,8 +308,7 @@ public class FolderController implements WebMailConstants {
     // SENDER OR DESTINY COLUMN
     //*************************************************************
 	public boolean isSentItemColumn(){
-		if (folder.getFolder().getFullName().equals(AonFolder.SENT_FOLDER_NAME) ||
-				folder.isDraftFolder())
+		if (folder.isSentFolder() || folder.isDraftFolder())
 			return true;
 		return false;
 	}
@@ -329,7 +328,8 @@ public class FolderController implements WebMailConstants {
 			} catch (WebmailException e) {
 			}
 		} catch (MessagingException e) {
-			e.printStackTrace();
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
 		}
     }
 
@@ -370,6 +370,15 @@ public class FolderController implements WebMailConstants {
 		}
 	}
 
+	public void orderBySize(ActionEvent event) {
+		try{
+			orderBy(AonMessageSortableList.SIZE_COLUMN);
+		} catch (WebmailException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
+	}
+	
 	public void orderByDate(ActionEvent event) {
 		try{
 			orderBy(AonMessageSortableList.DATE_COLUMN);

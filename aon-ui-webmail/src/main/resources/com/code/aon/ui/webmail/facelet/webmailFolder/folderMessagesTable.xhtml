@@ -44,7 +44,8 @@
 						columnClasses="aon-width-80,
 								aon-width-200 aon-editDataTable-textColumn,
 								aon-editDataTable-textColumn,
-								aon-width-150 aon-editDataTable-textColumn">
+								aon-width-150 aon-editDataTable-textColumn,
+								aon-width-60 aon-editDataTable-textColumn">
 								
 						<aon:rowSelector action="#{webmailFolder.getSelectedMessageAction}"
 							actionListener="#{webmailFolder.changeSelectedMessage}" />							
@@ -129,11 +130,7 @@
 								</aon:commandLink>
 							</f:facet>
 							<aon:outputText escape="false" value="#{to.subject}"
-								rendered="#{to.readed}" >
-								<aon:abbreviateConverter maxWidth="60" />
-							</aon:outputText>
-							<aon:outputText escape="false" value="#{to.subject}"
-								rendered="#{!to.readed}" style="font-weight: bold" >
+								style="#{to.readed?'':'font-weight: bold'}" >
 								<aon:abbreviateConverter maxWidth="60" />
 							</aon:outputText>
 						</aon:column>
@@ -146,11 +143,21 @@
 							</f:facet>
 							<aon:div style="white-space:nowrap">
 								<aon:outputText value="#{to.sentDateString}"
-									rendered="#{to.readed}" />
-								<aon:outputText value="#{to.sentDateString}"
-									rendered="#{!to.readed}" style="font-weight: bold" />
+									style="#{to.readed?'':'font-weight: bold'}" />
 							</aon:div>
 						</aon:column>
+						<aon:column>
+							<f:facet name="header">
+								<aon:commandLink action="folder"
+									actionListener="#{webmailFolder.orderBySize}">
+									<aon:outputText value="#{webmailBundle.webmail_size}" />
+								</aon:commandLink>
+							</f:facet>
+							<aon:div style="white-space:nowrap">
+								<aon:outputText value="#{to.displaySize}"
+									style="#{to.readed?'':'font-weight: bold'}" />
+							</aon:div>
+						</aon:column>						
 					</aon:dataTable>
 
 					<aon:dataScroller2 for="messageDataTable" page="#{webmailFolder.currentPage}" />

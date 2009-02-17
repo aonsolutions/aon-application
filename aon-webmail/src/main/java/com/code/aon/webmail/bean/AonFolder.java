@@ -235,7 +235,7 @@ public class AonFolder extends AonMessageSortableList {
 			return SENT_FOLDER_NAME;
 		} else if ( isSpamFolder() ) {
 			return SPAM_FOLDER_NAME;
-		} else if ( isSpamFolder() ) {
+		} else if ( isDraftFolder() ) {
 			return DRAFT_FOLDER_NAME;
 		}
     	return "other";
