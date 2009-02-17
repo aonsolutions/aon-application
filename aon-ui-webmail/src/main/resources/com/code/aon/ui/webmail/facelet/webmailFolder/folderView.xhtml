@@ -43,21 +43,12 @@
 							value="#{webmailBundle.webmail_newmail}"
 							styleClass="aon-finding-toolbar-item aon-icon-newMail">
 						</aon:commandButton>
-		
-						<aon:confirmButton id="deleteButton_n"
-							rendered="#{webmailFolder.folder.deleteableAllMessages}"
-							title="#{webmailBundle.webmail_deletemail}"
-							confirmTitle="#{webmailBundle.webmail_advice}"
-							confirmMessage="#{bundle.aon_remove_confirm}"
-							accesskey="#{bundle.aon_key_remove}" confirmAction="folder"
-							confirmActionListener="#{webmailFolder.deleteCheckedMessages}"
-							value="#{webmailBundle.webmail_deletemail}"
-							styleClass="aon-icon-mailDelete aon-finding-toolbar-item" />
-						<aon:commandButton
-							rendered="#{!webmailFolder.folder.deleteableAllMessages}"
-							title="#{webmailBundle.webmail_deletemail}" action="folder"
+							
+						<aon:commandButton id="deleteMail"
+							rendered="#{!webmailFolder.folder.purgableAllMessages}"
+							title="#{bundle.aon_remove}" action="folder"
 							actionListener="#{webmailFolder.deleteCheckedMessages}"
-							value="#{webmailBundle.webmail_deletemail}"
+							value="#{bundle.aon_remove}"
 							styleClass="aon-icon-mailDelete aon-finding-toolbar-item">
 						</aon:commandButton>
 		
@@ -68,16 +59,6 @@
 							styleClass="aon-icon-mailSearch aon-finding-toolbar-item">
 						</aon:commandButton>
 		
-						<aon:confirmButton id="deleteAllButton"
-							rendered="#{webmailFolder.folder.deleteableAllMessages}"
-							title="#{webmailBundle.webmail_deleteallmail}"
-							confirmTitle="#{webmailBundle.webmail_advice}"
-							confirmMessage="#{webmailBundle.webmail_remove_all_confirm}"
-							accesskey="#{bundle.aon_key_remove}" confirmAction="folder"
-							confirmActionListener="#{webmailFolder.deleteAllMessages}"
-							value="#{webmailBundle.webmail_deleteallmail}"
-							styleClass="aon-icon-mailDelete aon-finding-toolbar-item" />
-		
 						<!-- Move button  -->
 						<aon:commandButton id="moveButton" reRender="aonStatus"
 							title="#{webmailBundle.webmail_movemail}"
@@ -87,6 +68,27 @@
 								event="onclick" />
 						</aon:commandButton>
 						
+						<!-- Purge button  -->						
+						<aon:confirmButton id="purgeMail"
+							title="#{webmailBundle.webmail_mail_purge}"
+							confirmTitle="#{bundle.aon_advice}"
+							confirmMessage="#{webmailBundle.webmail_purge_confirm}"
+							accesskey="#{bundle.aon_key_remove}" confirmAction="folder"
+							confirmActionListener="#{webmailFolder.purgeCheckedMessages}"
+							value="#{webmailBundle.webmail_mail_purge}"
+							styleClass="aon-icon-mailDelete aon-finding-toolbar-item" />
+
+						<!-- Purge All button -->
+						<aon:confirmButton id="purgeAll"
+							rendered="#{webmailFolder.folder.purgableAllMessages}"
+							title="#{webmailBundle.webmail_mail_purge_all}"
+							confirmTitle="#{bundle.aon_advice}"
+							confirmMessage="#{webmailBundle.webmail_purge_all_confirm}"
+							confirmAction="folder"
+							confirmActionListener="#{webmailFolder.purgeAllMessages}"
+							value="#{webmailBundle.webmail_mail_purge_all}"
+							styleClass="aon-icon-mailDeleteAll aon-finding-toolbar-item" />		
+								
 						<!--  Refresh button -->
 						<aon:commandButton id="refreshAccounts" action="folder" 
 							actionListener="#{webmailFolder.refresh}"

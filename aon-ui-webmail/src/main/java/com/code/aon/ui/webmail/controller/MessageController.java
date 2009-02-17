@@ -294,19 +294,14 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
     }
 
     public void deleteSelectedMessage(ActionEvent event){
-    	AonMessage[] lst = new AonMessage[] { this.message };
-    	AonFolder folder = message.getParent();
-		try{
-			if ( folder.isTrashFolder() || folder.isSpamFolder() ){
-				folder.deleteMessages(lst);
-			}else{
-		    	AonFolder dest = folder.getServer().getAonFolder(folder.getServer().getTrashFolderName());
-		    	folder.moveMessages(lst, dest);
-			}
+    	AonMessage[] messagesLst = new AonMessage[] { this.message };
+    	FolderController folderController = (FolderController) AonUtil.getRegisteredBean(BEAN_FOLDER);
+    	try {
+    		folderController.deleteMessages(messagesLst, false);
 		} catch (MessagingException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
-		}
+		}    	
 	}
 
     public List<AonFile> getFiles(){
