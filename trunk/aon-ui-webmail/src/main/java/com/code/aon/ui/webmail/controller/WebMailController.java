@@ -46,8 +46,7 @@ public class WebMailController implements WebMailConstants, BundleConstants {
 		return server;
 	}
 
-	public void initDefault(AuthPrincipal user){
-		
+	public void initDefault(AuthPrincipal user) {	
 		try {
 			MailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
 			if (mailAccount!=null) {

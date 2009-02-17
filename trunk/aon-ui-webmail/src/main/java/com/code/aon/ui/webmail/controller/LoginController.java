@@ -10,8 +10,6 @@ public class LoginController implements WebMailConstants {
 	private static final String LOGIN_SUCCESS = NAVIGATION_FOLDER;
 	
 	private static final String LOGIN_ERROR = NAVIGATION_LOGIN;
-	
-	private AuthPrincipal mailUser;
 
 	private boolean logged;
 
@@ -20,25 +18,14 @@ public class LoginController implements WebMailConstants {
 	private String error = null;
 
 	public LoginController(){
-		System.out.println("LoginController -> instantiate");
 		page = startWebmail();
 	}
 	
-	/**
-	 * @return the mailUser
-	 */
-	public AuthPrincipal getMailUser() {
-		return mailUser;
-	}
-	
 	private String startWebmail(){
-		System.out.println("LoginController -> startWebmail v3.0.3.0");
 		logged = false;
-		mailUser = null;
 		try{
-			login();
-			System.out.println("LoginController -> startWebmail -> logged");
-	    	if (mailUser != null) {
+			AuthPrincipal mailUser = Utils.getAuthPrincipal();
+			if (mailUser != null) {
 				System.out.println("LoginController -> startWebmail -> initWebmail");
 	    		WebMailController webmail = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
 	    		webmail.initDefault(mailUser);
@@ -54,12 +41,6 @@ public class LoginController implements WebMailConstants {
 	    	return LOGIN_ERROR;
 		}
     	return LOGIN_ERROR;
-    }
-	
-    private void login() {
-		System.out.println("LoginController -> login");
-		this.mailUser = Utils.getAuthPrincipal();
-   		System.out.println(">>>>>>>>>>>>>>>>>> user.getShortName " + mailUser.getShortName());
     }
 
     public boolean isLogged(){
