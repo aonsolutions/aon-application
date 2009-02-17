@@ -140,14 +140,14 @@ public class InvoicingListener extends ControllerAdapter {
 			IncomeDetail incomeDetail = null;
 			if(iter.hasNext()){
 				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
-				incomeDetail = obtainIncomeDetail(invoiceDetail.getDeliveryDetail());
+				incomeDetail = obtainIncomeDetail(invoiceDetail.getSourceId());
 			}else{
 				criteria = new Criteria();
 				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 				iter = invoiceDetailBean.getList(criteria, 0, 1).iterator();
 				if(iter.hasNext()){
 					InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
-					incomeDetail = obtainIncomeDetail(invoiceDetail.getDeliveryDetail());
+					incomeDetail = obtainIncomeDetail(invoiceDetail.getSourceId());
 				}
 			}
 			if(incomeDetail != null){

@@ -217,7 +217,7 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 		try {
 			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_ID), invoiceDetail.getDeliveryDetail());
+			criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_ID), invoiceDetail.getSourceId());
 			Iterator iter = incomeDetailBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				return (IncomeDetail)iter.next();
@@ -282,7 +282,7 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 		try {
 			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_ID), invoiceDetail.getDeliveryDetail());
+			criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_ID), invoiceDetail.getSourceId());
 			Iterator iter = incomeDetailBean.getList(criteria).iterator();
 			int number = incomeDetailBean.getCount(criteria);
 			if(iter.hasNext()){
@@ -337,7 +337,7 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 			while(iter.hasNext()){
 				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
 				criteria = new Criteria();
-				criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_ID), invoiceDetail.getDeliveryDetail());
+				criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_ID), invoiceDetail.getSourceId());
 				Iterator iterator = incomeDetailBean.getList(criteria).iterator();
 				if(iterator.hasNext()){
 					IncomeDetail incomeDetail = (IncomeDetail)iterator.next();

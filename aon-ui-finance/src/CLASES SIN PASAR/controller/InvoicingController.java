@@ -368,7 +368,7 @@ public class InvoicingController extends BasicController {
 			while(iter.hasNext()){
 				IncomeDetail incomeDetail = (IncomeDetail)iter.next();
 				InvoiceDetail invoiceDetail = new InvoiceDetail();
-				invoiceDetail.setDeliveryDetail(incomeDetail.getId());
+				invoiceDetail.setSourceId(incomeDetail.getId());
 				invoiceDetail.setDescription(incomeDetail.getDescription());
 				invoiceDetail.setDiscountExpression(incomeDetail.getDiscountExpression());
 				invoiceDetail.setInvoice(invoice);
