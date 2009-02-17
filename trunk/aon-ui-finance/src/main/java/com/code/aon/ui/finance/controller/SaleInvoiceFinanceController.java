@@ -10,6 +10,8 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -73,7 +75,8 @@ public class SaleInvoiceFinanceController extends LinesController {
 			Iterator iter = rBankBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				RegistryBank rBank = (RegistryBank)iter.next();
-				SelectItem item = new SelectItem(rBank, rBank.getBank().getName());
+				SelectItem item = new SelectItem(rBank, StringUtils.abbreviate(rBank.getBank().getName(), 30)
+						+ " [" + rBank.getBankAccount().toString() + "]");
 				rBanks.add(item);
 			}
 		} catch (ManagerBeanException e) {

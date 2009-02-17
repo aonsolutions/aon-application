@@ -21,9 +21,9 @@
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="return" value="#{financeBundle.finance_to_return}"
 						styleClass="aon-finding-toolbar-item-no-icon"
-						actionListener="#{financeReturn.onEditSearch}" action="financeReturn_search"
+						actionListener="#{financeReturn.onReturn}" action="financeReturn_search"
 						accesskey="#{bundle.aon_key_search}" >
-						<aon:actionListener method="#{financeReturn.onReturn}" />
+						<aon:actionListener method="#{financeReturn.onEditSearch}" />
 					</aon:commandButton>						
 				</ui:define>				
 				
@@ -34,23 +34,23 @@
 
 					<aon:outputLabel for="Finance_payment"
 						value="#{financeBundle.finance_payment} / #{financeBundle.finance_charge}" />
-					<aon:selectOneRadio id="Finance_payment" value="#{financeReturnSearch.payment}" disabled="true">
+					<aon:selectOneRadio id="Finance_payment" value="#{financeReturn.to.payment}" disabled="true">
 						<f:selectItem itemLabel="#{financeBundle.finance_payment}" itemValue="#{true}" />
 						<f:selectItem itemLabel="#{financeBundle.finance_charge}" itemValue="#{false}" />
 					</aon:selectOneRadio>
 					
 					<aon:outputLabel for="Customer_full_name"
-						rendered="#{!financeReturnSearch.payment}"
+						rendered="#{!financeReturn.to.payment}"
 						value="#{customerBundle.customer_customer}" />
 					<aon:inputText id="Customer_full_name" 
-						rendered="#{!financeReturnSearch.payment}" disabled="true"
+						rendered="#{!financeReturn.to.payment}" disabled="true"
 						value="#{financeReturn.to.registry.name} #{financeReturn.to.registry.surname}" size="50" />
 							
 					<aon:outputLabel for="Supplier_full_name"
-						rendered="#{financeReturnSearch.payment}"
+						rendered="#{financeReturn.to.payment}"
 						value="#{supplierBundle.supplier_supplier}" />
 					<aon:inputText id="Supplier_full_name" 
-						rendered="#{financeReturnSearch.payment}" disabled="true"
+						rendered="#{financeReturn.to.payment}" disabled="true"
 						value="#{financeReturn.to.registry.name} #{financeReturn.to.registry.surname}" size="50" />
 
 					<aon:outputLabel for="Finance_invoice_series"
@@ -68,8 +68,9 @@
 
 					<aon:outputLabel for="Finance_date"
 						value="#{financeBundle.finance_finance_date}" />
-					<aon:selectInputDate id="Finance_date" 
-						value="#{financeReturn.returnDate}"
+					<aon:selectInputDate id="Finance_date"
+						disabled="true" 
+						value="#{financeReturn.to.dueDate}"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
@@ -79,6 +80,13 @@
 						disabled="true" value="#{financeReturn.to.amount}">
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:inputText>
+
+					<aon:outputLabel for="Finance_return_date"
+						value="#{financeBundle.finance_return_date}" />
+					<aon:selectInputDate id="Finance_return_date" 
+						value="#{financeReturn.returnDate}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 					<aon:outputLabel for="Finance_expenses"
 						value="#{financeBundle.finance_expenses}"/>

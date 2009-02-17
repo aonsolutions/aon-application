@@ -50,11 +50,11 @@ public class FinanceReturnController extends BasicController {
 		return writer;
 	}
 	
-	@Override
-	public void onSelect(ActionEvent event) {
-		super.onSelect(event);
-		setReturnDate( new Date() );
-	}
+//	@Override
+//	public void onSelect(ActionEvent event) {
+//		super.onSelect(event);
+//		setReturnDate( new Date() );
+//	}
 
 	public void onReturn(ActionEvent event) throws ManagerBeanException{
 		Finance finance = (Finance)this.getTo();
