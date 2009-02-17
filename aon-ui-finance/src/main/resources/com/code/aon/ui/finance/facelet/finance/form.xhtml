@@ -20,7 +20,7 @@
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="fraction" value="#{financeBundle.finance_to_fraction}"
-						immediate="#{true}" rendered="#{!finance.pending and !finance.returned}"
+						immediate="#{true}" rendered="#{finance.pending or finance.returned}"
 						styleClass="aon-finding-toolbar-item-no-icon"
 						actionListener="#{financeFraction.onFractionFinance}" action="finance_fraction"/>				
 				</ui:define>				
