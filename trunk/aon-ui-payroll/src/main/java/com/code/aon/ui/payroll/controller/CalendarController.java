@@ -22,6 +22,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.auxiliares.convenios.calendar.Calendario;
+import com.code.aon.payroll.avanzadas.hojastrabajo.Httrabajador;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.Tipdia;
 import com.code.aon.payroll.principales.Domicilio;
@@ -39,16 +40,12 @@ public class CalendarController extends LinesController implements
 	private Integer actual = 2009;
 	List<ITransferObject> selectlist;
 	List<ITransferObject> selectDefaultList;
-	// Date fecdia;
-	// Tipdia tipodia;
-
 	int[] listBlanks;
-
 	Anyo year;
 	String[] meses = { "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
 			"Julio", "Agosto", "Septiembre", "Octubre", "Noviembre",
 			"Diciembre" };
-	String[] numsem = { "1", "2", "3", "4", "5" };
+	String[] diasem = { "L", "M", "M", "J", "V", "S", "D" };
 
 	public void load(ActionEvent event) throws ManagerBeanException {
 
@@ -58,10 +55,7 @@ public class CalendarController extends LinesController implements
 		Calendar now = new GregorianCalendar(actual, 0, 1);
 		Integer dia = now.get(Calendar.DAY_OF_MONTH);
 		Integer mes = now.get(Calendar.MONTH);
-		Integer anio = now.get(Calendar.YEAR);
-
-		String[] diasem = { "L", "M", "M", "J", "V", "S", "D" };
-
+	
 		if (dias == null) {
 			dias = new ArrayList<MyCalendario>();
 			j = 0;
@@ -91,15 +85,13 @@ public class CalendarController extends LinesController implements
 		listaMeses.add("Octubre");
 		listaMeses.add("Noviembre");
 		listaMeses.add("Diciembre");
-
+		
 		mes = 0;
 		dia = 1;
 		listBlanks = new int[12];
 		year = new Anyo();
 
-		while (mes <= 11)
-
-		{
+		while (mes <= 11) {
 			Mes m = new Mes();
 			m.setCdg(mes);
 			m.setDesc(listaMeses.get(mes));
@@ -137,7 +129,6 @@ public class CalendarController extends LinesController implements
 						m.addDia(d);
 					}
 				}
-
 				j = 1;
 
 				MyCalendario d = new MyCalendario();
@@ -167,15 +158,13 @@ public class CalendarController extends LinesController implements
 				now.add(Calendar.DAY_OF_MONTH, 1);
 
 			}
-
 			now.add(Calendar.MONTH, 1);
 			mes++; // va al siguiente mes
 			dia = 1; // se coloca en el primer dia del mes
 			j = 0; // inicializa variable para meter Blanks al principo del mes
-
 		}
 		loadDefaultDays(); // carga dias del año para todas las
-		// empresas,actividades y centros de trabajo
+							// empresas,actividades y centros de trabajo
 	}
 
 	int row1;
@@ -214,11 +203,22 @@ public class CalendarController extends LinesController implements
 			j = 1;
 			;
 		}
-
 		System.out.println(mes.getCdg());
 		System.out.println(idx);
-		// System.out.println(listBlanks[mes.getCdg()]);
-
+	}
+	
+	public void clearFilter(ActionEvent event){
+		setEmpresa(null);
+		setActividad(null);
+		setDomicilio(null);
+		
+	}
+	
+	public void setActualYear(ActionEvent event){
+		Calendar actualyear = Calendar.getInstance();
+		
+		setActual(actualyear.getTime().getYear());
+			
 	}
 
 	public static int numDiasMes(int mes, int año) {
@@ -263,12 +263,6 @@ public class CalendarController extends LinesController implements
 		criteria.addEqualExpression(dom, domicilio.getCdg());
 		criteria.addBetweenExpression(fec, ini, fin);
 
-		Criteria criteria2 = new Criteria();
-		criteria2.addEqualExpression(emp, null);
-		criteria2.addEqualExpression(act, null);
-		criteria2.addEqualExpression(dom, null);
-		criteria2.addBetweenExpression(fec, ini, fin);
-
 		selectlist = bean.getList(criteria);
 
 		return selectlist;
@@ -287,9 +281,10 @@ public class CalendarController extends LinesController implements
 		String fec = bean.getFieldName(IPayrollAlias.CALENDARIO_FECCAL);
 
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(emp, null);
-		criteria.addEqualExpression(act, null);
-		criteria.addEqualExpression(dom, null);
+		criteria.addNullExpression(emp);
+		criteria.addNullExpression(act);
+		criteria.addNullExpression(dom);
+		
 		criteria.addBetweenExpression(fec, ini, fin);
 
 		selectDefaultList = bean.getList(criteria);
@@ -297,7 +292,7 @@ public class CalendarController extends LinesController implements
 		return selectDefaultList;
 	}
 
-	public Anyo loadDefaultDays() throws ManagerBeanException {
+	public void loadDefaultDays() throws ManagerBeanException {
 		int dia = 1;
 		int mes = 0;
 
@@ -308,46 +303,9 @@ public class CalendarController extends LinesController implements
 
 			while (mes < year.getListaMeses().size()) {
 
-				while (dia < year.getListaMeses().get(mes).getlistaDias()
-						.size())
-
-				{
-
-					if (c.getFeccal() == year.getListaMeses().get(mes)
-							.getlistaDias().get(dia).getFeccal())
-
-					{
-						year.getListaMeses().get(mes).getlistaDias().get(dia)
-								.setTipdia(
-										c.updateDay(c.getTipdia().getValue()));
-
-					}
-					dia++;
-				}
-				dia = 1;
-				mes++;
-			}
-
-		}
-
-		return year;
-
-	}
-
-	public Anyo loadDays(ActionEvent event) throws ManagerBeanException {
-		int dia = 1;
-		int mes = 0;
-
-		getSpecialDays();
-
-		for (ITransferObject to : selectlist) {
-			Calendario c = (Calendario) to;
-
-			while (mes < year.getListaMeses().size()) {
-
 				while (dia < year.getListaMeses().get(mes).getlistaDias().size())
-				{
-					if (c.getFeccal() == year.getListaMeses().get(mes).getlistaDias().get(dia).getFeccal())
+				{       
+					if (c.getFeccal().equals(year.getListaMeses().get(mes).getlistaDias().get(dia).getFeccal()))
 					{
 						year.getListaMeses().get(mes).getlistaDias().get(dia).setTipdia(c.updateDay(c.getTipdia().getValue()));
 					}
@@ -356,52 +314,93 @@ public class CalendarController extends LinesController implements
 				dia = 1;
 				mes++;
 			}
-		   /* 	yearModel = new ListDataModel(year.getListaMeses());
-		    	private MyCalendario[] days;
-		    	days = new MyCalendario[year.getListaMeses().listaDias.size()];
-				int i = 0;
-				for (MyCalendario c : listaDias) {
-					days[i] = c;
-					i++;
-				}
-		    	*/
-		    	
+			mes=0;
+					 		
+		 	}
+		
+		yearModel = new ListDataModel(year.getListaMeses());		 	
+		for (int i=0; i<=11;i++)
+	 	{year.getListaMeses().get(i).days=null;		
 		}
 
-		return year;
+		
+
+	}
+	
+	
+
+	public void loadDays(ActionEvent event) throws ManagerBeanException {
+		int dia = 1;
+		int mes = 0;
+
+		getSpecialDays();
+
+
+			while (mes < year.getListaMeses().size()) {
+
+				while (dia < year.getListaMeses().get(mes).getlistaDias().size())
+				{
+					
+					for (ITransferObject to : selectlist) {
+						Calendario c = (Calendario) to;
+						
+					if (c.getFeccal().equals(year.getListaMeses().get(mes).getlistaDias().get(dia).getFeccal()))
+					{
+						year.getListaMeses().get(mes).getlistaDias().get(dia).setTipdia(c.updateDay(c.getTipdia().getValue()));
+					    
+					}
+					}
+					
+					dia++;
+				}
+				dia = 1;
+				mes++;
+			 		 		
+		       }
+			mes=0;
+		
+		
+		yearModel = new ListDataModel(year.getListaMeses());// recargamos modelo 	
+		for (int i=0; i<=11;i++)
+	 	{year.getListaMeses().get(i).days=null;	}
 
 	}
 
+	public void generateCdg() {
+		((Calendario) getTo()).setCdg(Integer.parseInt(Utils.maxCode(
+				"Httrabajador", "cdg")) + 1);
+	}
+		
+	
+	
 	public void saveModelDays(ActionEvent event) throws ManagerBeanException {
 		int dia = 1;
 		int mes = 0;
-		// anio=2009;
+		
 
 		while (mes < year.getListaMeses().size()) {
 
 			while (dia < year.getListaMeses().get(mes).getlistaDias().size())
 
 			{
-				if (year.getListaMeses().get(mes).getlistaDias().get(dia)
-						.getTipdia().getValue() == "F")
+				if     (   (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia().getValue().equals("F"))
+						|| (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia().getValue().equals("Z"))
+						|| (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia().getValue().equals("W")))
 
 				{
-//IMAnagerBean calendari0= BeanManager
-					year.getListaMeses().get(mes).getlistaDias().get(dia);
-				}
-
-				else if (year.getListaMeses().get(mes).getlistaDias().get(dia)
-						.getTipdia().getValue() == "Z")
-
-				{
-					year.getListaMeses().get(mes).getlistaDias().get(dia);
-				}
-
-				else if (year.getListaMeses().get(mes).getlistaDias().get(dia)
-						.getTipdia().getValue() == "W")
-
-				{
-					year.getListaMeses().get(mes).getlistaDias().get(dia);
+                 IManagerBean calendario= BeanManager.getManagerBean(Calendario.class);
+                 ITransferObject to = null;
+                 Calendario  cal= (Calendario)to;
+                
+                 cal.setCdg(Integer.parseInt(Utils.maxCode("Calendar", "cdg")) + 1);
+                 cal.setEmpresa(year.getListaMeses().get(mes).getlistaDias().get(dia).getEmpresa());
+                 cal.setActividad(year.getListaMeses().get(mes).getlistaDias().get(dia).getActividad());
+                 cal.setDomicilio(year.getListaMeses().get(mes).getlistaDias().get(dia).getDomicilio());
+                 cal.setTipdia(year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia());
+                 cal.setFeccal(year.getListaMeses().get(mes).getlistaDias().get(dia).getFeccal());
+                 
+                 calendario.insert(cal);
+                               
 				}
 				dia++;
 			}
@@ -516,6 +515,14 @@ public class CalendarController extends LinesController implements
 		return dias;
 	}
 
+	public void reloadModel(){
+		
+		yearModel = new ListDataModel(year.getListaMeses());
+		
+		
+	}
+	
+	
 	public class Mes {
 
 		private List<MyCalendario> listaDias;
