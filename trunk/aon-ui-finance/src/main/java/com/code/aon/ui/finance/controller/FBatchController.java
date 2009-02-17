@@ -237,8 +237,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 	        while(iterator.hasNext()){
 	        	FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iterator.next();
 	        	financeBatchDetailBean.remove(fBatchDetail);
-
-	        	updateRelatedInfo(fBatchDetail);
 	        }
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error removing selected finances to the FinanceBatch with id=" + fBatch.getId(), e);
