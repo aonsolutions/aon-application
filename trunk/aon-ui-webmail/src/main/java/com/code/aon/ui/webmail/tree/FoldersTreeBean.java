@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import javax.faces.FacesException;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.richfaces.component.UITree;
 import org.richfaces.event.NodeSelectedEvent;
 import org.richfaces.model.TreeNode;
@@ -74,15 +75,14 @@ public class FoldersTreeBean implements WebMailConstants {
 		return rootNode;
 	}
 
-	public AonFolder recoverTreeNode(AonFolder aonFolder){
+	public AonFolder recoverTreeNode(String folderName){
 		AonFolder top = (AonFolder)rootNode.getData();
 		ArrayList<AonFolder> lst;
 		try {
 			lst = top.getFolderList();
 			for (int i = 0; i < lst.size(); i++) {
 				AonFolder current = lst.get(i);
-				String name = current.getName();
-				if (aonFolder.getName().equals(name)){
+				if ( StringUtils.equals(folderName,current.getName()) ) {
 					return current;
 				}
 			}

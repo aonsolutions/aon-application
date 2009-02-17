@@ -126,39 +126,46 @@ public class FolderController implements WebMailConstants {
 
     public void deleteCheckedMessages(ActionEvent event) {
     	try{
-   			deleteMessages(folder.getSelectedMessages());
-   			resetCurrentPage();
+   			deleteMessages(folder.getSelectedMessages(), false);
 		} catch (MessagingException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}
     }
 
-    public void deleteAllMessages(ActionEvent event) {
+    public void purgeCheckedMessages(ActionEvent event) {
     	try{
-	    	deleteMessages(folder.getMessageList());
-	    	resetCurrentPage();
+   			deleteMessages(folder.getSelectedMessages(), true);
+		} catch (MessagingException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
+    }
+    
+    public void purgeAllMessages(ActionEvent event) {
+    	try {
+	    	deleteMessages(folder.getMessageList(), true);
 		} catch (MessagingException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}
     }
 
-    private void deleteMessages(AonMessage[] messagesLst) throws MessagingException {
+    protected void deleteMessages(AonMessage[] messagesLst, boolean purge) throws MessagingException {
     	AonServer server = getWebMailController().getServer();
-		if (folder.isTrashFolder() || folder.isSpamFolder() || server.isQuotaExceeded() ) {
+		if ( purge ) {
 			folder.deleteMessages(messagesLst);
 			try {
 				folder.refresh();
 			} catch (WebmailException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
-		}else{
-	    	AonFolder dest = server.getAonFolder(server.getTrashFolderName());
-	    	AonFolder treeDest = getTreeController().recoverTreeNode(dest);
+		} else {
+	    	AonFolder treeDest = getTreeController().recoverTreeNode(server.getTrashFolderName());
 	    	moveSelectedMessages(treeDest);
 	    	getTreeController().loadTree();
 		}
+    	resetCurrentPage();		
     }
 
 	// *************************************************************************

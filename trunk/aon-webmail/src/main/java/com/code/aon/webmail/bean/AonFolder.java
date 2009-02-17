@@ -207,7 +207,7 @@ public class AonFolder extends AonMessageSortableList {
     	return true;
     }
 
-    public boolean isDeleteableAllMessages() {
+    public boolean isPurgableAllMessages() {
     	if ( isTrashFolder() || isSpamFolder() ) {
     		return true;
     	}
