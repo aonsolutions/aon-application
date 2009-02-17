@@ -65,12 +65,20 @@
 
 	<navigation-rule>
 		<navigation-case>
+			<from-outcome>menu_products</from-outcome>
+			<to-view-id>/facelet/menu/products.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>menu_commercial</from-outcome>
 			<to-view-id>/facelet/menu/commercial.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>menu_sales</from-outcome>
 			<to-view-id>/facelet/menu/sales.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_purchases</from-outcome>
+			<to-view-id>/facelet/menu/purchases.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>menu_treasury</from-outcome>
