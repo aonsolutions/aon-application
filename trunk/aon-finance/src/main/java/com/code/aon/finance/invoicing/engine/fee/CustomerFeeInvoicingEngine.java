@@ -269,7 +269,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 	
 	private InvoiceDetail createInvoiceDetail(CustomerFee customerFee, Invoice invoice, InvoicingParameters params) {
 		InvoiceDetail invoiceDetail = new InvoiceDetail();
-		invoiceDetail.setDeliveryDetail(null);
+		invoiceDetail.setSourceId(null);
 		invoiceDetail.setInvoice(invoice);
 		invoiceDetail.setItem(customerFee.getItem());
         invoiceDetail.setDescription(obtainFeeDescription(customerFee, invoice, params));
