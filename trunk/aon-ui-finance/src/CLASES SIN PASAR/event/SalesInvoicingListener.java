@@ -105,7 +105,7 @@ public class SalesInvoicingListener extends ControllerAdapter {
 		Iterator iter = invoiceDetailBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
-			DeliveryDetail deliveryDetail = obtainDeliveryDetail(invoiceDetail.getDeliveryDetail());
+			DeliveryDetail deliveryDetail = obtainDeliveryDetail(invoiceDetail.getSourceId());
 			Sales sales = deliveryDetail.getSalesDetail().getSales();
 			sales.setPos(obtainPos(posId));
 
@@ -219,14 +219,14 @@ public class SalesInvoicingListener extends ControllerAdapter {
 			DeliveryDetail deliveryDetail = null;
 			if(iter.hasNext()){
 				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
-				deliveryDetail = obtainDeliveryDetail(invoiceDetail.getDeliveryDetail());
+				deliveryDetail = obtainDeliveryDetail(invoiceDetail.getSourceId());
 			}else{
 				criteria = new Criteria();
 				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 				iter = invoiceDetailBean.getList(criteria, 0, 1).iterator();
 				if(iter.hasNext()){
 					InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
-					deliveryDetail = obtainDeliveryDetail(invoiceDetail.getDeliveryDetail());
+					deliveryDetail = obtainDeliveryDetail(invoiceDetail.getSourceId());
 				}
 			}
 			if(deliveryDetail != null){
@@ -253,7 +253,7 @@ public class SalesInvoicingListener extends ControllerAdapter {
 			Iterator iter = invoiceDetailBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
-				DeliveryDetail deliveryDetail = obtainDeliveryDetail(invoiceDetail.getDeliveryDetail());
+				DeliveryDetail deliveryDetail = obtainDeliveryDetail(invoiceDetail.getSourceId());
 				if(deliveryDetail != null){
 					return deliveryDetail.getSalesDetail().getSales().getPos().getId();
 				}
