@@ -674,7 +674,7 @@ public class InvoiceEntryController {
 		while (iter.hasNext()) {
 			InvoiceEntryDetail detail = (InvoiceEntryDetail) iter.next();
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
-			invoiceDetail.setDeliveryDetail(null);
+			invoiceDetail.setSourceId(null);
 			invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
 			invoiceDetail.setInvoice(invoice);
 			invoiceDetail.setItem(null);
