@@ -39,7 +39,7 @@
 				</rich:columns>
 			</rich:dataTable>
 </aon:div>
-			<h:panelGrid columns="2" dir="true" width="40%">
+			<h:panelGrid  id="filter" columns="2" dir="true" width="70%">
 
 				<aon:div styleClass="aon-lookup">
 					<aon:panelGrid columns="2" dir="true" width="50%"
@@ -48,10 +48,13 @@
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_convenios_calendario}" />
 
-						<rich:inputNumberSpinner ajaxSingle="true" inputSize="4"
+						<rich:inputNumberSpinner  inputSize="4"
 							value="#{calendar.actual}" maxValue="3000">
-							<a4j:support event="onchange" actionListener="#{calendar.load}"
-								reRender="tabla" />
+							<a4j:support event="onchange" ajaxSingle="true" 
+								reRender="tabla,filter"  >
+									<aon:actionListener method="#{calendar.load}" />
+									<aon:actionListener method="#{calendar.clearFilter}" />
+									</a4j:support>
 						</rich:inputNumberSpinner>
 
 					 	<aon:outputLabel value="#{appBundle.aon_payroll_resultados_tc2_emp}" />
@@ -110,7 +113,7 @@
 				</aon:div>
 
 				<aon:div>
-					<aon:panel>
+					<aon:panel >
 						<aon:outputText value="Festivo"
 							style="width: 100%;text-align:center;background-color:#CC3333;" />
 						<br />
