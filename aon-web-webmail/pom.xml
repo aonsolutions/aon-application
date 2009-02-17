@@ -35,6 +35,18 @@
 					<groupId>com.code.aon</groupId>
 					<artifactId>aon.ui.config</artifactId>
 				</exclusion>
+				<exclusion>
+					<artifactId>Esendex</artifactId>
+					<groupId>com.esendex</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>wsdl4j</artifactId>
+					<groupId>wsdl4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>axis</artifactId>
+					<groupId>axis</groupId>
+				</exclusion>				
 			</exclusions>			
 		</dependency>
 	</dependencies>
