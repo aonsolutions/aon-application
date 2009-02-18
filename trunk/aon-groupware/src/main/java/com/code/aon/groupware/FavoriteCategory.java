@@ -8,6 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -56,4 +57,27 @@ public class FavoriteCategory implements ITransferObject {
 	public void setUser(User user) {
 		this.user = user;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof FavoriteCategory) {
+			FavoriteCategory o = (FavoriteCategory) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return (this.id != null) ? id.hashCode() : super.hashCode();
+	}
+
 }
