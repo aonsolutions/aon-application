@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -67,14 +66,6 @@ public class FolderController implements WebMailConstants {
 	public void resetCurrentPage() {
 		setCurrentPage( 1 );
 	}
-	
-   @PostConstruct
-   public void initBean() {
-	   getWebMailController().setFolderController(this);
-	   getTreeController().setFolderController(this);
-	   // Nos aseguramos que esta creado el managed bean de Login
-	   AonUtil.getRegisteredBean(BEAN_LOGIN);
-   }	
 
 	/**
 	 * @return the folder
@@ -296,7 +287,7 @@ public class FolderController implements WebMailConstants {
 			if (this.folder.getMessageCount()==0){
 				this.folder.deleteFolder(true);
 				this.folder = null;
-		    	getTreeController().initTree();
+		    	getTreeController().initTree(getWebMailController().getServer());
 			}
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());

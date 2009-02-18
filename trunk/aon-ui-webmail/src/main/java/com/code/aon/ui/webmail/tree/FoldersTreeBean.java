@@ -48,8 +48,8 @@ public class FoldersTreeBean implements WebMailConstants {
 		}
 	}
 
-	public void initTree() {
-		loadTree();
+	public void initTree( AonServer server ) {
+		loadTree( server );
 		setCurrent( (AonFolder) rootNode.getChild(1).getData() );
 		getFolderController().nodeSelected( getCurrent() );
 	}
@@ -57,7 +57,10 @@ public class FoldersTreeBean implements WebMailConstants {
 	public void loadTree() {
 		WebMailController webMailController = (WebMailController) AonUtil
 				.getRegisteredBean(WebMailConstants.BEAN_WEBMAIL);
-		AonServer server = webMailController.getServer();
+		loadTree( webMailController.getServer() );
+	}
+	
+	public void loadTree( AonServer server ) {
 		AonFolder folder = new AonFolder(server.getRoot(), server);
 		rootNode = new TreeNodeImpl();
 		rootNode.setData(folder);

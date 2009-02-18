@@ -14,41 +14,32 @@
 
 		<aon:form id="webmailForm">
 			
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid  columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-					
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{webmailBundle.webmail_main}" />
-					</aon:div>
-					
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{webmailBundle.webmail_newmail}" />
-					</aon:div>
-					
-					<aon:div styleClass="aon-finding-toolbar-item-group">						
-						<aon:commandButton id="send"
-							value="#{webmailBundle.webmail_send}"
-							styleClass="aon-icon-accept aon-finding-toolbar-item"
-							action="#{webmailMessage.getReturnAction}"
-							actionListener="#{webmailMessage.send}"
-							onclick="Richfaces.showModalPanel('waitProccess')" 
-			     			oncomplete="Richfaces.hideModalPanel('waitProccess')" />						
-						<aon:commandButton id="save_draft"
-							value="#{webmailBundle.webmail_save_draft}"
-							styleClass="aon-icon aon-icon-mail-save aon-finding-toolbar-item"
-							action="messageNew"
-							actionListener="#{webmailMessage.saveDraft}" />
-			     		<aon:confirmButton id="back" immediate="true"
-							title="#{bundle.aon_back}" value="#{bundle.aon_back}"
-							confirmTitle="#{bundle.aon_confirm_title}"
-							confirmMessage="#{webmailBundle.webmail_back_confirm}"
-							confirmAction="#{webmailMessage.getReturnAction}"
-							accesskey="#{bundle.aon_key_cancel}"
-							styleClass="aon-icon-cancel aon-finding-toolbar-item" />	
-					</aon:div>
-				</aon:panelGrid>
-			</aon:div>
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{webmailBundle.webmail_main}" />
+				<ui:param name="toolbarDescription" value="#{webmailBundle.webmail_newmail}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="send"
+						value="#{webmailBundle.webmail_send}"
+						styleClass="aon-icon-accept aon-finding-toolbar-item"
+						action="#{webmailMessage.getReturnAction}"
+						actionListener="#{webmailMessage.send}"
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+		     			oncomplete="Richfaces.hideModalPanel('waitProccess')" />						
+					<aon:commandButton id="save_draft"
+						value="#{webmailBundle.webmail_save_draft}"
+						styleClass="aon-icon aon-icon-mail-save aon-finding-toolbar-item"
+						action="messageNew"
+						actionListener="#{webmailMessage.saveDraft}" />
+		     		<aon:confirmButton id="back" immediate="true"
+						title="#{bundle.aon_back}" value="#{bundle.aon_back}"
+						confirmTitle="#{bundle.aon_confirm_title}"
+						confirmMessage="#{webmailBundle.webmail_back_confirm}"
+						confirmAction="#{webmailMessage.getReturnAction}"
+						accesskey="#{bundle.aon_key_cancel}"
+						styleClass="aon-icon-cancel aon-finding-toolbar-item" />	
+				</ui:define>
+			</ui:decorate>
+
 			<aon:div styleClass="aon-scroll-area">
 		
 				<aon:div id="newMessageHeader">
@@ -140,7 +131,7 @@
 										<aon:outputText value="#{attachment.fileName}" styleClass="aon-bold" />
 										<aon:commandLink
 											reRender="attachDataTable" style="font-size:0.9em;margin-left:20px;"
-											value="#{webmailBundle.webmail_deletemail}"
+											value="#{bundle.aon_remove}"
 											styleClass="aon-icon-commandButton aon-icon-delete"
 											actionListener="#{attachment.fileDeleted}">
 										</aon:commandLink>
