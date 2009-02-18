@@ -91,7 +91,7 @@ public class Utils {
 	}
 	
 	/**
-	 * Dado el nombre de una tabla y un campo de la tabla, devuelve el valor maximo
+	 * Dado el nombre de un POJO(osea, la clase JAVA) y un campo de la tabla, devuelve el valor maximo
 	 * @param tableName
 	 * @param fieldName
 	 * @return
@@ -121,7 +121,7 @@ public class Utils {
 	*/
 	
 	/**
-	 * Dado el nombre de una tabla, un campo de la tabla y una clausula where, 
+	 * Dado el nombre de  un POJO(osea, la clase JAVA) un campo de la tabla y una clausula where, 
 	 * devuelve su valor maximo
 	 * @param tableName
 	 * @param fieldName

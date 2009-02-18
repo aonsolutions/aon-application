@@ -33,9 +33,12 @@ public class Calendario implements ITransferObject {
 	private Integer cdg;
 	private Date feccal;
 	private Tipdia tipdia;
-	private Empresa empresa;
-	private Actividad actividad;
-	private Domicilio domicilio;
+	//private Empresa empresa;
+	//private Actividad actividad;
+	//private Domicilio domicilio;	
+	private Integer empresa;
+	private Integer actividad;
+	private Integer domicilio;
 
 	@Id
 	// @DataDefinition(label="Codigo de Calendario")
@@ -70,8 +73,8 @@ public class Calendario implements ITransferObject {
 		this.tipdia = tipdia;
 	}
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "codemp", nullable = false)
+/*	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "codemp")
 	public Empresa getEmpresa() {
 		return empresa;
 	}
@@ -81,7 +84,7 @@ public class Calendario implements ITransferObject {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "codact", nullable = false)
+	@JoinColumn(name = "codact")
 	public Actividad getActividad() {
 		return actividad;
 	}
@@ -91,15 +94,46 @@ public class Calendario implements ITransferObject {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "domicilio", nullable = false)
+	@JoinColumn(name = "domicilio")
 	public Domicilio getDomicilio() {
 		return this.domicilio;
 	}
 
 	public void setDomicilio(Domicilio domicilio) {
 		this.domicilio = domicilio;
-	}
+	}*/
 	
+	
+	//@DataDefinition(label="Codigo de Empresa")
+    @Column(name="codemp", length=4)
+    public Integer getEmpresa() {
+        return this.empresa;
+    }
+    
+    public void setEmpresa(Integer codemp) {
+        this.empresa = codemp;
+    }
+    
+	//@DataDefinition(label="Codigo de Actividad")
+    @Column(name="codact", length=4)
+    public Integer getActividad() {
+        return this.actividad;
+    }
+    
+    public void setActividad(Integer codact) {
+        this.actividad = codact;
+    }
+    
+	//@DataDefinition(label="Codigo de Domicilio")
+    @Column(name="domicilio", length=4)
+    public Integer getDomicilio() {
+        return this.domicilio;
+    }
+    
+    public void setDomicilio(Integer domicilio) {
+        this.domicilio = domicilio;
+    }
+
 	public Tipdia updateDay(String tipo) {
 		if (tipo == "F") {
 			return Tipdia.TIP1;

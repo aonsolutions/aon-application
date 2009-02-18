@@ -14,7 +14,8 @@ public enum Tipdia implements IResourceable, IStringEnum {
 	TIP1("F"),
 	TIP2("Z"),
 	TIP3("W"),
-	TIP4("L");
+	TIP4("L"),
+	TIP5("S");
 
     
 	/** Message file base path. */
