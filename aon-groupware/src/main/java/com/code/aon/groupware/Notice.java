@@ -9,8 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -140,14 +140,6 @@ public class Notice implements ITransferObject {
 		this.subject = subject;
 	}
 
-	@Transient
-	public String getSubjectHead(){
-		if(getSubject() != null && getSubject().length() >= 64){
-			return getSubject().substring(0, 63);
-		}
-		return getSubject();
-	}
-	
 	@Column(nullable=false)
 	public NoticeStatus getStatus() {
 		return status;
@@ -174,4 +166,27 @@ public class Notice implements ITransferObject {
 	public void setPriority(Priority priority) {
 		this.priority = priority;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof Notice) {
+			Notice o = (Notice) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return (this.id != null) ? id.hashCode() : super.hashCode();
+	}
+	
 }
