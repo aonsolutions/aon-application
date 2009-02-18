@@ -104,3 +104,9 @@
 	background:transparent url(../images/aon-icon-dropwDown.png) scroll left center no-repeat;
 }
 
+.aon-message-server-error {
+	padding:5px 1em 5px 0px;
+	font-size:1.1em;
+	font-weight:bold;
+	background-position:left center !important;	
+}

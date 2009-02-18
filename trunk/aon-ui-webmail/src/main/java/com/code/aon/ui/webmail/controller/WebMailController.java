@@ -8,7 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
+import javax.mail.MessagingException;
 import javax.mail.Quota;
 
 import com.code.aon.bridge.plugin.Utils;
@@ -36,6 +36,8 @@ public class WebMailController implements WebMailConstants, BundleConstants {
 	
 	private AonServer server;
 	
+	private String initErrorMessage;
+	
 	private FolderController folderController;
 	
 	public WebMailController() {
@@ -50,13 +52,16 @@ public class WebMailController implements WebMailConstants, BundleConstants {
 	    	}
 		} catch (Throwable e) {
 			LOGGER.log(Level.SEVERE, "Error connecting to the Server", e);
-    		AonUtil.addErrorMessage(e.getMessage());
-    		throw new AbortProcessingException(e);			
+			initErrorMessage = e.getMessage();	
 		}
     }
 	
 	public boolean isLogged() {
-		return (getServer() != null);
+		return (getServer() != null) && getServer().isConnected();
+	}
+
+	public String getInitErrorMessage() {
+		return initErrorMessage;
 	}
 
 	/**
@@ -66,22 +71,18 @@ public class WebMailController implements WebMailConstants, BundleConstants {
 		return server;
 	}
 
-	private void initDefault(AuthPrincipal user) {	
-		try {
-			MailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
-			if (mailAccount!=null) {
-				init(mailAccount);
-			}else{
-	    		AonUtil.addErrorMessage("NOT VALID ACCOUNT");
-			}
-    	}catch (ManagerBeanException e) {
-    		AonUtil.addErrorMessage(e.getMessage());
-    		throw new AbortProcessingException(e);
+	private void initDefault(AuthPrincipal user) throws ManagerBeanException, MessagingException {	
+		MailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
+		if (mailAccount!=null) {
+			init(mailAccount);
+		}else{
+    		AonUtil.addErrorMessage("NOT VALID ACCOUNT");
 		}
 	}
 
-	public void init(MailAccount mailAccount){
+	public void init(MailAccount mailAccount) throws MessagingException {
 		server = new AonServer(mailAccount);
+		server.connect();
 		server.createBasicFolders();
 		createDefaultSignature(mailAccount);
 		SpamController spamController = (SpamController) AonUtil.getRegisteredBean(BEAN_SPAM);

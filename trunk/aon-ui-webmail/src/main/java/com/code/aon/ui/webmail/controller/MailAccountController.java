@@ -123,7 +123,11 @@ public class MailAccountController extends BasicController implements WebMailCon
 		try{
 			webmail.init((MailAccount)super.getSelectedTO());
 		} catch (Throwable e) {
-			webmail.init((MailAccount)previous);
+			try {
+				webmail.init((MailAccount)previous);
+			} catch (MessagingException e1) {
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			}
 			AonUtil.addErrorMessage( e.getMessage() );
 		} finally {
 			this.accountId = webmail.getServer().getAccount().getId();			
