@@ -16,12 +16,7 @@ public class MailAccountControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterModelInitialized(ControllerEvent event) throws ControllerListenerException {
-		MailAccountController controller = (MailAccountController) event.getController();
-		try {
-			controller.updateMailAccountList();
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException( e.getMessage(), e );
-		}					
+		updateMailAccountList(event);
 	}
 
 	@Override
@@ -47,12 +42,22 @@ public class MailAccountControllerListener extends ControllerAdapter {
 		if ( mailAccount.getId().equals(wmc.getServer().getAccount().getId()) ) {
 			wmc.getServer().setAccount(mailAccount);
 		}
+		updateMailAccountList(event);		
 	}
 
 	private void updateSignatureList() throws ControllerListenerException {
 		SignatureController signatureController = (SignatureController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_SIGNATURE);
 		try {
 			signatureController.updateSignatureList();
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException( e.getMessage(), e );
+		}		
+	}
+
+	private void updateMailAccountList(ControllerEvent event) throws ControllerListenerException {
+		MailAccountController controller = (MailAccountController) event.getController();
+		try {
+			controller.updateMailAccountList();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}		

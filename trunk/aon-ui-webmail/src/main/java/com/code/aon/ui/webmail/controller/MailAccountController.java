@@ -49,8 +49,7 @@ public class MailAccountController extends BasicController implements WebMailCon
 	private List<SelectItem> mailAccounts;
 	
 	public MailAccountController() {
-		WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-		this.accountId = webmail.getServer().getAccount().getId();
+		updateCurrentMailAccount();
 	}
 
 	@Override
@@ -177,8 +176,15 @@ public class MailAccountController extends BasicController implements WebMailCon
 			SelectItem item = new SelectItem(mailAccount.getId(),mailAccount.getEmail());
 			this.mailAccounts.add(item);
 		}
+		updateCurrentMailAccount();
 	}
 
+	@SuppressWarnings("unchecked")
+	public void updateCurrentMailAccount() {
+		WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
+		this.accountId = webmail.getServer().getAccount().getId();
+	}
+	
 	public String getAccountId() {
 		return accountId;
 	}
