@@ -126,10 +126,18 @@ public class GroupWareCollectionsController {
 		Iterator iter = favoriteCategoriesBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			FavoriteCategory category = (FavoriteCategory)iter.next();
-			SelectItem item = new SelectItem(category.getId(), category.getDescription());
+			SelectItem item = new SelectItem(category, category.getDescription());
 			favoriteCategoriesList.add(item);
 		}
 		return favoriteCategoriesList;
 	}
+	
+	public FavoriteCategory getFavoriteCategory() {
+		return null;
+	}
+
+	public void setFavoriteCategory( FavoriteCategory favoriteCategory ) {
+	}
+	
 
 }
