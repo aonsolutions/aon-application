@@ -80,6 +80,7 @@
 							title="#{webmailBundle.webmail_mailAccountChange}"
 							action="mailAccount_list" actionListener="#{mailAccount.onChangeServer}"
 							value="#{webmailBundle.webmail_mailAccountChange}"
+							onclick="Richfaces.showModalPanel('waitProccess')"
 							styleClass="aon-icon-commandButton aon-icon-predetermine">
 						</aon:commandButton>
 					</aon:column>
@@ -90,6 +91,8 @@
 
 			</aon:div>
 		</aon:form>
+		
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 
 	</ui:define>
 
