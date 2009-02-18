@@ -12,21 +12,21 @@
 
 <ui:composition>
 
-	<aon:div rendered="#{!webmailLogin.logged}">
+	<aon:div rendered="#{!webmail.logged}">
 		<aon:div styleClass="aon-content-home">
-			<aon:outputText value="#{webmailLogin.error}" />
+			<aon:outputText value="ERROR" />
 		</aon:div>
 	</aon:div>
 
 	<aon:div id="noFolderSelected"
-		rendered="#{!webmailFolder.folderSelected and webmailLogin.logged}">
+		rendered="#{!webmailFolder.folderSelected and webmail.logged}">
 		<aon:div styleClass="aon-content-home">
 			<aon:outputText value="NO FOLDER SELECTED" />
 		</aon:div>
 	</aon:div>
 
 	<aon:div id="folderSelected"
-		rendered="#{webmailFolder.folderSelected and webmailLogin.logged}">
+		rendered="#{webmailFolder.folderSelected and webmail.logged}">
 
 		<aon:div id="messageGrid">
 

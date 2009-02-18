@@ -121,15 +121,15 @@ public class MailAccountController extends BasicController implements WebMailCon
 		webmail.getServer().disconnect();
 		MailAccount previous = webmail.getServer().getAccount();
 		try{
-			webmail.initFull((MailAccount)super.getSelectedTO());
+			webmail.init((MailAccount)super.getSelectedTO());
 		} catch (Throwable e) {
-			webmail.initFull((MailAccount)previous);
+			webmail.init((MailAccount)previous);
 			AonUtil.addErrorMessage( e.getMessage() );
 		} finally {
 			this.accountId = webmail.getServer().getAccount().getId();			
 		}
     	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(WebMailConstants.BEAN_TREE);
-    	treeBean.initTree();		
+    	treeBean.initTree( webmail.getServer() );		
 	}
 	
 	@SuppressWarnings("unused")

@@ -1,11 +1,10 @@
 package com.code.aon.ui.webmail.controller;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
@@ -39,6 +38,27 @@ public class WebMailController implements WebMailConstants, BundleConstants {
 	
 	private FolderController folderController;
 	
+	public WebMailController() {
+		startWebmail();
+	}
+
+	private void startWebmail() {
+		try {
+			AuthPrincipal mailUser = Utils.getAuthPrincipal();
+			if (mailUser != null) {
+	    		initDefault(mailUser);
+	    	}
+		} catch (Throwable e) {
+			LOGGER.log(Level.SEVERE, "Error connecting to the Server", e);
+    		AonUtil.addErrorMessage(e.getMessage());
+    		throw new AbortProcessingException(e);			
+		}
+    }
+	
+	public boolean isLogged() {
+		return (getServer() != null);
+	}
+
 	/**
 	 * @return the server
 	 */
@@ -46,11 +66,11 @@ public class WebMailController implements WebMailConstants, BundleConstants {
 		return server;
 	}
 
-	public void initDefault(AuthPrincipal user) {	
+	private void initDefault(AuthPrincipal user) {	
 		try {
 			MailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
 			if (mailAccount!=null) {
-				initFull(mailAccount);
+				init(mailAccount);
 			}else{
 	    		AonUtil.addErrorMessage("NOT VALID ACCOUNT");
 			}
@@ -60,18 +80,14 @@ public class WebMailController implements WebMailConstants, BundleConstants {
 		}
 	}
 
-	public void initBasic(MailAccount mailAccount){
+	public void init(MailAccount mailAccount){
 		server = new AonServer(mailAccount);
 		server.createBasicFolders();
 		createDefaultSignature(mailAccount);
 		SpamController spamController = (SpamController) AonUtil.getRegisteredBean(BEAN_SPAM);
 		spamController.updateSpamEnabled(mailAccount);
-	}
-	
-	public void initFull(MailAccount mailAccount) {
-		initBasic(mailAccount);
     	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(BEAN_TREE);
-    	treeBean.initTree();
+    	treeBean.initTree( getServer() );
 	}
 
     public String getMillis() {
