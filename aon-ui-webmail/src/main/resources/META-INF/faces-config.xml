@@ -14,14 +14,6 @@
    <!-- ************ MANAGED BEANS ************** -->
    <!-- ***************************************** -->
 	<managed-bean>
-        <managed-bean-name>webmailLogin</managed-bean-name>
-        <managed-bean-class>
-            com.code.aon.ui.webmail.controller.LoginController
-        </managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-    </managed-bean>
-
-	<managed-bean>
         <managed-bean-name>webmail</managed-bean-name>
         <managed-bean-class>
             com.code.aon.ui.webmail.controller.WebMailController
