@@ -9,7 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+
+import org.apache.commons.lang.ObjectUtils;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.User;
@@ -59,14 +60,6 @@ public class Alarm implements ITransferObject {
 		this.description = description;
 	}
 	
-	@Transient
-	public String getDescriptionHead(){
-		if(getDescription() != null && getDescription().length() >= 64){
-			return getDescription().substring(0, 63);
-		}
-		return getDescription();
-	}
-
 	@Column(name="alarm_date", nullable=false)
 	public Date getAlarmDate() {
 		return alarmDate;
@@ -118,4 +111,27 @@ public class Alarm implements ITransferObject {
 	public void setPriority(Priority priority) {
 		this.priority = priority;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof Alarm) {
+			Alarm o = (Alarm) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return (this.id != null) ? id.hashCode() : super.hashCode();
+	}
+	
 }
