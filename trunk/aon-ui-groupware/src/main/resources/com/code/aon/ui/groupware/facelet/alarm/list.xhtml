@@ -43,7 +43,9 @@
 							<f:facet name="header">
 								<aon:outputText value="#{groupwareBundle.alarm_description}" />
 							</f:facet>
-							<aon:outputText value="#{to.descriptionHead}" />
+							<aon:outputText value="#{to.description}" >
+								<aon:abbreviateConverter maxWidth="64" />
+							</aon:outputText>
 						</aon:column>
 
 						<aon:column>
