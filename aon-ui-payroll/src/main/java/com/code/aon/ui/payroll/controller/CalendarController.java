@@ -46,11 +46,19 @@ public class CalendarController extends LinesController implements
 			"Julio", "Agosto", "Septiembre", "Octubre", "Noviembre",
 			"Diciembre" };
 	String[] diasem = { "L", "M", "M", "J", "V", "S", "D" };
-
+	
+    private Integer numFestivos = 0;
+	private Integer numNolabo = 0;
+	private Integer numOtros = 0;
+	private Integer numLaborables = 0;
+    
 	public void load(ActionEvent event) throws ManagerBeanException {
-
+	
+		numFestivos = 0;
+		numNolabo = 0;
+		numOtros = 0;
+		numLaborables = 0;
 		yearModel = null;
-		daysModel = null;
 		dias = null;
 		Calendar now = new GregorianCalendar(actual, 0, 1);
 		Integer dia = now.get(Calendar.DAY_OF_MONTH);
@@ -146,11 +154,11 @@ public class CalendarController extends LinesController implements
 				dayOfWeek = now.get(Calendar.DAY_OF_WEEK) - 1;
 
 				if (dayOfWeek == 6) {
-					d.setTipdia(Tipdia.TIP2);
+					d.setTipdia(Tipdia.TIP5);
 
 				}
 				if (dayOfWeek == 0) {
-					d.setTipdia(Tipdia.TIP2);
+					d.setTipdia(Tipdia.TIP5);
 				}
 
 				m.addDia(d);
@@ -297,42 +305,44 @@ public class CalendarController extends LinesController implements
 		int mes = 0;
 
 		getDefaultDays();
-
-		for (ITransferObject to : selectDefaultList) {
-			Calendario c = (Calendario) to;
-
+		
 			while (mes < year.getListaMeses().size()) {
 
 				while (dia < year.getListaMeses().get(mes).getlistaDias().size())
-				{       
+				{
+					
+				// Comprobamos si el dia del modelo es = que el de la select y si lo es se le cambia el tipo de dia	
+				for (ITransferObject to : selectDefaultList) {
+					Calendario c = (Calendario) to;
+
 					if (c.getFeccal().equals(year.getListaMeses().get(mes).getlistaDias().get(dia).getFeccal()))
-					{
-						year.getListaMeses().get(mes).getlistaDias().get(dia).setTipdia(c.updateDay(c.getTipdia().getValue()));
+					{year.getListaMeses().get(mes).getlistaDias().get(dia).setTipdia(c.updateDay(c.getTipdia().getValue()));
 					}
+				}
+				
 					dia++;
 				}
 				dia = 1;
 				mes++;
-			}
-			mes=0;
-					 		
-		 	}
-		
+			   }
+			
+			
+	    countDays(); //Cuenta los dias de cada tipo
+		mes=0;		
 		yearModel = new ListDataModel(year.getListaMeses());		 	
 		for (int i=0; i<=11;i++)
-	 	{year.getListaMeses().get(i).days=null;		
-		}
-
-		
+	 	{year.getListaMeses().get(i).days=null;}
 
 	}
 	
-	
-
 	public void loadDays(ActionEvent event) throws ManagerBeanException {
 		int dia = 1;
 		int mes = 0;
-
+		numFestivos = 0;
+		numNolabo = 0;
+		numOtros = 0;
+		numLaborables = 0;
+		
 		getSpecialDays();
 
 
@@ -340,7 +350,7 @@ public class CalendarController extends LinesController implements
 
 				while (dia < year.getListaMeses().get(mes).getlistaDias().size())
 				{
-					
+					// Comprobamos si el dia del modelo es = que el de la select y si lo es se le cambia el tipo de dia	
 					for (ITransferObject to : selectlist) {
 						Calendario c = (Calendario) to;
 						
@@ -351,6 +361,7 @@ public class CalendarController extends LinesController implements
 					}
 					}
 					
+					
 					dia++;
 				}
 				dia = 1;
@@ -358,7 +369,8 @@ public class CalendarController extends LinesController implements
 			 		 		
 		       }
 			mes=0;
-		
+			
+		countDays(); //Cuenta los dias de cada tipo
 		
 		yearModel = new ListDataModel(year.getListaMeses());// recargamos modelo 	
 		for (int i=0; i<=11;i++)
@@ -376,38 +388,79 @@ public class CalendarController extends LinesController implements
 	public void saveModelDays(ActionEvent event) throws ManagerBeanException {
 		int dia = 1;
 		int mes = 0;
-		
+		numFestivos = 0;
+		numNolabo = 0;
+		numOtros = 0;
+		numLaborables = 0;
 
 		while (mes < year.getListaMeses().size()) {
 
 			while (dia < year.getListaMeses().get(mes).getlistaDias().size())
 
 			{
-				if     (   (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia().getValue().equals("F"))
-						|| (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia().getValue().equals("Z"))
-						|| (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia().getValue().equals("W")))
+				if ((year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia()== Tipdia.TIP1)
+					|| (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia()== Tipdia.TIP2)
+						|| (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia()== Tipdia.TIP3))
 
 				{
+				 
                  IManagerBean calendario= BeanManager.getManagerBean(Calendario.class);
                  ITransferObject to = null;
-                 Calendario  cal= (Calendario)to;
-                
-                 cal.setCdg(Integer.parseInt(Utils.maxCode("Calendar", "cdg")) + 1);
-                 cal.setEmpresa(year.getListaMeses().get(mes).getlistaDias().get(dia).getEmpresa());
-                 cal.setActividad(year.getListaMeses().get(mes).getlistaDias().get(dia).getActividad());
-                 cal.setDomicilio(year.getListaMeses().get(mes).getlistaDias().get(dia).getDomicilio());
-                 cal.setTipdia(year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia());
-                 cal.setFeccal(year.getListaMeses().get(mes).getlistaDias().get(dia).getFeccal());
+                 Calendario  cal=new Calendario();
+                 Integer cdg  = Integer.parseInt(Utils.maxCode("Calendario", "cdg")) + 1;
+                 cal.setCdg(cdg);
+                 cal.setEmpresa(getEmpresa().getCdg());
+                 cal.setActividad(getActividad().getCdg());
+                 cal.setDomicilio(getDomicilio().getCdg());
+                 cal.setTipdia(year.getListaMeses().get(mes).getDays()[dia].getTipdia());
+                 cal.setFeccal(year.getListaMeses().get(mes).getDays()[dia].getFeccal());
                  
-                 calendario.insert(cal);
+                 calendario.insertOrUpdate(cal);
                                
 				}
+				else if (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia()== Tipdia.TIP4){
+					
+					
+				}				
+			
+				
 				dia++;
 			}
 			dia = 1;
 			mes++;
 		}
+		countDays(); //Cuenta los dias de cada tipo
+	}
+	
+	
+	public void countDays(){
+		int dia = 1;
+		int mes = 0;
+		numFestivos = 0;
+		numNolabo = 0;
+		numOtros = 0;
+		numLaborables = 0;
+		
+		while (mes < year.getListaMeses().size()) {
 
+			while (dia < year.getListaMeses().get(mes).getlistaDias().size())
+
+			{
+		
+		if (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia() == Tipdia.TIP1) {
+			setNumFestivos();
+		} else if (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia() == Tipdia.TIP2) {
+			setNumNolabo();
+		} else if (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia() == Tipdia.TIP3) {
+			setNumOtros();
+		} else if (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia() == Tipdia.TIP4) {
+			setNumLaborables();
+		}	
+		dia++;
+	     }
+    	dia=1;
+		mes++;
+		}
 	}
 
 	public Anyo getYear() {
@@ -475,12 +528,7 @@ public class CalendarController extends LinesController implements
 		return yearModel;
 	}
 
-	private DataModel daysModel;
 
-	public DataModel getDaysModel() {
-
-		return daysModel;
-	}
 
 	public class Anyo {
 
@@ -515,12 +563,7 @@ public class CalendarController extends LinesController implements
 		return dias;
 	}
 
-	public void reloadModel(){
-		
-		yearModel = new ListDataModel(year.getListaMeses());
-		
-		
-	}
+	
 	
 	
 	public class Mes {
@@ -584,19 +627,6 @@ public class CalendarController extends LinesController implements
 
 	}
 
-	public class Dias {
-
-		private String dia;
-
-		public String getDia() {
-			return dia;
-		}
-
-		public void setDia(String dia) {
-			this.dia = dia;
-		}
-
-	}
 
 	public class MyCalendario extends Calendario {
 
@@ -612,6 +642,9 @@ public class CalendarController extends LinesController implements
 			if (getTipdia() == Tipdia.TIP3) {
 				return "#0099FF";
 			}
+			if (getTipdia() == Tipdia.TIP5) {
+				return "#99CCFF";
+			}
 			if (getTipdia() == Tipdia.TIP4) {
 				return "white";
 			}
@@ -626,25 +659,39 @@ public class CalendarController extends LinesController implements
 			this.diasem = diasem;
 		}
 
-		public Tipdia updateDay(String tipo) {
-			if (tipo == "F") {
-				return Tipdia.TIP1;
-			}
 
-			if (tipo == "Z") {
-				return Tipdia.TIP2;
-			}
+	}
 
-			if (tipo == "W") {
-				return Tipdia.TIP3;
-			}
+	public int getNumFestivos() {
+		return numFestivos;
+	}
 
-			if (tipo == "L") {
-				return Tipdia.TIP4;
-			}
-			return null;
+	public void setNumFestivos() {
+		this.numFestivos++;
+	}
 
-		}
+	public int getNumNolabo() {
+		return numNolabo;
+	}
+
+	public void setNumNolabo() {
+		this.numNolabo++;
+	}
+
+	public int getNumOtros() {
+		return numOtros;
+	}
+
+	public void setNumOtros() {
+		this.numOtros++;
+	}
+
+	public int getNumLaborables() {
+		return numLaborables;
+	}
+
+	public void setNumLaborables() {
+		this.numLaborables++;
 	}
 
 }

@@ -61,6 +61,8 @@
 		<mapping class="com.code.aon.payroll.auxiliares.convenios.Pagaext"/>
 		<mapping class="com.code.aon.payroll.auxiliares.convenios.Categoria"/>
 		<mapping class="com.code.aon.payroll.auxiliares.convenios.Percniv"/>
+		<mapping class="com.code.aon.payroll.auxiliares.convenios.Percniv"/>
+		<mapping class="com.code.aon.payroll.auxiliares.convenios.calendar.Calendario"/>
         <!-- GEOGRAFICAS -->		
         <mapping class="com.code.aon.payroll.geograficas.Nacion"/>
         <mapping class="com.code.aon.payroll.geograficas.Pais"/>

@@ -31,7 +31,7 @@
 					</f:facet>
 					<aon:div>
 						<aon:outputText id="pic#{m.desc}#{idx}" value="#{m.days[idx].cdg}"
-							style="width: 100%;text-align:center;background-color: #{m.days[idx].color};">
+							style="width: 150%;text-align:center;background-color: #{m.days[idx].color};">
 							<a4j:support ajaxSingle="true" event="onclick"
 								actionListener="#{calendar.onChangeDay}" reRender="calendarForm" />
 						</aon:outputText>
@@ -39,7 +39,7 @@
 				</rich:columns>
 			</rich:dataTable>
 </aon:div>
-			<h:panelGrid  id="filter" columns="2" dir="true" width="70%">
+			<h:panelGrid  id="filter" columns="3" dir="true" width="70%">
 
 				<aon:div styleClass="aon-lookup">
 					<aon:panelGrid columns="2" dir="true" width="50%"
@@ -112,19 +112,29 @@
 					</aon:panelGrid>
 				</aon:div>
 
+
 				<aon:div>
-					<aon:panel >
-						<aon:outputText value="Festivo"
+					<aon:panel >						
+							<aon:outputText value="Festivo"
 							style="width: 100%;text-align:center;background-color:#CC3333;" />
+							<aon:outputText value="        #{calendar.numFestivos}"
+							 />
+							
 						<br />
 						<aon:outputText value="No Laborable"
 							style="width: 100%;text-align:center;background-color:#99CC66;" />
+							<aon:outputText value="        #{calendar.numNolabo}"	 />
+							
 						<br />
 						<aon:outputText value="Otros Dias"
 							style="width: 100%;text-align:center;background-color:#0099FF;" />
+							<aon:outputText value="       #{calendar.numOtros}"	 />
+							
 						<br />
-						<aon:outputText value="Laborable"
+						<aon:outputText value="Laborables"
 							style="width: 100%;text-align:center;background-color:white;" />
+							<aon:outputText value="     #{calendar.numLaborables}"	 />
+							
 					</aon:panel>
 				</aon:div>
 
@@ -132,11 +142,11 @@
 			</h:panelGrid>
 
 			<aon:commandButton value="VER CALENDARIO">
-				<a4j:support event="onclick" actionListener="#{calendar.loadDays}"
+				<a4j:support event="onclick" ajaxSingle="true"  actionListener="#{calendar.loadDays}"
 					reRender="tabla" />
 			</aon:commandButton>
 			<aon:commandButton value="GUARDAR CAMBIOS">
-				<a4j:support event="onclick"
+				<a4j:support event="onclick" ajaxSingle="true"
 					actionListener="#{calendar.saveModelDays}" reRender="calendarForm" />
 			</aon:commandButton>
 
