@@ -1,15 +1,21 @@
 package com.code.aon.ui.groupware.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIInput;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
+import javax.faces.validator.ValidatorException;
+import javax.xml.bind.ValidationException;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -21,37 +27,36 @@ import com.code.aon.config.WorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.groupware.Notice;
-import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
+import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
+import com.sun.faces.util.MessageFactory;
 
-public class NoticeController extends BasicController implements IAonObjectClasses {
+public class NoticeController extends BasicController implements IAonObjectClasses, ILdapConstants {
 	
 	private static final Logger LOGGER = Logger.getLogger(NoticeController.class.getName());
-
-	private List<SelectItem> users = new LinkedList<SelectItem>();
 	
-	private static final String COMMONNAME = "cn";
-
-	private static final String SURNAME = "sn";
+	public static final Integer SELECT_ONE_VALUE = -1;
 
 	private static final String USER_ALTERNATIVE_EMAIL = "mail";
 
-	private static final String DOMAIN_MEMBER_ATTRIBUTE = "member";
+	private static final String USER_CELLULAR_NUMBER = "mobile";
+	
+	private List<SelectItem> workGroups;
+	
+	private List<SelectItem> users;
 
 	private boolean sendMail = false;
 	
 	private String mailList = "";
-
-	private static final String USER_CELLULAR_NUMBER = "mobile";
 
 	private boolean sendSMS = false;
 
@@ -62,161 +67,180 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	private String recipient;
 	
 	private int selected = -1;
-	
-	private Integer workGroupId;
 
+	public Integer getSelectOneValue() {
+		return SELECT_ONE_VALUE;
+	}
+	
 	public List<SelectItem> getUsers() {
-		if (users.size() == 0 && workGroupId == null) loadUsers(); 
 		return users;
 	}
+	
+	public int getUserCount() {
+		return this.users.size();
+	}
 
-	public void setUsers(List<SelectItem> users) {
-		this.users = users;
+	public List<SelectItem> getWorkGroups() {
+		return this.workGroups;
+	}
+
+	public int getWorkGroupCount() {
+		return this.workGroups.size();
+	}
+
+	public boolean isRecipientSelectable() {
+		WorkGroup wg = ((Notice) getTo()).getWorkGroup();
+		return (wg != null) && (! SELECT_ONE_VALUE.equals(wg.getId()));
 	}
 	
 	public void workGroupChange(ValueChangeEvent event) {
 		mailList = null;
 		resetSMS();
-        if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
-        	workGroupId = new Integer(event.getNewValue().toString());
-        	((Notice)getTo()).getRecipient().setId(null);
-            loadUsers();
-        } else {
-        	workGroupId = null;
-            loadUsers();
+		Integer workGroupId = (Integer) event.getNewValue();
+    	if ( (! SELECT_ONE_VALUE.equals(workGroupId)) && (workGroupId != null) ) {
+    		((Notice)getTo()).getRecipient().setId(null);
+        	loadUsers(workGroupId);	
         }
     }
 
 	public void recipientChange(ValueChangeEvent event) {
 		mailList = null;
 		resetSMS();
-		if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
-        	((Notice)getTo()).getRecipient().setId(new Integer(""+event.getNewValue()));
-        }
     }
 
-	public List<SelectItem> getWorkgroups() throws ManagerBeanException {
-		List<SelectItem> workgroups = new LinkedList<SelectItem>(); 
-		IManagerBean workGroupBean = BeanManager.getManagerBean(WorkGroup.class); 
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(workGroupBean.getFieldName(IConfigAlias.WORK_GROUP_STATUS), WorkGroupStatus.ACTIVE);
-		criteria.addOrder(workGroupBean.getFieldName(IConfigAlias.WORK_GROUP_DESCRIPTION));
-		Iterator<ITransferObject> iter = workGroupBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			WorkGroup workGroup = (WorkGroup)iter.next();
-			SelectItem item = new SelectItem(workGroup.getId(), workGroup.getDescription());
-			workgroups.add(item);
-		}
-		return workgroups;
-	}
+    public void resetUsers() {
+    	users = new LinkedList<SelectItem>();
+    }
+	
+    @SuppressWarnings("unchecked")
+	private List<User> getUser(Integer id) throws ManagerBeanException {
+        IManagerBean managerBean = BeanManager.getManagerBean(User.class);
+        Criteria criteria = new Criteria();
+        criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_ID), id);
+        criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_AVAILABLE), true);
+        criteria.addOrder(managerBean.getFieldName(IConfigAlias.USER_NAME));
+        return (List) managerBean.getList(criteria);
+    }
 
     @SuppressWarnings("unchecked")
-    public void loadUsers() {
-    	users = new LinkedList<SelectItem>();
-        try {
-	    	if (workGroupId == null) {
-	            IManagerBean managerBean = BeanManager.getManagerBean(User.class);
-	            Criteria criteria = new Criteria();
-	            criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_AVAILABLE), true);
-	            criteria.addOrder(managerBean.getFieldName(IConfigAlias.USER_NAME));
-	            Iterator iterator = managerBean.getList(criteria).iterator();
-	            while (iterator.hasNext()) {
-	                User user = (User)iterator.next();
-	                SelectItem item = new SelectItem(user.getId(), user.getName());
-	                users.add(item);
-	            }
-	    	}
-	    	else {
-	            IManagerBean managerBean = BeanManager.getManagerBean(UserWorkGroup.class);
-	            Criteria criteria = new Criteria();
-	            criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_WORK_GROUP_WORK_GROUP_ID), workGroupId);
-	            criteria.addOrder(managerBean.getFieldName(IConfigAlias.USER_WORK_GROUP_USER_NAME));
-	            Iterator iterator = managerBean.getList(criteria).iterator();
-	            while (iterator.hasNext()) {
-	                UserWorkGroup userWorkGroup = (UserWorkGroup)iterator.next();
-	                if (userWorkGroup.getUser().getAvailable()) {
-		                SelectItem item = new SelectItem(userWorkGroup.getUser().getId(), userWorkGroup.getUser().getName());
-		                users.add(item);
-	                }
-	            }
-	    	}
-        } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error loading users of workgroup with id= " + workGroupId.toString(), e);
-        }
+	private List<User> getAllUsers() throws ManagerBeanException {
+        IManagerBean managerBean = BeanManager.getManagerBean(User.class);
+        Criteria criteria = new Criteria();
+        criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_AVAILABLE), true);
+        criteria.addOrder(managerBean.getFieldName(IConfigAlias.USER_NAME));
+        return (List) managerBean.getList(criteria);
     }
     
-	public Integer getWorkGroupId() {
-		return workGroupId;
-	}
-
-	public void setWorkGroupId(Integer workGroupId) {
-		this.workGroupId = workGroupId;
-	}
-
-	private void chargeMails() {
-		AuthPrincipal user = UserUtils.getInstance().getPrincipal();
-		String domain = user.getDomain();
-		mailList = "";
-		
-		if (((Notice)getTo()).getRecipient() != null && ((Notice)getTo()).getRecipient().getId() != null) {
-			//Se envia a un solo usuario.
-			Integer usernameId = ((Notice)getTo()).getRecipient().getId();
-			String username = getUserName(usernameId);
-			String userEmail = getLdapUserMail(domain, username);
-			if (userEmail != null) mailList = userEmail;
+	private List<User> getWorkGroupUsers( Integer workGroupId ) throws ManagerBeanException {
+        IManagerBean managerBean = BeanManager.getManagerBean(UserWorkGroup.class);
+        Criteria criteria = new Criteria();
+        criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_WORK_GROUP_WORK_GROUP_ID), workGroupId);
+        criteria.addOrder(managerBean.getFieldName(IConfigAlias.USER_WORK_GROUP_USER_NAME));
+        List<User> result = new LinkedList<User>();
+        for( ITransferObject to : managerBean.getList(criteria) ) {
+            UserWorkGroup userWorkGroup = (UserWorkGroup) to;
+            if (userWorkGroup.getUser().getAvailable()) {
+            	result.add( userWorkGroup.getUser() );
+            }	            	
+        }
+        return result;
+    }
+	
+	private List<User> getSelectedUsers() throws ManagerBeanException {
+		Notice notice = (Notice) getTo();
+		WorkGroup wg = notice.getWorkGroup();
+		if ( wg != null ) {
+			if ( wg.getId() == null ) {
+				return getAllUsers();
+			} else if (! SELECT_ONE_VALUE.equals(wg.getId()) ) {
+				User recipient = notice.getRecipient();
+				if ( (recipient != null) && (recipient.getId() != null) ) {
+					return getUser(recipient.getId());
+				}
+				return getWorkGroupUsers(wg.getId());
+			}
 		}
-		else {
-			//Se envia a un grupo.
-			String SEP = "";
-			for (int i=0;i<users.size();i++) {
-				Integer usernameId = new Integer(""+users.get(i).getValue());
-				String username = getUserName(usernameId);
-				String userEmail = getLdapUserMail(domain, username);
+		return Collections.emptyList();
+	}
+    
+    @SuppressWarnings("unchecked")
+    public void loadUsers( Integer workGroupId ) {
+    	resetUsers();
+        try {
+        	List<User> list = (workGroupId != null) ? getWorkGroupUsers(workGroupId) : getAllUsers();
+            for( User user : list ) {
+                SelectItem item = new SelectItem(user.getId(), user.getName());
+                users.add(item);
+	    	}
+        } catch (ManagerBeanException e) {
+            LOGGER.log(Level.SEVERE, "Error loading users of workgroup with id= " + workGroupId, e);
+        }
+    }
+
+    private boolean hasUsers( WorkGroup workGroup ) {
+        try {
+	        IManagerBean managerBean = BeanManager.getManagerBean(UserWorkGroup.class);
+	        Criteria criteria = new Criteria();
+	        criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_WORK_GROUP_WORK_GROUP_ID), workGroup.getId());
+	        return managerBean.getCount(criteria) > 0;
+        } catch (ManagerBeanException e) {
+            LOGGER.log(Level.SEVERE, "Error counting users of the workgroup " + workGroup.getId(), e);
+        }    	
+        return false;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void loadWorkGroups() {
+        try {    	
+			this.workGroups = new LinkedList<SelectItem>();
+			IManagerBean workGroupBean = BeanManager.getManagerBean(WorkGroup.class); 
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(workGroupBean.getFieldName(IConfigAlias.WORK_GROUP_STATUS), WorkGroupStatus.ACTIVE);
+			criteria.addOrder(workGroupBean.getFieldName(IConfigAlias.WORK_GROUP_DESCRIPTION));
+			Iterator<ITransferObject> iter = workGroupBean.getList(criteria).iterator();
+			while (iter.hasNext()) {
+				WorkGroup workGroup = (WorkGroup)iter.next();
+				if ( hasUsers(workGroup) ) {
+					SelectItem item = new SelectItem(workGroup.getId(), workGroup.getDescription());
+					workGroups.add(item);
+				}
+			}
+        } catch (ManagerBeanException e) {
+            LOGGER.log(Level.SEVERE, "Error loading workgroups", e);
+        }
+    }    
+    
+	private void chargeMails() {
+		String domain = UserUtils.getInstance().getPrincipal().getDomain();
+		mailList = "";
+
+		String SEP = "";
+		try {
+			for( User user : getSelectedUsers() ) {
+				String userEmail = getLdapUserMail(domain, user.getLogin());
 				if (userEmail != null) {
 					mailList += SEP+userEmail;
 					SEP = ", ";
-				}
+				}			
 			}
-		}
+        } catch (ManagerBeanException e) {
+            LOGGER.log(Level.SEVERE, "Error retrieving emails", e);
+        }
 	}
 
 	private void chargeSMS() {
-		AuthPrincipal user = UserUtils.getInstance().getPrincipal();
-		String domain = user.getDomain();
+		String domain = UserUtils.getInstance().getPrincipal().getDomain();
 		resetSMS();
-		if (((Notice)getTo()).getRecipient().getId() != null) {
-			//Se envia a un solo usuario.
-			Integer usernameId = ((Notice)getTo()).getRecipient().getId();
-			String username = getUserName(usernameId);
-			String userSMS = getLdapUserSMS(domain, username);
-			if (userSMS != null) this.recipients.add(userSMS);
-		}
-		else {
-			//Se envia a un grupo.
-			for (int i=0;i<users.size();i++) {
-				Integer usernameId = new Integer(""+users.get(i).getValue());
-				String username = getUserName(usernameId);
-				String userSMS = getLdapUserSMS(domain, username);
-				if (userSMS != null) this.recipients.add(userSMS);
-			}
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private String getUserName(Integer usernameId) {
 		try {
-	        IManagerBean userBean = BeanManager.getManagerBean(User.class);
-	        Criteria criteria = new Criteria();
-	        criteria.addEqualExpression(userBean.getFieldName(IConfigAlias.USER_AVAILABLE), true);
-	        criteria.addEqualExpression(userBean.getFieldName(IConfigAlias.USER_ID), usernameId);
-	        Iterator iterator = userBean.getList(criteria).iterator();
-	        if (iterator.hasNext()) {
-	            User user = (User)iterator.next();
-	            return user.getLogin();
-	        }
-		}
-		catch (ManagerBeanException mbe) {}
-		return null;
+			for( User user : getSelectedUsers() ) {
+				String userSMS = getLdapUserSMS(domain, user.getLogin());
+				if (userSMS != null) {
+					this.recipients.add(userSMS);
+				}
+			}
+        } catch (ManagerBeanException e) {
+            LOGGER.log(Level.SEVERE, "Error retrieving cellulars", e);
+        }
 	}
 
 	private String getLdapUserMail(String domain, String username) {
@@ -228,12 +252,12 @@ public class NoticeController extends BasicController implements IAonObjectClass
 			try {
 				LdapSession session = ldap.getLdapSession();
 				String filter = LdapSession.getObjectClass(USER);
-				Entry userEntry = session.get(userDN.toString(), filter,USER_ALTERNATIVE_EMAIL, COMMONNAME, SURNAME);
+				Entry userEntry = session.get(userDN.toString(), filter,USER_ALTERNATIVE_EMAIL, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE);
 				String alternativeEmail = null;
 				String name = username;
 				try {
-					String cn = userEntry.getAsString(COMMONNAME);
-					String sn = userEntry.getAsString(SURNAME);
+					String cn = userEntry.getAsString(COMMON_NAME_ATTRIBUTE);
+					String sn = userEntry.getAsString(SURNAME_ATTRIBUTE);
 					name = "" + cn + " " + sn + "";
 					alternativeEmail = userEntry.getAsString(USER_ALTERNATIVE_EMAIL);
 				}catch (NullPointerException npe) {}
@@ -253,10 +277,10 @@ public class NoticeController extends BasicController implements IAonObjectClass
 				try {
 					LdapSession session = ldap.getLdapSession();
 					String filter = LdapSession.getObjectClass(DOMAIN);
-					Entry domainEntry = session.get(domainDN.toString(), filter, DOMAIN_MEMBER_ATTRIBUTE);
+					Entry domainEntry = session.get(domainDN.toString(), filter, MEMBER_ATTRIBUTE);
 					List<Object> alternativeDomain = null;
 					try {
-						alternativeDomain = (List<Object>)domainEntry.get(DOMAIN_MEMBER_ATTRIBUTE);
+						alternativeDomain = (List<Object>)domainEntry.get(MEMBER_ATTRIBUTE);
 						for (int i=0;i<alternativeDomain.size();i++) {
 							String altdomain = ""+alternativeDomain.get(i);
 							altdomain = altdomain.substring(3, altdomain.indexOf(","));
@@ -266,12 +290,12 @@ public class NoticeController extends BasicController implements IAonObjectClass
 								try {
 									LdapSession altsession = ldap.getLdapSession();
 									String altfilter = LdapSession.getObjectClass(USER);
-									Entry userEntry = altsession.get(altuserDN.toString(), altfilter, USER_ALTERNATIVE_EMAIL, COMMONNAME, SURNAME);
+									Entry userEntry = altsession.get(altuserDN.toString(), altfilter, USER_ALTERNATIVE_EMAIL, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE);
 									String alternativeEmail = null;
 									String name = username;
 									try {
-										String cn = userEntry.getAsString(COMMONNAME);
-										String sn = userEntry.getAsString(SURNAME);
+										String cn = userEntry.getAsString(COMMON_NAME_ATTRIBUTE);
+										String sn = userEntry.getAsString(SURNAME_ATTRIBUTE);
 										name = "" + cn + " " + sn + "";
 										alternativeEmail = userEntry.getAsString(USER_ALTERNATIVE_EMAIL);
 									}catch (NullPointerException npe) {}
@@ -301,10 +325,10 @@ public class NoticeController extends BasicController implements IAonObjectClass
 			try {
 				LdapSession session = ldap.getLdapSession();
 				String filter = LdapSession.getObjectClass(USER);
-				Entry userEntry = session.get(userDN.toString(), filter,USER_CELLULAR_NUMBER, COMMONNAME, SURNAME);
+				Entry userEntry = session.get(userDN.toString(), filter,USER_CELLULAR_NUMBER, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE);
 				try {
-					String cn = userEntry.getAsString(COMMONNAME);
-					String sn = userEntry.getAsString(SURNAME);
+					String cn = userEntry.getAsString(COMMON_NAME_ATTRIBUTE);
+					String sn = userEntry.getAsString(SURNAME_ATTRIBUTE);
 					String name = "" + cn + " " + sn + "";
 					sms = userEntry.getAsString(USER_CELLULAR_NUMBER);
 					sms = ""+name+"-"+sms+"";
@@ -386,4 +410,12 @@ public class NoticeController extends BasicController implements IAonObjectClass
 		selected = -1;
 		modify = false;
 	}
+	
+	public void workGroupCheck(FacesContext context, UIComponent component, Object value) {
+		if (SELECT_ONE_VALUE.equals(value) ) {
+			throw new ValidatorException( MessageFactory.getMessage(
+				context, UIInput.REQUIRED_MESSAGE_ID, MessageFactory.getLabel(context, component)));
+		}
+	}
+	
 }

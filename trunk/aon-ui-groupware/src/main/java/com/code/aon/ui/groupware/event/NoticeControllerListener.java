@@ -48,7 +48,7 @@ public class NoticeControllerListener extends ControllerAdapter {
 		Notice notice = (Notice)event.getController().getTo();
 		notice.setSender(UserUtils.getInstance().getLoggedUser());
 	}
-	
+
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		NoticeController noticeController = (NoticeController)event.getController();
@@ -75,26 +75,22 @@ public class NoticeControllerListener extends ControllerAdapter {
 		noticeController.resetSMS();
 		noticeController.setSendMail(false);
 		noticeController.setSendSMS(false);
-		Notice notice = (Notice)noticeController.getTo();
-		if(notice.getWorkGroup() != null && notice.getWorkGroup().getId() != null){
-			noticeController.setWorkGroupId(notice.getWorkGroup().getId());
-		}
-		else {
-			noticeController.setWorkGroupId(null);
-		}
-		noticeController.loadUsers();
+		Notice notice = (Notice) noticeController.getTo();
+		noticeController.loadWorkGroups();
+		noticeController.loadUsers( notice.getWorkGroup().getId() );
 	}
 
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		NoticeController noticeController = (NoticeController)event.getController();
 		Notice notice = (Notice)noticeController.getTo();
 		notice.setDate(new Date());
+		notice.getWorkGroup().setId(NoticeController.SELECT_ONE_VALUE);
 		noticeController.setMailList(null);
 		noticeController.resetSMS();
 		noticeController.setSendMail(false);
 		noticeController.setSendSMS(false);
-		noticeController.setWorkGroupId(null);
-		noticeController.loadUsers();
+		noticeController.loadWorkGroups();
+		noticeController.resetUsers();
 	}
 
 	private void insertRelatedAlarm(Notice notice) throws ControllerListenerException{
@@ -103,13 +99,11 @@ public class NoticeControllerListener extends ControllerAdapter {
 			if (notice.getWorkGroup() == null && notice.getRecipient() == null) {
 				//Se envia a todos los usuarios.
 				users = getUsers(null);
-			}
-			else {
+			} else {
 				if (notice.getRecipient() != null) {
 					//Se envia a un solo usuario.
 					users.add(notice.getRecipient());
-				}
-				else {
+				} else {
 					//Se envia a un grupo.
 					users = getUsers(notice.getWorkGroup().getId());
 				}
