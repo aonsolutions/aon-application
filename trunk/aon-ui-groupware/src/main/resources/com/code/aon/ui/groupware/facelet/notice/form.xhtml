@@ -23,7 +23,7 @@
 				<aon:panelGrid columns="2" dir="true">
 
 						<aon:outputLabel for="Notice_date"
-							value="#{groupwareBundle.aon_date}" />
+							value="#{bundle.aon_date}" />
 
 						<aon:selectInputDate id="Notice_date" 
 							inputSize="18" value="#{notice.to.date}"
@@ -69,14 +69,14 @@
 							value="#{notice.to.phone}" />
 							
 						<aon:outputLabel for="Notice_status" 
-							value="#{groupwareBundle.notice_status}" />
+							value="#{bundle.aon_status}" />
 						<aon:selectOneMenu id="Notice_status"
 							value="#{notice.to.status}">
 							<f:selectItems value="#{groupWareCollections.noticeStatuses}" />
 						</aon:selectOneMenu>
 						
 						<aon:outputLabel for="Notice_type" 
-							value="#{groupwareBundle.notice_type}" />
+							value="#{bundle.aon_type}" />
 						<aon:selectOneMenu id="Notice_type"
 							value="#{notice.to.type}">
 							<f:selectItems value="#{groupWareCollections.noticeTypes}" />
