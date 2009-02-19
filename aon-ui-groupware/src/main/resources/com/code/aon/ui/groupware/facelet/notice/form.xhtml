@@ -49,7 +49,7 @@
 						value="#{groupwareBundle.notice_recipient}" />
 					<aon:selectOneMenu id="Notice_recipient_id"
 						disabled="#{!notice.recipientSelectable}" focus="Notice_source"
-						value="#{notice.to.recipient.id}" reRender="Notice_recipient_id,Notice_sendEmail, Notice_sendSMS"
+						value="#{notice.to.recipient}" reRender="Notice_recipient_id,Notice_sendEmail, Notice_sendSMS"
 						valueChangeListener="#{notice.recipientChange}">
 						<c:if test="#{!notice.recipientSelectable}">
 							<f:selectItem itemLabel="#{groupwareBundle.groupware_select_one}" itemValue="#{notice.selectOneValue}"/>

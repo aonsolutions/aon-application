@@ -15,7 +15,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
-import javax.xml.bind.ValidationException;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -71,7 +70,7 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	public Integer getSelectOneValue() {
 		return SELECT_ONE_VALUE;
 	}
-	
+
 	public List<SelectItem> getUsers() {
 		return users;
 	}
@@ -98,7 +97,7 @@ public class NoticeController extends BasicController implements IAonObjectClass
 		resetSMS();
 		Integer workGroupId = (Integer) event.getNewValue();
     	if ( (! SELECT_ONE_VALUE.equals(workGroupId)) && (workGroupId != null) ) {
-    		((Notice)getTo()).getRecipient().setId(null);
+    		((Notice)getTo()).setRecipient(null);
         	loadUsers(workGroupId);	
         }
     }
@@ -169,7 +168,7 @@ public class NoticeController extends BasicController implements IAonObjectClass
         try {
         	List<User> list = (workGroupId != null) ? getWorkGroupUsers(workGroupId) : getAllUsers();
             for( User user : list ) {
-                SelectItem item = new SelectItem(user.getId(), user.getName());
+                SelectItem item = new SelectItem(user, user.getName());
                 users.add(item);
 	    	}
         } catch (ManagerBeanException e) {
