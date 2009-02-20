@@ -31,7 +31,7 @@ public class DeliveryInvoiceDetailRemover implements IInvoiceDetailRemover {
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class.getName());
 			invoiceDetailBean.remove(invoiceDetail);
-			DeliveryDetail deliveryDetail = obtainDeliveryDetail(invoiceDetail.getDeliveryDetail());
+			DeliveryDetail deliveryDetail = obtainDeliveryDetail(invoiceDetail.getSourceId());
 			/* ACTUALIZA EL ESTADO DEL ALBARÁN */
 			updateDelivery(deliveryDetail.getDelivery());
 			/* BORRAR LA LINEA DE FACTURA */
