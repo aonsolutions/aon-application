@@ -22,7 +22,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.Month;
-import com.code.aon.groupware.Contact;
 import com.code.aon.groupware.MessageContent;
 import com.code.aon.messaging.sms.Message;
 import com.code.aon.messaging.sms.Sender;
@@ -30,6 +29,7 @@ import com.code.aon.messaging.sms.SynchronizedSender;
 import com.code.aon.messaging.util.Utils;
 import com.code.aon.ui.messaging.PriceTariff;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.webmail.Contact;
 
 public class SMSController implements Serializable {
 

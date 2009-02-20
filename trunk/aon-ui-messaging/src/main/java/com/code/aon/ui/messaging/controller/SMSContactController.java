@@ -10,11 +10,11 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.groupware.Contact;
-import com.code.aon.groupware.dao.IContactAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.webmail.Contact;
+import com.code.aon.webmail.dao.IWebMailAlias;
 
 public class SMSContactController {
 
@@ -64,7 +64,7 @@ public class SMSContactController {
 			init();
 			addExpressions(); 
 			IManagerBean bean = FormUtil.getController( BEAN_CONTACT ).getManagerBean();
-			criteria.addOrder( bean.getFieldName( IContactAlias.CONTACT_NAME ) );
+			criteria.addOrder( bean.getFieldName( IWebMailAlias.CONTACT_NAME ) );
 			List lst = bean.getList( criteria );
             for (int i = 0, max = lst.size(); i < max; i++) {
             	SelectionContact sc = new SelectionContact();
