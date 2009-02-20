@@ -57,8 +57,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.velocity.TemplateHelper;
 import com.code.aon.common.velocity.VelocityHelper;
-import com.code.aon.groupware.Contact;
-import com.code.aon.groupware.dao.IContactAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -69,6 +67,7 @@ import com.code.aon.ui.webmail.bean.AonFile;
 import com.code.aon.ui.webmail.bean.AonMessageTracer;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.listener.IAonFileListener;
+import com.code.aon.webmail.Contact;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonAttachment;
@@ -77,6 +76,7 @@ import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonMessageUtils;
 import com.code.aon.webmail.bean.AonServer;
 import com.code.aon.webmail.bean.BundleConstants;
+import com.code.aon.webmail.dao.IWebMailAlias;
 import com.sun.mail.imap.AppendUID;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.util.LineOutputStream;
@@ -936,7 +936,7 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
 		IController contactController = FormUtil.getController(BEAN_CONTACT);
 		IManagerBean contactsBean = contactController.getManagerBean();
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(contactsBean.getFieldName(IContactAlias.CONTACT_EMAIL), email);
+		criteria.addEqualExpression(contactsBean.getFieldName(IWebMailAlias.CONTACT_EMAIL), email);
 		List<ITransferObject> list = contactsBean.getList(criteria);
 		if (list.size()==0){
 			Contact contact = new Contact();
@@ -1047,8 +1047,8 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
     	try{
 			IManagerBean bean = FormUtil.getController(WebMailConstants.BEAN_CONTACT).getManagerBean();
 			Criteria criteria = new Criteria();
-			String displayName = bean.getFieldName(IContactAlias.CONTACT_DISPLAY_NAME);
-			String email = bean.getFieldName(IContactAlias.CONTACT_EMAIL);
+			String displayName = bean.getFieldName(IWebMailAlias.CONTACT_DISPLAY_NAME);
+			String email = bean.getFieldName(IWebMailAlias.CONTACT_EMAIL);
 			Expression exp1 = ExpressionUtilities.getLikeExpression(displayName, text + "*");
 			Expression exp2 = ExpressionUtilities.getLikeExpression(email, text + "*");
 			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
