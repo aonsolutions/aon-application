@@ -17,8 +17,6 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
-import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.IProgression;
@@ -54,7 +52,6 @@ public class FeeInvoicingController  implements IProgression{
 	private static final Logger LOGGER = Logger.getLogger(FeeInvoicingController.class.getName());
 
 	private final static String BUNDLE_KEY = "financeBundle";
-	private final static String PERIOD_ERROR_KEY = "finance_invoicing_period_error";
 	private final static String NO_INVOICE_KEY = "finance_invoicing_no_invoice";
 	private final static String SALE_INVOICE_CONTROLLER = "saleInvoice";
 
@@ -151,7 +148,6 @@ public class FeeInvoicingController  implements IProgression{
 		return 1;
 	}
 
-	@SuppressWarnings("unchecked")
 	private SecurityLevel obtainSeriesSecurityLevel(Series series) throws ManagerBeanException {
 		if (series != null) {
 			return series.getSecurityLevel();
@@ -170,51 +166,44 @@ public class FeeInvoicingController  implements IProgression{
 
 			recording = false;
 			setProgressionEnabled(true);
-			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
-			Criteria criteria = new Criteria();
-			criteria.addLessThanOrEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE), getParams().getInvoiceDate());
-			criteria.addGreaterThanOrEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_DEADLINE), getParams().getInvoiceDate());
-			if (periodBean.getList(criteria).size() == 0) {
-				AonUtil.addErrorMessageFromBundle(BUNDLE_KEY, PERIOD_ERROR_KEY);
-			} else {
-				getEngine().setInvoicingDAO(new CustomerFeeInvoicingDAO());
-				getEngine().setInvoicingFeedBack(getInvoicingFeedBack());
-				
-				HibernateUtil.beginTransaction(sessionName);
-				getEngine().invoice(getParams());
-				HibernateUtil.getSession(sessionName).flush();					
-				HibernateUtil.commitTransaction(sessionName);
 
-				Collection<Invoice> invoicedList = getEngine().getInvoicingDAO().getCollection();
-				if (invoicedList.size() > 0) {
-					if (getParams().isInvoiceRecordable()) {
-						HibernateUtil.beginTransaction(sessionName);
-						recording = true;
-						invoicesToRecord = invoicedList.size();
-						recordingInvoice = 0;
-						Iterator<Invoice> iter = invoicedList.iterator();
-						while (iter.hasNext()) {
-							Invoice invoice = iter.next();
-							getAccountEntryInvoiceWriter().recordAndUpdateInvoice(invoice, getPriceStrategy());
-							recordingInvoice++;
-						}
-						HibernateUtil.getSession(sessionName).flush();
-						HibernateUtil.commitTransaction(sessionName);
+			getEngine().setInvoicingDAO(new CustomerFeeInvoicingDAO());
+			getEngine().setInvoicingFeedBack(getInvoicingFeedBack());
+			
+			HibernateUtil.beginTransaction(sessionName);
+			getEngine().invoice(getParams());
+			HibernateUtil.getSession(sessionName).flush();					
+			HibernateUtil.commitTransaction(sessionName);
+
+			Collection<Invoice> invoicedList = getEngine().getInvoicingDAO().getCollection();
+			if (invoicedList.size() > 0) {
+				if (getParams().isInvoiceRecordable()) {
+					HibernateUtil.beginTransaction(sessionName);
+					recording = true;
+					invoicesToRecord = invoicedList.size();
+					recordingInvoice = 0;
+					Iterator<Invoice> iter = invoicedList.iterator();
+					while (iter.hasNext()) {
+						Invoice invoice = iter.next();
+						getAccountEntryInvoiceWriter().recordAndUpdateInvoice(invoice, getPriceStrategy());
+						recordingInvoice++;
 					}
-					DataModel invoiceModel;
-					if (invoicedList instanceof List) {
-						invoiceModel = new ListDataModel((List) invoicedList);
-					} else {
-						List invoices = new LinkedList(invoicedList);
-						invoiceModel = new ListDataModel(invoices);
-					}
-					IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER);
-					invoiceController.setModel(invoiceModel);
-					setRedirect(true);
-				} else {
-					setRedirect(false);
-					AonUtil.addInfoMessageFromBundle(BUNDLE_KEY, NO_INVOICE_KEY);
+					HibernateUtil.getSession(sessionName).flush();
+					HibernateUtil.commitTransaction(sessionName);
 				}
+				DataModel invoiceModel;
+				if (invoicedList instanceof List) {
+					invoiceModel = new ListDataModel((List) invoicedList);
+				} else {
+					List invoices = new LinkedList(invoicedList);
+					invoiceModel = new ListDataModel(invoices);
+				}
+				IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER);
+				invoiceController.setModel(invoiceModel);
+				setRedirect(true);
+			} else {
+				setRedirect(false);
+				AonUtil.addInfoMessageFromBundle(BUNDLE_KEY, NO_INVOICE_KEY);
 			}
 		} catch (Exception e) {
 			setRedirect(false);
