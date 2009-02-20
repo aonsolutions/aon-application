@@ -42,9 +42,9 @@
 
 			<aon:div styleClass="aon-sidebarIcons-icon">
 				<aon:commandLink 
-					actionListener="#{contact.onSearch}" action="contact">
+					actionListener="#{contact.onSearch}" action="contact_list">
 					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-contactos.png']}" />
-					<aon:div><aon:outputText value="#{groupwareBundle.aon_contacts}" /></aon:div>
+					<aon:div><aon:outputText value="#{webmailBundle.webmail_contacts}" /></aon:div>
 				</aon:commandLink>
 			</aon:div>
 
