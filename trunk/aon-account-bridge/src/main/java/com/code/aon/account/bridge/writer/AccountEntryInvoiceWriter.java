@@ -58,8 +58,7 @@ public class AccountEntryInvoiceWriter {
 		}
 	}
 
-	public void recordAndUpdateInvoice(Invoice invoice, IPriceStrategy priceStrategy)
-		throws ManagerBeanException {
+	public void recordAndUpdateInvoice(Invoice invoice, IPriceStrategy priceStrategy) throws ManagerBeanException {
 		recordInvoice(invoice,priceStrategy);	
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		invoice.setStatus(InvoiceStatus.SCORED);
