@@ -71,14 +71,6 @@
 		<mapping class="com.code.aon.company.resources.Resource"/>
 		<mapping class="com.code.aon.company.resources.Employee"/>
 
-		<!-- AON-COMPOSITE Mapping files -->		
-		<mapping class="com.code.aon.composition.Composition"/>
-		<mapping class="com.code.aon.composition.CompositionDetail"/>
-		<mapping class="com.code.aon.composition.CompositionExpense"/>
-		<mapping class="com.code.aon.composition.Production"/>
-		<mapping class="com.code.aon.composition.ProductionDetail"/>
-		<mapping class="com.code.aon.composition.ProductionExpense"/>
-		
 		<!-- AON-CONFIG Mapping files -->
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
 		<mapping class="com.code.aon.config.Bank"/>
