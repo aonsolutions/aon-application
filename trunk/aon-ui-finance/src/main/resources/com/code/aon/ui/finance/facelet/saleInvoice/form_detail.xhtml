@@ -27,17 +27,10 @@
 					<ui:param name="removeButtonReRender" value="menuExt,Invoice_total" />
 					<ui:param name="focusOnAdd" value="InvoiceDetail_item_product_code-New" />
 					<ui:param name="focusOnSelect" value="InvoiceDetail_item_product_code" />
-					<ui:param name="columnClasses"
-						value="aon-editDataTable-textColumn,
-						aon-editDataTable-numberColumn aon-width-80,
-						aon-editDataTable-numberColumn aon-width-80,
-						aon-editDataTable-numberColumn aon-width-80,
-						aon-editDataTable-numberColumn aon-width-80,
-						aon-editDataTable-textColumn aon-width-150" />
 	
 					<ui:define name="columns">
 	
-						<aon:column>
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 							<f:facet name="header">
 								<aon:outputLabel for="InvoiceDetail_item_product_code" value="#{productBundle.product_item}" />
 							</f:facet>
@@ -97,7 +90,7 @@
 							</f:facet>
 						</aon:column>
 	
-						<aon:column>
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 							<f:facet name="header">
 								<aon:outputLabel for="InvoiceDetail_quantity" value="#{bundle.aon_quantity}" />
 							</f:facet>
@@ -120,7 +113,7 @@
 							</f:facet>
 						</aon:column>
 	
-						<aon:column>
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 							<f:facet name="header">
 								<aon:outputLabel for="InvoiceDetail_price" value="#{bundle.aon_price}" />
 							</f:facet>
@@ -138,7 +131,7 @@
 							</f:facet>
 						</aon:column>
 	
-						<aon:column>
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 							<f:facet name="header">
 								<aon:outputLabel for="InvoiceDetail_discount" value="#{bundle.aon_discount}" />
 							</f:facet>
@@ -157,7 +150,7 @@
 							</f:facet>
 						</aon:column>
 	
-						<aon:column width="60">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 							<f:facet name="header">
 								<aon:outputLabel for="InvoiceDetail_amount" value="#{bundle.aon_amount}" />
 							</f:facet>
@@ -179,9 +172,9 @@
 							</f:facet>
 						</aon:column>
 	
-						<aon:column>
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 							<f:facet name="header">
-								<aon:outputLabel for="InvoiceDetail_workPlace" value="#{companyBundle.company_workplace_module}" />
+								<aon:outputLabel for="InvoiceDetail_workPlace" value="#{companyBundle.company_workplace}" />
 							</f:facet>
 							<aon:outputText
 								rendered="#{formList}"

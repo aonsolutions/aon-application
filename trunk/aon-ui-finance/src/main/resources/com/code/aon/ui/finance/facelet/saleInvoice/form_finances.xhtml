@@ -22,21 +22,11 @@
 					<ui:param name="showNote" value="false" />
 					<ui:param name="showDataScroller" value="false" />
 					<ui:param name="skipResetButton" value="#{saleInvoice.recorded}" />
-					<!-- 				
-					<ui:param name="skipLineEdition"
-						value="#{saleInvoiceFinance.modelToEditable}" />
-	 				-->
 					<ui:param name="saveButtonReRender" value="Invoice_total" />
-					<ui:param name="columnClasses"
-						value="aon-editDataTable-textColumn aon-width-150,
-						aon-editDataTable-textColumn aon-width-150,
-						aon-editDataTable-textColumn aon-width-auto,
-						aon-editDataTable-textColumn aon-width-80,
-						aon-editDataTable-numberColumn aon-width-80" />
 
 					<ui:define name="columns">
 
-						<aon:column>
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 							<f:facet name="header">
 								<aon:outputLabel for="Finance_dueDate"
 									value="#{financeBundle.finance_finance_date}" />
@@ -57,7 +47,7 @@
 							</f:facet>
 						</aon:column>
 
-						<aon:column>
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 							<f:facet name="header">
 								<aon:outputLabel for="Finance_PayMethod"
 									value="#{configBundle.config_pay_method}" />
@@ -82,7 +72,7 @@
 							</f:facet>
 						</aon:column>
 
-						<aon:column>
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 							<f:facet name="header">
 								<aon:div>
 									<aon:outputLabel for="RegistryBank_code"
@@ -189,7 +179,7 @@
 							</f:facet>
 						</aon:column>
 
-						<aon:column>
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_status}" />
 							</f:facet>
@@ -199,7 +189,7 @@
 							</f:facet>
 						</aon:column>
 
-						<aon:column>
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 							<f:facet name="header">
 								<aon:outputLabel for="Finance_amount"
 									value="#{bundle.aon_amount}" />
