@@ -1,6 +1,8 @@
 package com.code.aon.account.bridge.util;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -271,11 +273,24 @@ public class AccountUtil {
 		criteria.addGreaterThanOrEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_DEADLINE), date);
 		criteria.addLessThanOrEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE), date);
 		Iterator iter = periodBean.getList(criteria).iterator();
-		if(iter.hasNext()){
+		if (iter.hasNext()) {
 			return (Period)iter.next();
-		}
-		throw new ManagerBeanException("Not Period defined for current Date");
+		} else {
+			Calendar initiation = new GregorianCalendar();
+			initiation.setTime(date);
+			initiation.set(Calendar.DAY_OF_MONTH, 1);
+			initiation.set(Calendar.MONTH, 0);
+			Calendar deadline = new GregorianCalendar();
+			deadline.setTime(date);
+			deadline.set(Calendar.DAY_OF_MONTH, 31);
+			deadline.set(Calendar.MONTH, 11);
 
+			Period period = new Period();
+			period.setId(Integer.toString(initiation.get(Calendar.YEAR)));
+			period.setInitiationDate(initiation.getTime());
+			period.setDeadline(deadline.getTime());
+			return (Period)periodBean.insert(period);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
