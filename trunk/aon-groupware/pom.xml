@@ -22,12 +22,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.common.ldap</artifactId>
-			<version>0.9.3</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
 			<artifactId>aon.config</artifactId>
 			<version>3.3.2</version>
 			<scope>compile</scope>
