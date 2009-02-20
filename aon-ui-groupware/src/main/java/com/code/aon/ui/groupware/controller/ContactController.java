@@ -15,12 +15,12 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.dao.ldap.LdapDAO;
-import com.code.aon.groupware.Contact;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.webmail.Contact;
 
 public class ContactController extends BasicController {
 	
