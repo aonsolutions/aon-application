@@ -142,10 +142,10 @@ public class FolderController implements WebMailConstants {
 		}
     }
 
-    protected void deleteMessages(AonMessage[] messagesLst, boolean purge) throws MessagingException {
+    protected void deleteMessages(AonMessage[] messages, boolean purge) throws MessagingException {
     	AonServer server = getWebMailController().getServer();
 		if ( purge ) {
-			folder.deleteMessages(messagesLst);
+			folder.deleteMessages(messages);
 			try {
 				folder.refresh();
 			} catch (WebmailException e) {
@@ -153,7 +153,7 @@ public class FolderController implements WebMailConstants {
 			}
 		} else {
 	    	AonFolder treeDest = getTreeController().recoverTreeNode(server.getTrashFolderName());
-	    	moveSelectedMessages(treeDest);
+	    	moveMessages(treeDest, messages);
 	    	getTreeController().loadTree();
 		}
     	resetCurrentPage();		
@@ -315,8 +315,11 @@ public class FolderController implements WebMailConstants {
 	// DESTINY FOLDER SELECTION POPUP
 	//********************************************************************************************
     public void moveSelectedMessages(AonFolder dest){
+    	moveMessages(dest, folder.getSelectedMessages());
+    }
+
+    public void moveMessages(AonFolder dest, AonMessage[] messages){
 		try {
-			AonMessage[] messages = folder.getSelectedMessages();
 			if (! ArrayUtils.isEmpty(messages) ) {
 				folder.moveMessages(messages, dest);
 			}
@@ -330,7 +333,7 @@ public class FolderController implements WebMailConstants {
 			throw new AbortProcessingException(e);
 		}
     }
-
+    
     // *******************************************************
     // ORDER BY
     // *******************************************************

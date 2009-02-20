@@ -100,11 +100,23 @@
 					<aon:commandButton
 						id="deleteButton"
 						title="#{bundle.aon_remove}"
+						rendered="#{!webmailFolder.folder.purgableAllMessages}"
 						action="#{webmailMessage.getReturnAction}"
 						actionListener="#{webmailMessage.deleteSelectedMessage}"
 						value="#{bundle.aon_remove}"
 						styleClass="aon-finding-toolbar-item aon-icon-mailDelete">
-					</aon:commandButton>									
+					</aon:commandButton>
+								
+					<aon:confirmButton id="purgeMail"
+						rendered="#{webmailFolder.folder.purgableAllMessages}"
+						title="#{webmailBundle.webmail_mail_purge}"
+						confirmTitle="#{bundle.aon_advice}"
+						confirmMessage="#{webmailBundle.webmail_purge_confirm}"
+						accesskey="#{bundle.aon_key_remove}"
+						confirmAction="#{webmailMessage.getReturnAction}"
+						confirmActionListener="#{webmailMessage.purgeSelectedMessage}"
+						value="#{webmailBundle.webmail_mail_purge}"
+						styleClass="aon-icon-mailDelete aon-finding-toolbar-item" />
 
 					<a4j:htmlCommandLink id="save" target="_blank"
 						actionListener="#{webmailMessage.save}"
