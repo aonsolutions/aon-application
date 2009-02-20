@@ -304,6 +304,17 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
 		}    	
 	}
 
+    public void purgeSelectedMessage(ActionEvent event){
+    	AonMessage[] messagesLst = new AonMessage[] { this.message };
+    	FolderController folderController = (FolderController) AonUtil.getRegisteredBean(BEAN_FOLDER);
+    	try {
+    		folderController.deleteMessages(messagesLst, true);
+		} catch (MessagingException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}    	
+	}
+    
     public List<AonFile> getFiles(){
     	return newMsgFileList;
     }
