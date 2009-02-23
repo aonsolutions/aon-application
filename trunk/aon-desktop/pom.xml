@@ -89,7 +89,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.groupware</artifactId>
-			<version>3.5.0</version>
+			<version>3.5.1</version>
 			<scope>compile</scope>
 		</dependency>
 	    <dependency>
@@ -106,7 +106,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.messaging</artifactId>
-			<version>0.1.0</version>
+			<version>0.2.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

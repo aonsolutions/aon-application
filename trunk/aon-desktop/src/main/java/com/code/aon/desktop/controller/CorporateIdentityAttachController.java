@@ -7,6 +7,7 @@ import java.io.IOException;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
@@ -14,9 +15,9 @@ import org.richfaces.model.UploadItem;
 import com.code.aon.common.IAttachment;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.common.io.IAonFileListener;
-import com.code.aon.ui.form.GridController;
+import com.code.aon.ui.form.BasicController;
 
-public class CorporateIdentityAttachController extends GridController implements IAonFileListener {
+public class CorporateIdentityAttachController extends BasicController implements IAonFileListener {
 
 	/** The uploaded file. */
 	private AonFile aonFile;
@@ -75,7 +76,7 @@ public class CorporateIdentityAttachController extends GridController implements
 				f.setData(data);
 			}
 			f.setFileName(item.getFileName());
-			getAttachment().setDescription(item.getFileName().substring(item.getFileName().lastIndexOf("\\") + 1));
+			getAttachment().setDescription(FilenameUtils.getName(item.getFileName()));
 			f.addAonFileListener(this);
 			setAonFile(f);
 		} catch (IOException e) {
@@ -87,6 +88,7 @@ public class CorporateIdentityAttachController extends GridController implements
 		if (getAonFile() != null) return getAonFile().getFileName();
 		else return "Undefined.";
 	}
+	
 	public void fileDeleted(AonFile aonFile) {
 		setAonFile(null);
 	}
@@ -97,22 +99,6 @@ public class CorporateIdentityAttachController extends GridController implements
 			attach.setData( null );
 			attach.setMimeType( null );
 		}
-	}
-
-	public void onAccept(ActionEvent event) {
-		super.accept(event);
-		super.onCancel(event);
-		setAonFile(null);
-	}
-
-	public void onCancel(ActionEvent event) {
-		super.onCancel(event);
-		setAonFile(null);
-	}
-
-	public void onRemove(ActionEvent event) {
-		super.onRemove(event);
-		super.onCancel(event);
 	}
 
 }
