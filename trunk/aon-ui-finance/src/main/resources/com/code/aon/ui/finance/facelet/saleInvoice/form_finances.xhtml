@@ -22,6 +22,8 @@
 					<ui:param name="showNote" value="false" />
 					<ui:param name="showDataScroller" value="false" />
 					<ui:param name="skipResetButton" value="#{saleInvoice.recorded}" />
+					<ui:param name="skipRemoveButton" value="#{saleInvoice.recorded}" />
+					<ui:param name="skipLineEdition" value="#{!saleInvoiceFinance.modelToEditable}" />
 					<ui:param name="saveButtonReRender" value="Invoice_total" />
 
 					<ui:define name="columns">
@@ -194,10 +196,10 @@
 								<aon:outputLabel for="Finance_amount"
 									value="#{bundle.aon_amount}" />
 							</f:facet>
-							<aon:outputText value="#{to.amount}" rendered="#{formList}">
+							<aon:outputText value="#{to.amount}" rendered="#{formList or saleInvoice.recorded}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
-							<aon:inputText id="Finance_amount" rendered="#{formEdit}"
+							<aon:inputText id="Finance_amount" rendered="#{formEdit and !saleInvoice.recorded}"
 								size="10" value="#{saleInvoiceFinance.to.amount}" />
 							<f:facet name="footer">
 								<aon:inputText id="Finance_amount-New" rendered="#{formNew}"
