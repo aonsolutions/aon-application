@@ -1,7 +1,14 @@
 package com.code.aon.desktop.event;
 
-import java.io.IOException;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import net.sf.jmimemagic.Magic;
+import net.sf.jmimemagic.MagicMatch;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -22,6 +29,8 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class CorporateIdentityAttachControllerListener extends ControllerAdapter {
+
+	private static final Logger LOGGER = Logger.getLogger(CorporateIdentityAttachControllerListener.class.getName());
 	
 	private static final String COMPANY_CONTROLLER_NAME = "company"; 
 
@@ -40,33 +49,72 @@ public class CorporateIdentityAttachControllerListener extends ControllerAdapter
 	}
 	
 	@Override
+	public void afterBeanCreated(ControllerEvent event)
+			throws ControllerListenerException {
+		CorporateIdentityAttachController ciaController = (CorporateIdentityAttachController)event.getController();
+		ciaController.setAonFile(null);
+		RegistryAttachment attach = (RegistryAttachment) ciaController.getTo();
+		CompanyController companyController = (CompanyController)FormUtil.getController(COMPANY_CONTROLLER_NAME);
+		attach.setRegistryAttachmentType(RegistryAttachmentType.CORPORATE_IDENTITY);				
+		attach.setRegistry((Company)companyController.getTo());
+		attach.setCategory(null);		
+	}
+
+	@Override
+	public void afterBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		CorporateIdentityAttachController ciaController = (CorporateIdentityAttachController)event.getController();
+		ciaController.setAonFile(null);
+	}
+
+	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		CorporateIdentityAttachController ciaController = (CorporateIdentityAttachController)event.getController();
+		updateRegistryAttachment(ciaController);
+	}
+	
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		CorporateIdentityAttachController ciaController = (CorporateIdentityAttachController)event.getController();
+		updateRegistryAttachment(ciaController);
+	}
+
+	private void updateRegistryAttachment( CorporateIdentityAttachController ciaController ) throws ControllerListenerException {
 		try {
-			CorporateIdentityAttachController ciaController = (CorporateIdentityAttachController)event.getController();
-			if(ciaController.getAonFile().getData() != null){
-				AonFile aonFile = ciaController.getAonFile(); 
-				if (aonFile.getSize() > 1048576){
+			AonFile aonFile = ciaController.getAonFile();			
+			if( (aonFile != null) && (aonFile.getData() != null) ) { 
+				if ( aonFile.getSize() > 1048576 ) {
 			        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME); 
 					throw new ControllerListenerException(bundle.getString("company_image_max_size_error"));
 				}
 				RegistryAttachment attach = (RegistryAttachment)ciaController.getTo();
-				CompanyController companyController = (CompanyController)FormUtil.getController(COMPANY_CONTROLLER_NAME);
-				attach.setRegistry((Company)companyController.getTo());
-				attach.setCategory(null);
-				attach.setData(aonFile.getData());
-				String ext = aonFile.getFileName().substring(aonFile.getFileName().lastIndexOf(".") + 1);
-				MimeType mt = MimeType.getByExtension(ext);
+				attach.setData(aonFile.getData());				
+				String ext = FilenameUtils.getExtension(aonFile.getFileName());
+				MimeType mt = null;
+				if ( StringUtils.isEmpty(ext) ) {
+					try {
+						MagicMatch match = Magic.getMagicMatch(aonFile.getData());
+						ext = match.getExtension();
+						mt = MimeType.get(match.getMimeType());
+					} catch (Throwable th) {
+						LOGGER.log(Level.SEVERE, "Error finding file Mime Type", th );
+					}
+				} else {
+					mt = MimeType.getByExtension(ext);	
+				}
 				attach.setMimeType(mt);
-				if (attach.getDescription() == null || attach.getDescription().trim().equals("")) {
-					attach.setDescription(aonFile.getFileName().substring(aonFile.getFileName().lastIndexOf("\\") + 1));
+				if ( StringUtils.isBlank(attach.getDescription()) ) {
+					attach.setDescription(FilenameUtils.getBaseName(aonFile.getFileName()));
+				} else {
+					if (attach.getDescription().indexOf(".") < 0) {
+						attach.setDescription(attach.getDescription() + "." + ext);
+					}
 				}
-				else {
-					if (attach.getDescription().indexOf(".") < 0) attach.setDescription(attach.getDescription() + "." + ext);
-				}
-				attach.setRegistryAttachmentType(RegistryAttachmentType.CORPORATE_IDENTITY);
 			}	
-		} catch (IOException e) {
+		} catch (Throwable th) {
 			throw new ControllerListenerException("Error uploading file");
-		}
+		}		
 	}
+	
 }
