@@ -23,7 +23,6 @@ public class CorporateIdentityAttachController extends BasicController implement
 	private AonFile aonFile;
 
 	private long maximumSize = -1;
-	
 
 	public CorporateIdentityAttachController() {
 		this.maximumSize = -1;
@@ -100,5 +99,5 @@ public class CorporateIdentityAttachController extends BasicController implement
 			attach.setMimeType( null );
 		}
 	}
-
+	
 }

@@ -4,6 +4,9 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIInput;
+
 import net.sf.jmimemagic.Magic;
 import net.sf.jmimemagic.MagicMatch;
 
@@ -27,6 +30,8 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
+import com.sun.faces.util.MessageFactory;
 
 public class CorporateIdentityAttachControllerListener extends ControllerAdapter {
 
@@ -70,6 +75,7 @@ public class CorporateIdentityAttachControllerListener extends ControllerAdapter
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		CorporateIdentityAttachController ciaController = (CorporateIdentityAttachController)event.getController();
+		checkFileData(ciaController);
 		updateRegistryAttachment(ciaController);
 	}
 	
@@ -77,9 +83,24 @@ public class CorporateIdentityAttachControllerListener extends ControllerAdapter
 	public void beforeBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
 		CorporateIdentityAttachController ciaController = (CorporateIdentityAttachController)event.getController();
+		checkFileData(ciaController);
 		updateRegistryAttachment(ciaController);
 	}
 
+	private void checkFileData( CorporateIdentityAttachController ciaController ) throws ControllerListenerException {
+		boolean ok = true;
+		if ( ciaController.isNew() ) {
+			ok = ciaController.isUploaded();
+		} else {
+			RegistryAttachment attach = (RegistryAttachment)ciaController.getTo();
+			ok = (attach.getData() != null) && (attach.getData().length > 0);
+		}
+		if (! ok ) {
+			FacesMessage message = MessageFactory.getMessage( UIInput.REQUIRED_MESSAGE_ID, AonUtil.getMessage("aon_fileupload_element") );
+			throw new ControllerListenerException( message.getSummary() );			
+		}
+	}
+	
 	private void updateRegistryAttachment( CorporateIdentityAttachController ciaController ) throws ControllerListenerException {
 		try {
 			AonFile aonFile = ciaController.getAonFile();			
@@ -111,7 +132,9 @@ public class CorporateIdentityAttachControllerListener extends ControllerAdapter
 						attach.setDescription(attach.getDescription() + "." + ext);
 					}
 				}
-			}	
+			} else {
+				throw new ControllerListenerException("Borracho !!");
+			}
 		} catch (Throwable th) {
 			throw new ControllerListenerException("Error uploading file");
 		}		
