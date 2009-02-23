@@ -96,7 +96,7 @@ public class NoticeController extends BasicController implements IAonObjectClass
 		mailList = null;
 		resetSMS();
 		Integer workGroupId = (Integer) event.getNewValue();
-    	if ( (! SELECT_ONE_VALUE.equals(workGroupId)) && (workGroupId != null) ) {
+    	if ( ! SELECT_ONE_VALUE.equals(workGroupId) ) {
     		((Notice)getTo()).setRecipient(null);
         	loadUsers(workGroupId);	
         }
@@ -147,16 +147,17 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	
 	private List<User> getSelectedUsers() throws ManagerBeanException {
 		Notice notice = (Notice) getTo();
-		WorkGroup wg = notice.getWorkGroup();
-		if ( wg != null ) {
-			if ( wg.getId() == null ) {
-				return getAllUsers();
-			} else if (! SELECT_ONE_VALUE.equals(wg.getId()) ) {
-				User recipient = notice.getRecipient();
-				if ( (recipient != null) && (recipient.getId() != null) ) {
-					return getUser(recipient.getId());
+		User recipient = notice.getRecipient();
+		if ( (recipient != null) && (recipient.getId() != null) ) {
+			return getUser(recipient.getId());
+		} else {
+			WorkGroup wg = notice.getWorkGroup();
+			if ( wg != null ) {
+				if ( wg.getId() == null ) {
+					return getAllUsers();
+				} else if (! SELECT_ONE_VALUE.equals(wg.getId()) ) {
+					return getWorkGroupUsers(wg.getId());
 				}
-				return getWorkGroupUsers(wg.getId());
 			}
 		}
 		return Collections.emptyList();
