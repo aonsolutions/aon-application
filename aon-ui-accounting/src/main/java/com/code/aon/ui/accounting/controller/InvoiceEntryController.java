@@ -489,11 +489,11 @@ public class InvoiceEntryController {
 			insertFinances(invoice);
 			if (isNew) {
 				entry = getWriter().insertAccountEntry(entry);
+				this.setAccountEntryInvoice(getWriter().insertAccountEntryInvoice(entry, invoice));
 			}
 			getWriter().insertEntryDetails(entry, account, invoice.getSeries(),
 					invoice.getNumber(), getInvoiceTotal(), obtainTotalRetention(),
 					obtainVATandSurchargeQuota(), obtainBasesPerAccount(details));
-			this.setAccountEntryInvoice(getWriter().insertAccountEntryInvoice(entry, invoice));
 			getHeader().setAccountEntryId(entry.getId());
 			this.isNew = false;
 
