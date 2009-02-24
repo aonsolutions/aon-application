@@ -10,6 +10,7 @@ import java.util.List;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.PayMethod;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
@@ -41,14 +42,14 @@ public class FinanceGenerator {
 			date = (rPayMethod == null?date:calculatePaymentDate(rPayMethod.getDaysToFirstPayment(),rPayMethod.getPaymentDaysArray(),date));
 			financeList.add(createFinance(invoice,registry,date,(rPayMethod==null?null:rPayMethod.getPayment()),totalPrice,rBank));
 		}else{
-			double paymentPrice = round((totalPrice/rPayMethod.getNumberOfPayments()),2);
+			double paymentPrice = CommonUtil.round((totalPrice/rPayMethod.getNumberOfPayments()),2);
 			date = calculatePaymentDate(rPayMethod.getDaysToFirstPayment(),rPayMethod.getPaymentDaysArray(),date);
 			financeList.add(createFinance(invoice,registry,date,rPayMethod.getPayment(),paymentPrice,rBank));
 			for(int i = 2;i <= rPayMethod.getNumberOfPayments() - 1;i++){
 				date = calculatePaymentDate(rPayMethod.getDaysBetweenPayments(), rPayMethod.getPaymentDaysArray(), date);
 				financeList.add(createFinance(invoice,registry,date,rPayMethod.getPayment(),paymentPrice,rBank));
 				}
-			paymentPrice = round(totalPrice - (paymentPrice * (rPayMethod.getNumberOfPayments() - 1)), 2);
+			paymentPrice = CommonUtil.round(totalPrice - (paymentPrice * (rPayMethod.getNumberOfPayments() - 1)), 2);
 			date = calculatePaymentDate(rPayMethod.getDaysBetweenPayments(), rPayMethod.getPaymentDaysArray(), date);
 			financeList.add(createFinance(invoice,registry,date,rPayMethod.getPayment(),paymentPrice,rBank));
 		}
@@ -138,9 +139,5 @@ public class FinanceGenerator {
 		}
 		return calendar.getTime();
 	}
-	
-	protected double round(double value, int precision) {
-        double decimal = Math.pow(10, precision);
-        return Math.round(decimal*value) / decimal;
-    }
+
 }
