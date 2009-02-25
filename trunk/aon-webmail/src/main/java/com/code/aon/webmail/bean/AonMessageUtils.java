@@ -7,6 +7,8 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeUtility;
 
 import org.apache.commons.lang.StringUtils;
@@ -197,6 +199,24 @@ public class AonMessageUtils {
 			}
 		}
 		return result;		
+	}
+	
+	public static boolean isValidEmail( String email ) {
+		if (! StringUtils.isBlank(email) ) {
+			try {
+				new InternetAddress(email);
+				return hasNameAndDomain(email);
+		    } catch (AddressException ex){
+		    	return false;
+		    }			
+		}
+	    return false;
+	}
+	
+	private static boolean hasNameAndDomain(String email){
+		String[] tokens = email.split("@");
+		return (tokens.length == 2) && (!StringUtils.isBlank(tokens[0])) && 
+			(!StringUtils.isBlank(tokens[1]));
 	}
 	
 }

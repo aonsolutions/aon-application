@@ -29,9 +29,15 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.commercial</artifactId>
-			<version>3.2.0-SNAPSHOT</version>
+			<version>3.2.0</version>
 			<scope>compile</scope>
-		</dependency>		
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.company</artifactId>
+			<version>3.6.0</version>			
+			<scope>compile</scope>
+		</dependency>				
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
@@ -43,6 +49,17 @@
 			<artifactId>aon.ui.mailing</artifactId>
 			<version>3.0.1</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.messaging</artifactId>
+			<version>0.2.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.webmail</artifactId>
+			<version>4.6.0</version>
 		</dependency>				
 		<dependency>
 			<groupId>javax.servlet</groupId>

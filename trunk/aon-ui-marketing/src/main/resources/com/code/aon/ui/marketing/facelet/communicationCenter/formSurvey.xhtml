@@ -36,14 +36,34 @@
 								reRender="CommunicationCenter_target,aonToolbar"
 								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 								accesskey="#{bundle.aon_key_cancel}"/>
-						</c:if>						
-						<a4j:htmlCommandLink id="mailing" value="#{marketingBundle.marketing_mailing}" target="_blank"
-							action="communicationCenter" actionListener="#{communicationCenter.onGenerateTargetMailing}"
-							rendered="#{communicationCenter.action.mediaType  == 'MAIL'}"
-							styleClass="aon-finding-toolbar-item aon-icon-webmail2" >
-							<a4j:support event="onclick" process="CommunicationCenter_action_id" 
-								reRender="aonContent" actionListener="#{communicationCenter.onInit}" />
-						</a4j:htmlCommandLink>
+						</c:if>					
+						<c:if test="#{communicationCenter.action.mediaType  == 'MAIL'}" >							
+							<a4j:htmlCommandLink id="mailing" value="#{marketingBundle.marketing_mailing}" target="_blank"
+								action="communicationCenter" actionListener="#{communicationCenter.onGenerateTargetMailing}"
+								styleClass="aon-finding-toolbar-item aon-icon-webmail2" >
+								<a4j:support event="onclick" process="CommunicationCenter_action_id" 
+									reRender="aonContent" actionListener="#{communicationCenter.onInit}" />
+							</a4j:htmlCommandLink>
+						</c:if>
+						<c:if test="#{communicationCenter.action.mediaType  == 'EMAIL'}" >
+							<aon:commandButton id="email"
+								action="communicationCenter_email"
+								actionListener="#{webmailMessage.createNewMessage}"
+								value="#{webmailBundle.webmail_newmail}"
+								styleClass="aon-finding-toolbar-item aon-icon-newMail">
+								<f:setPropertyActionListener target="#{webmailMessage.showToolbar}" value="#{false}" />
+								<f:setPropertyActionListener target="#{webmailMessage.showRecipients}" value="#{false}" />
+							</aon:commandButton>								
+						</c:if>
+						<c:if test="#{communicationCenter.action.mediaType  == 'SMS'}" >
+							<aon:commandButton id="sms"
+								action="sms"
+								actionListener="#{smsCommunication.onInit}"
+								value="#{smsBundle.sms_send}"
+								styleClass="aon-finding-toolbar-item aon-icon-new-phone">
+								<f:setPropertyActionListener target="#{sms.allowUpdateRecipients}" value="#{false}" />
+							</aon:commandButton>					
+						</c:if>
 					</c:if>						
 				</ui:define>
 			</ui:decorate>
@@ -80,7 +100,7 @@
 						</aon:div>
 						<aon:div id="CommunicationCenter_action_detail">
 							<aon:panelGrid rendered="#{communicationCenter.actionSelected}" columns="2" dir="true">
-								<aon:outputText value="#{bundle.aon_description}" />						
+								<aon:outputText value="#{marketingBundle.marketing_campaign}" />						
 								<aon:outputText size="64"
 									value="#{communicationCenter.action.campaign.description}" />
 								<aon:outputText value="#{bundle.aon_type}" />									

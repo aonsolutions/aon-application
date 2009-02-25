@@ -520,7 +520,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<ActionTarget> getActionTargets( boolean onlyFirst ) throws ManagerBeanException {
+	public List<ActionTarget> getActionTargets( boolean onlyFirst ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
 		Criteria criteria = getPendingTargetsCriteria(bean, false);
 		List list = onlyFirst ? bean.getList(criteria, 0, 1) : bean.getList(criteria);
