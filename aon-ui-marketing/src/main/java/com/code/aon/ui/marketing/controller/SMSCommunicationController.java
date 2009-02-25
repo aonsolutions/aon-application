@@ -23,6 +23,7 @@ import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.enumeration.ActionTargetStatus;
+import com.code.aon.messaging.sms.Message;
 import com.code.aon.messaging.util.Utils;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryMedia;
@@ -70,6 +71,10 @@ public class SMSCommunicationController implements IMarketingConstants {
 	private CommunicationCenterController getCommunicationController() {
 		return (CommunicationCenterController) AonUtil.getRegisteredBean(COMMUNICATION_CENTER_CONTROLLER_NAME);
 	}
+
+	private SMSController getSMSController() {
+		return (SMSController) AonUtil.getRegisteredBean(IMessagingConstants.SMS_CONTROLLER_NAME);
+	}
 	
 	private List<String> getCellulars( Target target ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryMedia.class);
@@ -93,9 +98,12 @@ public class SMSCommunicationController implements IMarketingConstants {
 		return Collections.emptyList();
 	}
 	
-	private boolean sendSMS( String phone ) {
+	private boolean sendSMS( SMSController sms, String phone ) {
 		boolean result = true;
 		try {
+			Message message = (Message) sms.getMessage().clone();
+			message.add(phone);
+			sms.sendMessage(message);
 		} catch ( Throwable th ) {
 			LOGGER.log(Level.SEVERE, "Error sending sms to " + phone, th );
 			result = false;
@@ -110,9 +118,10 @@ public class SMSCommunicationController implements IMarketingConstants {
 
     public void send(ActionEvent event) {
     	try {
+    		SMSController sms = getSMSController();
     		for( Map.Entry<String,ActionTarget> entry : cellularMap.entrySet() ) {
     			ActionTarget actionTarget = entry.getValue();
-    			if ( sendSMS(entry.getKey()) ) {
+    			if ( sendSMS(sms, entry.getKey()) ) {
     				actionTarget.setStatus(ActionTargetStatus.SENT);
     			} else {
     				actionTarget.setStatus(ActionTargetStatus.INCORRECT);
@@ -146,7 +155,7 @@ public class SMSCommunicationController implements IMarketingConstants {
     }
     
     public void onInit( ActionEvent event ) {
-    	SMSController sms = (SMSController) AonUtil.getRegisteredBean(IMessagingConstants.SMS_CONTROLLER_NAME);
+    	SMSController sms = getSMSController();
 		String username = UserUtils.getInstance().getLoggedUser().getLogin();
 		sms.setUsername(username);
 		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(CompanyController.COMPANY_NAME);
