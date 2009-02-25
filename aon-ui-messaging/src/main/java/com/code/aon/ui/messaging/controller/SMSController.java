@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
@@ -36,15 +37,20 @@ public class SMSController implements Serializable {
 	private static final long serialVersionUID = -5534264216750579958L;
 	private static final Logger LOGGER = Logger.getLogger( SMSController.class.getName() );
 	
+    private static final String EXTENDED_CHARACTERS = "^{}\\[]|";
+	
 	private static final String SMS_CONTACT_MANAGED_BEAN = "smsContact";
 	
 	private static final String SMS_BUNDLE = "smsBundle";
 	
     private static final String USER_MESSAGES = "SELECT count(*) FROM Message as msg " +
     	"WHERE msg.username = :username AND msg.sentDate BETWEEN :fromDate AND :toDate";
+    
     private static final String COMPANY_MESSAGES = "SELECT count(*) FROM Message as msg " +
     	"WHERE msg.sentDate BETWEEN :fromDate AND :toDate";
 
+    private ResourceBundle bundle;
+    
 	private boolean showWindow;
 	private boolean allowSending;
 
@@ -74,6 +80,7 @@ public class SMSController implements Serializable {
 	public SMSController() {
 		this.allowUpdateRecipients = true;
 		this.showToolbar = true;
+		this.bundle = AonUtil.getResourceBundle(SMS_BUNDLE);
 		loadPriceTariff();
 		try {
 			this.message = new Message();
@@ -192,6 +199,29 @@ public class SMSController implements Serializable {
 	public void setSelected(int selected) {
 		this.selected = selected;
 	}
+	
+	private int getCharacterCount( String message ) {
+		int count = 0;
+		if ( message != null ) {
+			count = message.length();
+		    for (int i = 0; i < message.length(); i++) { 
+			    if (EXTENDED_CHARACTERS.indexOf(message.charAt(i)) != -1) { 
+				    count++ ;
+			    }
+		    }
+		}
+		return count;
+	}
+	
+	public String getCharacterCountMessage() {
+		int count = getCharacterCount(message.getInfo().getMessage());
+		if ( count > 160 ) {
+			return "Limite de caracteres alcanzado";
+		} else if ( count == 1 ) {
+			return count + " caracter (max 160)";
+		}
+		return count + " caracteres (max 160)";
+	}
 
 	public void openContacts(ActionEvent event){
 		SMSContactController smscc = (SMSContactController) AonUtil.getRegisteredBean( SMS_CONTACT_MANAGED_BEAN );
@@ -228,7 +258,8 @@ public class SMSController implements Serializable {
 				throw new AbortProcessingException(e.getMessage(), e);				
 			}
 		} else {
-			String message = AonUtil.addInfoMessageFromBundle(SMS_BUNDLE, "sms_empty_recipient_error");
+			String message = bundle.getString("sms_empty_recipient_error");
+			AonUtil.addErrorMessage(message);
 			throw new AbortProcessingException( message );
 		}
 	}

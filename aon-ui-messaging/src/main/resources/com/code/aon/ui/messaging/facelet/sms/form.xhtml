@@ -42,11 +42,12 @@
 							<aon:outputLabel for="SMS_message" value="#{smsBundle.sms_message}" />
 							<aon:div>
 								<aon:inputTextarea id="SMS_message" value="#{sms.message.info.message}"
-										cols="80" rows="4" required="true"
-										onkeyup="UpdateMessageLength()" />
+									cols="80" rows="4" required="true" />
+									<a4j:support event="onkeyup" reRender="characterCount"
+										ajaxSingle="true" eventsQueue="smsCharacterCount"
+										requestDelay="500" ignoreDupResponses="true" />										
 								<aon:div>
-									<aon:inputText id="messageLength" value="(max 160)" 
-										readonly="true" style="border:0;" size="25"/>
+									<aon:outputText id="characterCount" value="#{sms.characterCountMessage}" />
 								</aon:div>
 							</aon:div>
 
