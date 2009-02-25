@@ -40,17 +40,19 @@
 							<aon:inputText id="SMS_originator" size="40" maxlength="11" value="#{sms.message.info.originator}" />
 		
 							<aon:outputLabel for="SMS_message" value="#{smsBundle.sms_message}" />
-							<aon:div>
-								<aon:inputTextarea id="SMS_message" value="#{sms.message.info.message}"
-									cols="80" rows="4" required="true" />
-									<a4j:support event="onkeyup" reRender="characterCount"
-										ajaxSingle="true" eventsQueue="smsCharacterCount"
-										requestDelay="500" ignoreDupResponses="true" />										
+							<a4j:region>
 								<aon:div>
-									<aon:outputText id="characterCount" value="#{sms.characterCountMessage}" />
+									<aon:inputTextarea id="SMS_message" value="#{sms.message.info.message}"
+										cols="80" rows="4" required="true"
+										validator="#{sms.characterCountValidator}" />
+										<a4j:support event="onkeyup" reRender="characterCount"
+											eventsQueue="smsCharacterCount"
+											requestDelay="500" ignoreDupResponses="true" />										
+									<aon:div>
+										<aon:outputText id="characterCount" value="#{sms.characterCountMessage}" />
+									</aon:div>
 								</aon:div>
-							</aon:div>
-
+							</a4j:region>
 
 							<aon:outputLabel for="SMS_recipient" value="#{smsBundle.sms_recipients}" />
 							<a4j:region>

@@ -39,7 +39,7 @@ public class SMSManager implements Serializable, IServices {
 		try {
 			ApplicationsManager apps = 
 				(ApplicationsManager) AonUtil.getRegisteredBean( ApplicationsManager.BEAN_NAME );
-			app = apps.getApplication( "aon-sms" );
+			app = apps.getApplication( SMSController.AON_SMS_APPLICATION );
 			initSMSController();
 		} catch (ManagerBeanException e) {
 			LOGGER.severe( e.getMessage() );

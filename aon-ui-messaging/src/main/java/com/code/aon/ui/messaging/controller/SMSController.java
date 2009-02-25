@@ -2,6 +2,7 @@ package com.code.aon.ui.messaging.controller;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -10,8 +11,12 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.validator.LengthValidator;
+import javax.faces.validator.ValidatorException;
 import javax.xml.soap.SOAPException;
 
 import org.apache.commons.lang.StringUtils;
@@ -31,11 +36,14 @@ import com.code.aon.messaging.util.Utils;
 import com.code.aon.ui.messaging.PriceTariff;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.Contact;
+import com.sun.faces.util.MessageFactory;
 
 public class SMSController implements Serializable {
 
 	private static final long serialVersionUID = -5534264216750579958L;
 	private static final Logger LOGGER = Logger.getLogger( SMSController.class.getName() );
+	
+	public static final String AON_SMS_APPLICATION = "aon-sms";
 	
     private static final String EXTENDED_CHARACTERS = "^{}\\[]|";
 	
@@ -200,12 +208,13 @@ public class SMSController implements Serializable {
 		this.selected = selected;
 	}
 	
-	private int getCharacterCount( String message ) {
+	private int getCharacterCount() {
 		int count = 0;
-		if ( message != null ) {
-			count = message.length();
-		    for (int i = 0; i < message.length(); i++) { 
-			    if (EXTENDED_CHARACTERS.indexOf(message.charAt(i)) != -1) { 
+		String text = this.message.getInfo().getMessage();
+		if ( text != null ) {
+			count = text.length();
+		    for (int i = 0; i < text.length(); i++) { 
+			    if (EXTENDED_CHARACTERS.indexOf(text.charAt(i)) != -1) { 
 				    count++ ;
 			    }
 		    }
@@ -214,15 +223,23 @@ public class SMSController implements Serializable {
 	}
 	
 	public String getCharacterCountMessage() {
-		int count = getCharacterCount(message.getInfo().getMessage());
+		int count = getCharacterCount();
 		if ( count > 160 ) {
-			return "Limite de caracteres alcanzado";
+			return bundle.getString("sms_message_size_limit");
 		} else if ( count == 1 ) {
-			return count + " caracter (max 160)";
+			return bundle.getString("sms_message_size_one");
 		}
-		return count + " caracteres (max 160)";
+		String pattern = bundle.getString("sms_message_size_many"); 
+		return MessageFormat.format(pattern, count);
 	}
 
+	public void characterCountValidator(FacesContext context, UIComponent component, Object value) {
+		if (getCharacterCount() > 160 ) {
+			throw new ValidatorException( MessageFactory.getMessage(
+				context, LengthValidator.MAXIMUM_MESSAGE_ID, MessageFactory.getLabel(context, component), 160));
+		}
+	}
+	
 	public void openContacts(ActionEvent event){
 		SMSContactController smscc = (SMSContactController) AonUtil.getRegisteredBean( SMS_CONTACT_MANAGED_BEAN );
 		smscc.init();

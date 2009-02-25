@@ -13,11 +13,14 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.bridge.plugin.UserManager;
 import com.code.aon.commercial.Target;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.jaas.client.ast.IApplication;
+import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.enumeration.ActionTargetStatus;
 import com.code.aon.messaging.util.Utils;
@@ -35,8 +38,35 @@ public class SMSCommunicationController implements IMarketingConstants {
 	
 	private static final Logger LOGGER = Logger.getLogger(SurveyResponseController.class.getName());
 	
+	private boolean executable;
+	
 	private Map<String,ActionTarget> cellularMap;
 	
+	public SMSCommunicationController() {
+		this.executable = calculateExecutable();
+	}
+
+	public boolean isExecutable() {
+		return executable;
+	}
+
+	@SuppressWarnings("unchecked")
+	private boolean calculateExecutable() {
+		UserManager userManager = new UserManager();
+		userManager.findUser(UserUtils.getInstance().getLoggedUser().getLogin());
+		try {
+			List<IApplication> applications = userManager.getUserApplications();
+			for( IApplication application : applications ) {
+				if ( SMSController.AON_SMS_APPLICATION.equals(application.getId()) ) {
+					return true;
+				}
+			}
+		} catch (DeploymentException e) {
+			LOGGER.log(Level.SEVERE, "Error checking authorization for sending sms", e);
+		}
+		return false;
+	}
+
 	private CommunicationCenterController getCommunicationController() {
 		return (CommunicationCenterController) AonUtil.getRegisteredBean(COMMUNICATION_CENTER_CONTROLLER_NAME);
 	}
@@ -121,6 +151,8 @@ public class SMSCommunicationController implements IMarketingConstants {
 		sms.setUsername(username);
 		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(CompanyController.COMPANY_NAME);
 		sms.setOrganization(companyController.obtainCompany().getAlias());
+		String domainName = UserUtils.getInstance().getPrincipal().getDomain();
+		sms.setDomainName(domainName);
 		sms.reset(event);
 		try {
 			fillRecipients(sms);
