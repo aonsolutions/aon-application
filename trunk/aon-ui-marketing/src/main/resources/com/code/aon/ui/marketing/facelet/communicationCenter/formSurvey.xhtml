@@ -57,10 +57,11 @@
 						</c:if>
 						<c:if test="#{communicationCenter.action.mediaType  == 'SMS'}" >
 							<aon:commandButton id="sms"
-								action="sms"
+								action="communicationCenter_sms"
 								actionListener="#{smsCommunication.onInit}"
 								value="#{smsBundle.sms_send}"
 								styleClass="aon-finding-toolbar-item aon-icon-new-phone">
+								<f:setPropertyActionListener target="#{sms.showToolbar}" value="#{false}" />
 								<f:setPropertyActionListener target="#{sms.allowUpdateRecipients}" value="#{false}" />
 							</aon:commandButton>					
 						</c:if>

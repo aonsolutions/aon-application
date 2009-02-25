@@ -834,6 +834,10 @@
 			<from-outcome>communicationCenter_email</from-outcome>
 			<to-view-id>/com/code/aon/ui/marketing/facelet/communicationCenter/email.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>communicationCenter_sms</from-outcome>
+			<to-view-id>/com/code/aon/ui/marketing/facelet/communicationCenter/sms.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>					
 	
 </faces-config>

@@ -9,11 +9,15 @@
 			<aon:commandButton id="sendSMS" value="#{smsBundle.sms_send}"
 				disabled="#{!sms.allowSending}"
 				styleClass="aon-finding-toolbar-item aon-icon-accept"
-				actionListener="#{smsCommunication.send}"
+				action="communicationCenter"
+				actionListener="#{sms.sendMessage}"
 				onclick="Richfaces.showModalPanel('waitProccess')" 
 	     		oncomplete="Richfaces.hideModalPanel('waitProccess')"							
 				accesskey="#{bundle.aon_key_save}" />    							
 		</ui:define>
+		<!-- 
+						actionListener="#{smsCommunication.send}"
+ 		-->						
 	</ui:decorate>
 	
 </ui:composition>
