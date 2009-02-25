@@ -1,4 +1,4 @@
-package com.code.aon.groupware;
+package com.code.aon.messaging;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
