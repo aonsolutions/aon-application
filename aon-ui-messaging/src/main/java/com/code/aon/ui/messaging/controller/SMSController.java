@@ -30,6 +30,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.messaging.MessageContent;
 import com.code.aon.messaging.sms.Message;
+import com.code.aon.messaging.sms.SMSException;
 import com.code.aon.messaging.sms.Sender;
 import com.code.aon.messaging.sms.SynchronizedSender;
 import com.code.aon.messaging.util.Utils;
@@ -264,10 +265,7 @@ public class SMSController implements Serializable {
 		add2List( event );
 		if ( this.recipients.size() > 0 ) {
 			try {
-				updateDomain();
-				SynchronizedSender synSender = new SynchronizedSender( sender, AonUtil.getCurrentLocale() );
-				Message sentMessage = synSender.send( this.message );
-				messageSent(sentMessage);
+				sendMessage( this.message );
 				reset(event);
 			} catch ( Throwable e ) {
 				LOGGER.severe(">>>> sendMessage " + e.getMessage());
@@ -279,6 +277,13 @@ public class SMSController implements Serializable {
 			AonUtil.addErrorMessage(message);
 			throw new AbortProcessingException( message );
 		}
+	}
+	
+	public void sendMessage( Message message ) throws SOAPException, SMSException {
+		updateDomain();
+		SynchronizedSender synSender = new SynchronizedSender( sender, AonUtil.getCurrentLocale() );
+		Message sentMessage = synSender.send( message );
+		messageSent(sentMessage);
 	}
 
 	public void reset(ActionEvent event) {
@@ -352,9 +357,8 @@ public class SMSController implements Serializable {
 		MessageContent mc = new MessageContent();
 		mc.setContent( sentMessage.getInfo().getMessage() );
 		LOGGER.info( sentMessage.getInfo().getMessage() );
-		IManagerBean bean;
 		try {
-			bean = BeanManager.getManagerBean( com.code.aon.messaging.Message.class );
+			IManagerBean bean = BeanManager.getManagerBean( com.code.aon.messaging.Message.class );
 			Iterator<Message.Recipient> iter = sentMessage.getRecipients().iterator();
 			while (iter.hasNext()) {
 				Message.Recipient elem = iter.next();
