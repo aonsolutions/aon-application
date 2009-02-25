@@ -10,14 +10,11 @@
 				disabled="#{!sms.allowSending}"
 				styleClass="aon-finding-toolbar-item aon-icon-accept"
 				action="communicationCenter"
-				actionListener="#{sms.sendMessage}"
+				actionListener="#{smsCommunication.send}"
 				onclick="Richfaces.showModalPanel('waitProccess')" 
 	     		oncomplete="Richfaces.hideModalPanel('waitProccess')"							
 				accesskey="#{bundle.aon_key_save}" />    							
 		</ui:define>
-		<!-- 
-						actionListener="#{smsCommunication.send}"
- 		-->						
 	</ui:decorate>
 	
 </ui:composition>
