@@ -107,6 +107,10 @@
 		<mapping class="com.code.aon.company.WorkActivity"/>
 		<mapping class="com.code.aon.company.resources.Resource"/>
 		<mapping class="com.code.aon.company.resources.Employee"/>
+
+		<!-- AON-MESSAGING Mapping files -->
+		<mapping class="com.code.aon.messaging.Message"/>
+		<mapping class="com.code.aon.messaging.MessageContent"/>
 				
 	</session-factory>
 

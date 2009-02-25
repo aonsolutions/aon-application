@@ -29,6 +29,22 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>emailCommunication</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.marketing.controller.EmailCommunicationController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>smsCommunication</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.marketing.controller.SMSCommunicationController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ************ QUESTION ************** -->
 	<managed-bean>
 		<managed-bean-name>question</managed-bean-name>
@@ -813,6 +829,10 @@
 		<navigation-case>
 			<from-outcome>communicationCenter_response</from-outcome>
 			<to-view-id>/com/code/aon/ui/marketing/facelet/communicationCenter/response.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>communicationCenter_email</from-outcome>
+			<to-view-id>/com/code/aon/ui/marketing/facelet/communicationCenter/email.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>					
 	

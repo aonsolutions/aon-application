@@ -22,7 +22,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.Month;
-import com.code.aon.groupware.MessageContent;
+import com.code.aon.messaging.MessageContent;
 import com.code.aon.messaging.sms.Message;
 import com.code.aon.messaging.sms.Sender;
 import com.code.aon.messaging.sms.SynchronizedSender;
@@ -67,12 +67,13 @@ public class SMSController implements Serializable {
 	private Double companyMessageUnitPrice;
 	private Double companyTotalConsume;
 
-	private boolean showContacts;
+	private boolean allowUpdateRecipients;
+	private boolean showToolbar;
 	
 	@SuppressWarnings("unchecked")
 	public SMSController() {
-		this.allowSending = true;
-		this.showContacts = true;
+		this.allowUpdateRecipients = true;
+		this.showToolbar = true;
 		loadPriceTariff();
 		try {
 			this.message = new Message();
@@ -305,11 +306,11 @@ public class SMSController implements Serializable {
 		LOGGER.info( sentMessage.getInfo().getMessage() );
 		IManagerBean bean;
 		try {
-			bean = BeanManager.getManagerBean( com.code.aon.groupware.Message.class );
+			bean = BeanManager.getManagerBean( com.code.aon.messaging.Message.class );
 			Iterator<Message.Recipient> iter = sentMessage.getRecipients().iterator();
 			while (iter.hasNext()) {
 				Message.Recipient elem = iter.next();
-				com.code.aon.groupware.Message log = new com.code.aon.groupware.Message();
+				com.code.aon.messaging.Message log = new com.code.aon.messaging.Message();
 				log.setMessageId( elem.getId() );
 				log.setContent( mc );
 				log.setMessageParts( 1 );
@@ -343,12 +344,20 @@ public class SMSController implements Serializable {
 		}
 	}
 
-	public boolean isShowContacts() {
-		return showContacts;
+	public boolean isAllowUpdateRecipients() {
+		return allowUpdateRecipients;
 	}
 
-	public void setShowContacts(boolean showContacts) {
-		this.showContacts = showContacts;
+	public void setAllowUpdateRecipients(boolean allowUpdateRecipients) {
+		this.allowUpdateRecipients = allowUpdateRecipients;
+	}
+
+	public boolean isShowToolbar() {
+		return showToolbar;
+	}
+
+	public void setShowToolbar(boolean showToolbar) {
+		this.showToolbar = showToolbar;
 	}
 	
 }

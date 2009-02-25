@@ -52,21 +52,21 @@
 							accesskey="#{bundle.aon_key_search}" />
 					</aon:div>
 					<aon:panelGrid id="searchData" columns="2" >
-						<aon:outputLabel for="Contact_displayName" value="#{groupwareBundle.contact_displayName}" />
+						<aon:outputLabel for="Contact_displayName" value="#{webmailBundle.webmail_contact_displayName}" />
 						<aon:inputText id="Contact_displayName" size="80" maxlength="64" value="#{smsContact.displayName}" >
 							<a4j:support event="onblur" 
 								ajaxSingle="true" ignoreDupResponses="true" requestDelay="100"
 								 />
 						</aon:inputText>
 	
-						<aon:outputLabel for="Contact_name" value="#{groupwareBundle.contact_name}" />
+						<aon:outputLabel for="Contact_name" value="#{bundle.aon_name}" />
 						<aon:inputText id="Contact_name" size="80" maxlength="64" value="#{smsContact.name}" >
 							<a4j:support event="onchange" 
 								ajaxSingle="true" ignoreDupResponses="true" requestDelay="100"
 								 />
 						</aon:inputText>
 	
-						<aon:outputLabel for="Contact_surname" value="#{groupwareBundle.contact_surname}" />
+						<aon:outputLabel for="Contact_surname" value="#{webmailBundle.webmail_contact_surname}" />
 						<aon:inputText id="Contact_surname" size="80" maxlength="64" value="#{smsContact.surname}" >
 							<a4j:support event="onchange" 
 								ajaxSingle="true" ignoreDupResponses="true" requestDelay="100"
@@ -94,14 +94,14 @@
 		
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{groupwareBundle.contact_displayName}" />
+								<aon:outputText value="#{webmailBundle.webmail_contact_displayName}" />
 							</f:facet>
 							<aon:outputText value="#{to.contact.displayName}"/>
 						</aon:column>
 		
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{groupwareBundle.contact_cellular_phone}" />
+								<aon:outputText value="#{webmailBundle.webmail_contact_cellular_phone}" />
 							</f:facet>
 							<aon:outputText value="#{to.contact.cellularPhone}"/>
 						</aon:column>							

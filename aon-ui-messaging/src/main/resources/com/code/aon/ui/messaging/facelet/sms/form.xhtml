@@ -15,22 +15,19 @@
 
 		<aon:form id="smsForm">
 
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{smsBundle.sms_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
-				<ui:param name="skipResetButton" value="true" />
-				<ui:param name="skipSearchButton" value="true" />
-				<ui:param name="skipRemoveButton" value="true" />
-				<ui:param name="skipBackButton" value="true" />
-				<ui:param name="skipSaveButton" value="true" />
-				<ui:define name="additionalToolbarContent">
-					<aon:commandButton id="sendSMS" value="#{smsBundle.sms_send}"
-						disabled="#{!sms.allowSending}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						actionListener="#{smsManager.sendMessage}"
-						onclick="Richfaces.showModalPanel('waitProccess')" 
-			     		oncomplete="Richfaces.hideModalPanel('waitProccess')"							
-						accesskey="#{bundle.aon_key_save}" />
+				<ui:define name="toolbarContent">
+					<c:if test="#{sms.showToolbar}" >
+						<aon:commandButton id="sendSMS" value="#{smsBundle.sms_send}"
+							disabled="#{!sms.allowSending}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							actionListener="#{smsManager.sendMessage}"
+							onclick="Richfaces.showModalPanel('waitProccess')" 
+				     		oncomplete="Richfaces.hideModalPanel('waitProccess')"							
+							accesskey="#{bundle.aon_key_save}" />
+					</c:if>
 				</ui:define>
 			</ui:decorate>
 
@@ -53,10 +50,11 @@
 								</aon:div>
 							</aon:div>
 
-							<c:if test="#{sms.showContacts}">
-								<aon:outputLabel for="SMS_recipient" value="#{smsBundle.sms_recipients}" />
-								<a4j:region>
-									<aon:div>
+
+							<aon:outputLabel for="SMS_recipient" value="#{smsBundle.sms_recipients}" />
+							<a4j:region>
+								<aon:div style="height: 240px;overflow: auto;">
+									<c:if test="#{sms.allowUpdateRecipients}">								
 										<aon:inputText id="SMS_recipient" maxlength="13" size="13" value="#{sms.recipient}" >
 											<f:validateLength maximum="13" />
 											<f:validateLongRange maximum="0099999999999" />
@@ -65,15 +63,17 @@
 											styleClass="aon-commandButton aon-icon-new-phone aon-icon-button"
 											actionListener="#{sms.add2List}"
 											reRender="SMS_recipient, recipientList"
-											accesskey="#{bundle.aon_key_save}" />
+											accesskey="#{bundle.aon_key_save}" />										
 										<aon:commandButton id="findContact" value="#{smsBundle.sms_find_contacts}" title="#{smsBundle.sms_find_contacts}"
 											reRender="showWindow" immediate="true"
 											styleClass="aon-commandButton  aon-icon-search aon-icon-button"
 											actionListener="#{sms.openContacts}" />
-										<aon:div styleClass="aon-dataList-scroll">
-											<rich:dataList id="recipientList" var="recipient" value="#{sms.recipients}"
-													style="margin-left:1.1em;" rowKeyVar="row" >
-						           				<aon:outputText value="#{recipient}"/>
+									</c:if>									
+									<aon:div styleClass="aon-dataList-scroll">
+										<rich:dataList id="recipientList" var="recipient" value="#{sms.recipients}"
+												style="margin-left:1.1em;" rowKeyVar="row" >
+					           				<aon:outputText value="#{recipient}"/>
+					           				<c:if test="#{sms.allowUpdateRecipients}">
 												<a4j:commandButton id="removeFromList" value="" 
 													title="#{smsBundle.sms_removeFromlist}"
 													styleClass="aon-margin-left aon-icon-commandButton aon-icon-delete"													
@@ -83,11 +83,11 @@
 										            	value="#{row}" assignTo="#{sms.selected}"
 										            	actionListener="#{sms.removeFromList}" />
 												</a4j:commandButton>
-									        </rich:dataList>
-								        </aon:div>
-									</aon:div>
-								</a4j:region>
-							</c:if>
+											</c:if>
+								        </rich:dataList>
+							        </aon:div>
+								</aon:div>
+							</a4j:region>
 
 						</aon:panelGrid>
 					</aon:div>
@@ -184,7 +184,7 @@
 			</aon:div>
    		</aon:form>
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
-		<c:if test="#{sms.showContacts}">
+		<c:if test="#{sms.allowUpdateRecipients}">
 			<ui:include src="/com/code/aon/ui/messaging/facelet/sms/contacts.xhtml" />
 		</c:if>
 	</ui:define>

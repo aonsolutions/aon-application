@@ -121,6 +121,15 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
     
     private VelocityHelper velocityHelper;
     
+    private boolean showRecipients;
+    
+    private boolean showToolbar;
+    
+	public MessageController() {
+		this.showRecipients = true;
+		this.showToolbar = true;
+	}
+
 	/**
 	 * @return the message
 	 */
@@ -495,7 +504,7 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
 		return newMessage; 
 	}
 
-	private AonMessage compoundMessage() throws ManagerBeanException, UnsupportedEncodingException, MessagingException, WebmailException {
+	public AonMessage compoundMessage() throws ManagerBeanException, UnsupportedEncodingException, MessagingException, WebmailException {
 		IManagerBean mailAccountBean = FormUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();	
 		MailAccount mailAccount = (MailAccount) mailAccountBean.get( senderMailAccountId );   		
     	AonMessage aonMessage = compoundMessage(
@@ -1085,5 +1094,21 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
 		}
 		return this.messageContent;
 	}
-    
+
+	public boolean isShowRecipients() {
+		return showRecipients;
+	}
+
+	public void setShowRecipients(boolean showRecipients) {
+		this.showRecipients = showRecipients;
+	}
+
+	public boolean isShowToolbar() {
+		return showToolbar;
+	}
+
+	public void setShowToolbar(boolean showToolbar) {
+		this.showToolbar = showToolbar;
+	}
+	
 }

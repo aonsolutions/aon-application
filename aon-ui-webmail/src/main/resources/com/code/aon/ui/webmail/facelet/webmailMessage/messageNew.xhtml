@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 <body>
@@ -18,25 +19,27 @@
 				<ui:param name="toolbarTitle" value="#{webmailBundle.webmail_main}" />
 				<ui:param name="toolbarDescription" value="#{webmailBundle.webmail_newmail}" />
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="send"
-						value="#{webmailBundle.webmail_send}"
-						styleClass="aon-icon-accept aon-finding-toolbar-item"
-						action="#{webmailMessage.getReturnAction}"
-						actionListener="#{webmailMessage.send}"
-						onclick="Richfaces.showModalPanel('waitProccess')" 
-		     			oncomplete="Richfaces.hideModalPanel('waitProccess')" />						
-					<aon:commandButton id="save_draft"
-						value="#{webmailBundle.webmail_save_draft}"
-						styleClass="aon-icon aon-icon-mail-save aon-finding-toolbar-item"
-						action="messageNew"
-						actionListener="#{webmailMessage.saveDraft}" />
-		     		<aon:confirmButton id="back" immediate="true"
-						title="#{bundle.aon_back}" value="#{bundle.aon_back}"
-						confirmTitle="#{bundle.aon_confirm_title}"
-						confirmMessage="#{webmailBundle.webmail_back_confirm}"
-						confirmAction="#{webmailMessage.getReturnAction}"
-						accesskey="#{bundle.aon_key_cancel}"
-						styleClass="aon-icon-cancel aon-finding-toolbar-item" />	
+					<c:if test="#{webmailMessage.showToolbar}" >
+						<aon:commandButton id="send"
+							value="#{webmailBundle.webmail_send}"
+							styleClass="aon-icon-accept aon-finding-toolbar-item"
+							action="#{webmailMessage.getReturnAction}"
+							actionListener="#{webmailMessage.send}"
+							onclick="Richfaces.showModalPanel('waitProccess')" 
+			     			oncomplete="Richfaces.hideModalPanel('waitProccess')" />						
+						<aon:commandButton id="save_draft"
+							value="#{webmailBundle.webmail_save_draft}"
+							styleClass="aon-icon aon-icon-mail-save aon-finding-toolbar-item"
+							action="messageNew"
+							actionListener="#{webmailMessage.saveDraft}" />
+			     		<aon:confirmButton id="back" immediate="true"
+							title="#{bundle.aon_back}" value="#{bundle.aon_back}"
+							confirmTitle="#{bundle.aon_confirm_title}"
+							confirmMessage="#{webmailBundle.webmail_back_confirm}"
+							confirmAction="#{webmailMessage.getReturnAction}"
+							accesskey="#{bundle.aon_key_cancel}"
+							styleClass="aon-icon-cancel aon-finding-toolbar-item" />
+					</c:if>	
 				</ui:define>
 			</ui:decorate>
 
@@ -57,48 +60,50 @@
 							<f:selectItems value="#{mailAccount.mailAccounts}" />
 						</aon:selectOneMenu>
 						
-						<aon:div styleClass="aon-text-right">							
-							<aon:commandButton id="addToEmail" reRender="showEmailWindow"
-							actionListener="#{webmailMessage.openEmailsToPanelPopup}" styleClass="new-mail-button"
-							value="#{webmailBundle.webmail_to}"/>							
-						</aon:div>
-						<aon:div>
-							<aon:inputText id="NewMail_to"
+						<c:if test="#{webmailMessage.showRecipients}" >
+							<aon:div styleClass="aon-text-right">							
+								<aon:commandButton id="addToEmail" reRender="showEmailWindow"
+								actionListener="#{webmailMessage.openEmailsToPanelPopup}" styleClass="new-mail-button"
+								value="#{webmailBundle.webmail_to}"/>							
+							</aon:div>
+							<aon:div>
+								<aon:inputText id="NewMail_to"
+									size="120"
+									value="#{webmailMessage.recipientsTo}"/>
+								<ui:include src="/com/code/aon/ui/webmail/facelet/util/suggestEmail.xhtml">
+									<ui:param name="inputId" value="NewMail_to" />
+								</ui:include>								
+							</aon:div>
+		
+							<aon:div styleClass="aon-text-right">						
+								<aon:commandButton id="addCcEmail" reRender="showEmailWindow"
+									actionListener="#{webmailMessage.openEmailsCcPanelPopup}" styleClass="new-mail-button"
+									value="#{webmailBundle.webmail_cc}" />							
+							</aon:div>
+							<aon:div>
+								<aon:inputText id="NewMail_cc"
 								size="120"
-								value="#{webmailMessage.recipientsTo}"/>
-							<ui:include src="/com/code/aon/ui/webmail/facelet/util/suggestEmail.xhtml">
-								<ui:param name="inputId" value="NewMail_to" />
-							</ui:include>								
-						</aon:div>
-	
-						<aon:div styleClass="aon-text-right">						
-							<aon:commandButton id="addCcEmail" reRender="showEmailWindow"
-								actionListener="#{webmailMessage.openEmailsCcPanelPopup}" styleClass="new-mail-button"
-								value="#{webmailBundle.webmail_cc}" />							
-						</aon:div>
-						<aon:div>
-							<aon:inputText id="NewMail_cc"
-							size="120"
-							value="#{webmailMessage.recipientsCc}"/>								
-							<ui:include src="/com/code/aon/ui/webmail/facelet/util/suggestEmail.xhtml">
-								<ui:param name="inputId" value="NewMail_cc" />
-							</ui:include>								
-						</aon:div>
-						
-						<aon:div styleClass="aon-text-right">							
-							<aon:commandButton id="addBccEmail" reRender="showEmailWindow"
-								actionListener="#{webmailMessage.openEmailsBccPanelPopup}" 
-								styleClass="new-mail-button"
-								value="#{webmailBundle.webmail_bcc}" />							
-						</aon:div>
-						<aon:div>
-							<aon:inputText id="NewMail_Bcc"
-								size="120"
-								value="#{webmailMessage.recipientsBcc}"/>											
-							<ui:include src="/com/code/aon/ui/webmail/facelet/util/suggestEmail.xhtml">
-								<ui:param name="inputId" value="NewMail_Bcc" />
-							</ui:include>								
-						</aon:div>
+								value="#{webmailMessage.recipientsCc}"/>								
+								<ui:include src="/com/code/aon/ui/webmail/facelet/util/suggestEmail.xhtml">
+									<ui:param name="inputId" value="NewMail_cc" />
+								</ui:include>								
+							</aon:div>
+							
+							<aon:div styleClass="aon-text-right">							
+								<aon:commandButton id="addBccEmail" reRender="showEmailWindow"
+									actionListener="#{webmailMessage.openEmailsBccPanelPopup}" 
+									styleClass="new-mail-button"
+									value="#{webmailBundle.webmail_bcc}" />							
+							</aon:div>
+							<aon:div>
+								<aon:inputText id="NewMail_Bcc"
+									size="120"
+									value="#{webmailMessage.recipientsBcc}"/>											
+								<ui:include src="/com/code/aon/ui/webmail/facelet/util/suggestEmail.xhtml">
+									<ui:param name="inputId" value="NewMail_Bcc" />
+								</ui:include>								
+							</aon:div>
+						</c:if>
 						
 						<aon:div>
 							<aon:outputLabel for="NewMail_Subject" 
