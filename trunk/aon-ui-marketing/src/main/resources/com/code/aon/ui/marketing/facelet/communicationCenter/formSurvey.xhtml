@@ -56,7 +56,7 @@
 							</aon:commandButton>								
 						</c:if>
 						<c:if test="#{communicationCenter.action.mediaType  == 'SMS'}" >
-							<aon:commandButton id="sms"
+							<aon:commandButton id="sms" disabled="#{!smsCommunication.executable}"
 								action="communicationCenter_sms"
 								actionListener="#{smsCommunication.onInit}"
 								value="#{smsBundle.sms_send}"
