@@ -211,6 +211,17 @@ public class SaleInvoiceController extends InvoiceController {
 		return getPriceStrategy().getTotalPrice(invoice,invoice);
 	}
 
+	public double getToInvoiceFinanceTotal() throws ManagerBeanException {
+		double financeTotal = 0;
+		IController feeFinanceController = FormUtil.getController(SALE_INVOICE_FINANCE_CONTROLLER_NAME);
+		Iterator<?> iterator = feeFinanceController.getManagerBean().getList(feeFinanceController.getCriteria()).iterator();
+		while(iterator.hasNext()) {
+			Finance finance = (Finance)iterator.next();
+			financeTotal += finance.getAmount();
+		}
+		return financeTotal;
+	}
+
 	public Customer getCustomer() throws ManagerBeanException{
 		IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
 		Criteria criteria = new Criteria();
@@ -237,9 +248,8 @@ public class SaleInvoiceController extends InvoiceController {
 	public void generateFinances(ActionEvent event) throws ManagerBeanException{
 		Invoice invoice = (Invoice)this.getTo();
 		try {
-			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 			IController feeFinanceController = FormUtil.getController(SALE_INVOICE_FINANCE_CONTROLLER_NAME);
-			List<?> financeList = (List<?>) feeFinanceController.getModel().getWrappedData();
+			List<?> financeList = (List<?>) feeFinanceController.getManagerBean().getList(feeFinanceController.getCriteria());
 			if (existFinanceTrackings(financeList)) {
 				AonUtil.addInfoMessageFromBundle(IFinanceMessages.BUNDLE_KEY,IFinanceMessages.VALIDATE_FINANCES_GENERATION_ERROR_KEY);
 				throw new AbortProcessingException();
@@ -247,7 +257,7 @@ public class SaleInvoiceController extends InvoiceController {
 			Iterator<?> iter = financeList.iterator();
 			while(iter.hasNext()) {
 				Finance finance = (Finance)iter.next();
-				financeBean.remove(finance);
+				feeFinanceController.getManagerBean().remove(finance);
 			}
 			getFinanceGenerator().generateFinances(invoice, invoice.getRegistry(), getPriceStrategy().getTotalPrice(invoice, invoice));
 			feeFinanceController.onSearch(null);
@@ -272,6 +282,11 @@ public class SaleInvoiceController extends InvoiceController {
 	}
 
 	public void onRecordInvoice(ActionEvent event) throws ManagerBeanException{
+		if (getToInvoiceTotalPrice() != getToInvoiceFinanceTotal()) {
+			String message = AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.UNABLE_RECORD_INACCURACY_ERROR_KEY);
+			throw new AbortProcessingException(message);
+		}
+
 		Invoice invoice = (Invoice)this.getTo();
 		getAccountWriter().recordAndUpdateInvoice(invoice, getPriceStrategy());
 	}
