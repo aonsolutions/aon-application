@@ -36,11 +36,8 @@ import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.enumeration.TaxType;
-import com.code.aon.customer.Customer;
-import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -49,7 +46,6 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
@@ -186,19 +182,16 @@ public class AccountEntryController extends BasicController {
 					header.setType(InvoiceType.SALES);
 					detail = obtainEntryDetailFromAccountPattern(entry, "70*");
 					header.setAccount((detail!=null)?detail.getAccount():null);
-					invoiceEntryController.setCurrentTaxInfo( obtainCustomer(accountEntryInvoice.getInvoice().getRegistry().getId()) );
 				}
 				if(entry.getType().equals(AccountEntryType.PURCHASE_INVOICE)){
 					header.setType(InvoiceType.PURCHASE);
 					detail = obtainEntryDetailFromAccountPattern(entry, "60*");
 					header.setAccount((detail!=null)?detail.getAccount():null);
-					invoiceEntryController.setCurrentTaxInfo(invoiceEntryController.getCompany()); 
 				}
 				if(entry.getType().equals(AccountEntryType.EXPENSE_INVOICE)){
 					header.setType(InvoiceType.EXPENSES);
 					detail = obtainEntryDetailFromAccountPattern(entry, "6*");
 					header.setAccount((detail!=null)?detail.getAccount():null);
-					invoiceEntryController.setCurrentTaxInfo(invoiceEntryController.getCompany()); 
 				}
 				header.setDate(entry.getEntryDate());
 				header.setDocument(accountEntryInvoice.getInvoice().getRegistryDocument());
@@ -210,6 +203,9 @@ public class AccountEntryController extends BasicController {
 				header.getPeriod().setId(entry.getAccountPeriod());
 				header.setSecurityLevel(entry.getSecurityLevel());
 				header.setRegistry(accountEntryInvoice.getInvoice().getRegistry());
+				header.setWithholding(accountEntryInvoice.getInvoice().isWithholding());
+				header.setSurcharge(accountEntryInvoice.getInvoice().isSurcharge());
+				header.setTaxFree(accountEntryInvoice.getInvoice().isTaxFree());
 				header.setAccountEntryId(entry.getId());
 				invoiceEntryController.setHeader(header);
 				invoiceEntryController.setFinances(new ListDataModel(obtainFinances(accountEntryInvoice.getInvoice())));
@@ -218,17 +214,6 @@ public class AccountEntryController extends BasicController {
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error loading InvoiceEntryController", e);
 		}
-	}
-	
-	private ITaxInfo obtainCustomer(Integer id) throws ManagerBeanException {
-		IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(customerBean.getFieldName(ICustomerAlias.CUSTOMER_ID), id);
-		Iterator<ITransferObject> iter = customerBean.getList(criteria, 0, 1).iterator();
-		if (iter.hasNext()) {
-			return (ITaxInfo) iter.next();
-		}
-		return null;
 	}
 	
 	private void loadExpenseEntryController(AccountEntry entry) {

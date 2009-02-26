@@ -111,7 +111,7 @@
 					value=" #{financeTo.bankAccount}" />
 
 				<aon:div id="RegistryBank_lookup" styleClass="aon-lookup"
-					rendered="#{financeTo==invoiceEntry.currentFinance and invoiceEntry.sales}">
+					rendered="#{financeTo==invoiceEntry.currentFinance}">
 					<aon:lookupInputText id="RegistryBank_code"
 						property="#{financeTo.bank}" reRender="RegistryBank_lookup"
 						lookup="#{bankLookup}" value="#{financeTo.bank.code}" size="3"
@@ -222,6 +222,11 @@
 							rendered="#{invoiceEntry.newFinance}"
 							value="#{invoiceEntry.currentFinance.amount}">
 						</aon:inputText>
+						<aon:outputText id="financesTotal" rendered="#{!invoiceEntry.newFinance}"
+							style="#{invoiceEntry.settled?'':'color:red;font-weight:bold;'}" 
+							value="#{invoiceEntry.financeTotal}">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
 					</aon:div>
 				</f:facet>
 			</aon:column>

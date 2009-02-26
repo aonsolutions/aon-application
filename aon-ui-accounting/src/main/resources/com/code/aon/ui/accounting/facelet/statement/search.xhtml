@@ -35,6 +35,18 @@
 					<aon:inputText id="Account_id" value="#{trialBalance.parameters.accountExpression}"
 						size="14" />
 
+					<aon:outputLabel for="Account_Description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="Account_Description" 
+						value="#{trialBalance.parameters.accountDescription}"
+						size="50" />
+
+					<aon:outputLabel for="Account_Alias"
+						value="#{bundle.aon_alias}" />
+					<aon:inputText id="Account_Alias" 
+						value="#{trialBalance.parameters.accountAlias}"
+						size="30" />
+
 					<aon:outputLabel
 						for="AccountEntryDetail_accountEntry_accountPeriod"
 						value="#{accountingBundle.accounting_period}" />

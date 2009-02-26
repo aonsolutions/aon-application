@@ -36,42 +36,42 @@
 						value="#{accountingBundle.accounting_def_sales_acc}" />
 					<aon:selectOneMenu id="ACC_default_sales_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_SALES_ACC'].value}">
-						<f:selectItems value="#{accountCollections.salesAccounts}" />
+						<f:selectItems value="#{accountCollections.salesAccountsIds}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_purchase_account"
 						value="#{accountingBundle.accounting_def_purchase_acc}" />
 					<aon:selectOneMenu id="ACC_default_purchase_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_PURCHASE_ACC'].value}">
-						<f:selectItems value="#{accountCollections.purchaseAccounts}" />
+						<f:selectItems value="#{accountCollections.purchaseAccountsIds}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_cash_account"
 						value="#{accountingBundle.accounting_def_cash_acc}" />
 					<aon:selectOneMenu id="ACC_default_cash_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_CASH_ACC'].value}">
-						<f:selectItems value="#{accountCollections.cashAccounts}" />
+						<f:selectItems value="#{accountCollections.cashAccountsIds}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_charged_vat_account"
 						value="#{accountingBundle.accounting_def_charged_vat_acc}" />
 					<aon:selectOneMenu id="ACC_default_charged_vat_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_CHARGED_VAT_ACC'].value}">
-						<f:selectItems value="#{accountCollections.chargedVatAccounts}" />
+						<f:selectItems value="#{accountCollections.chargedVatAccountsIds}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_paid_vat_account"
 						value="#{accountingBundle.accounting_def_paid_vat_acc}" />
 					<aon:selectOneMenu id="ACC_default_paid_vat_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_PAID_VAT_ACC'].value}">
-						<f:selectItems value="#{accountCollections.paidVatAccounts}" />
+						<f:selectItems value="#{accountCollections.paidVatAccountsIds}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_paid_retention_account"
 						value="#{accountingBundle.accounting_def_paid_ret_acc}" />
 					<aon:selectOneMenu id="ACC_default_paid_retention_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_PAID_RET_ACC'].value}">
-						<f:selectItems value="#{accountCollections.paidRetentionAccounts}" />
+						<f:selectItems value="#{accountCollections.paidRetentionAccountsIds}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_charged_retention_account"
@@ -79,29 +79,29 @@
 					<aon:selectOneMenu id="ACC_default_charged_retention_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_CHARGED_RET_ACC'].value}">
 						<f:selectItems
-							value="#{accountCollections.chargedRetentionAccounts}" />
+							value="#{accountCollections.chargedRetentionAccountsIds}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_salary_account"
 						value="#{accountingBundle.accounting_def_salary_acc}" />
 					<aon:selectOneMenu id="ACC_default_salary_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_SALARY_ACC'].value}">
-						<f:selectItems value="#{accountCollections.salaryAccounts}" />
+						<f:selectItems value="#{accountCollections.salaryAccountsIds}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_pending_salary_account"
 						value="#{accountingBundle.accounting_def_pending_salary_acc}" />
 					<aon:selectOneMenu id="ACC_default_pending_salary_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_PENDING_SALARY_ACC'].value}">
-						<f:selectItems value="#{accountCollections.pendingSalaryAccounts}" />
+						<f:selectItems value="#{accountCollections.pendingSalaryAccountsIds}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_social_insurance_account"
 						value="#{accountingBundle.accounting_def_social_insurance_acc}" />
 					<aon:selectOneMenu id="ACC_default_social_insurance_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_SOCIAL_INSURANCE_ACC'].value}">
-						<f:selectItems
-							value="#{accountCollections.socialInsuranceAccounts}" />
+						<f:selectItems 
+							value="#{accountCollections.socialInsuranceAccountsIds}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel
@@ -111,10 +111,43 @@
 						id="ACC_default_enterprise_social_insurance_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_COMPANY_SOC_INS_ACC'].value}">
 						<f:selectItems
-							value="#{accountCollections.enterpriseSocialInsuranceAccounts}" />
+							value="#{accountCollections.enterpriseSocialInsuranceAccountsIds}" />
 					</aon:selectOneMenu>
+
+					<aon:outputLabel
+						for="ACC_accounting_def_vat_percent"
+						value="#{accountingBundle.accounting_def_vat_percent}" />
+					<aon:selectOneMenu
+						id="ACC_accounting_def_vat_percent"
+						value="#{accAppParams.parameters['ACC_DEFAULT_VAT_PERCENT'].value}">
+						<f:selectItem itemValue="" itemLabel=" " />
+						<f:selectItems value="#{configCollections.vatTaxesIds}" />						
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel
+						for="ACC_accounting_def_retention_percent"
+						value="#{accountingBundle.accounting_def_retention_percent}" />
+					<aon:selectOneMenu
+						id="ACC_accounting_def_retention_percent"
+						value="#{accAppParams.parameters['ACC_DEFAULT_RETENTION_PERCENT'].value}">
+						<f:selectItem itemValue="" itemLabel=" " />
+						<f:selectItems value="#{configCollections.retentionTaxesIds}" />						
+					</aon:selectOneMenu>
+
+					<aon:outputLabel
+						for="ACC_accounting_def_invoice_series"
+						value="#{accountingBundle.accounting_def_invoice_series}" />
+					<aon:selectOneMenu
+						id="ACC_accounting_def_invoice_series"
+						value="#{accAppParams.parameters['ACC_DEFAULT_INVOICE_SERIES'].value}">
+						<f:selectItem itemValue="" itemLabel=" " />
+						<f:selectItems value="#{configCollections.seriesIds}" />						
+					</aon:selectOneMenu>
+
+					
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
 	</ui:define>
 </ui:composition>
+

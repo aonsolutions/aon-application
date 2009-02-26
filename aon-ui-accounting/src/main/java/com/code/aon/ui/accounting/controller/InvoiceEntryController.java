@@ -27,6 +27,7 @@ import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.InvoiceEntryDetail;
 import com.code.aon.accounting.InvoiceEntryHeader;
 import com.code.aon.accounting.dao.IAccountingAlias;
@@ -40,13 +41,17 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.Company;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Series;
+import com.code.aon.config.Tax;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.customer.Customer;
+import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -61,11 +66,10 @@ import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
-import com.code.aon.registry.IRegistry;
-import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -74,6 +78,7 @@ public class InvoiceEntryController {
 
 	private static final Logger LOGGER = Logger.getLogger(InvoiceEntryController.class.getName());
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
+	private static final String ACCOUNT_APP_PARAM_CONTROLLER_NAME = "accAppParams";
 
 	private AccountEntryInvoiceWriter writer;
 
@@ -95,14 +100,9 @@ public class InvoiceEntryController {
 
 	private InvoiceEntryDetail currentDetail;
 
-	private ITaxInfo currentTaxInfo;
-
 	private Company company;
 
 	private Finance currentFinance;
-
-	// private List<SelectItem> vatTaxes;
-	// private List<SelectItem> retentionTaxes;
 
 	public AccountEntryInvoiceWriter getWriter() {
 		if (writer == null) {
@@ -240,10 +240,14 @@ public class InvoiceEntryController {
 	}
 
 	public void onReset(ActionEvent event) {
-		reset();
+		try {
+			reset();
+		} catch (ManagerBeanException e) {
+			throw new AbortProcessingException(e.getMessage(),e);
+		}
 	}
 
-	private void reset() {
+	private void reset() throws ManagerBeanException {
 		this.isNew = true;
 		this.header = new InvoiceEntryHeader();
 		initializeHeader();
@@ -258,7 +262,7 @@ public class InvoiceEntryController {
 		this.setNewFinance(false);
 	}
 
-	private void initializeHeader() {
+		private void initializeHeader() throws ManagerBeanException {
 		Account account = new Account();
 		account.setEntryEnabled(true);
 		header.setAccount(account);
@@ -267,7 +271,14 @@ public class InvoiceEntryController {
 		header.setSecurityLevel(SecurityLevel.OFFICIAL);
 		header.setTransaction(InvoiceTransactionType.NATIONAL);
 		header.setInvestment(false);
-		setCurrentTaxInfo(null);
+		header.setTaxFree(false);
+		header.setWithholding(false);
+		header.setSurcharge(false);
+		AccountAppParamsController c  = (AccountAppParamsController) AonUtil.getRegisteredBean( ACCOUNT_APP_PARAM_CONTROLLER_NAME );
+		ApplicationParameter param = c.getParameter( DefaultAccounts.DEFAULT_INVOICE_SERIES);
+		if (param != null) {
+			header.setSeries(param.getValue());	
+		}
 	}
 
 	public boolean isSales() {
@@ -296,6 +307,44 @@ public class InvoiceEntryController {
 		this.currentDetail = new InvoiceEntryDetail();
 		Account a = (header.getAccount() != null) ? header.getAccount() : null;
 		this.currentDetail.setAccount(a);
+
+		AccountAppParamsController c  = (AccountAppParamsController) AonUtil.getRegisteredBean( ACCOUNT_APP_PARAM_CONTROLLER_NAME );
+		try {
+			ApplicationParameter param = c.getParameter( DefaultAccounts.DEFAULT_VAT_PERCENT );
+			if (param != null) {
+				String value = param.getValue();
+				Integer id = Integer.parseInt(value);
+				IManagerBean taxBean = BeanManager.getManagerBean(Tax.class);
+				Tax tax = (Tax) taxBean.get(id);
+				if (tax != null) {
+					this.currentDetail.setVatPercent(tax.getPercentage());
+					if (isWithSurcharge()) {
+						this.currentDetail.setSurchargePercent(tax.getSurcharge());	
+					}
+				} else {
+					LOGGER.warning("NO SE PUEDE ASIGNAR EL PORCENTAJE DE IVA POR DEFECTO. ENCONTRADO [" + value + "]");		
+				}
+			}
+		} catch (Exception e) {
+			LOGGER.warning("NO SE PUEDE ASIGNAR EL PORCENTAJE DE IVA POR DEFECTO.");
+		}
+
+		if (isWithHolding()) {
+			try {
+				ApplicationParameter param = c.getParameter( DefaultAccounts.DEFAULT_RETENTION_PERCENT);
+				if (param != null) {
+					String value = param.getValue();
+					Integer id = Integer.parseInt(value);
+					IManagerBean taxBean = BeanManager.getManagerBean(Tax.class);
+					Tax tax = (Tax) taxBean.get(id);
+					if (tax != null) {
+						this.currentDetail.setRetentionPercent(tax.getPercentage());
+					}
+				}
+			} catch (Exception e) {
+				LOGGER.warning("NO SE PUEDE ASIGNAR EL PORCENTAJE DE RETENCION POR DEFECTO.");
+			}
+		}
 	}
 
 	public void onSelectDetail(ActionEvent event) {
@@ -367,16 +416,16 @@ public class InvoiceEntryController {
 	}
 
 	public void onNewFinance(ActionEvent event) {
-		this.isNewFinance = true;
-		Registry registry = null;
-		if (getCurrentTaxInfo() instanceof Registry) {
-			registry = (Registry) getCurrentTaxInfo();
-		} else {
-			registry = ((IRegistry) getCurrentTaxInfo()).getRegistry();
-		}
-		this.currentFinance = initializeFinance();
 		try {
-			getFinanceGenerator().initializeFinanceData(this.currentFinance, registry);
+			this.isNewFinance = true;
+			this.currentFinance = initializeFinance();
+			Invoice invoice = isNew() ? new Invoice() : getAccountEntryInvoice().getInvoice();
+			invoice = mergeInvoice(invoice);
+			this.currentFinance.setInvoice(invoice);
+			getFinanceGenerator().initializeFinanceData(this.currentFinance);
+			if (this.currentFinance.getBank() == null) {
+				this.currentFinance.setBank(new Bank());
+			}
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("Error al inicializar el vencimiento");
 		}
@@ -443,17 +492,18 @@ public class InvoiceEntryController {
 	}
 
 	public void onTypeChanged(ActionEvent event) {
-		initializeHeader();
-		if (isPurchase() || isExpense()) {
-			setCurrentTaxInfo(getCompany());
+		try {
+			initializeHeader();
+		} catch (ManagerBeanException e) {
+			throw new AbortProcessingException(e.getMessage(),e);
 		}
 	}
 
 	public void accept(ActionEvent event) {
-		if (getInvoiceTotal() != getFinanceTotal()) {
-			//"finance_unable_record_inaccuracy_error"
+		if (getFinanceTotal() > 0 && getInvoiceTotal() != getFinanceTotal()) {
+			String msg = AonUtil.addErrorMessageFromBundle("financeBundle", "finance_unable_record_inaccuracy_error");
+			throw new AbortProcessingException(msg);
 		}
-
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
@@ -462,12 +512,14 @@ public class InvoiceEntryController {
 			HibernateUtil.setCloseSession(false);
 
 			HibernateUtil.beginTransaction(sessionName);
-			AccountEntry entry = new AccountEntry();
+			AccountEntry entry = null;			
 			if (!this.isNew) {
 				deleteFinances(getAccountEntryInvoice().getInvoice());
 				deleteInvoiceDetails(getAccountEntryInvoice().getInvoice());
 				deleteAccountEntryDetails(getAccountEntryInvoice().getAccountEntry());
 				entry = this.getAccountEntryInvoice().getAccountEntry();
+			} else {
+				entry = new AccountEntry();
 			}
 			entry.setAccountPeriod(getHeader().getPeriod().getId());
 			entry.setEntryDate(getHeader().getDate());
@@ -491,10 +543,13 @@ public class InvoiceEntryController {
 			Invoice invoice = insertOrUpdateInvoice();
 			insertInvoiceDetails(invoice);
 			insertFinances(invoice);
-			if (isNew) {
-				entry = getWriter().insertAccountEntry(entry);
-				setAccountEntryInvoice(getWriter().insertAccountEntryInvoice(entry, invoice));
+			if (!isNew) {
+				entry = (AccountEntry) HibernateUtil.getSession(sessionName).merge(entry);
 			}
+			entry = getWriter().insertOrUpdateAccountEntry(entry);
+			if (isNew) {
+				this.setAccountEntryInvoice(getWriter().insertAccountEntryInvoice(entry, invoice));
+			} 
 			getWriter().insertEntryDetails(entry, account, getWriter().obtainConcept(invoice), getInvoiceTotal(), 
 					obtainTotalRetention(), obtainVATandSurchargeQuota(), obtainBasesPerAccount(details));
 			getHeader().setAccountEntryId(entry.getId());
@@ -550,6 +605,9 @@ public class InvoiceEntryController {
 		return total;
 	}
 
+	public boolean isSettled() {
+		return (finances.getRowCount() == 0 || getInvoiceTotal() == getFinanceTotal());		
+	}
 	/**
 	 * Obtain VA tand surcharge quota.
 	 * 
@@ -667,6 +725,9 @@ public class InvoiceEntryController {
 		invoice.setSecurityLevel(getHeader().getSecurityLevel());
 		invoice.setInvestment(getHeader().isInvestment());
 		invoice.setTransaction(getHeader().getTransaction());
+		invoice.setWithholding(getHeader().isWithholding());
+		invoice.setTaxFree(getHeader().isTaxFree() );
+		invoice.setSurcharge(getHeader().isSurcharge());
 		return invoice;
 	}
 
@@ -767,16 +828,7 @@ public class InvoiceEntryController {
 		List<Finance> financeList = new LinkedList<Finance>();
 		Invoice invoice = isNew() ? new Invoice() : getAccountEntryInvoice().getInvoice();
 		invoice = mergeInvoice(invoice);
-		Registry registry = null;
-		if (getCurrentTaxInfo() instanceof Registry) {
-			registry = (Registry) getCurrentTaxInfo();
-		} else {
-			registry = ((IRegistry) getCurrentTaxInfo()).getRegistry();
-		}
-		if (registry != null && registry.getId() != null) {
-			financeList = getFinanceGenerator().generateFinances(invoice, registry,
-					this.getInvoiceTotal(), false);
-		}
+		financeList = getFinanceGenerator().generateFinances(invoice, this.getInvoiceTotal(), false);
 		this.finances = new ListDataModel(financeList);
 	}
 
@@ -873,37 +925,44 @@ public class InvoiceEntryController {
 
 	public void registryChanged(LookupChangeEvent event) {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			Company company = getCompany();
+			Registry registry = null;
 			if (isSales()) {
-				setCurrentTaxInfo((ITaxInfo) event.getNewValue());
-			} else {
-
+				Customer customer = (Customer) event.getNewValue();
+				registry = customer.getRegistry();
+				getHeader().setWithholding( company.isWithholding() && customer.isWithholding() );
+				getHeader().setSurcharge( customer.isSurcharge() );
+				getHeader().setTaxFree( customer.isTaxFree() );
+			} else if (isPurchase()) {
+				Supplier supplier = (Supplier) event.getNewValue();
+				registry = supplier.getRegistry();
+				getHeader().setWithholding(  supplier.isWithholding() );
+				getHeader().setSurcharge( company.isSurcharge() );
+				getHeader().setTaxFree( company.isTaxFree()  );
+			} else if (isExpense()){
+				Creditor creditor = (Creditor) event.getNewValue();
+				registry = creditor.getRegistry();
+				getHeader().setWithholding(  creditor.isWithholding() );
+				getHeader().setSurcharge( company.isSurcharge() );
+				getHeader().setTaxFree( company.isTaxFree()  );
 			}
-			Registry registry = ((IRegistry) event.getNewValue()).getRegistry();
-			header.setDocument(registry.getDocument());
-			header.setName(registry.getFullName());
+			getHeader().setDocument(registry.getDocument());
+			getHeader().setName(registry.getFullName());
 		} else {
-			header.setDocument(null);
-			header.setName(null);
+			getHeader().setDocument(null);
+			getHeader().setName(null);
+			getHeader().setWithholding(  false );
+			getHeader().setSurcharge( false );
+			getHeader().setTaxFree( false  );
 		}
-	}
-
-	public ITaxInfo getCurrentTaxInfo() {
-		return currentTaxInfo;
-	}
-
-	public void setCurrentTaxInfo(ITaxInfo currentTaxInfo) {
-		this.currentTaxInfo = currentTaxInfo;
 	}
 
 	public boolean isWithHolding() {
-		return getCompany().isWithholding();
+		return getHeader().isWithholding();
 	}
 
 	public boolean isWithSurcharge() {
-		if (getCurrentTaxInfo() != null && (isSales() || isPurchase())) {
-			return getCurrentTaxInfo().isSurcharge();
-		}
-		return false;
+		return ((isSales() || isPurchase()) && getHeader().isSurcharge());
 	}
 
 	public void onPayMethodChanged(ValueChangeEvent event) {
@@ -937,9 +996,15 @@ public class InvoiceEntryController {
 		try {
 			if (getCurrentFinance() != null && getCurrentFinance().getPayMethod() != null) {
 				PayMethod pm = getCurrentFinance().getPayMethod();
-				if (isSales() && pm.getType() != PayMethodType.BANK_TRANSFER) {
-					return getRegistryBanks(header.getRegistry());
+				if (pm.getType() == PayMethodType.BANK_TRANSFER) {
+					if (isSales()) {
+						return getRegistryBanks(getCompany());
+					} 
+					return getRegistryBanks(header.getRegistry());		
 				}
+				if (isSales()) {
+					return getRegistryBanks(header.getRegistry());		
+				} 
 				return getRegistryBanks(getCompany());
 			}
 			return new LinkedList<SelectItem>();
