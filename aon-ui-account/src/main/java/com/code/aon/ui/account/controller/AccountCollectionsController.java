@@ -23,84 +23,69 @@ import com.code.aon.ql.util.ExpressionUtilities;
  */
 public class AccountCollectionsController {
 
-	private LinkedList<SelectItem> accountLevels;
-
-	/**
-	 * Gets the sales accounts.
-	 * 
-	 * @return the sales accounts
-	 * @throws ManagerBeanException
-	 * @throws ExpressionException
-	 */
-	public List<SelectItem> getSalesAccounts() throws ManagerBeanException, ExpressionException {
-		List<SelectItem> salesAccounts = new LinkedList<SelectItem>();
-		salesAccounts = new LinkedList<SelectItem>();
+	private List<SelectItem> getAccounts(Criteria criteria, boolean pojo) throws ManagerBeanException {
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+		Iterator<?> iter = accountBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			Account account = (Account) iter.next();
+			SelectItem item = new SelectItem(pojo?account:account.getId(), account.getFullDescription());
+			list.add(item);
+		}
+		return list;
+	}
+	
+	private List<SelectItem> getSalesAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "70*");
 		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
 				new Boolean(true));
-		Iterator<?> iter = accountBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			Account account = (Account) iter.next();
-			SelectItem item = new SelectItem(account, account.getFullDescription());
-			salesAccounts.add(item);
-		}
-		return salesAccounts;
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getSalesAccounts() throws ManagerBeanException, ExpressionException {
+		return getSalesAccounts(true);
 	}
 
-	/**
-	 * Gets the purchase accounts.
-	 * 
-	 * @return the purchase accounts
-	 * @throws ExpressionException
-	 * @throws ManagerBeanException
-	 */
+	public List<SelectItem> getSalesAccountsIds() throws ManagerBeanException, ExpressionException {
+		return getSalesAccounts(false);
+	}
 
-	public List<SelectItem> getPurchaseAccounts() throws ManagerBeanException, ExpressionException {
-		List<SelectItem> purchaseAccounts = new LinkedList<SelectItem>();
+
+	private List<SelectItem> getPurchaseAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "60*");
 		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
 				new Boolean(true));
-		Iterator<?> iter = accountBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			Account account = (Account) iter.next();
-			SelectItem item = new SelectItem(account, account.getFullDescription());
-			purchaseAccounts.add(item);
-		}
-		return purchaseAccounts;
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getPurchaseAccounts() throws ManagerBeanException, ExpressionException {
+		return getPurchaseAccounts(true);
 	}
 
-	public List<SelectItem> getCashAccounts() throws ManagerBeanException, ExpressionException {
-		List<SelectItem> cashAccounts = new LinkedList<SelectItem>();
+	public List<SelectItem> getPurchaseAccountsIds() throws ManagerBeanException, ExpressionException {
+		return getPurchaseAccounts(false);
+	}
+
+	private List<SelectItem> getCashAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "570*");
 		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
 				new Boolean(true));
-		Iterator<?> iter = accountBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			Account account = (Account) iter.next();
-			SelectItem item = new SelectItem(account, account.getFullDescription());
-			cashAccounts.add(item);
-		}
-		return cashAccounts;
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getCashAccounts() throws ManagerBeanException, ExpressionException {
+		return getCashAccounts(true);
 	}
 
-	/**
-	 * Gets the expenses accounts.
-	 * 
-	 * @return the expenses accounts
-	 * @throws ManagerBeanException
-	 * @throws ExpressionException
-	 */
+	public List<SelectItem> getCashAccountsIds() throws ManagerBeanException, ExpressionException {
+		return getCashAccounts(false);
+	}
 
-	public List<SelectItem> getExpensesAccounts() throws ManagerBeanException, ExpressionException {
-		List<SelectItem> expensesAccounts = new LinkedList<SelectItem>();
+	private List<SelectItem> getExpensesAccounts(boolean pojo) throws ManagerBeanException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-
 		Expression expression1 = ExpressionUtilities.getLikeExpression(accountBean
 				.getFieldName(IAccountAlias.ACCOUNT_ID), "62%");
 		Expression expression2 = ExpressionUtilities.getLikeExpression(accountBean
@@ -109,198 +94,188 @@ public class AccountCollectionsController {
 		criteria.addExpression(ExpressionUtilities.getOrExpression(expression1, expression2));
 		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
 				new Boolean(true));
-		Iterator<?> iter = accountBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			Account account = (Account) iter.next();
-			SelectItem item = new SelectItem(account, account.getFullDescription());
-			expensesAccounts.add(item);
-		}
-		return expensesAccounts;
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getExpensesAccounts() throws ManagerBeanException {
+		return getExpensesAccounts(true);
 	}
 
-	public List<SelectItem> getChargedVatAccounts() throws ManagerBeanException,
-			ExpressionException {
-		List<SelectItem> chargedVatAccounts = new LinkedList<SelectItem>();
+	public List<SelectItem> getExpensesAccountsIds() throws ManagerBeanException {
+		return getExpensesAccounts(false);
+	}
+
+	private List<SelectItem> getChargedVatAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "477*");
 		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
 				new Boolean(true));
-		Iterator<?> iter = accountBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			Account account = (Account) iter.next();
-			SelectItem item = new SelectItem(account, account.getFullDescription());
-			chargedVatAccounts.add(item);
-		}
-		return chargedVatAccounts;
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getChargedVatAccounts() throws ManagerBeanException, ExpressionException {
+		return getChargedVatAccounts(true);
 	}
 
-	public List<SelectItem> getPaidVatAccounts() throws ManagerBeanException, ExpressionException {
-		List<SelectItem> paidVatAccounts = new LinkedList<SelectItem>();
+	public List<SelectItem> getChargedVatAccountsIds() throws ManagerBeanException, ExpressionException {
+		return getChargedVatAccounts(false);
+	}
+
+	private List<SelectItem> getPaidVatAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "472*");
 		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
 				new Boolean(true));
-		Iterator<?> iter = accountBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			Account account = (Account) iter.next();
-			SelectItem item = new SelectItem(account, account.getFullDescription());
-			paidVatAccounts.add(item);
-		}
-		return paidVatAccounts;
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getPaidVatAccounts() throws ManagerBeanException, ExpressionException {
+		return getPaidVatAccounts(true);
 	}
 
-	public List<SelectItem> getPaidRetentionAccounts() throws ManagerBeanException,
-			ExpressionException {
-		List<SelectItem> paidRetentionAccounts = new LinkedList<SelectItem>();
+	public List<SelectItem> getPaidVatAccountsIds() throws ManagerBeanException, ExpressionException {
+		return getPaidVatAccounts(false);
+	}
+
+	private List<SelectItem> getPaidRetentionAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "473*");
 		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
 				new Boolean(true));
-		Iterator<?> iter = accountBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			Account account = (Account) iter.next();
-			SelectItem item = new SelectItem(account, account.getFullDescription());
-			paidRetentionAccounts.add(item);
-		}
-		return paidRetentionAccounts;
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getPaidRetentionAccounts() throws ManagerBeanException, ExpressionException {
+		return getPaidRetentionAccounts(true);
 	}
 
-	public List<SelectItem> getChargedRetentionAccounts() throws ManagerBeanException,
-			ExpressionException {
-		List<SelectItem> chargedRetentionAccounts = new LinkedList<SelectItem>();
+	public List<SelectItem> getPaidRetentionAccountsIds() throws ManagerBeanException, ExpressionException {
+		return getPaidRetentionAccounts(false);
+	}
+
+	private List<SelectItem> getChargedRetentionAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "475*");
 		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
 				new Boolean(true));
-		Iterator<?> iter = accountBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			Account account = (Account) iter.next();
-			SelectItem item = new SelectItem(account, account.getFullDescription());
-			chargedRetentionAccounts.add(item);
-		}
-		return chargedRetentionAccounts;
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getChargedRetentionAccounts() throws ManagerBeanException, ExpressionException {
+		return getChargedRetentionAccounts(true);
 	}
 
-	public List<SelectItem> getSalaryAccounts() throws ManagerBeanException, ExpressionException {
-		List<SelectItem> salaryAccounts = new LinkedList<SelectItem>();
+	public List<SelectItem> getChargedRetentionAccountsIds() throws ManagerBeanException, ExpressionException {
+		return getChargedRetentionAccounts(false);
+	}
+
+	private List<SelectItem> getSalaryAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "640*");
 		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
 				new Boolean(true));
-		Iterator<?> iter = accountBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			Account account = (Account) iter.next();
-			SelectItem item = new SelectItem(account, account.getFullDescription());
-			salaryAccounts.add(item);
-		}
-		return salaryAccounts;
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getSalaryAccounts() throws ManagerBeanException, ExpressionException {
+		return getSalaryAccounts(true);
 	}
 
-	public List<SelectItem> getPendingSalaryAccounts() throws ManagerBeanException,
-			ExpressionException {
-		List<SelectItem> pendingSalaryAccounts = new LinkedList<SelectItem>();
+	public List<SelectItem> getSalaryAccountsIds() throws ManagerBeanException, ExpressionException {
+		return getSalaryAccounts(false);
+	}
+
+	private List<SelectItem> getPendingSalaryAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "465*");
 		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
 				new Boolean(true));
-		Iterator<?> iter = accountBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			Account account = (Account) iter.next();
-			SelectItem item = new SelectItem(account, account.getFullDescription());
-			pendingSalaryAccounts.add(item);
-		}
-		return pendingSalaryAccounts;
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getPendingSalaryAccounts() throws ManagerBeanException, ExpressionException {
+		return getPendingSalaryAccounts(true);
 	}
 
-	public List<SelectItem> getSocialInsuranceAccounts() throws ManagerBeanException,
-			ExpressionException {
-		List<SelectItem> socialInsuranceAccounts = new LinkedList<SelectItem>();
+	public List<SelectItem> getPendingSalaryAccountsIds() throws ManagerBeanException, ExpressionException {
+		return getPendingSalaryAccounts(false);
+	}
+
+
+	private List<SelectItem> getSocialInsuranceAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "476*");
 		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
 				new Boolean(true));
-		Iterator<?> iter = accountBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			Account account = (Account) iter.next();
-			SelectItem item = new SelectItem(account, account.getFullDescription());
-			socialInsuranceAccounts.add(item);
-		}
-		return socialInsuranceAccounts;
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getSocialInsuranceAccounts() throws ManagerBeanException, ExpressionException {
+		return getSocialInsuranceAccounts(true);
 	}
 
-	public List<SelectItem> getEnterpriseSocialInsuranceAccounts() throws ManagerBeanException,
-			ExpressionException {
-		List<SelectItem> enterpriseSocialInsuranceAccounts = new LinkedList<SelectItem>();
+	public List<SelectItem> getSocialInsuranceAccountsIds() throws ManagerBeanException, ExpressionException {
+		return getSocialInsuranceAccounts(false);
+	}
+
+	private List<SelectItem> getEnterpriseSocialInsuranceAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "642*");
 		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
 				new Boolean(true));
-		Iterator<?> iter = accountBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			Account account = (Account) iter.next();
-			SelectItem item = new SelectItem(account, account.getFullDescription());
-			enterpriseSocialInsuranceAccounts.add(item);
-		}
-		return enterpriseSocialInsuranceAccounts;
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getEnterpriseSocialInsuranceAccounts() throws ManagerBeanException, ExpressionException {
+		return getEnterpriseSocialInsuranceAccounts(true);
+	}
+	public List<SelectItem> getEnterpriseSocialInsuranceAccountsIds() throws ManagerBeanException, ExpressionException {
+		return getEnterpriseSocialInsuranceAccounts(false);
 	}
 
-	public List<SelectItem> getFixedAssestsAccounts() throws ManagerBeanException,
-			ExpressionException {
-		List<SelectItem> fixedAssestsAccounts = new LinkedList<SelectItem>();
+	private List<SelectItem> getFixedAssestsAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "21*");
 		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
 				new Boolean(true));
-		Iterator<?> iter = accountBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			Account account = (Account) iter.next();
-			SelectItem item = new SelectItem(account, account.getFullDescription());
-			fixedAssestsAccounts.add(item);
-		}
-		return fixedAssestsAccounts;
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getFixedAssestsAccounts() throws ManagerBeanException, ExpressionException {
+		return getFixedAssestsAccounts(true);
+	}
+	public List<SelectItem> getFixedAssestsAccountsIds() throws ManagerBeanException, ExpressionException {
+		return getFixedAssestsAccounts(false);
 	}
 
-	public List<SelectItem> getDebtInterestAccounts() throws ManagerBeanException,
-			ExpressionException {
-		List<SelectItem> debtInterestAccounts = new LinkedList<SelectItem>();
+	private List<SelectItem> getDebtInterestAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "662*");
 		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
 				new Boolean(true));
-		Iterator<?> iter = accountBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			Account account = (Account) iter.next();
-			SelectItem item = new SelectItem(account, account.getFullDescription());
-			debtInterestAccounts.add(item);
-		}
-		return debtInterestAccounts;
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getDebtInterestAccounts() throws ManagerBeanException, ExpressionException {
+		return getDebtInterestAccounts(true);
+	}
+	public List<SelectItem> getDebtInterestAccountsIds() throws ManagerBeanException, ExpressionException {
+		return getDebtInterestAccounts(false);
 	}
 
-	public List<SelectItem> getFinancialExpensesAccounts() throws ManagerBeanException,
-			ExpressionException {
-		List<SelectItem> financialExpensesAccounts = new LinkedList<SelectItem>();
+
+	private List<SelectItem> getFinancialExpensesAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "669*");
 		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
 				new Boolean(true));
-		Iterator<?> iter = accountBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			Account account = (Account) iter.next();
-			SelectItem item = new SelectItem(account, account.getFullDescription());
-			financialExpensesAccounts.add(item);
-		}
-		return financialExpensesAccounts;
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getFinancialExpensesAccounts() throws ManagerBeanException, ExpressionException {
+		return getFinancialExpensesAccounts(true);
+	}
+	public List<SelectItem> getFinancialExpensesAccountsIds() throws ManagerBeanException, ExpressionException {
+		return getFinancialExpensesAccounts(false);
 	}
 	
 }
