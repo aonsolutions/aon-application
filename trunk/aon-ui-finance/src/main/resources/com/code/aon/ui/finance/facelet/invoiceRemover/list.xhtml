@@ -19,11 +19,11 @@
 				<ui:param name="skipResetButton" value="true" />
 				
 				<ui:define name="additionalToolbarContent">
-					<aon:commandButton
-						id="remove_selected" 
-						title="#{financeBundle.finance_remove_selected}"
-						styleClass="aon-finding-toolbar-item aon-icon-delete"
+					<aon:commandButton id="remove_selected"
 						value="#{financeBundle.finance_remove_selected}"
+						rendered="#{invoiceRemover.model.rowCount > 0}"
+						reRender="invoiceRemoverDataDiv"
+						styleClass="aon-finding-toolbar-item aon-icon-delete"
 						actionListener="#{invoiceRemover.onRemoveSelected}"
 						onclick="Richfaces.showModalPanel('waitProccess')" 
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
@@ -48,8 +48,7 @@
 						ajaxSingle="true"
 						actionListener="#{invoiceRemover.checkNone}" reRender="invoiceRemoverDataDiv"
 						onclick="Richfaces.showModalPanel('waitProccess')"
-			     		oncomplete="Richfaces.hideModalPanel('waitProccess')">
-			     	</aon:commandButton>				
+			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 				</aon:div>
 
 				<aon:div id="invoiceRemoverDataDiv" >
@@ -65,13 +64,19 @@
 							<aon:selectBooleanCheckbox id="Included_Row_checked"
 								value="#{invoiceRemover.rowChecked}"
 								rendered="#{invoiceRemover.modelToRemovable}" />	
+							<aon:div style="display:inline;cursor:pointer;">
+								<aon:outputText value="&#160;"
+									styleClass="aon-icon-errorwarning" style="padding-left:20px"
+									rendered="#{!invoiceRemover.modelToRemovable}" />
+								<rich:toolTip value="#{financeBundle.finance_unable_remove_paid_error}" />
+							</aon:div>
 						</aon:column>
 	
 						<aon:column>
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
 							</f:facet>
-							<aon:outputText value="#{to.series} / #{to.number}" />
+							<aon:outputText value="#{to.referenceCode}" />
 						</aon:column>
 	
 						<aon:column>
@@ -102,13 +107,6 @@
 				</aon:div>
 			</aon:div>
 		</aon:form>
-<!-- 		
-		<ui:include src="/com/code/aon/ui/resources/facelet/shared/progressBar.xhtml">
-			<ui:param name="progressLabel"
-				value="#{financeBundle.finance_invoice_removing_module} ..." />
-			<ui:param name="progressBarBean" value="#{invoiceRemover}" />
-		</ui:include>
- -->
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 	</ui:define>
 </ui:composition>
