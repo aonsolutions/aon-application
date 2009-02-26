@@ -8,8 +8,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
@@ -144,6 +146,21 @@ public class RegistryBank implements ITransferObject,IBankAccountContainer {
 		this.sufix = sufix;
 	}
     
+	@Transient
+	public String getFullName() {
+		StringBuilder sb = new StringBuilder();
+		if (getBank() != null && !StringUtils.isEmpty(getBank().getName()))  {
+			sb.append(StringUtils.abbreviate(getBank().getName(), 30));
+			sb.append(" ");
+		}
+		if (getBankAccount() != null) {
+			sb.append("[");
+			sb.append(getBankAccount().toString());
+			sb.append("]");
+		}
+		return sb.toString(); 
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {

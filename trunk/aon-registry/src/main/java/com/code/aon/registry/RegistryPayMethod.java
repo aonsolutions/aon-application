@@ -39,6 +39,9 @@ public class RegistryPayMethod implements ITransferObject {
     /** The payment. */
     private PayMethod payment;
 
+    /** The payment. */
+    private RegistryBank rBank;
+
     /** The number of payments. */
     private int numberOfPayments;
 
@@ -149,6 +152,26 @@ public class RegistryPayMethod implements ITransferObject {
      */
     public void setPayment(PayMethod payment) {
         this.payment = payment;
+    }
+
+    /**
+     * Gets the bank.
+     * 
+     * @return the payment
+     */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="rbank")
+    public RegistryBank getRegistryBank() {
+        return rBank;
+    }
+
+    /**
+     * Sets the bank.
+     * 
+     * @param payment the payment
+     */
+    public void setRegistryBank(RegistryBank rBank) {
+        this.rBank = rBank;
     }
 
     /**

@@ -529,10 +529,16 @@ public interface IRegistryAlias {
 	String  REGISTRY_PAY_METHOD_PAYMENT_ID = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[5];
 
 	/** 
+	* Alias value: RegistryPayMethod_registryBank_id
+	* Hibernate value: RegistryPayMethod.registryBank.id
+	*/
+	String  REGISTRY_PAY_METHOD_REGISTRY_BANK_ID = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[6];
+
+	/** 
 	* Alias value: RegistryPayMethod_registry_id
 	* Hibernate value: RegistryPayMethod.registry.id
 	*/
-	String  REGISTRY_PAY_METHOD_REGISTRY_ID = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[6];
+	String  REGISTRY_PAY_METHOD_REGISTRY_ID = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[7];
 
 
 
