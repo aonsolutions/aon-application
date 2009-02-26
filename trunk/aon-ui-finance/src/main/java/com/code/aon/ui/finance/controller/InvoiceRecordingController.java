@@ -12,14 +12,19 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -105,8 +110,25 @@ public class InvoiceRecordingController extends BasicController{
 		return false;
 	}
 	
-	private boolean isRecordable(Invoice invoice) {
-		return InvoiceStatus.PENDING.equals(invoice.getStatus());
+	private boolean isRecordable(Invoice invoice) throws ManagerBeanException {
+		return InvoiceStatus.PENDING.equals(invoice.getStatus()) && (getInvoiceTotal(invoice) == getFinanceTotal(invoice));
+	}
+
+	private double getInvoiceTotal(Invoice invoice) throws ManagerBeanException {
+		return getPriceStrategy().getTotalPrice(invoice,invoice);
+	}
+
+	private double getFinanceTotal(Invoice invoice) throws ManagerBeanException {
+		double financeTotal = 0;
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
+		Iterator<?> iterator = financeBean.getList(criteria).iterator();
+		while(iterator.hasNext()) {
+			Finance finance = (Finance)iterator.next();
+			financeTotal += finance.getAmount();
+		}
+		return financeTotal;
 	}
 
 	public List<SelectItem> getInvoiceTypes() {
