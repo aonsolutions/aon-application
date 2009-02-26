@@ -166,7 +166,7 @@ public class InvoiceRecordingController extends BasicController{
 							String msg =  "Unable to rollback transaction!";
 							LOGGER.log(Level.SEVERE, msg, e);
 						}
-						String msg =  "Error recording invoice:  " + invoice.getSeriesNumber();
+						String msg =  "Error recording invoice:  " + invoice.getReferenceCode();
 						LOGGER.log(Level.SEVERE, msg, e);
 						AonUtil.addErrorMessage(msg);
 						throw new AbortProcessingException(msg);

@@ -37,6 +37,11 @@
 						<f:selectItems value="#{financeCollections.creditorStatuses}" />
 					</aon:selectOneMenu>
 					
+					<aon:outputLabel for="Creditor_withholding"
+						value="#{bundle.aon_retention}" />
+					<aon:selectBooleanCheckbox id="Creditor_withholding"
+						value="#{creditor.to.withholding}" />
+
 					<c:if test="#{creditor.showAccount}">
 						<aon:outputLabel for="Creditor_account"
 							value="#{accountingBundle.accounting_account}" />
@@ -65,10 +70,27 @@
 					</aon:panelTab>
 
 					<c:if test="#{customer.showFinanceData}">
-						<aon:panelTab id="finance" label="#{registryBundle.registry_banks_module}">
-							<ui:include	src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
-								<ui:param name="controller" value="#{creditorRbank}" />
-							</ui:include>
+						<aon:panelTab id="finance"
+							label="#{registryBundle.registry_finance_data_module}">
+							<aon:panel>
+								<f:facet name="header">
+									<aon:outputText
+										value="#{registryBundle.registry_banks_module}" />
+								</f:facet>
+								<ui:include
+									src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
+									<ui:param name="controller" value="#{creditorRbank}" />
+								</ui:include>
+							</aon:panel>
+							<aon:panel>
+								<f:facet name="header">
+									<aon:outputText value="#{configBundle.config_predef_paymethod}" />
+								</f:facet>
+								<ui:include
+									src="/com/code/aon/ui/registry/facelet/rpaymethod/tab_grid.xhtml">
+									<ui:param name="controller" value="#{creditorRPayMethod}" />
+								</ui:include>
+							</aon:panel>
 						</aon:panelTab>
 					</c:if>
 				</aon:panelTabSet>
