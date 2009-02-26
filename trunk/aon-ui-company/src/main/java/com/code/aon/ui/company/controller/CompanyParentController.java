@@ -7,10 +7,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.SelectItem;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -25,6 +30,7 @@ import com.code.aon.registry.RecordData;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
@@ -594,7 +600,7 @@ public class CompanyParentController extends BasicController implements ICompany
 		return IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID;
 	}
 	
-	public String getOnNew() throws ManagerBeanException {
+	public String getOnNew() {
 		if(this.getTo() == null) {
 			this.onLoad();
 		}
@@ -649,5 +655,4 @@ public class CompanyParentController extends BasicController implements ICompany
 	public void setShowPanelTabSet(boolean showPanelTabSet) {
 		this.showPanelTabSet = showPanelTabSet;
 	}
-
 }
