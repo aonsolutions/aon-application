@@ -450,6 +450,10 @@ public class InvoiceEntryController {
 	}
 
 	public void accept(ActionEvent event) {
+		if (getInvoiceTotal() != getFinanceTotal()) {
+			//"finance_unable_record_inaccuracy_error"
+		}
+
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
@@ -527,6 +531,21 @@ public class InvoiceEntryController {
 		while (iter.hasNext()) {
 			InvoiceEntryDetail detail = (InvoiceEntryDetail) iter.next();
 			total += detail.getTotal();
+		}
+		return total;
+	}
+
+	/**
+	 * Gets the invoice total.
+	 * 
+	 * @return the invoice total
+	 */
+	public double getFinanceTotal() {
+		double total = 0.0;
+		Iterator<?> iter = ((List<?>) finances.getWrappedData()).iterator();
+		while (iter.hasNext()) {
+			Finance finance = (Finance) iter.next();
+			total += finance.getAmount();
 		}
 		return total;
 	}
