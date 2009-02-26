@@ -259,7 +259,7 @@ public class SaleInvoiceController extends InvoiceController {
 				Finance finance = (Finance)iter.next();
 				feeFinanceController.getManagerBean().remove(finance);
 			}
-			getFinanceGenerator().generateFinances(invoice, invoice.getRegistry(), getPriceStrategy().getTotalPrice(invoice, invoice));
+			getFinanceGenerator().generateFinances(invoice, getPriceStrategy().getTotalPrice(invoice, invoice));
 			feeFinanceController.onSearch(null);
 		} catch (ManagerBeanException e) {
 			String msg = AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY,IFinanceMessages.GENERATE_FINANCES_ERROR_KEY);
