@@ -40,7 +40,7 @@ public class AccountEntryInvoiceWriter {
 	private Account salesDefaultAccount;
 	private static final String N_FRA = "N/Fra: ";
 	private static final String S_FRA = "S/Fra: ";
-	
+
 	public void unrecordAndUpdateInvoice(Invoice invoice) throws ManagerBeanException {
 		unrecordInvoice(invoice);
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
@@ -68,8 +68,7 @@ public class AccountEntryInvoiceWriter {
 		invoiceBean.update(invoice);
 	}
 	
-	public void recordInvoice(Invoice invoice, IPriceStrategy priceStrategy)
-			throws ManagerBeanException {
+	public void recordInvoice(Invoice invoice, IPriceStrategy priceStrategy) throws ManagerBeanException {
 		AccountEntry entry = new AccountEntry();
 		entry.setAccountPeriod(AccountUtil.obtainPeriod(invoice.getIssueDate()).getId());
 		entry.setEntryDate(invoice.getIssueDate());
@@ -77,7 +76,7 @@ public class AccountEntryInvoiceWriter {
 		AccountEntryType accountEntryType = null;
 		if (invoice.getType() == InvoiceType.SALES) {
 			accountEntryType = AccountEntryType.SALES_INVOICE;
-		} else if (invoice.getType() == InvoiceType.SALES) {
+		} else if (invoice.getType() == InvoiceType.PURCHASE) {
 			accountEntryType = AccountEntryType.PURCHASE_INVOICE;
 		} else {
 			throw new ManagerBeanException("Unsupported invoice Type '" + invoice.getType() + "'");
@@ -86,16 +85,23 @@ public class AccountEntryInvoiceWriter {
 		entry.setSecurityLevel(invoice.getSecurityLevel());
 		entry = insertAccountEntry(entry);
 		List<TaxBreakDown> taxBreakDown = priceStrategy.getTaxBreakDowns(invoice, invoice);
-		Account account = (invoice.getType().equals(InvoiceType.SALES) ? AccountUtil
-				.obtainCustomerAccount(invoice.getRegistry()) : AccountUtil
-				.obtainSupplierAccount(invoice.getRegistry()));
+		Account account = (invoice.getType().equals(InvoiceType.SALES) ? 
+				AccountUtil.obtainCustomerAccount(invoice.getRegistry()) : 
+				AccountUtil.obtainSupplierAccount(invoice.getRegistry()));
 		double total = priceStrategy.getTotalPrice(invoice, invoice);
 		double retentitonTotal = getRetentionTotal(taxBreakDown);
 		double taxQuota = getTaxQuota(taxBreakDown);
 		Map<Account, Double> bases = obtainBasesPerAccount(invoice);
-		insertEntryDetails(entry, account, invoice.getSeries(), invoice.getNumber(), total,
-				retentitonTotal, taxQuota, bases);
+		insertEntryDetails(entry, account, obtainConcept(invoice), total, retentitonTotal, taxQuota, bases);
 		insertAccountEntryInvoice(entry, invoice);
+	}
+
+	public String obtainConcept(Invoice invoice) {
+		InvoiceType type = invoice.getType();
+		String series = invoice.getSeries();
+		int number = invoice.getNumber();
+		String refCode = invoice.getReferenceCode();
+		return (type.equals(InvoiceType.SALES)) ? (N_FRA + (series == null ? "" : (series + "/")) + number): (S_FRA + refCode); 
 	}
 
 	private Map<Account, Double> obtainBasesPerAccount(Invoice invoice) throws ManagerBeanException {
@@ -230,11 +236,10 @@ public class AccountEntryInvoiceWriter {
 	 * @throws ManagerBeanException
 	 *             the manager bean exception
 	 */
-	public void insertEntryDetails(AccountEntry entry, Account account, String series, int number,
+	public void insertEntryDetails(AccountEntry entry, Account account, String concept,
 			double invoiceTotal, double retentionTotal, double taxQuota,
 			Map<Account, Double> basesPerAccount) throws ManagerBeanException {
 		IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
-		String concept = (account.getId().startsWith("430"))?N_FRA:S_FRA; 
 		// Primer Apunte
 		AccountEntryDetail entryDetail = new AccountEntryDetail();
 		entryDetail.setAccount(account);
@@ -251,7 +256,7 @@ public class AccountEntryInvoiceWriter {
 		if (entry.getType().equals(AccountEntryType.EXPENSE_INVOICE)) {
 			entryDetail.setCredit(invoiceTotal);
 		}
-		entryDetail.setConcept(concept + (series==null?"":(series + "/")) + number);
+		entryDetail.setConcept(concept);
 		entryDetailBean.insert(entryDetail);
 		// Segundo Apunte(Mirar si hay q crearlo o no)
 		entryDetail = new AccountEntryDetail();
@@ -267,7 +272,7 @@ public class AccountEntryInvoiceWriter {
 			}
 			entryDetail.setAccountEntry(entry);
 			entryDetail.setBalancingAccount(account);
-			entryDetail.setConcept(concept + (series==null?"":(series + "/")) + number);
+			entryDetail.setConcept(concept);
 			entryDetailBean.insert(entryDetail);
 		}
 		// Tercer Apunte (Si I.V.A. es 0 no se crea)
@@ -284,7 +289,7 @@ public class AccountEntryInvoiceWriter {
 			}
 			entryDetail.setAccountEntry(entry);
 			entryDetail.setBalancingAccount(account);
-			entryDetail.setConcept(concept + (series==null?"":(series + "/")) + number);
+			entryDetail.setConcept(concept);
 			entryDetailBean.insert(entryDetail);
 		}
 		// Cuarto Apunte (o varios Apuntes en funcion del Mapa de bases por
@@ -295,7 +300,7 @@ public class AccountEntryInvoiceWriter {
 			entryDetail.setAccount(iterator.next());
 			entryDetail.setAccountEntry(entry);
 			entryDetail.setBalancingAccount(account);
-			entryDetail.setConcept(concept + (series==null?"":(series + "/")) + number);
+			entryDetail.setConcept(concept);
 			if (entry.getType().equals(AccountEntryType.SALES_INVOICE)) {
 				entryDetail
 						.setCredit((basesPerAccount.get(entryDetail.getAccount())).doubleValue());
