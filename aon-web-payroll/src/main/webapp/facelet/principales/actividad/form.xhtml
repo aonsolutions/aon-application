@@ -31,13 +31,13 @@
 						style="margin-bottom=2px;">
 
 
-						<aon:outputLabel for="Actividad_cdg"
+						<aon:outputLabel for="Actividad_descripcion"
 							value="#{appBundle.aon_payroll_principales_tipocuenta_actividad}" />
 						<aon:div>
 							<aon:inputText id="Acti_cdg" value="#{actividad.to.cdg}" size="5"
 								disabled="true" />
 
-							<aon:inputText id="Acti_description"
+							<aon:inputText id="Actividad_descripcion" required="true"
 								value="#{actividad.to.descripcion}" size="60"  />
 						</aon:div>
 
@@ -51,13 +51,13 @@
 						<aon:outputLabel for="Empresa_cdg"
 							value="#{appBundle.aon_payroll_principales_tipocuenta_empresa}" />
 						<aon:div styleClass="aon-lookup">
-							<aon:lookupInputText id="Empre_cdg" lookup="#{empresaLookup}"
+							<aon:lookupInputText id="Empresa_cdg" lookup="#{empresaLookup}" required="true"
 								reRender="Empr_description" value="#{actividad.to.empresa.cdg}"
 								size="5">
 							</aon:lookupInputText>
 							<aon:lookupButton id="Empre_lookup"
 								windowTitle="#{appBundle.aon_payroll_principales_tipocuenta_empresa}"
-								selectReRender="Empre_cdg,Empre_description"
+								selectReRender="Empresa_cdg,Empre_description"
 								lookup="#{empresaLookup}" minHeight="440"
 								property="#{actividad.to.empresa}">
 							</aon:lookupButton>
@@ -125,7 +125,7 @@
 			<aon:div id="tabsinfo">
 				<rich:tabPanel switchType="ajax">
 
-					<rich:tab id="datos1"
+					<rich:tab id="datos1" 
 						label="#{appBundle.aon_payroll_principales_clientes_datos}">
 
 
@@ -138,16 +138,16 @@
 
 
 
-									<aon:outputLabel for="Empresa_cdg"
+									<aon:outputLabel for="Convenio_cdg"
 										value="#{appBundle.aon_payroll_principales_actividad_con}" />
 									<aon:div styleClass="aon-lookup">
-										<aon:lookupInputText id="Conv_cdg" lookup="#{convenioLookup}"
+										<aon:lookupInputText id="Convenio_cdg" lookup="#{convenioLookup}"
 											reRender="Conv_description"
 											value="#{actividad.to.convenio.cdg}" size="5">
 										</aon:lookupInputText>
 										<aon:lookupButton id="conv_lookup"
 											windowTitle="#{appBundle.aon_payroll_principales_actividad_con}"
-											selectReRender="Conv_cdg,Conv_description"
+											selectReRender="Convenio_cdg,Conv_description"
 											lookup="#{convenioLookup}" minHeight="440"
 											property="#{actividad.to.convenio}">
 										</aon:lookupButton>
@@ -180,10 +180,10 @@
 									<aon:inputText value="#{actividad.to.epiiae}" size="10" />
 
 
-									<aon:outputLabel
+									<aon:outputLabel for="Acticidad_Economica"
 										value="#{appBundle.aon_payroll_principales_actividad_act}" />
 
-									<aon:inputText value="#{actividad.to.acteco}" size="70" />
+									<aon:inputText  id="Acticidad_Economica" value="#{actividad.to.acteco}" size="70"  required="true" />
 
 
 									<aon:outputLabel
@@ -214,7 +214,7 @@
 										value="#{appBundle.aon_payroll_principales_actividad_regimen}" />
 									<aon:selectOneMenu value="#{actividad.to.indregimen}">
 
-										<f:selectItem value="#{null}" itemLabel="    " />
+										<f:selectItem  value="#{null}" itemLabel="    " />
 										<f:selectItems value="#{actividad.listaindregs}" />
 									</aon:selectOneMenu>
 									<aon:outputLabel
@@ -327,7 +327,7 @@
 					</rich:tab>
 
 
-					<rich:tab
+					<rich:tab rendered="#{!actividad.new}"
 						label="#{appBundle.aon_payroll_principales_actividad_cen}">
 						<aon:div id="emprctraDataDiv">
 
@@ -391,7 +391,7 @@
 
 
 					</rich:tab>
-					<rich:tab
+					<rich:tab rendered="#{!actividad.new}"
 						label="#{appBundle.aon_payroll_principales_actividad_ccc}">
 						<aon:div>
 
@@ -465,7 +465,7 @@
 
 					</rich:tab>
 
-					<rich:tab
+					<rich:tab rendered="#{!actividad.new}"
 						label="#{appBundle.aon_payroll_principales_actividad_ccos}">
 						<aon:div>
 
@@ -533,7 +533,7 @@
 						</aon:div>
 							</rich:tab>
 						
-						<rich:tab id="ctas"
+						<rich:tab id="ctas" rendered="#{!actividad.new}"
 							label="#{appBundle.aon_payroll_principales_clientes_ctas}">
 							<aon:div id="ctasDiv">
 
@@ -544,7 +544,7 @@
 
 
 
-					<rich:tab id="avisosdata"
+					<rich:tab id="avisosdata" rendered="#{!actividad.new}"
 						label="#{appBundle.aon_payroll_principales_avisos}">
 
 

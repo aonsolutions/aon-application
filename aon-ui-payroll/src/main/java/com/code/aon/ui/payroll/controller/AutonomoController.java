@@ -287,8 +287,8 @@ public class AutonomoController extends PayrollBasicController {
 		if (StringUtils.isEmpty(((Autonomos)getTo()).getMutua().getCdg()))
 			((Autonomos) getTo()).setMutua(null);
 
-		if (StringUtils.isEmpty(((Autonomos)getTo()).getProvincia().getCdg()))
-			((Autonomos) getTo()).setProvincia(null);
+	//	if (StringUtils.isEmpty(((Autonomos)getTo()).getProvincia().getCdg()))
+	//		((Autonomos) getTo()).setProvincia(null);
 
 		if (StringUtils.isEmpty(((Autonomos)getTo()).getTipovia().getCdg()))
 			((Autonomos) getTo()).setTipovia(null);

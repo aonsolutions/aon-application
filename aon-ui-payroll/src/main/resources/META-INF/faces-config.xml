@@ -3548,8 +3548,7 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{tipdomicilioControllerListener}</value>
-				<value>#{calendarListener}</value>
-
+				
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -6878,23 +6877,7 @@
 			<property-name>beanName</property-name>
 			<value>calendar</value>
 		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>tipdomicilio</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>cdg</key>
-					<value>domicilio.cdg</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
+			
 	</managed-bean>
 	
 	

@@ -36,7 +36,7 @@
 							value="#{appBundle.aon_payroll_principales_clientes_cod}" />
 						<aon:inputText value="#{cliente.to.cdg}" maxlength="4" />
 
-						<aon:outputLabel
+						<aon:outputLabel for="nombre"
 							value="#{appBundle.aon_payroll_principales_clientes_nom}" />
 						<aon:inputText id="nombre" value="#{cliente.to.descripcion}"
 							size="60" required="true" maxlength="60" />
@@ -49,13 +49,13 @@
 						<aon:outputLabel for="Dele_cdg"
 							value="#{appBundle.aon_payroll_principales_clientes_deleg}" />
 						<aon:div styleClass="aon-lookup">
-							<aon:lookupInputText id="Del_cdg" lookup="#{delegacionLookup}"
+							<aon:lookupInputText id="Delegacion_cdg" lookup="#{delegacionLookup}"
 								reRender="Del_description" value="#{cliente.to.delegacion.cdg}"
 								required="true" size="5">
 							</aon:lookupInputText>
 							<aon:lookupButton id="Del_lookup"
 								windowTitle="#{appBundle.aon_payroll_principales_clientes_deleg}"
-								selectReRender="Del_cdg,Del_description"
+								selectReRender="Delelegacion_cdg,Del_description"
 								lookup="#{delegacionLookup}" minHeight="440"
 								property="#{cliente.to.delegacion}">
 							</aon:lookupButton>
@@ -120,9 +120,9 @@
 												size="60" disabled="true" />
 										</aon:div>
 
-										<aon:outputLabel
+										<aon:outputLabel for="numero_Documento"
 											value="#{appBundle.aon_payroll_principales_clientes_numdoc}" />
-										<aon:inputText id="numDocu" value="#{cliente.to.numdoc}"
+										<aon:inputText id="numero_Documento" value="#{cliente.to.numdoc}"
 											size="60" required="true" maxlength="20" />
 
 										<aon:outputLabel for="Divi_cdg"
@@ -348,7 +348,7 @@
 							</aon:panelGrid>
 						</rich:tab>
 
-					 <rich:tab id="domidfd"
+				<!-- 	 <rich:tab id="domidfd"
 							label="#{appBundle.aon_payroll_principales_clientes_dom}">
 
 
@@ -359,7 +359,7 @@
 
 						</rich:tab>
 						
-						<!-- 	<rich:tab id="ctas"
+							<rich:tab id="ctas"
 							label="#{appBundle.aon_payroll_principales_clientes_ctas}">
 							<aon:div id="ctasDiv">
 

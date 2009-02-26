@@ -116,17 +116,17 @@
 							style="margin-bottom=2px;">
 
 
-							<aon:outputLabel for="Percepcion_id_codcom"
+							<aon:outputLabel for="Codigo_Complemento"
 								value="#{appBundle.aon_payroll_principales_personas_percep_cocom}" />
 							<aon:div styleClass="aon-lookup">
-								<aon:lookupInputText id="Percepcion_id_codcom"
-									lookup="#{complementoLookup}"
+								<aon:lookupInputText id="Codigo_Complemento"
+									lookup="#{complementoLookup}" required="#{true}"
 									reRender="Percepcion_complemento_description"
 									value="#{percep.to.complemento.cdg}" size="5">
 								</aon:lookupInputText>
 								<aon:lookupButton id="Percepcion_id_codcom_lookup"
 									windowTitle="#{appBundle.aon_payroll_auxiliares_convenios__aplic_comp}"
-									selectReRender="Percepcion_complemento_description,Percepcion_id_codcom"
+									selectReRender="Percepcion_complemento_description,Codigo Complemento"
 									lookup="#{complementoLookup}" minHeight="440"
 									property="#{percep.to.complemento}">
 								</aon:lookupButton>
@@ -138,28 +138,28 @@
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_personas_percep_mes}" />
-							<aon:inputText value="#{percep.to.mes}" required="true" size="10"
+							<aon:inputText value="#{percep.to.mes}"  size="10"
 								maxlength="6" />
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_personas_percep_import}" />
-							<aon:inputText value="#{percep.to.importe}" required="true"
+							<aon:inputText value="#{percep.to.importe}" 
 								size="10" maxlength="6" />
 
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_personas_percep_cal}" />
-							<aon:inputText value="#{percep.to.calculo}" required="true"
+							<aon:inputText value="#{percep.to.calculo}" 
 								size="10" maxlength="6" />
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_personas_percep_tipo}" />
-							<aon:inputText value="#{percep.to.tipcot}" required="true"
+							<aon:inputText value="#{percep.to.tipcot}" 
 								size="10" maxlength="6" />
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_personas_percep_ilt}" />
-							<aon:inputText value="#{percep.to.garilt}" required="true"
+							<aon:inputText value="#{percep.to.garilt}" 
 								size="10" maxlength="6" />
 
 
@@ -183,21 +183,21 @@
 							<aon:inputText value="#{percep.to.impuni}" size="10"
 								maxlength="6" />
 
-							<aon:outputLabel
+							<aon:outputLabel for="Descripcion_complemento"
 								value="#{appBundle.aon_payroll_principales_personas_percep_desc}" />
-							<aon:inputText value="#{percep.to.descom}" size="50"
+							<aon:inputText  id="Descripcion_complemento" value="#{percep.to.descom}" size="50" required="#{true}"
 								maxlength="40" />
 
 
 
-							<aon:outputLabel
+							<aon:outputLabel for="Descripcion_abreviada"
 								value="#{appBundle.aon_payroll_principales_personas_percep_descabre}" />
-							<aon:inputText value="#{percep.to.desabr}" size="50"
+							<aon:inputText id="Descripcion_abreviada" value="#{percep.to.desabr}" size="50" required="#{true}"
 								maxlength="40" />
 
-							<aon:outputLabel
+							<aon:outputLabel for="Inicio_vigencia"
 								value="#{appBundle.aon_payroll_principales_personas_percep_fechaini}" />
-							<aon:selectInputDate renderAsPopup="true"
+							<aon:selectInputDate id="Inicio_vigencia" renderAsPopup="true" required="#{true}"
 								popupDateFormat="#{appBundle.aon_date_pattern}"
 								value="#{percep.to.fecini}" enableManualInput="true" />
 

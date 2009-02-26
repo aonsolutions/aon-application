@@ -3,25 +3,35 @@ package com.code.aon.ui.payroll.controller;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.geograficas.Provincia;
 import com.code.aon.payroll.principales.Cliente;
 import com.code.aon.payroll.principales.Domicilio;
+import com.code.aon.payroll.principales.empresa.Actividad;
+import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.payroll.tipos.Tipovia;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -30,6 +40,10 @@ public class CuentaController extends LinesController {
 	
 	
 private Cliente cliente;
+private List<SelectItem> entidades;
+private List<SelectItem> sucursales;
+
+
 
 	@Override
    public void onEditSearch(ActionEvent arg0) {
@@ -91,6 +105,47 @@ private Cliente cliente;
 		this.code = code;
 	}
 
+	
+/*	  
+	public List<SelectItem> getListaEntidades() throws ManagerBeanException  {
+		if(entidades==null){
+			
+			entidades = new LinkedList<SelectItem>();
+		Controller controller = FormUtil.getController(IPayrollConstants.ENTIDAD_CONTROLLER_NAME);
+		List<ITransferObject> empresa  =  controller.getManagerBean().getList(controller.getCriteria());
+		for (ITransferObject to: empresa) {
+			Empresa e = (Empresa) to;	
+			SelectItem item = new SelectItem(e.getCdg(),""+e.getCdg()+" "+e.getDescripcion());
+			entidades.add(item);
+		}
+		}
+		
+		return entidades;
+	}	
+	
+	
+	public void refreshListaAct(ValueChangeEvent event) throws ManagerBeanException  {
+		
+		Integer newCodEmpresa = (Integer) event.getNewValue();	
+		
+		if (newCodEmpresa != null) {
+			IManagerBean bean = BeanManager.getManagerBean(Actividad.class);
+			String emp = bean.getFieldName(IPayrollAlias.ACTIVIDAD_EMPRESA_CDG);
+			Criteria cri1 = new Criteria();
+			cri1.addEqualExpression(emp, newCodEmpresa);
+			List<ITransferObject> filtroact;
+			filtroact = bean.getList(cri1);
+			sucursales.clear();
+			sucursales.clear();
+			for (ITransferObject to : filtroact) {
+				Actividad a = (Actividad) to;
+				SelectItem item = new SelectItem(a.getCdg(),""+a.getCdg()+": "+a.getDescripcion());
+				sucursales.add(item);
+			}
+		
+		}        
+	}*/
+	
 }
 
 

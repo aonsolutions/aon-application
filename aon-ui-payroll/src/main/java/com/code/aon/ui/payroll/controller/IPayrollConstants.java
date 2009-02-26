@@ -39,6 +39,6 @@ public interface IPayrollConstants {
 	String NOMINAIT_CONTROLLER_NAME = "nominait";
 	String AVISO_CONTROLLER_NAME = "aviso";
 	String PRCDIVTRAB_CONTROLLER_NAME = "prcdivtrab";
-	
-	
+	String ENTIDAD_CONTROLLER_NAME = "entidad";
+	String SUCURSAL_CONTROLLER_NAME = "sucursal";
 }

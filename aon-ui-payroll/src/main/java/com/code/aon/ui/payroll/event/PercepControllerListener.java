@@ -44,12 +44,11 @@ public class PercepControllerListener extends ControllerAdapter implements IPayr
 
 
 		
-	
-	
+
 	
 	
 @Override
-public void beforeBeanAdded(ControllerEvent event)
+public void afterBeanCreated(ControllerEvent event)
 		throws ControllerListenerException {
 		
 	
