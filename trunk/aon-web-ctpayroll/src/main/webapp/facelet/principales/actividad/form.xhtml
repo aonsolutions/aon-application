@@ -52,12 +52,14 @@
 							value="#{appBundle.aon_payroll_principales_tipocuenta_empresa}" />
 						<aon:div styleClass="aon-lookup">
 							<aon:lookupInputText id="Empresa_cdg" lookup="#{empresaLookup}" required="true"
-								reRender="Empr_description" value="#{actividad.to.empresa.cdg}"
+								reRender="Empre_description" value="#{actividad.to.empresa.cdg}"
+								lookupChangeListener="#{actividad.onEmpresaChange}"
 								size="5">
 							</aon:lookupInputText>
 							<aon:lookupButton id="Empre_lookup"
 								windowTitle="#{appBundle.aon_payroll_principales_tipocuenta_empresa}"
 								selectReRender="Empresa_cdg,Empre_description"
+								lookupChangeListener="#{actividad.onEmpresaChange}"
 								lookup="#{empresaLookup}" minHeight="440"
 								property="#{actividad.to.empresa}">
 							</aon:lookupButton>
@@ -151,7 +153,7 @@
 											lookup="#{convenioLookup}" minHeight="440"
 											property="#{actividad.to.convenio}">
 										</aon:lookupButton>
-										<aon:inputText id="Conv_description"
+										<aon:inputText id="Conv_description" 
 											value="#{(actividad.to.convenio.description!=null)?(actividad.to.convenio.description):('')}"
 											size="60" disabled="true" />
 									</aon:div>
@@ -160,7 +162,7 @@
 	                               <aon:outputLabel for="Cnae_cdg"
 										value="#{appBundle.aon_payroll_principales_actividad_cnae93}" />
 								
-	                               <aon:inputText value="#{actividad.to.cnae}" size="10" />
+	                               <aon:inputText id="Cnae_cdg" value="#{actividad.to.cnae}" size="10" />
 			 
 									<aon:outputLabel
 										value="#{appBundle.aon_payroll_principales_actividad_cnae2009}" />
