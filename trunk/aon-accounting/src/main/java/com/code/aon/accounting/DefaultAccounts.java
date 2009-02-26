@@ -43,4 +43,11 @@ public class DefaultAccounts {
 
 	/** The Constant financialExpensesAccount. */
 	public static final String FINANCIAL_EXPENSES_ACCOUNT = "ACC_DEFAULT_FINAN_EXPENSES_ACC";
+	
+	public static final String DEFAULT_VAT_PERCENT = "ACC_DEFAULT_VAT_PERCENT";
+	public static final String DEFAULT_SURCHARGE_PERCENT = "ACC_DEFAULT_SURCHARGE_PERCENT";
+	public static final String DEFAULT_RETENTION_PERCENT = "ACC_DEFAULT_RETENTION_PERCENT";
+	public static final String DEFAULT_INVOICE_SERIES = "ACC_DEFAULT_INVOICE_SERIES";
+
+
 }

@@ -12,6 +12,10 @@ public class SummaryProviderParameters {
 	 */
 	private String accountExpression;
 
+	private String accountDescription;
+
+	private String accountAlias;
+
 	/**
 	 * TRUE si se desea que se devuelva los acumulados de los nivees inferiores,
 	 * como elementos de la colección, estos valores no deben tenerse en cuenta
@@ -66,6 +70,8 @@ public class SummaryProviderParameters {
 
 	public SummaryProviderParameters() {
 		setAccountExpression(null);
+		setAccountDescription(null);
+		setAccountAlias(null);
 		setLowerLevelVisible(false);
 		setZeroSumVisible(false);
 		setAccountLevel(4);
@@ -85,6 +91,22 @@ public class SummaryProviderParameters {
 
 	public void setAccountExpression(String accountExpression) {
 		this.accountExpression = accountExpression;
+	}
+
+	public String getAccountDescription() {
+		return accountDescription;
+	}
+
+	public void setAccountDescription(String accountDescription) {
+		this.accountDescription = accountDescription;
+	}
+
+	public String getAccountAlias() {
+		return accountAlias;
+	}
+
+	public void setAccountAlias(String accountAlias) {
+		this.accountAlias = accountAlias;
 	}
 
 	public boolean isLowerLevelVisible() {
