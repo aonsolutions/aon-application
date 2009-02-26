@@ -29,7 +29,7 @@ public class CompanyAliasWriter {
 		classes[2] = Resource.class.getName();
 		classes[3] = WorkPlace.class.getName();
 		classes[4] = WorkActivity.class.getName();
-		HibernateUtil.getSessionFactory();
+		HibernateUtil.getSessionFactory( HibernateUtil.getSessionFactoryName() );
 		AliasWriter writer = new AliasWriter("com.code.aon.company.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );
