@@ -1,6 +1,5 @@
 package com.code.aon.webmail.bean;
 
-import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -177,8 +176,12 @@ public class AonMessageUtils {
 					StringBuffer decodedTextTrimed = new StringBuffer(decodedText);
 					decodedTextTrimed.deleteCharAt(pos);
 					result = decodedTextTrimed.toString();
-					pos = result.indexOf("=?");
-				} catch (UnsupportedEncodingException e) {
+					int newPos = result.indexOf("=?");
+					if ( newPos == pos ) {
+						break;
+					}
+					pos = newPos;
+				} catch (Throwable e) {
 					LOGGER.log(Level.SEVERE,"Error decoding string" + text, e);
 					return text;
 				}
