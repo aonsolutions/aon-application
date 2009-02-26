@@ -39,9 +39,8 @@
 							onclick="Richfaces.showModalPanel('waitProccess')" 
 				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 						<h:commandLink id="saleInvoice" value="#{bundle.aon_report}"
-							target="_new" rendered="#{!saleInvoice.new}"
+							target="_new" rendered="#{!saleInvoice.new and saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
 							action="#{report.onExecute}"
-							disabled="#{saleInvoiceDetail.to != null}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-printer">
 							<f:param name="reportKey" value="saleInvoice" />
