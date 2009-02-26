@@ -32,7 +32,7 @@ public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			if (invoice.getRegistryName()!=null && !invoice.getRegistryName().equals( invoice.getRegistry().getFullName())) {
 				concept = StringUtils.abbreviate(invoice.getReferenceCode() + " - " + invoice.getRegistryName(), 64);
 			}
-	        finance.setConcept( concept ); 
+	        finance.setConcept(concept); 
 		}
 	}
 
@@ -51,6 +51,9 @@ public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		}
 		if (finance.getBank() != null && finance.getBank().getId() == null) {
 			finance.setBank(null);
+		}
+		if (finance.getSecurityLevel() == null) {
+			finance.setSecurityLevel(finance.getInvoice().getSecurityLevel());
 		}
 	}
 }
