@@ -46,7 +46,11 @@ public class InvoiceEntryHeader implements ITransferObject {
 	/** The reference code. */
 	private String referenceCode;
 	
-	/** The concept. */
+    private boolean taxFree;
+    private boolean surcharge;
+    private boolean withholding;
+
+    /** The concept. */
 	private Account account;
 	
 	/** The security level. */
@@ -274,5 +278,29 @@ public class InvoiceEntryHeader implements ITransferObject {
 
 	public void setAccountEntryId(Integer accountEntryId) {
 		this.accountEntryId = accountEntryId;
+	}
+
+	public boolean isTaxFree() {
+		return taxFree;
+	}
+
+	public void setTaxFree(boolean taxFree) {
+		this.taxFree = taxFree;
+	}
+
+	public boolean isSurcharge() {
+		return surcharge;
+	}
+
+	public void setSurcharge(boolean surcharge) {
+		this.surcharge = surcharge;
+	}
+
+	public boolean isWithholding() {
+		return withholding;
+	}
+
+	public void setWithholding(boolean withholding) {
+		this.withholding = withholding;
 	}
 }

@@ -64,6 +64,16 @@ public class SummaryProvider {
 						.getExpression(params.getAccountExpression(), accountBean
 								.getFieldName(IAccountAlias.ACCOUNT_ID)));
 			}
+			if (!StringUtils.isEmpty(params.getAccountDescription())) {
+				criteria.addExpression(ExpressionUtilities
+						.getExpression(params.getAccountDescription(), accountBean
+								.getFieldName(IAccountAlias.ACCOUNT_DESCRIPTION)));
+			}
+			if (!StringUtils.isEmpty(params.getAccountAlias())) {
+				criteria.addExpression(ExpressionUtilities
+						.getExpression(params.getAccountAlias(), accountBean
+								.getFieldName(IAccountAlias.ACCOUNT_ALIAS)));
+			}
 			if (!params.isLowerLevelVisible()) {
 				Expression e1 = ExpressionUtilities.getEqualExpression(accountBean
 						.getFieldName(IAccountAlias.ACCOUNT_LEVEL), params.getAccountLevel());
