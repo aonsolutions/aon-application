@@ -41,13 +41,18 @@ public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			throw new ManagerBeanVetoListenerException("El importe del vencimiento no puede ser 0.0");
 		}
 		BankAccount bankAccount = finance.getBankAccount();
-		if (bankAccount != null &&
-			(bankAccount.getOffice() != null ||
-			bankAccount.getEntity() != null ||
-			bankAccount.getControl() != null ||
-			bankAccount.getAccount() != null) &&
-			!bankAccount.isValid()) {
-			throw new ManagerBeanVetoListenerException("La cuenta bancaria del vencimiento no es válida. Los digitos de control no coinciden.");
+		if (bankAccount != null) {
+			if (StringUtils.isWhitespace(bankAccount.getOffice())) bankAccount.setOffice(null);
+			if (StringUtils.isWhitespace(bankAccount.getEntity())) bankAccount.setEntity(null);
+			if (StringUtils.isWhitespace(bankAccount.getControl())) bankAccount.setControl(null);
+			if (StringUtils.isWhitespace(bankAccount.getAccount())) bankAccount.setAccount(null);
+			if ((bankAccount.getOffice() != null ||
+				bankAccount.getEntity() != null ||
+				bankAccount.getControl() != null ||
+				bankAccount.getAccount() != null) &&
+				!bankAccount.isValid()) {
+				throw new ManagerBeanVetoListenerException("La cuenta bancaria del vencimiento no es válida. Los digitos de control no coinciden.");
+			}
 		}
 		if (finance.getBank() != null && finance.getBank().getId() == null) {
 			finance.setBank(null);

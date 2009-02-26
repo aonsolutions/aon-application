@@ -33,7 +33,13 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Invoice invoice = (Invoice) evt.getTo();
 		if (invoice.getType() == InvoiceType.SALES) {
-			invoice.setReferenceCode((!StringUtils.isEmpty(invoice.getSeries()) ? invoice.getSeries() + "/" : "") + invoice.getNumber());
+			StringBuilder sb = new StringBuilder();
+			if (!StringUtils.isEmpty(invoice.getSeries())) {
+				sb.append(invoice.getSeries());
+				sb.append("/");
+			}
+			sb.append(invoice.getNumber());
+			invoice.setReferenceCode(sb.toString());
 		} else {
 			Calendar calendar = new GregorianCalendar();
 			calendar.setTime(invoice.getIssueDate());
@@ -57,7 +63,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				removeInvoiceAddress(invoice);
 			} else {
 				throw new ManagerBeanVetoListenerException("La factura "
-						+ invoice.getSeriesNumber()
+						+ invoice.getReferenceCode()
 						+ " no se puede borrar. Tiene vencimientos con movimientos.");
 			}
 		} catch (ManagerBeanException e) {
