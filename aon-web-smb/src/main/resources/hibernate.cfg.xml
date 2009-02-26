@@ -101,9 +101,6 @@
 		<mapping class="com.code.aon.finance.InvoicingGroup"/>
 		<mapping class="com.code.aon.finance.InvoicingGroupDetail"/>
 
-		<!-- AON-FINANCE-BRIDGE Mapping files -->	
-		<mapping class="com.code.aon.finance.bridge.FinanceSales"/>
-
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoTree"/>
 		<mapping class="com.code.aon.geozone.GeoZone"/>
