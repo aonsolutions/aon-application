@@ -12,6 +12,7 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
+import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -21,11 +22,6 @@ public class InvoicingGroupControllerListener extends ControllerAdapter {
 	
 	private static final Logger LOGGER = Logger.getLogger(InvoicingGroupControllerListener.class.getName());
 
-	private final static String BUNDLE_KEY = "financeBundle";
-
-	private final static String INVALID_INVOICING_GROUP_KEY = "finance_invalid_invoicing_group_parent";
-	private final static String INVALID_INVOICING_GROUP_DETAIL_KEY = "finance_invalid_invoicing_group_detail_parent";
-	
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		InvoicingGroup invoicingGroup = (InvoicingGroup)event.getController().getTo();
@@ -49,7 +45,8 @@ public class InvoicingGroupControllerListener extends ControllerAdapter {
             	criteria.addExpression(ExpressionUtilities.getNotEqualExpression(invoicingGroupBean.getFieldName(IFinanceAlias.INVOICING_GROUP_ID), group.getId()));
         	}
         	if (invoicingGroupBean.getCount(criteria) > 0) {
-        		throw new ControllerListenerException(AonUtil.addInfoMessageFromBundle(BUNDLE_KEY, INVALID_INVOICING_GROUP_KEY));
+        		String message = AonUtil.addInfoMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.INVALID_INVOICING_GROUP_PARENT_KEY);
+        		throw new ControllerListenerException(message);
         	}
     	} catch (ManagerBeanException e) {
             LOGGER.log(Level.SEVERE, "Error obtaining InvoicingGroup with parent=" + group.getParent().getId(), e);
@@ -62,7 +59,8 @@ public class InvoicingGroupControllerListener extends ControllerAdapter {
         	Criteria criteria = new Criteria();
         	criteria.addEqualExpression(invoicingGroupDetailBean.getFieldName(IFinanceAlias.INVOICING_GROUP_DETAIL_CHILD_ID), registry.getId());
         	if (invoicingGroupDetailBean.getCount(criteria) > 0) {
-        		throw new ControllerListenerException(AonUtil.addInfoMessageFromBundle(BUNDLE_KEY, INVALID_INVOICING_GROUP_DETAIL_KEY));
+        		String message = AonUtil.addInfoMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.INVALID_INVOICING_GROUP_DETAIL_PARENT_KEY);
+        		throw new ControllerListenerException(message);
         	}
     	} catch (ManagerBeanException e) {
             LOGGER.log(Level.SEVERE, "Error obtaining InvoicingGroupDetail with child=" + registry.getId(), e);
