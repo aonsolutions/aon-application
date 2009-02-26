@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -13,8 +14,8 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_invoice_removing_module}" />
-				<ui:param name="controller" value="#{invoiceRemover}" />
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_invoice_recording_module}" />
+				<ui:param name="controller" value="#{invoiceRecording}" />
 				<ui:param name="skipResetButton" value="true" />
 				
 				<ui:define name="additionalToolbarContent">
@@ -37,20 +38,22 @@
 					<aon:commandButton title="#{bundle.aon_check_all}"
 						styleClass="aon-finding-toolbar-item aon-icon-checkAll"
 						value="#{bundle.aon_check_all}"
+						ajaxSingle="true"
 						actionListener="#{invoiceRecording.checkAll}" reRender="invoiceRecordingDataDiv"
 						onclick="Richfaces.showModalPanel('waitProccess')" 
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
 					<aon:commandButton title="#{bundle.aon_uncheck_all}"
 						styleClass="aon-finding-toolbar-item aon-icon-checkNone"
 						value="#{bundle.aon_uncheck_all}"
+						ajaxSingle="true"
 						actionListener="#{invoiceRecording.checkNone}" reRender="invoiceRecordingDataDiv"
 						onclick="Richfaces.showModalPanel('waitProccess')" 
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 				</aon:div>
 
-				<aon:div id="invoiceRecordingDataDiv" rendered="#{invoiceRecording.model.rowCount > 0}">
+				<aon:div id="invoiceRecordingDataDiv">
 					<aon:dataTable id="invoiceRecordingData" value="#{invoiceRecording.model}"
-						var="to" rows="20"
+						var="to" rows="20" rendered="#{invoiceRecording.model.rowCount > 0}"
 						columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
 							 aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
 
@@ -61,13 +64,25 @@
 							<aon:selectBooleanCheckbox id="Included_Row_checked"
 								value="#{invoiceRecording.rowChecked}"
 								rendered="#{invoiceRecording.modelToRecordable}"/>	
+<aon:div>
+							<aon:outputText value="&#160;"
+								styleClass="aon-icon-errorwarning" style="padding-left:20px; cursor:pointer"
+								rendered="#{!invoiceRecording.modelToRecordable}">
+							</aon:outputText>									
+								<rich:toolTip value="yyy" showEvent="onclick"
+								hideDelay="2000">
+								<f:facet name="defaultContent">
+									<aon:outputText value="xxxxxxxxx" />
+								</f:facet>
+							</rich:toolTip>
+</aon:div>
 						</aon:column>
 	
 						<aon:column>
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
 							</f:facet>
-							<aon:outputText value="#{to.series} / #{to.number}" />
+							<aon:outputText value="#{to.referenceCode}" />
 						</aon:column>
 
 						<aon:column>
