@@ -96,68 +96,57 @@
 				</aon:div>
 				<rich:spacer />
 
- 
-	<!--  	<aon:div id="dato1" styleClass="aon-scroll-area">
-					<aon:panelGrid columns="4" dir="true" width="100%">
-	
-							<aon:outputText
-								value="#{appBundle.aon_payroll_principales_clientes_empresa}" />
+				
+					<rich:tabPanel switchType="ajax" >
 
-							<aon:selectOneMenu layout="pageDirection"
-								>
-								<f:selectItem value="#{null}" itemLabel="    " />
-								<f:selectItems value="#{cliente.listaemp}" />
-							</aon:selectOneMenu>
-
-							<aon:outputText
-								value="#{appBundle.aon_payroll_principales_tipocuenta_actividad}" />
-
-							<aon:selectOneMenu layout="pageDirection"
-							  >
-								<f:selectItem value="#{null}" itemLabel="    " />
-								<f:selectItems value="#{cliente.listaact}" />
-							</aon:selectOneMenu>
-
-					</aon:panelGrid>
-</aon:div>
--->
-
-				<aon:div id="empreDiv">
+					<rich:tab
+						label="Empresas">
+						<aon:div id="empreDiv">
 					<ui:include src="grid.xhtml" rendered="#{!cliente.new}" />
 				</aon:div>
+					</rich:tab>
+	              </rich:tabPanel>
+				
+				
+				<rich:tabPanel switchType="ajax" >
 
-				<aon:div id="actiDiv">
+					<rich:tab
+						label="Actividades">
+						<aon:div id="actiDiv">
 
-					<ui:include src="actividad/grid.xhtml" rendered="#{!cliente.new}" />
-				</aon:div>
-
-
-				<aon:div  id="tabsInfo" >
-					<rich:tabPanel  switchType="ajax" style="tabs">
-					
-						<rich:tab
-							label="#{appBundle.aon_payroll_principales_domicilio_domiasin}" >
-							
-						<aon:div>
-							<ui:include src="domicilio/grid2.xhtml"
-								rendered="#{!cliente.new}" />
-
+							<ui:include src="actividad/grid.xhtml"
+								rendered="#{to==empresa.to}" />
 						</aon:div>
+					</rich:tab>
+	              </rich:tabPanel>
 
-						</rich:tab>
-				  	
+
+					<aon:div id="tabsInfo">
+						<rich:tabPanel switchType="ajax" style="tabs">
+
 							<rich:tab
-							label="#{appBundle.aon_payroll_principales_cuentasasign}" >
+								label="#{appBundle.aon_payroll_principales_domicilio_domiasin}">
 
-						<aon:div id="cuenta">
+								<aon:div>
+									<ui:include src="domicilio/grid2.xhtml"
+										rendered="#{!cliente.new}" />
 
-							<ui:include src="cuenta/grid2.xhtml" rendered="#{!cliente.new}" />
-						</aon:div>
-						</rich:tab>
-						
-					
-					
-				<!--  		
+								</aon:div>
+
+							</rich:tab>
+
+							<rich:tab
+								label="#{appBundle.aon_payroll_principales_cuentasasign}">
+
+								<aon:div id="cuenta">
+
+									<ui:include src="cuenta/grid2.xhtml" rendered="#{!cliente.new}" />
+								</aon:div>
+							</rich:tab>
+
+
+
+							<!--  		
 				
 						
 						<rich:tab
@@ -169,9 +158,9 @@
 							</aon:div>
 						</rich:tab>
 				-->
-					</rich:tabPanel>
+						</rich:tabPanel>
 
-				</aon:div>
+					</aon:div>
 			</aon:div>
 		</aon:form>
 

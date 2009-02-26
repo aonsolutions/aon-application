@@ -22,6 +22,7 @@ import com.code.aon.payroll.enumeration.Retribuciones;
 import com.code.aon.payroll.enumeration.TipoComplemento;
 import com.code.aon.payroll.principales.persona.Trabajador;
 import com.code.aon.payroll.principales.personas.Percep;
+import com.code.aon.payroll.resultados.nomina.Nomina;
 import com.code.aon.ui.form.LinesController;
 
 public class PercepController extends LinesController {
@@ -163,27 +164,6 @@ public void generarNumero(ActionEvent event){
 		((Percep)getTo()).getId().setCdg(((Percep)getTo()).getTrabajador().getCdg());
 		String num = Utils.maxCode("Percep", "id.numero", "id.cdg="+((Percep)getTo()).getId().getCdg());
 		((Percep)getTo()).getId().setNumero(Integer.parseInt(num)+1);
-	}
-	
-
-
-	
-	Integer code ;
- public Integer getCode() throws ManagerBeanException {	
- 	
- 	
-	       	code = 0;		
-			String consulta = "select max cdg from PercepId";			
-			Query q = HibernateUtil.getSession().createQuery(consulta);			
-			List results = q.list();
-			System.out.println("Max Code: " + results.get(0));   
-			code= (Integer)results.get(0) +1;
-			System.out.println("New Code: " + code);
-			return code;		      
-	     				
-		}
- public void setCode(Integer code) {
-		this.code = code;
 	}
 
 

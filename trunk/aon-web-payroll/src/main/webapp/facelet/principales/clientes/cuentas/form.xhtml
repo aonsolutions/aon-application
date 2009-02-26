@@ -73,24 +73,49 @@
 						
 					 <aon:outputLabel for="Cuenta_sucursal" 
 						value="#{appBundle.aon_payroll_principales_cuenta_sucursal}" />
-					<aon:div id="sucursalLookupDiv" styleClass="aon-lookup">
-						<aon:lookupInputText id="Cuenta_suc"
-							lookup="#{sucursalLookup}"
-							reRender="Cuenta_sucdesc"
-							value="#{cuenta.to.sucursal.id.cdg}" size="5">
-						</aon:lookupInputText>
-						<aon:lookupButton id="Cuentasuc_lookup"
-							windowTitle="#{appBundle.aon_payroll_principales_cuenta_sucursal}"
-							selectReRender="Cuenta_suc,Cuenta_sucdesc"
-							lookup="#{sucursalLookup}" minHeight="440"
-							property="#{cuenta.to.sucursal}">
-						</aon:lookupButton>
-						<aon:inputText id="Cuenta_sucdesc"
-							value="#{(cuenta.to.sucursal.id.codent!=null)?(cuenta.to.sucursal.id.codent):('')}"   
-							size="60" disabled="true" />
-					</aon:div>		
-							
-					<aon:outputLabel value="#{appBundle.aon_payroll_principales_cuenta_dc}" />
+						<aon:div id="sucursalLookupDiv" styleClass="aon-lookup">
+							<aon:lookupInputText id="Cuenta_suc" lookup="#{sucursalLookup}"
+								reRender="Cuenta_sucdesc" value="#{cuenta.to.sucursal.id.cdg}"
+								size="5">
+							</aon:lookupInputText>
+							<aon:lookupButton id="Cuentasuc_lookup"
+								windowTitle="#{appBundle.aon_payroll_principales_cuenta_sucursal}"
+								selectReRender="Cuenta_suc,Cuenta_sucdesc"
+								lookup="#{sucursalLookup}" minHeight="440"
+								property="#{cuenta.to.sucursal}">
+							</aon:lookupButton>
+							<aon:inputText id="Cuenta_sucdesc"
+								value="#{(cuenta.to.sucursal.id.codent!=null)?(cuenta.to.sucursal.id.codent):('')}"
+								size="60" disabled="true" />
+						</aon:div>
+						
+						
+							<aon:outputLabel for="entidades"
+							value="#{appBundle.aon_payroll_principales_cuenta_entidad_nom}" />
+						
+						
+						<aon:selectOneMenu id="entidades" value="#{cuenta.entidad.cdg}"
+							reRender="sucursales"
+							valueChangeListener="#{cuenta.refreshSucursales}">
+
+							<f:selectItem value="#{null}" itemLabel="    " />
+							<f:selectItems value="#{calendar.listaEntidades}" />
+						</aon:selectOneMenu>
+
+
+						<aon:outputLabel for="sucursales"
+							value="#{appBundle.aon_payroll_principales_cuenta_sucursal}" />
+
+						<aon:selectOneMenu id="sucursales"
+							value="#{calendar.sucursal.id.cdg}" reRender="dc"
+							valueChangeListener="#{calendar.refreshDc}">
+							<f:selectItem value="#{null}" itemLabel="    " />
+							<f:selectItems value="#{calendar.listaSucursales}" />
+						</aon:selectOneMenu>
+						
+						
+
+						<aon:outputLabel id="dc"  value="#{appBundle.aon_payroll_principales_cuenta_dc}" />
 					<aon:inputText value="#{cuenta.to.dc}" 
 						 size="50" maxlength="20" />
 			  		

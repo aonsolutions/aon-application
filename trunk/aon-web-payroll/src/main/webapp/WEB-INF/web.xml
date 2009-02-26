@@ -102,8 +102,8 @@
 	</context-param>
 
 	<context-param>
-		<param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
-		<param-value>richFaces3.2.1/</param-value>
+		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
+		<param-value>richFaces3.3.0/</param-value>
 	</context-param>
 	<context-param>
 		<param-name>org.richfaces.SKIN</param-name>

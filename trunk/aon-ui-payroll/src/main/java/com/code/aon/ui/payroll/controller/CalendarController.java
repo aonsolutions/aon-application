@@ -1,18 +1,23 @@
 package com.code.aon.ui.payroll.controller;
 
+
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
+
 import javax.faces.component.UIComponent;
 import javax.faces.component.html.HtmlOutputText;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ArrayDataModel;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
@@ -21,15 +26,22 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.payroll.auxiliares.convenios.calendar.Calendario;
-import com.code.aon.payroll.avanzadas.hojastrabajo.Httrabajador;
+import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.Tipdia;
+import com.code.aon.payroll.enumeration.Tipdom;
 import com.code.aon.payroll.principales.Domicilio;
 import com.code.aon.payroll.principales.empresa.Actividad;
+import com.code.aon.payroll.principales.empresa.Emprdom;
 import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.util.AonUtil;
 
 public class CalendarController extends LinesController implements
 		IPayrollConstants {
@@ -51,28 +63,57 @@ public class CalendarController extends LinesController implements
 	private Integer numNolabo = 0;
 	private Integer numOtros = 0;
 	private Integer numLaborables = 0;
-    
-	public void load(ActionEvent event) throws ManagerBeanException {
+	private Integer codempresa;
+	private Integer codactividad;
+	private Integer codcentro;
+	private List<SelectItem> empresas;
+	private List<SelectItem> actividades;
+	private List<SelectItem> domicilios;
 	
+	
+	public void load(ActionEvent event) throws ManagerBeanException {
+	  
+		
+		codempresa =null;
+		codactividad=null;
+		codcentro= null;
+		empresas=null;
+		domicilios=null;
 		numFestivos = 0;
 		numNolabo = 0;
 		numOtros = 0;
 		numLaborables = 0;
 		yearModel = null;
 		dias = null;
+		int[] huecos = {0,0,0,0,0,0,0,0,0,0,0,0};
 		Calendar now = new GregorianCalendar(actual, 0, 1);
 		Integer dia = now.get(Calendar.DAY_OF_MONTH);
 		Integer mes = now.get(Calendar.MONTH);
 	
+		int ji=0;	
+	
+	
+	
+	while( ji<=11)
+	{
+		Calendar a= new GregorianCalendar(actual, ji, 1);
+		huecos[ji]= a.get(Calendar.DAY_OF_WEEK);
+		ji++;
+	}
+		
+		
 		if (dias == null) {
 			dias = new ArrayList<MyCalendario>();
 			j = 0;
-			for (int i = 0; i < 40; i++) {
+			for (int i = 0; i < 38; i++) {
 
 				MyCalendario d = new MyCalendario();
 				d.setCdg(i);
 				d.setDiasem(diasem[j]);
 				dias.add(d);
+				if (diasem[j]=="S" || diasem[j]=="D"){
+					d.setFinde(true);
+				}				
 				j++;
 				if (j == 7) {
 					j = 0;
@@ -112,20 +153,21 @@ public class CalendarController extends LinesController implements
 
 				if (j == 0) {
 
-					int dayOfWeek = 0;
-					dayOfWeek = now.get(Calendar.DAY_OF_WEEK) - 1;
+					
+					
+				
+						if (huecos[mes] == 1) {						
+							huecos[mes] = 8;
+						}
+						
+						
+						listBlanks[mes] = huecos[mes] - 2;
+						
 
-					if (dayOfWeek == 6) {
-						dayOfWeek = 6;
-
-					}
-					if (dayOfWeek == 0) {
-						dayOfWeek = 7;
-
-					}
-					System.out.println(dayOfWeek - 1);
-					listBlanks[mes] = dayOfWeek - 1;
-					for (int i = 1; i < dayOfWeek; i++) { // Mete
+			
+			
+					listBlanks[mes] = huecos[mes] - 2;
+					for (int i = 1; i <  huecos[mes]-1; i++) { // Mete blankos antes del primer dia de mes
 
 						MyCalendario d = new MyCalendario();
 						d.setCdg(null);
@@ -150,23 +192,23 @@ public class CalendarController extends LinesController implements
 				d.setActividad(null);
 				d.setDomicilio(null);
 
-				int dayOfWeek = 0;
-				dayOfWeek = now.get(Calendar.DAY_OF_WEEK) - 1;
+		/*	    int dayOfWeek = 0;
+				dayOfWeek = now.get(Calendar.DAY_OF_WEEK);
 
-				if (dayOfWeek == 6) {
+				if (dayOfWeek == 7) {
 					d.setTipdia(Tipdia.TIP5);
 
 				}
-				if (dayOfWeek == 0) {
+				if (dayOfWeek == 1) {
 					d.setTipdia(Tipdia.TIP5);
 				}
-
+*/
 				m.addDia(d);
 				dia++;
 				now.add(Calendar.DAY_OF_MONTH, 1);
 
 			}
-			now.add(Calendar.MONTH, 1);
+			now.add(Calendar.MONTH, 1);			
 			mes++; // va al siguiente mes
 			dia = 1; // se coloca en el primer dia del mes
 			j = 0; // inicializa variable para meter Blanks al principo del mes
@@ -175,6 +217,9 @@ public class CalendarController extends LinesController implements
 							// empresas,actividades y centros de trabajo
 	}
 
+
+	
+	
 	int row1;
 	int column1;
 	int j = 0;
@@ -189,7 +234,7 @@ public class CalendarController extends LinesController implements
 		int row = mes.getCdg();
 		int col = idx;
 		if (row == row1 && col == column1) {
-
+			
 			if (j == 1) {
 				cal.setTipdia(Tipdia.TIP2);
 				j = 2;
@@ -204,13 +249,21 @@ public class CalendarController extends LinesController implements
 				j = 1;
 			}
 
+		} else if (cal.getTipdia() == Tipdia.TIP1) {
+			cal.setTipdia(Tipdia.TIP2);
+			row1 = row;
+			column1 = col;
+			j = 2;
 		} else {
+
 			row1 = row;
 			column1 = col;
 			cal.setTipdia(Tipdia.TIP1);
 			j = 1;
 			;
 		}
+		
+		countDays();
 		System.out.println(mes.getCdg());
 		System.out.println(idx);
 	}
@@ -266,9 +319,9 @@ public class CalendarController extends LinesController implements
 
 		Criteria criteria = new Criteria();
 
-		criteria.addEqualExpression(emp, empresa.getCdg());
-		criteria.addEqualExpression(act, actividad.getCdg());
-		criteria.addEqualExpression(dom, domicilio.getCdg());
+		criteria.addEqualExpression(emp,codempresa);
+		criteria.addEqualExpression(act,codactividad);
+		criteria.addEqualExpression(dom,codcentro);
 		criteria.addBetweenExpression(fec, ini, fin);
 
 		selectlist = bean.getList(criteria);
@@ -300,6 +353,27 @@ public class CalendarController extends LinesController implements
 		return selectDefaultList;
 	}
 
+	public void clearYear() throws ManagerBeanException {
+		int dia = 1;
+		int mes = 0;
+		
+			while (mes < year.getListaMeses().size()) {
+
+			while (dia < year.getListaMeses().get(mes).getlistaDias().size()) {
+
+				year.getListaMeses().get(mes).getlistaDias().get(dia)
+						.setTipdia(Tipdia.TIP4);
+
+				dia++;
+			}
+			dia = 1;
+			mes++;
+
+		}
+			loadDefaultDays();
+	}
+			
+			
 	public void loadDefaultDays() throws ManagerBeanException {
 		int dia = 1;
 		int mes = 0;
@@ -317,6 +391,7 @@ public class CalendarController extends LinesController implements
 
 					if (c.getFeccal().equals(year.getListaMeses().get(mes).getlistaDias().get(dia).getFeccal()))
 					{year.getListaMeses().get(mes).getlistaDias().get(dia).setTipdia(c.updateDay(c.getTipdia().getValue()));
+					
 					}
 				}
 				
@@ -342,7 +417,8 @@ public class CalendarController extends LinesController implements
 		numNolabo = 0;
 		numOtros = 0;
 		numLaborables = 0;
-		
+		clearYear();
+	
 		getSpecialDays();
 
 
@@ -392,45 +468,75 @@ public class CalendarController extends LinesController implements
 		numNolabo = 0;
 		numOtros = 0;
 		numLaborables = 0;
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			try {  HibernateUtil.setBeginTransaction(false);
+			       HibernateUtil.setCloseSession(false);
+			       HibernateUtil.beginTransaction(sessionName);
+								
+			       while (mes < year.getListaMeses().size()) {
 
-		while (mes < year.getListaMeses().size()) {
+						while (dia < year.getListaMeses().get(mes).getlistaDias().size())
 
-			while (dia < year.getListaMeses().get(mes).getlistaDias().size())
+						{
+							if ((year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia()== Tipdia.TIP1)
+								|| (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia()== Tipdia.TIP2)
+									|| (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia()== Tipdia.TIP3))
 
-			{
-				if ((year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia()== Tipdia.TIP1)
-					|| (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia()== Tipdia.TIP2)
-						|| (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia()== Tipdia.TIP3))
-
-				{
-				 
-                 IManagerBean calendario= BeanManager.getManagerBean(Calendario.class);
-                 ITransferObject to = null;
-                 Calendario  cal=new Calendario();
-                 Integer cdg  = Integer.parseInt(Utils.maxCode("Calendario", "cdg")) + 1;
-                 cal.setCdg(cdg);
-                 cal.setEmpresa(getEmpresa().getCdg());
-                 cal.setActividad(getActividad().getCdg());
-                 cal.setDomicilio(getDomicilio().getCdg());
-                 cal.setTipdia(year.getListaMeses().get(mes).getDays()[dia].getTipdia());
-                 cal.setFeccal(year.getListaMeses().get(mes).getDays()[dia].getFeccal());
-                 
-                 calendario.insertOrUpdate(cal);
-                               
-				}
-				else if (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia()== Tipdia.TIP4){
-					
-					
-				}				
-			
+							{
+							 
+			                 IManagerBean calendario= BeanManager.getManagerBean(Calendario.class);
+			                 ITransferObject to = null;
+			                 Calendario  cal=new Calendario();
+			                 Integer cdg  = Integer.parseInt(Utils.maxCode("Calendario", "cdg")) + 1;
+			                 cal.setCdg(cdg);
+			                 cal.setEmpresa(codempresa);
+			                 cal.setActividad(codactividad);
+			                 cal.setDomicilio(codcentro);
+			                 cal.setTipdia(year.getListaMeses().get(mes).getDays()[dia].getTipdia());
+			                 cal.setFeccal(year.getListaMeses().get(mes).getDays()[dia].getFeccal());
+			                 
+			                 calendario.insertOrUpdate(cal);
+			                               
+							}
+							else if (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia()== Tipdia.TIP4){
+								
+								
+							}				
+						
+							
+							dia++;
+						}
+						dia = 1;
+						mes++;
+					}
+					countDays(); //Cuenta los dias de cada tipo
 				
-				dia++;
+					HibernateUtil.getSession(sessionName).flush();
+					HibernateUtil.commitTransaction(sessionName);
+				} catch (Exception e) {
+					try {
+						HibernateUtil.rollbackTransaction(sessionName);
+					} catch (DAOException daoe) {
+						String msg = "Unable to rollback transaction!";
+						//Logger.log(Level.SEVERE, msg, e);
+					}
+					String msg = "Error al guardar el Calendario:  " + e.getMessage() ;
+					//LOGGER.log(Level.SEVERE, msg, e);
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				} finally {
+					HibernateUtil.closeSession(sessionName);
+				}
+			} finally {
+				HibernateUtil.setCloseSession(mustCloseSession);
+				HibernateUtil.setBeginTransaction(mustBeginTransaction);
 			}
-			dia = 1;
-			mes++;
 		}
-		countDays(); //Cuenta los dias de cada tipo
-	}
+		
+	
 	
 	
 	public void countDays(){
@@ -447,14 +553,14 @@ public class CalendarController extends LinesController implements
 
 			{
 		
-		if (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia() == Tipdia.TIP1) {
-			setNumFestivos();
-		} else if (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia() == Tipdia.TIP2) {
-			setNumNolabo();
-		} else if (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia() == Tipdia.TIP3) {
-			setNumOtros();
-		} else if (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia() == Tipdia.TIP4) {
-			setNumLaborables();
+		         if (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia() == Tipdia.TIP1) {
+		          	setNumFestivos();
+		          } else if (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia() == Tipdia.TIP2) {
+		        	setNumNolabo();
+		           } else if (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia() == Tipdia.TIP3) {
+		        	setNumOtros();
+		          } else if (year.getListaMeses().get(mes).getlistaDias().get(dia).getTipdia() == Tipdia.TIP4) {
+		           setNumLaborables();
 		}	
 		dia++;
 	     }
@@ -631,19 +737,49 @@ public class CalendarController extends LinesController implements
 	public class MyCalendario extends Calendario {
 
 		private String diasem;
+        private boolean finde;
+        
+        
+		public boolean getFinde() {
+			return finde;
+		}
 
+		public void setFinde(boolean finde) {
+			this.finde = finde;
+		}
+
+		public String getWeekend() {
+			
+			  String color;
+	          color= "#000000"; 
+	      
+	          
+			if (getFinde() == true) {
+				color= "#00C957";					
+			if (   getTipdia()==Tipdia.TIP1 ||getTipdia()==Tipdia.TIP2 || getTipdia()==Tipdia.TIP3) {
+				color= "#FFFFFF";
+			}
+			
+			
+			}
+			
+			return color;
+			
+		}
+		
+		
 		public String getColor() {
 			if (getTipdia() == Tipdia.TIP1) {
-				return "#CC3333";
+				return "#FF8247";
 			}
 			if (getTipdia() == Tipdia.TIP2) {
-				return "#99CC66";
+				return "#EEC900";
 			}
 			if (getTipdia() == Tipdia.TIP3) {
-				return "#0099FF";
+				return "#5CACEE";
 			}
 			if (getTipdia() == Tipdia.TIP5) {
-				return "#99CCFF";
+				return "#A2CD5A";
 			}
 			if (getTipdia() == Tipdia.TIP4) {
 				return "white";
@@ -694,4 +830,135 @@ public class CalendarController extends LinesController implements
 		this.numLaborables++;
 	}
 
+	
+  
+    
+    
+  
+	public List<SelectItem> getListaemp() throws ManagerBeanException  {
+		if(empresas==null){
+			
+		empresas = new LinkedList<SelectItem>();
+		EmpresaController controller = (EmpresaController)FormUtil.getController(IPayrollConstants.EMPRESA_CONTROLLER_NAME);
+		List<ITransferObject> empresa  =  controller.getManagerBean().getList(controller.getCriteria());
+		for (ITransferObject to: empresa) {
+			Empresa e = (Empresa) to;	
+			SelectItem item = new SelectItem(e.getCdg(),""+e.getCdg()+" "+e.getDescripcion());
+			empresas.add(item);
+		}
+		}
+		
+		return empresas;
+	}	
+	
+	
+	public void refreshListaAct(ValueChangeEvent event) throws ManagerBeanException  {
+		clearYear();
+		Integer newCodEmpresa = (Integer) event.getNewValue();	
+		codempresa=newCodEmpresa;
+		if (newCodEmpresa != null) {
+			IManagerBean bean = BeanManager.getManagerBean(Actividad.class);
+			String emp = bean.getFieldName(IPayrollAlias.ACTIVIDAD_EMPRESA_CDG);
+			Criteria cri1 = new Criteria();
+			cri1.addEqualExpression(emp, newCodEmpresa);
+			List<ITransferObject> filtroact;
+			filtroact = bean.getList(cri1);
+			actividades.clear();
+			domicilios.clear();
+			for (ITransferObject to : filtroact) {
+				Actividad a = (Actividad) to;
+				SelectItem item = new SelectItem(a.getCdg(),""+a.getCdg()+": "+a.getDescripcion());
+				actividades.add(item);
+			}
+		
+		}        
+	}
+	
+	public void refreshListaDom(ValueChangeEvent event) throws ManagerBeanException  {
+		clearYear();
+		Integer newCodActividad = (Integer) event.getNewValue();
+		codactividad= newCodActividad;
+		if (newCodActividad != null) {
+
+			IManagerBean bean = BeanManager.getManagerBean(Emprdom.class);
+
+			String act = bean.getFieldName(IPayrollAlias.EMPRDOM_ACTIVIDAD_CDG);
+			String tipdom = bean.getFieldName(IPayrollAlias.EMPRDOM_TIPDOM);
+
+			Criteria cri1 = new Criteria();
+			cri1.addEqualExpression(act, newCodActividad);
+			cri1.addEqualExpression(tipdom, Tipdom.CENTROSTRABAJO);
+
+			List<ITransferObject> filtroact;
+			filtroact = bean.getList(cri1);
+			domicilios.clear();
+			for (ITransferObject to : filtroact) {
+				Emprdom a = (Emprdom) to;
+				SelectItem item = new SelectItem(a.getDomicilio().getCdg()," "+a.getDomicilio().getCdg()+" "+a.getDomicilio().getNomvia());
+				domicilios.add(item);
+			}
+
+			
+		}
+	}
+
+	public void refreshDomicilios(ValueChangeEvent event) throws ManagerBeanException  {
+		Integer newCodCentro = (Integer) event.getNewValue();
+		codcentro= newCodCentro;
+		clearYear();
+		
+	}
+	
+	public Integer getCodempresa() {
+		return codempresa;
+	}
+
+	public void setCodempresa(Integer codempresa) {		
+		this.codempresa = codempresa;
+			
+	}
+
+	public Integer getCodactividad() {
+		return codactividad;
+	}
+
+	public void setCodactividad(Integer codactividad) {
+		this.codactividad = codactividad;
+	}
+
+	public Integer getCodcentro() {
+		return codcentro;
+	}
+
+	public void setCodcentro(Integer codcentro) {
+		this.codcentro = codcentro;
+	}
+
+	public List<SelectItem> getActividades() {
+		
+		if(actividades==null){						
+			actividades = new LinkedList<SelectItem>();
+			actividades.add( new SelectItem( IPayrollConstants.EMPTY_STRING, IPayrollConstants.EMPTY_STRING ) );		
+		}
+			
+		return actividades;
+	}
+
+	public void setActividades(List<SelectItem> actividades) {
+		this.actividades = actividades;
+	}
+
+	public List<SelectItem> getDomicilios() {
+		if(domicilios==null){						
+			domicilios = new LinkedList<SelectItem>();
+			domicilios.add( new SelectItem( IPayrollConstants.EMPTY_STRING, IPayrollConstants.EMPTY_STRING ) );		
+		}
+			
+		return domicilios;
+	}
+
+	public void setDomicilios(List<SelectItem> domicilios) {
+		this.domicilios = domicilios;
+	}
+		
 }

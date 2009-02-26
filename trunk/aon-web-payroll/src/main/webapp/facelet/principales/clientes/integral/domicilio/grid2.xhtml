@@ -33,7 +33,7 @@
 				
 				<f:facet name="footer">
 
-					<aon:commandButton alt="[#{bundle.aon_reset}]"
+					<aon:commandButton alt="[#{bundle.aon_reset}]" 
 						styleClass="aon-editDataTable-button aon-icon-reset"
 						actionListener="#{tipdomicilio.onReset}" />
 
@@ -98,7 +98,7 @@
 				</f:facet>
 
 				<aon:outputText
-					value="#{to.cliente.persona}t: #{to.cliente.telefono} f.#{to.cliente.fax} #{to.cliente.email} "
+					value="#{to.cliente.persona}t: #{to.cliente.telefono} f:#{to.cliente.fax} #{to.cliente.email} "
 					disabled="true" size="50" maxlength="20" />
 
 				<f:facet name="footer">
@@ -162,12 +162,12 @@
 					action="integral_form" actionListener="#{tipdomicilio.onAccept}" />
 			
 
-				<!--  	<aon:commandButton id="cancel-tipdomi"
+			  	<aon:commandButton id="cancel-tipdomi"
 						title="[#{bundle.aon_cancel}]"
 						styleClass="aon-editDataTable-button aon-icon-cancel"
 						rendered="#{tipdomicilio.new}"						
 						actionListener="#{tipdomicilio.onCancel}" immediate="true"
-						accesskey="#{bundle.aon_key_cancel_line}" />-->
+						accesskey="#{bundle.aon_key_cancel_line}" />
   </aon:div>
 				</f:facet>
 			</aon:column>

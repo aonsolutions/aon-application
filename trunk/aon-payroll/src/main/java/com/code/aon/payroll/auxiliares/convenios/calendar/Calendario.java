@@ -33,9 +33,6 @@ public class Calendario implements ITransferObject {
 	private Integer cdg;
 	private Date feccal;
 	private Tipdia tipdia;
-	//private Empresa empresa;
-	//private Actividad actividad;
-	//private Domicilio domicilio;	
 	private Integer empresa;
 	private Integer actividad;
 	private Integer domicilio;
