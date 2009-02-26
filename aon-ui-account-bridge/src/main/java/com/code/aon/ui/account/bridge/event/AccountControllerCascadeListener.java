@@ -1,10 +1,12 @@
 package com.code.aon.ui.account.bridge.event;
 
 import java.util.Iterator;
+import java.util.List;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.CreditorAccount;
 import com.code.aon.account.bridge.CustomerAccount;
+import com.code.aon.account.bridge.ProductAccount;
 import com.code.aon.account.bridge.RegistryBankAccount;
 import com.code.aon.account.bridge.SupplierAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
@@ -89,6 +91,14 @@ public class AccountControllerCascadeListener extends ControllerAdapter {
 			}else if(prefix.equals(AccountConstants.CREDITOR_ACCOUNT_PREFIX)){
 				IManagerBean creditorAccountBean = BeanManager.getManagerBean(CreditorAccount.class);
 				deleteLink(creditorAccountBean, IAccountBridgeAlias.CREDITOR_ACCOUNT_ACCOUNT_ID, account.getId());
+			} 
+			IManagerBean productAccountBean = BeanManager.getManagerBean(ProductAccount.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_ACCOUNT_ID), account.getId());
+			List<?> list = productAccountBean.getList(criteria);
+			Iterator<?> iter = list.iterator();
+			while (iter.hasNext()) {
+				productAccountBean.remove( (ITransferObject) iter.next() );
 			}
 		}
 	}

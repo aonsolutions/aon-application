@@ -67,4 +67,9 @@ public class BasicAccountListener extends ControllerAdapter {
 		}
 	}
 
+	@Override
+	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		setAccount( null );
+	}
+	
 }
