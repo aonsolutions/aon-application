@@ -42,7 +42,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
 
-public class ActividadController extends LinesController {
+public class EmpreactController extends PayrollBasicController {
 
 	private List<SelectItem> listaenvioss;
 	private List<SelectItem> listamodpago;

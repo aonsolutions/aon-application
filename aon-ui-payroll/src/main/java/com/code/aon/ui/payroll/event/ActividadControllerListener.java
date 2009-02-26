@@ -19,10 +19,17 @@ public class ActividadControllerListener extends ControllerAdapter implements
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
 		
-		((ActividadController)getController()).generateCdg();
-	}
+((ActividadController)getController()).generateCdg();
+	}		
 
+@Override
+public void beforeBeanAdded(ControllerEvent event)
+		throws ControllerListenerException {
+	
+	
+	((ActividadController)getController()).generateCdg();
 
+}
 	
 	@Override
 	public void afterModelInitialized(ControllerEvent event)
