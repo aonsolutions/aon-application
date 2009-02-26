@@ -94,7 +94,7 @@
 							</aon:selectOneMenu>
 							<aon:div style="display:inline; margin-left: 5px;">
 								<aon:selectOneMenu id="Account_invoiceTransactionType"
-									disabled="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}"
+									disabled="#{invoiceEntry.newDetail}"
 									value="#{invoiceEntry.header.transaction}">
 									<f:selectItems
 										value="#{financeCollections.invoiceTransactionTypes}" />
@@ -102,7 +102,7 @@
 							</aon:div>
 							<aon:div style="display:inline; margin-left: 5px;">
 								<aon:selectBooleanCheckbox id="Account_investment"
-									disabled="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}"
+									disabled="#{invoiceEntry.newDetail}"
 									rendered="#{invoiceEntry.purchase}"
 									value="#{invoiceEntry.header.investment}" />
 								<aon:outputLabel for="Account_investment"
@@ -112,29 +112,32 @@
 						</aon:div>
 
 						<aon:outputLabel for="Account_invoice_series"
+							rendered="#{invoiceEntry.sales}"
 							value="#{bundle.aon_series}/#{bundle.aon_number}" />
+						<aon:outputLabel for="Account_invoice_referenceCode"
+							rendered="#{!invoiceEntry.sales}"  
+							value="#{accountingBundle.accounting_referenceCode}" />
 						<aon:div>
 							<aon:selectOneMenu id="Account_invoice_series"
 								rendered="#{invoiceEntry.sales}"
-								disabled="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}"
+								disabled="#{invoiceEntry.newDetail}"
 								valueChangeListener="onSeriesChanged"
 								reRender="Account_invoice_number"
 								value="#{invoiceEntry.header.series}">
 								<f:selectItem itemValue="" itemLabel=" " />
 								<f:selectItems value="#{configCollections.seriesIds}" />
 							</aon:selectOneMenu>
-
 							<aon:inputText id="Account_invoice_number"
 								style="margin-left: 5px; margin-bottom: 2px;"
 								rendered="#{invoiceEntry.sales}" required="true"
-								disabled="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}"
+								disabled="#{invoiceEntry.newDetail}"
 								value="#{invoiceEntry.header.number}" size="7" maxlength="7">
 								<f:validateLength maximum="7" />
 							</aon:inputText>
 
 							<aon:inputText id="Account_invoice_referenceCode"
 								rendered="#{!invoiceEntry.sales}" required="true"
-								disabled="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}"
+								disabled="#{invoiceEntry.newDetail}"
 								value="#{invoiceEntry.header.referenceCode}" size="25"
 								maxlength="32" onblur="toUpperCase(this);">
 								<f:validateLength maximum="32" />
@@ -143,7 +146,7 @@
 
 						<aon:outputLabel for="Account_date" value="#{bundle.aon_date}" />
 						<aon:selectInputDate size="8" id="Account_date"
-							disabled="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}"
+							disabled="#{invoiceEntry.newDetail}"
 							value="#{invoiceEntry.header.date}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}" />
@@ -152,7 +155,7 @@
 							value="#{bundle.aon_security_level}" />
 						<aon:selectOneRadio id="AccountEntry_securityLevel"
 							style="display:inline;"
-							disabled="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}"
+							disabled="#{invoiceEntry.newDetail}"
 							value="#{invoiceEntry.header.securityLevel}">
 							<f:selectItems value="#{commonCollections.securityLevels}" />
 						</aon:selectOneRadio>
@@ -180,7 +183,8 @@
 										minWidth="650" property="#{invoiceEntry.header.registry}"
 										lookupProperty="registry">
 									</aon:lookupButton>
-									<aon:inputText id="Customer_name" 
+									<aon:inputText id="Customer_name"
+										disabled="#{invoiceEntry.newDetail}" 
 										value="#{invoiceEntry.header.name}" 
 										size="50" />
 								</a4j:region>
@@ -201,7 +205,8 @@
 										minWidth="650" property="#{invoiceEntry.header.registry}"
 										lookupProperty="registry">
 									</aon:lookupButton>
-									<aon:inputText id="Supplier_name" 
+									<aon:inputText id="Supplier_name"
+										disabled="#{invoiceEntry.newDetail}" 
 										value="#{invoiceEntry.header.name}" 
 										size="50"/>
 								</a4j:region>
@@ -223,7 +228,8 @@
 										lookupProperty="registry">
 									</aon:lookupButton>
 									<aon:inputText id="Creditor_name" 
-										value="#{invoiceEntry.header.name}" 
+										value="#{invoiceEntry.header.name}"
+										disabled="#{invoiceEntry.newDetail}" 
 										size="50"/>
 								</a4j:region>
 							</aon:panelGroup>
@@ -233,7 +239,7 @@
 							value="#{bundle.aon_company_document}" />
 						<aon:inputText id="Invoice_document"
 							value="#{invoiceEntry.header.document}" size="10"
-							disabled="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}">
+							disabled="#{invoiceEntry.newDetail}">
 						</aon:inputText>
 
 						<aon:outputLabel for="accountId"
@@ -246,7 +252,7 @@
 							<ui:param name="renderDescription" value="#{true}" />
 							<ui:param name="renderedAttr" value="#{true}" />
 							<ui:param name="disabled"
-								value="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}" />
+								value="#{invoiceEntry.newDetail}" />
 							<ui:param name="reRenderAttr" value="none" />
 							<ui:param name="required" value="false" />
 							<ui:param name="entity" value="#{invoiceEntry.header.account}" />

@@ -80,4 +80,11 @@ public class AccountAppParamsController{
 			}
 		}
 	}
+	
+	public ApplicationParameter getParameter(String key) throws ManagerBeanException {
+		if (parameters == null || parameters.isEmpty()) {
+			loadParameters();	
+		}
+		return parameters.get(key); 		
+	}
 }

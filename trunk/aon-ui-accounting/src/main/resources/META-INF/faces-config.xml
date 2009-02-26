@@ -472,6 +472,18 @@
 					<key>ACC_DEFAULT_FINAN_EXPENSES_ACC</key>
 					<value>669</value>
 				</map-entry>
+				<map-entry>
+					<key>ACC_DEFAULT_VAT_PERCENT</key>
+					<value></value>
+				</map-entry>
+				<map-entry>
+					<key>ACC_DEFAULT_RETENTION_PERCENT</key>
+					<value></value>
+				</map-entry>
+				<map-entry>
+					<key>ACC_DEFAULT_INVOICE_SERIES</key>
+					<value></value>
+				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>
