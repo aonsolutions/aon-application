@@ -64,18 +64,12 @@
 							<aon:selectBooleanCheckbox id="Included_Row_checked"
 								value="#{invoiceRecording.rowChecked}"
 								rendered="#{invoiceRecording.modelToRecordable}"/>	
-<aon:div>
-							<aon:outputText value="&#160;"
-								styleClass="aon-icon-errorwarning" style="padding-left:20px; cursor:pointer"
-								rendered="#{!invoiceRecording.modelToRecordable}">
-							</aon:outputText>									
-								<rich:toolTip value="yyy" showEvent="onclick"
-								hideDelay="2000">
-								<f:facet name="defaultContent">
-									<aon:outputText value="xxxxxxxxx" />
-								</f:facet>
-							</rich:toolTip>
-</aon:div>
+							<aon:div style="display:inline;cursor:pointer;">
+								<aon:outputText value="&#160;"
+									styleClass="aon-icon-errorwarning" style="padding-left:20px"
+									rendered="#{!invoiceRecording.modelToRecordable}" />
+								<rich:toolTip value="#{financeBundle.finance_unable_record_inaccuracy_error}" />
+							</aon:div>
 						</aon:column>
 	
 						<aon:column>
