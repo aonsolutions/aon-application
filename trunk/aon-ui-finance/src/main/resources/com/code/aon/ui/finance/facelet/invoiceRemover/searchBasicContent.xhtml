@@ -5,7 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />	
+	<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
 
 	<aon:outputLabel for="Customer_id"
 		value="#{customerBundle.customer_customer}" />
@@ -28,14 +28,14 @@
 		<aon:outputLabel for="Invoice_issueDate-From"
 			styleClass="aon-form-date-label" value="#{bundle.aon_date_from}:" />
 		<aon:selectInputDate id="Invoice_issueDate-From"
-			valueChangeListener="#{finance.addGreaterThanOrEqualExpression}"
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}" />
 
 		<aon:outputLabel for="Invoice_issueDate-To"
 			styleClass="aon-form-date-label" value="#{bundle.aon_date_to}:" />
 		<aon:selectInputDate id="Invoice_issueDate-To"
-			valueChangeListener="#{finance.addLessThanOrEqualExpression}"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}" />
 	</aon:div>
@@ -44,7 +44,7 @@
 		value="#{bundle.aon_security_level}" />
 	<aon:selectOneMenu id="Invoice_securityLevel"
 		converter="aon.EnumConverter"
-		valueChangeListener="#{invoiceRemover.addEqualExpression}">
+		valueChangeListener="#{controller.addEqualExpression}">
 		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{commonCollections.securityLevels}" />
 	</aon:selectOneMenu>
