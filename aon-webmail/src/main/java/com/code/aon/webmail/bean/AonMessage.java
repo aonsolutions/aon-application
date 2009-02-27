@@ -2,8 +2,6 @@ package com.code.aon.webmail.bean;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -208,8 +206,7 @@ public class AonMessage implements IMimeType, BundleConstants {
 	 */
 	public String getSubject() throws WebmailException {
 		try {
-			String subject = message.getSubject();
-			return AonMessageUtils.decodeText(subject);
+			return message.getSubject();
 		} catch (MessagingException e) {
 			LOGGER.log(Level.SEVERE, "Error getting message subject", e);
 			throw new WebmailException(e);
