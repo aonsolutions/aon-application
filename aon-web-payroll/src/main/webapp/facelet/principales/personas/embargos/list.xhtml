@@ -13,23 +13,23 @@
 
 	<ui:define name="content">
 
-		<aon:form id="embargoList">
+		<aon:form id="embargoBasicList">
 			
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_clientes}" />
-				<ui:param name="controller" value="#{embargo}"/>
+				<ui:param name="controller" value="#{embargoBasic}"/>
 				<ui:param name="skipBackButton" value="false" />
-				<aon:methodParam name="cancelAction" value="embargo_form"/>	
+				<aon:methodParam name="cancelAction" value="embargoBasic_form"/>	
 			</ui:include>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="embargoData" value="#{embargo.model}" var="to" rows="20" 
+				<aon:dataTable id="embargoBasicData" value="#{embargoBasic.model}" var="to" rows="20" 
 					columnClasses="aon-editDataTable-textColumn, 
 					aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
-					<aon:rowSelector action="embargo_form" actionListener="#{embargo.onSelect}" />
+					<aon:rowSelector action="embargoBasic_form" actionListener="#{embargoBasic.onSelect}" />
 					
  					<aon:column>
 						<f:facet name="header">
@@ -57,7 +57,7 @@
 
  				</aon:dataTable>
 
-				<aon:dataScroller2 for="embargoData"  showNote="true" />
+				<aon:dataScroller2 for="embargoBasicData"  showNote="true" />
 
 			</aon:div>
 		</aon:form>

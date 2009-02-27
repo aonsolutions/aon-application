@@ -68,7 +68,7 @@ public class TrabajadorControllerListener extends ControllerAdapter implements
 		controllers.add((LinesController) FormUtil.getController(IPayrollConstants.BONIFICA_CONTROLLER_NAME));
 		controllers.add((LinesController) FormUtil.getController(IPayrollConstants.PERCEP_CONTROLLER_NAME));
 		controllers.add((LinesController) FormUtil.getController(IPayrollConstants.TRABDTO_CONTROLLER_NAME));
-		controllers.add((LinesController) FormUtil.getController(IPayrollConstants.EMBARGO_CONTROLLER_NAME));
+		controllers.add((LinesController) FormUtil.getController(IPayrollConstants.EMBARGO_LINES_CONTROLLER_NAME));
 		controllers.add((LinesController) FormUtil.getController(IPayrollConstants.PARTEIT_CONTROLLER_NAME));
 		controllers.add((LinesController) FormUtil.getController(IPayrollConstants.TRABINCI_CONTROLLER_NAME));
 		controllers.add((LinesController) FormUtil.getController(IPayrollConstants.NOMINAIT_CONTROLLER_NAME));
