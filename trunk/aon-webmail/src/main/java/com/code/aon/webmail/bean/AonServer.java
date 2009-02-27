@@ -111,6 +111,7 @@ public class AonServer {
 
         // mailProperties.setProperty("mail.debug", "true");
         // setup SSL connection factory
+        mailProperties.setProperty( "mail.mime.decodetext.strict", "false" );
         if (account.isIncomingSsl()) {
             mailProperties.setProperty("mail.imap.socketFactory.class",
                     "javax.net.ssl.SSLSocketFactory");
