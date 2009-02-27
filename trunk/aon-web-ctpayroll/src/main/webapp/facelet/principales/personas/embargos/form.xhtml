@@ -15,12 +15,12 @@
 
 				<aon:form id="embargoForm">
 
-					<ui:include	src="/facelet/templates/formPrintToolbar.xhtml">
+					<ui:include	src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 						<ui:param name="toolbarTitle" value="#{menuBundle.principales_personas__embargo}" />
-						<ui:param name="controller" value="#{embargo}" />
+						<ui:param name="controller" value="#{embargoBasic}" />
 					</ui:include>
 
-					<aon:div id="embargo" styleClass="aon-scroll-area aon-scroll-area-clientes">
+					<aon:div id="embargoBasic" styleClass="aon-scroll-area aon-scroll-area-clientes">
 					
 						<aon:panel>
 							<f:facet name="header">
@@ -28,21 +28,16 @@
 									value="#{appBundle.aon_payroll_pricipales_personas_embargos_persona}" />
 							</f:facet>
 							<aon:div>
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_cdg}: " />
-							<aon:outputText	value="#{embargo.to.codper}" size="10" rendered="#{!embargo.new}" />
-							<aon:inputText	value="#{embargo.to.codper}" size="10" rendered="#{embargo.new}" />
-							
-							<aon:outputText	value="#{embargo.to.trabajador.persona.cdg}" size="10" rendered="#{!embargo.new}" />
-							<aon:inputText	value="#{embargo.to.trabajador.persona.cdg}" size="10" rendered="#{embargo.new}" />
+							<aon:outputLabel value="#{appBundle.aon_payroll_cdg}: " />
+							<aon:outputText	value="#{embargoBasic.to.codper}" size="10" rendered="#{!embargoBasic.new}" />
 							
 							<br />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_pricipales_personas_embargos_nombre}: " />	
-							<aon:outputText	value="#{embargo.to.trabajador.persona.descripcion} " rendered="#{!embargo.new}" />
-							<aon:outputText	value="#{embargo.to.trabajador.persona.apellido2}, " rendered="#{!embargo.new}" />
-							<aon:outputText	value="#{embargo.to.trabajador.persona.nombre}" rendered="#{!embargo.new}" />
+							<aon:outputText	value="#{embargoBasic.to.trabajador.persona.descripcion} " rendered="#{!embargoBasic.new}" />
+							<aon:outputText	value="#{embargoBasic.to.trabajador.persona.apellido2}, " rendered="#{!embargoBasic.new}" />
+							<aon:outputText	value="#{embargoBasic.to.trabajador.persona.nombre}" rendered="#{!embargoBasic.new}" />
 							</aon:div>
 						</aon:panel>
 						
@@ -54,50 +49,43 @@
 									<aon:outputLabel for="Trabajador_cdg"
 										value="#{appBundle.aon_payroll_pricipales_personas_embargos_cdg}" />
 									<aon:div styleClass="aon-lookup">
-										<aon:lookupInputText readonly="#{!embargo.new}" required="#{true}"
+										<aon:lookupInputText readonly="#{!embargoBasic.new}" required="#{true}"
 											id="Trabajador_cdg" lookup="#{trabajadorLookup}"
 											reRender="Trabajador_codnsz"
-											value="#{embargo.to.trabajador.cdg}" size="5">
+											value="#{embargoBasic.to.trabajador.cdg}" size="5">
 										</aon:lookupInputText>
-										<aon:lookupButton rendered="#{embargo.new}"
+										<aon:lookupButton rendered="#{embargoBasic.new}"
 											id="Trabajador_lookup"
 											windowTitle="#{appBundle.aon_payroll_pricipales_personas_embargos_cdg}"
 											selectReRender="Trabajador_cdg,Trabajador_codnsz"
 											lookup="#{trabajadorLookup}" minHeight="440"
-											property="#{embargo.to.trabajador}">
+											property="#{embargoBasic.to.trabajador}">
 										</aon:lookupButton>
-										<!--  
-										<aon:inputText
-											id="Trabajador_codnsz"
-											value="#{(embargo.to.trabajador.codnsz!=null)?(embargo.to.trabajador.codnsz):('')}"
-											size="55" disabled="true" />
-										-->
+										
 									</aon:div>
 									
 									<aon:outputLabel
 										value="#{appBundle.aon_payroll_pricipales_personas_embargos_comienzo}" />
-									<aon:inputText id="Fecha" readonly="#{!embargo.new}" 
-										required="#{true}" 
-										value="#{embargo.to.id.fecha}" size="32" maxlength="10" >
-										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-											timeZone="#{timeZoneController.timeZoneId}" />
-									</aon:inputText>
-
+									<aon:selectInputDate value="#{embargoBasic.to.id.fecha}" id="FechaInicio"
+										readonly="#{!embargoBasic.new}" required="true"
+										renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+									</aon:selectInputDate>
+									
 									<aon:outputLabel
 										value="#{appBundle.aon_payroll_pricipales_personas_embargos_concepto}" />
-									<aon:inputText id="Concepto" required="#{true}" readonly="#{!embargo.new}"
-										value="#{embargo.to.concepto}" size="35" maxlength="30" />
+									<aon:inputText id="Concepto" required="#{true}" readonly="#{!embargoBasic.new}"
+										value="#{embargoBasic.to.concepto}" size="35" maxlength="30" />
 
 									<aon:outputLabel 
 										value="#{appBundle.aon_payroll_pricipales_personas_embargos_importe}" />
 									<aon:inputText 
-										value="#{embargo.to.importe}" size="15" maxlength="10" />
+										value="#{embargoBasic.to.importe}" size="15" maxlength="10" />
 
 									<aon:outputLabel
 										value="#{appBundle.aon_payroll_pricipales_personas_embargos_afecta}" />										
-									<aon:selectOneRadio value="#{embargo.to.afecta}">
+									<aon:selectOneRadio value="#{embargoBasic.to.afecta}" required="true">
 										<f:selectItems
-											value="#{embargo.listaAfectados}" />
+											value="#{embargoBasic.listaAfectados}" />
 									</aon:selectOneRadio>
 								
 								</aon:panelGrid>

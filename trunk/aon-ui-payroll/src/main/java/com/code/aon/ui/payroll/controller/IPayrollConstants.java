@@ -33,7 +33,8 @@ public interface IPayrollConstants {
 	String EMPRESA_CONTROLLER_NAME = "empresa";
 	String BONIFICA_CONTROLLER_NAME = "bonifica";
 	String TRABDTO_CONTROLLER_NAME = "trabdto";
-	String EMBARGO_CONTROLLER_NAME = "embargo";
+	String EMBARGO_BASIC_CONTROLLER_NAME = "embargoBasic";
+	String EMBARGO_LINES_CONTROLLER_NAME = "embargo";
 	String PARTEIT_CONTROLLER_NAME = "parteit";
 	String TRABINCI_CONTROLLER_NAME = "trabinci";
 	String NOMINAIT_CONTROLLER_NAME = "nominait";

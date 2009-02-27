@@ -136,6 +136,7 @@ public class PersonaController extends PayrollBasicController {
 		provincia = new Provincia();
 		provincia1 = new Provincia();
 		tipovia = new Tipovia();
+		tabName = null;
 	}
 	
 	/**
