@@ -3,10 +3,13 @@ package com.code.aon.accounting.vat;
 import java.util.Calendar;
 import java.util.Date;
 
-import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.common.util.CommonUtil;
+import com.code.aon.finance.enumeration.InvoiceTransactionType;
+import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.enumeration.VatType;
 
 public class Vat {
-	TaxType taxType;
+	InvoiceType invoiceType;
 	double percent;
 	double surcharge;
 	double base;
@@ -18,16 +21,28 @@ public class Vat {
 	Date date;
 	int month;
 	int year;
-
 	int quarter;
+	InvoiceTransactionType transactionType;
+	boolean investment;
+
 	Calendar calendar;
 
-	public TaxType getTaxType() {
-		return taxType;
+	public InvoiceType getInvoiceType() {
+		return invoiceType;
 	}
 
-	public void setTaxType(TaxType taxType) {
-		this.taxType = taxType;
+	public void setInvoiceType(InvoiceType invoiceType) {
+		this.invoiceType = invoiceType;
+	}
+	
+	public VatType getVatType() {
+		if (invoiceType == InvoiceType.SALES) {
+			return VatType.OUTPUT;
+		} 
+		if (isInvestment()) {
+			return VatType.INVESTMENT;
+		}
+		return VatType.INPUT;
 	}
 
 	public double getPercent() {
@@ -131,11 +146,15 @@ public class Vat {
 	}
 
 	public double getVatQuota() {
-		return round(getBase() * (getPercent() + getSurcharge()) / 100);
+		return CommonUtil.round(getBase() * getPercent() / 100);
+	}
+
+	public double getSurchargeQuota() {
+		return CommonUtil.round(getBase() * getSurcharge() / 100);
 	}
 
 	public double getTotal() {
-		return round(getBase() + getVatQuota());
+		return CommonUtil.round(getBase() + getVatQuota() + getSurchargeQuota());
 	}
 	
 	
@@ -146,8 +165,20 @@ public class Vat {
 		return this.calendar;
 	}
 	
-	private double round(double value) {
-		double decimal = Math.pow(10, 2);
-		return Math.round(decimal * value) / decimal;
+	public InvoiceTransactionType getTransactionType() {
+		return transactionType;
 	}
+
+	public void setTransactionType(InvoiceTransactionType transactionType) {
+		this.transactionType = transactionType;
+	}
+
+	public boolean isInvestment() {
+		return investment;
+	}
+
+	public void setInvestment(boolean investment) {
+		this.investment = investment;
+	}
+	
 }

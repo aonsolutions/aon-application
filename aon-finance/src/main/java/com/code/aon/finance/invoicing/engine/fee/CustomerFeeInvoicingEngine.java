@@ -28,6 +28,7 @@ import com.code.aon.finance.InvoicingGroupDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
+import com.code.aon.finance.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.IInvoicingFeedBack;
 import com.code.aon.finance.invoicing.InvoicingParameters;
@@ -319,6 +320,15 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		invoice.setSurcharge(customerFee.getCustomer().isSurcharge());
 		invoice.setTaxFree(customerFee.getCustomer().isTaxFree());
 		invoice.setWithholding(customerFee.getCustomer().isWithholding());
+		invoice.setInvestment(false);
+		
+		//TODO la asignación de de InvoiceTransactionType no es correcta,
+		//debería propagarse desde customer.
+		if (!customerFee.getCustomer().isTaxFree()) {
+			invoice.setTransaction( InvoiceTransactionType.NATIONAL);
+		} else {
+			invoice.setTransaction( InvoiceTransactionType.INTRACOMUNNITARY);
+		}
 		return invoice;
 	}
 	

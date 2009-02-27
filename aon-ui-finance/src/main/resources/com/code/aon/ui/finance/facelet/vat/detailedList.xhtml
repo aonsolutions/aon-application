@@ -35,15 +35,15 @@
 						<f:param name="outputFormat" value="MS Excel" />
 					</h:commandLink>
 
-					<!-- 
 					<h:commandLink value="#{financeBundle.finance_summary}" target="_blank"
 						action="#{report.onExecute}"
 						title="#{financeBundle.finance_vat_report_summary}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="vatSummaryBook" />
+						<f:setPropertyActionListener target="#{vatReport.summaryMode}" value="#{true}" />
 					</h:commandLink>
-
+					<!-- 
 					<h:commandLink value="#{financeBundle.finance_summary}" target="_blank"
 						action="#{report.onExecute}"
 						title="#{financeBundle.finance_vat_report_summary}"
@@ -59,37 +59,47 @@
 			<!--  aon-region-body -->
 			<aon:div id="accountEntryData" styleClass="aon-scroll-area">
 				<aon:dataTable id="vatReportList" value="#{vatReport.model}"
-					rows="" var="to" rendered="#{vatReport.model.rowCount > 0}">
+					rows="20" var="to" rendered="#{vatReport.model.rowCount > 0}">
 
-					<aon:column styleClass="aon-editDataTable-textColumn">
+					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_type}" />
+							<aon:outputText value="#{financeBundle.finance_invoice_number}" />
 						</f:facet>
-						<aon:outputText value="#{to.vatType}" />
+						<aon:outputText value="#{to.series}/#{to.number}" />
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-textColumn">
+					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_year}" />
+							<aon:outputText value="#{bundle.aon_date}" />
 						</f:facet>
-						<aon:outputText value="#{to.year}" />
+						<aon:outputText value="#{to.date}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-textColumn">
+					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{financeBundle.finance_quarter}" />
+							<aon:outputText value="#{financeBundle.finance_invoice_number}" />
 						</f:facet>
-						<aon:outputText value="#{vatReport.quarterArray[to.quarter-1]}" />
+						<aon:outputText value="#{to.reference}" />
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-textColumn">
+					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_month}" />
+							<aon:outputText value="#{bundle.aon_company_document}" />
 						</f:facet>
-						<aon:outputText value="#{vatReport.monthsArray[to.month-1]}" />
+						<aon:outputText value="#{to.document}" />
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-numberColumn">
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_company_name}" />
+						</f:facet>
+						<aon:outputText value="#{to.name}" />
+					</aon:column>
+
+					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_taxable_base}" />
 						</f:facet>
@@ -98,7 +108,7 @@
 						</aon:outputText>
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-numberColumn">
+					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="%" />
 						</f:facet>
@@ -107,34 +117,25 @@
 						</aon:outputText>
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-numberColumn">
+					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_surcharge}" />
+							<aon:outputText value="#{financeBundle.finance_surcharge}" />
 						</f:facet>
 						<aon:outputText value="#{to.surcharge}">
 							<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 						</aon:outputText>
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-numberColumn">
+					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_vat_quota}" />
+							<aon:outputText value="#{financeBundle.finance_vat_quota}" />
 						</f:facet>
 						<aon:outputText value="#{to.vatQuota}">
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-numberColumn">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_surcharge_quota}" />
-						</f:facet>
-						<aon:outputText value="#{to.surchargeQuota}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-numberColumn">
+					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_total}" />
 						</f:facet>
@@ -143,6 +144,8 @@
 						</aon:outputText>
 					</aon:column>
 				</aon:dataTable>
+
+				<aon:dataScroller2 for="vatReportList" showNote="true" />
 			</aon:div>
 		</aon:form>
 	</ui:define>
