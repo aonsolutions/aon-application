@@ -58,7 +58,7 @@
 							</aon:lookupInputText>
 							<aon:lookupButton id="Dom_lookup"
 								windowTitle="#{appBundle.aon_payroll_avanzadas_hojas_cen}"
-								selectReRender="Dom_tipovia" lookup="#{domicilioLookup}"
+								selectReRender="Dom_tipovia,Dom_cdg" lookup="#{domicilioLookup}"
 								minHeight="440" property="#{httrabajador.to.domicilio}">
 							</aon:lookupButton>
 
@@ -289,20 +289,20 @@
 								<aon:inputText value="#{httrabajador.to.profesion}" size="50"
 									maxlength="20" />
 
-								<aon:outputLabel for="Cat_cdg"
+								<aon:outputLabel for="categoria_cdg"
 									value="#{appBundle.aon_payroll_avanzadas_hojas_cat}" />
 								<aon:div styleClass="aon-lookup">
-									<aon:lookupInputText id="Cat_cdg" lookup="#{baseLookup}"
-										reRender="Cat_descripcion"
+									<aon:lookupInputText id="categoria_cdg" lookup="#{categoriaLookup}"
+										reRender="cat_descripcion"
 										value="#{httrabajador.to.categoria}" size="5">
 									</aon:lookupInputText>
-									<aon:lookupButton id="Cat_lookup"
+									<aon:lookupButton id="cat_lookup"
 										windowTitle="#{appBundle.aon_payroll_avanzadas_hojas_cat}"
 										selectReRender="Cat_cdg,Cat_descripcion"
 										lookup="#{categoriaLookup}" minHeight="440"
 										property="#{httrabajador.categoria}">
 									</aon:lookupButton>
-									<aon:inputText id="Cat_descripcion"
+									<aon:inputText id="cat_descripcion"
 										value="#{(httrabajador.to.descategoria!=null)?(httrabajador.to.descategoria):('')}"
 										size="34" disabled="true" />
 								</aon:div>
@@ -435,38 +435,38 @@
 									maxlength="20" />
 									
 									
-									<aon:outputLabel for="Base_cdg"
+									<aon:outputLabel for="cont_cdg"
 									value="#{appBundle.aon_payroll_avanzadas_hojas_codcontra}" />
 								<aon:div styleClass="aon-lookup">
-									<aon:lookupInputText id="Cont_cdg" lookup="#{contratosLookup}"
+									<aon:lookupInputText id="cont_cdg" lookup="#{contratosLookup}"
 										reRender="Cont_descripcion"
 										value="#{httrabajador.to.tipocont.cdg}" size="3">
 									</aon:lookupInputText>
-									<aon:lookupButton id="Cont_lookup"
+									<aon:lookupButton id="cont_lookup"
 										windowTitle="#{appBundle.aon_payroll_avanzadas_hojas_codcontra}"
-										selectReRender="Cont_cdg,Cont_descripcion"
+										selectReRender="cont_cdg,cont_descripcion"
 										lookup="#{contratosLookup}" minHeight="440"
 										property="#{httrabajador.to.tipocont}">
 									</aon:lookupButton>
-									<aon:inputText id="Cont_descripcion"
+									<aon:inputText id="cont_descripcion"
 										value="#{(httrabajador.to.tipocont.description!=null)?(httrabajador.to.tipocont.description):('')}"
 										size="50" disabled="true" />
 								</aon:div>
 								
-										<aon:outputLabel for="Base_cdg"
+										<aon:outputLabel for="cont2_cdg"
 									value="#{appBundle.aon_payroll_avanzadas_hojas_ct2}" />
 								<aon:div styleClass="aon-lookup">
-									<aon:lookupInputText id="Cont2_cdg" lookup="#{contratostc2Lookup}"
-										reRender="Cont2_descripcion"
+									<aon:lookupInputText id="cont2_cdg" lookup="#{contratostc2Lookup}"
+										reRender="cont2_descripcion"
 										value="#{httrabajador.to.tipcotc2.cdg}" size="3">
 									</aon:lookupInputText>
-									<aon:lookupButton id="Cont2_lookup"
+									<aon:lookupButton id="cont2_lookup"
 										windowTitle="#{appBundle.aon_payroll_avanzadas_hojas_ct2}"
-										selectReRender="Cont2_cdg,Cont2_descripcion"
+										selectReRender="cont2_cdg,cont2_descripcion"
 										lookup="#{contratostc2Lookup}" minHeight="440"
 										property="#{httrabajador.to.tipcotc2}">
 									</aon:lookupButton>
-									<aon:inputText id="Cont2_descripcion"
+									<aon:inputText id="cont2_descripcion"
 										value="#{(httrabajador.to.tipcotc2.description!=null)?(httrabajador.to.tipcotc2.description):('')}"
 										size="50" disabled="true" />
 								</aon:div>
@@ -1395,12 +1395,12 @@
 		<aon:lookupButtonPopup lookup="#{cuentaLookup}" />
 		<aon:lookupButtonPopup lookup="#{entidadLookup}" />
 		<aon:lookupButtonPopup lookup="#{sucursalLookup}" />
-	    <aon:lookupButtonPopup lookup="#{complementoLookup}" /> 
-  <!--  <aon:lookupButtonPopup lookup="#{categoriaLookup}" />
-		<aon:lookupButtonPopup lookup="#{contratosLookup}" /> 
-	    <aon:lookupButtonPopup lookup="#{contratostc2Lookup}" />-->
-	    <aon:lookupButtonPopup lookup="#{epigrafeLookup}" />
-	    <aon:lookupButtonPopup lookup="#{baseLookup}" />
+		<aon:lookupButtonPopup lookup="#{complementoLookup}" />
+		<aon:lookupButtonPopup lookup="#{categoriaLookup}" />
+	     <aon:lookupButtonPopup lookup="#{contratosLookup}" />
+		<aon:lookupButtonPopup lookup="#{contratostc2Lookup}" /> 
+		<aon:lookupButtonPopup lookup="#{epigrafeLookup}" />
+		<aon:lookupButtonPopup lookup="#{baseLookup}" />
 
 	</ui:define>
 </ui:composition>

@@ -427,8 +427,7 @@ public class HttrabajadorController extends PayrollBasicController {
 	
 	  public void verifyNullFields(){
 	 if(StringUtils.isEmpty(((Httrabajador)getTo()).getTipovia().getCdg()))
-	 ((Httrabajador)getTo()).getTipovia().setCdg("CL");
-	 
+	 ((Httrabajador)getTo()).getTipovia().setCdg("CL");	 
 	  if(StringUtils.isEmpty(((Httrabajador)getTo()).getDocumento().getCdg()))
 	  ((Httrabajador)getTo()).setDocumento(null);
 	  if(StringUtils.isEmpty(((Httrabajador)getTo()).getPais().getCdg()))
