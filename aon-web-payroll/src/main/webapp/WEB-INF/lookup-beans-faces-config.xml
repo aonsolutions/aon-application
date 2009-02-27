@@ -512,7 +512,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>categoriaLookup</value>
+			<value>contratosLookup</value>
 		</managed-property>
 		<managed-property>
 			<property-name>foreignPojo</property-name>
@@ -532,7 +532,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>categoriaLookup</value>
+			<value>contratostc2Lookup</value>
 		</managed-property>
 		<managed-property>
 			<property-name>foreignPojo</property-name>

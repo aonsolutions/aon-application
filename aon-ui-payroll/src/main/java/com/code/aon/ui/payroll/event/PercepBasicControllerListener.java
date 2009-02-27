@@ -13,14 +13,15 @@ import com.code.aon.ui.payroll.controller.ConveniosComplementoController;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
 import com.code.aon.ui.payroll.controller.NominaexController;
 import com.code.aon.ui.payroll.controller.OtrpercepController;
+import com.code.aon.ui.payroll.controller.PercepBasicController;
 import com.code.aon.ui.payroll.controller.PercepController;
 
 
-public class PercepControllerListener extends ControllerAdapter implements IPayrollConstants {
+public class PercepBasicControllerListener extends ControllerAdapter implements IPayrollConstants {
 	
-		@Override
+	@Override
 	public void beforeBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		PercepController controller = (PercepController) event.getController();
+		PercepBasicController controller = (PercepBasicController) event.getController();
 		try {
 
 			controller.refreshComplementos();
@@ -31,7 +32,7 @@ public class PercepControllerListener extends ControllerAdapter implements IPayr
 
 	@Override
 	public void beforeBeanSelected(ControllerEvent event) throws ControllerListenerException {
-		PercepController controller = (PercepController) event.getController();
+		PercepBasicController controller = (PercepBasicController) event.getController();
 		try {
 	
 			controller.refreshComplementos();
@@ -54,7 +55,7 @@ public void afterBeanCreated(ControllerEvent event)
 	
 			 
 		 
-		 ((PercepController)getController()).generarNumero(null);
+		 ((PercepBasicController)getController()).generarNumero(null);
 		 
 		
 
