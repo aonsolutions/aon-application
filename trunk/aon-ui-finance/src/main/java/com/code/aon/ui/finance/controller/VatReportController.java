@@ -21,14 +21,35 @@ import com.code.aon.ui.util.AonUtil;
 
 public class VatReportController implements ICollectionProvider{
 
-	private boolean summaryMode;
 	private Date date;
 	private Date fromDate;
 	private Date toDate;
 	private VatType vatType;
 	private SecurityLevel securityLevel;
 	private DataModel model;
+	private List<Vat> summary;
 	private List<String> months;
+	private String[] monthsArray = new String[] {
+			AonUtil.getMessage("aon_january"),
+			AonUtil.getMessage("aon_february"),
+			AonUtil.getMessage("aon_march"),
+			AonUtil.getMessage("aon_april"),
+			AonUtil.getMessage("aon_may"),
+			AonUtil.getMessage("aon_june"),
+			AonUtil.getMessage("aon_july"),
+			AonUtil.getMessage("aon_august"),
+			AonUtil.getMessage("aon_september"),
+			AonUtil.getMessage("aon_october"),
+			AonUtil.getMessage("aon_november"),
+			AonUtil.getMessage("aon_december")
+	};
+
+	private String[] quarterArray = new String[] {
+			AonUtil.getMessage("financeBundle","finance_quarter_1"),
+			AonUtil.getMessage("financeBundle","finance_quarter_2"),
+			AonUtil.getMessage("financeBundle","finance_quarter_3"),
+			AonUtil.getMessage("financeBundle","finance_quarter_4")
+	};
 
 	public Date getDate() {
 		return date;
@@ -70,14 +91,6 @@ public class VatReportController implements ICollectionProvider{
 		this.securityLevel = securityLevel;
 	}
 
-	public boolean isSummaryMode() {
-		return summaryMode;
-	}
-
-	public void setSummaryMode(boolean summaryMode) {
-		this.summaryMode = summaryMode;
-	}
-
 	public DataModel getModel() {
 		return model;
 	}
@@ -86,6 +99,13 @@ public class VatReportController implements ICollectionProvider{
 		this.model = model;
 	}
 
+	public String[] getMonthsArray() {
+		return monthsArray;
+	}
+	public String[] getQuarterArray() {
+		return quarterArray;
+	}
+		
 	public List<String> getMonths() {
 		if (months==null){
 			months = new LinkedList<String>();
@@ -111,7 +131,7 @@ public class VatReportController implements ICollectionProvider{
 		setVatType(VatType.OUTPUT);
 		setSecurityLevel(null);
 		setModel(null);
-		setSummaryMode(false);
+		summary = null;
 	}
 
 	public List<Vat> search() {
@@ -123,7 +143,7 @@ public class VatReportController implements ICollectionProvider{
 			vcp.setVatType(getVatType());
 			vcp.setSecurityLevel(getSecurityLevel());
 			VatCollection vc = new VatCollection();
-			return vc.getList(vcp,isSummaryMode());
+			return vc.getSummaryList(vcp);
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
@@ -131,7 +151,8 @@ public class VatReportController implements ICollectionProvider{
 	}
 
 	public void onSearch(ActionEvent event) {
-		setModel(new ListDataModel(search()));
+		summary = search();
+		setModel(new ListDataModel(summary));
 	}
 
 	public String getTitle() {
@@ -147,12 +168,17 @@ public class VatReportController implements ICollectionProvider{
 	
 	@Override
 	public Collection<?> getCollection(boolean arg0) throws ManagerBeanException {
-		return getCollection(false);
+		return summary;
 	}
 
 	@Override
 	public Collection<?> getCollection() {
-		return isSummaryMode()?search():(List<?>)(getModel().getWrappedData());
+		try {
+			return getCollection(false);
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
 	}
 
 }

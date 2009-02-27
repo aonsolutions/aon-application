@@ -9,12 +9,83 @@ import java.util.List;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.finance.enumeration.InvoiceType;
-import com.code.aon.finance.enumeration.VatType;
 import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.finance.enumeration.InvoiceTransactionType;
+import com.code.aon.finance.enumeration.InvoiceType;
 
 public class VatCollection {
 
+	public List<Vat> getSummaryList(VatCollectionParameters params) throws ManagerBeanException {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			StringWriter stmt = new StringWriter();
+			stmt.append("SELECT i.type,YEAR(i.issue_date) YEAR,QUARTER(i.issue_date) QUARTER, ");
+			stmt.append("	   MONTH(i.issue_date) MONTH,it.percentage,it.surcharge,i.transaction,");
+			stmt.append("	   i.investment,SUM(id.taxable_base)");
+			stmt.append(" FROM invoice_tax it ");
+			stmt.append(" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)"); 
+			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)"); 
+			stmt.append(" WHERE it.tax_type = 1");
+			if (params.getFromDate() != null) {
+				stmt.append(" AND i.issue_date >= ?");
+			}
+			if (params.getToDate() != null) {
+				stmt.append(" AND i.issue_date <= ?");
+			}
+			if (params.getSecurityLevel() != null) {
+				stmt.append(" AND i.security_level = " + params.getSecurityLevel().ordinal());
+			}
+			stmt.append(" GROUP BY i.TYPE,QUARTER(i.issue_date),MONTH(i.issue_date),YEAR(i.issue_date),");
+			stmt.append("         it.percentage,it.surcharge,i.transaction,i.investment");
+			stmt.append(" ORDER BY type DESC,year,quarter,month,i.transaction,i.investment,");
+			stmt.append("		 it.percentage,it.surcharge");
+			ps = HibernateUtil.getSQLConnection().prepareStatement(stmt.toString(),
+					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			if (params.getFromDate() != null) {
+				ps.setDate(1, new java.sql.Date( params.getFromDate().getTime()));
+			}
+			if (params.getToDate() != null) {
+				ps.setDate(2, new java.sql.Date( params.getToDate().getTime()));
+			}
+			rs = ps.executeQuery();
+			List<Vat> vats = new LinkedList<Vat>();
+			while (rs.next()) {
+				Vat vat = new Vat();
+				InvoiceType type = InvoiceType.values()[rs.getInt(1)];
+				vat.setInvoiceType( type );
+				vat.setYear(rs.getInt(2));
+				vat.setQuarter(rs.getInt(3));
+				vat.setMonth(rs.getInt(4));
+				vat.setPercent(rs.getDouble(5));
+				vat.setSurcharge(rs.getDouble(6));
+				InvoiceTransactionType transaction = InvoiceTransactionType.values()[rs.getInt(7)];
+				vat.setTransactionType(transaction);
+				vat.setInvestment(rs.getBoolean(8));
+				vat.setBase(rs.getDouble(9));
+				vats.add(vat);
+			}
+			return vats;
+		} catch (SQLException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+				}
+			}
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+
+	}
+/*	
+	@Deprecated
 	public List<Vat> getList(VatCollectionParameters params, boolean summary ) throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -98,5 +169,5 @@ public class VatCollection {
 		}
 
 	}
-
+*/
 }
