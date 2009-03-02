@@ -20,7 +20,7 @@
 }
 
 .aon-dataTable-link {
-	background:#fff url(images/aon-icon/aon-icon-arrow-dataTable-item.png) scroll right center no-repeat;
+	background:transparent url(images/aon-icon/aon-icon-arrow-dataTable-item.png) scroll right center no-repeat;
 	padding-right: 10px;
 }
 
@@ -34,7 +34,6 @@
 }
 
 .aonSubMenu {
-	border-bottom:solid  #8b8b8b 1px;
 	margin-top: 2px;
 	padding-top: 2px;
 	padding-right: 2px;
@@ -42,7 +41,7 @@
 	padding-left: 26px;
 	color:#555555;
 	font-family: Helvetica;
-	font-size: 1.1em;
+	font-size: 1em;
 	width:80%;
 	font-weight:bold;
 }
