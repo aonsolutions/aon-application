@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.desktop</artifactId>
 	<packaging>war</packaging>
-	<version>3.10.0</version>
+	<version>3.10.1</version>
 	<description>AON DESKTOP</description>
 	<name>AON DESKTOP</name>
 	<properties>
@@ -36,7 +36,7 @@
 	    <dependency>
 	      <groupId>com.code.aon</groupId>
 	      <artifactId>aon.registry</artifactId>
-	      <version>3.2.1</version>
+	      <version>3.3.0</version>
 	    </dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
@@ -59,7 +59,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
-			<version>3.5.0</version>
+			<version>3.6.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -71,7 +71,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>3.6.0</version>
+			<version>3.7.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -89,7 +89,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.groupware</artifactId>
-			<version>3.6.0</version>
+			<version>3.6.1</version>
 			<scope>compile</scope>
 		</dependency>
 	    <dependency>
@@ -106,13 +106,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.messaging</artifactId>
-			<version>0.3.0</version>
+			<version>0.3.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.webmail</artifactId>
-			<version>4.7.0</version>
+			<version>4.7.2</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
