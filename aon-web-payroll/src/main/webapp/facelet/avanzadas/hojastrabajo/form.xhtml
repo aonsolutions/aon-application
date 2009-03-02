@@ -289,7 +289,7 @@
 								<aon:inputText value="#{httrabajador.to.profesion}" size="50"
 									maxlength="20" />
 
-								<aon:outputLabel for="categoria_cdg"
+					<!-- 		<aon:outputLabel for="categoria_cdg"
 									value="#{appBundle.aon_payroll_avanzadas_hojas_cat}" />
 								<aon:div styleClass="aon-lookup">
 									<aon:lookupInputText id="categoria_cdg" lookup="#{categoriaLookup}"
@@ -298,7 +298,7 @@
 									</aon:lookupInputText>
 									<aon:lookupButton id="cat_lookup"
 										windowTitle="#{appBundle.aon_payroll_avanzadas_hojas_cat}"
-										selectReRender="Cat_cdg,Cat_descripcion"
+										selectReRender="categoria_cdg,cat_descripcion"
 										lookup="#{categoriaLookup}" minHeight="440"
 										property="#{httrabajador.categoria}">
 									</aon:lookupButton>
@@ -306,6 +306,8 @@
 										value="#{(httrabajador.to.descategoria!=null)?(httrabajador.to.descategoria):('')}"
 										size="34" disabled="true" />
 								</aon:div>
+								
+								 -->	
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_avanzadas_hojas_niv}" />
 								<aon:inputText value="#{httrabajador.to.nivel}" size="50"
@@ -613,15 +615,14 @@
 
 					<rich:tab id="tdatos3" rendered="#{!httrabajador.new}"
 						label="#{appBundle.aon_payroll_avanzadas_hojas_com}">
-						<aon:div id="httcomplementoDiv">
 
-							<aon:editDataTable id="httcomplementoData" var="to" rows="15"
-								value="#{httcomplemento.model}"
-								columnClasses="aon-editDataTable-iconColumn, 
+
+						<aon:editDataTable id="httcomplementoData" var="to" rows="15"
+							value="#{httcomplemento.model}"
+							columnClasses="aon-editDataTable-iconColumn, 
 						aon-editDataTable-numberColumn,aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
 
-
-
+						
 
 								<aon:column>
 									<f:facet name="header">
@@ -629,17 +630,16 @@
 									</f:facet>
 
 									<aon:div>
-										<aon:commandButton alt="[#{bundle.aon_reset}]"
+										<aon:commandButton alt="[#{bundle.aon_reset}]"										
 											styleClass="aon-editDataTable-button aon-icon-rowSelector "
-											actionListener="#{httcomplemento.onSelect}"
+											actionListener="#{httcomplemento.onSelect}"	
 											accesskey="#{bundle.aon_key_new_line}" />
 									</aon:div>
 									<f:facet name="footer">
 										<aon:div>
 											<h:commandButton alt="[#{bundle.aon_reset}]"
 												styleClass="aon-editDataTable-button aon-icon-reset"
-												actionListener="#{httcomplemento.onReset}"
-												rendered="#{!httcomplemento.new}"
+												actionListener="#{httcomplemento.onReset}"												
 												accesskey="#{bundle.aon_key_new_line}" />
 										</aon:div>
 									</f:facet>
@@ -653,40 +653,19 @@
 											value="#{appBundle.aon_payroll_avanzadas_hojas_cdg}" />
 									</f:facet>
 
-									<aon:outputText value="#{httcomplemento.to.complemento}"
+									<aon:outputText value="#{to.complemento}"
 										rendered="#{to!=httcomplemento.to}" />
-									<aon:outputText value="#{httcomplemento.to.complemento}"
-										rendered="#{to==httcomplemento.to}" />
 
-									<!--  	<aon:div id="CompleLookupDiv" styleClass="aon-lookup">
-										<aon:lookupInputText id="Comple_cdg" rendered="#{to==httcomplemento.to}"
-											lookup="#{complementoLookup}" 
-											value="#{httcomplemento.complemento}" size="5">
-										</aon:lookupInputText>
-										<aon:lookupButton id="Comple_lookup" rendered="#{to==httcomplemento.to}"
-											windowTitle="#{appBundle.aon_payroll_avanzadas_hojas_com}"
-											selectReRender="Comple_cdg"
-											lookup="#{complementoLookup}" minHeight="440"
-											property="#{httcomplemento.complemento}">
-										</aon:lookupButton>
-										
-									</aon:div>
-							
+								
+
+									<aon:inputText styleClass="aon-form-input-text "
+										rendered="#{to==httcomplemento.to}" size="20"
+										value="#{httcomplemento.to.complemento}" maxlength="20" />
 									<f:facet name="footer">
-									    <aon:div id="CompleLookupDiv2" styleClass="aon-lookup">
-										<aon:lookupInputText id="Comple2_cdg" rendered="#{httcomplemento.new}"
-											lookup="#{complementoLookup}" 
-											value="#{httcomplemento.complemento}" size="5">
-										</aon:lookupInputText>
-										<aon:lookupButton id="Comple2_lookup" rendered="#{httcomplemento.new}"
-											windowTitle="#{appBundle.aon_payroll_avanzadas_hojas_com}"
-											selectReRender="Comple2_cdg"
-											lookup="#{complementoLookup}" minHeight="440"
-											property="#{httcomplemento.complemento}">
-										</aon:lookupButton>
-										
-									</aon:div>
-									</f:facet>-->
+										<aon:inputText styleClass="aon-form-input-text"
+											rendered="#{httcomplemento.new}" size="20"
+											value="#{httcomplemento.to.complemento}" maxlength="2" />
+									</f:facet>
 								</aon:column>
 
 								<aon:column>
@@ -843,11 +822,10 @@
 										</aon:div>
 									</f:facet>
 								</aon:column>
-							</aon:editDataTable>
-							<aon:dataScroller2 for="httcomplementoData" showNote="true" />
+						</aon:editDataTable>
+						<aon:dataScroller2 for="httcomplementoData" showNote="true" />
 
-						</aon:div>
-					</rich:tab>
+											</rich:tab>
 
 					<rich:tab id="tdatos4" rendered="#{!httrabajador.new}"
 						label="#{appBundle.aon_payroll_avanzadas_hojas_avi}">
@@ -1378,9 +1356,6 @@
 						</aon:div>
 					</rich:tab>
 
-
-
-
 				</rich:tabPanel>
 			</aon:div>
 		</aon:form>
@@ -1397,7 +1372,7 @@
 		<aon:lookupButtonPopup lookup="#{sucursalLookup}" />
 		<aon:lookupButtonPopup lookup="#{complementoLookup}" />
 		<aon:lookupButtonPopup lookup="#{categoriaLookup}" />
-	     <aon:lookupButtonPopup lookup="#{contratosLookup}" />
+	    <aon:lookupButtonPopup lookup="#{contratosLookup}" />
 		<aon:lookupButtonPopup lookup="#{contratostc2Lookup}" /> 
 		<aon:lookupButtonPopup lookup="#{epigrafeLookup}" />
 		<aon:lookupButtonPopup lookup="#{baseLookup}" />

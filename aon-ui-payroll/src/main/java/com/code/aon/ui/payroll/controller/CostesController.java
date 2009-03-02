@@ -21,6 +21,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.payroll.auxiliares.convenios.Convenio;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Mutua;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal;
+import com.code.aon.payroll.avanzadas.hojastrabajo.Httrabajador;
 import com.code.aon.payroll.cotizacion.Base;
 import com.code.aon.payroll.cotizacion.Epigrafe;
 import com.code.aon.payroll.cotizacion.Linepigr;
@@ -198,6 +199,13 @@ public class CostesController extends PayrollBasicController	 {
 	}
 	
 
+	/**
+	 * genera un cdg siguiendo al maximo 
+	 */
+	public void generateCdg(){
+		((Httrabajador)getTo()).setCdg(Integer.parseInt(Utils.maxCode("Httrabajador", "cdg"))+1);
+	}
+	
 		
 	
 	/*
