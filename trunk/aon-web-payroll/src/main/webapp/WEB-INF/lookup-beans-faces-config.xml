@@ -154,7 +154,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
-			<value>/facelet/principales/personas/personas/nacionLookup/list.xhtml</value>
+			<value>/facelet/principales/personas/personas/nacionLookup/list.xhtml</value> 
 		</managed-property>
 	</managed-bean>	
 	
@@ -618,6 +618,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
+			<!-- <value>facelet/payrollLookup/bonificacionLookup/list.xhtml</value> -->
 			<value>facelet/principales/personas/integral/bonificaciones/bonificacionLookup/list.xhtml</value>
 		</managed-property>
 	</managed-bean>	

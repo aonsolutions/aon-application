@@ -114,36 +114,8 @@ public class TrabajadorControllerListener extends ControllerAdapter implements
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );			
 		}
-				
-		
-		
-		//IPayrollAlias.BONIFICA_EMPRPER_CDG;
-		
-		/*
-		 * trabajo
-		 * bonifica
-		 * trabdto
-		 * embargo  **
-		 * parteit
-		 * trabinci
-		 * nominait
-		 * aviso  **
-		 * prcdivtrab
-		 */
 		
 		
 	}
 	
-	/*
-	private void resetComunidadModel() throws ControllerListenerException {
-		LinesController comunidadController = (LinesController) FormUtil.getController(IPayrollConstants.COMUNIDAD_CONTROLLER_NAME);
-		try {
-			comunidadController.clearCriteria();
-			Criteria criteria = comunidadController.getCriteria();
-			criteria.addNullExpression(comunidadController.getFieldName(IPayrollAlias.COMUNIDAD_PAIS_CDG));
-			comunidadController.initializeModel();
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException( e.getMessage(), e );			
-		}		
-	}*/
 }

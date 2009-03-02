@@ -16,8 +16,7 @@
 				<aon:form id="bonificaForm">
 
 					<!-- 
-						<ui:include
-						src="/facelet/templates/formPrintToolbar.xhtml">
+						<ui:include	src="/facelet/templates/formPrintToolbar.xhtml">
 					-->
 					<ui:include
 						src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
@@ -37,13 +36,12 @@
 					<aon:div id="bonificaData"
 						styleClass="aon-scroll-area">
 
-						<aon:panelGrid columns="4" dir="true"
+						<aon:panelGrid columns="2" dir="true"
 							width="100%">
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_bonifica_trabajador}" />
-							<aon:inputText value="#{trabajador.to.cdg}" readonly="#{!bonifica.new}"
-								size="" maxlength="" />
+							<aon:outputText value="#{trabajador.to.cdg}" size="3" maxlength="3" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_bonifica_nom_ape}" />
@@ -63,13 +61,12 @@
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_bonifica_boni}" />
 							<aon:div styleClass="aon-lookup">
-								<aon:inputText value="#{bonifica.to.id.cdg}" readonly="#{!bonifica.new}"
-									size="" maxlength="" />
-								<aon:lookupInputText id="bonificacion_cdg" 
+								<aon:lookupInputText id="bonificacion_cdg" readonly="#{!bonifica.new}"
 									lookup="#{bonificacionLookup}" reRender="bonificacion_descripcion"
 									value="#{bonifica.to.tipboni.cdg}" size="5">
 								</aon:lookupInputText>
 								<aon:lookupButton id="bonificacion_lookup"
+									disabled="#{!bonifica.new}"
 									windowTitle="#{appBundle.aon_payroll_principales_trabajador_empresa}"
 									selectReRender="bonificacion_cdg,bonificacion_descripcion"
 									lookup="#{bonificacionLookup}" minHeight="440"
@@ -80,51 +77,54 @@
 									size="45" disabled="true" />
 							</aon:div>
 							
-							<aon:outputLabel
+							<aon:outputLabel for="bonifica_calculo"
 								value="#{appBundle.aon_payroll_principales_bonifica_calculo}" />
-							<aon:inputText value="#{bonifica.to.tipboni.calculo}" readonly="#{!bonifica.new}" />
+							<aon:inputText id="bonifica_calculo"
+								value="#{bonifica.to.tipboni.calculo}" 
+								readonly="true" size="35" />
 							
-							<aon:outputLabel
+							<aon:outputLabel for="bonifica_fec_conces"
 								value="#{appBundle.aon_payroll_principales_bonifica_fec_conces}" />
-							<aon:selectInputDate renderAsPopup="true" readonly="#{!bonifica.new}"
+							<aon:selectInputDate id="bonifica_fec_conces" 
+								renderAsPopup="true" readonly="#{!bonifica.new}"
 								popupDateFormat="#{appBundle.aon_date_pattern}"
 								value="#{bonifica.to.id.fecini}" enableManualInput="true" />
 							
-							<aon:outputLabel
+							<aon:outputLabel for="bonifica_fec_term"
 								value="#{appBundle.aon_payroll_principales_bonifica_fec_term}" />
-							<aon:selectInputDate renderAsPopup="true"
+							<aon:selectInputDate renderAsPopup="true" id="bonifica_fec_term"
 								popupDateFormat="#{appBundle.aon_date_pattern}"
 								value="#{bonifica.to.fecfin}" enableManualInput="true" />
 							
-							<aon:outputLabel
+							<aon:outputLabel for="bonifica_horas"
 								value="#{appBundle.aon_payroll_principales_bonifica_formacion}" />
-							<aon:inputText value="#{bonifica.to.horas}"
-								size="" maxlength="" />
+							<aon:inputText id="bonifica_horas" value="#{bonifica.to.horas}"
+								size="2" maxlength="2" />
 							
-							<aon:outputLabel
+							<aon:outputLabel for="bonifica_importe"
 								value="#{appBundle.aon_payroll_principales_bonifica_importe_directo}" />
-							<aon:inputText value="#{bonifica.to.importe}"
-								size="" maxlength="" />
+							<aon:inputText id="bonifica_importe" value="#{bonifica.to.importe}"
+								size="8" maxlength="8" readonly="#{!bonifica.new}" />
 							
-							<aon:outputLabel
+							<aon:outputLabel for="bonifica_tipoImporte"
 								value="#{appBundle.aon_payroll_principales_bonifica_tipo_importe}" />
-							<aon:selectOneMenu 
+							<aon:selectOneMenu id="bonifica_tipoImporte" disabled="#{!bonifica.new}"
 								value="#{bonifica.to.tipo}">
-								<f:selectItems
-									value="#{bonifica.listaTiposImporte}" />
+								<f:selectItem value="#{null}" itemLabel="&#160;" />
+								<f:selectItems value="#{bonifica.listaTiposImporte}" />
 							</aon:selectOneMenu>
 							
-							<aon:outputLabel
+							<aon:outputLabel for="bonifica_prorrat" 
 								value="#{appBundle.aon_payroll_principales_bonifica_prorrat}" />
-							<aon:selectBooleanCheckbox value="#{bonifica.to.prorrateo}" />
+							<aon:selectBooleanCheckbox id="bonifica_prorrat" disabled="#{!bonifica.new}"
+								value="#{bonifica.to.prorrateo}" />
 
 						</aon:panelGrid>
 					</aon:div>
 				</aon:form>
 
 				<aon:lookupButtonPopup lookup="#{bonificacionLookup}" />
-				<aon:lookupButtonPopup lookup="#{trabajadorLookup}" />
-
+				 
 			</ui:define>
 		</ui:composition>
 	</body>
