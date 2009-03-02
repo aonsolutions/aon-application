@@ -5214,7 +5214,7 @@
 	<managed-bean>
 		<managed-bean-name>httaviso</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.LinesController
+			com.code.aon.ui.payroll.controller.HttavisoController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -5253,14 +5253,35 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+		<managed-property>
+		<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{httavisoControllerListener}</value>
+			</list-entries>
+		</managed-property>
+		
+		</managed-bean>
+		
+	<managed-bean>
+		<managed-bean-name>
+			httavisoControllerListener
+		</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.HttavisoControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
+
 
 	<!-- ************* Avanzadas - Hojas Trabajo bonificacion ***************** -->
 
 	<managed-bean>
 		<managed-bean-name>httbonificacion</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.LinesController
+			com.code.aon.ui.payroll.controller.HttbonificacionController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -5299,7 +5320,27 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+		<managed-property>
+         <property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{httbonificacionControllerListener}</value>
+			</list-entries>
+		</managed-property>
+
 	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>
+			httbonificacionControllerListener
+		</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.HttbonificacionControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 
 	<!-- ************* Avanzadas - Hojas Trabajo complemento ***************** -->
 
@@ -5344,6 +5385,26 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+		<managed-property>
+	<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{httcomplementoControllerListener}</value>
+			</list-entries>
+		</managed-property>
+
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>
+			httcomplementoControllerListener
+		</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.HttcomplementoControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************* Avanzadas - Hojas Trabajo incidencia ***************** -->
@@ -5351,7 +5412,7 @@
 	<managed-bean>
 		<managed-bean-name>httincidencia</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.LinesController
+			com.code.aon.ui.payroll.controller.HttincidenciasController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -5390,6 +5451,30 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+		<managed-property>
+	<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{httincidenciaControllerListener}</value>
+			</list-entries>
+		</managed-property>
+
+	</managed-bean>
+
+
+
+
+
+	<managed-bean>
+		<managed-bean-name>
+			httincidenciaControllerListener
+		</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.HttincidenciaControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************* Resultados - IRPF - Mantenimiento de impresos 11X ***************** -->

@@ -9,6 +9,8 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.payroll.controller.ActividadController;
+import com.code.aon.ui.payroll.controller.EmbargoBasicController;
+import com.code.aon.ui.payroll.controller.EmpreactController;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
 import com.code.aon.ui.payroll.controller.PersonaController;
 
@@ -67,6 +69,21 @@ public void beforeBeanAdded(ControllerEvent event)
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );			
 		}		
+	}
+	
+	@Override
+	public void afterBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		
+		EmpreactController act = (EmpreactController)FormUtil.getController(IPayrollConstants.EMPREACT_CONTROLLER_NAME);
+		try {
+			act.setModel(this.getController().getModel());
+			act.onSelect(null);
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 }
