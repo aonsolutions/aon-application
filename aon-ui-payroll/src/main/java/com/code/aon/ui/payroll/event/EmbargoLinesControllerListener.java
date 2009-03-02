@@ -16,15 +16,17 @@ public class EmbargoLinesControllerListener extends ControllerAdapter {
 		
 		EmbargoBasicController ebc = (EmbargoBasicController)FormUtil.getController(IPayrollConstants.EMBARGO_BASIC_CONTROLLER_NAME);
 		try {
+			ebc.setModel(this.getController().getModel());
+			/*
 			ebc.setCriteria(this.getController().getCriteria());
+			ebc.onSearch(null);
 			ebc.getModel().setRowIndex(this.getController().getModel().getRowIndex());
+			*/
 			ebc.onSelect(null);
+			
 		} catch (ManagerBeanException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
-	
-	
 }
