@@ -65,6 +65,50 @@ public class SaleInvoiceFinanceController extends LinesController {
 		return true;
 	}
 
+	public void onPayMethodChanged(ValueChangeEvent event) {
+		PayMethod oldPay = (PayMethod) event.getOldValue();
+		PayMethod newPay = (PayMethod) event.getNewValue();
+		if (oldPay == null || newPay == null || oldPay.getType() != newPay.getType()) {
+			Finance finance= (Finance) getTo();
+			finance.setBank(new Bank());
+			finance.setBankAccount(new BankAccount());
+		}
+	}
+
+	public void onBankChanged(LookupChangeEvent event) {
+		Finance finance= (Finance) getTo();
+		finance.setBankAccount(new BankAccount());
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			Bank bank = (Bank) event.getNewValue();
+			finance.getBankAccount().setEntity(bank.getCode());			
+		}
+	}
+	
+	public void onRBankChanged(ValueChangeEvent event) {
+		Finance finance= (Finance) getTo();
+		finance.setBank(null);
+		finance.setBankAccount(new BankAccount());
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			RegistryBank rbank = (RegistryBank) event.getNewValue();
+			finance.setBank(rbank.getBank());
+			finance.setBankAccount( rbank.getBankAccount() );			
+		}
+	}
+
+	public List<SelectItem> getBanks() {
+		Finance finance= (Finance) getTo();
+		if (finance != null && finance.getPayMethod() != null) {
+			PayMethod pm = finance.getPayMethod();
+			if (pm.getType() == PayMethodType.NEGOTIABLE_DOCUMENT) {
+				SaleInvoiceController saleInvoicingController = (SaleInvoiceController) FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
+				Invoice invoice = (Invoice)saleInvoicingController.getTo(); 
+				return getRegistryBanks(invoice.getRegistry());
+			}
+			return getRegistryBanks(getCompany());
+		}
+		return new LinkedList<SelectItem>();
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getRegistryBanks(Registry registry){
 		List<SelectItem> rBanks = new LinkedList<SelectItem>();
@@ -85,61 +129,6 @@ public class SaleInvoiceFinanceController extends LinesController {
 		return rBanks;
 	}
 	
-	public void onBankChanged(ValueChangeEvent event) {
-		Finance finance= (Finance) getTo();
-		if (event.getNewValue() != null) {
-			RegistryBank rb = (RegistryBank) event.getNewValue();
-			finance.setBank(rb.getBank());
-			finance.setBankAccount(rb.getBankAccount());
-		} else {
-			finance.setBank(null);
-			finance.setBankAccount(null);
-		}
-	}
-	
-	public void onPayMethodChanged(ValueChangeEvent event) {
-		PayMethod oldPay = (PayMethod) event.getOldValue();
-		PayMethod newPay = (PayMethod) event.getNewValue();
-		if (oldPay == null || newPay == null || oldPay.getType() != newPay.getType()) {
-			Finance finance= (Finance) getTo();
-			finance.setBank(new Bank());
-			finance.setBankAccount(new BankAccount());
-		}
-	}
-	public void onBankChanged(LookupChangeEvent event) {
-		Finance finance= (Finance) getTo();
-		finance.setBankAccount(new BankAccount());
-		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-			Bank bank = (Bank) event.getNewValue();
-			finance.getBankAccount().setEntity( bank.getCode() );			
-		}
-	}
-	
-	public void onRBankChanged(ValueChangeEvent event) {
-		Finance finance= (Finance) getTo();
-		finance.setBank(null);
-		finance.setBankAccount(new BankAccount());
-		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-			RegistryBank rbank = (RegistryBank) event.getNewValue();
-			finance.setBank(rbank.getBank());
-			finance.setBankAccount( rbank.getBankAccount() );			
-		}
-	}
-
-	public List<SelectItem> getBanks() {
-		Finance finance= (Finance) getTo();
-		if (finance != null && finance.getPayMethod() != null) {
-			PayMethod pm = finance.getPayMethod();
-			if (pm.getType() != PayMethodType.BANK_TRANSFER) {
-				SaleInvoiceController saleInvoicingController = (SaleInvoiceController) FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
-				Invoice invoice = (Invoice)saleInvoicingController.getTo(); 
-				return getRegistryBanks(invoice.getRegistry());
-			}
-			return getRegistryBanks(getCompany());
-		}
-		return new LinkedList<SelectItem>();
-	}
-	
 	public Company getCompany() {
 		try {
 			if (company == null) {
@@ -158,4 +147,5 @@ public class SaleInvoiceFinanceController extends LinesController {
 	public void setCompany(Company company) {
 		this.company = company;
 	}
+
 }
