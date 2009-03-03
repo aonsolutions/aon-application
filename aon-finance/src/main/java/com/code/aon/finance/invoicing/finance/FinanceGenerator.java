@@ -169,4 +169,22 @@ public class FinanceGenerator {
 		return calendar.getTime();
 	}
 
+	public Finance duplicateFinance(Finance finance, double newAmount) throws ManagerBeanException {
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Finance newFinance = new Finance();
+		newFinance.setPayment(finance.isPayment());
+		newFinance.setRegistry(finance.getRegistry());
+		newFinance.setAmount(newAmount);
+		newFinance.setExpenses(0.0);
+		newFinance.setConcept(finance.getConcept());
+		newFinance.setInvoice(finance.getInvoice());
+		newFinance.setDueDate(finance.getDueDate());
+		newFinance.setPayMethod(finance.getPayMethod());
+		newFinance.setBank(finance.getBank());
+		newFinance.setBankAccount(finance.getBankAccount());
+		newFinance.setFinanceStatus(FinanceStatus.PENDING);
+		newFinance.setSecurityLevel(finance.getSecurityLevel());
+		return (Finance)financeBean.insert(newFinance);
+	}
+
 }
