@@ -73,7 +73,7 @@
 	<!--  LISTADO DIARIO DE APUNTES -->
 	<report id="journalBook" description="Listado Diario de Apuntes">
 		<template path="/com/code/aon/ui/accounting/report/journalBook.jasper"/>
-		<bean key="com.code.aon.account.AccountEntryDetail" />
+		<bean key="com.code.aon.accounting.AccountEntryDetail" />
 		<criteria provider="#{journalReport}"/>
 		<fetch-mode paginated="true" page-count="5000" virtualizer-max-size="1000" />
 		<params>

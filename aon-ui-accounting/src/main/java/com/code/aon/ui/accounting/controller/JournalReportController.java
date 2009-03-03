@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.ManagerBeanException;
@@ -19,6 +20,10 @@ public class JournalReportController extends BasicController {
 	private Date fromDate;
 	private Date toDate;
 	private Date date;
+	private Integer previousAccountEntryDetail;
+	private Integer previousAccountEntry;
+	private boolean currentValue = true;
+	private boolean odd = true;
 
 	private SecurityLevel securityLevel;
 
@@ -73,6 +78,9 @@ public class JournalReportController extends BasicController {
 		setToDate(null);
 		setDate(new Date());
 		setSecurityLevel(null);
+		previousAccountEntry = null;
+		previousAccountEntryDetail = null;
+		odd = true;
 	}
 
 	public void onEditSearch(ActionEvent event) {
@@ -84,20 +92,63 @@ public class JournalReportController extends BasicController {
 		try {
 			Criteria criteria = getCriteria();
 			if (period != null) {
-				criteria.addEqualExpression(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD), period.getId());
+				criteria
+						.addEqualExpression(
+								getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD),
+								period.getId());
 			}
 			if (getFromDate() != null) {
-				criteria.addGreaterThanOrEqualExpression(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE), getFromDate());
+				criteria
+						.addGreaterThanOrEqualExpression(
+								getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE),
+								getFromDate());
 			}
 			if (getToDate() != null) {
-				criteria.addLessThanOrEqualExpression(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE), getToDate());
+				criteria
+						.addLessThanOrEqualExpression(
+								getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE),
+								getToDate());
 			}
 			if (getSecurityLevel() != null) {
-				//TODO Alias para el securityLevel
-				criteria.addEqualExpression("AccountEntryDetail.accountEntry.securityLevel", getSecurityLevel());
+				// TODO Alias para el securityLevel
+				criteria.addEqualExpression("AccountEntryDetail.accountEntry.securityLevel",
+						getSecurityLevel());
 			}
-			getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID));
+			getCriteria().addOrder(
+					getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID));
 			super.onSearch(event);
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage());
+		}
+	}
+
+	public boolean isOdd() {
+		return odd;
+	}
+	
+	public boolean isFirstEntry() {
+		try {
+			AccountEntryDetail acd = (AccountEntryDetail) getModel().getRowData();
+			if (previousAccountEntryDetail == null || !previousAccountEntryDetail.equals(acd.getId())) {
+				previousAccountEntryDetail = acd.getId();
+				Integer current = acd.getAccountEntry().getId();
+				if (previousAccountEntry == null) {
+					previousAccountEntry = current;
+					currentValue = true;
+				} else {
+					if (!previousAccountEntry.equals(current)) {
+						previousAccountEntry = current;
+						odd = !odd;
+						currentValue = true;
+					} else {
+						currentValue = false;
+					}
+				}
+			}
+			return currentValue;
+		} catch (java.lang.IllegalArgumentException e) {
+			return currentValue;
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage());
