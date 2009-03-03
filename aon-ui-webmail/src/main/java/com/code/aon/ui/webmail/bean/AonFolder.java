@@ -1,23 +1,130 @@
 package com.code.aon.ui.webmail.bean;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.mail.FetchProfile;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.ui.webmail.exception.WebmailException;
 
 public class AonFolder extends AonMessageSortableList {
+
+	private static final Logger LOGGER = Logger.getLogger(AonFolder.class
+			.getName());
+
+	public AonFolder(Folder folder) {
+		super(DATE_COLUMN,folder);
+	}
+
+    public void refresh() throws WebmailException {
+    	refreshMessageList();
+    	sort();
+    }
+
+	public ArrayList<AonFolder> getFolderList() throws WebmailException {
+		ArrayList<AonFolder> folderList = null;
+		try {
+			open(Folder.READ_ONLY);
+            Folder[] folders = folder.list();
+            folderList = new ArrayList<AonFolder>(folders.length);
+            for (int i = 0; i < folders.length; i++) {
+                if (folders[i] != null) {
+                	folderList.add(new AonFolder(folders[i]));
+                }
+            }
+		} catch (MessagingException e) {
+			LOGGER.log(Level.ALL, "Folder list " + folder.getName(), e);
+			throw new WebmailException(e);
+		}
+		return folderList;
+	}
+
+	public ArrayList<AonMessage> getMessageList(){
+		if (!oldSort.equals(sort) || oldAscending != ascending) {
+			sort();
+		}
+		return messageList;
+	}
+
+	public void deleteFolder(boolean content) throws WebmailException{
+		try {
+			close(false);
+			folder.delete(content);
+		} catch (MessagingException e) {
+			LOGGER.log(Level.ALL,"Deleting folder failed", e);
+			throw new WebmailException(e);
+		}
+	}
+	
+	private synchronized void refreshMessageList() throws WebmailException {
+		try {
+			open(Folder.READ_WRITE);
+			Message[] messages = folder.getMessages();
+
+			messageList = new ArrayList<AonMessage>(messages.length);
+			AonMessage aonMessage;
+			for (int i = 0; i < messages.length; i++) {
+				if (messages[i] != null && !messages[i].isExpunged()) {
+					aonMessage = new AonMessage();
+                	aonMessage.setParent(this);
+                	aonMessage.setMessage((MimeMessage)messages[i]);
+                    messageList.add(aonMessage);
+                }
+            }
+        } catch (MessagingException e) {
+			LOGGER.log(Level.ALL,"Error reading messages ", e);
+			throw new WebmailException(e);
+        }
+    }
+
+    public boolean open(int mode){
+    	try {
+    		if (!folder.isOpen()){
+    			folder.open(mode);
+    		}
+			return true;
+		} catch (MessagingException e) {
+			LOGGER.log(Level.ALL,"Error opening folder in mode " +mode, e);
+		}
+		return false;
+    }
+    
+    public boolean close(boolean mode){
+    	try {
+	    	folder.close(mode);
+		} catch (MessagingException e) {
+			LOGGER.log(Level.ALL,"Error closing folder in mode " +mode, e);
+		}
+		return false;
+    }
+
+
+    public boolean isLeaf(){
+    	try {
+			if (Folder.HOLDS_FOLDERS != folder.getType())
+				return true;
+		} catch (MessagingException e) {
+			LOGGER.log(Level.ALL,"Error getting folder type", e);
+		}
+    	return false;
+    }
+    
+	public boolean isRoot(){
+		try {
+			if (folder.getParent()==null)
+				return true;
+		} catch (MessagingException e) {
+			//throw new WebmailException(e);
+		}
+		return false;
+	}
 
     // Draft folder
     public static final String DRAFT_FOLDER_NAME = "Borrador";
@@ -33,129 +140,12 @@ public class AonFolder extends AonMessageSortableList {
 
     // Spam folder decloration
     public static final String SPAM_FOLDER_NAME = "spam";
-	
-	private static final Logger LOGGER = Logger.getLogger(AonFolder.class
-			.getName());
-	
-	private int pageSize = 20;
 
-	public AonFolder(Folder folder) {
-		super(DATE_COLUMN,folder);
-	}
-
-	public int getPageSize() {
-		return pageSize;
-	}
-
-    public void refresh() throws WebmailException {
-    	refreshMessageList();
-    	sort();
-    }
-
-	public ArrayList<AonFolder> getFolderList() throws WebmailException {
-		ArrayList<AonFolder> folderList = null;
-		try {
-            Folder[] folders = folder.list();
-            folderList = new ArrayList<AonFolder>(folders.length);
-            for (int i = 0; i < folders.length; i++) {
-                if (folders[i] != null) {
-                	folderList.add(new AonFolder(folders[i]));
-                }
-            }
-		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE, "Folder list " + folder.getName(), e);
-			throw new WebmailException(e);
-		}
-		return folderList;
-	}
-
-	public void deleteFolder(boolean content) throws WebmailException{
-		try {
-			close(false);
-			folder.delete(content);
-		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,"Deleting folder failed", e);
-			throw new WebmailException(e);
-		}
-	}
-	
-	private synchronized void refreshMessageList() throws WebmailException {
-		try {
-			open(Folder.READ_WRITE);
-			Message[] messages = folder.getMessages();
-			FetchProfile profile = new FetchProfile();
-			profile.add(FetchProfile.Item.FLAGS);
-			profile.add(FetchProfile.Item.ENVELOPE);
-			folder.fetch(messages, profile);
-
-			int realLength = 0;
-			AonMessage[] list = new AonMessage[messages.length];
-			for (int i = 0; i < messages.length; i++) {
-				if (messages[i] != null && !messages[i].isExpunged()) {
-					AonMessage aonMessage = new AonMessage();
-                	aonMessage.setParent(this);
-                	aonMessage.setMessage((MimeMessage)messages[i]);
-                	list[realLength++] = aonMessage;
-                }
-            }
-			if ( realLength != messages.length ) {
-				list = (AonMessage[]) ArrayUtils.subarray( list, 0, realLength);
-			}
-			setMessageList(list);
-        } catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,"Error reading messages ", e);
-			throw new WebmailException(e);
-        }
-    }
-
-    public boolean open(int mode){
-    	try {
-    		if (!folder.isOpen()){
-    			folder.open(mode);
-    		}
-			return true;
-		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,"Error opening folder " + folder.getName() + " in mode " +mode, e);
-		}
-		return false;
-    }
-    
-    public boolean close(boolean mode){
-    	try {
-	    	folder.close(mode);
-		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,"Error closing folder " + folder.getName() + " in mode " +mode, e);
-		}
-		return false;
-    }
-
-
-    public boolean isLeaf(){
-    	try {
-			if (Folder.HOLDS_FOLDERS != folder.getType())
-				return true;
-		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,"Error getting folder type", e);
-		}
-    	return false;
-    }
-    
-	public boolean isRoot(){
-		try {
-			if (folder.getParent()==null) {
-				return true;
-			}
-		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,"Error checking if is root", e);
-		}
-		return false;
-	}
-
-    public void moveMessages(AonMessage[] messagesToMove, AonFolder destinationFolder) throws MessagingException {
-    	Message[] messages = new Message[messagesToMove.length];
-    	for(int pos=0; pos<messagesToMove.length; pos++){
-    		messages[pos] = messagesToMove[pos].getMessage();
-    		messagesToMove[pos].setSelected(false);
+    public void moveMessages(List<AonMessage> messagesToMove, AonFolder destinationFolder) throws MessagingException {
+    	Message[] messages = new Message[messagesToMove.size()];
+    	for(int pos=0; pos<messagesToMove.size(); pos++){
+    		messages[pos] = messagesToMove.get(pos).getMessage();
+    		messagesToMove.get(pos).setSelected(false);
     	}
     	destinationFolder.open(Folder.READ_WRITE);
     	Folder desfFolder = destinationFolder.getFolder();
@@ -165,11 +155,13 @@ public class AonFolder extends AonMessageSortableList {
         destinationFolder.close(true);
     }
     
-    public void deleteMessages(AonMessage[] messagesToDelete) throws MessagingException{
-    	for(int pos=0; pos<messagesToDelete.length; pos++){
-    		messagesToDelete[pos].getMessage().setFlag(Flags.Flag.DELETED, true);
-    		messagesToDelete[pos].setSelected(false);
+    public void deleteMessages(List<AonMessage> messagesToDelete) throws MessagingException{
+    	Message[] messages = new Message[messagesToDelete.size()];
+    	for(int pos=0; pos<messagesToDelete.size(); pos++){
+    		messages[pos] = messagesToDelete.get(pos).getMessage();
+    		messagesToDelete.get(pos).setSelected(false);
     	}
+        folder.setFlags(messages,new Flags(Flags.Flag.DELETED), true);
         folder.expunge();
     }
 
@@ -245,40 +237,25 @@ public class AonFolder extends AonMessageSortableList {
     	return "other";
     }
     
-    public boolean isDraftFolder() {
-    	return AonFolder.DRAFT_FOLDER_NAME.equals( getFolder().getFullName() );	
-    }
-    
     //**************************************************************
     // SELECTED ROWS
     //**************************************************************
 
-    public AonMessage[] getSelectedMessages(){
-    	List<AonMessage> selectedAonMessages = new ArrayList<AonMessage>();
-    	for (AonMessage aonMessage : getMessageList()) {
-    		if (aonMessage.isSelected()) {
-    			selectedAonMessages.add(aonMessage);
-    		}
-		}
-    	return selectedAonMessages.toArray(new AonMessage[selectedAonMessages.size()]);
-    }
-    
     public AonMessage getSelectedMessage() {
-    	return (AonMessage) getModel().getRowData();
+    	Iterator<AonMessage> iter = messageList.iterator();
+    	while (iter.hasNext()){
+        	return iter.next();
+    	}
+    	return null;
     }
-    
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
+
+    public List<AonMessage> getSelectedMessages(){
+    	List<AonMessage> selectedAonMessages = new ArrayList<AonMessage>();
+    	for (AonMessage aonMessage : messageList) {
+    		if (aonMessage.isSelected())
+    			selectedAonMessages.add(aonMessage);
 		}
-		if (obj instanceof AonFolder) {
-			AonFolder f = (AonFolder) obj;
-			if (!StringUtils.equals(getName(), f.getName())) {
-				return false;
-			}
-			return true;
-		}
-		return false;
-	}    
+    	return selectedAonMessages;
+    }
+
 }

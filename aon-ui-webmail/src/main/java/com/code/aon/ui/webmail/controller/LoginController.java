@@ -1,18 +1,24 @@
 package com.code.aon.ui.webmail.controller;
 
-import com.code.aon.bridge.plugin.Utils;
+import java.security.Principal;
+import java.util.Iterator;
+
+import javax.faces.context.FacesContext;
+
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.User;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
-import com.code.aon.ui.webmail.bean.AonFolder;
+import com.code.aon.ui.webmail.bean.AonConstants;
 
-public class LoginController implements WebMailConstants {
+public class LoginController {
 
-	private static final String LOGIN_SUCCESS = NAVIGATION_FOLDER;
-	
-	private static final String LOGIN_ERROR = NAVIGATION_LOGIN;
-	
-	private AuthPrincipal mailUser;
+	private User mailUser;
 
 	private boolean logged;
 
@@ -28,27 +34,27 @@ public class LoginController implements WebMailConstants {
 	/**
 	 * @return the mailUser
 	 */
-	public AuthPrincipal getMailUser() {
+	public User getMailUser() {
 		return mailUser;
 	}
 	
 	private String startWebmail(){
-		System.out.println("LoginController -> startWebmail v3.0.3.0");
+		System.out.println("LoginController -> startWebmail");
 		logged = false;
 		mailUser = null;
 		try{
 			login();
 			System.out.println("LoginController -> startWebmail -> logged");
-	    	if (mailUser != null) {
+	    	if (mailUser != null){
 				System.out.println("LoginController -> startWebmail -> initWebmail");
-	    		WebMailController webmail = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
+	    		WebMailController webmail = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
 	    		webmail.initDefault(mailUser);
 	    		if (webmail.getServer()!=null){
 	    			logged = true;
 	    			return LOGIN_SUCCESS;
 	    		}
 	    	}
-		} catch (Exception e) {
+		}catch (Exception e) {
 			System.out.println("LoginController -> startWebmail -> " + e.getMessage());
 			e.printStackTrace();
 			error = e.getMessage();
@@ -58,9 +64,43 @@ public class LoginController implements WebMailConstants {
     }
 	
     private void login() {
-		System.out.println("LoginController -> login");
-		this.mailUser = Utils.getAuthPrincipal();
-   		System.out.println(">>>>>>>>>>>>>>>>>> user.getShortName " + mailUser.getShortName());
+    	try{
+			System.out.println("LoginController -> login");
+			AuthPrincipal user = null;
+    		Principal principal = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal();
+    		try {
+    			System.out.println(">>>>>>>>>>>>>>>>>> principal.getName " + principal.getName());
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    		}
+    		if ( principal instanceof AuthPrincipal ) {
+    			user = (AuthPrincipal) principal;
+    		} else {
+    			user = new AuthPrincipal( principal.getName() );
+    		}
+
+    		System.out.println(">>>>>>>>>>>>>>>>>> user.getShortName " + user.getShortName());
+
+    		System.out.println("LoginController -> login -> getUserPrincipal");
+    		IManagerBean beanUser = BeanManager.getManagerBean(User.class);
+    		Criteria criteriaUser = new Criteria();
+    		criteriaUser.addExpression(beanUser.getFieldName(IConfigAlias.USER_LOGIN), user.getShortName());
+    		Iterator iterUser = beanUser.getList(criteriaUser).iterator();
+			System.out.println("LoginController -> login -> getList");
+    		if (iterUser.hasNext()){
+    			mailUser = (User)iterUser.next();
+        		System.out.println(">>>>>>>>>>>>>>>>>> RETONNO " + mailUser.getLogin());
+    		}else{
+    			mailUser = null;
+        		System.out.println(">>>>>>>>>>>>>>>>>> RETONNO NULL ");
+    		}
+    	}catch (ManagerBeanException e) {
+			System.out.println("LoginController -> login exception -> " + e.getMessage());
+			mailUser = null;
+		} catch (ExpressionException e) {
+			System.out.println("LoginController -> login exception -> " + e.getMessage());
+			mailUser = null;
+		}
     }
 
     public boolean isLogged(){
@@ -77,5 +117,8 @@ public class LoginController implements WebMailConstants {
 	public String getPage() {
 		return page;
 	}
-	
+    
+	private static String LOGIN_SUCCESS = AonConstants.NAVIGATION_FOLDER;
+	private static String LOGIN_ERROR = AonConstants.NAVIGATION_LOGIN;
+
 }

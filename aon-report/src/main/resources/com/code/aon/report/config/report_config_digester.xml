@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <digester-rules>
+	<object-create-rule pattern="*/report-config" classname="com.code.aon.report.config.ReportConfigurationManager"/>
 
 	<pattern value="report-config/default-config">
 		<object-create-rule classname="com.code.aon.report.config.ReportConfig"/>
@@ -28,14 +29,12 @@
 		<pattern value="criteria">
 			<set-properties-rule>
     	  		<alias attr-name="provider" prop-name="criteriaProvider" />
-    	  		<alias attr-name="forceRefresh" prop-name="forceRefresh" />
 		    </set-properties-rule>
 		</pattern>
 		
 		<pattern value="collection">
 			<set-properties-rule>
     	  		<alias attr-name="provider" prop-name="collectionProvider" />
-    	  		<alias attr-name="forceRefresh" prop-name="forceRefresh" />
 		    </set-properties-rule>
 		</pattern>
 		

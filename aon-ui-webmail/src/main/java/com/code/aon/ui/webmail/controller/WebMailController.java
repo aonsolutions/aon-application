@@ -1,5 +1,8 @@
 package com.code.aon.ui.webmail.controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
@@ -10,30 +13,29 @@ import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 
-import com.code.aon.bridge.plugin.Utils;
-import com.code.aon.bridge.session.LoggedUser;
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.company.Company;
+import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.bean.AonFolder;
 import com.code.aon.ui.webmail.bean.AonServer;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
 import com.code.aon.webmail.dao.IWebMailAlias;
+import com.code.aon.webmail.enumeration.MailAccountStatus;
+import com.code.aon.webmail.enumeration.SignatureType;
 
-public class WebMailController implements WebMailConstants {
+public class WebMailController {
 
 	private static final Logger LOGGER = Logger.getLogger(WebMailController.class.getName());
 	
 	private AonServer server;
-	
-	private FolderController folderController;
-
 	
 	/**
 	 * @return the server
@@ -42,12 +44,12 @@ public class WebMailController implements WebMailConstants {
 		return server;
 	}
 
-	public void initDefault(AuthPrincipal mailUser){
+	public void initDefault(User mailUser){
 		
 		try {
 			MailAccount mailAccount = getAccount(mailUser);
-			if (mailAccount!=null) {
-				initFull(mailAccount);
+			if (mailAccount!=null){
+				this.init(mailAccount);
 			}else{
 	    		AonUtil.addErrorMessage("NOT VALID ACCOUNT");
 			}
@@ -57,11 +59,13 @@ public class WebMailController implements WebMailConstants {
 		}
 	}
 
-	public void initDesktop(AuthPrincipal mailUser){
+	public void initDesktop(User mailUser){
 		try {
 			MailAccount mailAccount = getAccount(mailUser);
 			if (mailAccount!=null){
-				initBasic(mailAccount);
+				server = new AonServer(mailAccount);
+				server.createBasicFolders();
+				createDefaultSignature(mailAccount);
 			}else{
 	    		AonUtil.addErrorMessage("NOT VALID ACCOUNT");
 			}
@@ -71,30 +75,55 @@ public class WebMailController implements WebMailConstants {
 		}
 	}
 
-	public void initBasic(MailAccount mailAccount){
+	public void init(MailAccount mailAccount){
 		server = new AonServer(mailAccount);
 		server.createBasicFolders();
 		createDefaultSignature(mailAccount);
-		SpamController spamController = (SpamController) AonUtil.getRegisteredBean(BEAN_SPAM);
-		spamController.updateSpamEnabled(mailAccount);
-	}
-	
-	public void initFull(MailAccount mailAccount) {
-		initBasic(mailAccount);
-    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(BEAN_TREE);
-    	treeBean.initTree();
+    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
+    	treeBean.loadTree();
+    	FolderController folderBean = (FolderController)AonUtil.getRegisteredBean(AonConstants.BEAN_FOLDER);
+    	folderBean.nodeSelected(getServer().getAonFolder(AonFolder.INBOX_FOLDER_NAME));
 	}
 
-    private MailAccount getAccount(AuthPrincipal mailUser) throws ManagerBeanException {
-		IManagerBean beanAccount = AonUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();
+    private MailAccount getAccount(User mailUser) throws ManagerBeanException {
+		IManagerBean beanAccount = BeanManager.getManagerBean(MailAccount.class);
 		Criteria criteriaAccount = new Criteria();
-		criteriaAccount.addEqualExpression(beanAccount.getFieldName(IWebMailAlias.MAIL_ACCOUNT_NAME), MailAccount.DEFAULT_MAIL_ACCOUNT_NAME);
-		Iterator<ITransferObject> iterAccount = beanAccount.getList(criteriaAccount).iterator();
+		criteriaAccount.addEqualExpression(beanAccount.getFieldName(IWebMailAlias.MAIL_ACCOUNT_USER_ID), mailUser.getId());
+		criteriaAccount.addEqualExpression(beanAccount.getFieldName(IWebMailAlias.MAIL_ACCOUNT_STATUS), MailAccountStatus.ACTIVE);
+		Iterator iterAccount = beanAccount.getList(criteriaAccount).iterator();
 		if (iterAccount.hasNext()){
 			MailAccount mailAccount = (MailAccount)iterAccount.next();
 			return mailAccount;
 		}
 		return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public String getCompanyName(){
+        IManagerBean companyBean;
+		try {
+			companyBean = BeanManager.getManagerBean(Company.class);
+	        List companyList = companyBean.getList(null);
+	        if (companyList.size() > 0) {
+	            Company company = (Company)companyList.get(0);
+	            return company.getName();
+	        }
+		} catch (Exception e) {
+		}
+        return "";
+    }
+
+    public String getLoggedUserName() {
+    	if (server==null)
+    		return "";
+        User user = server.getAccount().getUser();
+        return user.getName();
+    }
+
+    
+    public String getCurrentDate() {
+        DateFormat formatter = new SimpleDateFormat("EEEE, dd MMMM yyyy");
+        return formatter.format(new Date()).toUpperCase();
     }
 
     public String getMillis() {
@@ -106,47 +135,26 @@ public class WebMailController implements WebMailConstants {
     }
     
     private void createDefaultSignature(MailAccount mailAccount){
-    	if ( mailAccount.getSignature() == null ) {
-    		try {
-    			Signature signature = null;
-    			String name = Utils.getAuthPrincipal().getDomain();
-				IManagerBean signatureBean = AonUtil.getController(BEAN_SIGNATURE).getManagerBean();
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(signatureBean.getFieldName(IWebMailAlias.SIGNATURE_NAME), name);
-				List<ITransferObject> list = signatureBean.getList(criteria);
-				if ( list.size() == 1) {
-					signature = (Signature) list.get(0);
-				} else {
-					LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(BEAN_LOGGED_USER);					
-		    		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		            ResourceBundle bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE, locale); 
-		        	signature = new Signature();
-		        	signature.setName(name);
-		        	signature.setSignature("<br><br><br><hr>"+
-		        			"<b><font size='4'>"+ loggedUser.getLoggedUserName()+"</font></b><p>"+
-		        			"<b><font size='2'>"+ loggedUser.getCompanyName()+"</font></b><p>"+
-		        			"<br>"+
-		        			"<i>"+bundle.getString("aon_webmail_signature_deftext")+"</i>");
-					signatureBean.insert(signature);					
-				}
-				IManagerBean mailAccountBean = AonUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();
-				mailAccount.setSignature(signature);
-				mailAccountBean.update(mailAccount);
-    		} catch (ManagerBeanException e) {
-    			LOGGER.severe( e.getMessage() );
-        	}    		
-    	}
-    }
-
-	public FolderController getFolderController() {
-		if ( folderController == null ) {
-	    	setFolderController( (FolderController)AonUtil.getRegisteredBean(BEAN_FOLDER) );
+        try {
+			IManagerBean signatureBean = BeanManager.getManagerBean(Signature.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(signatureBean.getFieldName(IWebMailAlias.SIGNATURE_MAIL_ACCOUNT_ID), mailAccount.getId());
+			if (signatureBean.getList(criteria).isEmpty()){
+	        	String BASE_NAME = "com.code.aon.ui.webmail.i18n.messages";
+	    		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+	            ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
+	        	Signature signature = new Signature();
+	        	signature.setActive(SignatureType.ACTIVE);
+	        	signature.setName(bundle.getString("aon_webmail_signature_defname"));
+	        	signature.setMailAccount(mailAccount);
+	        	signature.setSignature("<br><br><br><hr>"+
+	        			"<b><font size='4'>"+getLoggedUserName()+"</font></b><p>"+
+	        			"<b><font size='2'>"+getCompanyName()+"</font></b><p>"+
+	        			"<br>"+
+	        			"<i>"+bundle.getString("aon_webmail_signature_deftext")+"</i>");
+				signatureBean.insert(signature);
+			}
+		} catch (ManagerBeanException e) {
 		}
-		return folderController;
-	}
-
-	public void setFolderController(FolderController folderController) {
-		this.folderController = folderController;
-	}
-	
+    }
 }

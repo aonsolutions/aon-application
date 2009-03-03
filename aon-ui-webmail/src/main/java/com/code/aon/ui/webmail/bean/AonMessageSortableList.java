@@ -1,12 +1,11 @@
 package com.code.aon.ui.webmail.bean;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.faces.model.ArrayDataModel;
-import javax.faces.model.DataModel;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -14,8 +13,7 @@ import javax.mail.event.MessageChangedEvent;
 import javax.mail.event.MessageChangedListener;
 import javax.mail.event.MessageCountEvent;
 import javax.mail.event.MessageCountListener;
-
-import org.apache.commons.lang.ArrayUtils;
+import javax.mail.internet.MimeMessage;
 
 import com.code.aon.ui.webmail.exception.WebmailException;
 
@@ -23,17 +21,7 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
 
 	private static final Logger LOGGER = Logger.getLogger(AonMessageSortableList.class.getName());
 
-    public static String FROM_COLUMN = "from";   
-    
-    public static String TO_COLUMN = "to";
-    
-    public static String SUBJECT_COLUMN = "subject";
-    
-    public static String DATE_COLUMN = "date";
-	
-    private DataModel model;
-    
-    private AonMessage[] messageList;
+	protected ArrayList<AonMessage> messageList = new ArrayList<AonMessage>();
 
 	protected Folder folder;
 	
@@ -61,7 +49,7 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
 	/**
 	 * @return the messageList
 	 */
-	public AonMessage[] getMessageList() {
+	public ArrayList<AonMessage> getMessageList() {
 		if (!oldSort.equals(sort) || oldAscending != ascending) {
 			sort();
 		}
@@ -71,13 +59,8 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
 	/**
 	 * @param messageList the messageList to set
 	 */
-	public void setMessageList(AonMessage[] messageList) {
+	public void setMessageList(ArrayList<AonMessage> messageList) {
 		this.messageList = messageList;
-		this.model = new ArrayDataModel(this.messageList);
-	}
-	
-	public DataModel getModel() {
-		return model;
 	}
 
 	@Override
@@ -104,15 +87,60 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
 	 * Sort the list.
 	 */
 	protected void sort(final String column, final boolean ascending) {
-		if (messageList != null) {
-			try {
-				Comparator<AonMessage> comparator = AonMessageComparator.getComparator(column, ascending);
-				Arrays.sort(messageList, comparator);
-			} catch ( Throwable th ) {
-				LOGGER.log(Level.SEVERE, "Error sorting message list", th);
+		Comparator comparator = new Comparator() {
+			public int compare(Object o1, Object o2){
+				AonMessage c1 = (AonMessage) o1;
+				AonMessage c2 = (AonMessage) o2;
+				if (column == null) {
+					return 0;
+				}
+				try {
+					if (column.equals(SUBJECT_COLUMN)) {
+						int a = c1.getSubject().compareToIgnoreCase(c2.getSubject());
+						int d = c2.getSubject().compareToIgnoreCase(c1.getSubject());
+						return ascending ? a : d ;
+					} else if (column.equals(FROM_COLUMN)) {
+						int a = c1.getSender().compareToIgnoreCase(c2.getSender());
+						int d = c2.getSender().compareToIgnoreCase(c1.getSender());
+						return ascending ? a : d ;
+					} else if (column.equals(TO_COLUMN)) {
+						int a = c1.getRecipientsTo().compareToIgnoreCase(c2.getRecipientsTo());
+						int d = c2.getRecipientsTo().compareToIgnoreCase(c1.getRecipientsTo());
+						return ascending ? a : d ;
+					} else if (column.equals(DATE_COLUMN)) {
+						if (c1.getMessage().getSentDate() != null
+								&& c2.getSentDate() != null) {
+							int a = c1.getSentDate().compareTo(c2.getSentDate());
+							int d = c2.getSentDate().compareTo(c1.getSentDate());
+							return ascending ? a : d;
+						} else {
+							return 0;
+						}
+					} else {
+						return 0;
+					}
+				} catch (MessagingException e) {
+					LOGGER.log(Level.ALL,"Sort error", e);
+					return 0;
+				} catch (WebmailException e) {
+					LOGGER.log(Level.ALL,"Sort error", e);
+					return 0;
+				}
 			}
+		};
+		if (messageList != null) {
+			Collections.sort(messageList, comparator);
 		}
 	}
+
+    public static String FROM_COLUMN = "from";   
+    
+    public static String TO_COLUMN = "to";
+    
+    public static String SUBJECT_COLUMN = "subject";
+    
+    public static String DATE_COLUMN = "date";
+
     
     /**
      * Invoked when messages are added into a folder.  
@@ -128,35 +156,32 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
         if (messageCountEvent.getMessages() != null) {
             removeMessage(messageCountEvent.getMessages());
         }
+    	//this.messageCountEvent = messageCountEvent;
     }
     
     protected synchronized void removeMessage(Message[] messages) {
         if (messages != null) {
-        	boolean changed = false;
-        	AonMessage[] list = getMessageList();
-        	for( Message message : messages ) {
-                AonMessage aonMessage = findMessage(message);
+            Message message;
+            AonMessage aonMessage;
+            for (int i = messages.length - 1; i >= 0; i--) {
+                message = messages[i];
+                aonMessage = findMessage(message);
                 if (aonMessage != null){
-                    int index = ArrayUtils.indexOf( list, aonMessage );
-                    if (index >= 0) {
-                    	changed = true;
-                    	list = (AonMessage[]) ArrayUtils.remove( list, index );
+                    int index = messageList.indexOf(aonMessage);
+                    if (index >= 0){
+                        messageList.remove(index);
                     }
                 }
             }
-        	if ( changed ) {
-        		setMessageList( list );
-        	}
         }
     }
 
     protected synchronized AonMessage findMessage(Message message){
-        if (message == null) {
+        if (message == null)
             return null;
-        }
-        for (int i = this.messageList.length - 1; i >= 0 ; i--) {
-            if (message.equals(messageList[i].getMessage())){
-                return messageList[i];
+        for (int i = this.messageList.size() - 1; i >= 0 ; i--) {
+            if (message.equals(messageList.get(i).getMessage())){
+                return messageList.get(i);
             }
         }
         return null;
@@ -178,7 +203,7 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
                     try {
                         foundMessage.setMessageFlag(changedMessage.getFlags());
                     } catch (MessagingException e) {
-            			LOGGER.log(Level.SEVERE,"Error getting message flags",e);
+            			LOGGER.log(Level.ALL,"Error getting message flags",e);
                     }
                 }
             }

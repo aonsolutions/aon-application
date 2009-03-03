@@ -1,5 +1,8 @@
 package com.code.aon.ui.webmail.bean;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -49,20 +52,20 @@ public class AonSearcher {
 		this.aonFolder = aonFolder;
 	}
 
-	public AonMessage[] search() throws WebmailException{
+	public ArrayList<AonMessage> search() throws WebmailException{
 		if (!hasTerm())
-			return new AonMessage[0];
+			return new ArrayList<AonMessage>();
 		Folder folder = aonFolder.getFolder();
 		Message[] messages;
 		try {
 			messages = folder.search(term);
-			AonMessage[] search = new AonMessage[messages.length];
+			ArrayList<AonMessage> search = new ArrayList<AonMessage>();
 			AonMessage aonMessage;
 			for (int i = 0; i < messages.length; i++){
 				aonMessage = new AonMessage();
 				aonMessage.setMessage((MimeMessage)messages[i]);
 				aonMessage.setParent(aonFolder);
-				search[i] = aonMessage; 
+				search.add(aonMessage); 
 			}
 			return search;
 		} catch (MessagingException e) {

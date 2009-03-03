@@ -1,16 +1,17 @@
 package com.code.aon.ui.webmail.bean;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.event.AbortProcessingException;
 import javax.mail.AuthenticationFailedException;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
+import javax.mail.PasswordAuthentication;
 import javax.mail.SendFailedException;
 import javax.mail.Session;
 import javax.mail.Store;
@@ -29,19 +30,20 @@ public class AonServer {
 	private static final Logger LOGGER = Logger.getLogger(AonServer.class.getName());
 	
 	private static final String IMAP = "imap";
+	private static final String POP3 = "pop3";
+	private static final String SMTP = "smtp";
 	
-    private Store store;
+    protected Store store;
 
-    private Session session;
+    protected Session session;
 
-    private MailAccount account;
+    protected MailAccount account;
     
-    private boolean ensure_connection;
+    protected boolean ensure_connection = true;
     
     /** Creates a new instance of Server */
     public AonServer(MailAccount account){
-        setAccount( account );
-        this.ensure_connection = true;
+        this.account = account;
     }
     
     /**
@@ -63,7 +65,6 @@ public class AonServer {
         try {
             Properties mailProperties = System.getProperties();
 
-            // mailProperties.setProperty("mail.debug", "true");
             // setup SSL connection factory
             if (account.isIncomingSsl()) {
                 mailProperties.setProperty("mail.imap.socketFactory.class",
@@ -83,23 +84,24 @@ public class AonServer {
                 mailProperties.remove("mail.imap.port");
                 mailProperties.remove("mail.imap.socketFactory.port");
             }
-            URLName url = new URLName(IMAP, account.getHost(), -1, "INBOX", account.getMailUsername(),account.getPasswordString());
+
+            URLName url = new URLName(IMAP, account.getHost(), -1, "INBOX", account.getMailUsername(),account.getPassword());
             session = Session.getInstance(mailProperties, null);
             store = session.getStore(url);
             store.connect();
 
             return true;
         }catch (NoSuchProviderException e) {
-        	LOGGER.log(Level.SEVERE,"Connection Error - No such provider for " + account.toString(),e);
+        	LOGGER.log(Level.ALL,"Connection Error - No such provider for " + account.toString(),e);
             return false;
         }catch(AuthenticationFailedException e){
-        	LOGGER.log(Level.SEVERE,"Connection Error - Authentication error " + account.toString(),e);
+        	LOGGER.log(Level.ALL,"Connection Error - Authentication error " + account.toString(),e);
             return false;
         }catch (MessagingException e) {
-        	LOGGER.log(Level.SEVERE,"Connection Error - Messaging Exception " + account.toString(),e);
+        	LOGGER.log(Level.ALL,"Connection Error - Messaging Exception " + account.toString(),e);
             return false;
         }catch (Throwable e) {
-        	LOGGER.log(Level.SEVERE,"Connection Error - Misc. Exception " + account.toString(),e);
+        	LOGGER.log(Level.ALL,"Connection Error - Misc. Exception " + account.toString(),e);
             return false;
         }
     }
@@ -112,14 +114,14 @@ public class AonServer {
     	try {
     		store.close();
     	} catch (MessagingException e) {
-    		LOGGER.log(Level.SEVERE,"Messaging Exception on disconnect method",e);
+    		LOGGER.log(Level.ALL,"Messaging Exception on disconnect method",e);
     	}
     }
 
     protected void ensureConnection() {
         if (ensure_connection && (! isConnected())) {
             if (!connect()) {
-        		LOGGER.log(Level.INFO,"Error connecting to " + account.getHost() );
+        		LOGGER.log(Level.INFO,"Connection Failed!");
             }
         }
     }
@@ -128,7 +130,7 @@ public class AonServer {
         try {
             return store.getDefaultFolder();
         } catch (MessagingException e) {
-        	LOGGER.log(Level.SEVERE,"getRoot failed " , e);
+        	LOGGER.log(Level.ALL,"getRoot failed " , e);
             return null;
         }
     }
@@ -138,7 +140,7 @@ public class AonServer {
         try {
             return new AonFolder(store.getFolder(folderName));
         } catch (MessagingException e) {
-        	LOGGER.log(Level.SEVERE,"getAonFolder failed " , e);
+        	LOGGER.log(Level.ALL,"getAonFolder failed " , e);
             return null;
         }
     }
@@ -159,7 +161,7 @@ public class AonServer {
 			}
 			return new AonFolder(new_folder);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,
+			LOGGER.log(Level.ALL,
 					"Creating new folder failed ", e);
 		}
 		return null;
@@ -170,10 +172,10 @@ public class AonServer {
         return this.account.toString();
     }
         
-    public AonMessage createAonMessage( String address, String personal ) throws AddressException, MessagingException, WebmailException, UnsupportedEncodingException{
+    public AonMessage createAonMessage() throws AddressException, MessagingException, WebmailException{
     	AonMessage aonMessage = new AonMessage();
 		aonMessage.setMessage(new MimeMessage(session));
-		aonMessage.setSender(new InternetAddress(address, personal));
+		aonMessage.setSender(new InternetAddress(account.getEmail()));
     	return aonMessage;
     }
     
@@ -195,7 +197,7 @@ public class AonServer {
                 		account.getOutgoingHost(),
                 		account.getOutgoingPort(),
                 		account.getMailUsername(),
-                		account.getPasswordString());
+                		account.getPassword());
             } else {
             	session.getProperties().put("mail.smtp.auth", "false");
                 transport.connect(
@@ -210,19 +212,19 @@ public class AonServer {
                 transport.sendMessage(message,
                         message.getAllRecipients());
             } else {
-            	LOGGER.log(Level.SEVERE,"Could not send message, null message");
+            	LOGGER.log(Level.ALL,"Could not send message, null message");
             }
             return true;
         } catch (SendFailedException e) {
-        	LOGGER.log(Level.SEVERE,"Message send failed " , e);
+        	LOGGER.log(Level.ALL,"Message send failed " , e);
 			AonUtil.addErrorMessage(e.getMessage());
 			return false;
         } catch (MessagingException e) {
-        	LOGGER.log(Level.SEVERE,"Message was not sent correctly " , e);
+        	LOGGER.log(Level.ALL,"Message was not sent correctly " , e);
 			AonUtil.addErrorMessage(e.getMessage());
 			return false;
         } catch (Throwable e) {
-        	LOGGER.log(Level.SEVERE,"Message was not sent correctly " , e);
+        	LOGGER.log(Level.ALL,"Message was not sent correctly " , e);
 			AonUtil.addErrorMessage(e.getMessage());
 			return false;
         }
@@ -235,10 +237,6 @@ public class AonServer {
 		return account;
 	}
     
-	public void setAccount(MailAccount account) {
-		this.account = account;
-	}
-
 	public void createBasicFolders(){
 		try{
 			if (!getRoot().getFolder(AonFolder.SENT_FOLDER_NAME).exists()){
@@ -253,8 +251,7 @@ public class AonServer {
 			if (!getRoot().getFolder(AonFolder.SPAM_FOLDER_NAME).exists()){
 				createAonFolder(null, AonFolder.SPAM_FOLDER_NAME, Folder.HOLDS_MESSAGES);
 			}
-		} catch (MessagingException e) {
-			LOGGER.severe( e.getMessage() );
+		}catch (MessagingException e) {
 		}
 	}
 	

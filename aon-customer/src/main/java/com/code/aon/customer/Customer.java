@@ -1,5 +1,8 @@
 package com.code.aon.customer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,14 +13,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import com.code.aon.common.ILookupObject;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
+import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.product.Tariff;
 import com.code.aon.registry.IRegistry;
@@ -32,10 +37,11 @@ import com.code.aon.registry.Registry;
  */
 @Entity
 @Table(name="customer")
-public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry{
+public class Customer implements ITransferObject, ILookupObject, ITaxInfo, IScopable, IRegistry{
 	
-	private static final long serialVersionUID = 4701123719465168619L;
-
+	/** The Constant SUPPLIER_FULL_NAME used to retrieve the complete name of the supplier using the lookup. */
+	private static final String CUSTOMER_FULL_NAME = "Customer_full_name";
+	
 	/** The id. */
 	private Integer id;
 	
@@ -231,25 +237,28 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (id == null) {
+			return super.equals(obj);
 		}
 		if (obj instanceof Customer) {
-			Customer o = (Customer) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
+			return (this.id.equals(((Customer) obj).getId()));
 		}
 		return false;
 	}
 
-	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
-
-	
+	/**
+	 * Gets the map of values used by the lookup.
+	 * 
+	 * @return the map
+	 */
+	@Transient
+	public Map<String, Object> getLookups() {
+		Map<String,Object> map = new HashMap<String,Object>();
+        map.put(ICustomerAlias.CUSTOMER_ID, getId());
+        map.put(ICustomerAlias.CUSTOMER_REGISTRY_NAME, getRegistry().getName());
+        map.put(ICustomerAlias.CUSTOMER_REGISTRY_SURNAME, getRegistry().getSurname());
+        map.put(ICustomerAlias.CUSTOMER_REGISTRY_DOCUMENT, getRegistry().getDocument());
+        map.put(CUSTOMER_FULL_NAME, getRegistry().getName() + " " + ((getRegistry().getSurname() == null) ? "" : getRegistry().getSurname()) );
+		return map;
+	}
 }

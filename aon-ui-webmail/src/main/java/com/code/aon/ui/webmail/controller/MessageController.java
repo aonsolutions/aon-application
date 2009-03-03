@@ -5,28 +5,22 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
+import javax.faces.validator.LengthValidator;
 import javax.mail.BodyPart;
-import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Header;
 import javax.mail.Message;
@@ -37,57 +31,39 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.richfaces.event.UploadEvent;
-import org.richfaces.model.UploadItem;
+import org.apache.myfaces.custom.fileupload.UploadedFile;
 
-import com.code.aon.bridge.session.LoggedUser;
-import com.code.aon.common.AonException;
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.common.velocity.TemplateHelper;
-import com.code.aon.common.velocity.VelocityHelper;
 import com.code.aon.groupware.Contact;
-import com.code.aon.groupware.dao.IContactAlias;
+import com.code.aon.groupware.dao.IGroupWareAlias;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.IController;
+import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonAttachment;
+import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.bean.AonFile;
 import com.code.aon.ui.webmail.bean.AonFolder;
 import com.code.aon.ui.webmail.bean.AonMessage;
 import com.code.aon.ui.webmail.bean.AonMessageUtils;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.converter.MaxLenghtStringConverter;
 import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.ui.webmail.listener.IAonFileListener;
 import com.code.aon.webmail.MailAccount;
-import com.sun.mail.imap.AppendUID;
-import com.sun.mail.imap.IMAPFolder;
+import com.code.aon.webmail.Signature;
+import com.code.aon.webmail.dao.IWebMailAlias;
+import com.code.aon.webmail.enumeration.SignatureType;
 import com.sun.mail.util.LineOutputStream;
 
-public class MessageController implements WebMailConstants, IAonFileListener {
-
-	private static final int MAX_LENGTH_STRING = 120;
-
-	private static final String REPLIED_MESSAGE = "aon_webmail_replied_message";
-
-	private static final String FORWARDED_MESSAGE = "aon_webmail_forwarded_message";
-	
-	private static final String VM_PATH_DEFAULT = "com/code/aon/ui/webmail/";
-	
-	private static final String PRINT_TEMPLATE = "print.html.vm";
+public class MessageController implements IAonFileListener{
 
 	private static final Logger LOGGER = Logger.getLogger(MessageController.class.getName());
 	
 	private AonMessage message;
 
 	private AonMessage parentMessage;
-	
-	private Long draftMessageUID;
 
 	private String sender;
 
@@ -103,13 +79,7 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 
     private List<AonFile> newMsgFileList;
 
-    private String returnAction = NAVIGATION_FOLDER;
-    
-    private String senderMailAccountId;
-    
-    private String messageBody;
-    
-    private VelocityHelper velocityHelper;
+    private String returnAction = AonConstants.NAVIGATION_FOLDER;
     
 	/**
 	 * @return the message
@@ -124,14 +94,11 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 	public void setMessage(AonMessage message) {
 		this.message = message;
 		afterSetMessage();
-		AttachController attachController = (AttachController) AonUtil.getRegisteredBean(BEAN_ATTACH);
-		attachController.update(this.message);
 	}
 
 
 	private void afterSetMessage(){
 		initShotMessageToCcBcc();
-		initContactName();
 	}
 	
 	
@@ -139,6 +106,15 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 	 * @return the returnAction
 	 */
 	public String getReturnAction() {
+		return returnAction;
+	}
+
+	/**
+	 * @return the returnAction
+	 */
+	public String getDeleteReturnAction() {
+		if (getMessageList().size()>0)
+			return AonConstants.NAVIGATION_MESSAGE;
 		return returnAction;
 	}
 
@@ -154,35 +130,21 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 		parentMessage = null;
     }
 
-	public void editDraftMessage(AonMessage message, long uid) {
-		initVars();
-		this.draftMessageUID = uid;
-		parentMessage = null;
-		try {
-			copyAttachmentsToFileList( message );			
-			recipientsTo = message.getRecipientsTo();
-			recipientsCc = message.getRecipientsCc();
-			recipientsBcc = message.getRecipientsBcc();
-	       	subject = message.getSubject();
-	       	content = message.getContent().toString();
-		} catch (WebmailException e) {
-    		AonUtil.addErrorMessage(e.getMessage());
-    		throw new AbortProcessingException(e);
-		}
-	}	
-	
 	public void replyToSelectedMessage(ActionEvent event) {
 		initVars();
 		parentMessage = message;
 		try {
 			recipientsTo = AonMessage.parseDisplayAddress(message.getSender());
 	       	subject = "Reply: "+message.getSubject();
-	       	messageBody = AonMessage.getMessageEnvelope(message.getMessage(), message.getContent(), REPLIED_MESSAGE);
-	       	content += messageBody;
+	        StringBuffer localBody = new StringBuffer(content);
+	        localBody.append("<br/>---------- Replyed message ----------");
+	        localBody.append("<br/>From: ").append(message.getSender());
+	        localBody.append("<br/>Date: ").append(message.getSentDate());
+	        localBody.append("<br/>Subject: ").append(message.getSubject());
+	        localBody.append("<br/><br/><br/>");
+	        localBody.append(message.getContent());
+	       	content = localBody.toString();
 		} catch (WebmailException e) {
-    		AonUtil.addErrorMessage(e.getMessage());
-    		throw new AbortProcessingException(e);
-		} catch (MessagingException e) {
     		AonUtil.addErrorMessage(e.getMessage());
     		throw new AbortProcessingException(e);
 		}
@@ -192,82 +154,80 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 		initVars();
 		parentMessage = message;
 		try{
-	       	String dest = message.getSender()+AonMessageUtils.EMAIL_SEPARATOR;
-	       	dest += message.getRecipientsTo()+AonMessageUtils.EMAIL_SEPARATOR;
-	       	dest += message.getRecipientsCc()+AonMessageUtils.EMAIL_SEPARATOR;
+	       	String dest = message.getSender()+",";
+	       	dest += message.getRecipientsTo()+",";
+	       	dest += message.getRecipientsCc()+",";
 			recipientsTo = AonMessage.parseDisplayAddress(dest);
 	       	subject = "ReplyALL: "+message.getSubject();
-	       	messageBody = AonMessage.getMessageEnvelope(message.getMessage(), message.getContent(), REPLIED_MESSAGE);
-	       	content += messageBody;
+	        StringBuffer localBody = new StringBuffer(content);
+	        localBody.append("<br/>---------- Replyed message ----------");
+	        localBody.append("<br/>From: ").append(message.getSender());
+	        localBody.append("<br/>Date: ").append(message.getSentDate());
+	        localBody.append("<br/>Subject: ").append(message.getSubject());
+	        localBody.append("<br/><br/><br/>");
+	        localBody.append(message.getContent());
+	       	content = localBody.toString();
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
-		} catch (MessagingException e) {
-    		AonUtil.addErrorMessage(e.getMessage());
-    		throw new AbortProcessingException(e);			
 		}
     }
-	
-	private void refreshDraftFolder() {
-    	FolderController folderController = (FolderController) AonUtil.getRegisteredBean(BEAN_FOLDER);
-    	if ( folderController.getFolder().isDraftFolder() ) {
-    		folderController.getFolder().close(false);
-    		folderController.refresh(null);
-    	}
-	}
 
-	private void copyAttachmentsToFileList( AonMessage message ) throws WebmailException {
-       	Iterator<AonAttachment> iter =message.getAttachements().iterator();
-       	while (iter.hasNext()){
-       		AonAttachment attach = iter.next();
-       		MimeBodyPart m = (MimeBodyPart) attach.getPart();
-       		try {
-       			AonFile af = new AonFile();
-       			InputStream is = m.getInputStream();
-       			String name = attach.getFileName();
-       			File f = File.createTempFile( "webmail-", name ); 
-       			FileOutputStream fos = new FileOutputStream(f);
-       			IOUtils.copy( is, fos );
-       			is.close();
-    			fos.close();
-    			af.setFile(f);
-    			af.setFileName( name );
-    	    	af.addAonFileListener(this);
-       			newMsgFileList.add(af);
-			} catch (IOException e) {
-				AonUtil.addErrorMessage(e.getMessage());
-			} catch (MessagingException e) {
-				AonUtil.addErrorMessage(e.getMessage());
-			}
-       	}		
-	}
-	
 	public void forwardMessage(ActionEvent event) {
 		initVars();
 		parentMessage = message;
-		try {
-			copyAttachmentsToFileList( message );
+		try{
+	       	Iterator<AonAttachment> iter =message.getAttachements().iterator();
+	       	while (iter.hasNext()){
+	       		AonAttachment attach = iter.next();
+	       		MimeBodyPart m = (MimeBodyPart) attach.getPart();
+	       		try {
+	       			AonFile af = new AonFile();
+	       			InputStream is = m.getInputStream();
+	       			File f = new File("/tmp/"+attach.getFileName()); 
+	       			FileOutputStream fos = new FileOutputStream(f);
+	    			byte buff [] = new byte [ 256 ];
+	    			int read = is.read ( buff );
+	    			while ( read != -1  ) {
+	    				fos.write ( buff,0,read );
+	    				read = is.read ( buff );
+	    			}
+	    			fos.flush();
+	    			fos.close();
+	    			af.setFile(f);
+	    	    	af.addAonFileListener(this);
+	       			newMsgFileList.add(af);
+				} catch (IOException e) {
+					AonUtil.addErrorMessage(e.getMessage());
+				} catch (MessagingException e) {
+					AonUtil.addErrorMessage(e.getMessage());
+				}
+	       	}
 	       	subject = "Fwd: "+message.getSubject();
-	       	messageBody = AonMessage.getMessageEnvelope(message.getMessage(), message.getContent(), FORWARDED_MESSAGE);
-	       	content += messageBody;
+	        StringBuffer localBody = new StringBuffer(content);
+	        localBody.append("<br/>---------- Forwarded message ----------");
+	        localBody.append("<br/>From: ").append(message.getSender());
+	        localBody.append("<br/>Date: ").append(message.getSentDate());
+	        localBody.append("<br/>Subject: ").append(message.getSubject());
+	        localBody.append("<br/><br/><br/>");
+	        localBody.append(message.getContent());
+	       	content = localBody.toString();
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
-		} catch (MessagingException e) {
-    		AonUtil.addErrorMessage(e.getMessage());
-    		throw new AbortProcessingException(e);			
 		}
     }
 
     public void deleteSelectedMessage(ActionEvent event){
-    	AonMessage[] lst = new AonMessage[] { this.message };
+    	ArrayList<AonMessage> lst = new ArrayList<AonMessage>();
+		lst.add(this.message);
 		try{
 			if (message.getParent().getFolder().getFullName().equals(AonFolder.TRASH_FOLDER_NAME)){
 				message.getParent().deleteMessages(lst);
 			}else if (message.getParent().getFolder().getFullName().equals(AonFolder.SPAM_FOLDER_NAME)){
 				message.getParent().deleteMessages(lst);
 			}else{
-		    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
+		    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
 		    	AonFolder dest = webMailController.getServer().getAonFolder(AonFolder.TRASH_FOLDER_NAME);
 		    	message.getParent().moveMessages(lst, dest);
 			}
@@ -276,6 +236,17 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 			throw new AbortProcessingException(e);
 		}
 	}
+
+    public void deleteSelectedMessageAndMove(ActionEvent event){
+    	AonMessage message = null; 
+    	if(isNextMessage()){
+    		message = getNextMessage();
+    	}else if (isPreviousMessage()){
+    		message = getPreviousMessage();
+    	}
+    	deleteSelectedMessage(event);
+    	setMessage(message);
+    }
 
     public List<AonFile> getFiles(){
     	return newMsgFileList;
@@ -288,26 +259,72 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 	//***************************************************************
 	//*********** ATTACH ********************************************
 	//***************************************************************
-
-	public void fileUploaded(UploadEvent event) {
-		UploadItem item = event.getUploadItem();
+	public void fileUploaded(File file) {
     	AonFile f = new AonFile();
-    	f.setFile(item.getFile());
-    	f.setFileName(item.getFileName());
+    	f.setFile(file);
     	f.addAonFileListener(this);
     	newMsgFileList.add(f);
-	}	
+	}
+    
+	private UploadedFile inputFile;
 	
+	private long maximumSize = -1;
+
+	public UploadedFile getInputFile() {
+		return inputFile;
+	}
+
+	public void setInputFile(UploadedFile inputFile) {
+		this.inputFile = inputFile;
+	}
+	
+	public void fileUploaded( ActionEvent event ) throws IOException {
+		if ( this.inputFile!= null ) {
+			long size = this.inputFile.getSize();
+			String upload_name = inputFile.getName();
+			upload_name = upload_name.replace('\\', '/');
+			if (upload_name.lastIndexOf('/')>=0)
+				upload_name = upload_name.substring(upload_name.lastIndexOf('/'));
+			String preffix = upload_name;
+			String suffix = "";
+			if (upload_name.lastIndexOf('.')>=0){
+				preffix = upload_name.substring(0,upload_name.lastIndexOf('.'));
+				suffix = upload_name.substring(upload_name.lastIndexOf('.'));
+			}
+			File file = File.createTempFile(preffix, suffix);
+			if ( (maximumSize != -1) && (size > maximumSize) ) {
+				FacesContext ctx = FacesContext.getCurrentInstance();
+				FacesMessage message = AonUtil.getMessage( ctx,
+						LengthValidator.MAXIMUM_MESSAGE_ID, new Object[]{maximumSize, upload_name} );
+				ctx.addMessage(AonUtil.AON_ERROR, message);
+			} else {
+				byte[] data = this.inputFile.getBytes();
+		        FileOutputStream outputStream = new FileOutputStream(file);
+		        outputStream.write(data);
+		        outputStream.close();			
+		        fileUploaded(file);
+			}
+		}
+	}
+
 	//***************************************************************
 	//*********** END ATTACH ****************************************
 	//***************************************************************
 	
 	
     public void send(ActionEvent event) {
-    	try {
-	    	AonMessage aonMessage = compoundMessage();
-	    	AonFolder dest = null;
-	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
+    	try{
+	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+	    	AonMessage aonMessage = compoundMessage(
+	    			recipientsTo,
+	    			recipientsCc, 
+	    			recipientsBcc,
+	    			subject, 
+	    			AonMessageUtils.unparse_cid(content),
+	    			parentMessage,
+	    			newMsgFileList
+	    			);
+	    	AonFolder dest;
 	    	if (webMailController.getServer().sendMessage(aonMessage)){
 		    	dest = webMailController.getServer().getAonFolder(AonFolder.SENT_FOLDER_NAME);
 		    	if (parentMessage!=null){
@@ -325,71 +342,15 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 	    	desfFolder.appendMessages(messages);
 	    	desfFolder.expunge();
 	    	dest.close(false);
-	    	deleteDraftMessage();
-	    	refreshDraftFolder();
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		} catch (MessagingException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		} catch (UnsupportedEncodingException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
 		}
-    }
-    
-    private void deleteDraftMessage() throws MessagingException {
-    	if ( this.draftMessageUID != null ) {
-    		WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-    		AonFolder folder = webMailController.getServer().getAonFolder(AonFolder.DRAFT_FOLDER_NAME);
-    		IMAPFolder imapFolder = (IMAPFolder) folder.getFolder();
-    		imapFolder.open(Folder.READ_WRITE);
-    		Message message = imapFolder.getMessageByUID(this.draftMessageUID);
-    		if ( message != null ) {
-	    		message.setFlag(Flags.Flag.DELETED, true);	    			
-    		}
-    		imapFolder.close(true);
-    		this.draftMessageUID = null;
-    	}    	
     }
 
-    public void saveDraft(ActionEvent event) {
-    	try {
-	    	AonMessage aonMessage = compoundMessage();    		
-	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-	    	AonFolder dest = webMailController.getServer().getAonFolder(AonFolder.DRAFT_FOLDER_NAME);
-	    	Message[] messages = new Message[1];
-    		messages[0] = aonMessage.getMessage();
-    		messages[0].setFlag(Flag.DRAFT, true);
-	    	dest.open(Folder.READ_WRITE);
-	    	deleteDraftMessage();
-	    	IMAPFolder desfFolder = (IMAPFolder) dest.getFolder();
-	    	AppendUID[] uids = desfFolder.appendUIDMessages(messages);
-	    	if (! ArrayUtils.isEmpty(uids) ) {
-		    	this.draftMessageUID = uids[0].uid;	
-	    	}
-	    	desfFolder.expunge();
-	    	dest.close(false);
-	    	refreshDraftFolder();
-		} catch (WebmailException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		} catch (MessagingException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		} catch (UnsupportedEncodingException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		}
-    }
-    
     public void addAttach(MimeMultipart multipart,File file) throws IOException, MessagingException{
     	MimeBodyPart adjunto = new MimeBodyPart ();
     	adjunto.attachFile(file);
@@ -400,10 +361,8 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 	/**
 	* Method for compounding the message.
 	 * @throws WebmailException 
-	 * @throws UnsupportedEncodingException 
 	*/
-	private AonMessage compoundMessage(
-			String sender,
+	private AonMessage compoundMessage( 
 			String recipientsTo,
 			String recipientsCC, 
 			String recipientsBCC,
@@ -411,11 +370,9 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 			String text, 
 			AonMessage parentAonMsg,
 			List<AonFile> fileList) 
-			throws MessagingException, WebmailException, UnsupportedEncodingException {
-    	LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(BEAN_LOGGED_USER);
-    	String personal = loggedUser.getLoggedUserName();
-    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);    	
-    	AonMessage newMessage = webMailController.getServer().createAonMessage(sender, personal);
+			throws MessagingException, WebmailException {
+    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+    	AonMessage newMessage = webMailController.getServer().createAonMessage();
        	if (recipientsTo!=null)
        		newMessage.setRecipientsTo(recipientsTo);
        	if (recipientsCC!=null)
@@ -449,11 +406,9 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 		if ( fileList.size() > 0 ) {
 			FileDataSource fds;
 			for ( int i=0; i < fileList.size(); i++ ) {
-				AonFile file = fileList.get(i);
 				MimeBodyPart mbpNext = new MimeBodyPart();
-				fds = new FileDataSource(file.getFile());
-				String name = FilenameUtils.getName(file.getFileName());
-				mbpNext.setFileName( name );
+				fds = new FileDataSource((fileList.get(i)).getFile());
+				mbpNext.setFileName(fds.getName());
 				mbpNext.setDataHandler(new DataHandler(fds));
 				multipart1.addBodyPart(mbpNext);
 			}
@@ -466,34 +421,16 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 		return newMessage; 
 	}
 
-	private AonMessage compoundMessage() throws ManagerBeanException, UnsupportedEncodingException, MessagingException, WebmailException {
-		IManagerBean mailAccountBean = AonUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();	
-		MailAccount mailAccount = (MailAccount) mailAccountBean.get( senderMailAccountId );   		
-    	AonMessage aonMessage = compoundMessage(
-    			mailAccount.getEmail(),
-    			recipientsTo,
-    			recipientsCc, 
-    			recipientsBcc,
-    			subject, 
-    			AonMessageUtils.unparse_cid(content),
-    			parentMessage,
-    			newMsgFileList
-    			);
-    	return aonMessage;
-	}
-	
 	private void initVars(){
-    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-    	MailAccount account = webMailController.getServer().getAccount();
-		sender = account.getEmail();
-		senderMailAccountId = account.getId();
+    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+		sender = webMailController.getServer().getAccount().getEmail();
 		recipientsTo = null;
 		recipientsCc = null;
 		recipientsBcc = null;
-		subject = null;		
-		content = (account.getSignature()!=null)?account.getSignature().getSignature():"";
+		subject = null;
+		content = getSignature()!=null?getSignature().getSignature():"";
     	newMsgFileList = new ArrayList<AonFile>();
-		draftMessageUID = null;
+		
 	}
 	//********************************************************************************************
 
@@ -576,57 +513,61 @@ public class MessageController implements WebMailConstants, IAonFileListener {
     }
 
 	//********************************************************************************************
+	//SIGNATURE
+	//********************************************************************************************
+    
+    private Signature getSignature(){
+    	try{
+    		WebMailController wmc = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+    		MailAccount account = wmc.getServer().getAccount();
+    		IManagerBean bean = BeanManager.getManagerBean(Signature.class);
+    		Criteria criteria = new Criteria();
+    		criteria.addEqualExpression(bean.getFieldName(IWebMailAlias.SIGNATURE_MAIL_ACCOUNT_ID), account.getId());
+    		criteria.addExpression(bean.getFieldName(IWebMailAlias.SIGNATURE_ACTIVE), String.valueOf(SignatureType.ACTIVE.ordinal()));
+    		List list = bean.getList(criteria);
+    		if (!list.isEmpty()){
+    			return (Signature)list.get(0);
+    		}
+    	}catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+		} catch (ExpressionException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+		}
+    	return null;
+    }
+    
+	//********************************************************************************************
 	// EMAIL SELECTION POPUP
 	//********************************************************************************************
     
-    private boolean showEmailsWindow;
-    
     private String selectedDestinyContainer;
-    
-	public boolean isShowEmailsWindow() {
-		return showEmailsWindow;
-	}
-
-	public void setShowEmailsWindow(boolean showEmailsWindow) {
-		this.showEmailsWindow = showEmailsWindow;
-	}
 
 	public String getSelectedDestinyContainer() {
 		return selectedDestinyContainer;
 	}
 	
-	public void openEmailsPanelPopup(ActionEvent event){
-		MultiSelectionEmailBean multiSelectionEmailBean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(BEAN_MULTISELECTIONEMAIL);
-		multiSelectionEmailBean.reload();
-		setShowEmailsWindow(true);
-	}
-
-	
 	public void openEmailsToPanelPopup(ActionEvent event){
 		this.selectedDestinyContainer = CONTAINER_TO;
-		openEmailsPanelPopup(event);
 	}
 
 	public void openEmailsCcPanelPopup(ActionEvent event){
 		this.selectedDestinyContainer = CONTAINER_CC;
-		openEmailsPanelPopup(event);
 	}
 
 	public void openEmailsBccPanelPopup(ActionEvent event){
 		this.selectedDestinyContainer = CONTAINER_BCC;
-		openEmailsPanelPopup(event);
 	}
 
 
 	public void acceptAllEmailItems(ActionEvent event){
-		MultiSelectionEmailBean bean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(BEAN_MULTISELECTIONEMAIL);
+		MultiSelectionEmailBean bean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(AonConstants.BEAN_MULTISELECTIONEMAIL);
 		List<Contact> lst = bean.getSelectedRows();
 		email = "";
         for (int i = 0, max = lst.size(); i < max; i++) {
         	Contact e = lst.get(i);
         	email += e.getEmail();
         	if (i+1 < max)
-        		email += AonMessageUtils.EMAIL_SEPARATOR + " ";
+        		email += ", ";
 		}
         if (CONTAINER_TO.equals(selectedDestinyContainer)){
             recipientsTo = acceptEmailItem(recipientsTo);
@@ -659,18 +600,14 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 	}
 
 	private String acceptEmailItem(String recipient){
-		String result = StringUtils.trimToEmpty(recipient);
-		if (! StringUtils.isEmpty(result) ) {
-			if (!result.endsWith(AonMessageUtils.EMAIL_SEPARATOR)) {
-				result += AonMessageUtils.EMAIL_SEPARATOR;
-			}
-			result += " ";
+		if (recipient==null || recipient.trim().length()==0){
+			recipient = "";
+		}else if (!recipient.trim().endsWith(",")){
+			recipient += ", ";
 		}
-		if (! StringUtils.isBlank(email) ) {
-			result += email + AonMessageUtils.EMAIL_SEPARATOR;
-		}
+		recipient += email + ",";
 		email = null;
-		return result;
+		return recipient;
 	}
 	
 	//********************************************************************************************
@@ -736,8 +673,7 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 			    out.write(block, 0, read);
 			}
 			in.close();
-			response.flushBuffer();
-			out.close();
+			out.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (MessagingException e) {
@@ -751,24 +687,24 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 	// NEXT - PREVIOUS
 	// ****************************************************************
 
-	private AonMessage[] getMessageList(){
-		if (NAVIGATION_FOLDER.equals(returnAction)){
+	private ArrayList<AonMessage> getMessageList(){
+		if (AonConstants.NAVIGATION_FOLDER.equals(returnAction)){
 			if (this.getMessage()==null)
-				return new AonMessage[0];
+				return new ArrayList<AonMessage>();
 			return this.getMessage().getParent().getMessageList();
-		}else if(NAVIGATION_SEARCH.equals(returnAction)){
-			SearchController sc = (SearchController)AonUtil.getRegisteredBean(BEAN_SEARCH);
+		}else if(AonConstants.NAVIGATION_SEARCH.equals(returnAction)){
+			SearchController sc = (SearchController)AonUtil.getRegisteredBean(AonConstants.BEAN_SEARCH);
 			return sc.getSortableList().getMessageList();
 		}
 		return null;
 	}
 
 	public int getCurrentIndex(){
-		return ArrayUtils.indexOf( getMessageList(), getMessage() );
+		return getMessageList().indexOf(this.getMessage());
 	}
 	
 	public boolean isPreviousMessage(){
-		int index = getCurrentIndex();
+		int index = getMessageList().indexOf(this.getMessage());
 		index--;
 		if (index>=0)
 			return true;
@@ -776,28 +712,26 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 	}
 
 	public boolean isNextMessage(){
-		int index = getCurrentIndex();
+		int index = getMessageList().indexOf(this.getMessage());
 		index++;
-		if (index<getMessageList().length)
+		if (index<getMessageList().size())
 			return true;
 		return false;
 	}
 
 	private AonMessage getPreviousMessage(){
-		int index = getCurrentIndex();
+		int index = getMessageList().indexOf(this.getMessage());
 		index--;
-		if (index>=0) {
-			return getMessageList()[index];
-		}
+		if (index>=0)
+			return getMessageList().get(index);
 		return null;
 	}
 	
 	private AonMessage getNextMessage(){
-		int index = getCurrentIndex();
+		int index = getMessageList().indexOf(this.getMessage());
 		index++;
-		if (index < getMessageList().length ) {
-			return getMessageList()[index];
-		}
+		if (index<getMessageList().size())
+			return getMessageList().get(index);
 		return null;
 	}
 	
@@ -820,7 +754,8 @@ public class MessageController implements WebMailConstants, IAonFileListener {
     	}else if (isPreviousMessage()){
     		nextMessage = getPreviousMessage();
     	}
-    	AonMessage[] lst = new AonMessage[] { this.message };
+    	ArrayList<AonMessage> lst = new ArrayList<AonMessage>();
+		lst.add(this.message);
 		try{
 	    	message.getParent().moveMessages(lst, dest);
 		} catch (MessagingException e) {
@@ -852,7 +787,7 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 
 	private boolean isShotMessageToControl(){
     	try {
-			if (message.getRecipientsTo().length()>MAX_LENGTH_STRING)
+			if (message.getRecipientsTo().length()>MaxLenghtStringConverter.getMax())
 				return true;
 		} catch (Exception e) {
 		}
@@ -879,7 +814,7 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 	
     private boolean isShotMessageCcControl() {
     	try {
-			if (message.getRecipientsCc().length()>MAX_LENGTH_STRING)
+			if (message.getRecipientsCc().length()>MaxLenghtStringConverter.getMax())
 				return true;
 		} catch (Exception e) {
 		}
@@ -910,134 +845,56 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 		this.contactName = contactName;
 	}
 
-	public void initContactName() {
-		this.contactName = "";
-		try {
-			if ( this.message != null ) {
-				String sender = message.getSender(-1);
-				String email = message.getSenderEmail();
-				if ( StringUtils.equals(sender, email) ) {
-					int pos = email.indexOf('@');
-					this.contactName = (pos != -1) ? email.substring(0, pos) : email;
-				} else {
-					this.contactName = sender;
-				}
-			}
-		} catch (WebmailException e) {
-			LOGGER.severe( "Error setting contactName" );
-		}
-    }
-
-	public void saveToContacts(ActionEvent event) throws WebmailException, ManagerBeanException {
+	public void addToContacts(ActionEvent event) throws WebmailException, ManagerBeanException{
 		String email = message.getSenderEmail();
-		IController contactController = AonUtil.getController(BEAN_CONTACT);
-		IManagerBean contactsBean = contactController.getManagerBean();
+		contactName = message.getSenderShort();
+		if (email.equals(contactName)){
+			contactName = "";
+		}
+		/*
+		String email = message.getSenderEmail();
+		contactName = message.getSenderShort();
+		IManagerBean contactsBean = BeanManager.getManagerBean(Contact.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(contactsBean.getFieldName(IContactAlias.CONTACT_EMAIL), email);
+    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+       	MailAccount account = webMailController.getServer().getAccount();
+		criteria.addEqualExpression(contactsBean.getFieldName(IGroupWareAlias.CONTACT_USER_ID), account.getUser().getId());
+		criteria.addEqualExpression(contactsBean.getFieldName(IGroupWareAlias.CONTACT_EMAIL), email);
 		List list = contactsBean.getList(criteria);
 		if (list.size()==0){
+			if (email.equals(contactName)){
+				contactName = "";
+			}else{
+				saveToContacts(event);
+			}
+		}
+		*/
+    }
+
+	public void saveToContacts(ActionEvent event) throws WebmailException, ManagerBeanException{
+		IManagerBean contactsBean = BeanManager.getManagerBean(Contact.class);
+		Criteria criteria = new Criteria();
+    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+       	MailAccount account = webMailController.getServer().getAccount();
+		criteria.addEqualExpression(contactsBean.getFieldName(IGroupWareAlias.CONTACT_USER_ID), account.getUser().getId());
+		criteria.addEqualExpression(contactsBean.getFieldName(IGroupWareAlias.CONTACT_EMAIL), email);
+		List list = contactsBean.getList(criteria);
+		if (list.size()==0){
+			String email = message.getSenderEmail();
+			
 			Contact contact = new Contact();
+			contact.setUser(account.getUser());
 			contact.setEmail(email);
-			contact.setDisplayName(contactName);
-			int pos = contactName.indexOf(' ');
-			if ( pos != -1 ) {
-				contact.setName(contactName.substring(0, pos));
-				String surname = StringUtils.trimToNull( StringUtils.substring(contactName, pos+1) );
-				contact.setSurname(surname);
-			} else {
-				contact.setName(contactName);
-			}
+			contact.setName(contactName);
 
-			contactsBean.insert(contact);		
+			contactsBean.insert(contact);
+			
+			BasicController contactController = (BasicController)AonUtil.getRegisteredBean(AonConstants.BEAN_EMAIL);
 			contactController.onSearch(null);
+			
+			MultiSelectionEmailBean multiSelectionEmailBean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(AonConstants.BEAN_MULTISELECTIONEMAIL);
+			multiSelectionEmailBean.reload();
 		}
-    }
-	
-	public String getSenderMailAccountId() {
-		return senderMailAccountId;
-	}
-
-	public void setSenderMailAccountId(String senderMailAccountId) {
-		this.senderMailAccountId = senderMailAccountId;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void onMailAccountChanged(ValueChangeEvent event) throws ManagerBeanException {
-		if(event.getNewValue() != null) {
-			IManagerBean mailAccountBean = AonUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();	
-			MailAccount mailAccount = (MailAccount) mailAccountBean.get( event.getNewValue().toString() );
-			if ( mailAccount.getSignature() != null ) {
-				content = mailAccount.getSignature().getSignature() + StringUtils.defaultString(messageBody);
-			} else {
-				content = StringUtils.defaultString(messageBody);	
-			}
-		}
-	}	
-	
-	private VelocityHelper getVelocityHelper() {
-		if ( this.velocityHelper == null ) {
-			this.velocityHelper = new VelocityHelper();
-			try {
-				this.velocityHelper.init( VM_PATH_DEFAULT );
-			} catch (Exception e) {
-				LOGGER.log(Level.SEVERE, "Velocity engine could not be initialized", e );
-			}
-		}
-		return this.velocityHelper;
-	}
-	
-	
-	private void printMessage( HttpServletResponse response, AonMessage message ) {
-		try {
-			response.setContentType(MimeType.MIME_HTML.getName());
-			Writer out = new OutputStreamWriter( response.getOutputStream() );
-			TemplateHelper th = getVelocityHelper().getTemplateHelper();
-			FacesContext context = FacesContext.getCurrentInstance();
-			th.putInContext("contextPath", context.getExternalContext().getRequestContextPath());
-			LoggedUser loggerUser = (LoggedUser) AonUtil.getRegisteredBean(BEAN_LOGGED_USER);
-			th.putInContext("username", loggerUser.getLoggedUserName());
-			SimpleDateFormat df = new SimpleDateFormat("EEE, dd/MM/yy-HH:mm");
-			th.putInContext("nowDate", df.format(new Date()));
-			Locale locale = AonUtil.getCurrentLocale();
-			ResourceBundle bundle = ResourceBundle.getBundle(WebMailConstants.RESOURCE_BUNDLE, locale);	
-			th.putInContext("fromLiteral", bundle.getString("aon_webmail_from"));
-			th.putInContext("sender", message.getSender());
-			th.putInContext("toLiteral", bundle.getString("aon_webmail_to"));
-			th.putInContext("recipientsTo", message.getRecipientsTo());
-			String cc = message.getRecipientsCc();
-			if (! StringUtils.isEmpty(cc) ) {
-				th.putInContext("ccLiteral", bundle.getString("aon_webmail_cc"));
-				th.putInContext("recipientsCc", cc );				
-			}
-			th.putInContext("dateLiteral", bundle.getString("aon_webmail_date"));
-			th.putInContext("sentDateString", message.getSentDateString());
-			th.putInContext("subjectLiteral", bundle.getString("aon_webmail_subject"));
-			th.putInContext("subject", message.getSubject());
-			th.putInContext("messageContent", message.getContent());
-			th.processTemplate(PRINT_TEMPLATE, out);
-			response.flushBuffer();
-			out.close();
-		} catch (IOException e) {
-			LOGGER.log( Level.SEVERE, e.getMessage(), e );
-		} catch (AonException e) {
-			LOGGER.log( Level.SEVERE, e.getMessage(), e );
-		} catch (WebmailException e) {
-			LOGGER.log( Level.SEVERE, e.getMessage(), e );			
-		}		
-	}
-	
-    public void print( ActionEvent event ) throws MessagingException, WebmailException {
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-        printMessage(response, this.message);
-        context.responseComplete();    	
     }
 
-    public void save( ActionEvent event ) throws MessagingException, WebmailException {
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-        save(response);
-        context.responseComplete();    	
-    }
-    
 }

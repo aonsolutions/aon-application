@@ -44,14 +44,11 @@ public class ReportConfig {
 	 */
 	private String criteriaProvider;
 	
-	private boolean forceRefresh;
-
 	/**
 	 * Class name of the <code>com.code.aon.common.ICollectionProvider</code> to obtain the
 	 * Collection. 
 	 */
 	private String collectionProvider;
-
 
 	/**
 	 * Map of report parameters.
@@ -152,14 +149,6 @@ public class ReportConfig {
 	 */
 	public void setCriteriaProvider(String criteriaProvider) {
 		this.criteriaProvider = criteriaProvider;
-	}
-
-	public boolean isForceRefresh() {
-		return forceRefresh;
-	}
-
-	public void setForceRefresh(boolean forceRefresh) {
-		this.forceRefresh = forceRefresh;
 	}
 
 	/**

@@ -12,14 +12,10 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.PayMethod;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
-import com.code.aon.config.Tax;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
-import com.code.aon.config.enumeration.PayMethodType;
-import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
@@ -44,13 +40,6 @@ public class ConfigCollectionsController {
 		return series;
 	}
 
-	public Scope getScope() {
-		return null;
-	}
-
-	public void setScope( Scope scope ) {
-	}
-	
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getScopes() throws ManagerBeanException {
 		List<SelectItem> scopes = new LinkedList<SelectItem>();
@@ -120,146 +109,4 @@ public class ConfigCollectionsController {
 		}
 		return currentUserScopes;
 	}
-
-	/** The taxes list. */
-	private List<SelectItem> taxes;
-
-	/**
-	 * Gets the taxes.
-	 * 
-	 * @return the taxes
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	public List<SelectItem> getTaxes() throws ManagerBeanException {
-		if (taxes == null) {
-			taxes = new LinkedList<SelectItem>();
-			List<ITransferObject> c = BeanManager.getManagerBean(Tax.class).getList(null);
-			Iterator<ITransferObject> iter = c.iterator();
-			while (iter.hasNext()) {
-				Tax tax = (Tax) iter.next();
-				SelectItem item = new SelectItem(tax, tax.getName());
-				taxes.add(item);
-			}
-		}
-		return taxes;
-	}
-
-	/** The vat taxes list. */
-	private List<SelectItem> vatTaxes;
-
-	/**
-	 * Gets the vat taxes.
-	 * 
-	 * @return the vat taxes
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	public List<SelectItem> getVatTaxes() throws ManagerBeanException {
-		if (vatTaxes == null) {
-			vatTaxes = new LinkedList<SelectItem>();
-			IManagerBean managerBean = BeanManager.getManagerBean(Tax.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.TAX_TYPE), TaxType.VAT);
-			List<ITransferObject> c = managerBean.getList(criteria);  
-			Iterator<ITransferObject> iter = c.iterator();
-			while (iter.hasNext()) {
-				Tax tax = (Tax) iter.next();
-				SelectItem item = new SelectItem(tax, tax.getName());
-				vatTaxes.add(item);
-			}
-		}
-		return vatTaxes;
-	}
-	
-	/** The retention taxes list. */
-	private List<SelectItem> retentionTaxes;
-	
-	/**
-	 * Gets the retention taxes.
-	 * 
-	 * @return the retention taxes
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	public List<SelectItem> getRetentionTaxes() throws ManagerBeanException {
-		if (retentionTaxes == null) {
-			retentionTaxes = new LinkedList<SelectItem>();
-			IManagerBean managerBean = BeanManager.getManagerBean(Tax.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.TAX_TYPE), TaxType.RETENTION);
-			List<ITransferObject> c = managerBean.getList(criteria);  
-			Iterator<ITransferObject> iter = c.iterator();
-			while (iter.hasNext()) {
-				Tax tax = (Tax) iter.next();
-				SelectItem item = new SelectItem(tax, tax.getName());
-				retentionTaxes.add(item);
-			}
-		}
-		return retentionTaxes;
-	}
-
-	/**
-	 * Gets the tax types
-	 * 
-	 * @return the tax types
-	 */
-	public List<SelectItem> getTaxTypes() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-		TaxType[] taxTypes = TaxType.values();
-		for (int i = 0; i < taxTypes.length; i++) {
-			TaxType type = taxTypes[i];
-			String name = type.getName(locale);
-			SelectItem item = new SelectItem(type, name);
-			types.add(item);
-		}
-		return types;
-	}
-
-	/**
-	 * Fills and Returns PayMethod collection
-	 * 
-	 * @return PayMethod collection
-	 * @throws ManagerBeanException
-	 */
-	public List<SelectItem> getPayMethods() throws ManagerBeanException {
-		List<SelectItem> payMethods = new LinkedList<SelectItem>();
-		IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
-		Criteria criteria = new Criteria();
-		criteria.addOrder(payMethodBean.getFieldName(IConfigAlias.PAY_METHOD_NAME));
-		Iterator<?> iter = payMethodBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			PayMethod pMethod = (PayMethod) iter.next();
-			SelectItem item = new SelectItem(pMethod, pMethod.getName());
-			payMethods.add(item);
-		}
-		return payMethods;
-	}
-
-	/**
-	 * Returns a list of PayMethodType
-	 * 
-	 * @return list of PayMethodType
-	 */
-	public List<SelectItem> getPayMethodTypes() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-		PayMethodType[] payMethodType = PayMethodType.values();
-		for (int i = 0; i < payMethodType.length; i++) {
-			PayMethodType type = payMethodType[i];
-			String name = type.getName(locale);
-			SelectItem item = new SelectItem(type, name);
-			types.add(item);
-		}
-		return types;
-	}
-	
-	public PayMethod getPayMethod() {
-		return null;
-	}
-
-	public void setPayMethod( PayMethod payMethod ) {
-	}
-
 }
