@@ -30,7 +30,7 @@ public class HttbonificacionController extends LinesController {
 	public void generateCdg(){
 		
 		Integer cdg= ((Httrabajador)(FormUtil.getController(IPayrollConstants.HTTRABAJADOR_CONTROLLER_NAME)).getTo()).getCdg();
-		Integer orden= Integer.parseInt(Utils.maxCode("Httbonificacion","id.orden","id.cdg="+cdg));
+		Integer orden= Integer.parseInt(Utils.maxCode("Httbonificacion","id.orden"));
 		
 		((Httbonificacion)getTo()).getId().setCdg(((Httrabajador)(FormUtil.getController(IPayrollConstants.HTTRABAJADOR_CONTROLLER_NAME)).getTo()).getCdg());
 		((Httbonificacion)getTo()).getId().setOrden(orden +1);

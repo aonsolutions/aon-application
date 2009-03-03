@@ -44,4 +44,5 @@ public interface IPayrollConstants {
 	String SUCURSAL_CONTROLLER_NAME = "sucursal";
 	String HTTRABAJADOR_CONTROLLER_NAME = "httrabajador";
 	String EMPREACT_CONTROLLER_NAME = "empreact";
+	String COSTES_CONTROLLER_NAME = "costes";
 }
