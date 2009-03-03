@@ -12,7 +12,7 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_finance_module}" />
+				<ui:param name="toolbarTitle" value="#{(finance.payment) ? (financeBundle.finance_payment_module) : (financeBundle.finance_charge_module)}" />
 				<ui:param name="controller" value="#{finance}" />
 				<ui:param name="skipResetButton" value="true" />
 				
@@ -38,8 +38,9 @@
 
 				<aon:dataTable id="financeData" value="#{finance.model}"
 					var="to" rows="20" rendered="#{finance.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn
-						aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+						aon-editDataTable-numberColumn">
 
 					<aon:rowSelector action="finance_form" actionListener="#{finance.onSelect}" />
 	
@@ -47,15 +48,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{financeBundle.finance_invoice}" />
 						</f:facet>
-						<aon:outputText value="#{to.invoice.series} / #{to.invoice.number}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{financeSearch.payment?(financeBundle.finance_creditor):(financeBundle.finance_debtor)}" />
-						</f:facet>
-						<aon:outputText value="#{to.registry.surname}, " rendered="#{to.registry.surname != null and to.registry.surname != ''}"/>								
-						<aon:outputText value="#{to.registry.name}" />
+						<aon:outputText value="#{to.invoice.referenceCode}" />
 					</aon:column>
 
 					<aon:column>
@@ -70,16 +63,30 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_status}" />
+							<aon:outputText value="#{(finance.payment) ? (financeBundle.finance_creditor) : (financeBundle.finance_debtor)}" />
 						</f:facet>
-						<aon:outputText value="#{to.financeStatus}" />
+						<aon:outputText value="#{to.invoice.registryName}" />
 					</aon:column>
-					
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_company_document}" />
+						</f:facet>
+						<aon:outputText value="#{to.invoice.registryDocument}" />
+					</aon:column>
+
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{configBundle.config_pay_method}" />
 						</f:facet>
 						<aon:outputText value="#{to.payMethod.name}" />
+					</aon:column>
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_status}" />
+						</f:facet>
+						<aon:outputText value="#{to.financeStatus}" />
 					</aon:column>
 					
 					<aon:column>
