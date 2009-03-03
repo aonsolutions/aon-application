@@ -24,21 +24,15 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="aon_finance" action="finance_search"
-										actionListener="#{finance.onEditSearch}"
-										value="#{financeBundle.finance_finance_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="aon_finance_return"
-										action="financeReturn_search"
-										actionListener="#{financeReturn.onEditSearch}"
-										value="#{financeBundle.finance_finance_return_module}" />
+									<aon:commandLink id="aon_finance_charge" action="finance_search"
+										actionListener="#{finance.onEditSearchCharge}"
+										value="#{financeBundle.finance_charge_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="aon_finance_payment"
-										action="financePayment_search"
-										actionListener="#{financePayment.onEditSearch}"
-										value="#{financeBundle.finance_finance_payment_module}" />
+										action="finance_search"
+										actionListener="#{finance.onEditSearchPayment}"
+										value="#{financeBundle.finance_payment_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="aon_fbatch" action="fbatch_search"
