@@ -69,7 +69,13 @@
 								<c:if test="#{statement.openingEntryPresent}">
 									<aon:column colspan="3" styleClass="aon-text-right"
 										style="font-size: 1em;background: #FFF;font-weight: normal;">
-										<aon:outputText value="#{accountingBundle.accounting_opening_entry}" />
+							<h:commandLink immediate="true" target="_blank"
+								styleClass="aon-dataTable-link"
+								title="#{accountingBundle.accounting_lookup_account_entry}"
+								actionListener="#{trialBalance.onOpeningEntry}"
+								action="accountEntry_form">
+								<aon:outputText value="#{accountingBundle.accounting_opening_entry}" />
+							</h:commandLink>
 										<aon:outputText value=" (" />
 										<aon:outputText
 											value="#{statement.openingEntry.fromDate}">
