@@ -1,8 +1,12 @@
 package com.code.aon.account.bridge.writer;
 
+import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.code.aon.account.Account;
+import com.code.aon.account.bridge.AccountEntryFinanceTracking;
 import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
@@ -10,8 +14,11 @@ import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.Finance;
+import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.registry.RegistryBank;
 
 /**
  * The Class AccountEntryFinanceWriter.
@@ -37,8 +44,21 @@ public class AccountEntryFinanceWriter {
 		}
 		return entry;
 	}
-	
-	public AccountEntry returnFinance(FinanceRecordingTo to) throws ManagerBeanException {
+
+	public AccountEntry recordFinance(Finance finance, RegistryBank registryBank, Date paymentDate) throws ManagerBeanException {
+		List<Finance> list = new LinkedList<Finance>();
+		list.add(finance);
+
+		FinanceRecordingTo recordingTo = new FinanceRecordingTo();
+		recordingTo.setRegistryBank(registryBank);
+		recordingTo.setFinanceList(list);
+		recordingTo.setDate(paymentDate);
+		recordingTo.setType((finance.isPayment()?AccountEntryType.PAYMENT:AccountEntryType.COLLECTION));
+		recordingTo.setSecurityLevel(finance.getSecurityLevel()==null?SecurityLevel.OFFICIAL:finance.getSecurityLevel());
+		return recordFinances(recordingTo);
+	}
+
+	public AccountEntry returnFinances(FinanceRecordingTo to) throws ManagerBeanException {
 		AccountEntry entry = createAccountEntry(to);
 		Account bankAccount = (to.getRegistryBank() != null?AccountUtil.obtainRBankAccount(to.getRegistryBank()):AccountUtil.obtainCashAccount());
 		if(to.getFinanceList().size() > 0){
@@ -46,6 +66,19 @@ public class AccountEntryFinanceWriter {
 			insertReturnEntryDetails(bankAccount, entry, finance);
 		}
 		return entry;
+	}
+
+	public AccountEntry returnFinance(Finance finance, RegistryBank registryBank, Date returnDate) throws ManagerBeanException {
+		List<Finance> list = new LinkedList<Finance>();
+		list.add(finance);
+
+		FinanceRecordingTo recordingTo = new FinanceRecordingTo();
+		recordingTo.setRegistryBank(registryBank);
+		recordingTo.setFinanceList(list);
+		recordingTo.setDate(returnDate);
+		recordingTo.setType((finance.isPayment()?AccountEntryType.RETURNED_PAYMENT:AccountEntryType.RETURNED_COLLECTION));
+		recordingTo.setSecurityLevel(finance.getSecurityLevel()==null?SecurityLevel.OFFICIAL:finance.getSecurityLevel());
+		return returnFinances(recordingTo);
 	}
 
 	private AccountEntry createAccountEntry(FinanceRecordingTo to) throws ManagerBeanException {
@@ -136,4 +169,13 @@ public class AccountEntryFinanceWriter {
 		detail.setBalancingAccount(registryAccount);
 		accountEntryDetailBean.insert(detail);
 	}
+
+	public AccountEntryFinanceTracking insertAccountEntryFinanceTracking(AccountEntry entry, FinanceTracking tracking) throws ManagerBeanException {
+		IManagerBean accountEntryFinanceTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
+		AccountEntryFinanceTracking accEntryTracking = new AccountEntryFinanceTracking();
+		accEntryTracking.setAccountEntry(entry);
+		accEntryTracking.setFinanceTracking(tracking);
+		return (AccountEntryFinanceTracking) accountEntryFinanceTrackingBean.insert(accEntryTracking);
+	}
+
 }
