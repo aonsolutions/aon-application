@@ -158,35 +158,71 @@ public class LdapSession implements ILdapConstants {
 		return dn;
 	}
 	
-	private String resolveBase(String base) throws NamingException {
+	private String resolveBase(String base) {
 		if ( (this.baseDN != null) && (base.endsWith(this.baseDN)) ) {
 			return base.substring(0, base.length() - this.baseDN.length() - 1);
 		}
 		return base;
 	}
 	
-	private void addAttribute( Entry entry, Attribute attribute ) throws NamingException {
-		String name = attribute.getID();
-		NamingEnumeration<?> values = attribute.getAll();
+	private Attribute getAttribute( DistinguishedName dn, String attributeId ) throws NamingException {
+		Attributes attributes = dc.getAttributes( dn.toString(), new String[]{attributeId} );
+		return attributes.get(attributeId);
+	}
+	
+	private DirContext getSyntax( Entry entry, Attribute attribute ) {
 		DirContext syntax = null;
 		try {
 			syntax = attribute.getAttributeSyntaxDefinition();
 		} catch (NamingException e) {
-			LOGGER.debug(e.getMessage(), e);
+			try {
+				Attribute attr = getAttribute(entry.getDN(), attribute.getID());
+				syntax = attr.getAttributeSyntaxDefinition();
+			} catch (NamingException ne) {
+				LOGGER.debug(e.getMessage(), ne);
+			}
 		}
+		return syntax;
+	}
+	
+	private void addAttribute( Entry entry, Attribute attribute ) throws NamingException {
+		String name = attribute.getID();
+		NamingEnumeration<?> values = attribute.getAll();
+		DirContext syntax = getSyntax(entry, attribute);
 		while (values.hasMore()) {
 			Object value = values.nextElement();
 			entry.put(name, convertValue(value, syntax));
 		}
 	}
-
-	private Entry getEntry(String base, SearchResult sr) throws NamingException {
-		String name = sr.getName();
-		if (!StringUtils.isEmpty(base)) {
-			name += ',' + base;
+	
+	private String getName( String base, Scope scope, SearchResult sr ) {
+		String result = null;
+		if ( scope == Scope.OBJECT_SCOPE ) {
+			result = base;
+		} else {
+			if ( sr.isRelative() ) {
+				String name = sr.getName();				
+				if (! StringUtils.isEmpty(name) ) {
+					if (! StringUtils.isEmpty(base)) {
+						result = name + "," + base;
+					} else {
+						result = name;	
+					}
+				} else {
+					result = base;	
+				}
+			}
 		}
-		Entry entry = new Entry(name);
+		return result;
+	}
 
+	private Entry getEntry(String base, Scope scope, SearchResult sr) throws NamingException {
+		String dn = resolveBase(sr.getNameInNamespace());
+		Entry entry = new Entry(dn);
+		String searchDN = getName(base, scope, sr);
+		if ( (! StringUtils.isEmpty(searchDN)) && (!searchDN.equals(dn)) ) {			
+			entry.setSearchDN( new DistinguishedName(searchDN) );
+		}
 		Attributes at = sr.getAttributes();
 		NamingEnumeration<? extends Attribute> ane = at.getAll();
 		while (ane.hasMore()) {
@@ -205,7 +241,7 @@ public class LdapSession implements ILdapConstants {
 					filter, sc);
 			while (ne.hasMore()) {
 				SearchResult sr = ne.next();
-				results.add(getEntry(base, sr));
+				results.add(getEntry(base, scope, sr));
 			}
 		} catch (InvalidSearchFilterException isfe) {
 			throw new LdapException("Search Filter Invalid: " + filter, isfe);
@@ -242,7 +278,7 @@ public class LdapSession implements ILdapConstants {
 			while (ne.hasMore()) {
 				SearchResult sr = ne.next();
 				if (entry == null) {
-					entry = getEntry(base, sr);
+					entry = getEntry(base, scope, sr);
 				} else {
 					return null;
 				}

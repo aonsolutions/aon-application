@@ -27,6 +27,17 @@ public interface ILdapConstants {
 	String HOME_DIRECTORY_ATTRIBUTE = "homeDirectory";
 
 	String USER_ID_NUMBER_ATTRIBUTE = "uidNumber";
-
 	
+	String ALIASED_OBJECT_NAME_ATTRIBUTE = "aliasedobjectname";
+	
+	String REF_ATTRIBUTE = "ref";
+	
+    String USER_MANAGEMENT_ATTRIBUTE = "userManagement";
+	
+	String PASSWORD_EXPIRATION_TIMESTAMP_ATTRIBUTE = "passwordExpirationTimestamp";
+
+	String MAIL_ATTRIBUTE = "mail";
+
+	String MOBILE_ATTRIBUTE = "mobile";
+
 }

@@ -16,6 +16,12 @@ public interface IAonObjectClasses {
 
 	String INET_ORG_PERSON = "inetOrgPerson";	
 	
+	String EXTENSIBLE_OBJECT = "extensibleObject";
+	
+	String ALIAS = "alias";
+	
+	String REFERRAL = "referral";
+	
 	String CONTACT = "aonContact";
 
 	String DB_CONNECTION = "aonDBConnection";

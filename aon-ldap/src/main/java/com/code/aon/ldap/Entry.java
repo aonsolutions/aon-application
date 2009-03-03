@@ -13,6 +13,8 @@ public class Entry implements ILdapConstants {
 	
 	private DistinguishedName dn;
 	
+	private DistinguishedName searchDN;
+	
 	private Map<String,List<Object>> values;
 
     public Entry( String dn ) {
@@ -26,6 +28,14 @@ public class Entry implements ILdapConstants {
 
 	public void setDN(DistinguishedName dn) {
 		this.dn = dn;
+	}
+
+	public DistinguishedName getSearchDN() {
+		return searchDN;
+	}
+
+	public void setSearchDN(DistinguishedName searchDN) {
+		this.searchDN = searchDN;
 	}
 
 	public Set<Map.Entry<String,List<Object>>> entrySet() {
