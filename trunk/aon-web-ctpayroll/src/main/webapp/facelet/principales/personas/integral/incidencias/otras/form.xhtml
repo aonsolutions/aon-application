@@ -36,11 +36,28 @@
 
 					<aon:div id="bonificaData"
 						styleClass="aon-scroll-area">
+						
+						<aon:panelGrid columns="2" dir="true"
+							width="100%">
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_bonifica_trabajador}" />
+							<aon:outputText value="#{trabajador.to.cdg}" size="3" maxlength="3" />
+							
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_bonifica_nom_ape}" />
+							<aon:div>
+								<aon:outputText value="#{trabajador.to.persona.descripcion} " />
+								<aon:outputText value="#{trabajador.to.persona.apellido2}, " />
+								<aon:outputText value="#{trabajador.to.persona.nombre} " />
+							</aon:div>
+							
+						</aon:panelGrid>
 
 						<aon:panelGrid columns="2" dir="true"
 							width="100%">
 
-
+							<!--  
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_inciit_codtra}" />
 							<aon:inputText value="#{trabajador.to.cdg}" readonly="#{!bonifica.new}"
@@ -53,7 +70,7 @@
 								<aon:outputText value="#{trabajador.to.persona.apellido2}, " />
 								<aon:outputText value="#{trabajador.to.persona.nombre} " />
 							</aon:div>
-							
+							-->
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_inciit_fecini_inci}" />
@@ -90,12 +107,12 @@
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_otrasinci_importe}" />
 							<aon:inputText value="#{trabinci.to.importe}"
-								size="" maxlength="" />
+								size="8" maxlength="8" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_otrasinci_horas_dias}" />
 							<aon:inputText value="#{trabinci.to.cantidad}"
-								size="" maxlength="" />
+								size="2" maxlength="2" />
 							
 						</aon:panelGrid>
 
@@ -103,7 +120,9 @@
 				</aon:form>
 				
 				<aon:lookupButtonPopup lookup="#{trabinciLookup}" />
-				
+				<!--  
+				<aon:lookupButtonPopup lookup="#{tipincLookup}" />
+				-->
 			</ui:define>
 		</ui:composition>
 	</body>

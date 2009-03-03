@@ -48,7 +48,7 @@ public class BonificaControllerListener extends ControllerAdapter implements
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
-		//((Bonifica)this.getController().getTo()).setEmprper(null);
+		((Bonifica)this.getController().getTo()).setEmprper(null);
 	}
 	
 	private void setDefaultFields(){
