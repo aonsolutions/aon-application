@@ -5,49 +5,24 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Bank;
 import com.code.aon.customer.Customer;
+import com.code.aon.finance.Creditor;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.supplier.Supplier;
+import com.code.aon.ui.finance.controller.FinanceController;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 
 public class FinanceSearchListener extends ControllerSearchListener {
 
-	/** Determines if the finance is a payment or a charge. */
-	private Boolean payment;
-	
+	private Customer customer;
+
+	private Supplier supplier;
+
+	private Creditor creditor;
+
 	private Bank bank;
 	
-	private Customer customer;
-	
-	private Supplier supplier;
-	
-	/**
-	 * Gets if the finance is a payment or a charge.
-	 * 
-	 * @return true if the finance is a payment
-	 */
-	public Boolean getPayment() {
-		return payment;
-	}
-
-	/**
-	 * Sets if the finance is a payment or a charge.
-	 * 
-	 * @param payment true if the finance is a payment
-	 */
-	public void setPayment(Boolean payment) {
-		this.payment = payment;
-	}
-		
-	public Bank getBank() {
-		return bank;
-	}
-
-	public void setBank(Bank bank) {
-		this.bank = bank;
-	}
-
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -64,35 +39,46 @@ public class FinanceSearchListener extends ControllerSearchListener {
 		this.supplier = supplier;
 	}
 	
+	public Creditor getCreditor() {
+		return creditor;
+	}
+
+	public void setCreditor(Creditor creditor) {
+		this.creditor = creditor;
+	}
+	
+	public Bank getBank() {
+		return bank;
+	}
+
+	public void setBank(Bank bank) {
+		this.bank = bank;
+	}
+
 	@Override
 	protected void init() throws ManagerBeanException {
-		setPayment(Boolean.FALSE);
-		setBank( new Bank() );
-		setCustomer( new Customer() );
-		setSupplier( new Supplier() );
+		setCustomer(new Customer());
+		setSupplier(new Supplier());
+		setCreditor(new Creditor());
+		setBank(new Bank());
 	}
 	
 	@Override
 	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
 		Criteria criteria = getController().getCriteria();
-		if ( (getBank() != null) && (!StringUtils.isEmpty(getBank().getCode())) ) {
-			criteria.addEqualExpression("Finance.bank.code", getBank().getCode());			
+		criteria.addEqualExpression(getController().getFieldName(IFinanceAlias.FINANCE_PAYMENT), ((FinanceController)getController()).isPayment());
+		if ((getCustomer() != null) && (getCustomer().getId() != null)) {
+			criteria.addEqualExpression(getController().getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID), getCustomer().getId());			
 		}
-		if ( getPayment() != null ) {
-			if ( getPayment() ) {
-				if ( (getSupplier() != null) && (getSupplier().getId() != null) ) {
-					String field = getController().getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID);
-					criteria.addEqualExpression(field, getSupplier().getId());			
-				}			
-			} else {
-				if ( (getCustomer() != null) && (getCustomer().getId() != null) ) {
-					String field = getController().getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID);
-					criteria.addEqualExpression(field, getCustomer().getId());			
-				}
-			}
-			String payment = getController().getFieldName(IFinanceAlias.FINANCE_PAYMENT);
-			criteria.addEqualExpression(payment, getPayment());
+		if ((getSupplier() != null) && (getSupplier().getId() != null)) {
+			criteria.addEqualExpression(getController().getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID), getSupplier().getId());			
+		}			
+		if ((getCreditor() != null) && (getCreditor().getId() != null)) {
+			criteria.addEqualExpression(getController().getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID), getCreditor().getId());			
+		}			
+		if ((getBank() != null) && (!StringUtils.isEmpty(getBank().getCode()))) {
+			criteria.addEqualExpression(getController().getFieldName(IFinanceAlias.FINANCE_BANK_CODE), getBank().getCode());			
 		}
 	}
-	
+
 }
