@@ -422,7 +422,7 @@ public class InvoiceEntryController {
 			Invoice invoice = isNew() ? new Invoice() : getAccountEntryInvoice().getInvoice();
 			invoice = mergeInvoice(invoice);
 			this.currentFinance.setInvoice(invoice);
-			getFinanceGenerator().initializeFinanceData(this.currentFinance);
+			getFinanceGenerator().initializeFinanceData(this.currentFinance,obtainInitialAmount());
 			if (this.currentFinance.getBank() == null) {
 				this.currentFinance.setBank(new Bank());
 			}
@@ -437,13 +437,9 @@ public class InvoiceEntryController {
 
 	@SuppressWarnings("unchecked")
 	public void onAddFinance(ActionEvent event) {
-		validateFinance(this.currentFinance);
 		((List<Finance>) this.finances.getWrappedData()).add(this.currentFinance);
 		this.currentFinance = initializeFinance();
 		this.setNewFinance(false);
-	}
-
-	private void validateFinance(Finance currentFinance2) {
 	}
 
 	@SuppressWarnings("unchecked")
@@ -465,12 +461,7 @@ public class InvoiceEntryController {
 	}
 
 	private Finance initializeFinance() {
-		Finance finance = new Finance();
-		finance.setDueDate(new Date());
-		finance.setFinanceStatus(FinanceStatus.PENDING);
-		finance.setAmount(obtainInitialAmount());
-		finance.setBankAccount(new BankAccount());
-		return finance;
+		return new Finance();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -996,15 +987,10 @@ public class InvoiceEntryController {
 		try {
 			if (getCurrentFinance() != null && getCurrentFinance().getPayMethod() != null) {
 				PayMethod pm = getCurrentFinance().getPayMethod();
-				if (pm.getType() == PayMethodType.BANK_TRANSFER) {
-					if (isSales()) {
-						return getRegistryBanks(getCompany());
-					} 
-					return getRegistryBanks(header.getRegistry());		
+				if ((isSales() && pm.getType() == PayMethodType.NEGOTIABLE_DOCUMENT) || 
+					(!isSales() && pm.getType() == PayMethodType.BANK_TRANSFER)) {
+					return getRegistryBanks(getCurrentFinance().getRegistry());
 				}
-				if (isSales()) {
-					return getRegistryBanks(header.getRegistry());		
-				} 
 				return getRegistryBanks(getCompany());
 			}
 			return new LinkedList<SelectItem>();

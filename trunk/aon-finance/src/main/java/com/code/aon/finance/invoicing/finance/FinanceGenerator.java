@@ -24,19 +24,35 @@ import com.code.aon.registry.dao.IRegistryAlias;
 
 public class FinanceGenerator {
 
-	public Finance initializeFinanceData(Finance finance) throws ManagerBeanException{
+	public Finance initializeFinanceData(Finance finance, double initialAmount) throws ManagerBeanException{
+		if (finance.getInvoice() == null) {
+			throw new IllegalArgumentException("La factura del vto. no puede ser null");
+		}
 		RegistryPayMethod rPayMethod = obtainRPayMethod(finance.getInvoice());
-		return initializeFinanceData(finance,rPayMethod);
+		return initializeFinanceData(finance,rPayMethod,initialAmount);
 	}
 
-	public Finance initializeFinanceData(Finance finance, RegistryPayMethod rPayMethod){
+	public Finance initializeFinanceData(Finance finance, RegistryPayMethod rPayMethod,double initialAmount){
+		if (finance.getInvoice() == null) {
+			throw new IllegalArgumentException("La factura del vto. no puede ser null");
+		}
+		RegistryBank rBank = null;
 		if (rPayMethod != null) {
-			RegistryBank rBank = rPayMethod.getRegistryBank();
+			rBank = rPayMethod.getRegistryBank();
 			if (rBank != null) {
 				finance.setBank(rBank.getBank());
 				finance.setBankAccount( rBank.getBankAccount() );
 			}
 			finance.setPayMethod( rPayMethod.getPayment() );
+		}
+		finance.setDueDate(finance.getInvoice().getIssueDate());
+		finance.setFinanceStatus(FinanceStatus.PENDING);
+		finance.setRegistry(finance.getInvoice().getRegistry());
+		finance.setAmount(initialAmount);
+		if(finance.getInvoice().getType().equals(InvoiceType.SALES)){
+			finance.setPayment(false);
+		}else{
+			finance.setPayment(true);
 		}
 		return finance;
 	}
@@ -107,8 +123,8 @@ public class FinanceGenerator {
 		finance.setBank((rBank==null?null:rBank.getBank()));
 		finance.setBankAccount((rBank==null?null:rBank.getBankAccount()));
 		finance.setDueDate(date);
-		finance.setFinanceStatus(FinanceStatus.PENDING);
 		finance.setInvoice(invoice);
+		finance.setFinanceStatus(FinanceStatus.PENDING);
 		if(invoice.getType().equals(InvoiceType.SALES)){
 			finance.setPayment(false);
 		}else{

@@ -22,12 +22,14 @@
 						<f:facet name="header">
 							<aon:outputText value="#{accountBundle.account_account}" />
 						</f:facet>
-						<aon:outputText value="#{to.account.id}"
-							rendered="#{to!=accountEntryDetail.to}" />
+						<aon:div rendered="#{to!=accountEntryDetail.to}" style="width: 100px;float:left;">
+							<aon:outputText value="#{to.account.id}"/>
+						</aon:div>
 						<aon:outputText value="#{to.account.description}"
-							rendered="#{to!=accountEntryDetail.to}" 
-							style="position: absolute; left: 120px;">
-							<aon:abbreviateConverter maxWidth="35" />							
+							rendered="#{to!=accountEntryDetail.to}"
+							styleClass="aon-italic" 
+							style="width: auto; font-size: 0.9em;">
+							<aon:abbreviateConverter maxWidth="55" />							
 						</aon:outputText>
 						<ui:include
 							src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
@@ -60,30 +62,13 @@
 							</ui:include>
 						</f:facet>
 					</aon:column>
-<!-- 
-					<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_description}" />
-						</f:facet>
-						<aon:outputText id="Account_Lookup_description-Edit"
-							value="#{to.account.description}">
-							<aon:abbreviateConverter maxWidth="35" />
-						</aon:outputText>
-						<f:facet name="footer">
-							<aon:outputText id="Account_Lookup_description-New"
-								rendered="#{accountEntryDetail.new}"
-								value="#{accountEntryDetail.to.account.description}">
-								<aon:abbreviateConverter maxWidth="35" />
-							</aon:outputText>
-						</f:facet>
-					</aon:column>
- -->
+
 					<aon:column
-						styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-150">
+						styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-200">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_concept}" />
 						</f:facet>
-						<aon:outputText value="#{to.concept}"
+						<aon:outputText value="#{to.concept}" styleClass="aon-nowrap"
 							rendered="#{to!=accountEntryDetail.to}" />
 						<aon:inputText id="AccountEntryDetail_concept-Edit"
 							value="#{accountEntryDetail.to.concept}"
