@@ -1,5 +1,6 @@
 package com.code.aon.ui.payroll.event;
 
+import com.code.aon.payroll.principales.personas.Prcdivtrab;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -18,8 +19,9 @@ public class PrcdivtrabControllerListener extends ControllerAdapter implements
 	@Override
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
-
-		super.beforeBeanAdded(event);
+		
+		int cdg = ((Prcdivtrab)this.getController().getTo()).getEmprper().getCdg();
+		((Prcdivtrab)this.getController().getTo()).getId().setCdg(cdg);
 	}
 	
 	@Override

@@ -54,10 +54,7 @@
 					<f:facet name="header">
 						<aon:outputText value="#{appBundle.aon_payroll_principales_integralTra_linea}" />
 					</f:facet>
-					<aon:outputText value="#{to.linea}" >
-						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-							timeZone="#{timeZoneController.timeZoneId}" />
-					</aon:outputText>
+					<aon:outputText value="#{to.linea}" />
 				</aon:column>
 			
 				<aon:column>

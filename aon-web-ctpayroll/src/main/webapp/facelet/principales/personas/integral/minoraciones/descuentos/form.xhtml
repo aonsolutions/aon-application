@@ -36,36 +36,37 @@
 
 					<aon:div id="trabdtoData"
 						styleClass="aon-scroll-area">
+						
+						
+						<aon:panelGrid columns="2" dir="true"
+							width="100%">
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_bonifica_trabajador}" />
+							<aon:outputText value="#{trabajador.to.cdg}" size="3" maxlength="3" />
+							
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_bonifica_nom_ape}" />
+							<aon:div>
+								<aon:outputText value="#{trabajador.to.persona.descripcion} " />
+								<aon:outputText value="#{trabajador.to.persona.apellido2}, " />
+								<aon:outputText value="#{trabajador.to.persona.nombre} " />
+							</aon:div>
+							
+						</aon:panelGrid>
 
 						<aon:panelGrid columns="4" dir="true"
 							width="100%">
 							
-														
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_principales_trabdto_codtra}" />
-							<aon:inputText value="#{trabajador.to.cdg}"
-								readonly="#{true}" size="" maxlength="" />
-							
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_principales_trabdto_datos_trab}" />
-							<aon:div>
-								<aon:outputText
-									value="#{trabajador.to.persona.descripcion} " />
-								<aon:outputText
-									value="#{trabajador.to.persona.apellido2}, " />
-								<aon:outputText
-									value="#{trabajador.to.persona.nombre} " />
-							</aon:div>
-							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_trabdto_num_orden}" />
 							<aon:inputText value="#{trabdto.to.id.orden}"
-								readonly="#{true}" size="" maxlength="" />
+								readonly="#{true}" size="2" maxlength="2" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_trabdto_num_linea}" />
 							<aon:inputText value="#{trabdto.to.linea}"
-								size="" maxlength="" />
+								size="2" maxlength="2" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_trabdto_fecini_desc}" />
@@ -82,12 +83,12 @@
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_trabdto_concep_minor}" />
 							<aon:inputText value="#{trabdto.to.concepto}"
-								size="" maxlength="" />
+								size="20" maxlength="30" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_trabdto_importe_minor}" />
 							<aon:inputText value="#{trabdto.to.importe}"
-								size="" maxlength="" />
+								size="7" maxlength="10" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_trabdto_importe_indicar}" />

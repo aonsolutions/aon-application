@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
-import com.code.aon.payroll.enumeration.ImporteIndicar;
 import com.code.aon.payroll.enumeration.Tipoit;
 import com.code.aon.ui.form.LinesController;
 

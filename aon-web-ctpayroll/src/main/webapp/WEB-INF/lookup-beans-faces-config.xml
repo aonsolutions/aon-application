@@ -640,6 +640,25 @@
 			<property-name>listPagePath</property-name>
 			<value>facelet/principales/personas/integral/incidencias/otras/tipincLookup/list.xhtml</value>
 		</managed-property>
+	</managed-bean>
+	
+	<!--  ************ tipo incidencia LOOKUP **************  -->	
+	<managed-bean>
+		<managed-bean-name>tipautLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>tipautLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.payroll.principales.personas.Tipaut</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>facelet/principales/personas/integral/trabajo/tipautLookup/list.xhtml</value>
+		</managed-property>
 	</managed-bean>	
 	
 	

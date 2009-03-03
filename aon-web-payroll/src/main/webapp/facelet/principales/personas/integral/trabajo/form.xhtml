@@ -98,20 +98,22 @@
 						
 						
 						
-					<rich:tabPanel switchType="ajax" id="trabajoTabs" 
+					<rich:tabPanel switchType="client" id="trabajoTabs" 
 						selectedTab="#{trabajo.tabName}" 
 						valueChangeListener="#{trabajo.changeTabValue}" >
 	
 						<rich:tab id="tab1"
 							label="#{appBundle.aon_payroll_principales_trabajo_tab1}" >
 							<aon:div id="trabajo">									 
-								<!-- <ui:include src="tab1/form.xhtml" /> --> 
+								<ui:include src="tab1/form.xhtml" /> 
 							</aon:div>
 						</rich:tab>
 						<rich:tab id="tab2"
 							label="#{appBundle.aon_payroll_principales_trabajo_tab2}" >
 							<aon:div id="bonificaciones">									 
-								<!-- <ui:include src="tab2/form.xhtml" /> -->
+								 
+								<ui:include src="tab2/form.xhtml" />
+								
 							</aon:div>
 						</rich:tab>
 						<rich:tab id="tab3"
@@ -131,6 +133,7 @@
 				<aon:lookupButtonPopup lookup="#{tipocontratoLookup}" />
 				<!-- 
 				<aon:lookupButtonPopup lookup="#{contratostc2Lookup}" />
+				<aon:lookupButtonPopup lookup="#{tipautLookup}" />
 				-->
 				<aon:lookupButtonPopup lookup="#{colectivosLookup}" />
 				  

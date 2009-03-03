@@ -1,5 +1,6 @@
 package com.code.aon.ui.payroll.event;
 
+import com.code.aon.payroll.principales.personas.Trabajo;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -18,8 +19,11 @@ public class TrabajoControllerListener extends ControllerAdapter implements
 	@Override
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
-
-		super.beforeBeanAdded(event);
+		
+		int cdg = ((Trabajo)this.getController().getTo()).getEmprper().getCdg(); 
+		((Trabajo)this.getController().getTo()).getId().setCdg(cdg);
+	
+		checkNullFields();
 	}
 	
 	@Override
@@ -27,7 +31,7 @@ public class TrabajoControllerListener extends ControllerAdapter implements
 			throws ControllerListenerException {
 		// TODO Auto-generated method stub
 		System.out.println(" beforeBeanSelected ");
-
+		
 		super.beforeBeanSelected(event);
 	}
 	
@@ -37,5 +41,38 @@ public class TrabajoControllerListener extends ControllerAdapter implements
 		// TODO Auto-generated method stub
 		
 		super.beforeModelInitialized(event);
+	}
+	
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		checkNullFields();
+	}
+
+	private void checkNullFields() {
+		Trabajo trabajo = ((Trabajo)this.getController().getTo());
+		
+		// Comprueba lookup nulos
+		if(trabajo.getTipaut()!=null && trabajo.getTipaut().getCdg()== "")
+			trabajo.setTipaut(null);
+		if(trabajo.getBasecoti()!=null && trabajo.getBasecoti().getCdg() == "")
+			trabajo.setBasecoti(null);
+		if(trabajo.getColectivos()!=null && trabajo.getColectivos().getCdg() == "")
+			trabajo.setColectivos(null);
+		if(trabajo.getConvenio()!=null && trabajo.getConvenio().getCdg() == "")
+			trabajo.setConvenio(null);
+		if(trabajo.getTipocont()!=null && trabajo.getTipocont().getCdg() == "")
+			trabajo.setTipocont(null);
+		if(trabajo.getEntidad()!=null && trabajo.getEntidad().getCdg() == "")
+			trabajo.setEntidad(null);
+		if(trabajo.getEpigrafe()!=null && trabajo.getEpigrafe().getCdg() == "")
+			trabajo.setEpigrafe(null);
+		if(trabajo.getPorcoti()!=null && trabajo.getPorcoti().getCdg() == "")
+			trabajo.setPorcoti(null);
+		if(trabajo.getSucursal()!=null && trabajo.getSucursal().getId().getCdg() == "")
+			trabajo.setSucursal(null);
+		if(trabajo.getTipcotc2()!=null && trabajo.getTipcotc2().getCdg() == "")
+			trabajo.setTipcotc2(null);
+		
 	}
 }
