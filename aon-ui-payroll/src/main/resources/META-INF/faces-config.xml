@@ -6425,10 +6425,20 @@
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 			        <value>#{boniLinesListener}</value>
 			        <value>#{comuLinesListener}</value>
+			         <value>#{costesControllerListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 
+	
+	<managed-bean>
+		<managed-bean-name>costesControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.CostesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
 	
 <managed-bean>
 		<managed-bean-name>boniLinesListener</managed-bean-name>
@@ -6502,8 +6512,25 @@
 						
 			</map-entries>
 		</managed-property>		 
+	<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>			      
+			         <value>#{lbonificaControllerListener}</value>
+			</list-entries>
+		</managed-property>
 	</managed-bean>
 
+	
+	<managed-bean>
+		<managed-bean-name>lbonificaControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.LbonificaControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	
 	<managed-bean>
 		<managed-bean-name>comuLinesListener</managed-bean-name>
 		<managed-bean-class>
@@ -6576,6 +6603,22 @@
 						
 			</map-entries>
 		</managed-property>		 
+	<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>			      
+			         <value>#{lcomunicaControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	
+	<managed-bean>
+		<managed-bean-name>lcomunicaControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.LcomunicaControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
 	

@@ -58,11 +58,11 @@ public class Lbonifica  implements ITransferObject {
     
 	//@DataDefinition(label="Numero Horas Formacion")
     @Column(name="horas", nullable=false, length=2)
-    public int getHoras() {
+    public Integer getHoras() {
         return this.horas;
     }
     
-    public void setHoras(int horas) {
+    public void setHoras(Integer horas) {
         this.horas = horas;
     }
     

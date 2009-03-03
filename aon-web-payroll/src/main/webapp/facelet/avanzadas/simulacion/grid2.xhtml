@@ -40,24 +40,7 @@
 
 
 			
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText
-						value="#{appBundle.aon_payroll_avanzadas_simulacion_ord}" />
-				</f:facet>
-				<aon:outputText value="#{to.id.orden}"
-					rendered="#{to!=lcomunica.to}">
-				</aon:outputText>
-				<aon:inputText styleClass="aon-form-input-text " 
-					rendered="#{to==lcomunica.to}" size="5"
-					value="#{lcomunica.to.id.orden}" maxlength="10" />
-				<f:facet name="footer">
-					<aon:inputText styleClass="aon-form-input-text" 
-						rendered="#{lcomunica.new}" size="5"
-						value="#{lcomunica.to.id.orden}" maxlength="10" />
-				</f:facet>
-			</aon:column>
-			
+		
 						
 			<aon:column>
 				<f:facet name="header">
@@ -69,34 +52,42 @@
 				</aon:outputText>
 				<aon:inputText styleClass="aon-form-input-text " 
 					rendered="#{to==lcomunica.to}" size="5"
-					value="#{lcomunica.to.anionac}" maxlength="10" />
+					value="#{lcomunica.to.anionac}" maxlength="4" />
 				<f:facet name="footer">
 					<aon:inputText styleClass="aon-form-input-text" 
 						rendered="#{lcomunica.new}" size="5"
-						value="#{lcomunica.to.anionac}" maxlength="10" />
+						value="#{lcomunica.to.anionac}" maxlength="4" />
 				</f:facet>
 			</aon:column>
-			
-			
-						
+
+
+
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText
 						value="#{appBundle.aon_payroll_avanzadas_simulacion_minus}" />
 				</f:facet>
-				<aon:outputText value="#{to.xminus}"
-					rendered="#{to!=lcomunica.to}">
+				<aon:outputText value="#{to.xminus}" rendered="#{to!=lcomunica.to}">
 				</aon:outputText>
-				<aon:inputText styleClass="aon-form-input-text " 
-					rendered="#{to==lcomunica.to}" size="5"
-					value="#{lcomunica.to.xminus}" maxlength="10" />
+
+
+				<aon:selectOneMenu layout="pageDirection"
+					rendered="#{to==lcomunica.to}" value="#{lcomunica.to.xminus}">
+					<f:selectItem value="#{null}" itemLabel="    " />
+					<f:selectItems value="#{costes.listaminus}" />
+				</aon:selectOneMenu>
+
+
 				<f:facet name="footer">
-					<aon:inputText styleClass="aon-form-input-text" 
-						rendered="#{lcomunica.new}" size="5"
-						value="#{lcomunica.to.xminus}" maxlength="10" />
+
+					<aon:selectOneMenu layout="pageDirection"
+						rendered="#{lcomunica.new}" value="#{lcomunica.to.xminus}">
+						<f:selectItem value="#{null}" itemLabel="    " />
+						<f:selectItems value="#{costes.listaminus}" />
+					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>
-			
+
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText
@@ -105,13 +96,25 @@
 				<aon:outputText value="#{to.desAsc}"
 					rendered="#{to!=lcomunica.to}">
 				</aon:outputText>
-				<aon:inputText styleClass="aon-form-input-text " 
-					rendered="#{to==lcomunica.to}" size="5"
-					value="#{lcomunica.to.desAsc}" maxlength="10" />
+
+					
+					
+				<aon:selectOneMenu layout="pageDirection"
+					rendered="#{to==lcomunica.to}" value="#{lcomunica.to.desAsc}">
+					<f:selectItem value="#{null}" itemLabel="    " />
+					<f:selectItems value="#{lcomunica.listadesc}" />
+				</aon:selectOneMenu>
+					
+					
 				<f:facet name="footer">
-					<aon:inputText styleClass="aon-form-input-text" 
-						rendered="#{lcomunica.new}" size="5"
-						value="#{lcomunica.to.desAsc}" maxlength="10" />
+			
+						
+						<aon:selectOneMenu layout="pageDirection"
+					rendered="#{lcomunica.new}" value="#{lcomunica.to.desAsc}">
+					<f:selectItem value="#{null}" itemLabel="    " />
+					<f:selectItems value="#{lcomunica.listadesc}" />
+				</aon:selectOneMenu>
+					
 				</f:facet>
 			</aon:column>
 			

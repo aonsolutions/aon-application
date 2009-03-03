@@ -21,7 +21,9 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.payroll.auxiliares.convenios.Convenio;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Mutua;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal;
+import com.code.aon.payroll.avanzadas.hojastrabajo.Httincidencia;
 import com.code.aon.payroll.avanzadas.hojastrabajo.Httrabajador;
+import com.code.aon.payroll.avanzadas.simulacion.Costes;
 import com.code.aon.payroll.cotizacion.Base;
 import com.code.aon.payroll.cotizacion.Epigrafe;
 import com.code.aon.payroll.cotizacion.Linepigr;
@@ -46,6 +48,7 @@ import com.code.aon.payroll.principales.persona.Trabajador;
 import com.code.aon.payroll.principales.personas.Persona;
 import com.code.aon.payroll.tipos.Tipovia;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
 
@@ -199,14 +202,13 @@ public class CostesController extends PayrollBasicController	 {
 	}
 	
 
-	/**
-	 * genera un cdg siguiendo al maximo 
-	 */
 	public void generateCdg(){
-		((Httrabajador)getTo()).setCdg(Integer.parseInt(Utils.maxCode("Httrabajador", "cdg"))+1);
-	}
-	
 		
+		Integer cdg= Integer.parseInt(Utils.maxCode("Costes","id.cdg"));
+		
+		((Costes)getTo()).getId().setNumero(1);
+		((Costes)getTo()).getId().setCdg(cdg +1);
+	}
 	
 	/*
 		@Override

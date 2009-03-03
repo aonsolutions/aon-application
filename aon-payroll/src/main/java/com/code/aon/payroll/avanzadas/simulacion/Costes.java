@@ -85,7 +85,56 @@ public class Costes  implements ITransferObject {
  
 
     
+     public Costes(){
+    	  porcoti = new PorcentajeMaestro( );
+    	  porcoti.setCdg("DESEMPL1");
+    	  basecoti = new Base();
+    	  basecoti.setCdg("05");
+    	  epigrafe = new  Epigrafe();
+    	  epigrafe.setCdg("113");
+    	  indtp = Timecont.TIP1;
+    	  sitfam = Sitfami.SIT3;
+          xminus =Minusvalia.SIT0;     
+          procot= Prorateo.PROMENSUAL;
+          proret= Prorateo.PROMENSUAL;
+    	  semana=2400;
+    	  semanatp=0;
+    	  cantp=0;
+    	  impPension = new BigDecimal(0);
+          impAnual = new BigDecimal(0);
+          impIrreg = new BigDecimal(0);
+          impSs = new BigDecimal(0);
+          solicita = new BigDecimal(0);
+          pluprcmin= new BigDecimal(0);
+          pluprcmax= new BigDecimal(0);
+    	  impActual = new BigDecimal(0);
+    	  impExtActual= new BigDecimal(0);
+    	  ssActual= new BigDecimal(0);
+    	  irpfActual= new BigDecimal(0);
+    	  netoActual= new BigDecimal(0);
+    	  ssEmpActual =new BigDecimal(0);
+    	  costeActual= new BigDecimal(0);
+    	  impSupuesto= new BigDecimal(0);
+    	  impExtSupuesto= new BigDecimal(0);
+    	  ssSupuesto =new BigDecimal(0);
+    	  irpfSupuesto =new BigDecimal(0);
+    	  netoSupuesto =new BigDecimal(0);
+    	  ssEmpSupuesto= new BigDecimal(0);
+    	  costeSupuesto =new BigDecimal(0);
+    	  impDiferencia =new BigDecimal(0);
+    	  impExtDiferencia =new BigDecimal(0);
+    	  ssDiferencia =new BigDecimal(0);
+    	  irpfDiferencia =new BigDecimal(0);
+    	  netoDiferencia =new BigDecimal(0);
+    	  ssEmpDiferencia =new BigDecimal(0);
+    	  costeDiferencia= new BigDecimal(0);
+    	 
 
+ 	}
+
+     
+     
+     
     @EmbeddedId    
     @AttributeOverrides( {
         @AttributeOverride(name="cdg", column=@Column(name="cdg", nullable=false, length=4) ), 

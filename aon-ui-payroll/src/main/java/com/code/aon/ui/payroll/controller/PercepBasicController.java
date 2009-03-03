@@ -15,6 +15,8 @@ import org.hibernate.Query;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.payroll.auxiliares.convenios.Complemento;
+import com.code.aon.payroll.avanzadas.hojastrabajo.Httaviso;
+import com.code.aon.payroll.avanzadas.hojastrabajo.Httrabajador;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.FijoVariable;
 import com.code.aon.payroll.enumeration.IndiceComplemento;
@@ -23,6 +25,7 @@ import com.code.aon.payroll.enumeration.TipoComplemento;
 import com.code.aon.payroll.principales.persona.Trabajador;
 import com.code.aon.payroll.principales.personas.Percep;
 import com.code.aon.payroll.resultados.nomina.Nomina;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 
 public class PercepBasicController extends PayrollBasicController {
@@ -161,12 +164,13 @@ public class PercepBasicController extends PayrollBasicController {
 
 public void generarNumero(ActionEvent event){
 		
-		((Percep)getTo()).getId().setCdg(((Percep)getTo()).getTrabajador().getCdg());
-		String num = Utils.maxCode("Percep", "id.numero", "id.cdg="+((Percep)getTo()).getId().getCdg());
-		((Percep)getTo()).getId().setNumero(Integer.parseInt(num)+1);
-	}
-
-
+/*	Integer cdg= ((Httrabajador)(FormUtil.getController(IPayrollConstants.HTTRABAJADOR_CONTROLLER_NAME)).getTo()).getCdg();
+	Integer numero= Integer.parseInt(Utils.maxCode("Httaviso","id.numero","id.cdg="+cdg));
+	
+	((Httaviso)getTo()).getId().setCdg(((Httrabajador)(FormUtil.getController(IPayrollConstants.HTTRABAJADOR_CONTROLLER_NAME)).getTo()).getCdg());
+	((Httaviso)getTo()).getId().setOrden(orden +1);
+	
+*/}
 
 public Date getFecini() {
 	return fecini;
