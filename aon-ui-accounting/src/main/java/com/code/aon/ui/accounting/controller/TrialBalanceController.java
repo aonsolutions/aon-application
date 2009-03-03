@@ -59,7 +59,11 @@ public class TrialBalanceController implements ICollectionProvider {
 		setParameters(null);
 		setSummaryCollection(null);
 	}
-
+	public void onResetStatement(ActionEvent event) {
+		onReset(event);
+		getParameters().setAccountLevel(5);
+	}
+	
 	public void onSearch(ActionEvent event) {
 		try {
 			if (getParameters().getPeriod() == null) {
@@ -137,15 +141,13 @@ public class TrialBalanceController implements ICollectionProvider {
 		}
 	}
 
-	public void onAccountEntry(ActionEvent event) {
+	private void showAccountEntry(Balance balance) {
 		try {
-			StatementController c = (StatementController) AonUtil.getRegisteredBean(STATEMENT_CONTROLLER_NAME);
-			Balance aed = (Balance) c.getDetailModel().getRowData();
 			AccountEntryController entryController = (AccountEntryController) FormUtil
 					.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(
-					IAccountingAlias.ACCOUNT_ENTRY_ID), aed.getAccountEntry());
+					IAccountingAlias.ACCOUNT_ENTRY_ID), balance.getAccountEntry());
 			entryController.setCriteria(criteria);
 			entryController.onSearch(null);
 			entryController.getModel().setRowIndex(0);
@@ -155,6 +157,16 @@ public class TrialBalanceController implements ICollectionProvider {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
+	}
+	public void onOpeningEntry(ActionEvent event) {
+		StatementController c = (StatementController) AonUtil.getRegisteredBean(STATEMENT_CONTROLLER_NAME);
+		Balance balance = c.getOpeningEntry();
+		showAccountEntry(balance);
+	}
+	public void onAccountEntry(ActionEvent event) {
+		StatementController c = (StatementController) AonUtil.getRegisteredBean(STATEMENT_CONTROLLER_NAME);
+		Balance balance = (Balance) c.getDetailModel().getRowData();
+		showAccountEntry(balance);
 	}
 
 	@Override
