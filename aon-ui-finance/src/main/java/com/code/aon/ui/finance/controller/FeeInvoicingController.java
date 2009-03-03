@@ -279,7 +279,7 @@ public class FeeInvoicingController  implements IProgression{
 			}
 		} else {
 			if (invoicesToRecord > 0) {
-				int pro = (int) CommonUtil.round(((recordingInvoice* 100 / invoicesToRecord) / 2)+50);
+				int pro = (int) CommonUtil.round(((recordingInvoice * 100 / invoicesToRecord) / 2)+50);
 				setProgressionValue(new Long(pro));
 			}
 		}
