@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -12,7 +13,7 @@
 
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_finance_module}" />
+				<ui:param name="toolbarTitle" value="#{(finance.payment) ? (financeBundle.finance_payment_module) : (financeBundle.finance_charge_module)}" />
 				<ui:param name="controller" value="#{finance}" />
 				<ui:param name="skipResetButton" value="true" />
 			</ui:include>
@@ -22,24 +23,16 @@
 				<ui:param name="controller" value="#{finance}" />
 				<ui:define name="searchContent">
 
-					<aon:outputLabel for="Finance_payment"
-						value="#{financeBundle.finance_payment} / #{financeBundle.finance_charge}" />
-					<aon:selectOneRadio id="Finance_payment" value="#{financeSearch.payment}"
-						reRender="Registry_label,Registry_lookup">
-						<f:selectItem itemLabel="#{financeBundle.finance_payment}" itemValue="#{true}" />
-						<f:selectItem itemLabel="#{financeBundle.finance_charge}" itemValue="#{false}" />
-					</aon:selectOneRadio>
-
-					<aon:div id="Registry_label" >
+					<aon:div id="Registry_label">
 						<aon:outputLabel for="Customer_id"
-							rendered="#{!financeSearch.payment}"
+							rendered="#{!finance.payment}"
 							value="#{customerBundle.customer_customer}" />
 						<aon:outputLabel for="Supplier_id"
-							rendered="#{financeSearch.payment}"
+							rendered="#{finance.payment}"
 							value="#{supplierBundle.supplier_supplier}" />
 					</aon:div>
 					<aon:div id="Registry_lookup" >													
-						<aon:div styleClass="aon-lookup" rendered="#{!financeSearch.payment}">
+						<aon:div styleClass="aon-lookup" rendered="#{!finance.payment}">
 							<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
 								reRender="Customer_full_name"
 								value="#{financeSearch.customer.id}" size="5" />
@@ -53,7 +46,7 @@
 								value="#{(financeSearch.customer.registry.name!=null)?(financeSearch.customer.registry.fullName):('')}"
 								size="50" disabled="true" />							
 						</aon:div>
-						<aon:div styleClass="aon-lookup" rendered="#{financeSearch.payment}">
+						<aon:div styleClass="aon-lookup" rendered="#{finance.payment}">
 							<aon:lookupInputText id="Supplier_id" lookup="#{supplierLookup}"
 								reRender="Supplier_full_name"
 								value="#{financeSearch.supplier.id}" size="5" />
@@ -69,10 +62,20 @@
 						</aon:div>
 					</aon:div>
 
-					<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml">
-						<ui:param name="aliasPreffix" value="Finance_invoice" />						
-					</ui:include>		
-					
+					<c:if test="#{!finance.payment}">
+						<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml">
+							<ui:param name="aliasPreffix" value="Finance_invoice" />						
+						</ui:include>
+					</c:if>
+
+					<aon:outputLabel for="Finance_invoice_referenceCode"
+						rendered="#{finance.payment}"
+						value="#{financeBundle.finance_invoice_number}" />
+					<aon:inputText id="Finance_invoice_referenceCode"
+						rendered="#{finance.payment}"
+						valueChangeListener="#{finance.addExpression}"
+						size="20" />
+
 					<aon:outputLabel value="#{financeBundle.finance_invoice_date}" />
 					<aon:div>
 						<aon:outputLabel for="Finance_invoice_issueDate-From" styleClass="aon-form-date-label"
