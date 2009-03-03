@@ -12,5 +12,7 @@ public interface IFinanceMessages {
 	String INVALID_INVOICING_GROUP_DETAIL_PARENT_KEY = "finance_invalid_invoicing_group_detail_parent";
 	String INVALID_INVOICING_GROUP_DETAIL_CHILD_KEY = "finance_invalid_invoicing_group_detail_child";
 	String UNABLE_RECORD_INACCURACY_ERROR_KEY = "finance_unable_record_inaccuracy_error";
-
+	String PAYMENT_INVALID_AMOUNT_ERROR = "finance_payment_invalid_amount_error";
+	String FINANCE_TRACKING_FRACTIONED = "finance_tracking_fractioned";
+	String FINANCE_TRACKING_RECORDED  = "finance_tracking_recorded";
 }
