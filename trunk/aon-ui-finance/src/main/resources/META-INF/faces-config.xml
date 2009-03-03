@@ -178,13 +178,19 @@
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
-				<value>#{financeTrackingListener}</value>
-				<value>#{financeControllerListener}</value>
 				<value>#{financeSearch}</value>
-				<value>#{bankAccountValidatorListener}</value>
+				<value>#{financeTrackingListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>financeSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.FinanceSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
 	
 	<managed-bean>
 		<managed-bean-name>financeTrackingListener</managed-bean-name>
@@ -206,22 +212,6 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>financeControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.event.FinanceControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>financeSearch</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.event.FinanceSearchListener
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
 	
 	<!-- ************* FINANCETRACKING ***************** -->
 	<managed-bean>
@@ -258,108 +248,6 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
-	<!-- ************* FINANCE RETURN ***************** -->
-	<managed-bean>
-		<managed-bean-name>financeReturn</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.controller.FinanceReturnController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.finance.Finance</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>financeReturn</value>
-		</managed-property>				
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Finance_invoice_series,Finance_invoice_number</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>defaultExpressions</property-name>
-			<map-entries>
-				<map-entry>
-					<key>Finance_financeStatus</key>
-					<value>#{financeCollections.financeStatuses[3].value}</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>		
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>
-					com.code.aon.ui.form.event.IControllerListener
-				</value-class>
-				<value>#{financeReturnSearch}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>financeReturnSearch</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.event.FinanceSearchListener
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>			
-
-	<!-- ************* FINANCE PAYMENT ***************** -->
-	<managed-bean>
-		<managed-bean-name>financePayment</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.controller.FinancePaymentController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.finance.Finance</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>financePayment</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Finance_invoice_series,Finance_invoice_number</value>
-		</managed-property>				
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>
-					com.code.aon.ui.form.event.IControllerListener
-				</value-class>
-				<value>#{financePaymentControllerListener}</value>
-				<value>#{financePaymentSearch}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>financePaymentControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.event.FinancePaymentControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>financePaymentSearch</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.event.FinanceSearchListener
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>			
 	
 	<!-- ************* FINANCE FRACTION ***************** -->
 	<managed-bean>
@@ -1612,38 +1500,6 @@
 		<navigation-case>
 			<from-outcome>finance_fraction</from-outcome>
 			<to-view-id>/com/code/aon/ui/finance/facelet/finance/fraction.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>	
-
-	<!-- =================== FinanceReturn ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>financeReturn_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/financeReturn/search.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>financeReturn_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/financeReturn/list.xhtml</to-view-id>
-		</navigation-case>		
-		<navigation-case>
-			<from-outcome>financeReturn_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/financeReturn/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-	<!-- =================== FinancePayment ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>financePayment_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/financePayment/search.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>financePayment_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/financePayment/list.xhtml</to-view-id>
-		</navigation-case>		
-		<navigation-case>
-			<from-outcome>financePayment_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/financePayment/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 
