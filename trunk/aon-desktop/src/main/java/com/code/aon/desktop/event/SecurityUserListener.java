@@ -7,6 +7,7 @@ import org.apache.commons.lang.ObjectUtils;
 
 import com.code.aon.bridge.plugin.UserManager;
 import com.code.aon.config.User;
+import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.desktop.controller.AonDomainController;
 import com.code.aon.desktop.controller.AonUserController;
 import com.code.aon.jaas.auth.AuthPrincipal;
@@ -31,7 +32,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
 
-public class SecurityUserListener extends ControllerAdapter implements ILdapConstants, IAonObjectClasses {
+public class SecurityUserListener extends ControllerAdapter implements ILdapConstants, IAonObjectClasses, IDesktopConstants {
 
 	private static final Logger LOGGER = Logger.getLogger(SecurityUserListener.class.getName());
 
@@ -100,7 +101,7 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 			throws ControllerListenerException {
 		User user = (User) event.getController().getTo();
 		setProperties( user, true );
-		AonUserController userController = (AonUserController) AonUtil.getRegisteredBean("currentUser");
+		AonUserController userController = (AonUserController) AonUtil.getRegisteredBean(CURRENT_USER_CONTROLLER_NAME);
 		userController.updateExpirationTimestamp( user.getLogin(), true );
 	}
 
@@ -194,7 +195,7 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 			LOGGER.severe( "No existe en LDAP el usuario " + user.getLogin() + " para el dominio " + domain );
 		}			
 		try {
-			AonDomainController domainController = (AonDomainController) FormUtil.getController("domain");
+			AonDomainController domainController = (AonDomainController) FormUtil.getController(CURRENT_DOMAIN_CONTROLLER_NAME);
 			domainController.flushAuthenticationCache( user.getLogin() );
 		} catch (DeploymentException e) {
 			LOGGER.severe( "Error refrescando la cache de autentificacion" );			

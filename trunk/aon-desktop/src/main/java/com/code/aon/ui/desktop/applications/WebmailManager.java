@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.code.aon.bridge.plugin.Utils;
+import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.ui.util.AonUtil;
@@ -15,7 +16,7 @@ import com.code.aon.webmail.WebmailUtil;
 import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonServer;
 
-public class WebmailManager implements IServices {
+public class WebmailManager implements IServices, IDesktopConstants {
 	
 	private static final Logger LOGGER = Logger.getLogger( WebmailManager.class.getName() );
 
@@ -24,7 +25,7 @@ public class WebmailManager implements IServices {
     private AonServer webmailServer;
 
 	public WebmailManager() throws DeploymentException, IOException {
-		ApplicationsManager apps = (ApplicationsManager) AonUtil.getRegisteredBean( ApplicationsManager.BEAN_NAME );
+		ApplicationsManager apps = (ApplicationsManager) AonUtil.getRegisteredBean( APPLICATIONS_CONTROLLER_NAME );
 		app = apps.getApplication( "aon-webmail" );
 		if ( app != null && isExecutable() ) {
 			try {

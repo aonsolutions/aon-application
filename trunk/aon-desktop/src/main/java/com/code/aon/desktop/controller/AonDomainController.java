@@ -23,6 +23,7 @@ import com.code.aon.bridge.plugin.DomainManager;
 import com.code.aon.bridge.plugin.UserManager;
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.client.ast.IDomainApplication;
 import com.code.aon.jaas.client.ast.INode;
@@ -43,7 +44,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class AonDomainController extends BasicController implements IAonObjectClasses, ILdapConstants {
+public class AonDomainController extends BasicController implements IAonObjectClasses, ILdapConstants, IDesktopConstants {
 
 	/** Obtiene un logger apropiado. */
 	private static final Logger LOGGER = Logger.getLogger(AonDomainController.class.getName());
@@ -221,7 +222,7 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 	public String getCurrentUserName() {
 		if ( this.users.isRowAvailable() ) {
 			IRelation user = (IRelation) this.users.getRowData();
-			AonUserController userController = (AonUserController) AonUtil.getRegisteredBean("currentUser");		
+			AonUserController userController = (AonUserController) AonUtil.getRegisteredBean(CURRENT_USER_CONTROLLER_NAME);		
 			return userController.getUserName(user.getId());
 		}
 		return "";
@@ -404,7 +405,7 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 	public boolean isUserManagement() {
 		if ( userManagement == null ) {
 			userManagement = Boolean.FALSE;
-			AonUserController userController = (AonUserController) FormUtil.getController("currentUser");
+			AonUserController userController = (AonUserController) FormUtil.getController(CURRENT_USER_CONTROLLER_NAME);
 			DistinguishedName dn = AonDN.getDomainDN(userController.getDomain());			
 			BasicLdap ldap = new BasicLdap();
 			try {
