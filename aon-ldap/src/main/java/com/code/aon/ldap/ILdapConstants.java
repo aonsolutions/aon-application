@@ -36,6 +36,8 @@ public interface ILdapConstants {
 	
 	String PASSWORD_EXPIRATION_TIMESTAMP_ATTRIBUTE = "passwordExpirationTimestamp";
 
+	String ACTIVE_ATTRIBUTE = "active";
+	
 	String MAIL_ATTRIBUTE = "mail";
 
 	String MOBILE_ATTRIBUTE = "mobile";
