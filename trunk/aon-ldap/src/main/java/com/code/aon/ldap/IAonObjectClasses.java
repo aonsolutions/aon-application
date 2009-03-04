@@ -4,6 +4,8 @@ public interface IAonObjectClasses {
 
 	String TOP = "top";
 	
+	String ORGANIZATIONAL_UNIT = "organizationalUnit";
+	
 	String GROUP_OF_NAMES = "groupOfNames";
 	
 	String AMAVIS_ACCOUNT = "amavisAccount";
