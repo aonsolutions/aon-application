@@ -224,7 +224,7 @@
 	</servlet-mapping>
 	<!-- Welcome File List -->
 	<welcome-file-list>
-		<welcome-file>index2.jsp</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 	<!-- Security Constraint -->
 	<security-constraint>

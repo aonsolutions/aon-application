@@ -1,5 +1,6 @@
 package com.code.aon.desktop.event;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -33,14 +34,6 @@ import com.code.aon.ui.util.AonUtil;
 public class SecurityUserListener extends ControllerAdapter implements ILdapConstants, IAonObjectClasses {
 
 	private static final Logger LOGGER = Logger.getLogger(SecurityUserListener.class.getName());
-
-	private static final String USER_UID_NUMBER_ATTRIBUTE = "uidNumber";
-
-	private static final String ACTIVE_ATTRIBUTE = "active";
-
-	private static final String USER_ALTERNATIVE_EMAIL = "mail";
-
-	private static final String USER_CELLULAR_NUMBER = "mobile";
 
 	private boolean showUserNotExistsWindow = false;
 	
@@ -143,16 +136,16 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 					LdapSession session = ldap.getLdapSession();
 					String filter = LdapSession.getObjectClass(USER);
 					Entry userEntry = session.get(userDN.toString(), filter, 
-							COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE, USER_ALTERNATIVE_EMAIL, USER_CELLULAR_NUMBER, ACTIVE_ATTRIBUTE);
+							COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE, MAIL_ATTRIBUTE, MOBILE_ATTRIBUTE, ACTIVE_ATTRIBUTE);
 					name = userEntry.getAsString(COMMON_NAME_ATTRIBUTE);
 					surname = userEntry.getAsString(SURNAME_ATTRIBUTE);
 					active = userEntry.getAsBoolean(ACTIVE_ATTRIBUTE);
-					try {
-						alternativeEmail = userEntry.getAsString(USER_ALTERNATIVE_EMAIL);
-					}catch (NullPointerException npe) {}
-					try {
-						cellular = userEntry.getAsString(USER_CELLULAR_NUMBER);
-					}catch (NullPointerException npe) {}
+					if ( userEntry.containsKey(MAIL_ATTRIBUTE) ) {
+						alternativeEmail = userEntry.getAsString(MAIL_ATTRIBUTE);
+					}
+					if ( userEntry.containsKey(MOBILE_ATTRIBUTE) ) {
+						cellular = userEntry.getAsString(MOBILE_ATTRIBUTE);
+					}
 				} catch (LdapException e) {
 					AonUtil.addErrorMessage( "Error obteniendo una propiedad de " + user.getLogin() );
 				} finally {
@@ -175,27 +168,24 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 				session.replaceAttribute(userDN, COMMON_NAME_ATTRIBUTE, name);
 				session.replaceAttribute(userDN, SURNAME_ATTRIBUTE, surname);
 				session.replaceAttribute(userDN, ACTIVE_ATTRIBUTE, active);
-				session.replaceAttribute(userDN, USER_UID_NUMBER_ATTRIBUTE, user.getId().toString());
+				session.replaceAttribute(userDN, USER_ID_NUMBER_ATTRIBUTE, user.getId().toString());
 
 				String filter = LdapSession.getObjectClass(USER);
-				Entry u = session.get(userDN.toString(), filter, COMMON_NAME_ATTRIBUTE, USER_ALTERNATIVE_EMAIL, USER_CELLULAR_NUMBER);
+				Entry userEntry = session.get(userDN.toString(), filter, MAIL_ATTRIBUTE, MOBILE_ATTRIBUTE);
 				String old_mail = null;
-				String old_cellular = null;
-				try {
-					old_mail = u.getAsString(USER_ALTERNATIVE_EMAIL);
-					old_cellular = u.getAsString(USER_CELLULAR_NUMBER);
+				if ( userEntry.containsKey(MAIL_ATTRIBUTE) ) {
+					old_mail = userEntry.getAsString(MAIL_ATTRIBUTE);
 				}
-				catch (NullPointerException npe) {
+				String old_mobile = null;
+				if ( userEntry.containsKey(MOBILE_ATTRIBUTE) ) {
+					old_mobile = userEntry.getAsString(MOBILE_ATTRIBUTE);
 				}
-				
-				session.updateAttribute(userDN, USER_ALTERNATIVE_EMAIL, old_mail, alternativeEmail);
-				session.updateAttribute(userDN, USER_CELLULAR_NUMBER, old_cellular, cellular);
-
-//				if ( updateId ) {
-//					session.replaceAttribute(userDN, "uidNumber", user.getId().toString());	
-//				}
+				session.updateAttribute(userDN, MAIL_ATTRIBUTE, old_mail, alternativeEmail);
+				session.updateAttribute(userDN, MOBILE_ATTRIBUTE, old_mobile, cellular);
 			} catch (LdapException e) {
-				AonUtil.addErrorMessage( "Error obteniendo las propiedades del usuario " + user.getLogin() );
+				String message = "Error estableciendo las propiedades del usuario " + user.getLogin();
+				LOGGER.log(Level.SEVERE, message, e);
+				AonUtil.addErrorMessage( message );
 			} finally {
 				ldap.closeSession();
 			}

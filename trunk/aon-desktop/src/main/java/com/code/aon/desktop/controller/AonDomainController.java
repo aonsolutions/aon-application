@@ -45,8 +45,6 @@ import com.code.aon.ui.util.AonUtil;
 
 public class AonDomainController extends BasicController implements IAonObjectClasses, ILdapConstants {
 
-    private static final String USER_MANAGEMENT_ATTRIBUTE = "userManagement";
-
 	/** Obtiene un logger apropiado. */
 	private static final Logger LOGGER = Logger.getLogger(AonDomainController.class.getName());
 	

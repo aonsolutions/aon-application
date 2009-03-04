@@ -41,7 +41,7 @@
 			</aon:div>
 
 			<aon:div styleClass="aon-sidebarIcons-icon">
-				<aon:commandLink 
+				<aon:commandLink rendered="#{currentUser.contactsEnabled}"
 					actionListener="#{contact.onSearch}" action="contact_list">
 					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-contactos.png']}" />
 					<aon:div><aon:outputText value="#{webmailBundle.webmail_contacts}" /></aon:div>
@@ -81,7 +81,7 @@
 
 			<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Manager">
 				<aon:commandLink 
-					actionListener="#{domain.onLoadCurrentDomain}" action="application_list">
+					actionListener="#{currentDomain.onLoadCurrentDomain}" action="application_list">
 					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-ambito.png']}" />
 					<aon:div><aon:outputText value="#{appBundle.aon_profiles}" /></aon:div>
 				</aon:commandLink>
