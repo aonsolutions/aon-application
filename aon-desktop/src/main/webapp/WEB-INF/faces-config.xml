@@ -81,7 +81,7 @@
 
 	<!-- ************ PROFILES ************** -->
 	<managed-bean>
-		<managed-bean-name>domain</managed-bean-name>
+		<managed-bean-name>currentDomain</managed-bean-name>
 		<managed-bean-class>com.code.aon.desktop.controller.AonDomainController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>

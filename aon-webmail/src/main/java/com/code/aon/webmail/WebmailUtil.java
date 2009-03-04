@@ -1,6 +1,6 @@
 package com.code.aon.webmail;
 
-import java.util.Iterator;
+import java.util.List;
 
 import com.code.aon.common.BasicManagerBean;
 import com.code.aon.common.IManagerBean;
@@ -33,9 +33,9 @@ public class WebmailUtil {
 		IManagerBean beanAccount = new BasicManagerBean(dao);
 		Criteria criteriaAccount = new Criteria();
 		criteriaAccount.addEqualExpression(beanAccount.getFieldName(IWebMailAlias.MAIL_ACCOUNT_NAME), MailAccount.DEFAULT_MAIL_ACCOUNT_NAME);
-		Iterator<ITransferObject> iterAccount = beanAccount.getList(criteriaAccount).iterator();
-		if (iterAccount.hasNext()){
-			MailAccount mailAccount = (MailAccount)iterAccount.next();
+		List<ITransferObject> list = beanAccount.getList(criteriaAccount);
+		if (! list.isEmpty() ) {
+			MailAccount mailAccount = (MailAccount) list.get(0);
 			return mailAccount;
 		}
 		return null;
