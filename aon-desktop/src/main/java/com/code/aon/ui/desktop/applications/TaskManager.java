@@ -9,11 +9,12 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.project.enumeration.TaskStatus;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 
-public class TaskManager implements IServices {
+public class TaskManager implements IServices, IDesktopConstants {
 
 	private ApplicationsManager.App app;
 	
@@ -34,14 +35,15 @@ public class TaskManager implements IServices {
 
 	public TaskManager() {
 		ApplicationsManager apps = 
-			(ApplicationsManager) AonUtil.getRegisteredBean( ApplicationsManager.BEAN_NAME );
+			(ApplicationsManager) AonUtil.getRegisteredBean( APPLICATIONS_CONTROLLER_NAME );
 		app = apps.getApplication( "aon-task" );
 		userId = UserUtils.getInstance().getLoggedUser().getId();
 	}
 
 	public List<TaskInfo> getTaskSummaryModel() {
 		ArrayList<TaskInfo> l = new ArrayList<TaskInfo>();
-		Session session = HibernateUtil.getSession();
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
+		Session session = HibernateUtil.getSession(sessionFactoryName);
 		Query query = session.createSQLQuery( InProgressSelect )
 			.addScalar( "total", Hibernate.INTEGER ).setParameter( "userId", userId );
 		String desc = TaskStatus.IN_PROGRESS.getName( AonUtil.getCurrentLocale() );

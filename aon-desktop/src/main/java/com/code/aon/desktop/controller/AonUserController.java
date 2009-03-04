@@ -12,6 +12,7 @@ import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
+import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.ldap.AonDN;
@@ -29,7 +30,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
-public class AonUserController extends UserController implements ILdapConstants, IAonObjectClasses {
+public class AonUserController extends UserController implements ILdapConstants, IAonObjectClasses, IDesktopConstants {
 
 	private static final Logger LOGGER = Logger.getLogger(AonUserController.class.getName());
 	
@@ -187,7 +188,7 @@ public class AonUserController extends UserController implements ILdapConstants,
 		if ( ctx.getMaximumSeverity() == null ) {
 			updateExpirationTimestamp( user.getLogin(), managerChangingPassword );
 			changeDefaultMailAccountPassword( user.getLogin(), getUserManager().getPassword() );				
-			AonDomainController domainController = (AonDomainController) FormUtil.getController("domain");
+			AonDomainController domainController = (AonDomainController) FormUtil.getController(CURRENT_DOMAIN_CONTROLLER_NAME);
 			domainController.flushAuthenticationCache( user.getLogin() );
 			setShowPasswordChangedWindow(true);
 		} else {

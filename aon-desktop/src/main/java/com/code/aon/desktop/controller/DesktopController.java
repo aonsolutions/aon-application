@@ -25,6 +25,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.company.Company;
 import com.code.aon.desktop.DesktopAlarm;
 import com.code.aon.desktop.DesktopNoticeSummary;
+import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.groupware.Note;
 import com.code.aon.groupware.dao.IGroupWareAlias;
 import com.code.aon.groupware.enumeration.AlarmSource;
@@ -42,12 +43,8 @@ import com.code.aon.ui.groupware.controller.NoteController;
 import com.code.aon.ui.groupware.controller.NoticeController;
 import com.code.aon.ui.util.AonUtil;
 
-public class DesktopController extends BasicController {
+public class DesktopController extends BasicController implements IDesktopConstants {
 	
-	private static final String NOTE_CONTROLLER_NAME = "note";
-	private static final String ALARM_CONTROLLER_NAME = "alarm";
-    private static final String NOTICE_CONTROLLER_NAME = "notice";
-
 	private static final SelectItem NULL_SELECT_ITEM = new SelectItem(null, " ");	
 	private static final SelectItem ALL_SELECT_ITEM = new SelectItem(null, "Todos");	
     
