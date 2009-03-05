@@ -113,7 +113,7 @@ public class Trabajo implements ITransferObject {
 
 	@Temporal(TemporalType.DATE)
 	// @DataDefinition(label="Fecha Fin Vigencia")
-	@Column(name = "fecfin", length = 10)
+	@Column(name = "fecfin")
 	public Date getFecfin() {
 		return this.fecfin;
 	}
@@ -247,7 +247,7 @@ public class Trabajo implements ITransferObject {
 
 	@Temporal(TemporalType.DATE)
 	// @DataDefinition(label="Fecha Inicio Contrato")
-	@Column(name = "fecinicont", length = 10)
+	@Column(name = "fecinicont")
 	public Date getFecinicont() {
 		return this.fecinicont;
 	}
@@ -258,7 +258,7 @@ public class Trabajo implements ITransferObject {
 
 	@Temporal(TemporalType.DATE)
 	// @DataDefinition(label="Fecha Fin Contrato")
-	@Column(name = "fecfincont", length = 10)
+	@Column(name = "fecfincont")
 	public Date getFecfincont() {
 		return this.fecfincont;
 	}
@@ -279,7 +279,7 @@ public class Trabajo implements ITransferObject {
 
 	@Temporal(TemporalType.DATE)
 	// @DataDefinition(label="Fecha autorización")
-	@Column(name = "fecaut", length = 10)
+	@Column(name = "fecaut")
 	public Date getFecaut() {
 		return this.fecaut;
 	}
@@ -310,7 +310,7 @@ public class Trabajo implements ITransferObject {
 
 	@Temporal(TemporalType.DATE)
 	// @DataDefinition(label="Fecha Autorizacion Pluriempleo")
-	@Column(name = "plufecaut", length = 10)
+	@Column(name = "plufecaut")
 	public Date getPlufecaut() {
 		return this.plufecaut;
 	}
@@ -477,7 +477,7 @@ public class Trabajo implements ITransferObject {
 
 	@Temporal(TemporalType.DATE)
 	// @DataDefinition(label="Fecha Creacion Fila")
-	@Column(name = "fecnew", length = 10)
+	@Column(name = "fecnew")
 	public Date getFecnew() {
 		return this.fecnew;
 	}
@@ -488,7 +488,7 @@ public class Trabajo implements ITransferObject {
 
 	@Temporal(TemporalType.TIME)
 	// @DataDefinition(label="Hora Creacion Fila")
-	@Column(name = "hornew", length = 8)
+	@Column(name = "hornew")
 	public Date getHornew() {
 		return this.hornew;
 	}
@@ -499,7 +499,7 @@ public class Trabajo implements ITransferObject {
 
 	@Temporal(TemporalType.DATE)
 	// @DataDefinition(label="Fecha Modificacion Fila")
-	@Column(name = "fecmod", length = 10)
+	@Column(name = "fecmod")
 	public Date getFecmod() {
 		return this.fecmod;
 	}
@@ -510,7 +510,7 @@ public class Trabajo implements ITransferObject {
 
 	@Temporal(TemporalType.TIME)
 	// @DataDefinition(label="Hora Modificacion Fila")
-	@Column(name = "hormod", length = 8)
+	@Column(name = "hormod")
 	public Date getHormod() {
 		return this.hormod;
 	}

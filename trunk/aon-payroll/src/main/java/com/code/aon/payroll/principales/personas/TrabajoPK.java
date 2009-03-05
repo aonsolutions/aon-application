@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * Clave primaria de Trabajo
@@ -26,7 +28,8 @@ public class TrabajoPK implements Serializable {
 	}
 
 	// @DataDefinition(label="Fecha Inicio Vigencia")
-	@Column(name = "fecini", nullable = false, length = 10)
+	@Temporal(TemporalType.DATE)
+	@Column(name = "fecini", nullable = false)
 	public Date getFecini() {
 		return this.fecini;
 	}

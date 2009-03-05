@@ -90,7 +90,7 @@ public class Empresa implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "fecini", length = 10)
+	@Column(name = "fecini")
 	public Date getFecini() {
 		return this.fecini;
 	}
@@ -105,7 +105,7 @@ public class Empresa implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "fecfin", length = 10)
+	@Column(name = "fecfin")
 	public Date getFecfin() {
 		return this.fecfin;
 	}
@@ -190,7 +190,7 @@ public class Empresa implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "fecnac", length = 10)
+	@Column(name = "fecnac")
 	public Date getFecnac() {
 		return this.fecnac;
 	}
@@ -234,7 +234,7 @@ public class Empresa implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "feccon", length = 10)
+	@Column(name = "feccon")
 	public Date getFeccon() {
 		return this.feccon;
 	}
@@ -277,7 +277,7 @@ public class Empresa implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "fecnew", length = 10)
+	@Column(name = "fecnew")
 	public Date getFecnew() {
 		return this.fecnew;
 	}
@@ -292,7 +292,7 @@ public class Empresa implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.TIME)
-	@Column(name = "hornew", length = 8)
+	@Column(name = "hornew")
 	public Date getHornew() {
 		return this.hornew;
 	}
@@ -307,7 +307,7 @@ public class Empresa implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "fecmod", length = 10)
+	@Column(name = "fecmod")
 	public Date getFecmod() {
 		return this.fecmod;
 	}
@@ -322,7 +322,7 @@ public class Empresa implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.TIME)
-	@Column(name = "hormod", length = 8)
+	@Column(name = "hormod")
 	public Date getHormod() {
 		return this.hormod;
 	}

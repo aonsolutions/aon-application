@@ -29,4 +29,11 @@ public class EmbargoLinesControllerListener extends ControllerAdapter {
 			e.printStackTrace();
 		}
 	}
+	
+	@Override
+	public void afterBeanReset(ControllerEvent event)
+			throws ControllerListenerException {
+		// TODO Auto-generated method stub
+		super.afterBeanReset(event);
+	}
 }

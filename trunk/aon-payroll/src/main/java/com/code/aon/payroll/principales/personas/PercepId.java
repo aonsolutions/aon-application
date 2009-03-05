@@ -10,8 +10,8 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class PercepId  implements java.io.Serializable {
 
-     private int cdg;
-     private int numero;
+     private Integer cdg;
+     private Integer numero;
 
     public PercepId() {
     }
@@ -21,24 +21,26 @@ public class PercepId  implements java.io.Serializable {
        this.numero = numero;
     }
 
-
+    //@DataDefinition(label="Numero de Percepcion")
     @Column(name="cdg", nullable=false, length=4)
-    public int getCdg() {
+    public Integer getCdg() {
         return this.cdg;
     }
     
-    public void setCdg(int cdg) {
+    public void setCdg(Integer cdg) {
         this.cdg = cdg;
     }
 
+	//@DataDefinition(label="Codigo de Trabajador")
     @Column(name="numero", nullable=false, length=4)
-    public int getNumero() {
+    public Integer getNumero() {
         return this.numero;
     }
     
-    public void setNumero(int numero) {
+    public void setNumero(Integer numero) {
         this.numero = numero;
     }
+
 
 
    public boolean equals(Object other) {

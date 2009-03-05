@@ -100,7 +100,7 @@ public class Parteit implements ITransferObject {
 
 	@Temporal(TemporalType.DATE)
 	// @DataDefinition(label="Fecha Fin Incidencia")
-	@Column(name = "fecfin", length = 10)
+	@Column(name = "fecfin")
 	public Date getFecfin() {
 		return this.fecfin;
 	}
@@ -163,7 +163,7 @@ public class Parteit implements ITransferObject {
 
 	@Temporal(TemporalType.DATE)
 	// @DataDefinition(label="Si recaida, Fecha Inicial primera I.T.")
-	@Column(name = "feciniori", length = 10)
+	@Column(name = "feciniori")
 	public Date getFeciniori() {
 		return this.feciniori;
 	}

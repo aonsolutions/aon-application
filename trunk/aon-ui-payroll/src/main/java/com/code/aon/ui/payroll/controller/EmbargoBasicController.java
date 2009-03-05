@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.Afectados;
+import com.code.aon.payroll.principales.persona.Embargo;
 import com.code.aon.payroll.principales.persona.Trabajador;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -112,5 +113,6 @@ public class EmbargoBasicController extends BasicController {
 		*/
 		super.onSelect(event);
 	}
-
+	
+	
 }

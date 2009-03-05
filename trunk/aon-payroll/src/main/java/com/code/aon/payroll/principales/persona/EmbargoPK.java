@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * Clave primaria de Embargo
@@ -33,7 +35,8 @@ public class EmbargoPK implements Serializable {
 	 * Devuelve la Fecha Comienzo Embargo
 	 * @return
 	 */
-	@Column(name = "fecha", nullable = false, length = 10)
+	@Temporal(TemporalType.DATE)
+	@Column(name = "fecha", nullable = false)
 	public Date getFecha() {
 		return this.fecha;
 	}

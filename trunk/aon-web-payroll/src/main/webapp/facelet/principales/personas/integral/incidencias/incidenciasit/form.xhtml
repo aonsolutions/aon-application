@@ -78,17 +78,20 @@
 								value="#{appBundle.aon_payroll_principales_inciit_fecini_inci}" />
 							<aon:selectInputDate renderAsPopup="true" readonly="#{!nominait.new}"
 								popupDateFormat="#{appBundle.aon_date_pattern}"
+								id="fecini_inci" required="true"
 								value="#{nominait.to.id.feciniit}" enableManualInput="true" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_inciit_fecini_inci_nomi}" />
 							<aon:selectInputDate renderAsPopup="true" readonly="#{!nominait.new}"
 								popupDateFormat="#{appBundle.aon_date_pattern}"
+								id="fecini_inci_nomi" required="true"
 								value="#{nominait.to.id.fecini}" enableManualInput="true" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_inciit_fecfin_inci_nomi}" />
-							<aon:selectInputDate renderAsPopup="true"
+							<aon:selectInputDate renderAsPopup="true" 
+								id="fecfin_inci_nomi" required="true"
 								popupDateFormat="#{appBundle.aon_date_pattern}"
 								value="#{nominait.to.fecfin}" enableManualInput="true" />
 								
@@ -98,70 +101,82 @@
 						
 						<aon:panelGrid columns="4" dir="true"
 							width="100%">
-
+ 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_inciit_dias_it}" />
 							<aon:inputText value="#{nominait.to.diasit}"
+								id="dias_it" required="true"
 								size="2" maxlength="2" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_inciit_dias_presta_it}" />
 							<aon:inputText value="#{nominait.to.diasemp}"
+								id="dias_presta_it" required="true"
 								size="2" maxlength="2" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_inciit_dias_presta_60}" />
 							<aon:inputText value="#{nominait.to.dias60}"
+								id="dias_presta_60" required="true"
 								size="2" maxlength="2" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_inciit_dias_presta}" />
 							<aon:inputText value="#{nominait.to.diasSs}"
+								id="dias_presta" required="true"
 								size="2" maxlength="2" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_inciit_dias_sin_presta}" />
 							<aon:inputText value="#{nominait.to.diasin}"
+								id="dias_sin_presta" required="true"
 								size="2" maxlength="2" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_inciit_dias_presta_75}" />
 							<aon:inputText value="#{nominait.to.dias75}"
+								id="dias_presta_75" required="true"
 								size="2" maxlength="2" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_inciit_importe_presta_ss}" />
 							<aon:inputText value="#{nominait.to.ptsSs}"
+								id="importe_presta_ss" required="true"
 								size="11" maxlength="11" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_inciit_importe_presta_empresa}" />
 							<aon:inputText value="#{nominait.to.ptsemp}"
+								id="importe_presta_empresa" required="true"
 								size="11" maxlength="11" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_inciit_base_conting_gen}" />
 							<aon:inputText value="#{nominait.to.basecon}"
+								id="base_conting_gen" required="true"
 								size="11" maxlength="11" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_inciit_base_accidentes}" />
 							<aon:inputText value="#{nominait.to.baseacc}"
+								id="base_accidentes" required="true"
 								size="11" maxlength="11" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_inciit_base_cg_nom}" />
 							<aon:inputText value="#{nominait.to.baseconTotal}"
+								id="base_cg_nom" required="true"
 								size="11" maxlength="11" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_inciit_base_acc}" />
 							<aon:inputText value="#{nominait.to.baseaccTotal}"
+								id="base_acc" required="true"
 								size="11" maxlength="11" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_inciit_tipoit}" />
-							<aon:selectOneRadio 
+							<aon:selectOneRadio id="tipo_it" required="true"
 								value="#{nominait.to.tipoit}">
 								<f:selectItems
 									value="#{nominait.listaTipoIt}" />

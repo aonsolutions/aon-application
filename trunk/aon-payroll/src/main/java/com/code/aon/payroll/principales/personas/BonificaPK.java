@@ -37,7 +37,7 @@ public class BonificaPK implements Serializable {
 	}
 
 	// @DataDefinition(label="Fecha Concesion Bonificacion")
-	@Column(name = "fecini", nullable = false, length = 10)
+	@Column(name = "fecini", nullable = false)
 	public Date getFecini() {
 		return this.fecini;
 	}

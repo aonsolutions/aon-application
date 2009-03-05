@@ -93,7 +93,7 @@ public class Trabajador implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "fecalt", nullable = false, length = 10)
+	@Column(name = "fecalt", nullable = false)
 	public Date getFecalt() {
 		return this.fecalt;
 	}
@@ -107,7 +107,7 @@ public class Trabajador implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "fecbaj", length = 10)
+	@Column(name = "fecbaj")
 	public Date getFecbaj() {
 		return this.fecbaj;
 	}
@@ -121,7 +121,7 @@ public class Trabajador implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "fecnew", length = 10)
+	@Column(name = "fecnew")
 	public Date getFecnew() {
 		return this.fecnew;
 	}
@@ -135,7 +135,7 @@ public class Trabajador implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.TIME)
-	@Column(name = "hornew", length = 8)
+	@Column(name = "hornew")
 	public Date getHornew() {
 		return this.hornew;
 	}
@@ -149,7 +149,7 @@ public class Trabajador implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "fecmod", length = 10)
+	@Column(name = "fecmod")
 	public Date getFecmod() {
 		return this.fecmod;
 	}
@@ -163,7 +163,7 @@ public class Trabajador implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.TIME)
-	@Column(name = "hormod", length = 8)
+	@Column(name = "hormod")
 	public Date getHormod() {
 		return this.hormod;
 	}
