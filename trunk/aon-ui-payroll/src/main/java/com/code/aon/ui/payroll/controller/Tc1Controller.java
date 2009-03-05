@@ -1,15 +1,35 @@
 package com.code.aon.ui.payroll.controller;
 
+import java.sql.Date;
+
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.dao.IPayrollAlias;
+import com.code.aon.payroll.enumeration.Tipccc;
 import com.code.aon.payroll.principales.empresa.Actividad;
+import com.code.aon.payroll.principales.personas.Persona;
+import com.code.aon.payroll.resultados.seguros.Lintc2;
+import com.code.aon.payroll.resultados.seguros.Tc1;
+import com.code.aon.payroll.resultados.seguros.Tc2;
 
 
 public class Tc1Controller extends PayrollBasicController {
 
-	
+	public void generateCdg(){
+		((Tc1)getTo()).setCdg(Integer.parseInt(Utils.maxCode("Tc1", "cdg"))+1);
+		Date  d= new Date(1/1/2009);
+		((Tc1)getTo()).setFecmod(d);
+		((Tc1)getTo()).setHormod(d);
+		((Tc1)getTo()).setFecnew(d);	
+		((Tc1)getTo()).setHornew(d);
+		 Persona p= new Persona();
+		 p.setCdg(1);
+	    ((Tc1)getTo()).setCodper(p);	
+		((Tc1)getTo()).setCodccc(Tipccc.TIP2);
+		((Tc1)getTo()).getCodtc2().setCdg(0);
+	}
+
 	
 
 	private Actividad actividad;

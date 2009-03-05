@@ -48,6 +48,7 @@ public class Tc2Controller extends PayrollBasicController {
 		((Tc2)getTo()).setFecnew(d);	
 		((Tc2)getTo()).setHornew(d);
 		((Tc2)getTo()).setCodccc(Tipccc.TIP2);
+		
 	}
 
 

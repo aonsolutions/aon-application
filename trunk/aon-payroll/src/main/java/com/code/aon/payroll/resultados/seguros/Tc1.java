@@ -14,9 +14,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.payroll.enumeration.Tipccc;
 import com.code.aon.payroll.principales.empresa.Actividad;
 import com.code.aon.payroll.principales.empresa.Emprccc;
 import com.code.aon.payroll.principales.personas.Persona;
@@ -28,7 +30,7 @@ public class Tc1  implements ITransferObject {
 
      private Integer cdg;
      private Actividad codact;
-     private String codccc;
+     private Tipccc codccc;
      private Integer numtra;
      private Integer desdeMes;
      private Integer desdeAnio;
@@ -113,6 +115,45 @@ public class Tc1  implements ITransferObject {
      private String indregimen;
 
    
+     public Tc1() {
+    	 numtra=0;
+    	 baseConcom= new BigDecimal(0);
+         prcConcom= new BigDecimal(0);
+         cuotaConcom= new BigDecimal(0);
+         baseHexno= new BigDecimal(0);
+         prcHexno= new BigDecimal(0);
+         cuotaHexno= new BigDecimal(0);
+         baseHexest= new BigDecimal(0);
+         prcHexest= new BigDecimal(0);
+         cuotaHexest= new BigDecimal(0);
+         baseRedit= new BigDecimal(0);
+         baseRedcc= new BigDecimal(0);
+         baseReducc= new BigDecimal(0);
+         liqCotgen= new BigDecimal(0);
+         baseAcctra= new BigDecimal(0);
+         cuotasIt= new BigDecimal(0);
+         cuotasIms= new BigDecimal(0);
+         cuotasAcc= new BigDecimal(0);
+         compIt= new BigDecimal(0);
+         liqAcc= new BigDecimal(0);
+         prcDesem= new BigDecimal(0);
+         cuotaDesem= new BigDecimal(0);
+         redInem= new BigDecimal(0);
+         liqOtras= new BigDecimal(0);
+         baseMora= new BigDecimal(0);
+         prcMora= new BigDecimal(0);
+         cuotaMora= new BigDecimal(0);
+         importeTc1= new BigDecimal(0);
+         baseServcom= new BigDecimal(0);
+         prcServcom= new BigDecimal(0);
+         cuotaServcom= new BigDecimal(0);
+         baseDedcol= new BigDecimal(0);
+         prcDedcol= new BigDecimal(0);
+         cuotaDedcol= new BigDecimal(0);
+
+ 	}
+     
+     
    //@DataDefinition(label="Codigo de TC1")
     @Id     
 	@Column(name="cdg", unique=true, nullable=false, length=4)
@@ -136,12 +177,13 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Tipo Cuenta Cotizacion")
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Tipccc")} )
     @Column(name="codccc", nullable=false, length=1)
-    public String getCodccc() {
+    public Tipccc getCodccc() {
         return this.codccc;
     }
     
-    public void setCodccc(String codccc) {
+    public void setCodccc(Tipccc codccc) {
         this.codccc = codccc;
     }
     
