@@ -26,7 +26,7 @@ public class NominadevId  implements java.io.Serializable {
         return this.cdg;
     }
     
-    public void setCdg(int cdg) {
+    public void setCdg(Integer cdg) {
         this.cdg = cdg;
     }
 

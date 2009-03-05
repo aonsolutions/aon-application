@@ -49,6 +49,19 @@ public class Nominadev  implements ITransferObject {
      private Nomina nomina;
 
   
+     public Nominadev(){
+    	 
+    	 unidades = new BigDecimal(0);
+         impuni = new BigDecimal(0);
+         importe = new BigDecimal(0);	
+         
+         indcom= IndiceComplemento.HORAS;
+         tipcom= TipoComplemento.CANTIDAD;
+         dinesp= Retribuciones.DINERARIA;
+         fijovar= FijoVariable.FIJO;
+     }
+     
+     
     @EmbeddedId    
     @AttributeOverrides( {
         @AttributeOverride(name="cdg", column=@Column(name="cdg", nullable=false, length=4) ), 

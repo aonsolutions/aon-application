@@ -27,7 +27,7 @@
 				styleClass="aon-scroll-area aon-scroll-area-nom">
 
 				<aon:div styleClass="aon-scroll-area aon-scroll-area-nom">
-					<aon:panelGrid columns="6" dir="true" width="100%"
+				 	<aon:panelGrid columns="6" dir="true" width="100%"
 						style="margin-bottom=2px;">
 
 						<aon:outputLabel
@@ -79,7 +79,7 @@
 								size="30" disabled="true" />
 						</aon:div>
 
-					</aon:panelGrid>
+					</aon:panelGrid>  
 						</aon:div>
 <aon:div 
 				styleClass="aon-scroll-area aon-scroll-area-nom">
@@ -116,17 +116,15 @@
 							value="#{appBundle.aon_payroll_resultados_tc2_codcta}" />
 
 						<aon:inputText id="Acti7_descripcion"
-							value="#{(tc2.to.codccc!=null)?(tc2.to.codccc):('')}" size="30"
-							disabled="true" />
+							  size="30"
+							 />
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_resultados_tc2_tipocuen}" />
-
-						<aon:inputText id="Acti8_descripcion"
-							value="#{(tc2.to.codccc!=null)?(tc2.to.codccc):('')}" size="30"
-							disabled="true" />
-
-
+                    
+                          <aon:outputText 
+							value="#{tc2.to.codccc}" size="30" disabled="true"
+							 />
 		                    <aon:outputLabel
 							value="#{appBundle.aon_payroll_resultados_tc2_numtra}" />
 

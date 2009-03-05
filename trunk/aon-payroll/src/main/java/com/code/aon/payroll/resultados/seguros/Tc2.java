@@ -15,10 +15,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.auxiliares.convenios.Convenio;
+import com.code.aon.payroll.enumeration.Tipccc;
 import com.code.aon.payroll.principales.empresa.Actividad;
  
 @Entity
@@ -27,7 +29,7 @@ public class Tc2  implements ITransferObject {
 
      private Integer cdg;
      private Actividad codact;
-     private String codccc;
+     private Tipccc codccc;
      private String codcon;
      private Integer numtra;
      private Integer mes;
@@ -54,7 +56,21 @@ public class Tc2  implements ITransferObject {
      private Date hormod;
      private String indregimen;
    
+     public Tc2() {
+        tipo="0";
+        numtra=0;
+        baseConcom= new BigDecimal(0);
+        baseAcctra = new BigDecimal(0);
+        baseHexno = new BigDecimal(0);
+        baseHexest = new BigDecimal(0);
+        baseCccemp = new BigDecimal(0);
+        baseOccemp = new BigDecimal(0);
+        compEcal= new BigDecimal(0);
+        compAcc = new BigDecimal(0);
+        redConcom = new BigDecimal(0);
+        redInem = new BigDecimal(0);
 
+	}
 
    
 
@@ -81,13 +97,13 @@ public class Tc2  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Tipo Cuenta Cotizacion")
-
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Tipccc")} )
     @Column(name="codccc", nullable=false)
-    public String getCodccc() {
+    public Tipccc getCodccc() {
         return this.codccc;
     }
     
-    public void setCodccc(String codccc) {
+    public void setCodccc(Tipccc codccc) {
         this.codccc = codccc;
     }
     

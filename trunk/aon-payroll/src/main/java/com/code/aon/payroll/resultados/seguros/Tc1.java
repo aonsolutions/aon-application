@@ -125,8 +125,8 @@ public class Tc1  implements ITransferObject {
     }
     
 	//@DataDefinition(label="Codigo de Actividad")
-    @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="codact", nullable=false)
+	@ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name="codact", insertable=false, updatable=false)
     public Actividad getCodact() {
         return this.codact;
     }

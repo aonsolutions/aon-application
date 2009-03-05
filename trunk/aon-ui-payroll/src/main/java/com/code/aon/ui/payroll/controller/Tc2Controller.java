@@ -1,5 +1,6 @@
 package com.code.aon.ui.payroll.controller;
 
+import java.sql.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -8,16 +9,12 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.payroll.auxiliares.convenios.Convenio;
 import com.code.aon.payroll.dao.IPayrollAlias;
+import com.code.aon.payroll.enumeration.Tipccc;
 import com.code.aon.payroll.enumeration.Tipnomina;
 import com.code.aon.payroll.principales.empresa.Actividad;
-import com.code.aon.payroll.principales.empresa.Empresa;
-import com.code.aon.payroll.principales.persona.Trabajador;
-import com.code.aon.payroll.resultados.nomina.Nomina;
+import com.code.aon.payroll.resultados.seguros.Tc2;
 
 public class Tc2Controller extends PayrollBasicController {
 
@@ -44,7 +41,13 @@ public class Tc2Controller extends PayrollBasicController {
 	 * genera un cdg siguiendo al maximo 
 	 */
 	public void generateCdg(){
-		((Nomina)getTo()).setCdg(Integer.parseInt(Utils.maxCode("Nomina", "cdg"))+1);
+		((Tc2)getTo()).setCdg(Integer.parseInt(Utils.maxCode("Tc2", "cdg"))+1);
+		Date  d= new Date(1/1/2009);
+		((Tc2)getTo()).setFecmod(d);
+		((Tc2)getTo()).setHormod(d);
+		((Tc2)getTo()).setFecnew(d);	
+		((Tc2)getTo()).setHornew(d);
+		((Tc2)getTo()).setCodccc(Tipccc.TIP2);
 	}
 
 

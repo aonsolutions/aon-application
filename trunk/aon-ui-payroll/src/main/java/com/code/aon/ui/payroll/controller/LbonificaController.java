@@ -44,9 +44,9 @@ public class LbonificaController extends LinesController {
 public void generateCdg(){
 		
 		Integer cdg= ((Costes)(FormUtil.getController(IPayrollConstants.COSTES_CONTROLLER_NAME)).getTo()).getId().getCdg();
-		Integer numero= Integer.parseInt(Utils.maxCode("Lbonifica","id.numero","id.cdg="+cdg));
+		Integer numero= Integer.parseInt(Utils.maxCode("Lbonifica","id.numero"));
 		
-		((Lbonifica)getTo()).getId().setCdg(((Httrabajador)(FormUtil.getController(IPayrollConstants.COSTES_CONTROLLER_NAME)).getTo()).getCdg());
+		((Lbonifica)getTo()).getId().setCdg(((Costes)(FormUtil.getController(IPayrollConstants.COSTES_CONTROLLER_NAME)).getTo()).getId().getCdg());
 		((Lbonifica)getTo()).getId().setNumero(numero +1);
 	}
 	
