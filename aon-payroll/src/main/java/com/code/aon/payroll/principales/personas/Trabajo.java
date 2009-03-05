@@ -31,6 +31,7 @@ import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
 import com.code.aon.payroll.enumeration.Prorateo;
 import com.code.aon.payroll.enumeration.RelacionLaboral;
 import com.code.aon.payroll.enumeration.Timecont;
+import com.code.aon.payroll.enumeration.TipIrpf;
 import com.code.aon.payroll.principales.persona.Trabajador;
 
 /**
@@ -69,13 +70,13 @@ public class Trabajo implements ITransferObject {
 	private Integer semanatp;
 	private Integer cantp;
 	private BigDecimal baseant;
-	private String indalt;
-	private String inddtoit;
-	private String inddtootr;
+	private Boolean indalt;
+	private Boolean inddtoit;
+	private Boolean inddtootr;
 	private Timecont indtp;
-	private String indirpf;
+	private TipIrpf indirpf;
 	private Integer concol;
-	private String indactcon;
+	private Boolean indactcon;
 	private String especial;
 	private Date fecnew;
 	private Date hornew;
@@ -83,7 +84,7 @@ public class Trabajo implements ITransferObject {
 	private Date hormod;
 	private String dc;
 	private String historico;
-	private String indceutamelilla;
+	private Boolean indceutamelilla;
 	private RelacionLaboral relacion;
 	private String ocupacion;
 	private Tipaut tipaut;
@@ -389,32 +390,35 @@ public class Trabajo implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Toma Fecha Alta como Fecha Antiguedad para Pagas")
+	@Type(type="siNoType" )
 	@Column(name = "indalt", length = 1)
-	public String getIndalt() {
+	public Boolean getIndalt() {
 		return this.indalt;
 	}
 
-	public void setIndalt(String indalt) {
+	public void setIndalt(Boolean indalt) {
 		this.indalt = indalt;
 	}
 
 	// @DataDefinition(label="Descontar Dias IT")
+	@Type(type="siNoType" )
 	@Column(name = "inddtoit", length = 1)
-	public String getInddtoit() {
+	public Boolean getInddtoit() {
 		return this.inddtoit;
 	}
 
-	public void setInddtoit(String inddtoit) {
+	public void setInddtoit(Boolean inddtoit) {
 		this.inddtoit = inddtoit;
 	}
 
 	// @DataDefinition(label="Descontar Dias Incidencias")
+	@Type(type="siNoType" )
 	@Column(name = "inddtootr", length = 1)
-	public String getInddtootr() {
+	public Boolean getInddtootr() {
 		return this.inddtootr;
 	}
 
-	public void setInddtootr(String inddtootr) {
+	public void setInddtootr(Boolean inddtootr) {
 		this.inddtootr = inddtootr;
 	}
 
@@ -430,12 +434,13 @@ public class Trabajo implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Indicador IRPF")
-	@Column(name = "indirpf", nullable = false, length = 1)
-	public String getIndirpf() {
+	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.TipIrpf")} )
+    @Column(name = "indirpf", nullable = false, length = 1)
+	public TipIrpf getIndirpf() {
 		return this.indirpf;
 	}
 
-	public void setIndirpf(String indirpf) {
+	public void setIndirpf(TipIrpf indirpf) {
 		this.indirpf = indirpf;
 	}
 
@@ -450,12 +455,13 @@ public class Trabajo implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Actualizar Percepciones segun Convenio")
+	@Type(type="siNoType" )
 	@Column(name = "indactcon", length = 1)
-	public String getIndactcon() {
+	public Boolean getIndactcon() {
 		return this.indactcon;
 	}
 
-	public void setIndactcon(String indactcon) {
+	public void setIndactcon(Boolean indactcon) {
 		this.indactcon = indactcon;
 	}
 
@@ -534,12 +540,13 @@ public class Trabajo implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Res. y Per. Ceuta Melilla")
+	@Type(type="siNoType" )
 	@Column(name = "indceutamelilla", length = 1)
-	public String getIndceutamelilla() {
+	public Boolean getIndceutamelilla() {
 		return this.indceutamelilla;
 	}
 
-	public void setIndceutamelilla(String indceutamelilla) {
+	public void setIndceutamelilla(Boolean indceutamelilla) {
 		this.indceutamelilla = indceutamelilla;
 	}
 

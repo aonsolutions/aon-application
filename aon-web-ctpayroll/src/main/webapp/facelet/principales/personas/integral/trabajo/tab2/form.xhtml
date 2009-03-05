@@ -46,8 +46,7 @@
 					size="45" disabled="true" />
 				 -->
 			</aon:div>
-			
-<!--
+
 			<aon:outputLabel
 				value="#{appBundle.aon_payroll_principales_trabajo_fecha}" />
 			<aon:selectInputDate renderAsPopup="true" 
@@ -71,7 +70,6 @@
 			<aon:inputText value="#{trabajo.to.numcta}" />
 
 		
-		
 
 			<aon:outputLabel
 				value="#{appBundle.aon_payroll_principales_trabajo_num_aut_pluri}" />
@@ -79,8 +77,10 @@
 
 			<aon:outputLabel
 				value="#{appBundle.aon_payroll_principales_trabajo_fec_aut_pluri}" />
-			<aon:inputText value="#{trabajo.to.plufecaut}" />
-
+			<aon:selectInputDate renderAsPopup="true" 
+				popupDateFormat="#{appBundle.aon_date_pattern}"
+				value="#{trabajo.to.plufecaut}" enableManualInput="true" />
+			
 			<aon:outputLabel
 				value="#{appBundle.aon_payroll_principales_trabajo_pluri_tope_min}" />
 			<aon:inputText value="#{trabajo.to.pluprcmin}" />
@@ -89,7 +89,7 @@
 				value="#{appBundle.aon_payroll_principales_trabajo_pluri_tope_max}" />
 			<aon:inputText value="#{trabajo.to.pluprcmax}" />
 
-		
+<!-- 		
 		
 		
 
@@ -108,11 +108,10 @@
 			<aon:outputLabel
 				value="#{appBundle.aon_payroll_principales_trabajo_min_jornada_semana_parcial}" />
 			<aon:inputText value="???" />
-		
+-->		
 			<aon:outputLabel
 				value="#{appBundle.aon_payroll_principales_trabajo_base_antig}" />
 			<aon:inputText value="#{trabajo.to.baseant}" />
- -->
  
 		</aon:panelGrid>
 	</aon:div>

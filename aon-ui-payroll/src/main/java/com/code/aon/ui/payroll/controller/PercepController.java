@@ -160,10 +160,11 @@ public class PercepController extends LinesController {
 	}
 
 public void generarNumero(ActionEvent event){
-		
+		/*
 		((Percep)getTo()).getId().setCdg(((Percep)getTo()).getTrabajador().getCdg());
 		String num = Utils.maxCode("Percep", "id.numero", "id.cdg="+((Percep)getTo()).getId().getCdg());
 		((Percep)getTo()).getId().setNumero(Integer.parseInt(num)+1);
+		*/
 	}
 
 
