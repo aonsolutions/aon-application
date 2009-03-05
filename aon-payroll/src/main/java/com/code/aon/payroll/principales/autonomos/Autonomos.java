@@ -94,7 +94,7 @@ public class Autonomos  implements ITransferObject {
     
     
     @Temporal(TemporalType.DATE)
-	@Column(name="fecinigestion", length=10)
+	@Column(name="fecinigestion")
     public Date getFecinigestion() {
         return this.fecinigestion;
     }
@@ -105,7 +105,7 @@ public class Autonomos  implements ITransferObject {
     
     
     @Temporal(TemporalType.DATE)
-    @Column(name="fecfingestion", length=10)
+    @Column(name="fecfingestion")
     public Date getFecfingestion() {
         return this.fecfingestion;
     }
@@ -208,7 +208,7 @@ public class Autonomos  implements ITransferObject {
         this.tipautonomo = tipautonomo;
     }
     @Temporal(TemporalType.DATE)
-    @Column(name="fecconstitucion", length=10)
+    @Column(name="fecconstitucion")
     public Date getFecconstitucion() {
         return this.fecconstitucion;
     }
@@ -219,7 +219,7 @@ public class Autonomos  implements ITransferObject {
     
     
     @Temporal(TemporalType.DATE)
-    @Column(name="fecalta", length=10)
+    @Column(name="fecalta")
     public Date getFecalta() {
         return this.fecalta;
     }
@@ -366,7 +366,7 @@ public class Autonomos  implements ITransferObject {
     
     
     @Temporal(TemporalType.DATE)
-    @Column(name="fecnew", length=10)
+    @Column(name="fecnew")
     public Date getFecnew() {
         return this.fecnew;
     }
@@ -377,7 +377,7 @@ public class Autonomos  implements ITransferObject {
     
     
     @Temporal(TemporalType.TIME)
-    @Column(name="hornew", length=8)
+    @Column(name="hornew")
     public Date getHornew() {
         return this.hornew;
     }
@@ -388,7 +388,7 @@ public class Autonomos  implements ITransferObject {
     
     
     @Temporal(TemporalType.DATE)
-    @Column(name="fecmod", length=10)
+    @Column(name="fecmod")
     public Date getFecmod() {
         return this.fecmod;
     }
@@ -399,7 +399,7 @@ public class Autonomos  implements ITransferObject {
     
     
     @Temporal(TemporalType.TIME)
-    @Column(name="hormod", length=8)
+    @Column(name="hormod")
     public Date getHormod() {
         return this.hormod;
     }

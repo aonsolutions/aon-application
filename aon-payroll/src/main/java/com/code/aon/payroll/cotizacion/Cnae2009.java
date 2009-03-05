@@ -44,7 +44,7 @@ public class Cnae2009  implements ITransferObject {
     }
     
     @Temporal(TemporalType.DATE)
-    @Column(name="fecfin", nullable=false, length=10)
+    @Column(name="fecfin", nullable=false)
     public Date getFecfin() {
         return this.fecfin;
     }

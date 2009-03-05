@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.code.aon.common.ITransferObject;
 
@@ -48,8 +50,8 @@ public class LinDivisaId  implements  Serializable {
         this.divisaFinal = divisaFinal;
     }
 
-	
-    @Column(name="fecini",  length=10)
+    @Temporal(TemporalType.DATE)
+    @Column(name="fecini")
     public Date getFecini() {
         return this.fecini;
     }

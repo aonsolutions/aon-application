@@ -150,7 +150,19 @@ public class Tc1  implements ITransferObject {
          baseDedcol= new BigDecimal(0);
          prcDedcol= new BigDecimal(0);
          cuotaDedcol= new BigDecimal(0);
-
+         baseOtrcon= new BigDecimal(0);         
+         prcOtrcon= new BigDecimal(0);
+         cuotaOtrcon= new BigDecimal(0);
+         baseConcomCe= new BigDecimal(0);
+         prcConcomCe= new BigDecimal(0);
+         cuotaConcomCe= new BigDecimal(0);
+         baseDesemCe= new BigDecimal(0);
+         prcDesemCe= new BigDecimal(0);
+         cuotaDesemCe= new BigDecimal(0);
+         baseDesem= new BigDecimal(0);
+         impcomp= new BigDecimal(0);
+         imppres= new BigDecimal(0);        
+         impdist= new BigDecimal(0);
  	}
      
      
@@ -167,7 +179,7 @@ public class Tc1  implements ITransferObject {
     
 	//@DataDefinition(label="Codigo de Actividad")
 	@ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="codact", insertable=false, updatable=false)
+    @JoinColumn(name="codact", nullable=false)
     public Actividad getCodact() {
         return this.codact;
     }

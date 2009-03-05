@@ -228,7 +228,7 @@ public class Percniv implements ITransferObject {
      * @return
      */
     @Temporal(TemporalType.DATE)
-    @Column(name="fecnew", length=10)
+    @Column(name="fecnew")
     public Date getFecnew() {
         return this.fecnew;
     }
@@ -242,7 +242,7 @@ public class Percniv implements ITransferObject {
      * @return
      */
     @Temporal(TemporalType.TIME)
-    @Column(name="hornew", length=8)
+    @Column(name="hornew")
     public Date getHornew() {
         return this.hornew;
     }
@@ -256,7 +256,7 @@ public class Percniv implements ITransferObject {
      * @return
      */
     @Temporal(TemporalType.DATE)
-    @Column(name="fecmod", length=10)
+    @Column(name="fecmod")
     public Date getFecmod() {
         return this.fecmod;
     }
@@ -270,7 +270,7 @@ public class Percniv implements ITransferObject {
      * @return
      */
     @Temporal(TemporalType.TIME)
-    @Column(name="hormod", length=8)
+    @Column(name="hormod")
     public Date getHormod() {
         return this.hormod;
     }

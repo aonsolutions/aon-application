@@ -29,7 +29,7 @@ public class CuotaPK implements Serializable {
 	}
 
 	@Temporal(TemporalType.DATE)
-	@Column(name="fecini", nullable=false, length=10)
+	@Column(name="fecini", nullable=false)
 	public Date getFecini() {
 		return this.fecini;
 	}

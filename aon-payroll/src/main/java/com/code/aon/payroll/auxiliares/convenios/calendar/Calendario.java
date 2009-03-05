@@ -50,7 +50,7 @@ public class Calendario implements ITransferObject {
 
 	@Temporal(TemporalType.DATE)
 	// @DataDefinition(label="Fecha de Calendario")
-	@Column(name = "feccal", nullable = false, length = 10)
+	@Column(name = "feccal", nullable = false)
 	public Date getFeccal() {
 		return this.feccal;
 	}

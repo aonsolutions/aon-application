@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * Clave primaria de Porcentajes de cotización.
@@ -25,8 +27,8 @@ public class PorcentajePK implements Serializable {
 	public void setCdg(String cdg) {
 		this.cdg = cdg;
 	}
-
-	@Column(name="fecini", nullable=false, length=10)
+	@Temporal(TemporalType.DATE)
+	@Column(name="fecini", nullable=false)
 	public Date getFecini() {
 		return this.fecini;
 	}
