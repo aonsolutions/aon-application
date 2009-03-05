@@ -45,7 +45,7 @@ public class Httaviso  implements ITransferObject{
         this.id = id;
     }
     @Temporal(TemporalType.DATE)
-    @Column(name="fecha", length=10)
+    @Column(name="fecha")
     public Date getFecha() {
         return this.fecha;
     }

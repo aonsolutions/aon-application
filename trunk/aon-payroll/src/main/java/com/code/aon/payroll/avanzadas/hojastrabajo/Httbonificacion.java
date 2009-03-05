@@ -56,7 +56,7 @@ public class Httbonificacion  implements ITransferObject {
         this.bonificacion = bonificacion;
     }
     @Temporal(TemporalType.DATE)
-    @Column(name="fecinicio", length=10)
+    @Column(name="fecinicio")
     public Date getFecinicio() {
         return this.fecinicio;
     }
@@ -65,8 +65,7 @@ public class Httbonificacion  implements ITransferObject {
         this.fecinicio = fecinicio;
     }
     @Temporal(TemporalType.DATE)
-
-    @Column(name="fecfin", length=10)
+    @Column(name="fecfin")
     public Date getFecfin() {
         return this.fecfin;
     }

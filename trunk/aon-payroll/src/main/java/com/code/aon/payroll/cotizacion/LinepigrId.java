@@ -30,7 +30,7 @@ public class LinepigrId  implements Serializable {
     }
 
 	
-    @Column(name="fecini", nullable=false, length=10)
+    @Column(name="fecini", nullable=false)
     public Date getFecini() {
         return this.fecini;
     }

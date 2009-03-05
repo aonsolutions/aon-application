@@ -49,7 +49,7 @@ public class Linepigr  implements ITransferObject {
         this.id = id;
     }
     @Temporal(TemporalType.DATE)
-    @Column(name="fecfin", nullable=false, length=10)
+    @Column(name="fecfin", nullable=false)
     public Date getFecfin() {
         return this.fecfin;
     }

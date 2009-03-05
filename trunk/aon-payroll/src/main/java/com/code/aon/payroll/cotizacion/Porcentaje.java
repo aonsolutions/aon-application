@@ -42,8 +42,8 @@ public class Porcentaje implements ITransferObject {
 	public void setId(PorcentajePK id) {
 		this.id = id;
 	}
-
-	@Column(name="fecfin", nullable=false, length=10)
+	@Temporal(TemporalType.DATE)
+	@Column(name="fecfin", nullable=false)
 	public Date getFecfin() {
 		return this.fecfin;
 	}

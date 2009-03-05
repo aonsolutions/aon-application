@@ -23,7 +23,7 @@ public class ExclusionPK implements Serializable{
      private String hijos;
 		
 	@Temporal(TemporalType.DATE)
-	@Column(name="fecini", nullable=false, length=10)
+	@Column(name="fecini", nullable=false)
 	public Date getFecini() {
 		return fecini;
 	}

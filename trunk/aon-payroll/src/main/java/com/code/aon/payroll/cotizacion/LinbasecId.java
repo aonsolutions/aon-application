@@ -11,6 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.code.aon.common.ITransferObject;
@@ -33,8 +35,8 @@ public class LinbasecId  implements Serializable {
         this.cdg = cdg;
     }
 
-	
-    @Column(name="fecini", nullable=false, length=10)
+    @Temporal(TemporalType.DATE)
+    @Column(name="fecini", nullable=false)
     public Date getFecini() {
         return this.fecini;
     }

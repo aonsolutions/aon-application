@@ -171,7 +171,7 @@ public class Httrabajador  implements ITransferObject {
         this.lugnac = lugnac;
     }
     @Temporal(TemporalType.DATE)
-    @Column(name="fecnac", length=10)
+    @Column(name="fecnac")
     public Date getFecnac() {
         return this.fecnac;
     }
@@ -351,7 +351,7 @@ public class Httrabajador  implements ITransferObject {
     }
     @Temporal(TemporalType.DATE)
 
-    @Column(name="fecalta", length=10)
+    @Column(name="fecalta")
     public Date getFecalta() {
         return this.fecalta;
     }
@@ -361,7 +361,7 @@ public class Httrabajador  implements ITransferObject {
     }
     @Temporal(TemporalType.DATE)
 
-    @Column(name="fecbaja", length=10)
+    @Column(name="fecbaja")
     public Date getFecbaja() {
         return this.fecbaja;
     }
@@ -370,8 +370,7 @@ public class Httrabajador  implements ITransferObject {
         this.fecbaja = fecbaja;
     }
     @Temporal(TemporalType.DATE)
-
-    @Column(name="fecantiguedad", length=10)
+    @Column(name="fecantiguedad")
     public Date getFecantiguedad() {
         return this.fecantiguedad;
     }
@@ -409,7 +408,7 @@ public class Httrabajador  implements ITransferObject {
         this.fecinicio = fecinicio;
     }
     @Temporal(TemporalType.DATE)
-    @Column(name="fecfin", length=10)
+    @Column(name="fecfin")
     public Date getFecfin() {
         return this.fecfin;
     }

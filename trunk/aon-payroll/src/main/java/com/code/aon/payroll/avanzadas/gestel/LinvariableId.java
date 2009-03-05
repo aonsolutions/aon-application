@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 
@@ -31,8 +33,8 @@ public class LinvariableId  implements Serializable {
         this.cdg = cdg;
     }
 
-
-    @Column(name="fecinicio", nullable=false, length=10)
+    @Temporal(TemporalType.DATE)
+    @Column(name="fecinicio", nullable=false)
     public Date getFecini() {
         return this.fecini;
     }

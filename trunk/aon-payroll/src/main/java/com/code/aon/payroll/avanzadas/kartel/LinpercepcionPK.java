@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * Clave primaria de Linpercepcion
@@ -33,6 +35,7 @@ public class LinpercepcionPK implements Serializable {
 	 * Devuelve la Fecha Inicio Vigencia
 	 * @return
 	 */
+	@Temporal(TemporalType.DATE)
 	@Column(name = "fecinicio", nullable = false, length = 10)
 	public Date getFecini() {
 		return this.fecini;

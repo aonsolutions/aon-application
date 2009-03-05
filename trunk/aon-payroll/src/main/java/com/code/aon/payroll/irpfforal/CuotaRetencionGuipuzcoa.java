@@ -50,7 +50,7 @@ public class CuotaRetencionGuipuzcoa  implements ITransferObject{
     }
     @Temporal(TemporalType.DATE)
 	
-    @Column(name="fecfin", length=10)
+    @Column(name="fecfin")
     public Date getFecfin() {
         return this.fecfin;
     }

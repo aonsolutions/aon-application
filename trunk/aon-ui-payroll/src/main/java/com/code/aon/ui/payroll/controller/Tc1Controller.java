@@ -1,6 +1,7 @@
 package com.code.aon.ui.payroll.controller;
 
 import java.sql.Date;
+import java.util.Calendar;
 
 import javax.faces.event.ActionEvent;
 
@@ -18,19 +19,26 @@ public class Tc1Controller extends PayrollBasicController {
 
 	public void generateCdg(){
 		((Tc1)getTo()).setCdg(Integer.parseInt(Utils.maxCode("Tc1", "cdg"))+1);
-		Date  d= new Date(1/1/2009);
+		
+	
+		Date  d= new Date(1,1,2009);
 		((Tc1)getTo()).setFecmod(d);
 		((Tc1)getTo()).setHormod(d);
 		((Tc1)getTo()).setFecnew(d);	
-		((Tc1)getTo()).setHornew(d);
+		((Tc1)getTo()).setHornew(d);	
+		
 		 Persona p= new Persona();
 		 p.setCdg(1);
 	    ((Tc1)getTo()).setCodper(p);	
 		((Tc1)getTo()).setCodccc(Tipccc.TIP2);
-		((Tc1)getTo()).getCodtc2().setCdg(0);
-	}
+		
+		Tc2 t= new Tc2();
+		t.setCdg(4);
+		((Tc1)getTo()).setCodtc2(t);
+		((Tc1)getTo()).setApellidos(" ");
+		
 
-	
+	}
 
 	private Actividad actividad;
 

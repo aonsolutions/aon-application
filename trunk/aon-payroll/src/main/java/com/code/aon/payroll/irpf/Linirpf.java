@@ -11,6 +11,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.code.aon.common.ITransferObject;
 
@@ -54,8 +56,8 @@ public class Linirpf  implements  ITransferObject  {
     public void setId(LinirpfId id) {
         this.id = id;
     }
-   
-    @Column(name="fecfin", length=10)
+    @Temporal(TemporalType.DATE)
+    @Column(name="fecfin")
     public Date getFecfin() {
         return this.fecfin;
     }

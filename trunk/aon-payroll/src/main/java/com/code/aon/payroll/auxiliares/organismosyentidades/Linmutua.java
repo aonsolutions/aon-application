@@ -44,7 +44,7 @@ public class Linmutua  implements ITransferObject {
     }
   
     
-	
+    @Temporal(TemporalType.DATE)
     @Column(name="fecfin", length=10)
     public Date getFecfin() {
         return this.fecfin;

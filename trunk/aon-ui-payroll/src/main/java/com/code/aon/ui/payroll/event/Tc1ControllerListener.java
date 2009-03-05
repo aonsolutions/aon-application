@@ -21,5 +21,6 @@ public void beforeBeanAdded(ControllerEvent event)
 	
 	
 	((Tc1Controller)getController()).generateCdg();
+	
 }
 }
