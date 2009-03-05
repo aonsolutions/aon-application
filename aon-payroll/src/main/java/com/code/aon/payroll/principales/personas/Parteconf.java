@@ -66,7 +66,7 @@ public class Parteconf  implements ITransferObject {
     }
     @Temporal(TemporalType.DATE)
 //	@DataDefinition(label="Fecha parte confirmación")
-    @Column(name="fecconf", nullable=false, length=10)
+    @Column(name="fecconf", nullable=false)
     public Date getFecconf() {
         return this.fecconf;
     }

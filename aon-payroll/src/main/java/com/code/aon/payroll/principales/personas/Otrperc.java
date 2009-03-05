@@ -56,7 +56,7 @@ public class Otrperc  implements ITransferObject {
         this.cdg = cdg;
     }
     @Temporal(TemporalType.DATE)
-    @Column(name="fecha", nullable=false, length=10)
+    @Column(name="fecha", nullable=false)
     public Date getFecha() {
         return this.fecha;
     }

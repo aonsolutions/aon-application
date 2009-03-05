@@ -74,13 +74,13 @@
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_inciit_fecini_inci}" />
-							<aon:selectInputDate renderAsPopup="true" readonly="#{!trabinci.new}"
-								popupDateFormat="#{appBundle.aon_date_pattern}"
+							<aon:selectInputDate id="fecini" renderAsPopup="true" readonly="#{!trabinci.new}"
+								popupDateFormat="#{appBundle.aon_date_pattern}" required="true"
 								value="#{trabinci.to.id.fecini}" enableManualInput="true" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_inciit_fecfin_inci}" />
-							<aon:selectInputDate renderAsPopup="true"
+							<aon:selectInputDate id="fecfin" renderAsPopup="true" required="true"
 								popupDateFormat="#{appBundle.aon_date_pattern}"
 								value="#{trabinci.to.fecfin}" enableManualInput="true" />
 					
@@ -89,7 +89,7 @@
 								value="#{appBundle.aon_payroll_principales_otrasinci_tipo_inci}" />
 							<aon:div styleClass="aon-lookup">
 								<aon:lookupInputText id="tipinc_cdg" readonly="#{!trabinci.new}"
-									lookup="#{tipincLookup}" reRender="tipinc_descripcion"
+									lookup="#{tipincLookup}" reRender="tipinc_descripcion" required="true"
 									value="#{trabinci.to.tipinc.cdg}" size="5">
 								</aon:lookupInputText>
 								<aon:lookupButton id="tipinc_lookup" disabled="#{!trabinci.new}"
@@ -106,12 +106,12 @@
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_otrasinci_importe}" />
-							<aon:inputText value="#{trabinci.to.importe}"
+							<aon:inputText id="importe" value="#{trabinci.to.importe}"
 								size="8" maxlength="8" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_otrasinci_horas_dias}" />
-							<aon:inputText value="#{trabinci.to.cantidad}"
+							<aon:inputText id="cantidad" value="#{trabinci.to.cantidad}" required="true"
 								size="2" maxlength="2" />
 							
 						</aon:panelGrid>

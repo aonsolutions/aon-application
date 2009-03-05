@@ -65,7 +65,7 @@ public class Nominait implements ITransferObject {
 
 	@Temporal(TemporalType.DATE)
 	// @DataDefinition(label="Fecha Fin Incidencia Periodo Nomina")
-	@Column(name = "fecfin", nullable = false, length = 10)
+	@Column(name = "fecfin", nullable = false)
 	public Date getFecfin() {
 		return this.fecfin;
 	}

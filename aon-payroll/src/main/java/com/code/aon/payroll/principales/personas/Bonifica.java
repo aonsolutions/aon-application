@@ -54,7 +54,7 @@ public class Bonifica implements ITransferObject {
 
 	@Temporal(TemporalType.DATE)
 	// @DataDefinition(label="Fecha Terminacion Bonificacion")
-	@Column(name = "fecfin", length = 10)
+	@Column(name = "fecfin")
 	public Date getFecfin() {
 		return this.fecfin;
 	}

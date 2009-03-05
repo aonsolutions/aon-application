@@ -77,7 +77,7 @@ public class Finiquito implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "fecbaj", nullable = false, length = 10)
+	@Column(name = "fecbaj", nullable = false)
 	public Date getFecbaj() {
 		return this.fecbaj;
 	}
@@ -104,7 +104,7 @@ public class Finiquito implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "vacfecini", length = 10)
+	@Column(name = "vacfecini")
 	public Date getVacfecini() {
 		return this.vacfecini;
 	}
@@ -209,7 +209,7 @@ public class Finiquito implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "fecnew", length = 10)
+	@Column(name = "fecnew")
 	public Date getFecnew() {
 		return this.fecnew;
 	}
@@ -223,7 +223,7 @@ public class Finiquito implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.TIME)
-	@Column(name = "hornew", length = 8)
+	@Column(name = "hornew")
 	public Date getHornew() {
 		return this.hornew;
 	}
@@ -237,7 +237,7 @@ public class Finiquito implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "fecmod", length = 10)
+	@Column(name = "fecmod")
 	public Date getFecmod() {
 		return this.fecmod;
 	}
@@ -251,7 +251,7 @@ public class Finiquito implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.TIME)
-	@Column(name = "hormod", length = 8)
+	@Column(name = "hormod")
 	public Date getHormod() {
 		return this.hormod;
 	}
@@ -278,7 +278,7 @@ public class Finiquito implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "feccobreal", length = 10)
+	@Column(name = "feccobreal")
 	public Date getFeccobreal() {
 		return this.feccobreal;
 	}

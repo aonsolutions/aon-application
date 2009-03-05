@@ -72,7 +72,7 @@ public class Percep  implements ITransferObject {
         this.id = id;
     }
     @Temporal(TemporalType.DATE)
-    @Column(name="fecini", nullable=false, length=10)
+    @Column(name="fecini", nullable=false)
     public Date getFecini() {
         return this.fecini;
     }
@@ -81,7 +81,7 @@ public class Percep  implements ITransferObject {
         this.fecini = fecini;
     }
     @Temporal(TemporalType.DATE)
-    @Column(name="fecfin", length=10)
+    @Column(name="fecfin")
     public Date getFecfin() {
         return this.fecfin;
     }
@@ -90,7 +90,7 @@ public class Percep  implements ITransferObject {
         this.fecfin = fecfin;
     }
     @Temporal(TemporalType.DATE)
-    @Column(name="fecret", length=10)
+    @Column(name="fecret")
     public Date getFecret() {
         return this.fecret;
     }
@@ -198,7 +198,7 @@ public class Percep  implements ITransferObject {
         this.fijovar = fijovar;
     }
     @Temporal(TemporalType.DATE)
-    @Column(name="fecnew", length=10)
+    @Column(name="fecnew")
     public Date getFecnew() {
         return this.fecnew;
     }
@@ -207,7 +207,7 @@ public class Percep  implements ITransferObject {
         this.fecnew = fecnew;
     }
     @Temporal(TemporalType.TIME)
-    @Column(name="hornew", length=8)
+    @Column(name="hornew")
     public Date getHornew() {
         return this.hornew;
     }
@@ -216,7 +216,7 @@ public class Percep  implements ITransferObject {
         this.hornew = hornew;
     }
     @Temporal(TemporalType.DATE)
-    @Column(name="fecmod", length=10)
+    @Column(name="fecmod")
     public Date getFecmod() {
         return this.fecmod;
     }
@@ -225,7 +225,7 @@ public class Percep  implements ITransferObject {
         this.fecmod = fecmod;
     }
     @Temporal(TemporalType.TIME)
-    @Column(name="hormod", length=8)
+    @Column(name="hormod")
     public Date getHormod() {
         return this.hormod;
     }

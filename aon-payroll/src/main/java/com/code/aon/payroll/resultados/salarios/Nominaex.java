@@ -112,7 +112,8 @@ public class Nominaex implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "fecini", nullable = false, length = 10)
+	@Column(name = "fecini", nullable = false
+)
 	public Date getFecini() {
 		return this.fecini;
 	}
@@ -126,7 +127,7 @@ public class Nominaex implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "fecfin", nullable = false, length = 10)
+	@Column(name = "fecfin", nullable = false)
 	public Date getFecfin() {
 		return this.fecfin;
 	}
@@ -206,7 +207,7 @@ public class Nominaex implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "fecnew", length = 10)
+	@Column(name = "fecnew")
 	public Date getFecnew() {
 		return this.fecnew;
 	}
@@ -220,7 +221,7 @@ public class Nominaex implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.TIME)
-	@Column(name = "hornew", length = 8)
+	@Column(name = "hornew")
 	public Date getHornew() {
 		return this.hornew;
 	}
@@ -234,7 +235,7 @@ public class Nominaex implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "fecmod", length = 10)
+	@Column(name = "fecmod")
 	public Date getFecmod() {
 		return this.fecmod;
 	}
@@ -248,7 +249,7 @@ public class Nominaex implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.TIME)
-	@Column(name = "hormod", length = 8)
+	@Column(name = "hormod")
 	public Date getHormod() {
 		return this.hormod;
 	}
@@ -262,7 +263,7 @@ public class Nominaex implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "feccob", length = 10)
+	@Column(name = "feccob")
 	public Date getFeccob() {
 		return this.feccob;
 	}
@@ -289,7 +290,7 @@ public class Nominaex implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "feccobreal", length = 10)
+	@Column(name = "feccobreal")
 	public Date getFeccobreal() {
 		return this.feccobreal;
 	}
@@ -303,7 +304,7 @@ public class Nominaex implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "fecemi", length = 10)
+	@Column(name = "fecemi")
 	public Date getFecemi() {
 		return this.fecemi;
 	}
@@ -408,7 +409,7 @@ public class Nominaex implements ITransferObject {
 	 * @return
 	 */
 	@Temporal(TemporalType.DATE)
-	@Column(name = "fecant", length = 10)
+	@Column(name = "fecant")
 	public Date getFecant() {
 		return this.fecant;
 	}

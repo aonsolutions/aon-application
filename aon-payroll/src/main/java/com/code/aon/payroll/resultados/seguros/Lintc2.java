@@ -161,7 +161,7 @@ public class Lintc2  implements ITransferObject {
     }
     @Temporal(TemporalType.DATE)
 	//@DataDefinition(label="Fecha Deduccion / Compensacion")
-    @Column(name="dc_fecha", length=10)
+    @Column(name="dc_fecha")
     public Date getDcFecha() {
         return this.dcFecha;
     }

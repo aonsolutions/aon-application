@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * Clave primaria de Nominait
@@ -27,7 +29,8 @@ public class NominaitPK implements Serializable {
 	}
 
 	// @DataDefinition(label="Fecha Inicio Incidencia")
-	@Column(name = "feciniit", nullable = false, length = 10)
+	@Temporal(TemporalType.DATE)
+	@Column(name = "feciniit", nullable = false)
 	public Date getFeciniit() {
 		return this.feciniit;
 	}
@@ -37,7 +40,8 @@ public class NominaitPK implements Serializable {
 	}
 
 	// @DataDefinition(label="Fecha Inicio Incidencia Periodo Nomina")
-	@Column(name = "fecini", nullable = false, length = 10)
+	@Temporal(TemporalType.DATE)
+	@Column(name = "fecini", nullable = false)
 	public Date getFecini() {
 		return this.fecini;
 	}
