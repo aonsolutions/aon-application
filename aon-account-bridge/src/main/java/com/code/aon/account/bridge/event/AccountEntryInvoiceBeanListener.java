@@ -14,7 +14,6 @@ import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.ql.Criteria;
 
 public class AccountEntryInvoiceBeanListener extends ManagerBeanListenerAdapter {
-
 	
 	@Override
 	public void beanRemoved(ManagerBeanEvent evt) throws ManagerBeanException {
