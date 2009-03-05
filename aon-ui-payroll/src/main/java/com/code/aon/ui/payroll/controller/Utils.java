@@ -135,7 +135,10 @@ public class Utils {
 			Query query = HibernateUtil.getSession().createQuery(sql);			
 			List results = query.list();
 				
-			return results.get(0).toString();
+			if(results.size()<=0)
+				return "0";
+			else
+				return results.get(0).toString();
 		} else
 			return null;
 	}
