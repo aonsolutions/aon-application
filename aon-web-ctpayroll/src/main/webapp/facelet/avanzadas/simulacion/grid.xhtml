@@ -50,11 +50,11 @@
 				</aon:outputText>
 				<aon:inputText styleClass="aon-form-input-text " 
 					rendered="#{to==lbonifica.to}" size="5"
-					value="#{lbonifica.to.id.codbon}" maxlength="10" />
+					value="#{lbonifica.to.id.codbon}" maxlength="2" />
 				<f:facet name="footer">
 					<aon:inputText styleClass="aon-form-input-text" 
 						rendered="#{lbonifica.new}" size="5"
-						value="#{lbonifica.to.id.codbon}" maxlength="10" />
+						value="#{lbonifica.to.id.codbon}" maxlength="2" />
 				</f:facet>
 			</aon:column>
 
@@ -92,7 +92,7 @@
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
-				<aon:selectInputDate required="true" requiredMessage="fecini"
+				<aon:selectInputDate required="true" requiredMessage="fecfin"
 					rendered="#{to==lbonifica.to}" inputSize="10"
 					value="#{lbonifica.to.fecfin}" renderAsPopup="true"
 					popupDateFormat="#{appBundle.aon_date_pattern}">

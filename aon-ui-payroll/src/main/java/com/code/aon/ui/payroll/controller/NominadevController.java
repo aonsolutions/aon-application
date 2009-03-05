@@ -8,11 +8,15 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.payroll.auxiliares.convenios.Complemento;
+import com.code.aon.payroll.avanzadas.hojastrabajo.Httrabajador;
 import com.code.aon.payroll.enumeration.FijoVariable;
 import com.code.aon.payroll.enumeration.IndiceComplemento;
 import com.code.aon.payroll.enumeration.Retribuciones;
 import com.code.aon.payroll.enumeration.TipoComplemento;
 import com.code.aon.payroll.principales.empresa.Emprccos;
+import com.code.aon.payroll.resultados.nomina.Nomina;
+import com.code.aon.payroll.resultados.nomina.Nominadev;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 
 public class NominadevController extends LinesController {
@@ -100,9 +104,13 @@ public class NominadevController extends LinesController {
 	 * genera un cdg siguiendo al maximo 
 	 */
 	public void generateCdg(){
-		((Emprccos)getTo()).setCdg(Integer.parseInt(Utils.maxCode("Emprccos", "cdg"))+1);
+		
+		
+		Integer cdg= ((Nomina)(FormUtil.getController(IPayrollConstants.NOMINA_CONTROLLER_NAME)).getTo()).getCdg();
+
+		((Nominadev)getTo()).getId().setOrden((Integer.parseInt(Utils.maxCode("Nominadev", "id.orden", "id.cdg="+cdg))+1));
+		((Nominadev)getTo()).getId().setCdg(cdg);
+	
 	}
-	
-	
 	
 }

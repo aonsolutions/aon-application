@@ -28,9 +28,7 @@
 				styleClass="aon-scroll-area aon-scroll-area-principales">
 
 				<aon:div styleClass="aon-scroll-area aon-scroll-area-principales">
-					<aon:panelGrid columns="4" dir="true" width="100%"
-					>
-
+	  		  	<aon:panelGrid columns="4" dir="true" width="100%">
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_resultados_tc2_act}" />
@@ -41,7 +39,7 @@
 								windowTitle="#{appBundle.aon_payroll_resultados_tc2_act}"
 								selectReRender="Acti_cdg,Acti_descripcion,Acti1_descripcion,Acti2_descripcion,Acti3_descripcion,Acti4_descripcion,Acti5_descripcion,Acti6_descripcion,Acti7_descripcion,Acti8_descripcion"
 								lookup="#{actividadLookup}" minHeight="440"
-								property="#{tc1.to.codact}">
+								property="#{tc1.actividad}">
 							</aon:lookupButton>
 
 						</aon:div>

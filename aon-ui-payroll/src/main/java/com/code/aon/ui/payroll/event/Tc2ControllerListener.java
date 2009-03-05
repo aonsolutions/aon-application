@@ -7,6 +7,7 @@ import com.code.aon.ui.payroll.controller.ActividadController;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
 import com.code.aon.ui.payroll.controller.NominaController;
 import com.code.aon.ui.payroll.controller.PersonaController;
+import com.code.aon.ui.payroll.controller.Tc2Controller;
 
 public class Tc2ControllerListener extends ControllerAdapter implements
 		IPayrollConstants {
@@ -16,7 +17,7 @@ public class Tc2ControllerListener extends ControllerAdapter implements
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
 		
-		((NominaController)getController()).generateCdg();
+		((Tc2Controller)getController()).generateCdg();
 	}
 
 }

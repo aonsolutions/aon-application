@@ -38,6 +38,7 @@ public class NominaController extends PayrollBasicController {
 	 */
 	public void generateCdg(){
 		((Nomina)getTo()).setCdg(Integer.parseInt(Utils.maxCode("Nomina", "cdg"))+1);
+		((Nomina)getTo()).setOrden(0);
 	}
 	
 	
