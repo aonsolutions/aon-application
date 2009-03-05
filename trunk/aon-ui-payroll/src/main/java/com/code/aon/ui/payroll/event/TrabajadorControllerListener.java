@@ -3,15 +3,25 @@ package com.code.aon.ui.payroll.event;
 import java.util.ArrayList;
 import java.util.List;
 
+import antlr.debug.NewLineListener;
+
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.dao.IPayrollAlias;
+import com.code.aon.payroll.enumeration.Tipccc;
+import com.code.aon.payroll.principales.Domicilio;
+import com.code.aon.payroll.principales.empresa.Emprccc;
+import com.code.aon.payroll.principales.persona.Trabajador;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.payroll.controller.EmprcccController;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
+import com.code.aon.ui.payroll.controller.TrabajadorController;
+import com.code.aon.ui.payroll.controller.Utils;
 
 public class TrabajadorControllerListener extends ControllerAdapter implements
 		IPayrollConstants {
@@ -22,12 +32,57 @@ public class TrabajadorControllerListener extends ControllerAdapter implements
 			
 		super.afterBeanCreated(event);
 	}
+	
+	@Override
+	public void beforeBeanReset(ControllerEvent event)
+			throws ControllerListenerException {
+		((Trabajador)this.getController().getTo()).setDomicilio(null);
+	}
+	
+	@Override
+	public void afterBeanReset(ControllerEvent event)
+			throws ControllerListenerException {
+		((Trabajador)this.getController().getTo()).setDomicilio(null);
+	}
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
 
-		super.beforeBeanAdded(event);
+		//Integer cdg = Integer.parseInt(Utils.maxCode("Trabajador", "cdg"));
+		Domicilio domicilio = ((TrabajadorController)this.getController()).getDomicilio(); 
+		
+		//((Trabajador)this.getController().getTo()).setCdg(cdg+1);
+		((Trabajador)this.getController().getTo()).setDomicilio(domicilio);
+		
+		Integer codact = ((Trabajador)this.getController().getTo()).getActividad().getCdg();
+		Tipccc tipccc = ((Trabajador)this.getController().getTo()).getEmprccc().getId().getTipccc();
+		Emprccc emprccc;
+		//EmprcccController ec = new EmprcccController();
+		EmprcccController ec = (EmprcccController)FormUtil.getController("emprccc");
+		
+		try {
+			ec.clearCriteria();
+			Criteria criteria = ec.getCriteria();
+			
+			criteria.addEqualExpression(ec.getFieldName(IPayrollAlias.EMPRCCC_ID_CDG), codact);
+			criteria.addEqualExpression(ec.getFieldName(IPayrollAlias.EMPRCCC_ID_TIPCCC), tipccc);
+			ec.setCriteria(criteria);
+			
+			if(BeanManager.getManagerBean(Emprccc.class).getList(criteria).size() == 0){
+				throw new ControllerListenerException("La cuenta de cotización no pertenece a la actividad seleccionada.");
+				
+			}
+			
+			emprccc = (Emprccc)((BeanManager.getManagerBean(Emprccc.class).getList(criteria)).get(0)); 
+			
+			((Trabajador)this.getController().getTo()).setEmprccc(emprccc);
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 	
 	@Override

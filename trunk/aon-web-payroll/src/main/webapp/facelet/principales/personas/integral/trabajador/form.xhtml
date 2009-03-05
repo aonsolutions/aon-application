@@ -115,7 +115,7 @@
 								</f:facet>
 								<aon:lookupInputText id="domicilio_cdg" required="#{true}"
 									lookup="#{domicilioLookup}" reRender="domicilio_descripcion"
-									value="#{trabajador.to.domicilio.cdg}" size="5">
+									value="#{trabajador.domicilio.cdg}" size="5">
 									<!-- 
 									<a4j:support event="onchange" reRender="admon_lookup, provincia_lookup" >
 										<aon:actionListener method="#{impresos11x.setDefaultAdmon}" />
@@ -127,13 +127,11 @@
 									windowTitle="#{appBundle.aon_payroll_principales_trabajador_centro_trab}"
 									selectReRender="domicilio_cdg,domicilio_descripcion"
 									lookup="#{domicilioLookup}" minHeight="440"
-									property="#{trabajador.to.domicilioAux}">
+									property="#{trabajador.domicilio}">
 								</aon:lookupButton>
-								<!--   
 								<aon:inputText id="domicilio_descripcion"
-									value="#{(trabajador.to.domicilio.nomvia!=null)?(trabajador.to.domicilio.nomvia):('')}"
+									value="#{(trabajador.domicilio.nomvia!=null)?(trabajador.domicilio.nomvia):('')}"
 									size="45" disabled="true" />
-								  -->
 							</aon:panel>
 						</aon:div>
 							

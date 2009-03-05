@@ -180,5 +180,14 @@ public class TrabajadorController extends LinesController {
 		// return results.get(0).toString();
 	}
 	
+	@Override
+	public void onReset(ActionEvent event) {
+		// TODO Auto-generated method stub
+		super.onReset(event);
+		this.setDomicilio(new Domicilio());
+		Integer cdg = Integer.parseInt(Utils.maxCode("Trabajador", "cdg"));
+		((Trabajador)this.getTo()).setCdg(cdg+1);
+	}
+	
 	
 }
