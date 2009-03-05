@@ -39,6 +39,10 @@ public class AonDN implements ILdapConstants {
 	public static String status( int status ) {
 		return STATUS_ATTRIBUTE + "=" + status;
 	}
+
+	public static DistinguishedName getDomainsDN() {
+		return new DistinguishedName( ou(DOMAINS) );
+	}
 	
 	public static DistinguishedName getDomainDN( String domain ) {
 		return new DistinguishedName( cn(domain), ou(DOMAINS) );
