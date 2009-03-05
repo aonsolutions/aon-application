@@ -96,12 +96,13 @@ public class AccountEntryInvoiceWriter {
 		insertAccountEntryInvoice(entry, invoice);
 	}
 
+	public String obtainConcept(String prefix, Invoice invoice) {
+		return prefix + " " + invoice.getReferenceCode(); 
+	}
+
 	public String obtainConcept(Invoice invoice) {
-		InvoiceType type = invoice.getType();
-		String series = invoice.getSeries();
-		int number = invoice.getNumber();
-		String refCode = invoice.getReferenceCode();
-		return (type.equals(InvoiceType.SALES)) ? (N_FRA + (series == null ? "" : (series + "/")) + number): (S_FRA + refCode); 
+		String prefix = (invoice.getType().equals(InvoiceType.SALES)) ? N_FRA : S_FRA;
+		return obtainConcept(prefix, invoice);
 	}
 
 	private Map<Account, Double> obtainBasesPerAccount(Invoice invoice) throws ManagerBeanException {
