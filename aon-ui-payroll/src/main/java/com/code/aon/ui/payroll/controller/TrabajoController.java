@@ -12,6 +12,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.payroll.auxiliares.convenios.Convenio;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.IndiceAgrario;
 import com.code.aon.payroll.enumeration.IndiceGrupo;
@@ -34,6 +35,7 @@ public class TrabajoController extends LinesController {
 	private Actividad actividad;
 	private Domicilio domicilio;
 	private Emprccos emprccos;
+	private Convenio convenio;
 		
 	public List<SelectItem> getIndagrario() {
 		return indagrario;
@@ -146,6 +148,14 @@ public class TrabajoController extends LinesController {
 
 	public void setEmprccos(Emprccos emprccos) {
 		this.emprccos = emprccos;
+	}
+	
+	public Convenio getConvenio() {
+		return convenio;
+	}
+
+	public void setConvenio(Convenio convenio) {
+		this.convenio = convenio;
 	}
 	
 	

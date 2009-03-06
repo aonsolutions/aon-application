@@ -1,8 +1,6 @@
 package com.code.aon.ui.payroll.controller;
 
 import java.math.BigDecimal;
-import java.util.logging.Logger;
-
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.payroll.divisa.Divisa;

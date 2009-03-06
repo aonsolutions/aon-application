@@ -5,7 +5,6 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.payroll.auxiliares.convenios.Categoria;
 import com.code.aon.payroll.cotizacion.Base;
 import com.code.aon.payroll.cotizacion.Epigrafe;
 import com.code.aon.payroll.dao.IPayrollAlias;

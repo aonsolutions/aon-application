@@ -20,7 +20,6 @@ import org.hibernate.annotations.Type;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.enumeration.Tipccc;
 import com.code.aon.payroll.principales.empresa.Actividad;
-import com.code.aon.payroll.principales.empresa.Emprccc;
 import com.code.aon.payroll.principales.personas.Persona;
 
 

@@ -15,7 +15,6 @@ import javax.faces.model.SelectItem;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.payroll.auxiliares.Admon;
-import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.divisa.Divisa;
 import com.code.aon.payroll.enumeration.ConciertoEconomico;
@@ -23,18 +22,12 @@ import com.code.aon.payroll.enumeration.EnvioSS;
 import com.code.aon.payroll.enumeration.IndicadorIrpf;
 import com.code.aon.payroll.enumeration.PagoImpuestos;
 import com.code.aon.payroll.enumeration.Sexo;
-import com.code.aon.payroll.enumeration.Tipdom;
 import com.code.aon.payroll.geograficas.Pais;
-import com.code.aon.payroll.geograficas.Provincia;
 import com.code.aon.payroll.principales.Cliente;
-import com.code.aon.payroll.principales.Domicilio;
-import com.code.aon.payroll.principales.empresa.Emprdom;
 import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Empresario;
-import com.code.aon.payroll.tipos.Tipovia;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.util.AonUtil;
 
 public class EmpresaController extends LinesController  implements IPayrollAlias, IPayrollBackAction   {
 

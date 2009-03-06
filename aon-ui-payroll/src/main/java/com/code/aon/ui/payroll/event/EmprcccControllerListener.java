@@ -5,7 +5,6 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.payroll.controller.EmprcccController;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
-import com.code.aon.ui.payroll.controller.PersonaController;
 
 public class EmprcccControllerListener extends ControllerAdapter implements
 		IPayrollConstants {

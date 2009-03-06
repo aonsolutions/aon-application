@@ -3,8 +3,6 @@ package com.code.aon.ui.payroll.event;
 import java.util.ArrayList;
 import java.util.List;
 
-import antlr.debug.NewLineListener;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.dao.IPayrollAlias;
@@ -21,7 +19,6 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.payroll.controller.EmprcccController;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
 import com.code.aon.ui.payroll.controller.TrabajadorController;
-import com.code.aon.ui.payroll.controller.Utils;
 
 public class TrabajadorControllerListener extends ControllerAdapter implements
 		IPayrollConstants {

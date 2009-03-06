@@ -154,152 +154,172 @@ aon_payroll_principales_mntoit_procesado=Procesado
 				
 				<rich:spacer />
 				
-					<aon:div style="width:25%;">
-						<aon:panel width="100%">
-							<f:facet name="header">
-								<aon:outputText
-									value="#{appBundle.aon_payroll_principales_mntoit_alta}" />
-							</f:facet>
-						<aon:panelGrid columns="2" dir="true" >
+				<aon:div style="width:25%;">
+					<aon:panel width="100%">
+						<f:facet name="header">
+							<aon:outputText
+								value="#{appBundle.aon_payroll_principales_mntoit_alta}" />
+						</f:facet>
+					<aon:panelGrid columns="2" dir="true" >
 
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_principales_mntoit_inicio_it}" />
-							<aon:selectInputDate value="#{parteit.to.id.fecini}" inputSize="10"
-								renderAsPopup="true" enableManualInput="true"
-								popupDateFormat="#{appBundle.aon_date_pattern}" />
-							
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_principales_mntoit_colegiado}" />
-							<aon:inputText value="#{parteit.to.numcolbaj}"
-								size="8" maxlength="8" />
-							
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_principales_mntoit_cias}" />
-							<aon:inputText value="#{parteit.to.ciasbaj}"
-								size="11" maxlength="11" />
-							
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_principales_mntoit_baja_proces}" />
-							<aon:selectBooleanCheckbox value="#{parteit.to.bajproc}" />
+						<aon:outputLabel
+							value="#{appBundle.aon_payroll_principales_mntoit_inicio_it}" />
+						<aon:selectInputDate value="#{parteit.to.id.fecini}" inputSize="10"
+							id="inicio_it" required="true"
+							renderAsPopup="true" enableManualInput="true"
+							popupDateFormat="#{appBundle.aon_date_pattern}" />
+						
+						<aon:outputLabel
+							value="#{appBundle.aon_payroll_principales_mntoit_colegiado}" />
+						<aon:inputText value="#{parteit.to.numcolbaj}"
+							id="colegiado_alta"
+							size="8" maxlength="8" />
+						
+						<aon:outputLabel
+							value="#{appBundle.aon_payroll_principales_mntoit_cias}" />
+						<aon:inputText value="#{parteit.to.ciasbaj}"
+							id="cias_alta" required="true"
+							size="11" maxlength="11" />
+						
+						<aon:outputLabel
+							value="#{appBundle.aon_payroll_principales_mntoit_baja_proces}" />
+						<aon:selectBooleanCheckbox value="#{parteit.to.bajproc}" 
+							id="baja_proces" required="true" />
 
-						</aon:panelGrid>
-						</aon:panel>
-						</aon:div>
-						<rich:spacer />
-						<aon:div style="width:25%;">
-						<aon:panel >
-							<f:facet name="header">
-								<aon:outputText
-									value="#{appBundle.aon_payroll_principales_mntoit_baja}" />
-							</f:facet>
+					</aon:panelGrid>
+					</aon:panel>
+				</aon:div>
+						
+				<rich:spacer />
+						
+				<aon:div style="width:25%;">
+					<aon:panel >
+						<f:facet name="header">
+							<aon:outputText
+								value="#{appBundle.aon_payroll_principales_mntoit_baja}" />
+						</f:facet>
 						<aon:panelGrid columns="2" dir="true" >
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_mntoit_final_it}" />
 							<aon:selectInputDate value="#{parteit.to.fecfin}" inputSize="10"
 								renderAsPopup="true" enableManualInput="true"
+								id="fecfin" required="true"
 								popupDateFormat="#{appBundle.aon_date_pattern}" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_mntoit_colegiado}" />
 							<aon:inputText value="#{parteit.to.numcolalt}"
+								id="colegiado_baja" required="true"
 								size="8" maxlength="8" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_mntoit_cias}" />
 							<aon:inputText value="#{parteit.to.ciasalt}"
+								id="cias_baja"
 								size="11" maxlength="11" />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_mntoit_alta_proces}" />
-							<aon:selectBooleanCheckbox value="#{parteit.to.altproc}" />
+							<aon:selectBooleanCheckbox value="#{parteit.to.altproc}" 
+								id="alta_proces" required="true"/>
 							
 						</aon:panelGrid>
-						</aon:panel>
-						</aon:div>
+					</aon:panel>
+				</aon:div>
 						
-						<rich:spacer />
+				<rich:spacer />
 						
+				<aon:panel>
+					<f:facet name="header">
+						<aon:outputText
+							value="#{appBundle.aon_payroll_principales_mntoit_bases}" />
+					</f:facet>
+
+					<aon:panelGrid columns="4" dir="true" width="100%">	
+						<aon:outputLabel
+							value="#{appBundle.aon_payroll_principales_mntoit_retrib_periodo_ant}" />
+						<aon:inputText value="#{parteit.to.baseant}"
+							id="retrib_periodo_ant"
+							size="11" maxlength="11" />
 						
-						<aon:panel>
-							<f:facet name="header">
-								<aon:outputText
-									value="#{appBundle.aon_payroll_principales_mntoit_bases}" />
-							</f:facet>
+						<aon:outputLabel
+							value="#{appBundle.aon_payroll_principales_mntoit_diaria_accid}" />
+						<aon:inputText value="#{parteit.to.basediaacc}"
+							id="diaria_accid"
+							size="11" maxlength="11" />
+						
+						<aon:outputLabel
+							value="#{appBundle.aon_payroll_principales_mntoit_regulad_diaria}" />
+						<aon:inputText value="#{parteit.to.baseregdia}"
+							id="regulad_diaria" 
+							size="11" maxlength="11" />
+						
+						<aon:outputLabel
+							value="#{appBundle.aon_payroll_principales_mntoit_diaria_conting}" />
+						<aon:inputText value="#{parteit.to.basediacg}"
+							id="diaria_conting" 
+							size="11" maxlength="11" />
 
-						<aon:panelGrid columns="4" dir="true" width="100%">	
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_principales_mntoit_retrib_periodo_ant}" />
-							<aon:inputText value="#{parteit.to.baseant}"
-								size="" maxlength="" />
-							
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_principales_mntoit_diaria_accid}" />
-							<aon:inputText value="#{parteit.to.basediaacc}"
-								size="" maxlength="" />
-							
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_principales_mntoit_regulad_diaria}" />
-							<aon:inputText value="#{parteit.to.baseregdia}"
-								size="" maxlength="" />
-							
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_principales_mntoit_diaria_conting}" />
-							<aon:inputText value="#{parteit.to.basediacg}"
-								size="" maxlength="" />
+						<aon:outputLabel
+							value="#{appBundle.aon_payroll_principales_mntoit_dias_periodo_ant}" />
+						<aon:inputText value="#{parteit.to.diasant}"
+							id="dias_periodo_ant" required="true"
+							size="2" maxlength="2" />
+						
+						<aon:outputLabel
+							value="#{appBundle.aon_payroll_principales_mntoit_prest_60}" />
+						<aon:inputText value="#{parteit.to.prest60}"
+							id="prest_60" 
+							size="11" maxlength="11" />
+						
+						<aon:outputLabel
+							value="#{appBundle.aon_payroll_principales_mntoit_prest_75}" />
+						<aon:inputText value="#{parteit.to.prest75}"
+							id="prest_75"
+							size="11" maxlength="11" />
 
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_principales_mntoit_dias_periodo_ant}" />
-							<aon:inputText value="#{parteit.to.diasant}"
-								size="" maxlength="" />
-							
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_principales_mntoit_prest_60}" />
-							<aon:inputText value="#{parteit.to.prest60}"
-								size="" maxlength="" />
-							
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_principales_mntoit_prest_75}" />
-							<aon:inputText value="#{parteit.to.prest75}"
-								size="" maxlength="" />
+					</aon:panelGrid>
+				</aon:panel>
+					
+				<rich:spacer />
+					
+				<aon:panelGrid columns="6" dir="true"
+					width="100%">
 
-						</aon:panelGrid>
-						</aon:panel>
-						<rich:spacer />
-						<aon:panelGrid columns="6" dir="true"
-							width="100%">
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_mntoit_tipo_it}" />
+					<aon:selectOneRadio id="Parteit_tipoit" value="#{parteit.to.tipoit}"
+						required="true">
+						<f:selectItems value="#{nominait.listaTipoIt}" />
+					</aon:selectOneRadio>
+					
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_mntoit_riesgo_embarazo}" />
+					<aon:selectBooleanCheckbox value="#{parteit.to.riesgo}" 
+						id="riesgo_embarazo" />
+					
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_mntoit_recaida_ant_it}" />
+					<aon:selectBooleanCheckbox value="#{parteit.to.recaida}" 
+						id="recaida_ant_it" />
+					
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_mntoit_prorrat_coti}" />
+					<aon:selectOneRadio id="Parteit_proret" value="#{parteit.to.proret}"
+						required="true" >
+						<f:selectItems value="#{baseMaestro.listaProrateos}"/>
+					</aon:selectOneRadio>
+					
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_principales_mntoit_parte_proces}" />
+					<aon:selectBooleanCheckbox value="#{parteit.to.procesado}" 
+						id="parte_proces" />
 
+				</aon:panelGrid>
 
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_principales_mntoit_tipo_it}" />
-							<aon:selectOneRadio id="Parteit_tipoit" value="#{parteit.to.tipoit}">
-								<f:selectItems value="#{nominait.listaTipoIt}" />
-							</aon:selectOneRadio>
-							
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_principales_mntoit_riesgo_embarazo}" />
-							<aon:selectBooleanCheckbox value="#{parteit.to.riesgo}" />
-							
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_principales_mntoit_recaida_ant_it}" />
-							<aon:selectBooleanCheckbox value="#{parteit.to.recaida}" />
-							
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_principales_mntoit_prorrat_coti}" />
-							<aon:selectOneRadio id="Parteit_proret" value="#{parteit.to.proret}">
-								<f:selectItems value="#{baseMaestro.listaProrateos}"/>
-							</aon:selectOneRadio>
-							
-							<aon:outputLabel
-								value="#{appBundle.aon_payroll_principales_mntoit_parte_proces}" />
-							<aon:selectBooleanCheckbox value="#{parteit.to.procesado}" />
-
-						</aon:panelGrid>
-
-					</aon:div>
-				</aon:form>
-				
-				
+			</aon:div>
+			</aon:form>
 			</ui:define>
 		</ui:composition>
 	</body>

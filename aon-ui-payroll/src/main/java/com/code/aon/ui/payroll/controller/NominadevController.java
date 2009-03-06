@@ -8,12 +8,10 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.payroll.auxiliares.convenios.Complemento;
-import com.code.aon.payroll.avanzadas.hojastrabajo.Httrabajador;
 import com.code.aon.payroll.enumeration.FijoVariable;
 import com.code.aon.payroll.enumeration.IndiceComplemento;
 import com.code.aon.payroll.enumeration.Retribuciones;
 import com.code.aon.payroll.enumeration.TipoComplemento;
-import com.code.aon.payroll.principales.empresa.Emprccos;
 import com.code.aon.payroll.resultados.nomina.Nomina;
 import com.code.aon.payroll.resultados.nomina.Nominadev;
 import com.code.aon.ui.form.FormUtil;

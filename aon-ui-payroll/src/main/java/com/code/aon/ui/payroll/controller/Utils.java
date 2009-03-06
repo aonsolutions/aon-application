@@ -9,7 +9,6 @@ import org.hibernate.Query;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.payroll.cotizacion.Porcentaje;
-import com.code.aon.payroll.principales.empresa.Empresa;
 
 public class Utils {
 

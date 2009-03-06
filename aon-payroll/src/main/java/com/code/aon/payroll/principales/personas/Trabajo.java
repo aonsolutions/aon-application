@@ -601,7 +601,7 @@ public class Trabajo implements ITransferObject {
 		this.colectivos = colectivos;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "codcon", nullable = false)
 	public Convenio getConvenio() {
 		return this.convenio;

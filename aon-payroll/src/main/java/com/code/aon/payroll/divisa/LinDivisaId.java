@@ -9,8 +9,6 @@ import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.code.aon.common.ITransferObject;
-
 
 
 @Embeddable

@@ -19,7 +19,6 @@ import org.hibernate.annotations.Type;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.cotizacion.Base;
 import com.code.aon.payroll.cotizacion.Epigrafe;
-import com.code.aon.payroll.cotizacion.Porcentaje;
 import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
 import com.code.aon.payroll.enumeration.Minusvalia;
 import com.code.aon.payroll.enumeration.Prorateo;

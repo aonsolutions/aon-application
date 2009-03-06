@@ -1,17 +1,12 @@
 package com.code.aon.ui.payroll.controller;
 
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.dao.IPayrollAlias;
-import com.code.aon.payroll.enumeration.Prorateo;
 
 public class VariableController extends PayrollBasicController {
 
