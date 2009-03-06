@@ -15,6 +15,11 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 public @interface BaseDN {
 
+	/**
+	 * Value.
+	 * 
+	 * @return the string
+	 */
 	String value();
 	
 }

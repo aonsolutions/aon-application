@@ -10,6 +10,8 @@ public interface IDesktopConstants {
 	
 	String CURRENT_DOMAIN_CONTROLLER_NAME = "currentDomain";
 	
+	String DOMAIN_CONTROLLER_NAME = "domain";
+	
 	String NOTE_CONTROLLER_NAME = "note";
 	
 	String ALARM_CONTROLLER_NAME = "alarm";

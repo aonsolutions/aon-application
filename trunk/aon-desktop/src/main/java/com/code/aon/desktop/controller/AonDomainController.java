@@ -22,7 +22,9 @@ import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
 import com.code.aon.bridge.plugin.DomainManager;
 import com.code.aon.bridge.plugin.UserManager;
 import com.code.aon.bridge.plugin.Utils;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.desktop.Domain;
 import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.client.ast.IDomainApplication;
@@ -59,13 +61,22 @@ public class AonDomainController extends BasicController implements IAonObjectCl
     private Relation user;
     private String currentTab;
     
-    private Boolean userManagement;
+    private boolean userManagement;
+    private boolean domainManagement;
     
     private boolean newProfile;
     private boolean newUser;
     
     private List<SelectItem> availableUsers;
     
+	public AonDomainController() {
+		Domain domain = getCurrentDomain();
+		if ( domain != null ) {
+			userManagement = domain.getUserManagement();
+			domainManagement = domain.getDomainManagement();
+		}
+	}
+
 	public boolean isNewProfile() {
 		return newProfile;
 	}
@@ -402,25 +413,25 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 		return false;
 	}
 
-	public boolean isUserManagement() {
-		if ( userManagement == null ) {
-			userManagement = Boolean.FALSE;
-			AonUserController userController = (AonUserController) FormUtil.getController(CURRENT_USER_CONTROLLER_NAME);
-			DistinguishedName dn = AonDN.getDomainDN(userController.getDomain());			
-			BasicLdap ldap = new BasicLdap();
-			try {
-				String objectClass = LdapSession.getObjectClass(DOMAIN);
-				Entry entry = ldap.getLdapSession().get( dn.toString(), objectClass );
-				if ( (entry != null) && (entry.containsKey(USER_MANAGEMENT_ATTRIBUTE)) ) {
-					userManagement = entry.getAsBoolean(USER_MANAGEMENT_ATTRIBUTE);
-				}
-			} catch ( LdapException e ) {
-				LOGGER.log(Level.SEVERE, "Error añadiendo usuario " + dn, e );
-			} finally {
-				ldap.closeSession();
-			}
+	private Domain getCurrentDomain() {
+		Domain domain = null;
+		AonUserController userController = (AonUserController) FormUtil.getController(CURRENT_USER_CONTROLLER_NAME);
+		try {
+			IManagerBean bean = FormUtil.getController(DOMAIN_CONTROLLER_NAME).getManagerBean();
+			DistinguishedName id = AonDN.getDomainDN(userController.getDomain());
+			domain = (Domain) bean.get( id.toString() );
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obteniendo de LDAP el aonDomain " + userController.getDomain(), e );
 		}
-		return userManagement.booleanValue();
+		return domain;
+	}
+
+	public boolean isUserManagement() {
+		return userManagement;
+	}
+
+	public boolean isDomainManagement() {
+		return domainManagement;
 	}
 	
 }

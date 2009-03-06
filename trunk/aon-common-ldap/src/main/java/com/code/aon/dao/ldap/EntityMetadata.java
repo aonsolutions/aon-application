@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.persistence.Id;
 
@@ -20,11 +19,12 @@ import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
 
+/**
+ * The Class EntityMetadata.
+ */
 public class EntityMetadata {
 
 	private Class<? extends ITransferObject> pojoClass;
-	
-	private Properties ldapProperties;
 	
 	private PropertyInfo rdn;
 	
@@ -106,34 +106,74 @@ public class EntityMetadata {
 		}
 	}
 
+	/**
+	 * Gets the pojo class.
+	 * 
+	 * @return the pojo class
+	 */
 	public Class<? extends ITransferObject> getPojoClass() {
 		return pojoClass;
 	}
 
+	/**
+	 * Gets the rDN.
+	 * 
+	 * @return the rDN
+	 */
 	public PropertyInfo getRDN() {
 		return rdn;
 	}
 
+	/**
+	 * Gets the dn holder.
+	 * 
+	 * @return the dn holder
+	 */
 	public String getDnHolder() {
 		return dnHolder;
 	}
 
+	/**
+	 * Gets the field map.
+	 * 
+	 * @return the field map
+	 */
 	public Map<String, String> getFieldMap() {
 		return fieldMap;
 	}
 
+	/**
+	 * Gets the mappings.
+	 * 
+	 * @return the mappings
+	 */
 	public List<PropertyInfo> getMappings() {
 		return mappings;
 	}
 
+	/**
+	 * Gets the main object class.
+	 * 
+	 * @return the main object class
+	 */
 	public String getMainObjectClass() {
 		return mainObjectClass;
 	}
 
+	/**
+	 * Gets the object classes.
+	 * 
+	 * @return the object classes
+	 */
 	public String[] getObjectClasses() {
 		return objectClasses;
 	}
 
+	/**
+	 * Gets the base dn.
+	 * 
+	 * @return the base dn
+	 */
 	public String getBaseDN() {
 		return baseDN;
 	}
