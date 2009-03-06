@@ -1,11 +1,6 @@
 package com.code.aon.payroll.auxiliares.convenios.calendar;
 
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.List;
-
-import com.code.aon.common.ITransferObject;
 
 
 

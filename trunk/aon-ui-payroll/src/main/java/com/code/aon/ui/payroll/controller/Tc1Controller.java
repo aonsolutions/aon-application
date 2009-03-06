@@ -1,8 +1,6 @@
 package com.code.aon.ui.payroll.controller;
 
 import java.sql.Date;
-import java.util.Calendar;
-
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.ManagerBeanException;
@@ -10,7 +8,6 @@ import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.Tipccc;
 import com.code.aon.payroll.principales.empresa.Actividad;
 import com.code.aon.payroll.principales.personas.Persona;
-import com.code.aon.payroll.resultados.seguros.Lintc2;
 import com.code.aon.payroll.resultados.seguros.Tc1;
 import com.code.aon.payroll.resultados.seguros.Tc2;
 

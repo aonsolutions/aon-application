@@ -1,56 +1,22 @@
 package com.code.aon.ui.payroll.controller;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
-
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.payroll.auxiliares.convenios.Convenio;
-import com.code.aon.payroll.auxiliares.organismosyentidades.Mutua;
-import com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal;
-import com.code.aon.payroll.avanzadas.hojastrabajo.Httincidencia;
-import com.code.aon.payroll.avanzadas.hojastrabajo.Httrabajador;
 import com.code.aon.payroll.avanzadas.simulacion.Costes;
 import com.code.aon.payroll.cotizacion.Base;
 import com.code.aon.payroll.cotizacion.Epigrafe;
-import com.code.aon.payroll.cotizacion.Linepigr;
 import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
-import com.code.aon.payroll.dao.IPayrollAlias;
-import com.code.aon.payroll.enumeration.EnvioSS2;
-import com.code.aon.payroll.enumeration.Epigrafes;
-import com.code.aon.payroll.enumeration.IndRegimen;
 import com.code.aon.payroll.enumeration.Minusvalia;
-import com.code.aon.payroll.enumeration.Modpago;
 import com.code.aon.payroll.enumeration.Prorateo;
 import com.code.aon.payroll.enumeration.Sitfami;
 import com.code.aon.payroll.enumeration.Timecont;
-import com.code.aon.payroll.enumeration.Tipcuenta;
-import com.code.aon.payroll.enumeration.Tiponomina;
-import com.code.aon.payroll.geograficas.Provincia;
-import com.code.aon.payroll.principales.Cliente;
-import com.code.aon.payroll.principales.empresa.Actividad;
-import com.code.aon.payroll.principales.empresa.Emprdom;
-import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.payroll.principales.persona.Trabajador;
-import com.code.aon.payroll.principales.personas.Persona;
-import com.code.aon.payroll.tipos.Tipovia;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
-import com.code.aon.ui.form.LinesController;
 
 public class CostesController extends PayrollBasicController	 {
 

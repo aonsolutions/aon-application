@@ -4,19 +4,15 @@ package com.code.aon.payroll.principales;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
 import com.code.aon.payroll.divisa.Divisa;
-import com.code.aon.payroll.enumeration.EnvioSS;
 import com.code.aon.payroll.enumeration.EnvioSS2;
 import com.code.aon.payroll.geograficas.Pais;
 import com.code.aon.payroll.geograficas.Provincia;
-import com.code.aon.payroll.irpf.Linirpf;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Empresario;
 import com.code.aon.payroll.tipos.Tipovia;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;

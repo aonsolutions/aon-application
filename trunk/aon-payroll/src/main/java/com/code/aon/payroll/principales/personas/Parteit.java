@@ -34,11 +34,11 @@ public class Parteit implements ITransferObject {
 	private ParteitPK id;
 	private String numcolbaj;
 	private String ciasbaj;
-	private String bajproc;
+	private Boolean bajproc;
 	private Date fecfin;
 	private String numcolalt;
 	private String ciasalt;
-	private String altproc;
+	private Boolean altproc;
 	private Tipoit tipoit;
 	private Boolean recaida;
 	private Date feciniori;
@@ -51,7 +51,7 @@ public class Parteit implements ITransferObject {
 	private BigDecimal prest60;
 	private BigDecimal prest75;
 	private Boolean procesado;
-	private String riesgo;
+	private Boolean riesgo;
 	private Trabajador emprper;
 
 	// private List<Parteconf> parteconfList = new ArrayList<Parteconf>(0);
@@ -89,12 +89,13 @@ public class Parteit implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Baja procesada")
+	@Type(type="siNoType" )
 	@Column(name = "bajproc", nullable = false, length = 1)
-	public String getBajproc() {
+	public Boolean getBajproc() {
 		return this.bajproc;
 	}
 
-	public void setBajproc(String bajproc) {
+	public void setBajproc(Boolean bajproc) {
 		this.bajproc = bajproc;
 	}
 
@@ -130,12 +131,13 @@ public class Parteit implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Alta procesada")
+	@Type(type="siNoType" )
 	@Column(name = "altproc", nullable = false, length = 1)
-	public String getAltproc() {
+	public Boolean getAltproc() {
 		return this.altproc;
 	}
 
-	public void setAltproc(String altproc) {
+	public void setAltproc(Boolean altproc) {
 		this.altproc = altproc;
 	}
 
@@ -265,12 +267,13 @@ public class Parteit implements ITransferObject {
 	}
 
 	// @DataDefinition(label="Riesgo Embarazo")
+	@Type(type="siNoType" )
 	@Column(name = "riesgo", length = 1)
-	public String getRiesgo() {
+	public Boolean getRiesgo() {
 		return this.riesgo;
 	}
 
-	public void setRiesgo(String riesgo) {
+	public void setRiesgo(Boolean riesgo) {
 		this.riesgo = riesgo;
 	}
 

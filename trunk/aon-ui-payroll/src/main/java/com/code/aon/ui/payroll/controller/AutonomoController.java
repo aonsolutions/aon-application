@@ -15,25 +15,12 @@ import org.hibernate.Query;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Mutua;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal;
 import com.code.aon.payroll.dao.IPayrollAlias;
-import com.code.aon.payroll.divisa.Divisa;
-import com.code.aon.payroll.enumeration.Claveper;
-import com.code.aon.payroll.enumeration.EnvioSS2;
-import com.code.aon.payroll.enumeration.IndicadorAnio;
-import com.code.aon.payroll.enumeration.Ingreso;
-import com.code.aon.payroll.enumeration.Retribuciones;
-import com.code.aon.payroll.enumeration.TipoProrrateo;
-import com.code.aon.payroll.geograficas.Pais;
 import com.code.aon.payroll.geograficas.Provincia;
-import com.code.aon.payroll.principales.Cliente;
 import com.code.aon.payroll.principales.autonomos.Autonomos;
-import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.payroll.principales.personas.Persona;
-import com.code.aon.payroll.tipos.Documento;
-import com.code.aon.payroll.tipos.Empresario;
 import com.code.aon.payroll.tipos.Tipovia;
 
 public class AutonomoController extends PayrollBasicController {

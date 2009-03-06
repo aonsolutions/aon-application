@@ -17,7 +17,6 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.auxiliares.convenios.Convenio;
-import com.code.aon.payroll.cotizacion.CnaeMaestro;
 import com.code.aon.payroll.enumeration.EnvioSS2;
 import com.code.aon.payroll.enumeration.IndRegimen;
 import com.code.aon.payroll.enumeration.Modpago;

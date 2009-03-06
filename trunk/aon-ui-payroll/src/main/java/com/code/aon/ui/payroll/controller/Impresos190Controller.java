@@ -14,7 +14,6 @@ import com.code.aon.payroll.auxiliares.Admon;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.geograficas.Provincia;
 import com.code.aon.payroll.principales.empresa.Empresa;
-import com.code.aon.payroll.resultados.irpf.Impresos11x;
 import com.code.aon.payroll.resultados.irpf.Impresos190;
 
 public class Impresos190Controller extends PayrollBasicController {

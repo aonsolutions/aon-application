@@ -4,10 +4,7 @@ import com.code.aon.payroll.geograficas.Provincia;
 import com.code.aon.payroll.tipos.Tipovia;
 
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;

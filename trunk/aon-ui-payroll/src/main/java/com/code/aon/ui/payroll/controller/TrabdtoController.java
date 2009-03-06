@@ -10,7 +10,6 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.payroll.enumeration.Afectados;
 import com.code.aon.payroll.enumeration.ImporteIndicar;
-import com.code.aon.payroll.enumeration.TipoImporte;
 import com.code.aon.ui.form.LinesController;
 
 public class TrabdtoController extends LinesController {

@@ -7,13 +7,9 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
-import com.code.aon.payroll.avanzadas.hojastrabajo.Httrabajador;
 import com.code.aon.payroll.avanzadas.simulacion.Costes;
-import com.code.aon.payroll.avanzadas.simulacion.Lbonifica;
 import com.code.aon.payroll.avanzadas.simulacion.Lcomunica;
 import com.code.aon.payroll.enumeration.Ascdes;
-import com.code.aon.payroll.enumeration.Sitfami;
-import com.code.aon.payroll.principales.empresa.Emprccos;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 

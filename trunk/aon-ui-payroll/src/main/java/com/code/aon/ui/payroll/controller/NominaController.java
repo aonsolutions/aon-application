@@ -11,7 +11,6 @@ import javax.faces.model.SelectItem;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.Tipnomina;
-import com.code.aon.payroll.principales.empresa.Actividad;
 import com.code.aon.payroll.principales.persona.Trabajador;
 import com.code.aon.payroll.resultados.nomina.Nomina;
 

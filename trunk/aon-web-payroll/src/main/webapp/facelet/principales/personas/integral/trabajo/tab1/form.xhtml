@@ -14,17 +14,19 @@
 			<aon:div styleClass="aon-lookup">
 				<aon:lookupInputText id="convenio_cdg"
 					lookup="#{convenioLookup}" reRender="convenio_descripcion"
-					value="#{trabajo.to.convenio.cdg}" size="5">
+					value="#{trabajo.convenio.cdg}" size="5">
 				</aon:lookupInputText>
 				<aon:lookupButton id="convenio_lookup"
 					windowTitle="#{appBundle.aon_payroll_principales_trabajo_cod_conv}"
 					selectReRender="convenio_cdg,convenio_descripcion"
 					lookup="#{convenioLookup}" minHeight="440"
-					property="#{trabajo.to.convenio}">
+					property="#{trabajo.convenio}">
 				</aon:lookupButton>
+				
 				<aon:inputText id="convenio_descripcion"
-					value="#{(trabajo.to.convenio.description!=null)?(trabajo.to.convenio.description):('')}"
+					value="#{(trabajo.convenio.description!=null)?(trabajo.convenio.description):('')}"
 					size="45" disabled="true" />
+				
 			</aon:div>
 			
 			<aon:outputLabel

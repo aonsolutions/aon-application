@@ -7,35 +7,23 @@ import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.divisa.Divisa;
-import com.code.aon.payroll.enumeration.ConciertoEconomico;
-import com.code.aon.payroll.enumeration.EnvioSS;
 import com.code.aon.payroll.enumeration.EnvioSS2;
-import com.code.aon.payroll.enumeration.IndicadorIrpf;
 import com.code.aon.payroll.geograficas.Pais;
 import com.code.aon.payroll.geograficas.Provincia;
 import com.code.aon.payroll.principales.Cliente;
-import com.code.aon.payroll.principales.Domicilio;
-import com.code.aon.payroll.principales.empresa.Actividad;
-import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Empresario;
 import com.code.aon.payroll.tipos.Tipovia;
-import com.code.aon.ui.form.FormUtil;
 
 public class ClienteController extends PayrollBasicController {
 

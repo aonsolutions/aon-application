@@ -4,7 +4,6 @@ package com.code.aon.ui.payroll.event;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.principales.Cliente;
 import com.code.aon.payroll.principales.empresa.Actividad;
-import com.code.aon.payroll.principales.empresa.Emprdom;
 import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.payroll.principales.empresa.Emprlban;
 import com.code.aon.ui.form.FormUtil;

@@ -1,6 +1,5 @@
 package com.code.aon.ui.payroll.controller;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -8,12 +7,10 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 
 import com.code.aon.common.BeanManager;
@@ -21,16 +18,12 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.payroll.cotizacion.Linepigr;
 import com.code.aon.payroll.dao.IPayrollAlias;
-import com.code.aon.payroll.enumeration.Epigrafes;
-import com.code.aon.payroll.enumeration.Tipcuenta;
 import com.code.aon.payroll.enumeration.Tipdom;
 import com.code.aon.payroll.principales.Cliente;
 import com.code.aon.payroll.principales.empresa.Actividad;
 import com.code.aon.payroll.principales.empresa.Emprdom;
 import com.code.aon.ql.Criteria;
-import com.code.aon.payroll.principales.empresa.Empresa;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;

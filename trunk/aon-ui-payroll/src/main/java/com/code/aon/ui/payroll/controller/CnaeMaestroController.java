@@ -9,8 +9,6 @@ import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
@@ -21,9 +19,6 @@ import com.code.aon.payroll.cotizacion.CnaeMaestro;
 import com.code.aon.payroll.cotizacion.Ocupacion;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.form.IController;
-import com.code.aon.ui.util.AonUtil;
 
 public class CnaeMaestroController extends PayrollBasicController implements IPayrollConstants {
 

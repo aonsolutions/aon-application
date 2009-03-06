@@ -1,25 +1,8 @@
 package com.code.aon.ui.payroll.event;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
-
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ManagerBeanException;
-import com.code.aon.payroll.cotizacion.CnaeMaestro;
-import com.code.aon.payroll.cotizacion.Ocupacion;
-import com.code.aon.payroll.dao.IPayrollAlias;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.form.IController;
-import com.code.aon.ui.form.PageDataModel;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.payroll.controller.CnaeMaestroController;
 import com.code.aon.ui.payroll.controller.IPayrollConstants;
 

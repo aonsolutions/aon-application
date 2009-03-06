@@ -10,10 +10,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
-
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.payroll.auxiliares.convenios.Complemento;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.FijoVariable;
@@ -21,8 +18,6 @@ import com.code.aon.payroll.enumeration.IndiceComplemento;
 import com.code.aon.payroll.enumeration.Retribuciones;
 import com.code.aon.payroll.enumeration.TipoComplemento;
 import com.code.aon.payroll.principales.persona.Trabajador;
-import com.code.aon.payroll.principales.personas.Percep;
-import com.code.aon.payroll.resultados.nomina.Nomina;
 import com.code.aon.ui.form.LinesController;
 
 public class PercepController extends LinesController {

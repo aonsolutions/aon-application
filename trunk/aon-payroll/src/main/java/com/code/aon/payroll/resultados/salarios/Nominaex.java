@@ -24,7 +24,6 @@ import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.auxiliares.convenios.Complemento;
-import com.code.aon.payroll.avanzadas.kartel.Linpercepcion;
 import com.code.aon.payroll.divisa.Divisa;
 import com.code.aon.payroll.enumeration.FijoVariable;
 import com.code.aon.payroll.principales.persona.Trabajador;

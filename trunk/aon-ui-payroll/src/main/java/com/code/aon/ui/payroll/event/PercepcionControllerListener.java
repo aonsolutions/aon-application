@@ -1,17 +1,12 @@
 package com.code.aon.ui.payroll.event;
 
-import java.util.Date;
-
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
-import com.code.aon.payroll.avanzadas.kartel.Linpercepcion;
 import com.code.aon.payroll.avanzadas.kartel.Percepcion;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.payroll.controller.IPayrollConstants;
-import com.code.aon.ui.payroll.controller.Utils;
 import com.code.aon.ui.util.AonUtil;
 
 public class PercepcionControllerListener extends ControllerAdapter {
