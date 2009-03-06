@@ -12,7 +12,7 @@ import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
 import com.code.aon.ldap.IAonObjectClasses;
 
-@EntryObject(mainObjectClass=IAonObjectClasses.DOMAIN, objectClasses={IAonObjectClasses.TOP})
+@EntryObject(baseDN="ou=domains",mainObjectClass=IAonObjectClasses.DOMAIN, objectClasses={IAonObjectClasses.TOP})
 public class Domain implements ITransferObject {
 
 	private static final long serialVersionUID = -4808900608917312113L;
@@ -29,11 +29,13 @@ public class Domain implements ITransferObject {
 	
 	private String mobile;
 	
-	private Boolean dnsManagement;
-	
 	private Integer status;
 	
+	private Boolean dnsManagement;
+	
 	private Boolean userManagement;
+	
+	private Boolean domainManagement;
 	
 	private byte[] jpegLogo;
 
@@ -119,6 +121,15 @@ public class Domain implements ITransferObject {
 
 	public void setUserManagement(Boolean userManagement) {
 		this.userManagement = userManagement;
+	}
+	
+	@Attribute(name="domainManagement")	
+	public Boolean getDomainManagement() {
+		return domainManagement;
+	}
+
+	public void setDomainManagement(Boolean domainManagement) {
+		this.domainManagement = domainManagement;
 	}
 
 	@Attribute(name="jpegLogo")
