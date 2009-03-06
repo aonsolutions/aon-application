@@ -15,10 +15,25 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 public @interface EntryObject {
 
+	/**
+	 * Main object class.
+	 * 
+	 * @return the string
+	 */
 	String mainObjectClass();
 	
+    /**
+     * Object classes.
+     * 
+     * @return the string[]
+     */
     String[] objectClasses() default {};
     
+    /**
+     * Base dn.
+     * 
+     * @return the string
+     */
     String baseDN() default "";
 	
 }

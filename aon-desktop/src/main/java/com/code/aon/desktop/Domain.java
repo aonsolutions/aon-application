@@ -31,11 +31,11 @@ public class Domain implements ITransferObject {
 	
 	private Integer status;
 	
-	private Boolean dnsManagement;
+	private boolean dnsManagement;
 	
-	private Boolean userManagement;
+	private boolean userManagement;
 	
-	private Boolean domainManagement;
+	private boolean domainManagement;
 	
 	private byte[] jpegLogo;
 
