@@ -28,8 +28,9 @@
 				styleClass="aon-scroll-area aon-scroll-area-principales">
 
 				<aon:div styleClass="aon-scroll-area aon-scroll-area-principales">
-	  	<!--  -->	  	<aon:panelGrid columns="4" dir="true" width="100%">
-
+  
+					<aon:panelGrid columns="4" dir="true" width="100%">
+  
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_resultados_tc2_act}" />
 						<aon:div styleClass="aon-lookup">
@@ -91,20 +92,17 @@
 
 						<aon:selectBooleanCheckbox value="#{tc1.to.comision}" />
 
-
 					</aon:panelGrid>
+					
 				</aon:div>
+	
 				<aon:div styleClass="aon-scroll-area aon-scroll-area-principales">
-
+  
 					<aon:outputText style="float:left;font-weight:bold"
 						value="#{appBundle.aon_payroll_resultados_tc1_reggen}" />
 
-					<aon:panelGrid columns="6" dir="true" width="100%"
-					>
-
-
-
-
+					<aon:panelGrid columns="6" dir="true" width="100%">
+  
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_resultados_tc2_claie}" />
 
@@ -122,17 +120,14 @@
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_resultados_tc2_codcta}" />
 
-						<aon:inputText id="Acti7_descripcion"
-							value="#{tc1.to.codccc}" size="30"
-							disabled="true" />
+						<aon:inputText id="Acti7_descripcion" value="#{tc1.to.codccc}"
+							size="30" disabled="true" />
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_resultados_tc2_tipocuen}" />
 
-						<aon:inputText id="Acti8_descripcion"
-							value="#{tc1.to.codccc}" size="30"
-							disabled="true" />
-
+						<aon:inputText id="Acti8_descripcion" value="#{tc1.to.codccc}"
+							size="30" disabled="true" />
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_resultados_tc2_numtra}" />
@@ -141,7 +136,6 @@
 
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_resultados_tc1_desde}" />
-
 
 						<aon:div>
 							<aon:inputText value="#{tc1.to.desdeMes}" size="10" />
@@ -155,9 +149,8 @@
 							<aon:inputText value="#{tc1.to.hastaAnio}" size="10" />
 						</aon:div>
 
-
-
 					</aon:panelGrid>
+
 				</aon:div>
 
 				<aon:div styleClass="aon-scroll-area aon-scroll-area-nom">
@@ -165,11 +158,11 @@
 						value="#{appBundle.aon_payroll_resultados_tc1_cot}" />
 					<aon:panelGrid columns="4" dir="true" width="100%"
 						style="margin-bottom=2px;  float:right">
+
 						<f:facet name="header">
 
 						</f:facet>
-
-
+   
 						<aon:outputText value="             " />
 						<aon:outputLabel
 							value="#{appBundle.aon_payroll_resultados_tc1_bas}" />
@@ -243,8 +236,10 @@
 						<aon:inputText value="#{tc1.to.cuotaDedcol}" size="40" />
 
 					</aon:panelGrid>
+	
 					<h:panelGrid columns="2" dir="true" width="100%">
 						<aon:div styleClass="aon-scroll-area aon-scroll-area-nom">
+   
 							<h:panelGrid columns="2" dir="true" width="100%">
 
 								<f:facet name="header">
@@ -255,19 +250,20 @@
 									value="#{appBundle.aon_payroll_resultados_tc1_numss}" />
 
 								<aon:outputText value="#{tc1.to.codper.numss}" size="15" />
-	                          <aon:outputLabel
+								<aon:outputLabel
 									value="#{appBundle.aon_payroll_resultados_tc1_iper}" />
 
 								<aon:outputText value="#{tc1.to.codper.numdoc}" size="15" />
 
-                                 </h:panelGrid>
-                                 <h:panelGrid columns="4" dir="true" width="100%">
+							</h:panelGrid>
+							
+							<h:panelGrid columns="4" dir="true" width="100%">
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_resultados_tc1_claipf}" />
 
 								<aon:outputText value="#{tc1.to.codper.tipdoc}" size="5" />
 
-							
+
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_resultados_tc1_dihor}" />
 
@@ -292,8 +288,9 @@
 									value="#{appBundle.aon_payroll_resultados_tc1_diasmat}" />
 
 								<aon:outputText value="#{tc1.to.diasmat}" size="5" />
-	                         </h:panelGrid>
-	                         <h:panelGrid columns="2" dir="true" width="100%">
+							</h:panelGrid>
+							
+							<h:panelGrid columns="2" dir="true" width="100%">
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_resultados_tc1_sitesp}" />
 
@@ -313,64 +310,64 @@
 									value="#{appBundle.aon_payroll_resultados_tc1_horas}" />
 								<aon:outputLabel value="   " />
 
-	                           </h:panelGrid>
-								<h:panelGrid columns="4" dir="true" width="100%">
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_resultados_tc1_numeo}" />
+							</h:panelGrid>
+							
+							<h:panelGrid columns="4" dir="true" width="100%">
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_resultados_tc1_numeo}" />
 
-									<aon:outputText value="#{tc1.to.horcomp}" size="5" />
+								<aon:outputText value="#{tc1.to.horcomp}" size="5" />
 
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_resultados_tc1_imp}" />
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_resultados_tc1_imp}" />
 
-									<aon:outputText value="#{tc1.to.impcomp}" size="5" />
-								</h:panelGrid>
-								<h:panelGrid columns="2" dir="true" width="100%">
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_resultados_tc1_boni2}" />
+								<aon:outputText value="#{tc1.to.impcomp}" size="5" />
+							</h:panelGrid>
+							
+							<h:panelGrid columns="2" dir="true" width="100%">
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_resultados_tc1_boni2}" />
 
-									<aon:outputLabel value="   " />
+								<aon:outputLabel value="   " />
 
-								</h:panelGrid>
-								<h:panelGrid columns="4" dir="true" width="100%">
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_resultados_tc1_hpres}" />
+							</h:panelGrid>
+							
+							<h:panelGrid columns="4" dir="true" width="100%">
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_resultados_tc1_hpres}" />
 
-									<aon:outputText value="#{tc1.to.horpres}" size="5" />
+								<aon:outputText value="#{tc1.to.horpres}" size="5" />
 
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_resultados_tc1_imp}" />
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_resultados_tc1_imp}" />
 
-									<aon:outputText value="#{tc1.to.imppres}" size="5" />
+								<aon:outputText value="#{tc1.to.imppres}" size="5" />
 
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_resultados_tc1_hdist}" />
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_resultados_tc1_hdist}" />
 
-									<aon:outputText value="#{tc1.to.hordist}" size="5" />
+								<aon:outputText value="#{tc1.to.hordist}" size="5" />
 
-									<aon:outputLabel
-										value="#{appBundle.aon_payroll_resultados_tc1_imp}" />
+								<aon:outputLabel
+									value="#{appBundle.aon_payroll_resultados_tc1_imp}" />
 
-									<aon:outputText value="#{tc1.to.impdist}" size="5" />
+								<aon:outputText value="#{tc1.to.impdist}" size="5" />
 
-								</h:panelGrid>
+							</h:panelGrid>
 
-								<h:panelGrid columns="2" dir="true" width="100%">
+							<h:panelGrid columns="2" dir="true" width="100%">
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_resultados_tc1_apeynom}" />
 
 								<aon:outputText value="#{tc1.to.codper.aliastc2}" size="5" />
-
-
-
 							</h:panelGrid>
+							
 						</aon:div>
 
 						<aon:div>
+    						
 							<h:panelGrid columns="2" dir="true" width="100%"
 								style="margin-bottom=2px;">
-
-
 
 								<aon:outputLabel style="float:right"
 									value="#{appBundle.aon_payroll_resultados_tc1_comp}" />
@@ -389,10 +386,8 @@
 
 								</aon:div>
 
-
 								<aon:outputLabel style="float:right"
 									value="#{appBundle.aon_payroll_resultados_tc1_lkuido}" />
-
 
 								<aon:inputText style="float:right" value="#{tc1.to.liqCotgen}"
 									size="40" />
@@ -401,8 +396,6 @@
 									value="#{appBundle.aon_payroll_resultados_tc1_acc}" />
 
 								<aon:outputLabel style="float:right" value="   " />
-
-
 
 								<aon:outputLabel style="float:right"
 									value="#{appBundle.aon_payroll_resultados_tc1_sumatot}" />
@@ -419,8 +412,6 @@
 										size="5" />
 								</aon:div>
 
-
-
 								<aon:outputLabel style="float:right"
 									value="#{appBundle.aon_payroll_resultados_tc1_compen}" />
 
@@ -431,9 +422,9 @@
 								<aon:outputLabel style="float:right"
 									value="#{appBundle.aon_payroll_resultados_tc1_liqu}" />
 
-
 								<aon:inputText style="float:right" value="#{tc1.to.liqAcc}"
 									size="40" />
+
 							</h:panelGrid>
 
 							<h:panelGrid columns="4" dir="true" width="100%"
@@ -579,10 +570,13 @@
 
 
 							</h:panelGrid>
+							
 						</aon:div>
 
 					</h:panelGrid>
+
 				</aon:div>
+
 			</aon:div>
 		</aon:form>
 
