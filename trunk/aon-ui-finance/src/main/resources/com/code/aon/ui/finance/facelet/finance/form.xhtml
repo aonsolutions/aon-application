@@ -239,7 +239,7 @@
 									<f:facet name="header">
 										<aon:outputText value="&#160;" />
 									</f:facet>
-									<aon:confirmButton id="cancel"
+									<aon:confirmButton id="undo"
 										title="#{financeBundle.finance_tracking_undo}"
 										immediate="true" rendered="#{financeTracking.unrecordable}" 
 										confirmTitle="#{bundle.aon_confirm_title}"
@@ -257,7 +257,7 @@
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
-		<ui:include src="/com/code/aon/ui/finance/facelet/financePayment/modalPanel.xhtml" />
-		<ui:include src="/com/code/aon/ui/finance/facelet/financeReturn/modalPanel.xhtml" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalPayment.xhtml" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalReturn.xhtml" />
 	</ui:define>
 </ui:composition>

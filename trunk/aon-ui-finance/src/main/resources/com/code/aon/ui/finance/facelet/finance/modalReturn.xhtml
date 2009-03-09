@@ -44,8 +44,8 @@
 											target="#{finance.showFinanceReturnWindow}"
 											value="#{false}" />
 									</aon:commandButton>
-									<aon:commandButton id="financeReturn-back"
-										value="#{bundle.aon_back}"
+									<aon:commandButton id="financeReturn-cancel"
+										value="#{bundle.aon_cancel}"
 										reRender="showFinanceReturnWindow"
 										immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel">
@@ -58,14 +58,14 @@
 									<aon:panelGrid id="menuGrid" columns="2" dir="true">
 
 										<aon:outputLabel for="Finance_returnDate"
-											value="#{bundle.aon_date}" />
+											value="#{financeBundle.finance_return_date}" />
 										<aon:selectInputDate id="Finance_returnDate" 
 											value="#{finance.returnDate}"
 											timeZone="#{timeZoneController.timeZone}"
 											popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 										<aon:outputLabel for="Finance_returnExpenses"
-											value="#{bundle.aon_amount}" />
+											value="#{financeBundle.finance_expenses}" />
 										<aon:inputText id="Finance_returnExpenses"
 											value="#{finance.returnExpenses}" size="10" />
 
