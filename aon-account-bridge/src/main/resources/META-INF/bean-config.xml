@@ -27,4 +27,11 @@
 		</listeners>
 	</bean>
 
+	<bean description="Borrado de la tabla de enlace entre seguimiento de vencimientos y apuntes">
+		<pojo>com.code.aon.account.bridge.AccountEntryFinanceTracking</pojo>
+		<listeners>
+	        <listener>com.code.aon.account.bridge.event.AccountEntryFinanceTrackingBeanListener</listener>
+		</listeners>
+	</bean>
+
 </bean-config>
