@@ -1,14 +1,12 @@
 package com.code.aon.ui.finance.event;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.Bank;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.registry.RegistryBank;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.finance.controller.FinanceController;
 import com.code.aon.ui.form.event.ControllerSearchListener;
@@ -21,7 +19,7 @@ public class FinanceSearchListener extends ControllerSearchListener {
 
 	private Creditor creditor;
 
-	private Bank bank;
+	private RegistryBank registryBank;
 	
 	public Customer getCustomer() {
 		return customer;
@@ -47,12 +45,12 @@ public class FinanceSearchListener extends ControllerSearchListener {
 		this.creditor = creditor;
 	}
 	
-	public Bank getBank() {
-		return bank;
+	public RegistryBank getRegistryBank() {
+		return registryBank;
 	}
 
-	public void setBank(Bank bank) {
-		this.bank = bank;
+	public void setRegistryBank(RegistryBank registryBank) {
+		this.registryBank = registryBank;
 	}
 
 	@Override
@@ -60,7 +58,7 @@ public class FinanceSearchListener extends ControllerSearchListener {
 		setCustomer(new Customer());
 		setSupplier(new Supplier());
 		setCreditor(new Creditor());
-		setBank(new Bank());
+		setRegistryBank(new RegistryBank());
 	}
 	
 	@Override
@@ -76,8 +74,8 @@ public class FinanceSearchListener extends ControllerSearchListener {
 		if ((getCreditor() != null) && (getCreditor().getId() != null)) {
 			criteria.addEqualExpression(getController().getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID), getCreditor().getId());			
 		}			
-		if ((getBank() != null) && (!StringUtils.isEmpty(getBank().getCode()))) {
-			criteria.addEqualExpression(getController().getFieldName(IFinanceAlias.FINANCE_BANK_CODE), getBank().getCode());			
+		if ((getRegistryBank() != null) && (getRegistryBank().getId() != null)) {
+			criteria.addEqualExpression(getController().getFieldName(IFinanceAlias.FINANCE_BANK_ACCOUNT), getRegistryBank().getBankAccount());			
 		}
 	}
 
