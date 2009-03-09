@@ -51,6 +51,15 @@ public class PercepControllerListener extends ControllerAdapter implements
 			throws ControllerListenerException {
 
 		((PercepController) getController()).generarNumero(null);
+		
+		PercepBasicController pbc = (PercepBasicController)FormUtil.getController(IPayrollConstants.PERCEP_BASIC_CONTROLLER_NAME);
+		try {
+			pbc.setModel(this.getController().getModel());
+			pbc.onSelect(null);
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 }
