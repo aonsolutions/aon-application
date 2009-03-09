@@ -44,11 +44,18 @@
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
-				<value>#{fBatchSearch}</value>
-				<value>#{fBatchDetailListener}</value>
 				<value>#{fBatchControllerListener}</value>
+				<value>#{fBatchDetailListener}</value>
 			</list-entries>
 		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>fBatchControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.FBatchControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
 	<managed-bean>
@@ -70,30 +77,6 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>fBatchSearch</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.event.FBatchSearchListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>fBatchControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.event.FBatchControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>fBatchPrinter</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.fbatch.print.FBatchPrinter
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- ************* FBATCHDETAIL ***************** -->
@@ -145,6 +128,15 @@
 		<managed-bean-name>fBatchDetailControllerListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.finance.event.FBatchDetailControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************* FBATCHPRINTER ***************** -->
+	<managed-bean>
+		<managed-bean-name>fBatchPrinter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.fbatch.print.FBatchPrinter
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
