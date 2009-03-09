@@ -91,7 +91,7 @@ public class SaleInvoiceFinanceController extends LinesController {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			RegistryBank rbank = (RegistryBank) event.getNewValue();
 			finance.setBank(rbank.getBank());
-			finance.setBankAccount( rbank.getBankAccount() );			
+			finance.setBankAccount(rbank.getBankAccount());			
 		}
 	}
 
