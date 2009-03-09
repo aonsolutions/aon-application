@@ -27,7 +27,8 @@ function concatHost() {
 		if (document.forms[0].j_username.value.indexOf("@") < 0) {
 			var context = location.pathname.substring( 1, location.pathname.length );
 			context = "/" + context.substring( 0, context.indexOf("/") );
-			hostname = calcHost(location.hostname);
+			// hostname = calcHost(location.hostname);
+			hostname = document.forms[0].login_domain.value;
 			document.forms[0].j_username.value = document.forms[0].j_username_view.value + '@' + hostname + context;
 		}
 	}
