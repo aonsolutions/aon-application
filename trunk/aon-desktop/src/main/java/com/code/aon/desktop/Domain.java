@@ -38,6 +38,10 @@ public class Domain implements ITransferObject {
 	private boolean domainManagement;
 	
 	private byte[] jpegLogo;
+	
+	public Domain() {
+		this.status = 0;
+	}
 
 	@Id
 	@GeneratedValue
