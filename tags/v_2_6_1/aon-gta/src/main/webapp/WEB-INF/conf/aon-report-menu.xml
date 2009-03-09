@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<root key="AON_REPORT" descriptionKey="aon_application_menu_title" ref="firstContent">
+	<menu ref="content" key="aon_sales" descriptionKey="aon_sales_desc">
+		<option key="Ventas_Anuales.xml" 
+    		ref="/hyperview.faces?fileName=Ventas_Anuales.xml" 
+    		target="_blank" 
+	    	contextRelative="true"
+    		external="true" />
+	    <option key="Ventas.xml" 
+    		ref="/hyperview.faces?fileName=Ventas.xml" 
+    		target="_blank" 
+	    	contextRelative="true"
+    		external="true" />
+	    <option key="Ventas_Comparativa_Periodos.xml" 
+    		ref="/hyperview.faces?fileName=Ventas_Comparativa_Periodos.xml" 
+    		target="_blank" 
+	    	contextRelative="true"
+    		external="true" />
+    	<option key="Ventas_12_1.xml" 
+    		ref="/hyperview.faces?fileName=Ventas_12_1.xml" 
+    		target="_blank" 
+	    	contextRelative="true"
+    		external="true" />	
+    	<option key="ABC_Ventas.xml" 
+    		ref="/hyperview.faces?fileName=ABC_Ventas.xml" 
+    		target="_blank" 
+	    	contextRelative="true"
+    		external="true" />
+    	<option key="Comparativa_Beneficios.xml" 
+    		ref="/hyperview.faces?fileName=Comparativa_Beneficios.xml" 
+    		target="_blank" 
+	    	contextRelative="true"
+    		external="true" />	
+    	<option key="Matricula.xml" 
+    		ref="/hyperview.faces?fileName=Matricula.xml" 
+    		target="_blank" 
+	    	contextRelative="true"
+    		external="true" />	
+    	<option key="Vehiculos_por_Titulares.xml" 
+    		ref="/hyperview.faces?fileName=Vehiculos_por_Titulares.xml" 
+    		target="_blank" 
+	    	contextRelative="true"
+    		external="true" />	
+		<option id="productivity" 
+			key="aon_labour_productivity" 
+			descriptionKey="aon_labour_productivity_desc" 
+			ref="productivity">
+			<actionListener action="#{labourReport.onEditSearch}"/>
+		</option>		
+	</menu>
+	<menu ref="content" key="aon_purchase" descriptionKey="aon_purchase_desc">
+		<option key="Compras_Anuales.xml" 
+    		ref="/hyperview.faces?fileName=Compras_Anuales.xml" 
+    		target="_blank" 
+	    	contextRelative="true"
+    		external="true" />
+		<option key="Compras.xml" 
+    		ref="/hyperview.faces?fileName=Compras.xml" 
+    		target="_blank" 
+	    	contextRelative="true"
+    		external="true" />
+	    <option key="Compras_Comparativa_Periodos.xml" 
+    		ref="/hyperview.faces?fileName=Compras_Comparativa_Periodos.xml" 
+    		target="_blank" 
+	    	contextRelative="true"
+    		external="true" />
+    	<option key="Compras_12_1.xml" 
+    		ref="/hyperview.faces?fileName=Compras_12_1.xml" 
+    		target="_blank" 
+	    	contextRelative="true"
+    		external="true" />	
+    	<option key="ABC_Compras.xml" 
+    		ref="/hyperview.faces?fileName=ABC_Compras.xml" 
+    		target="_blank" 
+	    	contextRelative="true"
+    		external="true" />	
+	</menu>
+</root>
