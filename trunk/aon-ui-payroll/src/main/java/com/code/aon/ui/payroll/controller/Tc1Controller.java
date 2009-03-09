@@ -26,7 +26,8 @@ public class Tc1Controller extends PayrollBasicController {
 		
 		 Persona p= new Persona();
 		 p.setCdg(1);
-	    ((Tc1)getTo()).setCodper(p);	
+	    ((Tc1)getTo()).setCodper(p);
+	    
 		((Tc1)getTo()).setCodccc(Tipccc.TIP2);
 		
 		Tc2 t= new Tc2();
