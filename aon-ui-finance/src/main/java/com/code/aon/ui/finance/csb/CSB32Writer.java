@@ -19,8 +19,12 @@ import com.code.aon.csb.fd0.model.CSB32.data.Individual;
 import com.code.aon.csb.fd0.model.CSB32.data.Lot;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
+import com.code.aon.finance.Invoice;
+import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.csb.CSBOutput;
+import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.IAddress;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.dao.IRegistryAlias;
@@ -88,27 +92,27 @@ public class CSB32Writer {
 		individual.setAceptedCode(new Integer(2));
 		individual.setAditionalData(fBatchDetail.getFinance().getId().toString());
 		individual.setAmount(new Double(fBatchDetail.getFinance().getTotalAmount()));
-		individual.setDocumentNumber(fBatchDetail.getFinance().getInvoice().getSeries() + "/" + fBatchDetail.getFinance().getInvoice().getNumber());
+		individual.setDocumentNumber(fBatchDetail.getFinance().getInvoice().getReferenceCode());
 		individual.setDocumentType(new Integer(2)); // RECIBO
-		individual.setEfectPayed(fBatchDetail.getFinance().getRegistry().getName() + " " + fBatchDetail.getFinance().getRegistry().getSurname());
+		individual.setEfectPayed(fBatchDetail.getFinance().getInvoice().getRegistryName());
 		individual.setEfectPayer(company.getName());
 		individual.setExpenseClause(new Integer(0));
 		individual.setExpiryDate(fBatchDetail.getFinanceBatch().getIssueDate());
 		individual.setPayedDocument(fBatchDetail.getFinance().getInvoice().getRegistryDocument());
-		RegistryAddress customerAddress = obtainRegistryAddress(fBatchDetail.getFinance().getRegistry().getId());
-		if(customerAddress != null){
-			individual.setPayedPost(customerAddress.getCity());
+		IAddress detailAddress = obtainInvoiceAddress(fBatchDetail.getFinance().getInvoice());
+		if(detailAddress != null){
+			individual.setPayedPost(detailAddress.getCity());
 			try {
-				individual.setPayedPostPostalCode(new Integer(customerAddress.getZip()));
-				individual.setPayedPostProvince(new Integer(customerAddress.getZip().substring(0, 1)));
+				individual.setPayedPostPostalCode(new Integer(detailAddress.getZip()));
+				individual.setPayedPostProvince(new Integer(detailAddress.getZip().substring(0, 1)));
 			} catch (NumberFormatException e) {
 				individual.setPayedPostPostalCode(new Integer(0));
 				individual.setPayedPostProvince(new Integer(0));
 			}
-			individual.setPayedAddress(customerAddress.getAddress() + customerAddress.getAddress2());
+			individual.setPayedAddress(detailAddress.getAddress() + detailAddress.getAddress2());
 		}
 		individual.setPaymentDate(fBatchDetail.getFinance().getDueDate());
-		RegistryAddress companyAddress = obtainRegistryAddress(company.getId());
+		IAddress companyAddress = obtainRegistryAddress(company.getId());
 		if(companyAddress != null){
 			individual.setPaymentPost(companyAddress.getCity());
 			try {
@@ -121,14 +125,27 @@ public class CSB32Writer {
 	}
 
 	@SuppressWarnings("unchecked")
-	private RegistryAddress obtainRegistryAddress(Integer id) throws ManagerBeanException {
+	private IAddress obtainInvoiceAddress(Invoice invoice) throws ManagerBeanException {
+		IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceAddressBean.getFieldName(IFinanceAlias.INVOICE_ADDRESS_INVOICE_ID), invoice.getId());
+		Iterator iterator = invoiceAddressBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			return (InvoiceAddress)iterator.next();
+		}
+		return obtainRegistryAddress(invoice.getRegistry().getId());
+	}
+
+	@SuppressWarnings("unchecked")
+	private IAddress obtainRegistryAddress(Integer registryId) throws ManagerBeanException {
 		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
-		Iterator iter = rAddressBean.getList(criteria).iterator();
-		if(iter.hasNext()){
-			return (RegistryAddress)iter.next();
+		criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), registryId);
+		Iterator iterator = rAddressBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			return (RegistryAddress)iterator.next();
 		}
 		return null;
 	}
+
 }
