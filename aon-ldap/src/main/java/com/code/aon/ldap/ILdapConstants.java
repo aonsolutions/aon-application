@@ -41,5 +41,7 @@ public interface ILdapConstants {
 	String MAIL_ATTRIBUTE = "mail";
 
 	String MOBILE_ATTRIBUTE = "mobile";
+	
+	String HOST_ATTRIBUTE = "host";
 
 }
