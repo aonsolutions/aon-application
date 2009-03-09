@@ -1,7 +1,6 @@
 package com.code.aon.ui.finance.event;
 
 import java.util.Date;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -10,6 +9,7 @@ import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.controller.FBatchController;
 import com.code.aon.ui.finance.controller.FBatchDetailController;
 import com.code.aon.ui.finance.controller.FinanceController;
@@ -29,6 +29,8 @@ public class FBatchControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		FinanceBatch fBatch = (FinanceBatch)event.getController().getTo();
+		fBatch.setPayment(false);
+		fBatch.setIssueDate(new Date());
 		fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
 	}
 	
@@ -51,9 +53,7 @@ public class FBatchControllerListener extends ControllerAdapter {
             Date oldDate = ((FinanceBatch)fBatchController.getManagerBean().getList(criteria).get(0)).getIssueDate();
             if (oldDate.after(fBatch.getIssueDate())) {
                 fBatch.setIssueDate(oldDate);
-
-                ResourceBundle bundle = AonUtil.getResourceBundle("financeBundle");
-                throw new ControllerListenerException(bundle.getString("aon_finance_batch_date_error"));
+                AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_DATE_ERROR);
             }
         } catch (ManagerBeanException e) {
             LOGGER.log(Level.SEVERE, "Error obtaining FinanceBatch with id=" + fBatch.getId(), e);
