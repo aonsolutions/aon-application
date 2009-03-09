@@ -20,8 +20,12 @@ import com.code.aon.csb.fd0.model.CSB58.data.Orderer;
 import com.code.aon.csb.fd0.model.CSB58.data.Presenter;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
+import com.code.aon.finance.Invoice;
+import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.csb.CSBOutput;
+import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.IAddress;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.dao.IRegistryAlias;
@@ -88,36 +92,49 @@ public class CSB58Writer {
             ccc.parse(fBatchDetail.getFinance().getBankAccount().getValue());
             individual.setAccount(ccc);
         }
-		individual.setConcept("FRA:" + fBatchDetail.getFinance().getInvoice().getSeries() + "/" + fBatchDetail.getFinance().getInvoice().getNumber());
-		individual.setInternalCode(fBatchDetail.getFinance().getInvoice().getSeries() + "/" + fBatchDetail.getFinance().getInvoice().getNumber());
+		individual.setConcept("FRA:" + fBatchDetail.getFinance().getInvoice().getReferenceCode());
+		individual.setInternalCode(fBatchDetail.getFinance().getInvoice().getReferenceCode());
 		individual.setName(fBatchDetail.getFinance().getInvoice().getRegistryName());
 		individual.setReferenceCode(fBatchDetail.getFinance().getInvoice().getRegistryDocument()); 
 		individual.setReturnCode(fBatchDetail.getFinance().getId().toString());
 		individual.setExpiryDate(fBatchDetail.getFinance().getDueDate());
-		RegistryAddress customerAddress = obtainRegistryAddress(fBatchDetail.getFinance().getRegistry().getId());
-		if(customerAddress != null){
-			individual.setAccountUserAddress(customerAddress.getAddress());
-			individual.setAccountUserAddress2(customerAddress.getAddress2());
+		IAddress detailAddress = obtainInvoiceAddress(fBatchDetail.getFinance().getInvoice());
+		if(detailAddress != null){
+			individual.setAccountUserAddress(detailAddress.getAddress());
+			individual.setAccountUserAddress2(detailAddress.getAddress2());
 			try {
-				individual.setAccountUserPCode(new Integer(customerAddress.getZip()));
+				individual.setAccountUserPCode(new Integer(detailAddress.getZip()));
 			} catch (NumberFormatException e) {
 				individual.setAccountUserPCode(new Integer(0));
 			}
-			individual.setOrdererCounty(customerAddress.getCity());
+			individual.setOrdererCounty(detailAddress.getCity());
 		}
 		individual.setInitDate(new Date());
 		return individual;
 	}
 	
 	@SuppressWarnings("unchecked")
-	private RegistryAddress obtainRegistryAddress(Integer id) throws ManagerBeanException {
+	private IAddress obtainInvoiceAddress(Invoice invoice) throws ManagerBeanException {
+		IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceAddressBean.getFieldName(IFinanceAlias.INVOICE_ADDRESS_INVOICE_ID), invoice.getId());
+		Iterator iterator = invoiceAddressBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			return (InvoiceAddress)iterator.next();
+		}
+		return obtainRegistryAddress(invoice.getRegistry().getId());
+	}
+
+	@SuppressWarnings("unchecked")
+	private IAddress obtainRegistryAddress(Integer registryId) throws ManagerBeanException {
 		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
-		Iterator iter = rAddressBean.getList(criteria).iterator();
-		if(iter.hasNext()){
-			return (RegistryAddress)iter.next();
+		criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), registryId);
+		Iterator iterator = rAddressBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			return (RegistryAddress)iterator.next();
 		}
 		return null;
 	}
+
 }
