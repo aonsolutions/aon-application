@@ -332,24 +332,8 @@ public class FinanceController extends BasicController {
 		return rBanks;
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<SelectItem> getCompanyRegistryBanks() {
-		List<SelectItem> rBanks = new LinkedList<SelectItem>();
-		try {
-			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), getCompany().getId());
-			Iterator iter = rBankBean.getList(criteria).iterator();
-			while(iter.hasNext()){
-				RegistryBank rBank = (RegistryBank)iter.next();
-				SelectItem item = new SelectItem(rBank, StringUtils.abbreviate(rBank.getBank().getName(), 30)
-						+ " [" + rBank.getBankAccount().toString() + "]");
-				rBanks.add(item);
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining Banks", e);
-		}
-		return rBanks;
+		return getRegistryBanks(getCompany());
 	}
 
 	public boolean isPending() {
