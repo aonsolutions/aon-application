@@ -38,7 +38,7 @@
 				<aon:dataTable id="fbatchData" value="#{fbatch.model}"
 					var="to" rows="20" rendered="#{fbatch.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-numberColumn, aon-editDataTable-textColumn, 
-						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn,
 						aon-editDataTable-textColumn, aon-editDataTable-textColumn,
 						aon-editDataTable-numberColumn, aon-editDataTable-numberColumn">
 
@@ -56,14 +56,6 @@
 							<aon:outputText value="#{bundle.aon_description}" />
 						</f:facet>
 						<aon:outputText value="#{to.description}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{financeBundle.finance_fbatch_type}" />
-						</f:facet>
-						<aon:outputText
-							value="#{to.payment?(financeBundle.finance_payment):(financeBundle.finance_charge)}" />
 					</aon:column>
 
 					<aon:column>
