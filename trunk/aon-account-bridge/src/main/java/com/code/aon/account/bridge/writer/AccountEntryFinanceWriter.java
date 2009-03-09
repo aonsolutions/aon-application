@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
+import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
@@ -16,8 +17,11 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.Finance;
+import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceTracking;
+import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryBank;
 
 /**
@@ -25,22 +29,26 @@ import com.code.aon.registry.RegistryBank;
  */
 public class AccountEntryFinanceWriter {
 
+	private static final String C_FRA = "Cobro Fra: ";
+	private static final String P_FRA = "Pago Fra: ";
+	private static final String D_FRA = "Dev. Fra: ";
+
 	@SuppressWarnings("unchecked")
-	public AccountEntry recordFinances(FinanceRecordingTo to) throws ManagerBeanException{
+	public AccountEntry recordFinances(FinanceRecordingTo to, FinanceBatch fbatch) throws ManagerBeanException {
 		AccountEntry entry = createAccountEntry(to);
 		Account bankAccount = (to.getRegistryBank() != null?AccountUtil.obtainRBankAccount(to.getRegistryBank()):AccountUtil.obtainCashAccount());
-		Iterator iter = to.getFinanceList().iterator();
+		Iterator iterator = to.getFinanceList().iterator();
 		double amount = 0.0;
-		while(iter.hasNext()){
-			Finance finance = (Finance)iter.next();
+		while (iterator.hasNext()) {
+			Finance finance = (Finance)iterator.next();
 			amount += finance.getTotalAmount();
-			insertEntryDetail(bankAccount,finance, entry);
+			insertEntryDetail(bankAccount, finance, fbatch, entry);
 		}
-		if(to.getFinanceList().size() > 0){
-			Finance finance = to.getFinanceList().get(0);
-			insertLastEntryDetail(bankAccount, entry, finance, amount);
-		}else{
-			insertLastEntryDetail(bankAccount, entry, null, amount);
+		if (fbatch != null) {
+			insertLastEntryDetail(bankAccount, entry, fbatch.getDescription(), amount);
+		} else{
+			Finance finance = (Finance)to.getFinanceList().get(0);
+			insertLastEntryDetail(bankAccount, entry, obtainConcept(finance.getInvoice(), null), amount);
 		}
 		return entry;
 	}
@@ -55,13 +63,13 @@ public class AccountEntryFinanceWriter {
 		recordingTo.setDate(paymentDate);
 		recordingTo.setType((finance.isPayment()?AccountEntryType.PAYMENT:AccountEntryType.COLLECTION));
 		recordingTo.setSecurityLevel(finance.getSecurityLevel()==null?SecurityLevel.OFFICIAL:finance.getSecurityLevel());
-		return recordFinances(recordingTo);
+		return recordFinances(recordingTo, null);
 	}
 
 	public AccountEntry returnFinances(FinanceRecordingTo to) throws ManagerBeanException {
 		AccountEntry entry = createAccountEntry(to);
-		Account bankAccount = (to.getRegistryBank() != null?AccountUtil.obtainRBankAccount(to.getRegistryBank()):AccountUtil.obtainCashAccount());
-		if(to.getFinanceList().size() > 0){
+		Account bankAccount = (to.getRegistryBank() != null) ? AccountUtil.obtainRBankAccount(to.getRegistryBank()) : AccountUtil.obtainCashAccount();
+		if (to.getFinanceList().size() > 0) {
 			Finance finance = to.getFinanceList().get(0);
 			insertReturnEntryDetails(bankAccount, entry, finance);
 		}
@@ -82,56 +90,49 @@ public class AccountEntryFinanceWriter {
 	}
 
 	private AccountEntry createAccountEntry(FinanceRecordingTo to) throws ManagerBeanException {
-		try {
-			IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
-			AccountEntry entry = new AccountEntry();
-			entry.setEntryDate(to.getDate());
-			entry.setJournal(null);
-			entry.setType(to.getType());
-			entry.setAccountPeriod(AccountUtil.obtainPeriod(to.getDate()).getId());
-			entry.setSecurityLevel(to.getSecurityLevel());
-			entry = (AccountEntry) accountEntryBean.insert(entry);
-			return entry;
-		} catch (ManagerBeanException e) {
-			throw new ManagerBeanException("Error creating AccountEntry", e);
-		}
+		AccountEntry entry = new AccountEntry();
+		entry.setAccountPeriod(AccountUtil.obtainPeriod(to.getDate()).getId());
+		entry.setEntryDate(to.getDate());
+		entry.setType(to.getType());
+		entry.setJournal(null);
+		entry.setSecurityLevel(to.getSecurityLevel());
+
+		IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
+		return (AccountEntry)accountEntryBean.insert(entry);
 	}
 
-	
-	private void insertEntryDetail(Account bankAccount, Finance finance, AccountEntry entry) throws ManagerBeanException {
+	private void insertEntryDetail(Account bankAccount, Finance finance, FinanceBatch fbatch, AccountEntry entry) throws ManagerBeanException {
 		AccountEntryDetail detail = new AccountEntryDetail();
-		if(finance.getInvoice().getType().equals(InvoiceType.SALES)){
+		detail.setAccountEntry(entry);
+		if (finance.getInvoice().getType().equals(InvoiceType.SALES)) {
 			detail.setAccount(AccountUtil.obtainCustomerAccount(finance.getRegistry()));
 			detail.setCredit(finance.getTotalAmount());
-		}else if(finance.getInvoice().getType().equals(InvoiceType.PURCHASE)){
+		} else if(finance.getInvoice().getType().equals(InvoiceType.PURCHASE)) {
 			detail.setAccount(AccountUtil.obtainSupplierAccount(finance.getRegistry()));
 			detail.setDebit(finance.getTotalAmount());
-		}else{
+		} else {
 			detail.setAccount(AccountUtil.obtainCreditorAccount(finance.getRegistry()));
 			detail.setDebit(finance.getTotalAmount());
 		}
-		detail.setAccountEntry(entry);
+		detail.setConcept(obtainConcept(finance.getInvoice(), fbatch));
 		detail.setBalancingAccount(bankAccount);
-		detail.setConcept("N/Fra: " + finance.getInvoice().getSeries() + "/" + finance.getInvoice().getNumber());
+
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		accountEntryDetailBean.insert(detail);
 	}
 	
-	private void insertLastEntryDetail(Account bankAccount, AccountEntry entry, Finance finance, double amount) throws ManagerBeanException {
+	private void insertLastEntryDetail(Account bankAccount, AccountEntry entry, String concept, double amount) throws ManagerBeanException {
 		AccountEntryDetail detail = new AccountEntryDetail();
-		if(entry.getType().equals(AccountEntryType.COLLECTION)){
-			detail.setDebit(amount);
-		}else{
-			detail.setCredit(amount);
-		}
 		detail.setAccountEntry(entry);
 		detail.setAccount(bankAccount);
-		if(finance != null){
-			detail.setConcept("N/Fra: " + finance.getInvoice().getSeries() + "/" + finance.getInvoice().getNumber());
-		}else{
-			detail.setConcept("");
-		}
+		detail.setConcept(concept);
 		detail.setBalancingAccount(null);
+		if (entry.getType().equals(AccountEntryType.COLLECTION)) {
+			detail.setDebit(amount);
+		} else{
+			detail.setCredit(amount);
+		}
+
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		accountEntryDetailBean.insert(detail);
 	}
@@ -140,34 +141,45 @@ public class AccountEntryFinanceWriter {
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		// Primer Apunte
 		AccountEntryDetail detail = new AccountEntryDetail();
+		detail.setAccountEntry(entry);
 		Account registryAccount = null;
-		if(finance.getInvoice().getType().equals(InvoiceType.SALES)){
+		if (finance.getInvoice().getType().equals(InvoiceType.SALES)) {
 			registryAccount = AccountUtil.obtainCustomerAccount(finance.getRegistry());
 			detail.setDebit(finance.getTotalAmount());
-		}else if(finance.getInvoice().getType().equals(InvoiceType.PURCHASE)){
+		} else if(finance.getInvoice().getType().equals(InvoiceType.PURCHASE)) {
 			registryAccount = AccountUtil.obtainSupplierAccount(finance.getRegistry());
 			detail.setCredit(finance.getTotalAmount());
-		}else{
+		} else {
 			registryAccount = AccountUtil.obtainCreditorAccount(finance.getRegistry());
 			detail.setCredit(finance.getTotalAmount());
 		}
 		detail.setAccount(registryAccount);
-		detail.setAccountEntry(entry);
+		detail.setConcept(obtainReturnConcept(finance.getInvoice()));
 		detail.setBalancingAccount(bankAccount);
-		detail.setConcept("N/Fra: " + finance.getInvoice().getSeries() + "/" + finance.getInvoice().getNumber());
 		accountEntryDetailBean.insert(detail);
+
 		// Segundo Apunte
 		detail = new AccountEntryDetail();
-		if(entry.getType().equals(AccountEntryType.RETURNED_COLLECTION)){
-			detail.setCredit(finance.getTotalAmount());
-		}else{
-			detail.setDebit(finance.getTotalAmount());
-		}
 		detail.setAccountEntry(entry);
 		detail.setAccount(bankAccount);
-		detail.setConcept("N/Fra: " + finance.getInvoice().getSeries() + "/" + finance.getInvoice().getNumber());
+		detail.setConcept(obtainReturnConcept(finance.getInvoice()));
 		detail.setBalancingAccount(registryAccount);
+		if (entry.getType().equals(AccountEntryType.RETURNED_COLLECTION)) {
+			detail.setCredit(finance.getTotalAmount());
+		} else {
+			detail.setDebit(finance.getTotalAmount());
+		}
 		accountEntryDetailBean.insert(detail);
+	}
+
+	private String obtainConcept(Invoice invoice, FinanceBatch fbatch) {
+		String concept = (invoice.getType().equals(InvoiceType.SALES) ? C_FRA : P_FRA) + invoice.getReferenceCode();
+		String fbatchConcept = (fbatch != null) ? (" (R:" + fbatch.getId() + ")") : "";
+		return concept + fbatchConcept;
+	}
+
+	private String obtainReturnConcept(Invoice invoice) {
+		return D_FRA + invoice.getReferenceCode();
 	}
 
 	public AccountEntryFinanceTracking insertAccountEntryFinanceTracking(AccountEntry entry, FinanceTracking tracking) throws ManagerBeanException {
@@ -176,6 +188,19 @@ public class AccountEntryFinanceWriter {
 		accEntryTracking.setAccountEntry(entry);
 		accEntryTracking.setFinanceTracking(tracking);
 		return (AccountEntryFinanceTracking) accountEntryFinanceTrackingBean.insert(accEntryTracking);
+	}
+
+	@SuppressWarnings("unchecked")
+	public boolean removeAccountEntryFinanceTracking(FinanceTracking tracking) throws ManagerBeanException {
+		IManagerBean accountEntryFinanceTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(accountEntryFinanceTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_ID), tracking.getId());
+		Iterator iterator = accountEntryFinanceTrackingBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			AccountEntryFinanceTracking accountEntryFinanceTracking = (AccountEntryFinanceTracking)iterator.next();
+			return accountEntryFinanceTrackingBean.remove(accountEntryFinanceTracking);
+		}
+		return false;
 	}
 
 }
