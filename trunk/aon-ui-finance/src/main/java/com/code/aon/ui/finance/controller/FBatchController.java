@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,6 +31,7 @@ import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
@@ -42,7 +42,6 @@ import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
-import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.csb.CSBOutput;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
@@ -54,7 +53,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.registry.RegistryBank;
+import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.csb.CSB19Writer;
 import com.code.aon.ui.finance.csb.CSB32Writer;
 import com.code.aon.ui.finance.csb.CSB58Writer;
@@ -75,9 +74,32 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	private static final String FINANCE_BATCH_DETAIL_CONTROLLER_NAME = "fBatchDetail";
 
+	private Company company;
+
 	private CSBOutput csbOutput;
 
 	private Date recordDate;
+
+	private boolean showFbatchRecordWindow;
+
+	public Company getCompany() {
+		try {
+			if (company == null) {
+				IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+				Iterator<ITransferObject> iter = companyBean.getList(null, 0, 1).iterator();
+				if (iter.hasNext()) {
+					setCompany((Company) iter.next());
+				}
+			}
+		} catch (ManagerBeanException e) {
+			throw new AbortProcessingException("Error obtaining Company!");
+		}
+		return company;
+	}
+
+	public void setCompany(Company company) {
+		this.company = company;
+	}
 
 	public CSBOutput getCsbOutput() {
 		return csbOutput;
@@ -95,6 +117,14 @@ public class FBatchController extends BasicController implements ICollectionProv
 		this.recordDate = recordDate;
 	}
 
+	public boolean isShowFbatchRecordWindow() {
+		return showFbatchRecordWindow;
+	}
+
+	public void setShowFbatchRecordWindow(boolean value) {
+		this.showFbatchRecordWindow = value;
+	}
+	
     public boolean isTodo() {
         return FinanceBatchStatus.TODO.equals(((FinanceBatch)this.getTo()).getFinanceBatchStatus());
     }
@@ -112,8 +142,86 @@ public class FBatchController extends BasicController implements ICollectionProv
     }
 
     public boolean isFilled() {
-        return getToTotalDetails().intValue() > 0;
+        return (getToTotalDetails().intValue() > 0);
     }
+
+	@SuppressWarnings("unchecked")
+	public Integer getAccountEntryId() {
+    	FinanceBatch fbatch = (FinanceBatch)this.getTo();
+		try {
+			if (fbatch != null && fbatch.getId() != null) {
+				IManagerBean accountEntryFbatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(accountEntryFbatchBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_BATCH_FINANCE_BATCH_ID), fbatch.getId());
+				Iterator iterator = accountEntryFbatchBean.getList(criteria).iterator();
+				if (iterator.hasNext()) {
+					AccountEntryFinanceBatch accountEntryFbatch = (AccountEntryFinanceBatch)iterator.next();
+					return accountEntryFbatch.getAccountEntry().getId();
+				}
+			}
+		}catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining account entry id", e);
+		}
+    	return null;
+	}
+
+    public Integer getModelToTotalDetails(){
+		try {
+			FinanceBatch fbatch = (FinanceBatch) this.getModel().getRowData();
+			return getFinanceBatchTotalDetails(fbatch);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining modelTo fbatch total details", e);
+		}
+		return new Integer(0);
+	}
+
+	public Integer getToTotalDetails(){
+		FinanceBatch fbatch = (FinanceBatch) this.getTo();
+		return getFinanceBatchTotalDetails(fbatch);
+	}
+
+	public Integer getFinanceBatchTotalDetails(FinanceBatch fbatch){
+		try {
+			IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), fbatch.getId());
+			return fBatchDetailBean.getCount(criteria);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining fbatch total details", e);
+		}
+		return new Integer(0);
+	}
+
+    public Double getModelToTotalAmount(){
+		try {
+			FinanceBatch fbatch = (FinanceBatch) this.getModel().getRowData();
+			return getFinanceBatchTotalAmount(fbatch);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining modelTo fbatch total amount", e);
+		}
+		return new Double(0);
+	}
+
+	public Double getToTotalAmount(){
+		FinanceBatch fbatch = (FinanceBatch) this.getTo();
+		return getFinanceBatchTotalAmount(fbatch);
+	}
+
+	public Double getFinanceBatchTotalAmount(FinanceBatch fbatch){
+		try {
+			IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), fbatch.getId());
+			Projection projection = Projection.sum(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_AMOUNT));
+			Object value = fBatchDetailBean.getUniqueResult(projection, criteria);
+			if (value != null) {
+				return (Double)value;
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining fbatch total amount", e);
+		}
+		return new Double(0);
+	}
 
     public void loadAvailableFinances(boolean payment) {
         try {
@@ -122,15 +230,11 @@ public class FBatchController extends BasicController implements ICollectionProv
 
             Criteria criteria = new Criteria();
             criteria.addEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_PAYMENT), new Boolean(payment));
-            Expression amountExpr = 
-                ExpressionUtilities.getNotEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_AMOUNT), new Double(0));
-            Expression expensesExpr = 
-                ExpressionUtilities.getNotEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_EXPENSES), new Double(0));
+            Expression amountExpr = ExpressionUtilities.getNotEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_AMOUNT), new Double(0));
+            Expression expensesExpr = ExpressionUtilities.getNotEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_EXPENSES), new Double(0));
             criteria.addExpression(ExpressionUtilities.getOrExpression(amountExpr, expensesExpr));
-            Expression pendingExpr = 
-                ExpressionUtilities.getEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
-            Expression returnedExpr = 
-                ExpressionUtilities.getEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.RETURNED);
+            Expression pendingExpr = ExpressionUtilities.getEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
+            Expression returnedExpr = ExpressionUtilities.getEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.RETURNED);
             criteria.addExpression(ExpressionUtilities.getOrExpression(pendingExpr, returnedExpr));
             if (!to.getFinanceBatchType().equals(FinanceBatchType.NONE)) {
                 criteria.addEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_PAY_METHOD_TYPE), PayMethodType.NEGOTIABLE_DOCUMENT);
@@ -153,20 +257,9 @@ public class FBatchController extends BasicController implements ICollectionProv
         }
     }
 
-    public void loadDetails(FinanceBatch fbatch) {
-        try {
-            LinesController fBatchDetailController = (LinesController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
-            Criteria criteria = new Criteria();
-            criteria.addEqualExpression(fBatchDetailController.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), fbatch.getId());
-            criteria.addOrder(fBatchDetailController.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_INVOICE_SERIES));
-            criteria.addOrder(fBatchDetailController.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_INVOICE_NUMBER));
-            criteria.addOrder(fBatchDetailController.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_DUE_DATE));
-
-            fBatchDetailController.setCriteria(criteria);
-            fBatchDetailController.onSearch(null);
-        } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error loading FinanceBatchDetail model", e);
-        }
+    private void loadDetails(FinanceBatch fbatch) {
+        LinesController fBatchDetailController = (LinesController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
+        fBatchDetailController.onSearch(null);
     }
 
     @SuppressWarnings("unchecked")
@@ -181,9 +274,6 @@ public class FBatchController extends BasicController implements ICollectionProv
                 LOGGER.log(Level.SEVERE, "Error updating FinanceBatch with id=" + fBatch.getId(), e);
             }
         }
-
-        ResourceBundle bundle = AonUtil.getResourceBundle("financeBundle");
-        String trackingDescription = bundle.getString("finance_tracking_batched") + " " + fBatch.getId() + " - " + fBatch.getDescription();
 
         FinanceController financeController = (FinanceController)FormUtil.getController(FINANCE_CONTROLLER_NAME);
         try {
@@ -203,7 +293,7 @@ public class FBatchController extends BasicController implements ICollectionProv
                 fBatchDetail.setStatus(FinanceStatus.BATCHED);
 				financeBatchDetailBean.insert(fBatchDetail);
 
-                FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.BATCHED, trackingDescription);
+                FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.BATCHED, AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_BATCHED));
             }
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error adding selected finances to the FinanceBatch with id=" + fBatch.getId(), e);
@@ -245,70 +335,33 @@ public class FBatchController extends BasicController implements ICollectionProv
 		loadAvailableFinances(fBatch.isPayment());
     }
 
-	public void updateRelatedInfo(FinanceBatchDetail fBatchDetail) {
-		try {
-			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			FinanceStatus financeStatus = (wasFinanceReturned(fBatchDetail.getFinance()))?FinanceStatus.RETURNED:FinanceStatus.PENDING;
-			fBatchDetail.getFinance().setFinanceStatus(financeStatus);
-			financeBean.update(fBatchDetail.getFinance());
-			FinanceTrackingWriter.removeLastTrackingByType(fBatchDetail.getFinance(), FinanceTrackingType.BATCHED);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE,"Error updating finances in FinanceBatch with id="+ fBatchDetail.getFinanceBatch().getId(), e);
-		}
-	}
-
-	public boolean wasFinanceReturned(Finance finance) {
-		try {
-			IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_ID),finance.getId());
-			criteria.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TYPE),FinanceTrackingType.RETURNED);
-			return (trackingBean.getCount(criteria) > 0);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE,"Error obtaining FinanceTracking of Finance with id="+ finance.getId(), e);
-		}
-		return false;
-	}
-
 	@SuppressWarnings("unchecked")
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
     	FinanceBatch fbatch = (FinanceBatch)this.getTo();
 
-        Company company = obtainCompany();
         Collection fbatchDetailCollection = obtainDetailsCollection(fbatch);
         if (fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_19_D) || fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_19)) {
 			CSB19Writer csb19Writer = new CSB19Writer();
-			csbOutput = csb19Writer.createCSB19(company, fbatch, fbatchDetailCollection);
+			csbOutput = csb19Writer.createCSB19(getCompany(), fbatch, fbatchDetailCollection);
 		}
 		else if (fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_32)) {
 			CSB32Writer csb32Writer = new CSB32Writer();
-			csbOutput = csb32Writer.createCSB32(company, fbatch, fbatchDetailCollection);
+			csbOutput = csb32Writer.createCSB32(getCompany(), fbatch, fbatchDetailCollection);
 		}
 		else if (fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_58)) {
 			CSB58Writer csb58Writer = new CSB58Writer();
-			csbOutput = csb58Writer.createCSB58(company, fbatch, fbatchDetailCollection);
+			csbOutput = csb58Writer.createCSB58(getCompany(), fbatch, fbatchDetailCollection);
 		}
 
         if (csbOutput != null) {
         	if (csbOutput.getErrors().size() > 0) {
-        		ResourceBundle bundle = AonUtil.getResourceBundle("financeBundle");
-        		AonUtil.addErrorMessage(bundle.getString("finance_batch_disk_error"));
+        		AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_DISK_ERROR);
         	} else {
                 fbatch.setFinanceBatchStatus(FinanceBatchStatus.DONE);
                 getManagerBean().update(fbatch);
         	}
         }
 	}
-
-	@SuppressWarnings("unchecked")
-    private Company obtainCompany() throws ManagerBeanException {
-        IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
-        Iterator iter = companyBean.getList(null).iterator();
-        if (iter.hasNext()) {
-            return (Company)iter.next();
-        }
-        return null;
-    }
 
 	@SuppressWarnings("unchecked")
 	private Collection obtainDetailsCollection(FinanceBatch fbatch) {
@@ -347,7 +400,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	        String fileName = ((FinanceBatch)this.getTo()).getFinanceBatchType().getName(AonUtil.getCurrentLocale());
 	        fileName += "-" + ((FinanceBatch)this.getTo()).getDescription();
-	        fileName = ((csbOutput.getErrors().size()>0)?"ERROR-":"") + fileName;
+	        fileName = ((csbOutput.getErrors().size()>0) ? "ERROR-" : "") + fileName;
 
 	        response.setContentType(MimeType.MIME_TXT.getName());
 	        response.setContentLength(data.length);
@@ -361,8 +414,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 	@SuppressWarnings("unchecked")
     public void onRecord(ActionEvent event) throws ManagerBeanException {
         FinanceBatch fbatch = (FinanceBatch)this.getTo();
-        fbatch.setRegistryBank(fbatch.getRegistryBank().getId() == null?null:fbatch.getRegistryBank());
-        
+
         List<Finance> financeList = new LinkedList<Finance>();
         Iterator iterator = fbatch.getDetailList().iterator();
         while (iterator.hasNext()) {
@@ -371,23 +423,20 @@ public class FBatchController extends BasicController implements ICollectionProv
         }
 
         FinanceRecordingTo recordingTo = new FinanceRecordingTo();
-        recordingTo.setDate((getRecordDate()!=null)?getRecordDate():fbatch.getIssueDate());
+        recordingTo.setDate((getRecordDate()!=null) ? getRecordDate() : fbatch.getIssueDate());
         recordingTo.setType(fbatch.isPayment() ? AccountEntryType.PAYMENT : AccountEntryType.COLLECTION);
         recordingTo.setRegistryBank(fbatch.getRegistryBank());
         recordingTo.setFinanceList(financeList);
         recordingTo.setSecurityLevel(SecurityLevel.OFFICIAL);
 
         AccountEntryFinanceWriter accountEntryWriter = new AccountEntryFinanceWriter();
-        AccountEntry entry = accountEntryWriter.recordFinances(recordingTo);
+        AccountEntry entry = accountEntryWriter.recordFinances(recordingTo, fbatch);
 
         IManagerBean accountEntryFbatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
         AccountEntryFinanceBatch accountEntryFinanceBatch = new AccountEntryFinanceBatch();
         accountEntryFinanceBatch.setFinanceBatch(fbatch);
         accountEntryFinanceBatch.setAccountEntry(entry);
         accountEntryFbatchBean.insert(accountEntryFinanceBatch);
-
-        ResourceBundle bundle = AonUtil.getResourceBundle("financeBundle");
-        String trackingDescription = bundle.getString("finance_tracking_recorded") + " " + entry.getId();
 
         IManagerBean fbatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
         IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
@@ -400,27 +449,24 @@ public class FBatchController extends BasicController implements ICollectionProv
             fbatchDetail.getFinance().setFinanceStatus(FinanceStatus.PAID);
             financeBean.update(fbatchDetail.getFinance());
 
-            FinanceTrackingWriter.addFinanceTracking(fbatchDetail.getFinance(), FinanceTrackingType.RECORDED, trackingDescription);
+            FinanceTrackingWriter.addFinanceTracking(fbatchDetail.getFinance(), FinanceTrackingType.RECORDED, AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED));
         }
 
         fbatch.setFinanceBatchStatus(FinanceBatchStatus.RECORDED);
         getManagerBean().update(fbatch);
         loadDetails(fbatch);
-        fbatch.setRegistryBank(fbatch.getRegistryBank() == null?new RegistryBank():fbatch.getRegistryBank());
     }
 
 	@SuppressWarnings("unchecked")
     public void onUnrecord(ActionEvent event) throws ManagerBeanException {
         FinanceBatch fbatch = (FinanceBatch)this.getTo();
 
-        ResourceBundle bundle = AonUtil.getResourceBundle("financeBundle");
-
         IManagerBean fbatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
         Criteria criteria = new Criteria();
         criteria.addEqualExpression(fbatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), fbatch.getId());
         criteria.addEqualExpression(fbatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.RETURNED);
-        if (fbatchDetailBean.getList(criteria).size() > 0) {
-            AonUtil.addErrorMessage(bundle.getString("finance_batch_unrecord_error"));
+        if (fbatchDetailBean.getCount(criteria) > 0) {
+            AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_UNRECORD_ERROR);
             throw new AbortProcessingException();
         }
 
@@ -460,95 +506,9 @@ public class FBatchController extends BasicController implements ICollectionProv
             FinanceTrackingWriter.removeLastTrackingByType(fbatchDetail.getFinance(), FinanceTrackingType.RECORDED);
         }
         
-        fbatch.setRegistryBank(fbatch.getRegistryBank().getId() == null?null:fbatch.getRegistryBank());
         fbatch.setFinanceBatchStatus(fbatch.getFinanceBatchType().equals(FinanceBatchType.NONE) ? FinanceBatchStatus.TODO : FinanceBatchStatus.DONE);
         getManagerBean().update(fbatch);
         loadDetails(fbatch);
-        fbatch.setRegistryBank(fbatch.getRegistryBank() == null?new RegistryBank():fbatch.getRegistryBank());
     }
 
-    public Double getModelToTotalAmount(){
-		try {
-			FinanceBatch fbatch = (FinanceBatch) this.getModel().getRowData();
-			return getFinanceBatchTotalAmount(fbatch);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining modelTo fbatch total amount", e);
-		}
-		return new Double(0);
-	}
-
-	public Double getToTotalAmount(){
-		FinanceBatch fbatch = (FinanceBatch) this.getTo();
-		return getFinanceBatchTotalAmount(fbatch);
-	}
-
-	public Double getFinanceBatchTotalAmount(FinanceBatch fbatch){
-		try {
-			IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), fbatch.getId());
-			Projection projection = Projection.sum(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_AMOUNT));
-			Object value = fBatchDetailBean.getUniqueResult(projection, criteria);
-			if (value != null) {
-				return (Double)value;
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining fbatch total amount", e);
-		}
-		return new Double(0);
-	}
-
-    public Integer getModelToTotalDetails(){
-		try {
-			FinanceBatch fbatch = (FinanceBatch) this.getModel().getRowData();
-			return getFinanceBatchTotalDetails(fbatch);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining modelTo fbatch total details", e);
-		}
-		return new Integer(0);
-	}
-
-	public Integer getToTotalDetails(){
-		FinanceBatch fbatch = (FinanceBatch) this.getTo();
-		return getFinanceBatchTotalDetails(fbatch);
-	}
-
-	public Integer getFinanceBatchTotalDetails(FinanceBatch fbatch){
-		try {
-			IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), fbatch.getId());
-			return fBatchDetailBean.getCount(criteria);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining fbatch total details", e);
-		}
-		return new Integer(0);
-	}
-
-	@SuppressWarnings("unchecked")
-	public Integer getAccountEntryId() {
-    	FinanceBatch fbatch = (FinanceBatch)this.getTo();
-		try {
-			if (fbatch != null && fbatch.getId() != null) {
-				IManagerBean accountEntryFbatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(accountEntryFbatchBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_BATCH_FINANCE_BATCH_ID), fbatch.getId());
-				Iterator iterator = accountEntryFbatchBean.getList(criteria).iterator();
-				if (iterator.hasNext()) {
-					AccountEntryFinanceBatch accountEntryFbatch = (AccountEntryFinanceBatch)iterator.next();
-					return accountEntryFbatch.getAccountEntry().getId();
-				}
-			}
-		}catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining account entry id", e);
-		}
-    	return null;
-	}
-
-//    public void onReport(ActionEvent event) {
-//        ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
-//        manager.setReportKey("fBatch");
-//        manager.setOutputFormat(OutputFormat.PDF);
-//    }
-	
 }
