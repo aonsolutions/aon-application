@@ -151,7 +151,7 @@
 		<mapping class="com.code.aon.supplier.Supplier"/>
 		<mapping class="com.code.aon.supplier.SupplierSegment"/>
 
-		<!-- AON-WAREHOUSE Mapping files -->		
+		<!-- AON-WAREHOUSE Mapping files --> 
 		<mapping class="com.code.aon.warehouse.Delivery"/>
 		<mapping class="com.code.aon.warehouse.DeliveryDetail"/>
 		<mapping class="com.code.aon.warehouse.DeliveryDetailLabour"/>
@@ -161,6 +161,7 @@
 		<mapping class="com.code.aon.warehouse.InventoryDetail"/>
 		<mapping class="com.code.aon.warehouse.Stock"/>
 		<mapping class="com.code.aon.warehouse.Warehouse"/>
+				
 	</session-factory>
 
 </hibernate-configuration>
