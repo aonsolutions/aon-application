@@ -21,21 +21,21 @@
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 		<aon:commandButton title="#{financeBundle.finance_remove_batch}"
-			styleClass="aon-finding-toolbar-item aon-icon-delete"
+			styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
 			value="#{financeBundle.finance_remove_batch}"
-			actionListener="#{fbatch.onRemoveSelected}" reRender="fbatchPanelTabSet"
+			actionListener="#{fbatch.onRemoveSelected}" reRender="financeBatchForm,fbatchPanelTabSet"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 		<h:commandLink target="_blank"
 			title="#{fbatch.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
 			value="#{fbatch.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
 			actionListener="#{fbatch.downloadDisk}" rendered="#{fbatch.csbOutput!=null}"
-			styleClass="aon-finding-toolbar-item aon-icon-file-download" />
+			styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
 	</aon:div>
 
 	<aon:div id="fBatchDetailDataDiv">
 		<aon:dataTable id="fBatchDetailData" value="#{fBatchDetail.model}"
-			var="to" rows="10" rendered="#{fBatchDetail.model.rowCount > 0}"
+			var="to" rows="20" rendered="#{fBatchDetail.model.rowCount > 0}"
 			columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
 				aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
 				aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">				
@@ -54,15 +54,14 @@
 				<f:facet name="header">
 					<aon:outputText value="#{financeBundle.finance_invoice}" />
 				</f:facet>
-				<aon:outputText value="#{to.finance.invoice.series} / #{to.finance.invoice.number}" />
+				<aon:outputText value="#{to.finance.invoice.referenceCode}" />
 			</aon:column>
 			
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_description}" />
 				</f:facet>
-				<aon:outputText value="#{to.finance.registry.surname}, " rendered="#{to.finance.registry.surname != null and to.finance.registry.surname != ''}"/>								
-				<aon:outputText value="#{to.finance.registry.name}" />
+				<aon:outputText value="#{to.finance.invoice.registryName}" />
 			</aon:column>
 	
 			<aon:column>

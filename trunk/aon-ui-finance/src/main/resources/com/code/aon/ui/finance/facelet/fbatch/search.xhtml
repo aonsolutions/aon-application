@@ -21,17 +21,10 @@
 				<ui:param name="controller" value="#{fbatch}" />
 				<ui:define name="searchContent">
 
-					<aon:outputLabel for="Finance_payment"
-						value="#{financeBundle.finance_fbatch_type}" />
-					<aon:selectOneRadio id="Finance_payment" value="#{fBatchSearch.payment}">
-						<f:selectItem itemLabel="#{financeBundle.finance_payment}" itemValue="#{true}" />
-						<f:selectItem itemLabel="#{financeBundle.finance_charge}" itemValue="#{false}" />
-					</aon:selectOneRadio>
-							
 					<aon:outputLabel for="FinanceBatch_id"
 						value="#{bundle.aon_id}" />
 					<aon:inputText id="FinanceBatch_id"
-						valueChangeListener="#{fbatch.addExpression}" size="20" />
+						valueChangeListener="#{fbatch.addExpression}" size="10" />
 							
 					<aon:outputLabel for="FinanceBatch_description"
 						value="#{bundle.aon_description}" />
@@ -55,21 +48,15 @@
 							popupDateFormat="#{bundle.aon_date_pattern}"/>							
 					</aon:div>
 							
-					<aon:outputLabel for="RegistryBank_Lookup_id"
+					<aon:outputLabel for="FinanceBatch_registryBank_id"
 						value="#{configBundle.config_bank}" />
-					<aon:selectOneMenu id="RegistryBank_Lookup_id"
-						value="#{fBatchSearch.registryBank}"
-						reRender="RegistryBank_Lookup_bankAccount">
+					<aon:selectOneMenu id="FinanceBatch_registryBank_id"
+						value="#{registryCollections.registryBank}"
+						valueChangeListener="#{fbatch.addIdEqualExpression}">
 						<f:selectItem itemLabel="-" value="#{null}"  />
-						<f:selectItems value="#{financeCollections.companyBanks}" />
+						<f:selectItems value="#{finance.companyRegistryBanks}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="RegistryBank_Lookup_bankAccount"
-						value="#{configBundle.config_bank_account}" />
-					<aon:inputText id="RegistryBank_Lookup_bankAccount"
-						value="#{financePayment.registryBank.bankAccount}"
-						disabled="true" size="40" /> 							
- 							
 					<aon:outputLabel for="FinanceBatch_financeBatchType"
 						value="#{financeBundle.finance_disk_type}" />
 					<aon:selectOneMenu id="FinanceBatch_financeBatchType"
