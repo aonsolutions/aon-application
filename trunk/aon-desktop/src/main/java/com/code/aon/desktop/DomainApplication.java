@@ -10,30 +10,26 @@ import org.apache.commons.lang.ObjectUtils;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
+import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
-import com.code.aon.desktop.controller.DomainController;
 import com.code.aon.ldap.IAonObjectClasses;
 
-@EntryObject(mainObjectClass=IAonObjectClasses.DB_CONNECTION, objectClasses={IAonObjectClasses.TOP})
-public class DBConnnection implements ITransferObject, Cloneable {
+@EntryObject(mainObjectClass=IAonObjectClasses.DOMAIN_APPLICATION, objectClasses={IAonObjectClasses.TOP})
+public class DomainApplication implements ITransferObject, Cloneable {
 
-	private static final long serialVersionUID = -16395756416577198L;
+	private static final long serialVersionUID = -1729654908005345126L;
 	
-	private static final Logger LOGGER = Logger.getLogger(DomainController.class.getName());	
+	private static final Logger LOGGER = Logger.getLogger(DomainApplication.class.getName());;
 
 	private String id;
 	
 	private String commonName;
 	
-	private String driverClassName;
+	private DBConnnection dataSource;
 	
-	private String labeledURI;
-	
-	private String uid;
-	
-	private byte[] userPassword;
-	
+	private Integer status;
+
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
@@ -55,40 +51,23 @@ public class DBConnnection implements ITransferObject, Cloneable {
 		this.commonName = commonName;
 	}
 	
-	@Attribute(name="driverClassName",nullable=false)
-	public String getDriverClassName() {
-		return driverClassName;
+	@Attribute(name="status")
+	public Integer getStatus() {
+		return status;
 	}
 
-	public void setDriverClassName(String driverClassName) {
-		this.driverClassName = driverClassName;
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 
-	@Attribute(name="labeledURI",nullable=false)
-	public String getLabeledURI() {
-		return labeledURI;
+	@BaseDN("ou=bds,{parent}")
+	@Attribute(name="dataSource")
+	public DBConnnection getDataSource() {
+		return dataSource;
 	}
 
-	public void setLabeledURI(String labeledURI) {
-		this.labeledURI = labeledURI;
-	}
-
-	@Attribute(name="uid",length=256,nullable=false)
-	public String getUid() {
-		return uid;
-	}
-
-	public void setUid(String uid) {
-		this.uid = uid;
-	}
-
-	@Attribute(name="userPassword",length=128,nullable=false)
-	public byte[] getUserPassword() {
-		return userPassword;
-	}
-
-	public void setUserPassword(byte[] userPassword) {
-		this.userPassword = userPassword;
+	public void setDataSource(DBConnnection dataSource) {
+		this.dataSource = dataSource;
 	}
 	
 	@Override
@@ -101,14 +80,14 @@ public class DBConnnection implements ITransferObject, Cloneable {
         }
         return obj;
 	}
-
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {
     		return super.equals(obj);
 		}
-		if (obj instanceof DBConnnection) {
-			DBConnnection o = (DBConnnection) obj;
+		if (obj instanceof DomainApplication) {
+			DomainApplication o = (DomainApplication) obj;
 			if (o.getId() == null && id == null) {
 				return super.equals(obj);	
 			}
