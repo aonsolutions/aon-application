@@ -52,6 +52,10 @@ public class AonDN implements ILdapConstants {
 		return new DistinguishedName( cn(application), ou(APPLICATIONS) );
 	}
 	
+	public static DistinguishedName getDomainBDsDN( String domain ) {
+		return new DistinguishedName( ou(BDS), getDomainDN(domain) );
+	}
+	
 	public static DistinguishedName getDomainApplicationsDN( String domainName ) {
 		return new DistinguishedName( ou(APPLICATIONS), getDomainDN(domainName) );
 	}
