@@ -1,4 +1,4 @@
-package com.code.aon.accounting.vat;
+package com.code.aon.finance.vat;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -6,6 +6,7 @@ import java.util.Date;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.enumeration.VatReportType;
 import com.code.aon.finance.enumeration.VatType;
 
 public class Vat {
@@ -23,6 +24,7 @@ public class Vat {
 	int year;
 	int quarter;
 	InvoiceTransactionType transactionType;
+	VatType vatType;
 	boolean investment;
 
 	Calendar calendar;
@@ -36,13 +38,27 @@ public class Vat {
 	}
 	
 	public VatType getVatType() {
-		if (invoiceType == InvoiceType.SALES) {
-			return VatType.OUTPUT;
-		} 
-		if (isInvestment()) {
-			return VatType.INVESTMENT;
+		if (vatType == null) {
+			if (invoiceType == InvoiceType.SALES) {
+				setVatType( VatType.OUTPUT );
+			} else {
+				setVatType( isInvestment()?VatType.INVESTMENT:VatType.INPUT);
+			}
 		}
-		return VatType.INPUT;
+		return vatType;
+	}
+	public void setVatType(VatType vatType) {
+		this.vatType = vatType;
+	}
+
+	public VatReportType getReportType() {
+		if (transactionType == InvoiceTransactionType.INTRACOMUNNITARY) {
+			return VatReportType.INTRACOMUNNITARY;
+		} 
+		if (transactionType == InvoiceTransactionType.EXTRACOMUNNITARY) {
+			return VatReportType.EXTRACOMUNNITARY;
+		}
+		return VatReportType.GENERAL;
 	}
 
 	public double getPercent() {
@@ -180,5 +196,6 @@ public class Vat {
 	public void setInvestment(boolean investment) {
 		this.investment = investment;
 	}
+
 	
 }

@@ -531,7 +531,7 @@ public class InvoiceEntryController {
 					}
 				}
 			}
-			Invoice invoice = insertOrUpdateInvoice();
+			Invoice invoice = insertOrUpdateInvoice( sessionName );
 			insertInvoiceDetails(invoice);
 			insertFinances(invoice);
 			if (!isNew) {
@@ -684,12 +684,15 @@ public class InvoiceEntryController {
 		}
 	}
 
-	private Invoice insertOrUpdateInvoice() throws ManagerBeanException {
+	private Invoice insertOrUpdateInvoice(String sessionName) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Invoice invoice = isNew() ? new Invoice() : getAccountEntryInvoice().getInvoice();
 		invoice = mergeInvoice(invoice);
 		if (isNew()) {
 			invoice = (Invoice) invoiceBean.insert(invoice);
+		} else{
+			invoice = (Invoice) HibernateUtil.getSession(sessionName).merge(invoice);
+			invoice = (Invoice) invoiceBean.update(invoice);
 		}
 		// Al convertir el proceso en transaccional, el update
 		// de invoice se realiza al momento del session.flush()
