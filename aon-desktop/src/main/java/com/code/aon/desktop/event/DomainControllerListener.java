@@ -4,6 +4,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.desktop.DBConnnection;
 import com.code.aon.desktop.Domain;
 import com.code.aon.desktop.controller.DomainController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -21,8 +22,8 @@ public class DomainControllerListener extends ControllerAdapter {
 		Domain domain = (Domain) event.getController().getTo();
 		try {
 			domainController.addAccessPolicy(domain.getCommonName());
-			domainController.createDB(domain.getCommonName());
-			domainController.createApplications(domain.getCommonName());
+			DBConnnection dbConnection = domainController.createDB(domain.getCommonName());
+			domainController.createApplications(dbConnection, domain.getCommonName());
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
