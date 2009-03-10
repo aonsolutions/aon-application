@@ -759,26 +759,30 @@
 								</aon:column>
 
 
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText
-											value="#{appBundle.aon_payroll_avanzadas_hojas_red}" />
-									</f:facet>
-									<aon:outputText value="#{to.mes}"
-										rendered="#{to!=httcomplemento.to}" />
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText
+										value="#{appBundle.aon_payroll_avanzadas_hojas_red}" />
+								</f:facet>
+								<aon:outputText value="#{to.redondeo}"
+									rendered="#{to!=httcomplemento.to}" />
 
-									<aon:inputText styleClass="aon-form-input-text "
-										rendered="#{to==httcomplemento.to}" size="20"
-										value="#{httcomplemento.to.mes}" maxlength="20" />
-									<f:facet name="footer">
-										<aon:inputText styleClass="aon-form-input-text"
-											rendered="#{httcomplemento.new}" size="20"
-											value="#{httcomplemento.to.mes}" maxlength="10" />
-									</f:facet>
-								</aon:column>
+								<aon:selectOneMenu value="#{httcomplemento.to.redondeo}"
+									rendered="#{to==httcomplemento.to}" layout="pageDirection">
+									<f:selectItems value="#{httcomplemento.listaPagaExtra}" />
+								</aon:selectOneMenu>
+								<f:facet name="footer">
 
 
-								<aon:column>
+									<aon:selectOneMenu value="#{httcomplemento.to.redondeo}"
+										rendered="#{httcomplemento.new}" layout="pageDirection">
+										<f:selectItems value="#{httcomplemento.listaPagaExtra}" />
+									</aon:selectOneMenu>
+								</f:facet>
+							</aon:column>
+
+
+							<aon:column>
 									<f:facet name="header">
 										<aon:outputText value="&#160;" />
 									</f:facet>
@@ -892,16 +896,21 @@
 									</f:facet>
 									<aon:outputText value="#{to.tipo}"
 										rendered="#{to!=httaviso.to}" />
-
-									<aon:inputText styleClass="aon-form-input-text "
-										required="true" rendered="#{to==httaviso.to}" size="20"
-										value="#{httaviso.to.tipo}" maxlength="20" />
+										
+									<aon:selectOneMenu value="#{httaviso.to.tipo}"
+										rendered="#{to==httaviso.to}" layout="pageDirection">
+										<f:selectItems value="#{httaviso.Listaavisos}" />
+									</aon:selectOneMenu>
+									
 									<f:facet name="footer">
-										<aon:inputText styleClass="aon-form-input-text"
-											required="true" rendered="#{httaviso.new}" size="20"
-											value="#{httaviso.to.tipo}" maxlength="10" />
+										<aon:selectOneMenu value="#{httaviso.to.tipo}"
+											rendered="#{httaviso.new}" layout="pageDirection">
+											<f:selectItems value="#{httaviso.listaavisos}" />
+										</aon:selectOneMenu>
 									</f:facet>
 								</aon:column>
+
+
 
 
 								<aon:column>
