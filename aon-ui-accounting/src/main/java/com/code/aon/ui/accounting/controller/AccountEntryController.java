@@ -206,6 +206,8 @@ public class AccountEntryController extends BasicController {
 				header.setWithholding(accountEntryInvoice.getInvoice().isWithholding());
 				header.setSurcharge(accountEntryInvoice.getInvoice().isSurcharge());
 				header.setTaxFree(accountEntryInvoice.getInvoice().isTaxFree());
+				header.setInvestment(accountEntryInvoice.getInvoice().isInvestment());
+				header.setTransaction(accountEntryInvoice.getInvoice().getTransaction());
 				header.setAccountEntryId(entry.getId());
 				invoiceEntryController.setHeader(header);
 				invoiceEntryController.setFinances(new ListDataModel(obtainFinances(accountEntryInvoice.getInvoice())));

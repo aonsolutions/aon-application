@@ -1,4 +1,4 @@
-package com.code.aon.accounting.vat;
+package com.code.aon.finance.vat;
 
 import java.io.StringWriter;
 import java.sql.PreparedStatement;
@@ -9,13 +9,14 @@ import java.util.List;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.finance.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.enumeration.VatReportType;
+import com.code.aon.finance.enumeration.VatType;
 
 public class VatCollection {
 
-	public List<Vat> getSummaryList(VatCollectionParameters params) throws ManagerBeanException {
+	public List<Vat> getVatList(VatCollectionParameters params) throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
@@ -84,70 +85,84 @@ public class VatCollection {
 		}
 
 	}
-/*	
-	@Deprecated
-	public List<Vat> getList(VatCollectionParameters params, boolean summary ) throws ManagerBeanException {
+
+	public List<Vat> getVatDetailList(VatCollectionParameters params) throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			StringWriter stmt = new StringWriter();
-			stmt.append("SELECT it.tax_type,it.percentage,it.surcharge,");
-			stmt.append("id.taxable_base,");
-			stmt.append("i.series,i.number,i.reference_code,i.rdocument,");
-			stmt.append("i.rname,i.issue_date,i.transaction");
-			stmt.append(" FROM invoice_tax it");
-			stmt
-					.append(" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)");
-			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
-			stmt.append(" WHERE it.tax_type = 1");
-
+		StringWriter stmt = new StringWriter();
+			stmt.append(" SELECT i.type,i.transaction,i.issue_date,i.reference_code,i.rdocument,i.rname ");
+			stmt.append("  ,it.percentage,it.surcharge,id.taxable_base, ");
+			stmt.append("  CEIL((i.investment+ELT((i.type+1),20,10,20,20)) / 10) vatType ");
+			stmt.append("  FROM invoice_tax it ");
+			stmt.append("  INNER JOIN invoice_detail id ON (it.invoice_detail = id.id) ");
+			stmt.append("  INNER JOIN invoice i ON (id.invoice = i.id) ");
+			stmt.append("  WHERE it.tax_type = 1 ");
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
 			}
 			if (params.getToDate() != null) {
 				stmt.append(" AND i.issue_date <= ?");
 			}
+			if (params.getVatPercent() != null) {
+				stmt.append(" AND it.percentage = ?");
+			}
+			if (params.getSurchargePercent() != null) {
+				stmt.append(" AND it.surcharge = ?");
+			}
+			if (params.getVatType() != null) {
+				stmt.append(" AND CEIL((i.investment+ELT((i.type+1),20,10,20,20)) / 10) = "+ (params.getVatType().ordinal() + 1));	
+			}
+			if (params.getVatReportType() != null) {
+				if (params.getVatReportType() == VatReportType.GENERAL) {
+					stmt.append(" AND i.transaction = "+ InvoiceTransactionType.NATIONAL.ordinal());
+				} else if (params.getVatReportType() == VatReportType.SURCHARGE) {
+					stmt.append(" AND i.transaction = "+ InvoiceTransactionType.NATIONAL.ordinal());
+					stmt.append(" AND it.surcharge > 0");
+				} else if (params.getVatReportType() == VatReportType.INTRACOMUNNITARY) {
+					stmt.append(" AND i.transaction = "+ InvoiceTransactionType.INTRACOMUNNITARY.ordinal());
+				}
+				else if (params.getVatReportType() == VatReportType.EXTRACOMUNNITARY) {
+					stmt.append(" AND i.transaction = "+ InvoiceTransactionType.EXTRACOMUNNITARY.ordinal());
+				}				
+			}
 			if (params.getSecurityLevel() != null) {
 				stmt.append(" AND i.security_level = " + params.getSecurityLevel().ordinal());
 			}
-			if (params.getVatType() == VatType.INPUT) {
-				stmt.append(" AND  i.type != " + InvoiceType.SALES.ordinal());
-				stmt.append(" AND i.investment = 0");
-			} else if (params.getVatType() == VatType.OUTPUT) {
-				stmt.append(" AND i.type = " + InvoiceType.SALES.ordinal());
-				stmt.append(" AND i.investment = 0");
-			} else if (params.getVatType() == VatType.INVESTMENT) {
-				stmt.append(" AND i.investment = 1");
-			}
-			if (summary) {
-				stmt.append(" ORDER BY YEAR(i.issue_date),MONTH(i.issue_date),it.tax_type,it.percentage");
-			} else {
-				stmt.append(" ORDER BY i.series,i.number");	
-			}
+			stmt.append(" ORDER BY vatType,i.transaction,i.issue_date,i.reference_code");
 			
 			ps = HibernateUtil.getSQLConnection().prepareStatement(stmt.toString(),
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			int i = 0;
 			if (params.getFromDate() != null) {
-				ps.setDate(1, new java.sql.Date( params.getFromDate().getTime()));
+				ps.setDate(++i, new java.sql.Date( params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
-				ps.setDate(2, new java.sql.Date( params.getToDate().getTime()));
+				ps.setDate(++i, new java.sql.Date( params.getToDate().getTime()));
+			}
+			if (params.getVatPercent() != null) {
+				ps.setDouble(++i, params.getVatPercent());
+			}
+			if (params.getSurchargePercent() != null) {
+				ps.setDouble(++i, params.getSurchargePercent());
 			}
 			rs = ps.executeQuery();
 			List<Vat> vats = new LinkedList<Vat>();
 			while (rs.next()) {
 				Vat vat = new Vat();
-				TaxType type = TaxType.values()[rs.getInt(1)];
-				vat.setTaxType( type );
-				vat.setPercent(rs.getDouble(2));
-				vat.setSurcharge(rs.getDouble(3));
-				vat.setBase(rs.getDouble(4));
-				vat.setSeries(rs.getString(5));
-				vat.setNumber(rs.getInt(6));
-				vat.setReference(rs.getString(7));
-				vat.setDocument(rs.getString(8));
-				vat.setName(rs.getString(9));
-				vat.setDate(rs.getDate(10));
+				InvoiceType type = InvoiceType.values()[rs.getInt(1)];
+				vat.setInvoiceType( type );
+				InvoiceTransactionType transaction = InvoiceTransactionType.values()[rs.getInt(2)];
+				vat.setTransactionType(transaction);
+				vat.setDate(rs.getDate(3));
+				vat.setReference(rs.getString(4));
+				vat.setDocument(rs.getString(5));
+				vat.setName(rs.getString(6));
+				vat.setPercent(rs.getDouble(7));
+				vat.setSurcharge(rs.getDouble(8));
+				vat.setBase(rs.getDouble(9));
+				VatType vatType = VatType.values()[(rs.getInt(10) - 1)];
+				vat.setVatType(vatType);
 				vats.add(vat);
 			}
 			return vats;
@@ -169,5 +184,5 @@ public class VatCollection {
 		}
 
 	}
-*/
+	
 }

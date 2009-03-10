@@ -1473,6 +1473,10 @@
 			<from-outcome>vat_report_list</from-outcome>
 			<to-view-id>/com/code/aon/ui/finance/facelet/vat/list.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>vat_report_detail</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/vat/detailList.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 
 	<!-- =================== Finance ================= -->
