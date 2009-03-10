@@ -71,4 +71,77 @@ public interface IDesktopAlias {
 	*/
 	String  DOMAIN_JPEG_LOGO = "Domain_jpegLogo";
 
+
+	/** 
+	* Alias value: AccessPolicy_id
+	* Hibernate value: AccessPolicy.id
+	*/
+	String  ACCESS_POLICY_ID = "AccessPolicy_id";
+
+	/** 
+	* Alias value: AccessPolicy_commonName
+	* Hibernate value: AccessPolicy.commonName
+	*/
+	String  ACCESS_POLICY_NAME = "AccessPolicy_commonName";
+
+	/** 
+	* Alias value: AccessPolicy_maxDefinedUsers
+	* Hibernate value: AccessPolicy.maxDefinedUsers
+	*/
+	String  ACCESS_POLICY_MAX_DEFINED_USERS = "AccessPolicy_maxDefinedUsers";
+
+	/** 
+	* Alias value: AccessPolicy_maxAllowedUsers
+	* Hibernate value: AccessPolicy.maxAllowedUsers
+	*/
+	String  ACCESS_POLICY_MAX_ALLOWD_USERS = "AccessPolicy_maxAllowedUsers";
+
+	/** 
+	* Alias value: AccessPolicy_maxSessions4User
+	* Hibernate value: AccessPolicy.maxSessions4User
+	*/
+	String  ACCESS_POLICY_MAX_SESSIONS_4_USER = "AccessPolicy_maxSessions4User";
+
+	/** 
+	* Alias value: AccessPolicy_exceptionThrowableIfMaximumExceeded
+	* Hibernate value: AccessPolicy.exceptionThrowableIfMaximumExceeded
+	*/
+	String  ACCESS_POLICY_EXCEPTION_THROWABLE_IF_MAXIMUM_EXCEEDED = "AccessPolicy_exceptionThrowableIfMaximumExceeded";
+
+	
+	/** 
+	* Alias value: DBConnnection_id
+	* Hibernate value: DBConnnection.id
+	*/
+	String  DB_CONNECTION_ID = "DBConnnection_id";
+
+	/** 
+	* Alias value: DBConnnection_commonName
+	* Hibernate value: DBConnnection.commonName
+	*/
+	String  DB_CONNECTION_COMMON_NAME = "DBConnnection_commonName";
+	
+	/** 
+	* Alias value: DBConnnection_driverClassName
+	* Hibernate value: DBConnnection.driverClassName
+	*/
+	String  DB_CONNECTION_DRIVER_CLASS_NAME = "DBConnnection_driverClassName";
+
+	/** 
+	* Alias value: DBConnnection_labeledURI
+	* Hibernate value: DBConnnection.labeledURI
+	*/
+	String  DB_CONNECTION_LABELED_URI = "DBConnnection_labeledURI";
+
+	/** 
+	* Alias value: DBConnnection_uid
+	* Hibernate value: DBConnnection.uid
+	*/
+	String  DB_CONNECTION_UID = "DBConnnection_uid";
+
+	/** 
+	* Alias value: DBConnnection_userPassword
+	* Hibernate value: DBConnnection.userPassword
+	*/
+	String  DB_CONNECTION_USER_PASSWORD = "DBConnnection_userPassword";
 }
