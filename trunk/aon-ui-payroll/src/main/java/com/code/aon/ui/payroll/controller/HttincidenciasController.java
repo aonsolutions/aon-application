@@ -16,7 +16,7 @@ public class HttincidenciasController extends LinesController {
 	public void generateCdg(){
 		
 		Integer cdg= ((Httrabajador)(FormUtil.getController(IPayrollConstants.HTTRABAJADOR_CONTROLLER_NAME)).getTo()).getCdg();
-		Integer orden= Integer.parseInt(Utils.maxCode("Httincidencia","id.orden"));
+		Integer orden= Integer.parseInt(Utils.maxCode("Httincidencia","id.orden","id.cdg="+cdg));
 		
 		((Httincidencia)getTo()).getId().setCdg(((Httrabajador)(FormUtil.getController(IPayrollConstants.HTTRABAJADOR_CONTROLLER_NAME)).getTo()).getCdg());
 		((Httincidencia)getTo()).getId().setOrden(orden +1);
