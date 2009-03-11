@@ -21,10 +21,11 @@ public class DomainControllerListener extends ControllerAdapter {
 		DomainController domainController = (DomainController) event.getController();
 		Domain domain = (Domain) event.getController().getTo();
 		try {
-			domainController.addAccessPolicy(domain.getCommonName());
 			DBConnnection dbConnection = domainController.createDB(domain.getCommonName());
+			domainController.createUsers(dbConnection, domain.getCommonName());
 			domainController.createApplications(dbConnection, domain.getCommonName());
-		} catch (ManagerBeanException e) {
+			domainController.addAccessPolicy(domain.getCommonName());
+		} catch (Throwable e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
 		}

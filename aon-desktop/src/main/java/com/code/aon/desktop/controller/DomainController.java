@@ -5,16 +5,26 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.HibernateException;
+import org.hibernate.ReplicationMode;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.AnnotationConfiguration;
 
+import com.code.aon.common.AonException;
 import com.code.aon.common.BasicManagerBean;
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.User;
 import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.desktop.AccessPolicy;
 import com.code.aon.desktop.DBConnnection;
 import com.code.aon.desktop.Domain;
+import com.code.aon.desktop.DomainApplication;
 import com.code.aon.desktop.IDesktopConstants;
+import com.code.aon.desktop.dao.DBManager;
 import com.code.aon.desktop.dao.IDesktopAlias;
 import com.code.aon.jaas.client.ast.IAccessPolicy;
 import com.code.aon.ldap.AonDN;
@@ -26,17 +36,18 @@ import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.util.AonUtil;
 
 public class DomainController extends BasicController implements IDesktopConstants, IAonObjectClasses {
-
-	private static final String AON_MASTER = "aon_master";
 
 	private static final Logger LOGGER = Logger.getLogger(DomainController.class.getName());
 	
 	private LdapDAO dbConnectionDAO;
 	
 	private BasicManagerBean dbConnectionManagerBean;
+
+	private LdapDAO domainApplicationDAO;
+	
+	private BasicManagerBean domainApplicationManagerBean;
 	
 	private BasicManagerBean ldapManagerBean;
 
@@ -63,10 +74,21 @@ public class DomainController extends BasicController implements IDesktopConstan
 		}
 		return this.dbConnectionManagerBean;
 	}		
+
+	public BasicManagerBean getDomainApplicationManagerBean() {
+		if ( this.domainApplicationManagerBean == null ) {
+			this.domainApplicationDAO = new LdapDAO(DomainApplication.class);		
+			this.domainApplicationManagerBean = new BasicManagerBean(this.domainApplicationDAO);			
+		}
+		return this.domainApplicationManagerBean;
+	}	
 	
 	private String getCurrentDomain() {
+		/*
 		AonUserController auc = (AonUserController) AonUtil.getRegisteredBean(CURRENT_USER_CONTROLLER_NAME);
 		return auc.getDomain();
+		*/
+		return "inetserver.net";
 	}
 	
 	public void addAccessPolicy( String domain ) throws ManagerBeanException {
@@ -99,7 +121,7 @@ public class DomainController extends BasicController implements IDesktopConstan
 		IManagerBean bean = getDBConnnectionManagerBean();
 		this.dbConnectionDAO.setBaseDN(bdsDN.toString());
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IDesktopAlias.DB_CONNECTION_COMMON_NAME), AON_MASTER);
+		criteria.addEqualExpression(bean.getFieldName(IDesktopAlias.DB_CONNECTION_COMMON_NAME), DBManager.AON_MASTER);
 		List<ITransferObject> list = bean.getList(criteria);
 		if (! list.isEmpty() ) {
 			return (DBConnnection) list.get(0);
@@ -114,23 +136,28 @@ public class DomainController extends BasicController implements IDesktopConstan
 	private DBConnnection getDBConnection( DBConnnection dbConnection, String domain ) {
 		DBConnnection newDBConnection = (DBConnnection) dbConnection.clone();
 		newDBConnection.setId(null);
-		newDBConnection.setCommonName(AON_MASTER);
-		String bdName = domain.replace(',', '-');
+		newDBConnection.setCommonName(DBManager.AON_MASTER);
+		String bdName = domain.replace('.', '-');
 		String url = dbConnection.getLabeledURI();
 		String newUrl = StringUtils.substringBeforeLast(url, "/") + "/" + bdName;
 		String suffix = StringUtils.substringAfter(url, "?");
 		if (! StringUtils.isEmpty(suffix) ) {
 			newUrl += "?" + suffix;
 		}
-		newDBConnection.setLabeledURI(url);
+		newDBConnection.setLabeledURI(newUrl);
 		return newDBConnection;
 	}
 	
 	private void createDB( DBConnnection dbConnection ) {
-		
+		DBManager manager = new DBManager();
+		try {
+			manager.createDB(dbConnection);
+		} catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);			
+		}
 	}
 	
-	public void createDB( String domain ) throws ManagerBeanException {
+	public DBConnnection createDB( String domain ) throws ManagerBeanException {
 		DistinguishedName bdsDN = AonDN.getDomainBDsDN(domain);
 		addOrganizationUnit(bdsDN);
 		DBConnnection currentDBConnection = getCurrentDBConnection();
@@ -138,12 +165,69 @@ public class DomainController extends BasicController implements IDesktopConstan
 		this.dbConnectionDAO.setBaseDN(bdsDN.toString());
 		getDBConnnectionManagerBean().insert(newDBConnection);
 		createDB(newDBConnection);
+		return newDBConnection;
 	}
 	
-	public void createApplications( String domain ) {
-		DistinguishedName bdsDN = AonDN.getDomainApplicationsDN(domain);
-		addOrganizationUnit(bdsDN);
+	@SuppressWarnings("unchecked")
+	private List<DomainApplication> getCurrentDomainApplications() throws ManagerBeanException {
+		DistinguishedName dn = AonDN.getDomainApplicationsDN(getCurrentDomain());
+		IManagerBean bean = getDomainApplicationManagerBean();
+		this.domainApplicationDAO.setBaseDN(dn.toString());
+		return (List) bean.getList(null);
 	}
 	
+	private DomainApplication getDomainApplication( DomainApplication domainApplication, DBConnnection dbConnection, String domain ) {
+		DomainApplication newDomainApplication = (DomainApplication) domainApplication.clone();
+		newDomainApplication.setId(null);
+		newDomainApplication.setDataSource(dbConnection);
+		return newDomainApplication;
+	}	
 	
+	public void createApplications( DBConnnection dbConnection, String domain ) throws ManagerBeanException {
+		DistinguishedName dasDN = AonDN.getDomainApplicationsDN(domain);
+		addOrganizationUnit(dasDN);
+		List<DomainApplication> list = getCurrentDomainApplications();
+		this.domainApplicationDAO.setBaseDN(dasDN.toString());
+		for( DomainApplication da : list ) {
+			DomainApplication newDA = getDomainApplication(da, dbConnection, domain);
+			getDomainApplicationManagerBean().insert(newDA);
+		}
+	}
+	
+	private SessionFactory getSessionFactory( DBConnnection dbConnection ) {
+		AnnotationConfiguration configuration = new AnnotationConfiguration();
+   		configuration.addProperties( dbConnection.getHibernateProperties() );
+   		configuration.configure();    			
+   		configuration.buildMappings();
+		return configuration.buildSessionFactory();
+	}
+	
+	private void replicateUsers( DBConnnection dbConnection ) throws AonException {
+		IManagerBean userBean = BeanManager.getManagerBean(User.class);
+		List<ITransferObject> users = userBean.getList(null);
+		SessionFactory factory = getSessionFactory(dbConnection);
+		Session session = null;
+		try {
+			session = factory.openSession();
+			session.beginTransaction();
+			for( ITransferObject user : users ) {
+				session.replicate(user, ReplicationMode.EXCEPTION );
+			}
+			session.getTransaction().commit();
+		} catch (HibernateException e) {
+			if ( session != null ) {
+				session.getTransaction().rollback();	
+			}
+			throw new AonException( e.getMessage(), e );	
+		} finally {
+			if ( session != null ) {
+				session.close();
+			}
+		}
+	}
+	
+	public void createUsers( DBConnnection dbConnection, String domain ) throws AonException {
+		replicateUsers( dbConnection );
+	}
+
 }

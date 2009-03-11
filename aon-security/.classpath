@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/main/java"/>
-	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry kind="src" path="src/main/resources"/>
+	<classpathentry including="**/*.java" kind="src" path="src/main/java"/>
+	<classpathentry kind="con" path="org.devzuz.q.maven.jdt.core.mavenClasspathContainer"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry kind="lib" path="C:/SERVER/jboss-4.2.1.GA/client/jbossall-client.jar"/>
 	<classpathentry kind="lib" path="C:/SERVER/jboss-4.2.1.GA/server/default/lib/jbosssx.jar" sourcepath="C:/JAVA/jboss-4.2.1.GA-src/security/src/main"/>
 	<classpathentry kind="output" path="bin"/>

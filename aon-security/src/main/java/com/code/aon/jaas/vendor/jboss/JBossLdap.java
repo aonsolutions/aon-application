@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.management.ObjectName;
+import javax.naming.Context;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,7 +19,6 @@ import org.jboss.system.ServiceMBeanSupport;
 
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.IConstants;
-import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.client.ast.IDomain;
 import com.code.aon.jaas.client.ast.IDomainApplication;
@@ -67,6 +67,9 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 				ldapProperties.put( option.getName(), option.getValue() );
 			}
 		}
+		if (! ldapProperties.contains(Context.REFERRAL) ) {
+			ldapProperties.put(Context.REFERRAL, "follow");
+		}
 		this.ldap = new SecurityLdap( ldapProperties );
 	}
 	
@@ -111,7 +114,9 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 			LOGGER.debug("Retrieving application for: CONTEXT[" + ctx + "]");
 		}
 		Application application = this.ldap.getApplication4Ctx(ctx);
-		updateApplication(application);
+		if ( application != null ) {
+			updateApplication(application);	
+		}
 		return application;
 	}
 	
@@ -122,13 +127,17 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 		return Domain.get(this.ldap, domainId);
 	}
 
+	@SuppressWarnings("unchecked")
 	public List getUserApplications(String domainId, String userId) {
 		if ( LOGGER.isDebugEnabled() ) {
 			LOGGER.debug("Retrieving user applications for: DOMAIN[" + domainId + "], USER [" + userId + "]" );
 		}
 		List<IApplication> applications = new ArrayList<IApplication>();
 		for( String name : this.ldap.getUserApplications(domainId, userId) ) {
-			applications.add( Application.get(this.ldap, name) );
+			Application application = Application.get(this.ldap, name);
+			if ( application != null ) {
+				applications.add( application );	
+			}
 		}
 		return applications;
 	}
@@ -138,7 +147,9 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 			LOGGER.debug("Retrieving application for: NAME[" + name + "]" );
 		}
 		Application application = Application.get(this.ldap, name);
-		updateApplication(application);
+		if ( application != null ) {
+			updateApplication(application);	
+		}
 		return application;
 	}
 
@@ -166,7 +177,7 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 		}
 		DistinguishedName dn = AonDN.getApplicationProfileDN(appId, relation.getId());
 		if ( this.ldap.exists(dn, PROFILE) ) {
-			ldap.updateRelation( dn, relation );
+			DomainApplication.updateRelation( ldap, dn, relation );
 		} else {
 			IDomainApplication domainApplication = DomainApplication.get(this.ldap, domainId, appId);
 			domainApplication.updateProfile(relation);
@@ -180,7 +191,7 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 		}
 		DistinguishedName dn = AonDN.getDomainApplicationUserDN(domainId, appId, relation.getId());
 		if ( this.ldap.exists(dn, DOMAIN_APPLICATION_USER) ) {
-			this.ldap.updateRelation(dn, relation);
+			DomainApplication.updateRelation( ldap, dn, relation);
 		}
 		return relation;
 	}

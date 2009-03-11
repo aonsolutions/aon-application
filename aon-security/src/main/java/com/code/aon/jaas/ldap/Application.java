@@ -12,8 +12,10 @@ import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.client.ast.IDomain;
 import com.code.aon.jaas.client.ast.INodeVisitor;
 import com.code.aon.jaas.client.ast.IRole;
+import com.code.aon.jaas.client.ast.core.Role;
 import com.code.aon.jaas.deployment.event.SubDeployerEvent;
 import com.code.aon.ldap.AonDN;
+import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
@@ -50,9 +52,9 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
     /** Hash encoding format. Default BASE64. */
 	private String hashEncoding = Util.BASE64_ENCODING;
     
-	private SecurityLdap ldap;
+	private BasicLdap ldap;
 	
-	public Application(SecurityLdap ldap) {
+	public Application(BasicLdap ldap) {
 		this.ldap = ldap;
 	}
 	
@@ -206,7 +208,7 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 			DistinguishedName dn = AonDN.getRolesDN(application);
 			List<Entry> list = session.search(dn.toString(), objectClass );
 			for( Entry entry : list ) {
-				IRole role = this.ldap.getRole(entry);
+				IRole role = getRole(entry);
 				roles.add(role);
 			}
 		} catch ( LdapException e ) {
@@ -216,5 +218,11 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 		}
 		return roles;
 	}
+	
+	public IRole getRole( Entry entry ) {
+		Role role = new Role();
+		role.setId(entry.getAsString(COMMON_NAME_ATTRIBUTE));
+		return role;
+	}	
 	
 }
