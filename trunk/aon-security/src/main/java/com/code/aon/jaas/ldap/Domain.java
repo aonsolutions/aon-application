@@ -3,9 +3,11 @@ package com.code.aon.jaas.ldap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -17,13 +19,16 @@ import com.code.aon.jaas.client.ast.INodeVisitor;
 import com.code.aon.jaas.client.ast.IUser;
 import com.code.aon.jaas.client.ast.UserAlreadyExistException;
 import com.code.aon.jaas.client.ast.core.AccessPolicy;
+import com.code.aon.jaas.client.ast.core.User;
 import com.code.aon.ldap.AonDN;
+import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
+import com.code.aon.ldap.Scope;
 
 public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, IAonObjectClasses {
 	
@@ -35,11 +40,11 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 	/** Domain identifier. */
 	private String id;
 
-	private SecurityLdap ldap;
+	private BasicLdap ldap;
 	
 	private int status;
 	
-	public Domain(SecurityLdap ldap) {
+	public Domain(BasicLdap ldap) {
 		this.ldap = ldap;
 	}
 	
@@ -79,9 +84,9 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 
 	@Override
 	public IUser getStandaloneUser(String name) {
-		Entry user = ldap.getUser(this.id, name);
-		if ( user != null ) {
-			return ldap.getUser(user);
+		Entry entry = getUser(this.ldap, this.id, name);
+		if ( entry != null ) {
+			return getUser(entry);
 		}
 		return null;
 	}
@@ -109,7 +114,7 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 	@Override
 	public Map<String, IUser> standaloneUsers() {
 		Map<String,IUser> map = new HashMap<String, IUser>();
-		for( IUser user : ldap.getUsers(this.id) ) {
+		for( IUser user : getUsers(this.id) ) {
 			map.put( user.getId(), user);
 		}
 		return map;
@@ -143,20 +148,22 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 		return AonDN.getDomainDN(domainName);
 	}
 	
-	private static Domain getObject( SecurityLdap ldap, Entry entry ) {
+	private static Domain getObject( BasicLdap ldap, Entry entry ) {
 		Domain domain = new Domain(ldap);
 		domain.setId(entry.getAsString(COMMON_NAME_ATTRIBUTE));
 		domain.setStatus(entry.getAsInteger(STATUS_ATTRIBUTE));
 		return domain;
 	}
 
-	public static Domain get( SecurityLdap ldap, String domainId ) {
+	public static Domain get( BasicLdap ldap, String domainId ) {
 		Domain domain = null;
 		try {
 			String objectClass = LdapSession.getObjectClass(DOMAIN);
 			DistinguishedName dn = getDN(domainId);
 			Entry entry = ldap.getLdapSession().get( dn.toString(), objectClass );
-			domain = getObject(ldap, entry);
+			if ( entry != null ) {
+				domain = getObject(ldap, entry);	
+			}
 		} catch ( LdapException e ) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
@@ -210,6 +217,52 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 			this.ldap.closeSession();
 		}
 		return applications;
+	}
+	
+	public static Entry getUser( BasicLdap ldap, String domainId, String userId ) {
+		Entry entry = null;
+		try {
+			String objectClass = LdapSession.getObjectClass(USER);
+			DistinguishedName dn = AonDN.getUserDN(domainId, userId);
+			entry = ldap.getLdapSession().get( dn.toString(), objectClass );
+		} catch ( LdapException e ) {
+			LOGGER.error( e.getMessage(), e );
+		} finally {
+			ldap.closeSession();
+		}
+		return entry;
+	}	
+	
+	private static User getUser( Entry entry ) {
+		User user = new User();
+		user.setId(entry.getAsString(USER_ID_ATTRIBUTE));
+		user.setName(entry.getAsString(COMMON_NAME_ATTRIBUTE));
+		byte[] password = entry.getAsByteArray(USER_PASSWORD_ATTRIBUTE);		
+		int offset = ArrayUtils.indexOf( password, (byte) '}' ) + 1;
+		user.setPasswd( new String(password, offset, password.length-offset) );
+		if ( entry.containsKey(DESCRIPTION_ATTRIBUTE) ) {
+			user.setDescription(entry.getAsString(DESCRIPTION_ATTRIBUTE));			
+		}
+		return user;
+	}
+		
+	
+	private List<IUser> getUsers( String domainName ) {
+		List<IUser> users = new LinkedList<IUser>();
+		try {
+			String objectClass = LdapSession.getObjectClass(USER);
+			DistinguishedName dn = AonDN.getUsersDN( domainName );
+			List<Entry> list = ldap.getLdapSession().search( dn.toString(), objectClass, Scope.SUBTREE_SCOPE );
+			for( Entry entry : list ) {
+				IUser user = getUser(entry);
+				users.add(user);
+			}
+		} catch ( LdapException e ) {
+			LOGGER.error( e.getMessage(), e );
+		} finally {
+			ldap.closeSession();
+		}
+		return users;
 	}
 	
 }

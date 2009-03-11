@@ -1,5 +1,6 @@
 package com.code.aon.desktop;
 
+import java.util.Properties;
 import java.util.logging.Logger;
 
 import javax.persistence.Column;
@@ -7,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.cfg.Environment;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
@@ -81,7 +84,7 @@ public class DBConnnection implements ITransferObject, Cloneable {
 	public void setUid(String uid) {
 		this.uid = uid;
 	}
-
+	
 	@Attribute(name="userPassword",length=128,nullable=false)
 	public byte[] getUserPassword() {
 		return userPassword;
@@ -89,6 +92,24 @@ public class DBConnnection implements ITransferObject, Cloneable {
 
 	public void setUserPassword(byte[] userPassword) {
 		this.userPassword = userPassword;
+	}
+
+	public String getPassword() {
+		return new String(userPassword);
+	}
+	
+	public String getDBName() {
+		String name = StringUtils.substringAfterLast(this.labeledURI, "/");
+		return StringUtils.substringBefore(name, "?");
+	}
+	
+	public Properties getHibernateProperties() {
+		Properties hibernateProperties = new Properties();
+		hibernateProperties.put(Environment.USER, getUid());
+		hibernateProperties.put(Environment.PASS, getPassword());
+		hibernateProperties.put(Environment.URL, getLabeledURI());
+		hibernateProperties.put(Environment.DRIVER, getDriverClassName());
+		return hibernateProperties;
 	}
 	
 	@Override

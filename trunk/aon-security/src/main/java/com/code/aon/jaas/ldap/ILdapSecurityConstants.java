@@ -6,8 +6,6 @@ public interface ILdapSecurityConstants {
 	
 	String DATA_SOURCE_ATTRIBUTE = "dataSource";
 	
-	String ACTIVE_ATTRIBUTE = "active";
-	
     String EXCEPTION_THROWABLE_IF_MAXIMUM_EXCEEDED_ATTRIBUTE = "exceptionThrowableIfMaximumExceeded";
 
 	String MAX_ALLOWED_USERS_ATTRIBUTE = "maxAllowedUsers";
