@@ -38,8 +38,9 @@ import com.code.aon.ql.Criteria;
 public class AccountEntryInvoiceWriter {
 
 	private Account salesDefaultAccount;
-	private static final String N_FRA = "N/Fra: ";
-	private static final String S_FRA = "S/Fra: ";
+	private static final String N_FRA = "N/Fra";
+	private static final String S_FRA = "S/Fra";
+	private static final String ABONO = "ABONO";
 
 	public void unrecordAndUpdateInvoice(Invoice invoice) throws ManagerBeanException {
 		unrecordInvoice(invoice);
@@ -92,7 +93,7 @@ public class AccountEntryInvoiceWriter {
 		double retentitonTotal = getRetentionTotal(taxBreakDown);
 		double taxQuota = getTaxQuota(taxBreakDown);
 		Map<Account, Double> bases = obtainBasesPerAccount(invoice);
-		insertEntryDetails(entry, account, obtainConcept(invoice), total, retentitonTotal, taxQuota, bases);
+		insertEntryDetails(entry, account, obtainConcept(invoice, total), total, retentitonTotal, taxQuota, bases);
 		insertAccountEntryInvoice(entry, invoice);
 	}
 
@@ -100,8 +101,12 @@ public class AccountEntryInvoiceWriter {
 		return prefix + " " + invoice.getReferenceCode(); 
 	}
 
-	public String obtainConcept(Invoice invoice) {
+	public String obtainConcept(Invoice invoice, double total) {
 		String prefix = (invoice.getType().equals(InvoiceType.SALES)) ? N_FRA : S_FRA;
+		if (total < 0) {
+			prefix += " " + ABONO;
+		}
+		prefix += ": ";
 		return obtainConcept(prefix, invoice);
 	}
 
@@ -261,7 +266,7 @@ public class AccountEntryInvoiceWriter {
 		entryDetailBean.insert(entryDetail);
 		// Segundo Apunte(Mirar si hay q crearlo o no)
 		entryDetail = new AccountEntryDetail();
-		if (retentionTotal > 0) {
+		if (retentionTotal != 0) {
 			if (entry.getType().equals(AccountEntryType.SALES_INVOICE)) {
 				entryDetail.setAccount(AccountUtil
 						.obtainDefaultAccount(DefaultAccounts.PAID_RETENTION_ACCOUNT));
@@ -277,7 +282,7 @@ public class AccountEntryInvoiceWriter {
 			entryDetailBean.insert(entryDetail);
 		}
 		// Tercer Apunte (Si I.V.A. es 0 no se crea)
-		if (taxQuota > 0) {
+		if (taxQuota != 0) {
 			entryDetail = new AccountEntryDetail();
 			if (entry.getType().equals(AccountEntryType.SALES_INVOICE)) {
 				entryDetail.setAccount(AccountUtil
