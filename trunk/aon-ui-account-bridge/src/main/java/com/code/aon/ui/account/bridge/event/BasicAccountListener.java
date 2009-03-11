@@ -47,29 +47,40 @@ public class BasicAccountListener extends ControllerAdapter {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-		setAccount( null );
-		ITransferObject to = event.getController().getTo();
+	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		setAccount(null);
+	}
+
+	@Override
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(getPojo());
-			Criteria criteria = new Criteria();
-			String fieldName = bean.getFieldName( getAlias() );
-			Serializable id = event.getController().getManagerBean().getId(to);
-			criteria.addEqualExpression( fieldName, id );
-			List<ITransferObject> list = bean.getList(criteria);
-			if ( list.size() > 0 ) {
-				IAccount iaccount = (IAccount) list.get(0);
-				setAccount( iaccount.getAccount() );
-			}
+			loadAccount(event.getController().getManagerBean().getId(event.getController().getTo()));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
 
 	@Override
-	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		setAccount( null );
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		try {
+			loadAccount(event.getController().getManagerBean().getId(event.getController().getTo()));
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
 	}
-	
+
+	private void loadAccount(Serializable id) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(getPojo());
+		Criteria criteria = new Criteria();
+		String fieldName = bean.getFieldName(getAlias());
+		criteria.addEqualExpression(fieldName, id);
+		List<ITransferObject> list = bean.getList(criteria);
+		if (list.size() > 0) {
+			IAccount iaccount = (IAccount) list.get(0);
+			setAccount(iaccount.getAccount());
+		} else {
+			setAccount(null);
+		}
+	}
+
 }
