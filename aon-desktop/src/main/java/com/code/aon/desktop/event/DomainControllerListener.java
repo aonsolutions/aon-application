@@ -19,17 +19,25 @@ public class DomainControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		DomainController domainController = (DomainController) event.getController();
 		Domain domain = (Domain) event.getController().getTo();
+		String name = domain.getCommonName();
 		try {
-			DBConnnection dbConnection = domainController.createDB(domain.getCommonName());
-			domainController.createUsers(dbConnection, domain.getCommonName());
-			domainController.createApplications(dbConnection, domain.getCommonName());
-			domainController.addAccessPolicy(domain.getCommonName());
+			DBConnnection dbConnection = domainController.createDB(name);
+			domainController.createUsers(dbConnection, name);
+			domainController.createApplications(dbConnection, name);
+			domainController.addAccessPolicy(name);
 		} catch (Throwable e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			domainController.removeDomain(name, true);
 			throw new ControllerListenerException( e.getMessage(), e );
 		}
 	}
 
-	
+	@Override
+	public void beforeBeanRemoved(ControllerEvent event)
+			throws ControllerListenerException {
+		DomainController domainController = (DomainController) event.getController();
+		Domain domain = (Domain) event.getController().getTo();
+		domainController.removeDomain(domain.getCommonName(), true);
+	}
 	
 }
