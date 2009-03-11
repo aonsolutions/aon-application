@@ -87,40 +87,17 @@ public class SaleInvoiceControllerListener extends ControllerAdapter {
 		try {
 			SaleInvoiceController saleInvoiceController = (SaleInvoiceController)this.getController(); 
 			saleInvoiceController.loadAddresses(null);
-//			saleInvoiceController.setSeriesDescripition("");
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
-
-//		SaleInvoiceDetailController detailController = (SaleInvoiceDetailController)FormUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
-//		detailController.setWorkPlace(null);
-	}
-/*	
-	@Override
-	public void afterBeanCanceled(ControllerEvent event) throws ControllerListenerException {
-		SaleInvoiceDetailController detailController = (SaleInvoiceDetailController)FormUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
-		detailController.setWorkPlace(null);
 	}
 
-	@Override
-	public void afterBeanReset(ControllerEvent event) throws ControllerListenerException {
-		SaleInvoiceDetailController detailController = (SaleInvoiceDetailController)FormUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
-		detailController.setWorkPlace(null);
-	}
-
-	@Override
-	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
-		SaleInvoiceDetailController detailController = (SaleInvoiceDetailController)FormUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
-		detailController.setWorkPlace(null);
-	}
-*/	
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		try {
 			SaleInvoiceController saleInvoiceController = (SaleInvoiceController)this.getController(); 
 			Invoice invoice = (Invoice) saleInvoiceController.getTo();
 			saleInvoiceController.loadAddresses(invoice.getRegistry().getId());
-//			saleInvoiceController.setSeriesDescripition(obtainSeriesDescription(invoice.getSeries()));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
@@ -155,17 +132,5 @@ public class SaleInvoiceControllerListener extends ControllerAdapter {
 		}
 		return null;
 	}
-/*	
-	@SuppressWarnings("unchecked")
-	private String obtainSeriesDescription(String series) throws ManagerBeanException {
-		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), series);
-		Iterator iter = seriesBean.getList(criteria).iterator();
-		if(iter.hasNext()){
-			return ((Series)iter.next()).getDescription();
-		}
-		return null;
-	}
-*/
+
 }
