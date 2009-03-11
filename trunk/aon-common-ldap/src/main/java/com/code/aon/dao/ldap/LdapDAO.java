@@ -63,10 +63,20 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		setBaseDN( this.metadata.getBaseDN() );			
 	}
 	
+	/**
+	 * Gets the base dn.
+	 * 
+	 * @return the base dn
+	 */
 	public String getBaseDN() {
 		return baseDN;
 	}
 
+	/**
+	 * Sets the base dn.
+	 * 
+	 * @param baseDN the new base dn
+	 */
 	public void setBaseDN(String baseDN) {
 		this.baseDN = baseDN; 
 		try {
@@ -101,6 +111,15 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		}
 	}
 	
+	/**
+	 * Calculate dn.
+	 * 
+	 * @param to the to
+	 * 
+	 * @return the string
+	 * 
+	 * @throws DAOException the DAO exception
+	 */
 	public String calculateDN( ITransferObject to ) throws DAOException {
 		StringBuffer dn = new StringBuffer( this.baseDN );
 		try {
@@ -114,6 +133,15 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		return dn.toString();
 	}
 
+	/**
+	 * Exists.
+	 * 
+	 * @param id the id
+	 * 
+	 * @return true, if successful
+	 * 
+	 * @throws DAOException the DAO exception
+	 */
 	public boolean exists( String id ) throws DAOException {
 		return exists( id, this.metadata.getMainObjectClass() );
 	}
@@ -125,7 +153,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 			String dn = getDN(criteria);
 			String filter = getFilter(criteria);
 			LOGGER.info( "getCount, dn=" + dn + ",filter=" + filter );
-			count = getLdapSession().getCount(dn.toString(), filter, Scope.SUBTREE_SCOPE );
+			count = getLdapSession().getCount(dn.toString(), filter, Scope.ONELEVEL_SCOPE );
 		} catch ( LdapException e ) {
 			throw new DAOException( "Error getting count of " + metadata.getMainObjectClass(), e );
 		} finally {
@@ -138,6 +166,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		return metadata.getPojoClass();
 	}
 	
+	@SuppressWarnings("unchecked")
 	private IDAO getDAO( PropertyInfo info ) {
 		LdapDAO dao = new LdapDAO( getProperties(), (Class<ITransferObject>) info.getPropertyClass() );
 		if ( info.getBaseDN() != null ) {
@@ -307,7 +336,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 			String dn = getDN(criteria);
 			String filter = getFilter(criteria);
 			LOGGER.info( "getList, dn=" + dn + ",filter=" + filter );
-			List<Entry> list = getLdapSession().search(dn.toString(), filter, Scope.SUBTREE_SCOPE );
+			List<Entry> list = getLdapSession().search(dn.toString(), filter, Scope.ONELEVEL_SCOPE );
 			list = sortList(list, criteria);
 			list = getSubList(list, offset, count);
 			tos = convertList(list);
