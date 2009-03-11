@@ -31,6 +31,7 @@ public class AccountEntryFinanceWriter {
 
 	private static final String C_FRA = "Cobro Fra: ";
 	private static final String P_FRA = "Pago Fra: ";
+	private static final String A_FRA = "Abono Fra: ";
 	private static final String D_FRA = "Dev. Fra: ";
 
 	@SuppressWarnings("unchecked")
@@ -48,7 +49,7 @@ public class AccountEntryFinanceWriter {
 			insertLastEntryDetail(bankAccount, entry, fbatch.getDescription(), amount);
 		} else{
 			Finance finance = (Finance)to.getFinanceList().get(0);
-			insertLastEntryDetail(bankAccount, entry, obtainConcept(finance.getInvoice(), null), amount);
+			insertLastEntryDetail(bankAccount, entry, obtainConcept(finance.getInvoice(), finance.getTotalAmount(), null), amount);
 		}
 		return entry;
 	}
@@ -114,7 +115,7 @@ public class AccountEntryFinanceWriter {
 			detail.setAccount(AccountUtil.obtainCreditorAccount(finance.getRegistry()));
 			detail.setDebit(finance.getTotalAmount());
 		}
-		detail.setConcept(obtainConcept(finance.getInvoice(), fbatch));
+		detail.setConcept(obtainConcept(finance.getInvoice(), finance.getTotalAmount(), fbatch));
 		detail.setBalancingAccount(bankAccount);
 
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
@@ -172,8 +173,8 @@ public class AccountEntryFinanceWriter {
 		accountEntryDetailBean.insert(detail);
 	}
 
-	private String obtainConcept(Invoice invoice, FinanceBatch fbatch) {
-		String concept = (invoice.getType().equals(InvoiceType.SALES) ? C_FRA : P_FRA) + invoice.getReferenceCode();
+	private String obtainConcept(Invoice invoice, double total, FinanceBatch fbatch) {
+		String concept = ((total < 0) ? A_FRA : (invoice.getType().equals(InvoiceType.SALES) ? C_FRA : P_FRA)) + invoice.getReferenceCode();
 		String fbatchConcept = (fbatch != null) ? (" (R:" + fbatch.getId() + ")") : "";
 		return concept + fbatchConcept;
 	}
