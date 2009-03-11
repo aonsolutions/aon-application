@@ -208,7 +208,7 @@ public class SaleInvoiceController extends InvoiceController {
 	
 	public double getInvoiceTotalPrice() throws ManagerBeanException{
 		Invoice invoice = (Invoice)this.getModel().getRowData();
-		return getPriceStrategy().getTotalPrice(invoice,invoice);
+		return getPriceStrategy().getTotalPrice(invoice, invoice);
 	}
 
 	public double getToInvoiceFinanceTotal() throws ManagerBeanException {
@@ -231,7 +231,6 @@ public class SaleInvoiceController extends InvoiceController {
 			if (iter.hasNext()) {
 				return (Customer)iter.next();
 			}
-			
 		}
 		return null;
 	}
