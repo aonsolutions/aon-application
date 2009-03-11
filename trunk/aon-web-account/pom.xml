@@ -10,7 +10,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.account</artifactId>
 	<packaging>war</packaging>
-	<version>3.0.0</version>
+	<version>3.0.2</version>
 	<description>AON WEB ACCOUNT</description>
 	<name>AON WEB ACCOUNT</name>
 	<build>
@@ -36,13 +36,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.account</artifactId>
-			<version>3.3.0</version>
+			<version>3.4.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.accounting</artifactId>
-			<version>3.3.0</version>
+			<version>3.5.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -66,7 +66,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.finance</artifactId>
-			<version>3.3.0</version>
+			<version>3.6.0</version>
 			<scope>runtime</scope>
 			<exclusions>
 				<exclusion>
@@ -112,7 +112,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.supplier</artifactId>
-			<version>3.3.0</version>
+			<version>3.4.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
