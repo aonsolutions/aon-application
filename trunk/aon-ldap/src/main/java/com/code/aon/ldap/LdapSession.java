@@ -10,6 +10,7 @@ import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.NameAlreadyBoundException;
+import javax.naming.NameClassPair;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -153,9 +154,21 @@ public class LdapSession implements ILdapConstants {
 	
 	public DistinguishedName getFullDN( DistinguishedName dn ) {
 		if ( this.baseDN != null ) {
-			return new DistinguishedName( dn, this.baseDN );
+			String dnValue = dn.toString();
+			if (! dnValue.endsWith(this.baseDN) ) {
+				return new DistinguishedName( dn, this.baseDN );	
+			}
 		}
 		return dn;
+	}
+
+	public DistinguishedName getFullDN( String dn ) {
+		if ( this.baseDN != null ) {
+			if (! dn.endsWith(this.baseDN) ) {
+				return new DistinguishedName( dn, this.baseDN );
+			}
+		}
+		return new DistinguishedName(dn);
 	}
 	
 	private String resolveBase(String base) {
@@ -368,7 +381,29 @@ public class LdapSession implements ILdapConstants {
 		try {
 			dc.destroySubcontext( resolveBase(dn) );
 		} catch (NamingException ne) {
-			throw new LdapException("Error in delete. " + ne.getMessage(), ne);
+			throw new LdapException("Error in delete: " + dn + ", " + ne.getMessage(), ne);
+		}
+	}
+	
+	public void deleteDepth(String dn, boolean selfDelete) throws LdapException {
+		try {		
+			String fullDN = getFullDN(dn).toString();
+			NamingEnumeration<NameClassPair> ne = this.dc.list(resolveBase(dn));
+			while ( ne.hasMore() ) {
+				NameClassPair ncp = ne.next();
+				String childDN = ncp.getNameInNamespace();
+				if ( childDN.endsWith(fullDN) ) {
+					deleteDepth(ncp.getNameInNamespace(), true);	
+				} else {
+					DistinguishedName referralDN = new DistinguishedName(ncp.getName(),fullDN);
+					delete(referralDN);
+				}
+			}
+			if ( selfDelete ) {
+				delete(dn);	
+			}
+		} catch (NamingException ne) {
+			throw new LdapException("Error in delete depth: " + dn + ", " + ne.getMessage(), ne);
 		}
 	}
 
