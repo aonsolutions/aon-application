@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
@@ -39,6 +40,7 @@ public class DBManager {
 		return DBManager.class.getResource(INSERT_SQL);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private List<String> readSqlScript( URL url, String dbName ) throws IOException {
 		InputStream in = url.openStream();
 		List<String> lines = IOUtils.readLines( in );
@@ -79,8 +81,13 @@ public class DBManager {
 	    return connection;
 	}
 	
-	private void executeScript( DBConnnection dbConnection, URL scriptUrl ) throws IOException, ClassNotFoundException, AonException {
-		List<String> statements = readSqlScript(scriptUrl, dbConnection.getDBName());
+	private void executeScript( DBConnnection dbConnection, URL scriptUrl ) throws AonException {
+		List<String> statements = null;
+		try {
+			statements = readSqlScript(scriptUrl, dbConnection.getDBName());
+		} catch (IOException e) {
+			throw new AonException( "Error reading sql script: " + scriptUrl + ", " + e.getMessage(), e );
+		}
 	    Connection connection = null;
 	    Statement statement = null;
 		try {
@@ -110,22 +117,31 @@ public class DBManager {
 		try {
 			connection = getConnection(dbConnection);
 			statement = connection.createStatement();
-			String sql = "DROP DATABASE " + DB_SEP + dbConnection.getDBName() + DB_SEP;
+			String sql = "DROP DATABASE '" + dbConnection.getDBName() + "'";
 			statement.execute(sql);
 		} finally {
 			DbUtils.closeQuietly(statement);
 			DbUtils.closeQuietly(connection);
 		}		
 	}
-	
-	public void createDB( DBConnnection connection ) throws IOException, ClassNotFoundException, AonException {
+
+	public boolean exists( DBConnnection dbc ) throws SQLException {
+	    Connection connection = null;
+	    Statement statement = null;
 		try {
-			dropDB( connection );
-		} catch (SQLException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-		}
-		executeScript( connection, getCreateSqlURL() );
-		executeScript( connection, getInsertSqlURL() );
+			connection = getConnection(dbc);
+			statement = connection.createStatement();
+			String sql = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '" + dbc.getDBName() + "'";
+			ResultSet set = statement.executeQuery(sql);
+			return set.next();
+		} finally {
+			DbUtils.closeQuietly(statement);
+			DbUtils.closeQuietly(connection);
+		}		
+	}	
+	public void createDB( DBConnnection dbc ) throws AonException {
+		executeScript( dbc, getCreateSqlURL() );
+		executeScript( dbc, getInsertSqlURL() );
 	}
 	
 }

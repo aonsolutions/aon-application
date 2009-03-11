@@ -1,6 +1,7 @@
 package com.code.aon.desktop.controller;
 
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,6 +54,12 @@ public class DomainController extends BasicController implements IDesktopConstan
 	private BasicManagerBean domainApplicationManagerBean;
 	
 	private BasicManagerBean ldapManagerBean;
+	
+	private DBManager manager = new DBManager();
+
+	public DomainController() {
+		manager = new DBManager();
+	}
 
 	@Override
 	public IManagerBean getManagerBean() throws ManagerBeanException {
@@ -136,6 +143,32 @@ public class DomainController extends BasicController implements IDesktopConstan
 			ldap.closeSession();
 		}
 	}	
+
+	public void removeDomain( String domain, boolean selftDelete ) {
+		BasicLdap ldap = new BasicLdap();
+		try {
+			Properties properties = ldap.getProperties();
+			if ( properties.containsKey(Context.REFERRAL) ) {
+				properties.remove(Context.REFERRAL);
+			}
+			DistinguishedName dn = AonDN.getDomainDN(domain);
+			if ( ldap.exists(dn, DOMAIN) ) {
+				ldap.getLdapSession().deleteDepth(dn.toString(), selftDelete);	
+			}
+		} catch ( LdapException e ) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+		} finally {
+			ldap.closeSession();
+		}
+		try {
+			DBConnnection dbc = getDBConnection(domain);
+			if ( manager.exists(dbc) ) {
+				manager.dropDB(dbc);
+			}
+		} catch ( Throwable e ) {
+			LOGGER.log(Level.SEVERE, "Error removing db of " + domain + ", " + e.getMessage(), e);
+		}
+	}	
 	
 	private DBConnnection getCurrentDBConnection() throws ManagerBeanException {
 		DistinguishedName bdsDN = AonDN.getDomainBDsDN(getCurrentDomain());
@@ -154,12 +187,12 @@ public class DomainController extends BasicController implements IDesktopConstan
 		return null;
 	}
 	
-	private DBConnnection getDBConnection( DBConnnection dbConnection, String domain ) {
-		DBConnnection newDBConnection = (DBConnnection) dbConnection.clone();
+	private DBConnnection getDBConnection( String domain ) throws ManagerBeanException {
+		DBConnnection newDBConnection = (DBConnnection) getCurrentDBConnection().clone();
 		newDBConnection.setId(null);
 		newDBConnection.setCommonName(DBManager.AON_MASTER);
 		String bdName = domain.replace('.', '-');
-		String url = dbConnection.getLabeledURI();
+		String url = newDBConnection.getLabeledURI();
 		String newUrl = StringUtils.substringBeforeLast(url, "/") + "/" + bdName;
 		String suffix = StringUtils.substringAfter(url, "?");
 		if (! StringUtils.isEmpty(suffix) ) {
@@ -169,23 +202,13 @@ public class DomainController extends BasicController implements IDesktopConstan
 		return newDBConnection;
 	}
 	
-	private void createDB( DBConnnection dbConnection ) {
-		DBManager manager = new DBManager();
-		try {
-			manager.createDB(dbConnection);
-		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);			
-		}
-	}
-	
-	public DBConnnection createDB( String domain ) throws ManagerBeanException {
+	public DBConnnection createDB( String domain ) throws AonException {
 		DistinguishedName bdsDN = AonDN.getDomainBDsDN(domain);
 		addOrganizationUnit(bdsDN);
-		DBConnnection currentDBConnection = getCurrentDBConnection();
-		DBConnnection newDBConnection = getDBConnection( currentDBConnection, domain );
+		DBConnnection newDBConnection = getDBConnection( domain );
 		this.dbConnectionDAO.setBaseDN(bdsDN.toString());
 		getDBConnnectionManagerBean().insert(newDBConnection);
-		createDB(newDBConnection);
+		manager.createDB(newDBConnection);
 		return newDBConnection;
 	}
 	
