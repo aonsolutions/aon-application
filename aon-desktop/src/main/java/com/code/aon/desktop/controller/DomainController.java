@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.naming.Context;
+
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.ReplicationMode;
@@ -34,6 +36,7 @@ import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
+import com.code.aon.ldap.LdapSession;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 
@@ -116,6 +119,24 @@ public class DomainController extends BasicController implements IDesktopConstan
 		}
 	}
 	
+	private void addReferral( DistinguishedName dn, DistinguishedName ref ) {
+		BasicLdap ldap = new BasicLdap();
+		try {
+			LdapSession session = ldap.getLdapSession();
+			Entry entry = new Entry(dn.toString());
+			entry.addObjectClasses(new String[]{TOP, REFERRAL, EXTENSIBLE_OBJECT});
+			entry.put( ILdapConstants.ORGANIZATIONAL_UNIT_NAME_ATTRIBUTE, dn.getLevelValue(0) );
+			String preffix = StringUtils.substringBeforeLast(ldap.getProperties().getProperty(Context.PROVIDER_URL), "/" );
+			String url = preffix + "/" + session.getFullDN(ref);
+			entry.put( ILdapConstants.REF_ATTRIBUTE, url );
+			ldap.getLdapSession().add(entry);
+		} catch ( LdapException e ) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+		} finally {
+			ldap.closeSession();
+		}
+	}	
+	
 	private DBConnnection getCurrentDBConnection() throws ManagerBeanException {
 		DistinguishedName bdsDN = AonDN.getDomainBDsDN(getCurrentDomain());
 		IManagerBean bean = getDBConnnectionManagerBean();
@@ -191,12 +212,20 @@ public class DomainController extends BasicController implements IDesktopConstan
 		for( DomainApplication da : list ) {
 			DomainApplication newDA = getDomainApplication(da, dbConnection, domain);
 			getDomainApplicationManagerBean().insert(newDA);
+			// Profiles
+			DistinguishedName currentProfilesDN = AonDN.getDomainApplicationProfilesDN(getCurrentDomain(), newDA.getCommonName());
+			DistinguishedName profilesDN = AonDN.getDomainApplicationProfilesDN(domain, newDA.getCommonName());
+			addReferral(profilesDN, currentProfilesDN);
+			// Users
+			DistinguishedName currentUsersDN = AonDN.getDomainApplicationUsersDN(getCurrentDomain(), newDA.getCommonName());
+			DistinguishedName usersDN = AonDN.getDomainApplicationUsersDN(domain, newDA.getCommonName());
+			addReferral(usersDN, currentUsersDN);
 		}
 	}
 	
 	private SessionFactory getSessionFactory( DBConnnection dbConnection ) {
 		AnnotationConfiguration configuration = new AnnotationConfiguration();
-   		configuration.addProperties( dbConnection.getHibernateProperties() );
+		configuration.setProperties( dbConnection.getHibernateProperties() );
    		configuration.configure();    			
    		configuration.buildMappings();
 		return configuration.buildSessionFactory();
@@ -228,6 +257,9 @@ public class DomainController extends BasicController implements IDesktopConstan
 	
 	public void createUsers( DBConnnection dbConnection, String domain ) throws AonException {
 		replicateUsers( dbConnection );
+		DistinguishedName currentUsersDN = AonDN.getUsersDN(getCurrentDomain());
+		DistinguishedName usersDN = AonDN.getUsersDN(domain);
+		addReferral(usersDN, currentUsersDN);
 	}
 
 }

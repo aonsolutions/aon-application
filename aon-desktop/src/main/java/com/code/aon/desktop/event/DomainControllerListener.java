@@ -3,7 +3,6 @@ package com.code.aon.desktop.event;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.desktop.DBConnnection;
 import com.code.aon.desktop.Domain;
 import com.code.aon.desktop.controller.DomainController;
