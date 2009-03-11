@@ -24,7 +24,7 @@ public class InvoiceDetailByDeliveryPrinter implements ICollectionProvider {
         Query q = session.createQuery("SELECT " +
         		"new com.code.aon.ui.finance.invoice.print.InvoiceDetailByDeliveryCollectionProvider(invoiceDetail, delivery.series, delivery.number, delivery.issueTime) " +
         		"FROM InvoiceDetail invoiceDetail, DeliveryDetail deliveryDetail, Delivery delivery " + 
-        		"WHERE invoiceDetail.deliveryDetail = deliveryDetail.id " + 
+        		"WHERE invoiceDetail.sourceId = deliveryDetail.id " + 
         		"AND deliveryDetail.delivery.id = delivery.id " +
         		"AND invoiceDetail.invoice.id = " + id
                 );
