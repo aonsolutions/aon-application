@@ -9,7 +9,7 @@ public class SupplierController extends BasicController {
 
 	private String selectedTab;
 	
-	private boolean showFinanceRegistryBank = true;
+	private boolean showFinanceData = true;
 	
 	private boolean showAccount;
 	
@@ -21,12 +21,12 @@ public class SupplierController extends BasicController {
 		this.selectedTab = selectedTab;
 	}
 	
-	public boolean isShowFinanceRegistryBank() {
-		return showFinanceRegistryBank;
+	public boolean isShowFinanceData() {
+		return showFinanceData;
 	}
 
-	public void setShowFinanceRegistryBank(boolean showFinanceRegistryBank) {
-		this.showFinanceRegistryBank = showFinanceRegistryBank;
+	public void setShowFinanceData(boolean showFinanceData) {
+		this.showFinanceData = showFinanceData;
 	}
 
 	public boolean isShowAccount() {
