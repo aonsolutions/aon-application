@@ -491,7 +491,9 @@ public class InvoiceEntryController {
 	}
 
 	public void accept(ActionEvent event) {
-		if (getFinanceTotal() > 0 && getInvoiceTotal() != getFinanceTotal()) {
+		double invoiceTotal = getInvoiceTotal();
+		double financeTotal = getFinanceTotal();
+		if (financeTotal > 0 && invoiceTotal != financeTotal) {
 			String msg = AonUtil.addErrorMessageFromBundle("financeBundle", "finance_unable_record_inaccuracy_error");
 			throw new AbortProcessingException(msg);
 		}
@@ -541,7 +543,7 @@ public class InvoiceEntryController {
 			if (isNew) {
 				this.setAccountEntryInvoice(getWriter().insertAccountEntryInvoice(entry, invoice));
 			} 
-			getWriter().insertEntryDetails(entry, account, getWriter().obtainConcept(invoice), getInvoiceTotal(), 
+			getWriter().insertEntryDetails(entry, account, getWriter().obtainConcept(invoice, invoiceTotal), invoiceTotal, 
 					obtainTotalRetention(), obtainVATandSurchargeQuota(), obtainBasesPerAccount(details));
 			getHeader().setAccountEntryId(entry.getId());
 			this.isNew = false;
