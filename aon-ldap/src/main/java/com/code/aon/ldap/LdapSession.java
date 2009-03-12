@@ -394,7 +394,8 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 	
 	public void deleteDepth(String dn, boolean selfDelete) throws LdapException {	
 		String fullDN = getFullDN(dn).toString();
-		for( Entry child : getList(dn) ) {
+		List<Entry> list = getList(dn);
+		for( Entry child : list ) {
 			String childDN = child.getDN().toString();
 			if ( child.hasObjectClass(REFERRAL) ) {
 				delete(childDN);
