@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -33,7 +34,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class LdapSession implements ILdapConstants {
+public class LdapSession implements ILdapConstants, IAonObjectClasses {
 
 	public static final String TRUE_VALUE = "TRUE";
 	
@@ -230,11 +231,13 @@ public class LdapSession implements ILdapConstants {
 	}
 
 	private Entry getEntry(String base, Scope scope, SearchResult sr) throws NamingException {
-		String dn = resolveBase(sr.getNameInNamespace());
-		Entry entry = new Entry(dn);
-		String searchDN = getName(base, scope, sr);
-		if ( (! StringUtils.isEmpty(searchDN)) && (!searchDN.equals(dn)) ) {			
-			entry.setSearchDN( new DistinguishedName(searchDN) );
+		Entry entry = new Entry(sr.getNameInNamespace());
+		String name = getName(base, scope, sr);
+		if (! StringUtils.isEmpty(name) ) {
+			DistinguishedName searchDN = getFullDN(name);
+			if (! searchDN.equals(entry.getDN()) ) {			
+				entry.setSearchDN( searchDN );
+			}
 		}
 		Attributes at = sr.getAttributes();
 		NamingEnumeration<? extends Attribute> ane = at.getAll();
@@ -385,25 +388,26 @@ public class LdapSession implements ILdapConstants {
 		}
 	}
 	
-	public void deleteDepth(String dn, boolean selfDelete) throws LdapException {
-		try {		
-			String fullDN = getFullDN(dn).toString();
-			NamingEnumeration<NameClassPair> ne = this.dc.list(resolveBase(dn));
-			while ( ne.hasMore() ) {
-				NameClassPair ncp = ne.next();
-				String childDN = ncp.getNameInNamespace();
-				if ( childDN.endsWith(fullDN) ) {
-					deleteDepth(ncp.getNameInNamespace(), true);	
-				} else {
-					DistinguishedName referralDN = new DistinguishedName(ncp.getName(),fullDN);
-					delete(referralDN);
-				}
-			}
-			if ( selfDelete ) {
-				delete(dn);	
-			}
-		} catch (NamingException ne) {
-			throw new LdapException("Error in delete depth: " + dn + ", " + ne.getMessage(), ne);
+	private List<Entry> getList( String dn ) throws LdapException {
+		return search( dn, getObjectClass("*"), OBJECT_CLASS_ATTRIBUTE);
+	}
+	
+	public void deleteDepth(String dn, boolean selfDelete) throws LdapException {	
+		String fullDN = getFullDN(dn).toString();
+		for( Entry child : getList(dn) ) {
+			String childDN = child.getDN().toString();
+			if ( child.hasObjectClass(REFERRAL) ) {
+				delete(childDN);
+			} else if ( childDN.endsWith(fullDN) ) {
+				deleteDepth(childDN, true);	
+			} else {
+				String name = child.getDN().getLevelValue(0);
+				DistinguishedName referralDN = new DistinguishedName(name,fullDN);
+				delete(referralDN);
+			}				
+		}
+		if ( selfDelete ) {
+			delete(dn);	
 		}
 	}
 
