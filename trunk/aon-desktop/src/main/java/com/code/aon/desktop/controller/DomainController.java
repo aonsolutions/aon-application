@@ -5,8 +5,13 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.validator.ValidatorException;
 import javax.naming.Context;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.ReplicationMode;
@@ -40,10 +45,15 @@ import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
 
 public class DomainController extends BasicController implements IDesktopConstants, IAonObjectClasses {
 
 	private static final Logger LOGGER = Logger.getLogger(DomainController.class.getName());
+	
+	private String currentDomain;
+	
+	private String domainSuffix;
 	
 	private LdapDAO dbConnectionDAO;
 	
@@ -58,9 +68,33 @@ public class DomainController extends BasicController implements IDesktopConstan
 	private DBManager manager = new DBManager();
 
 	public DomainController() {
+		AonUserController auc = (AonUserController) AonUtil.getRegisteredBean(CURRENT_USER_CONTROLLER_NAME);
+		this.currentDomain = auc.getDomain();
+		String[] parts = StringUtils.split(this.currentDomain, ".");
+		if ( ArrayUtils.getLength(parts) > 2 ) {
+			this.domainSuffix = parts[parts.length-2] + "." + parts[parts.length-1]; 
+		} else {
+			this.domainSuffix = this.currentDomain;
+		}
 		manager = new DBManager();
 	}
 
+	public String getCurrentDomain() {
+		return currentDomain;
+	}
+	
+	public String getDomainSuffix() {
+		return domainSuffix;
+	}
+
+	public void domainNameCheck(FacesContext context, UIComponent component, Object value) {
+		String domainName = value.toString();
+		if (! domainName.matches("[a-zA-Z][a-zA-Z0-9]*") ) {
+			String summary = AonUtil.getMessage("appBundle", "desktop_domain_invalid_name");
+			throw new ValidatorException( new FacesMessage(summary) );
+		}
+	}
+	
 	@Override
 	public IManagerBean getManagerBean() throws ManagerBeanException {
 		if (this.ldapManagerBean == null) {
@@ -93,14 +127,6 @@ public class DomainController extends BasicController implements IDesktopConstan
 		return this.domainApplicationManagerBean;
 	}	
 	
-	private String getCurrentDomain() {
-		/*
-		AonUserController auc = (AonUserController) AonUtil.getRegisteredBean(CURRENT_USER_CONTROLLER_NAME);
-		return auc.getDomain();
-		*/
-		return "inetserver.net";
-	}
-	
 	public void addAccessPolicy( String domain ) throws ManagerBeanException {
 		BasicManagerBean bean = getAccessPolicyManagerBean(domain);
 		AccessPolicy ap = new AccessPolicy();
@@ -118,6 +144,7 @@ public class DomainController extends BasicController implements IDesktopConstan
 			Entry entry = new Entry(dn.toString() );
 			entry.addObjectClasses(new String[]{TOP, ORGANIZATIONAL_UNIT});
 			entry.put( ILdapConstants.ORGANIZATIONAL_UNIT_NAME_ATTRIBUTE, dn.getLevelValue(0) );
+			LOGGER.info( "Add Organization Unit entry: " + dn );
 			ldap.getLdapSession().add(entry);
 		} catch ( LdapException e ) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
@@ -126,17 +153,22 @@ public class DomainController extends BasicController implements IDesktopConstan
 		}
 	}
 	
-	private void addReferral( DistinguishedName dn, DistinguishedName ref ) {
+	private void addReferral( DistinguishedName dn, DistinguishedName ref, String objectClass ) {
 		BasicLdap ldap = new BasicLdap();
 		try {
-			LdapSession session = ldap.getLdapSession();
-			Entry entry = new Entry(dn.toString());
-			entry.addObjectClasses(new String[]{TOP, REFERRAL, EXTENSIBLE_OBJECT});
-			entry.put( ILdapConstants.ORGANIZATIONAL_UNIT_NAME_ATTRIBUTE, dn.getLevelValue(0) );
-			String preffix = StringUtils.substringBeforeLast(ldap.getProperties().getProperty(Context.PROVIDER_URL), "/" );
-			String url = preffix + "/" + session.getFullDN(ref);
-			entry.put( ILdapConstants.REF_ATTRIBUTE, url );
-			ldap.getLdapSession().add(entry);
+			if ( ldap.exists(ref, objectClass) ) {
+				LdapSession session = ldap.getLdapSession();		
+				Entry entry = new Entry(dn.toString());
+				entry.addObjectClasses(new String[]{TOP, REFERRAL, EXTENSIBLE_OBJECT});
+				entry.put( ILdapConstants.ORGANIZATIONAL_UNIT_NAME_ATTRIBUTE, dn.getLevelValue(0) );
+				String preffix = StringUtils.substringBeforeLast(ldap.getProperties().getProperty(Context.PROVIDER_URL), "/" );
+				String url = preffix + "/" + session.getFullDN(ref);
+				entry.put( ILdapConstants.REF_ATTRIBUTE, url );
+				LOGGER.info( "Adding referral " + dn + " ->" + url );
+				ldap.getLdapSession().add(entry);
+			} else {
+				LOGGER.severe( "Can't make a Referreal, ref doesn't exist: " + ref );
+			}
 		} catch ( LdapException e ) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		} finally {
@@ -145,12 +177,11 @@ public class DomainController extends BasicController implements IDesktopConstan
 	}	
 
 	public void removeDomain( String domain, boolean selftDelete ) {
-		BasicLdap ldap = new BasicLdap();
+		BasicLdap ldap = null;
 		try {
-			Properties properties = ldap.getProperties();
-			if ( properties.containsKey(Context.REFERRAL) ) {
-				properties.remove(Context.REFERRAL);
-			}
+			Properties properties = (Properties) BasicLdap.getLdapProperties().clone();
+			properties.put(Context.REFERRAL, "ignore");
+			ldap = new BasicLdap( properties );
 			DistinguishedName dn = AonDN.getDomainDN(domain);
 			if ( ldap.exists(dn, DOMAIN) ) {
 				ldap.getLdapSession().deleteDepth(dn.toString(), selftDelete);	
@@ -238,11 +269,11 @@ public class DomainController extends BasicController implements IDesktopConstan
 			// Profiles
 			DistinguishedName currentProfilesDN = AonDN.getDomainApplicationProfilesDN(getCurrentDomain(), newDA.getCommonName());
 			DistinguishedName profilesDN = AonDN.getDomainApplicationProfilesDN(domain, newDA.getCommonName());
-			addReferral(profilesDN, currentProfilesDN);
+			addReferral(profilesDN, currentProfilesDN, ORGANIZATIONAL_UNIT);
 			// Users
 			DistinguishedName currentUsersDN = AonDN.getDomainApplicationUsersDN(getCurrentDomain(), newDA.getCommonName());
 			DistinguishedName usersDN = AonDN.getDomainApplicationUsersDN(domain, newDA.getCommonName());
-			addReferral(usersDN, currentUsersDN);
+			addReferral(usersDN, currentUsersDN, ORGANIZATIONAL_UNIT);
 		}
 	}
 	
@@ -254,10 +285,11 @@ public class DomainController extends BasicController implements IDesktopConstan
 		return configuration.buildSessionFactory();
 	}
 	
-	private void replicateUsers( DBConnnection dbConnection ) throws AonException {
+	private void replicateUsers( DBConnnection dbc ) throws AonException {
+		LOGGER.info( "Replicating users in " + dbc );
 		IManagerBean userBean = BeanManager.getManagerBean(User.class);
 		List<ITransferObject> users = userBean.getList(null);
-		SessionFactory factory = getSessionFactory(dbConnection);
+		SessionFactory factory = getSessionFactory(dbc);
 		Session session = null;
 		try {
 			session = factory.openSession();
@@ -282,7 +314,7 @@ public class DomainController extends BasicController implements IDesktopConstan
 		replicateUsers( dbConnection );
 		DistinguishedName currentUsersDN = AonDN.getUsersDN(getCurrentDomain());
 		DistinguishedName usersDN = AonDN.getUsersDN(domain);
-		addReferral(usersDN, currentUsersDN);
+		addReferral(usersDN, currentUsersDN, ORGANIZATIONAL_UNIT);
 	}
 
 }
