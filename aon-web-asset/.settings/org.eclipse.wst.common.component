@@ -3,7 +3,6 @@
     <wb-module deploy-name="aon-web-asset">
         <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-asset/aon-ui-asset">
             <dependency-type>uses</dependency-type>
         </dependent-module>
