@@ -21,9 +21,20 @@
 
 					<aon:outputLabel for="Domain_commonName"
 						value="#{bundle.aon_name}" />
-					<aon:inputText id="Domain_commonName"
-						size="60" required="true" disabled="#{!domain.new}"
-						value="#{domain.to.commonName}" />
+					<c:if test="#{domain.new}" >
+						<aon:div>
+							<aon:inputText id="Domain_commonName" validator="#{domain.domainNameCheck}"
+								size="14" required="true" disabled="#{!domain.new}"
+								value="#{domain.to.commonName}" />
+							<aon:outputText value="."  styleClass="aon-bold aon-margin-left aon-margin-right" />
+							<aon:inputText id="Domain_suffix" 
+								size="20" disabled="true" value="#{domain.domainSuffix}" />
+						</aon:div>
+					</c:if>
+					<c:if test="#{!domain.new}" >
+						<aon:inputText id="Domain_commonName" validator="#{domain.domainNameCheck}"
+							size="60" disabled="true" value="#{domain.to.commonName}" />
+					</c:if>
 
 					<aon:outputLabel for="Domain_organizationName"
 						value="#{bundle.aon_description}" />
