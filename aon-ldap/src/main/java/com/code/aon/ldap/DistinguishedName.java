@@ -1,19 +1,24 @@
 package com.code.aon.ldap;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
 
 public class DistinguishedName {
 	
 	private String[] levels;
 
 	public DistinguishedName(String ... levels) {
-		if ( levels.length > 1 ) {
-			this.levels = levels;			
-		} else {
-			String dn = levels[0];
-			this.levels = StringUtils.split(dn, ",");			
+		List<String> list = new LinkedList<String>();
+		for( String level : levels ) {
+			for( String part : StringUtils.split(level, ",") ) {
+				list.add( part );
+			}
 		}
+		this.levels = list.toArray(new String[list.size()]);
 	}
 
 	public DistinguishedName( String partList, DistinguishedName dn ) {
@@ -52,4 +57,15 @@ public class DistinguishedName {
 		return StringUtils.join(this.levels, ',');
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if ( (obj == null) || (!(obj instanceof DistinguishedName)) ) {
+			return false;
+		}
+		if (this == obj) {
+			return true;
+		}
+		return ArrayUtils.isEquals(levels, ((DistinguishedName) obj).levels);
+	}
+	
 }
