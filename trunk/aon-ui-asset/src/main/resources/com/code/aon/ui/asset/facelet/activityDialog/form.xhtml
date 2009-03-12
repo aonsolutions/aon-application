@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="activityDialogForm">
+
+			<!-- TOOLBAR -->
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle"
+						value="#{(activityDialog.request)?(assetBundle.asset_request_module):(assetBundle.asset_activity_module)}" />
+				<ui:param name="toolbarDescription"
+						value="#{activityDialog.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="activityDialog-save"
+						value="#{bundle.aon_save}" reRender="activityDialogForm"
+						rendered="#{activityDialog.new and !activityDialog.request}" 
+						actionListener="#{activityDialog.onAccept}"
+						action="activityDialog_form"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_save}" />
+					<aon:commandButton id="activityDialog-reset"
+						value="#{bundle.aon_reset}" reRender="activityDialogForm"
+						rendered="#{!activityDialog.new and !activityDialog.request}" 
+						actionListener="#{activityDialog.onInitialize}"
+						styleClass="aon-finding-toolbar-item aon-icon-new"
+						accesskey="#{bundle.aon_key_new}" />
+					<aon:commandButton id="activityDialog-email"
+						value="#{assetBundle.asset_activity_send_request}"
+						rendered="#{activityDialog.new and activityDialog.request}"
+						actionListener="#{activityDialog.onEmail}"
+						action="activityDialog_form" 
+						styleClass="aon-finding-toolbar-item aon-icon-webmail2"
+						accesskey="#{bundle.aon_key_new}" />
+						
+				</ui:define>
+			</ui:decorate>
+
+			<!-- TOOLBAR END -->
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="activityDialogTable" columns="2" width="100%">
+
+					<aon:outputLabel for="Asset_id" value="#{assetBundle.asset_asset}" />
+					<aon:div styleClass="aon-lookup" id="Asset_id">
+						<aon:lookupInputText id="Asset_name" lookup="#{assetLookup}"
+							reRender="Asset_description" value="#{activityDialog.asset.name}"
+							required="true" size="10" disabled="#{!activityDialog.new}">
+						</aon:lookupInputText>
+						<aon:lookupButton id="Asset_lookup"
+							windowTitle="#{assetBundle.asset_asset}"
+							selectReRender="Asset_name,Asset_description"
+							lookup="#{assetLookup}" minHeight="440"
+							property="#{activityDialog.asset}"
+							disabled="#{!activityDialog.new}">
+						</aon:lookupButton>
+						<aon:inputText id="Asset_description"
+							value="#{(activityDialog.asset.description!=null)?(activityDialog.asset.description):('')}"
+							size="70" disabled="true" />
+					</aon:div>
+
+					<aon:outputLabel for="ActivityDialog_startDate"
+						value="#{assetBundle.asset_startDate}" />
+					<aon:selectInputDate renderAsPopup="true" id="ActivityDialog_startDate"
+						popupDateFormat="#{assetBundle.aon_date_pattern}" inputSize="8"
+						value="#{activityDialog.fromDate}" enableManualInput="true" 
+						disabled="#{!activityDialog.new}"/>
+
+					<aon:outputLabel for="ActivityDialog_endDate"
+						value="#{assetBundle.asset_endDate}" />
+					<aon:selectInputDate renderAsPopup="true" id="ActivityDialog_endDate"
+						popupDateFormat="#{assetBundle.aon_date_pattern}" inputSize="8"
+						value="#{activityDialog.toDate}" enableManualInput="true" 
+						disabled="#{!activityDialog.new}"/>
+
+					<aon:outputLabel for="ActivityDialog_fromTime"
+						value="#{assetBundle.asset_fromTime}" />
+					<aon:div id="ActivityDialog_fromTime">
+						<aon:selectOneMenu id="fromTimeHours" disabled="#{!activityDialog.new}"
+							value="#{activityDialog.fromTimeHours}">
+							<f:selectItems value="#{activityDialog.hours}" />
+						</aon:selectOneMenu>
+						<aon:outputLabel 
+							value="#{assetBundle.asset_hours}" />
+						<aon:selectOneMenu id="fromTimeMins" disabled="#{!activityDialog.new}"
+							value="#{activityDialog.fromTimeMins}">
+							<f:selectItems value="#{activityDialog.mins}" />
+						</aon:selectOneMenu>
+						<aon:outputLabel
+							value="#{assetBundle.asset_minutes}" />
+					</aon:div>
+
+					<aon:outputLabel for="ActivityDialog_toTime"
+						value="#{assetBundle.asset_toTime}" />
+					<aon:div id="ActivityDialog_toTime">
+						<aon:selectOneMenu id="toTimeHours" disabled="#{!activityDialog.new}"
+							value="#{activityDialog.toTimeHours}">
+							<f:selectItems value="#{activityDialog.hours}" />
+						</aon:selectOneMenu>
+						<aon:outputLabel 
+							value="#{assetBundle.asset_hours}" />
+						<aon:selectOneMenu id="toTimeMins" disabled="#{!activityDialog.new}"
+							value="#{activityDialog.toTimeMins}">
+							<f:selectItems value="#{activityDialog.mins}" />
+						</aon:selectOneMenu>
+						<aon:outputLabel
+							value="#{assetBundle.asset_minutes}" />
+					</aon:div>
+
+					<aon:outputLabel for="ActivityDialog_who"
+						value="#{assetBundle.asset_activity_who}" />
+					<aon:inputText id="ActivityDialog_who" value="#{activityDialog.who}"
+						required="#{true}" size="20" disabled="#{!activityDialog.new}">
+						<f:validateLength maximum="20" />
+					</aon:inputText>
+
+					<aon:outputLabel for="ActivityDialog_why"
+						value="#{assetBundle.asset_activity_why}" />
+					<aon:inputTextarea id="ActivityDialog_why" value="#{activityDialog.why}"
+						required="#{true}" cols="50" rows="4" disabled="#{!activityDialog.new}">
+						<f:validateLength maximum="128" />
+					</aon:inputTextarea>
+
+				</aon:panelGrid>
+
+				<aon:div id="newActivities"> 				  
+					<aon:panel rendered="#{!activityDialog.new and !activityDialog.request}">
+						<f:facet name="header">
+							<aon:outputLabel value="#{assetBundle.asset_activity_added_records}" />
+						</f:facet>
+						<ui:include src="grid.xhtml" />
+					</aon:panel>
+				</aon:div>
+				
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{assetLookup}" />
+	</ui:define>
+</ui:composition>
