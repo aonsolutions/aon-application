@@ -81,17 +81,18 @@ public class DBManager {
 	    return connection;
 	}
 	
-	private void executeScript( DBConnnection dbConnection, URL scriptUrl ) throws AonException {
+	private void executeScript( DBConnnection dbc, URL scriptUrl ) throws AonException {
+		LOGGER.info( "Executing script " + scriptUrl + " for " + dbc);
 		List<String> statements = null;
 		try {
-			statements = readSqlScript(scriptUrl, dbConnection.getDBName());
+			statements = readSqlScript(scriptUrl, dbc.getDBName());
 		} catch (IOException e) {
 			throw new AonException( "Error reading sql script: " + scriptUrl + ", " + e.getMessage(), e );
 		}
 	    Connection connection = null;
 	    Statement statement = null;
 		try {
-			connection = getConnection(dbConnection);
+			connection = getConnection(dbc);
 			connection.setAutoCommit(false);
 			for( String sql : statements ) {
 				statement = connection.createStatement();
@@ -111,13 +112,14 @@ public class DBManager {
 		}
 	}
 	
-	public void dropDB( DBConnnection dbConnection ) throws SQLException {
+	public void dropDB( DBConnnection dbc ) throws SQLException {
 	    Connection connection = null;
 	    Statement statement = null;
 		try {
-			connection = getConnection(dbConnection);
+			connection = getConnection(dbc);
 			statement = connection.createStatement();
-			String sql = "DROP DATABASE '" + dbConnection.getDBName() + "'";
+			String sql = "DROP DATABASE " + DB_SEP + dbc.getDBName() + DB_SEP + "";
+			LOGGER.info( "Executing sql: " + sql );
 			statement.execute(sql);
 		} finally {
 			DbUtils.closeQuietly(statement);
@@ -132,6 +134,7 @@ public class DBManager {
 			connection = getConnection(dbc);
 			statement = connection.createStatement();
 			String sql = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '" + dbc.getDBName() + "'";
+			LOGGER.info( "Check if exists database: " + sql );
 			ResultSet set = statement.executeQuery(sql);
 			return set.next();
 		} finally {
@@ -139,6 +142,7 @@ public class DBManager {
 			DbUtils.closeQuietly(connection);
 		}		
 	}	
+	
 	public void createDB( DBConnnection dbc ) throws AonException {
 		executeScript( dbc, getCreateSqlURL() );
 		executeScript( dbc, getInsertSqlURL() );

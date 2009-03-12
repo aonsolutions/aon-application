@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class Entry implements ILdapConstants { 
+public class Entry implements ILdapConstants, IAonObjectClasses { 
 
 	private static final long serialVersionUID = -3592232487775900337L;
 	
@@ -91,6 +91,11 @@ public class Entry implements ILdapConstants {
 
 	public Date getAsDate( String key ) {
 		return (Date) getAsObject(key);
+	}
+	
+	public boolean hasObjectClass( String name ) {
+		List<Object> objectClasses = get(OBJECT_CLASS_ATTRIBUTE);
+		return ( objectClasses != null ) ? objectClasses.contains(name) : false;
 	}
 	
 }
