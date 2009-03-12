@@ -180,7 +180,8 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 	}
 	
 	private Attribute getAttribute( DistinguishedName dn, String attributeId ) throws NamingException {
-		Attributes attributes = dc.getAttributes( dn.toString(), new String[]{attributeId} );
+		String base = resolveBase(dn.toString());
+		Attributes attributes = dc.getAttributes( base, new String[]{attributeId} );
 		return attributes.get(attributeId);
 	}
 	
