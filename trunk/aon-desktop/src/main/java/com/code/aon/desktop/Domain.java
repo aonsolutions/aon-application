@@ -5,9 +5,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
+import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
 import com.code.aon.ldap.IAonObjectClasses;
@@ -30,6 +33,8 @@ public class Domain implements ITransferObject {
 	private String mobile;
 	
 	private Integer status;
+	
+	private Domain member;
 	
 	private boolean dnsManagement;
 	
@@ -136,6 +141,17 @@ public class Domain implements ITransferObject {
 		this.domainManagement = domainManagement;
 	}
 
+	@Cascade(CascadeType.ALL)
+	@BaseDN("{this}")
+	@Attribute(name="member")
+	public Domain getMember() {
+		return member;
+	}
+
+	public void setMember(Domain member) {
+		this.member = member;
+	}	
+	
 	@Attribute(name="jpegLogo")
 	public byte[] getJpegLogo() {
 		return jpegLogo;
