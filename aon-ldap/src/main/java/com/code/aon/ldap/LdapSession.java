@@ -402,9 +402,7 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 			} else if ( childDN.endsWith(fullDN) ) {
 				deleteDepth(childDN, true);	
 			} else {
-				String name = child.getDN().getLevelValue(0);
-				DistinguishedName referralDN = new DistinguishedName(name,fullDN);
-				delete(referralDN);
+				LOGGER.debug( "Skipping " + childDN );
 			}				
 		}
 		if ( selfDelete ) {
