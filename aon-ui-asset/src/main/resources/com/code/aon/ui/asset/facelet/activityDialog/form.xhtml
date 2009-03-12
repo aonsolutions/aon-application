@@ -48,7 +48,7 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="activityDialogTable" columns="2" width="100%">
 
-					<aon:outputLabel for="Asset_id" value="#{assetBundle.asset_asset}" />
+					<aon:outputLabel for="Asset_name" value="#{assetBundle.asset_asset}" />
 					<aon:div styleClass="aon-lookup" id="Asset_id">
 						<aon:lookupInputText id="Asset_name" lookup="#{assetLookup}"
 							reRender="Asset_description" value="#{activityDialog.asset.name}"

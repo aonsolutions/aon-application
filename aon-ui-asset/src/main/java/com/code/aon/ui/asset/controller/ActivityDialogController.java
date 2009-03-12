@@ -11,23 +11,36 @@ import java.util.logging.Logger;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+import javax.mail.internet.InternetAddress;
+
+import org.apache.commons.lang.SystemUtils;
 
 import com.code.aon.asset.Asset;
 import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.dao.IAssetAlias;
+import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryMedia;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.WebmailUtil;
+import com.code.aon.webmail.bean.AonMessage;
+import com.code.aon.webmail.bean.AonServer;
 
 public class ActivityDialogController {
 
+	private static final String ASSET_BUNDLE = "assetBundle";
 	private Asset asset;
 	private Date fromDate;
 	private Date toDate;
@@ -195,7 +208,7 @@ public class ActivityDialogController {
 			}
 		} catch (ManagerBeanException e) {
 			if (e.getCause() instanceof ManagerBeanVetoListenerException) {
-				AonUtil.addErrorMessageFromBundle("assetBundle","asset_error_hoverlap");
+				AonUtil.addErrorMessageFromBundle(ASSET_BUNDLE,"asset_error_hoverlap");
 			} else {
 				AonUtil.addErrorMessageFromBundle(e.getMessage());
 			}
@@ -209,8 +222,57 @@ public class ActivityDialogController {
 		buildToTime();
 		if (isValidDate() && isValidTime()) {
 			setNew(false);
-			AonUtil.addInfoMessage("ENVIANDO MENSAJE");
-			//LOGGER.info("ENVIANDO MENSAJE");
+			AuthPrincipal user = UserUtils.getInstance().getPrincipal();
+			String domain = user.getDomain();
+			String login = user.getShortName();
+			LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean("loggedUser");
+			String username = loggedUser.getLoggedUserName();
+			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean("company");
+			companyController.obtainCompany();
+			RegistryMedia companyEmail = companyController.getEmail();
+			if ( companyEmail == null ) {
+				AonUtil.addErrorMessage( "En los Datos de la Empresa no esta indicado el email" );
+				return;
+			}
+			String to = companyEmail.getValue();
+			String subject = "SOLICITUD DE RESERVA";
+			StringBuffer content = new StringBuffer();
+			content.append( AonUtil.getMessage(ASSET_BUNDLE, "asset_asset") ).append( ": ");
+			content.append( getAsset().getName() ).append(SystemUtils.LINE_SEPARATOR);
+			content.append( AonUtil.getMessage(ASSET_BUNDLE, "asset_startDate") ).append( ": ");
+			content.append( getFromTime() ).append(SystemUtils.LINE_SEPARATOR);
+			content.append( AonUtil.getMessage(ASSET_BUNDLE, "asset_endDate") ).append( ": ");
+			content.append( getToTime() ).append(SystemUtils.LINE_SEPARATOR);
+			content.append( AonUtil.getMessage(ASSET_BUNDLE, "asset_activity_who") ).append( ": ");
+			content.append( getWho() ).append(SystemUtils.LINE_SEPARATOR);
+			content.append( AonUtil.getMessage(ASSET_BUNDLE, "asset_activity_why") ).append( ": ");
+			content.append( getWhy() ).append(SystemUtils.LINE_SEPARATOR);				
+			
+			MailAccount mailAccount;
+			try {
+				mailAccount = WebmailUtil.getDefaultAccount(domain,login);
+			} catch (ManagerBeanException e) {
+				AonUtil.addErrorMessage( "El usuario " + login + " no tiene definida ninguna cuenta de correo" );
+				throw new AbortProcessingException( e.getMessage(), e);
+			}
+			
+			try {
+				AonServer server = new AonServer(mailAccount);
+				server.connect();
+				String from = mailAccount.getEmail();
+				AonMessage aonMessage = server.createAonMessage(from, username);
+				InternetAddress iafrom = new InternetAddress(from, username);
+				aonMessage.setSender(iafrom);
+				aonMessage.setRecipientsTo(to);
+				aonMessage.setSubject(subject);
+				aonMessage.setContent(content.toString());
+				server.sendMessage(aonMessage);
+				server.disconnect();
+			} catch (Throwable e) {
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				AonUtil.addErrorMessage( e.getMessage() );
+				throw new AbortProcessingException( e.getMessage(), e);
+			}
 		}
 	}
 
@@ -222,7 +284,7 @@ public class ActivityDialogController {
 		if (fromDate.after(toDate)) {
 			//ResourceBundle bundle = AonUtil.getResourceBundle("assetBundle");
 			//AonUtil.addErrorMessage(bundle.getString("assetBundle","asset_error_date_range"));
-			AonUtil.addErrorMessageFromBundle("assetBundle","asset_error_date_range");
+			AonUtil.addErrorMessageFromBundle(ASSET_BUNDLE,"asset_error_date_range");
 			return false;
 		}
 		return true;
@@ -232,7 +294,7 @@ public class ActivityDialogController {
 		if (fromTime.after(toTime) || fromTime.equals(toTime)) {
 			//ResourceBundle bundle = AonUtil.getResourceBundle("assetBundle");
 			//AonUtil.addErrorMessage(bundle.getString("asset_error_time_range"));
-			AonUtil.addErrorMessageFromBundle("assetBundle","asset_error_time_range");
+			AonUtil.addErrorMessageFromBundle(ASSET_BUNDLE,"asset_error_time_range");
 			return false;
 		}
 		return true;
