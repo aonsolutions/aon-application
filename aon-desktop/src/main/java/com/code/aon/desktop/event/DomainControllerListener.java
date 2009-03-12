@@ -7,12 +7,17 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.desktop.DBConnnection;
 import com.code.aon.desktop.Domain;
+import com.code.aon.desktop.IDesktopConstants;
+import com.code.aon.desktop.controller.AonDomainController;
+import com.code.aon.desktop.controller.AonUserController;
 import com.code.aon.desktop.controller.DomainController;
+import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
-public class DomainControllerListener extends ControllerAdapter {
+public class DomainControllerListener extends ControllerAdapter implements IDesktopConstants {
 
 	private static final Logger LOGGER = Logger.getLogger(DomainControllerListener.class.getName());
 
@@ -23,6 +28,8 @@ public class DomainControllerListener extends ControllerAdapter {
 		Domain domain = (Domain) event.getController().getTo();
 		String name = domain.getCommonName() + "." + domainController.getDomainSuffix();
 		domain.setCommonName(name);
+		AonDomainController adc = (AonDomainController) AonUtil.getRegisteredBean(CURRENT_DOMAIN_CONTROLLER_NAME);
+		domain.setMember( adc.getDomain() );		
 	}
 
 	@Override

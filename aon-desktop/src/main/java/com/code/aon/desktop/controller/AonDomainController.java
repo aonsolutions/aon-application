@@ -56,6 +56,7 @@ public class AonDomainController extends BasicController implements IAonObjectCl
     private ListDataModel applications;
     private ListDataModel profiles;
     private ListDataModel users;
+    private Domain domain;
     private IDomainApplication da;
     private Relation profile;
     private Relation user;
@@ -70,11 +71,15 @@ public class AonDomainController extends BasicController implements IAonObjectCl
     private List<SelectItem> availableUsers;
     
 	public AonDomainController() {
-		Domain domain = getCurrentDomain();
+		domain = getCurrentDomain();
 		if ( domain != null ) {
 			userManagement = domain.getUserManagement();
 			domainManagement = domain.getDomainManagement();
 		}
+	}
+
+	public Domain getDomain() {
+		return domain;
 	}
 
 	public boolean isNewProfile() {
