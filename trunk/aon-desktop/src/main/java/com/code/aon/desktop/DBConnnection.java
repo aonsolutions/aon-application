@@ -9,6 +9,7 @@ import javax.persistence.Id;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.cfg.Environment;
 
 import com.code.aon.common.ITransferObject;
@@ -143,6 +144,11 @@ public class DBConnnection implements ITransferObject, Cloneable {
 	@Override
 	public int hashCode() {
 		return (this.id != null) ? id.hashCode() : super.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}	
 	
 }
