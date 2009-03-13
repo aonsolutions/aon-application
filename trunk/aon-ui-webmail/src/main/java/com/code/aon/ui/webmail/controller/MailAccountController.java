@@ -13,9 +13,9 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.mail.MessagingException;
+import javax.naming.Name;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.BasicManagerBean;
@@ -24,6 +24,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ldap.NameResolver;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
@@ -70,16 +71,16 @@ public class MailAccountController extends BasicController implements WebMailCon
 	
 	@Override
 	public void accept(ActionEvent event) {		
-		String oldId = (String) this.savedToId;
+		Name oldId = NameResolver.getName( (String) this.savedToId );
 		try {
-			String currentId = this.dao.calculateDN(getTo());
+			Name currentId = this.dao.calculateDN(getTo());
 			if ( isNew() ) {
 				if ( dao.exists(currentId) ) {
 					addMessageExpression(MAIL_ACCOUNT_DUPLICATED);
 		            return;
 				}			
 			} else {
-				if (! StringUtils.equals(oldId, currentId) ) {
+				if (! oldId.equals(currentId) ) {
 					if ( dao.exists(currentId) ) {
 						addMessageExpression(MAIL_ACCOUNT_DUPLICATED);
 						return;

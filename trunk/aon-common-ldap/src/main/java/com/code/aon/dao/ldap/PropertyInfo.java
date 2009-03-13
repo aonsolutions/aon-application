@@ -1,5 +1,7 @@
 package com.code.aon.dao.ldap;
 
+import javax.naming.Name;
+
 import com.code.aon.common.ITransferObject;
 
 public class PropertyInfo {
@@ -16,7 +18,7 @@ public class PropertyInfo {
 	
 	private boolean nullable;
 	
-	private String baseDN;
+	private Name baseDN;
 
 	public PropertyInfo(String accesPath, String ldapName) {
 		this.accesPath = accesPath;
@@ -77,11 +79,11 @@ public class PropertyInfo {
 		return null;
 	}
 
-	public String getBaseDN() {
+	public Name getBaseDN() {
 		return baseDN;
 	}
 
-	public void setBaseDN(String baseDN) {
+	public void setBaseDN(Name baseDN) {
 		this.baseDN = baseDN;
 	}
 	

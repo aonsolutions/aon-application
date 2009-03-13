@@ -7,34 +7,36 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.naming.Name;
+
 public class Entry implements ILdapConstants, IAonObjectClasses { 
 
 	private static final long serialVersionUID = -3592232487775900337L;
 	
-	private DistinguishedName dn;
+	private Name dn;
 	
-	private DistinguishedName searchDN;
+	private Name searchDN;
 	
 	private Map<String,List<Object>> values;
 
-    public Entry( String dn ) {
-        this.dn = new DistinguishedName( dn );
+    public Entry( Name dn ) {
+        this.dn = dn;
         this.values = new HashMap<String, List<Object>>();
     }
 
-	public DistinguishedName getDN() {
+	public Name getDN() {
 		return dn;
 	}
 
-	public void setDN(DistinguishedName dn) {
+	public void setDN(Name dn) {
 		this.dn = dn;
 	}
 
-	public DistinguishedName getSearchDN() {
+	public Name getSearchDN() {
 		return searchDN;
 	}
 
-	public void setSearchDN(DistinguishedName searchDN) {
+	public void setSearchDN(Name searchDN) {
 		this.searchDN = searchDN;
 	}
 

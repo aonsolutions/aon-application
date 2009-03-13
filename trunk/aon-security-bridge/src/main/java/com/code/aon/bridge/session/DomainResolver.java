@@ -1,6 +1,7 @@
 package com.code.aon.bridge.session;
 
 import javax.faces.context.FacesContext;
+import javax.naming.Name;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -9,14 +10,13 @@ import org.apache.commons.logging.LogFactory;
 
 import sun.net.util.IPAddressUtil;
 
-import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.BasicLdap;
-import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
+import com.code.aon.ldap.NameResolver;
 
 public class DomainResolver implements ILdapConstants, IAonObjectClasses {
 
@@ -28,18 +28,18 @@ public class DomainResolver implements ILdapConstants, IAonObjectClasses {
     
     private boolean existsDomain( String host ) {
     	BasicLdap ldap = new BasicLdap();
-    	DistinguishedName dn = AonDN.getDomainDN(host);
+    	Name dn = NameResolver.getDomainDN(host);
     	return ldap.exists(dn, DOMAIN);
     }
     
     private String findDomain( String ipAddress ) {
     	BasicLdap ldap = new BasicLdap();
-    	DistinguishedName dn = AonDN.getDomainsDN();
+    	Name dn = NameResolver.getDomainsDN();
 		try {
-			String objectClass = LdapSession.getObjectClass(IAonObjectClasses.DOMAIN);
-			String host = "(" + HOST_ATTRIBUTE + "=" + ipAddress +  ")";
-			String filter = "(&" + host + objectClass + ")";
-			Entry entry = ldap.getLdapSession().searchOne(dn.toString(), filter, COMMON_NAME_ATTRIBUTE);
+			String objectClass = NameResolver.getObjectClass(IAonObjectClasses.DOMAIN);
+			String host = NameResolver.getEqualExpression(HOST_ATTRIBUTE, ipAddress);
+			String filter = NameResolver.getAndExpression( host, objectClass );
+			Entry entry = ldap.getLdapSession().searchOne(dn, filter, COMMON_NAME_ATTRIBUTE);
 			if ( entry != null ) {
 				return entry.getAsString(COMMON_NAME_ATTRIBUTE);
 			}

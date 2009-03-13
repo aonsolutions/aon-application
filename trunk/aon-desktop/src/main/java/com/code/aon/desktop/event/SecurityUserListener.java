@@ -3,6 +3,8 @@ package com.code.aon.desktop.event;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.naming.Name;
+
 import org.apache.commons.lang.ObjectUtils;
 
 import com.code.aon.bridge.plugin.UserManager;
@@ -12,14 +14,13 @@ import com.code.aon.desktop.controller.AonDomainController;
 import com.code.aon.desktop.controller.AonUserController;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.deployment.DeploymentException;
-import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.BasicLdap;
-import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
+import com.code.aon.ldap.NameResolver;
 import com.code.aon.ui.config.controller.UserController;
 import com.code.aon.ui.config.event.UserSecurityActivationListener;
 import com.code.aon.ui.config.util.UserUtils;
@@ -129,14 +130,14 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 			this.active = true;
 		} else {
 			this.disabled = calculateDisabled(user);
-			DistinguishedName userDN = AonDN.getUserDN( domain, user.getLogin() );
+			Name userDN = NameResolver.getUserDN( domain, user.getLogin() );
 			BasicLdap ldap = new BasicLdap();
 			if ( ldap.exists(userDN, USER) ) {
 				this.showUserNotExistsWindow = false;
 				try {
 					LdapSession session = ldap.getLdapSession();
-					String filter = LdapSession.getObjectClass(USER);
-					Entry userEntry = session.get(userDN.toString(), filter, 
+					String filter = NameResolver.getObjectClass(USER);
+					Entry userEntry = session.get(userDN, filter, 
 							COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE, MAIL_ATTRIBUTE, MOBILE_ATTRIBUTE, ACTIVE_ATTRIBUTE);
 					name = userEntry.getAsString(COMMON_NAME_ATTRIBUTE);
 					surname = userEntry.getAsString(SURNAME_ATTRIBUTE);
@@ -161,7 +162,7 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 	}
 	
 	private void setProperties( User user, boolean updateId ) {
-		DistinguishedName userDN = AonDN.getUserDN( domain, user.getLogin() );
+		Name userDN = NameResolver.getUserDN( domain, user.getLogin() );
 		BasicLdap ldap = new BasicLdap();
 		if ( ldap.exists(userDN, USER) ) {
 			try {
@@ -171,8 +172,8 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 				session.replaceAttribute(userDN, ACTIVE_ATTRIBUTE, active);
 				session.replaceAttribute(userDN, USER_ID_NUMBER_ATTRIBUTE, user.getId().toString());
 
-				String filter = LdapSession.getObjectClass(USER);
-				Entry userEntry = session.get(userDN.toString(), filter, MAIL_ATTRIBUTE, MOBILE_ATTRIBUTE);
+				String filter = NameResolver.getObjectClass(USER);
+				Entry userEntry = session.get(userDN, filter, MAIL_ATTRIBUTE, MOBILE_ATTRIBUTE);
 				String old_mail = null;
 				if ( userEntry.containsKey(MAIL_ATTRIBUTE) ) {
 					old_mail = userEntry.getAsString(MAIL_ATTRIBUTE);

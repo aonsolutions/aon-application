@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.naming.Name;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -14,14 +16,13 @@ import com.code.aon.jaas.client.ast.INodeVisitor;
 import com.code.aon.jaas.client.ast.IRole;
 import com.code.aon.jaas.client.ast.core.Role;
 import com.code.aon.jaas.deployment.event.SubDeployerEvent;
-import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.BasicLdap;
-import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
+import com.code.aon.ldap.NameResolver;
 
 public class Application implements IApplication, ILdapConstants, ILdapSecurityConstants, IAonObjectClasses {
 
@@ -173,8 +174,8 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
-	public static DistinguishedName getDN( String application ) {
-		return AonDN.getApplicationDN(application);
+	public static Name getDN( String application ) {
+		return NameResolver.getApplicationDN(application);
 	}
 	
 	private static Application getObject( SecurityLdap ldap, Entry entry ) {
@@ -186,16 +187,10 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 	
 	public static Application get( SecurityLdap ldap, String applicationId ) {
 		Application application = null;
-		try {
-			LdapSession session = ldap.getLdapSession();
-			String objectClass = LdapSession.getObjectClass(APPLICATION);
-			DistinguishedName dn = getDN(applicationId);
-			Entry entry = session.get( dn.toString(), objectClass );
+		Name dn = getDN(applicationId);
+		Entry entry = ldap.get( dn, APPLICATION );
+		if ( entry != null ) {
 			application = getObject(ldap, entry);
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
-		} finally {
-			ldap.closeSession();
 		}
 		return application;
 	}
@@ -204,9 +199,9 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 		List<IRole> roles = new ArrayList<IRole>();
 		try {
 			LdapSession session = this.ldap.getLdapSession();
-			String objectClass = LdapSession.getObjectClass(ROLE);
-			DistinguishedName dn = AonDN.getRolesDN(application);
-			List<Entry> list = session.search(dn.toString(), objectClass );
+			String objectClass = NameResolver.getObjectClass(ROLE);
+			Name dn = NameResolver.getRolesDN(application);
+			List<Entry> list = session.search(dn, objectClass );
 			for( Entry entry : list ) {
 				IRole role = getRole(entry);
 				roles.add(role);
