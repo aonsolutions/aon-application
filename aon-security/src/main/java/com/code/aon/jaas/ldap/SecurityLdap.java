@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.naming.Name;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,9 +14,8 @@ import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.client.ast.IRelation;
 import com.code.aon.jaas.client.ast.IUser;
 import com.code.aon.jaas.client.ast.core.Relation;
-import com.code.aon.ldap.AonDN;
+import com.code.aon.ldap.NameResolver;
 import com.code.aon.ldap.BasicLdap;
-import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
@@ -35,22 +36,18 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 		super( properties );
 	}
 	
-	private static String getAndExpression( String expression1, String expression2 ) {
-		return "(&" + expression1 + expression2 + ")";
-	}
-	
 	@SuppressWarnings("unchecked")
 	public IRelation getProfile( Entry entry ) {
 		Relation relation = new Relation();
 		relation.setId(entry.getAsString(COMMON_NAME_ATTRIBUTE));
 		Object value = entry.get( MEMBER_ATTRIBUTE );
 		if ( value instanceof String ) {
-			DistinguishedName member = new DistinguishedName( (String) value );
-			relation.addRelation( member.getLevelValue(0) );
+			Name member = NameResolver.getName( (String) value );
+			relation.addRelation( member.get(0) );
 		} else {
 			for( String profile : (List<String>) value ) {
-				DistinguishedName dn = new DistinguishedName( profile );
-				relation.addRelation( dn.getLevelValue(0) );
+				Name dn = NameResolver.getName( profile );
+				relation.addRelation( dn.get(0) );
 			}
 		}
 		return relation;
@@ -69,7 +66,7 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 	}
 	
 	public boolean hasDomain( String domainName ) {
-		DistinguishedName dn = Domain.getDN(domainName);
+		Name dn = Domain.getDN(domainName);
 		return exists(dn, DOMAIN);
 	}
 
@@ -109,7 +106,7 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 		return true;
 	}
 	
-	public void deleteAttribute( DistinguishedName dn, String attribute, String ... moreAttributes ) {
+	public void deleteAttribute( Name dn, String attribute, String ... moreAttributes ) {
 		try {
 			getLdapSession().removeAttributes(dn, attribute, moreAttributes);
 		} catch ( LdapException e ) {
@@ -120,26 +117,17 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 	}
 	
 	public Entry getApplicationProfile( String domainName, String application, String profileName ) {
-		Entry entry = null;
-		try {
-			String objectClass = LdapSession.getObjectClass(PROFILE);
-			DistinguishedName dn = AonDN.getApplicationProfileDN(application, profileName);
-			entry = getLdapSession().get( dn.toString(), objectClass );
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
-		} finally {
-			closeSession();
-		}
-		return entry;
+		Name dn = NameResolver.getApplicationProfileDN(application, profileName);
+		return get( dn, PROFILE );
 	}
 
 	public Entry getProfile( String domainName, String application, String profileName ) {
 		Entry profile = null;
-		DistinguishedName dn = AonDN.getApplicationProfileDN(application, profileName);
+		Name dn = NameResolver.getApplicationProfileDN(application, profileName);
 		if ( exists(dn, PROFILE) ) {
 			profile = getApplicationProfile(domainName, application, profileName);
 		} else {
-			dn = AonDN.getDomainApplicationProfileDN(domainName, application, profileName);
+			dn = NameResolver.getDomainApplicationProfileDN(domainName, application, profileName);
 			if ( exists(dn, DOMAIN_APPLICATION_PROFILE) ) {
 				profile = getDomainApplicationProfile(domainName, application, profileName);
 			}
@@ -148,17 +136,8 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 	}
 
 	private Entry getDomainApplicationProfile( String domainName, String application, String profileName ) {
-		Entry entry = null;
-		try {
-			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION_PROFILE);
-			DistinguishedName dn = AonDN.getDomainApplicationProfileDN(domainName, application, profileName);
-			entry = getLdapSession().get( dn.toString(), objectClass );
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
-		} finally {
-			closeSession();
-		}
-		return entry;
+		Name dn = NameResolver.getDomainApplicationProfileDN(domainName, application, profileName);
+		return get( dn, DOMAIN_APPLICATION_PROFILE );
 	}	
 		
 	public Application getApplication4Ctx( String context ) {
@@ -174,12 +153,12 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 		List<String> applications = new ArrayList<String>();
 		try {
 			LdapSession session = getLdapSession();
-			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION_USER);
-			String cn = LdapSession.getCommonName(userId);
-			DistinguishedName dn = DomainApplication.getParentDN(domainId);
-			List<Entry> list = session.search( dn.toString(), getAndExpression(objectClass, cn), Scope.SUBTREE_SCOPE, COMMON_NAME_ATTRIBUTE);
+			String objectClass = NameResolver.getObjectClass(DOMAIN_APPLICATION_USER);
+			String cn = NameResolver.getCommonName(userId);
+			Name dn = DomainApplication.getParentDN(domainId);
+			List<Entry> list = session.search( dn, NameResolver.getAndExpression(objectClass, cn), Scope.SUBTREE_SCOPE, COMMON_NAME_ATTRIBUTE);
 			for( Entry entry : list ) {
-				String application = entry.getDN().getLevelValue( 2 );
+				String application = entry.getDN().get( 2 );
 				applications.add(application);
 			}
 		} catch ( LdapException e ) {
@@ -201,8 +180,8 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 			}
 			session.updateAttribute( userEntry, USER_PASSWORD_ATTRIBUTE, password);
 			if ( (oldUserId != null) && (! user.getId().equals(oldUserId)) ) {
-				DistinguishedName newDN = AonDN.getUserDN(domainId, user.getId());
-				session.rename(userEntry.getDN().toString(), newDN.toString());
+				Name newDN = NameResolver.getUserDN(domainId, user.getId());
+				session.rename(userEntry.getDN(), newDN);
 			}
 		} catch ( LdapException e ) {
 			LOGGER.error( e.getMessage(), e );
@@ -213,17 +192,10 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 	
 	private String getOrganizationName( String domainId ) {
 		String organizationName = null;
-		try {
-			String objectClass = LdapSession.getObjectClass(DOMAIN);
-			DistinguishedName dn = Domain.getDN(domainId);
-			Entry entry = getLdapSession().get( dn.toString(), objectClass );
-			if ( (entry != null) && entry.containsKey(ORGANIZATION_NAME_ATTRIBUTE) ) {
-				organizationName = entry.getAsString(ORGANIZATION_NAME_ATTRIBUTE);
-			}
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
-		} finally {
-			closeSession();
+		Name dn = Domain.getDN(domainId);
+		Entry entry = get( dn, DOMAIN );
+		if ( (entry != null) && entry.containsKey(ORGANIZATION_NAME_ATTRIBUTE) ) {
+			organizationName = entry.getAsString(ORGANIZATION_NAME_ATTRIBUTE);
 		}
 		return organizationName;		
 	}
@@ -232,8 +204,8 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 		try {
 			String organizationName = getOrganizationName(domainId);
 			LdapSession session = getLdapSession();
-			DistinguishedName dn = AonDN.getUserDN( domainId, user.getId());
-			Entry entry = new Entry(dn.toString());
+			Name dn = NameResolver.getUserDN( domainId, user.getId());
+			Entry entry = new Entry(dn);
 			entry.addObjectClass(AMAVIS_ACCOUNT);
 			entry.addObjectClass(USER);
 			entry.addObjectClass(INET_ORG_PERSON);

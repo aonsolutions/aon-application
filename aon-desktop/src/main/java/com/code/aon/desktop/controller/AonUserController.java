@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.naming.Name;
 
 import org.apache.commons.lang.time.DateUtils;
 
@@ -15,14 +16,13 @@ import com.code.aon.config.User;
 import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.deployment.DeploymentException;
-import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.BasicLdap;
-import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
+import com.code.aon.ldap.NameResolver;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.UserController;
 import com.code.aon.ui.config.util.UserUtils;
@@ -115,7 +115,7 @@ public class AonUserController extends UserController implements ILdapConstants,
 	}
 	
 	private void changeDefaultMailAccountPassword( String userName, String newPassword ) {
-		DistinguishedName accountsDN = AonDN.getUserDefaultAccount( domain, userName );
+		Name accountsDN = NameResolver.getUserDefaultAccount( domain, userName );
 		BasicLdap ldap = new BasicLdap();
 		if ( ldap.exists(accountsDN, MAIL_ACCOUNT ) ) {
 			try {
@@ -131,7 +131,7 @@ public class AonUserController extends UserController implements ILdapConstants,
 	}
 
 	public void updateExpirationTimestamp( String userName, boolean expireToday ) {
-		DistinguishedName userDN = AonDN.getUserDN( domain, userName );
+		Name userDN = NameResolver.getUserDN( domain, userName );
 		BasicLdap ldap = new BasicLdap();
 		if ( ldap.exists(userDN, USER) ) {
 			try {
@@ -217,7 +217,7 @@ public class AonUserController extends UserController implements ILdapConstants,
 	}
 		
 	public boolean calculateContactsEnabled() {		
-		DistinguishedName contactsDN = AonDN.getUserAddressBookDN( domain, principal.getShortName() );
+		Name contactsDN = NameResolver.getUserAddressBookDN( domain, principal.getShortName() );
 		BasicLdap ldap = new BasicLdap();
 		boolean enabled = ldap.exists(contactsDN, ORGANIZATIONAL_UNIT);
 		ldap.closeSession();
@@ -230,21 +230,17 @@ public class AonUserController extends UserController implements ILdapConstants,
 	
 	public boolean calculatePasswordExpired() {
 		boolean passwordExpired = false;
-		DistinguishedName userDN = AonDN.getUserDN( domain, principal.getShortName() );
+		Name userDN = NameResolver.getUserDN( domain, principal.getShortName() );
 		BasicLdap ldap = new BasicLdap();
 		if ( ldap.exists(userDN, USER) ) {
-			try {
-				LdapSession session = ldap.getLdapSession();
-				String filter = LdapSession.getObjectClass(USER);
-				Entry userEntry = session.get(userDN.toString(), filter,PASSWORD_EXPIRATION_TIMESTAMP_ATTRIBUTE);
+			Entry userEntry = ldap.get(userDN, USER,PASSWORD_EXPIRATION_TIMESTAMP_ATTRIBUTE);
+			if ( userEntry != null ) {
 				if (userEntry.getSearchDN() == null) {
 					Date expirationDate = userEntry.getAsDate(PASSWORD_EXPIRATION_TIMESTAMP_ATTRIBUTE);
 					passwordExpired = new Date().after(expirationDate);
 				}
-			} catch (LdapException e) {
-				AonUtil.addErrorMessage("Error actualizando la fecha de expiración de la contraseña" );
-			} finally {
-				ldap.closeSession();
+			} else {
+				AonUtil.addErrorMessage("Error calculando si la contraseña ha expirado" );
 			}
 		} else {
 			LOGGER.severe( "No existe en LDAP el usuario " + principal.getShortName() + " para el dominio " + domain );
@@ -255,26 +251,21 @@ public class AonUserController extends UserController implements ILdapConstants,
 	public String getUserName( String login ) {
 		String name = login;
 		BasicLdap ldap = new BasicLdap();
-		try {
-			DistinguishedName dn = AonDN.getUserDN(domain, login);
-			String filter = LdapSession.getObjectClass("aonUser");
-			Entry entry = ldap.getLdapSession().get(dn.toString(), filter, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE);
-			if ( entry != null ) {
-		    	name = entry.getAsString(COMMON_NAME_ATTRIBUTE);
-		    	if (entry.containsKey(SURNAME_ATTRIBUTE) ) {
-		    		name += " " + entry.getAsString(SURNAME_ATTRIBUTE);
-		    	}				
-			}
-		} catch ( LdapException e ) {
-			throw new AbortProcessingException( "Error getting name for " + login + ". " + e.getMessage(), e );
-		} finally {
-			ldap.closeSession();
+		Name dn = NameResolver.getUserDN(domain, login);
+		Entry entry = ldap.get(dn, USER, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE);
+		if ( entry != null ) {
+	    	name = entry.getAsString(COMMON_NAME_ATTRIBUTE);
+	    	if (entry.containsKey(SURNAME_ATTRIBUTE) ) {
+	    		name += " " + entry.getAsString(SURNAME_ATTRIBUTE);
+	    	}				
+		} else {
+			throw new AbortProcessingException( "Error getting name for " + login );
 		}
 		return name;
 	}
 
 	public void updateUserLdapProperties( String userName, String name, String surname, String mail, String mobile ) {
-		DistinguishedName userDN = AonDN.getUserDN( domain, userName );
+		Name userDN = NameResolver.getUserDN( domain, userName );
 		BasicLdap ldap = new BasicLdap();
 		if ( ldap.exists(userDN, USER) ) {
 			try {
@@ -282,8 +273,8 @@ public class AonUserController extends UserController implements ILdapConstants,
 				session.replaceAttribute(userDN, COMMON_NAME_ATTRIBUTE, name);
 				session.replaceAttribute(userDN, SURNAME_ATTRIBUTE, surname);
 
-				String filter = LdapSession.getObjectClass(USER);
-				Entry userEntry = session.get(userDN.toString(), filter, MAIL_ATTRIBUTE, MOBILE_ATTRIBUTE);
+				String filter = NameResolver.getObjectClass(USER);
+				Entry userEntry = session.get(userDN, filter, MAIL_ATTRIBUTE, MOBILE_ATTRIBUTE);
 				String old_mail = null;
 				if ( userEntry.containsKey(MAIL_ATTRIBUTE) ) {
 					old_mail = userEntry.getAsString(MAIL_ATTRIBUTE);
@@ -309,17 +300,12 @@ public class AonUserController extends UserController implements ILdapConstants,
 		User user = (User) getTo();
 		String login = user.getLogin();
 		BasicLdap ldap = new BasicLdap();
-		try {
-			DistinguishedName dn = AonDN.getUserDN(domain, login);
-			String filter = LdapSession.getObjectClass("aonUser");
-			Entry entry = ldap.getLdapSession().get(dn.toString(), filter, COMMON_NAME_ATTRIBUTE);
-			if ( entry != null ) {
-		    	name = entry.getAsString(COMMON_NAME_ATTRIBUTE);
-			}
-		} catch ( LdapException e ) {
-			throw new AbortProcessingException( "Error getting name for " + login + ". " + e.getMessage(), e );
-		} finally {
-			ldap.closeSession();
+		Name dn = NameResolver.getUserDN(domain, login);
+		Entry entry = ldap.get(dn, USER, COMMON_NAME_ATTRIBUTE);
+		if ( entry != null ) {
+	    	name = entry.getAsString(COMMON_NAME_ATTRIBUTE);
+		} else {
+			throw new AbortProcessingException( "Error getting name for " + login );
 		}
 		return name;
 	}
@@ -332,17 +318,12 @@ public class AonUserController extends UserController implements ILdapConstants,
 		User user = (User) getTo();
 		String login = user.getLogin();
 		BasicLdap ldap = new BasicLdap();
-		try {
-			DistinguishedName dn = AonDN.getUserDN(domain, login);
-			String filter = LdapSession.getObjectClass("aonUser");
-			Entry entry = ldap.getLdapSession().get(dn.toString(), filter, SURNAME_ATTRIBUTE);
-			if ( entry != null ) {
-		    	surname = entry.getAsString(SURNAME_ATTRIBUTE);
-			}
-		} catch ( LdapException e ) {
-			throw new AbortProcessingException( "Error getting surname for " + login + ". " + e.getMessage(), e );
-		} finally {
-			ldap.closeSession();
+		Name dn = NameResolver.getUserDN(domain, login);
+		Entry entry = ldap.get(dn, USER, SURNAME_ATTRIBUTE);
+		if ( entry != null ) {
+	    	surname = entry.getAsString(SURNAME_ATTRIBUTE);
+		} else {
+			throw new AbortProcessingException( "Error getting surname for " + login );
 		}
 		return surname;
 	}
@@ -355,20 +336,12 @@ public class AonUserController extends UserController implements ILdapConstants,
 		User user = (User) getTo();
 		String login = user.getLogin();
 		BasicLdap ldap = new BasicLdap();
-		try {
-			DistinguishedName dn = AonDN.getUserDN(domain, login);
-			String filter = LdapSession.getObjectClass("aonUser");
-			Entry entry = ldap.getLdapSession().get(dn.toString(), filter, MAIL_ATTRIBUTE);
-			if ( entry != null ) {
-				try {
-					alternativeEmail = entry.getAsString(MAIL_ATTRIBUTE);
-				}
-				catch (NullPointerException npe) {}
-			}
-		} catch ( LdapException e ) {
-			throw new AbortProcessingException( "Error getting email for " + login + ". " + e.getMessage(), e );
-		} finally {
-			ldap.closeSession();
+		Name dn = NameResolver.getUserDN(domain, login);
+		Entry entry = ldap.get(dn, USER, MAIL_ATTRIBUTE);
+		if ( entry != null ) {
+			alternativeEmail = entry.getAsString(MAIL_ATTRIBUTE);
+		} else {
+			throw new AbortProcessingException( "Error getting email for " + login );
 		}
 		return alternativeEmail;
 	}
@@ -382,20 +355,12 @@ public class AonUserController extends UserController implements ILdapConstants,
 		User user = (User) getTo();
 		String login = user.getLogin();
 		BasicLdap ldap = new BasicLdap();
-		try {
-			DistinguishedName dn = AonDN.getUserDN(domain, login);
-			String filter = LdapSession.getObjectClass("aonUser");
-			Entry entry = ldap.getLdapSession().get(dn.toString(), filter, MOBILE_ATTRIBUTE);
-			if ( entry != null ) {
-				try {
-					cellular = entry.getAsString(MOBILE_ATTRIBUTE);
-				}
-				catch (NullPointerException npe) {}
-			}
-		} catch ( LdapException e ) {
-			throw new AbortProcessingException( "Error getting cellular for " + login + ". " + e.getMessage(), e );
-		} finally {
-			ldap.closeSession();
+		Name dn = NameResolver.getUserDN(domain, login);
+		Entry entry = ldap.get(dn, USER, MOBILE_ATTRIBUTE);
+		if ( entry != null ) {
+			cellular = entry.getAsString(MOBILE_ATTRIBUTE);
+		} else {
+			throw new AbortProcessingException( "Error getting cellular for " + login );
 		}
 		return cellular;
 	}

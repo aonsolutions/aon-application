@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.Name;
 import javax.persistence.Id;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -18,6 +19,7 @@ import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
+import com.code.aon.ldap.NameResolver;
 
 /**
  * The Class EntityMetadata.
@@ -38,7 +40,7 @@ public class EntityMetadata {
 	
 	private String[] objectClasses;
 	
-	private String baseDN;
+	private Name baseDN;
 
 	/**
 	 * Instantiates a new Entity Metadata.
@@ -49,7 +51,7 @@ public class EntityMetadata {
 		this.pojoClass = pojoClass;
 		if ( this.pojoClass.isAnnotationPresent(EntryObject.class) ) {
 			EntryObject entity = this.pojoClass.getAnnotation(EntryObject.class);
-			this.baseDN = entity.baseDN();
+			this.baseDN = NameResolver.getName(entity.baseDN());
 			this.mainObjectClass = entity.mainObjectClass();
 			this.objectClasses = entity.objectClasses();
 		} else {
@@ -73,7 +75,8 @@ public class EntityMetadata {
 		info.setNullable( attribute.nullable() );
 		info.setAlias( getAlias(accessPath) );
 		if ( method.isAnnotationPresent(BaseDN.class) ) {
-			info.setBaseDN( method.getAnnotation(BaseDN.class).value() );
+			String name = method.getAnnotation(BaseDN.class).value();
+			info.setBaseDN( NameResolver.getName(name) );
 		}
 		return info;
 	}
@@ -174,7 +177,7 @@ public class EntityMetadata {
 	 * 
 	 * @return the base dn
 	 */
-	public String getBaseDN() {
+	public Name getBaseDN() {
 		return baseDN;
 	}
 	

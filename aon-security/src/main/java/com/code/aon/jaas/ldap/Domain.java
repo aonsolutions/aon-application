@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.Name;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,14 +22,13 @@ import com.code.aon.jaas.client.ast.IUser;
 import com.code.aon.jaas.client.ast.UserAlreadyExistException;
 import com.code.aon.jaas.client.ast.core.AccessPolicy;
 import com.code.aon.jaas.client.ast.core.User;
-import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.BasicLdap;
-import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
+import com.code.aon.ldap.NameResolver;
 import com.code.aon.ldap.Scope;
 
 public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, IAonObjectClasses {
@@ -144,8 +145,8 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 		this.status = status;
 	}
 
-	public static DistinguishedName getDN( String domainName ) {
-		return AonDN.getDomainDN(domainName);
+	public static Name getDN( String domainName ) {
+		return NameResolver.getDomainDN(domainName);
 	}
 	
 	private static Domain getObject( BasicLdap ldap, Entry entry ) {
@@ -157,17 +158,10 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 
 	public static Domain get( BasicLdap ldap, String domainId ) {
 		Domain domain = null;
-		try {
-			String objectClass = LdapSession.getObjectClass(DOMAIN);
-			DistinguishedName dn = getDN(domainId);
-			Entry entry = ldap.getLdapSession().get( dn.toString(), objectClass );
-			if ( entry != null ) {
-				domain = getObject(ldap, entry);	
-			}
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
-		} finally {
-			ldap.closeSession();
+		Name dn = getDN(domainId);
+		Entry entry = ldap.get( dn, DOMAIN );
+		if ( entry != null ) {
+			domain = getObject(ldap, entry);	
 		}
 		return domain;
 	}
@@ -186,9 +180,9 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 		IAccessPolicy accessPolicy = null;
 		try {
 			LdapSession session = ldap.getLdapSession();
-			String objectClass = LdapSession.getObjectClass(ACCESS_POLICY);
-			DistinguishedName dn = getDN(domainName);
-			Entry entry = session.searchOne( dn.toString(), objectClass );
+			String objectClass = NameResolver.getObjectClass(ACCESS_POLICY);
+			Name dn = getDN(domainName);
+			Entry entry = session.searchOne( dn, objectClass );
 			if ( entry != null ) {
 				accessPolicy = getAccessPolicy( entry );
 			}
@@ -204,9 +198,9 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 		List<IDomainApplication> applications = new ArrayList<IDomainApplication>();
 		try {
 			LdapSession session = this.ldap.getLdapSession();
-			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION);
-			DistinguishedName dn = DomainApplication.getParentDN(domainName);
-			List<Entry> list = session.search(dn.toString(), objectClass );
+			String objectClass = NameResolver.getObjectClass(DOMAIN_APPLICATION);
+			Name dn = DomainApplication.getParentDN(domainName);
+			List<Entry> list = session.search(dn, objectClass );
 			for( Entry entry : list ) {
 				IDomainApplication application = DomainApplication.getObject(this.ldap, entry, domainName);
 				applications.add(application);
@@ -220,17 +214,8 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 	}
 	
 	public static Entry getUser( BasicLdap ldap, String domainId, String userId ) {
-		Entry entry = null;
-		try {
-			String objectClass = LdapSession.getObjectClass(USER);
-			DistinguishedName dn = AonDN.getUserDN(domainId, userId);
-			entry = ldap.getLdapSession().get( dn.toString(), objectClass );
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
-		} finally {
-			ldap.closeSession();
-		}
-		return entry;
+		Name dn = NameResolver.getUserDN(domainId, userId);
+		return ldap.get( dn, USER );
 	}	
 	
 	private static User getUser( Entry entry ) {
@@ -250,9 +235,9 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 	private List<IUser> getUsers( String domainName ) {
 		List<IUser> users = new LinkedList<IUser>();
 		try {
-			String objectClass = LdapSession.getObjectClass(USER);
-			DistinguishedName dn = AonDN.getUsersDN( domainName );
-			List<Entry> list = ldap.getLdapSession().search( dn.toString(), objectClass, Scope.SUBTREE_SCOPE );
+			String objectClass = NameResolver.getObjectClass(USER);
+			Name dn = NameResolver.getUsersDN( domainName );
+			List<Entry> list = ldap.getLdapSession().search( dn, objectClass, Scope.SUBTREE_SCOPE );
 			for( Entry entry : list ) {
 				IUser user = getUser(entry);
 				users.add(user);

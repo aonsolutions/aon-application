@@ -4,14 +4,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import javax.naming.Context;
+import javax.naming.Name;
 import javax.naming.NameAlreadyBoundException;
-import javax.naming.NameClassPair;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -57,7 +56,7 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 
 	private DirContext dc;
 	
-	private String baseDN;
+	private Name baseDN;
 
 	public void open(String host, int port, String user, String password,
 			boolean ssl) throws LdapException {
@@ -85,7 +84,8 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 	public void open(Properties properties) throws LdapException {
 		try {
 			this.dc = new InitialDirContext(properties);
-			this.baseDN = StringUtils.trimToNull( dc.getNameInNamespace() );
+			String name = StringUtils.trimToEmpty( dc.getNameInNamespace() );
+			this.baseDN = NameResolver.getName(name);
 		} catch (NamingException e) {
 			throw new LdapException("Error opening LDAP connection", e);
 		}
@@ -102,14 +102,6 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 	public DirContext getDc() {
 		return dc;
 	}
-
-	public static String getObjectClass( String objectClass ) {
-		return "(" + OBJECT_CLASS_ATTRIBUTE + "=" + objectClass +  ")";
-	}
-
-	public static String getCommonName( String cn ) {
-		return "(" + COMMON_NAME_ATTRIBUTE + "=" +  cn + ")";
-	}
 	
 	private Object convertValue(Object value, DirContext syntax)
 			throws NamingException {
@@ -121,7 +113,7 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 			if (oid.equals(INTEGER_SYNTAX)) {
 				result = Integer.valueOf(value.toString());
 			} else if (oid.equals(DISTINGUISHED_NAME_SYNTAX)) {
-				result = new DistinguishedName(value.toString());
+				result = NameResolver.getName(value.toString());
 			} else if (oid.equals(BOOLEAN_SYNTAX)) {
 				result = TRUE_VALUE.equals(value) ? Boolean.TRUE
 						: Boolean.FALSE;
@@ -149,39 +141,28 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 		return sc;
 	}
 
-	public String getBaseDN() {
+	public Name getBaseDN() {
 		return this.baseDN;
 	}
 	
-	public DistinguishedName getFullDN( DistinguishedName dn ) {
-		if ( this.baseDN != null ) {
-			String dnValue = dn.toString();
-			if (! dnValue.endsWith(this.baseDN) ) {
-				return new DistinguishedName( dn, this.baseDN );	
+	public Name getFullDN( Name dn ) {
+		if (! this.baseDN.isEmpty() ) {
+			if (! dn.endsWith(this.baseDN) ) {
+				return NameResolver.getName( dn, this.baseDN );	
 			}
 		}
 		return dn;
 	}
-
-	public DistinguishedName getFullDN( String dn ) {
-		if ( this.baseDN != null ) {
-			if (! dn.endsWith(this.baseDN) ) {
-				return new DistinguishedName( dn, this.baseDN );
-			}
-		}
-		return new DistinguishedName(dn);
-	}
 	
-	private String resolveBase(String base) {
-		if ( (this.baseDN != null) && (base.endsWith(this.baseDN)) ) {
-			return base.substring(0, base.length() - this.baseDN.length() - 1);
+	private Name resolveBase(Name base) {
+		if ( (!this.baseDN.isEmpty()) && base.endsWith(this.baseDN) ) {
+			return base.getPrefix(this.baseDN.size());
 		}
 		return base;
 	}
 	
-	private Attribute getAttribute( DistinguishedName dn, String attributeId ) throws NamingException {
-		String base = resolveBase(dn.toString());
-		Attributes attributes = dc.getAttributes( base, new String[]{attributeId} );
+	private Attribute getAttribute( Name dn, String attributeId ) throws NamingException {
+		Attributes attributes = dc.getAttributes( resolveBase(dn), new String[]{attributeId} );
 		return attributes.get(attributeId);
 	}
 	
@@ -210,16 +191,16 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 		}
 	}
 	
-	private String getName( String base, Scope scope, SearchResult sr ) {
-		String result = null;
+	private Name getName( Name base, Scope scope, SearchResult sr ) {
+		Name result = null;
 		if ( scope == Scope.OBJECT_SCOPE ) {
 			result = base;
 		} else {
 			if ( sr.isRelative() ) {
-				String name = sr.getName();				
-				if (! StringUtils.isEmpty(name) ) {
-					if (! StringUtils.isEmpty(base)) {
-						result = name + "," + base;
+				Name name = NameResolver.getName(sr.getName());				
+				if (! name.isEmpty() ) {
+					if (! base.isEmpty() ) {
+						result = NameResolver.getName( name, base );
 					} else {
 						result = name;	
 					}
@@ -231,11 +212,11 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 		return result;
 	}
 
-	private Entry getEntry(String base, Scope scope, SearchResult sr) throws NamingException {
-		Entry entry = new Entry(sr.getNameInNamespace());
-		String name = getName(base, scope, sr);
-		if (! StringUtils.isEmpty(name) ) {
-			DistinguishedName searchDN = getFullDN(name);
+	private Entry getEntry(Name base, Scope scope, SearchResult sr) throws NamingException {
+		Entry entry = new Entry(NameResolver.getName(sr.getNameInNamespace()));
+		Name name = getName(base, scope, sr);
+		if ( (name != null) && (!name.isEmpty()) ) {
+			Name searchDN = getFullDN(name);
 			if (! searchDN.equals(entry.getDN()) ) {			
 				entry.setSearchDN( searchDN );
 			}
@@ -249,7 +230,7 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 		return entry;
 	}
 
-	public List<Entry> search(String base, String filter, Scope scope,
+	public List<Entry> search(Name base, String filter, Scope scope,
 			String... attributes) throws LdapException {
 		List<Entry> results = new ArrayList<Entry>();
 		try {
@@ -270,10 +251,10 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 		return results;
 	}
 
-	public boolean exists(String base, String filter) throws LdapException {
+	public boolean exists(Name base, String filter) throws LdapException {
 		try {
 			SearchControls sc = getSearchControls(Scope.OBJECT_SCOPE, new String[]{OBJECT_CLASS_ATTRIBUTE});
-			NamingEnumeration<SearchResult> ne = dc.search(resolveBase(base), filter, sc);
+			NamingEnumeration<SearchResult> ne = dc.search(getFullDN(base), filter, sc);
 			while (ne.hasMore()) {
 				return true;
 			}
@@ -285,7 +266,7 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 		return false;
 	}
 	
-	private Entry get(String base, String filter, Scope scope,
+	private Entry get(Name base, String filter, Scope scope,
 			String... attributes) throws LdapException {
 		Entry entry = null;
 		try {
@@ -310,22 +291,22 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 		return entry;
 	}
 
-	public Entry get(String base, String filter, String... attributes)
+	public Entry get(Name base, String filter, String... attributes)
 			throws LdapException {
 		return this.get(base, filter, Scope.OBJECT_SCOPE, attributes);
 	}
 
-	public Entry searchOne(String base, String filter, String... attributes)
+	public Entry searchOne(Name base, String filter, String... attributes)
 			throws LdapException {
 		return this.get(base, filter, Scope.ONELEVEL_SCOPE, attributes);
 	}
 
-	public List<Entry> search(String base, String filter, String... attributes)
+	public List<Entry> search(Name base, String filter, String... attributes)
 			throws LdapException {
 		return this.search(base, filter, Scope.ONELEVEL_SCOPE, attributes);
 	}
 
-	public int getCount(String base, String filter, Scope scope,
+	public int getCount(Name base, String filter, Scope scope,
 			String... attributes) throws LdapException {
 		int count = -1;
 		try {
@@ -347,7 +328,7 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 		return count;
 	}
 
-	public int getCount(String base, String filter, String... attributes)
+	public int getCount(Name base, String filter, String... attributes)
 			throws LdapException {
 		return this.getCount(base, filter, Scope.ONELEVEL_SCOPE, attributes);
 	}
@@ -366,7 +347,7 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 				}
 				attributes.put(attribute);
 			}
-			dc.createSubcontext( resolveBase(entry.getDN().toString()), attributes);
+			dc.createSubcontext( resolveBase(entry.getDN()), attributes);
 		} catch (NameAlreadyBoundException nabe) {
 			throw new LdapException("Entry Already Exists: " + entry.getDN(),
 					nabe);
@@ -377,11 +358,7 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 		}
 	}
 
-	public void delete(DistinguishedName dn) throws LdapException {
-		this.delete(dn.toString());
-	}
-
-	public void delete(String dn) throws LdapException {
+	public void delete(Name dn) throws LdapException {
 		try {
 			dc.destroySubcontext( resolveBase(dn) );
 		} catch (NamingException ne) {
@@ -389,15 +366,15 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 		}
 	}
 	
-	private List<Entry> getList( String dn ) throws LdapException {
-		return search( dn, getObjectClass("*"), OBJECT_CLASS_ATTRIBUTE);
+	private List<Entry> getList( Name dn ) throws LdapException {
+		return search( dn, NameResolver.getObjectClass("*"), OBJECT_CLASS_ATTRIBUTE);
 	}
 	
-	public void deleteDepth(String dn, boolean selfDelete) throws LdapException {	
-		String fullDN = getFullDN(dn).toString();
+	public void deleteDepth(Name dn, boolean selfDelete) throws LdapException {	
+		Name fullDN = getFullDN(dn);
 		List<Entry> list = getList(dn);
 		for( Entry child : list ) {
-			String childDN = child.getDN().toString();
+			Name childDN = child.getDN();
 			if ( child.hasObjectClass(REFERRAL) ) {
 				delete(childDN);
 			} else if ( childDN.endsWith(fullDN) ) {
@@ -411,7 +388,7 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 		}
 	}
 
-	public void rename(String dn, String newDN) throws LdapException {
+	public void rename(Name dn, Name newDN) throws LdapException {
 		try {
 			dc.rename( resolveBase(dn), resolveBase(newDN) );
 		} catch (NamingException ne) {
@@ -419,7 +396,7 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 		}
 	}
 
-	public void removeAttributes(String dn, String attribute, String ... moreAttributes ) throws LdapException {
+	public void removeAttributes(Name dn, String attribute, String ... moreAttributes ) throws LdapException {
 		try {
 			ModificationItem[] items = new ModificationItem[1+moreAttributes.length];
 
@@ -432,10 +409,6 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 		} catch (NamingException ne) {
 			throw new LdapException("Error in remove Attribute. " + ne.getMessage(), ne);
 		}
-	}
-
-	public void removeAttributes(DistinguishedName dn, String attribute, String ... moreAttributes ) throws LdapException {
-		this.removeAttributes(dn.toString(), attribute, moreAttributes);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -457,7 +430,7 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 		return attribute;
 	}
 	
-	public void addAttribute(String dn, String name, Object value) throws LdapException {
+	public void addAttribute(Name dn, String name, Object value) throws LdapException {
 		try {
 			ModificationItem[] items = new ModificationItem[1];
 
@@ -469,11 +442,7 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 		}
 	}
 
-	public void addAttribute(DistinguishedName dn, String name, Object value ) throws LdapException {
-		this.addAttribute(dn.toString(), name, value);
-	}
-
-	public void replaceAttribute(String dn, String name, Object value ) throws LdapException {
+	public void replaceAttribute(Name dn, String name, Object value ) throws LdapException {
 		try {
 			ModificationItem[] items = new ModificationItem[1];
 
@@ -483,10 +452,6 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 		} catch (NamingException ne) {
 			throw new LdapException("Error in replace Attribute. " + ne.getMessage(), ne);
 		}
-	}
-
-	public void replaceAttribute(DistinguishedName dn, String name, Object value ) throws LdapException {
-		this.replaceAttribute(dn.toString(), name, value);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -509,7 +474,7 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 		this.updateAttribute(entry.getDN(), name, oldValue, newValue);
 	}
 
-	public void updateAttribute( DistinguishedName dn, String name, Object oldValue, Object newValue ) throws LdapException {
+	public void updateAttribute( Name dn, String name, Object oldValue, Object newValue ) throws LdapException {
 		Object _oldValue = getRealValue(oldValue);
 		Object _newValue = getRealValue(newValue);
 		if ( _oldValue != null ) {

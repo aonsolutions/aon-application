@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
+import javax.naming.Name;
 
 
 public class BasicLdap {
@@ -93,7 +94,7 @@ public class BasicLdap {
 		}
 	}
 	
-	public void delete( DistinguishedName dn ) throws LdapException {
+	public void delete( Name dn ) throws LdapException {
 		try {
 			getLdapSession().delete(dn);
 		} finally {
@@ -101,10 +102,10 @@ public class BasicLdap {
 		}
 	}
 	
-	public boolean exists( String dn, String objectClass ) {
+	public boolean exists( Name dn, String objectClass ) {
 		boolean exists = false;
 		try {
-			exists = getLdapSession().exists( dn, LdapSession.getObjectClass(objectClass) );
+			exists = getLdapSession().exists( dn, NameResolver.getObjectClass(objectClass) );
 		} catch ( LdapException e ) {
 			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		} finally {
@@ -113,8 +114,16 @@ public class BasicLdap {
 		return exists;
 	}
 
-	public boolean exists( DistinguishedName dn, String objectClass ) {
-		return exists( dn.toString(), objectClass );
+	public Entry get( Name dn, String objectClass, String... attributes ) {
+		Entry entry = null;
+		try {
+			entry = getLdapSession().get( dn, NameResolver.getObjectClass(objectClass), attributes );
+		} catch ( LdapException e ) {
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
+		} finally {
+			closeSession();
+		}
+		return entry;
 	}
-
+	
 }
