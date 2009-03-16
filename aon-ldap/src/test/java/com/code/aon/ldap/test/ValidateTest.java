@@ -193,6 +193,14 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
     		checkName(memberName, PROFILE, user.getDN(), profilesDN);
     	}		
 	}
+
+	private void testDomainApplicationProfile( Entry profile, String application ) {
+		Name rolesDN = NameResolver.getApplicationRolesDN(application);
+    	for( Object member : profile.get(MEMBER_ATTRIBUTE) ) {
+    		Name memberName = NameResolver.getName( member.toString() );
+    		checkName(memberName, ROLE, profile.getDN(), rolesDN);
+    	}		
+	}
 	
     private void testDomainApplication( Entry application, String domain ) {
     	String name = application.getAsString(COMMON_NAME_ATTRIBUTE);
@@ -217,6 +225,10 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 			testDomainApplicationUser( user, name, domain );
 		}
 		
+		List<Entry> profiles = getList(usersDN, DOMAIN_APPLICATION_PROFILE);
+		for( Entry profile : profiles ) {
+			testDomainApplicationProfile( profile, name );
+		}
     }
 	
     private void testDomain( Entry domain ) {
