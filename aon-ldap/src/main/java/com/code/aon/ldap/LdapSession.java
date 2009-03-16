@@ -147,7 +147,7 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 	
 	public Name getFullDN( Name dn ) {
 		if (! this.baseDN.isEmpty() ) {
-			if (! dn.endsWith(this.baseDN) ) {
+			if (! dn.startsWith(this.baseDN) ) {
 				return NameResolver.getName( dn, this.baseDN );	
 			}
 		}
@@ -377,7 +377,7 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 			Name childDN = child.getDN();
 			if ( child.hasObjectClass(REFERRAL) ) {
 				delete(childDN);
-			} else if ( childDN.endsWith(fullDN) ) {
+			} else if ( childDN.startsWith(fullDN) ) {
 				deleteDepth(childDN, true);	
 			} else {
 				LOGGER.debug( "Skipping " + childDN );

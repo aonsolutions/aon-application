@@ -1,6 +1,5 @@
 package com.code.aon.bridge.session;
 
-import javax.faces.event.AbortProcessingException;
 import javax.naming.Name;
 
 import com.code.aon.bridge.plugin.Utils;
@@ -10,7 +9,6 @@ import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
-import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.NameResolver;
 
 public class LoggedUser implements ILdapConstants, IAonObjectClasses {

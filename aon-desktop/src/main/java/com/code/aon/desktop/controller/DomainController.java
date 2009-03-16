@@ -143,7 +143,7 @@ public class DomainController extends BasicController implements IDesktopConstan
 		try {
 			Entry entry = new Entry(dn);
 			entry.addObjectClasses(new String[]{TOP, ORGANIZATIONAL_UNIT});
-			entry.put( ILdapConstants.ORGANIZATIONAL_UNIT_NAME_ATTRIBUTE, dn.get(0) );
+			entry.put( ILdapConstants.ORGANIZATIONAL_UNIT_NAME_ATTRIBUTE, NameResolver.getFirstValue(dn) );
 			LOGGER.info( "Add Organization Unit entry: " + dn );
 			ldap.getLdapSession().add(entry);
 		} catch ( LdapException e ) {
@@ -160,7 +160,7 @@ public class DomainController extends BasicController implements IDesktopConstan
 				LdapSession session = ldap.getLdapSession();		
 				Entry entry = new Entry(dn);
 				entry.addObjectClasses(new String[]{TOP, REFERRAL, EXTENSIBLE_OBJECT});
-				entry.put( ILdapConstants.ORGANIZATIONAL_UNIT_NAME_ATTRIBUTE, dn.get(0) );
+				entry.put( ILdapConstants.ORGANIZATIONAL_UNIT_NAME_ATTRIBUTE, NameResolver.getFirstValue(dn) );
 				String preffix = StringUtils.substringBeforeLast(ldap.getProperties().getProperty(Context.PROVIDER_URL), "/" );
 				String url = preffix + "/" + session.getFullDN(ref);
 				entry.put( ILdapConstants.REF_ATTRIBUTE, url );

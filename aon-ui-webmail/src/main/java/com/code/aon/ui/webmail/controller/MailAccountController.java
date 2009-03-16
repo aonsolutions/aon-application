@@ -71,7 +71,6 @@ public class MailAccountController extends BasicController implements WebMailCon
 	
 	@Override
 	public void accept(ActionEvent event) {		
-		Name oldId = NameResolver.getName( (String) this.savedToId );
 		try {
 			Name currentId = this.dao.calculateDN(getTo());
 			if ( isNew() ) {
@@ -80,6 +79,7 @@ public class MailAccountController extends BasicController implements WebMailCon
 		            return;
 				}			
 			} else {
+				Name oldId = NameResolver.getName( (String) this.savedToId );				
 				if (! oldId.equals(currentId) ) {
 					if ( dao.exists(currentId) ) {
 						addMessageExpression(MAIL_ACCOUNT_DUPLICATED);
