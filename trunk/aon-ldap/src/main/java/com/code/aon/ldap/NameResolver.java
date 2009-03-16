@@ -1,8 +1,6 @@
 package com.code.aon.ldap;
 
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -75,6 +73,21 @@ public class NameResolver implements ILdapConstants {
 			return new LdapName( name );
 		} catch (InvalidNameException e) {
 			LOGGER.log( Level.SEVERE, "Error creating Name: " + name, e);			
+		}
+		return null;		
+	}
+
+	public static String getValue( Name name, int pos ) {
+		try {	
+			LdapName newName = null;
+			if ( LdapName.class.isAssignableFrom(name.getClass()) ) {
+				newName = (LdapName) name;
+			} else {
+				newName = new LdapName( name.toString() );
+			}
+			return newName.getRdn(pos).getValue().toString();
+		} catch (InvalidNameException e) {
+			LOGGER.log( Level.SEVERE, "Error getting value " + pos + " of Name: " + name, e);			
 		}
 		return null;		
 	}

@@ -44,4 +44,12 @@ public interface ILdapConstants {
 	
 	String HOST_ATTRIBUTE = "host";
 
+	String DESCRIPTION_ATTRIBUTE = "description";
+	
+	String DATA_SOURCE_ATTRIBUTE = "dataSource";	
+		
+	String LABELED_URI_ATTRIBUTE = "labeledURI";
+
+	String DRIVER_CLASS_NAME_ATTRIBUTE = "driverClassName";
+	
 }
