@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.smb</artifactId>
 	<packaging>war</packaging>
-	<version>3.0.4</version>
+	<version>3.0.5</version>
 	<description>AON WEB SMB</description>
 	<name>AON WEB SMB</name>
 	<properties>
@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.accounting</artifactId>
-			<version>3.5.0</version>
+			<version>3.6.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -90,7 +90,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.finance</artifactId>
-			<version>3.6.0</version>
+			<version>3.7.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
