@@ -415,22 +415,22 @@ public class FBatchController extends BasicController implements ICollectionProv
     public void onRecord(ActionEvent event) throws ManagerBeanException {
         FinanceBatch fbatch = (FinanceBatch)this.getTo();
 
-        List<Finance> financeList = new LinkedList<Finance>();
+        List<FinanceBatchDetail> fbatchDetailList = new LinkedList<FinanceBatchDetail>();
         Iterator iterator = fbatch.getDetailList().iterator();
         while (iterator.hasNext()) {
             FinanceBatchDetail fbatchDetail = (FinanceBatchDetail)iterator.next();
-            financeList.add(fbatchDetail.getFinance());
+            fbatchDetailList.add(fbatchDetail);
         }
 
         FinanceRecordingTo recordingTo = new FinanceRecordingTo();
-        recordingTo.setDate((getRecordDate()!=null) ? getRecordDate() : fbatch.getIssueDate());
         recordingTo.setType(fbatch.isPayment() ? AccountEntryType.PAYMENT : AccountEntryType.COLLECTION);
+        recordingTo.setDate((getRecordDate()!=null) ? getRecordDate() : fbatch.getIssueDate());
         recordingTo.setRegistryBank(fbatch.getRegistryBank());
-        recordingTo.setFinanceList(financeList);
+        recordingTo.setFBatchDetailList(fbatchDetailList);
         recordingTo.setSecurityLevel(SecurityLevel.OFFICIAL);
 
         AccountEntryFinanceWriter accountEntryWriter = new AccountEntryFinanceWriter();
-        AccountEntry entry = accountEntryWriter.recordFinances(recordingTo, fbatch);
+        AccountEntry entry = accountEntryWriter.recordFBatchDetails(recordingTo, fbatch);
 
         IManagerBean accountEntryFbatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
         AccountEntryFinanceBatch accountEntryFinanceBatch = new AccountEntryFinanceBatch();
