@@ -15,7 +15,6 @@ import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
-import com.code.aon.ldap.LdapSession;
 import com.code.aon.ldap.NameResolver;
 
 public class DomainResolver implements ILdapConstants, IAonObjectClasses {

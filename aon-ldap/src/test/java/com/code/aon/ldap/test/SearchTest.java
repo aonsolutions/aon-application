@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.naming.Context;
+import javax.naming.Name;
 
 import junit.framework.JUnit4TestAdapter;
 
@@ -15,11 +16,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.code.aon.ldap.Entry;
+import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
+import com.code.aon.ldap.NameResolver;
 
-public class SearchTest {
+public class SearchTest implements IAonObjectClasses, ILdapConstants {
 
 	private static Log LOGGER = LogFactory.getLog(SearchTest.class.getName());
 	
@@ -60,7 +63,8 @@ public class SearchTest {
 	@Test
     public void testSearch() {
 		try {
-			List<Entry> list = session.search("cn=code.es,ou=domains","(objectclass=aonAccessPolicy)");
+			Name name = NameResolver.getDomainDN("code.es");
+			List<Entry> list = session.search(name,NameResolver.getObjectClass(ACCESS_POLICY));
 			Assert.assertFalse( list.isEmpty() );
 		} catch (LdapException e) {
 			Assert.fail( e.getMessage() );
@@ -70,7 +74,8 @@ public class SearchTest {
 	@Test
     public void testExists() {
 		try {
-			boolean value = session.exists("cn=aon-desktop,ou=applications","(objectclass=aonApplication)");
+			Name name = NameResolver.getApplicationDN("aon-desktop");
+			boolean value = session.exists(name,NameResolver.getObjectClass(APPLICATION));
 			Assert.assertTrue( value );
 		} catch (LdapException e) {
 			Assert.fail( e.getMessage() );
@@ -80,13 +85,14 @@ public class SearchTest {
 	@Test
     public void testCycle() {
 		try {
-			Entry entry = new Entry("cn=deletable.es,ou=domains");
-			entry.addObjectClasses( new String[]{"top", "aonDomain"} );
+			Name name = NameResolver.getDomainDN("deletable");
+			Entry entry = new Entry(name);
+			entry.addObjectClasses( new String[]{TOP, DOMAIN} );
 			entry.put( "host", "127.0.0.1" );
 			session.add(entry);
-			String newDN = "cn=borrable.es,ou=domains";
-			session.rename(entry.getDN().toString(), newDN );			
-			session.delete( newDN );
+			Name newName = NameResolver.getDomainDN("borrable");
+			session.rename(entry.getDN(), newName );			
+			session.delete( newName );
 		} catch (LdapException e) {
 			Assert.fail( e.getMessage() );
 		}
@@ -95,13 +101,14 @@ public class SearchTest {
 	@Test
     public void testAttributes() {
 		try {
-			Entry entry = new Entry("uid=deletable,ou=users,cn=localhost,ou=domains");
-			entry.addObjectClasses(new String[]{"top", "person", "aonUser", "posixAccount"});
-			entry.put( ILdapConstants.COMMON_NAME_ATTRIBUTE, "Deletable" );
-			entry.put( ILdapConstants.SURNAME_ATTRIBUTE, "Deletable" );
-			entry.put( "homeDirectory", "/home/deletable" );
-			entry.put( "gidNumber", 100 );
-			entry.put( "uidNumber", 100 );
+			Name name = NameResolver.getUserDN("localhost", "deletable");
+			Entry entry = new Entry(name);
+			entry.addObjectClasses(new String[]{TOP, PERSON, USER, POSIX_ACCOUNT});
+			entry.put( COMMON_NAME_ATTRIBUTE, "Deletable" );
+			entry.put( SURNAME_ATTRIBUTE, "Deletable" );
+			entry.put( HOME_DIRECTORY_ATTRIBUTE, "/home/deletable" );
+			entry.put( GROUP_ID_NUMBER_ATTRIBUTE, 100 );
+			entry.put( USER_ID_NUMBER_ATTRIBUTE, 100 );
 			entry.put( "description", "Mierda descripcion" );
 			session.add(entry);
 			session.addAttribute(entry.getDN(), "description", "aimar" );
