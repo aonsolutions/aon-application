@@ -4,6 +4,7 @@
  */
 package com.code.aon.desktop;
 
+import javax.naming.Name;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -28,7 +29,7 @@ public class AccessPolicy implements ITransferObject {
 	private static final long serialVersionUID = -9075569722189572290L;
 
 	/** Security domain identifier. This can be Nominal or Concurrent. */
-	private String id;
+	private Name id;
 	
 	private String commonName;	
 
@@ -50,14 +51,14 @@ public class AccessPolicy implements ITransferObject {
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)	
-	public String getId() {
+	public Name getId() {
 		return id;
 	}
 	
 	/**
 	 * @param id The id to set.
 	 */
-	public void setId(String id) {
+	public void setId(Name id) {
 		this.id = id;
 	}
 

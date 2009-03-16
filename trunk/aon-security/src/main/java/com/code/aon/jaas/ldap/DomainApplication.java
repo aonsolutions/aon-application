@@ -265,7 +265,7 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 		relation.setId(entry.getAsString(COMMON_NAME_ATTRIBUTE));
 		for( Object member : entry.get(MEMBER_ATTRIBUTE) ) {
 			Name dn = NameResolver.getName( (String) member );
-			relation.addRelation( dn.get(0) );
+			relation.addRelation( NameResolver.getFirstValue(dn) );
 		}
 		return relation;
 	}
@@ -296,11 +296,11 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 			Object value = user.get( MEMBER_ATTRIBUTE );
 			if ( value instanceof String ) {
 				Name member = NameResolver.getName( (String) value );
-				relation.addRelation( member.get(0) );
+				relation.addRelation( NameResolver.getFirstValue(member) );
 			} else {
 				for( String profile : (List<String>) value ) {
 					Name dn = NameResolver.getName( profile );
-					relation.addRelation( dn.get(0) );
+					relation.addRelation( NameResolver.getFirstValue(dn) );
 				}
 			}
 		}

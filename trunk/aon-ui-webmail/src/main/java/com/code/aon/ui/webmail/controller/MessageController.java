@@ -39,6 +39,7 @@ import javax.mail.Part;
 import javax.mail.Flags.Flag;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
+import javax.naming.Name;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
@@ -115,7 +116,7 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
 
     private String returnAction = NAVIGATION_FOLDER;
     
-    private String senderMailAccountId;
+    private Name senderMailAccountId;
     
     private String messageBody;
     
@@ -976,11 +977,11 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
 		}
     }
 	
-	public String getSenderMailAccountId() {
+	public Name getSenderMailAccountId() {
 		return senderMailAccountId;
 	}
 
-	public void setSenderMailAccountId(String senderMailAccountId) {
+	public void setSenderMailAccountId(Name senderMailAccountId) {
 		this.senderMailAccountId = senderMailAccountId;
 	}
 	

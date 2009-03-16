@@ -57,7 +57,6 @@ public class ContactController extends BasicController {
 	
 	@Override
 	public void accept(ActionEvent event) {		
-		Name oldId = NameResolver.getName( (String) this.savedToId );
 		try {
 			Name currentId = this.dao.calculateDN(getTo());
 			if ( isNew() ) {
@@ -66,6 +65,7 @@ public class ContactController extends BasicController {
 		            return;
 				}			
 			} else {
+				Name oldId = (Name) this.savedToId;
 				if (! oldId.equals(currentId) ) {
 					if ( dao.exists(currentId) ) {
 						addMessageExpression(CONTACT_DUPLICATED);

@@ -1,5 +1,6 @@
 package com.code.aon.desktop;
 
+import javax.naming.Name;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -20,7 +21,7 @@ public class Domain implements ITransferObject {
 
 	private static final long serialVersionUID = -4808900608917312113L;
 
-	private String id;
+	private Name id;
 	
 	private String commonName;
 	
@@ -51,11 +52,11 @@ public class Domain implements ITransferObject {
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
-	public String getId() {
+	public Name getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Name id) {
 		this.id = id;
 	}
 	

@@ -424,7 +424,7 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 		try {
 			IManagerBean bean = FormUtil.getController(DOMAIN_CONTROLLER_NAME).getManagerBean();
 			Name id = NameResolver.getDomainDN(userController.getDomain());
-			domain = (Domain) bean.get( id.toString() );
+			domain = (Domain) bean.get( id );
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error obteniendo de LDAP el aonDomain " + userController.getDomain(), e );
 		}

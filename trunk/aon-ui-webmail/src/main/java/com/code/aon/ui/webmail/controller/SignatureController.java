@@ -20,7 +20,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.GridController;
@@ -63,7 +62,7 @@ public class SignatureController extends GridController {
 	@Override
 	public void accept(ActionEvent event) {		
 		boolean renamed = false;
-		Name oldId = NameResolver.getName( (String) this.savedToId );
+		Name oldId = null;
 		try {
 			Name currentId = this.dao.calculateDN(getTo());
 			if ( isNew() ) {
@@ -72,6 +71,7 @@ public class SignatureController extends GridController {
 		            return;
 				}			
 			} else {
+				oldId = (Name) this.savedToId;				
 				if (! oldId.equals(currentId) ) {
 					if ( dao.exists(currentId) ) {
 						addMessageExpression(SIGNATURE_DUPLICATED);
@@ -95,7 +95,7 @@ public class SignatureController extends GridController {
 		}				
 		super.accept(event);
 		if ( renamed ) {
-			updateReferences( oldId.toString(), (Signature) getTo() );
+			updateReferences( oldId, (Signature) getTo() );
 		}
 	}
 
@@ -115,7 +115,7 @@ public class SignatureController extends GridController {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<MailAccount> getReferences( String id ) {
+	private List<MailAccount> getReferences( Name id ) {
 		List<MailAccount> list = null;
 		try {
 			IManagerBean mailAccountBean = FormUtil.getController(WebMailConstants.BEAN_MAIL_ACCOUNT).getManagerBean();
@@ -128,7 +128,7 @@ public class SignatureController extends GridController {
 		return list;
 	}
 
-	private void updateReferences( String id, Signature signature ) {
+	private void updateReferences( Name id, Signature signature ) {
 		try {
 			IManagerBean mailAccountBean = FormUtil.getController(WebMailConstants.BEAN_MAIL_ACCOUNT).getManagerBean();
 			for( MailAccount mailAccount : getReferences(id) ) {

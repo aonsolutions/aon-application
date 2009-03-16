@@ -1,5 +1,6 @@
 package com.code.aon.webmail;
 
+import javax.naming.Name;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,7 +28,7 @@ public class MailAccount implements ITransferObject{
 	private static final long serialVersionUID = 3319001240608653621L;
 
 	// ident
-	private String id;
+	private Name id;
 	
 	// name;
 	private String name;
@@ -135,14 +136,14 @@ public class MailAccount implements ITransferObject{
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
-	public String getId() {
+	public Name getId() {
 		return id;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(String id) {
+	public void setId(Name id) {
 		this.id = id;
 	}
 
