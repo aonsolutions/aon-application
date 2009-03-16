@@ -62,8 +62,8 @@ public class NameResolver implements ILdapConstants {
 	
 	public static Name getName( Rdn rdn, Name suffix ) {
 		try {
-			Name name = getName(rdn);			
-			return name.addAll(suffix);
+			Name name = (Name) suffix.clone();
+			return name.addAll(getName(rdn));
 		} catch (InvalidNameException e) {
 			LOGGER.log( Level.SEVERE, "Error creating Name with " + rdn + " and " + suffix, e);			
 		}
@@ -92,7 +92,7 @@ public class NameResolver implements ILdapConstants {
 	}
 
 	public static Rdn status( int status ) {
-		return getRdn(STATUS_ATTRIBUTE, status);
+		return getRdn(STATUS_ATTRIBUTE, String.valueOf(status));
 	}
 	
 	public static String getEqualExpression( String attribute, String value ) {
@@ -116,7 +116,7 @@ public class NameResolver implements ILdapConstants {
 	}
 	
 	public static Name getDomainDN( String domain ) {
-		return getName( cn(domain), ou(DOMAINS) );
+		return getName( ou(DOMAINS), cn(domain) );
 	}
 
 	public static Name getApplicationsDN() {
@@ -124,7 +124,7 @@ public class NameResolver implements ILdapConstants {
 	}
 	
 	public static Name getApplicationDN( String application ) {
-		return getName( cn(application), ou(APPLICATIONS) );
+		return getName( ou(APPLICATIONS), cn(application) );
 	}
 	
 	public static Name getDomainBDsDN( String domain ) {
@@ -187,12 +187,12 @@ public class NameResolver implements ILdapConstants {
 		return getName( cn(profile), getApplicationProfilesDN(application) );
 	}
 	
-	public static Name getRolesDN( String application ) {
+	public static Name getApplicationRolesDN( String application ) {
 		return getName( ou(ROLES), getApplicationDN(application) );
 	}
 
-	public static Name getRoleDN( String application, String role ) {
-		return getName( cn(role), getRolesDN(application) );
+	public static Name getApplicationRoleDN( String application, String role ) {
+		return getName( cn(role), getApplicationRolesDN(application) );
 	}
 
 	public static Name getMessagesDN() {
@@ -200,11 +200,11 @@ public class NameResolver implements ILdapConstants {
 	}
 	
 	public static Name getMessageDN( int status ) {
-		return getName( status(status), ou(MESSAGES) );
+		return getName( ou(MESSAGES), status(status) );
 	}
 
 	public static Name getMessageDN( int status, String language ) {
-		return getName( status(status), ou(language), ou(MESSAGES) );
+		return getName( ou(MESSAGES), ou(language), status(status) );
 	}
 	
 }

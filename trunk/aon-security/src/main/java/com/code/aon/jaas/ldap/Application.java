@@ -200,7 +200,7 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 		try {
 			LdapSession session = this.ldap.getLdapSession();
 			String objectClass = NameResolver.getObjectClass(ROLE);
-			Name dn = NameResolver.getRolesDN(application);
+			Name dn = NameResolver.getApplicationRolesDN(application);
 			List<Entry> list = session.search(dn, objectClass );
 			for( Entry entry : list ) {
 				IRole role = getRole(entry);
