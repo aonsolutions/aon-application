@@ -27,7 +27,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>resourceContextPath</property-name>
-			<value>aon-account</value>
+			<value>aon-asset</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
