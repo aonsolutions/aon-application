@@ -7,21 +7,32 @@ import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.Finance;
+import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.registry.RegistryBank;
 
 public class FinanceRecordingTo implements ITransferObject {
 
 	private static final long serialVersionUID = -7892480587508670847L;
 
-	private RegistryBank registryBank;
+	private AccountEntryType type;
 	
 	private Date date;
 	
-	private AccountEntryType type;
+	private RegistryBank registryBank;
 	
 	private SecurityLevel securityLevel;
 	
 	private List<Finance> financeList;
+
+	private List<FinanceBatchDetail> fbatchDetailList;
+
+	public AccountEntryType getType() {
+		return type;
+	}
+
+	public void setType(AccountEntryType type) {
+		this.type = type;
+	}
 
 	public Date getDate() {
 		return date;
@@ -29,14 +40,6 @@ public class FinanceRecordingTo implements ITransferObject {
 
 	public void setDate(Date date) {
 		this.date = date;
-	}
-
-	public List<Finance> getFinanceList() {
-		return financeList;
-	}
-
-	public void setFinanceList(List<Finance> financeList) {
-		this.financeList = financeList;
 	}
 
 	public RegistryBank getRegistryBank() {
@@ -47,14 +50,6 @@ public class FinanceRecordingTo implements ITransferObject {
 		this.registryBank = registryBank;
 	}
 
-	public AccountEntryType getType() {
-		return type;
-	}
-
-	public void setType(AccountEntryType type) {
-		this.type = type;
-	}
-
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
@@ -62,4 +57,21 @@ public class FinanceRecordingTo implements ITransferObject {
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
 	}
+
+	public List<Finance> getFinanceList() {
+		return financeList;
+	}
+
+	public void setFinanceList(List<Finance> financeList) {
+		this.financeList = financeList;
+	}
+
+	public List<FinanceBatchDetail> getFBatchDetailList() {
+		return fbatchDetailList;
+	}
+
+	public void setFBatchDetailList(List<FinanceBatchDetail> fbatchDetailList) {
+		this.fbatchDetailList = fbatchDetailList;
+	}
+
 }
