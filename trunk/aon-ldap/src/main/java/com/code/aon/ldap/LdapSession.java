@@ -155,8 +155,8 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 	}
 	
 	private Name resolveBase(Name base) {
-		if ( (!this.baseDN.isEmpty()) && base.endsWith(this.baseDN) ) {
-			return base.getPrefix(this.baseDN.size());
+		if ( (!this.baseDN.isEmpty()) && base.startsWith(this.baseDN) ) {
+			return base.getSuffix(this.baseDN.size());
 		}
 		return base;
 	}
@@ -254,7 +254,7 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 	public boolean exists(Name base, String filter) throws LdapException {
 		try {
 			SearchControls sc = getSearchControls(Scope.OBJECT_SCOPE, new String[]{OBJECT_CLASS_ATTRIBUTE});
-			NamingEnumeration<SearchResult> ne = dc.search(getFullDN(base), filter, sc);
+			NamingEnumeration<SearchResult> ne = dc.search(resolveBase(base), filter, sc);
 			while (ne.hasMore()) {
 				return true;
 			}

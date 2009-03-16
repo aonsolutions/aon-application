@@ -1,6 +1,8 @@
 package com.code.aon.ldap;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,8 +52,8 @@ public class NameResolver implements ILdapConstants {
 	
 	public static Name getName( Name preffix, Name suffix ) {
 		try {
-			Name newName = (Name) preffix.clone();
-			return newName.addAll(suffix);
+			Name newName = (Name) suffix.clone();
+			return newName.addAll(preffix);
 		} catch (InvalidNameException e) {
 			LOGGER.log( Level.SEVERE, "Error creating Name with " + preffix + " and " + suffix, e);			
 		}
@@ -117,6 +119,10 @@ public class NameResolver implements ILdapConstants {
 		return getName( cn(domain), ou(DOMAINS) );
 	}
 
+	public static Name getApplicationsDN() {
+		return getName( ou(APPLICATIONS) );
+	}
+	
 	public static Name getApplicationDN( String application ) {
 		return getName( cn(application), ou(APPLICATIONS) );
 	}
@@ -189,6 +195,10 @@ public class NameResolver implements ILdapConstants {
 		return getName( cn(role), getRolesDN(application) );
 	}
 
+	public static Name getMessagesDN() {
+		return getName( ou(MESSAGES) );
+	}
+	
 	public static Name getMessageDN( int status ) {
 		return getName( status(status), ou(MESSAGES) );
 	}
