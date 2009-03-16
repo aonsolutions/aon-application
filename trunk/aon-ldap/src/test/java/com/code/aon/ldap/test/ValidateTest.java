@@ -1,13 +1,16 @@
 package com.code.aon.ldap.test;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 
-import javax.naming.Context;
 import javax.naming.Name;
 
 import junit.framework.JUnit4TestAdapter;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
@@ -27,24 +30,32 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 
 	private static Log LOGGER = LogFactory.getLog(ValidateTest.class.getName());
 	
-	private static final String HOST = "192.168.2.100";
-	
-	private static final String BASE_DN = "o=Esferalia-CODE,c=ES";
-	
-	private static final String TEST_USER = "cn=Manager," + BASE_DN;
-	
-	private static final String TEST_PASSWORD = "secret";
+	private static final String LDAP_PROPERTIES = "ldap.properties";
 	
 	private static BasicLdap ldap;
 
+	public static Properties loadProperties() {
+		Properties properties = new Properties();
+		String path = System.getProperty(LDAP_PROPERTIES);
+		try {
+			if (! StringUtils.isEmpty(path) ) {
+				FileInputStream fin = new FileInputStream( path ); 
+				properties.load(fin);
+				fin.close();
+			} else {
+				InputStream in = ValidateTest.class.getResourceAsStream(LDAP_PROPERTIES);
+				properties.load(in);
+				in.close();
+			}
+		} catch ( IOException e ) {
+			Assert.fail( e.getMessage() );
+		}
+		return properties;
+	}
+	
 	@BeforeClass
 	public static synchronized void runBeforeAllTests() {
-		Properties properties = new Properties();
-		properties.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-		properties.put(Context.PROVIDER_URL, "ldap://" + HOST + "/" + BASE_DN);
-		properties.put(Context.SECURITY_PRINCIPAL, TEST_USER);
-		properties.put(Context.SECURITY_CREDENTIALS, TEST_PASSWORD);
-		ldap = new BasicLdap( properties );
+		ldap = new BasicLdap( loadProperties() );
 	}
 	
 	@After
