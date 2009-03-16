@@ -79,6 +79,17 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 		return list;
 	}	
 	
+	private Name getFullDN( Name name ) {
+		try {
+			return ldap.getLdapSession().getFullDN(name);
+		} catch ( LdapException e ) {
+			Assert.fail( e.getMessage() );
+		} finally {
+			ldap.closeSession();
+		}		
+		return null;		
+	}
+	
 	@Test
     public void testRoot() {
 		Name applications = NameResolver.getApplicationsDN();
@@ -87,16 +98,13 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 		Assert.assertTrue( ldap.exists(domains, ORGANIZATIONAL_UNIT) );
 		Name messages = NameResolver.getMessagesDN();
 		Assert.assertTrue( ldap.exists(messages, ORGANIZATIONAL_UNIT) );
-		try {
-			Name fullApplications = ldap.getLdapSession().getFullDN(applications);
-			Assert.assertTrue( ldap.exists(fullApplications, ORGANIZATIONAL_UNIT) );
-			Name fullDomains = ldap.getLdapSession().getFullDN(domains);
-			Assert.assertTrue( ldap.exists(fullDomains, ORGANIZATIONAL_UNIT) );
-			Name fullMessages = ldap.getLdapSession().getFullDN(messages);
-			Assert.assertTrue( ldap.exists(fullMessages, ORGANIZATIONAL_UNIT) );
-		} catch (LdapException e) {
-			Assert.fail( e.getMessage() );
-		}
+
+		Name fullApplications = getFullDN(applications);
+		Assert.assertTrue( ldap.exists(fullApplications, ORGANIZATIONAL_UNIT) );
+		Name fullDomains = getFullDN(domains);
+		Assert.assertTrue( ldap.exists(fullDomains, ORGANIZATIONAL_UNIT) );
+		Name fullMessages = getFullDN(messages);
+		Assert.assertTrue( ldap.exists(fullMessages, ORGANIZATIONAL_UNIT) );
     }
 
 	@Test
@@ -112,16 +120,21 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 		Assert.assertTrue( ldap.exists(message100_es, MESSAGE) );
 	}
 	
+	private void checkName( Name name, String objectClass, Name container, Name preffix ) {
+		if ( ldap.exists(name, objectClass) ) {
+			if (! name.startsWith(preffix) ) {
+				LOGGER.error( objectClass + " " + name + " must have preffix  " + preffix + " in " + container );
+			}
+		} else {
+			LOGGER.error( objectClass + " doesn't exist " + name + " in " + container );
+		}
+		
+	}
+	
     private void testApplicationProfile( Entry profile, Name applicationDN ) {
     	for( Object member : profile.get(MEMBER_ATTRIBUTE) ) {
     		Name memberName = NameResolver.getName( member.toString() );
-    		if ( ldap.exists(memberName, ROLE) ) {
-    			if (! memberName.startsWith(applicationDN) ) {
-    				LOGGER.error( "Profile " + profile.getDN() + " has a role of another application " + member );
-    			}
-    		} else {
-    			LOGGER.error("Member doesn't exist " + member + " of profile " + profile.getDN() );
-    		}
+    		checkName(memberName, ROLE, profile.getDN(), applicationDN);
     	}
     }
 
@@ -145,7 +158,7 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 	@Test
     public void testApplications() {
 		Name applications = NameResolver.getApplicationsDN();
-		for( Entry application : getList(applications, APPLICATION) ) {
+		for( Entry application : getList(applications, APPLICATION,COMMON_NAME_ATTRIBUTE) ) {
 			testApplication(application);
 		}
 	}
@@ -168,6 +181,43 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 			LOGGER.warn( "DBConnection not used in any application: " + db.getDN() );
 		}
 	}
+	
+	private void testDomainApplicationUser( Entry user, String application, String domain ) {
+		String name = user.getAsString(COMMON_NAME_ATTRIBUTE);
+		Name userDN = NameResolver.getUserDN(domain, name);
+		Assert.assertTrue( "User " + userDN + " doesn't exist, buf referenced " + user.getDN(), ldap.exists(userDN, USER) );
+		
+		Name profilesDN = getFullDN(NameResolver.getApplicationProfilesDN(application));
+    	for( Object member : user.get(MEMBER_ATTRIBUTE) ) {
+    		Name memberName = NameResolver.getName( member.toString() );
+    		checkName(memberName, PROFILE, user.getDN(), profilesDN);
+    	}		
+	}
+	
+    private void testDomainApplication( Entry application, String domain ) {
+    	String name = application.getAsString(COMMON_NAME_ATTRIBUTE);
+		Name applicationDN = NameResolver.getApplicationDN(name);
+		Assert.assertTrue( ldap.exists(applicationDN, APPLICATION) );
+		Name profilesDN = NameResolver.getDomainApplicationProfilesDN(domain, name);
+		Assert.assertTrue( ldap.exists(profilesDN, ORGANIZATIONAL_UNIT) );
+		Name usersDN = NameResolver.getDomainApplicationUsersDN(domain, name);
+		Assert.assertTrue( ldap.exists(usersDN, ORGANIZATIONAL_UNIT) );    	
+		
+		if ( application.containsKey(DATA_SOURCE_ATTRIBUTE) ) {
+			Name dataSource = NameResolver.getName( application.getAsString(DATA_SOURCE_ATTRIBUTE) );
+			Name bdsDN = getFullDN(NameResolver.getDomainBDsDN(domain));
+			checkName(dataSource, DB_CONNECTION, application.getDN(), bdsDN);
+		}
+		
+		List<Entry> users = getList(usersDN, DOMAIN_APPLICATION_USER);
+		if ( users.isEmpty() ) {
+			LOGGER.info( "DomainApplication " + application.getDN() + " with users empty" );	
+		}
+		for( Entry user : users ) {
+			testDomainApplicationUser( user, name, domain );
+		}
+		
+    }
 	
     private void testDomain( Entry domain ) {
     	String name = domain.getAsString(COMMON_NAME_ATTRIBUTE);
@@ -192,12 +242,15 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 		
 		List<Entry> applications = getList(applicationsDN, DOMAIN_APPLICATION);
 		Assert.assertFalse( "Domain " + name + " with applications empty", applications.isEmpty() );		
+		for( Entry application : applications ) {
+			testDomainApplication( application, name );
+		}		
     }
 	
 	@Test
     public void testDomains() {
 		Name domains = NameResolver.getDomainsDN();
-		for( Entry domain : getList(domains, DOMAIN) ) {
+		for( Entry domain : getList(domains, DOMAIN, COMMON_NAME_ATTRIBUTE) ) {
 			testDomain(domain);
 		}				
 	}
