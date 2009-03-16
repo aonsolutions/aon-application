@@ -94,7 +94,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 
 	private void setDN( ITransferObject to, Name dn ) throws DAOException {
 		try {
-			BeanUtils.setProperty( to, metadata.getDnHolder(), dn.toString() );
+			PropertyUtils.setProperty( to, metadata.getDnHolder(), dn );
 		} catch (Exception e) {
 			throw new DAOException( e );
 		}
@@ -169,11 +169,11 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	private IDAO getDAO( PropertyInfo info ) {
 		LdapDAO dao = new LdapDAO( getProperties(), (Class<ITransferObject>) info.getPropertyClass() );
 		if ( info.getBaseDN() != null ) {
-			String baseDN = info.getBaseDN().toString();
+			String baseDN = info.getBaseDN();
 			if (! StringUtils.isEmpty(baseDN) ) {
 				baseDN = baseDN.replace( "{this}", getBaseDN().toString() );
 				if ( baseDN.indexOf("{parent}") != -1 ) {
-					Name parent = getBaseDN().getSuffix(1);
+					Name parent = NameResolver.getParent(getBaseDN());
 					baseDN = baseDN.replace( "{parent}", parent.toString() );
 				}
 			}
@@ -293,7 +293,8 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 			if ( value != null ) {
 				if ( info.isTransferObject() ) {
 					IDAO dao = getDAO(info);
-					value = dao.get( (Serializable) value );
+					Name id = NameResolver.getName( value.toString() );
+					value = dao.get( (Serializable) id );
 				}
 				BeanUtils.setProperty(to, info.getAccesPath(), value);						
 			}
@@ -356,15 +357,14 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	
 	@Override
 	public void setId(ITransferObject to, Serializable id) throws DAOException {
-		Name dn = NameResolver.getName( (String) id );
-		setDN(to, dn);
+		setDN(to, (Name) id);
 	}
 	
 	@Override
 	public ITransferObject get(Serializable pk) throws DAOException {
 		LOGGER.info( "Get: " + pk );
 		ITransferObject to = null;
-		Name dn = NameResolver.getName( (String) pk );
+		Name dn = (Name) pk;
 		if ( exists(dn, metadata.getMainObjectClass()) ) {
 			Entry entry = get(dn, metadata.getMainObjectClass());
 			if ( entry != null ) {

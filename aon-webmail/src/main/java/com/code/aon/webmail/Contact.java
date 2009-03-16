@@ -1,5 +1,6 @@
 package com.code.aon.webmail;
 
+import javax.naming.Name;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,7 +24,7 @@ public class Contact implements ITransferObject {
 
 	private static final long serialVersionUID = 7825997921660369372L;
 
-	private String id;
+	private Name id;
 	
 	private String displayName;
 	
@@ -70,11 +71,11 @@ public class Contact implements ITransferObject {
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
-	public String getId() {
+	public Name getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Name id) {
 		this.id = id;
 	}
 	

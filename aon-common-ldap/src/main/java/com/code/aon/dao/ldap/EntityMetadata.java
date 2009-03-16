@@ -76,7 +76,7 @@ public class EntityMetadata {
 		info.setAlias( getAlias(accessPath) );
 		if ( method.isAnnotationPresent(BaseDN.class) ) {
 			String name = method.getAnnotation(BaseDN.class).value();
-			info.setBaseDN( NameResolver.getName(name) );
+			info.setBaseDN( name );
 		}
 		return info;
 	}

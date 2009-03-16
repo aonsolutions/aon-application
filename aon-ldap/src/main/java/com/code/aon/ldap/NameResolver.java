@@ -85,11 +85,21 @@ public class NameResolver implements ILdapConstants {
 			} else {
 				newName = new LdapName( name.toString() );
 			}
-			return newName.getRdn(pos).getValue().toString();
+			int index = newName.size()-1-pos;
+			return newName.getRdn(index).getValue().toString();
 		} catch (InvalidNameException e) {
 			LOGGER.log( Level.SEVERE, "Error getting value " + pos + " of Name: " + name, e);			
 		}
 		return null;		
+	}
+
+	public static String getFirstValue( Name name ) {
+		return getValue(name, 0);
+	}
+
+	public static Name getParent( Name name ) {
+		int pos = name.size()-1;
+		return name.getPrefix(pos);
 	}
 	
 	public static Rdn userId( String uid ) {

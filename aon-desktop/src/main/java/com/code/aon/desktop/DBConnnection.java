@@ -3,6 +3,7 @@ package com.code.aon.desktop;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import javax.naming.Name;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -26,7 +27,7 @@ public class DBConnnection implements ITransferObject, Cloneable {
 	
 	private static final Logger LOGGER = Logger.getLogger(DomainController.class.getName());	
 
-	private String id;
+	private Name id;
 	
 	private String commonName;
 	
@@ -41,11 +42,11 @@ public class DBConnnection implements ITransferObject, Cloneable {
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
-	public String getId() {
+	public Name getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Name id) {
 		this.id = id;
 	}
 	

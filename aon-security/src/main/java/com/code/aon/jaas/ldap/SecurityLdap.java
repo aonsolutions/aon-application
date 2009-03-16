@@ -43,11 +43,11 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 		Object value = entry.get( MEMBER_ATTRIBUTE );
 		if ( value instanceof String ) {
 			Name member = NameResolver.getName( (String) value );
-			relation.addRelation( member.get(0) );
+			relation.addRelation( NameResolver.getFirstValue(member) );
 		} else {
 			for( String profile : (List<String>) value ) {
 				Name dn = NameResolver.getName( profile );
-				relation.addRelation( dn.get(0) );
+				relation.addRelation( NameResolver.getFirstValue(dn) );
 			}
 		}
 		return relation;
@@ -158,8 +158,8 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 			Name dn = DomainApplication.getParentDN(domainId);
 			List<Entry> list = session.search( dn, NameResolver.getAndExpression(objectClass, cn), Scope.SUBTREE_SCOPE, COMMON_NAME_ATTRIBUTE);
 			for( Entry entry : list ) {
-				String application = entry.getDN().get( 2 );
-				applications.add(application);
+				String application = NameResolver.getValue(entry.getDN(), 2);
+				applications.add( application );
 			}
 		} catch ( LdapException e ) {
 			LOGGER.error( e.getMessage(), e );

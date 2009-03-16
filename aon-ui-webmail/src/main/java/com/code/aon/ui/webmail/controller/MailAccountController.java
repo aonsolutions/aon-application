@@ -43,7 +43,7 @@ public class MailAccountController extends BasicController implements WebMailCon
 	
 	private BasicManagerBean ldapManagerBean;
 	
-	private String accountId;
+	private Name accountId;
 	
 	private boolean showMailAccountList;
 	
@@ -186,11 +186,11 @@ public class MailAccountController extends BasicController implements WebMailCon
 		this.accountId = webmail.getServer().getAccount().getId();
 	}
 	
-	public String getAccountId() {
+	public Name getAccountId() {
 		return accountId;
 	}
 
-	public void setAccountId(String accountId) {
+	public void setAccountId(Name accountId) {
 		this.accountId = accountId;
 	}
 
