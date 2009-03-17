@@ -32,6 +32,7 @@ public class WebmailManager implements IServices, IDesktopConstants {
 				AuthPrincipal user = Utils.getAuthPrincipal();
 				MailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
 				this.webmailServer = new AonServer(mailAccount);
+				this.webmailServer.connect();
 			} catch (Throwable th) {
 				LOGGER.log(Level.SEVERE, "Error on Webmail init", th);
 			}

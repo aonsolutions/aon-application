@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import javax.naming.Name;
 
@@ -27,6 +28,8 @@ import com.code.aon.ldap.NameResolver;
 import com.code.aon.ldap.Scope;
 
 public class ValidateTest implements IAonObjectClasses, ILdapConstants {
+
+	private static final String AON_WEBMAIL = "aon-webmail";
 
 	private static Log LOGGER = LogFactory.getLog(ValidateTest.class.getName());
 	
@@ -101,34 +104,58 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 		return null;		
 	}
 	
+	private void assertExist( Name dn, String objectClass ) {
+		Assert.assertTrue( objectClass + " doesn't exist " + dn, ldap.exists(dn, objectClass) );
+	}
+	
+	private void addOrganizationUnit( Name dn ) {
+		try {
+			Entry entry = new Entry(dn);
+			entry.addObjectClasses(new String[]{TOP, ORGANIZATIONAL_UNIT});
+			entry.put( ORGANIZATIONAL_UNIT_NAME_ATTRIBUTE, NameResolver.getFirstValue(dn) );
+			LOGGER.info( "Add Organization Unit entry: " + dn );
+			ldap.getLdapSession().add(entry);
+		} catch ( LdapException e ) {
+			LOGGER.error(e.getMessage(), e);
+		} finally {
+			ldap.closeSession();
+		}
+	}	
+	private void ensureOrganizationalUnit( Name dn ) {
+		if (! ldap.exists(dn, ORGANIZATIONAL_UNIT) ) {
+			LOGGER.warn( ORGANIZATIONAL_UNIT + " " + dn + " doesn't exist" );
+			addOrganizationUnit(dn);
+		}
+	}
+	
 	@Test
     public void testRoot() {
 		Name applications = NameResolver.getApplicationsDN();
-		Assert.assertTrue( ldap.exists(applications, ORGANIZATIONAL_UNIT) );
+		assertExist(applications, ORGANIZATIONAL_UNIT );
 		Name domains = NameResolver.getDomainsDN();
-		Assert.assertTrue( ldap.exists(domains, ORGANIZATIONAL_UNIT) );
+		assertExist(domains, ORGANIZATIONAL_UNIT );
 		Name messages = NameResolver.getMessagesDN();
-		Assert.assertTrue( ldap.exists(messages, ORGANIZATIONAL_UNIT) );
+		assertExist(messages, ORGANIZATIONAL_UNIT );
 
 		Name fullApplications = getFullDN(applications);
-		Assert.assertTrue( ldap.exists(fullApplications, ORGANIZATIONAL_UNIT) );
+		assertExist(fullApplications, ORGANIZATIONAL_UNIT );
 		Name fullDomains = getFullDN(domains);
-		Assert.assertTrue( ldap.exists(fullDomains, ORGANIZATIONAL_UNIT) );
+		assertExist(fullDomains, ORGANIZATIONAL_UNIT );
 		Name fullMessages = getFullDN(messages);
-		Assert.assertTrue( ldap.exists(fullMessages, ORGANIZATIONAL_UNIT) );
+		assertExist(fullMessages, ORGANIZATIONAL_UNIT );
     }
 
 	@Test
     public void testMessages() {
 		Name message10 = NameResolver.getMessageDN(10);
-		Assert.assertTrue( ldap.exists(message10, MESSAGE) );
+		assertExist(message10, MESSAGE );
 		Name message100 = NameResolver.getMessageDN(100);
-		Assert.assertTrue( ldap.exists(message100, MESSAGE) );
+		assertExist(message100, MESSAGE );
 
 		Name message10_es = NameResolver.getMessageDN(10, "es");
-		Assert.assertTrue( ldap.exists(message10_es, MESSAGE) );
+		assertExist(message10_es, MESSAGE );
 		Name message100_es = NameResolver.getMessageDN(100, "es");
-		Assert.assertTrue( ldap.exists(message100_es, MESSAGE) );
+		assertExist(message100_es, MESSAGE );
 	}
 	
 	private void checkName( Name name, String objectClass, Name container, Name preffix ) {
@@ -138,8 +165,7 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 			}
 		} else {
 			LOGGER.error( objectClass + " doesn't exist " + name + " in " + container );
-		}
-		
+		}	
 	}
 	
     private void testApplicationProfile( Entry profile, Name applicationDN ) {
@@ -152,9 +178,9 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
     private void testApplication( Entry application ) {
     	String name = application.getAsString(COMMON_NAME_ATTRIBUTE);
 		Name profilesDN = NameResolver.getApplicationProfilesDN(name);
-		Assert.assertTrue( ldap.exists(profilesDN, ORGANIZATIONAL_UNIT) );
+		ensureOrganizationalUnit( profilesDN );
 		Name rolesDN = NameResolver.getApplicationRolesDN(name);
-		Assert.assertTrue( ldap.exists(rolesDN, ORGANIZATIONAL_UNIT) );
+		ensureOrganizationalUnit( rolesDN );
 		
 		List<Entry> roles = getList(rolesDN, ROLE, OBJECT_CLASS_ATTRIBUTE);
 		Assert.assertFalse( "Application " + name + " with roles empty",  roles.isEmpty() );
@@ -216,11 +242,11 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
     private void testDomainApplication( Entry application, String domain ) {
     	String name = application.getAsString(COMMON_NAME_ATTRIBUTE);
 		Name applicationDN = NameResolver.getApplicationDN(name);
-		Assert.assertTrue( ldap.exists(applicationDN, APPLICATION) );
+		assertExist(applicationDN, APPLICATION );
 		Name profilesDN = NameResolver.getDomainApplicationProfilesDN(domain, name);
-		Assert.assertTrue( ldap.exists(profilesDN, ORGANIZATIONAL_UNIT) );
+		assertExist(profilesDN, ORGANIZATIONAL_UNIT );
 		Name usersDN = NameResolver.getDomainApplicationUsersDN(domain, name);
-		Assert.assertTrue( ldap.exists(usersDN, ORGANIZATIONAL_UNIT) );    	
+		assertExist(usersDN, ORGANIZATIONAL_UNIT );    	
 		
 		if ( application.containsKey(DATA_SOURCE_ATTRIBUTE) ) {
 			Name dataSource = NameResolver.getName( application.getAsString(DATA_SOURCE_ATTRIBUTE) );
@@ -241,15 +267,54 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 			testDomainApplicationProfile( profile, name );
 		}
     }
+    
+    private void testMailAccount( Entry mailAccount, Name signaturesDN ) {
+    	if ( mailAccount.containsKey(SIGNATURE_MEMBER_ATTRIBUTE) ) {
+    		String member = mailAccount.getAsString(SIGNATURE_MEMBER_ATTRIBUTE);
+    		Name memberName = NameResolver.getName( member );
+    		checkName(memberName, SIGNATURE, mailAccount.getDN(), signaturesDN);    	
+    	}
+    }
+    
+    private void testWebmail( String domain ) {
+    	Name usersDN = NameResolver.getDomainApplicationUsersDN(domain, AON_WEBMAIL);
+		List<Entry> users = getList(usersDN, DOMAIN_APPLICATION_USER, COMMON_NAME_ATTRIBUTE);
+		for( Entry user : users ) {
+			String name = user.getAsString(COMMON_NAME_ATTRIBUTE);
+			Name userDN = NameResolver.getUserDN(domain, name);
+			if ( ldap.exists(userDN, USER) ) {
+				Name addressbook = NameResolver.getUserAddressBookDN(domain, name);
+				ensureOrganizationalUnit( addressbook );
+				
+				Name signaturesDN = NameResolver.getUserSignaturesDN(domain, name);
+				ensureOrganizationalUnit( signaturesDN );
+				List<Entry> signatures = getList(signaturesDN, SIGNATURE);
+				if ( signatures.isEmpty() ) {
+					LOGGER.error( "User " + userDN + " with signatures empty" );	
+				}
+				
+				Name accounts = NameResolver.getUserAccountsDN(domain, name);
+				ensureOrganizationalUnit( accounts );
+				List<Entry> mailAccounts = getList(accounts, MAIL_ACCOUNT);
+				if ( mailAccounts.isEmpty() ) {
+					LOGGER.error( "User " + userDN + " with mail accounts empty" );	
+				} else {
+					for( Entry mailAccount : mailAccounts ) {
+						testMailAccount(mailAccount, getFullDN(signaturesDN));
+					}	
+				}				
+			}
+		}    	
+    }
 	
     private void testDomain( Entry domain ) {
     	String name = domain.getAsString(COMMON_NAME_ATTRIBUTE);
 		Name applicationsDN = NameResolver.getDomainApplicationsDN(name);
-		Assert.assertTrue( ldap.exists(applicationsDN, ORGANIZATIONAL_UNIT) );
+		assertExist(applicationsDN, ORGANIZATIONAL_UNIT );
 		Name bdsDN = NameResolver.getDomainBDsDN(name);
-		Assert.assertTrue( ldap.exists(bdsDN, ORGANIZATIONAL_UNIT) );
+		assertExist(bdsDN, ORGANIZATIONAL_UNIT );
 		Name usersDN = NameResolver.getUsersDN(name);
-		Assert.assertTrue( ldap.exists(usersDN, ORGANIZATIONAL_UNIT) );
+		assertExist(usersDN, ORGANIZATIONAL_UNIT );
 
 		List<Entry> users = getList(usersDN, USER, USER_ID_ATTRIBUTE);
 		Assert.assertFalse( "Domain " + name + " with users empty", users.isEmpty() );
@@ -268,6 +333,11 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 		for( Entry application : applications ) {
 			testDomainApplication( application, name );
 		}		
+		
+		Name webmail = NameResolver.getDomainApplicationDN(name, AON_WEBMAIL);
+		if ( ldap.exists(webmail, DOMAIN_APPLICATION) ) {
+			testWebmail( name );
+		}
     }
 	
 	@Test
