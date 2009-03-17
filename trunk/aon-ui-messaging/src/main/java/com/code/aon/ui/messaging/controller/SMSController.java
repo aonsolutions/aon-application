@@ -11,12 +11,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.validator.LengthValidator;
-import javax.faces.validator.ValidatorException;
 import javax.xml.soap.SOAPException;
 
 import org.apache.commons.lang.StringUtils;
@@ -37,7 +33,6 @@ import com.code.aon.messaging.util.Utils;
 import com.code.aon.ui.messaging.PriceTariff;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.Contact;
-import com.sun.faces.util.MessageFactory;
 
 public class SMSController implements Serializable {
 
@@ -209,7 +204,7 @@ public class SMSController implements Serializable {
 		this.selected = selected;
 	}
 	
-	private int getCharacterCount() {
+	public int getCharacterCount() {
 		int count = 0;
 		String text = this.message.getInfo().getMessage();
 		if ( text != null ) {
@@ -225,19 +220,19 @@ public class SMSController implements Serializable {
 	
 	public String getCharacterCountMessage() {
 		int count = getCharacterCount();
-		if ( count > 160 ) {
-			return bundle.getString("sms_message_size_limit");
-		} else if ( count == 1 ) {
+		if ( count == 1 ) {
 			return bundle.getString("sms_message_size_one");
+		} else {
+			String pattern = bundle.getString("sms_message_size_many"); 
+			return MessageFormat.format(pattern, count);
 		}
-		String pattern = bundle.getString("sms_message_size_many"); 
-		return MessageFormat.format(pattern, count);
 	}
 
-	public void characterCountValidator(FacesContext context, UIComponent component, Object value) {
-		if (getCharacterCount() > 160 ) {
-			throw new ValidatorException( MessageFactory.getMessage(
-				context, LengthValidator.MAXIMUM_MESSAGE_ID, MessageFactory.getLabel(context, component), 160));
+	public void checkMessageLength() {
+		if ( getCharacterCount() > 160 ) {
+			String message = bundle.getString("sms_message_size_limit");
+			AonUtil.addErrorMessage( message );
+			throw new AbortProcessingException( message );							
 		}
 	}
 	
@@ -264,8 +259,9 @@ public class SMSController implements Serializable {
 		// if the recipient is not null, then adds to the recipients list.
 		add2List( event );
 		if ( this.recipients.size() > 0 ) {
+			checkMessageLength();
 			try {
-				sendMessage( this.message );
+				// sendMessage( this.message );
 				reset(event);
 			} catch ( Throwable e ) {
 				LOGGER.severe(">>>> sendMessage " + e.getMessage());

@@ -43,13 +43,12 @@
 							<a4j:region>
 								<aon:div>
 									<aon:inputTextarea id="SMS_message" value="#{sms.message.info.message}"
-										cols="80" rows="4" required="true"
-										validator="#{sms.characterCountValidator}" />
+										cols="80" rows="4" required="true" />
 										<a4j:support event="onkeyup" reRender="characterCount"
 											eventsQueue="smsCharacterCount"
 											requestDelay="500" ignoreDupResponses="true" />										
-									<aon:div>
-										<aon:outputText id="characterCount" value="#{sms.characterCountMessage}" />
+									<aon:div id="characterCount" styleClass="#{(sms.characterCount &gt; 160)?'aon-message-error':''}">
+										<aon:outputText value="#{sms.characterCountMessage}" />
 									</aon:div>
 								</aon:div>
 							</a4j:region>
