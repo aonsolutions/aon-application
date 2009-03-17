@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.desktop</artifactId>
 	<packaging>war</packaging>
-	<version>3.10.1</version>
+	<version>3.11.0</version>
 	<description>AON DESKTOP</description>
 	<name>AON DESKTOP</name>
 	<properties>
@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.project</artifactId>
-			<version>3.0.4</version>
+			<version>3.0.5</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -53,13 +53,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security.bridge</artifactId>
-			<version>3.1.0</version>
+			<version>3.2.0</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
-			<version>3.6.0</version>
+			<version>3.7.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -89,7 +89,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.groupware</artifactId>
-			<version>3.6.1</version>
+			<version>3.7.0</version>
 			<scope>compile</scope>
 		</dependency>
 	    <dependency>
@@ -100,21 +100,26 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>3.5.1</version>
+			<version>3.6.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.messaging</artifactId>
-			<version>0.3.1</version>
+			<version>0.4.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.webmail</artifactId>
-			<version>4.7.2</version>
+			<version>4.8.0</version>
 			<scope>compile</scope>
-		</dependency>		
+		</dependency>
+		<dependency>
+		    <groupId>commons-dbutils</groupId>
+		    <artifactId>commons-dbutils</artifactId>
+		    <version>1.1</version>
+		</dependency> 
 		<dependency>
 		    <groupId>javax.faces</groupId>
 		    <artifactId>jsf-impl</artifactId>
