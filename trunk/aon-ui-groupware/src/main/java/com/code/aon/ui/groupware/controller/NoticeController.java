@@ -33,8 +33,6 @@ import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
-import com.code.aon.ldap.LdapException;
-import com.code.aon.ldap.LdapSession;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;

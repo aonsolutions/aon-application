@@ -87,10 +87,11 @@ public class BasicLdap {
 		try {
 			if ( session != null ) {
 				session.close();
-				session = null;
 			}
 		} catch (LdapException e) {
 			LOGGER.log( Level.SEVERE, e.getMessage(), e );
+		} finally {
+			session = null;
 		}
 	}
 	
