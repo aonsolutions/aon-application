@@ -4,7 +4,6 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
-import com.code.aon.common.enumeration.MimeType;
 
 public enum SpamScoreType implements IResourceable {
 
