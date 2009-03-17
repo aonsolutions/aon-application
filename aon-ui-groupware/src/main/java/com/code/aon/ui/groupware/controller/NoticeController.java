@@ -247,9 +247,8 @@ public class NoticeController extends BasicController implements IAonObjectClass
 		String email = null;
 		if ( ldap.exists(userDN, USER) ) {
 			email = "<"+username+"@"+domain+">";
-			try {
-				LdapSession session = ldap.getLdapSession();
-				Entry userEntry = session.get(userDN, USER, MAIL_ATTRIBUTE, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE);
+			Entry userEntry = ldap.get(userDN, USER, MAIL_ATTRIBUTE, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE);
+			if ( userEntry != null ) {
 				String alternativeEmail = null;
 				String name = username;
 				String cn = userEntry.getAsString(COMMON_NAME_ATTRIBUTE);
@@ -262,10 +261,8 @@ public class NoticeController extends BasicController implements IAonObjectClass
 				if (! StringUtils.isEmpty(alternativeEmail) ) {
 					email = email + ", "+ name +" <"+alternativeEmail+">";
 				}
-			} catch (LdapException e) {
-                LOGGER.log(Level.SEVERE, "Error obteniendo propiedades del usuario " + username, e);
-			} finally {
-				ldap.closeSession();
+			} else {
+                LOGGER.log(Level.SEVERE, "Error obteniendo propiedades del usuario " + username);
 			}
 		}
 		if (email == null) {
