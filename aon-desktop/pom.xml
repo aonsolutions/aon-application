@@ -61,12 +61,6 @@
 			<artifactId>aon.ui.config</artifactId>
 			<version>3.7.0</version>
 			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>com.code.aon</groupId>
-					<artifactId>aon.account</artifactId>
-				</exclusion>
-			</exclusions>						
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
