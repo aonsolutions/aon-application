@@ -7,9 +7,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 
+import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.enumeration.TaxType;
 
@@ -55,6 +57,16 @@ public class Tax implements ITransferObject{
      * Last date for this tax to be applied.
      */
     private Date startDate;
+
+    /**
+     * Sales account. 
+     */
+    private Account salesAccount;
+
+    /**
+     * Purchase account. 
+     */
+    private Account purchaseAccount;
 
     /**
      * Void constructor.
@@ -116,6 +128,26 @@ public class Tax implements ITransferObject{
     }
 
     /**
+     * Returns the tax type.
+     * 
+     * @return tax type.
+     */
+    @Column(name="tax_type", nullable=false)
+    public TaxType getType() {
+        return type;
+    }
+
+    /**
+     * Assigns the tax type.
+     * 
+     * @param type
+     *            tax type.
+     */
+    public void setType(TaxType type) {
+        this.type = type;
+    }
+ 
+    /**
      * Returns the percentage to be applied in this tax.
      * 
      * @return percentage.
@@ -132,26 +164,6 @@ public class Tax implements ITransferObject{
      */
     public void setPercentage(double percentage) {
         this.percentage = percentage;
-    }
-
-    /**
-     * Returns the top date for this tax to be applied.
-     * 
-     * @return  the top date for this tax to be applied.
-     */
-    @Column(name="start_date")
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    /**
-     * Assigns the top date for this tax to be applied.
-     * 
-     * @param startDate
-     *             the top date for this tax to be applied.
-     */
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
     }
 
     /**
@@ -175,25 +187,69 @@ public class Tax implements ITransferObject{
     }
 
     /**
-     * Returns the tax type.
+     * Returns the top date for this tax to be applied.
      * 
-     * @return tax type.
+     * @return  the top date for this tax to be applied.
      */
-    @Column(name="tax_type", nullable=false)
-    public TaxType getType() {
-        return type;
+    @Column(name="start_date")
+    public Date getStartDate() {
+        return startDate;
     }
 
     /**
-     * Assigns the tax type.
+     * Assigns the top date for this tax to be applied.
      * 
-     * @param type
-     *            tax type.
+     * @param startDate
+     *             the top date for this tax to be applied.
      */
-    public void setType(TaxType type) {
-        this.type = type;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
- 
+
+    /**
+	 * Returns the sales account
+	 * 
+     * @return String the sales account.
+     * 
+     */
+	@Transient
+	public Account getSalesAccount() {
+		return salesAccount;
+	}
+
+    /**
+     * Assigns the sales account.
+     * 
+     * @param salesAccount
+     *            the sales account.
+     */
+	@Transient
+	public void setSalesAccount(Account salesAccount) {
+		this.salesAccount = salesAccount;
+	}
+
+    /**
+	 * Returns the purchase account
+	 * 
+     * @return String the purchase account.
+     * 
+     */
+	@Transient
+	public Account getPurchaseAccount() {
+		return purchaseAccount;
+	}
+
+    /**
+     * Assigns the purchase account.
+     * 
+     * @param purchaseAccount
+     *            the purchase account.
+     */
+	@Transient
+	public void setPurchaseAccount(Account purchaseAccount) {
+		this.purchaseAccount = purchaseAccount;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {
