@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.Level;
 
 import javax.naming.Name;
 
@@ -14,7 +13,7 @@ import junit.framework.JUnit4TestAdapter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -61,8 +60,8 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 		ldap = new BasicLdap( loadProperties() );
 	}
 	
-	@After
-	public synchronized void runAfterAllTests() {
+	@AfterClass
+	public static synchronized void runAfterAllTests() {
 		ldap.closeSession();
 	}
 	
@@ -96,6 +95,17 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 	private Name getFullDN( Name name ) {
 		try {
 			return ldap.getLdapSession().getFullDN(name);
+		} catch ( LdapException e ) {
+			Assert.fail( e.getMessage() );
+		} finally {
+			ldap.closeSession();
+		}		
+		return null;		
+	}
+
+	private Name getBaseDN() {
+		try {
+			return ldap.getLdapSession().getBaseDN();
 		} catch ( LdapException e ) {
 			Assert.fail( e.getMessage() );
 		} finally {
@@ -225,9 +235,16 @@ public class ValidateTest implements IAonObjectClasses, ILdapConstants {
 		Assert.assertTrue( "User " + userDN + " doesn't exist, buf referenced " + user.getDN(), ldap.exists(userDN, USER) );
 		
 		Name profilesDN = getFullDN(NameResolver.getApplicationProfilesDN(application));
+		Name domainProfilesDN = getFullDN(NameResolver.getDomainApplicationProfilesDN(domain, application));
     	for( Object member : user.get(MEMBER_ATTRIBUTE) ) {
     		Name memberName = NameResolver.getName( member.toString() );
-    		checkName(memberName, PROFILE, user.getDN(), profilesDN);
+    		if ( memberName.startsWith(profilesDN) ) {
+        		checkName(memberName, PROFILE, user.getDN(), profilesDN);	
+    		} else if ( memberName.startsWith(domainProfilesDN) ) {
+    			checkName(memberName, PROFILE, user.getDN(), domainProfilesDN);
+    		} else {
+    			checkName(memberName, PROFILE, user.getDN(), getBaseDN());
+    		}
     	}		
 	}
 
