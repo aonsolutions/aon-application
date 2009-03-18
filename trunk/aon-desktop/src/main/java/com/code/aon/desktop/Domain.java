@@ -35,7 +35,7 @@ public class Domain implements ITransferObject {
 	
 	private Integer status;
 	
-	private Domain member;
+	private Domain parentDomain;
 	
 	private boolean dnsManagement;
 	
@@ -144,13 +144,13 @@ public class Domain implements ITransferObject {
 
 	@Cascade(CascadeType.ALL)
 	@BaseDN("{this}")
-	@Attribute(name="member")
-	public Domain getMember() {
-		return member;
+	@Attribute(name="parentDomain")
+	public Domain getParentDomain() {
+		return parentDomain;
 	}
 
-	public void setMember(Domain member) {
-		this.member = member;
+	public void setParentDomain(Domain parentDomain) {
+		this.parentDomain = parentDomain;
 	}	
 	
 	@Attribute(name="jpegLogo")
