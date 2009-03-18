@@ -54,4 +54,6 @@ public interface ILdapConstants {
 
 	String DRIVER_CLASS_NAME_ATTRIBUTE = "driverClassName";
 	
+	String PARENT_DOMAIN_ATTRIBUTE = "parentDomain";
+	
 }
