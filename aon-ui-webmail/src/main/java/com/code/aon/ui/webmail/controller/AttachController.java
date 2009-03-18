@@ -3,8 +3,10 @@ package com.code.aon.ui.webmail.controller;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -113,41 +115,31 @@ public class AttachController {
         context.responseComplete();    	
     }
     
-    public void getZippedAttachments(HttpServletResponse response) throws MessagingException, WebmailException{
+    private void getZippedAttachments(HttpServletResponse response) throws MessagingException, WebmailException{
         try {
 	        String outFilename = "attachments.zip";
 			response.setContentType("application/zip");
 			response.setHeader("Content-disposition", "attachment; filename=\""
 					+ outFilename + "\"");
-			byte[] data = new byte[1024];
 
-            ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
-
-    		for (AonAttachment aonAttachment : attachments) {
-                InputStream in = (InputStream)aonAttachment.getPart().getInputStream();
-                
-                
+			ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
+			Set<String> fileNames = new HashSet<String>();
+			for (AonAttachment aonAttachment : attachments) {
+                InputStream in = aonAttachment.getPart().getInputStream();
+                                
             	String filename = aonAttachment.getFileName();
-            	boolean done = false;
-            	int i = 0;
-            	while (!done){
-	                try{
-	                	out.putNextEntry(new ZipEntry(filename+(i==0?"":"["+i+"]")));
-	                	done = true;
-	                }catch (Exception e) {
-	                	++i;
-					}
+           		for( int i = 0; fileNames.contains(filename); i++ ) {
+           			filename = aonAttachment.getFileName() + "("+i+")";
             	}
+               	out.putNextEntry(new ZipEntry(filename));
 
-                int len;
-                while ((len = in.read(data)) > 0) {
-                    out.write(data, 0, len);
-                }
+            	IOUtils.copy( in, out );
 
                 out.closeEntry();
                 in.close();
+                
+           		fileNames.add(filename);                
             }
-
     		response.flushBuffer();
             out.close();
 		} catch (IOException e) {
