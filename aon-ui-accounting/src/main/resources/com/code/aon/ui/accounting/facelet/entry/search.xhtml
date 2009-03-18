@@ -48,15 +48,13 @@
 						<aon:outputLabel for="AccountEntry_entryDate-From"
 							styleClass="aon-tip" value="#{bundle.aon_date_from}" />
 						<aon:selectInputDate id="AccountEntry_entryDate-From"
-							value="#{accountEntry.fromDate}"
-							valueChangeListener="#{accountEntry.addEntryDateFromExpression}"
+							valueChangeListener="#{accountEntry.addGreaterThanOrEqualExpression}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 						<aon:outputLabel for="AccountEntry_entryDate-To"
 							styleClass="aon-tip" value="#{bundle.aon_date_to}" />
 						<aon:selectInputDate id="AccountEntry_entryDate-To"
-							value="#{accountEntry.toDate}"
-							valueChangeListener="#{accountEntry.addEntryDateToExpression}"
+							valueChangeListener="#{accountEntry.addLessThanOrEqualExpression}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>

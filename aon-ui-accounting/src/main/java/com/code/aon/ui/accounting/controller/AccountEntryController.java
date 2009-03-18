@@ -1,6 +1,5 @@
 package com.code.aon.ui.accounting.controller;
 
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -70,14 +69,9 @@ public class AccountEntryController extends BasicController {
 
 	private static final String LEASING_FEE_ENTRY_CONTROLLER_NAME = "leasingFeeEntry";
 	
-	private Date fromDate;
-	private Date toDate;
-	
 	@Override
 	public void onEditSearch(ActionEvent event) {
 		super.onEditSearch(event);
-		this.toDate = null;
-		this.fromDate = null;
 	}
 	
     @Override
@@ -493,28 +487,6 @@ public class AccountEntryController extends BasicController {
 			getCriteria().addEqualExpression(accountEntryBean.getFieldName(field), event.getNewValue());
 		}
 	}
-	
-	public void addEntryDateFromExpression(ValueChangeEvent event){
-		if(event.getNewValue() != null && fromDate != null){
-			try {
-				IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
-				getCriteria().addGreaterThanOrEqualExpression(accountEntryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ENTRY_DATE), event.getNewValue());
-			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error adding FROM date expression", e);
-			}
-		}
-	}
-	
-	public void addEntryDateToExpression(ValueChangeEvent event){
-		if(event.getNewValue() != null && toDate != null){
-			try {
-				IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
-				getCriteria().addLessThanOrEqualExpression(accountEntryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ENTRY_DATE), event.getNewValue());
-			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error adding TO date expression", e);
-			}
-		}
-	}
 
     public boolean isManual() {
         return (this.getTo() != null && ((AccountEntry)this.getTo()).getType() == AccountEntryType.MANUAL);
@@ -562,20 +534,4 @@ public class AccountEntryController extends BasicController {
         return credit;
     }
 
-	public Date getFromDate() {
-		return fromDate;
-	}
-
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
-
-	public Date getToDate() {
-		return toDate;
-	}
-
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
-	
 }
