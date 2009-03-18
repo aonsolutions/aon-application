@@ -30,6 +30,10 @@ public class AccountWizard extends AbstractWizard {
 	private String id;
 	private String description;
 	private String alias;
+	private boolean orderById = false;
+	private boolean orderByDescription  = true;
+	private boolean orderByAlias = false;
+	
 
 	static {
 		try {
@@ -100,6 +104,13 @@ public class AccountWizard extends AbstractWizard {
 			criteria.addExpression(ExpressionUtilities.getExpression(getAlias(), ALIAS));
 		}
 		criteria.addEqualExpression(ENTRY_ENABLED, true);
+		if (isOrderById()) {
+			criteria.addOrder(ID);	
+		} else if (isOrderByDescription()) {
+			criteria.addOrder(DESCRIPTION);	
+		} else if (isOrderByAlias()) {
+			criteria.addOrder(ALIAS);	
+		}
 	}
 
 	@Override
@@ -112,6 +123,30 @@ public class AccountWizard extends AbstractWizard {
 		setId(null);
 		setDescription(null);
 		setAlias(null);
+	}
+
+	public boolean isOrderById() {
+		return orderById;
+	}
+
+	public void setOrderById(boolean orderById) {
+		this.orderById = orderById;
+	}
+
+	public boolean isOrderByDescription() {
+		return orderByDescription;
+	}
+
+	public void setOrderByDescription(boolean orderByDescription) {
+		this.orderByDescription = orderByDescription;
+	}
+
+	public boolean isOrderByAlias() {
+		return orderByAlias;
+	}
+
+	public void setOrderByAlias(boolean orderByAlias) {
+		this.orderByAlias = orderByAlias;
 	}
 
 }
