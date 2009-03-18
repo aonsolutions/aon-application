@@ -192,7 +192,7 @@ public class DomainController extends BasicController implements IDesktopConstan
 			ldap.closeSession();
 		}
 		try {
-			DBConnnection dbc = getDBConnection(domain);
+			DBConnnection dbc = calculateDBConnection(domain);
 			if ( manager.exists(dbc) ) {
 				manager.dropDB(dbc);
 			}
@@ -201,8 +201,8 @@ public class DomainController extends BasicController implements IDesktopConstan
 		}
 	}	
 	
-	private DBConnnection getCurrentDBConnection() throws ManagerBeanException {
-		Name bdsDN = NameResolver.getDomainBDsDN(getCurrentDomain());
+	public DBConnnection getDBConnection( String domain ) throws ManagerBeanException {
+		Name bdsDN = NameResolver.getDomainBDsDN(domain);
 		IManagerBean bean = getDBConnnectionManagerBean();
 		this.dbConnectionDAO.setBaseDN(bdsDN);
 		Criteria criteria = new Criteria();
@@ -218,8 +218,8 @@ public class DomainController extends BasicController implements IDesktopConstan
 		return null;
 	}
 	
-	private DBConnnection getDBConnection( String domain ) throws ManagerBeanException {
-		DBConnnection newDBConnection = (DBConnnection) getCurrentDBConnection().clone();
+	private DBConnnection calculateDBConnection( String domain ) throws ManagerBeanException {
+		DBConnnection newDBConnection = (DBConnnection) getDBConnection(getCurrentDomain()).clone();
 		newDBConnection.setId(null);
 		newDBConnection.setCommonName(DBManager.AON_MASTER);
 		String bdName = domain.replace('.', '-');
@@ -236,7 +236,7 @@ public class DomainController extends BasicController implements IDesktopConstan
 	public DBConnnection createDB( String domain ) throws AonException {
 		Name bdsDN = NameResolver.getDomainBDsDN(domain);
 		addOrganizationUnit(bdsDN);
-		DBConnnection newDBConnection = getDBConnection( domain );
+		DBConnnection newDBConnection = calculateDBConnection( domain );
 		this.dbConnectionDAO.setBaseDN(bdsDN);
 		getDBConnnectionManagerBean().insert(newDBConnection);
 		manager.createDB(newDBConnection);
@@ -285,10 +285,15 @@ public class DomainController extends BasicController implements IDesktopConstan
 		return configuration.buildSessionFactory();
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void replicateUsers( DBConnnection dbc ) throws AonException {
-		LOGGER.info( "Replicating users in " + dbc );
 		IManagerBean userBean = BeanManager.getManagerBean(User.class);
 		List<ITransferObject> users = userBean.getList(null);
+		replicateUsers(dbc, (List) users);
+	}
+
+	public void replicateUsers( DBConnnection dbc, List<User> users ) throws AonException {
+		LOGGER.info( "Replicating users in " + dbc );
 		SessionFactory factory = getSessionFactory(dbc);
 		Session session = null;
 		try {

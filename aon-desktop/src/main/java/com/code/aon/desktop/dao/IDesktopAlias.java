@@ -25,6 +25,12 @@ public interface IDesktopAlias {
 	String  DOMAIN_ORGANIZATION_NAME = "Domain_organizationName";
 
 	/** 
+	* Alias value: Domain_parentDomain
+	* Hibernate value: Domain.parentDomain
+	*/
+	String  DOMAIN_PARENT_DOMAIN = "Domain_parentDomain";
+	
+	/** 
 	* Alias value: Domain_host
 	* Hibernate value: Domain.host
 	*/
