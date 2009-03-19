@@ -28,11 +28,7 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 	private void removeInvoiceDetailAccount(InvoiceDetail invoiceDetail) throws ManagerBeanException {
 		IManagerBean invoiceAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
 		Criteria criteria = new Criteria();
-		criteria
-				.addEqualExpression(
-						invoiceAccountBean
-								.getFieldName(IAccountBridgeAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_ID),
-						invoiceDetail.getId());
+		criteria.addEqualExpression(invoiceAccountBean.getFieldName(IAccountBridgeAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_ID), invoiceDetail.getId());
 		Iterator<?> iterator = invoiceAccountBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			InvoiceDetailAccount invoiceDetailAccount = (InvoiceDetailAccount) iterator.next();
