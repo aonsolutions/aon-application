@@ -147,6 +147,10 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>corporateIdentityAttach</value>
+		</managed-property>										
+		<managed-property>
 			<property-name>maximumSize</property-name>
 			<value>1048576</value>
 		</managed-property>

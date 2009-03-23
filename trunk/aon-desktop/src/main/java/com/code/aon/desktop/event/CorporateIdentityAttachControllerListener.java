@@ -131,8 +131,6 @@ public class CorporateIdentityAttachControllerListener extends ControllerAdapter
 						attach.setDescription(attach.getDescription() + "." + ext);
 					}
 				}
-			} else {
-				throw new ControllerListenerException("Borracho !!");
 			}
 		} catch (Throwable th) {
 			throw new ControllerListenerException("Error uploading file");

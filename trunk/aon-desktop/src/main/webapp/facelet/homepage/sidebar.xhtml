@@ -68,8 +68,8 @@
 				</aon:commandLink>
 			</aon:div>
 
-			<aon:div styleClass="aon-sidebarIcons-icon">
-				<aon:commandLink action="corporate_identity" actionListener="#{company.onLoad}">
+			<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="DocumentsVisible">
+				<aon:commandLink action="corporateIdentityAttach_list" actionListener="#{company.onLoad}">
 					<aon:graphicImage height="32" width="32"
 						url="#{aonResource.resolveLocal['/images/aon-icon-big-identity.gif']}" />
 					<aon:div><aon:outputText value="#{appBundle.aon_corporate_identity}" /></aon:div>
