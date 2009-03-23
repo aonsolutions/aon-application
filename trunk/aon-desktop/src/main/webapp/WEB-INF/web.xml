@@ -245,6 +245,9 @@
 			<role-name>User</role-name>
 			<role-name>SMSSender</role-name>
 			<role-name>FAXSender</role-name>
+			<role-name>DocumentsVisible</role-name>
+			<role-name>PredefinedDocumentsExecutable</role-name>
+			<role-name>CorporativeDocumentsManager</role-name>
 		</auth-constraint>
 	</security-constraint>
 	<login-config>
@@ -265,6 +268,15 @@
 	</security-role>
 	<security-role>
 		<role-name>FAXSender</role-name>
+	</security-role>
+	<security-role>
+		<role-name>DocumentsVisible</role-name>
+	</security-role>
+	<security-role>
+		<role-name>PredefinedDocumentsExecutable</role-name>
+	</security-role>
+	<security-role>
+		<role-name>CorporativeDocumentsManager</role-name>
 	</security-role>
 
 	<resource-env-ref>
