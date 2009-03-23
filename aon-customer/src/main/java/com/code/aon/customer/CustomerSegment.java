@@ -67,15 +67,12 @@ public class CustomerSegment implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (this == obj) {
+			return true;
 		}
 		if (obj instanceof CustomerSegment) {
-			CustomerSegment o = (CustomerSegment) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
+			CustomerSegment cs = (CustomerSegment) obj;
+			if (ObjectUtils.equals(getId(), cs.getId())) {
 				return true;
 			}
 		}
@@ -83,8 +80,8 @@ public class CustomerSegment implements ITransferObject {
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public int hashCode() {
+		return getId().hashCode();
+	}
 
 }

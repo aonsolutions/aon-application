@@ -11,7 +11,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -231,24 +230,18 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (id == null) {
+			return super.equals(obj);
 		}
 		if (obj instanceof Customer) {
-			Customer o = (Customer) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
+			return (this.id.equals(((Customer) obj).getId()));
 		}
 		return false;
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
-
+	public int hashCode() {
+		return getId().hashCode();
+	}
+	
 }
