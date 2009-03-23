@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="controller" value="#{catalogueItem}" />
+		<ui:param name="columnClasses"
+			value="aon-editDataTable-textColumn,
+					aon-editDataTable-numberColumn aon-width-100,
+					aon-editDataTable-numberColumn aon-width-80,
+					aon-editDataTable-numberColumn aon-width-80" />
+		<ui:define name="columns">
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{productBundle.product_item}" />
+				</f:facet>
+				<aon:outputText value="#{to.item.product.name} #{to.item.detail}"
+					rendered="#{to!=catalogueItem.to}" />
+				<aon:div styleClass="aon-lookup" rendered="#{to==catalogueItem.to}">
+					<aon:lookupInputText id="CatalogueItem_item_product_code-Edit" value="#{catalogueItem.to.item.product.code}"
+						lookup="#{itemLookup}" reRender="CatalogueItem_item_product_name-Edit,CatalogueItem_price-Edit"
+						lookupChangeListener="#{catalogueItem.itemData}" onblur="toUpperCase(this);"
+						required="true" size="10">
+						<aon:joinProperty alias="Item_product_code" value="#{catalogueItem.to.item.product.code}" />
+					</aon:lookupInputText>
+					<aon:lookupButton
+						windowTitle="#{productBundle.product_item_selection}" actionType="search"
+						property="#{catalogueItem.to.item}"	selectReRender="#{dataTableId}"
+						lookup="#{itemLookup}" minHeight="460" minWidth="650"
+						lookupChangeListener="#{catalogueItem.itemData}">
+					</aon:lookupButton>
+					<aon:inputText id="CatalogueItem_item_product_name-Edit" 
+						value="#{(catalogueItem.to.item.product.name!=null)?(catalogueItem.to.item.product.name):('')}"
+						disabled="true" size="60" />
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div styleClass="aon-lookup" rendered="#{catalogueItem.new}">
+						<aon:lookupInputText id="CatalogueItem_item_product_code-New" value="#{catalogueItem.to.item.product.code}"
+							lookup="#{itemLookup}" reRender="CatalogueItem_item_product_name-New,CatalogueItem_price-New"
+							lookupChangeListener="#{catalogueItem.itemData}" onblur="toUpperCase(this);"
+							required="true" size="10">
+							<aon:joinProperty alias="Item_product_code" value="#{catalogueItem.to.item.product.code}" />
+						</aon:lookupInputText>
+						<aon:lookupButton
+							windowTitle="#{productBundle.product_item_selection}" actionType="search"
+							property="#{catalogueItem.to.item}" selectReRender="#{dataTableId}"
+							lookup="#{itemLookup}" minHeight="460" minWidth="650"
+							lookupChangeListener="#{catalogueItem.itemData}">
+						</aon:lookupButton>
+						<aon:inputText id="CatalogueItem_item_product_name-New" 
+							value="#{(catalogueItem.to.item.product.name!=null)?(catalogueItem.to.item.product.name):('')}"
+							disabled="true" size="60" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_date_from} #{bundle.aon_quantity}" />
+				</f:facet>
+				<aon:outputText value="#{to.quantity}"
+					rendered="#{to.id!=catalogueItem.to.id}">
+					<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
+				</aon:outputText>
+				<aon:inputText value="#{catalogueItem.to.quantity}" 
+					rendered="#{to.id==catalogueItem.to.id}" required="#{true}" size="7">
+					<f:validateDoubleRange />
+				</aon:inputText>
+				<f:facet name="footer">
+					<aon:inputText value="#{catalogueItem.to.quantity}"
+						rendered="#{catalogueItem.new}" required="#{true}" size="7">
+						<f:validateDoubleRange />
+					</aon:inputText>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_price}" />
+				</f:facet>
+				<aon:outputText value="#{to.price}"
+					rendered="#{to.id!=catalogueItem.to.id}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:inputText id="CatalogueItem_price-Edit" value="#{catalogueItem.to.price}"
+					rendered="#{to.id==catalogueItem.to.id}" required="#{true}" size="7">
+					<f:validateDoubleRange />
+				</aon:inputText>
+				<f:facet name="footer">
+					<aon:inputText id="CatalogueItem_price-New" value="#{catalogueItem.to.price}"
+						rendered="#{catalogueItem.new}" required="#{true}" size="7">
+						<f:validateDoubleRange />
+					</aon:inputText>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_discount}" />
+				</f:facet>
+				<aon:outputText value="#{to.discount}" 
+					rendered="#{to.id!=catalogueItem.to.id}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+				<aon:inputText value="#{catalogueItem.to.discount}"
+					rendered="#{to.id==catalogueItem.to.id}" required="#{true}" size="7">
+					<f:validateDoubleRange />
+				</aon:inputText>
+				<f:facet name="footer">
+					<aon:inputText value="#{catalogueItem.to.discount}"
+						rendered="#{catalogueItem.new}" required="#{true}" size="7">
+						<f:validateDoubleRange />
+					</aon:inputText>
+				</f:facet>
+			</aon:column>
+
+		</ui:define>
+	</ui:decorate>
+</ui:composition>
