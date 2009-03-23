@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.code.aon.customer.Customer">
+		<alias names="id,registry_id,status,surcharge,tariff_id,taxFree,registry_name,registry_surname,registry_alias,registry_document,withholding,customerSegment_id,scope_id"/>
+		<hibernate names="id,registry.id,status,surcharge,tariff.id,taxFree,registry.name,registry.surname,registry.alias,registry.document,withholding,customerSegment.id,scope.id"/>
+	</bean>
+</dao>
