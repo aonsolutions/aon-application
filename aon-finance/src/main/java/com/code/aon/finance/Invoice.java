@@ -21,6 +21,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.Formula;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IHeaderObject;
@@ -124,7 +125,10 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	/** The detail of this invoice. */
 	private Set<InvoiceAddress> invoiceAddresses = new HashSet<InvoiceAddress>();
 
-    /**
+	private int issueYear;
+	private int issueMonth;
+	
+	/**
      * Gets the id.
      * 
      * @return the id
@@ -448,6 +452,21 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 		this.transaction = transaction;
 	}
 
+	@Formula("year(issue_date)")
+	public int getIssueYear() {
+	 return issueYear;	
+	}
+	public void setIssueYear(int year) {
+		issueYear = year;
+	}
+	@Formula("month(issue_date)")
+	public int getIssueMonth() {
+	 return issueMonth;	
+	}
+	public void setIssueMonth(int month) {
+		issueMonth = month;
+	}
+	
 	/**
 	 * Gets the lines.
 	 * 
