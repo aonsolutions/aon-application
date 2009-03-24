@@ -1064,20 +1064,25 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
         context.responseComplete();    	
     }
     
-	public List<ITransferObject> suggestionEmails( Object text ) {
-    	try{
-			IManagerBean bean = FormUtil.getController(WebMailConstants.BEAN_CONTACT).getManagerBean();
-			Criteria criteria = new Criteria();
-			String displayName = bean.getFieldName(IWebMailAlias.CONTACT_DISPLAY_NAME);
-			String email = bean.getFieldName(IWebMailAlias.CONTACT_EMAIL);
-			Expression exp1 = ExpressionUtilities.getLikeExpression(displayName, text + "*");
-			Expression exp2 = ExpressionUtilities.getLikeExpression(email, text + "*");
-			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
-			criteria.addNotNullExpression(email);
-			criteria.addOrder(displayName);
-			return bean.getList(criteria);
-    	} catch (ManagerBeanException e) {
-    		LOGGER.log( Level.SEVERE, "Error getting suggestion emails", e );
+	public List<ITransferObject> suggestionEmails( Object value ) {
+		if ( value != null ) {
+			String text = value.toString();
+			if (! StringUtils.isBlank(text) ) {
+				try {
+					IManagerBean bean = FormUtil.getController(WebMailConstants.BEAN_CONTACT).getManagerBean();
+					Criteria criteria = new Criteria();
+					String displayName = bean.getFieldName(IWebMailAlias.CONTACT_DISPLAY_NAME);
+					String email = bean.getFieldName(IWebMailAlias.CONTACT_EMAIL);
+					Expression exp1 = ExpressionUtilities.getLikeExpression(displayName, text + "*");
+					Expression exp2 = ExpressionUtilities.getLikeExpression(email, text + "*");
+					criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
+					criteria.addNotNullExpression(email);
+					criteria.addOrder(displayName);
+					return bean.getList(criteria);
+		    	} catch (ManagerBeanException e) {
+		    		LOGGER.log( Level.SEVERE, "Error getting suggestion emails", e );
+				}				
+			}
 		}
     	return Collections.emptyList();
     }
