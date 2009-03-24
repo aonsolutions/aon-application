@@ -39,9 +39,6 @@ public class AccountEntryDetailControllerListener extends ControllerAdapter {
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		try {
 			AccountEntryDetail detail = (AccountEntryDetail) event.getController().getTo();
-			detail.setConcept(getConcept());
-			detail.setAccount(getBalancingAccount());
-			detail.setBalancingAccount(getAccount());
 			List<AccountEntryDetail> list = (List <AccountEntryDetail>) event.getController().getModel().getWrappedData();
 			double imp = getBalance(list);
 			if (imp > 0) {
@@ -49,6 +46,9 @@ public class AccountEntryDetailControllerListener extends ControllerAdapter {
 			} else {
 				detail.setDebit(CommonUtil.round(imp*(-1)));
 			}
+			detail.setConcept(getConcept());
+			detail.setAccount(getBalancingAccount());
+			detail.setBalancingAccount(getAccount());
 			setBalancingAccount(null);
 			setAccount(null);
 			setConcept(null);
@@ -77,6 +77,9 @@ public class AccountEntryDetailControllerListener extends ControllerAdapter {
 		for (AccountEntryDetail detail: list) {
 			imp = CommonUtil.round(imp + detail.getDebit());
 			imp = CommonUtil.round(imp - detail.getCredit());
+			setConcept(detail.getConcept());
+			setBalancingAccount(detail.getBalancingAccount());
+			setAccount(detail.getAccount());
 		}
 		return imp;
 	}

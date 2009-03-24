@@ -49,15 +49,37 @@
 						<f:facet name="header">
 							<aon:outputText value="#{accountBundle.account_account}" />
 						</f:facet>
-						<aon:div rendered="#{to!=accountEntryDetail.to}" style="width: 100px;float:left;">
-							<aon:outputText value="#{to.account.id}"/>
+
+ <!-- 						
+						<aon:div style="width: 90%;" 
+							rendered="#{to!=accountEntryDetail.to}" styleClass="aon-nowrap"> 
+							<aon:panelGroup styleClass="aon-bold">
+								<aon:outputText value="#{to.account.id}"/>
+							</aon:panelGroup>
+							<aon:panelGroup styleClass="aon-italic" style="width: auto; font-size: 0.9em;">
+								<aon:outputText value="&#160;&#160;&#160;"/>
+								<aon:outputText value="#{to.account.description}">
+									<aon:abbreviateConverter maxWidth="50" />							
+								</aon:outputText>
+							</aon:panelGroup>
 						</aon:div>
-						<aon:outputText value="#{to.account.description}"
-							rendered="#{to!=accountEntryDetail.to}"
-							styleClass="aon-italic" 
-							style="width: auto; font-size: 0.9em;">
-							<aon:abbreviateConverter maxWidth="55" />							
-						</aon:outputText>
+ -->						
+
+						<aon:div style="width: 90%;"
+							rendered="#{to!=accountEntryDetail.to}" styleClass="aon-nowrap"> 
+							
+							<aon:div style="width: 100px;float: left;">
+								<aon:outputText value="#{to.account.id}"/>
+							</aon:div>
+							
+							<aon:outputText value="#{to.account.description}"
+								styleClass="aon-italic" 
+								style="font-size: 0.9em">
+								<aon:abbreviateConverter maxWidth="50" />							
+							</aon:outputText>
+							
+						</aon:div>
+
 						<ui:include
 							src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
 							<ui:param name="wizard" value="#{accountWizard}" />
@@ -91,7 +113,7 @@
 					</aon:column>
 
 					<aon:column
-						styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-200">
+						styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-150">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_concept}" />
 						</f:facet>

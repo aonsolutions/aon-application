@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.ListDataModel;
@@ -42,6 +43,7 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
@@ -127,31 +129,42 @@ public class AccountEntryController extends BasicController {
 		}
 	}
 	
+	public String searchAction() {
+		try {
+			return (getModel().getRowCount() > 0 )?"accountEntry_form":"accountEntry_list";
+		} catch (ManagerBeanException e) {
+			String msg = "No se pudo realizar la búsqueda.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
+	}
+	
 	public String onNavigate() {
-		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.SALES_INVOICE) ||
-				((AccountEntry)getTo()).getType().equals(AccountEntryType.PURCHASE_INVOICE) ||
-				((AccountEntry)getTo()).getType().equals(AccountEntryType.EXPENSE_INVOICE)){
+		AccountEntry entry = (AccountEntry)getTo(); 
+		if (entry.getType() == AccountEntryType.SALES_INVOICE ||
+			entry.getType() == AccountEntryType.PURCHASE_INVOICE ||
+			entry.getType() == AccountEntryType.EXPENSE_INVOICE){
 			return "account_invoice_entry";
 		}
-		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.EXPENSES)){
+		if(entry.getType() == AccountEntryType.EXPENSES){
 			return "account_expense_entry";
 		}
-		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.SALARY)){
+		if(entry.getType() == AccountEntryType.SALARY){
 			return "account_salary_entry";
 		}
-		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.SOCIAL_INSURANCE)){
+		if(entry.getType() == AccountEntryType.SOCIAL_INSURANCE){
 			return "account_social_insurance_entry";
 		}
-		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.LOAN)){
+		if(entry.getType() == AccountEntryType.LOAN) {
 			return "account_loan_entry";
 		}
-		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.LOAN_FEE)){
+		if(entry.getType() == AccountEntryType.LOAN_FEE){
 			return "account_loan_fee_entry";
 		}
-		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.LEASING)){
+		if(entry.getType()== AccountEntryType.LEASING){
 			return "account_leasing_entry";
 		}
-		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.LEASING_FEE)){
+		if(entry.getType() == AccountEntryType.LEASING_FEE){
 			return "account_leasing_fee_entry";
 		}
 		return "";
@@ -385,6 +398,11 @@ public class AccountEntryController extends BasicController {
 			while(iter.hasNext()){
 				InvoiceEntryDetail detail = new InvoiceEntryDetail();
 				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
+				if (invoiceDetail.getSource() != InvoiceSource.ACCOUNT) {
+					String msg = "Asiento generado automáticamente. No se puede modificar.";
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				}
 				detail.setTaxableBase(invoiceDetail.getTaxableBase());
 
 				Criteria taxCriteria = new Criteria();
@@ -489,7 +507,8 @@ public class AccountEntryController extends BasicController {
 	}
 
     public boolean isManual() {
-        return (this.getTo() != null && ((AccountEntry)this.getTo()).getType() == AccountEntryType.MANUAL);
+    	AccountEntry entry = (AccountEntry) this.getTo();
+        return (this.getTo() != null && (entry.getType() == AccountEntryType.MANUAL || entry.getType() == AccountEntryType.OPENING));
     }
 
     @SuppressWarnings("unchecked")

@@ -14,6 +14,7 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_entry_module}" />
 				<ui:param name="controller" value="#{accountEntry}" />
+				<aon:methodParam name="backAction" value="accountEntry_form" />				
 			</ui:include>
 
 			<ui:decorate
@@ -22,7 +23,7 @@
 				<ui:param name="controller" value="#{accountEntry}" />
 				
 				<ui:define name="searchContent">
-					<aon:methodParam name="searchAction" value="accountEntry_form" />
+					<aon:methodParam name="searchAction" value="#{accountEntry.searchAction}" />
 
 					<aon:outputLabel for="AccountEntry_id"
 						value="#{bundle.aon_id}" />
@@ -62,7 +63,8 @@
 					<aon:outputLabel for="AccountEntry_securityLevel"
 						value="#{bundle.aon_security_level}" />
 					<aon:selectOneMenu id="AccountEntry_securityLevel"
-						valueChangeListener="#{accountEntry.addExpression}">
+						converter="aon.EnumConverter"
+						valueChangeListener="#{controller.addEqualExpression}">
 						<f:selectItem value="#{nullItem.value}" />
 						<f:selectItems value="#{commonCollections.securityLevels}" />
 					</aon:selectOneMenu>
