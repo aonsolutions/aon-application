@@ -469,6 +469,9 @@ public class RichLookupBean {
 	 */
 	public void setShowWindow(boolean showPopup) {
 		this.showWindow = showPopup;
+		if (! showPopup ) {
+			setSelectedPanel(null);
+		}
 	}
 
 	/**
@@ -520,7 +523,7 @@ public class RichLookupBean {
 			FacesContext ctx = FacesContext.getCurrentInstance();
 			Object newValue = null;
 			if ( resolved ) {
-				if ( getController().isNew() ) {
+				if ( FORM_ID.equals(getSelectedPanel()) ) {
 					newValue = getController().getTo();
 				} else {
 					try {
