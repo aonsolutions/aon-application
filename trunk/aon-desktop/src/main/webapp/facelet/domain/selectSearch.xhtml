@@ -10,11 +10,15 @@
 		<aon:form id="contactSearch">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.aon_domains}" />
+				<ui:param name="toolbarTitle" value="#{appBundle.desktop_domain_selection}" />
 				<ui:param name="controller" value="#{domain}" />
+				<ui:param name="skipResetButton" value="true" />
+				<aon:methodParam name="backAction" value="domain_select" />
 			</ui:include>
 
-			<ui:include src="/facelet/domain/searchContent.xhtml" />
+			<ui:include src="/facelet/domain/searchContent.xhtml" >
+				<aon:methodParam name="searchAction" value="domain_select" />
+			</ui:include>
 			
 		</aon:form>
 	</ui:define>
