@@ -184,20 +184,26 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 
 	private Object getValue( ITransferObject to, PropertyInfo info ) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, DAOException {
 		Object value = PropertyUtils.getProperty(to, info.getAccesPath());
-		if ( value != null ) {
-			if ( info.isTransferObject() ) {
+		return getValue(value, info);
+	}
+
+	private Object getValue( Object value, PropertyInfo info ) throws DAOException {
+		Object result = value; 
+		if ( result != null ) {
+			if ( info.isTransferObject() && (value instanceof ITransferObject) ) {
 				IDAO dao = getDAO(info);
-				value = dao.getId( (ITransferObject) value );
-			} else if ( value instanceof Boolean ) {
-				value = ((Boolean) value).booleanValue() ? LdapSession.TRUE_VALUE : LdapSession.FALSE_VALUE;
-			} else if (! (value instanceof byte[]) ) {
-				value = value.toString();
+				result = dao.getId( (ITransferObject) result );
 			}
-			if ( value instanceof String ) {
-				value = StringUtils.trimToNull( (String) value );
+			if ( result instanceof Boolean ) {
+				result = ((Boolean) result).booleanValue() ? LdapSession.TRUE_VALUE : LdapSession.FALSE_VALUE;
+			} else if (! (result instanceof byte[]) ) {
+				result = result.toString();
+			}
+			if ( result instanceof String ) {
+				result = StringUtils.trimToNull( (String) result );
 			}
 		}
-		return value;
+		return result;
 	}
 	
 	private void setProperties( ITransferObject to, Entry entry ) throws DAOException {
@@ -385,22 +391,13 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 			Entry entry = session.get(dn, filter);
 			for( PropertyInfo info : metadata.getMappings() ) {
 				try {
-					Object value = getValue(to, info);
+					Object newValue = getValue(to, info);
 					String name = info.getLdapName();
+					Object oldValue = null;
 					if ( entry.containsKey(name) ) {
-						if ( value != null ) {
-							Object entryValue = entry.getAsObject(name);
-							if (! ObjectUtils.equals(value, entryValue) ) {
-								session.replaceAttribute(dn, name, value);	
-							}				
-						} else {
-							session.removeAttributes(dn, name);
-						}						
-					} else {
-						if ( value != null ) {
-							session.addAttribute(dn, name, value);						
-						}						
+						oldValue = getValue(entry.getAsObject(name), info);
 					}
+					session.updateAttribute(dn, name, oldValue, newValue);
 				} catch (Exception e) {
 					throw new DAOException( e );
 				}
