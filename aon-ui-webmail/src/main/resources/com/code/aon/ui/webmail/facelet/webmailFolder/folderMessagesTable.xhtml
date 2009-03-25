@@ -100,18 +100,14 @@
 							<aon:div styleClass="aon-nowrap">
 								<aon:outputText escape="false" title="#{to.senderEmail}"
 									value="#{to.senderSummary}"
-									rendered="#{!webmailFolder.sentItemColumn and to.readed}" >
-									<aon:abbreviateConverter maxWidth="35" />
-								</aon:outputText>
-								<aon:outputText escape="false" title="#{to.senderEmail}"
-									value="#{to.senderSummary}"
-									rendered="#{!webmailFolder.sentItemColumn and !to.readed}"
-									style="font-weight: bold" >
+									rendered="#{!webmailFolder.sentItemColumn}"
+									style="#{to.readed?'':'font-weight: bold'}" >
 									<aon:abbreviateConverter maxWidth="35" />
 								</aon:outputText>
 								<aon:outputText escape="false" title="#{to.recipientsToEmail}"
 									value="#{to.recipientsToSummary}"
-									rendered="#{webmailFolder.sentItemColumn}" >
+									rendered="#{webmailFolder.sentItemColumn}"
+									style="#{to.readed?'':'font-weight: bold'}" >
 									<aon:abbreviateConverter maxWidth="35" />
 								</aon:outputText>
 							</aon:div>

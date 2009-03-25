@@ -24,7 +24,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.ldap.NameResolver;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
@@ -79,7 +78,7 @@ public class MailAccountController extends BasicController implements WebMailCon
 		            return;
 				}			
 			} else {
-				Name oldId = NameResolver.getName( (String) this.savedToId );				
+				Name oldId = (Name) this.savedToId;				
 				if (! oldId.equals(currentId) ) {
 					if ( dao.exists(currentId) ) {
 						addMessageExpression(MAIL_ACCOUNT_DUPLICATED);
@@ -208,7 +207,7 @@ public class MailAccountController extends BasicController implements WebMailCon
 
 	public void onChangeMailAccount( ValueChangeEvent event ) {
 		resetFolderController();
-		String newAccountId = (String) event.getNewValue();
+		Name newAccountId = (Name) event.getNewValue();
 		for( int i = 0; i < this.mailAccounts.size(); i++ ) {
 			if ( ObjectUtils.equals(newAccountId, this.mailAccounts.get(i).getValue()) ) {
 				try {
