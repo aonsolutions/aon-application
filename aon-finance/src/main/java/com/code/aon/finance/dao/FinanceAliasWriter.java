@@ -29,7 +29,7 @@ public class FinanceAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/Enterprise/aon-finance/src/main/java/com/code/aon/finance/dao/IFinanceAlias.java");
+		File file = new File("/AON-PROJECT/aon-finance/src/main/java/com/code/aon/finance/dao/IFinanceAlias.java");
 		String[] classes = new String[12]; 
 		classes[0] = CustomerFee.class.getName();
 		classes[1] = Finance.class.getName();
@@ -43,7 +43,7 @@ public class FinanceAliasWriter {
 		classes[9] = FinanceTracking.class.getName();
 		classes[10] = InvoicingGroup.class.getName();
 		classes[11] = InvoicingGroupDetail.class.getName();
-		HibernateUtil.getSessionFactory();
+		HibernateUtil.getSessionFactory(null);
 		AliasWriter writer = new AliasWriter("com.code.aon.finance.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );
