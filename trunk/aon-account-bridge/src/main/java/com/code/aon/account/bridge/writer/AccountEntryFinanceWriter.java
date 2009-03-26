@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
@@ -220,11 +222,11 @@ public class AccountEntryFinanceWriter {
 	private String obtainConcept(Invoice invoice, double total, FinanceBatch fbatch) {
 		String concept = ((total < 0) ? A_FRA : (invoice.getType().equals(InvoiceType.SALES) ? C_FRA : P_FRA)) + invoice.getReferenceCode();
 		String fbatchConcept = (fbatch != null) ? (" (R:" + fbatch.getId() + ")") : "";
-		return concept + fbatchConcept;
+		return StringUtils.abbreviate(concept + fbatchConcept, 32);
 	}
 
 	private String obtainReturnConcept(Invoice invoice) {
-		return D_FRA + invoice.getReferenceCode();
+		return StringUtils.abbreviate(D_FRA + invoice.getReferenceCode(), 32);
 	}
 
 	public AccountEntryFinanceTracking insertAccountEntryFinanceTracking(AccountEntry entry, FinanceTracking tracking) throws ManagerBeanException {
