@@ -172,20 +172,19 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
 
 	public void createNewMessage(ActionEvent event){
 		initVars();
-		parentMessage = null;
     }
 
 	public void editDraftMessage(AonMessage message, long uid) {
 		initVars();
+		this.parentMessage = message;
 		this.draftMessageUID = uid;
-		parentMessage = null;
 		try {
 			copyAttachmentsToFileList( message );			
-			recipientsTo = message.getRecipientsTo();
-			recipientsCc = message.getRecipientsCc();
-			recipientsBcc = message.getRecipientsBcc();
+			recipientsTo = AonMessage.parseDisplayAddress(message.getRecipientsTo());
+			recipientsCc = AonMessage.parseDisplayAddress(message.getRecipientsCc());
+			recipientsBcc = AonMessage.parseDisplayAddress(message.getRecipientsBcc());
 	       	subject = message.getSubject();
-	       	content = getMessageContent();
+	       	content = getMessageContent( message );
 		} catch (WebmailException e) {
     		AonUtil.addErrorMessage(e.getMessage());
     		throw new AbortProcessingException(e);
@@ -533,6 +532,9 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
 		content = (account.getSignature()!=null)?account.getSignature().getSignature():"";
     	newMsgFileList = new ArrayList<AonFile>();
 		draftMessageUID = null;
+		parentMessage = null;
+		messageContent = null;
+		messageBody = null;
 	}
 	//********************************************************************************************
 
@@ -989,7 +991,7 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
 	public void onMailAccountChanged(ValueChangeEvent event) throws ManagerBeanException {
 		if(event.getNewValue() != null) {
 			IManagerBean mailAccountBean = FormUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();	
-			MailAccount mailAccount = (MailAccount) mailAccountBean.get( event.getNewValue().toString() );
+			MailAccount mailAccount = (MailAccount) mailAccountBean.get( (Name) event.getNewValue() );
 			if ( mailAccount.getSignature() != null ) {
 				content = mailAccount.getSignature().getSignature() + StringUtils.defaultString(messageBody);
 			} else {
@@ -1088,6 +1090,10 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
     }
 	
 	public String getMessageContent() {
+		return getMessageContent(message);
+	}
+
+	public String getMessageContent( AonMessage message ) {
 		if ( messageContent == null ) {
 			AonMessageTracer amt = new AonMessageTracer(message.getMessage());
 			try {
@@ -1100,7 +1106,7 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
 		}
 		return this.messageContent;
 	}
-
+	
 	public boolean isShowRecipients() {
 		return showRecipients;
 	}
