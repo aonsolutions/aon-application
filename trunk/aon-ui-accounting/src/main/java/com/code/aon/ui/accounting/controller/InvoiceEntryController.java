@@ -544,7 +544,7 @@ public class InvoiceEntryController {
 				this.setAccountEntryInvoice(getWriter().insertAccountEntryInvoice(entry, invoice));
 			} 
 			getWriter().insertEntryDetails(entry, account, getWriter().obtainConcept(invoice, invoiceTotal), invoiceTotal, 
-					obtainTotalRetention(), obtainVATandSurchargeQuota(), obtainBasesPerAccount(details));
+					obtainRetentionQuotasPerAccount(invoice), obtainTaxQuotasPerAccount(invoice), obtainBasesPerAccount(details));
 			getHeader().setAccountEntryId(entry.getId());
 			this.isNew = false;
 
@@ -606,14 +606,24 @@ public class InvoiceEntryController {
 	 * 
 	 * @return the double
 	 */
-	private double obtainVATandSurchargeQuota() {
+	private Map<Account, Double> obtainTaxQuotasPerAccount(Invoice invoice) throws ManagerBeanException {
+		Account account;
+		if (invoice.getType().equals(InvoiceType.SALES)) {
+			account = AccountUtil.obtainDefaultAccount(DefaultAccounts.CHARGE_VAT_ACCOUNT);
+		} else {
+			account = AccountUtil.obtainDefaultAccount(DefaultAccounts.PAID_VAT_ACCOUNT);
+		}
+
 		double total = 0.0;
 		Iterator<?> iter = ((List<?>) details.getWrappedData()).iterator();
 		while (iter.hasNext()) {
 			InvoiceEntryDetail detail = (InvoiceEntryDetail) iter.next();
 			total += detail.getVatQuota() + detail.getSurcharge();
 		}
-		return total;
+
+		Map<Account, Double> taxQuotasPerAccountMap = new HashMap<Account, Double>();
+		taxQuotasPerAccountMap.put(account, new Double(total));
+		return taxQuotasPerAccountMap;
 	}
 
 	/**
@@ -640,14 +650,24 @@ public class InvoiceEntryController {
 	 * 
 	 * @return the double
 	 */
-	private double obtainTotalRetention() {
+	private Map<Account, Double> obtainRetentionQuotasPerAccount(Invoice invoice) throws ManagerBeanException {
+		Account account;
+		if (invoice.getType().equals(InvoiceType.SALES)) {
+			account = AccountUtil.obtainDefaultAccount(DefaultAccounts.PAID_RETENTION_ACCOUNT);
+		} else {
+			account = AccountUtil.obtainDefaultAccount(DefaultAccounts.CHARGED_RETENTION_ACCOUNT);
+		}
+
 		double total = 0.0;
 		Iterator<?> iter = ((List<?>) details.getWrappedData()).iterator();
 		while (iter.hasNext()) {
 			InvoiceEntryDetail detail = (InvoiceEntryDetail) iter.next();
 			total += detail.getRetentionQuota();
 		}
-		return total;
+
+		Map<Account, Double> retentionQuotasPerAccountMap = new HashMap<Account, Double>();
+		retentionQuotasPerAccountMap.put(account, new Double(total));
+		return retentionQuotasPerAccountMap;
 	}
 
 	public void onRemove(ActionEvent event) {
