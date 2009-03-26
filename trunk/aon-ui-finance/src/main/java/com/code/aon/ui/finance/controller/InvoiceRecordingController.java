@@ -154,7 +154,7 @@ public class InvoiceRecordingController extends BasicController{
 				if (invoice.getStatus() == InvoiceStatus.PENDING) {
 					try {
 						HibernateUtil.beginTransaction(sessionName);
-						getAccountEntryInvoiceWriter().recordInvoice(invoice, getPriceStrategy());
+						getAccountEntryInvoiceWriter().recordInvoice(invoice);
 						invoice.setStatus(InvoiceStatus.SCORED);
 						HibernateUtil.getSession(sessionName).merge(invoice);
 						HibernateUtil.getSession(sessionName).flush();
