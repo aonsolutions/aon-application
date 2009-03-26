@@ -41,6 +41,13 @@
 		</vetoListeners>
 	</bean>
 
+	<bean description="Borrado de una línea de impuestos de factura.">
+		<pojo>com.code.aon.finance.InvoiceTax</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.bridge.event.InvoiceTaxBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
 	<bean description="Borrado de la tabla de enlace entre facturas y apuntes">
 		<pojo>com.code.aon.account.bridge.AccountEntryInvoice</pojo>
 		<listeners>
