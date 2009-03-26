@@ -126,6 +126,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	private Set<InvoiceAddress> invoiceAddresses = new HashSet<InvoiceAddress>();
 
 	private int issueYear;
+
 	private int issueMonth;
 	
 	/**
@@ -454,15 +455,18 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 
 	@Formula("year(issue_date)")
 	public int getIssueYear() {
-	 return issueYear;	
+		return issueYear;	
 	}
+
 	public void setIssueYear(int year) {
 		issueYear = year;
 	}
+
 	@Formula("month(issue_date)")
 	public int getIssueMonth() {
-	 return issueMonth;	
+		return issueMonth;	
 	}
+
 	public void setIssueMonth(int month) {
 		issueMonth = month;
 	}
