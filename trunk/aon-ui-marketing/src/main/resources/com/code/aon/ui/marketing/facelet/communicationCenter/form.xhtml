@@ -20,22 +20,24 @@
 				<ui:param name="toolbarDescription" value="#{bundle.aon_reset}" />
 				<ui:define name="toolbarContent">
 					<c:if test="#{(communicationCenter.actionSelected) and (communicationCenter.pendingTargets &gt; 0)}" >
-						<c:if test="#{communicationCenter.action.mediaType  == 'PHONE'}" >
-							<aon:commandButton id="accept" value="#{bundle.aon_accept}"
-								action="communicationCenter_response" actionListener="#{communicationCenter.onStartSurveyResponse}"
-								rendered="#{communicationCenter.surveySelected and communicationCenter.targetSelected}"
-								styleClass="aon-finding-toolbar-item aon-icon-accept"
-								accesskey="#{bundle.aon_key_accept}" />				
-							<aon:commandButton id="save" value="#{bundle.aon_save}"
-								action="communicationCenter" actionListener="#{communicationCenter.onUpdateActionTarget}"
-								reRender="CommunicationCenter_target,CommunicationCenter_action_detail,aonToolbar"
-								styleClass="aon-finding-toolbar-item aon-icon-save"
-								accesskey="#{bundle.aon_key_save}" />
-							<aon:commandButton id="skip" value="#{marketingBundle.marketing_skip}"
-								action="communicationCenter" actionListener="#{communicationCenter.onNextTarget}"
-								reRender="CommunicationCenter_target,aonToolbar"
-								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-								accesskey="#{bundle.aon_key_cancel}"/>
+						<c:if test="#{campaign.showPhoneActionMediaType}" >
+							<c:if test="#{communicationCenter.action.mediaType  == 'PHONE'}" >
+								<aon:commandButton id="accept" value="#{bundle.aon_accept}"
+									action="communicationCenter_response" actionListener="#{communicationCenter.onStartSurveyResponse}"
+									rendered="#{communicationCenter.surveySelected and communicationCenter.targetSelected}"
+									styleClass="aon-finding-toolbar-item aon-icon-accept"
+									accesskey="#{bundle.aon_key_accept}" />				
+								<aon:commandButton id="save" value="#{bundle.aon_save}"
+									action="communicationCenter" actionListener="#{communicationCenter.onUpdateActionTarget}"
+									reRender="CommunicationCenter_target,CommunicationCenter_action_detail,aonToolbar"
+									styleClass="aon-finding-toolbar-item aon-icon-save"
+									accesskey="#{bundle.aon_key_save}" />
+								<aon:commandButton id="skip" value="#{marketingBundle.marketing_skip}"
+									action="communicationCenter" actionListener="#{communicationCenter.onNextTarget}"
+									reRender="CommunicationCenter_target,aonToolbar"
+									styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+									accesskey="#{bundle.aon_key_cancel}"/>
+							</c:if>
 						</c:if>					
 						<c:if test="#{communicationCenter.action.mediaType  == 'MAIL'}" >							
 							<a4j:htmlCommandLink id="mailing" value="#{marketingBundle.marketing_mailing}" target="_blank"
@@ -114,28 +116,30 @@
 						</aon:div>
 					</aon:div>
 					
-					<aon:outputLabel for="CommunicationCenter_survey_id" 
-						value="#{marketingBundle.marketing_survey}" />
-					<aon:div styleClass="aon-lookup" id="CommunicationCenter_survey">
-						<aon:lookupInputText id="CommunicationCenter_survey_id"
-							lookup="#{surveyLookup}" required="true"
-							lookupChangeListener="#{communicationCenter.onSurveyLookupChange}"
-							disabled="#{communicationCenter.actionSelected}" 
-							reRender="CommunicationCenter_survey_detail,aonToolbar"
-							value="#{communicationCenter.survey.id}" size="5">
-						</aon:lookupInputText>
-						<aon:lookupButton 
-							windowTitle="#{marketingBundle.marketing_survey_selection}"
-							selectReRender="CommunicationCenter_survey_id,CommunicationCenter_survey_detail,aonToolbar"
-							lookupChangeListener="#{communicationCenter.onSurveyLookupChange}"
-							disabled="#{communicationCenter.actionSelected}"
-							lookup="#{surveyLookup}" minHeight="440"
-							property="#{communicationCenter.survey}">
-						</aon:lookupButton>
-						<aon:inputText id="CommunicationCenter_survey_detail"
-							value="#{communicationCenter.survey.description}"
-							size="64" disabled="true" />
-					</aon:div>
+					<c:if test="#{campaign.showSurvey}" >
+						<aon:outputLabel for="CommunicationCenter_survey_id" 
+							value="#{marketingBundle.marketing_survey}" />
+						<aon:div styleClass="aon-lookup" id="CommunicationCenter_survey">
+							<aon:lookupInputText id="CommunicationCenter_survey_id"
+								lookup="#{surveyLookup}" required="true"
+								lookupChangeListener="#{communicationCenter.onSurveyLookupChange}"
+								disabled="#{communicationCenter.actionSelected}" 
+								reRender="CommunicationCenter_survey_detail,aonToolbar"
+								value="#{communicationCenter.survey.id}" size="5">
+							</aon:lookupInputText>
+							<aon:lookupButton 
+								windowTitle="#{marketingBundle.marketing_survey_selection}"
+								selectReRender="CommunicationCenter_survey_id,CommunicationCenter_survey_detail,aonToolbar"
+								lookupChangeListener="#{communicationCenter.onSurveyLookupChange}"
+								disabled="#{communicationCenter.actionSelected}"
+								lookup="#{surveyLookup}" minHeight="440"
+								property="#{communicationCenter.survey}">
+							</aon:lookupButton>
+							<aon:inputText id="CommunicationCenter_survey_detail"
+								value="#{communicationCenter.survey.description}"
+								size="64" disabled="true" />
+						</aon:div>
+					</c:if>
 
 					<aon:outputLabel for="CommunicationCenter_target_id"
 						value="#{commercialBundle.commercial_target}" />

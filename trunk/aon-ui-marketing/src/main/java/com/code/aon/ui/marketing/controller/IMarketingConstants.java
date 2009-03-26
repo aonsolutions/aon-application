@@ -12,7 +12,7 @@ public interface IMarketingConstants {
 	// BEAN
 	// ************************************************************
 	
-	String MARKETING_COLLECTIONS_CONTROLLER_NAME = "commecialCollections";
+	String MARKETING_COLLECTIONS_CONTROLLER_NAME = "marketingCollections";
 
 	String SURVEY_CONTROLLER_NAME = "survey";
 	
