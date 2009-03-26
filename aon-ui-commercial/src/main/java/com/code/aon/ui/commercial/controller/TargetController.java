@@ -30,6 +30,15 @@ public class TargetController extends BasicController {
 	
 	private boolean showCommercialTracking;
 	
+	private boolean showProduct;
+	
+	private boolean showSeller;
+	
+	public TargetController() {
+		this.showProduct = true;
+		this.showSeller = true;
+	}
+
 	public List<SelectItem> getSegments() {
 		return segments;
 	}
@@ -78,6 +87,22 @@ public class TargetController extends BasicController {
 
 	public void setShowSearchOnlyCustomers(boolean showSearchOnlyCustomers) {
 		this.showSearchOnlyCustomers = showSearchOnlyCustomers;
+	}
+
+	public boolean isShowProduct() {
+		return showProduct;
+	}
+
+	public void setShowProduct(boolean showProduct) {
+		this.showProduct = showProduct;
+	}
+
+	public boolean isShowSeller() {
+		return showSeller;
+	}
+
+	public void setShowSeller(boolean showSeller) {
+		this.showSeller = showSeller;
 	}
 	
 }

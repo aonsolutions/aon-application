@@ -452,7 +452,7 @@
 	<managed-bean>
 		<managed-bean-name>campaign</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.BasicController
+			com.code.aon.ui.marketing.controller.CampaignController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -824,7 +824,7 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>communicationCenter</from-outcome>
-			<to-view-id>/com/code/aon/ui/marketing/facelet/communicationCenter/formSurvey.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/marketing/facelet/communicationCenter/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>communicationCenter_response</from-outcome>
