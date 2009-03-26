@@ -39,8 +39,6 @@ import com.code.aon.finance.invoicing.engine.IInvoicingEngine;
 import com.code.aon.finance.invoicing.engine.InvoicingEngineFactory;
 import com.code.aon.finance.invoicing.engine.fee.CustomerFeeInvoicingDAO;
 import com.code.aon.finance.invoicing.engine.fee.CustomerFeeInvoicingEngine;
-import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
-import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ui.form.FormUtil;
@@ -58,7 +56,6 @@ public class FeeInvoicingController  implements IProgression{
 	private InvoicingParameters invoicingParams;
 	private IInvoicingEngine engine;
 	private AccountEntryInvoiceWriter accountWriter;
-	private IPriceStrategy priceStrategy;
 	private IInvoicingFeedBack feedBack;
 
 	private boolean progressionPanelVisible;
@@ -90,13 +87,6 @@ public class FeeInvoicingController  implements IProgression{
 			accountWriter = new AccountEntryInvoiceWriter();
 		}
 		return accountWriter;
-	}
-
-	public IPriceStrategy getPriceStrategy() {
-		if (priceStrategy == null) {
-			priceStrategy = new InvoicePriceStrategy();
-		}
-		return priceStrategy;
 	}
 
 	private IInvoicingFeedBack getInvoicingFeedBack() {
@@ -185,7 +175,7 @@ public class FeeInvoicingController  implements IProgression{
 					Iterator<Invoice> iter = invoicedList.iterator();
 					while (iter.hasNext()) {
 						Invoice invoice = iter.next();
-						getAccountEntryInvoiceWriter().recordAndUpdateInvoice(invoice, getPriceStrategy());
+						getAccountEntryInvoiceWriter().recordAndUpdateInvoice(invoice);
 						recordingInvoice++;
 					}
 					HibernateUtil.getSession(sessionName).flush();

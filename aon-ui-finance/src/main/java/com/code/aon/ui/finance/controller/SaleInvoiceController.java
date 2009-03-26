@@ -287,7 +287,7 @@ public class SaleInvoiceController extends InvoiceController {
 		}
 
 		Invoice invoice = (Invoice)this.getTo();
-		getAccountWriter().recordAndUpdateInvoice(invoice, getPriceStrategy());
+		getAccountWriter().recordAndUpdateInvoice(invoice);
 	}
 	
 	public void onUnrecordInvoice(ActionEvent event) throws ManagerBeanException{
