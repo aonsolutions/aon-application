@@ -5,7 +5,6 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core">
 
 	<aon:div id="aon-scroll-area">
@@ -18,8 +17,7 @@
 					<f:param value="#{company.timeStamp}" name="time" />
 				</a4j:mediaOutput>
 				<aon:div style="font-weight: bold;font-size:14px;padding:2em;">
-					<aon:outputText value="#{jsfTest.stringList}" /><br/>
-					<aon:outputText value="#{jsfTest.stringMap}" />
+					<aon:outputText value="#{company.companyLabel}" />
 				</aon:div>
 			</aon:div>
 		</aon:div>
