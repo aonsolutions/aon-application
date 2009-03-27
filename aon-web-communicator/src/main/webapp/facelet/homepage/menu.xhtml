@@ -41,6 +41,7 @@
 					value="#{commercialBundle.commercial_communication_center_module}"
 					styleClass="aon-top-menu-item aon-icon-call" immediate="true" 
 					action="communicationCenter" actionListener="#{communicationCenter.onInit}" >
+					<f:setPropertyActionListener value="appBundle" target="#{campaign.bundleName}" />
 					<f:setPropertyActionListener value="#{false}" target="#{campaign.showSurvey}" />
 					<f:setPropertyActionListener value="#{false}" target="#{campaign.showPhoneActionMediaType}" />
 				</aon:commandLink>
