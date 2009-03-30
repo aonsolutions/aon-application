@@ -293,7 +293,7 @@ public class FBatchController extends BasicController implements ICollectionProv
                 fBatchDetail.setStatus(FinanceStatus.BATCHED);
 				financeBatchDetailBean.insert(fBatchDetail);
 
-				String tracking = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_BATCHED) + " " + fBatch.getId();
+				String tracking = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_BATCHED) + " " + fBatch.getId() + " - " + fBatch.getDescription();
 				FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.BATCHED, tracking);
             }
 		} catch (ManagerBeanException e) {
