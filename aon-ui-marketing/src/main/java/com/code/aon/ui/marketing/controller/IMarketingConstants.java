@@ -2,6 +2,8 @@ package com.code.aon.ui.marketing.controller;
 
 public interface IMarketingConstants {
 
+	String BUNDLE_NAME = "marketingBundle";	
+	
 	// ************************************************************
 	// NAVIGATION
 	// ************************************************************

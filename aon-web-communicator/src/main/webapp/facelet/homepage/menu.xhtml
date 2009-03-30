@@ -12,9 +12,10 @@
 			<aon:menuBar> 
 				<aon:dropDownMenu value="#{bundle.aon_masters}">
 					<aon:menuItem id="target"
-						value="#{appBundle.communicator_contact_module}" 
+						value="#{appBundle.commercial_target_module}" 
 						iconClass="aon-target-iconClass"
 						action="target_search" actionListener="#{target.onEditSearch}" >
+						<f:setPropertyActionListener value="appBundle" target="#{target.bundleName}" />
 						<f:setPropertyActionListener value="#{false}" target="#{target.showProduct}" />
 						<f:setPropertyActionListener value="#{false}" target="#{target.showSeller}" />
 					</aon:menuItem>
