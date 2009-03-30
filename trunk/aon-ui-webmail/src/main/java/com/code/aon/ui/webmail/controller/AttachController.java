@@ -1,8 +1,13 @@
 package com.code.aon.ui.webmail.controller;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -79,14 +84,17 @@ public class AttachController {
 		try {
 			String filename = attachment.getFileName();
 			response.setContentType(attachment.getPart().getContentType());
-			response.setHeader("content-disposition", "attachment;filename=\""
+			response.setHeader("Content-disposition", "attachment;filename=\""
 					+ filename + "\"");
 			ServletOutputStream sos = response.getOutputStream();
 			BufferedInputStream bis = new BufferedInputStream(attachment.getPart().getInputStream());
-			IOUtils.copy( bis, sos );
-			response.flushBuffer();
-			sos.close();
+			int size = IOUtils.copy( bis, sos );
+			if ( size > 0 ) {
+				response.setHeader("Content-Length", String.valueOf(size));
+			}
 			bis.close();
+			sos.close();
+			response.flushBuffer();
 		} catch (IOException e) {
 			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		} catch (MessagingException e) {
@@ -122,7 +130,9 @@ public class AttachController {
 			response.setHeader("Content-disposition", "attachment; filename=\""
 					+ outFilename + "\"");
 
-			ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
+			File tempFile = File.createTempFile(outFilename, ".zip");
+			OutputStream fileOut = new BufferedOutputStream( new FileOutputStream(tempFile) );
+			ZipOutputStream zipOut = new ZipOutputStream(fileOut);
 			Set<String> fileNames = new HashSet<String>();
 			for (AonAttachment aonAttachment : attachments) {
                 InputStream in = aonAttachment.getPart().getInputStream();
@@ -131,17 +141,27 @@ public class AttachController {
            		for( int i = 0; fileNames.contains(filename); i++ ) {
            			filename = aonAttachment.getFileName() + "("+i+")";
             	}
-               	out.putNextEntry(new ZipEntry(filename));
+           		zipOut.putNextEntry(new ZipEntry(filename));
 
-            	IOUtils.copy( in, out );
+            	IOUtils.copy( in, zipOut );
 
-                out.closeEntry();
+            	zipOut.closeEntry();
                 in.close();
                 
            		fileNames.add(filename);                
             }
+			zipOut.close();
+            long size = tempFile.length();
+            if ( size > 0 ) {
+                response.setHeader("Content-Length", String.valueOf(size));	
+            }
+            ServletOutputStream sos = response.getOutputStream();
+            InputStream fileIn = new BufferedInputStream( new FileInputStream(tempFile) );
+            IOUtils.copy( fileIn, sos );
+            fileIn.close();
+            sos.close();
     		response.flushBuffer();
-            out.close();
+    		tempFile.delete();
 		} catch (IOException e) {
 			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		} catch (MessagingException e) {
