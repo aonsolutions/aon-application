@@ -261,7 +261,7 @@ public class SMSController implements Serializable {
 		if ( this.recipients.size() > 0 ) {
 			checkMessageLength();
 			try {
-				// sendMessage( this.message );
+				sendMessage( this.message );
 				reset(event);
 			} catch ( Throwable e ) {
 				LOGGER.severe(">>>> sendMessage " + e.getMessage());
