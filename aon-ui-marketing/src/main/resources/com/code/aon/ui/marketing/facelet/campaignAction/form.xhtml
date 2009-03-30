@@ -93,7 +93,9 @@
 				
 			</aon:div>
 		</aon:form>	
-		<aon:lookupButtonPopup lookup="#{surveyLookup}" />
+		<c:if test="#{campaign.showSurvey}" >
+			<aon:lookupButtonPopup lookup="#{surveyLookup}" />
+		</c:if>
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />
 	</ui:define>
 </ui:composition>

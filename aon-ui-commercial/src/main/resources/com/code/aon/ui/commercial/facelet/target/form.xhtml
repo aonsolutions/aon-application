@@ -76,8 +76,12 @@
 				</c:if>
 			</aon:div>
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{itemLookup}" />	
-		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
+		<c:if test="#{target.showProduct}">
+			<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		</c:if>	
+		<c:if test="#{target.showSeller}">
+			<aon:lookupButtonPopup lookup="#{sellerLookup}" />
+		</c:if>
 		<c:if test="#{target.showProfile}">
 			<aon:lookupButtonPopup lookup="#{questionLookup}" />
 		</c:if>	
