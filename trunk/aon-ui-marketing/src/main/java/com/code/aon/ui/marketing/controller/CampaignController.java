@@ -2,6 +2,7 @@ package com.code.aon.ui.marketing.controller;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.faces.model.SelectItem;
 
@@ -15,9 +16,12 @@ public class CampaignController extends BasicController implements IMarketingCon
 	private boolean showSurvey;
 	
 	private boolean showPhoneActionMediaType;
+
+	private ResourceBundle bundle;
 	
 	public CampaignController() {
 		this.showSurvey = true;
+		setBeanName(BUNDLE_NAME);
 	}
 
 	public boolean isShowSurvey() {
@@ -55,6 +59,14 @@ public class CampaignController extends BasicController implements IMarketingCon
 			}
 			return list;
 		}
+	}
+
+	public ResourceBundle getBundle() {
+		return bundle;
+	}
+
+	public void setBundleName(String bundleName) {
+		this.bundle = AonUtil.getResourceBundle(bundleName);
 	}	
 	
 }

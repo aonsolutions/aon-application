@@ -2,6 +2,9 @@ package com.code.aon.ui.commercial.controller;
 
 public interface ICommercialConstants {
 
+	/** ResourceBundle name. */
+	String BUNDLE_NAME = "commercialBundle";
+	
 	/** Target Controller name. */
 	String TARGET_CONTROLLER_NAME = "target";
 	

@@ -3,6 +3,7 @@ package com.code.aon.ui.commercial.controller;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.faces.model.SelectItem;
 
@@ -14,6 +15,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * Controller used in the target maintenance.
@@ -21,6 +23,8 @@ import com.code.aon.ui.form.BasicController;
 public class TargetController extends BasicController {
 	
 	private List<SelectItem> segments;
+	
+	private ResourceBundle bundle;
 	
 	private String selectedTab;
 	
@@ -37,6 +41,7 @@ public class TargetController extends BasicController {
 	public TargetController() {
 		this.showProduct = true;
 		this.showSeller = true;
+		setBeanName(ICommercialConstants.BUNDLE_NAME);
 	}
 
 	public List<SelectItem> getSegments() {
@@ -104,5 +109,13 @@ public class TargetController extends BasicController {
 	public void setShowSeller(boolean showSeller) {
 		this.showSeller = showSeller;
 	}
+
+	public ResourceBundle getBundle() {
+		return bundle;
+	}
+
+	public void setBundleName(String bundleName) {
+		this.bundle = AonUtil.getResourceBundle(bundleName);
+	}	
 	
 }

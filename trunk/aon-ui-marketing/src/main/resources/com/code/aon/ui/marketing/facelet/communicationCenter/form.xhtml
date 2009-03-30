@@ -109,7 +109,7 @@
 								<aon:outputText value="#{bundle.aon_type}" />									
 								<aon:outputText size="40"
 									value="#{communicationCenter.action.mediaType}" />
-								<aon:outputText value="#{marketingBundle.marketing_action_pending_targets}" />									
+								<aon:outputText value="#{campaign.bundle.marketing_action_pending_targets}" />									
 								<aon:outputText size="5"
 									value="#{communicationCenter.pendingTargets}" />
 							</aon:panelGrid>
@@ -142,7 +142,7 @@
 					</c:if>
 
 					<aon:outputLabel for="CommunicationCenter_target_id"
-						value="#{commercialBundle.commercial_target}" />
+						value="#{campaign.bundle.commercial_target}" />
 					<aon:div id="CommunicationCenter_target">
 						<aon:div styleClass="aon-lookup" id="CommunicationCenter_target_lookup">
 							<aon:lookupInputText id="CommunicationCenter_target_id"
@@ -153,7 +153,7 @@
 								value="#{communicationCenter.target.id}" size="5">
 							</aon:lookupInputText>
 							<aon:lookupButton 
-								windowTitle="#{commercialBundle.commercial_target_selection}" actionType="search"
+								windowTitle="#{campaign.bundle.commercial_target_selection}" actionType="search"
 								selectReRender="CommunicationCenter_target_id,CommunicationCenter_target_detail,aonToolbar"
 								disabled="#{communicationCenter.actionSelected}"
 								lookup="#{targetLookup}" minHeight="460" minWidth="650"
@@ -161,7 +161,7 @@
 								property="#{communicationCenter.target}">
 							</aon:lookupButton>
 							<aon:lookupButton 
-								windowTitle="#{commercialBundle.commercial_target_new}"
+								windowTitle="#{campaign.bundle.commercial_target_new}"
 								selectReRender="CommunicationCenter_target_id,CommunicationCenter_target_detail,aonToolbar"
 								lookup="#{targetLookup}" actionType="new" minWidth="650" minHeight="490"
 								lookupChangeListener="#{communicationCenter.onTargetLookupChange}"
