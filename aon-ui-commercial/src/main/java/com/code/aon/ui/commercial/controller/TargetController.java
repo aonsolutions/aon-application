@@ -41,7 +41,7 @@ public class TargetController extends BasicController {
 	public TargetController() {
 		this.showProduct = true;
 		this.showSeller = true;
-		setBeanName(ICommercialConstants.BUNDLE_NAME);
+		setBundleName(ICommercialConstants.BUNDLE_NAME);
 	}
 
 	public List<SelectItem> getSegments() {
