@@ -62,7 +62,7 @@
 		<dependency>
 			<groupId>javax.faces</groupId>
 			<artifactId>jsf-api</artifactId>
-			<version>1.2_04-p02</version>
+			<version>1.2_09</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
