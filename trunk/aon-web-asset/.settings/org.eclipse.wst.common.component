@@ -9,6 +9,9 @@
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-asset/aon-asset">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-common/aon-common">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="aon-web-asset"/>
         <property name="java-output-path" value="build/classes"/>
     </wb-module>
