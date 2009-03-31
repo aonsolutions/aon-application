@@ -249,6 +249,7 @@
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>Invitado</role-name>
+			<role-name>Administrador</role-name>
 		</auth-constraint>
 	</security-constraint>
 
@@ -261,7 +262,8 @@
 	</login-config>
 
 	<security-role><role-name>Invitado</role-name></security-role>
-
+	<security-role><role-name>Administrador</role-name></security-role>
+	
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/AonAsset</resource-env-ref-name>
 	  <resource-env-ref-type>javax.sql.DataSource</resource-env-ref-type>
