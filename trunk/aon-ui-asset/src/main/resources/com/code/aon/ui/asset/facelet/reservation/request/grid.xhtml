@@ -74,13 +74,20 @@
 				value="#{assetBundle.asset_minutes}" />
 		</aon:div>
 
-		<aon:outputLabel for="ActivityDialog_who"
+		<aon:outputLabel for="tivityDialog_who"
 			value="#{assetBundle.asset_activity_who}" />
-		<aon:inputText id="ActivityDialog_who" value="#{activityDialog.who}"
-			required="#{true}" size="20" disabled="#{!activityDialog.new}">
-			<f:validateLength maximum="20" />
-		</aon:inputText>
-
+		<aon:div>
+			<aon:inputText id="ActivityDialog_who" value="#{activityDialog.who}"
+				
+				required="#{true}" size="20" disabled="#{(!activityDialog.new) or activityDialog.request}">
+				<f:validateLength maximum="20" />
+			</aon:inputText>
+			
+			<aon:outputText id="ActivityDialog_who_request" value="#{activityDialog.who}"
+				size="20" />
+				
+		</aon:div>
+		
 		<aon:outputLabel for="ActivityDialog_why"
 			value="#{assetBundle.asset_activity_why}" />
 		<aon:inputTextarea id="ActivityDialog_why" value="#{activityDialog.why}"
