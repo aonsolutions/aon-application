@@ -1,5 +1,7 @@
 package com.code.aon.ldap;
 
+
+
 public class AonDN implements ILdapConstants {
 
 	public static final String DOMAINS = "domains";
@@ -20,10 +22,6 @@ public class AonDN implements ILdapConstants {
 	
 	public static final String BDS = "bds";
 	
-	public static final String MESSAGES = "messages";
-	
-	public static final String DEFAULT_MAIL_ACCOUNT_NAME = "default";
-	
 	public static String userId( String uid ) {
 		return USER_ID_ATTRIBUTE + "=" + uid;
 	}
@@ -34,10 +32,6 @@ public class AonDN implements ILdapConstants {
 
 	public static String ou( String cn ) {
 		return ORGANIZATIONAL_UNIT_NAME_ATTRIBUTE + "=" + cn;
-	}
-
-	public static String status( int status ) {
-		return STATUS_ATTRIBUTE + "=" + status;
 	}
 	
 	public static DistinguishedName getDomainDN( String domain ) {
@@ -68,10 +62,6 @@ public class AonDN implements ILdapConstants {
 		return new DistinguishedName( ou(ACCOUNTS), getUserDN(domain, user) );
 	}
 
-	public static DistinguishedName getUserDefaultAccount( String domain, String user ) {
-		return new DistinguishedName( cn(DEFAULT_MAIL_ACCOUNT_NAME), getUserAccountsDN(domain, user) );
-	}
-	
 	public static DistinguishedName getUserSignaturesDN( String domain, String user ) {
 		return new DistinguishedName( ou(SIGNATURES), getUserDN(domain, user) );
 	}
@@ -110,14 +100,6 @@ public class AonDN implements ILdapConstants {
 
 	public static DistinguishedName getRoleDN( String application, String role ) {
 		return new DistinguishedName( cn(role), getRolesDN(application) );
-	}
-
-	public static DistinguishedName getMessageDN( int status ) {
-		return new DistinguishedName( status(status), ou(MESSAGES) );
-	}
-
-	public static DistinguishedName getMessageDN( int status, String language ) {
-		return new DistinguishedName( status(status), ou(language), ou(MESSAGES) );
 	}
 	
 }

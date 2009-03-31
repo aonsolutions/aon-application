@@ -71,27 +71,46 @@
 			</aon:div>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="menuGrid" columns="2" dir="true">
+				<aon:panelGrid id="menuGrid" columns="2" dir="true" width="100%">
 
-					<ui:include src="/commercial/target/formContent.xhtml">
-						<ui:param name="targetController" value="#{target}"/>
-					</ui:include>
+					<aon:outputLabel for="Target_id"
+						value="#{registryBundle.aon_id}" />
+					<aon:inputText id="Target_id" value="#{target.to.id}"
+						required="true" size="15" disabled="true" />
+	
+					<aon:outputLabel for="Target_document"
+						value="#{registryBundle.aon_nif}" />
+					<aon:inputText id="Target_document" maxlength="16"
+						value="#{target.to.registry.document}" size="16" onblur="toUpperCase(this);">
+					</aon:inputText>
+	
+					<aon:outputLabel for="Target_name"
+						value="#{registryBundle.aon_name}" />
+					<aon:inputText id="Target_name" maxlength="64"
+						value="#{target.to.registry.name}" size="64">
+					</aon:inputText>
+	
+					<aon:outputLabel for="Target_surname"
+						value="#{registryBundle.aon_surname}" />
+					<aon:inputText id="Target_surname" maxlength="64"
+						value="#{target.to.registry.surname}" size="64">
+					</aon:inputText>
+	
+					<aon:outputLabel for="Target_alias"
+						value="#{registryBundle.aon_alias}" />
+					<aon:inputText id="Target_alias" maxlength="32"
+						value="#{target.to.registry.alias}" size="32" onblur="toUpperCase(this);">
+					</aon:inputText>
 
 				</aon:panelGrid>
 
-				<aon:panelTabSet rendered="#{!target.new}" selectedTab="#{target.selectedTab}" valueChangeListener="#{target.tabChanged}">
+				<aon:panelTabSet rendered="#{!target.new}" valueChangeListener="#{target.tabChanged}">
 					<aon:panelTab name="targetAddress" label="#{registryBundle.aon_address}">
-						<ui:include src="/commercial/registry/address/grid.xhtml" >
-							<ui:param name="controller" value="#{targetAddress}"/>
-							<ui:param name="showDataScroller" value="#{true}"/>
-						</ui:include>
+						<ui:include src="/commercial/target/address/grid.xhtml" />
                     </aon:panelTab>
 
 					<aon:panelTab name="targetMedia" label="#{registryBundle.aon_media}">
-						<ui:include src="/commercial/registry/media/grid.xhtml" >					
-							<ui:param name="controller" value="#{targetMedia}"/>
-							<ui:param name="showDataScroller" value="#{true}"/>
-						</ui:include>
+						<ui:include src="/commercial/target/media/grid.xhtml" />					
                     </aon:panelTab>
 
 					<aon:panelTab name="targetSegment" label="#{appBundle.aon_target_segment}">
@@ -106,10 +125,6 @@
 						<ui:include src="/commercial/target/seller/grid.xhtml" />
                     </aon:panelTab>
 
-					<aon:panelTab name="targetProfile" label="#{marketingBundle.aon_target_profile}">
-						<ui:include src="/commercial/target/profile/grid.xhtml" />
-                    </aon:panelTab>
-
 					<aon:panelTab name="targetTracking" label="#{appBundle.aon_target_tracking}">
 						<ui:include src="/commercial/target/tracking/list.xhtml" />
                     </aon:panelTab>
@@ -120,7 +135,6 @@
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />		
-		<aon:lookupButtonPopup lookup="#{questionLookup}" />
 	</ui:define>
 </ui:composition>
 

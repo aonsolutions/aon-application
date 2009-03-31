@@ -5,7 +5,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
 
@@ -95,15 +94,5 @@ public class SurveyWorkflow extends ValueHolder {
 	public void setNextSurveyQuestion(SurveyQuestion nextSurveyQuestion) {
 		this.nextSurveyQuestion = nextSurveyQuestion;
 	}
-	
-	/**
-	 * Gets the question.
-	 * 
-	 * @return the question
-	 */
-	@Transient
-	public Question getQuestion() {
-		return (surveyQuestion != null) ? surveyQuestion.getQuestion() : null;
-	}	
 	
 }

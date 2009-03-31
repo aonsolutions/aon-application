@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
@@ -27,6 +28,7 @@ import com.code.aon.common.ITransferObject;
 @Entity
 @Table(name = "ACTION", schema = "AUDIT")
 @SequenceGenerator(name="ACTION_GENERATOR", sequenceName="SEQ_ACTION",allocationSize=1)
+@org.hibernate.annotations.Table( appliesTo = "ACTION", indexes = { @Index(name="IDX_ACTION", columnNames={"NAME","APPLICATION"})})
 public class Action implements ITransferObject {
 
 	private static final long serialVersionUID = -7135601793952520234L;
@@ -113,5 +115,27 @@ public class Action implements ITransferObject {
 	public void setApplication(Application application) {
 		this.application = application;
 	}
-    
+ 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof Action) {
+			Action o = (Action) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
+	
 }
