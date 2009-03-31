@@ -189,13 +189,15 @@ public class ActivityDialogController {
 		setRequest(false);
 		setFromTimeHours("8");
 		setFromTimeMins("00");
-		setToTimeHours("8");
+		setToTimeHours("9");
 		setToTimeMins("00");
 	}
 
 	public void onInitializeRequest(ActionEvent event) {
 		onInitialize(event);
 		setRequest(true);
+		//if(isRequest())
+			setWho(UserUtils.getInstance().getPrincipal().getShortName());
 	}
 
 	public void onAccept(ActionEvent event) {
