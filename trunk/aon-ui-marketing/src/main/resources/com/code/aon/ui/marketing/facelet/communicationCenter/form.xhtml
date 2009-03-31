@@ -143,7 +143,7 @@
 
 					<c:if test="#{communicationCenter.showTarget}" >
 						<aon:outputLabel for="CommunicationCenter_target_id"
-							value="#{campaign.bundle.commercial_target}" />
+							value="#{target.bundle.commercial_target}" />
 						<aon:div id="CommunicationCenter_target">
 							<aon:div styleClass="aon-lookup" id="CommunicationCenter_target_lookup">
 								<aon:lookupInputText id="CommunicationCenter_target_id"
@@ -154,7 +154,7 @@
 									value="#{communicationCenter.target.id}" size="5">
 								</aon:lookupInputText>
 								<aon:lookupButton 
-									windowTitle="#{campaign.bundle.commercial_target_selection}" actionType="search"
+									windowTitle="#{target.bundle.commercial_target_selection}" actionType="search"
 									selectReRender="CommunicationCenter_target_id,CommunicationCenter_target_detail,aonToolbar"
 									disabled="#{communicationCenter.actionSelected}"
 									lookup="#{targetLookup}" minHeight="460" minWidth="650"
@@ -162,7 +162,7 @@
 									property="#{communicationCenter.target}">
 								</aon:lookupButton>
 								<aon:lookupButton 
-									windowTitle="#{campaign.bundle.commercial_target_new}"
+									windowTitle="#{target.bundle.commercial_target_new}"
 									selectReRender="CommunicationCenter_target_id,CommunicationCenter_target_detail,aonToolbar"
 									lookup="#{targetLookup}" actionType="new" minWidth="650" minHeight="490"
 									lookupChangeListener="#{communicationCenter.onTargetLookupChange}"
