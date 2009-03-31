@@ -8,6 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -32,85 +34,129 @@ public class AssetCollectionsController {
 	private String name;
 	private Date fromDate;
 	private Date toDate;
-	// asset, user
 	private String statType;
-	// year, month, day
 	private String dateRange;
 	List<AssetStat> stats;
 	private String beanName;
 	private IManagerBean assetActivityBean;
 	Criteria criteria;
 	Locale locale = AonUtil.getCurrentLocale();
+	private static final Logger LOGGER = Logger.getLogger(AssetCollectionsController.class.getName());
 	
+	/**
+	 * Devuelve la fecha
+	 * @return
+	 */
 	public Date getDate() {
 		return date;
 	}
 	public void setDate(Date date) {
 		this.date = date;
 	}
+	/**
+	 * Devuelve la fecha inicial del periodo filtrado
+	 * @return
+	 */
 	public Date getFromDate() {
 		return fromDate;
 	}
 	public void setFromDate(Date fromDate) {
 		this.fromDate = fromDate;
 	}
+	/**
+	 * Devuelve la fecha final del periodo filtrado
+	 * @return
+	 */
 	public Date getToDate() {
 		return toDate;
 	}
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
 	}
+	/**
+	 * Devuelve el nombre del bean
+	 * @return
+	 */
 	public String getBeanName() {
 		return beanName;
 	}
 	public void setBeanName(String beanName) {
 		this.beanName = beanName;
 	}
+	/**
+	 * Devuelve el anio a usar por el filtro
+	 * @return
+	 */
 	public Integer getYear() {
 		return year;
 	}
 	public void setYear(Integer year) {
 		this.year = year;
 	}
+	/**
+	 * Devuelve el mes a usar por el filtro
+	 * @return
+	 */
 	public Integer getMonth() {
 		return month;
 	}
 	public void setMonth(Integer month) {
 		this.month = month;
 	}
+	/**
+	 * Devuelve el nombre del referido a mostrar
+	 * @return
+	 */
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
+	/**
+	 * Devuelve el tipo de filtro de la estadistica (por activo o por usuario)
+	 * @return
+	 */
 	public String getStatType() {
 		return statType;
 	}
 	public void setStatType(String statType) {
 		this.statType = statType;
 	}
+	/**
+	 * Devuelve el rango de la fecha de la estadistica
+	 * @return
+	 */
 	public String getDateRange() {
 		return dateRange;
 	}
 	public void setDateRange(String dateRange) {
 		this.dateRange = dateRange;
 	}
+	/**
+	 * Devuelve el nombre del mes
+	 * @return
+	 */
 	public String getMonthName() {
 		return Month.getMonthByValue(month).getName(locale);
 	}
 	
-	
-
-	
+	/**
+	 * Inicializa la lista de estadisticas
+	 * @param event
+	 */
 	public void onInitialize(ActionEvent event) {
 		setYear(Calendar.getInstance().get(Calendar.YEAR));
 		setStatType("ASSET");
 		setDateRange("YEAR");
 		refreshStats(event);
-		
 	}
-
+	
+	/**
+	 * Actualiza los atributos para el filtro (activo, usuario y year, month, day)
+	 * y construye la lista de estadisticas 
+	 * @param event
+	 */
 	public void refreshStats(ActionEvent event) {
 		Calendar cal = new GregorianCalendar();
 		cal.set(year.intValue(), Calendar.JANUARY, 1);
@@ -123,8 +169,6 @@ public class AssetCollectionsController {
 		Map<String, String> params = ec.getRequestParameterMap();			
 		if (params.get("year")!=null){
 			year = Integer.parseInt(params.get("year"));
-			//fromDate.setYear(year);
-			//toDate.setYear(year);
 			cal = new GregorianCalendar();
 			cal.set(Calendar.YEAR, year);
 			cal.set(Calendar.MONTH, cal.getActualMinimum(Calendar.MONTH));
@@ -154,18 +198,23 @@ public class AssetCollectionsController {
 				buildStatsByMonth();
 			else if(getDateRange().equals("DAY"))
 				buildStatsByDay();
-			//else if(getStatType().equals("USER"))
-				//buildStatsByUser();
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 	}
 	
+	/**
+	 * Devuelve la lista de estadisticas
+	 * @return
+	 */
 	public List<AssetStat> getStats(){
 		return stats;
 	}
 	
+	/**
+	 * Construye el criteria para obtener una lista a partir del bean de assetActivity
+	 * @throws ManagerBeanException
+	 */
 	private void buildCriteria() throws ManagerBeanException{
 		assetActivityBean = BeanManager.getManagerBean(AssetActivity.class);
 		criteria = new Criteria();
@@ -196,17 +245,14 @@ public class AssetCollectionsController {
 			criteria.addEqualExpression(identifier, name);
 			identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE);
 			criteria.addOrder(identifier);
-			
-			
-		} else if(getStatType().equals("USER"))
-			System.out.println("user");
-		
-		
-		
+		} 
 	}
 	
+	/**
+	 * Construye la lista de estadisticas segun el anio
+	 * @throws ManagerBeanException
+	 */
 	public void buildStatsByYear() throws ManagerBeanException {
-		//List<AssetStat> activities = new LinkedList<AssetStat>();
 		stats = new LinkedList<AssetStat>();
 		buildCriteria();
 		Iterator<ITransferObject> iter = assetActivityBean.getList(criteria).iterator();
@@ -228,7 +274,6 @@ public class AssetCollectionsController {
 					stat.setHours(stat.getHours()+hours);
 					stat.setRequest(stat.getRequest()+1);
 					stat.setAverage(stat.getHours()/stat.getRequest());
-					//stat.setType(StatType.anual);
 					stat.setUser(activity.getWho());
 				} else {
 					stat = new AssetStat();
@@ -238,7 +283,6 @@ public class AssetCollectionsController {
 					stat.setHours(hours);
 					stat.setRequest(1);
 					stat.setAverage(stat.getHours()/stat.getRequest());
-					//stat.setType(StatType.anual);
 					stat.setUser(activity.getWho());
 					stats.add(stat);
 				}
@@ -250,7 +294,6 @@ public class AssetCollectionsController {
 					stat.setHours(stat.getHours()+hours);
 					stat.setRequest(stat.getRequest()+1);
 					stat.setAverage(stat.getHours()/stat.getRequest());
-					//stat.setType(StatType.anual);
 					stat.setUser(activity.getWho());
 				} else {
 					stat = new AssetStat();
@@ -260,28 +303,28 @@ public class AssetCollectionsController {
 					stat.setHours(hours);
 					stat.setRequest(1);
 					stat.setAverage(stat.getHours()/stat.getRequest());
-					//stat.setType(StatType.anual);
 					stat.setUser(activity.getWho());
 					stats.add(stat);
 				}
-			
 			}
-			
 			previous = activity;
 		}
 	}
 	
-	
-	
+	/**
+	 * Construye la lista de estadisticas segun el mes
+	 * @throws ManagerBeanException
+	 */
 	public void buildStatsByMonth() throws ManagerBeanException {
 		stats = new LinkedList<AssetStat>();
+		Calendar cal = new GregorianCalendar();
 		for(int i=0;i<12;i++){
 			stats.add(i, new AssetStat());
-			//stats.get(i).setName(Month.getMonthByValue(i).getName(FacesContext.getCurrentInstance().getViewRoot().getLocale()));
 			stats.get(i).setKey(String.valueOf(i));
 			stats.get(i).setName(Month.getMonthByValue(i).getName(locale));
-			//stat.setKey(activity.getId().toString());
-			stats.get(i).getDate().setMonth(i);
+			cal.setTime(stats.get(i).getDate());
+			cal.set(Calendar.MONTH, i);
+			stats.get(i).setDate(cal.getTime());
 		}
 		
 		buildCriteria();
@@ -295,18 +338,22 @@ public class AssetCollectionsController {
 			activity = (AssetActivity) iter.next(); 
 			hours=activity.getToTime().getTime() - activity.getFromTime().getTime();
 			hours /=(1000*60*60);
+			cal.setTime(activity.getDate());
 			
-			stat = stats.get(activity.getDate().getMonth());
+			stat = stats.get(cal.get(Calendar.MONTH));
 			stat.setDate(activity.getDate());
 			stat.setHours(stat.getHours()+hours);
 			stat.setRequest(stat.getRequest()+1);
 			stat.setAverage(stat.getHours()/stat.getRequest());
 			stat.setUser(activity.getWho());
-			stats.set(stat.getDate().getMonth(), stat);
+			stats.set(cal.get(Calendar.MONTH), stat);
 		}
 	}
 	
-	// ESTES PA LUEGO!!!!!!
+	/**
+	 * Construye la lista de estadisticas segun el dia
+	 * @throws ManagerBeanException
+	 */
 	public void buildStatsByDay() throws ManagerBeanException {
 		stats = new LinkedList<AssetStat>();
 		Calendar cal = new GregorianCalendar();
@@ -314,13 +361,10 @@ public class AssetCollectionsController {
 		int days = cal.getActualMaximum(Calendar.DATE);
 		System.out.println(cal.getActualMaximum(Calendar.DATE));
 		
-		
 		for(int i=0;i<days;i++){
 			stats.add(i, new AssetStat());
-			//stats.get(i).setName(Month.getMonthByValue(i).getName(FacesContext.getCurrentInstance().getViewRoot().getLocale()));
 			stats.get(i).setKey(String.valueOf(i));
 			stats.get(i).setName(String.valueOf(i));
-			//stats.get(i).getDate().setMonth(i);
 		}
 		
 		buildCriteria();
@@ -334,24 +378,16 @@ public class AssetCollectionsController {
 			activity = (AssetActivity) iter.next(); 
 			hours=activity.getToTime().getTime() - activity.getFromTime().getTime();
 			hours /=(1000*60*60);
+			cal.setTime(activity.getDate());
 			
-			stat = stats.get(activity.getDate().getDate()-1);
+			stat = stats.get(cal.get(Calendar.DAY_OF_MONTH)-1);
 			stat.setDate(activity.getDate());
 			stat.setHours(stat.getHours()+hours);
 			stat.setRequest(stat.getRequest()+1);
 			stat.setAverage(stat.getHours()/stat.getRequest());
 			stat.setUser(activity.getWho());
-			stats.set(stat.getDate().getDate()-1, stat);
+			stats.set(cal.get(Calendar.DAY_OF_MONTH)-1, stat);
 		}
-		
-		
-		
-		
 	}
-	public void buildStatsByUser() {
 		
-	}
-	
-	
-	
 }
