@@ -5,6 +5,8 @@
 	<projects>
 		<project>aon-ui-asset</project>
 		<project>aon-asset</project>
+		<project>aon-report</project>
+		<project>aon-common</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
