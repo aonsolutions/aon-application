@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.ForeignKey;
 
 import com.code.aon.common.ITransferObject;
@@ -139,5 +140,27 @@ public class ActionExecution implements ITransferObject {
 	public void setExecutionDate(Date executionDate) {
 		this.executionDate = executionDate;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof ActionExecution) {
+			ActionExecution o = (ActionExecution) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }	
     
 }
