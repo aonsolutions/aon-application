@@ -216,6 +216,17 @@
 				<value>AssetActivity_date</value>
 			</managed-property>
 		</managed-bean>
+		
+		<!-- ********** ASSET ACTIVITY COLLECTIONS ********** -->
+		<managed-bean>
+			<managed-bean-name>assetCollections</managed-bean-name>
+			<managed-bean-class>com.code.aon.ui.asset.controller.AssetCollectionsController</managed-bean-class>
+			<managed-bean-scope>session</managed-bean-scope>
+			<managed-property>
+				<property-name>beanName</property-name>
+				<value>assetCollections</value>
+			</managed-property>
+		</managed-bean>
 	
 	<!-- ****************************************** -->
 	<!-- ***************** LOOK UP **************** -->
@@ -279,5 +290,21 @@
 			<to-view-id>/com/code/aon/ui/asset/facelet/reservation/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-
+	
+	<!-- ****************** ASSET ACTIVITY Reservations **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>stat_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/asset/facelet/stat/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>month_stat_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/asset/facelet/stat/month/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>day_stat_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/asset/facelet/stat/day/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 </faces-config>
