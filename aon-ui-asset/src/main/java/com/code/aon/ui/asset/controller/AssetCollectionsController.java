@@ -312,7 +312,7 @@ public class AssetCollectionsController {
 	}
 	
 	/**
-	 * Construye la lista de estadisticas segun el mes
+	 * Construye la lista de estadisticas segun el mes del anio
 	 * @throws ManagerBeanException
 	 */
 	public void buildStatsByMonth() throws ManagerBeanException {
@@ -351,7 +351,7 @@ public class AssetCollectionsController {
 	}
 	
 	/**
-	 * Construye la lista de estadisticas segun el dia
+	 * Construye la lista de estadisticas segun los dias del mes
 	 * @throws ManagerBeanException
 	 */
 	public void buildStatsByDay() throws ManagerBeanException {
@@ -363,8 +363,8 @@ public class AssetCollectionsController {
 		
 		for(int i=0;i<days;i++){
 			stats.add(i, new AssetStat());
-			stats.get(i).setKey(String.valueOf(i));
-			stats.get(i).setName(String.valueOf(i));
+			stats.get(i).setKey(String.valueOf(i+1));
+			stats.get(i).setName(String.valueOf(i+1));
 		}
 		
 		buildCriteria();
