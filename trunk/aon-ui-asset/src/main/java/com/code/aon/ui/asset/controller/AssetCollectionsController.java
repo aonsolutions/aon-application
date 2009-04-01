@@ -124,7 +124,7 @@ public class AssetCollectionsController {
 		this.statType = statType;
 	}
 	/**
-	 * Devuelve el rango de la fecha de la estadistica
+	 * Devuelve el tipo de rango de la fecha de la estadistica (YEAR, MONTH, DAY)
 	 * @return
 	 */
 	public String getDateRange() {
@@ -163,6 +163,8 @@ public class AssetCollectionsController {
 		setFromDate(cal.getTime());
 		cal.set(year.intValue(), Calendar.DECEMBER, 31);
 		setToDate(cal.getTime());
+		setMonth(null);
+		setName(null);
 		
 		
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
