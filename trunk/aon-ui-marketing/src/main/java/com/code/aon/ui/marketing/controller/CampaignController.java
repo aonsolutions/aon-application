@@ -21,6 +21,7 @@ public class CampaignController extends BasicController implements IMarketingCon
 	
 	public CampaignController() {
 		this.showSurvey = true;
+		this.showPhoneActionMediaType = true;
 		setBundleName(BUNDLE_NAME);
 	}
 
