@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.desktop</artifactId>
 	<packaging>war</packaging>
-	<version>4.0.0</version>
+	<version>4.1.0</version>
 	<description>AON DESKTOP</description>
 	<name>AON DESKTOP</name>
 	<properties>
@@ -41,7 +41,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>3.6.0</version>
+			<version>3.6.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -59,7 +59,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
-			<version>3.7.0</version>
+			<version>3.8.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -71,25 +71,25 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>3.7.1</version>
+			<version>3.8.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>3.4.1</version>
+			<version>3.5.0</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.geozone</artifactId>
-			<version>3.1.5</version>
+			<version>3.1.6</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.groupware</artifactId>
-			<version>3.7.0</version>
+			<version>3.7.1</version>
 			<scope>compile</scope>
 		</dependency>
 	    <dependency>
@@ -106,13 +106,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.messaging</artifactId>
-			<version>0.4.0</version>
+			<version>0.4.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.webmail</artifactId>
-			<version>4.8.0</version>
+			<version>4.8.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -123,7 +123,7 @@
 		<dependency>
 		    <groupId>javax.faces</groupId>
 		    <artifactId>jsf-impl</artifactId>
-		    <version>1.2_04-p02</version>
+		    <version>1.2_09</version>
 		    <scope>provided</scope>
 		</dependency> 				
 	</dependencies>
