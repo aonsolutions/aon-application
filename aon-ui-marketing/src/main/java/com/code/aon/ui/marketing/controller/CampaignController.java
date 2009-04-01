@@ -21,7 +21,7 @@ public class CampaignController extends BasicController implements IMarketingCon
 	
 	public CampaignController() {
 		this.showSurvey = true;
-		setBeanName(BUNDLE_NAME);
+		setBundleName(BUNDLE_NAME);
 	}
 
 	public boolean isShowSurvey() {
