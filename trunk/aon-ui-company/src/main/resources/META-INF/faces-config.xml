@@ -53,7 +53,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>companyOptionalListeners</property-name>
-			<value>#{targetOptionalListeners}</value>
+			<value>#{companyOptionalListeners}</value>
 		</managed-property>
 	</managed-bean>
 	
