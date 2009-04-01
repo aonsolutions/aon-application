@@ -52,7 +52,7 @@
 			</list-entries>
 		</managed-property>
 		<managed-property>
-			<property-name>companyOptionalListeners</property-name>
+			<property-name>optionalListenerClasses</property-name>
 			<value>#{companyOptionalListeners}</value>
 		</managed-property>
 	</managed-bean>
