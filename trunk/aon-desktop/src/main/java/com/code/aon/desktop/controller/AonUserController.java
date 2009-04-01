@@ -333,13 +333,16 @@ public class AonUserController extends UserController implements ILdapConstants,
 	}
 
 	public String getAlternativeEmail() {
+		this.alternativeEmail = null;
 		User user = (User) getTo();
 		String login = user.getLogin();
 		BasicLdap ldap = new BasicLdap();
 		Name dn = NameResolver.getUserDN(domain, login);
 		Entry entry = ldap.get(dn, USER, MAIL_ATTRIBUTE);
 		if ( entry != null ) {
-			alternativeEmail = entry.getAsString(MAIL_ATTRIBUTE);
+			if ( entry.containsKey(MAIL_ATTRIBUTE) ) {
+				alternativeEmail = entry.getAsString(MAIL_ATTRIBUTE);	
+			}
 		} else {
 			throw new AbortProcessingException( "Error getting email for " + login );
 		}
@@ -352,13 +355,16 @@ public class AonUserController extends UserController implements ILdapConstants,
 	}
 
 	public String getCellular() {
+		this.cellular = null;
 		User user = (User) getTo();
 		String login = user.getLogin();
 		BasicLdap ldap = new BasicLdap();
 		Name dn = NameResolver.getUserDN(domain, login);
 		Entry entry = ldap.get(dn, USER, MOBILE_ATTRIBUTE);
 		if ( entry != null ) {
-			cellular = entry.getAsString(MOBILE_ATTRIBUTE);
+			if ( entry.containsKey(MOBILE_ATTRIBUTE) ) {
+				cellular = entry.getAsString(MOBILE_ATTRIBUTE);	
+			}	
 		} else {
 			throw new AbortProcessingException( "Error getting cellular for " + login );
 		}
