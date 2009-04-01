@@ -27,21 +27,22 @@
 						actionListener="#{assetCollections.refreshStats}" >
 						<f:param name="type" value="YEAR" />
 					</aon:commandButton>
-					<!--  
+					  
 					<a4j:htmlCommandLink id="export2pdf" value="PDF"
 						title="Listado Pdf"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						action="#{report.onExecute}" target="_blank">
-						<f:param name="reportKey" value="stats" />
+						<f:param name="reportKey" value="yearStatsList" />
+						<f:param name="outputFormat" value="PDF" />
 					</a4j:htmlCommandLink>
 					<a4j:htmlCommandLink id="export2excel" value="XLS"
 						title="Listado Xls"
 						styleClass="aon-finding-toolbar-item aon-icon-excel"
 						action="#{report.onExecute}" target="_blank">
-						<f:param name="reportKey" value="stats" />
+						<f:param name="reportKey" value="yearStatsList" />
 						<f:param name="outputFormat" value="MS Excel" />
 					</a4j:htmlCommandLink>
-					-->
+					
 				</ui:define>
 			</ui:decorate>
 			<!-- TOOLBAR END -->
