@@ -22,7 +22,7 @@ public class MarketingTargetController extends TargetController {
 	private IManagerBean mtBean;
 	
 	@Override
-	protected String resolveAlias( String alias ) {
+	public String resolveAlias( String alias ) {
 		String newKey = alias;
 		if ( newKey.startsWith("Target_") ) {
 			newKey = newKey.replace("Target_", "MarketingTarget_target_");
