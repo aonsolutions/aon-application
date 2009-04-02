@@ -611,7 +611,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * @param alias
 	 * @return Field path.
 	 */
-	protected String resolveAlias( String alias ) {
+	public String resolveAlias( String alias ) {
 		String fieldName = null;
 		try {
 			fieldName = getFieldName(alias);
