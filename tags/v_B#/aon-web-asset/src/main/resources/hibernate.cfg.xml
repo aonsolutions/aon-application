@@ -1,0 +1,69 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration> 
+
+	<session-factory>
+		<property name="connection.provider_class">com.code.aon.common.dao.hibernate.C3P0ConnectionProvider</property>
+		
+		<property name="c3p0.acquire_increment">1</property>
+		<property name="c3p0.idle_test_period">1900</property>
+		<property name="c3p0.timeout">3600</property>
+		<property name="c3p0.max_size">30</property>
+		<property name="c3p0.min_size">1</property>
+		<property name="c3p0.max_statements">0</property>
+		<property name="c3p0.preferredTestQuery">select 1;</property>
+
+ 
+		<property name="connection.service">jboss.admin:service=AonLdap</property>
+		<property name="connection.datasource">java:comp/env/jdbc/AonAsset</property>
+		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+
+		<property name="show_sql">true</property>		
+ 
+
+		<!-- AON-ASSET Mapping files --> 
+		<mapping class="com.code.aon.asset.Asset"/>
+		<mapping class="com.code.aon.asset.AssetActivity"/>
+
+
+		<!-- AON-COMPANY Mapping files -->	
+		<mapping class="com.code.aon.company.Company"/>
+		<mapping class="com.code.aon.company.WorkPlace"/>
+		<mapping class="com.code.aon.company.WorkActivity"/>
+		<mapping class="com.code.aon.company.resources.Resource"/>
+		<mapping class="com.code.aon.company.resources.Employee"/>
+
+		<!-- AON-CONFIG Mapping files -->
+		<mapping class="com.code.aon.config.ApplicationParameter"/>
+		<mapping class="com.code.aon.config.Bank"/>
+		<mapping class="com.code.aon.config.PayMethod"/>
+		<mapping class="com.code.aon.config.Series"/>
+		<mapping class="com.code.aon.config.Scope"/>
+		<mapping class="com.code.aon.config.Tax"/>
+		<mapping class="com.code.aon.config.TaxDetail"/>
+		<mapping class="com.code.aon.config.User"/>
+		<mapping class="com.code.aon.config.UserScope"/>
+		<mapping class="com.code.aon.config.WorkGroup"/>
+
+		<!-- AON-REGISTRY Mapping files -->	
+		<mapping class="com.code.aon.registry.Category"/>
+		<mapping class="com.code.aon.registry.RegistryBank"/>
+		<mapping class="com.code.aon.registry.RecordData"/>
+		<mapping class="com.code.aon.registry.Registry"/>
+		<mapping class="com.code.aon.registry.RegistryAddress"/>
+		<mapping class="com.code.aon.registry.RegistryAttachment"/>
+		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
+		<mapping class="com.code.aon.registry.RegistryMedia"/>
+		<mapping class="com.code.aon.registry.RegistryNote"/>
+		<mapping class="com.code.aon.registry.RegistryPayMethod"/>
+		<mapping class="com.code.aon.registry.RegistryRelationship"/>
+		<mapping class="com.code.aon.registry.Relationship"/>
+
+		<!-- AON-GEOZONE Mapping files -->		
+		<mapping class="com.code.aon.geozone.GeoTree"/>
+		<mapping class="com.code.aon.geozone.GeoZone"/>		
+	</session-factory>
+
+</hibernate-configuration>
