@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.ClassUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Cascade;
 
 import com.code.aon.common.BeanManager;
@@ -116,6 +117,23 @@ public class AbstractPojoController {
 		return getManagerBean().getFieldName(alias);
 	}
 
+	/**
+	 * Resolves the alias.
+	 * 
+	 * @param alias
+	 * @return Field path.
+	 */
+	public String resolveAlias( String alias ) {
+		String fieldName = null;
+		try {
+			fieldName = getFieldName(alias);
+		} catch (ManagerBeanException e) {
+			fieldName = alias.replace('_', '.');
+			fieldName = StringUtils.substringBefore(fieldName, "-");
+		}
+		return fieldName;
+	}
+		
 	/**
 	 * Restores de null value in framework created subpojos.
 	 * 
