@@ -605,23 +605,6 @@ public class BasicController extends AbstractPojoController implements IControll
 		}
 	}	
 	
-	/**
-	 * Resolves the alias.
-	 * 
-	 * @param alias
-	 * @return Field path.
-	 */
-	public String resolveAlias( String alias ) {
-		String fieldName = null;
-		try {
-			fieldName = getFieldName(alias);
-		} catch (ManagerBeanException e) {
-			fieldName = alias.replace('_', '.');
-			fieldName = StringUtils.substringBefore(fieldName, "-");
-		}
-		return fieldName;
-	}
-	
 	@Override
 	public void clearCriteria() throws ManagerBeanException {
 		this.criteria = new Criteria();
