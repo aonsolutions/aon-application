@@ -108,16 +108,21 @@ public class TargetSearchListener extends ControllerSearchListener implements IC
 	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
 		Criteria criteria = getController().getCriteria();
 		if ( (getSeller() != null) && (getSeller().getId() != null) ) {
-			criteria.addEqualExpression("Target.trackings.seller.id", getSeller().getId());			
+			String activity = getController().resolveAlias("Target_trackings_seller_id");
+			criteria.addEqualExpression(activity, getSeller().getId());			
 		}
 		if (getActivity() != null) {
-			criteria.addEqualExpression("Target.trackings.activity.id", getActivity().getId());			
+			String activity = getController().resolveAlias("Target_trackings_activity_id");
+			criteria.addEqualExpression(activity, getActivity().getId());			
 		}		
 		if (! ArrayUtils.isEmpty(getTrackingStatuses()) ) {
-			addEnumToCriteria( criteria, "Target.trackings.status", getTrackingStatuses() );
+			String status = getController().resolveAlias("Target_trackings_status");
+			addEnumToCriteria( criteria, status, getTrackingStatuses() );
 		}
-		addEnumToCriteria( criteria, "Target.registry.medias.mediaType", getMediaTypes().toArray() );
-		addEnumToCriteria( criteria, "Target.segments.segment.id", getSegmentsIds().toArray() );
+		String mediaType = getController().resolveAlias("Target_registry_medias_mediaType");
+		addEnumToCriteria( criteria, mediaType, getMediaTypes().toArray() );
+		String segment = getController().resolveAlias("Target_segments_segment_id");
+		addEnumToCriteria( criteria, segment, getSegmentsIds().toArray() );
 	}
 	
 	public void onAddMediaType( ActionEvent event ) {
