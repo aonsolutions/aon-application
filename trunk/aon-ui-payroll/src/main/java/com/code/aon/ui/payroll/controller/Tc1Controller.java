@@ -33,7 +33,7 @@ public class Tc1Controller extends PayrollBasicController {
 		Tc2 t= new Tc2();
 		t.setCdg(4);
 		((Tc1)getTo()).setCodtc2(t);
-		((Tc1)getTo()).setApellidos(" ");
+		
 		
 
 	}
