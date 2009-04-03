@@ -3,8 +3,8 @@
 	<name>aon-web-payroll</name>
 	<comment></comment>
 	<projects>
-		<project>aon-ui-payroll</project>
 		<project>aon-payroll</project>
+		<project>aon-ui-payroll</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -23,11 +23,6 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>org.maven.ide.eclipse.maven2Builder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
 			<name>org.devzuz.q.maven.jdt.core.mavenIncrementalBuilder</name>
 			<arguments>
 			</arguments>
@@ -36,7 +31,6 @@
 	<natures>
 		<nature>org.devzuz.q.maven.jdt.core.mavenNature</nature>
 		<nature>org.eclipse.wst.common.modulecore.ModuleCoreNature</nature>
-		<nature>org.maven.ide.eclipse.maven2Nature</nature>
 		<nature>org.eclipse.jem.workbench.JavaEMFNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
