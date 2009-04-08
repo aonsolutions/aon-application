@@ -9,6 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 
@@ -36,7 +38,9 @@ public class UserScope implements ITransferObject {
 	}
 
 	@ManyToOne
-	@JoinColumn(name="user", nullable=false)
+	@JoinColumn(name="user_id", nullable=false)
+    @ForeignKey(name = "FK_USER_SCOPE_USER_ID")
+    @Index(name = "IDX_USER_SCOPE_USER_ID")    	
 	public User getUser() {
 		return user;
 	}
@@ -47,6 +51,8 @@ public class UserScope implements ITransferObject {
 
 	@ManyToOne
 	@JoinColumn(name="scope", nullable=false)
+    @ForeignKey(name = "FK_USER_SCOPE_SCOPE")
+    @Index(name = "IDX_USER_SCOPE_SCOPE")    		
 	public Scope getScope() {
 		return scope;
 	}

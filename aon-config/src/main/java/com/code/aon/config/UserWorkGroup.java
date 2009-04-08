@@ -9,6 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 
@@ -37,7 +39,9 @@ public class UserWorkGroup implements ITransferObject {
 
 	
 	@ManyToOne
-	@JoinColumn(name="user", nullable=false)
+	@JoinColumn(name="user_id", nullable=false)
+    @ForeignKey(name = "FK_USER_WORKGROUP_USER")
+    @Index(name = "IDX_USER_WORKGROUP_USER")    			
 	public User getUser() {
 		return user;
 	}
@@ -48,6 +52,8 @@ public class UserWorkGroup implements ITransferObject {
 
 	@ManyToOne
 	@JoinColumn(name="workgroup", nullable=false)
+    @ForeignKey(name = "FK_USER_WORKGROUP_WORKGROUP")
+    @Index(name = "IDX_USER_WORKGROUP_WORKGROUP")    				
 	public WorkGroup getWorkGroup() {
 		return workGroup;
 	}
