@@ -127,8 +127,6 @@ public class PersonaController extends PayrollBasicController {
 	@Override
 	public void onEditSearch(ActionEvent arg0) {
 		
-		super.onEditSearch(arg0);
-		
 		tipdoc = new Documento();
 		nacion = new Nacion();
 		pais = new Pais();
@@ -137,6 +135,9 @@ public class PersonaController extends PayrollBasicController {
 		provincia1 = new Provincia();
 		tipovia = new Tipovia();
 		tabName = null;
+		
+		super.onEditSearch(arg0);
+		
 	}
 	
 	/**

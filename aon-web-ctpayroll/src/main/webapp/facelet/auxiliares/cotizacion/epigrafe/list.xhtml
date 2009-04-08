@@ -14,12 +14,13 @@
 	<ui:define name="content">
 
 		<aon:form id="epigrafeMaestroList">
-		
-		   <ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_cotizacion_epigrafes}" />
 				<ui:param name="controller" value="#{epigrafeMaestro}" />
-				
+				<aon:valueParam name="skipBackButton" default="false" />
+				<aon:methodParam name="backAction" value="auxiliares" />
 			</ui:include>
+		
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 

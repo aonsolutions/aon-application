@@ -16,10 +16,11 @@
 		<aon:form id="elementoMaestroList">
 						
 			<!-- start toolbar navigation -->
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_cotizacion__elemcotizacion}" />
 				<ui:param name="controller" value="#{elementoMaestro}" />
-				
+				<aon:valueParam name="skipBackButton" default="false" />
+				<aon:methodParam name="backAction" value="auxiliares" />
 			</ui:include>
 			<!-- end toolbar navigation -->
 

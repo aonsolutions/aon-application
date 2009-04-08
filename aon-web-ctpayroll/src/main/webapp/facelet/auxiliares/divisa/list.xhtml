@@ -15,12 +15,14 @@
 
 		<aon:form id="divisaMaestroList">
 		
-						<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_auxiliares_divisa}" />
-				<ui:param name="controller" value="#{divisaMaestro}" />
-				
+			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_auxiliares_divisa}" />>				
+				<ui:param name="controller" value="#{divisaMaestro}"/>
+			    <ui:param name="reportKey" value="DivisaList"/>
+			    <ui:param name="reportKeyXls" value="DivisaList2"/>	
+			    <aon:valueParam name="skipBackButton" default="false" />
+				<aon:methodParam name="backAction" value="auxiliares" />
 			</ui:include>
-
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">

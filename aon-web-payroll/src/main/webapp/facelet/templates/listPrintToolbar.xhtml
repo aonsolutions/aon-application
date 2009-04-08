@@ -6,8 +6,15 @@
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >	
 		<ui:define name="additionalToolbarContent">
-			<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml" />
+			<c:if test="#{(skipBackButton!=null) and (!skipBackButton)}">
+				<aon:commandButton id="#{toolbarID}-back" 
+					value="#{bundle.aon_back}" action="#{backAction}"
+					styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+					accesskey="#{bundle.aon_key_cancel}" />
+			</c:if>
+			<c:if test="#{reportKey!=null}">
+				<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml" />
+			</c:if>
 		</ui:define>				
 	</ui:decorate>		
-				
 </ui:composition>

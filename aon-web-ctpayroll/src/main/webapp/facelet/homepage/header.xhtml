@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 <body>
 
@@ -43,6 +44,36 @@
 				<aon:div styleClass="aon-float-right"
 					rendered="#{!aonConfiguration.properties.hideHeaderLinks}">
                		<aon:div styleClass="aon-header-menu-item">
+					<!--MODAL PANEL DE LA AYUDA -->
+						<rich:modalPanel id="panel" width="350" height="100">
+					        <f:facet name="header">
+					            <h:panelGroup>
+					                <h:outputText value="[Modal Panel]"></h:outputText>
+					            </h:panelGroup>
+					        </f:facet>
+					        <f:facet name="controls">
+					            <h:panelGroup>
+					                <h:outputText value="[CERRAR]" id="hidelink" />
+					                <rich:componentControl for="panel" attachTo="hidelink" 
+					                	operation="hide" event="onclick"/>
+					            </h:panelGroup>
+					        </f:facet>
+					        <h:outputText value="This panel is called using Component Control Component"/>
+					        <br/>
+					        <h:outputText value="Closure link (X) works also through Component Control"/>
+					    </rich:modalPanel>
+					    <aon:outputLink 
+							
+							value="#"
+							rendered="#{payrollController.mainMenuEnabled}">
+							<h:outputText value="[AYUDA]" />
+					        <rich:componentControl for="panel" attachTo="link" 
+					        	operation="show" event="onclick"/>
+					    </aon:outputLink>
+					<!-- MODAL PANEL DE LA AYUDA -->
+
+
+
 						<h:outputLink 
 							target="_top"
 							value="${facesContext.externalContext.requestContextPath}"

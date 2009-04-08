@@ -15,11 +15,13 @@
 
 		<aon:form id="baseMaestroList">
 		
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_cotizacion_bases}" />
 				<ui:param name="controller" value="#{baseMaestro}" />
-				
+				<aon:valueParam name="skipBackButton" default="false" />
+				<aon:methodParam name="backAction" value="auxiliares" />
 			</ui:include>
+			
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 

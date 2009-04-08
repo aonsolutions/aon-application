@@ -14,13 +14,14 @@
 	<ui:define name="content">
 
 		<aon:form id="cnaeMaestroList">
-		
-				<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+
+			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_cotizacion__cnae}" />
 				<ui:param name="controller" value="#{cnaeMaestro}" />
+				<aon:valueParam name="skipBackButton" default="false" />
+				<aon:methodParam name="backAction" value="auxiliares" />
 			</ui:include>
-
-
+			
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 

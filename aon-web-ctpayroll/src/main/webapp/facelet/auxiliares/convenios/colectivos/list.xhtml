@@ -15,19 +15,15 @@
 
 		<aon:form id="convenioList">
 			
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_convenios__convenio}" />
 				<ui:param name="controller" value="#{convenio}" />
-				
-				<ui:define name="additionalToolbarContent">
-					<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-						<ui:param name="controller" value="#{convenio}"/>
-						<ui:param name="reportKey" value=""/>
-						<ui:param name="reportKeyXls" value=""/>
-					</ui:include>	
-				</ui:define>
-			</ui:decorate>
-
+				<ui:param name="reportKey" value=""/>
+				<ui:param name="reportKeyXls" value=""/>
+				<aon:valueParam name="skipBackButton" default="false" />
+				<aon:methodParam name="backAction" value="auxiliares" />
+			</ui:include>
+			
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 

@@ -26,11 +26,11 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div>
-								<aon:commandLink id="naciones" action="nacion_form"
+								<aon:commandLink id="naciones" action="nacion_search"
 									value="#{menuBundle.auxiliares_geograficas__nacion}" />
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="pais" action="pais_form"
+								<aon:commandLink id="pais" action="pais_search"
 									value="#{menuBundle.auxiliares_geograficas__paicopro}"  >
 									<aon:actionListener method="#{pais.onEditSearch}" />
 									<aon:actionListener method="#{pais.onSearch}" />
@@ -45,7 +45,7 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div>
-								<aon:commandLink id="contratosTc2" action="contratosTc2_form"
+								<aon:commandLink id="contratosTc2" action="contratosTc2_search"
 										value="#{menuBundle.auxiliares_contratos__tipcotc2}" >
 									<aon:actionListener method="#{contratosTc2.onEditSearch}" />
 									<aon:actionListener method="#{contratosTc2.onSearch}" />
@@ -53,7 +53,7 @@
 								</aon:commandLink>
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="contratosInternos" action="contratosInternos_form"
+								<aon:commandLink id="contratosInternos" action="contratosInternos_search"
 										value="#{menuBundle.auxiliares_contratos__tipocont}" >
 									<aon:actionListener method="#{contratosInternos.onEditSearch}" />
 									<aon:actionListener method="#{contratosInternos.onSearch}" />
@@ -69,7 +69,7 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div>
-								<aon:commandLink id="porcentajeMaestro" action="porcentajeMaestro_form"
+								<aon:commandLink id="porcentajeMaestro" action="porcentajeMaestro_search"
 										value="#{menuBundle.auxiliares_cotizacion__porcoti}"  >
 									<aon:actionListener method="#{porcentajeMaestro.onEditSearch}" />
 									<aon:actionListener method="#{porcentajeMaestro.onSearch}" />
@@ -77,7 +77,7 @@
 								</aon:commandLink>
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="baseMaestro" action="baseMaestro_form"
+								<aon:commandLink id="baseMaestro" action="baseMaestro_search"
 										value="#{menuBundle.auxiliares_cotizacion__cotizaciones}" >
 								    <aon:actionListener method="#{baseMaestro.onEditSearch}" />
 									<aon:actionListener method="#{baseMaestro.onSearch}" />
@@ -85,7 +85,7 @@
 								</aon:commandLink>							
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="elementoMaestro" action="elementoMaestro_form"
+								<aon:commandLink id="elementoMaestro" action="elementoMaestro_search"
 										value="#{menuBundle.auxiliares_cotizacion__elemcotizacion}"   >
 									<aon:actionListener method="#{elementoMaestro.onEditSearch}" />
 									<aon:actionListener method="#{elementoMaestro.onSearch}" />
@@ -93,7 +93,7 @@
 								</aon:commandLink>							
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="ocupacionMaestro" action="ocupacionMaestro_form"
+								<aon:commandLink id="ocupacionMaestro" action="ocupacionMaestro_search"
 										value="#{menuBundle.auxiliares_cotizacion__ocupacion}"  >
 									<aon:actionListener method="#{ocupacionMaestro.onEditSearch}" />
 									<aon:actionListener method="#{ocupacionMaestro.onSearch}" />
@@ -101,7 +101,7 @@
 								</aon:commandLink>							
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="cnae_form" action="cnaeMaestro_form"
+								<aon:commandLink id="cnae_form" action="cnaeMaestro_search"
 										value="#{menuBundle.auxiliares_cotizacion__cnae}" >
 									<aon:actionListener method="#{cnaeMaestro.onEditSearch}" />
 									<aon:actionListener method="#{cnaeMaestro.onSearch}" />
@@ -109,7 +109,7 @@
 								</aon:commandLink>							
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="cnae2009_form" action="cnae2009Maestro_form"
+								<aon:commandLink id="cnae2009_form" action="cnae2009Maestro_search"
 										value="#{menuBundle.auxiliares_cotizacion__cnae2009}">
 									<aon:actionListener method="#{cnae2009Maestro.onEditSearch}" />
 									<aon:actionListener method="#{cnae2009Maestro.onSearch}" />
@@ -118,11 +118,11 @@
 							</aon:div>
 							
 							<aon:div>
-								<aon:commandLink id="cotizacion_Bonificacion" action="cotizacionBonificacion_form"
+								<aon:commandLink id="cotizacion_Bonificacion" action="cotizacionBonificacion_search"
 									value="#{menuBundle.auxiliares_cotizacion__tipboni}" />
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="epigrafeMaestro" action="epigrafeMaestro_form"
+								<aon:commandLink id="epigrafeMaestro" action="epigrafeMaestro_search"
 									value="#{menuBundle.auxiliares_cotizacion__epigrafes}" > 
 								    <aon:actionListener method="#{epigrafeMaestro.onEditSearch}" />
 									<aon:actionListener method="#{epigrafeMaestro.onSearch}" />
@@ -138,35 +138,35 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div>
-								<aon:commandLink id="tiposDocumento" action="tiposDocumento_form"
+								<aon:commandLink id="tiposDocumento" action="tiposDocumento_search"
 									value="#{menuBundle.auxiliares_tipos__tipdoc}" />
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="tiposEmpresario" action="tiposEmpresario_form"
+								<aon:commandLink id="tiposEmpresario" action="tiposEmpresario_search"
 									value="#{menuBundle.auxiliares_tipos__tipempr}" />
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="tiposIncidencia" action="tiposIncidencia_form"
+								<aon:commandLink id="tiposIncidencia" action="tiposIncidencia_search"
 									value="#{menuBundle.auxiliares_tipos__tipinc}" />
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="tiposRegistro" action="tiposRegistro_form"
+								<aon:commandLink id="tiposRegistro" action="tiposRegistro_search"
 									value="#{menuBundle.auxiliares_tipos__tipreg}" />
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="tiposVia" action="tiposVia_form"
+								<aon:commandLink id="tiposVia" action="tiposVia_search"
 									value="#{menuBundle.auxiliares_tipos__tipovia}" />
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="tiposAutorizacion" action="tiposAutorizacion_form"
+								<aon:commandLink id="tiposAutorizacion" action="tiposAutorizacion_search"
 									value="#{menuBundle.auxiliares_tipos__tipaut}" />
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="tiposCnae" action="tiposCnae_form"
+								<aon:commandLink id="tiposCnae" action="tiposCnae_search"
 									value="#{menuBundle.auxiliares_tipos__tipocnae}"/>
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="tiposCnae2009" action="tiposCnae2009_form"
+								<aon:commandLink id="tiposCnae2009" action="tiposCnae2009_search"
 									value="#{menuBundle.auxiliares_tipos__tipocnae2009}"/>
 							</aon:div>
 						</aon:div>
@@ -190,7 +190,7 @@
 								</aon:commandLink>
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="complemento" action="complemento_form"
+								<aon:commandLink id="complemento" action="complemento_search"
 									value="#{menuBundle.auxiliares_convenios__complemento}" >
 									<aon:actionListener method="#{complemento.onEditSearch}" />
 									<aon:actionListener method="#{complemento.onSearch}" />
@@ -198,7 +198,7 @@
 								</aon:commandLink>
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="convenio" action="convenio_form"
+								<aon:commandLink id="convenio" action="convenio_search"
 									value="#{menuBundle.auxiliares_convenios__convenio}" >
 									<aon:actionListener method="#{convenio.onEditSearch}" />
 									<aon:actionListener method="#{convenio.onSearch}" />
@@ -214,7 +214,7 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div>
-								<aon:commandLink id="irpfMaestro" action="irpfMaestro_form"
+								<aon:commandLink id="irpfMaestro" action="irpfMaestro_search"
 									value="#{menuBundle.auxiliares_irpf__datosirpf}" >
 									<aon:actionListener method="#{irpfMaestro.onEditSearch}" />
 									<aon:actionListener method="#{irpfMaestro.onSearch}" />
@@ -222,11 +222,11 @@
 								</aon:commandLink>
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="irpf_cuotas" action="cuotas_form"
+								<aon:commandLink id="irpf_cuotas" action="cuotas_search"
 									value="#{menuBundle.auxiliares_irpf__cuota}" />							
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="irpf_exclusion" action="exclusion_form"
+								<aon:commandLink id="irpf_exclusion" action="exclusion_search"
 									value="#{menuBundle.auxiliares_irpf__exclusion}" />							
 							</aon:div>
 						</aon:div>
@@ -238,7 +238,7 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div>
-								<aon:commandLink id="divisaMaestro" action="divisaMaestro_form"
+								<aon:commandLink id="divisaMaestro" action="divisaMaestro_search"
 									value="#{menuBundle.auxiliares_divisas__divisa}" >
 									<aon:actionListener method="#{divisaMaestro.onEditSearch}" />
 									<aon:actionListener method="#{divisaMaestro.onSearch}" />
@@ -254,7 +254,7 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div>
-								<aon:commandLink id="sistemaRed_colectivos" action="sistemaRedColectivos_form"
+								<aon:commandLink id="sistemaRed_colectivos" action="sistemaRedColectivos_search"
 									value="#{menuBundle.auxiliares_sistema_red__colectivos}" />							
 							</aon:div>
 						</aon:div>
@@ -266,35 +266,35 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div>
-								<aon:commandLink id="CuotaRetencionAlava" action="cuotaRetencionAlava_form"
+								<aon:commandLink id="CuotaRetencionAlava" action="cuotaRetencionAlava_search"
 									value="#{menuBundle.auxiliares_irpf_foral__cuota_01}" />
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="MinoracionesAlava" action="minoracionesAlava_form"
+								<aon:commandLink id="MinoracionesAlava" action="minoracionesAlava_search"
 									value="#{menuBundle.auxiliares_irpf_foral__minor_01}" />
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="CuotaRetencionGuipuzcoa" action="cuotaRetencionGuipuzcoa_form"
+								<aon:commandLink id="CuotaRetencionGuipuzcoa" action="cuotaRetencionGuipuzcoa_search"
 									value="#{menuBundle.auxiliares_irpf_foral__cuota_20}" />
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="MinoracionesGuipuzcoa" action="minoracionesGuipuzcoa_form"
+								<aon:commandLink id="MinoracionesGuipuzcoa" action="minoracionesGuipuzcoa_search"
 									value="#{menuBundle.auxiliares_irpf_foral__minor_20}" />
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="CuotaRetencionVizcaya" action="cuotaRetencionVizcaya_form"
+								<aon:commandLink id="CuotaRetencionVizcaya" action="cuotaRetencionVizcaya_search"
 									value="#{menuBundle.auxiliares_irpf_foral__cuota_48}" />
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="MinoracionesVizcaya" action="minoracionesVizcaya_form"
+								<aon:commandLink id="MinoracionesVizcaya" action="minoracionesVizcaya_search"
 									value="#{menuBundle.auxiliares_irpf_foral__minor_48}" />
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="CuotaRetencionNavarra" action="cuotaRetencionNavarra_form"
+								<aon:commandLink id="CuotaRetencionNavarra" action="cuotaRetencionNavarra_search"
 									value="#{menuBundle.auxiliares_irpf_foral__cuota_31}" />
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="MinoracionesNavarra" action="minoracionesNavarra_form"
+								<aon:commandLink id="MinoracionesNavarra" action="minoracionesNavarra_search"
 									value="#{menuBundle.auxiliares_irpf_foral__minor_31}" />
 							</aon:div>
 						</aon:div>
@@ -306,7 +306,7 @@
 						</f:facet>
 						<aon:div styleClass="aon-direct-access-list">
 							<aon:div>
-								<aon:commandLink id="entidadMaestro_form" action="entidadMaestro_form"
+								<aon:commandLink id="entidadMaestro_form" action="entidadMaestro_search"
 									value="#{menuBundle.auxiliares_organismos_entidades__entidsucur}" >
 									<aon:actionListener method="#{entidadMaestro.onEditSearch}" />
 									<aon:actionListener method="#{entidadMaestro.onSearch}" />
@@ -314,11 +314,11 @@
 								</aon:commandLink>
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="admon" action="admon_form"
+								<aon:commandLink id="admon" action="admon_search"
 									value="#{menuBundle.auxiliares_organismos_entidades__admon}" />
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="mutuaMaestro" action="mutuaMaestro_form"
+								<aon:commandLink id="mutuaMaestro" action="mutuaMaestro_search"
 									value="#{menuBundle.auxiliares_organismos_entidades__mutua}" >
 									<aon:actionListener method="#{mutuaMaestro.onEditSearch}" />
 									<aon:actionListener method="#{mutuaMaestro.onSearch}" />
@@ -326,7 +326,7 @@
 								</aon:commandLink>
 							</aon:div>
 							<aon:div>
-								<aon:commandLink id="delegacion" action="delegacion_form"
+								<aon:commandLink id="delegacion" action="delegacion_search"
 									value="#{menuBundle.auxiliares_organismos_entidades__delegacion}" >
 									<aon:actionListener method="#{delegacion.onEditSearch}" />
 									<aon:actionListener method="#{delegacion.onSearch}" />

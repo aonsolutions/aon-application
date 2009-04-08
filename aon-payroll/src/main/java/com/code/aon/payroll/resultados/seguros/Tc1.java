@@ -115,7 +115,7 @@ public class Tc1  implements ITransferObject {
 
    
      public Tc1() {
-    	 numtra=0;
+    	 numtra=new Integer(0);
     	 baseConcom= new BigDecimal(0);
          prcConcom= new BigDecimal(0);
          cuotaConcom= new BigDecimal(0);

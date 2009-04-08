@@ -253,7 +253,9 @@
 						y="3"
 						width="68"
 						height="14"
-						key="textField-8"/>
+						key="textField-8">
+							<printWhenExpression><![CDATA[new Boolean(((Calendar.getInstance().getTime()).after($F{id}.getFecini())) && ((Calendar.getInstance().getTime()).before($F{fecfin})))]]></printWhenExpression>
+						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
@@ -266,7 +268,9 @@
 						y="3"
 						width="84"
 						height="14"
-						key="textField-12"/>
+						key="textField-12">
+							<printWhenExpression><![CDATA[new Boolean(((Calendar.getInstance().getTime()).after($F{id}.getFecini())) && ((Calendar.getInstance().getTime()).before($F{fecfin})))]]></printWhenExpression>
+						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
@@ -279,7 +283,9 @@
 						y="3"
 						width="91"
 						height="14"
-						key="textField-17"/>
+						key="textField-17">
+							<printWhenExpression><![CDATA[new Boolean(((Calendar.getInstance().getTime()).after($F{id}.getFecini())) && ((Calendar.getInstance().getTime()).before($F{fecfin})))]]></printWhenExpression>
+						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
@@ -292,7 +298,9 @@
 						y="3"
 						width="119"
 						height="14"
-						key="textField-19"/>
+						key="textField-19">
+							<printWhenExpression><![CDATA[new Boolean(((Calendar.getInstance().getTime()).after($F{id}.getFecini())) && ((Calendar.getInstance().getTime()).before($F{fecfin})))]]></printWhenExpression>
+						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
@@ -305,7 +313,9 @@
 						y="3"
 						width="82"
 						height="14"
-						key="textField-48"/>
+						key="textField-48">
+							<printWhenExpression><![CDATA[new Boolean(((Calendar.getInstance().getTime()).after($F{id}.getFecini())) && ((Calendar.getInstance().getTime()).before($F{fecfin})))]]></printWhenExpression>
+						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>

@@ -16,9 +16,11 @@
 				
 	            <ui:include src="/facelet/templates/gridPrintToolbar.xhtml" >
 					<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_auxiliares_irpf__exclusion}" />
-						<ui:param name="controller" value="#{exclusion}"/>
-						<ui:param name="reportKey" value="irpfExclusionList"/>
+					<ui:param name="controller" value="#{exclusion}"/>
+					<ui:param name="reportKey" value="irpfExclusionList"/>
 					<aon:valueParam name="skipSearchButton" default="false"/>
+					<aon:valueParam name="skipBackButton" default="false" />
+					<aon:methodParam name="backAction" value="auxiliares" />
 		      	</ui:include>	
 	
 				<!-- region-body -->
