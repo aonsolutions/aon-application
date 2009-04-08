@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -36,6 +37,7 @@ import com.code.aon.registry.enumeration.RegistryType;
 @Entity
 @Table(name="registry")
 @Inheritance(strategy=InheritanceType.JOINED )
+@org.hibernate.annotations.Table( appliesTo = "registry", indexes = { @Index(name="IDX_REIGSTRY", columnNames={"name","surname"})})
 public class Registry implements ITransferObject {
 	
 	private static final long serialVersionUID = 8635760095705923309L;
@@ -110,6 +112,7 @@ public class Registry implements ITransferObject {
 	 * @return the document
 	 */
 	@Column(length=16)
+	@Index(name="IDX_REGISTRY_DOCUMENT")
 	public String getDocument() {
 		return document;
 	}

@@ -9,6 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 
@@ -67,6 +69,8 @@ public class RegistryRelationship implements ITransferObject {
 	 */
 	@ManyToOne
 	@JoinColumn(name = "registry", nullable = false)
+	@ForeignKey(name = "FK_RRELATIONSHIP_REGISTRY")
+	@Index(name = "IDX_RRELATIONSHIP_REGISTRY")
 	public Registry getRegistry() {
 		return registry;
 	}
@@ -88,6 +92,8 @@ public class RegistryRelationship implements ITransferObject {
 	 */
 	@ManyToOne
 	@JoinColumn(name = "related_registry", nullable = false)
+	@ForeignKey(name = "FK_RRELATIONSHIP_RELATED_REGISTRY")
+	@Index(name = "IDX_RRELATIONSHIP_RELATED_REGISTRY")
 	public Registry getRelatedRegistry() {
 		return relatedRegistry;
 	}
@@ -108,7 +114,9 @@ public class RegistryRelationship implements ITransferObject {
 	 * @return the type of the relationship
 	 */
 	@ManyToOne
-	@JoinColumn(name = "relationship")
+	@JoinColumn(name = "relationship", nullable = false)
+	@ForeignKey(name = "FK_RRELATIONSHIP_RELATIONSHIP")
+	@Index(name = "IDX_RRELATIONSHIP_RELATIONSHIP")
 	public Relationship getRelationship() {
 		return relationship;
 	}

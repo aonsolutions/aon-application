@@ -9,8 +9,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 
@@ -59,6 +63,8 @@ public class RecordData implements ITransferObject {
 
 	@ManyToOne
 	@JoinColumn(name="registry", nullable=false)
+	@ForeignKey(name = "FK_RECORD_DATA_REGISTRY")
+	@Index(name = "IDX_RECORD_DATA_REGISTRY")
 	public Registry getRegistry() {
 		return registry;
 	}
@@ -68,6 +74,7 @@ public class RecordData implements ITransferObject {
 	}
 
 	@Column(name="creation_date")
+	@Temporal(TemporalType.DATE)
 	public Date getCreationDate() {
 		return creationDate;
 	}
@@ -104,6 +111,7 @@ public class RecordData implements ITransferObject {
 	}
 
 	@Column(name="record_date")
+	@Temporal(TemporalType.DATE)
 	public Date getRecordDate() {
 		return recordDate;
 	}
@@ -159,6 +167,8 @@ public class RecordData implements ITransferObject {
 
 	@ManyToOne
 	@JoinColumn(name="attach")
+	@ForeignKey(name = "FK_RECORD_DATA_ATTACH")
+	@Index(name = "IDX_RECORD_DATA_ATTACH")
 	public RegistryAttachment getAttach() {
 		return attach;
 	}

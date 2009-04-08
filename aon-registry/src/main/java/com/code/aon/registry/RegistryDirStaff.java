@@ -9,8 +9,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 
@@ -55,6 +59,8 @@ public class RegistryDirStaff implements ITransferObject {
 
 	@ManyToOne
 	@JoinColumn(name="registry", nullable=false)
+	@ForeignKey(name = "FK_RDIR_STAFF_REGISTRY")
+	@Index(name = "IDX_RDIR_STAFF_REGISTRY")
 	public Registry getRegistry() {
 		return registry;
 	}
@@ -126,7 +132,7 @@ public class RegistryDirStaff implements ITransferObject {
 		this.shareNumber = shareNumber;
 	}
 
-	@Column(name="nominal_value")
+	@Column(name="nominal_value", precision = 15, scale = 3)
 	public double getNominalValue() {
 		return nominalValue;
 	}
@@ -136,6 +142,7 @@ public class RegistryDirStaff implements ITransferObject {
 	}
 
 	@Column(name="due_date")
+	@Temporal(TemporalType.DATE)
 	public Date getDueDate() {
 		return dueDate;
 	}

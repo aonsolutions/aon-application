@@ -9,7 +9,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
@@ -86,6 +88,8 @@ public class RegistryAttachment implements IAttachment {
      */
     @ManyToOne
     @JoinColumn(name="registry", nullable = false, updatable = false)    
+    @ForeignKey(name = "FK_RATTACH_REGISTRY")
+    @Index(name = "IDX_RATTACH_REGISTRY")
 	public Registry getRegistry() {
         return this.registry;
     }
@@ -106,6 +110,8 @@ public class RegistryAttachment implements IAttachment {
      */
     @ManyToOne
     @JoinColumn(name="category")    
+    @ForeignKey(name = "FK_RATTACH_CATEGORY")
+    @Index(name = "IDX_RATTACH_CATEGORY")
     public Category getCategory() {
         return this.category;
     }

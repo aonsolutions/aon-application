@@ -9,6 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.geozone.GeoZone;
@@ -87,6 +89,8 @@ public class RegistryAddress implements ITransferObject, IAddress {
      */
     @ManyToOne
     @JoinColumn(name="registry", nullable = false, updatable = false)    
+    @ForeignKey(name = "FK_RADDRESS_REGISTRY")
+    @Index(name = "IDX_RADDRESS_REGISTRY")
     public Registry getRegistry() {
         return registry;
     }
@@ -162,7 +166,7 @@ public class RegistryAddress implements ITransferObject, IAddress {
      * 
      * @return the address type
      */
-    @Column(name="type")
+    @Column(name="type", nullable = false)
     public AddressType getAddressType() {
         return type;
     }
@@ -202,6 +206,8 @@ public class RegistryAddress implements ITransferObject, IAddress {
 	 */
 	@ManyToOne
     @JoinColumn( name="geozone" )
+    @ForeignKey(name = "FK_RADDRESS_GEOZONE")
+    @Index(name = "IDX_RADDRESS_GEOZONE")
     public GeoZone getGeozone() {
         return geozone;
     }

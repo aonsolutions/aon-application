@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.PayMethod;
@@ -83,6 +85,8 @@ public class RegistryPayMethod implements ITransferObject {
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="registry", nullable = false)
+    @ForeignKey(name = "FK_RPAYMETHOD_REGISTRY")
+    @Index(name = "IDX_RPAYMETHOD_REGISTRY")
     public Registry getRegistry() {
         return registry;
     }
@@ -141,6 +145,8 @@ public class RegistryPayMethod implements ITransferObject {
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="pay_method", nullable = false)
+    @ForeignKey(name = "FK_RPAYMETHOD_PAY_METHOD")
+    @Index(name = "IDX_RPAYMETHOD_PAY_METHOD")
     public PayMethod getPayment() {
         return payment;
     }
@@ -161,6 +167,8 @@ public class RegistryPayMethod implements ITransferObject {
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="rbank")
+    @ForeignKey(name = "FK_RPAYMETHOD_RBANK")
+    @Index(name = "IDX_RPAYMETHOD_RBANK")
     public RegistryBank getRegistryBank() {
         return rBank;
     }
