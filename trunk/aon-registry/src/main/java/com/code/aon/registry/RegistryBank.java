@@ -12,6 +12,8 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
@@ -72,7 +74,7 @@ public class RegistryBank implements ITransferObject,IBankAccountContainer {
      * 
      * @return the bank account
      */
-    @Column(name = "bank_account")
+    @Column(name = "bank_account", length = 30)
     @Type(type="com.code.aon.config.hibernate.BankAccountType")
     public BankAccount getBankAccount() {
         return bankAccount;
@@ -94,6 +96,8 @@ public class RegistryBank implements ITransferObject,IBankAccountContainer {
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="bank", nullable = false)
+    @ForeignKey(name = "FK_RBANK_BANK")
+    @Index(name = "IDX_RBANK_BANK")
     public Bank getBank() {
         return bank;
     }
@@ -114,6 +118,8 @@ public class RegistryBank implements ITransferObject,IBankAccountContainer {
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="registry", nullable = false)
+    @ForeignKey(name = "FK_RBANK_REGISTRY")
+    @Index(name = "IDX_RBANK_REGISTRY")
     public Registry getRegistry() {
         return registry;
     }

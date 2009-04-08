@@ -9,6 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.registry.enumeration.MediaType;
@@ -68,6 +70,8 @@ public class RegistryMedia implements ITransferObject {
      */
     @ManyToOne
     @JoinColumn(name="registry", nullable = false, updatable = false)    
+	@ForeignKey(name = "FK_RMEDIA_REGISTRY")
+	@Index(name = "IDX_RMEDIA_REGISTRY")    
     public Registry getRegistry() {
         return this.registry;
     }
@@ -86,7 +90,7 @@ public class RegistryMedia implements ITransferObject {
      * 
      * @return the media type
      */
-    @Column(name="media")
+    @Column(name="media", nullable = false)
     public MediaType getMediaType() {
         return media;
     }

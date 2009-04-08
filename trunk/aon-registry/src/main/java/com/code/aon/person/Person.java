@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
@@ -98,6 +100,7 @@ public class Person implements ITransferObject {
 	 * @return the birth date
 	 */
 	@Column(name="birth_date")
+	@Temporal(TemporalType.DATE)
 	public Date getBirthDate() {
 		return birthDate;
 	}
