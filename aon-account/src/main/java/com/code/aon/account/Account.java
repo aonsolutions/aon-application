@@ -50,7 +50,7 @@ public class Account implements ITransferObject {
 	 * @return The ID of this account
 	 */
 	@Id
-	@Column(nullable = false)
+	@Column(nullable = false, length = 12)
 	public String getId() {
 		return id;
 	}
@@ -111,6 +111,7 @@ public class Account implements ITransferObject {
 	 * @return <code>true</code> if account entries are enabled,
 	 *         <code>false</code> otherwise.
 	 */
+	@Column(nullable = true)
 	public boolean isEntryEnabled() {
 		return entryEnabled;
 	}
