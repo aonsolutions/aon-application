@@ -42,7 +42,7 @@ public class Series implements ITransferObject {
 		this.description = description;
 	}
 
-	@Column(name="security_level")
+	@Column(name="security_level", nullable = false)
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}

@@ -55,7 +55,7 @@ public class PayMethod implements ITransferObject{
 	 * 
 	 * @return the name
 	 */
-	@Column(name = "name", nullable = false)
+	@Column(name = "name", length = 32, nullable = false)
 	public String getName() {
 		return name;
 	}
@@ -74,7 +74,7 @@ public class PayMethod implements ITransferObject{
 	 * 
 	 * @return the type
 	 */
-	@Column(name = "type")
+	@Column(name = "type", nullable = false)
 	public PayMethodType getType() {
 		return type;
 	}

@@ -78,6 +78,7 @@ public class User implements ITransferObject{
 		this.validate = validate;
 	}
 
+	@Column(length = 128)
 	public String getAon_key() {
 		return aon_key;
 	}
