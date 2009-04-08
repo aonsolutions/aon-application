@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -152,6 +154,7 @@ public class Tax implements ITransferObject{
      * 
      * @return percentage.
      */
+    @Column(nullable = false, precision = 15, scale = 3)
     public double getPercentage() {
         return percentage;
     }
@@ -172,6 +175,7 @@ public class Tax implements ITransferObject{
      * @return the surcharge.
      * @hibernate.property 
      */
+    @Column(precision = 15, scale = 3)
     public double getSurcharge() {
         return surcharge;
     }
@@ -192,6 +196,7 @@ public class Tax implements ITransferObject{
      * @return  the top date for this tax to be applied.
      */
     @Column(name="start_date")
+    @Temporal(TemporalType.DATE)
     public Date getStartDate() {
         return startDate;
     }

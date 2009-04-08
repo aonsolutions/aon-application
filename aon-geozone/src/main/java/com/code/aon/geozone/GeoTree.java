@@ -12,6 +12,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 
@@ -58,6 +60,8 @@ public class GeoTree implements ITransferObject {
 	 */
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="parent")
+    @ForeignKey(name = "FK_GEOTREE_PARENT")
+    @Index(name = "IDX_GEOTREE_PARENT")        
 	public GeoZone getParent() {
 		return parent;
 	}
@@ -79,7 +83,9 @@ public class GeoTree implements ITransferObject {
     @OneToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	@org.hibernate.annotations.Cascade(value={org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE})
 	@ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="child")
+    @JoinColumn(name="child", nullable = false)
+    @ForeignKey(name = "FK_GEOTREE_CHILD")
+    @Index(name = "IDX_GEOTREE_CHILD")    
     public GeoZone getChild() {
 		return child;
 	}

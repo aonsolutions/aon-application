@@ -9,8 +9,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 
@@ -85,6 +89,8 @@ public class TaxDetail implements ITransferObject {
      */
 	@ManyToOne
     @JoinColumn(name="tax", nullable=false)
+    @ForeignKey(name = "FK_TAX_DETAIL_TAX")
+    @Index(name = "IDX_TAX_DETAIL_TAX")    
 	public Tax getTax() {
 		return tax;
 	}
@@ -105,6 +111,7 @@ public class TaxDetail implements ITransferObject {
      * @return startDate.
      */
 	@Column(name="start_date")
+	@Temporal(TemporalType.DATE)
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -125,6 +132,7 @@ public class TaxDetail implements ITransferObject {
      * @return endDate.
      */
 	@Column(name="end_date")
+	@Temporal(TemporalType.DATE)
 	public Date getEndDate() {
 		return endDate;
 	}
@@ -144,7 +152,7 @@ public class TaxDetail implements ITransferObject {
      * 
      * @return value.
      */
-	@Column(name="value")
+	@Column(name="value",precision = 15, scale = 3)
 	public double getValue() {
 		return value;
 	}
@@ -164,7 +172,7 @@ public class TaxDetail implements ITransferObject {
      * 
      * @return surcharge.
      */
-	@Column(name="surcharge")
+	@Column(name="surcharge",precision = 15, scale = 3)
 	public double getSurcharge() {
 		return surcharge;
 	}
