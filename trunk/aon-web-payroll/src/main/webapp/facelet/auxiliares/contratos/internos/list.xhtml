@@ -14,11 +14,14 @@
 	<ui:define name="content">
 
 		<aon:form id="contratosInternosList">
-		
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_contratos__tipocont}" />
+			
+			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_contratos__tipocont}" />				
 				<ui:param name="controller" value="#{contratosInternos}" />
-			</ui:include>	
+				<ui:param name="reportKey" value="contratosInternosList"/>
+				<aon:valueParam name="skipBackButton" default="false" />
+				<aon:methodParam name="backAction" value="auxiliares" />
+			</ui:include>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">

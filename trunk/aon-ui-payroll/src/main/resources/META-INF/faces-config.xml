@@ -35,7 +35,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Documento_cdg</value>
+			<value>Documento_description</value>
 		</managed-property>
 	</managed-bean>
 
@@ -60,7 +60,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Registro_cdg</value>
+			<value>Registro_description</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -87,6 +87,10 @@
 			<property-name>beanName</property-name>
 			<value>tiposIncidencia</value>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Incidencia_description</value>
+		</managed-property>
 	</managed-bean>
 
 	<!-- ************* TIPOS DE AUTORIZACION ***************** -->
@@ -112,6 +116,10 @@
 			<property-name>beanName</property-name>
 			<value>tiposAutorizacion</value>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Autorizacion_description</value>
+		</managed-property>
 	</managed-bean>
 
 	<!-- ************* TIPOS DE EMPRESARIOS ***************** -->
@@ -128,6 +136,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.tipos.Empresario</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Empresario_description</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -158,6 +170,10 @@
 			<property-name>beanName</property-name>
 			<value>tiposCnae</value>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>TipoCnae_description</value>
+		</managed-property>
 	</managed-bean>
 
 	<!-- ************* TIPOS DE CNAE2009 ***************** -->
@@ -183,6 +199,10 @@
 			<property-name>beanName</property-name>
 			<value>tiposCnae2009</value>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>TipoCnae2009_description</value>
+		</managed-property>
 	</managed-bean>
 
 	<!-- ************* COTIZACIONES - BONIFICACION ***************** -->
@@ -203,6 +223,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.cotizacion.Bonificacion</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Bonificacion_description</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -239,6 +263,10 @@
 			<value>com.code.aon.payroll.auxiliares.Admon</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Admon_description</value>
+		</managed-property>
+		<managed-property>
 			<property-name>beanName</property-name>
 			<value>admon</value>
 		</managed-property>
@@ -262,6 +290,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.auxiliares.Colectivos</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Colectivos_description</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -305,7 +337,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Tipovia_cdg</value>
+			<value>Tipovia_description</value>
 		</managed-property>
 	</managed-bean>
 
@@ -327,6 +359,10 @@
 			</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Delegacion_description</value>
+		</managed-property>
+		<managed-property>
 			<property-name>beanName</property-name>
 			<value>delegacion</value>
 		</managed-property>
@@ -338,10 +374,6 @@
 				</value-class>
 				<value>#{DelegacionControllerListener}</value>
 			</list-entries>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Delegacion_cdg</value>
 		</managed-property>
 	</managed-bean>
 
@@ -591,7 +623,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Nacion_cdg</value>
+			<value>Nacion_description</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -832,6 +864,10 @@
 			<value>epigrafeMaestro</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Epigrafe_description</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>
@@ -955,6 +991,10 @@
 			<value>com.code.aon.payroll.divisa.Divisa</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Divisa_description</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>
@@ -1016,6 +1056,7 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.divisa.LinDivisa</value>
 		</managed-property>
+		
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
@@ -1075,7 +1116,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>PorcentajeMaestro_ordpct</value>
+			<value>PorcentajeMaestro_description</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1196,6 +1237,12 @@
 			<property-name>beanName</property-name>
 			<value>baseMaestro</value>
 		</managed-property>
+		<!--  
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Base_description</value>
+		</managed-property>
+		-->
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.cotizacion.Base</value>
@@ -1317,7 +1364,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>ContratosInternos_cdg</value>
+			<value>ContratosInternos_description</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1362,7 +1409,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>ContratosTc2_cdg</value>
+			<value>ContratosTc2_description</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1675,7 +1722,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Complemento_cdg</value>
+			<value>Complemento_description</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1719,7 +1766,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>ElementoMaestro_cdg</value>
+			<value>ElementoMaestro_description</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1847,7 +1894,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>OcupacionMaestro_cdg DESC</value>
+			<value>OcupacionMaestro_description</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1973,7 +2020,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>CnaeMaestro_cdg</value>
+			<value>CnaeMaestro_description</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -2099,7 +2146,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Cnae2009Maestro_cdg</value>
+			<value>Cnae2009Maestro_description</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -2227,7 +2274,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Convenio_cdg</value>
+			<value>Convenio_description</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -2616,6 +2663,10 @@
 			<value>entidadMaestro</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Entidad_description</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>
@@ -2704,6 +2755,10 @@
 			<value>
 				com.code.aon.payroll.auxiliares.organismosyentidades.Mutua
 			</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Mutua_description</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -2808,6 +2863,10 @@
 				</value-class>
 				<value>#{irpfListener}</value>
 			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Elemirpf_description</value>
 		</managed-property>
 	</managed-bean>
 

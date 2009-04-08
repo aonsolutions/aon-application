@@ -75,103 +75,78 @@ public class OtrpercepController extends LinesController {
 	}
 
 	@Override
-	   public void onEditSearch(ActionEvent arg0) {
-		   super.onEditSearch(arg0);
-		   
+	public void onEditSearch(ActionEvent arg0) {
 	       setPersona( new Persona() );
 		   setEmpresa( new Empresa() );
-		
-		  
-
+		   super.onEditSearch(arg0);
 	}
+
 	@Override
 	public void onSearch(ActionEvent event) {
-		
-
+	
 		try {
-			if   (empresa.getCdg() != null)  {
+			if (empresa.getCdg() != null)  {
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.OTRPERC_EMPRESA_CDG), getEmpresa().getCdg());
 			}
-			if   (persona.getCdg() != null) {
+			if (persona.getCdg() != null) {
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.OTRPERC_PERSONA_CDG), getPersona().getCdg());
 			}
 		     
-		    if    (fecha != null){
-					getCriteria().addEqualExpression(getFieldName(IPayrollAlias.OTRPERC_FECHA), getFecha());
-				}
-		    
-		
+		    if (fecha != null){
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.OTRPERC_FECHA), getFecha());
+			}
 		} catch (ManagerBeanException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
 		super.onSearch(event);
 	}
-
 
 	public Date getFecha() {
 		return fecha;
 	}
 
-
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
 	}
-
 
 	public Persona getPersona() {
 		return persona;
 	}
 
-
 	public void setPersona(Persona persona) {
 		this.persona = persona;
 	}
-
 
 	public Empresa getEmpresa() {
 		return empresa;
 	}
 
-
 	public void setEmpresa(Empresa empresa) {
 		this.empresa = empresa;
 	}
-
-
 	
 	Integer code ;
     public Integer getCode() throws ManagerBeanException {	
-    	
-    	
-	       	code = 0;		
-			String consulta = "select max(cdg) from Otrperc";			
-			Query q = HibernateUtil.getSession().createQuery(consulta);			
-			List results = q.list();
-			System.out.println("Max Code: " + results.get(0));   
-			code= (Integer)results.get(0) +1;
-			System.out.println("New Code: " + code);
-			return code;		      
-	     				
-		}
+       	code = 0;		
+		String consulta = "select max(cdg) from Otrperc";			
+		Query q = HibernateUtil.getSession().createQuery(consulta);			
+		List results = q.list();
+		System.out.println("Max Code: " + results.get(0));   
+		code= (Integer)results.get(0) +1;
+		System.out.println("New Code: " + code);
+		return code;		      
+	}
+
     public void setCode(Integer code) {
 		this.code = code;
 	}
-
-
 	
 	public void setDefaultFields(){		
 		Otrperc c = (Otrperc)getTo();		
 		c.setClave(Claveper.CLAVE7);
 		c.setNatret(Retribuciones.DINERARIA);
 		c.setIngreso(Ingreso.ING1);
-	
-		
-
 	}
-	
-	
 
 }

@@ -9,11 +9,24 @@
 		<fetch-mode paginated="false" />
 	</default-config>
 
-	<!--  *********  Impresion a PDF de los Porcentajes de Cotización ********* -->
+	<!--  *********  Impresion a PDF de los Porcentajes de Cotización -LISTA- ********* -->
 	<report id="porcentajesCotizacion" description="Listado de Porcentajes de Cotización">
 		<template path="/com/code/aon/ui/payroll/report/porcentajesCotizacion.jasper" />
 		<bean key="com.code.aon.payroll.cotizacion.Porcentaje" />
 		<criteria provider="#{porcentaje}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	<!--  *********  Impresion a PDF de los Porcentajes de Cotización -REGISTRO- ********* -->
+	<report id="porcentajesCotizacionList" description="Listado de Porcentajes de Cotización">
+		<template path="/com/code/aon/ui/payroll/report/porcentajesCotizacion.jasper" />
+		<!--  
+		<bean key="com.code.aon.payroll.cotizacion.Porcentaje" />
+		-->
+		<collection provider="#{porcentajeMaestro}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />
@@ -326,7 +339,7 @@
 		</params>
 	</report>
 	<!--  *********  Impresion a PDF de los Porcentajes de cotizacion  ********* -->
-	<report id="cotizacionPorcentajesList" description="Listado de Porcentajes">
+	<report id="cotizacionPorcentajes" description="Listado de Porcentajes">
 		<template path="/com/code/aon/ui/payroll/report/porcentajesCotizacion.jasper" />
 		<bean key="com.code.aon.payroll.cotizacion.Porcentaje" />
 		<criteria provider="#{porcentaje}" />
@@ -336,11 +349,35 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
+	<report id="cotizacionPorcentajesList" description="Listado de Porcentajes">
+		<template path="/com/code/aon/ui/payroll/report/porcentajesCotizacion.jasper" />
+		<!--  
+		<bean key="com.code.aon.payroll.cotizacion.Porcentaje" />
+		-->
+		<collection provider="#{porcentaje.model}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
 	<!--  *********  Impresion a XLS de los Porcentajes de cotizacion  ********* -->
-	<report id="cotizacionPorcentajesXlsList" description="Listado de Porcentajes">
+	<report id="cotizacionPorcentajesXls" description="Listado de Porcentajes">
 		<template path="/com/code/aon/ui/payroll/report/porcentajesCotizacionXls.jasper" />
 		<bean key="com.code.aon.payroll.cotizacion.Porcentaje" />
 		<criteria provider="#{porcentaje}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	<report id="cotizacionPorcentajesXlsList" description="Listado de Porcentajes">
+		<template path="/com/code/aon/ui/payroll/report/porcentajesCotizacionXls.jasper" />
+		<!--  
+		<bean key="com.code.aon.payroll.cotizacion.Porcentaje" />
+		-->
+		<collection provider="#{porcentajeMaestro.porcentaje}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />
@@ -383,6 +420,26 @@
 	</report>
 	
 			<!--  *********  Impresion a PDF de los Divisas ********* -->
+	<report id="DivisaDetail" description="Listado de Divisas">
+		<template path="/com/code/aon/ui/payroll/report/DivisaDetail.jasper" />
+		<bean key="com.code.aon.payroll.divisa.LinDivisa" />
+		<criteria provider="#{divisa}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	<report id="DivisaDetail2" description="Listado de Divisas">
+		<template path="/com/code/aon/ui/payroll/report/DivisaDetail2.jasper" />
+		<bean key="com.code.aon.payroll.divisa.LinDivisa" />
+		<criteria provider="#{divisa}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
 	<report id="DivisaList" description="Listado de Divisas">
 		<template path="/com/code/aon/ui/payroll/report/DivisaList.jasper" />
 		<bean key="com.code.aon.payroll.divisa.LinDivisa" />
@@ -393,8 +450,7 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
-	
-		<report id="DivisaList2" description="Listado de Divisas">
+	<report id="DivisaList2" description="Listado de Divisas">
 		<template path="/com/code/aon/ui/payroll/report/DivisaList2.jasper" />
 		<bean key="com.code.aon.payroll.divisa.LinDivisa" />
 		<criteria provider="#{divisa}" />

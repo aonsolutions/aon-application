@@ -9,14 +9,18 @@ import com.code.aon.ui.payroll.controller.Tc1Controller;
 public class Tc1ControllerListener extends ControllerAdapter implements
 		IPayrollConstants {
 
+	@Override
+	public void beforeBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
 
+		((Tc1Controller) getController()).generateCdg();
 
-@Override
-public void beforeBeanAdded(ControllerEvent event)
-		throws ControllerListenerException {
-	
-	
-	((Tc1Controller)getController()).generateCdg();
-	
-}
+	}
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		// TODO Auto-generated method stub
+		super.beforeBeanUpdated(event);
+	}
 }

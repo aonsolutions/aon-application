@@ -86,5 +86,34 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+	
+	<!--  *************** 
+		PAYROLL CONFIGURATION
+		***************** -->
+	<managed-bean>
+		<managed-bean-name>payrollConfiguration</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PayrollConfigurationController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<!--  
+		<managed-property>
+			<property-name>styleSheets</property-name>
+			<list-entries>
+				<value>#{aonResource.resolveLocal['/aon-richCss.css']}</value>
+				<value>#{aonResource.resolveLocal['/css/payroll.css']}</value>
+			</list-entries>
+		</managed-property>
+		-->
+	</managed-bean>
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 </faces-config>

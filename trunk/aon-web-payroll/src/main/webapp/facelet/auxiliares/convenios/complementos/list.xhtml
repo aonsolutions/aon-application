@@ -14,10 +14,13 @@
 	<ui:define name="content">
 
 		<aon:form id="complementoList">
-			
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_convenios__complemento}" />
+
+			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_convenios__complemento}" />				
 				<ui:param name="controller" value="#{complemento}" />
+				<ui:param name="reportKey" value="convenioComplementoList"/>
+				<aon:valueParam name="skipBackButton" default="false" />
+				<aon:methodParam name="backAction" value="auxiliares" />
 			</ui:include>
 
 			<!--  aon-region-body -->

@@ -29,7 +29,7 @@
 
 	<field name="cdg" class="java.lang.Integer"/>
 	<field name="description" class="java.lang.String"/>
-	<field name="calculo" class="java.lang.String"/>
+	<field name="calculo" class="com.code.aon.payroll.enumeration.FormaCalculo"/>
 	<field name="prcCg" class="java.math.BigDecimal"/>
 	<field name="prcAcc" class="java.math.BigDecimal"/>
 	<field name="prcAccfgs" class="java.math.BigDecimal"/>
@@ -296,7 +296,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{calculo}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{calculo}.getName($P{REPORT_RESOURCE_BUNDLE}.getLocale())]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

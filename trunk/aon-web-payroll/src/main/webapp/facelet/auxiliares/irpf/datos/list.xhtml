@@ -15,9 +15,11 @@
 
 		<aon:form id="irpfMaestroList">
 		
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_irpf__datosirpf}" />
 				<ui:param name="controller" value="#{irpfMaestro}" />
+				<aon:valueParam name="skipBackButton" default="false" />
+				<aon:methodParam name="backAction" value="auxiliares" />
 			</ui:include>
 
 			<!--  aon-region-body -->
