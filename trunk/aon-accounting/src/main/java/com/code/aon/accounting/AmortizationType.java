@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
@@ -26,7 +28,7 @@ public class AmortizationType implements ITransferObject {
 
 	private static final long serialVersionUID = -4744515826050552526L;
 
-	private String id;
+	private Integer id;
 	private String description;
     private Account fixedAssetAccount;
     private Account accumulatedAccount;
@@ -35,7 +37,7 @@ public class AmortizationType implements ITransferObject {
 
 	@Id
     @GeneratedValue	
-	public String getId() {
+	public Integer getId() {
 		return id;
 	}
 
@@ -45,7 +47,7 @@ public class AmortizationType implements ITransferObject {
 	 * @param id
 	 *            The ID of this account.
 	 */
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -72,6 +74,8 @@ public class AmortizationType implements ITransferObject {
 
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn( name="fixed_asset_account", nullable=false )
+	@ForeignKey(name = "FK_AMORTIZATION_TYPE_FIXED_ASSET_ACCOUNT")
+	@Index(name = "IDX_AMORTIZATION_TYPE_FIXED_ASSET_ACCOUNT")							
 	public Account getFixedAssetAccount() {
 		return fixedAssetAccount;
 	}
@@ -82,6 +86,8 @@ public class AmortizationType implements ITransferObject {
 
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn( name="accumulated_account", nullable=false )
+	@ForeignKey(name = "FK_AMORTIZATION_TYPE_ACCUMULATED_ACCOUNT")
+	@Index(name = "IDX_AMORTIZATION_TYPE_ACCUMULATED_ACCOUNT")						
 	public Account getAccumulatedAccount() {
 		return accumulatedAccount;
 	}
@@ -92,6 +98,8 @@ public class AmortizationType implements ITransferObject {
 
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn( name="allocation_account", nullable=false )
+	@ForeignKey(name = "FK_AMORTIZATION_TYPE_ALLOCATION_ACCOUNT")
+	@Index(name = "IDX_AMORTIZATION_TYPE_ALLOCATION_ACCOUNT")					
 	public Account getAllocationAccount() {
 		return allocationAccount;
 	}
@@ -100,6 +108,7 @@ public class AmortizationType implements ITransferObject {
 		this.allocationAccount = allocationAccount;
 	}
 
+	@Column(nullable=true)
     public double getPercentage() {
 		return percentage;
 	}

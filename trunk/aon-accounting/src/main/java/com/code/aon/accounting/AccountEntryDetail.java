@@ -10,6 +10,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+
 import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.util.CommonUtil;
@@ -75,6 +78,8 @@ public class AccountEntryDetail implements ITransferObject {
 	 */
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn( name="account_entry", nullable=false )
+	@ForeignKey(name = "FK_ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY")
+	@Index(name = "IDX_ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY")			
 	public AccountEntry getAccountEntry() {
 		return accountEntry;
 	}
@@ -113,6 +118,8 @@ public class AccountEntryDetail implements ITransferObject {
 	 */
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn( name="account", nullable=false )
+	@ForeignKey(name = "FK_ACCOUNT_ENTRY_DETAIL_ACCOUNT")
+	@Index(name = "IDX_ACCOUNT_ENTRY_DETAIL_ACCOUNT")	
 	public Account getAccount() {
 		return account;
 	}
@@ -152,6 +159,8 @@ public class AccountEntryDetail implements ITransferObject {
 	 */
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn( name="balancing_account")
+	@ForeignKey(name = "FK_ACCOUNT_ENTRY_DETAIL_BALANCING_ACCOUNT")
+	@Index(name = "IDX_ACCOUNT_ENTRY_DETAIL_BALANCING_ACCOUNT")		
 	public Account getBalancingAccount() {
 		return balancingAccount;
 	}
@@ -170,6 +179,7 @@ public class AccountEntryDetail implements ITransferObject {
 	 * 
 	 * @return the debit
 	 */
+	@Column(nullable=true)
 	public double getDebit() {
 		return debit;
 	}
@@ -196,6 +206,7 @@ public class AccountEntryDetail implements ITransferObject {
 	 * 
 	 * @return the credit
 	 */
+	@Column(nullable=true)
 	public double getCredit() {
 		return credit;
 	}

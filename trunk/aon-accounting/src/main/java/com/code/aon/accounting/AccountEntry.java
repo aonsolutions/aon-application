@@ -10,6 +10,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Index;
+
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -68,7 +70,8 @@ public class AccountEntry implements ITransferObject {
 	 * 
 	 * @return the account period
 	 */
-	@Column(name="account_period", length=4)
+	@Column(name="account_period", length=4, nullable=false)
+	@Index(name = "IDX_ACCOUNT_ENTRY_ACCOUNT_PERIOD")
 	public String getAccountPeriod() {
 		return accountPeriod;
 	}

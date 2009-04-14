@@ -6,6 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.code.aon.common.ITransferObject;
 
@@ -42,7 +44,7 @@ public class Period implements ITransferObject {
 	 * @return The ID of this account
 	 */
 	@Id
-	@Column(nullable = false)
+	@Column(nullable = false, length=4)
 	public String getId() {
 		return id;
 	}
@@ -63,6 +65,7 @@ public class Period implements ITransferObject {
 	 * @return The initation date of this accounting period.
 	 */
 	@Column(name = "initiation_date", nullable = false)
+	@Temporal(TemporalType.DATE)
 	public Date getInitiationDate() {
 		return initiationDate;
 	}
@@ -83,6 +86,7 @@ public class Period implements ITransferObject {
 	 * @return The deadline of this accounting period.
 	 */
 	@Column(nullable = false)
+	@Temporal(TemporalType.DATE)
 	public Date getDeadline() {
 		return deadline;
 	}

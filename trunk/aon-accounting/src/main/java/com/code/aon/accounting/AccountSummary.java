@@ -10,6 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
@@ -71,7 +76,8 @@ public class AccountSummary implements ITransferObject {
 	 * 
 	 * @return the account period
 	 */
-	@Column(name="account_period", length=4)
+	@Column(name="account_period", length=4, nullable=false)
+	@Index(name = "IDX_ACCOUNT_SUMMARY_ACCOUNT_PERIOD")
 	public String getAccountPeriod() {
 		return accountPeriod;
 	}
@@ -92,6 +98,8 @@ public class AccountSummary implements ITransferObject {
 	 */
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn( name="account", nullable=false )
+	@ForeignKey(name = "FK_ACCOUNT_SUMMARY_ACCOUNT")
+	@Index(name = "IDX_ACCOUNT_SUMMARY_ACCOUNT")				
 	public Account getAccount() {
 		return account;
 	}
@@ -130,6 +138,7 @@ public class AccountSummary implements ITransferObject {
      * @return the entry date
      */
     @Column(name="entry_date")
+    @Temporal(TemporalType.DATE)
     public Date getEntryDate() {
         return entryDate;
     }
@@ -148,6 +157,7 @@ public class AccountSummary implements ITransferObject {
      * 
      * @return the debit
      */
+    @Column(nullable=true)
     public double getDebit() {
         return debit;
     }
@@ -166,6 +176,7 @@ public class AccountSummary implements ITransferObject {
 	 * 
 	 * @return the credit
 	 */
+    @Column(nullable=true)
 	public double getCredit() {
 		return credit;
 	}

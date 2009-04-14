@@ -75,7 +75,7 @@ public class AutoConcept implements ITransferObject {
      * 
      * @return the description.
      */
-    @Column(length=15,nullable=false)
+    @Column(length=32,nullable=false)
     public String getDescription() {
         return description;
     }
