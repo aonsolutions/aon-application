@@ -12,7 +12,9 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import com.code.aon.common.ITransferObject;
@@ -129,6 +131,7 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
      * 
      * @return True if a surcharge has to be applied.
      */
+    @Column(nullable=true)
     public boolean isSurcharge() {
         return surcharge;
     }
@@ -147,6 +150,7 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
      * 
      * @return True if taxes has to be applied to the customer.
      */
+    @Column(name="taxfree")
     public boolean isTaxFree() {
         return taxFree;
     }
@@ -156,7 +160,6 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
      * 
      * @param taxFree True if taxes has to be applied to the customer or not.
      */
-    @Column(name="taxfree")
     public void setTaxFree(boolean taxFree) {
         this.taxFree = taxFree;
     }
@@ -168,6 +171,8 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	 */
     @ManyToOne
     @JoinColumn(name="tariff")
+    @ForeignKey(name = "FK_CUSTOMER_TARIFF")
+    @Index(name = "IDX_CUSTOMER_TARIFF")        
 	public Tariff getTariff() {
 		return tariff;
 	}
@@ -186,6 +191,7 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	 * 
 	 * @return true, if a withholding is applied
 	 */
+	@Column(nullable=true)
 	public boolean isWithholding() {
 		return withholding;
 	}
@@ -206,6 +212,8 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	 */
 	@ManyToOne
     @JoinColumn(name="segment")
+    @ForeignKey(name = "FK_CUSTOMER_SEGMENT")
+    @Index(name = "IDX_CUSTOMER_SEGMENT")    
 	public CustomerSegment getCustomerSegment() {
 		return customerSegment;
 	}
@@ -221,6 +229,8 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	
 	@ManyToOne
     @JoinColumn(name="scope", nullable=false)
+    @ForeignKey(name = "FK_CUSTOMER_SCOPE")
+    @Index(name = "IDX_CUSTOMER_SCOPE")
 	public Scope getScope() {
 		return scope;
 	}
