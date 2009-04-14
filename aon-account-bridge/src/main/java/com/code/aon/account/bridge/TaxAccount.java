@@ -8,6 +8,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+
 import com.code.aon.account.Account;
 import com.code.aon.account.IAccount;
 import com.code.aon.account.bridge.enumeration.TaxAccountType;
@@ -63,6 +66,8 @@ public class TaxAccount implements ITransferObject, IAccount {
 	 */
 	@ManyToOne
 	@JoinColumn(name="tax", nullable = false)
+	@ForeignKey(name="FK_TAX_ACCOUNT_TAX")
+	@Index(name="IDX_TAX_ACCOUNT_TAX")						
 	public Tax getTax() {
 		return tax;
 	}
@@ -83,6 +88,8 @@ public class TaxAccount implements ITransferObject, IAccount {
 	 */
 	@ManyToOne
 	@JoinColumn(name="account", nullable = false)
+	@ForeignKey(name="FK_TAX_ACCOUNT_ACCOUNT")
+	@Index(name="IDX_TAX_ACCOUNT_ACCOUNT")					
 	public Account getAccount() {
 		return account;
 	}
@@ -101,6 +108,7 @@ public class TaxAccount implements ITransferObject, IAccount {
 	 * 
 	 * @return the type
 	 */
+	@Column(nullable=false)
 	public TaxAccountType getType() {
 		return type;
 	}

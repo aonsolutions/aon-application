@@ -8,6 +8,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.finance.FinanceBatch;
@@ -59,6 +62,8 @@ public class AccountEntryFinanceBatch implements ITransferObject {
 	 */
 	@ManyToOne
 	@JoinColumn( name="account_entry", nullable = false)
+	@ForeignKey(name="FK_ACCOUNT_ENTRY_FBATCH_ACCOUNT_ENTRY")
+	@Index(name="IDX_ACCOUNT_ENTRY_FBATCH_ACCOUNT_ENTRY")													
 	public AccountEntry getAccountEntry() {
 		return accountEntry;
 	}
@@ -79,6 +84,8 @@ public class AccountEntryFinanceBatch implements ITransferObject {
 	 */
 	@ManyToOne
 	@JoinColumn( name="fbatch", nullable = false)
+	@ForeignKey(name="FK_ACCOUNT_ENTRY_FBATCH_FBATCH")
+	@Index(name="IDX_ACCOUNT_ENTRY_FBATCH_FBATCH")														
 	public FinanceBatch getFinanceBatch() {
 		return financeBatch;
 	}

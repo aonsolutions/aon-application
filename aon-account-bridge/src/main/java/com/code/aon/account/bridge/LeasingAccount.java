@@ -8,6 +8,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+
 import com.code.aon.account.Account;
 import com.code.aon.account.IAccount;
 import com.code.aon.accounting.Leasing;
@@ -59,6 +62,8 @@ public class LeasingAccount implements ITransferObject, IAccount {
 	 */
 	@ManyToOne
 	@JoinColumn( name="leasing", nullable = false)
+	@ForeignKey(name="FK_LEASING_ACCOUNT_LEASING")
+	@Index(name="IDX_LEASING_ACCOUNT_LEASING")									
 	public Leasing getLeasing() {
 		return leasing;
 	}
@@ -79,6 +84,8 @@ public class LeasingAccount implements ITransferObject, IAccount {
 	 */
 	@ManyToOne
 	@JoinColumn( name="account", nullable = false)
+	@ForeignKey(name="FK_LEASING_ACCOUNT_ACCOUNT")
+	@Index(name="IDX_LEASING_ACCOUNT_ACCOUNT")								
 	public Account getAccount() {
 		return account;
 	}
