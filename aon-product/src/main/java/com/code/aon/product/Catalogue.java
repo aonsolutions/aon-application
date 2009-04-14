@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.ObjectUtils;
 
@@ -61,7 +63,7 @@ public class Catalogue implements ITransferObject {
 	 * 
 	 * @return the name
 	 */
-	@Column(length=32)
+	@Column(length=32, nullable = false)
 	public String getName() {
 		return name;
 	}
@@ -80,7 +82,8 @@ public class Catalogue implements ITransferObject {
 	 * 
 	 * @return the start date
 	 */
-	@Column(name="start_date")
+	@Column(name="start_date", nullable = false)
+	@Temporal(TemporalType.DATE)
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -100,6 +103,7 @@ public class Catalogue implements ITransferObject {
 	 * @return the end date
 	 */
 	@Column(name="end_date")
+	@Temporal(TemporalType.DATE)
 	public Date getEndDate() {
 		return endDate;
 	}

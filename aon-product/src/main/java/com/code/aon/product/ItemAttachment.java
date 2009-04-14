@@ -9,7 +9,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
@@ -86,6 +88,8 @@ public class ItemAttachment implements IAttachment, Cloneable {
      */
     @ManyToOne
     @JoinColumn(name="item", nullable = false, updatable = false)    
+    @ForeignKey(name = "FK_IATTACH_ITEM")
+    @Index(name = "IDX_IATTACH_ITEM")    
 	public Item getItem() {
         return this.item;
     }

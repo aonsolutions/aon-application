@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 
@@ -61,6 +63,8 @@ public class TariffCatalogue implements ITransferObject {
 	 */
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn(name="tariff", nullable=false)
+    @ForeignKey(name = "FK_TARIFF_CATALOGUE_TARIFF")
+    @Index(name = "IDX_TARIFF_CATALOGUE_TARIFF")    	        		
 	public Tariff getTariff() {
 		return tariff;
 	}
@@ -81,6 +85,8 @@ public class TariffCatalogue implements ITransferObject {
 	 */
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn(name="catalogue", nullable=false)
+    @ForeignKey(name = "FK_TARIFF_CATALOGUE_CATALOGUE")
+    @Index(name = "IDX_TARIFF_CATALOGUE_CATALOGUE")    	        	
 	public Catalogue getCatalogue() {
 		return catalogue;
 	}

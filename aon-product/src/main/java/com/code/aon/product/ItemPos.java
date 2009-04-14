@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.product.enumeration.PluProductType;
@@ -88,6 +90,8 @@ public class ItemPos implements ITransferObject {
 	 */
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "item", nullable = false)
+    @ForeignKey(name = "FK_ITEM_POS_ITEM")
+    @Index(name = "IDX_ITEM_POS_ITEM")    	
 	public Item getItem() {
 		return item;
 	}
@@ -107,7 +111,7 @@ public class ItemPos implements ITransferObject {
 	 * 
 	 * @return the barcode.
 	 */
-	@Column(name = "barcode")
+	@Column(name = "barcode", length = 15)
 	public String getBarcode() {
 		return barcode;
 	}
@@ -126,7 +130,7 @@ public class ItemPos implements ITransferObject {
 	 * 
 	 * @return plu.
 	 */
-	@Column(name = "plu")
+	@Column(name = "plu", length = 4, nullable = false)
 	public String getPlu() {
 		return plu;
 	}
@@ -145,7 +149,7 @@ public class ItemPos implements ITransferObject {
 	 * 
 	 * @return the shortDescription.
 	 */
-	@Column(name = "desc_short")
+	@Column(name = "desc_short", length = 20)
 	public String getShortDescription() {
 		return shortDescription;
 	}
@@ -162,7 +166,7 @@ public class ItemPos implements ITransferObject {
 	/**
 	 * @return the pluProductType
 	 */
-	@Column(name = "plu_product_type")
+	@Column(name = "plu_product_type", nullable = false)
 	public PluProductType getPluProductType() {
 		return pluProductType;
 	}

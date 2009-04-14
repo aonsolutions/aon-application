@@ -9,6 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 
@@ -84,6 +86,8 @@ public class ProductCategoryTree implements ITransferObject {
      */
     @ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "child")
+    @ForeignKey(name = "FK_PCATEGORY_TREE_CHILD")
+    @Index(name = "IDX_PCATEGORY_TREE_CHILD")    	        	
     public ProductCategory getChild() {
         return child;
     }
@@ -105,6 +109,8 @@ public class ProductCategoryTree implements ITransferObject {
      */
     @ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "parent")
+    @ForeignKey(name = "FK_PCATEGORY_TREE_PARENT")
+    @Index(name = "IDX_PCATEGORY_TREE_PARENT")    	        		
     public ProductCategory getParent() {
         return parent;
     }

@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 
@@ -119,6 +121,8 @@ public final class ProductCategory implements ITransferObject {
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="pcategory_group")
+    @ForeignKey(name = "FK_PCATEGORY_PCATEGORY_GROUP")
+    @Index(name = "IDX_PCATEGORY_PCATEGORY_GROUP")    	            
     public ProductCategoryGroup getGroup() {
         return group;
     }

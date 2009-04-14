@@ -15,6 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
@@ -135,6 +137,7 @@ public class Product implements ITransferObject {
      * @return product's name.
      */
     @Column(length=64, nullable=false)
+    @Index(name = "IDX_PRODUCT_NAME")
     public String getName() {
         return name;
     }
@@ -156,6 +159,8 @@ public class Product implements ITransferObject {
      */
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="brand", nullable=true)
+    @ForeignKey(name = "FK_PRODUCT_BRAND")
+    @Index(name = "IDX_PRODUCT_BRAND")    	        
     public Brand getBrand() {
         return brand;
     }
@@ -177,6 +182,8 @@ public class Product implements ITransferObject {
      */
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="category", nullable=true)
+    @ForeignKey(name = "FK_PRODUCT_CATEGORY")
+    @Index(name = "IDX_PRODUCT_CATEGORY")    	        
     public ProductCategory getCategory() {
         return category;
     }
@@ -197,6 +204,7 @@ public class Product implements ITransferObject {
      * @return the internal code of this product.
      */
     @Column(nullable=false, length=15)
+    @Index(name = "IDX_PRODUCT_CODE")    	    
     public String getCode() {
         return code;
     }
@@ -216,6 +224,7 @@ public class Product implements ITransferObject {
      * 
      * @return True if the product is inventariable.
      */
+    @Column(nullable=true)
     public boolean isInventoriable() {
         return inventoriable;
     }
@@ -255,7 +264,9 @@ public class Product implements ITransferObject {
      * @return V.A.T. of this product
      */
     @ManyToOne
-    @JoinColumn(name="vat", nullable=false)
+    @JoinColumn(name="vat", nullable=true)
+    @ForeignKey(name = "FK_PRODUCT_VAT")
+    @Index(name = "IDX_PRODUCT_VAT")    	        
     public Tax getVat() {
 		return vat;
 	}
@@ -277,6 +288,8 @@ public class Product implements ITransferObject {
      */
     @ManyToOne
     @JoinColumn(name="retention")
+    @ForeignKey(name = "FK_PRODUCT_RETENTION")
+    @Index(name = "IDX_PRODUCT_RETENTION")    	    
 	public Tax getRetention() {
 		return retention;
 	}

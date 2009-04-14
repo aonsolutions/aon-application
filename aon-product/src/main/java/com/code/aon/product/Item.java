@@ -5,10 +5,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull;
@@ -125,7 +128,7 @@ public class Item implements ITransferObject {
      * 
      * @return item's description.
      */
-    @Column(length=65535)
+    @Lob
     public String getDescription() {
         return description;
     }
@@ -145,6 +148,7 @@ public class Item implements ITransferObject {
      * 
      * @return item's price.
      */
+    @Column(nullable=true)
     public double getPrice() {
         return price;
     }
@@ -169,6 +173,8 @@ public class Item implements ITransferObject {
     @JoinColumn(name="product", nullable=false)
     @org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     @AonPOJOInitializationInvalidateRestoreNull
+    @ForeignKey(name = "FK_ITEM_PRODUCT")
+    @Index(name = "IDX_ITEM_PRODUCT")
     public Product getProduct() {
         return product;
     }
