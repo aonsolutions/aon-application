@@ -9,6 +9,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
@@ -88,6 +93,7 @@ public class Leasing implements ITransferObject {
 	 * @return the leasing date
 	 */
 	@Column(name="leasing_date", nullable=false)
+	@Temporal(TemporalType.DATE)
 	public Date getLeasingDate() {
 		return leasingDate;
 	}
@@ -220,6 +226,7 @@ public class Leasing implements ITransferObject {
 	 * 
 	 * @return the amount
 	 */
+	@Column(nullable=true, precision=15, scale=3)
 	public double getAmount() {
 		return amount;
 	}
@@ -240,6 +247,8 @@ public class Leasing implements ITransferObject {
 	 */
     @ManyToOne
     @JoinColumn(name="rbank", nullable=false)
+	@ForeignKey(name = "FK_LEASING_RBANK")
+	@Index(name = "IDX_LEASING_RBANK")			        
 	public RegistryBank getRegistryBank() {
 		return registryBank;
 	}
@@ -255,6 +264,8 @@ public class Leasing implements ITransferObject {
 	
 	@ManyToOne
 	@JoinColumn(name="fixed_asset_account", nullable=false)
+	@ForeignKey(name = "FK_LEASING_FIXED_ASSET_ACCOUNT")
+	@Index(name = "IDX_LEASING_FIXED_ASSET_ACCOUNT")			        	
 	public Account getFixedAssetAccount() {
 		return fixedAssetAccount;
 	}
