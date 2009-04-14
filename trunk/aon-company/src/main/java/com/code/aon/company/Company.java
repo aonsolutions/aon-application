@@ -4,6 +4,7 @@
  */
 package com.code.aon.company;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -44,6 +45,7 @@ public class Company extends Registry implements ITaxInfo{
 	 * 
 	 * @return true, if is active
 	 */
+    @Column(nullable=true)
 	public boolean isActive() {
 		return active;
 	}
@@ -62,6 +64,7 @@ public class Company extends Registry implements ITaxInfo{
 	 * 
 	 * @return true, if is surcharge
 	 */
+	@Column(nullable=true)
 	public boolean isSurcharge() {
 		return surcharge;
 	}
@@ -80,6 +83,7 @@ public class Company extends Registry implements ITaxInfo{
 	 * 
 	 * @return true, if is surcharge
 	 */
+	@Column(nullable=true)
 	public boolean isWithholding() {
 		return withholding;
 	}

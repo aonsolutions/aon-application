@@ -12,7 +12,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.company.WorkActivity;
@@ -24,6 +29,7 @@ import com.code.aon.company.WorkPlace;
  */
 @Entity
 @Table(name="resource")
+@org.hibernate.annotations.Table( appliesTo = "resource", indexes = { @Index(name="IDX_RESOURCE", columnNames={"employee","endingdate"})})
 public class Resource implements ITransferObject {
 
 	private static final long serialVersionUID = -4406916296529969516L;
@@ -69,6 +75,8 @@ public class Resource implements ITransferObject {
 	 */
 	@OneToOne
 	@JoinColumn(name="employee")
+	@ForeignKey(name = "FK_RESOURCE_EMPLOYEE")
+	@Index(name = "IDX_RESOURCE_EMPLOYEE")	
 	public Employee getEmployee() {
 		return this.employee;
 	}
@@ -89,6 +97,8 @@ public class Resource implements ITransferObject {
 	 */
 	@OneToOne
 	@JoinColumn(name="workplace")
+	@ForeignKey(name = "FK_RESOURCE_WORKPLACE")
+	@Index(name = "IDX_RESOURCE_WORKPLACE")	
 	public WorkPlace getWorkPlace() {
 		return this.workPlace;
 	}
@@ -109,6 +119,8 @@ public class Resource implements ITransferObject {
 	 */
 	@OneToOne
 	@JoinColumn(name="workactivity")
+	@ForeignKey(name = "FK_RESOURCE_WORKACTIVITY")
+	@Index(name = "IDX_RESOURCE_WORKACTIVITY")		
 	public WorkActivity getWorkActivity() {
 		return this.workActivity;
 	}
@@ -128,6 +140,7 @@ public class Resource implements ITransferObject {
 	 * @return endingDate
 	 */
 	@Column(name="endingdate")
+	@Temporal(TemporalType.DATE)
 	public Date getEndingDate() {
 		return this.endingDate;
 	}
@@ -147,6 +160,7 @@ public class Resource implements ITransferObject {
 	 * @return startingDate
 	 */
 	@Column(name="startingdate", nullable=false)
+	@Temporal(TemporalType.DATE)
 	public Date getStartingDate() {
 		return this.startingDate;
 	}

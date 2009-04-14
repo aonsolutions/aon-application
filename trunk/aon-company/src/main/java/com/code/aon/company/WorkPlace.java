@@ -16,6 +16,8 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.WhereJoinTable;
 
 import com.code.aon.common.ITransferObject;
@@ -83,7 +85,7 @@ public class WorkPlace implements ITransferObject, IEntity {
 	 * 
 	 * @return the description
 	 */
-	@Column(name="description")
+	@Column(name="description", length = 64, nullable = false)
 	public String getDescription() {
 		return description;
 	}
@@ -105,6 +107,8 @@ public class WorkPlace implements ITransferObject, IEntity {
 	@OneToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     @JoinColumn(name="address", nullable = false)
+    @ForeignKey(name = "FK_WORKPLACE_ADDRESS")
+    @Index(name = "IDX_WORKPLACE_ADDRESS")
 	public RegistryAddress getAddress() {
 		return address;
 	}
@@ -141,6 +145,7 @@ public class WorkPlace implements ITransferObject, IEntity {
      * 
 	 * @return the active
 	 */
+	@Column(nullable = true)
 	public boolean isActive() {
 		return active;
 	}

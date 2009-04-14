@@ -17,6 +17,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.WhereJoinTable;
 
 import com.code.aon.common.ITransferObject;
@@ -61,7 +63,7 @@ public class WorkActivity implements ITransferObject, IEntity {
 		this.id = id;
 	}
 	
-	@Column(name="description")
+	@Column(name="description", length = 64, nullable = false)
 	public String getDescription() {
 		return description;
 	}
@@ -71,7 +73,9 @@ public class WorkActivity implements ITransferObject, IEntity {
 	}
 
 	@OneToOne
-    @JoinColumn(name="workplace", nullable = false, updatable = false)    
+    @JoinColumn(name="workplace", updatable = false)
+    @ForeignKey(name = "FK_WORKACTIVITY_WORKPLACE")
+    @Index(name = "IDX_WORKACTIVITY_WORKPLACE")    
     public WorkPlace getWorkPlace() {
 		return workPlace;
 	}
@@ -103,6 +107,7 @@ public class WorkActivity implements ITransferObject, IEntity {
      * 
 	 * @return the active
 	 */
+	@Column(nullable = true)
 	public boolean isActive() {
 		return active;
 	}
