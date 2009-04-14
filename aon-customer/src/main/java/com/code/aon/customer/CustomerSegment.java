@@ -51,7 +51,7 @@ public class CustomerSegment implements ITransferObject {
 	 * 
 	 * @return the description
 	 */
-	@Column(length=64, name="description")
+	@Column(length=64, name="description", nullable = false)
 	public String getDescription() {
 		return description;
 	}
