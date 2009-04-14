@@ -14,7 +14,7 @@ public class DiscountExpressionUserType implements UserType {
 	/**
 	 * Field SQL_TYPES
 	 */
-	private static final int[] SQL_TYPES = { Types.TINYINT };
+	private static final int[] SQL_TYPES = { Types.VARCHAR };
 
 	/**
 	 * Method sqlTypes
