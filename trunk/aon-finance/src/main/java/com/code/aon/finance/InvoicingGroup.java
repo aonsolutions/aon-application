@@ -9,6 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.registry.Registry;
@@ -58,6 +60,8 @@ public class InvoicingGroup implements ITransferObject {
 	 */
     @ManyToOne
     @JoinColumn(name="parent", nullable = false)
+    @ForeignKey(name="FK_INVOICING_GROUP_PARENT")
+    @Index(name="IDX_INVOICING_GROUP_PARENT")                                            
 	public Registry getParent() {
 		return parent;
 	}

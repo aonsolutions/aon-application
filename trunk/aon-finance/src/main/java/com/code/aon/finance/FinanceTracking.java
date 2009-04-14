@@ -10,8 +10,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
@@ -71,6 +75,8 @@ public class FinanceTracking implements ITransferObject {
 	 */
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="finance", nullable=false)
+    @ForeignKey(name="FK_FINANCE_TRACKING_FINANCE")
+    @Index(name="IDX_FINANCE_TRACKING_FINANCE")                    
 	public Finance getFinance() {
 		return finance;
 	}
@@ -90,6 +96,7 @@ public class FinanceTracking implements ITransferObject {
 	 * @return the tracking date
 	 */
 	@Column(name="tracking_date", nullable=false)
+	@Temporal(TemporalType.DATE)
 	public Date getTrackingDate() {
 		return trackingDate;
 	}
@@ -127,6 +134,7 @@ public class FinanceTracking implements ITransferObject {
      * 
      * @return the description
      */
+	@Column(length=64)
     public String getDescription() {
         return description;
     }
@@ -145,6 +153,7 @@ public class FinanceTracking implements ITransferObject {
      * 
      * @return the amount
      */
+    @Column(nullable=true, precision=15, scale=3)
     public double getAmount() {
         return amount;
     }

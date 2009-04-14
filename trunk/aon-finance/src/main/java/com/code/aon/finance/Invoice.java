@@ -14,14 +14,19 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IHeaderObject;
@@ -50,6 +55,9 @@ import com.code.aon.registry.RegistryAddress;
  */
 @Entity
 @Table(name = "invoice")
+@org.hibernate.annotations.Table( appliesTo = "invoice", indexes =
+	{ @Index(name="IDX_SERIES", columnNames={"series","number","type"}),
+		@Index(name="IDX_SERIES_NUMBER", columnNames={"series","number"})})
 public class Invoice implements ITransferObject, IHeaderObject, ICalculableContainer, ITaxInfo {
 	
 	private static final long serialVersionUID = 5692053383866684819L;
@@ -156,6 +164,8 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="registry", nullable = false)
+    @ForeignKey(name="FK_INVOICE_REGISTRY")
+    @Index(name="IDX_INVOICE_REGISTRY")                        
     public Registry getRegistry() {
         return registry;
     }
@@ -214,6 +224,8 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	 */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="raddress")
+    @ForeignKey(name="FK_INVOICE_RADDRESS")
+    @Index(name="IDX_INVOICE_RADDRESS")                            
     public RegistryAddress getRegistryAddress() {
         return registryAddress;
     }
@@ -233,6 +245,8 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
      * @return the issue date
      */
     @Column(name="issue_date")
+    @Temporal(TemporalType.DATE)
+    @Index(name="IDX_INVOICE_ISSUE_DATE")
     public Date getIssueDate() {
         return issueDate;
     }
@@ -385,6 +399,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	 * 
 	 * @return true, if a surcharge has to be applied.
 	 */
+	@Column(nullable=true)
 	public boolean isSurcharge() {
 		return surcharge;
 	}
@@ -426,7 +441,8 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 		this.withholding = withholding;
 	}
 	
-	@Column(name="comments",length=65535)
+	@Column(name="comments")
+	@Lob
 	public String getComments() {
 		return comments;
 	}

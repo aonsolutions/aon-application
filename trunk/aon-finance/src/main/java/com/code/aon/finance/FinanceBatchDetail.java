@@ -1,5 +1,6 @@
 package com.code.aon.finance;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -9,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.finance.enumeration.FinanceStatus;
@@ -58,6 +61,8 @@ public class FinanceBatchDetail implements ITransferObject {
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="fbatch", nullable = false)
+    @ForeignKey(name="FK_FBATCH_DETAIL_FBATCH")
+    @Index(name="IDX_FBATCH_DETAIL_FBATCH")                    
 	public FinanceBatch getFinanceBatch() {
 		return financeBatch;
 	}
@@ -78,6 +83,8 @@ public class FinanceBatchDetail implements ITransferObject {
 	 */
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="finance", nullable = false)
+    @ForeignKey(name="FK_FBATCH_DETAIL_FINANCE")
+    @Index(name="IDX_FBATCH_DETAIL_FINANCE")                
 	public Finance getFinance() {
 		return finance;
 	}
@@ -105,6 +112,7 @@ public class FinanceBatchDetail implements ITransferObject {
      * 
      * @return the amount
      */
+	@Column(nullable=true, precision=15, scale=3)
     public double getAmount() {
         return amount;
     }
