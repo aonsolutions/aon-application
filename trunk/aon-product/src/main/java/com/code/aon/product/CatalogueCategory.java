@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 
@@ -67,6 +69,8 @@ public class CatalogueCategory implements ITransferObject {
 	 */
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn(name="catalogue", nullable=false)
+	@ForeignKey(name = "FK_CATALOGUE_CATEGORY_CATALOGUE")
+	@Index(name = "IDX_CATALOGUE_CATEGORY_CATALOGUE")
 	public Catalogue getCatalogue() {
 		return catalogue;
 	}
@@ -87,6 +91,8 @@ public class CatalogueCategory implements ITransferObject {
 	 */
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn(name="category", nullable=false)
+	@ForeignKey(name = "FK_CATALOGUE_CATEGORY_CATEGORY")
+	@Index(name = "IDX_CATALOGUE_CATEGORY_CATEGORY")	
 	public ProductCategory getCategory() {
 		return category;
 	}
@@ -105,6 +111,7 @@ public class CatalogueCategory implements ITransferObject {
 	 * 
 	 * @return the quantity
 	 */
+	@Column(nullable = true)
 	public double getQuantity() {
 		return quantity;
 	}
@@ -123,6 +130,7 @@ public class CatalogueCategory implements ITransferObject {
 	 * 
 	 * @return the discount
 	 */
+	@Column(nullable = true, precision = 6, scale = 2)
 	public double getDiscount() {
 		return discount;
 	}
