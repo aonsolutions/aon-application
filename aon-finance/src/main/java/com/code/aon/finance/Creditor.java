@@ -12,7 +12,9 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import com.code.aon.common.ITransferObject;
@@ -112,6 +114,7 @@ public class Creditor implements ITransferObject, IScopable, IRegistry {
 	 * 
 	 * @return true, if a withholding is applied
 	 */
+	@Column(nullable=true)
 	public boolean isWithholding() {
 		return withholding;
 	}
@@ -122,6 +125,8 @@ public class Creditor implements ITransferObject, IScopable, IRegistry {
 
 	@ManyToOne
     @JoinColumn(name="scope", nullable=false)
+	@ForeignKey(name="FK_CREDITOR_SCOPE")
+	@Index(name="IDX_CREDITOR_SCOPE")    
 	public Scope getScope() {
 		return scope;
 	}

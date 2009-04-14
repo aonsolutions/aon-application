@@ -9,6 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.enumeration.TaxType;
@@ -64,6 +66,8 @@ public class InvoiceTax implements ITransferObject {
 	 */
 	@ManyToOne
     @JoinColumn(name="invoice_detail", nullable = false)
+    @ForeignKey(name="FK_INVOICE_TAX_INVOICE_DETAIL")
+    @Index(name="IDX_INVOICE_TAX_INVOICE_DETAIL")                                        
 	public InvoiceDetail getInvoiceDetail() {
 		return invoiceDetail;
 	}
@@ -82,7 +86,7 @@ public class InvoiceTax implements ITransferObject {
 	 * 
 	 * @return the percentage
 	 */
-	@Column(name="percentage")
+	@Column(name="percentage", precision=15, scale=3)
 	public double getPercentage() {
 		return percentage;
 	}
@@ -101,7 +105,7 @@ public class InvoiceTax implements ITransferObject {
 	 * 
 	 * @return the surcharge
 	 */
-	@Column(name="surcharge")
+	@Column(name="surcharge", precision=15, scale=3)
 	public double getSurcharge() {
 		return surcharge;
 	}
