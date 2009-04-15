@@ -19,6 +19,8 @@
 			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_cotizacion__elemcotizacion}" />
 				<ui:param name="controller" value="#{elementoMaestro}" />
+				<ui:param name="reportKey" value="ElementocotiListPrint"/>
+				<ui:param name="reportKeyXls" value="ElementocotiListPrint"/>
 				<aon:valueParam name="skipBackButton" default="false" />
 				<aon:methodParam name="backAction" value="auxiliares" />
 			</ui:include>

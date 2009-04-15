@@ -387,6 +387,17 @@
 		</params>
 	</report>
 	
+		<report id="porcentajesCotizacionPrint" description="Listado de Porcentajes">
+		<template path="/com/code/aon/ui/payroll/report/porcentajesCotizacionPrint.jasper" />
+	     <bean key="com.code.aon.payroll.cotizacion.PorcentajeMaestro" />
+		<criteria provider="#{porcentajeMaestro}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
 		<!--  *********  Impresion a PDF de las delegaciones  ********* -->
 	<report id="DelegacionList" description="Listado de Delegaciones">
 		<template path="/com/code/aon/ui/payroll/report/DelegacionList.jasper" />
@@ -410,6 +421,18 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
+	
+		<report id="EpigrafesListPrint" description="Listado de Epigrafes">
+		<template path="/com/code/aon/ui/payroll/report/EpigrafesListPrint.jasper" />
+		<bean key="com.code.aon.payroll.cotizacion.Epigrafe" />
+		<criteria provider="#{epigrafeMaestro}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
 	<report id="EpigrafeList2" description="Listado de Epigrafes">
 		<template path="/com/code/aon/ui/payroll/report/EpigrafeList2.jasper" />
 		<bean key="com.code.aon.payroll.cotizacion.Linepigr" />
@@ -495,11 +518,34 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
+	
+		<report id="BasesListPrint" description="Listado de Bases de cotizacion">
+		<template path="/com/code/aon/ui/payroll/report/BasesListPrint.jasper" />
+		<bean key="com.code.aon.payroll.cotizacion.Base" />
+		<criteria provider="#{baseMaestro}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
 	<!--  *********  Impresion a PDF de los Elementos de cotizacion  ********* -->
 	<report id="cotizacionElementosList" description="Listado de Elementos">
 		<template path="/com/code/aon/ui/payroll/report/elementosCotizacion.jasper" />
 		<bean key="com.code.aon.payroll.cotizacion.Elemento" />
 		<criteria provider="#{elemento}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+		<report id="ElementocotiListPrint" description="Listado de Elementos">
+		<template path="/com/code/aon/ui/payroll/report/ElemcotiListPrint.jasper" />
+		<bean key="com.code.aon.payroll.cotizacion.ElementoMaestro" />
+		<criteria provider="#{elementoMaestro}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />
@@ -629,6 +675,17 @@
 		</params>
 	</report>
 	
+	     <report id="OcupacionListPrint" description="Listado de ocupaciones">
+		<template path="/com/code/aon/ui/payroll/report/OcupacionListPrint.jasper" />
+		<bean key="com.code.aon.payroll.cotizacion.OcupacionMaestro" />
+		<criteria provider="#{ocupacionMaestro}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
 	 <report id="OcupacionListXLS" description="Listado de ocupaciones">
 		<template path="/com/code/aon/ui/payroll/report/OcupacionesListXLS.jasper" />
 		<bean key="com.code.aon.payroll.cotizacion.Ocupacion" />
@@ -652,7 +709,18 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
-	
+
+ <report id="Cnae93ListPrint" description="Listado de Cnae">
+		<template path="/com/code/aon/ui/payroll/report/Cnae93ListPrint.jasper" />
+		<bean key="com.code.aon.payroll.cotizacion.CnaeMaestro" />
+		<criteria provider="#{cnaeMaestro}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+
 	<!--  *********  Impresion a Excel del mantenimiento de Cnae 1993 Rev.1 ********* -->
 	
 	 <report id="CnaeListXls" description="Listado de Cnae">
@@ -672,6 +740,17 @@
 		<template path="/com/code/aon/ui/payroll/report/Cnae2009List.jasper" />
 		<bean key="com.code.aon.payroll.cotizacion.Cnae2009" />
 		<criteria provider="#{cnae2009}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	<report id="Cnae09ListPrint" description="Listado de Cnae 2009">
+		<template path="/com/code/aon/ui/payroll/report/Cnae09ListPrint.jasper" />
+		<bean key="com.code.aon.payroll.cotizacion.Cnae2009Maestro" />
+		<criteria provider="#{cnae2009Maestro}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />

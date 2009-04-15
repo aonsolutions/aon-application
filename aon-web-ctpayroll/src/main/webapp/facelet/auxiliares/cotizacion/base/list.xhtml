@@ -18,8 +18,12 @@
 			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_cotizacion_bases}" />
 				<ui:param name="controller" value="#{baseMaestro}" />
+				<ui:param name="reportKey" value="BasesListPrint"/>
+				<ui:param name="reportKeyXls" value="BasesListPrint"/>
 				<aon:valueParam name="skipBackButton" default="false" />
 				<aon:methodParam name="backAction" value="auxiliares" />
+				
+				
 			</ui:include>
 			
 			<!--  aon-region-body -->

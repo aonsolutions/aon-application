@@ -18,6 +18,8 @@
 			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_cotizacion__cnae}" />
 				<ui:param name="controller" value="#{cnaeMaestro}" />
+				<ui:param name="reportKey" value="Cnae93ListPrint"/>
+				<ui:param name="reportKeyXls" value="Cnae93ListPrint"/>				
 				<aon:valueParam name="skipBackButton" default="false" />
 				<aon:methodParam name="backAction" value="auxiliares" />
 			</ui:include>

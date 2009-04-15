@@ -17,6 +17,8 @@
 			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_cotizacion__ocupacion}" />
 				<ui:param name="controller" value="#{ocupacionMaestro}" />
+				<ui:param name="reportKey" value="OcupacionListPrint"/>
+				<ui:param name="reportKeyXls" value="OcupacionListPrint"/>
 				<aon:valueParam name="skipBackButton" default="false" />
 				<aon:methodParam name="backAction" value="auxiliares" />
 			</ui:include>

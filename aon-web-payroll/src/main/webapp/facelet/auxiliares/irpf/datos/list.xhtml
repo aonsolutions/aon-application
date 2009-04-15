@@ -18,6 +18,8 @@
 			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_irpf__datosirpf}" />
 				<ui:param name="controller" value="#{irpfMaestro}" />
+                 <ui:param name="reportKey" value="IrpfMaestroListPrint"/>
+			    <ui:param name="reportKeyXls" value="IrpfMaestroListPrint"/>	
 				<aon:valueParam name="skipBackButton" default="false" />
 				<aon:methodParam name="backAction" value="auxiliares" />
 			</ui:include>
