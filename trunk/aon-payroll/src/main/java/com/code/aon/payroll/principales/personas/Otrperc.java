@@ -42,8 +42,13 @@ public class Otrperc  implements ITransferObject {
      private Ingreso ingreso;
      private String subclave;
      private Retribuciones natret;
+     /*
      private Empresa empresa;
      private Persona persona;
+     */
+     private Integer codemp;
+     private Integer codper;
+     
 
    
     @Id     
@@ -174,7 +179,8 @@ public class Otrperc  implements ITransferObject {
         this.natret = natret;
     }
     
-	@ManyToOne(fetch=FetchType.EAGER)
+    /*
+	@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="codemp", nullable=false)
     public Empresa getEmpresa() {
         return this.empresa;
@@ -184,7 +190,7 @@ public class Otrperc  implements ITransferObject {
         this.empresa = empresa;
     }
     
-	@ManyToOne(fetch=FetchType.EAGER)
+	@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="codper", nullable=false)
     public Persona getPersona() {
         return this.persona;
@@ -193,6 +199,25 @@ public class Otrperc  implements ITransferObject {
     public void setPersona(Persona persona) {
         this.persona = persona;
     }
+    */
+
+	@Column(name="codemp", length=4, nullable=false)
+	public Integer getCodemp() {
+		return codemp;
+	}
+
+	public void setCodemp(Integer codemp) {
+		this.codemp = codemp;
+	}
+
+	@Column(name="codper", length=4, nullable=false)
+	public Integer getCodper() {
+		return codper;
+	}
+
+	public void setCodper(Integer codper) {
+		this.codper = codper;
+	}
 
 
 }

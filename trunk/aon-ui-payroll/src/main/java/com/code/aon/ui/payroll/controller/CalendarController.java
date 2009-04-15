@@ -309,9 +309,9 @@ public class CalendarController extends LinesController implements
 		Date ini = fecini.getTime();
 		Date fin = fecfin.getTime();
 		IManagerBean bean = BeanManager.getManagerBean(Calendario.class);
-		String emp = bean.getFieldName(IPayrollAlias.CALENDARIO_EMPRESA_CDG);
-		String act = bean.getFieldName(IPayrollAlias.CALENDARIO_ACTIVIDAD_CDG);
-		String dom = bean.getFieldName(IPayrollAlias.CALENDARIO_DOMICILIO_CDG);
+		String emp = bean.getFieldName(IPayrollAlias.CALENDARIO_EMPRESA);
+		String act = bean.getFieldName(IPayrollAlias.CALENDARIO_ACTIVIDAD);
+		String dom = bean.getFieldName(IPayrollAlias.CALENDARIO_DOMICILIO);
 		String fec = bean.getFieldName(IPayrollAlias.CALENDARIO_FECCAL);
 
 		Criteria criteria = new Criteria();
@@ -333,9 +333,9 @@ public class CalendarController extends LinesController implements
 		Date ini = fecini.getTime();
 		Date fin = fecfin.getTime();
 		IManagerBean bean = BeanManager.getManagerBean(Calendario.class);
-		String emp = bean.getFieldName(IPayrollAlias.CALENDARIO_EMPRESA_CDG);
-		String act = bean.getFieldName(IPayrollAlias.CALENDARIO_ACTIVIDAD_CDG);
-		String dom = bean.getFieldName(IPayrollAlias.CALENDARIO_DOMICILIO_CDG);
+		String emp = bean.getFieldName(IPayrollAlias.CALENDARIO_EMPRESA);
+		String act = bean.getFieldName(IPayrollAlias.CALENDARIO_ACTIVIDAD);
+		String dom = bean.getFieldName(IPayrollAlias.CALENDARIO_DOMICILIO);
 		String fec = bean.getFieldName(IPayrollAlias.CALENDARIO_FECCAL);
 
 		Criteria criteria = new Criteria();

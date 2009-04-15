@@ -17,42 +17,48 @@
 			
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_personas_otrperc}" />
-				<ui:param name="controller" value="#{otrperc}"/>
+				<ui:param name="controller" value="#{otraspercep}"/>
 			
 			</ui:include>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="otrpercData" value="#{otrperc.model}"
-					var="to" rows="20" rendered="#{otrperc.model.rowCount > 0}"
+				<aon:dataTable id="otrpercData" value="#{otraspercep.model}"
+					var="to" rows="20" rendered="#{otraspercep.model.rowCount > 0}"
 					columnClasses="aon-width-150, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
 					<aon:rowSelector action="otrperc_form"
-						actionListener="#{otrperc.onSelect}" />
+						actionListener="#{otraspercep.onSelect}" />
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
 						</f:facet>
-						<aon:outputText value="#{to.cdg}" />
+						<aon:outputText value="#{to.cdg}" size="5" />
 					</aon:column>
 
+					
+					
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.aon_payroll_principales_empresa_cdg}" />
+							<aon:outputText value="#{appBundle.aon_payroll_principales_personas_otrperc_fecha}" />
 						</f:facet>
-						<aon:outputText value="#{to.empresa.cdg}" />
+						<aon:outputText value="#{to.fecha}" size="8" />
 					</aon:column>
-
-
-
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.aon_payroll_principales_personas_otrperc_per}" />
+							<aon:outputText value="#{appBundle.aon_payroll_principales_personas_otrperc_concep}" />
 						</f:facet>
-						<aon:outputText value="#{to.persona.cdg}" />
+						<aon:outputText value="#{to.concepto}" size="10" />
 					</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_principales_personas_otrperc_claveper}" />
+						</f:facet>
+						<h:outputText value="#{to.clave}"  />
+					</aon:column>
+					
 
 
 

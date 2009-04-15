@@ -86,10 +86,10 @@ public class OtrpercepController extends LinesController {
 	
 		try {
 			if (empresa.getCdg() != null)  {
-				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.OTRPERC_EMPRESA_CDG), getEmpresa().getCdg());
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.OTRPERC_CODEMP), getEmpresa().getCdg());
 			}
 			if (persona.getCdg() != null) {
-				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.OTRPERC_PERSONA_CDG), getPersona().getCdg());
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.OTRPERC_CODPER), getPersona().getCdg());
 			}
 		     
 		    if (fecha != null){
