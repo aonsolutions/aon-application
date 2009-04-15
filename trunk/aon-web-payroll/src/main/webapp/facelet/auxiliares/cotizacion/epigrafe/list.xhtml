@@ -17,8 +17,11 @@
 			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_cotizacion_epigrafes}" />
 				<ui:param name="controller" value="#{epigrafeMaestro}" />
+				<ui:param name="reportKey" value="EpigrafesListPrint"/>
+				<ui:param name="reportKeyXls" value="EpigrafesListPrint"/>	
 				<aon:valueParam name="skipBackButton" default="false" />
-				<aon:methodParam name="backAction" value="auxiliares" />
+				<aon:methodParam name="backAction" value="auxiliares" />				
+				
 			</ui:include>
 		
 			<!--  aon-region-body -->
