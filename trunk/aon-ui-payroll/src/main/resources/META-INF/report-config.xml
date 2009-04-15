@@ -338,6 +338,8 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
+	
+	
 	<!--  *********  Impresion a PDF de los Porcentajes de cotizacion  ********* -->
 	<report id="cotizacionPorcentajes" description="Listado de Porcentajes">
 		<template path="/com/code/aon/ui/payroll/report/porcentajesCotizacion.jasper" />
@@ -454,6 +456,17 @@
 		<template path="/com/code/aon/ui/payroll/report/DivisaList2.jasper" />
 		<bean key="com.code.aon.payroll.divisa.LinDivisa" />
 		<criteria provider="#{divisa}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+		<report id="DivisaListPrint" description="Listado de Entidades">
+		<template path="/com/code/aon/ui/payroll/report/DivisaListPrint.jasper" />
+		<bean key="com.code.aon.payroll.divisa.Divisa" />
+		<criteria provider="#{divisaMaestro}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />
@@ -587,6 +600,17 @@
 		<template path="/com/code/aon/ui/payroll/report/DatosListXLS.jasper" />
 		<bean key="com.code.aon.payroll.irpf.Linirpf" />
 		<criteria provider="#{irpf}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+		<report id="IrpfMaestroListPrint" description="Listado de datos clave para el IRPF en excel">
+		<template path="/com/code/aon/ui/payroll/report/IrpfMaestroListPrint.jasper" />
+		<bean key="com.code.aon.payroll.irpf.Elemirpf" />
+		<criteria provider="#{irpfMaestro}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />
