@@ -517,6 +517,17 @@
 		</params>
 	</report>
 	
+		<report id="MutuasListPrint" description="Listado de Mutuas">
+		<template path="/com/code/aon/ui/payroll/report/MutuasListPrint.jasper" />
+		<bean key="com.code.aon.payroll.auxiliares.organismosyentidades.Mutua" />
+		<criteria provider="#{mutuaMaestro}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
 		<report id="MutuasListXLS" description="Listado de Mutuas">
 		<template path="/com/code/aon/ui/payroll/report/MutuasListXLS.jasper" />
 		<bean key="com.code.aon.payroll.auxiliares.organismosyentidades.Linmutua" />
@@ -543,6 +554,17 @@
 		<template path="/com/code/aon/ui/payroll/report/EntidadListXLS.jasper" />
 		<bean key="com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal" />
 		<criteria provider="#{sucursal}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+		<report id="EntidadListPrint" description="Listado de Entidades">
+		<template path="/com/code/aon/ui/payroll/report/EntidadListPrint.jasper" />
+		<bean key="com.code.aon.payroll.auxiliares.organismosyentidades.Entidad" />
+		<criteria provider="#{entidadMaestro}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />
