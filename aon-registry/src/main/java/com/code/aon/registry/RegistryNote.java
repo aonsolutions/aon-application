@@ -81,7 +81,6 @@ public class RegistryNote implements ITransferObject {
 		this.noteDate = noteDate;
 	}
 
-	@Column(nullable=false)
 	@Lob
 	public String getComments() {
 		return comments;
