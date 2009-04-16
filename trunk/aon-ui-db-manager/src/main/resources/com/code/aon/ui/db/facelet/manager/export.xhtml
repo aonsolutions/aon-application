@@ -20,7 +20,7 @@
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 				<ui:define name="toolbarContent">
 					<a4j:htmlCommandLink id="downloadZip" target="_blank"
-						value="#{bundle.aon_save}"
+						value="#{dbManagerBundle.db_manager_export}"
 						actionListener="#{dbManager.onExport}"
 						styleClass="aon-finding-toolbar-item aon-icon-file-download"
 						accesskey="#{bundle.aon_key_save}">
