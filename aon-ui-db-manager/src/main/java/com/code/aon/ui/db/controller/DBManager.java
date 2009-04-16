@@ -8,6 +8,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -19,15 +21,21 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
+import org.richfaces.event.UploadEvent;
+import org.richfaces.model.UploadItem;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.db.HibernateDataManager;
+import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.util.AonUtil;
 
 public class DBManager {
 
 	private static final Logger LOGGER = Logger.getLogger(DBManager.class.getName());
+	
+	private List<AonFile> files;
 
 	private void responseZip(File file) throws IOException {
         FacesContext context = FacesContext.getCurrentInstance();
@@ -82,6 +90,35 @@ public class DBManager {
 			LOGGER.severe( ">>>> onExport " + e.getMessage() );
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+	
+	public void onInitImport( ActionEvent event ) {
+		this.files = new ArrayList<AonFile>();
+	}
+	
+	public List<AonFile> getFiles() {
+		return files;
+	}
+
+	public void setFiles(List<AonFile> files) { 
+		this.files = files;
+	}	
+	
+	public synchronized void fileUploaded(UploadEvent event) {
+	    UploadItem item = event.getUploadItem();
+	    AonFile file = new AonFile();
+	    file.setFileName(item.getFileName());
+	    file.setData(item.getData());
+	    files.add(file);	    
+	}	
+	
+	public void fileDeleted( ActionEvent event ) {
+        FacesContext context = FacesContext.getCurrentInstance();
+		String indexValue = context.getExternalContext().getRequestParameterMap().get("index");
+		if (! StringUtils.isEmpty(indexValue) ) {
+			int index = Integer.valueOf(indexValue);
+			this.files.remove(index);
 		}
 	}
 	
