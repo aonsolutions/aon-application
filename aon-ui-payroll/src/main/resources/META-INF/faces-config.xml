@@ -4592,7 +4592,7 @@
 			<property-name>aliasMap</property-name>
 			<map-entries>
 				<map-entry>
-					<key>Otrperc_persona_cdg</key>
+					<key>Otrperc_codper</key>
 					<value>cdg</value>
 				</map-entry>
 			</map-entries>

@@ -39,29 +39,27 @@
 									<aon:inputText id="Percep_id_cdg" 
 											valueChangeListener="#{percepbasic.addExpression}" 
 										size="10" maxlength="6" />
-                                  <aon:outputLabel
-										value="  " />
-
+                                  
 								<!--  	<aon:outputLabel
 										value="#{appBundle.aon_payroll_principales_personas_percep}" />
 									<aon:inputText value="#{percep.to.id.numero}" 
 										size="10" maxlength="6" />-->
 
 
-							<aon:outputLabel for="Trabajador_cdg"
-								value="#{appBundle.aon_payroll_principales_personas_percep_trab}" />
-							<aon:div styleClass="aon-lookup">
-								<aon:lookupInputText readonly="#{!percepbasic.new}"
-									 id="Trabajador_cdg"
-									lookup="#{trabajadorLookup}"
-									value="#{percepbasic.trabajador.cdg}" size="5">
-								</aon:lookupInputText>
-								<aon:lookupButton id="Trabajador_lookup"
-									windowTitle="#{appBundle.aon_payroll_principales_personas_percep_trab}"
-									selectReRender="act,acti,fec,desc,ape,nom,Trabajador_cdg" lookup="#{trabajadorLookup}"
-									minHeight="440" property="#{percepbasic.trabajador}">
-								</aon:lookupButton>
-							</aon:div>
+								<aon:outputLabel for="Trabajador_cdg"
+									value="#{appBundle.aon_payroll_principales_personas_percep_trab}" />
+								<aon:div styleClass="aon-lookup">
+									<aon:lookupInputText readonly="#{!percepbasic.new}"
+										 id="Trabajador_cdg"
+										lookup="#{trabajadorLookup}"
+										value="#{percepbasic.trabajador.cdg}" size="5">
+									</aon:lookupInputText>
+									<aon:lookupButton id="Trabajador_lookup"
+										windowTitle="#{appBundle.aon_payroll_principales_personas_percep_trab}"
+										selectReRender="act,acti,fec,desc,ape,nom,Trabajador_cdg" lookup="#{trabajadorLookup}"
+										minHeight="440" property="#{percepbasic.trabajador}">
+									</aon:lookupButton>
+								</aon:div>
 						</aon:panelGrid>
 					</aon:div>
 
@@ -248,47 +246,30 @@
 
 
 
-								<aon:panelGrid id="percep_right" columns="1" dir="true"
+								<aon:panelGrid id="percep_right" columns="4" dir="true"
 									width="100%" style="margin-bottom=2px;">
-								
-										<f:facet name="header">
-											<aon:outputText
-												value="#{appBundle.aon_payroll_auxiliares_convenios__ind_comp}" />
-										</f:facet>
-										<aon:div styleClass="">
-											<aon:selectOneRadio id="Percep_indcom" 
+										<aon:outputText	value="#{appBundle.aon_payroll_auxiliares_convenios__ind_comp}" />
+										<aon:selectOneRadio id="Percep_indcom" 
 											valueChangeListener="#{percepbasic.addExpression}">
-												<aon:enumConverter enum="com.code.aon.payroll.enumeration.IndiceComplemento" />	
+											<aon:enumConverter enum="com.code.aon.payroll.enumeration.IndiceComplemento" />	
 											<f:selectItems value="#{percepbasic.listaIndiceComplemento}" />
-											</aon:selectOneRadio>
-										</aon:div>
-								
-
-
-										<f:facet name="header">
-											<aon:outputText
+										</aon:selectOneRadio>
+									
+										<aon:outputText
 												value="#{appBundle.aon_payroll_auxiliares_convenios__fijo_var}" />
-										</f:facet>
-										<aon:div styleClass="">
-											<aon:selectOneRadio id="Percep_fijovar" 
+										<aon:selectOneRadio id="Percep_fijovar" 
 											valueChangeListener="#{percepbasic.addExpression}">
 											<aon:enumConverter enum="com.code.aon.payroll.enumeration.FijoVariable" />
-												<f:selectItems value="#{percepbasic.listaFijoVariable}" />
-											</aon:selectOneRadio>
-										</aon:div>
+											<f:selectItems value="#{percepbasic.listaFijoVariable}" />
+										</aon:selectOneRadio>
 									
-
-										<f:facet name="header">
-											<aon:outputText
+										<aon:outputText
 												value="#{appBundle.aon_payroll_auxiliares_convenios__retrib}" />
-										</f:facet>
-										<aon:div styleClass="">
-											<aon:selectOneRadio id="Percep_dinesp" 
+										<aon:selectOneRadio id="Percep_dinesp" 
 											valueChangeListener="#{percepbasic.addExpression}">
 											<aon:enumConverter enum="com.code.aon.payroll.enumeration.Retribuciones" />	
 											<f:selectItems value="#{percepbasic.listaRetribuciones}" />
-											</aon:selectOneRadio>
-										</aon:div>
+										</aon:selectOneRadio>
 									
 								</aon:panelGrid>
 
