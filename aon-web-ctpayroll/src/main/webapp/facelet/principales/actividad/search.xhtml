@@ -15,14 +15,14 @@
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
 				<ui:param name="toolbarTitle"
 					value="#{appBundle.aon_payroll_principales_actividad}" />
-				<ui:param name="controller" value="#{actividad}" />
+				<ui:param name="controller" value="#{empreact}" />
 			</ui:include>
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:define name="searchContent">
 					<aon:methodParam name="searchActionListener"
-						value="#{actividad.onSearch}" type="actionListener" />
+						value="#{empreact.onSearch}" type="actionListener" />
 					<aon:methodParam name="searchAction" value="actividad_list" />
 
 
@@ -38,17 +38,17 @@
 									value="#{appBundle.aon_payroll_principales_tipocuenta_actividad}" />
 								<aon:div styleClass="aon-lookup">
 									<aon:lookupInputText id="Acti_cdg" lookup="#{actividadLookup}"
-										reRender="Acti_description" value="#{actividad.actividad.cdg}"
+										reRender="Acti_description" value="#{empreact.actividad.cdg}"
 										size="5">
 									</aon:lookupInputText>
 									<aon:lookupButton id="Acti_lookup"
 										windowTitle="#{appBundle.aon_payroll_principales_tipocuenta_actividad}"
 										selectReRender="Acti_cdg,Acti_description"
 										lookup="#{actividadLookup}" minHeight="440"
-										property="#{actividad.actividad}">
+										property="#{empreact.actividad}">
 									</aon:lookupButton>
 									<aon:inputText id="Acti_description"
-										value="#{(actividad.actividad.descripcion!=null)?(actividad.actividad.descripcion):('')}"
+										value="#{(empreact.actividad.descripcion!=null)?(empreact.actividad.descripcion):('')}"
 										size="60" disabled="true" />
 								</aon:div>
 
@@ -56,7 +56,7 @@
 									value="#{appBundle.aon_payroll_principales_actividad_ali}" />
 
 								<aon:inputText id="Actividad_alias"
-									valueChangeListener="#{actividad.addExpression}" size="30" />
+									valueChangeListener="#{empreact.addExpression}" size="30" />
 
 
 
@@ -64,17 +64,17 @@
 									value="#{appBundle.aon_payroll_principales_tipocuenta_empresa}" />
 								<aon:div styleClass="aon-lookup">
 									<aon:lookupInputText id="Empre_cdg" lookup="#{empresaLookup}"
-										reRender="Empr_description" value="#{actividad.empresa.cdg}"
+										reRender="Empr_description" value="#{empreact.empresa.cdg}"
 										size="5">
 									</aon:lookupInputText>
 									<aon:lookupButton id="Empre_lookup"
 										windowTitle="#{appBundle.aon_payroll_principales_tipocuenta_empresa}"
 										selectReRender="Empre_cdg,Empre_description"
 										lookup="#{empresaLookup}" minHeight="440"
-										property="#{actividad.empresa}">
+										property="#{empreact.empresa}">
 									</aon:lookupButton>
 									<aon:inputText id="Empre_description"
-										value="#{(actividad.empresa.descripcion!=null)?(actividad.empresa.descripcion):('')}"
+										value="#{(empreact.empresa.descripcion!=null)?(empreact.empresa.descripcion):('')}"
 										size="60" disabled="true" />
 								</aon:div>
 
@@ -83,7 +83,7 @@
 									value="#{appBundle.aon_payroll_principales_actividad_bbx}" />
 
 								<aon:inputText id="Actividad_codnsz"
-									valueChangeListener="#{actividad.addExpression}" size="5" />
+									valueChangeListener="#{empreact.addExpression}" size="5" />
 
 							</aon:panelGrid>
 
@@ -101,17 +101,17 @@
 									value="#{appBundle.aon_payroll_principales_actividad_con}" />
 								<aon:div styleClass="aon-lookup">
 									<aon:lookupInputText id="Conv_cdg" lookup="#{convenioLookup}"
-										reRender="Conv_description" value="#{actividad.convenio.cdg}"
+										reRender="Conv_description" value="#{empreact.convenio.cdg}"
 										size="5">
 									</aon:lookupInputText>
 									<aon:lookupButton id="conv_lookup"
 										windowTitle="#{appBundle.aon_payroll_principales_actividad_con}"
 										selectReRender="Conv_cdg,Conv_description"
 										lookup="#{convenioLookup}" minHeight="440"
-										property="#{actividad.convenio}">
+										property="#{empreact.convenio}">
 									</aon:lookupButton>
 									<aon:inputText id="Conv_description"
-										value="#{(actividad.convenio.description!=null)?(actividad.convenio.description):('')}"
+										value="#{(empreact.convenio.description!=null)?(empreact.convenio.description):('')}"
 										size="60" disabled="true" />
 								</aon:div>
 
@@ -120,20 +120,20 @@
 									value="#{appBundle.aon_payroll_principales_actividad_cnae93}" />
 
 								<aon:inputText id="Actividad_cnae"
-									valueChangeListener="#{actividad.addExpression}" size="10" />
+									valueChangeListener="#{empreact.addExpression}" size="10" />
 
 
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_principales_actividad_cnae2009}" />
 
 								<aon:inputText id="Actividad_cnae2009"
-									valueChangeListener="#{actividad.addExpression}" size="10" />
+									valueChangeListener="#{empreact.addExpression}" size="10" />
 
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_principales_actividad_prev}" />
 
 								<aon:inputText id="Actividad_prevencion"
-									valueChangeListener="#{actividad.addExpression}" size="10" />
+									valueChangeListener="#{empreact.addExpression}" size="10" />
 
 
 
@@ -141,63 +141,63 @@
 									value="#{appBundle.aon_payroll_principales_actividad_epiiae}" />
 
 								<aon:inputText id="Actividad_epiiae"
-									valueChangeListener="#{actividad.addExpression}" size="10" />
+									valueChangeListener="#{empreact.addExpression}" size="10" />
 
 
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_principales_actividad_act}" />
 
 								<aon:inputText id="Actividad_acteco"
-									valueChangeListener="#{actividad.addExpression}" size="55" />
+									valueChangeListener="#{empreact.addExpression}" size="55" />
 
 
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_principales_actividad_fecini}" />
 								<aon:selectInputDate renderAsPopup="true"
 									popupDateFormat="#{appBundle.aon_date_pattern}"
-									value="#{actividad.fecini}" enableManualInput="true" />
+									value="#{empreact.fecini}" enableManualInput="true" />
 
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_principales_actividad_fecfin}" />
 								<aon:selectInputDate renderAsPopup="true"
 									popupDateFormat="#{appBundle.aon_date_pattern}"
-									value="#{actividad.fecfin}" enableManualInput="true" />
+									value="#{empreact.fecfin}" enableManualInput="true" />
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_principales_actividad_envio}" />
 								<aon:selectOneMenu id="Actividad_envioss"
-									valueChangeListener="#{actividad.addExpression}">
+									valueChangeListener="#{empreact.addExpression}">
 									<aon:enumConverter
 										enum="com.code.aon.payroll.enumeration.EnvioSS2" />
 									<f:selectItem value="#{null}" itemLabel="    " />
-									<f:selectItems value="#{actividad.listaenvios}" />
+									<f:selectItems value="#{empreact.listaenvios}" />
 								</aon:selectOneMenu>
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_principales_actividad_tipnom}" />
 								<aon:selectOneMenu id="Actividad_tiponomina"
-									valueChangeListener="#{actividad.addExpression}">
+									valueChangeListener="#{empreact.addExpression}">
 									<aon:enumConverter
 										enum="com.code.aon.payroll.enumeration.Tiponomina" />
 									<f:selectItem value="#{null}" itemLabel="    " />
-									<f:selectItems value="#{actividad.listatiposnom}" />
+									<f:selectItems value="#{empreact.listatiposnom}" />
 								</aon:selectOneMenu>
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_principales_actividad_regimen}" />
 								<aon:selectOneMenu id="Actividad_indregimen"
-									valueChangeListener="#{actividad.addExpression}">
+									valueChangeListener="#{empreact.addExpression}">
 									<aon:enumConverter
 										enum="com.code.aon.payroll.enumeration.IndRegimen" />
 									<f:selectItem value="#{null}" itemLabel="    " />
-									<f:selectItems value="#{actividad.listaindregs}" />
+									<f:selectItems value="#{empreact.listaindregs}" />
 								</aon:selectOneMenu>
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_principales_actividad_modpago}" />
 								<aon:selectOneMenu id="Actividad_modpago"
-									valueChangeListener="#{actividad.addExpression}">
+									valueChangeListener="#{empreact.addExpression}">
 									<aon:enumConverter
 										enum="com.code.aon.payroll.enumeration.Modpago" />
 
 									<f:selectItem value="#{null}" itemLabel="    " />
-									<f:selectItems value="#{actividad.listamodpagos}" />
+									<f:selectItems value="#{empreact.listamodpagos}" />
 								</aon:selectOneMenu>
 
 
@@ -216,15 +216,15 @@
 											<aon:outputText
 												value="#{appBundle.aon_payroll_principales_empresa_servicios}" />
 										</f:facet>
-										<aon:selectBooleanCheckbox value="#{actividad.indcal}" />
+										<aon:selectBooleanCheckbox value="#{empreact.indcal}" />
 										<aon:outputLabel
 											value="#{appBundle.aon_payroll_principales_empresa_indcal}" />
 										<br />
-										<aon:selectBooleanCheckbox value="#{actividad.indnom}" />
+										<aon:selectBooleanCheckbox value="#{empreact.indnom}" />
 										<aon:outputLabel
 											value="#{appBundle.aon_payroll_principales_empresa_indnom}" />
 										<br />
-										<aon:selectBooleanCheckbox value="#{actividad.indcoste}" />
+										<aon:selectBooleanCheckbox value="#{empreact.indcoste}" />
 										<aon:outputLabel
 											value="#{appBundle.aon_payroll_principales_empresa_indcoste}" />
 									</aon:panel>
@@ -234,15 +234,15 @@
 											<aon:outputText
 												value="#{appBundle.aon_payroll_principales_actividad_ss}" />
 										</f:facet>
-										<aon:selectBooleanCheckbox value="#{actividad.indred}" />
+										<aon:selectBooleanCheckbox value="#{empreact.indred}" />
 										<aon:outputLabel
 											value="#{appBundle.aon_payroll_principales_actividad_ss1}" />
 										<br />
-										<aon:selectBooleanCheckbox value="#{actividad.indmutua}" />
+										<aon:selectBooleanCheckbox value="#{empreact.indmutua}" />
 										<aon:outputLabel
 											value="#{appBundle.aon_payroll_principales_actividad_ss2}" />
 										<br />
-										<aon:selectBooleanCheckbox value="#{actividad.indtc1}" />
+										<aon:selectBooleanCheckbox value="#{empreact.indtc1}" />
 										<aon:outputLabel
 											value="#{appBundle.aon_payroll_principales_actividad_ss3}" />
 										<br />
@@ -251,7 +251,7 @@
 										<aon:outputLabel
 											value="#{appBundle.aon_payroll_principales_actividad_ss4}" />
 										<br />
-										<aon:selectBooleanCheckbox value="#{actividad.colss}" />
+										<aon:selectBooleanCheckbox value="#{empreact.colss}" />
 										<aon:outputLabel
 											value="#{appBundle.aon_payroll_principales_actividad_ss5}" />
 									</aon:panel>
@@ -263,7 +263,7 @@
 										<aon:outputText
 											value="#{appBundle.aon_payroll_principales_actividad_ingrescheck}" />
 
-										<aon:selectBooleanCheckbox value="#{actividad.ingespemp}" />
+										<aon:selectBooleanCheckbox value="#{empreact.ingespemp}" />
 
 										<aon:outputText value="   " />
 										<aon:outputText value="   " />

@@ -13,23 +13,23 @@
 
 	<ui:define name="content">
 
-		<aon:form id="otrpercList">
+		<aon:form id="actividadList">
 			
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_actividad}" />
-				<ui:param name="controller" value="#{actividad}"/>
+				<ui:param name="controller" value="#{empreact}"/>
 			
 			</ui:include>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="otrpercData" value="#{actividad.model}"
-					var="to" rows="20" rendered="#{actividad.model.rowCount > 0}"
+				<aon:dataTable id="otrpercData" value="#{empreact.model}"
+					var="to" rows="20" rendered="#{empreact.model.rowCount > 0}"
 					columnClasses="aon-width-150, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
 					<aon:rowSelector action="actividad_form"
-						actionListener="#{actividad.onSelect}" />
+						actionListener="#{empreact.onSelect}" />
 
 					<aon:column>
 						<f:facet name="header">
