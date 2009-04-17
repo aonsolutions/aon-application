@@ -16,7 +16,7 @@ import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.StringType;
 import org.hibernate.type.Type;
 
-public class EntityImportVisitor  implements IEntityVisitor {
+public class EntityImportVisitor implements IEntityVisitor {
 
 	private int counter;
 	
@@ -32,6 +32,8 @@ public class EntityImportVisitor  implements IEntityVisitor {
 
 	private String className;
 	
+	Class<? extends Serializable> lastEntity;
+	
 	private List<String> notNullableStringProperties;
 	
 	@SuppressWarnings("unchecked")
@@ -42,10 +44,12 @@ public class EntityImportVisitor  implements IEntityVisitor {
 		initTransaction();
 	}
 	
-	@Override
 	public void setEntity(Class<? extends Serializable> entity) {
-		this.className = entity.getName();
-		initNotNullableStringProperties(sessionFactory, entity);		
+		if ( this.lastEntity != entity ) {
+			this.className = entity.getName();
+			initNotNullableStringProperties(sessionFactory, entity);
+			this.lastEntity = entity;
+		}
 	}
 
 	private void initNotNullableStringProperties(SessionFactory sessionFactory, Class<? extends Serializable> entity) {
@@ -85,7 +89,8 @@ public class EntityImportVisitor  implements IEntityVisitor {
 		}
 	}
 	
-	public void visit(Element element) {
+	public void visit( Element element, Class<? extends Serializable> entity ) {
+		setEntity(entity);
 		patch(element);
 		dom4jSession.replicate( className, element, ReplicationMode.EXCEPTION );
     	if ( ++counter == maxExport ) {

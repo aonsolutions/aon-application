@@ -92,6 +92,8 @@ public class HibernateDataManager {
 	
 	private IEntityManager importer;
 	
+	private IEntityVisitor visitor;
+	
 	public HibernateDataManager() {
 		setMaxExport( DEFAULT_MAX_EXPORT );
 		setMaxImport( DEFAULT_MAX_IMPORT );
@@ -265,6 +267,17 @@ public class HibernateDataManager {
 
 	public void setInsert(boolean insert) {
 		this.insert = insert;
+	}
+
+	public IEntityVisitor getVisitor() {
+		if ( visitor == null ) {
+    		this.visitor = new EntityImportVisitor(getImportFactory(), getMaxImport());	
+		}
+		return visitor;
+	}
+
+	public void setVisitor(IEntityVisitor visitor) {
+		this.visitor = visitor;
 	}
 
 	public static Properties loadProperties( File file ) {
@@ -452,6 +465,11 @@ public class HibernateDataManager {
     	}
     }
     
+    public void importFile( File file ) throws EntityProcessException {
+    	XMLToDBImporter xmlImporter = (XMLToDBImporter) this.importer;
+    	xmlImporter.proccess(file);
+    }    
+    
     private QueryIterable<Object> getEntityIterable() {
     	QueryIterable<Object> entityIterable = new QueryIterable<Object>();
 		entityIterable.setMaxResults( getMaxExport() );
@@ -476,9 +494,12 @@ public class HibernateDataManager {
 	    		exportData();
 	    	}
 	    	if ( isImportData() ) {
-	    		IEntityVisitor visitor = new EntityImportVisitor(getImportFactory(), getMaxImport());
-	    		importer = new XMLToDBImporter( this, visitor );
-	        	importData();    		
+	    		importer = new XMLToDBImporter( this, getVisitor() );
+	    		if ( getFile() != null ) {
+	    			importFile(file);
+	    		} else {
+		        	importData();	
+	    		}    		
 	    	}
     	}
     }
@@ -487,12 +508,13 @@ public class HibernateDataManager {
     	HibernateDataManager hdm = new HibernateDataManager();
     	/*
     	hdm.setExportData(true);
+    	hdm.setFile( new File("/tmp/aon_master.xml") );
     	hdm.setDirectory( new File("/tmp/db-manager") );
     	hdm.setConfigurationFile( new File("/AON-PROJECT/aon-cse-util/ant/hibernate.cfg.xml") );
     	hdm.setExportProperties( new File("/AON-PROJECT/aon-cse-util/ant/mysql.properties") );
-    	*/
+    	 */
     	hdm.setImportData(true);
-    	hdm.setDirectory( new File("/tmp/db-manager") );
+    	hdm.setFile( new File("/tmp/aon_master.xml") );
     	hdm.setConfigurationFile( new File("/AON-PROJECT/aon-cse-util/ant/hibernate.cfg.xml") );
     	hdm.setImportProperties( new File("/AON-PROJECT/aon-cse-util/ant/postgresql.properties") );
     	hdm.execute();
