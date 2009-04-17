@@ -329,12 +329,12 @@
 										disabled="true"
 										popupDateFormat="#{bundle.aon_date_pattern}">
 									</aon:selectInputDate>	
-
+<!--  
 									<aon:outputLabel for="Empresa_obsnif"
 										value="#{appBundle.aon_payroll_principales_empresa_obsnif}" />
 									<aon:inputTextarea id="Empresa_obsnif" cols="60" rows="5" size="1" 
 										valueChangeListener="#{empresa.addExpression}" />
-
+-->
 								</aon:panelGrid>
 							</aon:div>
 							
@@ -352,18 +352,18 @@
 											<aon:outputText
 												value="#{appBundle.aon_payroll_principales_empresa_servicios}" />
 										</f:facet>
-										<aon:selectBooleanCheckbox
-											value="#{empresa.to.indcal}" />
+										<aon:selectBooleanCheckbox id="Empresa_indcal"
+											valueChangeListener="#{empresa.addDirectExpression}" />
 										<aon:outputLabel
 											value="#{appBundle.aon_payroll_principales_empresa_indcal}" />
 										<br />
-										<aon:selectBooleanCheckbox
-											value="#{empresa.to.indnom}" />
+										<aon:selectBooleanCheckbox id="Empresa_indnom"
+											valueChangeListener="#{empresa.addDirectExpression}" />
 										<aon:outputLabel
 											value="#{appBundle.aon_payroll_principales_empresa_indnom}" />
 										<br />
-										<aon:selectBooleanCheckbox
-											value="#{empresa.to.indcoste}" />
+										<aon:selectBooleanCheckbox id="Empresa_indcoste"
+											valueChangeListener="#{empresa.addDirectExpression}" />
 										<aon:outputLabel
 											value="#{appBundle.aon_payroll_principales_empresa_indcoste}" />
 									</aon:panel>

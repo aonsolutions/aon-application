@@ -170,17 +170,17 @@ public class EmpreactController extends PayrollBasicController {
 			if (indcal) {
 
 				getCriteria().addEqualExpression(
-						getFieldName(IPayrollAlias.ACTIVIDAD_INDCAL), true);
+						getFieldName(IPayrollAlias.ACTIVIDAD_INDCAL), "S");
 			}
 			if (indnom) {
 
 				getCriteria().addEqualExpression(
-						getFieldName(IPayrollAlias.ACTIVIDAD_INDNOM), true);
+						getFieldName(IPayrollAlias.ACTIVIDAD_INDNOM), "S");
 			}
 			if (indcoste) {
 
 				getCriteria().addEqualExpression(
-						getFieldName(IPayrollAlias.ACTIVIDAD_INDCOSTE), true);
+						getFieldName(IPayrollAlias.ACTIVIDAD_INDCOSTE), "S");
 			}
 			if (flc) {
 

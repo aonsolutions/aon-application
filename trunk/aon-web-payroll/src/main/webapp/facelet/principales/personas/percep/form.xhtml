@@ -13,14 +13,18 @@
 	<ui:define name="content">
 
 		<aon:form id="percepForm">
-
-
+		
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle"
 					value="#{appBundle.aon_payroll_principales_personas_percep}" />
 				<ui:param name="controller" value="#{percepbasic}" />
+				<aon:methodParam name="backAction" value="percep_list" />
+				<aon:methodParam name="searchAction" value="percep_search" />
+				
+				<!--  
 				<ui:param name="reportKey" value="DelegacionList" />
+				-->
 			</ui:include>
 			<aon:div id="clientes"
 				styleClass="aon-scroll-area aon-scroll-area-principales">
