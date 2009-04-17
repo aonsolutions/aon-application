@@ -33,7 +33,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.mapping.ForeignKey;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.metadata.ClassMetadata;
 import org.xml.sax.SAXException;
@@ -82,11 +81,11 @@ public class HibernateDataManager {
 	
 	private List<Class<? extends Serializable>> excludeEntities;
 	
-	private AnnotationConfiguration importConfiguration;
+	private Configuration importConfiguration;
 	
 	private SessionFactory importFactory;
 	
-	private AnnotationConfiguration exportConfiguration;	
+	private Configuration exportConfiguration;	
 	
 	private SessionFactory exportFactory;
 	
@@ -140,6 +139,10 @@ public class HibernateDataManager {
 		this.exportProperties = exportProperties;
 	}
 	
+	public void setImportConfiguration(Configuration importConfiguration) {
+		this.importConfiguration = importConfiguration;
+	}
+	
 	private Configuration getImportConfiguration() {
 		if ( importConfiguration == null ) {
 			importConfiguration = createConfiguration(configurationFile, importProperties);
@@ -154,8 +157,8 @@ public class HibernateDataManager {
 		return importFactory;
 	}
 
-	public void setImportFactory(SessionFactory importFactory) {
-		this.importFactory = importFactory;
+	public void setExportConfiguration(Configuration exportConfiguration) {
+		this.exportConfiguration = exportConfiguration;
 	}
 
 	private Configuration getExportConfiguration() {
@@ -170,10 +173,6 @@ public class HibernateDataManager {
 			exportFactory = getExportConfiguration().buildSessionFactory();
 		}
 		return exportFactory;
-	}
-	
-	public void setExportFactory(SessionFactory exportFactory) {
-		this.exportFactory = exportFactory;
 	}
 
 	public File getFile( Class entity ) {
@@ -419,49 +418,25 @@ public class HibernateDataManager {
     
     public void exportData() throws EntityProcessException {
     	DBToXMLExporter exporter = new DBToXMLExporter( this, getElementEntityIterable() );
-    	for( Class entity : getEntities() ) {
+    	List<Class<? extends Serializable>> entities = getEntities();
+   		DependencyResolver dr = new DependencyResolver( getExportConfiguration() );
+   		entities = dr.organize(entities);    	
+    	for( Class entity : entities ) {
     		exporter.proccess(entity);
     	}
     	endDocument(true);
     }
     
-    private Set<Class> getDependencies( Class entity ) {
-    	PersistentClass pc = getImportConfiguration().getClassMapping(entity.getName());
-    	Set<Class> result = new HashSet<Class>();
-    	Iterator it = pc.getTable().getForeignKeyIterator();
-    	while ( it.hasNext() ) {
-    		ForeignKey fk = (ForeignKey) it.next();
-    		PersistentClass foreignPC = getImportConfiguration().getClassMapping(fk.getReferencedEntityName());
-    		result.add( foreignPC.getMappedClass() );
-    	}
-    	return result;
-    }
-    
-    private void importDataEx( Set<Class> imported, Set<Class> processed, Class entity ) throws EntityProcessException {
-    	if (! processed.contains(entity) ) {
-       		if (! imported.contains(entity) ) {
-	        	processed.add( entity );
-	    		for( Class dependency : getDependencies( entity ) ) {
-               		importDataEx( imported, processed, dependency );        			
-	           	}
-    			importer.proccess( entity );
-	           	imported.add( entity );
-	           	processed.remove( entity );
-       		}	           
-    	} else {
-    		LOGGER.warning( "Entity is being processed: " + entity );
-    	}
-    }
-    
     public void importData() throws EntityProcessException {
     	Set<Class> imported = new HashSet<Class>();
     	Set<Class> processed = new HashSet<Class>();
+    	List<Class<? extends Serializable>> entities = getEntities();
+    	if (! ignoreDependencies ) {
+    		DependencyResolver dr = new DependencyResolver( getImportConfiguration() );
+    		entities = dr.organize(entities);
+    	}
     	for( Class entity : getEntities() ) {
-    		if ( ignoreDependencies ) {
-    			importer.proccess( entity );    			
-    		} else {
-    			importDataEx( imported, processed, entity );
-    		}
+   			importer.proccess( entity );    			
     	}
     }
     
@@ -506,17 +481,19 @@ public class HibernateDataManager {
 	
     public static void main(String[] args) throws EntityProcessException {
     	HibernateDataManager hdm = new HibernateDataManager();
+
     	/*
     	hdm.setExportData(true);
     	hdm.setFile( new File("/tmp/aon_master.xml") );
-    	hdm.setDirectory( new File("/tmp/db-manager") );
+    	// hdm.setDirectory( new File("/tmp/db-manager") );
     	hdm.setConfigurationFile( new File("/AON-PROJECT/aon-cse-util/ant/hibernate.cfg.xml") );
     	hdm.setExportProperties( new File("/AON-PROJECT/aon-cse-util/ant/mysql.properties") );
     	 */
     	hdm.setImportData(true);
     	hdm.setFile( new File("/tmp/aon_master.xml") );
+    	// hdm.setDirectory( new File("/tmp/db-manager") );
     	hdm.setConfigurationFile( new File("/AON-PROJECT/aon-cse-util/ant/hibernate.cfg.xml") );
-    	hdm.setImportProperties( new File("/AON-PROJECT/aon-cse-util/ant/postgresql.properties") );
+    	hdm.setImportProperties( new File("/AON-PROJECT/aon-cse-util/ant/postgresql.properties") );    	
     	hdm.execute();
 	}
     
