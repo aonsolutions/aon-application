@@ -14,50 +14,78 @@
 	<ui:define name="content">
 
 		<aon:form id="embargoBasicList">
-			
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_clientes}" />
-				<ui:param name="controller" value="#{embargoBasic}"/>
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{appBundle.aon_payroll_pricipales_personas_embargos}" />
+				<ui:param name="controller" value="#{embargoBasic}" />
 				<ui:param name="skipBackButton" value="false" />
-				<aon:methodParam name="cancelAction" value="embargoBasic_form"/>	
+				<aon:methodParam name="cancelAction" value="embargoBasic_form" />
 			</ui:include>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="embargoBasicData" value="#{embargoBasic.model}" var="to" rows="20" 
+				<aon:dataTable id="embargoBasicData" value="#{embargoBasic.model}"
+					var="to" rows="20"
 					columnClasses="aon-editDataTable-textColumn, 
 					aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
-					<aon:rowSelector action="embargoBasic_form" actionListener="#{embargoBasic.onSelect}" />
-					
- 					<aon:column>
+					<aon:rowSelector action="embargoBasic_form"
+						actionListener="#{embargoBasic.onSelect}" />
+
+					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.aon_payroll_principales_trabajador_cod_persona}" />
+							<aon:outputText
+								value="#{appBundle.aon_payroll_principales_trabajador_cod_persona}" />
 						</f:facet>
-						<aon:outputText value="#{to.codper}"/>
+						<aon:outputText value="#{to.codper}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.aon_payroll_pricipales_personas_embargos_cdg}" />
+							<aon:outputText
+								value="#{appBundle.aon_payroll_pricipales_personas_embargos_cdg}" />
 						</f:facet>
-						<aon:outputText value="#{to.id.cdg}"/>
+						<aon:outputText value="#{to.id.cdg}" />
 					</aon:column>
-		
+
+			
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.aon_payroll_pricipales_personas_embargos_comienzo}" />
+							<aon:outputText
+								value="#{appBundle.aon_payroll_pricipales_personas_embargos_nombre}" />
 						</f:facet>
-						<aon:outputText value="#{to.id.fecha}" >
+						<aon:outputText
+							value="#{to.trabajador.persona.nombre}  #{to.trabajador.persona.descripcion}  #{to.trabajador.persona.apellido2}" />
+					</aon:column>
+
+
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText
+								value="#{appBundle.aon_payroll_pricipales_personas_embargos_comienzo}" />
+						</f:facet>
+						<aon:outputText value="#{to.id.fecha}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
 					</aon:column>
 
- 				</aon:dataTable>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText
+								value="#{appBundle.aon_payroll_pricipales_personas_embargos_afecta}" />
+						</f:facet>
+						<aon:outputText value="#{to.afecta}" />
+					</aon:column>
 
-				<aon:dataScroller2 for="embargoBasicData"  showNote="true" />
+
+				</aon:dataTable>
+
+				<aon:dataScroller2 for="embargoBasicData" showNote="true" />
 
 			</aon:div>
 		</aon:form>
