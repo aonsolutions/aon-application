@@ -7,14 +7,9 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 <body>
-
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
-
 	<ui:define name="content">
-
 		<aon:form id="otrpercForm">
-
-
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle"
@@ -22,33 +17,16 @@
 				<ui:param name="controller" value="#{otraspercep}" />
 				<ui:param name="reportKey" value="DelegacionList" />
 			</ui:include>
+
 			<aon:div id="clientes"
 				styleClass="aon-scroll-area aon-scroll-area-principales">
 				<aon:div id="otrperc" styleClass="aon-scroll-area">
-
-
 					<aon:div styleClass="aon-scroll-area">
-						<aon:panelGrid columns="4" dir="true" width="100%"
-							style="margin-bottom=2px;">
+						<aon:panelGrid columns="4" dir="true" width="100%" style="margin-bottom=2px;">
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_personas_otrperc_num}" />
 							<aon:inputText value="#{otraspercep.to.cdg}" required="true" disabled="true"
 								size="10" maxlength="6" />
-
-							<aon:outputLabel for="Persona_cdg"
-								value="#{appBundle.aon_payroll_principales_personas_otrperc_per}" />
-							<aon:div styleClass="aon-lookup">
-								<aon:lookupInputText id="Persona_cdg" lookup="#{personaLookup}"
-									reRender="Persona_description"
-									value="#{otraspercep.persona.cdg}" size="5" required="true">
-								</aon:lookupInputText>
-								<aon:lookupButton id="Persona_lookup"
-									windowTitle="#{appBundle.aon_payroll_principales_personas_otrperc_per}"
-									selectReRender="Persona_cdg,Persona_description,info_persona"
-									lookup="#{personaLookup}" minHeight="440"
-									property="#{otraspercep.persona}">
-								</aon:lookupButton>
-							</aon:div>
 
 							<aon:outputLabel for="Empresa_cdg"
 								value="#{appBundle.aon_payroll_principales_personas_otrperc_emp}" />
@@ -67,19 +45,32 @@
 									value="#{(otraspercep.empresa.descripcion!=null)?(otraspercep.empresa.descripcion):('')}"
 									size="60" disabled="true" />
 							</aon:div>
-
 						</aon:panelGrid>
 					</aon:div>
+
 					<rich:spacer />
 
 					<aon:div styleClass="aon-scroll-area" id="info_persona">
-						<aon:panelGrid columns="4" dir="true" width="100%"
-							style="margin-bottom=2px;">
+						<aon:panelGrid columns="4" dir="true" width="100%" style="margin-bottom=2px;">
+							<aon:outputLabel for="Persona_cdg"
+								value="#{appBundle.aon_payroll_principales_personas_otrperc_per}" />
+							<aon:div styleClass="aon-lookup">
+								<aon:lookupInputText id="Persona_cdg" lookup="#{personaLookup}"
+									reRender="Persona_description"
+									value="#{otraspercep.persona.cdg}" size="5" required="true">
+								</aon:lookupInputText>
+								<aon:lookupButton id="Persona_lookup"
+									windowTitle="#{appBundle.aon_payroll_principales_personas_otrperc_per}"
+									selectReRender="Persona_cdg,Persona_description,info_persona"
+									lookup="#{personaLookup}" minHeight="440"
+									property="#{otraspercep.persona}">
+								</aon:lookupButton>
+							</aon:div>
+
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_personas_otrperc_nom}" />
 							<aon:inputText value="#{otraspercep.persona.nombre}" size="60"
 								maxlength="20" />
-							
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_personas_otrperc_ape1}" />
@@ -127,7 +118,6 @@
 							<aon:inputText id="base" value="#{otraspercep.to.base}" size="60" required="true"
 								maxlength="20" />
 
-
 							<aon:outputLabel for="porcentaje"
 								value="#{appBundle.aon_payroll_principales_personas_otrperc_porcen}" />
 							<aon:inputText id="porcentaje" value="#{otraspercep.to.prcret}" size="60" required="true"
@@ -138,13 +128,10 @@
 							<aon:inputText value="#{otraspercep.to.retencion}" size="60"
 								maxlength="20" />
 
-
-
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_personas_otrperc_apor}" />
 							<aon:inputText value="#{otraspercep.to.aportaSs}" size="60"
 								maxlength="20" />
-
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_personas_otrperc_anio}" />
@@ -158,28 +145,20 @@
 								<f:selectItems value="#{otraspercep.listaRetribuciones}" />
 							</aon:selectOneRadio>
 
-
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_personas_otrperc_ingresocuenta}" />
 							<aon:selectOneRadio layout="pageDirection"
 								value="#{otraspercep.to.ingreso}">
 								<f:selectItems value="#{otraspercep.listaIngreso}" />
 							</aon:selectOneRadio>
-
-
-
 						</aon:panelGrid>
 					</aon:div>
-
-
 				</aon:div>
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{personaLookup}" />
 		<aon:lookupButtonPopup lookup="#{empresaLookup}" />
-
 	</ui:define>
 </ui:composition>
-
 </body>
 </html>

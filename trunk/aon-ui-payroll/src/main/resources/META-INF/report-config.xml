@@ -305,7 +305,7 @@
 		</params>
 	</report>
 	
-	<!--  *********  Impresion a PDF de los Contratos internos  ********* -->
+	<!--  *********  Impresion a PDF de los Contratos internos - Listado ********* -->
 	<report id="contratosInternosList" description="Listado de Contratos internos">
 		<template path="/com/code/aon/ui/payroll/report/contratosInternosList.jasper" />
 		<bean key="com.code.aon.payroll.auxiliares.contratos.ContratosInternos" />
@@ -316,7 +316,19 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
-	<!--  *********  Impresion a PDF de los Contratos tc2  ********* -->
+	<!--  *********  Impresion a PDF de los Contratos internos - Detalle ********* -->
+	<report id="contratosInternosListPrint" description="Listado de Contratos internos">
+		<template path="/com/code/aon/ui/payroll/report/contratosInternosList.jasper" />
+		<bean key="com.code.aon.payroll.auxiliares.contratos.ContratosInternos" />
+		<criteria provider="#{contratosInternos.contratosInternosPrint}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	<!--  *********  Impresion a PDF de los Contratos tc2 - Listado ********* -->
 	<report id="contratosTc2List" description="Listado de Contratos TC2">
 		<template path="/com/code/aon/ui/payroll/report/contratosTc2List.jasper" />
 		<bean key="com.code.aon.payroll.auxiliares.contratos.ContratosTc2" />
@@ -327,11 +339,34 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
-	<!--  *********  Impresion a PDF de los Complementos de convenios  ********* -->
+	<!--  *********  Impresion a PDF de los Contratos tc2 - Detalle ********* -->
+	<report id="contratosTc2ListPrint" description="Listado de Contratos TC2">
+		<template path="/com/code/aon/ui/payroll/report/contratosTc2List.jasper" />
+		<bean key="com.code.aon.payroll.auxiliares.contratos.ContratosTc2" />
+		<criteria provider="#{contratosTc2.contratosTc2Print}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	<!--  *********  Impresion a PDF de los Complementos de convenios - Listado ********* -->
 	<report id="convenioComplementoList" description="Listado de Complementos">
 		<template path="/com/code/aon/ui/payroll/report/conveniosComplementosList.jasper" />
 		<bean key="com.code.aon.payroll.auxiliares.convenios.Complemento" />
 		<criteria provider="#{complemento}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	<!--  *********  Impresion a PDF de los Complementos de convenios - Detalle ********* -->
+	<report id="convenioComplementoListPrint" description="Listado de Complementos">
+		<template path="/com/code/aon/ui/payroll/report/conveniosComplementosList.jasper" />
+		<bean key="com.code.aon.payroll.auxiliares.convenios.Complemento" />
+		<criteria provider="#{complemento.complementoPrint}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />
@@ -398,11 +433,22 @@
 		</params>
 	</report>
 	
-		<!--  *********  Impresion a PDF de las delegaciones  ********* -->
+	<!--  *********  Impresion a PDF de las delegaciones - Listado ********* -->
 	<report id="DelegacionList" description="Listado de Delegaciones">
 		<template path="/com/code/aon/ui/payroll/report/DelegacionList.jasper" />
 		<bean key="com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion" />
 		<criteria provider="#{delegacion}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	<!--  *********  Impresion a PDF de las delegaciones - Detalle ********* -->
+	<report id="DelegacionListPrint" description="Listado de Delegaciones">
+		<template path="/com/code/aon/ui/payroll/report/DelegacionList.jasper" />
+		<bean key="com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion" />
+		<criteria provider="#{delegacion.delegacionPrint}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />
@@ -876,6 +922,30 @@
 		<template path="/com/code/aon/ui/payroll/report/percepcionXlsList.jasper" />
 		<bean key="com.code.aon.payroll.avanzadas.kartel.Linpercepcion" />
 		<criteria provider="#{linpercepcion}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	<!--  *********  Impresion a PDF del manto. Integral de convenios colectivos ********* -->
+	<report id="integralConvenioList" description="Listado de Convenios Colectivos">
+		<template path="/com/code/aon/ui/payroll/report/integralConvenioList.jasper" />
+		<bean key="com.code.aon.payroll.auxiliares.convenios.Convenio" />
+		<criteria provider="#{convenio}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	<!--  *********  Impresion a PDF del manto. Integral de convenios colectivos ********* -->
+	<report id="integralConvenioListPrint" description="Listado de Convenios Colectivos">
+		<template path="/com/code/aon/ui/payroll/report/integralConvenioListPrint.jasper" />
+		<bean key="com.code.aon.payroll.auxiliares.convenios.Convenio" />
+		<criteria provider="#{convenio.convenioPrint}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />

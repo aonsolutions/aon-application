@@ -34,11 +34,12 @@ public class PercepBasicController extends PayrollBasicController {
 	private Trabajador trabajador;
 
 	public List<SelectItem> getListaComplementos() {
+		refreshComplementos();
 		return complementos;
 	}
 
 	@SuppressWarnings("unchecked")
-	public void refreshComplementos() throws ManagerBeanException {
+	public void refreshComplementos() {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot()
 				.getLocale();
 		complementos = new LinkedList<SelectItem>();
@@ -120,42 +121,28 @@ public class PercepBasicController extends PayrollBasicController {
 	public void onSearch(ActionEvent event) {
 
 		try {
-			if (complemento1.getCdg() != null
-					&& (!StringUtils.isEmpty(complemento.getCdg()))) {
-				getCriteria().addEqualExpression(
-						getFieldName(IPayrollAlias.PERCEP_COMPLEMENTO1_CDG),
-						getComplemento1().getCdg());
+			if (complemento1.getCdg() != null && (!StringUtils.isEmpty(complemento.getCdg()))) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.PERCEP_COMPLEMENTO1_CDG), getComplemento1().getCdg());
 			}
-			if (complemento.getCdg() != null
-					&& (!StringUtils.isEmpty(complemento1.getCdg()))) {
-				getCriteria().addEqualExpression(
-						getFieldName(IPayrollAlias.PERCEP_COMPLEMENTO_CDG),
-						getComplemento().getCdg());
+			if (complemento.getCdg() != null && (!StringUtils.isEmpty(complemento1.getCdg()))) {
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.PERCEP_COMPLEMENTO_CDG),	getComplemento().getCdg());
 			}
 			if (trabajador.getCdg() != null) {
-				getCriteria().addEqualExpression(
-						getFieldName(IPayrollAlias.PERCEP_TRABAJADOR_CDG),
-						getTrabajador().getCdg());
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.PERCEP_TRABAJADOR_CDG), getTrabajador().getCdg());
 			}
-
 			if (fecini != null) {
-				getCriteria().addEqualExpression(
-						getFieldName(IPayrollAlias.PERCEP_FECINI), getFecini());
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.PERCEP_FECINI), getFecini());
 			}
 			if (fecfin != null) {
-				getCriteria().addEqualExpression(
-						getFieldName(IPayrollAlias.PERCEP_FECFIN), getFecfin());
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.PERCEP_FECFIN), getFecfin());
 			}
 			if (fecret != null) {
-				getCriteria().addEqualExpression(
-						getFieldName(IPayrollAlias.PERCEP_FECRET), getFecret());
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.PERCEP_FECRET), getFecret());
 			}
-
 		} catch (ManagerBeanException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		super.onSearch(event);
 	}
 
