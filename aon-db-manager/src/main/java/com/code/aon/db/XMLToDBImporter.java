@@ -12,14 +12,17 @@ public class XMLToDBImporter implements IEntityManager {
 	
 	private HibernateDataManager hdm;
 	
-	public XMLToDBImporter(HibernateDataManager hdm) {
+	private IEntityVisitor visitor;
+	
+	public XMLToDBImporter(HibernateDataManager hdm, IEntityVisitor visitor) {
 		this.hdm = hdm;
+		this.visitor = visitor;
 	}
 	
 	public void proccess(Class entity) throws EntityProcessException {
 		LOGGER.info( "Importing entity " + entity );
 		try {
-			IEntityVisitor visitor = new EntityImportVisitor(hdm.getImportFactory(), hdm.getMaxImport(), entity);
+			visitor.setEntity(entity);
 			SAXEntityReader reader = new SAXEntityReader( visitor );
 			InputStream in = new FileInputStream( hdm.getFile(entity) );
 			reader.parse( new InputSource(in) );
