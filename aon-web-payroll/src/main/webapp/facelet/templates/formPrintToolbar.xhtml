@@ -6,7 +6,9 @@
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >	
 		<ui:define name="beforeSpinToolbarContent">
-			<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml" />
+			<c:if test="#{reportKey!=null}">
+				<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml" />
+			</c:if>
 		</ui:define>				
 	</ui:decorate>		
 				

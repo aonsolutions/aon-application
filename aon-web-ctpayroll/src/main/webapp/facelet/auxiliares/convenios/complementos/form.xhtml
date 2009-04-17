@@ -17,7 +17,8 @@
 			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_convenios__complemento}" />				
 				<ui:param name="controller" value="#{complemento}" />
-				<ui:param name="reportKey" value="convenioComplementoList"/>
+				<ui:param name="reportKey" value="convenioComplementoListPrint"/>
+				<ui:param name="reportKeyXls" value="convenioComplementoListPrint"/>
 			</ui:include>
 
 			<aon:div id="complemento" styleClass="aon-scroll-area">

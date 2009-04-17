@@ -15,27 +15,27 @@ public class PercepBasicControllerListener extends ControllerAdapter implements
 	@Override
 	public void beforeBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
-		PercepBasicController controller = (PercepBasicController) event
-				.getController();
-		try {
-
+		PercepBasicController controller = (PercepBasicController) event.getController();
+		//try {
 			controller.refreshComplementos();
-		} catch (ManagerBeanException e) {
+		/*
+	 	} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
+		*/
 	}
 
 	@Override
 	public void beforeBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
-		PercepBasicController controller = (PercepBasicController) event
-				.getController();
-		try {
-
+		PercepBasicController controller = (PercepBasicController) event.getController();
+		//try {
 			controller.refreshComplementos();
+		/*
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
+		*/
 	}
 
 	@Override

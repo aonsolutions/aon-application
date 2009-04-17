@@ -1,6 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 
@@ -18,7 +19,7 @@
 			</f:facet>
 			<aon:div>
 				<c:if test="#{!skipEditButton}">								
-					<aon:commandButton
+					<h:commandButton
 						id="#{dataTableId}-edit" title="#{bundle.aon_edit}"
 						action="#{editAction}" actionListener="#{editActionListener}"
 						rendered="#{formEdit}" reRender="#{resetButtonReRender}"
@@ -31,7 +32,7 @@
 			<f:facet name="footer">
 				<aon:div>
 					<c:if test="#{!skipResetButton}">								
-						<aon:commandButton
+						<h:commandButton
 							id="#{dataTableId}-reset" title="#{bundle.aon_reset}"
 							action="#{resetAction}" actionListener="#{resetActionListener}"
 							rendered="#{!formNew}" reRender="#{resetButtonReRender}"

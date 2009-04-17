@@ -13,6 +13,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.payroll.auxiliares.contratos.ContratosInternos;
 import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.Desempleado;
@@ -23,6 +24,7 @@ public class ContratosInternosController extends PayrollBasicController {
 
 	private List<SelectItem> asimilados;
 	private List<SelectItem> desempleados;
+	private ContratosInternosController contratosInternosPrint;
 
 	/**
 	 * Recupera los Asimilados asociados al % de cotizacion 'DESEMPL%'.
@@ -76,6 +78,13 @@ public class ContratosInternosController extends PayrollBasicController {
 	//añade el valor de los checkbox al criteria para realizar busquedas
 	@Override
 	public void onSearch(ActionEvent event) {
+		try {
+			this.clearCriteria();
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		
 		try {
 			if(searchMujersub)
@@ -131,4 +140,31 @@ public class ContratosInternosController extends PayrollBasicController {
 		this.searchExcsocial = searchExcsocial;
 	}
 
+	public ContratosInternosController getContratosInternosPrint() {
+		return contratosInternosPrint;
+	}
+
+	public void setContratosInternosPrint(
+			ContratosInternosController contratosInternosPrint) {
+		this.contratosInternosPrint = contratosInternosPrint;
+	}
+	
+	@Override
+	public void onSelect(ActionEvent event) {
+		// TODO Auto-generated method stub
+		super.onSelect(event);
+		if(getTo()!=null){
+			try {
+				String id = BeanManager.getManagerBean(ContratosInternos.class).getFieldName(IPayrollAlias.CONTRATOS_INTERNOS_CDG);
+				String cdg = ((ContratosInternos)getTo()).getCdg();
+				contratosInternosPrint = new ContratosInternosController();
+				contratosInternosPrint = this;
+				contratosInternosPrint.clearCriteria();
+				contratosInternosPrint.getCriteria().addEqualExpression(id, cdg);
+			} catch (ManagerBeanException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 }

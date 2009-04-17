@@ -5,9 +5,14 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.payroll.auxiliares.convenios.Complemento;
+import com.code.aon.payroll.auxiliares.convenios.Convenio;
+import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.TipoComplemento;
 import com.code.aon.payroll.enumeration.TipoCotizaciones;
 import com.code.aon.payroll.enumeration.Retribuciones;
@@ -22,6 +27,8 @@ public class ConveniosComplementoController extends PayrollBasicController {
 	private List<SelectItem> retribuciones;
 	private List<SelectItem> fijoVariable;
 	private List<SelectItem> indComp;
+	
+	private ConveniosComplementoController complementoPrint;
 
 	/**
 	 * Recupera los tipos de cotizaciones 
@@ -116,5 +123,48 @@ public class ConveniosComplementoController extends PayrollBasicController {
 		}
 		return indComp;
 	}
+
+	public ConveniosComplementoController getComplementoPrint() {
+		return complementoPrint;
+	}
+
+	public void setComplementoPrint(ConveniosComplementoController complementoPrint) {
+		this.complementoPrint = complementoPrint;
+	}
+	
+	@Override
+	public void onSelect(ActionEvent event) {
+		// TODO Auto-generated method stub
+		super.onSelect(event);
+		
+		// guarda unicamente el TO seleccionado en el controlador print
+		if(getTo()!=null){
+			try {
+				String id = BeanManager.getManagerBean(Complemento.class).getFieldName(IPayrollAlias.COMPLEMENTO_CDG);
+				String cdg = ((Complemento)getTo()).getCdg();
+				complementoPrint = new ConveniosComplementoController();
+				complementoPrint = this;
+				complementoPrint.clearCriteria();
+				complementoPrint.getCriteria().addEqualExpression(id, cdg);
+			} catch (ManagerBeanException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	@Override
+	public void onSearch(ActionEvent event) {
+		// TODO Auto-generated method stub
+		try {
+			this.clearCriteria();
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		super.onSearch(event);
+	}
+	
+	
 
 }
