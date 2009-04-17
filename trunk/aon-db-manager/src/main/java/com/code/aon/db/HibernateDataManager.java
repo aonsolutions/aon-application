@@ -476,7 +476,8 @@ public class HibernateDataManager {
 	    		exportData();
 	    	}
 	    	if ( isImportData() ) {
-	    		importer = new XMLToDBImporter( this );
+	    		IEntityVisitor visitor = new EntityImportVisitor(getImportFactory(), getMaxImport());
+	    		importer = new XMLToDBImporter( this, visitor );
 	        	importData();    		
 	    	}
     	}

@@ -1,6 +1,8 @@
 package com.code.aon.db;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -33,15 +35,20 @@ public class EntityImportVisitor  implements IEntityVisitor {
 	private List<String> notNullableStringProperties;
 	
 	@SuppressWarnings("unchecked")
-	public EntityImportVisitor(SessionFactory sessionFactory, int maxExport, Class entity) {
+	public EntityImportVisitor(SessionFactory sessionFactory, int maxExport) {
 		this.sessionFactory = sessionFactory;
 		this.maxExport = maxExport;
-		this.className = entity.getName();
-		initNotNullableStringProperties(sessionFactory, entity);
+		this.notNullableStringProperties = Collections.emptyList();
 		initTransaction();
 	}
 	
-	private void initNotNullableStringProperties(SessionFactory sessionFactory, Class entity) {
+	@Override
+	public void setEntity(Class<? extends Serializable> entity) {
+		this.className = entity.getName();
+		initNotNullableStringProperties(sessionFactory, entity);		
+	}
+
+	private void initNotNullableStringProperties(SessionFactory sessionFactory, Class<? extends Serializable> entity) {
 		notNullableStringProperties = new ArrayList<String>();
 		ClassMetadata cmd = sessionFactory.getClassMetadata(entity);
 		String[] names = cmd.getPropertyNames();
