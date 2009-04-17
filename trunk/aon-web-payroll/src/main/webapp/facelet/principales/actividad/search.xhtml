@@ -96,7 +96,7 @@
 								style="margin-bottom=2px;">
 
 
- 
+
 								<aon:outputLabel for="Conv_cdg"
 									value="#{appBundle.aon_payroll_principales_actividad_con}" />
 								<aon:div styleClass="aon-lookup">
@@ -193,7 +193,8 @@
 									value="#{appBundle.aon_payroll_principales_actividad_modpago}" />
 								<aon:selectOneMenu id="Actividad_modpago"
 									valueChangeListener="#{actividad.addExpression}">
-                       <aon:enumConverter	enum="com.code.aon.payroll.enumeration.Modpago" />
+									<aon:enumConverter
+										enum="com.code.aon.payroll.enumeration.Modpago" />
 
 									<f:selectItem value="#{null}" itemLabel="    " />
 									<f:selectItems value="#{actividad.listamodpagos}" />
@@ -270,25 +271,18 @@
 
 									</aon:panel>
 									<aon:panel style="height: 100%">
-
+                                        <f:facet name="header">
+											<aon:outputText
+												value="#{appBundle.aon_payroll_principales_actividad_inds}" />
+										</f:facet>
 										<aon:outputText
 											value="#{appBundle.aon_payroll_principales_actividad_indlogo}" />
 
 										<aon:selectBooleanCheckbox value="#{actividad.indlogo}" />
-
-										<h:inputTextarea cols="30" rows="4" size="150" maxlength="100" />
-
-									</aon:panel>
-
-									<aon:panel style="height: 100%">
-
 										<aon:outputText
 											value="#{appBundle.aon_payroll_principales_actividad_indfirma}" />
 
 										<aon:selectBooleanCheckbox value="#{actividad.indfirma}" />
-
-										<h:inputTextarea cols="30" rows="4" size="150" maxlength="100" />
-
 									</aon:panel>
 
 
