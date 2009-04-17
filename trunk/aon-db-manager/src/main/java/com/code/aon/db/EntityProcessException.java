@@ -2,7 +2,9 @@ package com.code.aon.db;
 
 public class EntityProcessException extends Exception {
 
-    public EntityProcessException() {
+	private static final long serialVersionUID = -2065541219807778133L;
+
+	public EntityProcessException() {
         super();
     }
 

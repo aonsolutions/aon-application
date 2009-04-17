@@ -12,14 +12,11 @@ import org.xml.sax.helpers.XMLReaderAdapter;
 
 public class SAXEntityReader extends XMLReaderAdapter {
 
-	private String entity;
-	
 	private IEntityVisitor visitor;
 	
 	private Stack<Element> elements;
 	
-	public SAXEntityReader( String entity, IEntityVisitor visitor ) throws SAXException {
-		this.entity = entity;
+	public SAXEntityReader( IEntityVisitor visitor ) throws SAXException {
 		this.visitor = visitor;
 	}
 
@@ -61,12 +58,11 @@ public class SAXEntityReader extends XMLReaderAdapter {
 	public void endElement(String uri, String localName, String name)
 			throws SAXException {
 		Element element = elements.pop();
-		if ( entity.equals(name) ) {
-			visitor.visit(element);
-		}
 		if ( elements.size() > 1 ) {
 			Element parent = elements.peek();
 			parent.add( element );
+		} else if ( elements.size() == 1 ) {
+			visitor.visit(element);			
 		}
 	}
 	

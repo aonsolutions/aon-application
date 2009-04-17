@@ -1,8 +1,10 @@
 package com.code.aon.db;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -12,19 +14,29 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
+import org.dom4j.tree.DefaultElement;
+import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.mapping.ForeignKey;
 import org.hibernate.mapping.PersistentClass;
+import org.hibernate.metadata.ClassMetadata;
+import org.xml.sax.SAXException;
 
 public class HibernateDataManager {
 	
@@ -34,9 +46,15 @@ public class HibernateDataManager {
 	
 	private static final int DEFAULT_EXPORT_FLUSH = 500;
 	
-	private static Log LOGGER = LogFactory.getLog(HibernateDataManager.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(HibernateDataManager.class.getName());
 	
 	private File directory;
+	
+	private File file;
+	
+	private XMLWriter xmlWriter;
+	
+	private Element root;
 	
 	private File configurationFile;
 	
@@ -88,6 +106,14 @@ public class HibernateDataManager {
 		this.directory = directory;
 	}
 	
+	public File getFile() {
+		return file;
+	}
+
+	public void setFile(File file) {
+		this.file = file;
+	}
+
 	public File getConfigurationFile() {
 		return configurationFile;
 	}
@@ -126,6 +152,10 @@ public class HibernateDataManager {
 		return importFactory;
 	}
 
+	public void setImportFactory(SessionFactory importFactory) {
+		this.importFactory = importFactory;
+	}
+
 	private Configuration getExportConfiguration() {
 		if ( exportConfiguration == null ) {
 			exportConfiguration = createConfiguration(configurationFile, exportProperties);
@@ -140,6 +170,10 @@ public class HibernateDataManager {
 		return exportFactory;
 	}
 	
+	public void setExportFactory(SessionFactory exportFactory) {
+		this.exportFactory = exportFactory;
+	}
+
 	public File getFile( Class entity ) {
 		String name = entity.getName().replace('.', '_') + ".xml";
 		return new File( getDirectory(), name );
@@ -148,11 +182,11 @@ public class HibernateDataManager {
 	public List<Class<? extends Serializable>> getEntities() {
 		if ( includeEntities == null ) {
 			includeEntities = new ArrayList<Class<? extends Serializable>>();
-			Configuration cfg = ( isExportData() ? getExportConfiguration() : getImportConfiguration() );
-			Iterator i = cfg.getClassMappings();
+			SessionFactory factory = ( isExportData() ? getExportFactory() : getImportFactory() );
+			Iterator i = factory.getAllClassMetadata().values().iterator();
 			while ( i.hasNext() ) {
-				PersistentClass pc = (PersistentClass) i.next();
-				includeEntities.add( pc.getMappedClass() );
+				ClassMetadata cm = (ClassMetadata) i.next();
+				includeEntities.add( cm.getMappedClass(EntityMode.POJO) );
 			}
 		}
 		if ( this.excludeEntities != null ) {
@@ -240,9 +274,57 @@ public class HibernateDataManager {
 			properties.load( in );
 			in.close();			
 		} catch (IOException e) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 		return properties;
+	}
+	
+	private static org.w3c.dom.Document newDocument() {
+		DocumentBuilderFactory dBF = DocumentBuilderFactory.newInstance();
+		try {
+			DocumentBuilder builder = dBF.newDocumentBuilder();
+			return builder.newDocument();	
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private static org.w3c.dom.Document createDocument( File configurationFle ) {
+		AnnotationConfiguration configuration = new AnnotationConfiguration();
+		if ( configurationFle != null ) {
+			configuration.configure( configurationFle );
+		} else {
+   			configuration.configure();    			
+		}
+		configuration.buildMappings();
+		
+		org.w3c.dom.Document document = newDocument();
+		org.w3c.dom.Element root = document.createElement("entity-mappings");
+		root.setAttribute("version", "1.0");
+		document.appendChild(root);
+
+		Iterator cm = configuration.getClassMappings();
+		while ( cm.hasNext() ){
+			PersistentClass pc = (PersistentClass) cm.next();
+
+			org.w3c.dom.Element entity = document.createElement("entity");
+			entity.setAttribute( "class", pc.getClassName() );
+			root.appendChild(entity);
+
+			org.w3c.dom.Element attributes = document.createElement("attributes");
+			entity.appendChild(attributes);
+
+			org.w3c.dom.Element id = document.createElement("id");
+			String idName = pc.getIdentifierProperty().getName();
+			id.setAttribute( "name", idName );
+			attributes.appendChild(id);
+			
+			org.w3c.dom.Element generatedValue = document.createElement("generated-value");
+			generatedValue.setAttribute( "strategy", "TABLE" );
+			id.appendChild(generatedValue);
+		}		
+		return document;
 	}
 	
     public static AnnotationConfiguration createConfiguration( File configurationFle, File propertiesFile) {
@@ -251,6 +333,10 @@ public class HibernateDataManager {
     		configuration = new AnnotationConfiguration();
     		Properties properties = loadProperties(propertiesFile);
     		configuration.addProperties( properties );
+    		/*
+    		org.w3c.dom.Document doc = createDocument(configurationFle);
+    		configuration.addDocument(doc);
+    		*/
     		if ( configurationFle != null ) {
     			configuration.configure( configurationFle );
     		} else {
@@ -270,11 +356,60 @@ public class HibernateDataManager {
         return document;
     }
     
+    private XMLWriter createWriter( File file ) throws IOException {
+        OutputFormat format = OutputFormat.createPrettyPrint();   
+        format.setEncoding( "UTF-8" );
+        BufferedWriter out = new BufferedWriter( new FileWriter(file) );
+        XMLWriter writer = new XMLWriter( out, format );
+        writer.setMaximumAllowedCharacter(0x7F);
+        return writer;
+    }
+    
+    private void startDocument( XMLWriter writer ) throws IOException, SAXException {
+        this.root = new DefaultElement( "root" );
+        writer.startDocument();
+        writer.writeOpen( root );    		    	
+    }
+    
+    public XMLWriter startDocument( Class<Element> entity ) throws EntityProcessException {
+		try {    	
+	    	if ( getFile() != null ) {
+	    		if ( this.xmlWriter == null ) {
+	        		this.xmlWriter = createWriter( getFile() );
+	        		startDocument(this.xmlWriter);    			
+	    		}
+	    	} else {
+	    		this.xmlWriter = createWriter( getFile(entity) );
+	    		startDocument(this.xmlWriter);
+	    	}
+		} catch ( Throwable th ) {
+			throw new EntityProcessException( th );
+		}
+    	return this.xmlWriter;
+    }
+
+    public void endDocument( boolean force ) throws EntityProcessException {
+    	if ( force || (getFile() == null) ) {
+			if ( this.xmlWriter != null ) {
+				try {
+			        this.xmlWriter.writeClose( root );
+			        this.xmlWriter.endDocument();
+			        this.xmlWriter.close();
+			        this.xmlWriter = null;
+			        this.root = null;
+	    		} catch ( Throwable th ) {
+	    			throw new EntityProcessException( th );
+	    		}
+			}
+    	}
+    }
+    
     public void exportData() throws EntityProcessException {
     	DBToXMLExporter exporter = new DBToXMLExporter( this, getElementEntityIterable() );
     	for( Class entity : getEntities() ) {
     		exporter.proccess(entity);
     	}
+    	endDocument(true);
     }
     
     private Set<Class> getDependencies( Class entity ) {
@@ -301,7 +436,7 @@ public class HibernateDataManager {
 	           	processed.remove( entity );
        		}	           
     	} else {
-    		LOGGER.warn( "Entity is being processed: " + entity );
+    		LOGGER.warning( "Entity is being processed: " + entity );
     	}
     }
     
@@ -347,4 +482,19 @@ public class HibernateDataManager {
     	}
     }
 	
+    public static void main(String[] args) throws EntityProcessException {
+    	HibernateDataManager hdm = new HibernateDataManager();
+    	/*
+    	hdm.setExportData(true);
+    	hdm.setDirectory( new File("/tmp/db-manager") );
+    	hdm.setConfigurationFile( new File("/AON-PROJECT/aon-cse-util/ant/hibernate.cfg.xml") );
+    	hdm.setExportProperties( new File("/AON-PROJECT/aon-cse-util/ant/mysql.properties") );
+    	*/
+    	hdm.setImportData(true);
+    	hdm.setDirectory( new File("/tmp/db-manager") );
+    	hdm.setConfigurationFile( new File("/AON-PROJECT/aon-cse-util/ant/hibernate.cfg.xml") );
+    	hdm.setImportProperties( new File("/AON-PROJECT/aon-cse-util/ant/postgresql.properties") );
+    	hdm.execute();
+	}
+    
 }

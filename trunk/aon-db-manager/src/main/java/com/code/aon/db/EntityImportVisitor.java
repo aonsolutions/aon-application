@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
-import org.dom4j.Node;
 import org.hibernate.EntityMode;
 import org.hibernate.ReplicationMode;
 import org.hibernate.Session;
@@ -19,8 +16,6 @@ import org.hibernate.type.Type;
 
 public class EntityImportVisitor  implements IEntityVisitor {
 
-	private static Log LOGGER = LogFactory.getLog(EntityImportVisitor.class.getName());
-	
 	private int counter;
 	
 	private int maxExport;
