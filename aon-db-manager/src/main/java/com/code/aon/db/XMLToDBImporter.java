@@ -1,6 +1,5 @@
 package com.code.aon.db;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.logging.Logger;
@@ -32,13 +31,10 @@ public class XMLToDBImporter implements IEntityManager {
 		}
 	}
 
-	public void proccess(File file) throws EntityProcessException {
-		LOGGER.info( "Importing file " + file );
+	public void proccess(InputStream byteStream) throws EntityProcessException {
 		try {
 			SAXEntityReader reader = new SAXEntityReader( visitor, hdm.getEntities() );
-			InputStream in = new FileInputStream( file );
-			reader.parse( new InputSource(in) );
-			in.close();
+			reader.parse( new InputSource(byteStream) );
 		} catch ( Throwable th ) {
 			throw new EntityProcessException( th );			
 		}

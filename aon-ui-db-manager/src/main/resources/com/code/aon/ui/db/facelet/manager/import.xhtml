@@ -24,7 +24,9 @@
 						value="#{dbManagerBundle.db_manager_import}"
 						actionListener="#{dbManager.onImport}"
 						styleClass="aon-finding-toolbar-item aon-icon-file-upload"
-						accesskey="#{bundle.aon_key_save}" />
+						accesskey="#{bundle.aon_key_save}"
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+		     			oncomplete="Richfaces.hideModalPanel('waitProccess')" />						
 				</ui:define>				
 			</ui:decorate>
 
@@ -62,6 +64,8 @@
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
+		
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		
 	</ui:define>
 </ui:composition>

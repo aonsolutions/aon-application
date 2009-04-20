@@ -51,6 +51,8 @@ public class HibernateDataManager {
 	
 	private File file;
 	
+	private InputStream inputStream;
+	
 	private XMLWriter xmlWriter;
 	
 	private Element root;
@@ -113,6 +115,14 @@ public class HibernateDataManager {
 
 	public void setFile(File file) {
 		this.file = file;
+	}
+
+	public InputStream getInputStream() {
+		return inputStream;
+	}
+
+	public void setInputStream(InputStream inputStream) {
+		this.inputStream = inputStream;
 	}
 
 	public File getConfigurationFile() {
@@ -440,9 +450,9 @@ public class HibernateDataManager {
     	}
     }
     
-    public void importFile( File file ) throws EntityProcessException {
+    public void importData( InputStream byteStream ) throws EntityProcessException {
     	XMLToDBImporter xmlImporter = (XMLToDBImporter) this.importer;
-    	xmlImporter.proccess(file);
+    	xmlImporter.proccess(byteStream);
     }    
     
     private QueryIterable<Object> getEntityIterable() {
@@ -470,8 +480,8 @@ public class HibernateDataManager {
 	    	}
 	    	if ( isImportData() ) {
 	    		importer = new XMLToDBImporter( this, getVisitor() );
-	    		if ( getFile() != null ) {
-	    			importFile(file);
+	    		if ( getInputStream() != null ) {
+	    			importData(getInputStream());
 	    		} else {
 		        	importData();	
 	    		}    		
