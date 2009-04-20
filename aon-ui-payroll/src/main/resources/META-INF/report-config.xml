@@ -839,6 +839,17 @@
 		</params>
 	</report>
 	
+		<report id="ClienteListDetail" description="Listado de detalle de Cliente">
+		<template path="/com/code/aon/ui/payroll/report/ClienteList.jasper" />
+		<bean key="com.code.aon.payroll.principales.Cliente" />
+		<criteria provider="#{cliente.clientePrint}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
 		 <report id="DomicilioList" description="Listado de DOMICILIO">
 		<template path="/com/code/aon/ui/payroll/report/DomicilioList.jasper" />
 		<bean key="com.code.aon.payroll.principales.Domicilio" />
