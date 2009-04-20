@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -24,13 +26,20 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.metadata.ClassMetadata;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.hibernate.IConfigurationFactory;
+import com.code.aon.common.dao.hibernate.ISessionFactoryNameProvider;
 import com.code.aon.db.HibernateDataManager;
 import com.code.aon.ui.common.io.AonFile;
+import com.code.aon.ui.db.hibernate.ReplicateConfigurationFactory;
+import com.code.aon.ui.db.hibernate.ReplicateSessionFactoryNameProvider;
+import com.code.aon.ui.db.hibernate.TransferObjectImportVisitor;
 import com.code.aon.ui.util.AonUtil;
 
 public class DBManager {
@@ -38,6 +47,10 @@ public class DBManager {
 	private static final Logger LOGGER = Logger.getLogger(DBManager.class.getName());
 	
 	private List<AonFile> files;
+	
+	private ISessionFactoryNameProvider previousNameProvider;
+	
+	private IConfigurationFactory previousConfigurationFactory;
 
 	private void responseZip(File file) throws IOException {
         FacesContext context = FacesContext.getCurrentInstance();
@@ -128,14 +141,42 @@ public class DBManager {
 			this.files.remove(index);
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	private List<ClassMetadata> getEntities() {
+		List<ClassMetadata> entities = new LinkedList<ClassMetadata>();
+		String factoryName = HibernateUtil.getSessionFactoryName();
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory(factoryName);
+		Iterator i = sessionFactory.getAllClassMetadata().values().iterator();
+		while ( i.hasNext() ) {
+			entities.add( (ClassMetadata) i.next() );
+		}
+		return entities;
+	}
+	
+	private void initImport() {
+		this.previousConfigurationFactory = HibernateUtil.getConfigurationFactory();
+		this.previousNameProvider = HibernateUtil.getSessionFactoryNameProvider();
+		List<ClassMetadata> entities = getEntities();
+		ReplicateConfigurationFactory configurationFactory = new ReplicateConfigurationFactory(this.previousConfigurationFactory);
+		configurationFactory.setEntities( entities );
+		HibernateUtil.setConfigurationFactory(configurationFactory);
+		HibernateUtil.setSessionFactoryNameProvider(ReplicateSessionFactoryNameProvider.getInstance());
+	}
 
+	private void finishImport() {
+		HibernateUtil.setConfigurationFactory(this.previousConfigurationFactory);
+		HibernateUtil.setSessionFactoryNameProvider(this.previousNameProvider);
+	}
+	
 	public void onImport( ActionEvent event ) {
 		HibernateDataManager hdm = new HibernateDataManager();
 		hdm.setImportData(true);
 		try {
+			initImport();
 			String factoryName = HibernateUtil.getSessionFactoryName();
-			Configuration cfg = HibernateUtil.getConfigurationFactory().getConfiguration(factoryName);
-			hdm.setImportConfiguration( cfg );
+			SessionFactory sessionFactory = HibernateUtil.getSessionFactory(factoryName);
+			hdm.setImportFactory( sessionFactory );
 			TransferObjectImportVisitor visitor = new TransferObjectImportVisitor();
 			hdm.setVisitor(visitor);
 			for( AonFile file : this.files ) {
@@ -147,6 +188,8 @@ public class DBManager {
 			LOGGER.severe( ">>>> onExport " + e.getMessage() );
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
+			finishImport();
 		}
 	}
 	

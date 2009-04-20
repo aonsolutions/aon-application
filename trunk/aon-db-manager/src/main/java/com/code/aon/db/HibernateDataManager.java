@@ -153,6 +153,10 @@ public class HibernateDataManager {
 		this.importConfiguration = importConfiguration;
 	}
 	
+	public void setImportFactory(SessionFactory importFactory) {
+		this.importFactory = importFactory;
+	}
+
 	private Configuration getImportConfiguration() {
 		if ( importConfiguration == null ) {
 			importConfiguration = createConfiguration(configurationFile, importProperties);

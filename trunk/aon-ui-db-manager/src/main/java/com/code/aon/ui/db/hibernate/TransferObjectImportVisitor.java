@@ -1,4 +1,4 @@
-package com.code.aon.ui.db.controller;
+package com.code.aon.ui.db.hibernate;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -8,9 +8,7 @@ import java.util.logging.Logger;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
-import org.dom4j.Node;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.engine.Mapping;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.Type;
