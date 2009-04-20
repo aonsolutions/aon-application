@@ -11,6 +11,7 @@ import org.dom4j.Element;
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.Mapping;
 import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.type.EntityType;
 import org.hibernate.type.Type;
 
 import com.code.aon.common.BeanManager;
@@ -80,8 +81,13 @@ public class TransferObjectImportVisitor extends EntityImportVisitor {
 				type = cm.getPropertyType(propertyName);	
 			}
 			Object value = type.fromXMLNode( propertyElement, factory);
+			String accessPath = propertyName;
+			if ( type.isEntityType() ) {
+				EntityType et = (EntityType) type;
+				accessPath += "." + et.getIdentifierOrUniqueKeyPropertyName(factory); 
+			}
 			try {
-				PropertyUtils.setProperty(to, propertyName, value);
+				PropertyUtils.setProperty(to, accessPath, value);
 			} catch (Throwable e) {
 				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
