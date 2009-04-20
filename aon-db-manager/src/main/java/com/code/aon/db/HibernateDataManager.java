@@ -17,10 +17,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -33,7 +29,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.mapping.PersistentClass;
 import org.hibernate.metadata.ClassMetadata;
 import org.xml.sax.SAXException;
 
@@ -305,64 +300,12 @@ public class HibernateDataManager {
 		return properties;
 	}
 	
-	private static org.w3c.dom.Document newDocument() {
-		DocumentBuilderFactory dBF = DocumentBuilderFactory.newInstance();
-		try {
-			DocumentBuilder builder = dBF.newDocumentBuilder();
-			return builder.newDocument();	
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	private static org.w3c.dom.Document createDocument( File configurationFle ) {
-		AnnotationConfiguration configuration = new AnnotationConfiguration();
-		if ( configurationFle != null ) {
-			configuration.configure( configurationFle );
-		} else {
-   			configuration.configure();    			
-		}
-		configuration.buildMappings();
-		
-		org.w3c.dom.Document document = newDocument();
-		org.w3c.dom.Element root = document.createElement("entity-mappings");
-		root.setAttribute("version", "1.0");
-		document.appendChild(root);
-
-		Iterator cm = configuration.getClassMappings();
-		while ( cm.hasNext() ){
-			PersistentClass pc = (PersistentClass) cm.next();
-
-			org.w3c.dom.Element entity = document.createElement("entity");
-			entity.setAttribute( "class", pc.getClassName() );
-			root.appendChild(entity);
-
-			org.w3c.dom.Element attributes = document.createElement("attributes");
-			entity.appendChild(attributes);
-
-			org.w3c.dom.Element id = document.createElement("id");
-			String idName = pc.getIdentifierProperty().getName();
-			id.setAttribute( "name", idName );
-			attributes.appendChild(id);
-			
-			org.w3c.dom.Element generatedValue = document.createElement("generated-value");
-			generatedValue.setAttribute( "strategy", "TABLE" );
-			id.appendChild(generatedValue);
-		}		
-		return document;
-	}
-	
     public static AnnotationConfiguration createConfiguration( File configurationFle, File propertiesFile) {
     	AnnotationConfiguration configuration = null;
         try {
     		configuration = new AnnotationConfiguration();
     		Properties properties = loadProperties(propertiesFile);
     		configuration.addProperties( properties );
-    		/*
-    		org.w3c.dom.Document doc = createDocument(configurationFle);
-    		configuration.addDocument(doc);
-    		*/
     		if ( configurationFle != null ) {
     			configuration.configure( configurationFle );
     		} else {
