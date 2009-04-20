@@ -37,8 +37,8 @@
 							style="margin-bottom=2px;">
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_personas_percep_cdg}" />
-							<aon:inputText value="#{percepbasic.to.id.cdg}" 
-								size="10" maxlength="6" />
+							<aon:inputText value="#{percepbasic.to.id.cdg}" id="percep_cdg" 
+								size="10" maxlength="6" readonly="true" />
 
 
 						<!-- 	<aon:outputLabel
@@ -50,14 +50,15 @@
 							<aon:outputLabel for="Trabajador_cdg"
 								value="#{appBundle.aon_payroll_principales_personas_percep_trab}" />
 							<aon:div styleClass="aon-lookup">
-								<aon:lookupInputText readonly="#{!percep.new}"
+								<aon:lookupInputText readonly="#{!percepbasic.new}"
 									required="#{true}" id="Trabajador_cdg"
 									lookup="#{trabajadorLookup}"
 									value="#{percepbasic.to.trabajador.cdg}" size="5">
 								</aon:lookupInputText>
-								<aon:lookupButton id="Trabajador_lookup"
+								<aon:lookupButton id="Trabajador_lookup" disabled="#{!percepbasic.new}"
 									windowTitle="#{appBundle.aon_payroll_principales_personas_percep_trab}"
-									selectReRender="act,acti,fec,desc,ape,nom,Trabajador_cdg" lookup="#{trabajadorLookup}"
+									selectReRender="act,acti,fec,desc,ape,nom,Trabajador_cdg,info_trabajador" 
+									lookup="#{trabajadorLookup}"
 									minHeight="440" property="#{percepbasic.to.trabajador}">
 								</aon:lookupButton>
 							</aon:div>
@@ -71,12 +72,12 @@
 
 
 					<aon:div styleClass="aon-scroll-area">
-						<aon:panelGrid columns="4" dir="true" width="100%"
+						<aon:panelGrid columns="4" dir="true" width="100%" id="info_trabajador"
 							style="margin-bottom=2px;">
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_personas_percep_fecalt}" />
-							<aon:selectInputDate id="fec" renderAsPopup="true" disabled="true"
+							<aon:selectInputDate id="fecalt" renderAsPopup="true" disabled="true"
 								popupDateFormat="#{appBundle.aon_date_pattern}"
 								value="#{percepbasic.to.trabajador.fecalt}"
 								enableManualInput="true" />
@@ -94,31 +95,25 @@
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_principales_personas_percep_trab}" />
-
 							<aon:div>
-								<aon:inputText id="nom" disabled="true"
+								<aon:inputText id="nombre_persona" disabled="true"
 									value="#{(percepbasic.to.trabajador.persona.nombre!=null)?(percepbasic.to.trabajador.persona.nombre):('')}"
 									size="20" maxlength="30" />
 
-								<aon:inputText id="desc" disabled="true"
+								<aon:inputText id="apelleido_persona" disabled="true"
 									value="#{(percepbasic.to.trabajador.persona.descripcion!=null)?(percepbasic.to.trabajador.persona.descripcion):('')}"
 									size="20" maxlength="30" />
 
-								<aon:inputText id="ape" disabled="true"
+								<aon:inputText id="apelleido2_persona" disabled="true"
 									value="#{(percepbasic.to.trabajador.persona.apellido2!=null)?(percepbasic.to.trabajador.persona.apellido2):('')}"
 									size="20" maxlength="30" />
 							</aon:div>
-
 						</aon:panelGrid>
-
-
 					</aon:div>
 
 					<aon:div styleClass="aon-scroll-area">
-
 						<aon:panelGrid columns="4" dir="true" width="100%"
 							style="margin-bottom=2px;">
-
 
 							<aon:outputLabel for="Codigo_Complemento"
 								value="#{appBundle.aon_payroll_principales_personas_percep_cocom}" />
@@ -140,56 +135,54 @@
 							</aon:div>
 
 
-							<aon:outputLabel
+							<aon:outputLabel for="mes"
 								value="#{appBundle.aon_payroll_principales_personas_percep_mes}" />
-							<aon:inputText value="#{percepbasic.to.mes}"  size="10"
+							<aon:inputText value="#{percepbasic.to.mes}" id="mes" size="10" required="true"
 								maxlength="6" />
 
-							<aon:outputLabel
+							<aon:outputLabel for="importe"
 								value="#{appBundle.aon_payroll_principales_personas_percep_import}" />
-							<aon:inputText value="#{percepbasic.to.importe}" 
+							<aon:inputText id="importe" value="#{percepbasic.to.importe}" required="true"
 								size="10" maxlength="6" />
 
-
-							<aon:outputLabel
+							<aon:outputLabel for="calculo"
 								value="#{appBundle.aon_payroll_principales_personas_percep_cal}" />
-							<aon:inputText value="#{percepbasic.to.calculo}" 
+							<aon:inputText id="calculo" value="#{percepbasic.to.calculo}" 
 								size="10" maxlength="6" />
 
-							<aon:outputLabel
+							<aon:outputLabel for="tipo_cotizacion"
 								value="#{appBundle.aon_payroll_principales_personas_percep_tipo}" />
-							<aon:inputText value="#{percepbasic.to.tipcot}" 
+							<aon:inputText id="tipo_cotizacion" value="#{percepbasic.to.tipcot}" 
 								size="10" maxlength="6" />
 
-							<aon:outputLabel
+							<aon:outputLabel for="garantizado_ilt"
 								value="#{appBundle.aon_payroll_principales_personas_percep_ilt}" />
-							<aon:inputText value="#{percepbasic.to.garilt}" 
+							<aon:inputText id="garantizado_ilt" value="#{percepbasic.to.garilt}" required="true"
 								size="10" maxlength="6" />
 
 
-							<aon:outputLabel
+							<aon:outputLabel for="tipo_complemento"
 								value="#{appBundle.aon_payroll_principales_personas_percep_tip}" />
-
-							<aon:selectOneMenu id="tipcom" value="#{percepbasic.to.tipcom}">
+							<aon:selectOneMenu id="tipo_complemento" value="#{percepbasic.to.tipcom}">
 								<f:selectItem value="#{null}" itemLabel="  " />
 								<f:selectItems value="#{percepbasic.listaComplementos}" />
 							</aon:selectOneMenu>
 
 
-							<aon:outputLabel
+							<aon:outputLabel for="unidades"
 								value="#{appBundle.aon_payroll_principales_personas_percep_uds}" />
-							<aon:inputText value="#{percepbasic.to.unidades}" size="10"
+							<aon:inputText id="unidades" value="#{percepbasic.to.unidades}" size="10" required="true"
 								maxlength="6" />
 
 
-							<aon:outputLabel
+							<aon:outputLabel for="importe_unitario"
 								value="#{appBundle.aon_payroll_principales_personas_percep_impuni}" />
-							<aon:inputText value="#{percepbasic.to.impuni}" size="10"
+							<aon:inputText id="importe_unitario" value="#{percepbasic.to.impuni}" size="10" required="true"
 								maxlength="6" />
 
 							<aon:outputLabel for="Descripcion_complemento"
 								value="#{appBundle.aon_payroll_principales_personas_percep_desc}" />
-							<aon:inputText  id="Descripcion_complemento" value="#{percepbasic.to.descom}" size="50" required="#{true}"
+							<aon:inputText id="Descripcion_complemento" value="#{percepbasic.to.descom}" size="50" required="#{true}"
 								maxlength="40" />
 
 
@@ -243,11 +236,11 @@
 							width="100%" style="margin-bottom=2px;">
 							<aon:panel>
 								<f:facet name="header">
-									<aon:outputText
+									<aon:outputLabel for="Indicador_complemento"
 										value="#{appBundle.aon_payroll_auxiliares_convenios__ind_comp}" />
 								</f:facet>
 								<aon:div styleClass="">
-									<aon:selectOneRadio id="IndComplemento"
+									<aon:selectOneRadio id="Indicador_complemento" required="true"
 										value="#{percepbasic.to.indcom}">
 										<f:selectItems value="#{percepbasic.listaIndiceComplemento}" />
 									</aon:selectOneRadio>
@@ -257,11 +250,12 @@
 
 							<aon:panel>
 								<f:facet name="header">
-									<aon:outputText
+									<aon:outputLabel for="fijo_variable"
 										value="#{appBundle.aon_payroll_auxiliares_convenios__fijo_var}" />
 								</f:facet>
 								<aon:div styleClass="">
-									<aon:selectOneRadio id="FijoVar" value="#{percepbasic.to.fijovar}">
+									<aon:selectOneRadio id="fijo_variable" required="true"
+										value="#{percepbasic.to.fijovar}">
 										<f:selectItems value="#{percepbasic.listaFijoVariable}" />
 									</aon:selectOneRadio>
 								</aon:div>
@@ -269,11 +263,11 @@
 
 							<aon:panel>
 								<f:facet name="header">
-									<aon:outputText
+									<aon:outputLabel for="Retribucion"
 										value="#{appBundle.aon_payroll_auxiliares_convenios__retrib}" />
 								</f:facet>
 								<aon:div styleClass="">
-									<aon:selectOneRadio id="Retribucion"
+									<aon:selectOneRadio id="Retribucion" required="true"
 										value="#{percepbasic.to.dinesp}">
 										<f:selectItems value="#{percepbasic.listaRetribuciones}" />
 									</aon:selectOneRadio>

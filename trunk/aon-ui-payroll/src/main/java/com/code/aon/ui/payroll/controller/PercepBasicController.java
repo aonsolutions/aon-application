@@ -38,7 +38,6 @@ public class PercepBasicController extends PayrollBasicController {
 		return complementos;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void refreshComplementos() {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot()
 				.getLocale();
@@ -121,13 +120,12 @@ public class PercepBasicController extends PayrollBasicController {
 	public void onSearch(ActionEvent event) {
 
 		try {
-			if (complemento1.getCdg() != null && (!StringUtils.isEmpty(complemento.getCdg()))) {
+			if (complemento1.getCdg() != null && (!StringUtils.isEmpty(complemento1.getCdg()))) {
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.PERCEP_COMPLEMENTO1_CDG), getComplemento1().getCdg());
-			}
-			if (complemento.getCdg() != null && (!StringUtils.isEmpty(complemento1.getCdg()))) {
+			} 
+			if (complemento.getCdg() != null && (!StringUtils.isEmpty(complemento.getCdg()))) {
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.PERCEP_COMPLEMENTO_CDG),	getComplemento().getCdg());
-			}
-			if (trabajador.getCdg() != null) {
+			} if (trabajador.getCdg() != null) {
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.PERCEP_TRABAJADOR_CDG), getTrabajador().getCdg());
 			}
 			if (fecini != null) {

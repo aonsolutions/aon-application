@@ -1,6 +1,8 @@
 package com.code.aon.ui.payroll.event;
 
-import com.code.aon.common.ManagerBeanException;
+import org.apache.commons.lang.StringUtils;
+
+import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.principales.personas.Percep;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -16,33 +18,21 @@ public class PercepBasicControllerListener extends ControllerAdapter implements
 	public void beforeBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
 		PercepBasicController controller = (PercepBasicController) event.getController();
-		//try {
-			controller.refreshComplementos();
-		/*
-	 	} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e.getMessage(), e);
-		}
-		*/
+		controller.refreshComplementos();
 	}
 
 	@Override
 	public void beforeBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
 		PercepBasicController controller = (PercepBasicController) event.getController();
-		//try {
-			controller.refreshComplementos();
-		/*
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e.getMessage(), e);
-		}
-		*/
+		controller.refreshComplementos();
 	}
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
 
-		((PercepBasicController) getController()).generarNumero(null);
+		//((PercepBasicController) getController()).generarNumero(null);
 
 	}
 	
@@ -55,6 +45,12 @@ public class PercepBasicControllerListener extends ControllerAdapter implements
 		
 		((Percep)this.getController().getTo()).getId().setCdg(cdg+1);
 		((Percep)this.getController().getTo()).getId().setNumero(numero);
+		
+		PercepBasicController percepBasic = (PercepBasicController)this.getController();
+		
+		if (percepBasic.getComplemento1().getCdg() == null) {
+			percepBasic.setComplemento1(null);
+		}
 		
 	}
 }
