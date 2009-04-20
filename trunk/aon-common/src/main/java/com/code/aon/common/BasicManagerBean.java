@@ -248,6 +248,25 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 			throw new ManagerBeanException(e.getMessage(), e);
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.code.aon.common.IManagerBean#insert(com.code.aon.common.ITransferObject)
+	 */
+	public ITransferObject replicate(ITransferObject to)
+			throws ManagerBeanException {
+		try {
+			ManagerBeanEvent evt = new ManagerBeanEvent( to );
+			fireVetoableBeanInserted(evt);
+			ITransferObject ret = getDao().replicate(to);
+			fireBeanInserted(evt);
+			return ret;
+		} catch (DAOException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (ManagerBeanVetoListenerException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		}
+	}
 	
 	/**
      * Fire an existing ManagerBeanEvent to any registered vetoListeners.
