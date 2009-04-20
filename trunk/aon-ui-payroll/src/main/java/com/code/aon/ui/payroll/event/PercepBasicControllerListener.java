@@ -2,6 +2,7 @@ package com.code.aon.ui.payroll.event;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.payroll.auxiliares.convenios.Complemento;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.principales.personas.Percep;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -46,11 +47,11 @@ public class PercepBasicControllerListener extends ControllerAdapter implements
 		((Percep)this.getController().getTo()).getId().setCdg(cdg+1);
 		((Percep)this.getController().getTo()).getId().setNumero(numero);
 		
-		PercepBasicController percepBasic = (PercepBasicController)this.getController();
-		
-		if (percepBasic.getComplemento1().getCdg() == null) {
-			percepBasic.setComplemento1(null);
-		}
+//		PercepBasicController percepBasic = (PercepBasicController)this.getController();
+//		
+//		if (percepBasic.getComplemento1()==null || StringUtils.isEmpty(percepBasic.getComplemento1().getCdg()) || percepBasic.getComplemento1().getCdg() == null) {
+//			percepBasic.setComplemento1(new Complemento());
+//		}
 		
 	}
 }

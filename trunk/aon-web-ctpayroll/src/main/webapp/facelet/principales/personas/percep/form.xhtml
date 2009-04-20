@@ -21,6 +21,7 @@
 				<ui:param name="controller" value="#{percepbasic}" />
 				<aon:methodParam name="backAction" value="percep_list" />
 				<aon:methodParam name="searchAction" value="percep_search" />
+				<aon:methodParam name="resetAction" default="percep_form" resolve="true" />
 				
 				<!--  
 				<ui:param name="reportKey" value="DelegacionList" />
@@ -214,7 +215,7 @@
 								value="#{appBundle.aon_payroll_principales_personas_percep_comp}" />
 							<aon:div styleClass="aon-lookup">
 								<aon:lookupInputText id="Percepcion_id_codcom1"
-									lookup="#{complementoLookup}"
+									lookup="#{complementoLookup}" required="true"
 									reRender="Percepcion_complemento1_description"
 									value="#{percepbasic.to.complemento1.cdg}" size="5">
 								</aon:lookupInputText>
