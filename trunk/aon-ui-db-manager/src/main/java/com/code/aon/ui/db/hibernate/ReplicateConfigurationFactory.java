@@ -1,6 +1,12 @@
 package com.code.aon.ui.db.hibernate;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,6 +23,10 @@ import com.code.aon.common.dao.hibernate.IConfigurationFactory;
 
 public class ReplicateConfigurationFactory extends DefaultConfigurationFactory {
 
+	private static final String TEST_HIBERNATE_PROPERTIES_FILE = "/test.properties";
+
+	private static final Logger LOGGER = Logger.getLogger(ReplicateConfigurationFactory.class.getName());
+	
 	private IConfigurationFactory defaultFactory;
 
 	private Configuration configuration;
@@ -84,6 +94,20 @@ public class ReplicateConfigurationFactory extends DefaultConfigurationFactory {
 		return document;
 	}
 	
+	private void addTestProperties(Configuration configuration) {
+		Properties properties = new Properties();
+		try {
+			InputStream in = ReplicateConfigurationFactory.class.getResourceAsStream(TEST_HIBERNATE_PROPERTIES_FILE);
+			if ( in != null ) {
+				properties.load( in );
+				configuration.setProperties(properties);
+				in.close();
+			}			
+		} catch (IOException e) {
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
+		}		
+	}
+	
 	@Override
 	protected void completeConfiguration(Configuration configuration) {
 		Document document = createDocument();
@@ -91,6 +115,7 @@ public class ReplicateConfigurationFactory extends DefaultConfigurationFactory {
 		if ( root.hasChildNodes() ) {
 			configuration.addDocument(document);	
 		}
+		addTestProperties(configuration);
 	}
 
 	@Override
