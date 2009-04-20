@@ -62,5 +62,14 @@ public interface IManagerBean extends IFinderBean {
      * @throws ManagerBeanException if an unexpected error occurs.
      */
     ITransferObject insertOrUpdate(ITransferObject to) throws ManagerBeanException;
+ 
+    /**
+     * Replicate in the data source, the <code>ITransferObject</code>.
+     * 
+     * @param to Transfer Object to insert.
+     * @return Transfer Object con los datos insertados.
+     * @throws ManagerBeanException if an unexpected error occurs.
+     */
+    ITransferObject replicate(ITransferObject to) throws ManagerBeanException;
     
 }

@@ -182,6 +182,17 @@ public interface IDAO {
 	public ITransferObject insertOrUpdate(ITransferObject to) throws DAOException;
 	
 	/**
+	 * Replicate the Transfer Object.
+	 * 
+	 * @param to the to
+	 * 
+	 * @return The inserted object.
+	 * 
+	 * @throws DAOException the DAO exception
+	 */
+	ITransferObject replicate(ITransferObject to) throws DAOException;
+	
+	/**
 	 * Return the POJO(Plain Old Java Object) Class.
 	 * 
 	 * @return The class of the POJO.
