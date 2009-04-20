@@ -2,6 +2,7 @@ package com.code.aon.ui.db.controller;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -20,9 +21,10 @@ import javax.faces.event.ActionEvent;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
@@ -81,8 +83,8 @@ public class DBManager {
 			File xmlFile = File.createTempFile("aon_master", ".xml");
 			hdm.setFile( xmlFile );
 			String factoryName = HibernateUtil.getSessionFactoryName();
-			SessionFactory factory = HibernateUtil.getSessionFactory(factoryName);
-			hdm.setExportFactory( factory );
+			Configuration cfg = HibernateUtil.getConfigurationFactory().getConfiguration(factoryName);
+			hdm.setExportConfiguration( cfg );
 			hdm.execute();
 			responseZip( xmlFile );
 			xmlFile.delete();
@@ -105,11 +107,16 @@ public class DBManager {
 		this.files = files;
 	}	
 	
-	public synchronized void fileUploaded(UploadEvent event) {
+	public synchronized void fileUploaded(UploadEvent event) throws IOException {
 	    UploadItem item = event.getUploadItem();
 	    AonFile file = new AonFile();
 	    file.setFileName(item.getFileName());
-	    file.setData(item.getData());
+	    if ( item.isTempFile() ) {
+	    	byte[] data = FileUtils.readFileToByteArray(item.getFile());
+	    	file.setData(data);
+	    } else {
+		    file.setData(item.getData());	
+	    }
 	    files.add(file);	    
 	}	
 	
@@ -119,6 +126,27 @@ public class DBManager {
 		if (! StringUtils.isEmpty(indexValue) ) {
 			int index = Integer.valueOf(indexValue);
 			this.files.remove(index);
+		}
+	}
+
+	public void onImport( ActionEvent event ) {
+		HibernateDataManager hdm = new HibernateDataManager();
+		hdm.setImportData(true);
+		try {
+			String factoryName = HibernateUtil.getSessionFactoryName();
+			Configuration cfg = HibernateUtil.getConfigurationFactory().getConfiguration(factoryName);
+			hdm.setImportConfiguration( cfg );
+			TransferObjectImportVisitor visitor = new TransferObjectImportVisitor();
+			hdm.setVisitor(visitor);
+			for( AonFile file : this.files ) {
+				ByteArrayInputStream in = new ByteArrayInputStream(file.getData());
+				hdm.setInputStream( in );
+				hdm.execute();	
+			}
+		} catch (Throwable e) {
+			LOGGER.severe( ">>>> onExport " + e.getMessage() );
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}
 	

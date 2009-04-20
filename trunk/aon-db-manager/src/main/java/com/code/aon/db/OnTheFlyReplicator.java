@@ -50,7 +50,7 @@ public class OnTheFlyReplicator implements IEntityManager {
         	} else {
         		session.replicate( entityName, element, ReplicationMode.EXCEPTION );        		
         	}
-        	if ( ++imported == hdm.getMaxImport() ) {
+        	if ( (hdm.getMaxImport() != 0) && (++imported == hdm.getMaxImport()) ) {
         		LOGGER.info( "Imported " + counter + " elements of " + entityName );
 				endTransaction();
         		initTransaction();

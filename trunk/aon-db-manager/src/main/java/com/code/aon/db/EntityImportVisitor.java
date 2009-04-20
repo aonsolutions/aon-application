@@ -20,7 +20,7 @@ public class EntityImportVisitor implements IEntityVisitor {
 
 	private int counter;
 	
-	private int maxExport;
+	private int maxImport;
 	
 	private SessionFactory sessionFactory;
 	
@@ -30,31 +30,49 @@ public class EntityImportVisitor implements IEntityVisitor {
 	
 	private Transaction tx;
 
-	private String className;
+	private String entityName;
 	
-	Class<? extends Serializable> lastEntity;
+	private Class<? extends Serializable> lastEntity;
 	
 	private List<String> notNullableStringProperties;
-	
-	@SuppressWarnings("unchecked")
-	public EntityImportVisitor(SessionFactory sessionFactory, int maxExport) {
-		this.sessionFactory = sessionFactory;
-		this.maxExport = maxExport;
+
+	public EntityImportVisitor() {
 		this.notNullableStringProperties = Collections.emptyList();
-		initTransaction();
 	}
 	
-	public void setEntity(Class<? extends Serializable> entity) {
+	public EntityImportVisitor(SessionFactory sessionFactory, int maxImport) {
+		this();
+		setSessionFactory(sessionFactory);
+		setMaxImport(maxImport);
+	}
+	
+	public int getMaxImport() {
+		return maxImport;
+	}
+
+	public void setMaxImport(int maxImport) {
+		this.maxImport = maxImport;
+	}
+
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
+	private void setEntity(Class<? extends Serializable> entity) {
 		if ( this.lastEntity != entity ) {
-			this.className = entity.getName();
-			initNotNullableStringProperties(sessionFactory, entity);
+			this.entityName = entity.getName();
+			entityChanged(this.lastEntity, entity);
 			this.lastEntity = entity;
 		}
 	}
 
-	private void initNotNullableStringProperties(SessionFactory sessionFactory, Class<? extends Serializable> entity) {
+	private void initNotNullableStringProperties(Class<? extends Serializable> entity) {
 		notNullableStringProperties = new ArrayList<String>();
-		ClassMetadata cmd = sessionFactory.getClassMetadata(entity);
+		ClassMetadata cmd = getSessionFactory().getClassMetadata(entity);
 		String[] names = cmd.getPropertyNames();
 		Type[] types = cmd.getPropertyTypes();
 		boolean[] nullables = cmd.getPropertyNullability();
@@ -65,21 +83,30 @@ public class EntityImportVisitor implements IEntityVisitor {
 		}
 	}
 	
-	private void initTransaction() {
+	protected void entityChanged( Class<? extends Serializable> oldEntity, Class<? extends Serializable> newEntity ) {
+		initNotNullableStringProperties(newEntity);
+	}
+	
+	protected void initTransaction() {
 		session = sessionFactory.openSession();
 		dom4jSession = session.getSession(EntityMode.DOM4J);
 		tx = session.beginTransaction();
 	}
 
-	private void endTransaction() {
+	protected void endTransaction() {
 		tx.commit();
 		session.close();
+	}
+	
+	protected void replicate( Element element, String entityName ) {
+		patch(element);
+		dom4jSession.replicate( entityName, element, ReplicationMode.EXCEPTION );
 	}
 
 	public void startDocument() {
 		initTransaction();
 	}
-
+	
 	private void patch( Element element ) {
 		for( String property : this.notNullableStringProperties ) {
 			Element e = element.element(property);
@@ -91,9 +118,8 @@ public class EntityImportVisitor implements IEntityVisitor {
 	
 	public void visit( Element element, Class<? extends Serializable> entity ) {
 		setEntity(entity);
-		patch(element);
-		dom4jSession.replicate( className, element, ReplicationMode.EXCEPTION );
-    	if ( ++counter == maxExport ) {
+		replicate(element, entityName);
+    	if ( (maxImport != 0) && (++counter == maxImport) ) {
 			counter = 0;
 			endTransaction();
 			initTransaction();
