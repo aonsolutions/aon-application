@@ -12,6 +12,7 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
@@ -44,6 +45,7 @@ public class ClienteController extends PayrollBasicController {
 	private boolean indnom;
 	private boolean indcoste;
 	private boolean soloases;
+	private ClienteController clientePrint;
 
 	/**
 	 * Recupera los tipos de retribuciones 
@@ -108,7 +110,12 @@ public class ClienteController extends PayrollBasicController {
 	@Override
 	public void onSearch(ActionEvent event) {
 
-		
+		try {
+			this.clearCriteria();
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		try {
 			if ((cliente.getCdg() != null) && (cliente != null)) {
@@ -213,6 +220,25 @@ public class ClienteController extends PayrollBasicController {
 		super.onSearch(event);
 	}
 
+	@Override
+	public void onSelect(ActionEvent event) {
+		// TODO Auto-generated method stub
+		super.onSelect(event);
+		if(getTo()!=null){
+			try {
+				String id = BeanManager.getManagerBean(Cliente.class).getFieldName(IPayrollAlias.CLIENTE_CDG);
+				Integer cdg = ((Delegacion)getTo()).getCdg();
+				clientePrint = new ClienteController();
+				clientePrint = this;
+				clientePrint.clearCriteria();
+				clientePrint.getCriteria().addEqualExpression(id, cdg);
+			} catch (ManagerBeanException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public Tipovia getTipovia() {
 		return tipovia;
 	}
@@ -351,4 +377,13 @@ public class ClienteController extends PayrollBasicController {
 	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
 	}
+	
+	public ClienteController getClientePrint() {
+		return clientePrint;
+	}
+
+	public void setClientePrint(ClienteController clientePrint) {
+		this.clientePrint = clientePrint;
+	}
+
 }
