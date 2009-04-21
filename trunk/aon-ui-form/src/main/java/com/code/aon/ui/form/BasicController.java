@@ -291,7 +291,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 */
 	public void accept(ActionEvent event) {
 		try {
-			restoreNullSubPOJOs(getTo());
+			getManagerBean().restoreNullSubPOJOs(getTo());
 			accept();
 			if (isNew()) {
 				initializeModel();
