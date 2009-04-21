@@ -413,6 +413,18 @@ public class FinanceController extends BasicController {
 		}
 	}
 
+	public void onSettleFinance(ActionEvent event) throws ManagerBeanException {
+		Finance finance = (Finance)this.getTo();
+		finance.setFinanceStatus(FinanceStatus.SETTLED);
+		getManagerBean().update(finance);
+
+		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_SETTLED);
+		FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.SETTLED, message);
+
+		FinanceTrackingController financeTrackingController = (FinanceTrackingController)FormUtil.getController(FINANCE_TRACKING_CONTROLLER_NAME);
+		financeTrackingController.onSearch(null);
+	}
+
 	/**
 	 * CHECK LIST CONTROL 
 	 */
