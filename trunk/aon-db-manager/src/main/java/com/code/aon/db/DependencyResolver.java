@@ -2,35 +2,36 @@ package com.code.aon.db;
 
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.hibernate.cfg.Configuration;
-import org.hibernate.mapping.ForeignKey;
-import org.hibernate.mapping.PersistentClass;
+import org.hibernate.SessionFactory;
+import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.type.AssociationType;
+import org.hibernate.type.Type;
 
 public class DependencyResolver {
 	
 	private static final Logger LOGGER = Logger.getLogger(DependencyResolver.class.getName());
 	
-	private Configuration configuration;
+	private SessionFactory sessionFactory;
 
-	public DependencyResolver(Configuration configuration) {
-		this.configuration = configuration;
+	public DependencyResolver(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 	}
 	
 	@SuppressWarnings("unchecked")
 	private Set<Class> getDependencies( Class entity ) {
-    	PersistentClass pc = configuration.getClassMapping(entity.getName());
+    	ClassMetadata cm = sessionFactory.getClassMetadata(entity);
     	Set<Class> result = new HashSet<Class>();
-    	Iterator it = pc.getTable().getForeignKeyIterator();
-    	while ( it.hasNext() ) {
-    		ForeignKey fk = (ForeignKey) it.next();
-    		PersistentClass foreignPC = configuration.getClassMapping(fk.getReferencedEntityName());
-    		result.add( foreignPC.getMappedClass() );
+    	for( Type type : cm.getPropertyTypes() ) {
+    		if ( type.isEntityType() || type.isAnyType() ) {
+    			AssociationType at = (AssociationType) type;
+    			Class _class = at.getReturnedClass();
+    			result.add(_class);
+    		}
     	}
     	return result;
     }	

@@ -376,7 +376,7 @@ public class HibernateDataManager {
     public void exportData() throws EntityProcessException {
     	DBToXMLExporter exporter = new DBToXMLExporter( this, getElementEntityIterable() );
     	List<Class<? extends Serializable>> entities = getEntities();
-   		DependencyResolver dr = new DependencyResolver( getExportConfiguration() );
+   		DependencyResolver dr = new DependencyResolver( getExportFactory() );
    		entities = dr.organize(entities);    	
     	for( Class entity : entities ) {
     		exporter.proccess(entity);
@@ -389,7 +389,7 @@ public class HibernateDataManager {
     	Set<Class> processed = new HashSet<Class>();
     	List<Class<? extends Serializable>> entities = getEntities();
     	if (! ignoreDependencies ) {
-    		DependencyResolver dr = new DependencyResolver( getImportConfiguration() );
+    		DependencyResolver dr = new DependencyResolver( getImportFactory() );
     		entities = dr.organize(entities);
     	}
     	for( Class entity : getEntities() ) {
@@ -439,18 +439,18 @@ public class HibernateDataManager {
     public static void main(String[] args) throws EntityProcessException {
     	HibernateDataManager hdm = new HibernateDataManager();
 
-    	/*
     	hdm.setExportData(true);
     	hdm.setFile( new File("/tmp/aon_master.xml") );
     	// hdm.setDirectory( new File("/tmp/db-manager") );
     	hdm.setConfigurationFile( new File("/AON-PROJECT/aon-cse-util/ant/hibernate.cfg.xml") );
     	hdm.setExportProperties( new File("/AON-PROJECT/aon-cse-util/ant/mysql.properties") );
-    	 */
+    	/*    	
     	hdm.setImportData(true);
     	hdm.setFile( new File("/tmp/aon_master.xml") );
     	// hdm.setDirectory( new File("/tmp/db-manager") );
     	hdm.setConfigurationFile( new File("/AON-PROJECT/aon-cse-util/ant/hibernate.cfg.xml") );
-    	hdm.setImportProperties( new File("/AON-PROJECT/aon-cse-util/ant/postgresql.properties") );    	
+    	hdm.setImportProperties( new File("/AON-PROJECT/aon-cse-util/ant/postgresql.properties") );
+    	    	 */    	
     	hdm.execute();
 	}
     
