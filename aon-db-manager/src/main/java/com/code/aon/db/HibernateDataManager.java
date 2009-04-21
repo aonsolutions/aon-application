@@ -144,10 +144,6 @@ public class HibernateDataManager {
 		this.exportProperties = exportProperties;
 	}
 	
-	public void setImportConfiguration(Configuration importConfiguration) {
-		this.importConfiguration = importConfiguration;
-	}
-	
 	public void setImportFactory(SessionFactory importFactory) {
 		this.importFactory = importFactory;
 	}
@@ -166,10 +162,6 @@ public class HibernateDataManager {
 		return importFactory;
 	}
 
-	public void setExportConfiguration(Configuration exportConfiguration) {
-		this.exportConfiguration = exportConfiguration;
-	}
-
 	private Configuration getExportConfiguration() {
 		if ( exportConfiguration == null ) {
 			exportConfiguration = createConfiguration(configurationFile, exportProperties);
@@ -177,6 +169,10 @@ public class HibernateDataManager {
 		return exportConfiguration;
 	}
 	
+	public void setExportFactory(SessionFactory exportFactory) {
+		this.exportFactory = exportFactory;
+	}
+
 	public SessionFactory getExportFactory() {
 		if ( exportFactory == null ) {
 			exportFactory = getExportConfiguration().buildSessionFactory();

@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.Mapping;
 import org.hibernate.metadata.ClassMetadata;
@@ -19,7 +20,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.db.EntityImportVisitor;
 
 public class TransferObjectImportVisitor extends EntityImportVisitor {
@@ -31,6 +31,10 @@ public class TransferObjectImportVisitor extends EntityImportVisitor {
 	private boolean previousCloseSession;
 	
 	private String factoryName;
+	
+	private IManagerBean bean;
+	
+	private String lastEntityName;
 
 	public TransferObjectImportVisitor() {
 		setMaxImport(0);
@@ -43,20 +47,23 @@ public class TransferObjectImportVisitor extends EntityImportVisitor {
 
 	@Override
 	protected void initTransaction() {
-		this.previousBeginTransaction = HibernateUtil.mustBeginTransaction();
-		this.previousCloseSession = HibernateUtil.mustCloseSession();
-		HibernateUtil.setBeginTransaction(false);
-		HibernateUtil.setCloseSession(false);
 		factoryName = HibernateUtil.getSessionFactoryName();
+		/*
+		this.previousCloseSession = HibernateUtil.mustCloseSession();
+		HibernateUtil.setCloseSession(false);
+		this.previousBeginTransaction = HibernateUtil.mustBeginTransaction(); 
+		HibernateUtil.setBeginTransaction(false);
 		try {
 			HibernateUtil.beginTransaction(factoryName);
 		} catch (DAOException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
+		*/
 	}
 	
 	@Override
 	protected void endTransaction() {
+		/*
 		try {
 			HibernateUtil.commitTransaction(factoryName);
 		} catch (DAOException e) {
@@ -64,6 +71,7 @@ public class TransferObjectImportVisitor extends EntityImportVisitor {
 		}
 		HibernateUtil.setBeginTransaction(this.previousBeginTransaction);
 		HibernateUtil.setCloseSession(this.previousCloseSession);
+		*/
 	}
 	
 	private void initialize( ITransferObject to, Element element ) {
@@ -80,26 +88,38 @@ public class TransferObjectImportVisitor extends EntityImportVisitor {
 			} else {
 				type = cm.getPropertyType(propertyName);	
 			}
-			Object value = type.fromXMLNode( propertyElement, factory);
-			String accessPath = propertyName;
-			if ( type.isEntityType() ) {
-				EntityType et = (EntityType) type;
-				accessPath += "." + et.getIdentifierOrUniqueKeyPropertyName(factory); 
-			}
-			try {
-				PropertyUtils.setProperty(to, accessPath, value);
-			} catch (Throwable e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			if (! type.isCollectionType() ) {
+				Object value = type.fromXMLNode( propertyElement, factory);
+				if ( type.isEntityType() ) {
+					EntityType et = (EntityType) type;
+					Session session = HibernateUtil.getSession(factoryName);
+					value = session.get(et.getReturnedClass(), (Serializable) value);
+				}
+				try {
+					PropertyUtils.setProperty(to, propertyName, value);
+				} catch (Throwable e) {
+					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				}
 			}
 		}
+	}
+	
+	private IManagerBean getManagerBean( String entityName ) throws ManagerBeanException {
+		if (! StringUtils.equals(lastEntityName, entityName) ) { 
+			LOGGER.info( "Importing entity " + entityName );
+			this.bean = BeanManager.getManagerBean(entityName);
+			this.lastEntityName = entityName;
+		}		
+		return this.bean;
 	}
 
 	@Override
 	protected void replicate(Element element, String entityName) {
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(entityName);
+			IManagerBean bean = getManagerBean(entityName);
 			ITransferObject to = bean.createNewTo();
 			initialize(to, element);
+			bean.restoreNullSubPOJOs(to);
 			bean.replicate(to);
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);			

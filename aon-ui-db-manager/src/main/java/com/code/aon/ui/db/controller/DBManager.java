@@ -96,8 +96,8 @@ public class DBManager {
 			File xmlFile = File.createTempFile("aon_master", ".xml");
 			hdm.setFile( xmlFile );
 			String factoryName = HibernateUtil.getSessionFactoryName();
-			Configuration cfg = HibernateUtil.getConfigurationFactory().getConfiguration(factoryName);
-			hdm.setExportConfiguration( cfg );
+			SessionFactory factory = HibernateUtil.getSessionFactory(factoryName);
+			hdm.setExportFactory( factory );
 			hdm.execute();
 			responseZip( xmlFile );
 			xmlFile.delete();
