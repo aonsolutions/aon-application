@@ -22,6 +22,19 @@ public class BankAccountType extends StringType {
 			return "bankAccount"; 
 	}
 	
+	@Override
+	public Object fromStringValue(String xml) {
+		if (xml== null) {
+			return null;
+		}
+		BankAccount ba = new BankAccount();
+		ba.setEntity(StringUtils.substring(xml,0,4));
+		ba.setOffice(StringUtils.substring(xml,4,8));
+		ba.setControl(StringUtils.substring(xml,8,10));
+		ba.setAccount(StringUtils.substring(xml,10));
+		return ba;
+	}
+	
 	public void set(PreparedStatement st, Object value, int index) throws SQLException {
 		super.set(st, toString(value), index);
 	}
@@ -41,15 +54,7 @@ public class BankAccountType extends StringType {
 
 	public Object get(ResultSet rs, String name) throws SQLException {
 		String account = rs.getString(name);
-		if (account== null) {
-			return null;
-		}
-		BankAccount ba = new BankAccount();
-		ba.setEntity(StringUtils.substring(account,0,4));
-		ba.setOffice(StringUtils.substring(account,4,8));
-		ba.setControl(StringUtils.substring(account,8,10));
-		ba.setAccount(StringUtils.substring(account,10));
-		return ba;
+		return fromStringValue(account);
 	}
 
 }
