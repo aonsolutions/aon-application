@@ -23,8 +23,7 @@ public class BankAccountType extends StringType {
 	}
 	
 	public void set(PreparedStatement st, Object value, int index) throws SQLException {
-		BankAccount ba = (BankAccount) value;
-		st.setString(index, ba==null?null:ba.getValue());
+		super.set(st, toString(value), index);
 	}
 
 	public String objectToSQLString(Object value, Dialect dialect) throws Exception {
@@ -33,6 +32,9 @@ public class BankAccountType extends StringType {
 	}
 
 	public String toString(Object value) {
+		if (value instanceof String) {
+			return (String) value;
+		}
 		BankAccount ba = (BankAccount) value;
 		return ba==null?null:ba.getValue();
 	}
