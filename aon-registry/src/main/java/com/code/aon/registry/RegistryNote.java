@@ -17,6 +17,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.registry.enumeration.NoteType;
@@ -82,6 +83,7 @@ public class RegistryNote implements ITransferObject {
 	}
 
 	@Lob
+	@Type(type="com.code.aon.common.dao.hibernate.type.StringClobEnhancedType")
 	public String getComments() {
 		return comments;
 	}
