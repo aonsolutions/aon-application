@@ -7,17 +7,17 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 	<body>
-
 		<ui:composition
 			template="/facelet/templates/aon.ui.content.xhtml">
-
 			<ui:define name="content">
-
 				<aon:form id="embargoForm">
-
-					<ui:include	src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+					<ui:include
+						src="/facelet/templates/formPrintToolbar.xhtml">
 						<ui:param name="toolbarTitle" value="#{menuBundle.principales_personas__embargo}" />
 						<ui:param name="controller" value="#{embargoBasic}" />
+						<aon:methodParam name="backAction" value="embargoBasic_list" />
+						<ui:param name="reportKey" value="embargoListDetail" />
+						
 					</ui:include>
 
 					<aon:div id="embargoBasic" styleClass="aon-scroll-area aon-scroll-area-clientes">
@@ -89,16 +89,11 @@
 									</aon:selectOneRadio>
 								
 								</aon:panelGrid>
-								
 							</aon:div>
-							
 					</aon:div>
 				</aon:form>
-
 				<aon:lookupButtonPopup lookup="#{trabajadorLookup}" /> 
-				
 			</ui:define>
 		</ui:composition>
-
 	</body>
 </html>

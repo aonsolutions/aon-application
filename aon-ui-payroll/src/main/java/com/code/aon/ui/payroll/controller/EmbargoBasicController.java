@@ -11,13 +11,15 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.Afectados;
+import com.code.aon.payroll.principales.persona.Embargo;
 import com.code.aon.payroll.principales.persona.Trabajador;
-import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 
-public class EmbargoBasicController extends BasicController {
+public class EmbargoBasicController extends PayrollBasicController {
 
 	private List<SelectItem> afectados;
 
@@ -70,6 +72,13 @@ public class EmbargoBasicController extends BasicController {
 
 	@Override
 	public void onSearch(ActionEvent event) {
+		
+		try {
+			this.clearCriteria();
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		try {
 			/*
@@ -93,23 +102,26 @@ public class EmbargoBasicController extends BasicController {
 		super.onSearch(event);
 	}
 	
-	@Override
-	public void onSelect(ActionEvent event) {
-		
-		// meter en el criteria el cdg de embargo
-		/*
-		LinesController ebc = (LinesController)FormUtil.getController(IPayrollConstants.EMBARGO_LINES_CONTROLLER_NAME);
-		
-		try {
-			this.setCriteria(ebc.getCriteria());
-			super.onSelect(event);
-		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
-		super.onSelect(event);
+	private EmbargoBasicController embargoPrint;
+	
+	public EmbargoBasicController getEmbargoPrint() {
+		return embargoPrint;
+	}
+
+	public void setEmbargoPrint(EmbargoBasicController embargoPrint) {
+		this.embargoPrint = embargoPrint;
 	}
 	
+	@Override
+	public void onSelect(ActionEvent event) {
+		// TODO Auto-generated method stub
+		super.onSelect(event);
+		onPrintSelected();
+	}
+	
+	public void onPrintSelected() {
+		PayrollJasperTemplateController.addSelectedToList(getTo());
+	}
+		
 	
 }

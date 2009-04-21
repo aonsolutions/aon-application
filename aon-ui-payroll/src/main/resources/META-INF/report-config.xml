@@ -964,4 +964,79 @@
 		</params>
 	</report>
 	
+	<!--  *********  Impresion a PDF del mnto. de embargos - Lista ********* -->
+	<report id="embargoList" description="Listado de Embargos">
+		<template path="/com/code/aon/ui/payroll/report/embargoList.jasper" />
+		<bean key="com.code.aon.payroll.principales.persona.Embargo" />
+		<criteria provider="#{embargoBasic}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	<!--  *********  Impresion a PDF del mnto. de embargos - Detalle ********* -->
+	<report id="embargoListDetail" description="Detalle del Embargo">
+		<template path="/com/code/aon/ui/payroll/report/embargoList.jasper" />
+		<collection provider="#{jasperController.selectedToList}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	<!--  *********  Impresion a PDF del mnto. de otras percepciones - Lista ********* -->
+	<report id="otrasPercepcionesList" description="Listado de Otras percepciones">
+		<template path="/com/code/aon/ui/payroll/report/otrasPercepcionesList.jasper" />
+		<bean key="com.code.aon.payroll.principales.personas.Otrperc" />
+		<criteria provider="#{otraspercep}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	<!--  *********  Impresion a PDF del mnto. de otras percepciones - Detalle ********* -->
+	<report id="otrasPercepcionesDetail" description="Detalle de Otras percepciones">
+		<template path="/com/code/aon/ui/payroll/report/otrasPercepcionesDetail.jasper" />
+		<collection provider="#{jasperController.selectedToList}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	<!--  *********  Impresion a PDF del mnto. de integral de trabajadores - Lista ********* -->
+	<report id="integralTrabajadoresList" description="Listado de mantenimiento integral de trabajadores">
+		<template path="/com/code/aon/ui/payroll/report/integralTrabajadoresList.jasper" />
+		<bean key="com.code.aon.payroll.principales.personas.Persona" />
+		<criteria provider="#{persona}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	<!--  *********  Impresion a PDF del mnto. de integral de trabajadores - Detalle ********* -->
+	
+	
+	<!--  *********  Impresion a PDF del mnto. de percepciones - Lista ********* -->
+	<report id="percepcionesList" description="Listado de percepciones">
+		<template path="/com/code/aon/ui/payroll/report/percepcionesList.jasper" />
+		<bean key="com.code.aon.payroll.principales.personas.Percep" />
+		<criteria provider="#{percepbasic}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	<!--  *********  Impresion a PDF del mnto. de percepciones - Detalle ********* -->
+	
 </report-config>

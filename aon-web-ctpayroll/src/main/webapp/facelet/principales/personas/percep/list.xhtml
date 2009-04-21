@@ -12,21 +12,24 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 		<aon:form id="otrpercList">
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+			<ui:include	src="/facelet/templates/listPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_personas_percep}" />
-				<ui:param name="controller" value="#{percep}"/>
+				<ui:param name="controller" value="#{percepbasic}"/>
+				<aon:methodParam name="resetAction" default="percep_form" resolve="true" />
+				
+				<ui:param name="reportKey" value="percepcionesList" />
 			</ui:include>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="otrpercData" value="#{percep.model}"
+				<aon:dataTable id="otrpercData" value="#{percepbasic.model}"
 					var="to" rows="20" 
 					columnClasses="aon-editDataTable-numberColumn, aon-editDataTable-numberColumn
 					aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
 					<aon:rowSelector action="percep_form"
-						actionListener="#{percep.onSelect}" />
+						actionListener="#{percepbasic.onSelect}" />
 
 					<aon:column>
 						<f:facet name="header">
