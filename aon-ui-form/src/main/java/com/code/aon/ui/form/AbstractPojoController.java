@@ -135,50 +135,6 @@ public class AbstractPojoController {
 	}
 		
 	/**
-	 * Restores de null value in framework created subpojos.
-	 * 
-	 * @param to
-	 * @throws ManagerBeanException
-	 */
-	@SuppressWarnings("unchecked")
-	protected void restoreNullSubPOJOs(ITransferObject to) throws ManagerBeanException {
-		try {
-			Class clazz = to.getClass();
-			LOGGER.fine("Restoring null values on " + clazz.getName());
-			PropertyDescriptor[] pds = PropertyUtils.getPropertyDescriptors(clazz);
-			LOGGER.fine("Found " + pds.length + " properties");
-			for (PropertyDescriptor pd : pds) {
-				Class fieldClass = pd.getPropertyType();
-				String name = pd.getName();
-				if (ITransferObject.class.isAssignableFrom(fieldClass)) {
-					if (!pd.getReadMethod().isAnnotationPresent(Cascade.class)) {
-						LOGGER.fine("Initializing TO " + name + " property");
-						ITransferObject childTO = (ITransferObject) PropertyUtils.getProperty(to, name);
-						if (childTO != null ) {
-							IManagerBean bean = BeanManager.getManagerBean(fieldClass);
-							Serializable id = bean.getId(childTO);
-							if (id == null) {
-								if(!pd.getReadMethod().isAnnotationPresent(AonPOJOInitializationInvalidateRestoreNull.class)){
-									PropertyUtils.setProperty(to, name, null);
-									LOGGER.fine("Assigned NULL to " + fieldClass);
-								}
-							}
-						}
-					}
-				}
-			}
-		} catch (SecurityException e) {
-			throw new ManagerBeanException(e.getMessage());
-		} catch (IllegalAccessException e) {
-			throw new ManagerBeanException(e.getMessage());
-		} catch (InvocationTargetException e) {
-			throw new ManagerBeanException(e.getMessage());
-		} catch (NoSuchMethodException e) {
-			throw new ManagerBeanException(e.getMessage());
-		}
-	}
-
-	/**
 	 * Add message to the collection of messages.
 	 * 
 	 * @param message

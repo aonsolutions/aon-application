@@ -1,6 +1,7 @@
 package com.code.aon.common;
 
 import java.beans.PropertyDescriptor;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Stack;
@@ -9,7 +10,9 @@ import java.util.logging.Logger;
 import javax.persistence.Transient;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.hibernate.annotations.Cascade;
 
+import com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull;
 import com.code.aon.common.dao.IDAO;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.event.IManagerBeanListener;
@@ -172,6 +175,44 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 		} catch (IllegalAccessException e) {
 			LOGGER.severe(e.getMessage());
 			throw new ManagerBeanException(e.getMessage(), e);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void restoreNullSubPOJOs(ITransferObject to) throws ManagerBeanException {
+		try {
+			Class clazz = to.getClass();
+			LOGGER.fine("Restoring null values on " + clazz.getName());
+			PropertyDescriptor[] pds = PropertyUtils.getPropertyDescriptors(clazz);
+			LOGGER.fine("Found " + pds.length + " properties");
+			for (PropertyDescriptor pd : pds) {
+				Class fieldClass = pd.getPropertyType();
+				String name = pd.getName();
+				if (ITransferObject.class.isAssignableFrom(fieldClass)) {
+					if (!pd.getReadMethod().isAnnotationPresent(Cascade.class)) {
+						LOGGER.fine("Initializing TO " + name + " property");
+						ITransferObject childTO = (ITransferObject) PropertyUtils.getProperty(to, name);
+						if (childTO != null ) {
+							IManagerBean bean = BeanManager.getManagerBean(fieldClass);
+							Serializable id = bean.getId(childTO);
+							if (id == null) {
+								if(!pd.getReadMethod().isAnnotationPresent(AonPOJOInitializationInvalidateRestoreNull.class)){
+									PropertyUtils.setProperty(to, name, null);
+									LOGGER.fine("Assigned NULL to " + fieldClass);
+								}
+							}
+						}
+					}
+				}
+			}
+		} catch (SecurityException e) {
+			throw new ManagerBeanException(e.getMessage());
+		} catch (IllegalAccessException e) {
+			throw new ManagerBeanException(e.getMessage());
+		} catch (InvocationTargetException e) {
+			throw new ManagerBeanException(e.getMessage());
+		} catch (NoSuchMethodException e) {
+			throw new ManagerBeanException(e.getMessage());
 		}
 	}
 	

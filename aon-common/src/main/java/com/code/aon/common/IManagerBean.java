@@ -19,6 +19,14 @@ public interface IManagerBean extends IFinderBean {
 	void initializePOJO(ITransferObject to) throws ManagerBeanException;
 	
 	/**
+	 * Restores null value in framework created subpojos.
+	 * 
+	 * @param to
+	 * @throws ManagerBeanException
+	 */
+	void restoreNullSubPOJOs(ITransferObject to) throws ManagerBeanException;
+	
+	/**
 	 * Create a new <code>ITransferObject</code> attending to the POJO.
 	 * associated to controller.
 	 * 
