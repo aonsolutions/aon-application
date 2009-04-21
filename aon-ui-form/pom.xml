@@ -18,7 +18,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.common</artifactId>
-			<version>3.4.0</version>
+			<version>3.4.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
