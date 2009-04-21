@@ -13,6 +13,15 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	
+	<!-- ************* CONTROLADOR DE REPORTS ***************** -->
+	<managed-bean>
+		<managed-bean-name>jasperController</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PayrollJasperTemplateController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
 	<!-- ************* TIPOS DE DOCUMENTO ***************** -->
 	<managed-bean>

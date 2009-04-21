@@ -15,7 +15,7 @@ import javax.persistence.TemporalType;
 @Embeddable
 public class EmbargoPK implements Serializable {
 
-	private int cdg;
+	private Integer cdg;
 	private Date fecha;
 
 	/**
@@ -23,11 +23,11 @@ public class EmbargoPK implements Serializable {
 	 * @return
 	 */
 	@Column(name = "cdg", nullable = false, length = 4)
-	public int getCdg() {
+	public Integer getCdg() {
 		return this.cdg;
 	}
 
-	public void setCdg(int cdg) {
+	public void setCdg(Integer cdg) {
 		this.cdg = cdg;
 	}
 

@@ -10,12 +10,11 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 		<aon:form id="otrpercForm">
-			<ui:include
-				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+			<ui:include	src="/facelet/templates/formPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle"
 					value="#{appBundle.aon_payroll_principales_personas_otrperc}" />
 				<ui:param name="controller" value="#{otraspercep}" />
-				<ui:param name="reportKey" value="DelegacionList" />
+				<ui:param name="reportKey" value="otrasPercepcionesDetail" />
 			</ui:include>
 
 			<aon:div id="clientes"

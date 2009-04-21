@@ -148,5 +148,7 @@ public class OtrpercepController extends LinesController {
 		c.setNatret(Retribuciones.DINERARIA);
 		c.setIngreso(Ingreso.ING1);
 	}
-
+	
+	
+		
 }

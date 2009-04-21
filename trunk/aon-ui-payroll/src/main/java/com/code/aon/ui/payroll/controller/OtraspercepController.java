@@ -178,7 +178,7 @@ public class OtraspercepController extends PayrollBasicController {
 	public void onSelect(ActionEvent event) {
 		// TODO Auto-generated method stub
 		super.onSelect(event);
-		
+		onPrintSelected();
 		// despues del on Select obtener por SQL persona y empresa 
 		// y guardarlos en el controller
 		try {
@@ -284,6 +284,10 @@ public class OtraspercepController extends PayrollBasicController {
 	public void updateBeanJoins(){
 		((Otrperc)this.getTo()).setCodemp(empresa.getCdg());
 		((Otrperc)this.getTo()).setCodper(persona.getCdg());
+	}
+	
+	public void onPrintSelected() {
+		PayrollJasperTemplateController.addSelectedToList(getTo());
 	}
 	
 }

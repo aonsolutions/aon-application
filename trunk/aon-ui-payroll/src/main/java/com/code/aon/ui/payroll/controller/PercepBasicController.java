@@ -201,5 +201,5 @@ public class PercepBasicController extends PayrollBasicController {
 	public void setTrabajador(Trabajador trabajador) {
 		this.trabajador = trabajador;
 	}
-
+	
 }
