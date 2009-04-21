@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.accounting</artifactId>
-	<version>3.8.0</version>
+	<version>3.9.0</version>
 	<description>AON UI ACCOUNT</description>
 	<name>AON UI ACCOUNT</name>
 	<dependencies>
@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.account.bridge</artifactId>
-			<version>3.8.0</version>
+			<version>3.8.1-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.finance</artifactId>
-			<version>3.10.0</version>
+			<version>3.10.1-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
