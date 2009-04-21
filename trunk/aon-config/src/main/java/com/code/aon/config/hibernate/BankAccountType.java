@@ -14,12 +14,15 @@ public class BankAccountType extends StringType {
 
 	private static final long serialVersionUID = 7916889161980318593L;
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public Class getReturnedClass() {
 		return BankAccount.class;
 	}
+	
+	@Override
 	public String getName() { 
-			return "bankAccount"; 
+		return "bankAccount"; 
 	}
 	
 	@Override
@@ -34,26 +37,31 @@ public class BankAccountType extends StringType {
 		ba.setAccount(StringUtils.substring(xml,10));
 		return ba;
 	}
-	
-	public void set(PreparedStatement st, Object value, int index) throws SQLException {
-		super.set(st, toString(value), index);
-	}
 
-	public String objectToSQLString(Object value, Dialect dialect) throws Exception {
-		BankAccount ba = (BankAccount) value;
-		return '\'' + (ba==null?null:ba.getValue()) + '\'';
-	}
-
+	@Override
 	public String toString(Object value) {
+		if ( value == null ) {
+			return null;
+		}
 		if (value instanceof String) {
 			return (String) value;
 		}
-		BankAccount ba = (BankAccount) value;
-		return ba==null?null:ba.getValue();
+		return ((BankAccount) value).getValue();
+	}
+	
+	@Override
+	public String objectToSQLString(Object value, Dialect dialect) throws Exception {
+		return '\'' + toString(value) + '\'';
 	}
 
+	@Override
+	public void set(PreparedStatement st, Object value, int index) throws SQLException {
+		super.set(st, toString(value), index);
+	}
+	
+	@Override
 	public Object get(ResultSet rs, String name) throws SQLException {
-		String account = rs.getString(name);
+		String account = (String) super.get(rs, name);
 		return fromStringValue(account);
 	}
 
