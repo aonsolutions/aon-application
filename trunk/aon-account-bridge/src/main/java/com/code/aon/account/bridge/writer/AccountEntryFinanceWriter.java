@@ -149,7 +149,7 @@ public class AccountEntryFinanceWriter {
 		AccountEntryDetail detail = new AccountEntryDetail();
 		detail.setAccountEntry(entry);
 		detail.setAccount(bankAccount);
-		detail.setConcept((recordingTo.getFinanceList().size()==1)?obtainConcept(invoice, balancingAmount, null):recordingTo.getBalancingConcept());
+		detail.setConcept((StringUtils.isEmpty(recordingTo.getBalancingConcept()))?obtainConcept(invoice, balancingAmount, null):recordingTo.getBalancingConcept());
 		detail.setBalancingAccount((recordingTo.getFinanceList().size()==1)?registryAccount:null);
 		if (entry.getType().equals(AccountEntryType.COLLECTION)) {
 			detail.setDebit(balancingAmount);
