@@ -365,16 +365,18 @@ public class FinanceController extends BasicController {
 			throw new AbortProcessingException();
 		}
 
-		if(getPaymentAmount() != finance.getTotalAmount()) {
+		if (getPaymentAmount() != finance.getTotalAmount()) {
 			getFinanceGenerator().duplicateFinance(finance, CommonUtil.round(finance.getTotalAmount() - getPaymentAmount(), 2));
 			finance.setAmount(CommonUtil.round(getPaymentAmount() - finance.getExpenses(), 2));
-			FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.FRACTIONED, AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED));
+			String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED);
+			FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.FRACTIONED, message);
 		}
 		finance.setFinanceStatus(FinanceStatus.PAID);
 		getManagerBean().update(finance);
 
 		AccountEntry entry = getWriter().recordFinance(finance, getPaymentRegistryBank(), getPaymentDate());
-		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.RECORDED, AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId());
+		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId();
+		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, entry.getEntryDate(), FinanceTrackingType.RECORDED, message);
 		getWriter().insertAccountEntryFinanceTracking(entry, tracking);
 
 		FinanceTrackingController financeTrackingController = (FinanceTrackingController)FormUtil.getController(FINANCE_TRACKING_CONTROLLER_NAME);
@@ -389,7 +391,8 @@ public class FinanceController extends BasicController {
 		returnFinanceBatchDetail(finance);
 
 		AccountEntry entry = getWriter().returnFinance(finance, getReturnRegistryBank(), getReturnDate());
-		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.RETURNED, AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId());
+		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId();
+		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, entry.getEntryDate(), FinanceTrackingType.RETURNED, message);
 		getWriter().insertAccountEntryFinanceTracking(entry, tracking);
 
 		FinanceTrackingController financeTrackingController = (FinanceTrackingController)FormUtil.getController(FINANCE_TRACKING_CONTROLLER_NAME);
@@ -411,11 +414,9 @@ public class FinanceController extends BasicController {
 	}
 
 	/**
-	 * If the value changed sets the row to be checked or not.
-	 * true to add or false to remove
-	 * 
-	 * @param event the event that is launched by value change
+	 * CHECK LIST CONTROL 
 	 */
+
 	public void rowSelected(ValueChangeEvent event) {
 		if (event.getNewValue() != null) {
 			setRowChecked(((Boolean)event.getNewValue()).booleanValue());
@@ -437,21 +438,11 @@ public class FinanceController extends BasicController {
 		clearCheckedFinances();
 	}
 
-	/**
-	 * Determines if the current row is selected or not
-	 * 
-	 * @return true if the current row is selected
-	 */
 	public boolean getRowChecked() {
 		Finance to = (Finance) model.getRowData();
 		return checks.contains(to);
 	}
 	
-	/**
-	 * Adds or removes a Delivery in the checks list
-	 * 
-	 * @param rowChecked true to add and false to remove
-	 */
 	public void setRowChecked(boolean rowChecked) {
 		if (rowChecked) {
 			Finance to = (Finance) model.getRowData();
@@ -470,8 +461,8 @@ public class FinanceController extends BasicController {
 		return checks;
 	}
 	
-	public void clearCheckedFinances(){
+	public void clearCheckedFinances() {
 		checks = new ArrayList<Finance>();
 	}
-	
+
 }

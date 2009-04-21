@@ -246,9 +246,9 @@ public class FBatchController extends BasicController implements ICollectionProv
                     }
                 }
             }
+            criteria.addOrder(controller.getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
             criteria.addOrder(controller.getFieldName(IFinanceAlias.FINANCE_INVOICE_SERIES));
             criteria.addOrder(controller.getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER));
-            criteria.addOrder(controller.getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
 
             controller.setCriteria(criteria);
             controller.onSearch(null);
@@ -293,8 +293,8 @@ public class FBatchController extends BasicController implements ICollectionProv
                 fBatchDetail.setStatus(FinanceStatus.BATCHED);
 				financeBatchDetailBean.insert(fBatchDetail);
 
-				String tracking = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_BATCHED) + " " + fBatch.getId() + " - " + fBatch.getDescription();
-				FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.BATCHED, tracking);
+				String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_BATCHED) + " " + fBatch.getId() + " - " + fBatch.getDescription();
+				FinanceTrackingWriter.addFinanceTracking(finance, fBatch.getIssueDate(), FinanceTrackingType.BATCHED, message);
             }
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error adding selected finances to the FinanceBatch with id=" + fBatch.getId(), e);
@@ -450,8 +450,8 @@ public class FBatchController extends BasicController implements ICollectionProv
             fbatchDetail.getFinance().setFinanceStatus(FinanceStatus.PAID);
             financeBean.update(fbatchDetail.getFinance());
 
-            String tracking = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId();
-            FinanceTrackingWriter.addFinanceTracking(fbatchDetail.getFinance(), FinanceTrackingType.RECORDED, tracking);
+            String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId();
+            FinanceTrackingWriter.addFinanceTracking(fbatchDetail.getFinance(), entry.getEntryDate(), FinanceTrackingType.RECORDED, message);
         }
 
         fbatch.setFinanceBatchStatus(FinanceBatchStatus.RECORDED);
