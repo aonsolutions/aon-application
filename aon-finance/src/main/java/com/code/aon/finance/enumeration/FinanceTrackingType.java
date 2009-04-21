@@ -27,9 +27,12 @@ public enum FinanceTrackingType implements IResourceable {
     UNRECORDED,
     
     /** FRACTIONED. */
-    FRACTIONED;
+    FRACTIONED,
 
-    /** Message file base path. */
+    /** SETTLED. */
+    SETTLED;
+
+	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.finance.i18n.messages";
     
     /** Message key prefix. */
