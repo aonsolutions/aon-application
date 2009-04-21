@@ -7,6 +7,9 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
+import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -37,6 +40,9 @@ public class FinanceTrackingController extends LinesController {
 		if (getModel().isRowAvailable()) {
 			FinanceTracking tracking = (FinanceTracking)this.getModel().getRowData();
 			if (isLastTracking(tracking)) {
+				if (tracking.getType().equals(FinanceTrackingType.SETTLED)) {
+					return true;
+				}
 				IManagerBean entryFinanceTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(entryFinanceTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_FINANCE_ID), tracking.getFinance().getId());
@@ -44,7 +50,15 @@ public class FinanceTrackingController extends LinesController {
 				Iterator<?> iterator = entryFinanceTrackingBean.getList(criteria).iterator();
 				if (iterator.hasNext()) {
 					AccountEntryFinanceTracking entryFinanceTracking = (AccountEntryFinanceTracking)iterator.next();
-					return entryFinanceTracking.getFinanceTracking().getId().equals(tracking.getId());
+					if (!entryFinanceTracking.getFinanceTracking().getId().equals(tracking.getId())) {
+						return false;
+					}
+
+					IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+					AccountEntry entry = entryFinanceTracking.getAccountEntry();
+					criteria = new Criteria();
+					criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
+					return (entryDetailBean.getCount(criteria) <= 2);
 				}
 			}
 		}
