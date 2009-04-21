@@ -273,6 +273,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 	
+	<!-- ********** ACCOUNT FINANCE CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>financeEntry</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.FinanceEntryController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
 	<!-- ********** ACCOUNT EXPENSE CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>expenseEntry</managed-bean-name>
@@ -645,6 +652,10 @@
 		<navigation-case>
 			<from-outcome>account_invoice_entry</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/invoice/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>account_finance_entry</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/finance/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>account_expense_entry</from-outcome>
