@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.smb</artifactId>
 	<packaging>war</packaging>
-	<version>3.0.7</version>
+	<version>3.0.8</version>
 	<description>AON WEB SMB</description>
 	<name>AON WEB SMB</name>
 	<properties>
@@ -21,6 +21,25 @@
 		<finalName>aon-smb</finalName>
 	</build>
 	<dependencies>
+
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.account.bridge</artifactId>
+			<version>3.8.1-SNAPSHOT</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.finance</artifactId>
+			<version>3.10.1-SNAPSHOT</version>
+			<scope>runtime</scope>
+		</dependency>
+
+
+
+
+
+
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
@@ -60,7 +79,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.accounting</artifactId>
-			<version>3.8.0</version>
+			<version>3.9.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -90,7 +109,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.finance</artifactId>
-			<version>3.10.0</version>
+			<version>3.11.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
