@@ -177,7 +177,7 @@ public class DBManager {
 			String factoryName = HibernateUtil.getSessionFactoryName();
 			SessionFactory sessionFactory = HibernateUtil.getSessionFactory(factoryName);
 			hdm.setImportFactory( sessionFactory );
-			TransferObjectImportVisitor visitor = new TransferObjectImportVisitor();
+			TransferObjectImportVisitor visitor = new TransferObjectImportVisitor(sessionFactory, 0);
 			hdm.setVisitor(visitor);
 			for( AonFile file : this.files ) {
 				ByteArrayInputStream in = new ByteArrayInputStream(file.getData());
