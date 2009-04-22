@@ -118,12 +118,12 @@ public class TransferObjectImportVisitor extends EntityImportVisitor {
 	protected void replicate(Element element, String entityName) throws EntityProcessException {
 		try {
 			IManagerBean bean = getManagerBean(entityName);
-			ITransferObject to = bean.createNewTo();
+			ITransferObject to = (ITransferObject) bean.getPOJOClass().newInstance();
 			initialize(to, element);
-			bean.restoreNullSubPOJOs(to);
 			bean.replicate(to);
-		} catch (ManagerBeanException e) {
-			throw new EntityProcessException( e.getMessage(), e );
+		} catch (Throwable th) {
+			LOGGER.severe( "Error in replicate " + entityName + ": " + element );
+			throw new EntityProcessException( th.getMessage(), th );
 		}
 	}
 
