@@ -21,6 +21,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.db.EntityImportVisitor;
+import com.code.aon.db.EntityProcessException;
 
 public class TransferObjectImportVisitor extends EntityImportVisitor {
 	
@@ -114,7 +115,7 @@ public class TransferObjectImportVisitor extends EntityImportVisitor {
 	}
 
 	@Override
-	protected void replicate(Element element, String entityName) {
+	protected void replicate(Element element, String entityName) throws EntityProcessException {
 		try {
 			IManagerBean bean = getManagerBean(entityName);
 			ITransferObject to = bean.createNewTo();
@@ -122,7 +123,7 @@ public class TransferObjectImportVisitor extends EntityImportVisitor {
 			bean.restoreNullSubPOJOs(to);
 			bean.replicate(to);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);			
+			throw new EntityProcessException( e.getMessage(), e );
 		}
 	}
 
