@@ -726,11 +726,11 @@ public class InvoiceEntryController {
 		invoice.setSeries(getHeader().getSeries());
 		if (getHeader().getType().equals(InvoiceType.SALES)) {
 			if (getHeader().getNumber() == 0) {
-				invoice.setNumber(calculateNextNumber(getHeader().getSeries(), getHeader()
-						.getType()));
+				invoice.setNumber(calculateNextNumber(getHeader().getSeries(), getHeader().getType()));
+			} else {
+				invoice.setNumber(getHeader().getNumber());
 			}
-		} else {
-			invoice.setNumber(getHeader().getNumber());
+			getHeader().setReferenceCode(obtainReferenceCode(invoice.getSeries(), invoice.getNumber()));
 		}
 		invoice.setReferenceCode(getHeader().getReferenceCode());
 		invoice.setRegistry(getHeader().getRegistry());
@@ -742,9 +742,20 @@ public class InvoiceEntryController {
 		invoice.setInvestment(getHeader().isInvestment());
 		invoice.setTransaction(getHeader().getTransaction());
 		invoice.setWithholding(getHeader().isWithholding());
-		invoice.setTaxFree(getHeader().isTaxFree() );
+		invoice.setTaxFree(getHeader().isTaxFree());
 		invoice.setSurcharge(getHeader().isSurcharge());
 		return invoice;
+	}
+
+	private String obtainReferenceCode(String series, int number) {
+		StringBuilder sb = new StringBuilder();
+		if (!StringUtils.isEmpty(series)) {
+			sb.append(series);
+			sb.append("/");
+		}
+		sb.append(number);
+
+		return sb.toString();
 	}
 
 	private int calculateNextNumber(String series, InvoiceType invoiceType)
