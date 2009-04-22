@@ -54,12 +54,20 @@ public class SAXEntityReader extends XMLReaderAdapter {
 	@Override
 	public void startDocument() throws SAXException {
 		elements = new Stack<Element>();
-		this.visitor.startDocument();
+		try {
+			this.visitor.startDocument();
+		} catch (EntityProcessException e) {
+			throw new SAXException( e.getMessage(), e );
+		}
 	}
 	
 	@Override
 	public void endDocument() throws SAXException {
-		this.visitor.endDocument();
+		try {
+			this.visitor.endDocument();
+		} catch (EntityProcessException e) {
+			throw new SAXException( e.getMessage(), e );			
+		}
 	}
 
 	private Element getElement( String localName, Attributes attributes ) {
@@ -107,7 +115,11 @@ public class SAXEntityReader extends XMLReaderAdapter {
 			Element parent = elements.peek();
 			parent.add( element );
 		} else if ( elements.size() == 1 ) {
-			visitor.visit(element, resolveEntity(name));			
+			try {
+				visitor.visit(element, resolveEntity(name));
+			} catch (EntityProcessException e) {
+				throw new SAXException( e.getMessage(), e );			
+			}						
 		}
 	}
 	

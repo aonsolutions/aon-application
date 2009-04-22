@@ -98,9 +98,13 @@ public class EntityImportVisitor implements IEntityVisitor {
 		session.close();
 	}
 	
-	protected void replicate( Element element, String entityName ) {
-		patch(element);
-		dom4jSession.replicate( entityName, element, ReplicationMode.EXCEPTION );
+	protected void replicate( Element element, String entityName ) throws EntityProcessException {
+		try {
+			patch(element);
+			dom4jSession.replicate( entityName, element, ReplicationMode.EXCEPTION );
+		} catch ( Throwable th ) {
+			throw new EntityProcessException( th.getMessage(), th );
+		}
 	}
 
 	public void startDocument() {
@@ -116,7 +120,7 @@ public class EntityImportVisitor implements IEntityVisitor {
 		}
 	}
 	
-	public void visit( Element element, Class<? extends Serializable> entity ) {
+	public void visit( Element element, Class<? extends Serializable> entity ) throws EntityProcessException {
 		setEntity(entity);
 		replicate(element, entityName);
     	if ( (maxImport != 0) && (++counter == maxImport) ) {

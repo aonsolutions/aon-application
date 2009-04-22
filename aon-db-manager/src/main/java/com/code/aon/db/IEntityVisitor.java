@@ -6,10 +6,10 @@ import org.dom4j.Element;
 
 public interface IEntityVisitor {
 
-	void startDocument();
+	void startDocument() throws EntityProcessException;
 	
-	void endDocument();
+	void endDocument() throws EntityProcessException;
 	
-	void visit( Element element, Class<? extends Serializable> entity );
+	void visit( Element element, Class<? extends Serializable> entity ) throws EntityProcessException;
 	
 }
