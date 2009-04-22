@@ -3,7 +3,9 @@ package com.code.aon.db;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
@@ -34,14 +36,10 @@ public class EntityImportVisitor implements IEntityVisitor {
 	
 	private Class<? extends Serializable> lastEntity;
 	
-	private List<String> notNullableStringProperties;
+	private Set<String> notNullableStringProperties;
 
-	public EntityImportVisitor() {
-		this.notNullableStringProperties = Collections.emptyList();
-	}
-	
 	public EntityImportVisitor(SessionFactory sessionFactory, int maxImport) {
-		this();
+		this.notNullableStringProperties = new HashSet<String>();
 		setSessionFactory(sessionFactory);
 		setMaxImport(maxImport);
 	}
@@ -71,13 +69,12 @@ public class EntityImportVisitor implements IEntityVisitor {
 	}
 
 	private void initNotNullableStringProperties(Class<? extends Serializable> entity) {
-		notNullableStringProperties = new ArrayList<String>();
+		notNullableStringProperties.clear();
 		ClassMetadata cmd = getSessionFactory().getClassMetadata(entity);
 		String[] names = cmd.getPropertyNames();
-		Type[] types = cmd.getPropertyTypes();
 		boolean[] nullables = cmd.getPropertyNullability();
 		for( int i = 0; i < names.length; i++ ) {
-			if ( (!nullables[i]) && types[i].getClass().isAssignableFrom(StringType.class) ) {
+			if ( !nullables[i] ) {
 				notNullableStringProperties.add( names[i] );
 			}
 		}
@@ -96,6 +93,10 @@ public class EntityImportVisitor implements IEntityVisitor {
 	protected void endTransaction() {
 		tx.commit();
 		session.close();
+	}
+	
+	protected boolean isNotNullable( String propertyName ) {
+		return this.notNullableStringProperties.contains( propertyName );
 	}
 	
 	protected void replicate( Element element, String entityName ) throws EntityProcessException {

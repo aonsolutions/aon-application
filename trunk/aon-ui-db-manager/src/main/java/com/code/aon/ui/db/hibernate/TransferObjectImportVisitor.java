@@ -20,6 +20,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.db.EntityImportVisitor;
 import com.code.aon.db.EntityProcessException;
 
@@ -37,8 +38,8 @@ public class TransferObjectImportVisitor extends EntityImportVisitor {
 	
 	private String lastEntityName;
 
-	public TransferObjectImportVisitor() {
-		setMaxImport(0);
+	public TransferObjectImportVisitor(SessionFactory sessionFactory, int maxImport) {
+		super(sessionFactory, maxImport);
 	}
 
 	@Override
@@ -49,7 +50,6 @@ public class TransferObjectImportVisitor extends EntityImportVisitor {
 	@Override
 	protected void initTransaction() {
 		factoryName = HibernateUtil.getSessionFactoryName();
-		/*
 		this.previousCloseSession = HibernateUtil.mustCloseSession();
 		HibernateUtil.setCloseSession(false);
 		this.previousBeginTransaction = HibernateUtil.mustBeginTransaction(); 
@@ -59,12 +59,10 @@ public class TransferObjectImportVisitor extends EntityImportVisitor {
 		} catch (DAOException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
-		*/
 	}
 	
 	@Override
 	protected void endTransaction() {
-		/*
 		try {
 			HibernateUtil.commitTransaction(factoryName);
 		} catch (DAOException e) {
@@ -72,10 +70,9 @@ public class TransferObjectImportVisitor extends EntityImportVisitor {
 		}
 		HibernateUtil.setBeginTransaction(this.previousBeginTransaction);
 		HibernateUtil.setCloseSession(this.previousCloseSession);
-		*/
 	}
 	
-	private void initialize( ITransferObject to, Element element ) {
+	private void initialize( ITransferObject to, Element element ) throws EntityProcessException {
 		SessionFactory sessionFactory = HibernateUtil.getSessionFactory(factoryName); 
 		Mapping factory = (Mapping) sessionFactory;
 		ClassMetadata cm = sessionFactory.getClassMetadata(to.getClass());
@@ -90,16 +87,19 @@ public class TransferObjectImportVisitor extends EntityImportVisitor {
 				type = cm.getPropertyType(propertyName);	
 			}
 			if (! type.isCollectionType() ) {
-				Object value = type.fromXMLNode( propertyElement, factory);
+				Object value = type.fromXMLNode(propertyElement, factory);
 				if ( type.isEntityType() ) {
 					EntityType et = (EntityType) type;
 					Session session = HibernateUtil.getSession(factoryName);
 					value = session.get(et.getReturnedClass(), (Serializable) value);
 				}
-				try {
-					PropertyUtils.setProperty(to, propertyName, value);
-				} catch (Throwable e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				if ( value != null ) {
+					try {
+						PropertyUtils.setProperty(to, propertyName, value);
+					} catch (Throwable th) {
+						LOGGER.severe( "Error in set property " + propertyName + " value " + value + " for element " + element );
+						throw new EntityProcessException( th.getMessage(), th );
+					}
 				}
 			}
 		}
