@@ -20,6 +20,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.hibernate.ReplicationMode;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.db.EntityImportVisitor;
 import com.code.aon.db.EntityProcessException;
@@ -120,7 +121,7 @@ public class TransferObjectImportVisitor extends EntityImportVisitor {
 			IManagerBean bean = getManagerBean(entityName);
 			ITransferObject to = (ITransferObject) bean.getPOJOClass().newInstance();
 			initialize(to, element);
-			bean.replicate(to);
+			bean.replicate(to, ReplicationMode.EXCEPTION);
 		} catch (Throwable th) {
 			LOGGER.severe( "Error in replicate " + entityName + ": " + element );
 			throw new EntityProcessException( th.getMessage(), th );
