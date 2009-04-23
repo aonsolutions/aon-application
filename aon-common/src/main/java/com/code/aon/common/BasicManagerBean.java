@@ -14,6 +14,7 @@ import org.hibernate.annotations.Cascade;
 
 import com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull;
 import com.code.aon.common.dao.IDAO;
+import com.code.aon.common.dao.hibernate.ReplicationMode;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.event.IManagerBeanListener;
 import com.code.aon.common.event.IManagerBeanVetoListener;
@@ -294,17 +295,13 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 	 * (non-Javadoc)
 	 * @see com.code.aon.common.IManagerBean#insert(com.code.aon.common.ITransferObject)
 	 */
-	public ITransferObject replicate(ITransferObject to)
+	public ITransferObject replicate(ITransferObject to, ReplicationMode mode)
 			throws ManagerBeanException {
 		try {
 			ManagerBeanEvent evt = new ManagerBeanEvent( to );
-			fireVetoableBeanInserted(evt);
-			ITransferObject ret = getDao().replicate(to);
-			fireBeanInserted(evt);
+			ITransferObject ret = getDao().replicate(to, mode);
 			return ret;
 		} catch (DAOException e) {
-			throw new ManagerBeanException(e.getMessage(), e);
-		} catch (ManagerBeanVetoListenerException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
 		}
 	}

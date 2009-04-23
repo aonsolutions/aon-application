@@ -343,18 +343,32 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 		return to;
 	}
 	
+	private ReplicationMode getReplicationMode( com.code.aon.common.dao.hibernate.ReplicationMode mode ) {
+		switch (mode) {
+			case EXCEPTION:
+				return ReplicationMode.EXCEPTION;
+			case IGNORE:
+				return ReplicationMode.IGNORE;
+			case LATEST_VERSION:
+				return ReplicationMode.LATEST_VERSION;
+			case OVERWRITE:
+				return ReplicationMode.OVERWRITE;
+		}
+		return null;
+	}
+	
 	/* 
 	 * (non-Javadoc)
 	 * @see com.code.aon.common.dao.IDAO#insert(com.code.aon.common.ITransferObject)
 	 */
-	public ITransferObject replicate(ITransferObject to) throws DAOException {
+	public ITransferObject replicate(ITransferObject to, com.code.aon.common.dao.hibernate.ReplicationMode mode) throws DAOException {
         Session session = HibernateUtil.getSession(sessionFactoryName);
 		try {
 			if (HibernateUtil.mustBeginTransaction()) {
 				session.beginTransaction();	
 			}
 
-			session.replicate(to, ReplicationMode.EXCEPTION);
+			session.replicate(to, getReplicationMode(mode));
 			
 			if (HibernateUtil.mustBeginTransaction()) {
 				session.getTransaction().commit();
