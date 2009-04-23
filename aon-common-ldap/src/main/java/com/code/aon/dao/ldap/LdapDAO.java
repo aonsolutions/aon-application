@@ -13,11 +13,11 @@ import javax.naming.ldap.Rdn;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.IDAO;
+import com.code.aon.common.dao.hibernate.ReplicationMode;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
@@ -419,6 +419,13 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 			update(to);
 		}
 		return to;
+	}
+
+	@Override
+	public ITransferObject replicate(ITransferObject to, ReplicationMode mode)
+			throws DAOException {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not supported!");
 	}
 
 	public void setProperty(ITransferObject to, String propertyName,
