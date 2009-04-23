@@ -1,9 +1,6 @@
 package com.code.aon.ldap;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -44,11 +41,7 @@ public class LdapSession implements ILdapConstants {
 
 	private static final String INTEGER_SYNTAX = "1.3.6.1.4.1.1466.115.121.1.27";
 
-	private static final String GENERALIZED_TIME_SYNTAX = "1.3.6.1.4.1.1466.115.121.1.24";
-	
 	private static final String DISTINGUISHED_NAME_SYNTAX = "1.3.6.1.4.1.1466.115.121.1.12";
-	
-	private static final SimpleDateFormat GENERALIZED_TIME_FORMAT = new SimpleDateFormat( "yyyyMMddHHmmss'Z'" );
 
 	private static final Log LOGGER = LogFactory.getLog(LdapSession.class
 			.getName());
@@ -123,12 +116,6 @@ public class LdapSession implements ILdapConstants {
 			} else if (oid.equals(BOOLEAN_SYNTAX)) {
 				result = TRUE_VALUE.equals(value) ? Boolean.TRUE
 						: Boolean.FALSE;
-			} else if (oid.equals(GENERALIZED_TIME_SYNTAX)) {
-				try {
-					result = GENERALIZED_TIME_FORMAT.parse( value.toString() );
-				} catch (ParseException e) {
-					LOGGER.error( "Error parsing Generalized Time: " + value, e );
-				}
 			}
 		}
 		return result;
@@ -174,6 +161,7 @@ public class LdapSession implements ILdapConstants {
 		} catch (NamingException e) {
 			LOGGER.debug(e.getMessage(), e);
 		}
+		List<Object> list = new ArrayList<Object>();
 		while (values.hasMore()) {
 			Object value = values.nextElement();
 			entry.put(name, convertValue(value, syntax));
@@ -313,7 +301,7 @@ public class LdapSession implements ILdapConstants {
 				}
 				attributes.put(attribute);
 			}
-			dc.createSubcontext( resolveBase(entry.getDN().toString()), attributes);
+			dc.createSubcontext(entry.getDN().toString(), attributes);
 		} catch (NameAlreadyBoundException nabe) {
 			throw new LdapException("Entry Already Exists: " + entry.getDN(),
 					nabe);
@@ -330,7 +318,7 @@ public class LdapSession implements ILdapConstants {
 
 	public void delete(String dn) throws LdapException {
 		try {
-			dc.destroySubcontext( resolveBase(dn) );
+			dc.destroySubcontext(dn);
 		} catch (NamingException ne) {
 			throw new LdapException("Error in delete. " + ne.getMessage(), ne);
 		}
@@ -338,7 +326,7 @@ public class LdapSession implements ILdapConstants {
 
 	public void rename(String dn, String newDN) throws LdapException {
 		try {
-			dc.rename( resolveBase(dn), resolveBase(newDN) );
+			dc.rename(dn, newDN);
 		} catch (NamingException ne) {
 			throw new LdapException("Error in rename. " + ne.getMessage(), ne);
 		}
@@ -353,7 +341,7 @@ public class LdapSession implements ILdapConstants {
 			for( String value : moreAttributes ) {
 				items[i++] = new ModificationItem( DirContext.REMOVE_ATTRIBUTE, new BasicAttribute(value) );
 			}
-			dc.modifyAttributes( resolveBase(dn), items );
+			dc.modifyAttributes( dn, items );
 		} catch (NamingException ne) {
 			throw new LdapException("Error in remove Attribute. " + ne.getMessage(), ne);
 		}
@@ -363,19 +351,12 @@ public class LdapSession implements ILdapConstants {
 		this.removeAttributes(dn.toString(), attribute, moreAttributes);
 	}
 
-	@SuppressWarnings("unchecked")
 	private Attribute getAttribute( String name, Object value ) {
 		Attribute attribute = new BasicAttribute(name);
 		if ( List.class.isAssignableFrom(value.getClass()) ) {
 			for( Object _value : (List<Object>) value ) {
 				attribute.add(_value);
 			}				
-		} else if ( Boolean.class.isAssignableFrom(value.getClass()) ) {
-			Boolean b = (Boolean) value;
-			attribute.add( b ? TRUE_VALUE : FALSE_VALUE );
-		} else if ( Date.class.isAssignableFrom(value.getClass()) ) {
-			String date = GENERALIZED_TIME_FORMAT.format( (Date) value );
-			attribute.add( date );
 		} else {
 			attribute.add(value);
 		}
@@ -388,7 +369,7 @@ public class LdapSession implements ILdapConstants {
 
 			Attribute attribute = getAttribute(name, value);
 			items[0] = new ModificationItem( DirContext.ADD_ATTRIBUTE, attribute );
-			dc.modifyAttributes( resolveBase(dn), items );
+			dc.modifyAttributes( dn, items );
 		} catch (NamingException ne) {
 			throw new LdapException("Error in add Attribute. " + ne.getMessage(), ne);
 		}
@@ -404,7 +385,7 @@ public class LdapSession implements ILdapConstants {
 
 			Attribute attribute = getAttribute(name, value);
 			items[0] = new ModificationItem( DirContext.REPLACE_ATTRIBUTE, attribute );
-			dc.modifyAttributes( resolveBase(dn), items );
+			dc.modifyAttributes( dn, items );
 		} catch (NamingException ne) {
 			throw new LdapException("Error in replace Attribute. " + ne.getMessage(), ne);
 		}
@@ -414,7 +395,6 @@ public class LdapSession implements ILdapConstants {
 		this.replaceAttribute(dn.toString(), name, value);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private Object getRealValue( Object value ) {
 		if ( value != null ) {
 			if ( List.class.isAssignableFrom(value.getClass()) ) {
@@ -429,25 +409,25 @@ public class LdapSession implements ILdapConstants {
 		return value;
 	}
 
-	public void updateAttribute( Entry entry, String name, Object newValue ) throws LdapException {
+	public void updateAttribute( LdapSession session, Entry entry, String name, Object newValue ) throws LdapException {
 		Object oldValue = entry.containsKey(name) ? entry.get(name) : null;
-		this.updateAttribute(entry.getDN(), name, oldValue, newValue);
+		this.updateAttribute(session, entry.getDN(), name, oldValue, newValue);
 	}
 
-	public void updateAttribute( DistinguishedName dn, String name, Object oldValue, Object newValue ) throws LdapException {
+	public void updateAttribute( LdapSession session, DistinguishedName dn, String name, Object oldValue, Object newValue ) throws LdapException {
 		Object _oldValue = getRealValue(oldValue);
 		Object _newValue = getRealValue(newValue);
 		if ( _oldValue != null ) {
 			if ( _newValue != null ) {
 				if (! ObjectUtils.equals(_newValue, _oldValue) ) {
-					replaceAttribute( dn, name, _newValue);	
+					session.replaceAttribute( dn, name, _newValue);	
 				}				
 			} else {
-				removeAttributes( dn, name);
+				session.removeAttributes( dn, name);
 			}						
 		} else {
 			if ( _newValue != null ) {
-				addAttribute( dn, name, _newValue);						
+				session.addAttribute( dn, name, _newValue);						
 			}						
 		}		
 	}

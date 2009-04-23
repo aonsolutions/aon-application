@@ -8,15 +8,13 @@ public class PropertyInfo {
 	
 	private String alias;
 	
-	private Class<?> propertyClass;
+	private Class propertyClass;
 	
 	private String ldapName;
 	
 	private int length;
 	
 	private boolean nullable;
-	
-	private String baseDN;
 
 	public PropertyInfo(String accesPath, String ldapName) {
 		this.accesPath = accesPath;
@@ -57,11 +55,11 @@ public class PropertyInfo {
 		this.nullable = nullable;
 	}
 
-	public Class<?> getPropertyClass() {
+	public Class getPropertyClass() {
 		return propertyClass;
 	}
 
-	public void setPropertyClass(Class<?> propertyClass) {
+	public void setPropertyClass(Class propertyClass) {
 		this.propertyClass = propertyClass;
 	}
 
@@ -75,14 +73,6 @@ public class PropertyInfo {
 			return this.accesPath.substring(0, pos);
 		}
 		return null;
-	}
-
-	public String getBaseDN() {
-		return baseDN;
-	}
-
-	public void setBaseDN(String baseDN) {
-		this.baseDN = baseDN;
 	}
 	
 }

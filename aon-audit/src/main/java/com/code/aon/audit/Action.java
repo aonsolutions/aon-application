@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
@@ -114,5 +115,27 @@ public class Action implements ITransferObject {
 	public void setApplication(Application application) {
 		this.application = application;
 	}
-    
+ 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof Action) {
+			Action o = (Action) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
+	
 }
