@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition>
+	<aon:div>
+		<aon:panelGroup>
+			<!-- main menu declaration  -->
+			<aon:form>
+				<aon:menuBar id="menu"
+					imageDir="#{facesContext.externalContext.requestContextPath}/xmlhttp/css/xp/css-images/">
+					<aon:menuItem id="user_management" value="#{menuBundle.aon_user_management}" >
+						<aon:menuItem id="user" styleClass="aon-main-menu-leaf"
+							action="user" value="#{menuBundle.aon_user}"/>
+					</aon:menuItem>	
+				</aon:menuBar>
+			</aon:form>
+		</aon:panelGroup>
+	</aon:div>
+</ui:composition>
+
+</body>
+</html>

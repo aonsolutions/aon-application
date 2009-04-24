@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition>
+
+	<aon:panelGroup id="#{lookupId}ReRender" styleClass="aon-popupWindow">
+
+		<rich:modalPanel id="#{lookupId}" rendered="#{lookup.showWindow}"
+			showWhenRendered="true" minWidth="480">
+
+			<f:facet name="header">
+				<aon:div styleClass="aon-popupWindow-title">
+					<aon:outputText value="Select Window" />
+				</aon:div>
+			</f:facet>
+			<f:facet name="controls">
+				<aon:form>
+					<aon:commandButton type="button" styleClass="aon-popupWindow-close"
+						actionListener="#{lookup.onCloseWindow}" immediate="true">
+						<rich:componentControl for="#{lookupId}" event="onclick"
+							disableDefault="true" operation="hide" />
+					</aon:commandButton>
+				</aon:form>
+			</f:facet>
+
+			<aon:div id="lookupContent" styleClass="aon-popupWindow-content">
+				<aon:div style="width:100%">
+					<aon:div styleClass="aon-popupWindow-content-internal">
+						<aon:div style="width:100%">
+							<aon:form>
+
+								<c:if
+									test="#{(lookup.listPagePath != null) and (lookup.selectedPanel == 'list')}">
+									<a4j:include viewId="listContent.xhtml" />
+								</c:if>
+
+								<c:if
+									test="#{(lookup.searchPagePath != null) and (lookup.selectedPanel == 'search')}">
+									<a4j:include viewId="searchContent.xhtml" />
+								</c:if>
+
+								<c:if
+									test="#{(lookup.newPagePath != null) and (lookup.selectedPanel == 'form')}">
+									<a4j:include viewId="formContent.xhtml" />
+								</c:if>
+
+							</aon:form>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+			</aon:div>
+		</rich:modalPanel>
+
+	</aon:panelGroup>
+
+</ui:composition>
+
+</body>
+</html>

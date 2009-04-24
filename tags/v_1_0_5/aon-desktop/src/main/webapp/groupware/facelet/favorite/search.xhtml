@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="favoriteForm">
+
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true" 				
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+								
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{groupwareBundle.aon_favorite}" />
+					</aon:div>						
+		
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{bundle.aon_search}" />
+					</aon:div>				
+		
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="search" value="#{bundle.aon_accept}"
+							action="favorite_list" actionListener="#{favorite.onSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />
+						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							action="favorite_list" actionListener="#{favorite.onCancel}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="true" accesskey="#{bundle.aon_key_cancel}" />	
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="favorite_form" actionListener="#{favorite.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}" />
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+			<!-- end toolbar navigation -->
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-scroll-area-internal">		
+			
+					<aon:panelGrid columns="2" >
+
+						<aon:outputLabel for="Favorite_description"
+							value="#{groupwareBundle.favorite_description}" />
+						<aon:inputText id="Favorite_description"
+							maxlength="128" size="100"
+							valueChangeListener="#{favorite.addExpression}" />
+
+						<aon:outputLabel for="Favorite_url"
+							value="#{groupwareBundle.favorite_url}" />
+						<aon:inputText id="Favorite_url"
+							maxlength="128" size="100"
+							valueChangeListener="#{favorite.addExpression}" />
+<!-- 
+						<aon:outputLabel for="Favorite_favoriteCategory_id"
+							value="#{groupwareBundle.favorite_favorite_category}" />
+						<aon:selectOneMenu id="Favorite_favoriteCategory_id"
+							valueChangeListener="#{favorite.addExpression}" >
+							<f:selectItems value="#{groupWareCollections.favoriteCategories}" />
+						</aon:selectOneMenu>
+ -->
+					</aon:panelGrid>
+
+				</aon:div>
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>
