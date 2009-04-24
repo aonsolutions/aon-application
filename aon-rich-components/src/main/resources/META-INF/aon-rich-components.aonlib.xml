@@ -186,10 +186,4 @@
 		<attribute name="iconClass" value="aon-menuItem-iconClass" />
 		<attribute name="selectClass" value="aon-menuItem-selectClass" /> 				       
 	</component>
-	
-	<component localName="panelCollapsible">
-		<attribute name="styleClass" value="aon-portlet" /> 
-		<attribute name="headerClass" value="aon-portlet-title" /> 
-		<attribute name="bodyClass" value="aon-portlet-body" /> 	
-	</component>
 </components>

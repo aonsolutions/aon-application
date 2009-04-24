@@ -4,6 +4,7 @@ import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIData;
+import javax.faces.component.UIViewRoot;
 
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
@@ -24,23 +25,17 @@ public class DataScrollerHandler extends TagHandler {
 
 	private static final String TEMPLATE = TEMPLATE_PATH + "dataScroller.xhtml";
 	
-	private static final String RENDERED = "rendered";
-	
 	private static final String DATA_TABLE = "dataTable";
 	
-	private static final String FOR = "for";
+	private static final String MODEL = "model";
 	
 	private static final String PAGE_SIZE = "pageSize";
 	
    	private static final String SHOW_NOTE = "showNote";
    	
-   	private static final String ROW_COUNT = "rowCount";
-   	
-   	private static final String PAGE = "page";
-   	
-	private TagAttribute forTag;
+	private TagAttribute dataTable;
 	
-   	private TagAttribute rowCount;	
+   	private TagAttribute model;	
 
 	/**
 	 * The Constructor.
@@ -50,17 +45,13 @@ public class DataScrollerHandler extends TagHandler {
 	 */
 	public DataScrollerHandler(TagConfig config) {
 		super(config);
-		forTag = getRequiredAttribute(FOR);
-		rowCount = getRequiredAttribute(ROW_COUNT);
+		dataTable = getRequiredAttribute(DATA_TABLE);
+		model = getRequiredAttribute(MODEL);
 	}
 
-	private UIData getDataTable( FaceletContext ctx, UIComponent parent ) {
-		return (UIData) ComponentSupport.findChild( parent, forTag.getValue(ctx) );
-	}
-	
 	private int getPageSize( FaceletContext ctx, UIComponent parent ) {
 		int rows = 20;
-		UIData table = getDataTable(ctx, parent);
+		UIData table = (UIData) ComponentSupport.findChild( parent, dataTable.getValue(ctx) );
 		if ( table != null ) {
 			rows = table.getRows();
 		}
@@ -69,14 +60,10 @@ public class DataScrollerHandler extends TagHandler {
 	
 	private void insertTemplate(FaceletContext ctx, UIComponent component) {
 		VariableMapper newMapper = new VariableMapperWrapper(ctx.getVariableMapper());
-		newMapper.setVariable(DATA_TABLE, forTag.getValueExpression(ctx, String.class));		
-		newMapper.setVariable(ROW_COUNT, rowCount.getValueExpression(ctx, Integer.class));
+		newMapper.setVariable(MODEL, model.getValueExpression(ctx, Object.class));
+		newMapper.setVariable(DATA_TABLE, dataTable.getValueExpression(ctx, String.class));		
 		ValueExpression showNote = FaceletUtil.getBooleanValueExpression(ctx, getAttribute(SHOW_NOTE));
 		newMapper.setVariable(SHOW_NOTE, showNote);
-		TagAttribute page = getAttribute(PAGE);
-		if (page != null) {
-			newMapper.setVariable(PAGE, page.getValueExpression(ctx, Object.class));
-		}
 		TagAttribute pageSize = getAttribute(PAGE_SIZE);
 		if (pageSize != null) {
 			newMapper.setVariable(PAGE_SIZE, pageSize.getValueExpression(ctx, Integer.class));
@@ -85,23 +72,13 @@ public class DataScrollerHandler extends TagHandler {
 			newMapper.setVariable(PAGE_SIZE, ctx.getExpressionFactory()
 					.createValueExpression(ctx, String.valueOf(rows), Integer.class));
 		}
+		
 		FaceletUtil.insertTemplate(ctx, tag, component, FaceletUtil.getTemplate(TEMPLATE), newMapper);
 	}
 
-	private boolean isRendered( FaceletContext ctx ) {
-		boolean rendered = true;
-		TagAttribute renderedTag = getAttribute(RENDERED);
-		if ( renderedTag != null ) {
-			rendered = renderedTag.getBoolean(ctx);
-		}
-		return rendered;
-	}
-	
 	@Override
 	public void apply(FaceletContext ctx, UIComponent parent) {
-		if ( isRendered(ctx) ) {
-			insertTemplate( ctx, parent );
-		}
+		insertTemplate( ctx, parent );
 	}
 
 }

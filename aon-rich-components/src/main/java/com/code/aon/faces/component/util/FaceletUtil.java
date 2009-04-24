@@ -116,8 +116,6 @@ public class FaceletUtil {
 				String[] ids = StringUtils.split(current, " ,");
 				if (! ArrayUtils.contains(ids, value) ) {
 					result = current + ", " + value;
-				} else {
-					result = current;
 				}
 			}
 		}
