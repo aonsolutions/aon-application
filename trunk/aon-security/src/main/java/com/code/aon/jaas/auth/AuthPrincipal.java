@@ -8,6 +8,8 @@ import java.security.Principal;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import sun.net.util.IPAddressUtil;
+
 import com.code.aon.jaas.client.ast.IDomain;
 
 /**
@@ -139,6 +141,17 @@ public class AuthPrincipal implements Principal, Serializable {
     private String user(String value) {
         return value.substring( 0, value.lastIndexOf(IConstants.IDENTITY_SEPARATOR) );    	
     }
+    
+    /**
+     * Checks if is iP address.
+     * 
+     * @param host the host
+     * 
+     * @return true, if is iP address
+     */
+    private boolean isIPAddress( String host ) {
+    	return IPAddressUtil.isIPv4LiteralAddress(host) || IPAddressUtil.isIPv6LiteralAddress(host);
+    }    
 
     /**
      * Returns user domain: user@<b>domain</b>/context
@@ -151,9 +164,11 @@ public class AuthPrincipal implements Principal, Serializable {
 		try {
 			InetAddress thisIp = InetAddress.getLocalHost();
 			LOGGER.debug( "Principal Domain: " + _domain + " InetAddress[" + thisIp.getCanonicalHostName() + ", " + thisIp.getHostAddress() + ", " + thisIp.getHostName() + "]"  );
-			_domain = ( thisIp.getCanonicalHostName().equals( _domain ) 
-						|| thisIp.getHostAddress().equals( _domain ) 
-						|| IDomain.DEFAULT_DOMAIN_IP.equals( _domain ) )? IDomain.DEFAULT_DOMAIN_NAME: _domain;
+			if ( (_domain != null) && isIPAddress(_domain) ) {
+				if ( thisIp.getHostAddress().equals(_domain) || IDomain.DEFAULT_DOMAIN_IP.equals(_domain) ) {
+					_domain = IDomain.DEFAULT_DOMAIN_NAME;
+				}
+			}
 		} catch(UnknownHostException e) {
 			LOGGER.warn( e );
 		}
