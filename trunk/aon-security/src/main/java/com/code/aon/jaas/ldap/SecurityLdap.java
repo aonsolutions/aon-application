@@ -99,10 +99,12 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
     	if ( domainUserEntry == null ) {
     		return false;
     	}
-    	int status = domainUserEntry.getAsInteger(STATUS_ATTRIBUTE);
-    	if ( status > 10 ) {
-    		throw new AuthenticationLoginException( LOGIN_ERROR_PREFFIX + status, arguments );
-    	}		
+    	if ( domainUserEntry.containsKey(STATUS_ATTRIBUTE) ) {
+	    	int status = domainUserEntry.getAsInteger(STATUS_ATTRIBUTE);
+	    	if ( status > 10 ) {
+	    		throw new AuthenticationLoginException( LOGIN_ERROR_PREFFIX + status, arguments );
+	    	}
+	    }		
 		return true;
 	}
 	

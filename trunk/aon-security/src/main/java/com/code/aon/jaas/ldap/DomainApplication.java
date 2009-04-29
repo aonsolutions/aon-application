@@ -62,7 +62,10 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 
 	@Override
 	public IDataSourceMetaData getDataSourceMetaData() {
-		return getDataSourceMetaData(this.dataSource);
+		if ( this.dataSource != null ) {
+			return getDataSourceMetaData(this.dataSource);
+		}
+		return null;
 	}
 
 	@Override
@@ -142,9 +145,13 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 	public static DomainApplication getObject( BasicLdap ldap, Entry entry, String domain ) {
 		DomainApplication domainApplication = new DomainApplication(ldap, domain);
 		domainApplication.setId(entry.getAsString(COMMON_NAME_ATTRIBUTE));
-		String dataSource = entry.getAsString(DATA_SOURCE_ATTRIBUTE);
-		domainApplication.setDataSource(NameResolver.getName(dataSource));
-		domainApplication.setStatus(entry.getAsInteger(STATUS_ATTRIBUTE));
+		if ( entry.containsKey(DATA_SOURCE_ATTRIBUTE) ) {
+			String dataSource = entry.getAsString(DATA_SOURCE_ATTRIBUTE);
+			domainApplication.setDataSource(NameResolver.getName(dataSource));
+		}
+		if ( entry.containsKey(STATUS_ATTRIBUTE) ) {
+			domainApplication.setStatus(entry.getAsInteger(STATUS_ATTRIBUTE));	
+		}		
 		return domainApplication;
 	}
 	

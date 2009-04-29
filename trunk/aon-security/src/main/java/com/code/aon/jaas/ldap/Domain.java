@@ -152,7 +152,9 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 	private static Domain getObject( BasicLdap ldap, Entry entry ) {
 		Domain domain = new Domain(ldap);
 		domain.setId(entry.getAsString(COMMON_NAME_ATTRIBUTE));
-		domain.setStatus(entry.getAsInteger(STATUS_ATTRIBUTE));
+		if ( entry.containsKey(STATUS_ATTRIBUTE) ) {
+			domain.setStatus(entry.getAsInteger(STATUS_ATTRIBUTE));	
+		}
 		return domain;
 	}
 
@@ -222,9 +224,11 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 		User user = new User();
 		user.setId(entry.getAsString(USER_ID_ATTRIBUTE));
 		user.setName(entry.getAsString(COMMON_NAME_ATTRIBUTE));
-		byte[] password = entry.getAsByteArray(USER_PASSWORD_ATTRIBUTE);		
-		int offset = ArrayUtils.indexOf( password, (byte) '}' ) + 1;
-		user.setPasswd( new String(password, offset, password.length-offset) );
+		if ( entry.containsKey(USER_PASSWORD_ATTRIBUTE) ) {
+			byte[] password = entry.getAsByteArray(USER_PASSWORD_ATTRIBUTE);		
+			int offset = ArrayUtils.indexOf( password, (byte) '}' ) + 1;
+			user.setPasswd( new String(password, offset, password.length-offset) );
+		}
 		if ( entry.containsKey(DESCRIPTION_ATTRIBUTE) ) {
 			user.setDescription(entry.getAsString(DESCRIPTION_ATTRIBUTE));			
 		}
