@@ -11,6 +11,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -209,6 +210,12 @@ public class Util {
 			String path = IConstants.RESOURCES_DEFAULT_DIR + thisIp;
 			if ( LOGGER.isDebugEnabled() )
 				LOGGER.debug( "Serializing deployed applications:" + l + " on " + thisIp );
+			File file = new File( path );
+			File directory = file.getParentFile();
+			if (! directory.exists() ) {
+				LOGGER.info( "Creating directory:" + directory );
+				directory.mkdirs();
+			}
 			ostream = new FileOutputStream( path );
 			/* Create the output stream */
 			ObjectOutputStream oopstream = new ObjectOutputStream( ostream );
@@ -238,6 +245,11 @@ public class Util {
 			String path = IConstants.RESOURCES_DEFAULT_DIR + thisIp;
 			if ( LOGGER.isDebugEnabled() )
 				LOGGER.debug( "Deserializing deployed applications from " + thisIp );
+			File file = new File( path );
+			if (! file.exists() ) {
+				LOGGER.warn( "File not found " + file );
+				return Collections.emptyList();
+			}
 			istream = new FileInputStream( path );
 			/* Create the output stream */
 			ObjectInputStream p = new ObjectInputStream( istream );
