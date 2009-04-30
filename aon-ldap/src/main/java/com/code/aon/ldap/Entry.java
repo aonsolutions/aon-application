@@ -83,6 +83,10 @@ public class Entry implements ILdapConstants, IAonObjectClasses {
 		return (Integer) getAsObject(key);
 	}
 
+	public Number getAsNumber( String key ) {
+		return (Number) getAsObject(key);
+	}
+	
 	public byte[] getAsByteArray( String key ) {
 		return (byte[]) getAsObject(key);
 	}
