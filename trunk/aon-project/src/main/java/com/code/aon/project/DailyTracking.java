@@ -7,10 +7,17 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.User;
@@ -52,7 +59,9 @@ public class DailyTracking implements ITransferObject {
 	}
 
 	@ManyToOne
-	@JoinColumn(name="user", nullable=false)
+	@JoinColumn(name="user_id", nullable=false)
+	@ForeignKey(name = "FK_DAILY_TRACKING_USER_ID")
+	@Index(name = "IDX_DAILY_TRACKING_USER_ID")						
 	public User getUser() {
 		return user;
 	}
@@ -71,7 +80,7 @@ public class DailyTracking implements ITransferObject {
         this.trackingDate = trackingDate;
     }
 
-    @Column(name="tracking_duration")
+    @Column(name="tracking_duration", nullable=false)
     public Double getTrackingDuration() {
         return trackingDuration;
     }
@@ -81,7 +90,9 @@ public class DailyTracking implements ITransferObject {
     }
 
     @ManyToOne
-    @JoinColumn(name="job_type")
+    @JoinColumn(name="job_type", nullable=false)
+	@ForeignKey(name = "FK_DAILY_TRACKING_JOB_TYPE")
+	@Index(name = "IDX_DAILY_TRACKING_JOB_TYPE")						        
     public JobType getJobType() {
         return jobType;
     }
@@ -92,6 +103,8 @@ public class DailyTracking implements ITransferObject {
 
     @ManyToOne
     @JoinColumn(name="customer")
+	@ForeignKey(name = "FK_DAILY_TRACKING_CUSTOMER")
+	@Index(name = "IDX_DAILY_TRACKING_CUSTOMER")						            
     public Customer getCustomer() {
 		return customer;
 	}
@@ -102,6 +115,8 @@ public class DailyTracking implements ITransferObject {
 
 	@ManyToOne
     @JoinColumn(name="dossier")
+	@ForeignKey(name = "FK_DAILY_TRACKING_DOSSIER")
+	@Index(name = "IDX_DAILY_TRACKING_DOSSIER")						    
     public Dossier getDossier() {
         return dossier;
     }
@@ -112,6 +127,8 @@ public class DailyTracking implements ITransferObject {
 
     @ManyToOne
     @JoinColumn(name="activity")
+	@ForeignKey(name = "FK_DAILY_TRACKING_ACTIVITY")
+	@Index(name = "IDX_DAILY_TRACKING_ACTIVITY")						        
     public Activity getActivity() {
         return activity;
     }
@@ -120,7 +137,8 @@ public class DailyTracking implements ITransferObject {
         this.activity = activity;
     }
 
-	@Column(length=65535)
+	@Lob
+	@Type(type="com.code.aon.common.dao.hibernate.type.StringClobEnhancedType")
 	public String getComments() {
 		return comments;
 	}
@@ -128,4 +146,21 @@ public class DailyTracking implements ITransferObject {
 	public void setComments(String comments) {
 		this.comments = comments;
 	}
+
+	@Override
+    public boolean equals(Object obj) {
+		return EqualsBuilder.reflectionEquals(this, obj);
+    }
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().
+			append(activity).append(comments).
+			append(customer).append(dossier).
+			append(id).append(jobType).
+			append(trackingDate).append(trackingDuration).
+			append(user).
+			toHashCode();
+	}
+
 }

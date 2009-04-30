@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import com.code.aon.common.ITransferObject;
 
@@ -54,6 +55,13 @@ public class DossierType implements ITransferObject {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().
+			append(description).append(id).
+			toHashCode();
 	}
 	
 }

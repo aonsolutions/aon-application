@@ -8,6 +8,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.customer.Customer;
 import com.code.aon.project.enumeration.DossierStatus;
@@ -43,6 +47,8 @@ public class Dossier implements ITransferObject {
 
 	@ManyToOne
 	@JoinColumn( name="customer",nullable=false )
+	@ForeignKey(name = "FK_DOSSIER_CUSTOMER")
+	@Index(name = "IDX_DOSSIER_CUSTOMER")						            	
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -53,6 +59,8 @@ public class Dossier implements ITransferObject {
 
 	@ManyToOne
 	@JoinColumn(name="dossier_type", nullable=false)
+	@ForeignKey(name = "FK_DOSSIER_DOSSIER_TYPE")
+	@Index(name = "IDX_DOSSIER_DOSSIER_TYPE")						            		
 	public DossierType getDossierType() {
 		return dossierType;
 	}
@@ -62,6 +70,7 @@ public class Dossier implements ITransferObject {
 	}
 
 	@Column(length=16, nullable=false)
+	@Index(name = "IDX_DOSSIER_NUMBER")	
 	public String getNumber() {
 		return number;
 	}
@@ -97,6 +106,15 @@ public class Dossier implements ITransferObject {
 			return (this.id.equals(((Dossier) obj).getId()));
 		}
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().
+			append(customer).append(dossierType).
+			append(id).append(location).
+			append(number).append(status).
+			toHashCode();
 	}
 	
 }
