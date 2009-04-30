@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition>
+	<aon:div id="aon-header">	
+		<aon:panelGrid columns="3" width="100%" 
+			columnClasses="aon-header-name,aon-header-slogan,aon-header-info">
+			<aon:div>
+				<aon:outputConnectionStatus id="aonStatus" styleClass="aon-outputConnectionStatus"		
+					startStyleClass="aon-outputConnectionStatus-start"
+					stopStyleClass="aon-outputConnectionStatus-stop"/>
+				<aon:div id="status_error" layout="inline" styleClass="aon-outputConnectionStatus-failed" style="display: none"/>					
+				<aon:outputText value="#{appBundle.aon_application_title}" 
+					styleClass="aon-applicationName"/>
+			</aon:div>
+	
+			<aon:div>
+				<aon:div rendered="#{aonConfiguration.properties.middleHeader == null}">
+					<aon:outputText value="&#160;"/>
+				</aon:div>
+				<aon:div rendered="#{aonConfiguration.properties.middleHeader != null}">
+					<aon:outputText escape="false" value="#{aonConfiguration.properties.middleHeader}" />
+				</aon:div>
+			</aon:div>
+			
+			<aon:div styleClass="aon-nowrap">
+				<aon:div style="white-space:nowrap;">
+					<aon:outputText value="#{webmail.companyName}" />
+					<aon:outputText value=" / " rendered="#{login.logged}" />
+					<aon:outputText value="#{webmail.loggedUserName}" rendered="#{login.logged}" styleClass="aon-bold"/>
+				</aon:div>
+			</aon:div>	
+		
+		</aon:panelGrid>
+		<aon:div styleClass="aon-header-additionalInfo">				
+			<aon:div styleClass="aon-float-right">
+				<aon:div styleClass="aon-header-menu-item">
+					<h:outputLink 
+						target="_top" 
+						value="${facesContext.externalContext.requestContextPath}">
+						<h:outputText value="#{bundle.aon_home}" />
+					</h:outputLink>
+					<aon:commandLink style="border-right:0;"
+							onclick="parent.window.close();"
+							target="_top" >
+							<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
+					</aon:commandLink>
+				</aon:div>	
+			</aon:div>
+			<aon:outputText value="#{webmail.currentDate}" />
+		    <a4j:region>
+		        <h:form>
+		            <a4j:poll id="poll" interval="300000" status="aonStatus" />
+		        </h:form>
+		    </a4j:region>
+		</aon:div>
+	</aon:div>
+	
+</ui:composition>
+</body>
+</html>
