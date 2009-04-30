@@ -30,6 +30,7 @@ import javax.naming.directory.SearchResult;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -111,7 +112,7 @@ public class LdapSession implements ILdapConstants, IAonObjectClasses {
 					new String[] { NUMERIC_OID });
 			String oid = (String) attributes.get(NUMERIC_OID).get();
 			if (oid.equals(INTEGER_SYNTAX)) {
-				result = Integer.valueOf(value.toString());
+				result = NumberUtils.createNumber(value.toString());
 			} else if (oid.equals(DISTINGUISHED_NAME_SYNTAX)) {
 				result = NameResolver.getName(value.toString());
 			} else if (oid.equals(BOOLEAN_SYNTAX)) {
