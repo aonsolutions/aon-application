@@ -88,8 +88,8 @@ public class BasicLdap {
 			if ( session != null ) {
 				session.close();
 			}
-		} catch (LdapException e) {
-			LOGGER.log( Level.SEVERE, e.getMessage(), e );
+		} catch (Throwable th) {
+			LOGGER.log( Level.SEVERE, th.getMessage(), th );
 		} finally {
 			session = null;
 		}
@@ -107,8 +107,8 @@ public class BasicLdap {
 		boolean exists = false;
 		try {
 			exists = getLdapSession().exists( dn, NameResolver.getObjectClass(objectClass) );
-		} catch ( LdapException e ) {
-			LOGGER.log( Level.SEVERE, e.getMessage(), e );
+		} catch ( Throwable th ) {
+			LOGGER.log( Level.SEVERE, th.getMessage(), th );
 		} finally {
 			closeSession();
 		}
@@ -119,8 +119,8 @@ public class BasicLdap {
 		Entry entry = null;
 		try {
 			entry = getLdapSession().get( dn, NameResolver.getObjectClass(objectClass), attributes );
-		} catch ( LdapException e ) {
-			LOGGER.log( Level.SEVERE, e.getMessage(), e );
+		} catch ( Throwable th ) {
+			LOGGER.log( Level.SEVERE, th.getMessage(), th );
 		} finally {
 			closeSession();
 		}
