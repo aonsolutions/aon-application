@@ -125,9 +125,9 @@ public abstract class AbstractLoginModule implements LoginModule, IConstants {
 					return true;
 				}
 				//	Else, fall through and perform the login
-			} catch (Exception e) { // $codepro.audit.disable caughtExceptions
+			} catch (Throwable th) { // $codepro.audit.disable caughtExceptions
 				// Dump the exception and continue
-				LOGGER.fatal( "login failed:" + e.getMessage() );
+				LOGGER.fatal( "login failed:" + th.getMessage() );
 			}
 		}
 		return false;

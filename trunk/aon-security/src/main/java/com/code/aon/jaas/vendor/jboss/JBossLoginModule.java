@@ -80,8 +80,8 @@ public class JBossLoginModule extends XMLLoginModule {
 				if (principal.getName().indexOf(host) > -1 && principal.getName().indexOf(context) > -1)
 					list.add(principal);
 			}
-    	} catch(Exception e) {
-			throw new LoginException( "Error retrieving active users on [" + host + "] Host." + e.getMessage() );
+    	} catch (Throwable th) {
+			throw new LoginException( "Error retrieving active users on [" + host + "] Host." + th.getMessage() );
     	}
 		return list.size(); 
 	}

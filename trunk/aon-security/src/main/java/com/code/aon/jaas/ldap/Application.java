@@ -20,7 +20,6 @@ import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
-import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
 import com.code.aon.ldap.NameResolver;
 
@@ -206,8 +205,8 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 				IRole role = getRole(entry);
 				roles.add(role);
 			}
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
+		} catch ( Throwable th ) {
+			LOGGER.error( th.getMessage(), th );
 		} finally {
 			this.ldap.closeSession();
 		}

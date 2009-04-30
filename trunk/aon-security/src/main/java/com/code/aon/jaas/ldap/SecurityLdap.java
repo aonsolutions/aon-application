@@ -14,13 +14,12 @@ import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.client.ast.IRelation;
 import com.code.aon.jaas.client.ast.IUser;
 import com.code.aon.jaas.client.ast.core.Relation;
-import com.code.aon.ldap.NameResolver;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
-import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
+import com.code.aon.ldap.NameResolver;
 import com.code.aon.ldap.Scope;
 
 public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecurityConstants, IAonObjectClasses {
@@ -111,8 +110,8 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 	public void deleteAttribute( Name dn, String attribute, String ... moreAttributes ) {
 		try {
 			getLdapSession().removeAttributes(dn, attribute, moreAttributes);
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
+		} catch ( Throwable th ) {
+			LOGGER.error( th.getMessage(), th );
 		} finally {
 			closeSession();
 		}
@@ -163,8 +162,8 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 				String application = NameResolver.getValue(entry.getDN(), 2);
 				applications.add( application );
 			}
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
+		} catch ( Throwable th ) {
+			LOGGER.error( th.getMessage(), th );
 		} finally {
 			closeSession();
 		}
@@ -185,8 +184,8 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 				Name newDN = NameResolver.getUserDN(domainId, user.getId());
 				session.rename(userEntry.getDN(), newDN);
 			}
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
+		} catch ( Throwable th ) {
+			LOGGER.error( th.getMessage(), th );
 		} finally {
 			closeSession();
 		}
@@ -239,8 +238,8 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 				entry.put(ORGANIZATION_NAME_ATTRIBUTE, organizationName);
 			}
 			session.add(entry);
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
+		} catch ( Throwable th ) {
+			LOGGER.error( th.getMessage(), th );
 		} finally {
 			closeSession();
 		}
