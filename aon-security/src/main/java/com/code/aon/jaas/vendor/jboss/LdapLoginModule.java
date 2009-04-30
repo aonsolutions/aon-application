@@ -41,8 +41,8 @@ public class LdapLoginModule extends JBossLoginModule {
     				newOptions.put( option.getName(), option.getValue() );
     			}
     		}
-    	} catch (Exception e) {
-    		LOGGER.fatal( "Error updating options. " + e.getMessage(), e );
+    	} catch (Throwable th) {
+    		LOGGER.fatal( "Error updating options. " + th.getMessage(), th );
         }
     	return newOptions;
 	}
@@ -66,8 +66,8 @@ public class LdapLoginModule extends JBossLoginModule {
 			ldap = (SecurityLdap) getMBeanServer().invoke( new ObjectName(this.objectName), "getSecurityLdap",
 						new Object[] {},new String[] {} );
 	        this.authInfo = new AuthInfo( ldap );			
-		} catch (Exception e) {
-			LOGGER.error( "Error getting SecurityLdap. " + e.getMessage(), e );
+		} catch (Throwable th) {
+			LOGGER.error( "Error getting SecurityLdap. " + th.getMessage(), th );
 		}
 	}
 

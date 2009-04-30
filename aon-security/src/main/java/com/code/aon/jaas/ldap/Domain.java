@@ -26,7 +26,6 @@ import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
-import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.ldap.Scope;
@@ -181,15 +180,14 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 	private IAccessPolicy getAccessPolicy( String domainName ) {
 		IAccessPolicy accessPolicy = null;
 		try {
-			LdapSession session = ldap.getLdapSession();
 			String objectClass = NameResolver.getObjectClass(ACCESS_POLICY);
 			Name dn = getDN(domainName);
-			Entry entry = session.searchOne( dn, objectClass );
+			Entry entry = ldap.getLdapSession().searchOne( dn, objectClass );
 			if ( entry != null ) {
 				accessPolicy = getAccessPolicy( entry );
 			}
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
+		} catch ( Throwable th ) {
+			LOGGER.error( th.getMessage(), th );
 		} finally {
 			ldap.closeSession();
 		}
@@ -207,8 +205,8 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 				IDomainApplication application = DomainApplication.getObject(this.ldap, entry, domainName);
 				applications.add(application);
 			}
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
+		} catch ( Throwable th ) {
+			LOGGER.error( th.getMessage(), th );
 		} finally {
 			this.ldap.closeSession();
 		}
@@ -246,8 +244,8 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 				IUser user = getUser(entry);
 				users.add(user);
 			}
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
+		} catch ( Throwable th ) {
+			LOGGER.error( th.getMessage(), th );
 		} finally {
 			ldap.closeSession();
 		}

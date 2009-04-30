@@ -452,8 +452,8 @@ public abstract class XMLLoginModule extends AbstractLoginModule {
     						new Object[] { this.securityDomain },
 							new String[] { String.class.getName() } );
 	        this.authInfo = new AuthInfo( apps );
-    	} catch (Exception e) {
-    		LOGGER.fatal( "Error loading Host[" + domain + "]." + e.getMessage() );
+    	} catch (Throwable th) {
+    		LOGGER.fatal( "Error loading Host[" + domain + "]." + th.getMessage() );
         }
 	}
 
@@ -501,8 +501,8 @@ public abstract class XMLLoginModule extends AbstractLoginModule {
     		ObjectName name = new ObjectName(this.sessionManagerObjectName);
     		AuthenticationLoginException e = new AuthenticationLoginException( message, obj); 
     		getMBeanServer().invoke( name, "fillLastLoginException", new Object[] { e }, new String[] { AuthenticationLoginException.class.getName() } );
-    	} catch (Exception e) {
-    		LOGGER.fatal( "Error setting FailedLoginException: " + e.getMessage() );
+    	} catch (Throwable th) {
+    		LOGGER.fatal( "Error setting FailedLoginException: " + th.getMessage() );
         }
 	}
 

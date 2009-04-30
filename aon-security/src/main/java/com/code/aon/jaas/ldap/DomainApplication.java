@@ -20,7 +20,6 @@ import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
-import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
 import com.code.aon.ldap.NameResolver;
 
@@ -184,8 +183,8 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 				IRelation profile = getRelation(entry);
 				profiles.add(profile);
 			}
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
+		} catch ( Throwable th ) {
+			LOGGER.error( th.getMessage(), th );
 		} finally {
 			this.ldap.closeSession();
 		}
@@ -202,8 +201,8 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 				IRelation profile = getRelation(entry);
 				profiles.add(profile);
 			}
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
+		} catch ( Throwable th ) {
+			LOGGER.error( th.getMessage(), th );
 		} finally {
 			this.ldap.closeSession();
 		}
@@ -220,8 +219,8 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 				IRelation user = getRelation(entry);
 				users.add(user);
 			}
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
+		} catch ( Throwable th ) {
+			LOGGER.error( th.getMessage(), th );
 		} finally {
 			this.ldap.closeSession();
 		}
@@ -239,8 +238,8 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 				Entry entry = getDomainApplicationProfile( session, relation, dn);
 				session.add(entry);
 			}
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
+		} catch ( Throwable th ) {
+			LOGGER.error( th.getMessage(), th );
 		} finally {
 			this.ldap.closeSession();
 		}
@@ -251,8 +250,8 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 		Name dn = NameResolver.getDomainApplicationProfileDN(domainId, appId, relation.getId());
 		try {
 			this.ldap.delete(dn);
-		} catch (LdapException e) {
-			LOGGER.error( e.getMessage(), e );
+		} catch ( Throwable th ) {
+			LOGGER.error( th.getMessage(), th );
 		}
 	}
 	
@@ -324,8 +323,8 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 				members.add( member.toString() );
 			}
 			session.replaceAttribute(dn, MEMBER_ATTRIBUTE, members);
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
+		} catch ( Throwable th ) {
+			LOGGER.error( th.getMessage(), th );
 		} finally {
 			ldap.closeSession();
 		}
