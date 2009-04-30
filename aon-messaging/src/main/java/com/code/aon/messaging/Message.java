@@ -12,7 +12,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 
@@ -45,6 +48,8 @@ public class Message implements ITransferObject {
 	@ManyToOne(cascade = {CascadeType.ALL} )
 	@Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE} )
 	@JoinColumn(name="message_content")
+	@ForeignKey(name = "FK_MESSAGE_LOG_MESSAGE_CONTENT")
+	@Index(name = "IDX_MESSAGE_LOG_MESSAGE_CONTENT")					
 	public MessageContent getContent() {
 		return content;
 	}
@@ -53,7 +58,7 @@ public class Message implements ITransferObject {
 		this.content = content;
 	}
 
-	@Column(name="message_id", nullable=false)
+	@Column(name="message_id", length=64, nullable=false)
 	public String getMessageId() {
 		return messageId;
 	}
@@ -62,6 +67,7 @@ public class Message implements ITransferObject {
 		this.messageId = messageId;
 	}
 
+	@Column(length=64, nullable=false)
 	public String getRecipient() {
 		return recipient;
 	}
@@ -70,6 +76,7 @@ public class Message implements ITransferObject {
 		this.recipient = recipient;
 	}
 
+	@Column(length=10)
 	public String getType() {
 		return type;
 	}
@@ -96,6 +103,7 @@ public class Message implements ITransferObject {
 		this.messageParts = messageParts;
 	}
 
+	@Column(length=32, nullable=false)
 	public String getUsername() {
 		return username;
 	}
@@ -123,7 +131,12 @@ public class Message implements ITransferObject {
 
 	@Override
 	public int hashCode() {
-		return (this.id != null) ? id.hashCode() : super.hashCode();
-	}	
+		return new HashCodeBuilder().
+			append(content).append(id).
+			append(messageId).append(messageParts).
+			append(recipient).append(sentDate).
+			append(type).append(username).
+			toHashCode();
+	}
 	
 }

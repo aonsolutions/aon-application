@@ -4,9 +4,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 
@@ -30,7 +33,8 @@ public class MessageContent implements ITransferObject {
 		this.id = id;
 	}
 
-	@Column(length=65535, nullable=false)
+	@Lob
+	@Type(type="com.code.aon.common.dao.hibernate.type.StringClobEnhancedType")
 	public String getContent() {
 		return content;
 	}
@@ -58,7 +62,9 @@ public class MessageContent implements ITransferObject {
 
 	@Override
 	public int hashCode() {
-		return (this.id != null) ? id.hashCode() : super.hashCode();
-	}	
+		return new HashCodeBuilder().
+			append(content).append(id).
+			toHashCode();
+	}
 	
 }
