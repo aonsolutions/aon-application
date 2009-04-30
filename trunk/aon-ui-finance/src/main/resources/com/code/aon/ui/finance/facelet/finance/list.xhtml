@@ -29,6 +29,18 @@
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="financeList" />
 					</h:commandLink>
+						<h:commandLink value="#{financeBundle.finance_list_by_account}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="financeListByAccount" />
+					</h:commandLink>
+						<h:commandLink value="#{financeBundle.finance_list_by_date}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="financeListByDate" />
+					</h:commandLink>
 				</ui:define>				
 				
 			</ui:decorate>
