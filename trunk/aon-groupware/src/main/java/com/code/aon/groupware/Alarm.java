@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
@@ -137,10 +138,15 @@ public class Alarm implements ITransferObject {
 		}
 		return false;
 	}
-
+	
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }	
+	public int hashCode() {
+		return new HashCodeBuilder().
+			append(alarmDate).append(description).
+			append(id).append(priority).
+			append(source).append(sourceId).
+			append(status).append(user).
+			toHashCode();
+	}
 
 }
