@@ -7,10 +7,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.User;
@@ -51,7 +55,9 @@ public class Alarm implements ITransferObject {
 		this.id = id;
 	}
 
-	@Column(length=65535, nullable=false)
+	@Column(nullable=false)
+	@Lob
+	@Type(type="com.code.aon.common.dao.hibernate.type.StringClobEnhancedType")	
 	public String getDescription() {
 		return description;
 	}
@@ -76,6 +82,7 @@ public class Alarm implements ITransferObject {
 		this.status = status;
 	}
 
+	@Column(nullable=false)
 	public AlarmSource getSource() {
 		return source;
 	}
@@ -94,7 +101,9 @@ public class Alarm implements ITransferObject {
 	}
 
 	@ManyToOne
-	@JoinColumn(name="user")
+	@JoinColumn(name="user_id")
+	@ForeignKey(name = "FK_ALARM_USER_ID")
+	@Index(name = "IDX_ALARM_USER_ID")
 	public User getUser() {
 		return user;
 	}
@@ -130,8 +139,8 @@ public class Alarm implements ITransferObject {
 	}
 
 	@Override
-	public int hashCode() {
-		return (this.id != null) ? id.hashCode() : super.hashCode();
-	}
-	
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }	
+
 }

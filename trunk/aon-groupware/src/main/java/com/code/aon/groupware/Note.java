@@ -7,12 +7,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.User;
@@ -66,6 +70,8 @@ public class Note implements ITransferObject {
 	@ManyToOne
 	@JoinColumn(name="owner")
 	@Fetch(FetchMode.JOIN)
+	@ForeignKey(name = "FK_NOTE_OWNER")
+	@Index(name = "IDX_NOTE_OWNER")				
 	public User getOwner() {
 		return owner;
 	}
@@ -74,7 +80,8 @@ public class Note implements ITransferObject {
 		this.owner = owner;
 	}
 
-	@Column(length=65535)
+	@Lob
+	@Type(type="com.code.aon.common.dao.hibernate.type.StringClobEnhancedType")
 	public String getNote() {
 		return note;
 	}
@@ -101,8 +108,8 @@ public class Note implements ITransferObject {
 	}
 
 	@Override
-	public int hashCode() {
-		return (this.id != null) ? id.hashCode() : super.hashCode();
-	}	
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }	
 	
 }
