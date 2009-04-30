@@ -7,6 +7,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import com.code.aon.common.ITransferObject;
 
 /**
@@ -63,4 +66,17 @@ public class JobType implements ITransferObject{
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	@Override
+    public boolean equals(Object obj) {
+		return EqualsBuilder.reflectionEquals(this, obj);
+    }
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().
+			append(description).append(id).
+			toHashCode();
+	}
+	
 }

@@ -9,6 +9,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.WorkGroup;
 
@@ -39,6 +44,8 @@ public class Activity implements ITransferObject {
 
 	@ManyToOne
 	@JoinColumn( name="dossier",nullable=false )
+	@ForeignKey(name = "FK_ACTIVITY_DOSSIER")
+	@Index(name = "IDX_ACTIVITY_DOSSIER")				
 	public Dossier getDossier() {
 		return dossier;
 	}
@@ -49,6 +56,8 @@ public class Activity implements ITransferObject {
 	
 	@ManyToOne
 	@JoinColumn( name="activity_type",nullable=false )
+	@ForeignKey(name = "FK_ACTIVITY_ACTIVITY_TYPE")
+	@Index(name = "IDX_ACTIVITY_ACTIVITY_TYPE")			
 	public ActivityType getActivityType() {
 		return activityType;
 	}
@@ -59,6 +68,8 @@ public class Activity implements ITransferObject {
 
 	@ManyToOne
 	@JoinColumn( name="workgroup",nullable=false )
+	@ForeignKey(name = "FK_ACTIVITY_WORKGROUP")
+	@Index(name = "IDX_ACTIVITY_WORKGROUP")		
 	public WorkGroup getWorkgroup() {
 		return workgroup;
 	}
@@ -69,10 +80,15 @@ public class Activity implements ITransferObject {
 
 	@Override
     public boolean equals(Object obj) {
-        if (obj instanceof Activity) {
-            return (this.id.equals(((Activity)obj).getId()));
-        }
-        return false;
+		return EqualsBuilder.reflectionEquals(this, obj);
     }
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().
+			append(activityType).append(dossier).
+			append(id).append(workgroup).
+			toHashCode();
+	}
 
 }

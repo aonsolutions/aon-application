@@ -8,12 +8,20 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.User;
@@ -127,6 +135,7 @@ public class Task implements ITransferObject {
 	 * @return the start date
 	 */
 	@Column(name = "start_date")
+	@Temporal(TemporalType.DATE)
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -147,6 +156,7 @@ public class Task implements ITransferObject {
 	 * @return the end date
 	 */
 	@Column(name = "end_date")
+	@Temporal(TemporalType.DATE)
 	public Date getEndDate() {
 		return endDate;
 	}
@@ -167,6 +177,7 @@ public class Task implements ITransferObject {
 	 * @return the due date
 	 */
 	@Column(name = "due_date", nullable = false)
+	@Temporal(TemporalType.DATE)
 	public Date getDueDate() {
 		return dueDate;
 	}
@@ -224,6 +235,7 @@ public class Task implements ITransferObject {
 	 * 
 	 * @return the percent
 	 */
+	@Column(nullable=true)
 	public int getPercent() {
 		return percent;
 	}
@@ -244,8 +256,10 @@ public class Task implements ITransferObject {
 	 * @return the user
 	 */
 	@ManyToOne
-	@JoinColumn(name = "user")
+	@JoinColumn(name = "user_id")
 	@Fetch(FetchMode.JOIN)
+	@ForeignKey(name = "FK_TASK_USER_ID")
+	@Index(name = "IDX_TASK_USER_ID")						            			
 	public User getUser() {
 		return user;
 	}
@@ -267,6 +281,8 @@ public class Task implements ITransferObject {
 	 */
 	@ManyToOne
 	@JoinColumn(name = "workgroup")
+	@ForeignKey(name = "FK_TASK_WORKGROUP")
+	@Index(name = "IDX_TASK_WORKGROUP")						            				
 	public WorkGroup getWorkGroup() {
 		return workGroup;
 	}
@@ -307,6 +323,8 @@ public class Task implements ITransferObject {
 	 */
 	@ManyToOne
 	@JoinColumn(name = "dossier")
+	@ForeignKey(name = "FK_TASK_DOSSIER")
+	@Index(name = "IDX_TASK_DOSSIER")						            					
 	public Dossier getDossier() {
 		return dossier;
 	}
@@ -328,6 +346,8 @@ public class Task implements ITransferObject {
 	 */
 	@ManyToOne
 	@JoinColumn(name = "activity")
+	@ForeignKey(name = "FK_TASK_ACTIVITY")
+	@Index(name = "IDX_TASK_ACTIVITY")						            						
 	public Activity getActivity() {
 		return activity;
 	}
@@ -350,6 +370,8 @@ public class Task implements ITransferObject {
 	@ManyToOne
 	@JoinColumn(name = "sender")
 	@Fetch(FetchMode.JOIN)
+	@ForeignKey(name = "FK_TASK_SENDER")
+	@Index(name = "IDX_TASK_SENDER")						            							
 	public User getSender() {
 		return sender;
 	}
@@ -369,7 +391,8 @@ public class Task implements ITransferObject {
 	 * 
 	 * @return the comments
 	 */
-	@Column(length = 65535)
+	@Lob
+	@Type(type="com.code.aon.common.dao.hibernate.type.StringClobEnhancedType")
 	public String getComments() {
 		return comments;
 	}
@@ -494,4 +517,14 @@ public class Task implements ITransferObject {
         return (!getRepeatPeriod().equals(TaskPeriod.YEARLY));
     }
 
+	@Override
+    public boolean equals(Object obj) {
+		return EqualsBuilder.reflectionEquals(this, obj);
+    }
+
+	@Override
+	public int hashCode() {
+		return HashCodeBuilder.reflectionHashCode(this);
+	}
+	
 }

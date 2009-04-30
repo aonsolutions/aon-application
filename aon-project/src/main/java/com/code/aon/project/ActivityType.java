@@ -9,6 +9,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+
 import com.code.aon.common.ITransferObject;
 
 @Entity
@@ -45,6 +50,8 @@ public class ActivityType implements ITransferObject {
 
 	@ManyToOne
 	@JoinColumn(name="dossier_type")
+	@ForeignKey(name = "FK_ACTIVITY_TYPE_DOSSIER_TYPE")
+	@Index(name = "IDX_ACTIVITY_TYPE_DOSSIER_TYPE")					
 	public DossierType getDossierType() {
 		return dossierType;
 	}
@@ -52,4 +59,17 @@ public class ActivityType implements ITransferObject {
 	public void setDossierType(DossierType dossierType) {
 		this.dossierType = dossierType;
 	}
+
+	@Override
+    public boolean equals(Object obj) {
+		return EqualsBuilder.reflectionEquals(this, obj);
+    }
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().
+			append(description).append(dossierType).
+			append(id).toHashCode();
+	}
+
 }
