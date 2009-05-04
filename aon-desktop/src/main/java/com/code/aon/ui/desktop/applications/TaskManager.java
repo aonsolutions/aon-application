@@ -20,16 +20,16 @@ public class TaskManager implements IServices, IDesktopConstants {
 	
 	private String InProgressSelect = "SELECT count(id) as total FROM task" +
 			" WHERE status = " + TaskStatus.IN_PROGRESS.ordinal() +
-			" AND user = :userId";
+			" AND user_id = :userId";
 	private String PendingSelect = "SELECT count(id) as total FROM task" +
 			" WHERE status = " + TaskStatus.PENDING.ordinal() +
-			" AND user = :userId";
+			" AND user_id = :userId";
 	private String UserWorkgroupSelect = "SELECT count(task.id) as total FROM task, user_workgroup" +
-			" WHERE task.user is null AND task.workgroup = user_workgroup.workgroup" +
-			" AND user_workgroup.user = :userId";
+			" WHERE task.user_id is null AND task.workgroup = user_workgroup.workgroup" +
+			" AND user_workgroup.user_id = :userId";
 	private String expiredSelect = "SELECT count(id) as total FROM task" +
 		" WHERE status IN (" + TaskStatus.IN_PROGRESS.ordinal() + "," + TaskStatus.PENDING.ordinal() + ")" +
-		" AND user = :userId" +
+		" AND user_id = :userId" +
 		" AND due_date < :dueDate";
 	private Integer userId;
 
@@ -39,7 +39,7 @@ public class TaskManager implements IServices, IDesktopConstants {
 		app = apps.getApplication( "aon-task" );
 		userId = UserUtils.getInstance().getLoggedUser().getId();
 	}
-
+	
 	public List<TaskInfo> getTaskSummaryModel() {
 		ArrayList<TaskInfo> l = new ArrayList<TaskInfo>();
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
