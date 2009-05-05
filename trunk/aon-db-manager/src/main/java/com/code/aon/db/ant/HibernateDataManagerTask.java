@@ -55,6 +55,10 @@ public class HibernateDataManagerTask extends Task {
 	public void setDirectory(File directory) {
 		this.hdm.setDirectory(directory);		
 	}
+
+	public void setFile(File file) {
+		this.hdm.setFile(file);		
+	}
 	
 	public void setIgnoreDependencies(boolean ignoreDependencies) {
 		this.hdm.setIgnoreDependencies( ignoreDependencies );

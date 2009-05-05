@@ -1,5 +1,6 @@
 package com.code.aon.db;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -120,6 +121,10 @@ public class HibernateDataManager {
 		this.inputStream = inputStream;
 	}
 
+	private boolean isOneXml() {
+		return (getFile() != null) || (getInputStream() != null);
+	}
+	
 	public File getConfigurationFile() {
 		return configurationFile;
 	}
@@ -338,7 +343,7 @@ public class HibernateDataManager {
     
     public XMLWriter startDocument( Class<Element> entity ) throws EntityProcessException {
 		try {    	
-	    	if ( getFile() != null ) {
+	    	if ( isOneXml() ) {
 	    		if ( this.xmlWriter == null ) {
 	        		this.xmlWriter = createWriter( getFile() );
 	        		startDocument(this.xmlWriter);    			
@@ -354,7 +359,7 @@ public class HibernateDataManager {
     }
 
     public void endDocument( boolean force ) throws EntityProcessException {
-    	if ( force || (getFile() == null) ) {
+    	if ( force || isOneXml() ) {
 			if ( this.xmlWriter != null ) {
 				try {
 			        this.xmlWriter.writeClose( root );
@@ -393,9 +398,22 @@ public class HibernateDataManager {
     	}
     }
     
-    public void importData( InputStream byteStream ) throws EntityProcessException {
-    	XMLToDBImporter xmlImporter = (XMLToDBImporter) this.importer;
-    	xmlImporter.proccess(byteStream);
+    public void importDataOneXml() throws EntityProcessException {
+    	try {
+	    	InputStream byteStream = null;
+	    	if ( getInputStream() != null ) {
+	    		byteStream = getInputStream();
+	    	} else {
+	    		byteStream = new BufferedInputStream( new FileInputStream(getFile()) );
+	    	}
+	    	XMLToDBImporter xmlImporter = (XMLToDBImporter) this.importer;
+	    	xmlImporter.proccess(byteStream);
+	    	if ( getFile() != null ) {
+	    		byteStream.close();
+	    	}
+    	} catch ( IOException e) {
+    		throw new EntityProcessException( e.getMessage(), e );
+    	}
     }    
     
     private QueryIterable<Object> getEntityIterable() {
@@ -423,31 +441,37 @@ public class HibernateDataManager {
 	    	}
 	    	if ( isImportData() ) {
 	    		importer = new XMLToDBImporter( this, getVisitor() );
-	    		if ( getInputStream() != null ) {
-	    			importData(getInputStream());
+	    		if ( isOneXml() ) {
+	    			importDataOneXml();
 	    		} else {
 		        	importData();	
 	    		}    		
 	    	}
     	}
     }
-	
-    public static void main(String[] args) throws EntityProcessException {
+    
+    private static void _export() throws EntityProcessException {
     	HibernateDataManager hdm = new HibernateDataManager();
-
     	hdm.setExportData(true);
     	hdm.setFile( new File("/tmp/aon_master.xml") );
     	// hdm.setDirectory( new File("/tmp/db-manager") );
     	hdm.setConfigurationFile( new File("/AON-PROJECT/aon-cse-util/ant/hibernate.cfg.xml") );
     	hdm.setExportProperties( new File("/AON-PROJECT/aon-cse-util/ant/mysql.properties") );
-    	/*    	
+    	hdm.execute();
+    }
+
+    private static void _import() throws EntityProcessException {
+    	HibernateDataManager hdm = new HibernateDataManager();
     	hdm.setImportData(true);
     	hdm.setFile( new File("/tmp/aon_master.xml") );
     	// hdm.setDirectory( new File("/tmp/db-manager") );
     	hdm.setConfigurationFile( new File("/AON-PROJECT/aon-cse-util/ant/hibernate.cfg.xml") );
-    	hdm.setImportProperties( new File("/AON-PROJECT/aon-cse-util/ant/postgresql.properties") );
-    	    	 */    	
+    	hdm.setImportProperties( new File("/AON-PROJECT/aon-cse-util/ant/postgresql.properties") );    	
     	hdm.execute();
+    }
+    
+    public static void main(String[] args) throws EntityProcessException {
+    	_import();
 	}
     
 }
