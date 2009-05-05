@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core" 
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 
@@ -152,6 +153,20 @@
 								</aon:commandLink>	
 							</aon:div>
 							<aon:div styleClass="aon-portlet-body">
+							
+								<c:if test="#{desktop.updatesAvailable}">
+									<aon:panelCollapsible expanded="true" label="#{appBundle.desktop_update_title}">
+										<aon:div>
+											<aon:outputLink value="#{desktop.updateApplicationURL}" target="_blank">
+												<aon:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon/aon-icon-warning.png']}" />											
+												<aon:outputText value="#{appBundle.desktop_update_message}"
+													style="font-family:arial;font-size:11pt;color:#e55302 !important;"
+													styleClass="aon-bold aon-vertical-align-top aon-margin-left" /> 
+											</aon:outputLink>									
+										</aon:div>
+									</aon:panelCollapsible>
+								</c:if>							
+							
 								<aon:panelCollapsible expanded="true" label="#{appBundle.aon_desktop_today}">
 								<aon:div>
 									<aon:dataTable id="todayAlarmList" columns="3" border="0" 
