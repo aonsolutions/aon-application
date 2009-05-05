@@ -103,7 +103,13 @@ public class HibernateDataManagerTask extends Task {
     		throw new BuildException( "One of exportData, importData or onTheFly attributes must be set" );
     	}
     	if ( hdm.isExportData() || hdm.isImportData() ) {
-    		checkFile( hdm.getDirectory(), "directory" );
+    		if ( hdm.getDirectory() != null ) {
+    			checkFile( hdm.getDirectory(), "directory" );
+    		} else if ( hdm.getFile() != null ) {
+    			checkFile( hdm.getFile(), "file" );
+    		} else {
+    			throw new BuildException( "file or directory must be set for exportData/importData" );
+    		}
     	}
     	checkFile( hdm.getConfigurationFile(), "configurationFile" );
     	if ( hdm.isExportData() || hdm.isOnTheFly() ) {
