@@ -363,7 +363,7 @@ public class DesktopController extends BasicController implements IDesktopConsta
 				available = (result == '1');
 			} catch (Throwable e) {
 				checkUpdateURL = false;
-				LOGGER.log( Level.WARNING, "Error getting updates available. " + e.getMessage(), e);
+				LOGGER.log( Level.INFO, "Error getting updates available. " + e.getMessage(), e);
 			}
     	}
     	return available;
