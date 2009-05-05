@@ -1,5 +1,9 @@
 package com.code.aon.desktop.controller;
 
+import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.URL;
+import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -8,6 +12,8 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -41,9 +47,10 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.groupware.controller.AlarmController;
 import com.code.aon.ui.groupware.controller.NoteController;
 import com.code.aon.ui.groupware.controller.NoticeController;
-import com.code.aon.ui.util.AonUtil;
 
 public class DesktopController extends BasicController implements IDesktopConstants {
+	
+	private static final Logger LOGGER = Logger.getLogger(DesktopController.class.getName());
 	
 	private static final SelectItem NULL_SELECT_ITEM = new SelectItem(null, " ");	
 	private static final SelectItem ALL_SELECT_ITEM = new SelectItem(null, "Todos");	
@@ -53,6 +60,8 @@ public class DesktopController extends BasicController implements IDesktopConsta
     private ListDataModel todayAlarmModel;
     private ListDataModel recentAlarmModel;
     private ListDataModel ancientAlarmModel;
+    
+    private boolean checkUpdateURL = true;
 
 	public SelectItem getNullValue() {
 		return NULL_SELECT_ITEM;
@@ -101,7 +110,8 @@ public class DesktopController extends BasicController implements IDesktopConsta
 
     @SuppressWarnings("unchecked")
     private List createQuery(String select) {
-        Session session = HibernateUtil.getSession();
+    	String name = HibernateUtil.getSessionFactoryName();
+        Session session = HibernateUtil.getSession(name);
         Query query = session.createQuery(select);
         return query.list();
     }
@@ -327,8 +337,40 @@ public class DesktopController extends BasicController implements IDesktopConsta
 		if (session.getAttribute("AON_KEY_VALIDATOR_OK") != null) return true;
 		return false;
     }
-    
-    public boolean isRoleManager() {
-    	return FacesContext.getCurrentInstance().getExternalContext().isUserInRole("Manager");
+
+	public String getUpdateURL() {
+    	String server = null;
+		try {
+			server = InetAddress.getLocalHost().getCanonicalHostName();
+		} catch (UnknownHostException e) {
+			try {
+				server = InetAddress.getLocalHost().getHostAddress();
+			} catch (UnknownHostException e1) {
+				LOGGER.log( Level.SEVERE, "Error getting server address. " + e1.getMessage(), e1);
+			}
+		}
+    	return "http://" + server + ":7654";		
+	}
+	    
+    public boolean isUpdatesAvailable() {
+    	boolean available = false;
+    	if ( checkUpdateURL ) {
+	    	try {
+				URL url = new URL( getUpdateURL() + "/hasupdate.rpy" );
+				InputStream in = url.openStream();
+				char result = (char) in.read();
+				in.close();
+				available = (result == '1');
+			} catch (Throwable e) {
+				checkUpdateURL = false;
+				LOGGER.log( Level.WARNING, "Error getting updates available. " + e.getMessage(), e);
+			}
+    	}
+    	return available;
     }
+    
+	public String getUpdateApplicationURL() {
+		return getUpdateURL() + "/update.rpy";
+	}
+
 }
