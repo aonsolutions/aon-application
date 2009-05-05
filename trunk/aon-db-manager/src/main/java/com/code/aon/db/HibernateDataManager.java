@@ -359,7 +359,7 @@ public class HibernateDataManager {
     }
 
     public void endDocument( boolean force ) throws EntityProcessException {
-    	if ( force || isOneXml() ) {
+    	if ( force || (!isOneXml()) ) {
 			if ( this.xmlWriter != null ) {
 				try {
 			        this.xmlWriter.writeClose( root );
