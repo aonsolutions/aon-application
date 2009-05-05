@@ -20,15 +20,17 @@ public class ExportResultTransformer extends RootEntityResultTransformer {
 	@Override
 	@SuppressWarnings("unchecked")	
 	public List transformList(List list) {
-		String name = ClassUtils.getShortClassName(this.entity);
-		List result = new ArrayList( list.size() );
-		for( Object o : list ) {
-			Element element = (Element) o;
-			if ( name.equals(element.getName()) ) {
-				result.add(o);	
+		if ( (! list.isEmpty()) && (list.get(0) instanceof Element) ) { 
+			String name = ClassUtils.getShortClassName(this.entity);
+			List result = new ArrayList( list.size() );
+			for( Object o : list ) {
+				Element element = (Element) o;
+				if ( name.equals(element.getName()) ) {
+					result.add(o);	
+				}
 			}
 		}
-		return result;
+		return list;
 	}
 	
 }

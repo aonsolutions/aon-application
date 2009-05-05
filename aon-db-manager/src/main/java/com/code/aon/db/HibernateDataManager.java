@@ -393,7 +393,7 @@ public class HibernateDataManager {
     		DependencyResolver dr = new DependencyResolver( getImportFactory() );
     		entities = dr.organize(entities);
     	}
-    	for( Class entity : getEntities() ) {
+    	for( Class entity : entities ) {
    			importer.proccess( entity );    			
     	}
     }
@@ -470,8 +470,17 @@ public class HibernateDataManager {
     	hdm.execute();
     }
     
+    private static void _onTheFly() throws EntityProcessException {
+    	HibernateDataManager hdm = new HibernateDataManager();
+    	hdm.setOnTheFly(true);
+    	hdm.setConfigurationFile( new File("/AON-PROJECT/aon-cse-util/ant/hibernate.cfg.xml") );
+    	hdm.setExportProperties( new File("/AON-PROJECT/aon-cse-util/ant/mysql.properties") );
+    	hdm.setImportProperties( new File("/AON-PROJECT/aon-cse-util/ant/postgresql.properties") );    	
+    	hdm.execute();
+    }
+
     public static void main(String[] args) throws EntityProcessException {
-    	_import();
+    	_onTheFly();
 	}
     
 }
