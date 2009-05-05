@@ -105,8 +105,8 @@ public class HibernateDataManagerTask extends Task {
     	if ( hdm.isExportData() ) {
     		if ( hdm.getDirectory() != null ) {
     			checkFile( hdm.getDirectory(), "directory" );
-    		} else {
-    			throw new BuildException( "file or directory must be set for exportData/importData" );
+    		} else if ( hdm.getFile() == null ) {
+    			throw new BuildException( "file or directory must be set for exportData" );
     		}
     	}
     	if ( hdm.isImportData() ) {
@@ -115,7 +115,7 @@ public class HibernateDataManagerTask extends Task {
     		} else if ( hdm.getFile() != null ) {
     			checkFile( hdm.getFile(), "file" );
     		} else {
-    			throw new BuildException( "file or directory must be set for exportData/importData" );
+    			throw new BuildException( "file or directory must be set for importData" );
     		}
     	}
     	checkFile( hdm.getConfigurationFile(), "configurationFile" );
