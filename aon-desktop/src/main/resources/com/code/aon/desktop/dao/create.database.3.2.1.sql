@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 3.2.0
+# Version: 3.2.1
 # Created by: girazu
-# Creation Date: 25/03/2009 16:18
+# Creation Date: 04/05/2009 16:59
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -584,7 +584,7 @@ CREATE TABLE `activity` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Actividad',
   `dossier` int(4) NOT NULL COMMENT 'Identificador del Expendiente',
   `activity_type` int(4) NOT NULL COMMENT 'Tipo de Actividad',
-  `workgroup` int(4) default NULL COMMENT 'Identificador del Grupo de Trabajo',
+  `workgroup` int(4) NOT NULL COMMENT 'Identificador del Grupo de Trabajo',
   PRIMARY KEY  (`id`),
   KEY `activity_type` (`activity_type`),
   KEY `dossier` (`dossier`),
@@ -675,7 +675,7 @@ CREATE TABLE `task` (
   `priority` tinyint(2) default '0' COMMENT 'Prioridad de la Tarea',
   `status` tinyint(2) default '0' COMMENT 'Estado de la Tarea',
   `percent` tinyint(2) default '0' COMMENT 'Porcentaje de realizacion de la Tarea',
-  `user` int(4) default NULL COMMENT 'Identificador del Usuario asociado a la Tarea',
+  `user_id` int(4) default NULL COMMENT 'Identificador del Usuario asociado a la Tarea',
   `workgroup` int(4) default NULL COMMENT 'Identificador del Grupo de Trabajo asociado a la Tarea',
   `source` tinyint(2) default NULL COMMENT 'Origen de la Tarea',
   `dossier` int(4) default NULL COMMENT 'Identificador del Expediente',
@@ -684,12 +684,12 @@ CREATE TABLE `task` (
   `comments` text collate latin1_spanish_ci COMMENT 'Comentarios de la Tarea',
   `repeat_period` tinyint(2) default '0' COMMENT 'Periodo de repeticion de la Tarea',
   PRIMARY KEY  (`id`),
-  KEY `user` (`user`),
   KEY `workgroup` (`workgroup`),
   KEY `dossier` (`dossier`),
   KEY `sender` (`sender`),
   KEY `activity` (`activity`),
-  CONSTRAINT `task_fk_1` FOREIGN KEY (`user`) REFERENCES `user` (`id`),
+  KEY `user` (`user_id`),
+  CONSTRAINT `task_fk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   CONSTRAINT `task_fk_2` FOREIGN KEY (`workgroup`) REFERENCES `workgroup` (`id`),
   CONSTRAINT `task_fk_3` FOREIGN KEY (`dossier`) REFERENCES `dossier` (`id`),
   CONSTRAINT `task_fk_4` FOREIGN KEY (`sender`) REFERENCES `user` (`id`),
@@ -728,11 +728,11 @@ CREATE TABLE `alarm` (
   `status` tinyint(2) default NULL COMMENT 'Estado de la Alarma',
   `source` tinyint(2) NOT NULL COMMENT 'Origen de la Alarma',
   `source_id` int(4) default NULL COMMENT 'Identificador del origen de la Alarma',
-  `user` int(4) default NULL COMMENT 'Identificador del Usuario asociado a la Alarma',
+  `user_id` int(4) default NULL COMMENT 'Identificador del Usuario asociado a la Alarma',
   `priority` tinyint(2) NOT NULL COMMENT 'Prioridad de la Alarma',
   PRIMARY KEY  (`id`),
-  KEY `user` (`user`),
-  CONSTRAINT `alarm_fk` FOREIGN KEY (`user`) REFERENCES `user` (`id`)
+  KEY `user` (`user_id`),
+  CONSTRAINT `alarm_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Alarmas';
 
 #
@@ -1517,7 +1517,7 @@ CREATE TABLE `job_type` (
 
 CREATE TABLE `daily_tracking` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Parte',
-  `user` int(4) NOT NULL COMMENT 'Identificador del Usuario que realiza el Parte',
+  `user_id` int(4) NOT NULL COMMENT 'Identificador del Usuario que realiza el Parte',
   `tracking_date` date NOT NULL COMMENT 'Fecha del Parte',
   `tracking_duration` double NOT NULL default '0' COMMENT 'Tiempo invertido en el Parte',
   `job_type` int(4) NOT NULL COMMENT 'Tipo de Trabajo realizado en el Parte',
@@ -1530,8 +1530,8 @@ CREATE TABLE `daily_tracking` (
   KEY `activity` (`activity`),
   KEY `job_type` (`job_type`),
   KEY `customer` (`customer`),
-  KEY `user` (`user`),
-  CONSTRAINT `daily_tracking_fk_1` FOREIGN KEY (`user`) REFERENCES `user` (`id`),
+  KEY `user` (`user_id`),
+  CONSTRAINT `daily_tracking_fk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   CONSTRAINT `daily_tracking_fk_2` FOREIGN KEY (`dossier`) REFERENCES `dossier` (`id`),
   CONSTRAINT `daily_tracking_fk_3` FOREIGN KEY (`activity`) REFERENCES `activity` (`id`),
   CONSTRAINT `daily_tracking_fk_4` FOREIGN KEY (`job_type`) REFERENCES `job_type` (`id`),
@@ -1791,10 +1791,10 @@ CREATE TABLE `expenditures` (
 CREATE TABLE `favorite_category` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Categoria',
-  `user` int(4) NOT NULL COMMENT 'Usuario al que pertenece la Categoria',
+  `user_id` int(4) NOT NULL COMMENT 'Usuario al que pertenece la Categoria',
   PRIMARY KEY  (`id`),
-  KEY `user` (`user`),
-  CONSTRAINT `favorite_category_fk` FOREIGN KEY (`user`) REFERENCES `user` (`id`)
+  KEY `user` (`user_id`),
+  CONSTRAINT `favorite_category_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias de Favoritos de Usuario';
 
 #
@@ -1806,12 +1806,12 @@ CREATE TABLE `favorite` (
   `favorite_category` int(4) NOT NULL COMMENT 'Categoria a la que pertenece el Favorito',
   `description` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Favorito',
   `url` varchar(128) collate latin1_spanish_ci NOT NULL COMMENT 'Url del Favorito',
-  `user` int(4) NOT NULL COMMENT 'Usuario al que pertenece el Favorito',
+  `user_id` int(4) NOT NULL COMMENT 'Usuario al que pertenece el Favorito',
   PRIMARY KEY  (`id`),
   KEY `favorite_category` (`favorite_category`),
-  KEY `user` (`user`),
+  KEY `user` (`user_id`),
   CONSTRAINT `favorite_fk` FOREIGN KEY (`favorite_category`) REFERENCES `favorite_category` (`id`),
-  CONSTRAINT `favorite_fk1` FOREIGN KEY (`user`) REFERENCES `user` (`id`)
+  CONSTRAINT `favorite_fk1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Favoritos de Usuario';
 
 #
@@ -1820,8 +1820,8 @@ CREATE TABLE `favorite` (
 
 CREATE TABLE `fbatch_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle de la Remesa',
-  `fbatch` int(4) default NULL COMMENT 'Identificador de la Remesa',
-  `finance` int(4) default NULL COMMENT 'Identificador del Vencimiento',
+  `fbatch` int(4) NOT NULL COMMENT 'Identificador de la Remesa',
+  `finance` int(4) NOT NULL COMMENT 'Identificador del Vencimiento',
   `amount` double(15,3) default '0.000' COMMENT 'Importe del Detalle de la Remesa',
   `status` tinyint(2) default NULL COMMENT 'Estado del Detalle de la Remesa',
   PRIMARY KEY  (`id`),
@@ -2496,7 +2496,7 @@ CREATE TABLE `note` (
 
 CREATE TABLE `notice` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Aviso',
-  `date` datetime default NULL COMMENT 'Fecha y hora en la que se produjo el Aviso',
+  `date` datetime NOT NULL COMMENT 'Fecha y hora en la que se produjo el Aviso',
   `sender` int(4) NOT NULL COMMENT 'Remitente del Aviso',
   `work_group` int(4) default NULL COMMENT 'Grupo de Trabajo al que va dirigida el Aviso',
   `recipient` int(4) default NULL COMMENT 'Destinatario del Aviso',
@@ -2841,15 +2841,12 @@ CREATE TABLE `relationship` (
 CREATE TABLE `rmedia` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Medio de Contacto de la Persona o Empresa',
   `registry` int(4) NOT NULL default '0' COMMENT 'Identificador del Registro de la Persona o Empresa',
-  `raddress` int(4) default NULL COMMENT 'Identificador de la Direccion de la Persona o Empresa',
   `media` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Medio de Contacto de la Persona o Empresa',
   `value` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Valor del Medio de Contacto de la Persona o Empresa',
   `comment` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Comentarios acerca del Medio de Contacto de la Persona o Empresa',
   PRIMARY KEY  (`id`),
   KEY `idx_rmed_rgty` (`registry`),
-  KEY `raddress` (`raddress`),
-  CONSTRAINT `rmedia_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
-  CONSTRAINT `rmedia_ibfk_2` FOREIGN KEY (`raddress`) REFERENCES `raddress` (`id`)
+  CONSTRAINT `rmedia_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Medios de Contacto de Personas o Empresas';
 
 #
@@ -2874,8 +2871,8 @@ CREATE TABLE `rnote` (
 
 CREATE TABLE `rpaymethod` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Forma de Pago de la Persona o Empresa',
-  `registry` int(4) default NULL COMMENT 'Identificador del Registro de la Persona o Empresa',
-  `pay_method` int(4) default NULL COMMENT 'Identificador de la Forma de Pago',
+  `registry` int(4) NOT NULL COMMENT 'Identificador del Registro de la Persona o Empresa',
+  `pay_method` int(4) NOT NULL COMMENT 'Identificador de la Forma de Pago',
   `rbank` int(4) default NULL COMMENT 'Identificador de la Entidad Bancaria',
   `number_of_pymnts` smallint(2) default '0' COMMENT 'Numero de Vencimientos',
   `days_to_first_pymnt` smallint(2) default '0' COMMENT 'Dias al primer Vencimiento',
@@ -3283,12 +3280,12 @@ CREATE TABLE `tax_detail` (
 
 CREATE TABLE `user_scope` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `user` int(4) NOT NULL COMMENT 'Identificador del Usuario',
+  `user_id` int(4) NOT NULL COMMENT 'Identificador del Usuario',
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
   PRIMARY KEY  (`id`),
-  KEY `user` (`user`),
   KEY `scope` (`scope`),
-  CONSTRAINT `user_scope_fk` FOREIGN KEY (`user`) REFERENCES `user` (`id`),
+  KEY `user` (`user_id`),
+  CONSTRAINT `user_scope_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   CONSTRAINT `user_scope_fk1` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ambitos de Usuario';
 
@@ -3298,12 +3295,12 @@ CREATE TABLE `user_scope` (
 
 CREATE TABLE `user_workgroup` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `user` int(4) NOT NULL COMMENT 'Identificado del Usuario',
+  `user_id` int(4) NOT NULL COMMENT 'Identificador del Usuario',
   `workgroup` int(4) NOT NULL COMMENT 'Identificador del Grupo de Trabajo',
   PRIMARY KEY  (`id`),
-  KEY `user` (`user`),
   KEY `workgroup` (`workgroup`),
-  CONSTRAINT `user_workgroup_fk_1` FOREIGN KEY (`user`) REFERENCES `user` (`id`),
+  KEY `user` (`user_id`),
+  CONSTRAINT `user_workgroup_fk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   CONSTRAINT `user_workgroup_fk_2` FOREIGN KEY (`workgroup`) REFERENCES `workgroup` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Usuarios y Grupos de Trabajo';
 
@@ -3454,7 +3451,7 @@ RETURN (SELECT IF (SUM(inventory_detail.cost) IS NULL, 0, SUM(inventory_detail.c
        AND inventory.inventory_date = d);
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('3.2.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('3.2.1');
 
 COMMIT;
 
