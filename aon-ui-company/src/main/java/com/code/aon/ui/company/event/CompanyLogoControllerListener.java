@@ -1,7 +1,6 @@
 package com.code.aon.ui.company.event;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,13 +12,10 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
-import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.CompanyParentController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -86,9 +82,8 @@ public class CompanyLogoControllerListener extends ControllerAdapter implements 
 		CompanyController companyController = (CompanyController) event.getController();
 		if (companyController.getAonFile() != null) {
 			AonFile aonFile = companyController.getAonFile();
-			RegistryAttachment attach = obtainRegistryAttachment(((Company) event.getController()
-					.getTo()).getId());
 			try {
+				RegistryAttachment attach = companyController.obtainCompanyLogo();				
 				if (aonFile.getSize() > LOGO_MAX_SIZE) {
 					String message = AonUtil.getMessage(BUNDLE_NAME, "company_logo_max_size_error");
 					throw new ControllerListenerException(message);
@@ -154,30 +149,6 @@ public class CompanyLogoControllerListener extends ControllerAdapter implements 
 			}
 		}
 		return result;
-	}
-
-	/**
-	 * Obtains the RegistryAttachemnt with the id passed as parameter
-	 * 
-	 * @param id the id
-	 * 
-	 * @return the registry attachment
-	 */
-	@SuppressWarnings("unchecked")
-	protected RegistryAttachment obtainRegistryAttachment(Integer id) {
-		try {
-			IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), id);
-			criteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.LOGO);
-			Iterator iter = attachBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				return (RegistryAttachment)iter.next();
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining attach for company", e);
-		}
-		return null;
 	}
 	
 }

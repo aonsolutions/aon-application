@@ -26,6 +26,7 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -459,7 +460,14 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 
 	public boolean isWithLogo() throws ManagerBeanException {
-		return !(obtainCompanyLogo() == null);
+		Company company = obtainCompany();
+		IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
+		Criteria criteria = new Criteria();
+		String alias = registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
+		criteria.addEqualExpression(alias, company.getId());
+		String type = registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
+		criteria.addEqualExpression(type, RegistryAttachmentType.LOGO);
+		return registryAttachBean.getCount(criteria) > 0;
 	}
 	
 	/**
@@ -507,6 +515,8 @@ public class CompanyParentController extends BasicController implements ICompany
 		Criteria criteria = new Criteria();
 		String alias = registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
 		criteria.addEqualExpression(alias, ((Company)this.getTo()).getId());
+		String type = registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
+		criteria.addEqualExpression(type, RegistryAttachmentType.LOGO);
 		Iterator iter = registryAttachBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			return (RegistryAttachment)iter.next();
