@@ -6,13 +6,13 @@ import java.util.logging.Logger;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.enumeration.AddressType;
-import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -116,7 +116,7 @@ public class CompanyAddressListener extends ControllerAdapter {
 			IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(workPlaceBean.getFieldName(ICompanyAlias.WORK_PLACE_ADDRESS_ID), registryAddress.getId());
-			Iterator iter = workPlaceBean.getList(criteria).iterator();
+			Iterator<ITransferObject> iter = workPlaceBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				return (WorkPlace)iter.next();
 			}
