@@ -1,7 +1,6 @@
 package com.code.aon.ui.company.event;
 
 import java.io.IOException;
-import java.util.ResourceBundle;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -14,15 +13,14 @@ import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.company.controller.CompanyImagesController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
-public class CompanyImagesControllerListener extends ControllerAdapter {
+public class CompanyImagesControllerListener extends ControllerAdapter implements ICompanyConstants {
 	
-    /** BASE_NAME. */
-    private static final String BASE_NAME = "com.code.aon.ui.registry.i18n.messages";
-
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
@@ -42,9 +40,9 @@ public class CompanyImagesControllerListener extends ControllerAdapter {
 			CompanyImagesController imagesController = (CompanyImagesController)event.getController();
 			if(imagesController.getAonFile().getData() != null){
 				AonFile aonFile = imagesController.getAonFile(); 
-				if (aonFile.getSize() >1000000){
-			        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME); 
-					throw new ControllerListenerException(bundle.getString("aon_company_image_max_size_error"));
+				if (aonFile.getSize() > IMAGE_MAX_SIZE) {
+					String message = AonUtil.getMessage(BUNDLE_NAME, "company_image_max_size_error");
+					throw new ControllerListenerException(message);					
 				}
 				RegistryAttachment attach = (RegistryAttachment)imagesController.getTo();
 				attach.setCategory(null);
@@ -56,4 +54,5 @@ public class CompanyImagesControllerListener extends ControllerAdapter {
 			throw new ControllerListenerException("Error uploading file");
 		}
 	}
+	
 }

@@ -1,7 +1,7 @@
 package com.code.aon.ui.company.event;
 
 import java.io.IOException;
-import java.util.ResourceBundle;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,24 +13,27 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
+import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.CompanyParentController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * Listener added to the CompanyController.
  */
-public class CompanyLogoControllerListener extends CompanyLogoParentControllerListener {
+public class CompanyLogoControllerListener extends ControllerAdapter implements ICompanyConstants {
 
 	/** The LOGGER. */
 	private static final Logger LOGGER = Logger.getLogger(CompanyLogoControllerListener.class
 			.getName());
-
-	/** BASE_NAME. */
-	private static final String BASE_NAME = "com.code.aon.ui.registry.i18n.messages";
 
 	/**
 	 * Adds the company logo as a RegistryAttach if it is uploaded
@@ -47,10 +50,9 @@ public class CompanyLogoControllerListener extends CompanyLogoParentControllerLi
 		if (companyController.getAonFile() != null) {
 			AonFile aonFile = companyController.getAonFile();
 			try {
-				if (aonFile.getSize() > 262144) {
-					ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME);
-					throw new ControllerListenerException(bundle
-							.getString("company_logo_max_size_error"));
+				if (aonFile.getSize() > LOGO_MAX_SIZE) {
+					String message = AonUtil.getMessage(BUNDLE_NAME, "company_logo_max_size_error");
+					throw new ControllerListenerException(message);
 				}
 				RegistryAttachment attach = new RegistryAttachment();
 				attach.setRegistryAttachmentType(RegistryAttachmentType.LOGO);
@@ -87,10 +89,9 @@ public class CompanyLogoControllerListener extends CompanyLogoParentControllerLi
 			RegistryAttachment attach = obtainRegistryAttachment(((Company) event.getController()
 					.getTo()).getId());
 			try {
-				if (aonFile.getSize() > 262144) {
-					ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME);
-					throw new ControllerListenerException(bundle
-							.getString("company_logo_max_size_error"));
+				if (aonFile.getSize() > LOGO_MAX_SIZE) {
+					String message = AonUtil.getMessage(BUNDLE_NAME, "company_logo_max_size_error");
+					throw new ControllerListenerException(message);
 				}
 				if (attach == null) {
 					attach = new RegistryAttachment();
@@ -118,15 +119,20 @@ public class CompanyLogoControllerListener extends CompanyLogoParentControllerLi
 
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-		RegistryAttachment attach = obtainRegistryAttachment(((Company) event.getController()
-				.getTo()).getId());
-		if (attach!=null) {
-			AonFile f = new AonFile();
-			CompanyController companyController = (CompanyController) event.getController();
-			f.setData(attach.getData());
-			f.setFileName(attach.getDescription());
-			f.addAonFileListener(companyController);
-			companyController.setAonFile(f);
+		CompanyController companyController = (CompanyController) event.getController();
+		try {
+			RegistryAttachment companyLogo = companyController.obtainCompanyLogo();
+			if (companyLogo != null) {
+				companyController.setAttach(companyLogo);
+
+				AonFile f = new AonFile();
+				f.setData(companyLogo.getData());
+				f.setFileName(companyLogo.getDescription());
+				f.addAonFileListener(companyController);
+				companyController.setAonFile(f);
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException( e.getMessage(), e );
 		}
 	}
 	
@@ -150,4 +156,28 @@ public class CompanyLogoControllerListener extends CompanyLogoParentControllerLi
 		return result;
 	}
 
+	/**
+	 * Obtains the RegistryAttachemnt with the id passed as parameter
+	 * 
+	 * @param id the id
+	 * 
+	 * @return the registry attachment
+	 */
+	@SuppressWarnings("unchecked")
+	protected RegistryAttachment obtainRegistryAttachment(Integer id) {
+		try {
+			IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), id);
+			criteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.LOGO);
+			Iterator iter = attachBean.getList(criteria).iterator();
+			if(iter.hasNext()){
+				return (RegistryAttachment)iter.next();
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining attach for company", e);
+		}
+		return null;
+	}
+	
 }
