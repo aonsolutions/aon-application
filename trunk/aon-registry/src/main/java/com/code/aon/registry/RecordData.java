@@ -13,6 +13,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
@@ -179,24 +182,51 @@ public class RecordData implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final RecordData o = (RecordData) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.attach, o.attach)
+				.append(this.creationDate, o.creationDate)				
+				.append(this.description, o.description)
+				.append(this.notary, o.notary)				
+				.append(this.number, o.number)
+				.append(this.page, o.page)				
+				.append(this.recordDate, o.recordDate)
+				.append(this.registration, o.registration)				
+				.append(this.registry, o.registry)
+				.append(this.section, o.section)				
+				.append(this.sheet, o.sheet)
+				.append(this.volume, o.volume)				
+				.isEquals();
 		}
-		if (obj instanceof RecordData) {
-			RecordData o = (RecordData) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(attach)
+			.append(creationDate)
+			.append(description)	
+			.append(id)			
+			.append(notary)
+			.append(number)
+			.append(page)			
+			.append(recordDate)
+			.append(registration)
+			.append(registry)			
+			.append(section)
+			.append(sheet)
+			.append(volume)			
+			.toHashCode();
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 
 }

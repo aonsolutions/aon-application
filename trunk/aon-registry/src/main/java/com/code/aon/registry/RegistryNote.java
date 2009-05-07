@@ -15,6 +15,9 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
@@ -83,7 +86,7 @@ public class RegistryNote implements ITransferObject {
 	}
 
 	@Lob
-	@Type(type="com.code.aon.common.dao.hibernate.type.StringClobEnhancedType")
+	@Type(type="stringClob")
 	public String getComments() {
 		return comments;
 	}
@@ -118,24 +121,37 @@ public class RegistryNote implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final RegistryNote o = (RegistryNote) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.comments, o.comments)
+				.append(this.description, o.description)				
+				.append(this.noteDate, o.noteDate)
+				.append(this.notetype, o.notetype)
+				.append(this.registry, o.registry)
+				.isEquals();
 		}
-		if (obj instanceof RegistryNote) {
-			RegistryNote o = (RegistryNote) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(comments)
+			.append(description)
+			.append(id)
+			.append(noteDate)
+			.append(notetype)	
+			.append(registry)
+			.toHashCode();
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	} 
 
 }

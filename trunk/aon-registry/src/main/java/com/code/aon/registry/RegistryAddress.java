@@ -9,6 +9,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
@@ -280,24 +283,47 @@ public class RegistryAddress implements ITransferObject, IAddress {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final RegistryAddress o = (RegistryAddress) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.address, o.address)
+				.append(this.address2, o.address2)				
+				.append(this.address3, o.address3)
+				.append(this.city, o.city)				
+				.append(this.geozone, o.geozone)
+				.append(this.recipient, o.recipient)
+				.append(this.registry, o.registry)				
+				.append(this.streetType, o.streetType)
+				.append(this.type, o.type)				
+				.append(this.zip, o.zip)
+				.isEquals();
 		}
-		if (obj instanceof RegistryAddress) {
-			RegistryAddress o = (RegistryAddress) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(address)
+			.append(address2)
+			.append(address3)	
+			.append(city)			
+			.append(geozone)
+			.append(id)
+			.append(recipient)	
+			.append(registry)			
+			.append(streetType)
+			.append(type)			
+			.append(zip)
+			.toHashCode();
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 
 }

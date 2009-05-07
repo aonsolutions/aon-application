@@ -12,6 +12,9 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
@@ -169,24 +172,35 @@ public class RegistryBank implements ITransferObject,IBankAccountContainer {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final RegistryBank o = (RegistryBank) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.bank, o.bank)
+				.append(this.bankAccount, o.bankAccount)				
+				.append(this.registry, o.registry)
+				.append(this.sufix, o.sufix)
+				.isEquals();
 		}
-		if (obj instanceof RegistryBank) {
-			RegistryBank o = (RegistryBank) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(bank)
+			.append(bankAccount)
+			.append(id)	
+			.append(registry)
+			.append(sufix)				
+			.toHashCode();
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
-    
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}    
+	
 }
