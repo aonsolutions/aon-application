@@ -5,6 +5,8 @@
 <hibernate-configuration>
 
 	<session-factory>
+	
+		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
 		<!-- AON-REGISTRY Mapping files -->
 		<mapping class="com.code.aon.registry.Category"/>
