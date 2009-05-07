@@ -118,7 +118,6 @@ public class Alarm implements ITransferObject {
 
 	@Column(nullable=false)
 	@Enumerated
-	@Type(type="tinyIntEnum")
 	public Priority getPriority() {
 		return priority;
 	}
