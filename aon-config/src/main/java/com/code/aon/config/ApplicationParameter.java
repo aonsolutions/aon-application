@@ -6,6 +6,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import com.code.aon.common.ITransferObject;
 
 /**
@@ -116,14 +121,36 @@ public class ApplicationParameter implements ITransferObject {
 	public void setSystemParameter(boolean systemParameter) {
 		this.systemParameter = systemParameter;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final ApplicationParameter o = (ApplicationParameter) obj;
+		if (o.getName() == null && getName() == null) {
+			return new EqualsBuilder()
+				.append(this.value, o.value)
+				.append(this.defaultValue, o.defaultValue)
+				.append(this.systemParameter, o.systemParameter)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getName(), o.getName());		
+	}	
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(name)
+			.append(value)
+			.append(defaultValue)
+			.append(systemParameter)
+			.toHashCode();
+	}	
+	
+	@Override
 	public String toString() {
-		return getValue();
+		return ToStringBuilder.reflectionToString(this);
 	}
 
 }
