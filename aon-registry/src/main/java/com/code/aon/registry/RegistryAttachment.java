@@ -5,10 +5,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
@@ -148,6 +152,7 @@ public class RegistryAttachment implements IAttachment {
      * 
      * @return the data
      */
+    @Lob
     public byte[] getData() {
         return data;
     }
@@ -232,24 +237,41 @@ public class RegistryAttachment implements IAttachment {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final RegistryAttachment o = (RegistryAttachment) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.category, o.category)
+				.append(this.data, o.data)				
+				.append(this.description, o.description)
+				.append(this.mimeType, o.mimeType)				
+				.append(this.registry, o.registry)
+				.append(this.registryAttachmentType, o.registryAttachmentType)
+				.append(this.size, o.size)				
+				.isEquals();
 		}
-		if (obj instanceof RegistryAttachment) {
-			RegistryAttachment o = (RegistryAttachment) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(category)
+			.append(data)
+			.append(description)	
+			.append(id)			
+			.append(mimeType)
+			.append(registry)
+			.append(registryAttachmentType)	
+			.append(size)			
+			.toHashCode();
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 
 }

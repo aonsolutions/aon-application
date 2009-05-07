@@ -13,6 +13,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
@@ -153,24 +156,47 @@ public class RegistryDirStaff implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final RegistryDirStaff o = (RegistryDirStaff) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.director, o.director)
+				.append(this.document, o.document)				
+				.append(this.dueDate, o.dueDate)
+				.append(this.name, o.name)
+				.append(this.nominalValue, o.nominalValue)
+				.append(this.percentShare, o.percentShare)				
+				.append(this.registry, o.registry)
+				.append(this.representative, o.representative)
+				.append(this.shareHolder, o.shareHolder)
+				.append(this.shareNumber, o.shareNumber)				
+				.isEquals();
 		}
-		if (obj instanceof RegistryDirStaff) {
-			RegistryDirStaff o = (RegistryDirStaff) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(director)
+			.append(document)
+			.append(dueDate)
+			.append(id)	
+			.append(name)
+			.append(nominalValue)				
+			.append(percentShare)
+			.append(registry)
+			.append(representative)	
+			.append(shareHolder)
+			.append(shareNumber)				
+			.toHashCode();
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}    
 
 }
