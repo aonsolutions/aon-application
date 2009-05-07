@@ -7,6 +7,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.common.ITransferObject;
 
@@ -41,13 +44,13 @@ public class Account implements ITransferObject {
 	 * TRUE if account entries are enabled, FALSE otherwise.
 	 */
 	private boolean entryEnabled;
-	
+
 	private int level;
-	
+
 	/**
-	 * Gets the ID of this account.
+	 * Gets the id.
 	 * 
-	 * @return The ID of this account
+	 * @return the id
 	 */
 	@Id
 	@Column(nullable = false, length = 12)
@@ -56,7 +59,7 @@ public class Account implements ITransferObject {
 	}
 
 	/**
-	 * Sets the ID of this account.
+	 * Sets the id.
 	 * 
 	 * @param id
 	 *            The ID of this account.
@@ -127,7 +130,6 @@ public class Account implements ITransferObject {
 		this.entryEnabled = entryEnabled;
 	}
 
-	@Column(nullable = false)
 	public int getLevel() {
 		return level;
 	}
@@ -148,24 +150,33 @@ public class Account implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() !=  getClass()) return false;
+		final Account o = (Account) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+			.append(this.description, o.description)
+			.append(this.entryEnabled, o.entryEnabled)
+			.append(this.alias, o.alias)
+			.isEquals();
 		}
-		if (obj instanceof Account) {
-			Account o = (Account) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(this.id)
+			.append(this.description)
+			.append(this.entryEnabled)
+			.append(this.alias)
+			.toHashCode();
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 
 }
