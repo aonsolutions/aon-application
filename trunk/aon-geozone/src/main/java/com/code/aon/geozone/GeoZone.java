@@ -7,6 +7,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.common.ITransferObject;
 
@@ -69,36 +72,31 @@ public class GeoZone implements ITransferObject {
         this.name = name;
     }
 
-    /**
-     * Returns the string that represents an object.
-     * 
-     * @return String 
-     * @see java.lang.Object#toString()
-     */
-	public String toString() {
-		return "GeoZoneTO[id=" + this.id + ",name=" + this.name + "]";
-	}
-	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final GeoZone o = (GeoZone) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.name, o.name)
+				.isEquals();
 		}
-		if (obj instanceof GeoZone) {
-			GeoZone o = (GeoZone) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(id)
+			.append(name)
+			.toHashCode();
+	}
 
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
+	
 }
