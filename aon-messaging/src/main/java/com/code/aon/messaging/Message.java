@@ -12,7 +12,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
@@ -114,29 +116,41 @@ public class Message implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Message o = (Message) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.content, o.content)
+				.append(this.messageId, o.messageId)
+				.append(this.messageParts, o.messageParts)
+				.append(this.recipient, o.recipient)
+				.append(this.sentDate, o.sentDate)
+				.append(this.type, o.type)
+				.append(this.username, o.username)
+				.isEquals();
 		}
-		if (obj instanceof Message) {
-			Message o = (Message) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
 	}
-
+	
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().
-			append(content).append(id).
-			append(messageId).append(messageParts).
-			append(recipient).append(sentDate).
-			append(type).append(username).
-			toHashCode();
+		return new HashCodeBuilder()
+			.append(content)
+			.append(id)
+			.append(messageId)
+			.append(messageParts)
+			.append(recipient)
+			.append(sentDate)
+			.append(type)
+			.append(username)
+			.toHashCode();
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}
 	
 }
