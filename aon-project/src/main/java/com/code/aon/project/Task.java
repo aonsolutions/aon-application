@@ -15,8 +15,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.ForeignKey;
@@ -392,7 +394,7 @@ public class Task implements ITransferObject {
 	 * @return the comments
 	 */
 	@Lob
-	@Type(type="com.code.aon.common.dao.hibernate.type.StringClobEnhancedType")
+	@Type(type="stringClob")
 	public String getComments() {
 		return comments;
 	}
@@ -517,14 +519,58 @@ public class Task implements ITransferObject {
         return (!getRepeatPeriod().equals(TaskPeriod.YEARLY));
     }
 
-	@Override
-    public boolean equals(Object obj) {
-		return EqualsBuilder.reflectionEquals(this, obj);
-    }
+	@Override	
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Task o = (Task) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.activity, o.activity)
+				.append(this.comments, o.comments)
+				.append(this.description, o.description)
+				.append(this.dossier, o.dossier)
+				.append(this.dueDate, o.dueDate)
+				.append(this.endDate, o.endDate)
+				.append(this.percent, o.percent)
+				.append(this.priority, o.priority)
+				.append(this.repeatPeriod, o.repeatPeriod)
+				.append(this.sender, o.sender)
+				.append(this.source, o.source)
+				.append(this.startDate, o.startDate)
+				.append(this.status, o.status)
+				.append(this.user, o.user)
+				.append(this.workGroup, o.workGroup)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
 
 	@Override
 	public int hashCode() {
-		return HashCodeBuilder.reflectionHashCode(this);
+		return new HashCodeBuilder()
+			.append(activity)
+			.append(comments)
+			.append(description)
+			.append(dossier)			
+			.append(dueDate)
+			.append(endDate)
+			.append(id)
+			.append(percent)			
+			.append(priority)
+			.append(repeatPeriod)
+			.append(sender)
+			.append(source)			
+			.append(startDate)			
+			.append(status)			
+			.append(user)			
+			.append(workGroup)						
+			.toHashCode();
+	}	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}
 	
 }

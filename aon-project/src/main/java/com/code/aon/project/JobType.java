@@ -7,8 +7,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.common.ITransferObject;
 
@@ -67,16 +69,30 @@ public class JobType implements ITransferObject{
 		this.description = description;
 	}
 	
-	@Override
-    public boolean equals(Object obj) {
-		return EqualsBuilder.reflectionEquals(this, obj);
-    }
+	@Override	
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final JobType o = (JobType) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.description, o.description)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
 
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder().
 			append(description).append(id).
 			toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}
 	
 }

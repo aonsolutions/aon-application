@@ -13,8 +13,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
@@ -138,7 +140,7 @@ public class DailyTracking implements ITransferObject {
     }
 
 	@Lob
-	@Type(type="com.code.aon.common.dao.hibernate.type.StringClobEnhancedType")
+	@Type(type="stringClob")
 	public String getComments() {
 		return comments;
 	}
@@ -147,10 +149,26 @@ public class DailyTracking implements ITransferObject {
 		this.comments = comments;
 	}
 
-	@Override
-    public boolean equals(Object obj) {
-		return EqualsBuilder.reflectionEquals(this, obj);
-    }
+	@Override	
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final DailyTracking o = (DailyTracking) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.activity, o.activity)
+				.append(this.comments, o.comments)
+				.append(this.customer, o.customer)
+				.append(this.dossier, o.dossier)
+				.append(this.jobType, o.jobType)
+				.append(this.trackingDate, o.trackingDate)
+				.append(this.trackingDuration, o.trackingDuration)
+				.append(this.user, o.user)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
 
 	@Override
 	public int hashCode() {
@@ -163,4 +181,9 @@ public class DailyTracking implements ITransferObject {
 			toHashCode();
 	}
 
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
+	
 }
