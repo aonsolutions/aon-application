@@ -9,8 +9,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
@@ -60,10 +62,20 @@ public class ActivityType implements ITransferObject {
 		this.dossierType = dossierType;
 	}
 
-	@Override
-    public boolean equals(Object obj) {
-		return EqualsBuilder.reflectionEquals(this, obj);
-    }
+	@Override	
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final ActivityType o = (ActivityType) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.description, o.description)
+				.append(this.dossierType, o.dossierType)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
 
 	@Override
 	public int hashCode() {
@@ -72,4 +84,9 @@ public class ActivityType implements ITransferObject {
 			append(id).toHashCode();
 	}
 
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
+	
 }

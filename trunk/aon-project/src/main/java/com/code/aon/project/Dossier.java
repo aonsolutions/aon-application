@@ -8,7 +8,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
@@ -97,15 +100,22 @@ public class Dossier implements ITransferObject {
 		this.status = status;
 	}
 
-	@Override
+	@Override	
 	public boolean equals(Object obj) {
-		if (id == null) {
-			return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Dossier o = (Dossier) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.customer, o.customer)
+				.append(this.dossierType, o.dossierType)
+				.append(this.location, o.location)
+				.append(this.number, o.number)
+				.append(this.status, o.status)
+				.isEquals();
 		}
-		if (obj instanceof Dossier) {
-			return (this.id.equals(((Dossier) obj).getId()));
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
 	}
 
 	@Override
@@ -115,6 +125,11 @@ public class Dossier implements ITransferObject {
 			append(id).append(location).
 			append(number).append(status).
 			toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}
 	
 }
