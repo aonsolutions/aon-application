@@ -11,6 +11,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
@@ -118,24 +121,35 @@ public class Company extends Registry implements ITaxInfo{
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Company o = (Company) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.appendSuper(super.equals(obj))
+				.append(this.active, o.active)
+				.append(this.calendar, o.calendar)
+				.append(this.surcharge, o.surcharge)
+				.append(this.withholding, o.withholding)
+				.isEquals();
 		}
-		if (obj instanceof Company) {
-			Company o = (Company) obj;
-			if (o.getId() == null && getId() == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.appendSuper(super.hashCode())
+			.append(active)
+			.append(calendar)
+			.append(surcharge)
+			.append(withholding)
+			.toHashCode();
 	}
 
 	@Override
-    public int hashCode() {
-        return getId() != null ? this.getClass().hashCode() + getId().hashCode() : super.hashCode();
-    }
-
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 }
