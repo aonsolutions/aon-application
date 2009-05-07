@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -12,7 +13,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
@@ -58,7 +61,7 @@ public class Alarm implements ITransferObject {
 
 	@Column(nullable=false)
 	@Lob
-	@Type(type="com.code.aon.common.dao.hibernate.type.StringClobEnhancedType")	
+	@Type(type="stringClob")	
 	public String getDescription() {
 		return description;
 	}
@@ -114,6 +117,8 @@ public class Alarm implements ITransferObject {
 	}
 
 	@Column(nullable=false)
+	@Enumerated
+	@Type(type="tinyIntEnum")
 	public Priority getPriority() {
 		return priority;
 	}
@@ -124,19 +129,22 @@ public class Alarm implements ITransferObject {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Alarm o = (Alarm) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.alarmDate, o.alarmDate)
+				.append(this.description, o.description)
+				.append(this.priority, o.priority)
+				.append(this.source, o.source)
+				.append(this.sourceId, o.sourceId)
+				.append(this.status, o.status)
+				.append(this.user, o.user)
+				.isEquals();
 		}
-		if (obj instanceof Alarm) {
-			Alarm o = (Alarm) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
 	}
 	
 	@Override
@@ -147,6 +155,11 @@ public class Alarm implements ITransferObject {
 			append(source).append(sourceId).
 			append(status).append(user).
 			toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}
 
 }

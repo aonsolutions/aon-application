@@ -12,7 +12,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.ForeignKey;
@@ -143,7 +145,7 @@ public class Notice implements ITransferObject {
 	}
 
 	@Lob
-	@Type(type="com.code.aon.common.dao.hibernate.type.StringClobEnhancedType")
+	@Type(type="stringClob")
 	public String getSubject() {
 		return subject;
 	}
@@ -181,24 +183,49 @@ public class Notice implements ITransferObject {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Notice o = (Notice) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.company, o.company)
+				.append(this.date, o.date)
+				.append(this.phone, o.phone)
+				.append(this.priority, o.priority)				
+				.append(this.recipient, o.recipient)
+				.append(this.sender, o.sender)
+				.append(this.source, o.source)
+				.append(this.status, o.status)
+				.append(this.subject, o.subject)
+				.append(this.type, o.type)
+				.append(this.workGroup, o.workGroup)				
+				.isEquals();
 		}
-		if (obj instanceof Notice) {
-			Notice o = (Notice) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
 	}
 
 	@Override
 	public int hashCode() {
-		return HashCodeBuilder.reflectionHashCode(this);
+		return new HashCodeBuilder()
+			.append(this.company)
+			.append(this.date)
+			.append(this.id)
+			.append(this.phone)
+			.append(this.priority)				
+			.append(this.recipient)
+			.append(this.sender)
+			.append(this.source)
+			.append(this.status)
+			.append(this.subject)
+			.append(this.type)
+			.append(this.workGroup)				
+			.toHashCode();		
 	}	
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 	
 }
