@@ -15,6 +15,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
@@ -423,24 +426,51 @@ public class Product implements ITransferObject {
     
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Product o = (Product) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.brand, o.brand)			
+				.append(this.category, o.category)								
+				.append(this.code, o.code)				
+				.append(this.composition, o.composition)								
+				.append(this.inventoriable, o.inventoriable)				
+				.append(this.name, o.name)			
+				.append(this.purchaseAccount, o.purchaseAccount)								
+				.append(this.retention, o.retention)				
+				.append(this.salesAccount, o.salesAccount)								
+				.append(this.status, o.status)				
+				.append(this.type, o.type)				
+				.append(this.vat, o.vat)				
+				.isEquals();
 		}
-		if (obj instanceof Product) {
-			Product o = (Product) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(brand)
+			.append(category)		
+			.append(code)						
+			.append(composition)						
+			.append(id)						
+			.append(inventoriable)			
+			.append(name)
+			.append(purchaseAccount)		
+			.append(retention)						
+			.append(salesAccount)						
+			.append(status)						
+			.append(type)			
+			.append(vat)			
+			.toHashCode();
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 
 }
