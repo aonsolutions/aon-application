@@ -13,6 +13,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
@@ -189,24 +192,37 @@ public class TaxDetail implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final TaxDetail o = (TaxDetail) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.endDate, o.endDate)			
+				.append(this.startDate, o.startDate)
+				.append(this.surcharge, o.surcharge)				
+				.append(this.tax, o.tax)			
+				.append(this.value, o.value)
+				.isEquals();
 		}
-		if (obj instanceof TaxDetail) {
-			TaxDetail o = (TaxDetail) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(endDate)		
+			.append(id)		
+			.append(startDate)		
+			.append(surcharge)		
+			.append(tax)
+			.append(value)			
+			.toHashCode();
+	}	
 
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
+	
 }
