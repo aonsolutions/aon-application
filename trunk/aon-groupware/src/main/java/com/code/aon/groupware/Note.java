@@ -12,7 +12,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.ForeignKey;
@@ -82,7 +84,7 @@ public class Note implements ITransferObject {
 	}
 
 	@Lob
-	@Type(type="com.code.aon.common.dao.hibernate.type.StringClobEnhancedType")
+	@Type(type="stringClob")
 	public String getNote() {
 		return note;
 	}
@@ -93,19 +95,19 @@ public class Note implements ITransferObject {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Note o = (Note) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.date, o.date)
+				.append(this.note, o.note)
+				.append(this.owner, o.owner)
+				.append(this.subject, o.subject)				
+				.isEquals();
 		}
-		if (obj instanceof Note) {
-			Note o = (Note) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
 	}
 
 	@Override
@@ -115,6 +117,11 @@ public class Note implements ITransferObject {
 			append(note).append(owner).
 			append(subject).
 			toHashCode();
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}
 	
 }
