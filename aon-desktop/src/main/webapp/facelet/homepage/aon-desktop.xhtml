@@ -287,15 +287,15 @@
 					</aon:div>
 
 					<aon:div>
-						<aon:div styleClass="aon-company-logo">
-							<a4j:mediaOutput element="img" cacheable="false"
-								rendered="#{company.withLogo}" 
-								value="#{company.aonFile.key}"
-								createContent="#{company.createLogoContent}">
-								<f:param value="#{company.timeStamp}" name="time" />
-							</a4j:mediaOutput>
-
-						</aon:div>
+						<c:if test="#{company.withLogo}">
+							<aon:div styleClass="aon-company-logo">
+								<a4j:mediaOutput element="img" cacheable="false" 
+									value="#{company.aonFile.key}"
+									createContent="#{company.createLogoContent}">
+									<f:param value="#{company.timeStamp}" name="time" />
+								</a4j:mediaOutput>
+							</aon:div>
+						</c:if>
 						<!--  soporte -->
 						<aon:div styleClass="aon-support">
 							<aon:div styleClass="aon-support-title">
