@@ -11,11 +11,11 @@ import javax.persistence.Table;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.StreetType;
@@ -323,7 +323,7 @@ public class RegistryAddress implements ITransferObject, IAddress {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		return new PojoToStringBuilder(this).toString();
 	}
 
 }

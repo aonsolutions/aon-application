@@ -16,11 +16,11 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
 import com.code.aon.registry.Registry;
@@ -185,7 +185,7 @@ public class Person implements ITransferObject {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		return new PojoToStringBuilder(this).toString();
 	}
 
 }
