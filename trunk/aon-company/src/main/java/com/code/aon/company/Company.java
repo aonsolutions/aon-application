@@ -13,8 +13,8 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
 
@@ -150,6 +150,7 @@ public class Company extends Registry implements ITaxInfo{
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		return new PojoToStringBuilder(this).toString();
 	}
+	
 }
