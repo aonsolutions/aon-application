@@ -10,13 +10,20 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.registry.RegistryAttachment;
 
 @Entity
 @Table(name="web_info_page_resource")
 public class WebInfoPageResource implements ITransferObject {
 	
+	private static final long serialVersionUID = 2700609535843713724L;
+
 	private Integer id;
 
 	private WebInfoPage webInfoPage;
@@ -65,4 +72,35 @@ public class WebInfoPageResource implements ITransferObject {
 		this.content = content;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final WebInfoPageResource o = (WebInfoPageResource) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.content, o.content)
+				.append(this.rattach, o.rattach)
+				.append(this.webInfoPage, o.webInfoPage)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(content)		
+			.append(id)
+			.append(rattach)
+			.append(webInfoPage)			
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
+	
 }

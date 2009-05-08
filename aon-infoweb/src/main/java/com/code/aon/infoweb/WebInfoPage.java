@@ -11,13 +11,20 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.infoweb.enumeration.WebInfoPageType;
 
 @Entity
 @Table(name="web_info_page")
 public class WebInfoPage implements ITransferObject {
 	
+	private static final long serialVersionUID = -4628246222559589905L;
+
 	private Integer id;
 	
 	private String name;
@@ -52,7 +59,7 @@ public class WebInfoPage implements ITransferObject {
 		this.name = name;
 	}
 
-	@Column(name="type")
+	@Column(name="type", nullable=false)
 	public WebInfoPageType getType() {
 		return type;
 	}
@@ -70,7 +77,7 @@ public class WebInfoPage implements ITransferObject {
 		this.position = position;
 	}
 
-	@Column(name="active")
+	@Column(name="active", nullable=false)
 	public boolean isActive() {
 		return active;
 	}
@@ -105,4 +112,37 @@ public class WebInfoPage implements ITransferObject {
 		return false;
     }
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final WebInfoPage o = (WebInfoPage) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.active, o.active)
+				.append(this.name, o.name)
+				.append(this.position, o.position)
+				.append(this.type, o.type)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(active)
+			.append(id)
+			.append(name)
+			.append(position)
+			.append(type)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
+	
 }

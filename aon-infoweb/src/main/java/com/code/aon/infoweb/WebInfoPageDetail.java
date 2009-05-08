@@ -6,16 +6,25 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.infoweb.enumeration.WebInfoLayoutType;
 
 @Entity
 @Table(name="web_info_page_detail")
 public class WebInfoPageDetail implements ITransferObject {
 	
+	private static final long serialVersionUID = 1708466275331452164L;
+
 	private Integer id;
 	
 	private WebInfoPage webInfoPage;
@@ -67,6 +76,8 @@ public class WebInfoPageDetail implements ITransferObject {
 		this.layout = layout;
 	}
 
+	@Lob
+	@Type(type="stringClob")   
 	@Column(name="content")
 	public String getContent() {
 		return content;
@@ -85,4 +96,39 @@ public class WebInfoPageDetail implements ITransferObject {
 		this.extra = extra;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final WebInfoPageDetail o = (WebInfoPageDetail) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.content, o.content)
+				.append(this.extra, o.extra)
+				.append(this.layout, o.layout)
+				.append(this.title, o.title)
+				.append(this.webInfoPage, o.webInfoPage)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(content)
+			.append(extra)			
+			.append(id)
+			.append(layout)
+			.append(title)
+			.append(webInfoPage)			
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
+	
 }
