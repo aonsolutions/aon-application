@@ -85,7 +85,6 @@ public class FinanceController extends BasicController {
 	
 	private List orderedList;
 
-
 	/**
 	 * A list of finances currently checked
 	 */
@@ -439,21 +438,6 @@ public class FinanceController extends BasicController {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	public void checkAll(ActionEvent event) throws ManagerBeanException {
-		Iterator iter = this.getManagerBean().getList(this.getCriteria()).iterator();
-		while(iter.hasNext()){
-			Finance finance = (Finance)iter.next();
-			if (!checks.contains(finance)) {
-				checks.add(finance);
-			}
-		}
-	}
-
-	public void checkNone(ActionEvent event) {
-		clearCheckedFinances();
-	}
-
 	public boolean getRowChecked() {
 		Finance to = (Finance) model.getRowData();
 		return checks.contains(to);
@@ -481,6 +465,21 @@ public class FinanceController extends BasicController {
 		checks = new ArrayList<Finance>();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public void checkAll(ActionEvent event) throws ManagerBeanException {
+		Iterator iterator = this.getManagerBean().getList(this.getCriteria()).iterator();
+		while (iterator.hasNext()) {
+			Finance finance = (Finance)iterator.next();
+			if (!checks.contains(finance)) {
+				checks.add(finance);
+			}
+		}
+	}
+
+	public void checkNone(ActionEvent event) {
+		clearCheckedFinances();
+	}
+
 	public List getOrderedList() {
 		return orderedList;
 	}
@@ -489,9 +488,7 @@ public class FinanceController extends BasicController {
 		this.orderedList = orderedList;
 	}
 	
-	
 	public void onOrderFinanceList(ActionEvent event) throws ManagerBeanException {
-		
 		Criteria cr = new Criteria();
 		cr=this.getCriteria();
 		cr.setOrderByList(null);
@@ -503,11 +500,9 @@ public class FinanceController extends BasicController {
 		cr.addOrder(invoiceseries,true);
 		cr.addOrder(invoicenumber,true);
 		orderedList=bean.getList(cr);
-						
 	}
 	
 	public void onOrderFinanceListByRegistry(ActionEvent event) throws ManagerBeanException {
-	
 		Criteria cr = new Criteria();
 		cr=this.getCriteria();
 		cr.setOrderByList(null);
@@ -515,11 +510,9 @@ public class FinanceController extends BasicController {
 		String registry = bean.getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID);		
 		cr.addOrder(registry,true);
 		orderedList=bean.getList(cr);
-						
 	}
 	
 	public void onOrderFinanceListByDate(ActionEvent event) throws ManagerBeanException {
-		
 		Criteria cr = new Criteria();
 		cr=this.getCriteria();
 		cr.setOrderByList(null);
@@ -529,7 +522,6 @@ public class FinanceController extends BasicController {
 		cr.addOrder(date,true);
 		cr.addOrder(id,true);
 		orderedList=bean.getList(cr);
-						
 	}
 
 

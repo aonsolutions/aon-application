@@ -30,9 +30,7 @@ public class AccountEntryInvoiceBeanListener extends ManagerBeanListenerAdapter 
 	private void removeAccountEntryDetails(AccountEntry accountEntry) throws ManagerBeanException {
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(accountEntryDetailBean
-				.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry
-				.getId());
+		criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
 		Iterator iter = accountEntryDetailBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			AccountEntryDetail accEntryDetail = (AccountEntryDetail) iter.next();
