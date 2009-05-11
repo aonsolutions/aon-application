@@ -2,6 +2,7 @@ package com.code.aon.ui.infoweb.controller;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
@@ -64,7 +65,7 @@ public class CompanyWebInfoPageController extends BasicController {
 				++position;
 			}
 		}catch (ManagerBeanException e) {
-			
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return position;
 	}
@@ -173,7 +174,7 @@ public class CompanyWebInfoPageController extends BasicController {
 			resources = new ListDataModel(listWipr);
 			resetResource();
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 
@@ -191,7 +192,7 @@ public class CompanyWebInfoPageController extends BasicController {
 			if (detail.getId() != null) wipdBean.update(detail);
 			else wipdBean.insert(detail);
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
     }
 
@@ -232,7 +233,7 @@ public class CompanyWebInfoPageController extends BasicController {
 			setSelectedData(current);
 			resetResource();
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
     }
 
@@ -246,7 +247,7 @@ public class CompanyWebInfoPageController extends BasicController {
 			setSelectedData(current);
 			resetResource();
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
     }
 
