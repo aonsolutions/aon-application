@@ -6,6 +6,28 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
+	<aon:div styleClass="aon-toolbar" rendered="#{financeEntry.finances.rowCount > 0}">
+	
+		<aon:commandButton title="#{bundle.aon_check_all}"
+			styleClass="aon-finding-toolbar-item aon-icon-checkAll"
+			value="#{bundle.aon_check_all}"
+			actionListener="#{financeEntry.checkAllFinances}" reRender="financeDataDiv"
+			onclick="Richfaces.showModalPanel('waitProccess')" 
+     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+		<aon:commandButton title="#{bundle.aon_uncheck_all}"
+			styleClass="aon-finding-toolbar-item aon-icon-checkNone"
+			value="#{bundle.aon_uncheck_all}"
+			actionListener="#{financeEntry.checkNoneFinances}" reRender="financeDataDiv"
+			onclick="Richfaces.showModalPanel('waitProccess')" 
+     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+		<aon:commandButton title="#{accountingBundle.accounting_finance_add_record_list}"
+			styleClass="aon-finding-toolbar-item aon-icon-newFolder"
+			value="#{accountingBundle.accounting_finance_add_record_list}"
+			actionListener="#{financeEntry.onAddSelected}" reRender="financeEntryForm,financePanelTabSet"
+			onclick="Richfaces.showModalPanel('waitProccess')" 
+     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+	</aon:div>
+
 	<aon:div id="financeDataDiv">
 		<aon:dataTable id="financeData" value="#{financeEntry.finances}"
 			var="to" rows="20" rendered="#{financeEntry.finances.rowCount > 0}"
@@ -17,10 +39,9 @@
 				<f:facet name="header">
 					<aon:outputText value="&#160;" />
 				</f:facet>
-				<aon:selectBooleanCheckbox id="Included_Row_checked"
-					value="#{financeEntry.rowChecked}"
-					valueChangeListener="#{financeEntry.rowSelected}"
-					reRender="AccountEntry_total" />	
+				<aon:selectBooleanCheckbox id="Checked_Finances"
+					value="#{financeEntry.rowCheckedFinances}"
+					valueChangeListener="#{financeEntry.rowSelectedFinances}" />
 			</aon:column>
 			
 			<aon:column>
