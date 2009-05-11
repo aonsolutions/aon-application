@@ -13,6 +13,7 @@ import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -248,16 +249,34 @@ public class AccountEntryFinanceWriter {
 	}
 
 	@SuppressWarnings("unchecked")
-	public boolean removeAccountEntryFinanceTracking(FinanceTracking tracking) throws ManagerBeanException {
+	public void removeAccountEntryFinanceTracking(FinanceTracking tracking) throws ManagerBeanException {
 		IManagerBean accountEntryFinanceTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(accountEntryFinanceTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_ID), tracking.getId());
 		Iterator iterator = accountEntryFinanceTrackingBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			AccountEntryFinanceTracking accountEntryFinanceTracking = (AccountEntryFinanceTracking)iterator.next();
-			return accountEntryFinanceTrackingBean.remove(accountEntryFinanceTracking);
+			accountEntryFinanceTrackingBean.remove(accountEntryFinanceTracking);
+			removeAccountEntryDetails(accountEntryFinanceTracking.getAccountEntry());
+			removeAccountEntry(accountEntryFinanceTracking.getAccountEntry());
 		}
-		return false;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void removeAccountEntryDetails(AccountEntry accountEntry) throws ManagerBeanException {
+		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
+		Iterator iter = accountEntryDetailBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			AccountEntryDetail accEntryDetail = (AccountEntryDetail) iter.next();
+			accountEntryDetailBean.remove(accEntryDetail);
+		}
+	}
+
+	private void removeAccountEntry(AccountEntry accountEntry) throws ManagerBeanException {
+		IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
+		accountEntryBean.remove(accountEntry);
 	}
 
 }
