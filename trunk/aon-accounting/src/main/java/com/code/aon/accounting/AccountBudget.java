@@ -11,6 +11,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
@@ -46,7 +50,7 @@ public class AccountBudget implements ITransferObject {
 	 */
 	@Id
 	@GeneratedValue
-	@Column(nullable = false)
+	@Column(nullable = false, length = 4)
 	public Integer getId() {
 		return id;
 	}
@@ -66,6 +70,7 @@ public class AccountBudget implements ITransferObject {
 	 * @return the account period
 	 */
 	@Column(name="account_period", length=4, nullable=false)
+	@ForeignKey(name = "FK_ACCOUNT_BUDGET_PERIOD")
 	@Index(name = "IDX_ACCOUNT_BUDGET_ACCOUNT_PERIOD")	
 	public String getPeriod() {
 		return period;
@@ -107,7 +112,7 @@ public class AccountBudget implements ITransferObject {
 	 * 
 	 * @return the security level
 	 */
-	@Column(name="security_level")
+	@Column(name="security_level", length = 2)
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
@@ -119,6 +124,47 @@ public class AccountBudget implements ITransferObject {
 	 */
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
+	}
+	
+//	@Override
+//    public boolean equals(Object obj) {
+//        return this.id.equals(((AccountBudget)obj).getId()); 
+//    }
+//	 
+//	@Override
+//    public int hashCode() {
+//        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+//    }
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() !=  getClass()) return false;
+		final AccountBudget o = (AccountBudget) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+			.append(this.period, o.period)
+			.append(this.account, o.account)
+			.append(this.securityLevel, o.securityLevel)
+			.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(this.id)
+			.append(this.period)
+			.append(this.account)
+			.append(this.securityLevel)
+			.toHashCode();
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}
 	
 }
