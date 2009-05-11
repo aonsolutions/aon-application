@@ -39,6 +39,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.ApplicationParameter;
@@ -479,7 +480,7 @@ public class InvoiceEntryController {
 			Finance finance = (Finance) financeIter.next();
 			financeSum += finance.getAmount();
 		}
-		return round(detailSum - financeSum, 2);
+		return CommonUtil.round(detailSum - financeSum);
 	}
 
 	public void onTypeChanged(ActionEvent event) {
@@ -499,7 +500,7 @@ public class InvoiceEntryController {
 		}
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
-		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		String sessionName = HibernateUtil.getSessionFactoryName();
 		try {
 			HibernateUtil.setBeginTransaction(false);
 			HibernateUtil.setCloseSession(false);
@@ -943,11 +944,6 @@ public class InvoiceEntryController {
 			AonUtil.addErrorMessage(m);
 			LOGGER.log(Level.SEVERE, m, e);
 		}
-	}
-
-	private double round(double value, int precision) {
-		double decimal = Math.pow(10, precision);
-		return Math.round(decimal * value) / decimal;
 	}
 
 	public void registryChanged(LookupChangeEvent event) {
