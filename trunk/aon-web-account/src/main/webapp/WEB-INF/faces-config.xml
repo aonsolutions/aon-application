@@ -77,7 +77,8 @@
 			<value-class>
 				com.code.aon.ui.form.event.IControllerListener
 			</value-class>
-			<value>#{aon_ui_accounting_accountControllerListener}</value>
+			<!-- aon-ui-finance -->
+			<value>#{accountControllerListener}</value>
 		</list-entries>
 	</managed-bean>
 	
@@ -90,7 +91,8 @@
 			<value-class>
 				com.code.aon.ui.form.event.IControllerListener
 			</value-class>
-				<value>#{aon_ui_finance_customerFeeChildListener}</value>
+				<!-- aon-ui-finance -->
+				<value>#{customerFeeChildListener}</value>
 		</list-entries>
 	</managed-bean>
 
