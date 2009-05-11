@@ -209,13 +209,13 @@
 						</rich:panel>
 					</aon:div>
 
-					<aon:div id="closeModalPanel">
+					<aon:div>
 						<aon:div style="text-align:right;">
 							<rich:spacer height="3" />
 							<br />
 							<aon:panelGrid style="float:right;border:1px gray solid">
 								<aon:commandButton id="closeDocument"
-									reRender="info, closeModalPanel" style="padding-right:15px"
+									reRender="showGenericModalPanel" style="padding-right:15px"
 									value="#{appBundle.infoweb_close}" immediate="true"
 									styleClass="aon-icon-commandButton aon-icon-cancel">
 									<f:setPropertyActionListener
