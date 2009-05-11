@@ -146,14 +146,14 @@
 						</rich:panel>
 					</aon:div>
 
-					<aon:div id="closeResourceModalPanel">
+					<aon:div>
 						<aon:div style="text-align:right;">
 							<rich:spacer height="3" />
 							<br />
 							<aon:panelGrid
 								style="float:right;border:1px gray solid">
 								<aon:commandButton
-									reRender="infoR, closeResourceModalPanel"
+									reRender="showResourceModalPanel"
 									style="padding-right:15px"
 									value="#{appBundle.infoweb_close}" immediate="true"
 									styleClass="aon-icon-commandButton aon-icon-cancel">

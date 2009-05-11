@@ -14,19 +14,11 @@
 		<aon:form id="templatesForm">
 	
 		<aon:div>
-			<ui:include
-				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle"
-					value="#{appBundle.infoweb_template}" />
-				<ui:param name="controller" value="#{webPageStyle}" />
-				<ui:param name="skipSaveButton" value="true" />
-				<ui:param name="skipCancelButton" value="true" />
-				<ui:param name="skipRemoveButton" value="true" />
-				<ui:param name="skipSearchButton" value="true" />
-				<ui:param name="skipResetButton" value="true" />
-				<ui:param name="skipBackButton" value="true" />
-				<ui:param name="skipSpin" value="true" />
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.infoweb_template}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 			</ui:include>
+			
 			<rich:panel styleClass="aon-content-home">
 				<aon:div style="text-align:center;">
 					<aon:div style="text-align:right;width:50%;float:left;padding:5px"> 
