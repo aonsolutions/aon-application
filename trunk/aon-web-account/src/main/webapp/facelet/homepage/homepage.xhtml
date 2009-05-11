@@ -30,10 +30,10 @@
 							<aon:div>
 								<aon:div styleClass="aonSubMenu aonSubMenuOptionEntry">
 									<aon:outputText
-										value="#{accountingBundle.accounting_expense_entry_module}" />
+										value="#{accountingBundle.accounting_entry_finance_module}" />
 									<h:commandLink immediate="true"
-										actionListener="#{expenseEntry.onReset}"
-										action="account_expense_entry">
+										actionListener="#{financeEntry.onReset}"
+										action="account_finance_entry">
 										<aon:outputText value="[#{bundle.aon_reset}]" />
 									</h:commandLink>
 								</aon:div>
@@ -66,16 +66,17 @@
 							<aon:div>
 								<aon:div styleClass="aonSubMenu aonSubMenuOptionEntry">
 									<aon:outputText
-										value="#{accountingBundle.accounting_loan_fee_entry_module}" />
+										value="#{accountingBundle.accounting_expense_entry_module}" />
 									<h:commandLink immediate="true"
-										actionListener="#{loanFeeEntry.onReset}"
-										action="account_loan_fee_entry">
+										actionListener="#{expenseEntry.onReset}"
+										action="account_expense_entry">
 										<aon:outputText value="[#{bundle.aon_reset}]" />
 									</h:commandLink>
 								</aon:div>
 							</aon:div>
 
 							<aon:div>
+								<!-- 
 								<aon:div styleClass="aonSubMenu aonSubMenuOptionEntry">
 									<aon:outputText
 										value="#{accountingBundle.accounting_leasing_fee_entry_module}" />
@@ -85,6 +86,7 @@
 										<aon:outputText value="[#{bundle.aon_reset}]" />
 									</h:commandLink>
 								</aon:div>
+								-->
 							</aon:div>
 						</h:panelGrid>
 					</aon:panelCollapsible>

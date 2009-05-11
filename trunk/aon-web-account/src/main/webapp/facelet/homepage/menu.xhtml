@@ -29,6 +29,8 @@
 			<aon:dropDownMenu value="#{appBundle.account_pred_entries}">
 				<aon:menuItem actionListener="#{invoiceEntry.onReset}" action="account_invoice_entry" value="#{accountingBundle.accounting_entry_invoice_module}"/>
 				<aon:menuSeparator/>
+				<aon:menuItem actionListener="#{financeEntry.onReset}" action="account_finance_entry" value="#{accountingBundle.accounting_entry_finance_module}"/>
+				<aon:menuSeparator/>
 				<aon:menuItem actionListener="#{expenseEntry.onReset}" action="account_expense_entry" value="#{accountingBundle.accounting_expense_entry_module}"/>
 				<aon:menuItem actionListener="#{salaryEntry.onReset}" action="account_salary_entry" value="#{accountingBundle.accounting_salary_entry_module}"/>
 				<aon:menuItem actionListener="#{socialInsuranceEntry.onReset}" action="account_social_insurance_entry" value="#{accountingBundle.accounting_social_insurance_entry_module}"/>
