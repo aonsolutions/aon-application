@@ -1,39 +1,29 @@
 package com.code.aon.ui.webmail.controller;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
-import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.mail.MessagingException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.webmail.WebmailException;
-import com.code.aon.webmail.bean.AonAttachment;
-import com.code.aon.webmail.bean.AonMessage;
+import com.code.aon.ui.webmail.bean.AonAttachment;
+import com.code.aon.ui.webmail.bean.AonConstants;
+import com.code.aon.ui.webmail.bean.AonMessage;
+import com.code.aon.ui.webmail.exception.WebmailException;
 
 public class AttachController {
-	
-	private static final Logger LOGGER = Logger.getLogger(AttachController.class.getName());
 
 	private AonMessage aonMessage;
 	
-	private List<AonAttachment> attachments;
+	private List<AonAttachment> aonList;
 	
 	private int attachPos;
 	
@@ -46,84 +36,46 @@ public class AttachController {
 	}
 	
     public AonAttachment getAttach() {
-   		return attachments.get(attachPos);
+   		return aonList.get(attachPos);
 	}
 
 	public List<SelectItem> getAttachmentsDrop() throws ManagerBeanException, ExpressionException, WebmailException {
 		List<SelectItem> types = new LinkedList<SelectItem>();
 		for (AonAttachment aonAttachment : getAttachments()) {
 			String name = aonAttachment.getFileName()+" ("+aonAttachment.getFileSize()+")";
-			types.add(new SelectItem(aonAttachment.getPosition(), name));
+			types.add(new SelectItem(aonAttachment.getPosition()-1, name));
 		}
 		return types;
 	}
 
-	public void update( AonMessage message ) {
-		this.aonMessage = message;
-    	this.attachPos = 0;
-    	try {
-    		this.attachments = this.aonMessage.getAttachements();
-		} catch (WebmailException e) {
-    		AonUtil.addErrorMessage(e.getMessage());
-    		throw new AbortProcessingException(e);
-		}
-	}
-	
-	public List<AonAttachment> getAttachments() {
-    	return attachments;
+	public List<AonAttachment> getAttachments() throws WebmailException{
+    	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
+    	AonMessage currentMessage = messageController.getMessage();
+    	if (this.aonMessage != currentMessage){
+    		this.aonMessage = currentMessage;
+        	aonList = aonMessage.getAttachements();
+        	attachPos=0;
+    	}
+    	return aonList;
     }
 
-	private void download(AonAttachment attachment, HttpServletResponse response) {
-		try {
-			String filename = attachment.getFileName();
-			response.setContentType(attachment.getPart().getContentType());
-			response.setHeader("content-disposition", "attachment;filename=\""
-					+ filename + "\"");
-			ServletOutputStream sos = response.getOutputStream();
-			BufferedInputStream bis = new BufferedInputStream(attachment.getPart().getInputStream());
-			IOUtils.copy( bis, sos );
-			response.flushBuffer();
-			sos.close();
-			bis.close();
-		} catch (IOException e) {
-			LOGGER.log( Level.SEVERE, e.getMessage(), e );
-		} catch (MessagingException e) {
-			LOGGER.log( Level.SEVERE, e.getMessage(), e );
-		}
-	}
-	
     public void getAttachment(String pos,HttpServletResponse response) throws MessagingException{
     	int position = Integer.parseInt(pos);
-    	AonAttachment aonAttachment = attachments.get(position);
-    	download(aonAttachment, response);
+    	AonAttachment aonAttachment = aonList.get(position-1);
+    	aonAttachment.download(response);
     }
 
-    public void downloadAttachment( ActionEvent event ) throws MessagingException, WebmailException {
-        FacesContext context = FacesContext.getCurrentInstance();
-		String index = context.getExternalContext().getRequestParameterMap().get("index");
-        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-        getAttachment( index, response);
-        context.responseComplete();    	
-    }
-    
-    public void downloadZippedAttachments( ActionEvent event ) throws MessagingException, WebmailException {
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-        getZippedAttachments(response);
-        context.responseComplete();    	
-    }
-    
     public void getZippedAttachments(HttpServletResponse response) throws MessagingException, WebmailException{
         try {
 	        String outFilename = "attachments.zip";
 			response.setContentType("application/zip");
-			response.setHeader("Content-disposition", "attachment; filename=\""
+			response.setHeader("content-disposition", "attachment;filename=\""
 					+ outFilename + "\"");
 			byte[] data = new byte[1024];
 
             ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
 
-    		for (AonAttachment aonAttachment : attachments) {
+    		for (AonAttachment aonAttachment : aonList) {
                 InputStream in = (InputStream)aonAttachment.getPart().getInputStream();
                 
                 
@@ -148,17 +100,19 @@ public class AttachController {
                 in.close();
             }
 
-    		response.flushBuffer();
+    		out.flush();
             out.close();
 		} catch (IOException e) {
-			LOGGER.log( Level.SEVERE, e.getMessage(), e );
+			e.printStackTrace();
 		} catch (MessagingException e) {
-			LOGGER.log( Level.SEVERE, e.getMessage(), e );
+			e.printStackTrace();
 		}
     }
 
     public boolean isAttachment() throws WebmailException{
-    	return ! this.attachments.isEmpty();
+    	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
+    	AonMessage aonMessage = messageController.getMessage();
+    	return aonMessage.isAttachment() && (aonMessage.getAttachements().size()>0);
     }
     
 }

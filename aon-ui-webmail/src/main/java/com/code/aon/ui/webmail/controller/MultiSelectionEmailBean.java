@@ -3,58 +3,62 @@ package com.code.aon.ui.webmail.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
-
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.groupware.Contact;
+import com.code.aon.groupware.dao.IContactAlias;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
-import com.code.aon.webmail.Contact;
-import com.code.aon.webmail.dao.IWebMailAlias;
+import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.bean.AonConstants;
+import com.code.aon.webmail.MailAccount;
 
 public class MultiSelectionEmailBean {
 
-	private ListDataModel model;
-	
 	private List<SelectionEmail> emails; 
+
+	public MultiSelectionEmailBean(){
+		this.reload();
+	}
 	
-	public void reload() {
+    public void reload() {
         emails = new ArrayList<SelectionEmail>();
     	try{
-			IManagerBean bean = FormUtil.getController(WebMailConstants.BEAN_CONTACT).getManagerBean();
+			WebMailController wmc = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+			MailAccount account = wmc.getServer().getAccount();
+			IManagerBean bean = BeanManager.getManagerBean(Contact.class);
 			Criteria criteria = new Criteria();
-			criteria.addOrder(bean.getFieldName(IWebMailAlias.CONTACT_NAME));
-			List<ITransferObject> lst = bean.getList(criteria);
+			criteria.addOrder(bean.getFieldName(IContactAlias.CONTACT_NAME));
+			List lst = lst = bean.getList(criteria);
             for (int i = 0, max = lst.size(); i < max; i++) {
             	SelectionEmail se = new SelectionEmail();
             	se.setEmail((Contact) lst.get(i));
             	se.setSelected(Boolean.FALSE);
             	emails.add(se);
             }
-    	} catch (ManagerBeanException e) {
+    	}catch (ManagerBeanException e) {
     		e.printStackTrace();
 		}
-    	this.model = new ListDataModel( emails );
     }
     
-	public ListDataModel getModel() {
-		return model;
+	/**
+	 * @return the emails
+	 */
+	public List<SelectionEmail> getEmails() {
+		return emails;
 	}
-	
-	public void onToggleSelected(ActionEvent event) {
-		if ( model.isRowAvailable() ) {
-			SelectionEmail selectionEmail = (SelectionEmail) model.getRowData();
-			selectionEmail.setSelected(! selectionEmail.isSelected() );
-		}
-	}	
+
+	/**
+	 * @param emails the emails to set
+	 */
+	public void setEmails(List<SelectionEmail> emails) {
+		this.emails = emails;
+	}
 	
 	/**
 	 * @return the selectedRows
 	 */
-	public List<Contact> getSelectedRows() {
+	public List getSelectedRows() {
 	    List<Contact> selectedRows = new ArrayList<Contact>();
         selectedRows.clear();
         for (int i = emails.size()-1; i >= 0 ; i--) {
@@ -83,20 +87,6 @@ public class MultiSelectionEmailBean {
 		 */
 		public void setSelected(boolean selected) {
 			this.selected = selected;
-		}
-		
-		/**
-		 * Checks if is read only selected. Necesario debido a un error en Rich Faces 3.2.0.SR1.
-		 * Los selectBooleanCheckBox no se actualizan correctamente en una tabla dentro de un
-		 * modalPanel y por eso se actualizan mediante el rowSelector.
-		 * 
-		 * @return true, if is read only selected
-		 */
-		public boolean isReadOnlySelected() {
-			return selected;
-		}
-
-		public void setReadOnlySelected(boolean readOnlySelected) {
 		}
 
 		/**

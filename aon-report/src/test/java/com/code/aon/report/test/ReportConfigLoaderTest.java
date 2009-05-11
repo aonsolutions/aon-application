@@ -1,5 +1,7 @@
 package com.code.aon.report.test;
 
+import java.net.URL;
+
 import junit.framework.TestCase;
 
 import com.code.aon.report.config.ReportConfig;
@@ -18,7 +20,8 @@ public class ReportConfigLoaderTest extends TestCase {
 	public void testReadConfiguration() {
         try {
 			ReportConfigurationParser parser = ReportConfigurationParser.getInstance();
-			ReportConfigurationManager rc = parser.getConfigurationManager();
+			URL url = ReportConfigLoaderTest.class.getResource( "report-config.xml" );
+			ReportConfigurationManager rc = parser.getConfiguration(url.openStream());
 			System.out.println( rc );
 			ReportConfig rcg= rc.getReport( "salesInvoiceList" );
 			System.out.println( rcg );
@@ -31,12 +34,6 @@ public class ReportConfigLoaderTest extends TestCase {
 			assertEquals(50, rcg.getFetchMode().getVirtualizerPageMax() );
 			assertNotNull( rcg.getParams());
 			assertEquals("#{company.obtainCompany}", rcg.getParams().get("company") );
-			ReportConfig rcg1 = rc.getReport( "customer" );
-			assertTrue(rcg1.isForceRefresh());
-			ReportConfig rcg2 = rc.getReport( "payform" );
-			assertFalse(rcg2.isForceRefresh());
-			ReportConfig rcg3 = rc.getReport( "item" );
-			assertTrue(rcg3.isForceRefresh());
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail( e.getMessage() );

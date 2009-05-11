@@ -13,7 +13,9 @@
 				<aon:menuItem action="account_list" value="#{accountBundle.account_module}"/>
 				<aon:menuItem action="autConcept" value="#{accountingBundle.accounting_aut_concept_module}"/>
 				<aon:menuSeparator/>
-				<aon:menuItem actionListener="#{customer.onEditSearch}" action="customer_search" value="#{customerBundle.customer_module}"/>
+				<aon:menuItem actionListener="#{customer.onEditSearch}" action="customer_search" value="#{customerBundle.customer_module}">
+					<f:setPropertyActionListener value="#{true}" target="#{customer.showAccount}" />
+				</aon:menuItem>
 				<aon:menuItem actionListener="#{supplier.onEditSearch}" action="supplier_search" value="#{supplierBundle.supplier_module}"/>
 				<aon:menuItem actionListener="#{creditor.onEditSearch}" action="creditor_search" value="#{financeBundle.finance_creditor_module}"/>
 				<aon:menuSeparator/>
@@ -26,6 +28,8 @@
  
 			<aon:dropDownMenu value="#{appBundle.account_pred_entries}">
 				<aon:menuItem actionListener="#{invoiceEntry.onReset}" action="account_invoice_entry" value="#{accountingBundle.accounting_entry_invoice_module}"/>
+				<aon:menuSeparator/>
+				<aon:menuItem actionListener="#{financeEntry.onReset}" action="account_finance_entry" value="#{accountingBundle.accounting_entry_finance_module}"/>
 				<aon:menuSeparator/>
 				<aon:menuItem actionListener="#{expenseEntry.onReset}" action="account_expense_entry" value="#{accountingBundle.accounting_expense_entry_module}"/>
 				<aon:menuItem actionListener="#{salaryEntry.onReset}" action="account_salary_entry" value="#{accountingBundle.accounting_salary_entry_module}"/>
@@ -64,7 +68,6 @@
 				 -->
 			</aon:dropDownMenu>
 			
-<!-- 
 			<aon:dropDownMenu value="#{appBundle.account_fixed_assets}">
 				<aon:menuItem style="color:red;" action="amortization_list" value="#{accountingBundle.accounting_amortization_form_module}"/>
 				<aon:menuSeparator/>
@@ -75,10 +78,11 @@
 			</aon:dropDownMenu>
 
 			<aon:dropDownMenu value="#{appBundle.account_budget}">
+				<aon:menuItem actionListener="#{accountBudget.onEditSearch}" action="accountBudget_search" value="#{accountingBundle.accounting_account_budget_module}"/>
 				<aon:menuItem actionListener="#{budgetedProfitAndLossReport.onEditSearch}" action="budgeted_profit_and_loss_search" value="#{accountingBundle.accounting_budgeted_balance_sheet_module}"/>
 				<aon:menuItem disabled="true" value="#{accountingBundle.accounting_compared_budgeted_balance_sheet_module}"/>
 			</aon:dropDownMenu>
-
+<!-- 
 			<aon:dropDownMenu value="#{appBundle.account_utilities}">
 				<aon:menuItem disabled="true" value="#{appBundle.account_transfer}"/>
 				<aon:menuItem disabled="true" value="#{appBundle.account_import_data}"/>

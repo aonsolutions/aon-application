@@ -32,8 +32,6 @@ public class JRXlsExporterFactory implements IJRExporterFactory {
 	public void fillJRParametersMap(Map<Object,Object> map) throws ReportException {
 		map.put(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS,
 				Boolean.TRUE);
-		map.put(JRXlsExporterParameter.IS_DETECT_CELL_TYPE,
-				Boolean.TRUE);
 		map.put(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND,
 				Boolean.FALSE);
 		map.put(IReportConstants.SHOULD_PRINT_HEADERS, Boolean.FALSE );
