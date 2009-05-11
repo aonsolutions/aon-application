@@ -25,11 +25,11 @@ public class FileController extends BasicController implements IAonFileListener 
 	/** The uploaded file. */
 	private AonFile aonFile;
 
-	private long maximumSize = -1;
+	private long maximumSize;
 	
 
 	public FileController() {
-		this.maximumSize = -1;
+		this.maximumSize = 65535;
 	}
 
 	public long getMaximumSize() {
@@ -37,7 +37,7 @@ public class FileController extends BasicController implements IAonFileListener 
 	}
 
 	public void setMaximumSize(long maximumSize) {
-		this.maximumSize = 524288;
+		this.maximumSize = maximumSize;
 	}
 
 	public IAttachment getAttachment() {

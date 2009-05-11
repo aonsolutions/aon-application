@@ -1,6 +1,7 @@
 package com.code.aon.ui.infoweb.event;
 
 import java.io.IOException;
+import java.util.ResourceBundle;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -20,6 +21,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.infoweb.controller.FileController;
+import com.code.aon.ui.infoweb.controller.IInfoWebConstants;
 import com.code.aon.ui.util.AonUtil;
 
 public class CompanyImagesControllerListener extends ControllerAdapter {
@@ -41,9 +43,10 @@ public class CompanyImagesControllerListener extends ControllerAdapter {
 			FileController imagesController = (FileController)event.getController();
 			if(imagesController.getAonFile().getData() != null){
 				AonFile aonFile = imagesController.getAonFile(); 
-				if (aonFile.getSize() > 65535) {
-					String message = AonUtil.getMessage(ICompanyConstants.BUNDLE_NAME, "company_image_max_size_error");
-					throw new ControllerListenerException(message);					
+				if (aonFile.getSize() > imagesController.getMaximumSize()) {
+					String message = AonUtil.getMessage(IInfoWebConstants.BUNDLE_NAME, "infoweb_image_max_size_error");
+					String formatted = AonUtil.substituteParams(AonUtil.getCurrentLocale(), message, new Object[]{imagesController.getMaximumSize()});
+					throw new ControllerListenerException(formatted);					
 				}				
 				RegistryAttachment attach = (RegistryAttachment)imagesController.getTo();
 				CompanyController companyController = (CompanyController)FormUtil.getController(ICompanyConstants.COMPANY_CONTROLLER_NAME);

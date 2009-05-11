@@ -15,10 +15,10 @@
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 			</ui:include>
 			
-			<rich:panel styleClass="aon-content-home">
-				<aon:panelGrid cellpadding="5" cellspacing="0" border="0" columns="2" style="width:100%"
+			<aon:panel styleClass="aon-content-home">
+				<aon:panelGrid cellpadding="5" cellspacing="0" border="0" columns="2"
 					styleClass="aon-noborder"
-					columnClasses="aon-midle-width  aon-vertical-align-top,aon-midle-width" id="imagesPanel">	
+					columnClasses="aon-midle-width  aon-vertical-align-top,aon-midle-width aon-vertical-align-top" id="imagesPanel">	
 					<aon:div styleClass="aon-width-300">
 						<aon:editDataTable id="companyImages"
 							var="to" value="#{companyImages.model}"
@@ -60,63 +60,68 @@
 						<aon:dataScroller2 for="companyImages" showNote="true" />
 					</aon:div>	
 					
-					<aon:div id="image_form" >	
-						<aon:div styleClass="aon-group" rendered="#{(companyImages.to != null) or (companyImages.new)}">	
-							<aon:div styleClass="aon-group-title">		
-								<aon:outputLabel for="RegistryAttachment_preview" value="#{appBundle.infoweb_images_preview}" />
-							</aon:div>
-							<aon:div styleClass="aon-group-body">
-								<aon:div styleClass="aon-toolbar" >
-									<aon:commandButton id="save_image" value="#{bundle.aon_save}"					
-										styleClass="aon-icon-accept aon-finding-toolbar-item"
-										actionListener="#{companyImages.onAccept}" reRender="imagesPanel"/>
-									<aon:commandButton id="remove_image" value="#{bundle.aon_remove}"
-										styleClass="aon-icon-delete aon-finding-toolbar-item"
-										rendered="#{!companyImages.new}" immediate="true"
-										actionListener="#{companyImages.onRemove}" reRender="imagesPanel"/>
-									<aon:commandButton id="cancel_image" value="#{bundle.aon_cancel}" immediate="true"
-										styleClass="aon-icon-cancel aon-finding-toolbar-item" reRender="imagesPanel"
-										actionListener="#{companyImages.onCancel}"/>	
-								</aon:div>	
+					<aon:div id="image_form" styleClass="aon-width-auto">	
+						<aon:div rendered="#{(companyImages.to != null) or (companyImages.new)}">
+							<aon:panel>
+								<f:facet name="header">
+									<aon:outputLabel for="RegistryAttachment_preview" value="#{appBundle.infoweb_images_preview}" />
+								</f:facet>
+								<aon:div styleClass="aon-group-body">
+									<aon:div styleClass="aon-toolbar" >
+										<aon:commandButton id="save_image" value="#{bundle.aon_save}"					
+											styleClass="aon-icon-accept aon-finding-toolbar-item"
+											actionListener="#{companyImages.onAccept}" reRender="imagesPanel"/>
+										<aon:commandButton id="remove_image" value="#{bundle.aon_remove}"
+											styleClass="aon-icon-delete aon-finding-toolbar-item"
+											rendered="#{!companyImages.new}" immediate="true"
+											actionListener="#{companyImages.onRemove}" reRender="imagesPanel"/>
+										<aon:commandButton id="cancel_image" value="#{bundle.aon_cancel}" immediate="true"
+											styleClass="aon-icon-cancel aon-finding-toolbar-item" reRender="imagesPanel"
+											actionListener="#{companyImages.onCancel}"/>	
+									</aon:div>	
 			
-								<aon:panelGrid columns="2" style="margin-left:10px;" 
-									cellpadding="0" cellspacing="0" width="100%"
-									rendered="#{companyImages.to != null}">	
-									<aon:outputLabel for="RegistryAttachment_description" value="#{bundle.aon_description}" />
-									<aon:inputText id="RegistryAttachment_description" size="45" required="true"
-										maxlength="50" value="#{companyImages.to.description}" />		
-			
-									<aon:outputLabel for="RegistryAttachment_inputFile" value="#{appBundle.infoweb_images_file}" />
-									<aon:fileUpload id="RegistryAttachment_inputFile" width="100%" rendered="#{companyImages.fileData == null}"
-											addControlLabel="#{appBundle.infoweb_add}" 
-											stopControlLabel="#{appBundle.infoweb_stop}" 
-											stopEntryControlLabel="#{appBundle.infoweb_stop}"
-											uploadControlLabel="#{appBundle.infoweb_uploading}"
-											cancelEntryControlLabel="#{appBundle.infoweb_cancel}"
-											clearAllControlLabel="#{appBundle.infoweb_clear_all}" 
-											clearControlLabel="#{appBundle.infoweb_clear}"
-											doneLabel="#{appBundle.infoweb_done}" 
-											progressLabel="#{appBundle.infoweb_progress}" 
-											sizeErrorLabel="#{appBundle.infoweb_size_error}" 
-											transferErrorLabel="#{appBundle.infoweb_transfer_error}" 
-											fileUploadListener="#{companyImages.fileUploaded}"
-											immediateUpload="true" autoclear="false" listHeight="70px" listWidth="100%">
-										<a4j:support event="onuploadcomplete" reRender="image_preview" />
-									</aon:fileUpload>
-			
-									<aon:panelGroup id="image_preview" styleClass="aon-text-center" rendered="#{companyImages.fileData != null}">
-										<a4j:mediaOutput id="RegistryAttachment_preview" 
-											element="img" cacheable="false" style="width:200px" 
-											createContent="#{companyImages.paint}" 
-											mimeType="#{companyImages.mimeType}" />
-									</aon:panelGroup>
-								</aon:panelGrid>
-							</aon:div>			
+									<aon:panelGrid columns="2" styleClass="aon-margin-left " 
+										cellpadding="0" cellspacing="0" width="100%"
+										rendered="#{companyImages.to != null}">	
+										<aon:outputLabel for="RegistryAttachment_description" value="#{bundle.aon_description}" />
+										<aon:inputText id="RegistryAttachment_description" size="45" required="true"
+											maxlength="50" value="#{companyImages.to.description}" />		
+				
+										<aon:outputLabel for="RegistryAttachment_inputFile" value="#{appBundle.infoweb_images_file}" />
+										<aon:fileUpload id="RegistryAttachment_inputFile" rendered="#{companyImages.fileData == null}"
+												addControlLabel="#{bundle.aon_fileUpload_add}"
+												stopControlLabel="#{bundle.aon_fileUpload_stop}"
+												stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+												uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+												cancelEntryControlLabel="#{bundle.aon_cancel}"
+												clearAllControlLabel="#{appBundle.infoweb_clear_all}" 
+												clearControlLabel="#{appBundle.infoweb_clear}"
+												doneLabel="#{appBundle.infoweb_done}" 
+												progressLabel="#{appBundle.infoweb_progress}" 
+												sizeErrorLabel="#{appBundle.infoweb_size_error}" 
+												transferErrorLabel="#{appBundle.infoweb_transfer_error}" 
+												fileUploadListener="#{companyImages.fileUploaded}"
+												immediateUpload="true" autoclear="false" listHeight="70px">
+												<f:facet name="label">
+													<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+												</f:facet>
+												<a4j:support event="onuploadcomplete" reRender="image_preview" />
+										</aon:fileUpload>
+				
+										<aon:panelGroup id="image_preview" styleClass="aon-text-center" rendered="#{companyImages.fileData != null}">
+											<a4j:mediaOutput id="RegistryAttachment_preview" 
+												element="img" cacheable="false" style="width:200px" 
+												createContent="#{companyImages.paint}" 
+												mimeType="#{companyImages.mimeType}" />
+										</aon:panelGroup>
+									</aon:panelGrid>
+								</aon:div>
+							</aon:panel>			
 						</aon:div>	
 					</aon:div>	
 			
 				</aon:panelGrid>
-			</rich:panel>
+			</aon:panel>
 		
 		</aon:form>
 	</ui:define>
