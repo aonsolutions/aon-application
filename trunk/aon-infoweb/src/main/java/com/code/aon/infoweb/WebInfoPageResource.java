@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
@@ -45,6 +47,8 @@ public class WebInfoPageResource implements ITransferObject {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn( name="web_info_page",nullable=false )
+    @ForeignKey(name = "FK_WEB_INFO_PAGE_RESOURCE_WEB_INFO_PAGE")
+    @Index(name = "IDX_WEB_INFO_PAGE_RESOURCE_WEB_INFO_PAGE")		
 	public WebInfoPage getWebInfoPage() {
 		return webInfoPage;
 	}
@@ -54,7 +58,9 @@ public class WebInfoPageResource implements ITransferObject {
 	}
 
 	@OneToOne(fetch = FetchType.EAGER)
-	@JoinColumn( name="rattach",nullable=false )
+	@JoinColumn( name="rattach" )
+    @ForeignKey(name = "FK_WEB_INFO_PAGE_RESOURCE_RATTACH")
+    @Index(name = "IDX_WEB_INFO_PAGE_RESOURCE_RATTACH")			
 	public RegistryAttachment getRattach() {
 		return rattach;
 	}

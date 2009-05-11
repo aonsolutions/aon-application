@@ -1,6 +1,5 @@
 package com.code.aon.ui.infoweb.velocity;
 
-import com.code.aon.infoweb.enumeration.WebInfoPageType;
 
 public class MenuOptionHandler {
 

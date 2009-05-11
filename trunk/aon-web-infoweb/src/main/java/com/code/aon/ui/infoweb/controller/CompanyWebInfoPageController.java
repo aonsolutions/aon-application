@@ -22,9 +22,9 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
-import com.code.aon.ui.form.GridController;
+import com.code.aon.ui.form.BasicController;
 
-public class CompanyWebInfoPageController extends GridController {
+public class CompanyWebInfoPageController extends BasicController {
 	
 	private static final Logger LOGGER = Logger.getLogger(CompanyWebInfoPageController.class.getName());
 
@@ -47,10 +47,6 @@ public class CompanyWebInfoPageController extends GridController {
 	public ListDataModel resources;
 	
 	public WebInfoPageResource resource;
-
-	public CompanyWebInfoPageController() {
-		super();
-	}
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event){
