@@ -70,6 +70,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	 */
 	public Invoice() {
 		this.issueDate = new Date();
+		this.taxDate = new Date();
 	}
 
     /** The id. */
@@ -98,6 +99,9 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
     
     /** The issue date. */
     private Date issueDate;
+
+    /** The tax date. */
+    private Date taxDate;
 
     /** The security level. */
     private SecurityLevel securityLevel;
@@ -257,6 +261,8 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
      */
     public void setIssueDate(Date issueDate) {
         this.issueDate = issueDate;
+        /*@TODO Quitar esta linea de abajo cuando el campo taxDate tenga mantenimiento.*/
+        this.taxDate = issueDate;
     }
 
     /**
@@ -264,10 +270,11 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
      * 
      * @return the tax date
      */
-    @Transient
+    @Column(name="tax_date")
+    @Temporal(TemporalType.DATE)
+    @Index(name="IDX_INVOICE_TAX_DATE")
     public Date getTaxDate() {
-        return issueDate;
-        // Retorna fecha de factura , hasta que la columna esté en la BD.        
+        return taxDate;
     }
 
     /**
@@ -276,7 +283,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
      * @param taxDate the tax date
      */
     public void setTaxDate(Date taxDate) {
-        // Nada, hasta que la columna esté en la BD.
+    	this.taxDate = taxDate;
     }
 
     /**
