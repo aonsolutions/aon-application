@@ -26,7 +26,8 @@
 				<aon:commandLink id="images" 
 					title="#{appBundle.infoweb_images}" action="images" 
 					value="#{appBundle.infoweb_images}"
-					actionListener="#{companyWebInfo.onInit}" styleClass="aon-top-menu-item">
+					actionListener="#{companyWebInfo.onInit}" styleClass="aon-top-menu-item">					
+					<aon:actionListener method="#{companyImages.onCancel}" />
 				</aon:commandLink>
 	
 				<aon:commandLink id="pages" 

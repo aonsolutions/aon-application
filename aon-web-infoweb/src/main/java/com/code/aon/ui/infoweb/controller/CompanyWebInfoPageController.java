@@ -28,40 +28,29 @@ public class CompanyWebInfoPageController extends BasicController {
 	
 	private static final Logger LOGGER = Logger.getLogger(CompanyWebInfoPageController.class.getName());
 
-	public boolean showGenericModalPanel = false;
+	public boolean showGenericModalPanel;
 
-	public boolean showLocationModalPanel = false;
+	public boolean showLocationModalPanel;
 
-	public boolean showResourceModalPanel = false;
+	public boolean showResourceModalPanel;
 	
-	public boolean richTextEnabled = false;
+	public boolean richTextEnabled;
 
 	public WebInfoPage current;
 	
 	public WebInfoPageDetail detail;
 
-	public boolean newResource = false;
+	public boolean newResource;
 	
 	public String rattachId;
 
 	public ListDataModel resources;
 	
 	public WebInfoPageResource resource;
-
-	@SuppressWarnings("unused")
-	public void onSelect(ActionEvent event){
-		cancel(event);
-		super.onSelect(event);
+	
+	public CompanyWebInfoPageController() {
+		this.richTextEnabled = true;
 	}
-
-	/* (non-Javadoc)
-     * @see com.code.aon.ui.form.IController#onAccept(javax.faces.event.ActionEvent)
-     */
-    public void onAccept(ActionEvent event) {
-    	accept(event);
-    	onSelectDetail(event);
-    	cancel(event);
-    }
 
 	public int getLastPosition() {
 		int position = 0;
@@ -137,16 +126,10 @@ public class CompanyWebInfoPageController extends BasicController {
 		setSelectedData(wip);
 		if (wip.getType().equals(WebInfoPageType.GENERIC)) {
 			setShowGenericModalPanel(true);
-		}
-		else {
-			if (wip.getType().equals(WebInfoPageType.LOCATION)) {
-				setShowLocationModalPanel(true);
-			}
-			else {
-				if (wip.getType().equals(WebInfoPageType.GALLERY)) {
-					setShowResourceModalPanel(true);
-				}
-			}
+		} else if (wip.getType().equals(WebInfoPageType.LOCATION)) {
+			setShowLocationModalPanel(true);
+		} else if (wip.getType().equals(WebInfoPageType.GALLERY)) {
+			setShowResourceModalPanel(true);
 		}
 	}
 
