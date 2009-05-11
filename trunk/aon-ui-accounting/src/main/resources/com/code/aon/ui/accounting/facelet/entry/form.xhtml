@@ -29,7 +29,11 @@
 						disabled="#{!accountEntry.manual}"
 						rendered="#{accountEntry.model.rowCount > 0 or accountEntry.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;" />
+						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;">
+						
+						<aon:actionListener method="#{accountEntryDetail.onReset}" />
+						
+					</aon:commandButton>
 					<aon:commandButton id="remove" value="#{bundle.aon_remove}"
 						accesskey="#{bundle.aon_key_remove}" action="accountEntry_form"
 						actionListener="#{accountEntry.onRemove}"
@@ -60,8 +64,9 @@
 				<aon:div
 					rendered="#{accountEntry.model.rowCount > 0 or accountEntry.new}">
 					<aon:panelGrid columns="5" style="width: 99%;margin-bottom: 1em;"
-						columnClasses="aon-panelGrid-even aon-width-200
-						,aon-panelGrid-even aon-width-200
+						columnClasses="
+						 aon-panelGrid-even aon-width-150
+						,aon-panelGrid-even aon-width-150
 						,aon-panelGrid-even aon-width-200
 						,aon-panelGrid-even aon-width-200
 						,aon-panelGrid-even aon-width-auto"
@@ -79,9 +84,11 @@
 								rendered="#{!accountEntry.manual or !accountEntry.new}" />
 						</aon:div>
 
-						<aon:div rendered="#{!accountEntry.new}">
-							<aon:outputText value="#{bundle.aon_id}: " />
-							<aon:outputText value="#{accountEntry.to.id}&#160;" />
+						<aon:div>
+							<aon:div rendered="#{!accountEntry.new}">
+								<aon:outputText value="#{bundle.aon_id}: " />
+								<aon:outputText value="#{accountEntry.to.id}&#160;" />
+							</aon:div>
 						</aon:div>
 
 						<aon:div>
@@ -98,7 +105,7 @@
 							</aon:outputText>
 						</aon:div>
 
-						<aon:div rendered="#{!accountEntry.new}">
+						<aon:div>
 							<aon:outputText value="#{accountEntry.to.type}" />
 						</aon:div>
 

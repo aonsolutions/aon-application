@@ -64,6 +64,7 @@
 								disabled="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}"
 								value="#{invoiceEntry.header.period}">
 								<f:selectItems value="#{accountingCollections.accountPeriods}" />
+								<a4j:support event="onchange" ajaxSingle="true" reRender="Account_Period"/>
 							</aon:selectOneMenu>
 							<h:commandLink immediate="true" target="_blank"
 								rendered="#{!invoiceEntry.new}" 
@@ -112,14 +113,17 @@
 						</aon:div>
 
 						<aon:outputLabel for="Account_invoice_series"
-							rendered="#{invoiceEntry.sales}"
+							rendered="#{invoiceEntry.sales and invoiceEntry.new}"
+							value="#{bundle.aon_series}/#{bundle.aon_number}" />
+						<aon:outputLabel for="Account_invoice_seriesI"
+							rendered="#{invoiceEntry.sales and !invoiceEntry.new}"
 							value="#{bundle.aon_series}/#{bundle.aon_number}" />
 						<aon:outputLabel for="Account_invoice_referenceCode"
 							rendered="#{!invoiceEntry.sales}"  
 							value="#{financeBundle.finance_invoice_number}" />
 						<aon:div>
 							<aon:selectOneMenu id="Account_invoice_series"
-								rendered="#{invoiceEntry.sales}"
+								rendered="#{invoiceEntry.sales and invoiceEntry.new}"
 								disabled="#{invoiceEntry.newDetail}"
 								valueChangeListener="onSeriesChanged"
 								reRender="Account_invoice_number"
@@ -127,17 +131,22 @@
 								<f:selectItem itemValue="" itemLabel=" " />
 								<f:selectItems value="#{configCollections.seriesIds}" />
 							</aon:selectOneMenu>
+							<aon:inputText id="Account_invoice_seriesI"
+								style="margin-left: 5px; margin-bottom: 2px;"
+								rendered="#{invoiceEntry.sales and !invoiceEntry.new}"
+								disabled="true" value="#{invoiceEntry.header.series}" 
+								size="7" maxlength="7" />
 							<aon:inputText id="Account_invoice_number"
 								style="margin-left: 5px; margin-bottom: 2px;"
 								rendered="#{invoiceEntry.sales}" required="true"
-								disabled="#{invoiceEntry.newDetail}"
+								disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 								value="#{invoiceEntry.header.number}" size="7" maxlength="7">
 								<f:validateLength maximum="7" />
 							</aon:inputText>
 
 							<aon:inputText id="Account_invoice_referenceCode"
 								rendered="#{!invoiceEntry.sales}" required="true"
-								disabled="#{invoiceEntry.newDetail}"
+								disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 								value="#{invoiceEntry.header.referenceCode}" size="25"
 								maxlength="25" onblur="toUpperCase(this);">
 								<f:validateLength maximum="32" />
@@ -173,12 +182,14 @@
 									<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
 										reRender="Customer_name,Invoice_document,invoiceDetails"
 										lookupProperty="registry" ajaxSingle="false"
+										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										value="#{invoiceEntry.header.registry.id}" size="5" />
 									<aon:lookupButton
 										windowTitle="#{customerBundle.customer_selection}"
 										selectReRender="Customer_id,Customer_name,Invoice_document,invoiceDetails"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
+										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										actionType="search" lookup="#{customerLookup}" minHeight="460"
 										minWidth="650" property="#{invoiceEntry.header.registry}"
 										lookupProperty="registry">
@@ -187,8 +198,8 @@
 										windowTitle="#{customerBundle.customer_new}"
 										selectReRender="Customer_id,Customer_name,Invoice_document,invoiceDetails,aonToolbar"
 										lookup="#{customerLookup}" actionType="new" 
-										minWidth="650" 
-										minHeight="600"
+										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
+										minWidth="650" minHeight="600"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										property="#{invoiceEntry.header.registry}"
 										lookupProperty="registry">
@@ -206,11 +217,13 @@
 										reRender="Supplier_name,Invoice_document,invoiceDetails"
 										lookupProperty="registry" ajaxSingle="false"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
+										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										value="#{invoiceEntry.header.registry.id}" size="5" />
 									<aon:lookupButton
 										windowTitle="#{supplierBundle.supplier_selection}"
 										selectReRender="Supplier_id,Supplier_name,Invoice_document,invoiceDetails"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
+										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										actionType="search" lookup="#{supplierLookup}" minHeight="460"
 										minWidth="650" property="#{invoiceEntry.header.registry}"
 										lookupProperty="registry">
@@ -218,9 +231,9 @@
 									<aon:lookupButton 
 										windowTitle="#{supplierBundle.supplier_new}"
 										selectReRender="Supplier_id,Supplier_name,Invoice_document,invoiceDetails,aonToolbar"
+										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										lookup="#{supplierLookup}" actionType="new" 
-										minWidth="650" 
-										minHeight="600"
+										minWidth="650" minHeight="600"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										property="#{invoiceEntry.header.registry}"
 										lookupProperty="registry">
@@ -237,11 +250,13 @@
 									<aon:lookupInputText id="Creditor_id" lookup="#{creditorLookup}"
 										reRender="Creditor_name,Invoice_document,invoiceDetails"
 										lookupProperty="registry" ajaxSingle="false"
+										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										value="#{invoiceEntry.header.registry.id}" size="5" />
 									<aon:lookupButton
 										windowTitle="#{financeBundle.finance_creditor_selection}"
 										selectReRender="Creditor_id,Creditor_name,Invoice_document,invoiceDetails"
+										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										actionType="search" lookup="#{creditorLookup}" minHeight="460"
 										minWidth="650" property="#{invoiceEntry.header.registry}"
@@ -251,8 +266,8 @@
 										windowTitle="#{financeBundle.finance_creditor_new}"
 										selectReRender="Creditor_id,Creditor_name,Invoice_document,invoiceDetails,aonToolbar"
 										lookup="#{creditorLookup}" actionType="new" 
-										minWidth="650" 
-										minHeight="550"
+										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
+										minWidth="650" minHeight="550"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										property="#{invoiceEntry.header.registry}"
 										lookupProperty="registry">
