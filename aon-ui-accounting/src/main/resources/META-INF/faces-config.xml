@@ -17,30 +17,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- **************** ACCOUNT LISTENERS ************************** -->
-	<managed-bean>
-		<managed-bean-name>accountListeners</managed-bean-name>
-	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<list-entries>
-			<value-class>
-				com.code.aon.ui.form.event.IControllerListener
-			</value-class>
-			<value>#{accountControllerListener}</value>
-			<value>#{accountAppParamsControllerListener}</value>
-		</list-entries>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>accountControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.accounting.event.AccountControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>accountAppParamsControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.accounting.event.AccountAppParamsControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
 	<!-- **************** ACCOUNTING PERIOD ************************** -->
 	<managed-bean>
 		<managed-bean-name>accPeriod</managed-bean-name>
@@ -124,6 +100,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
+	<!-- ************ ACCOUNT LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>aon_ui_accounting_accountControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.accounting.event.AccountControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 	<!-- **************** AUTOMATIC CONCEPTS ************************** -->
 	<managed-bean>
 		<managed-bean-name>autConcept</managed-bean-name>
@@ -210,7 +193,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>-1</value>
+			<value>100</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -390,7 +373,7 @@
 		<managed-bean-name>accAppParams</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.accounting.controller.AccountAppParamsController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
+ 		<managed-property>
 			<property-name>defaultParameters</property-name>
 			<map-entries>
 				<key-class>java.lang.String</key-class>
@@ -449,15 +432,15 @@
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_VAT_PERCENT</key>
-					<value></value>
+					<value>[NULL]</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_RETENTION_PERCENT</key>
-					<value></value>
+					<value>[NULL]</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_INVOICE_SERIES</key>
-					<value></value>
+					<value>[NULL]</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>

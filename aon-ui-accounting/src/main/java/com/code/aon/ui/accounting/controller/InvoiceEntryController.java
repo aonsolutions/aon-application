@@ -1,5 +1,7 @@
 package com.code.aon.ui.accounting.controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -785,6 +787,14 @@ public class InvoiceEntryController {
 			invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
 			invoiceDetail.setInvoice(invoice);
 			invoiceDetail.setItem(null);
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("Fra. Nº: ");
+			sb.append(invoice.getReferenceCode());
+			sb.append(" del ");
+			sb.append( getDateFormatter().format(  invoice.getIssueDate() ) );
+			invoiceDetail.setDescription( sb.toString() );
+			
 			invoiceDetail.setSource(InvoiceSource.ACCOUNT);
 			invoiceDetail.setWorkPlace(obtainWorkPlace());
 			invoiceDetail.setTaxableBase(detail.getTaxableBase());
@@ -794,6 +804,10 @@ public class InvoiceEntryController {
 			insertInvoiceTaxes(invoiceDetail, detail);
 			insertInvoiceAccounts(invoiceDetail, detail);
 		}
+	}
+
+	private DateFormat getDateFormatter() {
+		return new SimpleDateFormat("dd/MM/yyyy");
 	}
 
 	private WorkPlace obtainWorkPlace() throws ManagerBeanException {

@@ -38,6 +38,14 @@ public class AccountAppParamsController{
 
 	public void setDefaultParameters(Map<String, String> defaultParameters) {
 		this.defaultParameters = defaultParameters;
+		if (defaultParameters != null) {
+			for (String key : defaultParameters.keySet()) {
+				String value = defaultParameters.get(key);
+				if ("[NULL]".equals(value)) {
+					defaultParameters.put(key,null);	
+				}
+			}
+		}
 	}
 
 	public void onAccept(ActionEvent event) throws ManagerBeanException{

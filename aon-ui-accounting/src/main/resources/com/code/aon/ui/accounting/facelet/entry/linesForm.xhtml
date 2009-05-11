@@ -12,17 +12,18 @@
 		<aon:div rendered="#{!accountEntry.new}">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-				<ui:param name="rows" value="0" />
-				<ui:param name="showDataScroller" value="false" />
+				<ui:param name="rows" value="100" />
+
 				<ui:param name="controller" value="#{accountEntryDetail}" />
 				<ui:param name="skipLineEdition" value="#{!accountEntry.manual}" />
 				<ui:param name="skipResetButton" value="#{!accountEntry.manual}" />
-				
+
 				<ui:define name="columns">
 
 					<f:facet name="footer">
 						<rich:columnGroup rendered="#{accountEntryDetail.new}">
-							<aon:column colspan="#{accountEntry.manual?'3':'2'}" style="background-color: white;">
+							<aon:column colspan="#{accountEntry.manual?'3':'2'}"
+								style="background-color: white;">
 								<aon:outputText value="&#160;" />
 							</aon:column>
 							<aon:column style="background-color: white;">
@@ -45,12 +46,13 @@
 						</rich:columnGroup>
 					</f:facet>
 
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto aon-nowrap">
+					<aon:column
+						styleClass="aon-editDataTable-textColumn aon-width-auto aon-nowrap">
 						<f:facet name="header">
 							<aon:outputText value="#{accountBundle.account_account}" />
 						</f:facet>
 
- <!-- 						
+						<!-- 						
 						<aon:div style="width: 90%;" 
 							rendered="#{to!=accountEntryDetail.to}" styleClass="aon-nowrap"> 
 							<aon:panelGroup styleClass="aon-bold">
@@ -63,21 +65,20 @@
 								</aon:outputText>
 							</aon:panelGroup>
 						</aon:div>
- -->						
+ -->
 
 						<aon:div style="width: 90%;"
-							rendered="#{to!=accountEntryDetail.to}" styleClass="aon-nowrap"> 
-							
+							rendered="#{to!=accountEntryDetail.to}" styleClass="aon-nowrap">
+
 							<aon:div style="width: 100px;float: left;">
-								<aon:outputText value="#{to.account.id}"/>
+								<aon:outputText value="#{to.account.id}" />
 							</aon:div>
-							
+
 							<aon:outputText value="#{to.account.description}"
-								styleClass="aon-italic" 
-								style="font-size: 0.9em">
-								<aon:abbreviateConverter maxWidth="50" />							
+								styleClass="aon-italic" style="font-size: 0.9em">
+								<aon:abbreviateConverter maxWidth="50" />
 							</aon:outputText>
-							
+
 						</aon:div>
 
 						<ui:include
@@ -88,11 +89,13 @@
 							<ui:param name="size" value="12" />
 							<ui:param name="maxlength" value="12" />
 							<ui:param name="renderDescription" value="#{true}" />
-							<ui:param name="renderedAttr" value="#{to==accountEntryDetail.to}" />
+							<ui:param name="renderedAttr"
+								value="#{to==accountEntryDetail.to}" />
 							<ui:param name="disabled" value="#{false}" />
 							<ui:param name="reRenderAttr" value="none" />
 							<ui:param name="entity" value="#{accountEntryDetail.to.account}" />
-							<ui:param name="ELExpression" value="accountEntryDetail.to.account" />
+							<ui:param name="ELExpression"
+								value="accountEntryDetail.to.account" />
 						</ui:include>
 						<f:facet name="footer">
 							<ui:include
@@ -107,7 +110,8 @@
 								<ui:param name="disabled" value="#{false}" />
 								<ui:param name="reRenderAttr" value="none" />
 								<ui:param name="entity" value="#{accountEntryDetail.to.account}" />
-								<ui:param name="ELExpression" value="accountEntryDetail.to.account" />
+								<ui:param name="ELExpression"
+									value="accountEntryDetail.to.account" />
 							</ui:include>
 						</f:facet>
 					</aon:column>
@@ -143,20 +147,23 @@
 							<f:validateDoubleRange />
 						</aon:inputText>
 						<f:facet name="footer">
-								<aon:div styleClass="aon-italic" style="text-align:right; font-weight:bold;">
-									<aon:inputText value="#{accountEntryDetail.to.debit}"
-										rendered="#{accountEntryDetail.new}" required="true" size="10">
-										<f:validateDoubleRange />
-										<a4j:support event="onkeyup"
-											onsubmit="if(event.keyCode != 120) return false;"
-											eventsQueue="debitKeyUp" ignoreDupResponses="true"
-											requestDelay="100" actionListener="#{accountEntryDetail.onBalanceAmount}">
-										</a4j:support>
-									</aon:inputText>
-									<aon:outputText value="#{accountEntry.totalDebit}" rendered="#{!accountEntryDetail.new}">
-										<f:convertNumber pattern="#,##0.00" />
-									</aon:outputText>
-								</aon:div>
+							<aon:div styleClass="aon-italic"
+								style="text-align:right; font-weight:bold;">
+								<aon:inputText value="#{accountEntryDetail.to.debit}"
+									rendered="#{accountEntryDetail.new}" required="true" size="10">
+									<f:validateDoubleRange />
+									<a4j:support event="onkeyup"
+										onsubmit="if(event.keyCode != 120) return false;"
+										eventsQueue="debitKeyUp" ignoreDupResponses="true"
+										requestDelay="100"
+										actionListener="#{accountEntryDetail.onBalanceAmount}">
+									</a4j:support>
+								</aon:inputText>
+								<aon:outputText value="#{accountEntry.totalDebit}"
+									rendered="#{!accountEntryDetail.new}">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</aon:div>
 						</f:facet>
 					</aon:column>
 
@@ -174,15 +181,17 @@
 							<f:validateDoubleRange />
 						</aon:inputText>
 						<f:facet name="footer">
-								<aon:div styleClass="aon-italic" style="text-align:right; font-weight:bold;">
-							<aon:inputText value="#{accountEntryDetail.to.credit}"
-								rendered="#{accountEntryDetail.new}" required="true" size="10">
-								<f:validateDoubleRange />
-							</aon:inputText>
-									<aon:outputText value="#{accountEntry.totalCredit}" rendered="#{!accountEntryDetail.new}">
-										<f:convertNumber pattern="#,##0.00" />
-									</aon:outputText>
-								</aon:div>
+							<aon:div styleClass="aon-italic"
+								style="text-align:right; font-weight:bold;">
+								<aon:inputText value="#{accountEntryDetail.to.credit}"
+									rendered="#{accountEntryDetail.new}" required="true" size="10">
+									<f:validateDoubleRange />
+								</aon:inputText>
+								<aon:outputText value="#{accountEntry.totalCredit}"
+									rendered="#{!accountEntryDetail.new}">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</aon:div>
 						</f:facet>
 					</aon:column>
 
@@ -201,10 +210,12 @@
 							<ui:param name="size" value="12" />
 							<ui:param name="maxlength" value="12" />
 							<ui:param name="renderDescription" value="#{false}" />
-							<ui:param name="renderedAttr" value="#{to==accountEntryDetail.to}" />
+							<ui:param name="renderedAttr"
+								value="#{to==accountEntryDetail.to}" />
 							<ui:param name="disabled" value="#{false}" />
 							<ui:param name="reRenderAttr" value="none" />
-							<ui:param name="entity" value="#{accountEntryDetail.to.balancingAccount}" />
+							<ui:param name="entity"
+								value="#{accountEntryDetail.to.balancingAccount}" />
 							<ui:param name="ELExpression"
 								value="accountEntryDetail.to.balancingAccount" />
 						</ui:include>
@@ -220,7 +231,8 @@
 								<ui:param name="renderedAttr" value="#{accountEntryDetail.new}" />
 								<ui:param name="disabled" value="#{false}" />
 								<ui:param name="reRenderAttr" value="none" />
-								<ui:param name="entity" value="#{accountEntryDetail.to.balancingAccount}" />
+								<ui:param name="entity"
+									value="#{accountEntryDetail.to.balancingAccount}" />
 								<ui:param name="ELExpression"
 									value="accountEntryDetail.to.balancingAccount" />
 							</ui:include>
