@@ -31,7 +31,10 @@ import com.code.aon.common.enumeration.SecurityLevel;
 @Table(name = "account_budget_detail")
 public class AccountBudgetDetail implements ITransferObject {
 	
-	// private static final long serialVersionUID = -8220548741479656597L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5647680939634585971L;
 
 	/** The id. */
 	private Integer id;
