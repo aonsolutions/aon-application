@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
@@ -50,6 +52,8 @@ public class WebInfoPageDetail implements ITransferObject {
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn( name="web_info_page",nullable=false )
+    @ForeignKey(name = "FK_WEB_INFO_PAGE_DETAIL_WEB_INFO_PAGE")
+    @Index(name = "IDX_WEB_INFO_PAGE_DETAIL_WEB_INFO_PAGE")	
 	public WebInfoPage getWebInfoPage() {
 		return webInfoPage;
 	}

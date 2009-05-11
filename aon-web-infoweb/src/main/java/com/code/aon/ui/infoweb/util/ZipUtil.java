@@ -16,13 +16,13 @@ import com.code.aon.ui.util.AonUtil;
 
 public class ZipUtil {
 	
-	static final int BUFFER = 2048;
+	private static final int BUFFER = 2048;
 
-	static final int GEN_INFO = 1;
+	private static final int GEN_INFO = 1;
 
-	static final int GEN_ERROR = 2;
+	private static final int GEN_ERROR = 2;
 
-	static final int GEN_WARN = 3;
+	private static final int GEN_WARN = 3;
 
 	public static boolean uncompressZipFile(String source_zip_file, String destination_folder, String file_content) {
 		File szf = new File(source_zip_file); 

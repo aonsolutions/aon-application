@@ -11,17 +11,17 @@ import com.code.aon.company.Company;
 import com.code.aon.infoweb.WebInfo;
 import com.code.aon.infoweb.dao.IWebInfoAlias;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 
 public class CompanyWebInfoController extends BasicController {
 	
-	private static final String COMPANY_CONTROLLER_NAME = "company";
-
 	@SuppressWarnings({"unchecked", "unused"})
 	public void onLoadWebInfo(ActionEvent event) throws ManagerBeanException{
-		IController companyController = (IController) FormUtil.getController(COMPANY_CONTROLLER_NAME);
+		IController companyController = (IController) FormUtil.getController(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 		Company company = ((Company)companyController.getTo());
 		IManagerBean webInfoBean = BeanManager.getManagerBean(WebInfo.class);
 		Criteria criteria = new Criteria();
@@ -37,4 +37,12 @@ public class CompanyWebInfoController extends BasicController {
 			this.setNew(true);
 		}
 	}
+	
+	public void onInit(ActionEvent event) {
+		CompanyController companyController = (CompanyController) FormUtil.getController(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		if(companyController.getTo() == null){
+			companyController.onLoad(event);
+		}
+	}
+	
 }
