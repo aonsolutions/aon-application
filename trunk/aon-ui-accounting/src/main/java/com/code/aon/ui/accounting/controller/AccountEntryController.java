@@ -11,6 +11,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.ListDataModel;
 
+import com.code.aon.account.bridge.AccountEntryFinanceBatch;
+import com.code.aon.account.bridge.AccountEntryFinanceTracking;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.InvoiceDetailAccount;
 import com.code.aon.account.bridge.LeasingAccount;
@@ -56,6 +58,8 @@ public class AccountEntryController extends BasicController {
 	private static final Logger LOGGER = Logger.getLogger(AccountEntryController.class.getName());
 	
 	private static final String INVOICE_ENTRY_CONTROLLER_NAME = "invoiceEntry";
+	
+	private static final String FINANCE_ENTRY_CONTROLLER_NAME = "financeEntry";
 	
 	private static final String EXPENSE_ENTRY_CONTROLLER_NAME = "expenseEntry";
 	
@@ -106,6 +110,10 @@ public class AccountEntryController extends BasicController {
 				entry.getType().equals(AccountEntryType.EXPENSE_INVOICE)){
 			loadInvoiceEntryController(entry);
 		}
+		if(entry.getType().equals(AccountEntryType.PAYMENT) ||
+				entry.getType().equals(AccountEntryType.COLLECTION)){
+			loadFinanceEntryController(entry);
+		}
 		if(entry.getType().equals(AccountEntryType.EXPENSES)){
 			loadExpenseEntryController(entry);
 		}
@@ -145,6 +153,10 @@ public class AccountEntryController extends BasicController {
 			entry.getType() == AccountEntryType.PURCHASE_INVOICE ||
 			entry.getType() == AccountEntryType.EXPENSE_INVOICE){
 			return "account_invoice_entry";
+		}
+		if(entry.getType().equals(AccountEntryType.PAYMENT) ||
+				entry.getType().equals(AccountEntryType.COLLECTION)){
+			return "account_finance_entry";
 		}
 		if(entry.getType() == AccountEntryType.EXPENSES){
 			return "account_expense_entry";
@@ -219,6 +231,51 @@ public class AccountEntryController extends BasicController {
 				invoiceEntryController.setHeader(header);
 				invoiceEntryController.setFinances(new ListDataModel(obtainFinances(accountEntryInvoice.getInvoice())));
 				invoiceEntryController.setDetails(new ListDataModel(obtainDetails(accountEntryInvoice.getInvoice())));
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error loading InvoiceEntryController", e);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void loadFinanceEntryController(AccountEntry entry) {
+		try {
+			FinanceEntryController financeEntryController = (FinanceEntryController)AonUtil.getRegisteredBean(FINANCE_ENTRY_CONTROLLER_NAME);
+			financeEntryController.onReset(null);
+			financeEntryController.setNew(false);
+
+			IManagerBean accountEntryFBatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(accountEntryFBatchBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_BATCH_ACCOUNT_ENTRY_ID), entry.getId());
+			Iterator iter = accountEntryFBatchBean.getList(criteria).iterator();
+			if (iter.hasNext()) {
+				String msg = "Asiento generado automáticamente. No se puede modificar.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			} else {
+				financeEntryController.setAccountEntry(entry);
+				financeEntryController.setPayment(entry.getType().equals(AccountEntryType.PAYMENT) ? true : false);
+				financeEntryController.setDate(entry.getEntryDate());
+				IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
+				criteria.addOrder(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ID), false);
+				iter = accountEntryDetailBean.getList(criteria).iterator();
+				if (iter.hasNext()) {
+					AccountEntryDetail accountEntryDetail = (AccountEntryDetail)iter.next();
+					financeEntryController.setRegistryBank(obtainRBank(accountEntryDetail.getAccount().getId()));
+					financeEntryController.setConcept(accountEntryDetail.getConcept());
+				}
+
+				IManagerBean accountEntryFTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(accountEntryFTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY_ID), entry.getId());
+				iter = accountEntryFTrackingBean.getList(criteria).iterator();
+				while (iter.hasNext()) {
+					AccountEntryFinanceTracking accountEntryFinanceTracking = (AccountEntryFinanceTracking)iter.next();
+					((List)financeEntryController.getLines().getWrappedData()).add(accountEntryFinanceTracking.getFinanceTracking().getFinance());
+				}
+				financeEntryController.loadAvailableFinances(financeEntryController.getPayment());
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error loading InvoiceEntryController", e);
