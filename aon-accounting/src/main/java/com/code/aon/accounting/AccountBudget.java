@@ -1,7 +1,5 @@
 package com.code.aon.accounting;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -41,16 +39,7 @@ public class AccountBudget implements ITransferObject {
     /** The security level. */
     private SecurityLevel securityLevel;
 
-    /** The entry date. */
-    private Date date;
-
-    /** The debit. */
-	private double debit;
-	
-	/** The credit. */
-	private double credit;
-
-	/**
+    /**
 	 * Gets the id.
 	 * 
 	 * @return the id
@@ -131,62 +120,5 @@ public class AccountBudget implements ITransferObject {
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
 	}
-
-    /**
-     * Gets the entry date.
-     * 
-     * @return the entry date
-     */
-    @Column(name="entry_date")
-    @Temporal(TemporalType.DATE)
-    public Date getDate() {
-        return date;
-    }
-
-    /**
-     * Sets the entry date.
-     * 
-     * @param entryDate the entry date
-     */
-    public void setDate(Date dateate) {
-        this.date = dateate;
-    }
-
-    /**
-     * Gets the debit.
-     * 
-     * @return the debit
-     */
-    @Column(nullable=true)
-    public double getDebit() {
-        return debit;
-    }
-
-    /**
-     * Sets the debit.
-     * 
-     * @param debit the debit
-     */
-    public void setDebit(double debit) {
-        this.debit = debit;
-    }
-
-	/**
-	 * Gets the credit.
-	 * 
-	 * @return the credit
-	 */
-    @Column(nullable=true)
-	public double getCredit() {
-		return credit;
-	}
-
-	/**
-	 * Sets the credit.
-	 * 
-	 * @param credit the credit
-	 */
-	public void setCredit(double credit) {
-		this.credit = credit;
-	}
+	
 }
