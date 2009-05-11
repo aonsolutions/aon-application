@@ -43,7 +43,35 @@
 			<param id="reportTitle" value="#{budgetedProfitAndLossReport.getReportTitle}" />
 		</params>
 	</report>
-
+	
+	<!--  LISTADO DE CUENTAS CON PRESUPUESTO -->
+	<report id="budgetList" description="BudgetList">
+		<template path="/com/code/aon/ui/accounting/report/budgetList.jasper"/>
+		<bean key="com.code.aon.accounting.AccountBudget" />
+		<criteria provider="#{accountBudget}"/>
+		<fetch-mode paginated="true" page-count="5000" virtualizer-max-size="1000" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="creditTotal" value="#{accountBudget.getCreditTotal}" />
+			<param id="debitTotal" value="#{accountBudget.getDebitTotal}" />
+		</params>
+	</report>
+	
+	<!--  LISTADO DETALLADO DE CUENTAS CON PRESUPUESTO -->
+	<report id="budgetDetailList" description="BudgetDetailList">
+		<template path="/com/code/aon/ui/accounting/report/budgetDetailList.jasper"/>
+		<bean key="com.code.aon.accounting.AccountBudgetDetail" />
+		<criteria provider="#{accountBudgetDetail}"/>
+		<fetch-mode paginated="true" page-count="5000" virtualizer-max-size="1000" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="debitTotal" value="#{accountBudget.getDebitTotal}" />
+			<param id="monthNames" value="#{accountBudget.getMonthNames()}" />
+		</params>
+	</report>
+	
 	<!--  EXTRACTO DE CUENTA -->
 	<report id="statement" description="Account Statement">
 		<template path="/com/code/aon/ui/accounting/report/statement.jasper"/>

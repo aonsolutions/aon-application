@@ -12,7 +12,7 @@
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
 				<ui:param name="toolbarTitle"
 					value="#{accountingBundle.accounting_account_budget_module}" />
-				<ui:param name="accountBudget" value="#{accountBudget}" />
+				<ui:param name="controller" value="#{accountBudget}" />
 			</ui:include>
 
 			<ui:decorate
@@ -21,10 +21,29 @@
 				<ui:param name="controller" value="#{accountBudget}" />
 
 				<ui:define name="searchContent">
-					<aon:outputLabel for="AccountBudget_account_id"
-						value="#{bundle.aon_id}" />
-					<aon:inputText id="AccountBudget_account_id" size="50"
-						valueChangeListener="#{accountBudget.addExpression}" />
+						
+					<aon:outputLabel for="accountId"
+						value="#{accountBundle.account_account}" />
+					<ui:decorate 
+						template="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
+						<ui:param name="wizard" value="#{accountWizard}" />
+						<ui:param name="id" value="accountId" />
+						<ui:param name="size" value="12" />
+						<ui:param name="maxlength" value="12" />
+						<ui:param name="renderDescription" value="true" />
+						<ui:param name="renderedAttr" value="true" />
+						<ui:param name="disabled" value="false" />
+						<ui:param name="reRenderAttr" value="none" />
+						<ui:param name="entity" value="#{accountBudget.account}" />
+						<ui:param name="ELExpression" value="accountBudget.account" />
+					</ui:decorate>
+
+					<aon:outputLabel for="AccountBudget_period"
+						value="#{accountingBundle.accounting_period}" />
+					<aon:selectOneMenu id="AccountBudget_period" 
+						valueChangeListener="#{accountBudget.addExpression}" >
+						<f:selectItems value="#{accountingCollections.accountPeriodKeys}" />
+					</aon:selectOneMenu>
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
