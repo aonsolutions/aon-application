@@ -10,10 +10,13 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -37,7 +40,6 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.infoweb.util.FTPUtil;
@@ -50,14 +52,18 @@ import com.code.aon.ui.util.AonUtil;
 
 public class GeneratorController extends BasicController implements VelocityConstants  {
 
+	private static final Logger LOGGER = Logger.getLogger(GeneratorController.class.getName());
+	
 	private VelocityUtil vu = new VelocityUtil();
 	
-	private boolean generate = false;
+	private boolean published;
 	
-	private String webPage = "";
+	private String webPage;
 	
 	public void onGenerate(ActionEvent event) throws ManagerBeanException {
 		String dominio = null;
+		this.published = false;
+		this.webPage = null;
 		String template_path = TEMPLATE_PATH;
 		String temporal_path = TEMPORAL_PATH + "/" + System.currentTimeMillis() + "";
 		String images_temporal_path = temporal_path + "/images";
@@ -79,7 +85,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 					template = ap.getValue();
 				}
 			} catch (ManagerBeanException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, e.getMessage(), e );
 			}
 			vu.setTemplate(template);
 			String current_template_path = TEMPLATE_PATH + "/" + template;
@@ -181,26 +187,18 @@ public class GeneratorController extends BasicController implements VelocityCons
 				Iterator<RegistryMedia> mediaList = company.getMedias().iterator();
 				while (mediaList.hasNext()) {
 					RegistryMedia m = (RegistryMedia)mediaList.next();
-					if (m.getMediaType() == MediaType.EMAIL) {
-						vu.put("email", m.getValue());
-					}
-					else if (m.getMediaType() == MediaType.WEB) {
-						try {
-							URL web = new URL(m.getValue());
-							dominio = web.getHost();
-							if (dominio.indexOf(".") != dominio.lastIndexOf(".")) {
-								dominio = dominio.substring(dominio.indexOf(".") + 1);
-							}
-						} catch (MalformedURLException e) {
-							AonUtil.addWarningMessage("WARNING: La url de la pagina web no tiene el formato correcto (http://www.midominio.com).");
-							e.printStackTrace();
-						}
-					}
-					else if (m.getMediaType() == MediaType.FIXED_PHONE) {
-						vu.put("phone", m.getValue());
-					}
-					else if (m.getMediaType() == MediaType.FAX) {
-						vu.put("fax", m.getValue());
+					switch (m.getMediaType()) {
+						case WEB:
+							dominio = getDomain(m.getValue());
+							break;
+						case EMAIL:
+							vu.put("email", m.getValue());
+						case FIXED_PHONE:
+							vu.put("phone", m.getValue());
+							break;
+						case FAX:
+							vu.put("fax", m.getValue());
+							break;
 					}
 				}
 				companyBean = null;
@@ -293,10 +291,20 @@ public class GeneratorController extends BasicController implements VelocityCons
 					pagename = "index";
 					isIndex = true;
 				}
-				if (wip.getType() == WebInfoPageType.CONTACT) generatePage("contact.vm", pagename );
-				else if (wip.getType() == WebInfoPageType.GENERIC) generateGenericPage(wip, isIndex);
-				else if (wip.getType() == WebInfoPageType.LOCATION) generateGenericPage(wip, isIndex);
-				else if (wip.getType() == WebInfoPageType.GALLERY) generateGalleryPage(wip, isIndex);
+				switch (wip.getType()) {
+					case CONTACT:
+						generatePage("contact.vm", pagename );
+						break;
+					case GENERIC:
+						generateGenericPage(wip, isIndex);
+						break;
+					case LOCATION:
+						generateGenericPage(wip, isIndex);
+						break;
+					case GALLERY:
+						generateGalleryPage(wip, isIndex);
+						break;
+				}
 			}
 
 			//Parseamos los estilos
@@ -310,17 +318,11 @@ public class GeneratorController extends BasicController implements VelocityCons
 
 				if (wivt == WebInfoVariableType.FONT) {
 					value = getFontType(wis);
-				}
-				else {
-					if (wivt == WebInfoVariableType.IMAGE) {
-						value = getImage(wis);
-						copyImageToCss(temporal_path, value);
-					}
-					else {
-						if (wivt == WebInfoVariableType.BORDER || wivt == WebInfoVariableType.SIZE) {
-							value = value + "px";
-						}
-					}
+				} else if (wivt == WebInfoVariableType.IMAGE) {
+					value = getImage(wis);
+					copyImageToCss(temporal_path, value);
+				} else if (wivt == WebInfoVariableType.BORDER || wivt == WebInfoVariableType.SIZE) {
+					value = value + "px";
 				}
 				vu.put(name, value);
 				vu.put(name.toLowerCase(), value);
@@ -331,28 +333,26 @@ public class GeneratorController extends BasicController implements VelocityCons
 			vu.copyDir(current_template_path + "/css/images", temporal_path + "/css");
 			vu.copyDir(current_template_path + "/css/img", temporal_path + "/css");
 			vu.copyDir(current_template_path + "/images", temporal_path + "/");
+
+			AonUtil.addInfoMessage("OK: La web ha sido generada." );
 			
 			//Subimos por FTP
 			try {
 				if (dominio != null) {
+					webPage = "http://www." + dominio + "/";					
 					FTPUtil.uploadFTP(temporal_path, "/" + dominio + "/WEBSITES/www." + dominio + "/", "192.168.3.47");
-					webPage = "http://www." + dominio + "/";
+					this.published = true;
 				}
-				generate = true;
-				AonUtil.addInfoMessage("OK: La web ha sido generada." );
-			}
-			catch (Exception e) {
-				e.printStackTrace();
+			} catch (Throwable th) {
+				LOGGER.log(Level.SEVERE, th.getMessage(), th );
 				AonUtil.addErrorMessage("ERROR: Se ha producido un error durante la publicacion de la pagina.");
 			}
-		}
-		catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th );
 			AonUtil.addErrorMessage("ERROR: Se ha producido un error durante la generacion de los contenidos.");
-		} 
-		finally {
+		} finally {
 			HibernateUtil.setCloseSession(true);
-			HibernateUtil.closeSession();
+			HibernateUtil.closeSession(HibernateUtil.getSessionFactoryName());
 		}
 		
 	}
@@ -361,7 +361,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		try {
 			vu.copyFile(temporal_path + "/images/"+value+"", temporal_path + "/css/images/"+value+"");
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e );
 		}
 		
 	}
@@ -397,8 +397,9 @@ public class GeneratorController extends BasicController implements VelocityCons
 					else vu.put("coords"+num, coords);
 					num++;
 				}
+			} else {
+				vu.put("coords", wipd.getExtra());
 			}
-			else vu.put("coords", wipd.getExtra());
 		}
 		
 		//Ahora las imagenes
@@ -496,51 +497,78 @@ public class GeneratorController extends BasicController implements VelocityCons
     }
 
 	public String getFontType(WebInfoStyle style) {
-		try {
-			if (Integer.parseInt(style.getValue()) == WebInfoFontType.ARIAL.ordinal()) {
-				return WebInfoFontType.ARIAL.getValue();
+		if ( NumberUtils.isNumber(style.getValue()) ) {
+			try {
+				int value = Integer.parseInt(style.getValue());
+				if ( value == WebInfoFontType.ARIAL.ordinal()) {
+					return WebInfoFontType.ARIAL.getValue();
+				}
+				if (value == WebInfoFontType.TIMES.ordinal()) {
+					return WebInfoFontType.TIMES.getValue();
+				}
+				if (value == WebInfoFontType.TREBUCHET.ordinal()) {
+					return WebInfoFontType.TREBUCHET.getValue();
+				}
+				if (value == WebInfoFontType.VERDANA.ordinal()) {
+					return WebInfoFontType.VERDANA.getValue();
+				}
+			} catch (NumberFormatException n) {
+				LOGGER.log(Level.SEVERE, n.getMessage(), n );
 			}
-			if (Integer.parseInt(style.getValue()) == WebInfoFontType.TIMES.ordinal()) {
-				return WebInfoFontType.TIMES.getValue();
-			}
-			if (Integer.parseInt(style.getValue()) == WebInfoFontType.TREBUCHET.ordinal()) {
-				return WebInfoFontType.TREBUCHET.getValue();
-			}
-			if (Integer.parseInt(style.getValue()) == WebInfoFontType.VERDANA.ordinal()) {
-				return WebInfoFontType.VERDANA.getValue();
-			}
-
-		} catch (NumberFormatException n) {
-			n.printStackTrace();
 		}
 		return "Verdana";
 	}
 
 	public String getImage(WebInfoStyle style) {
 		String filename = "blank.jpg";
-		try {
-			IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
-			Criteria attachCriteria = new Criteria();
-			attachCriteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_ID), Integer.parseInt(style.getValue()));
-			List<ITransferObject> attachList = (List<ITransferObject>)attachBean.getList(attachCriteria);
-			if (attachList.size() > 0) {
-				RegistryAttachment ra = (RegistryAttachment)attachList.get(0);
-				filename = ra.getDescription() + "." + ra.getMimeType().getExtension();
+		if ( NumberUtils.isNumber(style.getValue()) ) {
+			try {
+				IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
+				Criteria attachCriteria = new Criteria();
+				attachCriteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_ID), Integer.parseInt(style.getValue()));
+				List<ITransferObject> attachList = (List<ITransferObject>)attachBean.getList(attachCriteria);
+				if (attachList.size() > 0) {
+					RegistryAttachment ra = (RegistryAttachment)attachList.get(0);
+					filename = ra.getDescription() + "." + ra.getMimeType().getExtension();
+				}
+			} catch (Throwable th) {
+				LOGGER.log(Level.SEVERE, th.getMessage(), th );
 			}
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		} catch (NumberFormatException n) {
 		}
 		return filename;
 	}
 
-	public boolean isGenerate() {
-		return generate;
+	public boolean isPublished() {
+		return published;
 	}
 
 	public String getWebPage() {
 		return webPage;
 	}
 
+	private String getDomain( String value ) {
+		String domain = null;
+		URL web = null;
+		try {
+			web = new URL(value);
+		} catch (MalformedURLException e) {
+			if (! value.startsWith("http://") ) {
+				try {
+					web = new URL("http://" +value);
+				} catch (MalformedURLException e1) {
+					LOGGER.log(Level.WARNING, e1.getMessage(), e1 );
+				}
+			}
+		}
+		if ( web != null ) {
+			domain = web.getHost();
+			if (domain.indexOf(".") != domain.lastIndexOf(".")) {
+				domain = domain.substring(domain.indexOf(".") + 1);
+			}
+		} else {
+			AonUtil.addWarningMessage("WARNING: La url de la pagina web no tiene el formato correcto (http://www.midominio.com).");			
+		}
+		return domain;
+	}
 
 }

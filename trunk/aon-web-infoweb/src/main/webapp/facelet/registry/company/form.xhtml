@@ -28,7 +28,7 @@
 							actionListener="#{generator.onGenerate}"/>
 						<h:outputLink id="web" value="#{generator.webPage}" target="_new"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							rendered="#{generator.generate}">
+							rendered="#{generator.published}">
 							<aon:outputText value="#{appBundle.infoweb_view}"/>
 						</h:outputLink>
 					</aon:div>
