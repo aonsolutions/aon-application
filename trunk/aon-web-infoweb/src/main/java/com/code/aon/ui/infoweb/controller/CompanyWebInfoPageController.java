@@ -43,7 +43,7 @@ public class CompanyWebInfoPageController extends BasicController {
 
 	public boolean newResource;
 	
-	public String rattachId;
+	public Integer rattachId;
 
 	public ListDataModel resources;
 	
@@ -211,10 +211,9 @@ public class CompanyWebInfoPageController extends BasicController {
 	@SuppressWarnings("unused")
 	public void onSelectResource(ActionEvent event) {
 		WebInfoPageResource wipr = (WebInfoPageResource)this.resources.getRowData();
-		resource = wipr;
-		rattachId = ""+resource.getRattach().getId();
+		resource = wipr; 
+		rattachId = (resource.getRattach() != null) ? resource.getRattach().getId() : null;
 		setNewResource(false);
-		LOGGER.fine(">>>>>>>>>>>> RESOURCE: " + resource.getContent() + " WITH IMAGE " + resource.getRattach().getId() + " SELECTED.");
 	}
 
 	/* (non-Javadoc)
@@ -226,7 +225,7 @@ public class CompanyWebInfoPageController extends BasicController {
 			LOGGER.fine(">>>>>> INSERTANDO EN BASE DE DATOS " + resource.getContent() + " CON LA IMAGEN "+ rattachId + ".");
 			resource.setWebInfoPage(current);
 			RegistryAttachment ra = new RegistryAttachment();
-			ra.setId(Integer.parseInt(rattachId));
+			ra.setId(rattachId);
 			resource.setRattach(ra);
 			if (resource.getId() != null) wiprBean.update(resource);
 			else wiprBean.insert(resource);
@@ -259,10 +258,7 @@ public class CompanyWebInfoPageController extends BasicController {
 		List<ITransferObject> list = rattachBean.getList(criteria);
 		for (int i=0; i <list.size(); i++) {
 			RegistryAttachment rattach = (RegistryAttachment)list.get(i);
-			Integer id = rattach.getId();
-			String name = rattach.getDescription();
-			LOGGER.fine(">>>>>>>>>>>>>> " + id + " --- " + name + " <<<<<<<<<<<<<<<<");
-			SelectItem item = new SelectItem(id, name);
+			SelectItem item = new SelectItem(rattach.getId(), rattach.getDescription());
 			images.add(item);
 		}
 		return images;
@@ -288,13 +284,11 @@ public class CompanyWebInfoPageController extends BasicController {
 		this.newResource = newResource;
 	}
 
-	public String getRattachId() {
-		LOGGER.fine(">>>>>>>>>>>>>> GETTING RATTACH ID: " + rattachId);
+	public Integer getRattachId() {
 		return rattachId;
 	}
 
-	public void setRattachId(String rattachId) {
-		LOGGER.fine(">>>>>>>>>>>>>> SETTING RATTACH ID: " + rattachId);
+	public void setRattachId(Integer rattachId) {
 		this.rattachId = rattachId;
 	}
 
