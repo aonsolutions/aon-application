@@ -5,20 +5,21 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
 		<aon:form id="companyImagesForm">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{appBundle.infoweb_images}" />
+				<ui:param name="toolbarTitle" value="#{companyBundle.company_images_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 			</ui:include>
 			
-			<aon:panel styleClass="aon-content-home">
-				<aon:panelGrid cellpadding="5" cellspacing="0" border="0" columns="2"
-					styleClass="aon-noborder"
-					columnClasses="aon-midle-width  aon-vertical-align-top,aon-midle-width aon-vertical-align-top" id="imagesPanel">	
+			<aon:div styleClass="aon-scroll-area">			
+				<aon:panelGrid id="imagesPanel"
+					cellpadding="5" cellspacing="0" border="0" columns="2" styleClass="aon-noborder"
+					columnClasses="aon-midle-width  aon-vertical-align-top,aon-midle-width aon-vertical-align-top">	
 					<aon:div styleClass="aon-width-300">
 						<aon:editDataTable id="companyImages"
 							var="to" value="#{companyImages.model}"
@@ -31,7 +32,7 @@
 								</f:facet>
 								<aon:outputText value="&#160;"/>
 								<f:facet name="footer">
-									<aon:div rendered="#{companyImages.model.rowCount &lt; 16}">
+									<aon:div rendered="#{(companyImages.maximumNumber == 0) or (companyImages.model.rowCount &lt; companyImages.maximumNumber)}">
 										<aon:commandButton id="reset" reRender="imagesPanel"
 											styleClass="aon-editDataTable-button aon-icon-reset"
 											value="" rendered="#{!companyImages.new}"
@@ -47,16 +48,22 @@
 									<aon:outputText value="#{bundle.aon_description}" />
 								</f:facet>
 								<aon:outputText value="#{to.description}"/>
-								<f:facet name="footer">
-									<aon:div>				
-										<aon:outputText value="#{appBundle.infoweb_max_number_images}" rendered="#{companyImages.model.rowCount &lt; 20}"/>
-										<aon:outputText value="#{appBundle.infoweb_max_images_exceeded}" rendered="#{companyImages.model.rowCount &gt; 19}"/>
-									</aon:div>
-								</f:facet>
+								<c:if test="#{companyImages.maximumNumber != 0}">
+									<f:facet name="footer">
+										<aon:div>				
+											<aon:outputFormat value="#{companyBundle.company_max_number_images}" rendered="#{companyImages.model.rowCount &lt; companyImages.maximumNumber}">
+												<f:param value="#{companyImages.maximumNumber}" />
+											</aon:outputFormat>
+											<aon:outputFormat value="#{companyBundle.company_max_images_reached}" rendered="#{companyImages.model.rowCount &gt;= companyImages.maximumNumber}">
+												<f:param value="#{companyImages.maximumNumber}" />
+											</aon:outputFormat>
+										</aon:div>
+									</f:facet>
+								</c:if>
 							</aon:column>
 					
 						</aon:editDataTable>
-
+	
 						<aon:dataScroller2 for="companyImages" showNote="true" />
 					</aon:div>	
 					
@@ -64,17 +71,21 @@
 						<aon:div rendered="#{(companyImages.to != null) or (companyImages.new)}">
 							<aon:panel>
 								<f:facet name="header">
-									<aon:outputLabel for="RegistryAttachment_preview" value="#{appBundle.infoweb_images_preview}" />
+									<aon:outputLabel for="RegistryAttachment_preview" value="#{companyBundle.company_images_preview}" />
 								</f:facet>
 								<aon:div styleClass="aon-group-body">
 									<aon:div styleClass="aon-toolbar" >
 										<aon:commandButton id="save_image" value="#{bundle.aon_save}"					
 											styleClass="aon-icon-accept aon-finding-toolbar-item"
 											actionListener="#{companyImages.onAccept}" reRender="imagesPanel"/>
-										<aon:commandButton id="remove_image" value="#{bundle.aon_remove}"
-											styleClass="aon-icon-delete aon-finding-toolbar-item"
+										<aon:confirmButton id="remove_image"
+											value="#{bundle.aon_remove}" reRender="imagesPanel"
 											rendered="#{!companyImages.new}" immediate="true"
-											actionListener="#{companyImages.onRemove}" reRender="imagesPanel"/>
+											styleClass="aon-icon-delete aon-finding-toolbar-item"
+											confirmTitle="#{bundle.aon_confirm_title}"
+											confirmMessage="#{bundle.aon_remove_confirm}"
+											confirmActionListener="#{companyImages.onRemove}"
+											accesskey="#{bundle.aon_key_remove}" />											
 										<aon:commandButton id="cancel_image" value="#{bundle.aon_cancel}" immediate="true"
 											styleClass="aon-icon-cancel aon-finding-toolbar-item" reRender="imagesPanel"
 											actionListener="#{companyImages.onCancel}"/>	
@@ -86,7 +97,7 @@
 										<aon:inputText id="RegistryAttachment_description" size="45" required="true"
 											maxlength="50" value="#{companyImages.to.description}" />		
 				
-										<aon:outputLabel for="RegistryAttachment_inputFile" value="#{appBundle.infoweb_images_file}" />
+										<aon:outputLabel for="RegistryAttachment_inputFile" value="#{companyBundle.company_image}" />
 										<a4j:region>
 											<h:panelGrid id="imageGrid">
 												<aon:fileUpload id="RegistryAttachment_inputFile"
@@ -117,8 +128,7 @@
 					</aon:div>	
 			
 				</aon:panelGrid>
-			</aon:panel>
-		
+			</aon:div>		
 		</aon:form>
 	</ui:define>
 </ui:composition>

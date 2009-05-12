@@ -2,6 +2,11 @@ package com.code.aon.ui.company.event;
 
 import java.io.IOException;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIInput;
+
+import org.apache.commons.lang.ArrayUtils;
+
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ql.ast.Expression;
@@ -16,6 +21,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
+import com.sun.faces.util.MessageFactory;
 
 public class CompanyImagesControllerListener extends ControllerAdapter implements ICompanyConstants {
 	
@@ -40,32 +46,6 @@ public class CompanyImagesControllerListener extends ControllerAdapter implement
 			throw new ControllerListenerException("Error before model Initialized",e);
 		}
 	}
-	
-	/*
-	@Override
-	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		try {
-			FileController imagesController = (FileController)event.getController();
-			if(imagesController.getAonFile().getData() != null){
-				AonFile aonFile = imagesController.getAonFile(); 
-				if (aonFile.getSize() > imagesController.getMaximumSize()) {
-					String message = AonUtil.getMessage(IInfoWebConstants.BUNDLE_NAME, "infoweb_image_max_size_error");
-					String formatted = AonUtil.substituteParams(AonUtil.getCurrentLocale(), message, new Object[]{imagesController.getMaximumSize()});
-					throw new ControllerListenerException(formatted);					
-				}				
-				RegistryAttachment attach = (RegistryAttachment)imagesController.getTo();
-				CompanyController companyController = (CompanyController)FormUtil.getController(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-				attach.setRegistry((Company)companyController.getTo());
-				attach.setCategory(null);
-				attach.setData(aonFile.getData());
-				attach.setRegistryAttachmentType(RegistryAttachmentType.ADDITIONAL_IMAGE);
-				attach.setMimeType(MimeType.getByExtension(aonFile.getFileName().substring(aonFile.getFileName().lastIndexOf(".") + 1)));
-			}	
-		} catch (IOException e) {
-			throw new ControllerListenerException("Error uploading file");
-		}
-	}
-	*/
 	
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
@@ -92,25 +72,40 @@ public class CompanyImagesControllerListener extends ControllerAdapter implement
 		imagesController.setMimeType(null);
 	}
 
+	private void checkAonFile( CompanyImagesController imagesController ) throws ControllerListenerException, IOException {
+		AonFile aonFile = imagesController.getAonFile();
+		if ( ArrayUtils.isEmpty(aonFile.getData()) ) {
+			FacesMessage message = MessageFactory.getMessage( UIInput.REQUIRED_MESSAGE_ID, AonUtil.getMessage("aon_fileupload_element") );
+			throw new ControllerListenerException( message.getSummary() );									
+		} else if (aonFile.getSize() > imagesController.getMaximumSize()) {
+			String message = AonUtil.getMessage(BUNDLE_NAME, "company_image_max_size_error");
+			String formatted = AonUtil.substituteParams(AonUtil.getCurrentLocale(), message, new Object[]{imagesController.getMaximumSize()});
+			throw new ControllerListenerException(formatted);										
+		}
+	}
+	
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		try {
 			CompanyImagesController imagesController = (CompanyImagesController)event.getController();
-			AonFile aonFile = imagesController.getAonFile();
-			if(aonFile.getSize() > 0) {				 
-				if (aonFile.getSize() > imagesController.getMaximumSize()) {
-					String message = AonUtil.getMessage(BUNDLE_NAME, "company_image_max_size_error");
-					String formatted = AonUtil.substituteParams(AonUtil.getCurrentLocale(), message, new Object[]{imagesController.getMaximumSize()});
-					throw new ControllerListenerException(formatted);										
-				}
-				RegistryAttachment attach = (RegistryAttachment)imagesController.getTo();
-				attach.setCategory(null);
-				attach.setData(aonFile.getData());
-				MimeType mimeType = CompanyImagesController.getMimeType(aonFile.getFileName(), aonFile.getData());
-				attach.setMimeType(mimeType);
-			}	
+			checkAonFile(imagesController);
+			RegistryAttachment attach = (RegistryAttachment)imagesController.getTo();
+			attach.setRegistryAttachmentType(imagesController.getAttachmentType());
+			CompanyImagesController.update(attach, imagesController.getAonFile());	
 		} catch (IOException e) {
-			throw new ControllerListenerException("Error uploading file");
+			throw new ControllerListenerException("Error uploading file. " + e.getMessage(), e );
+		}
+	}
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		try {
+			CompanyImagesController imagesController = (CompanyImagesController)event.getController();
+			checkAonFile(imagesController);
+			RegistryAttachment attach = (RegistryAttachment)imagesController.getTo();
+			CompanyImagesController.update(attach, imagesController.getAonFile());	
+		} catch (IOException e) {
+			throw new ControllerListenerException("Error uploading file. " + e.getMessage(), e );
 		}
 	}
 	

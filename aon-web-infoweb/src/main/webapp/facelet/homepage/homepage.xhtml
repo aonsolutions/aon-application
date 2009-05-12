@@ -33,7 +33,7 @@
 							<aon:actionListener method="#{companyWebInfo.onInit}" />
 						</aon:commandButton> 
 						<aon:commandButton id="webinfo-icon-images"
-							value="#{appBundle.infoweb_images}"
+							value="#{companyBundle.company_images_module}"
 							image="/images/icons/webinfo-icon-images.png"
 							styleClass="aon-icon-commandButton" 
 							action="companyImages">
@@ -42,7 +42,7 @@
 						</aon:commandButton> 
 		                <aon:outputText value="#{companyBundle.company_data_module}"/>
 		                <aon:outputText value="#{appBundle.infoweb_data}"/>
-		                <aon:outputText value="#{appBundle.infoweb_images}"/>
+		                <aon:outputText value="#{companyBundle.company_images_module}"/>
 					</h:panelGrid>
 					<h:panelGrid columns="3" styleClass="aon-text-center" style="width:100%">
 						<aon:commandButton id="webinfo-icon-pages"

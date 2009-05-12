@@ -51,6 +51,12 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+		    <groupId>javax.faces</groupId>
+		    <artifactId>jsf-impl</artifactId>
+		    <version>1.2_09</version>
+		    <scope>provided</scope>
+		</dependency> 						
+		<dependency>
     		<groupId>jmimemagic</groupId>
     		<artifactId>jmimemagic</artifactId>
     		<version>0.1.2</version>

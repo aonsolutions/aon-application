@@ -22,6 +22,7 @@ import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.form.LinesController;
@@ -31,13 +32,17 @@ public class CompanyImagesController extends LinesController {
 
 	private static final Logger LOGGER = Logger.getLogger(CompanyImagesController.class.getName());
 	
-	private static final int DEFAULT_MAXIMUM_SIZE = 64 * 1024;
-	
 	private static final RegistryAttachmentType[] DEFAULT_DISPLAYED_TYPES = new RegistryAttachmentType[] {RegistryAttachmentType.ADDITIONAL_IMAGE};
+
+	private static final int DEFAULT_MAXIMUM_SIZE = 256 * 1024;
+	
+	private static final int DEFAULT_MAXIMUM_NUMBER = 16;
 	
 	private AonFile aonFile;
 	
 	private MimeType mimeType;
+	
+	private int maximumNumber;
 	
 	private long maximumSize;
 	
@@ -53,6 +58,7 @@ public class CompanyImagesController extends LinesController {
 		setMaximumSize(DEFAULT_MAXIMUM_SIZE);
 		setDisplayedTypes(DEFAULT_DISPLAYED_TYPES);
 		setAttachmentType(RegistryAttachmentType.ADDITIONAL_IMAGE);
+		setMaximumNumber(DEFAULT_MAXIMUM_NUMBER);
 		setShowAttachemntTypes(false);
 	}
 
@@ -64,6 +70,14 @@ public class CompanyImagesController extends LinesController {
 		this.maximumSize = maximumSize;
 	}
 	
+	public int getMaximumNumber() {
+		return maximumNumber;
+	}
+
+	public void setMaximumNumber(int maximumNumber) {
+		this.maximumNumber = maximumNumber;
+	}
+
 	public AonFile getAonFile() {
 		return aonFile;
 	}
@@ -140,6 +154,12 @@ public class CompanyImagesController extends LinesController {
 			out.write(getAonFile().getData());
 		}
 	}    
+	
+	public static void update(RegistryAttachment attachment, AonFile aonFile ) {
+		attachment.setData(aonFile.getData());
+		MimeType mimeType = CompanyImagesController.getMimeType(aonFile.getFileName(), aonFile.getData());
+		attachment.setMimeType(mimeType);		
+	}
 	
 	public static MimeType getMimeType(String resource, byte[] data) {
 		MimeType result = null;
