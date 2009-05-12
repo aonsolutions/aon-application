@@ -1,17 +1,10 @@
 package com.code.aon.ui.infoweb.event;
 
 import java.io.IOException;
-import java.util.ResourceBundle;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.company.controller.CompanyController;
@@ -25,17 +18,6 @@ import com.code.aon.ui.infoweb.controller.IInfoWebConstants;
 import com.code.aon.ui.util.AonUtil;
 
 public class CompanyImagesControllerListener extends ControllerAdapter {
-	
-	@Override
-	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
-		try {
-			IManagerBean rAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
-			Expression imageExp = ExpressionUtilities.getEqualExpression(rAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.ADDITIONAL_IMAGE);
-			event.getController().getCriteria().addExpression(imageExp);
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException("Error before model Initialized",e);
-		}
-	}
 	
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
@@ -53,7 +35,6 @@ public class CompanyImagesControllerListener extends ControllerAdapter {
 				attach.setRegistry((Company)companyController.getTo());
 				attach.setCategory(null);
 				attach.setData(aonFile.getData());
-				//attach.setDescription(aonFile.getFileName().substring(aonFile.getFileName().lastIndexOf("\\") + 1, aonFile.getFileName().lastIndexOf(".")));
 				attach.setRegistryAttachmentType(RegistryAttachmentType.ADDITIONAL_IMAGE);
 				attach.setMimeType(MimeType.getByExtension(aonFile.getFileName().substring(aonFile.getFileName().lastIndexOf(".") + 1)));
 			}	
