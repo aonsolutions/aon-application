@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
@@ -21,19 +22,19 @@ public class FTPUtil {
 	public static void uploadFTP(String source, String destination, String domain) throws IOException {
 
 		FTPClient ftp = new FTPClient();
-		LOGGER.fine("FTP>>>>>>>>>>>>>>>>>>>>>> Connecting to: " + SERVER );
-		ftp.connect(SERVER); // + domain
+		LOGGER.fine("Connecting to: " + SERVER );
+		ftp.connect(SERVER);
 		ftp.login(USER, PASSWORD);
 		ftp.changeWorkingDirectory(destination);
-		LOGGER.fine("FTP>>>>>>>>>>>>>>>>>>>>>> Connected.");
-		LOGGER.fine("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.getReplyString());
-		LOGGER.fine("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.getSystemName());
-		LOGGER.fine("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.printWorkingDirectory());
-		LOGGER.fine("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.setFileType(FTPClient.BINARY_FILE_TYPE));
+		LOGGER.fine("Connected.");
+		LOGGER.fine("Reply String: " + ftp.getReplyString());
+		LOGGER.fine("System Name: " + ftp.getSystemName());
+		LOGGER.fine("Working Directory: " + ftp.printWorkingDirectory());
+		LOGGER.fine("File Type: " + ftp.setFileType(FTPClient.BINARY_FILE_TYPE));
 		FTPFile files[] = ftp.listFiles();
-		if (files.length > 0) {
+		if (! ArrayUtils.isEmpty(files)) {
 			if (!files[0].hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION) ) {
-				LOGGER.severe("FTP>>>>>>>>>>>>>>>>>>>>>> WRITE PERMISSION DENIED");
+				LOGGER.severe("Write permission denied for " + files[0]);
 				AonUtil.addErrorMessage("FTP ERROR: Error intentando escribir en el servidor.");
 			}
 		}
@@ -49,20 +50,25 @@ public class FTPUtil {
 		for (int i = 0; i < dirList.length; i++) {
 			File f = new File(ftpDir, dirList[i]);
 			if (f.isDirectory()) {
-				LOGGER.fine("FTP>>>>>>>>>>>>>>>>>>>>>> Creating directory: " + breadCrum + "/" + f.getName());
-				if (!fc.makeDirectory(breadCrum + "/" + f.getName())) {
-					LOGGER.severe(">>>>>>>>>> FTP ERROR, Can not create " + f.getName() + " directory");
+				String directory = breadCrum + "/" + f.getName();
+				LOGGER.fine("Creating directory: " + directory);
+				if ( !fc.makeDirectory(directory) ) {
+					String filePath = f.getPath();
+					ftpDir(filePath, fc, directory);
+				} else {
+					AonUtil.addErrorMessage("FTP ERROR: No se ha podido crear el directorio " + directory);
+					LOGGER.severe("Can not create directory " + directory);
 				}
-				String filePath = f.getPath();
-				ftpDir(filePath, fc, breadCrum + "/" + f.getName());
-				continue;
+			} else {
+				FileInputStream fis = new FileInputStream(f);
+				String name = breadCrum + "/" + f.getName();
+				LOGGER.fine("Creating file: " + name);
+				if (!fc.storeFile(name, fis)) {
+					AonUtil.addErrorMessage("FTP ERROR: No se ha podido escribir el fichero " + name);
+					LOGGER.severe("Can not write " + name);
+				}
+				fis.close();
 			}
-			FileInputStream fis = new FileInputStream(f);
-			LOGGER.fine("FTP>>>>>>>>>>>>>>>>>>>>>> Creating file: " + breadCrum + "/" + f.getName());
-			if (!fc.storeFile(breadCrum + "/" + f.getName(), fis)) {
-				LOGGER.severe(">>>>>>>>>>>>> FTP ERROR, Can not write " + f.getName());
-			}
-			fis.close();
 		}
 	}
 
