@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.sf.jmimemagic.Magic;
-import net.sf.jmimemagic.MagicMatch;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -16,6 +13,7 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.CompanyImagesController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -56,7 +54,7 @@ public class CompanyLogoControllerListener extends ControllerAdapter implements 
 				attach.setData(aonFile.getData());
 				attach.setDescription("aon-logo");
 				attach.setRegistry((Company) event.getController().getTo());
-				MimeType mt = getMimeType(aonFile.getFileName(), aonFile.getData());
+				MimeType mt = CompanyImagesController.getMimeType(aonFile.getFileName(), aonFile.getData());
 				attach.setMimeType(mt);
 				IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 				companyController.setAttach((RegistryAttachment) attachBean.insert(attach));
@@ -96,7 +94,7 @@ public class CompanyLogoControllerListener extends ControllerAdapter implements 
 				attach.setData(aonFile.getData());
 				attach.setDescription("aon-logo");
 				attach.setRegistry((Company) event.getController().getTo());
-				MimeType mt = getMimeType(aonFile.getFileName(), aonFile.getData());
+				MimeType mt = CompanyImagesController.getMimeType(aonFile.getFileName(), aonFile.getData());
 				attach.setMimeType(mt);
 				IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 				if (attach.getId() == null) {
@@ -130,25 +128,5 @@ public class CompanyLogoControllerListener extends ControllerAdapter implements 
 			throw new ControllerListenerException( e.getMessage(), e );
 		}
 	}
-	
-	private MimeType getMimeType(String resource, byte[] data) {
-		MimeType result = null;
-		int pos = resource.lastIndexOf('.');
-		if (pos != -1) {
-			String extension = resource.substring(pos + 1);
-			result = MimeType.getByExtension(extension);
-		}
-		if (result == null) {
-			try {
-				MagicMatch match = Magic.getMagicMatch(data, true);
-				if (match != null) {
-					result = MimeType.getByExtension(match.getMimeType());
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return result;
-	}
-	
+
 }
