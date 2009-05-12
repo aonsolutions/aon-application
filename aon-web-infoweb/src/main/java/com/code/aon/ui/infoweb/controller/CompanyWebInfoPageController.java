@@ -43,7 +43,7 @@ public class CompanyWebInfoPageController extends BasicController {
 
 	public boolean newResource;
 	
-	public Integer rattachId;
+	public RegistryAttachment attachment;
 
 	public ListDataModel resources;
 	
@@ -212,7 +212,7 @@ public class CompanyWebInfoPageController extends BasicController {
 	public void onSelectResource(ActionEvent event) {
 		WebInfoPageResource wipr = (WebInfoPageResource)this.resources.getRowData();
 		resource = wipr; 
-		rattachId = (resource.getRattach() != null) ? resource.getRattach().getId() : null;
+		attachment = resource.getRattach();
 		setNewResource(false);
 	}
 
@@ -222,13 +222,9 @@ public class CompanyWebInfoPageController extends BasicController {
     public void onAcceptResource(ActionEvent event) {
 		try {
 			IManagerBean wiprBean = BeanManager.getManagerBean(WebInfoPageResource.class);
-			LOGGER.fine(">>>>>> INSERTANDO EN BASE DE DATOS " + resource.getContent() + " CON LA IMAGEN "+ rattachId + ".");
 			resource.setWebInfoPage(current);
-			RegistryAttachment ra = new RegistryAttachment();
-			ra.setId(rattachId);
-			resource.setRattach(ra);
-			if (resource.getId() != null) wiprBean.update(resource);
-			else wiprBean.insert(resource);
+			resource.setRattach(attachment);
+			wiprBean.insertOrUpdate(resource);
 			setSelectedData(current);
 			resetResource();
 		} catch (ManagerBeanException e) {
@@ -258,7 +254,7 @@ public class CompanyWebInfoPageController extends BasicController {
 		List<ITransferObject> list = rattachBean.getList(criteria);
 		for (int i=0; i <list.size(); i++) {
 			RegistryAttachment rattach = (RegistryAttachment)list.get(i);
-			SelectItem item = new SelectItem(rattach.getId(), rattach.getDescription());
+			SelectItem item = new SelectItem(rattach, rattach.getDescription());
 			images.add(item);
 		}
 		return images;
@@ -284,12 +280,12 @@ public class CompanyWebInfoPageController extends BasicController {
 		this.newResource = newResource;
 	}
 
-	public Integer getRattachId() {
-		return rattachId;
+	public RegistryAttachment getAttachment() {
+		return attachment;
 	}
 
-	public void setRattachId(Integer rattachId) {
-		this.rattachId = rattachId;
+	public void setAttachment(RegistryAttachment attachment) {
+		this.attachment = attachment;
 	}
 
 	public boolean isRichTextEnabled() {

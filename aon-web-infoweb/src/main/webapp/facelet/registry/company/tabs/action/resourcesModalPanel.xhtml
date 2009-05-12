@@ -78,13 +78,13 @@
 									value="#{to.rattach.description}"
 									rendered="#{to != webPage.resource}" />
 								<aon:selectOneMenu id="WebInfoPageResource_rattach"
-									value="#{webPage.rattachId}"
+									value="#{webPage.attachment}"
 									rendered="#{to == webPage.resource}" required="true">
 									<f:selectItems value="#{webPage.images}" />
 								</aon:selectOneMenu>
 								<f:facet name="footer">
 									<aon:selectOneMenu id="WebInfoPageResource_rattach-New"
-										value="#{webPage.rattachId}" 
+										value="#{webPage.attachment}" 
 										rendered="#{webPage.newResource}" required="true">
 										<f:selectItems value="#{webPage.images}" />
 									</aon:selectOneMenu>
