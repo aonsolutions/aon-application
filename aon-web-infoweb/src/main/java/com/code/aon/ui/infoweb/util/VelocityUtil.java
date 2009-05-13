@@ -5,10 +5,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
@@ -85,180 +85,60 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
 		this.context.remove(key);
 	}
 
+    public boolean generate(File template, File page) {
+		boolean error = false;
+
+        BufferedReader reader = null;
+        BufferedWriter writer = null;
+        try {
+			if (!template.exists()) {
+				error = true;
+			} else {
+				reader = new BufferedReader(new FileReader(template));
+			}
+			if (!error) {
+				try {
+					writer = new BufferedWriter(new FileWriter(page));
+                    this.evaluate(context, writer, "AON-INFOWEB", reader);
+					writer.flush();
+				} catch(Throwable th) {
+				    error = true;
+					addMessage("Error al evaluar el contexto en el fichero '" + template + "' <BR/>" + th.getMessage(), ERROR);
+				}
+			} else {
+				addMessage("No se pudo generar el fichero '" + page + "'", ERROR);
+			}
+		}  catch(Throwable th) {
+		    error = true;
+			addMessage("Error al generar el fichero '" + page + "' </BR> " + th.getMessage() + "", ERROR);
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+		} finally {
+			IOUtils.closeQuietly(writer);
+			IOUtils.closeQuietly(reader);
+        }
+		return error;
+	}
+
     public boolean generate(String page) {
-		boolean error = false;
-
-        File fi = new File(this.templateDirectory, INDEX_TEMPLATE);
-        BufferedReader reader = null;
-        FileReader fr = null;
-
-        File fo = new File(this.temporalDirectory, page);
-        BufferedWriter writer = null;
-        FileWriter fw = null;
-
-        try {
-			if (!fi.exists()) {
-				error = true;
-				LOGGER.warning("Fichero de plantilla 'index.vm' no encontrado.");
-			} else {
-                fr = new FileReader(fi);
-				reader = new BufferedReader(fr);
-			}
-			if (!error) {
-				try {
-                    fw = new FileWriter(fo);
-                    writer = new BufferedWriter(fw);
-
-                    this.evaluate(context, writer, "¡AON-CMS!", reader);
-					writer.flush();
-					LOGGER.info("Página " + page + " generada con exito");
-				} catch(Exception e) {
-				    error = true;
-					addMessage("Error al evaluar el contexto en el fichero '" + page + "' <BR/>" + e.getMessage(), ERROR);
-				}
-			} else {
-				addMessage("No se pudo generar el fichero '" + page + "'", ERROR);
-			}
-		} catch(Exception e) {
-		    error = true;
-			addMessage("Error al generar el fichero '" + page + "' </BR> " + e.getMessage() + "", ERROR);
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-		} finally {
-			try {
-				if (writer != null) {
-					writer.flush();
-                    writer.close();
-                    fw.close();
-                }
-                if (reader != null) {
-                    reader.close();
-                    fr.close();
-                }
-                fi = null;
-                fo = null;
-            } catch (IOException e) {
-            	LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            }
-        }
-		return error;
+        File template = new File(this.templateDirectory, INDEX_TEMPLATE);
+    	File file = new File(this.temporalDirectory, page);
+    	return generate(template, file);
 	}
-
+    
     public boolean generate(String template, String page) {
-		boolean error = false;
-
-        File fi = new File(this.templateDirectory, template);
-        BufferedReader reader = null;
-        FileReader fr = null;
-
-        File fo = new File(this.temporalDirectory, page);
-        BufferedWriter writer = null;
-        FileWriter fw = null;
-
-        try {
-			if (!fi.exists()) {
-				error = true;
-			} else {
-                fr = new FileReader(fi);
-				reader = new BufferedReader(fr);
-			}
-
-			if (!error) {
-				try {
-                    fw = new FileWriter(fo);
-                    writer = new BufferedWriter(fw);
-
-                    this.evaluate(context, writer, "¡AON-CMS!", reader);
-					writer.flush();
-				} catch(Exception e) {
-				    error = true;
-					addMessage("Error al evaluar el contexto en el fichero '" + template + "' <BR/>" + e.getMessage(), ERROR);
-				}
-			} else {
-				addMessage("No se pudo generar el fichero '" + page + "'", ERROR);
-			}
-		} catch(Exception e) {
-		    error = true;
-			addMessage("Error al generar el fichero '" + page + "' </BR> " + e.getMessage() + "", ERROR);
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-		} finally {
-			try {
-                if (writer != null) {
-                    writer.flush();
-                    writer.close();
-                    fw.close();
-                }
-                if (reader != null) {
-                    reader.close();
-                    fr.close();
-                }
-                fi = null;
-                fo = null;
-            } catch (IOException e) {
-            	LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            }
-        }
-
-		return error;
+        File templateFile = new File(this.templateDirectory, template);
+    	File file = new File(this.temporalDirectory, page);
+    	return generate(templateFile, file);
 	}
-
+    
     public boolean generateCSS() {
-		boolean error = false;
-		
 		File templateCss = new File( this.templateDirectory, CSS_PATH );
-        File fi = new File(templateCss, STYLE_TEMPLATE);
-        BufferedReader reader = null;
-        FileReader fr = null;
+        File template = new File(templateCss, STYLE_TEMPLATE);
 
         File temporalCss = new File( this.temporalDirectory, CSS_PATH );
-        File fo = new File(temporalCss, "style.css");
-        BufferedWriter writer = null;
-        FileWriter fw = null;
+        File file = new File(temporalCss, "style.css");
 
-        try {
-			if (!fi.exists()) {
-				error = true;
-			} else {
-                fr = new FileReader(fi);
-				reader = new BufferedReader(fr);
-			}
-
-			if (!error) {
-				try {
-                    fw = new FileWriter(fo);
-                    writer = new BufferedWriter(fw);
-
-                    this.evaluate(context, writer, "¡AON-CMS!", reader);
-					writer.flush();
-				} catch(Exception e) {
-				    error = true;
-					addMessage("Error al evaluar el contexto en el fichero 'style.css' <BR/>" + e.getMessage(), ERROR);
-				}
-			} else {
-				addMessage("No se pudo generar el fichero 'style.css'", ERROR);
-			}
-		} catch(Exception e) {
-		    error = true;
-			addMessage("Error al generar el fichero 'style.css' </BR> " + e.getMessage() + "", ERROR);
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-		} finally {
-            try {
-                if (writer != null) {
-                    writer.flush();
-                    writer.close();
-                    fw.close();
-                }
-                if (reader != null) {
-                    reader.close();
-                    fr.close();
-                }
-                fi = null;
-                fo = null;
-            } catch (IOException e) {
-            	LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            }
-        }
-
-		return error;
+        return generate(template, file);
 	}
 
 	public String getTemplate() {
