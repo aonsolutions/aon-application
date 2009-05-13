@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -15,6 +16,7 @@ import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
@@ -23,6 +25,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.dao.IConfigAlias;
@@ -41,6 +44,7 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.company.controller.CompanyImagesController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.infoweb.util.FTPUtil;
 import com.code.aon.ui.infoweb.util.ImageUtil;
@@ -60,52 +64,68 @@ public class GeneratorController extends BasicController implements VelocityCons
 	
 	private String webPage;
 	
+	private String getTemplate() {
+		String template = "default";
+		//Obtenemos el template seleccionado
+		try {
+			IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(apBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), TEMPLATE_NAME_PARAM);
+			List<ITransferObject> list = apBean.getList(criteria);
+			if (list.size() > 0) {
+				ApplicationParameter ap = (ApplicationParameter)list.get(0);
+				template = ap.getValue();
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e );
+		}
+		return template;
+	}
+	
+	/**
+	 * Obtenemos si esta definida la pagina homepage seleccionada
+	 * 
+	 * @return the homepage
+	 */
+	private int getHomepage() {
+		int homepage = 0;
+		try {
+			IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(apBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), HOMEPAGE_NAME_PARAM);
+			List<ITransferObject> list = apBean.getList(criteria);
+			if (list.size() > 0) {
+				ApplicationParameter ap = (ApplicationParameter)list.get(0);
+				homepage = Integer.parseInt(ap.getValue());
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return homepage;
+	}
+	
 	public void onGenerate(ActionEvent event) throws ManagerBeanException {
-		String dominio = null;
+		String domain = null;
 		this.published = false;
 		this.webPage = null;
-		String template_path = TEMPLATE_PATH;
-		String temporal_path = TEMPORAL_PATH + "/" + System.currentTimeMillis() + "";
-		String images_temporal_path = temporal_path + "/images";
-		String css_temporal_path = temporal_path + "/css";
+		File templateDirectory = new File(TEMPLATE_PATH);
+		File temporalDirectory = new File( TEMPORAL_PATH, System.currentTimeMillis() + "" );
+		File imagesTemporalDirectory = new File( temporalDirectory, IMAGES_PATH );
+		File cssTemporalDirectory = new File( temporalDirectory, CSS_PATH );
 		try {
 			HibernateUtil.setCloseSession(false);
 			vu = new VelocityUtil();
 			//Añadimos al contexto todo lo necesario para las paginas
 			
-			String template = "default";
-			//Obtenemos el template seleccionado
-			try {
-				IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(apBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), TEMPLATE_NAME_PARAM);
-				List<ITransferObject> list = apBean.getList(criteria);
-				if (list.size() > 0) {
-					ApplicationParameter ap = (ApplicationParameter)list.get(0);
-					template = ap.getValue();
-				}
-			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e );
-			}
+			String template = getTemplate();
 			vu.setTemplate(template);
-			String current_template_path = TEMPLATE_PATH + "/" + template;
+			File currentTemplateDirectory = new File( templateDirectory, template );
 
-	/*
-	 * 		index.vm {
-	 * 			#include $content
-	 * 			$company - Datos de la empresa
-	 * 			$logo - Logo de la empresa.
-	 * 		}
-	 */
-			//Obtenemos datos comunes a todas las paginas company y el logo
 			//Indicamos el directorio del template
-			vu.setTemplate_path(template_path);
-			File f = new File(images_temporal_path);
-			f.mkdirs();
-			vu.setTemporal_path(temporal_path);
-
-			f = new File(css_temporal_path);
-			f.mkdirs();
+			vu.setTemplateDirectory(templateDirectory);
+			vu.setTemporalDirectory(temporalDirectory);
+			imagesTemporalDirectory.mkdirs();
+			cssTemporalDirectory.mkdirs();
 			
 			GregorianCalendar gc = new GregorianCalendar();
 			vu.put("currentYear", gc.get(Calendar.YEAR));
@@ -120,233 +140,42 @@ public class GeneratorController extends BasicController implements VelocityCons
 				vu.put("company", company);
 				vu.initialize();
 	
-				IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
-				Criteria attachCriteria = new Criteria();
-				attachCriteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), company.getId());
-				attachCriteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.LOGO);
-				List<ITransferObject> attachList = (List<ITransferObject>)attachBean.getList(attachCriteria);
-				if (attachList.size() > 0) {
-					RegistryAttachment ra = (RegistryAttachment)attachList.get(0);
-					String extension = ra.getMimeType()==null?"jpg":ra.getMimeType().getExtension();
-					String filename = "logo." + extension;
-					if (ImageUtil.copyRegistryBlobToFile(ra, images_temporal_path, filename)) {
-						vu.put("logo", filename);
-					}
-				}
-		/*
-		 * 		$content = home.vm {
-		 *			$description - Descripcion comercial de la empresa (obligatorio - WARNING)
-		 *			$slogan - Eslogan de la empresa (opcional)
-		 *			$schedule - Horario comercial (opcional)
-		 * 		}
-		 */		
-				IManagerBean webinfoBean = BeanManager.getManagerBean(WebInfo.class);
-				Criteria webinfoCriteria = new Criteria();
-				webinfoCriteria.addEqualExpression(webinfoBean.getFieldName(IWebInfoAlias.WEB_INFO_COMPANY_ID), company.getId());
-				List<ITransferObject> webinfoList = (List<ITransferObject>)webinfoBean.getList(webinfoCriteria);
-				if (webinfoList.size() > 0) {
-					WebInfo wi = (WebInfo)webinfoList.get(0);
-					String description = wi.getCommercialDescription();
-					String slogan = wi.getSlogan();
-					String schedule = wi.getSchedule();
-					if (description != null) vu.put("description", description);
-					if (slogan != null) vu.put("slogan", slogan);
-					if (schedule != null) vu.put("schedule", schedule);
-				}
-				webinfoBean = null;
+				addCompanyLogo( company, imagesTemporalDirectory );
+				addWebInfoAttributes( company );
+				addCompanyImages( company, imagesTemporalDirectory );
 
-		/*
-		 * 		Imagenes de Rattach {
-		 *			$images - Todas las imagenes de rattach con sus thumbnails (tn_)
-		 * 		}
-		 */		
-
-				ArrayList<ImageHandler> all_images = new ArrayList<ImageHandler>();
-				attachCriteria = new Criteria();
-				attachCriteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), company.getId());
-				attachCriteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.ADDITIONAL_IMAGE);
-				attachList = (List<ITransferObject>)attachBean.getList(attachCriteria);
-				for (int i=0; i<attachList.size(); i++) {
-					RegistryAttachment ra = (RegistryAttachment)attachList.get(i);
-					if ( (ra.getData() != null) && (!StringUtils.isEmpty(ra.getDescription())) ) {
-						String filename = ra.getDescription() + "." + ra.getMimeType().getExtension();
-						if (!ImageUtil.copyRegistryBlobToFile(ra, images_temporal_path, 200, 200, filename)) {
-							AonUtil.addErrorMessage("ERROR: Se produjo un error al intentar copiar la imagen " + filename + "."); 
-						}
-						ImageHandler ih = new ImageHandler(filename, getPageName(ra.getDescription()), ra.getDescription());
-						all_images.add(ih);
-					}
-				}
-				vu.put("all_images", all_images);
-
-		/*
-		 * 		Sacar datos de contacto {
-		 * 			$email - Email para el formulario de envio, si no existe no hay opcion de menu. 
-		 * 		}
-		 */
-				Iterator<RegistryMedia> mediaList = company.getMedias().iterator();
-				while (mediaList.hasNext()) {
-					RegistryMedia m = (RegistryMedia)mediaList.next();
-					switch (m.getMediaType()) {
-						case WEB:
-							dominio = getDomain(m.getValue());
-							break;
-						case EMAIL:
-							vu.put("email", m.getValue());
-						case FIXED_PHONE:
-							vu.put("phone", m.getValue());
-							break;
-						case FAX:
-							vu.put("fax", m.getValue());
-							break;
-					}
-				}
-				companyBean = null;
-				attachBean = null;
-		/*
-		 * 		$content = address.vm {
-		 *			$company - Datos de empresa
-		 *			$addresses - Direcciones de la empresa (Google Maps)
-		 * 		}
-		 */
-				RegistryAddress defaultAddress = company.getDefaultAddress();
-				ArrayList<RegistryAddress> addresses = new ArrayList<RegistryAddress>();
-				Iterator<RegistryAddress> addressList = company.getAddresses().iterator();
-				while (addressList.hasNext()) {
-					RegistryAddress a = (RegistryAddress)addressList.next();
-					if (defaultAddress != null && a.getId() == defaultAddress.getId()) {
-						//Nothing
-					}
-					else {
-						addresses.add(a);
-					}
-				}
-				if (addresses.size() > 0) vu.put("addresses", addresses);
-				if (defaultAddress != null) vu.put("address", defaultAddress);
+				domain = addContactData( company );
+				addAddresses( company );
 			}
 
-			int homepage = 0;
-			/* 
-			 * Obtenemos si esta definida la pagina homepage seleccionada 
-			 */
-			try {
-				IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(apBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), HOMEPAGE_NAME_PARAM);
-				List<ITransferObject> list = apBean.getList(criteria);
-				if (list.size() > 0) {
-					ApplicationParameter ap = (ApplicationParameter)list.get(0);
-					homepage = Integer.parseInt(ap.getValue());
-				}
-			} catch (ManagerBeanException e) {}
+			int homepage = getHomepage();
 			
-			/* 
-			 * Sacamos el menu de las paginas y cada una de las pagina.
-			 */
-			ArrayList<MenuOptionHandler> menu = new ArrayList<MenuOptionHandler>();
-			MenuOptionHandler moh = new MenuOptionHandler("Inicio", "index.html");
-			menu.add(moh);
-			IManagerBean wimBean = BeanManager.getManagerBean(WebInfoPage.class);
-			Criteria wimCriteria = new Criteria();
-			wimCriteria.addEqualExpression(wimBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_ACTIVE), true);
-			wimCriteria.addOrder(wimBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_POSITION));
-			List<ITransferObject> wimList = (List<ITransferObject>)wimBean.getList(wimCriteria);
-			for (int i=0;i < wimList.size();i++) {
-				WebInfoPage wip = (WebInfoPage)wimList.get(i);
-				int id = wip.getId();
-				if (homepage != id) {
-					String label = wip.getName();
-					String link = wip.getName() + ".html";
-					link = link.replaceAll(" ", "_");
-					link = link.replaceAll("ñ", "n").replaceAll("á", "a").replaceAll("é", "e").replaceAll("í", "i").replaceAll("ó", "o").replaceAll("ú", "u");
-					link = link.replaceAll("Ñ", "N").replaceAll("Á", "A").replaceAll("É", "E").replaceAll("Í", "I").replaceAll("Ó", "O").replaceAll("Ú", "U");
-					moh = new MenuOptionHandler(label, link);
-					menu.add(moh);
-				}
-			}
-			vu.put("menu", menu);
+			generateMenu( homepage );
 
 			//Generar pagina principal
-			vu.put("content", "home.vm");
-			vu.generate("index.html");
+			vu.put("content", HOME_TEMPLATE);
+			vu.generate(INDEX_HTML);
 
 			//Generar pagina de error 404
-			vu.generate("404error.vm","404error.html");
+			vu.generate(ERROR_TEMPLATE,ERROR_HTML);
 
 			//Generar pagina de error 404
-			vu.put("content", "mail.vm");
-			vu.generate("mail.php");
+			vu.put("content", MAIL_TEMPLATE);
+			vu.generate(MAIL_PHP);
 
-			//Generar paginas segun menu.
-			IManagerBean wipBean = BeanManager.getManagerBean(WebInfoPage.class);
-			Criteria wipCriteria = new Criteria();
-			wipCriteria.addEqualExpression(wipBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_ACTIVE), true);
-			List<ITransferObject> wipList = (List<ITransferObject>)wipBean.getList(wipCriteria);
-			for (int i=0;i < wipList.size();i++) {
-				WebInfoPage wip = (WebInfoPage)wipList.get(i);
-				int id = wip.getId();
-				String pagename = wip.getName();
-				boolean isIndex = false;
-				if (homepage == id) {
-					pagename = "index";
-					isIndex = true;
-				}
-				switch (wip.getType()) {
-					case CONTACT:
-						generatePage("contact.vm", pagename );
-						break;
-					case GENERIC:
-						generateGenericPage(wip, isIndex);
-						break;
-					case LOCATION:
-						generateGenericPage(wip, isIndex);
-						break;
-					case GALLERY:
-						generateGalleryPage(wip, isIndex);
-						break;
-				}
-			}
-
-			//Parseamos los estilos
-			IManagerBean wisBean = BeanManager.getManagerBean(WebInfoStyle.class);
-			List<ITransferObject> wisList = (List<ITransferObject>)wisBean.getList(null);
-			for (int i=0;i < wisList.size();i++) {
-				WebInfoStyle wis = (WebInfoStyle)wisList.get(i);
-				String name = wis.getVariable(); 
-				WebInfoVariableType wivt = getVariableType(name);
-				String value = wis.getValue();
-
-				if (wivt == WebInfoVariableType.FONT) {
-					value = getFontType(wis);
-				} else if (wivt == WebInfoVariableType.IMAGE) {
-					value = getImage(wis);
-					copyImageToCss(temporal_path, value);
-				} else if (wivt == WebInfoVariableType.BORDER || wivt == WebInfoVariableType.SIZE) {
-					value = value + "px";
-				}
-				vu.put(name, value);
-				vu.put(name.toLowerCase(), value);
-			}
-			vu.generateCSS();
+			generatePages(homepage);
+			generateCss(temporalDirectory, cssTemporalDirectory);
 			
-			vu.copyDir(current_template_path + "/js", temporal_path + "/");
-			vu.copyDir(current_template_path + "/css/images", temporal_path + "/css");
-			vu.copyDir(current_template_path + "/css/img", temporal_path + "/css");
-			vu.copyDir(current_template_path + "/images", temporal_path + "/");
+			copyDirectoryToDirectory(new File(currentTemplateDirectory, "js"), temporalDirectory );
+			File currentTemplateCssDirectory = new File(currentTemplateDirectory, CSS_PATH);
+			copyDirectoryToDirectory(new File(currentTemplateCssDirectory, IMAGES_PATH), cssTemporalDirectory );
+			copyDirectoryToDirectory(new File(currentTemplateCssDirectory, CSSIMG_PATH), cssTemporalDirectory );
+			copyDirectoryToDirectory(new File(currentTemplateDirectory, IMAGES_PATH), temporalDirectory );
 
 			AonUtil.addInfoMessage("OK: La web ha sido generada." );
 			
-			//Subimos por FTP
-			try {
-				if (dominio != null) {
-					webPage = "http://www." + dominio + "/";					
-					FTPUtil.uploadFTP(temporal_path, "/" + dominio + "/WEBSITES/www." + dominio + "/", "192.168.3.47");
-					this.published = true;
-				}
-			} catch (Throwable th) {
-				LOGGER.log(Level.SEVERE, th.getMessage(), th );
-				AonUtil.addErrorMessage("ERROR: Se ha producido un error durante la publicacion de la pagina.");
-			}
+			publish( domain, temporalDirectory );
+
 		} catch (Throwable th) {
 			LOGGER.log(Level.SEVERE, th.getMessage(), th );
 			AonUtil.addErrorMessage("ERROR: Se ha producido un error durante la generacion de los contenidos.");
@@ -357,13 +186,27 @@ public class GeneratorController extends BasicController implements VelocityCons
 		
 	}
 
-	private void copyImageToCss(String temporal_path, String value) {
+	private void copyImageToCss(File temporalDirectory, File cssTemporalDirectory, String value) {
 		try {
-			vu.copyFile(temporal_path + "/images/"+value+"", temporal_path + "/css/images/"+value+"");
+			File srcFile = new File( new File(temporalDirectory, "images"), value );
+			File destFile = new File( new File(cssTemporalDirectory, "images"), value );
+			FileUtils.copyFile(srcFile, destFile);
 		} catch (IOException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e );
 		}
-		
+	}
+	
+	private void copyDirectoryToDirectory(File srcDir, File destDir) {
+		try {
+			if ( srcDir.exists() ) {
+				LOGGER.info( "Copy directory: " + srcDir + " -> " + destDir );
+				FileUtils.copyDirectoryToDirectory(srcDir, destDir );
+			} else {
+				LOGGER.warning( "Directory doesn't exists: " + srcDir );
+			}
+		} catch (IOException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e );
+		}		
 	}
 
 	private void generateGenericPage(WebInfoPage wip, boolean isIndex) throws ManagerBeanException {
@@ -381,7 +224,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		}
 
 		String template;
-		if (wip.getType() == WebInfoPageType.LOCATION) template = "location.vm";
+		if (wip.getType() == WebInfoPageType.LOCATION) template = LOCATION_TEMPLATE;
 		else template = "generic" + wipd.getLayout().ordinal() + ".vm";
 		vu.put("title", wipd.getTitle());
 		vu.put("text", wipd.getContent());
@@ -454,7 +297,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			if (!primera) vu.put("previous", previous_link);
 			if (!ultima) vu.put("next", next_link);
 			vu.put("return", getPageName(wip.getName()));
-			generatePage("imageview.vm", wipr.getRattach().getDescription());
+			generatePage(IMAGE_VIEW_TEMPLATE, wipr.getRattach().getDescription());
 			vu.remove("image");
 			if (!primera) vu.remove("previous");
 			if (!ultima) vu.remove("next");
@@ -466,7 +309,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		
 		String pagename = wip.getName();
 		if (isIndex) pagename = "index";
-		generatePage("gallery.vm", pagename);
+		generatePage(GALLERY_TEMPLATE, pagename);
 		if (wip.getType() == WebInfoPageType.LOCATION) vu.remove("coords");
 		vu.remove("gallery");
 	}
@@ -570,5 +413,236 @@ public class GeneratorController extends BasicController implements VelocityCons
 		}
 		return domain;
 	}
+	
+	public static String getImageName( RegistryAttachment ra ) {
+		return getImageName(ra, null);
+	}
 
+	public static String getImageName( RegistryAttachment ra, String name ) {
+		MimeType mimeType = ra.getMimeType();
+		if ( mimeType == null ) {
+			mimeType = CompanyImagesController.getMimeType(ra.getDescription(), ra.getData());
+			if ( mimeType == null ) {
+				mimeType = MimeType.MIME_JPEG;
+			}
+		}
+		String preffix = (name != null ) ? name : ra.getDescription();
+		if ( StringUtils.isEmpty(preffix) ) {
+			preffix = "webInfoImage_" + ra.getId(); 
+		}
+		return preffix + "." + mimeType.getExtension();
+	}
+
+	private void addCompanyLogo( Company company, File imagesDirectory ) throws ManagerBeanException {
+		IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
+		Criteria attachCriteria = new Criteria();
+		attachCriteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), company.getId());
+		attachCriteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.LOGO);
+		List<ITransferObject> attachList = (List<ITransferObject>)attachBean.getList(attachCriteria);
+		if (attachList.size() > 0) {
+			RegistryAttachment ra = (RegistryAttachment) attachList.get(0);
+			String filename = getImageName(ra, "logo");
+			if (ImageUtil.copyRegistryBlobToFile(ra, imagesDirectory, filename)) {
+				vu.put("logo", filename);
+			}
+		}		
+	}
+	
+	private void addWebInfoAttributes( Company company ) throws ManagerBeanException {
+		/*
+		 * 		$content = home.vm {
+		 *			$description - Descripcion comercial de la empresa (obligatorio - WARNING)
+		 *			$slogan - Eslogan de la empresa (opcional)
+		 *			$schedule - Horario comercial (opcional)
+		 * 		}
+		 */		
+		IManagerBean webinfoBean = BeanManager.getManagerBean(WebInfo.class);
+		Criteria webinfoCriteria = new Criteria();
+		webinfoCriteria.addEqualExpression(webinfoBean.getFieldName(IWebInfoAlias.WEB_INFO_COMPANY_ID), company.getId());
+		List<ITransferObject> webinfoList = (List<ITransferObject>)webinfoBean.getList(webinfoCriteria);
+		if (webinfoList.size() > 0) {
+			WebInfo wi = (WebInfo)webinfoList.get(0);
+			String description = wi.getCommercialDescription();
+			if (! StringUtils.isBlank(description) ) {
+				vu.put("description", description);
+			}
+			String slogan = wi.getSlogan();
+			if (! StringUtils.isBlank(slogan) ) {
+				vu.put("slogan", slogan);
+			}
+			String schedule = wi.getSchedule();
+			if (! StringUtils.isBlank(schedule) ) {
+				vu.put("schedule", schedule);
+			}
+		}		
+	}
+
+	private void addCompanyImages( Company company, File imagesDirectory ) throws ManagerBeanException {
+		IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
+		List<ImageHandler> all_images = new LinkedList<ImageHandler>();
+		Criteria attachCriteria = new Criteria();
+		attachCriteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), company.getId());
+		attachCriteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.ADDITIONAL_IMAGE);
+		List<ITransferObject> attachList = (List<ITransferObject>)attachBean.getList(attachCriteria);
+		for (int i=0; i<attachList.size(); i++) {
+			RegistryAttachment ra = (RegistryAttachment)attachList.get(i);
+			if ( (ra.getData() != null) && (!StringUtils.isEmpty(ra.getDescription())) ) {
+				String filename = getImageName(ra);
+				if (!ImageUtil.copyRegistryBlobToFile(ra, imagesDirectory, 200, 200, filename)) {
+					AonUtil.addErrorMessage("ERROR: Se produjo un error al intentar copiar la imagen " + filename + "."); 
+				}
+				ImageHandler ih = new ImageHandler(filename, getPageName(ra.getDescription()), ra.getDescription());
+				all_images.add(ih);
+			}
+		}
+		vu.put("all_images", all_images);	
+	}
+	
+	private String addContactData( Company company ) {
+		/*
+		 * 		Sacar datos de contacto {
+		 * 			$email - Email para el formulario de envio, si no existe no hay opcion de menu. 
+		 * 		}
+		 */
+		String domain = null;
+		Iterator<RegistryMedia> mediaList = company.getMedias().iterator();
+		while (mediaList.hasNext()) {
+			RegistryMedia m = (RegistryMedia)mediaList.next();
+			switch (m.getMediaType()) {
+				case WEB:
+					domain = getDomain(m.getValue());
+					break;
+				case EMAIL:
+					vu.put("email", m.getValue());
+				case FIXED_PHONE:
+					vu.put("phone", m.getValue());
+					break;
+				case FAX:
+					vu.put("fax", m.getValue());
+					break;
+			}
+		}		
+		return domain;
+	}
+	
+	private void addAddresses( Company company ) throws ManagerBeanException {
+		/*
+		 * 		$content = address.vm {
+		 *			$company - Datos de empresa
+		 *			$addresses - Direcciones de la empresa (Google Maps)
+		 * 		}
+		 */	
+		RegistryAddress defaultAddress = company.getDefaultAddress();
+		ArrayList<RegistryAddress> addresses = new ArrayList<RegistryAddress>();
+		Iterator<RegistryAddress> addressList = company.getAddresses().iterator();
+		while (addressList.hasNext()) {
+			RegistryAddress a = (RegistryAddress)addressList.next();
+			if (defaultAddress != null && a.getId() == defaultAddress.getId()) {
+				//Nothing
+			} else {
+				addresses.add(a);
+			}
+		}
+		if (addresses.size() > 0) {
+			vu.put("addresses", addresses);
+		}
+		if (defaultAddress != null) {
+			vu.put("address", defaultAddress);		
+		}
+	}
+
+	private void generateCss( File temporalDirectory, File cssTemporalDirectory) throws ManagerBeanException {
+		//Parseamos los estilos
+		IManagerBean wisBean = BeanManager.getManagerBean(WebInfoStyle.class);
+		List<ITransferObject> wisList = (List<ITransferObject>)wisBean.getList(null);
+		for (int i=0;i < wisList.size();i++) {
+			WebInfoStyle wis = (WebInfoStyle)wisList.get(i);
+			String name = wis.getVariable(); 
+			WebInfoVariableType wivt = getVariableType(name);
+			String value = wis.getValue();
+			if (wivt == WebInfoVariableType.FONT) {
+				value = getFontType(wis);
+			} else if (wivt == WebInfoVariableType.IMAGE) {
+				value = getImage(wis);
+				copyImageToCss(temporalDirectory, cssTemporalDirectory, value);
+			} else if (wivt == WebInfoVariableType.BORDER || wivt == WebInfoVariableType.SIZE) {
+				value = value + "px";
+			}
+			vu.put(name, value);
+			vu.put(name.toLowerCase(), value);
+		}
+		vu.generateCSS();		
+	}
+	
+	private void generatePages( int homepage) throws ManagerBeanException {
+		//Generar paginas segun menu.
+		IManagerBean wipBean = BeanManager.getManagerBean(WebInfoPage.class);
+		Criteria wipCriteria = new Criteria();
+		wipCriteria.addEqualExpression(wipBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_ACTIVE), true);
+		List<ITransferObject> wipList = (List<ITransferObject>)wipBean.getList(wipCriteria);
+		for (int i=0;i < wipList.size();i++) {
+			WebInfoPage wip = (WebInfoPage)wipList.get(i);
+			String pagename = wip.getName();
+			boolean isIndex = false;
+			if (homepage == wip.getId()) {
+				pagename = "index";
+				isIndex = true;
+			}
+			switch (wip.getType()) {
+				case CONTACT:
+					generatePage(CONTACT_TEMPLATE, pagename );
+					break;
+				case GENERIC:
+					generateGenericPage(wip, isIndex);
+					break;
+				case LOCATION:
+					generateGenericPage(wip, isIndex);
+					break;
+				case GALLERY:
+					generateGalleryPage(wip, isIndex);
+					break;
+			}
+		}		
+	}
+
+	/**
+	 * Sacamos el menu de las paginas y cada una de las pagina.
+	 * @throws ManagerBeanException 
+	 */
+	private void generateMenu( int homepage ) throws ManagerBeanException {
+		ArrayList<MenuOptionHandler> menu = new ArrayList<MenuOptionHandler>();
+		MenuOptionHandler moh = new MenuOptionHandler("Inicio", INDEX_HTML);
+		menu.add(moh);
+		IManagerBean wimBean = BeanManager.getManagerBean(WebInfoPage.class);
+		Criteria wimCriteria = new Criteria();
+		wimCriteria.addEqualExpression(wimBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_ACTIVE), true);
+		wimCriteria.addOrder(wimBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_POSITION));
+		List<ITransferObject> wimList = (List<ITransferObject>)wimBean.getList(wimCriteria);
+		for (int i=0;i < wimList.size();i++) {
+			WebInfoPage wip = (WebInfoPage)wimList.get(i);
+			int id = wip.getId();
+			if (homepage != id) {
+				String label = wip.getName();
+				String link = getPageName(label);
+				moh = new MenuOptionHandler(label, link);
+				menu.add(moh);
+			}
+		}
+		vu.put("menu", menu);		
+	}
+
+	private void publish( String domain, File temporalDirectory ) {
+		//Subimos por FTP
+		try {
+			if (domain != null) {
+				webPage = "http://www." + domain + "/";					
+				FTPUtil.uploadFTP(temporalDirectory, "/" + domain + "/WEBSITES/www." + domain + "/", "192.168.3.47");
+				this.published = true;
+			}
+		} catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th );
+			AonUtil.addErrorMessage("ERROR: Se ha producido un error durante la publicacion de la pagina.");
+		}		
+	}
+	
 }

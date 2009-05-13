@@ -136,7 +136,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 
 	public HashMap<String,String> parseTemplateStyle() {
 		HashMap<String,String> styleMap = new HashMap<String,String>();
-		String path = TEMPLATE_PATH + "/" + getTemplate() + "/" + CSS_PATH + "/" + CSS_STYLE_FILE;
+		String path = TEMPLATE_PATH + "/" + getTemplate() + "/" + CSS_PATH + "/" + STYLE_TEMPLATE;
 		File f = new File(path);
 		if (!f.exists()) {
 			AonUtil.addErrorMessage("ERROR: No existe el fichero de estilos para esta plantilla. Contacte con su administrador."); 

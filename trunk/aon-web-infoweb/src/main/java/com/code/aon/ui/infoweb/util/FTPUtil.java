@@ -19,7 +19,7 @@ public class FTPUtil {
 	private static final String USER = "ftpcms";
 	private static final String PASSWORD = "cms2001";
 	
-	public static void uploadFTP(String source, String destination, String domain) throws IOException {
+	public static void uploadFTP(File source, String destination, String domain) throws IOException {
 
 		FTPClient ftp = new FTPClient();
 		LOGGER.fine("Connecting to: " + SERVER );
@@ -44,8 +44,7 @@ public class FTPUtil {
 		ftp.disconnect();
 	}
 
-	private static void ftpDir(String dir2ftp, FTPClient fc, String breadCrum) throws IOException {
-		File ftpDir = new File(dir2ftp);
+	private static void ftpDir(File ftpDir, FTPClient fc, String breadCrum) throws IOException {
 		String[] dirList = ftpDir.list();
 		for (int i = 0; i < dirList.length; i++) {
 			File f = new File(ftpDir, dirList[i]);
@@ -53,8 +52,7 @@ public class FTPUtil {
 				String directory = breadCrum + "/" + f.getName();
 				LOGGER.fine("Creating directory: " + directory);
 				if ( !fc.makeDirectory(directory) ) {
-					String filePath = f.getPath();
-					ftpDir(filePath, fc, directory);
+					ftpDir(f, fc, directory);
 				} else {
 					AonUtil.addErrorMessage("FTP ERROR: No se ha podido crear el directorio " + directory);
 					LOGGER.severe("Can not create directory " + directory);
