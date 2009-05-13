@@ -104,41 +104,46 @@ public class GeneratorController extends BasicController implements VelocityCons
 		return homepage;
 	}
 	
+	private Company getCompany() throws ManagerBeanException {
+		IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+		List<ITransferObject> companyList = (List<ITransferObject>)companyBean.getList(null);
+		if (! companyList.isEmpty() ) {
+			return (Company)companyList.get(0);
+		}		
+		return null;
+	}
+	
 	public void onGenerate(ActionEvent event) throws ManagerBeanException {
 		String domain = null;
 		this.published = false;
 		this.webPage = null;
-		File templateDirectory = new File(TEMPLATE_PATH);
-		File temporalDirectory = new File( TEMPORAL_PATH, System.currentTimeMillis() + "" );
-		File imagesTemporalDirectory = new File( temporalDirectory, IMAGES_PATH );
-		File cssTemporalDirectory = new File( temporalDirectory, CSS_PATH );
 		try {
 			HibernateUtil.setCloseSession(false);
 			vu = new VelocityUtil();
 			//Añadimos al contexto todo lo necesario para las paginas
 			
 			String template = getTemplate();
+			LOGGER.fine( "Using template: " + template );
 			vu.setTemplate(template);
-			File currentTemplateDirectory = new File( templateDirectory, template );
-
 			//Indicamos el directorio del template
+			File templateDirectory = new File(TEMPLATE_PATH);
 			vu.setTemplateDirectory(templateDirectory);
+			File temporalDirectory = new File( TEMPORAL_PATH, System.currentTimeMillis() + "" );
 			vu.setTemporalDirectory(temporalDirectory);
+			File currentTemplateDirectory = new File( templateDirectory, template );
+			vu.initialize();
+			
+			File imagesTemporalDirectory = new File( temporalDirectory, IMAGES_PATH );
 			imagesTemporalDirectory.mkdirs();
+			File cssTemporalDirectory = new File( temporalDirectory, CSS_PATH );
 			cssTemporalDirectory.mkdirs();
 			
 			GregorianCalendar gc = new GregorianCalendar();
 			vu.put("currentYear", gc.get(Calendar.YEAR));
 
-			Company company = new Company();
-			IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
-			List<ITransferObject> companyList = (List<ITransferObject>)companyBean.getList(null);
-			if (companyList.size() > 0) {
-				company = (Company)companyList.get(0);
-			}
-			if (company != null && company.getId() >= 0) {
+			Company company = getCompany();
+			if (company != null) {
 				vu.put("company", company);
-				vu.initialize();
 	
 				addCompanyLogo( company, imagesTemporalDirectory );
 				addWebInfoAttributes( company );
@@ -149,6 +154,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			}
 
 			int homepage = getHomepage();
+			LOGGER.info( "Homepage: " + homepage );
 			
 			generateMenu( homepage );
 
@@ -209,7 +215,8 @@ public class GeneratorController extends BasicController implements VelocityCons
 		}		
 	}
 
-	private void generateGenericPage(WebInfoPage wip, boolean isIndex) throws ManagerBeanException {
+	private void generateGenericPage(WebInfoPage wip, String pageName) throws ManagerBeanException {
+		LOGGER.fine( "Generating gallery: " + wip + ", Page: " + pageName);
 		IManagerBean wipdBean = BeanManager.getManagerBean(WebInfoPageDetail.class);
 		Criteria wipdCriteria = new Criteria();
 		wipdCriteria.addEqualExpression(wipdBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_DETAIL_WEB_INFO_PAGE_ID), wip.getId());
@@ -254,20 +261,19 @@ public class GeneratorController extends BasicController implements VelocityCons
 
 		for (int i = 0; i < wiprList.size(); i++) {
 			WebInfoPageResource wipr = (WebInfoPageResource)wiprList.get(i);
-			ImageHandler ih = new ImageHandler(wipr.getRattach().getDescription() + "." + wipr.getRattach().getMimeType().getExtension(), getPageName(wipr.getRattach().getDescription()), wipr.getContent());
+			ImageHandler ih = new ImageHandler(wipr.getRattach().getDescription() + "." + wipr.getRattach().getMimeType().getExtension(), getImagePageName(wipr.getRattach().getDescription()), wipr.getContent());
 			images.add(ih);
 		}
 		vu.put("images", images);
-		String pagename = wip.getName();
-		if (isIndex) pagename = "index";
-		generatePage(template, pagename);
+		generatePage(template, pageName);
 		vu.remove("title");
 		vu.remove("text");
 		if (wip.getType() == WebInfoPageType.LOCATION) vu.remove("coords");
 		vu.remove("images");
 	}
 
-	private void generateGalleryPage(WebInfoPage wip, boolean isIndex) throws ManagerBeanException {
+	private void generateGalleryPage(WebInfoPage wip, String pageName) throws ManagerBeanException {
+		LOGGER.fine( "Generating gallery: " + wip + ", Page: " + pageName);
 		ArrayList<ImageHandler> images = new ArrayList<ImageHandler>();
 		IManagerBean wiprBean = BeanManager.getManagerBean(WebInfoPageResource.class);
 		Criteria wiprCriteria = new Criteria();
@@ -283,42 +289,46 @@ public class GeneratorController extends BasicController implements VelocityCons
 			if ((i+1) == wiprList.size()) {
 				ultima = true;
 				next_link = "";
-			}
-			else {
+			} else {
 				WebInfoPageResource wiprn = (WebInfoPageResource)wiprList.get(i+1);
-				next_link = getPageName(wiprn.getRattach().getDescription());
+				next_link = getImagePageName(wiprn.getRattach().getDescription());
 			}
 			WebInfoPageResource wipr = (WebInfoPageResource)wiprList.get(i);
 			//Por cada imagen se hace tambien una pagina
-			ImageHandler ih = new ImageHandler(wipr.getRattach().getDescription() + "." + wipr.getRattach().getMimeType().getExtension(), getPageName(wipr.getRattach().getDescription()), wipr.getContent());
+			ImageHandler ih = new ImageHandler(wipr.getRattach().getDescription() + "." + wipr.getRattach().getMimeType().getExtension(), getImagePageName(wipr.getRattach().getDescription()), wipr.getContent());
 			images.add(ih);
 			
 			vu.put("image", ih);
 			if (!primera) vu.put("previous", previous_link);
 			if (!ultima) vu.put("next", next_link);
 			vu.put("return", getPageName(wip.getName()));
-			generatePage(IMAGE_VIEW_TEMPLATE, wipr.getRattach().getDescription());
+			generateImagePage(IMAGE_VIEW_TEMPLATE, wipr.getRattach().getDescription());
 			vu.remove("image");
 			if (!primera) vu.remove("previous");
 			if (!ultima) vu.remove("next");
 			vu.remove("return");
 			primera = false;
-			previous_link = getPageName(wipr.getRattach().getDescription());
+			previous_link = getImagePageName(wipr.getRattach().getDescription());
 		}
 		vu.put("gallery", images);
 		
-		String pagename = wip.getName();
-		if (isIndex) pagename = "index";
-		generatePage(GALLERY_TEMPLATE, pagename);
-		if (wip.getType() == WebInfoPageType.LOCATION) vu.remove("coords");
+		generatePage(GALLERY_TEMPLATE, pageName);
+		if (wip.getType() == WebInfoPageType.LOCATION) {
+			vu.remove("coords");
+		}
 		vu.remove("gallery");
 	}
 
+	private void generateImagePage(String template, String name) {
+		vu.put("pagename", name);
+		vu.put("content", template);
+		vu.generate( getImagePageName(name) );
+	}
+	
 	private void generatePage(String template, String name) {
 		vu.put("pagename", name);
-		String page = getPageName(name);
 		vu.put("content", template);
-		vu.generate(page);
+		vu.generate( getPageName(name) );
 	}
 
 	private String getPageName(String name) {
@@ -329,6 +339,10 @@ public class GeneratorController extends BasicController implements VelocityCons
 		return page;
 	}
 
+	private String getImagePageName(String name) {
+		return IMAGE_PAGE_PREFFIX + getPageName(name);
+	}
+	
     public WebInfoVariableType getVariableType(String text) {
 	    WebInfoVariableType wvt[] = WebInfoVariableType.values();
 		for (int i = 0;i<wvt.length;i++) {
@@ -434,6 +448,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 	}
 
 	private void addCompanyLogo( Company company, File imagesDirectory ) throws ManagerBeanException {
+		LOGGER.info( "Writing company logo" );
 		IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria attachCriteria = new Criteria();
 		attachCriteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), company.getId());
@@ -456,6 +471,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		 *			$schedule - Horario comercial (opcional)
 		 * 		}
 		 */		
+		LOGGER.info( "Adding WebInfo attributes to the context" );
 		IManagerBean webinfoBean = BeanManager.getManagerBean(WebInfo.class);
 		Criteria webinfoCriteria = new Criteria();
 		webinfoCriteria.addEqualExpression(webinfoBean.getFieldName(IWebInfoAlias.WEB_INFO_COMPANY_ID), company.getId());
@@ -478,6 +494,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 	}
 
 	private void addCompanyImages( Company company, File imagesDirectory ) throws ManagerBeanException {
+		LOGGER.info( "Writing company images" );
 		IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 		List<ImageHandler> all_images = new LinkedList<ImageHandler>();
 		Criteria attachCriteria = new Criteria();
@@ -491,8 +508,10 @@ public class GeneratorController extends BasicController implements VelocityCons
 				if (!ImageUtil.copyRegistryBlobToFile(ra, imagesDirectory, 200, 200, filename)) {
 					AonUtil.addErrorMessage("ERROR: Se produjo un error al intentar copiar la imagen " + filename + "."); 
 				}
-				ImageHandler ih = new ImageHandler(filename, getPageName(ra.getDescription()), ra.getDescription());
+				ImageHandler ih = new ImageHandler(filename, getImagePageName(ra.getDescription()), ra.getDescription());
 				all_images.add(ih);
+			} else {
+				LOGGER.warning( "Invalid image: " + ra );
 			}
 		}
 		vu.put("all_images", all_images);	
@@ -504,6 +523,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		 * 			$email - Email para el formulario de envio, si no existe no hay opcion de menu. 
 		 * 		}
 		 */
+		LOGGER.info( "Adding Contact attributes to the context" );
 		String domain = null;
 		Iterator<RegistryMedia> mediaList = company.getMedias().iterator();
 		while (mediaList.hasNext()) {
@@ -511,9 +531,11 @@ public class GeneratorController extends BasicController implements VelocityCons
 			switch (m.getMediaType()) {
 				case WEB:
 					domain = getDomain(m.getValue());
+					LOGGER.info( "Domain: " + domain + " from " + m);
 					break;
 				case EMAIL:
 					vu.put("email", m.getValue());
+					break;
 				case FIXED_PHONE:
 					vu.put("phone", m.getValue());
 					break;
@@ -532,6 +554,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		 *			$addresses - Direcciones de la empresa (Google Maps)
 		 * 		}
 		 */	
+		LOGGER.info( "Adding addresses to the context" );
 		RegistryAddress defaultAddress = company.getDefaultAddress();
 		ArrayList<RegistryAddress> addresses = new ArrayList<RegistryAddress>();
 		Iterator<RegistryAddress> addressList = company.getAddresses().iterator();
@@ -547,12 +570,14 @@ public class GeneratorController extends BasicController implements VelocityCons
 			vu.put("addresses", addresses);
 		}
 		if (defaultAddress != null) {
+			LOGGER.fine( "Default address: " + defaultAddress );
 			vu.put("address", defaultAddress);		
 		}
 	}
 
 	private void generateCss( File temporalDirectory, File cssTemporalDirectory) throws ManagerBeanException {
 		//Parseamos los estilos
+		LOGGER.info( "Writting the css" );
 		IManagerBean wisBean = BeanManager.getManagerBean(WebInfoStyle.class);
 		List<ITransferObject> wisList = (List<ITransferObject>)wisBean.getList(null);
 		for (int i=0;i < wisList.size();i++) {
@@ -576,30 +601,29 @@ public class GeneratorController extends BasicController implements VelocityCons
 	
 	private void generatePages( int homepage) throws ManagerBeanException {
 		//Generar paginas segun menu.
+		LOGGER.info( "Generating the pages" );
 		IManagerBean wipBean = BeanManager.getManagerBean(WebInfoPage.class);
 		Criteria wipCriteria = new Criteria();
 		wipCriteria.addEqualExpression(wipBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_ACTIVE), true);
 		List<ITransferObject> wipList = (List<ITransferObject>)wipBean.getList(wipCriteria);
 		for (int i=0;i < wipList.size();i++) {
 			WebInfoPage wip = (WebInfoPage)wipList.get(i);
-			String pagename = wip.getName();
-			boolean isIndex = false;
+			String pageName = wip.getName();
 			if (homepage == wip.getId()) {
-				pagename = "index";
-				isIndex = true;
+				pageName = "index";
 			}
 			switch (wip.getType()) {
 				case CONTACT:
-					generatePage(CONTACT_TEMPLATE, pagename );
+					generatePage(CONTACT_TEMPLATE, pageName );
 					break;
 				case GENERIC:
-					generateGenericPage(wip, isIndex);
+					generateGenericPage(wip, pageName);
 					break;
 				case LOCATION:
-					generateGenericPage(wip, isIndex);
+					generateGenericPage(wip, pageName);
 					break;
 				case GALLERY:
-					generateGalleryPage(wip, isIndex);
+					generateGalleryPage(wip, pageName);
 					break;
 			}
 		}		
@@ -610,6 +634,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 	 * @throws ManagerBeanException 
 	 */
 	private void generateMenu( int homepage ) throws ManagerBeanException {
+		LOGGER.info( "Generating the menu for the context" );
 		ArrayList<MenuOptionHandler> menu = new ArrayList<MenuOptionHandler>();
 		MenuOptionHandler moh = new MenuOptionHandler("Inicio", INDEX_HTML);
 		menu.add(moh);

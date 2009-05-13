@@ -13,6 +13,7 @@ public interface VelocityConstants {
 	DOMAINS_PATH				= "/home/DOMAINS",
 	WEBSITE_PATH				= "WEBSITES",
 	RESOURCE_PATH				= "DOMAIN-RESOURCES",
+	IMAGE_PAGE_PREFFIX 			= "aonInfoWeb_",
 	
 	CSS_PATH					= "css",
 	CSS_STYLE_DEFAULTS			= "default.properties",
