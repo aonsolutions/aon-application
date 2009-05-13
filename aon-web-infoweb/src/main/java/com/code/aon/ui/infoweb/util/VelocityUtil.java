@@ -45,6 +45,10 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
 	public void setTemporalDirectory(File temporalDirectory) {
 		this.temporalDirectory = temporalDirectory;
 	}
+	
+	public File getTemporalDirectory() {
+		return temporalDirectory;
+	}
 
 	public VelocityContext getContext() {
 		return context;
@@ -61,8 +65,8 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
         this.setProperty(Velocity.RUNTIME_LOG, templateDirectory + "/" + VELOCITY_LOG_FILE);
         try {
         	this.init();
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        } catch (Throwable th) {
+            LOGGER.log(Level.SEVERE, th.getMessage(), th);
         }
     }
 
@@ -78,6 +82,7 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
 	}
 
 	public void put(String key, Object value) {
+		LOGGER.fine( "Key: " + key + ", Value: " + value );
 		this.context.put(key, value);
 	}
 
@@ -87,7 +92,7 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
 
     public boolean generate(File template, File page) {
 		boolean error = false;
-
+		LOGGER.fine( "Template: " + template + " -> " + page );
         BufferedReader reader = null;
         BufferedWriter writer = null;
         try {

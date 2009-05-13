@@ -1,7 +1,7 @@
 package com.code.aon.ui.infoweb.velocity;
 
 public class ImageHandler {
-
+	
 	private String name;
 
 	private String link;
