@@ -5,9 +5,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
+import javax.faces.validator.ValidatorException;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -24,8 +28,9 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
 
-public class CompanyWebInfoPageController extends BasicController {
+public class CompanyWebInfoPageController extends BasicController implements IInfoWebConstants {
 	
 	private static final Logger LOGGER = Logger.getLogger(CompanyWebInfoPageController.class.getName());
 
@@ -299,6 +304,29 @@ public class CompanyWebInfoPageController extends BasicController {
 	private void resetResource() {
 		setResource(null);
 		setNewResource(false);
+	}
+	
+	public void pageNameCheck(FacesContext context, UIComponent component, Object value) throws ManagerBeanException {
+		String domainName = value.toString();
+		IManagerBean bean = getManagerBean();
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_NAME), domainName);
+		int count = bean.getCount(criteria);
+		if ( count > 0 ) {
+			FacesMessage message = new FacesMessage(AonUtil.getMessage(BUNDLE_NAME, "infoweb_page_duplicated_name"));
+			message.setSeverity(FacesMessage.SEVERITY_ERROR);
+			throw new ValidatorException( message );
+		}
+		for( int i = 0; i < domainName.length(); i++ ) {
+			char c = domainName.charAt(i);
+			if (! (Character.isLetter(c) || Character.isDigit(c) || (c == ' ') ) ) {
+				String text = AonUtil.getMessage(BUNDLE_NAME, "infoweb_page_invalid_character");
+				String formatted = AonUtil.substituteParams(AonUtil.getCurrentLocale(), text, new Object[]{c});
+				FacesMessage message = new FacesMessage(formatted);
+				message.setSeverity(FacesMessage.SEVERITY_ERROR);				
+				throw new ValidatorException( message );										
+			}
+		}
 	}
 	
 }
