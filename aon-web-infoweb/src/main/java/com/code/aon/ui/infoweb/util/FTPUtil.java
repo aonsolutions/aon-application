@@ -3,6 +3,7 @@ package com.code.aon.ui.infoweb.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -19,12 +20,12 @@ public class FTPUtil {
 	private static final String USER = "ftpcms";
 	private static final String PASSWORD = "cms2001";
 	
-	public static void uploadFTP(File source, String destination, String domain) throws IOException {
-
+	public static void uploadFTP(File source, String destination) throws IOException {
 		FTPClient ftp = new FTPClient();
 		LOGGER.fine("Connecting to: " + SERVER );
 		ftp.connect(SERVER);
 		ftp.login(USER, PASSWORD);
+		ftp.enterLocalPassiveMode();
 		ftp.changeWorkingDirectory(destination);
 		LOGGER.fine("Connected.");
 		LOGGER.fine("Reply String: " + ftp.getReplyString());
@@ -33,15 +34,60 @@ public class FTPUtil {
 		LOGGER.fine("File Type: " + ftp.setFileType(FTPClient.BINARY_FILE_TYPE));
 		FTPFile files[] = ftp.listFiles();
 		if (! ArrayUtils.isEmpty(files)) {
-			if (!files[0].hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION) ) {
+			if (! hasWritePermission(files[0]) ) {
 				LOGGER.severe("Write permission denied for " + files[0]);
 				AonUtil.addErrorMessage("FTP ERROR: Error intentando escribir en el servidor.");
 			}
 		}
+		ftpDelete(ftp, destination);
 		ftpDir(source, ftp, destination);
 
 		ftp.logout();
 		ftp.disconnect();
+	}
+	
+	private static boolean hasWritePermission( FTPFile file ) {
+		return file.hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION) ||
+			file.hasPermission(FTPFile.GROUP_ACCESS, FTPFile.WRITE_PERMISSION) ||
+			file.hasPermission(FTPFile.WORLD_ACCESS, FTPFile.WRITE_PERMISSION);
+	}
+	
+	private static void deleteFile(FTPClient ftp, String pathname) {
+		try {
+			if (! ftp.deleteFile(pathname) ) {
+				LOGGER.fine("File no deleted " + pathname);
+			}
+		} catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, "Error deleting file " + pathname, th);
+		}
+	}
+
+	private static void deleteDirectory(FTPClient ftp, String pathname) {
+		try {
+			if (! ftp.removeDirectory(pathname) ) {
+				LOGGER.fine("Directory no deleted " + pathname);
+			}
+		} catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, "Error deleting directory " + pathname, th);
+		}
+	}
+	
+	private static void ftpDelete(FTPClient ftp, String destination) throws IOException {		
+		ftp.changeWorkingDirectory(destination);
+		FTPFile files[] = ftp.listFiles();
+		if (! ArrayUtils.isEmpty(files)) {
+			for( FTPFile file : files ) {
+				if ( file != null ) {
+					if ( file.isFile() ) {
+						deleteFile(ftp, file.getName());
+					} else if ( file.isDirectory() ) {
+						ftpDelete(ftp, file.getName());
+						ftp.changeToParentDirectory();
+						deleteDirectory(ftp, file.getName());
+					}
+				}
+			}
+		}
 	}
 
 	private static void ftpDir(File ftpDir, FTPClient fc, String breadCrum) throws IOException {
@@ -69,5 +115,5 @@ public class FTPUtil {
 			}
 		}
 	}
-
+	
 }
