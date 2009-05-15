@@ -97,7 +97,7 @@ public class FTPUtil {
 			if (f.isDirectory()) {
 				String directory = breadCrum + "/" + f.getName();
 				LOGGER.fine("Creating directory: " + directory);
-				if ( !fc.makeDirectory(directory) ) {
+				if ( fc.makeDirectory(directory) ) {
 					ftpDir(f, fc, directory);
 				} else {
 					AonUtil.addErrorMessage("FTP ERROR: No se ha podido crear el directorio " + directory);

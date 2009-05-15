@@ -661,7 +661,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		try {
 			if (domain != null) {
 				webPage = "http://www." + domain + "/";					
-				FTPUtil.uploadFTP(temporalDirectory, "/" + domain + "/WEBSITES/www." + domain + "/");
+				FTPUtil.uploadFTP(temporalDirectory, "/" + domain + "/WEBSITES/www." + domain);
 				this.published = true;
 			}
 		} catch (Throwable th) {
