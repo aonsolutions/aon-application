@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.code.aon.ui.util.ServleJSFtUtil;
+import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.bean.AonMessage;
 
@@ -29,7 +31,7 @@ public class CidServlet extends HttpServlet {
 		cadena = "cid:" + cadena.substring(cadena.lastIndexOf("/")+1,cadena.indexOf(".cid"));
 		String id  = "<" + cadena.substring(4,cadena.length()) + ">";
 
-		MessageController messageController = (MessageController) ServleJSFtUtil.getManagedBean( request, response, "webmailMessage" );
+		MessageController messageController = (MessageController) ServleJSFtUtil.getManagedBean( request, response, WebMailConstants.BEAN_MESSAGE );
     	AonMessage aonMessage = messageController.getMessage();
 
 		try{
