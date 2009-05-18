@@ -136,17 +136,6 @@ public class FinanceEntryController {
 		this.concept = concept;
 	}
 
-	@SuppressWarnings("unchecked")
-	public double getTotal() {
-		double total = 0.0;
-		Iterator<Finance> iterator = ((List)lines.getWrappedData()).iterator();
-		while (iterator.hasNext()) {
-			Finance finance = iterator.next();
-			total += finance.getTotalAmount();
-		}
-		return total;
-	}
-
 	public Company getCompany() {
 		try {
 			if (company == null) {
@@ -246,6 +235,17 @@ public class FinanceEntryController {
 			LOGGER.log(Level.SEVERE, "Error obtaining Banks", e);
 		}
 		return rBanks;
+	}
+
+	@SuppressWarnings("unchecked")
+	public double getTotal() {
+		double total = 0.0;
+		Iterator<Finance> iterator = ((List)lines.getWrappedData()).iterator();
+		while (iterator.hasNext()) {
+			Finance finance = iterator.next();
+			total += finance.getTotalAmount();
+		}
+		return total;
 	}
 
 	public void onTypeChanged(ValueChangeEvent event) {
@@ -503,7 +503,7 @@ public class FinanceEntryController {
 	}
 
 	public boolean isLastTracking() throws ManagerBeanException {
-		if (accountEntry != null) {
+		if (accountEntry != null && lines.isRowAvailable()) {
 			Finance finance = (Finance)lines.getRowData();
 			return isLastTracking(finance);
 		}
@@ -642,7 +642,7 @@ public class FinanceEntryController {
 		Iterator iterator = ((List)lines.getWrappedData()).iterator();
 		while (iterator.hasNext()) {
 			Finance finance = (Finance)iterator.next();
-			if (!lineChecks.contains(finance)) {
+			if (!lineChecks.contains(finance) && isLastTracking(finance)) {
 				lineChecks.add(finance);
 			}
 		}
