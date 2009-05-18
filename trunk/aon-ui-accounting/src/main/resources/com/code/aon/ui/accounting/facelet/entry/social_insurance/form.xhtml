@@ -9,8 +9,7 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-
-		<aon:form>
+		<aon:form id="socialInsuranceEntryForm">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 
@@ -33,8 +32,8 @@
 						accesskey="#{bundle.aon_key_remove}" action="accountEntry_search"
 						actionListener="#{socialInsuranceEntry.onRemove}"
 						rendered="#{!socialInsuranceEntry.new}" immediate="true"
-						onclick="if (confirm('#{bundle.aon_remove_confirm}')) return false;"
-						styleClass="aon-finding-toolbar-item aon-icon-delete" />
+						styleClass="aon-finding-toolbar-item aon-icon-delete"
+						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;" />
 				</ui:define>
 			</ui:decorate>
 
@@ -48,39 +47,18 @@
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
-					<aon:outputLabel for="Account_Period"
-						value="#{accountingBundle.accounting_period}" />
-					<aon:selectOneMenu id="Account_Period"
-						value="#{socialInsuranceEntry.header.period}">
-						<f:selectItems value="#{accountingCollections.accountPeriods}" />
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Account_description"
-						value="#{bundle.aon_description}" />
-					<aon:inputText id="Account_description"
-						value="#{socialInsuranceEntry.header.description}" size="60" />
-
-					<aon:outputLabel for="Account_amount"
-						value="#{bundle.aon_amount}" />
-					<aon:inputText id="Account_amount"
-						value="#{socialInsuranceEntry.header.amount}" size="15">
-						<f:validateDoubleRange />
-					</aon:inputText>
-
-					<aon:outputLabel for="RegistryBank_Lookup_id"
+					<aon:outputLabel for="Account_registryBank"
 						value="#{configBundle.config_bank}" />
-					<aon:selectOneMenu id="RegistryBank_Lookup_id" required="true"
-						value="#{socialInsuranceEntry.header.RBank}"
-						reRender="RegistryBank_bankAccount">
-						<f:selectItem itemDisabled="true" itemValue="" itemLabel="-" />
-						<f:selectItems value="#{financeCollections.companyBanks}" />
+					<aon:selectOneMenu id="Account_registryBank"
+						value="#{socialInsuranceEntry.header.registryBank}">
+						<f:selectItem itemLabel="#{accountingBundle.accounting_def_cash_acc}" value="#{null}" />
+						<f:selectItems value="#{socialInsuranceEntry.companyRegistryBanks}" />
 					</aon:selectOneMenu>
 
-					<aon:outputText value="#{configBundle.config_bank_account}" />
-					<aon:div id="RegistryBank_bankAccount">
-						<aon:outputText value="#{socialInsuranceEntry.header.RBank.bankAccount}" />
-						<aon:outputText value="&#160;" />
-					</aon:div>
+					<aon:outputLabel for="Account_concept"
+						value="#{bundle.aon_concept}" />
+					<aon:inputText id="Account_concept"
+						value="#{socialInsuranceEntry.header.concept}" size="50" maxLength="32" />
 
 					<aon:outputLabel for="AccountEntry_securityLevel"
 						value="#{bundle.aon_security_level}" />
@@ -88,6 +66,13 @@
 						value="#{socialInsuranceEntry.header.securityLevel}">
 						<f:selectItems value="#{commonCollections.securityLevels}" />
 					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Account_amount"
+						value="#{bundle.aon_amount}" />
+					<aon:inputText id="Account_amount"
+						value="#{socialInsuranceEntry.header.amount}" size="15"
+						ajaxSingle="true" />
+
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
