@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.registry.RegistryBank;
 
 public class SalaryEntryHeader implements ITransferObject {
@@ -13,26 +14,27 @@ public class SalaryEntryHeader implements ITransferObject {
 	/** The date. */
 	private Date date;
 	
-	/** The period. */
-	private Period period;
+	/** The registry bank. */
+	private RegistryBank registryBank;
 	
-	/** The description. */
-	private String description;
+	/** The concept. */
+	private String concept;
 	
+	/** The security level. */
+	private SecurityLevel securityLevel;
+
 	/** The gross salary. */
 	private double grossSalary;
 	
 	/** The retention. */
 	private double retention;
 	
-	/** The social isurance. */
-	private double socialInsurance;
+	/** The employee social insurance. */
+	private double employeeSocialInsurance;
 	
-	/** The r bank. */
-	private RegistryBank rBank;
+	/** The company social insurance. */
+	private double companySocialInsurance;
 	
-	private SecurityLevel securityLevel;
-
 	/**
 	 * Gets the date.
 	 * 
@@ -52,39 +54,57 @@ public class SalaryEntryHeader implements ITransferObject {
 	}
 
 	/**
-	 * Gets the period.
+	 * Gets the registry bank.
 	 * 
-	 * @return the period
+	 * @return the registry bank
 	 */
-	public Period getPeriod() {
-		return period;
+	public RegistryBank getRegistryBank() {
+		return registryBank;
 	}
 
 	/**
-	 * Sets the period.
+	 * Sets the registry bank.
 	 * 
-	 * @param period the period
+	 * @param registryBank the registry bank
 	 */
-	public void setPeriod(Period period) {
-		this.period = period;
+	public void setRegistryBank(RegistryBank registryBank) {
+		this.registryBank = registryBank;
+	}
+	
+	/**
+	 * Gets the concept.
+	 * 
+	 * @return the concept
+	 */
+	public String getConcept() {
+		return concept;
 	}
 
 	/**
-	 * Gets the description.
+	 * Sets the concept.
 	 * 
-	 * @return the description
+	 * @param concept the concept
 	 */
-	public String getDescription() {
-		return description;
+	public void setConcept(String concept) {
+		this.concept = concept;
 	}
 
 	/**
-	 * Sets the description.
+	 * Gets the security level.
 	 * 
-	 * @param description the description
+	 * @return the security level
 	 */
-	public void setDescription(String description) {
-		this.description = description;
+	public SecurityLevel getSecurityLevel() {
+		return securityLevel;
+	}
+
+	/**
+	 * Sets the security level.
+	 * 
+	 * @param securityLevel the security level
+	 */
+	public void setSecurityLevel(SecurityLevel securityLevel) {
+		this.securityLevel = securityLevel;
 	}
 
 	/**
@@ -124,55 +144,57 @@ public class SalaryEntryHeader implements ITransferObject {
 	}
 
 	/**
-	 * Gets the social isurance.
+	 * Gets the employee social insurance.
 	 * 
-	 * @return the social isurance
+	 * @return the employee social insurance
 	 */
-	public double getSocialInsurance() {
-		return socialInsurance;
+	public double getEmployeeSocialInsurance() {
+		return employeeSocialInsurance;
 	}
 
 	/**
-	 * Sets the social isurance.
+	 * Sets the employee social insurance.
 	 * 
-	 * @param socialIsurance the social isurance
+	 * @param employeeSocialInsurance the employee social insurance
 	 */
-	public void setSocialInsurance(double socialIsurance) {
-		this.socialInsurance = socialIsurance;
+	public void setEmployeeSocialInsurance(double employeeSocialIsurance) {
+		this.employeeSocialInsurance = employeeSocialIsurance;
 	}
 
 	/**
-	 * Gets the Registry bank.
+	 * Gets the company social insurance.
 	 * 
-	 * @return the Registry bank
+	 * @return the company social insurance
 	 */
-	public RegistryBank getRBank() {
-		return rBank;
+	public double getCompanySocialInsurance() {
+		return companySocialInsurance;
 	}
 
 	/**
-	 * Sets the Registry bank.
+	 * Sets the company social insurance.
 	 * 
-	 * @param rBank the Registry bank
+	 * @param companySocialInsurance the company social insurance
 	 */
-	public void setRBank(RegistryBank rBank) {
-		this.rBank = rBank;
+	public void setCompanySocialInsurance(double companySocialIsurance) {
+		this.companySocialInsurance = companySocialIsurance;
 	}
-	
+
 	/**
 	 * Gets the net salary.
 	 * 
 	 * @return the net salary
 	 */
 	public double getNetSalary(){
-		return grossSalary - (retention + socialInsurance);
+		return CommonUtil.round(grossSalary - retention - employeeSocialInsurance);
 	}
 
-	public SecurityLevel getSecurityLevel() {
-		return securityLevel;
+	/**
+	 * Gets the total social insurance.
+	 * 
+	 * @return the total social insurance
+	 */
+	public double getTotalSocialInsurance(){
+		return CommonUtil.round(employeeSocialInsurance + companySocialInsurance);
 	}
 
-	public void setSecurityLevel(SecurityLevel securityLevel) {
-		this.securityLevel = securityLevel;
-	}
 }
