@@ -10,10 +10,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.commercial.Target;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.marketing.enumeration.ActionTargetStatus;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
@@ -40,11 +45,12 @@ public class ActionTarget implements ITransferObject, IRegistry {
 	@ManyToOne (fetch=FetchType.EAGER)
     @JoinColumn( name="action", nullable = false, updatable = false )	
 	@ForeignKey(name = "FK_MK_ACTION_TARGET_MK_ACTION")
+	@Index(name = "IDX_MK_ACTION_TARGET_MK_ACTION")
 	private Action action;
 
 	@ManyToOne (fetch=FetchType.EAGER)
     @JoinColumn( name="target", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_MK_ACTION_TARGET_TARGET")
+	@Index(name = "IDX_MK_ACTION_TARGET_TARGET")
 	private Target target;
 
 	@Column(nullable = false)
@@ -52,7 +58,7 @@ public class ActionTarget implements ITransferObject, IRegistry {
 	
 	@ManyToOne (fetch=FetchType.EAGER)
     @JoinColumn( name="survey_response" )	
-	@ForeignKey(name = "FK_MK_ACTION_TARGET_SURVEY_RESPONSE")
+	@Index(name = "IDX_MK_ACTION_TARGET_SURVEY_RESPONSE")
 	private SurveyResponse surveyResponse;	
 	
     /**
@@ -171,6 +177,39 @@ public class ActionTarget implements ITransferObject, IRegistry {
 	@Override
 	public void setRegistry(Registry registry) {
 		this.target.setRegistry(registry);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final ActionTarget o = (ActionTarget) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.action, o.action)
+				.append(this.status, o.status)				
+				.append(this.surveyResponse, o.surveyResponse)
+				.append(this.target, o.target)				
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(action)
+			.append(id)	
+			.append(status)			
+			.append(surveyResponse)
+			.append(target)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
 	}
 	
 }
