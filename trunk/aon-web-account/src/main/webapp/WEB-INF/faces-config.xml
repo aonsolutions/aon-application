@@ -4,14 +4,12 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 	
 	<application>
-		<message-bundle>com.code.aon.ui.common.i18n.messages
-		</message-bundle>
+		<message-bundle>com.code.aon.ui.common.i18n.messages</message-bundle>
 		<locale-config>
 			<default-locale>es</default-locale>
 			<supported-locale>en</supported-locale>
 		</locale-config>
-		<view-handler>com.sun.facelets.FaceletViewHandler
-		</view-handler>
+		<view-handler>com.sun.facelets.FaceletViewHandler</view-handler>
 		<resource-bundle>
 			<base-name>com.code.aon.ui.web.account.i18n.messages</base-name>
 			<var>appBundle</var>
@@ -31,23 +29,22 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/1.6.5</value>
+			<value>/aonResource/3.6.1</value>
 		</managed-property>		
 	</managed-bean>
 
-	<!--  *************** 
-		AON CONFIGURATION
-		***************** -->
+	<!--  **** AON CONFIGURATION **** -->
 	<managed-bean>
 		<managed-bean-name>aonConfiguration</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.common.controller.ConfigurationController
+		<managed-bean-class>
+			com.code.aon.ui.common.controller.ConfigurationController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>styleSheets</property-name>
 			<list-entries>
-				<value>/aonResource/aon-richCss.css</value>
-				<value>#{aonResource.resolveLocal['/css/aon-account.css']}</value>
+				<value>#{aonResource.resolve['/aon-richCss.css']}</value>
+				<value>#{aonResource.resolveLocal['/css/smb.css']}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
