@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
+
+	<aon:outputLabel for="Customer_id"
+		value="#{customerBundle.customer_customer}" />
+	<aon:div styleClass="aon-lookup">
+		<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
+			reRender="Customer_full_name" lookupProperty="registry"
+			value="#{invoiceRemoverSearch.registry.id}" size="5" />
+		<aon:lookupButton windowTitle="#{customerBundle.customer_selection}"
+			selectReRender="Customer_id,Customer_full_name" actionType="search"
+			lookup="#{customerLookup}" minHeight="460" minWidth="650"
+			property="#{invoiceRemoverSearch.registry}" lookupProperty="registry">
+		</aon:lookupButton>
+		<aon:inputText id="Customer_full_name"
+			value="#{(invoiceRemoverSearch.registry.name!=null)?(invoiceRemoverSearch.registry.fullName):('')}"
+			size="50" disabled="true" />
+	</aon:div>
+
+	<aon:outputLabel value="#{bundle.aon_date}" />
+	<aon:div>
+		<aon:outputLabel for="Invoice_issueDate-From"
+			styleClass="aon-form-date-label" value="#{bundle.aon_date_from}:" />
+		<aon:selectInputDate id="Invoice_issueDate-From"
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+
+		<aon:outputLabel for="Invoice_issueDate-To"
+			styleClass="aon-form-date-label" value="#{bundle.aon_date_to}:" />
+		<aon:selectInputDate id="Invoice_issueDate-To"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+	</aon:div>
+
+	<aon:outputLabel for="Invoice_securityLevel"
+		value="#{bundle.aon_security_level}" />
+	<aon:selectOneMenu id="Invoice_securityLevel"
+		converter="aon.EnumConverter"
+		valueChangeListener="#{controller.addEqualExpression}">
+		<f:selectItem itemLabel="-" value="#{null}" />
+		<f:selectItems value="#{commonCollections.securityLevels}" />
+	</aon:selectOneMenu>
+
+</ui:composition>
