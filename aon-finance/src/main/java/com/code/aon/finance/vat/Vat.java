@@ -14,6 +14,8 @@ public class Vat {
 	double percent;
 	double surcharge;
 	double base;
+	double vatQuota;
+	double surchargeQuota;
 	String series;
 	int number;
 	String reference;
@@ -83,6 +85,22 @@ public class Vat {
 
 	public void setBase(double base) {
 		this.base = base;
+	}
+
+	public double getVatQuota() {
+		return vatQuota;
+	}
+
+	public void setVatQuota(double vatQuota) {
+		this.vatQuota = vatQuota;
+	}
+
+	public double getSurchargeQuota() {
+		return surchargeQuota;
+	}
+
+	public void setSurchargeQuota(double surchargeQuota) {
+		this.surchargeQuota = surchargeQuota;
 	}
 
 	public String getSeries() {
@@ -161,18 +179,9 @@ public class Vat {
 		this.year = year;
 	}
 
-	public double getVatQuota() {
-		return CommonUtil.round(getBase() * getPercent() / 100);
-	}
-
-	public double getSurchargeQuota() {
-		return CommonUtil.round(getBase() * getSurcharge() / 100);
-	}
-
 	public double getTotal() {
 		return CommonUtil.round(getBase() + getVatQuota() + getSurchargeQuota());
 	}
-	
 	
 	public Calendar getCalendar() {
 		if (this.calendar == null) {
