@@ -214,6 +214,18 @@
 		<url-pattern>*.cid</url-pattern>
 	</servlet-mapping>
 	
+	<!-- Message Content Servlet -->
+	<servlet>
+		<servlet-name>MessageServlet</servlet-name>
+		<servlet-class>
+			com.code.aon.ui.webmail.servlet.MessageServlet
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MessageServlet</servlet-name>
+		<url-pattern>*.msg</url-pattern>
+	</servlet-mapping>
+	
 	<!-- Resource Servlet -->
 	<servlet>
 		<servlet-name>ResourceServlet</servlet-name>
