@@ -21,6 +21,7 @@
 						accesskey="#{bundle.aon_key_save}"
 						actionListener="#{salaryEntry.accept}"
 						action="accountEntry_form"
+						disabled="#{salaryEntry.header.grossSalary == 0}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;" />
 					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
@@ -31,9 +32,8 @@
 					<aon:commandButton id="remove" value="#{bundle.aon_remove}"
 						accesskey="#{bundle.aon_key_remove}" action="accountEntry_search"
 						actionListener="#{salaryEntry.onRemove}"
-						rendered="#{!salaryEntry.new}"
+						rendered="#{!salaryEntry.new}" immediate="true"
 						styleClass="aon-finding-toolbar-item aon-icon-delete"
-						immediate="true"
 						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;" />
 				</ui:define>
 			</ui:decorate>
@@ -48,63 +48,18 @@
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
-					<aon:outputLabel for="Account_Period"
-						value="#{accountingBundle.accounting_period}" />
-					<aon:selectOneMenu id="Account_Period"
-						value="#{salaryEntry.header.period}">
-						<f:selectItems value="#{accountingCollections.accountPeriods}" />
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Account_description"
-						value="#{bundle.aon_description}" />
-					<aon:inputText id="Account_description"
-						value="#{salaryEntry.header.description}" size="60" />
-
-					<aon:outputLabel for="Account_gross_salary"
-						value="#{accountingBundle.accounting_gross_salary}" />
-					<aon:inputText id="Account_gross_salary"
-						value="#{salaryEntry.header.grossSalary}" size="15"
-						ajaxSingle="true" reRender="Account_net_salary">
-<!-- 	 					<f:validateDoubleRange />  -->
-					</aon:inputText>
-
-					<aon:outputLabel for="Account_retention"
-						value="#{bundle.aon_retention}" />
-					<aon:inputText id="Account_retention"
-						value="#{salaryEntry.header.retention}" size="15"
-						ajaxSingle="true" reRender="Account_net_salary">
-<!-- 	 					<f:validateDoubleRange />  -->
-					</aon:inputText>
-
-					<h:outputLabel for="Account_social_insurance"
-						value="#{accountingBundle.accounting_social_insurance}" />
-					<aon:inputText id="Account_social_insurance"
-						value="#{salaryEntry.header.socialInsurance}" size="15"
-						ajaxSingle="true" reRender="Account_net_salary">
-<!-- 	 					<f:validateDoubleRange />  -->
-					</aon:inputText>
-
-					<aon:outputLabel for="Account_net_salary"
-						value="#{accountingBundle.accounting_net_salary}" />
-					<aon:inputText id="Account_net_salary"
-						value="#{salaryEntry.header.netSalary}" disabled="true"
-						size="15">
-					</aon:inputText>
-
-					<aon:outputLabel for="RegistryBank_id"
+					<aon:outputLabel for="Account_registryBank"
 						value="#{configBundle.config_bank}" />
-					<aon:selectOneMenu id="RegistryBank_id"
-						value="#{salaryEntry.header.RBank}"
-						reRender="RegistryBank_bankAccount">
-						<f:selectItem itemDisabled="true" itemValue="" itemLabel="-" />
-						<f:selectItems value="#{financeCollections.companyBanks}" />
+					<aon:selectOneMenu id="Account_registryBank"
+						value="#{salaryEntry.header.registryBank}">
+						<f:selectItem itemLabel="#{accountingBundle.accounting_pending_salary}" value="#{null}" />
+						<f:selectItems value="#{salaryEntry.companyRegistryBanks}" />
 					</aon:selectOneMenu>
 
-					<aon:outputText value="#{configBundle.config_bank_account}" />
-					<aon:div id="RegistryBank_bankAccount">
-						<aon:outputText value="#{salaryEntry.header.RBank.bankAccount}" />
-						<aon:outputText value="&#160;" />
-					</aon:div>
+					<aon:outputLabel for="Account_concept"
+						value="#{bundle.aon_concept}" />
+					<aon:inputText id="Account_concept"
+						value="#{salaryEntry.header.concept}" size="50" maxlength="32" />
 
 					<aon:outputLabel for="AccountEntry_securityLevel"
 						value="#{bundle.aon_security_level}" />
@@ -112,6 +67,39 @@
 						value="#{salaryEntry.header.securityLevel}">
 						<f:selectItems value="#{commonCollections.securityLevels}" />
 					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Account_gross_salary"
+						value="#{accountingBundle.accounting_gross_salary}" />
+					<aon:inputText id="Account_gross_salary"
+						value="#{salaryEntry.header.grossSalary}" size="15"
+						ajaxSingle="true" reRender="save,Account_net_salary" />
+
+					<aon:outputLabel for="Account_retention"
+						value="#{bundle.aon_retention}" />
+					<aon:inputText id="Account_retention"
+						value="#{salaryEntry.header.retention}" size="15"
+						ajaxSingle="true" reRender="Account_net_salary" />
+
+					<h:outputLabel for="Account_employee_social_insurance"
+						value="#{accountingBundle.accounting_employee_social_insurance}" />
+					<aon:inputText id="Account_employee_social_insurance"
+						value="#{salaryEntry.header.employeeSocialInsurance}" size="15"
+						ajaxSingle="true" reRender="Account_net_salary" />
+
+					<h:outputLabel for="Account_company_social_insurance"
+						value="#{accountingBundle.accounting_company_social_insurance}" />
+					<aon:inputText id="Account_company_social_insurance"
+						value="#{salaryEntry.header.companySocialInsurance}" size="15" />
+
+					<aon:outputLabel for="Account_net_salary"
+						value="#{accountingBundle.accounting_net_salary}" />
+					<aon:outputText id="Account_net_salary"
+					 	styleClass="aon-bold"
+						value="#{salaryEntry.header.netSalary}"
+						size="15">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>	
+
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
