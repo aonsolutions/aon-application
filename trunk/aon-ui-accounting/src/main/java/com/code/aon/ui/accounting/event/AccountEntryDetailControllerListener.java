@@ -13,29 +13,38 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class AccountEntryDetailControllerListener extends ControllerAdapter {
 
-	private static final Logger LOGGER = Logger
-			.getLogger(AccountEntryDetailControllerListener.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(AccountEntryDetailControllerListener.class.getName());
 
 	private String concept;
 	private Account balancingAccount;
 	private Account account;
 
-	@Override
-	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		// ESTA LINEA SE DESCOMENTA PORQUE NO LE ENCONTRAMOS SENTIDO.
-		// event.getController().setModel(null);
+	public String getConcept() {
+		return concept;
+	}
+
+	public void setConcept(String concept) {
+		this.concept = concept;
+	}
+
+	public Account getBalancingAccount() {
+		return balancingAccount;
+	}
+
+	public void setBalancingAccount(Account balancingAccount) {
+		this.balancingAccount = balancingAccount;
+	}
+
+	public Account getAccount() {
+		return account;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
 	}
 
 	@Override
-	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		AccountEntryDetail detail = (AccountEntryDetail) event.getController().getTo();
-		setConcept(detail.getConcept());
-		setBalancingAccount(detail.getBalancingAccount());
-		setAccount(detail.getAccount());
-	}
-
 	@SuppressWarnings("unchecked")
-	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		try {
 			AccountEntryDetail detail = (AccountEntryDetail) event.getController().getTo();
@@ -57,21 +66,14 @@ public class AccountEntryDetailControllerListener extends ControllerAdapter {
 		}
 	}
 
-	public String getConcept() {
-		return concept;
+	@Override
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		AccountEntryDetail detail = (AccountEntryDetail) event.getController().getTo();
+		setConcept(detail.getConcept());
+		setBalancingAccount(detail.getBalancingAccount());
+		setAccount(detail.getAccount());
 	}
 
-	public void setConcept(String concept) {
-		this.concept = concept;
-	}
-
-	public Account getBalancingAccount() {
-		return balancingAccount;
-	}
-
-	public void setBalancingAccount(Account balancingAccount) {
-		this.balancingAccount = balancingAccount;
-	}
 	private double getBalance(List<AccountEntryDetail> list) {
 		double imp = 0;
 		for (AccountEntryDetail detail: list) {
@@ -84,11 +86,4 @@ public class AccountEntryDetailControllerListener extends ControllerAdapter {
 		return imp;
 	}
 
-	public Account getAccount() {
-		return account;
-	}
-
-	public void setAccount(Account account) {
-		this.account = account;
-	}
 }
