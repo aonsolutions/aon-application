@@ -89,7 +89,6 @@ public class AccountEntryController extends BasicController {
         }
     }
 
-
     @Override
     public void onRemove(ActionEvent event) {
         super.onRemove(event);
@@ -306,21 +305,28 @@ public class AccountEntryController extends BasicController {
 		salaryController.onReset(null);
 		salaryController.setNew(false);
 		salaryController.setAccountEntry(entry);
+
 		SalaryEntryHeader header = new SalaryEntryHeader();
-		Period period = new Period();
-		period.setId(entry.getAccountPeriod());
-		header.setPeriod(period);
 		header.setDate(entry.getEntryDate());
+		AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "465*");
+		if (accountEntryDetail != null) {
+			header.setConcept(accountEntryDetail.getConcept());
+		} else {
+			accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
+			if (accountEntryDetail != null) {
+				header.setRegistryBank(obtainRBank(accountEntryDetail.getAccount().getId()));
+				header.setConcept(accountEntryDetail.getConcept());
+			}
+		}
 		header.setSecurityLevel(entry.getSecurityLevel());
-		AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "6*");
-		header.setGrossSalary(accountEntryDetail.getDebit());
-		header.setDescription(accountEntryDetail.getConcept());
-		accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "47501");
-		header.setRetention(accountEntryDetail.getCredit());
-		accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "476");
-		header.setSocialInsurance(accountEntryDetail.getCredit());
-		accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "5*");
-		header.setRBank(obtainRBank(accountEntryDetail.getAccount().getId()));
+		accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "640*");
+		header.setGrossSalary((accountEntryDetail != null)?accountEntryDetail.getDebit():0);
+		accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "475*");
+		header.setRetention((accountEntryDetail != null)?accountEntryDetail.getCredit():0);
+		accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "642*");
+		header.setCompanySocialInsurance((accountEntryDetail != null)?accountEntryDetail.getDebit():0);
+		accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "476*");
+		header.setEmployeeSocialInsurance((accountEntryDetail != null)?accountEntryDetail.getCredit() - header.getCompanySocialInsurance():0);
 		salaryController.setHeader(header);
 	}
 	
@@ -329,16 +335,19 @@ public class AccountEntryController extends BasicController {
 		socialInsController.onReset(null);
 		socialInsController.setNew(false);
 		socialInsController.setAccountEntry(entry);
+
 		SocialInsuranceEntryHeader header = new SocialInsuranceEntryHeader();
-		Period period = new Period();
-		period.setId(entry.getAccountPeriod());
-		header.setPeriod(period);
 		header.setDate(entry.getEntryDate());
-		AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
-		header.setAmount(accountEntryDetail.getCredit());
-		header.setRBank(obtainRBank(accountEntryDetail.getAccount().getId()));
-		header.setDescription(accountEntryDetail.getConcept());
+		AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "570*");
+		if (accountEntryDetail != null) {
+			header.setConcept(accountEntryDetail.getConcept());
+		} else {
+			accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
+			header.setRegistryBank(obtainRBank(accountEntryDetail.getAccount().getId()));
+			header.setConcept(accountEntryDetail.getConcept());
+		}
 		header.setSecurityLevel(entry.getSecurityLevel());
+		header.setAmount(accountEntryDetail.getCredit());
 		socialInsController.setHeader(header);
 	}
 
