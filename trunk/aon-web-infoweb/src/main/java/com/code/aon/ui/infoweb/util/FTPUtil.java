@@ -16,6 +16,8 @@ public class FTPUtil {
 
 	private static final Logger LOGGER = Logger.getLogger(FTPUtil.class.getName());
 	
+	private static final String PATH_SEPARATOR = "/";
+	
 	private static final String SERVER = "192.168.3.47";
 	private static final String USER = "ftpcms";
 	private static final String PASSWORD = "cms2001";
@@ -55,7 +57,7 @@ public class FTPUtil {
 	private static void deleteFile(FTPClient ftp, String pathname) {
 		try {
 			if (! ftp.deleteFile(pathname) ) {
-				LOGGER.fine("File no deleted " + pathname);
+				LOGGER.severe("File no deleted " + pathname);
 			}
 		} catch (Throwable th) {
 			LOGGER.log(Level.SEVERE, "Error deleting file " + pathname, th);
@@ -65,28 +67,31 @@ public class FTPUtil {
 	private static void deleteDirectory(FTPClient ftp, String pathname) {
 		try {
 			if (! ftp.removeDirectory(pathname) ) {
-				LOGGER.fine("Directory no deleted " + pathname);
+				LOGGER.severe("Directory no deleted " + pathname);
 			}
 		} catch (Throwable th) {
 			LOGGER.log(Level.SEVERE, "Error deleting directory " + pathname, th);
 		}
 	}
 	
-	private static void ftpDelete(FTPClient ftp, String destination) throws IOException {		
-		ftp.changeWorkingDirectory(destination);
-		FTPFile files[] = ftp.listFiles();
-		if (! ArrayUtils.isEmpty(files)) {
-			for( FTPFile file : files ) {
-				if ( file != null ) {
-					if ( file.isFile() ) {
-						deleteFile(ftp, file.getName());
-					} else if ( file.isDirectory() ) {
-						ftpDelete(ftp, file.getName());
-						ftp.changeToParentDirectory();
-						deleteDirectory(ftp, file.getName());
+	private static void ftpDelete(FTPClient ftp, String destination) throws IOException {
+		if ( ftp.changeWorkingDirectory(destination) ) {
+			FTPFile files[] = ftp.listFiles(destination);
+			if (! ArrayUtils.isEmpty(files)) {
+				for( FTPFile file : files ) {
+					if ( file != null ) {
+						String name = destination + PATH_SEPARATOR + file.getName();
+						if ( file.isFile() ) {
+							deleteFile(ftp, name);
+						} else if ( file.isDirectory() ) {
+							ftpDelete(ftp, name);
+							deleteDirectory(ftp, name);	
+						}
 					}
 				}
 			}
+		} else {
+			LOGGER.severe( "Error in change of working directory: " + destination );
 		}
 	}
 
@@ -95,7 +100,7 @@ public class FTPUtil {
 		for (int i = 0; i < dirList.length; i++) {
 			File f = new File(ftpDir, dirList[i]);
 			if (f.isDirectory()) {
-				String directory = breadCrum + "/" + f.getName();
+				String directory = breadCrum + PATH_SEPARATOR + f.getName();
 				LOGGER.fine("Creating directory: " + directory);
 				if ( fc.makeDirectory(directory) ) {
 					ftpDir(f, fc, directory);
@@ -105,7 +110,7 @@ public class FTPUtil {
 				}
 			} else {
 				FileInputStream fis = new FileInputStream(f);
-				String name = breadCrum + "/" + f.getName();
+				String name = breadCrum + PATH_SEPARATOR + f.getName();
 				LOGGER.fine("Creating file: " + name);
 				if (!fc.storeFile(name, fis)) {
 					AonUtil.addErrorMessage("FTP ERROR: No se ha podido escribir el fichero " + name);
