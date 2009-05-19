@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.registry.RegistryBank;
 
 public class LeasingFeeEntryHeader implements ITransferObject {
@@ -236,13 +237,9 @@ public class LeasingFeeEntryHeader implements ITransferObject {
 
 	public double getVatQuota() {
 		if (getLeasing() != null && getLeasing().getVat() != null) {
-			return round((getTaxableBase() * getLeasing().getVat().getPercentage()) / 100, 2);	
+			return CommonUtil.round((getTaxableBase() * getLeasing().getVat().getPercentage()) / 100, 2);	
 		}
 		return 0;
 	}
 	
-    private double round(double value, int precision) {
-        double decimal = Math.pow(10, precision);
-        return Math.round(decimal*value) / decimal;
-    }
 }

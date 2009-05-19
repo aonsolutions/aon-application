@@ -2,6 +2,8 @@ package com.code.aon.accounting.summary;
 
 import java.util.List;
 
+import com.code.aon.common.util.CommonUtil;
+
 public class SummaryMonthly extends Summary {
 
 	private List<Double> months;
@@ -28,7 +30,7 @@ public class SummaryMonthly extends Summary {
 		double total = 0;
 		if (months != null) {
 			for (Double amount: months) {
-				total = round(total + amount);
+				total = CommonUtil.round(total + amount);
 			}
 		}
 		return total;

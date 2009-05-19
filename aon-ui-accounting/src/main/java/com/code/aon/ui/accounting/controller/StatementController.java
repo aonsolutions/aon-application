@@ -18,6 +18,7 @@ import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.accounting.util.AccountUtils;
 import com.code.aon.accounting.util.Balance;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -135,11 +136,11 @@ public class StatementController extends BasicController {
 			if (previous != null) {
 				balance.addBalance(previous);
 			} else {
-				double b = round(d.getDebit() - d.getCredit());
+				double b = CommonUtil.round(d.getDebit() - d.getCredit());
 				if (b > 0) {
 					balance.setUnpaidBalance(b);
 				} else {
-					balance.setCreditBalance(round(b * (-1)));
+					balance.setCreditBalance(CommonUtil.round(b * (-1)));
 				}
 			}
 			detail.add(balance);
@@ -193,12 +194,6 @@ public class StatementController extends BasicController {
 		return (getFromOpeningEntry() != null);
 	}
 
-	private double round(double value) {
-		double decimal = Math.pow(10, 2);
-		return Math.round(decimal * value) / decimal;
-	}
-	
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection getCollection() {
