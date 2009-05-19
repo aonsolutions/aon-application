@@ -234,14 +234,6 @@ public class SocialInsuranceEntryController {
 		previousTo.set(Calendar.DATE, 1);
 		previousTo.add(Calendar.DATE, -1);
 
-		Date d1 = previousFrom.getTime();
-		Date d2 = previousTo.getTime();
-		Date d3 = currentFrom.getTime();
-		Date d4 = currentTo.getTime();
-
-
-
-
 		AccountEntry acumEntry = new AccountEntry();
 		int acumEntryId = 0; 
 		double acumAmount = 0;
