@@ -14,6 +14,7 @@ import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class ProfitAndLossReportController implements ICollectionProvider {
@@ -54,9 +55,9 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 	}
 
 	public double getTotalResult() {
-		double gm = round(grossMargin.getCredit() - grossMargin.getDebit());
-		double te = round(totalExpenses.getDebit() - totalExpenses.getCredit());
-		return round(gm - te);
+		double gm = CommonUtil.round(grossMargin.getCredit() - grossMargin.getDebit());
+		double te = CommonUtil.round(totalExpenses.getDebit() - totalExpenses.getCredit());
+		return CommonUtil.round(gm - te);
 	}
 
 	public String getAccountStatement() {
@@ -82,8 +83,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 	}
 
 	public void onStatement(ActionEvent event) {
-		TrialBalanceController c = (TrialBalanceController) AonUtil
-				.getRegisteredBean(TRIAL_BALANCE_CONTROLLER_NAME);
+		TrialBalanceController c = (TrialBalanceController) AonUtil.getRegisteredBean(TRIAL_BALANCE_CONTROLLER_NAME);
 		c.onReset(event);
 		c.setParameters(getParameters());
 		c.onSearch(event);
@@ -119,14 +119,14 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 
 	public Collection<Summary> getCollection() {
 		Collection<Summary> list = new LinkedList<Summary>();
-		list.addAll(getGrossMargin().getSummaryList());
+		list.addAll(getGrossMargin().getSortedSummaryList());
 		Summary gmTotal = new Summary();
 		gmTotal.setDescription(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_gross_margin"));
 		gmTotal.setCredit(getGrossMargin().getCredit());
 		gmTotal.setDebit(getGrossMargin().getDebit());
 		list.add(gmTotal);
 
-		list.addAll(getTotalExpenses().getSummaryList());
+		list.addAll(getTotalExpenses().getSortedSummaryList());
 		Summary teTotal = new Summary();
 		teTotal.setDescription(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_total_expenses"));
 		teTotal.setCredit(getTotalExpenses().getCredit());
@@ -147,7 +147,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		r.append(")");
 		result.setDescription(r.toString());
 		if (getTotalResult() < 0) {
-			result.setDebit(round(getTotalResult() * (-1)));
+			result.setDebit(CommonUtil.round(getTotalResult() * (-1)));
 		} else {
 			result.setCredit(getTotalResult());
 		}
@@ -160,18 +160,12 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		return getCollection();
 	}
 
-	private double round(double value) {
-		double decimal = Math.pow(10, 2);
-		return Math.round(decimal * value) / decimal;
-	}
-
 	public List<ProfitAndLossReportController> getController() {
 		if (collections == null) {
 			collections = new LinkedList<ProfitAndLossReportController>();
 			// Se añade una WeakReference para evitar que el objeto "this" cruce
 			// referencia directa con la lista.
-			WeakReference<ProfitAndLossReportController> weakThis = new WeakReference<ProfitAndLossReportController>(
-					this);
+			WeakReference<ProfitAndLossReportController> weakThis = new WeakReference<ProfitAndLossReportController>(this);
 			collections.add(weakThis.get());
 		}
 		return collections;
