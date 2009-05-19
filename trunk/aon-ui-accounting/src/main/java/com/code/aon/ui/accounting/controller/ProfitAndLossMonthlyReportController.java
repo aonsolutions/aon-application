@@ -14,6 +14,7 @@ import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class ProfitAndLossMonthlyReportController implements ICollectionProvider {
@@ -31,7 +32,7 @@ public class ProfitAndLossMonthlyReportController implements ICollectionProvider
 
 			SummaryProvider sp = new SummaryProvider();
 			SummaryCollection grossMargin = sp.getGrossMarginSummaryCollection(params);
-			list.addAll(grossMargin.getSummaryList());
+			list.addAll(grossMargin.getSortedSummaryList());
 			SummaryMonthly gmTotal = new SummaryMonthly();
 			gmTotal.setDescription(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_gross_margin"));
 			gmTotal.setCredit(grossMargin.getCredit());
@@ -40,17 +41,21 @@ public class ProfitAndLossMonthlyReportController implements ICollectionProvider
 			for (int i = 0; i < 12; i++) {
 				months.add(new Double(0));
 			}
-			for (Summary s : grossMargin.getSummaryList()) {
+			for (Summary s : grossMargin.getSortedSummaryList()) {
 				SummaryMonthly sm = (SummaryMonthly) s;
 				for (int i = 0; i < sm.getMonths().size(); i++) {
-					months.set(i, round(months.get(i) + sm.getMonths().get(i)));
+					if (sm.getId().startsWith("7")) {
+						months.set(i, CommonUtil.round(months.get(i) + sm.getMonths().get(i)));
+					} else {
+						months.set(i, CommonUtil.round(months.get(i) - sm.getMonths().get(i)));
+					}
 				}
 			}
 			gmTotal.setMonths(months);
 			list.add(gmTotal);
 
 			SummaryCollection totalExpenses = sp.getTotalExpensesSummaryCollection(params);
-			list.addAll(totalExpenses.getSummaryList());
+			list.addAll(totalExpenses.getSortedSummaryList());
 			SummaryMonthly teTotal = new SummaryMonthly();
 			teTotal.setDescription(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_total_expenses"));
 			teTotal.setCredit(totalExpenses.getCredit());
@@ -59,10 +64,10 @@ public class ProfitAndLossMonthlyReportController implements ICollectionProvider
 			for (int i = 0; i < 12; i++) {
 				months.add(new Double(0));
 			}
-			for (Summary s : totalExpenses.getSummaryList()) {
+			for (Summary s : totalExpenses.getSortedSummaryList()) {
 				SummaryMonthly sm = (SummaryMonthly) s;
 				for (int i = 0; i < sm.getMonths().size(); i++) {
-					months.set(i, round(months.get(i) + sm.getMonths().get(i)));
+					months.set(i, CommonUtil.round(months.get(i) + sm.getMonths().get(i)));
 				}
 			}
 			teTotal.setMonths(months);
@@ -75,7 +80,7 @@ public class ProfitAndLossMonthlyReportController implements ICollectionProvider
 				months.add(new Double(0));
 			}
 			for (int i = 0; i < months.size(); i++) {
-				months.set(i, round(gmTotal.getMonths().get(i) - teTotal.getMonths().get(i)));
+				months.set(i, CommonUtil.round(gmTotal.getMonths().get(i) - teTotal.getMonths().get(i)));
 			}
 			result.setMonths(months);
 
@@ -105,11 +110,6 @@ public class ProfitAndLossMonthlyReportController implements ICollectionProvider
 	@Override
 	public Collection<?> getCollection(boolean arg0) throws ManagerBeanException {
 		return getCollection();
-	}
-
-	private double round(double value) {
-		double decimal = Math.pow(10, 2);
-		return Math.round(decimal * value) / decimal;
 	}
 
 }
