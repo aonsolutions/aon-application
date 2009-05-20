@@ -19,6 +19,7 @@ public interface VelocityConstants {
 	CSS_STYLE_DEFAULTS			= "default.properties",
 	CSSIMG_PATH					= "img",
 	IMAGES_PATH					= "images",
+	INDEX_TITLE					= "Inicio",
 
 	TEMPORAL_PATH				= "/home/COMMON-RESOURCES/aon-web-info/temporal",
 

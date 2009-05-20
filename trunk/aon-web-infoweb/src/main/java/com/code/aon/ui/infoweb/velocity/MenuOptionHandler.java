@@ -20,4 +20,8 @@ public class MenuOptionHandler {
 		return link;
 	}
 
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
 }
