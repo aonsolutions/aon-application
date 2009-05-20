@@ -58,6 +58,17 @@
 		</params>
 	</report>
 	
+	<!--  BALANCE DE PERDIDAS Y GANACIAS PRESUPUESTADO -->
+	<report id="profitAndLossComparison" description="BudgetedProfitAndLoss">
+		<template path="/com/code/aon/ui/accounting/report/profitAndLossComparison.jasper"/>
+		<collection provider="#{budgetedProfitAndLossComparison.list}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="params" value="#{budgetedProfitAndLossReport.getParameters}" />
+		</params>
+	</report>
+
 	<!--  LISTADO DETALLADO DE CUENTAS CON PRESUPUESTO -->
 	<report id="budgetDetailList" description="BudgetDetailList">
 		<template path="/com/code/aon/ui/accounting/report/budgetDetailList.jasper"/>
