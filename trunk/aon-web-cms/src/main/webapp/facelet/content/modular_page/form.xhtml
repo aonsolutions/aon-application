@@ -160,15 +160,8 @@
 							
 							<aon:dataTable id="dataTable" value="#{modular_page_option.model}" var="to"
 								rows="#{modular_page_option.pageLimit}"
-								styleClass="dr-table rich-table aon-editDataTable"
-								headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
-								footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
-								rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
-								cellpadding="0" cellspacing="0"
-								columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
-										dr-table-cell rich-table-cell aon-editDataTable-textColumn,
-										dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
-										dr-table-cell rich-table-cell aon-editDataTable-textColumn">
+								columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+										aon-editDataTable-iconColumn, aon-editDataTable-textColumn">
 										
 								<aon:column>
 									<a4j:support 
@@ -234,9 +227,7 @@
 	
 							</aon:dataTable>
 								
-							<aon:dataScroller for="dataTable"
-								rowCount="#{modular_page_option.model.rowCount}" 
-								showNote="true" />					
+							<aon:dataScroller2 for="dataTable" showNote="true" />					
 
 						</rich:panel>
 						
