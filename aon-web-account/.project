@@ -2,6 +2,12 @@
 <projectDescription>
 	<name>aon-web-account</name>
 	<comment></comment>
+	<projects>
+		<project>aon-ui-accounting</project>
+		<project>aon-accounting</project>
+		<project>aon-ui-account</project>
+		<project>aon-account</project>
+	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>

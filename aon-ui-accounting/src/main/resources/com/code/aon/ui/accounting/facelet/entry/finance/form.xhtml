@@ -71,6 +71,8 @@
 								<aon:outputText styleClass="aon-bold"
 									value="#{financeEntry.accountEntry.id}"/>
 								<aon:outputText styleClass="aon-italic" value=")"/>
+								<f:setPropertyActionListener value="#{true}" 
+									target="#{aonConfiguration.properties.hideHeaderLinks}" />
 							</h:commandLink>
 						</aon:div>
 

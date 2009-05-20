@@ -57,7 +57,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{accountingBundle.accounting_debit}" />
 						</f:facet>
-						<aon:outputText value="#{to.debit}">
+						<aon:outputText value="#{to.debit}" rendered="#{to.debit != 0}">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
 						<f:facet name="footer">
@@ -74,7 +74,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{accountingBundle.accounting_credit}" />
 						</f:facet>
-						<aon:outputText value="#{to.credit}">
+						<aon:outputText value="#{to.credit}" rendered="#{to.credit != 0}">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
 						<f:facet name="footer">
@@ -91,7 +91,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{accountingBundle.accounting_debit_balance}" />
 						</f:facet>
-						<aon:outputText value="#{to.unpaidBalance}">
+						<aon:outputText value="#{to.unpaidBalance}" rendered="#{to.unpaidBalance != 0}">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
 						<f:facet name="footer">
@@ -108,7 +108,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{accountingBundle.accounting_credit_balance}" />
 						</f:facet>
-						<aon:outputText value="#{to.creditBalance}">
+						<aon:outputText value="#{to.creditBalance}" rendered="#{to.creditBalance != 0}">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
 						<f:facet name="footer">

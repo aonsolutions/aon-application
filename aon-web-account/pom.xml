@@ -22,7 +22,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>3.6.1</version>
+			<version>3.6.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -40,7 +40,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.accounting</artifactId>
-			<version>3.11.0</version>
+			<version>3.12.0-SNAPSHOT</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -147,5 +147,4 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-	</dependencies>
-</project>
+	</dependencies></project>

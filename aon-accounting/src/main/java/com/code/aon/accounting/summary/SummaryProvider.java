@@ -146,7 +146,8 @@ public class SummaryProvider {
 					sm.setMonths(months);
 					s = sm;
 				}
-				if (!params.isZeroSumVisible() && (CommonUtil.round(debit) == CommonUtil.round(credit))) {
+				if (!params.isNoTouchedAccountVisible() && 
+					(CommonUtil.round(debit) == 0 && CommonUtil.round(credit) == 0)) {
 					add = false;
 				}
 				if (!params.isLowerLevelVisible() && !account.isEntryEnabled()
