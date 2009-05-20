@@ -31,6 +31,7 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.util.AonUtil;
 
 public class ExpenseEntryController {
 	
@@ -45,6 +46,8 @@ public class ExpenseEntryController {
 	private ExpenseEntryHeader header;
 
 	private Company company;
+	
+	private String navigationKey;
 
 	public boolean isNew() {
 		return isNew;
@@ -95,15 +98,14 @@ public class ExpenseEntryController {
 	
 	private void reset(){
 		this.isNew = true;
-		this.header = initializeHeader();
+		setHeader( initializeHeader() );
 	}
 	
 	private ExpenseEntryHeader initializeHeader() {
 		ExpenseEntryHeader header = new ExpenseEntryHeader();
 		header.setDate(new Date());
-		header.setRegistryBank(new RegistryBank());
-		header.getRegistryBank().setBank(new Bank());
 		header.setAccount(new Account());
+		header.getAccount().setId("");
 		return header;
 	}
 	
@@ -126,13 +128,20 @@ public class ExpenseEntryController {
 				rBanks.add(item);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining Banks", e);
+			String message  = "Error obtaining Banks";
+			LOGGER.log(Level.SEVERE, message , e);
+			AonUtil.addErrorMessage(message);
 		}
 		return rBanks;
 	}
+	
+	public String accept(){
+		return navigationKey; 	
+	}
 
-	public void accept(ActionEvent event){
+	public void onAccept(ActionEvent event){
 		try {
+			this.navigationKey = "accountEntry_form"; 
 			AccountEntry entry = new AccountEntry();
 			if (!this.isNew) {
 				deleteAccountEntryDetails(getAccountEntry());
@@ -150,16 +159,25 @@ public class ExpenseEntryController {
 			this.isNew = false;
 			loadAccountEntryController(entry);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error accepting AccountEntry", e);
+			navigationKey = null;
+			String message = "Error accepting AccountEntry";
+			LOGGER.log(Level.SEVERE, message , e);
+			AonUtil.addErrorMessage(message);
 		}
 	}
 	
 	public void onRemove(ActionEvent event){
-		deleteAccountEntryDetails(getAccountEntry());
-		deleteAccountEntry(getAccountEntry());
-
-		AccountEntryController entryController = (AccountEntryController)FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
-		entryController.onEditSearch(null);
+		try {
+			deleteAccountEntryDetails(getAccountEntry());
+			deleteAccountEntry(getAccountEntry());
+	
+			AccountEntryController entryController = (AccountEntryController)FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
+			entryController.onEditSearch(null);
+		} catch (ManagerBeanException e) {
+			String message = "Error deleting AccountEntry";
+			LOGGER.log(Level.SEVERE, message , e);
+			AonUtil.addErrorMessage(message);
+		}
 	}
 	
 	private AccountEntry insertorUpdateAccountEntry(AccountEntry entry) {
@@ -171,78 +189,63 @@ public class ExpenseEntryController {
 				entry = (AccountEntry)entryBean.update(entry);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error inserting AccountEntry", e);
+			String message = "Error inserting AccountEntry";
+			LOGGER.log(Level.SEVERE, message , e);
+			AonUtil.addErrorMessage(message);
 		}
 		return entry;
 	}
 
-	private void insertEntryDetails(AccountEntry entry) {
-		try {
-			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+	private void insertEntryDetails(AccountEntry entry) throws ManagerBeanException {
+		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 
-			Account bankAccount = null;
-			if (header.getRegistryBank() != null && header.getRegistryBank().getId() != null) {
-				bankAccount = AccountUtil.obtainRBankAccount(header.getRegistryBank());
-			} else {
-				bankAccount = AccountUtil.obtainCashAccount();
-			}
-			// Primer apunte
-			AccountEntryDetail detail = new AccountEntryDetail();
-			detail.setAccount(getHeader().getAccount());
-			detail.setAccountEntry(entry);
-			detail.setBalancingAccount(bankAccount);
-			detail.setConcept(getHeader().getConcept());
-			detail.setDebit(getHeader().getAmount());
-			accountEntryDetailBean.insert(detail);
-			// Segundo apunte
-			detail = new AccountEntryDetail();
-			detail.setAccount(bankAccount);
-			detail.setAccountEntry(entry);
-			detail.setBalancingAccount(getHeader().getAccount());
-			detail.setConcept(getHeader().getConcept());
-			detail.setCredit(getHeader().getAmount());
-			accountEntryDetailBean.insert(detail);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error inserting AccountEntryDetails related with Account entry with id= " + entry.getId(), e);
+		Account bankAccount = null;
+		if (getHeader().getRegistryBank() != null && getHeader().getRegistryBank().getId() != null) {
+			bankAccount = AccountUtil.obtainRBankAccount(getHeader().getRegistryBank());
+		} else {
+			bankAccount = AccountUtil.obtainCashAccount();
 		}
+		// Primer apunte
+		AccountEntryDetail detail = new AccountEntryDetail();
+		detail.setAccount(getHeader().getAccount());
+		detail.setAccountEntry(entry);
+		detail.setBalancingAccount(bankAccount);
+		detail.setConcept(getHeader().getConcept());
+		detail.setDebit(getHeader().getAmount());
+		accountEntryDetailBean.insert(detail);
+		// Segundo apunte
+		detail = new AccountEntryDetail();
+		detail.setAccount(bankAccount);
+		detail.setAccountEntry(entry);
+		detail.setBalancingAccount(getHeader().getAccount());
+		detail.setConcept(getHeader().getConcept());
+		detail.setCredit(getHeader().getAmount());
+		accountEntryDetailBean.insert(detail);
 	}
 
 	@SuppressWarnings("unchecked")
-	private void deleteAccountEntryDetails(AccountEntry accountEntry) {
-		try {
-			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
-			Iterator iter = accountEntryDetailBean.getList(criteria).iterator();
-			while(iter.hasNext()){
-				accountEntryDetailBean.remove((AccountEntryDetail)iter.next());
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error deleting details related with AccountEntry with id=" + accountEntry.getId(), e);
+	private void deleteAccountEntryDetails(AccountEntry accountEntry) throws ManagerBeanException {
+		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
+		Iterator iter = accountEntryDetailBean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			accountEntryDetailBean.remove((AccountEntryDetail)iter.next());
 		}
 	}
 	
-	private void deleteAccountEntry(AccountEntry accountEntry) {
-		try {
-			IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
-			accountEntryBean.remove(accountEntry);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error deleting AccountEntry with id= " + accountEntry.getId(), e);
-		}
+	private void deleteAccountEntry(AccountEntry accountEntry) throws ManagerBeanException {
+		IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
+		accountEntryBean.remove(accountEntry);
 	}
 	
-	private void loadAccountEntryController(AccountEntry entry) {
-		try {
-			AccountEntryController entryController = (AccountEntryController)FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
-			entryController.setCriteria(criteria);
-			entryController.onSearch(null);
-			entryController.getModel().setRowIndex(0);
-			entryController.onSelect(null);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading AccountEntryController", e);
-		}
+	private void loadAccountEntryController(AccountEntry entry) throws ManagerBeanException {
+		AccountEntryController entryController = (AccountEntryController)FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
+		entryController.setCriteria(criteria);
+		entryController.onSearch(null);
+		entryController.getModel().setRowIndex(0);
+		entryController.onSelect(null);
 	}
-
 }

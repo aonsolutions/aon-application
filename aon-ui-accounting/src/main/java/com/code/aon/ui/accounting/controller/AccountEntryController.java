@@ -58,21 +58,13 @@ public class AccountEntryController extends BasicController {
 	private static final Logger LOGGER = Logger.getLogger(AccountEntryController.class.getName());
 	
 	private static final String INVOICE_ENTRY_CONTROLLER_NAME = "invoiceEntry";
-	
 	private static final String FINANCE_ENTRY_CONTROLLER_NAME = "financeEntry";
-	
 	private static final String EXPENSE_ENTRY_CONTROLLER_NAME = "expenseEntry";
-	
 	private static final String SALARY_ENTRY_CONTROLLER_NAME = "salaryEntry";
-	
 	private static final String SOCIAL_INSURANCE_ENTRY_CONTROLLER_NAME = "socialInsuranceEntry";
-	
 	private static final String LOAN_ENTRY_CONTROLLER_NAME = "loanEntry";
-
 	private static final String LOAN_FEE_ENTRY_CONTROLLER_NAME = "loanFeeEntry";
-
 	private static final String LEASING_ENTRY_CONTROLLER_NAME = "leasingEntry";
-
 	private static final String LEASING_FEE_ENTRY_CONTROLLER_NAME = "leasingFeeEntry";
 	
 	@Override

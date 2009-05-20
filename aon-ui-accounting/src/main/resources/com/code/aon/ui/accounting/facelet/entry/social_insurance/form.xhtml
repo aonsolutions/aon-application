@@ -17,12 +17,12 @@
 				<ui:param name="toolbarDescription" value="#{socialInsuranceEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 						
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="save" value="#{bundle.aon_save}"
+					<aon:commandButton id="save" value="#{accountingBundle.accounting_entry_generate}"
 						accesskey="#{bundle.aon_key_save}"
 						actionListener="#{socialInsuranceEntry.accept}"
 						action="accountEntry_form"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;" />
+						onclick="if (!confirm('#{accountingBundle.accounting_entry_generate}?')) return false;" />
 					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 						accesskey="#{bundle.aon_key_new}"
 						actionListener="#{socialInsuranceEntry.onReset}"
