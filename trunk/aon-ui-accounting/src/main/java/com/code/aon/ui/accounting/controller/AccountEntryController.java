@@ -286,17 +286,18 @@ public class AccountEntryController extends BasicController {
 		expenseEntryController.onReset(null);
 		expenseEntryController.setNew(false);
 		expenseEntryController.setAccountEntry(entry);
+
 		ExpenseEntryHeader header = new ExpenseEntryHeader();
-		Period period = new Period();
-		period.setId(entry.getAccountPeriod());
-		header.setPeriod(period);
 		header.setDate(entry.getEntryDate());
-		AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "6*");
+		AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
+		if (accountEntryDetail != null) {
+			header.setRegistryBank(obtainRBank(accountEntryDetail.getAccount().getId()));
+		}
+		accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "6*");
 		header.setAccount(accountEntryDetail.getAccount());
-		header.setDescription(accountEntryDetail.getConcept());
-		header.setAmount(accountEntryDetail.getDebit());
-		header.setRBank(obtainRBank(accountEntryDetail.getBalancingAccount().getId()));
+		header.setConcept(accountEntryDetail.getConcept());
 		header.setSecurityLevel(entry.getSecurityLevel());
+		header.setAmount(accountEntryDetail.getDebit());
 		expenseEntryController.setHeader(header);
 	}
 	
@@ -329,7 +330,7 @@ public class AccountEntryController extends BasicController {
 		header.setEmployeeSocialInsurance((accountEntryDetail != null)?accountEntryDetail.getCredit() - header.getCompanySocialInsurance():0);
 		salaryController.setHeader(header);
 	}
-	
+
 	private void loadSocialInsuranceEntryController(AccountEntry entry) {
 		SocialInsuranceEntryController socialInsController = (SocialInsuranceEntryController)AonUtil.getRegisteredBean(SOCIAL_INSURANCE_ENTRY_CONTROLLER_NAME);
 		socialInsController.onReset(null);
@@ -339,13 +340,11 @@ public class AccountEntryController extends BasicController {
 		SocialInsuranceEntryHeader header = new SocialInsuranceEntryHeader();
 		header.setDate(entry.getEntryDate());
 		AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "570*");
-		if (accountEntryDetail != null) {
-			header.setConcept(accountEntryDetail.getConcept());
-		} else {
+		if (accountEntryDetail == null) {
 			accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
 			header.setRegistryBank(obtainRBank(accountEntryDetail.getAccount().getId()));
-			header.setConcept(accountEntryDetail.getConcept());
 		}
+		header.setConcept(accountEntryDetail.getConcept());
 		header.setSecurityLevel(entry.getSecurityLevel());
 		header.setAmount(accountEntryDetail.getCredit());
 		socialInsController.setHeader(header);
