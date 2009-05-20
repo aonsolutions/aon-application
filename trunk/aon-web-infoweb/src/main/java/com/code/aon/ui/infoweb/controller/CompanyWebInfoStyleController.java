@@ -50,7 +50,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 
 	public String template;
 	
-	public int homepage = 0;
+	public Integer homepage;
 	
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event){
@@ -238,9 +238,10 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 		return template;
 	}
 
-	public int getHomepage() {
-		if (homepage < 0) {
+	public Integer getHomepage() {
+		if (homepage == null) {
 			try {
+				homepage = 0;
 				IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(apBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), HOMEPAGE_NAME_PARAM);
@@ -351,7 +352,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 		this.template = template;
 	}
 
-	public void setHomepage(int homepage) {
+	public void setHomepage(Integer homepage) {
 		this.homepage = homepage;
 	}
 
