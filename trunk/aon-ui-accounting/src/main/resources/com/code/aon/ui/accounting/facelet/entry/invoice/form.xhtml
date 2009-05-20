@@ -21,12 +21,14 @@
 
 				<ui:define name="toolbarContent">
 
-					<aon:commandButton value="#{bundle.aon_save}" id="saveInvoice"
+					<aon:commandButton 
+						value="#{accountingBundle.accounting_entry_generate}"
+						id="saveInvoice"
 						reRender="invoiceEntryForm" accesskey="#{bundle.aon_key_save}"
 						actionListener="#{invoiceEntry.accept}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						disabled="#{invoiceEntry.details.rowCount == 0 or !invoiceEntry.accountSource}"
-						onclick="if (!confirm('#{bundle.aon_save_confirm}'))  return false;" />
+						onclick="if (!confirm('#{accountingBundle.accounting_entry_generate}?'))  return false;" />
 					<aon:commandButton value="#{bundle.aon_reset}"
 						accesskey="#{bundle.aon_key_new}"
 						actionListener="#{invoiceEntry.onReset}"

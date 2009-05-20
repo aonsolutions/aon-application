@@ -17,16 +17,17 @@
 				<ui:param name="toolbarDescription" value="#{expenseEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="save" value="#{bundle.aon_save}"
+					<aon:commandButton id="save" 
+						value="#{accountingBundle.accounting_entry_generate}"
 						accesskey="#{bundle.aon_key_save}"
-						actionListener="#{expenseEntry.accept}"
-						action="accountEntry_form"
+						actionListener="#{expenseEntry.onAccept}"
+						action="#{expenseEntry.accept}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;" />
+						onclick="if (!confirm('#{accountingBundle.accounting_entry_generate}?')) return false;" />
 					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 						accesskey="#{bundle.aon_key_new}"
-						actionListener="#{expenseEntry.onReset}"
 						rendered="#{!expenseEntry.new}"
+						actionListener="#{expenseEntry.onReset}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"/>
 					<aon:commandButton id="remove" value="#{bundle.aon_remove}"
 						accesskey="#{bundle.aon_key_remove}" action="accountEntry_search"
@@ -50,8 +51,7 @@
 					<aon:outputLabel for="Account_registryBank"
 						value="#{configBundle.config_bank}" />
 					<aon:selectOneMenu id="Account_registryBank"
-						value="#{expenseEntry.header.registryBank}"
-						reRender="Account_date">
+						value="#{expenseEntry.header.registryBank}">
 						<f:selectItem itemLabel="#{accountingBundle.accounting_def_cash_acc}" value="#{null}" />
 						<f:selectItems value="#{expenseEntry.companyRegistryBanks}" />
 					</aon:selectOneMenu>
@@ -63,8 +63,9 @@
 
 					<aon:outputLabel for="Account_account"
 						value="#{accountBundle.account_account}" />
-					<aon:selectOneMenu id="Account_account"
+					<aon:selectOneMenu id="Account_account" required="true"
 						value="#{expenseEntry.header.account}">
+						<f:selectItem value="#{nullItem.value}" />
 						<f:selectItems value="#{accountCollections.expensesAccounts}" />
 					</aon:selectOneMenu>
 
@@ -78,8 +79,7 @@
 					<aon:outputLabel for="Account_amount"
 						value="#{bundle.aon_amount}" />
 					<aon:inputText id="Account_amount"
-						value="#{expenseEntry.header.amount}" size="15"
-						ajaxSingle="true" />
+						value="#{expenseEntry.header.amount}" size="15"	/>
 
 				</aon:panelGrid>
 			</aon:div>
