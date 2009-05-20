@@ -56,7 +56,7 @@
 						</rich:columnGroup>
 					</f:facet>
 
-					<rich:subTable value="#{controller.grossMargin.summaryList}"
+					<rich:subTable value="#{controller.grossMargin.sortedSummaryList}"
 						var="to">
 						<aon:column styleClass="aon-width-100">
 							<aon:outputText value="#{to.id}" />
@@ -95,7 +95,7 @@
 						</aon:outputText>
 					</aon:column>
 
-					<rich:subTable value="#{controller.totalExpenses.summaryList}"
+					<rich:subTable value="#{controller.totalExpenses.sortedSummaryList}"
 						var="to">
 						<aon:column>
 							<aon:commandLink immediate="true"
