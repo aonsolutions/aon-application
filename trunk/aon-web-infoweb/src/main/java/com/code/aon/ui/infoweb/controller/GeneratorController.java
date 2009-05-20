@@ -58,11 +58,13 @@ public class GeneratorController extends BasicController implements VelocityCons
 
 	private static final Logger LOGGER = Logger.getLogger(GeneratorController.class.getName());
 	
-	private VelocityUtil vu = new VelocityUtil();
+	private VelocityUtil vu;
 	
 	private boolean published;
 	
 	private String webPage;
+	
+	private int homepage;
 	
 	private String getTemplate() {
 		String template = "default";
@@ -153,14 +155,16 @@ public class GeneratorController extends BasicController implements VelocityCons
 				addAddresses( company );
 			}
 
-			int homepage = getHomepage();
+			this.homepage = getHomepage();
 			LOGGER.info( "Homepage: " + homepage );
 			
-			generateMenu( homepage );
+			generateMenu();
 
 			//Generar pagina principal
 			vu.put("content", HOME_TEMPLATE);
-			vu.generate(INDEX_HTML);
+			if ( isGenerateDefaultPage() ) {
+				vu.generate(INDEX_HTML);
+			}
 
 			//Generar pagina de error 404
 			vu.generate(ERROR_TEMPLATE,ERROR_HTML);
@@ -169,7 +173,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			vu.put("content", MAIL_TEMPLATE);
 			vu.generate(MAIL_PHP);
 
-			generatePages(homepage);
+			generatePages();
 			generateCss(temporalDirectory, cssTemporalDirectory);
 			
 			copyDirectoryToDirectory(new File(currentTemplateDirectory, "js"), temporalDirectory );
@@ -215,8 +219,8 @@ public class GeneratorController extends BasicController implements VelocityCons
 		}		
 	}
 
-	private void generateGenericPage(WebInfoPage wip, String pageName) throws ManagerBeanException {
-		LOGGER.fine( "Generating gallery: " + wip + ", Page: " + pageName);
+	private void generateGenericPage(WebInfoPage wip) throws ManagerBeanException {
+		LOGGER.fine( "Generating gallery: " + wip );
 		IManagerBean wipdBean = BeanManager.getManagerBean(WebInfoPageDetail.class);
 		Criteria wipdCriteria = new Criteria();
 		wipdCriteria.addEqualExpression(wipdBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_DETAIL_WEB_INFO_PAGE_ID), wip.getId());
@@ -265,15 +269,15 @@ public class GeneratorController extends BasicController implements VelocityCons
 			images.add(ih);
 		}
 		vu.put("images", images);
-		generatePage(template, pageName);
+		generatePage(template, wip);
 		vu.remove("title");
 		vu.remove("text");
 		if (wip.getType() == WebInfoPageType.LOCATION) vu.remove("coords");
 		vu.remove("images");
 	}
 
-	private void generateGalleryPage(WebInfoPage wip, String pageName) throws ManagerBeanException {
-		LOGGER.fine( "Generating gallery: " + wip + ", Page: " + pageName);
+	private void generateGalleryPage(WebInfoPage wip) throws ManagerBeanException {
+		LOGGER.fine( "Generating gallery: " + wip);
 		ArrayList<ImageHandler> images = new ArrayList<ImageHandler>();
 		IManagerBean wiprBean = BeanManager.getManagerBean(WebInfoPageResource.class);
 		Criteria wiprCriteria = new Criteria();
@@ -312,7 +316,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		}
 		vu.put("gallery", images);
 		
-		generatePage(GALLERY_TEMPLATE, pageName);
+		generatePage(GALLERY_TEMPLATE, wip);
 		if (wip.getType() == WebInfoPageType.LOCATION) {
 			vu.remove("coords");
 		}
@@ -325,10 +329,12 @@ public class GeneratorController extends BasicController implements VelocityCons
 		vu.generate( getImagePageName(name) );
 	}
 	
-	private void generatePage(String template, String name) {
+	private void generatePage(String template, WebInfoPage wip) {
+		String name = wip.getName();
 		vu.put("pagename", name);
 		vu.put("content", template);
-		vu.generate( getPageName(name) );
+		String fileName = (wip.getId() != homepage) ? getPageName(name) : INDEX_HTML;
+		vu.generate( fileName );
 	}
 
 	private String getPageName(String name) {
@@ -599,7 +605,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		vu.generateCSS();		
 	}
 	
-	private void generatePages( int homepage) throws ManagerBeanException {
+	private void generatePages() throws ManagerBeanException {
 		//Generar paginas segun menu.
 		LOGGER.info( "Generating the pages" );
 		IManagerBean wipBean = BeanManager.getManagerBean(WebInfoPage.class);
@@ -608,37 +614,45 @@ public class GeneratorController extends BasicController implements VelocityCons
 		List<ITransferObject> wipList = (List<ITransferObject>)wipBean.getList(wipCriteria);
 		for (int i=0;i < wipList.size();i++) {
 			WebInfoPage wip = (WebInfoPage)wipList.get(i);
-			String pageName = wip.getName();
-			if (homepage == wip.getId()) {
-				pageName = "index";
-			}
 			switch (wip.getType()) {
 				case CONTACT:
-					generatePage(CONTACT_TEMPLATE, pageName );
+					generatePage(CONTACT_TEMPLATE, wip );
 					break;
 				case GENERIC:
-					generateGenericPage(wip, pageName);
+					generateGenericPage(wip);
 					break;
 				case LOCATION:
-					generateGenericPage(wip, pageName);
+					generateGenericPage(wip);
 					break;
 				case GALLERY:
-					generateGalleryPage(wip, pageName);
+					generateGalleryPage(wip);
 					break;
 			}
 		}		
+	}
+	
+	private MenuOptionHandler getMenuOptionHandler( WebInfoPage wip ) {
+		String label = wip.getName();
+		String link = getPageName(label);
+		return new MenuOptionHandler(label, link);		
 	}
 
 	/**
 	 * Sacamos el menu de las paginas y cada una de las pagina.
 	 * @throws ManagerBeanException 
 	 */
-	private void generateMenu( int homepage ) throws ManagerBeanException {
+	private void generateMenu() throws ManagerBeanException {
 		LOGGER.info( "Generating the menu for the context" );
 		ArrayList<MenuOptionHandler> menu = new ArrayList<MenuOptionHandler>();
-		MenuOptionHandler moh = new MenuOptionHandler("Inicio", INDEX_HTML);
-		menu.add(moh);
 		IManagerBean wimBean = BeanManager.getManagerBean(WebInfoPage.class);
+		MenuOptionHandler indexMenu = new MenuOptionHandler(INDEX_TITLE, INDEX_HTML);
+		if (! isGenerateDefaultPage() ) {			
+			WebInfoPage wip = (WebInfoPage) wimBean.get(homepage);
+			if ( wip != null ) {
+				indexMenu.setLabel(wip.getName());
+			}
+		}
+		menu.add(indexMenu);
 		Criteria wimCriteria = new Criteria();
 		wimCriteria.addEqualExpression(wimBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_ACTIVE), true);
 		wimCriteria.addOrder(wimBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_POSITION));
@@ -647,10 +661,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			WebInfoPage wip = (WebInfoPage)wimList.get(i);
 			int id = wip.getId();
 			if (homepage != id) {
-				String label = wip.getName();
-				String link = getPageName(label);
-				moh = new MenuOptionHandler(label, link);
-				menu.add(moh);
+				menu.add( getMenuOptionHandler(wip) );
 			}
 		}
 		vu.put("menu", menu);		
@@ -668,6 +679,10 @@ public class GeneratorController extends BasicController implements VelocityCons
 			LOGGER.log(Level.SEVERE, th.getMessage(), th );
 			AonUtil.addErrorMessage("ERROR: Se ha producido un error durante la publicacion de la pagina.");
 		}		
+	}
+	
+	private boolean isGenerateDefaultPage() {
+		return this.homepage == 0;
 	}
 	
 }
