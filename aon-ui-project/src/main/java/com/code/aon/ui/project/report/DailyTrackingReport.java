@@ -34,24 +34,12 @@ public class DailyTrackingReport {
 
 	private String dossierTypeDescription;
 	
-	private String comments;
-	
-	public String getComments() {
-		return comments;
-	}
-
-
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
-
-
 	private static final String UNKNOWN = "?";
 
 	public DailyTrackingReport(Integer id, Integer userId, String userName, Date date,
 			Double duration, Integer jobTypeId, String jobTypeDescription, Integer customerId,
 			String customerName,Integer dossierId, String dossierNumber, Integer activityId,
-			String activityDescription, Integer dossierTypeId, String dossierTypeDescription,String comments) {
+			String activityDescription, Integer dossierTypeId, String dossierTypeDescription) {
 		this.id = id;
 		this.userId = userId;
 		this.userName = userName;
@@ -67,7 +55,6 @@ public class DailyTrackingReport {
 		this.activityDescription = activityDescription;
 		this.dossierTypeId = dossierTypeId;
 		this.dossierTypeDescription = dossierTypeDescription;
-		this.comments = comments;
 	}
 
 

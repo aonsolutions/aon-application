@@ -45,38 +45,42 @@
 							columnClasses="aon-table-body aon-table-body-string,
 								aon-table-body aon-table-body-string,
 								aon-table-body aon-table-body-string,
+								aon-table-body aon-table-body-string,
 								aon-table-body aon-table-body-number">
 
 							<h:column>
 								<f:facet name="header">
+									<h:outputText value="#{appBundle.mark_course}" />
+								</f:facet>
+								<h:outputText value="#{to.subject.course.code} #{to.subject.course.description}" />
+							</h:column>
+							
+							<h:column>
+								<f:facet name="header">
 									<h:outputText value="#{appBundle.mark_customer}" />
 								</f:facet>
-								<h:outputText value="#{to.alumn.customer.registry.name} #{to.alumn.customer.registry.surname}">
-								</h:outputText>
+								<h:outputText value="#{to.alumn.customer.registry.name} #{to.alumn.customer.registry.surname}" />
 							</h:column>
 							
 							<h:column>
 								<f:facet name="header">
 									<h:outputText value="#{appBundle.mark_subject}" />
 								</f:facet>
-								<h:outputText value="#{to.subject.course.description} #{to.subject.academicSkill.description}">
-								</h:outputText>
+								<h:outputText value="#{to.subject.academicSkill.description}" />
 							</h:column>
 
 							<h:column>
 								<f:facet name="header">
 									<h:outputText value="#{appBundle.mark_evaluation}" />
 								</f:facet>
-								<h:outputText value="#{to.evaluation}">
-								</h:outputText>
+								<h:outputText value="#{to.evaluation}" />
 							</h:column>
 							
 							<h:column>
 								<f:facet name="header">
 									<h:outputText value="#{appBundle.mark_mark}" />
 								</f:facet>
-								<h:outputText value="#{to.mark}">
-								</h:outputText>
+								<h:outputText value="#{to.mark}" />
 							</h:column>
 						</t:dataTable>
 					</t:div>

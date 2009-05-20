@@ -32,8 +32,6 @@ public class MenuController {
 			menus.add(item);
             item = new SelectItem("AON_FINANCE", "Tesorería");
 			menus.add(item);
-			item = new SelectItem("AON_ACCOUNT", "Contabilidad");
-            menus.add(item);
             item = new SelectItem("AON_REPORT", "Informes");
             menus.add(item);
             item = new SelectItem("AON_CONFIG", "Configuración");

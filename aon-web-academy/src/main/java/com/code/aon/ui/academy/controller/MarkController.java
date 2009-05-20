@@ -2,10 +2,13 @@ package com.code.aon.ui.academy.controller;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.code.aon.academy.Course;
 import com.code.aon.academy.CourseAcademicSkill;
 import com.code.aon.academy.CourseAlumn;
+import com.code.aon.academy.Mark;
 import com.code.aon.academy.dao.IAcademyAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -20,7 +23,8 @@ import com.code.aon.ui.menu.jsf.MenuEvent;
 
 public class MarkController extends BasicController {
 
-	@SuppressWarnings("unused")
+	private static final Logger LOGGER = Logger.getLogger(MarkController.class.getName());
+
 	public void onNewSearch(MenuEvent menuevent){
 		onEditSearch(null);
 	}
@@ -60,4 +64,29 @@ public class MarkController extends BasicController {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	public Double getAverageMark() throws ManagerBeanException {
+		boolean printAverage = false;
+		Double averageMark = 0.0;
+		Double weightSum = 0.0;
+		try {
+			Iterator iterator = getManagerBean().getList(getCriteria()).iterator();
+			while (iterator.hasNext()) {
+				Mark mark = (Mark)iterator.next();
+				if (mark.getMark() != null) {
+					printAverage = true;
+					averageMark += mark.getMark() * mark.getSubject().getWeight();
+					weightSum += mark.getSubject().getWeight();
+				}
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error getting mark list", e);
+		}
+		return (!printAverage || weightSum == 0)?null:round(averageMark / weightSum, 2);
+	}
+
+	private double round(double value, int precision) {
+		return Math.round(value * Math.pow(10, precision)) / Math.pow(10, precision);
+	}
+
 }

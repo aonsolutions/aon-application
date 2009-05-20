@@ -64,6 +64,13 @@
 	</bean>
 
 	<bean description="">
+		<pojo>com.code.aon.finance.FinanceBatchDetail</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.finance.event.FinanceBatchDetailBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="">
 		<pojo>com.code.aon.academy.Course</pojo>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.academy.event.CourseVetoListener</vetoListener>

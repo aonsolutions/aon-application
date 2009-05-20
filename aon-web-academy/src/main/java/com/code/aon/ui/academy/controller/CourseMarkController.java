@@ -51,12 +51,10 @@ public class CourseMarkController{
 		this.to = to;
 	}
 
-	@SuppressWarnings("unused")
     public void onSelect(ActionEvent event) {
     	setTo((AlumnMarks) this.result.getRowData());
     }
 
-	@SuppressWarnings("unused")
     public void onAccept(ActionEvent event) throws ManagerBeanException {
     	Object[] marks = getTo().getValues();
     	Mark mark;
@@ -72,7 +70,6 @@ public class CourseMarkController{
     	resetTo();
     }
 
-	@SuppressWarnings("unused")
     public void onCancel(ActionEvent event) {
     	resetTo();
     }
@@ -151,8 +148,7 @@ public class CourseMarkController{
         	alumnMarkHeaders.add(i,alumnMarkHeader);
     	}
 	}
-	
-	@SuppressWarnings("unused")
+
 	public void onSearch(ActionEvent event) throws ManagerBeanException {
 		initCourse();
     	IManagerBean markBean = BeanManager.getManagerBean(Mark.class);
@@ -212,8 +208,30 @@ public class CourseMarkController{
     	}
     	return map;
     }
-    
-    public class AlumnMarkHeader{
+
+	public Double getAverageMark() {
+		boolean printAverage = false;
+		Double averageMark = 0.0;
+		Double weightSum = 0.0;
+		if (result.isRowAvailable()) {
+			AlumnMarks marks = (AlumnMarks)result.getRowData();
+			for(int i=0; i<marks.getValues().length; i++) {
+				Mark mark = (Mark)marks.getValues()[i];
+				if (mark.getMark() != null) {
+					printAverage = true;
+					averageMark += mark.getMark() * mark.getSubject().getWeight();
+					weightSum += mark.getSubject().getWeight();
+				}
+			}
+		}
+		return (!printAverage || weightSum == 0)?null:round(averageMark / weightSum, 2);
+	}
+
+	private double round(double value, int precision) {
+		return Math.round(value * Math.pow(10, precision)) / Math.pow(10, precision);
+	}
+
+	public class AlumnMarkHeader{
     	
     	private int position; 
     	

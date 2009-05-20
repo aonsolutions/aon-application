@@ -7,11 +7,6 @@
 <report-config>
 	<default-config>
 		<fetch-mode paginated="false" />
-		<!-- 
-		<params>
-			<param id="logoImageFile" value="com/code/aon/ui/marketplace/report/resources/logo.gif" />
-		</params>
-		 -->
 	</default-config>
 	<!--  **********************************************************
 						      ACADEMY
@@ -61,6 +56,8 @@
 			<param id="evaluation" value="#{courseAlumnMark.getEvaluation}" />
 			<param id="encode" value="#{markPrinter.isEncodedMarks}" />
 			<param id="qualifications" value="#{markPrinter.getQualificationLegend}" />
+			<param id="withAverageMark" value="#{markPrinter.withAverageMark}" />
+			<param id="withFinalMark" value="#{markPrinter.withFinalMark}" />
 		</params>
 	</report>
 
@@ -477,4 +474,16 @@
 		</params>
 	</report>
 
+	<!--  *********  Instructor  ********* -->
+	<report id="instructorCourse" description="Instructor Course report">
+		<template path="/com/code/aon/ui/academy/report/instructorCourse.jasper" />
+		<collection provider="#{instructorCourse}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.academy.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="employee" value="#{employee.getEmployee}" />
+			<param id="instructorWeeklyHours" value="#{instructorCourse.getWeeklyHoursCollection}" />
+		</params>
+	</report>
+	
 </report-config>

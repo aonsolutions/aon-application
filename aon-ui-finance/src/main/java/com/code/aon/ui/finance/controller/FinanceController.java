@@ -23,6 +23,7 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.menu.jsf.MenuEvent;
 
 /**
  * Controller used in the finance maintenance.
@@ -151,6 +152,10 @@ public class FinanceController extends BasicController {
     	return ((Finance)this.getTo()).getFinanceStatus().equals(FinanceStatus.RETURNED);
     }
 
+	public void onEditSearch(MenuEvent event) throws ManagerBeanException {
+		this.onEditSearch((ActionEvent)event);
+	}
+
 	@Override
 	public void onEditSearch(ActionEvent event) {
 		setPayment(new Boolean(false));
@@ -183,6 +188,23 @@ public class FinanceController extends BasicController {
 		if(event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Criteria c = getCriteria();
 			c.addExpression(getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID), event.getNewValue().toString());
+			setCriteria(c);
+		}
+	}
+	
+	/**
+	 * Adds to criteria the generic equal expression.
+	 * 
+	 * @param event the event that contains the new value
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 * @throws ExpressionException the expression exception
+	 */
+	public void addEqualExpression(ValueChangeEvent event) throws ManagerBeanException, ExpressionException {
+	    if (event.getNewValue() != null && !event.getNewValue().equals(new Integer(Integer.MAX_VALUE))) {
+	    	Criteria c = getCriteria();
+			Object value = event.getNewValue();
+			c.addExpression(getFieldName(event.getComponent().getId()), value.toString());
 			setCriteria(c);
 		}
 	}

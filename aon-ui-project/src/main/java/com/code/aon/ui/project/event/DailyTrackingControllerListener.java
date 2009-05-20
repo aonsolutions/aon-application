@@ -30,6 +30,7 @@ public class DailyTrackingControllerListener extends ControllerAdapter {
         DailyTrackingController controller = (DailyTrackingController)event.getController();
         controller.setDossiers(new LinkedList<SelectItem>());
         controller.setActivities(new LinkedList<SelectItem>());
+        controller.setFinishedTaskModel(null);
     }
 
     @Override
@@ -61,14 +62,19 @@ public class DailyTrackingControllerListener extends ControllerAdapter {
     public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
     	try {
     		DailyTrackingController trackingController = (DailyTrackingController)event.getController();
-    		if(!trackingController.isMonitor()){
+    		if(!trackingController.isReportMode()){
     			IManagerBean dailyTrackingBean = BeanManager.getManagerBean(DailyTracking.class);
     			trackingController.getCriteria().addEqualExpression(dailyTrackingBean.getFieldName(IProjectAlias.DAILY_TRACKING_USER_ID), UserUtils.getInstance().getLoggedUser().getId());
     		}
-    		trackingController.completeCriteria();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
     }
     
+    @Override
+    public void beforeBeanReset(ControllerEvent event) throws ControllerListenerException {
+    	DailyTrackingController trackingController = (DailyTrackingController)event.getController();
+    	trackingController.setFromDate(null);
+    	trackingController.setToDate(null);
+    }
 }

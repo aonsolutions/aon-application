@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.Company;
 import com.code.aon.finance.PayMethod;
 import com.code.aon.finance.RegistryBank;
@@ -39,9 +39,15 @@ public class FinanceCollectionsController {
 	 * 
 	 * @return Security Level collection.
 	 */
-	@Deprecated
 	public List<SelectItem> getSecurityLevels() {
-		throw new AbortProcessingException("Usar el método #{commonCollections.securityLevels}");
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		LinkedList<SelectItem> levels = new LinkedList<SelectItem>();
+		for (SecurityLevel level : SecurityLevel.values()) {
+			String name = level.getName(locale);
+			SelectItem item = new SelectItem(level, name);
+			levels.add(item);
+		}
+		return levels;
 	}
 
 	/**
@@ -59,7 +65,7 @@ public class FinanceCollectionsController {
 		Iterator iter = payMethodBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			PayMethod pMethod = (PayMethod) iter.next();
-			SelectItem item = new SelectItem(pMethod, pMethod.getName());
+			SelectItem item = new SelectItem(pMethod.getId(), pMethod.getName());
 			payMethods.add(item);
 		}
 		return payMethods;
@@ -176,7 +182,7 @@ public class FinanceCollectionsController {
     		iter = rBankBean.getList(criteria).iterator();
     		while(iter.hasNext()){
     			RegistryBank rBank = (RegistryBank)iter.next();
-    			SelectItem item = new SelectItem(rBank,rBank.getBank().getName());
+    			SelectItem item = new SelectItem(rBank.getId(),rBank.getBank().getName());
     			rBanks.add(item);
     		}
     	}

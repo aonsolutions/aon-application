@@ -19,14 +19,13 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.finance.controller.InvoicingController;
 import com.code.aon.ui.finance.controller.InvoicingDetailController;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.form.PageDataModel;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -67,20 +66,6 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 	private static final String FINANCE_CONTROLLER_NAME = "purchaseFinance";
 	
 	/**
-	 * Reset the income and purchase of invoicingdetail controller
-	 * 
-	 * @see com.code.aon.ui.form.event.ControllerAdapter#beforeBeanCreated(com.code.aon.ui.form.event.ControllerEvent)
-	 */
-	@Override
-	public void beforeBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		InvoicingDetailController invoicingDetailController = (InvoicingDetailController)AonUtil.getController(INVOICING_DETAIL_CONTROLLER_NAME);
-		LinesController financeController = (LinesController)AonUtil.getController(FINANCE_CONTROLLER_NAME);
-		financeController.onCancel(null);
-		invoicingDetailController.setIncome(null);
-		invoicingDetailController.setPurchase(null);
-	}
-	
-	/**
 	 * Assigns default type, status and address to invoice
 	 * 
 	 * @see com.code.aon.ui.form.event.ControllerAdapter#beforeBeanAdded(com.code.aon.ui.form.event.ControllerEvent)
@@ -91,27 +76,6 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 		invoice.setType(InvoiceType.PURCHASE);
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setRegistryAddress(obtainRegistryAddress(invoice.getRegistry().getId()));
-	}
-	
-	/**
-	 * Recovers the first address of this registry ident
-	 * 
-	 * @param id related registry ident
-	 * @return the first address
-	 */
-	private RegistryAddress obtainRegistryAddress(Integer id) {
-		try {
-			IManagerBean registryAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(registryAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID),id);
-			Iterator iter = registryAddressBean.getList(criteria).iterator();
-			if (iter.hasNext()) {
-				return (RegistryAddress) iter.next();
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE,"Error obtaining RegistryAddress for registry with id: " + id, e);
-		}
-		return null;
 	}
 	
 	/**
@@ -128,7 +92,6 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 			criteria.addEqualExpression(incomeBean.getFieldName(IWarehouseAlias.INCOME_SUPPLIER_ID), invoice.getRegistry().getId());
 			criteria.addEqualExpression(incomeBean.getFieldName(IWarehouseAlias.INCOME_INCOME_STATUS), IncomeStatus.PENDING);
 			IncomeController incomeController = (IncomeController)AonUtil.getController(INCOME_CONTROLLER_NAME);
-			incomeController.clearCheckList();
 			incomeController.setCriteria(criteria);
 			incomeController.onSearch(null);
 		} catch (ManagerBeanException e) {
@@ -145,28 +108,14 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		Invoice invoice = (Invoice)event.getController().getTo();
-		try {
-			IManagerBean incomeBean = BeanManager.getManagerBean(Income.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(incomeBean.getFieldName(IWarehouseAlias.INCOME_SUPPLIER_ID), invoice.getRegistry().getId());
-			Expression expression = ExpressionUtilities.getExpression(Integer.toString(IncomeStatus.PENDING.ordinal()), incomeBean.getFieldName(IWarehouseAlias.INCOME_INCOME_STATUS));
-			Iterator iterator = obtainClosedIncomes(invoice.getId()).iterator();
-			while (iterator.hasNext()) {
-				Income income = (Income)iterator.next();
-				Expression idExpression = ExpressionUtilities.getExpression(income.getId().toString(), incomeBean.getFieldName(IWarehouseAlias.INCOME_ID));
-				expression = ExpressionUtilities.getOrExpression(expression, idExpression);
-			}
-			criteria.addExpression(expression);
-			criteria.addOrder(incomeBean.getFieldName(IWarehouseAlias.INCOME_INCOME_STATUS), false);
-			IncomeController incomeController = (IncomeController)AonUtil.getController(INCOME_CONTROLLER_NAME);
-			incomeController.clearCheckList();
-			incomeController.setCriteria(criteria);
-			incomeController.onSearch(null);
-		} catch (ExpressionException e) {
-			LOGGER.log(Level.SEVERE, "Error retrieving income model for supplier= " + invoice.getRegistry().getId(), e);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error retrieving income model for supplier= " + invoice.getRegistry().getId(), e);
-		}
+		List<ITransferObject> pending = obtaingPendingIncomes(invoice.getRegistry().getId());
+		List<ITransferObject> closed = obtainClosedIncomes(invoice.getId());
+		closed.addAll(pending);
+		IncomeController incomeController = (IncomeController)AonUtil.getController(INCOME_CONTROLLER_NAME);
+		PageDataModel pdm = new PageDataModel(event.getController(),((BasicController)event.getController()).getPageLimit());
+		pdm.setWrappedData(closed);
+		pdm.resize(closed.size());
+		incomeController.setModel(pdm);
 		updateDetailControllerReferences(invoice);
 	}
 	
@@ -261,6 +210,20 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 	}
 	
 	/**
+	 * Reset the income and purchase of invoicingdetail controller
+	 * 
+	 * @see com.code.aon.ui.form.event.ControllerAdapter#beforeBeanCreated(com.code.aon.ui.form.event.ControllerEvent)
+	 */
+	@Override
+	public void beforeBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		InvoicingDetailController invoicingDetailController = (InvoicingDetailController)AonUtil.getController(INVOICING_DETAIL_CONTROLLER_NAME);
+		LinesController financeController = (LinesController)AonUtil.getController(FINANCE_CONTROLLER_NAME);
+		financeController.onCancel(null);
+		invoicingDetailController.setIncome(null);
+		invoicingDetailController.setPurchase(null);
+	}
+	
+	/**
 	 * Recovers income controlle and resets it
 	 * 
 	 * @see com.code.aon.ui.form.event.ControllerAdapter#afterBeanRemoved(com.code.aon.ui.form.event.ControllerEvent)
@@ -268,7 +231,11 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 	@Override
 	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
 		IncomeController incomeController = (IncomeController)AonUtil.getController(INCOME_CONTROLLER_NAME);
-		incomeController.onReset(null);
+		try {
+			incomeController.onReset(null);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
+		}
 	}
 	
 	/**
@@ -319,6 +286,27 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 	}
 
 	/**
+	 * Recovers the first address of this registry ident
+	 * 
+	 * @param id related registry ident
+	 * @return the first address
+	 */
+	private RegistryAddress obtainRegistryAddress(Integer id) {
+		try {
+			IManagerBean registryAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(registryAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID),id);
+			Iterator iter = registryAddressBean.getList(criteria).iterator();
+			if (iter.hasNext()) {
+				return (RegistryAddress) iter.next();
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE,"Error obtaining RegistryAddress for registry with id: " + id, e);
+		}
+		return null;
+	}
+	
+	/**
 	 * Recovers closed incomes related to this invoice ident 
 	 * 
 	 * @param invoiceId related invoice ident
@@ -333,6 +321,7 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.INCOME);
 			Iterator iter = invoiceDetailBean.getList(criteria).iterator();
 			List<ITransferObject> incomes = new LinkedList<ITransferObject>();
+			List<Integer> ids = new LinkedList<Integer>();
 			while(iter.hasNext()){
 				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
 				criteria = new Criteria();
@@ -340,7 +329,8 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 				Iterator iterator = incomeDetailBean.getList(criteria).iterator();
 				if(iterator.hasNext()){
 					IncomeDetail incomeDetail = (IncomeDetail)iterator.next();
-					if(!incomes.contains(incomeDetail.getIncome())){
+					if(!ids.contains(incomeDetail.getIncome().getId())){
+						ids.add(incomeDetail.getIncome().getId());
 						incomes.add(incomeDetail.getIncome());
 					}
 				}
@@ -348,6 +338,25 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 			return incomes;
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error retrieving incomes closed by invoice id= " + invoiceId, e);
+		}
+		return null;
+	}
+	
+	/**
+	 * Recovers pending incomes of this supplier
+	 * 
+	 * @param supplierId supplier's ident
+	 * @return list of incomes
+	 */
+	private List<ITransferObject> obtaingPendingIncomes(Integer supplierId) {
+		try {
+			IManagerBean incomeBean = BeanManager.getManagerBean(Income.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(incomeBean.getFieldName(IWarehouseAlias.INCOME_SUPPLIER_ID), supplierId);
+			criteria.addEqualExpression(incomeBean.getFieldName(IWarehouseAlias.INCOME_INCOME_STATUS), IncomeStatus.PENDING);
+			return incomeBean.getList(criteria);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error retrieving pending incomes for supplier with id= " + supplierId, e);
 		}
 		return null;
 	}

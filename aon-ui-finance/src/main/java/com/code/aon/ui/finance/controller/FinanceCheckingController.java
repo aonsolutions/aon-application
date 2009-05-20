@@ -16,6 +16,7 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.GridController;
+import com.code.aon.ui.menu.jsf.MenuEvent;
 
 /**
  * This controller checks finances, sales and purchases. 
@@ -83,7 +84,7 @@ public class FinanceCheckingController extends GridController {
 	 * @param event the menu event
 	 */
 	@SuppressWarnings("unused")	
-	public void setPurchaseMode(ActionEvent event){
+	public void setPurchaseMode(MenuEvent event){
 		try {
 			this.clearCriteria();
 			this.payment = new Boolean(true);
@@ -98,7 +99,7 @@ public class FinanceCheckingController extends GridController {
 	 * @param event the menu event
 	 */
 	@SuppressWarnings("unused")	
-	public void setSalesMode(ActionEvent event){
+	public void setSalesMode(MenuEvent event){
 		try {
 			this.clearCriteria();
 		} catch (ManagerBeanException e) {
@@ -247,4 +248,19 @@ public class FinanceCheckingController extends GridController {
 		}
 	}
 	
+	/**
+	 * Adds to criteria the generic equal expression
+	 * 
+	 * @param event the event that contains the new value
+	 * @throws ManagerBeanException
+	 * @throws ExpressionException
+	 */
+	public void addEqualExpression(ValueChangeEvent event) throws ManagerBeanException, ExpressionException {
+	    if (event.getNewValue() != null && !event.getNewValue().equals(new Integer(Integer.MAX_VALUE))) {
+	    	Criteria c = getCriteria();
+			Object value = event.getNewValue();
+			c.addExpression(getFieldName(event.getComponent().getId()), value.toString());
+			setCriteria(c);
+		}
+	}
 }

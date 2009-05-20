@@ -31,6 +31,7 @@ import com.code.aon.ui.finance.remover.IInvoiceDetailRemover;
 import com.code.aon.ui.finance.remover.InvoiceRemoverFactory;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.PageDataModel;
+import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
 
 public class InvoiceRemover extends BasicController {
@@ -107,6 +108,10 @@ public class InvoiceRemover extends BasicController {
 
 	public void clearCheckedInvoices() {
 		checks = new ArrayList<Invoice>();
+	}
+	
+	public void onEditSearch(MenuEvent event) throws ManagerBeanException {
+		this.onEditSearch((ActionEvent)event);
 	}
 	
 	@Override
