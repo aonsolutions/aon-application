@@ -78,15 +78,8 @@
 					
 					<aon:dataTable id="dataTable" value="#{download.model}" var="to"
 						rows="#{download.pageLimit}" 
-						styleClass="dr-table rich-table aon-editDataTable"
-						headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
-						footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
-						rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
-						cellpadding="0" cellspacing="0"
-						columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
-								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
-								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
-								dr-table-cell rich-table-cell aon-editDataTable-iconColumn">
+						columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+								aon-editDataTable-textColumn, aon-editDataTable-iconColumn">
 				
 						<aon:column>
 							<a4j:support 
@@ -145,10 +138,7 @@
 
 					</aon:dataTable>
 				
-					<aon:dataScroller for="dataTable"
-						rowCount="#{download.model.rowCount}" 
-						page="#{download.page}"
-						showNote="true" />					
+					<aon:dataScroller2 for="dataTable" showNote="true" />					
 
 			</aon:div>
 		</aon:form>

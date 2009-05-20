@@ -49,13 +49,9 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 				<aon:dataTable id="dataTable" value="#{section.model}" var="to"
-					rows="#{section.pageLimit}" styleClass="dr-table rich-table aon-editDataTable"
-					headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
-					footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
-					rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
-					cellpadding="0" cellspacing="0"
-					columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
-							dr-table-cell rich-table-cell aon-editDataTable-iconColumn">
+					rows="#{section.pageLimit}" 
+					columnClasses="aon-editDataTable-textColumn,
+							aon-editDataTable-iconColumn">
 							
 					<aon:column>
 						<a4j:support 
@@ -88,7 +84,7 @@
 
 				</aon:dataTable>
 				
-				<rich:datascroller align="left"  for="dataTable" maxPages="20" />
+				<aon:dataScroller2 for="dataTable" />
 				
 			</aon:div>
 		</aon:form>
