@@ -103,6 +103,7 @@ public final class ResourceManager {
 		String select = "SELECT r FROM Resource r, Employee e " +
 			"WHERE r.employee = e " +
 			"AND r.employee = :employee " +
+			"AND r.endingDate is null " +
 			"GROUP BY r.employee";
 		Query query = HibernateUtil.getSession().createQuery( select );
 		query.setEntity( "employee", employee );

@@ -15,6 +15,8 @@ import com.code.aon.common.ITransferObject;
 @Table(name="activity_type")
 public class ActivityType implements ITransferObject {
 	
+	private static final long serialVersionUID = 4810421114437119111L;
+
 	private Integer id;
 	
 	private String description;
@@ -42,7 +44,7 @@ public class ActivityType implements ITransferObject {
 	}
 
 	@ManyToOne
-	@JoinColumn(name="dossier_type", nullable=false)
+	@JoinColumn(name="dossier_type")
 	public DossierType getDossierType() {
 		return dossierType;
 	}

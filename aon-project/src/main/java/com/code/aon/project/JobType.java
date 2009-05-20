@@ -16,6 +16,8 @@ import com.code.aon.common.ITransferObject;
 @Table(name="job_type")
 public class JobType implements ITransferObject{
 	
+	private static final long serialVersionUID = -2573079175301468919L;
+
 	/** The id. */
 	private Integer id;
 	

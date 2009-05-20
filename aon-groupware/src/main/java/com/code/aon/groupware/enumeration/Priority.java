@@ -16,8 +16,8 @@ public enum Priority implements IResourceable {
 	/** LOW. */
 	LOW,
 	
-	/** MEDIUM. */
-	MEDIUM,
+	/** NORMAL. */
+	NORMAL,
 	
 	/** HIGH. */
 	HIGH;

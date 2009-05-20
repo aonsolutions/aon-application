@@ -13,6 +13,8 @@ import com.code.aon.config.enumeration.WorkGroupStatus;
 @Table(name="workgroup")
 public class WorkGroup implements ITransferObject {
 
+	private static final long serialVersionUID = 6826723766234882061L;
+
 	private Integer id;
 	
 	private String description;
@@ -46,4 +48,16 @@ public class WorkGroup implements ITransferObject {
 	public void setStatus(WorkGroupStatus status) {
 		this.status = status;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (id == null) {
+			return super.equals(obj);
+		}
+		if (obj instanceof WorkGroup) {
+			return (this.id.equals(((WorkGroup) obj).getId()));
+		}
+		return false;
+	}
+
 }

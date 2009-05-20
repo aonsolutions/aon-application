@@ -12,6 +12,8 @@ import com.code.aon.common.ITransferObject;
 @Table(name="user")
 public class User implements ITransferObject{
 	
+	private static final long serialVersionUID = -151638379810317997L;
+
 	private Integer id;
 	
 	private String name;
@@ -88,5 +90,16 @@ public class User implements ITransferObject{
 
 	public void setStatus(Integer status) {
 		this.status = status;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (id == null) {
+			return super.equals(obj);
+		}
+		if (obj instanceof User) {
+			return (this.id.equals(((User) obj).getId()));
+		}
+		return false;
 	}
 }

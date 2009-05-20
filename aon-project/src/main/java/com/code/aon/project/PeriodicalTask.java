@@ -19,6 +19,8 @@ import javax.persistence.Table;
 @Table(name="periodical_task")
 public class PeriodicalTask implements ITransferObject {
 	
+	private static final long serialVersionUID = -1505827359603532393L;
+
 	private Integer id;
 	
 	private Date startDate;

@@ -405,7 +405,7 @@
 	
 	<!-- ************** COURSE ****************** -->
 	<managed-bean>
-		<managed-bean-name>course</managed-bean-name>
+		<managed-bean-name>lhcourse</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.record.controller.CourseController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -414,7 +414,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.record.Course</value>
+			<value>com.code.aon.record.LHCourse</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>

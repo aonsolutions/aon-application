@@ -156,6 +156,7 @@ public class WorkPlace implements ITransferObject, IEntity {
 	 */
 	@OneToMany()
 	@JoinColumn(name="workplace")
+	@OrderBy("id")
 	public Set<WorkActivity> getActivities() {
 		return this.activities;
 	}

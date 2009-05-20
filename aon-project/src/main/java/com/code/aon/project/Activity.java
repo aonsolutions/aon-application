@@ -16,6 +16,8 @@ import com.code.aon.config.WorkGroup;
 @Table(name="activity")
 public class Activity implements ITransferObject {
 
+	private static final long serialVersionUID = -4787407277231738055L;
+
 	private Integer id;
 	
 	private Dossier dossier;

@@ -7,6 +7,8 @@ import com.code.aon.campaign.Campaign;
 import com.code.aon.campaign.CampaignDossier;
 import com.code.aon.campaign.Process;
 import com.code.aon.campaign.ProcessDetail;
+import com.code.aon.campaign.ProcessDetailTransition;
+import com.code.aon.campaign.ProcessTransitionType;
 
 /** 
 * Interface for holding entity properties constants.
@@ -51,28 +53,34 @@ public interface ICampaignAlias {
 	String  ACTIVITY_PROCESS_TASK_ID = ACTIVITY_PROCESS_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: ActivityProcess_dossier_id
+	* Alias value: ActivityProcess_task_dossier_id
+	* Hibernate value: ActivityProcess.task.dossier.id
+	*/
+	String  ACTIVITY_PROCESS_TASK_DOSSIER_ID = ACTIVITY_PROCESS_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ActivityProcess_activity_dossier_id
 	* Hibernate value: ActivityProcess.activity.dossier.id
 	*/
-	String  ACTIVITY_PROCESS_DOSSIER_ID = ACTIVITY_PROCESS_ENTRY.getAliasNames()[5];
+	String  ACTIVITY_PROCESS_ACTIVITY_DOSSIER_ID = ACTIVITY_PROCESS_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: ActivityProcess_processDetail_position
 	* Hibernate value: ActivityProcess.processDetail.position
 	*/
-	String  ACTIVITY_PROCESS_PROCESS_DETAIL_POSITION = ACTIVITY_PROCESS_ENTRY.getAliasNames()[6];
+	String  ACTIVITY_PROCESS_PROCESS_DETAIL_POSITION = ACTIVITY_PROCESS_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: ActivityProcess_task_endDate
 	* Hibernate value: ActivityProcess.task.endDate
 	*/
-	String  ACTIVITY_PROCESS_TASK_END_DATE = ACTIVITY_PROCESS_ENTRY.getAliasNames()[7];
+	String  ACTIVITY_PROCESS_TASK_END_DATE = ACTIVITY_PROCESS_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: ActivityProcess_task_dueDate
 	* Hibernate value: ActivityProcess.task.dueDate
 	*/
-	String  ACTIVITY_PROCESS_TASK_DUE_DATE = ACTIVITY_PROCESS_ENTRY.getAliasNames()[8];
+	String  ACTIVITY_PROCESS_TASK_DUE_DATE = ACTIVITY_PROCESS_ENTRY.getAliasNames()[9];
 
 
 
@@ -257,6 +265,56 @@ public interface ICampaignAlias {
 	* Hibernate value: ProcessDetail.workgroup.id
 	*/
 	String  PROCESS_DETAIL_WORKGROUP_ID = PROCESS_DETAIL_ENTRY.getAliasNames()[7];
+
+
+
+	/** 
+	* DAOConstantsEntry for ProcessDetailTransition entity.
+	*/ 
+	DAOConstantsEntry PROCESS_DETAIL_TRANSITION_ENTRY = DAOConstants.getDAOConstant(ProcessDetailTransition.class);
+
+	/** 
+	* Alias value: ProcessDetailTransition_id
+	* Hibernate value: ProcessDetailTransition.id
+	*/
+	String  PROCESS_DETAIL_TRANSITION_ID = PROCESS_DETAIL_TRANSITION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ProcessDetailTransition_nextProcessDetail_id
+	* Hibernate value: ProcessDetailTransition.nextProcessDetail.id
+	*/
+	String  PROCESS_DETAIL_TRANSITION_NEXT_PROCESS_DETAIL_ID = PROCESS_DETAIL_TRANSITION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ProcessDetailTransition_processDetail_id
+	* Hibernate value: ProcessDetailTransition.processDetail.id
+	*/
+	String  PROCESS_DETAIL_TRANSITION_PROCESS_DETAIL_ID = PROCESS_DETAIL_TRANSITION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ProcessDetailTransition_processTransitionType_id
+	* Hibernate value: ProcessDetailTransition.processTransitionType.id
+	*/
+	String  PROCESS_DETAIL_TRANSITION_PROCESS_TRANSITION_TYPE_ID = PROCESS_DETAIL_TRANSITION_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for ProcessTransitionType entity.
+	*/ 
+	DAOConstantsEntry PROCESS_TRANSITION_TYPE_ENTRY = DAOConstants.getDAOConstant(ProcessTransitionType.class);
+
+	/** 
+	* Alias value: ProcessTransitionType_description
+	* Hibernate value: ProcessTransitionType.description
+	*/
+	String  PROCESS_TRANSITION_TYPE_DESCRIPTION = PROCESS_TRANSITION_TYPE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ProcessTransitionType_id
+	* Hibernate value: ProcessTransitionType.id
+	*/
+	String  PROCESS_TRANSITION_TYPE_ID = PROCESS_TRANSITION_TYPE_ENTRY.getAliasNames()[1];
 
 
 }

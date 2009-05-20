@@ -15,7 +15,7 @@ import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.company.resources.Employee;
 import com.code.aon.ql.Criteria;
 import com.code.aon.record.Contract;
-import com.code.aon.record.Course;
+import com.code.aon.record.LHCourse;
 import com.code.aon.record.Position;
 import com.code.aon.record.Work;
 import com.code.aon.record.dao.IRecordAlias;
@@ -128,9 +128,9 @@ public class ContractController extends BasicController {
 			(CourseController) AonUtil.getController( CourseController.MANAGER_BEAN_NAME );
 		courseController.setEmployee(getEmployee());
 		if(getEmployee().getId() != null){
-			IManagerBean courseBean = BeanManager.getManagerBean(Course.class);
+			IManagerBean courseBean = BeanManager.getManagerBean(LHCourse.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(courseBean.getFieldName(IRecordAlias.COURSE_EMPLOYEE_ID), getEmployee().getId());
+			criteria.addEqualExpression(courseBean.getFieldName(IRecordAlias.LHCOURSE_EMPLOYEE_ID), getEmployee().getId());
 			courseController.setCriteria(criteria);
 			courseController.onSearch(null);
 		}

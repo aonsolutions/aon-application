@@ -6,7 +6,6 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -239,6 +238,24 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
         return ExpressionUtilities.getAndExpression(ExpressionUtilities.getAndExpression(billingExpr, initialExpr), ExpressionUtilities.getOrExpression(finalExpr, finalNullExpr));
 	}
 
+	private InvoiceDetail createInvoiceDetail(CustomerFee customerFee, Invoice invoice, InvoicingParameters params) {
+		InvoiceDetail invoiceDetail = new InvoiceDetail();
+		invoiceDetail.setDeliveryDetail(null);
+		invoiceDetail.setInvoice(invoice);
+		invoiceDetail.setItem(customerFee.getItem());
+        invoiceDetail.setDescription(customerFee.getDescription());
+        if (!invoice.getRegistry().getId().equals(customerFee.getCustomer().getId())) {
+            invoiceDetail.setDescription(invoiceDetail.getDescription() + " - " + customerFee.getCustomer().getRegistry().getName() + " " + customerFee.getCustomer().getRegistry().getSurname());
+        }
+        invoiceDetail.setDiscountExpression(customerFee.getDiscountExpression());
+		invoiceDetail.setPrice(customerFee.getPrice() * calculateCorrectionFactor(customerFee, params));
+		invoiceDetail.setQuantity(customerFee.getQuantity());
+		invoiceDetail.setSource(InvoiceSource.FEE);
+		invoiceDetail.setTaxes(0.0);
+		invoiceDetail.setWorkPlace(customerFee.getWorkPlace());
+		return invoiceDetail;
+	}
+	
 	private Invoice createInvoice(CustomerFee customerFee, int counter, InvoicingParameters params) throws ManagerBeanException {
 		Invoice invoice = new Invoice();
 		invoice.setNumber(counter);
@@ -257,35 +274,6 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		return invoice;
 	}
 	
-	private InvoiceDetail createInvoiceDetail(CustomerFee customerFee, Invoice invoice, InvoicingParameters params) {
-		InvoiceDetail invoiceDetail = new InvoiceDetail();
-		invoiceDetail.setDeliveryDetail(null);
-		invoiceDetail.setInvoice(invoice);
-		invoiceDetail.setItem(customerFee.getItem());
-        invoiceDetail.setDescription(obtainFeeDescription(customerFee, invoice, params));
-        invoiceDetail.setDiscountExpression(customerFee.getDiscountExpression());
-		invoiceDetail.setPrice(customerFee.getPrice() * calculateCorrectionFactor(customerFee, params));
-		invoiceDetail.setQuantity(customerFee.getQuantity());
-		invoiceDetail.setSource(InvoiceSource.FEE);
-		invoiceDetail.setTaxes(0.0);
-		invoiceDetail.setWorkPlace(customerFee.getWorkPlace());
-		return invoiceDetail;
-	}
-
-	private String obtainFeeDescription(CustomerFee customerFee, Invoice invoice, InvoicingParameters params) {
-		String description = customerFee.getDescription();
-		if (description.indexOf("${MONTH}") > 0) {
-			description = description.replace("${MONTH}", params.getMonth().getName(Locale.getDefault()).toUpperCase());
-		}
-		if (description.indexOf("${YEAR}") > 0) {
-			description = description.replace("${YEAR}", Integer.toString(params.getYear()));
-		}
-		if (!invoice.getRegistry().getId().equals(customerFee.getCustomer().getId())) {
-        	description += " - " + customerFee.getCustomer().getRegistry().getName() + " " + customerFee.getCustomer().getRegistry().getSurname();
-        }
-		return (description.length()>64)?description.substring(0, 64):description;
-	}
-
 	@SuppressWarnings("unchecked")
 	private int calculateNextNumber(int counter, String series) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);

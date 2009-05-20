@@ -12,6 +12,8 @@ import com.code.aon.common.ITransferObject;
 @Table(name="scope")
 public class Scope implements ITransferObject {
 	
+	private static final long serialVersionUID = 426210469334561749L;
+
 	private Integer id;
 	
 	private String description;
@@ -34,5 +36,16 @@ public class Scope implements ITransferObject {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (id == null) {
+			return super.equals(obj);
+		}
+		if (obj instanceof Scope) {
+			return (this.id.equals(((Scope) obj).getId()));
+		}
+		return false;
 	}
 }

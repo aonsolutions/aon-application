@@ -6,13 +6,18 @@
 	</bean>
 
 	<bean class="com.code.aon.project.Task" sqlName="task">
-		<alias names="id,description,startDate,endDate,dueDate,priority,status,percent,user_id,workGroup_id,source,dossier_id,activity_id,sender_id,comments,customer_id" />
-		<hibernate names="id,description,startDate,endDate,dueDate,priority,status,percent,user&lt;id,workGroup.id,source,dossier.id,activity.id,sender.id,comments,dossier.customer.id" />
+		<alias names="id,description,startDate,endDate,dueDate,priority,status,percent,user_id,user_name,workGroup_id,source,dossier_id,dossier_number,activity_id,sender_id,comments,customer_id" />
+		<hibernate names="id,description,startDate,endDate,dueDate,priority,status,percent,user&lt;id,user&lt;name,workGroup.id,source,dossier&lt;id,dossier&lt;number,activity.id,sender.id,comments,dossier&lt;customer.id" />
 	</bean>
 	
 	<bean class="com.code.aon.project.DailyTracking" sqlName="daily_tracking">
-		<alias names="id,user_id,trackingDate,trackingDuration,jobType_id,customer_id,customer_registry_name,customer_registry_surname,customer_status,dossier_id,activity_id,comments" />
-		<hibernate names="id,user.id,trackingDate,trackingDuration,jobType.id,customer.id,customer.registry.name,customer.registry.surname,customer.status,dossier.id,activity.id,comments" />
+		<alias names="id,user_id,trackingDate,trackingDuration,jobType_id,customer_id,customer_registry_name,customer_registry_surname,customer_status,dossier_id,dossier_number,activity_id,comments" />
+		<hibernate names="id,user.id,trackingDate,trackingDuration,jobType.id,customer.id,customer.registry.name,customer.registry.surname,customer.status,dossier.id,dossier.number,activity.id,comments" />
+	</bean>
+	
+	<bean class="com.code.aon.project.ActivityType" sqlName="activity_type">
+		<alias names="id,description,dossierType_id" />
+		<hibernate names="id,description,dossierType&lt;id" />
 	</bean>
 	
 </dao>

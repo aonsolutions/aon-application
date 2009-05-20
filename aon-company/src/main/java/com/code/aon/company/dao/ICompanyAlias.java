@@ -5,7 +5,6 @@ import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.company.Company;
 import com.code.aon.company.resources.Employee;
 import com.code.aon.company.resources.Resource;
-import com.code.aon.company.WebInfo;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.WorkActivity;
 
@@ -184,56 +183,6 @@ public interface ICompanyAlias {
 	* Hibernate value: Resource.workPlace.id
 	*/
 	String  RESOURCE_WORK_PLACE_ID = RESOURCE_ENTRY.getAliasNames()[5];
-
-
-
-	/** 
-	* DAOConstantsEntry for WebInfo entity.
-	*/ 
-	DAOConstantsEntry WEB_INFO_ENTRY = DAOConstants.getDAOConstant(WebInfo.class);
-
-	/** 
-	* Alias value: WebInfo_commercialDescription
-	* Hibernate value: WebInfo.commercialDescription
-	*/
-	String  WEB_INFO_COMMERCIAL_DESCRIPTION = WEB_INFO_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: WebInfo_company_id
-	* Hibernate value: WebInfo.company.id
-	*/
-	String  WEB_INFO_COMPANY_ID = WEB_INFO_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: WebInfo_content
-	* Hibernate value: WebInfo.content
-	*/
-	String  WEB_INFO_CONTENT = WEB_INFO_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: WebInfo_id
-	* Hibernate value: WebInfo.id
-	*/
-	String  WEB_INFO_ID = WEB_INFO_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: WebInfo_schedule
-	* Hibernate value: WebInfo.schedule
-	*/
-	String  WEB_INFO_SCHEDULE = WEB_INFO_ENTRY.getAliasNames()[4];
-
-	/** 
-	* Alias value: WebInfo_slogan
-	* Hibernate value: WebInfo.slogan
-	*/
-	String  WEB_INFO_SLOGAN = WEB_INFO_ENTRY.getAliasNames()[5];
-
-	/** 
-	* Alias value: WebInfo_title
-	* Hibernate value: WebInfo.title
-	*/
-	String  WEB_INFO_TITLE = WEB_INFO_ENTRY.getAliasNames()[6];
-
 
 
 	/** 

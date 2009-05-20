@@ -1,12 +1,21 @@
 package com.code.aon.common.dao.hibernate;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Projections;
+import org.hibernate.impl.CriteriaImpl;
+import org.hibernate.impl.CriteriaImpl.OrderEntry;
 import org.hibernate.metadata.ClassMetadata;
 
 import com.code.aon.common.AbstractFieldMapper;
@@ -108,7 +117,40 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
     public ITransferObject get(Serializable pk) throws DAOException {
     	return get( this.entry.getPojo(), pk );
     }
+    
+    private boolean isDistinctProblem( org.hibernate.Criteria criteria, int count ) {
+    	if ( count != -1 ) {
+    		CriteriaImpl criteriaImpl = (CriteriaImpl) criteria;
+    		return criteriaImpl.getResultTransformer() == CriteriaSpecification.DISTINCT_ROOT_ENTITY;
+    	}
+    	return false;
+    }
+    
+    private List<ITransferObject> getDistinctList( Session session, CriteriaImpl criteria ) {
+    	org.hibernate.criterion.ProjectionList projectionList = Projections.projectionList().add(Projections.id());
+    	for (Iterator i = criteria.iterateOrderings(); i.hasNext();) {
+    		OrderEntry entry = (OrderEntry) i.next();
+    		String property = StringUtils.split(entry.getOrder().toString())[0];
+    		projectionList.add(Projections.property(property));
+    	}    	
+    	criteria.setProjection(Projections.distinct(projectionList));
+    	
+    	List idlist = new LinkedList<Serializable>();
+    	for( Object o : criteria.list() ) {
+    		idlist.add( (projectionList.getLength() > 1 ? ((Object[])o)[0] : o) );
+    	}
 
+    	if (! idlist.isEmpty()) {
+    		org.hibernate.Criteria entityCriteria = session.createCriteria(this.entry.getPojo());
+    		ClassMetadata cm = session.getSessionFactory().getClassMetadata(this.entry.getPojo());
+    		String id = cm.getIdentifierPropertyName();
+    		entityCriteria.add(Expression.in(id, idlist));
+    		return entityCriteria.list();
+    	} else {
+    		return Collections.EMPTY_LIST;
+    	}    	
+    }
+    
     /* 
      * (non-Javadoc)
 	 * @see com.code.aon.common.dao.IDAO#getList(com.code.aon.ql.Criteria, int, int)
@@ -129,7 +171,11 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 				hibernateCriteria.setFirstResult(offset);
 				hibernateCriteria.setMaxResults(count);
 			}
-			list = hibernateCriteria.list();
+			if (! isDistinctProblem(hibernateCriteria, count) ) {
+				list = hibernateCriteria.list();				
+			} else {
+				list = getDistinctList(session, (CriteriaImpl) hibernateCriteria);
+			}	
 			if (HibernateUtil.mustBeginTransaction()) {
 				HibernateUtil.getSession().getTransaction().commit();
 			}

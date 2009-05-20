@@ -30,6 +30,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.groupware.Alarm</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>alarm</value>
+		</managed-property>		
 	</managed-bean>
 
 	
@@ -48,6 +52,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.groupware.Note</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>note</value>
+		</managed-property>				
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Note_date</value>
@@ -94,6 +102,10 @@
 			<value>com.code.aon.groupware.Notice</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>notice</value>
+		</managed-property>						
+		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Notice_date DESC</value>
 		</managed-property>		
@@ -139,6 +151,10 @@
 			<value>com.code.aon.groupware.Contact</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contact</value>
+		</managed-property>								
+		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Contact_displayName</value>
 		</managed-property>
@@ -160,6 +176,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.groupware.Favorite</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>favorite</value>
+		</managed-property>										
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Favorite_favoriteCategory_id,Favorite_description</value>
@@ -205,6 +225,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.groupware.FavoriteCategory</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>favoriteCategory</value>
+		</managed-property>												
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>FavoriteCategory_description</value>

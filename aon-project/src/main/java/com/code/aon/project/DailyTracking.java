@@ -20,6 +20,8 @@ import com.code.aon.customer.Customer;
 @Table(name="daily_tracking")
 public class DailyTracking implements ITransferObject {
 	
+	private static final long serialVersionUID = -9211987133575207355L;
+
 	private Integer id;
 	
 	private User user;

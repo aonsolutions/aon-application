@@ -39,6 +39,24 @@ public class IncomeControllerListener extends ControllerAdapter {
 	private static final Logger LOGGER = Logger.getLogger(IncomeControllerListener.class.getName());
 
 	/**
+	 * Fills the criteria  
+	 * 
+	 * @see com.code.aon.ui.form.event.ControllerAdapter#beforeModelInitialized(com.code.aon.ui.form.event.ControllerEvent)
+	 */
+	@Override
+	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
+		Criteria criteria;
+		try {
+			criteria = event.getController().getCriteria();
+			criteria.addOrder(event.getController().getFieldName(IWarehouseAlias.INCOME_ISSUE_TIME));
+			criteria.addOrder(event.getController().getFieldName(IWarehouseAlias.INCOME_SERIES));
+			criteria.addOrder(event.getController().getFieldName(IWarehouseAlias.INCOME_NUMBER));
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e.getCause());
+		}
+	}
+
+	/**
 	 * Assigns default status and suppliers address, the first of the supplier, before inserting
 	 * 
 	 * @see com.code.aon.ui.form.event.ControllerAdapter#beforeBeanAdded(com.code.aon.ui.form.event.ControllerEvent)

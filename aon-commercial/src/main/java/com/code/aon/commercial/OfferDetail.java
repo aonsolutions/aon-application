@@ -134,6 +134,7 @@ public class OfferDetail implements ITransferObject,ICalculable {
      * 
      * @return the quantity
      */
+    @Column(nullable=false)
     public double getQuantity() {
         return quantity;
     }
@@ -152,6 +153,7 @@ public class OfferDetail implements ITransferObject,ICalculable {
 	 * 
 	 * @return the price
 	 */
+    @Column(nullable=false)
 	public double getPrice() {
 		return price;
 	}

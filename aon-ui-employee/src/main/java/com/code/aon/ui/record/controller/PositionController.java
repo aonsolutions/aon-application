@@ -16,7 +16,7 @@ import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.company.resources.Employee;
 import com.code.aon.ql.Criteria;
 import com.code.aon.record.Contract;
-import com.code.aon.record.Course;
+import com.code.aon.record.LHCourse;
 import com.code.aon.record.Work;
 import com.code.aon.record.dao.IRecordAlias;
 import com.code.aon.registry.Registry;
@@ -63,7 +63,9 @@ public class PositionController extends BasicController {
 		if ( ec.getResource() != null ) {
 			Integer workPlaceId = ec.getResource().getWorkPlace().getId();
 			try {
-				this.activities = CompanyUtil.findActivities( workPlaceId );
+				// Find working place active activities, otherwise inactive.
+				int active = ( ec.getResource().getWorkPlace().isActive() )? 1: -1;
+				this.activities = CompanyUtil.findActivities( workPlaceId, active );
 			} catch (ManagerBeanException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -86,7 +88,8 @@ public class PositionController extends BasicController {
 
 	public void workingPlaceChanged(ValueChangeEvent event) throws ManagerBeanException {
 		Integer workPlaceId = (Integer) event.getNewValue();
-		this.activities = CompanyUtil.findActivities( workPlaceId );
+		// Find working place active and inactive activities.
+		this.activities = CompanyUtil.findActivities( workPlaceId, 0 );
 	}
 
 	@SuppressWarnings("unchecked")
@@ -116,9 +119,9 @@ public class PositionController extends BasicController {
 			(CourseController) AonUtil.getController( CourseController.MANAGER_BEAN_NAME );
 		courseController.setEmployee(getEmployee());
 		if(getEmployee().getId() != null){
-			IManagerBean courseBean = BeanManager.getManagerBean(Course.class);
+			IManagerBean courseBean = BeanManager.getManagerBean(LHCourse.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(courseBean.getFieldName(IRecordAlias.COURSE_EMPLOYEE_ID), getEmployee().getId());
+			criteria.addEqualExpression(courseBean.getFieldName(IRecordAlias.LHCOURSE_EMPLOYEE_ID), getEmployee().getId());
 			courseController.setCriteria(criteria);
 			courseController.onSearch(null);
 		}

@@ -11,6 +11,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name="series")
 public class Series implements ITransferObject {
@@ -70,4 +71,16 @@ public class Series implements ITransferObject {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (id == null) {
+			return super.equals(obj);
+		}
+		if (obj instanceof Series) {
+			return (this.id.equals(((Series) obj).getId()));
+		}
+		return false;
+	}
+	
 }

@@ -19,6 +19,8 @@
 		<mapping class="com.code.aon.groupware.Notice"/>
 		<mapping class="com.code.aon.groupware.FavoriteCategory"/>
 		<mapping class="com.code.aon.groupware.Favorite"/>
+		<mapping class="com.code.aon.groupware.Message"/>
+		<mapping class="com.code.aon.groupware.MessageContent"/>
 
 		<mapping class="com.code.aon.company.resources.Employee"/>
  		

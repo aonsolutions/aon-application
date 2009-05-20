@@ -1,15 +1,22 @@
 package com.code.aon.ui.commercial.controller;
 
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.SelectItem;
 
+import com.code.aon.commercial.CommercialSegment;
+import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ILookupObject;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
@@ -36,12 +43,8 @@ public class TargetController extends BasicController {
 	/** REGISTRY_ADDRESS_CITY. */
 	private static final String REGISTRY_ADDRESS_CITY = "city";
 	
-	/** TargetMedia Controller name. */
-	private static final String TARGET_MEDIA_CONTROLLER_NAME = "targetMedia";
+	private List<SelectItem> segments;
 	
-	/** TargetAddress Controller name. */
-	private final static String TARGET_ADDRESS_CONTROLLER_NAME = "targetAddress";
-
     /**
      * Adds custom entries into the lookup map
      * 
@@ -80,35 +83,32 @@ public class TargetController extends BasicController {
         this.onReset((ActionEvent)event);
     }
 
-    /**
-     * On reset. Method launched by the menu
-     * 
-     * @param event the event
-     */
-    @Override
-    public void onReset(ActionEvent event) {
-        IController addressController = AonUtil.getController(TARGET_ADDRESS_CONTROLLER_NAME);
-        addressController.onCancel(event);
+	public List<SelectItem> getSegments() {
+		return segments;
+	}
 
-        IController mediaController = AonUtil.getController(TARGET_MEDIA_CONTROLLER_NAME);
-        mediaController.onCancel(event);
-
-        super.onReset(event);
-    }
-
-    /**
-     * On select. Sends a cancel to the media and address controllers to avoid having editing any of them
-     * 
-     * @param event the event
-     */
-    @Override
-    public void onSelect(ActionEvent event) {
-    	IController addressController = AonUtil.getController(TARGET_ADDRESS_CONTROLLER_NAME);
-        addressController.onCancel(event);
-
-        IController mediaController = AonUtil.getController(TARGET_MEDIA_CONTROLLER_NAME);
-        mediaController.onCancel(event);
-
-        super.onSelect(event);
-    }
+	@SuppressWarnings("unchecked")
+	public void refreshSegments() throws ManagerBeanException {
+		segments = new LinkedList<SelectItem>();
+		IManagerBean segmentBean = BeanManager.getManagerBean(CommercialSegment.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(segmentBean.getFieldName(ICommercialAlias.COMMERCIAL_SEGMENT_NAME));
+		Iterator<ITransferObject> iter = segmentBean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			CommercialSegment segment = (CommercialSegment)iter.next();
+			SelectItem item = new SelectItem(segment.getId(), segment.getName());
+			segments.add(item);
+		}
+	}
+	
+	public void tabChanged( ValueChangeEvent event ) {
+		Object controllerName = event.getOldValue();
+		if ( controllerName != null ) {
+			IController controller = AonUtil.getController((String) controllerName);
+			if ( controller != null ) {
+				controller.onCancel(null);	
+			}
+		}
+	}
+	    
 }

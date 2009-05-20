@@ -24,7 +24,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class CourseController extends BasicController {
 	
-	public static final String MANAGER_BEAN_NAME = "course";
+	public static final String MANAGER_BEAN_NAME = "lhcourse";
 
 	private Logger LOGGER = Logger.getLogger(CourseController.class.getName());
 	
@@ -51,7 +51,7 @@ public class CourseController extends BasicController {
 		}
 		if(this.getEmployee().getId() != null){
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(getManagerBean().getFieldName(IRecordAlias.COURSE_EMPLOYEE_ID), getEmployee().getId());
+			criteria.addEqualExpression(getManagerBean().getFieldName(IRecordAlias.LHCOURSE_EMPLOYEE_ID), getEmployee().getId());
 			setCriteria(criteria);
 			this.onSearch(null);
 		}

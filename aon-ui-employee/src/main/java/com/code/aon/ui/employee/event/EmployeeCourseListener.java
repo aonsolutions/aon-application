@@ -1,6 +1,6 @@
 package com.code.aon.ui.employee.event;
 
-import com.code.aon.record.Course;
+import com.code.aon.record.LHCourse;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -22,6 +22,6 @@ public class EmployeeCourseListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		CourseController courseController = (CourseController)event.getController();
-		((Course)courseController.getTo()).setEmployee(courseController.getEmployee());
+		((LHCourse)courseController.getTo()).setEmployee(courseController.getEmployee());
 	}
 }

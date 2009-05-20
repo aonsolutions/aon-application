@@ -75,10 +75,8 @@
 
 								<t:outputText value="#{to.id}" id="Period_id-LABEL"
 									rendered="#{to.id!=accPeriod.to.id}" />
-								<t:outputLabel for="Period_id-EDIT"
-									value="#{accountBundle.aon_accPeriod_id}" rendered="#{false}" />
 								<t:inputText rendered="#{to.id==accPeriod.to.id}"
-									disabled="true" id="Period_id-EDIT" style="width:100%"
+									disabled="true" id="Period_id-EDIT" style="width:80%"
 									styleClass="aon-form-input-text" value="#{accPeriod.to.id}"
 									required="#{true}" />
 
@@ -91,10 +89,8 @@
 											rendered="#{!accPeriod.new}"
 											accesskey="#{bundle.aon_key_new_line}">
 										</t:commandButton>
-										<h:outputLabel for="Period_id-NEW"
-											value="#{accountBundle.aon_accPeriod_id}" rendered="#{false}" />
 										<h:inputText id="Period_id-NEW" rendered="#{accPeriod.new}"
-											style="width:100%" styleClass="aon-form-input-text"
+											style="width:80%" styleClass="aon-form-input-text" maxlength="4"
 											value="#{accPeriod.to.id}" required="#{true}" />
 									</t:div>
 								</f:facet>
@@ -109,19 +105,15 @@
 								<t:outputText value="#{to.initiationDate}"
 									id="Period_initiationDate-LABEL"
 									rendered="#{to.id!=accPeriod.to.id}">
-									<f:convertDateTime type="date" timeStyle="medium"
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
 								</t:outputText>
-								<t:outputLabel id="Period_initiationDate-LABEL-EDIT"
-									for="Period_initiationDate-EDIT"
-									value="#{accountBundle.aon_accPeriod_initiation_date}"
-									rendered="#{false}" />
 								<t:div id="Period_initiationDate-CALENDAR-EDIT-DIV"
 									styleClass="aon-form-nowrap">
 									<t:inputCalendar size="8" required="true"
 										id="Period_initiationDate-EDIT"
 										rendered="#{to.id==accPeriod.to.id}"
-										value="#{accPeriod.to.initiationDate}" style="width:90%"
+										value="#{accPeriod.to.initiationDate}" style="width:60%"
 										monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 										currentDayCellClass="currentDayCell" renderAsPopup="true"
 										styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
@@ -131,15 +123,11 @@
 
 								<f:facet name="footer">
 									<t:div id="Period_initiationDate-NEW-DIV">
-										<t:outputLabel id="Period_initiationDate-LABEL-NEW"
-											for="Period_initiationDate-NEW"
-											value="#{accountBundle.aon_accPeriod_initiation_date}"
-											rendered="#{false}" />
 										<t:div id="Period_initiationDate-CALENDAR-NEW-DIV"
 											styleClass="aon-form-nowrap">
 											<t:inputCalendar size="8" id="Period_initiationDate-NEW"
 												rendered="#{accPeriod.new}" forceID="true"
-												value="#{accPeriod.to.initiationDate}" style="width:90%"
+												value="#{accPeriod.to.initiationDate}" style="width:60%"
 												monthYearRowClass="yearMonthHeader"
 												weekRowClass="weekHeader" popupButtonStyleClass="aon-form-calendar-button"
 												currentDayCellClass="currentDayCell" required="true"
@@ -158,17 +146,14 @@
 
 								<t:outputText value="#{to.deadline}" id="Period_deadline-LABEL"
 									rendered="#{to.id!=accPeriod.to.id}">
-									<f:convertDateTime type="date" timeStyle="medium"
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
 								</t:outputText>
-								<t:outputLabel id="Period_deadline-LABEL-EDIT"
-									for="Period_deadline-EDIT"
-									value="#{accountBundle.aon_accPeriod_deadline}" rendered="#{false}" />
 								<t:div id="Period_deadline-CALENDAR-EDIT-DIV"
 									styleClass="aon-form-nowrap">
 									<t:inputCalendar size="8" required="true"
 										id="Period_deadline-EDIT" rendered="#{to.id==accPeriod.to.id}"
-										value="#{accPeriod.to.deadline}" style="width:90%"
+										value="#{accPeriod.to.deadline}" style="width:60%"
 										monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 										currentDayCellClass="currentDayCell" renderAsPopup="true"
 										styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
@@ -177,15 +162,11 @@
 								</t:div>
 								<f:facet name="footer">
 									<t:div id="Period_deadline-NEW-DIV">
-										<t:outputLabel id="Period_deadline-LABEL-NEW"
-											for="Period_deadline-NEW"
-											value="#{accountBundle.aon_accPeriod_deadline}"
-											rendered="#{false}" />
 										<t:div id="Period_deadline-CALENDAR-NEW-DIV"
 											styleClass="aon-form-nowrap">
 											<t:inputCalendar size="8" id="Period_deadline-NEW"
 												rendered="#{accPeriod.new}" value="#{accPeriod.to.deadline}"
-												style="width:90%" monthYearRowClass="yearMonthHeader"
+												style="width:60%" monthYearRowClass="yearMonthHeader"
 												weekRowClass="weekHeader" forceID="true"
 												popupButtonStyleClass="aon-form-calendar-button"
 												currentDayCellClass="currentDayCell" required="true"

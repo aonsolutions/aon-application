@@ -14,6 +14,8 @@ import com.code.aon.common.ITransferObject;
 @Table(name="user_workgroup")
 public class UserWorkGroup implements ITransferObject {
 
+	private static final long serialVersionUID = 7804966037720748099L;
+
 	private Integer id;
 	
 	private User user;

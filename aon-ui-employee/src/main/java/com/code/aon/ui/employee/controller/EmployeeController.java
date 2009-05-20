@@ -175,7 +175,8 @@ public class EmployeeController extends BasicController {
 		Integer workPlaceId = (Integer) event.getNewValue();
 		WorkPlace workPlace = CompanyUtil.getWorkPlace( workPlaceId );
 		this.resource.setWorkPlace( workPlace );
-		this.activities = CompanyUtil.findActivities( workPlaceId );
+		 // Find working place active activities, otherwise inactive.
+		this.activities = CompanyUtil.findActivities( workPlaceId, ( (workPlace.isActive())? 1: -1) );
 	}
 
 	@SuppressWarnings("unused")

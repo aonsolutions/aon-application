@@ -26,7 +26,6 @@ import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.customer.Customer;
 import com.code.aon.project.Activity;
 import com.code.aon.project.Dossier;
-import com.code.aon.project.PeriodicalTask;
 import com.code.aon.project.Task;
 import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.project.enumeration.DossierStatus;
@@ -39,21 +38,12 @@ import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.project.util.CampaignTaskManager;
-import com.code.aon.ui.util.AonUtil;
 
 public class TaskController extends BasicController implements ITaskController {
 
     private static final Logger LOGGER = Logger.getLogger(TaskController.class.getName());
 
-	private static final String PERIOD_TASK_CONTROLLER_NAME = "periodTask";
-
     private Expression myStatusExpression;
-    private Date startDateFrom;
-    private Date startDateTo;
-    private Date endDateFrom;
-    private Date endDateTo;
-    private Date dueDateFrom;
-    private Date dueDateTo;
 
     private Customer customer;
     private List<SelectItem> dossiers = new LinkedList<SelectItem>();
@@ -170,25 +160,18 @@ public class TaskController extends BasicController implements ITaskController {
     }
     
     public DataModel getInboxModel(){
-		obtainTaskInbox();	
+    	obtainTaskInbox();
     	return this.model;
     }
 
     @Override
     public void onEditSearch(ActionEvent event) {
         setMyStatusExpression(null);
-        setCustomer(null);
-        setStartDateFrom(null);
-        setStartDateTo(null);
-        setEndDateFrom(null);
-        setEndDateTo(null);
-        setDueDateFrom(null);
-        setDueDateTo(null);
         super.onEditSearch(event);
     }
     
     public void addStartDateFromExpression(ValueChangeEvent event){
-        if(event.getNewValue() != null && getStartDateFrom() != null) {
+        if(event.getNewValue() != null) {
             try {
                 getCriteria().addGreaterThanOrEqualExpression(getFieldName(IProjectAlias.TASK_START_DATE), event.getNewValue());
             } catch (ManagerBeanException e) {
@@ -198,7 +181,7 @@ public class TaskController extends BasicController implements ITaskController {
     }
     
     public void addStartDateToExpression(ValueChangeEvent event){
-        if(event.getNewValue() != null && getStartDateTo() != null) {
+        if(event.getNewValue() != null) {
             try {
                 getCriteria().addLessThanOrEqualExpression(getFieldName(IProjectAlias.TASK_START_DATE), event.getNewValue());
             } catch (ManagerBeanException e) {
@@ -208,7 +191,7 @@ public class TaskController extends BasicController implements ITaskController {
     }
 
     public void addEndDateFromExpression(ValueChangeEvent event){
-        if(event.getNewValue() != null && getEndDateFrom() != null) {
+        if(event.getNewValue() != null) {
             try {
                 getCriteria().addGreaterThanOrEqualExpression(getFieldName(IProjectAlias.TASK_END_DATE), event.getNewValue());
             } catch (ManagerBeanException e) {
@@ -218,7 +201,7 @@ public class TaskController extends BasicController implements ITaskController {
     }
     
     public void addEndDateToExpression(ValueChangeEvent event){
-        if(event.getNewValue() != null && getEndDateTo() != null) {
+        if(event.getNewValue() != null) {
             try {
                 getCriteria().addLessThanOrEqualExpression(getFieldName(IProjectAlias.TASK_END_DATE), event.getNewValue());
             } catch (ManagerBeanException e) {
@@ -228,7 +211,7 @@ public class TaskController extends BasicController implements ITaskController {
     }
 
     public void addDueDateFromExpression(ValueChangeEvent event){
-        if(event.getNewValue() != null && getDueDateFrom() != null) {
+        if(event.getNewValue() != null) {
             try {
                 getCriteria().addGreaterThanOrEqualExpression(getFieldName(IProjectAlias.TASK_DUE_DATE), event.getNewValue());
             } catch (ManagerBeanException e) {
@@ -238,7 +221,7 @@ public class TaskController extends BasicController implements ITaskController {
     }
     
     public void addDueDateToExpression(ValueChangeEvent event){
-        if(event.getNewValue() != null && getDueDateTo() != null) {
+        if(event.getNewValue() != null) {
             try {
                 getCriteria().addLessThanOrEqualExpression(getFieldName(IProjectAlias.TASK_DUE_DATE), event.getNewValue());
             } catch (ManagerBeanException e) {
@@ -251,17 +234,6 @@ public class TaskController extends BasicController implements ITaskController {
         if(event.getNewValue() != null && !event.getNewValue().equals("")) {
             try {
                 getCriteria().addEqualExpression(getFieldName(IProjectAlias.TASK_CUSTOMER_ID), new Integer(event.getNewValue().toString()));
-            } catch (ManagerBeanException e) {
-                LOGGER.log(Level.SEVERE, "Error adding customer expression", e);
-            }
-        }
-    }
-
-    public void addCustomerPojoExpression(ValueChangeEvent event) {
-        if(event.getNewValue() != null && !event.getNewValue().equals("")) {
-            try {
-            	Customer c = (Customer) event.getNewValue();
-                getCriteria().addEqualExpression(getFieldName(IProjectAlias.TASK_CUSTOMER_ID), new Integer(c.getId().toString()));
             } catch (ManagerBeanException e) {
                 LOGGER.log(Level.SEVERE, "Error adding customer expression", e);
             }
@@ -326,7 +298,7 @@ public class TaskController extends BasicController implements ITaskController {
     }
 
     public boolean isSourceCampaign() {
-        return ((Task)this.getTo()).getSource().equals(TaskSource.AON_CONSULTANT);
+        return ((Task)this.getTo()).getSource().equals(TaskSource.PROCESS);
     }
 
     public boolean isMyTask() {
@@ -455,7 +427,7 @@ public class TaskController extends BasicController implements ITaskController {
 	@SuppressWarnings("unused")
     public Campaign getTaskCampaign() {
         Task task = (Task)this.getTo();
-        if (task.getSource().equals(TaskSource.AON_CONSULTANT)) {
+        if (task.getSource().equals(TaskSource.PROCESS)) {
             try {
                 ActivityProcess activityProcess = CampaignTaskManager.getCurrentActivityProcess(task);
                 if (activityProcess != null) {
@@ -471,7 +443,7 @@ public class TaskController extends BasicController implements ITaskController {
     @SuppressWarnings("unused")
     public String getPreviousTaskDescription() {
         Task task = (Task)this.getTo();
-        if (task.getSource().equals(TaskSource.AON_CONSULTANT)) {
+        if (task.getSource().equals(TaskSource.PROCESS)) {
             Task previousTask = getPreviousTask(task);
             return (previousTask != null) ? previousTask.getDescription() : null;
         }
@@ -481,7 +453,7 @@ public class TaskController extends BasicController implements ITaskController {
     @SuppressWarnings("unused")
     public String getPreviousTaskEmployee() {
         Task task = (Task)this.getTo();
-        if (task.getSource().equals(TaskSource.AON_CONSULTANT)) {
+        if (task.getSource().equals(TaskSource.PROCESS)) {
             Task previousTask = getPreviousTask(task);
             User previousUser = (previousTask != null) ? previousTask.getUser() : null;
             if (previousUser != null) {
@@ -492,7 +464,7 @@ public class TaskController extends BasicController implements ITaskController {
     }
 
     private Task getPreviousTask(Task task) {
-        if (task.getSource().equals(TaskSource.AON_CONSULTANT)) {
+        if (task.getSource().equals(TaskSource.PROCESS)) {
             try {
                 return CampaignTaskManager.getPreviousTask(task);
             } catch (ManagerBeanException e) {
@@ -518,7 +490,7 @@ public class TaskController extends BasicController implements ITaskController {
             task.setUser(UserUtils.getInstance().getLoggedUser());
             updateTask(task);
 
-            if (task.getSource().equals(TaskSource.AON_CONSULTANT)) {
+            if (task.getSource().equals(TaskSource.PROCESS)) {
                 finishTaskAlarm(task);
             }
         }
@@ -575,7 +547,7 @@ public class TaskController extends BasicController implements ITaskController {
         Iterator<Task> iter = checks.iterator();
         while(iter.hasNext()){
             Task task = iter.next();
-            task = releaseTask(task);
+            releaseTask(task);
             if (!message && !isFreeTask(task)) {
                 addMessage("Existen Tareas que no se han podido liberar por estar asumidas por otros Usuarios.");
                 message = true;
@@ -584,12 +556,11 @@ public class TaskController extends BasicController implements ITaskController {
         resetChecks();
     }
 
-    private Task releaseTask(Task task) {
+    private void releaseTask(Task task) {
         if (isMyTask(task)) {
             task.setUser(null);
-            task = updateTask(task);
+            updateTask(task);
         }
-        return task;
     }
 
     @SuppressWarnings("unused")
@@ -623,13 +594,9 @@ public class TaskController extends BasicController implements ITaskController {
             task.setUser(UserUtils.getInstance().getLoggedUser());
             updateTask(task);
 
-            if (task.getSource().equals(TaskSource.AON_CONSULTANT)) {
+            if (task.getSource().equals(TaskSource.PROCESS)) {
                 finishTaskAlarm(task);
                 createNextTask(task);
-            } else {
-            	if(task.getSource().equals(TaskSource.PERIODICAL)){
-            		createNextPeriodicalTask(task);
-            	}
             }
         }
     }
@@ -648,48 +615,6 @@ public class TaskController extends BasicController implements ITaskController {
 		}
     }
 	
-	@SuppressWarnings("unchecked")
-    private void createNextPeriodicalTask(Task task) {
-		try {
-			IManagerBean periodTaskBean = BeanManager.getManagerBean(PeriodicalTask.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(periodTaskBean.getFieldName(IProjectAlias.PERIODICAL_TASK_TASK_ID), task.getId());
-			Iterator iter = periodTaskBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				PeriodicalTask periodTask = (PeriodicalTask)iter.next();
-				if(periodTask.getNextDate().before(periodTask.getEndDate())){
-					PeriodicalTaskController periodTaskController = (PeriodicalTaskController)AonUtil.getController(PERIOD_TASK_CONTROLLER_NAME);
-					Task newTask = creteNewPeriodicalTask(periodTask, task);
-					periodTask.setTask(newTask);
-					periodTask.setNextDate(periodTaskController.addPeriodToDate(periodTask, newTask.getStartDate()));
-					periodTaskBean.update(periodTask);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error creating next periodical task for task with id= " + task.getId(), e);
-		}
-	}
-
-    private Task creteNewPeriodicalTask(PeriodicalTask periodTask, Task task) throws ManagerBeanException {
-    	Task newTask = new Task();
-    	newTask.setActivity(task.getActivity());
-    	newTask.setComments(task.getComments());
-    	newTask.setDescription(task.getDescription());
-    	newTask.setDossier(task.getDossier());
-    	newTask.setPercent(0);
-    	newTask.setPriority(task.getPriority());
-    	newTask.setSender(task.getSender());
-    	newTask.setSource(task.getSource());
-    	newTask.setStartDate(periodTask.getNextDate());
-    	newTask.setStatus(TaskStatus.PENDING);
-    	newTask.setUser(null);
-    	newTask.setWorkGroup(task.getWorkGroup());
-    	PeriodicalTaskController periodTaskController = (PeriodicalTaskController)AonUtil.getController(PERIOD_TASK_CONTROLLER_NAME);
-    	newTask.setDueDate(periodTaskController.addPeriodToDate(periodTask, task.getDueDate()));
-    	IManagerBean taskBean = BeanManager.getManagerBean(Task.class);
-		return (Task)taskBean.insert(newTask);
-	}
-
 	@SuppressWarnings("unused")
     public void onStartTask(ActionEvent event) {
         Task task = (Task)this.getTo();
@@ -740,53 +665,5 @@ public class TaskController extends BasicController implements ITaskController {
         }
         return null;
     }
-
-	public Date getStartDateFrom() {
-		return startDateFrom;
-	}
-
-	public void setStartDateFrom(Date startDateFrom) {
-		this.startDateFrom = startDateFrom;
-	}
-
-	public Date getStartDateTo() {
-		return startDateTo;
-	}
-
-	public void setStartDateTo(Date startDateTo) {
-		this.startDateTo = startDateTo;
-	}
-
-	public Date getEndDateFrom() {
-		return endDateFrom;
-	}
-
-	public void setEndDateFrom(Date endDateFrom) {
-		this.endDateFrom = endDateFrom;
-	}
-
-	public Date getEndDateTo() {
-		return endDateTo;
-	}
-
-	public void setEndDateTo(Date endDateTo) {
-		this.endDateTo = endDateTo;
-	}
-
-	public Date getDueDateFrom() {
-		return dueDateFrom;
-	}
-
-	public void setDueDateFrom(Date dueDateFrom) {
-		this.dueDateFrom = dueDateFrom;
-	}
-
-	public Date getDueDateTo() {
-		return dueDateTo;
-	}
-
-	public void setDueDateTo(Date dueDateTo) {
-		this.dueDateTo = dueDateTo;
-	}
 
 }

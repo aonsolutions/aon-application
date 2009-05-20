@@ -21,6 +21,15 @@ public class CustomerControllerNoteListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		applyCustomerCriteria(event);
+	}
+
+	@Override
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		applyCustomerCriteria(event);
+	}
+
+	private void applyCustomerCriteria(ControllerEvent event) throws ControllerListenerException {
 		Customer customer = (Customer)event.getController().getTo();
 		CustomerNoteController rNoteController = (CustomerNoteController)AonUtil.getController(REGISTRY_NOTE_CONTROLLER_NAME);
 		try {
@@ -36,4 +45,5 @@ public class CustomerControllerNoteListener extends ControllerAdapter {
 			throw new ControllerListenerException(e);
 		}
 	}
+
 }
