@@ -47,7 +47,7 @@ public class FavoriteCategory implements ITransferObject {
 	}
 
 	@ManyToOne
-	@JoinColumn(name="user")
+	@JoinColumn(name="user_id")
 	@Fetch(FetchMode.JOIN)
 	public User getUser() {
 		return user;

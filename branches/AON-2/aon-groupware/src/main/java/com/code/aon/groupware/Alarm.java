@@ -101,7 +101,7 @@ public class Alarm implements ITransferObject {
 	}
 
 	@ManyToOne
-	@JoinColumn(name="user")
+	@JoinColumn(name="user_id")
 	public User getUser() {
 		return user;
 	}
