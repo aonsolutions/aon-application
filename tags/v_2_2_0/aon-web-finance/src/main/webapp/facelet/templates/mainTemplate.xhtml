@@ -1,0 +1,38 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"				
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<c:forEach items="#{aonConfiguration.applicationBundleList}" var="appBundle">
+	<f:loadBundle basename="#{appBundle.value}" var="#{appBundle.key}" />
+</c:forEach>
+<f:view>
+	<head>
+	<title>#{hyperviewBundle.aon_application_title}</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<meta http-equiv="Expires" content="0" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<c:forEach items="#{aonConfiguration.styleSheets}" var="styleSheet">	
+		<t:stylesheet path="#{styleSheet}" />
+	</c:forEach>
+	<script type='text/javascript'
+		src="${facesContext.externalContext.requestContextPath}/js/Hyperview.js">
+			// nothing
+		</script>
+	<script type='text/javascript'
+		src="${facesContext.externalContext.requestContextPath}/js/HyperViewForm.js">
+			// nothing
+		</script>
+	</head>
+	<body id="aon-body" onload="aonResizeBody()" onresize="aonResizeBody()">
+		<ui:insert name="header" />
+		
+		<t:div styleClass="aon-central-content" id="aon-content-container-noframes" forceId="#{true}">
+			<ui:insert name="content" />
+		</t:div>
+		<ui:insert name="footer"/>			
+	</body>
+</f:view>
+</html>

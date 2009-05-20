@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="rmedia">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" name="registry" sqlType="integer" type="integer"/>
+        <column label="" name="raddress" sqlType="integer" type="integer"/>
+        <column label="" length="4" name="media" sqlType="tinyint" type="string"/>
+        <column label="" length="64" name="value" sqlType="varchar" type="string"/>
+        <column label="" length="64" name="comment" sqlType="varchar" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="rmedia_ibfk_1" foreignPath="data/registry.exdm.xml">
+            <sourceColumns>
+                <column name="registry"/>
+            </sourceColumns>
+        </join>
+        <join description="rmedia_ibfk_2" foreignPath="data/raddress.exdm.xml">
+            <sourceColumns>
+                <column name="raddress"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>
