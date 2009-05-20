@@ -62,7 +62,8 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
         this.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, templateDirectory.getAbsolutePath());
         this.setProperty(Velocity.INPUT_ENCODING, VELOCITY_FILE_ENCODING);
         this.setProperty(Velocity.OUTPUT_ENCODING, VELOCITY_FILE_ENCODING);
-        this.setProperty(Velocity.RUNTIME_LOG, templateDirectory + "/" + VELOCITY_LOG_FILE);
+        this.setProperty(Velocity.RUNTIME_LOG, templateDirectory + "/" + VELOCITY_LOG_FILE);        
+        this.setProperty(Velocity.RUNTIME_LOG_REFERENCE_LOG_INVALID, Boolean.TRUE.toString());
         try {
         	this.init();
         } catch (Throwable th) {
