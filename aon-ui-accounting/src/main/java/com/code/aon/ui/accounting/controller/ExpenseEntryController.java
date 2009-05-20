@@ -103,6 +103,7 @@ public class ExpenseEntryController {
 		header.setDate(new Date());
 		header.setRegistryBank(new RegistryBank());
 		header.getRegistryBank().setBank(new Bank());
+		header.setAccount(new Account());
 		return header;
 	}
 	
