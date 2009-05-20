@@ -17,10 +17,11 @@
 			<ui:param name="showDataScroller" value="false" />
 			<ui:param name="skipResetButton" value="#{true}" />
 			<ui:param name="skipRemoveButton" value="#{true}" />
+			<ui:param name="saveButtonReRender" value="#{dataTableId}" />
 
 		<ui:define name="columns">
 			
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">
+			<aon:column styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
 					<aon:outputText value="&#160;" />
 				</f:facet>
@@ -30,12 +31,14 @@
 				</f:facet>
 			</aon:column>
 			
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
 				<f:facet name="header">
 					<aon:outputText value="#{accountingBundle.accounting_debit}" />
 				</f:facet>
-				<aon:outputText value="#{to.debit}" rendered="#{to!=accountBudgetDetail.to}" size="4" />
-				<aon:inputText value="#{to.debit}" required="true" size="10"
+				<aon:outputText value="#{to.debit}" rendered="#{to!=accountBudgetDetail.to}" >
+					<f:convertNumber pattern="#,##0.00" />
+				</aon:outputText>
+				<aon:inputText value="#{to.debit}" required="true" size="15"
 					rendered="#{to==accountBudgetDetail.to}" >
 					<!--  
 					<a4j:support ajaxSingle="true" event="onchange"
@@ -43,16 +46,20 @@
 					-->
 				</aon:inputText>
 				<f:facet name="footer">
-					<aon:outputText value="#{accountBudget.debitTotal}" />
+					<aon:outputText value="#{accountBudget.debitTotal}" >
+						<f:convertNumber pattern="#,##0.00" />
+					</aon:outputText>
 				</f:facet>
 			</aon:column>
 			
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
 				<f:facet name="header">
 					<aon:outputText value="#{accountingBundle.accounting_credit}" />
 				</f:facet>
-				<aon:outputText value="#{to.credit}" rendered="#{to!=accountBudgetDetail.to}" size="4"/>
-				<aon:inputText value="#{to.credit}" required="true" size="10"
+				<aon:outputText value="#{to.credit}" rendered="#{to!=accountBudgetDetail.to}" >
+					<f:convertNumber pattern="#,##0.00" />
+				</aon:outputText>
+				<aon:inputText value="#{to.credit}" required="true" size="15"
 					rendered="#{to==accountBudgetDetail.to}" >
 					<!--  
 					<a4j:support ajaxSingle="true" event="onchange"
@@ -60,7 +67,9 @@
 					-->
 				</aon:inputText>
 				<f:facet name="footer">
-					<aon:outputText value="#{accountBudget.creditTotal}" />
+					<aon:outputText value="#{accountBudget.creditTotal}" >
+						<f:convertNumber pattern="#,##0.00" />
+					</aon:outputText>
 				</f:facet>
 			</aon:column>
 			
