@@ -34,4 +34,12 @@
 		</vetoListeners>
 	</bean>
 
+	<bean description="Listener para controlar el solape entre fechas de diferentes periodos.">
+		<pojo>com.code.aon.accounting.Period</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.accounting.event.PeriodBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+	
+
 </bean-config>
