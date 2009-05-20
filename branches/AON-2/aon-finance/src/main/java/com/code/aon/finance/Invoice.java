@@ -60,6 +60,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	 */
 	public Invoice() {
 		this.issueDate = new Date();
+		this.taxDate = new Date();
 	}
 
     /** The id. */
@@ -88,6 +89,9 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
     
     /** The issue date. */
     private Date issueDate;
+
+    /** The tax date. */
+    private Date taxDate;
 
     /** The security level. */
     private SecurityLevel securityLevel;
@@ -232,6 +236,27 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
      */
     public void setIssueDate(Date issueDate) {
         this.issueDate = issueDate;
+        /*@TODO Quitar esta linea de abajo cuando el campo taxDate tenga mantenimiento.*/
+        this.taxDate = issueDate;
+    }
+
+    /**
+     * Gets the tax date.
+     * 
+     * @return the tax date
+     */
+    @Column(name="tax_date")
+    public Date getTaxDate() {
+        return taxDate;
+    }
+
+    /**
+     * Sets the tax date.
+     * 
+     * @param taxDate the tax date
+     */
+    public void setTaxDate(Date taxDate) {
+        this.taxDate = taxDate;
     }
 
     /**
