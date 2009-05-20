@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:t="http://myfaces.apache.org/tomahawk"            
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+		<t:stylesheet path="/jscalendar-1.0/calendar-system.css" />
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/lang/calendar-es.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar-setup.js">
+			// nothing
+		</script>
+	</ui:define>		
+
+	<ui:define name="content">
+		<h:form id="deliveryForm">
+		
+			<t:div styleClass="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton id="search" value="#{bundle.aon_search}" 
+						action="delivery_list" actionListener="#{delivery.onSearch}" 
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'" 
+						accesskey="#{bundle.aon_key_search}"/>
+					<t:commandButton id="cancel" value="#{bundle.aon_cancel}" 
+						action="delivery_list" actionListener="#{delivery.onCancel}" 
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'" 
+						accesskey="#{bundle.aon_key_cancel}"/>
+					<h:commandButton id="clear" value="#{bundle.aon_clear}"
+						type="reset"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-reset"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'" />
+					<t:commandButton id="reset" value="#{bundle.aon_reset}"
+						action="delivery_form" actionListener="#{delivery.onReset}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'" 
+						accesskey="#{bundle.aon_key_new}"/>
+				</t:div>
+				</t:div>
+			</t:div>
+			
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+				<h:outputText value="#{bundle.aon_search_header}" />
+				</t:div>
+			</t:div>
+			
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+					<h:panelGrid columns="2" styleClass="aon-form-table" 
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+							
+						<h:outputLabel for="Delivery_series"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							value="#{warehouseBundle.aon_series_number}" />
+						<t:div>
+							<t:inputText id="Delivery_series" size="4"
+								styleClass="aon-form-input-text"
+								valueChangeListener="#{delivery.addExpression}" />
+							<t:inputText id="Delivery_number" size="7"
+								styleClass="aon-form-input-text"
+								valueChangeListener="#{delivery.addExpression}" />
+						</t:div>
+						
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							for="Delivery_startDate" value="#{warehouseBundle.aon_date}" />
+						<t:div>
+							<t:div style="display:inline;">
+								<h:outputLabel value="#{warehouseBundle.aon_date_from}" 
+									styleClass="aon-form-input-text-label" />
+								<t:inputText styleClass="aon-form-input-text"
+									id="Delivery_issueDate1" 
+									forceId="#{true}"
+									valueChangeListener="#{delivery.addIssueDateGreaterThanExpression}"
+									size="10" maxlength="12">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</t:inputText>
+								<t:commandButton styleClass="aon-form-calendar-button"
+									id="Delivery_issueDate1_button" forceId="#{true}" value=""
+									immediate="true" />
+								<script type="text/javascript">
+								  Calendar.setup( {
+									inputField  : "Delivery_issueDate1", button : "Delivery_issueDate1_button",
+									ifFormat    : "%d/%m/%Y" } );
+								</script>
+							</t:div>
+							<t:div style="display:inline;">
+								<h:outputLabel value="#{warehouseBundle.aon_date_to}" 
+									styleClass="aon-form-input-text-label" />
+								<t:inputText styleClass="aon-form-input-text"
+									id="Delivery_issueDate2" 
+									forceId="#{true}"
+									valueChangeListener="#{delivery.addIssueDateLessThanExpression}"
+									size="10" maxlength="12">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</t:inputText>
+								<t:commandButton styleClass="aon-form-calendar-button"
+									id="Delivery_issueDate2_button" forceId="#{true}" value=""
+									immediate="true" />
+								<script type="text/javascript">
+								  Calendar.setup( {
+									inputField  : "Delivery_issueDate2", button : "Delivery_issueDate2_button",
+									ifFormat    : "%d/%m/%Y" } );
+								</script>
+							</t:div>
+						</t:div>
+						
+						<t:outputLabel for="Customer_Lookup_id"
+							styleClass="aon-form-input-text-label"
+							value="#{warehouseBundle.aon_customer}" />
+						<t:div>
+							<t:inputText id="Customer_Lookup_id" size="5" forceId="#{true}"
+								styleClass="aon-form-input-text"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');"
+								valueChangeListener="#{delivery.addCustomerExpression}" />
+							<h:commandButton id="find_Customer_Lookup_id"
+								onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');return false;"	
+								value="" immediate="true" styleClass="aon-form-lookup-button" />
+							<t:inputText id="Customer_full_name" forceId="#{true}"
+								styleClass="aon-form-input-text-disabled" disabled="true"
+								size="40" />
+						</t:div>
+
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							for="Delivery_target_registry_document" 
+							value="#{warehouseBundle.aon_customer_document}" />
+						<t:inputText id="Delivery_target_registry_document" size="15"
+							styleClass="aon-form-input-text"
+							valueChangeListener="#{delivery.addTargetExpression}" />
+
+						<t:outputLabel for="Delivery_status"
+							styleClass="aon-form-selectOneMenu-label"
+							value="#{warehouseBundle.aon_status}" />
+						<h:selectOneMenu id="Delivery_status" 
+							styleClass="aon-form-selectOneMenu-field"
+							valueChangeListener="#{delivery.addEqualExpression}"
+							converter="aonDeliveryStatusConverter">
+							<f:selectItem itemDisabled="true" itemLabel="-" itemValue=""/>
+							<f:selectItems value="#{warehouseCollections.deliveryStatuses}" />
+						</h:selectOneMenu>
+							
+					</h:panelGrid>
+				</t:div>
+			</t:div>	
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

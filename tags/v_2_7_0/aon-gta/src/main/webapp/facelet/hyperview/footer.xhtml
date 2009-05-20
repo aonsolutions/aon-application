@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:t="http://myfaces.apache.org/tomahawk"      
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>	
+
+<ui:composition>
+
+	
+	<t:div styleClass="aon-foot" id="aon-footer-container" forceId="#{true}">	
+		<h:panelGrid columns="2" styleClass="aon-table-default" columnClasses="aon-foot-leftGroup,aon-foot-rightGroup" dir="true">
+			<h:panelGroup>
+				<t:div styleClass="aon-foot-leftGroup-item"><h:outputText value="#{appBundle.aon_footer}" /></t:div>
+			</h:panelGroup>
+			
+			<h:panelGroup >
+				<f:verbatim>&#160;</f:verbatim>
+			</h:panelGroup>
+
+		
+		</h:panelGrid>			
+	</t:div>
+</ui:composition>
+
+</body>
+</html>

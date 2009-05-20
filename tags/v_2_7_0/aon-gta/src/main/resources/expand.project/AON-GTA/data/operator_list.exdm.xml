@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="operator_list">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" name="operator" sqlType="integer" type="integer"/>
+        <column label="" name="calllist" sqlType="integer" type="integer"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="operator_list_ibfk_1" foreignPath="data/operator.exdm.xml">
+            <sourceColumns>
+                <column name="operator"/>
+            </sourceColumns>
+        </join>
+        <join description="operator_list_ibfk_2" foreignPath="data/calllist.exdm.xml">
+            <sourceColumns>
+                <column name="calllist"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>
