@@ -11,14 +11,15 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.company.Company;
 
 @Entity
@@ -120,7 +121,13 @@ public class WebInfo implements ITransferObject {
 
 	@Override
 	public String toString() {
-		return new PojoToStringBuilder(this).toString();
+	     return new ToStringBuilder(this).
+	       append("id", id).
+	       append("company", company.getId()).
+	       append("commercialDescription", StringUtils.abbreviate(schedule, 32)).
+	       append("schedule", StringUtils.abbreviate(schedule, 32)).
+	       append("slogan", slogan).	       
+	       toString();
 	}
 	
 }

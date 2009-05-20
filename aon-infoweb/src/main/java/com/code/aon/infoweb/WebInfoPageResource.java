@@ -11,13 +11,14 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.registry.RegistryAttachment;
 
 @Entity
@@ -106,7 +107,12 @@ public class WebInfoPageResource implements ITransferObject {
 
 	@Override
 	public String toString() {
-		return new PojoToStringBuilder(this).toString();
-	}
-	
+	     return new ToStringBuilder(this).
+	       append("id", id).
+	       append("webInfoPage", webInfoPage.getId()).	       
+	       append("rattach", rattach.getId()).
+	       append("content", StringUtils.abbreviate(content, 32)).
+	       toString();
+	}	
+
 }

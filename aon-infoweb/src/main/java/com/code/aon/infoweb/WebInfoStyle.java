@@ -7,11 +7,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name="web_info_style")
@@ -80,7 +81,11 @@ public class WebInfoStyle implements ITransferObject {
 
 	@Override
 	public String toString() {
-		return new PojoToStringBuilder(this).toString();
-	}
+	     return new ToStringBuilder(this).
+	       append("id", id).	       
+	       append("variable", StringUtils.abbreviate(variable, 64)).
+	       append("value", StringUtils.abbreviate(value, 32)).
+	       toString();
+	}	
 	
 }
