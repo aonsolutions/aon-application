@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:div id="aonHeader" styleClass="aon-header">
@@ -45,19 +46,20 @@
 
 		<aon:form>
 			<aon:div styleClass="aon-header-additionalInfo">
-				<aon:div styleClass="aon-float-right"
-					rendered="#{!aonConfiguration.properties.hideHeaderLinks}">
-					<aon:div styleClass="aon-header-menu-item">
-						<h:outputLink target="_top"
-							value="${facesContext.externalContext.requestContextPath}">
-							<h:outputText value="#{bundle.aon_home}" />
-						</h:outputLink>
-						<h:commandLink style="border-right:0;" action="logout"
-							actionListener="#{aonConfiguration.logout}">
-							<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
-						</h:commandLink>
+				<c:if test="#{!aonConfiguration.properties.hideHeaderLinks}">
+					<aon:div styleClass="aon-float-right">
+						<aon:div styleClass="aon-header-menu-item">
+							<h:outputLink target="_top"
+								value="${facesContext.externalContext.requestContextPath}">
+								<h:outputText value="#{bundle.aon_home}" />
+							</h:outputLink>
+							<h:commandLink style="border-right:0;" action="logout"
+								actionListener="#{aonConfiguration.logout}">
+								<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
+							</h:commandLink>
+						</aon:div>
 					</aon:div>
-				</aon:div>
+				</c:if>
 				<aon:outputText value="[#{aonConfiguration.applicationVersion}]"
 					rendered="#{aonConfiguration.applicationVersion != null}" />
 				<aon:outputText value="#{aonConfiguration.currentDate}" />

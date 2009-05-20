@@ -84,7 +84,7 @@
 						width="63"
 						height="11"
 						key="textField-46">
-							<printWhenExpression><![CDATA[new Boolean($P{openingEntry} != null)]]></printWhenExpression>
+							<printWhenExpression><![CDATA[new Boolean($P{openingEntry} != null && $P{openingEntry}.getDebit() != 0)]]></printWhenExpression>
 						</reportElement>
 					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -103,7 +103,7 @@
 						width="63"
 						height="11"
 						key="textField-47">
-							<printWhenExpression><![CDATA[new Boolean($P{openingEntry} != null)]]></printWhenExpression>
+							<printWhenExpression><![CDATA[new Boolean($P{openingEntry} != null && $P{openingEntry}.getCredit() != 0)]]></printWhenExpression>
 						</reportElement>
 					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -179,7 +179,7 @@
 						width="63"
 						height="11"
 						key="textField-54">
-							<printWhenExpression><![CDATA[new Boolean($P{fromOpeningEntry} != null)]]></printWhenExpression>
+							<printWhenExpression><![CDATA[new Boolean($P{fromOpeningEntry} != null && $P{openingEntry}.getCreditBalance() != 0)]]></printWhenExpression>
 						</reportElement>
 					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -198,7 +198,7 @@
 						width="63"
 						height="11"
 						key="textField-55">
-							<printWhenExpression><![CDATA[new Boolean($P{fromOpeningEntry} != null)]]></printWhenExpression>
+							<printWhenExpression><![CDATA[new Boolean($P{fromOpeningEntry} != null && $P{fromOpeningEntry}.getCredit() != 0)]]></printWhenExpression>
 						</reportElement>
 					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -217,7 +217,7 @@
 						width="63"
 						height="11"
 						key="textField-56">
-							<printWhenExpression><![CDATA[new Boolean($P{openingEntry} != null)]]></printWhenExpression>
+							<printWhenExpression><![CDATA[new Boolean($P{openingEntry} != null && $P{openingEntry}.getUnpaidBalance() != 0)]]></printWhenExpression>
 						</reportElement>
 					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -236,7 +236,7 @@
 						width="63"
 						height="11"
 						key="textField-57">
-							<printWhenExpression><![CDATA[new Boolean($P{openingEntry} != null)]]></printWhenExpression>
+							<printWhenExpression><![CDATA[new Boolean($P{openingEntry} != null && $P{openingEntry}.getCreditBalance() != 0)]]></printWhenExpression>
 						</reportElement>
 					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -255,7 +255,7 @@
 						width="63"
 						height="11"
 						key="textField-58">
-							<printWhenExpression><![CDATA[new Boolean($P{fromOpeningEntry} != null)]]></printWhenExpression>
+							<printWhenExpression><![CDATA[new Boolean($P{fromOpeningEntry} != null && $P{fromOpeningEntry}.getCredit() != 0)]]></printWhenExpression>
 						</reportElement>
 					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -274,7 +274,7 @@
 						width="63"
 						height="11"
 						key="textField-59">
-							<printWhenExpression><![CDATA[new Boolean($P{fromOpeningEntry} != null)]]></printWhenExpression>
+							<printWhenExpression><![CDATA[new Boolean($P{fromOpeningEntry} != null && $P{fromOpeningEntry}.getCreditBalance() != 0)]]></printWhenExpression>
 						</reportElement>
 					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -710,7 +710,9 @@
 						y="0"
 						width="63"
 						height="11"
-						key="textField-9"/>
+						key="textField-9">
+							<printWhenExpression><![CDATA[new Boolean($F{credit}.doubleValue() != 0)]]></printWhenExpression>
+						</reportElement>
 					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#999999"/>
@@ -727,7 +729,9 @@
 						y="0"
 						width="63"
 						height="11"
-						key="textField-10"/>
+						key="textField-10">
+							<printWhenExpression><![CDATA[new Boolean($F{debit}.doubleValue() != 0)]]></printWhenExpression>
+						</reportElement>
 					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#999999"/>
@@ -795,7 +799,9 @@
 						y="0"
 						width="63"
 						height="11"
-						key="textField-28"/>
+						key="textField-28">
+							<printWhenExpression><![CDATA[new Boolean($F{unpaidBalance}.doubleValue() != 0)]]></printWhenExpression>
+						</reportElement>
 					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#999999"/>
@@ -812,7 +818,9 @@
 						y="0"
 						width="63"
 						height="11"
-						key="textField-29"/>
+						key="textField-29">
+							<printWhenExpression><![CDATA[new Boolean($F{creditBalance}.doubleValue() != 0)]]></printWhenExpression>
+						</reportElement>
 					<box rightPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#999999"/>

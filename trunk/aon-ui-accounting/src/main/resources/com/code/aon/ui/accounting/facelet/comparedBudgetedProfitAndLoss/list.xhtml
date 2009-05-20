@@ -104,7 +104,7 @@
 					    <f:facet name="header">
 							<aon:outputText value="#{accountingBundle.accounting_accumulated}"/>
 						</f:facet>
-						<aon:outputText value="#{to.accumulated}">
+						<aon:outputText value="#{to.accumulated}" rendered="#{to.accumulated != 0}">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
 					</aon:column>
@@ -113,7 +113,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{accountingBundle.accounting_budgeted}"/>
 						</f:facet>
-						<aon:outputText value="#{to.budgeted}">
+						<aon:outputText value="#{to.budgeted}" rendered="#{to.budgeted != 0}">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
 					</aon:column>
@@ -122,7 +122,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{accountingBundle.accounting_difference}"/>
 						</f:facet>
-						<aon:outputText value="#{to.difference}">
+						<aon:outputText value="#{to.difference}" rendered="#{to.difference != 0}">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
 					</aon:column>
@@ -131,7 +131,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{accountingBundle.accounting_percent}"/>
 						</f:facet>
-						<aon:outputText value="#{to.percent}">
+						<aon:outputText value="#{to.percent}" rendered="#{to.percent != 0}">
 							<f:convertNumber pattern="#,##0.00 %" />
 						</aon:outputText>
 					</aon:column>

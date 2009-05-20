@@ -25,9 +25,15 @@
 </head>
 <body>
 	<aon:div id="aon-content">			
-		<ui:insert name="mainHeader" />		
+		<ui:insert name="mainHeader" />
 		<ui:insert name="mainContent" />
 	</aon:div>
+ 
+	<c:if test="#{aonConfiguration.properties.hideHeaderLinks}">
+		<aon:set
+			var="#{aonConfiguration.properties.hideHeaderLinks}"  
+			value="#{false}" />
+	</c:if>
 </body>
 </f:view>
 </html>

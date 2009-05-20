@@ -68,14 +68,14 @@
 
 						<aon:column
 							styleClass="aon-editDataTable-numberColumn aon-width-150">
-							<aon:outputText value="#{to.unpaidBalance}">
+							<aon:outputText value="#{to.unpaidBalance}" rendered="#{to.unpaidBalance != 0}">
 								<f:convertNumber pattern="#,##0.00" />
 							</aon:outputText>
 						</aon:column>
 
 						<aon:column
 							styleClass="aon-editDataTable-numberColumn aon-width-150">
-							<aon:outputText value="#{to.creditBalance}">
+							<aon:outputText value="#{to.creditBalance}" rendered="#{to.creditBalance != 0}">
 								<f:convertNumber pattern="#,##0.00" />
 							</aon:outputText>
 						</aon:column>
@@ -85,12 +85,12 @@
 						<aon:outputText value="#{accountingBundle.accounting_gross_margin}" />
 					</aon:column>
 					<aon:column styleClass="aon-text-right">
-						<aon:outputText value="#{controller.grossMargin.unpaidBalance}">
+						<aon:outputText value="#{controller.grossMargin.unpaidBalance}" rendered="#{controller.grossMargin.unpaidBalance != 0}">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
 					</aon:column>
 					<aon:column styleClass="aon-text-right">
-						<aon:outputText value="#{controller.grossMargin.creditBalance}">
+						<aon:outputText value="#{controller.grossMargin.creditBalance}" rendered="#{controller.grossMargin.creditBalance != 0}">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
 					</aon:column>
@@ -115,13 +115,13 @@
 						</aon:column>
 
 						<aon:column styleClass="aon-editDataTable-numberColumn">
-							<aon:outputText value="#{to.unpaidBalance}">
+							<aon:outputText value="#{to.unpaidBalance}" rendered="#{to.unpaidBalance != 0}">
 								<f:convertNumber pattern="#,##0.00" />
 							</aon:outputText>
 						</aon:column>
 
 						<aon:column styleClass="aon-editDataTable-numberColumn">
-							<aon:outputText value="#{to.creditBalance}">
+							<aon:outputText value="#{to.creditBalance}" rendered="#{to.creditBalance != 0}">
 								<f:convertNumber pattern="#,##0.00" />
 							</aon:outputText>
 						</aon:column>
@@ -133,13 +133,13 @@
 					</aon:column>
 
 					<aon:column styleClass="aon-editDataTable-numberColumn">
-						<aon:outputText value="#{controller.totalExpenses.unpaidBalance}">
+						<aon:outputText value="#{controller.totalExpenses.unpaidBalance}" rendered="#{controller.totalExpenses.unpaidBalance != 0}">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
 					</aon:column>
 
 					<aon:column styleClass="aon-editDataTable-numberColumn">
-						<aon:outputText value="#{controller.totalExpenses.creditBalance}">
+						<aon:outputText value="#{controller.totalExpenses.creditBalance}" rendered="#{controller.totalExpenses.creditBalance != 0}">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
 					</aon:column>

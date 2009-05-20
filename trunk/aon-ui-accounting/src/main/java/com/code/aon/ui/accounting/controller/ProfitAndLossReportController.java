@@ -85,7 +85,18 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 	public void onStatement(ActionEvent event) {
 		TrialBalanceController c = (TrialBalanceController) AonUtil.getRegisteredBean(TRIAL_BALANCE_CONTROLLER_NAME);
 		c.onReset(event);
-		c.setParameters(getParameters());
+		SummaryProviderParameters spp = new SummaryProviderParameters();
+		spp.setAccountExpression(getAccountStatement());
+		spp.setDate(getParameters().getDate());
+		spp.setFromDate(getParameters().getFromDate());
+		spp.setToDate(getParameters().getToDate());
+		spp.setAccountLevel(getParameters().getAccountLevel());
+		spp.setBudgeted(getParameters().isBudgeted());
+		spp.setLowerLevelVisible(getParameters().isLowerLevelVisible());
+		spp.setNoTouchedAccountVisible(getParameters().isNoTouchedAccountVisible());
+		spp.setPeriod(getParameters().getPeriod());
+		spp.setSecurityLevel(getParameters().getSecurityLevel());
+		c.setParameters(spp);		
 		c.onSearch(event);
 	}
 
