@@ -28,7 +28,7 @@
 	<parameter name="logoImageFile" isForPrompting="true" class="java.io.InputStream"/>
 	<parameter name="company" isForPrompting="false" class="com.code.aon.company.Company"/>
 
-	<field name="description" class="java.lang.String"/>
+	<field name="reportDescription" class="java.lang.String"/>
 	<field name="notes" class="java.lang.String"/>
 	<field name="amount" class="java.lang.Double"/>
 
@@ -157,7 +157,7 @@
 					<textElement verticalAlignment="Middle" isStyledText="true">
 						<font pdfFontName="Helvetica" size="8" isBold="false"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{reportDescription}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -176,7 +176,7 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{notes}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="###0.00;(###0.00)" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="427"
 						y="0"
