@@ -18,7 +18,7 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class HeaderController extends BasicI18nController {
+public class HeaderController extends BasicI18nController implements ICMSConstants {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
@@ -86,7 +86,7 @@ public class HeaderController extends BasicI18nController {
 	}
 	
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		HeaderDetail current = (HeaderDetail)getToI18n();
 		current.setImage(image);

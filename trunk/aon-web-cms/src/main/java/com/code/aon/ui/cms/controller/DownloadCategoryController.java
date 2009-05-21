@@ -7,10 +7,11 @@ import com.code.aon.cms.DownloadCategoryDetail;
 import com.code.aon.cms.DownloadConfig;
 import com.code.aon.cms.Image;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class DownloadCategoryController extends BasicI18nController {
+public class DownloadCategoryController extends BasicI18nController implements ICMSConstants, Constants {
 
 	private int page;
 	
@@ -23,7 +24,7 @@ public class DownloadCategoryController extends BasicI18nController {
 	}
 	
 	public void onInit(ActionEvent event) {
-		((GeneratorConfigController)AonUtil.getRegisteredBean("generator_config")).initSection(DownloadConfig.class);
+		((GeneratorConfigController)AonUtil.getRegisteredBean(GENERATOR_CONFIG)).initSection(DownloadConfig.class);
 	}
 	
 	@SuppressWarnings("unused")
@@ -47,7 +48,7 @@ public class DownloadCategoryController extends BasicI18nController {
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = "- NO VALUE -";
+		String label = NO_VALUE_LABEL;
 		DownloadCategoryDetail downloadCategoryDetail = (DownloadCategoryDetail)getModelRowdataI18n();
 		if (downloadCategoryDetail != null) label = downloadCategoryDetail.getLabel();
 		return label;
@@ -60,16 +61,16 @@ public class DownloadCategoryController extends BasicI18nController {
 	}
 
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		DownloadCategory current = (DownloadCategory)getTo();
 		current.setImage(image);
 	}
 	
 	public String getBack(){
-		if (FormUtil.getController("download").getTo()==null)
-			return "download_list";
-		return "download_form";
+		if (FormUtil.getController(DOWNLOAD).getTo()==null)
+			return DOWNLOAD_LIST;
+		return DOWNLOAD_FORM;
 	}
 
 }

@@ -8,7 +8,7 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.ImageResize;
 import com.code.aon.ui.util.AonUtil;
 
-public class ResizeController {
+public class ResizeController implements ICMSConstants {
 
 	private Image resizeImage = null;
 
@@ -76,7 +76,7 @@ public class ResizeController {
 	}
 	
 	public void onResizeFile(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
 		resizeImage = (Image)controller.getModel().getRowData();
 		onInit();
 	}
@@ -87,7 +87,7 @@ public class ResizeController {
 	
 	public void onAccept(ActionEvent event) {
 		ImageResize.resize(ControllerUtil.getImagesPath()+resizeImage.getRelativePath(), width, height);
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
 		controller.chargeImageList();
 		resizeImage = null;
 	}

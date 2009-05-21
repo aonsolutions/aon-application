@@ -81,7 +81,7 @@
 							value="#{appBundle.album}"
 							action="album_list"
 							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item">
+							styleClass="aon-finding-toolbar-item-no-icon">
 						</aon:commandButton>
 				    </aon:div>
 					
@@ -106,7 +106,7 @@
 							value="#{appBundle.album}"
 							action="album_form"
 							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item">
+							styleClass="aon-finding-toolbar-item-no-icon">
 							<aon:actionListener method="#{album.onReset}" />
 						</aon:commandButton>
 						<aon:commandButton id="categories_edit"
@@ -114,7 +114,7 @@
 							value="#{appBundle.album}"
 							action="album_form"
 							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item">
+							styleClass="aon-finding-toolbar-item-no-icon">
 							<aon:actionListener method="#{album.onAlbumImageCriteria}" />
 							<aon:actionListener method="#{album.onSearch}" />
 							<aon:actionListener method="#{album.onSelectFirst}" />

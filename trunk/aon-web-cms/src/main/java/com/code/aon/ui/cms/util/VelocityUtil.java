@@ -13,9 +13,10 @@ import org.apache.velocity.app.VelocityEngine;
 import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.controller.GeneratorStatusController;
+import com.code.aon.ui.cms.controller.ICMSConstants;
 import com.code.aon.ui.util.AonUtil;
 
-public class VelocityUtil extends VelocityEngine implements Constants {
+public class VelocityUtil extends VelocityEngine implements Constants, ICMSConstants {
     
 	public static final int INFO = 0;
 
@@ -58,7 +59,7 @@ public class VelocityUtil extends VelocityEngine implements Constants {
     }
 
 	public static void addMessage(String msg, int type) {
-		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
+		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean(GENERATOR_STATUS);
 		if (type == INFO){
 			//AonUtil.addInfoMessage(" INFO: " + msg);
 			status.addMessage(" INFO: " + msg);

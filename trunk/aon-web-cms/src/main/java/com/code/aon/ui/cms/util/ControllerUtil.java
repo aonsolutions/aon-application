@@ -3,34 +3,34 @@ package com.code.aon.ui.cms.util;
 import com.code.aon.cms.Config;
 import com.code.aon.cms.ConfigDetail;
 import com.code.aon.cms.Language;
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.controller.ConfigController;
 import com.code.aon.ui.cms.controller.I18NController;
+import com.code.aon.ui.cms.controller.ICMSConstants;
 import com.code.aon.ui.util.AonUtil;
 
-public class ControllerUtil implements Constants {
+public class ControllerUtil implements Constants, ICMSConstants {
 
 	public static I18NController getI18NController() {
-		return (I18NController) AonUtil.getRegisteredBean("i18n");
+		return (I18NController) AonUtil.getRegisteredBean(I18N);
 	}
 	
 	public static Language getCurrentLanguage() {
-		I18NController i18n = (I18NController) AonUtil.getRegisteredBean("i18n");
+		I18NController i18n = (I18NController) AonUtil.getRegisteredBean(I18N);
 		return i18n.getCurrentLanguage();
 	}	
 
 	public static ConfigController getConfigController() {
-		return (ConfigController) AonUtil.getRegisteredBean("config");
+		return (ConfigController) AonUtil.getRegisteredBean(CONFIG);
 	}
 	
 	public static Config getCurrentConfig() {
-		ConfigController config = (ConfigController)AonUtil.getRegisteredBean("config");
+		ConfigController config = (ConfigController)AonUtil.getRegisteredBean(CONFIG);
 		return config.getCurrentConfig();
 	}
 
 	public static ConfigDetail getCurrentConfigDetail() {
-		ConfigController config = (ConfigController)AonUtil.getRegisteredBean("config");
+		ConfigController config = (ConfigController)AonUtil.getRegisteredBean(CONFIG);
 		return config.getCurrentConfigDetail();
 	}	
 

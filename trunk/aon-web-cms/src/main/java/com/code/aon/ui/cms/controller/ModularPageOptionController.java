@@ -14,12 +14,13 @@ import com.code.aon.cms.enumeration.ModularPageOptionType;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.controller.support.OrderedControllerSupport;
 import com.code.aon.ui.cms.controller.support.IOrderedControllerListener;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class ModularPageOptionController extends BasicI18nController implements IOrderedControllerListener {
+public class ModularPageOptionController extends BasicI18nController implements IOrderedControllerListener, ICMSConstants, Constants {
 
 	public OrderedControllerSupport orderedControllerSupport = new OrderedControllerSupport(ICMSAlias.MODULAR_PAGE_OPTION_POSITION);
 
@@ -48,7 +49,7 @@ public class ModularPageOptionController extends BasicI18nController implements 
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = "- NO VALUE -";
+		String label = NO_VALUE_LABEL;
 		ModularPageOptionDetail mpd = (ModularPageOptionDetail)getModelRowdataI18n();
 		if (mpd != null) label = mpd.getLabel();
 		return label;
@@ -69,20 +70,20 @@ public class ModularPageOptionController extends BasicI18nController implements 
 	public List<SelectItem> getIdents() throws ManagerBeanException, ExpressionException {
 		ModularPageOption mo = (ModularPageOption)getTo();
 		List<SelectItem> idents = new LinkedList<SelectItem>();
-		if (mo.getType().equals(ModularPageOptionType.GENERIC)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getGenericPageList();
-		else if (mo.getType().equals(ModularPageOptionType.BANNER)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getBannerList();
-		else if (mo.getType().equals(ModularPageOptionType.BANNER_GROUP)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getBannerGroupList();
-		else if (mo.getType().equals(ModularPageOptionType.ARTICLE)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleList();
-		else if (mo.getType().equals(ModularPageOptionType.ARTICLE_NEWS)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
-		else if (mo.getType().equals(ModularPageOptionType.ARTICLE_EVENTS)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
-		else if (mo.getType().equals(ModularPageOptionType.ARTICLE_SERVICES)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
-		else if (mo.getType().equals(ModularPageOptionType.ARTICLE_OTHER)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
-		else if (mo.getType().equals(ModularPageOptionType.DIRECT_ACCESS_GROUP)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getDirectAccessGroupList();
-		else if (mo.getType().equals(ModularPageOptionType.DOWNLOADS)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getDownloadCategoryList();
-		else if (mo.getType().equals(ModularPageOptionType.DIRECT_ACCESS)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getDirectAccessList();
-		else if (mo.getType().equals(ModularPageOptionType.LINK_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getLinkCategoryList();
-		else if (mo.getType().equals(ModularPageOptionType.ACTIVITY)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getActivityList();
-		else if (mo.getType().equals(ModularPageOptionType.ALBUM_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getAlbumCategoryList();
+		if (mo.getType().equals(ModularPageOptionType.GENERIC)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getGenericPageList();
+		else if (mo.getType().equals(ModularPageOptionType.BANNER)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getBannerList();
+		else if (mo.getType().equals(ModularPageOptionType.BANNER_GROUP)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getBannerGroupList();
+		else if (mo.getType().equals(ModularPageOptionType.ARTICLE)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleList();
+		else if (mo.getType().equals(ModularPageOptionType.ARTICLE_NEWS)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleCategoryList();
+		else if (mo.getType().equals(ModularPageOptionType.ARTICLE_EVENTS)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleCategoryList();
+		else if (mo.getType().equals(ModularPageOptionType.ARTICLE_SERVICES)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleCategoryList();
+		else if (mo.getType().equals(ModularPageOptionType.ARTICLE_OTHER)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getArticleCategoryList();
+		else if (mo.getType().equals(ModularPageOptionType.DIRECT_ACCESS_GROUP)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getDirectAccessGroupList();
+		else if (mo.getType().equals(ModularPageOptionType.DOWNLOADS)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getDownloadCategoryList();
+		else if (mo.getType().equals(ModularPageOptionType.DIRECT_ACCESS)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getDirectAccessList();
+		else if (mo.getType().equals(ModularPageOptionType.LINK_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getLinkCategoryList();
+		else if (mo.getType().equals(ModularPageOptionType.ACTIVITY)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getActivityList();
+		else if (mo.getType().equals(ModularPageOptionType.ALBUM_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getAlbumCategoryList();
 		return idents;
 	}
 

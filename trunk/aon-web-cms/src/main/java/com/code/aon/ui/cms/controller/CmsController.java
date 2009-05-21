@@ -6,8 +6,6 @@ public class CmsController {
 
 	private boolean adminProfile = false;
 
-	public static String NAME = "cms";
-
 	public void assignAdminProfile(){
 		adminProfile = true;
 	}

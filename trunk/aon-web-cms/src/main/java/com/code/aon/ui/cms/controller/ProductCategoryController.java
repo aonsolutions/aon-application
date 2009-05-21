@@ -16,7 +16,7 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.form.FormUtil;
 
-public class ProductCategoryController extends BasicI18nController {
+public class ProductCategoryController extends BasicI18nController implements ICMSConstants {
 
 	private int page;
 	
@@ -63,7 +63,7 @@ public class ProductCategoryController extends BasicI18nController {
 	}
 	
 	public void onSelectSubCategories(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		SubCategoryController lc = (SubCategoryController)FormUtil.getController("subCategory");
+		SubCategoryController lc = (SubCategoryController)FormUtil.getController(SUB_CATEGORY);
 		IManagerBean moBean = BeanManager.getManagerBean(ProductCategory.class);
 		ProductCategory productCategory = (ProductCategory) this.getTo();
 		Criteria criteria = new Criteria();
@@ -75,9 +75,9 @@ public class ProductCategoryController extends BasicI18nController {
 	}
 
 	public String getBack(){
-		if (FormUtil.getController("product").getTo()==null)
-			return "product_list";
-		return "product_form";
+		if (FormUtil.getController(PRODUCT).getTo()==null)
+			return PRODUCT_LIST;
+		return PRODUCT_FORM;
 	}
 
 }

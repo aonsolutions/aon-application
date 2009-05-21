@@ -33,7 +33,7 @@ import com.code.aon.ui.cms.velocity.ProductGenerator;
 import com.code.aon.ui.cms.velocity.SportGenerator;
 import com.code.aon.ui.util.AonUtil;
 
-public class GeneratorController implements Constants {
+public class GeneratorController implements Constants, ICMSConstants {
 
 	private GeneratorStatusController status;
 
@@ -43,7 +43,7 @@ public class GeneratorController implements Constants {
 
 	public GeneratorController(){
 		super();
-		status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
+		status = (GeneratorStatusController)AonUtil.getRegisteredBean(GENERATOR_STATUS);
 	}
 	
 	public void onGenerate(ActionEvent event) throws ManagerBeanException {
@@ -120,14 +120,14 @@ public class GeneratorController implements Constants {
 
 	public void onGenerateCurrentArticle(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		initGenerator();
-		ArticleController controller = (ArticleController)AonUtil.getRegisteredBean("article");
+		ArticleController controller = (ArticleController)AonUtil.getRegisteredBean(ARTICLE);
 		ArticleGenerator.generateArticle((Article) controller.getTo());
 		finalizeGenerator();
 	}
 
 	public void onGenerateCurrentArticleCategory(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		initGenerator();
-		ArticleCategoryController controller = (ArticleCategoryController)AonUtil.getRegisteredBean("article_category");
+		ArticleCategoryController controller = (ArticleCategoryController)AonUtil.getRegisteredBean(ARTICLE_CATEGORY);
 		ArticleType[] types_ = ArticleType.values();
 		for (int i = 0; i < types_.length; i++) {
 			ArticleGenerator.generate(types_[i],(ArticleCategory) controller.getTo());
@@ -143,7 +143,7 @@ public class GeneratorController implements Constants {
 
 	public void onGenerateCurrentModular(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		initGenerator();
-		ModularPageController controller = (ModularPageController)AonUtil.getRegisteredBean("modular_page");
+		ModularPageController controller = (ModularPageController)AonUtil.getRegisteredBean(MODULAR_PAGE);
 		ModularPageGenerator.generate((ModularPage) controller.getTo());
 		finalizeGenerator();
 	}
@@ -156,7 +156,7 @@ public class GeneratorController implements Constants {
 	
 	public void onGenerateCurrentGenericPage(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		initGenerator();
-		GenericPageController controller = (GenericPageController)AonUtil.getRegisteredBean("generic_page");
+		GenericPageController controller = (GenericPageController)AonUtil.getRegisteredBean(GENERIC_PAGE);
 		GenericGenerator.generate((GenericPage) controller.getTo());
 		finalizeGenerator();
 	}
@@ -169,7 +169,7 @@ public class GeneratorController implements Constants {
 
 	public void onGenerateCurrentLinkCategory(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		initGenerator();
-		LinkCategoryController controller = (LinkCategoryController)AonUtil.getRegisteredBean("link_category");
+		LinkCategoryController controller = (LinkCategoryController)AonUtil.getRegisteredBean(LINK_CATEGORY);
 		LinkGenerator.generate((LinkCategory) controller.getTo());
 		finalizeGenerator();
 	}
@@ -182,7 +182,7 @@ public class GeneratorController implements Constants {
 
 	public void onGenerateCurrentFaqCategory(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		initGenerator();
-		FaqCategoryController controller = (FaqCategoryController)AonUtil.getRegisteredBean("faq_category");
+		FaqCategoryController controller = (FaqCategoryController)AonUtil.getRegisteredBean(FAQ_CATEGORY);
 		FaqGenerator.generate((FaqCategory) controller.getTo());
 		finalizeGenerator();
 	}
@@ -195,7 +195,7 @@ public class GeneratorController implements Constants {
 	
 	public void onGenerateCurrentDownloadCategory(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		initGenerator();
-		DownloadCategoryController controller = (DownloadCategoryController)AonUtil.getRegisteredBean("download_category");
+		DownloadCategoryController controller = (DownloadCategoryController)AonUtil.getRegisteredBean(DOWNLOAD_CATEGORY);
 		DownloadsGenerator.generate((DownloadCategory) controller.getTo());
 		finalizeGenerator();
 	}
@@ -208,7 +208,7 @@ public class GeneratorController implements Constants {
 		
 	public void onGenerateCurrentAlbumCategory(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		initGenerator();
-		AlbumCategoryController controller = (AlbumCategoryController)AonUtil.getRegisteredBean("album_category");
+		AlbumCategoryController controller = (AlbumCategoryController)AonUtil.getRegisteredBean(ALBUM_CATEGORY);
 		AlbumGenerator.generate((AlbumCategory) controller.getTo());
 		finalizeGenerator();
 	}
@@ -221,7 +221,7 @@ public class GeneratorController implements Constants {
 
 	public void onGenerateCurrentDirectAccessCategory(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		initGenerator();
-		DirectAccessGroupController controller = (DirectAccessGroupController)AonUtil.getRegisteredBean("direct_access_group");
+		DirectAccessGroupController controller = (DirectAccessGroupController)AonUtil.getRegisteredBean(DIRECT_ACCESS_GROUP);
 		DirectAccessGenerator.generate((DirectAccessGroup) controller.getTo());
 		finalizeGenerator();
 	}

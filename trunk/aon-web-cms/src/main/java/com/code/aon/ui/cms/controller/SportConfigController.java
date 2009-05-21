@@ -8,10 +8,10 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class SportConfigController extends BasicController {
+public class SportConfigController extends BasicController implements ICMSConstants {
 
 	public void onInit(ActionEvent event) {
-		((GeneratorConfigController)AonUtil.getRegisteredBean("generator_config")).initSection(SportConfig.class);
+		((GeneratorConfigController)AonUtil.getRegisteredBean(GENERATOR_CONFIG)).initSection(SportConfig.class);
 		super.onSearch(event);
 		try{
 			super.onSelectFirst(event);

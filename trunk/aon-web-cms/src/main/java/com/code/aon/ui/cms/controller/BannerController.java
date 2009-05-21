@@ -17,9 +17,10 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.util.AonUtil;
 
-public class BannerController extends BasicI18nController {
+public class BannerController extends BasicI18nController implements ICMSConstants, Constants {
 
 	private String label;
 	
@@ -56,7 +57,7 @@ public class BannerController extends BasicI18nController {
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = "- NO VALUE -";
+		String label = NO_VALUE_LABEL;
 		BannerDetail bd = (BannerDetail)getModelRowdataI18n();
 		if (bd != null) label = bd.getLabel();
 		return label;
@@ -68,7 +69,7 @@ public class BannerController extends BasicI18nController {
 	}
 
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		BannerDetail current = (BannerDetail)getToI18n();
 		current.setImage(image);

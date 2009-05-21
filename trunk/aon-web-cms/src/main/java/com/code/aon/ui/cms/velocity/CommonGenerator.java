@@ -9,9 +9,6 @@ import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import javax.mail.Session;
-import javax.mail.Transport;
-
 import com.code.aon.cms.ConfigDetail;
 import com.code.aon.cms.Footer;
 import com.code.aon.cms.FooterDetail;

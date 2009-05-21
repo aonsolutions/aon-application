@@ -8,13 +8,14 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.cms.controller.ICMSConstants;
 import com.code.aon.ui.cms.controller.SportCareerPathController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
-public class SportPlayerControllerListener extends ControllerAdapter {
+public class SportPlayerControllerListener extends ControllerAdapter implements ICMSConstants {
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)
@@ -34,7 +35,7 @@ public class SportPlayerControllerListener extends ControllerAdapter {
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
 		try{
-			SportCareerPathController c = (SportCareerPathController)FormUtil.getController("sport_career_path");
+			SportCareerPathController c = (SportCareerPathController)FormUtil.getController(SPORT_CAREER_PATH);
 			IManagerBean moBean = BeanManager.getManagerBean(SportCareerPath.class);
 			SportPlayer sportPlayer = (SportPlayer) event.getController().getTo();
 			Criteria criteria = new Criteria();

@@ -9,9 +9,10 @@ import com.code.aon.cms.Image;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.util.AonUtil;
 
-public class AlbumImageController extends BasicI18nController {
+public class AlbumImageController extends BasicI18nController implements ICMSConstants, Constants {
 
 	private int page;
 	
@@ -44,7 +45,7 @@ public class AlbumImageController extends BasicI18nController {
 	}
 	
 	public String getI18nTitle() throws ManagerBeanException {
-		String title = "- NO VALUE -";
+		String title = NO_VALUE_LABEL;
 		AlbumImageDetail aid = (AlbumImageDetail)getModelRowdataI18n();
 		if (aid != null) title = aid.getTitle();
 		return title;
@@ -61,21 +62,21 @@ public class AlbumImageController extends BasicI18nController {
 	}
 	
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		AlbumImage current = (AlbumImage)getTo();
 		current.setImage(image);
 	}
 	
 	public void onSelectThumbnail(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		AlbumImage current = (AlbumImage)getTo();
 		current.setThumbnail(image);
 	}
 
 	public void onAlbumCriteria(ActionEvent event) throws ManagerBeanException {
-		AlbumController albumController = (AlbumController)AonUtil.getRegisteredBean("album");
+		AlbumController albumController = (AlbumController)AonUtil.getRegisteredBean(ALBUM);
 		Album albumTo = (Album)albumController.getTo();
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(this.getFieldName(ICMSAlias.ALBUM_IMAGE_ALBUM_ID),albumTo.getId());

@@ -13,96 +13,94 @@
 	<ui:define name="content">
 
 		<aon:form id="list">
-		<aon:div styleClass="aon-finding-title-toolbar">
-			<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
-				columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.album_image}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{appBundle.aon_listing}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">					
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="album_image_form"
+							rendered="#{cms.roleEditor}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{albumImage.onReset}" />
+						</aon:commandButton>
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							action="album_image_search"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}">
+							<aon:actionListener method="#{albumImage.onEditSearch}" />
+						</aon:commandButton>
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
+							action="home" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+						</aon:commandButton>
+						<aon:commandButton id="categories"
+							value="#{appBundle.album}"
+							action="album_list"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item-no-icon">
+							<aon:actionListener method="#{album.onSearch}" />
+						</aon:commandButton>
+						<aon:commandButton id="create_album"
+							value="#{appBundle.aon_create_album}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept">
+							<a4j:support 
+								event="onclick" 
+								onclick="javascript:Richfaces.showModalPanel('album_modal',{width:680, top:100});" />
+						</aon:commandButton>	
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+					
+				<aon:dataTable id="dataTable" rows="#{albumImage.pageLimit}" var="to"					
+					value="#{albumImage.model}" rendered="#{albumImage.model.rowCount > 0}"
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+							aon-editDataTable-iconColumn">
 			
-				<aon:div styleClass="aon-finding-title-internal">
-					<aon:outputText value="#{appBundle.album_image}"/>	  						
-				</aon:div>					
-				
-				<aon:div styleClass="aon-finding-subtitle-internal">
-					<aon:outputText
-						value="#{appBundle.aon_listing}" />
-				</aon:div>					
-					
-				<!-- start toolbar navigation -->
-				<aon:div styleClass="aon-finding-toolbar-item-group">					
-					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-						action="album_image_form"
-						rendered="#{cms.roleEditor}"
-						styleClass="aon-finding-toolbar-item aon-icon-reset"
-						accesskey="#{bundle.aon_key_new}">
-						<aon:actionListener method="#{albumImage.onReset}" />
-					</aon:commandButton>
-					<aon:commandButton id="search" value="#{bundle.aon_search}"
-						action="album_image_search"
-						styleClass="aon-finding-toolbar-item aon-icon-search"
-						accesskey="#{bundle.aon_key_search}">
-						<aon:actionListener method="#{albumImage.onEditSearch}" />
-					</aon:commandButton>
-					<aon:commandButton id="exit"
-						value="#{bundle.aon_close}"
-						action="home" 
-						immediate="#{true}"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						accesskey="#{bundle.aon_key_close}">
-					</aon:commandButton>
-					<aon:commandButton id="categories"
-						value="#{appBundle.album}"
-						action="album_list"
-						immediate="#{true}"
-						styleClass="aon-finding-toolbar-item">
-						<aon:actionListener method="#{album.onSearch}" />
-					</aon:commandButton>
-					<aon:commandButton id="create_album"
-						value="#{appBundle.aon_create_album}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept">
-						<a4j:support 
-							event="onclick" 
-							onclick="javascript:Richfaces.showModalPanel('album_modal',{width:680, top:100});" />
-					</aon:commandButton>	
-			    </aon:div>
-				
-				<!-- end toolbar navigation -->
-			</aon:panelGrid>
-		</aon:div>
-		<!--  aon-region-body -->
-		<aon:div styleClass="aon-scroll-area">
-					
-					<aon:dataTable id="dataTable" value="#{albumImage.model}" var="to"
-						rows="#{albumImage.pageLimit}" 
-						columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-								aon-editDataTable-iconColumn">
-				
-						<aon:column>
-							<a4j:support 
-								action="album_image_form"
-								actionListener="#{albumImage.onSelect}"
-								event="onclick" />
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.albumImage_thumbnail}" />
-							</f:facet>
-							<aon:graphicImage url="#{to.thumbnail}.thumbnail" 
-								styleClass="aon-editDataTable-button"/>
-						</aon:column>
+					<aon:rowSelector
+						action="album_image_form" actionListener="#{albumImage.onSelect}" />							
+			
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.albumImage_thumbnail}" />
+						</f:facet>
+						<aon:graphicImage url="#{to.thumbnail}.thumbnail" 
+							styleClass="aon-editDataTable-button"/>
+					</aon:column>
 
-						<aon:column>
-							<a4j:support 
-								action="album_image_form"
-								actionListener="#{albumImage.onSelect}"
-								event="onclick" />
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.albumImage_title}"/>
-							</f:facet>
-							<aon:outputText value="#{albumImage.i18nTitle}" 
-								styleClass="aon-editDataTable-button"/>
-						</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.albumImage_title}"/>
+						</f:facet>
+						<aon:outputText value="#{albumImage.i18nTitle}" 
+							styleClass="aon-editDataTable-button"/>
+					</aon:column>
 
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.albumImage_active}" />
-							</f:facet>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.albumImage_active}" />
+						</f:facet>
+						<aon:div onmouseover="disableRowSelector();"
+							onmouseout="enableRowSelector();" >					
 							<aon:commandLink title="#{appBundle.albumImage_activate}" 
 								action="album_image_list"
 								actionListener="#{albumImage.onActivate}" 
@@ -117,11 +115,12 @@
 								<aon:graphicImage id="AlbumImage_deactive" alt="#{appBundle.album_image_deactivate}"
 									url="/images/cms/active.png" />
 							</aon:commandLink>
-						</aon:column>
+						</aon:div>
+					</aon:column>
 
-					</aon:dataTable>
-				
-					<aon:dataScroller2 for="dataTable" showNote="true" />					
+				</aon:dataTable>
+			
+				<aon:dataScroller2 for="dataTable" showNote="true" />					
 
 			</aon:div>
 			<ui:include src="/facelet/content/utils/album_modal.xhtml">

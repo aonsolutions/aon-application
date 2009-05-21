@@ -5,12 +5,13 @@ import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.cms.controller.ICMSConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
-public class BannerCategoryControllerListener extends ControllerAdapter {
+public class BannerCategoryControllerListener extends ControllerAdapter implements ICMSConstants {
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)
@@ -46,6 +47,6 @@ public class BannerCategoryControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
-		FormUtil.getController("banner").onSearch(null);
+		FormUtil.getController(BANNNER).onSearch(null);
 	}
 }

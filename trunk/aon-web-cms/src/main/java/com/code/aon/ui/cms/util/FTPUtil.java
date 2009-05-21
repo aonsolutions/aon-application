@@ -10,9 +10,10 @@ import org.apache.commons.net.ftp.FTPFile;
 import com.code.aon.cms.Config;
 import com.code.aon.common.AonException;
 import com.code.aon.ui.cms.controller.GeneratorStatusController;
+import com.code.aon.ui.cms.controller.ICMSConstants;
 import com.code.aon.ui.util.AonUtil;
 
-public class FTPUtil {
+public class FTPUtil implements ICMSConstants {
 
 	private static Config config;
 
@@ -52,7 +53,7 @@ public class FTPUtil {
 			String user,
 			String password
 			) throws IOException {
-		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
+		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean(GENERATOR_STATUS);
 		status.addMessage("Publicando via FTP");
 		status.addMessage("Conectando....");
 		
@@ -110,7 +111,7 @@ public class FTPUtil {
 	public static String invalidFolder[] = {"ckfinder", "_thumbs"};
 	
 	public static void ftpDir(String dir2ftp, FTPClient fc, String breadCrum) {
-		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
+		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean(GENERATOR_STATUS);
 		try {
 			File ftpDir = new File(dir2ftp);
 			String[] dirList = ftpDir.list();
