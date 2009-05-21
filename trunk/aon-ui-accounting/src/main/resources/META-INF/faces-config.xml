@@ -779,13 +779,13 @@
 		<navigation-case>
 			<from-outcome>balance_form</from-outcome>
 			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/balance/maintenance/form.xhtml</to-view-id>
+				/com/code/aon/ui/accounting/facelet/balance/form.xhtml</to-view-id>
 		</navigation-case>
 
 		<navigation-case>
 			<from-outcome>balance_list</from-outcome>
 			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/balance/maintenance/list.xhtml</to-view-id>
+				/com/code/aon/ui/accounting/facelet/balance/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
