@@ -13,6 +13,8 @@ import com.code.aon.accounting.AmortizationType;
 import com.code.aon.accounting.Loan;
 import com.code.aon.accounting.Leasing;
 import com.code.aon.accounting.Period;
+import com.code.aon.accounting.Balance;
+import com.code.aon.accounting.BalanceDetail;
 
 /** 
 * Interface for holding entity properties constants.
@@ -581,6 +583,98 @@ public interface IAccountingAlias {
 	* Hibernate value: Period.initiationDate
 	*/
 	String  PERIOD_INITIATION_DATE = PERIOD_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for Balance entity.
+	*/ 
+	DAOConstantsEntry BALANCE_ENTRY = DAOConstants.getDAOConstant(Balance.class);
+
+	/** 
+	* Alias value: Balance_id
+	* Hibernate value: Balance.id
+	*/
+	String  BALANCE_ID = BALANCE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Balance_name
+	* Hibernate value: Balance.name
+	*/
+	String  BALANCE_NAME = BALANCE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Balance_removable
+	* Hibernate value: Balance.removable
+	*/
+	String  BALANCE_REMOVABLE = BALANCE_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for BalanceDetail entity.
+	*/ 
+	DAOConstantsEntry BALANCE_DETAIL_ENTRY = DAOConstants.getDAOConstant(BalanceDetail.class);
+
+	/** 
+	* Alias value: BalanceDetail_accounts
+	* Hibernate value: BalanceDetail.accounts
+	*/
+	String  BALANCE_DETAIL_ACCOUNTS = BALANCE_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: BalanceDetail_balance_id
+	* Hibernate value: BalanceDetail.balance.id
+	*/
+	String  BALANCE_DETAIL_BALANCE_ID = BALANCE_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: BalanceDetail_code
+	* Hibernate value: BalanceDetail.code
+	*/
+	String  BALANCE_DETAIL_CODE = BALANCE_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: BalanceDetail_comment
+	* Hibernate value: BalanceDetail.comment
+	*/
+	String  BALANCE_DETAIL_COMMENT = BALANCE_DETAIL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: BalanceDetail_description
+	* Hibernate value: BalanceDetail.description
+	*/
+	String  BALANCE_DETAIL_DESCRIPTION = BALANCE_DETAIL_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: BalanceDetail_id
+	* Hibernate value: BalanceDetail.id
+	*/
+	String  BALANCE_DETAIL_ID = BALANCE_DETAIL_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: BalanceDetail_internalCalculation
+	* Hibernate value: BalanceDetail.internalCalculation
+	*/
+	String  BALANCE_DETAIL_INTERNAL_CALCULATION = BALANCE_DETAIL_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: BalanceDetail_order
+	* Hibernate value: BalanceDetail.order
+	*/
+	String  BALANCE_DETAIL_ORDER = BALANCE_DETAIL_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: BalanceDetail_visible
+	* Hibernate value: BalanceDetail.visible
+	*/
+	String  BALANCE_DETAIL_VISIBLE = BALANCE_DETAIL_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: BalanceDetail_zeroFlag
+	* Hibernate value: BalanceDetail.zeroFlag
+	*/
+	String  BALANCE_DETAIL_ZERO_FLAG = BALANCE_DETAIL_ENTRY.getAliasNames()[9];
 
 
 }
