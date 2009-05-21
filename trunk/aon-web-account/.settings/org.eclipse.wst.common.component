@@ -12,10 +12,7 @@
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-accounting/aon-accounting">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-account/aon-ui-account">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-account/aon-account">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-account-bridge/aon-account-bridge">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="java-output-path" value="build/classes"/>

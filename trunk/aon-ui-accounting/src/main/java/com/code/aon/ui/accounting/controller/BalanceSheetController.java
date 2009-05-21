@@ -1,6 +1,7 @@
 package com.code.aon.ui.accounting.controller;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -11,19 +12,24 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import com.code.aon.accounting.BalanceDetail;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 
-public class BalanceSheetController {
+public class BalanceSheetController implements ICollectionProvider{
 
 	private DataModel balanceModel;
 	private List<ITransferObject> balanceDetailList;
@@ -83,7 +89,6 @@ public class BalanceSheetController {
 
 			BalanceDetail bd = (BalanceDetail) to;
 			BalanceItem b = new BalanceItem();
-			// b.setNotes(bd.getAccounts());
 			b.setCode(bd.getCode());
 			if (bd.getDescription() != null) {
 				b.setDescription(bd.getDescription());
@@ -100,7 +105,6 @@ public class BalanceSheetController {
 				if (line.length() >= 2) {
 					line = line.substring(0, line.length() - 1);
 					b.setAccounts(line);
-					 //b.setNotes(line);
 					b.setAmount(getAccountsAmount(line, bd.isCreditNature()));
 				}
 
@@ -117,7 +121,6 @@ public class BalanceSheetController {
 				int i = 0;
 				while (tokenizer.hasMoreTokens()) {
 					data[i] = tokenizer.nextToken();
-
 					++i;
 				}
 
@@ -132,26 +135,26 @@ public class BalanceSheetController {
 					int j = 0;
 					while (data[j] != null) {
 						if (code.equals(data[j])) {
-
 							line = line + "|" + account;// si ya lo tenemos,
 							// metemos las cuentas
 							// en line
-
 						}
 						j++;
 					}
-
 				}
 
 				line = line.substring(1, line.length());
 				b.setAmount(getAccountsAmount(line, bd.isCreditNature()));
-				 //b.setNotes(line);
 				b.setAccounts(line);
-
 			}
-
+			b.setVisible(true);
+			if (bd.isZeroFlag() || (bd.isZeroFlag() && b.getAmount() != 0 )) {
+				b.setVisible(false);
+			}
+			if (!bd.isVisible()) {
+				b.setVisible(false);
+			}
 			balanceList.add(b);
-
 		}
 
 		balanceModel = null;
@@ -170,11 +173,10 @@ public class BalanceSheetController {
 		}
 		Double amount;
 		if (creditNature) {
-			amount = summaryCollection.getCreditBalance();
+			amount = CommonUtil.round( summaryCollection.getCredit() -  summaryCollection.getDebit() ); 
 		} else {
-			amount = summaryCollection.getUnpaidBalance();
+			amount = CommonUtil.round( summaryCollection.getDebit() -  summaryCollection.getCredit() ); 
 		}
-
 		return amount;
 
 	}
@@ -214,6 +216,15 @@ public class BalanceSheetController {
 		private String accounts;
 		private Double amount;
 		private Double amount2;
+		private boolean visible;
+
+		public boolean isVisible() {
+			return visible;
+		}
+
+		public void setVisible(boolean visible) {
+			this.visible = visible;
+		}
 
 		public String getCode() {
 			return code;
@@ -263,6 +274,9 @@ public class BalanceSheetController {
 			this.amount2 = amount2;
 		}
 
+		public int getLevel() {
+			return getCode() == null?0:StringUtils.countMatches(getCode(), ".");
+		}
 	}
 
 	public SummaryProviderParameters getParameters() {
@@ -303,4 +317,15 @@ public class BalanceSheetController {
 		this.fromDate = fromDate;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public Collection getCollection() {
+		return (List<BalanceItem>) getBalanceModel().getWrappedData();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+		return getCollection();
+	}
 }

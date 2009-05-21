@@ -106,6 +106,7 @@ public class InvoiceEntryController {
 	private Company company;
 
 	private Finance currentFinance;
+	private String onGenerateKey;
 
 	public AccountEntryInvoiceWriter getWriter() {
 		if (writer == null) {
@@ -492,8 +493,12 @@ public class InvoiceEntryController {
 			throw new AbortProcessingException(e.getMessage(),e);
 		}
 	}
-
-	public void accept(ActionEvent event) {
+	
+	public String generate() {
+		return onGenerateKey;
+	}
+	
+	public void onGenerate(ActionEvent event) {
 		double invoiceTotal = getInvoiceTotal();
 		double financeTotal = getFinanceTotal();
 		if (financeTotal > 0 && invoiceTotal != financeTotal) {
@@ -550,10 +555,12 @@ public class InvoiceEntryController {
 					obtainRetentionQuotasPerAccount(invoice), obtainTaxQuotasPerAccount(invoice), obtainBasesPerAccount(details));
 			getHeader().setAccountEntryId(entry.getId());
 			this.isNew = false;
-
+			loadAccountEntryController(entry);
 			HibernateUtil.getSession(sessionName).flush();
 			HibernateUtil.commitTransaction(sessionName);
+			onGenerateKey = "accountEntry_form";
 		} catch (Exception e) {
+			onGenerateKey = null;
 			try {
 				HibernateUtil.rollbackTransaction(sessionName);
 			} catch (DAOException daoe) {
@@ -569,6 +576,17 @@ public class InvoiceEntryController {
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
+			
+	}
+
+	private void loadAccountEntryController(AccountEntry entry) throws ManagerBeanException {
+		AccountEntryController entryController = (AccountEntryController)FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
+		entryController.setCriteria(criteria);
+		entryController.onSearch(null);
+		entryController.getModel().setRowIndex(0);
+		entryController.onSelect(null);
 	}
 
 	/**

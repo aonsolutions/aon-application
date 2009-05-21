@@ -9,14 +9,14 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.account</artifactId>
 	<packaging>war</packaging>
-	<version>3.0.5</version>
+	<version>3.0.6-SNAPSHOT</version>
 	<description>AON WEB ACCOUNT</description>
 	<name>AON WEB ACCOUNT</name>
 	<build>
 		<finalName>aon-account</finalName>
 	</build>
 	<properties>
-		<dbVersion>3.3.0</dbVersion>
+		<dbVersion>3.4.0</dbVersion>
 	</properties>
 	<dependencies>
 		<dependency>
