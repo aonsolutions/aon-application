@@ -124,5 +124,15 @@
 			<param id="period" value="#{journalReport.getPeriod}" />
 		</params>
 	</report>
+	
+	<!--  BALANCES OFICIALES  -->
+	<report id="officialBalance" description="Official Balance Report">
+		<template path="/com/code/aon/ui/accounting/report/officialBalanceSheet.jasper" />
+		<collection provider="#{balanceSheet.balanceModel}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
 
 </report-config>
