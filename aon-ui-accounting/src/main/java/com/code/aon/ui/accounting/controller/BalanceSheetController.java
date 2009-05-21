@@ -281,7 +281,7 @@ public class BalanceSheetController {
 			p.setDate(new Date());
 			p.setAccountExpression(null);
 			p.setLowerLevelVisible(false);
-			p.setZeroSumVisible(false);
+			p.setNoTouchedAccountVisible(false);
 			p.setRowsPerPage(20);
 			p.setAccountLevel(4);
 			p.setBudgeted(false);
