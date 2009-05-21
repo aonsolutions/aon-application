@@ -10,38 +10,36 @@
 
 <ui:composition>
 
-<style>
-.bodyPanel {
-	width:300px;
-    height:475px;
-    overflow:auto;
-}
-</style>
-    <rich:modalPanel  id="#{modalPanelName}"  
-        height="560" width="675" zindex="2000">
-        <f:facet name="header">
-            <h:outputText value="Album" />
-        </f:facet>
+    <rich:modalPanel id="albumModalPanel" height="690" width="640">
+		<f:facet name="header">
+			<aon:div styleClass="aon-popupWindow-title">
+				<aon:outputText value="Album" />
+			</aon:div>
+		</f:facet>
         <f:facet name="controls">
 			<aon:commandButton id="close"
 				action="album_image_list"
 				actionListener="#{album.onInitGenerateFromGallery}"
 				image="/images/icefaces/popupclose.gif"
-				styleClass="aon-icon-commandButton">
+				styleClass="aon-popupWindow-close">
+				<rich:componentControl for="albumModalPanel"
+					operation="hide" event="onclick" />
 			</aon:commandButton>	
         </f:facet>
         <aon:div id="tree_">
-			<aon:commandButton id="generate"
-				rendered="#{!album.activeLog}"
-				value="#{appBundle.aon_generate}" 
-				reRender="tree_,log_"
-				styleClass="aon-finding-toolbar-item aon-icon-accept">
-				<aon:actionListener method="#{album.onGenerateFromGallery}" />
-				<aon:actionListener method="#{albumImage.onSearch}" />
-			</aon:commandButton>
+			<aon:div styleClass="aon-toolbar">        
+				<aon:commandButton id="generate"
+					rendered="#{!album.activeLog}"
+					value="#{appBundle.aon_generate}" 
+					reRender="tree_,log_"
+					styleClass="aon-finding-toolbar-item aon-icon-accept">
+					<aon:actionListener method="#{album.onGenerateFromGallery}" />
+					<aon:actionListener method="#{albumImage.onSearch}" />
+				</aon:commandButton>
+			</aon:div>
 			<h:panelGrid id="#{modalPanelName}_treeGrid" columns="2" rendered="#{!album.activeLog}">
-	            <rich:panel bodyClass="bodyPanel">
-				    <rich:tree style="width:300px"
+	            <rich:panel styleClass="aon-width-300 aon-scroll">
+				    <rich:tree
 				    	switchType="server" 
 				    	stateAdvisor="#{treeStateAdvisor}">
 				        <rich:recursiveTreeNodesAdaptor roots="#{roots}" 
@@ -57,13 +55,11 @@
 				        </rich:recursiveTreeNodesAdaptor>
 				    </rich:tree>
 				</rich:panel>
-	            <rich:panel bodyClass="bodyPanel">
-					<aon:panelGroup>
-						<aon:outputLabel value="#{galleryBean.currentRelativePath}" />
-						<rich:dataList var="item" value="#{galleryBean.model}" >	
-		            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}"/>
-						</rich:dataList>
-					</aon:panelGroup>
+				<rich:panel styleClass="aon-width-300 aon-scroll">
+					<aon:outputLabel value="#{galleryBean.currentRelativePath}" />
+					<rich:dataList var="item" value="#{galleryBean.model}" >	
+	            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}"/>
+					</rich:dataList>
 				</rich:panel>
 			</h:panelGrid>
 		</aon:div>

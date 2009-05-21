@@ -17,6 +17,8 @@ public class AlbumImageHandler {
 	
 	private String alt;
 	
+	private String altThumbnail;
+	
 	private String url;
 
 	public AlbumImageHandler (AlbumImageDetail detail) {
@@ -26,6 +28,7 @@ public class AlbumImageHandler {
 		this.image = detail.getAlbumImage().getImage();
 		this.thumbnail = detail.getAlbumImage().getThumbnail();
 		this.alt = detail.getAlt();
+		this.altThumbnail = detail.getAlt_thumbnail();
 		this.url = Templates.ALBUM_IMAGES.getHtmlName();
 		this.url = this.url.replaceAll("%NAME%", "ALBUM_IMAGE_"+this.id);
 	}
@@ -58,5 +61,8 @@ public class AlbumImageHandler {
 		return id;
 	}
 
+	public String getAltThumbnail() {
+		return altThumbnail;
+	}
 	
 }
