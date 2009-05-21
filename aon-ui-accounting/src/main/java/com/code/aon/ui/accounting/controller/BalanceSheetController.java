@@ -13,7 +13,6 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.accounting.BalanceDetail;
 import com.code.aon.accounting.dao.IAccountingAlias;
@@ -154,6 +153,7 @@ public class BalanceSheetController implements ICollectionProvider{
 			if (!bd.isVisible()) {
 				b.setVisible(false);
 			}
+			b.setTitle(bd.isTitle());
 			balanceList.add(b);
 		}
 
@@ -217,6 +217,16 @@ public class BalanceSheetController implements ICollectionProvider{
 		private Double amount;
 		private Double amount2;
 		private boolean visible;
+		private boolean title;
+
+
+		public boolean isTitle() {
+			return title;
+		}
+
+		public void setTitle(boolean title) {
+			this.title = title;
+		}
 
 		public boolean isVisible() {
 			return visible;
@@ -244,6 +254,10 @@ public class BalanceSheetController implements ICollectionProvider{
 
 		public String getDescription() {
 			return description;
+		}
+
+		public String getReportDescription() {
+			return StringUtils.leftPad(description, (getLevel() * 5));
 		}
 
 		public void setDescription(String description) {

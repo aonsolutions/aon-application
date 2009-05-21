@@ -50,10 +50,11 @@
 					<aon:column rendered="#{to.visible}">
 						<f:facet name="header">
 							<aon:outputText
-								style="padding-left: #{to.level * 15}px;"
 								value="#{accountingBundle.accounting_balance_cdg}" />
 						</f:facet>
-						<aon:outputText size="80" value="#{to.description}" />
+						<aon:outputText size="80"
+							style="padding-left: #{to.level * 15}px;#{to.title?'font-weight:bold;':''}" 
+							value="#{to.description}" />
 					</aon:column>
 
 					<aon:column rendered="#{to.visible}">
