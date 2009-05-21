@@ -70,6 +70,18 @@
 				 -->
 			</aon:dropDownMenu>
 			
+				<aon:dropDownMenu value="#{accountingBundle.accounting_balance}">
+				<aon:menuItem  value="#{accountingBundle.accounting_balance_menu_bs}"  actionListener="#{balanceSheet.onBalanceSheet}" action="balance_sheet_form"/>
+				<aon:menuItem  value="#{accountingBundle.accounting_balance_menu_pyg}"  actionListener="#{balanceSheet.onProfitLossAccount}" action="balance_sheet_form"/>
+				<aon:menuItem  value="#{accountingBundle.accounting_balance_menu_bs_abre}" disabled="true"/>
+				<aon:menuItem  value="#{accountingBundle.accounting_balance_menu_pyg_abre}" disabled="true"/>
+				<aon:menuSeparator/>
+				<aon:menuItem  value="#{accountingBundle.accounting_balance_menu}" actionListener="#{balance.onSelectFirst}" action="balance_form"/>
+								
+			</aon:dropDownMenu>
+			
+					
+			
 			<aon:dropDownMenu value="#{appBundle.account_fixed_assets}">
 				<aon:menuItem style="color:red;" action="amortization_list" value="#{accountingBundle.accounting_amortization_form_module}"/>
 				<aon:menuSeparator/>
