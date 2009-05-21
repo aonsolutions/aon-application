@@ -11,8 +11,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.accounting.BalanceDetail;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.summary.SummaryCollection;
@@ -23,6 +21,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.util.AonUtil;
 
 public class BalanceSheetController {
 
@@ -32,28 +31,26 @@ public class BalanceSheetController {
 	private SummaryProviderParameters parameters;
 	private SummaryProvider summaryProvider;
 	private SummaryCollection summaryCollection;
-    private Date fromDate;
-    private Date toDate;
-	
-	
+	private Date fromDate;
+	private Date toDate;
 
 	public void onReset(ActionEvent event) {
-		
+
 		Calendar c = Calendar.getInstance();
 		c.set(Calendar.MONTH, 0);
-		c.set(Calendar.DAY_OF_MONTH, 1);		
-        setFromDate(c.getTime());
+		c.set(Calendar.DAY_OF_MONTH, 1);
+		setFromDate(c.getTime());
 		c.set(Calendar.MONTH, 11);
 		c.set(Calendar.DAY_OF_MONTH, 31);
 		setToDate(c.getTime());
-		}	
-	
-
+	}
 
 	public void onBalanceSheet(ActionEvent event) {
-
-		getBalanceCollection(1);
-
+		try {
+			getBalanceCollection(1);
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+		}
 	}
 
 	public void onBasicBalanceSheet(ActionEvent event) {
@@ -61,42 +58,40 @@ public class BalanceSheetController {
 	}
 
 	public void onProfitLossAccount(ActionEvent event) {
-		getBalanceCollection(2);
+		try {
+			getBalanceCollection(2);
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+		}
 	}
 
 	public void onBasicProfitLossAccount(ActionEvent event) {
 
 	}
 
-	public void getBalanceCollection(Integer balanceId) {
-      balanceList.clear();
-		try {
-			IManagerBean bean;
-			bean = BeanManager.getManagerBean(BalanceDetail.class);
-			String balance = bean
-					.getFieldName(IAccountingAlias.BALANCE_DETAIL_BALANCE_ID);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(balance, balanceId);
-			balanceDetailList = bean.getList(criteria);
-			balanceModel = null;
-		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	
+	private void getBalanceCollection(Integer balanceId) throws ManagerBeanException {
+		balanceList.clear();
+		IManagerBean bean;
+		bean = BeanManager.getManagerBean(BalanceDetail.class);
+		String balance = bean.getFieldName(IAccountingAlias.BALANCE_DETAIL_BALANCE_ID);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(balance, balanceId);
+		balanceDetailList = bean.getList(criteria);
+		balanceModel = null;
+
 		for (ITransferObject to : balanceDetailList) {
 
 			BalanceDetail bd = (BalanceDetail) to;
 			BalanceItem b = new BalanceItem();
-			//b.setNotes(bd.getAccounts());
+			// b.setNotes(bd.getAccounts());
 			b.setCode(bd.getCode());
 			if (bd.getDescription() != null) {
 				b.setDescription(bd.getDescription());
-			}		
-			
-			if (bd.getAccounts()!= null && bd.isInternalCalculation()==false){// Calcula el String con las cuentas 
-																				//de un balanceDetail
-				String accounts=bd.getAccounts();
+			}
+
+			if (bd.getAccounts() != null && bd.isInternalCalculation() == false) {
+				// Calcula el String con las  cuentas  de un balanceDetail
+				String accounts = bd.getAccounts();
 				String line = new String();
 				StringTokenizer tokenizer = new StringTokenizer(accounts, ",");
 				while (tokenizer.hasMoreTokens()) {
@@ -105,85 +100,85 @@ public class BalanceSheetController {
 				if (line.length() >= 2) {
 					line = line.substring(0, line.length() - 1);
 					b.setAccounts(line);
-					//b.setNotes(line);
+					// b.setNotes(line);
 					b.setAmount(getAccountsAmount(line, bd.isCreditNature()));
 				}
-				
+
 			}
-			
-			if (bd.getAccounts()!= null && bd.isInternalCalculation() ){//Calcula el String con las cuentas 
-																			//de un balanceDetail que esta compesto por otros(UN TOTAL)
+
+			if (bd.getAccounts() != null && bd.isInternalCalculation()) {// Calcula
+				// el String con las cuentas de un balanceDetail que esta compesto por otros(UN TOTAL)
 				String line = new String();
-				String accounts = bd.getAccounts();//linea de total que proviene de la BD
+				String accounts = bd.getAccounts();// linea de total que
+				// proviene de la BD
 				String[] data = new String[30];
-				StringTokenizer tokenizer = new StringTokenizer(accounts, ",");//Trocea el total para averiguar que cuantas forman cada parte
-				int i=0;
+				StringTokenizer tokenizer = new StringTokenizer(accounts, ",");// Trocea
+				// el total para averiguar que cuantas forman cada parte
+				int i = 0;
 				while (tokenizer.hasMoreTokens()) {
-					data[i] = tokenizer.nextToken();	
-					
-					
+					data[i] = tokenizer.nextToken();
+
 					++i;
 				}
-			
-				
-				//recorrer la lista "balanceList" para encontrar el code y asi aprovechar  sus accounts
-					Iterator<BalanceItem> li = balanceList.iterator();
-					while (li.hasNext()) {
-						BalanceItem balItem= li.next();	
-						String code = balItem.getCode();
-						String account= balItem.getAccounts();
-										
-						int j=0;
-						while (data[j]!=null){
-						if (code.equals(data[j])) {						
-							
-							line = line +"|"+ account;// si ya lo tenemos, metemos las cuentas en line
-							
+
+				// recorrer la lista "balanceList" para encontrar el code y asi
+				// aprovechar sus accounts
+				Iterator<BalanceItem> li = balanceList.iterator();
+				while (li.hasNext()) {
+					BalanceItem balItem = li.next();
+					String code = balItem.getCode();
+					String account = balItem.getAccounts();
+
+					int j = 0;
+					while (data[j] != null) {
+						if (code.equals(data[j])) {
+
+							line = line + "|" + account;// si ya lo tenemos,
+							// metemos las cuentas
+							// en line
+
 						}
 						j++;
-						}					
-					
-					}	
-					
-				line=line.substring(1, line.length());
-				b.setAmount(getAccountsAmount(line,bd.isCreditNature()));
-				//b.setNotes(line);
+					}
+
+				}
+
+				line = line.substring(1, line.length());
+				b.setAmount(getAccountsAmount(line, bd.isCreditNature()));
+				// b.setNotes(line);
 				b.setAccounts(line);
-				
+
 			}
-					
+
 			balanceList.add(b);
-			
-			}	
-		
+
+		}
+
 		balanceModel = null;
 	}
-	
-	
-	
-	public Double getAccountsAmount(String line,Boolean creditNature){
+
+	public Double getAccountsAmount(String line, Boolean creditNature) {
 		parameters = new SummaryProviderParameters();
 		summaryCollection = new SummaryCollection();
 		summaryProvider = new SummaryProvider();
-		parameters.setAccountExpression(line);		
+		parameters.setAccountExpression(line);
 		try {
-			summaryCollection=summaryProvider.getSummaryCollection(parameters);
+			summaryCollection = summaryProvider.getSummaryCollection(parameters);
 		} catch (ManagerBeanException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Double amount ;
+		Double amount;
 		if (creditNature) {
-			 amount = summaryCollection.getCreditBalance();
+			amount = summaryCollection.getCreditBalance();
 		} else {
-			 amount = summaryCollection.getUnpaidBalance();
+			amount = summaryCollection.getUnpaidBalance();
 		}
-		
+
 		return amount;
-		
+
 	}
-	
-	
+
 	public List<BalanceItem> getBalanceList() {
 		return balanceList;
 	}
@@ -212,14 +207,14 @@ public class BalanceSheetController {
 	}
 
 	public class BalanceItem {
-        
+
 		private String code;
 		private String description;
 		private String notes;
 		private String accounts;
 		private Double amount;
 		private Double amount2;
-		
+
 		public String getCode() {
 			return code;
 		}
@@ -227,7 +222,7 @@ public class BalanceSheetController {
 		public void setCode(String code) {
 			this.code = code;
 		}
-		
+
 		public String getAccounts() {
 			return accounts;
 		}
@@ -279,7 +274,7 @@ public class BalanceSheetController {
 			p.setDate(new Date());
 			p.setAccountExpression(null);
 			p.setLowerLevelVisible(false);
-		   p.setNoTouchedAccountVisible(false);
+			p.setNoTouchedAccountVisible(false);
 			p.setRowsPerPage(20);
 			p.setAccountLevel(4);
 			p.setBudgeted(false);
@@ -292,25 +287,20 @@ public class BalanceSheetController {
 		this.parameters = parameters;
 	}
 
-	
 	public Date getToDate() {
 		return toDate;
 	}
-
 
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
 	}
 
-	
 	public Date getFromDate() {
 		return fromDate;
 	}
 
-
 	public void setFromDate(Date fromDate) {
 		this.fromDate = fromDate;
 	}
-
 
 }

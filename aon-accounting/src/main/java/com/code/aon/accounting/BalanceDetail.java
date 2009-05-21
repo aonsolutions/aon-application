@@ -9,11 +9,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
 
 /**
@@ -23,13 +27,15 @@ import com.code.aon.common.ITransferObject;
 @Table(name = "balance_detail")
 public class BalanceDetail implements ITransferObject {
 		
+	private static final long serialVersionUID = -7813781883946689430L;
+	
 	private Integer id;	
 	private Balance balance;
 	private String  code;
 	private String  description;
 	private String  accounts;
 	private Integer sortKey;
-	private boolean comment;
+	private boolean title;
 	private boolean internalCalculation;
 	private boolean visible;
 	private boolean zeroFlag;
@@ -60,7 +66,7 @@ public class BalanceDetail implements ITransferObject {
 		this.balance = balance;
 	}
 		
-	@Column(name="code", length=128)
+	@Column(name="code", length=16)
 	public String getCode() {
 		return code;
 	}
@@ -79,8 +85,7 @@ public class BalanceDetail implements ITransferObject {
 	}
 	
 	@Lob
-	@Type(type="com.code.aon.common.dao.hibernate.type.StringClobEnhancedType")
-    @Column(name="accounts", length=128)
+	@Type(type="stringClob")
 	public String getAccounts() {
 		return accounts;
 	}
@@ -89,7 +94,7 @@ public class BalanceDetail implements ITransferObject {
 		this.accounts = accounts;
 	}
 
-	@Column(name="sortKey", length=11)
+	@Column(name="sortKey")
 	public Integer getSortKey() {
 		return sortKey;
 	}
@@ -98,16 +103,16 @@ public class BalanceDetail implements ITransferObject {
 		this.sortKey = sortKey;
 	}
 	
-	@Column(name="comment", length=4)
-	public boolean isComment() {
-		return comment;
+	@Column(name="title")
+	public boolean isTitle() {
+		return title;
 	}
 
-	public void setComment(boolean comment) {
-		this.comment = comment;
+	public void setTitle(boolean title) {
+		this.title = title;
 	}
 	
-	@Column(name="internal_calculation", length=4)
+	@Column(name="internal_calculation")
 	public boolean isInternalCalculation() {
 		return internalCalculation;
 	}
@@ -116,7 +121,7 @@ public class BalanceDetail implements ITransferObject {
 		this.internalCalculation = internalCalculation;
 	}
 	
-	@Column(name="visible", length=4)
+	@Column(name="visible")
 	public boolean isVisible() {
 		return visible;
 	}
@@ -125,7 +130,7 @@ public class BalanceDetail implements ITransferObject {
 		this.visible = visible;
 	}
 	
-	@Column(name="zeroFlag", length=4)
+	@Column(name="zeroFlag")
 	public boolean isZeroFlag() {
 		return zeroFlag;
 	}
@@ -134,7 +139,7 @@ public class BalanceDetail implements ITransferObject {
 		this.zeroFlag = zeroFlag;
 	}	
 	
-	@Column(name="creditNature", length=4)
+	@Column(name="creditNature")
 	public boolean isCreditNature() {
 		return creditNature;
 	}
@@ -143,6 +148,35 @@ public class BalanceDetail implements ITransferObject {
 		this.creditNature = creditNature;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() !=  getClass()) return false;
+		final BalanceDetail o = (BalanceDetail) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+			.append(this.getCode(), o.getCode())
+			.append(this.getAccounts(), o.getAccounts())
+			.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());
+	}
 
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(this.getId())
+			.append(this.getCode())
+			.append(this.getAccounts())
+			.toHashCode();
+	}
 	
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+			.append("id",this.getId())
+			.append("code",this.getCode())
+			.append("accounts",this.getAccounts()).toString();
+	}
 }
