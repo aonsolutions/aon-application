@@ -30,6 +30,8 @@ public class Balance implements ITransferObject {
 	private Integer id;
 	private String name;
 	private Boolean removable;
+	private Integer type;
+
 
 	@Id
 	@GeneratedValue
@@ -63,6 +65,17 @@ public class Balance implements ITransferObject {
 	public void setRemovable(Boolean removable) {
 		this.removable = removable;
 	}
+
+	@Column(name="type")
+	public Integer getType() {
+		return type;
+	}
+
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
 
 
 }
