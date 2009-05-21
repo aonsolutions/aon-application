@@ -1,0 +1,525 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PROCESS model-entity="JSFProcess">
+ <PROCESS-ITEM NAME="rules:" SHAPE="32,17,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::0" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="accountBudget_list::#com#code#aon#ui#accounting#facelet#budget#list.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/accounting/facelet/budget/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#budget#list.xhtml"
+    TITLE="accountBudget_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="accountBudget_search::#com#code#aon#ui#accounting#facelet#budget#search.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/accounting/facelet/budget/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#budget#search.xhtml"
+    TITLE="accountBudget_search" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="accountBudget_form::#com#code#aon#ui#accounting#facelet#budget#form.xhtml"
+    NAME="output2"
+    PATH="/com/code/aon/ui/accounting/facelet/budget/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#budget#form.xhtml"
+    TITLE="accountBudget_form" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::1" SHAPE="32,417,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::1" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="balance_form::#com#code#aon#ui#accounting#facelet#balance#maintenance#form.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/accounting/facelet/balance/maintenance/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#balance#maintenance#form.xhtml"
+    TITLE="balance_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="balance_list::#com#code#aon#ui#accounting#facelet#balance#maintenance#list.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/accounting/facelet/balance/maintenance/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#balance#maintenance#list.xhtml"
+    TITLE="balance_list" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::2" SHAPE="32,529,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::2" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="balance_select_date::#com#code#aon#ui#accounting#facelet#balance#sheet#selectDates.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/accounting/facelet/balance/sheet/selectDates.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#balance#sheet#selectDates.xhtml"
+    TITLE="balance_select_date" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="balance_sheet_form::#com#code#aon#ui#accounting#facelet#balance#sheet#form.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/accounting/facelet/balance/sheet/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#balance#sheet#form.xhtml"
+    TITLE="balance_sheet_form" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::3" SHAPE="32,929,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::3" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="autConcept::#com#code#aon#ui#accounting#facelet#autConcept#grid.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/accounting/facelet/autConcept/grid.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#autConcept#grid.xhtml"
+    TITLE="autConcept" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::4" SHAPE="32,1329,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::4" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="amortization_form::#com#code#aon#ui#accounting#facelet#amortization#form.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/accounting/facelet/amortization/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#amortization#form.xhtml"
+    TITLE="amortization_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="amortization_list::#com#code#aon#ui#accounting#facelet#amortization#list.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/accounting/facelet/amortization/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#amortization#list.xhtml"
+    TITLE="amortization_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="amortization_search::#com#code#aon#ui#accounting#facelet#amortization#search.xhtml"
+    NAME="output2"
+    PATH="/com/code/aon/ui/accounting/facelet/amortization/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#amortization#search.xhtml"
+    TITLE="amortization_search" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::5" SHAPE="32,1441,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::5" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="amortizationType_form::#com#code#aon#ui#accounting#facelet#amortization#type#form.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/accounting/facelet/amortization/type/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#amortization#type#form.xhtml"
+    TITLE="amortizationType_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="amortizationType_list::#com#code#aon#ui#accounting#facelet#amortization#type#list.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/accounting/facelet/amortization/type/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#amortization#type#list.xhtml"
+    TITLE="amortizationType_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="amortizationType_search::#com#code#aon#ui#accounting#facelet#amortization#type#search.xhtml"
+    NAME="output2"
+    PATH="/com/code/aon/ui/accounting/facelet/amortization/type/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#amortization#type#search.xhtml"
+    TITLE="amortizationType_search" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::6" SHAPE="32,1553,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::6" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="accPeriod::#com#code#aon#ui#accounting#facelet#period#grid.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/accounting/facelet/period/grid.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#period#grid.xhtml"
+    TITLE="accPeriod" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::7" SHAPE="32,3105,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::7" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="defaultParams::#com#code#aon#ui#accounting#facelet#params#form.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/accounting/facelet/params/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#params#form.xhtml"
+    TITLE="defaultParams" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::8" SHAPE="32,3361,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::8" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="accountEntry_form::#com#code#aon#ui#accounting#facelet#entry#form.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/accounting/facelet/entry/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#entry#form.xhtml"
+    TITLE="accountEntry_form" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="accountEntry_list::#com#code#aon#ui#accounting#facelet#entry#list.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/accounting/facelet/entry/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#entry#list.xhtml"
+    TITLE="accountEntry_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="accountEntry_search::#com#code#aon#ui#accounting#facelet#entry#search.xhtml"
+    NAME="output2"
+    PATH="/com/code/aon/ui/accounting/facelet/entry/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#entry#search.xhtml"
+    TITLE="accountEntry_search" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="account_invoice_entry::#com#code#aon#ui#accounting#facelet#entry#invoice#form.xhtml"
+    NAME="output3"
+    PATH="/com/code/aon/ui/accounting/facelet/entry/invoice/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#entry#invoice#form.xhtml"
+    TITLE="account_invoice_entry" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="account_finance_entry::#com#code#aon#ui#accounting#facelet#entry#finance#form.xhtml"
+    NAME="output4"
+    PATH="/com/code/aon/ui/accounting/facelet/entry/finance/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#entry#finance#form.xhtml"
+    TITLE="account_finance_entry" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="account_expense_entry::#com#code#aon#ui#accounting#facelet#entry#expense#form.xhtml"
+    NAME="output5"
+    PATH="/com/code/aon/ui/accounting/facelet/entry/expense/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#entry#expense#form.xhtml"
+    TITLE="account_expense_entry" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="account_salary_entry::#com#code#aon#ui#accounting#facelet#entry#salary#form.xhtml"
+    NAME="output6"
+    PATH="/com/code/aon/ui/accounting/facelet/entry/salary/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#entry#salary#form.xhtml"
+    TITLE="account_salary_entry" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="account_social_insurance_entry::#com#code#aon#ui#accounting#facelet#entry#social_insurance#form.xhtml"
+    NAME="output7"
+    PATH="/com/code/aon/ui/accounting/facelet/entry/social_insurance/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#entry#social_insurance#form.xhtml"
+    TITLE="account_social_insurance_entry" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="accountOpeningEntry::#com#code#aon#ui#accounting#facelet#entry#opening#form.xhtml"
+    NAME="output8"
+    PATH="/com/code/aon/ui/accounting/facelet/entry/opening/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#entry#opening#form.xhtml"
+    TITLE="accountOpeningEntry" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="accountClosingEntry::#com#code#aon#ui#accounting#facelet#entry#closing#form.xhtml"
+    NAME="output9"
+    PATH="/com/code/aon/ui/accounting/facelet/entry/closing/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#entry#closing#form.xhtml"
+    TITLE="accountClosingEntry" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="accountOperatingEntry::#com#code#aon#ui#accounting#facelet#entry#operating#form.xhtml"
+    NAME="output10"
+    PATH="/com/code/aon/ui/accounting/facelet/entry/operating/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#entry#operating#form.xhtml"
+    TITLE="accountOperatingEntry" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::9" SHAPE="32,3617,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::9" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="account_loan_fee_entry::#com#code#aon#ui#accounting#facelet#entry#loan#fee#form.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/accounting/facelet/entry/loan/fee/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#entry#loan#fee#form.xhtml"
+    TITLE="account_loan_fee_entry" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="account_loan_entry::#com#code#aon#ui#accounting#facelet#entry#loan#open#form.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/accounting/facelet/entry/loan/open/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#entry#loan#open#form.xhtml"
+    TITLE="account_loan_entry" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::10" SHAPE="32,3729,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::10" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="account_leasing_entry::#com#code#aon#ui#accounting#facelet#entry#leasing#open#form.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/accounting/facelet/entry/leasing/open/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#entry#leasing#open#form.xhtml"
+    TITLE="account_leasing_entry" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="account_leasing_fee_entry::#com#code#aon#ui#accounting#facelet#entry#leasing#fee#form.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/accounting/facelet/entry/leasing/fee/form.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#entry#leasing#fee#form.xhtml"
+    TITLE="account_leasing_fee_entry" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::11" SHAPE="32,4129,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::11" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="regenerateAccountSummary::#com#code#aon#ui#accounting#facelet#util#summary#search.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/accounting/facelet/util/summary/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#util#summary#search.xhtml"
+    TITLE="regenerateAccountSummary" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::12" SHAPE="32,4385,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::12" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="account_statement_search::#com#code#aon#ui#accounting#facelet#statement#search.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/accounting/facelet/statement/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#statement#search.xhtml"
+    TITLE="account_statement_search" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="account_statement_account_list::#com#code#aon#ui#accounting#facelet#statement#accountList.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/accounting/facelet/statement/accountList.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#statement#accountList.xhtml"
+    TITLE="account_statement_account_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="account_statement_list::#com#code#aon#ui#accounting#facelet#statement#statementList.xhtml"
+    NAME="output2"
+    PATH="/com/code/aon/ui/accounting/facelet/statement/statementList.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#statement#statementList.xhtml"
+    TITLE="account_statement_list" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::13" SHAPE="32,4641,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::13" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="trialBalance_search::#com#code#aon#ui#accounting#facelet#trialbalance#search.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/accounting/facelet/trialbalance/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#trialbalance#search.xhtml"
+    TITLE="trialBalance_search" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="trialBalance_list::#com#code#aon#ui#accounting#facelet#trialbalance#list.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/accounting/facelet/trialbalance/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#trialbalance#list.xhtml"
+    TITLE="trialBalance_list" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::14" SHAPE="32,4897,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::14" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="profit_and_loss_list::#com#code#aon#ui#accounting#facelet#profitAndLoss#list.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/accounting/facelet/profitAndLoss/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#profitAndLoss#list.xhtml"
+    TITLE="profit_and_loss_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="profit_and_loss_search::#com#code#aon#ui#accounting#facelet#profitAndLoss#search.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/accounting/facelet/profitAndLoss/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#profitAndLoss#search.xhtml"
+    TITLE="profit_and_loss_search" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::15" SHAPE="32,5153,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::15" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="budgeted_profit_and_loss_list::#com#code#aon#ui#accounting#facelet#budgetedProfitAndLoss#list.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/accounting/facelet/budgetedProfitAndLoss/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#budgetedProfitAndLoss#list.xhtml"
+    TITLE="budgeted_profit_and_loss_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="budgeted_profit_and_loss_search::#com#code#aon#ui#accounting#facelet#budgetedProfitAndLoss#search.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/accounting/facelet/budgetedProfitAndLoss/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#budgetedProfitAndLoss#search.xhtml"
+    TITLE="budgeted_profit_and_loss_search" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#budgetedProfitAndLoss#list.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/budgetedProfitAndLoss/list.xhtml"
+  SHAPE="256,4657,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#params#form.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/params/form.xhtml"
+  SHAPE="240,1457,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#entry#loan#open#form.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/entry/loan/open/form.xhtml"
+  SHAPE="256,3265,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#entry#form.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/entry/form.xhtml"
+  SHAPE="304,1569,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#amortization#search.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/amortization/search.xhtml"
+  SHAPE="272,833,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#entry#leasing#open#form.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/entry/leasing/open/form.xhtml"
+  SHAPE="256,3377,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#entry#invoice#form.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/entry/invoice/form.xhtml"
+  SHAPE="304,2225,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#trialbalance#search.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/trialbalance/search.xhtml"
+  SHAPE="256,4145,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#journal#search.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/journal/search.xhtml"
+  SHAPE="256,5313,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#comparedBudgetedProfitAndLoss#list.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/comparedBudgetedProfitAndLoss/list.xhtml"
+  SHAPE="256,4913,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#statement#accountList.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/statement/accountList.xhtml"
+  SHAPE="272,3921,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#entry#search.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/entry/search.xhtml"
+  SHAPE="304,2113,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#entry#social_insurance#form.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/entry/social_insurance/form.xhtml"
+  SHAPE="304,2673,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#period#grid.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/period/grid.xhtml"
+  SHAPE="240,1345,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#util#summary#search.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/util/summary/search.xhtml"
+  SHAPE="240,3633,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#autConcept#grid.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/autConcept/grid.xhtml"
+  SHAPE="240,433,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#entry#expense#form.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/entry/expense/form.xhtml"
+  SHAPE="304,2449,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#entry#opening#form.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/entry/opening/form.xhtml"
+  SHAPE="304,2785,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#amortization#type#search.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/amortization/type/search.xhtml"
+  SHAPE="272,1233,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#amortization#list.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/amortization/list.xhtml"
+  SHAPE="272,721,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#budget#search.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/budget/search.xhtml"
+  SHAPE="272,209,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#budget#form.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/budget/form.xhtml"
+  SHAPE="272,321,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#trialbalance#list.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/trialbalance/list.xhtml"
+  SHAPE="256,4289,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#budgetedProfitAndLoss#search.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/budgetedProfitAndLoss/search.xhtml"
+  SHAPE="256,4801,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#statement#search.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/statement/search.xhtml"
+  SHAPE="272,3745,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#amortization#form.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/amortization/form.xhtml"
+  SHAPE="272,545,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#entry#finance#form.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/entry/finance/form.xhtml"
+  SHAPE="304,2337,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#comparedBudgetedProfitAndLoss#search.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/comparedBudgetedProfitAndLoss/search.xhtml"
+  SHAPE="256,5057,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#profitAndLoss#search.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/profitAndLoss/search.xhtml"
+  SHAPE="256,4545,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#entry#salary#form.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/entry/salary/form.xhtml"
+  SHAPE="304,2561,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#amortization#type#form.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/amortization/type/form.xhtml"
+  SHAPE="272,945,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#entry#leasing#fee#form.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/entry/leasing/fee/form.xhtml"
+  SHAPE="256,3521,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#profitAndLoss#list.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/profitAndLoss/list.xhtml"
+  SHAPE="256,4401,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#entry#loan#fee#form.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/entry/loan/fee/form.xhtml"
+  SHAPE="256,3121,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#journal#list.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/journal/list.xhtml"
+  SHAPE="256,5169,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#statement#statementList.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/statement/statementList.xhtml"
+  SHAPE="272,4033,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#budget#list.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/budget/list.xhtml"
+  SHAPE="272,33,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#entry#operating#form.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/entry/operating/form.xhtml"
+  SHAPE="304,3009,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#entry#list.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/entry/list.xhtml"
+  SHAPE="304,2001,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#entry#closing#form.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/entry/closing/form.xhtml"
+  SHAPE="304,2897,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#amortization#type#list.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/amortization/type/list.xhtml"
+  SHAPE="272,1121,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules::16" SHAPE="32,6049,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::16" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="compared_budgeted_profit_and_loss_list::#com#code#aon#ui#accounting#facelet#comparedBudgetedProfitAndLoss#list.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/accounting/facelet/comparedBudgetedProfitAndLoss/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#comparedBudgetedProfitAndLoss#list.xhtml"
+    TITLE="compared_budgeted_profit_and_loss_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="compared_budgeted_profit_and_loss_search::#com#code#aon#ui#accounting#facelet#comparedBudgetedProfitAndLoss#search.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/accounting/facelet/comparedBudgetedProfitAndLoss/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#comparedBudgetedProfitAndLoss#search.xhtml"
+    TITLE="compared_budgeted_profit_and_loss_search" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#balance#maintenance#list.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/balance/maintenance/list.xhtml"
+  SHAPE="256,1201,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#balance#maintenance#form.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/balance/maintenance/form.xhtml"
+  SHAPE="256,689,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules::17" SHAPE="32,6049,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::17" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="journal_list::#com#code#aon#ui#accounting#facelet#journal#list.xhtml"
+    NAME="output"
+    PATH="/com/code/aon/ui/accounting/facelet/journal/list.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#journal#list.xhtml"
+    TITLE="journal_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="journal_search::#com#code#aon#ui#accounting#facelet#journal#search.xhtml"
+    NAME="output1"
+    PATH="/com/code/aon/ui/accounting/facelet/journal/search.xhtml"
+    TARGET="rules:#com#code#aon#ui#accounting#facelet#journal#search.xhtml"
+    TITLE="journal_search" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#balance#sheet#selectDates.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/balance/sheet/selectDates.xhtml"
+  SHAPE="240,1937,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#code#aon#ui#accounting#facelet#balance#sheet#form.xhtml"
+  PATH="/com/code/aon/ui/accounting/facelet/balance/sheet/form.xhtml"
+  SHAPE="256,1969,0,0" model-entity="JSFProcessGroup"/>
+</PROCESS>
