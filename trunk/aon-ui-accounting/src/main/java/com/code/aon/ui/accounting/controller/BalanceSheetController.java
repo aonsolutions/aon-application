@@ -100,7 +100,7 @@ public class BalanceSheetController {
 				if (line.length() >= 2) {
 					line = line.substring(0, line.length() - 1);
 					b.setAccounts(line);
-					 b.setNotes(line);
+					 //b.setNotes(line);
 					b.setAmount(getAccountsAmount(line, bd.isCreditNature()));
 				}
 
@@ -145,7 +145,7 @@ public class BalanceSheetController {
 
 				line = line.substring(1, line.length());
 				b.setAmount(getAccountsAmount(line, bd.isCreditNature()));
-				 b.setNotes(line);
+				 //b.setNotes(line);
 				b.setAccounts(line);
 
 			}

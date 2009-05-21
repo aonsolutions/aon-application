@@ -43,12 +43,14 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:editDataTable id="balanceDetailData"
 					value="#{balanceSheet.balanceModel}" var="to" rows="150"
-					columnClasses="aon-editDataTable-textColumn,
-				aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn">
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+					aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
 
 					<!--  <aon:rowSelector toggleOnClick="#{balanceDetail.to == null}"
 				actionListener="#{balanceDetail.onSelect}" />-->
 
+<!--  
+-->
 		       <aon:column>
 						<f:facet name="header">
 							<aon:outputText
@@ -63,7 +65,7 @@
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText
-								value="#{accountingBundle.accounting_balance_cdg}" />
+								value="#{accountingBundle.accounting_account}" />
 						</f:facet>
 						<aon:outputText size="80" value="#{to.description}"
 							rendered="#{to!=balanceDetail.to}">
@@ -83,13 +85,14 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="AnyO" />
+							<aon:outputText value="#{accountingBundle.accounting_accumulated}" />
 						</f:facet>
 						<aon:outputText size="20" value="#{to.amount}" rendered="#{to!=balanceDetail.to}">
 
 						</aon:outputText>
 					</aon:column>
 
+<!--  
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="AnyO-1" />
@@ -98,6 +101,7 @@
 
 						</aon:outputText>
 					</aon:column>
+-->
 
 				
 
