@@ -107,16 +107,16 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{accountingBundle.accounting_balance_detail_comment}" />
+					<aon:outputText value="#{accountingBundle.accounting_balance_detail_title}" />
 				</f:facet>
 				<aon:outputText value="&#160;"
-					styleClass="#{(to.comment)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
+					styleClass="#{(to.title)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
 					rendered="#{to!=balanceDetail.to}" />
 				<aon:selectBooleanCheckbox rendered="#{to==balanceDetail.to}"
-					value="#{balanceDetail.to.comment}" />
+					value="#{balanceDetail.to.title}" />
 				<f:facet name="footer">
 					<aon:selectBooleanCheckbox rendered="#{balanceDetail.new}"
-						value="#{balanceDetail.to.comment}" />
+						value="#{balanceDetail.to.title}" />
 				</f:facet>
 			</aon:column>
 			
