@@ -88,7 +88,7 @@ public class BalanceSheetController {
 
 			BalanceDetail bd = (BalanceDetail) to;
 			BalanceItem b = new BalanceItem();
-			b.setNotes(bd.getAccounts());
+			//b.setNotes(bd.getAccounts());
 			b.setCode(bd.getCode());
 			if (bd.getDescription() != null) {
 				b.setDescription(bd.getDescription());
@@ -105,7 +105,7 @@ public class BalanceSheetController {
 				if (line.length() >= 2) {
 					line = line.substring(0, line.length() - 1);
 					b.setAccounts(line);
-					b.setNotes(line);
+					//b.setNotes(line);
 					b.setAmount(getAccountsAmount(line, bd.isCreditNature()));
 				}
 				
@@ -120,7 +120,7 @@ public class BalanceSheetController {
 				int i=0;
 				while (tokenizer.hasMoreTokens()) {
 					data[i] = tokenizer.nextToken();	
-					//System.out.println(data[i]);
+					
 					
 					++i;
 				}
@@ -132,13 +132,11 @@ public class BalanceSheetController {
 						BalanceItem balItem= li.next();	
 						String code = balItem.getCode();
 						String account= balItem.getAccounts();
-						System.out.println(code);
-					
+										
 						int j=0;
 						while (data[j]!=null){
-						if (code.equals(data[j])) {	
+						if (code.equals(data[j])) {						
 							
-							System.out.println(data[j]);
 							line = line +"|"+ account;// si ya lo tenemos, metemos las cuentas en line
 							
 						}
@@ -149,9 +147,9 @@ public class BalanceSheetController {
 					
 				line=line.substring(1, line.length());
 				b.setAmount(getAccountsAmount(line,bd.isCreditNature()));
-				b.setNotes(line);
+				//b.setNotes(line);
 				b.setAccounts(line);
-				System.out.println(bd.getCode()+"    "+"TOTAL "+accounts+" "+line);
+				
 			}
 					
 			balanceList.add(b);
@@ -281,7 +279,7 @@ public class BalanceSheetController {
 			p.setDate(new Date());
 			p.setAccountExpression(null);
 			p.setLowerLevelVisible(false);
-			p.setNoTouchedAccountVisible(false);
+		   p.setNoTouchedAccountVisible(false);
 			p.setRowsPerPage(20);
 			p.setAccountLevel(4);
 			p.setBudgeted(false);
