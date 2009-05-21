@@ -11,6 +11,8 @@ import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationDetail;
 import com.code.aon.accounting.AmortizationType;
 import com.code.aon.accounting.AutoConcept;
+import com.code.aon.accounting.Balance;
+import com.code.aon.accounting.BalanceDetail;
 import com.code.aon.accounting.Leasing;
 import com.code.aon.accounting.Loan;
 import com.code.aon.accounting.Period;
@@ -28,8 +30,8 @@ public class AccountingAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-PROJECT/aon-accounting/src/main/java/com/code/aon/accounting/dao/IAccountingAlias.java");
-		String[] classes = new String[11]; 
+		File file = new File("/Enterprise/aon-accounting/src/main/java/com/code/aon/accounting/dao/IAccountingAlias.java");
+		String[] classes = new String[13]; 
 		classes[0] = AccountBudget.class.getName();
 		classes[1] = AutoConcept.class.getName();
 		classes[2] = AccountEntry.class.getName();
@@ -41,6 +43,10 @@ public class AccountingAliasWriter {
 		classes[8] = Loan.class.getName();
 		classes[9] = Leasing.class.getName();
 		classes[10] = Period.class.getName();
+		classes[11] = Balance.class.getName();
+		classes[12] = BalanceDetail.class.getName();	
+		
+		
 		HibernateUtil.getSessionFactory();
 		AliasWriter writer = new AliasWriter("com.code.aon.accounting.dao");
 		writer.write(classes, file);
