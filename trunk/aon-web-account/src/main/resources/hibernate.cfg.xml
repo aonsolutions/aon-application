@@ -21,11 +21,11 @@
 		<mapping class="com.code.aon.accounting.Amortization"/>
 		<mapping class="com.code.aon.accounting.AmortizationDetail"/>
 		<mapping class="com.code.aon.accounting.AmortizationType"/>
+		<mapping class="com.code.aon.accounting.Balance"/>
+		<mapping class="com.code.aon.accounting.BalanceDetail"/>
 		<mapping class="com.code.aon.accounting.Loan"/>
 		<mapping class="com.code.aon.accounting.Leasing"/>
 		<mapping class="com.code.aon.accounting.Period"/>
-		<mapping class="com.code.aon.accounting.Balance"/>
-		<mapping class="com.code.aon.accounting.BalanceDetail"/>
 		
 		<!-- AON-ACCOUNT-BRIDGE Mapping files -->
 		<mapping class="com.code.aon.account.bridge.AccountEntryInvoice"/>
