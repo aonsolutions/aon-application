@@ -20,14 +20,20 @@
             <a4j:poll id="poll" interval="2000" enabled="#{generator_status.activePoll}" reRender="poll,grid"/>
         </h:form>
     </a4j:region>
-	<h:form>
+	<aon:form>
         <rich:modalPanel id="#{modalPanelName}" minHeight="550" height="550"  minWidth="1000" width="1000">
-            <f:facet name="header">
-                <h:outputText value="Generator" />
-            </f:facet>
-            <f:facet name="controls">
-                <h:graphicImage value="/images/icefaces/popupclose.gif" style="cursor:pointer" onclick="Richfaces.hideModalPanel('#{modalPanelName}')" />
-            </f:facet>
+			<f:facet name="header">
+				<aon:div styleClass="aon-popupWindow-title">
+					<aon:outputText value="Generator" />
+				</aon:div>
+			</f:facet>
+	        <f:facet name="controls">
+				<aon:commandButton type="button" styleClass="aon-popupWindow-close"
+					immediate="true" reRender="aonStatus">
+					<rich:componentControl for="#{modalPanelName}"
+						operation="hide" event="onclick" />
+				</aon:commandButton>
+	        </f:facet>
 			<rich:panel bodyClass="inpanelBody" id="grid">
          		<aon:div styleClass="aon-header">
 					<aon:panelGrid columns="1" width="100%" columnClasses="aon-header-name">
@@ -38,7 +44,7 @@
 				</aon:div>
 				<rich:panel bodyClass="bodyPanel">
 			        <rich:dataList id="dataList" var="msg" value="#{generator_status.status}">
-						<h:outputText value="#{msg}"/>
+						<aon:outputText value="#{msg}"/>
 					</rich:dataList>
 				</rich:panel>
 				<br/><rich:separator height="2" lineType="dashed"/><br/>
@@ -51,10 +57,10 @@
 				</aon:div>
 				<rich:panel bodyClass="bodyPanel">
 			        <rich:dataList id="dataList_Error" var="msg" value="#{generator_status.errors}">
-						<h:outputText style="color:red;" value="#{msg}"/>
+						<aon:outputText style="color:red;" value="#{msg}"/>
 					</rich:dataList>
 				</rich:panel>
 			</rich:panel>
         </rich:modalPanel>
-	</h:form>
+	</aon:form>
 </ui:composition>

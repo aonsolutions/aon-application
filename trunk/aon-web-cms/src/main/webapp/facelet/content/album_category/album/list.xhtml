@@ -41,17 +41,14 @@
 							accesskey="#{bundle.aon_key_search}">
 							<aon:actionListener method="#{album.onEditSearch}" />
 						</aon:commandButton>
-						<aon:commandButton id="generate"
+						<aon:commandButton id="generate" reRender="grid,poll"
+							actionListener="#{generator.onGenerateAlbums}"
 							value="#{appBundle.aon_generate}" 
 							rendered="#{cms.roleEditor}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
-							<aon:actionListener method="#{generator.onGenerateAlbums}" />
-							<a4j:support 
-								event="onclick" 
-								actionListener="#{generator_status.onActivePoll}"  
-								reRender="poll,grid" 
-								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:680, top:100});" />
+							<aon:actionListener method="#{generator_status.onActivePoll}" />
+							<rich:componentControl for="gen_log" operation="show" event="onclick"/>
 						</aon:commandButton>	
 						<aon:commandButton id="exit"
 							value="#{bundle.aon_close}"
