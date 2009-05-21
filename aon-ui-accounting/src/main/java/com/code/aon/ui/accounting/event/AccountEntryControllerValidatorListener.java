@@ -20,12 +20,12 @@ public class AccountEntryControllerValidatorListener extends ControllerAdapter {
     
     @Override
     public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-        executeAccountEntryValidations((AccountEntry)event.getController().getTo());
+        //executeAccountEntryValidations((AccountEntry)event.getController().getTo());
     }
 
     @Override
     public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-        executeAccountEntryValidations((AccountEntry)event.getController().getTo());
+        //executeAccountEntryValidations((AccountEntry)event.getController().getTo());
     }
 
     private void executeAccountEntryValidations(AccountEntry entry) throws ControllerListenerException {
@@ -44,7 +44,7 @@ public class AccountEntryControllerValidatorListener extends ControllerAdapter {
         } catch (ManagerBeanException e) {
             LOGGER.log(Level.SEVERE, "Error obtaining Period from Account Entry", e);
         }
-
         return false;
+        //return true;
     }
 }

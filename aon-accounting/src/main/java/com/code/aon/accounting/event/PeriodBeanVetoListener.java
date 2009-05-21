@@ -1,7 +1,6 @@
 package com.code.aon.accounting.event;
 
 import java.util.Date;
-import java.util.Iterator;
 
 import com.code.aon.accounting.Period;
 import com.code.aon.common.BeanManager;
