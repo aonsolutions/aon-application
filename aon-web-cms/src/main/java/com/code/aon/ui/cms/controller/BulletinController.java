@@ -38,7 +38,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class BulletinController extends BasicI18nController {
+public class BulletinController extends BasicI18nController implements ICMSConstants {
 
 	private int page;
 	
@@ -98,7 +98,7 @@ public class BulletinController extends BasicI18nController {
 	}
 
 	public void onSelectArticles(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		BulletinArticleController c = (BulletinArticleController)FormUtil.getController("bulletin_article");
+		BulletinArticleController c = (BulletinArticleController)FormUtil.getController(BULLETIN_ARTICLE);
 		IManagerBean moBean = BeanManager.getManagerBean(BulletinArticle.class);
 		Bulletin bulletin = (Bulletin) this.getTo();
 		Criteria criteria = new Criteria();
@@ -110,13 +110,13 @@ public class BulletinController extends BasicI18nController {
 	}
 
 	public void onInit(ActionEvent event){
-		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
+		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean(GENERATOR_STATUS);
 		status.onInit(event);
 		this.onSearch(event);
 	}
 
 	public void onGenerate(ActionEvent event){
-		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
+		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean(GENERATOR_STATUS);
 		status.onInit(event);
 		
 		VelocityUtil vu = new VelocityUtil();

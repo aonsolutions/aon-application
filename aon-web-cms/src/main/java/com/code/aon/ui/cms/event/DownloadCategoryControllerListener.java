@@ -5,12 +5,13 @@ import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.cms.controller.ICMSConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
-public class DownloadCategoryControllerListener extends ControllerAdapter {
+public class DownloadCategoryControllerListener extends ControllerAdapter implements ICMSConstants {
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)
@@ -45,6 +46,6 @@ public class DownloadCategoryControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
-		FormUtil.getController("download").onSearch(null);
+		FormUtil.getController(DOWNLOAD).onSearch(null);
 	}
 }

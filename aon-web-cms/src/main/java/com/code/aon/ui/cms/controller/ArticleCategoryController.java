@@ -6,10 +6,11 @@ import com.code.aon.cms.ArticleCategory;
 import com.code.aon.cms.ArticleCategoryDetail;
 import com.code.aon.cms.ArticleConfig;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class ArticleCategoryController extends BasicI18nController {
+public class ArticleCategoryController extends BasicI18nController implements ICMSConstants, Constants {
 
 	private int page;
 	
@@ -23,7 +24,7 @@ public class ArticleCategoryController extends BasicI18nController {
 
 
 	public void onInit(ActionEvent event){
-		((GeneratorConfigController)AonUtil.getRegisteredBean("generator_config")).initSection(ArticleConfig.class);
+		((GeneratorConfigController)AonUtil.getRegisteredBean(GENERATOR_CONFIG)).initSection(ArticleConfig.class);
 	}
 	
 	@SuppressWarnings("unused")
@@ -47,16 +48,16 @@ public class ArticleCategoryController extends BasicI18nController {
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = "- NO VALUE -";
+		String label = NO_VALUE_LABEL;
 		ArticleCategoryDetail articleCategoryDetail = (ArticleCategoryDetail)getModelRowdataI18n();
 		if (articleCategoryDetail != null) label = articleCategoryDetail.getLabel();
 		return label;
 	}
 
 	public String getBack(){
-		if (FormUtil.getController("article").getTo()==null)
-			return "article_list";
-		return "article_form";
+		if (FormUtil.getController(ARTICLE).getTo()==null)
+			return ARTICLE_LIST;
+		return ARTICLE_FORM;
 	}
 
 }

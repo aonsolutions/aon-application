@@ -22,6 +22,7 @@ public interface Constants {
 	MESSAGES_FILE				= "messages",
 	TEMPORAL_PATH				= "temp",
 	CONFIG_PATH					= "config",
+	NO_VALUE_LABEL				= "- NO VALUE -",
 
 	//RESOURCES CONSTANTS
 	OTHER_IMAGE					= "otro.png",

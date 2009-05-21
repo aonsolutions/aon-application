@@ -7,7 +7,7 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.ui.util.AonUtil;
 
-public class AdminController {
+public class AdminController implements ICMSConstants {
 
 	private String user_ = "esferalia";
 
@@ -36,9 +36,9 @@ public class AdminController {
 	public void onAccept(ActionEvent event) {
 		String crypted = hash(passwd);
 		if (user_.equals(user) && passwd_.equals(crypted)){
-			DomainUtilities domainUtilities = (DomainUtilities)AonUtil.getRegisteredBean(DomainUtilities.NAME);
+			DomainUtilities domainUtilities = (DomainUtilities)AonUtil.getRegisteredBean(DOMAIN_UTILS);
 			domainUtilities.assignAdminProfile();
-			CmsController cms = (CmsController)AonUtil.getRegisteredBean(CmsController.NAME);
+			CmsController cms = (CmsController)AonUtil.getRegisteredBean(CMS);
 			cms.assignAdminProfile();
 		}
 		user = "";
@@ -62,7 +62,6 @@ public class AdminController {
 			for (int i=0;i<messageDigest.length;i++) {
 				hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
 			}
-			String foo = messageDigest.toString();
 			md5_passwd=hexString+"";
 		}catch(NoSuchAlgorithmException nsae){
 		}

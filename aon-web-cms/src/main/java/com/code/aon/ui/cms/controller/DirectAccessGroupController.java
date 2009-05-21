@@ -16,10 +16,11 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.form.FormUtil;
 
 
-public class DirectAccessGroupController extends BasicI18nController {
+public class DirectAccessGroupController extends BasicI18nController implements ICMSConstants, Constants {
 
 	private String label;
 	
@@ -54,16 +55,16 @@ public class DirectAccessGroupController extends BasicI18nController {
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = "- NO VALUE -";
+		String label = NO_VALUE_LABEL;
 		DirectAccessGroupDetail directAccessGroupDetail = (DirectAccessGroupDetail)getModelRowdataI18n();
 		if (directAccessGroupDetail != null) label = directAccessGroupDetail.getLabel();
 		return label;
 	}
 
 	public String getBack(){
-		if (FormUtil.getController("direct_access").getTo()==null)
-			return "direct_access_list";
-		return "direct_access_form";
+		if (FormUtil.getController(DIRECT_ACCESS).getTo()==null)
+			return DIRECT_ACCESS_LIST;
+		return DIRECT_ACCESS_FORM;
 	}
 
 	@Override

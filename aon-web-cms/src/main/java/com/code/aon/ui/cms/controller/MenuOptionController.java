@@ -12,12 +12,13 @@ import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.controller.support.OrderedControllerSupport;
 import com.code.aon.ui.cms.controller.support.IOrderedControllerListener;
 import com.code.aon.ui.cms.util.MenuOptionUtil;
 
 
-public class MenuOptionController extends BasicI18nController implements IOrderedControllerListener{
+public class MenuOptionController extends BasicI18nController implements IOrderedControllerListener, Constants {
 
 	public OrderedControllerSupport orderedControllerSupport = new OrderedControllerSupport(ICMSAlias.MENU_OPTION_POSITION);
 
@@ -67,14 +68,14 @@ public class MenuOptionController extends BasicI18nController implements IOrdere
 
 
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = "- NO VALUE -";
+		String label = NO_VALUE_LABEL;
 		MenuOptionDetail mod = (MenuOptionDetail)getModelRowdataI18n();
 		if (mod != null) label = mod.getLabel();
 		return label;
 	}
 
 	public String getI18nUrl() throws ManagerBeanException {
-		String url = "- NO VALUE -";
+		String url = NO_VALUE_LABEL;
 		MenuOptionDetail mod = (MenuOptionDetail)getModelRowdataI18n();
 		if (mod != null) url = mod.getUrl();
 		return url;

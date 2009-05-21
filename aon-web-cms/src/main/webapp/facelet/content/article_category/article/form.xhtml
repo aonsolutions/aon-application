@@ -99,7 +99,7 @@
 							value="#{appBundle.article_category}"
 							action="article_category_list"
 							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item">
+							styleClass="aon-finding-toolbar-item-no-icon">
 							<aon:actionListener method="#{article_category.onSearch}" />
 						</aon:commandButton>
 				    </aon:div>
@@ -397,7 +397,7 @@
 								</aon:column>
 							</aon:dataTable>
 							
-							<aon:dataScroller2 for="articleRelatedDataTable" showNote="true" />					
+							<aon:dataScroller2 for="articleRelatedDataTable" />					
 								
 						</aon:div>
 		</aon:form>
@@ -568,7 +568,7 @@
 								</aon:column>
 							</aon:dataTable>
 														
-							<aon:dataScroller2 for="articleDocumentDataTable" showNote="true" />					
+							<aon:dataScroller2 for="articleDocumentDataTable" />					
 
 						</aon:div>
 

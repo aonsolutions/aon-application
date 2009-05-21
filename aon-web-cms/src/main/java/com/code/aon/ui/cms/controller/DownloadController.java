@@ -17,9 +17,10 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.util.AonUtil;
 
-public class DownloadController extends BasicI18nController{
+public class DownloadController extends BasicI18nController implements ICMSConstants, Constants {
 
 	private String title;
 	
@@ -54,7 +55,7 @@ public class DownloadController extends BasicI18nController{
 	}
 	
 	public String getI18nTitle() throws ManagerBeanException {
-		String title = "- NO VALUE -";
+		String title = NO_VALUE_LABEL;
 		DownloadDetail downloadDetail = (DownloadDetail)getModelRowdataI18n();
 		if (downloadDetail != null) title = downloadDetail.getTitle();
 		return title;
@@ -66,7 +67,7 @@ public class DownloadController extends BasicI18nController{
 	}
 
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("document");
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(DOCUMENT);
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		DownloadDetail current = (DownloadDetail)getToI18n();
 		current.setFile(image);

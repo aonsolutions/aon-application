@@ -57,7 +57,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.util.AonUtil;
 
-public class CollectionsController {
+public class CollectionsController implements ICMSConstants {
 
 	
 	public List<SelectItem> getLanguageTypes() throws ManagerBeanException {
@@ -250,7 +250,7 @@ public class CollectionsController {
 	}
 
 	public List<SelectItem> getSidebarTypes() throws ManagerBeanException, ExpressionException {
-		DomainUtilities domainUtilities = (DomainUtilities)AonUtil.getRegisteredBean(DomainUtilities.NAME);
+		DomainUtilities domainUtilities = (DomainUtilities)AonUtil.getRegisteredBean(DOMAIN_UTILS);
 		List<SelectItem> types = new LinkedList<SelectItem>();
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		SelectItem item = new SelectItem("", "");
@@ -290,7 +290,7 @@ public class CollectionsController {
 	}
 	
 	public List<SelectItem> getPageTypes() throws ManagerBeanException, ExpressionException {
-		DomainUtilities domainUtilities = (DomainUtilities)AonUtil.getRegisteredBean(DomainUtilities.NAME);
+		DomainUtilities domainUtilities = (DomainUtilities)AonUtil.getRegisteredBean(DOMAIN_UTILS);
 		List<SelectItem> types = new LinkedList<SelectItem>();
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		SelectItem item = new SelectItem("", "");
@@ -367,7 +367,7 @@ public class CollectionsController {
 	}
 
 	public List<SelectItem> getModularPageOptionTypes() throws ManagerBeanException, ExpressionException {
-		DomainUtilities domainUtilities = (DomainUtilities)AonUtil.getRegisteredBean(DomainUtilities.NAME);
+		DomainUtilities domainUtilities = (DomainUtilities)AonUtil.getRegisteredBean(DOMAIN_UTILS);
 		List<SelectItem> types = new LinkedList<SelectItem>();
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		SelectItem item = new SelectItem("", "");
@@ -586,7 +586,7 @@ public class CollectionsController {
 	}
 
 	public List<SelectItem> getAvailableParentSectionList() throws ManagerBeanException {
-		SectionController sectionController = (SectionController)AonUtil.getRegisteredBean("section");
+		SectionController sectionController = (SectionController)AonUtil.getRegisteredBean(SECTION);
 		Section current = (Section)sectionController.getTo();
 		
 		List<SelectItem> itemList = new LinkedList<SelectItem>();

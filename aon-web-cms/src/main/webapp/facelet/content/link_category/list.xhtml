@@ -114,22 +114,23 @@
 					<f:facet name="header">
 						<aon:outputText value="#{appBundle.link_category_active}" />
 					</f:facet>
-					<aon:commandLink title="#{appBundle.link_category_activate}" 
-						action="link_category_list"
-						actionListener="#{link_category.onActivate}"
-						onmouseover="disableRowSelector();" onmouseout="enableRowSelector();" 
-						rendered="#{!to.active}">
-						<aon:graphicImage id="LinkCategory_active" alt="#{appBundle.link_category_activate}"
-							url="/images/cms/inactive.png" />
-					</aon:commandLink>
-					<aon:commandLink title="#{appBundle.link_category_deactivate}" 
-						action="link_category_list"
-						actionListener="#{link_category.onDeactivate}" 
-						onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
-						rendered="#{to.active}">
-						<aon:graphicImage id="LinkCategory_deactive" alt="#{appBundle.link_category_deactivate}"
-							url="/images/cms/active.png" />
-					</aon:commandLink>
+					<aon:div onmouseover="disableRowSelector();"
+						onmouseout="enableRowSelector();" >				
+						<aon:commandLink title="#{appBundle.link_category_activate}" 
+							action="link_category_list"
+							actionListener="#{link_category.onActivate}"
+							rendered="#{!to.active}">
+							<aon:graphicImage id="LinkCategory_active" alt="#{appBundle.link_category_activate}"
+								url="/images/cms/inactive.png" />
+						</aon:commandLink>
+						<aon:commandLink title="#{appBundle.link_category_deactivate}" 
+							action="link_category_list"
+							actionListener="#{link_category.onDeactivate}" 
+							rendered="#{to.active}">
+							<aon:graphicImage id="LinkCategory_deactive" alt="#{appBundle.link_category_deactivate}"
+								url="/images/cms/active.png" />
+						</aon:commandLink>
+					</aon:div>
 				</aon:column>
 
 			</aon:dataTable>

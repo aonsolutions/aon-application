@@ -16,9 +16,10 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.cms.Constants;
 
 
-public class LinkController extends BasicI18nController {
+public class LinkController extends BasicI18nController implements Constants {
 
 	private String label;
 	
@@ -53,7 +54,7 @@ public class LinkController extends BasicI18nController {
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = "- NO VALUE -";
+		String label = NO_VALUE_LABEL;
 		LinkDetail ld = (LinkDetail)getModelRowdataI18n();
 		if (ld != null) label = ld.getLabel();
 		return label;

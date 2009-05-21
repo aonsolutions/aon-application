@@ -5,10 +5,10 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.util.AonUtil;
 
-public class GeneratorApplicationController {
+public class GeneratorApplicationController implements ICMSConstants {
 
 	public void onGenerate(ActionEvent event) throws ManagerBeanException {
-		GeneratorController generator = (GeneratorController)AonUtil.getRegisteredBean("generator");
+		GeneratorController generator = (GeneratorController)AonUtil.getRegisteredBean(GENERATOR);
 		generator.getStatus().onInit(event);
 		generator.getStatus().addMessage("ALL PROCESS WORKING...PLEASE WAIT TO START.");
         this.limitar();

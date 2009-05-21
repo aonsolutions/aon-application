@@ -23,7 +23,7 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class ProductController extends BasicI18nController {
+public class ProductController extends BasicI18nController implements ICMSConstants {
 
 	private String shortDesc;
 	
@@ -123,7 +123,7 @@ public class ProductController extends BasicI18nController {
 	}
 	
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		Product current = (Product)getTo();
 		current.setImage(image);

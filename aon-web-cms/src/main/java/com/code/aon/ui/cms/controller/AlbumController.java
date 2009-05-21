@@ -21,12 +21,13 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.ImageUtil;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class AlbumController extends BasicI18nController {
+public class AlbumController extends BasicI18nController implements ICMSConstants, Constants {
 
 	private int page;
 	
@@ -59,7 +60,7 @@ public class AlbumController extends BasicI18nController {
 	}
 	
 	public String getI18nTitle() throws ManagerBeanException {
-		String title = "- NO VALUE -";
+		String title = NO_VALUE_LABEL;
 		AlbumDetail ad = (AlbumDetail)getModelRowdataI18n();
 		if (ad != null) title = ad.getTitle();
 		return title;
@@ -72,21 +73,21 @@ public class AlbumController extends BasicI18nController {
 	}
 	
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		Album current = (Album)getTo();
 		current.setImage(image);
 	}
 
 	public String getBack(){
-		if (FormUtil.getController("albumImage").getTo()==null)
-			return "home";
-		return "album_image_form";
+		if (FormUtil.getController(ALBUM_IMAGE).getTo()==null)
+			return HOME;
+		return ALBUM_IMAGE_FORM;
 	}
 
 	
 	public void onAlbumImageCriteria(ActionEvent event) throws ManagerBeanException {
-		AlbumImageController albumImageController = (AlbumImageController)AonUtil.getRegisteredBean("albumImage");
+		AlbumImageController albumImageController = (AlbumImageController)AonUtil.getRegisteredBean(ALBUM_IMAGE);
 		AlbumImage albumImageTo = (AlbumImage)albumImageController.getTo();
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(this.getFieldName(ICMSAlias.ALBUM_ID),albumImageTo.getAlbum().getId());
@@ -119,7 +120,7 @@ public class AlbumController extends BasicI18nController {
 
 		String albumAlias = "AUTO_GENERATED";
 		
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery"); 
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY); 
 		List<Image> list = (List<Image>) controller.getModel().getWrappedData();
 		
 		this.status.add(0,GregorianCalendar.getInstance().getTime()+": Searching category...");

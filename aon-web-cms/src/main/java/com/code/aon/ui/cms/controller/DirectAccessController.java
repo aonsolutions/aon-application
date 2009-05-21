@@ -18,11 +18,12 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.MenuOptionUtil;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class DirectAccessController extends BasicI18nController {
+public class DirectAccessController extends BasicI18nController implements ICMSConstants, Constants {
 
 	private String label;
 	
@@ -59,14 +60,14 @@ public class DirectAccessController extends BasicI18nController {
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = "- NO VALUE -";
+		String label = NO_VALUE_LABEL;
 		DirectAccessDetail dad = (DirectAccessDetail)getModelRowdataI18n();
 		if (dad != null) label = dad.getLabel();
 		return label;
 	}
 
 	public String getI18nUrl() throws ManagerBeanException {
-		String url = "- NO VALUE -";
+		String url = NO_VALUE_LABEL;
 		DirectAccessDetail dad = (DirectAccessDetail)getModelRowdataI18n();
 		if (dad != null) url = dad.getUrl();
 		return url;
@@ -112,7 +113,7 @@ public class DirectAccessController extends BasicI18nController {
 	}
 	
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		DirectAccess current = (DirectAccess)getTo();
 		current.setImage(image);

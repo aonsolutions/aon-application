@@ -21,10 +21,11 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class ArticleController extends BasicI18nController {
+public class ArticleController extends BasicI18nController implements ICMSConstants, Constants {
 
 	private String title;
 
@@ -79,21 +80,21 @@ public class ArticleController extends BasicI18nController {
 	}
 	
 	public String getI18nTitle() throws ManagerBeanException {
-		String label = "- NO VALUE -";
+		String label = NO_VALUE_LABEL;
 		ArticleDetail fd = (ArticleDetail)getModelRowdataI18n();
 		if (fd != null) label = fd.getTitle();
 		return label;
 	}
 
 	public String getI18nSubtitle() throws ManagerBeanException {
-		String label = "- NO VALUE -";
+		String label = NO_VALUE_LABEL;
 		ArticleDetail fd = (ArticleDetail)getModelRowdataI18n();
 		if (fd != null) label = fd.getSubtitle();
 		return label;
 	}
 
 	public String getI18nContent() throws ManagerBeanException {
-		String label = "- NO VALUE -";
+		String label = NO_VALUE_LABEL;
 		ArticleDetail fd = (ArticleDetail)getModelRowdataI18n();
 		if (fd != null) label = fd.getContent();
 		return label;
@@ -110,21 +111,21 @@ public class ArticleController extends BasicI18nController {
 	}
 	
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		Article current = (Article)getTo();
 		current.setImage(image);
 	}
 
 	public void onSelectThumbnail(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		Article current = (Article)getTo();
 		current.setThumbnail(image);
 	}
 
 	public void onSelectRelatedArticles(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		ArticleRelatedController c = (ArticleRelatedController)FormUtil.getController("articleRelated");
+		ArticleRelatedController c = (ArticleRelatedController)FormUtil.getController(ARTICLE_RELATED);
 		IManagerBean moBean = BeanManager.getManagerBean(ArticleRelated.class);
 		Article article = (Article) this.getTo();
 		Criteria criteria = new Criteria();
@@ -135,7 +136,7 @@ public class ArticleController extends BasicI18nController {
 	}
 
 	public void onSelectArticleDocuments(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		ArticleDocumentController c = (ArticleDocumentController)FormUtil.getController("articleDocument");
+		ArticleDocumentController c = (ArticleDocumentController)FormUtil.getController(ARTICLE_DOCUMENT);
 		IManagerBean moBean = BeanManager.getManagerBean(ArticleDocument.class);
 		Article article = (Article) this.getTo();
 		Criteria criteria = new Criteria();

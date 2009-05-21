@@ -1,22 +1,23 @@
 package com.code.aon.ui.cms.tree;
 
 import com.code.aon.ui.cms.controller.GalleryController;
+import com.code.aon.ui.cms.controller.ICMSConstants;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class FileSystemBean {
+public class FileSystemBean implements ICMSConstants {
 
 	private String current;
 	
     public synchronized FileSystemNode[] getImageRoots() {
-    	current = "gallery";
+    	current = GALLERY;
     	FileSystemNode[] srcRoots = new FileSystemNode[1];
     	srcRoots[0] = new FileSystemNode(ControllerUtil.getImagesPath(),this);
         return srcRoots;
     }
 
     public synchronized FileSystemNode[] getDocumentRoots() {
-    	current = "document";
+    	current = DOCUMENT;
     	FileSystemNode[] srcRoots = new FileSystemNode[1];
     	srcRoots[0] = new FileSystemNode(ControllerUtil.getDocumentsPath(),this);
         return srcRoots;

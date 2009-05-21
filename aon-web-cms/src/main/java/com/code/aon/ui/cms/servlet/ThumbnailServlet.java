@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.code.aon.cms.Config;
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.ImageUtil;
 

@@ -6,10 +6,11 @@ import com.code.aon.cms.AlbumCategory;
 import com.code.aon.cms.AlbumCategoryDetail;
 import com.code.aon.cms.AlbumConfig;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class AlbumCategoryController extends BasicI18nController {
+public class AlbumCategoryController extends BasicI18nController implements ICMSConstants, Constants {
 
 	private int page;
 	
@@ -22,7 +23,7 @@ public class AlbumCategoryController extends BasicI18nController {
 	}
 	
 	public void onInit(ActionEvent event) {
-		((GeneratorConfigController)AonUtil.getRegisteredBean("generator_config")).initSection(AlbumConfig.class);
+		((GeneratorConfigController)AonUtil.getRegisteredBean(GENERATOR_CONFIG)).initSection(AlbumConfig.class);
 	}
 
 	@SuppressWarnings("unused")
@@ -46,16 +47,16 @@ public class AlbumCategoryController extends BasicI18nController {
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = "- NO VALUE -";
+		String label = NO_VALUE_LABEL;
 		AlbumCategoryDetail albumCategoryDetail = (AlbumCategoryDetail)getModelRowdataI18n();
 		if (albumCategoryDetail != null) label = albumCategoryDetail.getLabel();
 		return label;
 	}
 
 	public String getBack(){
-		if (FormUtil.getController("album").getTo()==null)
-			return "album_list";
-		return "album_form";
+		if (FormUtil.getController(ALBUM).getTo()==null)
+			return ALBUM_LIST;
+		return ALBUM_FORM;
 	}
 
 }

@@ -14,8 +14,6 @@ public class DomainUtilities {
 
 	private boolean adminProfile = false;
 	
-	public static String NAME = "domainUtils";
-	
 	public DomainUtilities(){
 		initPageType();
 		initSidebarType();
