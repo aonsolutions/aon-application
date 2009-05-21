@@ -8,7 +8,7 @@
 
 		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon-dini-es?autoReconnect=true</property>		
 		<property name="connection.username">dbuser</property>		
-		<property name="show_sql">true</property>		
+			
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
 		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
 		<property name="connection.password">serubd2000</property>		
@@ -26,7 +26,8 @@
 		<mapping class="com.code.aon.account.Loan"/>
 		<mapping class="com.code.aon.account.Leasing"/>
 		<mapping class="com.code.aon.account.Period"/>
-		
+		<mapping class="com.code.aon.accounting.Balance"/>
+		<mapping class="com.code.aon.accounting.BalanceDetail"/>
 		<mapping class="com.code.aon.finance.RegistryBank"/>
 		<mapping class="com.code.aon.finance.Bank"/>
 				
