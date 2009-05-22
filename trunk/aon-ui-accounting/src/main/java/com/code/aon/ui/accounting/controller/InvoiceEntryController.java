@@ -555,9 +555,10 @@ public class InvoiceEntryController {
 					obtainRetentionQuotasPerAccount(invoice), obtainTaxQuotasPerAccount(invoice), obtainBasesPerAccount(details));
 			getHeader().setAccountEntryId(entry.getId());
 			this.isNew = false;
-			loadAccountEntryController(entry);
+			//loadAccountEntryController(entry);
 			HibernateUtil.getSession(sessionName).flush();
 			HibernateUtil.commitTransaction(sessionName);
+			onViewAccountEntry(event);
 			onGenerateKey = "accountEntry_form";
 		} catch (Exception e) {
 			onGenerateKey = null;

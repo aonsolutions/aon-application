@@ -20,15 +20,16 @@
 				<ui:define name="additionalToolbarContent">
 
 					<aon:commandButton id="reset" 
-						value="#{accountingBundle.accounting_new_manual_entry}"
-						accesskey="#{bundle.aon_key_new}" 
+						value="#{bundle.aon_reset}"
+						accesskey="#{bundle.aon_key_new}"
+						title="#{bundle.aon_key_new}"
 						action="accountEntry_form"
 						actionListener="#{accountEntry.onReset}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"
 						rendered="#{!accountEntry.new}" />
 					<aon:commandButton 
 						value="#{accountingBundle.accounting_new_invoice_entry}"
-						accesskey="#{bundle.aon_key_new}"
+						accesskey="X" title="Alt+X"
 						actionListener="#{invoiceEntry.onReset}"
 						action="account_invoice_entry"
 						rendered="#{!accountEntry.new}"
