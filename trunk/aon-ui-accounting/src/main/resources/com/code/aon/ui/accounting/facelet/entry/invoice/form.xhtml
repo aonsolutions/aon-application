@@ -132,7 +132,7 @@
 							<aon:selectOneMenu id="Account_invoice_series"
 								rendered="#{invoiceEntry.sales and invoiceEntry.new}"
 								disabled="#{invoiceEntry.newDetail}"
-								valueChangeListener="onSeriesChanged"
+								valueChangeListener="#{invoiceEntry.onSeriesChanged}"
 								reRender="Account_invoice_number"
 								value="#{invoiceEntry.header.series}">
 								<f:selectItem itemValue="" itemLabel=" " />
@@ -161,12 +161,34 @@
 						</aon:div>
 
 						<aon:outputLabel for="Account_date" value="#{bundle.aon_date}" />
-						<aon:selectInputDate size="8" id="Account_date"
-							disabled="#{invoiceEntry.newDetail}"
-							value="#{invoiceEntry.header.date}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}" />
-
+						<aon:div>
+							<aon:selectInputDate size="8" id="Account_date"
+								disabled="#{invoiceEntry.newDetail}"
+								value="#{invoiceEntry.header.date}"
+								timeZone="#{timeZoneController.timeZone}"
+								reRender="Account_taxDate" ajaxSingle="true"
+								popupDateFormat="#{bundle.aon_date_pattern}">
+								<a4j:support 
+									event="oninputchange"
+									actionListener="#{invoiceEntry.onDateChanged}"
+									reRender="Account_taxDate"/>
+								<a4j:support 
+									event="onchanged"
+									actionListener="#{invoiceEntry.onDateChanged}"
+									reRender="Account_taxDate"/>
+							</aon:selectInputDate>
+								
+							<aon:outputLabel for="Account_taxDate"
+								styleClass="aon-form-date-label" 
+								style="margin-right: 5px;"
+								value="#{accountingBundle.accounting_tax_date}" />
+							<aon:selectInputDate size="8" id="Account_taxDate"
+								disabled="#{invoiceEntry.newDetail}"
+								value="#{invoiceEntry.header.taxDate}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}" />
+						</aon:div>
+						
 						<aon:outputLabel for="AccountEntry_securityLevel"
 							value="#{bundle.aon_security_level}" />
 						<aon:selectOneRadio id="AccountEntry_securityLevel"

@@ -272,6 +272,7 @@ public class InvoiceEntryController {
 		header.setAccount(account);
 		header.setRegistry(new Registry());
 		header.setDate(new Date());
+		header.setTaxDate(new Date());
 		header.setSecurityLevel(SecurityLevel.OFFICIAL);
 		header.setTransaction(InvoiceTransactionType.NATIONAL);
 		header.setInvestment(false);
@@ -580,16 +581,6 @@ public class InvoiceEntryController {
 			
 	}
 
-	private void loadAccountEntryController(AccountEntry entry) throws ManagerBeanException {
-		AccountEntryController entryController = (AccountEntryController)FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
-		entryController.setCriteria(criteria);
-		entryController.onSearch(null);
-		entryController.getModel().setRowIndex(0);
-		entryController.onSelect(null);
-	}
-
 	/**
 	 * Gets the invoice total.
 	 * 
@@ -745,6 +736,7 @@ public class InvoiceEntryController {
 
 	private Invoice mergeInvoice(Invoice invoice) throws ManagerBeanException {
 		invoice.setIssueDate(getHeader().getDate());
+		invoice.setTaxDate(getHeader().getTaxDate());
 		invoice.setSeries(getHeader().getSeries());
 		if (getHeader().getType().equals(InvoiceType.SALES)) {
 			if (getHeader().getNumber() == 0) {
@@ -1093,6 +1085,10 @@ public class InvoiceEntryController {
 			getHeader().setNumber(number);
 			getHeader().setSecurityLevel(securityLevel);
 		}
+	}
+
+	public void onDateChanged(ActionEvent event) {
+		getHeader().setTaxDate(getHeader().getDate());
 	}
 
 	@SuppressWarnings("unchecked")
