@@ -9,6 +9,8 @@ import javax.naming.Name;
 import javax.naming.ldap.LdapName;
 import javax.naming.ldap.Rdn;
 
+import org.apache.commons.lang.StringUtils;
+
 public class NameResolver implements ILdapConstants {
 
 	private static final Logger LOGGER = Logger.getLogger(NameResolver.class.getName());
@@ -70,6 +72,11 @@ public class NameResolver implements ILdapConstants {
 
 	public static Name getName( String name ) {
 		try {		
+			if ( !StringUtils.isBlank(name) ) {
+				if ( (name.charAt(0) == '\"') && (name.charAt(name.length()-1) == '\"') ) {
+					return new LdapName( name.substring(1, name.length()-1) );
+				}
+			}
 			return new LdapName( name );
 		} catch (InvalidNameException e) {
 			LOGGER.log( Level.SEVERE, "Error creating Name: " + name, e);			
