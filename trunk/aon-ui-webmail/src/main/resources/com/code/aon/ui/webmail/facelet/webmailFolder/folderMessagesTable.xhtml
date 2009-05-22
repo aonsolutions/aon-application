@@ -119,7 +119,7 @@
 									<aon:outputText value="#{webmailBundle.webmail_subject}" />
 								</aon:commandLink>
 							</f:facet>
-							<aon:outputText escape="false" value="#{to.subject}"
+							<aon:outputText escape="false" value="#{to.displaySubject}"
 								style="#{to.readed?'':'font-weight: bold'}" >
 								<aon:abbreviateConverter maxWidth="60" />
 							</aon:outputText>
