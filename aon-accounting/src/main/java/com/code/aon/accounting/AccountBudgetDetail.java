@@ -169,7 +169,9 @@ public class AccountBudgetDetail implements ITransferObject {
      * @return the debit
      */
     public Double getDebit() {
-        return debit;
+    	if(debit==null)
+			return 0.0;
+    	return debit;
     }
 
     /**
@@ -187,6 +189,8 @@ public class AccountBudgetDetail implements ITransferObject {
 	 * @return the credit
 	 */
 	public Double getCredit() {
+		if(credit==null)
+			return 0.0;
 		return credit;
 	}
 
