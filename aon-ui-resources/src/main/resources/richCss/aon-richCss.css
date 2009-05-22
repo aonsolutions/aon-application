@@ -1376,7 +1376,7 @@ color:#000;
 	 background:transparent url(images/aon-icon/aon-icon-menu-top-item.png) left top no-repeat;
  }
  .aon-menuItem-selectClass{
- 	background-color:red; 		
+ 	background-color:#ddd; 		
  }
  .aon-menuItem-no-iconClass{
  	display:none;
