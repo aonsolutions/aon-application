@@ -16,7 +16,6 @@
 					value="#{accountingBundle.accounting_account_budget_module}" />
 				<ui:param name="controller" value="#{accountBudget}" />
 				<ui:param name="controller" value="#{accountBudget}" />
-				valuesTable
 				<ui:define name="additionalToolbarContent">
 					<h:commandLink target="_blank"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
@@ -46,11 +45,6 @@
 						<ui:param name="required" value="true" />
 						<ui:param name="entity" value="#{accountBudget.to.account}" />
 						<ui:param name="ELExpression" value="accountBudget.to.account" />
-						<!--  
-						<a4j:support ajaxSingle="true" event="onchange"
-							actionListener="#{accountBudget.onValidateAccount}" />
-						<aon:actionListener method="#{accountBudget}" />
-						-->
 					</ui:decorate>
 
 					<aon:outputLabel for="AccountBudget_accountPeriod"
@@ -61,24 +55,12 @@
 						<f:selectItems value="#{accountingCollections.accountPeriodKeys}" />
 					</aon:selectOneMenu>
 					
-					<!--  
-					<aon:outputLabel for="AccountBudget_date" value="#{bundle.aon_date}" />
-					<aon:selectInputDate size="8" id="AccountBudget_date"
-						value="#{accountBudget.to.date}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}" />
-					-->
-
 					<aon:outputLabel for="AccountBudget_debit" 
 						value="#{accountingBundle.accounting_debit}"
 						rendered="#{accountBudget.new}"/>
 					<aon:inputText id="AccountBudget_debit" value="#{accountBudget.debit}"
 						size="10" rendered="#{accountBudget.new}">
 						<f:validateDoubleRange />
-						<!--  
-						<a4j:support ajaxSingle="true" event="onkeyup" disabled="#{!accountBudget.new}"
-							actionListener="#{accountBudget.onChangeDebit}"/>
-						-->
 					</aon:inputText>
 
 					<aon:outputLabel for="AccountBudget_credit" 
@@ -87,20 +69,9 @@
 					<aon:inputText id="AccountBudget_credit" value="#{accountBudget.credit}"
 						size="10" rendered="#{accountBudget.new}">
 						<f:validateDoubleRange />
-						<!--  
-						<a4j:support ajaxSingle="true" event="onkeyup" disabled="#{!accountBudget.new}"
-							actionListener="#{accountBudget.onChangeCredit}"/>
-						-->
 					</aon:inputText>
 		
 				</aon:panelGrid>
-				
-				<!--  
-				<aon:panelGrid id="panelDataTable" columns="3" style="width: 40%;">
-				
-				</aon:panelGrid>
-				-->
-				
 			</aon:div>
 					
 			<aon:div id="valuesTable" styleClass="aon-scroll-area" style="width:400px"
