@@ -11,6 +11,7 @@
 			template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 			<ui:param name="controller" value="#{accountBudgetDetail}" />
 			<ui:param name="columnClasses" value="
+			aon-editDataTable-textColumn,
 			aon-editDataTable-numberColumn,
 			aon-editDataTable-numberColumn" />
 
@@ -27,7 +28,7 @@
 				</f:facet>
 				<aon:outputText value="#{accountBudgetDetail.monthNames[accountBudgetDetail.model.rowIndex]}" />
 				<f:facet name="footer">
-					<aon:outputText value="#{accountingBundle.accounting_total_expenses}" />
+					<aon:outputText value="#{accountingBundle.accounting_total}" />
 				</f:facet>
 			</aon:column>
 			

@@ -90,7 +90,7 @@ public class BalanceSheetController implements ICollectionProvider{
 			BalanceItem b = new BalanceItem();
 			b.setCode(bd.getCode());
 			if (bd.getDescription() != null) {
-				b.setDescription(bd.getDescription());
+				b.setDescription(bd.getDescription().trim());
 			}
 
 			if (bd.getAccounts() != null && bd.isInternalCalculation() == false) {
@@ -257,7 +257,7 @@ public class BalanceSheetController implements ICollectionProvider{
 		}
 
 		public String getReportDescription() {
-			return StringUtils.leftPad(description, (getLevel() * 5));
+			return StringUtils.leftPad(description, (getLevel() * 5)+description.length());
 		}
 
 		public void setDescription(String description) {

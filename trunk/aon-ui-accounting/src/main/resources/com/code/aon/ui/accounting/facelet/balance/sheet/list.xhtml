@@ -47,33 +47,34 @@
 								   aon-editDataTable-textColumn,
 								   aon-editDataTable-numberColumn">
 
-					<aon:column rendered="#{to.visible}">
+					<aon:column>
 						<f:facet name="header">
 							<aon:outputText
 								value="#{accountingBundle.accounting_balance_cdg}" />
 						</f:facet>
-						<aon:outputText size="80"
+						<aon:outputText size="80" rendered="#{to.visible}"
 							style="padding-left: #{to.level * 15}px;#{to.title?'font-weight:bold;':''}" 
 							value="#{to.description}" />
 					</aon:column>
 
-					<aon:column rendered="#{to.visible}">
+					<aon:column>
 						<f:facet name="header">
 							<aon:outputText
 								value="#{accountingBundle.accounting_balance_sheet_notes}" />
 						</f:facet>
-						<aon:outputText size="60" value="#{to.notes}" />
+						<aon:outputText size="60" value="#{to.notes}" rendered="#{to.visible}"/>
 					</aon:column>
 
-					<aon:column rendered="#{to.visible}">
+					<aon:column>
 						<f:facet name="header">
 							<aon:outputText
 								value="#{accountingBundle.accounting_accumulated}" />
 						</f:facet>
-						<aon:outputText size="20" value="#{to.amount}">
+						<aon:outputText size="20" value="#{to.amount}" rendered="#{to.visible}">
 							<f:convertNumber pattern="#,##0.00;(#,##0.00)" />
 						</aon:outputText>
 					</aon:column>
+					
 				</aon:editDataTable>
 				<aon:dataScroller2 for="balanceDetailData" showNote="true" />
 			</aon:div>

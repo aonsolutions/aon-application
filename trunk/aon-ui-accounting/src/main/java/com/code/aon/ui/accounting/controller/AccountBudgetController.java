@@ -25,8 +25,6 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
 public class AccountBudgetController extends BasicController {
@@ -114,51 +112,27 @@ public class AccountBudgetController extends BasicController {
 		return Month.values();
 	}
 
-	public void initializeValueList(){
+	public void buildDetailValueList(){
 		AccountBudgetDetail detail = new AccountBudgetDetail();
 		detail.setAccountBudget((AccountBudget)getTo());
 		valueList=new ArrayList<AccountBudgetDetail>();
+		creditTotal=new Double(0.0);
+		debitTotal=new Double(0.0);
 		for(int i=0;i<Month.values().length;i++){
+			if(credit!=null){
+				detail.setCredit(getCredit());
+				creditTotal+=credit;
+			} else {
+				detail.setCredit(0.0);
+			}
+			if(debit!=null){
+				detail.setDebit(getDebit());
+				debitTotal+=debit;
+			} else {
+				detail.setDebit(0.0);
+			}
 			valueList.add(i, detail);
 		}
-	}
-
-	/**
-	 * Actualiza los valores del haber por mes la lista de los valores  
-	 * @param event
-	 */
-	public void onChangeCredit(ActionEvent event) {
-		if(credit!=null){
-			for(int i=0;i<valueList.size();i++){
-				valueList.get(i).setCredit(getCredit());; 
-			}
-			credit=null;
-		}
-	}
-
-	public void onChangeDebit(ActionEvent event) {
-		if(debit!=null){
-			for(int i=0;i<valueList.size();i++){
-				valueList.get(i).setDebit(getDebit());
-			}
-			debit=null;
-		}
-	}
-	
-	public void onChangeMonthDebit(ActionEvent event) {
-		//debit = ((AccountBudgetDetail)FormUtil.getController("accountBudgetDetail").getTo()).getDebit();
-		if(debitTotal==null){
-			debitTotal=debit;
-		}
-		debitTotal+=debit;
-	}
-	
-	public void onChangeMonthCredit(ActionEvent event) {
-		//credit = ((AccountBudgetDetail)FormUtil.getController("accountBudgetDetail").getTo()).getCredit();
-		if(creditTotal==null){
-			creditTotal=credit;
-		}
-		creditTotal+=credit;
 	}
 	
 	/**
@@ -223,55 +197,12 @@ public class AccountBudgetController extends BasicController {
 		insertBudgetDetail();
 	}
 	
-	/*
-	@Override
-	public void onSelect(ActionEvent event) {
-		// TODO Auto-generated method stub
-		super.onSelect(event);
-		buildCreditDebitList();
-	}
-	*/
-	
-	/**
-	 * Construye las listas de debe y haber a partir del detalle de los presupuestos
-	 * de las cuentas
-	 */
-	/*
-	private void buildCreditDebitList() {
-		List<ITransferObject> detailList = null;
-		valueList = new ArrayList<AccountBudgetDetail>();
-		//debitList = new ArrayList<AccountBudgetDetail>();
-		for(int i=0;i<Month.values().length;i++){
-			valueList.add(i, null);
-			//debitList.add(i, null);
-		}
-		
-		try {
-			IController detailController = FormUtil.getController("accountBudgetDetail");
-			detailList = detailController.getManagerBean().getList(detailController.getCriteria());
-		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		for(ITransferObject to:detailList){
-			AccountBudgetDetail detail = (AccountBudgetDetail)to; 
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(detail.getDate());
-			int index = cal.get(Calendar.MONTH);
-			valueList.set(index, detail);
-			//debitList.set(index, detail);
-		}
-	}
-	*/
-	
 	private boolean isValidAccountPeriod(){
 		AccountBudget to = (AccountBudget)getTo();
 		List<ITransferObject> list = null;
 		try {
 			list = getManagerBean().getList(getCriteria());
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -287,35 +218,25 @@ public class AccountBudgetController extends BasicController {
 	}
 	
 	public void calculateCreditDebitTotals(){
-		
 		PreparedStatement sum = null;
 		ResultSet sumSet = null;
-	
 		try {
 			StringWriter sumStmt = new StringWriter();
 			sumStmt.append("SELECT SUM(s.debit),SUM(s.credit)");
 			sumStmt.append(" FROM account_budget_detail s ");
 			sumStmt.append(" WHERE s.account LIKE ?");
 			sumStmt.append(" AND s.account_period = ?");
-		
 			sum = HibernateUtil.getSQLConnection().prepareStatement(sumStmt.toString());
-			
 			sum.setString(1, ((AccountBudget)getTo()).getAccount().getId());
 			sum.setString(2, ((AccountBudget)getTo()).getPeriod());
-			
 			sumSet = sum.executeQuery();
-			
 			if (sumSet.next()) {
 				debitTotal = sumSet.getDouble(1);
 				creditTotal = sumSet.getDouble(2);
 			}
-
-		
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 
 }
