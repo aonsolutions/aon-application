@@ -1,0 +1,238 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div>
+		<aon:editDataTable id="balanceDetailData"
+			rendered="#{!balance.new}"
+			value="#{balanceDetail.model}" var="to" rows="20"
+			columnClasses="aon-editDataTable-iconColumn
+				, aon-editDataTable-numberColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,
+				aon-editDataTable-numberColumn,aon-editDataTable-iconColumn	,aon-editDataTable-iconColumn
+				,aon-editDataTable-iconColumn,aon-editDataTable-iconColumn,aon-editDataTable-iconColumn
+				,aon-editDataTable-buttonsColumn">
+
+			<aon:rowSelector toggleOnClick="#{balanceDetail.to == null}"
+				actionListener="#{balanceDetail.onSelect}" />
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:outputText value="&#160;" />
+				<f:facet name="footer">
+					<aon:div>
+						<aon:commandButton alt="[#{bundle.aon_reset}]"
+							styleClass="aon-editDataTable-button aon-icon-reset"
+							actionListener="#{balanceDetail.onReset}" value=""
+							rendered="#{!balanceDetail.new}"
+							accesskey="#{bundle.aon_key_new_line}" />
+					</aon:div>
+
+				</f:facet>
+			</aon:column>
+
+				
+		 <aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{accountingBundle.accounting_balance_cdg}" />
+				</f:facet>
+				<aon:outputText value="#{to.code}" rendered="#{to!=balanceDetail.to}">
+
+				</aon:outputText>
+				<aon:inputText styleClass="aon-form-input-text"
+					rendered="#{to==balanceDetail.to}" value="#{balanceDetail.to.code}"
+					maxlength="6" size="5" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text"
+						rendered="#{balanceDetail.new}" value="#{balanceDetail.to.code}"
+						maxlength="6" size="5" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{accountingBundle.accounting_balance_detail_desc}" />
+				</f:facet>
+				<aon:outputText value="#{to.description}"
+					rendered="#{to!=balanceDetail.to}">
+					<f:convertNumber minFractionDigits="2" />
+				</aon:outputText>
+				<aon:inputText styleClass="aon-form-input-text"
+					rendered="#{to==balanceDetail.to}"
+					value="#{balanceDetail.to.description}" maxlength="50" size="50" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text"
+						rendered="#{balanceDetail.new}"
+						value="#{balanceDetail.to.description}" maxlength="50" size="50" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{accountingBundle.accounting_balance_detail_accounts}" />
+				</f:facet>
+				<aon:outputText value="#{to.accounts}"
+					rendered="#{to!=balanceDetail.to}">
+					<aon:abbreviateConverter maxWidth="50" />
+				</aon:outputText>
+				<h:inputTextarea styleClass="aon-form-input-text"
+					rendered="#{to==balanceDetail.to}"
+					value="#{balanceDetail.to.accounts}" maxlength="100" size="20" />
+				<f:facet name="footer">
+					<h:inputTextarea styleClass="aon-form-input-text"
+						rendered="#{balanceDetail.new}"
+						value="#{balanceDetail.to.accounts}" maxlength="100" size="20" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{accountingBundle.accounting_balance_detail_sortkey}"/>
+				</f:facet>
+				<aon:outputText value="#{to.sortKey}"
+					rendered="#{to!=balanceDetail.to}">
+				
+				</aon:outputText>
+				<aon:inputText styleClass="aon-form-input-text"
+					rendered="#{to==balanceDetail.to}"
+					value="#{balanceDetail.to.sortKey}" maxlength="2" size="4" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text"
+						rendered="#{balanceDetail.new}" value="#{balanceDetail.to.sortKey}"
+						maxlength="2" size="4" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{accountingBundle.accounting_balance_detail_title}" />
+				</f:facet>
+				<aon:outputText value="&#160;"
+					styleClass="#{(to.title)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
+					rendered="#{to!=balanceDetail.to}" />
+				<aon:selectBooleanCheckbox rendered="#{to==balanceDetail.to}"
+					value="#{balanceDetail.to.title}" />
+				<f:facet name="footer">
+					<aon:selectBooleanCheckbox rendered="#{balanceDetail.new}"
+						value="#{balanceDetail.to.title}" />
+				</f:facet>
+			</aon:column>
+			
+			  		<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{accountingBundle.accounting_balance_detail_calculation}" />
+				</f:facet>
+				<aon:outputText value="&#160;"
+					styleClass="#{(to.internalCalculation)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
+					rendered="#{to!=balanceDetail.to}" />
+				<aon:selectBooleanCheckbox rendered="#{to==balanceDetail.to}"
+					value="#{balanceDetail.to.internalCalculation}" />
+				<f:facet name="footer">
+					<aon:selectBooleanCheckbox rendered="#{balanceDetail.new}"
+						value="#{balanceDetail.to.internalCalculation}" />
+				</f:facet>
+			</aon:column>
+			
+			
+			 <aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{accountingBundle.accounting_balance_detail_visible}" />
+				</f:facet>
+				<aon:outputText value="&#160;"
+					styleClass="#{(to.visible)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
+					rendered="#{to!=balanceDetail.to}" />
+				<aon:selectBooleanCheckbox rendered="#{to==balanceDetail.to}"
+					value="#{balanceDetail.to.visible}" />
+				<f:facet name="footer">
+					<aon:selectBooleanCheckbox rendered="#{balanceDetail.new}"
+						value="#{balanceDetail.to.visible}" />
+				</f:facet>
+			</aon:column>
+			
+			
+			
+					<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{accountingBundle.accounting_balance_detail_zeroflag}" />
+				</f:facet>
+				<aon:outputText value="&#160;"
+					styleClass="#{(to.zeroFlag)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
+					rendered="#{to!=balanceDetail.to}" />
+				<aon:selectBooleanCheckbox rendered="#{to==balanceDetail.to}"
+					value="#{balanceDetail.to.zeroFlag}" />
+				<f:facet name="footer">
+					<aon:selectBooleanCheckbox rendered="#{balanceDetail.new}"
+						value="#{balanceDetail.to.zeroFlag}" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{accountingBundle.accounting_balance_detail_creditnature}" />
+				</f:facet>
+				<aon:outputText value="&#160;" style="text-align:center;"
+					styleClass="#{(to.creditNature)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
+					rendered="#{to!=balanceDetail.to}" />
+				<aon:selectBooleanCheckbox rendered="#{to==balanceDetail.to}"
+					value="#{balanceDetail.to.creditNature}" />
+				<f:facet name="footer">
+					<aon:selectBooleanCheckbox rendered="#{balanceDetail.new}"
+						value="#{balanceDetail.to.creditNature}" />
+				</f:facet>
+			</aon:column>
+			
+ 
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:div>
+					<f:verbatim rendered="#{to!=balanceDetail.to}">&#160;</f:verbatim>
+					<aon:commandButton title="[#{bundle.aon_accept}]"
+						rendered="#{to==balanceDetail.to}"
+						styleClass="aon-editDataTable-button aon-icon-accept"
+						actionListener="#{balanceDetail.onAccept}"
+						accesskey="#{bundle.aon_key_save_line}" />
+					<aon:commandButton title="[#{bundle.aon_cancel}]"
+						styleClass="aon-editDataTable-button aon-icon-cancel"
+						rendered="#{to==balanceDetail.to}"
+						actionListener="#{balanceDetail.onCancel}" immediate="true"
+						accesskey="#{bundle.aon_key_cancel_line}" />
+					<aon:confirmButton id="remove-Porcentaje"
+						title="[#{bundle.aon_remove}]"
+						styleClass="aon-editDataTable-button aon-icon-delete"
+						rendered="#{to==balanceDetail.to}"
+						confirmTitle="#{bundle.aon_confirm_title}"
+						confirmMessage="#{bundle.aon_remove_confirm}"
+						confirmActionListener="#{balanceDetail.onRemove}" immediate="true"
+						accesskey="#{bundle.aon_key_remove_line}" />
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div>
+						<f:verbatim rendered="#{!porcentaje.new}">&#160;</f:verbatim>
+						<aon:commandButton title="[#{bundle.aon_accept}]"
+							styleClass="aon-editDataTable-button aon-icon-accept"
+							rendered="#{balanceDetail.new}"
+							actionListener="#{balanceDetail.onAccept}"
+							accesskey="#{bundle.aon_key_save_line}" />
+						<aon:confirmButton id="cancel-Porcentaje"
+							title="[#{bundle.aon_cancel}]"
+							styleClass="aon-editDataTable-button aon-icon-cancel"
+							rendered="#{balanceDetail.new}"
+							confirmTitle="#{bundle.aon_confirm_title}"
+							confirmMessage="#{bundle.aon_cancel_confirm}"
+							confirmActionListener="#{balanceDetail.onCancel}"
+							immediate="true" accesskey="#{bundle.aon_key_cancel_line}" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+		</aon:editDataTable>
+			<aon:dataScroller2 for="balanceDetailData" showNote="true" />
+	</aon:div>
+
+</ui:composition>

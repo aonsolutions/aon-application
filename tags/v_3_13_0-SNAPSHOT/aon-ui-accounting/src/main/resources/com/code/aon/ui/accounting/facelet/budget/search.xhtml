@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="accountBudgetForm">
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{accountingBundle.accounting_account_budget_module}" />
+				<ui:param name="controller" value="#{accountBudget}" />
+			</ui:include>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+
+				<ui:param name="controller" value="#{accountBudget}" />
+
+				<ui:define name="searchContent">
+						
+					<aon:outputLabel for="accountId"
+						value="#{accountBundle.account_account}" />
+					<ui:decorate 
+						template="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
+						<ui:param name="wizard" value="#{accountWizard}" />
+						<ui:param name="id" value="accountId" />
+						<ui:param name="size" value="12" />
+						<ui:param name="maxlength" value="12" />
+						<ui:param name="renderDescription" value="true" />
+						<ui:param name="renderedAttr" value="true" />
+						<ui:param name="disabled" value="false" />
+						<ui:param name="reRenderAttr" value="none" />
+						<ui:param name="entity" value="#{accountBudget.account}" />
+						<ui:param name="ELExpression" value="accountBudget.account" />
+					</ui:decorate>
+
+					<aon:outputLabel for="AccountBudget_period"
+						value="#{accountingBundle.accounting_period}" />
+					<aon:selectOneMenu id="AccountBudget_period" 
+						valueChangeListener="#{accountBudget.addExpression}" >
+						<f:selectItems value="#{accountingCollections.accountPeriodKeys}" />
+					</aon:selectOneMenu>
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+	</ui:define>
+</ui:composition>
