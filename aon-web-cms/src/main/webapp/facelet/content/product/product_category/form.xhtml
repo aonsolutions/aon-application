@@ -78,17 +78,16 @@
 							<aon:actionListener method="#{productCategory.onCancel}" />
 						</aon:commandButton>
 						<!-- 
-						<aon:commandButton id="partial_generate"
+						<aon:commandButton id="partial_generate" reRender="aonStatus"
 							value="#{appBundle.aon_generate}" 
 							rendered="#{productCategory.to!=null}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{generator.onGenerateCurrentProductCategory}" />
 							<a4j:support 
-								event="onclick" 
+								event="onclick" reRender="poll,grid" 
 								actionListener="#{generator_status.onActivePoll}"  
-								reRender="poll,grid" 
-								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:680, top:100});" />
+								onclick="javascript:Richfaces.showModalPanel('gen_log');" />
 						</aon:commandButton>
 						 -->
 				    </aon:div>

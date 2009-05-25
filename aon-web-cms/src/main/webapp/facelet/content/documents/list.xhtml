@@ -29,7 +29,7 @@
 						columnClasses="aon-header-name">
 						<aon:div>
 							<aon:outputText value="#{appBundle.aon_cms_current_path}: " styleClass="aon-applicationName"/>
-							<aon:outputText value="#{document.currentRelativePath}"/>	  						
+							<aon:outputText value="#{document.currentRelativePath}" styleClass="aon-applicationName"/>	  						
 							<aon:commandButton value="#{appBundle.aon_cms_remove_folder}"
 								rendered="#{document.emptyDir}"
 								action="document_list"
