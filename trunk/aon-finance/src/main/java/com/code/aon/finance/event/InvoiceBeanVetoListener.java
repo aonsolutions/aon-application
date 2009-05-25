@@ -50,6 +50,9 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				invoice.setNumber(SeriesNumberUtil.obtainNumber(invoice.getSeries(), "Invoice", criteria));
 			}
 		}
+		if (invoice.getTaxDate() == null) {
+			invoice.setTaxDate( invoice.getIssueDate());
+		}
 	}
 
 	@Override
