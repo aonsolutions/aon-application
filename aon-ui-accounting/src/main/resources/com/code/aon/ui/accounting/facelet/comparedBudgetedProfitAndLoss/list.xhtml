@@ -19,9 +19,6 @@
 				<ui:define name="toolbarActions">
 					<aon:methodParam name="searchActionListener"
 						value="#{budgetedProfitAndLossComparison.onSearch}" type="actionListener" />
-					<!--  
-					<aon:methodParam name="searchAction" value="compared_budgeted_profit_and_loss_search" />
-					-->
 					<aon:methodParam name="searchAction" value="compared_budgeted_profit_and_loss_search" />
 				</ui:define>
 				<ui:define name="additionalToolbarContent">
@@ -41,7 +38,7 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="dataTable" columns="4" style="width: 100%;">
+				<aon:panelGrid id="dataTable" columns="2" >
 					<aon:outputLabel for="reportDate"
 						value="#{accountingBundle.accounting_report_date}" />
 					<aon:outputText
@@ -52,11 +49,8 @@
 					
 					<aon:outputLabel 
 						value="#{accountingBundle.accounting_period}" />
-					<aon:selectOneMenu 
-						disabled="#{!accountBudget.new}"
-						value="#{budgetedProfitAndLossComparison.parameters.period}">
-						<f:selectItems value="#{accountingCollections.accountPeriodKeys}" />
-					</aon:selectOneMenu>
+					<aon:outputText styleClass="aon-bold"
+						value="#{budgetedProfitAndLossComparison.parameters.period.id}" />
 					
 					<aon:outputLabel
 						value="#{bundle.aon_date_from}" />
