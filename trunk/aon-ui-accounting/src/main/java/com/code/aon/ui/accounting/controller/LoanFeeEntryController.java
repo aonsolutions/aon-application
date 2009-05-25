@@ -10,6 +10,7 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.LoanAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
+import com.code.aon.account.bridge.util.AccountConstants;
 import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
@@ -18,6 +19,7 @@ import com.code.aon.accounting.Loan;
 import com.code.aon.accounting.LoanFeeEntryHeader;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.util.AccountUtils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -25,7 +27,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.utils.AccountPeriodValidator;
 import com.code.aon.ui.form.FormUtil;
 
-public class LoanFeeEntryController {
+public class LoanFeeEntryController implements ISpecialAccountEntry{
 
 	private static final Logger LOGGER = Logger.getLogger(LoanFeeEntryController.class.getName()); 
 	
@@ -37,6 +39,14 @@ public class LoanFeeEntryController {
 	
 	private LoanFeeEntryHeader header;
 
+	private AccountUtils accountUtils;
+
+	public AccountUtils getAccountUtils() {
+		if (accountUtils == null) {
+			accountUtils = new AccountUtils();
+		}
+		return accountUtils;
+	}
 
 	public boolean isNew() {
 		return isNew;
@@ -199,5 +209,41 @@ public class LoanFeeEntryController {
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error loading AccountEntryController", e);
 		}
+	}
+
+	@Override
+	public void loadEntry(AccountEntry entry) throws ManagerBeanException {
+		onReset(null);
+		setNew(false);
+		setAccountEntry(entry);
+		LoanFeeEntryHeader header = new LoanFeeEntryHeader();
+		Loan loan = obtainLoan(entry);
+		AccountEntryDetail accountEntryDetail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.LOAN_ACCOUNT_PREFIX + "*");
+		header.setAmortization(accountEntryDetail.getDebit());
+		header.setDescription(accountEntryDetail.getConcept());
+		header.setFeeDate(entry.getEntryDate());
+		header.setLoan(loan);
+		header.setRegistryBank(AccountUtil.obtainRBank(accountEntryDetail.getBalancingAccount().getId()));
+		accountEntryDetail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "*");
+		header.setInterest(accountEntryDetail.getDebit());
+		setHeader(header);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Loan obtainLoan(AccountEntry entry) throws ManagerBeanException {
+		AccountEntryDetail detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.LOAN_ACCOUNT_PREFIX + "*");
+		IManagerBean loanAccountBean = BeanManager.getManagerBean(LoanAccount.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(loanAccountBean.getFieldName(IAccountBridgeAlias.LOAN_ACCOUNT_ACCOUNT_ID), detail.getAccount().getId());
+		Iterator iter = loanAccountBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			return ((LoanAccount)iter.next()).getLoan();
+		}
+		return null;
+	}
+
+	@Override
+	public String getNavigationKey() {
+		return "account_loan_fee_entry";
 	}
 }

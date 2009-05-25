@@ -13,6 +13,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.account.bridge.util.AccountConstants;
 import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
@@ -20,6 +21,7 @@ import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.SalaryEntryHeader;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.util.AccountUtils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -32,7 +34,7 @@ import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.form.FormUtil;
 
-public class SalaryEntryController {
+public class SalaryEntryController implements ISpecialAccountEntry{
 
 	private static final Logger LOGGER = Logger.getLogger(SalaryEntryController.class.getName()); 
 	
@@ -45,6 +47,15 @@ public class SalaryEntryController {
 	private SalaryEntryHeader header;
 
 	private Company company;
+
+	private AccountUtils accountUtils;
+
+	public AccountUtils getAccountUtils() {
+		if (accountUtils == null) {
+			accountUtils = new AccountUtils();
+		}
+		return accountUtils;
+	}
 
 	public boolean isNew() {
 		return isNew;
@@ -271,6 +282,41 @@ public class SalaryEntryController {
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error loading AccountEntryController", e);
 		}
+	}
+
+	@Override
+	public void loadEntry(AccountEntry entry) throws ManagerBeanException {
+		onReset(null);
+		setNew(false);
+		setAccountEntry(entry);
+
+		SalaryEntryHeader header = new SalaryEntryHeader();
+		header.setDate(entry.getEntryDate());
+		AccountEntryDetail accountEntryDetail = getAccountUtils().getEntryDetailFromAccountPattern(entry, "465*");
+		if (accountEntryDetail != null) {
+			header.setConcept(accountEntryDetail.getConcept());
+		} else {
+			accountEntryDetail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
+			if (accountEntryDetail != null) {
+				header.setRegistryBank(AccountUtil.obtainRBank(accountEntryDetail.getAccount().getId()));
+				header.setConcept(accountEntryDetail.getConcept());
+			}
+		}
+		header.setSecurityLevel(entry.getSecurityLevel());
+		accountEntryDetail = getAccountUtils().getEntryDetailFromAccountPattern(entry, "640*");
+		header.setGrossSalary((accountEntryDetail != null)?accountEntryDetail.getDebit():0);
+		accountEntryDetail = getAccountUtils().getEntryDetailFromAccountPattern(entry, "475*");
+		header.setRetention((accountEntryDetail != null)?accountEntryDetail.getCredit():0);
+		accountEntryDetail = getAccountUtils().getEntryDetailFromAccountPattern(entry, "642*");
+		header.setCompanySocialInsurance((accountEntryDetail != null)?accountEntryDetail.getDebit():0);
+		accountEntryDetail = getAccountUtils().getEntryDetailFromAccountPattern(entry, "476*");
+		header.setEmployeeSocialInsurance((accountEntryDetail != null)?accountEntryDetail.getCredit() - header.getCompanySocialInsurance():0);
+		setHeader(header);
+	}
+
+	@Override
+	public String getNavigationKey() {
+		return "account_salary_entry";
 	}
 
 }
