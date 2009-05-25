@@ -21,7 +21,8 @@
         </h:form>
     </a4j:region>
 	<aon:form>
-        <rich:modalPanel id="#{modalPanelName}" minHeight="550" height="550"  minWidth="1000" width="1000">
+        <rich:modalPanel id="showGeneratorLogModalPanel"
+			minHeight="560" height="560" minWidth="1000" width="1000">
 			<f:facet name="header">
 				<aon:div styleClass="aon-popupWindow-title">
 					<aon:outputText value="Generator" />
@@ -29,8 +30,9 @@
 			</f:facet>
 	        <f:facet name="controls">
 				<aon:commandButton type="button" styleClass="aon-popupWindow-close"
+					actionListener="#{generator_status.onReset}"
 					immediate="true" reRender="aonStatus">
-					<rich:componentControl for="#{modalPanelName}"
+					<rich:componentControl for="showGeneratorLogModalPanel"
 						operation="hide" event="onclick" />
 				</aon:commandButton>
 	        </f:facet>

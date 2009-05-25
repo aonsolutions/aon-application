@@ -43,17 +43,16 @@
 							accesskey="#{bundle.aon_key_search}">
 							<aon:actionListener method="#{faq.onEditSearch}" />
 						</aon:commandButton>
-						<aon:commandButton id="generate"
+						<aon:commandButton id="generate" reRender="aonStatus"
 							value="#{appBundle.aon_generate}" 
 							rendered="#{cms.roleEditor}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{generator.onGenerateFaqs}" />
 							<a4j:support 
-								event="onclick" 
+								event="onclick" reRender="poll,grid" 
 								actionListener="#{generator_status.onActivePoll}"  
-								reRender="poll,grid" 
-								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:680, top:100});" />
+								onclick="javascript:Richfaces.showModalPanel('gen_log');" />
 						</aon:commandButton>	
 						<aon:commandButton id="exit"
 							value="#{bundle.aon_close}"
@@ -147,9 +146,7 @@
 			</aon:div>
 		</aon:form>
 		
-		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml">
-			<ui:param name="modalPanelName" value="gen_log" />
-		</ui:include>
+		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
 		
 	</ui:define>
 

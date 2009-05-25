@@ -13,23 +13,28 @@ import com.code.aon.ui.cms.util.FTPUtil;
 
 public class GeneratorStatusController  {
 
-	private boolean generated = false;
+	private boolean generated;
 
-	private boolean generatedOk = false;
+	private boolean generatedOk;
 
-	private boolean activePoll = false;
+	private boolean activePoll;
 
-	private boolean published = false;
+	private boolean published;
 
 	private List<String> status;
 
 	private List<String> errors;
 
-	public void onInit(ActionEvent event){
+	public void onInit(ActionEvent event) {
+		onReset(event);
+		this.activePoll = true;
+	}
+
+	public void onReset(ActionEvent event) {
 		this.generated = false;
 		this.generatedOk = false;
 		this.published = false;
-		this.activePoll = true;
+		this.activePoll = false;
 		this.status = new ArrayList<String>();
 		this.errors = new ArrayList<String>();
 	}
@@ -113,15 +118,6 @@ public class GeneratorStatusController  {
 
 	public String getWebURL() {
 		return ControllerUtil.getWebURL();
-	}
-	
-	private static String checkMem(String data) {
-		long freeMemory = Runtime.getRuntime().freeMemory();
-		long totalMemory = Runtime.getRuntime().totalMemory();
-		long maxMemory = Runtime.getRuntime().maxMemory();
-		long memoryUsed = totalMemory-freeMemory;
-		data += "-------------> "+(memoryUsed/(1024*1024))+" of "+(maxMemory/(1024*1024))+" MB used";
-		return data;
 	}
 	
 }
