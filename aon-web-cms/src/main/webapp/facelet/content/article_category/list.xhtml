@@ -13,46 +13,21 @@
 	<ui:define name="content">
 
 		<aon:form id="list">
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
-				
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.article_category}"/>	  						
-					</aon:div>					
-					
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{appBundle.aon_listing}" />
-					</aon:div>					
-						
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">					
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							rendered="#{cms.roleEditor}"
-							action="article_category_form"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}">
-							<aon:actionListener method="#{article_category.onReset}" />
-						</aon:commandButton>
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							action="article_category_search"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}">
-							<aon:actionListener method="#{article_category.onEditSearch}" />
-						</aon:commandButton>
-						<aon:commandButton id="exit"
-							value="#{bundle.aon_close}"
-							action="#{article_category.getBack}" 
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}">
-						</aon:commandButton>
-				    </aon:div>
-					
-					<!-- end toolbar navigation -->
-				</aon:panelGrid>
-			</aon:div>
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.article_category}" />
+				<ui:param name="controller" value="#{article_category}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="exit"
+						value="#{bundle.aon_close}"
+						action="#{article_category.getBack}" 
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_close}">
+					</aon:commandButton>				
+				</ui:define>
+			</ui:decorate>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
