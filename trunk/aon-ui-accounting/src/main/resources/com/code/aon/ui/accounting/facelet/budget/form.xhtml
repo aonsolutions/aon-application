@@ -49,11 +49,8 @@
 
 					<aon:outputLabel for="AccountBudget_accountPeriod"
 						value="#{accountingBundle.accounting_period}" />
-					<aon:selectOneMenu id="AccountBudget_accountPeriod"
-						disabled="#{!accountBudget.new}"
-						value="#{accountBudget.to.period}">
-						<f:selectItems value="#{accountingCollections.accountPeriodKeys}" />
-					</aon:selectOneMenu>
+					<aon:outputText styleClass="aon-bold"
+						value="#{accountBudget.to.period}" />
 					
 					<aon:outputLabel for="AccountBudget_debit" 
 						value="#{accountingBundle.accounting_debit}"
