@@ -19,9 +19,6 @@
 				<ui:define name="toolbarActions">
 					<aon:methodParam name="searchActionListener"
 						value="#{budgetedProfitAndLossReport.onEditSearch}" type="actionListener" />
-					<!--  
-					<aon:methodParam name="searchAction" value="profit_and_loss_search" />
-					-->
 					<aon:methodParam name="searchAction" value="budgeted_profit_and_loss_search" />
 				</ui:define>
 				<ui:define name="additionalToolbarContent">
@@ -35,6 +32,14 @@
 			</ui:decorate>
 
 			<aon:div id="accountData" styleClass="aon-scroll-area">
+			
+				<aon:div style="margin-bottom:0.75em;">
+					<aon:panelGrid columns="2">
+						<aon:outputLabel value="#{accountingBundle.accounting_period}" />
+						<aon:outputText styleClass="aon-bold"
+							value="#{budgetedProfitAndLossReport.parameters.period.id}" />
+					</aon:panelGrid>
+				</aon:div>
 
 				<aon:dataTable value="#{budgetedProfitAndLossReport.controller}"
 					var="controller">
@@ -59,7 +64,16 @@
 					<rich:subTable value="#{controller.grossMargin.sortedSummaryList}"
 						var="to">
 						<aon:column styleClass="aon-width-100">
-							<aon:outputText value="#{to.id}" />
+							<aon:commandLink immediate="true"
+								title="#{accountingBundle.accounting_statement_module}"
+								styleClass="aon-dataTable-link" action="account_statement_list">
+								<f:setPropertyActionListener value="#{to.id}"
+									target="#{budgetedProfitAndLossReport.accountStatement}" />
+								<aon:actionListener method="#{budgetedProfitAndLossReport.onStatement}" />
+								<aon:outputText value="#{to.id}" />
+								<f:setPropertyActionListener value="budgeted_profit_and_loss_list"
+									target="#{statement.backAction}" />
+							</aon:commandLink>
 						</aon:column>
 
 						<aon:column>
@@ -105,7 +119,7 @@
 									target="#{budgetedProfitAndLossReport.accountStatement}" />
 								<aon:actionListener method="#{budgetedProfitAndLossReport.onStatement}" />
 								<aon:outputText value="#{to.id}" />
-								<f:setPropertyActionListener value="profit_and_loss_list"
+								<f:setPropertyActionListener value="budgeted_profit_and_loss_list"
 									target="#{statement.backAction}" />
 							</aon:commandLink>
 						</aon:column>
