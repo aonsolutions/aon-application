@@ -10,6 +10,7 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.LoanAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
+import com.code.aon.account.bridge.util.AccountConstants;
 import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
@@ -17,6 +18,7 @@ import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.Loan;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.util.AccountUtils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -24,7 +26,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.utils.AccountPeriodValidator;
 import com.code.aon.ui.form.FormUtil;
 
-public class LoanEntryController {
+public class LoanEntryController implements ISpecialAccountEntry {
 
 	private static final Logger LOGGER = Logger.getLogger(LoanEntryController.class.getName()); 
 	
@@ -36,6 +38,14 @@ public class LoanEntryController {
 	
 	private Loan loan;
 
+	private AccountUtils accountUtils;
+
+	public AccountUtils getAccountUtils() {
+		if (accountUtils == null) {
+			accountUtils = new AccountUtils();
+		}
+		return accountUtils;
+	}
 
 	public boolean isNew() {
 		return isNew;
@@ -214,5 +224,32 @@ public class LoanEntryController {
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error loading AccountEntryController", e);
 		}
+	}
+
+	@Override
+	public void loadEntry(AccountEntry entry) throws ManagerBeanException {
+		onReset(null);
+		setNew(false);
+		setAccountEntry(entry);
+		Loan loan = obtainLoan(entry);
+		setLoan(loan);
+	}
+
+	@SuppressWarnings("unchecked")
+	private Loan obtainLoan(AccountEntry entry) throws ManagerBeanException {
+		AccountEntryDetail detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.LOAN_ACCOUNT_PREFIX + "*");
+		IManagerBean loanAccountBean = BeanManager.getManagerBean(LoanAccount.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(loanAccountBean.getFieldName(IAccountBridgeAlias.LOAN_ACCOUNT_ACCOUNT_ID), detail.getAccount().getId());
+		Iterator iter = loanAccountBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			return ((LoanAccount)iter.next()).getLoan();
+		}
+		return null;
+	}
+
+	@Override
+	public String getNavigationKey() {
+		return "account_loan_entry";
 	}
 }

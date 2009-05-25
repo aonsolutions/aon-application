@@ -14,18 +14,19 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
+import com.code.aon.account.bridge.util.AccountConstants;
 import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.ExpenseEntryHeader;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.util.AccountUtils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
-import com.code.aon.config.Bank;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
@@ -33,7 +34,7 @@ import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class ExpenseEntryController {
+public class ExpenseEntryController implements ISpecialAccountEntry{
 	
 	private static final Logger LOGGER = Logger.getLogger(ExpenseEntryController.class.getName()); 
 	
@@ -48,6 +49,15 @@ public class ExpenseEntryController {
 	private Company company;
 	
 	private String navigationKey;
+
+	private AccountUtils accountUtils;
+
+	public AccountUtils getAccountUtils() {
+		if (accountUtils == null) {
+			accountUtils = new AccountUtils();
+		}
+		return accountUtils;
+	}
 
 	public boolean isNew() {
 		return isNew;
@@ -247,5 +257,31 @@ public class ExpenseEntryController {
 		entryController.onSearch(null);
 		entryController.getModel().setRowIndex(0);
 		entryController.onSelect(null);
+	}
+
+	@Override
+	public void loadEntry(AccountEntry entry) throws ManagerBeanException {
+		onReset(null);
+		setNew(false);
+		setAccountEntry(entry);
+
+		ExpenseEntryHeader header = new ExpenseEntryHeader();
+		header.setDate(entry.getEntryDate());
+		AccountEntryDetail accountEntryDetail = getAccountUtils().getEntryDetailFromAccountPattern(entry, 
+				 AccountConstants.BANK_ACCOUNT_PREFIX + "*");
+		if (accountEntryDetail != null) {
+			header.setRegistryBank(AccountUtil.obtainRBank(accountEntryDetail.getAccount().getId()));
+		}
+		accountEntryDetail = getAccountUtils().getEntryDetailFromAccountPattern(entry, "6*");
+		header.setAccount(accountEntryDetail.getAccount());
+		header.setConcept(accountEntryDetail.getConcept());
+		header.setSecurityLevel(entry.getSecurityLevel());
+		header.setAmount(accountEntryDetail.getDebit());
+		setHeader(header);
+	}
+
+	@Override
+	public String getNavigationKey() {
+		return "account_expense_entry";
 	}
 }

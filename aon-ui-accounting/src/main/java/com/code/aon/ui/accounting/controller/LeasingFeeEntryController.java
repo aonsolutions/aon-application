@@ -9,13 +9,18 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryInvoice;
+import com.code.aon.account.bridge.LeasingAccount;
+import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
+import com.code.aon.account.bridge.util.AccountConstants;
 import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.DefaultAccounts;
+import com.code.aon.accounting.Leasing;
 import com.code.aon.accounting.LeasingFeeEntryHeader;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.util.AccountUtils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -35,7 +40,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.utils.AccountPeriodValidator;
 import com.code.aon.ui.form.FormUtil;
 
-public class LeasingFeeEntryController {
+public class LeasingFeeEntryController implements ISpecialAccountEntry{
 
 	private static final Logger LOGGER = Logger.getLogger(LeasingFeeEntryController.class.getName());
 	
@@ -47,6 +52,14 @@ public class LeasingFeeEntryController {
 	
 	private LeasingFeeEntryHeader header;
 
+	private AccountUtils accountUtils;
+
+	public AccountUtils getAccountUtils() {
+		if (accountUtils == null) {
+			accountUtils = new AccountUtils();
+		}
+		return accountUtils;
+	}
 
 	public AccountEntryInvoice getAccountEntryInvoice() {
 		return accountEntryInvoice;
@@ -354,5 +367,54 @@ public class LeasingFeeEntryController {
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error loading AccountEntryController", e);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void loadEntry(AccountEntry entry) throws ManagerBeanException {
+		onReset(null);
+		setNew(false);
+		IManagerBean accountEntryInvoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(accountEntryInvoiceBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_INVOICE_ACCOUNT_ENTRY_ID), entry.getId());
+		Iterator iter = accountEntryInvoiceBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			AccountEntryInvoice accountEntryInvoice = (AccountEntryInvoice)iter.next();
+			setAccountEntryInvoice(accountEntryInvoice);
+			LeasingFeeEntryHeader header = new LeasingFeeEntryHeader();
+			AccountEntryDetail detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
+			header.setRBank(AccountUtil.obtainRBank(detail.getAccount().getId()));
+			detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "");
+			header.setInterest(detail.getDebit());
+			detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.LEASING_ACCOUNT_PREFIX + "*");
+			header.setAmortization(detail.getDebit());
+			detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.FINANCIAL_EXPENSES_ACCOUNT).getId() + "");
+			header.setExpenses(detail.getDebit());
+			header.setLeasing(obtainLeasing(entry));
+			header.setLeasingFeeDate(accountEntryInvoice.getInvoice().getIssueDate());
+			header.setSecurityLevel(accountEntryInvoice.getInvoice().getSecurityLevel());
+			header.setSeries(accountEntryInvoice.getInvoice().getSeries());
+			header.setNumber(accountEntryInvoice.getInvoice().getNumber());
+			header.setReferenceCode(accountEntryInvoice.getInvoice().getReferenceCode());
+			setHeader(header);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private Leasing obtainLeasing(AccountEntry entry) throws ManagerBeanException {
+		AccountEntryDetail detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.LEASING_ACCOUNT_PREFIX + "*");
+		IManagerBean loanAccountBean = BeanManager.getManagerBean(LeasingAccount.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(loanAccountBean.getFieldName(IAccountBridgeAlias.LEASING_ACCOUNT_ACCOUNT_ID), detail.getAccount().getId());
+		Iterator iter = loanAccountBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			return ((LeasingAccount)iter.next()).getLeasing();
+		}
+		return null;
+	}
+
+	@Override
+	public String getNavigationKey() {
+		return "account_leasing_fee_entry";
 	}
 }

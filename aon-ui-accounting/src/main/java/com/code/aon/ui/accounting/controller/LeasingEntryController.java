@@ -11,12 +11,14 @@ import javax.faces.event.ValueChangeEvent;
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.LeasingAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
+import com.code.aon.account.bridge.util.AccountConstants;
 import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Leasing;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.util.AccountUtils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -28,7 +30,7 @@ import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.accounting.utils.AccountPeriodValidator;
 import com.code.aon.ui.form.FormUtil;
 
-public class LeasingEntryController {
+public class LeasingEntryController implements ISpecialAccountEntry{
 
 	private static final Logger LOGGER = Logger.getLogger(LeasingEntryController.class.getName()); 
 	
@@ -40,6 +42,14 @@ public class LeasingEntryController {
 	
 	private Leasing leasing;
 	
+	private AccountUtils accountUtils;
+
+	public AccountUtils getAccountUtils() {
+		if (accountUtils == null) {
+			accountUtils = new AccountUtils();
+		}
+		return accountUtils;
+	}
 
 	public boolean isNew() {
 		return isNew;
@@ -226,5 +236,32 @@ public class LeasingEntryController {
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error loading AccountEntryController", e);
 		}
+	}
+
+	@Override
+	public void loadEntry(AccountEntry entry) throws ManagerBeanException {
+		onReset(null);
+		setNew(false);
+		setAccountEntry(entry);
+		Leasing leasing = obtainLeasing(entry);
+		setLeasing(leasing);
+	}
+
+	@SuppressWarnings("unchecked")
+	private Leasing obtainLeasing(AccountEntry entry) throws ManagerBeanException {
+		AccountEntryDetail detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.LEASING_ACCOUNT_PREFIX + "*");
+		IManagerBean loanAccountBean = BeanManager.getManagerBean(LeasingAccount.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(loanAccountBean.getFieldName(IAccountBridgeAlias.LEASING_ACCOUNT_ACCOUNT_ID), detail.getAccount().getId());
+		Iterator iter = loanAccountBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			return ((LeasingAccount)iter.next()).getLeasing();
+		}
+		return null;
+	}
+
+	@Override
+	public String getNavigationKey() {
+		return "account_leasing_entry";
 	}
 }

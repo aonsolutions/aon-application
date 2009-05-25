@@ -23,7 +23,6 @@
 
 			<aon:rowSelector immediate="true"
 				rendered="#{financeTo!=invoiceEntry.currentFinance}"
-				disabled="#{!invoiceEntry.accountSource}"
 				actionListener="#{invoiceEntry.onSelectFinance}" />
 
 			<aon:column>
@@ -36,7 +35,6 @@
 							reRender="FinancesData"
 							styleClass="aon-editDataTable-button aon-icon-new"
 							title="#{bundle.aon_key_new_line}"
-							disabled="#{!invoiceEntry.accountSource}"
 							actionListener="#{invoiceEntry.onNewFinance}"
 							rendered="#{!invoiceEntry.newFinance}"
 							focus="Account_Finance_DueDate"

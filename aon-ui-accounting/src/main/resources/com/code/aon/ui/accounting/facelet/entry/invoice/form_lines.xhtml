@@ -17,7 +17,6 @@
 
 			<aon:rowSelector immediate="true"
 				rendered="#{!invoiceEntry.newDetail and to!=invoiceEntry.currentDetail}"
-				disabled="#{!invoiceEntry.accountSource}"
 				actionListener="#{invoiceEntry.onSelectDetail}" />
 
 			<aon:column styleClass="aon-editDataTable-iconColumn aon-width-20">
@@ -31,7 +30,6 @@
 							reRender="TaxesData,invoiceTables"
 							actionListener="#{invoiceEntry.onNewDetail}"
 							rendered="#{!invoiceEntry.newDetail}"
-							disabled="#{!invoiceEntry.accountSource}"
 							accesskey="#{bundle.aon_key_new_line}"
 							focus="Account_Taxable_Base-New">
 						</aon:commandButton>

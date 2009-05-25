@@ -19,6 +19,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.util.AccountUtil;
@@ -28,6 +29,7 @@ import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.util.AccountUtils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -52,7 +54,7 @@ import com.code.aon.ui.accounting.IAccountingMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class FinanceEntryController {
+public class FinanceEntryController implements ISpecialAccountEntry{
 
 	private static final Logger LOGGER = Logger.getLogger(FinanceEntryController.class.getName());
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
@@ -80,6 +82,14 @@ public class FinanceEntryController {
 	private ArrayList<Finance> lineChecks = new ArrayList<Finance>();
 
 	private ArrayList<Finance> financeChecks = new ArrayList<Finance>();
+	private AccountUtils accountUtils;
+
+	public AccountUtils getAccountUtils() {
+		if (accountUtils == null) {
+			accountUtils = new AccountUtils();
+		}
+		return accountUtils;
+	}
 
 	public AccountEntryFinanceWriter getWriter() {
 		if (writer == null) {
@@ -179,14 +189,10 @@ public class FinanceEntryController {
 
 
 	public void onReset(ActionEvent event) {
-		try {
-			reset();
-		} catch (ManagerBeanException e) {
-			throw new AbortProcessingException(e.getMessage(),e);
-		}
+		reset();
 	}
 
-	private void reset() throws ManagerBeanException {
+	private void reset() {
 		this.accountEntry = null;
 		this.isNew = true;
 		initializeHeader();
@@ -196,7 +202,7 @@ public class FinanceEntryController {
 		setFinances(new ListDataModel(new LinkedList<Finance>()));
 	}
 
-	private void initializeHeader() throws ManagerBeanException {
+	private void initializeHeader(){
 		payment = null;
 		date = new Date();
 		registryBank = null;
@@ -586,7 +592,7 @@ public class FinanceEntryController {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void checkAllFinances(ActionEvent event) throws ManagerBeanException {
+	public void checkAllFinances(ActionEvent event) {
 		Iterator iterator = ((List)finances.getWrappedData()).iterator();
 		while (iterator.hasNext()) {
 			Finance finance = (Finance)iterator.next();
@@ -650,6 +656,51 @@ public class FinanceEntryController {
 
 	public void checkNoneLines(ActionEvent event) {
 		clearCheckedLines();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void loadEntry(AccountEntry entry) throws ManagerBeanException {
+		onReset(null);
+		setNew(false);
+
+		IManagerBean accountEntryFBatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(accountEntryFBatchBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_BATCH_ACCOUNT_ENTRY_ID), entry.getId());
+		Iterator iter = accountEntryFBatchBean.getList(criteria).iterator();
+		if (iter.hasNext()) {
+			String msg = "Asiento generado automáticamente. No se puede modificar.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} 
+		setAccountEntry(entry);
+		setPayment(entry.getType().equals(AccountEntryType.PAYMENT) ? true : false);
+		setDate(entry.getEntryDate());
+		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+		criteria = new Criteria();
+		criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
+		criteria.addOrder(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ID), false);
+		iter = accountEntryDetailBean.getList(criteria).iterator();
+		if (iter.hasNext()) {
+			AccountEntryDetail accountEntryDetail = (AccountEntryDetail)iter.next();
+			setRegistryBank(AccountUtil.obtainRBank(accountEntryDetail.getAccount().getId()));
+			setConcept(accountEntryDetail.getConcept());
+		}
+
+		IManagerBean accountEntryFTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
+		criteria = new Criteria();
+		criteria.addEqualExpression(accountEntryFTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY_ID), entry.getId());
+		iter = accountEntryFTrackingBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			AccountEntryFinanceTracking accountEntryFinanceTracking = (AccountEntryFinanceTracking)iter.next();
+			((List)getLines().getWrappedData()).add(accountEntryFinanceTracking.getFinanceTracking().getFinance());
+		}
+		loadAvailableFinances(getPayment());
+	}
+
+	@Override
+	public String getNavigationKey() {
+		return "account_finance_entry";
 	}
 
 }
