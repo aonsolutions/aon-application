@@ -167,12 +167,14 @@
       <param-name>org.ajax4jsf.DEFAULT_EXPIRE</param-name>
       <param-value>8640000</param-value>
    </context-param>
+
 <!-- 
 	<context-param>
       <param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
       <param-value>../aon-desktop/richFaces3.3.1/</param-value>
    </context-param>
--->
+ -->
+  
 	<filter>
 		<display-name>RichFaces Filter</display-name>
 		<filter-name>richfaces</filter-name>

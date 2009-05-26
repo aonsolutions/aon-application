@@ -514,6 +514,15 @@
 	</managed-bean>
 
 
+	<!-- ********** MBASE IMPORT CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>mbase</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.accounting.mbase.MbasesorController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+
 	<!-- ********** JOURNAL BOOK REPORT CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>journalReport</managed-bean-name>
@@ -1057,6 +1066,13 @@
 		<navigation-case>
 			<from-outcome>journal_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/journal/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<!-- **************** MBASE IMPORT REPORT ************************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>mbase_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/mbase/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 </faces-config>
