@@ -47,6 +47,7 @@ public class SMSManager implements Serializable, IServices, IDesktopConstants  {
 
 	private void initSMSController() throws ManagerBeanException {
 		SMSController sms = (SMSController) AonUtil.getRegisteredBean( SMS_CONTROLLER_NAME );
+		sms.setShowDemoMessage(true);
 		String username = UserUtils.getInstance().getPrincipal().getShortName();
 		sms.setUsername(username);
 		DesktopController desktop = (DesktopController) AonUtil.getRegisteredBean( DESKTOP_CONTROLLER_NAME );
@@ -55,7 +56,7 @@ public class SMSManager implements Serializable, IServices, IDesktopConstants  {
 	
 	public void sendMessage(ActionEvent event) {
 		if ( !isExecutable() ) {
-			String message = AonUtil.addInfoMessageFromBundle(APP_BUNDLE, "aon_sms_application_service_exception");
+			String message = AonUtil.addInfoMessageFromBundle(APP_BUNDLE, "desktop_sms_service_exception");
 			throw new AbortProcessingException( message );
 		}
 		SMSController sms = (SMSController) AonUtil.getRegisteredBean( SMS_CONTROLLER_NAME );
@@ -128,5 +129,12 @@ public class SMSManager implements Serializable, IServices, IDesktopConstants  {
         long sent = (Long) query.uniqueResult();
         return sent;
 	}
+	
+	public boolean isDemoMode() {
+		return (app == null);
+	}
 
+	public String getDemoMessage() {		
+		return AonUtil.addInfoMessageFromBundle(APP_BUNDLE, "desktop_sms_demo_message");
+	}
 }
