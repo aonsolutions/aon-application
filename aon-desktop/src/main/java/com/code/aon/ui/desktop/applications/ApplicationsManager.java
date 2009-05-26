@@ -10,14 +10,20 @@ import java.util.Properties;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
+import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.desktop.controller.AonUserController;
+import com.code.aon.desktop.controller.DomainController;
 import com.code.aon.jaas.auth.util.Util;
 import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.deployment.DeploymentException;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.util.AonUtil;
 
-public class ApplicationsManager {
+public class ApplicationsManager implements IDesktopConstants {
 
+	public static final String AON_CMS = "aon-cms";
+	
 	private List<App> applicationList;
 
 	@SuppressWarnings("unchecked")
@@ -35,21 +41,28 @@ public class ApplicationsManager {
 		List list = aonUserController.getUserManager().getUserApplications();
         for (int i = 0; i < list.size(); i++) {
 			IApplication app = (IApplication) list.get(i);
-			String context = app.getContext() + "/?aonDesktop=true";
-			String ip = Util.findStoredApplicationIp( thisIp, app.getContext() );
-			if ( !thisIp.equals( ip ) )
-				context = ec.getRequestContextPath() + app.getContext() + ".auth?aonDesktop=true";
+			String context = null;
+			if ( AON_CMS.equals(app.getId()) ) {
+				AonUserController auc = (AonUserController) AonUtil.getRegisteredBean(CURRENT_USER_CONTROLLER_NAME);
+				context = DomainController.getCMSDomainURL(auc.getDomain());
+			} else {
+				context = app.getContext() + "/?aonDesktop=true";
+				String ip = Util.findStoredApplicationIp( thisIp, app.getContext() );
+				if ( !thisIp.equals( ip ) ) {
+					context = ec.getRequestContextPath() + app.getContext() + ".auth?aonDesktop=true";
+				}
+			}
 			String property = services.getProperty( app.getId() );
+			App application;
 			if ( property != null ) {
 				char[] bar = property.substring( 0, property.indexOf( ';' ) ).toCharArray();
 				String role = property.substring( property.indexOf( ';' ) + 1 , property.length() );
 				boolean isUserInRole = role.equals("") || ec.isUserInRole( role );
-				App a = new App( app.getId(), app.getDescription(), context, bar, isUserInRole );
-				applicationList.add(a);
+				application = new App( app.getId(), app.getDescription(), context, bar, isUserInRole );
 			} else {
-				App a = new App( app.getId(), app.getDescription(), context, new char[] {'1','0','0'}, true );
-				applicationList.add(a);
+				application = new App( app.getId(), app.getDescription(), context, new char[] {'1','0','0'}, true );
 			}
+			applicationList.add(application);
         }
 	}
 

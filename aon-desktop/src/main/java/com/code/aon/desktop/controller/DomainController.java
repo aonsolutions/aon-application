@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 import javax.faces.validator.ValidatorException;
 import javax.naming.Context;
 import javax.naming.Name;
@@ -91,19 +90,41 @@ public class DomainController extends BasicController implements IDesktopConstan
 	public void setSelectedApplication(ApplicationsManager.App selectedApplication) {
 		this.selectedApplication = selectedApplication;
 	}
+	
+	public static String getCMSDomainURL( String domain ) {
+		StringBuffer url = new StringBuffer( "http://cms" );
+		String[] parts = StringUtils.split(domain, ".");
+		if ( ArrayUtils.getLength(parts) > 2 ) {
+			for( String part : parts ) {
+				url.append(".").append(part);
+			}
+		} else {
+			url.append(".").append(domain);
+		}
+		FacesContext context = FacesContext.getCurrentInstance();
+		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+		if ( request.getRemotePort() != 80 ) {
+			url.append( ":" ).append( String.valueOf(request.getLocalPort()) );
+		}		
+		return url.toString();
+	}
 
 	public String getCurrentDomainApplicationURL() throws ManagerBeanException {
 		if ( getModel().isRowAvailable() ) {
 			Domain domain = (Domain) getModel().getRowData();
-			StringBuffer url = new StringBuffer( "http://" );
-			url.append( domain.getCommonName() );
-			FacesContext context = FacesContext.getCurrentInstance();
-			HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-			if ( request.getRemotePort() != 80 ) {
-				url.append( ":" ).append( String.valueOf(request.getLocalPort()) );
+			if ( ApplicationsManager.AON_CMS.equals(selectedApplication.getId()) ) {
+				return getCMSDomainURL(domain.getCommonName());
+			} else {
+				StringBuffer url = new StringBuffer( "http://" );
+				url.append( domain.getCommonName() );
+				FacesContext context = FacesContext.getCurrentInstance();
+				HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+				if ( request.getRemotePort() != 80 ) {
+					url.append( ":" ).append( String.valueOf(request.getLocalPort()) );
+				}
+				url.append( selectedApplication.getContext() );
+				return url.toString();				
 			}
-			url.append( selectedApplication.getContext() );
-			return url.toString();
 		}
 		return null;
 	}
