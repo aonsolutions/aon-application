@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.marketing</artifactId>
-	<version>3.2.1</version>
+	<version>3.2.2</version>
 	<description>AON UI MARKETING</description>
 	<name>AON UI MARKETING</name>
 	<dependencies>
@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>3.9.0</version>			
+			<version>3.9.1</version>			
 			<scope>compile</scope>
 		</dependency>				
 		<dependency>
@@ -59,19 +59,19 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.mailing</artifactId>
-			<version>3.0.4</version>
+			<version>3.0.5</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.messaging</artifactId>
-			<version>0.4.2</version>
+			<version>0.5.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.webmail</artifactId>
-			<version>4.9.0</version>
+			<version>4.10.0</version>
 		</dependency>		
 		<dependency>
 			<groupId>javax.faces</groupId>
