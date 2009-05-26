@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:div id="aonHeader" styleClass="aon-header">
@@ -66,7 +67,7 @@
 				<aon:outputText value="#{aonConfiguration.currentDate}" />
 			    <a4j:region>
 		            <a4j:poll id="poll" interval="300000" status="aonStatus" />
-			    </a4j:region>								
+				</a4j:region>
 			</aon:div>
 		</aon:form>
 	</aon:div>
