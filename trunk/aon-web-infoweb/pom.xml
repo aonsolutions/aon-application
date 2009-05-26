@@ -11,11 +11,11 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.infoweb</artifactId>
 	<packaging>war</packaging>
-	<version>3.7.0</version>
+	<version>3.7.1</version>
 	<description>AON WEB INFOWEB</description>
 	<name>AON WEB INFOWEB</name>
 	<properties>
-		<dbVersion>3.0.1</dbVersion>
+		<dbVersion>3.4.0</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-infoweb</finalName>
@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>3.6.1</version>
+			<version>3.6.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -84,7 +84,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>3.9.0</version>
+			<version>3.9.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
