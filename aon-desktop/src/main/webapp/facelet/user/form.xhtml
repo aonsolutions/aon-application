@@ -12,23 +12,57 @@
 		
 		<aon:form id="userForm">
 
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.aon_users}" />				
-				<ui:param name="controller" value="#{user}" />
-				<ui:param name="skipRemoveButton" value="true" />
-				
-				<ui:define name="beforeSpinToolbarContent">
-					<aon:commandButton id="changePassword" value="#{appBundle.aon_change_password}"
-						action="changepassword_form" actionListener="#{currentUser.onLoadUser}" rendered="#{!user.new}"
-						styleClass="aon-finding-toolbar-item aon-icon-user-change-password" />
-					<aon:commandButton id="groups" value="#{appBundle.aon_workgroups}"
-						action="work_group" actionListener="#{workGroup.onSearch}" rendered="#{!user.new}"
-						styleClass="aon-finding-toolbar-item aon-icon-group" />
-					<aon:commandButton id="scopes" value="#{appBundle.aon_scopes}"
-						action="scope" actionListener="#{scope.onSearch}" rendered="#{!user.new}"
-						styleClass="aon-finding-toolbar-item aon-icon-ambito" />
-				</ui:define>				
-			</ui:decorate>		
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.aon_users}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{user.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+					</aon:div>
+
+					<aon:div>
+						<aon:commandButton id="save" value="#{bundle.aon_save}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							actionListener="#{user.accept}"	action="user_form"
+							accesskey="#{bundle.aon_key_save}" />
+						<aon:confirmButton id="cancel" value="#{bundle.aon_cancel}"
+							rendered="#{user.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="true" confirmTitle="#{bundle.aon_confirm_title}"
+							confirmMessage="#{bundle.aon_cancel_confirm}"
+							confirmActionListener="#{user.onCancel}"
+							confirmAction="user"
+							accesskey="#{bundle.aon_key_cancel}" />							
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							immediate="true" action="user_search" rendered="#{!user.new}"
+							actionListener="#{user.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />
+						<aon:commandButton id="back" value="#{bundle.aon_back}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="true" rendered="#{!user.new}"
+							actionListener="#{user.onCancel}" action="user"
+							accesskey="#{bundle.aon_key_cancel}" />
+						<aon:commandButton id="changePassword" value="#{appBundle.aon_change_password}"
+							action="changepassword_form" actionListener="#{currentUser.onLoadUser}" rendered="#{!user.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-user-change-password" />
+						<aon:commandButton id="groups" value="#{appBundle.aon_workgroups}"
+							action="work_group" actionListener="#{workGroup.onSearch}" rendered="#{!user.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-group" />
+						<aon:commandButton id="scopes" value="#{appBundle.aon_scopes}"
+							action="scope" actionListener="#{scope.onSearch}" rendered="#{!user.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-ambito" />
+					
+						<aon:spin controller="#{user}" action="user_form" rendered="#{!user.new}" />
+
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
 
 			<aon:div styleClass="aon-scroll-area">
 

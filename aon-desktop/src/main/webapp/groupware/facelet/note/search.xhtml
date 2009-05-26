@@ -9,40 +9,69 @@
 
 	<ui:define name="content">
 
-		<aon:form id="noteSearch">
+		<aon:form id="noteForm">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{groupwareBundle.aon_note}" />
-				<ui:param name="controller" value="#{note}" />
-			</ui:include>
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true" 				
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+								
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{groupwareBundle.aon_note}" />
+					</aon:div>						
+		
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{bundle.aon_search}" />
+					</aon:div>				
+		
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="search" value="#{bundle.aon_accept}"
+							action="note_list" actionListener="#{note.onSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />
+						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							action="note_list" actionListener="#{note.onCancel}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="true" accesskey="#{bundle.aon_key_cancel}" />	
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="note_form" actionListener="#{note.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}" />
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+			<!-- end toolbar navigation -->
 
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
-				<ui:define name="searchContent">
-					<aon:methodParam name="searchActionListener" value="#{note.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="note_list" />		
-						
-					<aon:outputLabel for="Note_date-From"
-						value="#{groupwareBundle.aon_date_from}" />
-					<aon:selectInputDate id="Note_date-From"
-					 	popupDateFormat="#{bundle.aon_date_pattern}"
-						value="#{note.fromDate}" renderAsPopup="true">
-					</aon:selectInputDate>
-
-					<aon:outputLabel for="Note_date-To"
-						value="#{groupwareBundle.aon_date_to}" />
-					<aon:selectInputDate id="Note_date-To"
-						popupDateFormat="#{bundle.aon_date_pattern}"
-						value="#{note.toDate}" renderAsPopup="true">
-					</aon:selectInputDate>
-					
-					<aon:outputLabel for="Note_subject"
-						value="#{groupwareBundle.note_subject}" />
-					<aon:inputText id="Note_subject"
-						maxlength="64" size="100"
-						valueChangeListener="#{note.addExpression}" />
-				</ui:define>
-			</ui:decorate>
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-scroll-area-internal">		
 			
+					<aon:panelGrid columns="2" >
+						
+						<aon:outputLabel for="Note_date-From"
+							value="#{groupwareBundle.aon_date_from}" />
+						<aon:selectInputDate id="Note_date-From"
+						 	popupDateFormat="#{bundle.aon_date_pattern}"
+							value="#{note.fromDate}" renderAsPopup="true">
+						</aon:selectInputDate>
+	
+						<aon:outputLabel for="Note_date-To"
+							value="#{groupwareBundle.aon_date_to}" />
+						<aon:selectInputDate id="Note_date-To"
+							popupDateFormat="#{bundle.aon_date_pattern}"
+							value="#{note.toDate}" renderAsPopup="true">
+						</aon:selectInputDate>
+						
+						<aon:outputLabel for="Note_subject"
+							value="#{groupwareBundle.note_subject}" />
+						<aon:inputText id="Note_subject"
+							maxlength="64" size="100"
+							valueChangeListener="#{note.addExpression}" />
+
+					</aon:panelGrid>
+					
+				</aon:div>
+			</aon:div>
+
 		</aon:form>
 	</ui:define>
 </ui:composition>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE report-config 
+	PUBLIC "-//CODE-AON//DTD Report Config//EN" 
+	"http://co-de.com/aon/report-config.dtd">
+
+<report-config>
+	<default-config>
+		<fetch-mode paginated="false" />
+	</default-config>
+
+	<!--  **********************************************************
+						      Target
+		  ********************************************************** -->
+	<report id="targetList" description="Targets List">
+		<template path="/com/code/aon/ui/commercial/report/target.jasper"/>
+		<bean key="com.code.aon.marketing.MarketingTarget" />
+		<criteria provider="#{target}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.commercial.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+	</report>
+	
+</report-config>

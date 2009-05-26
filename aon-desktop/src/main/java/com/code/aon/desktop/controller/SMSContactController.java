@@ -13,7 +13,7 @@ import com.code.aon.groupware.dao.IContactAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.bean.AonConstants;
 
 public class SMSContactController {
 
@@ -60,7 +60,7 @@ public class SMSContactController {
 		try {
 			init();
 			addExpressions(); 
-			IManagerBean bean = AonUtil.getController( WebMailConstants.BEAN_CONTACT ).getManagerBean();
+			IManagerBean bean = AonUtil.getController( AonConstants.BEAN_CONTACT ).getManagerBean();
 			criteria.addOrder( bean.getFieldName( IContactAlias.CONTACT_NAME ) );
 			List lst = bean.getList( criteria );
             for (int i = 0, max = lst.size(); i < max; i++) {
@@ -164,7 +164,7 @@ public class SMSContactController {
 	private void addExpression(String key, String value) throws ManagerBeanException {
 		try {
 			if (value.length() > 0) {
-				IManagerBean bean = AonUtil.getController( WebMailConstants.BEAN_CONTACT ).getManagerBean();
+				IManagerBean bean = AonUtil.getController( AonConstants.BEAN_CONTACT ).getManagerBean();
 					criteria.addExpression( bean.getFieldName( key ), value);
 			}
 		} catch (ExpressionException e) {

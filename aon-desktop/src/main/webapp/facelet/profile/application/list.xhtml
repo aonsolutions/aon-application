@@ -12,10 +12,29 @@
 
 		<aon:form id="applicationList">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.aon_profiles}" />
-				<ui:param name="toolbarDescription" value="#{appBundle.aon_applications}" />
-			</ui:include>
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.aon_profiles}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{appBundle.aon_applications}" />
+					</aon:div>
+
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="cancel" value="#{bundle.aon_back}"
+							action="user_list" immediate="true"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_cancel}" />
+					</aon:div>
+
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">

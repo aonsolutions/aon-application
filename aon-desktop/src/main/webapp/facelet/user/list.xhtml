@@ -12,20 +12,45 @@
 
 		<aon:form id="userList">
 
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.aon_users}" />				
-				<ui:param name="controller" value="#{user}" />
-				<ui:param name="skipResetButton" value="#{!domain.userManagement}" />
-				
-				<ui:define name="additionalToolbarContent">
-					<aon:commandButton id="groups" value="#{appBundle.aon_workgroups}"
-						action="work_group" actionListener="#{workGroup.onSearch}"
-						styleClass="aon-finding-toolbar-item aon-icon-group"/>
-					<aon:commandButton id="scopes" value="#{appBundle.aon_scopes}"
-						action="scope" actionListener="#{scope.onSearch}"
-						styleClass="aon-finding-toolbar-item aon-icon-ambito"/>
-				</ui:define>				
-			</ui:decorate>		
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.aon_users}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_listing}" />
+					</aon:div>
+
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							action="user_search" actionListener="#{user.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="user_form" actionListener="#{user.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							rendered="#{domain.userManagement}"
+							accesskey="#{bundle.aon_key_new}" />							
+						<aon:commandButton id="groups" value="#{appBundle.aon_workgroups}"
+							action="work_group" actionListener="#{workGroup.onSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-group"/>
+						<aon:commandButton id="scopes" value="#{appBundle.aon_scopes}"
+							action="scope" actionListener="#{scope.onSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-ambito"/>
+<!--  
+						<aon:commandButton id="profiles" value="#{appBundle.aon_profiles}"
+							action="application_list" actionListener="#{domain.onLoadCurrentDomain}"
+							styleClass="aon-finding-toolbar-item aon-icon-category"/>
+-->
+					</aon:div>
+
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">

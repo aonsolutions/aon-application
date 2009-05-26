@@ -15,19 +15,56 @@
 
 			<aon:div ajaxRendered="true" layout="none">
 
-				<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml" >
-					<ui:param name="toolbarTitle" value="#{appBundle.aon_users}" />
-					<ui:param name="toolbarDescription" value="#{appBundle.aon_workgroups}" />					
-					<ui:param name="controller" value="#{workGroup}" />
-					
-					<ui:define name="additionalToolbarContent">
-						<aon:commandButton
-							value="#{bundle.aon_back}" rendered="#{workGroup.to==null}"
-							action="user" actionListener="#{user.onSearch}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"/>					 
-					</ui:define>				
-				</ui:decorate>		
-			
+				<aon:div styleClass="aon-finding-title-toolbar">
+					<aon:panelGrid columns="3" dir="true"
+						columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+	
+						<aon:div styleClass="aon-finding-title-internal">
+							<aon:outputText value="#{appBundle.aon_users}" />
+						</aon:div>
+	
+						<aon:div styleClass="aon-finding-subtitle-internal">
+							<aon:outputText
+								value="#{appBundle.aon_workgroups}" />
+						</aon:div>
+	
+						<aon:div styleClass="aon-finding-toolbar-item-group">
+							<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+								actionListener="#{workGroup.onReset}" rendered="#{!workGroup.new}"
+								styleClass="aon-finding-toolbar-item aon-icon-reset"
+								accesskey="#{bundle.aon_key_new}"/>
+							<aon:commandButton id="save"
+								value="#{bundle.aon_save}"
+								actionListener="#{workGroup.onAccept}" 
+								rendered="#{workGroup.to!=null or workGroup.new}"
+								styleClass="aon-finding-toolbar-item aon-icon-accept"
+								accesskey="#{bundle.aon_key_new}" />
+							<aon:confirmButton id="cancelNew"
+								value="#{bundle.aon_cancel}" rendered="#{workGroup.new}"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_cancel_confirm}"
+								confirmActionListener="#{workGroup.onCancel}"
+								accesskey="#{bundle.aon_key_cancel}"/>
+							<aon:commandButton id="cancelEdit"
+								value="#{bundle.aon_cancel}" rendered="#{workGroup.to!=null and (!workGroup.new)}"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+								actionListener="#{workGroup.onCancel}"
+								accesskey="#{bundle.aon_key_cancel}"/>
+							<aon:confirmButton id="remove"
+								value="#{bundle.aon_remove}" rendered="#{workGroup.to!=null and !workGroup.new}"
+								styleClass="aon-finding-toolbar-item aon-icon-delete" immediate="true"
+								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_remove_confirm}"
+								confirmActionListener="#{workGroup.onRemove}"
+								accesskey="#{bundle.aon_key_remove}"/>
+							<aon:commandButton id="users"
+								value="#{bundle.aon_back}" rendered="#{workGroup.to==null}"
+								action="user" actionListener="#{user.onSearch}"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel"/>
+						</aon:div>
+					</aon:panelGrid>
+				</aon:div>
+				<!-- end toolbar navigation -->
+
 				<!--  aon-region-body -->
 	 			<aon:div styleClass="aon-scroll-area">
 					
@@ -100,7 +137,7 @@
 									rendered="#{to==workGroup.to}"
 									actionListener="#{workGroup.onCancel}" immediate="true"
 									accesskey="#{bundle.aon_key_cancel_line}" />
-								<aon:confirmButton id="editRemove" title="[#{bundle.aon_remove}]"
+								<aon:confirmButton title="[#{bundle.aon_remove}]"
 									styleClass="aon-editDataTable-button aon-icon-delete"
 									rendered="#{to==workGroup.to}"
 									confirmTitle="#{bundle.aon_confirm_title}" 
@@ -116,7 +153,7 @@
 										rendered="#{workGroup.new}"
 										styleClass="aon-editDataTable-button aon-icon-accept"
 										accesskey="#{bundle.aon_key_save_line}" />
-									<aon:confirmButton id="editCancel" title="[#{bundle.aon_cancel}]"
+									<aon:confirmButton title="[#{bundle.aon_cancel}]"
 										styleClass="aon-editDataTable-button aon-icon-cancel"
 										rendered="#{workGroup.new}"
 										confirmTitle="#{bundle.aon_confirm_title}" 

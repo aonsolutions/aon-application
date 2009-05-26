@@ -14,18 +14,28 @@
 
 		<aon:form id="smsForm">
 
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.aon_desktop_sms}" />
-				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
-				<ui:define name="toolbarContent">
-					<aon:commandButton id="sendSMS" value="#{appBundle.aon_messaging_send}"
-						reRender="smsSender, poll"
-						disabled="#{!sms.allowSending}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						actionListener="#{sms.sendMessage}"
-						accesskey="#{bundle.aon_key_save}" />
-				</ui:define>
-			</ui:decorate>
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.aon_desktop_sms}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_editing}" />
+					</aon:div> 
+
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="sendSMS" value="#{appBundle.aon_messaging_send}"
+							reRender="smsSender, poll"
+							disabled="#{!sms.allowSending}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							actionListener="#{sms.sendMessage}"
+							accesskey="#{bundle.aon_key_save}" />
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2"  style="border:0;width:auto;"

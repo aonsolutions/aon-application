@@ -12,29 +12,43 @@
 
 		<aon:form id="profileForm">
 
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.aon_profiles}" />
-				<ui:param name="toolbarDescription" value="#{appBundle.aon_application} : #{domain.da.id} / #{appBundle.aon_user} : #{domain.newUser?(bundle.aon_reset):(bundle.aon_editing)}" />
-				<ui:define name="toolbarContent">
-					<aon:commandButton id="save" value="#{bundle.aon_save}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						actionListener="#{domain.acceptUser}"
-						accesskey="#{bundle.aon_key_save}" reRender="aonToolbar" />
-					<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
-						rendered="#{(!domain.newUser) and domain.userManagement}"
-						styleClass="aon-finding-toolbar-item aon-icon-delete"
-						immediate="true" confirmTitle="#{bundle.aon_confirm_title}"
-						confirmMessage="#{bundle.aon_remove_confirm}"
-						confirmActionListener="#{domain.removeUser}"
-						confirmAction="profile_list"/>							
-					<aon:commandButton id="cancel" value="#{bundle.aon_back}"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						immediate="#{true}"
-						actionListener="#{domain.cancel}"
-						action="profile_list"
-						accesskey="#{bundle.aon_key_cancel}" />
-				</ui:define>
-			</ui:decorate>
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.aon_profiles}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{appBundle.aon_application}" />		
+						<aon:outputText value=" : " />		
+						<aon:outputText value="#{domain.da.id}" />		
+						<aon:outputText value=" / " />		
+						<aon:outputText value="#{appBundle.aon_user}" />
+					</aon:div>
+
+					<aon:div id="buttonDiv" styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="save" value="#{bundle.aon_save}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							actionListener="#{domain.acceptUser}"
+							accesskey="#{bundle.aon_key_save}" reRender="buttonDiv" />
+						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
+							rendered="#{(!domain.newUser) and domain.userManagement}"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							immediate="true" confirmTitle="#{bundle.aon_confirm_title}"
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{domain.removeUser}"
+							confirmAction="profile_list"/>							
+						<aon:commandButton id="cancel" value="#{bundle.aon_back}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="#{true}"
+							actionListener="#{domain.cancel}"
+							action="profile_list"
+							accesskey="#{bundle.aon_key_cancel}" />
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
 
 			<aon:div styleClass="aon-scroll-area">
 

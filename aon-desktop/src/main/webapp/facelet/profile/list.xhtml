@@ -12,32 +12,47 @@
 		
 		<aon:form id="profileForm">
 
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.aon_profiles}" />
-				<ui:param name="toolbarDescription" value="#{appBundle.aon_application} : #{domain.da.id}" />
-				<ui:define name="toolbarContent">
-					<aon:commandButton id="resetProfile" value="#{bundle.aon_reset}"
-						action="profile_form" rendered="#{domain.currentTab != 'users'}"
-						actionListener="#{domain.onResetProfile}"
-						styleClass="aon-finding-toolbar-item aon-icon-reset"
-						accesskey="#{bundle.aon_key_new}" />
-					<aon:commandButton id="resetUser" value="#{bundle.aon_reset}"
-						action="user_profile_form" rendered="#{(domain.currentTab == 'users') and domain.userManagement}"
-						actionListener="#{domain.onResetUser}"
-						styleClass="aon-finding-toolbar-item aon-icon-reset"
-						accesskey="#{bundle.aon_key_new}" />
-					<aon:commandButton id="cancel" value="#{bundle.aon_back}"
-						action="application_list" immediate="true"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						accesskey="#{bundle.aon_key_cancel}" />
-				</ui:define>
-			</ui:decorate>
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.aon_profiles}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{appBundle.aon_application}" />		
+						<aon:outputText value=" : " />		
+						<aon:outputText value="#{domain.da.id}" />		
+					</aon:div>
+
+					<!-- start toolbar navigation -->
+					<aon:div id="profilesToolbar" styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="resetProfile" value="#{bundle.aon_reset}"
+							action="profile_form" rendered="#{domain.currentTab != 'users'}"
+							actionListener="#{domain.onResetProfile}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}" />
+						<aon:commandButton id="resetUser" value="#{bundle.aon_reset}"
+							action="user_profile_form" rendered="#{(domain.currentTab == 'users') and domain.userManagement}"
+							actionListener="#{domain.onResetUser}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}" />
+						<aon:commandButton id="cancel" value="#{bundle.aon_back}"
+							action="application_list" immediate="true"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_cancel}" />
+					</aon:div>
+
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
 				<aon:panelTabSet id="applicationTabSet" value="#{domain.currentTab}">
-					<aon:panelTab name="profiles" label="#{appBundle.aon_profiles}" reRender="aonToolbar">
+					<aon:panelTab name="profiles" label="#{appBundle.aon_profiles}" reRender="profilesToolbar">
 						<aon:dataTable id="profileDataList" 
 							value="#{domain.profiles}" var="to" rows="30"
 							styleClass="aon-dataTable">
@@ -65,7 +80,7 @@
 						</aon:dataTable>
                     </aon:panelTab>
 
-					<aon:panelTab name="users" label="#{appBundle.aon_users}" reRender="aonToolbar">
+					<aon:panelTab name="users" label="#{appBundle.aon_users}" reRender="profilesToolbar">
 						<aon:dataTable id="usersDataList" 
 							value="#{domain.users}" var="to" rows="30"
 							styleClass="aon-dataTable">

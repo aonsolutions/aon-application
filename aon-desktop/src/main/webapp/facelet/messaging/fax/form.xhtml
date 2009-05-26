@@ -14,19 +14,29 @@
 
 		<aon:form id="faxForm" enctype="multipart/form-data">
 
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.aon_desktop_fax}" />
-				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
-				<ui:define name="toolbarContent">
-					<aon:commandButton id="sendFAX"
-						value="#{appBundle.aon_messaging_send}"
-						styleClass="aon-icon-accept aon-finding-toolbar-item"
-						actionListener="#{fax.send}"
-						onclick="Richfaces.showModalPanel('waitProccess')" 
-	     				oncomplete="Richfaces.hideModalPanel('waitProccess')"
-						 />						
-				</ui:define>
-			</ui:decorate>
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.aon_desktop_fax}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_editing}" />
+					</aon:div> 
+
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="sendFAX"
+							value="#{appBundle.aon_messaging_send}"
+							styleClass="aon-icon-accept aon-finding-toolbar-item"
+							actionListener="#{fax.send}"
+							onclick="Richfaces.showModalPanel('waitProccess')" 
+		     				oncomplete="Richfaces.hideModalPanel('waitProccess')"
+							 />						
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2"  style="border:0;width:auto;"
@@ -62,17 +72,17 @@
 							<aon:outputLabel for="attach_file" value="#{appBundle.aon_messaging_document}: " />
 							<aon:div id="attachDiv" >
 								<aon:fileUpload id="attach_file" disabled="#{!fax.enabled}"
-									addControlLabel="#{bundle.aon_fileUpload_add}" 
-									stopControlLabel="#{bundle.aon_fileUpload_stop}" 
-									stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
-									uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+									addControlLabel="#{appBundle.aon_fileUpload_add}" 
+									stopControlLabel="#{appBundle.aon_fileUpload_stop}" 
+									stopEntryControlLabel="#{appBundle.aon_fileUpload_stop}"
+									uploadControlLabel="#{appBundle.aon_fileUpload_upload}"
 									fileUploadListener="#{fax.fileUploaded}"
 									listHeight="0px" listWidth="90%"
 									immediateUpload="true" autoclear="true"
 									onupload="startUpload();" onuploadcanceled="endUpload();" onerror="endUpload();"
 									>
 									<f:facet name="label">
-										<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+										<h:outputText value="#{appBundle.aon_fileUpload_upload_label}" />
 									</f:facet>								
 									<a4j:support event="onuploadcomplete" oncomplete="endUpload();" reRender="attachDataTable" />
 								</aon:fileUpload>	
@@ -84,7 +94,7 @@
 												<aon:outputText value="#{attachment.fileName}" styleClass="aon-bold" />
 												<aon:commandLink
 													reRender="attachDiv" style="font-size:0.9em;margin-left:20px;"
-													value="#{bundle.aon_fileUpload_remove}"
+													value="#{appBundle.aon_fileUpload_remove}"
 													styleClass="aon-icon-commandButton aon-icon-delete"
 													actionListener="#{attachment.fileDeleted}">
 												</aon:commandLink>

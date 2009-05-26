@@ -23,6 +23,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.company.Company;
+import com.code.aon.config.User;
 import com.code.aon.desktop.DesktopAlarm;
 import com.code.aon.desktop.DesktopNoticeSummary;
 import com.code.aon.groupware.Note;
@@ -246,6 +247,22 @@ public class DesktopController extends BasicController {
     }
 
     @SuppressWarnings("unchecked")
+    public String getCompanyName() throws ManagerBeanException {
+        try {
+	    	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+	        List companyList = companyBean.getList(null);
+	        if (companyList.size() > 0) {
+	            Company company = (Company)companyList.get(0);
+	            return company.getName();
+	        }
+	        return null;
+        }
+        catch (Exception e) {
+        	return null;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
     public String getCompanyAlias() throws ManagerBeanException {
         try {
 	    	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
@@ -288,6 +305,21 @@ public class DesktopController extends BasicController {
 	    	return null;
 	    }
 	}
+
+    public String getLoggedUserName() {
+        User user = UserUtils.getInstance().getLoggedUser();
+        return user.getName();
+    }
+
+    public String getLoggedUser() {
+        return UserUtils.getInstance().getPrincipal().getShortName();
+    }
+    
+    public String getCurrentDate() {
+        DateFormat formatter = new SimpleDateFormat("EEEE, dd MMMM yyyy");
+
+        return formatter.format(new Date()).toUpperCase();
+    }
     
     public boolean isValidated() {
 		HttpSession session = (HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(false);

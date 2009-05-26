@@ -1,63 +1,87 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core" 
-	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
-<body>
 
-<ui:composition>
+	<c:if test="#{!aonConfiguration.properties.hideMenuBar}">
 
-	<aon:form id="commercialMenu">
-	
-		<aon:menuBar> 
-			<aon:dropDownMenu value="#{menuBundle.aon_auxiliars}">
-				<aon:menuItem value="#{menuBundle.aon_commercial_segments}" 
-					iconClass="aon-commercial-segment-iconClass"
-					action="commercialSegment" actionListener="#{commercialSegment.onSearch}" />
-				<aon:menuItem value="#{menuBundle.aon_commercial_activities}"
-					iconClass="aon-commercial-activity-iconClass"
-					action="commercialActivity" actionListener="#{commercialActivity.onSearch}" />
-				<aon:menuGroup value="#{menuBundle.aon_product_auxiliars}">
-					<aon:menuItem value="#{menuBundle.aon_product_categories}" 
-						action="productCategory" disabled="true" />
-					<aon:menuItem value="#{menuBundle.aon_product_taxes}" 
-						action="productTax" disabled="true" />
-				</aon:menuGroup>					
-			</aon:dropDownMenu>
-			<aon:dropDownMenu value="#{menuBundle.aon_masters}">
-				<aon:menuItem value="#{menuBundle.aon_targets}" 
-					iconClass="aon-target-iconClass"
-					action="target" actionListener="#{target.onSearch}" />
-				<aon:menuItem value="#{menuBundle.aon_products}" 
-					action="product" disabled="true" />
-				<aon:menuItem value="#{menuBundle.aon_sellers}"
-					iconClass="aon-seller-iconClass"
-					action="seller" actionListener="#{seller.onSearch}" />
-			</aon:dropDownMenu>
-			<aon:dropDownMenu value="#{menuBundle.aon_commercial}">
-				<aon:menuItem value="#{menuBundle.aon_commercial_tracking}" 
-					iconClass="aon-commercial-tracking-iconClass"
-					action="commercialTracking" actionListener="#{commercialTracking.onReset}" />
-				<aon:menuItem value="#{menuBundle.aon_commercial_offers}" 
-					action="offer" disabled="true" />					
-			</aon:dropDownMenu>
-			<aon:dropDownMenu value="#{marketingBundle.aon_marketing}">
-				<aon:menuItem value="#{marketingBundle.aon_marketing_surveis}" 
-					action="survey" actionListener="#{survey.onSearch}" />
-				<aon:menuItem value="#{marketingBundle.aon_marketing_questions}"
-					action="question" actionListener="#{question.onSearch}" />
-				<aon:menuItem value="#{marketingBundle.aon_marketing_campaigns}"
-					action="campaign" actionListener="#{campaign.onSearch}" />
-			</aon:dropDownMenu>
-			<aon:commandLink value="#{menuBundle.aon_communication_center}"
-				styleClass="aon-top-menu-item aon-icon-call" immediate="true" 
-				action="communicationCenter" actionListener="#{communicationCenter.onInitSurveyResponse}" />
-		</aon:menuBar>
-			
-	 </aon:form>
+		<aon:form id="commercialMenu">
+		
+			<aon:menuBar> 
+				<aon:dropDownMenu value="#{bundle.aon_auxiliaries}">
+					<aon:menuItem id="commercialSegment"
+						value="#{commercialBundle.commercial_segment_module}" 
+						iconClass="aon-commercial-segment-iconClass"
+						action="commercialSegment" actionListener="#{commercialSegment.onSearch}" />
+					<aon:menuItem id="commercialActivity" 
+						value="#{commercialBundle.commercial_activity_module}"
+						iconClass="aon-commercial-activity-iconClass"
+						action="commercialActivity" actionListener="#{commercialActivity.onSearch}" />
+					<aon:menuGroup value="#{commercialBundle.commercial_product_auxiliars_module_group}">
+						<aon:menuItem id="productCategory" 
+							action="productCategory" 
+							value="#{productBundle.product_category_module}" />
+						<aon:menuItem id="tax" 
+							action="tax" 
+							value="#{configBundle.config_tax_module}" />
+					</aon:menuGroup>					
+				</aon:dropDownMenu>
+				<aon:dropDownMenu value="#{bundle.aon_masters}">
+					<aon:menuItem id="target"
+						value="#{commercialBundle.commercial_target_module}" 
+						iconClass="aon-target-iconClass"
+						action="target_search" actionListener="#{target.onEditSearch}" >
+						<f:setPropertyActionListener value="#{true}" target="#{target.showProfile}" />
+						<f:setPropertyActionListener value="#{true}" target="#{target.showSearchOnlyCustomers}" />
+						<f:setPropertyActionListener value="#{true}" target="#{target.showCommercialTracking}" />
+					</aon:menuItem>
+					<aon:menuItem id="item" 
+						action="item_search" actionListener="#{item.onEditSearch}"
+						value="#{productBundle.product_module}" />						
+					<aon:menuItem id="seller" 
+						action="seller_search" actionListener="#{seller.onEditSearch}"
+						value="#{salesBundle.sales_seller_module}" />
+				</aon:dropDownMenu>
+				<aon:dropDownMenu value="#{commercialBundle.commercial_module_group}">
+					<aon:menuItem id="commercialTracking"
+						value="#{commercialBundle.commercial_tracking_module}" 
+						iconClass="aon-commercial-tracking-iconClass"
+						action="commercialTracking_form" actionListener="#{commercialTracking.onReset}" />
+					<aon:menuItem id="offer_form"
+						value="#{commercialBundle.commercial_offer_module}" 
+						action="offer_form" actionListener="#{offer.onReset}" />
+				</aon:dropDownMenu>
+				<aon:dropDownMenu value="#{marketingBundle.marketing_marketing}">
+					<aon:menuItem id="campaign"
+						value="#{marketingBundle.marketing_campaign_module}"
+						action="campaign_list" actionListener="#{campaign.onSearch}" />
+					<aon:menuItem id="survey" 
+						value="#{marketingBundle.marketing_survey_module}" 
+						action="survey_list" actionListener="#{survey.onSearch}" />
+					<aon:menuItem id="surveyResponse"
+						value="#{marketingBundle.marketing_survey_response_module}" 
+						action="surveyResponse_list" actionListener="#{surveyResponse.onSearch}" />
+					<aon:menuItem id="question"
+						value="#{marketingBundle.marketing_question_module}"
+						action="question_list" actionListener="#{question.onSearch}" />
+				</aon:dropDownMenu>
+				<aon:dropDownMenu value="#{bundle.aon_configuration}">
+					<aon:menuItem id="company"
+						value="#{companyBundle.company_data_module}"
+						action="company" actionListener="#{company.onLoad}" />
+					<aon:menuItem id="mailAccountCahnge"
+						value="#{webmailBundle.webmail_mailAccount}"
+						action="mailAccount_list" actionListener="#{mailAccount.onSearch}" />						
+				</aon:dropDownMenu>
+				<aon:commandLink id="communicationCenter"
+					value="#{commercialBundle.commercial_communication_center_module}"
+					styleClass="aon-top-menu-item aon-icon-call" immediate="true" 
+					action="communicationCenter" actionListener="#{communicationCenter.onInit}" />
+			</aon:menuBar>
+				
+		 </aon:form>
+	</c:if>
 
 </ui:composition>
-
-</body>
-</html>

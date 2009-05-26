@@ -9,31 +9,67 @@
 
 	<ui:define name="content">
 
-		<aon:form id="favoriteSearch">
+		<aon:form id="favoriteForm">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{groupwareBundle.aon_favorite}" />
-				<ui:param name="controller" value="#{favorite}" />
-			</ui:include>
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true" 				
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+								
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{groupwareBundle.aon_favorite}" />
+					</aon:div>						
+		
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{bundle.aon_search}" />
+					</aon:div>				
+		
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="search" value="#{bundle.aon_accept}"
+							action="favorite_list" actionListener="#{favorite.onSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />
+						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							action="favorite_list" actionListener="#{favorite.onCancel}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="true" accesskey="#{bundle.aon_key_cancel}" />	
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="favorite_form" actionListener="#{favorite.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}" />
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+			<!-- end toolbar navigation -->
 
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
-				<ui:define name="searchContent">
-					<aon:methodParam name="searchActionListener" value="#{favorite.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="favorite_list" />		
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-scroll-area-internal">		
+			
+					<aon:panelGrid columns="2" >
 
-					<aon:outputLabel for="Favorite_description"
-						value="#{groupwareBundle.favorite_description}" />
-					<aon:inputText id="Favorite_description"
-						maxlength="128" size="100"
-						valueChangeListener="#{favorite.addExpression}" />
+						<aon:outputLabel for="Favorite_description"
+							value="#{groupwareBundle.favorite_description}" />
+						<aon:inputText id="Favorite_description"
+							maxlength="128" size="100"
+							valueChangeListener="#{favorite.addExpression}" />
 
-					<aon:outputLabel for="Favorite_url"
-						value="#{groupwareBundle.favorite_url}" />
-					<aon:inputText id="Favorite_url"
-						maxlength="128" size="100"
-						valueChangeListener="#{favorite.addExpression}" />
-				</ui:define>
-			</ui:decorate>
+						<aon:outputLabel for="Favorite_url"
+							value="#{groupwareBundle.favorite_url}" />
+						<aon:inputText id="Favorite_url"
+							maxlength="128" size="100"
+							valueChangeListener="#{favorite.addExpression}" />
+<!-- 
+						<aon:outputLabel for="Favorite_favoriteCategory_id"
+							value="#{groupwareBundle.favorite_favorite_category}" />
+						<aon:selectOneMenu id="Favorite_favoriteCategory_id"
+							valueChangeListener="#{favorite.addExpression}" >
+							<f:selectItems value="#{groupWareCollections.favoriteCategories}" />
+						</aon:selectOneMenu>
+ -->
+					</aon:panelGrid>
+
+				</aon:div>
+			</aon:div>
 
 		</aon:form>
 	</ui:define>

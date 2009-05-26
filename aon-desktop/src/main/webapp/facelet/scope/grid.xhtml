@@ -14,18 +14,52 @@
 
 			<aon:div ajaxRendered="true" layout="none">
 
-				<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml" >
-					<ui:param name="toolbarTitle" value="#{appBundle.aon_users}" />
-					<ui:param name="toolbarDescription" value="#{appBundle.aon_scopes}" />					
-					<ui:param name="controller" value="#{scope}" />
-					
-					<ui:define name="additionalToolbarContent">
-						<aon:commandButton
-							value="#{bundle.aon_back}" rendered="#{scope.to==null}"
-							action="user" actionListener="#{user.onSearch}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"/>					 
-					</ui:define>				
-				</ui:decorate>		
+				<aon:div styleClass="aon-finding-title-toolbar">
+					<aon:panelGrid columns="3" dir="true"
+						columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+	
+						<aon:div styleClass="aon-finding-title-internal">
+							<aon:outputText value="#{appBundle.aon_users}" />
+						</aon:div>
+	
+						<aon:div styleClass="aon-finding-subtitle-internal">
+							<aon:outputText
+								value="#{appBundle.aon_scopes}" />
+						</aon:div>
+	
+						<aon:div styleClass="aon-finding-toolbar-item-group">
+							<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+								actionListener="#{scope.onReset}" rendered="#{!scope.new}"
+								styleClass="aon-finding-toolbar-item aon-icon-reset"
+								accesskey="#{bundle.aon_key_new}"/>
+							<aon:commandButton id="save"
+								value="#{bundle.aon_save}" rendered="#{scope.to!=null or scope.new}"
+								styleClass="aon-finding-toolbar-item aon-icon-accept"
+								actionListener="#{scope.onAccept}" 
+								accesskey="#{bundle.aon_key_new}" />
+							<aon:confirmButton id="cancelNew"
+								value="#{bundle.aon_cancel}" rendered="#{scope.new}"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_cancel_confirm}"
+								confirmActionListener="#{scope.onCancel}"
+								accesskey="#{bundle.aon_key_cancel}"/>
+							<aon:commandButton id="cancelEdit"
+								value="#{bundle.aon_cancel}" rendered="#{scope.to!=null and (!scope.new)}"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+								actionListener="#{scope.onCancel}"
+								accesskey="#{bundle.aon_key_cancel}"/>
+							<aon:confirmButton id="remove"
+								value="#{bundle.aon_remove}" rendered="#{scope.to!=null and !scope.new}"
+								styleClass="aon-finding-toolbar-item aon-icon-delete" immediate="true"
+								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_remove_confirm}"
+								confirmActionListener="#{scope.onRemove}"
+								accesskey="#{bundle.aon_key_remove}"/>
+							<aon:commandButton id="users" value="#{bundle.aon_back}"  rendered="#{scope.to==null}"
+								action="user" actionListener="#{user.onSearch}"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel"/>
+						</aon:div>
+					</aon:panelGrid>
+				</aon:div>
 
 				<!--  aon-region-body -->
 	 			<aon:div styleClass="aon-scroll-area">
