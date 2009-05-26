@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 3.2.1
+# Version: 3.4.0
 # Created by: girazu
-# Creation Date: 04/05/2009 16:59
+# Creation Date: 21/05/2009 17:58
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -276,14 +276,33 @@ CREATE TABLE `account_budget` (
   `account_period` char(4) collate latin1_spanish_ci NOT NULL COMMENT 'Ejercicio Contable del Presupuesto',
   `account` char(12) collate latin1_spanish_ci NOT NULL COMMENT 'Cuenta Contable del Presupuesto',
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad del Presupuesto',
+  PRIMARY KEY  (`id`),
+  KEY `account_budget_account_idx` (`account`),
+  KEY `account_budget_account_period_idx` (`account_period`),
+  CONSTRAINT `fk_account_budget_account` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
+  CONSTRAINT `fk_account_budget_period` FOREIGN KEY (`account_period`) REFERENCES `account_period` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Presupuesto de Cuentas Contables';
+
+#
+# Structure for the `account_budget_detail` table : 
+#
+
+CREATE TABLE `account_budget_detail` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `account_budget` int(4) NOT NULL COMMENT 'Identificador del Presupuesto',
+  `account_period` char(4) collate latin1_spanish_ci NOT NULL COMMENT 'Ejercicio Contable del Presupuesto',
+  `account` char(12) collate latin1_spanish_ci NOT NULL COMMENT 'Cuenta Contable del Presupuesto',
+  `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad del Presupuesto',
   `entry_date` date default NULL COMMENT 'Fecha del Presupuesto',
   `debit` double default '0' COMMENT 'Debe del Presupuesto',
   `credit` double default '0' COMMENT 'Haber del Presupuesto',
   PRIMARY KEY  (`id`),
   KEY `account_budget_account_idx` (`account`),
   KEY `account_budget_account_period_idx` (`account_period`),
-  CONSTRAINT `fk_account_budget_account` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
-  CONSTRAINT `fk_account_budget_period` FOREIGN KEY (`account_period`) REFERENCES `account_period` (`id`)
+  KEY `account_budget` (`account_budget`),
+  CONSTRAINT `fk_account_budget_detail_account_budget` FOREIGN KEY (`account_budget`) REFERENCES `account_budget` (`id`),
+  CONSTRAINT `fk_account_budget_detail_account_detail` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
+  CONSTRAINT `fk_account_budget_detail_period_detail` FOREIGN KEY (`account_period`) REFERENCES `account_period` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Presupuesto de Cuentas Contables';
 
 #
@@ -409,6 +428,7 @@ CREATE TABLE `invoice` (
   `rname` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Nombre completo del Cliente o Proveedor',
   `raddress` int(4) default NULL COMMENT 'Identificador de la Direccion de envio de la Factura',
   `issue_date` date default NULL COMMENT 'Fecha de emision de la Factura',
+  `tax_date` date default NULL COMMENT 'Fecha de Impuestos de la Factura',
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad de la Factura',
   `status` tinyint(2) default '0' COMMENT 'Estado de la Factura',
   `type` tinyint(2) default '0' COMMENT 'Tipo de Factura (Compra o Venta)',
@@ -424,6 +444,7 @@ CREATE TABLE `invoice` (
   KEY `idx_invc_date` (`issue_date`),
   KEY `registry` (`registry`),
   KEY `series_number` (`series`,`number`),
+  KEY `idx_invc_tax_date` (`tax_date`),
   CONSTRAINT `invoice_ibfk_3` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `invoice_ibfk_4` FOREIGN KEY (`raddress`) REFERENCES `raddress` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Facturas';
@@ -867,6 +888,39 @@ CREATE TABLE `auto_concept` (
   `description` char(32) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Concepto Automatico',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos Automaticos';
+
+#
+# Structure for the `balance` table : 
+#
+
+CREATE TABLE `balance` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `name` varchar(64) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Nombre del Balance',
+  `removable` tinyint(1) default '0' COMMENT 'Indica se puede ser borrado por el usuario',
+  `type` tinyint(2) default '0' COMMENT 'Tipo de Balance',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Balances';
+
+#
+# Structure for the `balance_detail` table : 
+#
+
+CREATE TABLE `balance_detail` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `balance` int(4) NOT NULL COMMENT 'Identificador del Balance',
+  `code` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Codigo del Detalle en el Balance',
+  `description` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Descripción del detalle de balance',
+  `accounts` text collate latin1_spanish_ci COMMENT 'Cuentas separadas por comas, que forman el acumulado.',
+  `sortKey` int(4) default '0' COMMENT 'Orden el que aparecera en el listado.',
+  `title` tinyint(1) NOT NULL default '0',
+  `internal_calculation` tinyint(1) NOT NULL default '0' COMMENT 'Indica si es un calculo interno, es decir si el contenido\r\n                de accounts son referencias a la columna -code- de esta tabla',
+  `visible` tinyint(1) NOT NULL default '1' COMMENT 'Si aparece o no en la impresion.',
+  `zeroFlag` tinyint(1) NOT NULL default '0' COMMENT 'Flag que se activa cuando la cuenta o cuentas tienen valor 0.',
+  `creditNature` tinyint(1) NOT NULL default '0' COMMENT 'Si es verdadero se hace una haber menos debe de las cuentas indicadas',
+  PRIMARY KEY  (`id`),
+  KEY `idx_balance` (`balance`),
+  CONSTRAINT `fk_balance_detail_balance` FOREIGN KEY (`balance`) REFERENCES `balance` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Balace';
 
 #
 # Structure for the `brand` table : 
@@ -3451,7 +3505,7 @@ RETURN (SELECT IF (SUM(inventory_detail.cost) IS NULL, 0, SUM(inventory_detail.c
        AND inventory.inventory_date = d);
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('3.2.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('3.4.0');
 
 COMMIT;
 
