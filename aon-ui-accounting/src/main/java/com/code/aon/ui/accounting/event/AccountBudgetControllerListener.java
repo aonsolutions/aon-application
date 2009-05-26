@@ -26,4 +26,10 @@ public class AccountBudgetControllerListener extends ControllerAdapter {
 		((AccountBudgetController)getController()).setDebit(null);
 	}
 	
+	@Override
+	public void beforeModelSearched(ControllerEvent event)
+			throws ControllerListenerException {
+		((AccountBudgetController)getController()).calculateCreditDebitLists();
+	}
+		
 }

@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,7 +39,8 @@ public class AccountBudgetController extends BasicController {
 	private Double debit;
 	private Double creditTotal;
 	private Double debitTotal;
-	
+	private List<Double> debitList;
+	private List<Double> creditList;	
 	
 	public Account getAccount() {
 		return account;
@@ -104,6 +106,26 @@ public class AccountBudgetController extends BasicController {
 		this.debitTotal = debitTotal;
 	}
 	
+	public List<Double> getDebitList() {
+		if(debitList==null)
+			debitList = new ArrayList<Double>();
+		return debitList;
+	}
+
+	public void setDebitList(List<Double> debitList) {
+		this.debitList = debitList;
+	}
+
+	public List<Double> getCreditList() {
+		if(creditList==null)
+			creditList = new ArrayList<Double>();
+		return creditList;
+	}
+
+	public void setCreditList(List<Double> creditList) {
+		this.creditList = creditList;
+	}
+	
 	/**
 	 * Devuelve un array de nombres de mes
 	 * @return
@@ -112,6 +134,10 @@ public class AccountBudgetController extends BasicController {
 		return Month.values();
 	}
 
+	/**
+	 * Construye la lista con las nuevas lineas del presupuesto.
+	 * De ésta se obtienen los valores para insertar en la bd. 
+	 */
 	public void buildDetailValueList(){
 		AccountBudgetDetail detail = new AccountBudgetDetail();
 		detail.setAccountBudget((AccountBudget)getTo());
@@ -235,6 +261,38 @@ public class AccountBudgetController extends BasicController {
 				creditTotal = sumSet.getDouble(2);
 			}
 		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void calculateCreditDebitLists(){
+		PreparedStatement sum = null;
+		ResultSet sumSet = null;
+		try {
+			Iterator<ITransferObject> it = getManagerBean().getList(null).iterator();
+			while(it.hasNext()){
+				AccountBudget to = (AccountBudget)it.next();
+				String id = to.getAccount().getId();
+				String period = to.getPeriod();
+				try {
+					StringWriter sumStmt = new StringWriter();
+					sumStmt.append("SELECT SUM(s.debit),SUM(s.credit)");
+					sumStmt.append(" FROM account_budget_detail s ");
+					sumStmt.append(" WHERE s.account LIKE ?");
+					sumStmt.append(" AND s.account_period = ?");
+					sum = HibernateUtil.getSQLConnection().prepareStatement(sumStmt.toString());
+					sum.setString(1, id);
+					sum.setString(2, period);
+					sumSet = sum.executeQuery();
+					if (sumSet.next()) {
+						getDebitList().add(sumSet.getDouble(1));
+						getCreditList().add(sumSet.getDouble(2));
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
 	}

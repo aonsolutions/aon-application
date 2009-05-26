@@ -24,7 +24,7 @@
 
 			<aon:div id="accountBudgetData" styleClass="aon-scroll-area">
 				<aon:dataTable id="accountBudgetDataList" value="#{accountBudget.model}"
-					rows="20" var="to" rendered="#{accountBudget.model.rowCount > 0}">
+					rows="20" var="to" rendered="#{accountBudget.model.rowCount > 0}" index="idx">
 					
 					<aon:rowSelector action="accountBudget_form" 
 						actionListener="#{accountBudget.onSelect}" />
@@ -62,11 +62,12 @@
 					</aon:column>
 					
 					<!--  
+					-->
 					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 						<f:facet name="header">
 							<aon:outputText value="#{accountingBundle.accounting_debit}" />
 						</f:facet>
-						<aon:outputText value="#{accountBudget.debitTotal}">
+						<aon:outputText value="#{accountBudget.debitList[accountBudget.model.rowIndex]}">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
 					</aon:column>
@@ -75,11 +76,10 @@
 						<f:facet name="header">
 							<aon:outputText value="#{accountingBundle.accounting_credit}" />
 						</f:facet>
-						<aon:outputText value="#{accountBudget.creditTotal}">
+						<aon:outputText value="#{accountBudget.creditList[accountBudget.model.rowIndex]}">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
 					</aon:column>
-					-->
 					
 				</aon:dataTable>
 				<aon:dataScroller2 for="accountBudgetDataList" showNote="true" />
