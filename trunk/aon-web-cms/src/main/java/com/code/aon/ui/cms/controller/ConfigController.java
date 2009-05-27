@@ -38,9 +38,7 @@ public class ConfigController extends BasicI18nController{
 	}
 	
 	private void init() throws ManagerBeanException {
-		LOGGER.info(">>>>>> ----------------------------------------");
 		LOGGER.info(">>>>>> CARGANDO CONFIGURACION...");
-		LOGGER.info(">>>>>> ----------------------------------------");
 		IManagerBean configBean = BeanManager.getManagerBean(Config.class);
 		List<ITransferObject> list = configBean.getList(null);
 		LOGGER.info(">>>>>>>>>>>>>>>>> CONFIGS: " + list.size());
