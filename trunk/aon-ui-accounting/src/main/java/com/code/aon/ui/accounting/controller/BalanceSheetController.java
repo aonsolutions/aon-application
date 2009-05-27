@@ -3,6 +3,7 @@ package com.code.aon.ui.accounting.controller;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +16,7 @@ import javax.faces.model.ListDataModel;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.accounting.BalanceDetail;
+import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
@@ -22,6 +24,7 @@ import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.IProgression;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
@@ -36,56 +39,82 @@ public class BalanceSheetController implements ICollectionProvider{
 	private SummaryProviderParameters parameters;
 	private SummaryProvider summaryProvider;
 	private SummaryCollection summaryCollection;
-	private Date fromDate;
-	private Date toDate;
+	private String type;
+	private String balanceName;
+	private Integer actualYear;
+	private Integer previousYear;
+	private SummaryProviderParameters previousParameters;
+	private  Boolean flagAccounts;
+	
+
 
 	public void onReset(ActionEvent event) {
-
-		Calendar c = Calendar.getInstance();
-		c.set(Calendar.MONTH, 0);
-		c.set(Calendar.DAY_OF_MONTH, 1);
-		setFromDate(c.getTime());
-		c.set(Calendar.MONTH, 11);
-		c.set(Calendar.DAY_OF_MONTH, 31);
-		setToDate(c.getTime());
+		parameters = new SummaryProviderParameters();
+		parameters.setPeriod(null);
+		parameters.setFromDate(null);
+		parameters.setToDate(null);
+		parameters.setDate(new Date());
+		parameters.setAccountExpression(null);
+		parameters.setLowerLevelVisible(false);
+		parameters.setNoTouchedAccountVisible(false);
+		parameters.setRowsPerPage(20);
+		parameters.setAccountLevel(4);
+		parameters.setBudgeted(false);	
+		setFlagAccounts(false);
 	}
-
-	public void onBalanceSheet(ActionEvent event) {
+	
+	public void onBalance(ActionEvent event) {	
+		
 		try {
-			getBalanceCollection(1);
+			getBalanceCollection(Integer.valueOf(type));
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 		}
 	}
 
-	public void onBasicBalanceSheet(ActionEvent event) {
-
-	}
-
-	public void onProfitLossAccount(ActionEvent event) {
-		try {
-			getBalanceCollection(2);
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-		}
-	}
-
-	public void onBasicProfitLossAccount(ActionEvent event) {
-
-	}
-
-	private void getBalanceCollection(Integer balanceId) throws ManagerBeanException {
+	private void getBalanceCollection(Integer type) throws ManagerBeanException {
+				
+		Calendar firstDay = new GregorianCalendar();
+		firstDay.setTime(parameters.getPeriod().getInitiationDate());
+		firstDay.set(Calendar.YEAR,firstDay.get(Calendar.YEAR)-1);
+	    
+		Calendar lastDay = new GregorianCalendar();
+		lastDay.setTime(parameters.getPeriod().getDeadline());
+		lastDay.set(Calendar.YEAR,lastDay.get(Calendar.YEAR)-1);
+		
+		Integer year= Integer.valueOf(parameters.getPeriod().getId());
+		setActualYear(year);
+		year--;		
+		setPreviousYear(year);
+		String anyo = year.toString();
+		Period p= new Period();
+		p.setDeadline(lastDay.getTime());
+		p.setInitiationDate(firstDay.getTime());
+		p.setId(anyo);
+		
+		previousParameters= new SummaryProviderParameters();
+		previousParameters.setPeriod(p);
+		previousParameters.setFromDate(parameters.getFromDate());
+		previousParameters.setToDate(parameters.getToDate());
+		previousParameters.setDate(parameters.getDate());
+		previousParameters.setAccountExpression(parameters.getAccountExpression());
+		previousParameters.setLowerLevelVisible(parameters.isLowerLevelVisible());
+		previousParameters.setNoTouchedAccountVisible(parameters.isNoTouchedAccountVisible());
+		previousParameters.setRowsPerPage(20);
+		previousParameters.setAccountLevel(4);
+		previousParameters.setBudgeted(parameters.isBudgeted());
+			
+		
+		
 		balanceList.clear();
 		IManagerBean bean;
 		bean = BeanManager.getManagerBean(BalanceDetail.class);
-		String balance = bean.getFieldName(IAccountingAlias.BALANCE_DETAIL_BALANCE_ID);
+		String balanceDetailId = bean.getFieldName(IAccountingAlias.BALANCE_DETAIL_BALANCE_ID);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(balance, balanceId);
+		criteria.addEqualExpression(balanceDetailId, type);
 		balanceDetailList = bean.getList(criteria);
-		balanceModel = null;
-
+		     
 		for (ITransferObject to : balanceDetailList) {
-
 			BalanceDetail bd = (BalanceDetail) to;
 			BalanceItem b = new BalanceItem();
 			b.setCode(bd.getCode());
@@ -104,27 +133,26 @@ public class BalanceSheetController implements ICollectionProvider{
 				if (line.length() >= 2) {
 					line = line.substring(0, line.length() - 1);
 					b.setAccounts(line);
-					b.setAmount(getAccountsAmount(line, bd.isCreditNature()));
+					parameters.setAccountExpression(line);
+					b.setAmount(getAccountsAmount(parameters, bd.isCreditNature()));
+					previousParameters.setAccountExpression(line);					
+				 	b.setPreviousAmount(getAccountsAmount(previousParameters, bd.isCreditNature()));
 				}
 
 			}
 
-			if (bd.getAccounts() != null && bd.isInternalCalculation()) {// Calcula
-				// el String con las cuentas de un balanceDetail que esta compesto por otros(UN TOTAL)
+			if (bd.getAccounts() != null && bd.isInternalCalculation()) {// Calcula el String con las cuentas de un balanceDetail que esta compesto por otros(UN TOTAL)
 				String line = new String();
-				String accounts = bd.getAccounts();// linea de total que
-				// proviene de la BD
+				String accounts = bd.getAccounts();// linea de total que proviene de la BD
 				String[] data = new String[30];
-				StringTokenizer tokenizer = new StringTokenizer(accounts, ",");// Trocea
-				// el total para averiguar que cuantas forman cada parte
+				StringTokenizer tokenizer = new StringTokenizer(accounts, ",");// Trocea el total para averiguar que cuantas forman cada parte
 				int i = 0;
 				while (tokenizer.hasMoreTokens()) {
 					data[i] = tokenizer.nextToken();
 					++i;
 				}
 
-				// recorrer la lista "balanceList" para encontrar el code y asi
-				// aprovechar sus accounts
+				// recorrer la lista "balanceList" para encontrar el code y asi aprovechar sus accounts
 				Iterator<BalanceItem> li = balanceList.iterator();
 				while (li.hasNext()) {
 					BalanceItem balItem = li.next();
@@ -134,18 +162,21 @@ public class BalanceSheetController implements ICollectionProvider{
 					int j = 0;
 					while (data[j] != null) {
 						if (code.equals(data[j])) {
-							line = line + "|" + account;// si ya lo tenemos,
-							// metemos las cuentas
-							// en line
+							line = line + "|" + account;// si ya lo tenemos,metemos las cuentas en line
 						}
 						j++;
 					}
 				}
 
 				line = line.substring(1, line.length());
-				b.setAmount(getAccountsAmount(line, bd.isCreditNature()));
+				parameters.setAccountExpression(line);
+				b.setAmount(getAccountsAmount(parameters, bd.isCreditNature()));
+				
+				previousParameters.setAccountExpression(line);				
+				b.setPreviousAmount(getAccountsAmount(previousParameters, bd.isCreditNature()));
 				b.setAccounts(line);
-			}
+			}		
+			
 			b.setVisible(true);
 			if (bd.isZeroFlag() || (bd.isZeroFlag() && b.getAmount() != 0 )) {
 				b.setVisible(false);
@@ -155,18 +186,18 @@ public class BalanceSheetController implements ICollectionProvider{
 			}
 			b.setTitle(bd.isTitle());
 			balanceList.add(b);
+			}
+			balanceModel = null;
 		}
-
-		balanceModel = null;
-	}
-
-	public Double getAccountsAmount(String line, Boolean creditNature) {
-		parameters = new SummaryProviderParameters();
+	
+	
+	public Double getAccountsAmount(SummaryProviderParameters params, Boolean creditNature) {
+		
 		summaryCollection = new SummaryCollection();
 		summaryProvider = new SummaryProvider();
-		parameters.setAccountExpression(line);
+				
 		try {
-			summaryCollection = summaryProvider.getSummaryCollection(parameters);
+			summaryCollection = summaryProvider.getSummaryCollection(params);;
 		} catch (ManagerBeanException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -180,6 +211,7 @@ public class BalanceSheetController implements ICollectionProvider{
 		return amount;
 
 	}
+		
 
 	public List<BalanceItem> getBalanceList() {
 		return balanceList;
@@ -189,7 +221,8 @@ public class BalanceSheetController implements ICollectionProvider{
 		this.balanceList = balanceList;
 	}
 
-	public DataModel getBalanceModel() {
+	public DataModel getBalanceModel() {		
+		
 		if (balanceModel == null) {
 			balanceModel = new ListDataModel(getBalanceList());
 		}
@@ -215,7 +248,7 @@ public class BalanceSheetController implements ICollectionProvider{
 		private String notes;
 		private String accounts;
 		private Double amount;
-		private Double amount2;
+		private Double previousAmount;
 		private boolean visible;
 		private boolean title;
 
@@ -280,12 +313,12 @@ public class BalanceSheetController implements ICollectionProvider{
 			this.amount = amount;
 		}
 
-		public Double getAmount2() {
-			return amount2;
+		public Double getPreviousAmount() {
+			return previousAmount;
 		}
 
-		public void setAmount2(Double amount2) {
-			this.amount2 = amount2;
+		public void setPreviousAmount(Double amount2) {
+			this.previousAmount = amount2;
 		}
 
 		public int getLevel() {
@@ -293,21 +326,17 @@ public class BalanceSheetController implements ICollectionProvider{
 		}
 	}
 
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+
 	public SummaryProviderParameters getParameters() {
-		if (parameters == null) {
-			SummaryProviderParameters p = new SummaryProviderParameters();
-			p.setPeriod(null);
-			p.setFromDate(getFromDate());
-			p.setToDate(getToDate());
-			p.setDate(new Date());
-			p.setAccountExpression(null);
-			p.setLowerLevelVisible(false);
-			p.setNoTouchedAccountVisible(false);
-			p.setRowsPerPage(20);
-			p.setAccountLevel(4);
-			p.setBudgeted(false);
-			setParameters(p);
-		}
+	
 		return parameters;
 	}
 
@@ -315,22 +344,13 @@ public class BalanceSheetController implements ICollectionProvider{
 		this.parameters = parameters;
 	}
 
-	public Date getToDate() {
-		return toDate;
+	
+	public SummaryProviderParameters getPreviousParameters() {
+		return previousParameters;
 	}
-
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
+	public void setPreviousParameters(SummaryProviderParameters previousParameters) {
+		this.previousParameters = previousParameters;
 	}
-
-	public Date getFromDate() {
-		return fromDate;
-	}
-
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection getCollection() {
@@ -342,4 +362,40 @@ public class BalanceSheetController implements ICollectionProvider{
 	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return getCollection();
 	}
+
+	public Integer getActualYear() {
+		return actualYear;
+	}
+
+	public void setActualYear(Integer actualYear) {
+		this.actualYear = actualYear;
+	}
+
+	public Integer getPreviousYear() {
+		return previousYear;
+	}
+
+	public void setPreviousYear(Integer previousYear) {
+		this.previousYear = previousYear;
+	}
+	
+	public String getBalanceName() {
+		return balanceName;
+	}
+	public void setBalanceName(String balanceName) {
+		this.balanceName = balanceName;
+	}
+	
+
+	public Boolean getFlagAccounts() {
+		return flagAccounts;
+	}
+
+	public void setFlagAccounts(Boolean flagAccounts) {
+		this.flagAccounts = flagAccounts;
+	}
+
+
+	
 }
+
