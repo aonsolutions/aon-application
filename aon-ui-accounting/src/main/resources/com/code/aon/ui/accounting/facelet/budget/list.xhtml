@@ -35,19 +35,7 @@
 						</f:facet>
 						<aon:outputText value="#{to.period}"/>
 					</aon:column>
-
-					<!--  
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_month}: " />
-						</f:facet>
-						<aon:outputText value="#{to.date}">
-							<f:convertDateTime pattern="MM" 
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
-					</aon:column>
-					-->
-
+					
 					<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 						<f:facet name="header">
 							<aon:outputText value="#{accountBundle.account_account}" />
@@ -61,8 +49,6 @@
 						</aon:outputText>
 					</aon:column>
 					
-					<!--  
-					-->
 					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 						<f:facet name="header">
 							<aon:outputText value="#{accountingBundle.accounting_debit}" />

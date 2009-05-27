@@ -41,10 +41,6 @@
 				</aon:outputText>
 				<aon:inputText value="#{to.debit}" required="true" size="15"
 					rendered="#{to==accountBudgetDetail.to}" >
-					<!--  
-					<a4j:support ajaxSingle="true" event="onchange"
-						actionListener="#{accountBudget.onChangeMonthDebit}"/>
-					-->
 				</aon:inputText>
 				<f:facet name="footer">
 					<aon:outputText value="#{accountBudget.debitTotal}" >
@@ -62,10 +58,6 @@
 				</aon:outputText>
 				<aon:inputText value="#{to.credit}" required="true" size="15"
 					rendered="#{to==accountBudgetDetail.to}" >
-					<!--  
-					<a4j:support ajaxSingle="true" event="onchange"
-						actionListener="#{accountBudget.onChangeMonthCredit}"/>
-					-->
 				</aon:inputText>
 				<f:facet name="footer">
 					<aon:outputText value="#{accountBudget.creditTotal}" >
@@ -76,63 +68,4 @@
 			
 		</ui:define>
 	</ui:decorate>			
-			
-		
-			<!--  
-		<aon:panelGrid id="panelDataTable" columns="3" style="width: 40%;">
-	 		
-	 		<aon:outputText value="&#160;" />
-	 		<aon:outputText value="#{accountingBundle.accounting_debit}" />
-	 		<aon:outputText value="#{accountingBundle.accounting_credit}" />
-	 		
-			<aon:outputText value="#{accountBudget.monthNames[0]}" />	
-			<aon:inputText value="#{accountBudget.debitList[0].debit}"	required="true" size="10"/>
-	 		<aon:inputText value="#{accountBudget.creditList[0].credit}" required="true" size="10" />
-			<aon:outputText value="#{accountBudget.monthNames[1]}" />	
-			<aon:inputText value="#{accountBudget.debitList[1]}"	required="true" size="10"/>
-	 		<aon:inputText value="#{accountBudget.creditList[1]}" required="true" size="10" />
-			
-			<aon:outputText value="#{accountBudget.monthNames[2]}" />
-			<aon:inputText value="#{accountBudget.debitList[2]}"	required="true" size="10"/>
-	 		<aon:inputText value="#{accountBudget.creditList[2]}" required="true" size="10" />
-			
-			<aon:outputText value="#{accountBudget.monthNames[3]}" />
-			<aon:inputText value="#{accountBudget.debitList[3]}"	required="true" size="10"/>
-	 		<aon:inputText value="#{accountBudget.creditList[3]}" required="true" size="10" />
-			
-			<aon:outputText value="#{accountBudget.monthNames[4]}" />
-			<aon:inputText value="#{accountBudget.debitList[4]}"	required="true" size="10"/>
-	 		<aon:inputText value="#{accountBudget.creditList[4]}" required="true" size="10" />
-			
-			<aon:outputText value="#{accountBudget.monthNames[5]}" />
-			<aon:inputText value="#{accountBudget.debitList[5]}"	required="true" size="10"/>
-	 		<aon:inputText value="#{accountBudget.creditList[5]}" required="true" size="10" />
-			
-			<aon:outputText value="#{accountBudget.monthNames[6]}" />
-			<aon:inputText value="#{accountBudget.debitList[6]}"	required="true" size="10"/>
-	 		<aon:inputText value="#{accountBudget.creditList[6]}" required="true" size="10" />
-			
-			<aon:outputText value="#{accountBudget.monthNames[7]}" />
-			<aon:inputText value="#{accountBudget.debitList[7]}"	required="true" size="10"/>
-	 		<aon:inputText value="#{accountBudget.creditList[7]}" required="true" size="10" />
-			
-			<aon:outputText value="#{accountBudget.monthNames[8]}" />
-			<aon:inputText value="#{accountBudget.debitList[8]}"	required="true" size="10"/>
-	 		<aon:inputText value="#{accountBudget.creditList[8]}" required="true" size="10" />
-			
-			<aon:outputText value="#{accountBudget.monthNames[9]}" />
-			<aon:inputText value="#{accountBudget.debitList[9]}"	required="true" size="10"/>
-	 		<aon:inputText value="#{accountBudget.creditList[9]}" required="true" size="10" />
-			
-			<aon:outputText value="#{accountBudget.monthNames[10]}" />
-			<aon:inputText value="#{accountBudget.debitList[10]}"	required="true" size="10"/>
-	 		<aon:inputText value="#{accountBudget.creditList[10]}" required="true" size="10" />
-			
-			<aon:outputText value="#{accountBudget.monthNames[11]}" />
-			<aon:inputText value="#{accountBudget.debitList[11]}"	required="true" size="10"/>
-	 		<aon:inputText value="#{accountBudget.creditList[11]}" required="true" size="10" />
-			
-		</aon:panelGrid>
-			-->
-		
 </ui:composition>

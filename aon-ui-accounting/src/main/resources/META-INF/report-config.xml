@@ -53,8 +53,8 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="creditTotal" value="#{accountBudget.getCreditTotal}" />
-			<param id="debitTotal" value="#{accountBudget.getDebitTotal}" />
+			<param id="creditList" value="#{accountBudget.getCreditList}" />
+			<param id="debitList" value="#{accountBudget.getDebitList}" />
 		</params>
 	</report>
 	
@@ -65,7 +65,7 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="params" value="#{budgetedProfitAndLossReport.getParameters}" />
+			<param id="params" value="#{budgetedProfitAndLossComparison.getParameters}"/>
 		</params>
 	</report>
 

@@ -50,6 +50,7 @@ public class ProfitAndLossComparisonController {
 
 		// se carga la lista de margen neto y la de coste total, por separado (de los presupuestos) 
 		boolean isGrossMargin = true;
+		boolean isTeResult = true;
 		for(Summary sumB: plBudgetController.getCollection()){
 			ProfitAndLossComparison plComp = new ProfitAndLossComparison();
 			plComp.setId(sumB.getId());
@@ -67,8 +68,9 @@ public class ProfitAndLossComparisonController {
 				if(sumB.getId() != null ){
 					teList.add(plComp);
 				} else {
-					if(teList.get(teList.size()-1).getId()!=null){
+					if(isTeResult){
 						addOrUpdateListResultRow(teList, plComp);
+						isTeResult = false;
 					} else {
 						addOrUpdateListResultRow(resultList, plComp);
 					}
@@ -78,6 +80,7 @@ public class ProfitAndLossComparisonController {
 		
 		// se carga la lista de margen neto y la de coste total, por separado (de cuentas ordinarias) 
 		isGrossMargin = true;
+		isTeResult = true;
 		for(Summary sum: plController.getCollection()){
 			ProfitAndLossComparison plComp = new ProfitAndLossComparison();
 			plComp.setId(sum.getId());
@@ -95,8 +98,9 @@ public class ProfitAndLossComparisonController {
 				if(sum.getId() != null ){
 					addOrdered(teList, plComp);
 				} else {
-					if(teList.get(teList.size()-1).getId()!=null){
+					if(isTeResult){
 						addOrUpdateListResultRow(teList, plComp);
+						isTeResult = false;
 					} else {
 						addOrUpdateListResultRow(resultList, plComp);
 					}
@@ -174,7 +178,7 @@ public class ProfitAndLossComparisonController {
 	}
 	
 	/**
-	 * Añade o, si esta ya existe, actualiza la fila correspondiente a los totales de la lista 
+	 * Añade o, si ya existe, actualiza la fila correspondiente a los totales de la lista 
 	 * @param list
 	 * @param obj
 	 */
