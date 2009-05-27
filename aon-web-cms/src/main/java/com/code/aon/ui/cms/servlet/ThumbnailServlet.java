@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -13,6 +14,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.apache.commons.io.IOUtils;
 
 import com.code.aon.cms.Config;
 import com.code.aon.ui.cms.Constants;
@@ -100,9 +103,8 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
         	res.setHeader("Cache-Control", "no-store");
             res.setCharacterEncoding("ISO-8859-1"); //$NON-NLS-1$
 			if (!document && f.exists() && f.isFile()) {
-				ImageUtil.resize(file, res.getOutputStream(), maxDim);
-            }
-            else {
+				ImageUtil.resize(f, res.getOutputStream(), maxDim);
+            } else {
             	String image = OTHER_IMAGE;
             	if (!f.exists() || !f.isFile()) {
             		image = BLANK_IMAGE;
@@ -128,15 +130,14 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
         		bis.close();
         	}
             res.flushBuffer();
-        } 
-		catch (Throwable th) {
-            th.printStackTrace();
+        } catch (Throwable th) {
+        	LOGGER.log(Level.SEVERE, th.getMessage(), th);
             throw new ServletException(th.getMessage(), th);
-        }finally{
-        	try {bis.close();} catch (Exception e) {}
-        	try {bos.close();} catch (Exception e) {}
-        	try {is.close();} catch (Exception e) {}
-        	try {os.close();} catch (Exception e) {}
+        } finally {
+        	IOUtils.closeQuietly(bis);
+        	IOUtils.closeQuietly(bos);
+        	IOUtils.closeQuietly(is);
+        	IOUtils.closeQuietly(os);
     		is = null;
     		bis = null;
             os = null;

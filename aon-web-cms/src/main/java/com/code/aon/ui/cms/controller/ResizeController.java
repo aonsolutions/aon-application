@@ -1,5 +1,7 @@
 package com.code.aon.ui.cms.controller;
 
+import java.io.File;
+
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.Image;
@@ -68,10 +70,11 @@ public class ResizeController implements ICMSConstants {
 	}
 
 	private void onInit(){
-		width = ImageResize.getMaxWidth(ControllerUtil.getImagesPath()+resizeImage.getRelativePath());
-		maxWidth = ImageResize.getMaxWidth(ControllerUtil.getImagesPath()+resizeImage.getRelativePath());
-		height = ImageResize.getMaxHeight(ControllerUtil.getImagesPath()+resizeImage.getRelativePath());
-		maxHeight = ImageResize.getMaxHeight(ControllerUtil.getImagesPath()+resizeImage.getRelativePath());
+		File file = ControllerUtil.getImagePath(resizeImage.getRelativePath());
+		width = ImageResize.getMaxWidth(file);
+		maxWidth = width;
+		height = ImageResize.getMaxHeight(file);
+		maxHeight = height;
 		ratio = true;
 	}
 	
@@ -86,7 +89,11 @@ public class ResizeController implements ICMSConstants {
 	}
 	
 	public void onAccept(ActionEvent event) {
-		ImageResize.resize(ControllerUtil.getImagesPath()+resizeImage.getRelativePath(), width, height);
+		File file = ControllerUtil.getImagePath(resizeImage.getRelativePath());
+		File newFile = ImageResize.resize(file, width, height);
+		if ( file.delete() ) {
+			newFile.renameTo(file);
+		}
 		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(GALLERY);
 		controller.chargeImageList();
 		resizeImage = null;
@@ -94,13 +101,15 @@ public class ResizeController implements ICMSConstants {
 
 	public void onChangeWidth(ActionEvent event) throws ManagerBeanException {
 		if (ratio){
-			height = ImageResize.getHeight(ControllerUtil.getImagesPath()+resizeImage.getRelativePath(), width);
+			File file = ControllerUtil.getImagePath(resizeImage.getRelativePath());
+			height = ImageResize.getHeight(file, width);
 		}
 	}
 
 	public void onChangeHeight(ActionEvent event) throws ManagerBeanException {
 		if (ratio){
-			width = ImageResize.getWidth(ControllerUtil.getImagesPath()+resizeImage.getRelativePath(), height);
+			File file = ControllerUtil.getImagePath(resizeImage.getRelativePath());
+			width = ImageResize.getWidth(file, height);
 		}
 	}
 	

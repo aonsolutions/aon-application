@@ -211,14 +211,10 @@ public class AlbumController extends BasicI18nController implements ICMSConstant
 			albumImage.setAlbum(album);
 			albumImage.setImage(image.getRelativePath());
 			albumImage.setPosition(i);
-			String thumb = ImageUtil.resize(ControllerUtil.getImagesPath()+image.getRelativePath(),ImageUtil.DEF_MAX_SIZE);
-			thumb = thumb.substring(ControllerUtil.getImagesPath().length(), thumb.length());
-			try{
-				thumb = thumb.replaceAll(File.separator, "/");
-			}catch(Exception e){
-				thumb = thumb.replaceAll(File.separator+File.separator, "/");
-			}
-			albumImage.setThumbnail(thumb);
+			File file = ControllerUtil.getImagePath(image.getRelativePath());
+			File thumb = ImageUtil.resize(file,ImageUtil.DEF_MAX_SIZE);
+			String path = ControllerUtil.getRelativePath(ControllerUtil.getImagesPath(), thumb);
+			albumImage.setThumbnail(path);
 			albumImage = (AlbumImage) albumImageBean.insert(albumImage);
 			
 			albumImageDetail = new AlbumImageDetail();

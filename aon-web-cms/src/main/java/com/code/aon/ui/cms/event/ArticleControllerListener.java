@@ -67,14 +67,10 @@ public class ArticleControllerListener extends ControllerAdapter {
 		if (a.getThumbnail()==null ||
 				a.getThumbnail().trim().isEmpty()){
 			if (a.getImage()!=null && !a.getImage().trim().isEmpty()){
-				String thumb = ImageUtil.resize(ControllerUtil.getImagesPath()+a.getImage(),ImageUtil.DEF_MAX_SIZE);
-				thumb = thumb.substring(ControllerUtil.getImagesPath().length(), thumb.length());
-				try{
-					thumb = thumb.replaceAll(File.separator, "/");
-				}catch(Exception e){
-					thumb = thumb.replaceAll(File.separator+File.separator, "/");
-				}
-				a.setThumbnail(thumb);
+				File file = ControllerUtil.getImagePath(a.getImage());
+				File thumb = ImageUtil.resize(file,ImageUtil.DEF_MAX_SIZE);
+				String path = ControllerUtil.getRelativePath(ControllerUtil.getImagesPath(), thumb);
+				a.setThumbnail( path );
 			}
 		}
 	}

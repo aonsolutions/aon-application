@@ -29,7 +29,7 @@
 						
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="generate" reRender="aonStatus"
+						<aon:commandButton id="generate"
 							value="#{appBundle.aon_generate}" 
 							reRender="generatorForm"
 							actionListener="#{generatorApplication.onGenerate}" 
@@ -39,7 +39,7 @@
 								actionListener="#{generator_status.onActivePoll}"  
 								onclick="javascript:Richfaces.showModalPanel('gen_log');" />
 						</aon:commandButton>
-						<aon:commandButton id="publish_ok" reRender="aonStatus"
+						<aon:commandButton id="publish_ok"
 							value="#{appBundle.aon_publish}" 
 							reRender="generatorForm"
 							rendered="#{generator_status.generated}"

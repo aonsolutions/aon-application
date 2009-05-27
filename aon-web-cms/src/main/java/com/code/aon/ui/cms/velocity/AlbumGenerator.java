@@ -48,35 +48,30 @@ public class AlbumGenerator extends Generator {
 			IManagerBean albumCategoryDetailBean = BeanManager.getManagerBean(AlbumCategoryDetail.class);
 			IManagerBean albumBean = BeanManager.getManagerBean(Album.class);
 			IManagerBean albumDetailBean = BeanManager.getManagerBean(AlbumDetail.class);
-			Criteria albumCategoryDetailCriteria;
-			Criteria albumCriteria;
-			Criteria albumDetailCriteria;
 			Criteria albumCategoryCriteria = new Criteria();
-			if (selectedCategory!=null)
+			if (selectedCategory!=null) {
 				albumCategoryCriteria.addEqualExpression(albumCategoryBean.getFieldName(ICMSAlias.ALBUM_CATEGORY_ID), selectedCategory.getId());
+			}
 			albumCategoryCriteria.addEqualExpression(albumCategoryBean.getFieldName(ICMSAlias.ALBUM_CATEGORY_ACTIVE), true);
 			albumCategoryCriteria.addOrder(albumCategoryBean.getFieldName(ICMSAlias.ALBUM_CATEGORY_POSITION));
 			albumCategoryList = (List<ITransferObject>)albumCategoryBean.getList(albumCategoryCriteria);
 			ArrayList<AlbumCategoryHandler> achlist = new ArrayList<AlbumCategoryHandler>();
-			AlbumCategory albumCategory;
-			AlbumCategoryDetail albumCategoryDetail;
-			Album album;
-			AlbumDetail albumDetail;
 			for (int j=0; j < albumCategoryList.size(); j++) {
-				albumCategory = (AlbumCategory)albumCategoryList.get(j);
-				if (albumCategory.getSection()!=null)
+				AlbumCategory albumCategory = (AlbumCategory)albumCategoryList.get(j);
+				if (albumCategory.getSection()!=null) {
 					CommonGenerator.getCommonGenerator().chargeContext(vu, albumCategory.getSection());
-				else
+				} else {
 					CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
-				albumCategoryDetailCriteria = new Criteria();
+				}
+				Criteria albumCategoryDetailCriteria = new Criteria();
 				albumCategoryDetailCriteria.addEqualExpression(albumCategoryDetailBean.getFieldName(ICMSAlias.ALBUM_CATEGORY_DETAIL_ALBUM_CATEGORY_ID), albumCategory.getId());
 				albumCategoryDetailCriteria.addEqualExpression(albumCategoryDetailBean.getFieldName(ICMSAlias.ALBUM_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				albumCategoryDetailList = (List<ITransferObject>)albumCategoryDetailBean.getList(albumCategoryDetailCriteria);
 				if (albumCategoryDetailList.isEmpty()) {
 					VelocityUtil.addMessage("La categoria de albumes "+albumCategory.getAlias()+" no esta internacionalizada.", VelocityUtil.WARN);
 				}else{
-					albumCategoryDetail = (AlbumCategoryDetail)albumCategoryDetailList.get(0);
-					albumCriteria = new Criteria();
+					AlbumCategoryDetail albumCategoryDetail = (AlbumCategoryDetail)albumCategoryDetailList.get(0);
+					Criteria albumCriteria = new Criteria();
 					albumCriteria.addEqualExpression(albumBean.getFieldName(ICMSAlias.ALBUM_ALBUM_CATEGORY_ID), albumCategory.getId());
 					albumCriteria.addEqualExpression(albumBean.getFieldName(ICMSAlias.ALBUM_ACTIVE), true);
 					albumCriteria.addOrder(albumBean.getFieldName(ICMSAlias.ALBUM_POSITION));
@@ -87,15 +82,15 @@ public class AlbumGenerator extends Generator {
 					}else{
 						AlbumCategoryHandler achandler = new AlbumCategoryHandler(albumCategoryDetail,ahlist);
 						for (int i=0; i < albumList.size(); i++) {
-							album = (Album)albumList.get(i);
-							albumDetailCriteria = new Criteria();
+							Album  album = (Album)albumList.get(i);
+							Criteria albumDetailCriteria = new Criteria();
 							albumDetailCriteria.addEqualExpression(albumDetailBean.getFieldName(ICMSAlias.ALBUM_DETAIL_ALBUM_ID), album.getId());
 							albumDetailCriteria.addEqualExpression(albumDetailBean.getFieldName(ICMSAlias.ALBUM_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 							albumDetailList = (List<ITransferObject>)albumDetailBean.getList(albumDetailCriteria);
 							if (albumDetailList.isEmpty()) {
 								VelocityUtil.addMessage("El albumes "+album.getAlias()+" no esta internacionalizada.", VelocityUtil.WARN);
 							}else{
-								albumDetail = (AlbumDetail)albumDetailList.get(0);
+								AlbumDetail albumDetail = (AlbumDetail)albumDetailList.get(0);
 								ArrayList<AlbumImageHandler> accessList = getAlbumImageList(albumDetail);
 								if (accessList != null && accessList.size() > 0) {
 									AlbumHandler ahandler = new AlbumHandler(albumDetail);

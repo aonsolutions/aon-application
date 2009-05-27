@@ -53,11 +53,10 @@
 					columnClasses="aon-editDataTable-textColumn,
 							aon-editDataTable-iconColumn">
 							
+					<aon:rowSelector
+						action="section_form" actionListener="#{section.onSelect}" />														
+							
 					<aon:column>
-						<a4j:support 
-							action="section_form"
-							actionListener="#{section.onSelect}"
-							event="onclick" />
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.section_alias}" />
 						</f:facet>
@@ -69,17 +68,20 @@
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.menu_defaultMenu}" />
 						</f:facet>
-						<aon:selectBooleanCheckbox 
-								value="#{to.default_}"
-								rendered="#{!to.default_}">
-							<a4j:support 
-								actionListener="#{section.defaultChanged}"
-								event="onclick"  
-								reRender="dataTable" />
-						</aon:selectBooleanCheckbox>
-						<aon:graphicImage  
-							rendered="#{to.default_}"
-							url="/images/cms/selected.gif" />
+						<aon:div onmouseover="disableRowSelector();"
+							onmouseout="enableRowSelector();" >																					
+							<aon:selectBooleanCheckbox 
+									value="#{to.default_}"
+									rendered="#{!to.default_}">
+								<a4j:support 
+									actionListener="#{section.defaultChanged}"
+									event="onclick"  
+									reRender="dataTable" />
+							</aon:selectBooleanCheckbox>
+							<aon:graphicImage  
+								rendered="#{to.default_}"
+								url="/images/cms/selected.gif" />
+						</aon:div>
 					</aon:column>
 
 				</aon:dataTable>
