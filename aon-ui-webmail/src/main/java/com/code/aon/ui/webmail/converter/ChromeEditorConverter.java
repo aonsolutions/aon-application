@@ -32,7 +32,7 @@ public class ChromeEditorConverter implements Converter {
 			return null;
 		}
 		String result = value.toString();
-		return isChrome(context) ? StringEscapeUtils.escapeHtml(result): result;
+		return isChrome(context) ? StringEscapeUtils.escapeXml(result): result;
 	}
 
 }
