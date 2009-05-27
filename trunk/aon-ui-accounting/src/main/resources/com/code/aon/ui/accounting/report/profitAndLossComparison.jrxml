@@ -65,12 +65,12 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{account_compared_balance_report}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{account_budget_balance_report} +" - "+$R{account_compared_acumulated_report}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="434"
-						y="0"
+						y="4"
 						width="100"
 						height="13"
 						key="textField-38"/>
