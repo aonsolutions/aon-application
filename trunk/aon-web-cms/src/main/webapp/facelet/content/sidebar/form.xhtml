@@ -68,7 +68,7 @@
 				<aon:panelGrid id="menuGrid" columns="2" dir="true">
 	
 					<aon:outputLabel for="sidebar_alias" style="width:100px"
-						value="#{appBundle.sidebar_alias}" />
+						value="#{appBundle.cms_alias}" />
 					<aon:inputText id="sidebar_alias"
 						required="true" size="32" maxlength="32"
 						value="#{sidebar.to.alias}">
@@ -112,7 +112,7 @@
 									actionListener="#{sidebar_option.onSelect}"
 									event="onclick" />
 								<f:facet name="header">
-									<aon:outputText value="#{appBundle.sidebar_option_alias}"/>
+									<aon:outputText value="#{appBundle.cms_alias}"/>
 								</f:facet>
 								<aon:outputText value="#{to.alias}" 
 									styleClass="aon-editDataTable-button" />
@@ -213,7 +213,7 @@
 							<aon:panelGrid id="sidebarOptionGrid" columns="2" dir="true">
 
 								<aon:outputText for="Alias" 
-									value="#{appBundle.sidebar_option_alias}" />
+									value="#{appBundle.cms_alias}" />
 								<aon:inputText id="Alias"
 									value="#{sidebar_option.to.alias}" 
 									required="true"

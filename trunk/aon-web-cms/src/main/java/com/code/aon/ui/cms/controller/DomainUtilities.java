@@ -95,8 +95,8 @@ public class DomainUtilities {
 		try{
 			stream = new FileInputStream(file);
 			propDomainSidebarType.load(stream);
-		}catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+		} catch (Throwable th) {
+			LOGGER.log(Level.WARNING, th.getMessage(), th);
 		}finally{
 			IOUtils.closeQuietly(stream);
 			stream= null;

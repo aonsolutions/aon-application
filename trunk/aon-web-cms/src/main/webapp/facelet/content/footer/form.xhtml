@@ -75,7 +75,7 @@
 						<aon:div style="width:99%;">
 			
 							<aon:panelGrid columns="2" dir="true">
-								<aon:outputText value="#{appBundle.menu_alias}" 
+								<aon:outputText value="#{appBundle.cms_alias}" 
 									for="alias"/>
 								<aon:inputText id="alias" 
 									value="#{footer.to.alias}" size="40" maxlength="64" />
@@ -138,7 +138,7 @@
 				
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.article_category_alias}" />
+								<aon:outputText value="#{appBundle.cms_alias}" />
 							</f:facet>
 							<aon:outputText value="#{to.bannerCategory.alias}" 
 								rendered="#{to!=footer_banner_category.to}" />

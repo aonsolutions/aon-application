@@ -110,7 +110,7 @@
 						<aon:panelGrid id="main_panel" columns="2" dir="true" style="width:100%">
 	
 							<aon:outputLabel for="Article_alias" style="width:100px"
-								value="#{appBundle.article_alias}" />
+								value="#{appBundle.cms_alias}" />
 							<aon:inputText id="Article_alias"
 								required="true" size="32" maxlength="32"
 								value="#{article.to.alias}">
@@ -448,7 +448,7 @@
 									</aon:div>
 									<aon:div rendered="#{to==articleDocument.to}">
 										<aon:panelGrid columns="2" dir="true">
-											<aon:outputText value="#{appBundle.document_related_alias}" />
+											<aon:outputText value="#{appBundle.cms_alias}" />
 											<aon:inputText  
 												id="Alias"
 												size="60" maxlength="255"
@@ -466,7 +466,7 @@
 											<aon:outputText 
 												size="60" maxlength="255"
 												value="#{articleDocument.toI18n.file}" />
-											<aon:outputText value="#{appBundle.document_related_description}" 
+											<aon:outputText value="#{bundle.aon_description}" 
 												for="Description" />
 											<aon:inputTextarea
 												id="Description"
@@ -477,7 +477,7 @@
 									<f:facet name="footer">
 										<aon:div rendered="#{articleDocument.new}">
 											<aon:panelGrid columns="2" dir="true">
-												<aon:outputText value="#{appBundle.document_related_alias}" 
+												<aon:outputText value="#{appBundle.cms_alias}" 
 													for="Alias_" />
 												<aon:inputText 
 													id="Alias_"
@@ -516,7 +516,7 @@
 													</aon:fileUpload>
 												</aon:div>
 
-												<aon:outputText value="#{appBundle.document_related_description}" 
+												<aon:outputText value="#{bundle.aon_description}" 
 													for="Description_" />
 												<aon:inputTextarea
 													id="Description_"
