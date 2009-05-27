@@ -48,6 +48,8 @@
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
  -->	
 
+		<mapping package="com.code.aon.common.dao.hibernate.type"/>
+
 		<!-- Mapping files -->
 		<mapping class="com.code.aon.cms.AlbumCategory"/>
 		<mapping class="com.code.aon.cms.AlbumCategoryDetail"/>

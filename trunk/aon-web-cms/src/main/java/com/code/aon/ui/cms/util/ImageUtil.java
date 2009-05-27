@@ -2,14 +2,16 @@ package com.code.aon.ui.cms.util;
 
 import java.awt.Image;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+
+import org.apache.commons.io.IOUtils;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.sun.jimi.core.Jimi;
@@ -67,95 +69,64 @@ public class ImageUtil {
 			Jimi.putImage(MimeType.MIME_JPEG.getName(), raster, os);
 			os.flush();
 		} catch (JimiException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 
-	public static void copyfile(File f1, File f2) {
-		InputStream in = null;
-		OutputStream out = null;
-		try {
-			in = new FileInputStream(f1);
-			out = new FileOutputStream(f2);
-			byte[] buf = new byte[1024];
-			int len;
-			while ((len = in.read(buf)) > 0) {
-				out.write(buf, 0, len);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try{in.close();}catch (Exception e) {}
-			try{out.close();}catch (Exception e) {}
-		}
-	}
-
-	public static String resize(String file, int maxDim) {
-		File f = new File(file);
-		if (f.isFile()){
-			String name = null;
+	public static File resize(File file, int maxDim) {
+		if (file.isFile()){
+			File newFile = null;
 			OutputStream os = null;
-			File tmp = null;
 			try {
-				name = f.getParentFile().getPath();
-				name += File.separator + DEF_DIR;
-
-				File dir = new File(name);
-				if (!dir.exists())
-					dir.mkdir();
-
-				name += File.separator + DEF_NAME + f.getName();
-					
-				tmp = File.createTempFile(f.getName(),"tmp");
-	
-				ImageUtil.copyfile(f,tmp);
-	
-				String tmp_name = tmp.getParentFile().getPath();
-				tmp_name += File.separator + tmp.getName();
-	
-				Image image = new ImageIcon(tmp_name).getImage();
+				Image image = getImage(file);
+				
+				File dir = new File( file.getParentFile(), DEF_DIR );
+				if (!dir.exists()) {
+					dir.mkdirs();
+				}
+				newFile = new File( dir, DEF_NAME + file.getName() );
 				ImageUtil util = new ImageUtil(image, maxDim);
-				
-				name = name.replace('\\', '/');
-				
-				os = new FileOutputStream(name);
+				os = new FileOutputStream(newFile);
 				util.writeResizedImage(os);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}finally{
-				try{os.close();}catch (Exception e) {}
-				try{tmp.deleteOnExit();}catch (Exception e) {}
-				f = null;
-				tmp = null;
+			} catch (Throwable e) {
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			} finally {
+				IOUtils.closeQuietly(os);
 			}
-			return name;
+			return newFile;
 		}
 		return null;
 	}
 
-	public static void resize(String file, OutputStream os, int maxDim) {
-		File f = new File(file);
-		if (f.isFile()){
-			Image image = new ImageIcon(file).getImage();
-			ImageUtil util = new ImageUtil(image, maxDim);
-			util.writeResizedImage(os);
+	public static void resize(File file, OutputStream os, int maxDim) {
+		if (file.isFile()) {
+			try {
+				Image image = getImage(file);
+				ImageUtil util = new ImageUtil(image, maxDim);
+				util.writeResizedImage(os);
+			} catch (Throwable e) {
+				LOGGER.log(Level.SEVERE, "Error resizing " + file + ". " + e.getMessage(), e);
+			}
 		}
 	}
-
-	public static void resize(String file, OutputStream os, int scaledW,
-			int scaledH) {
-		File f = new File(file);
-		if (f.isFile()){
-			Image image = new ImageIcon(file).getImage();
-			ImageUtil util = new ImageUtil(image, scaledW, scaledH);
-			util.writeResizedImage(os);
+	
+	public static Image getImage( File file ) {
+		Image image = null;
+		try {
+			image = ImageIO.read(file);
+		} catch ( Throwable th ) {
+			LOGGER.log(Level.FINE, "ImageIO error reading image " + file + ". " + th.getMessage(), th);
 		}
+		if ( image == null ) {
+			image = new ImageIcon(file.getAbsolutePath()).getImage();
+		}
+		return image;
 	}
 
 	public static void main(String[] args) {
-		System.out.println(ImageUtil.resize("c:/tmp/05.jpg", 18));
+		System.out.println(ImageUtil.resize(new File("c:/tmp/05.jpg"), 18));
 	}
 
 }
