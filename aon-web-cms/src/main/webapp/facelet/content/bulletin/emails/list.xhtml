@@ -62,6 +62,9 @@
 					value="#{bulletin_email.model}" var="to" rows="20"
 					columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
 							aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+
+					<aon:rowSelector toggleOnClick="#{bulletin_email.to == null}"
+						action="bulletin_email_list" actionListener="#{bulletin_email.onSelect}" />
 											
 					<aon:column>
 						<f:facet name="header">
@@ -92,10 +95,6 @@
 						<aon:outputText value="#{to.email}"
 							rendered="#{to!=bulletin_email.to}" 
 							styleClass="aon-editDataTable-button">
-							<a4j:support 
-								action="bulletin_email_list"
-								actionListener="#{bulletin_email.onSelect}"
-								event="onclick" />
 						</aon:outputText>	
 						<aon:inputText value="#{to.email}"
 							rendered="#{to==bulletin_email.to}"
@@ -116,10 +115,6 @@
 						<aon:outputText value="#{to.language.description}"
 							rendered="#{to!=bulletin_email.to}" 
 							styleClass="aon-editDataTable-button">
-							<a4j:support 
-								action="bulletin_email_list"
-								actionListener="#{bulletin_email.onSelect}"
-								event="onclick" />
 						</aon:outputText>	
 						<aon:selectOneMenu 
 							rendered="#{to==bulletin_email.to}" 

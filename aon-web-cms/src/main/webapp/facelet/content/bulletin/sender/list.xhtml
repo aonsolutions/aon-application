@@ -116,9 +116,9 @@
 	                    Error Console Log
 	            </f:facet>
 		        <rich:dataList id="dataList_Error" var="msg" value="#{generator_status.errors}" rows="5">
-					<h:outputText style="color:red;" value="#{msg}"/>
+					<aon:outputText style="color:red;" value="#{msg}"/>
 				</rich:dataList>
-				<rich:datascroller align="left"  for="dataList_Error" maxPages="20" />
+				<rich:datascroller align="left" for="dataList_Error" maxPages="20" />
 			</rich:panel>
 		</h:form>
 		<h:form>
@@ -129,9 +129,9 @@
 	                    Console Log
 	            </f:facet>
 		        <rich:dataList id="dataList" var="msg" value="#{generator_status.status}" rows="15">
-					<h:outputText value="#{msg}"/>
+					<aon:outputText value="#{msg}"/>
 				</rich:dataList>
-				<rich:datascroller align="left"  for="dataList" maxPages="20" />
+				<rich:datascroller align="left" for="dataList" maxPages="20" />
 			</rich:panel>
 	    </h:form>    		
 	</ui:define>
