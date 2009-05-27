@@ -49,9 +49,7 @@ public class I18NController {
 	}
 
 	private void init() throws ManagerBeanException {
-		LOGGER.info(">>>>>> ----------------------------------------");
 		LOGGER.info(">>>>>> CARGANDO LISTA DE IDIOMAS DISPONIBLES...");
-		LOGGER.info(">>>>>> ----------------------------------------");
 		IManagerBean languageBean = BeanManager.getManagerBean(Language.class);
 		Criteria criteria = new Criteria();
 		criteria.addOrder(languageBean.getFieldName(ICMSAlias.LANGUAGE_POSITION));

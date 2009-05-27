@@ -99,7 +99,7 @@
 				<aon:panelGrid id="main_panel" columns="2" dir="true">
 	
 					<aon:outputLabel for="ProductCategory_alias" style="width:100px"
-						value="#{appBundle.product_category_alias}" />
+						value="#{appBundle.cms_alias}" />
 					<aon:inputText id="ProductCategory_alias"
 						required="true" size="32" maxlength="32"
 						value="#{productCategory.to.alias}">
@@ -164,7 +164,7 @@
 									actionListener="#{subCategory.onSelect}"
 									event="onclick" />
 								<f:facet name="header">
-									<aon:outputText value="#{appBundle.product_category_alias}"/>
+									<aon:outputText value="#{appBundle.cms_alias}"/>
 								</f:facet>
 								<aon:outputText value="#{to.alias}" 
 									styleClass="aon-editDataTable-button"/>
@@ -259,7 +259,7 @@
 							<aon:panelGrid id="optionGrid" columns="2" dir="true">
 
 								<aon:outputLabel for="ProductSubCategory_alias" style="width:100px"
-									value="#{appBundle.product_category_alias}" />
+									value="#{appBundle.cms_alias}" />
 								<aon:inputText id="ProductSubCategory_alias"
 									required="true" size="32" maxlength="32"
 									value="#{subCategory.to.alias}">
