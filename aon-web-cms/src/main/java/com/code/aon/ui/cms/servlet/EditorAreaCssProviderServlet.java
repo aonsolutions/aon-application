@@ -7,12 +7,16 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.apache.commons.io.IOUtils;
 
 import com.code.aon.cms.Config;
 import com.code.aon.faces.component.richfaces.inputRichText.InputRichTextServlet;
@@ -27,6 +31,8 @@ import com.code.aon.ui.cms.Constants;
  */
 
 public class EditorAreaCssProviderServlet extends HttpServlet implements Constants{
+	
+	private static final Logger LOGGER = Logger.getLogger(EditorAreaCssProviderServlet.class.getName());
 	
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		doGet(req, res);
@@ -48,7 +54,7 @@ public class EditorAreaCssProviderServlet extends HttpServlet implements Constan
         	res.setHeader("Cache-Control", "no-store");
             res.setCharacterEncoding("ISO-8859-1"); //$NON-NLS-1$
 			if(f.exists()){
-				System.out.println(">>>>>>>>>>>>>>>> CSS: " + f.getAbsolutePath());
+				LOGGER.info(">>>>>>>>>>>>>>>> CSS: " + f.getAbsolutePath());
 				is = new FileInputStream(f);
         		bis = new BufferedInputStream(is);
                 os = res.getOutputStream();
@@ -71,7 +77,7 @@ public class EditorAreaCssProviderServlet extends HttpServlet implements Constan
 		        String path = "/" + uri.substring(uri.indexOf(InputRichTextUtil.FCK_FACES_RESOURCE_PREFIX)+InputRichTextUtil.FCK_FACES_RESOURCE_PREFIX.length()+1);
 	        	//this.getServletContext().getRequestDispatcher(new InputRichTextServlet().getCustomResourcePath() + path).forward(req,res);
 	        	//this.getServletContext().getRequestDispatcher(getCustomResourcePath() + path).forward(request,response);
-				System.out.println(">>>>>>>>>>>>>>>> innerCSS: " + path);
+		        LOGGER.info(">>>>>>>>>>>>>>>> innerCSS: " + path);
 				//ClassLoader cl = this.getClass().getClassLoader();
 	            ClassLoader cl = InputRichTextServlet.class.getClassLoader();
 
@@ -93,15 +99,14 @@ public class EditorAreaCssProviderServlet extends HttpServlet implements Constan
 //				FCKeditor/editor/css/fck_editorarea.css
 			}
             res.flushBuffer();
-        } 
-		catch (Throwable th) {
-            th.printStackTrace();
+        } catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
             throw new ServletException(th.getMessage(), th);
-        }finally{
-    		try{bis.close();}catch(Exception e){}
-    		try{is.close();}catch(Exception e){}
-    		try{bos.close();}catch(Exception e){}
-    		try{os.close();}catch(Exception e){}
+        } finally {
+        	IOUtils.closeQuietly(bis);
+        	IOUtils.closeQuietly(is);
+        	IOUtils.closeQuietly(bos);
+        	IOUtils.closeQuietly(os);
     		bis = null;
     		is = null;
     		bos = null;

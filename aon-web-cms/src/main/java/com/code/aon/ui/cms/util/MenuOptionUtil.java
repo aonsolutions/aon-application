@@ -3,6 +3,8 @@ package com.code.aon.ui.cms.util;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -48,6 +50,8 @@ import com.code.aon.ui.util.AonUtil;
 
 public class MenuOptionUtil implements ICMSConstants {
 
+	private static final Logger LOGGER = Logger.getLogger(MenuOptionUtil.class.getName());
+	
 	public static boolean isVisibleLevel(PageType type) {
 		if (type != null) {
 			if (type.equals(PageType.LINK)) return true;
@@ -295,7 +299,7 @@ public class MenuOptionUtil implements ICMSConstants {
 						idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getCategories();
 				}
 			} catch (ExpressionException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 		}else if (type.equals(PageType.BRANDS)){
 			try {
@@ -312,7 +316,7 @@ public class MenuOptionUtil implements ICMSConstants {
 					idents = ((CollectionsController)AonUtil.getRegisteredBean(COLLECTIONS)).getBrands();
 				}
 			} catch (ExpressionException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 		}
 		return idents;
@@ -337,7 +341,7 @@ public class MenuOptionUtil implements ICMSConstants {
 					return link;
 				}
 			} catch (ManagerBeanException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 			return null;
 		}
@@ -355,7 +359,7 @@ public class MenuOptionUtil implements ICMSConstants {
 					return link;
 				}
 			} catch (ManagerBeanException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 			return null;
 		}
@@ -373,7 +377,7 @@ public class MenuOptionUtil implements ICMSConstants {
 					return link;
 				}
 			} catch (ManagerBeanException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 			return null;
 		}
@@ -401,7 +405,7 @@ public class MenuOptionUtil implements ICMSConstants {
 					}
 				}
 			} catch (ManagerBeanException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 			return null;
 		}
@@ -429,7 +433,7 @@ public class MenuOptionUtil implements ICMSConstants {
 					}
 				}
 			} catch (ManagerBeanException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 			return null;
 		}
@@ -451,7 +455,7 @@ public class MenuOptionUtil implements ICMSConstants {
 					}
 				}
 			} catch (ManagerBeanException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 			return null;
 		}
@@ -487,7 +491,7 @@ public class MenuOptionUtil implements ICMSConstants {
 					}
 				}
 			} catch (ManagerBeanException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 			return null;
 		}
@@ -542,7 +546,7 @@ public class MenuOptionUtil implements ICMSConstants {
 					}
 				}
 			} catch (ManagerBeanException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 			return null;
 		}
@@ -576,7 +580,7 @@ public class MenuOptionUtil implements ICMSConstants {
 					}
 				}
 			} catch (ManagerBeanException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 			return null;
 		}
@@ -605,7 +609,7 @@ public class MenuOptionUtil implements ICMSConstants {
 					}
 				}
 			} catch (ManagerBeanException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 			return null;
 		}
@@ -629,7 +633,7 @@ public class MenuOptionUtil implements ICMSConstants {
 					}
 				}
 			} catch (ManagerBeanException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 			return null;
 		}
@@ -668,7 +672,7 @@ public class MenuOptionUtil implements ICMSConstants {
 					}
 				}
 			} catch (ManagerBeanException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 			return null;
 		}		

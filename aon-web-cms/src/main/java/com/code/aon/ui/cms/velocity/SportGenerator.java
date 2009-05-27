@@ -133,8 +133,8 @@ public class SportGenerator extends Generator {
 				
 				vu.remove("category");
 			}
-		} catch (Exception e) {
-			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);
+		} catch (Throwable th) {
+			VelocityUtil.addMessage(th.getMessage(), VelocityUtil.ERROR);
 		} finally{
 			categoryDetailList = null;
 			clubList = null;

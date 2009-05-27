@@ -20,8 +20,7 @@ import com.sun.jimi.core.raster.JimiRasterImage;
 
 public class ImageUtil {
 
-	private static final Logger LOGGER = Logger.getLogger(ImageUtil.class
-			.getName());
+	private static final Logger LOGGER = Logger.getLogger(ImageUtil.class.getName());
 
 	public static int DEF_MAX_SIZE = 100;
 
@@ -90,8 +89,8 @@ public class ImageUtil {
 				ImageUtil util = new ImageUtil(image, maxDim);
 				os = new FileOutputStream(newFile);
 				util.writeResizedImage(os);
-			} catch (Throwable e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			} catch (Throwable th) {
+				LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			} finally {
 				IOUtils.closeQuietly(os);
 			}
@@ -106,8 +105,8 @@ public class ImageUtil {
 				Image image = getImage(file);
 				ImageUtil util = new ImageUtil(image, maxDim);
 				util.writeResizedImage(os);
-			} catch (Throwable e) {
-				LOGGER.log(Level.SEVERE, "Error resizing " + file + ". " + e.getMessage(), e);
+			} catch (Throwable th) {
+				LOGGER.log(Level.SEVERE, "Error resizing " + file + ". " + th.getMessage(), th);
 			}
 		}
 	}
@@ -123,10 +122,6 @@ public class ImageUtil {
 			image = new ImageIcon(file.getAbsolutePath()).getImage();
 		}
 		return image;
-	}
-
-	public static void main(String[] args) {
-		System.out.println(ImageUtil.resize(new File("c:/tmp/05.jpg"), 18));
 	}
 
 }

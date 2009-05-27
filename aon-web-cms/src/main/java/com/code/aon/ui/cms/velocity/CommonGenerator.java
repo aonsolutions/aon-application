@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.code.aon.cms.ConfigDetail;
 import com.code.aon.cms.Footer;
@@ -39,6 +41,8 @@ import com.code.aon.ui.cms.velocity.attribute.SidebarOptionHandler;
 
 public class CommonGenerator extends Generator {
 
+	private static final Logger LOGGER = Logger.getLogger(CommonGenerator.class.getName());
+	
 	private Section previousSection = null;
 
     static private CommonGenerator singleton = null;
@@ -240,7 +244,7 @@ public class CommonGenerator extends Generator {
 				return hh;
 			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return null;
 	}
@@ -272,7 +276,7 @@ public class CommonGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return list;
 	}
@@ -290,7 +294,7 @@ public class CommonGenerator extends Generator {
 				return fh;
 			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return null;
 	}
@@ -388,7 +392,7 @@ public class CommonGenerator extends Generator {
 				return lang.getLanguage().getLocale().getLanguage();
 			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return null;
 	}
@@ -411,7 +415,7 @@ public class CommonGenerator extends Generator {
 				list.add(lh);
 			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return list;
 	}
@@ -425,9 +429,8 @@ public class CommonGenerator extends Generator {
 			f = new File(bundle_file);
 			try {
 				return new URL("file", null, f.getAbsolutePath()) ;
-			}
-			catch (MalformedURLException e) {
-				e.printStackTrace();
+			} catch (MalformedURLException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 			return super.findResource(name);
 		}

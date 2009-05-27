@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.code.aon.cms.SportCareerPath;
 import com.code.aon.cms.SportNationality;
@@ -22,6 +24,8 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.velocity.SportGenerator;
 
 public class SportPlayerHandler {
+	
+	private static final Logger LOGGER = Logger.getLogger(SportPlayerHandler.class.getName());
 
 	private String alias;
 	
@@ -60,26 +64,29 @@ public class SportPlayerHandler {
 			formatter = (SimpleDateFormat)SimpleDateFormat.getDateInstance(DateFormat.SHORT,locale);
 		try{
 			this.bornDate = formatter.format(sportPlayer.getBornDate());
-		}catch (Exception e) {
+		}catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		this.bornPlace = sportPlayer.getBornPlace();
 		this.weight = sportPlayer.getWeight();
 		this.lenght = sportPlayer.getLenght();
 		try{
 			this.sportNationality = getNationalityString(sportPlayer.getSportNationality());
-		}catch (Exception e) {
+		}catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		this.comunitary = sportPlayer.isComunitary();
 		this.photo = sportPlayer.getPhoto();
 		try{
 			this.sportClub = sportPlayer.getSportClub().getDescription();
-		}catch (Exception e) {
+		}catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		this.number = sportPlayer.getNumber();
 		try{
 			this.careers = fillCareer(sportPlayer.getId());
-		}catch (Exception e) {
-			e.printStackTrace();
+		}catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		this.url = Templates.SPORT.getHtmlName();
 		this.url = this.url.replaceAll("%NAME%", SportGenerator.PLAYER + this.alias);
@@ -111,7 +118,7 @@ public class SportPlayerHandler {
 				listSportCareerHandler.add(new SportCareerHandler((SportCareerPath) iterator.next()));
 			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return listSportCareerHandler;
 	}

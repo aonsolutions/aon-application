@@ -1,6 +1,8 @@
 package com.code.aon.ui.cms.controller;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -19,13 +21,15 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 
 public class ConfigController extends BasicI18nController{
 
+	private static final Logger LOGGER = Logger.getLogger(ConfigController.class.getName());
+	
 	private Config currentConfig;
 	
 	public ConfigController() {
 		try {
 			init();
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 
@@ -34,19 +38,19 @@ public class ConfigController extends BasicI18nController{
 	}
 	
 	private void init() throws ManagerBeanException {
-		System.out.println(">>>>>> ----------------------------------------");
-		System.out.println(">>>>>> CARGANDO CONFIGURACION...");
-		System.out.println(">>>>>> ----------------------------------------");
+		LOGGER.info(">>>>>> ----------------------------------------");
+		LOGGER.info(">>>>>> CARGANDO CONFIGURACION...");
+		LOGGER.info(">>>>>> ----------------------------------------");
 		IManagerBean configBean = BeanManager.getManagerBean(Config.class);
 		List<ITransferObject> list = configBean.getList(null);
-		System.out.println(">>>>>>>>>>>>>>>>> CONFIGS: " + list.size());
+		LOGGER.info(">>>>>>>>>>>>>>>>> CONFIGS: " + list.size());
 		if (list.size() > 0) {
 			setCurrentConfig((Config)list.get(0));
 		}
-		System.out.println(">>>>>> DOMINIO: " + currentConfig.getDomain());
-		System.out.println(">>>>>> TEMPLATE: " + currentConfig.getTemplate());
-		System.out.println(">>>>>> PREVIEW: " + currentConfig.getPreview_host());
-		System.out.println(">>>>>> HOST: " + currentConfig.getHost());
+		LOGGER.info(">>>>>> DOMINIO: " + currentConfig.getDomain());
+		LOGGER.info(">>>>>> TEMPLATE: " + currentConfig.getTemplate());
+		LOGGER.info(">>>>>> PREVIEW: " + currentConfig.getPreview_host());
+		LOGGER.info(">>>>>> HOST: " + currentConfig.getHost());
 	}
 
 	public Config getCurrentConfig() {
@@ -65,7 +69,7 @@ public class ConfigController extends BasicI18nController{
 				return cd;
 			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return null;
 	}

@@ -2,12 +2,16 @@ package com.code.aon.ui.cms.controller;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.ui.util.AonUtil;
 
 public class AdminController implements ICMSConstants {
+	
+	private static final Logger LOGGER = Logger.getLogger(AdminController.class.getName());
 
 	private String user_ = "esferalia";
 
@@ -64,6 +68,7 @@ public class AdminController implements ICMSConstants {
 			}
 			md5_passwd=hexString+"";
 		}catch(NoSuchAlgorithmException nsae){
+			LOGGER.log(Level.FINE, nsae.getMessage(), nsae);
 		}
 		return md5_passwd;
 	} 

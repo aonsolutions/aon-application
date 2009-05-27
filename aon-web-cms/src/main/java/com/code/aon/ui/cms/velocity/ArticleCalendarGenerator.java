@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleCategory;
@@ -38,6 +40,8 @@ import com.code.aon.ui.cms.velocity.attribute.NextArticlesHandler;
 import com.code.aon.ui.cms.velocity.utils.MonthContent;
 
 public class ArticleCalendarGenerator extends Generator {
+	
+	private static final Logger LOGGER = Logger.getLogger(ArticleCalendarGenerator.class.getName());
 	
 	public static void generate() {
 		List<ITransferObject> articleList;
@@ -146,19 +150,22 @@ public class ArticleCalendarGenerator extends Generator {
 							vu.put("previous_article_diary", (monthsList.get(0)).getCalendar());
 							vu.put("previous_article_diary_year", (monthsList.get(0)).getYear());
 							vu.put("previous_article_diary_month", (monthsList.get(0)).getMonth());
-						}catch (Exception e) {
+						}catch (Throwable th) {
+							LOGGER.log(Level.SEVERE, th.getMessage(), th);
 						}
 						try{
 							vu.put("article_diary", (monthsList.get(1)).getCalendar());
 							vu.put("article_diary_year", (monthsList.get(1)).getYear());
 							vu.put("article_diary_month", (monthsList.get(1)).getMonth());
-						}catch (Exception e) {
+						}catch (Throwable th) {
+							LOGGER.log(Level.SEVERE, th.getMessage(), th);
 						}
 						try{
 							vu.put("next_article_diary", (monthsList.get(2)).getCalendar());
 							vu.put("next_article_diary_year", (monthsList.get(2)).getYear());
 							vu.put("next_article_diary_month", (monthsList.get(2)).getMonth());
-						}catch (Exception e) {
+						}catch (Throwable th) {
+							LOGGER.log(Level.SEVERE, th.getMessage(), th);
 						}
 						
 						GregorianCalendar calendar = new GregorianCalendar();
@@ -198,19 +205,22 @@ public class ArticleCalendarGenerator extends Generator {
 				vu.put("previous_article_diary", (monthsList.get(0)).getCalendar());
 				vu.put("previous_article_diary_year", (monthsList.get(0)).getYear());
 				vu.put("previous_article_diary_month", (monthsList.get(0)).getMonth());
-			}catch (Exception e) {
+			}catch (Throwable th) {
+				LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			}
 			try{
 				vu.put("article_diary", (monthsList.get(1)).getCalendar());
 				vu.put("article_diary_year", (monthsList.get(1)).getYear());
 				vu.put("article_diary_month", (monthsList.get(1)).getMonth());
-			}catch (Exception e) {
+			}catch (Throwable th) {
+				LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			}
 			try{
 				vu.put("next_article_diary", (monthsList.get(2)).getCalendar());
 				vu.put("next_article_diary_year", (monthsList.get(2)).getYear());
 				vu.put("next_article_diary_month", (monthsList.get(2)).getMonth());
-			}catch (Exception e) {
+			}catch (Throwable th) {
+				LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			}
 
 			VelocityUtil.addMessage(" Generando diario indice.", VelocityUtil.INFO);

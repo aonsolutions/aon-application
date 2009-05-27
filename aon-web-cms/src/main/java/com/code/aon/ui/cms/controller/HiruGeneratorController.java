@@ -3,6 +3,8 @@ package com.code.aon.ui.cms.controller;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 
@@ -15,7 +17,9 @@ import com.code.aon.ui.cms.hiru.XmlBuilderListener;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.FTPUtil;
 
-public class HiruGeneratorController implements XmlBuilderListener{
+public class HiruGeneratorController implements XmlBuilderListener {
+	
+	private static final Logger LOGGER = Logger.getLogger(HiruGeneratorController.class.getName());
 
 	private String url;
 	
@@ -65,7 +69,8 @@ public class HiruGeneratorController implements XmlBuilderListener{
 					user,
 					password))
 				this.published = true;
-		}catch (Exception e) {
+		}catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}finally{
 			this.activePoll = false;
 		}

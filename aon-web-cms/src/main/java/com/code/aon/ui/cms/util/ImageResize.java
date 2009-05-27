@@ -39,8 +39,8 @@ public class ImageResize {
 				} catch (IOException e) {
 					LOGGER.log(Level.SEVERE, e.getMessage(), e);
 				}
-			} catch (Throwable e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			} catch (Throwable th) {
+				LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			} finally {
 				IOUtils.closeQuietly(os);
 			}
@@ -54,8 +54,8 @@ public class ImageResize {
 			try {
 				Image image = ImageUtil.getImage(file);
 				return  image.getWidth(null);
-			} catch (Throwable e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			} catch (Throwable th) {
+				LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			}
 		}
 		return 0;
@@ -66,8 +66,8 @@ public class ImageResize {
 			try {
 				Image image = ImageUtil.getImage(file);
 				return  image.getHeight(null);
-			} catch (Throwable e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			} catch (Throwable th) {
+				LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			}
 		}
 		return 0;
@@ -81,8 +81,8 @@ public class ImageResize {
 				int image_height = image.getHeight(null);
 				double scale = (double)image_height / (double)height;
 				return (int)((double)image_width / scale);
-			} catch (Throwable e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			} catch (Throwable th) {
+				LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			}
 		}
 		return 0;
@@ -96,8 +96,8 @@ public class ImageResize {
 				int image_height = image.getHeight(null);
 				double scale = (double)image_width / (double)width;
 				return (int)((double)image_height / scale);
-			} catch (Throwable e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			} catch (Throwable th) {
+				LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			}
 		}
 		return 0;

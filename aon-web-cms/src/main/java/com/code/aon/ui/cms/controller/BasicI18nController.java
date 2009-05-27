@@ -3,6 +3,7 @@ package com.code.aon.ui.cms.controller;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
@@ -189,7 +190,8 @@ public class BasicI18nController extends BasicController implements I18NControll
 					setToI18n(beanI18n.createNewTo());
 				}
 			}
-		} catch (Exception e) {
+		} catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 	}
 
@@ -334,7 +336,8 @@ public class BasicI18nController extends BasicController implements I18NControll
 					return list.get(0);
 				}
 			}
-		} catch (Exception e) {
+		} catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		return null;
 	}

@@ -58,8 +58,8 @@ public final class Emailer {
 			       	repeat = false;
 	       		}
 	       	}
-		}catch (Exception e) {
-			throw new Exception(e);
+		}catch (Throwable th) {
+			throw new Exception(th);
 		}finally{
        		transport.close();
 		}

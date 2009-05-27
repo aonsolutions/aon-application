@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.code.aon.cms.Link;
 import com.code.aon.cms.LinkCategory;
@@ -25,6 +27,8 @@ import com.code.aon.ui.cms.velocity.attribute.LinkCategoryHandler;
 import com.code.aon.ui.cms.velocity.attribute.LinkHandler;
 
 public class LinkGenerator extends Generator {
+	
+	private static final Logger LOGGER = Logger.getLogger(LinkGenerator.class.getName());
 
 	public static void generate() {
 		LinkGenerator.generate(null);
@@ -159,7 +163,7 @@ public class LinkGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		} finally {
 			linkList = null;
 			linkDetailList = null;

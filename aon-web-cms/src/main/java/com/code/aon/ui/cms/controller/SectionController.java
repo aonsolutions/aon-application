@@ -2,6 +2,8 @@ package com.code.aon.ui.cms.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -18,6 +20,8 @@ import com.code.aon.ui.form.BasicController;
 
 public class SectionController extends BasicController{
 
+	private static final Logger LOGGER = Logger.getLogger(SectionController.class.getName());
+	
 	/** A list that contains the selected objects of the model. */
 	private ArrayList<ITransferObject> checkList= new ArrayList<ITransferObject>();
 
@@ -97,7 +101,7 @@ public class SectionController extends BasicController{
 				section.setDefault_(true);
 			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 		super.onAccept(event);
 	}

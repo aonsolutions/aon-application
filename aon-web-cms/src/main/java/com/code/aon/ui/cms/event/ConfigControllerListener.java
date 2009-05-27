@@ -1,5 +1,8 @@
 package com.code.aon.ui.cms.event;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.code.aon.cms.Config;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
@@ -12,6 +15,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class ConfigControllerListener extends ControllerAdapter {
 
+	private static final Logger LOGGER = Logger.getLogger(ConfigControllerListener.class.getName());
+	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)
 			throws ControllerListenerException {
@@ -21,7 +26,8 @@ public class ConfigControllerListener extends ControllerAdapter {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.CONFIG_ID), new Integer(1));
 			controller.setCriteria(criteria);
-		}catch (Exception e) {
+		}catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			
 		}
 	}

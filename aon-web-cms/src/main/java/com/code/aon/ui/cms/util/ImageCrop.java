@@ -5,9 +5,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
+
+import org.apache.commons.io.IOUtils;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.sun.jimi.core.Jimi;
@@ -47,15 +50,15 @@ public class ImageCrop {
 					Jimi.putImage(MimeType.MIME_JPEG.getName(), raster2, os);
 					os.flush();
 				} catch (JimiException e) {
-					e.printStackTrace();
+					LOGGER.log(Level.SEVERE, e.getMessage(), e);
 				} catch (IOException e) {
-					e.printStackTrace();
+					LOGGER.log(Level.SEVERE, e.getMessage(), e);
 				}
 				
-			} catch (Exception e) {
-				e.printStackTrace();
-			}finally{
-				try{os.close();}catch (Exception e) {}
+			} catch (Throwable th) {
+				LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			} finally {
+				IOUtils.closeQuietly(os);
 				f = null;
 			}
 			return name;

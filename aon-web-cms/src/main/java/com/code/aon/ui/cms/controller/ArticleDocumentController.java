@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
@@ -56,8 +57,8 @@ public class ArticleDocumentController extends BasicI18nController {
 	        outputStream.write(data);
 			outputStream.close();					
 	        ((ArticleDocumentDetail)this.getToI18n()).setFile(fileName);
-        }catch (Exception e) {
-        	try {outputStream.close();} catch (Exception e1) {}
+        }catch (Throwable th) {
+        	IOUtils.closeQuietly(outputStream);
 		}
 	}
 

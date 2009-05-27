@@ -117,7 +117,7 @@ public class ControllerUtil implements Constants, ICMSConstants {
 		String value = StringUtils.substring(fullPath, path.length());
 		try{
 			value = value.replaceAll(File.separator, "/");
-		}catch(Exception e){
+		}catch(Throwable th){
 			value = value.replaceAll(File.separator+File.separator, "/");
 		}
 		return value;

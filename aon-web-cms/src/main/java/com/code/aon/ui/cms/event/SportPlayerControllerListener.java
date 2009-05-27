@@ -1,5 +1,8 @@
 package com.code.aon.ui.cms.event;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.code.aon.cms.SportCareerPath;
 import com.code.aon.cms.SportPlayer;
 import com.code.aon.cms.dao.ICMSAlias;
@@ -17,6 +20,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class SportPlayerControllerListener extends ControllerAdapter implements ICMSConstants {
 
+	private static final Logger LOGGER = Logger.getLogger(SportPlayerControllerListener.class.getName());
+	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)
 			throws ControllerListenerException {
@@ -27,7 +32,8 @@ public class SportPlayerControllerListener extends ControllerAdapter implements 
 			criteria.addOrder(bean.getFieldName(ICMSAlias.SPORT_PLAYER_SPORT_CLUB_ID));
 			criteria.addOrder(bean.getFieldName(ICMSAlias.SPORT_PLAYER_NAME));
 			event.getController().setCriteria(criteria);
-		}catch (Exception e) {
+		}catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 	}
 
