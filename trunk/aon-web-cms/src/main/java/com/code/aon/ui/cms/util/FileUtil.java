@@ -9,9 +9,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.apache.commons.io.IOUtils;
 
 
 public class FileUtil {
+	
+	private static final Logger LOGGER = Logger.getLogger(FileUtil.class.getName());
 	
 	public static void delete(String file) {
 		File f = new File(file);
@@ -85,14 +91,14 @@ public class FileUtil {
 			bos.flush();
 			bis.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}finally{
-			try{bis.close();}catch(Exception e){}
-			try{is.close();}catch(Exception e){}
-			try{bos.close();}catch(Exception e){}
-			try{os.close();}catch(Exception e){}
+			IOUtils.closeQuietly(bis);
+			IOUtils.closeQuietly(is);
+			IOUtils.closeQuietly(bos);
+			IOUtils.closeQuietly(os);
 			is = null;
 			bis = null;
 	        os = null;

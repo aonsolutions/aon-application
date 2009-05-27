@@ -29,6 +29,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -49,12 +51,13 @@ import org.apache.commons.fileupload.FileItem;
 
 public class UploaderConnectorServlet extends HttpServlet { 
          
-
-		private static String baseDir; 
-        private static boolean debug=false; 
-        private static boolean enabled=false; 
-        private static Hashtable allowedExtensions; 
-        private static Hashtable deniedExtensions; 
+	private static final Logger LOGGER = Logger.getLogger(UploaderConnectorServlet.class.getName());
+	
+	private static String baseDir; 
+    private static boolean debug; 
+    private static boolean enabled; 
+    private static Hashtable allowedExtensions; 
+    private static Hashtable deniedExtensions; 
          
         /** 
          * Initialize the servlet.<br> 
@@ -64,10 +67,10 @@ public class UploaderConnectorServlet extends HttpServlet {
          * 
          */ 
          public void init() throws ServletException { 
-                System.out.println("------------------------ UPLOAD SERVLET -------------------------");
+                LOGGER.info("------------------------ UPLOAD SERVLET -------------------------");
                 debug=(new Boolean(getInitParameter("debug"))).booleanValue(); 
                  
-                if(debug) System.out.println("\r\n---- SimpleUploaderServlet initialization started ----"); 
+                if(debug) LOGGER.info("\r\n---- SimpleUploaderServlet initialization started ----"); 
                  
                 baseDir=getInitParameter("baseDir"); 
                 enabled=(new Boolean(getInitParameter("enabled"))).booleanValue(); 
@@ -91,7 +94,7 @@ public class UploaderConnectorServlet extends HttpServlet {
                 allowedExtensions.put("Flash",stringToArrayList(getInitParameter("AllowedExtensionsFlash"))); 
                 deniedExtensions.put("Flash",stringToArrayList(getInitParameter("DeniedExtensionsFlash"))); 
                  
-                if(debug) System.out.println("---- SimpleUploaderServlet initialization completed ----\r\n"); 
+                if(debug) LOGGER.info("---- SimpleUploaderServlet initialization completed ----\r\n"); 
                  
         } 
          
@@ -111,9 +114,9 @@ public class UploaderConnectorServlet extends HttpServlet {
          * 
          */      
         public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { 
-            System.out.println("------------------------ UPLOAD SERVLET -------------------------");
+            LOGGER.info("------------------------ UPLOAD SERVLET -------------------------");
 
-                if (debug) System.out.println("--- BEGIN DOPOST ---"); 
+                if (debug) LOGGER.info("--- BEGIN DOPOST ---"); 
  
                 response.setContentType("text/html; charset=UTF-8"); 
                 response.setHeader("Cache-Control","no-cache"); 
@@ -126,7 +129,7 @@ public class UploaderConnectorServlet extends HttpServlet {
                 String currentDirPath=getServletContext().getRealPath(currentPath); 
                 currentPath=request.getContextPath()+currentPath; 
                  
-                if (debug) System.out.println(currentDirPath); 
+                if (debug) LOGGER.info(currentDirPath); 
                  
                 String retVal="0"; 
                 String newName=""; 
@@ -172,10 +175,12 @@ public class UploaderConnectorServlet extends HttpServlet {
                                 else { 
                                         retVal="202"; 
                                         errorMessage=""; 
-                                        if (debug) System.out.println("Invalid file type: " + ext);      
+                                        if (debug) LOGGER.info("Invalid file type: " + ext);      
                                 } 
-                        }catch (Exception ex) { 
-                                if (debug) ex.printStackTrace(); 
+                        }catch (Throwable th) { 
+                                if (debug) {
+                                	LOGGER.log(Level.SEVERE, th.getMessage(), th); 
+                                }
                                 retVal="203"; 
                         } 
                 } 
@@ -191,7 +196,7 @@ public class UploaderConnectorServlet extends HttpServlet {
                 out.flush(); 
                 out.close(); 
          
-                if (debug) System.out.println("--- END DOPOST ---");     
+                if (debug) LOGGER.info("--- END DOPOST ---");     
                  
         } 
  
@@ -218,13 +223,13 @@ public class UploaderConnectorServlet extends HttpServlet {
           
          private ArrayList stringToArrayList(String str) { 
           
-         if(debug) System.out.println(str); 
+         if(debug) LOGGER.info(str); 
          String[] strArr=str.split("\\|"); 
                   
          ArrayList tmp=new ArrayList(); 
          if(str.length()>0) { 
                  for(int i=0;i<strArr.length;++i) { 
-                                if(debug) System.out.println(i +" - "+strArr[i]); 
+                                if(debug) LOGGER.info(i +" - "+strArr[i]); 
                                 tmp.add(strArr[i].toLowerCase()); 
                         } 
                 } 

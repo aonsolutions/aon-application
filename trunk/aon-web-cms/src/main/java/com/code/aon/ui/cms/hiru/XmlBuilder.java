@@ -8,6 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -16,6 +18,7 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.io.IOUtils;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -31,6 +34,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 
 public class XmlBuilder {
+	
+	private static final Logger LOGGER = Logger.getLogger(XmlBuilder.class.getName());
 	
 	private String destDir;
 
@@ -58,11 +63,11 @@ public class XmlBuilder {
 			this.fireMessage("Start centres xml.");
 			buildOrganizerCentre(out);
 			this.fireMessage("Centres xml finished.");
-		} catch (Exception e) {
-			this.fireMessage(" ** ERROR ** Centres xml error: "+e.getMessage());
-			throw new XmlBuilderException(e);
+		} catch (Throwable th) {
+			this.fireMessage(" ** ERROR ** Centres xml error: "+th.getMessage());
+			throw new XmlBuilderException(th);
 		} finally {
-			out.close();
+			IOUtils.closeQuietly(out);
 		}
 	}
 	
@@ -126,9 +131,9 @@ public class XmlBuilder {
 					this.fireMessage("Start courses xml.");
 					buildCourse(object,courseout);
 					this.fireMessage("Courses xml finished.");
-				} catch (Exception e) {
-					this.fireMessage(" ** ERROR ** Courses xml error: "+e.getMessage());
-					throw new XmlBuilderException(e);
+				} catch (Throwable th) {
+					this.fireMessage(" ** ERROR ** Courses xml error: "+th.getMessage());
+					throw new XmlBuilderException(th);
 				} finally {
 					courseout.close();
 				}
@@ -266,13 +271,12 @@ public class XmlBuilder {
 	}
 
 	public static void main(String[] args) {
-		try{
-			
+		try {
 			// ControllerUtil.getDocumentsPath()
 			XmlBuilder b = new XmlBuilder("c:/tmp"+"/"+"hiru","http://hiru.com/xml");
 			b.generate();			
-		}catch (Exception e) {
-			e.printStackTrace();
+		}catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 	}
 	

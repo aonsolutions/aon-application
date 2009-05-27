@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
@@ -96,7 +97,7 @@ public class FTPUtil implements ICMSConstants {
 				status.addMessage("No hubo conexion con el servidor.");
 				error = false;
 			}
-		} catch (Exception e) {
+		} catch (Throwable th) {
 			status.addErrorMessage("FTP Error. Se produjo un error durante la conexion al FTP, si el error persite consulte con su administrador.");
 			error = false;
 		} finally {
@@ -131,13 +132,13 @@ public class FTPUtil implements ICMSConstants {
 					try{
 						fis= new FileInputStream(f);
 						fc.storeFile(breadCrum + "/" + f.getName(), fis);
-					}catch (Exception e){
-						try{fis.close();}catch (Exception e1){}
+					}catch (Throwable th){
+						IOUtils.closeQuietly(fis);
 					}
 				}
 			}
-		} catch (Exception e) {
-			AonUtil.addErrorMessage(e.getMessage());
+		} catch (Throwable th) {
+			AonUtil.addErrorMessage(th.getMessage());
 		}
 	}
 

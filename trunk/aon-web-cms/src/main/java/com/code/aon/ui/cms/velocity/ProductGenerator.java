@@ -3,6 +3,8 @@ package com.code.aon.ui.cms.velocity;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.hibernate.Query;
 
@@ -24,6 +26,8 @@ import com.code.aon.ui.cms.velocity.attribute.ProductCategoryHandler;
 import com.code.aon.ui.cms.velocity.attribute.ProductHandler;
 
 public class ProductGenerator extends Generator {
+	
+	private static final Logger LOGGER = Logger.getLogger(ProductGenerator.class.getName());
 
 	public static void generate() {
 		List<ProductCategoryDetail> productCategoryDetailList;
@@ -162,9 +166,9 @@ public class ProductGenerator extends Generator {
 			vu.finalize();
 			vu = null;		
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
+		} catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			VelocityUtil.addMessage(th.getMessage(), VelocityUtil.ERROR);;
 		} finally {
 			productCategoryDetailList = null;
 			productSubCategoryDetailList = null;

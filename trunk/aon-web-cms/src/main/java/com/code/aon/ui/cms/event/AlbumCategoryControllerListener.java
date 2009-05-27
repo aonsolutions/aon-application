@@ -21,8 +21,8 @@ public class AlbumCategoryControllerListener extends ControllerAdapter implement
 			IManagerBean bean = BeanManager.getManagerBean(AlbumCategory.class);
 			criteria.addOrder(bean.getFieldName(ICMSAlias.ALBUM_CATEGORY_POSITION));
 			event.getController().setCriteria(criteria);
-		}catch (Exception e) {
-			throw new ControllerListenerException(e);
+		}catch (Throwable th) {
+			throw new ControllerListenerException(th);
 		}
 	}
 	

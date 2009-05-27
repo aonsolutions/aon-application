@@ -1,16 +1,19 @@
 package com.code.aon.ui.cms.controller.support;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.code.aon.cms.IPositionObject;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.controller.support.IOrderedControllerListener;
 import com.code.aon.ui.form.IController;
 
 public class OrderedControllerSupport {
+	
+	private static final Logger LOGGER = Logger.getLogger(OrderedControllerSupport.class.getName());
 	
 	protected OrderedControllerListenerSupport orderedControllerListenerSupport = new OrderedControllerListenerSupport(); 
 	
@@ -89,6 +92,7 @@ public class OrderedControllerSupport {
 			orderedControllerListenerSupport.fireBeforeUseCriteria(criteria);
 			position = controller.getManagerBean().getCount(criteria);
 		}catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return position;
 	}

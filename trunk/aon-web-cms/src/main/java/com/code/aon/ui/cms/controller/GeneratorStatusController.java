@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 
@@ -12,6 +14,8 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.FTPUtil;
 
 public class GeneratorStatusController  {
+	
+	private static final Logger LOGGER = Logger.getLogger(GeneratorStatusController.class.getName());
 
 	private boolean generated;
 
@@ -93,7 +97,8 @@ public class GeneratorStatusController  {
 		try {
 			if (FTPUtil.uploadFTP())
 				this.published = true;
-		}catch (Exception e) {
+		}catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}finally{
 			this.activePoll = false;
 		}
@@ -106,7 +111,8 @@ public class GeneratorStatusController  {
 		try {
 			if (FTPUtil.uploadPreviewFTP())
 				this.published = true;
-		}catch (Exception e) {
+		}catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}finally{
 			this.activePoll = false;
 		}

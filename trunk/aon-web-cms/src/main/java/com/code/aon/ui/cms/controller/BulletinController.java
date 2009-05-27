@@ -15,6 +15,8 @@ import javax.mail.Address;
 import javax.mail.AuthenticationFailedException;
 import javax.mail.internet.InternetAddress;
 
+import org.apache.commons.io.IOUtils;
+
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleDetail;
 import com.code.aon.cms.Bulletin;
@@ -209,21 +211,15 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 			}
 		} catch (AuthenticationFailedException e) {
 			VelocityUtil.addMessage("Error de autentificacion.",VelocityUtil.ERROR);
-		} catch (Exception e) {
-			VelocityUtil.addMessage(e.getMessage(),VelocityUtil.ERROR);
+		} catch (Throwable th) {
+			VelocityUtil.addMessage(th.getMessage(),VelocityUtil.ERROR);
 		}finally {
 			article_content = null;
 			list = null;
 			article_list = null;
 			listBulletinArticle = null;
 			listBulletinEmail = null;
-	        try {
-	            if (buff != null) {
-	            	buff.close();
-	            }
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
+			IOUtils.closeQuietly(buff);
 	    }
 
 	}

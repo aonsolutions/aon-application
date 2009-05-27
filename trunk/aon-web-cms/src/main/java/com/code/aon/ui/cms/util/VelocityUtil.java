@@ -5,7 +5,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
@@ -18,6 +21,8 @@ import com.code.aon.ui.util.AonUtil;
 
 public class VelocityUtil extends VelocityEngine implements Constants, ICMSConstants {
     
+	private static final Logger LOGGER = Logger.getLogger(VelocityUtil.class.getName());
+	
 	public static final int INFO = 0;
 
 	public static final int ERROR = 1;
@@ -50,8 +55,8 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
         this.setProperty(Velocity.RUNTIME_LOG, template_path + "/" + VELOCITY_LOG_FILE);
         try {
         	this.init();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Throwable th) {
+        	LOGGER.log(Level.SEVERE, th.getMessage(), th);
         }
     }
     
@@ -89,7 +94,7 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
         String pageShortName;
         try{
         	pageShortName = page.substring(page.lastIndexOf('/'));
-        }catch (Exception e) {
+        }catch (Throwable th) {
         	pageShortName = page;
 		}
         
@@ -103,20 +108,20 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 	        writer = new BufferedWriter(fw);
 	        
 	        error = generate(template, writer, pageShortName);
-		}
-		catch(Exception e) {
+		} catch(Throwable th) {
 		    error = true;
-			addMessage("Error al generar el fichero '" + pageShortName + "' </BR> " + e.getMessage() + "", ERROR);
-			e.printStackTrace();
-		}
-	    finally {
+			addMessage("Error al generar el fichero '" + pageShortName + "' </BR> " + th.getMessage() + "", ERROR);
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+		} finally {
 	        try {
 	            if (writer != null) {
 	                writer.flush();
 	            }
-	        } catch (Exception e) {e.printStackTrace();}
-	        try {writer.close();} catch (Exception e) {e.printStackTrace();}
-	        try{fw.close();} catch (Exception e) {e.printStackTrace();}
+	        } catch (Throwable th) {
+	        	LOGGER.log(Level.SEVERE, th.getMessage(), th);
+	        }
+	        IOUtils.closeQuietly(writer);
+	        IOUtils.closeQuietly(fw);
 	        fo = null;
 	    }
 	    return error;
@@ -145,24 +150,20 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
                     this.evaluate(context, writer, "¡AON-CMS!", reader);
 					writer.flush();
 					addMessage("Página " + pageShortName + " generada con exito", INFO);
-				}
-				catch(Exception e) {
+				} catch(Throwable th) {
 				    error = true;
-					addMessage("Error al evaluar el contexto en el fichero '" + pageShortName + "' <BR/>" + e.getMessage(), ERROR);
+					addMessage("Error al evaluar el contexto en el fichero '" + pageShortName + "' <BR/>" + th.getMessage(), ERROR);
 				}
-			}
-			else {
+			} else {
 				addMessage("No se pudo generar el fichero '" + pageShortName + "'", ERROR);
 			}
-		}
-		catch(Exception e) {
+		} catch(Throwable th) {
 		    error = true;
-			addMessage("Error al generar el fichero '" + pageShortName + "' </BR> " + e.getMessage() + "", ERROR);
-			e.printStackTrace();
-		}
-        finally {
-            try {reader.close();} catch (Exception e) {e.printStackTrace();}
-            try {fr.close();} catch (Exception e) {e.printStackTrace();}
+			addMessage("Error al generar el fichero '" + pageShortName + "' </BR> " + th.getMessage() + "", ERROR);
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+		} finally {
+			IOUtils.closeQuietly(reader);
+			IOUtils.closeQuietly(fr);
             fi = null;
         }
 

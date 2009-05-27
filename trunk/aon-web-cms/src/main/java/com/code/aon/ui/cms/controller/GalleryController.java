@@ -5,11 +5,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
@@ -23,6 +26,8 @@ import com.code.aon.ui.form.BasicController;
 
 public abstract class GalleryController extends BasicController implements IGalleryController{
 
+	private static final Logger LOGGER = Logger.getLogger(GalleryController.class.getName());
+	
 	private String currentPath = recoverFilesPath();
 
 	private String getRelativePath(String path) {
@@ -102,11 +107,10 @@ public abstract class GalleryController extends BasicController implements IGall
 		        outputStream = new FileOutputStream(file);
 		        outputStream.write(data);
 				chargeImageList();
-			}
-			catch (Exception e) {
-			}
-			finally {
-		        try{outputStream.close();} catch (Exception e) {}			
+			} catch (Throwable th) {
+				LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			} finally {
+		        IOUtils.closeQuietly(outputStream);
 			}
 		}
 	}
@@ -154,7 +158,7 @@ public abstract class GalleryController extends BasicController implements IGall
 	public static void main(String[] args) {
 		String fileName = "fsadfs$$$·33a6756745._-gdfsg%%%";
 		fileName = fileName.replaceAll("[^A-Za-z0-9._-]+", "");
-		System.out.println(fileName);
+		LOGGER.info(fileName);
 	}
 	
 }

@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.apache.commons.io.IOUtils;
 
 import com.code.aon.cms.enumeration.ModularPageOptionType;
 import com.code.aon.cms.enumeration.PageType;
@@ -11,6 +15,8 @@ import com.code.aon.cms.enumeration.SidebarType;
 import com.code.aon.ui.cms.util.ControllerUtil;
 
 public class DomainUtilities {
+	
+	private static final Logger LOGGER = Logger.getLogger(DomainUtilities.class.getName());
 
 	private boolean adminProfile = false;
 	
@@ -35,8 +41,8 @@ public class DomainUtilities {
 	private void initPageType(){
 		try {
 			propDefPageType.load(PageType.class.getResourceAsStream(PAGETYPE));
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		
 		String file = ControllerUtil.getConfigPath()+File.separator+PAGETYPE;
@@ -44,9 +50,10 @@ public class DomainUtilities {
 		try{
 			stream = new FileInputStream(file);
 			propDomainPageType.load(stream);
-		}catch (Exception e) {
+		}catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}finally{
-			try{stream.close();}catch(Exception e){}
+			IOUtils.closeQuietly(stream);
 			stream= null;
 		}
 	}
@@ -61,7 +68,8 @@ public class DomainUtilities {
 				if ("true".equalsIgnoreCase(""+propDefPageType.get(type.toString())))
 					return true;
 			}
-		}catch (Exception e) {
+		}catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		return false;
 	}
@@ -78,8 +86,8 @@ public class DomainUtilities {
 	private void initSidebarType(){
 		try {
 			propDefSidebarType.load(PageType.class.getResourceAsStream(SIDEBARTYPE));
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		
 		String file = ControllerUtil.getConfigPath()+File.separator+SIDEBARTYPE;
@@ -87,9 +95,10 @@ public class DomainUtilities {
 		try{
 			stream = new FileInputStream(file);
 			propDomainSidebarType.load(stream);
-		}catch (Exception e) {
+		}catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}finally{
-			try{stream.close();}catch(Exception e){}
+			IOUtils.closeQuietly(stream);
 			stream= null;
 		}
 	}
@@ -104,7 +113,8 @@ public class DomainUtilities {
 				if ("true".equalsIgnoreCase(""+propDefSidebarType.get(type.toString())))
 					return true;
 			}
-		}catch (Exception e) {
+		}catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		return false;
 	}
@@ -121,8 +131,8 @@ public class DomainUtilities {
 	private void initModularPageOptionType(){
 		try {
 			propDefModularPageOptionType.load(PageType.class.getResourceAsStream(MODULARPAGEOPTIONTYPE));
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		
 		String file = ControllerUtil.getConfigPath()+File.separator+MODULARPAGEOPTIONTYPE;
@@ -130,9 +140,10 @@ public class DomainUtilities {
 		try{
 			stream = new FileInputStream(file);
 			propDomainModularPageOptionType.load(stream);
-		}catch (Exception e) {
+		}catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}finally{
-			try{stream.close();}catch(Exception e){}
+			IOUtils.closeQuietly(stream);
 			stream= null;
 		}
 	}
@@ -147,7 +158,8 @@ public class DomainUtilities {
 				if ("true".equalsIgnoreCase(""+propDefModularPageOptionType.get(type.toString())))
 					return true;
 			}
-		}catch (Exception e) {
+		}catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		return false;
 	}
@@ -164,8 +176,8 @@ public class DomainUtilities {
 	private void initMenu(){
 		try {
 			propDefMenu.load(PageType.class.getResourceAsStream(MENU));
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		
 		String file = ControllerUtil.getConfigPath()+File.separator+MENU;
@@ -173,9 +185,10 @@ public class DomainUtilities {
 		try{
 			stream = new FileInputStream(file);
 			propDomainMenu.load(stream);
-		}catch (Exception e) {
+		}catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}finally{
-			try{stream.close();}catch(Exception e){}
+			IOUtils.closeQuietly(stream);
 			stream= null;
 		}
 	}
@@ -190,7 +203,8 @@ public class DomainUtilities {
 				if ("true".equalsIgnoreCase(""+propDefMenu.get(option)))
 					return true;
 			}
-		}catch (Exception e) {
+		}catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		return false;
 	}

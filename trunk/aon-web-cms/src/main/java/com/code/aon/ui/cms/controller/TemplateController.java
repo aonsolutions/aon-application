@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
@@ -14,6 +16,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 import org.xml.sax.SAXException;
@@ -32,6 +35,8 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 public class TemplateController extends BasicController implements Constants {
+	
+	private static final Logger LOGGER = Logger.getLogger(TemplateController.class.getName());
 
 	private ListDataModel templates = new ListDataModel();
 	
@@ -63,7 +68,7 @@ public class TemplateController extends BasicController implements Constants {
 			checkList = new ArrayList<TemplateObject>();
 			list = getTemplateList();
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 		templates = new ListDataModel(list);
 	}
@@ -98,13 +103,11 @@ public class TemplateController extends BasicController implements Constants {
 						list.add(to);
 						++count;
 					} catch (SAXException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						LOGGER.log(Level.SEVERE, e.getMessage(), e);
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						LOGGER.log(Level.SEVERE, e.getMessage(), e);
 					}finally{
-						try{fis.close();}catch(Exception e){}
+						IOUtils.closeQuietly(fis);
 						fis = null;
 					}
 				}
@@ -208,9 +211,9 @@ public class TemplateController extends BasicController implements Constants {
 		try {
 			saxParser = saxParserFactory.newSAXParser();
 		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		} catch (SAXException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
 
@@ -238,10 +241,10 @@ public class TemplateController extends BasicController implements Constants {
 				FileUtil.delete(file.getAbsolutePath());
 			}
 			this.onInit(null);
-		}catch (Exception e) {
-			AonUtil.addErrorMessage("Error loading templates: "+e.getMessage());
+		}catch (Throwable th) {
+			AonUtil.addErrorMessage("Error loading templates: "+th.getMessage());
 		}finally{
-	        try{outputStream.close();}catch (Exception e) {}			
+			IOUtils.closeQuietly(outputStream);			
 		}		
 	}
 

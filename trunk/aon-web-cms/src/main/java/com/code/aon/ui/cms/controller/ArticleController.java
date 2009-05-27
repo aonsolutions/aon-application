@@ -149,7 +149,7 @@ public class ArticleController extends BasicI18nController implements ICMSConsta
 	public boolean isDiary() {
 		try{
 			return (((Article)this.getTo()).getArticleType() == ArticleType.EVENTS)?true:false;
-		}catch (Exception e) {
+		}catch (Throwable th) {
 			return false;
 		}
 	}
