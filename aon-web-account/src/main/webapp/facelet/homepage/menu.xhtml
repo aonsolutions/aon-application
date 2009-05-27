@@ -51,7 +51,7 @@
 			</aon:dropDownMenu>
  
 			<aon:dropDownMenu value="#{appBundle.account_reports}">
-				<aon:menuItem actionListener="#{trialBalance.onReset}" action="account_statement_search" value="#{accountingBundle.accounting_statement_module}"/>
+				<rich:menuItem  actionListener="#{trialBalance.onReset}" action="account_statement_search" value="#{accountingBundle.accounting_statement_module}"/>
 				<aon:menuSeparator/>
 				<aon:menuItem actionListener="#{journalReport.onReset}" action="journal_search"	value="#{accountingBundle.accounting_journal_module}"/>
 				<aon:menuSeparator/>
@@ -69,20 +69,36 @@
 				</aon:menuGroup>
 				 -->
 			</aon:dropDownMenu>
-			
+
 				<aon:dropDownMenu value="#{accountingBundle.accounting_balance}">
-				<aon:menuItem  value="#{accountingBundle.accounting_balance_menu_bs}"  actionListener="#{balanceSheet.onBalanceSheet}" action="balance_sheet_list"/>
-				<aon:menuItem  value="#{accountingBundle.accounting_balance_menu_pyg}"  actionListener="#{balanceSheet.onProfitLossAccount}" action="balance_sheet_list"/>
-				<aon:menuItem  value="#{accountingBundle.accounting_balance_menu_bs_abre}" disabled="true"/>
-				<aon:menuItem  value="#{accountingBundle.accounting_balance_menu_pyg_abre}" disabled="true"/>
-				<aon:menuSeparator/>
-				<aon:menuItem  value="#{accountingBundle.accounting_balance_menu}" actionListener="#{balance.onSelectFirst}" action="balance_form"/>
-								
-			</aon:dropDownMenu>
-			
-					
-			
-			<aon:dropDownMenu value="#{appBundle.account_fixed_assets}">
+					<aon:menuItem value="#{accountingBundle.accounting_balance_menu_bs}" 
+					    actionListener="#{balanceSheet.onReset}"						
+						action="balance_sheet_search">
+						<f:setPropertyActionListener value="1" target="#{balanceSheet.type}" />
+						<f:setPropertyActionListener value="#{accountingBundle.accounting_balance_menu_bs}" target="#{balanceSheet.balanceName}" />
+					</aon:menuItem>
+					<aon:menuItem 
+						value="#{accountingBundle.accounting_balance_menu_pyg}"
+						actionListener="#{balanceSheet.onReset}"				
+						action="balance_sheet_search">
+						<f:setPropertyActionListener value="2" target="#{balanceSheet.type}" />
+						<f:setPropertyActionListener value="#{accountingBundle.accounting_balance_menu_pg}" target="#{balanceSheet.balanceName}" />
+					</aon:menuItem>
+					<aon:menuItem
+						value="#{accountingBundle.accounting_balance_menu_bs_abre}"
+						disabled="true" />
+					<aon:menuItem
+						value="#{accountingBundle.accounting_balance_menu_pyg_abre}"
+						disabled="true" />
+					<aon:menuSeparator />
+					<aon:menuItem value="#{accountingBundle.accounting_balance_menu}"
+						actionListener="#{balance.onSelectFirst}" action="balance_form" />
+
+				</aon:dropDownMenu>
+
+
+
+				<aon:dropDownMenu value="#{appBundle.account_fixed_assets}">
 				<aon:menuItem style="color:red;" action="amortization_list" value="#{accountingBundle.accounting_amortization_form_module}"/>
 				<aon:menuSeparator/>
 				<aon:menuItem disabled="true" value="#{appBundle.accoung_amortization_report}"/>
@@ -106,7 +122,7 @@
 			<aon:dropDownMenu value="#{appBundle.account_configuration}">
 				<aon:menuItem action="company" actionListener="#{company.onLoad}" value="#{companyBundle.company_data_module}"/>
 				<aon:menuSeparator/>
-				<aon:menuItem action="accPeriod" value="#{accountingBundle.accounting_period_module}"/>
+				<aon:menuItem action="accPeriod" value="#{accountingBundle.accounting_period_module}"  />
 				<aon:menuItem action="defaultParams" actionListener="#{accAppParams.onLoad}" value="#{accountingBundle.accounting_default_params_module}"/>
 				<aon:menuItem action="series" value="#{configBundle.config_series_module}"/>
 				<aon:menuItem action="tax" value="#{configBundle.config_tax_module}"/>
