@@ -811,9 +811,9 @@
 	<navigation-rule>
 	
 		<navigation-case>
-			<from-outcome>balance_select_date</from-outcome>
+			<from-outcome>balance_sheet_search</from-outcome>
 			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/balance/sheet/selectDates.xhtml</to-view-id>
+				/com/code/aon/ui/accounting/facelet/balance/sheet/search.xhtml</to-view-id>
 		</navigation-case>
 		
 			<navigation-case>
