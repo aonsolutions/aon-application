@@ -48,6 +48,11 @@
 		</vetoListeners>
 	</bean>
 	
-	
+	<bean description="Listener para controlar que la cuenta de nuevo presupuesto permita apuntes.">
+		<pojo>com.code.aon.accounting.AccountBudget</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.accounting.event.AccountBudgetBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
 
 </bean-config>
