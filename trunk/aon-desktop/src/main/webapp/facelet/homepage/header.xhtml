@@ -59,20 +59,19 @@
 
 		<aon:form>
     		<aon:div styleClass="aon-header-additionalInfo">
-				<c:if test="#{!aonConfiguration.properties.hideHeaderLinks}">
-					<aon:div styleClass="aon-float-right">
-						<aon:div styleClass="aon-header-menu-item">
-							<h:outputLink target="_top"
-								value="${facesContext.externalContext.requestContextPath}">
-								<h:outputText value="#{bundle.aon_home}" />
-							</h:outputLink>
-							<aon:commandLink style="border-right:0;" action="logout"
-								actionListener="#{aonConfiguration.logout}">
-								<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
-							</aon:commandLink>
-						</aon:div>
+				<aon:div styleClass="aon-float-right"
+					rendered="#{!aonConfiguration.properties.hideHeaderLinks}">
+					<aon:div styleClass="aon-header-menu-item">
+						<h:outputLink target="_top"
+							value="${facesContext.externalContext.requestContextPath}">
+							<h:outputText value="#{bundle.aon_home}" />
+						</h:outputLink>
+						<aon:commandLink style="border-right:0;" action="logout"
+							actionListener="#{aonConfiguration.logout}">
+							<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
+						</aon:commandLink>
 					</aon:div>
-				</c:if>
+				</aon:div>
 				<aon:outputText value="#{aonConfiguration.currentDate}" />
 			</aon:div>
 		</aon:form>
