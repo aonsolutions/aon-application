@@ -15,7 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.cms.Config;
 import com.code.aon.ui.cms.Constants;
@@ -30,14 +32,57 @@ import com.code.aon.ui.cms.util.ImageUtil;
 
 public class ThumbnailServlet extends HttpServlet implements Constants{
 	
+	private static final long serialVersionUID = 7628878719631691763L;
+
 	private static final Logger LOGGER = Logger.getLogger(ThumbnailServlet.class.getName());
 	
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		doGet(req, res);
 	}
+	
+	private void setCacheControl( HttpServletResponse res, File file ) {
+		long value = getLastModified(file);
+		if ( value != -1 ) {
+			res.setHeader("Expires", "0");
+		} else {
+	    	res.setHeader("Expires", "0");
+	    	res.setHeader("Pragma", "no-cache");
+	    	res.setHeader("Cache-Control", "no-store");								
+		}
+	}
+	
+	private long getLastModified( File file ) {
+		if ( file.exists() && file.isFile() && file.canRead() ) {
+			long value = file.lastModified();
+			if ( value != 0 ) {
+				return value;
+			}
+		}
+		return -1;
+	}
+	
+	@Override
+	protected long getLastModified(HttpServletRequest req) {
+		File file = new File( getFile(req) );
+		long value = getLastModified(file);
+		if ( value != -1 ) {
+			LOGGER.info( file + ": " + value );
+			return value;
+		}
+		return super.getLastModified(req);
+	}
+	
+	
+	
+	private String getFile( HttpServletRequest req ) {
+		String servlet = req.getServletPath();
+		String basePath = getImagesPath(req.getSession());
+		String path = basePath + servlet;
+		String file = path.replaceAll(".thumbnail", "");
+		return file;
+	}
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		HttpSession session = req.getSession();
 		int maxDim = 100;
 		if (req.getParameter("width") != null) maxDim = Integer.parseInt(req.getParameter("width").toString());
 		
@@ -46,61 +91,37 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
         OutputStream os = null;
 		BufferedOutputStream bos = null;
 		try {
-			String servlet = req.getServletPath();
-			String basePath = getImagesPath(session);
-			String path = basePath + servlet;
-			String file = path.replaceAll(".thumbnail", "");
+			String file = getFile(req);
 			boolean document = false;
 			//Comprobamos la extension...
-			String ext = file.substring(file.lastIndexOf(".")+1);
-			if (ext != null && !ext.trim().equals("")) {
+			String ext = FilenameUtils.getExtension(file);
+			if (! StringUtils.isBlank(ext) ) {
 				if (ext.equals("doc") || ext.equals("docx") || ext.equals("wps")) {
 					ext = "word.png";
 					document = true;
-				}
-				else {
-					if (ext.equals("xls") || ext.equals("xlsx")) {
-						ext = "excel.png";
-						document = true;
-					}
-					else {
-						if (ext.equals("pps") || ext.equals("pptx") || ext.equals("ppt")) {
-							ext = "powerpoint.png";
-							document = true;
-						}
-						else {
-							if (ext.equals("wmv") || ext.equals("avi") || ext.equals("mov")) {
-								ext = "video.png";
-								document = true;
-							}
-							else {
-								if (ext.equals("wma") || ext.equals("mp3") || ext.equals("rm")) {
-									ext = "audio.png";
-									document = true;
-								}
-								else {
-									if (ext.equals("html") || ext.equals("htm")) {
-										ext = "html.png";
-										document = true;
-									}
-									else {
-										if (ext.equals("pdf")) {
-											ext = "pdf.png";
-											document = true;
-										}
-
-									}
-								}
-							}
-						}
-					}
+				} else if (ext.equals("xls") || ext.equals("xlsx")) {
+					ext = "excel.png";
+					document = true;
+				} else if (ext.equals("pps") || ext.equals("pptx") || ext.equals("ppt")) {
+					ext = "powerpoint.png";
+					document = true;
+				} else if (ext.equals("wmv") || ext.equals("avi") || ext.equals("mov")) {
+					ext = "video.png";
+					document = true;
+				} else if (ext.equals("wma") || ext.equals("mp3") || ext.equals("rm")) {
+					ext = "audio.png";
+					document = true;
+				} else if (ext.equals("html") || ext.equals("htm")) {
+					ext = "html.png";
+					document = true;
+				} else if (ext.equals("pdf")) {
+					ext = "pdf.png";
+					document = true;
 				}
 			}
 			File f = new File(file);
         	res.setContentType( "image/jpeg" );
-        	res.setHeader("Expires", "0");
-        	res.setHeader("Pragma", "no-cache");
-        	res.setHeader("Cache-Control", "no-store");
+        	setCacheControl(res, f);
             res.setCharacterEncoding("ISO-8859-1"); //$NON-NLS-1$
 			if (!document && f.exists() && f.isFile()) {
 				ImageUtil.resize(f, res.getOutputStream(), maxDim);
@@ -144,8 +165,6 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
     		bos = null;
         }
     }
-	
-
 	
 	public static String getImagesPath(HttpSession session) {
 		Config config = (Config)session.getAttribute(SESSION_CONFIG);
