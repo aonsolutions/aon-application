@@ -47,7 +47,7 @@
 		<managed-property>
 		   <property-name>styleSheets</property-name>
 		   <list-entries>
-			  <value>#{aonResource.resolveLocal['/aon-richCss.css']}</value>
+			  <value>#{aonResource.resolve['/aon-richCss.css']}</value>
 		   </list-entries>
 		</managed-property>
 	</managed-bean>

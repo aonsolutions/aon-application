@@ -55,10 +55,11 @@
 							styleClass="aon-finding-toolbar-item-no-icon">
 							<aon:actionListener method="#{album.onSearch}" />
 						</aon:commandButton>
-						<aon:commandButton id="create_album" reRender="aonStatus"
+						<aon:commandButton id="create_album" reRender="showAlbumWindow"
 							value="#{appBundle.aon_create_album}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
-							<rich:componentControl for="albumModalPanel" operation="show" event="onclick"/>
+							<f:setPropertyActionListener target="#{album.showAlbumWindow}"
+								value="#{true}" />						
 						</aon:commandButton>	
 				    </aon:div>
 					
@@ -104,14 +105,14 @@
 								actionListener="#{albumImage.onActivate}" 
 								rendered="#{!to.active}">
 								<aon:graphicImage id="AlbumImage_active" alt="#{appBundle.album_image_activate}"
-									url="/images/cms/inactive.png" />
+									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 							</aon:commandLink>
 							<aon:commandLink title="#{appBundle.albumImage_deactivate}" 
 								action="album_image_list"
 								actionListener="#{albumImage.onDeactivate}" 
 								rendered="#{to.active}">
 								<aon:graphicImage id="AlbumImage_deactive" alt="#{appBundle.album_image_deactivate}"
-									url="/images/cms/active.png" />
+									url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
 							</aon:commandLink>
 						</aon:div>
 					</aon:column>

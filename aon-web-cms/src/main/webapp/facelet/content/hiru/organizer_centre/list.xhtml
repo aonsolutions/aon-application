@@ -95,14 +95,14 @@
 								reRender="dataTable"
 								rendered="#{!to.active}">
 								<aon:graphicImage alt="#{appBundle.hiru_organizer_centre_activate}"
-									url="/images/cms/inactive.png" />
+									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 							</aon:commandLink>
 							<aon:commandLink title="#{appBundle.hiru_organizer_centre_deactivate}" 
 								actionListener="#{hiru_organizer_centre.onDeactivate}" 
 								reRender="dataTable" 
 								rendered="#{to.active}">
 								<aon:graphicImage alt="#{appBundle.hiru_organizer_centre_deactivate}"
-									url="/images/cms/active.png" />
+									url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
 							</aon:commandLink>
 						</aon:column>
 

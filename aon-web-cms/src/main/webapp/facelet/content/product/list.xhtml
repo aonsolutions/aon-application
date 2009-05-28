@@ -145,14 +145,14 @@
 									actionListener="#{product.onActivate}" 
 									rendered="#{!to.active}">
 									<aon:graphicImage id="Product_active" alt="#{appBundle.product_activate}"
-										url="/images/cms/inactive.png" />
+										url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 								</aon:commandLink>
 								<aon:commandLink title="#{appBundle.product_deactivate}" 
 									action="product_list"
 									actionListener="#{product.onDeactivate}" 
 									rendered="#{to.active}">
 									<aon:graphicImage id="Product_deactive" alt="#{appBundle.product_deactivate}"
-										url="/images/cms/active.png" />
+										url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
 								</aon:commandLink>
 							</aon:column>
 

@@ -22,7 +22,7 @@
 						<aon:commandButton id="cms-icon-menu"
 							rendered="#{cms.roleDesigner or cms.roleEditor}"
 							value="#{menuBundle.cms_menu}"
-							image="/images/cms/icons/cms-icon-menu.png"
+							image="#{aonResource.resolveLocal['/images/cms/icons/cms-icon-menu.png']}"
 							styleClass="aon-icon-commandButton" 
 							action="menu_list">
 							<aon:actionListener method="#{menu.onSearch}" />
@@ -40,7 +40,7 @@
 						<aon:commandButton id="cms-icon-generator"
 							rendered="#{cms.roleEditor or cms.rolePublisher}"
 							value="#{menuBundle.cms_generate_pages}"
-							image="/images/cms/icons/cms-icon-generator.png"
+							image="#{aonResource.resolveLocal['/images/cms/icons/cms-icon-generator.png']}"
 							styleClass="aon-icon-commandButton" 
 							action="generator_form">
 							<aon:actionListener method="#{generator_status.onInit}" />
@@ -59,7 +59,7 @@
 							rendered="#{domainUtils.articleMenu and ( cms.roleEditor or cms.roleRevisor )}">
 							<aon:commandButton id="cms-icon-news"
 								value="#{menuBundle.cms_article}"
-								image="/images/cms/icons/cms-icon-news.png"
+								image="#{aonResource.resolveLocal['/images/cms/icons/cms-icon-news.png']}"
 								styleClass="aon-icon-commandButton" 
 								action="article_list">
 								<aon:actionListener method="#{article.onSearch}" />
@@ -71,7 +71,7 @@
 							rendered="#{domainUtils.linkMenu and ( cms.roleEditor or cms.roleRevisor )}">
 							<aon:commandButton id="cms-icon-links"
 								value="#{menuBundle.cms_link}"
-								image="/images/cms/icons/cms-icon-links.png"
+								image="#{aonResource.resolveLocal['/images/cms/icons/cms-icon-links.png']}"
 								styleClass="aon-icon-commandButton" 
 								action="link_list">
 								<aon:actionListener method="#{link.onSearch}" />
@@ -83,7 +83,7 @@
 							rendered="#{domainUtils.faqMenu and ( cms.roleEditor or cms.roleRevisor )}">
 							<aon:commandButton id="cms-icon-faq"
 								value="#{menuBundle.cms_faq}"
-								image="/images/cms/icons/cms-icon-faq.png"
+								image="#{aonResource.resolveLocal['/images/cms/icons/cms-icon-faq.png']}"
 								styleClass="aon-icon-commandButton" 
 								action="faq_list">
 								<aon:actionListener method="#{faq.onSearch}" />
@@ -95,7 +95,7 @@
 							rendered="#{domainUtils.genericPageMenu and ( cms.roleEditor or cms.roleRevisor )}">
 							<aon:commandButton id="cms-icon-generic-page"
 								value="#{menuBundle.cms_generic_page}"
-								image="/images/cms/icons/cms-icon-generica.png"
+								image="#{aonResource.resolveLocal['/images/cms/icons/cms-icon-generica.png']}"
 								styleClass="aon-icon-commandButton" 
 								action="generic_page_list">
 								<aon:actionListener method="#{generic_page.onSearch}" />
@@ -108,7 +108,7 @@
 							rendered="#{domainUtils.modularMenu and ( cms.roleEditor or cms.roleRevisor )}">
 							<aon:commandButton id="cms-icon-modular"
 								value="#{menuBundle.cms_modular_page}"
-								image="/images/cms/icons/cms-icon-modular.png"
+								image="#{aonResource.resolveLocal['/images/cms/icons/cms-icon-modular.png']}"
 								styleClass="aon-icon-commandButton" 
 								action="modular_page_list">
 								<aon:actionListener method="#{modular_page.onSearch}" />
@@ -120,7 +120,7 @@
 							rendered="#{domainUtils.downloadMenu and ( cms.roleEditor or cms.roleRevisor )}">
 							<aon:commandButton id="cms-document-download"
 								value="#{menuBundle.cms_download}"
-								image="/images/cms/icons/cms-document-download.png"
+								image="#{aonResource.resolveLocal['/images/cms/icons/cms-document-download.png']}"
 								styleClass="aon-icon-commandButton" 
 								action="download_list">
 								<aon:actionListener method="#{download.onSearch}" />
@@ -132,7 +132,7 @@
 							rendered="#{domainUtils.albumMenu and ( cms.roleEditor or cms.roleRevisor )}">
 							<aon:commandButton id="cms-icon-album"
 								value="#{menuBundle.cms_album}"
-								image="/images/cms/icons/cms-icon-album-list.png"
+								image="#{aonResource.resolveLocal['/images/cms/icons/cms-icon-album-list.png']}"
 								styleClass="aon-icon-commandButton" 
 								action="album_list">
 								<aon:actionListener method="#{album.onSearch}" />
@@ -144,7 +144,7 @@
 							rendered="#{domainUtils.albumMenu and ( cms.roleEditor or cms.roleRevisor )}">
 							<aon:commandButton id="cms-icon-album_image"
 								value="#{menuBundle.cms_album_image}"
-								image="/images/cms/icons/cms-icon-album.png"
+								image="#{aonResource.resolveLocal['/images/cms/icons/cms-icon-album.png']}"
 								styleClass="aon-icon-commandButton" 
 								action="album_image_form">
 								<aon:actionListener method="#{albumImage.onReset}" />
@@ -163,7 +163,7 @@
 							rendered="#{cms.roleEditor}">
 							<aon:commandButton id="cms-document-upload"
 								value="#{menuBundle.cms_document_gallery}"
-								image="/images/cms/icons/cms-document-upload.png"
+								image="#{aonResource.resolveLocal['/images/cms/icons/cms-document-upload.png']}"
 								styleClass="aon-icon-commandButton" 
 								action="document_list">
 							</aon:commandButton> 
@@ -173,7 +173,7 @@
 							rendered="#{cms.roleEditor}">
 							<aon:commandButton id="cms-icon-image-upload"
 								value="#{menuBundle.cms_image_gallery}"
-								image="/images/cms/icons/cms-icon-image-upload.png"
+								image="#{aonResource.resolveLocal['/images/cms/icons/cms-icon-image-upload.png']}"
 								styleClass="aon-icon-commandButton" 
 								action="gallery_list">
 							</aon:commandButton> 

@@ -29,6 +29,8 @@ import com.code.aon.ui.util.AonUtil;
 
 public class AlbumController extends BasicI18nController implements ICMSConstants, Constants {
 
+	private boolean showAlbumWindow;
+	
 	private int page;
 	
 	public int getPage() {
@@ -231,4 +233,12 @@ public class AlbumController extends BasicI18nController implements ICMSConstant
 		this.activeLog = true;
 	}
 
+	public boolean isShowAlbumWindow() {
+		return showAlbumWindow;
+	}
+
+	public void setShowAlbumWindow(boolean showAlbumWindow) {
+		this.showAlbumWindow = showAlbumWindow;
+	}
+	
 }

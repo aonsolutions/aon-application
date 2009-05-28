@@ -116,7 +116,7 @@
 								actionListener="#{productCategory.onActivate}" 
 								rendered="#{!to.active}">
 								<aon:graphicImage id="ProductCategory_active" alt="#{appBundle.product_category_activate}"
-									url="/images/cms/inactive.png" />
+									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 							</aon:commandLink>
 							<aon:commandLink title="#{appBundle.product_category_deactivate}" 
 								reRender="dataTable"
@@ -124,7 +124,7 @@
 								rendered="#{to.active}">
 								<aon:graphicImage id="ProductCategory_deactive" 
 									alt="#{appBundle.product_category_deactivate}"
-									url="/images/cms/active.png" />
+									url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
 							</aon:commandLink>
 						</aon:column>
 

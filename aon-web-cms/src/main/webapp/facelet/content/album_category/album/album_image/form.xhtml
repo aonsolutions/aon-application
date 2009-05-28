@@ -174,7 +174,7 @@
 		                	immediate="#{true}"
 		                	reRender="thumbnail_preview_line1"
 		                    actionListener="#{albumImage.onDelImage}">
-							<aon:graphicImage url="/images/cms/inactive.png" />
+							<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 		        		</aon:commandLink>
 						<ui:include src="/facelet/content/utils/image_modal.xhtml">
 							<ui:param name="modalPanelName" value="mp_line1" />
@@ -195,7 +195,7 @@
 		                	immediate="#{true}"
 		                	reRender="thumbnail_preview_line1"
 		                    actionListener="#{albumImage.onDelThumbnail}">
-							<aon:graphicImage url="/images/cms/inactive.png" />
+							<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 		        		</aon:commandLink>
 						<ui:include src="/facelet/content/utils/image_modal.xhtml">
 							<ui:param name="modalPanelName" value="mp_thumbnail" />

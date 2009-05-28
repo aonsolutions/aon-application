@@ -192,14 +192,14 @@
 									reRender="dataTable"
 									rendered="#{!to.active}">
 									<aon:graphicImage id="subCategory_active" alt="#{appBundle.product_category_activate}"
-										url="/images/cms/inactive.png" />
+										url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 								</aon:commandLink>
 								<aon:commandLink title="#{appBundle.product_category_deactivate}" 
 									reRender="dataTable"
 									actionListener="#{subCategory.onDeactivate}" 
 									rendered="#{to.active}">
 									<aon:graphicImage id="subCategory_deactive" alt="#{appBundle.link_deactivate}"
-										url="/images/cms/active.png" />
+										url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
 								</aon:commandLink>
 							</aon:column>
 

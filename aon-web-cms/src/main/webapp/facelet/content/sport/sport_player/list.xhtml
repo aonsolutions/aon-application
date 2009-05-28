@@ -93,14 +93,14 @@
 								actionListener="#{sport_player.onActivate}" 
 								rendered="#{!to.active}">
 								<aon:graphicImage id="SP_active" alt="#{appBundle.sport_player_activate}"
-									url="/images/cms/inactive.png" />
+									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 							</aon:commandLink>
 							<aon:commandLink title="#{appBundle.sport_player_deactivate}" 
 								action="sport_player_list"
 								actionListener="#{sport_player.onDeactivate}" 
 								rendered="#{to.active}">
 								<aon:graphicImage id="SP_deactive" alt="#{appBundle.sport_player_deactivate}"
-									url="/images/cms/active.png" />
+									url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
 							</aon:commandLink>
 						</aon:column>
 
