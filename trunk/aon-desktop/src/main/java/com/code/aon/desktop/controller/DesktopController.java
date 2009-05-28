@@ -1,5 +1,8 @@
 package com.code.aon.desktop.controller;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.URL;
@@ -19,8 +22,10 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -41,12 +46,15 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.groupware.controller.AlarmController;
 import com.code.aon.ui.groupware.controller.NoteController;
 import com.code.aon.ui.groupware.controller.NoticeController;
+import com.code.aon.ui.util.AonUtil;
 
 public class DesktopController extends BasicController implements IDesktopConstants {
 	
@@ -373,4 +381,19 @@ public class DesktopController extends BasicController implements IDesktopConsta
 		return getUpdateURL() + "/update.rpy";
 	}
 
+	public boolean isBigLogo() {
+		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		RegistryAttachment attach = companyController.getAttach();
+		if ( (attach != null) && (!ArrayUtils.isEmpty(attach.getData())) ) {
+			InputStream in = new ByteArrayInputStream(attach.getData());
+			try {
+				BufferedImage image = ImageIO.read(in);
+				return (image.getWidth() > 200);
+			} catch (IOException e) {
+				LOGGER.log(Level.SEVERE, "Error reading logo. " + e.getMessage(), e);
+			}
+		}
+		return false;
+	}
+	
 }
