@@ -21,17 +21,17 @@ public class DomainResolver implements ILdapConstants, IAonObjectClasses {
 
 	private static final Log LOGGER = LogFactory.getLog( DomainResolver.class.getName() );	
 
-    private boolean isIPAddress( String host ) {
+    private static boolean isIPAddress( String host ) {
     	return IPAddressUtil.isIPv4LiteralAddress(host) || IPAddressUtil.isIPv6LiteralAddress(host);
     }
     
-    private boolean existsDomain( String host ) {
+    private static boolean existsDomain( String host ) {
     	BasicLdap ldap = new BasicLdap();
     	Name dn = NameResolver.getDomainDN(host);
     	return ldap.exists(dn, DOMAIN);
     }
     
-    private String findDomain( String ipAddress ) {
+    private static String findDomain( String ipAddress ) {
     	BasicLdap ldap = new BasicLdap();
     	Name dn = NameResolver.getDomainsDN();
 		try {
@@ -50,9 +50,7 @@ public class DomainResolver implements ILdapConstants, IAonObjectClasses {
 		return null;
     }
     
-    public String getDomain() {
-    	FacesContext ctx = FacesContext.getCurrentInstance();
-    	HttpServletRequest request = (HttpServletRequest) ctx.getExternalContext().getRequest();
+    public static String getDomain( HttpServletRequest request ) {
     	String host = request.getServerName();
     	if ( isIPAddress(host) ) {
     		String domain = findDomain(host);
@@ -71,7 +69,13 @@ public class DomainResolver implements ILdapConstants, IAonObjectClasses {
     			}
     		}
     	}
-    	return host;
+    	return host;    	
+    }
+    
+    public String getDomain() {
+    	FacesContext ctx = FacesContext.getCurrentInstance();
+    	HttpServletRequest request = (HttpServletRequest) ctx.getExternalContext().getRequest();
+    	return getDomain(request);
     }
     
 }
