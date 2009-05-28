@@ -8,7 +8,7 @@
 	xmlns:a4j="http://richfaces.org/a4j">	
 
 	<aon:commandLink style="padding-left:0.4em;" immediate="true" ajaxSingle="true" reRender="aonStatus">
-		<aon:graphicImage url="/images/cms/select.png" alt="#{appBundle.image_modal_open}"/>
+		<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/select.png']}" alt="#{appBundle.image_modal_open}"/>
 		<rich:componentControl for="#{modalPanelName}" operation="show" event="onclick"/>
 	</aon:commandLink>	
 	<rich:modalPanel id="#{modalPanelName}" height="660" width="700">

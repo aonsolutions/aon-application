@@ -70,8 +70,8 @@
 				    <rich:tree switchType="server" stateAdvisor="#{treeStateAdvisor}">
 				        <rich:recursiveTreeNodesAdaptor roots="#{fileSystemBean.imageRoots}" 
 				        	var="item" nodes="#{item.nodes}">
-							<rich:treeNode icon="/images/cms/tree/folderopen.gif"
-										iconLeaf="/images/cms/tree/folderopen.gif">
+							<rich:treeNode icon="#{aonResource.resolveLocal['/images/cms/tree/folderopen.gif']}"
+										iconLeaf="#{aonResource.resolveLocal['/images/cms/tree/folderopen.gif']}">
 				                <aon:commandLink action="#{item.onSelectFolder}" 
 				                	value="#{item}" immediate="#{true}"
 				                	reRender="main_form" />
@@ -91,12 +91,12 @@
 			            		</aon:div>
 			            		<aon:div styleClass="aon-padding aon-text-center">
 									<aon:commandButton styleClass="aon-noborder aon-padding"
-										image="/images/cms/icons/settings.png"
+										image="#{aonResource.resolveLocal['/images/cms/icons/settings.png']}"
 					                	action="resizer_form" value="#{appBundle.aon_cms_resize}"
 					                    actionListener="#{resizer.onResizeFile}">
 									</aon:commandButton> 
 									<aon:commandButton styleClass="aon-noborder aon-padding"
-										image="/images/cms/icons/delete.png"
+										image="#{aonResource.resolveLocal['/images/cms/icons/delete.png']}"
 					                	action="gallery_list" value="#{bundle.aon_remove}"
 					                    actionListener="#{gallery.onDeleteFile}"> 
 									</aon:commandButton> 

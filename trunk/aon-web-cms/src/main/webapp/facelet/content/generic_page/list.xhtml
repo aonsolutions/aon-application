@@ -103,14 +103,14 @@
 								actionListener="#{generic_page.onActivate}" 
 								rendered="#{!to.active}">
 								<aon:graphicImage id="GenericPage_active" alt="#{appBundle.generic_page_activate}"
-									url="/images/cms/inactive.png" />
+									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 							</aon:commandLink>
 							<aon:commandLink title="#{appBundle.generic_page_deactivate}" 
 								action="generic_page_list"
 								actionListener="#{generic_page.onDeactivate}" 
 								rendered="#{to.active}">
 								<aon:graphicImage id="GenericPage_deactive" alt="#{appBundle.generic_page_deactivate}"
-									url="/images/cms/active.png" />
+									url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
 							</aon:commandLink>
 						</aon:div>
 					</aon:column>

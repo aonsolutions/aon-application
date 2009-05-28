@@ -125,14 +125,14 @@
 								actionListener="#{banner.onActivate}" 
 								rendered="#{!to.active}">
 								<aon:graphicImage id="Banner_active" alt="#{appBundle.banner_activate}"
-									url="/images/cms/inactive.png" />
+									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 							</aon:commandLink>
 							<aon:commandLink title="#{appBundle.banner_deactivate}" 
 								action="banner_list"
 								actionListener="#{banner.onDeactivate}" 
 								rendered="#{to.active}">
 								<aon:graphicImage id="Banner_deactive" alt="#{appBundle.banner_deactivate}"
-									url="/images/cms/active.png" />
+									url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
 							</aon:commandLink>
 						</aon:column>
 

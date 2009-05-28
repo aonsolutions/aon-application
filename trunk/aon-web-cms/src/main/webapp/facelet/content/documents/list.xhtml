@@ -69,8 +69,8 @@
 				    <rich:tree switchType="server" stateAdvisor="#{treeStateAdvisor}">
 				        <rich:recursiveTreeNodesAdaptor roots="#{fileSystemBean.documentRoots}" 
 				        	var="item" nodes="#{item.nodes}">
-							<rich:treeNode icon="/images/cms/tree/folderopen.gif"
-								iconLeaf="/images/cms/tree/folderopen.gif">
+							<rich:treeNode icon="#{aonResource.resolveLocal['/images/cms/tree/folderopen.gif']}"
+								iconLeaf="#{aonResource.resolveLocal['/images/cms/tree/folderopen.gif']}">
 				                <aon:commandLink action="#{item.onSelectFolder}" 
 				                	value="#{item}" immediate="#{true}"
 				                	reRender="main_form" />
@@ -90,7 +90,7 @@
 									<aon:commandButton styleClass="aon-noborder aon-padding" 
 										action="document_list" value="#{bundle.aon_remove}"
 					                    actionListener="#{document.onDeleteFile}"
-										image="/images/cms/icons/delete.png">
+										image="#{aonResource.resolveLocal['/images/cms/icons/delete.png']}">
 									</aon:commandButton> 
 			            		</aon:div>
 							</aon:div>

@@ -107,7 +107,7 @@
 								event="onclick" reRender="dataTable" />
 						</aon:selectBooleanCheckbox>
 						<aon:graphicImage id="default_blocked" rendered="#{to.homepage}"
-							url="/images/cms/selected.gif" />
+							url="#{aonResource.resolveLocal['/images/cms/selected.gif']}" />
 					</aon:column>
 
 					<aon:column>
@@ -123,7 +123,7 @@
 								rendered="#{!to.active}">
 								<aon:graphicImage id="modular_page_active" 
 									alt="#{appBundle.modular_page_activate}"
-									url="/images/cms/inactive.png" />
+									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 							</aon:commandLink>
 							<aon:commandLink title="#{appBundle.modular_page_deactivate}" 
 								action="modular_page_list" 
@@ -131,12 +131,12 @@
 								rendered="#{to.active}">
 								<aon:graphicImage id="modular_page_deactive" 
 									alt="#{appBundle.modular_page_deactivate}"
-									url="/images/cms/active.png" />
+									url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
 							</aon:commandLink>
 						</aon:div>
 						<aon:div rendered="#{to.homepage}">
 							<aon:graphicImage rendered="#{to.homepage}"
-								url="/images/cms/selected.gif" 
+								url="#{aonResource.resolveLocal['/images/cms/selected.gif']}" 
 								alt="#{appBundle.modular_page_homepage_blocked}"/>
 						</aon:div>
 					</aon:column>

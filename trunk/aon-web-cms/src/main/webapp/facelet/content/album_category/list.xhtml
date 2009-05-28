@@ -115,14 +115,14 @@
 								actionListener="#{album_category.onActivate}" 
 								rendered="#{!to.active}">
 								<aon:graphicImage id="AlbumCategory_active" alt="#{appBundle.album_category_activate}"
-									url="/images/cms/inactive.png" />
+									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 							</aon:commandLink>
 							<aon:commandLink title="#{appBundle.album_category_deactivate}" 
 								action="album_category_list"
 								actionListener="#{album_category.onDeactivate}" 
 								rendered="#{to.active}">
 								<aon:graphicImage id="AlbumCategory_deactive" alt="#{appBundle.album_category_deactivate}"
-									url="/images/cms/active.png" />
+									url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
 							</aon:commandLink>
 						</aon:div>
 					</aon:column>

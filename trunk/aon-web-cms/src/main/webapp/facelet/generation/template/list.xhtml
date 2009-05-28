@@ -61,8 +61,9 @@
 			<aon:dataTable id="dataTable" value="#{template.templates}" var="to"
 				rows="#{template.pageLimit}" 
 				columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-textColumn, aon-editDataTable-iconColumn,
-						aon-editDataTable-textColumn">
+						aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
+						aon-editDataTable-textColumn aon-width-70,
+						aon-editDataTable-textColumn aon-width-70">
 		
 				<aon:column>
 					<f:facet name="header">
@@ -79,7 +80,7 @@
 					</aon:selectBooleanCheckbox>
 					<aon:graphicImage id="Template_selected_blocked" 
 						rendered="#{to.defaultTemplate}"
-						url="/images/cms/blocked.gif" 
+						url="#{aonResource.resolveLocal['/images/cms/blocked.gif']}" 
 						alt="#{appBundle.template_blocked}"/>
 				</aon:column>
 				
@@ -103,7 +104,7 @@
 							reRender="dataTable" />
 					</aon:selectBooleanCheckbox>
 					<aon:graphicImage id="Template_default_blocked" rendered="#{to.defaultTemplate}"
-						url="/images/cms/selected.gif" alt="#{appBundle.template_blocked}"/>
+						url="#{aonResource.resolveLocal['/images/cms/selected.gif']}" alt="#{appBundle.template_blocked}"/>
 				</aon:column>
 
 				<aon:column>

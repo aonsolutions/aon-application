@@ -126,14 +126,14 @@
 								actionListener="#{direct_access.onActivate}" 
 								rendered="#{!to.active}">
 								<aon:graphicImage id="DirectAccess_active" alt="#{appBundle.direct_access_activate}"
-									url="/images/cms/inactive.png" />
+									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 							</aon:commandLink>
 							<aon:commandLink title="#{appBundle.direct_access_deactivate}" 
 								action="direct_access_list"
 								actionListener="#{direct_access.onDeactivate}" 
 								rendered="#{to.active}">
 								<aon:graphicImage id="DirectAccess_deactive" alt="#{appBundle.direct_access_deactivate}"
-									url="/images/cms/active.png" />
+									url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
 							</aon:commandLink>
 						</aon:div>
 					</aon:column>

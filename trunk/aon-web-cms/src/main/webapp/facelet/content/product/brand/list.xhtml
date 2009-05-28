@@ -157,14 +157,14 @@
 							actionListener="#{brand.onActivate}" 
 							rendered="#{!to.active}">
 							<aon:graphicImage id="Brand_active" alt="#{appBundle.brand_activate}"
-								url="/images/cms/inactive.png" />
+								url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 						</aon:commandLink>
 						<aon:commandLink title="#{appBundle.brand_deactivate}" 
 							reRender="dataTable"
 							actionListener="#{brand.onDeactivate}" 
 							rendered="#{to.active}">
 							<aon:graphicImage id="Brand_deactive" alt="#{appBundle.brand_deactivate}"
-								url="/images/cms/active.png" />
+								url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
 						</aon:commandLink>
 					</aon:column>
 						

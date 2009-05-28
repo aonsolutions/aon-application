@@ -167,7 +167,7 @@
 				                	immediate="#{true}"
 				                	reRender="thumbnail_preview"
 				                    actionListener="#{product.onDelImage}">
-									<aon:graphicImage url="/images/cms/inactive.png"  alt="#{bundle.aon_remove}" />
+									<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}"  alt="#{bundle.aon_remove}" />
 				        		</aon:commandLink>
 							</aon:panelGroup>
 

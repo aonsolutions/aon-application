@@ -99,7 +99,7 @@
 		                	immediate="#{true}"
 		                	reRender="thumbnail_preview_1"
 		                    actionListener="#{sport_club.onDelImage}">
-							<aon:graphicImage url="/images/cms/inactive.png" />
+							<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 		        		</aon:commandLink>
 						<ui:include src="/facelet/content/utils/image_modal.xhtml">
 							<ui:param name="modalPanelName" value="mp" />
@@ -122,7 +122,7 @@
 		                	immediate="#{true}"
 		                	reRender="thumbnail_preview_2"
 		                    actionListener="#{sport_club.onDelLogo}">
-							<aon:graphicImage url="/images/cms/inactive.png" />
+							<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 		        		</aon:commandLink>
 						<ui:include src="/facelet/content/utils/image_modal.xhtml">
 							<ui:param name="modalPanelName" value="mp_thumbnail" />

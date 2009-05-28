@@ -118,14 +118,14 @@
 								actionListener="#{download.onActivate}" 
 								rendered="#{!to.active}">
 								<aon:graphicImage id="LinkCategory_active" alt="#{appBundle.download_activate}"
-									url="/images/cms/inactive.png" />
+									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
 							</aon:commandLink>
 							<aon:commandLink title="#{appBundle.download_deactivate}" 
 								action="download_list"
 								actionListener="#{download.onDeactivate}" 
 								rendered="#{to.active}">
 								<aon:graphicImage id="LinkCategory_deactive" alt="#{appBundle.download_deactivate}"
-									url="/images/cms/active.png" />
+									url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
 							</aon:commandLink>
 						</aon:div>
 					</aon:column>
