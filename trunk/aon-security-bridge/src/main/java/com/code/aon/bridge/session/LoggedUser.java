@@ -21,7 +21,9 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
 
 	private boolean logged;
 	
-	private Entry aonUser;
+	private String userName;
+	
+	private String companyName;
 	
 	private static final FakeMap USER_IN_ROLE = new FakeMap();
 	
@@ -29,34 +31,54 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
 		AuthPrincipal principal = Utils.getAuthPrincipal();
 		if ( (principal != null) && (!IConstants.UNAUTHENTICATED_IDENTITY.equals(principal.getName())) ) {
 			this.logged = true;
-			this.aonUser = getAonUser( principal );
+			initVariables(principal);
 		}
 	}
 
 	private Entry getAonUser( AuthPrincipal principal ) {
 		BasicLdap ldap = new BasicLdap();
 		Name dn = NameResolver.getUserDN(principal.getDomain(), principal.getShortName());
-		return ldap.get(dn, USER);
+		return ldap.get(dn, USER, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE, ORGANIZATION_NAME_ATTRIBUTE );
 	}		
-    
+
+	private Entry getAonDomain( AuthPrincipal principal ) {
+		BasicLdap ldap = new BasicLdap();
+		Name dn = NameResolver.getDomainDN(principal.getDomain());
+		return ldap.get(dn, DOMAIN, PARENT_DOMAIN_ATTRIBUTE, ORGANIZATION_NAME_ATTRIBUTE );
+	}		
+	
+    private void initVariables( AuthPrincipal principal ) {
+    	Entry user = getAonUser( principal );
+    	if ( user != null ) {
+        	this.userName = user.getAsString(COMMON_NAME_ATTRIBUTE);
+        	if (user.containsKey(SURNAME_ATTRIBUTE) ) {
+        		this.userName += " " + user.getAsString(SURNAME_ATTRIBUTE);
+        	}
+        	Entry domain = getAonDomain( principal );
+        	if ( domain != null ) {
+            	if (domain.containsKey(PARENT_DOMAIN_ATTRIBUTE) ) {
+            		companyName = domain.getAsString(ORGANIZATION_NAME_ATTRIBUTE);
+            	}    	        		
+        	}
+        	if ( StringUtils.isBlank(companyName) ) {
+            	if (user.containsKey(ORGANIZATION_NAME_ATTRIBUTE) ) {
+            		companyName = user.getAsString(ORGANIZATION_NAME_ATTRIBUTE);
+            	}    	
+        	}
+    	}
+    }
+
     public boolean isLogged(){
     	return logged;
     }    
-    
-    public String getCompanyName(){
-    	if (aonUser.containsKey(ORGANIZATION_NAME_ATTRIBUTE) ) {
-    		return aonUser.getAsString(ORGANIZATION_NAME_ATTRIBUTE);
-    	}    	
-    	return null;
-    }
-
+        
     public String getLoggedUserName() {
-    	String userName = aonUser.getAsString(COMMON_NAME_ATTRIBUTE);
-    	if (aonUser.containsKey(SURNAME_ATTRIBUTE) ) {
-    		userName += " " + aonUser.getAsString(SURNAME_ATTRIBUTE);
-    	}
         return userName;
     }    
+    
+    public String getCompanyName(){
+    	return companyName;
+    }
     
 	public FakeMap getUserInRole() {
 		return USER_IN_ROLE;
