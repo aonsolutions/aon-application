@@ -9,7 +9,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.account</artifactId>
 	<packaging>war</packaging>
-	<version>3.0.7-SNAPSHOT</version>
+	<version>3.0.8</version>
 	<description>AON WEB ACCOUNT</description>
 	<name>AON WEB ACCOUNT</name>
 	<build>
@@ -40,13 +40,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.accounting</artifactId>
-			<version>3.13.0-SNAPSHOT</version>
+			<version>3.13.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>3.9.0</version>
+			<version>3.9.1</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -58,13 +58,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.customer</artifactId>
-			<version>3.8.1</version>
+			<version>3.8.2</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.finance</artifactId>
-			<version>3.16.0</version>
+			<version>3.16.1</version>
 			<scope>runtime</scope>
 			<exclusions>
 				<exclusion>
@@ -82,7 +82,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.product</artifactId>
-			<version>3.3.1</version>
+			<version>3.3.2</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -110,7 +110,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.supplier</artifactId>
-			<version>3.6.0</version>
+			<version>3.6.1</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
