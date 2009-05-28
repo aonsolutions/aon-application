@@ -8,7 +8,7 @@
 	
 	<aon:form>
 	<aon:menuBar id="mainMenu"> 
-		<c:if test="#{!aonConfiguration.properties.hideHeaderLinks}">	
+		<c:if test="#{!aonConfiguration.properties.hideMenuBar}">	
 			<aon:dropDownMenu value="#{appBundle.account_masters}">
 				<aon:menuItem value="#{accountingBundle.accounting_entry_module}" actionListener="#{accountEntry.onEditSearch}" action="accountEntry_search"/>
 				<aon:menuSeparator/>
