@@ -23,7 +23,7 @@
 				</f:facet>
 		        <f:facet name="controls">
 					<aon:commandButton id="close"
-						action="album_image_list"
+						action="album_image_list" reRender="#{reRender}"
 						actionListener="#{album.onInitGenerateFromGallery}"
 						styleClass="aon-popupWindow-close">
 						<f:setPropertyActionListener target="#{album.showAlbumWindow}"
@@ -62,8 +62,8 @@
 						    </rich:tree>
 						</rich:panel>
 						<rich:panel styleClass="aon-width-300 aon-scroll">
-							<aon:outputLabel value="#{galleryBean.currentRelativePath}" />
-							<rich:dataList var="item" value="#{galleryBean.model}" >	
+							<aon:outputLabel value="#{gallery.currentRelativePath}" />
+							<rich:dataList var="item" value="#{gallery.model}" >	
 			            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}"/>
 							</rich:dataList>
 						</rich:panel>
