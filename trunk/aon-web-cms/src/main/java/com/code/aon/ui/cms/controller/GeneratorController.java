@@ -1,5 +1,9 @@
 package com.code.aon.ui.cms.controller;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.AlbumCategory;
@@ -34,6 +38,8 @@ import com.code.aon.ui.cms.velocity.SportGenerator;
 import com.code.aon.ui.util.AonUtil;
 
 public class GeneratorController implements Constants, ICMSConstants {
+	
+	private static final Logger LOGGER = Logger.getLogger(GeneratorController.class.getName());
 
 	private GeneratorStatusController status;
 
@@ -46,202 +52,297 @@ public class GeneratorController implements Constants, ICMSConstants {
 		status = (GeneratorStatusController)AonUtil.getRegisteredBean(GENERATOR_STATUS);
 	}
 	
+	private void generatorError( Throwable th ) {
+		LOGGER.log(Level.SEVERE, th.getMessage(), th);
+		String message = AonUtil.getMessage(ICMSConstants.BUNDLE_NAME, "cms_generator_error");
+		AonUtil.addErrorMessage( message + " " + th.getMessage());
+		throw new AbortProcessingException(th.getMessage(), th);		
+	}
+	
 	public void onGenerate(ActionEvent event) throws ManagerBeanException {
-		initGenerator();
-		System.gc();
-
-		//Generar index.html del idioma seleccionado
-		ModularPageGenerator.generate();
-		System.gc();
-		//Generar menus
-		MenuGenerator.generate();
-		System.gc();
-		//Generar generic
-		GenericGenerator.generate();
-		System.gc();
-		//Generar faq
-		FaqGenerator.generate();
-		System.gc();
-		//Generar link
-		LinkGenerator.generate();
-		System.gc();
-		//Generar direct access
-		DirectAccessGenerator.generate();
-		System.gc();
-		//Generar image album
-		AlbumGenerator.generate();
-		System.gc();
-		ArticleCalendarGenerator.generate();
-		System.gc();
-		ArticleGenerator.generate(ArticleType.NEWS);
-		System.gc();
-		ArticleGenerator.generate(ArticleType.SERVICES);
-		System.gc();
-		ArticleGenerator.generate(ArticleType.EVENTS);
-		System.gc();
-		ArticleGenerator.generate(ArticleType.OTHER);
-		System.gc();
-		//Generar articulo
-		DownloadsGenerator.generate();
-		System.gc();
-		//Generar cursos
-		HiruGenerator.generate();
-		System.gc();
-		//Generar productos
-		ProductGenerator.generate();
-		System.gc();
-		//Generar sports
-		SportGenerator.generate();
-		System.gc();
-		finalizeGenerator();
+		try {
+			initGenerator();
+			System.gc();
+	
+			//Generar index.html del idioma seleccionado
+			ModularPageGenerator.generate();
+			System.gc();
+			//Generar menus
+			MenuGenerator.generate();
+			System.gc();
+			//Generar generic
+			GenericGenerator.generate();
+			System.gc();
+			//Generar faq
+			FaqGenerator.generate();
+			System.gc();
+			//Generar link
+			LinkGenerator.generate();
+			System.gc();
+			//Generar direct access
+			DirectAccessGenerator.generate();
+			System.gc();
+			//Generar image album
+			AlbumGenerator.generate();
+			System.gc();
+			ArticleCalendarGenerator.generate();
+			System.gc();
+			ArticleGenerator.generate(ArticleType.NEWS);
+			System.gc();
+			ArticleGenerator.generate(ArticleType.SERVICES);
+			System.gc();
+			ArticleGenerator.generate(ArticleType.EVENTS);
+			System.gc();
+			ArticleGenerator.generate(ArticleType.OTHER);
+			System.gc();
+			//Generar articulo
+			DownloadsGenerator.generate();
+			System.gc();
+			//Generar cursos
+			HiruGenerator.generate();
+			System.gc();
+			//Generar productos
+			ProductGenerator.generate();
+			System.gc();
+			//Generar sports
+			SportGenerator.generate();
+			System.gc();
+			finalizeGenerator();
+		} catch ( Throwable th ) {
+			generatorError(th);
+		}
 	}
 	
 	public void onGenerateDiary(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		initGenerator();
-		ArticleCalendarGenerator.generate();
-		System.gc();
-		finalizeGenerator();
+		try {
+			initGenerator();
+			ArticleCalendarGenerator.generate();
+			System.gc();
+			finalizeGenerator();
+		} catch ( Throwable th ) {
+			generatorError(th);
+		}		
 	}
 	
 	public void onGenerateArticles(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		initGenerator();
-		ArticleCalendarGenerator.generate();
-		System.gc();
-		ArticleGenerator.generate(ArticleType.NEWS);
-		System.gc();
-		ArticleGenerator.generate(ArticleType.SERVICES);
-		System.gc();
-		ArticleGenerator.generate(ArticleType.EVENTS);
-		System.gc();
-		ArticleGenerator.generate(ArticleType.OTHER);
-		System.gc();
-		finalizeGenerator();
+		try {		
+			initGenerator();
+			ArticleCalendarGenerator.generate();
+			System.gc();
+			ArticleGenerator.generate(ArticleType.NEWS);
+			System.gc();
+			ArticleGenerator.generate(ArticleType.SERVICES);
+			System.gc();
+			ArticleGenerator.generate(ArticleType.EVENTS);
+			System.gc();
+			ArticleGenerator.generate(ArticleType.OTHER);
+			System.gc();
+			finalizeGenerator();
+		} catch ( Throwable th ) {
+			generatorError(th);
+		}		
 	}
 
 	public void onGenerateCurrentArticle(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		initGenerator();
-		ArticleController controller = (ArticleController)AonUtil.getRegisteredBean(ARTICLE);
-		ArticleGenerator.generateArticle((Article) controller.getTo());
-		finalizeGenerator();
+		try {
+			initGenerator();
+			ArticleController controller = (ArticleController)AonUtil.getRegisteredBean(ARTICLE);
+			ArticleGenerator.generateArticle((Article) controller.getTo());
+			finalizeGenerator();
+		} catch ( Throwable th ) {
+			generatorError(th);
+		}
 	}
 
 	public void onGenerateCurrentArticleCategory(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		initGenerator();
-		ArticleCategoryController controller = (ArticleCategoryController)AonUtil.getRegisteredBean(ARTICLE_CATEGORY);
-		ArticleType[] types_ = ArticleType.values();
-		for (int i = 0; i < types_.length; i++) {
-			ArticleGenerator.generate(types_[i],(ArticleCategory) controller.getTo());
-		}
-		finalizeGenerator();
+		try {
+			initGenerator();
+			ArticleCategoryController controller = (ArticleCategoryController)AonUtil.getRegisteredBean(ARTICLE_CATEGORY);
+			ArticleType[] types_ = ArticleType.values();
+			for (int i = 0; i < types_.length; i++) {
+				ArticleGenerator.generate(types_[i],(ArticleCategory) controller.getTo());
+			}
+			finalizeGenerator();
+		} catch ( Throwable th ) {
+			generatorError(th);
+		}			
 	}
 
 	public void onGenerateModular(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		initGenerator();
-		ModularPageGenerator.generate();
-		finalizeGenerator();
+		try {
+			initGenerator();
+			ModularPageGenerator.generate();
+			finalizeGenerator();
+		} catch ( Throwable th ) {
+			generatorError(th);
+		}
 	}
 
 	public void onGenerateCurrentModular(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		initGenerator();
-		ModularPageController controller = (ModularPageController)AonUtil.getRegisteredBean(MODULAR_PAGE);
-		ModularPageGenerator.generate((ModularPage) controller.getTo());
-		finalizeGenerator();
+		try {
+			initGenerator();
+			ModularPageController controller = (ModularPageController)AonUtil.getRegisteredBean(MODULAR_PAGE);
+			ModularPageGenerator.generate((ModularPage) controller.getTo());
+			finalizeGenerator();
+		} catch ( Throwable th ) {
+			generatorError(th);
+		}			
 	}
 
 	public void onGenerateGenericPages(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		initGenerator();
-		GenericGenerator.generate();
-		finalizeGenerator();
+		try {
+			initGenerator();
+			GenericGenerator.generate();
+			finalizeGenerator();
+		} catch ( Throwable th ) {
+			generatorError(th);
+		}			
 	}
 	
 	public void onGenerateCurrentGenericPage(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		initGenerator();
-		GenericPageController controller = (GenericPageController)AonUtil.getRegisteredBean(GENERIC_PAGE);
-		GenericGenerator.generate((GenericPage) controller.getTo());
-		finalizeGenerator();
+		try {
+			initGenerator();
+			GenericPageController controller = (GenericPageController)AonUtil.getRegisteredBean(GENERIC_PAGE);
+			GenericGenerator.generate((GenericPage) controller.getTo());
+			finalizeGenerator();
+		} catch ( Throwable th ) {
+			generatorError(th);
+		}			
 	}
 	
 	public void onGenerateLinks(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		initGenerator();
-		LinkGenerator.generate();
-		finalizeGenerator();
+		try {
+			initGenerator();
+			LinkGenerator.generate();
+			finalizeGenerator();
+		} catch ( Throwable th ) {
+			generatorError(th);
+		}			
 	}
 
 	public void onGenerateCurrentLinkCategory(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		initGenerator();
-		LinkCategoryController controller = (LinkCategoryController)AonUtil.getRegisteredBean(LINK_CATEGORY);
-		LinkGenerator.generate((LinkCategory) controller.getTo());
-		finalizeGenerator();
+		try {
+			initGenerator();
+			LinkCategoryController controller = (LinkCategoryController)AonUtil.getRegisteredBean(LINK_CATEGORY);
+			LinkGenerator.generate((LinkCategory) controller.getTo());
+			finalizeGenerator();
+		} catch ( Throwable th ) {
+			generatorError(th);
+		}			
 	}
 
 	public void onGenerateFaqs(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		initGenerator();
-		FaqGenerator.generate();
-		finalizeGenerator();
+		try {
+			initGenerator();
+			FaqGenerator.generate();
+			finalizeGenerator();
+		} catch ( Throwable th ) {
+			generatorError(th);
+		}						
 	}
 
 	public void onGenerateCurrentFaqCategory(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		initGenerator();
-		FaqCategoryController controller = (FaqCategoryController)AonUtil.getRegisteredBean(FAQ_CATEGORY);
-		FaqGenerator.generate((FaqCategory) controller.getTo());
-		finalizeGenerator();
+		try {
+			initGenerator();
+			FaqCategoryController controller = (FaqCategoryController)AonUtil.getRegisteredBean(FAQ_CATEGORY);
+			FaqGenerator.generate((FaqCategory) controller.getTo());
+			finalizeGenerator();
+		} catch ( Throwable th ) {
+			generatorError(th);
+		}						
 	}
 
 	public void onGenerateDownloads(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		initGenerator();
-		DownloadsGenerator.generate();
-		finalizeGenerator();
+		try {
+			initGenerator();
+			DownloadsGenerator.generate();
+			finalizeGenerator();
+		} catch ( Throwable th ) {
+			generatorError(th);
+		}			
 	}
 	
 	public void onGenerateCurrentDownloadCategory(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		initGenerator();
-		DownloadCategoryController controller = (DownloadCategoryController)AonUtil.getRegisteredBean(DOWNLOAD_CATEGORY);
-		DownloadsGenerator.generate((DownloadCategory) controller.getTo());
-		finalizeGenerator();
+		try {
+			initGenerator();
+			DownloadCategoryController controller = (DownloadCategoryController)AonUtil.getRegisteredBean(DOWNLOAD_CATEGORY);
+			DownloadsGenerator.generate((DownloadCategory) controller.getTo());
+			finalizeGenerator();
+		} catch ( Throwable th ) {
+			generatorError(th);
+		}						
 	}
 
 	public void onGenerateAlbums(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		initGenerator();
-		AlbumGenerator.generate();
-		finalizeGenerator();
+		try {
+			initGenerator();
+			AlbumGenerator.generate();
+			finalizeGenerator();
+		} catch ( Throwable th ) {
+			generatorError(th);
+		}						
 	}
 		
 	public void onGenerateCurrentAlbumCategory(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		initGenerator();
-		AlbumCategoryController controller = (AlbumCategoryController)AonUtil.getRegisteredBean(ALBUM_CATEGORY);
-		AlbumGenerator.generate((AlbumCategory) controller.getTo());
-		finalizeGenerator();
+		try {
+			initGenerator();
+			AlbumCategoryController controller = (AlbumCategoryController)AonUtil.getRegisteredBean(ALBUM_CATEGORY);
+			AlbumGenerator.generate((AlbumCategory) controller.getTo());
+			finalizeGenerator();
+		} catch ( Throwable th ) {
+			generatorError(th);
+		}						
 	}
 
 	public void onGenerateDirectAccess(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		initGenerator();
-		DirectAccessGenerator.generate();
-		finalizeGenerator();
+		try {
+			initGenerator();
+			DirectAccessGenerator.generate();
+			finalizeGenerator();
+		} catch ( Throwable th ) {
+			generatorError(th);
+		}						
 	}
 
 	public void onGenerateCurrentDirectAccessCategory(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		initGenerator();
-		DirectAccessGroupController controller = (DirectAccessGroupController)AonUtil.getRegisteredBean(DIRECT_ACCESS_GROUP);
-		DirectAccessGenerator.generate((DirectAccessGroup) controller.getTo());
-		finalizeGenerator();
+		try {
+			initGenerator();
+			DirectAccessGroupController controller = (DirectAccessGroupController)AonUtil.getRegisteredBean(DIRECT_ACCESS_GROUP);
+			DirectAccessGenerator.generate((DirectAccessGroup) controller.getTo());
+			finalizeGenerator();
+		} catch ( Throwable th ) {
+			generatorError(th);
+		}			
 	}
 
 	public void onGenerateProducts(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		initGenerator();
-		ProductGenerator.generate();
-		finalizeGenerator();
+		try {
+			initGenerator();
+			ProductGenerator.generate();
+			finalizeGenerator();
+		} catch ( Throwable th ) {
+			generatorError(th);
+		}			
 	}
 
 	public void onGenerateSports(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		initGenerator();
-		SportGenerator.generate();
-		finalizeGenerator();
+		try {
+			initGenerator();
+			SportGenerator.generate();
+			finalizeGenerator();
+		} catch ( Throwable th ) {
+			generatorError(th);
+		}						
 	}
 
 	public void onGenerateHiru(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		initGenerator();
-		HiruGenerator.generate();
-		finalizeGenerator();
+		try {
+			initGenerator();
+			HiruGenerator.generate();
+			finalizeGenerator();
+		} catch ( Throwable th ) {
+			generatorError(th);
+		}						
 	}
 
 	private void initGenerator(){
@@ -258,7 +359,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 
 	private void finalizeGenerator(){
 		status.addMessage("END: ----------------------------------------------------------------------------------------------------------------------------------------");
-		status.addMessage("END: ------------------------------------------------- LA GENERACION A TERMINADO -------------------------------------------------");
+		status.addMessage("END: ------------------------------------------------ LA GENERACION HA TERMINADO ------------------------------------------------");
 		status.addMessage("END: ----------------------------------------------------------------------------------------------------------------------------------------");
 		status.finalized();
 		System.gc();

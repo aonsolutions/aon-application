@@ -13,12 +13,12 @@ public class GeneratorApplicationController implements ICMSConstants {
 		generator.getStatus().addMessage("ALL PROCESS WORKING...PLEASE WAIT TO START.");
         this.limitar();
         this.incCuenta();
-        this.process(generator);
+        this.process(generator, event);
 		this.decCuenta(); // 
 	    this.desbloquear();	}
 
-	private void process(GeneratorController generator) throws ManagerBeanException {
-		generator.onGenerate(null);
+	private void process(GeneratorController generator, ActionEvent event) throws ManagerBeanException {
+		generator.onGenerate(event);
 	}
 
     private int cuenta = 0;

@@ -13,36 +13,12 @@
 	<ui:define name="content">
 
 		<aon:form id="list">
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
-				
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.article}"/>	  						
-					</aon:div>					
-					
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{appBundle.aon_listing}" />
-					</aon:div>					
-						
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">					
-						<aon:commandButton id="reset" 
-							rendered="#{cms.roleEditor}"
-							value="#{bundle.aon_reset}"
-							action="article_form"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}">
-							<aon:actionListener method="#{article.onReset}" />
-						</aon:commandButton>
-						<aon:commandButton id="search" 
-							value="#{bundle.aon_search}"
-							action="article_search"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}">
-							<aon:actionListener method="#{article.onEditSearch}" />
-						</aon:commandButton>
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.article}" />
+				<ui:param name="controller" value="#{article}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:define name="additionalToolbarContent">
 						<aon:commandButton id="generate" reRender="aonStatus"
 							value="#{appBundle.aon_generate}" 
 							rendered="#{cms.roleEditor}"
@@ -75,11 +51,8 @@
 							styleClass="aon-finding-toolbar-item-no-icon">
 							<aon:actionListener method="#{diary.onInit}" />
 						</aon:commandButton>
-				    </aon:div>
-					
-					<!-- end toolbar navigation -->
-				</aon:panelGrid>
-			</aon:div>
+				</ui:define>
+			</ui:decorate>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">

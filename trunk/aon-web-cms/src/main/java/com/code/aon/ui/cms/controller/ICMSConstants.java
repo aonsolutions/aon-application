@@ -2,6 +2,8 @@ package com.code.aon.ui.cms.controller;
 
 public interface ICMSConstants {
 	
+	String BUNDLE_NAME			= "appBundle";
+	
 	// Controller Names
 	
 	String
