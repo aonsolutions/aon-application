@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.account.Account;
@@ -22,9 +23,12 @@ import com.code.aon.accounting.util.AccountUtils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.utils.AccountPeriodValidator;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.util.AonUtil;
 
 public class LoanEntryController implements ISpecialAccountEntry {
 
@@ -88,23 +92,54 @@ public class LoanEntryController implements ISpecialAccountEntry {
 	}
 	
 	public void accept(ActionEvent event) throws ManagerBeanException {
-		AccountPeriodValidator.validateAccountPeriod(getLoan().getLoanDate());
-		AccountEntry entry = new AccountEntry();
-		if(!this.isNew){
-			deleteAccountEntryDetails(getAccountEntry());
-			entry = this.getAccountEntry();
+		//inicio transaccion
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			try {
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+				HibernateUtil.beginTransaction(sessionName);
+				// operaciones de la transaccion
+				AccountPeriodValidator.validateAccountPeriod(getLoan().getLoanDate());
+				AccountEntry entry = new AccountEntry();
+				if(!this.isNew){
+					deleteAccountEntryDetails(getAccountEntry());
+					entry = this.getAccountEntry();
+				}
+				insertLoan(getLoan());
+				entry.setEntryDate(getLoan().getLoanDate());
+				entry.setAccountPeriod(AccountUtil.obtainPeriod(getLoan().getLoanDate()).getId());
+				entry.setJournal(null);
+				entry.setType(AccountEntryType.LOAN);
+				entry.setSecurityLevel(getLoan().getSecurityLevel());
+				entry = insertorUpdateAccountEntry(entry);
+				insertEntryDetails(entry);
+				setAccountEntry(entry);
+				this.isNew = false;
+				loadAccountEntryController(entry);
+				// FIN operaciones de la transaccion
+				HibernateUtil.getSession(sessionName).flush();
+				HibernateUtil.commitTransaction(sessionName);
+			} catch (Exception e) {
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {
+					String msg = "Unable to rollback transaction!";
+					LOGGER.log(Level.SEVERE, msg, e);
+				}
+				String msg = "Error on aon-accounting:  " + e.getMessage() ;
+				LOGGER.log(Level.SEVERE, msg, e);
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			} finally {
+				HibernateUtil.closeSession(sessionName);
+			}
+		} finally {
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
-		insertLoan(getLoan());
-		entry.setEntryDate(getLoan().getLoanDate());
-		entry.setAccountPeriod(AccountUtil.obtainPeriod(getLoan().getLoanDate()).getId());
-		entry.setJournal(null);
-		entry.setType(AccountEntryType.LOAN);
-		entry.setSecurityLevel(getLoan().getSecurityLevel());
-		entry = insertorUpdateAccountEntry(entry);
-		insertEntryDetails(entry);
-		setAccountEntry(entry);
-		this.isNew = false;
-		loadAccountEntryController(entry);
 	}
 	
 	private Loan insertLoan(Loan loan) throws ManagerBeanException {
@@ -113,13 +148,44 @@ public class LoanEntryController implements ISpecialAccountEntry {
 	}
 
 	public void onRemove(ActionEvent event) throws ManagerBeanException{
+		//inicio transaccion
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
 		try {
-			deleteAccountEntryDetails(getAccountEntry());
-			deleteAccountEntry(getAccountEntry());
-			deleteLoanAccount(getLoan());
-			deleteLoan(getLoan());
-		} catch (ManagerBeanException e) {
-			throw new ManagerBeanException("Error Removing Loan", e);
+			try {
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+				HibernateUtil.beginTransaction(sessionName);
+				// operaciones de la transaccion
+				try {
+					deleteAccountEntryDetails(getAccountEntry());
+					deleteAccountEntry(getAccountEntry());
+					deleteLoanAccount(getLoan());
+					deleteLoan(getLoan());
+				} catch (ManagerBeanException e) {
+					throw new ManagerBeanException("Error Removing Loan", e);
+				}
+				// FIN operaciones de la transaccion
+				HibernateUtil.getSession(sessionName).flush();
+				HibernateUtil.commitTransaction(sessionName);
+			} catch (Exception e) {
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {
+					String msg = "Unable to rollback transaction!";
+					LOGGER.log(Level.SEVERE, msg, e);
+				}
+				String msg = "Error on aon-accounting:  " + e.getMessage() ;
+				LOGGER.log(Level.SEVERE, msg, e);
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			} finally {
+				HibernateUtil.closeSession(sessionName);
+			}
+		} finally {
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
 	}
 	

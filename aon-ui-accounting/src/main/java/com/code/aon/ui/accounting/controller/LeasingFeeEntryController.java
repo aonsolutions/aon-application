@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.account.Account;
@@ -24,6 +25,8 @@ import com.code.aon.accounting.util.AccountUtils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.Company;
 import com.code.aon.company.WorkPlace;
@@ -39,6 +42,7 @@ import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.utils.AccountPeriodValidator;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.util.AonUtil;
 
 public class LeasingFeeEntryController implements ISpecialAccountEntry{
 
@@ -102,26 +106,57 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 	}
 	
 	public void accept(ActionEvent event) throws ManagerBeanException{
-		AccountPeriodValidator.validateAccountPeriod(getHeader().getLeasingFeeDate());
-		AccountEntry entry = new AccountEntry();
-		if(!this.isNew){
-			deleteAccountEntryInvoice(this.getAccountEntryInvoice());
-			deleteInvoice(getAccountEntryInvoice().getInvoice());
-			deleteAccountEntryDetails(getAccountEntryInvoice().getAccountEntry());
-			entry = this.getAccountEntryInvoice().getAccountEntry();
+		//inicio transaccion
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			try {
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+				HibernateUtil.beginTransaction(sessionName);
+				// operaciones de la transaccion
+				AccountPeriodValidator.validateAccountPeriod(getHeader().getLeasingFeeDate());
+				AccountEntry entry = new AccountEntry();
+				if(!this.isNew){
+					deleteAccountEntryInvoice(this.getAccountEntryInvoice());
+					deleteInvoice(getAccountEntryInvoice().getInvoice());
+					deleteAccountEntryDetails(getAccountEntryInvoice().getAccountEntry());
+					entry = this.getAccountEntryInvoice().getAccountEntry();
+				}
+				entry.setAccountPeriod(AccountUtil.obtainPeriod(getHeader().getLeasingFeeDate()).getId());
+				entry.setEntryDate(getHeader().getLeasingFeeDate());
+				entry.setJournal(null);
+				entry.setSecurityLevel(getHeader().getSecurityLevel());
+				entry.setType(AccountEntryType.LEASING_FEE);
+				Invoice invoice = insertInvoice();
+				insertInvoiceDetail(invoice);
+				entry = insertorUpdateAccountEntry(entry);
+				insertEntryDetails(entry, invoice);
+				this.setAccountEntryInvoice(insertAccountEntryInvoice(entry, invoice));
+				this.isNew = false;
+				loadAccountEntryController(entry);
+				// FIN operaciones de la transaccion
+				HibernateUtil.getSession(sessionName).flush();
+				HibernateUtil.commitTransaction(sessionName);
+			} catch (Exception e) {
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {
+					String msg = "Unable to rollback transaction!";
+					LOGGER.log(Level.SEVERE, msg, e);
+				}
+				String msg = "Error on aon-accounting:  " + e.getMessage() ;
+				LOGGER.log(Level.SEVERE, msg, e);
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			} finally {
+				HibernateUtil.closeSession(sessionName);
+			}
+		} finally {
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
-		entry.setAccountPeriod(AccountUtil.obtainPeriod(getHeader().getLeasingFeeDate()).getId());
-		entry.setEntryDate(getHeader().getLeasingFeeDate());
-		entry.setJournal(null);
-		entry.setSecurityLevel(getHeader().getSecurityLevel());
-		entry.setType(AccountEntryType.LEASING_FEE);
-		Invoice invoice = insertInvoice();
-		insertInvoiceDetail(invoice);
-		entry = insertorUpdateAccountEntry(entry);
-		insertEntryDetails(entry, invoice);
-		this.setAccountEntryInvoice(insertAccountEntryInvoice(entry, invoice));
-		this.isNew = false;
-		loadAccountEntryController(entry);
 	}
 	
 	private void insertInvoiceDetail(Invoice invoice) throws ManagerBeanException {
@@ -224,10 +259,41 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 	}
 	
 	public void onRemove(ActionEvent event){
-		deleteAccountEntryInvoice(this.getAccountEntryInvoice());
-		deleteInvoice(getAccountEntryInvoice().getInvoice());
-		deleteAccountEntryDetails(getAccountEntryInvoice().getAccountEntry());
-		deleteAccountEntry(getAccountEntryInvoice().getAccountEntry());
+		//inicio transaccion
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			try {
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+				HibernateUtil.beginTransaction(sessionName);
+				// operaciones de la transaccion
+				deleteAccountEntryInvoice(this.getAccountEntryInvoice());
+				deleteInvoice(getAccountEntryInvoice().getInvoice());
+				deleteAccountEntryDetails(getAccountEntryInvoice().getAccountEntry());
+				deleteAccountEntry(getAccountEntryInvoice().getAccountEntry());
+				// FIN operaciones de la transaccion
+				HibernateUtil.getSession(sessionName).flush();
+				HibernateUtil.commitTransaction(sessionName);
+			} catch (Exception e) {
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {
+					String msg = "Unable to rollback transaction!";
+					LOGGER.log(Level.SEVERE, msg, e);
+				}
+				String msg = "Error on aon-accounting:  " + e.getMessage() ;
+				LOGGER.log(Level.SEVERE, msg, e);
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			} finally {
+				HibernateUtil.closeSession(sessionName);
+			}
+		} finally {
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
 	}
 	
 	private Invoice insertInvoice() {
@@ -416,5 +482,14 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 	@Override
 	public String getNavigationKey() {
 		return "account_leasing_fee_entry";
+	}
+	
+	public String getPeriodMessage() {
+		try {
+			return AccountPeriodValidator.getValidAccountPeriod(getHeader().getLeasingFeeDate());
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+			return " - ";
+		}
 	}
 }

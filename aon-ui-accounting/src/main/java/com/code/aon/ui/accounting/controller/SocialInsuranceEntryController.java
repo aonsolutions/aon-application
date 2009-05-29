@@ -29,6 +29,8 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
 import com.code.aon.config.Bank;
@@ -39,6 +41,7 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.util.AonUtil;
 
 public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 
@@ -148,35 +151,97 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 	}
 
 	public void accept(ActionEvent event) {
+		//inicio transaccion
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
 		try {
-			AccountEntry entry = new AccountEntry();
-			if (!this.isNew) {
-				deleteAccountEntryDetails(getAccountEntry());
-				entry = this.getAccountEntry();
+			try {
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+				HibernateUtil.beginTransaction(sessionName);
+				// operaciones de la transaccion
+				try {
+					AccountEntry entry = new AccountEntry();
+					if (!this.isNew) {
+						deleteAccountEntryDetails(getAccountEntry());
+						entry = this.getAccountEntry();
+					}
+					entry.setEntryDate(getHeader().getDate());
+					entry.setAccountPeriod(AccountUtil.obtainPeriod(getHeader().getDate()).getId());
+					entry.setJournal(null);
+					entry.setType(AccountEntryType.SOCIAL_INSURANCE);
+					entry.setSecurityLevel(getHeader().getSecurityLevel());
+					entry = insertorUpdateAccountEntry(entry);
+					insertEntryDetails(entry);
+					updateSalaryAccount(entry);
+					setAccountEntry(entry);
+					
+					this.isNew = false;
+					loadAccountEntryController(entry);
+				} catch (Exception e) {
+					LOGGER.log(Level.SEVERE, "Error accepting AccountEntry", e);
+				}
+				// FIN operaciones de la transaccion
+				HibernateUtil.getSession(sessionName).flush();
+				HibernateUtil.commitTransaction(sessionName);
+			} catch (Exception e) {
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {
+					String msg = "Unable to rollback transaction!";
+					LOGGER.log(Level.SEVERE, msg, e);
+				}
+				String msg = "Error on aon-accounting:  " + e.getMessage() ;
+				LOGGER.log(Level.SEVERE, msg, e);
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			} finally {
+				HibernateUtil.closeSession(sessionName);
 			}
-			entry.setEntryDate(getHeader().getDate());
-			entry.setAccountPeriod(AccountUtil.obtainPeriod(getHeader().getDate()).getId());
-			entry.setJournal(null);
-			entry.setType(AccountEntryType.SOCIAL_INSURANCE);
-			entry.setSecurityLevel(getHeader().getSecurityLevel());
-			entry = insertorUpdateAccountEntry(entry);
-			insertEntryDetails(entry);
-			updateSalaryAccount(entry);
-			setAccountEntry(entry);
-
-			this.isNew = false;
-			loadAccountEntryController(entry);
-		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error accepting AccountEntry", e);
+		} finally {
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
 	}
 	
 	public void onRemove(ActionEvent event){
-		deleteAccountEntryDetails(getAccountEntry());
-		deleteAccountEntry(getAccountEntry());
-
-		AccountEntryController entryController = (AccountEntryController)FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
-		entryController.onEditSearch(null);
+		//inicio transaccion
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			try {
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+				HibernateUtil.beginTransaction(sessionName);
+				// operaciones de la transaccion
+				deleteAccountEntryDetails(getAccountEntry());
+				deleteAccountEntry(getAccountEntry());
+				
+				AccountEntryController entryController = (AccountEntryController)FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
+				entryController.onEditSearch(null);
+				// FIN operaciones de la transaccion
+				HibernateUtil.getSession(sessionName).flush();
+				HibernateUtil.commitTransaction(sessionName);
+			} catch (Exception e) {
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {
+					String msg = "Unable to rollback transaction!";
+					LOGGER.log(Level.SEVERE, msg, e);
+				}
+				String msg = "Error on aon-accounting:  " + e.getMessage() ;
+				LOGGER.log(Level.SEVERE, msg, e);
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			} finally {
+				HibernateUtil.closeSession(sessionName);
+			}
+		} finally {
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
 	}
 	
 	private AccountEntry insertorUpdateAccountEntry(AccountEntry entry) {
