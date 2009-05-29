@@ -24,7 +24,6 @@ import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.IProgression;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
@@ -290,7 +289,7 @@ public class BalanceSheetController implements ICollectionProvider{
 		}
 
 		public String getReportDescription() {
-			return StringUtils.leftPad(description, (getLevel() * 5)+description.length());
+					return StringUtils.leftPad(description, (getLevel() * 5)+description.length());
 		}
 
 		public void setDescription(String description) {
