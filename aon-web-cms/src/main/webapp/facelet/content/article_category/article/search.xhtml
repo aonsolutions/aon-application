@@ -13,49 +13,16 @@
 	<ui:define name="content">
 
 		<aon:form id="list">
-		<aon:div styleClass="aon-finding-title-toolbar">
-			<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
-				columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
-			
-				<aon:div styleClass="aon-finding-title-internal">
-					<aon:outputText value="#{appBundle.article}"/>	  						
-				</aon:div>					
-				
-				<aon:div styleClass="aon-finding-subtitle-internal">
-					<aon:outputText
-						value="#{bundle.aon_search}" />
-				</aon:div>					
-					
+		
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.article}" />
+				<ui:param name="controller" value="#{article}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+			</ui:include>		
 
-				<!--  toolbar navigation -->
-				<aon:div styleClass="aon-finding-toolbar-item-group">					
-					<aon:commandButton id="search" value="#{bundle.aon_search}"
-						action="article_list"
-						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						accesskey="#{bundle.aon_key_search}">
-						<aon:actionListener method="#{article.onSearch}" />
-					</aon:commandButton>					
-					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-						rendered="#{cms.roleEditor}"
-						action="article_form"
-						styleClass="aon-finding-toolbar-item aon-icon-reset"
-						accesskey="#{bundle.aon_key_new}">
-						<aon:actionListener method="#{article.onReset}" />
-					</aon:commandButton>
-					<aon:commandButton id="cancel"
-						value="#{bundle.aon_cancel}"
-						action="article_list" 
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						accesskey="#{bundle.aon_key_cancel}">
-						<aon:actionListener method="#{article.onCancel}" />
-					</aon:commandButton>
-				</aon:div>			
-			<!-- end toolbar navigation -->
-			</aon:panelGrid>	
-		</aon:div>
-
-			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="main_panel" columns="2" dir="true">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:param name="controller" value="#{article}" />
+				<ui:define name="searchContent">
 	
 					<aon:outputLabel for="Article_alias"
 						value="#{appBundle.cms_alias}" />
@@ -85,44 +52,42 @@
 					<aon:inputText id="Article_position" size="10"
 						valueChangeListener="#{article.addExpression}" />
 
-					<aon:outputLabel for="Article_publishDate"
-						value="#{appBundle.article_publishDate}" />
+					<aon:outputLabel value="#{appBundle.article_publishDate}" />
 					<aon:div>
-						<aon:outputLabel for="Article_publishDate-From"
-							value="#{appBundle.aon_date_from}" />
+						<aon:outputLabel for="Article_publishDate-From" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_from}:" />
 						<aon:selectInputDate id="Article_publishDate-From"
-							value="#{article.dateFromPublish}"
-							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
-						</aon:selectInputDate>
+							valueChangeListener="#{article.addGreaterThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
 
-						<aon:outputLabel for="Article_publishDate-To"
-							value="#{appBundle.aon_date_to}" />
+						<aon:outputLabel for="Article_publishDate-To" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_to}:" />
 						<aon:selectInputDate id="Article_publishDate-To"
-							value="#{article.dateToPublish}"
-							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
-						</aon:selectInputDate>
-					</aon:div>					
-	
-					<aon:outputLabel for="Article_expireDate"
-						value="#{appBundle.article_expireDate}" />
-					<aon:div>
-						<aon:outputLabel for="Article_expireDate-From"
-							value="#{appBundle.aon_date_from}" />
-						<aon:selectInputDate id="Article_expireDate-From"
-							value="#{article.dateFromExpire}"
-							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
-						</aon:selectInputDate>
+							valueChangeListener="#{article.addLessThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+					</aon:div>
 
-						<aon:outputLabel for="Article_expireDate-To"
-							value="#{appBundle.aon_date_to}" />
+					<aon:outputLabel value="#{appBundle.article_expireDate}" />
+					<aon:div>
+						<aon:outputLabel for="Article_expireDate-From" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_from}:" />
+						<aon:selectInputDate id="Article_expireDate-From"
+							valueChangeListener="#{article.addGreaterThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+						<aon:outputLabel for="Article_expireDate-To" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_to}:" />
 						<aon:selectInputDate id="Article_expireDate-To"
-							value="#{article.dateToExpire}"
-							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
-						</aon:selectInputDate>
-					</aon:div>					
-	
-				</aon:panelGrid>
-			</aon:div>
+							valueChangeListener="#{article.addLessThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+					</aon:div>
+				
+				</ui:define>
+			</ui:decorate>	
 			
 		</aon:form>
 	</ui:define>

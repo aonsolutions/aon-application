@@ -50,27 +50,6 @@
 								actionListener="#{generator_status.onActivePoll}"  
 								onclick="javascript:Richfaces.showModalPanel('gen_log');" />
 						</aon:commandButton>
-						<!-- 
-						<aon:commandButton id="publish_preview_ok" reRender="aonStatus"
-							value="#{appBundle.aon_publish} PREVIEW" 
-							reRender="generatorForm"
-							rendered="#{generator_status.generated}"
-							actionListener="#{generator_status.onPublishPreview}" 
-							styleClass="aon-finding-toolbar-item aon-icon-accept">
-							<a4j:support 
-								event="onclick" reRender="poll,grid" 
-								actionListener="#{generator_status.onActivePoll}"  
-								onclick="javascript:Richfaces.showModalPanel('gen_log');" />
-						</aon:commandButton>
-						<h:outputLink 
-							id="preview_url"
-							rendered="#{generator_status.generated}"
-							value="#{generator_status.previewURL}" 
-							target="_blank"
-							style="line-height:18px;">
-							PREVIEW
-						</h:outputLink>
-						 -->
 						<h:outputLink 
 							id="web_url"
 							rendered="#{generator_status.published}"
