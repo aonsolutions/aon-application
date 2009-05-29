@@ -44,7 +44,7 @@
 							value="#{leasingEntry.leasing.leasingDate}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}" >
-							<a4j:support event="onkeyup" reRender="dateMsg" ajaxSingle="true" />
+							<a4j:support event="oninputchange" reRender="dateMsg" ajaxSingle="true" />
 							<a4j:support event="onchanged" reRender="dateMsg" ajaxSingle="true" />
 						</aon:selectInputDate>
 						<aon:outputText style="#{leasingEntry.periodMessage==null?'color:red;':''}" id="dateMsg" 

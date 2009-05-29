@@ -318,4 +318,13 @@ public class LoanEntryController implements ISpecialAccountEntry {
 	public String getNavigationKey() {
 		return "account_loan_entry";
 	}
+	
+	public String getPeriodMessage() {
+		try {
+			return AccountPeriodValidator.getValidAccountPeriod(getLoan().getLoanDate());
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+			return " - ";
+		}
+	}
 }
