@@ -33,6 +33,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.ui.accounting.utils.AccountPeriodValidator;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
@@ -164,6 +165,7 @@ public class ExpenseEntryController implements ISpecialAccountEntry{
 				// operaciones de la transaccion
 				try {
 					this.navigationKey = "accountEntry_form"; 
+					AccountPeriodValidator.validateAccountPeriod(getHeader().getDate());
 					AccountEntry entry = new AccountEntry();
 					if (!this.isNew) {
 						deleteAccountEntryDetails(getAccountEntry());
@@ -347,5 +349,14 @@ public class ExpenseEntryController implements ISpecialAccountEntry{
 	@Override
 	public String getNavigationKey() {
 		return "account_expense_entry";
+	}
+	
+	public String getPeriodMessage() {
+		try {
+			return AccountPeriodValidator.getValidAccountPeriod(getHeader().getDate());
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+			return " - ";
+		}
 	}
 }
