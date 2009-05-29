@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -65,10 +66,17 @@
 
 					<aon:outputLabel for="date"
 						value="#{bundle.aon_date}" />
-					<aon:selectInputDate id="date" required="true"
-						value="#{leasingFeeEntry.header.leasingFeeDate}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}"/>
+					<aon:div id="div">
+						<aon:selectInputDate id="date" required="true"
+							value="#{leasingFeeEntry.header.leasingFeeDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" >
+							<a4j:support event="onkeyup" reRender="dateMsg" ajaxSingle="true" />
+							<a4j:support event="onchanged" reRender="dateMsg" ajaxSingle="true" />
+						</aon:selectInputDate>
+						<aon:outputText style="#{leasingFeeEntry.periodMessage==null?'color:red;':''}" id="dateMsg" 
+							value="Ejercicio #{(leasingFeeEntry.periodMessage==null)?'no definido':leasingFeeEntry.periodMessage}" />
+					</aon:div>
 
 					<aon:outputLabel for="leasing"
 						value="#{accountingBundle.accounting_leasing}" />
