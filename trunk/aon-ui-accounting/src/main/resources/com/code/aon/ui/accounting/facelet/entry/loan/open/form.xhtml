@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -39,10 +40,17 @@
 
 					<aon:outputLabel for="Account_date"
 						value="#{bundle.aon_date}" />
-					<aon:selectInputDate id="Account_date" required="true"
-						value="#{loanEntry.loan.loanDate}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}"/>
+					<aon:div>
+						<aon:selectInputDate id="Account_date" required="true"
+							value="#{loanEntry.loan.loanDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}">
+							<a4j:support event="oninputchange" reRender="dateMsg" ajaxSingle="true" />
+							<a4j:support event="onchanged" reRender="dateMsg" ajaxSingle="true" />
+						</aon:selectInputDate>
+						<aon:outputText style="#{loanEntry.periodMessage==null?'color:red;':''}" id="dateMsg" 
+							value="Ejercicio #{(loanEntry.periodMessage==null)?'no definido':loanEntry.periodMessage}" />
+					</aon:div>
 
 					<aon:outputLabel for="Account_description"
 						value="#{bundle.aon_description}" />

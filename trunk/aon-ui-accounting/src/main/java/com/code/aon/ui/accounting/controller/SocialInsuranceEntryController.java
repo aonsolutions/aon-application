@@ -40,6 +40,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.ui.accounting.utils.AccountPeriodValidator;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
@@ -162,6 +163,7 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 				HibernateUtil.beginTransaction(sessionName);
 				// operaciones de la transaccion
 				try {
+					AccountPeriodValidator.validateAccountPeriod(getHeader().getDate());
 					AccountEntry entry = new AccountEntry();
 					if (!this.isNew) {
 						deleteAccountEntryDetails(getAccountEntry());
@@ -463,6 +465,15 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 	@Override
 	public String getNavigationKey() {
 		return "account_social_insurance_entry";
+	}
+	
+	public String getPeriodMessage() {
+		try {
+			return AccountPeriodValidator.getValidAccountPeriod(getHeader().getDate());
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+			return " - ";
+		}
 	}
 
 }

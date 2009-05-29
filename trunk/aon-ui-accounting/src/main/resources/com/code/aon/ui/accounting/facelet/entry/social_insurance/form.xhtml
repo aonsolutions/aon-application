@@ -42,10 +42,17 @@
 
 					<aon:outputLabel for="Account_date"
 						value="#{bundle.aon_date}" />
-					<aon:selectInputDate id="Account_date" required="true"
-						value="#{socialInsuranceEntry.header.date}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}"/>
+					<aon:div>
+						<aon:selectInputDate id="Account_date" required="true"
+							value="#{socialInsuranceEntry.header.date}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}">
+							<a4j:support event="oninputchange" reRender="dateMsg" ajaxSingle="true" />
+							<a4j:support event="onchanged" reRender="dateMsg" ajaxSingle="true" />
+						</aon:selectInputDate>
+						<aon:outputText style="#{socialInsuranceEntry.periodMessage==null?'color:red;':''}" id="dateMsg" 
+							value="Ejercicio #{(socialInsuranceEntry.periodMessage==null)?'no definido':socialInsuranceEntry.periodMessage}" />
+					</aon:div>
 
 					<aon:outputLabel for="Account_registryBank"
 						value="#{configBundle.config_bank}" />

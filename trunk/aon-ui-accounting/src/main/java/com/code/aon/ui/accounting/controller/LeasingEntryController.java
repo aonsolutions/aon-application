@@ -337,11 +337,6 @@ public class LeasingEntryController implements ISpecialAccountEntry{
 	public String getPeriodMessage() {
 		try {
 			return AccountPeriodValidator.getValidAccountPeriod(getLeasing().getLeasingDate());
-//			String msg = AccountPeriodValidator.getValidAccountPeriod(getLeasing().getLeasingDate());
-//			if(msg!=null)	
-//				return "Ejercicio: "+msg;
-//			else
-//				return "Ejercicio contable no definido";
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 			return " - ";
