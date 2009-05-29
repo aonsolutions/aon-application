@@ -523,6 +523,18 @@ public class FinanceController extends BasicController {
 		cr.addOrder(id,true);
 		orderedList=bean.getList(cr);
 	}
+	
+	public void onOrderFinanceListByPayment(ActionEvent event) throws ManagerBeanException {
+		Criteria cr = new Criteria();
+		cr=this.getCriteria();
+		cr.setOrderByList(null);
+		IManagerBean bean = BeanManager.getManagerBean(Finance.class);
+		String paymethod = bean.getFieldName(IFinanceAlias.FINANCE_PAY_METHOD_ID);
+		String id = bean.getFieldName(IFinanceAlias.FINANCE_ID);
+		cr.addOrder(paymethod,true);
+		cr.addOrder(id,true);
+		orderedList=bean.getList(cr);
+	}
 
 
 }
