@@ -24,9 +24,13 @@ import com.code.aon.ui.cms.util.ImageComparator;
 import com.code.aon.ui.cms.util.ZipUtil;
 import com.code.aon.ui.form.BasicController;
 
-public abstract class GalleryController extends BasicController implements IGalleryController{
+public abstract class GalleryController extends BasicController implements IGalleryController {
 
 	private static final Logger LOGGER = Logger.getLogger(GalleryController.class.getName());
+	
+	private boolean showImageWindow;
+	
+	private boolean showThumbnailImageWindow;
 	
 	private String currentPath = recoverFilesPath();
 
@@ -159,6 +163,22 @@ public abstract class GalleryController extends BasicController implements IGall
 		String fileName = "fsadfs$$$·33a6756745._-gdfsg%%%";
 		fileName = fileName.replaceAll("[^A-Za-z0-9._-]+", "");
 		LOGGER.info(fileName);
+	}
+
+	public boolean isShowImageWindow() {
+		return showImageWindow;
+	}
+
+	public void setShowImageWindow(boolean showImageWindow) {
+		this.showImageWindow = showImageWindow;
+	}
+
+	public boolean isShowThumbnailImageWindow() {
+		return showThumbnailImageWindow;
+	}
+
+	public void setShowThumbnailImageWindow(boolean showThumbnailImageWindow) {
+		this.showThumbnailImageWindow = showThumbnailImageWindow;
 	}
 	
 }

@@ -66,7 +66,6 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
 		File file = new File( getFile(req) );
 		long value = getLastModified(file);
 		if ( value != -1 ) {
-			LOGGER.info( file + ": " + value );
 			return value;
 		}
 		return super.getLastModified(req);
