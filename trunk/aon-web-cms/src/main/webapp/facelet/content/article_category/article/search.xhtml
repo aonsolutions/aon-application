@@ -85,6 +85,15 @@
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
+					
+					<aon:outputLabel for="Article_active"
+						value="#{appBundle.article_active}" />
+					<aon:selectOneMenu id="Article_active"
+						valueChangeListener="#{article.addExpression}">
+						<f:selectItem itemLabel="-"	itemValue="#{null}" />
+						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+					</aon:selectOneMenu>											
 				
 				</ui:define>
 			</ui:decorate>	

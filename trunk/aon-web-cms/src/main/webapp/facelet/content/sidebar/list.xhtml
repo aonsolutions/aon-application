@@ -13,81 +13,63 @@
 	<ui:define name="content">
 
 		<aon:form id="list">
-		<aon:div styleClass="aon-finding-title-toolbar">
-			<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
-				columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
-			
-				<aon:div styleClass="aon-finding-title-internal">
-					<aon:outputText value="#{appBundle.sidebar}"/>	  						
-				</aon:div>					
-				
-				<aon:div styleClass="aon-finding-subtitle-internal">
-					<aon:outputText
-						value="#{appBundle.aon_listing}" />
-				</aon:div>					
-					
-				<!-- start toolbar navigation -->
-				<aon:div styleClass="aon-finding-toolbar-item-group">					
-					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-						action="sidebar_form"
-						styleClass="aon-finding-toolbar-item aon-icon-reset"
-						accesskey="#{bundle.aon_key_new}">
-						<aon:actionListener method="#{sidebar.onReset}" />
-					</aon:commandButton>
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.sidebar}" />
+				<ui:param name="controller" value="#{sidebar}" />
+				<ui:param name="skipSearchButton" value="#{true}" />
+				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="exit"
 						value="#{bundle.aon_close}"
 						action="home" 
 						immediate="#{true}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						accesskey="#{bundle.aon_key_close}">
-					</aon:commandButton>
-			    </aon:div>
-				
-				<!-- end toolbar navigation -->
-			</aon:panelGrid>
-		</aon:div>
+					</aon:commandButton>				
+				</ui:define>
+			</ui:decorate>
 		
-		<!--  aon-region-body -->
-		<aon:div styleClass="aon-scroll-area">
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
 					
-					<aon:dataTable id="dataTable" value="#{sidebar.model}" var="to"
-						rows="#{sidebar.pageLimit}" 
-						columnClasses="aon-editDataTable-textColumn,
-								aon-editDataTable-iconColumn">
-				
-						<aon:column>
-							<a4j:support 
-								action="sidebar_form"
-								actionListener="#{sidebar.onSelect}"
-								event="onclick" />
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.cms_alias}" />
-							</f:facet>
-							<aon:outputText value="#{to.alias}"  
-								styleClass="aon-editDataTable-button"/>
-						</aon:column>
-						
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText for="Sidebar_defaultMenu" 
-									value="#{appBundle.menu_defaultMenu}" />
-							</f:facet>
+				<aon:dataTable id="dataTable" value="#{sidebar.model}" var="to"
+					rows="#{sidebar.pageLimit}"
+					columnClasses="aon-editDataTable-textColumn,
+							aon-editDataTable-iconColumn">
+			
+					<aon:rowSelector
+						action="sidebar_form" actionListener="#{sidebar.onSelect}" />							
+			
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.cms_alias}" />
+						</f:facet>
+						<aon:outputText value="#{to.alias}" />
+					</aon:column>
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText for="Sidebar_defaultMenu" 
+								value="#{appBundle.menu_defaultMenu}" />
+						</f:facet>
+						<aon:div onmouseover="disableRowSelector();"
+							onmouseout="enableRowSelector();" >																				
 							<aon:selectBooleanCheckbox id="Sidebar_defaultMenu" 
-									value="#{to.default_}" 
-									rendered="#{!to.default_}">
-									<a4j:support 
-										actionListener="#{sidebar.defaultChanged}"
-										event="onclick"  
-										reRender="dataTable" />
+								value="#{to.default_}" 
+								rendered="#{!to.default_}">
+								<a4j:support 
+									actionListener="#{sidebar.defaultChanged}"
+									event="onclick"  
+									reRender="dataTable" />
 							</aon:selectBooleanCheckbox>
-							<aon:graphicImage id="Menu_default_blocked" rendered="#{to.default_}"
-								url="#{aonResource.resolveLocal['/images/cms/selected.gif']}" alt="#{appBundle.menu_blocked}"/>
-						</aon:column>
+						</aon:div>
+						<aon:graphicImage id="Menu_default_blocked" rendered="#{to.default_}"
+							url="#{aonResource.resolveLocal['/images/cms/selected.gif']}" alt="#{appBundle.menu_blocked}"/>
+					</aon:column>
 
-					</aon:dataTable>
-				
-					<aon:dataScroller2 for="dataTable" />
-
+				</aon:dataTable>
+			
+				<aon:dataScroller2 for="dataTable" />
 
 			</aon:div>
 		</aon:form>

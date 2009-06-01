@@ -207,17 +207,22 @@
 										<aon:outputText value="#{appBundle.cms_position}" />
 									</f:facet>
 									<aon:div onmouseover="disableRowSelector();"
-										onmouseout="enableRowSelector();" >																									
-										<aon:commandButton id="moveUp" 
-											reRender="dataTable"
+										onmouseout="enableRowSelector();" >		
+										<aon:commandLink id="moveUp" reRender="dataTable"
+											title="#{appBundle.cms_move_up}" immediate="true"
 											actionListener="#{modular_page_option.onMoveUp}" 
-											rendered="#{to.position != 0 and modular_page_option.to==null}"
-											image="#{aonResource.resolveLocal['/images/cms/up.gif']}" styleClass="aon-icon-commandButton" />
-										<aon:commandButton id="moveDown"
-											reRender="dataTable"
-											actionListener="#{modular_page_option.onMoveDown}"
-											rendered="#{to.position &lt; (modular_page_option.model.rowCount - 1)  and modular_page_option.to==null}"
-											image="#{aonResource.resolveLocal['/images/cms/down.gif']}" styleClass="aon-icon-commandButton" />
+											styleClass="aon-margin-right"
+											rendered="#{to.position != 0 and modular_page_option.to==null}">
+											<aon:graphicImage alt="#{appBundle.cms_move_up}"
+												url="#{aonResource.resolveLocal['/images/cms/up.gif']}" />
+										</aon:commandLink>
+										<aon:commandLink id="moveDown" reRender="dataTable"
+											title="#{appBundle.cms_move_down}" immediate="true"
+											actionListener="#{modular_page_option.onMoveDown}" 
+											rendered="#{to.position &lt; (modular_page_option.model.rowCount - 1)  and modular_page_option.to==null}">
+											<aon:graphicImage alt="#{appBundle.cms_move_down}"
+												url="#{aonResource.resolveLocal['/images/cms/down.gif']}" />
+										</aon:commandLink>
 									</aon:div>
 								</aon:column>
 	
