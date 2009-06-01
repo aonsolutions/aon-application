@@ -15,6 +15,7 @@ import com.code.aon.company.Company;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.registry.servlet.RegistryAttachmentServlet;
 
 /**
@@ -41,10 +42,14 @@ public class CompanyLogoServlet extends RegistryAttachmentServlet {
 			Criteria criteria = new Criteria();
 			IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 			criteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), company.getId());
+			criteria.addExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), ""+RegistryAttachmentType.LOGO.ordinal());
 			List list = getManagerBean().getList(criteria);
 			if (list.size() > 0) {
 				RegistryAttachment ra = (RegistryAttachment) list.get(0);
-				res.setContentType(ra.getMimeType().getName());
+				try {
+					res.setContentType(ra.getMimeType().getName());
+				}
+				catch (NullPointerException n) {}
 				res.setCharacterEncoding("ISO-8859-1"); //$NON-NLS-1$
 				res.getOutputStream().write(ra.getData());
 				res.flushBuffer();

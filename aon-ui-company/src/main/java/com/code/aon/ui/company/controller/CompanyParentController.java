@@ -1,14 +1,11 @@
 package com.code.aon.ui.company.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Iterator;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -29,16 +26,15 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.util.AonUtil;
 
 /**
  * Controller used in the company maintenance.
  */
 public class CompanyParentController extends BasicController implements ICompanyController {
-	
-	public static final String COMPANY_NAME = "company";
 	
 	public static final String printHeaderParam = "APP_PRINT_HEADER_PARAM";
 	
@@ -81,6 +77,12 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 	private boolean printRecordData;
 	
+	private boolean showRegistryBank = true;
+
+	private boolean showCompanyOtherData = true;
+	
+	private boolean showPanelTabSet = true;
+
     /**
      * The empty constructor.
      * 
@@ -393,7 +395,7 @@ public class CompanyParentController extends BasicController implements ICompany
 		try {
 			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 			IController master = this;
-			IController detail = AonUtil.getController(getChildBean());
+			IController detail = FormUtil.getController(getChildBean());
 			ITransferObject to = master.getTo();
 			String reg = detail.getFieldName(getMasterFieldName());
 			Criteria criteria = new Criteria();
@@ -458,7 +460,14 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 
 	public boolean isWithLogo() throws ManagerBeanException {
-		return !(obtainCompanyLogo() == null);
+		Company company = obtainCompany();
+		IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
+		Criteria criteria = new Criteria();
+		String alias = registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
+		criteria.addEqualExpression(alias, company.getId());
+		String type = registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
+		criteria.addEqualExpression(type, RegistryAttachmentType.LOGO);
+		return registryAttachBean.getCount(criteria) > 0;
 	}
 	
 	/**
@@ -470,20 +479,15 @@ public class CompanyParentController extends BasicController implements ICompany
 	 * @throws IOException the IO exception
 	 */
 	public InputStream getAttachAsInputStream() throws IOException, ManagerBeanException{
-		File file = File.createTempFile("image", ".tmp");
-		
 		RegistryAttachment attach = obtainCompanyLogo();
 		if(attach != null){
-			FileOutputStream outputStream = new FileOutputStream(file);
-			outputStream.write(attach.getData());
-			outputStream.close();
-			return new FileInputStream(file);
+			return new ByteArrayInputStream(attach.getData());
 		}
 		return null;
 	}
 
 	@SuppressWarnings("unchecked")
-	public RecordData getCompanyRecordData() throws IOException, ManagerBeanException{
+	public RecordData getCompanyRecordData() throws ManagerBeanException{
 		IManagerBean recordDataBean = BeanManager.getManagerBean(RecordData.class);
 		Company company = (Company)getTo();
 		Criteria criteria = new Criteria();
@@ -503,7 +507,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	 * @throws ManagerBeanException the manager bean exception
 	 */
 	@SuppressWarnings("unchecked")
-	private RegistryAttachment obtainCompanyLogo() throws ManagerBeanException {
+	public RegistryAttachment obtainCompanyLogo() throws ManagerBeanException {
 		if(this.getTo() == null){
 			this.onLoad();
 		}
@@ -511,6 +515,8 @@ public class CompanyParentController extends BasicController implements ICompany
 		Criteria criteria = new Criteria();
 		String alias = registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
 		criteria.addEqualExpression(alias, ((Company)this.getTo()).getId());
+		String type = registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
+		criteria.addEqualExpression(type, RegistryAttachmentType.LOGO);
 		Iterator iter = registryAttachBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			return (RegistryAttachment)iter.next();
@@ -589,22 +595,11 @@ public class CompanyParentController extends BasicController implements ICompany
 		return IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID;
 	}
 	
-	/**
-	 * If the company has been defined navigates to the homepage, 
-	 * otherwise navigates to the company maintenance.
-	 * 
-	 * @return The url of the page that will be loaded
-	 * 
-	 * @throws ManagerBeanException
-	 */
-	public String getCompanyNavigation() throws ManagerBeanException {
-		String context = 
-			FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
-		if ( this.getModel().getRowCount() > 0 ) {
-			return context + "/facelet/homepage/firstContent.faces";
+	public String getOnNew() {
+		if(this.getTo() == null) {
+			this.onLoad();
 		}
-		this.onLoad();
-		return context + "/facelet/registry/company/init.faces";
+		return "";
 	}
 
 	/** COMPANY_ADDRESS_CONTROLLER_NAME. */
@@ -630,5 +625,29 @@ public class CompanyParentController extends BasicController implements ICompany
 			return (ApplicationParameter)iter.next();
 		}
 		return null;
+	}
+
+	public boolean isShowRegistryBank() {
+		return showRegistryBank;
+	}
+
+	public void setShowRegistryBank(boolean showRegistryBank) {
+		this.showRegistryBank = showRegistryBank;
+	}
+
+	public boolean isShowCompanyOtherData() {
+		return showCompanyOtherData;
+	}
+
+	public void setShowCompanyOtherData(boolean showCompanyOtherData) {
+		this.showCompanyOtherData = showCompanyOtherData;
+	}
+
+	public boolean isShowPanelTabSet() {
+		return showPanelTabSet;
+	}
+
+	public void setShowPanelTabSet(boolean showPanelTabSet) {
+		this.showPanelTabSet = showPanelTabSet;
 	}
 }
