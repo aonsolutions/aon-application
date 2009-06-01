@@ -28,7 +28,7 @@
 							<a4j:support 
 								event="onclick" reRender="poll,grid" 
 								actionListener="#{generator_status.onActivePoll}"  
-								onclick="javascript:Richfaces.showModalPanel('gen_log');" />
+								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 						</aon:commandButton>	
 						<aon:commandButton id="exit"
 							value="#{bundle.aon_close}"
@@ -70,29 +70,33 @@
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.cms_alias}" />
 						</f:facet>
-						<aon:outputText value="#{to.alias}" styleClass="aon-editDataTable-button"/>
+						<aon:outputText value="#{to.alias}"/>
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.article_title}" />
 						</f:facet>
-						<aon:outputText value="#{article.i18nTitle}"
-							styleClass="aon-editDataTable-button"/>
+						<aon:outputText value="#{article.i18nTitle}">
+							<aon:abbreviateConverter maxWidth="60" />
+						</aon:outputText>
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.article_category}" />
 						</f:facet>
-						<aon:outputText value="#{to.articleCategory.alias}" styleClass="aon-editDataTable-button" />
+						<aon:outputText value="#{to.articleCategory.alias}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.article_position}" />
+							<aon:outputText value="#{appBundle.article_endDate}" />
 						</f:facet>
-						<aon:outputText value="#{to.position}" styleClass="aon-editDataTable-button" />
+						<aon:outputText value="#{to.endDate}" >
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
 					</aon:column>
 					
 					<aon:column>
