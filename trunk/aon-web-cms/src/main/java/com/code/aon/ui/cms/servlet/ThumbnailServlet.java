@@ -36,26 +36,18 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
 
 	private static final Logger LOGGER = Logger.getLogger(ThumbnailServlet.class.getName());
 	
-	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		doGet(req, res);
-	}
-	
 	private void setCacheControl( HttpServletResponse res, File file ) {
-		long value = getLastModified(file);
-		if ( value != -1 ) {
-			res.setHeader("Expires", "0");
-		} else {
-	    	res.setHeader("Expires", "0");
-	    	res.setHeader("Pragma", "no-cache");
-	    	res.setHeader("Cache-Control", "no-store");								
-		}
+    	res.setHeader("Expires", "0");
+    	res.setHeader("Pragma", "no-cache");
+    	res.setHeader("Cache-Control", "no-store");								
 	}
 	
+	/*
 	private long getLastModified( File file ) {
 		if ( file.exists() && file.isFile() && file.canRead() ) {
 			long value = file.lastModified();
 			if ( value != 0 ) {
-				return value;
+				return value / 1000 * 1000;
 			}
 		}
 		return -1;
@@ -70,8 +62,7 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
 		}
 		return super.getLastModified(req);
 	}
-	
-	
+	*/
 	
 	private String getFile( HttpServletRequest req ) {
 		String servlet = req.getServletPath();
@@ -121,7 +112,6 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
 			File f = new File(file);
         	res.setContentType( "image/jpeg" );
         	setCacheControl(res, f);
-            res.setCharacterEncoding("ISO-8859-1"); //$NON-NLS-1$
 			if (!document && f.exists() && f.isFile()) {
 				ImageUtil.resize(f, res.getOutputStream(), maxDim);
             } else {
@@ -135,18 +125,7 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
         		bis = new BufferedInputStream(is);
                 os = res.getOutputStream();
         		bos = new BufferedOutputStream(os);
-        		byte[] input = new byte[1024];
-        		boolean eof = false;
-        		while (!eof) {
-        			int length = bis.read(input);
-        			if (length == -1) {
-        				eof = true;
-        			}
-        			else {
-        				bos.write(input, 0, length);
-        			}
-        		}
-        		bos.flush();
+        		IOUtils.copyLarge(bis, bos);
         		bis.close();
         	}
             res.flushBuffer();
