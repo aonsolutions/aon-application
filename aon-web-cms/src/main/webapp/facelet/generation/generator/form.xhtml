@@ -37,7 +37,7 @@
 							<a4j:support 
 								event="onclick" reRender="poll,grid" 
 								actionListener="#{generator_status.onActivePoll}"  
-								onclick="javascript:Richfaces.showModalPanel('gen_log');" />
+								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 						</aon:commandButton>
 						<aon:commandButton id="publish_ok"
 							value="#{appBundle.aon_publish}" 
@@ -48,7 +48,7 @@
 							<a4j:support 
 								event="onclick" reRender="poll,grid" 
 								actionListener="#{generator_status.onActivePoll}"  
-								onclick="javascript:Richfaces.showModalPanel('gen_log');" />
+								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 						</aon:commandButton>
 						<h:outputLink 
 							id="web_url"

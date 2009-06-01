@@ -32,7 +32,7 @@
 						<a4j:support 
 							event="onclick" reRender="poll,grid" 
 							actionListener="#{generator_status.onActivePoll}"  
-							onclick="javascript:Richfaces.showModalPanel('gen_log');" />
+							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 					</aon:commandButton>	
 					<aon:commandButton id="categories"
 						value="#{appBundle.article_category}"
@@ -83,12 +83,8 @@
 		
 							<aon:outputLabel for="ArticleDetail_publishDate"
 								value="#{appBundle.article_publishDate}" />
-							<aon:selectInputDate id="ArticleDetail_publishDate"
-								required="true"  
-								 style="z-index:2001;margin:0;vertical-align:middle;"
-								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
-								 value="#{article.to.publishDate}" renderAsPopup="true"
-								 enableManualInput="true"
+							<aon:selectInputDate id="ArticleDetail_publishDate" required="true"  
+								 value="#{article.to.publishDate}"
 								 popupDateFormat="#{bundle.aon_date_pattern}">
 								 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
@@ -97,10 +93,7 @@
 							<aon:outputLabel for="ArticleDetail_expireDate"
 								value="#{appBundle.article_expireDate}" />
 							<aon:selectInputDate id="ArticleDetail_expireDate" 
-								 style="z-index:2001;margin:0;vertical-align:middle;"
-								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
-								 value="#{article.to.expireDate}" renderAsPopup="true"
-								 enableManualInput="true"
+								 value="#{article.to.expireDate}"
 								 popupDateFormat="#{bundle.aon_date_pattern}">
 								 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
@@ -122,10 +115,7 @@
 								value="#{appBundle.article_initDate}" />
 							<aon:div id="dates_initDate">		
 								<aon:selectInputDate id="ArticleDetail_initDate"
-									 style="z-index:2001;margin:0;vertical-align:middle;"
-									 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
-									 value="#{article.to.initDate}" renderAsPopup="true"
-									 enableManualInput="true"
+									 value="#{article.to.initDate}"
 									 popupDateFormat="#{bundle.aon_date_pattern}"
 									 rendered="#{article.diary}">
 									 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -138,11 +128,8 @@
 								value="#{appBundle.article_endDate}" />
 							<aon:div id="dates_endDate">		
 								<aon:selectInputDate id="ArticleDetail_endDate"
-									 style="z-index:2001;margin:0;vertical-align:middle;"
-									 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
-									 value="#{article.to.endDate}" renderAsPopup="true"
+									 value="#{article.to.endDate}"
 									 popupDateFormat="#{bundle.aon_date_pattern}"
-									 enableManualInput="true"
 									 rendered="#{article.diary}">
 									 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 											timeZone="#{timeZoneController.timeZoneId}" />
@@ -166,12 +153,12 @@
 							<aon:div id="article_richtext">		
 								<aon:div sytle="width:100%" rendered="#{article.richTextEnabled}">
 									<aon:inputRichText style="width:800px" 
-										id="ArticleDetail_content" 
+										id="ArticleDetail_content" required="true"
 										value="#{article.toI18n.content}" />
 								</aon:div>
 								<aon:inputTextarea id="Article_content_TA"
 									rendered="#{!article.richTextEnabled}" 
-									rows="20" style="width:98%" 
+									rows="20" style="width:98%" required="true"
 									value="#{article.toI18n.content}"/>
 							</aon:div>
 		
