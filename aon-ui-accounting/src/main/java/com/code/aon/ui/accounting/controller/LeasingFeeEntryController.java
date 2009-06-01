@@ -102,6 +102,7 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 		LeasingFeeEntryHeader header = new LeasingFeeEntryHeader();
 		header.setLeasingFeeDate(new Date());
 		header.setSecurityLevel(SecurityLevel.OFFICIAL);
+		header.setLeasing(new Leasing());
 		return header;
 	}
 	

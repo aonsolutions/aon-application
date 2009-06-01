@@ -88,7 +88,7 @@
 					<aon:outputLabel for="RegistryBank_id"
 						value="#{configBundle.config_bank}" />
 					<aon:selectOneMenu id="RegistryBank_id"
-						value="#{leasingEntry.leasing.registryBank.id}"
+						value="#{leasingEntry.leasing.registryBank}"
 						reRender="RegistryBank_bankAccount"
 						valueChangeListener="#{leasingEntry.onRBankChange}">
 						<f:selectItem itemDisabled="true" itemValue="" itemLabel="-" />
@@ -111,14 +111,14 @@
 					<aon:outputLabel for="Fixed_asset_account"
 						value="#{accountingBundle.accounting_fixed_asset_account}" />
 					<aon:selectOneMenu id="Fixed_asset_account" required="true"
-						value="#{leasingEntry.leasing.fixedAssetAccount.id}">
+						value="#{leasingEntry.leasing.fixedAssetAccount}">
 						<f:selectItems value="#{accountCollections.fixedAssestsAccounts}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Leasing_vat"
 						value="#{bundle.aon_vat}" />
 					<aon:selectOneMenu id="Leasing_vat"
-						value="#{leasingEntry.leasing.vat.id}">
+						value="#{leasingEntry.leasing.vat}">
 						<f:selectItems value="#{configCollections.vatTaxes}" />
 					</aon:selectOneMenu>
 
