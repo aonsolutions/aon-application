@@ -17,22 +17,29 @@
 	</bean>
 
 	<bean description="Listener para escribir los acumulados por cuenta">
-		<pojo>com.code.aon.account.AccountEntry</pojo>
+		<pojo>com.code.aon.accounting.AccountEntry</pojo>
 		<listeners>
-	        <listener>com.code.aon.account.event.AccountEntrySummaryBeanListener</listener>
+	        <listener>com.code.aon.accounting.event.AccountEntrySummaryBeanListener</listener>
 		</listeners>
 		<vetoListeners>
-	        <vetoListener>com.code.aon.account.event.AccountEntrySummaryBeanVetoListener</vetoListener>
+	        <vetoListener>com.code.aon.accounting.event.AccountEntrySummaryBeanVetoListener</vetoListener>
 		</vetoListeners>
 	</bean>
 
 	<bean description="Listener para escribir los acumulados por cuenta">
-		<pojo>com.code.aon.account.AccountEntryDetail</pojo>
+		<pojo>com.code.aon.accounting.AccountEntryDetail</pojo>
 		<listeners>
-	        <listener>com.code.aon.account.event.AccountEntryDetailSummaryBeanListener</listener>
+	        <listener>com.code.aon.accounting.event.AccountEntryDetailSummaryBeanListener</listener>
 		</listeners>
 		<vetoListeners>
-	        <vetoListener>com.code.aon.account.event.AccountEntryDetailSummaryBeanVetoListener</vetoListener>
+	        <vetoListener>com.code.aon.accounting.event.AccountEntryDetailSummaryBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Listener que se encarga de recalcular las dotaciones.">
+		<pojo>com.code.aon.accounting.Amortization</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.accounting.event.AmortizationVetoableBeanListener</vetoListener>
 		</vetoListeners>
 	</bean>
 
