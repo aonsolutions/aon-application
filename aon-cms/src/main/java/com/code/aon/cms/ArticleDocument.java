@@ -13,11 +13,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name="article_document")
 public class ArticleDocument implements ITransferObject {
+
+	private static final long serialVersionUID = -5566306597391761268L;
 
 	private Integer id;
 	
@@ -65,4 +73,38 @@ public class ArticleDocument implements ITransferObject {
 	public void setDetails(Set<ArticleDocumentDetail> details) {
 		this.details = details;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final ArticleDocument o = (ArticleDocument) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.alias, o.alias)
+				.append(this.article, o.article)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(alias)
+			.append(article)
+			.append(id)	
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).
+		append("alias", StringUtils.abbreviate(alias, 32)).
+		append("article", article.getId()).
+		append("id", id).
+		toString();
+	}	
+
 }

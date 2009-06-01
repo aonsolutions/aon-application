@@ -90,16 +90,18 @@ public class DomainUtilities {
 			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}
 		
-		String file = ControllerUtil.getConfigPath()+File.separator+SIDEBARTYPE;
-		InputStream stream = null;
-		try{
-			stream = new FileInputStream(file);
-			propDomainSidebarType.load(stream);
-		} catch (Throwable th) {
-			LOGGER.log(Level.WARNING, th.getMessage(), th);
-		}finally{
-			IOUtils.closeQuietly(stream);
-			stream= null;
+		File file = new File( ControllerUtil.getConfigPath(), SIDEBARTYPE );
+		if ( file.exists() ) {
+			InputStream stream = null;
+			try{
+				stream = new FileInputStream(file);
+				propDomainSidebarType.load(stream);
+			} catch (Throwable th) {
+				LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			}finally{
+				IOUtils.closeQuietly(stream);
+				stream= null;
+			}
 		}
 	}
 	
