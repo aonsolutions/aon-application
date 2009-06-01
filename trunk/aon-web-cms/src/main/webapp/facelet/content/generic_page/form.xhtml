@@ -122,7 +122,8 @@
 									value="#{appBundle.generic_page_richtext_enabled}" />
 								<aon:selectBooleanCheckbox id="GenericPageDetail_richTextEnabled"
 									value="#{generic_page.richTextEnabled}">
-									<a4j:support 
+									<a4j:support
+										ajaxSingle="true" 
 										event="onclick"
 										reRender="generalGrid" />
 								</aon:selectBooleanCheckbox>
