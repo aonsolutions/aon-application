@@ -24,7 +24,7 @@
 		<c:if test="#{showWindow}">
 			<rich:modalPanel id="#{modalPanelName}"
 				rendered="#{showWindow}" showWhenRendered="true"
-				height="660" width="700">
+				height="660" width="710">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{appBundle.image_modal_title}" />
@@ -39,22 +39,24 @@
 					</aon:commandButton>
 		        </f:facet>
 				<h:panelGrid id="#{modalPanelName}_treeGrid" columns="2"
-					columnClasses="aon-width-300 aon-scroll aon-border aon-vertical-align-top, aon-width-auto aon-vertical-align-top">
-				    <rich:tree 
-				    	switchType="server" 
-				    	stateAdvisor="#{treeStateAdvisor}">
-				        <rich:recursiveTreeNodesAdaptor roots="#{roots}" 
-				        	var="item" 
-				        	nodes="#{item.nodes}">
-							<rich:treeNode>
-				                <aon:commandLink
-				                	action="#{item.onSelectFolder}" 
-				                	value="#{item}"
-				                	immediate="#{true}"
-				                	reRender="#{modalPanelName}_treeGrid" />
-							</rich:treeNode>
-				        </rich:recursiveTreeNodesAdaptor>
-				    </rich:tree>
+					columnClasses="aon-width-300 aon-border aon-vertical-align-top, aon-width-auto aon-vertical-align-top">
+					<aon:div styleClass="aon-scroll">
+					    <rich:tree 
+					    	switchType="server" 
+					    	stateAdvisor="#{treeStateAdvisor}">
+					        <rich:recursiveTreeNodesAdaptor roots="#{roots}" 
+					        	var="item" 
+					        	nodes="#{item.nodes}">
+								<rich:treeNode>
+					                <aon:commandLink
+					                	action="#{item.onSelectFolder}" 
+					                	value="#{item}"
+					                	immediate="#{true}"
+					                	reRender="#{modalPanelName}_treeGrid" />
+								</rich:treeNode>
+					        </rich:recursiveTreeNodesAdaptor>
+					    </rich:tree>
+					</aon:div>
 					<aon:div> 
 						<aon:div styleClass="aon-header">
 							<aon:panelGrid columns="1" width="100%" columnClasses="aon-header-name">

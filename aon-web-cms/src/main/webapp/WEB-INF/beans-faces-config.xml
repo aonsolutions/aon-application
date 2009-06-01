@@ -1601,6 +1601,10 @@
 			<value>com.code.aon.cms.ActivityDetail</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>activity</value>
+		</managed-property>										
+		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>ActivityDetail_activity_id</value>
 		</managed-property>
