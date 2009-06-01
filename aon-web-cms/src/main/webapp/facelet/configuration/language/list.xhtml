@@ -43,6 +43,9 @@
 						<aon:dataTable id="languagesDataList" columnWidths="30,50,*,30,30" 
 							value="#{language.languages}" var="to" rows="20"
 							columnClasses="aon-text-center, aon-text-center, aon-text-left, aon-text-center, aon-text-center">
+							
+							<aon:rowSelector toggleOnClick="#{false}" />							
+							
 							<aon:column>
 								<f:facet name="header">
 									<aon:outputText for="Language_selected" value="#{appBundle.language_active}"/>
@@ -52,7 +55,7 @@
 										rendered="#{!to.defaultLanguage}"
 										valueChangeListener="#{language.selectedLanguageChanged}">
 									<a4j:support 
-										reRender="aon-header"
+										reRender="languagesDataList"
 										actionListener="#{i18n.onReloadLanguages}"
 										event="onclick" />
 								</aon:selectBooleanCheckbox>
@@ -78,28 +81,27 @@
 										valueChangeListener="#{language.textChanged}"/>
 							</aon:column>
 
-							<aon:column>
+							<aon:column styleClass="aon-width-80">
 								<f:facet name="header">
-									<aon:outputText for="Language_position" 
-										value="#{appBundle.language_position}" />
+									<aon:outputText value="#{appBundle.language_position}" />
 								</f:facet>
-								<aon:graphicImage rendered="#{to.position == 0}"
-									url="#{aonResource.resolveLocal['/images/cms/spacer16.gif']}"/>
-								<aon:graphicImage rendered="#{to.position == 0}"
-									url="#{aonResource.resolveLocal['/images/cms/spacer16.gif']}"/>
-								<aon:commandButton id="moveUp" 
-									reRender="languagesDataList"
+								<aon:commandLink id="moveUp" reRender="languagesDataList"
+									title="#{appBundle.cms_move_up}" immediate="true"
 									actionListener="#{language.onMoveUp}" 
-									rendered="#{to.position != 0}"
-									image="#{aonResource.resolveLocal['/images/cms/up.gif']}" styleClass="aon-icon-commandButton" />
-								<aon:commandButton id="moveDown"
-									reRender="languagesDataList" 
+									styleClass="aon-margin-right"
+									rendered="#{to.position != 0}">
+									<aon:graphicImage alt="#{appBundle.cms_move_up}"
+										url="#{aonResource.resolveLocal['/images/cms/up.gif']}" />
+									<a4j:actionparam name="paramUp" value="#{to.language}" assignTo="#{language.listLanguage}" />										
+								</aon:commandLink>
+								<aon:commandLink id="moveDown" reRender="languagesDataList"
+									title="#{appBundle.cms_move_down}" immediate="true" 
 									actionListener="#{language.onMoveDown}"
-									rendered="#{to.position &lt; (language.rowCount - 1)}"
-									image="#{aonResource.resolveLocal['/images/cms/down.gif']}"
-									styleClass="aon-icon-commandButton" />
-								<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/spacer16.gif']}" style="padding-left:16px"
-									rendered="#{to.position == (language.rowCount - 1)}"/>
+									rendered="#{to.position &lt; (language.rowCount - 1)}">
+									<aon:graphicImage alt="#{appBundle.cms_move_down}"
+										url="#{aonResource.resolveLocal['/images/cms/down.gif']}" />
+									<a4j:actionparam name="paramDown" value="#{to.language}" assignTo="#{language.listLanguage}" />										
+								</aon:commandLink>
 							</aon:column>
 
 							<aon:column>

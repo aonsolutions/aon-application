@@ -36,9 +36,7 @@ public class OrderedControllerSupport {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void move(IController controller, int movement ) throws ManagerBeanException, ExpressionException {
-		IPositionObject object = (IPositionObject) controller.getModel().getRowData();
-		
+	private void move(IController controller, IPositionObject object, int movement ) throws ManagerBeanException, ExpressionException {
 		int oldPosition = object.getPosition();
 		int newPosition = oldPosition + movement;
 		
@@ -62,13 +60,23 @@ public class OrderedControllerSupport {
 	}
 	
     public void onMoveUp(IController controller) throws ManagerBeanException, ExpressionException {
-    	move(controller, -1);
+		IPositionObject object = (IPositionObject) controller.getModel().getRowData();
+    	onMoveUp(controller, object);
     }
 
+    public void onMoveUp(IController controller, IPositionObject object) throws ManagerBeanException, ExpressionException {
+    	move(controller, object, -1);
+    }
+    
     public void onMoveDown(IController controller) throws ManagerBeanException, ExpressionException {
-    	move(controller, 1);    	
+    	IPositionObject object = (IPositionObject) controller.getModel().getRowData();
+    	onMoveDown(controller, object);    	
     }
 
+    public void onMoveDown(IController controller, IPositionObject object) throws ManagerBeanException, ExpressionException {
+    	move(controller, object, 1);    	
+    }
+    
 	public void reorderObjects(IController controller) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		orderedControllerListenerSupport.fireBeforeUseCriteria(criteria);
