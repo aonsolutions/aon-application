@@ -70,9 +70,13 @@
 						<aon:div style="width: 90%;"
 							rendered="#{to!=accountEntryDetail.to}" styleClass="aon-nowrap">
 
-							<aon:div style="width: 100px;float: left;">
-								<aon:outputText value="#{to.account.id}" />
-							</aon:div>
+					        <h:commandLink immediate="#{true}" 
+					        style="width: 100px;float: left"
+							styleClass="aon-dataTable-link"
+							actionListener="#{accountEntryDetail.onAccountStatement}"
+							action="account_statement_list">
+							<aon:outputText value="#{to.account.id}" />
+						    </h:commandLink>
 
 							<aon:outputText value="#{to.account.description}"
 								styleClass="aon-italic" style="font-size: 0.9em">
@@ -200,8 +204,15 @@
 							<aon:outputText
 								value="#{accountingBundle.accounting_balancing_account}" />
 						</f:facet>
-						<aon:outputText value="#{to.balancingAccount.id}"
-							rendered="#{to!=accountEntryDetail.to}" />
+									
+							 <h:commandLink immediate="#{true}" 
+							style="width: 100px;float: left"
+							styleClass="aon-dataTable-link"
+							actionListener="#{accountEntryDetail.onBalancingAccountStatement}"
+							action="account_statement_list">
+							<aon:outputText value="#{to.balancingAccount.id}" />
+						    </h:commandLink>		
+						
 						<ui:include
 							src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
 							<ui:param name="wizard" value="#{accountWizard}" />
