@@ -110,6 +110,27 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	private Finance currentFinance;
 	private String onGenerateKey;
 	private AccountUtils accountUtils;
+	
+	private Date invoiceDate;
+	
+	private Date taxDate;
+	
+		
+	public Date getInvoiceDate() {
+		return invoiceDate;
+	}
+
+	public void setInvoiceDate(Date invoiceDate) {
+		this.invoiceDate = invoiceDate;
+	}
+
+	public Date getTaxDate() {
+		return taxDate;
+	}
+
+	public void setTaxDate(Date taxDate) {
+		this.taxDate = taxDate;
+	}
 
 	public AccountUtils getAccountUtils() {
 		if (accountUtils == null) {
@@ -282,8 +303,13 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		account.setEntryEnabled(true);
 		header.setAccount(account);
 		header.setRegistry(new Registry());
-		header.setDate(new Date());
-		header.setTaxDate(new Date());
+		if(invoiceDate!=null){		
+		header.setDate(this.getInvoiceDate());
+		header.setTaxDate(this.getTaxDate());
+		}else{
+			header.setDate(new Date());
+			header.setTaxDate(new Date());
+		}
 		header.setSecurityLevel(SecurityLevel.OFFICIAL);
 		header.setTransaction(InvoiceTransactionType.NATIONAL);
 		header.setInvestment(false);
@@ -516,6 +542,9 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	}
 
 	public void onGenerate(ActionEvent event) {
+		
+		invoiceDate = header.getDate();
+		taxDate = header.getTaxDate();
 		double invoiceTotal = getInvoiceTotal();
 		double financeTotal = getFinanceTotal();
 		if (financeTotal > 0 && invoiceTotal != financeTotal) {
