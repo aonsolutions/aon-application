@@ -10,15 +10,15 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.el.ELContext;
+import javax.el.ExpressionFactory;
+import javax.el.ValueExpression;
 import javax.faces.application.Application;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.el.EvaluationException;
-import javax.faces.el.PropertyNotFoundException;
-import javax.faces.el.ReferenceSyntaxException;
-import javax.faces.el.ValueBinding;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
@@ -47,8 +47,7 @@ public class ReportManager {
 	/**
 	 * Obtains a suitable <code>Logger</code>.
 	 */
-	private static Logger LOGGER = Logger.getLogger(ReportManager.class
-			.getName());
+	private static Logger LOGGER = Logger.getLogger(ReportManager.class.getName());
 
 	/**
 	 * Output format of the report.
@@ -115,6 +114,23 @@ public class ReportManager {
 				new SelectItem(OutputFormat.TXT, OutputFormat.TXT.getType()) };
 		return items;
 	}
+	
+	/**
+	 * Gets the bean registered in <code>faces-bean-config.xml</code> with
+	 * that name.
+	 * 
+	 * @param name
+	 *            the name
+	 * 
+	 * @return the registered bean
+	 */
+	public static Object getRegisteredBean(String name) {
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		ELContext elctx = ctx.getELContext();
+		ExpressionFactory ef = ctx.getApplication().getExpressionFactory();
+		ValueExpression ve = ef.createValueExpression(elctx, name, Object.class);
+		return ve.getValue(elctx);
+	}	
 
 	/**
 	 * Runs the report. Obtains a
@@ -129,45 +145,55 @@ public class ReportManager {
 	 * @throws DAOException
 	 */
 	public String onExecute() throws ReportException, DAOException {
+		ensureParams();
+		String out = execute(getOutputStream());
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		ctx.responseComplete();
+		return out;
+	}
+
+	/**
+	 * Runs the report. Obtains a
+	 * <code>com.code.aon.ui.report.jr.JRReport</code> calling the
+	 * <code>JRReportFactory.getJRReport(getReportKey())</code> method. Also,
+	 * finalizes the reponse calling the
+	 * <code>FacesContext.getCurrentInstance().responseComplete()</code>.
+	 * 
+	 * @return The outcome (- null - because this method finalizes the reponse).
+	 * @throws ReportException
+	 *             If an error ocurred.
+	 * @throws DAOException
+	 */
+	public String execute( OutputStream os ) throws ReportException, DAOException {
 
 		boolean initTransState = HibernateUtil.mustBeginTransaction();
 		boolean initSessionState = HibernateUtil.mustCloseSession();
-		// if(initTransState){
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
 		HibernateUtil.setCloseSession(false);
-		// }
-		// if(initSessionState){
 		HibernateUtil.setBeginTransaction(false);
-		// }
 		try {
-			ensureParams();
 			JRReport report = JRReportFactory.getJRReport(getReportKey());
 			resolveCustomParameters(report);
 			Criteria criteria = getCriteria(report);
 			Collection collection = getCollection(report);
 
-			HibernateUtil.startSession();
-			HibernateUtil.beginTransaction();
+			HibernateUtil.startSession(sessionFactoryName);
+			HibernateUtil.beginTransaction(sessionFactoryName);
 
 			String dp = report.getReportConfig().getDynamicParamsProvider();
 			LOGGER.info(dp);
-			FacesContext ctx = FacesContext.getCurrentInstance();
 			if (dp != null) {
-				ValueBinding vb = ctx.getApplication().createValueBinding(
-						"#{" + dp + "}");
-				IReportDynamicParamsProvider dpp = (IReportDynamicParamsProvider) vb
-						.getValue(ctx);
+				IReportDynamicParamsProvider dpp = (IReportDynamicParamsProvider) getRegisteredBean("#{"+dp+"}");
 				Map<String, Object> dynParams = dpp.getDynamicParamsMap();
 				LOGGER.info("" + dynParams.size());
 				report.setDynamicParams(dynParams);
 				LOGGER.info("Dynamic params set!");
 			}
 
-			String out = report.run(outputFormat, getOutputStrem(),
-					getBundle(), criteria, collection);
-			ctx.responseComplete();
+			String out = report.run(outputFormat, os, getBundle(), criteria, collection);
 			report.setCustomParams(null);
-			HibernateUtil.commitTransaction();
-			HibernateUtil.closeSession();
+			HibernateUtil.commitTransaction(sessionFactoryName);
+			HibernateUtil.closeSession(sessionFactoryName);
 			return out;
 		} finally {
 			if (initTransState != HibernateUtil.mustBeginTransaction()) {
@@ -178,7 +204,7 @@ public class ReportManager {
 			}
 		}
 	}
-
+	
 	private void ensureParams() throws ReportException{
 		ensureReportKey();
 		ensureOutputFormat();
@@ -227,7 +253,7 @@ public class ReportManager {
 	 * @throws ReportException
 	 *             If an error ocurred.
 	 */
-	private OutputStream getOutputStrem() throws ReportException {
+	private OutputStream getOutputStream() throws ReportException {
 		try {
 			FacesContext ctx = FacesContext.getCurrentInstance();
 			ExternalContext ec = ctx.getExternalContext();
@@ -240,7 +266,7 @@ public class ReportManager {
 			}
 			return res.getOutputStream();
 		} catch (IOException e) {
-			LOGGER.severe(e.getMessage());
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			throw new ReportException(e.getMessage(), e);
 		}
 	}
@@ -304,12 +330,7 @@ public class ReportManager {
 			if (provider != null) { // Criteria provider is EL expression ina a
 				// faces context.
 				if (provider.startsWith("#")) {
-					FacesContext ctx = FacesContext.getCurrentInstance();
-					ValueBinding vb = ctx.getApplication().createValueBinding(
-							provider);
-					ICriteriaProvider crpr = (ICriteriaProvider) vb
-							.getValue(ctx);
-
+					ICriteriaProvider crpr = (ICriteriaProvider) getRegisteredBean(provider);
 					return crpr.getCriteria();
 				}
 				// Criteria provider is a class.
@@ -320,12 +341,6 @@ public class ReportManager {
 
 			}
 			return null;
-		} catch (ReferenceSyntaxException e) {
-			throw new ReportException(e.getMessage(), e);
-		} catch (PropertyNotFoundException e) {
-			throw new ReportException(e.getMessage(), e);
-		} catch (EvaluationException e) {
-			throw new ReportException(e.getMessage(), e);
 		} catch (ManagerBeanException e) {
 			throw new ReportException(e.getMessage(), e);
 		} catch (ClassNotFoundException e) {
@@ -359,10 +374,7 @@ public class ReportManager {
 			if (provider != null) { // Criteria provider is EL expression ina a
 				// faces context.
 				if (provider.startsWith("#")) {
-					FacesContext ctx = FacesContext.getCurrentInstance();
-					ValueBinding vb = ctx.getApplication().createValueBinding(
-							provider);
-					Object c = vb.getValue(ctx);
+					Object c = getRegisteredBean(provider);
 					if (c instanceof ICollectionProvider) {
 						ICollectionProvider crpr = (ICollectionProvider) c;
 						return crpr.getCollection(config.isForceRefresh());
@@ -381,12 +393,6 @@ public class ReportManager {
 
 			}
 			return null;
-		} catch (ReferenceSyntaxException e) {
-			throw new ReportException(e.getMessage(), e);
-		} catch (PropertyNotFoundException e) {
-			throw new ReportException(e.getMessage(), e);
-		} catch (EvaluationException e) {
-			throw new ReportException(e.getMessage(), e);
 		} catch (ClassNotFoundException e) {
 			throw new ReportException(e.getMessage(), e);
 		} catch (InstantiationException e) {
@@ -413,25 +419,21 @@ public class ReportManager {
 							value.indexOf("{") + 1, value.indexOf("."));
 					String methodName = value.substring(value.indexOf(".") + 1,
 							value.indexOf("}"));
-					FacesContext ctx = FacesContext.getCurrentInstance();
-					ValueBinding vb = ctx.getApplication().createValueBinding(
-							"#{" + controllerName + "}");
-					Object o = vb.getValue(ctx);
+					Object o = getRegisteredBean("#{" + controllerName + "}");
 					try {
-						Method m;
-						m = o.getClass().getMethod(methodName, new Class[0]);
+						Method m = o.getClass().getMethod(methodName, new Class[0]);
 						Object obj = m.invoke(o, new Object[0]);
 						map.put(key, obj);
 					} catch (SecurityException e) {
-						e.printStackTrace();
+						LOGGER.log(Level.SEVERE, e.getMessage(), e);
 					} catch (NoSuchMethodException e) {
-						e.printStackTrace();
+						LOGGER.log(Level.SEVERE, e.getMessage(), e);
 					} catch (IllegalArgumentException e) {
-						e.printStackTrace();
+						LOGGER.log(Level.SEVERE, e.getMessage(), e);
 					} catch (IllegalAccessException e) {
-						e.printStackTrace();
+						LOGGER.log(Level.SEVERE, e.getMessage(), e);
 					} catch (InvocationTargetException e) {
-						e.printStackTrace();
+						LOGGER.log(Level.SEVERE, e.getMessage(), e);
 					}
 				}
 			}
