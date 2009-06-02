@@ -68,8 +68,12 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	private Boolean payment;
 
 	private Date date;
+	
+	private Date financeDate;
 
 	private RegistryBank registryBank;
+	
+	private RegistryBank financeRegistryBank;
 
 	private String concept;
 
@@ -83,6 +87,22 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
 	private ArrayList<Finance> financeChecks = new ArrayList<Finance>();
 	private AccountUtils accountUtils;
+		
+	public Date getFinanceDate() {
+		return financeDate;
+	}
+
+	public void setFinanceDate(Date financeDate) {
+		this.financeDate = financeDate;
+	}
+
+	public RegistryBank getFinanceRegistryBank() {
+		return financeRegistryBank;
+	}
+
+	public void setFinanceRegistryBank(RegistryBank financeRegistryBank) {
+		this.financeRegistryBank = financeRegistryBank;
+	}
 
 	public AccountUtils getAccountUtils() {
 		if (accountUtils == null) {
@@ -204,8 +224,17 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
 	private void initializeHeader(){
 		payment = null;
-		date = new Date();
-		registryBank = null;
+		if (financeDate != null) {
+			setDate(financeDate);
+		} else {
+			date = new Date();
+		}
+		if (financeRegistryBank != null) {
+			setRegistryBank(financeRegistryBank);
+		} else {
+			registryBank = null;
+		}
+		
 		concept = null;
 	}
 
@@ -348,6 +377,9 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
     @SuppressWarnings("unchecked")
     public void accept(ActionEvent event) {
+    	
+    	setFinanceDate(date);
+    	setFinanceRegistryBank(registryBank);
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
