@@ -20,4 +20,6 @@ public interface IFinanceMessages {
 	String FINANCE_BATCH_DATE_ERROR = "finance_batch_date_error";
 	String FINANCE_BATCH_DISK_ERROR = "finance_batch_disk_error";
 	String FINANCE_BATCH_UNRECORD_ERROR = "finance_batch_unrecord_error";
+	String NO_INVOICE_KEY = "finance_invoicing_no_invoice";
+	
 }
