@@ -14,17 +14,16 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
-public class SaleInvoiceFinanceControllerListener extends ControllerAdapter {
+public class SaleInvoiceFinanceControllerListener extends ControllerAdapter implements IFinanceConstants {
 	
 	private static final Logger LOGGER = Logger.getLogger(SaleInvoiceFinanceControllerListener.class.getName());
 	
-	private static final String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
-
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		Finance finance = (Finance) event.getController().getTo();

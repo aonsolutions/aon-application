@@ -13,12 +13,11 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.print.CheckingTo;
+import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.form.FormUtil;
 
 
-public class FinanceCheckingPrinter implements ICollectionProvider {
-
-	private static final String FINANCE_PRINTER_CONTROLLER = "financePrint";
+public class FinanceCheckingPrinter implements ICollectionProvider, IFinanceConstants {
 
 	@Override
 	@SuppressWarnings("unchecked")

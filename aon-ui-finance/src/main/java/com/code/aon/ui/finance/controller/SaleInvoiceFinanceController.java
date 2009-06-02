@@ -32,12 +32,10 @@ import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 
-public class SaleInvoiceFinanceController extends LinesController {
+public class SaleInvoiceFinanceController extends LinesController implements IFinanceConstants {
 	
 	private static final Logger LOGGER = Logger.getLogger(SaleInvoiceFinanceController.class.getName());
 
-	private static final String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
-	
 	private Company company;
 
 	public boolean isModelToEditable() throws ManagerBeanException{

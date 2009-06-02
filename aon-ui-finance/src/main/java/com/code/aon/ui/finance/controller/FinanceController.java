@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
@@ -51,11 +50,9 @@ import com.code.aon.ui.util.AonUtil;
  * Controller used in the finance maintenance.
  * 
  */
-public class FinanceController extends BasicController {
+public class FinanceController extends BasicController implements IFinanceConstants {
 
 	private static final Logger LOGGER = Logger.getLogger(FinanceController.class.getName());
-
-	private static final String FINANCE_TRACKING_CONTROLLER_NAME = "financeTracking";
 
 	private Company company;
 
