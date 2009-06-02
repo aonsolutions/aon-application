@@ -10,7 +10,9 @@ public interface IMimeType {
 
 	String MULTIPART_ANY = "multipart/*";
 	
-	String MULTIPART_RELATED = "multipart/related";
+	String RELATED = "related";
+	
+	String MULTIPART_RELATED = "multipart/" + RELATED;
 
 	String MULTIPART_MIXED = "multipart/mixed";
 
