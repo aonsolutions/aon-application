@@ -41,6 +41,8 @@ import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -88,16 +90,9 @@ public class FinanceController extends BasicController implements IFinanceConsta
 	private ArrayList<Finance> checks= new ArrayList<Finance>();
 
 	public Company getCompany() {
-		try {
-			if (company == null) {
-				IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
-				Iterator<ITransferObject> iter = companyBean.getList(null, 0, 1).iterator();
-				if (iter.hasNext()) {
-					setCompany((Company) iter.next());
-				}
-			}
-		} catch (ManagerBeanException e) {
-			throw new AbortProcessingException("Error obtaining Company!");
+		if (company == null) {
+			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+			setCompany( companyController.obtainCompany() );
 		}
 		return company;
 	}

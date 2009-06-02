@@ -1,13 +1,18 @@
 package com.code.aon.ui.finance.controller;
 
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
+import javax.mail.Address;
+import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -19,6 +24,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.company.Company;
 import com.code.aon.config.Series;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.customer.Customer;
@@ -38,14 +44,20 @@ import com.code.aon.ql.Projection;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.finance.IFinanceMessages;
+import com.code.aon.ui.finance.util.EmailUtilController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.webmail.EmailSender;
 
-public class SaleInvoiceController extends InvoiceController implements IFinanceConstants {
+public class SaleInvoiceController extends InvoiceController implements IFinanceConstants, IFinanceMessages {
+	
+	private static final Logger LOGGER = Logger.getLogger(SaleInvoiceController.class.getName());
 	
 	private IPriceStrategy priceStrategy;
 	
@@ -334,9 +346,31 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 			addressController.onReset(event);
 		}
 	}
+	
+	public String getSendEmailToTitle() throws ManagerBeanException {
+		Invoice invoice = (Invoice) getTo();
+		String message = AonUtil.getMessage(BUNDLE_KEY, FINANCE_SEND_EMAIL_TO);
+		return MessageFormat.format(message, invoice.getRegistry().getEmail().getValue() );
+	}
+
+	public String getRegistryWithoutEmailTitle() throws ManagerBeanException {
+		Invoice invoice = (Invoice) getTo();
+		String message = AonUtil.getMessage(BUNDLE_KEY, FINANCE_REGISTRY_WITHOUT_EMAIL);
+		return MessageFormat.format(message, invoice.getRegistry().getFullName() );
+	}
 
 	public void sendInvoiceByEmail( ActionEvent event ) {
-		
+		EmailUtilController emailController = (EmailUtilController) AonUtil.getRegisteredBean(EMAIL_UTIL_CONTROLLER_NAME);
+		try {
+			EmailSender sender = emailController.getEmailSender();
+			sender.connect();
+			emailController.sendInvoice( (Invoice) getTo() );
+			sender.disconnect();
+		} catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			AonUtil.addErrorMessage(th.getMessage());
+			throw new AbortProcessingException(th.getMessage(), th);
+		}
 	}
 	
 }

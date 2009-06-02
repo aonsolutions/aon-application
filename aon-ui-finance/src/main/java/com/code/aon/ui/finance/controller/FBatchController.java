@@ -54,6 +54,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.csb.CSB19Writer;
 import com.code.aon.ui.finance.csb.CSB32Writer;
@@ -80,16 +82,9 @@ public class FBatchController extends BasicController implements ICollectionProv
 	private boolean showFbatchRecordWindow;
 
 	public Company getCompany() {
-		try {
-			if (company == null) {
-				IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
-				Iterator<ITransferObject> iter = companyBean.getList(null, 0, 1).iterator();
-				if (iter.hasNext()) {
-					setCompany((Company) iter.next());
-				}
-			}
-		} catch (ManagerBeanException e) {
-			throw new AbortProcessingException("Error obtaining Company!");
+		if (company == null) {
+			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+			setCompany( companyController.obtainCompany() );
 		}
 		return company;
 	}
