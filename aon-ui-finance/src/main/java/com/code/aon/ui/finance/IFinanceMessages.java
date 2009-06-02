@@ -21,5 +21,10 @@ public interface IFinanceMessages {
 	String FINANCE_BATCH_DISK_ERROR = "finance_batch_disk_error";
 	String FINANCE_BATCH_UNRECORD_ERROR = "finance_batch_unrecord_error";
 	String NO_INVOICE_KEY = "finance_invoicing_no_invoice";
+	String FINANCE_SEND_EMAIL_TO = "finance_send_email_to";
+	String FINANCE_REGISTRY_WITHOUT_EMAIL = "finance_registry_without_email";
+	String FINANCE_INVOICE_EMAIL_SUBJECT = "finance_invoice_email_subject";
+	String FINANCE_INVOICE_EMAIL_BODY = "finance_invoice_email_body";
 	
 }
+

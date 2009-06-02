@@ -122,21 +122,17 @@
 							<aon:inputText id="Customer_full_name" disabled="#{saleInvoice.recorded}"
 								value="#{saleInvoice.to.registryName}" size="50" />
 						</a4j:region>
-						<!-- FARSA BOTON -->
 						<aon:commandButton
-							value="Enviar"
-							style="margin-left: 0.7em;"
+							value="#{financeBundle.finance_send_email}"
 							rendered="#{!saleInvoice.new and saleInvoice.to.registry.email != null}"
-							title="Enviar Mail a #{saleInvoice.to.registry.email.value}"
-							actionListener="#{saleInvoice.sendFarsaMail}"
-							styleClass="aon-icon-commandButton aon-icon-mailForward"/>
+							title="#{saleInvoice.sendEmailToTitle}"
+							actionListener="#{saleInvoice.sendInvoiceByEmail}"
+							styleClass="aon-margin-left aon-icon-commandButton aon-icon-mailForward"/>
 						<aon:commandButton
-							value="Sin Email"
-							style="margin-left: 0.7em;"
+							value="#{financeBundle.finance_without_email}" disabled="true"
 							rendered="#{!saleInvoice.new and saleInvoice.to.registry.email == null}"
-							title="#{saleInvoice.to.registry.fullName} no tiene eMail definido."
-							styleClass="aon-icon-commandButton aon-icon-mailDelete"/>
-						<!-- END FARSA BOTON -->
+							title="#{saleInvoice.registryWithoutEmailTitle}"
+							styleClass="aon-margin-left aon-icon-commandButton aon-icon-mailDelete"/>
 					</aon:div>
 
 					<aon:outputLabel for="Customer_registry_document"
