@@ -19,6 +19,8 @@ import com.code.aon.ldap.NameResolver;
 
 public class LoggedUser implements ILdapConstants, IAonObjectClasses {
 
+	public static final String LOGGED_USER = "loggedUser";
+	
 	private boolean logged;
 	
 	private String userName;
