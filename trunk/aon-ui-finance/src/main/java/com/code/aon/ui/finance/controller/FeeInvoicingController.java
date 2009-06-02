@@ -41,17 +41,14 @@ import com.code.aon.finance.invoicing.engine.fee.CustomerFeeInvoicingDAO;
 import com.code.aon.finance.invoicing.engine.fee.CustomerFeeInvoicingEngine;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
-public class FeeInvoicingController  implements IProgression{
+public class FeeInvoicingController implements IProgression, IFinanceConstants, IFinanceMessages {
 
 	private static final Logger LOGGER = Logger.getLogger(FeeInvoicingController.class.getName());
-
-	private final static String BUNDLE_KEY = "financeBundle";
-	private final static String NO_INVOICE_KEY = "finance_invoicing_no_invoice";
-	private final static String SALE_INVOICE_CONTROLLER = "saleInvoice";
 
 	private InvoicingParameters invoicingParams;
 	private IInvoicingEngine engine;
@@ -188,7 +185,7 @@ public class FeeInvoicingController  implements IProgression{
 					List invoices = new LinkedList(invoicedList);
 					invoiceModel = new ListDataModel(invoices);
 				}
-				IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER);
+				IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
 				invoiceController.setModel(invoiceModel);
 				setRedirect(true);
 			} else {

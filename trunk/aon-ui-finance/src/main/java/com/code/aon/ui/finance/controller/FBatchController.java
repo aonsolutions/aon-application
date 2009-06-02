@@ -67,13 +67,9 @@ import com.code.aon.ui.util.AonUtil;
  * Controller used in the fbatch maintenance.
  * 
  */
-public class FBatchController extends BasicController implements ICollectionProvider {
+public class FBatchController extends BasicController implements ICollectionProvider, IFinanceConstants {
 
 	private static final Logger LOGGER = Logger.getLogger(FBatchController.class.getName());
-
-	private static final String FINANCE_CONTROLLER_NAME = "finance";
-
-	private static final String FINANCE_BATCH_DETAIL_CONTROLLER_NAME = "fBatchDetail";
 
 	private Company company;
 

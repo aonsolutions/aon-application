@@ -45,11 +45,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
-public class SaleInvoiceController extends InvoiceController {
-	
-	private static final String SALE_INVOICE_ADDRESS_CONTROLLER_NAME = "saleInvoiceAddress";
-	private static final String SALE_INVOICE_DETAIL_CONTROLLER_NAME = "saleInvoiceDetail";
-	private static final String SALE_INVOICE_FINANCE_CONTROLLER_NAME = "saleInvoiceFinance";
+public class SaleInvoiceController extends InvoiceController implements IFinanceConstants {
 	
 	private IPriceStrategy priceStrategy;
 	
@@ -339,4 +335,8 @@ public class SaleInvoiceController extends InvoiceController {
 		}
 	}
 
+	public void sendInvoiceByEmail( ActionEvent event ) {
+		
+	}
+	
 }
