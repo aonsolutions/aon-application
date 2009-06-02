@@ -1,11 +1,15 @@
 package com.code.aon.accounting;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -42,6 +46,9 @@ public class AccountEntry implements ITransferObject {
 	
 	/** The security level. */
 	private SecurityLevel securityLevel;
+
+	/** The security level. */
+	private Set<AccountEntryDetail> detail = new HashSet<AccountEntryDetail>();
 	
 
 	/**
@@ -161,6 +168,15 @@ public class AccountEntry implements ITransferObject {
 		this.securityLevel = securityLevel;
 	}
 
+	@OneToMany(mappedBy = "accountEntry", cascade={CascadeType.REMOVE})
+	public Set<AccountEntryDetail> getDetail() {
+		return detail;
+	}
+	
+	public void setDetail(Set<AccountEntryDetail> detail) {
+		this.detail = detail;
+	}
+	
     @Override
     public boolean equals(Object obj) {
         return this.id.equals(((AccountEntry)obj).getId()); 
