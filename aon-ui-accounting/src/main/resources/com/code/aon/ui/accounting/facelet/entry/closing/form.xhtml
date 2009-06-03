@@ -19,7 +19,7 @@
 						accesskey="#{bundle.aon_key_save}"
 						actionListener="#{endPeriodEntries.onClosingEntry}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						onclick="return (confirm('#{bundle.aon_save_confirm}'))" />
+						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;" />
 				</ui:define>
 			</ui:decorate>
 

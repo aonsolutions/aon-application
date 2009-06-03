@@ -113,12 +113,12 @@ public class EndPeriodEntriesController {
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
-			if (!existsEntry(getPeriod(), AccountEntryType.OPENING, getSecurityLevel())) {
-				String msg = "No existe el asiento de apertura en el ejercicio " + getPeriod()
-						+ ".";
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg);
-			}
+//			if (!existsEntry(getPeriod(), AccountEntryType.OPENING, getSecurityLevel())) {
+//				String msg = "No existe el asiento de apertura en el ejercicio " + getPeriod()
+//						+ ".";
+//				AonUtil.addErrorMessage(msg);
+//				throw new AbortProcessingException(msg);
+//			}
 		}
 		if (accountEntryType == AccountEntryType.CLOSING) {
 			if (!existsEntry(getPeriod(), AccountEntryType.OPERATING, getSecurityLevel())) {
@@ -161,7 +161,7 @@ public class EndPeriodEntriesController {
 			if (getPreviousPeriod() != null) {
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(entryBean
-						.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), getPreviousPeriod());
+						.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), getPreviousPeriod().getId());
 				criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_TYPE),
 						AccountEntryType.CLOSING);
 				criteria.addEqualExpression(entryBean
@@ -271,7 +271,6 @@ public class EndPeriodEntriesController {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")

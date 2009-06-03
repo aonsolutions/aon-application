@@ -22,6 +22,8 @@ import com.code.aon.ui.util.AonUtil;
 
 public class AccountEntryDetailController extends LinesController {
 	
+	private static final String STATEMENT_CONTROLLER_NAME = "statement";
+
 	public void onBalanceAmount(ActionEvent event) {
 		
 	}
@@ -57,7 +59,6 @@ public class AccountEntryDetailController extends LinesController {
 		return imp;
 	}
 	
-	private static final String STATEMENT_CONTROLLER_NAME = "statement";
 	
 	public void onBalancingAccountStatement(ActionEvent event) {
 		try {

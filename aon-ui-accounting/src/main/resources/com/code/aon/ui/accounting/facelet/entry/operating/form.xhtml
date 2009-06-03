@@ -15,11 +15,11 @@
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="save" value="#{bundle.aon_save}"
+					<aon:commandButton id="save" value="#{accountingBundle.accounting_entry_generate}"
 						accesskey="#{bundle.aon_key_save}"
 						actionListener="#{endPeriodEntries.onOperatingEntry}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						onclick="return (confirm('#{bundle.aon_save_confirm}'))" />
+						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;" />
 				</ui:define>
 			</ui:decorate>
 

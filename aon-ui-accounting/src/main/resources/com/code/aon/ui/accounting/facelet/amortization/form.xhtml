@@ -45,7 +45,7 @@
 						value="#{amortization.to.amortizationType}" limitToList="true"
 						reRender="fixedAccountId,accumulatedAccountId,allocationAccountId,AmortizationType_percentage,AmortizationDetails"
 						ajaxSingle="true">
-						<f:selectItem value="#{nullItem.value}" />
+						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{accountingCollections.amortizationTypes}" />
 					</aon:selectOneMenu>
 
@@ -65,7 +65,7 @@
 						value="#{accountingBundle.accounting_amortization_period}" />
 					<aon:selectOneMenu id="Amortization_amortizationPeriod"
 						value="#{amortization.to.feePeriod}">
-						<f:selectItem value="#{nullItem.value}" />
+						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems
 							value="#{accountingCollections.amortizationPeriods}" />
 					</aon:selectOneMenu>

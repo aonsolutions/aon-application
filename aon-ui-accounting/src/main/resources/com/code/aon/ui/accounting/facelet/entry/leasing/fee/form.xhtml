@@ -20,8 +20,9 @@
 					value="#{leasingFeeEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="save" value="#{bundle.aon_save}"
+					<aon:commandButton id="save" value="#{accountingBundle.accounting_entry_generate}"
 						accesskey="#{bundle.aon_key_save}"
+						title="#{accountingBundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
 						actionListener="#{leasingFeeEntry.accept}"
 						action="accountEntry_form" 
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
@@ -29,17 +30,34 @@
 					</aon:commandButton>
 					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 						accesskey="#{bundle.aon_key_new}"
+						title="#{bundle.aon_reset} (ALT+#{bundle.aon_key_new})"
 						actionListener="#{leasingFeeEntry.onReset}"
 						rendered="#{!leasingFeeEntry.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset">
 					</aon:commandButton>
 					<aon:commandButton id="remove" value="#{bundle.aon_remove}"
-						accesskey="#{bundle.aon_key_remove}" action="accountEntry_search"
+						accesskey="#{bundle.aon_key_remove}" 
+						title="#{bundle.aon_remove} (ALT+#{bundle.aon_key_remove})"
+						action="accountEntry_search" 
 						actionListener="#{leasingFeeEntry.onRemove}"
 						rendered="#{!leasingFeeEntry.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-delete" immediate="true"
-						onclick="if (confirm('#{bundle.aon_remove_confirm}')) return true;">
-					</aon:commandButton>
+						onclick="if (confirm('#{bundle.aon_remove_confirm}')) return true;" />
+					<aon:commandButton value="#{bundle.aon_back}"
+						accesskey="#{bundle.aon_key_cancel}"
+						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})" 
+						action="accountEntry_form"
+						rendered="#{!leasingFeeEntry.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						immediate="true"
+						onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"/>
+					<aon:commandButton value="#{bundle.aon_back}"
+						accesskey="#{bundle.aon_key_cancel}"
+						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})"
+						action="accountEntry_search" rendered="#{leasingFeeEntry.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						immediate="true"
+						onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;" />
 				</ui:define>
 			</ui:decorate>
 
@@ -60,7 +78,7 @@
 					<aon:outputLabel for="date"
 						value="#{bundle.aon_concept}" />
 					<aon:selectOneMenu value="#{leasingFeeEntry.header.concept}">
-						<f:selectItem itemDisabled="true" itemValue="" itemLabel="-" />
+						<f:selectItem itemValue="" itemLabel="-" />
 						<f:selectItems value="#{accountingCollections.autoConcepts}" />
 					</aon:selectOneMenu>
 
@@ -84,7 +102,7 @@
 						ajaxSingle="true"
 						reRender="vat_percentage,taxableBase,total,supplierName,supplierDocument"
 						value="#{leasingFeeEntry.header.leasing}">
-						<f:selectItem itemDisabled="true" itemValue="" itemLabel="-" />
+						<f:selectItem itemValue="" itemLabel="-" />
 						<f:selectItems value="#{accountingCollections.leasings}" />
 					</aon:selectOneMenu>
 
@@ -139,7 +157,7 @@
 					<aon:selectOneMenu id="RegistryBank_Lookup_id" required="true"
 						value="#{leasingFeeEntry.header.RBank}"
 						reRender="RegistryBank_bankAccount" ajaxSingle="true">
-						<f:selectItem itemDisabled="true" itemValue="" itemLabel="-" />
+						<f:selectItem itemValue="" itemLabel="-" />
 						<f:selectItems value="#{financeCollections.companyBanks}" />
 					</aon:selectOneMenu>
 

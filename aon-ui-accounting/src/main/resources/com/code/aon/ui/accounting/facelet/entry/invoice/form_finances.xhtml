@@ -80,7 +80,7 @@
 					valueChangeListener="#{invoiceEntry.onPayMethodChanged}"
 					reRender="RegistryBank_lookup"
 					value="#{invoiceEntry.currentFinance.payMethod}">
-					<f:selectItem value="#{nullItem.value}" />
+					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{configCollections.payMethods}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
@@ -90,7 +90,7 @@
 						valueChangeListener="#{invoiceEntry.onPayMethodChanged}"
 						reRender="RegistryBank_lookup-New"
 						value="#{invoiceEntry.currentFinance.payMethod}">
-						<f:selectItem value="#{nullItem.value}" />
+						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{configCollections.payMethods}" />
 					</aon:selectOneMenu>
 				</f:facet>
@@ -147,7 +147,7 @@
 							reRender="RegistryBank_lookup" immediate="true"
 							value="#{registryCollections.registryBank}"
 							valueChangeListener="#{invoiceEntry.onRBankChanged}">
-							<f:selectItem value="#{nullItem.value}" />
+							<f:selectItem itemLabel="-" value="#{null}" />
 							<f:selectItems value="#{invoiceEntry.banks}" />
 						</aon:selectOneMenu>
 					</aon:div>
@@ -195,7 +195,7 @@
 								valueChangeListener="#{invoiceEntry.onRBankChanged}"
 								value="#{registryCollections.registryBank}" immediate="true"
 								reRender="RegistryBank_lookup-New">
-								<f:selectItem value="#{nullItem.value}" />
+								<f:selectItem itemLabel="-" value="#{null}" />
 								<f:selectItems value="#{invoiceEntry.banks}" />
 							</aon:selectOneMenu>
 						</aon:div>
