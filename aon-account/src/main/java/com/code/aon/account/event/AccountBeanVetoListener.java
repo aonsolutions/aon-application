@@ -7,14 +7,16 @@ import com.code.aon.common.event.ManagerBeanVetoListenerException;
 
 public class AccountBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
+	private static final String ERROR_MSG = "La cuenta debe tener una longitud de 1, 2, 3, 4 ó 9 caracteres.";
+	
     @Override
     public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	Account to = (Account)evt.getTo();
     	if (!checkValidLength(to)) {
-			throw new ManagerBeanVetoListenerException("Valid id lengths are: 1, 2, 3, 4 or 9");
+			throw new ManagerBeanVetoListenerException(ERROR_MSG);
 		}
 
-    	int level = (to.getId().length() > 5) ? 5 : to.getId().length();
+    	int level = (to.getId().length() > 4) ? 5 : to.getId().length();
     	to.setLevel(level);
     	to.setEntryEnabled(level==5);
     }
@@ -23,7 +25,7 @@ public class AccountBeanVetoListener extends ManagerBeanVetoListenerAdapter {
     public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	Account to = (Account)evt.getTo();
     	if (!checkValidLength(to)) {
-    		throw new ManagerBeanVetoListenerException("Valid id lengths are: 1, 2, 3, 4 or 9");
+			throw new ManagerBeanVetoListenerException(ERROR_MSG);
 		}
 	}
 
