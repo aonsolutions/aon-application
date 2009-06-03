@@ -993,10 +993,6 @@
 			com.code.aon.ui.finance.event.InvoiceSearchListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>defaultType</property-name>
-			<value>SALES</value>
-		</managed-property>		
 	</managed-bean>
 
 	<managed-bean>
