@@ -11,9 +11,9 @@ import com.code.aon.product.Product;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Registry;
-import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
 
-public class InvoiceSearchListener extends ControllerSearchListener {
+public class InvoiceSearchListener extends RegistrySearchListener {
 	
 	private String defaultType;
 
@@ -75,6 +75,7 @@ public class InvoiceSearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void init() throws ManagerBeanException {
+		super.init();
 		setType(null);
 		if (getDefaultType() != null) {
 			setType(InvoiceType.valueOf(getDefaultType()));
@@ -87,6 +88,7 @@ public class InvoiceSearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
+		super.completeCriteria();
 		Criteria criteria = getController().getCriteria();
 		if (getType() != null) {
 			criteria.addEqualExpression(getFieldName(IFinanceAlias.INVOICE_TYPE), getType());	

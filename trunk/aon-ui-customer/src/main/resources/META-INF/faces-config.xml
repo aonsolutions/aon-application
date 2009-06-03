@@ -49,6 +49,7 @@
 					<value>#{customerObservationListener}</value>
 					<value>#{customerRBankChildListener}</value>
 					<value>#{customerRPayMethodChildListener}</value>
+					<value>#{customerSearch}</value>
 			</list-entries>
 		</managed-property>
 		<managed-property>
@@ -60,6 +61,12 @@
 	<managed-bean>
 		<managed-bean-name>customerOptionalListeners</managed-bean-name>
 	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>customerSearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistrySearchListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
