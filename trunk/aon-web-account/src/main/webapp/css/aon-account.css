@@ -29,6 +29,18 @@
 	text-decoration: underline;
 }
 
+.aon-dataTable-link-simple {
+	padding-right: 10px;
+}
+
+.aon-dataTable-link-simple:hover {
+	cursor: pointer;
+	color: #285E9C; 
+	text-decoration: underline;
+}
+.aon-dataTable-footerClass {
+	background-color: white;
+}
 .aon-column-middle-width {
 	width: 50%;
 }
