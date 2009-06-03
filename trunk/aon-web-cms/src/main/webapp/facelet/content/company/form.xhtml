@@ -171,47 +171,57 @@
 		        	
 				</aon:panelGrid>
 
-				<rich:panel id="detail_list_panel" rendered="#{!company.new}">
-					<f:facet name="header">#{appBundle.activity}</f:facet>
-					<aon:panelGrid id="activities" columns="2" 
-						styleClass="none" columnClasses="aon-vertical-align-top,aon-vertical-align-top">
-						<aon:dataTable id="dataTable_1" value="#{company.currentActivitiesModel}" var="to"
-							limit="1000"
-							columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
-									aon-editDataTable-textColumn">
-							<aon:column>
-								<f:facet name="header">
-									<aon:div>
-										<aon:outputText value="ACTUALES" />
-									</aon:div>	
-								</f:facet>
-								<a4j:support 
-									actionListener="#{company.removeCurrentActivity}"
-									reRender="activities" 
-									event="onclick" />
-					            <h:outputText value="#{to.activity.alias}" styleClass="aon-editDataTable-button aon-icon-delete"/><br/>
-							</aon:column>
-				        </aon:dataTable>
-				        
-						<aon:dataTable id="dataTable_2" value="#{company.activityModel}" var="to"
-							limit="1000"
-							columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
-									aon-editDataTable-textColumn">
-							<aon:column>
-								<f:facet name="header">
-									<aon:div>
-										<aon:outputText value="DISPONIBLES" />
-									</aon:div>	
-								</f:facet>
-								<a4j:support 
-									actionListener="#{company.addCurrentActivity}"
-									reRender="activities" 
-									event="onclick" />
-					            <h:outputText value="#{to.alias}" styleClass="aon-editDataTable-button aon-icon-accept"/><br/>
-							</aon:column>
-				        </aon:dataTable>
-					</aon:panelGrid>
-				</rich:panel>
+				<aon:div id="detail_panel">
+					<aon:div styleClass="aon-form-group" rendered="#{!company.new}">
+						<aon:div styleClass="aon-form-group-title">
+							<aon:div styleClass="aon-form-group-title-internal">
+								<aon:outputLabel for="dataTable_1" value="#{appBundle.activity}" />
+							</aon:div>
+						</aon:div>
+
+						<aon:panelGrid id="activities" columns="2" styleClass="none"  
+							columnClasses="aon-vertical-align-top, aon-vertical-align-top">
+							<aon:dataTable id="dataTableCurrent" rows="10"
+								value="#{company.currentActivitiesModel}" var="to"
+								columnClasses="aon-editDataTable-textColumn aon-width-300">
+								<aon:column>
+									<f:facet name="header">
+										<aon:div>
+											<aon:outputText value="ACTUALES" />
+										</aon:div>	
+									</f:facet>
+									<a4j:support 
+										actionListener="#{company.removeCurrentActivity}"
+										reRender="activities" 
+										event="onclick" />
+						            <aon:outputText value="#{to.activity.alias}" styleClass="aon-editDataTable-button aon-icon-delete"/>
+								</aon:column>
+								<aon:dataScroller2 for="dataTableCurrent" />
+					        </aon:dataTable>
+					        
+					        <aon:div styleClass="aon-margin-left">
+								<aon:dataTable id="dataTableAvailable" rows="10"
+									value="#{company.activityModel}" var="to"								
+									columnClasses="aon-editDataTable-textColumn aon-width-300">
+									<aon:column>
+										<f:facet name="header">
+											<aon:div>
+												<aon:outputText value="DISPONIBLES" />
+											</aon:div>	
+										</f:facet>
+										<a4j:support 
+											actionListener="#{company.addCurrentActivity}"
+											reRender="activities" 
+											event="onclick" />
+							            <aon:outputText value="#{to.alias}" styleClass="aon-editDataTable-button aon-icon-accept"/>
+									</aon:column>
+						        </aon:dataTable>
+						        <aon:dataScroller2 for="dataTableAvailable" />
+							</aon:div>
+												        
+						</aon:panelGrid>
+					</aon:div>
+				</aon:div>
 			</aon:div>
 		</aon:form>
 	</ui:define>
