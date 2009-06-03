@@ -19,6 +19,7 @@
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="save" value="#{accountingBundle.accounting_entry_generate}"
 						accesskey="#{bundle.aon_key_save}"
+						title="#{accountingBundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
 						actionListener="#{salaryEntry.accept}"
 						action="accountEntry_form"
 						disabled="#{salaryEntry.header.grossSalary == 0}"
@@ -26,15 +27,35 @@
 						onclick="if (!confirm('#{accountingBundle.accounting_entry_generate}?')) return false;" />
 					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 						accesskey="#{bundle.aon_key_new}"
+						title="#{bundle.aon_reset} (ALT+#{bundle.aon_key_new})"
 						actionListener="#{salaryEntry.onReset}"
 						rendered="#{!salaryEntry.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset" />
 					<aon:commandButton id="remove" value="#{bundle.aon_remove}"
-						accesskey="#{bundle.aon_key_remove}" action="accountEntry_search"
+						accesskey="#{bundle.aon_key_remove}" 
+						title="#{bundle.aon_remove} (ALT+#{bundle.aon_key_remove})"
+						action="accountEntry_search" 
 						actionListener="#{salaryEntry.onRemove}"
 						rendered="#{!salaryEntry.new}" immediate="true"
 						styleClass="aon-finding-toolbar-item aon-icon-delete"
 						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;" />
+
+					<aon:commandButton value="#{bundle.aon_back}"
+						accesskey="#{bundle.aon_key_cancel}"
+						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})" 
+						action="accountEntry_form"
+						rendered="#{!salaryEntry.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						immediate="true"
+						onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"/>
+					<aon:commandButton value="#{bundle.aon_back}"
+						accesskey="#{bundle.aon_key_cancel}"
+						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})"
+						action="accountEntry_search" rendered="#{salaryEntry.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						immediate="true"
+						onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;" />
+						
 				</ui:define>
 			</ui:decorate>
 

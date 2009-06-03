@@ -91,7 +91,16 @@ public class LoanEntryController implements ISpecialAccountEntry {
 		return loan;
 	}
 	
-	public void accept(ActionEvent event) throws ManagerBeanException {
+	public void accept(ActionEvent event) {
+
+		try {
+			Integer.parseInt( loan.getTerm() );
+		} catch (NumberFormatException e) {
+			String msg = "El plazo de la operación no es un valor numérico válido";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException( msg );
+		}
+		
 		//inicio transaccion
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
@@ -104,17 +113,30 @@ public class LoanEntryController implements ISpecialAccountEntry {
 				// operaciones de la transaccion
 				AccountPeriodValidator.validateAccountPeriod(getLoan().getLoanDate());
 				AccountEntry entry = new AccountEntry();
-				if(!this.isNew){
-					deleteAccountEntryDetails(getAccountEntry());
-					entry = this.getAccountEntry();
-				}
-				insertLoan(getLoan());
 				entry.setEntryDate(getLoan().getLoanDate());
 				entry.setAccountPeriod(AccountUtil.obtainPeriod(getLoan().getLoanDate()).getId());
 				entry.setJournal(null);
 				entry.setType(AccountEntryType.LOAN);
 				entry.setSecurityLevel(getLoan().getSecurityLevel());
-				entry = insertorUpdateAccountEntry(entry);
+				IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
+				IManagerBean loanBean = BeanManager.getManagerBean(Loan.class);
+				if(this.isNew){
+					loanBean.insert(getLoan());
+					entry = (AccountEntry)entryBean.insert(entry);
+				} else {
+					deleteAccountEntryDetails(getAccountEntry());
+					loan = (Loan) HibernateUtil.getSession(sessionName).merge(loan);
+					loan = (Loan) loanBean.update(loan);
+					
+					// La cuenta contable puede cambiar en función del plazo del préstamo.
+					// Nos aseguramos de que el enlace entre cuenta y prestamo sea correcto.
+					deleteLoanAccount(getLoan());
+					
+					entry = this.getAccountEntry();
+					entry = (AccountEntry) HibernateUtil.getSession(sessionName).merge(entry);
+					entry = (AccountEntry)entryBean.update(entry);
+					
+				}
 				insertEntryDetails(entry);
 				setAccountEntry(entry);
 				this.isNew = false;
@@ -142,12 +164,7 @@ public class LoanEntryController implements ISpecialAccountEntry {
 		}
 	}
 	
-	private Loan insertLoan(Loan loan) throws ManagerBeanException {
-		IManagerBean loanBean = BeanManager.getManagerBean(Loan.class);
-		return (Loan) loanBean.insert(loan);
-	}
-
-	public void onRemove(ActionEvent event) throws ManagerBeanException{
+	public void onRemove(ActionEvent event) {
 		//inicio transaccion
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
@@ -189,76 +206,50 @@ public class LoanEntryController implements ISpecialAccountEntry {
 		}
 	}
 	
-	private AccountEntry insertorUpdateAccountEntry(AccountEntry entry) {
-		try {
-			IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
-			if(this.isNew){
-				entry = (AccountEntry)entryBean.insert(entry);
-			}else{
-				entry = (AccountEntry)entryBean.update(entry);
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error inserting AccountEntry", e);
-		}
-		return entry;
-	}
-	
-	private void insertEntryDetails(AccountEntry entry) {
-		try {
-			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
-			// Primer Apunte
-			AccountEntryDetail detail = new AccountEntryDetail();
-			Account loanAccount = AccountUtil.obtainLoanAccount(getLoan());
-			Account rBankAccount = AccountUtil.obtainRBankAccount(getLoan().getRegistryBank());
-			detail.setAccount(loanAccount);
-			detail.setAccountEntry(entry);
-			detail.setConcept(getLoan().getDescription());
-			detail.setCredit(getLoan().getAmount());
-			detail.setBalancingAccount(rBankAccount);
-			accountEntryDetailBean.insert(detail);
-			// Segundo Apunte
-			detail = new AccountEntryDetail();
-			detail.setAccount(rBankAccount);
-			detail.setAccountEntry(entry);
-			detail.setConcept(getLoan().getDescription());
-			detail.setDebit(getLoan().getAmount() - getLoan().getExpenses());
-			detail.setBalancingAccount(loanAccount);
-			accountEntryDetailBean.insert(detail);
-			// Tercer Apunte
-			detail = new AccountEntryDetail();
-			detail.setAccount(AccountUtil.obtainDefaultAccount(DefaultAccounts.FINANCIAL_EXPENSES_ACCOUNT));;
-			detail.setAccountEntry(entry);
-			detail.setConcept(getLoan().getDescription());
-			detail.setDebit(getLoan().getExpenses());
-			detail.setBalancingAccount(loanAccount);
-			accountEntryDetailBean.insert(detail);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error inserting details for AccountEntry with id = " + entry.getId(), e);
-		}
+	private void insertEntryDetails(AccountEntry entry) throws ManagerBeanException {
+		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+		// Primer Apunte
+		AccountEntryDetail detail = new AccountEntryDetail();
+		Account loanAccount = AccountUtil.obtainLoanAccount(getLoan());
+		Account rBankAccount = AccountUtil.obtainRBankAccount(getLoan().getRegistryBank());
+		detail.setAccount(loanAccount);
+		detail.setAccountEntry(entry);
+		detail.setConcept(getLoan().getDescription());
+		detail.setCredit(getLoan().getAmount());
+		detail.setBalancingAccount(rBankAccount);
+		accountEntryDetailBean.insert(detail);
+		// Segundo Apunte
+		detail = new AccountEntryDetail();
+		detail.setAccount(rBankAccount);
+		detail.setAccountEntry(entry);
+		detail.setConcept(getLoan().getDescription());
+		detail.setDebit(getLoan().getAmount() - getLoan().getExpenses());
+		detail.setBalancingAccount(loanAccount);
+		accountEntryDetailBean.insert(detail);
+		// Tercer Apunte
+		detail = new AccountEntryDetail();
+		detail.setAccount(AccountUtil.obtainDefaultAccount(DefaultAccounts.FINANCIAL_EXPENSES_ACCOUNT));;
+		detail.setAccountEntry(entry);
+		detail.setConcept(getLoan().getDescription());
+		detail.setDebit(getLoan().getExpenses());
+		detail.setBalancingAccount(loanAccount);
+		accountEntryDetailBean.insert(detail);
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void deleteAccountEntryDetails(AccountEntry accountEntry) {
-		try {
-			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
-			Iterator iter = accountEntryDetailBean.getList(criteria).iterator();
-			while(iter.hasNext()){
-				accountEntryDetailBean.remove((AccountEntryDetail)iter.next());
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error deleting details related with AccountEntry with id=" + accountEntry.getId(), e);
+	private void deleteAccountEntryDetails(AccountEntry accountEntry) throws ManagerBeanException {
+		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
+		Iterator iter = accountEntryDetailBean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			accountEntryDetailBean.remove((AccountEntryDetail)iter.next());
 		}
 	}
 
-	private void deleteAccountEntry(AccountEntry accountEntry) {
-		try {
-			IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
-			accountEntryBean.remove(accountEntry);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error deleting AccountEntry with id= " + accountEntry.getId(), e);
-		}
+	private void deleteAccountEntry(AccountEntry accountEntry) throws ManagerBeanException {
+		IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
+		accountEntryBean.remove(accountEntry);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -278,18 +269,14 @@ public class LoanEntryController implements ISpecialAccountEntry {
 		loanBean.remove(loan);
 	}
 
-	private void loadAccountEntryController(AccountEntry entry) {
-		try {
-			AccountEntryController entryController = (AccountEntryController)FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
-			entryController.setCriteria(criteria);
-			entryController.onSearch(null);
-			entryController.getModel().setRowIndex(0);
-			entryController.onSelect(null);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading AccountEntryController", e);
-		}
+	private void loadAccountEntryController(AccountEntry entry) throws ManagerBeanException {
+		AccountEntryController entryController = (AccountEntryController)FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
+		entryController.setCriteria(criteria);
+		entryController.onSearch(null);
+		entryController.getModel().setRowIndex(0);
+		entryController.onSelect(null);
 	}
 
 	@Override
@@ -303,7 +290,10 @@ public class LoanEntryController implements ISpecialAccountEntry {
 
 	@SuppressWarnings("unchecked")
 	private Loan obtainLoan(AccountEntry entry) throws ManagerBeanException {
-		AccountEntryDetail detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.LOAN_ACCOUNT_PREFIX + "*");
+		AccountEntryDetail detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.SHORT_TERM_LOAN_ACCOUNT_PREFIX + "*");
+		if (detail == null) {
+			detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.LONG_TERM_LOAN_ACCOUNT_PREFIX + "*");	
+		}
 		IManagerBean loanAccountBean = BeanManager.getManagerBean(LoanAccount.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(loanAccountBean.getFieldName(IAccountBridgeAlias.LOAN_ACCOUNT_ACCOUNT_ID), detail.getAccount().getId());

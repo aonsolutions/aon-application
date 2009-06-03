@@ -22,11 +22,12 @@
 					<aon:commandButton id="reset" 
 						value="#{bundle.aon_reset}"
 						accesskey="#{bundle.aon_key_new}"
-						title="#{bundle.aon_key_new}"
+						title="#{bundle.aon_key_new} (ALT+#{bundle.aon_key_new})"
 						action="accountEntry_form"
 						actionListener="#{accountEntry.onReset}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"
 						rendered="#{!accountEntry.new}" />
+
 					<aon:commandButton 
 						value="#{accountingBundle.accounting_new_invoice_entry}"
 						accesskey="X" title="Alt+X"
@@ -34,38 +35,40 @@
 						action="account_invoice_entry"
 						rendered="#{!accountEntry.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset" />
-<!-- 
-accounting_new_wizard_entry=Wizard
- -->
 
 					<aon:commandButton id="save" value="#{bundle.aon_save}"
+						title="#{bundle.aon_save} (ALT+#{bundle.aon_key_save})"
 						accesskey="#{bundle.aon_key_save}"
 						actionListener="#{accountEntry.accept}"
-						disabled="#{!accountEntry.manual}"
-						rendered="#{accountEntry.model.rowCount > 0 or accountEntry.new}"
+						rendered="#{accountEntry.manual and (accountEntry.model.rowCount > 0 or accountEntry.new)}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;">
-						
+						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;"
+						focus="accountId-NEW">
 						<aon:actionListener method="#{accountEntryDetail.onReset}" />
-						
 					</aon:commandButton>
+
 					<aon:commandButton id="remove" value="#{bundle.aon_remove}"
+						title="#{bundle.aon_remove} (ALT+#{bundle.aon_key_remove})"
 						accesskey="#{bundle.aon_key_remove}" action="accountEntry_form"
 						actionListener="#{accountEntry.onRemove}"
-						rendered="#{accountEntry.model.rowCount > 0 and !accountEntry.new}"
+						rendered="#{!accountEntry.new and accountEntry.manual}"
 						styleClass="aon-finding-toolbar-item aon-icon-delete"
-						disabled="#{!accountEntry.manual}"
 						immediate="true"
 						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;" />
+
 					<aon:commandButton id="search" value="#{bundle.aon_search}"
+						title="#{bundle.aon_search} (ALT+#{bundle.aon_key_search})"
 						accesskey="#{bundle.aon_key_search}" action="accountEntry_search"
+						rendered="#{!accountEntry.new}"
 						actionListener="#{accountEntry.onEditSearch}"
 						styleClass="aon-finding-toolbar-item aon-icon-search"
 						immediate="true" />
+
 					<aon:commandButton id="update" value="#{bundle.aon_update}"
+						accesskey="Q" title="#{bundle.aon_update} Alt+Q"
 						action="#{accountEntry.onNavigate}"
 						actionListener="#{accountEntry.onSelectEntry}"
-						disabled="#{accountEntry.manual}"
+						rendered="#{!accountEntry.manual}"
 						styleClass="aon-finding-toolbar-item aon-icon-refresh"
 						immediate="true" />
 

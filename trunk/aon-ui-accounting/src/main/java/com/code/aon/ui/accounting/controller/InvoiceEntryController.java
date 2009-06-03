@@ -299,14 +299,17 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	}
 
 	private void initializeHeader() throws ManagerBeanException {
-		Account account = new Account();
-		account.setEntryEnabled(true);
-		header.setAccount(account);
+//		Account account = new Account();
+//		account.setEntryEnabled(true);
+//		header.setAccount(account);
+
+		header.setAccount(null);
+		
 		header.setRegistry(new Registry());
 		if(invoiceDate!=null){		
-		header.setDate(this.getInvoiceDate());
-		header.setTaxDate(this.getTaxDate());
-		}else{
+			header.setDate(this.getInvoiceDate());
+			header.setTaxDate(this.getTaxDate());
+		} else {
 			header.setDate(new Date());
 			header.setTaxDate(new Date());
 		}
@@ -1308,4 +1311,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	public String getNavigationKey() {
 		return "account_invoice_entry";
 	}
+
 }
+

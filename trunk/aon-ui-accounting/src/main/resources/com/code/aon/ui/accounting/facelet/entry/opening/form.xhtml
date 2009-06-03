@@ -23,7 +23,7 @@
 						accesskey="#{bundle.aon_key_save}"
 						actionListener="#{endPeriodEntries.onOpeningEntry}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						onclick="return (confirm('#{bundle.aon_save_confirm}'));" />
+						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;" />
 				</ui:define>
 			</ui:decorate>
 
@@ -34,7 +34,7 @@
 						value="#{accountingBundle.accounting_previous_period}" />
 					<aon:selectOneMenu id="Opening_Period_Previous"
 						value="#{endPeriodEntries.previousPeriod}">
-						<f:selectItem value="#{nullItem.value}" />
+						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{accountingCollections.accountPeriods}" />
 					</aon:selectOneMenu>
 

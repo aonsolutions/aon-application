@@ -49,15 +49,17 @@ public class AccountEntryDetailControllerListener extends ControllerAdapter {
 		try {
 			AccountEntryDetail detail = (AccountEntryDetail) event.getController().getTo();
 			List<AccountEntryDetail> list = (List <AccountEntryDetail>) event.getController().getModel().getWrappedData();
-			double imp = getBalance(list);
-			if (imp > 0) {
-				detail.setCredit(imp);	
-			} else {
-				detail.setDebit(CommonUtil.round(imp*(-1)));
+			if (list.size()>0){
+				double imp = getBalance(list);
+				if (imp > 0) {
+					detail.setCredit(imp);	
+				} else {
+					detail.setDebit(CommonUtil.round(imp*(-1)));
+				}
+				detail.setConcept(getConcept());
+				detail.setAccount(getBalancingAccount());
+				detail.setBalancingAccount(getAccount());
 			}
-			detail.setConcept(getConcept());
-			detail.setAccount(getBalancingAccount());
-			detail.setBalancingAccount(getAccount());
 			setBalancingAccount(null);
 			setAccount(null);
 			setConcept(null);

@@ -40,7 +40,7 @@
 					<aon:selectOneMenu id="AccountEntry_type"
 						converter="aon.EnumConverter"
 						valueChangeListener="#{accountEntry.addEqualExpression}">
-						<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{accountingCollections.accountTypes}" />
 					</aon:selectOneMenu>
 
@@ -65,7 +65,7 @@
 					<aon:selectOneMenu id="AccountEntry_securityLevel"
 						converter="aon.EnumConverter"
 						valueChangeListener="#{controller.addEqualExpression}">
-						<f:selectItem value="#{nullItem.value}" />
+						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{commonCollections.securityLevels}" />
 					</aon:selectOneMenu>
 					

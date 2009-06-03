@@ -117,8 +117,7 @@ public class ExpenseEntryController implements ISpecialAccountEntry{
 	private ExpenseEntryHeader initializeHeader() {
 		ExpenseEntryHeader header = new ExpenseEntryHeader();
 		header.setDate(new Date());
-		header.setAccount(new Account());
-		header.getAccount().setId("");
+		header.setAccount(null);
 		return header;
 	}
 	

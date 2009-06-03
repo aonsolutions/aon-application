@@ -36,7 +36,7 @@
 					<aon:selectOneMenu
 						id="AccountEntryDetail_accountEntry_accountPeriod"
 						value="#{journalReport.period}">
-						<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+						<f:selectItem itemLabel="-" itemValue="" />
 						<f:selectItems value="#{accountingCollections.accountPeriods}" />
 					</aon:selectOneMenu>
 
@@ -66,7 +66,7 @@
 						value="#{bundle.aon_security_level}" />
 					<aon:selectOneMenu value="#{journalReport.securityLevel}" 
 						id="AccountEntryDetail_accountEntry_securityLevel">
-						<f:selectItem value="#{nullItem.value}" />
+						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{commonCollections.securityLevels}" />
 					</aon:selectOneMenu>
 
