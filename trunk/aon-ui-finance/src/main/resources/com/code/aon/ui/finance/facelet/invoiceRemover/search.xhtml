@@ -3,27 +3,12 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:h="http://java.sun.com/jsf/html"
-	template="/facelet/templates/aon.ui.content.xhtml">
+	xmlns:h="http://java.sun.com/jsf/html">
 
-	<ui:define name="content">
-		<aon:form id="invoiceRemoverForm">
+	<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/searchInvoice.xhtml" >
+		<ui:param name="toolbarTitle" value="#{financeBundle.finance_invoice_removing_module}" />
+		<ui:param name="controller" value="#{invoiceRemover}" />
+		<ui:param name="searchController" value="#{invoiceRemoverSearch}" />
+	</ui:include>
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_invoice_removing_module}" />
-				<ui:param name="controller" value="#{invoiceRemover}" />
-			</ui:include>
-
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
-				<ui:param name="controller" value="#{invoiceRemover}" />
-				<ui:define name="searchContent">
-					<ui:include src="/com/code/aon/ui/finance/facelet/invoiceRemover/searchContent.xhtml" />
-				</ui:define>
-			</ui:decorate>
-		</aon:form>
-		<aon:lookupButtonPopup lookup="#{customerLookup}" />
-		<aon:lookupButtonPopup lookup="#{itemLookup}" />
-		<aon:lookupButtonPopup lookup="#{bankLookup}" />
-	</ui:define>
 </ui:composition>

@@ -924,12 +924,16 @@
 	<managed-bean>
 		<managed-bean-name>invoiceRecordingSearch</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.event.InvoiceRecordingSearchListener
+			com.code.aon.ui.finance.event.InvoiceSearchListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>defaultType</property-name>
 			<value>SALES</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultStatus</property-name>
+			<value>PENDING</value>
 		</managed-property>		
 	</managed-bean>
 

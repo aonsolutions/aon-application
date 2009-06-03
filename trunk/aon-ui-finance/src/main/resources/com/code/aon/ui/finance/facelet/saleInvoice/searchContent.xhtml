@@ -24,20 +24,20 @@
 					<aon:lookupInputText id="InvoiceDetail_item_code" 
 						lookup="#{itemLookup}"
 						reRender="InvoiceDetail_item_detail"
-						value="#{saleInvoiceSearch.item.product.code}" size="10">
+						value="#{searchController.item.product.code}" size="10">
 						<aon:joinProperty alias="Item_product_code"
-							value="#{saleInvoiceSearch.item.product.code}" />
+							value="#{searchController.item.product.code}" />
 					</aon:lookupInputText>
 					<aon:lookupButton
 						windowTitle="#{productBundle.product_item_selection}" actionType="search"
 						selectReRender="InvoiceDetail_item_code,InvoiceDetail_item_detail"
 						lookup="#{itemLookup}" minHeight="460" minWidth="650"
-						property="#{saleInvoiceSearch.item}">
+						property="#{searchController.item}">
 						<aon:joinProperty alias="Item_product_code"
 							value="#{saleInvoiceDetail.to.item.product.code}" />
 					</aon:lookupButton>
 					<aon:inputText id="InvoiceDetail_item_detail"
-						value="#{(saleInvoiceSearch.item.product.name!=null)?(saleInvoiceSearch.item.product.name):('')}"
+						value="#{(searchController.item.product.name!=null)?(searchController.item.product.name):('')}"
 						size="60" disabled="true" />
 				</aon:div>
 								
@@ -94,17 +94,17 @@
 				<aon:div styleClass="aon-lookup">
 					<aon:lookupInputText id="Bank_code" lookup="#{bankLookup}"
 						reRender="Bank_name"
-						value="#{saleInvoiceSearch.bank.code}" size="5">
-						<aon:joinProperty alias="Bank_code" value="#{saleInvoiceSearch.bank.code}" />
+						value="#{searchController.bank.code}" size="5">
+						<aon:joinProperty alias="Bank_code" value="#{searchController.bank.code}" />
 					</aon:lookupInputText>
 					<aon:lookupButton 
 						windowTitle="#{configBundle.config_bank_selection}"
 						selectReRender="Bank_code,Bank_name" actionType="search"
 						lookup="#{bankLookup}" minHeight="460" minWidth="650"
-						property="#{saleInvoiceSearch.bank}">
+						property="#{searchController.bank}">
 					</aon:lookupButton>
 					<aon:inputText id="Bank_name"
-						value="#{saleInvoiceSearch.bank.name}"
+						value="#{searchController.bank.name}"
 						size="50" disabled="true" />							
 				</aon:div>
 				
@@ -135,16 +135,13 @@
 			</aon:panelGrid>
 		</aon:panelCollapsible>
 
-		<aon:panelCollapsible expanded="false" label="Datos del Cliente" >
+		<aon:panelCollapsible expanded="false" label="#{financeBundle.finance_invoice_customer_data}" >
 			<aon:panel style="text-align:right;">
 				<f:facet name="header">
 					<aon:outputLabel value="#{registryBundle.registry_address_module}" />
 				</f:facet>
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
-					<ui:include src="/com/code/aon/ui/registry/facelet/raddress/searchContent.xhtml">
-						<ui:param name="controller" value="#{saleInvoice}" />
-						<ui:param name="searchController" value="#{saleInvoiceSearch}" />
-					</ui:include>
+					<ui:include src="/com/code/aon/ui/registry/facelet/raddress/searchContent.xhtml" />
 				</aon:panelGrid>
 			</aon:panel>
 			<aon:panel style="text-align:right;">
@@ -152,10 +149,7 @@
 					<aon:outputLabel value="#{registryBundle.registry_media_module}" />
 				</f:facet>
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
-					<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/searchContent.xhtml">
-						<ui:param name="controller" value="#{saleInvoice}" />
-						<ui:param name="searchController" value="#{saleInvoiceSearch}" />
-					</ui:include>
+					<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/searchContent.xhtml" />
 				</aon:panelGrid>
 			</aon:panel>
 		</aon:panelCollapsible>
