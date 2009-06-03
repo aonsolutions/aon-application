@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:outputLabel for="#{searchController.preffix}addresses_address"
+		value="#{registryBundle.registry_address}" />
+	<aon:inputText id="#{searchController.preffix}addresses_address" size="60"
+		valueChangeListener="#{controller.addExpression}" />
+	<aon:outputLabel for="#{searchController.preffix}addresses_zip"
+		value="#{registryBundle.registry_zip}" />
+	<aon:inputText id="#{searchController.preffix}addresses_zip" size="60"
+		valueChangeListener="#{controller.addExpression}" />
+	<aon:outputLabel for="#{searchController.preffix}addresses_city"
+		value="#{registryBundle.registry_city}" />
+	<aon:inputText id="#{searchController.preffix}addresses_city" size="60"
+		valueChangeListener="#{controller.addExpression}" />
+	<aon:outputLabel for="#{searchController.preffix}addresses_geozone_id"
+		value="#{registryBundle.registry_geozone}" />
+	<aon:div id="geoZoneDiv">
+		<a4j:repeat value="#{searchController.geoZones}" rowKeyVar="index" var="geoZone">
+			<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+				<aon:selectOneMenu id="#{searchController.preffix}addresses_geozone_id"
+					value="#{searchController.geoZones[index]}">
+					<f:selectItem itemLabel="-" itemValue="#{searchController.emptyGeoZone}"/>
+					<f:selectItems value="#{geozoneCollections.geoTrees}" />
+					<a4j:support event="onchange" reRender="geoZoneDiv"/>
+				</aon:selectOneMenu>
+				<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="geoZoneDiv"
+					actionListener="#{searchController.onRemoveGeoZone}"
+					rendered="#{geoZone.id != null}">
+					<f:param name="index" value="#{index}" />
+				</aon:commandButton>
+				<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="geoZoneDiv"
+					actionListener="#{searchController.onAddGeoZone}"
+					rendered="#{(geoZone.id != null) and (index == (searchController.geoZonesSize-1))}"/>					
+			</aon:div>						
+		</a4j:repeat>
+	</aon:div>			
+
+</ui:composition>
