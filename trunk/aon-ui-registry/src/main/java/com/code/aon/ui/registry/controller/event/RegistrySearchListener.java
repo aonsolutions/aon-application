@@ -41,10 +41,6 @@ public class RegistrySearchListener extends ControllerSearchListener {
 		return geoZones;
 	}
 
-	public GeoZone getEmptyGeoZone() {
-		return EMPTY_GEOZONE;
-	}
-	
 	public void setGeoZones(List<GeoZone> geoZones) {
 		this.geoZones = geoZones;
 	}
@@ -56,12 +52,16 @@ public class RegistrySearchListener extends ControllerSearchListener {
 	public List<Integer> getGeoZonesIds() {
 		List<Integer> ids = new LinkedList<Integer>();
 		for( GeoZone geozone : getGeoZones() ) {
-			if ( geozone.getId() != null ) {
+			if ( (geozone != null) && (geozone.getId() != null) ) {
 				ids.add( geozone.getId() );
 			}
 		}
 		return ids;
 	}	
+	
+	public GeoZone getEmptyGeoZone() {
+		return EMPTY_GEOZONE;
+	}
 	
 	@Override
 	protected void init() throws ManagerBeanException {
