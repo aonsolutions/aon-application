@@ -1,29 +1,20 @@
 package com.code.aon.ui.finance.util;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 
 import javax.faces.event.AbortProcessingException;
 import javax.mail.Address;
-import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
-import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.finance.Invoice;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryMedia;
-import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -67,13 +58,16 @@ public class EmailUtilController implements IFinanceMessages {
 
 	public String getEmailSubject( Invoice invoice ) {
 		String message = AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_EMAIL_SUBJECT);
-		return MessageFormat.format(message, getCompany().getName(), invoice.getReferenceCode() );
+		return MessageFormat.format(message, invoice.getReferenceCode() );
 	}
 
-	public String getEmailBody() {
+	public String getEmailBody( Invoice invoice ) {
 		StringBuffer body = new StringBuffer();
 		body.append( "<html><body>" );
-		body.append(AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_EMAIL_BODY) );
+		body.append(AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_EMAIL_BODY_HEADER) );
+		String bodyPart = AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_EMAIL_BODY); 
+		body.append( MessageFormat.format(bodyPart, invoice.getReferenceCode(), invoice.getIssueDate()) );
+		body.append(AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_EMAIL_BODY_FOOTER) );
 		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 		Company company = companyController.obtainCompany();
 		body.append( company.getName() ).append( "<br/>" );
@@ -102,25 +96,22 @@ public class EmailUtilController implements IFinanceMessages {
 		return this.sender;
 	}
 	
-	public AonFile getInvoiceFile( Invoice invoice ) throws IOException, ReportException, DAOException {
+	public AonFile getInvoiceFile( String reporkey, String fileName ) throws IOException, ReportException {
 		ReportManager report = new ReportManager();
-		report.setOutputFormat(OutputFormat.PDF);
-		report.setReportKey("saleInvoice");
-		File file = File.createTempFile( "invoice", ".pdf" );
-		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-		report.execute(out);
-		out.close();
+		File file = File.createTempFile( reporkey, ".pdf" );
+		report.execute( file, reporkey);
 		AonFile aonFile = new AonFile();
 		aonFile.setFile(file);
-		aonFile.setFileName( "invoice.pdf" );
+		aonFile.setFileName( fileName );
 		return aonFile;
 	}
 	
-	public void sendInvoice( Invoice invoice ) throws WebmailException, MessagingException, ManagerBeanException, ReportException, IOException, DAOException {
+	public void sendInvoice( Invoice invoice ) throws ReportException, IOException, WebmailException, ManagerBeanException {
 		Address to = new InternetAddress( invoice.getRegistry().getEmail().getValue(), invoice.getRegistryName() );
 		String subject = getEmailSubject(invoice);
-		String content = getEmailBody();
-		AonFile file = getInvoiceFile(invoice);
+		String content = getEmailBody(invoice);
+		String name = "invoice_" + invoice.getSeries() + "-" + invoice.getNumber() + ".pdf";
+		AonFile file = getInvoiceFile("saleInvoice", name);
 		getEmailSender().sendMessage(to, subject, content, MimeType.MIME_HTML, file);		
 		file.getFile().delete();
 	}
