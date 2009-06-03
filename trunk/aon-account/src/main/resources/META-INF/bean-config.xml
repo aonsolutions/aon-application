@@ -8,9 +8,6 @@
 
 	<bean description="Listener para controlar el check de permite apuntes de cuentas">
 		<pojo>com.code.aon.account.Account</pojo>
-		<listeners>
-	        <listener>com.code.aon.account.event.AccountBeanListener</listener>
-		</listeners>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.account.event.AccountBeanVetoListener</vetoListener>
 		</vetoListeners>
