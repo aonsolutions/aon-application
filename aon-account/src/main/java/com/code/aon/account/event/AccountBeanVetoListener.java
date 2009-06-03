@@ -10,34 +10,29 @@ public class AccountBeanVetoListener extends ManagerBeanVetoListenerAdapter {
     @Override
     public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	Account to = (Account)evt.getTo();
-    	if(!checkValidLength(to)){
-			throw new ManagerBeanVetoListenerException("Valid id lengths are: 1, 2, 3, 5 or 12");
+    	if (!checkValidLength(to)) {
+			throw new ManagerBeanVetoListenerException("Valid id lengths are: 1, 2, 3, 4 or 9");
 		}
-    	to.setEntryEnabled(true);
-    	int level = to.getId().length();
-    	if (level == 5 ) {
-    		level = 4;
-    	}
-    	if (level >5 ) {
-    		level = 5;
-    	}
+
+    	int level = (to.getId().length() > 5) ? 5 : to.getId().length();
     	to.setLevel(level);
+    	to.setEntryEnabled(level==5);
     }
 	
     @Override
     public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	Account to = (Account)evt.getTo();
-    	if(!checkValidLength(to)){
-    		throw new ManagerBeanVetoListenerException("Valid id lengths are: 1, 2, 3, 5 or 12");
+    	if (!checkValidLength(to)) {
+    		throw new ManagerBeanVetoListenerException("Valid id lengths are: 1, 2, 3, 4 or 9");
 		}
 	}
 
 	private boolean checkValidLength(Account account) {
-		int l = account.getId().length();
-		if (l == 1 || l == 2 || l == 3 || l == 5 || l == 12 ){
+		int length = account.getId().length();
+		if (length == 1 || length == 2 || length == 3 || length == 4 || length == 9 ) {
 			return true;
 		}
 		return false;
 	}
-    
+
 }
