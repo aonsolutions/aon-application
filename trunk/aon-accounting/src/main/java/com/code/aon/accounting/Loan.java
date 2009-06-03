@@ -12,6 +12,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
@@ -28,33 +32,15 @@ public class Loan implements ITransferObject {
 
 	private static final long serialVersionUID = 6332808498569171281L;
 
-	/** The id. */
 	private Integer id;
-	
-	/** The description. */
 	private String description;
-	
-	/** The loan date. */
 	private Date loanDate;
-	
-	/** The term. */
 	private String term;
-	
-	/** The interest. */
 	private String interest;
-	
-	/** The review. */
 	private String review;
-	
-	/** The amount. */
 	private double amount;
-	
-	/** The expenses. */
 	private double expenses;
-	
-	/** The registry bank. */
 	private RegistryBank registryBank;
-	
 	private SecurityLevel securityLevel;
 
 	/**
@@ -242,4 +228,46 @@ public class Loan implements ITransferObject {
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
 	}
+	
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() !=  getClass()) return false;
+		final Loan o = (Loan) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+			.append(this.description, o.description)
+			.append(this.loanDate, o.loanDate )
+			.append(this.term, o.term )
+			.append(this.interest, o.interest )
+			.append(this.review, o.review  )
+			.append(this.amount, o.amount )
+			.append(this.expenses, o.expenses )
+			.append(this.registryBank, o.registryBank )
+			.append(this.securityLevel, o.securityLevel )
+			.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(this.id)
+			.append(this.loanDate)
+			.append(this.term)
+			.append(this.interest)
+			.append(this.review)
+			.append(this.amount)
+			.append(this.expenses)
+			.toHashCode();
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
+	
 }
