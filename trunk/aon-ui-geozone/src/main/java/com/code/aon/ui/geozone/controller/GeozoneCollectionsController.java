@@ -78,7 +78,9 @@ public class GeozoneCollectionsController {
 			Iterator<ITransferObject> iter = geoTreeBean.getList(criteria).iterator();
 			while (iter.hasNext()) {
 				GeoTree geoTree = (GeoTree)iter.next();
-				SelectItemGroup itemGroup = new SelectItemGroup(geoTree.getChild().getName(),geoTree.getChild().getName(),true,obtainGeoTreeChilds(geoTree.getChild().getId()));
+				String name = geoTree.getChild().getName();
+				SelectItem[] selectItems = obtainGeoTreeChilds(geoTree.getChild().getId());
+				SelectItemGroup itemGroup = new SelectItemGroup(name, name,false, selectItems);
 				geoTrees.add(itemGroup);
 			}
 		}
