@@ -127,6 +127,8 @@
 							rendered="#{!saleInvoice.new and saleInvoice.to.registry.email != null}"
 							title="#{saleInvoice.sendEmailToTitle}"
 							actionListener="#{saleInvoice.sendInvoiceByEmail}"
+							onclick="Richfaces.showModalPanel('waitProccess')" 
+			     			oncomplete="Richfaces.hideModalPanel('waitProccess')"							
 							styleClass="aon-margin-left aon-icon-commandButton aon-icon-mailForward"/>
 						<aon:commandButton
 							value="#{financeBundle.finance_without_email}" disabled="true"

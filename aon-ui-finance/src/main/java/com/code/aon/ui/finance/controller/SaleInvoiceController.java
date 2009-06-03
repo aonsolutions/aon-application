@@ -11,8 +11,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
-import javax.mail.Address;
-import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -24,7 +22,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.company.Company;
 import com.code.aon.config.Series;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.customer.Customer;
@@ -44,8 +41,6 @@ import com.code.aon.ql.Projection;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.util.EmailUtilController;
