@@ -38,11 +38,11 @@
 							reRender="saleInvoiceForm"
 							onclick="Richfaces.showModalPanel('waitProccess')" 
 				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<h:commandLink id="saleInvoice" value="#{bundle.aon_report}"
+						<h:commandLink id="saleInvoice" value="#{financeBundle.finance_invoice}"
 							target="_new" rendered="#{!saleInvoice.new and saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
 							action="#{report.onExecute}"
 							accesskey="#{bundle.aon_key_print}"
-							styleClass="aon-finding-toolbar-item aon-icon-printer">
+							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 							<f:param name="reportKey" value="saleInvoice" />
 							<f:param name="outputFormat" value="PDF" />
 						</h:commandLink>

@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
@@ -12,14 +13,14 @@
 	<aon:div styleClass="aon-lookup">
 		<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
 			reRender="Customer_full_name" lookupProperty="registry"
-			value="#{saleInvoiceSearch.registry.id}" size="5" />
+			value="#{searchController.registry.id}" size="5" />
 		<aon:lookupButton windowTitle="#{customerBundle.customer_selection}"
 			selectReRender="Customer_id,Customer_full_name" actionType="search"
 			lookup="#{customerLookup}" minHeight="460" minWidth="650"
-			property="#{saleInvoiceSearch.registry}" lookupProperty="registry">
+			property="#{searchController.registry}" lookupProperty="registry">
 		</aon:lookupButton>
 		<aon:inputText id="Customer_full_name"
-			value="#{(saleInvoiceSearch.registry.name!=null)?(saleInvoiceSearch.registry.fullName):('')}"
+			value="#{(searchController.registry.name!=null)?(searchController.registry.fullName):('')}"
 			size="50" disabled="true" />
 	</aon:div>
 
@@ -49,11 +50,13 @@
 		<f:selectItems value="#{commonCollections.securityLevels}" />
 	</aon:selectOneMenu>
 
-	<aon:outputLabel for="Invoice_status" value="#{bundle.aon_status}" />
-	<aon:selectOneMenu id="Invoice_status" converter="aon.EnumConverter"
-		valueChangeListener="#{controller.addEqualExpression}">
-		<f:selectItem itemLabel="-" value="#{null}" />
-		<f:selectItems value="#{financeCollections.invoiceStatuses}" />
-	</aon:selectOneMenu>
+	<c:if test="#{searchController.defaultStatus == null}">
+		<aon:outputLabel for="Invoice_status" value="#{bundle.aon_status}" />
+		<aon:selectOneMenu id="Invoice_status" converter="aon.EnumConverter"
+			valueChangeListener="#{controller.addEqualExpression}">
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{financeCollections.invoiceStatuses}" />
+		</aon:selectOneMenu>
+	</c:if>
 
 </ui:composition>
