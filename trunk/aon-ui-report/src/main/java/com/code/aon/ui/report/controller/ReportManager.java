@@ -1,5 +1,8 @@
 package com.code.aon.ui.report.controller;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -144,9 +147,9 @@ public class ReportManager {
 	 *             If an error ocurred.
 	 * @throws DAOException
 	 */
-	public String onExecute() throws ReportException, DAOException {
+	public String onExecute() throws ReportException {
 		ensureParams();
-		String out = execute(getOutputStream());
+		String out = execute(getOutputStream(), getReportKey());
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		ctx.responseComplete();
 		return out;
@@ -164,7 +167,37 @@ public class ReportManager {
 	 *             If an error ocurred.
 	 * @throws DAOException
 	 */
-	public String execute( OutputStream os ) throws ReportException, DAOException {
+	public String execute( File file, String reportKey ) throws ReportException {
+		OutputStream out = null;
+		try {
+			out = new BufferedOutputStream(new FileOutputStream(file));
+			return execute(out, reportKey);
+		} catch ( IOException e ) {
+			throw new ReportException(e.getMessage(), e);	
+		} finally {
+			if ( out != null ) {
+				try {
+					out.close();
+				} catch (IOException e) {
+					throw new ReportException(e.getMessage(), e);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Runs the report. Obtains a
+	 * <code>com.code.aon.ui.report.jr.JRReport</code> calling the
+	 * <code>JRReportFactory.getJRReport(getReportKey())</code> method. Also,
+	 * finalizes the reponse calling the
+	 * <code>FacesContext.getCurrentInstance().responseComplete()</code>.
+	 * 
+	 * @return The outcome (- null - because this method finalizes the reponse).
+	 * @throws ReportException
+	 *             If an error ocurred.
+	 * @throws DAOException
+	 */
+	public String execute( OutputStream os, String reportKey ) throws ReportException {
 
 		boolean initTransState = HibernateUtil.mustBeginTransaction();
 		boolean initSessionState = HibernateUtil.mustCloseSession();
@@ -172,7 +205,8 @@ public class ReportManager {
 		HibernateUtil.setCloseSession(false);
 		HibernateUtil.setBeginTransaction(false);
 		try {
-			JRReport report = JRReportFactory.getJRReport(getReportKey());
+			ensureOutputFormat();
+			JRReport report = JRReportFactory.getJRReport(reportKey);
 			resolveCustomParameters(report);
 			Criteria criteria = getCriteria(report);
 			Collection collection = getCollection(report);
@@ -195,6 +229,8 @@ public class ReportManager {
 			HibernateUtil.commitTransaction(sessionFactoryName);
 			HibernateUtil.closeSession(sessionFactoryName);
 			return out;
+		} catch (DAOException e) {
+			throw new ReportException(e.getMessage(), e);
 		} finally {
 			if (initTransState != HibernateUtil.mustBeginTransaction()) {
 				HibernateUtil.setBeginTransaction(initTransState);
