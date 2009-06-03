@@ -94,6 +94,24 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.security</artifactId>
+			<version>1.8.0</version>
+			<scope>provided</scope>
+		</dependency>		
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.webmail</artifactId>
+			<version>3.5.0</version>
+			<scope>compile</scope>
+		</dependency>		
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.company</artifactId>
+			<version>3.9.2</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
 			<version>3.8.2</version>
 			<scope>compile</scope>
@@ -104,6 +122,12 @@
 			<version>3.8.3</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.report</artifactId>
+			<version>3.5.0</version>
+			<scope>runtime</scope>
+		</dependency>		
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
