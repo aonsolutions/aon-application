@@ -5,15 +5,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.code.aon.account.Account;
-import com.code.aon.accounting.DefaultAccounts;
-import com.code.aon.accounting.Leasing;
-import com.code.aon.accounting.Loan;
-import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.account.bridge.CreditorAccount;
 import com.code.aon.account.bridge.CustomerAccount;
 import com.code.aon.account.bridge.LeasingAccount;
@@ -22,6 +15,11 @@ import com.code.aon.account.bridge.RegistryBankAccount;
 import com.code.aon.account.bridge.SupplierAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.dao.IAccountAlias;
+import com.code.aon.accounting.DefaultAccounts;
+import com.code.aon.accounting.Leasing;
+import com.code.aon.accounting.Loan;
+import com.code.aon.accounting.Period;
+import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -38,10 +36,7 @@ import com.code.aon.registry.RegistryBank;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.supplier.dao.ISupplierAlias;
 
-
 public class AccountUtil {
-	
-	private static final Logger LOGGER = Logger.getLogger(AccountUtil.class.getName());
 
 	@SuppressWarnings("unchecked")
 	public static RegistryBank obtainRBank(String account) throws ManagerBeanException {
@@ -60,7 +55,7 @@ public class AccountUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Account obtainRBankAccount(RegistryBank rBank) {
+	public static Account obtainRBankAccount(RegistryBank rBank) throws ManagerBeanException {
 		try {
 			IManagerBean rBankAccountBean = BeanManager.getManagerBean(RegistryBankAccount.class);
 			Criteria criteria = new Criteria();
@@ -82,16 +77,13 @@ public class AccountUtil {
 			rBankAccount.setRegistryBank(rBank);
 			rBankAccountBean.insert(rBankAccount);
 			return account;
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining registryBankAccount", e);
 		} catch (ExpressionException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining registryBankAccount", e);
+			throw new ManagerBeanException(e.getMessage(),e );
 		}
-		return null;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static Account obtainCustomerAccount(Registry registry) {
+	public static Account obtainCustomerAccount(Registry registry) throws ManagerBeanException {
 		try {
 			IManagerBean customerAccountBean = BeanManager.getManagerBean(CustomerAccount.class);
 			Criteria criteria = new Criteria();
@@ -113,16 +105,13 @@ public class AccountUtil {
 			customerAccount.setCustomer(obtainCustomer(registry.getId()));
 			customerAccountBean.insert(customerAccount);
 			return account;
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining customerAccount", e);
 		} catch (ExpressionException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining customerAccount", e);
+			throw new ManagerBeanException(e.getMessage(),e );
 		}
-		return null;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static Account obtainSupplierAccount(Registry registry) {
+	public static Account obtainSupplierAccount(Registry registry) throws ManagerBeanException {
 		try {
 			IManagerBean supplierAccountBean = BeanManager.getManagerBean(SupplierAccount.class);
 			Criteria criteria = new Criteria();
@@ -144,16 +133,13 @@ public class AccountUtil {
 			supplierAccount.setSupplier(obtainSupplier(registry.getId()));
 			supplierAccountBean.insert(supplierAccount);
 			return account;
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining supplierAccount", e);
 		} catch (ExpressionException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining supplierAccount", e);
+			throw new ManagerBeanException(e.getMessage(),e );
 		}
-		return null;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static Account obtainCreditorAccount(Registry registry) {
+	public static Account obtainCreditorAccount(Registry registry) throws ManagerBeanException {
 		try {
 			IManagerBean creditorAccountBean = BeanManager.getManagerBean(CreditorAccount.class);
 			Criteria criteria = new Criteria();
@@ -175,16 +161,13 @@ public class AccountUtil {
 			creditorAccount.setCreditor(obtainCreditor(registry.getId()));
 			creditorAccountBean.insert(creditorAccount);
 			return account;
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining creditorAccount", e);
 		} catch (ExpressionException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining creditorAccount", e);
+			throw new ManagerBeanException(e.getMessage(),e );
 		}
-		return null;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static Account obtainLeasingAccount(Leasing leasing) {
+	public static Account obtainLeasingAccount(Leasing leasing) throws ManagerBeanException {
 		try {
 			IManagerBean leasingAccountBean = BeanManager.getManagerBean(LeasingAccount.class);
 			Criteria criteria = new Criteria();
@@ -206,16 +189,13 @@ public class AccountUtil {
 			leasingAccount.setLeasing(leasing);
 			leasingAccountBean.insert(leasingAccount);
 			return account;
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining LeasingAccount", e);
 		} catch (ExpressionException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining LeasingAccount", e);
+			throw new ManagerBeanException(e.getMessage(),e );
 		}
-		return null;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static Account obtainLoanAccount(Loan loan) {
+	public static Account obtainLoanAccount(Loan loan) throws ManagerBeanException {
 		try {
 			IManagerBean loanAccountBean = BeanManager.getManagerBean(LoanAccount.class);
 			Criteria criteria = new Criteria();
@@ -227,7 +207,15 @@ public class AccountUtil {
 			}
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Account account = new Account();
-			account.setId(obtainNextAccountId(AccountConstants.LOAN_ACCOUNT_PREFIX));
+			
+			int term = 0; 
+			try {
+				term = Integer.parseInt(loan.getTerm());
+			} catch (NumberFormatException e) {
+				 
+			}
+			String prefix = (term>12)?AccountConstants.LONG_TERM_LOAN_ACCOUNT_PREFIX:AccountConstants.SHORT_TERM_LOAN_ACCOUNT_PREFIX; 
+			account.setId(obtainNextAccountId(prefix));
 			account.setDescription(loan.getDescription());
 			account.setEntryEnabled(true);
 			account.setAlias(account.getId());
@@ -237,12 +225,9 @@ public class AccountUtil {
 			loanAccount.setLoan(loan);
 			loanAccountBean.insert(loanAccount);
 			return account;
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining loanAccount", e);
 		} catch (ExpressionException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining loanAccount", e);
+			throw new ManagerBeanException(e.getMessage(),e );
 		}
-		return null;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -309,49 +294,37 @@ public class AccountUtil {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static Customer obtainCustomer(Integer id) {
-		try {
-			IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(customerBean.getFieldName(ICustomerAlias.CUSTOMER_ID), id);
-			Iterator iter = customerBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				return (Customer)iter.next();
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining customer with id= " + id, e);
+	private static Customer obtainCustomer(Integer id) throws ManagerBeanException {
+		IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(customerBean.getFieldName(ICustomerAlias.CUSTOMER_ID), id);
+		Iterator iter = customerBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			return (Customer)iter.next();
 		}
 		return null;
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static Supplier obtainSupplier(Integer id) {
-		try {
-			IManagerBean supplierBean = BeanManager.getManagerBean(Supplier.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(supplierBean.getFieldName(ISupplierAlias.SUPPLIER_ID), id);
-			Iterator iter = supplierBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				return (Supplier)iter.next();
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining supplier with id= " + id, e);
+	private static Supplier obtainSupplier(Integer id) throws ManagerBeanException {
+		IManagerBean supplierBean = BeanManager.getManagerBean(Supplier.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(supplierBean.getFieldName(ISupplierAlias.SUPPLIER_ID), id);
+		Iterator iter = supplierBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			return (Supplier)iter.next();
 		}
 		return null;
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static Creditor obtainCreditor(Integer id) {
-		try {
-			IManagerBean creditorBean = BeanManager.getManagerBean(Creditor.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(creditorBean.getFieldName(IFinanceAlias.CREDITOR_ID), id);
-			Iterator iter = creditorBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				return (Creditor)iter.next();
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining creditor with id= " + id, e);
+	private static Creditor obtainCreditor(Integer id) throws ManagerBeanException {
+		IManagerBean creditorBean = BeanManager.getManagerBean(Creditor.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(creditorBean.getFieldName(IFinanceAlias.CREDITOR_ID), id);
+		Iterator iter = creditorBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			return (Creditor)iter.next();
 		}
 		return null;
 	}
@@ -372,7 +345,7 @@ public class AccountUtil {
 	
 	private static String zerofill(String prefix) {
 		String string = "1";
-		for(int i=0;i< 12 - (prefix.length() + 1); i++){
+		for(int i=0;i< 9 - (prefix.length() + 1); i++){
 			string = "0" + string;
 		}
 		return prefix + string;
@@ -380,7 +353,7 @@ public class AccountUtil {
 	
 	private static String fillprefix(String prefix) {
 		String string = "";
-		for(int i=0; i< 12 - (prefix.length());i++){
+		for(int i=0; i< 9 - (prefix.length());i++){
 			string = string + "?";
 		}
 		return prefix + string;
