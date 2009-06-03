@@ -38,17 +38,14 @@ public class ConfigController extends BasicI18nController{
 	}
 	
 	private void init() throws ManagerBeanException {
-		LOGGER.info(">>>>>> CARGANDO CONFIGURACION...");
+		LOGGER.info( "CARGANDO CONFIGURACION...");
 		IManagerBean configBean = BeanManager.getManagerBean(Config.class);
 		List<ITransferObject> list = configBean.getList(null);
-		LOGGER.info(">>>>>>>>>>>>>>>>> CONFIGS: " + list.size());
+		LOGGER.info( "Number of Config: " + list.size());
 		if (list.size() > 0) {
 			setCurrentConfig((Config)list.get(0));
 		}
-		LOGGER.info(">>>>>> DOMINIO: " + currentConfig.getDomain());
-		LOGGER.info(">>>>>> TEMPLATE: " + currentConfig.getTemplate());
-		LOGGER.info(">>>>>> PREVIEW: " + currentConfig.getPreview_host());
-		LOGGER.info(">>>>>> HOST: " + currentConfig.getHost());
+		LOGGER.info( "CurrentConfig: " + currentConfig);
 	}
 
 	public Config getCurrentConfig() {

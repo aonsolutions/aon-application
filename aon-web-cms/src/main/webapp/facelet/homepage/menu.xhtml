@@ -1,7 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core" 
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
@@ -11,7 +12,7 @@
 			<a4j:outputPanel styleClass="aon-float-right" ajaxRendered="true">
 				<aon:panelGrid id="aon_language_panelGrid">
 					<a4j:repeat id="languageSelection" value="#{i18n.languageList}" var="column">
-						<aon:commandButton id="changeLanguage" reRender="aon-content-refresh" 
+						<aon:commandButton id="changeLanguage" 
 							actionListener="#{i18n.onChangeLanguage}" styleClass="aon-noborder"
 							rendered="#{i18n.currentLanguage.id != column.id}" style="padding:3px"
 							image="/images/flags/#{column.language.locale.language}_off.gif"/>
