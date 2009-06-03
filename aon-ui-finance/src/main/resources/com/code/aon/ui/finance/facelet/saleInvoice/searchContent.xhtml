@@ -135,6 +135,31 @@
 			</aon:panelGrid>
 		</aon:panelCollapsible>
 
+		<aon:panelCollapsible expanded="false" label="Datos del Cliente" >
+			<aon:panel style="text-align:right;">
+				<f:facet name="header">
+					<aon:outputLabel value="#{registryBundle.registry_address_module}" />
+				</f:facet>
+				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+					<ui:include src="/com/code/aon/ui/registry/facelet/raddress/searchContent.xhtml">
+						<ui:param name="controller" value="#{saleInvoice}" />
+						<ui:param name="searchController" value="#{saleInvoiceSearch}" />
+					</ui:include>
+				</aon:panelGrid>
+			</aon:panel>
+			<aon:panel style="text-align:right;">
+				<f:facet name="header">
+					<aon:outputLabel value="#{registryBundle.registry_media_module}" />
+				</f:facet>
+				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+					<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/searchContent.xhtml">
+						<ui:param name="controller" value="#{saleInvoice}" />
+						<ui:param name="searchController" value="#{saleInvoiceSearch}" />
+					</ui:include>
+				</aon:panelGrid>
+			</aon:panel>
+		</aon:panelCollapsible>
+
 	</aon:div>
 
 </ui:composition>
