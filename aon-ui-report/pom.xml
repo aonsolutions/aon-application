@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.report</artifactId>
-	<version>3.4.2</version>
+	<version>3.5.0</version>
 	<description>AON UI REPORT</description>
 	<name>AON UI REPORT</name>
 	<dependencies>
@@ -32,5 +32,11 @@
 			<version>2.4</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>el-api</artifactId>
+			<version>1.0</version>
+			<scope>provided</scope>
+		</dependency>		
 	</dependencies>
 </project>
