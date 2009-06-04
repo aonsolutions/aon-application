@@ -96,6 +96,26 @@
 		</param-value>
 	</context-param>
 
+	<context-param>
+		<description>
+			When true JSF makes sure all managed beans components,validators, 
+			etc can be instantiated by the runtime
+		</description>
+		<param-name>com.sun.faces.verifyObjects</param-name>
+		<param-value>false</param-value>
+	</context-param>
+
+	<context-param>
+		<description>
+			If true then all web configuration information (context initialization 
+			parameters and environment entries) will be written to the log. This 
+			is useful during development to confirm your application is configured 
+			as expected. Valid values for this parameter are true and false
+		</description>
+		<param-name>com.sun.faces.displayConfiguration</param-name>
+		<param-value>false</param-value>
+	</context-param>
+
 	<!-- JSF-FACELETS CONFIGURATION -->
 
 	<context-param>
