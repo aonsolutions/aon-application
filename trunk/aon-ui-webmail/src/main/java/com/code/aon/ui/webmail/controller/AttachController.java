@@ -126,7 +126,8 @@ public class AttachController {
     private void getZippedAttachments(HttpServletResponse response) throws MessagingException, WebmailException{
         try {
 	        String outFilename = "attachments.zip";
-	        response.setContentType("application/zip");
+	        // Unico Content-Type que soporta Firefox para ficheros comprimidos
+	        response.setContentType("application/x-zip-compressed");
 	        response.setHeader("Content-Encoding", "deflate");
 			response.setHeader("Content-disposition", "attachment; filename=\""
 					+ outFilename + "\"");
