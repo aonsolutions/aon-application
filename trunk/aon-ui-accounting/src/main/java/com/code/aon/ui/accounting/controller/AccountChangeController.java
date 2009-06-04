@@ -1,6 +1,5 @@
 package com.code.aon.ui.accounting.controller;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -10,24 +9,17 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.account.Account;
-import com.code.aon.accounting.AccountBudget;
-import com.code.aon.accounting.AccountBudgetDetail;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.AccountSummary;
-import com.code.aon.accounting.BalanceDetail;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
-import com.code.aon.accounting.event.AccountSummaryManager;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.accounting.controller.BalanceSheetController.BalanceItem;
 import com.code.aon.ui.util.AonUtil;
 
 public class AccountChangeController {
@@ -39,10 +31,8 @@ public class AccountChangeController {
 	private Date toDate;
 	private Period period;
 	private SecurityLevel securityLevel;
-	private List<ITransferObject> accountDetailList;
-	private List<ITransferObject> accountSummaryList;
 	private static final Logger LOGGER = Logger.getLogger(AccountEntryDetail.class.getName());
-	private Integer count;
+	
 	
 	public void onReset(ActionEvent e){
 		setInitAccount(null);
@@ -52,11 +42,10 @@ public class AccountChangeController {
 		setToDate(null);
 		setPeriod(null);
 		setSecurityLevel(null);
-		setCount(0);
 	}
 	
 
-	public void onChangeAccounts(ActionEvent e) throws ManagerBeanException {
+	public void onChangeAccounts(ActionEvent e)  {
 		if(!finalAccount.isEntryEnabled()){
 			String msg ="La Cuenta Destino no permite apuntes";
 				LOGGER.log(Level.SEVERE, msg);
@@ -72,7 +61,7 @@ public class AccountChangeController {
 				HibernateUtil.setBeginTransaction(false);
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
-                count=0;
+                int count=0;
 				IManagerBean bean;
 				bean = BeanManager.getManagerBean(AccountEntryDetail.class);
 
@@ -100,7 +89,7 @@ public class AccountChangeController {
 							balancingAccount.getId());
 				}
 
-				setAccountDetailList(bean.getList(criteria));
+				List<ITransferObject> accountDetailList = bean.getList(criteria);
 
 				for (ITransferObject to : accountDetailList) {
 					AccountEntryDetail acc = (AccountEntryDetail) to;
@@ -123,7 +112,7 @@ public class AccountChangeController {
 					criteria2.addEqualExpression(security, securityLevel);
 				}
 
-				setAccountDetailList(bean.getList(criteria2));
+				accountDetailList = bean.getList(criteria2);
 
 				for (ITransferObject to : accountDetailList) {
 					AccountEntryDetail acc = (AccountEntryDetail) to;
@@ -132,8 +121,7 @@ public class AccountChangeController {
 					count++;
 				}
 				
-				IManagerBean summmaryBean;
-				summmaryBean = BeanManager.getManagerBean(AccountSummary.class);
+				IManagerBean summmaryBean = BeanManager.getManagerBean(AccountSummary.class);
 				Criteria criteria3 = new Criteria();
 				criteria3.addEqualExpression(accountBalancing, initAccount
 						.getId());
@@ -147,8 +135,7 @@ public class AccountChangeController {
 				if (securityLevel != null) {
 					criteria3.addEqualExpression(security, securityLevel);
 				}
-				setAccountSummaryList(summmaryBean.getList(criteria3));
-
+				List<ITransferObject> accountSummaryList = summmaryBean.getList(criteria3); 
 				for (ITransferObject to : accountSummaryList) {
 					AccountSummary acc = (AccountSummary) to;
 					if(acc.getCredit()==0 && acc.getDebit()==0){
@@ -156,7 +143,7 @@ public class AccountChangeController {
 					}					
 				}
 				
-				AonUtil.addInfoMessage("Se han cambiado "+count+" apuntes");
+				AonUtil.addInfoMessage("Se han cambiado "+count+" líneas de apuntes");
 				
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
@@ -178,14 +165,6 @@ public class AccountChangeController {
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
-	}
-
-	public List<ITransferObject> getAccountDetailList() {
-		return accountDetailList;
-	}
-
-	public void setAccountDetailList(List<ITransferObject> accountDetailList) {
-		this.accountDetailList = accountDetailList;
 	}
 
 	public SecurityLevel getSecurityLevel() {
@@ -243,25 +222,5 @@ public class AccountChangeController {
 	public void setFinalAccount(Account finalAccount) {
 		this.finalAccount = finalAccount;
 	}
-
-	public Integer getCount() {
-		return count;
-	}
-	
-	public void setCount(Integer count) {
-		this.count = count;
-	}
-	
-	public List<ITransferObject> getAccountSummaryList() {
-		return accountSummaryList;
-	}
-
-
-
-	public void setAccountSummaryList(List<ITransferObject> accountSummaryList) {
-		this.accountSummaryList = accountSummaryList;
-	}
-
-	
 
 }
