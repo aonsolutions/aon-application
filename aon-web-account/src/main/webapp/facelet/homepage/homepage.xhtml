@@ -19,11 +19,11 @@
 								<aon:div styleClass="aonSubMenu aonSubMenuOptionEntry">
 									<aon:outputText
 										value="#{accountingBundle.accounting_entry_invoice_module}" />
-									<h:commandLink immediate="true"
+									<aon:commandLink immediate="true"
 										actionListener="#{invoiceEntry.onReset}"
 										action="account_invoice_entry">
 										<aon:outputText value="[#{bundle.aon_reset}]" />
-									</h:commandLink>
+									</aon:commandLink>
 								</aon:div>
 							</aon:div>
 
@@ -31,11 +31,11 @@
 								<aon:div styleClass="aonSubMenu aonSubMenuOptionEntry">
 									<aon:outputText
 										value="#{accountingBundle.accounting_entry_finance_module}" />
-									<h:commandLink immediate="true"
+									<aon:commandLink immediate="true"
 										actionListener="#{financeEntry.onReset}"
 										action="account_finance_entry">
 										<aon:outputText value="[#{bundle.aon_reset}]" />
-									</h:commandLink>
+									</aon:commandLink>
 								</aon:div>
 							</aon:div>
 
@@ -43,11 +43,11 @@
 								<aon:div styleClass="aonSubMenu aonSubMenuOptionEntry">
 									<aon:outputText
 										value="#{accountingBundle.accounting_salary_entry_module}" />
-									<h:commandLink immediate="true"
+									<aon:commandLink immediate="true"
 										actionListener="#{salaryEntry.onReset}"
 										action="account_salary_entry">
 										<aon:outputText value="[#{bundle.aon_reset}]" />
-									</h:commandLink>
+									</aon:commandLink>
 								</aon:div>
 							</aon:div>
 
@@ -55,11 +55,11 @@
 								<aon:div styleClass="aonSubMenu aonSubMenuOptionEntry">
 									<aon:outputText
 										value="#{accountingBundle.accounting_social_insurance_entry_module}" />
-									<h:commandLink immediate="true"
+									<aon:commandLink immediate="true"
 										actionListener="#{socialInsuranceEntry.onReset}"
 										action="account_social_insurance_entry">
 										<aon:outputText value="[#{bundle.aon_reset}]" />
-									</h:commandLink>
+									</aon:commandLink>
 								</aon:div>
 							</aon:div>
 
@@ -67,11 +67,11 @@
 								<aon:div styleClass="aonSubMenu aonSubMenuOptionEntry">
 									<aon:outputText
 										value="#{accountingBundle.accounting_expense_entry_module}" />
-									<h:commandLink immediate="true"
+									<aon:commandLink immediate="true"
 										actionListener="#{expenseEntry.onReset}"
 										action="account_expense_entry">
 										<aon:outputText value="[#{bundle.aon_reset}]" />
-									</h:commandLink>
+									</aon:commandLink>
 								</aon:div>
 							</aon:div>
 
@@ -80,11 +80,11 @@
 								<aon:div styleClass="aonSubMenu aonSubMenuOptionEntry">
 									<aon:outputText
 										value="#{accountingBundle.accounting_leasing_fee_entry_module}" />
-									<h:commandLink immediate="true"
+									<aon:commandLink immediate="true"
 										actionListener="#{leasingFeeEntry.onReset}"
 										action="account_leasing_fee_entry">
 										<aon:outputText value="[#{bundle.aon_reset}]" />
-									</h:commandLink>
+									</aon:commandLink>
 								</aon:div>
 								-->
 							</aon:div>
@@ -99,65 +99,65 @@
 								<aon:div styleClass="aonSubMenu aonSubMenuOption">
 									<aon:outputText
 										value="#{accountingBundle.accounting_entry_module}" />
-									<h:commandLink immediate="true"
+									<aon:commandLink immediate="true"
 										actionListener="#{accountEntry.onReset}"
 										action="accountEntry_form">
 										<aon:outputText value="[#{bundle.aon_reset}]" />
-									</h:commandLink>
-									<h:commandLink immediate="true"
+									</aon:commandLink>
+									<aon:commandLink immediate="true"
 										actionListener="#{accountEntry.onEditSearch}"
 										action="accountEntry_search">
 										<aon:outputText value="[#{bundle.aon_search}]" />
-									</h:commandLink>
+									</aon:commandLink>
 								</aon:div>
 							</aon:div>
 
 							<aon:div>
 								<aon:div styleClass="aonSubMenu aonSubMenuOption">
 									<aon:outputText value="#{accountBundle.account_module}" />
-									<h:commandLink immediate="true"
+									<aon:commandLink immediate="true"
 										actionListener="#{account.onReset}" action="account_form">
 										<aon:outputText value="[#{bundle.aon_reset}]" />
-									</h:commandLink>
-									<h:commandLink immediate="true"
+									</aon:commandLink>
+									<aon:commandLink immediate="true"
 										actionListener="#{account.onEditSearch}"
 										action="account_search">
 										<aon:outputText value="[#{bundle.aon_search}]" />
-									</h:commandLink>
+									</aon:commandLink>
 								</aon:div>
 							</aon:div>
 
 							<aon:div>
 								<aon:div styleClass="aonSubMenu aonSubMenuOption">
 									<aon:outputText value="#{customerBundle.customer_module}" />
-									<h:commandLink immediate="true"
+									<aon:commandLink immediate="true"
 										actionListener="#{customer.onReset}" action="customer_form">
 										<aon:outputText value="[#{bundle.aon_reset}]" />
 										<f:setPropertyActionListener value="#{true}" 
 											target="#{customer.showAccount}" />
-									</h:commandLink>
-									<h:commandLink immediate="true"
+									</aon:commandLink>
+									<aon:commandLink immediate="true"
 										actionListener="#{customer.onEditSearch}"
 										action="customer_search">
 										<aon:outputText value="[#{bundle.aon_search}]" />
 										<f:setPropertyActionListener value="#{true}" 
 											target="#{customer.showAccount}" />
-									</h:commandLink>
+									</aon:commandLink>
 								</aon:div>
 							</aon:div>
 
 							<aon:div>
 								<aon:div styleClass="aonSubMenu aonSubMenuOption">
 									<aon:outputText value="#{supplierBundle.supplier_module}" />
-									<h:commandLink immediate="true"
+									<aon:commandLink immediate="true"
 										actionListener="#{supplier.onReset}" action="supplier_form">
 										<aon:outputText value="[#{bundle.aon_reset}]" />
-									</h:commandLink>
-									<h:commandLink immediate="true"
+									</aon:commandLink>
+									<aon:commandLink immediate="true"
 										actionListener="#{supplier.onEditSearch}"
 										action="supplier_search">
 										<aon:outputText value="[#{bundle.aon_search}]" />
-									</h:commandLink>
+									</aon:commandLink>
 								</aon:div>
 							</aon:div>
 
@@ -165,15 +165,15 @@
 								<aon:div styleClass="aonSubMenu aonSubMenuOption">
 									<aon:outputText
 										value="#{financeBundle.finance_creditor_module}" />
-									<h:commandLink immediate="true"
+									<aon:commandLink immediate="true"
 										actionListener="#{creditor.onReset}" action="creditor_form">
 										<aon:outputText value="[#{bundle.aon_reset}]" />
-									</h:commandLink>
-									<h:commandLink immediate="true"
+									</aon:commandLink>
+									<aon:commandLink immediate="true"
 										actionListener="#{creditor.onEditSearch}"
 										action="creditor_search">
 										<aon:outputText value="[#{bundle.aon_search}]" />
-									</h:commandLink>
+									</aon:commandLink>
 								</aon:div>
 							</aon:div>
 
@@ -188,11 +188,11 @@
 								<aon:div styleClass="aonSubMenu aonSubMenuOptionReport">
 									<aon:outputText
 										value="#{accountingBundle.accounting_statement_module}" />
-									<h:commandLink immediate="true"
+									<aon:commandLink immediate="true"
 										actionListener="#{trialBalance.onReset}"
 										action="account_statement_search">
 										<aon:outputText value="[#{bundle.aon_listing}]" />
-									</h:commandLink>
+									</aon:commandLink>
 								</aon:div>
 							</aon:div>
 
@@ -200,11 +200,11 @@
 								<aon:div styleClass="aonSubMenu aonSubMenuOptionReport">
 									<aon:outputText
 										value="#{accountingBundle.accounting_trial_balance_module}" />
-									<h:commandLink immediate="true"
+									<aon:commandLink immediate="true"
 										actionListener="#{trialBalance.onReset}"
 										action="trialBalance_search">
 										<aon:outputText value="[#{bundle.aon_listing}]" />
-									</h:commandLink>
+									</aon:commandLink>
 								</aon:div>
 							</aon:div>
 
@@ -212,11 +212,11 @@
 								<aon:div styleClass="aonSubMenu aonSubMenuOptionReport">
 									<aon:outputText
 										value="#{accountingBundle.accounting_profit_and_loss_module}" />
-									<h:commandLink immediate="true"
+									<aon:commandLink immediate="true"
 										actionListener="#{profitAndLossReport.onEditSearch}"
 										action="profit_and_loss_search">
 										<aon:outputText value="[#{bundle.aon_listing}]" />
-									</h:commandLink>
+									</aon:commandLink>
 								</aon:div>
 							</aon:div>
 
@@ -224,11 +224,11 @@
 								<aon:div styleClass="aonSubMenu aonSubMenuOptionReport">
 									<aon:outputText
 										value="#{accountingBundle.accounting_journal_module}" />
-									<h:commandLink immediate="true"
+									<aon:commandLink immediate="true"
 										actionListener="#{journalReport.onReset}"
 										action="journal_search">
 										<aon:outputText value="[#{bundle.aon_listing}]" />
-									</h:commandLink>
+									</aon:commandLink>
 								</aon:div>
 							</aon:div>
 
@@ -236,11 +236,11 @@
 								<aon:div styleClass="aonSubMenu aonSubMenuOptionReport">
 									<aon:outputText
 										value="#{financeBundle.finance_vat_report_module}" />
-									<h:commandLink immediate="true"
+									<aon:commandLink immediate="true"
 										actionListener="#{vatReport.onReset}"
 										action="vat_report_search">
 										<aon:outputText value="[#{bundle.aon_listing}]" />
-									</h:commandLink>
+									</aon:commandLink>
 								</aon:div>
 							</aon:div>
 						</h:panelGrid>
