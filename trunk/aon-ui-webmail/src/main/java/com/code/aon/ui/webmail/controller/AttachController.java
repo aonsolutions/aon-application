@@ -128,7 +128,7 @@ public class AttachController {
 	        String outFilename = "attachments.zip";
 	        // Unico Content-Type que soporta Firefox para ficheros comprimidos
 	        response.setContentType("application/x-zip-compressed");
-	        response.setHeader("Content-Encoding", "deflate");
+        	response.setHeader("Content-Encoding", "");
 			response.setHeader("Content-disposition", "attachment; filename=\""
 					+ outFilename + "\"");
 
