@@ -774,6 +774,14 @@
 			com.code.aon.ui.accounting.event.StatementDetailListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
+	
+		<!-- ********** ACCOUNT CHANGE CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>accountChange</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.accounting.controller.AccountChangeController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
 	<!--  ****************************************** -->
 	<!--  ******** Navigation Rules **************** -->
@@ -1073,6 +1081,14 @@
 		<navigation-case>
 			<from-outcome>mbase_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/mbase/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+		<!-- **************** ACCOUNT CHANGE ************************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>accountChange_form</from-outcome>
+		<to-view-id>/com/code/aon/ui/accounting/facelet/accountChange/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 </faces-config>
