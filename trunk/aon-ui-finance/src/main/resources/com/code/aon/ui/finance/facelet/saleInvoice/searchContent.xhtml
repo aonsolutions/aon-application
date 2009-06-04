@@ -33,8 +33,6 @@
 						selectReRender="InvoiceDetail_item_code,InvoiceDetail_item_detail"
 						lookup="#{itemLookup}" minHeight="460" minWidth="650"
 						property="#{searchController.item}">
-						<aon:joinProperty alias="Item_product_code"
-							value="#{saleInvoiceDetail.to.item.product.code}" />
 					</aon:lookupButton>
 					<aon:inputText id="InvoiceDetail_item_detail"
 						value="#{(searchController.item.product.name!=null)?(searchController.item.product.name):('')}"
