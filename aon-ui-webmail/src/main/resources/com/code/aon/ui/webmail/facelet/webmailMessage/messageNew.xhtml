@@ -130,15 +130,18 @@
 								<a4j:support event="onuploadcomplete" reRender="attachDataTable" />
 							</aon:fileUpload>								
 							<aon:div id="attachDataTable">					
-								<aon:dataTable value="#{webmailMessage.files}" 
+								<aon:dataTable value="#{webmailMessage.files}" rowKeyVar="row"
 									var="attachment" styleClass="aon-panelGrid-formatting">
 									<aon:column>
 										<aon:outputText value="#{attachment.fileName}" styleClass="aon-bold" />
 										<aon:commandLink
-											reRender="attachDataTable" style="font-size:0.9em;margin-left:20px;"
+											reRender="attachDataTable" 
 											value="#{bundle.aon_remove}"
-											styleClass="aon-icon-commandButton aon-icon-delete"
-											actionListener="#{attachment.fileDeleted}">
+											style="font-size:0.9em;margin-left:20px;"
+											styleClass="aon-icon-commandButton aon-icon-delete">
+								            <a4j:actionparam name="selected"
+								            	value="#{row}" assignTo="#{webmailMessage.attachRemoveIndex}"
+								            	actionListener="#{webmailMessage.removeAttachment}" />											
 										</aon:commandLink>
 									</aon:column>
 								</aon:dataTable>									

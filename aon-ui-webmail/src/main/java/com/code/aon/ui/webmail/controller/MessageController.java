@@ -64,10 +64,9 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.AonFile;
 import com.code.aon.ui.webmail.bean.AonMessageTracer;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
-import com.code.aon.ui.webmail.listener.IAonFileListener;
+import com.code.aon.webmail.AonFile;
 import com.code.aon.webmail.Contact;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.WebmailException;
@@ -82,7 +81,7 @@ import com.sun.mail.imap.AppendUID;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.util.LineOutputStream;
 
-public class MessageController implements WebMailConstants, BundleConstants, IAonFileListener {
+public class MessageController implements WebMailConstants, BundleConstants {
 
 	private static final int MAX_LENGTH_STRING = 120;
 
@@ -125,6 +124,8 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
     private boolean showRecipients;
     
     private boolean showToolbar;
+    
+    private int attachRemoveIndex;
     
 	public MessageController() {
 		this.showRecipients = true;
@@ -275,7 +276,6 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
     			fos.close();
     			af.setFile(f);
     			af.setFileName( name );
-    	    	af.addAonFileListener(this);
        			newMsgFileList.add(af);
 			} catch (IOException e) {
 				AonUtil.addErrorMessage(e.getMessage());
@@ -328,10 +328,6 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
     	return newMsgFileList;
     }
 
-	public void fileDeleted(AonFile aonFile) {
-		newMsgFileList.remove(aonFile);
-	}
-
 	//***************************************************************
 	//*********** ATTACH ********************************************
 	//***************************************************************
@@ -341,7 +337,6 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
     	AonFile f = new AonFile();
     	f.setFile(item.getFile());
     	f.setFileName(item.getFileName());
-    	f.addAonFileListener(this);
     	newMsgFileList.add(f);
 	}	
 	
@@ -1121,6 +1116,18 @@ public class MessageController implements WebMailConstants, BundleConstants, IAo
 
 	public void setShowToolbar(boolean showToolbar) {
 		this.showToolbar = showToolbar;
+	}
+
+	public int getAttachRemoveIndex() {
+		return attachRemoveIndex;
+	}
+
+	public void setAttachRemoveIndex(int attachRemoveIndex) {
+		this.attachRemoveIndex = attachRemoveIndex;
+	}
+	
+	public void removeAttachment( ActionEvent event ) {
+		getFiles().remove(this.attachRemoveIndex);
 	}
 	
 }
