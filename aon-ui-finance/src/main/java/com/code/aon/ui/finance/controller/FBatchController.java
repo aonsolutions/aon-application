@@ -362,7 +362,7 @@ public class FBatchController extends BasicController implements ICollectionProv
     					"from FinanceBatchDetail as fbatchDetail " +
     					"where fbatchDetail.financeBatch.id = " + fbatch.getId() + " " +
     					"order by substring(fbatchDetail.finance.bankAccount, 1, 8), fbatchDetail.finance.invoice.registry.id";
-    	Session session = HibernateUtil.getSession(null);
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
     	Query query = session.createQuery(select);
     	return query.list(); 
 	}
