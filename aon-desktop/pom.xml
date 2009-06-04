@@ -35,7 +35,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>3.6.2</version>
+			<version>3.7.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security.bridge</artifactId>
-			<version>3.2.1</version>
+			<version>3.3.0</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
@@ -77,7 +77,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.geozone</artifactId>
-			<version>3.1.7</version>
+			<version>3.2.0</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
@@ -89,7 +89,7 @@
 	    <dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.report</artifactId>
-			<version>3.4.2</version>
+			<version>3.5.0</version>
 	    </dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
@@ -106,7 +106,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.webmail</artifactId>
-			<version>4.10.0</version>
+			<version>4.11.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
