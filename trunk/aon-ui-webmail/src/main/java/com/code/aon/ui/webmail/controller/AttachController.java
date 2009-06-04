@@ -127,7 +127,7 @@ public class AttachController {
         try {
 	        String outFilename = "attachments.zip";
 	        response.setContentType("application/zip");
-	        // response.setHeader("Content-Encoding", "deflate");
+	        response.setHeader("Content-Encoding", "deflate");
 			response.setHeader("Content-disposition", "attachment; filename=\""
 					+ outFilename + "\"");
 
