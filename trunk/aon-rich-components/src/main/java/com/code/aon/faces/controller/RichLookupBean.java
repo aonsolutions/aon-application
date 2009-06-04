@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -21,12 +20,9 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.AliasEntry;
-import com.code.aon.common.dao.DAOConstantsResolver;
 import com.code.aon.faces.component.richfaces.lookup.ILookupComponent;
 import com.code.aon.faces.component.richfaces.lookup.button.HtmlLookupButton;
 import com.code.aon.faces.component.richfaces.lookup.inputText.HtmlLookupInputText;
-import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
@@ -147,19 +143,6 @@ public class RichLookupBean {
 		this.searchPagePath = pagePath;
 	}
 
-	private Map<String, ValueExpression> calculateJoinBindings() {
-		Map<String, ValueExpression> joinBindingsMap = new HashMap<String, ValueExpression>();
-		DAOConstantsResolver resolver = new DAOConstantsResolver();
-		String expression = this.sourcePojoBinding.getExpressionString();
-		FacesContext ctx = FacesContext.getCurrentInstance();
-		ExpressionFactory factory = ctx.getApplication().getExpressionFactory();
-		for (AliasEntry entry : resolver.getIdentifierAliasEntryList(getController().getPojo())) {
-			String value = FaceletUtil.appendExpression(expression, entry.getAccessPath());
-			joinBindingsMap.put(entry.getAlias(), factory.createValueExpression(ctx.getELContext(),value, Object.class));
-		}
-		return joinBindingsMap;
-	}
-
 	/**
 	 * Gets the join bindings map.
 	 * 
@@ -173,9 +156,6 @@ public class RichLookupBean {
 		if (event.getComponent() instanceof HtmlLookupInputText) {
 			HtmlLookupInputText lookupComponent = (HtmlLookupInputText) event.getComponent();
 			joinBindingsMap = lookupComponent.getJoinBindingsMap();
-		}
-		if (joinBindingsMap.isEmpty()) {
-			joinBindingsMap = calculateJoinBindings();
 		}
 		return joinBindingsMap;
 	}
@@ -551,24 +531,6 @@ public class RichLookupBean {
 		return value; 
 	}
 	
-	private String getLookupPojo() {
-		String pojo = null;		
-		if ( getComponent().getLookupProperty() != null ) {
-			try {
-				Object value = this.controller.getManagerBean().createNewTo();
-				Class<?> _class = PropertyUtils.getPropertyType( value, getComponent().getLookupProperty() );
-				if ( _class != null ) {
-					pojo = _class.getName();
-				}
-			} catch (Throwable e) {
-				LOGGER.severe( e.getMessage() );
-			}
-			return pojo;
-		} 
-		pojo = getController().getPojo();			
-		return pojo;
-	}
-	
 	private void updateSourcePojo() {
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		sourcePojoBinding.setValue(ctx.getELContext(), getLookupValue());
@@ -604,55 +566,10 @@ public class RichLookupBean {
 		}
 	}
 
-	/**
-	 * Gets the parent binding.
-	 * 
-	 * @param vb
-	 *            the vb
-	 * @param ctx
-	 *            the ctx
-	 * 
-	 * @return the parent binding
-	 */
-	private ValueExpression getParentBinding(FacesContext ctx, ValueExpression ve) {
-		String parentExpression = ve.getExpressionString();
-		int pos = parentExpression.lastIndexOf('.');
-		if (pos != -1) {
-			String expression = parentExpression.substring(0, pos) + "}";
-			return ctx.getApplication().getExpressionFactory().createValueExpression(ctx.getELContext(),expression, Object.class);
-		}
-		return null;
-	}
-
-	/**
-	 * Gets the foreign binding.
-	 * 
-	 * @param event
-	 *            the event
-	 * 
-	 * @return the foreign binding
-	 */
-	private ValueExpression getSourcePojoBinding(UIComponent component) {
-		FacesContext ctx = FacesContext.getCurrentInstance();
-		ValueExpression ve = component.getValueExpression("value");
-		String pojo = getLookupPojo();
-		while (ve != null) {
-			String type = ve.getType(ctx.getELContext()).getName();
-			if (type.equals(pojo)) {
-				return ve;
-			} 
-			ve = getParentBinding(ctx, ve);
-		}
-		return null;
-	}
-
 	private void setBindings(UIComponent component) {
 		if (component instanceof ILookupComponent) {
 			this.component = (ILookupComponent) component;
 			this.sourcePojoBinding = this.component.getProperty();
-			if (this.sourcePojoBinding == null) {
-				this.sourcePojoBinding = getSourcePojoBinding(component);
-			}
 		}
 	}
 
