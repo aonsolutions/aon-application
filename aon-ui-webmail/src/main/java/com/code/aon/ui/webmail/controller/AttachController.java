@@ -126,7 +126,8 @@ public class AttachController {
     private void getZippedAttachments(HttpServletResponse response) throws MessagingException, WebmailException{
         try {
 	        String outFilename = "attachments.zip";
-	        response.setContentType("application/x-zip-compressed");
+	        response.setContentType("application/zip");
+	        // response.setHeader("Content-Encoding", "deflate");
 			response.setHeader("Content-disposition", "attachment; filename=\""
 					+ outFilename + "\"");
 
