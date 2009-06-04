@@ -235,7 +235,7 @@ public class AonMessage implements IMimeType, BundleConstants {
 	 */
 	public String getDisplayShortSubject() throws WebmailException {
 		try {
-			String subject = StringUtils.abbreviate(message.getSubject(), 60);
+			String subject = StringUtils.abbreviate(message.getSubject(), 55);
 			return StringUtils.defaultString(StringEscapeUtils.escapeHtml(subject));
 		} catch (MessagingException e) {
 			LOGGER.log(Level.SEVERE, "Error getting message displayable subject", e);
