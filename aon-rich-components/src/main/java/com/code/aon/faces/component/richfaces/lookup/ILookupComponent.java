@@ -5,8 +5,6 @@ import javax.el.ValueExpression;
 
 public interface ILookupComponent {
 
-	ValueExpression getLookup();
-
 	ValueExpression getProperty();
 	
 	String getLookupProperty();
