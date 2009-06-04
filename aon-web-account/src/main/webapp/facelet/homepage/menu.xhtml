@@ -130,6 +130,7 @@
 				<aon:menuItem action="officialBalance_list" value="#{accountingBundle.accounting_official_balance_configuration_module}"/>
 				<aon:menuSeparator/>
 				<aon:menuItem action="regenerateAccountSummary" value="#{accountingBundle.accounting_regenerate_summary_module}"/>
+				<aon:menuItem action="accountChange_form" actionListener="#{accountChange.onReset}" value="#{accountingBundle.accounting_change_account}"/>
 				<aon:menuSeparator/>
 				<aon:menuItem actionListener="#{mbase.onInitialize}" action="mbase_form" value="IMPORTACION DESDE MBASESOR"/>
 			</aon:dropDownMenu>
