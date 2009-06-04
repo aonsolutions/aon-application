@@ -16,9 +16,8 @@
 				<ui:param name="toolbarID" value="aonToolbar" />
 				<ui:param name="toolbarTitle"
 					value="#{accountingBundle.accounting_change_account}" />
-				
-				<ui:define name="toolbarContent">
 
+				<ui:define name="toolbarContent">
 					<aon:commandButton
 						value="#{accountingBundle.accounting_change_account_button}"
 						accesskey="#{bundle.aon_key_save}"
@@ -27,39 +26,37 @@
 						onclick="if (!confirm('#{accountingBundle.accounting_change_account_button}?'))  return false;" />
 				</ui:define>
 			</ui:decorate>
-			
-				<aon:div styleClass="aon-scroll-area">
-			<aon:panelGrid columns="2" style="width: 100%;"
-			>
-				<aon:outputLabel value="#{accountingBundle.accounting_change_account_origin}" />
-				<ui:decorate
-					template="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-					<ui:param name="wizard" value="#{accountWizard}" />
-					<ui:param name="id" value="account" />
-					<ui:param name="size" value="20" />
-					<ui:param name="maxlength" value="100" />
-					<ui:param name="renderDescription" value="#{true}" />
-					<ui:param name="renderedAttr" value="#{true}" />
-					<ui:param name="reRenderAttr" value="none" />
-					<ui:param name="required" value="true" />
-					<ui:param name="entity" value="#{accountChange.initAccount}" />
-				  <ui:param name="ELExpression" value="accountChange.initAccount" /> 
-				</ui:decorate>
 
-				<aon:outputLabel for="AccountEntryDetail_accountEntry_accountPeriod"
-					value="#{accountingBundle.accounting_period}" />
-					
-				<aon:selectOneMenu required="true"
-					id="AccountEntryDetail_accountEntry_accountPeriod"
-					value="#{accountChange.period}">
-					<f:selectItems value="#{accountingCollections.accountPeriods}" />
-				</aon:selectOneMenu>
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2" style="width: 100%;">
+					<aon:outputLabel
+						value="#{accountingBundle.accounting_change_account_origin}" />
+					<ui:decorate
+						template="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
+						<ui:param name="wizard" value="#{accountWizard}" />
+						<ui:param name="id" value="account" />
+						<ui:param name="size" value="20" />
+						<ui:param name="maxlength" value="100" />
+						<ui:param name="renderDescription" value="#{true}" />
+						<ui:param name="renderedAttr" value="#{true}" />
+						<ui:param name="reRenderAttr" value="none" />
+						<ui:param name="required" value="true" />
+						<ui:param name="entity" value="#{accountChange.initAccount}" />
+						<ui:param name="ELExpression" value="accountChange.initAccount" />
+					</ui:decorate>
 
-				<aon:outputLabel
-					for="AccountEntryDetail_accountEntry_entryDate-From"
-					value="#{bundle.aon_date_from}" />
-					
-				
+					<aon:outputLabel
+						for="AccountEntryDetail_accountEntry_accountPeriod"
+						value="#{accountingBundle.accounting_period}" />
+					<aon:selectOneMenu required="true"
+						id="AccountEntryDetail_accountEntry_accountPeriod"
+						value="#{accountChange.period}">
+						<f:selectItems value="#{accountingCollections.accountPeriods}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel
+						for="AccountEntryDetail_accountEntry_entryDate-From"
+						value="#{bundle.aon_date_from}" />
 					<aon:selectInputDate
 						id="AccountEntryDetail_accountEntry_entryDate-From"
 						value="#{accountChange.fromDate}"
@@ -68,25 +65,24 @@
 
 					<aon:outputLabel for="AccountEntryDetail_accountEntry_entryDate-To"
 						value="#{bundle.aon_date_to}" />
-						
 					<aon:selectInputDate
 						id="AccountEntryDetail_accountEntry_entryDate-To"
 						value="#{accountChange.toDate}"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}" />
-						
+
 					<aon:outputLabel
 						for="AccountEntryDetail_accountEntry_securityLevel"
 						value="#{bundle.aon_security_level}" />
-						
 					<aon:selectOneMenu
 						id="AccountEntryDetail_accountEntry_securityLevel"
 						value="#{accountChange.securityLevel}">
 						<f:selectItem itemValue="" itemLabel=" " />
 						<f:selectItems value="#{commonCollections.securityLevels}" />
 					</aon:selectOneMenu>
-					
-					<aon:outputLabel value="#{accountingBundle.accounting_balancing_account}" />
+
+					<aon:outputLabel
+						value="#{accountingBundle.accounting_balancing_account}" />
 					<ui:decorate
 						template="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
 						<ui:param name="wizard" value="#{accountWizard}" />
@@ -95,15 +91,17 @@
 						<ui:param name="maxlength" value="30" />
 						<ui:param name="renderDescription" value="#{true}" />
 						<ui:param name="renderedAttr" value="#{true}" />
-						<ui:param name="disabled" value="#{invoiceEntry.newDetail}" />
+						<ui:param name="disabled" value="#{false}" />
 						<ui:param name="reRenderAttr" value="none" />
 						<ui:param name="required" value="false" />
 						<ui:param name="entity" value="#{accountChange.balancingAccount}" />
-					    <ui:param name="ELExpression" value="accountChange.balancingAccount" />
+						<ui:param name="ELExpression"
+							value="accountChange.balancingAccount" />
 					</ui:decorate>
 
 
-					<aon:outputLabel value="#{accountingBundle.accounting_change_account_destiny}" />
+					<aon:outputLabel
+						value="#{accountingBundle.accounting_change_account_destiny}" />
 					<ui:decorate
 						template="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
 						<ui:param name="wizard" value="#{accountWizard}" />
@@ -115,15 +113,11 @@
 						<ui:param name="reRenderAttr" value="none" />
 						<ui:param name="required" value="true" />
 						<ui:param name="entity" value="#{accountChange.finalAccount}" />
-						<ui:param name="ELExpression" value="accountChange.finalAccount" /> 
+						<ui:param name="ELExpression" value="accountChange.finalAccount" />
 					</ui:decorate>
 
 				</aon:panelGrid>
-				</aon:div>
+			</aon:div>
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{bankLookup}" />
-		<aon:lookupButtonPopup lookup="#{customerLookup}" />
-		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
-		<aon:lookupButtonPopup lookup="#{creditorLookup}" />
 	</ui:define>
 </ui:composition>
