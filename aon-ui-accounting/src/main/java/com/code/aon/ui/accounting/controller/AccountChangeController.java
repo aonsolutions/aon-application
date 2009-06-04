@@ -147,7 +147,7 @@ public class AccountChangeController {
 				if (securityLevel != null) {
 					criteria3.addEqualExpression(security, securityLevel);
 				}
-				setAccountSummaryList(summmaryBean.getList(criteria2));
+				setAccountSummaryList(summmaryBean.getList(criteria3));
 
 				for (ITransferObject to : accountSummaryList) {
 					AccountSummary acc = (AccountSummary) to;
