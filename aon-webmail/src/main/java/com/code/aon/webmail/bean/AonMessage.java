@@ -226,6 +226,22 @@ public class AonMessage implements IMimeType, BundleConstants {
 			throw new WebmailException(e);
 		}
 	}
+
+	/**
+	 * Gets the message subject.
+	 * 
+	 * @return message subject. If null, an empty string is returned.
+	 * @throws WebmailException 
+	 */
+	public String getDisplayShortSubject() throws WebmailException {
+		try {
+			String subject = StringUtils.abbreviate(message.getSubject(), 60);
+			return StringUtils.defaultString(StringEscapeUtils.escapeHtml(subject));
+		} catch (MessagingException e) {
+			LOGGER.log(Level.SEVERE, "Error getting message displayable subject", e);
+			throw new WebmailException(e);
+		}
+	}
 	
 	private static String getDisplaySubject( Message message ) throws MessagingException {
 		String subject = message.getSubject();
