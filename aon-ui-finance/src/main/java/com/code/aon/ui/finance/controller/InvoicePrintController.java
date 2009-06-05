@@ -36,7 +36,6 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 	}
 
 	public void sendInvoicesByEmail( ActionEvent event ) {
-		/*
 		EmailUtilController emailController = (EmailUtilController) AonUtil.getRegisteredBean(EMAIL_UTIL_CONTROLLER_NAME);
 		try {
 			EmailSender sender = emailController.getEmailSender();
@@ -52,6 +51,5 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 			AonUtil.addErrorMessage(th.getMessage());
 			throw new AbortProcessingException(th.getMessage(), th);
 		}
-		*/
 	}	
 }
