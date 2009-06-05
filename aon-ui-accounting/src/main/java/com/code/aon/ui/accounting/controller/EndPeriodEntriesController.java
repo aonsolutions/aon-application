@@ -329,7 +329,8 @@ public class EndPeriodEntriesController {
 
 	@SuppressWarnings("unchecked")
 	private List getUnbalancedAccounts(Period period, AccountEntryType accountEntryType) {
-		Session session = HibernateUtil.getSession( null );
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		Session session = HibernateUtil.getSession( sessionName );
 		StringWriter sw = new StringWriter();
 		sw
 				.append("SELECT account.id,SUM(debit),SUM(credit) FROM AccountSummary WHERE accountPeriod = '");
