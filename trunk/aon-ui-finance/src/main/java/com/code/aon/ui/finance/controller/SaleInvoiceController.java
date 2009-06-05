@@ -368,4 +368,9 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		}
 	}
 	
+	public void updateInvoice( Invoice invoice ) {
+		setTo( invoice );
+		saveState( invoice );
+	}
+	
 }
