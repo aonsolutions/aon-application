@@ -587,6 +587,18 @@
 		</managed-property>
 	</managed-bean>
 
+	<!-- ********** ACCOUNT LEVEL CHANGE CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>accountLevelChange</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.accounting.controller.AccountLevelChangeController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+	</managed-bean>
+
 	<!--  *************** ACCOUNT APP PARAMS ***************** -->
 	<managed-bean>
 		<managed-bean-name>accAppParams</managed-bean-name>
@@ -969,14 +981,20 @@
 		</navigation-case>
 	</navigation-rule>
 
-	<!--
-		**************** REGENERATE ACCOUNT SUMMARY *********************
-	-->
+	<!-- **************** REGENERATE ACCOUNT SUMMARY ********************* -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>regenerateAccountSummary</from-outcome>
 			<to-view-id>
 				/com/code/aon/ui/accounting/facelet/util/summary/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<!-- **************** ACCOUNT LEVEL CHANGE ********************* -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>accountLevelChange</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/accounting/facelet/util/levelChange/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<!-- **************** ACCOUNT STATEMENT ************************** -->
