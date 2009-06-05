@@ -27,6 +27,6 @@ public interface IFinanceMessages {
 	String FINANCE_INVOICE_EMAIL_BODY_HEADER = "finance_invoice_email_body_header";
 	String FINANCE_INVOICE_EMAIL_BODY = "finance_invoice_email_body";
 	String FINANCE_INVOICE_EMAIL_BODY_FOOTER = "finance_invoice_email_body_footer";
-	
+	String FINANCE_NOT_MAIL_ACCOUNT = "finance_not_mail_account";
 }
 

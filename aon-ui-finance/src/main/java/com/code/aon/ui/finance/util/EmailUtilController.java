@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.mail.Address;
@@ -20,15 +22,17 @@ import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.IFinanceMessages;
+import com.code.aon.ui.finance.controller.InvoicePrintController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.AonFile;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.MailAccount;
-import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.WebmailUtil;
 
 public class EmailUtilController implements IFinanceMessages {
+
+	private static final Logger LOGGER = Logger.getLogger(InvoicePrintController.class.getName());
 	
 	private EmailSender sender;
 	
@@ -42,8 +46,9 @@ public class EmailUtilController implements IFinanceMessages {
 		try {
 			mailAccount = WebmailUtil.getDefaultAccount(domain,login);
 		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage( "El usuario " + login + " no tiene definida ninguna cuenta de correo" );
-			throw new AbortProcessingException( e.getMessage(), e);
+			String text = AonUtil.getMessage(BUNDLE_KEY, FINANCE_NOT_MAIL_ACCOUNT); 
+			String message = MessageFormat.format(text, user.getShortName() );
+			throw new AbortProcessingException( message, e);
 		}
 		return mailAccount;
 	}
@@ -73,11 +78,13 @@ public class EmailUtilController implements IFinanceMessages {
 		body.append( company.getName() ).append( "<br/>" );
 		RegistryMedia phone = companyController.getPhone();
 		if ( phone != null ) {
-			body.append( "Telefono: " ).append( phone.getValue() ).append( "<br/>" );
+			String phoneLabel = AonUtil.getMessage("registryBundle", "registry_phone");
+			body.append(phoneLabel).append( ": " ).append( phone.getValue() ).append( "<br/>" );
 		}
 		RegistryMedia fax = companyController.getFax();
 		if ( fax != null ) {
-			body.append( "Fax: " ).append( fax.getValue() ).append( "<br/>" );
+			String faxLabel = AonUtil.getMessage("registryBundle", "registry_fax");
+			body.append(faxLabel).append( ": " ).append( fax.getValue() ).append( "<br/>" );
 		}
 		RegistryMedia web = companyController.getWeb();
 		if ( web != null ) {
@@ -106,14 +113,26 @@ public class EmailUtilController implements IFinanceMessages {
 		return aonFile;
 	}
 	
-	public void sendInvoice( Invoice invoice ) throws ReportException, IOException, WebmailException, ManagerBeanException {
-		Address to = new InternetAddress( invoice.getRegistry().getEmail().getValue(), invoice.getRegistryName() );
-		String subject = getEmailSubject(invoice);
-		String content = getEmailBody(invoice);
-		String name = "invoice_" + invoice.getSeries() + "-" + invoice.getNumber() + ".pdf";
-		AonFile file = getInvoiceFile("saleInvoice", name);
-		getEmailSender().sendMessage(to, subject, content, MimeType.MIME_HTML, file);		
-		file.getFile().delete();
+	public void sendInvoice( Invoice invoice ) {
+		try {
+			RegistryMedia email = invoice.getRegistry().getEmail();
+			if ( email == null) {
+				String message = "No se ha podido enviar por email la factura " + invoice.getReferenceCode() + ". " + invoice.getRegistryName() + " no tiene e-mail definido";
+				AonUtil.addErrorMessage(message);				
+			} else {
+				Address to = new InternetAddress( email.getValue(), invoice.getRegistryName() );
+				String subject = getEmailSubject(invoice);
+				String content = getEmailBody(invoice);
+				String name = "invoice_" + invoice.getSeries() + "-" + invoice.getNumber() + ".pdf";
+				AonFile file = getInvoiceFile("saleInvoice", name);
+				getEmailSender().sendMessage(to, subject, content, MimeType.MIME_HTML, file);		
+				file.getFile().delete();
+			}
+		} catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			String message = "Error enviando por e-mail la factura " + invoice.getReferenceCode() + " de " + invoice.getRegistryName();
+			AonUtil.addErrorMessage(message);
+		}
 	}
 	
 }
