@@ -8,6 +8,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -35,7 +36,6 @@ import com.code.aon.common.IProgression;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
@@ -297,15 +297,19 @@ public class AccountLevelChangeController extends BasicController implements IPr
 		int rowsUpdated = 0;
 		try {
 			String update = "UPDATE " + table + " SET " + field + " = :targetAccount WHERE " + field + " = :sourceAccount";
-			Session session = HibernateUtil.getSession(null);
-			HibernateUtil.beginTransaction(null);
+			Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+			if (HibernateUtil.mustBeginTransaction()) {
+				session.beginTransaction();
+			}
 			Query query = session.createQuery(update);
 			query.setString("sourceAccount", sourceAccount.getId());
 			query.setString("targetAccount", targetAccount.getId());
 			rowsUpdated = query.executeUpdate();
 			session.flush();
-			HibernateUtil.commitTransaction(null);
-		} catch (DAOException e) {
+			if (HibernateUtil.mustBeginTransaction()) {
+				session.getTransaction().commit();
+			}
+		} catch (HibernateException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
 		}
 		return (rowsUpdated > 0);
@@ -317,15 +321,19 @@ public class AccountLevelChangeController extends BasicController implements IPr
 		try {
 			String update = "UPDATE " + table + " SET " + field1 + " = :targetAccount " +
 							"WHERE " + field2 + " LIKE 'ACC_%_ACC' AND " + field1 + " = :sourceAccount";
-			Session session = HibernateUtil.getSession(null);
-			HibernateUtil.beginTransaction(null);
+			Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+			if (HibernateUtil.mustBeginTransaction()) {
+				session.beginTransaction();
+			}
 			Query query = session.createQuery(update);
 			query.setString("sourceAccount", sourceAccount.getId());
 			query.setString("targetAccount", targetAccount.getId());
 			rowsUpdated = query.executeUpdate();
 			session.flush();
-			HibernateUtil.commitTransaction(null);
-		} catch (DAOException e) {
+			if (HibernateUtil.mustBeginTransaction()) {
+				session.getTransaction().commit();
+			}
+		} catch (HibernateException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
 		}
 		return (rowsUpdated > 0);
