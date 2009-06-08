@@ -68,6 +68,32 @@
 	<report id="invoiceFinances" description="feeInvoicing Finances">
 		<template path="/com/code/aon/ui/finance/report/feeInvoicingFinances.jasper"/>
 	</report>
+	
+	<!--  *********  Sale eInvoice Print  ********* -->
+	<report id="saleEInvoice" description="Digital Certificate Invoice's Report">
+		<template path="/com/code/aon/ui/finance/report/eInvoicing.jasper"/>
+		<collection provider="#{saleInvoice}" forceRefresh="true"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}" />
+			<param id="eInvoiceXml" value="#{saleInvoice.getEInvoice}" />
+			<param id="invoiceSignature" value="#{saleInvoice.getInvoiceSignature}" />
+			
+		</params>
+		
+		<nested-report report="invoiceDetail"/>
+		<nested-report report="invoiceTaxBreakDown"/>
+		<nested-report report="invoiceFinances"/>
+	</report>
 
 	<!--  *********  InvoicePrint  ********* -->
 	<report id="invoicePrint" description="Invoice's Report">

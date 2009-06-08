@@ -373,4 +373,23 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		saveState( invoice );
 	}
 	
+	/**
+	 * Devulve un archivo xml partiendo del id del invoice seleccionado
+	 * 
+	 * @return
+	 */
+	public String getEInvoice(){
+		Invoice i = new Invoice();
+		
+		return "xml";
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public String getInvoiceSignature(){
+		return "xml";
+	}
+	
 }
