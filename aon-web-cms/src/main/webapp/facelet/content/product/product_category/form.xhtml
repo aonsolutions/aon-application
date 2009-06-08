@@ -157,12 +157,10 @@
 							columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
 									aon-editDataTable-iconColumn">
 									
+							<aon:rowSelector immediate="true" reRender="detail_panel"
+								 actionListener="#{subCategory.onSelect}" />																		
+									
 							<aon:column>
-								<a4j:support 
-									immediate="#{true}"
-									reRender="detail_panel"
-									actionListener="#{subCategory.onSelect}"
-									event="onclick" />
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.cms_alias}"/>
 								</f:facet>
@@ -171,11 +169,6 @@
 							</aon:column>
 
 							<aon:column>
-								<a4j:support 
-									immediate="#{true}"
-									reRender="detail_panel"
-									actionListener="#{subCategory.onSelect}"
-									event="onclick" />
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.product_category_label}"/>
 								</f:facet>
@@ -187,20 +180,23 @@
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.product_category_active}" />
 								</f:facet>
-								<aon:commandLink title="#{appBundle.product_category_activate}" 
-									actionListener="#{subCategory.onActivate}"
-									reRender="dataTable"
-									rendered="#{!to.active}">
-									<aon:graphicImage id="subCategory_active" alt="#{appBundle.product_category_activate}"
-										url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
-								</aon:commandLink>
-								<aon:commandLink title="#{appBundle.product_category_deactivate}" 
-									reRender="dataTable"
-									actionListener="#{subCategory.onDeactivate}" 
-									rendered="#{to.active}">
-									<aon:graphicImage id="subCategory_deactive" alt="#{appBundle.link_deactivate}"
-										url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
-								</aon:commandLink>
+								<aon:div onmouseover="disableRowSelector();"
+									onmouseout="enableRowSelector();" >																																							
+									<aon:commandLink title="#{appBundle.product_category_activate}" 
+										actionListener="#{subCategory.onActivate}"
+										reRender="dataTable"
+										rendered="#{!to.active}">
+										<aon:graphicImage id="subCategory_active" alt="#{appBundle.product_category_activate}"
+											url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+									</aon:commandLink>
+									<aon:commandLink title="#{appBundle.product_category_deactivate}" 
+										reRender="dataTable"
+										actionListener="#{subCategory.onDeactivate}" 
+										rendered="#{to.active}">
+										<aon:graphicImage id="subCategory_deactive" alt="#{appBundle.link_deactivate}"
+											url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
+									</aon:commandLink>
+								</aon:div>
 							</aon:column>
 
 						</aon:dataTable>
