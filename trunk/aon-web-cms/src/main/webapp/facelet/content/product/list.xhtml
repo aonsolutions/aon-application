@@ -82,85 +82,75 @@
 			
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
-					<aon:dataTable id="dataTable" value="#{product.model}" var="to"
-						rows="#{product.pageLimit}"
-						columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-								aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-								aon-editDataTable-iconColumn">
-								
-							<aon:column>
-								<a4j:support 
-									action="product_form"
-									actionListener="#{product.onSelect}"
-									event="onclick" />
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.cms_alias}" />
-								</f:facet>
-								<aon:outputText value="#{to.alias}"
-									styleClass="aon-editDataTable-button" />
-							</aon:column>
+				<aon:dataTable id="dataTable" value="#{product.model}" var="to"
+					rows="#{product.pageLimit}" rendered="#{product.model.rowCount > 0}"
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+							aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+							aon-editDataTable-iconColumn">
+							
+					<aon:rowSelector
+						action="product_form" actionListener="#{product.onSelect}" />							
+							
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.cms_alias}" />
+						</f:facet>
+						<aon:outputText value="#{to.alias}"
+							styleClass="aon-editDataTable-button" />
+					</aon:column>
 
-							<aon:column>
-								<a4j:support 
-									action="product_form"
-									actionListener="#{product.onSelect}"
-									event="onclick" />
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.product_label}" />
-								</f:facet>
-								<aon:outputText value="#{product.i18nShortLabel}"
-									styleClass="aon-editDataTable-button" />
-							</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.product_label}" />
+						</f:facet>
+						<aon:outputText value="#{product.i18nShortLabel}"
+							styleClass="aon-editDataTable-button" />
+					</aon:column>
 
-							<aon:column>
-								<a4j:support 
-									action="product_form"
-									actionListener="#{product.onSelect}"
-									event="onclick" />
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.product_category}" />
-								</f:facet>
-								<aon:outputText value="#{product.i18nCategory}"
-									styleClass="aon-editDataTable-button" />
-							</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.product_category}" />
+						</f:facet>
+						<aon:outputText value="#{product.i18nCategory}"
+							styleClass="aon-editDataTable-button" />
+					</aon:column>
 
-							<aon:column>
-								<a4j:support 
-									action="product_form"
-									actionListener="#{product.onSelect}"
-									event="onclick" />
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.brand}" />
-								</f:facet>
-								<aon:outputText value="#{product.i18nBrand}"
-									styleClass="aon-editDataTable-button" />
-							</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.brand}" />
+						</f:facet>
+						<aon:outputText value="#{product.i18nBrand}"
+							styleClass="aon-editDataTable-button" />
+					</aon:column>
 
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.product_active}" />
-								</f:facet>
-								<aon:commandLink title="#{appBundle.product_activate}" 
-									action="product_list"
-									actionListener="#{product.onActivate}" 
-									rendered="#{!to.active}">
-									<aon:graphicImage id="Product_active" alt="#{appBundle.product_activate}"
-										url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
-								</aon:commandLink>
-								<aon:commandLink title="#{appBundle.product_deactivate}" 
-									action="product_list"
-									actionListener="#{product.onDeactivate}" 
-									rendered="#{to.active}">
-									<aon:graphicImage id="Product_deactive" alt="#{appBundle.product_deactivate}"
-										url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
-								</aon:commandLink>
-							</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.product_active}" />
+						</f:facet>
+						<aon:div onmouseover="disableRowSelector();"
+							onmouseout="enableRowSelector();" >																															
+							<aon:commandLink title="#{appBundle.product_activate}" 
+								action="product_list"
+								actionListener="#{product.onActivate}" 
+								rendered="#{!to.active}">
+								<aon:graphicImage id="Product_active" alt="#{appBundle.product_activate}"
+									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+							</aon:commandLink>
+							<aon:commandLink title="#{appBundle.product_deactivate}" 
+								action="product_list"
+								actionListener="#{product.onDeactivate}" 
+								rendered="#{to.active}">
+								<aon:graphicImage id="Product_deactive" alt="#{appBundle.product_deactivate}"
+									url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
+							</aon:commandLink>
+						</aon:div>
+					</aon:column>
 
-						</aon:dataTable>
-						
-						<aon:dataScroller2 for="dataTable" showNote="true" />					
+				</aon:dataTable>
 					
-				</aon:div>
+				<aon:dataScroller2 for="dataTable" showNote="true" />					
+					
+			</aon:div>
 		</aon:form>
 
 		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
