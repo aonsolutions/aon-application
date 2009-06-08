@@ -70,6 +70,9 @@
 							   aon-editDataTable-textColumn, aon-editDataTable-iconColumn,
 							   aon-editDataTable-buttonsColumn">
 
+					<aon:rowSelector immediate="true" reRender="dataTable,gridToolbar"
+						 actionListener="#{brand.onSelect}" />																		
+
 					<aon:column>
 						<f:facet name="header">
 							<aon:div>
@@ -99,10 +102,6 @@
 						<aon:outputText value="#{to.alias}"
 							rendered="#{to!=brand.to}" 
 							styleClass="aon-editDataTable-button">
-							<a4j:support 
-								reRender="dataTable,gridToolbar"
-								actionListener="#{brand.onSelect}"
-								event="onclick" />
 						</aon:outputText>	
 						<aon:inputText value="#{to.alias}"
 							id="#{to.id}_alias"
@@ -129,10 +128,6 @@
 						<aon:outputText value="#{brand.i18nLabel}"
 							rendered="#{to!=brand.to}" 
 							styleClass="aon-editDataTable-button">
-							<a4j:support 
-								reRender="dataTable,gridToolbar"
-								actionListener="#{brand.onSelect}"
-								event="onclick" />
 						</aon:outputText>	
 						<aon:inputText value="#{brand.toI18n.label}"
 							id="#{to.id}_label"
@@ -152,20 +147,23 @@
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.brand_active}" />
 						</f:facet>
-						<aon:commandLink title="#{appBundle.brand_activate}" 
-							reRender="dataTable"
-							actionListener="#{brand.onActivate}" 
-							rendered="#{!to.active}">
-							<aon:graphicImage id="Brand_active" alt="#{appBundle.brand_activate}"
-								url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
-						</aon:commandLink>
-						<aon:commandLink title="#{appBundle.brand_deactivate}" 
-							reRender="dataTable"
-							actionListener="#{brand.onDeactivate}" 
-							rendered="#{to.active}">
-							<aon:graphicImage id="Brand_deactive" alt="#{appBundle.brand_deactivate}"
-								url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
-						</aon:commandLink>
+						<aon:div onmouseover="disableRowSelector();"
+							onmouseout="enableRowSelector();" >																																					
+							<aon:commandLink title="#{appBundle.brand_activate}" 
+								reRender="dataTable"
+								actionListener="#{brand.onActivate}" 
+								rendered="#{!to.active}">
+								<aon:graphicImage id="Brand_active" alt="#{appBundle.brand_activate}"
+									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+							</aon:commandLink>
+							<aon:commandLink title="#{appBundle.brand_deactivate}" 
+								reRender="dataTable"
+								actionListener="#{brand.onDeactivate}" 
+								rendered="#{to.active}">
+								<aon:graphicImage id="Brand_deactive" alt="#{appBundle.brand_deactivate}"
+									url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
+							</aon:commandLink>
+						</aon:div>
 					</aon:column>
 						
 					<aon:column>
