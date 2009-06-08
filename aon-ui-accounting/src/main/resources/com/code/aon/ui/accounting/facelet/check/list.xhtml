@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="accountEntryList">
+			
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarID" value="aonToolbar" />
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_chech_balance_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_list}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="aonToolbar-back" 
+						value="#{bundle.aon_back}"
+						action="check_form" 
+						actionListener="#{accountCheck.onInitialize}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel" 
+						immediate="true"
+						accesskey="#{bundle.aon_key_cancel}" />
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div id="accountEntryData" styleClass="aon-scroll-area">
+				<c:if test="#{accountCheck.emptyAccountEntryCheck}">
+					<ui:include	src="emptyAccountEntry/list.xhtml" />
+				</c:if>
+				<c:if test="#{accountCheck.unbalancedAccountEntryCheck}">
+					<ui:include	src="unbalancedAccountEntry/list.xhtml" />
+				</c:if>
+				<c:if test="#{accountCheck.accountEntryEnabledCheck}">
+					<ui:include	src="accountEntryEnabled/list.xhtml" />
+				</c:if>
+				<c:if test="#{accountCheck.parentEntryCheck}">
+					<ui:include	src="parentEntry/list.xhtml" />
+				</c:if>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
