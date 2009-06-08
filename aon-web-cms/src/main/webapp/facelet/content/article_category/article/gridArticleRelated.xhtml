@@ -6,87 +6,28 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:div id="articleRelatedData">
+	<aon:div rendered="#{!article.new}">
 	
-		<aon:dataTable id="articleRelatedDataTable" 
-			value="#{articleRelated.model}" var="to"
-			rows="#{articleRelated.pageLimit}"
-			columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
-					aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-					aon-editDataTable-textColumn, aon-editDataTable-textColumn">
-	
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="&#160;" />
-				</f:facet>
-				<aon:outputText value="&#160;" />
-				<f:facet name="footer">
-					<aon:div>
-						<aon:commandButton id="reset"
-							title="[#{bundle.aon_reset}]"
-							styleClass="aon-editDataTable-button aon-icon-reset" 
-							value=""
-							immediate="true" 
-							reRender="articleRelatedData"
-							rendered="#{!articleRelated.new}" 
-							accesskey="#{bundle.aon_key_new_line}">
-							<aon:actionListener method="#{articleRelated.onReset}" />
-						</aon:commandButton>
-					</aon:div>
-				</f:facet>
-			</aon:column>
-	
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{appBundle.article_related_name}" />
-				</f:facet>
-				<aon:outputText value="#{to.articleRelated.alias}">
-					<a4j:support 
-						reRender="articleRelatedData"
-						actionListener="#{articleRelated.onSelect}"
-						event="onclick" />
-				</aon:outputText>					
-				<f:facet name="footer">
-					<aon:selectOneMenu styleClass="aon-form-selectOneMenu-field"
-						rendered="#{articleRelated.new}" 
-						value="#{articleRelated.to.articleRelated.id}">
-						<f:selectItems value="#{collections.articleList}" />
-					</aon:selectOneMenu>
-				</f:facet>
-			</aon:column>
-	
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="&#160;" />
-				</f:facet>
-				<f:verbatim rendered="#{to!=articleRelated.to}">&#160;</f:verbatim>
-				<aon:commandButton id="lineRemove" title="[#{bundle.aon_remove}]"
-					rendered="#{to==articleRelated.to}"
-					styleClass="aon-editDataTable-button aon-icon-delete"
-					reRender="articleRelatedData" 
-					immediate="true">
-					<aon:actionListener method="#{articleRelated.onRemove}" />
-				</aon:commandButton>
-				<f:facet name="footer">
-					<aon:div rendered="#{articleRelated.new}">
-						<f:verbatim rendered="#{!articleRelated.new}">&#160;</f:verbatim>
-						<aon:commandButton id="newAccept" title="[#{bundle.aon_accept}]"
-							styleClass="aon-editDataTable-button aon-icon-accept"
-							reRender="articleRelatedData">
-							<aon:actionListener method="#{articleRelated.accept}" />
-						</aon:commandButton>
-						<aon:commandButton id="newCancel" title="[#{bundle.aon_cancel}]"
-							styleClass="aon-editDataTable-button aon-icon-cancel"
-							reRender="articleRelatedData" 
-							immediate="true">
-							<aon:actionListener method="#{articleRelated.onCancel}" />
-						</aon:commandButton>
-					</aon:div>
-				</f:facet>
-			</aon:column>
-		</aon:dataTable>
-		
-		<aon:dataScroller2 for="articleRelatedDataTable" />					
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+			<ui:param name="controller" value="#{articleRelated}" />
+			<ui:param name="columnClasses" value="aon-editDataTable-textColumn" />
+			<ui:param name="skipSaveButton" value="#{!articleRelated.new}" />
+			<ui:define name="columns">
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputLabel for="ArticleRelated_Name" value="#{bundle.aon_name}" />
+					</f:facet>
+					<aon:outputText value="#{to.articleRelated.alias}" />
+					<f:facet name="footer">
+						<aon:selectOneMenu id="ArticleRelated_Name-New" 
+							rendered="#{formNew}" value="#{articleRelated.to.articleRelated.id}">
+							<f:selectItems value="#{collections.articleList}" />
+						</aon:selectOneMenu>
+					</f:facet>
+				</aon:column>
+
+			</ui:define>
+		</ui:decorate>
 			
 	</aon:div>
 
