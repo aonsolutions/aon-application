@@ -12,6 +12,7 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.FTPUtil;
+import com.code.aon.ui.util.AonUtil;
 
 public class GeneratorStatusController  {
 	
@@ -95,9 +96,10 @@ public class GeneratorStatusController  {
 		this.status = new ArrayList<String>();
 		this.errors = new ArrayList<String>();
 		try {
-			if (FTPUtil.uploadFTP())
+			if (FTPUtil.uploadFTP())  {
 				this.published = true;
-		}catch (Throwable th) {
+			}
+		}catch (Throwable th) {		
 			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}finally{
 			this.activePoll = false;
@@ -111,7 +113,7 @@ public class GeneratorStatusController  {
 		try {
 			if (FTPUtil.uploadPreviewFTP())
 				this.published = true;
-		}catch (Throwable th) {
+		}catch (Throwable th) {			
 			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		}finally{
 			this.activePoll = false;

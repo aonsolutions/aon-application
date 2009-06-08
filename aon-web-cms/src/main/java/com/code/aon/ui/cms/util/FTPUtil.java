@@ -68,15 +68,17 @@ public class FTPUtil implements ICMSConstants {
 			if (ftp.getReplyCode() >= 500) {
 				status.addErrorMessage(ftp.getReplyString());
 				throw new AonException();
+			} else {
+				status.addMessage(ftp.getReplyString());
 			}
-			else status.addMessage(ftp.getReplyString());
 			status.addMessage("Validando....");
 			ftp.login(user, password);
 			if (ftp.getReplyCode() >= 500) {
 				status.addErrorMessage(ftp.getReplyString());
 				throw new AonException();
+			} else {
+				status.addMessage(ftp.getReplyString());
 			}
-			else status.addMessage(ftp.getReplyString());
 
 			status.addMessage("Conectado.");
 			ftp.changeWorkingDirectory(destinationFolder);
@@ -92,8 +94,7 @@ public class FTPUtil implements ICMSConstants {
 				}
 				ftpDir(sourceFolder, ftp, destinationFolder);
 				status.addMessage("Publicacion finalizada.");
-			}
-			else {
+			} else {
 				status.addMessage("No hubo conexion con el servidor.");
 				error = false;
 			}
@@ -150,6 +151,5 @@ public class FTPUtil implements ICMSConstants {
 		}
  		return true;
 	}
-
 
 }
