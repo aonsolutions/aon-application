@@ -105,76 +105,78 @@
 				<aon:panelTab id="meta_tags" label="#{appBundle.banner_category}"
 					rendered="#{!footer.new}">
 
-					<aon:dataTable id="footer_banner_category_Data" 
-						value="#{footer_banner_category.model}" var="to"
-						rows="#{footer_banner_category.pageLimit}"
-						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
-								aon-editDataTable-buttonsColumn">
-				
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="&#160;" />
-							</f:facet>
-							<aon:outputText value="&#160;" rendered="#{to==footer_banner_category.to}" />
-							<aon:commandButton id="lineRemove" title="[#{bundle.aon_remove}]"
-								rendered="#{to!=footer_banner_category.to}"
-								styleClass="aon-editDataTable-button aon-icon-delete"
-								reRender="footer_banner_category_Data" immediate="true">
-								<aon:actionListener method="#{footer_banner_category.onRemoveRow}" />
-							</aon:commandButton>
-							<f:facet name="footer">
-								<aon:div>
-									<aon:commandButton id="reset"
-										title="[#{bundle.aon_reset}]"
-										styleClass="aon-editDataTable-button aon-icon-reset" value=""
-										immediate="true" reRender="footer_banner_category_Data"
-										rendered="#{!footer_banner_category.new}" 
-										accesskey="#{bundle.aon_key_new_line}">
-										<aon:actionListener method="#{footer_banner_category.onReset}" />
-									</aon:commandButton>
-								</aon:div>
-							</f:facet>
-						</aon:column>
-				
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.cms_alias}" />
-							</f:facet>
-							<aon:outputText value="#{to.bannerCategory.alias}" 
-								rendered="#{to!=footer_banner_category.to}" />
-							<f:facet name="footer">
-								<aon:selectOneMenu styleClass="aon-form-selectOneMenu-field"
-									rendered="#{footer_banner_category.new}" 
-									value="#{footer_banner_category.to.bannerCategory.id}">
-									<f:selectItems value="#{collections.bannerGroupList}" />
-								</aon:selectOneMenu>
-							</f:facet>
-						</aon:column>
-				
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="&#160;" />
-							</f:facet>
-							<f:verbatim rendered="#{to!=footer_banner_category.to}">&#160;</f:verbatim>
-							<f:facet name="footer">
-								<aon:div rendered="#{footer_banner_category.new}">
-									<f:verbatim rendered="#{!footer_banner_category.new}">&#160;</f:verbatim>
-									<aon:commandButton id="newAccept" title="[#{bundle.aon_accept}]"
-										styleClass="aon-editDataTable-button aon-icon-accept"
-										reRender="footer_banner_category_Data">
-										<aon:actionListener method="#{footer_banner_category.onAccept}" />
-									</aon:commandButton>
-									<aon:commandButton id="newCancel" title="[#{bundle.aon_cancel}]"
-										styleClass="aon-editDataTable-button aon-icon-cancel"
-										reRender="footer_banner_category_Data" immediate="true">
-										<aon:actionListener method="#{footer_banner_category.onCancel}" />
-									</aon:commandButton>
-								</aon:div>
-							</f:facet>
-						</aon:column>
-					</aon:dataTable>
+					<aon:div id="footer_banner_category_DataDiv">
+						<aon:dataTable id="footer_banner_category_Data" 
+							value="#{footer_banner_category.model}" var="to"
+							rows="#{footer_banner_category.pageLimit}"
+							columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
+									aon-editDataTable-buttonsColumn">
 					
-					<aon:dataScroller2 for="footer_banner_category_Data" showNote="true" />					
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="&#160;" />
+								</f:facet>
+								<aon:outputText value="&#160;" rendered="#{to==footer_banner_category.to}" />
+								<aon:commandButton id="lineRemove" title="[#{bundle.aon_remove}]"
+									rendered="#{to!=footer_banner_category.to}"
+									styleClass="aon-editDataTable-button aon-icon-delete"
+									reRender="footer_banner_category_DataDiv" immediate="true">
+									<aon:actionListener method="#{footer_banner_category.onRemoveRow}" />
+								</aon:commandButton>
+								<f:facet name="footer">
+									<aon:div>
+										<aon:commandButton id="reset"
+											title="[#{bundle.aon_reset}]"
+											styleClass="aon-editDataTable-button aon-icon-reset" value=""
+											immediate="true" reRender="footer_banner_category_DataDiv"
+											rendered="#{!footer_banner_category.new}" 
+											accesskey="#{bundle.aon_key_new_line}">
+											<aon:actionListener method="#{footer_banner_category.onReset}" />
+										</aon:commandButton>
+									</aon:div>
+								</f:facet>
+							</aon:column>
+					
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.cms_alias}" />
+								</f:facet>
+								<aon:outputText value="#{to.bannerCategory.alias}" 
+									rendered="#{to!=footer_banner_category.to}" />
+								<f:facet name="footer">
+									<aon:selectOneMenu styleClass="aon-form-selectOneMenu-field"
+										rendered="#{footer_banner_category.new}" 
+										value="#{footer_banner_category.to.bannerCategory.id}">
+										<f:selectItems value="#{collections.bannerGroupList}" />
+									</aon:selectOneMenu>
+								</f:facet>
+							</aon:column>
+					
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="&#160;" />
+								</f:facet>
+								<f:verbatim rendered="#{to!=footer_banner_category.to}">&#160;</f:verbatim>
+								<f:facet name="footer">
+									<aon:div rendered="#{footer_banner_category.new}">
+										<f:verbatim rendered="#{!footer_banner_category.new}">&#160;</f:verbatim>
+										<aon:commandButton id="newAccept" title="[#{bundle.aon_accept}]"
+											styleClass="aon-editDataTable-button aon-icon-accept"
+											reRender="footer_banner_category_DataDiv">
+											<aon:actionListener method="#{footer_banner_category.onAccept}" />
+										</aon:commandButton>
+										<aon:commandButton id="newCancel" title="[#{bundle.aon_cancel}]"
+											styleClass="aon-editDataTable-button aon-icon-cancel"
+											reRender="footer_banner_category_DataDiv" immediate="true">
+											<aon:actionListener method="#{footer_banner_category.onCancel}" />
+										</aon:commandButton>
+									</aon:div>
+								</f:facet>
+							</aon:column>
+						</aon:dataTable>
+						
+						<aon:dataScroller2 for="footer_banner_category_Data" />
+					</aon:div>					
 					
 				</aon:panelTab>			
 
