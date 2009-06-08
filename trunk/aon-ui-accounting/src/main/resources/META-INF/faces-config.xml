@@ -787,6 +787,14 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ********** ACCOUNT CHECK CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>accountCheck</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.accounting.controller.AccountCheckController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!--  ****************************************** -->
 	<!--  ******** Navigation Rules **************** -->
 	<!--  ****************************************** -->
@@ -1094,11 +1102,26 @@
 		</navigation-case>
 	</navigation-rule>
 	
-		<!-- **************** ACCOUNT CHANGE ************************** -->
+	<!-- **************** ACCOUNT CHANGE ************************** -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>accountChange_form</from-outcome>
 		<to-view-id>/com/code/aon/ui/accounting/facelet/accountChange/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+
+	<!-- **************** CHECK REPORT ************************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>check_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/check/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>check_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/check/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	
+	
 </faces-config>
