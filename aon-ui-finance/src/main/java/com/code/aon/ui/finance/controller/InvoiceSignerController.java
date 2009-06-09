@@ -130,43 +130,50 @@ public class InvoiceSignerController extends BasicController{
 			HibernateUtil.setBeginTransaction( false );
 			HibernateUtil.setCloseSession( false );
 
-			RegistryAttachment signature = obtainCompanySignature();
-			if (signature != null) {
-				IManagerBean invoiceAttachBean = BeanManager.getManagerBean(InvoiceAttachment.class);
-
-				Iterator<Invoice> iter = getCheckedInvoices().iterator();
-				while(iter.hasNext()){
-					Invoice invoice = iter.next();
-					try {
-						HibernateUtil.beginTransaction(sessionName);
-
-						InvoiceAttachment invoiceAttach = new InvoiceAttachment();
-						invoiceAttach.setInvoice(invoice);
-						invoiceAttach.setMimeType(signature.getMimeType());
-						invoiceAttach.setData(signature.getData());
-						invoiceAttach.setDescription(signature.getDescription());
-						invoiceAttach.setSize(signature.getSize());
-						invoiceAttachBean.insert(invoiceAttach);
-
-						HibernateUtil.getSession(sessionName).flush();					
-						HibernateUtil.commitTransaction(sessionName);
-					} catch (Exception e) {
+			//ÑAPA GORDA DONDE LAS HAYA. ESCAYOLA PA LA DEMO
+			if (getPassword().equals("aondemo")) {
+				RegistryAttachment signature = obtainCompanySignature();
+				if (signature != null) {
+					IManagerBean invoiceAttachBean = BeanManager.getManagerBean(InvoiceAttachment.class);
+	
+					Iterator<Invoice> iter = getCheckedInvoices().iterator();
+					while(iter.hasNext()){
+						Invoice invoice = iter.next();
 						try {
-							HibernateUtil.rollbackTransaction(sessionName);
-						} catch (DAOException daoe) {
-							String msg =  "Unable to rollback transaction!";
+							HibernateUtil.beginTransaction(sessionName);
+	
+							InvoiceAttachment invoiceAttach = new InvoiceAttachment();
+							invoiceAttach.setInvoice(invoice);
+							invoiceAttach.setMimeType(signature.getMimeType());
+							invoiceAttach.setData(signature.getData());
+							invoiceAttach.setDescription(signature.getDescription());
+							invoiceAttach.setSize(signature.getSize());
+							invoiceAttachBean.insert(invoiceAttach);
+	
+							HibernateUtil.getSession(sessionName).flush();					
+							HibernateUtil.commitTransaction(sessionName);
+						} catch (Exception e) {
+							try {
+								HibernateUtil.rollbackTransaction(sessionName);
+							} catch (DAOException daoe) {
+								String msg =  "Unable to rollback transaction!";
+								LOGGER.log(Level.SEVERE, msg, e);
+							}
+							String msg =  "Error recording invoice:  " + invoice.getReferenceCode();
 							LOGGER.log(Level.SEVERE, msg, e);
+							AonUtil.addErrorMessage(msg);
+							throw new AbortProcessingException(msg);
+						} finally {
+							HibernateUtil.closeSession(sessionName);
 						}
-						String msg =  "Error recording invoice:  " + invoice.getReferenceCode();
-						LOGGER.log(Level.SEVERE, msg, e);
-						AonUtil.addErrorMessage(msg);
-						throw new AbortProcessingException(msg);
-					} finally {
-						HibernateUtil.closeSession(sessionName);
 					}
+					clearCheckedInvoices();
+					this.onSearch(null);
 				}
-				clearCheckedInvoices();
-				this.onSearch(null);
+			} else {
+				String msg =  "Password Incorrecta!";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
 			}
 		} catch (ManagerBeanException e) {
 			String msg =  "Error obtaining company signature";

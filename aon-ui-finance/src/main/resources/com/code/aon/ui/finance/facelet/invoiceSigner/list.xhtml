@@ -19,16 +19,7 @@
 				<ui:param name="skipResetButton" value="true" />
 				
 				<ui:define name="additionalToolbarContent">
-					<aon:commandButton id="sign_selected"
-						value="#{financeBundle.finance_sign_selected}"
-						rendered="#{invoiceSigner.model.rowCount > 0}"
-						reRender="invoiceSignerDataDiv"
-						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						actionListener="#{invoiceSigner.onSignSelected}"
-						onclick="Richfaces.showModalPanel('waitProccess')" 
-			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-<!--
-					<aon:commandButton id="popup" immediate="#{true}" 
+					<aon:commandButton id="popup"
 						value="#{financeBundle.finance_sign_selected}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						actionListener="#{invoiceSigner.onPasswordShow}"
@@ -36,8 +27,6 @@
 						<f:setPropertyActionListener target="#{invoiceSigner.showPasswordWindow}"
 							value="#{true}" />
 					</aon:commandButton>
-
-  -->
 				</ui:define>				
 				
 			</ui:decorate>
