@@ -2,14 +2,11 @@ package com.code.aon.ui.finance.controller;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
 
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.common.BeanManager;
@@ -21,16 +18,15 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
-import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
-public class InvoiceRecordingController extends BasicController{
+public class InvoiceRecorderController extends BasicController{
 	
-	private static final Logger LOGGER = Logger.getLogger(InvoiceRecordingController.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(InvoiceRecorderController.class.getName());
 	
 	private AccountEntryInvoiceWriter accountEntryInvoiceWriter;
 
@@ -57,7 +53,7 @@ public class InvoiceRecordingController extends BasicController{
 		Iterator iter = this.getManagerBean().getList(this.getCriteria()).iterator();
 		while(iter.hasNext()){
 			Invoice invoice = (Invoice)iter.next();
-			if(isRecordable(invoice)){
+			if(isRecordable(invoice)) {
 				if (!checks.contains( invoice )) {
 					checks.add( invoice );
 				}
@@ -103,7 +99,7 @@ public class InvoiceRecordingController extends BasicController{
 	}
 	
 	public boolean isModelToRecordable() throws ManagerBeanException{
-		if ( getModel().isRowAvailable() ) {
+		if (getModel().isRowAvailable()) {
 			Invoice invoice = (Invoice)this.getModel().getRowData();
 			return isRecordable(invoice);
 		}
@@ -129,15 +125,6 @@ public class InvoiceRecordingController extends BasicController{
 			financeTotal += finance.getAmount();
 		}
 		return financeTotal;
-	}
-
-	public List<SelectItem> getInvoiceTypes() {
-		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-		SelectItem item = new SelectItem(InvoiceType.SALES, InvoiceType.SALES.getName(AonUtil.getCurrentLocale()));
-		types.add(item);
-		item = new SelectItem(InvoiceType.PURCHASE, InvoiceType.PURCHASE.getName(AonUtil.getCurrentLocale()));
-		types.add(item);
-		return types;
 	}
 
 	public void onRecordSelected(ActionEvent event){
