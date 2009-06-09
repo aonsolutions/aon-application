@@ -12,12 +12,12 @@ import javax.persistence.Table;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.IAttachment;
-import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 
@@ -248,8 +248,7 @@ public class RegistryAttachment implements IAttachment {
 				.append(this.description, o.description)
 				.append(this.mimeType, o.mimeType)				
 				.append(this.registry, o.registry)
-				.append(this.registryAttachmentType, o.registryAttachmentType)
-				.append(this.size, o.size)				
+				.append(this.registryAttachmentType, o.registryAttachmentType)			
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -264,14 +263,20 @@ public class RegistryAttachment implements IAttachment {
 			.append(id)			
 			.append(mimeType)
 			.append(registry)
-			.append(registryAttachmentType)	
-			.append(size)			
+			.append(registryAttachmentType)				
 			.toHashCode();
 	}
 
 	@Override
 	public String toString() {
-		return new PojoToStringBuilder(this).toString();
+		return new ToStringBuilder(this).
+			append("category", category.getId()).
+			append("description", description).
+			append("id", id).
+			append("mimeType", mimeType).
+			append("registry", registry.getId()).
+			append("registryAttachmentType", registryAttachmentType).
+			toString();
 	}
 
 }
