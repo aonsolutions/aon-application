@@ -1,0 +1,562 @@
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<application>
+		<resource-bundle>
+		   <base-name>com.code.aon.ui.project.i18n.messages</base-name>
+		   <var>projectBundle</var>
+		</resource-bundle>
+	</application>
+
+	<!--  *************** CONVERTER ***************** -->
+    <converter>
+		<converter-id>chromeEditorConverter</converter-id>
+		<converter-class>
+			com.code.aon.ui.common.converter.ChromeEditorConverter
+		</converter-class>
+    </converter>
+
+	<!--  *************** COLLECTIONS ***************** -->
+	<managed-bean>
+		<managed-bean-name>projectCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.project.controller.ProjectCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************** ROLE CONTROLLER ****************** --> 
+	<managed-bean>
+		<managed-bean-name>role</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.project.controller.RoleController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	
+	<!-- ************* DOSSIER TYPE ***************** -->
+	<managed-bean>
+		<managed-bean-name>dossierType</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>dossierType</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.project.DossierType</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{activityTypeListener}</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+	         <property-name>defaultOrder</property-name>
+    	     <value>DossierType_description</value>
+      	</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>activityTypeListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>activityType</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>ActivityType_dossierType_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************* ACTIVITY TYPE ***************** -->
+	<managed-bean>
+		<managed-bean-name>activityType</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.project.ActivityType</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>activityType</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>dossierType</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>dossierType.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************* JOB TYPE ***************** -->
+	<managed-bean>
+		<managed-bean-name>jobType</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.project.JobType</value>
+		</managed-property>
+		<managed-property>
+	         <property-name>defaultOrder</property-name>
+    	     <value>JobType_description</value>
+      	</managed-property>
+	</managed-bean>
+	
+	<!-- ************* ACTIVITY TYPE STANDALONE ***************** -->
+	<managed-bean>
+		<managed-bean-name>activityTypeStandalone</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.project.ActivityType</value>
+		</managed-property>
+		<managed-property>
+	         <property-name>defaultOrder</property-name>
+    	     <value>ActivityType_description</value>
+      	</managed-property>
+	</managed-bean>
+	
+	<!-- ************* ACTIVITIES IMPORTER ***************** -->
+	<managed-bean>
+		<managed-bean-name>activitiesImporter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.project.controller.ImportActivitiesController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************* DOSSIER ***************** -->
+	<managed-bean>
+		<managed-bean-name>dossier</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.project.controller.DossierController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>dossier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.project.Dossier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{dossierControllerListener}</value>
+				<value>#{activityListener}</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+         <property-name>defaultOrder</property-name>
+         <value>Dossier_number</value>
+      </managed-property>
+      	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>dossierControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.project.event.DossierControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>activityListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>activity</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Activity_dossier_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************* ACTIVITY ***************** -->
+	<managed-bean>
+		<managed-bean-name>activity</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.project.controller.ActivityController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.project.Activity</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>activity</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>dossier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>dossier.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{activityControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>activityControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.project.event.ActivityControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************* DAILY TRACKING ***************** -->
+	<managed-bean>
+		<managed-bean-name>dailyTracking</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.project.controller.DailyTrackingController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>dailyTracking</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.project.DailyTracking</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{dailyTrackingControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>dailyTrackingControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.project.event.DailyTrackingControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************* DAILY TRACKING ***************** -->
+	<managed-bean>
+		<managed-bean-name>dailyTrackingReport</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.project.report.DailyTrackingReportController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************* INBOX DAILY TRACKING ***************** -->
+	<managed-bean>
+		<managed-bean-name>inboxDailyTracking</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.project.DailyTracking</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{inboxDailyTrackingControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>inboxDailyTrackingControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.project.event.InboxDailyTrackingControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************* TASK ***************** -->
+	<managed-bean>
+		<managed-bean-name>task</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.project.controller.TaskController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>task</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.project.Task</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{taskControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>taskControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.project.event.TaskControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************* TASK MONITOR ***************** -->
+	<managed-bean>
+		<managed-bean-name>taskMonitor</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.project.controller.TaskMonitorController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.project.Task</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{taskMonitorControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>taskMonitorControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.project.event.TaskMonitorControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	
+	<!-- ================================================ -->	
+	<!-- =================== NAVIGATION ================= -->	
+	<!-- ================================================ -->	
+
+    <!-- =================== Dossier Type ================= --> 	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>dossierType_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/project/facelet/dossierType/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dossierType_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/project/facelet/dossierType/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+	
+	<!-- =================== ACTIVITY TYPE ================= -->	
+	<navigation-rule>
+	    <navigation-case>
+    	    <from-outcome>activity_type_standalone</from-outcome>
+        	<to-view-id>/com/code/aon/ui/project/facelet/activityType/grid.xhtml</to-view-id>
+    	</navigation-case>    
+	</navigation-rule>
+	
+	<!-- =================== JOB TYPE ================= -->	
+	<navigation-rule>
+	    <navigation-case>
+	        <from-outcome>job_type</from-outcome>
+	        <to-view-id>/com/code/aon/ui/project/facelet/jobType/grid.xhtml</to-view-id>
+	    </navigation-case>
+    </navigation-rule>    
+
+	<!-- =================== Task ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>task_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/project/facelet/task/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+	        <from-outcome>task_form</from-outcome>
+	        <to-view-id>/com/code/aon/ui/project/facelet/task/form.xhtml</to-view-id>
+	    </navigation-case>
+		<navigation-case>
+	        <from-outcome>task_search</from-outcome>
+	        <to-view-id>/com/code/aon/ui/project/facelet/task/search.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+
+	<!-- =================== DAILY TRACKING ================= -->
+	<navigation-rule>
+		<navigation-case>
+	        <from-outcome>dailyTracking_form</from-outcome>
+	        <to-view-id>/com/code/aon/ui/project/facelet/dailyTracking/form.xhtml</to-view-id>
+	    </navigation-case>
+		<navigation-case>
+			<from-outcome>dailyTracking_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/project/facelet/dailyTracking/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dailyTracking_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/project/facelet/dailyTracking/search.xhtml</to-view-id>
+		</navigation-case>
+	   	<navigation-case>
+	        <from-outcome>daily_tracking_report</from-outcome>
+	        <to-view-id>/com/code/aon/ui/project/facelet/dailyTracking/report.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+
+	<!-- =================== Dossier ================= --> 	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>dossier_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/project/facelet/dossier/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+	        <from-outcome>dossier_form</from-outcome>
+	        <to-view-id>/com/code/aon/ui/project/facelet/dossier/form.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+  
+
+<!--
+	********************************************************************** 
+	********************************************************************** 
+	********************************************************************** 
+	********************************************************************** 
+	********************************************************************** 
+	********************************************************************** 
+	********************************************************************** 
+	********************************************************************** 
+ -->
+
+	
+	<!-- =================== Task Monitor =================  	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>task_monitor_list</from-outcome>
+			<to-view-id>/facelet/task/monitor/list.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+	        <from-outcome>task_monitor_search</from-outcome>
+	        <to-view-id>/facelet/task/monitor/search.faces</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	-->
+  <!-- =================== Application Menu Navigation Rules ================= 	
+  <navigation-rule>
+	<navigation-case>
+		<from-outcome>content</from-outcome>
+		<to-view-id>/facelet/homepage/content.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+        <from-outcome>firstContent</from-outcome>
+        <to-view-id>/facelet/homepage/firstContent.faces</to-view-id>
+    </navigation-case>
+ 	<navigation-case>
+        <from-outcome>task_monitor</from-outcome>
+        <to-view-id>/facelet/task/monitor/search.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+-->  
+</faces-config>
