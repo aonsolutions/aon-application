@@ -8,6 +8,13 @@
 			<var>accountingBundle</var>
 		</resource-bundle>
 	</application>
+	
+	<application>
+		<resource-bundle>
+			<base-name>com.code.aon.ui.accounting.i18n.report</base-name>
+			<var>accountingReportBundle</var>
+		</resource-bundle>
+	</application>
 
 	<!--  *************** COLLECTIONS ***************** -->
 	<managed-bean>
