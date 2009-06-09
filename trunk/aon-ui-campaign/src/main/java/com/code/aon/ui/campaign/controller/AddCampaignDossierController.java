@@ -5,11 +5,8 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-
-import org.apache.myfaces.custom.sortheader.HtmlCommandSortHeader;
 
 import com.code.aon.campaign.Campaign;
 import com.code.aon.campaign.CampaignDossier;
@@ -24,8 +21,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.project.util.CampaignTaskManager;
-import com.code.aon.ui.util.AonUtil;
 
 public class AddCampaignDossierController extends BasicController {
 
@@ -90,7 +87,7 @@ public class AddCampaignDossierController extends BasicController {
     }
 
     public void onSearchDossiers(ActionEvent event) {
-        Campaign campaign = (Campaign)AonUtil.getController("campaign").getTo();
+        Campaign campaign = (Campaign)FormUtil.getController("campaign").getTo();
         searchDossiers(campaign);
     }
 
@@ -133,7 +130,7 @@ public class AddCampaignDossierController extends BasicController {
 
     @SuppressWarnings("unchecked" )
     public void onAddCampaignDossiers(ActionEvent event) {
-        Campaign campaign = (Campaign)AonUtil.getController("campaign").getTo();
+        Campaign campaign = (Campaign)FormUtil.getController("campaign").getTo();
         try {
             IManagerBean campaignDossierBean = BeanManager.getManagerBean(CampaignDossier.class);
             Iterator iterator = checks.iterator();
@@ -147,7 +144,7 @@ public class AddCampaignDossierController extends BasicController {
 
                 CampaignTaskManager.addCampaignTask(campaignDossier, 0, null);
             }
-            CampaignDossierController campaignDossierController = (CampaignDossierController)AonUtil.getController("campaignDossier");
+            CampaignDossierController campaignDossierController = (CampaignDossierController)FormUtil.getController("campaignDossier");
             campaignDossierController.onSearch(null);
 
             checks = new ArrayList<Activity>();
@@ -157,21 +154,7 @@ public class AddCampaignDossierController extends BasicController {
     }
 
     public void sort(ActionEvent event) {
-        try {
-            UIComponent component = event.getComponent();
-            if (component instanceof HtmlCommandSortHeader) {
-                HtmlCommandSortHeader header = (HtmlCommandSortHeader)component;
-                setAscending(header.getColumnName());
-                Criteria criteria = new Criteria();
-                criteria.addExpression(getMainCriteria().getExpression());
-                criteria.addOrder(getFieldName(header.getColumnName()), isAscending());
-                setSortColumn(header.getColumnName());
-                setCriteria(criteria);
-                onSearch(null);
-            }
-        } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error sorting campaign dossier list", e);
-        }
+        LOGGER.log(Level.SEVERE, "Error sorting campaign dossier list");
     }
 
 }

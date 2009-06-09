@@ -14,18 +14,21 @@ import javax.faces.model.SelectItem;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.User;
 import com.code.aon.config.UserWorkGroup;
+import com.code.aon.config.WorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.project.Activity;
 import com.code.aon.project.DailyTracking;
 import com.code.aon.project.Dossier;
+import com.code.aon.project.JobType;
 import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.project.enumeration.DossierStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 
 public class DailyTrackingController extends BasicController {
 
@@ -38,10 +41,10 @@ public class DailyTrackingController extends BasicController {
 
 	private Customer customer;
 
-	private Integer userId;
+	private User user;
 	private Date trackingDateFrom;
 	private Date trackingDateTo;
-	private Integer trackingJobTypeId;
+	private JobType trackingJobType;
 
 	private boolean monitor;
 
@@ -53,7 +56,7 @@ public class DailyTrackingController extends BasicController {
 		this.monitor = monitor;
 	}
 
-	public void onSwicthMonitor(ActionEvent event) throws ManagerBeanException {
+	public void onSwicthMonitor(ActionEvent event) {
 		onRefresh(event);
 	}
 
@@ -84,20 +87,16 @@ public class DailyTrackingController extends BasicController {
 		this.users = users;
 	}
 
-	public Integer getUserId() {
-		return userId;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUserId(Integer userId) {
-		this.userId = userId;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public void onRefresh(ActionEvent event) {
 		super.onSearch(event);
-	}
-
-	public void onReset(MenuEvent event) {
-		super.onReset(event);
 	}
 
 	public void onLaunch(ActionEvent event) {
@@ -111,14 +110,14 @@ public class DailyTrackingController extends BasicController {
 	@Override
 	public void onEditSearch(ActionEvent event) {
 		super.onEditSearch(event);
-		setCustomer(null);
+		setCustomer(new Customer());
 		setTrackingDateFrom(null);
 		setTrackingDateTo(null);
-		setTrackingJobTypeId(null);
-		setUserId(null);
+		setTrackingJobType(null);
+		setUser(null);
 	}
 
-	public void customerPojoChange(ValueChangeEvent event) {
+	public void customerPojoChange(LookupChangeEvent event) {
 		if (event.getNewValue() != null) {
 			Customer customer = (Customer) event.getNewValue();
 			loadDossiers(customer.getId());
@@ -131,7 +130,8 @@ public class DailyTrackingController extends BasicController {
 
 	public void workgroupChanged(ValueChangeEvent event) {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-			loadUsers(new Integer(event.getNewValue().toString()));
+			WorkGroup wg = (WorkGroup)  event.getNewValue();
+			loadUsers(wg.getId());
 		} else {
 			users = new LinkedList<SelectItem>();
 		}
@@ -151,7 +151,7 @@ public class DailyTrackingController extends BasicController {
 			Iterator iterator = managerBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				Dossier dossier = (Dossier) iterator.next();
-				SelectItem item = new SelectItem(dossier.getId(), dossier.getNumber());
+				SelectItem item = new SelectItem(dossier, dossier.getNumber());
 				dossiers.add(item);
 			}
 		} catch (ManagerBeanException e) {
@@ -177,7 +177,7 @@ public class DailyTrackingController extends BasicController {
 				sb.append(" (");
 				sb.append(dossier.getCustomer().getRegistry().getAlias());
 				sb.append(")");
-				SelectItem item = new SelectItem(dossier.getId(), sb.toString());
+				SelectItem item = new SelectItem(dossier, sb.toString());
 				allDossiers.add(item);
 			}
 		} catch (ManagerBeanException e) {
@@ -204,23 +204,14 @@ public class DailyTrackingController extends BasicController {
 	public void dossierChange(ValueChangeEvent event) {
 		if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
 			DailyTracking dt = (DailyTracking) getTo();
-			try {
-				IManagerBean bean = BeanManager.getManagerBean(Dossier.class);
-				Dossier d = (Dossier) bean.get((Integer) event.getNewValue());
-				if (d != null) {
-					if (dt.getCustomer() == null || dt.getCustomer().getId() == null
-							|| !d.getId().equals(dt.getCustomer().getId())) {
-						Customer old = (dt.getCustomer() != null) ? dt.getCustomer() : null;
-						dt.setCustomer(d.getCustomer());
-						ValueChangeEvent ev = new ValueChangeEvent(event.getComponent(), old, d
-								.getCustomer());
-						customerPojoChange(ev);
-					}
-				}
-			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error setting dossier customer", e);
+			Dossier d = (Dossier) event.getNewValue();
+			if (dt.getCustomer() == null || dt.getCustomer().getId() == null
+					|| !d.getId().equals(dt.getCustomer().getId())) {
+				dt.setCustomer(d.getCustomer());
+				LookupChangeEvent ev = new LookupChangeEvent(event.getComponent(), d.getCustomer());
+				customerPojoChange(ev);
 			}
-			loadActivities(new Integer(event.getNewValue().toString()));
+			loadActivities(d.getId());
 		} else {
 			activities = new LinkedList<SelectItem>();
 		}
@@ -237,7 +228,7 @@ public class DailyTrackingController extends BasicController {
 			Iterator iterator = managerBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				Activity activity = (Activity) iterator.next();
-				SelectItem item = new SelectItem(activity.getId(), activity.getActivityType()
+				SelectItem item = new SelectItem(activity, activity.getActivityType()
 						.getDescription());
 				activities.add(item);
 			}
@@ -262,9 +253,18 @@ public class DailyTrackingController extends BasicController {
 			Iterator iter = userWorkGroupBean.getList(criteria).iterator();
 			while (iter.hasNext()) {
 				UserWorkGroup userWorkGroup = (UserWorkGroup) iter.next();
-				SelectItem item = new SelectItem(userWorkGroup.getUser().getId(), userWorkGroup
-						.getUser().getName());
-				users.add(item);
+				boolean added = false;
+				for (SelectItem it:users) {
+					if (it.getValue().equals(userWorkGroup.getUser())) {
+						added = true;
+						break;
+					}
+				}
+				if (!added) {
+					SelectItem item = new SelectItem(userWorkGroup.getUser(), userWorkGroup
+							.getUser().getName());
+					users.add(item);	
+				}
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error loading users related with workgroup with id= "
@@ -396,19 +396,19 @@ public class DailyTrackingController extends BasicController {
 
 	public List<SelectItem> getAvailableDossiers() {
 		DailyTracking dt = (DailyTracking) getTo();
-		if (dt.getCustomer() != null && dt.getCustomer().getId() != null) {
+		if (dt!= null && dt.getCustomer() != null && dt.getCustomer().getId() != null) {
 			return getDossiers();
 		}
 		return getAllDossiers();
 	}
 
 
-	public Integer getTrackingJobTypeId() {
-		return trackingJobTypeId;
+	public JobType getTrackingJobType() {
+		return trackingJobType;
 	}
 
-	public void setTrackingJobTypeId(Integer trackingJobTypeId) {
-		this.trackingJobTypeId = trackingJobTypeId;
+	public void setTrackingJobType(JobType trackingJobType) {
+		this.trackingJobType = trackingJobType;
 	}
 
 	public void completeCriteria() {
@@ -428,15 +428,15 @@ public class DailyTrackingController extends BasicController {
 				getCriteria().addEqualExpression(
 						getFieldName(IProjectAlias.DAILY_TRACKING_CUSTOMER_ID), customer.getId());
 			}
-			if (getTrackingJobTypeId() != null) {
+			if (getTrackingJobType() != null && getTrackingJobType().getId() != null) {
 				getCriteria().addEqualExpression(
 						getFieldName(IProjectAlias.DAILY_TRACKING_JOB_TYPE_ID),
-						getTrackingJobTypeId());
+						getTrackingJobType().getId());
 			}
 			if (isMonitor()) {
-				if (getUserId() != null) {
+				if (getUser() != null && getUser().getId() != null) {
 					getCriteria().addEqualExpression(
-							getFieldName(IProjectAlias.DAILY_TRACKING_USER_ID), getUserId());
+							getFieldName(IProjectAlias.DAILY_TRACKING_USER_ID), getUser().getId());
 				}
 			}
 			getCriteria().addOrder(getFieldName(IProjectAlias.DAILY_TRACKING_TRACKING_DATE),false);

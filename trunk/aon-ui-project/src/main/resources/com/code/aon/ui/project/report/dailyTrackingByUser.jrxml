@@ -237,7 +237,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_daily_tracking_dossier}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_dossier}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -257,7 +257,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_daily_tracking_activity}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_activity}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -277,7 +277,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_daily_tracking_duration}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_duration}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -297,7 +297,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_daily_tracking_job_type}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_job_type}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -317,7 +317,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_daily_tracking_comments}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_comments}]]></textFieldExpression>
 				</textField>
 			</band>
 		</columnHeader>

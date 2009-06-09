@@ -1,0 +1,347 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="taskForm">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarID" value="toolbar" />
+				<ui:param name="toolbarTitle"
+					value="#{projectBundle.aon_task_inbox_module}" />
+				<ui:param name="controller" value="#{task}" />
+				<ui:param name="skipSaveButton" value="#{true}" />
+				<ui:param name="skipRemoveButton" value="#{true}" />
+				
+				<ui:define name="beforeToolbarContent">
+					<aon:commandButton id="toolbar-save"
+						value="#{bundle.aon_save}" 
+						rendered="#{task.to!=null or task.new}"
+						disabled="#{task.to.finished or task.to.deleted}"
+						actionListener="#{task.saveTask}" action="#{task.saveTarget}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_save}" />
+					<aon:commandButton id="remove" value="#{bundle.aon_remove}"
+						rendered="#{!task.new}"
+						disabled="#{task.to.sourceProcess or task.to.finished or task.to.deleted}"
+						styleClass="aon-finding-toolbar-item aon-icon-delete"
+						immediate="true"
+						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;"
+						actionListener="#{task.onRemove}" action="task_list"
+						accesskey="#{bundle.aon_key_remove}" />
+				</ui:define>
+
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="startTask" value="#{projectBundle.task_start}"
+						actionListener="#{task.onStartTask}"
+						styleClass="aon-finding-toolbar-item aon-icon-task-start"
+						rendered="#{!task.monitor and !task.new and task.myTask and task.to.pending}" />
+					<aon:commandButton id="assumeTask"
+						value="#{projectBundle.task_assume}"
+						actionListener="#{task.onAssumeTask}"
+						styleClass="aon-finding-toolbar-item aon-icon-task-assume"
+						rendered="#{!task.monitor and !task.new and task.to.user.id == null}" />
+					<aon:commandButton id="releaseTask"
+						value="#{projectBundle.task_release}"
+						actionListener="#{task.onReleaseTask}"
+						styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
+						rendered="#{!task.monitor and !task.new and task.myTask and !task.to.finished and !task.to.deleted and !task.to.inProgress}" />
+					<aon:commandButton id="reopenTask"
+						value="#{projectBundle.task_reopen}"
+						actionListener="#{task.onReopenTask}"
+						styleClass="aon-finding-toolbar-item aon-icon-task-reopen"
+						rendered="#{(task.monitor or task.myTask) and !task.to.sourceProcess and task.to.finished}" />
+					<aon:commandButton id="stopTask" value="#{projectBundle.task_stop}"
+						actionListener="#{task.onStopTask}"
+						styleClass="aon-finding-toolbar-item aon-icon-task-stop"
+						rendered="#{!task.monitor and task.myTask and task.to.inProgress}" />
+					<aon:commandButton id="finishTask"
+						value="#{projectBundle.task_finish}" action="#{task.onFinishTask}"
+						styleClass="aon-finding-toolbar-item aon-icon-task-finish"
+						rendered="#{!task.monitor and !task.new and !task.to.finished and !task.to.deleted}" />
+					<aon:selectBooleanCheckbox id="monitor" value="#{task.monitor}"
+						rendered="#{role.monitorRole}">
+						<a4j:support event="onclick" reRender="toolbar,taskForm" />
+					</aon:selectBooleanCheckbox>
+					<aon:outputLabel for="monitor" value="Monitor"
+						rendered="#{role.monitorRole}" />
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div id="fieldContainer" styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2" dir="true" style="width: 90%;">
+					<aon:outputLabel for="Task_descripcion"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="Task_descripcion" required="true" size="60"
+						maxlength="128" value="#{task.to.description}"
+						disabled="#{!task.monitor and !task.new}" />
+
+					<aon:outputLabel for="Task_startDate"
+						value="#{projectBundle.aon_initial_date}" />
+					<aon:selectInputDate id="Task_startDate"
+						value="#{task.to.startDate}" renderAsPopup="true"
+						enableManualInput="true"
+						popupDateFormat="#{bundle.aon_date_pattern}"
+						disabled="#{!task.new and !task.monitor}">
+					</aon:selectInputDate>
+
+					<aon:outputLabel for="Task_endDate"
+						value="#{projectBundle.aon_final_date}"
+						rendered="#{task.to.finished or task.to.deleted}" />
+					<aon:selectInputDate id="Task_endDate" value="#{task.to.endDate}"
+						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}"
+						enableManualInput="true" disabled="true"
+						rendered="#{task.to.finished or task.to.deleted}">
+					</aon:selectInputDate>
+
+					<aon:outputLabel for="Task_dueDate"
+						value="#{projectBundle.aon_due_date}" />
+					<aon:selectInputDate id="Task_dueDate" required="true"
+						renderAsPopup="true" value="#{task.to.dueDate}"
+						enableManualInput="true"
+						popupDateFormat="#{bundle.aon_date_pattern}"
+						disabled="#{!task.monitor and !task.new and !task.to.finished and !task.to.deleted}">
+					</aon:selectInputDate>
+
+					<aon:outputLabel for="Task_priority"
+						rendered="#{task.monitor or task.new}"
+						value="#{projectBundle.task_priority}" />
+					<aon:selectOneMenu id="Task_priority" value="#{task.to.priority}"
+						rendered="#{task.monitor or task.new}">
+						<f:selectItems value="#{projectCollections.taskPriorities}" />
+					</aon:selectOneMenu>
+					<aon:outputText value="#{projectBundle.task_priority}"
+						rendered="#{!task.monitor and !task.new}" />
+					<aon:inputText value="#{task.to.priority}" size="60"
+						disabled="true" rendered="#{!task.monitor and !task.new}" />
+
+					<aon:outputLabel for="Task_period"
+						rendered="#{!task.to.sourceProcess}"
+						value="#{projectBundle.task_period}" />
+					<aon:selectOneMenu id="Task_period" value="#{task.to.repeatPeriod}"
+						rendered="#{!task.to.sourceProcess}">
+						<f:selectItems value="#{projectCollections.taskPeriods}" />
+					</aon:selectOneMenu>
+
+					<aon:outputText value="#{bundle.aon_status}"
+						rendered="#{!task.new}" />
+					<aon:inputText value="#{task.to.status}" size="60"
+						disabled="true" rendered="#{!task.new}" />
+
+					<aon:outputLabel for="Task_workgroup"
+						value="#{projectBundle.aon_work_group}" />
+					<aon:div>
+						<aon:selectOneMenu id="Task_workgroup"
+							value="#{task.to.workGroup}" required="true"
+							valueChangeListener="#{task.workGroupChange}"
+							disabled="#{!task.monitor and !task.new}" reRender="Task_user">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{configCollections.workgroups}" />
+						</aon:selectOneMenu>
+						<aon:selectBooleanCheckbox id="allMembers"
+							value="#{task.allMembers}" rendered="#{task.new}">
+							<a4j:support event="onclick"
+								actionListener="#{task.allMembersChanged}" ajaxSingle="true"
+								reRender="Task_user" />
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="allMembers"
+							value="#{projectBundle.task_all_members}" rendered="#{task.new}" />
+					</aon:div>
+
+					<aon:outputLabel for="Task_user"
+						value="#{projectBundle.task_assigned}" />
+					<aon:selectOneMenu id="Task_user" value="#{task.to.user}"
+						disabled="#{task.allMembers or !(task.monitor or (!task.monitor and task.new))}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{task.users}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Task_dossier"
+						value="#{projectBundle.dossier_dossier}" />
+					<aon:selectOneMenu id="Task_dossier"
+						value="#{task.to.dossier}" ajaxSingle="true"
+						valueChangeListener="#{task.dossierChange}"
+						rendered="#{task.monitor or task.new}"
+						reRender="customerIdContainer,Task_activity,Task_dossier">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{task.availableFormDossiers}" />
+					</aon:selectOneMenu>
+					<aon:inputText 
+						value="#{(task.to.dossier.id != null)?(task.to.dossier.number):('')}"
+						size="60" disabled="true"
+						rendered="#{!task.new and !task.monitor}" />
+
+					<aon:outputLabel for="Customer_id"
+						value="#{customerBundle.customer_customer}" />
+					<aon:div id="customerIdContainer" styleClass="aon-lookup" 
+						rendered="#{task.new or task.monitor}">
+						<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
+							reRender="Customer_full_name,Task_activity,Task_dossier"
+							lookupChangeListener="#{task.customerChanged}" 
+							value="#{task.to.dossier.customer.id}" size="5" />
+						<aon:lookupButton windowTitle="#{customerBundle.customer_selection}"
+							property="#{task.to.dossier.customer}"
+							selectReRender="Customer_id,Customer_full_name,Task_activity,Task_dossier" 
+							actionType="search"
+							lookupChangeListener="#{task.customerChanged}"
+							lookup="#{customerLookup}" minHeight="460" minWidth="650">
+						</aon:lookupButton>
+						<aon:inputText id="Customer_full_name"
+							value="#{(task.to.dossier.customer.registry.name!=null)?(task.to.dossier.customer.registry.fullName):('')}"
+							size="50" disabled="true" />
+					</aon:div>
+					<aon:inputText id="Task_customer"
+						value="#{(task.to.dossier.id != null)?(task.to.dossier.customer.registry.fullName):('')}"
+						size="60" disabled="true"
+						rendered="#{!task.new and !task.monitor}" />
+
+					<aon:outputLabel for="Task_activity"
+						value="#{projectBundle.activity_activity}" />
+					<aon:selectOneMenu id="Task_activity"
+						value="#{task.to.activity}"
+						rendered="#{task.new or task.monitor}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{task.activities}" />
+					</aon:selectOneMenu>
+					<aon:inputText
+						value="#{(task.to.activity.id != null)?(task.to.activity.activityType.description):('')}"
+						size="60" disabled="true"
+						rendered="#{!task.new and !task.monitor}" />
+
+					<aon:outputLabel for="Task_sender"
+						value="#{projectBundle.task_sender}"
+						rendered="#{task.to.sourceAssigned or task.monitor}" />
+					<aon:inputText id="Task_sender" size="60"
+						value="#{task.to.sender.name}"
+						rendered="#{task.to.sourceAssigned or task.monitor}"
+						maxlength="50" disabled="true" />
+						
+					<aon:outputLabel for="Task_percent"
+						value="#{projectBundle.task_percent}" rendered="#{!task.new}" />
+					<rich:inputNumberSlider id="Task_percent"
+						value="#{task.to.percent}" minValue="0" maxValue="100"
+						inputPosition="left" showToolTip="false" rendered="#{!task.new}" />
+
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox value="#{task.richEditor}">
+							<a4j:support event="onclick"
+								reRender="comments_label,comments_input" ajaxSingle="true" />
+						</aon:selectBooleanCheckbox>
+						<aon:outputText value="#{projectBundle.aon_rich_editor}" />
+					</aon:div>
+
+					<aon:div id="comments_label">
+						<aon:outputLabel id="Task_comments_label" for="Task_comments"
+							rendered="#{!task.richEditor}"
+							value="#{bundle.aon_comment}" />
+						<aon:outputLabel id="Task_comments_label_rich"
+							for="Task_comments_rich" rendered="#{task.richEditor}"
+							value="#{bundle.aon_comment}" />
+					</aon:div>
+					<aon:div id="comments_input">
+						<aon:inputTextarea id="Task_comments" value="#{task.to.comments}"
+							rendered="#{!task.richEditor}" cols="120" rows="10"
+							disabled="#{task.to.finished or task.to.deleted}" />
+						<rich:editor id="messageEditor"
+							rendered="#{task.richEditor}"
+							disabled="#{task.to.finished or task.to.deleted}" 
+							value="#{task.to.comments}" 
+							height="400" configuration="tinyMCE"
+							converter="chromeEditorConverter" 
+							language="#{facesContext.application.defaultLocale.language}" />	
+					</aon:div>
+
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+
+		<aon:form id="chooseForm">
+			<aon:div id="chooseContainer">
+				<rich:modalPanel id="importActivities" top="100" left="100"
+					rendered="#{task.finishPanelVisible}" showWhenRendered="true"
+					minHeight="100" minWidth="100" height="300" width="600"
+					zindex="1000">
+					<f:facet name="header">
+						<aon:div styleClass="aon-popupWindow-title">
+							<h:outputText value="#{projectBundle.task_finish}" />
+						</aon:div>
+					</f:facet>
+					<f:facet name="controls">
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close" reRender="chooseContainer"
+							immediate="true">
+							<f:setPropertyActionListener value="#{false}"
+								target="#{task.finishPanelVisible}" />
+						</aon:commandButton>
+					</f:facet>
+					<aon:div styleClass="aon-scroll-area" style="width: 90%;">
+						<aon:div styleClass="aon-finding-title-toolbar">
+							<aon:panelGrid columns="1" dir="true"
+								columnClasses="aon-finding-toolbar">
+
+								<aon:div styleClass="aon-finding-toolbar-item-group">
+									<h:commandLink value="#{projectBundle.task_finish}"
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										actionListener="#{task.onFinishTransitionTask}"
+										action="task_list" />
+								</aon:div>
+							</aon:panelGrid>
+						</aon:div>
+
+						<aon:selectBooleanCheckbox id="transitionCorrect"
+							value="#{task.transitionCorrect}">
+							<a4j:support event="onclick"
+								reRender="import,transitionsTableContainer" ajaxSingle="true" />
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="transitionCorrect"
+							value="#{projectBundle.aon_correct} #{task.transitionSelected}" />
+
+						<aon:div id="transitionsTableContainer" style="margin-top: 10px;">
+							<aon:dataTable id="transitionsTable"
+								rendered="#{!task.transitionCorrect}"
+								value="#{task.transitionModel}" var="pdt">
+								<aon:rowSelector reRender="import,transitionsTableContainer"
+									actionListener="#{task.selectTransition}" />
+
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="&#160;" />
+									</f:facet>
+									<aon:div
+										styleClass="#{pdt == task.transitionSelected?'aon-icon-checked':'aon-icon-check'}">
+										<aon:outputText value="&#160;" />
+									</aon:div>
+								</aon:column>
+
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{appBundle.aon_transition_type}" />
+									</f:facet>
+									<aon:outputText
+										value="#{pdt.processTransitionType.description}" />
+								</aon:column>
+
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{appBundle.aon_next_process}" />
+									</f:facet>
+									<aon:outputText value="#{pdt.nextProcessDetail.description}" />
+								</aon:column>
+							</aon:dataTable>
+						</aon:div>
+					</aon:div>
+				</rich:modalPanel>
+			</aon:div>
+ 		</aon:form>
+
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+	</ui:define>
+</ui:composition>

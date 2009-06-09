@@ -276,7 +276,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_daily_tracking_dossier}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_dossier}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -296,7 +296,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_daily_tracking_duration}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_duration}]]></textFieldExpression>
 				</textField>
 			</band>
 		</columnHeader>

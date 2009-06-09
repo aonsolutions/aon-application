@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/com/code/aon/ui/campaign/facelet/processLauncher/step_template.xhtml">
+
+	<ui:define name="step_name">
+		<aon:outputText value="#{campaignBundle.process_wizard_step2}" />
+	</ui:define>
+
+	<ui:define name="step_content">
+		<aon:panelGrid columns="4" dir="true" style="width: 90%;">
+			<aon:outputLabel for="wzd_process"
+				value="#{campaignBundle.process_process}" />
+			<aon:outputText value="#{processWizard.process.description}" />
+
+			<aon:outputLabel for="Campaign_description"
+				value="#{bundle.aon_description}" />
+			<aon:outputText value="#{processWizard.description}" />
+
+			<aon:outputLabel for="Campaign_startDate"
+				value="#{campaignBundle.aon_initial_date}" />
+			<aon:outputText value="#{processWizard.startDate}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+
+
+			<aon:outputLabel for="Campaign_endDate"
+				value="#{campaignBundle.aon_final_date}" />
+			<aon:outputText value="#{processWizard.endDate}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+
+			<aon:outputLabel for="Campaign_workGroup"
+				value="#{campaignBundle.campaign_supervisor}" />
+			<aon:outputText value="#{processWizard.workGroup.description}" />
+
+			<aon:outputText value="&#160;" />
+			<aon:outputText value="&#160;" />
+		</aon:panelGrid>
+
+		<aon:panelGrid id="creationTable" columns="2" dir="true"
+			columnClasses="none, none" style="margin-top: 5px;width: 90%;">
+
+			<aon:div>
+				<aon:selectBooleanCheckbox id="radio1"
+					value="#{processWizard.existingDossier}">
+					<a4j:support event="onclick"
+						reRender="radio2,existingContainer,newContainer" ajaxSingle="true" />
+				</aon:selectBooleanCheckbox>
+				<aon:outputLabel for="radio1"
+					value="#{campaignBundle.process_wizard_add_dossier}" />
+			</aon:div>
+
+			<aon:div>
+				<aon:selectBooleanCheckbox id="radio2"
+					value="#{processWizard.newDossier}">
+					<a4j:support event="onclick"
+						reRender="radio1,existingContainer,newContainer" ajaxSingle="true" />
+				</aon:selectBooleanCheckbox>
+				<aon:outputLabel for="radio2"
+					value="#{campaignBundle.process_wizard_add_new_dossier}" />
+			</aon:div>
+
+			<aon:div id="existingContainer">
+				<aon:panelGrid columns="2" dir="true"
+					style="margin: 5px;width: 95%;">
+
+					<aon:outputLabel for="customerIdEx"
+						value="#{customerBundle.customer_customer}" />
+					<aon:div id="customerIdContainerEx" styleClass="aon-lookup">
+						<aon:lookupInputText id="customerIdEx" lookup="#{customerLookup}"
+							reRender="Customer_full_nameEx,process_dossier"
+							disabled="#{processWizard.newDossier}"
+							lookupChangeListener="#{processWizard.customerChanged}" 
+							value="#{processWizard.customer.id}" size="5" />
+						<aon:lookupButton windowTitle="#{customerBundle.customer_selection}"
+							property="#{processWizard.customer}"
+							selectReRender="customerIdEx,Customer_full_nameEx,process_dossier" 
+							actionType="search"
+							disabled="#{processWizard.newDossier}"
+							lookupChangeListener="#{processWizard.customerChanged}"
+							lookup="#{customerLookup}" minHeight="460" minWidth="650">
+						</aon:lookupButton>
+						<aon:inputText id="Customer_full_nameEx"
+							value="#{(processWizard.customer.registry.name!=null)?(processWizard.customer.registry.fullName):('')}"
+							size="50" disabled="true" />
+					</aon:div>
+
+					<aon:outputLabel for="process_dossier"
+						value="#{projectBundle.dossier_dossier}" />
+					<aon:selectOneMenu id="process_dossier"
+						value="#{processWizard.dossier}"
+						disabled="#{processWizard.newDossier}"
+						reRender="customerIdExContainer,process_dossier"
+						valueChangeListener="#{processWizard.dossierChanged}">
+						<f:selectItem value="#{nullSelectItem.value}" />
+						<f:selectItems value="#{processWizard.availableDossiers}" />
+					</aon:selectOneMenu>
+
+					<aon:outputText value="&#160;" />
+					<aon:commandButton value="#{campaignBundle.campaign_add_dossier}"
+						actionListener="#{processWizard.addExistingDossier}"
+						disabled="#{processWizard.newDossier}" focus="customerIdEx"
+						styleClass="aon-commandButton aon-icon-new"
+						reRender="creationTable, dossiersTable" />
+				</aon:panelGrid>
+			</aon:div>
+
+			<aon:div id="newContainer">
+				<aon:panelGrid columns="2" dir="true"
+					style="margin: 5px;width: 95%;">
+
+					<aon:outputLabel for="customerIdNew"
+						value="#{customerBundle.customer_customer}" />
+					<aon:div id="customerIdContainerNew" styleClass="aon-lookup">
+						<aon:lookupInputText id="customerIdNew" lookup="#{customerLookup}"
+							reRender="Customer_full_nameNew"
+							disabled="#{processWizard.existingDossier}"
+							lookupChangeListener="#{processWizard.customerChanged}" 
+							value="#{processWizard.customer.id}" size="5" />
+						<aon:lookupButton windowTitle="#{customerBundle.customer_selection}"
+							property="#{processWizard.customer}"
+							selectReRender="customerIdNew,Customer_full_nameNew" 
+							actionType="search"
+							disabled="#{processWizard.existingDossier}"
+							lookupChangeListener="#{processWizard.customerChanged}"
+							lookup="#{customerLookup}" minHeight="460" minWidth="650">
+						</aon:lookupButton>
+						<aon:inputText id="Customer_full_nameNew"
+							value="#{(processWizard.customer.registry.name!=null)?(processWizard.customer.registry.fullName):('')}"
+							size="50" disabled="true" />
+					</aon:div>
+
+					<aon:outputLabel for="Dossier_dossierType_id"
+						value="#{bundle.aon_type}" />
+					<aon:selectOneMenu id="Dossier_dossierType_id" 
+						disabled="#{processWizard.existingDossier}"
+						value="#{processWizard.dossier.dossierType}">
+						<f:selectItem value="#{nullSelectItem.value}" />
+						<f:selectItems value="#{projectCollections.dossierTypePojos}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Dossier_number"
+						value="#{projectBundle.dossier_dossier}" />
+					<aon:inputText id="Dossier_number" size="18"
+						disabled="#{processWizard.existingDossier}" maxlength="15"
+						value="#{processWizard.dossier.number}" />
+
+
+					<aon:outputText value="&#160;" />
+					<aon:commandButton value="#{campaignBundle.campaign_add_dossier}"
+						actionListener="#{processWizard.addNewDossier}"
+						disabled="#{processWizard.existingDossier}" focus="customerIdNew"
+						styleClass="aon-commandButton aon-icon-new"
+						reRender="creationTable, dossiersTable" />
+				</aon:panelGrid>
+			</aon:div>
+		</aon:panelGrid>
+
+		<aon:div id="dossiersTable" style="margin-top: 5px;width: 90%;">
+			<aon:dataTable id="dossierDataList"
+				value="#{processWizard.dossiersModel}" var="to">
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="&#160;" />
+					</f:facet>
+					<aon:graphicImage
+						url="/css/images/icons/aon_task_add_new_project.gif"
+						alt="#{campaignBundle.process_wizard_new_dossier_added}"
+						rendered="#{to.dossier.id==null}">
+					</aon:graphicImage>
+					<aon:graphicImage
+						url="/css/images/icons/aon_task_add_existing_project.gif"
+						alt="#{campaignBundle.process_wizard_dossier_added}"
+						rendered="#{to.dossier.id!=null}">
+					</aon:graphicImage>
+				</aon:column>
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{projectBundle.dossier_dossier}" />
+					</f:facet>
+					<aon:outputText value="#{to.dossier.number}" />
+				</aon:column>
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{customerBundle.customer_customer}" />
+					</f:facet>
+					<aon:outputText value="#{to.dossier.customer.registry.fullName}" />
+				</aon:column>
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_type}" />
+					</f:facet>
+					<aon:outputText value="#{to.dossier.dossierType.description}" />
+				</aon:column>
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="&#160;" />
+					</f:facet>
+					<aon:commandButton title="#{bundle.aon_remove}"
+						actionListener="#{processWizard.removeDossier}"
+						immediate="#{true}" reRender="dossiersTable"
+						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;"
+						styleClass="aon-editDataTable-button aon-icon-delete" />
+				</aon:column>
+
+			</aon:dataTable>
+			<aon:dataScroller for="dossierDataList"
+				rowCount="#{processWizard.dossiersModel.rowCount}" showNote="true" />
+		</aon:div>
+	</ui:define>
+	
+	<ui:define name="after_form">
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+	</ui:define>
+</ui:composition>

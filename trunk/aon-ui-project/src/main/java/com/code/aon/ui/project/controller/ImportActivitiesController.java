@@ -22,6 +22,7 @@ import com.code.aon.project.enumeration.DossierStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class ImportActivitiesController {
@@ -89,7 +90,7 @@ public class ImportActivitiesController {
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error importing activities", e);
 		} finally {
-			AonUtil.getController("activity").onSearch(event);
+			FormUtil.getController("activity").onSearch(event);
 			AonUtil.addInfoMessage("" + i + " activities imported");			
 			setImportPanel(false);
 		}
@@ -148,7 +149,7 @@ public class ImportActivitiesController {
 	}
 
 	private DossierController getDossierController() {
-		return (DossierController) AonUtil.getController("dossier");
+		return (DossierController) FormUtil.getController("dossier");
 	}
 
 	private Dossier getDossier() {

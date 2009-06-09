@@ -21,13 +21,11 @@ import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.PageDataModel;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.groupware.controller.AlarmController;
-import com.code.aon.ui.menu.jsf.MenuEvent;
-import com.code.aon.ui.project.controller.TaskController;
-import com.code.aon.ui.util.AonUtil;
 
 public class TaskAlarmController extends AlarmController {
 	
@@ -35,10 +33,6 @@ public class TaskAlarmController extends AlarmController {
 	
 	private static final String TASK_CONTROLLER_NAME = "task";
 	
-    public void onSearch(MenuEvent event) {
-        super.onSearch(null);
-    }
-
 	@Override
 	@SuppressWarnings("unchecked")
 	public void initializeModel() {
@@ -69,7 +63,7 @@ public class TaskAlarmController extends AlarmController {
 		Criteria criteria = getCriteria();
 		criteria.addEqualExpression(alarmBean.getFieldName(IGroupWareAlias.ALARM_STATUS), AlarmStatus.PENDING);
 		criteria.addLessThanOrEqualExpression(alarmBean.getFieldName(IGroupWareAlias.ALARM_ALARM_DATE), new Date());
-		TaskController taskController = (TaskController)AonUtil.getController(TASK_CONTROLLER_NAME);
+		TaskController taskController = (TaskController)FormUtil.getController(TASK_CONTROLLER_NAME);
 		Expression taskExpr = null;
 		Iterator iter = ((List)taskController.getModel().getWrappedData()).iterator();
 		while(iter.hasNext()){

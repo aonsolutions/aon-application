@@ -39,6 +39,7 @@ import com.code.aon.project.enumeration.TaskPeriod;
 import com.code.aon.project.enumeration.TaskSource;
 import com.code.aon.project.enumeration.TaskStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.project.util.CampaignTaskManager;
 import com.code.aon.ui.util.AonUtil;
 
@@ -251,7 +252,7 @@ public class ProcessLauncherWizard implements Serializable {
 		setWorkGroup(null);
 		setType(CampaignType.MANUAL);
 		setStatus(CampaignStatus.IN_PROGRESS);
-		setCustomer(null);
+		setCustomer(new Customer());
 		setDossiers(null);
 		setDossiersModel(null);
 		setAvailableDossiers(null);
@@ -311,7 +312,7 @@ public class ProcessLauncherWizard implements Serializable {
 		}
 	}
 
-	public void customerChanged(ValueChangeEvent event) {
+	public void customerChanged(LookupChangeEvent event) {
 		if (event.getNewValue() != null) {
 			setAvailableDossiers(null);
 		}
@@ -323,7 +324,7 @@ public class ProcessLauncherWizard implements Serializable {
 				Dossier dossier = (Dossier) event.getNewValue();
 				Customer c = dossier.getCustomer();
 				setCustomer(c);
-				ValueChangeEvent e = new ValueChangeEvent(event.getComponent(), null, c);
+				LookupChangeEvent e = new LookupChangeEvent(event.getComponent(), c);
 				customerChanged(e);
 			}
 		}
@@ -346,7 +347,7 @@ public class ProcessLauncherWizard implements Serializable {
 		cd.setDossier(getDossier());
 		if (validate(cd)) {
 			getDossiers().add(cd);
-			setCustomer(null);
+			setCustomer(new Customer());
 			setAvailableDossiers(null);
 		}
 	}
@@ -409,6 +410,7 @@ public class ProcessLauncherWizard implements Serializable {
 			c.setType(CampaignType.MANUAL);
 			c.setWorkGroup(getWorkGroup());
 			c = (Campaign) campaignBean.insert( c );
+			int i = 0;
 			for (CampaignDossier cd: dossiers) {
 				if (cd.getDossier().getId() == null ) {
 					Dossier d = cd.getDossier();
@@ -431,6 +433,7 @@ public class ProcessLauncherWizard implements Serializable {
 	            task.setStatus(TaskStatus.PENDING);
 	            task.setWorkGroup(pd.getWorkgroup());
 				taskBean.insert(task);
+				i++;
 
 				ActivityProcess ap = new ActivityProcess();
 				ap.setActivity(null);
@@ -440,6 +443,7 @@ public class ProcessLauncherWizard implements Serializable {
 				activityProcessBean.insert(ap);
 				
 			}
+			AonUtil.addInfoMessage("Proceso lanzado correctamente. " + i + " tareas creadas");
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}

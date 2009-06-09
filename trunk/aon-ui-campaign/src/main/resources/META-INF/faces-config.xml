@@ -1,38 +1,14 @@
-<?xml version="1.0"?>
-<!DOCTYPE faces-config PUBLIC
-  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
-  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
-<faces-config>
-
-	<!--  *************** CONVERTERS ***************** -->
-	<converter>
-		<description>Conversor para los CampaignTypes</description>
-		<converter-id>aonCampaignTypeConverter</converter-id>
-		<converter-class>com.code.aon.ui.campaign.converter.CampaignTypeConverter</converter-class>
-	</converter>
-
-	<converter>
-		<description>Conversor para los CampaignStatus</description>
-		<converter-id>aonCampaignStatusConverter</converter-id>
-		<converter-class>
-			com.code.aon.ui.campaign.converter.CampaignStatusConverter
-		</converter-class>
-	</converter>
-	
-	<!--  ********* PROCESS CONVERTER ***************** -->
-	<converter>
-		<converter-for-class>com.code.aon.campaign.Process</converter-for-class>
-		<converter-class>com.code.aon.ui.campaign.converter.ProcessConverter</converter-class>
-	</converter>
-	<converter>
-		<converter-for-class>com.code.aon.campaign.ProcessDetail</converter-for-class>
-		<converter-class>com.code.aon.ui.campaign.converter.ProcessDetailConverter</converter-class>
-	</converter>
-	<converter>
-		<converter-for-class>com.code.aon.campaign.ProcessTransitionType</converter-for-class>
-		<converter-class>com.code.aon.ui.campaign.converter.ProcessTransitionTypeConverter</converter-class>
-	</converter>
+	<application>
+		<resource-bundle>
+		   <base-name>com.code.aon.ui.campaign.i18n.messages</base-name>
+		   <var>campaignBundle</var>
+		</resource-bundle>
+	</application>
 
 	<!--  *************** COLLECTIONS ***************** -->
 	<managed-bean>
@@ -55,6 +31,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.campaign.Process</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>process</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -203,6 +183,10 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>campaign</value>
+		</managed-property>
+		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.campaign.Campaign</value>
 		</managed-property>
@@ -337,6 +321,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.campaign.ProcessTransitionType</value>
 		</managed-property>
+		<managed-property>
+	         <property-name>defaultOrder</property-name>
+    	     <value>ProcessTransitionType_description</value>
+      	</managed-property>
 	</managed-bean>
 
 	<!-- ************* PROCESS LAUNCHER ***************** -->
@@ -348,68 +336,76 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ================================================ -->
+	<!-- =================== NAVIGATION ================= -->
+	<!-- ================================================ -->
 
 	<!-- =================== Process ================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>process_list</from-outcome>
-			<to-view-id>/facelet/process/list.faces</to-view-id>
+			<to-view-id>/com/code/aon/ui/campaign/facelet/process/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>process_form</from-outcome>
-			<to-view-id>/facelet/process/form.faces</to-view-id>
+			<to-view-id>/com/code/aon/ui/campaign/facelet/process/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>process_search</from-outcome>
-			<to-view-id>/facelet/process/search.faces</to-view-id>
+			<to-view-id>/com/code/aon/ui/campaign/facelet/process/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
-	<!-- =================== Campaign ================= -->
+	<!-- ============ Process transition Type ============ -->
+	<navigation-rule>
+	    <navigation-case>
+	        <from-outcome>process_transition_type</from-outcome>
+	        <to-view-id>/com/code/aon/ui/campaign/facelet/processTransitionType/grid.xhtml</to-view-id>
+	    </navigation-case>    
+	</navigation-rule>
+
+	<!-- =================== Process Launcher ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>process_wizard_step0</from-outcome>
+			<to-view-id>/com/code/aon/ui/campaign/facelet/processLauncher/step0.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>process_wizard_step1</from-outcome>
+			<to-view-id>/com/code/aon/ui/campaign/facelet/processLauncher/step1.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>process_wizard_step2</from-outcome>
+			<to-view-id>/com/code/aon/ui/campaign/facelet/processLauncher/step2.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>process_wizard_step3</from-outcome>
+			<to-view-id>/com/code/aon/ui/campaign/facelet/processLauncher/step3.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>process_wizard_step4</from-outcome>
+			<to-view-id>/com/code/aon/ui/campaign/facelet/processLauncher/step4.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== Campaign ================= --> 
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>campaign_list</from-outcome>
-			<to-view-id>/facelet/campaign/list.faces</to-view-id>
+			<to-view-id>/com/code/aon/ui/campaign/facelet/campaign/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>campaign_form</from-outcome>
-			<to-view-id>/facelet/campaign/form.faces</to-view-id>
+			<to-view-id>/com/code/aon/ui/campaign/facelet/campaign/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>campaign_search</from-outcome>
-			<to-view-id>/facelet/campaign/search.faces</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>campaign_add_dossier</from-outcome>
-			<to-view-id>/facelet/campaign/addCampaignDossier/form.faces</to-view-id>
+			<to-view-id>/com/code/aon/ui/campaign/facelet/campaign/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>campaign_view_task</from-outcome>
-			<to-view-id>/facelet/campaign/viewCampaignTask/form.faces</to-view-id>
+			<to-view-id>/com/code/aon/ui/campaign/facelet/campaign/viewTask/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
-	<!-- =================== Application Menu Navigation Rules ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>content</from-outcome>
-			<to-view-id>/facelet/homepage/content.faces</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>firstContent</from-outcome>
-			<to-view-id>/facelet/homepage/firstContent.faces</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>process</from-outcome>
-			<to-view-id>/facelet/process/list.faces</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>campaign</from-outcome>
-			<to-view-id>/facelet/campaign/list.faces</to-view-id>
-		</navigation-case>
-	    <navigation-case>
-	        <from-outcome>process_transition_type</from-outcome>
-	        <to-view-id>/facelet/process_transition_type/grid.faces</to-view-id>
-	    </navigation-case>    
-	</navigation-rule>
 </faces-config>

@@ -58,8 +58,14 @@
 						backcolor="#FFFFFF"
 						key="image-1"
 						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<graphicElement stretchType="NoStretch" pen="None" fill="Solid" />
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<graphicElement stretchType="NoStretch" fill="Solid" >
+					<pen lineWidth="0.0" lineStyle="Solid"/>
+</graphicElement>
 					<imageExpression class="java.io.InputStream"><![CDATA[$P{logoImageFile}]]></imageExpression>
 				</image>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
@@ -69,7 +75,11 @@
 						width="694"
 						height="17"
 						key="textField-13"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
@@ -82,7 +92,11 @@
 						width="694"
 						height="12"
 						key="textField-14"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
@@ -102,7 +116,11 @@
 						forecolor="#FFFFFF"
 						backcolor="#000000"
 						key="textField-4"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
@@ -118,7 +136,11 @@
 						forecolor="#FFFFFF"
 						backcolor="#000000"
 						key="textField-18"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
@@ -134,7 +156,11 @@
 						forecolor="#FFFFFF"
 						backcolor="#000000"
 						key="textField-20"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
@@ -150,7 +176,11 @@
 						forecolor="#FFFFFF"
 						backcolor="#000000"
 						key="textField-22"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
@@ -166,7 +196,11 @@
 						forecolor="#FFFFFF"
 						backcolor="#000000"
 						key="textField-23"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
@@ -182,7 +216,11 @@
 						forecolor="#FFFFFF"
 						backcolor="#000000"
 						key="textField-24"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
@@ -198,7 +236,11 @@
 						forecolor="#FFFFFF"
 						backcolor="#000000"
 						key="textField-25"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
@@ -214,11 +256,15 @@
 						forecolor="#FFFFFF"
 						backcolor="#000000"
 						key="textField-26"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_work_group}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_workgroup}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -230,11 +276,15 @@
 						forecolor="#FFFFFF"
 						backcolor="#000000"
 						key="textField-27"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
+</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{task_user}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_user}]]></textFieldExpression>
 				</textField>
 			</band>
 		</columnHeader>
@@ -247,7 +297,11 @@
 						width="163"
 						height="14"
 						key="textField-12"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
+					<box leftPadding="5" rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
@@ -260,7 +314,11 @@
 						width="163"
 						height="14"
 						key="textField-19"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
+					<box leftPadding="5" rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
@@ -273,7 +331,11 @@
 						width="52"
 						height="14"
 						key="textField-21"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
+					<box leftPadding="5" rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
@@ -286,7 +348,11 @@
 						width="52"
 						height="14"
 						key="textField-28"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
+					<box leftPadding="5" rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
@@ -299,7 +365,11 @@
 						width="52"
 						height="14"
 						key="textField-29"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
+					<box leftPadding="5" rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
@@ -312,7 +382,11 @@
 						width="67"
 						height="14"
 						key="textField-30"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
+					<box leftPadding="5" rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
@@ -325,7 +399,11 @@
 						width="52"
 						height="14"
 						key="textField-31"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
+					<box leftPadding="5" rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
@@ -338,7 +416,11 @@
 						width="88"
 						height="14"
 						key="textField-32"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
+					<box leftPadding="5" rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
@@ -351,7 +433,11 @@
 						width="93"
 						height="14"
 						key="textField-33"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
+					<box leftPadding="5" rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#999999"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
@@ -372,7 +458,11 @@
 						width="13"
 						height="14"
 						key="textField-15"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
@@ -385,7 +475,11 @@
 						width="57"
 						height="14"
 						key="textField-16"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
@@ -398,7 +492,11 @@
 						width="262"
 						height="14"
 						key="textField-17"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
