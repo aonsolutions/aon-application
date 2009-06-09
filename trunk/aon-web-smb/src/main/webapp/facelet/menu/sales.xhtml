@@ -85,9 +85,15 @@
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink
+										value="#{financeBundle.finance_invoice_signing_module}"
+										actionListener="#{invoiceSigner.onEditSearch}"
+										action="invoiceSigner_search" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink
 										value="#{financeBundle.finance_invoice_recording_module}"
-										actionListener="#{invoiceRecording.onEditSearch}"
-										action="invoiceRecording_search" />
+										actionListener="#{invoiceRecorder.onEditSearch}"
+										action="invoiceRecorder_search" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink
