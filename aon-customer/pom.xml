@@ -10,32 +10,32 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.customer</artifactId>
-	<version>2.1.1</version>
+	<version>3.0.5</version>
 	<description>AON CUSTOMER</description>
 	<name>AON-CUSTOMER</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.common</artifactId>
-			<version>1.9.18</version>
+			<version>3.3.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.config</artifactId>
-			<version>2.0.5</version>
+			<version>3.3.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.product</artifactId>
-			<version>2.1.0</version>
+			<version>3.2.3</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.registry</artifactId>
-			<version>2.1.1</version>
+			<version>3.2.1</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>

@@ -12,8 +12,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.config.Bank;
+import com.code.aon.config.BankAccount;
+import com.code.aon.config.IBankAccountContainer;
+import com.code.aon.config.PayMethod;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.registry.Registry;
 
@@ -24,8 +31,10 @@ import com.code.aon.registry.Registry;
  */
 @Entity
 @Table(name = "finance")
-public class Finance implements ITransferObject{
+public class Finance implements ITransferObject, IBankAccountContainer{
 	
+	private static final long serialVersionUID = 8289553641190577845L;
+
 	/** The id. */
 	private Integer id;
 	
@@ -57,7 +66,7 @@ public class Finance implements ITransferObject{
 	private Bank bank;
 	
 	/** The bank account. */
-	private String bankAccount;
+	private BankAccount bankAccount;
 	
 	/** The finance status. */
 	private FinanceStatus financeStatus;
@@ -156,7 +165,8 @@ public class Finance implements ITransferObject{
 	 * @return the bank account
 	 */
 	@Column(name="bank_account", length=30)
-	public String getBankAccount() {
+	@Type(type="com.code.aon.config.hibernate.BankAccountType")
+	public BankAccount getBankAccount() {
 		return bankAccount;
 	}
 
@@ -165,7 +175,7 @@ public class Finance implements ITransferObject{
 	 * 
 	 * @param bankAccount the bank account
 	 */
-	public void setBankAccount(String bankAccount) {
+	public void setBankAccount(BankAccount bankAccount) {
 		this.bankAccount = bankAccount;
 	}
 
@@ -333,25 +343,24 @@ public class Finance implements ITransferObject{
 		return getAmount() + getExpenses();
 	}
 	
-    @Transient
-    public String getFormattedBankAccount(){
-    	if(getBankAccount() != null && getBankAccount().length() == 20){
-        	return getBankAccount().substring(0,4) + "." + 
-        	getBankAccount().substring(4, 8) + "." + 
-        	getBankAccount().substring(8, 10) + "." +
-        	getBankAccount().substring(10,20);
-    	}
-    	return getBankAccount();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-    	if(id == null){
+	public boolean equals(Object obj) {
+		if (obj == null) {
     		return super.equals(obj);
-    	}
-        if (obj instanceof Finance) {
-            return (this.id.equals(((Finance)obj).getId()));
-        }
-        return false;
-    }
+		}
+		if (obj instanceof Finance) {
+			Finance o = (Finance) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}
 }

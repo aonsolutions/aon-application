@@ -16,6 +16,8 @@ import com.code.aon.project.enumeration.DossierStatus;
 @Table(name="dossier")
 public class Dossier implements ITransferObject {
 	
+	private static final long serialVersionUID = -8950442685548951095L;
+
 	private Integer id;
 	
 	private Customer customer;
@@ -85,4 +87,16 @@ public class Dossier implements ITransferObject {
 	public void setStatus(DossierStatus status) {
 		this.status = status;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (id == null) {
+			return super.equals(obj);
+		}
+		if (obj instanceof Dossier) {
+			return (this.id.equals(((Dossier) obj).getId()));
+		}
+		return false;
+	}
+	
 }

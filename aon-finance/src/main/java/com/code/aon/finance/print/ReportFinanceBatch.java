@@ -5,8 +5,12 @@ import com.code.aon.finance.FinanceBatch;
 
 public class ReportFinanceBatch implements ITransferObject {
 
+	private static final long serialVersionUID = -929901176929210472L;
+
 	private FinanceBatch financeBatch;
 	
+	private Integer regs;
+
 	private Double total;
 
 	public FinanceBatch getFinanceBatch() {
@@ -15,6 +19,14 @@ public class ReportFinanceBatch implements ITransferObject {
 
 	public void setFinanceBatch(FinanceBatch batch) {
 		financeBatch = batch;
+	}
+
+	public Integer getRegs() {
+		return regs;
+	}
+
+	public void setRegs(Integer regs) {
+		this.regs = regs;
 	}
 
 	public Double getTotal() {

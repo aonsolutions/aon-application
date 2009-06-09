@@ -8,14 +8,16 @@ import com.code.aon.common.enumeration.IResourceable;
 
 public enum TaskPeriod implements IResourceable {
 
-	/** DAYS. */
-	DAYS(Calendar.DATE,1),
-	
-	/** WEEKS. */
-	WEEKS(Calendar.DATE,7),
-	
-	/** MONTHS. */
-	MONTHS(Calendar.MONTH,1);
+	NONE(0,0),
+	DAILY(Calendar.DATE,1),
+	WEEKLY(Calendar.DATE,7),
+	BI_WEEKLY(Calendar.DATE,14),
+	MONTHLY(Calendar.MONTH,1),
+	BI_MONTHLY(Calendar.MONTH,2),
+	THREE_MONTHLY(Calendar.MONTH,3),
+	FOUR_MONTHLY(Calendar.MONTH,4),
+	HALF_YEARLY(Calendar.MONTH,12),
+	YEARLY(Calendar.YEAR,1);
 
 	private int value;
 	

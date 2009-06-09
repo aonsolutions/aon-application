@@ -2,7 +2,10 @@ package com.code.aon.sales;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,18 +16,27 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IHeaderObject;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.PayMethod;
 import com.code.aon.customer.Customer;
-import com.code.aon.finance.PayMethod;
+import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
+import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
+import com.code.aon.sales.dao.ISalesAlias;
 import com.code.aon.sales.enumeration.DocumentType;
 import com.code.aon.sales.enumeration.SalesStatus;
+import com.code.aon.seller.Seller;
 
 /**
  * Transfer Object that represents a Sale.
@@ -33,9 +45,14 @@ import com.code.aon.sales.enumeration.SalesStatus;
  */
 @Entity
 @Table(name="sales")
-public class Sales implements ITransferObject {
+public class Sales implements ITransferObject, IHeaderObject, ICalculableContainer {
 	
-    /** The id. */
+	/** The Constant LOGGER. */
+	private static final Logger LOGGER = Logger.getLogger(Sales.class.getName());
+	
+	private static final long serialVersionUID = 2635528648512356470L;
+
+	/** The id. */
     private Integer id;
 
     /** The serie. */
@@ -71,13 +88,17 @@ public class Sales implements ITransferObject {
     /** The status. */
     private SalesStatus status;
     
-	/** The pos. */
-	private PointOfSale pos;
-	
 	/** The detail of this sale. */
 	private Set<SalesDetail> lines = new HashSet<SalesDetail>();
 
 	private WorkPlace workPlace;
+	
+	/**
+	 * The Constructor. Sets TODAY to issueDate
+	 */
+	public Sales() {
+		this.issueDate = new Date();
+	}
 	
 	/**
 	 * Gets the id.
@@ -164,7 +185,7 @@ public class Sales implements ITransferObject {
 	 * @return the shipping address
 	 */
 	@ManyToOne
-	@JoinColumn( name="shipping_address", updatable=false )
+	@JoinColumn( name="shipping_address" )
 	public RegistryAddress getShippingAddress() {
 		return shippingAddress;
 	}
@@ -243,7 +264,7 @@ public class Sales implements ITransferObject {
 	 * @return the pay method
 	 */
 	@ManyToOne
-	@JoinColumn( name="pay_method", updatable=false )
+	@JoinColumn( name="pay_method" )
 	public PayMethod getPayMethod() {
 		return payMethod;
 	}
@@ -313,26 +334,6 @@ public class Sales implements ITransferObject {
 		this.status = status;
 	}
 
-	/**
-	 * Gets the PointOfSale.
-	 * 
-	 * @return the PointOfSale
-	 */
-	@ManyToOne
-	@JoinColumn( name="pos" )
-	public PointOfSale getPos() {
-		return pos;
-	}
-
-	/**
-	 * Sets the PointOfSale.
-	 * 
-	 * @param pos the PointOfSale
-	 */
-	public void setPos(PointOfSale pos) {
-		this.pos = pos;
-	}
-	
     @ManyToOne
     @JoinColumn(name="workplace", nullable = false)
 	public WorkPlace getWorkPlace() {
@@ -361,4 +362,34 @@ public class Sales implements ITransferObject {
 	public void setLines( Set<SalesDetail> lines ) {
 		this.lines = lines;
 	}
+
+	/**
+	 * Gets the date. Necessary to implement <code>ICalculableContainer</code>
+	 * 
+	 * @return the date
+	 */
+	@Transient
+	public Date getDate() {
+		return issueDate;
+	}
+
+	/**
+	 * Gets the detail list. Used in the reports
+	 * 
+	 * @return the detail list
+	 */
+	@Transient
+	@SuppressWarnings("unchecked")
+	public List getDetailList() {
+		try {
+			IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_SALES_ID), getId());
+			return salesDetailBean.getList(criteria);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining salesDetail list", e);
+		}
+		return null;
+	}
+	
 }

@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.BeanManager;
@@ -39,7 +40,9 @@ import com.code.aon.ql.Criteria;
 @Table(name = "invoice_detail")
 public class InvoiceDetail implements ITransferObject, ICalculable {
 
-    /** The id. */
+	private static final long serialVersionUID = -4734071580890529329L;
+
+	/** The id. */
     private Integer id;
 
     /** The invoice. */
@@ -338,4 +341,27 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 		}
 		return taxBreakDowns;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof InvoiceDetail) {
+			InvoiceDetail o = (InvoiceDetail) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}
+	
 }

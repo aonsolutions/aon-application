@@ -10,46 +10,33 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.project</artifactId>
-	<version>2.0.5</version>
+	<version>3.0.5</version>
 	<description>AON PROJECT</description>
 	<name>AON PROJECT</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.common</artifactId>
-			<version>1.9.18</version>
+			<version>3.3.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.config</artifactId>
-			<version>2.0.5</version>
+			<version>3.4.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.customer</artifactId>
-			<version>2.1.1</version>
+			<version>3.0.7</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.groupware</artifactId>
-			<version>2.0.3</version>
+			<version>3.3.1</version>
 			<scope>compile</scope>
-			<!--
-				*** ELIMINAR LAS EXCLUSIONS CUANDO SE ACTUALICE A LAS ULTIMAS VERSIONES *** 
-			 -->
-			<exclusions>
-				<exclusion>
-					<groupId>com.code.aon</groupId>
-					<artifactId>aon.common</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.code.aon</groupId>
-					<artifactId>aon.config</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 	</dependencies>
 </project>

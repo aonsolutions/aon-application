@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-
 <!DOCTYPE report-config 
 	PUBLIC "-//CODE-AON//DTD Report Config//EN" 
 	"http://co-de.com/aon/report-config.dtd">
@@ -7,71 +6,111 @@
 <report-config>
 	<default-config>
 		<fetch-mode paginated="false" />
-		<!-- 
-		<params>
-			<param id="logoImageFile" value="com/code/aon/ui/gtm/report/resources/logo.gif" />
-		</params>
-		 -->
 	</default-config>
 
-	<report id="diary" description="Diary">
-		<template path="/com/code/aon/ui/account/report/diary.jasper"/>
-		<bean key="com.code.aon.account.AccountEntryDetail" />
-		<criteria provider="#{accountEntryReport}"/>
-
+	<!--  BALANCE DE PERDIDAS Y GANACIAS -->
+	<report id="profitAndLoss" description="ProfitAndLoss">
+		<template path="/com/code/aon/ui/accounting/report/profitAndLoss.jasper"/>
+		<collection provider="#{profitAndLossReport}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.account.i18n.messages" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="fromDate" value="#{accountEntryReport.getFromDate}" />
-			<param id="toDate" value="#{accountEntryReport.getToDate}" />
-			<param id="period" value="#{accountEntryReport.getPeriod}" />
+			<param id="params" value="#{profitAndLossReport.getParameters}" />
+			<param id="reportTitle" value="#{profitAndLossReport.getReportTitle}" />
+		</params>
+	</report>
+
+	<!--  BALANCE MESUAL DE PERDIDAS Y GANACIAS -->
+	<report id="profitAndLossMonthly" description="ProfitAndLossMonthly">
+		<template path="/com/code/aon/ui/accounting/report/profitAndLossMonthly.jasper"/>
+		<collection provider="#{profitAndLossMonthly}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="params" value="#{profitAndLossReport.getParameters}" />
+		</params>
+	</report>
+
+	<!--  BALANCE DE PERDIDAS Y GANACIAS PRESUPUESTADO -->
+	<report id="budgetedProfitAndLoss" description="BudgetedProfitAndLoss">
+		<template path="/com/code/aon/ui/accounting/report/profitAndLoss.jasper"/>
+		<collection provider="#{budgetedProfitAndLossReport}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="params" value="#{budgetedProfitAndLossReport.getParameters}" />
+			<param id="reportTitle" value="#{budgetedProfitAndLossReport.getReportTitle}" />
+		</params>
+	</report>
+
+	<!--  EXTRACTO DE CUENTA -->
+	<report id="statement" description="Account Statement">
+		<template path="/com/code/aon/ui/accounting/report/statement.jasper"/>
+		<collection provider="#{statement}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="openingEntry" value="#{statement.getOpeningEntry}" />
+			<param id="fromOpeningEntry" value="#{statement.getFromOpeningEntry}" />
+			<param id="periodBalance" value="#{statement.getPeriodBalance}" />
+			<param id="params" value="#{trialBalance.getParameters}" />
+		</params>
+	</report>
+
+	<!--  BALANCE DE SUMAS Y SALDOS -->
+	<report id="trialBalance" description="trialBalance">
+		<template path="/com/code/aon/ui/accounting/report/trialBalance.jasper"/>
+		<collection provider="#{trialBalance}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="summaryCollection" value="#{trialBalance.getSummaryCollection}" />
+			<param id="params" value="#{trialBalance.getParameters}" />
+		</params>
+	</report>
+
+	<!--  LISTADO DIARIO DE APUNTES -->
+	<report id="journalBook" description="Listado Diario de Apuntes">
+		<template path="/com/code/aon/ui/accounting/report/journalBook.jasper"/>
+		<bean key="com.code.aon.account.AccountEntryDetail" />
+		<criteria provider="#{journalReport}"/>
+		<fetch-mode paginated="true" page-count="5000" virtualizer-max-size="1000" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="fromDate" value="#{journalReport.getFromDate}" />
+			<param id="toDate" value="#{journalReport.getToDate}" />
+			<param id="date" value="#{journalReport.getDate}" />
+			<param id="period" value="#{journalReport.getPeriod}" />
 		</params>
 	</report>
 	
-	<report id="abstract" description="Abstract">
-		<template path="/com/code/aon/ui/account/report/abstract.jasper"/>
-		<bean key="com.code.aon.account.AccountEntryDetail" />
-		<criteria provider="#{accountEntryReport}"/>
-
+	<!--  LISTADO DEL LIBRO DE IVA -->
+	<report id="vatBook" description="Listado del Libro de IVA">
+		<template path="/com/code/aon/ui/finance/report/vatBook.jasper"/>
+		<collection provider="#{vatReport}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.account.i18n.messages" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="fromDate" value="#{accountEntryReport.getFromDate}" />
-			<param id="toDate" value="#{accountEntryReport.getToDate}" />
-			<param id="period" value="#{accountEntryReport.getPeriod}" />
+			<param id="fromDate" value="#{vatReport.getFromDate}" />
+			<param id="toDate" value="#{vatReport.getToDate}" />
+			<param id="date" value="#{vatReport.getDate}" />
+			<param id="title" value="#{vatReport.getTitle}" />
 		</params>
 	</report>
 
-	<report id="profitAndLoss" description="ProfitAndLoss">
-		<template path="/com/code/aon/ui/account/report/profitAndLoss.jasper"/>
-		<collection provider="#{accountSummaryReport}"/>
-
+	<!--  LISTADO DEL LIBRO DE IVA -->
+	<report id="vatSummaryBook" description="Listado Resumen del Libro de IVA">
+		<template path="/com/code/aon/ui/finance/report/vatBookSummary.jasper"/>
+		<collection provider="#{vatReport}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.account.i18n.messages" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="fromDate" value="#{accountSummaryReport.getFromDate}" />
-			<param id="toDate" value="#{accountSummaryReport.getToDate}" />
-			<param id="period" value="#{accountSummaryReport.getPeriod}" />
-			<param id="grossMargin" value="#{accountSummaryReport.getGrossMargin}" />
-			<param id="totalExpenses" value="#{accountSummaryReport.getTotalExpenses}" />
-			<param id="totalResult" value="#{accountSummaryReport.getTotalResult}" />
-		</params>
-	</report>
-
-	<report id="profitAndLossMonthly" description="ProfitAndLossMonthly">
-		<template path="/com/code/aon/ui/account/report/profitAndLossMonthly.jasper"/>
-		<collection provider="#{accountMonthlyReport}"/>
-
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.account.i18n.messages" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="fromDate" value="#{accountSummaryReport.getFromDate}" />
-			<param id="toDate" value="#{accountSummaryReport.getToDate}" />
-			<param id="period" value="#{accountSummaryReport.getPeriod}" />
+			<param id="fromDate" value="#{vatReport.getFromDate}" />
+			<param id="toDate" value="#{vatReport.getToDate}" />
+			<param id="date" value="#{vatReport.getDate}" />
+			<param id="title" value="#{vatReport.getTitle}" />
+			<param id="months" value="#{vatReport.getMonths}" />
 		</params>
 	</report>
 

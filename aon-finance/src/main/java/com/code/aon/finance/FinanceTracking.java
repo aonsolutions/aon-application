@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 
@@ -21,6 +23,8 @@ import com.code.aon.finance.enumeration.FinanceTrackingType;
 @Table(name="finance_tracking")
 public class FinanceTracking implements ITransferObject {
 	
+	private static final long serialVersionUID = 6433514583468654955L;
+
 	/** The id. */
 	private Integer id;
 	
@@ -153,4 +157,26 @@ public class FinanceTracking implements ITransferObject {
     public void setAmount(double amount) {
         this.amount = amount;
     }
+
+    @Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof FinanceTracking) {
+			FinanceTracking o = (FinanceTracking) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}    
 }

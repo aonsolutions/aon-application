@@ -20,6 +20,8 @@ import com.code.aon.common.enumeration.MimeType;
 @Table(name="sales_attach")
 public class SalesAttachment implements ITransferObject {
 	 
+	private static final long serialVersionUID = 363976096333530545L;
+
 	/** The id. */
 	private Integer id;
 	

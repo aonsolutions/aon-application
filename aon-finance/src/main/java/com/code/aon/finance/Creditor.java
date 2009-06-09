@@ -11,6 +11,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -28,6 +29,8 @@ import com.code.aon.registry.Registry;
 @Table(name="creditor")
 public class Creditor implements ITransferObject, IScopable, IRegistry {
 	
+	private static final long serialVersionUID = 6173766150887358588L;
+
 	/** The id. */
 	private Integer id;
 	
@@ -126,4 +129,27 @@ public class Creditor implements ITransferObject, IScopable, IRegistry {
 	public void setScope(Scope scope) {
 		this.scope = scope;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof Creditor) {
+			Creditor o = (Creditor) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}
+	
 }

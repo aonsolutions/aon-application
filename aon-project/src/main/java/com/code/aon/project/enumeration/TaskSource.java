@@ -16,11 +16,8 @@ public enum TaskSource implements IResourceable {
 	/** ASSIGNED. */
 	ASSIGNED,
 	
-	/** AON CONSULTANT. */
-	AON_CONSULTANT, 
-	
-	/** PERIODICAL. */
-	PERIODICAL;
+	/** PROCESS. */
+	PROCESS;
 	
 	/** Message file base path. */
 	private static final String BASE_NAME = "com.code.aon.project.i18n.messages";
