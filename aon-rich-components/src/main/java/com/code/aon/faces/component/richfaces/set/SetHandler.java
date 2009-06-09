@@ -29,7 +29,7 @@ public class SetHandler extends TagHandler {
             throws IOException, FacesException, FaceletException, ELException {
     	ValueExpression veVar = this.var.getValueExpression(ctx, Object.class);
         Object valueObj = this.value.getObject(ctx);
-        veVar.setValue(ctx.getFacesContext().getELContext(), valueObj);
+        veVar.setValue(ctx, valueObj);
         this.nextHandler.apply(ctx, parent);
     }
     
