@@ -15,7 +15,7 @@
 	<description>AON WEB SMB</description>
 	<name>AON WEB SMB</name>
 	<properties>
-		<dbVersion>3.4.0</dbVersion>
+		<dbVersion>3.5.0</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-smb</finalName>
