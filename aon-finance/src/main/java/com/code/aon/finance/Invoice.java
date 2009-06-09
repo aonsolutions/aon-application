@@ -134,7 +134,10 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	private Set<Finance> finances = new HashSet<Finance>();
 
 	/** The detail of this invoice. */
-	private Set<InvoiceAddress> invoiceAddresses = new HashSet<InvoiceAddress>();
+	private Set<InvoiceAddress> addresses = new HashSet<InvoiceAddress>();
+
+	/** The detail of this invoice. */
+	private Set<InvoiceAttachment> attachments = new HashSet<InvoiceAttachment>();
 
 	private int issueYear;
 	private int issueMonth;
@@ -537,12 +540,21 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	}
 
 	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
-	public Set<InvoiceAddress> getInvoiceAddresses() {
-		return invoiceAddresses;
+	public Set<InvoiceAddress> getAddresses() {
+		return addresses;
 	}
 
-	public void setInvoiceAddresses(Set<InvoiceAddress> invoiceAddresses) {
-		this.invoiceAddresses = invoiceAddresses;
+	public void setAddresses(Set<InvoiceAddress> addresses) {
+		this.addresses = addresses;
+	}
+
+	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
+	public Set<InvoiceAttachment> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(Set<InvoiceAttachment> attachments) {
+		this.attachments = attachments;
 	}
 
 	/**
@@ -557,7 +569,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	
 	@Transient
 	public IAddress getAddress(){
-		return(getInvoiceAddresses().iterator().hasNext()?getInvoiceAddresses().iterator().next():getRegistryAddress());
+		return(getAddresses().iterator().hasNext()?getAddresses().iterator().next():getRegistryAddress());
 	}
 	
 	/**
