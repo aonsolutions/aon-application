@@ -21,18 +21,16 @@ import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.project.enumeration.DossierStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.menu.jsf.MenuEvent;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.project.util.CampaignTaskManager;
-import com.code.aon.ui.util.AonUtil;
 
 public class CampaignController extends BasicController {
 
     private static final Logger LOGGER = Logger.getLogger(CampaignController.class.getName());
 
-    public void onSearch(MenuEvent event) {
+    public void onSearch(ActionEvent event) {
         try {
             String alias = getManagerBean().getFieldName(ICampaignAlias.CAMPAIGN_STATUS);
             Expression pendingExpression = ExpressionUtilities.getEqualExpression(alias, CampaignStatus.PENDING);
@@ -93,13 +91,17 @@ public class CampaignController extends BasicController {
         }
     }
 
-    public void addEqualExpression(ValueChangeEvent event) throws ManagerBeanException, ExpressionException {
-        if (event.getNewValue() != null && !event.getNewValue().equals(new Integer(Integer.MAX_VALUE))) {
-            Object value = event.getNewValue();
-            Criteria criteria = getCriteria();
-            criteria.addExpression(getFieldName(event.getComponent().getId()), value.toString());
-            setCriteria(criteria);
-        }
+    public void addEqualExpression(ValueChangeEvent event) {
+    	try {
+            if (event.getNewValue() != null && !event.getNewValue().equals(new Integer(Integer.MAX_VALUE))) {
+                Object value = event.getNewValue();
+                Criteria criteria = getCriteria();
+                criteria.addExpression(getFieldName(event.getComponent().getId()), value.toString());
+                setCriteria(criteria);
+            }
+    	} catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error adding Criteria", e);
+		}
     }
 
     public boolean isPending() {
@@ -147,7 +149,7 @@ public class CampaignController extends BasicController {
 
                 CampaignTaskManager.addCampaignTask(campaignDossier, 0, null);
             }
-            CampaignDossierController campaignDossierController = (CampaignDossierController)AonUtil.getController("campaignDossier");
+            CampaignDossierController campaignDossierController = (CampaignDossierController)FormUtil.getController("campaignDossier");
             campaignDossierController.setSortColumn(null);
             campaignDossierController.onSearch(null);
         } catch (ManagerBeanException e) {

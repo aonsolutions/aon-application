@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="dossierTypeList">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{projectBundle.aon_dossier_type}" />
+				<ui:param name="controller" value="#{dossierType}" />
+			</ui:include>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-scroll-area-internal">
+
+					<aon:dataTable id="dossierTypeDataList" value="#{dossierType.model}"
+						rows="20" var="to" rendered="#{dossierType.model.rowCount > 0}"
+						columnClasses="aon-editDataTable-text">
+
+						<aon:rowSelector 
+							actionListener="#{dossierType.onSelect}" 
+							action="dossierType_form"/>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}" />
+						</aon:column>
+
+					</aon:dataTable>
+					<aon:dataScroller2 for="dossierTypeDataList" shoNote="true" />
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>

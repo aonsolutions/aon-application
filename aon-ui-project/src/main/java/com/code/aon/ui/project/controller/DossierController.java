@@ -21,7 +21,7 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.customer.controller.CustomerController;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
 
 public class DossierController extends BasicController {
 	
@@ -31,7 +31,7 @@ public class DossierController extends BasicController {
 	
 
 	public void onDossier(ActionEvent event){
-		CustomerController customerController = (CustomerController)AonUtil.getController(CUSTOMER_CONTROLLER_NAME);
+		CustomerController customerController = (CustomerController)FormUtil.getController(CUSTOMER_CONTROLLER_NAME);
 		Customer customer = (Customer)customerController.getTo();
 		try {
 			IManagerBean dossierBean = BeanManager.getManagerBean(Dossier.class);

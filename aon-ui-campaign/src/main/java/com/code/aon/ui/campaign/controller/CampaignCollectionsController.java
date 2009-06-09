@@ -31,7 +31,7 @@ public class CampaignCollectionsController {
 		Iterator iter = processBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Process process = (Process)iter.next();
-			SelectItem item = new SelectItem(process.getId(), process.getDescription());
+			SelectItem item = new SelectItem(process, process.getDescription());
 			processList.add(item);
 		}
 		return processList;
@@ -67,7 +67,7 @@ public class CampaignCollectionsController {
 		return processList;
 	}
 
-	public List<SelectItem> getDateReferences() throws ManagerBeanException {
+	public List<SelectItem> getDateReferences()  {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		LinkedList<SelectItem> dateReferenceList = new LinkedList<SelectItem>();
 		DateReference[] dateReferences = DateReference.values();

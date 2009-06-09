@@ -19,8 +19,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.project.util.CampaignTaskManager;
-import com.code.aon.ui.util.AonUtil;
 
 public class ActivityProcessController extends BasicController {
 
@@ -64,7 +64,7 @@ public class ActivityProcessController extends BasicController {
 
     public void onSearchTasks(ActionEvent event) {
         try {
-            CampaignDossier campaignDossier = (CampaignDossier)AonUtil.getController("campaignDossier").getModel().getRowData();
+            CampaignDossier campaignDossier = (CampaignDossier)FormUtil.getController("campaignDossier").getModel().getRowData();
             setCampaignDossier(campaignDossier);
             setProcessDetail(CampaignTaskManager.getCurrentProcessDetail(campaignDossier));
             searchTasks();

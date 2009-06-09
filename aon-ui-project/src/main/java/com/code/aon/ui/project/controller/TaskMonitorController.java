@@ -11,7 +11,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 
 public class TaskMonitorController extends BasicController implements ITaskController {
 
@@ -31,17 +30,6 @@ public class TaskMonitorController extends BasicController implements ITaskContr
 
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
-	}
-
-	public void onEditSearch(MenuEvent event) {
-		super.onEditSearch(new ActionEvent(event.getComponent()));
-		customer = null;
-		startDateFrom = null;
-		startDateTo = null;
-		endDateFrom = null;
-		endDateTo = null;
-		dueDateFrom = null;
-		dueDateTo = null;
 	}
 
 	@Override

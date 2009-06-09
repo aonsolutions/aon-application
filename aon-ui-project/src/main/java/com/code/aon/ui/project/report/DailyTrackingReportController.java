@@ -21,15 +21,16 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.config.User;
 import com.code.aon.config.UserWorkGroup;
+import com.code.aon.config.WorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.customer.Customer;
 import com.code.aon.project.Activity;
 import com.code.aon.project.ActivityType;
 import com.code.aon.project.Dossier;
 import com.code.aon.project.DossierType;
+import com.code.aon.project.JobType;
 import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.project.enumeration.DossierStatus;
 import com.code.aon.ql.Criteria;
@@ -37,6 +38,7 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 
@@ -99,15 +101,15 @@ public class DailyTrackingReportController implements ICollectionProvider {
 	private List<SelectItem> users;
 
 	private Customer customer;
-	private Integer workgroupId;
-	private Integer userId;
-	private Integer dossierId;
-	private Integer activityId;
+	private WorkGroup workgroup;
+	private User user;
+	private Dossier dossier;
+	private Activity activity;
 	private Date fromDate;
 	private Date toDate;
-	private Integer jobTypeId;
-	private Integer dossierTypeId;
-	private Integer activityTypeId;
+	private JobType jobType;
+	private DossierType dossierType;
+	private ActivityType activityType;
 
 	private boolean dossierTypeDisabled;
 	private boolean activityTypeDisabled;
@@ -144,44 +146,44 @@ public class DailyTrackingReportController implements ICollectionProvider {
 		this.users = users;
 	}
 
-	public Integer getWorkgroupId() {
-		return workgroupId;
+	public WorkGroup getWorkgroup() {
+		return workgroup;
 	}
 
-	public void setWorkgroupId(Integer workgroupId) {
-		this.workgroupId = workgroupId;
+	public void setWorkgroup(WorkGroup workgroup) {
+		this.workgroup = workgroup;
 	}
 
-	public Integer getUserId() {
-		return userId;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUserId(Integer userId) {
-		this.userId = userId;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
-	public Integer getDossierId() {
-		return dossierId;
+	public Dossier getDossier() {
+		return dossier;
 	}
 
-	public void setDossierId(Integer dossierId) {
-		this.dossierId = dossierId;
+	public void setDossier(Dossier dossier) {
+		this.dossier = dossier;
 	}
 
-	public Integer getActivityId() {
-		return activityId;
+	public Activity getActivity() {
+		return activity;
 	}
 
-	public void setActivityId(Integer activityId) {
-		this.activityId = activityId;
+	public void setActivity(Activity activity) {
+		this.activity = activity;
 	}
 
-	public Integer getJobTypeId() {
-		return jobTypeId;
+	public JobType getJobType() {
+		return jobType;
 	}
 
-	public void setJobTypeId(Integer jobTypeId) {
-		this.jobTypeId = jobTypeId;
+	public void setJobType(JobType jobType) {
+		this.jobType = jobType;
 	}
 
 	public Date getFromDate() {
@@ -208,20 +210,20 @@ public class DailyTrackingReportController implements ICollectionProvider {
 		this.reportKey = reportKey;
 	}
 
-	public Integer getDossierTypeId() {
-		return dossierTypeId;
+	public DossierType getDossierType() {
+		return dossierType;
 	}
 
-	public void setDossierTypeId(Integer dossierTypeId) {
-		this.dossierTypeId = dossierTypeId;
+	public void setDossierType(DossierType dossierType) {
+		this.dossierType = dossierType;
 	}
 
-	public Integer getActivityTypeId() {
-		return activityTypeId;
+	public ActivityType getActivityType() {
+		return activityType;
 	}
 
-	public void setActivityTypeId(Integer activityTypeId) {
-		this.activityTypeId = activityTypeId;
+	public void setActivityType(ActivityType activityType) {
+		this.activityType = activityType;
 	}
 
 	public boolean isDossierTypeDisabled() {
@@ -276,7 +278,7 @@ public class DailyTrackingReportController implements ICollectionProvider {
 			Iterator iter = dossierTypeBean.getList(criteria).iterator();
 			while (iter.hasNext()) {
 				DossierType type = (DossierType) iter.next();
-				SelectItem item = new SelectItem(type.getId(), type.getDescription());
+				SelectItem item = new SelectItem(type, type.getDescription());
 				dossierTypes.add(item);
 			}
 		} catch (ManagerBeanException e) {
@@ -325,7 +327,7 @@ public class DailyTrackingReportController implements ICollectionProvider {
 						first = false;
 					}
 				}
-				SelectItem item = new SelectItem(at.getId(), at.getDescription());
+				SelectItem item = new SelectItem(at, at.getDescription());
 				temp.add(item);
 			}
 			if (group != null) {
@@ -336,7 +338,7 @@ public class DailyTrackingReportController implements ICollectionProvider {
 		}
 	}
 
-	public void reloadDossiers(ValueChangeEvent event) {
+	public void reloadDossiers(LookupChangeEvent event) {
 		if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
 			Object newValue = event.getNewValue();
 			if (newValue instanceof Customer) {
@@ -351,7 +353,7 @@ public class DailyTrackingReportController implements ICollectionProvider {
 
 	public void workgroupChanged(ValueChangeEvent event) {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-			loadUsers(new Integer(event.getNewValue().toString()));
+			loadUsers(((WorkGroup) event.getNewValue()).getId());
 		} else {
 			setUsers(null);
 		}
@@ -359,9 +361,9 @@ public class DailyTrackingReportController implements ICollectionProvider {
 
 	public void dossierTypeChanged(ValueChangeEvent event) {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-			Integer dossierTypeId = (Integer) event.getNewValue();
-			loadActivityTypes(dossierTypeId);
-			loadDossiers(null, dossierTypeId);
+			DossierType dossierType = (DossierType) event.getNewValue();
+			loadActivityTypes(dossierType.getId());
+			loadDossiers(null, dossierType.getId());
 		} else {
 			loadActivityTypes(null);
 			loadDossiers(null, null);
@@ -369,47 +371,28 @@ public class DailyTrackingReportController implements ICollectionProvider {
 	}
 
 	public void activityChanged(ValueChangeEvent event) {
-		try {
-			if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-				Integer activityId = (Integer) event.getNewValue();
-				IManagerBean bean = BeanManager.getManagerBean(Activity.class);
-				Activity a = (Activity) bean.get(activityId);
-				ActivityType at = a.getActivityType();
-				if (at != null) {
-					setActivityTypeId(at.getId());	
-				} else {
-					setActivityTypeId(null);
-				}
-				setActivityTypeDisabled(true);
-			} else {
-				setActivityTypeDisabled(false);
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading activities related with activity id= "
-					+ activityId.toString(), e);
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			Activity a = (Activity) event.getNewValue();
+			setActivityType(a.getActivityType());
+			setActivityTypeDisabled(true);
+		} else {
+			setActivityTypeDisabled(false);
 		}
 	}
 
 	public void activityTypeChanged(ValueChangeEvent event) {
-		try {
-			setDossierTypeDisabled(getDossierId() != null);
-			if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-				Integer activityTypeId = (Integer) event.getNewValue();
-				IManagerBean bean = BeanManager.getManagerBean(ActivityType.class);
-				ActivityType at = (ActivityType) bean.get(activityTypeId);
-				DossierType dt = at.getDossierType();
-				if (dt != null) {
-					Integer old = getDossierTypeId();
-					setDossierTypeId(dt.getId());
-					setDossierTypeDisabled(true);
-					ValueChangeEvent ev = new ValueChangeEvent(event.getComponent(), old,
-							getDossierTypeId());
-					dossierTypeChanged(ev);
-				}
+		setDossierTypeDisabled(getDossier() != null);
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			ActivityType at = (ActivityType) event.getNewValue();
+			DossierType dt = at.getDossierType();
+			if (dt != null) {
+				DossierType old = getDossierType();
+				setDossierType(dt);
+				setDossierTypeDisabled(true);
+				ValueChangeEvent ev = new ValueChangeEvent(event.getComponent(), old,
+						getDossierType());
+				dossierTypeChanged(ev);
 			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading dossier type related with activity type id= "
-					+ activityTypeId.toString(), e);
 		}
 	}
 
@@ -420,7 +403,7 @@ public class DailyTrackingReportController implements ICollectionProvider {
 			IManagerBean managerBean = BeanManager.getManagerBean(Dossier.class);
 			Criteria criteria = new Criteria();
 			if (customerId == null) {
-				if (getCustomer() != null) {
+				if (getCustomer() != null && getCustomer().getId() != null) {
 					customerId = getCustomer().getId();
 				}
 			}
@@ -430,8 +413,8 @@ public class DailyTrackingReportController implements ICollectionProvider {
 			}
 
 			if (dossierTypeId == null) {
-				if (getDossierTypeId() != null) {
-					customerId = getDossierTypeId();
+				if (getDossierType() != null) {
+					dossierTypeId = getDossierType().getId();
 				}
 			}
 			if (dossierTypeId != null) {
@@ -450,9 +433,9 @@ public class DailyTrackingReportController implements ICollectionProvider {
 					sb.append(" (");
 					sb.append(dossier.getCustomer().getRegistry().getAlias());
 					sb.append(")");
-					item = new SelectItem(dossier.getId(), sb.toString());
+					item = new SelectItem(dossier, sb.toString());
 				} else {
-					item = new SelectItem(dossier.getId(), dossier.getNumber());
+					item = new SelectItem(dossier, dossier.getNumber());
 				}
 				dossiers.add(item);
 			}
@@ -479,7 +462,7 @@ public class DailyTrackingReportController implements ICollectionProvider {
 				sb.append(" (");
 				sb.append(dossier.getCustomer().getRegistry().getAlias());
 				sb.append(")");
-				SelectItem item = new SelectItem(dossier.getId(), sb.toString());
+				SelectItem item = new SelectItem(dossier, sb.toString());
 				allDossiers.add(item);
 			}
 		} catch (ManagerBeanException e) {
@@ -488,42 +471,34 @@ public class DailyTrackingReportController implements ICollectionProvider {
 	}
 
 	public void dossierChange(ValueChangeEvent event) {
-		setDossierTypeDisabled(getActivityTypeId() != null);
+		setDossierTypeDisabled(getActivityType() != null);
 		if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
-			try {
-				IManagerBean bean = BeanManager.getManagerBean(Dossier.class);
-				Dossier d = (Dossier) bean.get((Integer) event.getNewValue());
-				if (d != null) {
-					if (getCustomer() == null || getCustomer().getId() == null
-							|| !d.getId().equals(getCustomer().getId())) {
-						Integer old = (getCustomer() != null && getCustomer().getId() != null) ? getCustomer()
-								.getId()
-								: null;
-						setCustomer(d.getCustomer());
-						ValueChangeEvent ev = new ValueChangeEvent(event.getComponent(), old, d
-								.getCustomer().getId());
-						reloadDossiers(ev);
-					}
-
-					if (getDossierTypeId() == null) {
-						DossierType dt = d.getDossierType();
-						if (dt != null) {
-							Integer old = getDossierTypeId();
-							setDossierTypeId(dt.getId());
-							setDossierTypeDisabled(true);
-							ValueChangeEvent ev = new ValueChangeEvent(event.getComponent(), old,
-									getDossierTypeId());
-							dossierTypeChanged(ev);
-						} else {
-							setDossierTypeDisabled(getActivityTypeId() != null);
-						}
-					}
-
+			Dossier d = (Dossier) event.getNewValue();
+			if (d != null) {
+				if (getCustomer() == null || getCustomer().getId() == null
+						|| !d.getId().equals(getCustomer().getId())) {
+					setCustomer(d.getCustomer());
+					LookupChangeEvent ev = new LookupChangeEvent(event.getComponent(), d
+							.getCustomer().getId());
+					reloadDossiers(ev);
 				}
-			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error setting dossier customer", e);
+
+				if (getDossierType() == null) {
+					DossierType dt = d.getDossierType();
+					if (dt != null) {
+						DossierType old = getDossierType();
+						setDossierType(dt);
+						setDossierTypeDisabled(true);
+						ValueChangeEvent ev = new ValueChangeEvent(event.getComponent(), old,
+								getDossierType());
+						dossierTypeChanged(ev);
+					} else {
+						setDossierTypeDisabled(getActivityType() != null);
+					}
+				}
+
 			}
-			loadActivities(new Integer(event.getNewValue().toString()));
+			loadActivities(d.getId());
 		} else {
 			loadActivities(null);
 		}
@@ -545,7 +520,7 @@ public class DailyTrackingReportController implements ICollectionProvider {
 			Iterator iterator = managerBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				Activity activity = (Activity) iterator.next();
-				SelectItem item = new SelectItem(activity.getId(), activity.getActivityType()
+				SelectItem item = new SelectItem(activity, activity.getActivityType()
 						.getDescription());
 				activities.add(item);
 			}
@@ -569,9 +544,18 @@ public class DailyTrackingReportController implements ICollectionProvider {
 				Iterator iter = userWorkGroupBean.getList(criteria).iterator();
 				while (iter.hasNext()) {
 					UserWorkGroup userWorkGroup = (UserWorkGroup) iter.next();
-					SelectItem item = new SelectItem(userWorkGroup.getUser().getId(), userWorkGroup
-							.getUser().getName());
-					users.add(item);
+					boolean added = false;
+					for (SelectItem it: users) {
+						if (it.getValue().equals(userWorkGroup.getUser())) {
+							added = true;
+							break;
+						}
+					}
+					if (!added) {
+						SelectItem item = new SelectItem(userWorkGroup.getUser(), userWorkGroup
+								.getUser().getName());
+						users.add(item);
+					}
 				}
 			} else {
 				IManagerBean userBean = BeanManager.getManagerBean(User.class);
@@ -579,7 +563,7 @@ public class DailyTrackingReportController implements ICollectionProvider {
 				Iterator iter = userBean.getList(criteria).iterator();
 				while (iter.hasNext()) {
 					User user = (User) iter.next();
-					SelectItem item = new SelectItem(user.getId(), user.getName());
+					SelectItem item = new SelectItem(user, user.getName());
 					users.add(item);
 				}
 			}
@@ -590,14 +574,14 @@ public class DailyTrackingReportController implements ICollectionProvider {
 	}
 
 	private void initializeSearchParameters() {
-		setCustomer(null);
-		setWorkgroupId(null);
-		setUserId(null);
-		setDossierId(null);
-		setActivityId(null);
-		setDossierTypeId(null);
-		setActivityTypeId(null);
-		setJobTypeId(null);
+		setCustomer(new Customer());
+		setWorkgroup(null);
+		setUser(null);
+		setDossier(null);
+		setActivity(null);
+		setDossierType(null);
+		setActivityType(null);
+		setJobType(null);
 		setFromDate(null);
 		setToDate(null);
 		setDossiers(null);
@@ -630,7 +614,7 @@ public class DailyTrackingReportController implements ICollectionProvider {
 
 	public List<SelectItem> getAvailableDossiers() {
 		if ((getCustomer() != null && getCustomer().getId() != null)
-				|| (getDossierTypeId() != null)) {
+				|| (getDossierType() != null)) {
 			return getDossiers();
 		}
 		return getAllDossiers();
@@ -646,7 +630,7 @@ public class DailyTrackingReportController implements ICollectionProvider {
 		StringBuilder sentence = new StringBuilder(getSentence());
 		sentence.append(getWhere());
 		sentence.append(getOrderBy());
-		Session session = HibernateUtil.getSession();
+		Session session = HibernateUtil.getSession( HibernateUtil.getSessionFactoryName() );
 		Query query = session.createQuery(sentence.toString());
 		setParameters(query);
 		return query.list();
@@ -663,49 +647,49 @@ public class DailyTrackingReportController implements ICollectionProvider {
 			}
 			where.append("dt.trackingDate <= ?");
 		}
-		if (getUserId() != null) {
+		if (getUser() != null) {
 			if (where.length() > 0) {
 				where.append(AND);
 			}
 			where.append("dt.user.id = ?");
 		}
 
-		if (getDossierId() != null) {
+		if (getDossier() != null) {
 			if (where.length() > 0) {
 				where.append(AND);
 			}
 			where.append("dt.dossier.id = ?");
 		}
 
-		if (getActivityId() != null) {
+		if (getActivity() != null) {
 			if (where.length() > 0) {
 				where.append(AND);
 			}
 			where.append("dt.activity.id = ?");
 		}
 
-		if (getCustomer() != null) {
+		if (getCustomer() != null && getCustomer().getId()!=null) {
 			if (where.length() > 0) {
 				where.append(AND);
 			}
 			where.append("dt.customer.id = ?");
 		}
 
-		if (getJobTypeId() != null) {
+		if (getJobType() != null) {
 			if (where.length() > 0) {
 				where.append(AND);
 			}
 			where.append("dt.jobType.id = ?");
 		}
 
-		if (getDossierTypeId() != null) {
+		if (getDossierType() != null) {
 			if (where.length() > 0) {
 				where.append(AND);
 			}
 			where.append("dt.dossier.dossierType.id = ?");
 		}
 
-		if (getActivityTypeId() != null) {
+		if (getActivityType() != null) {
 			if (where.length() > 0) {
 				where.append(AND);
 			}
@@ -728,32 +712,32 @@ public class DailyTrackingReportController implements ICollectionProvider {
 			query.setDate(i, getToDate());
 			i++;
 		}
-		if (getUserId() != null) {
-			query.setInteger(i, getUserId());
+		if (getUser() != null) {
+			query.setInteger(i, getUser().getId());
 			i++;
 		}
-		if (getDossierId() != null) {
-			query.setInteger(i, getDossierId());
+		if (getDossier() != null) {
+			query.setInteger(i, getDossier().getId());
 			i++;
 		}
-		if (getActivityId() != null) {
-			query.setInteger(i, getActivityId());
+		if (getActivity() != null) {
+			query.setInteger(i, getActivity().getId());
 			i++;
 		}
-		if (getCustomer() != null) {
+		if (getCustomer() != null && getCustomer().getId() != null) {
 			query.setInteger(i, getCustomer().getId());
 			i++;
 		}
-		if (getJobTypeId() != null) {
-			query.setInteger(i, getJobTypeId());
+		if (getJobType() != null) {
+			query.setInteger(i, getJobType().getId());
 			i++;
 		}
-		if (getDossierTypeId() != null) {
-			query.setInteger(i, getDossierTypeId());
+		if (getDossierType() != null) {
+			query.setInteger(i, getDossierType().getId());
 			i++;
 		}
-		if (getActivityTypeId() != null) {
-			query.setInteger(i, getActivityTypeId());
+		if (getActivityType() != null) {
+			query.setInteger(i, getActivityType().getId());
 			i++;
 		}
 	}
@@ -806,7 +790,7 @@ public class DailyTrackingReportController implements ICollectionProvider {
 		return sentence.toString();
 	}
 
-	public String onReport() throws ReportException, DAOException, ManagerBeanException {
+	public String onReport() throws ReportException{
 		ReportManager manager = (ReportManager) AonUtil.getRegisteredBean("report");
 		manager.setReportKey(getReportKey());
 		manager.setOutputFormat(getOutputFormat() == null ? OutputFormat.PDF : getOutputFormat());
