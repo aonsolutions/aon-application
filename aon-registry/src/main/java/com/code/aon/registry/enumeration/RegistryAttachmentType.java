@@ -21,7 +21,10 @@ public enum RegistryAttachmentType implements IResourceable {
 	BANNER,
 	
 	/** Corporate Identity DOCUMENTS **/
-	CORPORATE_IDENTITY;
+	CORPORATE_IDENTITY,
+	
+	/** The DIGITAL CERTIFICATE. */
+	DIGITAL_CERTIFICATE;
 	
 	
 	/** Message file base path. */
