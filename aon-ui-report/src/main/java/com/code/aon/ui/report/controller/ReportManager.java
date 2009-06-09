@@ -60,6 +60,8 @@ public class ReportManager {
 	 * Report idetifier.
 	 */
 	private String reportKey;
+	
+	private ICollectionProvider collectionProvider;
 
 	/**
 	 * Returns the report identifier.
@@ -97,6 +99,24 @@ public class ReportManager {
 	 */
 	public void setOutputFormat(OutputFormat outputFormat) {
 		this.outputFormat = outputFormat;
+	}
+	
+	/**
+	 * Gets the collection provider.
+	 * 
+	 * @return the collection provider
+	 */
+	public ICollectionProvider getCollectionProvider() {
+		return collectionProvider;
+	}
+
+	/**
+	 * Sets the collection provider.
+	 * 
+	 * @param collectionProvider the new collection provider
+	 */
+	public void setCollectionProvider(ICollectionProvider collectionProvider) {
+		this.collectionProvider = collectionProvider;
 	}
 
 	/**
@@ -358,7 +378,7 @@ public class ReportManager {
 					return crpr.getCriteria();
 				}
 				// Criteria provider is a class.
-				Class criteriaProviderClass = Class.forName(provider);
+				Class<?> criteriaProviderClass = Class.forName(provider);
 				ICriteriaProvider criteriaProvider = (ICriteriaProvider) criteriaProviderClass
 						.newInstance();
 				return criteriaProvider.getCriteria();
@@ -394,32 +414,32 @@ public class ReportManager {
 	private Collection getCollection(JRReport report) throws ReportException {
 		ReportConfig config = report.getReportConfig();
 		String provider = config.getCollectionProvider();
-		if (provider != null) {
-			try {			
-				if (provider.startsWith("#")) {
-					String providerName = strip(provider);
-					Object c = AonUtil.getRegisteredBean(providerName);
-					if (c instanceof ICollectionProvider) {
-						ICollectionProvider crpr = (ICollectionProvider) c;
-						return crpr.getCollection(config.isForceRefresh());
-					} else if (c instanceof Collection) {
-						return (Collection) c;
-					}
-				} else {
-					// Collection provider is a class.
-					ICollectionProvider collectionProvider = null;
-					try {
-						Class collectionProviderClass = Class.forName(provider);
-						collectionProvider = (ICollectionProvider) collectionProviderClass.newInstance();
-						return collectionProvider.getCollection(config.isForceRefresh());
-					} catch ( Throwable th ) {
-						throw new ReportException(th.getMessage(), th);		
-					}					
+		ICollectionProvider collectionProvider = getCollectionProvider();
+		if ( (collectionProvider == null) && (provider != null) ) {		
+			if (provider.startsWith("#")) {
+				String providerName = strip(provider);
+				Object c = AonUtil.getRegisteredBean(providerName);
+				if (c instanceof ICollectionProvider) {
+					collectionProvider = (ICollectionProvider) c;
+				} else if (c instanceof Collection) {
+					return (Collection) c;
 				}
+			} else {
+				try {
+					Class<?> collectionProviderClass = Class.forName(provider);
+					collectionProvider = (ICollectionProvider) collectionProviderClass.newInstance();
+				} catch ( Throwable th ) {
+					throw new ReportException(th.getMessage(), th);		
+				}					
+			}
+		}
+		if ( collectionProvider != null ) {
+			try {
+				return collectionProvider.getCollection(config.isForceRefresh());
 			} catch (ManagerBeanException e) {
 				throw new ReportException(e.getMessage(), e);
 			}				
-		}
+		}		
 		return null;
 	}
 
