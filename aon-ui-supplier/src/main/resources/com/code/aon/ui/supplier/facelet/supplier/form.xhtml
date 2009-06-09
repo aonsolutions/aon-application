@@ -18,11 +18,32 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="dataTable" columns="2">
 
-					<ui:include
-						src="/com/code/aon/ui/supplier/facelet/supplier/formContent.xhtml">
+					<ui:include src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml">
 						<ui:param name="controller" value="#{supplier}" />
 					</ui:include>
 
+					<aon:outputLabel for="Supplier_supplierSegment_id"
+						value="#{bundle.aon_segment}" />
+					<aon:selectOneMenu id="Supplier_supplierSegment_id"
+						value="#{supplier.to.supplierSegment}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{supplierCollections.supplierSegments}" />
+					</aon:selectOneMenu>
+				
+					<aon:outputLabel for="Supplier_scope_id"
+						value="#{bundle.aon_scope}" />
+					<aon:selectOneMenu id="Supplier_scope_id"
+						value="#{supplier.to.scope}">
+						<f:selectItems value="#{configCollections.currentUserScopes}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Supplier_status"
+						value="#{bundle.aon_status}" />
+					<aon:selectOneMenu id="Supplier_status"
+						value="#{supplier.to.status}">
+						<f:selectItems value="#{supplierCollections.supplierStatuses}" />
+					</aon:selectOneMenu>
+					
 					<c:if test="#{supplier.showAccount}">
 						<aon:outputLabel for="Supplier_account"
 							value="#{accountingBundle.accounting_account}" />
@@ -38,7 +59,7 @@
 				<c:if test="#{!supplier.new}">
 					<aon:panelTabSet selectedTab="#{supplier.selectedTab}">
 
-						<aon:panelTab id="address" label="#{registryBundle.registry_address_module}">
+						<aon:panelTab id="adddress" label="#{registryBundle.registry_address_module}">
 							<ui:include	src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
 								<ui:param name="controller" value="#{supplierAddress}" />
 							</ui:include>
@@ -50,35 +71,19 @@
 							</ui:include>
 						</aon:panelTab>
  
- 						<c:if test="#{supplier.showFinanceData}">
-							<aon:panelTab id="finance"
-								label="#{registryBundle.registry_finance_data_module}">
-								<aon:panel>
-									<f:facet name="header">
-										<aon:outputText
-											value="#{registryBundle.registry_banks_module}" />
-									</f:facet>
-									<ui:include
-										src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
-										<ui:param name="controller" value="#{supplierRbank}" />
-									</ui:include>
-								</aon:panel>
-								<aon:panel>
-									<f:facet name="header">
-										<aon:outputText value="#{configBundle.config_predef_paymethod}" />
-									</f:facet>
-									<ui:include
-										src="/com/code/aon/ui/registry/facelet/rpaymethod/tab_grid.xhtml">
-										<ui:param name="controller" value="#{supplierRPayMethod}" />
-									</ui:include>
-								</aon:panel>
+ 						<c:if test="#{supplier.showFinanceRegistryBank}">
+							<aon:panelTab id="finance" label="#{registryBundle.registry_banks_module}">
+								<ui:include src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
+									<ui:param name="controller" value="#{supplierRbank}" />							</ui:include>
 							</aon:panelTab>
 						</c:if>
+
 					</aon:panelTabSet>
 				</c:if>
+				
 			</aon:div>
 		</aon:form>
-		<c:if test="#{supplier.showFinanceData}">
+		<c:if test="#{supplier.showFinanceRegistryBank}">
 			<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		</c:if>
 	</ui:define>
