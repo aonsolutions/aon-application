@@ -13,18 +13,15 @@
 		<c:if test="#{(!currentUser.passwordExpired) and (company.model.rowCount > 0)}">
 			<aon:set var="#{aonConfiguration.properties.hideHeaderLinks}" value="#{false}" />
 			<aon:set var="#{aonConfiguration.properties.hideMenuBar}" value="#{false}" />
+			<aon:set var="#{aonConfiguration.properties.hideSideBar}" value="#{false}" />
 			<a4j:include id="aonContent" ajaxRendered="false"
 				viewId="/homepage.xhtml" />
 		</c:if>
 		<c:if test="#{currentUser.passwordExpired and (company.model.rowCount > 0)}">
- 			<aon:set var="#{aonConfiguration.properties.hideHeaderLinks}" value="#{true}" />
-			<aon:set var="#{aonConfiguration.properties.hideMenuBar}" value="#{true}" />
 			<a4j:include id="aonContent" ajaxRendered="false"
 				viewId="/facelet/user/expiredPasswordContent.xhtml" />
 		</c:if>
 		<c:if test="#{company.model.rowCount == 0}" >
-			<aon:set var="#{aonConfiguration.properties.hideHeaderLinks}" value="#{true}" />
-			<aon:set var="#{aonConfiguration.properties.hideMenuBar}" value="#{true}" />
 			<aon:set var="#{company.showPanelTabSet}" value="#{false}" />
 			<aon:outputText value="#{company.onNew}" style="display: none;" />
 			<a4j:include id="aonContent" ajaxRendered="false"
