@@ -17,6 +17,7 @@ public class CustomerController extends BasicController {
 	private String selectedTab;
 	
 	private boolean showFinanceData = true;
+	private boolean showProjectData = false;
 	
 	private boolean showAccount;
 	
@@ -49,6 +50,14 @@ public class CustomerController extends BasicController {
 		this.showFinanceData = showFinanceData;
 	}
         
+	public boolean isShowProjectData() {
+		return showProjectData;
+	}
+
+	public void setShowProjectData(boolean showProjectData) {
+		this.showProjectData = showProjectData;
+	}
+
 	public String getSelectedTab() {
 		return selectedTab;
 	}
