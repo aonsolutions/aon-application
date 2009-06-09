@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+
+	<ui:define name="content">
+		<aon:form id="activityProcessForm" styleClass="aon-form">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{menuBundle.aon_process_monitor}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{campaignBundle.campaign_view_task}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<h:commandButton id="cancel" value="#{bundle.aon_back}"
+							actionListener="#{activityProcess.onCancel}"
+							action="campaign_form" immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_cancel}" />
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="dataTable" columns="2">
+
+					<aon:outputLabel for="Campaign_description"
+						value="#{campaignBundle.campaign_label}" />
+					<aon:inputText id="Campaign_description"
+						value="#{campaign.to.description}" size="60" disabled="#{true}" />
+
+					<h:outputLabel for="Campaign_customer"
+						value="#{customerBundle.customer_customer}" />
+					<aon:inputText id="Campaign_customer"
+						value="#{activityProcess.campaignDossier.dossier.customer.registry.document} - #{activityProcess.campaignDossier.dossier.customer.registry.fullName}"
+						size="60" disabled="#{true}" />
+
+					<aon:outputLabel for="Campaign_dossier"
+						value="#{projectBundle.dossier_dossier}" />
+					<aon:inputText id="Campaign_dossier"
+						value="#{activityProcess.campaignDossier.dossier.number}"
+						size="60" disabled="#{true}" />
+
+					<aon:outputLabel for="Campaign_process_detail"
+						value="#{campaignBundle.campaign_current_action}" />
+					<aon:panelGroup>
+						<aon:selectOneMenu id="Campaign_process_detail"
+							value="#{activityProcess.processDetail.id}">
+							<f:selectItem value="#{nullSelectItem.value}" />
+							<f:selectItems value="#{activityProcess.processDetailList}" />
+						</aon:selectOneMenu>
+						<aon:commandButton
+							title="#{campaignBundle.campaign_change_current_action}"
+							value="#{campaignBundle.campaign_change_current_action}"
+							styleClass="aon-finding-toolbar-item aon-icon-refresh"
+							actionListener="#{activityProcess.onChangeProcessDetail}"
+							action="campaign_form" />
+					</aon:panelGroup>
+				</aon:panelGrid>
+
+				<aon:div styleClass="aon-form-group">
+					<aon:div styleClass="aon-form-group-title">
+						<aon:outputText value="#{campaignBundle.aon_tasks}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-form-group-body">
+						<aon:dataTable id="ActivityProcessDataList" var="to"
+							value="#{activityProcess.model}" rows="20">
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_description}" />
+								</f:facet>
+								<aon:outputText value="#{to.task.description}" />
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{campaignBundle.aon_initial_date}" />
+								</f:facet>
+								<aon:outputText value="#{to.task.startDate}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{campaignBundle.aon_final_date}" />
+								</f:facet>
+								<aon:outputText value="#{to.task.endDate}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{campaignBundle.aon_due_date}" />
+								</f:facet>
+								<aon:outputText value="#{to.task.dueDate}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_status}" />
+								</f:facet>
+								<aon:outputText value="#{to.task.status}" />
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{campaignBundle.aon_work_group}" />
+								</f:facet>
+								<aon:outputText value="#{to.task.workGroup.description}" />
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText
+										value="#{projectBundle.aon_daily_tracking_user}" />
+								</f:facet>
+								<aon:outputText value="#{to.task.user.name}" />
+							</aon:column>
+						</aon:dataTable>
+
+						<aon:dataScroller2 for="ActivityProcessDataList" showNote="true" />
+					</aon:div>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
