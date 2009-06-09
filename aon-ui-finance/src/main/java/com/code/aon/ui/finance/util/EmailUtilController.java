@@ -14,6 +14,8 @@ import javax.faces.event.AbortProcessingException;
 import javax.mail.Address;
 import javax.mail.internet.InternetAddress;
 
+import org.apache.commons.io.FileUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -23,7 +25,11 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.finance.Invoice;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
+import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -155,6 +161,37 @@ public class EmailUtilController implements ICollectionProvider, IFinanceMessage
 		return aonFile;
 	}
 	
+	public boolean hasDigitalCertificate() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
+		Criteria criteria = new Criteria();
+		String type = bean.getFieldName( IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE );
+		criteria.addEqualExpression( type, RegistryAttachmentType.DIGITAL_CERTIFICATE );
+		String registry = bean.getFieldName( IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID );
+		criteria.addEqualExpression( registry, company.getId() );
+		int count = bean.getCount(criteria);
+		return count > 0;
+	}
+
+	public AonFile getDigitalCertificate() throws ManagerBeanException, IOException {
+		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
+		Criteria criteria = new Criteria();
+		String type = bean.getFieldName( IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE );
+		criteria.addEqualExpression( type, RegistryAttachmentType.DIGITAL_CERTIFICATE );
+		String registry = bean.getFieldName( IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID );
+		criteria.addEqualExpression( registry, company.getId() );		
+		List<ITransferObject> list = bean.getList(criteria);
+		if (! list.isEmpty() ) {
+			RegistryAttachment ra = (RegistryAttachment) list.get(0);
+			File file = File.createTempFile( ra.getDescription(), ".cer" );
+			FileUtils.writeByteArrayToFile(file, ra.getData());
+			AonFile aonFile = new AonFile();
+			aonFile.setFile(file);
+			aonFile.setFileName( ra.getDescription() );
+			return aonFile;
+		}
+		return null;
+	}
+	
 	public void sendInvoice( Invoice invoice ) {
 		try {
 			RegistryMedia email = invoice.getRegistry().getEmail();
@@ -169,7 +206,13 @@ public class EmailUtilController implements ICollectionProvider, IFinanceMessage
 				String name = "invoice_" + invoice.getSeries() + "-" + invoice.getNumber() + ".pdf";
 				setCurrentInvoice(invoice);
 				AonFile file = getInvoiceFile("saleInvoice", name);
-				getEmailSender().sendMessage(to, subject, content, MimeType.MIME_HTML, file);		
+				if ( hasDigitalCertificate() ) {
+					AonFile dc = getDigitalCertificate();
+					getEmailSender().sendMessage(to, subject, content, MimeType.MIME_HTML, file, dc );
+					dc.getFile().delete();
+				} else {
+					getEmailSender().sendMessage(to, subject, content, MimeType.MIME_HTML, file);
+				}
 				file.getFile().delete();
 			}
 		} catch (Throwable th) {
