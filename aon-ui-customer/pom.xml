@@ -15,13 +15,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>3.5.0</version>
+			<version>3.5.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.customer</artifactId>
-			<version>3.1.1</version>
+			<version>3.1.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -33,14 +33,14 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.registry</artifactId>
-			<version>3.4.1</version>
+			<version>3.5.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.registry</artifactId>
-			<version>3.9.1</version>
-			<scope>compile</scope>
+			<version>3.10.0</version>
+			<scope>compile2</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
