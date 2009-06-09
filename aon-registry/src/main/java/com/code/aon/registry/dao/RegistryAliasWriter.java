@@ -43,7 +43,7 @@ public class RegistryAliasWriter {
 		classes[9] = RegistryPayMethod.class.getName();
 		classes[10] = RegistryRelationship.class.getName();
 		classes[11] = Relationship.class.getName();
-		HibernateUtil.getSessionFactory();
+		HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName());
 		AliasWriter writer = new AliasWriter("com.code.aon.registry.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );
