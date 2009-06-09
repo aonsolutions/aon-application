@@ -35,6 +35,43 @@
 						<f:param name="reportKey" value="profitAndLossMonthly" />
 						<f:param name="outputFormat" value="PDF" />
 					</h:commandLink>
+										
+					<h:commandLink target="_blank"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						value="#{accountingBundle.accounting_profit_and_loss_module_expense}"
+						action="#{report.onExecute}">
+						<f:param name="reportKey" value="profitAndLossTotalExpenses" />
+						<f:param name="outputFormat" value="PDF" />
+						<f:setPropertyActionListener value="#{accountingBundle.accounting_profit_and_loss_module_expense_graph}" target="#{profitAndLossReport.graphName}" />
+					</h:commandLink>
+					
+					<h:commandLink target="_blank"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						value="#{accountingBundle.account_gross_margin_button}"
+						action="#{report.onExecute}" actionListener="#{profitAndLossReport.onGenerateLists}">
+						<f:param name="reportKey" value="profitAndLossGrossMargin" />
+						<f:param name="outputFormat" value="PDF" />
+					<f:setPropertyActionListener value="#{accountingBundle.account_gross_margin}" target="#{profitAndLossReport.graphName}" />
+					</h:commandLink>
+					
+					<h:commandLink target="_blank"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						value="#{accountingBundle.accounting_profit_and_loss_module_net}"
+						action="#{report.onExecute}" actionListener="#{profitAndLossReport.onNetExpenses}">
+						<f:param name="reportKey" value="profitAndLossNetExpenses" />
+						<f:param name="outputFormat" value="PDF" />
+					<f:setPropertyActionListener value="#{accountingBundle.accounting_profit_and_loss_module_net_graph}" target="#{profitAndLossReport.graphName}" />
+					</h:commandLink>
+					
+			<!-- 	<h:commandLink target="_blank"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						value="#{accountingBundle.accounting_profit_and_loss_module_month_graph}"
+						action="#{report.onExecute}" >
+						<f:param name="reportKey" value="profitAndLossMonthlyGraph" />
+						<f:param name="outputFormat" value="PDF" />
+					<f:setPropertyActionListener value="#{accountingBundle.accounting_profit_and_loss_module_month_graph}" target="#{profitAndLossReport.graphName}" />
+					</h:commandLink> -->
+					
 				</ui:define>
 			</ui:decorate>
 
