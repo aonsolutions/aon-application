@@ -77,11 +77,13 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 	private boolean printRecordData;
 	
-	private boolean showRegistryBank = true;
+	private boolean showRegistryBank;
 
-	private boolean showCompanyOtherData = true;
+	private boolean showCompanyOtherData;
 	
-	private boolean showPanelTabSet = true;
+	private boolean showPanelTabSet;
+	
+	private boolean showDigitalCertificate;
 
     /**
      * The empty constructor.
@@ -89,7 +91,9 @@ public class CompanyParentController extends BasicController implements ICompany
      * @throws ManagerBeanException the manager bean exception
      */
     public CompanyParentController() throws ManagerBeanException {
-        super();
+        this.showRegistryBank = true;
+        this.showCompanyOtherData = true;
+        this.showPanelTabSet = true;
     }
 
     /**
@@ -650,4 +654,13 @@ public class CompanyParentController extends BasicController implements ICompany
 	public void setShowPanelTabSet(boolean showPanelTabSet) {
 		this.showPanelTabSet = showPanelTabSet;
 	}
+
+	public boolean isShowDigitalCertificate() {
+		return showDigitalCertificate;
+	}
+
+	public void setShowDigitalCertificate(boolean showDigitalCertificate) {
+		this.showDigitalCertificate = showDigitalCertificate;
+	}
+
 }

@@ -237,6 +237,13 @@
 								<ui:param name="controller" value="#{companyRecordData}" />
 							</ui:include>
 						</aon:panelTab>				
+						<c:if test="#{company.showDigitalCertificate}">
+							<aon:panelTab label="#{registryBundle.registry_digital_certificates}">
+								<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">
+									<ui:param name="controller" value="#{companyCertificate}" />
+								</ui:include>
+							</aon:panelTab>
+						</c:if>
 					</aon:panelTabSet>
 				</aon:div>
 			</c:if>
