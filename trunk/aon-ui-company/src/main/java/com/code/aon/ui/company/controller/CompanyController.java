@@ -14,12 +14,11 @@ import org.richfaces.model.UploadItem;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.common.io.AonFile;
-import com.code.aon.ui.common.io.IAonFileListener;
 
 /**
  * Controller used in the company maintenance.
  */
-public class CompanyController extends CompanyParentController implements IAonFileListener {
+public class CompanyController extends CompanyParentController {
 
 	/** The uploaded file. */
 	private AonFile aonFile;
@@ -64,15 +63,10 @@ public class CompanyController extends CompanyParentController implements IAonFi
 				f.setData(data);
 			}
 			f.setFileName(item.getFileName());
-			f.addAonFileListener(this);
 			setAonFile(f);
 		} catch (IOException e) {
 			throw new AbortProcessingException(e.getMessage());
 		}
-	}
-
-	public void fileDeleted(AonFile aonFile) {
-		setAonFile(null);
 	}
 
 	/**

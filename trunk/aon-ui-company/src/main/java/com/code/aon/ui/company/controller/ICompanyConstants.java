@@ -2,8 +2,16 @@ package com.code.aon.ui.company.controller;
 
 public interface ICompanyConstants {
 
+	// ************************************************************
+	// MESSAGES
+	// ************************************************************
+
 	/** ResourceBundle name. */
 	String BUNDLE_NAME = "companyBundle";
+	
+	String COMPANY_IMAGE_MAX_SIZE_ERROR = "company_image_max_size_error";
+	
+	String COMPANY_LOGO_MAX_SIZE_ERROR = "company_logo_max_size_error";
 	
 	int LOGO_MAX_SIZE = 256 * 1024;
 	
@@ -28,6 +36,6 @@ public interface ICompanyConstants {
 	
 	String COMPANY_RPAY_METHOD_CONTROLLER_NAME = "companyRPayMethod";
 	
-	String COMPANY_IMAGES_CONTROLLER_NAME = "companyImages";
+	String COMPANY_IMAGES_CONTROLLER_NAME = "companyImages";	
 	
 }
