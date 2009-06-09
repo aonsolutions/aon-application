@@ -368,28 +368,4 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		}
 	}
 	
-	public void updateInvoice( Invoice invoice ) {
-		setTo( invoice );
-		saveState( invoice );
-	}
-	
-	/**
-	 * Devulve un archivo xml partiendo del id del invoice seleccionado
-	 * 
-	 * @return
-	 */
-	public String getEInvoice(){
-		Invoice i = new Invoice();
-		
-		return "xml";
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public String getInvoiceSignature(){
-		return "xml";
-	}
-	
 }

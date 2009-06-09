@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -11,6 +14,10 @@ import javax.faces.event.AbortProcessingException;
 import javax.mail.Address;
 import javax.mail.internet.InternetAddress;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.ICollectionProvider;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
@@ -24,7 +31,6 @@ import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.InvoicePrintController;
-import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.AonFile;
@@ -32,7 +38,7 @@ import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.WebmailUtil;
 
-public class EmailUtilController implements IFinanceMessages, IFinanceConstants {
+public class EmailUtilController implements ICollectionProvider, IFinanceMessages, IFinanceConstants {
 
 	private static final Logger LOGGER = Logger.getLogger(InvoicePrintController.class.getName());
 	
@@ -40,6 +46,35 @@ public class EmailUtilController implements IFinanceMessages, IFinanceConstants 
 	
 	private Company company;
 	
+	private Invoice currentInvoice;
+	
+	@SuppressWarnings("unchecked")
+	public Collection getCollection() {
+		try {
+			return getCollection(false);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")	
+	public Collection getCollection(boolean forceRefresh)
+			throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
+		List<ITransferObject> l = new LinkedList<ITransferObject>();
+		l.add( bean.get(getCurrentInvoice().getId()) );
+		return l;
+	}
+	
+	public Invoice getCurrentInvoice() {
+		return currentInvoice;
+	}
+
+	public void setCurrentInvoice(Invoice currentInvoice) {
+		this.currentInvoice = currentInvoice;
+	}
+
 	private MailAccount getDefaultMailAccount( AuthPrincipal user ) {		
 		String domain = user.getDomain();
 		String login = user.getShortName();
@@ -111,17 +146,13 @@ public class EmailUtilController implements IFinanceMessages, IFinanceConstants 
 	
 	public AonFile getInvoiceFile( String reporkey, String fileName ) throws IOException, ReportException {
 		ReportManager report = new ReportManager();
+		report.setCollectionProvider(this);
 		File file = File.createTempFile( reporkey, ".pdf" );
 		report.execute( file, reporkey);
 		AonFile aonFile = new AonFile();
 		aonFile.setFile(file);
 		aonFile.setFileName( fileName );
 		return aonFile;
-	}
-	
-	private void setInvoice( Invoice invoice ) {
-		SaleInvoiceController controller = (SaleInvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
-		controller.updateInvoice(invoice);
 	}
 	
 	public void sendInvoice( Invoice invoice ) {
@@ -136,7 +167,7 @@ public class EmailUtilController implements IFinanceMessages, IFinanceConstants 
 				String subject = getEmailSubject(invoice);
 				String content = getEmailBody(invoice);
 				String name = "invoice_" + invoice.getSeries() + "-" + invoice.getNumber() + ".pdf";
-				setInvoice(invoice);
+				setCurrentInvoice(invoice);
 				AonFile file = getInvoiceFile("saleInvoice", name);
 				getEmailSender().sendMessage(to, subject, content, MimeType.MIME_HTML, file);		
 				file.getFile().delete();
