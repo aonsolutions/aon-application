@@ -15,14 +15,15 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.registry.enumeration.NoteType;
 
 @Entity
@@ -151,7 +152,14 @@ public class RegistryNote implements ITransferObject {
 
 	@Override
 	public String toString() {
-		return new PojoToStringBuilder(this).toString();
-	} 
+		return new ToStringBuilder(this).
+			append("comments", StringUtils.abbreviate(comments, 64)).
+			append("description", description).
+			append("id", id).
+			append("noteDate", noteDate).
+			append("notetype", notetype).
+			append("registry", registry.getId()).
+			toString();
+	}
 
 }
