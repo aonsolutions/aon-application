@@ -20,6 +20,61 @@
 			<param id="reportTitle" value="#{profitAndLossReport.getReportTitle}" />
 		</params>
 	</report>
+	
+		<!--  BALANCE DE PERDIDAS Y GANACIAS GRÁFICOS GASTOS -->
+	<report id="profitAndLossTotalExpenses" description="ProfitAndLoss graphics">
+		<template path="/com/code/aon/ui/accounting/report/profitAndLossGraph.jasper"/>
+		<collection provider="#{profitAndLossReport.totalExpenses.summaryList}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="params" value="#{profitAndLossReport.getParameters}" />	
+			<param id="title" value="#{profitAndLossReport.getGraphName}" />
+
+		</params>
+	</report>
+	
+		<!--  BALANCE DE PERDIDAS Y GANACIAS GRÁFICOS INGRESOS -->
+	<report id="profitAndLossGrossMargin" description="ProfitAndLoss graphics">
+		<template path="/com/code/aon/ui/accounting/report/profitAndLossGraphGrossMargin.jasper"/>
+		<collection provider="#{profitAndLossReport.salesList}" forceRefresh="true"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="params" value="#{profitAndLossReport.getParameters}" />
+			<param id="title" value="#{profitAndLossReport.getGraphName}" />
+			<param id="purchaseList" value="#{profitAndLossReport.getPurchaseList}" />
+			<param id="grossMarginList" value="#{profitAndLossReport.getGrossMarginList}" />
+	 	</params>
+	
+		<nested-report report="purchases"/>
+		<nested-report report="grossMargin"/>
+		
+	</report>
+
+	<report id="purchases" description="Purchases List">
+		<template path="/com/code/aon/ui/accounting/report/purchasesGraph.jasper"/>
+	</report>
+
+	<report id="grossMargin" description="Gross Margin List">
+		<template path="/com/code/aon/ui/accounting/report/grossMarginGraph.jasper"/>
+	</report>
+
+	
+	
+	
+			<!--  BALANCE DE PERDIDAS Y GANACIAS GRÁFICOS GASTOS NETOS -->
+	<report id="profitAndLossNetExpenses" description="ProfitAndLoss graphics">
+		<template path="/com/code/aon/ui/accounting/report/profitAndLossGraph.jasper"/>
+		<collection provider="#{profitAndLossReport.netExpenses}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="params" value="#{profitAndLossReport.getParameters}" />
+			<param id="title" value="#{profitAndLossReport.getGraphName}" />
+	 	</params>
+	</report>
+	
 
 	<!--  BALANCE MESUAL DE PERDIDAS Y GANACIAS -->
 	<report id="profitAndLossMonthly" description="ProfitAndLossMonthly">
@@ -31,6 +86,17 @@
 			<param id="params" value="#{profitAndLossReport.getParameters}" />
 		</params>
 	</report>
+	
+<!--  	  BALANCE MESUAL DE PERDIDAS Y GANACIAS GRAFICO
+	<report id="profitAndLossMonthlyGraph" description="ProfitAndLossMonthly">
+		<template path="/com/code/aon/ui/accounting/report/profitAndLossMonthlyGraph.jasper"/>
+		<collection provider="#{profitAndLossMonthly}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="params" value="#{profitAndLossReport.getParameters}" />
+		</params>
+	</report>-->
 
 	<!--  BALANCE DE PERDIDAS Y GANACIAS PRESUPUESTADO -->
 	<report id="budgetedProfitAndLoss" description="BudgetedProfitAndLoss">
@@ -68,6 +134,21 @@
 			<param id="params" value="#{budgetedProfitAndLossComparison.getParameters}"/>
 		</params>
 	</report>
+
+
+	<!--  BALANCE DE PERDIDAS Y GANACIAS PRESUPUESTADO GRAFICO -->
+	<report id="profitAndLossComparisonGraph" description="BudgetedProfitAndLoss">
+		<template path="/com/code/aon/ui/accounting/report/profitAndLossGraphComparisson.jasper"/>
+		<collection provider="#{budgetedProfitAndLossComparison.list}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="params" value="#{budgetedProfitAndLossComparison.getParameters}"/>
+		</params>
+	</report>
+
+
+	
 
 	<!--  LISTADO DETALLADO DE CUENTAS CON PRESUPUESTO -->
 	<report id="budgetDetailList" description="BudgetDetailList">
