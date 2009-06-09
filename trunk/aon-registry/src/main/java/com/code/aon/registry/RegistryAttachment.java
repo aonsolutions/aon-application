@@ -270,7 +270,7 @@ public class RegistryAttachment implements IAttachment {
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this).
-			append("category", category.getId()).
+			append("category", (category != null) ? category.getId() : "null" ).
 			append("description", description).
 			append("id", id).
 			append("mimeType", mimeType).
