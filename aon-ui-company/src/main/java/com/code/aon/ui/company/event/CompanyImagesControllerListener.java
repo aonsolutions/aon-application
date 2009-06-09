@@ -1,7 +1,5 @@
 package com.code.aon.ui.company.event;
 
-import java.io.IOException;
-
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIInput;
 
@@ -72,7 +70,7 @@ public class CompanyImagesControllerListener extends ControllerAdapter implement
 		imagesController.setMimeType(null);
 	}
 
-	private void checkAonFile( CompanyImagesController imagesController ) throws ControllerListenerException, IOException {
+	private void checkAonFile( CompanyImagesController imagesController ) throws ControllerListenerException {
 		AonFile aonFile = imagesController.getAonFile();
 		if ( ArrayUtils.isEmpty(aonFile.getData()) ) {
 			FacesMessage message = MessageFactory.getMessage( UIInput.REQUIRED_MESSAGE_ID, AonUtil.getMessage("aon_fileupload_element") );
@@ -86,27 +84,19 @@ public class CompanyImagesControllerListener extends ControllerAdapter implement
 	
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		try {
-			CompanyImagesController imagesController = (CompanyImagesController)event.getController();
-			checkAonFile(imagesController);
-			RegistryAttachment attach = (RegistryAttachment)imagesController.getTo();
-			attach.setRegistryAttachmentType(imagesController.getAttachmentType());
-			CompanyImagesController.update(attach, imagesController.getAonFile());	
-		} catch (IOException e) {
-			throw new ControllerListenerException("Error uploading file. " + e.getMessage(), e );
-		}
+		CompanyImagesController imagesController = (CompanyImagesController)event.getController();
+		checkAonFile(imagesController);
+		RegistryAttachment attach = (RegistryAttachment)imagesController.getTo();
+		attach.setRegistryAttachmentType(imagesController.getAttachmentType());
+		CompanyImagesController.update(attach, imagesController.getAonFile());	
 	}
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		try {
-			CompanyImagesController imagesController = (CompanyImagesController)event.getController();
-			checkAonFile(imagesController);
-			RegistryAttachment attach = (RegistryAttachment)imagesController.getTo();
-			CompanyImagesController.update(attach, imagesController.getAonFile());	
-		} catch (IOException e) {
-			throw new ControllerListenerException("Error uploading file. " + e.getMessage(), e );
-		}
+		CompanyImagesController imagesController = (CompanyImagesController)event.getController();
+		checkAonFile(imagesController);
+		RegistryAttachment attach = (RegistryAttachment)imagesController.getTo();
+		CompanyImagesController.update(attach, imagesController.getAonFile());	
 	}
 	
 }

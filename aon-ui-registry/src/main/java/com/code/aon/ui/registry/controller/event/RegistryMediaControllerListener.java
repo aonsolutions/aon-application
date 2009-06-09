@@ -9,15 +9,13 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.registry.controller.IRegistryConstants;
 
 /**
  * Controller used in the RegistryMedia maintenance
  */
-public class RegistryMediaControllerListener extends ControllerAdapter {
+public class RegistryMediaControllerListener extends ControllerAdapter implements IRegistryConstants {
 
-	/** ADDRESS_CONTROLLER_NAME. */
-	private static final String MEDIA_CONTROLLER_NAME = "media";
-	
 	/**
 	 * Gets the detail controller.
 	 * 
