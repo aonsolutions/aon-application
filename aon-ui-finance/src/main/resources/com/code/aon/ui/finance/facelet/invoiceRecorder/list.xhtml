@@ -10,21 +10,21 @@
 
 	<ui:define name="content">
 	
-		<aon:form id="invoiceRecordingList">
+		<aon:form id="invoiceRecorderList">
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{financeBundle.finance_invoice_recording_module}" />
-				<ui:param name="controller" value="#{invoiceRecording}" />
+				<ui:param name="controller" value="#{invoiceRecorder}" />
 				<ui:param name="skipResetButton" value="true" />
 				
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="record_selected"
 						value="#{financeBundle.finance_record_selected}"
-						rendered="#{invoiceRecording.model.rowCount > 0}"
-						reRender="invoiceRecordingDataDiv"
+						rendered="#{invoiceRecorder.model.rowCount > 0}"
+						reRender="invoiceRecorderDataDiv"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						actionListener="#{invoiceRecording.onRecordSelected}" 
+						actionListener="#{invoiceRecorder.onRecordSelected}" 
 						onclick="Richfaces.showModalPanel('waitProccess')" 
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 				</ui:define>				
@@ -34,26 +34,26 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:div styleClass="aon-toolbar" rendered="#{invoiceRecording.model.rowCount > 0}">
+				<aon:div styleClass="aon-toolbar" rendered="#{invoiceRecorder.model.rowCount > 0}">
 					<aon:commandButton title="#{bundle.aon_check_all}"
 						styleClass="aon-finding-toolbar-item aon-icon-checkAll"
 						value="#{bundle.aon_check_all}"
 						ajaxSingle="true"
-						actionListener="#{invoiceRecording.checkAll}" reRender="invoiceRecordingDataDiv"
+						actionListener="#{invoiceRecorder.checkAll}" reRender="invoiceRecorderDataDiv"
 						onclick="Richfaces.showModalPanel('waitProccess')" 
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
 					<aon:commandButton title="#{bundle.aon_uncheck_all}"
 						styleClass="aon-finding-toolbar-item aon-icon-checkNone"
 						value="#{bundle.aon_uncheck_all}"
 						ajaxSingle="true"
-						actionListener="#{invoiceRecording.checkNone}" reRender="invoiceRecordingDataDiv"
+						actionListener="#{invoiceRecorder.checkNone}" reRender="invoiceRecorderDataDiv"
 						onclick="Richfaces.showModalPanel('waitProccess')" 
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 				</aon:div>
 
-				<aon:div id="invoiceRecordingDataDiv">
-					<aon:dataTable id="invoiceRecordingData" value="#{invoiceRecording.model}"
-						var="to" rows="20" rendered="#{invoiceRecording.model.rowCount > 0}"
+				<aon:div id="invoiceRecorderDataDiv">
+					<aon:dataTable id="invoiceRecorderData" value="#{invoiceRecorder.model}"
+						var="to" rows="20" rendered="#{invoiceRecorder.model.rowCount > 0}"
 						columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
 							 aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
 
@@ -62,12 +62,12 @@
 								<aon:outputText value="&#160;" />
 							</f:facet>
 							<aon:selectBooleanCheckbox id="Included_Row_checked"
-								value="#{invoiceRecording.rowChecked}"
-								rendered="#{invoiceRecording.modelToRecordable}"/>	
+								value="#{invoiceRecorder.rowChecked}"
+								rendered="#{invoiceRecorder.modelToRecordable}"/>	
 							<aon:div style="display:inline;cursor:pointer;">
 								<aon:outputText value="&#160;"
 									styleClass="aon-icon-errorwarning" style="padding-left:20px"
-									rendered="#{!invoiceRecording.modelToRecordable}" />
+									rendered="#{!invoiceRecorder.modelToRecordable}" />
 								<rich:toolTip value="#{financeBundle.finance_unable_record_inaccuracy_error}" />
 							</aon:div>
 						</aon:column>
@@ -103,7 +103,7 @@
 							<aon:outputText value="#{to.status}" />
 						</aon:column>
 					</aon:dataTable>
-					<aon:dataScroller2 for="invoiceRecordingData" showNote="true" />
+					<aon:dataScroller2 for="invoiceRecorderData" showNote="true" />
 				</aon:div>
 			</aon:div>
 		</aon:form>
