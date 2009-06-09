@@ -5,35 +5,30 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import javax.faces.event.AbortProcessingException;
-import javax.faces.event.ActionEvent;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
 import com.code.aon.common.IAttachment;
 import com.code.aon.ui.common.io.AonFile;
-import com.code.aon.ui.common.io.IAonFileListener;
 import com.code.aon.ui.form.BasicController;
 
-public class CorporateIdentityAttachController extends BasicController implements IAonFileListener {
+public class CorporateIdentityAttachController extends BasicController {
 
 	/** The uploaded file. */
 	private AonFile aonFile;
 
-	private long maximumSize = -1;
-
-	public CorporateIdentityAttachController() {
-		this.maximumSize = -1;
-	}
+	private long maximumSize;
 
 	public long getMaximumSize() {
 		return maximumSize;
 	}
 
 	public void setMaximumSize(long maximumSize) {
-		this.maximumSize = 1048576;
+		this.maximumSize = maximumSize;
 	}
 
 	public IAttachment getAttachment() {
@@ -60,8 +55,7 @@ public class CorporateIdentityAttachController extends BasicController implement
 	}
 
 	public boolean isUploaded() {
-		if (this.aonFile != null && this.aonFile.getData().length > 0) return true;
-		else return false;
+		return (this.aonFile != null) && (! ArrayUtils.isEmpty(this.aonFile.getData())); 
 	}
 	
 	public void fileUploaded(UploadEvent event) {
@@ -76,27 +70,9 @@ public class CorporateIdentityAttachController extends BasicController implement
 			}
 			f.setFileName(item.getFileName());
 			getAttachment().setDescription(FilenameUtils.getName(item.getFileName()));
-			f.addAonFileListener(this);
 			setAonFile(f);
 		} catch (IOException e) {
 			throw new AbortProcessingException(e.getMessage());
-		}
-	}
-
-	public String getFilename() {
-		if (getAonFile() != null) return getAonFile().getFileName();
-		else return "Undefined.";
-	}
-	
-	public void fileDeleted(AonFile aonFile) {
-		setAonFile(null);
-	}
-
-	public void fileRemove( ActionEvent ent ) throws IOException {
-		IAttachment attach = getAttachment();
-		if ( attach != null ) {
-			attach.setData( null );
-			attach.setMimeType( null );
 		}
 	}
 	

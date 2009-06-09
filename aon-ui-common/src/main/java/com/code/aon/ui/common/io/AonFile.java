@@ -1,20 +1,13 @@
 package com.code.aon.ui.common.io;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.faces.event.ActionEvent;
-
-
 /**
  * @author ecastellano
  * 
  */
 public class AonFile {
 
-	private List<IAonFileListener> listeners = new ArrayList<IAonFileListener>();
 	private byte[] data;
+
 	private String fileName;
 
 	/**
@@ -32,10 +25,11 @@ public class AonFile {
 	}
 
 	/**
-	 * @return int
-	 * @throws IOException 
+	 * Gets the size.
+	 * 
+	 * @return the size
 	 */
-	public int getSize() throws IOException {
+	public int getSize() {
 		byte[] data = getData();
 		if (data != null) {
 			return data.length; 
@@ -67,30 +61,6 @@ public class AonFile {
 		return this.toString();
 	}
 
-
-	/**
-	 * @param event
-	 */
-	public void fileDeleted(ActionEvent event){
-		for (IAonFileListener l: listeners) {
-			l.fileDeleted(this);
-		}
-	}
-
-	/**
-	 * @param l
-	 */
-	public void addAonFileListener(IAonFileListener l){
-		listeners.add(l);
-	}
-
-	/**
-	 * @param l
-	 */
-	public void removeAonFileListener(IAonFileListener l){
-		listeners.remove(l);
-	}
-	
 }
 
 

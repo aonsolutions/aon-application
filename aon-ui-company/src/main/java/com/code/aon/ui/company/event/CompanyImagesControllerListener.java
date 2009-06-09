@@ -78,7 +78,7 @@ public class CompanyImagesControllerListener extends ControllerAdapter implement
 			FacesMessage message = MessageFactory.getMessage( UIInput.REQUIRED_MESSAGE_ID, AonUtil.getMessage("aon_fileupload_element") );
 			throw new ControllerListenerException( message.getSummary() );									
 		} else if (aonFile.getSize() > imagesController.getMaximumSize()) {
-			String message = AonUtil.getMessage(BUNDLE_NAME, "company_image_max_size_error");
+			String message = AonUtil.getMessage(BUNDLE_NAME, COMPANY_IMAGE_MAX_SIZE_ERROR);
 			String formatted = AonUtil.substituteParams(AonUtil.getCurrentLocale(), message, new Object[]{imagesController.getMaximumSize()});
 			throw new ControllerListenerException(formatted);										
 		}

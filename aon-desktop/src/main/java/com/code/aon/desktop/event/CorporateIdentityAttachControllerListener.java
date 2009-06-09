@@ -1,6 +1,5 @@
 package com.code.aon.desktop.event;
 
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -11,6 +10,7 @@ import net.sf.jmimemagic.Magic;
 import net.sf.jmimemagic.MagicMatch;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
@@ -37,9 +37,6 @@ import com.sun.faces.util.MessageFactory;
 public class CorporateIdentityAttachControllerListener extends ControllerAdapter implements IDesktopConstants {
 
 	private static final Logger LOGGER = Logger.getLogger(CorporateIdentityAttachControllerListener.class.getName());
-
-    /** BASE_NAME. */
-    private static final String BASE_NAME = "com.code.aon.desktop.i18n.messages";
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
@@ -92,22 +89,21 @@ public class CorporateIdentityAttachControllerListener extends ControllerAdapter
 			ok = ciaController.isUploaded();
 		} else {
 			RegistryAttachment attach = (RegistryAttachment)ciaController.getTo();
-			ok = (attach.getData() != null) && (attach.getData().length > 0);
+			ok = (attach.getData() != null) && (! ArrayUtils.isEmpty(attach.getData()));
 		}
 		if (! ok ) {
 			FacesMessage message = MessageFactory.getMessage( UIInput.REQUIRED_MESSAGE_ID, AonUtil.getMessage("aon_fileupload_element") );
 			throw new ControllerListenerException( message.getSummary() );			
+		} else if ( ciaController.isUploaded() && (ciaController.getAonFile().getSize() > ciaController.getMaximumSize()) ) {
+	        String message = AonUtil.getMessage(BUNDLE_NAME, DESKTOP_DOCUMENT_MAX_SIZE_ERROR, ciaController.getMaximumSize());
+			throw new ControllerListenerException(message);			
 		}
 	}
 	
 	private void updateRegistryAttachment( CorporateIdentityAttachController ciaController ) throws ControllerListenerException {
-		try {
-			AonFile aonFile = ciaController.getAonFile();			
-			if( (aonFile != null) && (aonFile.getData() != null) ) { 
-				if ( aonFile.getSize() > 1048576 ) {
-			        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME); 
-					throw new ControllerListenerException(bundle.getString("company_image_max_size_error"));
-				}
+		try {			
+			if ( ciaController.isUploaded() ) {
+				AonFile aonFile = ciaController.getAonFile();
 				RegistryAttachment attach = (RegistryAttachment)ciaController.getTo();
 				attach.setData(aonFile.getData());				
 				String ext = FilenameUtils.getExtension(aonFile.getFileName());

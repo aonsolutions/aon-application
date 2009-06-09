@@ -1,6 +1,5 @@
 package com.code.aon.ui.company.event;
 
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -45,7 +44,7 @@ public class CompanyLogoControllerListener extends ControllerAdapter implements 
 			AonFile aonFile = companyController.getAonFile();
 			try {
 				if (aonFile.getSize() > LOGO_MAX_SIZE) {
-					String message = AonUtil.getMessage(BUNDLE_NAME, "company_logo_max_size_error");
+					String message = AonUtil.getMessage(BUNDLE_NAME, COMPANY_LOGO_MAX_SIZE_ERROR);
 					throw new ControllerListenerException(message);
 				}
 				RegistryAttachment attach = new RegistryAttachment();
@@ -58,8 +57,6 @@ public class CompanyLogoControllerListener extends ControllerAdapter implements 
 				attach.setMimeType(mt);
 				IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 				companyController.setAttach((RegistryAttachment) attachBean.insert(attach));
-			} catch (IOException e) {
-				LOGGER.log(Level.SEVERE, "Error updating logo", e);
 			} catch (ManagerBeanException e) {
 				LOGGER.log(Level.SEVERE, "Error updating logo", e);
 			}
@@ -83,7 +80,7 @@ public class CompanyLogoControllerListener extends ControllerAdapter implements 
 			try {
 				RegistryAttachment attach = companyController.obtainCompanyLogo();				
 				if (aonFile.getSize() > LOGO_MAX_SIZE) {
-					String message = AonUtil.getMessage(BUNDLE_NAME, "company_logo_max_size_error");
+					String message = AonUtil.getMessage(BUNDLE_NAME, COMPANY_LOGO_MAX_SIZE_ERROR);
 					throw new ControllerListenerException(message);
 				}
 				if (attach == null) {
@@ -102,8 +99,6 @@ public class CompanyLogoControllerListener extends ControllerAdapter implements 
 				} else {
 					companyController.setAttach((RegistryAttachment) attachBean.update(attach));
 				}
-			} catch (IOException e) {
-				LOGGER.log(Level.SEVERE, "Error updating logo", e);
 			} catch (ManagerBeanException e) {
 				LOGGER.log(Level.SEVERE, "Error updating logo", e);
 			}
@@ -121,7 +116,6 @@ public class CompanyLogoControllerListener extends ControllerAdapter implements 
 				AonFile f = new AonFile();
 				f.setData(companyLogo.getData());
 				f.setFileName(companyLogo.getDescription());
-				f.addAonFileListener(companyController);
 				companyController.setAonFile(f);
 			}
 		} catch (ManagerBeanException e) {
