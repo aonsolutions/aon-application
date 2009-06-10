@@ -67,27 +67,16 @@
 				<aon:menuItem value="#{accountingBundle.accounting_balance_menu_bs}" 
 				    actionListener="#{balanceSheet.onReset}"						
 					action="balance_sheet_search">
-					<f:setPropertyActionListener value="1" target="#{balanceSheet.type}" />
+					<f:setPropertyActionListener value="1" target="#{balanceSheet.balance}" />
 					<f:setPropertyActionListener value="#{accountingBundle.accounting_balance_menu_bs}" target="#{balanceSheet.balanceName}" />
 				</aon:menuItem>
 				<aon:menuItem 
 					value="#{accountingBundle.accounting_balance_menu_pyg}"
 					actionListener="#{balanceSheet.onReset}"				
 					action="balance_sheet_search">
-					<f:setPropertyActionListener value="2" target="#{balanceSheet.type}" />
+					<f:setPropertyActionListener value="2" target="#{balanceSheet.balance}" />
 					<f:setPropertyActionListener value="#{accountingBundle.accounting_balance_menu_pg}" target="#{balanceSheet.balanceName}" />
 				</aon:menuItem>
-				<aon:menuSeparator />
-				<c:forEach items="#{accountingCollections.definedBalances}" var="balance">
-					<aon:menuItem 
-						value="#{balance.value.name}"
-						actionListener="#{balanceSheet.onReset}" 
-						disabled="true"
-						action="balance_sheet_search">
-						<f:setPropertyActionListener value="#{balance.value.id}" target="#{balanceSheet.type}" />
-						<f:setPropertyActionListener value="#{balance.value.name}" target="#{balanceSheet.balanceName}" />						
-					</aon:menuItem>				
-				</c:forEach>
 				<aon:menuSeparator />
 				<aon:menuItem value="#{accountingBundle.accounting_balance_menu}"
 					action="balance_list" />
