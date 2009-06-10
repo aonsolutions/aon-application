@@ -25,13 +25,13 @@
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="save" value="#{bundle.aon_save}"
 							actionListener="#{campaign.accept}"
-							onclick="return (confirm('#{bundle.aon_save_confirm}'))"
+							onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}" />
 						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							actionListener="#{campaign.onCancel}" action="campaign_list"
 							immediate="#{true}"
-							onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
+							onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:commandButton id="remove" value="#{bundle.aon_remove}"

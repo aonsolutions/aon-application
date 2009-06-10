@@ -57,7 +57,7 @@ public class DossierController extends BasicController {
 		Iterator iter = activityTypeBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			ActivityType type = (ActivityType)iter.next();
-			SelectItem item = new SelectItem(type.getId(), type.getDescription());
+			SelectItem item = new SelectItem(type, type.getDescription());
 			activityTypeList.add(item);
 		}
 		return activityTypeList;
