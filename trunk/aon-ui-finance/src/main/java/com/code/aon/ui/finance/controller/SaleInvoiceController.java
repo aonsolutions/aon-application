@@ -430,7 +430,7 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
         return writer;
     }
 	
-	private void writeInvoiceXml( Writer out, Serializable id ) throws IOException, SAXException {
+	public void writeInvoiceXml( Writer out, Serializable id ) throws IOException, SAXException {
 		String factoryName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 		Session session = HibernateUtil.getSession(factoryName);
 		Session dom4jSession = session.getSession(EntityMode.DOM4J);
