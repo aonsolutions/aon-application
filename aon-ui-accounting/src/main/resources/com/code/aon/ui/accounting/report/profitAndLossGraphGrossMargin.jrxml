@@ -27,7 +27,7 @@
 	<parameter name="company" isForPrompting="false" class="com.code.aon.company.Company"/>
 	<parameter name="params" isForPrompting="false" class="com.code.aon.accounting.summary.SummaryProviderParameters"/>
 	<parameter name="title" isForPrompting="false" class="java.lang.String"/>
-	<parameter name="purchaseList" isForPrompting="false" class="java.util.Collection"/>
+	<parameter name="purchasesList" isForPrompting="false" class="java.util.Collection"/>
 	<parameter name="grossMarginList" isForPrompting="false" class="java.util.Collection"/>
 	<parameter name="nestedReports" isForPrompting="true" class="java.util.Map"/>
 
@@ -59,7 +59,7 @@
 						height="172"
 						key="subreport-1"/>
 					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
-					<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{purchaseList})]]></dataSourceExpression>
+					<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{purchasesList})]]></dataSourceExpression>
 					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("purchases")]]></subreportExpression>
 				</subreport>
 				<subreport  isUsingCache="true">
@@ -83,7 +83,7 @@
 						key="element-2"/>
 					<box></box>
 						<chartTitle color="#000000" >
-								<titleExpression><![CDATA[$R{accounting_profit_and_loss_module_gross_graph_sales}]]></titleExpression>
+								<titleExpression><![CDATA[$R{accounting_profit_and_loss_module_gross_graph_purchases}]]></titleExpression>
 					</chartTitle>
 						<chartLegend textColor="#000000" backgroundColor="#FFFFFF" >
 					</chartLegend>
