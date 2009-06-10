@@ -9,8 +9,12 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.model.SelectItem;
+import javax.faces.validator.ValidatorException;
 
 import net.sf.jmimemagic.Magic;
 import net.sf.jmimemagic.MagicMatch;
@@ -21,14 +25,20 @@ import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 
-public class CompanyImagesController extends LinesController {
+public class CompanyImagesController extends LinesController implements ICompanyConstants {
 
 	private static final Logger LOGGER = Logger.getLogger(CompanyImagesController.class.getName());
 	
@@ -173,7 +183,7 @@ public class CompanyImagesController extends LinesController {
 			try {
 				MagicMatch match = Magic.getMagicMatch(data, true);
 				if (match != null) {
-					result = MimeType.getByExtension(match.getMimeType());
+					result = MimeType.get(match.getMimeType());
 				}
 			} catch (Throwable th) {
 				LOGGER.log(Level.SEVERE, th.getMessage(), th );
@@ -182,4 +192,30 @@ public class CompanyImagesController extends LinesController {
 		return result;
 	}
 	
+	public void imageNameCheck(FacesContext context, UIComponent component, Object value) throws ManagerBeanException {
+		String imageName = value.toString();
+		IManagerBean bean = getManagerBean();
+		Criteria criteria = new Criteria();
+		RegistryAttachment ra = (RegistryAttachment) getTo();
+		if ( ra.getId() != null ) {
+			Expression exp = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_ID), ra.getId());
+			criteria.addExpression(exp);
+		}
+		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_DESCRIPTION), imageName);
+		int count = bean.getCount(criteria);
+		if ( count > 0 ) {
+			FacesMessage message = new FacesMessage(AonUtil.getMessage(BUNDLE_NAME, COMPANY_IMAGE_DUPLICATED_NAME));
+			message.setSeverity(FacesMessage.SEVERITY_ERROR);
+			throw new ValidatorException( message );
+		}
+		for( int i = 0; i < imageName.length(); i++ ) {
+			char c = imageName.charAt(i);
+			if (! (Character.isLetter(c) || Character.isDigit(c) || (c == ' ') ) ) {
+				String text = AonUtil.getMessage(BUNDLE_NAME, COMPANY_IMAGE_INVALID_CHARACTER, c);
+				FacesMessage message = new FacesMessage(text);
+				message.setSeverity(FacesMessage.SEVERITY_ERROR);				
+				throw new ValidatorException( message );										
+			}
+		}
+	}	
 }

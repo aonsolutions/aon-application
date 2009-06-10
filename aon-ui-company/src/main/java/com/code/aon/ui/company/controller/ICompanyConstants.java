@@ -2,6 +2,10 @@ package com.code.aon.ui.company.controller;
 
 public interface ICompanyConstants {
 
+	int LOGO_MAX_SIZE = 256 * 1024;
+	
+	int IMAGE_MAX_SIZE = 1024 * 1024;
+	
 	// ************************************************************
 	// MESSAGES
 	// ************************************************************
@@ -13,9 +17,9 @@ public interface ICompanyConstants {
 	
 	String COMPANY_LOGO_MAX_SIZE_ERROR = "company_logo_max_size_error";
 	
-	int LOGO_MAX_SIZE = 256 * 1024;
+	String COMPANY_IMAGE_DUPLICATED_NAME = "company_image_duplicated_name";
 	
-	int IMAGE_MAX_SIZE = 1024 * 1024;
+	String COMPANY_IMAGE_INVALID_CHARACTER = "company_image_invalid_character";	
 	
 	// ************************************************************
 	// BEAN
