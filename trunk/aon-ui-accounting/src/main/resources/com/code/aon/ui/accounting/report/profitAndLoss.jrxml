@@ -43,6 +43,7 @@
 		</title>
 		<pageHeader>
 			<band height="36"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[$P{printHeaders}]]></printWhenExpression>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="6"
@@ -445,6 +446,7 @@
 		</columnFooter>
 		<pageFooter>
 			<band height="14"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[$P{printHeaders}]]></printWhenExpression>
 				<line direction="TopDown">
 					<reportElement
 						x="0"
