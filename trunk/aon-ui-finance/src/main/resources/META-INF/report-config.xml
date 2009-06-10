@@ -87,6 +87,7 @@
 			<param id="printRecordData" value="#{company.isPrintRecordData}" />
 			<param id="eInvoiceXml" value="#{saleInvoice.getEInvoice}" />
 			<param id="invoiceSignature" value="#{saleInvoice.getInvoiceSignature}" />
+			<param id="image" value="#{saleInvoice.getImage}" />
 			
 		</params>
 		

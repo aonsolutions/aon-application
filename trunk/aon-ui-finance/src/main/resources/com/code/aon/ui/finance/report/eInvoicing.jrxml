@@ -36,6 +36,7 @@
 	<parameter name="eInvoiceXml" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="invoiceSignature" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="PriceStrategy" isForPrompting="false" class="com.code.aon.product.strategy.IPriceStrategy"/>
+	<parameter name="image" isForPrompting="false" class="java.io.InputStream"/>
 
 	<field name="series" class="java.lang.String"/>
 	<field name="number" class="java.lang.Integer"/>
@@ -315,7 +316,7 @@
 			</band>
 		</columnHeader>
 		<detail>
-			<band height="431"  isSplitAllowed="true" >
+			<band height="509"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="274"
@@ -657,33 +658,90 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA["certificado digital"]]></textFieldExpression>
 				</textField>
-				<image  scaleImage="RetainShape" vAlign="Top" hAlign="Left" onErrorType="Icon" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="5"
-						y="283"
-						width="203"
-						height="123"
-						forecolor="#000000"
-						backcolor="#FFFFFF"
-						key="barcode-1"/>
-					<box></box>
-					<graphicElement stretchType="NoStretch" fill="Solid" />
-					<imageExpression class="java.awt.Image"><![CDATA[it.businesslogic.ireport.barcode.BcImage.getBarcodeImage(16,$P{eInvoiceXml},false,false,null,0,0)]]></imageExpression>
-				</image>
-				<image  scaleImage="RetainShape" vAlign="Top" hAlign="Left" onErrorType="Icon" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<image  scaleImage="RetainShape" vAlign="Top" hAlign="Left" isUsingCache="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
 						x="274"
-						y="283"
-						width="203"
-						height="123"
+						y="301"
+						width="244"
+						height="50"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
-						key="barcode-2"/>
+						key="image-2"
+						positionType="Float">
+							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+						</reportElement>
 					<box></box>
 					<graphicElement stretchType="NoStretch" fill="Solid" />
-					<imageExpression class="java.awt.Image"><![CDATA[it.businesslogic.ireport.barcode.BcImage.getBarcodeImage(16,$P{invoiceSignature},false,false,null,0,0)]]></imageExpression>
+					<imageExpression class="java.io.InputStream"><![CDATA[$P{image}]]></imageExpression>
+				</image>
+				<image  scaleImage="RetainShape" vAlign="Top" hAlign="Left" isUsingCache="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="5"
+						y="301"
+						width="244"
+						height="50"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="image-3"
+						positionType="Float">
+							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<graphicElement stretchType="NoStretch" fill="Solid" />
+					<imageExpression class="java.io.InputStream"><![CDATA[$P{image}]]></imageExpression>
+				</image>
+				<image  scaleImage="RetainShape" vAlign="Top" hAlign="Left" isUsingCache="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="5"
+						y="351"
+						width="244"
+						height="50"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="image-4"
+						positionType="Float">
+							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<graphicElement stretchType="NoStretch" fill="Solid" />
+					<imageExpression class="java.io.InputStream"><![CDATA[$P{image}]]></imageExpression>
+				</image>
+				<image  scaleImage="RetainShape" vAlign="Top" hAlign="Left" isUsingCache="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="5"
+						y="401"
+						width="244"
+						height="50"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="image-5"
+						positionType="Float">
+							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<graphicElement stretchType="NoStretch" fill="Solid" />
+					<imageExpression class="java.io.InputStream"><![CDATA[$P{image}]]></imageExpression>
+				</image>
+				<image  scaleImage="RetainShape" vAlign="Top" hAlign="Left" isUsingCache="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="5"
+						y="451"
+						width="244"
+						height="50"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="image-6"
+						positionType="Float">
+							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+						</reportElement>
+					<box></box>
+					<graphicElement stretchType="NoStretch" fill="Solid" />
+					<imageExpression class="java.io.InputStream"><![CDATA[$P{image}]]></imageExpression>
 				</image>
 			</band>
 		</detail>
