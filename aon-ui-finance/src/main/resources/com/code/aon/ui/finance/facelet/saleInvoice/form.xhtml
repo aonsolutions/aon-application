@@ -6,6 +6,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -17,43 +18,45 @@
 					value="#{financeBundle.finance_sale_invoice_management_module}" />
 				<ui:param name="controller" value="#{saleInvoice}" />
 				<ui:define name="beforeSpinToolbarContent">
-						<aon:commandButton id="finances"
-							value="#{financeBundle.finance_generate}"
-							actionListener="#{saleInvoice.generateFinances}"
-							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceFinance.allPending}"
-							styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
-						<aon:commandButton id="record"
-							value="#{financeBundle.finance_record}"
-							actionListener="#{saleInvoice.onRecordInvoice}"
-							rendered="#{saleInvoiceDetail.model.rowCount > 0 and !saleInvoice.recorded}"
-							styleClass="aon-finding-toolbar-item aon-icon-task-assume"
-							reRender="saleInvoiceForm" 
-							onclick="Richfaces.showModalPanel('waitProccess')" 
-				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<aon:commandButton id="unrecord"
-							value="#{financeBundle.finance_unrecord}"
-							actionListener="#{saleInvoice.onUnrecordInvoice}"
-							rendered="#{saleInvoice.recorded}"
-							styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
-							reRender="saleInvoiceForm"
-							onclick="Richfaces.showModalPanel('waitProccess')" 
-				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						<h:commandLink id="saleInvoice" value="#{financeBundle.finance_invoice}"
-							target="_new" rendered="#{!saleInvoice.new and saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
-							action="#{report.onExecute}"
-							accesskey="#{bundle.aon_key_print}"
-							styleClass="aon-finding-toolbar-item aon-icon-pdf">
-							<f:param name="reportKey" value="saleInvoice" />
-							<f:param name="outputFormat" value="PDF" />
-						</h:commandLink>
+					<aon:commandButton id="finances"
+						value="#{financeBundle.finance_generate}"
+						actionListener="#{saleInvoice.generateFinances}"
+						rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceFinance.allPending}"
+						styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
+					<aon:commandButton id="record"
+						value="#{financeBundle.finance_record}"
+						actionListener="#{saleInvoice.onRecordInvoice}"
+						rendered="#{saleInvoiceDetail.model.rowCount > 0 and !saleInvoice.recorded}"
+						styleClass="aon-finding-toolbar-item aon-icon-task-assume"
+						reRender="saleInvoiceForm" 
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandButton id="unrecord"
+						value="#{financeBundle.finance_unrecord}"
+						actionListener="#{saleInvoice.onUnrecordInvoice}"
+						rendered="#{saleInvoice.recorded}"
+						styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
+						reRender="saleInvoiceForm"
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<h:commandLink id="saleInvoice" value="#{financeBundle.finance_invoice}"
+						target="_new" rendered="#{!saleInvoice.new and saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
+						action="#{report.onExecute}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf">
+						<f:param name="reportKey" value="saleInvoice" />
+						<f:param name="outputFormat" value="PDF" />
+					</h:commandLink>
+					<c:if test="#{saleInvoice.digitalCertificate}">
 						<h:commandLink id="saleEInvoice" value="e#{financeBundle.finance_invoice}"
 							target="_new" rendered="#{!saleInvoice.new and saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
-							action="#{report.onExecute}"
+							action="#{report.onExecute}" 
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 							<f:param name="reportKey" value="saleEInvoice" />
 							<f:param name="outputFormat" value="PDF" />
 						</h:commandLink>
+					</c:if>
 				</ui:define>
 			</ui:decorate>
 		</aon:div>
