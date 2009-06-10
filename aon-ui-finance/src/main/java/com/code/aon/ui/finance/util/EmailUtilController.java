@@ -1,11 +1,10 @@
 package com.code.aon.ui.finance.util;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -18,12 +17,6 @@ import javax.mail.Address;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.io.FileUtils;
-import org.dom4j.Element;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
-import org.dom4j.tree.DefaultElement;
-import org.hibernate.EntityMode;
-import org.hibernate.Session;
 import org.xml.sax.SAXException;
 
 import com.code.aon.common.BeanManager;
@@ -31,7 +24,6 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.finance.Invoice;
@@ -185,39 +177,14 @@ public class EmailUtilController implements ICollectionProvider, IFinanceMessage
 		aonFile.setFile(file);
 		aonFile.setFileName( ra.getDescription() );
 		return aonFile;
-	}
-	
-    private XMLWriter createWriter( File file ) throws IOException {
-        OutputFormat format = OutputFormat.createPrettyPrint();   
-        format.setEncoding( "UTF-8" );
-        BufferedWriter out = new BufferedWriter( new FileWriter(file) );
-        XMLWriter writer = new XMLWriter( out, format );
-        writer.setMaximumAllowedCharacter(0x7F);
-        return writer;
-    }
-	
-	private void writeInvoiceXml( File file, String entityName, Serializable id ) throws IOException, SAXException {
-		String factoryName = HibernateUtil.getSessionFactoryName(entityName);
-		Session session = HibernateUtil.getSession(factoryName);
-		Session dom4jSession = session.getSession(EntityMode.DOM4J);
-		Object object = dom4jSession.get(entityName, id);
-		
-		XMLWriter writer = createWriter(file);
-        Element root = new DefaultElement( "root" );
-        writer.startDocument();
-        writer.writeOpen( root );
-        writer.write( object );
-        writer.writeClose( root );
-        writer.endDocument();
-        writer.close();        
-        
-        dom4jSession.close();
-        HibernateUtil.closeSession( factoryName );
-	}
-	
+	}	
+
 	private AonFile getInvoiceXml() throws IOException, SAXException {
+		SaleInvoiceController invoiceController = (SaleInvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);		
 		File file = File.createTempFile( "facturae", ".xml" );
-		writeInvoiceXml(file, Invoice.class.getName(), currentInvoice.getId());
+		Writer writer = new FileWriter( file );
+		invoiceController.writeInvoiceXml( writer, currentInvoice.getId());
+		writer.close();
 		AonFile aonFile = new AonFile();
 		aonFile.setFile(file);
 		aonFile.setFileName( "facturae.xml" );
