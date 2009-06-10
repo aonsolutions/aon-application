@@ -1,5 +1,7 @@
 package com.code.aon.ui.infoweb.velocity;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 public class ImageHandler {
 	
 	private String name;
@@ -15,7 +17,7 @@ public class ImageHandler {
 	}
 
 	public String getName() {
-		return name;
+		return StringEscapeUtils.escapeHtml(name);
 	}
 
 	public String getLink() {
