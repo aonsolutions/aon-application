@@ -15,8 +15,14 @@ public class BalanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
     public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Balance balance = (Balance) evt.getTo();
 		balance.setRemovable(true);
-		balance.setType(null);
     }
 	
+	@Override
+    public void vetoableBeanRemoved(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+		Balance balance = (Balance) evt.getTo();
+		if (!balance.isRemovable()) {
+			throw new ManagerBeanVetoListenerException("El balance no se puede borrar. Está configurado en el sistema.");
+		}
+    }
 
 }

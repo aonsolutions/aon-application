@@ -17,6 +17,7 @@ import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.enumeration.AmortizationPeriod;
+import com.code.aon.accounting.enumeration.BalanceType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -32,6 +33,9 @@ import com.code.aon.ql.util.ExpressionException;
 public class AccountingCollectionsController {
 
 	private LinkedList<SelectItem> accountLevels;
+	private LinkedList<SelectItem> balanceTypes;
+	private LinkedList<SelectItem> accountEntryTypes;
+	private LinkedList<SelectItem> amortizationPeriods;
 
 	/**
 	 * Gets the account periods.
@@ -99,16 +103,18 @@ public class AccountingCollectionsController {
 	}
 
 	public List<SelectItem> getAccountTypes() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-		AccountEntryType[] accountEntryTypes = AccountEntryType.values();
-		for (int i = 0; i < accountEntryTypes.length; i++) {
-			AccountEntryType type = accountEntryTypes[i];
-			String name = type.getName(locale);
-			SelectItem item = new SelectItem(type, name);
-			types.add(item);
+		if (accountEntryTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			accountEntryTypes = new LinkedList<SelectItem>();
+			AccountEntryType[] aeTypes = AccountEntryType.values();
+			for (int i = 0; i < aeTypes.length; i++) {
+				AccountEntryType type = aeTypes[i];
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				accountEntryTypes.add(item);
+			}
 		}
-		return types;
+		return accountEntryTypes;
 	}
 
 	public List<SelectItem> getAccountLevels() {
@@ -172,23 +178,34 @@ public class AccountingCollectionsController {
 	}
 	
 	public List<SelectItem> getAmortizationPeriods() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> list = new LinkedList<SelectItem>();
-		AmortizationPeriod[] periods = AmortizationPeriod.values();
-		for (int i = 0; i < periods.length; i++) {
-			AmortizationPeriod type = periods[i];
-			String name = type.getName(locale);
-			SelectItem item = new SelectItem(type, name);
-			list.add(item);
+		if (amortizationPeriods == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			amortizationPeriods = new LinkedList<SelectItem>();
+			AmortizationPeriod[] periods = AmortizationPeriod.values();
+			for (int i = 0; i < periods.length; i++) {
+				AmortizationPeriod type = periods[i];
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				amortizationPeriods.add(item);
+			}
 		}
-		return list;
+		return amortizationPeriods;
 	}
 	
-	public List<SelectItem> getDefinedBalances() throws ManagerBeanException {
+	public List<SelectItem> getClosingBalances() throws ManagerBeanException {
+		return getBalances(BalanceType.CLOSING );
+	}
+	public List<SelectItem> getOperatingBalances() throws ManagerBeanException {
+		return getBalances(BalanceType.OPERATING );
+	}
+	public List<SelectItem> getCustomBalances() throws ManagerBeanException {
+		return getBalances(BalanceType.CUSTOM );
+	}
+	private List<SelectItem> getBalances(BalanceType balanceType) throws ManagerBeanException {
 		List<SelectItem> balances = new LinkedList<SelectItem>();
 		IManagerBean balanceBean = BeanManager.getManagerBean(Balance.class);
 		Criteria c = new Criteria();
-		c.addGreaterThanOrEqualExpression(balanceBean.getFieldName(IAccountingAlias.BALANCE_REMOVABLE), true);
+		c.addEqualExpression(balanceBean.getFieldName(IAccountingAlias.BALANCE_TYPE), balanceType);
 		Iterator<?> iter = balanceBean.getList(c).iterator();
 		while (iter.hasNext()) {
 			Balance b = (Balance) iter.next();
@@ -197,4 +214,19 @@ public class AccountingCollectionsController {
 		}
 		return balances;
 	}
+	public List<SelectItem> getBalanceTypes() {
+		if (balanceTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			balanceTypes = new LinkedList<SelectItem>();
+			BalanceType[] bTypes = BalanceType.values();
+			for (int i = 0; i < bTypes.length; i++) {
+				BalanceType type = bTypes[i];
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				balanceTypes.add(item);
+			}
+		}
+		return balanceTypes;
+	}
+	
 }

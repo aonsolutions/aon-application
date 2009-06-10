@@ -12,9 +12,11 @@ import java.util.StringTokenizer;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.BalanceDetail;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
@@ -38,7 +40,8 @@ public class BalanceSheetController implements ICollectionProvider{
 	private SummaryProviderParameters parameters;
 	private SummaryProvider summaryProvider;
 	private SummaryCollection summaryCollection;
-	private String type;
+	private String balanceType;
+	private Balance balance;
 	private String balanceName;
 	private Integer actualYear;
 	private Integer previousYear;
@@ -65,7 +68,7 @@ public class BalanceSheetController implements ICollectionProvider{
 	public void onBalance(ActionEvent event) {	
 		
 		try {
-			getBalanceCollection(Integer.valueOf(type));
+			getBalanceCollection(balance.getId());
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 		}
@@ -325,12 +328,12 @@ public class BalanceSheetController implements ICollectionProvider{
 		}
 	}
 
-	public String getType() {
-		return type;
+	public Balance getBalance() {
+		return balance;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setBalance(Balance balance) {
+		this.balance = balance;
 	}
 
 
@@ -394,7 +397,22 @@ public class BalanceSheetController implements ICollectionProvider{
 		this.flagAccounts = flagAccounts;
 	}
 
+	public String getBalanceType() {
+		return balanceType;
+	}
 
-	
+	public void setBalanceType(String balanceType) {
+		this.balanceType = balanceType;
+	}
+
+	public List<SelectItem> getBalances() throws ManagerBeanException {
+		AccountingCollectionsController c =  (AccountingCollectionsController) AonUtil.getRegisteredBean("accountingCollections");
+		if ("0".equals(balanceType)) {
+			return c.getClosingBalances();
+		} else if ("1".equals(balanceType)) {
+			return c.getOperatingBalances();
+		} 
+		return c.getCustomBalances();
+	}
 }
 
