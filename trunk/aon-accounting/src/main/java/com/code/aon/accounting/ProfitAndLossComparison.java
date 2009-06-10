@@ -99,8 +99,12 @@ public class ProfitAndLossComparison {
 	 * Porcentaje de la diferencia sobre el acumulado
 	 */
 	public Double getPercent() {
-		if(getAccumulated()!=0.0 && getDifference()!=0.0)
+		if(getAccumulated()!=0.0 && getDifference()!=0.0){
 			return (getDifference().doubleValue()/getAccumulated().doubleValue());
+		}
+		if(getAccumulated()==0.0){
+			return (getDifference().doubleValue()/getBudgeted().doubleValue());
+		}
 		return 0.0;
 	}
 	

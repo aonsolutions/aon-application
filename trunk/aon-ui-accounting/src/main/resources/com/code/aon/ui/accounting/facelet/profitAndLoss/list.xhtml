@@ -78,10 +78,26 @@
 			<aon:div id="accountData" styleClass="aon-scroll-area">
 
 				<aon:div style="margin-bottom:0.75em;">
-					<aon:panelGrid columns="2">
+					<aon:panelGrid columns="6" style="width:100%;">
 						<aon:outputLabel value="#{accountingBundle.accounting_period}" />
 						<aon:outputText styleClass="aon-bold"
 							value="#{profitAndLossReport.parameters.period.id}" />
+							
+						<aon:outputLabel
+							value="#{bundle.aon_date_from}" />
+						<aon:outputText 
+							value="#{profitAndLossReport.parameters.fromDate}"
+							timeZone="#{timeZoneController.timeZone}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"/>
+						</aon:outputText>
+	
+						<aon:outputLabel
+							value="#{bundle.aon_date_to}" />
+						<aon:outputText 
+							value="#{profitAndLossReport.parameters.toDate}"
+							timeZone="#{timeZoneController.timeZone}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"/>
+						</aon:outputText>
 					</aon:panelGrid>
 				</aon:div>
 
