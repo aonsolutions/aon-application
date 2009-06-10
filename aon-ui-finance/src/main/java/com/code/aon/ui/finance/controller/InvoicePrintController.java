@@ -37,13 +37,15 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 
 	public void sendInvoicesByEmail( ActionEvent event ) {
 		EmailUtilController emailController = (EmailUtilController) AonUtil.getRegisteredBean(EMAIL_UTIL_CONTROLLER_NAME);
+		SaleInvoiceController invoiceController = (SaleInvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
 		try {
 			EmailSender sender = emailController.getEmailSender();
+			boolean eInvoice = invoiceController.isDigitalCertificate();
 			sender.connect();
 			Criteria criteria = getCriteria();
 			List<ITransferObject> list = getManagerBean().getList(criteria);
 			for( ITransferObject to : list ) {
-				emailController.sendInvoice( (Invoice) to );	
+				emailController.sendInvoice( (Invoice) to, eInvoice );	
 			}
 			sender.disconnect();
 		} catch (Throwable th) {

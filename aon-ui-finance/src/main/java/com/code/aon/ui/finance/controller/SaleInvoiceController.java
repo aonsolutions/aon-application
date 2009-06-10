@@ -1,5 +1,10 @@
 package com.code.aon.ui.finance.controller;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.Serializable;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -12,7 +17,15 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
+import org.dom4j.tree.DefaultElement;
+import org.hibernate.EntityMode;
+import org.hibernate.Session;
+import org.xml.sax.SAXException;
 
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
@@ -21,7 +34,9 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.company.Company;
 import com.code.aon.config.Series;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.customer.Customer;
@@ -39,8 +54,12 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.registry.RegistryAddress;
+import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.util.EmailUtilController;
@@ -359,13 +378,82 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		try {
 			EmailSender sender = emailController.getEmailSender();
 			sender.connect();
-			emailController.sendInvoice( (Invoice) getTo() );
+			emailController.sendInvoice( (Invoice) getTo(), isDigitalCertificate() );
 			sender.disconnect();
 		} catch (Throwable th) {
 			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			AonUtil.addErrorMessage(th.getMessage());
 			throw new AbortProcessingException(th.getMessage(), th);
 		}
+	}
+	
+	private Company getCompany() {
+		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		return companyController.obtainCompany();		
+	}
+	
+	public boolean isDigitalCertificate() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
+		Criteria criteria = new Criteria();
+		String type = bean.getFieldName( IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE );
+		criteria.addEqualExpression( type, RegistryAttachmentType.DIGITAL_CERTIFICATE );
+		String registry = bean.getFieldName( IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID );
+		criteria.addEqualExpression( registry, getCompany().getId() );
+		int count = bean.getCount(criteria);
+		return count > 0;
+	}
+	
+	public RegistryAttachment getDigitalCertificate() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
+		Criteria criteria = new Criteria();
+		String type = bean.getFieldName( IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE );
+		criteria.addEqualExpression( type, RegistryAttachmentType.DIGITAL_CERTIFICATE );
+		String registry = bean.getFieldName( IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID );
+		criteria.addEqualExpression( registry, getCompany().getId() );		
+		List<ITransferObject> list = bean.getList(criteria);
+		if (! list.isEmpty() ) {
+			return (RegistryAttachment) list.get(0);
+		}
+		return null;
+	}
+	
+	public String getInvoiceSignature() throws ManagerBeanException {
+		RegistryAttachment ra = getDigitalCertificate();
+		return new String( Base64.encodeBase64(ra.getData()) );
+	}
+	
+    private XMLWriter createWriter( Writer out ) throws IOException {
+        OutputFormat format = OutputFormat.createPrettyPrint();   
+        format.setEncoding( "UTF-8" );
+        XMLWriter writer = new XMLWriter( new BufferedWriter(out), format );
+        writer.setMaximumAllowedCharacter(0x7F);
+        return writer;
+    }
+	
+	private void writeInvoiceXml( Writer out, Serializable id ) throws IOException, SAXException {
+		String factoryName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Session session = HibernateUtil.getSession(factoryName);
+		Session dom4jSession = session.getSession(EntityMode.DOM4J);
+		Object object = dom4jSession.get(Invoice.class.getName(), id);
+		
+		XMLWriter writer = createWriter(out);
+        Element root = new DefaultElement( "root" );
+        writer.startDocument();
+        writer.writeOpen( root );
+        writer.write( object );
+        writer.writeClose( root );
+        writer.endDocument();
+        writer.close();        
+        
+        dom4jSession.close();
+        HibernateUtil.closeSession( factoryName );
+	}
+	
+	public String getEInvoice() throws IOException, SAXException {
+		StringWriter sw = new StringWriter();
+		Invoice invoice = (Invoice) getTo();
+		writeInvoiceXml(sw, invoice.getId());
+		return sw.toString();
 	}
 	
 }
