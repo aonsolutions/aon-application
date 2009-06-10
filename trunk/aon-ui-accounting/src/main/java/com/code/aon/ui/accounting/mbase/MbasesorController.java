@@ -19,10 +19,9 @@ import com.code.aon.common.sql.AonSQLException;
 import com.code.aon.common.sql.AonSQLFile;
 import com.code.aon.common.sql.AonSQLScript;
 import com.code.aon.ui.common.io.AonFile;
-import com.code.aon.ui.common.io.IAonFileListener;
 import com.code.aon.ui.util.AonUtil;
 
-public class MbasesorController implements IAonFileListener {
+public class MbasesorController  {
 
 	private AonFile aonFile;
 	private List<String> statements;
@@ -46,7 +45,7 @@ public class MbasesorController implements IAonFileListener {
 				f.setData(data);
 			}
 			f.setFileName(item.getFileName());
-			f.addAonFileListener(this);
+//			f.addAonFileListener(this);
 			setAonFile(f);
 		} catch (IOException e) {
 			throw new AbortProcessingException(e.getMessage());
