@@ -16,6 +16,17 @@ public class ProfitAndLossComparisonController {
 
 	private List<ProfitAndLossComparison> list;
 	private SummaryProviderParameters parameters;
+	private List<ProfitAndLossComparison> comparissonList;
+	private List<ProfitAndLossComparison> salesList;
+	
+
+	public List<ProfitAndLossComparison> getComparissonList() {
+		return comparissonList;
+	}
+
+	public void setComparissonList(List<ProfitAndLossComparison> comparissonList) {
+		this.comparissonList = comparissonList;
+	}
 
 	public List<ProfitAndLossComparison> getList() {
 		return list;
@@ -196,6 +207,35 @@ public class ProfitAndLossComparisonController {
 			element.setUnpaidBalance(element.getUnpaidBalance()+obj.getUnpaidBalance());
 			list.set(list.size()-1, element);
 		}
+	}
+	
+	public void onComparissonList(ActionEvent e) {
+
+		
+		List<ProfitAndLossComparison> summaryList;
+		comparissonList = new LinkedList<ProfitAndLossComparison>();
+		salesList = new LinkedList<ProfitAndLossComparison>();
+		summaryList = list;
+		for (Iterator iterator = summaryList.iterator(); iterator.hasNext();) {
+			ProfitAndLossComparison summary = (ProfitAndLossComparison) iterator.next();
+			
+			if (summary.getId()!=null && summary.getDescription()!=null &&( summary.getId().substring(0, 1).equals("7") || summary.getId().substring(0, 2).equals("60"))) {
+				comparissonList.add(summary);
+					}else{
+						if (summary.getId()!=null && summary.getDescription()!=null){
+				salesList.add(summary);}
+			}
+			
+		}
+		
+	}
+
+	public List<ProfitAndLossComparison> getSalesList() {
+		return salesList;
+	}
+
+	public void setSalesList(List<ProfitAndLossComparison> salesList) {
+		this.salesList = salesList;
 	}
 
 	public void onSearch(ActionEvent event) {
