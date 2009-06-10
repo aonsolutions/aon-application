@@ -11,11 +11,11 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.infoweb</artifactId>
 	<packaging>war</packaging>
-	<version>3.7.1</version>
+	<version>3.8.0</version>
 	<description>AON WEB INFOWEB</description>
 	<name>AON WEB INFOWEB</name>
 	<properties>
-		<dbVersion>3.4.0</dbVersion>
+		<dbVersion>3.2.1</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-infoweb</finalName>
