@@ -20,6 +20,15 @@
 	<build>
 		<finalName>aon-smb</finalName>
 	</build>
+	<repositories>
+		<!-- Necesario para iReport-utils  -->
+		<repository>
+			<id>jasperforge.org</id>
+			<name>iReport Repository for Maven</name>
+			<url>http://jasperforge.org/maven2/</url>
+			<layout>default</layout>
+		</repository>	
+	</repositories>	
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
@@ -175,6 +184,20 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!--  Necesario para imprimir barcodes con jasper -->
+		<dependency>
+			<groupId>iReport</groupId>
+			<artifactId>iReport-utils</artifactId>
+			<version>2.0.1</version>
+			<scope>compile</scope>
+		</dependency>
+		<!--  Necesario para imprimir barcodes con jasper -->
+		<dependency>
+			<groupId>net.sourceforge</groupId>
+			<artifactId>barbecue</artifactId>
+			<version>1.5-beta1</version>
+			<scope>compile</scope>
+		</dependency>		
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
