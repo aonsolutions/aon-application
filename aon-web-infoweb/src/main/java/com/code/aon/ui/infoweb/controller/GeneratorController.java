@@ -265,7 +265,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 
 		for (int i = 0; i < wiprList.size(); i++) {
 			WebInfoPageResource wipr = (WebInfoPageResource)wiprList.get(i);
-			ImageHandler ih = new ImageHandler(wipr.getRattach().getDescription() + "." + wipr.getRattach().getMimeType().getExtension(), getImagePageName(wipr.getRattach().getDescription()), wipr.getContent());
+			ImageHandler ih = new ImageHandler(getImageName(wipr.getRattach()), getImagePageName(wipr.getRattach().getDescription()), wipr.getContent());
 			images.add(ih);
 		}
 		vu.put("images", images);
@@ -299,7 +299,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			}
 			WebInfoPageResource wipr = (WebInfoPageResource)wiprList.get(i);
 			//Por cada imagen se hace tambien una pagina
-			ImageHandler ih = new ImageHandler(wipr.getRattach().getDescription() + "." + wipr.getRattach().getMimeType().getExtension(), getImagePageName(wipr.getRattach().getDescription()), wipr.getContent());
+			ImageHandler ih = new ImageHandler(getImageName(wipr.getRattach()), getImagePageName(wipr.getRattach().getDescription()), wipr.getContent());
 			images.add(ih);
 			
 			vu.put("image", ih);
@@ -392,7 +392,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 				List<ITransferObject> attachList = (List<ITransferObject>)attachBean.getList(attachCriteria);
 				if (attachList.size() > 0) {
 					RegistryAttachment ra = (RegistryAttachment)attachList.get(0);
-					filename = ra.getDescription() + "." + ra.getMimeType().getExtension();
+					filename = getImageName(ra);
 				}
 			} catch (Throwable th) {
 				LOGGER.log(Level.SEVERE, th.getMessage(), th );
@@ -512,7 +512,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			if ( (ra.getData() != null) && (!StringUtils.isEmpty(ra.getDescription())) ) {
 				String filename = getImageName(ra);
 				if (!ImageUtil.copyRegistryBlobToFile(ra, imagesDirectory, 200, 200, filename)) {
-					AonUtil.addErrorMessage("ERROR: Se produjo un error al intentar copiar la imagen " + filename + "."); 
+					AonUtil.addErrorMessage("ERROR: Se produjo un error al intentar copiar la imagen " + filename); 
 				}
 				ImageHandler ih = new ImageHandler(filename, getImagePageName(ra.getDescription()), ra.getDescription());
 				all_images.add(ih);
