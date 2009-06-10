@@ -35,13 +35,13 @@
 						<f:param name="outputFormat" value="MS Excel" />
 					</h:commandLink>
 					
-				<!--  	<h:commandLink target="_blank"
+				  	<h:commandLink target="_blank"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
-						value="Comparacion de cuentas"
+						value="#{accountingBundle.account_comp_account}" actionListener="#{budgetedProfitAndLossComparison.onComparissonList}"
 						action="#{report.onExecute}">
 						<f:param name="reportKey" value="profitAndLossComparisonGraph" />
 						<f:param name="outputFormat" value="PDF" />
-					</h:commandLink>-->
+					</h:commandLink>
 				</ui:define>
 			</ui:decorate>
 

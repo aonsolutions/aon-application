@@ -134,7 +134,6 @@
 		</params>
 	</report>
 
-
 	<!--  BALANCE DE PERDIDAS Y GANACIAS PRESUPUESTADO GRAFICO -->
 	<report id="profitAndLossComparisonGraph" description="BudgetedProfitAndLoss">
 		<template path="/com/code/aon/ui/accounting/report/profitAndLossGraphComparisson.jasper"/>
@@ -142,10 +141,17 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
+			<param id="salesList" value="#{budgetedProfitAndLossComparison.getSalesList}" />
 			<param id="params" value="#{budgetedProfitAndLossComparison.getParameters}"/>
 		</params>
+		
+	 <nested-report report="salesList"/>
+				
 	</report>
 
+	<report id="salesList" description="Purchases List">
+		<template path="/com/code/aon/ui/accounting/report/extraAccounts.jasper"/>
+	</report>
 
 	
 
