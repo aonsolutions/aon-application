@@ -23,7 +23,9 @@ import com.code.aon.infoweb.WebInfoPageResource;
 import com.code.aon.infoweb.dao.IWebInfoAlias;
 import com.code.aon.infoweb.enumeration.WebInfoPageType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
@@ -307,18 +309,23 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 	}
 	
 	public void pageNameCheck(FacesContext context, UIComponent component, Object value) throws ManagerBeanException {
-		String domainName = value.toString();
+		String pageName = value.toString();
 		IManagerBean bean = getManagerBean();
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_NAME), domainName);
+		WebInfoPage wip = (WebInfoPage) getTo();
+		if ( wip.getId() != null ) {
+			Expression exp = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_ID), wip.getId());
+			criteria.addExpression(exp);
+		}		
+		criteria.addEqualExpression(bean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_NAME), pageName);
 		int count = bean.getCount(criteria);
 		if ( count > 0 ) {
 			FacesMessage message = new FacesMessage(AonUtil.getMessage(BUNDLE_NAME, "infoweb_page_duplicated_name"));
 			message.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException( message );
 		}
-		for( int i = 0; i < domainName.length(); i++ ) {
-			char c = domainName.charAt(i);
+		for( int i = 0; i < pageName.length(); i++ ) {
+			char c = pageName.charAt(i);
 			if (! (Character.isLetter(c) || Character.isDigit(c) || (c == ' ') ) ) {
 				String text = AonUtil.getMessage(BUNDLE_NAME, "infoweb_page_invalid_character");
 				String formatted = AonUtil.substituteParams(AonUtil.getCurrentLocale(), text, new Object[]{c});
