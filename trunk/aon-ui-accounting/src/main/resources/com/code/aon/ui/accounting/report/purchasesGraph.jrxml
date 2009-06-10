@@ -58,7 +58,7 @@
 						key="element-2"/>
 					<box></box>
 						<chartTitle color="#000000" >
-								<titleExpression><![CDATA[$R{accounting_profit_and_loss_module_gross_graph_purchases}]]></titleExpression>
+								<titleExpression><![CDATA[$R{accounting_profit_and_loss_module_gross_graph_sales}]]></titleExpression>
 					</chartTitle>
 						<chartLegend textColor="#000000" backgroundColor="#FFFFFF" >
 					</chartLegend>

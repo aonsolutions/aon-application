@@ -174,7 +174,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		}
 		setTotalSales(amount);
 		Summary s = new Summary();
-		s.setId("7");
+		s.setId("Total Ventas");
 		s.setDescription("Total Ventas");
 		s.setCredit(amount);
 		salesList.add(0, s);
@@ -195,7 +195,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		}
 		setTotalPurchases(amount);
 		Summary s = new Summary();
-		s.setId("6");
+		s.setId("Total Compras");
 		s.setDescription("Total Compras");
 		s.setDebit(amount);
 		purchaseList.add(0, s);
@@ -205,7 +205,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 	public void generateGrossMarginsList() {
 
 		Summary s = new Summary();
-		s.setId("10");
+		s.setId("Margen Bruto");
 		s.setDescription("Margen Bruto");
 		s.setDebit(totalSales - totalPurchases);
 		grossMarginList.add(s);
