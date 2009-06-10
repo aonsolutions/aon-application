@@ -18,6 +18,27 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************ CUSTOMER SEGMENT ************** -->
+	<managed-bean>
+		<managed-bean-name>customerSegment</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.customer.CustomerSegment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>customerSegment</value>
+		</managed-property>
+	</managed-bean>
+
 	<!--  **** CUSTOMER **** -->
 	<managed-bean>
 		<managed-bean-name>customer</managed-bean-name>
@@ -346,8 +367,14 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
-	<!-- =================== Customer ========================== -->
 	<navigation-rule>
+		<!-- =================== Customer Segment ========================== -->
+		<navigation-case>
+			<from-outcome>customerSegment</from-outcome>
+			<to-view-id>/com/code/aon/ui/customer/facelet/customerSegment/grid.xhtml</to-view-id>
+		</navigation-case>
+
+		<!-- =================== Customer ========================== -->
 		<navigation-case>
 			<from-outcome>customer_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/customer/facelet/customer/form.xhtml</to-view-id>
