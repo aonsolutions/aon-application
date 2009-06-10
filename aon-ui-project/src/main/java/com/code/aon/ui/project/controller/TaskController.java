@@ -27,6 +27,7 @@ import com.code.aon.campaign.ProcessTransitionType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.config.User;
 import com.code.aon.config.UserWorkGroup;
 import com.code.aon.config.WorkGroup;
@@ -191,7 +192,7 @@ public class TaskController extends BasicController implements ITaskController {
 
 	public List<SelectItem> getAvailableFormDossiers() {
 		Task t = (Task) getTo();
-		if (t.getDossier().getCustomer() != null && t.getDossier().getCustomer().getId() != null) {
+		if (t.getDossier() != null && t.getDossier().getCustomer() != null && t.getDossier().getCustomer().getId() != null) {
 			return getDossiers();
 		}
 		return getAllDossiers();
@@ -1245,6 +1246,8 @@ public class TaskController extends BasicController implements ITaskController {
 
 	private Task updateTask(Task task) throws ManagerBeanException {
 		getManagerBean().restoreNullSubPOJOs(task);
+		String sfn = HibernateUtil.getSessionFactoryName();
+		task = (Task) HibernateUtil.getSession(sfn).merge(task);
 		task = (Task) getManagerBean().update(task);
 		getManagerBean().initializePOJO(task);
 		return task;

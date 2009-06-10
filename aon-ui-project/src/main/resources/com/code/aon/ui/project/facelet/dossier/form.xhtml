@@ -42,6 +42,7 @@
 					accesskey="#{bundle.aon_key_new}" />
 				<aon:commandButton id="importDossier"
 					value="#{projectBundle.dossier_import}" reRender="importContainer"
+					rendered="#{!dossier.new}"
 					actionListener="#{activitiesImporter.onShowImportPanel}"
 					styleClass="aon-finding-toolbar-item aon-icon-mailReply" />
 			</aon:div>
@@ -123,13 +124,13 @@
 						<h:selectOneMenu
 							id="type_edit"
 							rendered="#{dossier.to.dossierType != null and to==activity.to}"
-							value="#{activity.to.activityType.id}">
+							value="#{activity.to.activityType}">
 							<f:selectItems value="#{dossier.activityTypes}" />
 						</h:selectOneMenu>
 						<f:facet name="footer">
 							<h:selectOneMenu id="type_new"
 								rendered="#{dossier.to.dossierType != null and activity.new}"
-								value="#{activity.to.activityType.id}">
+								value="#{activity.to.activityType}">
 								<f:selectItems value="#{dossier.activityTypes}" />
 							</h:selectOneMenu>
 						</f:facet>
@@ -142,12 +143,12 @@
 						<aon:outputText value="#{to.workgroup.description}"
 							rendered="#{to!=activity.to}" />
 						<aon:selectOneMenu rendered="#{to==activity.to}"
-							value="#{activity.to.workgroup.id}">
+							value="#{activity.to.workgroup}">
 							<f:selectItems value="#{configCollections.workgroups}" />
 						</aon:selectOneMenu>
 						<f:facet name="footer">
 							<aon:selectOneMenu rendered="#{activity.new}"
-								value="#{activity.to.workgroup.id}">
+								value="#{activity.to.workgroup}">
 								<f:selectItems value="#{configCollections.workgroups}" />
 							</aon:selectOneMenu>
 						</f:facet>

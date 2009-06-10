@@ -181,7 +181,7 @@
 					<aon:outputLabel for="Customer_id"
 						value="#{customerBundle.customer_customer}" />
 					<aon:div id="customerIdContainer" styleClass="aon-lookup" 
-						rendered="#{task.new or task.monitor}">
+						rendered="#{(task.new or task.monitor) and task.to.dossier != null}">
 						<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
 							reRender="Customer_full_name,Task_activity,Task_dossier"
 							lookupChangeListener="#{task.customerChanged}" 
@@ -198,7 +198,7 @@
 							size="50" disabled="true" />
 					</aon:div>
 					<aon:inputText id="Task_customer"
-						value="#{(task.to.dossier.id != null)?(task.to.dossier.customer.registry.fullName):('')}"
+						value="#{(task.to.dossier != null and task.to.dossier.id != null)?(task.to.dossier.customer.registry.fullName):('')}"
 						size="60" disabled="true"
 						rendered="#{!task.new and !task.monitor}" />
 

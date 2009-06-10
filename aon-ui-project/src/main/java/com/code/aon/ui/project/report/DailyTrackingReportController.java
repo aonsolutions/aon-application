@@ -313,8 +313,9 @@ public class DailyTrackingReportController implements ICollectionProvider {
 				DossierType dt = at.getDossierType();
 				if (dt != null) {
 					if (d == null || !d.equals(dt.getId())) {
-						group.setSelectItems((SelectItem[]) temp
-								.toArray(new SelectItem[temp.size()]));
+						if (group != null) {
+							group.setSelectItems((SelectItem[]) temp.toArray(new SelectItem[temp.size()]));
+						}
 						temp = new LinkedList<SelectItem>();
 						group = new SelectItemGroup(dt.getDescription());
 						activityTypes.add(group);
