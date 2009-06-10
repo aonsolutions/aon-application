@@ -66,6 +66,9 @@
 .aonSubMenuOptionEntry {
 	background:#fff url(images/aon-content-menu/aon-content-option-triangle.gif) scroll left center no-repeat;
 }
+.aonSubMenuOptionBudget {
+	background:#fff url(images/aon-content-menu/aon-content-option-pentagon.gif) scroll left center no-repeat;
+}
 .aonSubMenu a {
 	margin-left: 5px;
 	font-weight: normal;

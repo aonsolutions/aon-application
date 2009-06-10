@@ -10,6 +10,7 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.accounting.AmortizationType;
 import com.code.aon.accounting.AutoConcept;
+import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.Leasing;
 import com.code.aon.accounting.Loan;
 import com.code.aon.accounting.Period;
@@ -181,5 +182,19 @@ public class AccountingCollectionsController {
 			list.add(item);
 		}
 		return list;
+	}
+	
+	public List<SelectItem> getDefinedBalances() throws ManagerBeanException {
+		List<SelectItem> balances = new LinkedList<SelectItem>();
+		IManagerBean balanceBean = BeanManager.getManagerBean(Balance.class);
+		Criteria c = new Criteria();
+		c.addGreaterThanOrEqualExpression(balanceBean.getFieldName(IAccountingAlias.BALANCE_REMOVABLE), true);
+		Iterator<?> iter = balanceBean.getList(c).iterator();
+		while (iter.hasNext()) {
+			Balance b = (Balance) iter.next();
+			SelectItem item = new SelectItem(b, b.getName());
+			balances.add(item);
+		}
+		return balances;
 	}
 }

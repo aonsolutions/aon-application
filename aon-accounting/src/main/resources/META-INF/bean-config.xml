@@ -55,4 +55,10 @@
 		</vetoListeners>
 	</bean>
 
+	<bean description="Listener para inicializar campos en Balance.">
+		<pojo>com.code.aon.accounting.Balance</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.accounting.event.BalanceBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
 </bean-config>
