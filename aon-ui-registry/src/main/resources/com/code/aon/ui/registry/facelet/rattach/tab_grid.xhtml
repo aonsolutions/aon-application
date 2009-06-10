@@ -4,15 +4,13 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-		<ui:param name="columnClasses"
-			value="aon-editDataTable-textColumn aon-vertical-align-top aon-width-300 aon-nowrap,
-			aon-editDataTable-textColumn aon-vertical-align-top aon-nowrap" />
 		<ui:define name="columns">
 		
-			<aon:column>
+			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-300 aon-nowrap">
 				<f:facet name="header">
 					<aon:outputLabel for="RegistryAttach_description" value="#{bundle.aon_description}" />
 				</f:facet>
@@ -27,7 +25,28 @@
 				</f:facet>
 			</aon:column>
  
-			<aon:column>
+			<c:if test="#{!skipCategoryColumn}"> 
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputLabel for="RegistryAttach_category" value="#{registryBundle.registry_category}" />
+					</f:facet>
+					<aon:outputText value="#{to.category.name}" rendered="#{formList}" />
+					<aon:selectOneMenu id="RegistryAttach_category" rendered="#{formEdit}"
+						value="#{controller.to.category}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{registryCollections.categories}" />
+					</aon:selectOneMenu>									
+					<f:facet name="footer">
+						<aon:selectOneMenu id="RegistryAttach_category-New" rendered="#{formNew}"
+							value="#{controller.to.category}">
+							<f:selectItem itemLabel="-" value="#{null}"/>
+							<f:selectItems value="#{registryCollections.categories}" />
+						</aon:selectOneMenu>									
+					</f:facet>
+				</aon:column>
+			</c:if>
+			 
+			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-nowrap">
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_fileupload_element}" />
 				</f:facet>

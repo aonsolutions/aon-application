@@ -241,6 +241,7 @@
 							<aon:panelTab label="#{registryBundle.registry_digital_certificates}">
 								<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">
 									<ui:param name="controller" value="#{companyCertificate}" />
+									<ui:param name="skipCategoryColumn" value="#{true}" />
 								</ui:include>
 							</aon:panelTab>
 						</c:if>
