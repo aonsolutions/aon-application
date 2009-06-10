@@ -2,6 +2,7 @@ package com.code.aon.ui.finance.controller;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -454,6 +455,10 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		Invoice invoice = (Invoice) getTo();
 		writeInvoiceXml(sw, invoice.getId());
 		return sw.toString();
+	}
+	
+	public InputStream getImage() throws IOException, ManagerBeanException{
+		return SaleInvoiceController.class.getResourceAsStream("/com/code/aon/ui/finance/report/barras.gif");
 	}
 	
 }
