@@ -45,7 +45,7 @@ public class BalanceDetail implements ITransferObject {
 
 	@Id
 	@GeneratedValue
-	@Column(nullable = false)
+	@Column(nullable = false, length=11)
 	public Integer getId() {
 		return id;
 	}
