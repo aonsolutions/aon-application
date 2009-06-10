@@ -36,11 +36,8 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.finance.Invoice;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
-import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -48,6 +45,7 @@ import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.InvoicePrintController;
+import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.AonFile;
@@ -56,6 +54,10 @@ import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.WebmailUtil;
 
 public class EmailUtilController implements ICollectionProvider, IFinanceMessages, IFinanceConstants {
+
+	private static final String SALE_INVOICE_REPORT = "saleInvoice";
+	
+	private static final String SALE_EINVOICE_REPORT = "saleEInvoice";
 
 	private static final Logger LOGGER = Logger.getLogger(InvoicePrintController.class.getName());
 	
@@ -112,8 +114,9 @@ public class EmailUtilController implements ICollectionProvider, IFinanceMessage
 		return company;
 	}
 
-	public String getEmailSubject( Invoice invoice ) {
-		String message = AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_EMAIL_SUBJECT);
+	public String getEmailSubject( Invoice invoice, boolean eInvoice ) {
+		String key = eInvoice ? FINANCE_EINVOICE_EMAIL_SUBJECT : FINANCE_INVOICE_EMAIL_SUBJECT; 
+		String message = AonUtil.getMessage(BUNDLE_KEY, key);
 		return MessageFormat.format(message, invoice.getReferenceCode() );
 	}
 
@@ -161,9 +164,10 @@ public class EmailUtilController implements ICollectionProvider, IFinanceMessage
 		return this.sender;
 	}
 	
-	public AonFile getInvoiceFile( String reporkey, String fileName ) throws IOException, ReportException {
+	public AonFile getInvoiceFile( String fileName, boolean eInvoice ) throws IOException, ReportException {
 		ReportManager report = new ReportManager();
 		report.setCollectionProvider(this);
+		String reporkey = eInvoice ? SALE_EINVOICE_REPORT : SALE_INVOICE_REPORT;
 		File file = File.createTempFile( reporkey, ".pdf" );
 		report.execute( file, reporkey);
 		AonFile aonFile = new AonFile();
@@ -172,35 +176,15 @@ public class EmailUtilController implements ICollectionProvider, IFinanceMessage
 		return aonFile;
 	}
 	
-	public boolean hasDigitalCertificate() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
-		Criteria criteria = new Criteria();
-		String type = bean.getFieldName( IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE );
-		criteria.addEqualExpression( type, RegistryAttachmentType.DIGITAL_CERTIFICATE );
-		String registry = bean.getFieldName( IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID );
-		criteria.addEqualExpression( registry, company.getId() );
-		int count = bean.getCount(criteria);
-		return count > 0;
-	}
-
 	public AonFile getDigitalCertificate() throws ManagerBeanException, IOException {
-		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
-		Criteria criteria = new Criteria();
-		String type = bean.getFieldName( IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE );
-		criteria.addEqualExpression( type, RegistryAttachmentType.DIGITAL_CERTIFICATE );
-		String registry = bean.getFieldName( IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID );
-		criteria.addEqualExpression( registry, company.getId() );		
-		List<ITransferObject> list = bean.getList(criteria);
-		if (! list.isEmpty() ) {
-			RegistryAttachment ra = (RegistryAttachment) list.get(0);
-			File file = File.createTempFile( ra.getDescription(), ".cer" );
-			FileUtils.writeByteArrayToFile(file, ra.getData());
-			AonFile aonFile = new AonFile();
-			aonFile.setFile(file);
-			aonFile.setFileName( ra.getDescription() );
-			return aonFile;
-		}
-		return null;
+		SaleInvoiceController invoiceController = (SaleInvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
+		RegistryAttachment ra = invoiceController.getDigitalCertificate();
+		File file = File.createTempFile( ra.getDescription(), ".cer" );
+		FileUtils.writeByteArrayToFile(file, ra.getData());
+		AonFile aonFile = new AonFile();
+		aonFile.setFile(file);
+		aonFile.setFileName( ra.getDescription() );
+		return aonFile;
 	}
 	
     private XMLWriter createWriter( File file ) throws IOException {
@@ -231,7 +215,7 @@ public class EmailUtilController implements ICollectionProvider, IFinanceMessage
         HibernateUtil.closeSession( factoryName );
 	}
 	
-	public AonFile getInvoiceXml() throws IOException, SAXException {
+	private AonFile getInvoiceXml() throws IOException, SAXException {
 		File file = File.createTempFile( "facturae", ".xml" );
 		writeInvoiceXml(file, Invoice.class.getName(), currentInvoice.getId());
 		AonFile aonFile = new AonFile();
@@ -240,7 +224,7 @@ public class EmailUtilController implements ICollectionProvider, IFinanceMessage
 		return aonFile;
 	}
 	
-	public void sendInvoice( Invoice invoice ) {
+	public void sendInvoice( Invoice invoice, boolean eInvoice ) {
 		try {
 			RegistryMedia email = invoice.getRegistry().getEmail();
 			if ( email == null) {
@@ -249,12 +233,12 @@ public class EmailUtilController implements ICollectionProvider, IFinanceMessage
 				AonUtil.addErrorMessage(message);				
 			} else {
 				Address to = new InternetAddress( email.getValue(), invoice.getRegistryName() );
-				String subject = getEmailSubject(invoice);
+				String subject = getEmailSubject(invoice, eInvoice);
 				String content = getEmailBody(invoice);
 				String name = "invoice_" + invoice.getSeries() + "-" + invoice.getNumber() + ".pdf";
 				setCurrentInvoice(invoice);
-				AonFile file = getInvoiceFile("saleInvoice", name);
-				if ( hasDigitalCertificate() ) {
+				AonFile file = getInvoiceFile(name, eInvoice);
+				if ( eInvoice ) {
 					AonFile dc = getDigitalCertificate();
 					AonFile xml = getInvoiceXml();
 					getEmailSender().sendMessage(to, subject, content, MimeType.MIME_HTML, file, dc, xml );

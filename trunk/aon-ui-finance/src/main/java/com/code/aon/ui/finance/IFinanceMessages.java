@@ -24,6 +24,7 @@ public interface IFinanceMessages {
 	String FINANCE_SEND_EMAIL_TO = "finance_send_email_to";
 	String FINANCE_REGISTRY_WITHOUT_EMAIL = "finance_registry_without_email";
 	String FINANCE_INVOICE_EMAIL_SUBJECT = "finance_invoice_email_subject";
+	String FINANCE_EINVOICE_EMAIL_SUBJECT = "finance_einvoice_email_subject";
 	String FINANCE_INVOICE_EMAIL_BODY_HEADER = "finance_invoice_email_body_header";
 	String FINANCE_INVOICE_EMAIL_BODY = "finance_invoice_email_body";
 	String FINANCE_INVOICE_EMAIL_BODY_FOOTER = "finance_invoice_email_body_footer";
