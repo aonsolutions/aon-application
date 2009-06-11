@@ -121,8 +121,6 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean(GENERATOR_STATUS);
 		status.onInit(event);
 		
-		VelocityUtil vu = new VelocityUtil();
-		
 		BufferedWriter buff = null;
 		List<ITransferObject> list;
 		List<ITransferObject> listBulletinArticle;
@@ -176,17 +174,15 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 					++i;
 				}
 
-				CommonGenerator.getCommonGenerator().init(vu);
-				vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
-				vu.initialize();
+				VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
 				
 				String template = ControllerUtil.getCurrentVmTemplatePath() 
 					+ "/" 
 					+ Templates.BULLETIN.getTemplateName();
 			    File f = new File(template);
 			    if (!f.exists()){
-			    	VelocityUtil.addMessage("No se ha encontrado plantilla " 
-			    			+ Templates.BULLETIN.getTemplateName(), VelocityUtil.ERROR);
+			    	status.error("No se ha encontrado plantilla " 
+			    			+ Templates.BULLETIN.getTemplateName());
 			    }else{
 			    	StringWriter writer = new StringWriter();
 			    	buff = new BufferedWriter(writer);
@@ -198,21 +194,21 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 			        vu.remove("content");
 			        vu.remove("title");
 			        
-			        VelocityUtil.addMessage("Enviando mails...",VelocityUtil.INFO);
+			        status.info("Enviando mails...");
 
 					Emailer emailer = new Emailer();
 					emailer.sendEmail(emails,
 							bulletinDetail.getTitle(),
 							writer.toString());
 					
-					VelocityUtil.addMessage("Mails enviados",VelocityUtil.INFO);
+					status.info("Mails enviados");
 
 			    }
 			}
 		} catch (AuthenticationFailedException e) {
-			VelocityUtil.addMessage("Error de autentificacion.",VelocityUtil.ERROR);
+			status.error("Error de autentificacion.");
 		} catch (Throwable th) {
-			VelocityUtil.addMessage(th.getMessage(),VelocityUtil.ERROR);
+			status.error(th.getMessage());
 		}finally {
 			article_content = null;
 			list = null;

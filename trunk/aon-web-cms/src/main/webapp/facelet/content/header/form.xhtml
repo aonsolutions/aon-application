@@ -123,6 +123,34 @@
 										id="headerDetail_content" 
 										value="#{headers.toI18n.content}" />
 								</aon:div>
+								
+								<aon:outputLabel 
+									value="#{appBundle.cms_image}" />
+								<aon:panelGroup id="thumbnail_preview">
+									<aon:graphicImage styleClass="aon-padding aon-border"
+										url="#{headers.toI18n.image}.thumbnail" 
+										alt="#{headers.toI18n.image}"/>										
+									<ui:include src="/facelet/content/utils/image_modal.xhtml">
+										<ui:param name="modalPanelName" value="mp" />
+										<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+										<ui:param name="listenerBean" value="#{headers}" />
+										<ui:param name="reRender" value="thumbnail_preview" />
+										<ui:param name="thumbnail" value="#{false}" />
+									</ui:include>
+					                <aon:commandLink style="padding:2px"
+					                	immediate="#{true}"
+					                	reRender="thumbnail_preview"
+					                    actionListener="#{headers.onDelImage}">
+										<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}"  alt="#{bundle.aon_remove}" />
+					        		</aon:commandLink>
+								</aon:panelGroup>
+	
+								<aon:outputLabel for="Header_imageAlt"
+									value="#{appBundle.cms_image_alt}" />
+								<aon:inputText id="Header_imageAlt"
+									size="64" maxlength="64"
+									value="#{headers.toI18n.alt}" />
+								
 							</aon:panelGrid>
 						</aon:panelTab>
 	
@@ -146,59 +174,6 @@
 								<aon:inputTextarea id="headerDetail_javascript"
 									cols="60" rows="20" 
 									value="#{headers.to.javascript}"/>
-							</aon:panelGrid>
-						</aon:panelTab>
-	
-						<aon:panelTab id="image"
-							label="#{appBundle.header_image}">
-							<aon:panelGrid columns="2" dir="true"
-								columnClasses="aon-panelGrid-odd,aon-panelGrid-even aon-vertical-align-top">
-								<aon:outputLabel for="alt"
-									value="#{appBundle.header_alt}" />
-								<aon:inputText id="alt"
-									size="64" maxlength="64"
-									value="#{headers.toI18n.alt}" />
-								
-								<aon:outputLabel 
-									value="#{appBundle.header_image}" />
-								<aon:panelGroup id="thumbnail_preview">
-									<aon:graphicImage 
-										url="#{headers.toI18n.image}.thumbnail" 
-										alt="#{headers.toI18n.image}"/>
-								</aon:panelGroup>
-								
-							    <rich:tree style="width:300px" switchType="ajax" stateAdvisor="#{treeStateAdvisor}">
-							        <rich:recursiveTreeNodesAdaptor roots="#{fileSystemBean.imageRoots}" 
-							        	var="item" 
-							        	nodes="#{item.nodes}">
-										<rich:treeNode>
-											<aon:commandLink action="#{item.onSelectFolder}" value="#{item}" />
-										</rich:treeNode>
-							        </rich:recursiveTreeNodesAdaptor>
-							    </rich:tree>
-								<aon:panelGroup>
-									<aon:outputLabel value="#{gallery.currentRelativePath}" />
-						            <aon:div styleClass="aon-padding">
-										<rich:dataGrid var="item" value="#{gallery.model}" columns="6">
-											<aon:div style="width:125px;text-align:center">
-							            		<aon:div style="width:114px;height:114px;overflow:hidden;" styleClass="aon-border">
-									                <aon:commandLink styleClass="aon-padding"
-									                	immediate="true"
-									                	reRender="thumbnail_preview"
-									                    actionListener="#{headers.onSelectImage}"
-									                    value="">
-									            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}"/>
-									        		</aon:commandLink>									            	
-							            		</aon:div>
-							            		<aon:div style="width:112px;overflow:hidden;">
-							            			<aon:outputText value="#{item.name}"/>
-							            		</aon:div>
-											</aon:div>
-										</rich:dataGrid>
-									</aon:div>
-									
-								</aon:panelGroup>
-    
 							</aon:panelGrid>
 						</aon:panelTab>
 						

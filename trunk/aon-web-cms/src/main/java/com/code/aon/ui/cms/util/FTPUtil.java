@@ -55,8 +55,8 @@ public class FTPUtil implements ICMSConstants {
 			String password
 			) throws IOException {
 		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean(GENERATOR_STATUS);
-		status.addMessage("Publicando via FTP");
-		status.addMessage("Conectando....");
+		status.info("Publicando via FTP");
+		status.info("Conectando....");
 		
 		boolean error = true;
 		String destinationFolder = dest;
@@ -66,46 +66,46 @@ public class FTPUtil implements ICMSConstants {
 		try {
 			ftp.connect(server);
 			if (ftp.getReplyCode() >= 500) {
-				status.addErrorMessage(ftp.getReplyString());
+				status.error(ftp.getReplyString());
 				throw new AonException();
 			} else {
-				status.addMessage(ftp.getReplyString());
+				status.info(ftp.getReplyString());
 			}
-			status.addMessage("Validando....");
+			status.info("Validando....");
 			ftp.login(user, password);
 			if (ftp.getReplyCode() >= 500) {
-				status.addErrorMessage(ftp.getReplyString());
+				status.error(ftp.getReplyString());
 				throw new AonException();
 			} else {
-				status.addMessage(ftp.getReplyString());
+				status.info(ftp.getReplyString());
 			}
 
-			status.addMessage("Conectado.");
+			status.info("Conectado.");
 			ftp.changeWorkingDirectory(destinationFolder);
-			status.addMessage(ftp.getReplyString());
-			status.addMessage(ftp.getSystemName());
+			status.info(ftp.getReplyString());
+			status.info(ftp.getSystemName());
 			ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
 			if (ftp.isConnected()) {
 				FTPFile files[] = ftp.listFiles();
 				if (files.length > 0) {
 					if (!files[0].hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION) ) {
-						status.addMessage("Error de escritura en el servidor.");
+						status.info("Error de escritura en el servidor.");
 					}
 				}
 				ftpDir(sourceFolder, ftp, destinationFolder);
-				status.addMessage("Publicacion finalizada.");
+				status.info("Publicacion finalizada.");
 			} else {
-				status.addMessage("No hubo conexion con el servidor.");
+				status.info("No hubo conexion con el servidor.");
 				error = false;
 			}
 		} catch (Throwable th) {
-			status.addErrorMessage("FTP Error. Se produjo un error durante la conexion al FTP, si el error persite consulte con su administrador.");
+			status.error("FTP Error. Se produjo un error durante la conexion al FTP, si el error persite consulte con su administrador.");
 			error = false;
 		} finally {
 			ftp.logout();
-			status.addMessage("Logout.");
+			status.info("Logout.");
 			ftp.disconnect();
-			status.addMessage("Desconectado.");
+			status.info("Desconectado.");
 			return error;
 		}
 	}
@@ -120,7 +120,7 @@ public class FTPUtil implements ICMSConstants {
 			for (int i = 0; i < dirList.length; i++) {
 				File f = new File(ftpDir, dirList[i]);
 				if (!f.getName().equals(config.getDomain() + ".zip")) {
-					status.addMessage("Subiendo archivo: /" + f.getName());
+					status.info("Subiendo archivo: /" + f.getName());
 					if (f.isDirectory()) {
 						if (isValidFolder(f.getName())) { 
 							fc.makeDirectory(breadCrum + "/" + f.getName());

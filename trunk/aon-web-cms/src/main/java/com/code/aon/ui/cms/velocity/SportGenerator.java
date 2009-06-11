@@ -17,8 +17,8 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.controller.GeneratorConfigController;
-import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.attribute.SportCategoryHandler;
 import com.code.aon.ui.cms.velocity.attribute.SportClubHandler;
@@ -27,12 +27,18 @@ import com.code.aon.ui.cms.velocity.attribute.SportPlayerHandler;
 import com.code.aon.ui.cms.velocity.attribute.SportPositionHandler;
 
 public class SportGenerator extends Generator {
+	
+	public static String CATEGORY = "category_";
+	
+	public static String CLUB = "club_";
+	
+	public static String PLAYER = "player_";
+	
+	public static String MAIN_PAGE = "index";
 
 	public static void generate() {
-		VelocityUtil vu = new VelocityUtil();
-		CommonGenerator.getCommonGenerator().init(vu);
-		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
-		vu.initialize();
+		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
+		IGeneratorLogger logger = CommonGenerator.getLogger();
 		List<ITransferObject> categoryDetailList;
 		List<ITransferObject> clubList;
 		List<ITransferObject> positionList;
@@ -103,13 +109,13 @@ public class SportGenerator extends Generator {
 			for (Iterator iterCat = sportCategoryHandlerList.iterator(); iterCat.hasNext();) {
 				SportCategoryHandler categoryHandler = (SportCategoryHandler) iterCat.next();
 				vu.put("category", categoryHandler);
-				VelocityUtil.addMessage(" Generando category " + categoryHandler.getAlias() + ".", VelocityUtil.INFO);
+				logger.info(" Generando category " + categoryHandler.getAlias() + ".");
 				generate(vu, Templates.SPORT, CATEGORY + categoryHandler.getAlias());
 				
 				for (Iterator iterClub = categoryHandler.getClubs().iterator(); iterClub.hasNext();) {
 					SportClubHandler clubHandler = (SportClubHandler) iterClub.next();
 					vu.put("club", clubHandler);
-					VelocityUtil.addMessage(" Generando club " + clubHandler.getAlias() + ".", VelocityUtil.INFO);
+					logger.info(" Generando club " + clubHandler.getAlias() + ".");
 					generate(vu, Templates.SPORT, CLUB + clubHandler.getAlias());
 
 					for (Iterator iterPos = clubHandler.getPositions().iterator(); iterPos.hasNext();) {
@@ -117,7 +123,7 @@ public class SportGenerator extends Generator {
 						for (Iterator iterPlayer = posHandler.getPlayers().iterator(); iterPlayer.hasNext();) {
 							SportPlayerHandler playerHandler = (SportPlayerHandler) iterPlayer.next();
 							vu.put("player", playerHandler);
-							VelocityUtil.addMessage(" Generando player " + playerHandler.getAlias() + ".", VelocityUtil.INFO);
+							logger.info(" Generando player " + playerHandler.getAlias() + ".");
 							generate(vu, Templates.SPORT, PLAYER + playerHandler.getAlias());
 							vu.remove("player");
 						}
@@ -126,7 +132,7 @@ public class SportGenerator extends Generator {
 				}
 				
 				
-				VelocityUtil.addMessage(" Generando category index.", VelocityUtil.INFO);
+				logger.info(" Generando category index.");
 				vu.put("categoryList",sportCategoryHandlerList);
 				generate(vu, Templates.SPORT, MAIN_PAGE );
 				vu.remove("categoryList");
@@ -134,22 +140,14 @@ public class SportGenerator extends Generator {
 				vu.remove("category");
 			}
 		} catch (Throwable th) {
-			VelocityUtil.addMessage(th.getMessage(), VelocityUtil.ERROR);
+			logger.error(th.getMessage());
 		} finally{
 			categoryDetailList = null;
 			clubList = null;
 			positionList = null;
 			playerList = null;
 		}
-		vu.finalize();
 		vu = null;
 	}
-	
-	public static String CATEGORY = "category_";
-	
-	public static String CLUB = "club_";
-	
-	public static String PLAYER = "player_";
-	
-	public static String MAIN_PAGE = "index";
+
 }

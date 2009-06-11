@@ -31,9 +31,8 @@ public class Generator {
 	        vu.generate(template, page);
 	        vu.remove("current_page");
 	        vu.remove("content");
-	    }
-	    else {
-	    	VelocityUtil.addMessage("No se ha encontrado plantilla " + type.getTemplateName(), VelocityUtil.ERROR);
+	    } else {
+	    	CommonGenerator.getLogger().error("No se ha encontrado plantilla " + type.getTemplateName());
 	    }
 	}
 

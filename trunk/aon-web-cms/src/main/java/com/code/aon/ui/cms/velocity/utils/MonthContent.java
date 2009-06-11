@@ -19,7 +19,7 @@ public class MonthContent {
 	
 	private Object[] values;
 	
-	DiaryHandler[][] diary;
+	private DiaryHandler[][] diary;
 
 	public MonthContent(int month, int year){
 		this.month = month;

@@ -10,7 +10,7 @@ public class GeneratorApplicationController implements ICMSConstants {
 	public void onGenerate(ActionEvent event) throws ManagerBeanException {
 		GeneratorController generator = (GeneratorController)AonUtil.getRegisteredBean(GENERATOR);
 		generator.getStatus().onInit(event);
-		generator.getStatus().addMessage("ALL PROCESS WORKING...PLEASE WAIT TO START.");
+		generator.getStatus().info("ALL PROCESS WORKING...PLEASE WAIT TO START.");
         this.limitar();
         this.incCuenta();
         this.process(generator, event);

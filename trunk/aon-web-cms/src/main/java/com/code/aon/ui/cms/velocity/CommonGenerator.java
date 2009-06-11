@@ -31,23 +31,30 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.Constants;
+import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.controller.GeneratorConfigController;
+import com.code.aon.ui.cms.controller.GeneratorStatusController;
+import com.code.aon.ui.cms.controller.ICMSConstants;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.attribute.FooterHandler;
 import com.code.aon.ui.cms.velocity.attribute.HeaderHandler;
 import com.code.aon.ui.cms.velocity.attribute.LanguageHandler;
 import com.code.aon.ui.cms.velocity.attribute.SidebarOptionHandler;
+import com.code.aon.ui.util.AonUtil;
 
-public class CommonGenerator extends Generator {
+public class CommonGenerator extends Generator implements ICMSConstants {
 
 	private static final Logger LOGGER = Logger.getLogger(CommonGenerator.class.getName());
 	
 	private Section previousSection = null;
+	
+	private IGeneratorLogger logger;
 
     static private CommonGenerator singleton = null;
 
     private CommonGenerator() { 
+    	logger = (GeneratorStatusController) AonUtil.getRegisteredBean(GENERATOR_STATUS);
     }
 
     static public CommonGenerator getCommonGenerator() {
@@ -57,8 +64,21 @@ public class CommonGenerator extends Generator {
         }
         return singleton;
     }
+    
+	public VelocityUtil initVelocityUtil(){
+		VelocityUtil vu = new VelocityUtil();
+		vu.setLogger(logger);
+		CommonGenerator.getCommonGenerator().init(vu);
+		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
+		vu.initialize();
+		return vu;
+	}    
+    
+    public static IGeneratorLogger getLogger() {
+		return getCommonGenerator().logger;
+	}
 
-    public void init(VelocityUtil vu) {
+	private void init(VelocityUtil vu) {
     	this.previousSection = null;
     	
 		ConfigDetail configDetail = ControllerUtil.getCurrentConfigDetail();
@@ -94,8 +114,8 @@ public class CommonGenerator extends Generator {
 			section = GeneratorConfigController.defaultSection();
 		}
 		
-		VelocityUtil.addMessage(". . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ." +
-								" . . . . . . . . . . . . . . Cargando sección... ["+section.getAlias()+"]", VelocityUtil.INFO);
+		logger.info(". . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ." +
+								" . . . . . . . . . . . . . . Cargando sección... ["+section.getAlias()+"]");
 		
 		if (previousSection==null ||
 				section.getId().intValue()!=previousSection.getId().intValue()){
@@ -201,7 +221,7 @@ public class CommonGenerator extends Generator {
 				vu.put("bundle", bundle);
 			}
 			catch (MissingResourceException mre) {
-				VelocityUtil.addMessage(" - No se ha encontrado fichero de mensajes para el idioma actual.", VelocityUtil.WARN);
+				logger.warning(" - No se ha encontrado fichero de mensajes para el idioma actual.");
 			}
 		}
 	}
@@ -300,10 +320,7 @@ public class CommonGenerator extends Generator {
 	}
 	
 	public void generateLanguagePage() {
-		VelocityUtil vu = new VelocityUtil();
-		CommonGenerator.getCommonGenerator().init(vu);
-		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
-		vu.initialize();
+		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();		
         vu.put("every_languages", getActiveLanguages());
         vu.put("default_language", getDefaultLanguage());
         vu.put("current_language", getCurrentLanguage());
@@ -314,15 +331,11 @@ public class CommonGenerator extends Generator {
 		if (!f.exists()) f.mkdirs();
 		generate(vu, Templates.LANGUAGE);
 		
-		vu.finalize();
 		vu = null;
 	}
 
 	public void generateEmailSendPage() {
-		VelocityUtil vu = new VelocityUtil();
-		CommonGenerator.getCommonGenerator().init(vu);
-		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
-		vu.initialize();
+		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();		
 		File f = new File(ControllerUtil.getPreviewPath());
 		if (!f.exists()) f.mkdirs();
 		f = new File(ControllerUtil.getLanguagePreviewPath());
@@ -342,15 +355,11 @@ public class CommonGenerator extends Generator {
 		vu.remove("password");
 		vu.remove("from");
 		vu.remove("name_from");
-		vu.finalize();
 		vu = null;
 	}
 
 	public void generateSearchPage() {
-		VelocityUtil vu = new VelocityUtil();
-		CommonGenerator.getCommonGenerator().init(vu);
-		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
-		vu.initialize();
+		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();		
 		File f = new File(ControllerUtil.getPreviewPath());
 		if (!f.exists()) f.mkdirs();
 		f = new File(ControllerUtil.getLanguagePreviewPath());
@@ -360,15 +369,11 @@ public class CommonGenerator extends Generator {
 		} catch (ManagerBeanException e) {
 		}
 		generate(vu, Templates.SEARCH);
-		vu.finalize();
 		vu = null;
 	}
 
 	public void generateCaptchaPage() {
-		VelocityUtil vu = new VelocityUtil();
-		CommonGenerator.getCommonGenerator().init(vu);
-		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
-		vu.initialize();
+		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();		
 
 		File f = new File(ControllerUtil.getPreviewPath());
 		if (!f.exists()) f.mkdirs();
@@ -376,7 +381,6 @@ public class CommonGenerator extends Generator {
 		if (!f.exists()) f.mkdirs();
 		generate(vu, Templates.CAPTCHA);
 		
-		vu.finalize();
 		vu = null;
 	}
 

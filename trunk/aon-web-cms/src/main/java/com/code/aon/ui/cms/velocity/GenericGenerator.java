@@ -11,6 +11,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.attribute.GenericPageHandler;
@@ -22,10 +23,8 @@ public class GenericGenerator extends Generator {
 	}
 
 	public static void generate(GenericPage selectedPage) {
-		VelocityUtil vu = new VelocityUtil();
-		CommonGenerator.getCommonGenerator().init(vu);
-		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
-		vu.initialize();
+		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
+		IGeneratorLogger logger = CommonGenerator.getLogger();
 		
 		List<ITransferObject> genericPageList;
 		List<ITransferObject> genericPageDetailList;
@@ -48,7 +47,7 @@ public class GenericGenerator extends Generator {
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.GENERIC_PAGE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				genericPageDetailList = (List<ITransferObject>)bean.getList(criteria);
 				if (genericPageDetailList.isEmpty()){
-					VelocityUtil.addMessage("La pagina generica " + gp.getAlias() + " no esta internacionalizada.", VelocityUtil.WARN);
+					logger.warning("La pagina generica " + gp.getAlias() + " no esta internacionalizada.");
 				}else{
 					gpd = (GenericPageDetail)genericPageDetailList.get(0);
 
@@ -60,7 +59,7 @@ public class GenericGenerator extends Generator {
 					else vu.remove("description");
 					if (gph.getKeywords() != null && !gph.getKeywords().equals("")) vu.put("keywords", gph.getKeywords());
 					else vu.remove("keywords");
-					VelocityUtil.addMessage(" Generando Página Genérica '" + gpd.getGeneric_page().getAlias() + "'.", VelocityUtil.INFO);
+					logger.info(" Generando Página Genérica '" + gpd.getGeneric_page().getAlias() + "'.");
 					CommonGenerator.getCommonGenerator().chargeContext(vu, gpd.getGeneric_page().getSection());
 					generate(vu, Templates.GENERIC, gpd.getGeneric_page().getAlias());
 					vu.remove("generic");
@@ -69,25 +68,25 @@ public class GenericGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);
+			logger.error(e.getMessage());
 		} finally {
 			genericPageList = null;
 			genericPageDetailList = null;
 		}
-		vu.finalize();
 		vu = null;
 	}
 
 	public static Object getGenericHandler(Integer ident) {
 		List<ITransferObject> genericPageList;
 		List<ITransferObject> genericPageDetailList;
+		IGeneratorLogger logger = CommonGenerator.getLogger();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(GenericPage.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.GENERIC_PAGE_ID), ident);
 			genericPageList = (List<ITransferObject>)bean.getList(criteria);
 			if (genericPageList.isEmpty()){
-				VelocityUtil.addMessage("PAGINA GENERICA "+ident+" REFERENCIADA NO EXISTE !!!", VelocityUtil.WARN);
+				logger.warning("PAGINA GENERICA "+ident+" REFERENCIADA NO EXISTE !!!");
 				return null;
 			}
 			GenericPage gp = (GenericPage)genericPageList.get(0);
@@ -98,7 +97,7 @@ public class GenericGenerator extends Generator {
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.GENERIC_PAGE_DETAIL_GENERIC_PAGE_ID), ident);
 				genericPageDetailList = (List<ITransferObject>)beanDetail.getList(criteria);
 				if (genericPageDetailList.isEmpty()){
-					VelocityUtil.addMessage("La pagina generica " + gp.getAlias() + " no esta internacionalizada.", VelocityUtil.WARN);
+					logger.warning("La pagina generica " + gp.getAlias() + " no esta internacionalizada.");
 				}else{
 					GenericPageDetail gpd = (GenericPageDetail)genericPageDetailList.get(0);
 					GenericPageHandler gph = new GenericPageHandler(gpd);
@@ -106,7 +105,7 @@ public class GenericGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);
+			logger.error(e.getMessage());
 		} finally {
 			genericPageList = null;
 			genericPageDetailList = null;

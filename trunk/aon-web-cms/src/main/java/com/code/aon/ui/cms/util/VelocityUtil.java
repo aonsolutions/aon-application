@@ -15,9 +15,8 @@ import org.apache.velocity.app.VelocityEngine;
 
 import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.ui.cms.Constants;
-import com.code.aon.ui.cms.controller.GeneratorStatusController;
+import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.controller.ICMSConstants;
-import com.code.aon.ui.util.AonUtil;
 
 public class VelocityUtil extends VelocityEngine implements Constants, ICMSConstants {
     
@@ -31,13 +30,16 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 
 	private String template_path;
 	
+	private IGeneratorLogger logger;
+	
 	private VelocityContext context = new VelocityContext();
 	
 	public void setTemplate_path(String template_path) {
 		this.template_path = template_path;
 		File f = new File(template_path + "/" + Templates.INDEX.getTemplateName());
-		if (!f.exists()) 
-			addMessage("No se han encontrado plantillas en '" + template_path + "'", ERROR);
+		if (!f.exists()) { 
+			logger.error("No se han encontrado plantillas en '" + template_path + "'");
+		}
 	}
 	
 	public VelocityContext getContext() {
@@ -47,8 +49,12 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 	public void setContext(VelocityContext context) {
 		this.context = context;
 	}
+	
+    public void setLogger(IGeneratorLogger logger) {
+		this.logger = logger;
+	}
 
-    public void initialize() {
+	public void initialize() {
         this.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, template_path + "/");
         this.setProperty(Velocity.INPUT_ENCODING, VELOCITY_FILE_ENCODING);
         this.setProperty(Velocity.OUTPUT_ENCODING, VELOCITY_FILE_ENCODING);
@@ -60,28 +66,6 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
         }
     }
     
-    public void finalize() {
-    }
-
-	public static void addMessage(String msg, int type) {
-		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean(GENERATOR_STATUS);
-		if (type == INFO){
-			//AonUtil.addInfoMessage(" INFO: " + msg);
-			status.addMessage(" INFO: " + msg);
-		}else if (type == ERROR){
-			//AonUtil.addErrorMessage(" ERROR: " + msg);
-			//status.addMessage(" ERROR: " + msg);
-			status.addErrorMessage(" ******* ERROR: " + msg + "***********");
-		}else if (type == WARN){
-			//AonUtil.addWarningMessage(" WARNING: " + msg);
-			//status.addMessage(" ******* WARNING: " + msg + "***********");
-			status.addErrorMessage(" ******* WARNING: " + msg + "***********");
-		}else{
-			//AonUtil.addFatalMessage(msg);
-			status.addMessage(msg);
-		}
-	}
-
 	public void put(String key, Object value) {
 		this.context.put(key, value);
 	}
@@ -110,7 +94,7 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 	        error = generate(template, writer, pageShortName);
 		} catch(Throwable th) {
 		    error = true;
-			addMessage("Error al generar el fichero '" + pageShortName + "' </BR> " + th.getMessage() + "", ERROR);
+		    logger.error("Error al generar el fichero '" + pageShortName + "' </BR> " + th.getMessage() + "");
 			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		} finally {
 	        try {
@@ -137,9 +121,8 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
         try {
 			if (!fi.exists()) {
 				error = true;
-				addMessage("Fichero de plantilla '" + template + "' no encontrado.", ERROR);
-			}
-			else {
+				logger.error("Fichero de plantilla '" + template + "' no encontrado.");
+			} else {
                 fr = new FileReader(fi);
 				reader = new BufferedReader(fr);
 			}
@@ -149,17 +132,17 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 
                     this.evaluate(context, writer, "¡AON-CMS!", reader);
 					writer.flush();
-					addMessage("Página " + pageShortName + " generada con exito", INFO);
+					logger.info("Página " + pageShortName + " generada con exito");
 				} catch(Throwable th) {
 				    error = true;
-					addMessage("Error al evaluar el contexto en el fichero '" + pageShortName + "' <BR/>" + th.getMessage(), ERROR);
+				    logger.error("Error al evaluar el contexto en el fichero '" + pageShortName + "' <BR/>" + th.getMessage());
 				}
 			} else {
-				addMessage("No se pudo generar el fichero '" + pageShortName + "'", ERROR);
+				logger.error("No se pudo generar el fichero '" + pageShortName + "'");
 			}
 		} catch(Throwable th) {
 		    error = true;
-			addMessage("Error al generar el fichero '" + pageShortName + "' </BR> " + th.getMessage() + "", ERROR);
+		    logger.error("Error al generar el fichero '" + pageShortName + "' </BR> " + th.getMessage());
 			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		} finally {
 			IOUtils.closeQuietly(reader);
