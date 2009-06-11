@@ -41,7 +41,14 @@
 						<f:param name="reportKey" value="profitAndLossMonthly" />
 						<f:param name="outputFormat" value="PDF" />
 					</h:commandLink>
-										
+					<h:commandLink target="_blank"
+						styleClass="aon-finding-toolbar-item aon-icon-excel"
+						value="#{accountingBundle.accounting_monthly_report}"
+						action="#{report.onExecute}">
+						<f:param name="reportKey" value="profitAndLossMonthly" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</h:commandLink>
+					
 					<h:commandLink target="_blank"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						value="#{accountingBundle.accounting_profit_and_loss_module_expense}"

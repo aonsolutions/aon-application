@@ -210,6 +210,20 @@
 			<param id="period" value="#{journalReport.getPeriod}" />
 		</params>
 	</report>
+	<report id="journalBookXls" description="Listado Diario para Excel de Apuntes">
+		<template path="/com/code/aon/ui/accounting/report/journalBookXls.jasper"/>
+		<bean key="com.code.aon.accounting.AccountEntryDetail" />
+		<criteria provider="#{journalReport}"/>
+		<fetch-mode paginated="true" page-count="5000" virtualizer-max-size="1000" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="fromDate" value="#{journalReport.getFromDate}" />
+			<param id="toDate" value="#{journalReport.getToDate}" />
+			<param id="date" value="#{journalReport.getDate}" />
+			<param id="period" value="#{journalReport.getPeriod}" />
+		</params>
+	</report>
 	
 	<!--  BALANCES OFICIALES  -->
 	<report id="officialBalance" description="Official Balance Report">
