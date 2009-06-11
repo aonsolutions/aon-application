@@ -2,27 +2,35 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:div style="margin-top: 10px;">
-		<aon:editDataTable id="balanceDetailData"
-			rendered="#{!balance.new}"
+		<aon:editDataTable id="balanceDetailData" rendered="#{!balance.new}"
 			value="#{balanceDetail.model}" var="to" rows="20"
 			columnClasses="aon-editDataTable-iconColumn
-				, aon-editDataTable-numberColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,
-				aon-editDataTable-numberColumn,aon-editDataTable-iconColumn	,aon-editDataTable-iconColumn
-				,aon-editDataTable-iconColumn,aon-editDataTable-iconColumn,aon-editDataTable-iconColumn
+				,aon-editDataTable-iconColumn aon-width-40
+				,aon-editDataTable-textColumn aon-width-100
+				,aon-editDataTable-textColumn aon-width-400
+				,aon-editDataTable-textColumn aon-width-auto
+				,aon-editDataTable-iconColumn aon-width-60
+				,aon-editDataTable-iconColumn aon-width-60
+				,aon-editDataTable-iconColumn aon-width-60
+				,aon-editDataTable-iconColumn aon-width-60
+				,aon-editDataTable-iconColumn aon-width-60
 				,aon-editDataTable-buttonsColumn">
-
-			<aon:rowSelector toggleOnClick="#{balanceDetail.to == null}"
-				actionListener="#{balanceDetail.onSelect}" />
 
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText value="&#160;" />
 				</f:facet>
-				<aon:outputText value="&#160;" />
+				<aon:commandButton id="balanceDetailTable-select"
+					actionListener="#{balanceDetail.onSelect}"
+					rendered="#{to!=accountEntryDetail.to}"
+					reRender="#{balanceDetailData}"
+					styleClass="aon-editDataTable-button aon-icon-rowSelector" />
 				<f:facet name="footer">
 					<aon:div>
 						<aon:commandButton alt="[#{bundle.aon_reset}]"
@@ -35,14 +43,34 @@
 				</f:facet>
 			</aon:column>
 
-				
-		 <aon:column>
+			<aon:column styleClass="aon-editDataTable-iconColumn">
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:div styleClass="aon-nowrap" rendered="#{to!=balanceDetail.to}">
+					<aon:graphicImage url="/css/images/aon-icon/aon-arrow-up.gif"
+						style="cursor:pointer" rendered="#{to.sortKey != 0}">
+						<a4j:support event="onclick"
+							actionListener="#{balanceDetail.onMoveUp}"
+							reRender="balanceDetailData" />
+					</aon:graphicImage>
+					<aon:graphicImage url="/css/images/aon-icon/aon-arrow-down.gif"
+						style="cursor:pointer"
+						rendered="#{to.sortKey &lt; (balanceDetail.model.rowCount-1)}">
+						<a4j:support event="onclick"
+							actionListener="#{balanceDetail.onMoveDown}"
+							reRender="balanceDetailData" />
+					</aon:graphicImage>
+				</aon:div>
+			</aon:column>
+
+
+			<aon:column>
 				<f:facet name="header">
 					<aon:outputText value="#{accountingBundle.accounting_balance_cdg}" />
 				</f:facet>
-				<aon:outputText value="#{to.code}" rendered="#{to!=balanceDetail.to}">
-
-				</aon:outputText>
+				<aon:outputText value="#{to.code}"
+					rendered="#{to!=balanceDetail.to}" />
 				<aon:inputText styleClass="aon-form-input-text"
 					rendered="#{to==balanceDetail.to}" value="#{balanceDetail.to.code}"
 					maxlength="16" size="10" />
@@ -55,9 +83,11 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{accountingBundle.accounting_balance_detail_desc}" />
+					<aon:outputText
+						value="#{accountingBundle.accounting_balance_detail_desc}" />
 				</f:facet>
 				<aon:outputText value="#{to.description}"
+					style="margin-left: #{(to.level-1)/2}em;#{to.title?'font-weight:bold;':''}#{to.internalCalculation?'font-style:italic;':''}"
 					rendered="#{to!=balanceDetail.to}">
 					<f:convertNumber minFractionDigits="2" />
 				</aon:outputText>
@@ -73,43 +103,35 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{accountingBundle.accounting_balance_detail_accounts}" />
+					<aon:outputText
+						value="#{accountingBundle.accounting_balance_detail_accounts}" />
 				</f:facet>
 				<aon:outputText value="#{to.accounts}"
 					rendered="#{to!=balanceDetail.to}">
 					<aon:abbreviateConverter maxWidth="50" />
 				</aon:outputText>
 				<h:inputTextarea styleClass="aon-form-input-text"
-					rendered="#{to==balanceDetail.to}"
-					value="#{balanceDetail.to.accounts}" maxlength="100" size="20" />
+					rendered="#{to==balanceDetail.to}" cols="50" rows="3" 
+					value="#{balanceDetail.to.accounts}" maxlength="100"  />
 				<f:facet name="footer">
 					<h:inputTextarea styleClass="aon-form-input-text"
-						rendered="#{balanceDetail.new}"
-						value="#{balanceDetail.to.accounts}" maxlength="100" size="20" />
+						rendered="#{balanceDetail.new}" cols="50" rows="3"
+						value="#{balanceDetail.to.accounts}" maxlength="100" />
 				</f:facet>
 			</aon:column>
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{accountingBundle.accounting_balance_detail_sortkey}"/>
-				</f:facet>
-				<aon:outputText value="#{to.sortKey}"
-					rendered="#{to!=balanceDetail.to}">
-				
-				</aon:outputText>
-				<aon:inputText styleClass="aon-form-input-text"
-					rendered="#{to==balanceDetail.to}"
-					value="#{balanceDetail.to.sortKey}" maxlength="2" size="4" />
-				<f:facet name="footer">
-					<aon:inputText styleClass="aon-form-input-text"
-						rendered="#{balanceDetail.new}" value="#{balanceDetail.to.sortKey}"
-						maxlength="2" size="4" />
-				</f:facet>
-			</aon:column>
-
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{accountingBundle.accounting_balance_detail_title}" />
+					<aon:div>
+						<aon:outputText
+							value="#{accountingBundle.accounting_balance_detail_title}">
+							<aon:abbreviateConverter maxWidth="4" />
+						</aon:outputText>
+						<rich:toolTip
+							value="#{accountingBundle.accounting_balance_detail_title}"
+							hideEvent="onmouseout" showDelay="100">
+						</rich:toolTip>
+					</aon:div>
 				</f:facet>
 				<aon:outputText value="&#160;"
 					styleClass="#{(to.title)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
@@ -121,10 +143,19 @@
 						value="#{balanceDetail.to.title}" />
 				</f:facet>
 			</aon:column>
-			
-			  		<aon:column>
+
+			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{accountingBundle.accounting_balance_detail_calculation}" />
+					<aon:div>
+						<aon:outputText
+							value="#{accountingBundle.accounting_balance_detail_calculation}">
+							<aon:abbreviateConverter maxWidth="4" />
+						</aon:outputText>
+						<rich:toolTip
+							value="#{accountingBundle.accounting_balance_detail_calculation}"
+							hideEvent="onmouseout" showDelay="100">
+						</rich:toolTip>
+					</aon:div>
 				</f:facet>
 				<aon:outputText value="&#160;"
 					styleClass="#{(to.internalCalculation)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
@@ -136,11 +167,20 @@
 						value="#{balanceDetail.to.internalCalculation}" />
 				</f:facet>
 			</aon:column>
-			
-			
-			 <aon:column>
+
+
+			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{accountingBundle.accounting_balance_detail_visible}" />
+					<aon:div>
+						<aon:outputText
+							value="#{accountingBundle.accounting_balance_detail_visible}">
+							<aon:abbreviateConverter maxWidth="4" />
+						</aon:outputText>
+						<rich:toolTip
+							value="#{accountingBundle.accounting_balance_detail_visible}"
+							hideEvent="onmouseout" showDelay="100">
+						</rich:toolTip>
+					</aon:div>
 				</f:facet>
 				<aon:outputText value="&#160;"
 					styleClass="#{(to.visible)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
@@ -152,12 +192,21 @@
 						value="#{balanceDetail.to.visible}" />
 				</f:facet>
 			</aon:column>
-			
-			
-			
-					<aon:column>
+
+
+
+			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{accountingBundle.accounting_balance_detail_zeroflag}" />
+					<aon:div>
+						<aon:outputText
+							value="#{accountingBundle.accounting_balance_detail_zeroflag}">
+							<aon:abbreviateConverter maxWidth="4" />
+						</aon:outputText>
+						<rich:toolTip
+							value="#{accountingBundle.accounting_balance_detail_zeroflag}"
+							hideEvent="onmouseout" showDelay="100">
+						</rich:toolTip>
+					</aon:div>
 				</f:facet>
 				<aon:outputText value="&#160;"
 					styleClass="#{(to.zeroFlag)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
@@ -169,10 +218,19 @@
 						value="#{balanceDetail.to.zeroFlag}" />
 				</f:facet>
 			</aon:column>
-			
+
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{accountingBundle.accounting_balance_detail_creditnature}" />
+					<aon:div>
+						<aon:outputText
+							value="#{accountingBundle.accounting_balance_detail_creditnature}">
+							<aon:abbreviateConverter maxWidth="4" />
+						</aon:outputText>
+						<rich:toolTip
+							value="#{accountingBundle.accounting_balance_detail_creditnature}"
+							hideEvent="onmouseout" showDelay="100">
+						</rich:toolTip>
+					</aon:div>
 				</f:facet>
 				<aon:outputText value="&#160;" style="text-align:center;"
 					styleClass="#{(to.creditNature)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
@@ -184,8 +242,8 @@
 						value="#{balanceDetail.to.creditNature}" />
 				</f:facet>
 			</aon:column>
-			
- 
+
+
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText value="&#160;" />
@@ -232,7 +290,7 @@
 			</aon:column>
 
 		</aon:editDataTable>
-			<aon:dataScroller2 for="balanceDetailData" showNote="true" />
+		<aon:dataScroller2 for="balanceDetailData" showNote="true" />
 	</aon:div>
 
 </ui:composition>
