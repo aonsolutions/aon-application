@@ -32,9 +32,8 @@
 					actionListener="#{config.onInit}" action="config_form"/>
 			</aon:dropDownMenu>
 			<aon:dropDownMenu id="structure"
-				rendered="#{cms.roleDesigner or cms.roleEditor}"
-				value="#{menuBundle.cms_structure}" submitMode="ajax"
-				event="onclick">
+				value="#{menuBundle.cms_structure}"
+				rendered="#{cms.roleDesigner or cms.roleEditor}">
 				<aon:menuItem id="menu" value="#{menuBundle.cms_menu}"
 					rendered="#{cms.roleDesigner or cms.roleEditor}"
 					action="menu_list"
@@ -57,9 +56,8 @@
 					actionListener="#{section.onSearch}"/>							
 			</aon:dropDownMenu>
 			<aon:dropDownMenu id="galleries"
-				rendered="#{cms.roleEditor}"
-				value="#{menuBundle.cms_galleries}" submitMode="ajax"
-				event="onclick">
+			value="#{menuBundle.cms_galleries}"
+				rendered="#{cms.roleEditor}">
 				<aon:menuItem id="image_gallery" 
 					rendered="#{cms.roleEditor}"
 					value="#{menuBundle.cms_image_gallery}"
@@ -70,9 +68,8 @@
 					action="document_list"/>
 			</aon:dropDownMenu>
 			<aon:dropDownMenu id="content"
-				rendered="#{cms.roleEditor or cms.roleRevisor}"
-				value="#{menuBundle.cms_content}" submitMode="ajax"
-				event="onclick">
+				value="#{menuBundle.cms_content}"
+				rendered="#{cms.roleEditor or cms.roleRevisor}" >
 				<aon:menuItem id="link" value="#{menuBundle.cms_link}"
 					rendered="#{domainUtils.linkMenu and ( cms.roleEditor or cms.roleRevisor )}"
 					action="link_list"
@@ -133,9 +130,8 @@
 					action="product_list"/>
 			</aon:dropDownMenu>
 			<aon:dropDownMenu id="hiru"
-				value="#{menuBundle.cms_hiru}" submitMode="ajax"
-				rendered="#{domainUtils.hiruMenu and ( cms.roleEditor or cms.roleRevisor or cms.rolePublisher)}"
-				event="onclick">
+				value="#{menuBundle.cms_hiru}"
+				rendered="#{domainUtils.hiruMenu and ( cms.roleEditor or cms.roleRevisor or cms.rolePublisher)}">
 				<aon:menuItem id="hiru_organizer_centre" value="#{menuBundle.cms_hiru_organizer_centre}"
 					rendered="#{cms.roleEditor or cms.roleRevisor}"
 					action="hiru_organizer_centre_list"
@@ -150,9 +146,8 @@
 					actionListener="#{hiru_generator.onInit}"/>
 			</aon:dropDownMenu>
 			<aon:dropDownMenu id="bulletins"
-				value="#{menuBundle.cms_bulletins}" submitMode="ajax"
-				rendered="#{domainUtils.bulletinMenu and ( cms.roleEditor or cms.roleRevisor or cms.rolePublisher)}"
-				event="onclick">
+				value="#{menuBundle.cms_bulletins}"
+				rendered="#{domainUtils.bulletinMenu and ( cms.roleEditor or cms.roleRevisor or cms.rolePublisher)}">
 				<aon:menuItem id="bulletin" 
 					rendered="#{cms.roleEditor or cms.roleRevisor}"
 					value="#{menuBundle.cms_bulletin}"
@@ -170,9 +165,8 @@
 					actionListener="#{bulletin.onInit}" />
 			</aon:dropDownMenu>
 			<aon:dropDownMenu id="sport"
-				value="#{menuBundle.cms_sport}" submitMode="ajax"
-				rendered="#{domainUtils.sportMenu and ( cms.roleEditor or cms.roleRevisor )}"
-				event="onclick">
+				value="#{menuBundle.cms_sport}"
+				rendered="#{domainUtils.sportMenu and ( cms.roleEditor or cms.roleRevisor )}" >
 				<aon:menuItem id="sport_category" value="#{menuBundle.cms_sport_category}"
 					action="sport_category_list"
 					actionListener="#{sport_category.onSearch}"/>
@@ -196,9 +190,8 @@
 					actionListener="#{sport_config.onInit}"/>
 			</aon:dropDownMenu>
 			<aon:dropDownMenu id="production"
-				value="#{menuBundle.cms_production}" submitMode="ajax"
-				rendered="#{cms.roleEditor or cms.rolePublisher or cms.roleDesigner}"
-				event="onclick">
+				value="#{menuBundle.cms_production}"
+				rendered="#{cms.roleEditor or cms.rolePublisher or cms.roleDesigner}">
 				<aon:menuItem id="template" value="#{menuBundle.cms_template}"
 					rendered="#{cms.roleDesigner}"
 					action="template_list" actionListener="#{template.onInit}" />
@@ -207,10 +200,10 @@
 					action="generator_form"
 					actionListener="#{generator_status.onInit}"/>
 			</aon:dropDownMenu>
-			<a4j:outputPanel styleClass="aon-float-right" ajaxRendered="true">
-				<aon:commandLink style="border-right:0;" action="admin_form">
-					<aon:outputText value="| #{appBundle.aon_advanced_mode}" />
-				</aon:commandLink>
+			<a4j:outputPanel styleClass="aon-float-right" rendered="#{!cms.administrator}">
+				<aon:commandLink 
+					value="| #{appBundle.aon_advanced_mode}" immediate="true"
+					style="border-right:0;" action="admin_form" />
 			</a4j:outputPanel>
 		</aon:menuBar>
 
