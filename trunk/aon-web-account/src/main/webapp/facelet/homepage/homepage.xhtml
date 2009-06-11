@@ -318,6 +318,38 @@
 						</h:panelGrid>
 					</aon:panelCollapsible>
 					
+					<aon:panelCollapsible label="#{financeBundle.finance_menu_group}">
+						<h:panelGrid styleClass="aon-text-left" columns="2"
+							style="width:100%; margin-top: 10px;"
+							columnClasses="aon-column-middle-width,aon-column-middle-width">
+
+
+							<aon:div>
+								<aon:div styleClass="aonSubMenu aonSubMenuOptionFinance">
+									<aon:outputText
+										value="#{financeBundle.finance_charge_module}" />
+									<aon:commandLink immediate="true"
+										actionListener="#{finance.onEditSearchCharge}"
+										action="finance_search">
+										<aon:outputText value="[#{bundle.aon_search}]" />
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+
+							<aon:div>
+								<aon:div styleClass="aonSubMenu aonSubMenuOptionFinance">
+									<aon:outputText
+										value="#{financeBundle.finance_payment_module}" />
+									<aon:commandLink immediate="true"
+										actionListener="#{finance.onEditSearchPayment}"
+										action="finance_search">
+										<aon:outputText value="[#{bundle.aon_search}]" />
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+						</h:panelGrid>
+					</aon:panelCollapsible>
+
 				</aon:div>
 			</aon:div>
 		</aon:form>
