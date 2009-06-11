@@ -68,6 +68,7 @@ public class BalanceSheetController implements ICollectionProvider{
 	public void onBalance(ActionEvent event) {	
 		
 		try {
+			setBalanceName(balance.getName());
 			getBalanceCollection(balance.getId());
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
