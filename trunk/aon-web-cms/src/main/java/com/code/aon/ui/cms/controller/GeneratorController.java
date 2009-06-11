@@ -20,7 +20,6 @@ import com.code.aon.cms.ModularPage;
 import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.ControllerUtil;
@@ -68,57 +67,41 @@ public class GeneratorController implements Constants, ICMSConstants {
 		LOGGER.log(Level.SEVERE, th.getMessage(), th);
 		String message = AonUtil.getMessage(ICMSConstants.BUNDLE_NAME, "cms_generator_error");
 		AonUtil.addErrorMessage( message + " " + th.getMessage());
+		closeSession();
 		throw new AbortProcessingException(th.getMessage(), th);		
 	}
 	
 	public void onGenerate(ActionEvent event) throws ManagerBeanException {
 		try {
 			initGenerator();
-			System.gc();
 	
 			//Generar index.html del idioma seleccionado
 			ModularPageGenerator.generate();
-			System.gc();
 			//Generar menus
 			MenuGenerator.generate();
-			System.gc();
 			//Generar generic
 			GenericGenerator.generate();
-			System.gc();
 			//Generar faq
 			FaqGenerator.generate();
-			System.gc();
 			//Generar link
 			LinkGenerator.generate();
-			System.gc();
 			//Generar direct access
 			DirectAccessGenerator.generate();
-			System.gc();
 			//Generar image album
 			AlbumGenerator.generate();
-			System.gc();
 			ArticleCalendarGenerator.generate();
-			System.gc();
 			ArticleGenerator.generate(ArticleType.NEWS);
-			System.gc();
 			ArticleGenerator.generate(ArticleType.SERVICES);
-			System.gc();
 			ArticleGenerator.generate(ArticleType.EVENTS);
-			System.gc();
 			ArticleGenerator.generate(ArticleType.OTHER);
-			System.gc();
 			//Generar articulo
 			DownloadsGenerator.generate();
-			System.gc();
 			//Generar cursos
 			HiruGenerator.generate();
-			System.gc();
 			//Generar productos
 			ProductGenerator.generate();
-			System.gc();
 			//Generar sports
 			SportGenerator.generate();
-			System.gc();
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -129,7 +112,6 @@ public class GeneratorController implements Constants, ICMSConstants {
 		try {
 			initGenerator();
 			ArticleCalendarGenerator.generate();
-			System.gc();
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -140,15 +122,10 @@ public class GeneratorController implements Constants, ICMSConstants {
 		try {		
 			initGenerator();
 			ArticleCalendarGenerator.generate();
-			System.gc();
 			ArticleGenerator.generate(ArticleType.NEWS);
-			System.gc();
 			ArticleGenerator.generate(ArticleType.SERVICES);
-			System.gc();
 			ArticleGenerator.generate(ArticleType.EVENTS);
-			System.gc();
 			ArticleGenerator.generate(ArticleType.OTHER);
-			System.gc();
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -366,22 +343,12 @@ public class GeneratorController implements Constants, ICMSConstants {
 	}
 	
 	private void closeSession() {
-		try {
-			HibernateUtil.commitTransaction(sessionFactoryName);
-			HibernateUtil.closeSession(sessionFactoryName);
-		} catch (DAOException e) {
-		    try {
-				HibernateUtil.rollbackTransaction(sessionFactoryName);
-			} catch (DAOException e2) {
-				LOGGER.log(Level.SEVERE, e2.getMessage(), e2);
-			}
-		} finally {		
-			if (initTransState != HibernateUtil.mustBeginTransaction()) {
-				HibernateUtil.setBeginTransaction(initTransState);
-			}
-			if (initSessionState != HibernateUtil.mustCloseSession()) {
-				HibernateUtil.setCloseSession(initSessionState);
-			}
+		HibernateUtil.closeSession(sessionFactoryName);
+		if (initTransState != HibernateUtil.mustBeginTransaction()) {
+			HibernateUtil.setBeginTransaction(initTransState);
+		}
+		if (initSessionState != HibernateUtil.mustCloseSession()) {
+			HibernateUtil.setCloseSession(initSessionState);
 		}
 	}
 	
@@ -402,7 +369,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 
 	private void finalizeGenerator(){
 		stopWatch.stop();
-		status.info("Ha tardadado: " + stopWatch.toString());		
+		status.info("Duración de la generación: " + stopWatch.toString());		
 		status.info("----------------------------------------------------------------------------------------------------------------------------------------");
 		status.info("------------------------------------------------ LA GENERACION HA TERMINADO ------------------------------------------------");
 		status.info("----------------------------------------------------------------------------------------------------------------------------------------");
