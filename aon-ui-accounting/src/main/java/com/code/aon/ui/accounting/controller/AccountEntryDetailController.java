@@ -60,21 +60,7 @@ public class AccountEntryDetailController extends LinesController {
 	}
 	
 	
-	public void onBalancingAccountStatement(ActionEvent event) {
-		try {
-			AccountEntryDetail detail = (AccountEntryDetail) getModel().getRowData();
-			Account account = detail.getBalancingAccount();
-			onStatement(account, event);
-		} catch (ManagerBeanException e) {
-			String msg = "No se pudo realizar el acceso al extracto.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		} catch (ExpressionException e) {
-			String msg = "No se pudo realizar el acceso al extracto.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}
-	}
+	
 	public void onAccountStatement(ActionEvent event) {
 		try {
 			AccountEntryDetail detail = (AccountEntryDetail) getModel().getRowData();
