@@ -130,8 +130,6 @@ public class ArticleGenerator extends Generator {
 			articleCategoryList = (List<ITransferObject>)articleCategoryBean.getList(articleCategoryCriteria);
 			ArrayList<ArticleCategoryHandler> achlist = new ArrayList<ArticleCategoryHandler>(); 
 			for (int j=0; j < articleCategoryList.size(); j++) {
-				
-				System.gc();
 				VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
 
 				articleCategory = (ArticleCategory)articleCategoryList.get(j);
