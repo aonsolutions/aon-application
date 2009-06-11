@@ -124,8 +124,10 @@ public class CompanyLogoControllerListener extends ControllerAdapter implements 
 				companyController.setAttach(companyLogo);
 
 				AonFile f = new AonFile();
+				f.setKey(companyLogo.getId());
 				f.setData(companyLogo.getData());
 				f.setFileName(companyLogo.getDescription());
+				f.setMimeType(companyLogo.getMimeType());
 				companyController.setAonFile(f);
 			}
 		} catch (ManagerBeanException e) {
