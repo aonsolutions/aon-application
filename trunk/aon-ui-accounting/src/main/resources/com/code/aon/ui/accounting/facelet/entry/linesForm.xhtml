@@ -8,8 +8,8 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich">
 
-	<aon:div id="linesContainer" style="width: 99%;">
-		<aon:div rendered="#{!accountEntry.new}">
+	<aon:div id="linesContainer" style="width: 99%;" >
+		<aon:div rendered="#{!accountEntry.new}" >
 
 			<aon:editDataTable id="entryDetailTable" var="to" footerClass="aon-dataTable-footerClass"
 				value="#{accountEntryDetail.model}" rows="100">
@@ -213,14 +213,15 @@
 					</f:facet>
 
 					<aon:div style="width: 90%;"
-						rendered="#{to!=accountEntryDetail.to}" styleClass="aon-nowrap">
-						<h:commandLink immediate="#{true}"
-							styleClass="aon-dataTable-link-simple"
-							actionListener="#{accountEntryDetail.onBalancingAccountStatement}"
-							title="#{accountingBundle.accounting_statement_module}"
-							action="account_statement_list">
-								<aon:outputText value="#{to.balancingAccount.id}" />
-						</h:commandLink>
+						rendered="#{to!=accountEntryDetail.to}" ajaxRendered="true">
+
+						<aon:outputText value="#{to.balancingAccount.id}">
+							<rich:toolTip value="#{to.balancingAccount.description}"
+								hideEvent="onmouseout" showDelay="200">
+							</rich:toolTip>
+						</aon:outputText>
+						
+						
 					</aon:div>
 
 					<ui:include

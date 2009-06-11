@@ -270,13 +270,11 @@
 							<aon:commandButton title="#{bundle.aon_save}"
 								reRender="FinancesData,aonToolbar" focus="saveInvoice"
 								actionListener="#{invoiceEntry.onAddFinance}"
-								onclick="if (!confirm('#{bundle.aon_accept_confirm}')) return false;"
 								styleClass="aon-editDataTable-button aon-icon-accept" value=""
 								accesskey="#{bundle.aon_key_save_line}" />
 							<aon:commandButton title="#{bundle.aon_cancel}"
 								actionListener="#{invoiceEntry.onCancelFinance}"
 								reRender="FinancesData,aonToolbar" immediate="true"
-								onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
 								styleClass="aon-editDataTable-button aon-icon-cancel" value=""
 								accesskey="#{bundle.aon_key_cancel_line}" />
 						</aon:div>

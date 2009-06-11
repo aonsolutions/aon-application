@@ -308,14 +308,12 @@
 							<aon:commandButton title="#{bundle.aon_save}"
 								reRender="TaxesData,aonToolbar,financesTotal"
 								actionListener="#{invoiceEntry.onAddDetail}"
-								onclick="if (!confirm('#{bundle.aon_accept_confirm}')) return false;"
 								styleClass="aon-editDataTable-button aon-icon-accept" value=""
 								accesskey="#{bundle.aon_key_save_line}"
 								focus="Account_Taxable_Base-New" />
 							<aon:commandButton title="#{bundle.aon_cancel}"
 								reRender="TaxesData,aonToolbar,invoiceContainer,financesTotal"
 								actionListener="#{invoiceEntry.onCancelDetail}" immediate="true"
-								onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
 								styleClass="aon-editDataTable-button aon-icon-cancel" value=""
 								accesskey="#{bundle.aon_key_cancel_line}" />
 						</aon:div>
