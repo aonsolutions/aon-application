@@ -1,5 +1,6 @@
 package com.code.aon.ui.cms.controller;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,13 +11,15 @@ import java.util.logging.Logger;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.FTPUtil;
-import com.code.aon.ui.util.AonUtil;
 
-public class GeneratorStatusController  {
+public class GeneratorStatusController implements IGeneratorLogger {
 	
 	private static final Logger LOGGER = Logger.getLogger(GeneratorStatusController.class.getName());
+	
+	private static final DateFormat TIME_FORMAT = SimpleDateFormat.getTimeInstance(DateFormat.MEDIUM); 
 
 	private boolean generated;
 
@@ -52,17 +55,30 @@ public class GeneratorStatusController  {
 		return this.errors;
 	}
 	
-	public void addMessage(String msg) {
-		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-		String time = sdf.format(new Date());
+	private void addMessage(String msg) {
+		String time = TIME_FORMAT.format(new Date());
 		this.status.add(0,time+" "+msg);
 	}	
 	
-	public void addErrorMessage(String msg) {
-		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-		String time = sdf.format(new Date());
+	private void addErrorMessage(String msg) {
+		String time = TIME_FORMAT.format(new Date());
 		this.errors.add(0, time+" "+msg);
 	}	
+
+	@Override
+	public void info(String msg) {
+		addMessage(" INFO: " + msg);
+	}
+	
+	@Override
+	public void error(String msg) {
+		addErrorMessage(" ******* ERROR: " + msg + "***********");
+	}
+
+	@Override
+	public void warning(String msg) {
+		addErrorMessage(" ******* WARNING: " + msg + "***********");
+	}
 
 	public boolean isActivePoll() {
 		return this.activePoll;

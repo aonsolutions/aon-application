@@ -12,14 +12,15 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.util.ControllerUtil;
-import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.attribute.ActivityHandler;
 import com.code.aon.ui.cms.velocity.attribute.CompanyHandler;
 
 public class ActivityGenerator extends Generator {
 
 	public static Object getActivityHandler(Integer ident) {
+		IGeneratorLogger logger = CommonGenerator.getLogger();
 		List<ITransferObject> l;
 		List<ITransferObject> ld;
 		List<ITransferObject> l_company;
@@ -29,7 +30,7 @@ public class ActivityGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ACTIVITY_ID), ident);
 			l = bean.getList(criteria);
 			if (l.isEmpty()){
-				VelocityUtil.addMessage("ACTIVIDAD "+ident+" REFERENCIADA NO EXISTE !!!", VelocityUtil.WARN);
+				logger.warning("ACTIVIDAD "+ident+" REFERENCIADA NO EXISTE !!!");
 				return null;
 			}
 			Activity a = (Activity) l.get(0);
@@ -40,7 +41,7 @@ public class ActivityGenerator extends Generator {
 			criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.ACTIVITY_DETAIL_ACTIVITY_ID), ident);
 			ld = (List<ITransferObject>)beanDetail.getList(criteria);
 			if (ld.isEmpty()){
-				VelocityUtil.addMessage("La actividad "+a.getAlias()+" no esta internacionalizada", VelocityUtil.WARN);
+				logger.warning("La actividad "+a.getAlias()+" no esta internacionalizada");
 			}else{
 				ActivityDetail lcd = (ActivityDetail)ld.get(0);
 				List<CompanyHandler> lstCompanies = new ArrayList<CompanyHandler>();
@@ -49,7 +50,7 @@ public class ActivityGenerator extends Generator {
 				criteria.addEqualExpression(beanCompanyActivity.getFieldName(ICMSAlias.COMPANY_ACTIVITY_ACTIVITY_ID), ident);
 				l_company = (List<ITransferObject>)beanCompanyActivity.getList(criteria);
 				if (l_company.isEmpty())
-					VelocityUtil.addMessage("La actividad "+a.getAlias()+" no tiene empresas.", VelocityUtil.WARN);
+					logger.warning("La actividad "+a.getAlias()+" no tiene empresas.");
 				for (ITransferObject company : l_company){
 					lstCompanies.add(new CompanyHandler(((CompanyActivity)company).getCompany()));
 				}
@@ -57,7 +58,7 @@ public class ActivityGenerator extends Generator {
 				return lch;
 			}
 		} catch (ManagerBeanException e) {
-			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
+			logger.error(e.getMessage());
 		}
 		l = null;
 		ld = null;

@@ -13,6 +13,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.attribute.MenuHandler;
@@ -22,6 +23,7 @@ public class MenuGenerator extends Generator {
 	
 	public static ArrayList<MenuOptionHandler> getMenuOptionList(Menu menu) {
 		ArrayList<MenuOptionHandler> list = new ArrayList<MenuOptionHandler>();
+		IGeneratorLogger logger = CommonGenerator.getLogger();
 
 		try {
 			IManagerBean moBean = BeanManager.getManagerBean(MenuOption.class);
@@ -31,7 +33,7 @@ public class MenuGenerator extends Generator {
 			criteria.addOrder(moBean.getFieldName(ICMSAlias.MENU_OPTION_POSITION));
 			List<ITransferObject> l = (List<ITransferObject>)moBean.getList(criteria);
 			if (l.isEmpty())
-				VelocityUtil.addMessage("El menu "+menu.getAlias()+" no tiene opciones", VelocityUtil.WARN);
+				logger.warning("El menu "+menu.getAlias()+" no tiene opciones");
 			for (int i = 0; i < l.size(); i++) {
 				MenuOption mo = (MenuOption)l.get(i);
 				IManagerBean modBean = BeanManager.getManagerBean(MenuOptionDetail.class);
@@ -40,7 +42,7 @@ public class MenuGenerator extends Generator {
 				criteria_detail.addEqualExpression(modBean.getFieldName(ICMSAlias.MENU_OPTION_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				List<ITransferObject> ld = (List<ITransferObject>)modBean.getList(criteria_detail);
 				if (ld.isEmpty()) {
-					VelocityUtil.addMessage("La opcion de menu "+mo.getAlias()+" no esta internacionalizada", VelocityUtil.WARN);
+					logger.warning("La opcion de menu "+mo.getAlias()+" no esta internacionalizada");
 				}else{
 					MenuOptionDetail mod = (MenuOptionDetail)ld.get(0);
 					MenuOptionHandler moh = new MenuOptionHandler(mod);
@@ -48,7 +50,7 @@ public class MenuGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);
+			logger.error(e.getMessage());
 		}
 		
 		return list;
@@ -61,22 +63,20 @@ public class MenuGenerator extends Generator {
 			criteria.addEqualExpression(menuBean.getFieldName(ICMSAlias.MENU_ID), menu);
 			List<ITransferObject> l = (List<ITransferObject>)menuBean.getList(criteria);
 			if (l.isEmpty()) {
-				VelocityUtil.addMessage("EL MENU "+menu+" REFERENCIADO NO EXISTE !!!", VelocityUtil.WARN);
+				CommonGenerator.getLogger().warning("EL MENU "+menu+" REFERENCIADO NO EXISTE !!!");
 			}else{
 				Menu m = (Menu)l.get(0);
 				return getMenuOptionList(m);
 			}
 		} catch (ManagerBeanException e) {
-			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);
+			CommonGenerator.getLogger().error(e.getMessage());
 		}
 		return null; 
 	}
 
 	public static void generate() {
-		VelocityUtil vu = new VelocityUtil();
-		CommonGenerator.getCommonGenerator().init(vu);
-		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
-		vu.initialize();
+		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
+		IGeneratorLogger logger = CommonGenerator.getLogger();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Menu.class);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(null);
@@ -85,15 +85,14 @@ public class MenuGenerator extends Generator {
 				ArrayList<MenuOptionHandler> menu_list = getMenuOptionList(menu);
 				if (menu_list != null && menu_list.size() > 0) {  
 					vu.put("menu_list", menu_list);
-					VelocityUtil.addMessage(" Generando Menu " + menu.getAlias() + ".", VelocityUtil.INFO);
+					logger.info(" Generando Menu " + menu.getAlias() + ".");
 					generate(vu, Templates.MENU, menu.getAlias());
 					vu.remove("menu_list");
 				}
 			}
 		} catch (ManagerBeanException e) {
-			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);
+			logger.error(e.getMessage());
 		}
-		vu.finalize();
 		vu = null;
 	}
 	
@@ -104,14 +103,14 @@ public class MenuGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.MENU_ID), ident);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.isEmpty()) {
-				VelocityUtil.addMessage("EL MENU "+ident+" REFERENCIADO NO EXISTE !!!", VelocityUtil.WARN);
+				CommonGenerator.getLogger().warning("EL MENU "+ident+" REFERENCIADO NO EXISTE !!!");
 			}else{
 				Menu menu = (Menu)l.get(0);
 				MenuHandler mh = new MenuHandler(menu);
 				return mh;
 			}
 		} catch (ManagerBeanException e) {
-			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);
+			CommonGenerator.getLogger().error(e.getMessage());
 		}
 		return null;
 	}

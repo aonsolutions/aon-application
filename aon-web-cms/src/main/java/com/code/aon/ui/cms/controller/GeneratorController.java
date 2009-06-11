@@ -6,6 +6,8 @@ import java.util.logging.Logger;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.time.StopWatch;
+
 import com.code.aon.cms.AlbumCategory;
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleCategory;
@@ -17,6 +19,8 @@ import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.ModularPage;
 import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.ControllerUtil;
@@ -42,6 +46,14 @@ public class GeneratorController implements Constants, ICMSConstants {
 	private static final Logger LOGGER = Logger.getLogger(GeneratorController.class.getName());
 
 	private GeneratorStatusController status;
+	
+	private StopWatch stopWatch;
+	
+	private boolean initTransState;
+	
+	private boolean initSessionState;
+	
+	private String sessionFactoryName;
 
 	public GeneratorStatusController getStatus() {
 		return status;
@@ -345,8 +357,39 @@ public class GeneratorController implements Constants, ICMSConstants {
 		}						
 	}
 
+	private void initSession() {
+		this.initTransState = HibernateUtil.mustBeginTransaction();
+		this.initSessionState = HibernateUtil.mustCloseSession();
+		this.sessionFactoryName = HibernateUtil.getSessionFactoryName();
+		HibernateUtil.setCloseSession(false);
+		HibernateUtil.setBeginTransaction(false);		
+	}
+	
+	private void closeSession() {
+		try {
+			HibernateUtil.commitTransaction(sessionFactoryName);
+			HibernateUtil.closeSession(sessionFactoryName);
+		} catch (DAOException e) {
+		    try {
+				HibernateUtil.rollbackTransaction(sessionFactoryName);
+			} catch (DAOException e2) {
+				LOGGER.log(Level.SEVERE, e2.getMessage(), e2);
+			}
+		} finally {		
+			if (initTransState != HibernateUtil.mustBeginTransaction()) {
+				HibernateUtil.setBeginTransaction(initTransState);
+			}
+			if (initSessionState != HibernateUtil.mustCloseSession()) {
+				HibernateUtil.setCloseSession(initSessionState);
+			}
+		}
+	}
+	
 	private void initGenerator(){
+		stopWatch = new StopWatch();
+		stopWatch.start();		
 		System.gc();
+		initSession();
 		status.onInit(null);
 		//Copy css and js files from current template
 		FileUtil.copyDir(ControllerUtil.getCssTemplatePath(), ControllerUtil.getPreviewPath());
@@ -358,10 +401,13 @@ public class GeneratorController implements Constants, ICMSConstants {
 	}
 
 	private void finalizeGenerator(){
-		status.addMessage("END: ----------------------------------------------------------------------------------------------------------------------------------------");
-		status.addMessage("END: ------------------------------------------------ LA GENERACION HA TERMINADO ------------------------------------------------");
-		status.addMessage("END: ----------------------------------------------------------------------------------------------------------------------------------------");
+		stopWatch.stop();
+		status.info("Ha tardadado: " + stopWatch.toString());		
+		status.info("----------------------------------------------------------------------------------------------------------------------------------------");
+		status.info("------------------------------------------------ LA GENERACION HA TERMINADO ------------------------------------------------");
+		status.info("----------------------------------------------------------------------------------------------------------------------------------------");
 		status.finalized();
+		closeSession();
 		System.gc();
 	}
 

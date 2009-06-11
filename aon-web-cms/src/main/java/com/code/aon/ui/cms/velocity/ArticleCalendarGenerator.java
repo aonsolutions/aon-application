@@ -29,6 +29,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
@@ -44,6 +45,7 @@ public class ArticleCalendarGenerator extends Generator {
 	private static final Logger LOGGER = Logger.getLogger(ArticleCalendarGenerator.class.getName());
 	
 	public static void generate() {
+		IGeneratorLogger logger = CommonGenerator.getLogger();
 		List<ITransferObject> articleList;
 		List<ITransferObject> articleDetailList;
 		Map<String, MonthContent> months;
@@ -89,7 +91,7 @@ public class ArticleCalendarGenerator extends Generator {
 				articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				articleDetailList = (List<ITransferObject>)articleDetailBean.getList(articleDetailCriteria);
 				if (articleDetailList.isEmpty()) {
-					VelocityUtil.addMessage(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.", VelocityUtil.WARN);
+					logger.warning(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.");
 				}else{
 					articleDetail = (ArticleDetail)articleDetailList.get(0);
 					Date initDate = article.getInitDate();
@@ -122,11 +124,8 @@ public class ArticleCalendarGenerator extends Generator {
 			}
 			
 			Section configSection = GeneratorConfigController.currentSection(ArticleConfig.class);
-			
-			VelocityUtil vu = new VelocityUtil();
-			CommonGenerator.getCommonGenerator().init(vu);
-			vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
-			vu.initialize();
+
+			VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
 
 			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 
@@ -174,7 +173,7 @@ public class ArticleCalendarGenerator extends Generator {
 						calendar.set(Calendar.DATE, i+1);
 						vu.put("current_date", calendar.get(Calendar.DATE)+"/"+(calendar.get(Calendar.MONTH)+1)+"/"+calendar.get(Calendar.YEAR));
 						String name = calendar.get(Calendar.YEAR)+"_"+calendar.get(Calendar.MONTH)+"_"+calendar.get(Calendar.DATE);
-						VelocityUtil.addMessage(" Generando diario "+name+".", VelocityUtil.INFO);
+						logger.info(" Generando diario "+name+".");
 						generate(vu, Templates.DIARY, name);
 						vu.remove("article_list");
 						vu.remove("current_date");
@@ -223,7 +222,7 @@ public class ArticleCalendarGenerator extends Generator {
 				LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			}
 
-			VelocityUtil.addMessage(" Generando diario indice.", VelocityUtil.INFO);
+			logger.info(" Generando diario indice.");
 			generate(vu, Templates.DIARY, DIARY_INDEX_PAGE);
 			vu.remove("diaryCategories");
 			vu.remove("article_list");
@@ -236,10 +235,9 @@ public class ArticleCalendarGenerator extends Generator {
 			vu.remove("previous_article_diary_month");
 			vu.remove("next_article_diary_year");
 			vu.remove("next_article_diary_month");
-			vu.finalize();
 			vu = null;		
 		} catch (ManagerBeanException e) {
-			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
+			logger.error(e.getMessage());
 		} finally {
 			articleList = null;
 			articleDetailList = null;
@@ -256,7 +254,7 @@ public class ArticleCalendarGenerator extends Generator {
 			articleCategoryDetailCriteria.addEqualExpression(articleCategoryDetailBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 			List<ITransferObject> articleCategoryDetailList = (List<ITransferObject>)articleCategoryDetailBean.getList(articleCategoryDetailCriteria);
 			if (articleCategoryDetailList.isEmpty()) {
-				VelocityUtil.addMessage(" Categoria de articulos " + articleCategory.getAlias() + " no internacionalizada.", VelocityUtil.WARN);
+				CommonGenerator.getLogger().warning(" Categoria de articulos " + articleCategory.getAlias() + " no internacionalizada.");
 			}else{
 				ArticleCategoryDetail articleCategoryDetail = (ArticleCategoryDetail)articleCategoryDetailList.get(0);
 				ArticleCategoryHandler achandler = new ArticleCategoryHandler(articleCategoryDetail,ArticleType.EVENTS,null);
@@ -267,7 +265,7 @@ public class ArticleCalendarGenerator extends Generator {
 
 	private static Diary getDiary() throws ManagerBeanException{
 		IManagerBean diaryBean = BeanManager.getManagerBean(Diary.class);
-		List diaryLst = diaryBean.getList(null);
+		List<ITransferObject> diaryLst = diaryBean.getList(null);
 		if (!diaryLst.isEmpty()){
 			return (Diary)diaryLst.get(0);
 		}
@@ -276,14 +274,14 @@ public class ArticleCalendarGenerator extends Generator {
 	
 	private static DiaryCategoriesHandler assignDiaryCategories(ArrayList<ArticleCategoryHandler> achlist) throws ManagerBeanException{
 		IManagerBean diaryBean = BeanManager.getManagerBean(Diary.class);
-		List diaryLst = diaryBean.getList(null);
+		List<ITransferObject> diaryLst = diaryBean.getList(null);
 		if (!diaryLst.isEmpty()){
 			Diary diary = (Diary)diaryLst.get(0);
 			IManagerBean diaryDetailBean = BeanManager.getManagerBean(DiaryDetail.class);
 			Criteria diaryDetailCriteria = new Criteria();
 			diaryDetailCriteria.addEqualExpression(diaryDetailBean.getFieldName(ICMSAlias.DIARY_DETAIL_DIARY_ID), diary.getId());
 			diaryDetailCriteria.addEqualExpression(diaryDetailBean.getFieldName(ICMSAlias.DIARY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-			List diaryDetailLst = diaryDetailBean.getList(diaryDetailCriteria);
+			List<ITransferObject> diaryDetailLst = diaryDetailBean.getList(diaryDetailCriteria);
 			DiaryDetail diaryDetail = null;
 			if (!diaryDetailLst.isEmpty()){
 				diaryDetail = (DiaryDetail)diaryDetailLst.get(0);
@@ -376,7 +374,7 @@ public class ArticleCalendarGenerator extends Generator {
 				articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				articleDetailList = (List<ITransferObject>)articleDetailBean.getList(articleDetailCriteria);
 				if (articleDetailList.isEmpty()) {
-					VelocityUtil.addMessage(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.", VelocityUtil.WARN);
+					CommonGenerator.getLogger().warning(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.");
 				}else{
 					articleDetail = (ArticleDetail)articleDetailList.get(0);
 					ahandler = new ArticleHandler(articleDetail);
@@ -386,7 +384,7 @@ public class ArticleCalendarGenerator extends Generator {
 			ahandler = null;
 		
 		} catch (ManagerBeanException e) {
-			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
+			CommonGenerator.getLogger().error(e.getMessage());
 		} finally {
 			article = null;
 			articleDetail = null;
@@ -426,7 +424,7 @@ public class ArticleCalendarGenerator extends Generator {
 
 			return nah;
 		} catch (ManagerBeanException e) {
-			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
+			CommonGenerator.getLogger().error(e.getMessage());
 		} finally {
 			articleList = null;
 		}
@@ -473,7 +471,7 @@ public class ArticleCalendarGenerator extends Generator {
 				articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				articleDetailList = (List<ITransferObject>)articleDetailBean.getList(articleDetailCriteria);
 				if (articleDetailList.isEmpty()) {
-					VelocityUtil.addMessage(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.", VelocityUtil.WARN);
+					CommonGenerator.getLogger().warning(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.");
 				}else{
 					articleDetail = (ArticleDetail)articleDetailList.get(0);
 					Date initDate = article.getInitDate();
@@ -496,7 +494,7 @@ public class ArticleCalendarGenerator extends Generator {
 			DiaryCalendarHandler diaryCalendarHandler = new DiaryCalendarHandler(monthsList);
 			return diaryCalendarHandler;
 		} catch (ManagerBeanException e) {
-			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
+			CommonGenerator.getLogger().error(e.getMessage());
 		} finally {
 			articleList = null;
 			articleDetailList = null;
