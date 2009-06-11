@@ -1,5 +1,7 @@
 package com.code.aon.ui.common.io;
 
+import com.code.aon.common.enumeration.MimeType;
+
 /**
  * @author ecastellano
  * 
@@ -9,6 +11,10 @@ public class AonFile {
 	private byte[] data;
 
 	private String fileName;
+	
+	private MimeType mimeType;
+	
+	private Object key;
 
 	/**
 	 * @return byte[]
@@ -58,9 +64,34 @@ public class AonFile {
 	 */
 
 	public String getKey() {
-		return this.toString();
+		return (key != null) ? this.key.toString() : this.toString();
 	}
 
+	/**
+	 * Sets the key.
+	 * 
+	 * @param key the new key
+	 */
+	public void setKey(Object key) {
+		this.key = key;
+	}
+
+	/**
+	 * Gets the mime type.
+	 * 
+	 * @return the mime type
+	 */
+	public MimeType getMimeType() {
+		return mimeType;
+	}
+
+	/**
+	 * Sets the mime type.
+	 * 
+	 * @param mimeType the new mime type
+	 */
+	public void setMimeType(MimeType mimeType) {
+		this.mimeType = mimeType;
+	}
+	
 }
-
-
