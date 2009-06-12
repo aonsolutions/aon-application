@@ -68,77 +68,77 @@
 			
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
-					<aon:dataTable id="dataTable" value="#{hiru_course.model}" var="to"
-						styleClass="dr-table rich-table aon-editDataTable"
-						rows="#{hiru_course.pageLimit}" 
-						columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-								aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-								aon-editDataTable-iconColumn">
+				<aon:dataTable id="dataTable" value="#{hiru_course.model}" var="to"
+					rows="#{hiru_course.pageLimit}" rendered="#{hiru_course.model.rowCount > 0}"
+					columnClasses="aon-editDataTable-textColumn,
+							aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+							aon-editDataTable-textColumn, aon-editDataTable-iconColumn">
 								
-							<aon:column>
-								<a4j:support 
-									action="hiru_course_form"
-									actionListener="#{hiru_course.onSelect}"
-									event="onclick" />
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.cms_alias}" />
-								</f:facet>
-								<aon:outputText value="#{to.alias}"
-									styleClass="aon-editDataTable-button" />
-							</aon:column>
+					<aon:rowSelector
+						action="hiru_course_form" actionListener="#{hiru_course.onSelect}" />							
+								
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.cms_alias}" />
+						</f:facet>
+						<aon:outputText value="#{to.alias}" />
+					</aon:column>
 
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.hiru_course_hiruOrganizerCentre}" />
-								</f:facet>
-								<aon:outputText value="#{to.hiruOrganizerCentre.name}" styleClass="aon-editDataTable-button" />
-							</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.hiru_course_hiruOrganizerCentre}" />
+						</f:facet>
+						<aon:outputText value="#{to.hiruOrganizerCentre.name}" />
+					</aon:column>
 
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.hiru_course_initDate}" />
-								</f:facet>
-								<aon:outputText value="#{to.initDate}">
-									 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-											timeZone="#{timeZoneController.timeZoneId}" />
-								</aon:outputText>
-							</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.hiru_course_initDate}" />
+						</f:facet>
+						<aon:outputText value="#{to.initDate}">
+							 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
 
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.hiru_course_endDate}" />
-								</f:facet>
-								<aon:outputText value="#{to.endDate}">
-									 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-											timeZone="#{timeZoneController.timeZoneId}" />
-								</aon:outputText>
-							</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.hiru_course_endDate}" />
+						</f:facet>
+						<aon:outputText value="#{to.endDate}">
+							 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
 
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.hiru_course_active}" />
-								</f:facet>
-								<aon:commandLink title="#{appBundle.hiru_course_activate}" 
-									actionListener="#{hiru_course.onActivate}"
-									reRender="dataTable"
-									rendered="#{!to.active}">
-									<aon:graphicImage alt="#{appBundle.hiru_course_activate}"
-										url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
-								</aon:commandLink>
-								<aon:commandLink title="#{appBundle.hiru_course_deactivate}" 
-									actionListener="#{hiru_course.onDeactivate}" 
-									reRender="dataTable" 
-									rendered="#{to.active}">
-									<aon:graphicImage alt="#{appBundle.hiru_course_deactivate}"
-										url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
-								</aon:commandLink>
-							</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.hiru_course_active}" />
+						</f:facet>
+						<aon:div onmouseover="disableRowSelector();"
+							onmouseout="enableRowSelector();" >																											
+							<aon:commandLink title="#{appBundle.hiru_course_activate}" 
+								actionListener="#{hiru_course.onActivate}"
+								reRender="dataTable"
+								rendered="#{!to.active}">
+								<aon:graphicImage alt="#{appBundle.hiru_course_activate}"
+									url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+							</aon:commandLink>
+							<aon:commandLink title="#{appBundle.hiru_course_deactivate}" 
+								actionListener="#{hiru_course.onDeactivate}" 
+								reRender="dataTable" 
+								rendered="#{to.active}">
+								<aon:graphicImage alt="#{appBundle.hiru_course_deactivate}"
+									url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
+							</aon:commandLink>
+						</aon:div>
+					</aon:column>
 							
-						</aon:dataTable>
+				</aon:dataTable>
 						
-						<aon:dataScroller2 for="dataTable" />
+				<aon:dataScroller2 for="dataTable" />
 					
-				</aon:div>
+			</aon:div>
 		</aon:form>
 
 		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
