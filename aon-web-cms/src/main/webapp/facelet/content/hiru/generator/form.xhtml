@@ -62,17 +62,17 @@
 	            <a4j:poll id="poll" interval="2000" enabled="#{hiru_generator.activePoll}" reRender="poll,grid_messages"/>
 	        </h:form>
 	    </a4j:region>
-		<h:form>
+		<aon:form>
 			<rich:panel bodyClass="inpanelBody" id="grid_messages">
 	        	<f:facet name="header">
-	                    Console Log
+	        		<aon:outputText value="Console Log"/>
 	            </f:facet>
 		        <rich:dataList id="dataList_Messages" var="msg" value="#{hiru_generator.messages}" rows="20">
-					<h:outputText style="color:red;" value="#{msg}"/>
+					<aon:outputText style="color:red;" value="#{msg}"/>
 				</rich:dataList>
-				<rich:datascroller align="left"  for="dataList_Messages" maxPages="20" />
+				<rich:datascroller align="left" for="dataList_Messages" maxPages="20" />
 			</rich:panel>
-		</h:form>
+		</aon:form>
 	</ui:define>
 </ui:composition>
 
