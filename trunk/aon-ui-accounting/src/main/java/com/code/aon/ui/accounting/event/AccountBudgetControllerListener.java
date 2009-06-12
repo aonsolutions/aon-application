@@ -29,7 +29,19 @@ public class AccountBudgetControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeModelSearched(ControllerEvent event)
 			throws ControllerListenerException {
+		//((AccountBudgetController)getController()).calculateCreditDebitLists();
+	}
+	
+	@Override
+	public void afterModelInitialized(ControllerEvent event)
+			throws ControllerListenerException {
 		((AccountBudgetController)getController()).calculateCreditDebitLists();
+	}
+	
+	@Override
+	public void beforeEditSearch(ControllerEvent event)
+			throws ControllerListenerException {
+		((AccountBudgetController)getController()).setAccount(null);
 	}
 		
 }

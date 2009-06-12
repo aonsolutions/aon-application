@@ -15,9 +15,11 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.account.Account;
+import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountBudget;
 import com.code.aon.accounting.AccountBudgetDetail;
 import com.code.aon.accounting.Period;
+import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -266,6 +268,8 @@ public class AccountBudgetController extends BasicController {
 	}
 	
 	public void calculateCreditDebitLists(){
+		setDebitList(null);
+		setCreditList(null);
 		PreparedStatement sum = null;
 		ResultSet sumSet = null;
 		try {
@@ -295,6 +299,19 @@ public class AccountBudgetController extends BasicController {
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public void onSearch(ActionEvent event) {
+		try {
+			if (account!=null && account.getId() != null) {
+				getCriteria().addEqualExpression(getFieldName(IAccountingAlias.ACCOUNT_BUDGET_ACCOUNT_ID),account.getId());
+			}
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		super.onSearch(event);
 	}
 
 }
