@@ -144,7 +144,7 @@ public class BalanceSheetController implements ICollectionProvider{
 
 			}
 
-			if (bd.getAccounts() != null && bd.isInternalCalculation()) {// Calcula el String con las cuentas de un balanceDetail que esta compesto por otros(UN TOTAL)
+			if ( StringUtils.isEmpty(bd.getAccounts()) && bd.isInternalCalculation()) {// Calcula el String con las cuentas de un balanceDetail que esta compesto por otros(UN TOTAL)
 				String line = new String();
 				String accounts = bd.getAccounts();// linea de total que proviene de la BD
 				String[] data = new String[30];
