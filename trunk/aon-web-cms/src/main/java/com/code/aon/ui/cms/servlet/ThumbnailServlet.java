@@ -61,28 +61,6 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
 		}
 	}
 	
-	/*
-	private long getLastModified( File file ) {
-		if ( file.exists() && file.isFile() && file.canRead() ) {
-			long value = file.lastModified();
-			if ( value != 0 ) {
-				return value / 1000 * 1000;
-			}
-		}
-		return -1;
-	}
-	
-	@Override
-	protected long getLastModified(HttpServletRequest req) {
-		File file = new File( getFile(req) );
-		long value = getLastModified(file);
-		if ( value != -1 ) {
-			return value;
-		}
-		return super.getLastModified(req);
-	}
-	*/
-	
 	private String getFile( HttpServletRequest req ) {
 		String servlet = req.getServletPath();
 		String basePath = getImagesPath(req.getSession());
