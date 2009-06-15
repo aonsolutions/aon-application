@@ -72,8 +72,8 @@
 		        <aon:div id="log_">
 					<rich:panel bodyClass="inpanelBody" id="gridLog" rendered="#{album.activeLog}">
 				       	<f:facet name="header">
-				                   Console Log
-				           </f:facet>
+				       		<aon:outputText value="Console Log" />
+			           </f:facet>
 				        <rich:dataList id="dataListLog" var="msg" value="#{album.status}" rows="15">
 							<h:outputText value="#{msg}"/>
 						</rich:dataList>

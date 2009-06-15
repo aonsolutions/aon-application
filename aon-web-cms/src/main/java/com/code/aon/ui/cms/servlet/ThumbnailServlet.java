@@ -32,14 +32,33 @@ import com.code.aon.ui.cms.util.ImageUtil;
 
 public class ThumbnailServlet extends HttpServlet implements Constants{
 	
+	private static final String WIDTH = "width";
+	
+	private static final String LAST_MODIFIED = "lm";
+
 	private static final long serialVersionUID = 7628878719631691763L;
+	
+	private static final long EXPIRED = 8640000L;
 
 	private static final Logger LOGGER = Logger.getLogger(ThumbnailServlet.class.getName());
 	
-	private void setCacheControl( HttpServletResponse res, File file ) {
+	private void setNoCacheControl( HttpServletResponse res ) {
     	res.setHeader("Expires", "0");
     	res.setHeader("Pragma", "no-cache");
     	res.setHeader("Cache-Control", "no-store");								
+	}
+
+	private void setCacheableControl( HttpServletResponse res ) {
+        res.setDateHeader("Expires", System.currentTimeMillis() + (EXPIRED * 1000L));
+        res.setHeader("Cache-control", "max-age=" + EXPIRED);
+	}
+	
+	private void setCacheControl( HttpServletRequest req, HttpServletResponse res ) {
+		if (req.getParameter(LAST_MODIFIED) != null) {
+			setCacheableControl(res);
+		} else {
+			setNoCacheControl(res);
+		}
 	}
 	
 	/*
@@ -74,7 +93,9 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		int maxDim = 100;
-		if (req.getParameter("width") != null) maxDim = Integer.parseInt(req.getParameter("width").toString());
+		if (req.getParameter(WIDTH) != null) {
+			maxDim = Integer.parseInt(req.getParameter(WIDTH).toString());
+		}
 		
 		InputStream is = null;
 		BufferedInputStream bis = null;
@@ -82,45 +103,40 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
 		BufferedOutputStream bos = null;
 		try {
 			String file = getFile(req);
-			boolean document = false;
 			//Comprobamos la extension...
 			String ext = FilenameUtils.getExtension(file);
+			String resource = null;
 			if (! StringUtils.isBlank(ext) ) {
 				if (ext.equals("doc") || ext.equals("docx") || ext.equals("wps")) {
-					ext = "word.png";
-					document = true;
+					resource = "word.png";
 				} else if (ext.equals("xls") || ext.equals("xlsx")) {
-					ext = "excel.png";
-					document = true;
+					resource = "excel.png";
 				} else if (ext.equals("pps") || ext.equals("pptx") || ext.equals("ppt")) {
-					ext = "powerpoint.png";
-					document = true;
+					resource = "powerpoint.png";
 				} else if (ext.equals("wmv") || ext.equals("avi") || ext.equals("mov")) {
-					ext = "video.png";
-					document = true;
+					resource = "video.png";
 				} else if (ext.equals("wma") || ext.equals("mp3") || ext.equals("rm")) {
-					ext = "audio.png";
-					document = true;
+					resource = "audio.png";
 				} else if (ext.equals("html") || ext.equals("htm")) {
-					ext = "html.png";
-					document = true;
+					resource = "html.png";
 				} else if (ext.equals("pdf")) {
-					ext = "pdf.png";
-					document = true;
+					resource = "pdf.png";
 				}
 			}
 			File f = new File(file);
-        	res.setContentType( "image/jpeg" );
-        	setCacheControl(res, f);
-			if (!document && f.exists() && f.isFile()) {
+			if ( (resource == null) && f.exists() && f.isFile()) {
+				setCacheControl(req, res);
+	        	res.setContentType( "image/jpeg" );
 				ImageUtil.resize(f, res.getOutputStream(), maxDim);
             } else {
             	String image = OTHER_IMAGE;
-            	if (!f.exists() || !f.isFile()) {
+            	if ( resource != null ) {
+            		image = resource;
+            	} else if (!f.exists() || !f.isFile()) {
             		image = BLANK_IMAGE;
             	}
+            	setCacheableControl(res);
             	res.setContentType( "image/png" );
-            	if (document) image = ext;
         		is = ThumbnailServlet.class.getResourceAsStream(image);
         		bis = new BufferedInputStream(is);
                 os = res.getOutputStream();
