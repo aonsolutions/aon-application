@@ -21,12 +21,12 @@
 					value="#{appBundle.aon_payroll_principales_integral}" />
 				<ui:param name="controller" value="#{cliente}" />
 				<aon:methodParam name="searchAction" value="integral_search" />
+				<aon:methodParam name="backAction" value="integral_list" />
 		        <ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipDeleteButton" value="true" />
 				<ui:param name="skipSaveButton" value="true" />	
-				<ui:param name="skipBackButton" value="true" />	
-				<ui:param name="skipRemoveButton" value="true" />	
-				<aon:methodParam name="saveAction" value="integral_form" />			
+			    <ui:param name="skipRemoveButton" value="true" />	
+				
 			</ui:include>
 
 

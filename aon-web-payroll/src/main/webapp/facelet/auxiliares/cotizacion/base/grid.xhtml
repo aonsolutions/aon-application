@@ -9,7 +9,7 @@
 	 <rich:spacer />
 		<aon:editDataTable id="linbaseData" value="#{linbase.model}" 
 			var="to" rows="0"
-			rendered="#{(linbase.model.rowCount > 0) or (linbase.new)}" 
+			rendered="#{!baseMaestro.new}" 
 			columnClasses="aon-editDataTable-iconColumn
 				, aon-editDataTable-dateColumn, aon-editDataTable-dateColumn
 				, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn
@@ -74,7 +74,7 @@
 						<aon:commandButton alt="[#{bundle.aon_reset}]"
 							styleClass="aon-editDataTable-button aon-icon-reset"
 							actionListener="#{linbase.onReset}" value=""
-							rendered="#{!linbase.new}"
+							rendered="#{!baseMaestro.new}"
 							accesskey="#{bundle.aon_key_new_line}" />
 					</aon:div>
 					
