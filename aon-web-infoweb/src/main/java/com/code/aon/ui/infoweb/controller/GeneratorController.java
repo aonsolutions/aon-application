@@ -339,7 +339,11 @@ public class GeneratorController extends BasicController implements VelocityCons
 	}
 
 	private String getPageName(String name) {
-		return name + ".html";
+		String page = name + ".html";
+		page = page.replaceAll(" ", "_");
+		page = page.replaceAll("ñ", "n").replaceAll("á", "a").replaceAll("é", "e").replaceAll("í", "i").replaceAll("ó", "o").replaceAll("ú", "u");
+		page = page.replaceAll("Ñ", "N").replaceAll("Á", "A").replaceAll("É", "E").replaceAll("Í", "I").replaceAll("Ó", "O").replaceAll("Ú", "U");
+		return page;
 	}
 
 	private String getPageLink(String name) {
