@@ -53,7 +53,6 @@ public class ContratosInternosController extends PayrollBasicController {
 		return desempleados;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void refreshAsimilados() throws ManagerBeanException {
 		asimilados = new LinkedList<SelectItem>();
 		asimilados.add( new SelectItem( IPayrollConstants.EMPTY_STRING, IPayrollConstants.EMPTY_STRING ) );
@@ -78,12 +77,12 @@ public class ContratosInternosController extends PayrollBasicController {
 	//añade el valor de los checkbox al criteria para realizar busquedas
 	@Override
 	public void onSearch(ActionEvent event) {
-		try {
-			this.clearCriteria();
-		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			this.clearCriteria();
+//		} catch (ManagerBeanException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 		
 		try {

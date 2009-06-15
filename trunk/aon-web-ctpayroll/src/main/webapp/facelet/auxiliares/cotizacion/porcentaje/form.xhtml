@@ -30,11 +30,11 @@
 				<aon:panelGrid id="porcentajeMaestro" columns="2" dir="true" width="100%" style="margin-bottom=2px;">
 					<aon:outputLabel value="#{appBundle.aon_payroll_cdg}" />
 					<aon:inputText value="#{porcentajeMaestro.to.cdg}" disabled="#{!porcentajeMaestro.new}" 
-						required="true" size="10" maxlength="8" />
+						required="true" size="10" maxlength="8" id="cdg"/>
 				
 					<aon:outputLabel for="Domain_name" value="#{appBundle.aon_payroll_description}" />
 					<aon:inputText value="#{porcentajeMaestro.to.description}" 
-						required="true" size="60" maxlength="50" >
+						required="true" size="60" maxlength="50" id="description" >
 					</aon:inputText>
 
 					<aon:outputLabel value="#{appBundle.aon_payroll_order}" />
