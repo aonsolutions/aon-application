@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.infoweb</artifactId>
 	<packaging>war</packaging>
-	<version>3.8.0</version>
+	<version>3.9.0</version>
 	<description>AON WEB INFOWEB</description>
 	<name>AON WEB INFOWEB</name>
 	<properties>
@@ -66,7 +66,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.infoweb</artifactId>
-			<version>3.1.1</version>
+			<version>3.1.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
