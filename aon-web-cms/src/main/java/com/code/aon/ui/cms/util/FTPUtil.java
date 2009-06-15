@@ -21,7 +21,7 @@ public class FTPUtil implements ICMSConstants {
 	public static boolean uploadFTP() throws IOException {
 		config = ControllerUtil.getCurrentConfig();
 		String destinationFolder = config.getFtp_path();
-		String sourceFolder = ControllerUtil.getPreviewPath();
+		File sourceFolder = ControllerUtil.getPreviewPath();
 		String server = config.getFtp_server();
 		String user = config.getFtp_user();
 		String password = config.getFtp_password();
@@ -35,7 +35,7 @@ public class FTPUtil implements ICMSConstants {
 	public static boolean uploadPreviewFTP() throws IOException {
 		config = ControllerUtil.getCurrentConfig();
 		String destinationFolder = config.getPreview_ftp_path();
-		String sourceFolder = ControllerUtil.getPreviewPath();
+		File sourceFolder = ControllerUtil.getPreviewPath();
 		String server = config.getPreview_ftp_server();
 		String user = config.getPreview_ftp_user();
 		String password = config.getPreview_ftp_password();
@@ -49,7 +49,7 @@ public class FTPUtil implements ICMSConstants {
 	@SuppressWarnings({ "finally", "finally" })
 	public static boolean uploadFTP(
 			String dest, 
-			String source,
+			File source,
 			String server,
 			String user,
 			String password
@@ -60,7 +60,6 @@ public class FTPUtil implements ICMSConstants {
 		
 		boolean error = true;
 		String destinationFolder = dest;
-		String sourceFolder = source;
 		FTPClient ftp = new FTPClient();
 
 		try {
@@ -92,7 +91,7 @@ public class FTPUtil implements ICMSConstants {
 						status.info("Error de escritura en el servidor.");
 					}
 				}
-				ftpDir(sourceFolder, ftp, destinationFolder);
+				ftpDir(source, ftp, destinationFolder);
 				status.info("Publicacion finalizada.");
 			} else {
 				status.info("No hubo conexion con el servidor.");
@@ -112,10 +111,9 @@ public class FTPUtil implements ICMSConstants {
 
 	public static String invalidFolder[] = {"ckfinder", "_thumbs"};
 	
-	public static void ftpDir(String dir2ftp, FTPClient fc, String breadCrum) {
+	public static void ftpDir(File ftpDir, FTPClient fc, String breadCrum) {
 		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean(GENERATOR_STATUS);
 		try {
-			File ftpDir = new File(dir2ftp);
 			String[] dirList = ftpDir.list();
 			for (int i = 0; i < dirList.length; i++) {
 				File f = new File(ftpDir, dirList[i]);
@@ -124,8 +122,7 @@ public class FTPUtil implements ICMSConstants {
 					if (f.isDirectory()) {
 						if (isValidFolder(f.getName())) { 
 							fc.makeDirectory(breadCrum + "/" + f.getName());
-							String filePath = f.getPath();
-							ftpDir(filePath, fc, breadCrum + "/" + f.getName());
+							ftpDir(f, fc, breadCrum + "/" + f.getName());
 						}
 						continue;
 					}

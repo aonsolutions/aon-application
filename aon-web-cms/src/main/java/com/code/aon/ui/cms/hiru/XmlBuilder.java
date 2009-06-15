@@ -37,21 +37,20 @@ public class XmlBuilder {
 	
 	private static final Logger LOGGER = Logger.getLogger(XmlBuilder.class.getName());
 	
-	private String destDir;
+	private File destDir;
 
 	private String url;
 
-	public XmlBuilder(String destDir, String url){
+	public XmlBuilder(File destDir, String url){
 		this.destDir = destDir;
 		this.url = url;
 	}
 
 	public void generate() throws FileNotFoundException, XmlBuilderException{
 		this.fireMessage("Start generation.");
-		File fileDir = new File(destDir);
-		if (!fileDir.exists()){
+		if (!destDir.exists()){
 			this.fireMessage("Creating directory....");
-			fileDir.mkdir();
+			destDir.mkdir();
 			this.fireMessage("Created.");
 		}
 		
@@ -273,7 +272,7 @@ public class XmlBuilder {
 	public static void main(String[] args) {
 		try {
 			// ControllerUtil.getDocumentsPath()
-			XmlBuilder b = new XmlBuilder("c:/tmp"+"/"+"hiru","http://hiru.com/xml");
+			XmlBuilder b = new XmlBuilder( new File("c:/tmp"+"/"+"hiru"),"http://hiru.com/xml");
 			b.generate();			
 		}catch (Throwable th) {
 			LOGGER.log(Level.SEVERE, th.getMessage(), th);

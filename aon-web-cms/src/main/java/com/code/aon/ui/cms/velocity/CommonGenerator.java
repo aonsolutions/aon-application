@@ -325,9 +325,9 @@ public class CommonGenerator extends Generator implements ICMSConstants {
         vu.put("default_language", getDefaultLanguage());
         vu.put("current_language", getCurrentLanguage());
 
-		File f = new File(ControllerUtil.getPreviewPath());
+		File f = ControllerUtil.getPreviewPath();
 		if (!f.exists()) f.mkdirs();
-		f = new File(ControllerUtil.getLanguagePreviewPath());
+		f = ControllerUtil.getLanguagePreviewPath();
 		if (!f.exists()) f.mkdirs();
 		generate(vu, Templates.LANGUAGE);
 		
@@ -336,9 +336,9 @@ public class CommonGenerator extends Generator implements ICMSConstants {
 
 	public void generateEmailSendPage() {
 		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();		
-		File f = new File(ControllerUtil.getPreviewPath());
+		File f = ControllerUtil.getPreviewPath();
 		if (!f.exists()) f.mkdirs();
-		f = new File(ControllerUtil.getLanguagePreviewPath());
+		f = ControllerUtil.getLanguagePreviewPath();
 		if (!f.exists()) f.mkdirs();
 		try {
 			CommonGenerator.getCommonGenerator().chargeContext(vu, null);
@@ -360,9 +360,9 @@ public class CommonGenerator extends Generator implements ICMSConstants {
 
 	public void generateSearchPage() {
 		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();		
-		File f = new File(ControllerUtil.getPreviewPath());
+		File f = ControllerUtil.getPreviewPath();
 		if (!f.exists()) f.mkdirs();
-		f = new File(ControllerUtil.getLanguagePreviewPath());
+		f = ControllerUtil.getLanguagePreviewPath();
 		if (!f.exists()) f.mkdirs();
 		try {
 			CommonGenerator.getCommonGenerator().chargeContext(vu, null);
@@ -375,9 +375,9 @@ public class CommonGenerator extends Generator implements ICMSConstants {
 	public void generateCaptchaPage() {
 		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();		
 
-		File f = new File(ControllerUtil.getPreviewPath());
+		File f = ControllerUtil.getPreviewPath();
 		if (!f.exists()) f.mkdirs();
-		f = new File(ControllerUtil.getLanguagePreviewPath());
+		f = ControllerUtil.getLanguagePreviewPath();
 		if (!f.exists()) f.mkdirs();
 		generate(vu, Templates.CAPTCHA);
 		
