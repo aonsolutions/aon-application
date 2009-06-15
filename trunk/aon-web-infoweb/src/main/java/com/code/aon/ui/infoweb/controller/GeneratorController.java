@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
@@ -265,7 +266,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 
 		for (int i = 0; i < wiprList.size(); i++) {
 			WebInfoPageResource wipr = (WebInfoPageResource)wiprList.get(i);
-			ImageHandler ih = new ImageHandler(getImageName(wipr.getRattach()), getImagePageName(wipr.getRattach().getDescription()), wipr.getContent());
+			ImageHandler ih = new ImageHandler(getImageName(wipr.getRattach()), getImagePageLink(wipr.getRattach().getDescription()), wipr.getContent());
 			images.add(ih);
 		}
 		vu.put(IMAGES_KEY, images);
@@ -295,11 +296,11 @@ public class GeneratorController extends BasicController implements VelocityCons
 				next_link = "";
 			} else {
 				WebInfoPageResource wiprn = (WebInfoPageResource)wiprList.get(i+1);
-				next_link = getImagePageName(wiprn.getRattach().getDescription());
+				next_link = getImagePageLink(wiprn.getRattach().getDescription());
 			}
 			WebInfoPageResource wipr = (WebInfoPageResource)wiprList.get(i);
 			//Por cada imagen se hace tambien una pagina
-			ImageHandler ih = new ImageHandler(getImageName(wipr.getRattach()), getImagePageName(wipr.getRattach().getDescription()), wipr.getContent());
+			ImageHandler ih = new ImageHandler(getImageName(wipr.getRattach()), getImagePageLink(wipr.getRattach().getDescription()), wipr.getContent());
 			images.add(ih);
 			
 			vu.put(IMAGE_KEY, ih);
@@ -312,7 +313,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			if (!ultima) vu.remove(NEXT_KEY);
 			vu.remove(RETURN_KEY);
 			primera = false;
-			previous_link = getImagePageName(wipr.getRattach().getDescription());
+			previous_link = getImagePageLink(wipr.getRattach().getDescription());
 		}
 		vu.put(GALLERY_KEY, images);
 		
@@ -338,15 +339,15 @@ public class GeneratorController extends BasicController implements VelocityCons
 	}
 
 	private String getPageName(String name) {
-		String page = name + ".html";
-		page = page.replaceAll(" ", "_");
-		page = page.replaceAll("ñ", "n").replaceAll("á", "a").replaceAll("é", "e").replaceAll("í", "i").replaceAll("ó", "o").replaceAll("ú", "u");
-		page = page.replaceAll("Ñ", "N").replaceAll("Á", "A").replaceAll("É", "E").replaceAll("Í", "I").replaceAll("Ó", "O").replaceAll("Ú", "U");
-		return page;
+		return name + ".html";
 	}
 
 	private String getImagePageName(String name) {
 		return IMAGE_PAGE_PREFFIX + getPageName(name);
+	}
+
+	private String getImagePageLink(String name) {
+		return StringEscapeUtils.escapeHtml(getImagePageName(name));
 	}
 	
     public WebInfoVariableType getVariableType(String text) {
@@ -514,7 +515,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 				if (!ImageUtil.copyRegistryBlobToFile(ra, imagesDirectory, 200, 200, filename)) {
 					AonUtil.addErrorMessage("ERROR: Se produjo un error al intentar copiar la imagen " + filename); 
 				}
-				ImageHandler ih = new ImageHandler(filename, getImagePageName(ra.getDescription()), ra.getDescription());
+				ImageHandler ih = new ImageHandler(filename, getImagePageLink(ra.getDescription()), ra.getDescription());
 				all_images.add(ih);
 			} else {
 				LOGGER.warning( "Invalid image: " + ra );
