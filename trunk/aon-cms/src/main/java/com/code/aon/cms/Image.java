@@ -2,14 +2,16 @@ package com.code.aon.cms;
 
 import java.io.File;
 import java.io.Serializable;
-
-import javax.persistence.Transient;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
 public class Image implements Serializable {
 
 	private static final long serialVersionUID = 1286073893332097082L;
+	
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
 
 	private File file;
 
@@ -32,10 +34,22 @@ public class Image implements Serializable {
 	public void setFile(File file) {
 		this.file = file;
 	}
+	
+	private Date getLastModified( File file ) {
+		long value = file.lastModified();
+		if ( value != 0 ) {
+			return new Date(value);
+		}
+		return null;
+	}
 
-	@Transient
 	public String getThumb() {
-		return relativePath + ".thumbnail";
+		String thumb = relativePath + ".thumbnail"; 
+		Date date = getLastModified(file);
+		if ( date != null ) {
+			thumb += "?lm=" + DATE_FORMAT.format(date);
+		}
+		return thumb;
 	}
 
 	public String getRelativePath() {
