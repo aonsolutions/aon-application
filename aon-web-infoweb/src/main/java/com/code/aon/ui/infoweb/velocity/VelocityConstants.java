@@ -28,7 +28,33 @@ public interface VelocityConstants {
 		
 	//VELOCITY PROPERTIES
 	VELOCITY_FILE_ENCODING		= "iso-8859-1",
-	VELOCITY_LOG_FILE			= "velocity.log";
+	VELOCITY_LOG_FILE			= "velocity.log",
+		
+	//VELOCTIY VALUES
+	IMAGES_KEY					= "images",
+	IMAGE_KEY					= "image",
+	MENU_KEY					= "menu",
+	ADDRESS_KEY					= "address",
+	ADDRESSES_KEY				= "addresses",
+	ALL_IMAGES_KEY 				= "all_images",
+	FAX_KEY 					= "fax",
+	PHONE_KEY					= "phone",
+	EMAIL_KEY					= "email",
+	DESCRIPTION_KEY				= "description",
+	SLOGAN_KEY					= "slogan",
+	SCHEDULE_KEY				= "schedule",
+	LOGO_KEY					= "logo",
+	PAGENAME_KEY				= "pagename",
+	GALLERY_KEY					= "gallery",
+	RETURN_KEY					= "return",
+	NEXT_KEY					= "next",
+	PREVIOUS_KEY				= "previous",
+	COORDS_KEY					= "coords",
+	TEXT_KEY					= "text",
+	TITLE_KEY					= "title",
+	CONTENT_KEY					= "content",
+	COMPANY_KEY					= "company",
+	CURRENT_YEAR_KEY			= "currentYear";
 
 	//TEMPLATES
 	String INDEX_TEMPLATE		= "index.vm";	

@@ -22,7 +22,7 @@
 				<ui:param name="skipBackButton" value="true" />
 			</ui:include>
 	
-			<rich:panel styleClass="aon-content-home">
+			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2" dir="true" style="width:100%">
 			
 					<aon:outputLabel for="WebInfo_slogan" value="#{appBundle.infoweb_data_slogan}" />
@@ -33,11 +33,28 @@
 					<aon:inputTextarea id="WebInfo_schedule" styleClass="aon-inputText"
 						cols="90" rows="3" value="#{companyWebInfo.to.schedule}" />
 			
+					<aon:outputLabel for="Generic_content_richTextEnabled"
+						value="#{appBundle.infoweb_page_rich_enable}" />
+					<aon:selectBooleanCheckbox id="Generic_content_richTextEnabled"
+						value="#{webPage.richTextEnabled}">
+						<a4j:support ajaxSingle="true" event="onclick"
+							reRender="commercialDescriptionDiv" />
+					</aon:selectBooleanCheckbox>
+
 					<aon:outputLabel for="WebInfo_commercialDescription" value="#{appBundle.infoweb_data_short_description}" />
-					<aon:inputTextarea id="WebInfo_commercialDescription"
-						value="#{companyWebInfo.to.commercialDescription}" cols="90" rows="15"/>
+					<aon:div id="commercialDescriptionDiv" style="width:600px">
+						<aon:inputTextarea id="WebInfo_commercialDescription"
+							rendered="#{!webPage.richTextEnabled}"
+							value="#{companyWebInfo.to.commercialDescription}" cols="90" rows="15"/>
+						<rich:editor 
+							id="WebInfo_commercialDescription-HTML"
+							value="#{companyWebInfo.to.commercialDescription}"
+							rendered="#{webPage.richTextEnabled}"
+							configuration="tinyMCE" height="280"
+							language="#{facesContext.application.defaultLocale.language}" />
+					</aon:div>
 				</aon:panelGrid>
-			</rich:panel>
+			</aon:div>
 		
 		</aon:form>
 	</ui:define>
