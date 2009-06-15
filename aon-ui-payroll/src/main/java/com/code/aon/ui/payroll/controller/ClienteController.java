@@ -227,7 +227,7 @@ public class ClienteController extends PayrollBasicController {
 		if(getTo()!=null){
 			try {
 				String id = BeanManager.getManagerBean(Cliente.class).getFieldName(IPayrollAlias.CLIENTE_CDG);
-				Integer cdg = ((Delegacion)getTo()).getCdg();
+				Integer cdg = ((Cliente)getTo()).getCdg();
 				clientePrint = new ClienteController();
 				clientePrint = this;
 				clientePrint.clearCriteria();
