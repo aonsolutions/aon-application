@@ -1,5 +1,6 @@
 package com.code.aon.ui.cms.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -66,6 +67,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 	
 	private void generatorError( Throwable th ) {
 		LOGGER.log(Level.SEVERE, th.getMessage(), th);
+		status.finalized();		
 		String message = AonUtil.getMessage(ICMSConstants.BUNDLE_NAME, "cms_generator_error");
 		AonUtil.addErrorMessage( message + " " + th.getMessage());
 		closeSession();
@@ -361,8 +363,14 @@ public class GeneratorController implements Constants, ICMSConstants {
 		status.onInit(null);
 		//Copy css and js files from current template
 		try {
-			FileUtils.copyDirectory(ControllerUtil.getCssTemplatePath(), ControllerUtil.getPreviewPath());
-			FileUtils.copyDirectory(ControllerUtil.getJsTemplatePath(), ControllerUtil.getPreviewPath());
+			File cssPath = ControllerUtil.getCssTemplatePath();
+			if ( cssPath.exists() ) {
+				FileUtils.copyDirectory(cssPath, ControllerUtil.getPreviewPath());	
+			}
+			File jsPath = ControllerUtil.getJsTemplatePath();
+			if ( jsPath.exists() ) {
+				FileUtils.copyDirectory(jsPath, ControllerUtil.getPreviewPath());
+			}
 		} catch (IOException e) {
 			generatorError(e);
 		}
