@@ -98,8 +98,9 @@ public class GeneratorStatusController implements IGeneratorLogger {
 
 	public void finalized() {
 		this.generated = true;
-		if (this.errors.size()==0)
+		if (this.errors.size()==0) {
 			this.generatedOk = true;
+		}
 		this.activePoll = false;
 	}
 
