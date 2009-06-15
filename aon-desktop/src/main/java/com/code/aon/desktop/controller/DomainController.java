@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.faces.validator.ValidatorException;
 import javax.naming.Context;
 import javax.naming.Name;
@@ -370,6 +371,20 @@ public class DomainController extends BasicController implements IDesktopConstan
 		Name currentUsersDN = NameResolver.getUsersDN(getCurrentDomain());
 		Name usersDN = NameResolver.getUsersDN(domain);
 		addReferral(usersDN, currentUsersDN, ORGANIZATIONAL_UNIT);
+	}
+	
+	private void synchronize( Domain domain ) {
+		
+	}
+	
+	public void synchronize( ActionEvent event ) throws ManagerBeanException {
+		IManagerBean bean = getManagerBean();
+		Criteria criteria = new Criteria();
+		String parentDomain = bean.getFieldName(IDesktopAlias.DOMAIN_PARENT_DOMAIN);
+		criteria.addNotNullExpression(parentDomain);
+		for( ITransferObject to : bean.getList(criteria) ) {
+			synchronize( (Domain) to );
+		}
 	}
 	
 }
