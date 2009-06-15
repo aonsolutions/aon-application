@@ -52,7 +52,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
-			<version>3.8.4</version>
+			<version>3.9.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
