@@ -25,7 +25,9 @@
 						<aon:commandButton id="generate"
 							value="#{appBundle.infoweb_generate}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							actionListener="#{generator.onGenerate}"/>
+							actionListener="#{generator.onGenerate}"
+							onclick="Richfaces.showModalPanel('waitProccess')" 
+				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />								
 						<h:outputLink id="web" value="#{generator.webPage}" target="_new"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							rendered="#{generator.published}">
@@ -37,5 +39,6 @@
 		<rich:panel styleClass="aon-content-home">
 		</rich:panel>
 		</aon:form>
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />		
 	</ui:define>
 </ui:composition>

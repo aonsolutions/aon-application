@@ -342,6 +342,10 @@ public class GeneratorController extends BasicController implements VelocityCons
 		return name + ".html";
 	}
 
+	private String getPageLink(String name) {
+		return StringEscapeUtils.escapeHtml(getPageName(name));
+	}
+	
 	private String getImagePageName(String name) {
 		return IMAGE_PAGE_PREFFIX + getPageName(name);
 	}
@@ -634,7 +638,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 	
 	private MenuOptionHandler getMenuOptionHandler( WebInfoPage wip ) {
 		String label = wip.getName();
-		String link = getPageName(label);
+		String link = getPageLink(label);
 		return new MenuOptionHandler(label, link);		
 	}
 
