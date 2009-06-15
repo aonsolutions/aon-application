@@ -5,7 +5,6 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.auxiliares.contratos.ContratosTc2;
-import com.code.aon.payroll.auxiliares.convenios.Convenio;
 import com.code.aon.payroll.dao.IPayrollAlias;
 
 
@@ -42,13 +41,12 @@ public class ContratosTc2Controller extends PayrollBasicController {
 	
 	@Override
 	public void onSearch(ActionEvent event) {
-		// TODO Auto-generated method stub
-		try {
-			this.clearCriteria();
-		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			this.clearCriteria();
+//		} catch (ManagerBeanException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		super.onSearch(event);
 	}
 	

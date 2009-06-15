@@ -7,7 +7,7 @@
 	<aon:div>
 		<aon:editDataTable id="porcentajeData" value="#{porcentaje.model}" 
 			var="to" rows="0"
-			rendered="#{(porcentaje.model.rowCount > 0) or (porcentaje.new)}" 
+			rendered="#{(porcentaje.model.rowCount >= 0) or !(porcentaje.new)}" 
 			columnClasses="aon-editDataTable-iconColumn
 				, aon-editDataTable-dateColumn, aon-editDataTable-dateColumn
 				, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn
