@@ -2,6 +2,7 @@ package com.code.aon.ui.cms.util;
 
 import java.io.File;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.cms.Config;
@@ -38,8 +39,8 @@ public class ControllerUtil implements Constants, ICMSConstants {
 		return config.getCurrentConfigDetail();
 	}	
 
-	public static String getDomainPath() {
-		return DOMAINS_PATH + File.separator + getCurrentConfig().getDomain();
+	public static File getDomainPath() {
+		return new File( DOMAINS_PATH, getCurrentConfig().getDomain() );
 	}
 	
 	public static String getTemporalPath() {
@@ -60,11 +61,8 @@ public class ControllerUtil implements Constants, ICMSConstants {
 		return path;
 	}	
 
-	public static String getCurrentTemplatePath() {
-		String path = null;
-		path = getTemplatePath() + 
-					File.separator + getCurrentConfig().getTemplate(); 
-		return path;
+	public static File getCurrentTemplatePath() {
+		return new File( getTemplatePath(), getCurrentConfig().getTemplate() );
 	}	
 	
 	public static String getCurrentVmTemplatePath() {
@@ -81,27 +79,28 @@ public class ControllerUtil implements Constants, ICMSConstants {
 		return path;
 	}	
 
-	public static String getCssTemplatePath() {
-		String path = null;
-		path = getCurrentTemplatePath() +  
-					File.separator + CSS_PATH; 
-		return path;
+	public static File getCssTemplatePath() {
+		return new File( getCurrentTemplatePath(), CSS_PATH );
 	}	
 
-	public static String getJsTemplatePath() {
-		String path = null;
-		path = getCurrentTemplatePath() + 
-					File.separator + JS_PATH; 
-		return path;
+	public static File getJsTemplatePath() {
+		return new File( getCurrentTemplatePath(), JS_PATH );
 	}	
 
-	public static String getImagesPath() {
-		String path = null;
-		path = getDomainPath() + 
-					File.separator + WEBSITE_PATH + 
-					File.separator + getCurrentConfig().getPreviewUrl() +
-					File.separator + IMAGES_PATH;
-		return path;
+	public static File getWebSitePath() {
+		return new File( getDomainPath(), WEBSITE_PATH );
+	}
+	
+	public static File getPreviewPath() {
+		return new File( getWebSitePath(), getCurrentConfig().getPreviewUrl() );
+	}	
+	
+	public static File getImagesPath() {
+		return new File( getPreviewPath(), IMAGES_PATH );		
+	}
+	
+	public static File getDocumentsPath() {
+		return new File( getPreviewPath(), DOCUMENTS_PATH );
 	}
 	
 	public static String fixPath( String path ) {
@@ -112,14 +111,11 @@ public class ControllerUtil implements Constants, ICMSConstants {
 		}  
 	}
 
-	public static String getRelativePath( String path, File file ) {
-		String fullPath = file.getAbsolutePath();
-		String value = StringUtils.substring(fullPath, path.length());
-		try{
-			value = value.replaceAll(File.separator, "/");
-		}catch(Throwable th){
-			value = value.replaceAll(File.separator+File.separator, "/");
-		}
+	public static String getRelativePath( File path, File file ) {
+		String fullPath = FilenameUtils.normalizeNoEndSeparator(file.getAbsolutePath());
+		String basePath = FilenameUtils.normalizeNoEndSeparator(path.getAbsolutePath());
+		String value = StringUtils.substring(fullPath, basePath.length());
+		value = FilenameUtils.separatorsToUnix(value);
 		return value;
 	}
 	
@@ -127,23 +123,6 @@ public class ControllerUtil implements Constants, ICMSConstants {
 		return new File( getImagesPath(), fixPath(relativePath) );
 	}
 	
-	public static String getDocumentsPath() {
-		String path = null;
-		path = getDomainPath() + 
-					File.separator + WEBSITE_PATH + 
-					File.separator + getCurrentConfig().getPreviewUrl() +
-					File.separator + DOCUMENTS_PATH;
-		return path;
-	}
-	
-	public static String getPreviewPath() {
-		String path = null;
-		path = getDomainPath() + 
-					File.separator + WEBSITE_PATH + 
-					File.separator + getCurrentConfig().getPreviewUrl();
-		return path;
-	}
-
 	public static String getPreviewURL() {
 		String url = null;
 		url = "http://" + getCurrentConfig().getPreview_host() + 
@@ -158,21 +137,13 @@ public class ControllerUtil implements Constants, ICMSConstants {
 		return url;
 	}
 
-	public static String getLanguagePreviewPath() {
-		String path = null;
-		path = getDomainPath() + 
-					File.separator + WEBSITE_PATH + 
-					File.separator + getCurrentConfig().getPreviewUrl() +
-					File.separator + getCurrentLanguage().getLanguage().getLocale().getLanguage();
-		return path;
+	public static File getLanguagePreviewPath() {
+		String language = getCurrentLanguage().getLanguage().getLocale().getLanguage();
+		return new File( getPreviewPath(), language );
 	}
 
-	public static String getConfigPath() {
-		String path = null;
-		path = getTemplatePath() + 
-					File.separator + getCurrentConfig().getTemplate() + 
-					File.separator + CONFIG_PATH; 
-		return path;
+	public static File getConfigPath() {
+		return new File( getCurrentTemplatePath(), CONFIG_PATH);
 	}	
 
 }

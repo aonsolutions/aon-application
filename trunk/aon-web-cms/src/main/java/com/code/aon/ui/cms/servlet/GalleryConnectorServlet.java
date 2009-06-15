@@ -85,11 +85,7 @@ public class GalleryConnectorServlet extends HttpServlet implements Constants {
 	
 	private static final String GENERIC = "CMSGP";
 
-	private static final String ROOT_FOLDER = "/";
-
 	private static HttpSession session;
-
-	private HttpServletRequest request;
 	
 	// private Locale locale;
 
@@ -116,7 +112,6 @@ public class GalleryConnectorServlet extends HttpServlet implements Constants {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		LOGGER.fine("--- BEGIN DOGET ---");
 		LOGGER.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> GET");
-		this.request = request;
 		this.session = request.getSession();
 		
 		response.setContentType("text/xml; charset=UTF-8");

@@ -7,7 +7,7 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 
 public class ImageGalleryController extends GalleryController {
 
-	public String recoverFilesPath() {
+	public File recoverFilesPath() {
 		return ControllerUtil.getImagesPath();
 	}
 

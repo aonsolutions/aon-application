@@ -1,12 +1,17 @@
 package com.code.aon.cms;
 
+import java.io.File;
+import java.io.Serializable;
+
 import javax.persistence.Transient;
 
-import com.code.aon.common.ITransferObject;
+import org.apache.commons.lang.StringEscapeUtils;
 
-public class Image implements ITransferObject {
+public class Image implements Serializable {
 
-	private String path;
+	private static final long serialVersionUID = 1286073893332097082L;
+
+	private File file;
 
 	private String relativePath;
 
@@ -20,17 +25,16 @@ public class Image implements ITransferObject {
 		this.name = name;
 	}
 
-	public String getPath() {
-		return path;
+	public File getFile() {
+		return file;
 	}
 
-	public void setPath(String path) {
-		this.path = path;
+	public void setFile(File file) {
+		this.file = file;
 	}
 
 	@Transient
 	public String getThumb() {
-		relativePath = relativePath.replaceAll("[ +]", "%20");
 		return relativePath + ".thumbnail";
 	}
 
@@ -39,7 +43,7 @@ public class Image implements ITransferObject {
 	}
 
 	public void setRelativePath(String relativePath) {
-		this.relativePath = relativePath;
+		this.relativePath = StringEscapeUtils.escapeHtml(relativePath);
 	}
 
 }

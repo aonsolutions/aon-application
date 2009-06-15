@@ -1,5 +1,6 @@
 package com.code.aon.ui.cms.controller;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,20 +26,27 @@ public class HiruGeneratorController implements XmlBuilderListener {
 	
 	private String destinationFolder;
 
-	private String sourceFolder;
+	private File sourceFolder;
 
-	String server;
+	private String server;
 	
-	String user;
+	private String user;
 	
-	String password;
+	private String password;
+	
+	private boolean generated;
 
+	private boolean published;
+
+	private boolean activePoll;
+
+	private List<String> messages;
+	
 	public HiruGeneratorController(){
-		super();
 		Config config = ControllerUtil.getCurrentConfig();
 		url = ControllerUtil.getWebURL()+"/"+Constants.DOCUMENTS_PATH+"/"+"hiru";		
 		destinationFolder = config.getFtp_path()+"/"+Constants.DOCUMENTS_PATH+"/"+"hiru";		
-		sourceFolder = ControllerUtil.getDocumentsPath()+"/"+"hiru";
+		sourceFolder = new File( ControllerUtil.getDocumentsPath(), "hiru" );
 		server = config.getFtp_server();
 		user = config.getFtp_user();
 		password = config.getFtp_password();
@@ -75,14 +83,6 @@ public class HiruGeneratorController implements XmlBuilderListener {
 			this.activePoll = false;
 		}
 	}
-	
-	private boolean generated = false;
-
-	private boolean published = false;
-
-	private boolean activePoll = false;
-
-	private List<String> messages;
 
 	public void onInit(ActionEvent event){
 		this.generated = false;

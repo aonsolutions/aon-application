@@ -1,11 +1,13 @@
 package com.code.aon.ui.cms.controller;
 
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.time.StopWatch;
 
 import com.code.aon.cms.AlbumCategory;
@@ -23,7 +25,6 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.ControllerUtil;
-import com.code.aon.ui.cms.util.FileUtil;
 import com.code.aon.ui.cms.velocity.AlbumGenerator;
 import com.code.aon.ui.cms.velocity.ArticleCalendarGenerator;
 import com.code.aon.ui.cms.velocity.ArticleGenerator;
@@ -359,8 +360,12 @@ public class GeneratorController implements Constants, ICMSConstants {
 		initSession();
 		status.onInit(null);
 		//Copy css and js files from current template
-		FileUtil.copyDir(ControllerUtil.getCssTemplatePath(), ControllerUtil.getPreviewPath());
-		FileUtil.copyDir(ControllerUtil.getJsTemplatePath(), ControllerUtil.getPreviewPath());
+		try {
+			FileUtils.copyDirectory(ControllerUtil.getCssTemplatePath(), ControllerUtil.getPreviewPath());
+			FileUtils.copyDirectory(ControllerUtil.getJsTemplatePath(), ControllerUtil.getPreviewPath());
+		} catch (IOException e) {
+			generatorError(e);
+		}
 		CommonGenerator.getCommonGenerator().generateLanguagePage();
 		CommonGenerator.getCommonGenerator().generateEmailSendPage();
 		CommonGenerator.getCommonGenerator().generateSearchPage();
