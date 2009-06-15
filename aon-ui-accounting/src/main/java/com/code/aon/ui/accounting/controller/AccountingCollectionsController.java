@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
@@ -20,10 +21,12 @@ import com.code.aon.accounting.enumeration.AmortizationPeriod;
 import com.code.aon.accounting.enumeration.BalanceType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 
 /**
  * Collections controller.
@@ -36,6 +39,7 @@ public class AccountingCollectionsController {
 	private LinkedList<SelectItem> balanceTypes;
 	private LinkedList<SelectItem> accountEntryTypes;
 	private LinkedList<SelectItem> amortizationPeriods;
+	private LinkedList<String> concepts;
 
 	/**
 	 * Gets the account periods.
@@ -79,6 +83,31 @@ public class AccountingCollectionsController {
 			autoConcepts.add(item);
 		}
 		return autoConcepts;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List getConceptsDescriptions() {
+		try {
+			if (concepts == null) {
+				concepts = new LinkedList<String>();
+				IManagerBean conceptBean = BeanManager.getManagerBean(AutoConcept.class);
+				Criteria criteria = new Criteria();
+				String field = conceptBean.getFieldName(IAccountingAlias.AUTO_CONCEPT_DESCRIPTION);
+				criteria.addOrder(field);
+				List<ITransferObject> list = conceptBean.getList(criteria); 
+				for (ITransferObject to:list) {
+					AutoConcept concept = (AutoConcept) to;
+					concepts.add(concept.getDescription());
+				}
+			}
+			return concepts;
+			
+		} catch (ManagerBeanException e) {
+			FacesContext context = FacesContext.getCurrentInstance();
+			FacesMessage message = new FacesMessage(e.getMessage());
+			context.addMessage(null, message);
+			return null;
+		}
 	}
 
 	/**
