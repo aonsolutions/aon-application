@@ -141,11 +141,11 @@ public class GeneratorController extends BasicController implements VelocityCons
 			cssTemporalDirectory.mkdirs();
 			
 			GregorianCalendar gc = new GregorianCalendar();
-			vu.put("currentYear", gc.get(Calendar.YEAR));
+			vu.put(CURRENT_YEAR_KEY, gc.get(Calendar.YEAR));
 
 			Company company = getCompany();
 			if (company != null) {
-				vu.put("company", company);
+				vu.put(COMPANY_KEY, company);
 	
 				addCompanyLogo( company, imagesTemporalDirectory );
 				addWebInfoAttributes( company );
@@ -161,7 +161,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			generateMenu();
 
 			//Generar pagina principal
-			vu.put("content", HOME_TEMPLATE);
+			vu.put(CONTENT_KEY, HOME_TEMPLATE);
 			if ( isGenerateDefaultPage() ) {
 				vu.generate(INDEX_HTML);
 			}
@@ -170,7 +170,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			vu.generate(ERROR_TEMPLATE,ERROR_HTML);
 
 			//Generar pagina de error 404
-			vu.put("content", MAIL_TEMPLATE);
+			vu.put(CONTENT_KEY, MAIL_TEMPLATE);
 			vu.generate(MAIL_PHP);
 
 			generatePages();
@@ -198,8 +198,8 @@ public class GeneratorController extends BasicController implements VelocityCons
 
 	private void copyImageToCss(File temporalDirectory, File cssTemporalDirectory, String value) {
 		try {
-			File srcFile = new File( new File(temporalDirectory, "images"), value );
-			File destFile = new File( new File(cssTemporalDirectory, "images"), value );
+			File srcFile = new File( new File(temporalDirectory, IMAGES_PATH), value );
+			File destFile = new File( new File(cssTemporalDirectory, IMAGES_PATH), value );
 			FileUtils.copyFile(srcFile, destFile);
 		} catch (IOException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e );
@@ -237,8 +237,8 @@ public class GeneratorController extends BasicController implements VelocityCons
 		String template;
 		if (wip.getType() == WebInfoPageType.LOCATION) template = LOCATION_TEMPLATE;
 		else template = "generic" + wipd.getLayout().ordinal() + ".vm";
-		vu.put("title", wipd.getTitle());
-		vu.put("text", wipd.getContent());
+		vu.put(TITLE_KEY, wipd.getTitle());
+		vu.put(TEXT_KEY, wipd.getContent());
 		if (wip.getType() == WebInfoPageType.LOCATION) {
 			//Primero miramos si el extra tiene |
 			String extra = wipd.getExtra();
@@ -247,12 +247,12 @@ public class GeneratorController extends BasicController implements VelocityCons
 				StringTokenizer st = new StringTokenizer(extra, "|");
 				while (st.hasMoreTokens()) {
 					String coords = st.nextToken();
-					if (num == 0) vu.put("coords", coords);
-					else vu.put("coords"+num, coords);
+					if (num == 0) vu.put(COORDS_KEY, coords);
+					else vu.put(COORDS_KEY+num, coords);
 					num++;
 				}
 			} else {
-				vu.put("coords", wipd.getExtra());
+				vu.put(COORDS_KEY, wipd.getExtra());
 			}
 		}
 		
@@ -268,12 +268,12 @@ public class GeneratorController extends BasicController implements VelocityCons
 			ImageHandler ih = new ImageHandler(getImageName(wipr.getRattach()), getImagePageName(wipr.getRattach().getDescription()), wipr.getContent());
 			images.add(ih);
 		}
-		vu.put("images", images);
+		vu.put(IMAGES_KEY, images);
 		generatePage(template, wip);
-		vu.remove("title");
-		vu.remove("text");
-		if (wip.getType() == WebInfoPageType.LOCATION) vu.remove("coords");
-		vu.remove("images");
+		vu.remove(TITLE_KEY);
+		vu.remove(TEXT_KEY);
+		if (wip.getType() == WebInfoPageType.LOCATION) vu.remove(COORDS_KEY);
+		vu.remove(IMAGES_KEY);
 	}
 
 	private void generateGalleryPage(WebInfoPage wip) throws ManagerBeanException {
@@ -302,37 +302,37 @@ public class GeneratorController extends BasicController implements VelocityCons
 			ImageHandler ih = new ImageHandler(getImageName(wipr.getRattach()), getImagePageName(wipr.getRattach().getDescription()), wipr.getContent());
 			images.add(ih);
 			
-			vu.put("image", ih);
-			if (!primera) vu.put("previous", previous_link);
-			if (!ultima) vu.put("next", next_link);
-			vu.put("return", getPageName(wip.getName()));
+			vu.put(IMAGE_KEY, ih);
+			if (!primera) vu.put(PREVIOUS_KEY, previous_link);
+			if (!ultima) vu.put(NEXT_KEY, next_link);
+			vu.put(RETURN_KEY, getPageName(wip.getName()));
 			generateImagePage(IMAGE_VIEW_TEMPLATE, wipr.getRattach().getDescription());
-			vu.remove("image");
-			if (!primera) vu.remove("previous");
-			if (!ultima) vu.remove("next");
-			vu.remove("return");
+			vu.remove(IMAGE_KEY);
+			if (!primera) vu.remove(PREVIOUS_KEY);
+			if (!ultima) vu.remove(NEXT_KEY);
+			vu.remove(RETURN_KEY);
 			primera = false;
 			previous_link = getImagePageName(wipr.getRattach().getDescription());
 		}
-		vu.put("gallery", images);
+		vu.put(GALLERY_KEY, images);
 		
 		generatePage(GALLERY_TEMPLATE, wip);
 		if (wip.getType() == WebInfoPageType.LOCATION) {
-			vu.remove("coords");
+			vu.remove(COORDS_KEY);
 		}
-		vu.remove("gallery");
+		vu.remove(GALLERY_KEY);
 	}
 
 	private void generateImagePage(String template, String name) {
-		vu.put("pagename", name);
-		vu.put("content", template);
+		vu.put(PAGENAME_KEY, name);
+		vu.put(CONTENT_KEY, template);
 		vu.generate( getImagePageName(name) );
 	}
 	
 	private void generatePage(String template, WebInfoPage wip) {
 		String name = wip.getName();
-		vu.put("pagename", name);
-		vu.put("content", template);
+		vu.put(PAGENAME_KEY, name);
+		vu.put(CONTENT_KEY, template);
 		String fileName = (wip.getId() != homepage) ? getPageName(name) : INDEX_HTML;
 		vu.generate( fileName );
 	}
@@ -462,9 +462,9 @@ public class GeneratorController extends BasicController implements VelocityCons
 		List<ITransferObject> attachList = (List<ITransferObject>)attachBean.getList(attachCriteria);
 		if (attachList.size() > 0) {
 			RegistryAttachment ra = (RegistryAttachment) attachList.get(0);
-			String filename = getImageName(ra, "logo");
+			String filename = getImageName(ra, LOGO_KEY);
 			if (ImageUtil.copyRegistryBlobToFile(ra, imagesDirectory, filename)) {
-				vu.put("logo", filename);
+				vu.put(LOGO_KEY, filename);
 			}
 		}		
 	}
@@ -486,15 +486,15 @@ public class GeneratorController extends BasicController implements VelocityCons
 			WebInfo wi = (WebInfo)webinfoList.get(0);
 			String description = wi.getCommercialDescription();
 			if (! StringUtils.isBlank(description) ) {
-				vu.put("description", description);
+				vu.put(DESCRIPTION_KEY, description);
 			}
 			String slogan = wi.getSlogan();
 			if (! StringUtils.isBlank(slogan) ) {
-				vu.put("slogan", slogan);
+				vu.put(SLOGAN_KEY, slogan);
 			}
 			String schedule = wi.getSchedule();
 			if (! StringUtils.isBlank(schedule) ) {
-				vu.put("schedule", schedule);
+				vu.put(SCHEDULE_KEY, schedule);
 			}
 		}		
 	}
@@ -520,7 +520,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 				LOGGER.warning( "Invalid image: " + ra );
 			}
 		}
-		vu.put("all_images", all_images);	
+		vu.put(ALL_IMAGES_KEY, all_images);	
 	}
 	
 	private String addContactData( Company company ) {
@@ -540,13 +540,13 @@ public class GeneratorController extends BasicController implements VelocityCons
 					LOGGER.info( "Domain: " + domain + " from " + m);
 					break;
 				case EMAIL:
-					vu.put("email", m.getValue());
+					vu.put(EMAIL_KEY, m.getValue());
 					break;
 				case FIXED_PHONE:
-					vu.put("phone", m.getValue());
+					vu.put(PHONE_KEY, m.getValue());
 					break;
 				case FAX:
-					vu.put("fax", m.getValue());
+					vu.put(FAX_KEY, m.getValue());
 					break;
 			}
 		}		
@@ -573,11 +573,11 @@ public class GeneratorController extends BasicController implements VelocityCons
 			}
 		}
 		if (addresses.size() > 0) {
-			vu.put("addresses", addresses);
+			vu.put(ADDRESSES_KEY, addresses);
 		}
 		if (defaultAddress != null) {
 			LOGGER.fine( "Default address: " + defaultAddress );
-			vu.put("address", defaultAddress);		
+			vu.put(ADDRESS_KEY, defaultAddress);		
 		}
 	}
 
@@ -664,7 +664,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 				menu.add( getMenuOptionHandler(wip) );
 			}
 		}
-		vu.put("menu", menu);		
+		vu.put(MENU_KEY, menu);		
 	}
 
 	private void publish( String domain, File temporalDirectory ) {

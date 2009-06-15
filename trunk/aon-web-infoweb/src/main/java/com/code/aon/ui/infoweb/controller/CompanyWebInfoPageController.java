@@ -13,6 +13,8 @@ import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -35,6 +37,8 @@ import com.code.aon.ui.util.AonUtil;
 public class CompanyWebInfoPageController extends BasicController implements IInfoWebConstants {
 	
 	private static final Logger LOGGER = Logger.getLogger(CompanyWebInfoPageController.class.getName());
+	
+	private static final char[] VALID_CHARS = new char[] {' ', '-', '_', '(', ')', '$', '&', '{', '}'};
 
 	public boolean showGenericModalPanel;
 
@@ -308,6 +312,10 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 		setNewResource(false);
 	}
 	
+	private boolean isValidChar( char c ) {
+		return Character.isLetter(c) || Character.isDigit(c) || ArrayUtils.contains(VALID_CHARS, c);
+	}
+	
 	public void pageNameCheck(FacesContext context, UIComponent component, Object value) throws ManagerBeanException {
 		String pageName = value.toString();
 		IManagerBean bean = getManagerBean();
@@ -326,7 +334,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 		}
 		for( int i = 0; i < pageName.length(); i++ ) {
 			char c = pageName.charAt(i);
-			if (! (Character.isLetter(c) || Character.isDigit(c) || (c == ' ') ) ) {
+			if (! isValidChar(c) ) {
 				String text = AonUtil.getMessage(BUNDLE_NAME, "infoweb_page_invalid_character");
 				String formatted = AonUtil.substituteParams(AonUtil.getCurrentLocale(), text, new Object[]{c});
 				FacesMessage message = new FacesMessage(formatted);
