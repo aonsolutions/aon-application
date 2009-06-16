@@ -10,20 +10,20 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.db.manager</artifactId>
-	<version>0.5.0</version>
+	<version>0.5.1</version>
 	<description>AON UI DB MANAGER</description>
 	<name>AON UI DB MANAGER</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>3.6.1</version>
+			<version>3.7.1</version>
 			<scope>compile</scope>
 		</dependency>					
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.db.manager</artifactId>
-			<version>1.1.0</version>
+			<version>1.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
