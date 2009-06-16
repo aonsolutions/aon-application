@@ -29,15 +29,15 @@
 							</f:facet>
 							<aon:div>
 							<aon:outputLabel value="#{appBundle.aon_payroll_cdg}: " />
-							<aon:outputText	value="#{embargoBasic.to.codper}" size="10"  />
+							<aon:outputText	id="codper" value="#{embargoBasic.to.trabajador.persona.cdg}" size="10"  />
 							
 							<br />
 							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_pricipales_personas_embargos_nombre}: " />	
-							<aon:outputText	value="#{embargoBasic.to.trabajador.persona.descripcion} "  />
-							<aon:outputText	value="#{embargoBasic.to.trabajador.persona.apellido2}, "  />
-							<aon:outputText	value="#{embargoBasic.to.trabajador.persona.nombre}"  />
+							<aon:outputText	id="descripcion" value="#{embargoBasic.to.trabajador.persona.descripcion} "  />
+							<aon:outputText id="apellido2" value="#{embargoBasic.to.trabajador.persona.apellido2}, "  />
+							<aon:outputText	id="nombre" value="#{embargoBasic.to.trabajador.persona.nombre}"  />
 							</aon:div>
 						</aon:panel>
 						
@@ -51,13 +51,13 @@
 									<aon:div styleClass="aon-lookup">
 										<aon:lookupInputText readonly="#{!embargoBasic.new}" required="#{true}"
 											id="Trabajador_cdg" lookup="#{trabajadorLookup}"
-											reRender="Trabajador_codnsz"
+											reRender="codper, descripcion, apellido2, nombre"
 											value="#{embargoBasic.to.trabajador.cdg}" size="5">
 										</aon:lookupInputText>
 										<aon:lookupButton rendered="#{embargoBasic.new}"
 											id="Trabajador_lookup"
 											windowTitle="#{appBundle.aon_payroll_pricipales_personas_embargos_cdg}"
-											selectReRender="Trabajador_cdg,Trabajador_codnsz"
+											selectReRender="Trabajador_cdg,Trabajador_codnsz, codper, descripcion, apellido2, nombre"
 											lookup="#{trabajadorLookup}" minHeight="440"
 											property="#{embargoBasic.to.trabajador}">
 										</aon:lookupButton>
