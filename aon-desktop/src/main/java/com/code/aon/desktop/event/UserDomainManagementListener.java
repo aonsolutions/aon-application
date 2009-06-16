@@ -28,7 +28,7 @@ public class UserDomainManagementListener extends ControllerAdapter implements I
 	private void addUser( Domain domain, User user, DomainController controller ) throws AonException {
 		DBConnnection dbc = controller.getDBConnection( domain.getCommonName() );
 		if ( dbc != null ) {
-			List<User> users = Arrays.asList( new User[]{user} );
+			List<ITransferObject> users = Arrays.asList( new ITransferObject[]{user} );
 			controller.replicateUsers(dbc, users);
 		} else {
 			LOGGER.warning( "No DBConnection found for domain " + domain.getCommonName() );
