@@ -21,7 +21,7 @@ public class EmbargoBasicControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
-		updateBasicModelFromLines();
+		//updateBasicModelFromLines();
 	}
 	
 	public void updateBasicModelFromLines(){
