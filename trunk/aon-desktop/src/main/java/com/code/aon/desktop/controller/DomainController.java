@@ -28,11 +28,14 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.config.Scope;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
+import com.code.aon.config.UserWorkGroup;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.dao.ldap.LdapDAO;
+import com.code.aon.db.hibernate.ReplicateConfigurationPatcher;
 import com.code.aon.desktop.AccessPolicy;
 import com.code.aon.desktop.DBConnnection;
 import com.code.aon.desktop.Domain;
@@ -334,7 +337,14 @@ public class DomainController extends BasicController implements IDesktopConstan
 	private SessionFactory getSessionFactory( DBConnnection dbConnection ) {
 		AnnotationConfiguration configuration = new AnnotationConfiguration();
 		configuration.setProperties( dbConnection.getHibernateProperties() );
-   		configuration.configure();    			
+   		configuration.configure();
+		
+		// Parche para que funciona bien el replicate en mysql
+		String factoryName = HibernateUtil.getSessionFactoryName();
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory(factoryName);
+		ReplicateConfigurationPatcher rcp = new ReplicateConfigurationPatcher(sessionFactory);
+   		rcp.completeConfiguration(configuration);
+   		
    		configuration.buildMappings();
 		return configuration.buildSessionFactory();
 	}
@@ -393,7 +403,7 @@ public class DomainController extends BasicController implements IDesktopConstan
 			replicateEntity(factory, Scope.class, ReplicationMode.OVERWRITE);
 			replicateEntity(factory, UserScope.class, ReplicationMode.OVERWRITE);
 			replicateEntity(factory, WorkGroup.class, ReplicationMode.OVERWRITE);
-			replicateEntity(factory, WorkGroup.class, ReplicationMode.OVERWRITE);
+			replicateEntity(factory, UserWorkGroup.class, ReplicationMode.OVERWRITE);
 		} catch (Throwable th) {
 			AonUtil.addErrorMessage( "Error sincronizando el dominio " + domain.getCommonName() );
 		}
