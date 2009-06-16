@@ -349,13 +349,6 @@ public class DomainController extends BasicController implements IDesktopConstan
 		return configuration.buildSessionFactory();
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void replicateUsers( DBConnnection dbc ) throws AonException {
-		IManagerBean userBean = BeanManager.getManagerBean(User.class);
-		List<ITransferObject> users = userBean.getList(null);
-		replicateUsers(dbc, users);
-	}
-	
 	public void replicateUsers( DBConnnection dbc, List<ITransferObject> users ) throws AonException {
 		LOGGER.info( "Replicating users in " + dbc );
 		replicateObjects( getSessionFactory(dbc), users, ReplicationMode.EXCEPTION);
@@ -382,8 +375,8 @@ public class DomainController extends BasicController implements IDesktopConstan
 		}
 	}
 	
-	public void createUsers( DBConnnection dbConnection, String domain ) throws AonException {
-		replicateUsers( dbConnection );
+	public void createUsers( DBConnnection dbc, String domain ) throws AonException {
+		synchronize(dbc, domain);
 		Name currentUsersDN = NameResolver.getUsersDN(getCurrentDomain());
 		Name usersDN = NameResolver.getUsersDN(domain);
 		addReferral(usersDN, currentUsersDN, ORGANIZATIONAL_UNIT);
@@ -394,19 +387,14 @@ public class DomainController extends BasicController implements IDesktopConstan
 		List<ITransferObject> list = bean.getList(null);
 		replicateObjects( factory, list, mode);		
 	}
-	
-	private void synchronize( Domain domain ) {
-		DBConnnection dbc;
-		try {
-			dbc = getDBConnection(domain.getCommonName());
-			SessionFactory factory = getSessionFactory(dbc);
-			replicateEntity(factory, Scope.class, ReplicationMode.OVERWRITE);
-			replicateEntity(factory, UserScope.class, ReplicationMode.OVERWRITE);
-			replicateEntity(factory, WorkGroup.class, ReplicationMode.OVERWRITE);
-			replicateEntity(factory, UserWorkGroup.class, ReplicationMode.OVERWRITE);
-		} catch (Throwable th) {
-			AonUtil.addErrorMessage( "Error sincronizando el dominio " + domain.getCommonName() );
-		}
+
+	private void synchronize( DBConnnection dbc, String domain ) throws AonException {
+		SessionFactory factory = getSessionFactory(dbc);
+		replicateEntity(factory, Scope.class, ReplicationMode.OVERWRITE);
+		replicateEntity(factory, WorkGroup.class, ReplicationMode.OVERWRITE);
+		replicateEntity(factory, User.class, ReplicationMode.OVERWRITE);
+		replicateEntity(factory, UserScope.class, ReplicationMode.OVERWRITE);
+		replicateEntity(factory, UserWorkGroup.class, ReplicationMode.OVERWRITE);
 	}
 	
 	private String getCurrentDomainDN() {
@@ -429,7 +417,13 @@ public class DomainController extends BasicController implements IDesktopConstan
 		String parentDomain = bean.getFieldName(IDesktopAlias.DOMAIN_PARENT_DOMAIN);
 		criteria.addEqualExpression(parentDomain, getCurrentDomainDN());
 		for( ITransferObject to : bean.getList(criteria) ) {
-			synchronize( (Domain) to );
+			String domain = ((Domain) to).getCommonName();
+			try {
+				DBConnnection dbc = getDBConnection(domain);
+				synchronize( dbc, domain );
+			} catch (Throwable th) {
+				AonUtil.addErrorMessage( "Error sincronizando el dominio " + domain );
+			}
 		}
 	}
 	
