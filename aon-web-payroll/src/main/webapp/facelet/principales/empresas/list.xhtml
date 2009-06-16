@@ -43,6 +43,13 @@
 						</f:facet>
 						<aon:outputText value="#{to.descripcion}"/>
 					</aon:column>
+					
+						<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_principales_clientes_cli}" />
+						</f:facet>
+						<aon:outputText value="#{to.cliente.descripcion}"/>
+					</aon:column>
 
  				</aon:dataTable>
 

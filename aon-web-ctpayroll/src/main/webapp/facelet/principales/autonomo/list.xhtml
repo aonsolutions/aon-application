@@ -28,7 +28,7 @@
 
 				<aon:dataTable id="otrpercData" value="#{autonomo.model}" var="to"
 					rows="20" rendered="#{autonomo.model.rowCount > 0}"
-					columnClasses="aon-width-150, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn, aon-editDataTable-textColumn">
+					columnClasses="aon-width-150, aon-editDataTable-numberColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-textColumn">
 
 					<aon:rowSelector action="autonomo_form"
 						actionListener="#{autonomo.onSelect}" />
@@ -46,6 +46,15 @@
 								value="#{appBundle.aon_payroll_principales_personas_otrperc_per}" />
 						</f:facet>
 						<aon:outputText value="#{to.persona.cdg}" />
+					</aon:column>
+					
+					
+						<aon:column>
+						<f:facet name="header">
+							<aon:outputText
+								value="#{appBundle.aon_payroll_principales_clientes_nom}" />
+						</f:facet>
+						<aon:outputText value="#{to.persona.nombre} #{to.persona.descripcion} #{to.persona.apellido2}" />
 					</aon:column>
 
 					<aon:column>
