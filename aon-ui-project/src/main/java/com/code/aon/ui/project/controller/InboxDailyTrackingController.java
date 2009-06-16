@@ -5,6 +5,7 @@ import com.code.aon.ui.menu.jsf.MenuEvent;
 
 public class InboxDailyTrackingController extends BasicController {
 
+	@SuppressWarnings("unused")
     public void onSearch(MenuEvent event) {
         super.onSearch(null);
     }

@@ -35,6 +35,7 @@ public class TaskAlarmController extends AlarmController {
 	
 	private static final String TASK_CONTROLLER_NAME = "task";
 	
+	@SuppressWarnings("unused")
     public void onSearch(MenuEvent event) {
         super.onSearch(null);
     }

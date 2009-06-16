@@ -30,6 +30,7 @@ public class DossierController extends BasicController {
 	private static final String CUSTOMER_CONTROLLER_NAME = "customer";
 	
 
+	@SuppressWarnings("unused")
 	public void onDossier(ActionEvent event){
 		CustomerController customerController = (CustomerController)AonUtil.getController(CUSTOMER_CONTROLLER_NAME);
 		Customer customer = (Customer)customerController.getTo();

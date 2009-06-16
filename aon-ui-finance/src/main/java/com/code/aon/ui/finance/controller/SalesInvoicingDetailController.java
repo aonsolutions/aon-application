@@ -20,6 +20,7 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.sales.Sales;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
@@ -193,5 +194,15 @@ public class SalesInvoicingDetailController extends LinesController {
 		}
 		return null;
 	}
+
+	/**
+	 * Calls onCancel action of the controller 
+	 * 
+	 * @param event menu event
+	 */
+	@SuppressWarnings("unused")
+    public void onCancel(MenuEvent event) {
+        super.onCancel(null);
+    }
 
 }

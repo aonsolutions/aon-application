@@ -421,10 +421,10 @@ public interface IFinanceAlias {
 	DAOConstantsEntry INVOICE_DETAIL_ENTRY = DAOConstants.getDAOConstant(InvoiceDetail.class);
 
 	/** 
-	* Alias value: InvoiceDetail_deliveryDetail
-	* Hibernate value: InvoiceDetail.deliveryDetail
+	* Alias value: InvoiceDetail_sourceId
+	* Hibernate value: InvoiceDetail.sourceId
 	*/
-	String  INVOICE_DETAIL_DELIVERY_DETAIL = INVOICE_DETAIL_ENTRY.getAliasNames()[0];
+	String  INVOICE_DETAIL_SOURCE_ID = INVOICE_DETAIL_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: InvoiceDetail_description

@@ -1,7 +1,6 @@
 package com.code.aon.ui.project.controller;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -9,21 +8,15 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.campaign.ActivityProcess;
 import com.code.aon.campaign.Campaign;
 import com.code.aon.campaign.CampaignDossier;
-import com.code.aon.campaign.ProcessDetailTransition;
-import com.code.aon.campaign.ProcessTransitionType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -31,13 +24,9 @@ import com.code.aon.config.User;
 import com.code.aon.config.UserWorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.customer.Customer;
-import com.code.aon.groupware.Alarm;
-import com.code.aon.groupware.Notice;
-import com.code.aon.groupware.enumeration.AlarmSource;
-import com.code.aon.groupware.enumeration.AlarmStatus;
-import com.code.aon.groupware.enumeration.Priority;
 import com.code.aon.project.Activity;
 import com.code.aon.project.Dossier;
+import com.code.aon.project.PeriodicalTask;
 import com.code.aon.project.Task;
 import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.project.enumeration.DossierStatus;
@@ -51,13 +40,14 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.project.util.CampaignTaskManager;
 import com.code.aon.ui.util.AonUtil;
 
 public class TaskController extends BasicController implements ITaskController {
 
 	private static final Logger LOGGER = Logger.getLogger(TaskController.class.getName());
+
+	private static final String PERIOD_TASK_CONTROLLER_NAME = "periodTask";
 
 	private static final String ASCENDING = "asc";
 	private static final String DESCENDING = "desc";
@@ -124,85 +114,31 @@ public class TaskController extends BasicController implements ITaskController {
 	private boolean orderAscending;
 
 	private boolean richEditor;
-
-	private boolean allMembers;
-
+	
 	private List<SelectItem> dossiers;
-	private List<SelectItem> allDossiers;
-	private List<SelectItem> activities;
+    private List<SelectItem> allDossiers;
+    private List<SelectItem> activities;
+
 	private List<SelectItem> users;
 
 	private ArrayList<Task> checks = new ArrayList<Task>();
 
 	private boolean monitor;
 
-	private boolean finishPanelVisible = false;
-	private ProcessTransitionType processTransitionType;
-	private DataModel transitionModel;
-	private ProcessDetailTransition transitionSelected;
-
-	private boolean transitionCorrect = true;
-
-	public ProcessTransitionType getProcessTransitionType() {
-		return processTransitionType;
-	}
-
-	public void setProcessTransitionType(ProcessTransitionType processTransitionType) {
-		this.processTransitionType = processTransitionType;
-	}
-
-	public boolean isFinishPanelVisible() {
-		return finishPanelVisible;
-	}
-
-	public void setFinishPanelVisible(boolean finishPanelVisible) {
-		this.finishPanelVisible = finishPanelVisible;
-	}
-
-	public DataModel getTransitionModel() throws ManagerBeanException {
-		if (transitionModel == null) {
-			initializeTransitionModel();
-		}
-		return transitionModel;
-	}
-
-	public void setTransitionModel(DataModel transitionModel) {
-		this.transitionModel = transitionModel;
-	}
-
-	public void setTransitionCorrect(boolean transitionCorrect) {
-		this.transitionCorrect = transitionCorrect;
-		if (transitionCorrect) {
-			this.setTransitionSelected(null);
-		}
-	}
-
-	public boolean isTransitionCorrect() {
-		return transitionCorrect;
-	}
-
-	public ProcessDetailTransition getTransitionSelected() {
-		return transitionSelected;
-	}
-
-	public void setTransitionSelected(ProcessDetailTransition transitionSelected) {
-		this.transitionSelected = transitionSelected;
-	}
-
 	public List<SelectItem> getAvailableFormDossiers() {
 		Task t = (Task) getTo();
 		if (t.getDossier().getCustomer() != null && t.getDossier().getCustomer().getId() != null) {
 			return getDossiers();
-		}
+		} 
 		return getAllDossiers();
-	}
+    }
 
 	public List<SelectItem> getAvailableSearchDossiers() {
 		if (getCustomer() != null && getCustomer().getId() != null) {
 			return getDossiers();
-		}
+		} 
 		return getAllDossiers();
-	}
+    }
 
 	public List<SelectItem> getAllDossiers() {
 		if (allDossiers == null) {
@@ -213,28 +149,27 @@ public class TaskController extends BasicController implements ITaskController {
 
 	@SuppressWarnings("unchecked")
 	public void loadAllDossiers() {
-		allDossiers = new LinkedList<SelectItem>();
-		try {
-			IManagerBean managerBean = BeanManager.getManagerBean(Dossier.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(managerBean.getFieldName(IProjectAlias.DOSSIER_STATUS),
-					DossierStatus.ACTIVE);
-			criteria.addOrder(managerBean.getFieldName(IProjectAlias.DOSSIER_NUMBER));
-			criteria.addOrder(managerBean.getFieldName(IProjectAlias.DOSSIER_CUSTOMER_ID));
-			Iterator iterator = managerBean.getList(criteria).iterator();
-			while (iterator.hasNext()) {
-				Dossier dossier = (Dossier) iterator.next();
-				StringBuilder sb = new StringBuilder(dossier.getNumber());
-				sb.append(" (");
-				sb.append(dossier.getCustomer().getRegistry().getAlias());
-				sb.append(")");
-				SelectItem item = new SelectItem(dossier.getId(), sb.toString());
-				allDossiers.add(item);
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading all dossiers!", e);
-		}
-	}
+        allDossiers = new LinkedList<SelectItem>();
+        try {
+            IManagerBean managerBean = BeanManager.getManagerBean(Dossier.class);
+            Criteria criteria = new Criteria();
+            criteria.addEqualExpression(managerBean.getFieldName(IProjectAlias.DOSSIER_STATUS), DossierStatus.ACTIVE);
+            criteria.addOrder(managerBean.getFieldName(IProjectAlias.DOSSIER_NUMBER));
+            criteria.addOrder(managerBean.getFieldName(IProjectAlias.DOSSIER_CUSTOMER_ID));
+            Iterator iterator = managerBean.getList(criteria).iterator();
+            while (iterator.hasNext()) {
+                Dossier dossier = (Dossier)iterator.next();
+                StringBuilder sb = new StringBuilder(dossier.getNumber()); 
+                sb.append(" (");
+                sb.append( dossier.getCustomer().getRegistry().getAlias() );
+                sb.append(")");
+                SelectItem item = new SelectItem(dossier.getId(), sb.toString() );
+                allDossiers.add(item);
+            }
+        } catch (ManagerBeanException e) {
+        	LOGGER.log(Level.SEVERE, "Error loading all dossiers!", e);
+        }
+    }
 
 	public List<SelectItem> getDossiers() {
 		return dossiers;
@@ -417,7 +352,7 @@ public class TaskController extends BasicController implements ITaskController {
 				IManagerBean bean = BeanManager.getManagerBean(Dossier.class);
 				Dossier d = (Dossier) bean.get((Integer) event.getNewValue());
 				if (d != null) {
-					((Task) getTo()).setDossier(d);
+					((Task)getTo()).setDossier(d);
 					loadDossiers(d.getCustomer().getId());
 				}
 				loadActivities(new Integer(event.getNewValue().toString()));
@@ -450,7 +385,7 @@ public class TaskController extends BasicController implements ITaskController {
 
 	@SuppressWarnings("unchecked")
 	public void loadActivities(Integer dossierId) {
-		setActivities(new LinkedList<SelectItem>());
+		setActivities( new LinkedList<SelectItem>());
 		try {
 			IManagerBean managerBean = BeanManager.getManagerBean(Activity.class);
 			Criteria criteria = new Criteria();
@@ -511,9 +446,10 @@ public class TaskController extends BasicController implements ITaskController {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	public Campaign getTaskCampaign() {
 		Task task = (Task) this.getTo();
-		if (task.isSourceProcess()) {
+		if (task.getSource().equals(TaskSource.AON_CONSULTANT)) {
 			try {
 				ActivityProcess activityProcess = CampaignTaskManager
 						.getCurrentActivityProcess(task);
@@ -528,18 +464,20 @@ public class TaskController extends BasicController implements ITaskController {
 		return null;
 	}
 
+	@SuppressWarnings("unused")
 	public String getPreviousTaskDescription() {
 		Task task = (Task) this.getTo();
-		if (task.isSourceProcess()) {
+		if (task.getSource().equals(TaskSource.AON_CONSULTANT)) {
 			Task previousTask = getPreviousTask(task);
 			return (previousTask != null) ? previousTask.getDescription() : null;
 		}
 		return null;
 	}
 
+	@SuppressWarnings("unused")
 	public String getPreviousTaskEmployee() {
 		Task task = (Task) this.getTo();
-		if (task.isSourceProcess()) {
+		if (task.getSource().equals(TaskSource.AON_CONSULTANT)) {
 			Task previousTask = getPreviousTask(task);
 			User previousUser = (previousTask != null) ? previousTask.getUser() : null;
 			if (previousUser != null) {
@@ -550,7 +488,7 @@ public class TaskController extends BasicController implements ITaskController {
 	}
 
 	private Task getPreviousTask(Task task) {
-		if (task.isSourceProcess()) {
+		if (task.getSource().equals(TaskSource.AON_CONSULTANT)) {
 			try {
 				return CampaignTaskManager.getPreviousTask(task);
 			} catch (ManagerBeanException e) {
@@ -561,6 +499,7 @@ public class TaskController extends BasicController implements ITaskController {
 		return null;
 	}
 
+	@SuppressWarnings("unused")
 	public void onRemoveTask(ActionEvent event) {
 		Task task = (Task) this.getTo();
 		removeTask(task);
@@ -575,7 +514,8 @@ public class TaskController extends BasicController implements ITaskController {
 			task.setStatus(TaskStatus.DELETED);
 			task.setUser(getLoggedUser());
 			updateTask(task);
-			if (task.isSourceProcess()) {
+
+			if (task.getSource().equals(TaskSource.AON_CONSULTANT)) {
 				finishTaskAlarm(task);
 			}
 		}
@@ -590,6 +530,7 @@ public class TaskController extends BasicController implements ITaskController {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	public void onAssumeTask(ActionEvent event) {
 		Task task = (Task) this.getTo();
 		assumeTask(task);
@@ -598,11 +539,7 @@ public class TaskController extends BasicController implements ITaskController {
 		}
 	}
 
-	public void onAssumeTaskFromList(ActionEvent event) {
-		Task task = (Task) model.getRowData();
-		assumeTask(task);
-	}
-
+	@SuppressWarnings("unused")
 	public void onAssumeSelected(ActionEvent event) {
 		boolean message = false;
 		Iterator<Task> iter = checks.iterator();
@@ -625,16 +562,13 @@ public class TaskController extends BasicController implements ITaskController {
 		}
 	}
 
-	public void onReleaseTaskFromList(ActionEvent event) {
-		Task task = (Task) model.getRowData();
-		releaseTask(task);
-	}
-
+	@SuppressWarnings("unused")
 	public void onReleaseTask(ActionEvent event) {
 		Task task = (Task) this.getTo();
 		releaseTask(task);
 	}
 
+	@SuppressWarnings("unused")
 	public void onReleaseSelected(ActionEvent event) {
 		boolean message = false;
 		Iterator<Task> iter = checks.iterator();
@@ -666,7 +600,7 @@ public class TaskController extends BasicController implements ITaskController {
 				campaignDossier.setCampaign(activityProcess.getCampaign());
 				campaignDossier.setDossier(task.getDossier());
 				CampaignTaskManager.addCampaignTask(campaignDossier, activityProcess
-						.getProcessDetail().getPosition() + 1, getTransitionSelected());
+						.getProcessDetail().getPosition() + 1);
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error creating next task for task with id= " + task.getId(),
@@ -674,7 +608,34 @@ public class TaskController extends BasicController implements ITaskController {
 		}
 	}
 
-	private Task repeatTask(Task task) throws ManagerBeanException {
+	@SuppressWarnings("unchecked")
+	private void createNextPeriodicalTask(Task task) {
+		try {
+			IManagerBean periodTaskBean = BeanManager.getManagerBean(PeriodicalTask.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(periodTaskBean
+					.getFieldName(IProjectAlias.PERIODICAL_TASK_TASK_ID), task.getId());
+			Iterator iter = periodTaskBean.getList(criteria).iterator();
+			if (iter.hasNext()) {
+				PeriodicalTask periodTask = (PeriodicalTask) iter.next();
+				if (periodTask.getNextDate().before(periodTask.getEndDate())) {
+					PeriodicalTaskController periodTaskController = (PeriodicalTaskController) AonUtil
+							.getController(PERIOD_TASK_CONTROLLER_NAME);
+					Task newTask = creteNewPeriodicalTask(periodTask, task);
+					periodTask.setTask(newTask);
+					periodTask.setNextDate(periodTaskController.addPeriodToDate(periodTask, newTask
+							.getStartDate()));
+					periodTaskBean.update(periodTask);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error creating next periodical task for task with id= "
+					+ task.getId(), e);
+		}
+	}
+
+	private Task creteNewPeriodicalTask(PeriodicalTask periodTask, Task task)
+			throws ManagerBeanException {
 		Task newTask = new Task();
 		newTask.setActivity(task.getActivity());
 		newTask.setComments(task.getComments());
@@ -684,27 +645,14 @@ public class TaskController extends BasicController implements ITaskController {
 		newTask.setPriority(task.getPriority());
 		newTask.setSender(task.getSender());
 		newTask.setSource(task.getSource());
-		newTask.setRepeatPeriod(task.getRepeatPeriod());
-
+		newTask.setStartDate(periodTask.getNextDate());
 		newTask.setStatus(TaskStatus.PENDING);
-		newTask.setUser(task.getUser());
+		newTask.setUser(null);
 		newTask.setWorkGroup(task.getWorkGroup());
-		Date startDate = task.getStartDate();
-		Date dueDate = task.getDueDate();
-		// Se truncan las horas, minutos, segundos, porque lo que nos interesa
-		// averiguar es cuánto plazo tenía esta tarea en dias.
-		startDate = DateUtils.truncate(startDate, Calendar.DAY_OF_MONTH);
-		dueDate = DateUtils.truncate(dueDate, Calendar.DAY_OF_MONTH);
-		// Se calculan los dias de diferencia.
-		int days = (int) (dueDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
-		// Se suma el periodo indicado.
-		Date newStartDate = DateUtils.add(startDate, task.getRepeatPeriod().getField(), task
-				.getRepeatPeriod().getValue());
-		// Se asigna la nueva fecha.
-		newTask.setStartDate(newStartDate);
-		// Se calcula y asigna la nueva fecha de vencimiento.
-		newTask.setDueDate(DateUtils.add(newStartDate, Calendar.DAY_OF_MONTH, days));
 		ensureTask(newTask);
+		PeriodicalTaskController periodTaskController = (PeriodicalTaskController) AonUtil
+				.getController(PERIOD_TASK_CONTROLLER_NAME);
+		newTask.setDueDate(periodTaskController.addPeriodToDate(periodTask, task.getDueDate()));
 		IManagerBean taskBean = BeanManager.getManagerBean(Task.class);
 		return (Task) taskBean.insert(newTask);
 	}
@@ -719,16 +667,15 @@ public class TaskController extends BasicController implements ITaskController {
 		if (task.getUser() != null && task.getUser().getId() == null) {
 			task.setUser(null);
 		}
-		if (task.getSender() != null && task.getSender().getId() == null) {
-			task.setSender(null);
-		}
 	}
 
+	@SuppressWarnings("unused")
 	public void onListStartTask(ActionEvent event) {
 		Task task = (Task) model.getRowData();
 		startTask(task);
 	}
 
+	@SuppressWarnings("unused")
 	public void onStartTask(ActionEvent event) {
 		Task task = (Task) this.getTo();
 		startTask(task);
@@ -741,11 +688,13 @@ public class TaskController extends BasicController implements ITaskController {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	public void onListStopTask(ActionEvent event) {
 		Task task = (Task) model.getRowData();
 		stopTask(task);
 	}
 
+	@SuppressWarnings("unused")
 	public void onStopTask(ActionEvent event) {
 		Task task = (Task) this.getTo();
 		stopTask(task);
@@ -758,20 +707,22 @@ public class TaskController extends BasicController implements ITaskController {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	public void onListReopenTask(ActionEvent event) {
 		Task task = (Task) model.getRowData();
 		reopenTask(task);
 	}
 
+	@SuppressWarnings("unused")
 	public void onReopenTask(ActionEvent event) {
 		Task task = (Task) this.getTo();
 		reopenTask(task);
 	}
 
 	private void reopenTask(Task task) {
-		if (isMonitor() || isMyTask(task)) {
+		if (isMyTask(task)) {
 			task.setStatus(TaskStatus.PENDING);
-			task = updateTask(task);
+			updateTask(task);
 		}
 	}
 
@@ -827,7 +778,7 @@ public class TaskController extends BasicController implements ITaskController {
 					getCriteria().addEqualExpression(CUSTOMER_ALIAS, customer.getId());
 				}
 			}
-
+			
 			if (getActivityId() != null) {
 				getCriteria().addEqualExpression(ACTIVITY_ALIAS, getActivityId());
 			}
@@ -1069,80 +1020,46 @@ public class TaskController extends BasicController implements ITaskController {
 				task.getUser().getId());
 	}
 
+	@SuppressWarnings("unused")
 	public void onFinishSelected(ActionEvent event) {
-		try {
-			boolean message = false;
-			Iterator<Task> iter = checks.iterator();
-			while (iter.hasNext()) {
-				Task task = iter.next();
-				finishTask(task);
-				if (!message && !isMyTask(task)) {
-					addMessage("Existen Tareas que no se han podido finalizar por estar asumidas por otros Usuarios.");
-					message = true;
-				}
-			}
-			resetChecks();
-			onRefresh(event);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error adding custom expression", e);
-		}
-	}
-
-	public String onFinishTask() {
-		try {
-			setTransitionModel(null);
-			setTransitionCorrect(true);
-			setTransitionSelected(null);
-			setFinishPanelVisible(false);
-			Task task = (Task) this.getTo();
-			if (task.isSourceProcess() && CampaignTaskManager.hasTransitions(task)) {
-				setFinishPanelVisible(true);
-				return null;
-			}
+		boolean message = false;
+		Iterator<Task> iter = checks.iterator();
+		while (iter.hasNext()) {
+			Task task = iter.next();
 			finishTask(task);
-			onRefresh(null);
-			return "task_list";
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error finishing task", e);
-			return null;
+			if (!message && !isMyTask(task)) {
+				addMessage("Existen Tareas que no se han podido finalizar por estar asumidas por otros Usuarios.");
+				message = true;
+			}
 		}
+		resetChecks();
+		onRefresh(event);
 	}
 
-	private void finishTask(Task task) throws ManagerBeanException {
+	@SuppressWarnings("unused")
+	public void onFinishTask(ActionEvent event) {
+		Task task = (Task) this.getTo();
+		finishTask(task);
+		onRefresh(event);
+	}
+
+	private void finishTask(Task task) {
 		if (isMyTask(task) || isFreeTask(task)) {
 			task.setEndDate(new Date());
 			task.setStatus(TaskStatus.FINISHED);
 			task.setUser(getLoggedUser());
-			task = updateTask(task);
+			updateTask(task);
 
-			if (task.isSourceProcess()) {
+			if (task.getSource().equals(TaskSource.AON_CONSULTANT)) {
 				finishTaskAlarm(task);
 				createNextTask(task);
 			} else {
-				if (task.isRepeatable()) {
-					repeatTask(task);
+				if (task.getSource().equals(TaskSource.PERIODICAL)) {
+					createNextPeriodicalTask(task);
 				}
-				insertRelatedAlarm(task);
 			}
 		} else {
 			addMessage("No se puede Finalizar la Tarea. Ha sido asumida por otro Usuario.");
-		}
-	}
-
-	private void insertRelatedAlarm(Task task) throws ManagerBeanException {
-		Integer userId = (task.getUser() != null)?task.getUser().getId():null; 
-		Integer senderId = (task.getSender() != null)?task.getSender().getId():null; 
-		if ( !userId.equals(senderId) ) {
-			IManagerBean alarmBean = BeanManager.getManagerBean(Alarm.class);
-			Alarm alarm = new Alarm();
-			alarm.setAlarmDate(task.getEndDate());
-			alarm.setUser(task.getSender());
-			alarm.setSource(AlarmSource.NOTICE);
-			alarm.setSourceId(task.getId());
-			alarm.setStatus(AlarmStatus.PENDING);
-			alarm.setPriority( Priority.NONE );
-			alarm.setDescription("" + AlarmStatus.FINISHED + ": " + task.getDescription());
-			alarmBean.insert(alarm);
 		}
 	}
 
@@ -1301,146 +1218,5 @@ public class TaskController extends BasicController implements ITaskController {
 
 	public void setRichEditor(boolean richEditor) {
 		this.richEditor = richEditor;
-	}
-
-	public boolean isAllMembers() {
-		return allMembers;
-	}
-
-	public void setAllMembers(boolean allMembers) {
-		this.allMembers = allMembers;
-	}
-
-	public void allMembersChanged(ActionEvent event) {
-		Task t = (Task) getTo();
-		if (isAllMembers()) {
-			t.setUser(new User());
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public void prepareForInsert(Task task) {
-		if (!isMyTask()) {
-			task.setSource(TaskSource.ASSIGNED);
-			task.setSender(UserUtils.getInstance().getLoggedUser());
-		}
-
-		try {
-			if (task.getDossier() != null && task.getDossier().getId() != null) {
-				IManagerBean dossierBean = BeanManager.getManagerBean(Dossier.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(dossierBean.getFieldName(IProjectAlias.DOSSIER_ID),
-						task.getDossier().getId());
-				List dossierList = dossierBean.getList(criteria);
-				if (dossierList.size() > 0) {
-					task.setDossier((Dossier) dossierList.get(0));
-				}
-			} else {
-				task.setDossier(null);
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error obtaining dossier from task";
-			addMessage(msg);
-			LOGGER.log(Level.SEVERE, msg, e);
-			throw new AbortProcessingException(msg);
-		}
-
-		try {
-			if (task.getActivity() != null && task.getActivity().getId() != null) {
-				IManagerBean activityBean = BeanManager.getManagerBean(Activity.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(activityBean.getFieldName(IProjectAlias.ACTIVITY_ID),
-						task.getActivity().getId());
-				List activityList = activityBean.getList(criteria);
-				if (activityList.size() > 0) {
-					task.setActivity((Activity) activityList.get(0));
-				}
-			} else {
-				task.setActivity(null);
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error obtaining activity from task";
-			addMessage(msg);
-			LOGGER.log(Level.SEVERE, msg, e);
-			throw new AbortProcessingException(msg);
-		}
-
-		Date startDate = task.getStartDate();
-		Date dueDate = task.getDueDate();
-		if (dueDate.compareTo(startDate) < 0) {
-			String msg = "Fecha Inicio no puede ser posterior a Fecha Vencimiento.";
-			LOGGER.log(Level.SEVERE, msg);
-			addMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-	}
-
-	public void saveTask(ActionEvent event) {
-		if (!isAllMembers()) {
-			super.accept(event);
-		} else {
-			Task task = (Task) getTo();
-			prepareForInsert(task);
-			forAllMembers(task);
-			onRefresh(event);
-			setAllMembers(true);
-		}
-
-	}
-
-	@SuppressWarnings("unchecked")
-	private void forAllMembers(Task task) {
-		try {
-			Criteria criteria = new Criteria();
-			IManagerBean managerBean = BeanManager.getManagerBean(UserWorkGroup.class);
-			criteria.addEqualExpression(managerBean
-					.getFieldName(IConfigAlias.USER_WORK_GROUP_WORK_GROUP_ID), task.getWorkGroup()
-					.getId());
-			Iterator iterator = managerBean.getList(criteria).iterator();
-			int i = 0;
-			while (iterator.hasNext()) {
-				UserWorkGroup uw = (UserWorkGroup) iterator.next();
-				task.setId(null);
-				task.setUser(uw.getUser());
-				setTo(task);
-				getManagerBean().insert(task);
-				i++;
-			}
-			AonUtil.addInfoMessage("" + i + "tarea(s) creadas.");
-		} catch (ManagerBeanException e) {
-			String msg = "Error al crear la tarea para los usuarios. [" + e.getMessage() + "]";
-			LOGGER.log(Level.SEVERE, msg, e);
-			addMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-	}
-
-	public String saveTarget() {
-		if (isAllMembers()) {
-			setAllMembers(false);
-			return "task_list";
-		}
-		return null;
-	}
-
-	private void initializeTransitionModel() throws ManagerBeanException {
-		Task task = (Task) getTo();
-		if (task != null) {
-			transitionModel = new ListDataModel(CampaignTaskManager.getTransitions(task));
-		}
-	}
-
-	public void selectTransition(ActionEvent event) {
-		ProcessDetailTransition pdt = (ProcessDetailTransition) transitionModel.getRowData();
-		this.setTransitionSelected(pdt);
-	}
-
-	public void onFinishTransitionTask(ActionEvent event) throws ManagerBeanException {
-		Task task = (Task) this.getTo();
-		finishTask(task);
-		onRefresh(null);
-		setTransitionModel(null);
-		setTransitionCorrect(true);
-		setFinishPanelVisible(false);
 	}
 }

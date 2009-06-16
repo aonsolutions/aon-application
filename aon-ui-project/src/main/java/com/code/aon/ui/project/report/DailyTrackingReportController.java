@@ -82,7 +82,7 @@ public class DailyTrackingReportController implements ICollectionProvider {
 			+ ", reg.name as customerName, dss.id as dossierId"
 			+ ", dss.number as dossierNumber, act.id as activityId"
 			+ ", aty.description as activityName, dty.id as dossierTypeId"
-			+ ", dty.description as dossierTypeDescription, dt.comments)"
+			+ ", dty.description as dossierTypeDescription)"
 			+ " FROM DailyTracking dt inner join dt.user as usr inner join dt.jobType as job"
 			+ " left outer join dt.customer as cus"
 			+ " left outer join dt.customer.registry as reg "
@@ -564,8 +564,6 @@ public class DailyTrackingReportController implements ICollectionProvider {
 				IManagerBean userWorkGroupBean = BeanManager.getManagerBean(UserWorkGroup.class);
 				criteria.addEqualExpression(userWorkGroupBean
 						.getFieldName(IConfigAlias.USER_WORK_GROUP_WORK_GROUP_ID), workgroupId);
-				criteria.addOrder(userWorkGroupBean
-						.getFieldName(IConfigAlias.USER_WORK_GROUP_USER_NAME));
 				Iterator iter = userWorkGroupBean.getList(criteria).iterator();
 				while (iter.hasNext()) {
 					UserWorkGroup userWorkGroup = (UserWorkGroup) iter.next();
@@ -575,7 +573,6 @@ public class DailyTrackingReportController implements ICollectionProvider {
 				}
 			} else {
 				IManagerBean userBean = BeanManager.getManagerBean(User.class);
-				criteria.addOrder(userBean.getFieldName(IConfigAlias.USER_NAME));
 				Iterator iter = userBean.getList(criteria).iterator();
 				while (iter.hasNext()) {
 					User user = (User) iter.next();

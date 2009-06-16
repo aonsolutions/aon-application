@@ -31,6 +31,7 @@ import com.code.aon.finance.invoicing.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.PageDataModel;
+import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
 
 public class FinancePaymentController extends BasicController {
@@ -146,7 +147,7 @@ public class FinancePaymentController extends BasicController {
 		return writer;
 	}
 
-	public void onStartSearch(ActionEvent event) throws ManagerBeanException {
+	public void onEditSearch(MenuEvent event) throws ManagerBeanException {
 		this.onEditSearch((ActionEvent)event);
 		initializeSearch();
 	}

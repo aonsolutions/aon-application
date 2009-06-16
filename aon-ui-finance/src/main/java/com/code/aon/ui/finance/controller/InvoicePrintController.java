@@ -21,6 +21,7 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.menu.jsf.MenuEvent;
 
 public class InvoicePrintController extends BasicController implements ICollectionProvider {
 	
@@ -96,6 +97,10 @@ public class InvoicePrintController extends BasicController implements ICollecti
 		this.registry = registry;
 	}
 	
+	public void onEditSearch(MenuEvent event){
+		this.onEditSearch((ActionEvent)event);
+	}
+
 	@Override
 	public void onSearch(ActionEvent event) {
 		try {

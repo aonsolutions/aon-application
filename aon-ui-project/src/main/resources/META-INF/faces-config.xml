@@ -22,10 +22,6 @@
 		<converter-for-class>com.code.aon.project.DossierType</converter-for-class>
 		<converter-class>com.code.aon.ui.project.converter.DossierTypeConverter</converter-class>
 	</converter>
-	<converter>
-		<converter-for-class>com.code.aon.project.Dossier</converter-for-class>
-		<converter-class>com.code.aon.ui.project.converter.DossierConverter</converter-class>
-	</converter>
 
 	<!--  *************** COLLECTIONS ***************** -->
 	<managed-bean>
@@ -36,7 +32,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ************** ROLE CONTROLLER ****************** --> 
+	<!-- ************** ROLE CONTROLLER ****************** -->
 	<managed-bean>
 		<managed-bean-name>role</managed-bean-name>
 		<managed-bean-class>
@@ -44,8 +40,7 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
-	
+
 	<!-- ************* DOSSIER TYPE ***************** -->
 	<managed-bean>
 		<managed-bean-name>dossierType</managed-bean-name>
@@ -479,6 +474,22 @@
 	    </navigation-case>
 	</navigation-rule>
 	
+	<!-- =================== Periodical Task ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>period_task_list</from-outcome>
+			<to-view-id>/facelet/period_task/list.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+	        <from-outcome>period_task_form</from-outcome>
+	        <to-view-id>/facelet/period_task/form.faces</to-view-id>
+	    </navigation-case>
+		<navigation-case>
+	        <from-outcome>period_task_search</from-outcome>
+	        <to-view-id>/facelet/period_task/search.faces</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+
   <!-- =================== Application Menu Navigation Rules ================= -->	
   <navigation-rule>
 	<navigation-case>
@@ -516,6 +527,10 @@
  	<navigation-case>
         <from-outcome>task_monitor</from-outcome>
         <to-view-id>/facelet/task/monitor/search.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+        <from-outcome>period_task</from-outcome>
+        <to-view-id>/facelet/period_task/form.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
 </faces-config>

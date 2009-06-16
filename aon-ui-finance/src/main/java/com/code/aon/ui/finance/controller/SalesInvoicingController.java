@@ -54,13 +54,15 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.report.OutputFormat;
 import com.code.aon.tas.SupportOrderInsurance;
 import com.code.aon.tas.dao.ITASAlias;
 import com.code.aon.tasDelivery.TasDelivery;
 import com.code.aon.tasDelivery.dao.ITasDeliveryAlias;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.menu.jsf.MenuEvent;
+import com.code.aon.ui.menu.jsf.MenuManager;
+import com.code.aon.ui.report.OutputFormat;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.warehouse.controller.DeliveryController;
@@ -145,6 +147,16 @@ public class SalesInvoicingController extends BasicController {
 	 */
 	public void setWarehouseId(Integer warehouseId) {
 		this.warehouseId = warehouseId;
+	}
+
+	/**
+	 * Resets the controller.
+	 * 
+	 * @param event menu event
+	 */
+	@SuppressWarnings("unused")
+	public void onReset(MenuEvent event){
+		super.onReset(null);
 	}
 	
 	/**
@@ -457,6 +469,7 @@ public class SalesInvoicingController extends BasicController {
 		this.onInvoice(null);
 		IController salesFinanceController = AonUtil.getController(SALES_FINANCE_CONTROLLER_NAME);
 		salesFinanceController.onSearch(null);
+		updateBreadCrumb();
 	}
 	
 	/**
@@ -480,6 +493,16 @@ public class SalesInvoicingController extends BasicController {
 			LOGGER.log(Level.SEVERE, "Error obtaining addres for customer with id= " + registry.getId(), e);
 		}
 		return null;
+	}
+
+	/**
+	 * Updates bread crumb.
+	 */
+	@SuppressWarnings("unchecked")
+	private void updateBreadCrumb() {
+		MenuManager menuManager = (MenuManager)AonUtil.getRegisteredBean(MENU_MANAGER_NAME);
+        menuManager.setCurrentMenu("AON_APP");
+        menuManager.getCurrentMenuModel().setSelectedNode(menuManager.getCurrentMenuModel().getOptionByKey("aon_sales_invoicing").getId());
 	}
 	
 	/**
@@ -657,8 +680,8 @@ public class SalesInvoicingController extends BasicController {
 				criteria = new Criteria();
 				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_DELIVERY_DETAIL), deliveryDetail.getId());
 				Iterator iterator = invoiceDetailBean.getList(criteria).iterator();
-				while(iterator.hasNext()){
-					invoiceDetailBean.remove((InvoiceDetail)iterator.next());
+				if(iterator.hasNext()){
+					invoiceDetailBean.remove((ITransferObject)iterator.next());
 				}
 			}
 		} catch (ManagerBeanException e) {

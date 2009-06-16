@@ -19,14 +19,13 @@ import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.ui.finance.controller.SalesInvoicingController;
 import com.code.aon.ui.finance.controller.SalesInvoicingDetailController;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.form.PageDataModel;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -67,22 +66,6 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 	private static final String SALES_FINANCE_CONTROLLER = "salesFinance";
 	
 	/**
-	 * Initialices controllers addreses and other related controllers,  
-	 * salesFinanceController and salesInvoicingDetailController
-	 * 
-	 * @see com.code.aon.ui.form.event.ControllerAdapter#beforeBeanCreated(com.code.aon.ui.form.event.ControllerEvent)
-	 */
-	@Override
-	public void beforeBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		SalesInvoicingDetailController salesInvoicingDetailController = (SalesInvoicingDetailController)AonUtil.getController(SALES_INVOICING_DETAIL_CONTROLLER_NAME);
-		LinesController salesFinanceController = (LinesController)AonUtil.getController(SALES_FINANCE_CONTROLLER);
-		salesFinanceController.onCancel(null);
-		salesInvoicingDetailController.setDelivery(null);
-		salesInvoicingDetailController.setSales(null);
-		((SalesInvoicingController)event.getController()).setAddresses(new LinkedList<SelectItem>());
-	}
-	
-	/**
 	 * Completes Invoice before add, type and status
 	 * 
 	 * @see com.code.aon.ui.form.event.ControllerAdapter#beforeBeanAdded(com.code.aon.ui.form.event.ControllerEvent)
@@ -108,7 +91,6 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 			criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_CUSTOMER_ID), invoice.getRegistry().getId());
 			criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_STATUS), DeliveryStatus.PENDING);
 			DeliveryController deliveryController = (DeliveryController)AonUtil.getController(DELIVERY_CONTROLLER_NAME);
-			deliveryController.clearCheckList();
 			deliveryController.setCriteria(criteria);
 			deliveryController.onSearch(null);
 		} catch (ManagerBeanException e) {
@@ -128,30 +110,15 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		Invoice invoice = (Invoice)event.getController().getTo();
-		try {
-			IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_CUSTOMER_ID), invoice.getRegistry().getId());
-			Expression expression = ExpressionUtilities.getExpression(Integer.toString(DeliveryStatus.PENDING.ordinal()), deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_STATUS));
-			Iterator iterator = obtainClosedDeliveries(invoice.getId()).iterator();
-			while (iterator.hasNext()) {
-				Delivery delivery = (Delivery)iterator.next();
-				Expression idExpression = ExpressionUtilities.getExpression(delivery.getId().toString(), deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_ID));
-				expression = ExpressionUtilities.getOrExpression(expression, idExpression);
-			}
-			criteria.addExpression(expression);
-			criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_STATUS), false);
-			DeliveryController deliveryController = (DeliveryController)AonUtil.getController(DELIVERY_CONTROLLER_NAME);
-			deliveryController.clearCheckList();
-			deliveryController.setCriteria(criteria);
-			deliveryController.onSearch(null);
-		} catch (ExpressionException e) {
-			LOGGER.log(Level.SEVERE, "Error retrieving income model for supplier= " + invoice.getRegistry().getId(), e);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error retrieving delivery model for customer= " + invoice.getRegistry().getId(), e);
-		}
+		List<ITransferObject> pending = obtaingPendingDeliveries(invoice.getRegistry().getId());
+		List<ITransferObject> closed = obtainClosedDeliveries(invoice.getId());
+		closed.addAll(pending);
+		DeliveryController deliveryController = (DeliveryController)AonUtil.getController(DELIVERY_CONTROLLER_NAME);
+		PageDataModel pdm = new PageDataModel(event.getController(), ((BasicController)event.getController()).getPageLimit());
+		pdm.setWrappedData(closed);
+		pdm.resize(closed.size());
+		deliveryController.setModel(pdm);
 		updateDetailControllerReferences(invoice);
-
 		((SalesInvoicingController)event.getController()).loadAddresses(invoice.getRegistry().getId());
 	}
 	
@@ -245,6 +212,22 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 	}
 	
 	/**
+	 * Initialices controllers addreses and other related controllers,  
+	 * salesFinanceController and salesInvoicingDetailController
+	 * 
+	 * @see com.code.aon.ui.form.event.ControllerAdapter#beforeBeanCreated(com.code.aon.ui.form.event.ControllerEvent)
+	 */
+	@Override
+	public void beforeBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		SalesInvoicingDetailController salesInvoicingDetailController = (SalesInvoicingDetailController)AonUtil.getController(SALES_INVOICING_DETAIL_CONTROLLER_NAME);
+		LinesController salesFinanceController = (LinesController)AonUtil.getController(SALES_FINANCE_CONTROLLER);
+		salesFinanceController.onCancel(null);
+		salesInvoicingDetailController.setDelivery(null);
+		salesInvoicingDetailController.setSales(null);
+		((SalesInvoicingController)event.getController()).setAddresses(new LinkedList<SelectItem>());
+	}
+	
+	/**
 	 * Resets DeliveryController
 	 * 
 	 * @see com.code.aon.ui.form.event.ControllerAdapter#afterBeanRemoved(com.code.aon.ui.form.event.ControllerEvent)
@@ -252,7 +235,11 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 	@Override
 	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
 		DeliveryController deliveryController = (DeliveryController)AonUtil.getController(DELIVERY_CONTROLLER_NAME);
-		deliveryController.onReset(null);
+		try {
+			deliveryController.onReset(null);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
+		}
 	}
 	
 	/**
@@ -316,6 +303,7 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DELIVERY);
 			Iterator iter = invoiceDetailBean.getList(criteria).iterator();
 			List<ITransferObject> deliveries = new LinkedList<ITransferObject>();
+			List<Integer> ids = new LinkedList<Integer>();
 			while(iter.hasNext()){
 				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
 				criteria = new Criteria();
@@ -323,7 +311,8 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 				Iterator iterator = deliveryDetailBean.getList(criteria).iterator();
 				if(iterator.hasNext()){
 					DeliveryDetail deliveryDetail = (DeliveryDetail)iterator.next();
-					if(!deliveries.contains(deliveryDetail.getDelivery())){
+					if(!ids.contains(deliveryDetail.getDelivery().getId())){
+						ids.add(deliveryDetail.getDelivery().getId());
 						deliveries.add(deliveryDetail.getDelivery());
 					}
 				}
@@ -335,4 +324,23 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 		return null;
 	}
 	
+	/**
+	 * Recovers Pending Deliveries for this Customer
+	 * 
+	 * @param customerId customer's ident
+	 * @return list of Deliveries
+	 */
+	private List<ITransferObject> obtaingPendingDeliveries(Integer customerId) {
+		try {
+			IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_CUSTOMER_ID), customerId);
+			criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_STATUS), DeliveryStatus.PENDING);
+			return deliveryBean.getList(criteria);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error retrieving pending deliveries for customer with id= " + customerId, e);
+		}
+		return null;
+	}
+
 }
