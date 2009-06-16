@@ -1,12 +1,13 @@
 package com.code.aon.ui.payroll.controller;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.payroll.auxiliares.convenios.Convenio;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.geograficas.Provincia;
@@ -16,7 +17,6 @@ public class DelegacionController extends PayrollBasicController {
 
 	private Provincia provincia;
 	private Tipovia tipovia;
-	private DelegacionController delegacionPrint;
 	
 	public Provincia getProvincia() {
 		return provincia;
@@ -45,15 +45,6 @@ public class DelegacionController extends PayrollBasicController {
 	@Override
 	public void onSearch(ActionEvent event) {
 		try {
-			this.clearCriteria();
-		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("------------"+tipovia);
-		System.out.println("------------"+provincia);
-		
-		try {
 			if( (provincia != null) && (! StringUtils.isEmpty(provincia.getCdg())) ) {
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.DELEGACION_PROVINCIA_CDG), getProvincia().getCdg());
 			}
@@ -61,39 +52,23 @@ public class DelegacionController extends PayrollBasicController {
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.DELEGACION_TIPOVIA_CDG), getTipovia().getCdg());
 			}
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		super.onSearch(event);
 	}
 
-	public DelegacionController getDelegacionPrint() {
-		return delegacionPrint;
+	private List<Delegacion> reportList;
+	public List<Delegacion> getReportList() {
+		reportList = new LinkedList<Delegacion>();
+		reportList.add((Delegacion) getTo());
+		return reportList;
 	}
 
-	public void setDelegacionPrint(DelegacionController delegacionPrint) {
-		this.delegacionPrint = delegacionPrint;
+	public void setReportList(List<Delegacion> reportList) {
+		this.reportList = reportList;
 	}
-	
-	@Override
-	public void onSelect(ActionEvent event) {
-		// TODO Auto-generated method stub
-		super.onSelect(event);
-		if(getTo()!=null){
-			try {
-				String id = BeanManager.getManagerBean(Delegacion.class).getFieldName(IPayrollAlias.DELEGACION_CDG);
-				Integer cdg = ((Delegacion)getTo()).getCdg();
-				delegacionPrint = new DelegacionController();
-				delegacionPrint = this;
-				delegacionPrint.clearCriteria();
-				delegacionPrint.getCriteria().addEqualExpression(id, cdg);
-			} catch (ManagerBeanException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
+
+		
 
 
 }

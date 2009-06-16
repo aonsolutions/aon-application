@@ -22,14 +22,14 @@
 
 			<aon:div id="delegacion" styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2" dir="true" width="100%" style="margin-bottom=2px;">
-					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_cdg}" />
-					<aon:inputText value="#{delegacion.to.cdg}" 
+					<aon:outputLabel for="Delegacion_cdg"
+						value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_cdg}" />
+					<aon:inputText value="#{delegacion.to.cdg}" id="Delegacion_cdg" 
 						required="true" size="2" maxlength="2" />
 				
 					<aon:outputLabel for="Delegacion_description" value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_descripcion}" />
 					<aon:inputText id="Delegacion_description" value="#{delegacion.to.descripcion}" 
-						required="true" size="30" maxlength="30" >
-					</aon:inputText>
+						required="true" size="30" maxlength="30" />
 									
 					  <aon:outputLabel for="Tipovia_cdg" 
 						value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_tipovia}" />
@@ -37,7 +37,8 @@
 						<aon:lookupInputText id="Tipovia_cdg"
 							lookup="#{tipoviaLookup}"
 							reRender="Tipovia_description"
-							value="#{delegacion.to.tipovia.cdg}" size="5">
+							value="#{delegacion.to.tipovia.cdg}" size="5"
+							required="true">
 						</aon:lookupInputText>
 						<aon:lookupButton id="Tipovia_lookup"
 							windowTitle="#{appBundle.aon_payroll_auxiliares_tipos__tipovia}"
@@ -50,36 +51,39 @@
 							size="34" disabled="true" />
 					</aon:div>
 					
-						<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_nomvia}" />
-					<aon:inputText value="#{delegacion.to.nomvia}" 
+					<aon:outputLabel for="Delegacion_nomvia" 
+						value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_nomvia}" />
+					<aon:inputText value="#{delegacion.to.nomvia}" id="Delegacion_nomvia" 
 						required="true" size="40" maxlength="40" />
 				
-					<aon:outputLabel  value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_numero}" />
-					<aon:inputText value="#{delegacion.to.numero}" 
-						required="true" size="5" maxlength="5" >
-					</aon:inputText>
-							<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_otradir}" />
-					<aon:inputText value="#{delegacion.to.otrdir}"  
+					<aon:outputLabel for="Delegacion_numero" 
+						value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_numero}" />
+					<aon:inputText value="#{delegacion.to.numero}" id="Delegacion_numero" 
+						required="true" size="5" maxlength="5" />
+					
+					<aon:outputLabel for="Delegacion_otrdir" 
+						value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_otradir}" />
+					<aon:inputText value="#{delegacion.to.otrdir}" id="Delegacion_otrdir"  
 						required="true" size="12" maxlength="12" />
 				
-				  	<aon:outputLabel  value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_codpostal}" />
-					<aon:inputText value="#{delegacion.to.codpos}" 
-						required="true" size="5" maxlength="5" >
-					</aon:inputText>
+				  	<aon:outputLabel for="Delegacion_codpos"  
+				  		value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_codpostal}" />
+					<aon:inputText value="#{delegacion.to.codpos}" id="Delegacion_codpos" 
+						required="true" size="5" maxlength="5" />
 					
-				 	<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_localidad}" />
-					<aon:inputText value="#{delegacion.to.localidad}"  
+				 	<aon:outputLabel for="Delegacion_localidad"
+				 		value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_localidad}" />
+					<aon:inputText value="#{delegacion.to.localidad}" id="Delegacion_localidad"  
 						required="true" size="30" maxlength="30" />
-						
-			
-						
+									
 				    <aon:outputLabel for="Provincia_cdg" 
 						value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_provincia}" />
 					<aon:div styleClass="aon-lookup">
 						<aon:lookupInputText id="Provincia_cdg"
 							lookup="#{provinciaLookup}"
 							reRender="Provincia_descripcion"
-							value="#{delegacion.to.provincia.cdg}" size="5">
+							value="#{delegacion.to.provincia.cdg}" size="5"
+							required="true">
 						</aon:lookupInputText>
 						<aon:lookupButton id="Provincia_lookup"
 							windowTitle="#{appBundle.aon_payroll_auxiliares_tipos__provincia}"
@@ -92,10 +96,10 @@
 							size="34" disabled="true" />
 					</aon:div>	
 					
-					<aon:outputLabel for="Delegacion_telefono" value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_telefono}" />
+					<aon:outputLabel for="Delegacion_telefono" 
+						value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_telefono}" />
 					<aon:inputText id="Delegacion_telefono" value="#{delegacion.to.telefono}" 
-						required="true" size="12" maxlength="12" >
-					</aon:inputText>
+						required="true" size="12" maxlength="12" />
 					
 					
 	          

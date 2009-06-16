@@ -26,7 +26,7 @@
 		<!--  
 		<bean key="com.code.aon.payroll.cotizacion.Porcentaje" />
 		-->
-		<collection provider="#{porcentajeMaestro}"/>
+		<collection provider="#{porcentajeMaestro}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />
@@ -319,8 +319,11 @@
 	<!--  *********  Impresion a PDF de los Contratos internos - Detalle ********* -->
 	<report id="contratosInternosListPrint" description="Listado de Contratos internos">
 		<template path="/com/code/aon/ui/payroll/report/contratosInternosList.jasper" />
+		<!--  
 		<bean key="com.code.aon.payroll.auxiliares.contratos.ContratosInternos" />
 		<criteria provider="#{contratosInternos.contratosInternosPrint}" />
+		-->
+		<collection provider="#{contratosInternos.reportList}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />
@@ -342,8 +345,11 @@
 	<!--  *********  Impresion a PDF de los Contratos tc2 - Detalle ********* -->
 	<report id="contratosTc2ListPrint" description="Listado de Contratos TC2">
 		<template path="/com/code/aon/ui/payroll/report/contratosTc2List.jasper" />
+		<!--  
 		<bean key="com.code.aon.payroll.auxiliares.contratos.ContratosTc2" />
 		<criteria provider="#{contratosTc2.contratosTc2Print}" />
+		-->
+		<collection provider="#{contratosTc2.reportList}" />		
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />
@@ -365,8 +371,11 @@
 	<!--  *********  Impresion a PDF de los Complementos de convenios - Detalle ********* -->
 	<report id="convenioComplementoListPrint" description="Listado de Complementos">
 		<template path="/com/code/aon/ui/payroll/report/conveniosComplementosList.jasper" />
+		<!--  
 		<bean key="com.code.aon.payroll.auxiliares.convenios.Complemento" />
 		<criteria provider="#{complemento.complementoPrint}" />
+		-->
+		<collection provider="#{complemento.reportList}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />
@@ -447,8 +456,11 @@
 	<!--  *********  Impresion a PDF de las delegaciones - Detalle ********* -->
 	<report id="DelegacionListPrint" description="Listado de Delegaciones">
 		<template path="/com/code/aon/ui/payroll/report/DelegacionList.jasper" />
+		<!--  
 		<bean key="com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion" />
 		<criteria provider="#{delegacion.delegacionPrint}" />
+		-->
+		<collection provider="#{delegacion.reportList}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />

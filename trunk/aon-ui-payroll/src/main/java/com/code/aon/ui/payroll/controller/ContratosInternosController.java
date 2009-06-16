@@ -24,7 +24,6 @@ public class ContratosInternosController extends PayrollBasicController {
 
 	private List<SelectItem> asimilados;
 	private List<SelectItem> desempleados;
-	private ContratosInternosController contratosInternosPrint;
 
 	/**
 	 * Recupera los Asimilados asociados al % de cotizacion 'DESEMPL%'.
@@ -32,6 +31,12 @@ public class ContratosInternosController extends PayrollBasicController {
 	 * @return
 	 */
 	public List<SelectItem> getAsimilados() {
+		try {
+			refreshAsimilados();
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return asimilados;
 	}	
 
@@ -77,13 +82,6 @@ public class ContratosInternosController extends PayrollBasicController {
 	//añade el valor de los checkbox al criteria para realizar busquedas
 	@Override
 	public void onSearch(ActionEvent event) {
-//		try {
-//			this.clearCriteria();
-//		} catch (ManagerBeanException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
 		
 		try {
 			if(searchMujersub)
@@ -95,7 +93,6 @@ public class ContratosInternosController extends PayrollBasicController {
 			if(searchExcsocial)
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRATOS_INTERNOS_EXCSOCIAL), true);	
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -138,32 +135,15 @@ public class ContratosInternosController extends PayrollBasicController {
 	public void setSearchExcsocial(boolean searchExcsocial) {
 		this.searchExcsocial = searchExcsocial;
 	}
-
-	public ContratosInternosController getContratosInternosPrint() {
-		return contratosInternosPrint;
-	}
-
-	public void setContratosInternosPrint(
-			ContratosInternosController contratosInternosPrint) {
-		this.contratosInternosPrint = contratosInternosPrint;
-	}
 	
-	@Override
-	public void onSelect(ActionEvent event) {
-		// TODO Auto-generated method stub
-		super.onSelect(event);
-		if(getTo()!=null){
-			try {
-				String id = BeanManager.getManagerBean(ContratosInternos.class).getFieldName(IPayrollAlias.CONTRATOS_INTERNOS_CDG);
-				String cdg = ((ContratosInternos)getTo()).getCdg();
-				contratosInternosPrint = new ContratosInternosController();
-				contratosInternosPrint = this;
-				contratosInternosPrint.clearCriteria();
-				contratosInternosPrint.getCriteria().addEqualExpression(id, cdg);
-			} catch (ManagerBeanException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+	private List<ContratosInternos> reportList;
+	public List<ContratosInternos> getReportList() {
+		reportList = new LinkedList<ContratosInternos>();
+		reportList.add((ContratosInternos) getTo());
+		return reportList;
+	}
+
+	public void setReportList(List<ContratosInternos> reportList) {
+		this.reportList = reportList;
 	}
 }
