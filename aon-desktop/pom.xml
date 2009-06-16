@@ -55,6 +55,12 @@
 			<artifactId>aon.security.bridge</artifactId>
 			<version>3.3.0</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>		
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.db.manager</artifactId>
+			<version>1.1.1</version>
+			<scope>compile</scope>
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
