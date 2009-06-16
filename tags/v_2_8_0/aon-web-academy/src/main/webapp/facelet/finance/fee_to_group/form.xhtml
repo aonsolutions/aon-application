@@ -1,0 +1,296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="feeToGroupForm" styleClass="aon-form">
+			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:div styleClass="aon-content-toolbar-item-group">
+						<t:commandButton id="accept" value="#{bundle.aon_accept}"
+							forceId="#{true}" actionListener="#{feeToGroup.onAssign}"
+							action="course_list" onclick="if(confirm('#{bundle.aon_accept_confirm}')){viewDialog.show();}else{ return false; }"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+							rendered="#{feeToGroup.model.rowCount >0}"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"/>
+						<h:commandButton id="search" value="#{bundle.aon_search}"
+							immediate="#{true}" action="fee_to_group_search"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
+							actionListener="#{feeToGroup.onEditSearch}"
+							accesskey="#{bundle.aon_key_search}" />
+					</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+					<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+						<t:outputLabel for="Item_Lookup_product_code"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.fee_item}" />
+						<t:div>
+							<t:inputText id="Item_Lookup_product_code" size="5" forceId="#{true}"
+								styleClass="aon-form-input-text"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','itemLookup','Item_Lookup_product_code','Item_product_code|Item_Lookup_product_code,Item_id|Item_Lookup_id,Item_price|Item_Lookup_price,Item_full_name|Item_full_name');"
+								value="#{feeToGroup.fee.item.product.code}" />
+							<h:commandButton id="find_Item_Lookup_id"
+								styleClass="aon-form-lookup-button" value="" immediate="true"
+								onclick="lookupSearchWindow(this, 'placeList', '#{itemLookup.encodedSearchPagePath}','Item_product_code|Item_Lookup_product_code,Item_id|Item_Lookup_id,Item_price|Item_Lookup_price,Item_full_name|Item_full_name');return false;" />
+							<t:inputHidden id="Item_Lookup_id" forceId="#{true}"
+								value="#{feeToGroup.fee.item.id}" required="true" />
+							<t:inputText id="Item_full_name" forceId="#{true}"
+								styleClass="aon-form-input-text"
+								size="27" value="#{feeToGroup.fee.description}" />
+						</t:div>
+		
+						<t:outputLabel for="CustomerFee_quantity"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.fee_quantity}" />
+						<t:inputText id="CustomerFee_quantity" 
+							styleClass="aon-form-input-text"
+							value="#{feeToGroup.fee.quantity}" 
+							required="#{true}" forceId="#{true}" size="10" >
+							<f:validateDoubleRange />
+						</t:inputText>
+
+						<t:outputLabel for="Item_Lookup_price"
+							styleClass="aon-form-input-text-label"
+							value="#{salesBundle.aon_customer_fee_price}" />
+						<t:inputText id="Item_Lookup_price" 
+							styleClass="aon-form-input-text"
+							value="#{feeToGroup.fee.price}" 
+							required="#{true}" forceId="#{true}" size="10" >
+							<f:validateDoubleRange />
+						</t:inputText>
+
+						<t:outputLabel for="CustomerFee_discountExpression"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.fee_discount_expr}" />
+						<h:inputText id="CustomerFee_discountExpression" 
+							styleClass="aon-form-input-text" size="10"
+							value="#{feeToGroup.fee.discountExpression.discountExpr}" />
+
+						<t:outputLabel for="CustomerFee_initialDate"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.aon_initial_date_abrv}" />
+						<t:inputCalendar id="CustomerFee_initialDate"
+							size="8" required="true"
+							value="#{feeToGroup.fee.initialDate}"
+							monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+							currentDayCellClass="currentDayCell" renderAsPopup="true"
+							styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+							popupTodayString="#{bundle.aon_popup_today}"
+							popupWeekString="#{bundle.aon_popup_week}" />
+
+						<t:outputLabel for="CustomerFee_finalDate"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.aon_final_date_abrv}" />
+						<t:inputCalendar id="CustomerFee_finalDate"
+							size="8" value="#{feeToGroup.fee.finalDate}"
+							monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+							currentDayCellClass="currentDayCell" renderAsPopup="true"
+							styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+							popupTodayString="#{bundle.aon_popup_today}"
+							popupWeekString="#{bundle.aon_popup_week}" />
+							
+						<t:outputLabel for="CustomerFee_billingDate"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.aon_billing_date_abrv}" />
+						<t:div>
+							<h:selectOneMenu id="CustomerFee_billingDate" 
+								value="#{feeToGroup.fee.billingDateMonth}"
+								styleClass="aon-form-selectOneMenu-field">
+								<f:selectItems value="#{salesCollections.months}" />
+							</h:selectOneMenu>
+							<h:outputLabel for="BillingDate_Year"
+								value="#{appBundle.aon_year}:" />
+							<h:inputText id="BillingDate_Year" required="true"
+								styleClass="aon-form-input-text" size="5"
+								value="#{feeToGroup.fee.billingDateYear}" />
+						</t:div>
+						
+						<t:outputLabel for="CustomerFee_period"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.fee_period}" />
+						<h:selectOneMenu id="CustomerFee_period" 
+							value="#{feeToGroup.fee.period}"
+							styleClass="aon-form-selectOneMenu-field">
+							<f:selectItems value="#{salesCollections.billingPeriods}" />
+						</h:selectOneMenu>	
+
+					</h:panelGrid>
+
+					<t:div styleClass="aon-form-group">
+						<t:div styleClass="aon-form-group-title">
+							<t:outputLabel for="feeToGroupDataList"
+								value="#{appBundle.course_courses}" />
+						</t:div>
+						<t:div styleClass="aon-form-group-body" rendered="#{feeToGroup.model.rowCount >0}">
+							<t:div>
+								<t:commandButton title="#{financeBundle.aon_select_all}"
+									styleClass="aon-form-button-plus" onclick="viewDialog.show();"
+									value="#{financeBundle.aon_select_all}"
+									actionListener="#{feeToGroup.checkAll}" />
+								<t:commandButton title="#{financeBundle.aon_select_none}"
+									styleClass="aon-form-button-minus" onclick="viewDialog.show();"
+									value="#{financeBundle.aon_select_none}"
+									actionListener="#{feeToGroup.checkNone}" />
+							</t:div>
+
+							<t:dataTable id="feeToGroupDataList" cellpadding="0" cellspacing="0"
+								var="to" value="#{feeToGroup.model}" rows="20"
+								rendered="#{feeToGroup.model.rowCount > 0}" styleClass="aon-table"
+								headerClass="aon-table-header"
+								rowClasses="aon-table-row-odd,aon-table-row-even"
+								columnClasses="aon-table-body aon-table-body-icon,
+											   aon-table-body aon-table-body-string,
+											   aon-table-body aon-table-body-string,
+											   aon-table-body aon-table-body-string,
+											   aon-table-body aon-table-body-string,
+											   aon-table-body aon-table-body-string,
+											   aon-table-body aon-table-body-string,
+											   aon-table-body aon-table-body-string,
+											   aon-table-body aon-table-body-string">
+
+								<h:column>
+									<f:facet name="header">
+										<f:verbatim>&#160;</f:verbatim>
+									</f:facet>
+									<t:selectBooleanCheckbox id="Included_Row_checked"
+										value="#{feeToGroup.rowChecked}"
+										valueChangeListener="#{feeToGroup.rowSelected}"
+										styleClass="aon-form-selectBooleanCheckbox-field" />	
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:outputText value="#{appBundle.course_code}" />
+									</f:facet>
+									<h:outputText value="#{to.code}" />
+									<f:verbatim>&#160;</f:verbatim>
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:panelGroup>
+											<h:outputText value="#{appBundle.course_academic_year}" />
+										</h:panelGroup>
+									</f:facet>
+									<h:outputText value="#{to.academicYear.description}" />
+									<f:verbatim>&#160;</f:verbatim>
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:panelGroup>
+											<h:outputText value="#{appBundle.course_start_date}" />
+										</h:panelGroup>
+									</f:facet>
+									<h:outputText value="#{to.startDate}">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</h:outputText>
+									<f:verbatim>&#160;</f:verbatim>
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:panelGroup>
+											<h:outputText value="#{appBundle.course_end_date}" />
+										</h:panelGroup>
+									</f:facet>
+									<h:outputText value="#{to.endDate}">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</h:outputText>
+									<f:verbatim>&#160;</f:verbatim>
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:panelGroup>
+											<h:outputText value="#{appBundle.course_subject}" />
+										</h:panelGroup>
+									</f:facet>
+									<h:outputText value="#{to.courseSubject.description}" />
+									<f:verbatim>&#160;</f:verbatim>
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:panelGroup>
+											<h:outputText value="#{appBundle.course_level}" />
+										</h:panelGroup>
+									</f:facet>
+									<h:outputText value="#{to.courseLevel.description}" />
+									<f:verbatim>&#160;</f:verbatim>
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:panelGroup>
+											<h:outputText value="#{appBundle.course_workplace}" />
+										</h:panelGroup>
+									</f:facet>
+									<h:outputText value="#{to.workPlace.description}" />
+									<f:verbatim>&#160;</f:verbatim>
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:panelGroup>
+											<h:outputText value="#{appBundle.course_status}" />
+										</h:panelGroup>
+									</f:facet>
+									<h:outputText value="#{to.status}" />
+									<f:verbatim>&#160;</f:verbatim>
+								</h:column>
+							</t:dataTable>
+
+						</t:div>
+
+						<ui:include src="/facelet/shared/dataScroller.xhtml">
+							<ui:param name="dataTable" value="feeToGroupDataList" />
+							<ui:param name="model" value="#{feeToGroup.model}" />
+							<ui:param name="showNote" value="#{true}" />
+						</ui:include>
+
+					</t:div>
+
+				</t:div>
+			</t:div>
+
+			<s:modalDialog dialogId="viewDialog" dialogVar="viewDialog"
+				closeButton="false">
+				<t:div styleClass="aon-timer">
+					<h:graphicImage value="/css/images/content/aon-timer.gif" />
+					<t:div styleClass="aon-timer-title">
+						<t:outputText value="#{appBundle.aon_in_progress}" />
+					</t:div>
+				</t:div>
+			</s:modalDialog>
+
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+	<ui:define name="content">
+		<h:form id="taskList">
+
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+				
+<!-- 
+					<t:div styleClass="aon-form-collapsiblePanel">
+						<t:collapsiblePanel value="false" styleClass="aon-form-collapsiblePanel-title"
+							title="#{appBundle.aon_mail}" >
+							<t:div styleClass="aon-form-collapsiblePanel-body">
+								<ui:include src="/facelet/inbox/mail/mail.xhtml" />
+							</t:div>
+						</t:collapsiblePanel>
+					</t:div>
+ -->					
+					<t:div styleClass="aon-form-collapsiblePanel">
+						<t:collapsiblePanel value="false" styleClass="aon-form-collapsiblePanel-title"
+							title="#{projectBundle.aon_tasks}" >
+							<t:div styleClass="aon-form-collapsiblePanel-body">
+								<ui:include src="/facelet/inbox/task/tasks.xhtml" />
+							</t:div>
+						</t:collapsiblePanel>
+					</t:div>
+					
+					<t:div styleClass="aon-form-collapsiblePanel">
+						<t:collapsiblePanel value="false" styleClass="aon-form-collapsiblePanel-title"
+							title="#{projectBundle.aon_alarms}" >
+							<t:div styleClass="aon-form-collapsiblePanel-body">
+								<ui:include src="/facelet/inbox/alarm/alarms.xhtml" />
+							</t:div>
+						</t:collapsiblePanel>
+					</t:div>
+					
+					<t:div styleClass="aon-form-collapsiblePanel">
+						<t:collapsiblePanel value="false" styleClass="aon-form-collapsiblePanel-title"
+							title="#{projectBundle.aon_daily_tracking_today_tracking}" >
+							<t:div styleClass="aon-form-collapsiblePanel-body">
+								<ui:include src="/facelet/inbox/dailyTracking/dailyTracking.xhtml" />
+							</t:div>
+						</t:collapsiblePanel>
+					</t:div>					
+					
+				</t:div>
+			</t:div>		
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="rRelationshipForm">
+
+			<t:div id="aon-content-menu" styleClass="aon-content-menu-aux"
+				forceId="#{true}" style="margin-left:16px;margin-right:16px;">
+				<h:outputText
+					value="#{customer.to.registry.name} #{customer.to.registry.surname}, #{customerBundle.customer_document}: #{customer.to.registry.document}" />
+			</t:div>
+
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal" style="padding-top:0">
+
+					<t:div styleClass="aon-content-menu" rendered="#{!customer.new}"
+						id="aon-content-menu" forceId="#{true}">
+						<t:panelGrid columns="7" cellpadding="0" cellspacing="0"
+							border="0">
+							<t:panelGroup>
+								<t:commandLink id="customer_data" forceId="#{true}"
+									value="#{appBundle.aon_personal_data}" action="customer_form"
+									styleClass="aon-content-menu-item" />
+							</t:panelGroup>
+							<t:panelGroup>
+								<t:commandLink id="economic_data" forceId="#{true}"
+									visibleOnUserRole="ClientesDatosEconomicos"
+									value="#{appBundle.aon_economic_data}"
+									actionListener="#{customerFee.onCustomerFee}"
+									action="economic_data" styleClass="aon-content-menu-item" />
+							</t:panelGroup>
+							<t:panelGroup>
+								<t:commandLink id="customer_dossier" forceId="#{true}"
+									value="#{projectBundle.dossier_dossiers}"
+									actionListener="#{dossier.onDossier}" action="dossier_list"
+									styleClass="aon-content-menu-item" />
+							</t:panelGroup>
+							<t:panelGroup>
+								<t:commandLink id="customer_business_data" forceId="#{true}" 
+									value="#{appBundle.aon_business_data}"
+									action="customer_rdir_staff" 
+									styleClass="aon-content-menu-item" />						
+							</t:panelGroup>
+							<t:panelGroup>
+								<t:commandLink id="customer_rnote" forceId="#{true}"
+									value="#{appBundle.aon_monitoring}"
+									actionListener="#{rnote.onSearch}" action="rnote"
+									styleClass="aon-content-menu-item" />
+							</t:panelGroup>
+							<t:panelGroup>
+								<t:commandLink id="customer_relationship" forceId="#{true}"
+									value="#{appBundle.aon_rRelationship}"
+									styleClass="aon-content-menu-item-active" />
+							</t:panelGroup>
+							<t:panelGroup>
+								<t:commandLink id="record_data" forceId="#{true}" 
+									value="#{appBundle.aon_record_data}"
+									action="customer_record_data_list" 
+									styleClass="aon-content-menu-item" />						
+							</t:panelGroup>
+						</t:panelGrid>
+					</t:div>
+
+					<t:div styleClass="aon-content-toolbar" forceId="#{true}"
+						id="aon-content-toolbar">
+						<t:div styleClass="aon-content-toolbar-internal">
+							<t:div styleClass="aon-content-toolbar-item-group">
+								<h:commandButton id="save" value="#{bundle.aon_save}"
+									styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+									onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+									onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
+									actionListener="#{rRelationship.onAccept}"
+									rendered="#{rRelationship.to!=null}"
+									onclick="return (confirm('#{bundle.aon_save_confirm}'));"
+									accesskey="#{bundle.aon_key_save}" />
+								<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+									immediate="#{true}"
+									styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+									onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+									onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'"
+									actionListener="#{rRelationship.onCancel}"
+									rendered="#{rRelationship.to!=null}"
+									onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+									accesskey="#{bundle.aon_key_cancel}" />
+								<h:commandButton id="remove" value="#{bundle.aon_remove}"
+									styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
+									onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
+									onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-delete'"
+									actionListener="#{rRelationship.onRemove}"
+									rendered="#{rRelationship.to!=null and !rRelationship.new}"
+									onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
+									accesskey="#{bundle.aon_key_remove}" />
+								<h:commandButton id="reset" value="#{bundle.aon_reset}"
+									styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
+									onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
+									onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'"
+									actionListener="#{rRelationship.onReset}"
+									rendered="#{!rRelationship.new}"
+									accesskey="#{bundle.aon_key_new}" />
+							</t:div>
+						</t:div>
+					</t:div>
+
+					<t:div styleClass="aon-table-hack">
+						<t:dataTable id="rRelationshipDataList"
+							value="#{rRelationship.model}" rows="20" var="to"
+							rowIndexVar="rowIndex"
+							rendered="#{rRelationship.model.rowCount > 0 or rRelationship.new}"
+							rowOnMouseOver="selectRow( this )"
+							rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+							styleClass="aon-edit-table" headerClass="aon-edit-table-header"
+							footerClass="aon-edit-table-footer"
+							rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+							columnClasses="aon-edit-table-body aon-edit-table-body-icon, 
+								aon-edit-table-body aon-edit-table-body-string,
+								aon-edit-table-body aon-edit-table-body-string,
+								aon-edit-table-body aon-edit-table-body-string,
+								aon-edit-table-body aon-edit-table-body-buttons">
+
+							<t:column>
+								<f:facet name="header">
+									<f:verbatim>&#160;</f:verbatim>
+								</f:facet>
+								<t:commandLink immediate="#{true}"
+									styleClass="aon-table-row-selected"
+									rendered="#{to.id!=rRelationship.to.id}"
+									actionListener="#{rRelationship.onSelect}" />
+								<f:verbatim>&#160;</f:verbatim>
+								<f:facet name="footer">
+									<t:div>
+										<t:commandButton id="reset" alt="[#{bundle.aon_reset}]"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
+											actionListener="#{rRelationship.onReset}"
+											rendered="#{!rRelationship.new}" value=""
+											accesskey="#{bundle.aon_key_new_line}">
+										</t:commandButton>
+									</t:div>
+								</f:facet>
+							</t:column>
+
+							<t:column width="300">
+								<f:facet name="header">
+									<t:outputText value="#{financeBundle.aon_bank_name}" />
+								</f:facet>
+								<t:outputText
+									value="#{to.relatedRegistry.name} #{to.relatedRegistry.surname}"
+									rendered="#{to!=rRelationship.to}" />
+								<t:div rendered="#{to==rRelationship.to}">
+									<t:inputText id="Customer_Lookup_id-Edit" size="5"
+										forceId="#{true}" styleClass="aon-form-input-text"
+										valueChangeListener="#{rRelationship.onRegistryChanged}"
+										onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id-Edit[#{rowIndex}]','Customer_id|Customer_Lookup_id-Edit[#{rowIndex}],Customer_full_name|Customer_full_name-Edit[#{rowIndex}]');"
+										value="#{rRelationship.to.relatedRegistry.id}" />
+									<h:commandButton id="find_Customer_Lookup_id-Edit"
+										styleClass="aon-form-lookup-button" value="" immediate="true"
+										onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id-Edit[#{rowIndex}],Customer_full_name|Customer_full_name-Edit[#{rowIndex}]');return false;" />
+									<t:inputText id="Customer_full_name-Edit" forceId="#{true}"
+										styleClass="aon-form-input-text-disabled"
+										value="#{to.relatedRegistry.name} #{to.relatedRegistry.surname}"
+										disabled="true" size="30" />
+								</t:div>
+								<f:facet name="footer">
+									<t:div rendered="#{rRelationship.new}">
+										<t:inputText id="Customer_Lookup_id-New" size="5"
+											forceId="#{true}" styleClass="aon-form-input-text"
+											valueChangeListener="#{rRelationship.onRegistryChanged}"
+											onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id-New','Customer_id|Customer_Lookup_id-New,Customer_full_name|Customer_full_name-New');"
+											value="#{rRelationship.to.relatedRegistry.id}" />
+										<h:commandButton id="find_Customer_Lookup_id-New"
+											styleClass="aon-form-lookup-button" value="" immediate="true"
+											onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id-New,Customer_full_name|Customer_full_name-New');return false;" />
+										<t:inputText id="Customer_full_name-New" forceId="#{true}"
+											styleClass="aon-form-input-text-disabled" disabled="true"
+											size="30" />
+									</t:div>
+								</f:facet>
+							</t:column>
+
+							<t:column>
+								<f:facet name="header">
+									<h:outputText value="#{registryBundle.aon_relationship}" />
+								</f:facet>
+								<h:outputText value="#{to.relationship.description}"
+									rendered="#{to.id!=rRelationship.to.id}" />
+								<h:selectOneMenu value="#{rRelationship.to.relationship.id}"
+									styleClass="aon-form-selectOneMenu-field"
+									valueChangeListener="#{rRelationship.onRelationshipChanged}"
+									rendered="#{to==rRelationship.to}">
+									<f:selectItems value="#{registryCollections.relationships}" />
+								</h:selectOneMenu>
+								<f:verbatim>&#160;</f:verbatim>
+								<f:facet name="footer">
+									<h:selectOneMenu value="#{rRelationship.to.relationship.id}"
+										styleClass="aon-form-selectOneMenu-field"
+										valueChangeListener="#{rRelationship.onRelationshipChanged}"
+										rendered="#{rRelationship.new}">
+										<f:selectItems value="#{registryCollections.relationships}" />
+									</h:selectOneMenu>
+								</f:facet>
+							</t:column>
+
+							<t:column>
+								<f:facet name="header">
+									<h:outputText value="#{appBundle.aon_comments}" />
+								</f:facet>
+								<h:outputText value="#{to.comments}"
+									rendered="#{to.id!=rRelationship.to.id}">
+									<f:convertNumber pattern="#,##0.00" />
+								</h:outputText>
+								<h:inputText rendered="#{to.id==rRelationship.to.id}"
+									styleClass="aon-form-input-text" size="64"
+									value="#{rRelationship.to.comments}" />
+								<f:verbatim>&#160;</f:verbatim>
+								<f:facet name="footer">
+									<h:inputText rendered="#{rRelationship.new}"
+										styleClass="aon-form-input-text" size="64"
+										value="#{rRelationship.to.comments}" />
+								</f:facet>
+							</t:column>
+
+							<t:column>
+								<f:facet name="header">
+									<f:verbatim>&#160;</f:verbatim>
+								</f:facet>
+								<t:commandButton title="#{bundle.aon_accept}"
+									actionListener="#{rRelationship.onAccept}"
+									onclick="return (confirm('#{bundle.aon_accept_confirm}'));"
+									styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+									value="" rendered="#{to.id==rRelationship.to.id}"
+									accesskey="#{bundle.aon_key_save_line}" />
+								<t:commandButton title="#{bundle.aon_cancel}"
+									actionListener="#{rRelationship.onCancel}" immediate="#{true}"
+									onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+									styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+									value="" accesskey="#{bundle.aon_key_cancel_line}"
+									rendered="#{to.id==rRelationship.to.id}" />
+								<t:commandButton title="#{bundle.aon_remove}"
+									actionListener="#{rRelationship.onRemove}"
+									onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
+									styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
+									value="" accesskey="#{bundle.aon_key_remove_line}"
+									rendered="#{to.id==rRelationship.to.id}" />
+								<f:verbatim rendered="#{to.id!=rRelationship.to.id}">&#160;</f:verbatim>
+								<f:facet name="footer">
+									<t:div>
+										<f:verbatim rendered="#{!rRelationship.new}">&#160;</f:verbatim>
+										<t:commandButton title="#{bundle.aon_accept}"
+											actionListener="#{rRelationship.onAccept}"
+											onclick="return (confirm('#{bundle.aon_accept_confirm}'));"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+											value="" accesskey="#{bundle.aon_key_save_line}"
+											rendered="#{rRelationship.new}" />
+										<t:commandButton title="#{bundle.aon_cancel}"
+											actionListener="#{rRelationship.onCancel}"
+											immediate="#{true}"
+											onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+											value="" accesskey="#{bundle.aon_key_cancel_line}"
+											rendered="#{rRelationship.new}" />
+									</t:div>
+								</f:facet>
+							</t:column>
+
+						</t:dataTable>
+
+						<ui:include src="/facelet/shared/dataScroller.xhtml">
+							<ui:param name="dataTable" value="rRelationshipDataList" />
+							<ui:param name="model" value="#{rRelationship.model}" />
+							<ui:param name="showNote" value="#{true}" />
+						</ui:include>
+
+					</t:div>
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+</body>
+</html>

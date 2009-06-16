@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="customer">
+    <columns>
+        <column label="" name="registry" sqlType="integer" type="integer"/>
+        <column label="" name="tariff" sqlType="integer" type="integer"/>
+        <column label="" length="1" name="taxfree" sqlType="bit" type="string"/>
+        <column label="" length="1" name="surcharge" sqlType="bit" type="string"/>
+        <column label="" length="2" name="status" sqlType="tinyint" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="registry"/>
+    </primaryKey>
+    <joins>
+        <join description="customer_ibfk_1" foreignPath="data/registry.exdm.xml">
+            <sourceColumns>
+                <column name="registry"/>
+            </sourceColumns>
+        </join>
+        <join description="customer_ibfk_2" foreignPath="data/tariff.exdm.xml">
+            <sourceColumns>
+                <column name="tariff"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

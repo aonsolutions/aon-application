@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<t:div styleClass="aon-table-hack">
+		<t:dataTable id="inboxTaskDataList" cellpadding="0" cellspacing="0"
+			var="to" value="#{task.model}" rows="20"
+			rowOnMouseOver="selectRow( this )" rowOnMouseOut="unselectRow( this )"
+			rowOnClick="sendRow( this )"
+			styleClass="aon-table" headerClass="aon-table-header"
+			rowClasses="aon-table-row-odd,aon-table-row-even"
+			columnClasses="aon-table-body aon-table-body-string,
+				aon-table-body aon-table-body-string,
+				aon-table-body aon-table-body-string,
+				aon-table-body aon-table-body-string,
+				aon-table-body aon-table-body-string,
+				aon-table-body aon-table-body-string,				
+				aon-table-body aon-table-body-number,
+				aon-table-body aon-table-body-string">
+
+			<h:column>
+				<f:facet name="header">
+					<h:panelGroup>
+						<h:outputText value="#{projectBundle.aon_description}" />
+					</h:panelGroup>
+				</f:facet>
+				<h:outputText value="#{to.description}" />
+				<t:commandLink immediate="#{true}" 
+					styleClass="aon-table-row-selected"
+					action="task_form" 
+					actionListener="#{task.onSelect}" />
+			</h:column>
+			
+			<h:column>
+				<f:facet name="header">
+					<h:panelGroup>
+						<h:outputText value="#{customerBundle.customer_customer}" />
+					</h:panelGroup>
+				</f:facet>
+				<h:outputText value="#{to.dossier.customer.registry.name} #{to.dossier.customer.registry.surname}"/>
+			</h:column>
+			
+			<h:column>
+				<f:facet name="header">
+					<h:panelGroup>
+						<h:outputText value="#{projectBundle.dossier_dossier}" />
+					</h:panelGroup>
+				</f:facet>
+				<h:outputText value="#{to.dossier.number}"/>
+			</h:column>
+			
+			<t:column width="80">
+				<f:facet name="header">
+					<h:panelGroup>
+						<h:outputText value="#{projectBundle.aon_initial_date}" />
+					</h:panelGroup>
+				</f:facet>
+				<h:outputText value="#{to.startDate}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</h:outputText>		
+			</t:column>
+			
+			<t:column width="75">
+				<f:facet name="header">
+					<h:panelGroup>
+						<h:outputText value="#{projectBundle.aon_final_date}" />
+					</h:panelGroup>
+				</f:facet>
+				<h:outputText value="#{to.dueDate}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</h:outputText>		
+			</t:column>			
+			
+			<t:column width="75">
+				<f:facet name="header">
+					<h:panelGroup>
+						<h:outputText value="#{projectBundle.task_priority}" />
+					</h:panelGroup>
+				</f:facet>
+				<h:outputText value="#{to.priority}"/>
+			</t:column>
+			
+			<t:column width="50">
+				<f:facet name="header">
+					<h:panelGroup>
+						<h:outputText value="#{projectBundle.task_percent_abv}" />
+					</h:panelGroup>
+				</f:facet>
+				<h:outputText value="#{to.percent} %"/>
+			</t:column>
+			
+			<t:column width="75">
+				<f:facet name="header">
+					<h:panelGroup>
+						<h:outputText value="#{projectBundle.aon_status}" />
+					</h:panelGroup>
+				</f:facet>
+				<h:outputText value="#{to.status}"/>
+			</t:column>
+
+		</t:dataTable>
+	</t:div>
+		
+</ui:composition>
+</body>
+</html>
