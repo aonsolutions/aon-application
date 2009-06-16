@@ -242,7 +242,7 @@
 										value="#{appBundle.aon_payroll_auxiliares_convenios__ind_comp}" />
 								</f:facet>
 								<aon:div styleClass="">
-									<aon:selectOneRadio id="Indicador_complemento" required="true"
+									<aon:selectOneRadio id="Indicador_complemento" required="#{percepbasic.new}"
 										value="#{percepbasic.to.indcom}">
 										<f:selectItems value="#{percepbasic.listaIndiceComplemento}" />
 									</aon:selectOneRadio>
@@ -256,7 +256,7 @@
 										value="#{appBundle.aon_payroll_auxiliares_convenios__fijo_var}" />
 								</f:facet>
 								<aon:div styleClass="">
-									<aon:selectOneRadio id="fijo_variable" required="true"
+									<aon:selectOneRadio id="fijo_variable" required="#{percepbasic.new}"
 										value="#{percepbasic.to.fijovar}">
 										<f:selectItems value="#{percepbasic.listaFijoVariable}" />
 									</aon:selectOneRadio>
@@ -269,7 +269,7 @@
 										value="#{appBundle.aon_payroll_auxiliares_convenios__retrib}" />
 								</f:facet>
 								<aon:div styleClass="">
-									<aon:selectOneRadio id="Retribucion" required="true"
+									<aon:selectOneRadio id="Retribucion" required="#{percepbasic.new}"
 										value="#{percepbasic.to.dinesp}">
 										<f:selectItems value="#{percepbasic.listaRetribuciones}" />
 									</aon:selectOneRadio>

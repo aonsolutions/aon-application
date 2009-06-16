@@ -16,6 +16,7 @@
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_personas_percep}" />
 				<ui:param name="controller" value="#{percepbasic}"/>
 				<aon:methodParam name="resetAction" default="percep_form" resolve="true" />
+				<aon:methodParam name="searchAction" value="percep_search" />
 				
 				<ui:param name="reportKey" value="percepcionesList" />
 			</ui:include>
@@ -25,8 +26,12 @@
 
 				<aon:dataTable id="otrpercData" value="#{percepbasic.model}"
 					var="to" rows="20" 
-					columnClasses="aon-editDataTable-numberColumn, aon-editDataTable-numberColumn
-					aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+					columnClasses="aon-editDataTable-numberColumn, 
+					aon-editDataTable-numberColumn
+					aon-editDataTable-textColumn, 
+					aon-editDataTable-textColumn,
+					aon-editDataTable-textColumn,
+					aon-editDataTable-numberColumn">
 
 					<aon:rowSelector action="percep_form"
 						actionListener="#{percepbasic.onSelect}" />
@@ -57,6 +62,20 @@
 							<aon:outputText value="#{appBundle.aon_payroll_principales_personas_percep_act}" />
 						</f:facet>
 						<aon:outputText value="#{to.trabajador.actividad.descripcion}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_principales_personas_percep_desc}" />
+						</f:facet>
+						<aon:outputText value="#{to.descom}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_principales_personas_percep_import}" />
+						</f:facet>
+						<aon:outputText value="#{to.importe}" />
 					</aon:column>
 
 				</aon:dataTable>

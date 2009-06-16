@@ -51,11 +51,13 @@
 								<aon:lookupInputText 
 									 id="Trabajador_cdg"
 									lookup="#{trabajadorLookup}"
+									reRender="act,acti,fec,desc,ape,nom,Trabajador_cdg" 
 									value="#{percepbasic.trabajador.cdg}" size="5">
 								</aon:lookupInputText>
 								<aon:lookupButton id="Trabajador_lookup"
 									windowTitle="#{appBundle.aon_payroll_principales_personas_percep_trab}"
-									selectReRender="act,acti,fec,desc,ape,nom,Trabajador_cdg" lookup="#{trabajadorLookup}"
+									selectReRender="act,acti,fec,desc,ape,nom,Trabajador_cdg" 
+									lookup="#{trabajadorLookup}"
 									minHeight="440" property="#{percepbasic.trabajador}">
 								</aon:lookupButton>
 							</aon:div>
@@ -73,14 +75,14 @@
 								enableManualInput="true" /> 
 						-->
 
-							<aon:outputLabel
+							<aon:outputLabel for="act"
 								value="#{appBundle.aon_payroll_principales_personas_percep_act}" />
 							<aon:div>
 								<aon:inputText id="act" size="10" maxlength="6" disabled="true"
-									value="#{(percepbasic.to.trabajador.actividad.cdg!=null)?(percepbasic.to.trabajador.actividad.cdg):('')}" />
+									value="#{(percepbasic.trabajador.actividad.cdg!=null)?(percepbasic.trabajador.actividad.cdg):('')}" />
 								
 								<aon:inputText id="acti" disabled="true"
-									value="#{(percepbasic.to.trabajador.actividad.descripcion!=null)?(percepbasic.to.trabajador.actividad.descripcion):('')}"
+									value="#{(percepbasic.trabajador.actividad.descripcion!=null)?(percepbasic.trabajador.actividad.descripcion):('')}"
 									size="60" maxlength="30" />
 							</aon:div>
 
@@ -88,15 +90,15 @@
 								value="#{appBundle.aon_payroll_principales_personas_percep_trab}" />
 							<aon:div>
 								<aon:inputText id="nom" disabled="true"
-									value="#{(percepbasic.to.trabajador.persona.nombre!=null)?(percepbasic.to.trabajador.persona.nombre):('')}"
+									value="#{(percepbasic.trabajador.persona.nombre!=null)?(percepbasic.trabajador.persona.nombre):('')}"
 									size="20" maxlength="30" />
 
 								<aon:inputText id="desc" disabled="true"
-									value="#{(percepbasic.to.trabajador.persona.descripcion!=null)?(percepbasic.to.trabajador.persona.descripcion):('')}"
+									value="#{(percepbasic.trabajador.persona.descripcion!=null)?(percepbasic.trabajador.persona.descripcion):('')}"
 									size="20" maxlength="30" />
 
 								<aon:inputText id="ape" disabled="true"
-									value="#{(percepbasic.to.trabajador.persona.apellido2!=null)?(percepbasic.to.trabajador.persona.apellido2):('')}"
+									value="#{(percepbasic.trabajador.persona.apellido2!=null)?(percepbasic.trabajador.persona.apellido2):('')}"
 									size="20" maxlength="30" />
 							</aon:div>
 						</aon:panelGrid>
