@@ -3,7 +3,7 @@ package com.code.aon.product.strategy;
 import java.util.Date;
 import java.util.List;
 
-import com.code.aon.product.Tariff;
+import com.code.aon.config.Tariff;
 import com.code.aon.registry.ITaxInfo;
 
 /**

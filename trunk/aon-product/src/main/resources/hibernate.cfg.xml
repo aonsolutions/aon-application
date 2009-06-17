@@ -6,13 +6,14 @@
 
 	<session-factory>
 
-		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon_master?autoReconnect=true</property>		
+		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon-asesor?autoReconnect=true</property>		
 		<property name="connection.username">dbuser</property>		
 		<property name="show_sql">true</property>		
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
 		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
 		<property name="connection.password">serubd2000</property>		
-		<property name="max_fetch_depth">5</property>				
+
+		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
 		<!-- Mapping files -->
 		<mapping class="com.code.aon.product.Brand"/>
@@ -26,9 +27,9 @@
 		<mapping class="com.code.aon.product.ProductCategory"/>
 		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
 		<mapping class="com.code.aon.product.ProductCategoryTree"/>
-		<mapping class="com.code.aon.product.Tariff"/>
 		<mapping class="com.code.aon.product.TariffCatalogue"/>
 		
+		<mapping class="com.code.aon.config.Tariff"/>
 		<mapping class="com.code.aon.config.Tax"/>
 		<mapping class="com.code.aon.config.TaxDetail"/>
 

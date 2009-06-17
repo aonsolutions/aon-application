@@ -16,8 +16,8 @@
 		<mapping class="com.code.aon.customer.Customer"/>
 		<mapping class="com.code.aon.customer.CustomerSegment"/>
 		
-		<!-- AON-PRODUCT Mapping files -->	
-		<mapping class="com.code.aon.product.Tariff"/>
+		<!-- AON-CONFIG Mapping files -->	
+		<mapping class="com.code.aon.config.Tariff"/>
 		
 		<!-- AON-REGISTRY Mapping files -->	
 		<mapping class="com.code.aon.registry.Registry"/>

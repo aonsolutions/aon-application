@@ -40,9 +40,8 @@ public class TaxKey {
 		TaxKey key = (TaxKey)obj;
 		if (getAccount() == null || key.getAccount() == null) {
 			return (getType().equals(key.getType()) && getPercent() == key.getPercent());
-		} else {
-			return (getType().equals(key.getType()) && getPercent() == key.getPercent() && getAccount().equals(key.getAccount()));
-		}
+		} 
+		return (getType().equals(key.getType()) && getPercent() == key.getPercent() && getAccount().equals(key.getAccount()));
 	}
 
 	@Override

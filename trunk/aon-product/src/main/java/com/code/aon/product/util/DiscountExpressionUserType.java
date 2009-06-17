@@ -9,6 +9,8 @@ import org.hibernate.type.StringType;
 
 public class DiscountExpressionUserType extends StringType {
 
+	private static final long serialVersionUID = -5938379210156728641L;
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public Class getReturnedClass() {

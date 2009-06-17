@@ -19,6 +19,7 @@ public interface ICalculableContainer {
 	 * 
 	 * @return ICalculable objects
 	 */
+	@SuppressWarnings("unchecked")
 	public List getDetailList();
 	
 	/**
