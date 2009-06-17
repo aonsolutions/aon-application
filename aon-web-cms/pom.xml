@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-web-cms</artifactId>
 	<packaging>war</packaging>
-	<version>4.2.4</version>
+	<version>4.2.5</version>
 	<description>WEB CMS</description>
 	<name>WEB CMS</name>
 	<build>
