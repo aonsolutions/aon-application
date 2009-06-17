@@ -149,4 +149,5 @@ public class TargetSearchListener extends ControllerSearchListener implements IC
 		if ( getSegments().isEmpty() ) {
 			getSegments().add( null );
 		}
-	}}
+	}
+}
