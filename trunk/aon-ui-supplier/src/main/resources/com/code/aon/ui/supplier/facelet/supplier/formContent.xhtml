@@ -12,13 +12,15 @@
 		<ui:param name="controller" value="#{controller}" />
 	</ui:include>
 
-	<aon:outputLabel for="Supplier_supplierSegment_id"
-		value="#{bundle.aon_segment}" />
-	<aon:selectOneMenu id="Supplier_supplierSegment_id"
-		value="#{controller.to.supplierSegment}">
-		<f:selectItem itemLabel="-" value="#{null}" />
-		<f:selectItems value="#{supplierCollections.supplierSegments}" />
-	</aon:selectOneMenu>
+	<c:if test="#{supplier.showSegment}">
+		<aon:outputLabel for="Supplier_supplierSegment_id"
+			value="#{bundle.aon_segment}" />
+		<aon:selectOneMenu id="Supplier_supplierSegment_id"
+			value="#{controller.to.supplierSegment}">
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{supplierCollections.supplierSegments}" />
+		</aon:selectOneMenu>
+	</c:if>
 
 	<aon:outputLabel for="Supplier_scope_id" value="#{bundle.aon_scope}" />
 	<aon:selectOneMenu id="Supplier_scope_id" value="#{controller.to.scope}">

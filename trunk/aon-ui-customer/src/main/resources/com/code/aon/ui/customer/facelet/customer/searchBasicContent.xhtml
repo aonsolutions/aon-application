@@ -2,6 +2,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
@@ -9,14 +10,17 @@
 		<ui:param name="controller" value="#{controller}" />
 	</ui:include>
 		
-	<aon:outputLabel for="Customer_customerSegment_id"
-		value="#{bundle.aon_segment}" />
-	<aon:selectOneMenu id="Customer_customerSegment_id"
-		value="#{customerCollections.customerSegment}"
-		valueChangeListener="#{controller.addIdEqualExpression}">
-		<f:selectItem itemLabel="-" value="#{null}"/>		
-		<f:selectItems value="#{customerCollections.customerSegments}" />
-	</aon:selectOneMenu>
+	<c:if test="#{customer.showSegment}">
+		<aon:outputLabel for="Customer_customerSegment_id"
+			value="#{bundle.aon_segment}" />
+		<aon:selectOneMenu id="Customer_customerSegment_id"
+			value="#{customerCollections.customerSegment}"
+			valueChangeListener="#{controller.addIdEqualExpression}">
+			<f:selectItem itemLabel="-" value="#{null}"/>		
+			<f:selectItems value="#{customerCollections.customerSegments}" />
+		</aon:selectOneMenu>
+	</c:if>
+		
 		
 	<aon:outputLabel for="Customer_status"
 		value="#{bundle.aon_status}" />
