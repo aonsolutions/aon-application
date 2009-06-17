@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
@@ -97,5 +98,16 @@ public class LeasingAccount implements ITransferObject, IAccount {
 	 */
 	public void setAccount(Account account) {
 		this.account = account;
+	}
+	@Transient
+	public ITransferObject getLinkedTo() {
+		return getLeasing();
+	}
+	public void setLinkedTo(ITransferObject to) {
+		setLeasing((Leasing) to);
+	}	
+	@Transient
+	public String getAccountDescription() {
+		return getLeasing()==null?null:getLeasing().getDescription();
 	}
 }
