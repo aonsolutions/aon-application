@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 	<body>
@@ -27,18 +28,19 @@
 							value="personaListXls" />
 
 						<ui:define name="beforeSpinToolbarContent">
-							<aon:commandButton 
+							<h:commandLink  target="_blank" value="Integral Trabajadores"
 								title="#{appBundle.aon_payroll_principales_integral_trabajadores}"
 								styleClass="aon-finding-toolbar-item aon-icon-tree"
-								action="integralTrab_form" rendered="#{!controller.new}"
-								actionListener="#{persona.onSelect}" >
-							</aon:commandButton>
-							<aon:commandButton 
+								action="integralTrab_search" rendered="#{!controller.new}"
+								>
+							</h:commandLink>
+							<h:commandLink  target="_blank" value="Otras Percepciones"
 								title="#{appBundle.aon_payroll_principales_personas_otrperc}"
 								styleClass="aon-finding-toolbar-item aon-icon-agenda"
-								action="otrperc_form" rendered="#{!controller.new}"
-								actionListener="#{otrperc.onSelectFirst}">
-							</aon:commandButton>
+								action="otrperc_search" rendered="#{!controller.new}"
+								>
+							</h:commandLink>
+							
 							<!-- 
 							<aon:commandButton 
 								title="#{appBundle.aon_payroll_principales_fichero_contrato}"
