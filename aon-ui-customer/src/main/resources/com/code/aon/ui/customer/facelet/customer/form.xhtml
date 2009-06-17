@@ -2,12 +2,15 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
+		
 		<aon:form>
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
@@ -34,15 +37,45 @@
 					columns="2" style="width: 100%;"
 					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
 
-					<c:if test="#{customer.showAccount}">
-						<aon:outputLabel for="Customer_account"
-							value="#{accountingBundle.accounting_account}" />
-						<aon:inputText id="Customer_account"
-							rendered="#{customerAccount.account != null}"
-							value="#{customerAccount.account.id} - #{customerAccount.account.description}"
-							disabled="true" size="60" />
-						<aon:inputText rendered="#{customerAccount.account == null}" value=""
-							disabled="true" size="60" />
+					<c:if test="#{customer.showAccount and !customer.new}">
+						<aon:outputLabel for="Customer_account" value="#{accountBundle.account_accounting}" />
+						<h:panelGrid columns="2" id="accountContainer">
+							<ui:include
+								src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
+								<ui:param name="wizard" value="#{accountWizard}" />
+								<ui:param name="id" value="Customer_account" />
+								<ui:param name="required" value="#{false}" />
+								<ui:param name="size" value="9" />
+								<ui:param name="maxlength" value="9" />
+								<ui:param name="renderDescription" value="#{true}" />
+								<ui:param name="renderedAttr" value="#{true}" />
+								<ui:param name="disabled" value="#{false}" />
+								<ui:param name="reRenderAttr" value="none" />
+								<ui:param name="entity" value="#{customerAccount.account}" />
+								<ui:param name="ELExpression" value="customerAccount.account" />
+							</ui:include>
+
+							<aon:commandButton
+								value="#{accountBundle.account_synchronize}"
+								title="#{accountBundle.account_synchronize}"
+								style="border: #808080 1px solid;"
+								styleClass="aon-finding-toolbar-item aon-icon-refresh"
+								rendered="#{customerAccount.accountSynchronizable}"
+								reRender="accountContainer"
+								actionListener="#{customerAccount.onAccountSynchronize}">
+							</aon:commandButton>
+
+							<aon:commandButton
+								value="#{accountBundle.account_new_account}" 
+								title="#{accountBundle.account_new_account}"
+								style="border: #808080 1px solid;"
+								styleClass="aon-finding-toolbar-item aon-icon-reset"
+								rendered="#{customerAccount.account == null}"
+								reRender="accountContainer"
+								actionListener="#{customerAccount.onNewAccount}">
+							</aon:commandButton>
+
+						</h:panelGrid>
 					</c:if>
 
 					<aon:outputLabel for="Observation"
@@ -91,6 +124,9 @@
 									</ui:include>
 								</aon:panel>
 							</aon:panelTab>
+						</c:if>
+
+						<c:if test="#{customer.showFinanceFeeData}">
 							<aon:panelTab id="fee"
 								label="#{financeBundle.finance_fees_module}">
 								<ui:include
@@ -115,10 +151,15 @@
 				</c:if>
 			</aon:div>
 		</aon:form>
+		
 		<c:if test="#{customer.showFinanceData}">
 			<aon:lookupButtonPopup lookup="#{bankLookup}" />
+		</c:if>
+		
+		<c:if test="#{customer.showFinanceFeeData}">
 			<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		</c:if>
+		
 		<c:if test="#{customer.showProjectData}">
 			<ui:include src="/com/code/aon/ui/project/facelet/dossier/import.xhtml" />
 		</c:if>

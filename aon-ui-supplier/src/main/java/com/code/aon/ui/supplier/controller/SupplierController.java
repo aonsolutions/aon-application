@@ -10,8 +10,8 @@ public class SupplierController extends BasicController {
 	private String selectedTab;
 	
 	private boolean showFinanceData = true;
-	
-	private boolean showAccount;
+	private boolean showAccount = false;
+	private boolean showSegment = true;
 	
 	public String getSelectedTab() {
 		return selectedTab;
@@ -37,4 +37,11 @@ public class SupplierController extends BasicController {
 		this.showAccount = showAccount;
 	}
 	
+	public boolean isShowSegment() {
+		return showSegment;
+	}
+
+	public void setShowSegment(boolean showSegment) {
+		this.showSegment = showSegment;
+	}
 }
