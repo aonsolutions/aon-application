@@ -14,35 +14,31 @@ import com.code.aon.ql.Criteria;
 
 public class EmptyAccountEntryCheck implements IAccountCheck{
 
-	private String period;
-	private List <AccountEntry> list;
-	
-	public String getPeriod() {
-		return period;
-	}
-
-	public void setPeriod(String period) {
-		this.period = period;
-	}
+	private String label = "Chequeo de apuntes sin líneas.";
+	private String emptyAccountEntry = "Apunte sin líneas.";
+	private boolean enabled;
+	private List <ICheckEntry> list;
 	
 	/**
 	 * Comprueba que todos los apuntes tengan lineas
 	 */
 	@Override
-	public void onExecute() throws AccountingCheckException{
-		list = new LinkedList<AccountEntry>();
+	public void onExecute(AccountingCheckParams params) throws AccountingCheckException{
+		list = new LinkedList<ICheckEntry>();
 		boolean prev = HibernateUtil.mustCloseSession();
 		try {
 			HibernateUtil.setCloseSession(false);
 			IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(entryBean
-					.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), period);
-			List<ITransferObject> toList = entryBean.getList(criteria);
-			for (ITransferObject to: toList) {
+					.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), params.getPeriod().getId());
+			for (ITransferObject to: entryBean.getList(criteria)) {
 				AccountEntry entry = (AccountEntry) to;
 				if(entry.getDetail() == null || entry.getDetail().size() == 0){
-					list.add(entry);
+					EmptyAccountCheckEntry e = new EmptyAccountCheckEntry();
+					e.setMessage( emptyAccountEntry );
+					e.setTo(entry);
+					list.add(e);
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -52,8 +48,24 @@ public class EmptyAccountEntryCheck implements IAccountCheck{
 		}
 	}
 	
-	public List <AccountEntry> getList(){
+	@Override
+	public List<ICheckEntry> getCheckList() {
 		return list;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	@Override
+	public String getLabel() {
+		return label;
 	}
 
 }

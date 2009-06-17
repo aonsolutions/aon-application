@@ -163,3 +163,10 @@
 	opacity:.30;
 	filter: alpha(opacity=30);
 }
+
+.rich-combobox-button-background {
+	display:none;
+}
+.rich-combobox-button-background-inactive {
+	display:none;
+}

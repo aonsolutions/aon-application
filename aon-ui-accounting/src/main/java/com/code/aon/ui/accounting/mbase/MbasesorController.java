@@ -15,6 +15,7 @@ import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.sql.AonSQLException;
 import com.code.aon.common.sql.AonSQLFile;
 import com.code.aon.common.sql.AonSQLScript;
@@ -45,7 +46,7 @@ public class MbasesorController  {
 				f.setData(data);
 			}
 			f.setFileName(item.getFileName());
-//			f.addAonFileListener(this);
+			f.setMimeType( MimeType.get(item.getContentType()) );
 			setAonFile(f);
 		} catch (IOException e) {
 			throw new AbortProcessingException(e.getMessage());

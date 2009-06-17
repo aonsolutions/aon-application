@@ -14,6 +14,7 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_entry_module}" />
 				<ui:param name="controller" value="#{accountEntry}" />
+				<aon:methodParam name="backActionListener" value="#{accountEntry.onSelectFirst}" type="actionListener" />
 				<aon:methodParam name="backAction" value="accountEntry_form" />				
 			</ui:include>
 

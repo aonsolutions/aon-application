@@ -15,13 +15,6 @@
 				value="#{accountEntryDetail.model}" rows="100">
 
 				<c:if test="#{accountEntry.manual}">
-<!-- 
-					<aon:rowSelector id="entryDetailTable-select"
-						toggleOnClick="#{accountEntryDetail.to == null and accountEntry.manual}"
-						actionListener="#{accountEntryDetail.onSelect}"
-						reRender="#{rowSelectorReRender}"
-						focus="#{(focusOnSelect != null)?(focusOnSelect):''}" />
- -->
 					<aon:column id="entryDetailTable-selectColumn"
 						styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
 						<f:facet name="header">
@@ -83,16 +76,14 @@
 					<aon:div style="width: 90%;"
 						rendered="#{to!=accountEntryDetail.to}" styleClass="aon-nowrap">
 						<h:commandLink immediate="#{true}"
-							styleClass="aon-dataTable-link-simple"
+							styleClass="aon-dataTable-link"
 							actionListener="#{accountEntryDetail.onAccountStatement}"
 							title="#{accountingBundle.accounting_statement_module}"
 							action="account_statement_list">
-							<aon:panelGroup style="width: 90px;float: left;">
 								<aon:outputText value="#{to.account.id}" />
-							</aon:panelGroup>
 						</h:commandLink>
 						<aon:panelGroup styleClass="aon-italic"
-							style="width: auto; font-size: 0.8em;">
+							style="font-size: 0.8em; margin-left: 10px;">
 							<aon:outputText value="#{to.account.description}">
 								<aon:abbreviateConverter maxWidth="50" />
 							</aon:outputText>
@@ -140,9 +131,22 @@
 						value="#{accountEntryDetail.to.concept}"
 						rendered="#{to==accountEntryDetail.to}" required="true" size="20" />
 					<f:facet name="footer">
+					<aon:div>
+<!-- 					
 						<aon:inputText id="AccountEntryDetail_concept-New"
 							value="#{accountEntryDetail.to.concept}"
 							rendered="#{accountEntryDetail.new}" required="true" size="20" />
+ -->
+						<rich:comboBox suggestionValues="#{accountingCollections.conceptsDescriptions}"
+							value="#{accountEntryDetail.to.concept}"
+							directInputSuggestions="true"
+							inputStyle="font-family: arial,lucida Grande, Trebuchet MS,sans-serif;
+										font-size:1em;"
+							buttonDisabledStyle="display:none;"
+							buttonInactiveStyle="display:none;"
+							buttonStyle="display:none;"	
+							rendered="#{accountEntryDetail.new}" required="true" size="20" />
+					</aon:div>
 					</f:facet>
 				</aon:column>
 
@@ -212,16 +216,11 @@
 							value="#{accountingBundle.accounting_balancing_account}" />
 					</f:facet>
 
-					<aon:div style="width: 90%;"
-						rendered="#{to!=accountEntryDetail.to}" ajaxRendered="true">
-
-						<aon:outputText value="#{to.balancingAccount.id}">
-							<rich:toolTip value="#{to.balancingAccount.description}"
-								hideEvent="onmouseout" showDelay="200">
-							</rich:toolTip>
-						</aon:outputText>
-						
-						
+					<aon:div style="width: 90%;" rendered="#{to!=accountEntryDetail.to}" ajaxRendered="true">
+						<aon:outputText value="#{to.balancingAccount.id}" />
+						<rich:toolTip value="#{to.balancingAccount.description}"
+							hideEvent="onmouseout" showDelay="200">
+						</rich:toolTip>
 					</aon:div>
 
 					<ui:include
@@ -308,9 +307,7 @@
 				</c:if>
 			</aon:editDataTable>
 
-			<aon:div id="entryDetailTableDataScroller" layout="none">
-				<aon:dataScroller2 for="entryDetailTable" showNote="true" />
-			</aon:div>
+			<aon:dataScroller2 for="entryDetailTable" showNote="true" />
 
 		</aon:div>
 	</aon:div>

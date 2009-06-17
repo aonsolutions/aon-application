@@ -144,25 +144,34 @@
 									<aon:commandLink immediate="true"
 										actionListener="#{customer.onReset}" action="customer_form">
 										<aon:outputText value="[#{bundle.aon_reset}]" />
-										<f:setPropertyActionListener value="#{true}" 
+										<f:setPropertyActionListener value="#{true}"
 											target="#{customer.showAccount}" />
+										<f:setPropertyActionListener value="#{false}"
+											target="#{customer.showTariff}" />
+										<f:setPropertyActionListener value="#{false}"
+											target="#{customer.showSegment}" />
+
 									</aon:commandLink>
 									<aon:commandLink immediate="true"
 										actionListener="#{customer.onEditSearch}"
 										action="customer_search">
 										<aon:outputText value="[#{bundle.aon_search}]" />
-										<f:setPropertyActionListener value="#{true}" 
+										<f:setPropertyActionListener value="#{true}"
 											target="#{customer.showAccount}" />
+										<f:setPropertyActionListener value="#{false}"
+											target="#{customer.showTariff}" />
+										<f:setPropertyActionListener value="#{false}"
+											target="#{customer.showSegment}" />
 									</aon:commandLink>
 								</aon:div>
 							</aon:div>
 
 							<aon:div>
 								<aon:div styleClass="aonSubMenu aonSubMenuOption">
-									<aon:outputText value="#{accountingBundle.accounting_aut_concept_module}" />
+									<aon:outputText
+										value="#{accountingBundle.accounting_aut_concept_module}" />
 									<aon:commandLink immediate="true"
-										actionListener="#{autConcept.onSearch}"
-										action="autConcept">
+										actionListener="#{autConcept.onSearch}" action="autConcept">
 										<aon:outputText value="[#{bundle.aon_search}]" />
 									</aon:commandLink>
 								</aon:div>
@@ -174,18 +183,26 @@
 									<aon:commandLink immediate="true"
 										actionListener="#{supplier.onReset}" action="supplier_form">
 										<aon:outputText value="[#{bundle.aon_reset}]" />
+										<f:setPropertyActionListener value="#{true}"
+											target="#{supplier.showAccount}" />
+										<f:setPropertyActionListener value="#{false}"
+											target="#{supplier.showSegment}" />
 									</aon:commandLink>
 									<aon:commandLink immediate="true"
 										actionListener="#{supplier.onEditSearch}"
 										action="supplier_search">
 										<aon:outputText value="[#{bundle.aon_search}]" />
+										<f:setPropertyActionListener value="#{true}"
+											target="#{supplier.showAccount}" />
+										<f:setPropertyActionListener value="#{false}"
+											target="#{supplier.showSegment}" />
 									</aon:commandLink>
 								</aon:div>
 							</aon:div>
 
 							<aon:div>
 							</aon:div>
-							
+
 							<aon:div>
 								<aon:div styleClass="aonSubMenu aonSubMenuOption">
 									<aon:outputText
@@ -193,11 +210,15 @@
 									<aon:commandLink immediate="true"
 										actionListener="#{creditor.onReset}" action="creditor_form">
 										<aon:outputText value="[#{bundle.aon_reset}]" />
+										<f:setPropertyActionListener value="#{true}"
+											target="#{creditor.showAccount}" />
 									</aon:commandLink>
 									<aon:commandLink immediate="true"
 										actionListener="#{creditor.onEditSearch}"
 										action="creditor_search">
 										<aon:outputText value="[#{bundle.aon_search}]" />
+										<f:setPropertyActionListener value="#{true}"
+											target="#{creditor.showAccount}" />
 									</aon:commandLink>
 								</aon:div>
 							</aon:div>
@@ -271,8 +292,8 @@
 							</aon:div>
 						</h:panelGrid>
 					</aon:panelCollapsible>
-					
-					
+
+
 					<aon:panelCollapsible label="#{appBundle.account_budget}">
 						<h:panelGrid styleClass="aon-text-left" columns="2"
 							style="width:100%; margin-top: 10px;"
@@ -317,7 +338,7 @@
 							</aon:div>
 						</h:panelGrid>
 					</aon:panelCollapsible>
-					
+
 					<aon:panelCollapsible label="#{financeBundle.finance_menu_group}">
 						<h:panelGrid styleClass="aon-text-left" columns="2"
 							style="width:100%; margin-top: 10px;"
@@ -326,8 +347,7 @@
 
 							<aon:div>
 								<aon:div styleClass="aonSubMenu aonSubMenuOptionFinance">
-									<aon:outputText
-										value="#{financeBundle.finance_charge_module}" />
+									<aon:outputText value="#{financeBundle.finance_charge_module}" />
 									<aon:commandLink immediate="true"
 										actionListener="#{finance.onEditSearchCharge}"
 										action="finance_search">
@@ -338,8 +358,7 @@
 
 							<aon:div>
 								<aon:div styleClass="aonSubMenu aonSubMenuOptionFinance">
-									<aon:outputText
-										value="#{financeBundle.finance_payment_module}" />
+									<aon:outputText value="#{financeBundle.finance_payment_module}" />
 									<aon:commandLink immediate="true"
 										actionListener="#{finance.onEditSearchPayment}"
 										action="finance_search">

@@ -4,54 +4,49 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.ui.accounting.controller.AccountEntryController;
-import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ql.Criteria;
 
 public class UnbalancedAccountEntryCheck implements IAccountCheck {
 
-	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
-	private String period;
-	private List <AccountEntry> list;
-
-	public String getPeriod() {
-		return period;
-	}
-
-	public void setPeriod(String period) {
-		this.period = period;
-	}
-
-	public boolean isEmpty() {
-		return list.isEmpty();
-	}
+	private String label = "Chequeo de apuntes descuadrados.";
+	private boolean enabled;
+	private String message = "Apunte descuadrado.";
+	private List <ICheckEntry> list;
 
 	/**
 	 * Comprueba que los apuntes no esten descuadrados
 	 */
 	@Override
-	public void onExecute() throws AccountingCheckException {
-		list = new LinkedList<AccountEntry>();
+	public void onExecute(AccountingCheckParams params) throws AccountingCheckException {
+		list = new LinkedList<ICheckEntry>();
 		boolean prev = HibernateUtil.mustCloseSession();
 		try {
-			AccountEntryController entryController = (AccountEntryController) FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
+			HibernateUtil.setCloseSession( false );
 			IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
-			entryController.getCriteria().addEqualExpression(entryBean
-					.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), period);
-			entryController.onSelectFirst(null);
-			entryController.onSelectNext(null);
-			if(CommonUtil.round(entryController.getTotalDebit()) != CommonUtil.round(entryController.getTotalCredit())){
-				list.add((AccountEntry)entryController.getTo());
-			}
-			while(!entryController.isInLast()){
-				entryController.onSelectNext(null);
-				if(CommonUtil.round(entryController.getTotalDebit()) != CommonUtil.round(entryController.getTotalCredit())){
-					list.add((AccountEntry)entryController.getTo());
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(entryBean
+					.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), params.getPeriod().getId());
+			for (ITransferObject to: entryBean.getList(criteria)) {
+				AccountEntry entry = (AccountEntry) to;
+				double debit = 0;
+				double credit = 0;
+				for(AccountEntryDetail details: entry.getDetail()) {
+					debit = CommonUtil.round(debit + details.getDebit());
+					credit = CommonUtil.round(credit + details.getCredit());
+				}
+				if(CommonUtil.round(debit) != CommonUtil.round(credit)){
+					UnbalancedAccountEntryCheckEntry e = new UnbalancedAccountEntryCheckEntry();
+					e.setMessage( message );
+					e.setTo(entry);
+					list.add(e);
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -61,8 +56,24 @@ public class UnbalancedAccountEntryCheck implements IAccountCheck {
 		}
 	}
 	
-	public List <AccountEntry> getList(){
+	@Override
+	public List<ICheckEntry> getCheckList() {
 		return list;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	@Override
+	public String getLabel() {
+		return label;
 	}
 
 }

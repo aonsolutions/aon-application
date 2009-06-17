@@ -87,6 +87,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
 	private ArrayList<Finance> financeChecks = new ArrayList<Finance>();
 	private AccountUtils accountUtils;
+	private String onGenerateKey;
 		
 	public Date getFinanceDate() {
 		return financeDate;
@@ -425,7 +426,10 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
 			HibernateUtil.getSession(sessionName).flush();
 			HibernateUtil.commitTransaction(sessionName);
+			onViewAccountEntry(event);
+			onGenerateKey = "accountEntry_form";
 		} catch (Exception e) {
+			onGenerateKey = null;
 			try {
 				HibernateUtil.rollbackTransaction(sessionName);
 			} catch (DAOException daoe) {
@@ -735,4 +739,8 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		return "account_finance_entry";
 	}
 
+	public String generate() {
+		return onGenerateKey;
+	}
+	
 }

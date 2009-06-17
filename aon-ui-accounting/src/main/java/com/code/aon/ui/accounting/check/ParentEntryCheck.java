@@ -4,31 +4,26 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
 
 public class ParentEntryCheck implements IAccountCheck {
 
-	private static final String ACCOUNT_CONTROLLER_NAME = "account";
-	private List <Account> list;
+	private String label = "Chequeo de cuentas contables sin niveles inferiores.";
+	private boolean enabled;
+	private List<ICheckEntry> list;
+	private String parentCheckEntryMsg = "Cuenta sin niveles inferiores.";
 
-	/**
-	 * Comprueba el derecho de apunte de las cuentas segun su nivel
-	 */
 	@Override
-	public void onExecute() throws AccountingCheckException {
-		list = new LinkedList<Account>();
+	public void onExecute(AccountingCheckParams params) throws AccountingCheckException {
+		list = new LinkedList<ICheckEntry>();
 		boolean prev = HibernateUtil.mustCloseSession();
 		try {
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-			BasicController accountController = (BasicController)FormUtil.getController(ACCOUNT_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
 			List<ITransferObject> toList = accountBean.getList(criteria);
 			
@@ -38,13 +33,12 @@ public class ParentEntryCheck implements IAccountCheck {
 					String id;
 					int lenght = calculateLevel(account);
 					id = account.getId().substring(0, lenght);
-					
-					criteria = new Criteria();
-					criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), id);
-					accountController.setCriteria(criteria);
-					accountController.onSearch(null);
-					if(accountController.getModel().getRowCount()==0){
-						list.add(account);
+					ITransferObject parent = accountBean.get(id);
+					if(parent == null){
+						ParentCheckEntry e = new ParentCheckEntry();
+						e.setMessage( parentCheckEntryMsg );
+						e.setTo(account);
+						list.add(e);
 					}
 				}
 			}
@@ -59,9 +53,24 @@ public class ParentEntryCheck implements IAccountCheck {
 		//return account.getLevel()==5?account.getLevel():account.getLevel()-1;
 		return account.getLevel()-1;
 	}
-	
-	public List <Account> getList(){
+
+	@Override
+	public List<ICheckEntry> getCheckList() {
 		return list;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
+	@Override
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	@Override
+	public String getLabel() {
+		return label;
 	}
 
 }
