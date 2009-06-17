@@ -31,6 +31,7 @@ import com.code.aon.finance.Creditor;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.supplier.Supplier;
@@ -68,7 +69,7 @@ public class AccountUtil {
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Account account = new Account();
 			account.setId(obtainNextAccountId(AccountConstants.BANK_ACCOUNT_PREFIX));
-			account.setDescription(rBank.getBank().getName() + " " + rBank.getBankAccount().toString());
+			account.setDescription(rBank.getFullName());
 			account.setEntryEnabled(true);
 			account.setAlias(account.getId());
 			account = (Account) accountBean.insert(account);
@@ -96,7 +97,7 @@ public class AccountUtil {
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Account account = new Account();
 			account.setId(obtainNextAccountId(AccountConstants.CUSTOMER_ACCOUNT_PREFIX));
-			account.setDescription((registry.getName()!= null?registry.getName() + " ":"") + (registry.getSurname()!=null?registry.getSurname():""));
+			account.setDescription(registry.getFullName());
 			account.setEntryEnabled(true);
 			account.setAlias(registry.getAlias());
 			account = (Account) accountBean.insert(account);
@@ -110,6 +111,16 @@ public class AccountUtil {
 		}
 	}
 	
+	public static Account obtainIRegistryAccount(IRegistry iRegistry) throws ManagerBeanException {
+		if (iRegistry instanceof Customer) {
+			return obtainCustomerAccount(iRegistry.getRegistry());
+		} else if (iRegistry instanceof Supplier) {
+			return obtainSupplierAccount(iRegistry.getRegistry());
+		} else if (iRegistry instanceof Creditor) {
+			return obtainCreditorAccount(iRegistry.getRegistry());
+		}
+		throw new ManagerBeanException("No se puede obtener la cuenta de un " + iRegistry); 
+	}
 	@SuppressWarnings("unchecked")
 	public static Account obtainSupplierAccount(Registry registry) throws ManagerBeanException {
 		try {
@@ -124,7 +135,7 @@ public class AccountUtil {
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Account account = new Account();
 			account.setId(obtainNextAccountId(AccountConstants.SUPPLIER_ACCOUNT_PREFIX));
-			account.setDescription((registry.getName()!=null?registry.getName() + " ":"") + (registry.getSurname()!=null?registry.getSurname():""));
+			account.setDescription(registry.getFullName());
 			account.setEntryEnabled(true);
 			account.setAlias(registry.getAlias());
 			account = (Account) accountBean.insert(account);
@@ -152,7 +163,7 @@ public class AccountUtil {
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Account account = new Account();
 			account.setId(obtainNextAccountId(AccountConstants.CREDITOR_ACCOUNT_PREFIX));
-			account.setDescription((registry.getName()!=null?registry.getName() + " ":"") + (registry.getSurname()!=null?registry.getSurname():""));
+			account.setDescription(registry.getFullName());
 			account.setEntryEnabled(true);
 			account.setAlias(registry.getAlias());
 			account = (Account) accountBean.insert(account);
@@ -256,6 +267,7 @@ public class AccountUtil {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Deprecated  //usar ImanagerBean.get(Serializable) 
 	public static Account obtainAccount(String account) throws ManagerBeanException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();

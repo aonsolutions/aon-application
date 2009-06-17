@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
@@ -121,4 +122,17 @@ public class ProductAccount implements ITransferObject, IAccount {
 	public void setType(ProductAccountType type) {
 		this.type = type;
 	}
+
+	@Transient
+	public ITransferObject getLinkedTo() {
+		return getProduct();
+	}
+	public void setLinkedTo(ITransferObject to) {
+		setProduct((Product) to);
+	}	
+	@Transient
+	public String getAccountDescription() {
+		return getProduct()==null?null:getProduct().getName();
+	}
+	
 }
