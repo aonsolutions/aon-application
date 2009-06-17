@@ -118,9 +118,9 @@
 							<aon:panelGroup>
 								<a4j:region>
 									<aon:lookupInputText id="Codigo_Complemento"
-										lookup="#{complementoLookup}" required="#{true}"
+										lookup="#{complementoLookup}" 
 										reRender="Percepcion_complemento_description"
-										value="#{percepbasic.to.complemento.cdg}" size="5">
+										value="#{percepbasic.complemento.cdg}" size="5">
 									</aon:lookupInputText>
 									<aon:lookupButton id="Percepcion_id_codcom_lookup"
 										windowTitle="#{appBundle.aon_payroll_auxiliares_convenios__aplic_comp}"
@@ -130,7 +130,7 @@
 										property="#{percepbasic.complemento}">
 									</aon:lookupButton>
 									<aon:outputText id="Percepcion_complemento_description"
-										value="#{(percepbasic.to.complemento.description!=null)?(percepbasic.to.complemento.description):('')}"
+										value="#{(percepbasic.complemento.description!=null)?(percepbasic.to.complemento.description):('')}"
 										size="34" disabled="true" />
 								</a4j:region>
 							</aon:panelGroup>
@@ -229,9 +229,9 @@
 							<aon:panelGroup>
 								<a4j:region>
 									<aon:lookupInputText id="Percepcion_id_codcom1"
-										lookup="#{complementoLookup}" required="true"
+										lookup="#{complementoLookup}" 
 										reRender="Percepcion_complemento1_description"
-										value="#{percepbasic.to.complemento1.cdg}" size="5">
+										value="#{percepbasic.complemento1.cdg}" size="5">
 									</aon:lookupInputText>
 									<aon:lookupButton id="Percepcion_id_codcom1_lookup"
 										windowTitle="#{appBundle.aon_payroll_principales_personas_percep_comp}"
@@ -241,7 +241,7 @@
 										property="#{percepbasic.complemento1}">
 									</aon:lookupButton>
 									<aon:outputText id="Percepcion_complemento1_description"
-										value="#{(percepbasic.to.complemento1.description!=null)?(percepbasic.to.complemento1.description):('')}"
+										value="#{(percepbasic.complemento1.description!=null)?(percepbasic.complemento1.description):('')}"
 										size="34" disabled="true" />
 								</a4j:region>
 							</aon:panelGroup>

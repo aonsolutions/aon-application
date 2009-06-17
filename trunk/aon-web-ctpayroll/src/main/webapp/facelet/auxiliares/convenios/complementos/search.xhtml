@@ -20,7 +20,10 @@
 					<aon:methodParam name="searchActionListener" value="#{complemento.onSearch}" type="actionListener" />
 					<aon:methodParam name="searchAction" value="complemento_list" />	
 
-						<ui:include src="searchContent.xhtml" />
+						<ui:include src="searchContent.xhtml" >
+							<ui:param name="controller" value="#{complemento}" />
+						</ui:include>
+						
 						
 				</ui:define>
 			</ui:decorate>
