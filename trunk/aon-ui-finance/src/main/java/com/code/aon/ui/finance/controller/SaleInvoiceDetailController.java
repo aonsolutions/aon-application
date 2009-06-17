@@ -5,11 +5,11 @@ import java.util.Date;
 import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.Item;
-import com.code.aon.product.Tariff;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.LinesController;
