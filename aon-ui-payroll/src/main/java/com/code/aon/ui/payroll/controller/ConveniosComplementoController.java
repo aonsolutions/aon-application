@@ -30,6 +30,13 @@ public class ConveniosComplementoController extends PayrollBasicController {
 	 * @return
 	 */
 	public List<SelectItem> getListaCotizaciones() {
+		if(cotizaciones==null){
+			try {
+				refreshCotizaciones();
+			} catch (ManagerBeanException e) {
+				e.printStackTrace();
+			}
+		}
 		return cotizaciones;
 	}	
 
@@ -39,6 +46,13 @@ public class ConveniosComplementoController extends PayrollBasicController {
 	 * @return
 	 */
 	public List<SelectItem> getListaComplementos() {
+		if(complementos==null){
+			try {
+				refreshComplementos();
+			} catch (ManagerBeanException e) {
+				e.printStackTrace();
+			}
+		}
 		return complementos;
 	}
 	
