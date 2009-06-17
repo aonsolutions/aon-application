@@ -4,6 +4,11 @@ public interface ICMSConstants {
 	
 	String BUNDLE_NAME			= "appBundle";
 	
+	String
+	
+	CMS_GENERATOR_ERROR			= "cms_generator_error",
+	CMS_GENERATOR_FINISHED		= "cms_generator_finished";
+	
 	// Controller Names
 	
 	String

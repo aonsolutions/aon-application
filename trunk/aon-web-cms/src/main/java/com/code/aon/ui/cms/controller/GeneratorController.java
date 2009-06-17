@@ -2,13 +2,12 @@ package com.code.aon.ui.cms.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
 
 import com.code.aon.cms.AlbumCategory;
@@ -44,9 +43,9 @@ import com.code.aon.ui.util.AonUtil;
 
 public class GeneratorController implements Constants, ICMSConstants {
 	
-	private static final Logger LOGGER = Logger.getLogger(GeneratorController.class.getName());
-
 	private GeneratorStatusController status;
+	
+	private GeneratorApplicationController applicationController;
 	
 	private StopWatch stopWatch;
 	
@@ -61,20 +60,11 @@ public class GeneratorController implements Constants, ICMSConstants {
 	}
 
 	public GeneratorController(){
-		super();
 		status = (GeneratorStatusController)AonUtil.getRegisteredBean(GENERATOR_STATUS);
 	}
 	
-	private void generatorError( Throwable th ) {
-		LOGGER.log(Level.SEVERE, th.getMessage(), th);
-		status.finalized();		
-		String message = AonUtil.getMessage(ICMSConstants.BUNDLE_NAME, "cms_generator_error");
-		AonUtil.addErrorMessage( message + " " + th.getMessage());
-		closeSession();
-		throw new AbortProcessingException(th.getMessage(), th);		
-	}
-	
-	public void onGenerate(ActionEvent event) throws ManagerBeanException {
+	public void onGenerate(GeneratorApplicationController applicationController) throws ManagerBeanException {
+		this.applicationController = applicationController;		
 		try {
 			initGenerator();
 	
@@ -380,15 +370,32 @@ public class GeneratorController implements Constants, ICMSConstants {
 		CommonGenerator.getCommonGenerator().generateCaptchaPage();
 	}
 
-	private void finalizeGenerator(){
+	private void finalizeGenerator() {
+		finalizeGenerator(false);
+	}
+	
+	private void finalizeGenerator( boolean withErrors ) {
 		stopWatch.stop();
 		status.info("Duración de la generación: " + stopWatch.toString());		
 		status.info("----------------------------------------------------------------------------------------------------------------------------------------");
-		status.info("------------------------------------------------ LA GENERACION HA TERMINADO ------------------------------------------------");
+		if ( withErrors ) {
+			status.info( AonUtil.getMessage(ICMSConstants.BUNDLE_NAME, CMS_GENERATOR_ERROR) );
+		} else {
+			status.info( AonUtil.getMessage(ICMSConstants.BUNDLE_NAME, CMS_GENERATOR_FINISHED) );
+		}		
 		status.info("----------------------------------------------------------------------------------------------------------------------------------------");
 		status.finalized();
 		closeSession();
 		System.gc();
 	}
 
+	private void generatorError( Throwable th ) {
+		if ( applicationController != null ) {
+			this.applicationController.unlock();
+		}
+		status.error( th.getMessage() );
+		finalizeGenerator( true );
+		throw new AbortProcessingException(th.getMessage(), th);		
+	}
+		
 }

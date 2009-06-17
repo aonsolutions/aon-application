@@ -99,8 +99,9 @@
 								
 							<aon:dataTable id="dataTable" value="#{menu_option.model}" var="to"
 								rows="#{menu_option.pageLimit}" 
-								columnClasses="aon-editDataTable-textColumn, aon-editDataTable-iconColumn,
-										aon-editDataTable-textColumn">
+								columnClasses="aon-editDataTable-textColumn, 
+										aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+										aon-editDataTable-iconColumn, aon-editDataTable-textColumn">
 										
 								<aon:rowSelector immediate="true"
 									reRender="detail_panel" actionListener="#{menu_option.onSelect}" />							
@@ -110,13 +111,21 @@
 										<aon:outputText value="#{appBundle.cms_alias}"/>
 									</f:facet>
 									<aon:outputText value="#{to.alias}" 
-										style="font-weight:bold"
-										styleClass="aon-editDataTable-button"
-										rendered="#{to.separator}"/>
-									<aon:outputText value="#{to.alias}"
-										rendered="#{!to.separator}" 
-										style="padding-left:20px"
-										styleClass="aon-editDataTable-button"/>
+										style="#{to.separator?'font-weight:bold':'padding-left:20px'}" />
+								</aon:column>
+
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{appBundle.cms_label}"/>
+									</f:facet>
+									<aon:outputText value="#{menu_option.i18nLabel}"  />
+								</aon:column>
+
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{appBundle.menu_option_type}"/>
+									</f:facet>
+									<aon:outputText value="#{to.type}"  />
 								</aon:column>
 		
 								<aon:column>
@@ -224,7 +233,7 @@
 									</aon:inputText>
 				
 									<aon:outputLabel for="MenuOptionDetail_label"
-										value="#{appBundle.menu_option_label}" />
+										value="#{appBundle.cms_label}" />
 									<aon:inputText id="MenuOptionDetail_label"
 										required="true" size="50" maxlength="64"
 										value="#{menu_option.toI18n.label}" />

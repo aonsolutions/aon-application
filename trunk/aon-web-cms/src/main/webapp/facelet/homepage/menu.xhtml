@@ -70,34 +70,6 @@
 			<aon:dropDownMenu id="content"
 				value="#{menuBundle.cms_content}"
 				rendered="#{cms.roleEditor or cms.roleRevisor}" >
-				<aon:menuItem id="link" value="#{menuBundle.cms_link}"
-					rendered="#{domainUtils.linkMenu and ( cms.roleEditor or cms.roleRevisor )}"
-					action="link_list"
-					actionListener="#{link.onSearch}" />
-				<aon:menuItem id="faq" value="#{menuBundle.cms_faq}"
-					rendered="#{domainUtils.faqMenu and ( cms.roleEditor or cms.roleRevisor )}"
-					actionListener="#{faq.onSearch}" 
-					action="faq_list"/>
-				<aon:menuItem id="download" 
-					value="#{menuBundle.cms_download}"
-					rendered="#{domainUtils.downloadMenu and ( cms.roleEditor or cms.roleRevisor )}"
-					action="download_list"
-					actionListener="#{download.onSearch}" />
-				<aon:menuItem id="album" 
-					value="#{menuBundle.cms_album}"
-					rendered="#{domainUtils.albumMenu and ( cms.roleEditor or cms.roleRevisor )}"
-					action="album_list"
-					actionListener="#{album.onSearch}" />
-				<aon:menuItem id="album_image" 
-					value="#{menuBundle.cms_album_image}"
-					rendered="#{domainUtils.albumMenu and ( cms.roleEditor or cms.roleRevisor )}"
-					action="album_image_form"
-					actionListener="#{albumImage.onReset}" />
-				<aon:menuItem id="banner" 
-					value="#{menuBundle.cms_banner}"
-					rendered="#{domainUtils.bannerMenu and ( cms.roleEditor or cms.roleRevisor )}"
-					actionListener="#{banner.onSearch}" 
-					action="banner_list"/>
 				<aon:menuItem id="direct_access" 
 					value="#{menuBundle.cms_direct_access}"
 					rendered="#{domainUtils.directAccessMenu and ( cms.roleEditor or cms.roleRevisor )}"
@@ -108,6 +80,29 @@
 					rendered="#{domainUtils.articleMenu and ( cms.roleEditor or cms.roleRevisor )}"
 					actionListener="#{article.onSearch}" 
 					action="article_list"/>
+				<aon:menuItem id="banner" 
+					value="#{menuBundle.cms_banner}"
+					rendered="#{domainUtils.bannerMenu and ( cms.roleEditor or cms.roleRevisor )}"
+					actionListener="#{banner.onSearch}" 
+					action="banner_list"/>
+				<aon:menuItem id="company" 
+					rendered="#{domainUtils.activityMenu and ( cms.roleEditor or cms.roleRevisor )}"
+					value="#{menuBundle.cms_company}"
+					actionListener="#{company.onSearch}" 
+					action="company_list"/>					
+				<aon:menuItem id="download" 
+					value="#{menuBundle.cms_download}"
+					rendered="#{domainUtils.downloadMenu and ( cms.roleEditor or cms.roleRevisor )}"
+					action="download_list"
+					actionListener="#{download.onSearch}" />
+				<aon:menuItem id="link" value="#{menuBundle.cms_link}"
+					rendered="#{domainUtils.linkMenu and ( cms.roleEditor or cms.roleRevisor )}"
+					action="link_list"
+					actionListener="#{link.onSearch}" />
+				<aon:menuItem id="faq" value="#{menuBundle.cms_faq}"
+					rendered="#{domainUtils.faqMenu and ( cms.roleEditor or cms.roleRevisor )}"
+					actionListener="#{faq.onSearch}" 
+					action="faq_list"/>
 				<aon:menuItem id="modular_page" 
 					value="#{menuBundle.cms_modular_page}"
 					rendered="#{domainUtils.modularMenu and ( cms.roleEditor or cms.roleRevisor )}"
@@ -118,16 +113,22 @@
 					rendered="#{domainUtils.genericPageMenu and ( cms.roleEditor or cms.roleRevisor )}"
 					actionListener="#{generic_page.onSearch}" 
 					action="generic_page_list"/>
-				<aon:menuItem id="company" 
-					rendered="#{domainUtils.activityMenu and ( cms.roleEditor or cms.roleRevisor )}"
-					value="#{menuBundle.cms_company}"
-					actionListener="#{company.onSearch}" 
-					action="company_list"/>
 				<aon:menuItem id="product" 
 					value="#{menuBundle.cms_product}"
 					rendered="#{domainUtils.productMenu and ( cms.roleEditor or cms.roleRevisor )}"
 					actionListener="#{product.onSearch}" 
 					action="product_list"/>
+				<aon:menuSeparator/>
+				<aon:menuItem id="album" 
+					value="#{menuBundle.cms_album}"
+					rendered="#{domainUtils.albumMenu and ( cms.roleEditor or cms.roleRevisor )}"
+					action="album_list"
+					actionListener="#{album.onSearch}" />
+				<aon:menuItem id="album_image" 
+					value="#{menuBundle.cms_album_image}"
+					rendered="#{domainUtils.albumMenu and ( cms.roleEditor or cms.roleRevisor )}"
+					action="album_image_form"
+					actionListener="#{albumImage.onReset}" />
 			</aon:dropDownMenu>
 			<aon:dropDownMenu id="hiru"
 				value="#{menuBundle.cms_hiru}"
