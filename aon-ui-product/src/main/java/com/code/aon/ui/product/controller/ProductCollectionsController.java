@@ -18,7 +18,6 @@ import com.code.aon.product.Brand;
 import com.code.aon.product.Catalogue;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.ProductCategoryGroup;
-import com.code.aon.product.Tariff;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.enumeration.PluProductType;
 import com.code.aon.product.enumeration.ProductStatus;
@@ -220,27 +219,6 @@ public class ProductCollectionsController {
 	}
 	
 
-	/**
-	 * Gets the tariffs.
-	 * 
-	 * @return the tariffs
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	public List<SelectItem> getTariffs() throws ManagerBeanException {
-		List<SelectItem> tariffs = new LinkedList<SelectItem>();
-		IManagerBean tariffBean = BeanManager.getManagerBean(Tariff.class);
-		Criteria criteria = new Criteria();
-		criteria.addOrder(tariffBean.getFieldName(IProductAlias.TARIFF_NAME));
-		Iterator<ITransferObject> iter = tariffBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			Tariff tariff = (Tariff) iter.next();
-			SelectItem item = new SelectItem(tariff, tariff.getName());
-			tariffs.add(item);
-		}
-		return tariffs;
-	}
-	
 	/**
 	 * Gets the plu product types
 	 * 

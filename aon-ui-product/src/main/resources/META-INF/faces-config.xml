@@ -317,7 +317,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.product.Tariff</value>
+			<value>com.code.aon.config.Tariff</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
