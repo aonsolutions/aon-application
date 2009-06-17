@@ -7,6 +7,7 @@ import com.code.aon.config.Bank;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
+import com.code.aon.config.Tariff;
 import com.code.aon.config.Tax;
 import com.code.aon.config.TaxDetail;
 import com.code.aon.config.User;
@@ -137,6 +138,25 @@ public interface IConfigAlias {
 	* Hibernate value: Series.securityLevel
 	*/
 	String  SERIES_SECURITY_LEVEL = SERIES_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for Tariff entity.
+	*/ 
+	DAOConstantsEntry TARIFF_ENTRY = DAOConstants.getDAOConstant(Tariff.class);
+
+	/** 
+	* Alias value: Tariff_id
+	* Hibernate value: Tariff.id
+	*/
+	String  TARIFF_ID = TARIFF_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Tariff_name
+	* Hibernate value: Tariff.name
+	*/
+	String  TARIFF_NAME = TARIFF_ENTRY.getAliasNames()[1];
 
 
 
