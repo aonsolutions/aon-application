@@ -17,11 +17,11 @@
 				<aon:form id="personaList">
 
 					<ui:include
-						src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+						src="/facelet/templates/listPrintToolbar.xhtml">
 						<ui:param name="toolbarTitle"
 							value="#{appBundle.aon_payroll_pricipales_personas_mnto_personas}" />
 						<ui:param name="controller" value="#{persona}" />
-
+	                    <ui:param name="reportKey" value="personasList" />
 					</ui:include>
 
 					<!--  aon-region-body -->
