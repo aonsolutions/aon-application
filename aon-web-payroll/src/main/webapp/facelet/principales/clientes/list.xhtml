@@ -15,10 +15,10 @@
 
 		<aon:form id="clienteList">
 			
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_clientes}" />
 				<ui:param name="controller" value="#{cliente}"/>
-				
+				<ui:param name="reportKey" value="cliente" />
 			</ui:include>
 
 			<!--  aon-region-body -->

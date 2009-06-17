@@ -15,10 +15,11 @@
 
 		<aon:form id="actividadList">
 			
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_actividad}" />
 				<ui:param name="controller" value="#{empreact}"/>
-			
+						
+				<ui:param name="reportKey" value="actividadesList" />
 			</ui:include>
 
 			<!--  aon-region-body -->

@@ -15,12 +15,11 @@
 
 		<aon:form id="otrpercList">
 
-			<ui:include
-				src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle"
-					value="#{appBundle.aon_payroll_principales_autonomos}" />
+			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_autonomos}" />
 				<ui:param name="controller" value="#{autonomo}" />
 
+				<ui:param name="reportKey" value="autonomosList" />
 			</ui:include>
 
 			<!--  aon-region-body -->
@@ -49,7 +48,7 @@
 					</aon:column>
 					
 					
-						<aon:column>
+					<aon:column>
 						<f:facet name="header">
 							<aon:outputText
 								value="#{appBundle.aon_payroll_principales_clientes_nom}" />

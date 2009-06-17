@@ -2,6 +2,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
@@ -14,9 +15,14 @@
 	-->
 	
 	<aon:outputLabel for="Empresa_cdg"
-		value="#{appBundle.aon_payroll_pricipales_personas_cdg}" />
-	<aon:inputText id="Empresa_cdg" size="10" maxlength="8"
-		valueChangeListener="#{empresaLookup.addExpression}" />
+		value="#{appBundle.aon_payroll_principales_empresa_cdg_descripcion}" />
+	<aon:div>
+		<aon:inputText id="Empresa_cdg" size="4" maxlength="4" 
+			valueChangeListener="#{empresaLookup.addExpression}" />
+		<rich:spacer />
+		<aon:inputText id="Empresa_descripcion" size="60" maxlength="40" 
+			valueChangeListener="#{empresaLookup.addExpression}" />
+	</aon:div>
 
 
 

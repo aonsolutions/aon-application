@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -44,36 +45,42 @@
 
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_principales_personas_otrperc_per}" />
-								<aon:div styleClass="aon-lookup">
-									<aon:lookupInputText id="Persona_cdg" lookup="#{personaLookup}"
-										reRender="Persona_description" value="#{otraspercep.persona.cdg}"
-										size="5">
-									</aon:lookupInputText>
-									<aon:lookupButton id="Persona_lookup"
-										windowTitle="#{appBundle.aon_payroll_auxiliares_tipos__tipovia}"
-										selectReRender="Persona_cdg,Persona_description"
-										lookup="#{personaLookup}" minHeight="440"
-										property="#{otraspercep.persona}">
-									</aon:lookupButton>
-								</aon:div>
-
+								<aon:panelGroup>
+									<a4j:region>
+										<aon:lookupInputText id="Persona_cdg" lookup="#{personaLookup}"
+											reRender="Persona_description"
+											value="#{otraspercep.persona.cdg}" size="5">
+										</aon:lookupInputText>
+										<aon:lookupButton id="Persona_lookup"
+											windowTitle="#{appBundle.aon_payroll_principales_personas_otrperc_per}"
+											selectReRender="Persona_cdg,Persona_description,info_persona"
+											actionType="search"
+											lookup="#{personaLookup}" minHeight="440"
+											property="#{otraspercep.persona}">
+										</aon:lookupButton>
+									</a4j:region>
+								</aon:panelGroup>
+								
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_principales_personas_otrperc_emp}" />
-								<aon:div styleClass="aon-lookup">
+								<aon:panelGroup>
+									<a4j:region>
 									<aon:lookupInputText id="Empre_cdg" lookup="#{empresaLookup}"
-										reRender="Empr_description" value="#{otraspercep.empresa.cdg}"
+										reRender="Empre_description" value="#{otraspercep.empresa.cdg}"
 										size="5">
 									</aon:lookupInputText>
 									<aon:lookupButton id="Empre_lookup"
 										windowTitle="#{appBundle.aon_payroll_principales_tipocuenta_empresa}"
 										selectReRender="Empre_cdg,Empre_description"
+										actionType="search"
 										lookup="#{empresaLookup}" minHeight="440"
 										property="#{otraspercep.empresa}">
 									</aon:lookupButton>
 									<aon:inputText id="Empre_description"
 										value="#{(otraspercep.empresa.descripcion!=null)?(otraspercep.empresa.descripcion):('')}"
-										size="40" disabled="true" />
-								</aon:div>
+										size="60" disabled="true" />
+									</a4j:region>
+								</aon:panelGroup>
 
 								<aon:outputLabel
 									value="#{appBundle.aon_payroll_principales_personas_otrperc_nom}" />
