@@ -58,6 +58,7 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 	private boolean progressionPanelVisible;
 	private boolean progressionEnabled;
 	private Long progressionValue;
+	private boolean progressStart;
 	private boolean recording;
 	private boolean redirect;
 	private int invoicesToRecord;
@@ -107,6 +108,7 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 		setProgressionPanelVisible(false);
 		setProgressionEnabled(false);
 		setProgressionValue(-1L);
+		progressStart = false;
 		recording = false;
 		invoicesToRecord = 0;
 		recordingInvoice = 0;
@@ -151,6 +153,7 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 			HibernateUtil.setBeginTransaction(false);
 			HibernateUtil.setCloseSession(false);
 
+			progressStart = true;
 			recording = false;
 			setProgressionEnabled(true);
 
@@ -208,9 +211,9 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 			HibernateUtil.closeSession(sessionName);
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
-			setProgressionValue(101L);
-			setProgressionEnabled(false);
 			setProgressionPanelVisible(false);
+			setProgressionEnabled(false);
+			setProgressionValue(101L);
 		}
 	}
 
@@ -222,6 +225,7 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 		setProgressionPanelVisible(true);
 		setProgressionEnabled(true);
 		setProgressionValue(-1L);
+		progressStart = false;
 		recording = false;
 		invoicesToRecord = 0;
 		recordingInvoice = 0;
@@ -230,6 +234,7 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 		setProgressionPanelVisible(false);
 		setProgressionEnabled(false);
 		setProgressionValue(-101L);
+		progressStart = false;
 		recording = false;
 		invoicesToRecord = 0;
 		recordingInvoice = 0;
@@ -254,20 +259,22 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 
 	@Override
 	public Long getProgressionCurrentValue() {
-		if (!recording) {
-			int row = getInvoicingFeedBack().getCurrentRow();
-			int count = getInvoicingFeedBack().getRowCount();
-			if (count > 0) {
-				int pro = (int) CommonUtil.round(row * 100 / count);
-				if (getParams().isInvoiceRecordable()) {
-					pro = pro / 2;
+		if (progressStart) {
+			if (!recording) {
+				int row = getInvoicingFeedBack().getCurrentRow();
+				int count = getInvoicingFeedBack().getRowCount();
+				if (count > 0) {
+					int pro = (int) CommonUtil.round(row * 100 / count);
+					if (getParams().isInvoiceRecordable()) {
+						pro = pro / 2;
+					}
+					setProgressionValue(new Long(pro));
 				}
-				setProgressionValue(new Long(pro));
-			}
-		} else {
-			if (invoicesToRecord > 0) {
-				int pro = (int) CommonUtil.round(((recordingInvoice * 100 / invoicesToRecord) / 2)+50);
-				setProgressionValue(new Long(pro));
+			} else {
+				if (invoicesToRecord > 0) {
+					int pro = (int) CommonUtil.round(((recordingInvoice * 100 / invoicesToRecord) / 2)+50);
+					setProgressionValue(new Long(pro));
+				}
 			}
 		}
 		return getProgressionValue();
