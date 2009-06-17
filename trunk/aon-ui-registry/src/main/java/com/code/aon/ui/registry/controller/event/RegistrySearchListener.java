@@ -26,6 +26,10 @@ public class RegistrySearchListener extends ControllerSearchListener {
 	private List<GeoZone> geoZones;
 	
 	public List<MediaType> getMediaTypes() {
+		if (mediaTypes == null) {
+			mediaTypes = new LinkedList<MediaType>();
+			mediaTypes.add( null );
+		}
 		return mediaTypes;
 	}
 
@@ -38,6 +42,10 @@ public class RegistrySearchListener extends ControllerSearchListener {
 	}
 	
 	public List<GeoZone> getGeoZones() {
+		if (geoZones == null ) {
+			geoZones = new LinkedList<GeoZone>();
+			geoZones.add( EMPTY_GEOZONE );
+		}
 		return geoZones;
 	}
 
