@@ -25,8 +25,8 @@
 						value="#{accountingBundle.accounting_entry_generate}" 
 						id="saveFinance" accesskey="#{bundle.aon_key_save}"
 						title="#{accountingBundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
-						reRender="financeEntryForm" 
 						actionListener="#{financeEntry.accept}"
+						action="#{financeEntry.generate}"
 						disabled="#{financeEntry.lines.rowCount == 0}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						onclick="if (!confirm('#{accountingBundle.accounting_entry_generate}?')) return false;" />
