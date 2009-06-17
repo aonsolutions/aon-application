@@ -233,6 +233,10 @@
 			<property-name>listPagePath</property-name>
 			<value>/facelet/auxiliares/convenios/percepcion/complementoLookup/list.xhtml</value>
 		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/facelet/auxiliares/convenios/percepcion/complementoLookup/search.xhtml</value>
+		</managed-property>
 	</managed-bean>	
 	
 	<!--  ************ entidad LOOKUP **************  -->	
@@ -308,6 +312,10 @@
 		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/facelet/principales/clientes/integral/empresaLookup/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/facelet/principales/clientes/integral/empresaLookup/search.xhtml</value>
 		</managed-property>
 	</managed-bean>	
 	
@@ -386,6 +394,10 @@
 			<property-name>listPagePath</property-name>
 			<value>/facelet/principales/personas/otrperc/personaLookup/list.xhtml</value>
 		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/facelet/principales/personas/otrperc/personaLookup/search.xhtml</value>
+		</managed-property>
 	</managed-bean>	
 	
 				<!--  ************ mutua LOOKUP **************  -->	
@@ -423,6 +435,10 @@
 		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/facelet/principales/personas/embargos/trabajadorLookup/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/facelet/principales/personas/embargos/trabajadorLookup/search.xhtml</value>
 		</managed-property>
 	</managed-bean>	
 	

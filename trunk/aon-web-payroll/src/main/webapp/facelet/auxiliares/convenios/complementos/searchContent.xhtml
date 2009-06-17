@@ -3,39 +3,20 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:aon="http://www.code.es/aon-rich-components"
-	template="/facelet/templates/aon.ui.content.xhtml">
+	xmlns:aon="http://www.code.es/aon-rich-components">
 	
-	<ui:define name="content">
-
-		<aon:form id="complementosSearch">
-			
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_convenios__complemento}" />
-				<ui:param name="controller" value="#{complemento}" />
-			</ui:include>
-			
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
-				<ui:define name="searchContent">
-					<aon:methodParam name="searchActionListener" value="#{complemento.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="complemento_list" />	
-
-						<ui:include src="searchContent.xhtml" />
-						
-				</ui:define>
-			</ui:decorate>
-
 <!--  
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
 					<aon:methodParam name="searchActionListener" value="#{complemento.onSearch}" type="actionListener" />
 					<aon:methodParam name="searchAction" value="complemento_list" />				
+-->
 				
 					<aon:outputLabel for="Complemento_cdg"
 						value="#{appBundle.aon_payroll_cdg}" />
 					<aon:inputText id="Complemento_cdg" size="1" maxlength="3"
 						valueChangeListener="#{complemento.addExpression}" />
-						
+
 					<aon:outputLabel for="Complemento_tipcot"
 						value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_tipcot}" />
 					<aon:selectOneMenu id="Complemento_tipcot" 
@@ -82,11 +63,10 @@
 					    <aon:enumConverter enum="com.code.aon.payroll.enumeration.IndiceComplemento" />	
 						<f:selectItems value="#{complemento.listaIndiceComplemento}"/>											
 					</aon:selectOneRadio>
+										
+<!--  
 				</ui:define>
 			</ui:decorate>
 -->
-
-		</aon:form>
-	</ui:define>
 		
 </ui:composition>
