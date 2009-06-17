@@ -34,8 +34,8 @@
 					
 				<aon:dataTable id="dataTable" rows="#{article_category.pageLimit}" var="to"
 					value="#{article_category.model}" rendered="#{article_category.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-							aon-editDataTable-textColumn, aon-editDataTable-iconColumn">
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+							aon-editDataTable-numberColumn, aon-editDataTable-iconColumn">
 							
 					<aon:rowSelector
 						action="article_category_form" actionListener="#{article_category.onSelect}" />							
@@ -44,15 +44,21 @@
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.cms_alias}" />
 						</f:facet>
-						<aon:outputText value="#{to.alias}" styleClass="aon-editDataTable-button"/>
+						<aon:outputText value="#{to.alias}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.article_category_label}" />
 						</f:facet>
-						<aon:outputText value="#{article_category.i18nLabel}"
-							styleClass="aon-editDataTable-button"/>
+						<aon:outputText value="#{article_category.i18nLabel}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.section}" />
+						</f:facet>
+						<aon:outputText value="#{to.section.alias}" />
 					</aon:column>
 
 					<aon:column>
@@ -60,7 +66,7 @@
 							<aon:outputText for="ArticleCategory_position" 
 								value="#{appBundle.article_category_position}" />
 						</f:facet>
-						<aon:outputText value="#{to.position}" styleClass="aon-editDataTable-button" />
+						<aon:outputText value="#{to.position}" />
 					</aon:column>
 
 					<aon:column>

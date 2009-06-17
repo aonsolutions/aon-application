@@ -69,8 +69,8 @@
 							accesskey="#{bundle.aon_key_close}">
 							<aon:actionListener method="#{link.onCancel}" />
 						</aon:commandButton>
-						<aon:commandButton id="exit"
-							value="#{bundle.aon_close}"
+						<aon:commandButton id="home"
+							value="#{bundle.aon_home}"
 							action="home" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
@@ -113,9 +113,11 @@
 
 					<aon:outputLabel for="LinkDetail_label"
 						value="#{appBundle.link_label}" />
-					<aon:inputText id="LinkDetail_label"
-						required="true" size="80" maxlength="255"
-						value="#{link.toI18n.label}" />
+					<aon:inputTextarea id="LinkDetail_label"
+						required="true" rows="3" style="width:98%" 
+						value="#{link.toI18n.label}" >
+						<f:validateLength maximum="255" />
+					</aon:inputTextarea>						
 
 					<aon:outputLabel for="Link_position"
 						value="#{appBundle.link_position}"/>

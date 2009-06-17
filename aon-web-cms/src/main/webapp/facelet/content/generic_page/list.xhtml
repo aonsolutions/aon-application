@@ -52,8 +52,8 @@
 								actionListener="#{generator_status.onActivePoll}"  
 								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 						</aon:commandButton>	
-						<aon:commandButton id="exit"
-							value="#{bundle.aon_close}"
+						<aon:commandButton id="home"
+							value="#{bundle.aon_home}"
 							action="home" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
@@ -70,8 +70,8 @@
 				<aon:dataTable id="dataTable" rows="#{generic_page.pageLimit}" var="to"
 					value="#{generic_page.model}" rendered="#{generic_page.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-							aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
-							aon-editDataTable-textColumn">
+							aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+							aon-editDataTable-iconColumn">
 							
 					<aon:rowSelector
 						action="generic_page_form" actionListener="#{generic_page.onSelect}" />
@@ -92,6 +92,23 @@
 							styleClass="aon-editDataTable-button" />
 					</aon:column>
 
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.section}" />
+						</f:facet>
+						<aon:outputText value="#{to.section.alias}" />
+					</aon:column>
+						
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.generic_page_create_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.create_date}">
+							 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
+					
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.generic_page_active}" />
@@ -115,23 +132,6 @@
 						</aon:div>
 					</aon:column>
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.generic_page_create_date}" />
-						</f:facet>
-						<aon:outputText value="#{to.create_date}">
-							 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
-					</aon:column>
-					
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.section}" />
-						</f:facet>
-						<aon:outputText value="#{to.section.alias}" />
-					</aon:column>
-						
 				</aon:dataTable>
 					
 				<aon:dataScroller2 for="dataTable" showNote="true" />					

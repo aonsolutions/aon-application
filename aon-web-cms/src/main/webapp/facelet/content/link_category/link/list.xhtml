@@ -54,8 +54,8 @@
 							actionListener="#{generator_status.onActivePoll}"  
 							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 					</aon:commandButton>	
-					<aon:commandButton id="exit"
-						value="#{bundle.aon_close}"
+					<aon:commandButton id="home"
+						value="#{bundle.aon_home}"
 						action="home" 
 						immediate="#{true}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
@@ -90,29 +90,30 @@
 					<f:facet name="header">
 						<aon:outputText value="#{appBundle.cms_alias}" />
 					</f:facet>
-					<aon:outputText value="#{to.alias}" styleClass="aon-editDataTable-button"/>
+					<aon:outputText value="#{to.alias}" />
 				</aon:column>
 
 				<aon:column>
 					<f:facet name="header">
 						<aon:outputText value="#{appBundle.link_label}" />
 					</f:facet>
-					<aon:outputText value="#{link.i18nLabel}"
-						styleClass="aon-editDataTable-button"/>
+					<aon:outputText value="#{link.i18nLabel}" >
+						<aon:abbreviateConverter maxWidth="60" />
+					</aon:outputText>
 				</aon:column>
 
 				<aon:column>
 					<f:facet name="header">
 						<aon:outputText value="#{appBundle.link_category}" />
 					</f:facet>
-					<aon:outputText value="#{to.linkCategory.alias}" styleClass="aon-editDataTable-button" />
+					<aon:outputText value="#{to.linkCategory.alias}" />
 				</aon:column>
 
 				<aon:column>
 					<f:facet name="header">
 						<aon:outputText value="#{appBundle.link_position}" />
 					</f:facet>
-					<aon:outputText value="#{to.position}" styleClass="aon-editDataTable-button" />
+					<aon:outputText value="#{to.position}" />
 				</aon:column>
 				
 				<aon:column>

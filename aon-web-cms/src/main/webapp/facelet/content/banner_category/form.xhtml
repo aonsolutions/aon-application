@@ -12,76 +12,13 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 		<aon:form id="main_form">
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
-				
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.banner_category}"/>	  						
-					</aon:div>					
-					
-					<aon:div styleClass="aon-finding-subtitle-internal">
-							<aon:outputText
-								value="#{banner_category.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-					</aon:div>					
-						
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">					
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							rendered="#{!banner_category.new and cms.roleEditor}"
-							action="banner_category_form"
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}">
-							<aon:actionListener method="#{banner_category.onReset}" />
-						</aon:commandButton>
-						<aon:commandButton id="save"
-							value="#{bundle.aon_save}" 
-							rendered="#{banner_category.to!=null or banner_category.new}"
-							reRender="main_form"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}">
-							<aon:actionListener method="#{banner_category.accept}" />
-						</aon:commandButton>
-						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" 
-							rendered="#{!banner_category.new and cms.roleEditor}" 
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-delete"
-							confirmTitle="Confirmation Dialog" 
-							confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{banner_category.onRemove}"
-							confirmAction="banner_category_list"
-							accesskey="#{bundle.aon_key_remove}"/>
-						<aon:commandButton id="search" 
-							value="#{bundle.aon_search}"
-							immediate="#{true}"
-							action="banner_category_search"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}">
-							<aon:actionListener method="#{banner_category.onEditSearch}" />
-						</aon:commandButton>
-						<aon:commandButton id="list"
-							value="#{bundle.aon_list}"
-							action="banner_category_list" 
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}">
-							<aon:actionListener method="#{banner_category.onCancel}" />
-						</aon:commandButton>
-						<aon:commandButton id="exit"
-							value="#{bundle.aon_close}"
-							action="#{banner_category.getBack}" 
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}">
-							<aon:actionListener method="#{banner_category.onCancel}" />
-						</aon:commandButton>
-				    </aon:div>
-					
-					<!-- end toolbar navigation -->
-				</aon:panelGrid>
-			</aon:div>
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.banner_category}" />
+				<ui:param name="controller" value="#{banner_category}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
+			</ui:include>
 			
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="main_panel" columns="2" dir="true">
@@ -115,7 +52,7 @@
 						value="#{banner_category.to.position}" />
 					
 					<aon:outputLabel for="BannerCategory_active"
-						value="#{appBundle.banner_category_active}"/>
+						value="#{appBundle.cms_active}"/>
 					<aon:selectBooleanCheckbox id="BannerCategory_active" 
 						value="#{banner_category.to.active}" />
 					
