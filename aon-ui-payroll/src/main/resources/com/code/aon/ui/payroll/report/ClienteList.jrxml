@@ -57,6 +57,7 @@
 	<field name="indnom" class="java.lang.Boolean"/>
 	<field name="soloases" class="java.lang.Boolean"/>
 	<field name="indcoste" class="java.lang.Boolean"/>
+	<field name="envioss" class="com.code.aon.payroll.enumeration.EnvioSS2"/>
 
 
 		<group  name="cliente" >
@@ -296,9 +297,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="2"
+						x="0"
 						y="254"
-						width="70"
+						width="72"
 						height="15"
 						forecolor="#000000"
 						backcolor="#CCCCCC"
@@ -350,9 +351,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="2"
+						x="0"
 						y="274"
-						width="70"
+						width="72"
 						height="15"
 						forecolor="#000000"
 						backcolor="#CCCCCC"
@@ -387,9 +388,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="2"
+						x="0"
 						y="294"
-						width="70"
+						width="72"
 						height="15"
 						forecolor="#000000"
 						backcolor="#CCCCCC"
@@ -424,9 +425,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="2"
+						x="0"
 						y="314"
-						width="70"
+						width="72"
 						height="15"
 						forecolor="#000000"
 						backcolor="#CCCCCC"
@@ -648,7 +649,7 @@
 						mode="Opaque"
 						x="354"
 						y="352"
-						width="96"
+						width="68"
 						height="15"
 						forecolor="#000000"
 						backcolor="#CCCCCC"
@@ -1393,6 +1394,23 @@
 						<font pdfFontName="Helvetica" size="8" isBold="false"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[( $F{soloases}.booleanValue()?"SÍ" : "-" )]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="422"
+						y="352"
+						width="113"
+						height="15"
+						key="textField-232"/>
+					<box>					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.5" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#CCCCCC"/>
+</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica" size="8" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{envioss}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>
