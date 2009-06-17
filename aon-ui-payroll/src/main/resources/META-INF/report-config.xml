@@ -1049,6 +1049,23 @@
 		</params>
 	</report>
 	
+
+	
+	
+	<!--  *********  Impresion de lista de Personas - Lista ********* -->
+	<report id="personasList" description="Listado de personas">
+		<template path="/com/code/aon/ui/payroll/report/personasList.jasper" />
+		<bean key="com.code.aon.payroll.principales.personas.Persona" />
+		<criteria provider="#{persona}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	
+	
 	<!--  *********  Impresion a PDF del mnto. de percepciones - Detalle ********* -->
 	
 </report-config>
