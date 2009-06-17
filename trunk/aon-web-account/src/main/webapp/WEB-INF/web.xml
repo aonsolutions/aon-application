@@ -140,7 +140,7 @@
 			screen when an error occurs during the rendering process.
 		</description>
 		<param-name>facelets.DEVELOPMENT</param-name>
-		<param-value>false</param-value>
+		<param-value>true</param-value>
 	</context-param>
 
 	<context-param>
@@ -195,11 +195,11 @@
     </context-param>
 <!-- 
 	<context-param>
-      <param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
-      <param-value>../aon-desktop/richFaces3.3.1/</param-value>
-   </context-param>
- -->
-  
+		<param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
+		<param-value>../aon-desktop/richFaces3.3.1/</param-value>
+	</context-param>
+-->
+
 	<filter>
 		<display-name>RichFaces Filter</display-name>
 		<filter-name>richfaces</filter-name>
@@ -246,7 +246,7 @@
            com.code.aon.ui.common.listener.BeanRegisterContextListener
        </listener-class>
     </listener>
-    
+
 	<!-- Listener, that does all the startup work (configuration, init). -->
 	<listener>
 		<listener-class>
@@ -258,7 +258,6 @@
        <param-name>config-file</param-name>
        <param-value>/WEB-INF/conf/bean_config.xml</param-value>
     </context-param> 
-
 
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
