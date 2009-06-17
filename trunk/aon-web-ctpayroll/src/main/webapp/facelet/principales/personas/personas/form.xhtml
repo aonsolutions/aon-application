@@ -18,14 +18,13 @@
 
 					<!-- <ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">-->
 					<ui:decorate
-						template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+						template="/facelet/templates/formPrintToolbarCliente.xhtml">
 
 						<ui:param name="toolbarTitle"
 							value="#{appBundle.aon_payroll_pricipales_personas_mnto_personas}" />
 						<ui:param name="controller" value="#{persona}" />
-						<ui:param name="reportKey" value="personaList" />
-						<ui:param name="reportKeyXls"
-							value="personaListXls" />
+						<ui:param name="reportKey" value="personaDetail" />
+						<ui:param name="reportKeyXls"	value="personaListXls" />
 
 						<ui:define name="beforeSpinToolbarContent">
 							<h:commandLink  target="_blank" value="Integral Trabajadores"
