@@ -8,6 +8,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.finance.FinanceTracking;
@@ -38,6 +41,8 @@ public class AccountEntryFinanceTracking implements ITransferObject {
 
 	@ManyToOne
 	@JoinColumn( name="account_entry", nullable = false)
+	@ForeignKey(name="FK_ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY")
+	@Index(name="IDX_ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY")														
 	public AccountEntry getAccountEntry() {
 		return accountEntry;
 	}
@@ -48,6 +53,8 @@ public class AccountEntryFinanceTracking implements ITransferObject {
 
 	@ManyToOne
 	@JoinColumn( name="finance_tracking", nullable = false)
+	@ForeignKey(name="FK_ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING")
+	@Index(name="IDX_ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING")															
 	public FinanceTracking getFinanceTracking() {
 		return financeTracking;
 	}

@@ -14,22 +14,22 @@ import org.hibernate.annotations.Index;
 import com.code.aon.account.Account;
 import com.code.aon.account.IAccount;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.supplier.Supplier;
+import com.code.aon.finance.InvoiceTax;
 
 /**
- * The Class SupplierAccount.
+ * The Class InvoiceTaxAccount.
  */
 @Entity
-@Table(name="supplier_account")
-public class SupplierAccount implements ITransferObject, IAccount {
+@Table(name="invoice_tax_account")
+public class InvoiceTaxAccount implements ITransferObject, IAccount {
 	
-	private static final long serialVersionUID = -4360062076830311608L;
+	private static final long serialVersionUID = -7929315870651403627L;
 
 	/** The id. */
 	private Integer id;
 	
-	/** The supplier. */
-	private Supplier supplier;
+	/** The invoice tax. */
+	private InvoiceTax invoiceTax;
 	
 	/** The account. */
 	private Account account;
@@ -56,25 +56,25 @@ public class SupplierAccount implements ITransferObject, IAccount {
 	}
 
 	/**
-	 * Gets the supplier.
+	 * Gets the invoice tax.
 	 * 
-	 * @return the supplier
+	 * @return the invoice tax
 	 */
 	@ManyToOne
-	@JoinColumn( name="supplier", nullable = false)
-	@ForeignKey(name="FK_SUPPLIER_ACCOUNT_SUPPLIER")
-	@Index(name="IDX_SUPPLIER_ACCOUNT_SUPPLIER")			
-	public Supplier getSupplier() {
-		return supplier;
+	@JoinColumn( name="invoice_tax", nullable = false)
+	@ForeignKey(name="FK_INVOICE_TAX_ACCOUNT_INVOICE_TAX")
+	@Index(name="IDX_INVOICE_TAX_ACCOUNT_INVOICE_TAX")											
+	public InvoiceTax getInvoiceTax() {
+		return invoiceTax;
 	}
 
 	/**
-	 * Sets the supplier.
+	 * Sets the invoice tax.
 	 * 
-	 * @param supplier the supplier
+	 * @param invoiceTax the invoice tax
 	 */
-	public void setSupplier(Supplier supplier) {
-		this.supplier = supplier;
+	public void setInvoiceTax(InvoiceTax invoiceTax) {
+		this.invoiceTax = invoiceTax;
 	}
 
 	/**
@@ -84,8 +84,8 @@ public class SupplierAccount implements ITransferObject, IAccount {
 	 */
 	@ManyToOne
 	@JoinColumn( name="account", nullable = false)
-	@ForeignKey(name="FK_SUPPLIER_ACCOUNT_ACCOUNT")
-	@Index(name="IDX_SUPPLIER_ACCOUNT_ACCOUNT")		
+	@ForeignKey(name="FK_INVOICE_TAX_ACCOUNT_ACCOUNT")
+	@Index(name="IDX_INVOICE_TAX_ACCOUNT_ACCOUNT")										
 	public Account getAccount() {
 		return account;
 	}

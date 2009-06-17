@@ -18,62 +18,62 @@
 		<mapping class="com.code.aon.account.bridge.SupplierAccount"/>		
 		<mapping class="com.code.aon.account.bridge.CreditorAccount"/>
 		<mapping class="com.code.aon.account.bridge.ProductAccount"/>		
+		<mapping class="com.code.aon.account.bridge.TaxAccount"/>		
 		<mapping class="com.code.aon.account.bridge.RegistryBankAccount"/>
 		<mapping class="com.code.aon.account.bridge.LoanAccount"/>
 		<mapping class="com.code.aon.account.bridge.LeasingAccount"/>
 		<mapping class="com.code.aon.account.bridge.InvoiceDetailAccount"/>
+		<mapping class="com.code.aon.account.bridge.InvoiceTaxAccount"/>
 		<mapping class="com.code.aon.account.bridge.AccountEntryInvoice"/>
 		<mapping class="com.code.aon.account.bridge.AccountEntryFinanceBatch"/>
 		<mapping class="com.code.aon.account.bridge.AccountEntryFinanceTracking"/>
 		
 		<mapping class="com.code.aon.account.Account"/>
-		<mapping class="com.code.aon.account.Period"/>
-		<mapping class="com.code.aon.account.AutoConcept"/>
-		<mapping class="com.code.aon.account.AccountEntry"/>
-		<mapping class="com.code.aon.account.AccountEntryDetail"/>
-		<mapping class="com.code.aon.account.AccountSummary"/>
-		<mapping class="com.code.aon.account.Loan"/>
-		<mapping class="com.code.aon.account.Leasing"/>
-		
-		<mapping class="com.code.aon.finance.Invoice"/>
+
+		<mapping class="com.code.aon.accounting.AccountEntry"/>
+		<mapping class="com.code.aon.accounting.Leasing"/>
+		<mapping class="com.code.aon.accounting.Loan"/>
+
+		<mapping class="com.code.aon.finance.Creditor"/>
+ 		<mapping class="com.code.aon.finance.Invoice"/>
 		<mapping class="com.code.aon.finance.InvoiceAddress"/>
 		<mapping class="com.code.aon.finance.InvoiceDetail"/>
-		<mapping class="com.code.aon.finance.RegistryBank"/>
-		<mapping class="com.code.aon.finance.Bank"/>
-		<mapping class="com.code.aon.finance.Creditor"/>
+		<mapping class="com.code.aon.finance.InvoiceTax"/>
 		<mapping class="com.code.aon.finance.Finance"/>
 		<mapping class="com.code.aon.finance.FinanceBatch"/>
 		<mapping class="com.code.aon.finance.FinanceBatchDetail"/>
 		<mapping class="com.code.aon.finance.FinanceTracking"/>
-		<mapping class="com.code.aon.finance.PayMethod"/>
-				
-		<mapping class="com.code.aon.registry.Registry"/>
-		<mapping class="com.code.aon.registry.RegistryAddress"/>
-		<mapping class="com.code.aon.registry.RegistryMedia"/>
-		
-		<mapping class="com.code.aon.company.WorkActivity"/>
-		<mapping class="com.code.aon.company.WorkPlace"/>
-		<mapping class="com.code.aon.company.resources.Employee"/>
-		<mapping class="com.code.aon.company.resources.Resource"/>
 
-		<mapping class="com.code.aon.geozone.GeoTree"/>
-		<mapping class="com.code.aon.geozone.GeoZone"/>
-		
+		<mapping class="com.code.aon.config.Bank"/>
 		<mapping class="com.code.aon.config.Scope"/>
+		<mapping class="com.code.aon.config.PayMethod"/>
+		<mapping class="com.code.aon.config.Tax"/>
 
-		<mapping class="com.code.aon.product.Item"/>
-		<mapping class="com.code.aon.product.Product"/>
-		<mapping class="com.code.aon.product.ProductCategory"/>
-		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
-		<mapping class="com.code.aon.product.Brand"/>
-		<mapping class="com.code.aon.product.Tax"/>
-		<mapping class="com.code.aon.product.Tariff"/>
-		
 		<mapping class="com.code.aon.customer.Customer"/>
 		<mapping class="com.code.aon.customer.CustomerSegment"/>
 
 		<mapping class="com.code.aon.supplier.Supplier"/>
 		<mapping class="com.code.aon.supplier.SupplierSegment"/>
+
+		<mapping class="com.code.aon.product.Brand"/>
+		<mapping class="com.code.aon.product.Item"/>
+		<mapping class="com.code.aon.product.Product"/>
+		<mapping class="com.code.aon.product.ProductCategory"/>
+		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
+		<mapping class="com.code.aon.product.Tariff"/>
+
+		<mapping class="com.code.aon.registry.Registry"/>
+		<mapping class="com.code.aon.registry.RegistryAddress"/>
+		<mapping class="com.code.aon.registry.RegistryBank"/>
+		<mapping class="com.code.aon.registry.RegistryMedia"/>
+
+		<mapping class="com.code.aon.company.WorkActivity"/>
+		<mapping class="com.code.aon.company.WorkPlace"/>
+		<mapping class="com.code.aon.company.resources.Employee"/>
+		<mapping class="com.code.aon.company.resources.Resource"/>
+
+		<mapping class="com.code.aon.geozone.GeoZone"/>
+
 	</session-factory>
 
 </hibernate-configuration>

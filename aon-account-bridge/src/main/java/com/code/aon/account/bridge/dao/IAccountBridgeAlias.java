@@ -6,10 +6,12 @@ import com.code.aon.account.bridge.CustomerAccount;
 import com.code.aon.account.bridge.SupplierAccount;
 import com.code.aon.account.bridge.CreditorAccount;
 import com.code.aon.account.bridge.ProductAccount;
+import com.code.aon.account.bridge.TaxAccount;
 import com.code.aon.account.bridge.RegistryBankAccount;
 import com.code.aon.account.bridge.LoanAccount;
 import com.code.aon.account.bridge.LeasingAccount;
 import com.code.aon.account.bridge.InvoiceDetailAccount;
+import com.code.aon.account.bridge.InvoiceTaxAccount;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
@@ -128,6 +130,37 @@ public interface IAccountBridgeAlias {
 
 
 	/** 
+	* DAOConstantsEntry for TaxAccount entity.
+	*/ 
+	DAOConstantsEntry TAX_ACCOUNT_ENTRY = DAOConstants.getDAOConstant(TaxAccount.class);
+
+	/** 
+	* Alias value: TaxAccount_account_id
+	* Hibernate value: TaxAccount.account.id
+	*/
+	String  TAX_ACCOUNT_ACCOUNT_ID = TAX_ACCOUNT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: TaxAccount_id
+	* Hibernate value: TaxAccount.id
+	*/
+	String  TAX_ACCOUNT_ID = TAX_ACCOUNT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: TaxAccount_tax_id
+	* Hibernate value: TaxAccount.tax.id
+	*/
+	String  TAX_ACCOUNT_TAX_ID = TAX_ACCOUNT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: TaxAccount_type
+	* Hibernate value: TaxAccount.type
+	*/
+	String  TAX_ACCOUNT_TYPE = TAX_ACCOUNT_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
 	* DAOConstantsEntry for RegistryBankAccount entity.
 	*/ 
 	DAOConstantsEntry REGISTRY_BANK_ACCOUNT_ENTRY = DAOConstants.getDAOConstant(RegistryBankAccount.class);
@@ -230,6 +263,37 @@ public interface IAccountBridgeAlias {
 	* Hibernate value: InvoiceDetailAccount.id
 	*/
 	String  INVOICE_DETAIL_ACCOUNT_ID = INVOICE_DETAIL_ACCOUNT_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for InvoiceTaxAccount entity.
+	*/ 
+	DAOConstantsEntry INVOICE_TAX_ACCOUNT_ENTRY = DAOConstants.getDAOConstant(InvoiceTaxAccount.class);
+
+	/** 
+	* Alias value: InvoiceTaxAccount_account_id
+	* Hibernate value: InvoiceTaxAccount.account.id
+	*/
+	String  INVOICE_TAX_ACCOUNT_ACCOUNT_ID = INVOICE_TAX_ACCOUNT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: InvoiceTaxAccount_invoiceTax_id
+	* Hibernate value: InvoiceTaxAccount.invoiceTax.id
+	*/
+	String  INVOICE_TAX_ACCOUNT_INVOICE_TAX_ID = INVOICE_TAX_ACCOUNT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: InvoiceTaxAccount_invoiceTax_invoice_id
+	* Hibernate value: InvoiceTaxAccount.invoiceTax.invoice.id
+	*/
+	String  INVOICE_TAX_ACCOUNT_INVOICE_TAX_INVOICE_ID = INVOICE_TAX_ACCOUNT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: InvoiceTaxAccount_id
+	* Hibernate value: InvoiceTaxAccount.id
+	*/
+	String  INVOICE_TAX_ACCOUNT_ID = INVOICE_TAX_ACCOUNT_ENTRY.getAliasNames()[3];
 
 
 

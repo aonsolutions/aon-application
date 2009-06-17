@@ -8,6 +8,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+
 import com.code.aon.account.Account;
 import com.code.aon.account.IAccount;
 import com.code.aon.account.bridge.enumeration.ProductAccountType;
@@ -63,6 +66,8 @@ public class ProductAccount implements ITransferObject, IAccount {
 	 */
 	@ManyToOne
 	@JoinColumn(name="product", nullable = false)
+	@ForeignKey(name="FK_PRODUCT_ACCOUNT_PRODUCT")
+	@Index(name="IDX_PRODUCT_ACCOUNT_PRODUCT")					
 	public Product getProduct() {
 		return product;
 	}
@@ -83,6 +88,8 @@ public class ProductAccount implements ITransferObject, IAccount {
 	 */
 	@ManyToOne
 	@JoinColumn(name="account", nullable = false)
+	@ForeignKey(name="FK_PRODUCT_ACCOUNT_ACCOUNT")
+	@Index(name="IDX_PRODUCT_ACCOUNT_ACCOUNT")				
 	public Account getAccount() {
 		return account;
 	}
@@ -101,6 +108,7 @@ public class ProductAccount implements ITransferObject, IAccount {
 	 * 
 	 * @return the type
 	 */
+	@Column(nullable=false)
 	public ProductAccountType getType() {
 		return type;
 	}

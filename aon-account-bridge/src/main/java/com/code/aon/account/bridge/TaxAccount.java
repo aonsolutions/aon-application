@@ -13,27 +13,31 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.IAccount;
+import com.code.aon.account.bridge.enumeration.TaxAccountType;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.supplier.Supplier;
+import com.code.aon.config.Tax;
 
 /**
- * The Class SupplierAccount.
+ * The Class TaxAccount.
  */
 @Entity
-@Table(name="supplier_account")
-public class SupplierAccount implements ITransferObject, IAccount {
+@Table(name="tax_account")
+public class TaxAccount implements ITransferObject, IAccount {
 	
-	private static final long serialVersionUID = -4360062076830311608L;
+	private static final long serialVersionUID = 1809456459170682443L;
 
 	/** The id. */
 	private Integer id;
 	
-	/** The supplier. */
-	private Supplier supplier;
+	/** The tax. */
+	private Tax tax;
 	
 	/** The account. */
 	private Account account;
 	
+	/** The type. */
+	private TaxAccountType type;
+
 	/**
 	 * Gets the id.
 	 * 
@@ -56,25 +60,25 @@ public class SupplierAccount implements ITransferObject, IAccount {
 	}
 
 	/**
-	 * Gets the supplier.
+	 * Gets the tax.
 	 * 
-	 * @return the supplier
+	 * @return the tax
 	 */
 	@ManyToOne
-	@JoinColumn( name="supplier", nullable = false)
-	@ForeignKey(name="FK_SUPPLIER_ACCOUNT_SUPPLIER")
-	@Index(name="IDX_SUPPLIER_ACCOUNT_SUPPLIER")			
-	public Supplier getSupplier() {
-		return supplier;
+	@JoinColumn(name="tax", nullable = false)
+	@ForeignKey(name="FK_TAX_ACCOUNT_TAX")
+	@Index(name="IDX_TAX_ACCOUNT_TAX")						
+	public Tax getTax() {
+		return tax;
 	}
 
 	/**
-	 * Sets the supplier.
+	 * Sets the tax.
 	 * 
-	 * @param supplier the supplier
+	 * @param tax the tax
 	 */
-	public void setSupplier(Supplier supplier) {
-		this.supplier = supplier;
+	public void setTax(Tax tax) {
+		this.tax = tax;
 	}
 
 	/**
@@ -83,9 +87,9 @@ public class SupplierAccount implements ITransferObject, IAccount {
 	 * @return the account
 	 */
 	@ManyToOne
-	@JoinColumn( name="account", nullable = false)
-	@ForeignKey(name="FK_SUPPLIER_ACCOUNT_ACCOUNT")
-	@Index(name="IDX_SUPPLIER_ACCOUNT_ACCOUNT")		
+	@JoinColumn(name="account", nullable = false)
+	@ForeignKey(name="FK_TAX_ACCOUNT_ACCOUNT")
+	@Index(name="IDX_TAX_ACCOUNT_ACCOUNT")					
 	public Account getAccount() {
 		return account;
 	}
@@ -97,5 +101,24 @@ public class SupplierAccount implements ITransferObject, IAccount {
 	 */
 	public void setAccount(Account account) {
 		this.account = account;
+	}
+
+	/**
+	 * Gets the type.
+	 * 
+	 * @return the type
+	 */
+	@Column(nullable=false)
+	public TaxAccountType getType() {
+		return type;
+	}
+
+	/**
+	 * Sets the type.
+	 * 
+	 * @param type the type
+	 */
+	public void setType(TaxAccountType type) {
+		this.type = type;
 	}
 }
