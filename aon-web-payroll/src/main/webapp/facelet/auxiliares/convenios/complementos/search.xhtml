@@ -14,7 +14,18 @@
 				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_convenios__complemento}" />
 				<ui:param name="controller" value="#{complemento}" />
 			</ui:include>
+			
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener" value="#{complemento.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="complemento_list" />	
 
+						<ui:include src="searchContent.xhtml" />
+						
+				</ui:define>
+			</ui:decorate>
+
+<!--  
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
 					<aon:methodParam name="searchActionListener" value="#{complemento.onSearch}" type="actionListener" />
@@ -73,6 +84,7 @@
 					</aon:selectOneRadio>
 				</ui:define>
 			</ui:decorate>
+-->
 
 		</aon:form>
 	</ui:define>

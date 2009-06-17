@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -47,20 +48,24 @@
 
 							<aon:outputLabel for="Trabajador_cdg"
 								value="#{appBundle.aon_payroll_principales_personas_percep_trab}" />
-							<aon:div styleClass="aon-lookup">
-								<aon:lookupInputText 
-									 id="Trabajador_cdg"
-									lookup="#{trabajadorLookup}"
-									reRender="act,acti,fec,desc,ape,nom,Trabajador_cdg" 
-									value="#{percepbasic.trabajador.cdg}" size="5">
-								</aon:lookupInputText>
-								<aon:lookupButton id="Trabajador_lookup"
-									windowTitle="#{appBundle.aon_payroll_principales_personas_percep_trab}"
-									selectReRender="act,acti,fec,desc,ape,nom,Trabajador_cdg" 
-									lookup="#{trabajadorLookup}"
-									minHeight="440" property="#{percepbasic.trabajador}">
-								</aon:lookupButton>
-							</aon:div>
+							
+							<aon:panelGroup>
+								<a4j:region>
+									<aon:lookupInputText id="Trabajador_cdg"
+										lookup="#{trabajadorLookup}"
+										reRender="act,acti,fec,desc,ape,nom,Trabajador_cdg,info_trabajador"
+										ajaxSingle="false" 
+										value="#{percepbasic.trabajador.cdg}" size="5" />
+									<aon:lookupButton
+										windowTitle="#{appBundle.aon_payroll_principales_personas_percep_trab}"
+										selectReRender="act,acti,fec,desc,ape,nom,Trabajador_cdg,info_trabajador"
+										actionType="search" lookup="#{trabajadorLookup}"
+										minHeight="460" minWidth="650"
+										property="#{percepbasic.trabajador}">
+									</aon:lookupButton>
+
+								</a4j:region>
+							</aon:panelGroup>
 						</aon:panelGrid>
 					
 						<aon:panelGrid columns="4" dir="true" width="100%"
@@ -110,22 +115,25 @@
 
 							<aon:outputLabel for="Percepcion_id_codcom"
 								value="#{appBundle.aon_payroll_principales_personas_percep_cocom}" />
-							<aon:div styleClass="aon-lookup">
-								<aon:lookupInputText id="Percepcion_id_codcom"
-									lookup="#{complementoLookup}"
-									reRender="Percepcion_complemento_description"
-									value="#{percepbasic.complemento.cdg}" size="5">
-								</aon:lookupInputText>
-								<aon:lookupButton id="Percepcion_id_codcom_lookup"
-									windowTitle="#{appBundle.aon_payroll_auxiliares_convenios__aplic_comp}"
-									selectReRender="Percepcion_complemento_description,Percepcion_id_codcom"
-									lookup="#{complementoLookup}" minHeight="440"
-									property="#{percepbasic.complemento}">
-								</aon:lookupButton>
-								<aon:outputText id="Percepcion_complemento_description"
-									value="#{(percepbasic.complemento.description!=null)?(percepbasic.complemento.description):('')}"
-									size="34" disabled="true" />
-							</aon:div>
+							<aon:panelGroup>
+								<a4j:region>
+									<aon:lookupInputText id="Codigo_Complemento"
+										lookup="#{complementoLookup}" required="#{true}"
+										reRender="Percepcion_complemento_description"
+										value="#{percepbasic.to.complemento.cdg}" size="5">
+									</aon:lookupInputText>
+									<aon:lookupButton id="Percepcion_id_codcom_lookup"
+										windowTitle="#{appBundle.aon_payroll_auxiliares_convenios__aplic_comp}"
+										selectReRender="Percepcion_complemento_description,Codigo_Complemento"
+										lookup="#{complementoLookup}" minHeight="440"
+										actionType="search" 
+										property="#{percepbasic.complemento}">
+									</aon:lookupButton>
+									<aon:outputText id="Percepcion_complemento_description"
+										value="#{(percepbasic.to.complemento.description!=null)?(percepbasic.to.complemento.description):('')}"
+										size="34" disabled="true" />
+								</a4j:region>
+							</aon:panelGroup>
 
 
 							<aon:outputLabel
@@ -218,22 +226,25 @@
 
 							<aon:outputLabel for="Percepcion_id_codcom"
 								value="#{appBundle.aon_payroll_principales_personas_percep_comp}" />
-							<aon:div styleClass="aon-lookup">
-								<aon:lookupInputText id="Percepcion_id_codcom1"
-									lookup="#{complementoLookup}"
-									reRender="Percepcion_complemento1_description"
-									value="#{percepbasic.complemento1.cdg}" size="5">
-								</aon:lookupInputText>
-								<aon:lookupButton id="Percepcion_id_codcom1_lookup"
-									windowTitle="#{appBundle.aon_payroll_principales_personas_percep_comp}"
-									selectReRender="Percepcion_complemento1_description,Percepcion_id_codcom1"
-									lookup="#{complementoLookup}" minHeight="440"
-									property="#{percepbasic.complemento1}">
-								</aon:lookupButton>
-								<aon:outputText id="Percepcion_complemento1_description"
-									value="#{(percepbasic.complemento1.description!=null)?(percepbasic.complemento1.description):('')}"
-									size="34" disabled="true" />
-							</aon:div>
+							<aon:panelGroup>
+								<a4j:region>
+									<aon:lookupInputText id="Percepcion_id_codcom1"
+										lookup="#{complementoLookup}" required="true"
+										reRender="Percepcion_complemento1_description"
+										value="#{percepbasic.to.complemento1.cdg}" size="5">
+									</aon:lookupInputText>
+									<aon:lookupButton id="Percepcion_id_codcom1_lookup"
+										windowTitle="#{appBundle.aon_payroll_principales_personas_percep_comp}"
+										selectReRender="Percepcion_complemento1_description,Percepcion_id_codcom1"
+										lookup="#{complementoLookup}" minHeight="440"
+										actionType="search"
+										property="#{percepbasic.complemento1}">
+									</aon:lookupButton>
+									<aon:outputText id="Percepcion_complemento1_description"
+										value="#{(percepbasic.to.complemento1.description!=null)?(percepbasic.to.complemento1.description):('')}"
+										size="34" disabled="true" />
+								</a4j:region>
+							</aon:panelGroup>
 						</aon:panelGrid>
 
 
