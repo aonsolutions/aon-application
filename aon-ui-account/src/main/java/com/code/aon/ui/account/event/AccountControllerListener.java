@@ -13,7 +13,7 @@ public class AccountControllerListener extends ControllerAdapter {
 		String id = account.getId();
 		if (id.length() > 4) {
 			id = id.substring(0,3);
-			if ("400".equals(id) || "410".equals(id) || "430".equals(id)) {
+			if ("40".equals(id) || "41".equals(id) || "42".equals(id) || "43".equals(id)) {
 				throw new ControllerListenerException("Las cuentas de clientes, proveedores y acreedores se deben crear desde los mantenimientos correspondientes.");
 			}
 		}
