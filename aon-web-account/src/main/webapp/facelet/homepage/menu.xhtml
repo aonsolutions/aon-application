@@ -19,7 +19,9 @@
 				<aon:menuSeparator/>
 				<aon:menuItem action="geotreeParent_list" value="#{geozoneBundle.geozone_module}"/>
 				<aon:menuSeparator/>
-				<aon:menuItem action="payMethod" value="#{financeBundle.finance_pay_methods}"/>
+				<aon:menuItem action="payMethod" value="#{configBundle.config_pay_methods}"/>
+				<aon:menuSeparator/>
+				<aon:menuItem action="bank" value="#{configBundle.config_bank_module}" />
 			</aon:dropDownMenu>
  
 			<aon:dropDownMenu value="#{appBundle.account_pred_entries}">
@@ -34,10 +36,6 @@
 				<aon:menuSeparator/>
 				<aon:menuItem actionListener="#{leasingEntry.onReset}" action="account_leasing_entry" value="#{accountingBundle.accounting_leasing_entry_module}"/>
 				<aon:menuItem actionListener="#{leasingFeeEntry.onReset}" action="account_leasing_fee_entry" value="#{accountingBundle.accounting_leasing_fee_entry_module}"/>
-				<!--  
-						****** Definicion de apuntes periodicos ******
-				<aon:menuItem value="#{appBundle.account_periodic_entries}" disabled="true"/>
-				-->
 				<aon:menuSeparator/>
 				<aon:menuGroup value="#{appBundle.account_end_period_entries}">
 					<aon:menuItem action="accountOperatingEntry" value="#{accountingBundle.accounting_operating_entry_module}"/>
@@ -58,14 +56,15 @@
 				<!--  
 						****** 347 - Operaciones con terceros ******
 				<aon:menuItem disabled="true" value="#{appBundle.account_outsiders_operations}"/>
-				 -->
 				<aon:menuSeparator/>
 				<aon:menuGroup value="#{appBundle.account_official_balances}">
 					<aon:menuItem disabled="true" value="#{accountingBundle.accounting_profit_and_loss_module}"/>
 					<aon:menuItem disabled="true" value="#{accountingBundle.accounting_balance_sheet_module}"/>
 				</aon:menuGroup>
+				 -->
 			</aon:dropDownMenu>
 			
+<!-- 
 			<aon:dropDownMenu value="#{appBundle.account_fixed_assets}">
 				<aon:menuItem style="color:red;" action="amortization_list" value="#{accountingBundle.accounting_amortization_form_module}"/>
 				<aon:menuSeparator/>
@@ -79,13 +78,13 @@
 				<aon:menuItem actionListener="#{budgetedProfitAndLossReport.onEditSearch}" action="budgeted_profit_and_loss_search" value="#{accountingBundle.accounting_budgeted_balance_sheet_module}"/>
 				<aon:menuItem disabled="true" value="#{accountingBundle.accounting_compared_budgeted_balance_sheet_module}"/>
 			</aon:dropDownMenu>
-			<!-- 
+
 			<aon:dropDownMenu value="#{appBundle.account_utilities}">
 				<aon:menuItem disabled="true" value="#{appBundle.account_transfer}"/>
 				<aon:menuItem disabled="true" value="#{appBundle.account_import_data}"/>
 				<aon:menuItem disabled="true" value="#{appBundle.account_export_data}"/>
 			</aon:dropDownMenu>
- 			-->
+-->
 			<aon:dropDownMenu value="#{appBundle.account_configuration}">
 				<aon:menuItem action="company" actionListener="#{company.onLoad}" value="#{companyBundle.company_data_module}"/>
 				<aon:menuSeparator/>

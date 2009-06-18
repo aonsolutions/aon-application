@@ -1,0 +1,60 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div id="activityDataDiv" styleClass="aon-scroll-area">
+	
+			<aon:dataTable id="assetActivityCalendar" value="#{assetCalendar.dayAssetModel}" var="list">
+				<f:facet name="header" >
+					<rich:columnGroup>
+						<rich:column>
+							<aon:outputText value="&#160;Horas" />
+						</rich:column>
+						
+						<rich:columns colspan="#{60/assetCalendar.fractionTime}" value="#{assetCalendar.hoursList}" var="hours" index="idx"	>
+							<aon:outputText value="#{hours}" />
+						</rich:columns>
+					</rich:columnGroup>
+				</f:facet>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="&#160;" />
+					</f:facet>
+					<aon:outputText value="#{list.asset.name}" />
+				</aon:column>
+  			
+				<rich:columns value="#{assetCalendar.timeFractionList}" var="times" index="idx"	>
+					<f:facet name="header">
+						<aon:outputText styleClass="calendar-header"
+							value="#{idx%(60/assetCalendar.fractionTime)==0?'00':times}" />
+					</f:facet>
+
+					<aon:div styleClass="#{list.fractions[idx].reserved?'reserved-cell':'available-cell'}">
+						<aon:outputText  value="&#160;&#160;&#160;" styleClass="#{list.fractions[idx].first?'aon-icon-info':'none'}" />
+						<rich:toolTip followMouse="true" direction="top-right" showDelay="250" 
+						 	rendered="#{list.fractions[idx].first}" >
+				            <span style="white-space:nowrap">
+				                <aon:div><aon:outputText value="#{list.asset.description}" /></aon:div>
+				            </span>
+				            
+				            <h:panelGrid columns="2" >
+				                <aon:outputLabel value="#{assetBundle.asset_activity_who}" />
+								<aon:outputText value="#{list.fractions[idx].activity.who}" />
+					                
+								<aon:outputLabel value="#{assetBundle.asset_activity_why}" />
+								<aon:outputText value="#{list.fractions[idx].activity.why}" />
+				            </h:panelGrid>
+				        </rich:toolTip>
+					</aon:div>
+				</rich:columns>
+				
+			</aon:dataTable>
+		
+	</aon:div>
+</ui:composition>

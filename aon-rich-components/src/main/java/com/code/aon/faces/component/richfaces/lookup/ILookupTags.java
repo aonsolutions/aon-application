@@ -16,8 +16,4 @@ public interface ILookupTags {
 	
 	String MIN_HEIGHT = "minHeight";
 	
-	String LOOKUP_PROPERTY = "lookupProperty";
-	
-	String LOOKUP_CHANGE_LISTENER = "lookupChangeListener";
-	
 }

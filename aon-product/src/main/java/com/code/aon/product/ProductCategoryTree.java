@@ -8,8 +8,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.apache.commons.lang.ObjectUtils;
-
 import com.code.aon.common.ITransferObject;
 
 /**
@@ -23,9 +21,7 @@ import com.code.aon.common.ITransferObject;
 @Table(name="pcategory_tree")
 public class ProductCategoryTree implements ITransferObject {
 
-	private static final long serialVersionUID = 4085534951360322369L;
-
-	/**
+    /**
      * Unique key.
      */
     private Integer id;
@@ -124,23 +120,4 @@ public class ProductCategoryTree implements ITransferObject {
     public void setParent(ProductCategory parent) {
         this.parent = parent;
     }
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj instanceof ProductCategoryTree) {
-			ProductCategoryTree productCategoryTree = (ProductCategoryTree) obj;
-			if (ObjectUtils.equals(getId(), productCategoryTree.getId())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public int hashCode() {
-		return 0;
-	}
 }

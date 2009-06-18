@@ -30,14 +30,6 @@
 			<value>com.code.aon.geozone.GeoTree</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>geotreeParent</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>GeoTree_child_name</value>
-		</managed-property>
-		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>
@@ -91,14 +83,6 @@
 			<value>com.code.aon.geozone.GeoTree</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>geotreeParent</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>GeoTree_child_name</value>
-		</managed-property>
-		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>false</value>
 		</managed-property>
@@ -115,17 +99,48 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{geotreeChildControllerListener}</value>
+			</list-entries>
+		</managed-property>
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>geotreeChildControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.geozone.event.GeotreeChildControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
   <!-- =================== Navigation Rules ================= -->
+
+  <!-- **************** MENU  *************** -->	
   <navigation-rule>
     <navigation-case>
-      <from-outcome>geotreeParent_form</from-outcome>
-      <to-view-id>/com/code/aon/ui/geozone/facelet/geozone/form.xhtml</to-view-id>
+      <from-outcome>geozone</from-outcome>
+      <to-view-id>/facelet/geozone/list.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+	
+  <!-- =================== GeoZone ========================== -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>geozone_form</from-outcome>
+      <to-view-id>/facelet/geozone/form.faces</to-view-id>
     </navigation-case>
     <navigation-case>
-      <from-outcome>geotreeParent_list</from-outcome>
-      <to-view-id>/com/code/aon/ui/geozone/facelet/geozone/list.xhtml</to-view-id>
+      <from-outcome>geozone_list</from-outcome>
+      <to-view-id>/facelet/geozone/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>geozone_search</from-outcome>
+      <to-view-id>/facelet/geozone/search.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
 

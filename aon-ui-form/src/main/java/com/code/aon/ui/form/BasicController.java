@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.faces.component.UIComponent;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -22,9 +21,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -612,18 +609,6 @@ public class BasicController extends AbstractPojoController implements IControll
 		}
 	}	
 
-	private String getDirectAlias( UIComponent component ) {
-		String fieldName = component.getId().replace('_', '.');
-		return fieldName;
-	}
-	
-	public void addDirectEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
-		if (event.getNewValue() != null) {
-			String fieldName = getDirectAlias(event.getComponent());
-			criteria.addEqualExpression(fieldName, event.getNewValue());
-		}
-	}	
-	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -634,21 +619,11 @@ public class BasicController extends AbstractPojoController implements IControll
 	public void addDirectExpression(ValueChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null) {
 			String value = event.getNewValue().toString();
-			String property = getDirectAlias(event.getComponent());
+			String property = event.getComponent().getId().replace('_', '.');
 			addExpression(property, value);
 		}
 	}
 
-	public void addDirectIdEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
-		if (event.getNewValue() != null) {
-			ITransferObject to = (ITransferObject) event.getNewValue();
-			String fieldName = getDirectAlias(event.getComponent());
-			IManagerBean bean = BeanManager.getManagerBean(to.getClass());
-			Serializable id = bean.getId(to);
-			criteria.addEqualExpression(fieldName, id);
-		}
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * 

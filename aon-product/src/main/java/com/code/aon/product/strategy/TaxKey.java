@@ -1,6 +1,6 @@
 package com.code.aon.product.strategy;
 
-import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.product.enumeration.TaxType;
 
 public class TaxKey {
 	

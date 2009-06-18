@@ -133,6 +133,13 @@ public class CompanyWebInfoPageController extends GridController {
     	move((WebInfoPage) this.model.getRowData(), 1);    	
     }
 
+    public boolean isDetailed() {
+		WebInfoPage wip = (WebInfoPage)this.model.getRowData();
+		if (wip.getType().equals(WebInfoPageType.GALLERY)) return true;
+		if (wip.getType().equals(WebInfoPageType.GENERIC)) return true;
+		if (wip.getType().equals(WebInfoPageType.LOCATION)) return true;
+		return false;
+    }
 
 	public void onSelectDetail(ActionEvent event) {
 		WebInfoPage wip = (WebInfoPage)this.model.getRowData();

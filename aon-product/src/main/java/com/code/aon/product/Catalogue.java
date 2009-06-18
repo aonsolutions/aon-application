@@ -8,8 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.apache.commons.lang.ObjectUtils;
-
 import com.code.aon.common.ITransferObject;
 
 /**
@@ -20,8 +18,6 @@ import com.code.aon.common.ITransferObject;
 @Entity
 @Table(name="catalogue")
 public class Catalogue implements ITransferObject {
-
-	private static final long serialVersionUID = -4171388932127976688L;
 
 	/** The Id. */
 	private Integer Id;
@@ -113,22 +109,4 @@ public class Catalogue implements ITransferObject {
 		this.endDate = endDate;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj instanceof Catalogue) {
-			Catalogue catalogue = (Catalogue) obj;
-			if (ObjectUtils.equals(getId(), catalogue.getId())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public int hashCode() {
-		return 0;
-	}
 }

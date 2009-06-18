@@ -17,7 +17,7 @@
 		</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
-<!-- 
+
 	<managed-bean>
 		<managed-bean-name>fopReport</managed-bean-name>
 		<managed-bean-class>
@@ -29,7 +29,6 @@
 			<value>/facelet/report/fopPreferences.faces</value>
 		</managed-property>
 	</managed-bean>
- -->
 
 </faces-config>
 

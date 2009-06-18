@@ -139,7 +139,7 @@
 						</f:facet>
 						<aon:div rendered="#{to!=webPage.to}">
 							<aon:commandButton title="#{appBundle.aon_web_info_page_detail}"
-								actionListener="#{webPage.onSelectDetail}" rendered="#{to.detailed}"
+								actionListener="#{webPage.onSelectDetail}" rendered="#{webPage.detailed}"
 								value="" styleClass="aon-editDataTable-button aon-icon-file-entrance"
 								reRender="showGenericModalPanel, showLocationModalPanel, showResourceModalPanel"/>
 							<aon:outputText value="&#160;"/>

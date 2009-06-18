@@ -1,7 +1,13 @@
 package com.code.aon.product;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,12 +20,16 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.ObjectUtils;
-
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.ILookupObject;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.config.Tax;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
+import com.code.aon.product.enumeration.TaxType;
+import com.code.aon.ql.Criteria;
 
 /**
  * Transfer Object that represents a product.
@@ -31,9 +41,9 @@ import com.code.aon.product.enumeration.ProductType;
  */
 @Entity
 @Table(name="product")
-public class Product implements ITransferObject {
+public class Product implements ITransferObject,ILookupObject {
 	
-	private static final long serialVersionUID = -2151513399907107131L;
+	private static final Logger LOGGER = Logger.getLogger(Product.class.getName());
 
     /**
      * Unique key.
@@ -414,6 +424,43 @@ public class Product implements ITransferObject {
 	}
 	
 	/**
+	 * Returns the V.A.T. to be applied for this product in a concrete date
+	 * 
+	 * @param date the date to check. 
+	 * @return the Tax to be applied  
+	 * 
+	 */
+	@Transient
+	@SuppressWarnings("unchecked")
+	public Tax getVat(Date date){
+        if(date.after(getVat().getStartDate())){
+        	return getVat();
+        }
+		try {
+			IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
+			Criteria criteria = new Criteria();
+        	criteria.addEqualExpression(taxDetailBean.getFieldName(IProductAlias.TAX_DETAIL_TAX_ID), getVat().getId());
+        	criteria.addLessThanExpression(taxDetailBean.getFieldName(IProductAlias.TAX_DETAIL_START_DATE),date);
+        	criteria.addGreaterThanExpression(taxDetailBean.getFieldName(IProductAlias.TAX_DETAIL_END_DATE),date);
+        	Iterator iter = taxDetailBean.getList(criteria).iterator();
+        	while(iter.hasNext()){
+        		TaxDetail taxDetail = (TaxDetail)iter.next();
+        		if(taxDetail.getTax().getType().equals(TaxType.VAT)){
+        			Tax tax = new Tax();
+            		tax.setId(taxDetail.getTax().getId());
+            		tax.setPercentage(taxDetail.getValue());
+            		tax.setSurcharge(taxDetail.getSurcharge());
+            		tax.setType(taxDetail.getTax().getType());
+            		return tax;
+        		}
+        	}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining VAT for product with id= " + getId() + "and date= " + date, e);
+		}
+		return getVat();
+	}
+
+	/**
 	 * Assigns the item to this product and add it to the items set.
 	 * 
 	 * @param item the item to add. 
@@ -424,22 +471,17 @@ public class Product implements ITransferObject {
 		this.items.add( item );
 	}
     
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj instanceof Product) {
-			Product product = (Product) obj;
-			if (ObjectUtils.equals(getId(), product.getId())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public int hashCode() {
-		return 0;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.code.aon.common.ILookupObject#lookups()
+     */
+    @Transient
+    public Map<String,Object> getLookups() {
+    	Map<String,Object> map = new HashMap<String,Object>();
+        map.put(IProductAlias.PRODUCT_ID , getId());
+        map.put(IProductAlias.PRODUCT_NAME, getName());
+        return map;
+    }
+    
 }

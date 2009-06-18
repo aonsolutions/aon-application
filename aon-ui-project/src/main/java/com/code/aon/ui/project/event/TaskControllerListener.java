@@ -75,7 +75,6 @@ public class TaskControllerListener extends ControllerAdapter {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		TaskController controller = (TaskController) event.getController();
 		Task task = (Task) controller.getTo();
@@ -105,7 +104,7 @@ public class TaskControllerListener extends ControllerAdapter {
 						"No se puede Editar la Tarea. Ha sido asumida por otro Usuario.");
 			}
 			if (task.getDossier() != null) {
-				controller.setCustomer(task.getDossier().getCustomer());
+//				controller.setCustomer(task.getDossier().getCustomer());
 				controller.loadDossiers(task.getDossier().getCustomer().getId());
 				controller.loadActivities(task.getDossier().getId());
 			} else {

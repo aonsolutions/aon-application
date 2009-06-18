@@ -27,12 +27,13 @@ import com.code.aon.campaign.ProcessTransitionType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.config.User;
 import com.code.aon.config.UserWorkGroup;
+import com.code.aon.config.WorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.customer.Customer;
 import com.code.aon.groupware.Alarm;
-import com.code.aon.groupware.Notice;
 import com.code.aon.groupware.enumeration.AlarmSource;
 import com.code.aon.groupware.enumeration.AlarmStatus;
 import com.code.aon.groupware.enumeration.Priority;
@@ -49,9 +50,9 @@ import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.project.util.CampaignTaskManager;
 import com.code.aon.ui.util.AonUtil;
 
@@ -102,8 +103,8 @@ public class TaskController extends BasicController implements ITaskController {
 	}
 
 	private String description;
-	private Integer workgroup;
-	private Integer user;
+	private WorkGroup workgroup;
+	private User user;
 	private Date startDateFrom;
 	private Date startDateTo;
 	private Date endDateFrom;
@@ -111,8 +112,8 @@ public class TaskController extends BasicController implements ITaskController {
 	private Date dueDateFrom;
 	private Date dueDateTo;
 	private Customer customer;
-	private Integer dossierId;
-	private Integer activityId;
+	private Dossier dossier;
+	private Activity activity;
 	private boolean statusPending = true;
 	private boolean statusInProgress = true;
 	private boolean statusFinished = false;
@@ -191,7 +192,7 @@ public class TaskController extends BasicController implements ITaskController {
 
 	public List<SelectItem> getAvailableFormDossiers() {
 		Task t = (Task) getTo();
-		if (t.getDossier().getCustomer() != null && t.getDossier().getCustomer().getId() != null) {
+		if (t.getDossier() != null && t.getDossier().getCustomer() != null && t.getDossier().getCustomer().getId() != null) {
 			return getDossiers();
 		}
 		return getAllDossiers();
@@ -228,11 +229,14 @@ public class TaskController extends BasicController implements ITaskController {
 				sb.append(" (");
 				sb.append(dossier.getCustomer().getRegistry().getAlias());
 				sb.append(")");
-				SelectItem item = new SelectItem(dossier.getId(), sb.toString());
+				SelectItem item = new SelectItem(dossier, sb.toString());
 				allDossiers.add(item);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading all dossiers!", e);
+			String msg = "Error loading all dossiers!";
+			LOGGER.log(Level.SEVERE, msg, e);
+			addMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 
@@ -308,7 +312,7 @@ public class TaskController extends BasicController implements ITaskController {
 
 	@Override
 	public void onEditSearch(ActionEvent event) {
-		setCustomer(null);
+		setCustomer(new Customer());
 		setStartDateFrom(null);
 		setStartDateTo(null);
 		setEndDateFrom(null);
@@ -318,8 +322,8 @@ public class TaskController extends BasicController implements ITaskController {
 		setDescription(null);
 		setWorkgroup(null);
 		setUser(null);
-		setDossierId(null);
-		setActivityId(null);
+		setDossier(null);
+		setActivity(null);
 		initializeStatusFilter();
 		setUsers(null);
 		setDossiers(null);
@@ -363,19 +367,11 @@ public class TaskController extends BasicController implements ITaskController {
 		return false;
 	}
 
-	public void customerChange(ValueChangeEvent event) {
-		if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
-			loadDossiers(new Integer(event.getNewValue().toString()));
-		} else {
-			setDossiers(null);
-		}
-	}
-
-	public void customerPojoChange(ValueChangeEvent event) {
+	public void customerChanged(LookupChangeEvent event) {
 		if (event.getNewValue() != null) {
 			Customer customer = (Customer) event.getNewValue();
 			loadDossiers(customer.getId());
-			setDossierId(null);
+			setDossier(null);
 		} else {
 			setDossiers(null);
 		}
@@ -402,7 +398,7 @@ public class TaskController extends BasicController implements ITaskController {
 					sb.append(dossier.getCustomer().getRegistry().getAlias());
 					sb.append(")");
 				}
-				SelectItem item = new SelectItem(dossier.getId(), sb.toString());
+				SelectItem item = new SelectItem(dossier, sb.toString());
 				dossiers.add(item);
 			}
 		} catch (ManagerBeanException e) {
@@ -412,39 +408,28 @@ public class TaskController extends BasicController implements ITaskController {
 	}
 
 	public void dossierChange(ValueChangeEvent event) {
-		try {
-			if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
-				IManagerBean bean = BeanManager.getManagerBean(Dossier.class);
-				Dossier d = (Dossier) bean.get((Integer) event.getNewValue());
-				if (d != null) {
-					((Task) getTo()).setDossier(d);
-					loadDossiers(d.getCustomer().getId());
-				}
-				loadActivities(new Integer(event.getNewValue().toString()));
-			} else {
-				setActivities(new LinkedList<SelectItem>());
+		if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
+			Dossier d = (Dossier) event.getNewValue();
+			if (d != null) {
+				((Task) getTo()).setDossier(d);
+				loadDossiers(d.getCustomer().getId());
 			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading dossier", e);
+			loadActivities(d.getId());
+		} else {
+			setActivities(new LinkedList<SelectItem>());
 		}
 	}
 
 	public void dossierSearchChange(ValueChangeEvent event) {
-		try {
-			if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
-				IManagerBean bean = BeanManager.getManagerBean(Dossier.class);
-				Integer id = (Integer) event.getNewValue();
-				Dossier d = (Dossier) bean.get(id);
-				if (d != null) {
-					setCustomer(d.getCustomer());
-					loadDossiers(d.getCustomer().getId());
-				}
-				loadActivities(new Integer(event.getNewValue().toString()));
-			} else {
-				setActivities(new LinkedList<SelectItem>());
+		if (event.getNewValue() != null) {
+			Dossier d = (Dossier) event.getNewValue();
+			if (d != null) {
+				setCustomer(d.getCustomer());
+				loadDossiers(d.getCustomer().getId());
 			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading dossier", e);
+			loadActivities(d.getId());
+		} else {
+			setActivities(new LinkedList<SelectItem>());
 		}
 	}
 
@@ -459,19 +444,23 @@ public class TaskController extends BasicController implements ITaskController {
 			Iterator iterator = managerBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				Activity activity = (Activity) iterator.next();
-				SelectItem item = new SelectItem(activity.getId(), activity.getActivityType()
+				SelectItem item = new SelectItem(activity, activity.getActivityType()
 						.getDescription());
 				activities.add(item);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading activities related with dossier with id= "
-					+ dossierId.toString(), e);
+			String msg = "Error loading activities related with dossier with id= "
+					+ dossierId.toString();
+			LOGGER.log(Level.SEVERE, msg, e);
+			addMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 
 	public void workGroupChange(ValueChangeEvent event) {
 		if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
-			loadUsers(new Integer(event.getNewValue().toString()));
+			WorkGroup work = (WorkGroup) event.getNewValue();
+			loadUsers(work.getId());
 		} else {
 			users = new LinkedList<SelectItem>();
 		}
@@ -502,12 +491,14 @@ public class TaskController extends BasicController implements ITaskController {
 				} else {
 					user = (User) iterator.next();
 				}
-				SelectItem item = new SelectItem(user.getId(), user.getName());
+				SelectItem item = new SelectItem(user, user.getName());
 				users.add(item);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading users of workgroup with id= "
-					+ workGroupId.toString(), e);
+			String msg = "Error loading users of workgroup with id= " + workGroupId.toString();
+			LOGGER.log(Level.SEVERE, msg, e);
+			addMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 
@@ -521,55 +512,73 @@ public class TaskController extends BasicController implements ITaskController {
 					return activityProcess.getCampaign();
 				}
 			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error getting campaign from task with id= "
-						+ task.getId(), e);
+				String msg = "Error getting campaign from task with id= " + task.getId();
+				LOGGER.log(Level.SEVERE, msg, e);
+				addMessage(msg);
+				throw new AbortProcessingException(msg);
 			}
 		}
 		return null;
 	}
 
 	public String getPreviousTaskDescription() {
-		Task task = (Task) this.getTo();
-		if (task.isSourceProcess()) {
-			Task previousTask = getPreviousTask(task);
-			return (previousTask != null) ? previousTask.getDescription() : null;
+		try {
+			Task task = (Task) this.getTo();
+			if (task.isSourceProcess()) {
+				Task previousTask = getPreviousTask(task);
+				return (previousTask != null) ? previousTask.getDescription() : null;
+			}
+			return null;
+		} catch (ManagerBeanException e) {
+			String msg = e.getMessage();
+			LOGGER.log(Level.SEVERE, msg, e);
+			addMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
-		return null;
 	}
 
 	public String getPreviousTaskEmployee() {
-		Task task = (Task) this.getTo();
-		if (task.isSourceProcess()) {
-			Task previousTask = getPreviousTask(task);
-			User previousUser = (previousTask != null) ? previousTask.getUser() : null;
-			if (previousUser != null) {
-				return (previousUser.getName());
+		try {
+			Task task = (Task) this.getTo();
+			if (task.isSourceProcess()) {
+				Task previousTask = getPreviousTask(task);
+				User previousUser = (previousTask != null) ? previousTask.getUser() : null;
+				if (previousUser != null) {
+					return (previousUser.getName());
+				}
 			}
+			return null;
+		} catch (ManagerBeanException e) {
+			String msg = e.getMessage();
+			LOGGER.log(Level.SEVERE, msg, e);
+			addMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
-		return null;
 	}
 
-	private Task getPreviousTask(Task task) {
+	private Task getPreviousTask(Task task) throws ManagerBeanException {
 		if (task.isSourceProcess()) {
-			try {
-				return CampaignTaskManager.getPreviousTask(task);
-			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error getting previous task from task with id= "
-						+ task.getId(), e);
-			}
+			return CampaignTaskManager.getPreviousTask(task);
 		}
 		return null;
 	}
 
 	public void onRemoveTask(ActionEvent event) {
-		Task task = (Task) this.getTo();
-		removeTask(task);
-		if (!isMyTask(task)) {
-			addMessage("No se puede Borrar la Tarea. Ha sido asumida por otro Usuario.");
+		try {
+			Task task = (Task) this.getTo();
+			removeTask(task);
+			if (!isMyTask(task)) {
+				addMessage("No se puede Borrar la Tarea. Ha sido asumida por otro Usuario.");
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error removing task. " + e.getMessage();
+			LOGGER.log(Level.SEVERE, msg, e);
+			addMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 
-	private void removeTask(Task task) {
+	private void removeTask(Task task) throws ManagerBeanException {
 		if (isFreeTask(task) || isMyTask(task)) {
 			task.setEndDate(new Date());
 			task.setStatus(TaskStatus.DELETED);
@@ -581,44 +590,60 @@ public class TaskController extends BasicController implements ITaskController {
 		}
 	}
 
-	private void finishTaskAlarm(Task task) {
-		try {
-			CampaignTaskManager.finishTaskAlarm(task);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error finishing alarm associated to task with id= "
-					+ task.getId(), e);
-		}
+	private void finishTaskAlarm(Task task) throws ManagerBeanException {
+		CampaignTaskManager.finishTaskAlarm(task);
 	}
 
 	public void onAssumeTask(ActionEvent event) {
-		Task task = (Task) this.getTo();
-		assumeTask(task);
-		if (!isMyTask(task)) {
-			addMessage("No se puede Asumir la Tarea. Ha sido asumida por otro Usuario.");
+		try {
+			Task task = (Task) this.getTo();
+			assumeTask(task);
+			if (!isMyTask(task)) {
+				addMessage("No se puede Asumir la Tarea. Ha sido asumida por otro Usuario.");
+			}
+		} catch (ManagerBeanException e) {
+			String msg = e.getMessage();
+			LOGGER.log(Level.SEVERE, msg, e);
+			addMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 
 	public void onAssumeTaskFromList(ActionEvent event) {
-		Task task = (Task) model.getRowData();
-		assumeTask(task);
+		try {
+			Task task = (Task) model.getRowData();
+			assumeTask(task);
+		} catch (ManagerBeanException e) {
+			String msg = e.getMessage();
+			LOGGER.log(Level.SEVERE, msg, e);
+			addMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 	}
 
 	public void onAssumeSelected(ActionEvent event) {
-		boolean message = false;
-		Iterator<Task> iter = checks.iterator();
-		while (iter.hasNext()) {
-			Task task = iter.next();
-			assumeTask(task);
-			if (!message && !isMyTask(task)) {
-				addMessage("Existen Tareas que no se han podido asumir por estar asumidas por otros Usuarios.");
-				message = true;
+		try {
+			boolean message = false;
+			Iterator<Task> iter = checks.iterator();
+			while (iter.hasNext()) {
+				Task task = iter.next();
+				assumeTask(task);
+				if (!message && !isMyTask(task)) {
+					addMessage("Existen Tareas que no se han podido asumir por estar asumidas por otros Usuarios.");
+					message = true;
+				}
 			}
+			resetChecks();
+			onRefresh(event);
+		} catch (ManagerBeanException e) {
+			String msg = e.getMessage();
+			LOGGER.log(Level.SEVERE, msg, e);
+			addMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
-		resetChecks();
-		onRefresh(event);
 	}
 
-	private void assumeTask(Task task) {
+	private void assumeTask(Task task) throws ManagerBeanException {
 		if (isFreeTask(task)) {
 			task.setUser(getLoggedUser());
 			updateTask(task);
@@ -626,31 +651,53 @@ public class TaskController extends BasicController implements ITaskController {
 	}
 
 	public void onReleaseTaskFromList(ActionEvent event) {
-		Task task = (Task) model.getRowData();
-		releaseTask(task);
+		try {
+			Task task = (Task) model.getRowData();
+			releaseTask(task);
+		} catch (ManagerBeanException e) {
+			String msg = e.getMessage();
+			LOGGER.log(Level.SEVERE, msg, e);
+			addMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+
 	}
 
 	public void onReleaseTask(ActionEvent event) {
-		Task task = (Task) this.getTo();
-		releaseTask(task);
+		try {
+			Task task = (Task) this.getTo();
+			releaseTask(task);
+		} catch (ManagerBeanException e) {
+			String msg = e.getMessage();
+			LOGGER.log(Level.SEVERE, msg, e);
+			addMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 	}
 
 	public void onReleaseSelected(ActionEvent event) {
-		boolean message = false;
-		Iterator<Task> iter = checks.iterator();
-		while (iter.hasNext()) {
-			Task task = iter.next();
-			task = releaseTask(task);
-			if (!message && !isFreeTask(task)) {
-				addMessage("Existen Tareas que no se han podido liberar por estar asumidas por otros Usuarios.");
-				message = true;
+		try {
+			boolean message = false;
+			Iterator<Task> iter = checks.iterator();
+			while (iter.hasNext()) {
+				Task task = iter.next();
+				task = releaseTask(task);
+				if (!message && !isFreeTask(task)) {
+					addMessage("Existen Tareas que no se han podido liberar por estar asumidas por otros Usuarios.");
+					message = true;
+				}
 			}
+			resetChecks();
+			onRefresh(event);
+		} catch (ManagerBeanException e) {
+			String msg = e.getMessage();
+			LOGGER.log(Level.SEVERE, msg, e);
+			addMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
-		resetChecks();
-		onRefresh(event);
 	}
 
-	private Task releaseTask(Task task) {
+	private Task releaseTask(Task task) throws ManagerBeanException {
 		if (isMyTask(task)) {
 			task.setUser(null);
 			task = updateTask(task);
@@ -658,19 +705,14 @@ public class TaskController extends BasicController implements ITaskController {
 		return task;
 	}
 
-	private void createNextTask(Task task) {
-		try {
-			ActivityProcess activityProcess = CampaignTaskManager.getCurrentActivityProcess(task);
-			if (activityProcess != null) {
-				CampaignDossier campaignDossier = new CampaignDossier();
-				campaignDossier.setCampaign(activityProcess.getCampaign());
-				campaignDossier.setDossier(task.getDossier());
-				CampaignTaskManager.addCampaignTask(campaignDossier, activityProcess
-						.getProcessDetail().getPosition() + 1, getTransitionSelected());
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error creating next task for task with id= " + task.getId(),
-					e);
+	private void createNextTask(Task task) throws ManagerBeanException {
+		ActivityProcess activityProcess = CampaignTaskManager.getCurrentActivityProcess(task);
+		if (activityProcess != null) {
+			CampaignDossier campaignDossier = new CampaignDossier();
+			campaignDossier.setCampaign(activityProcess.getCampaign());
+			campaignDossier.setDossier(task.getDossier());
+			CampaignTaskManager.addCampaignTask(campaignDossier, activityProcess.getProcessDetail()
+					.getPosition() + 1, getTransitionSelected());
 		}
 	}
 
@@ -725,16 +767,31 @@ public class TaskController extends BasicController implements ITaskController {
 	}
 
 	public void onListStartTask(ActionEvent event) {
-		Task task = (Task) model.getRowData();
-		startTask(task);
+		try {
+			Task task = (Task) model.getRowData();
+			startTask(task);
+		} catch (ManagerBeanException e) {
+			String msg = e.getMessage();
+			LOGGER.log(Level.SEVERE, msg, e);
+			addMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+
 	}
 
 	public void onStartTask(ActionEvent event) {
-		Task task = (Task) this.getTo();
-		startTask(task);
+		try {
+			Task task = (Task) this.getTo();
+			startTask(task);
+		} catch (ManagerBeanException e) {
+			String msg = e.getMessage();
+			LOGGER.log(Level.SEVERE, msg, e);
+			addMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 	}
 
-	private void startTask(Task task) {
+	private void startTask(Task task) throws ManagerBeanException {
 		if (isMyTask(task)) {
 			task.setStatus(TaskStatus.IN_PROGRESS);
 			updateTask(task);
@@ -742,16 +799,30 @@ public class TaskController extends BasicController implements ITaskController {
 	}
 
 	public void onListStopTask(ActionEvent event) {
-		Task task = (Task) model.getRowData();
-		stopTask(task);
+		try {
+			Task task = (Task) model.getRowData();
+			stopTask(task);
+		} catch (ManagerBeanException e) {
+			String msg = e.getMessage();
+			LOGGER.log(Level.SEVERE, msg, e);
+			addMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 	}
 
 	public void onStopTask(ActionEvent event) {
-		Task task = (Task) this.getTo();
-		stopTask(task);
+		try {
+			Task task = (Task) this.getTo();
+			stopTask(task);
+		} catch (ManagerBeanException e) {
+			String msg = e.getMessage();
+			LOGGER.log(Level.SEVERE, msg, e);
+			addMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 	}
 
-	private void stopTask(Task task) {
+	private void stopTask(Task task) throws ManagerBeanException {
 		if (isMyTask(task)) {
 			task.setStatus(TaskStatus.PENDING);
 			updateTask(task);
@@ -759,16 +830,30 @@ public class TaskController extends BasicController implements ITaskController {
 	}
 
 	public void onListReopenTask(ActionEvent event) {
-		Task task = (Task) model.getRowData();
-		reopenTask(task);
+		try {
+			Task task = (Task) model.getRowData();
+			reopenTask(task);
+		} catch (ManagerBeanException e) {
+			String msg = e.getMessage();
+			LOGGER.log(Level.SEVERE, msg, e);
+			addMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 	}
 
 	public void onReopenTask(ActionEvent event) {
-		Task task = (Task) this.getTo();
-		reopenTask(task);
+		try {
+			Task task = (Task) this.getTo();
+			reopenTask(task);
+		} catch (ManagerBeanException e) {
+			String msg = e.getMessage();
+			LOGGER.log(Level.SEVERE, msg, e);
+			addMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 	}
 
-	private void reopenTask(Task task) {
+	private void reopenTask(Task task) throws ManagerBeanException {
 		if (isMonitor() || isMyTask(task)) {
 			task.setStatus(TaskStatus.PENDING);
 			task = updateTask(task);
@@ -783,7 +868,7 @@ public class TaskController extends BasicController implements ITaskController {
 		this.monitor = monitor;
 	}
 
-	public void onSwicthMonitor(ActionEvent event) throws ManagerBeanException {
+	public void onSwicthMonitor(ActionEvent event) {
 		onRefresh(event);
 	}
 
@@ -814,22 +899,22 @@ public class TaskController extends BasicController implements ITaskController {
 				getCriteria().addLessThanOrEqualExpression(TASK_DUE_DATE_ALIAS, getDueDateTo());
 			}
 			if (getWorkgroup() != null) {
-				getCriteria().addEqualExpression(WORKGROUP_ALIAS, getWorkgroup());
+				getCriteria().addEqualExpression(WORKGROUP_ALIAS, getWorkgroup().getId());
 			}
 			if (getUser() != null) {
-				getCriteria().addEqualExpression(USER_ALIAS, getUser());
+				getCriteria().addEqualExpression(USER_ALIAS, getUser().getId());
 			}
 
-			if (getDossierId() != null) {
-				getCriteria().addEqualExpression(DOSSIER_ALIAS, getDossierId());
+			if (getDossier() != null) {
+				getCriteria().addEqualExpression(DOSSIER_ALIAS, getDossier().getId());
 			} else {
 				if (getCustomer() != null && getCustomer().getId() != null) {
-					getCriteria().addEqualExpression(CUSTOMER_ALIAS, customer.getId());
+					getCriteria().addEqualExpression(CUSTOMER_ALIAS, getCustomer().getId());
 				}
 			}
 
-			if (getActivityId() != null) {
-				getCriteria().addEqualExpression(ACTIVITY_ALIAS, getActivityId());
+			if (getActivity() != null) {
+				getCriteria().addEqualExpression(ACTIVITY_ALIAS, getActivity().getId());
 			}
 			if (isStatusDeleted() || isStatusFinished() || isStatusInProgress()
 					|| isStatusPending()) {
@@ -886,9 +971,15 @@ public class TaskController extends BasicController implements ITaskController {
 			}
 			addOrder();
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error adding custom expression", e);
+			String msg = "Error adding custom expression" + e.getMessage();
+			LOGGER.log(Level.SEVERE, msg, e);
+			addMessage(msg);
+			throw new AbortProcessingException(msg);
 		} catch (ExpressionException e) {
-			LOGGER.log(Level.SEVERE, "Error adding custom expression", e);
+			String msg = "Error adding custom expression" + e.getMessage();
+			LOGGER.log(Level.SEVERE, msg, e);
+			addMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 
@@ -980,36 +1071,36 @@ public class TaskController extends BasicController implements ITaskController {
 		this.description = description;
 	}
 
-	public Integer getWorkgroup() {
+	public WorkGroup getWorkgroup() {
 		return workgroup;
 	}
 
-	public void setWorkgroup(Integer workgroup) {
+	public void setWorkgroup(WorkGroup workgroup) {
 		this.workgroup = workgroup;
 	}
 
-	public Integer getUser() {
+	public User getUser() {
 		return user;
 	}
 
-	public void setUser(Integer user) {
+	public void setUser(User user) {
 		this.user = user;
 	}
 
-	public Integer getDossierId() {
-		return dossierId;
+	public Dossier getDossier() {
+		return dossier;
 	}
 
-	public void setDossierId(Integer dossierId) {
-		this.dossierId = dossierId;
+	public void setDossier(Dossier dossier) {
+		this.dossier = dossier;
 	}
 
-	public Integer getActivityId() {
-		return activityId;
+	public Activity getActivity() {
+		return activity;
 	}
 
-	public void setActivityId(Integer activityId) {
-		this.activityId = activityId;
+	public void setActivity(Activity activity) {
+		this.activity = activity;
 	}
 
 	public boolean isStatusPending() {
@@ -1057,7 +1148,8 @@ public class TaskController extends BasicController implements ITaskController {
 
 	public boolean isMyListTask() {
 		try {
-			return isMyTask((Task) this.getModel().getRowData());
+			return this.getModel().isRowAvailable()
+					&& isMyTask((Task) this.getModel().getRowData());
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error getting Task Model", e);
 		}
@@ -1084,7 +1176,10 @@ public class TaskController extends BasicController implements ITaskController {
 			resetChecks();
 			onRefresh(event);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error adding custom expression", e);
+			String msg = "Error finishing task. " + e.getMessage();
+			LOGGER.log(Level.SEVERE, msg, e);
+			addMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 
@@ -1103,8 +1198,10 @@ public class TaskController extends BasicController implements ITaskController {
 			onRefresh(null);
 			return "task_list";
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error finishing task", e);
-			return null;
+			String msg = "Error finishing task. " + e.getMessage();
+			LOGGER.log(Level.SEVERE, msg, e);
+			addMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 
@@ -1130,9 +1227,9 @@ public class TaskController extends BasicController implements ITaskController {
 	}
 
 	private void insertRelatedAlarm(Task task) throws ManagerBeanException {
-		Integer userId = (task.getUser() != null)?task.getUser().getId():null; 
-		Integer senderId = (task.getSender() != null)?task.getSender().getId():null; 
-		if ( !userId.equals(senderId) ) {
+		Integer userId = (task.getUser() != null) ? task.getUser().getId() : null;
+		Integer senderId = (task.getSender() != null) ? task.getSender().getId() : null;
+		if (!userId.equals(senderId)) {
 			IManagerBean alarmBean = BeanManager.getManagerBean(Alarm.class);
 			Alarm alarm = new Alarm();
 			alarm.setAlarmDate(task.getEndDate());
@@ -1140,22 +1237,20 @@ public class TaskController extends BasicController implements ITaskController {
 			alarm.setSource(AlarmSource.NOTICE);
 			alarm.setSourceId(task.getId());
 			alarm.setStatus(AlarmStatus.PENDING);
-			alarm.setPriority( Priority.NONE );
-			alarm.setDescription("" + AlarmStatus.FINISHED + ": " + task.getDescription());
+			alarm.setPriority(Priority.NONE);
+			String d = task.getDossier() == null?"":task.getDossier().getNumber();
+			alarm.setDescription("Task " + AlarmStatus.FINISHED + ": " + d + " - " + task.getDescription());
 			alarmBean.insert(alarm);
 		}
 	}
 
-	private Task updateTask(Task task) {
-		try {
-			restoreNullSubPOJOs(task);
-			task = (Task) getManagerBean().update(task);
-			getManagerBean().initializePOJO(task);
-			return task;
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error updating task with id= " + task.getId(), e);
-		}
-		return null;
+	private Task updateTask(Task task) throws ManagerBeanException {
+		getManagerBean().restoreNullSubPOJOs(task);
+		String sfn = HibernateUtil.getSessionFactoryName();
+		task = (Task) HibernateUtil.getSession(sfn).merge(task);
+		task = (Task) getManagerBean().update(task);
+		getManagerBean().initializePOJO(task);
+		return task;
 	}
 
 	// -------------------------------------------------
@@ -1435,12 +1530,19 @@ public class TaskController extends BasicController implements ITaskController {
 		this.setTransitionSelected(pdt);
 	}
 
-	public void onFinishTransitionTask(ActionEvent event) throws ManagerBeanException {
-		Task task = (Task) this.getTo();
-		finishTask(task);
-		onRefresh(null);
-		setTransitionModel(null);
-		setTransitionCorrect(true);
-		setFinishPanelVisible(false);
+	public void onFinishTransitionTask(ActionEvent event) {
+		try {
+			Task task = (Task) this.getTo();
+			finishTask(task);
+			onRefresh(null);
+			setTransitionModel(null);
+			setTransitionCorrect(true);
+			setFinishPanelVisible(false);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage());
+		}
 	}
+
 }

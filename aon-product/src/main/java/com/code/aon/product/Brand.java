@@ -1,14 +1,18 @@
 package com.code.aon.product;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import org.apache.commons.lang.ObjectUtils;
-
+import com.code.aon.common.ILookupObject;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.product.dao.IProductAlias;
 
 /**
  * Transfer Object that represents a brand.
@@ -20,11 +24,9 @@ import com.code.aon.common.ITransferObject;
  */
 @Entity
 @Table(name="brand")
-public class Brand implements ITransferObject {
+public class Brand implements ITransferObject, ILookupObject {
 
-	private static final long serialVersionUID = -9063450093952827806L;
-
-	/**
+    /**
      * Unique key.
      */
 	
@@ -93,22 +95,17 @@ public class Brand implements ITransferObject {
         this.name = name;
     }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj instanceof Brand) {
-			Brand brand = (Brand) obj;
-			if (ObjectUtils.equals(getId(), brand.getId())) {
-				return true;
-			}
-		}
-		return false;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.code.aon.common.ILookupObject#lookups()
+     */
+    @Transient
+    public Map<String,Object> getLookups() {
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put(IProductAlias.BRAND_ID, getId());
+        map.put(IProductAlias.BRAND_NAME, getName());
+        return map;
+    }
 
-	@Override
-	public int hashCode() {
-		return 0;
-	}
 }

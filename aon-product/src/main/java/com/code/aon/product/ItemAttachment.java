@@ -8,7 +8,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.Formula;
 
 import com.code.aon.common.IAttachment;
@@ -25,9 +24,7 @@ import com.code.aon.common.enumeration.MimeType;
 @Table(name="iattach")
 public class ItemAttachment implements IAttachment, Cloneable {
 
-	private static final long serialVersionUID = 5541725371222814863L;
-
-	/**
+    /**
      * Unique key.
      */
     private Integer id;
@@ -196,22 +193,4 @@ public class ItemAttachment implements IAttachment, Cloneable {
 		return super.clone();
 	}
 	
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj instanceof ItemAttachment) {
-			ItemAttachment itemAttachment = (ItemAttachment) obj;
-			if (ObjectUtils.equals(getId(), itemAttachment.getId())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public int hashCode() {
-		return 0;
-	}
 }

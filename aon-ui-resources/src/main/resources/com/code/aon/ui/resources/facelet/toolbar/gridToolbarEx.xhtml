@@ -7,20 +7,18 @@
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 		<ui:define name="toolbarContent">
 			<c:if test="#{!skipResetButton}">								
-				<aon:commandButton id="#{toolbarID}-reset"
-					value="#{bundle.aon_reset}" rendered="#{!formNew}" 
+				<aon:commandButton value="#{bundle.aon_reset}" rendered="#{!formNew}" 
 					action="#{resetAction}" actionListener="#{resetActionListener}"
 					styleClass="aon-finding-toolbar-item aon-icon-new"
 					accesskey="#{bundle.aon_key_new}" />
 			</c:if>				
 			<c:if test="#{!skipSaveButton}">		
-				<aon:commandButton id="#{toolbarID}-save"
-					value="#{bundle.aon_save}" rendered="#{formEdit or formNew}"
+				<aon:commandButton value="#{bundle.aon_save}" rendered="#{formEdit or formNew}"
 					action="#{saveAction}" actionListener="#{saveActionListener}"
 					styleClass="aon-finding-toolbar-item aon-icon-accept"
 					accesskey="#{bundle.aon_key_save}" />
 			</c:if>
-			<aon:confirmButton id="#{toolbarID}-cancel" value="#{bundle.aon_cancel}"
+			<aon:confirmButton id="cancel#{idSuffix}" value="#{bundle.aon_cancel}"
 				rendered="#{formNew}" immediate="true" 
 				styleClass="aon-finding-toolbar-item aon-icon-cancel"
 				confirmTitle="#{bundle.aon_confirm_title}"
@@ -29,7 +27,7 @@
 				confirmAction="#{cancelNewAction}"
 				accesskey="#{bundle.aon_key_cancel}" />
 			<c:if test="#{!skipRemoveButton}">				
-				<aon:confirmButton id="#{toolbarID}-remove" value="#{bundle.aon_remove}"
+				<aon:confirmButton id="remove#{idSuffix}" value="#{bundle.aon_remove}"
 					rendered="#{formEdit and (!formNew)}" immediate="true"
 					styleClass="aon-finding-toolbar-item aon-icon-delete"
 					confirmTitle="#{bundle.aon_confirm_title}"
@@ -39,15 +37,13 @@
 					accesskey="#{bundle.aon_key_remove}" />
 			</c:if>
 			<c:if test="#{!skipSearchButton}">			
-				<aon:commandButton id="#{toolbarID}-search"
-					value="#{bundle.aon_search}"
+				<aon:commandButton value="#{bundle.aon_search}"
 					rendered="#{!formNew}" immediate="true"
 					action="#{searchAction}" actionListener="#{searchActionListener}"
 					styleClass="aon-finding-toolbar-item aon-icon-search"
 					accesskey="#{bundle.aon_key_search}" />
 			</c:if>														
-			<aon:commandButton id="#{toolbarID}-new-cancel" 
-				value="#{bundle.aon_cancel}"
+			<aon:commandButton value="#{bundle.aon_cancel}"
 				rendered="#{formEdit and (!formNew)}" immediate="true"
 				styleClass="aon-finding-toolbar-item aon-icon-cancel"
 				actionListener="#{cancelEditActionListener}"

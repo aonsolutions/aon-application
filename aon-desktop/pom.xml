@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.desktop</artifactId>
 	<packaging>war</packaging>
-	<version>3.0.1</version>
+	<version>3.0.0</version>
 	<description>AON DESKTOP</description>
 	<name>AON DESKTOP</name>
 	<properties>
@@ -24,19 +24,19 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.common</artifactId>
-			<version>3.1.0</version>
+			<version>3.0.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>3.1.0</version>
+			<version>3.0.1</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>3.2.0</version>
+			<version>3.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -54,7 +54,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.geozone</artifactId>
-			<version>3.0.2</version>
+			<version>3.0.1</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
@@ -66,13 +66,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>3.0.2</version>
+			<version>3.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
-			<version>3.0.2</version>
+			<version>3.0.0</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -100,7 +100,7 @@
 	    <dependency>
 	      <groupId>com.code.aon</groupId>
 	      <artifactId>aon.ui.report</artifactId>
-	      <version>3.2.0</version>
+	      <version>3.1.3</version>
 	    </dependency>
 	</dependencies>
 </project>

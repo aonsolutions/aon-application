@@ -66,8 +66,7 @@
 	</component>
 
 	<component localName="commandLink">
-    	<attribute name="styleClass" value="aon-commandLink" />
-    	<attribute name="disabledStyleClass" value="aon-commandLink-disabled" />			
+    	<attribute name="styleClass" value="aon-commandLink" />			
 	</component>
 	
 	<component localName="panelTabSet">
@@ -85,13 +84,11 @@
 	</component>
 	
 	<component localName="inputText">
-    	<attribute name="styleClass" value="aon-inputText" />
-		<attribute name="disabledStyleClass" value="aon-inputText-disabled" />
+    	<attribute name="styleClass" value="aon-inputText" />			
 	</component>
 
 	<component localName="inputTextarea">
-    	<attribute name="styleClass" value="aon-inputTextarea" />
-    	<attribute name="disabledStyleClass" value="aon-inputText-disabled" />			
+    	<attribute name="styleClass" value="aon-inputTextarea" />			
 	</component>
 
 	<component localName="inputRichText">
@@ -100,8 +97,7 @@
 	</component>
 
 	<component localName="inputSecret">
-    	<attribute name="styleClass" value="aon-inputSecret" />
-    	<attribute name="disabledStyleClass" value="aon-inputText-disabled" />			
+    	<attribute name="styleClass" value="aon-inputSecret" />			
 	</component>
 
 	<component localName="selectOneMenu">

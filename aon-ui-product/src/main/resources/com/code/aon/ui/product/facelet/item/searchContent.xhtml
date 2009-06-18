@@ -17,26 +17,16 @@
 	<aon:outputLabel for="Item_product_category_id"
 		value="#{productBundle.product_category}" />
 	<aon:selectOneMenu id="Item_product_category_id"
-		value="#{productCollections.category}"
-		valueChangeListener="#{controller.addDirectIdEqualExpression}">
-		<f:selectItem itemLabel="-" value="#{null}"/>
-		<f:selectItems value="#{productCollections.categories}" />
-	</aon:selectOneMenu>
-	
-	<aon:outputLabel for="Item_product_brand_id"
-		value="#{productBundle.product_brand}" />
-	<aon:selectOneMenu id="Item_product_brand_id"
-		value="#{productCollections.brand}"
-		valueChangeListener="#{controller.addDirectIdEqualExpression}">
+		valueChangeListener="#{controller.addEqualExpression}">
 		<f:selectItem itemLabel="-" value="#{null}" itemDisabled="true" />
-		<f:selectItems value="#{productCollections.brands}" />
+		<f:selectItems value="#{productCollections.categories}" />
 	</aon:selectOneMenu>
 
 	<aon:outputLabel for="Item_status"
 		value="#{bundle.aon_status}" />
 	<aon:selectOneMenu id="Item_status"
-		converter="aon.EnumConverter"
-		valueChangeListener="#{controller.addEqualExpression}">
+		valueChangeListener="#{item.addEqualExpression}">
+		<aon:enumConverter enum="com.code.aon.product.enumeration.ProductStatus" />
 		<f:selectItem itemLabel="-" itemValue="" itemDisabled="true" />
 		<f:selectItems value="#{productCollections.productStatuses}" />
 	</aon:selectOneMenu>

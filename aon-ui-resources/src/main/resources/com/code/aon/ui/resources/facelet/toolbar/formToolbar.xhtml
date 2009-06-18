@@ -7,6 +7,7 @@
 	<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbarEx.xhtml" >
 		<aon:valueParam name="toolbarDescription" default="#{formNew?(bundle.aon_reset):(bundle.aon_editing)}" />	
 		<aon:valueParam name="formNew" default="#{controller.new}" />
+		<aon:valueParam name="idSuffix" default="#{controller.beanName}" />
 		<aon:methodParam name="saveActionListener" default="#{controller.accept}" type="actionListener" />
 		<aon:methodParam name="saveAction" default="#{controller.beanName}_form" resolve="true" />			
 		<aon:methodParam name="cancelActionListener" default="#{controller.onCancel}" type="actionListener" />

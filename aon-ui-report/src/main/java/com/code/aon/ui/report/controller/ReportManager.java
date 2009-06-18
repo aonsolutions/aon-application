@@ -167,7 +167,6 @@ public class ReportManager {
 		HibernateUtil.setBeginTransaction(false);
 		// }
 		try {
-			ensureParams();
 			JRReport report = JRReportFactory.getJRReport(getReportKey());
 			resolveCustomParameters(report);
 			Criteria criteria = getCriteria(report);
@@ -206,41 +205,6 @@ public class ReportManager {
 			}
 		}
 	}
-
-	private void ensureParams() throws ReportException{
-		ensureReportKey();
-		ensureOutputFormat();
-	}
-
-	private void ensureReportKey() throws ReportException {
-		String key = getReportKey();
-		if (key == null) {
-			Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-			key = parameters.get("reportKey");
-			if (key == null) {
-				throw new ReportException("Empty reportKey!");
-			}
-			setReportKey(key);
-		}
-	}
-
-	private void ensureOutputFormat() throws ReportException {
-		OutputFormat f = getOutputFormat();
-		if (f == null) {
-			Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-			String of = parameters.get("outputFormat");
-			if (of == null) {
-				setOutputFormat(OutputFormat.PDF);
-			} else {
-				OutputFormat ouf = OutputFormat.get(of);
-				if (ouf == null) {
-					throw new ReportException("Invalid outputFormat '"+of+"'!");
-				}
-				setOutputFormat(ouf);
-			}
-		}
-	}
-
 
 	/**
 	 * Obtains the OutputStream where the report will be writen. <br>
@@ -464,4 +428,5 @@ public class ReportManager {
 			report.setCustomParams(map);
 		}
 	}
+
 }

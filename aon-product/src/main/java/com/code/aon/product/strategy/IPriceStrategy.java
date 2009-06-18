@@ -32,7 +32,7 @@ public interface IPriceStrategy {
 	 * @param tariff the tariff to be applied to the ICalculabe object
 	 * @return the unit price
 	 */
-	public double getUnitPrice(ICalculable calc, ICalculableContainer icc, Tariff tariff);
+	public double getUnitPrice(ICalculable calc, Tariff tariff);
 	
 	/**
 	 * Returns the base price of the ICalculable object.

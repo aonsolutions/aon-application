@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import org.apache.commons.lang.ObjectUtils;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.product.enumeration.TaxType;
 
 /**
  * Transfer Object that represents an InvoiceTax.

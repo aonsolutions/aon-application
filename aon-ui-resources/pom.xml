@@ -11,14 +11,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.resources</artifactId>
-	<version>3.3.0</version>
+	<version>3.0.0</version>
 	<description>AON UI RESOURCES</description>
 	<name>AON UI RESOURCES</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.common</artifactId>
-			<version>3.1.0</version>
+			<version>2.2.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

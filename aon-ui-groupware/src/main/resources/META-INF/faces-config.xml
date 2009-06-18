@@ -263,15 +263,15 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>note_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/groupware/facelet/note/form.xhtml</to-view-id>
+			<to-view-id>/groupware/facelet/note/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>note_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/groupware/facelet/note/list.xhtml</to-view-id>
+			<to-view-id>/groupware/facelet/note/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 	        <from-outcome>note_search</from-outcome>
-	        <to-view-id>/com/code/aon/ui/groupware/facelet/note/search.xhtml</to-view-id>
+	        <to-view-id>/groupware/facelet/note/search.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 
@@ -279,15 +279,15 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>notice_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/groupware/facelet/notice/form.xhtml</to-view-id>
+			<to-view-id>/groupware/facelet/notice/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>notice_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/groupware/facelet/notice/list.xhtml</to-view-id>
+			<to-view-id>/groupware/facelet/notice/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>notice_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/groupware/facelet/notice/search.xhtml</to-view-id>
+			<to-view-id>/groupware/facelet/notice/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
@@ -295,11 +295,11 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>alarm_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/groupware/facelet/alarm/list.xhtml</to-view-id>
+			<to-view-id>/groupware/facelet/alarm/list.xhtml</to-view-id>
 		</navigation-case>
 	 	<navigation-case>
 	        <from-outcome>alarm_form</from-outcome>
-	        <to-view-id>/com/code/aon/ui/groupware/facelet/alarm/form.xhtml</to-view-id>
+	        <to-view-id>/groupware/facelet/alarm/form.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 	
@@ -307,15 +307,15 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>contact_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/groupware/facelet/contact/form.xhtml</to-view-id>
+			<to-view-id>/groupware/facelet/contact/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>contact_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/groupware/facelet/contact/list.xhtml</to-view-id>
+			<to-view-id>/groupware/facelet/contact/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 	        <from-outcome>contact_search</from-outcome>
-	        <to-view-id>/com/code/aon/ui/groupware/facelet/contact/search.xhtml</to-view-id>
+	        <to-view-id>/groupware/facelet/contact/search.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 	
@@ -323,15 +323,15 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>favorite_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/groupware/facelet/favorite/form.xhtml</to-view-id>
+			<to-view-id>/groupware/facelet/favorite/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>favorite_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/groupware/facelet/favorite/list.xhtml</to-view-id>
+			<to-view-id>/groupware/facelet/favorite/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 	        <from-outcome>favorite_search</from-outcome>
-	        <to-view-id>/com/code/aon/ui/groupware/facelet/favorite/search.xhtml</to-view-id>
+	        <to-view-id>/groupware/facelet/favorite/search.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 
@@ -339,27 +339,27 @@
   <navigation-rule>
     <navigation-case>
         <from-outcome>note</from-outcome>
-        <to-view-id>/com/code/aon/ui/groupware/facelet/note/list.xhtml</to-view-id>
+        <to-view-id>/groupware/facelet/note/list.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
         <from-outcome>notice</from-outcome>
-        <to-view-id>/com/code/aon/ui/groupware/facelet/notice/list.xhtml</to-view-id>
+        <to-view-id>/groupware/facelet/notice/list.xhtml</to-view-id>
     </navigation-case>
  	<navigation-case>
         <from-outcome>alarm</from-outcome>
-        <to-view-id>/com/code/aon/ui/groupware/facelet/alarm/list.xhtml</to-view-id>
+        <to-view-id>/groupware/facelet/alarm/list.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
         <from-outcome>contact</from-outcome>
-        <to-view-id>/com/code/aon/ui/groupware/facelet/contact/list.xhtml</to-view-id>
+        <to-view-id>/groupware/facelet/contact/list.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
         <from-outcome>favorite</from-outcome>
-        <to-view-id>/com/code/aon/ui/groupware/facelet/favorite/list.xhtml</to-view-id>
+        <to-view-id>/groupware/facelet/favorite/list.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
         <from-outcome>favorite_category</from-outcome>
-        <to-view-id>/com/code/aon/ui/groupware/facelet/favorite/category/grid.xhtml</to-view-id>
+        <to-view-id>/groupware/facelet/favorite/category/grid.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>
 </faces-config>

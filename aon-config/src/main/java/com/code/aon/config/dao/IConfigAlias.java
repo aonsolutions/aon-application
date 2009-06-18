@@ -9,8 +9,6 @@ import com.code.aon.config.UserScope;
 import com.code.aon.config.Series;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.config.UserWorkGroup;
-import com.code.aon.config.Tax;
-import com.code.aon.config.TaxDetail;
 
 /** 
 * Interface for holding entity properties constants.
@@ -233,92 +231,6 @@ public interface IConfigAlias {
 	* Hibernate value: UserWorkGroup.workGroup.description
 	*/
 	String  USER_WORK_GROUP_WORK_GROUP_DESCRIPTION = USER_WORK_GROUP_ENTRY.getAliasNames()[4];
-
-
-
-	/** 
-	* DAOConstantsEntry for Tax entity.
-	*/ 
-	DAOConstantsEntry TAX_ENTRY = DAOConstants.getDAOConstant(Tax.class);
-
-	/** 
-	* Alias value: Tax_id
-	* Hibernate value: Tax.id
-	*/
-	String  TAX_ID = TAX_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: Tax_name
-	* Hibernate value: Tax.name
-	*/
-	String  TAX_NAME = TAX_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: Tax_percentage
-	* Hibernate value: Tax.percentage
-	*/
-	String  TAX_PERCENTAGE = TAX_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: Tax_startDate
-	* Hibernate value: Tax.startDate
-	*/
-	String  TAX_START_DATE = TAX_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: Tax_surcharge
-	* Hibernate value: Tax.surcharge
-	*/
-	String  TAX_SURCHARGE = TAX_ENTRY.getAliasNames()[4];
-
-	/** 
-	* Alias value: Tax_type
-	* Hibernate value: Tax.type
-	*/
-	String  TAX_TYPE = TAX_ENTRY.getAliasNames()[5];
-
-
-
-	/** 
-	* DAOConstantsEntry for TaxDetail entity.
-	*/ 
-	DAOConstantsEntry TAX_DETAIL_ENTRY = DAOConstants.getDAOConstant(TaxDetail.class);
-
-	/** 
-	* Alias value: TaxDetail_endDate
-	* Hibernate value: TaxDetail.endDate
-	*/
-	String  TAX_DETAIL_END_DATE = TAX_DETAIL_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: TaxDetail_id
-	* Hibernate value: TaxDetail.id
-	*/
-	String  TAX_DETAIL_ID = TAX_DETAIL_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: TaxDetail_startDate
-	* Hibernate value: TaxDetail.startDate
-	*/
-	String  TAX_DETAIL_START_DATE = TAX_DETAIL_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: TaxDetail_surcharge
-	* Hibernate value: TaxDetail.surcharge
-	*/
-	String  TAX_DETAIL_SURCHARGE = TAX_DETAIL_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: TaxDetail_tax_id
-	* Hibernate value: TaxDetail.tax.id
-	*/
-	String  TAX_DETAIL_TAX_ID = TAX_DETAIL_ENTRY.getAliasNames()[4];
-
-	/** 
-	* Alias value: TaxDetail_value
-	* Hibernate value: TaxDetail.value
-	*/
-	String  TAX_DETAIL_VALUE = TAX_DETAIL_ENTRY.getAliasNames()[5];
 
 
 }

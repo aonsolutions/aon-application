@@ -13,7 +13,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -27,7 +26,7 @@ import com.code.aon.registry.Registry;
  */
 @Entity
 @Table(name = "finance")
-public class Finance implements ITransferObject, IBankAccountContainer{
+public class Finance implements ITransferObject{
 	
 	private static final long serialVersionUID = 8289553641190577845L;
 
@@ -62,7 +61,7 @@ public class Finance implements ITransferObject, IBankAccountContainer{
 	private Bank bank;
 	
 	/** The bank account. */
-	private BankAccount bankAccount;
+	private String bankAccount;
 	
 	/** The finance status. */
 	private FinanceStatus financeStatus;
@@ -161,8 +160,7 @@ public class Finance implements ITransferObject, IBankAccountContainer{
 	 * @return the bank account
 	 */
 	@Column(name="bank_account", length=30)
-	@Type(type="com.code.aon.finance.hibernate.BankAccountType")
-	public BankAccount getBankAccount() {
+	public String getBankAccount() {
 		return bankAccount;
 	}
 
@@ -171,7 +169,7 @@ public class Finance implements ITransferObject, IBankAccountContainer{
 	 * 
 	 * @param bankAccount the bank account
 	 */
-	public void setBankAccount(BankAccount bankAccount) {
+	public void setBankAccount(String bankAccount) {
 		this.bankAccount = bankAccount;
 	}
 
@@ -339,6 +337,17 @@ public class Finance implements ITransferObject, IBankAccountContainer{
 		return getAmount() + getExpenses();
 	}
 	
+    @Transient
+    public String getFormattedBankAccount(){
+    	if(getBankAccount() != null && getBankAccount().length() == 20){
+        	return getBankAccount().substring(0,4) + "." + 
+        	getBankAccount().substring(4, 8) + "." + 
+        	getBankAccount().substring(8, 10) + "." +
+        	getBankAccount().substring(10,20);
+    	}
+    	return getBankAccount();
+    }
+
 	public boolean equals(Object obj) {
 		if (obj == null) {
     		return super.equals(obj);

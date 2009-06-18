@@ -46,9 +46,7 @@
 			<aon:commandLink id="templates" 
 				title="#{appBundle.aon_web_info_template}" action="templates" 
 				value="#{appBundle.aon_web_info_template}"
-				styleClass="aon-top-menu-item">
-				<aon:actionListener method="#{company.onLoad}" />
-				<aon:actionListener method="#{webPageStyle.onLoad}" />
+				actionListener="#{company.onLoad}" styleClass="aon-top-menu-item">
 			</aon:commandLink>
 
 			<aon:commandLink id="generate" 

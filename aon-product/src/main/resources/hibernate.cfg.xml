@@ -28,10 +28,9 @@
 		<mapping class="com.code.aon.product.ProductCategoryTree"/>
 		<mapping class="com.code.aon.product.Tariff"/>
 		<mapping class="com.code.aon.product.TariffCatalogue"/>
+		<mapping class="com.code.aon.product.Tax"/>
+		<mapping class="com.code.aon.product.TaxDetail"/>
 		
-		<mapping class="com.code.aon.config.Tax"/>
-		<mapping class="com.code.aon.config.TaxDetail"/>
-
 	</session-factory>
 
 </hibernate-configuration>

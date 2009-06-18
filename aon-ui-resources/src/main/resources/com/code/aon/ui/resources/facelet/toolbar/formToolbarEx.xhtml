@@ -7,16 +7,14 @@
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 		<ui:define name="toolbarContent">
 			<c:if test="#{!skipSaveButton}">		
-				<aon:commandButton id="#{toolbarID}-save"
-					value="#{bundle.aon_save}"
+				<aon:commandButton value="#{bundle.aon_save}"
 					action="#{saveAction}"
 					actionListener="#{saveActionListener}"
 					styleClass="aon-finding-toolbar-item aon-icon-accept"
 					accesskey="#{bundle.aon_key_save}" />
 			</c:if>
 			<c:if test="#{!skipCancelButton}">			
-				<aon:confirmButton id="#{toolbarID}-cancel"
-					value="#{bundle.aon_cancel}"
+				<aon:confirmButton id="cancel#{idSuffix}" value="#{bundle.aon_cancel}"
 					rendered="#{formNew}" immediate="true" 
 					styleClass="aon-finding-toolbar-item aon-icon-cancel"
 					confirmTitle="#{bundle.aon_confirm_title}"
@@ -26,8 +24,7 @@
 					accesskey="#{bundle.aon_key_cancel}" />
 			</c:if>								
 			<c:if test="#{!skipRemoveButton}">				
-				<aon:confirmButton id="#{toolbarID}-remove"
-					value="#{bundle.aon_remove}"
+				<aon:confirmButton id="remove#{idSuffix}" value="#{bundle.aon_remove}"
 					rendered="#{!formNew}" immediate="true"
 					styleClass="aon-finding-toolbar-item aon-icon-delete"
 					confirmTitle="#{bundle.aon_confirm_title}"
@@ -37,23 +34,20 @@
 					accesskey="#{bundle.aon_key_remove}" />
 			</c:if>
 			<c:if test="#{!skipSearchButton}">			
-				<aon:commandButton id="#{toolbarID}-search" 
-					value="#{bundle.aon_search}"
+				<aon:commandButton value="#{bundle.aon_search}"
 					rendered="#{!formNew}" immediate="true"
 					action="#{searchAction}" actionListener="#{searchActionListener}"
 					styleClass="aon-finding-toolbar-item aon-icon-search"
 					accesskey="#{bundle.aon_key_search}" />
 			</c:if>
 			<c:if test="#{!skipResetButton}">								
-				<aon:commandButton id="#{toolbarID}-reset"
-					value="#{bundle.aon_reset}" rendered="#{!formNew}"
+				<aon:commandButton value="#{bundle.aon_reset}" rendered="#{!formNew}"
 					action="#{resetAction}" actionListener="#{resetActionListener}"
 					styleClass="aon-finding-toolbar-item aon-icon-new"
 					accesskey="#{bundle.aon_key_new}" />
 			</c:if>															
 			<c:if test="#{!skipBackButton}">								
-				<aon:commandButton id="#{toolbarID}-back"
-					value="#{bundle.aon_back}"
+				<aon:commandButton value="#{bundle.aon_back}"
 					rendered="#{!formNew}" immediate="true"
 					styleClass="aon-finding-toolbar-item aon-icon-cancel"
 					actionListener="#{backActionListener}"
@@ -63,8 +57,8 @@
 				
 			<ui:insert name="beforeSpinToolbarContent"/>				
 				
-			<c:if test="#{(!skipSpin) and (controller != null)}">
-				<aon:spin id="#{controller.beanName}Spin" controller="#{controller}" action="#{saveAction}" rendered="#{!formNew}" />
+			<c:if test="#{controller != null}">
+				<aon:spin controller="#{controller}" action="#{saveAction}" rendered="#{!formNew}" />
 			</c:if>
 		</ui:define>
 	</ui:decorate>

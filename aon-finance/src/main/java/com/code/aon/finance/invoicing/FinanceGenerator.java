@@ -81,7 +81,7 @@ public class FinanceGenerator {
 		Finance finance = new Finance();
 		finance.setAmount(totalPrice);
 		finance.setBank((rBank==null?null:rBank.getBank()));
-		finance.setBankAccount((rBank==null?null:rBank.getBankAccount()));
+		finance.setBankAccount((rBank==null?"":rBank.getBankAccount()));
 		finance.setDueDate(date);
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		finance.setInvoice(invoice);

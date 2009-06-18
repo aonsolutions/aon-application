@@ -97,6 +97,8 @@ public class CompanyLogoControllerListener extends CompanyLogoParentControllerLi
 				attach.setData(aonFile.getData());
 				attach.setDescription("");
 				attach.setRegistry((Company) event.getController().getTo());
+				attach.setMimeType(MimeType.getByExtension(aonFile.getFileName().substring(
+						aonFile.getFileName().lastIndexOf(".") + 1)));
 				IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 				if (attach.getId() == null) {
 					companyController.setAttach((RegistryAttachment) attachBean.insert(attach));
@@ -115,14 +117,12 @@ public class CompanyLogoControllerListener extends CompanyLogoParentControllerLi
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		RegistryAttachment attach = obtainRegistryAttachment(((Company) event.getController()
 				.getTo()).getId());
-		if (attach!=null) {
-			AonFile f = new AonFile();
-			CompanyController companyController = (CompanyController) event.getController();
-			f.setData(attach.getData());
-			f.setFileName(attach.getDescription());
-			f.addAonFileListener(companyController);
-			companyController.setAonFile(f);
-		}
+		CompanyController companyController = (CompanyController) event.getController();
+		AonFile f = new AonFile();
+		f.setData(attach.getData());
+		f.setFileName(attach.getDescription());
+		f.addAonFileListener(companyController);
+		companyController.setAonFile(f);
 	}
 
 }

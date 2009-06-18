@@ -33,7 +33,7 @@ public class ProjectCollectionsController {
 		Iterator iter = dossierTypeBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			DossierType type = (DossierType)iter.next();
-			SelectItem item = new SelectItem(type.getId(), type.getDescription());
+			SelectItem item = new SelectItem(type, type.getDescription());
 			dossierTypeList.add(item);
 		}
 		return dossierTypeList;
@@ -77,7 +77,6 @@ public class ProjectCollectionsController {
         while(iter.hasNext()){
             DossierType dossierType = (DossierType)iter.next();
             SelectItemGroup activityType = new SelectItemGroup(dossierType.getDescription());
-            activityType.setDisabled(true);
             activityType.setSelectItems(obtainActivityTypes(dossierType));
             activityTypeList.add(activityType);
         }
@@ -94,7 +93,7 @@ public class ProjectCollectionsController {
         Iterator iter = activityTypeBean.getList(criteria).iterator();
         while(iter.hasNext()){
             ActivityType activityType = (ActivityType)iter.next();
-            SelectItem item = new SelectItem(activityType.getId(), activityType.getDescription());
+            SelectItem item = new SelectItem(activityType, activityType.getDescription());
             activityTypes.add(item);
         }
         return activityTypes.toArray(new SelectItem[activityTypes.size()]);
@@ -109,7 +108,7 @@ public class ProjectCollectionsController {
 		Iterator iter = jobTypeBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			JobType type = (JobType)iter.next();
-			SelectItem item = new SelectItem(type.getId(), type.getDescription());
+			SelectItem item = new SelectItem(type, type.getDescription());
 			jobTypeList.add(item);
 		}
 		return jobTypeList;

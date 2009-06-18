@@ -8,28 +8,11 @@
 		<aon:valueParam name="dataTableId" default="#{controller.beanName}Data" />
 		<aon:valueParam name="dataModel" default="#{controller.model}" />
 		<aon:valueParam name="rows" default="#{controller.pageLimit}" />
-		<aon:valueParam name="showDataTable" default="true" />
 		<aon:valueParam name="showDataScroller" default="true" />
 		<aon:valueParam name="showNote" default="false" />
 		<aon:valueParam name="formNew" default="#{controller.new}" />
 		<aon:valueParam name="formEdit" default="#{to==controller.to}" />		
 		<aon:valueParam name="formList" default="#{to!=controller.to}" />
-		
-		<aon:methodParam name="resetActionListener" default="#{controller.onReset}" type="actionListener" />
-		<aon:methodParam name="resetAction" default="" />													
-
-		<aon:methodParam name="saveActionListener" default="#{controller.onAccept}" type="actionListener" />
-		<aon:methodParam name="saveAction" default="" />			
-		<aon:methodParam name="cancelEditActionListener" default="#{controller.onCancel}" type="actionListener" />
-		<aon:methodParam name="cancelEditAction" default="" />			
-		<aon:methodParam name="removeActionListener" default="#{controller.onRemove}" type="actionListener" />
-		<aon:methodParam name="removeAction" default="" />
-
-		<aon:methodParam name="newSaveActionListener" default="#{controller.onAccept}" type="actionListener" />
-		<aon:methodParam name="newSaveAction" default="" />			
-		<aon:methodParam name="cancelNewActionListener" default="#{controller.onCancel}" type="actionListener" />
-		<aon:methodParam name="cancelNewAction" default="" />			
-
 	</ui:include>
 	
 </ui:composition>

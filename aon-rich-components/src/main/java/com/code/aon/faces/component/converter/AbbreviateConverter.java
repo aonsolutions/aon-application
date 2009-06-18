@@ -9,8 +9,6 @@ import org.apache.commons.lang.StringUtils;
 
 public class AbbreviateConverter implements Converter, StateHolder {
 
-	private static final Integer DEFAULT_MAX_WIDTH = 60;
-	
 	private Integer maxWidth;
 	
 	@Override
@@ -46,9 +44,6 @@ public class AbbreviateConverter implements Converter, StateHolder {
 	}
 
 	public Integer getMaxWidth() {
-		if ( maxWidth == null ) {
-			maxWidth = DEFAULT_MAX_WIDTH;
-		}
 		return maxWidth;
 	}
 

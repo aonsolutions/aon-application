@@ -30,7 +30,7 @@
 						<f:validateLength minimum="1" maximum="16" />
 					</aon:inputText>
 
-					<aon:outputLabel for="Customer_name" value="#{bundle.aon_company_name}" />
+					<aon:outputLabel for="Customer_name" value="#{bundle.aon_name}" />
 					<aon:inputText id="Customer_name"
 						value="#{customer.to.registry.name}" size="64">
 						<f:validateLength minimum="1" maximum="64" />
@@ -57,7 +57,7 @@
 						<f:selectItems value="#{configCollections.scopes}" />
 					</h:selectOneMenu>
 
-					<h:outputLabel for="Customer_status" value="#{bundle.aon_status}" />
+					<h:outputLabel for="Customer_status" value="#{bundle.aon_company_name}" />
 					<h:selectOneMenu id="Customer_status" value="#{customer.to.status}">
 						<f:selectItems value="#{customerCollections.customerStatuses}" />
 					</h:selectOneMenu>
@@ -105,5 +105,6 @@
 				</c:if>
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 	</ui:define>
 </ui:composition>

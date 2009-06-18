@@ -1,5 +1,9 @@
 package com.code.aon.product;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,12 +11,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import org.apache.commons.lang.ObjectUtils;
-
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.ILookupObject;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull;
+import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.enumeration.ProductStatus;
+import com.code.aon.ql.Criteria;
 
 /**
  * Transfer Object that represents an item.
@@ -24,9 +33,11 @@ import com.code.aon.product.enumeration.ProductStatus;
  */
 @Entity
 @Table(name="item")
-public class Item implements ITransferObject {
+public class Item implements ITransferObject, ILookupObject {
 
-	private static final long serialVersionUID = -2720748805321005422L;
+    private static final String ITEM_FULL_NAME = "Item_full_name";
+    private static final String ITEM_VAT = "Item_vat";
+    private static final String ITEM_SURCHARGE = "Item_surcharge";
 	
     /**
      * Unique key.
@@ -298,22 +309,47 @@ public class Item implements ITransferObject {
 		this.purchasePrice = purchasePrice;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.code.aon.common.ILookupObject#lookups()
+     */
+	@Transient
+    public Map<String,Object> getLookups() {
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put(IProductAlias.ITEM_ID, getId());
+        map.put(IProductAlias.ITEM_PRODUCT_ID, getProduct().getId());
+        map.put(IProductAlias.ITEM_PRODUCT_CODE, getProduct().getCode());
+        map.put(IProductAlias.ITEM_PRODUCT_NAME, getProduct().getName());
+        map.put(IProductAlias.ITEM_PRODUCT_CATEGORY_ID, getProduct().getCategory().getId());
+        map.put(IProductAlias.ITEM_DETAIL, getDetail());
+        map.put(IProductAlias.ITEM_PRICE, new Double(getPrice()));
+        map.put(IProductAlias.ITEM_PURCHASE_PRICE, new Double(getPurchasePrice()));
+        map.put(IProductAlias.ITEM_EXPENSES_PERCENT, new Double(getExpensesPercent()));
+        map.put(IProductAlias.ITEM_EXPENSES_FIXED, new Double(getExpensesFixed()));
+        map.put(ITEM_FULL_NAME, getProduct().getName() + " " + ((getDetail() == null) ? "" : getDetail()));
+        map.put(ITEM_VAT, new Double(getProduct().getVat().getPercentage()));
+        map.put(ITEM_SURCHARGE, new Double(getProduct().getVat().getSurcharge()));
+        return map;
+    }
+	
+	/**
+	 * Returns all the Income Detail in a ordered list
+	 * 
+	 * @return List of IncomeDetail ordered
+	 */
+	@Transient
+	public ItemPos getItemPost() {
+		try {
+			IManagerBean itemPosBean = BeanManager.getManagerBean(ItemPos.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(itemPosBean.getFieldName(IProductAlias.ITEM_POS_ITEM_ID), getId());
+			Iterator iter = itemPosBean.getList(criteria).iterator();
+			if (iter.hasNext())
+				return (ItemPos)iter.next();
+		} catch (ManagerBeanException e) {
 		}
-		if (obj instanceof Item) {
-			Item item = (Item) obj;
-			if (ObjectUtils.equals(getId(), item.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return null;
 	}
 
-	@Override
-	public int hashCode() {
-		return 0;
-	}
 }

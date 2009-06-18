@@ -1,31 +1,22 @@
-<?xml version="1.0"?>
-<!DOCTYPE faces-config PUBLIC
-  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
-  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
-<faces-config>
+	<application>
+		<resource-bundle>
+		   <base-name>com.code.aon.ui.project.i18n.messages</base-name>
+		   <var>projectBundle</var>
+		</resource-bundle>
+	</application>
 
-	<!--  *************** CONVERTERS ***************** -->
-	<converter>
-		<description>Conversor para los TaskPriorities</description>
-		<converter-id>aonTaskPriorityConverter</converter-id>
-		<converter-class>com.code.aon.ui.project.converter.TaskPriorityConverter</converter-class>
-	</converter>
-
-	<converter>
-		<description>Conversor para los TaskStatus</description>
-		<converter-id>aonTaskStatusConverter</converter-id>
-		<converter-class>com.code.aon.ui.project.converter.TaskStatusConverter</converter-class>
-	</converter>
-
-	<converter>
-		<converter-for-class>com.code.aon.project.DossierType</converter-for-class>
-		<converter-class>com.code.aon.ui.project.converter.DossierTypeConverter</converter-class>
-	</converter>
-	<converter>
-		<converter-for-class>com.code.aon.project.Dossier</converter-for-class>
-		<converter-class>com.code.aon.ui.project.converter.DossierConverter</converter-class>
-	</converter>
+	<!--  *************** CONVERTER ***************** -->
+    <converter>
+		<converter-id>chromeEditorConverter</converter-id>
+		<converter-class>
+			com.code.aon.ui.common.converter.ChromeEditorConverter
+		</converter-class>
+    </converter>
 
 	<!--  *************** COLLECTIONS ***************** -->
 	<managed-bean>
@@ -58,6 +49,10 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>dossierType</value>
+		</managed-property>
+		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.project.DossierType</value>
 		</managed-property>
@@ -68,6 +63,10 @@
 				<value>#{activityTypeListener}</value>
 			</list-entries>
 		</managed-property>
+		<managed-property>
+	         <property-name>defaultOrder</property-name>
+    	     <value>DossierType_description</value>
+      	</managed-property>
 	</managed-bean>
 	
 	<managed-bean>
@@ -107,6 +106,10 @@
 			<value>com.code.aon.project.ActivityType</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>activityType</value>
+		</managed-property>
+		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
@@ -140,6 +143,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.project.JobType</value>
 		</managed-property>
+		<managed-property>
+	         <property-name>defaultOrder</property-name>
+    	     <value>JobType_description</value>
+      	</managed-property>
 	</managed-bean>
 	
 	<!-- ************* ACTIVITY TYPE STANDALONE ***************** -->
@@ -157,6 +164,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.project.ActivityType</value>
 		</managed-property>
+		<managed-property>
+	         <property-name>defaultOrder</property-name>
+    	     <value>ActivityType_description</value>
+      	</managed-property>
 	</managed-bean>
 	
 	<!-- ************* ACTIVITIES IMPORTER ***************** -->
@@ -166,6 +177,28 @@
 			com.code.aon.ui.project.controller.ImportActivitiesController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************* CUSTOMER DOSSIER LISTENER ***************** -->
+	<managed-bean>
+		<managed-bean-name>customerDossierListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.MasterControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>dossier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Dossier_customer_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
 	</managed-bean>
 
 	<!-- ************* DOSSIER ***************** -->
@@ -178,6 +211,10 @@
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>dossier</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -240,6 +277,10 @@
 			<value>com.code.aon.project.Activity</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>activity</value>
+		</managed-property>
+		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
@@ -285,6 +326,10 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>dailyTracking</value>
+		</managed-property>
+		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.project.DailyTracking</value>
 		</managed-property>
@@ -318,7 +363,7 @@
 	<managed-bean>
 		<managed-bean-name>inboxDailyTracking</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.project.controller.InboxDailyTrackingController
+			com.code.aon.ui.form.BasicController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -357,6 +402,10 @@
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>task</value>
+		</managed-property>		
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.project.Task</value>
@@ -411,63 +460,100 @@
 	</managed-bean>
 	
 	
-	<!-- =================== Dossier ================= -->	
+	<!-- ================================================ -->	
+	<!-- =================== NAVIGATION ================= -->	
+	<!-- ================================================ -->	
+
+    <!-- =================== Dossier Type ================= --> 	
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>dossier_list</from-outcome>
-			<to-view-id>/facelet/dossier/list.faces</to-view-id>
+			<from-outcome>dossierType_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/project/facelet/dossierType/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-	        <from-outcome>dossier_form</from-outcome>
-	        <to-view-id>/facelet/dossier/form.faces</to-view-id>
-	    </navigation-case>
-	</navigation-rule>
-  
-    <!-- =================== Dossier Type ================= -->	
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>dossier_type_list</from-outcome>
-			<to-view-id>/facelet/dossier/dossier_type/list.faces</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>dossier_type_form</from-outcome>
-			<to-view-id>/facelet/dossier/dossier_type/form.faces</to-view-id>
+			<from-outcome>dossierType_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/project/facelet/dossierType/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 	
-	<!-- =================== Daily Tracking ================= -->	
+	<!-- =================== ACTIVITY TYPE ================= -->	
 	<navigation-rule>
-		<navigation-case>
-	        <from-outcome>daily_tracking_form</from-outcome>
-	        <to-view-id>/facelet/dailyTracking/form.faces</to-view-id>
-	    </navigation-case>
-		<navigation-case>
-			<from-outcome>daily_tracking_list</from-outcome>
-			<to-view-id>/facelet/dailyTracking/list.faces</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>daily_tracking_search</from-outcome>
-			<to-view-id>/facelet/dailyTracking/search.faces</to-view-id>
-		</navigation-case>
+	    <navigation-case>
+    	    <from-outcome>activity_type_standalone</from-outcome>
+        	<to-view-id>/com/code/aon/ui/project/facelet/activityType/grid.xhtml</to-view-id>
+    	</navigation-case>    
 	</navigation-rule>
-  
+	
+	<!-- =================== JOB TYPE ================= -->	
+	<navigation-rule>
+	    <navigation-case>
+	        <from-outcome>job_type</from-outcome>
+	        <to-view-id>/com/code/aon/ui/project/facelet/jobType/grid.xhtml</to-view-id>
+	    </navigation-case>
+    </navigation-rule>    
+
 	<!-- =================== Task ================= -->	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>task_list</from-outcome>
-			<to-view-id>/facelet/task/list.faces</to-view-id>
+			<to-view-id>/com/code/aon/ui/project/facelet/task/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 	        <from-outcome>task_form</from-outcome>
-	        <to-view-id>/facelet/task/form.faces</to-view-id>
+	        <to-view-id>/com/code/aon/ui/project/facelet/task/form.xhtml</to-view-id>
 	    </navigation-case>
 		<navigation-case>
 	        <from-outcome>task_search</from-outcome>
-	        <to-view-id>/facelet/task/search.faces</to-view-id>
+	        <to-view-id>/com/code/aon/ui/project/facelet/task/search.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
+
+	<!-- =================== DAILY TRACKING ================= -->
+	<navigation-rule>
+		<navigation-case>
+	        <from-outcome>dailyTracking_form</from-outcome>
+	        <to-view-id>/com/code/aon/ui/project/facelet/dailyTracking/form.xhtml</to-view-id>
+	    </navigation-case>
+		<navigation-case>
+			<from-outcome>dailyTracking_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/project/facelet/dailyTracking/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dailyTracking_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/project/facelet/dailyTracking/search.xhtml</to-view-id>
+		</navigation-case>
+	   	<navigation-case>
+	        <from-outcome>daily_tracking_report</from-outcome>
+	        <to-view-id>/com/code/aon/ui/project/facelet/dailyTracking/report.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+
+	<!-- =================== Dossier ================= --> 	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>dossier_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/project/facelet/dossier/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+	        <from-outcome>dossier_form</from-outcome>
+	        <to-view-id>/com/code/aon/ui/project/facelet/dossier/form.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+  
+
+<!--
+	********************************************************************** 
+	********************************************************************** 
+	********************************************************************** 
+	********************************************************************** 
+	********************************************************************** 
+	********************************************************************** 
+	********************************************************************** 
+	********************************************************************** 
+ -->
+
 	
-	<!-- =================== Task Monitor ================= -->	
+	<!-- =================== Task Monitor =================  	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>task_monitor_list</from-outcome>
@@ -478,8 +564,8 @@
 	        <to-view-id>/facelet/task/monitor/search.faces</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
-	
-  <!-- =================== Application Menu Navigation Rules ================= -->	
+	-->
+  <!-- =================== Application Menu Navigation Rules ================= 	
   <navigation-rule>
 	<navigation-case>
 		<from-outcome>content</from-outcome>
@@ -489,33 +575,10 @@
         <from-outcome>firstContent</from-outcome>
         <to-view-id>/facelet/homepage/firstContent.faces</to-view-id>
     </navigation-case>
-   	<navigation-case>
-        <from-outcome>daily_tracking</from-outcome>
-        <to-view-id>/facelet/dailyTracking/form.faces</to-view-id>
-    </navigation-case>
-   	<navigation-case>
-        <from-outcome>daily_tracking_report</from-outcome>
-        <to-view-id>/facelet/dailyTracking/report.faces</to-view-id>
-    </navigation-case>
-	<navigation-case>
-        <from-outcome>dossier_type</from-outcome>
-        <to-view-id>/facelet/dossier/dossier_type/list.faces</to-view-id>
-    </navigation-case>    
-    <navigation-case>
-        <from-outcome>job_type</from-outcome>
-        <to-view-id>/facelet/job_type/grid.faces</to-view-id>
-    </navigation-case>    
-    <navigation-case>
-        <from-outcome>activity_type_standalone</from-outcome>
-        <to-view-id>/facelet/activity_type/grid.faces</to-view-id>
-    </navigation-case>    
- 	<navigation-case>
-        <from-outcome>task</from-outcome>
-        <to-view-id>/facelet/task/list.faces</to-view-id>
-    </navigation-case>
  	<navigation-case>
         <from-outcome>task_monitor</from-outcome>
         <to-view-id>/facelet/task/monitor/search.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
+-->  
 </faces-config>

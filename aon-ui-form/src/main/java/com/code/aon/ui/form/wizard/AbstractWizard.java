@@ -1,26 +1,29 @@
 package com.code.aon.ui.form.wizard;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.el.ELContext;
 import javax.el.ExpressionFactory;
 import javax.el.MethodExpression;
 import javax.el.ValueExpression;
 import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.form.BasicController;
 
 /**
  * 
@@ -30,28 +33,15 @@ public abstract class AbstractWizard {
 
 	private boolean visible;
 	private String valueExpression;
-	private String valueChangeListener;
+	private String valueChangeListener;	
 	private String extendedAttributesValueExpression;
-	private BasicController controller;
+	private DataModel model;
+	private Criteria criteria;
+	private int offset;
+	private int rows = 15;
+	private int count;
+	private List<ITransferObject> list;
 
-	/**
-	 * 
-	 */
-	public AbstractWizard() {
-		controller = new BasicController();
-		controller.setPageLimit(15);
-		controller.setPojo(getClazz().getName());
-		controller.setQueryOnStartUP(false);
-		controller.setSaveState(false);
-	}
-
-	/**
-	 * @return BasicController
-	 */
-	public BasicController getController() {
-		return controller;
-	}
-	
 	/**
 	 * @return boolean
 	 */
@@ -67,14 +57,14 @@ public abstract class AbstractWizard {
 	}
 
 	/**
-	 * @return String
+	 * @return String 
 	 */
 	public String getValueExpression() {
 		return valueExpression;
 	}
 
 	/**
-	 * @return String
+	 * @return String 
 	 */
 	public String getELValueExpression() {
 		return "#{" + valueExpression + "}";
@@ -95,7 +85,7 @@ public abstract class AbstractWizard {
 	}
 
 	/**
-	 * @return String
+	 * @return String 
 	 */
 	public String getELValueChangeListener() {
 		return "#{" + valueChangeListener + "}";
@@ -109,7 +99,7 @@ public abstract class AbstractWizard {
 	}
 
 	/**
-	 * @return String
+	 * @return String 
 	 */
 	public String getExtendedAttributesValueExpression() {
 		return extendedAttributesValueExpression;
@@ -123,76 +113,135 @@ public abstract class AbstractWizard {
 	}
 
 	/**
-	 * @return Criteria
-	 * @throws ManagerBeanException
+	 * @return int 
 	 */
-	public Criteria getCriteria() throws ManagerBeanException {
-		return controller.getCriteria();
+	public int getOffset() {
+		return offset;
+	}
+
+	/**
+	 * @param offset
+	 */
+	public void setOffset(int offset) {
+		this.offset = offset;
+	}
+
+	/**
+	 * @return int 
+	 */
+	public int getRows() {
+		return rows;
+	}
+
+	/**
+	 * @param rows
+	 */
+	/**
+	 * @param rows
+	 */
+	public void setRows(int rows) {
+		this.rows = rows;
+	}
+
+	/**
+	 * @return int
+	 */
+	public int getCount() {
+		return count;
+	}
+
+	/**
+	 * @param count
+	 */
+	public void setCount(int count) {
+		this.count = count;
+	}
+
+	/**
+	 * @return Criteria 
+	 */
+	public Criteria getCriteria() {
+		return criteria;
 	}
 
 	/**
 	 * @param criteria
-	 * @throws ManagerBeanException
 	 */
-	public void setCriteria(Criteria criteria) throws ManagerBeanException {
-		controller.setCriteria(criteria);
+	public void setCriteria(Criteria criteria) {
+		this.criteria = criteria;
 	}
 
 	/**
-	 * @return DataModel
-	 * @throws ManagerBeanException
+	 * @return List<ITransferObject>
 	 */
-	public DataModel getModel() throws ManagerBeanException {
-		return controller.getModel();
+	public List<ITransferObject> getList() {
+		return list;
+	}
+
+	/**
+	 * @param list
+	 */
+	public void setList(List<ITransferObject> list) {
+		this.list = list;
+		model = null;
+	}
+
+	/**
+	 * @return DataModel 
+	 */
+	public DataModel getModel() {
+		if (model == null) {
+			model = new ListDataModel(getList());
+		}
+		return model;
 	}
 
 	/**
 	 * @param event
-	 * @throws ManagerBeanException
 	 */
-	public void onShow(ActionEvent event) throws ManagerBeanException {
+	public void onShow(ActionEvent event) {
 		setVisible(true);
 		clear();
-		controller.setModel(null);
+		setList(null);
+		model = null;
 	}
 
 	/**
 	 * @param event
-	 * @throws ManagerBeanException
 	 */
-	public void onClose(ActionEvent event) throws ManagerBeanException {
-		controller.setModel(null);
+	public void onClose(ActionEvent event) {
 		reset();
 	}
 
 	/**
-	 * @throws ManagerBeanException
 	 * 
 	 */
-	protected void reset() throws ManagerBeanException {
+	protected void reset() {
 		setVisible(false);
 		clear();
-		controller.setModel(null);
+		setList(null);
 	}
 
 	/**
-	 * @throws ManagerBeanException
 	 * 
 	 */
-	protected void clear() throws ManagerBeanException {
+	protected void clear() {
 		resetFields();
-		setCriteria(new Criteria());
+		criteria = new Criteria();
+		offset = 0;
+		count = -1;
 	}
 
 	/**
 	 * @param event
-	 * @throws ManagerBeanException
 	 */
-	public void onSearch(ActionEvent event) throws ManagerBeanException {
+	public void onSearch(ActionEvent event) {
 		try {
-			setCriteria(new Criteria());
-			fillCriteria(getCriteria());
-			controller.onSearch(event);
+			criteria = new Criteria();
+			offset = 0;
+			count = -1;
+			fillCriteria(criteria);
+			onSearch(criteria);
 		} catch (ExpressionException e) {
 			FacesContext context = FacesContext.getCurrentInstance();
 			FacesMessage message = new FacesMessage(e.getMessage());
@@ -201,21 +250,88 @@ public abstract class AbstractWizard {
 	}
 
 	/**
-	 * @param event
+	 * @param criteria
+	 */
+	public void onSearch(Criteria criteria) {
+		try {
+			IManagerBean bean = getManagerBean();
+			if (count == -1) {
+				count = bean.getCount(criteria);
+			}
+			List<ITransferObject> list = null;
+			if (count > 0) {
+				list = bean.getList(criteria, offset, rows);
+				offset += list.size();
+			} else {
+				list = new LinkedList<ITransferObject>();
+			}
+			setList(list);
+			model = null;
+		} catch (ManagerBeanException e) {
+			FacesContext context = FacesContext.getCurrentInstance();
+			FacesMessage message = new FacesMessage(e.getMessage());
+			context.addMessage(null, message);
+		}
+	}
+
+	/**
+	 * @return IManagerBean
 	 * @throws ManagerBeanException
 	 */
-	public void onSelect(ActionEvent event) throws ManagerBeanException {
+	private IManagerBean getManagerBean() throws ManagerBeanException {
+		return BeanManager.getManagerBean( getClazz() );
+	}
+
+	/**
+	 * @param event
+	 */
+	public void nextPage(ActionEvent event) {
+		onSearch(criteria);
+	}
+
+	/**
+	 * @param event
+	 */
+	public void previousPage(ActionEvent event) {
+		if (offset > 0) {
+			offset -= getList().size();
+			offset -= rows;
+		}
+		if (offset < 0) {
+			offset = 0;
+		}
+		onSearch(criteria);
+	}
+
+	/**
+	 * @return boolean 
+	 */
+	public boolean isPreviousPageAvailable() {
+		return (offset > rows);
+	}
+
+	/**
+	 * @return boolean 
+	 */
+	public boolean isNextPageAvailable() {
+		return (count > 0 && offset < count);
+	}
+
+	/**
+	 * @param event
+	 */
+	public void onSelect(ActionEvent event) {
 		try {
 			FacesContext ctx = FacesContext.getCurrentInstance();
 			ELContext elctx = ctx.getELContext();
 			ExpressionFactory factory = ctx.getApplication().getExpressionFactory();
 			ValueExpression ve = factory.createValueExpression(elctx, getELValueExpression(),
 					getClazz());
-			Object newValue = controller.getModel().getRowData();
+			Object newValue = model.getRowData();
 			Object oldValue = ve.getValue(elctx);
 			ve.setValue(elctx, newValue);
 			assignExtendedLookupAttributes(newValue);
-			fireValueChangeListener(event, oldValue, newValue);
+			fireValueChangeListener(event,oldValue,newValue);
 			reset();
 		} catch (IllegalAccessException e) {
 			FacesContext context = FacesContext.getCurrentInstance();
@@ -245,11 +361,12 @@ public abstract class AbstractWizard {
 		try {
 			FacesContext ctx = FacesContext.getCurrentInstance();
 			ELContext elctx = ctx.getELContext();
-			UIComponent c = event.getComponent();
-			ValueExpression ve = c.getParent().getValueExpression("value");
-			Object newValue = ve.getValue(elctx);
+			ExpressionFactory factory = ctx.getApplication().getExpressionFactory();
+			ValueExpression ve = factory.createValueExpression(elctx, getELValueExpression(),
+					Object.class);
+			Object newValue = ve.getValue(elctx); 
 			assignExtendedLookupAttributes(ve.getValue(elctx));
-			fireValueChangeListener(event, null, newValue);
+			fireValueChangeListener(event,null,newValue);
 		} catch (IllegalAccessException e) {
 			FacesContext context = FacesContext.getCurrentInstance();
 			FacesMessage message = new FacesMessage(e.getMessage());
@@ -265,17 +382,16 @@ public abstract class AbstractWizard {
 		}
 	}
 
-	private void fireValueChangeListener(ActionEvent event, Object oldValue, Object newValue) {
+	private void fireValueChangeListener(ActionEvent event,Object oldValue, Object newValue) {
 		String expression = getELValueChangeListener();
 		if (!"#{null}".equals(expression)) {
 			FacesContext ctx = FacesContext.getCurrentInstance();
 			ELContext elctx = ctx.getELContext();
 			ExpressionFactory factory = ctx.getApplication().getExpressionFactory();
-			MethodExpression me = factory.createMethodExpression(elctx, expression, Object.class,
-					new Class[] { ValueChangeEvent.class });
-			ValueChangeEvent changeEvent = new ValueChangeEvent(event.getComponent(), oldValue,
-					newValue);
-			me.invoke(elctx, new Object[] { changeEvent });
+			MethodExpression me = 
+				factory.createMethodExpression(elctx, expression, Object.class, new Class[]{ValueChangeEvent.class} );
+			ValueChangeEvent changeEvent = new ValueChangeEvent(event.getComponent(),oldValue,newValue); 
+			me.invoke(elctx, new Object[]{changeEvent});
 		}
 	}
 
@@ -318,5 +434,6 @@ public abstract class AbstractWizard {
 	 * @return Class<? extends ITransferObject>
 	 */
 	protected abstract Class<? extends ITransferObject> getClazz();
+
 
 }

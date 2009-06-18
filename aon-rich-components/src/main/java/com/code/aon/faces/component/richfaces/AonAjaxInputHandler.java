@@ -32,6 +32,8 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 	private static final String SUPPORT_RENDERER_TYPE = "org.ajax4jsf.components.AjaxSupportRenderer";
 
 	private static final String SUPPORT_COMPONENT_TYPE = "org.ajax4jsf.Support";
+
+	private static final String DISABLED_STYLE_CLASS = "disabledStyleClass";
 	
 	private static final String PARTIAL_SUBMIT = "partialSubmit";
 	
@@ -53,6 +55,7 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 	@Override
 	protected MetaRuleset createMetaRuleset(Class type) {
 		MetaRuleset set = super.createMetaRuleset(type);
+		set.ignore(DISABLED_STYLE_CLASS);
 		set.ignore(RERENDER).ignore(PARTIAL_SUBMIT);
 		return set;
 	}
@@ -61,7 +64,23 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 	protected void setAttributes( FaceletContext ctx, Object instance ) {
 		super.setAttributes(ctx, instance);
 		UIComponent component = (UIComponent) instance;
+		updateDisabledStyleClass(ctx, component);
 		updateLabel(ctx, component);
+	}
+	
+	protected String getInputStyleClass() {
+		return STYLE_CLASS_ATTR;
+	}
+	
+	private void updateDisabledStyleClass(FaceletContext ctx, UIComponent c) {
+		TagAttribute disabledClass = getAttribute(DISABLED_STYLE_CLASS);
+		if ( disabledClass != null ) {
+			TagAttribute disabled = getAttribute(DISABLED_ATTR);
+			if ( (disabled != null) && disabled.getBoolean(ctx) ) {
+				String value = disabledClass.getValue(ctx);
+				UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), c, getInputStyleClass(), value);
+			}
+		}
 	}
 	
 	private void updateLabel(FaceletContext ctx, UIComponent c) {

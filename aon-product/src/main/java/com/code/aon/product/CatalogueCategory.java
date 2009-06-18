@@ -9,8 +9,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.apache.commons.lang.ObjectUtils;
-
 import com.code.aon.common.ITransferObject;
 
 /**
@@ -21,8 +19,6 @@ import com.code.aon.common.ITransferObject;
 @Entity
 @Table(name="catalogue_category")
 public class CatalogueCategory implements ITransferObject {
-
-	private static final long serialVersionUID = -1595222928098471123L;
 
 	/** The Id. */
 	private Integer Id;
@@ -136,22 +132,4 @@ public class CatalogueCategory implements ITransferObject {
 		this.discount = discount;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj instanceof CatalogueCategory) {
-			CatalogueCategory catalogueCategory = (CatalogueCategory) obj;
-			if (ObjectUtils.equals(getId(), catalogueCategory.getId())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public int hashCode() {
-		return 0;
-	}
 }

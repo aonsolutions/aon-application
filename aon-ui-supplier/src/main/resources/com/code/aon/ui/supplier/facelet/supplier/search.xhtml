@@ -16,11 +16,32 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
-				<ui:param name="controller" value="#{supplier}"/>
 				<ui:define name="searchContent">
 
-					<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/searchContent.xhtml" />
+					<aon:methodParam name="searchActionListener"
+						value="#{supplier.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="supplier_list" />
 
+					<aon:outputLabel for="Supplier_registry_document"
+						value="#{bundle.aon_company_document}" />
+					<aon:inputText id="Supplier_registry_document" size="20"
+						valueChangeListener="#{supplier.addExpression}" />
+
+					<aon:outputLabel for="Supplier_registry_name"
+						value="#{bundle.aon_company_name}" />
+					<aon:inputText id="Supplier_registry_name" size="40"
+						valueChangeListener="#{supplier.addExpression}" />
+
+					<aon:outputLabel for="Supplier_registry_surname"
+						value="#{registryBundle.registry_surname}" />
+					<aon:inputText id="Supplier_registry_surname" size="40"
+						valueChangeListener="#{supplier.addExpression}" />
+
+					<aon:outputLabel for="Supplier_registry_alias"
+						value="#{bundle.aon_company_alias}"
+						styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+					<aon:inputText id="Supplier_registry_alias" size="40"
+						valueChangeListener="#{supplier.addExpression}" />
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
