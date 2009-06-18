@@ -80,6 +80,7 @@ public class FTPUtil implements ICMSConstants {
 			}
 
 			status.info("Conectado.");
+			ftp.enterLocalPassiveMode();
 			ftp.changeWorkingDirectory(destinationFolder);
 			status.info(ftp.getReplyString());
 			status.info(ftp.getSystemName());
