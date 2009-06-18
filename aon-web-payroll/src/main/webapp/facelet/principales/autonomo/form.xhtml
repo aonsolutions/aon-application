@@ -237,7 +237,6 @@
 						<aon:div styleClass="aon-scroll-area">
 							<aon:panelGrid columns="4" dir="true" width="100%"
 								style="margin-bottom=2px;">
-
 								<aon:outputLabel for="Tipoviaa_cdg"
 									value="#{appBundle.aon_payroll_principales_clientes_tipovia}" />
 								<aon:div styleClass="aon-lookup">
@@ -317,10 +316,17 @@
 								<aon:outputLabel for="Tipovi_cdg"
 									value="#{appBundle.aon_payroll_principales_clientes_tipovia}" />
 								<aon:div styleClass="aon-lookup">
+<!--  
 									<aon:lookupInputText id="Tipovi_cdg" lookup="#{tipoviaLookup}"
 										reRender="Tipovia_description"
 										value="#{(autonomo.to.persona.tipovia.cdg!=null)?(autonomo.to.persona.tipovia.cdg):('')}"
-							disabled="true" size="5">
+										disabled="true" size="5">
+									</aon:lookupInputText>
+-->
+									<aon:lookupInputText id="Tipovi_cdg" lookup="#{tipoviaLookup}"
+										reRender="Tipovia_description"
+										value="#{autonomo.to.persona.tipovia.cdg}"
+										disabled="true" size="5">
 									</aon:lookupInputText>
 									<aon:lookupButton id="Tipovi_lookup"
 										windowTitle="#{appBundle.aon_payroll_auxiliares_tipos__tipovia}"
@@ -328,8 +334,13 @@
 										lookup="#{tipoviaLookup}" minHeight="440"
 										property="#{autonomo.to.persona.tipovia}">
 									</aon:lookupButton>
+<!--  
 									<aon:inputText id="Tipovi_description"
 										value="#{(autonomo.to.persona.tipovia.description!=null)?(autonomo.to.persona.tipovia.description):('')}"
+										size="34" disabled="true" />
+-->
+									<aon:inputText id="Tipovi_description"
+										value="#{autonomo.to.persona.tipovia.description}"
 										size="34" disabled="true" />
 								</aon:div>
 
@@ -362,14 +373,21 @@
 								<aon:inputText id="per_localidad" value="#{(autonomo.to.persona.localidad!=null)?(autonomo.to.persona.localidad):('')}"
 							disabled="true"
 									size="50" maxlength="20" />
-
 								<aon:outputLabel for="Provinci_cdg"
 									value="#{appBundle.aon_payroll_principales_clientes_provincia}" />
 								<aon:div styleClass="aon-lookup">
+<!--  
 									<aon:lookupInputText  lookup="#{provinciaLookup}"
 										reRender="Pro_description"
 										id="per_prvcdg" value="#{(autonomo.to.persona.provincia.cdg!=null)?(autonomo.to.persona.provincia.cdg):('')}"
-							disabled="true" size="5">
+										disabled="true" size="5">
+									</aon:lookupInputText>
+-->
+									<aon:lookupInputText  lookup="#{provinciaLookup}"
+										reRender="Pro_description"
+										id="per_prvcdg" 
+										value="#{autonomo.to.persona.provincia.cdg}"
+										disabled="true" size="5">
 									</aon:lookupInputText>
 									<aon:lookupButton id="Pr_lookup"
 										windowTitle="#{appBundle.aon_payroll_principales_clientes_provincia}"
@@ -377,8 +395,13 @@
 										lookup="#{provinciaLookup}" minHeight="440"
 										property="#{autonomo.to.persona.provincia}">
 									</aon:lookupButton>
+<!--  
 									<aon:inputText id="Pr_description"
 										value="#{(autonomo.to.persona.provincia.descripcion!=null)?(autonomo.to.persona.provincia.descripcion):('')}"
+										size="34" disabled="true" />
+-->
+									<aon:inputText id="Pr_description"
+										value="#{autonomo.to.persona.provincia.descripcion}"
 										size="34" disabled="true" />
 								</aon:div>
 
