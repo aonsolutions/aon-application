@@ -33,6 +33,16 @@ public class AlbumController extends BasicI18nController implements ICMSConstant
 	
 	private int page;
 	
+	private boolean richTextEnabled;
+	
+	public boolean isRichTextEnabled() {
+		return richTextEnabled;
+	}
+
+	public void setRichTextEnabled(boolean richTextEnabled) {
+		this.richTextEnabled = richTextEnabled;
+	}	
+	
 	public int getPage() {
 		return page;
 	}

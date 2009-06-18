@@ -62,7 +62,9 @@
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.generic_page_title}" />
 						</f:facet>
-						<aon:outputText value="#{generic_page.i18nTitle}" />
+						<aon:outputText value="#{generic_page.i18nTitle}">
+							<aon:abbreviateConverter maxWidth="60" />
+						</aon:outputText>						
 					</aon:column>
 
 					<aon:column>
