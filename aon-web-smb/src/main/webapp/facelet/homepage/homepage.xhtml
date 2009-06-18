@@ -16,9 +16,7 @@
 				<a4j:mediaOutput element="img" cacheable="false"
 					rendered="#{company.withLogo}" 
 					value="#{company.aonFile.key}"
-					createContent="#{company.createLogoContent}">
-					<f:param value="#{company.timeStamp}" name="time" />
-				</a4j:mediaOutput>
+					createContent="#{company.createLogoContent}" />
 				<aon:div style="font-weight: bold;font-size:14px;padding:2em;">
 					<aon:outputText value="#{company.companyLabel}" />
 				</aon:div>
