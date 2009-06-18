@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="supplierForm">
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{supplierBundle.supplier_module}" />
+				<ui:param name="controller" value="#{supplier}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="dataTable" columns="2">
+
+					<aon:outputLabel for="Supplier_id" value="#{bundle.aon_id}" />
+					<aon:inputText id="Supplier_id" value="#{supplier.to.id}"
+						required="true" size="15" disabled="true" />
+
+					<aon:outputLabel for="Supplier_registry_document"
+						value="#{bundle.aon_company_document}" />
+					<aon:inputText id="Supplier_registry_document"
+						value="#{supplier.to.registry.document}" size="16">
+						<f:validateLength minimum="1" maximum="16" />
+					</aon:inputText>
+
+					<aon:outputLabel for="Supplier_registry_name"
+						value="#{bundle.aon_company_name}" />
+					<aon:inputText id="Supplier_registry_name"
+						value="#{supplier.to.registry.name}" size="64">
+						<f:validateLength minimum="1" maximum="64" />
+					</aon:inputText>
+
+					<aon:outputLabel for="Supplier_registry_surname"
+						value="#{registryBundle.registry_surname}" />
+					<aon:inputText id="Supplier_registry_surname"
+						value="#{supplier.to.registry.surname}" size="64">
+						<f:validateLength minimum="1" maximum="64" />
+					</aon:inputText>
+
+					<aon:outputLabel for="Supplier_registry_alias"
+						value="#{bundle.aon_company_alias}" />
+					<aon:inputText id="Supplier_registry_alias"
+						value="#{supplier.to.registry.alias}" size="32">
+						<f:validateLength minimum="1" maximum="32" />
+					</aon:inputText>
+
+					<aon:outputLabel for="Supplier_scope_id"
+						value="#{bundle.aon_scope}" />
+					<aon:selectOneMenu id="Supplier_scope_id"
+						value="#{supplier.to.scope}">
+						<f:selectItems value="#{configCollections.scopes}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Supplier_status"
+						value="#{bundle.aon_status}" />
+					<aon:selectOneMenu id="Supplier_status"
+						value="#{supplier.to.status}">
+						<f:selectItems value="#{supplierCollections.supplierStatuses}" />
+					</aon:selectOneMenu>
+				</aon:panelGrid>
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>
+

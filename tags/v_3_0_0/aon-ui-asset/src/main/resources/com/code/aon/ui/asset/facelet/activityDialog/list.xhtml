@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="activityList">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{assetBundle.asset_activity_module}" />
+				<ui:param name="controller" value="#{asset}" />
+			</ui:include>
+ 
+			<aon:div id="assetData" styleClass="aon-scroll-area">
+				<aon:dataTable id="assetDataList" value="#{asset.model}"
+					rows="20" var="to" rendered="#{asset.model.rowCount > 0}">
+
+					<aon:rowSelector action="activity_form" 
+						actionListener="#{asset.onSelect}" />
+ 
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_id}" />
+						</f:facet>
+						<aon:outputText value="#{to.id}" />
+					</aon:column>
+<!-- 
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_description}" />
+						</f:facet>
+						<aon:outputText value="#{to.description}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_alias}" />
+						</f:facet>
+						<aon:outputText value="#{to.alias}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{accountBundle.account_entryEnabled}" />
+						</f:facet>
+						<aon:div styleClass="#{to.entryEnabled?'aon-icon-checked':'aon-icon-check'}">
+							<f:verbatim>&#160;</f:verbatim>
+						</aon:div>
+					</aon:column>
+-->
+
+				</aon:dataTable>
+
+				<aon:dataScroller2 for="assetDataList" showNote="true" />
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
