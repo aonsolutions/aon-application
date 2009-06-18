@@ -1107,6 +1107,19 @@
 		</params>
 	</report>
 	
+	
+			<!--  *********  Impresion de Detalle de Percepciones ********* -->
+	<report id="percepcionDetail" description="Detalle de Percepciones">
+		<template path="/com/code/aon/ui/payroll/report/percepcionesDetail.jasper" />
+		<bean key="com.code.aon.payroll.principales.personas.Percep" />
+		<criteria provider="#{percepbasic}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+			
 	<!--  *********  Impresion de lista de Personas - Lista ********* -->
 	<report id="empresaList" description="Listado de empresas">
 		<template path="/com/code/aon/ui/payroll/report/empresaList.jasper" />
@@ -1153,6 +1166,7 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
+	
 	<report id="autonomosDetail" description="Detalle de Autonomos">
 		<template path="/com/code/aon/ui/payroll/report/autonomosDetail.jasper" />
 		<bean key="com.code.aon.payroll.principales.autonomos.Autonomos" />
@@ -1164,4 +1178,16 @@
 		</params>
 	</report>
 	
+	
+	<!--  *********  Impresion de lista de Personas - Lista ********* -->
+	<report id="actividadDetail" description="Listado de Actividad">
+		<template path="/com/code/aon/ui/payroll/report/actividadDetail.jasper" />
+		<bean key="com.code.aon.payroll.principales.empresa.Actividad" />
+		<criteria provider="#{empreact}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
 </report-config>

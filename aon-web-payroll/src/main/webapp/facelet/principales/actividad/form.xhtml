@@ -17,11 +17,11 @@
 
 
 			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				template="/facelet/templates/formPrintToolbarCliente.xhtml">
 				<ui:param name="toolbarTitle"
 					value="#{appBundle.aon_payroll_principales_actividad}" />
 				<ui:param name="controller" value="#{empreact}" />
-				<ui:param name="reportKey" value="DelegacionList" />
+				<ui:param name="reportKey" value="actividadDetail" />
 				
 				<ui:define name="beforeSpinToolbarContent">
 							<aon:commandButton id="trabajadoresButton" title="Ver trabajadores"	
