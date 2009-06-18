@@ -136,11 +136,12 @@
 						required="true" size="80" maxlength="255"
 						value="#{link.to.url}" />
 
-					<aon:outputLabel for="Link_description" style="width:100px"
-						value="#{bundle.aon_description}" />
-					<aon:inputTextarea id="Link_description"
-						rows="3" style="width:98%" 
-						value="#{link.toI18n.description}"/>
+					<ui:include src="/facelet/content/utils/contentInput.xhtml" >
+						<ui:param name="labelValue" value="#{bundle.aon_description}" />
+						<ui:param name="inputTextId" value="Link_description" />
+						<ui:param name="inputTextValue" value="#{link.toI18n.description}" />
+						<ui:param name="richTextEnabled" value="#{link.richTextEnabled}" />
+					</ui:include>
 
 				</aon:panelGrid>
 			</aon:div>

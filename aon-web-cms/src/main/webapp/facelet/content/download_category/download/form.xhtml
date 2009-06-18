@@ -186,11 +186,10 @@
 
 					<aon:outputLabel for="DownloadDetail_description"
 						value="#{bundle.aon_description}" />
-					<aon:div style="width:600px">
-						<aon:inputRichText style="width:100%" 
-							id="DownloadDetail_description" 
-							value="#{download.toI18n.description}" />
-					</aon:div>
+					<rich:editor id="DownloadDetail_description"
+						value="#{download.toI18n.description}" 
+						height="250" width="620" configuration="tinyMCE" 
+						language="#{facesContext.application.defaultLocale.language}" />					
 
 					<aon:outputLabel for="Download_position"
 						value="#{appBundle.download_position}"/>

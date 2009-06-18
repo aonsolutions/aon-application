@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 <body>
 
@@ -94,11 +95,10 @@
 							<aon:panelGrid columns="2" dir="true">
 								<aon:outputLabel for="ConfigDetail_offline_message"
 									value="#{appBundle.config_offline_message}" />
-								<aon:div style="width:600px">
-									<aon:inputRichText id="ConfigDetail_offline_message"
-										toolbarSet="Default" 
-										value="#{config.toI18n.offline_message}"/>
-								</aon:div>
+								<rich:editor id="ConfigDetail_offline_message"
+									value="#{config.toI18n.offline_message}" 
+									height="250" width="620" configuration="tinyMCE" 
+									language="#{facesContext.application.defaultLocale.language}" />								
 							</aon:panelGrid>
 						</aon:panelTab>
 						<aon:panelTab id="smtp" label="#{appBundle.config_smtp_server}" rendered="#{cms.administrator}">

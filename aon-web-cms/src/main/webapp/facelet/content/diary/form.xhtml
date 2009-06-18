@@ -82,12 +82,11 @@
 
 								<aon:outputLabel for="content"
 									value="#{appBundle.diary_content}" />
-								<aon:div style="width:600px">
-									<aon:inputRichText style="width:100%" 
-										id="content" 
-										value="#{diary.toI18n.content}" />
-								</aon:div>
-								
+								<rich:editor id="content"
+									value="#{diary.toI18n.content}" 
+									height="250" width="620" configuration="tinyMCE" 
+									language="#{facesContext.application.defaultLocale.language}" />					
+																
 							</aon:panelGrid>
 						</aon:div>
 		
