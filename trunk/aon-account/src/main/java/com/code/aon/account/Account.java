@@ -23,7 +23,7 @@ import com.code.aon.common.ITransferObject;
 @Table(name = "account")
 public class Account implements ITransferObject {
 
-	private static final long serialVersionUID = -4744515826050552526L;
+	private static final long serialVersionUID = 6518379784581410771L;
 
 	/**
 	 * The ID of this account
@@ -156,9 +156,10 @@ public class Account implements ITransferObject {
 		final Account o = (Account) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
+			.append(this.alias, o.alias)
 			.append(this.description, o.description)
 			.append(this.entryEnabled, o.entryEnabled)
-			.append(this.alias, o.alias)
+			.append(this.level, o.level)
 			.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());
@@ -167,10 +168,11 @@ public class Account implements ITransferObject {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
-			.append(this.id)
+			.append(this.alias)
 			.append(this.description)
 			.append(this.entryEnabled)
-			.append(this.alias)
+			.append(this.id)
+			.append(this.level)
 			.toHashCode();
 	}
 	
@@ -178,5 +180,5 @@ public class Account implements ITransferObject {
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
-
+	
 }
