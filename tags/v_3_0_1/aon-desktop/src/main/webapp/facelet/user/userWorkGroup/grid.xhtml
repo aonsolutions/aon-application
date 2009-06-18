@@ -1,0 +1,101 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div styleClass="aon-form-group" rendered="#{!user.new}">
+		<aon:div styleClass="aon-form-group-title">
+			<aon:div styleClass="aon-form-group-title-internal">
+				<aon:outputLabel for="userWorkGroupDataList" value="#{configBundle.config_workgroups}" />
+			</aon:div>
+		</aon:div>
+
+		<aon:editDataTable id="userWorkGroupDataList" var="to"
+			value="#{userWorkGroup.model}" rows="20"
+			columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+
+			<aon:rowSelector toggleOnClick="#{userWorkGroup.to == null}"
+				actionListener="#{userWorkGroup.onSelect}" />
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:outputText value="&#160;" />
+				<f:facet name="footer">
+					<aon:div>
+						<aon:commandButton alt="[#{bundle.aon_reset}]"
+							styleClass="aon-editDataTable-button aon-icon-reset"
+							actionListener="#{userWorkGroup.onReset}" value=""
+							rendered="#{!userWorkGroup.new}"
+							accesskey="#{bundle.aon_key_new_line}" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_description}" />
+				</f:facet>
+				<aon:outputText value="#{to.workGroup.description}"
+					rendered="#{to!=userWorkGroup.to}" />
+				<aon:selectOneMenu rendered="#{to==userWorkGroup.to}"
+					valueChangeListener="#{userWorkGroup.onWorkGroupChanged}"
+					value="#{userWorkGroup.to.workGroup.id}">
+					<f:selectItems value="#{configCollections.workgroups}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu rendered="#{userWorkGroup.new}"
+						valueChangeListener="#{userWorkGroup.onWorkGroupChanged}"
+						value="#{userWorkGroup.to.workGroup.id}">
+						<f:selectItems value="#{configCollections.workgroups}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<f:verbatim>&#160;</f:verbatim>
+				</f:facet>
+				<aon:div>
+					<f:verbatim rendered="#{to!=userWorkGroup.to}">&#160;</f:verbatim>
+					<aon:commandButton title="[#{bundle.aon_accept}]" 
+						actionListener="#{userWorkGroup.onAccept}" 
+						rendered="#{to==userWorkGroup.to}" value=""
+						styleClass="aon-editDataTable-button aon-icon-accept"
+						accesskey="#{bundle.aon_key_save_line}" />
+					<aon:commandButton id="cancelEdit-userWorkGroup" title="[#{bundle.aon_cancel}]"
+						styleClass="aon-editDataTable-button aon-icon-cancel"
+						rendered="#{to==userWorkGroup.to}"
+						actionListener="#{userWorkGroup.onCancel}" immediate="true"
+						accesskey="#{bundle.aon_key_cancel_line}" />
+					<aon:confirmButton id="cancelRemove-userWorkGroup" title="[#{bundle.aon_remove}]"
+						styleClass="aon-editDataTable-button aon-icon-delete"
+						rendered="#{to==userWorkGroup.to}"
+						confirmTitle="#{bundle.aon_confirm_title}" 
+						confirmMessage="#{bundle.aon_remove_confirm}"
+						confirmActionListener="#{userWorkGroup.onRemove}" immediate="true"
+						accesskey="#{bundle.aon_key_remove_line}" />
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div>
+						<f:verbatim rendered="#{!userWorkGroup.new}">&#160;</f:verbatim>
+						<aon:commandButton title="#{bundle.aon_save}"
+							actionListener="#{userWorkGroup.onAccept}"
+							rendered="#{userWorkGroup.new}" value=""
+							styleClass="aon-editDataTable-button aon-icon-accept"
+							accesskey="#{bundle.aon_key_save_line}" />
+						<aon:confirmButton id="cancelNew-userWorkGroup" title="#{bundle.aon_cancel}"
+							styleClass="aon-editDataTable-button aon-icon-cancel"
+							rendered="#{userWorkGroup.new}"
+							confirmTitle="#{bundle.aon_confirm_title}" 
+							confirmMessage="#{bundle.aon_cancel_confirm}"
+							confirmActionListener="#{userWorkGroup.onCancel}" immediate="true"
+							accesskey="#{bundle.aon_key_cancel_line}" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+		</aon:editDataTable>
+
+	</aon:div>
+</ui:composition>

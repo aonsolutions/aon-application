@@ -1,0 +1,175 @@
+<?xml version="1.0"?>
+<!DOCTYPE 
+faces-config PUBLIC "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+"http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+<faces-config>
+	<application>
+		<message-bundle>
+			com.code.aon.ui.common.i18n.messages
+		</message-bundle>
+		<locale-config>
+			<default-locale>es</default-locale>
+		</locale-config>
+	</application>
+
+	<!-- *************** RESOURCE RESOLVER ***************** --> 
+	<managed-bean>
+		<managed-bean-name>aonResource</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.resources.bean.ResourceResolver
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>resourceURIPreffix</property-name>
+			<value>/aonResource/3.2.0</value>
+		</managed-property>		
+	</managed-bean>
+
+	<!--  *************** 
+		AON CONFIGURATION
+		***************** -->
+	<managed-bean>
+		<managed-bean-name>aonConfiguration</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.common.controller.ConfigurationController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>styleSheets</property-name>
+			<list-entries>
+				<value>#{aonResource.resolveLocal['/aon-richCss.css']}</value>
+				<value>#{aonResource.resolveLocal['/css/desktop.css']}</value>				
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>applicationBundles</property-name>
+			<map-entries>
+				<map-entry>
+					<key>bundle</key>
+					<value>com.code.aon.ui.common.i18n.messages</value>
+				</map-entry>
+				<map-entry>
+					<key>appBundle</key>
+					<value>com.code.aon.desktop.i18n.messages</value>
+				</map-entry>
+				<map-entry>
+					<key>registryBundle</key>
+					<value>
+						com.code.aon.ui.registry.i18n.messages
+					</value>
+				</map-entry>
+				<map-entry>
+					<key>groupwareBundle</key>
+					<value>
+						com.code.aon.ui.groupware.i18n.messages
+					</value>
+				</map-entry>
+				<map-entry>
+					<key>configBundle</key>
+					<value>com.code.aon.ui.config.i18n.messages</value>
+				</map-entry>
+				<map-entry>
+					<key>companyBundle</key>
+					<value>com.code.aon.ui.company.i18n.messages</value>
+				</map-entry>
+				<map-entry>
+					<key>securityBundle</key>
+					<value>com.code.aon.bridge.i18n.messages</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+
+	<!-- ************ DESKTOP ************** -->
+	<managed-bean>
+		<managed-bean-name>desktop</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.controller.DesktopController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>currentUser</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.controller.AonUserController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.User</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>currentUser</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>User_name</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{userSecurityActivationListener}</value>
+				<value>#{userScopeListener}</value>
+				<value>#{userWorkGroupListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ PROFILES ************** -->
+	<managed-bean>
+		<managed-bean-name>domain</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.controller.AonDomainController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.jaas.client.ast.IDomainApplication</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ USER ************** -->
+	<managed-bean>
+		<managed-bean-name>securityUser</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.event.SecurityUserListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>controller</property-name>
+			<value>#{user}</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ DESKTOP SERVICES ************** -->
+	<managed-bean>
+		<managed-bean-name>aonapps</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.desktop.applications.ApplicationsManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>email</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.desktop.applications.WebmailManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>sms</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.desktop.applications.SMSManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>smsContact</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.controller.SMSContactController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>task</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.desktop.applications.TaskManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ Collections ************** -->
+	<managed-bean>
+		<managed-bean-name>corporateIdentity</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.controller.CorporateIdentity</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+</faces-config>
