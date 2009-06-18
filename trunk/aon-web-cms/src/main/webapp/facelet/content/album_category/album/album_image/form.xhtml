@@ -127,31 +127,12 @@
 						required="true" size="64" maxlength="128"
 						value="#{albumImage.toI18n.title}" />
 					
-					<aon:outputLabel for="AlbumImageDetail_richTextEnabled"
-						value="#{appBundle.generic_page_richtext_enabled}" />
-					<aon:selectBooleanCheckbox id="AlbumImageDetail_richTextEnabled"
-						value="#{albumImage.richTextEnabled}">
-						<a4j:support 
-							ajaxSingle="true"
-							event="onclick"  
-							reRender="albumImage_richtext" />
-					</aon:selectBooleanCheckbox>
-				
-					<aon:outputLabel for="AlbumImageDetail_description" 
-						style="width:100px"
-						value="#{bundle.aon_description}" />
-					<aon:div id="albumImage_richtext">		
-						<aon:div style="width:600px;" rendered="#{albumImage.richTextEnabled}">
-							<aon:inputRichText 
-								id="AlbumImageDetail_description" 
-								value="#{albumImage.toI18n.description}" />
-						</aon:div>
-						<aon:inputTextarea id="AlbumImageDetail_description-TA"
-							rendered="#{!albumImage.richTextEnabled}" 
-							rows="10" style="width:98%" 
-							value="#{albumImage.toI18n.description}"/>
-					</aon:div>					
-
+					<ui:include src="/facelet/content/utils/contentInput.xhtml" >
+						<ui:param name="inputTextId" value="AlbumImageDetail_description" />
+						<ui:param name="inputTextValue" value="#{albumImage.toI18n.description}" />
+						<ui:param name="richTextEnabled" value="#{albumImage.richTextEnabled}" />
+					</ui:include>
+						
 					<aon:outputLabel for="AlbumImageDetail_alt"
 						value="#{appBundle.albumImage_alt}" />
 					<aon:inputText id="AlbumImageDetail_alt"
