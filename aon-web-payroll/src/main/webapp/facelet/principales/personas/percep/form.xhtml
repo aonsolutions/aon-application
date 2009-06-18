@@ -14,18 +14,21 @@
 
 		<aon:form id="percepForm">
 		
-			<ui:include
-				src="/facelet/templates/formPrintToolbarCliente.xhtml">
-				<ui:param name="toolbarTitle"
-					value="#{appBundle.aon_payroll_principales_personas_percep}" />
+			<ui:include	src="/facelet/templates/formPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_personas_percep}" />
 				<ui:param name="controller" value="#{percepbasic}" />
 				<aon:methodParam name="backAction" value="percep_list" />
 				<aon:methodParam name="cancelAction" value="percep_list" />
 				<aon:methodParam name="searchAction" value="percep_search" />
 				<aon:methodParam name="resetAction" default="percep_form" resolve="true" />
+				
+				<ui:param name="reportKey" value="percepcionesDetail" />
+				<!--  
 				<ui:param name="reportKey" value="percepcionDetail" />
 				<ui:param name="reportKeyXls" value="percepcionDetail" />
+				-->
 			</ui:include>
+						
 			<aon:div id="clientes"
 				styleClass="aon-scroll-area aon-scroll-area-principales">
 

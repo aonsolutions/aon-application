@@ -15,14 +15,12 @@
 
 		<aon:form id="autonomoForm">
 
-
-			<ui:include
-				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle"
-					value="#{appBundle.aon_payroll_principales_autonomos}" />
+			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_autonomos}" />
 				<ui:param name="controller" value="#{autonomo}" />
-				<ui:param name="reportKey" value="DelegacionList" />
+				<ui:param name="reportKey" value="autonomosDetail" />
 			</ui:include>
+
 			<aon:div id="cliente"
 				styleClass="aon-scroll-area aon-scroll-area-principales">
 
