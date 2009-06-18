@@ -19,38 +19,38 @@
 				<ui:param name="controller" value="#{article}" />
 				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
 				<ui:define name="additionalToolbarContent">
-						<aon:commandButton id="generate" reRender="aonStatus"
-							value="#{appBundle.aon_generate}" 
-							rendered="#{cms.roleEditor}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}">
-							<aon:actionListener method="#{generator.onGenerateArticles}" />
-							<a4j:support 
-								event="onclick" reRender="poll,grid" 
-								actionListener="#{generator_status.onActivePoll}"  
-								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
-						</aon:commandButton>	
-						<aon:commandButton id="home"
-							value="#{bundle.aon_home}"
-							action="home" 
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}">
-						</aon:commandButton>
-						<aon:commandButton id="categories"
-							value="#{appBundle.article_category}"
-							action="article_category_list"
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item-no-icon">
-							<aon:actionListener method="#{article_category.onSearch}" />
-						</aon:commandButton>
-						<aon:commandButton id="diary"
-							value="#{appBundle.diary}"
-							action="diary_form"
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item-no-icon">
-							<aon:actionListener method="#{diary.onInit}" />
-						</aon:commandButton>
+					<aon:commandButton id="generate" reRender="aonStatus"
+						value="#{appBundle.aon_generate}" 
+						rendered="#{cms.roleEditor}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_save}">
+						<aon:actionListener method="#{generator.onGenerateArticles}" />
+						<a4j:support 
+							event="onclick" reRender="poll,grid" 
+							actionListener="#{generator_status.onActivePoll}"  
+							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+					</aon:commandButton>	
+					<aon:commandButton id="home"
+						value="#{bundle.aon_home}"
+						action="home" 
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_close}">
+					</aon:commandButton>
+					<aon:commandButton id="categories"
+						value="#{appBundle.article_category}"
+						action="article_category_list"
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item-no-icon">
+						<aon:actionListener method="#{article_category.onSearch}" />
+					</aon:commandButton>
+					<aon:commandButton id="diary"
+						value="#{appBundle.diary}"
+						action="diary_form"
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item-no-icon">
+						<aon:actionListener method="#{diary.onInit}" />
+					</aon:commandButton>
 				</ui:define>
 			</ui:decorate>
 
