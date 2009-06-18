@@ -10,13 +10,6 @@
 	 <converter-class>com.code.aon.ui.common.converter.TransferObjectConverter</converter-class>
 	</converter>
 
-   	<!-- ************* ENUM CONVERTER ***************** -->
-	<converter>
-		<description>Conversor para intenacionalizar las opciones de los enumerados.</description>
-		<converter-for-class>com.code.aon.common.enumeration.IResourceable</converter-for-class>
-		<converter-class>com.code.aon.ui.common.converter.EnumLocaleConverter</converter-class>
-	</converter>
-	
 	<!-- ************ TIMEZONE CONTROLLER	************** -->
 	<managed-bean>
 		<managed-bean-name>timeZoneController</managed-bean-name>
@@ -37,14 +30,6 @@
 		<managed-bean-name>commonCollections</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.common.controller.CommonCollections</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<!--  *************** NULL ITEM ***************** -->
-	<managed-bean>
-		<managed-bean-name>nullItem</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.common.controller.NullSelectItemController 
-		</managed-bean-class>
-		<managed-bean-scope>application</managed-bean-scope>
 	</managed-bean>
 
 </faces-config>

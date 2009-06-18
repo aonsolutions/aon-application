@@ -31,16 +31,6 @@ public interface ISearchable extends ICriteriaProvider, IDataModelDataProvider {
      * @throws ManagerBeanException
      */
     void addDirectExpression(ValueChangeEvent event) throws ManagerBeanException;
-
-    /**
-     * Add a new expression to the criteria to condition the following searches.
-     * The id component is managed as the property path, replacing <code>_</code>
-     * with <code>.</code>. 
-     * 
-     * @param event
-     * @throws ManagerBeanException
-     */
-    void addDirectIdEqualExpression(ValueChangeEvent event) throws ManagerBeanException;
     
 	/**
 	 * Add a new expression to the criteria to condition the following searches.

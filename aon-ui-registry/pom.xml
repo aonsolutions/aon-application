@@ -10,26 +10,26 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.registry</artifactId>
-	<version>3.1.0</version>
+	<version>3.0.1</version>
 	<description>AON UI REGISTRY</description>
 	<name>AON UI REGISTRY</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>3.2.0</version>
+			<version>3.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.config</artifactId>
-			<version>3.1.1</version>
+			<version>3.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.registry</artifactId>
-			<version>3.0.1</version>
+			<version>3.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

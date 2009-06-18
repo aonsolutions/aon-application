@@ -79,12 +79,12 @@
 									value="#{to.securityLevel}" />
 								<aon:selectOneMenu rendered="#{to.id==series.to.id}"
 									value="#{series.to.securityLevel}">
-									<f:selectItems value="#{commonCollections.securityLevels}" />
+									<f:selectItems value="#{financeCollections.securityLevels}" />
 								</aon:selectOneMenu>
 								<f:facet name="footer">
 									<aon:selectOneMenu rendered="#{series.new}"
 										value="#{series.to.securityLevel}">
-										<f:selectItems value="#{commonCollections.securityLevels}" />
+										<f:selectItems value="#{financeCollections.securityLevels}" />
 									</aon:selectOneMenu>
 								</f:facet>
 							</aon:column>

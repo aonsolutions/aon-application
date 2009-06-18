@@ -21,10 +21,10 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.campaign.controller.CampaignController;
 import com.code.aon.ui.campaign.controller.CampaignDossierController;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
 
 public class CampaignControllerListener extends ControllerAdapter {
 
@@ -53,7 +53,7 @@ public class CampaignControllerListener extends ControllerAdapter {
 
     @Override
     public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-        ((CampaignDossierController)AonUtil.getController("campaignDossier")).setSortColumn(null);
+        ((CampaignDossierController)FormUtil.getController("campaignDossier")).setSortColumn(null);
     }
 
     @Override

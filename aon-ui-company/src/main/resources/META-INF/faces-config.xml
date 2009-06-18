@@ -33,26 +33,19 @@
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
-			<value>#{companyListeners}</value>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{companyControllerListener}</value>
+				<value>#{companyLogoControllerListener}</value>
+				<value>#{companyAppParamControllerListener}</value>
+				<!--value>#{companyRBankChildListener}</value-->
+				<value>#{companyAddressListener}</value>
+				<value>#{companyRecordDataChildListener}</value>
+			</list-entries>
 		</managed-property>
 	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>companyListeners</managed-bean-name>
-	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<list-entries>
-			<value-class>
-				com.code.aon.ui.form.event.IControllerListener
-			</value-class>
-			<value>#{companyControllerListener}</value>
-			<value>#{companyLogoControllerListener}</value>
-			<value>#{companyAppParamControllerListener}</value>
-			<value>#{companyAddressListener}</value>
-			<value>#{companyRecordDataChildListener}</value>
-		</list-entries>
-	</managed-bean>
-	
 	<managed-bean>
 		<managed-bean-name>
 			companyLogoControllerListener
@@ -62,7 +55,6 @@
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-	
 	<managed-bean>
 		<managed-bean-name>
 			companyAppParamControllerListener
@@ -137,6 +129,69 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<!-- **** COMPANY RBANK **** -->
+	<managed-bean>
+		<managed-bean-name>companyRbank</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.RegistryBankController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.RegistryBank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>companyRbank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>company</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{rBankValidatorListener}</value>
+				<value>#{rBankControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	<!-- managed-bean>
+		<managed-bean-name>companyRBankChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>companyRbank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryBank_registry_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean-->
 
 	<!-- **** COMPANY RECORD DATA **** -->
 	<managed-bean>

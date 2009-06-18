@@ -10,7 +10,6 @@ import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
@@ -18,7 +17,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.net.DummyHandler;
-import com.code.aon.faces.component.richfaces.lookup.LookupChangeEvent;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.Tag;
 import com.sun.facelets.tag.TagAttribute;
@@ -34,11 +32,7 @@ public class FaceletUtil {
 	
 	public final static Class[] VALUE_CHANGE_LISTENER_SIG = new Class[] { ValueChangeEvent.class };
 	
-	public final static Class[] LOOKUP_CHANGE_LISTENER_SIG = new Class[] { LookupChangeEvent.class };
-	
 	public final static Class[] VALIDATOR_SIG = new Class[] { FacesContext.class, UIComponent.class, Object.class };
-	
-	private static final String RENDERED = "rendered";
 	
 	public static URL getTemplate(String resource) {
 		ClassLoader loader = FaceletUtil.class.getClassLoader();
@@ -50,13 +44,9 @@ public class FaceletUtil {
 		}
 		return url;
 	}
-
-	public static TagAttribute getAttribute(Tag tag, String name) {
-		return tag.getAttributes().get(name);
-	}
 	
 	public static boolean hasValue(FaceletContext ctx, Tag tag, String name) {
-		TagAttribute tagAttribute = getAttribute(tag, name);
+		TagAttribute tagAttribute = tag.getAttributes().get(name);
 		if (tagAttribute != null) {
 			String value = tagAttribute.getValue(ctx);
 			return !StringUtils.isBlank(value);
@@ -147,22 +137,5 @@ public class FaceletUtil {
 		}
 		return result;
 	}
-	
-	public static Object getProperty( FacesContext ctx, UIComponent c, String name ) {
-        ValueBinding vb = c.getValueBinding(name);
-        if ( vb == null ) {
-        	return c.getAttributes().get(name);
-        } 
-        return vb.getValue(ctx);
-	}
-	
-	public static boolean isRendered( FaceletContext ctx, Tag tag ) {
-		boolean rendered = true;
-		TagAttribute renderedTag = getAttribute(tag, RENDERED);
-		if ( renderedTag != null ) {
-			rendered = renderedTag.getBoolean(ctx);
-		}
-		return rendered;
-	}	
 	
 }

@@ -115,15 +115,6 @@ public class Account implements ITransferObject {
 		return entryEnabled;
 	}
 
-	@Column(nullable = false)
-	public int getLevel() {
-		return level;
-	}
-
-	public void setLevel(int level) {
-		this.level = level;
-	}
-
 	/**
 	 * Sets if account entries are enabled.
 	 * 
@@ -135,6 +126,14 @@ public class Account implements ITransferObject {
 		this.entryEnabled = entryEnabled;
 	}
 
+	@Column(nullable = false)
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
 
 	/**
 	 * Returns the level of this account.
@@ -148,12 +147,15 @@ public class Account implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
+		if (obj == null) {
+    		return super.equals(obj);
 		}
 		if (obj instanceof Account) {
-			Account account = (Account) obj;
-			if (ObjectUtils.equals(getId(), account.getId())) {
+			Account o = (Account) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
 				return true;
 			}
 		}
@@ -161,7 +163,8 @@ public class Account implements ITransferObject {
 	}
 
 	@Override
-	public int hashCode() {
-		return 0;
-	}
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
+
 }

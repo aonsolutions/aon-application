@@ -10,9 +10,9 @@ import com.code.aon.campaign.ProcessDetail;
 import com.code.aon.campaign.dao.ICampaignAlias;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.listener.LinesControllerListener;
-import com.code.aon.ui.util.AonUtil;
 
 public class ProcessDetailDataModelListener extends LinesControllerListener implements
 		DataModelListener {
@@ -20,11 +20,11 @@ public class ProcessDetailDataModelListener extends LinesControllerListener impl
 	@Override
 	public void rowSelected(DataModelEvent event) {
 		if (event.getRowData() != null) {
-			IController c = AonUtil.getController("processDetail");
+			IController c = FormUtil.getController("processDetail");
 			ProcessDetail selected = (ProcessDetail) c.getTo();
 			if (selected == null) {
 				ProcessDetail pd = (ProcessDetail) event.getRowData();
-				IController controller = AonUtil.getController("processDetailTransition");	
+				IController controller = FormUtil.getController("processDetailTransition");	
 				Criteria criteria = new Criteria();
 				try {
 					String a = controller

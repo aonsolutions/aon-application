@@ -120,11 +120,11 @@
   <!-- =================== Navigation Rules ================= -->
   <navigation-rule>
     <navigation-case>
-      <from-outcome>geotreeParent_form</from-outcome>
+      <from-outcome>geozone_form</from-outcome>
       <to-view-id>/com/code/aon/ui/geozone/facelet/geozone/form.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
-      <from-outcome>geotreeParent_list</from-outcome>
+      <from-outcome>geozone_list</from-outcome>
       <to-view-id>/com/code/aon/ui/geozone/facelet/geozone/list.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>

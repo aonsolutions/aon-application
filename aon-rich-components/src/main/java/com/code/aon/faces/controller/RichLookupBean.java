@@ -10,12 +10,12 @@ import java.util.logging.Logger;
 import javax.faces.application.Application;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.el.MethodBinding;
 import javax.faces.el.ValueBinding;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.IManagerBean;
@@ -24,7 +24,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.AliasEntry;
 import com.code.aon.common.dao.DAOConstantsResolver;
 import com.code.aon.faces.component.richfaces.lookup.ILookupComponent;
-import com.code.aon.faces.component.richfaces.lookup.LookupChangeEvent;
 import com.code.aon.faces.component.richfaces.lookup.button.HtmlLookupButton;
 import com.code.aon.faces.component.richfaces.lookup.inputText.HtmlLookupInputText;
 import com.code.aon.faces.component.util.FaceletUtil;
@@ -334,30 +333,6 @@ public class RichLookupBean {
 	}
 	
 	/**
-	 * Add a new expression to the criteria to condition the following searches.
-	 * The id component is managed as an alias to resolve the real property
-	 * path.
-	 * 
-	 * @param event
-	 * @throws ManagerBeanException
-	 */
-	public void addDirectEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
-		getController().addDirectEqualExpression(event);
-	}
-		
-	/**
-	 * Add a new expression to the criteria to condition the following searches.
-	 * The id component is managed as an alias to resolve the real property
-	 * path.
-	 * 
-	 * @param event
-	 * @throws ManagerBeanException
-	 */
-	public void addDirectIdEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
-		getController().addDirectIdEqualExpression(event);
-	}
-	
-	/**
 	 * Execute cancel action.
 	 * 
 	 * @param event
@@ -513,62 +488,29 @@ public class RichLookupBean {
 		return null;
 	}
 	
-	private void fireLookupChangeListener(UIComponent component, boolean resolved) {
-		if ( getComponent().getLookupChangeListener() != null ) {
-			LookupChangeEvent event = null;
+	private void fireValueChangeListener(UIComponent component) {
+		if ( getButtonValueChangeListener() != null ) {
+			ValueChangeEvent event = null;
 			FacesContext ctx = FacesContext.getCurrentInstance();
-			Object newValue = null;
-			if ( resolved ) {
-				if ( getController().isNew() ) {
-					newValue = getController().getTo();
-				} else {
-					try {
-						newValue = getController().getModel().getRowData();
-					} catch (ManagerBeanException e) {
-						LOGGER.severe( e.getMessage() );
-					}
-				}				
+			if ( getController().isNew() ) {
+				event = new ValueChangeEvent(component, null, getController().getTo() );
+			} else {
+				Object newValue = null;
+				try {
+					newValue = getController().getModel().getRowData();
+				} catch (ManagerBeanException e) {
+					LOGGER.severe( e.getMessage() );
+				}
+				Object oldValue = getCurrentSourcePojo();
+				event = new ValueChangeEvent(component, oldValue, newValue );
 			}
-			event = new LookupChangeEvent(component, newValue );
-			getComponent().getLookupChangeListener().invoke(ctx, new Object[]{event});
+			getButtonValueChangeListener().invoke(ctx, new Object[]{event});
 		}
 	}
 
-	private Object getLookupValue() {
-		Object value = getController().getTo();
-		if ( getComponent().getLookupProperty() != null ) {
-			try {
-				value = PropertyUtils.getProperty( value, getComponent().getLookupProperty() );
-			} catch (Throwable e) {
-				LOGGER.severe( e.getMessage() );
-				value = null;
-			}
-		}
-		return value; 
-	}
-	
-	private String getLookupPojo() {
-		String pojo = null;		
-		if ( getComponent().getLookupProperty() != null ) {
-			try {
-				Object value = this.controller.getManagerBean().createNewTo();
-				Class _class = PropertyUtils.getPropertyType( value, getComponent().getLookupProperty() );
-				if ( _class != null ) {
-					pojo = _class.getName();
-				}
-			} catch (Throwable e) {
-				LOGGER.severe( e.getMessage() );
-			}
-			return pojo;
-		} else {
-			pojo = getController().getPojo();			
-		}
-		return pojo;
-	}
-	
 	private void updateSourcePojo() {
 		FacesContext ctx = FacesContext.getCurrentInstance();
-		sourcePojoBinding.setValue(ctx, getLookupValue());
+		sourcePojoBinding.setValue(ctx, getController().getTo());
 	}
 	
 	/**
@@ -594,7 +536,6 @@ public class RichLookupBean {
 			onReset(null);
 			restoreValues = true;
 		}
-		fireLookupChangeListener(event.getComponent(), !restoreValues);
 		updateSourcePojo();
 		if (restoreValues) {
 			restoreValues(joinBindingsMap, valuesMap);
@@ -632,10 +573,9 @@ public class RichLookupBean {
 	private ValueBinding getSourcePojoBinding(UIComponent component) {
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		ValueBinding vb = component.getValueBinding("value");
-		String pojo = getLookupPojo();
 		while (vb != null) {
 			String type = vb.getType(ctx).getName();
-			if (type.equals(pojo)) {
+			if (type.equals(this.controller.getPojo())) {
 				return vb;
 			} else {
 				vb = getParentBinding(ctx, vb);
@@ -729,7 +669,7 @@ public class RichLookupBean {
 	 *            the event
 	 */
 	public void onListSelect(ActionEvent event) {
-		fireLookupChangeListener(event.getComponent(), true);
+		fireValueChangeListener(event.getComponent());
 		onSelect(null);
 		updateSourcePojo();
 		setShowWindow(false);
@@ -744,7 +684,7 @@ public class RichLookupBean {
 	 */
 	public void onFormSelect(ActionEvent event) {
 		LOGGER.info("onFormSelect: " + getController().getTo());
-		fireLookupChangeListener(event.getComponent(), true);
+		fireValueChangeListener(event.getComponent());
 		updateSourcePojo();
 		setShowWindow(false);
 		clearModel();
@@ -791,6 +731,10 @@ public class RichLookupBean {
 
 	private void clearModel() {
 		getController().setModel(null);
+	}
+
+	public MethodBinding getButtonValueChangeListener() {
+		return this.component.getValueChangeListener();
 	}
 
 	public ILookupComponent getComponent() {

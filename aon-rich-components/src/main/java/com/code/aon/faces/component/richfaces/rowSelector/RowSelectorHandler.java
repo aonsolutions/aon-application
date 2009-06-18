@@ -90,9 +90,8 @@ public class RowSelectorHandler extends TagHandler implements IRichFacesTags {
 		String id = (String) root.getAttributes().get( EditDataTableHandler.EDIT_DATA_TABLE_ID );
 		if ( id != null ) {
 			String value = FaceletUtil.updateList(ctx, getAttribute(RERENDER), id);
-			AttributeInfo reRender = new AttributeInfo(RERENDER, value);
-			reRender.setForce(true);
-			attributes.add(reRender);
+			AttributeInfo info = new AttributeInfo(RERENDER, value);
+			attributes.add(info);
 		}
 		AttributeInfo onSubmit = new AttributeInfo(ON_SUBMIT_ATTRIBUTE, ON_SUBMIT_VALUE);
 		attributes.add(onSubmit);

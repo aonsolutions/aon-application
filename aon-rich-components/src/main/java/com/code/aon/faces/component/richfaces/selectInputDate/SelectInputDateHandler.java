@@ -10,11 +10,17 @@ import com.sun.facelets.tag.jsf.ComponentConfig;
 
 public class SelectInputDateHandler extends AonAjaxInputHandler {
 
+	private static final String INPUT_STYLE_CLASS = "inputClass";
 	private static final String DATE_PATTERN_ATTRIBUTE = "datePattern";
 	private static final String POPUP_DATE_FORMAT_ATTRIBUTE = "popupDateFormat";
 
 	public SelectInputDateHandler(ComponentConfig config) {
 		super(config);
+	}
+
+	@Override
+	protected String getInputStyleClass() {
+		return INPUT_STYLE_CLASS;
 	}
 
 	@Override

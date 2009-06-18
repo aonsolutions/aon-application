@@ -9,7 +9,7 @@
 
 	<aon:panelGroup id="#{confirmId}ReRender" styleClass="aon-popupWindow">
 		<c:if test="#{confirmShowWindow}">
-			<aon:subForm id="#{confirmId}Form">
+			<aon:subForm>
 				<rich:modalPanel 
 					id="#{confirmId}"
 					rendered="#{confirmShowWindow}" showWhenRendered="true"
@@ -21,8 +21,8 @@
 						</aon:div>
 					</f:facet>
 					<f:facet name="controls">
-						<aon:commandButton id="#{confirmId}-close" immediate="true"
-							type="button" styleClass="aon-popupWindow-close" >
+						<aon:commandButton type="button" styleClass="aon-popupWindow-close" 
+							 immediate="true">
 							<f:setPropertyActionListener target="#{confirmShowWindow}" value="false" />						
 							<rich:componentControl for="#{confirmId}" event="onclick"
 								disableDefault="true" operation="hide"/>
@@ -37,7 +37,7 @@
 							</aon:div>					
 						
 							<aon:div styleClass="aon-text-center">
-								<aon:commandButton id="#{confirmId}-yes" value="#{bundle.aon_yes}"
+								<aon:commandButton value="#{bundle.aon_yes}"
 									action="#{confirmAction}" reRender="#{confirmReRender}"
 									styleClass="aon-commandButton"
 									immediate="#{immediate}">
@@ -48,7 +48,7 @@
 									<rich:componentControl for="#{confirmId}" event="onclick"
 										disableDefault="true" operation="hide"/>
 								</aon:commandButton>
-								<aon:commandButton id="#{confirmId}-no" value="#{bundle.aon_no}"
+								<aon:commandButton value="#{bundle.aon_no}"
 									styleClass="aon-commandButton" immediate="true">
 									<f:setPropertyActionListener target="#{confirmShowWindow}" value="false" />								
 									<rich:componentControl for="#{confirmId}" event="onclick"

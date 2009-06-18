@@ -73,7 +73,7 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 	}
 	
 	private String getModalPanelId(FaceletContext ctx) {
-		return "cb_" + getId(ctx);
+		return "aon" + getId(ctx) + "ModalPanel";
 	}
 
 	@Override
