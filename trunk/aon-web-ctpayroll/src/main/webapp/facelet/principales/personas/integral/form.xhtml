@@ -17,11 +17,9 @@
 				<aon:form id="integralPresonasForm">
 
 					<!-- 
-						<ui:include
-						src="/facelet/templates/formPrintToolbar.xhtml">
+					<ui:include	src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 					-->
-					<ui:include
-						src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+					<ui:include	src="/facelet/templates/formPrintToolbar.xhtml">
 						<ui:param name="toolbarTitle" 
 							value="#{menuBundle.principales_personas__integral_per}" />
 						<ui:param name="controller"	value="#{persona}" />
@@ -33,6 +31,7 @@
 						<ui:param name="skipSaveButton" value="true" />	
 						<ui:param name="skipRemoveButton" value="true" />
 							
+						<ui:param name="reportKey" value="integralTrabajadoresDetail" />
 					</ui:include>
 					
 					<!--	FIN HEADER & TOOLBAR	-->

@@ -14,18 +14,20 @@
 			<ui:define name="content">
 
 				<aon:form id="empresaForm">
-
+<!--  
 					<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+-->
+					<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
 						<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_empresa}" />
 						<ui:param name="controller" value="#{empresa}" />
+						<ui:param name="reportKey" value="empresaDetail" />
 						<!--  
-						<ui:param name="reportKey" value="" />
 						<ui:param name="reportKeyXls" value="" />
 						-->
 						
 						
-						<ui:define name="beforeSpinToolbarContent">
 							<!-- 
+						<ui:define name="beforeSpinToolbarContent">
 							<aon:commandButton id="actividadesButton" title="#{appBundle.aon_payroll_principales_button_actividades}"	
 								styleClass="aon-finding-toolbar-item aon-icon-tree"
 								action="actividades_form" rendered="#{!controller.new}" 
@@ -50,10 +52,11 @@
 								actionListener="#{aviso.onEditSearch}" disabled="#{true}" >
 							
 							</aon:commandButton>
-							-->
 						</ui:define>
-						
 					</ui:decorate>
+							-->
+				</ui:include>
+						
 
 					<aon:div id="empresaData" styleClass="aon-scroll-area aon-scroll-area-principales">
 
