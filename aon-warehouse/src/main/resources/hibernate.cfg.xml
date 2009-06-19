@@ -26,13 +26,13 @@
 		<!-- AON-PRODUCT Mapping files -->	
 		<mapping class="com.code.aon.product.Item"/>
 		<mapping class="com.code.aon.product.Product"/>
-		<mapping class="com.code.aon.product.Tariff"/>
 		<mapping class="com.code.aon.product.ProductCategory"/>
 		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
 		<mapping class="com.code.aon.product.Brand"/>
 		
 		<!-- AON-CONFIG Mapping files -->
 		<mapping class="com.code.aon.config.Scope"/>
+		<mapping class="com.code.aon.config.Tariff"/>
 		<mapping class="com.code.aon.config.Tax"/>
 
 		<!-- AON-REGISTRY Mapping files -->	
