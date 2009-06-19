@@ -1,0 +1,311 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="percepForm">
+		
+			<ui:include	src="/facelet/templates/formPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_principales_personas_percep}" />
+				<ui:param name="controller" value="#{percepbasic}" />
+				<aon:methodParam name="backAction" value="percep_list" />
+				<aon:methodParam name="cancelAction" value="percep_list" />
+				<aon:methodParam name="searchAction" value="percep_search" />
+				<aon:methodParam name="resetAction" default="percep_form" resolve="true" />
+				
+				<ui:param name="reportKey" value="percepcionesDetail" />
+				<!--  
+				<ui:param name="reportKey" value="percepcionDetail" />
+				<ui:param name="reportKeyXls" value="percepcionDetail" />
+				-->
+			</ui:include>
+						
+			<aon:div id="clientes"
+				styleClass="aon-scroll-area aon-scroll-area-principales">
+
+				<aon:div id="percep" styleClass="aon-scroll-area">
+
+					<aon:div styleClass="aon-scroll-area">
+						<aon:panelGrid columns="4" dir="true" width="100%"
+							style="margin-bottom=2px;">
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_personas_percep_cdg}" />
+							<aon:inputText value="#{percepbasic.to.id.cdg}" id="percep_cdg" 
+								size="10" maxlength="6" readonly="true" />
+
+							<aon:outputLabel for="Trabajador_cdg"
+								value="#{appBundle.aon_payroll_principales_personas_percep_trab}" />
+							<aon:panelGroup>
+								<a4j:region>
+									<aon:lookupInputText id="Trabajador_cdg"
+										lookup="#{trabajadorLookup}"
+										required="#{true}"
+										reRender="act,acti,fec,desc,ape,nom,Trabajador_cdg,info_trabajador"
+										ajaxSingle="false" readonly="#{!percepbasic.new}"
+										value="#{percepbasic.to.trabajador.cdg}" size="5" />
+									<aon:lookupButton
+										disabled="#{!percepbasic.new}"
+										windowTitle="#{appBundle.aon_payroll_principales_personas_percep_trab}"
+										selectReRender="act,acti,fec,desc,ape,nom,Trabajador_cdg,info_trabajador"
+										actionType="search" lookup="#{trabajadorLookup}"
+										minHeight="460" minWidth="650"
+										property="#{percepbasic.to.trabajador}">
+									</aon:lookupButton>
+								</a4j:region>
+							</aon:panelGroup>
+						</aon:panelGrid>
+					</aon:div>
+
+					<aon:div styleClass="aon-scroll-area">
+						<aon:panelGrid columns="4" dir="true" width="100%" id="info_trabajador"
+							style="margin-bottom=2px;">
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_personas_percep_fecalt}" />
+							<aon:selectInputDate id="fecalt" renderAsPopup="true" disabled="true"
+								popupDateFormat="#{appBundle.aon_date_pattern}"
+								value="#{percepbasic.to.trabajador.fecalt}"
+								enableManualInput="true" />
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_personas_percep_act}" />
+							<aon:div>
+								<aon:inputText id="act" size="10" maxlength="6" disabled="true"
+									value="#{(percepbasic.to.trabajador.actividad.cdg!=null)?(percepbasic.to.trabajador.actividad.cdg):('')}" />
+
+								<aon:inputText id="acti" disabled="true"
+									value="#{(percepbasic.to.trabajador.actividad.descripcion!=null)?(percepbasic.to.trabajador.actividad.descripcion):('')}"
+									size="60" maxlength="30" />
+							</aon:div>
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_personas_percep_trab}" />
+							<aon:div>
+								<aon:inputText id="nom" disabled="true"
+									value="#{(percepbasic.to.trabajador.persona.nombre!=null)?(percepbasic.to.trabajador.persona.nombre):('')}"
+									size="20" maxlength="30" />
+
+								<aon:inputText id="desc" disabled="true"
+									value="#{(percepbasic.to.trabajador.persona.descripcion!=null)?(percepbasic.to.trabajador.persona.descripcion):('')}"
+									size="20" maxlength="30" />
+
+								<aon:inputText id="ape" disabled="true"
+									value="#{(percepbasic.to.trabajador.persona.apellido2!=null)?(percepbasic.to.trabajador.persona.apellido2):('')}"
+									size="20" maxlength="30" />
+							</aon:div>
+						</aon:panelGrid>
+					</aon:div>
+
+					<aon:div styleClass="aon-scroll-area">
+						<aon:panelGrid columns="4" dir="true" width="100%"
+							style="margin-bottom=2px;">
+
+							<aon:outputLabel for="Codigo_Complemento"
+								value="#{appBundle.aon_payroll_principales_personas_percep_cocom}" />
+							<aon:panelGroup>
+								<a4j:region>
+									<aon:lookupInputText id="Codigo_Complemento"
+										lookup="#{complementoLookup}" required="#{true}"
+										reRender="Percepcion_complemento_description"
+										value="#{percepbasic.to.complemento.cdg}" size="5">
+									</aon:lookupInputText>
+									<aon:lookupButton id="Percepcion_id_codcom_lookup"
+										windowTitle="#{appBundle.aon_payroll_auxiliares_convenios__aplic_comp}"
+										selectReRender="Percepcion_complemento_description,Codigo_Complemento"
+										lookup="#{complementoLookup}" minHeight="440"
+										actionType="search" 
+										property="#{percepbasic.to.complemento}">
+									</aon:lookupButton>
+									<aon:outputText id="Percepcion_complemento_description"
+										value="#{(percepbasic.to.complemento.description!=null)?(percepbasic.to.complemento.description):('')}"
+										size="34" disabled="true" />
+								</a4j:region>
+							</aon:panelGroup>
+							
+							<!--  
+							<aon:panelGroup>
+								<a4j:region>
+									<aon:lookupInputText id="Trabajador_cdg"
+										lookup="#{trabajadorLookup}"
+										required="#{true}"
+										reRender="act,acti,fec,desc,ape,nom,Trabajador_cdg,info_trabajador"
+										ajaxSingle="false" readonly="#{!percepbasic.new}"
+										value="#{percepbasic.to.trabajador.cdg}" size="5" />
+									<aon:lookupButton
+										disabled="#{!percepbasic.new}"
+										windowTitle="#{appBundle.aon_payroll_principales_personas_percep_trab}"
+										selectReRender="act,acti,fec,desc,ape,nom,Trabajador_cdg,info_trabajador"
+										actionType="search" lookup="#{trabajadorLookup}"
+										minHeight="460" minWidth="650"
+										property="#{percepbasic.to.trabajador}">
+									</aon:lookupButton>
+								</a4j:region>
+							</aon:panelGroup>
+							-->
+							
+							
+
+
+							<aon:outputLabel for="mes"
+								value="#{appBundle.aon_payroll_principales_personas_percep_mes}" />
+							<aon:inputText value="#{percepbasic.to.mes}" id="mes" size="10" required="true"
+								maxlength="6" />
+
+							<aon:outputLabel for="importe"
+								value="#{appBundle.aon_payroll_principales_personas_percep_import}" />
+							<aon:inputText id="importe" value="#{percepbasic.to.importe}" required="true"
+								size="10" maxlength="6" />
+
+							<aon:outputLabel for="calculo"
+								value="#{appBundle.aon_payroll_principales_personas_percep_cal}" />
+							<aon:inputText id="calculo" value="#{percepbasic.to.calculo}" 
+								size="10" maxlength="6" />
+
+							<aon:outputLabel for="tipo_cotizacion"
+								value="#{appBundle.aon_payroll_principales_personas_percep_tipo}" />
+							<aon:inputText id="tipo_cotizacion" value="#{percepbasic.to.tipcot}" 
+								size="10" maxlength="6" />
+
+							<aon:outputLabel for="garantizado_ilt"
+								value="#{appBundle.aon_payroll_principales_personas_percep_ilt}" />
+							<aon:inputText id="garantizado_ilt" value="#{percepbasic.to.garilt}" required="true"
+								size="10" maxlength="6" />
+
+
+							<aon:outputLabel for="tipo_complemento"
+								value="#{appBundle.aon_payroll_principales_personas_percep_tip}" />
+							<aon:selectOneMenu id="tipo_complemento" value="#{percepbasic.to.tipcom}">
+								<f:selectItem value="#{null}" itemLabel="  " />
+								<f:selectItems value="#{percepbasic.listaComplementos}" />
+							</aon:selectOneMenu>
+
+
+							<aon:outputLabel for="unidades"
+								value="#{appBundle.aon_payroll_principales_personas_percep_uds}" />
+							<aon:inputText id="unidades" value="#{percepbasic.to.unidades}" size="10" required="true"
+								maxlength="6" />
+
+
+							<aon:outputLabel for="importe_unitario"
+								value="#{appBundle.aon_payroll_principales_personas_percep_impuni}" />
+							<aon:inputText id="importe_unitario" value="#{percepbasic.to.impuni}" size="10" required="true"
+								maxlength="6" />
+
+							<aon:outputLabel for="Descripcion_complemento"
+								value="#{appBundle.aon_payroll_principales_personas_percep_desc}" />
+							<aon:inputText id="Descripcion_complemento" value="#{percepbasic.to.descom}" size="50" required="#{true}"
+								maxlength="40" />
+
+
+
+							<aon:outputLabel for="Descripcion_abreviada"
+								value="#{appBundle.aon_payroll_principales_personas_percep_descabre}" />
+							<aon:inputText id="Descripcion_abreviada" value="#{percepbasic.to.desabr}" size="50" required="#{true}"
+								maxlength="40" />
+
+							<aon:outputLabel for="Inicio_vigencia"
+								value="#{appBundle.aon_payroll_principales_personas_percep_fechaini}" />
+							<aon:selectInputDate id="Inicio_vigencia" renderAsPopup="true" required="#{true}"
+								popupDateFormat="#{appBundle.aon_date_pattern}"
+								value="#{percepbasic.to.fecini}" enableManualInput="true" />
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_personas_percep_fechafin}" />
+							<aon:selectInputDate renderAsPopup="true"
+								popupDateFormat="#{appBundle.aon_date_pattern}"
+								value="#{percepbasic.to.fecfin}" enableManualInput="true" />
+
+							<aon:outputLabel
+								value="#{appBundle.aon_payroll_principales_personas_percep_fecharet}" />
+							<aon:selectInputDate renderAsPopup="true"
+								popupDateFormat="#{appBundle.aon_date_pattern}"
+								value="#{percepbasic.to.fecret}" enableManualInput="true" />
+
+							<aon:outputLabel for="Percepcion_id_codcom1"
+								value="#{appBundle.aon_payroll_principales_personas_percep_comp}" />
+							<aon:panelGroup>
+								<a4j:region>
+									<aon:lookupInputText id="Percepcion_id_codcom1"
+										lookup="#{complementoLookup}" required="true"
+										reRender="Percepcion_complemento1_description"
+										value="#{percepbasic.to.complemento1.cdg}" size="5">
+									</aon:lookupInputText>
+									<aon:lookupButton id="Percepcion_id_codcom1_lookup"
+										windowTitle="#{appBundle.aon_payroll_principales_personas_percep_comp}"
+										selectReRender="Percepcion_complemento1_description,Percepcion_id_codcom1"
+										lookup="#{complementoLookup}" minHeight="440"
+										actionType="search"
+										property="#{percepbasic.to.complemento1}">
+									</aon:lookupButton>
+									<aon:outputText id="Percepcion_complemento1_description"
+										value="#{(percepbasic.to.complemento1.description!=null)?(percepbasic.to.complemento1.description):('')}"
+										size="34" disabled="true" />
+								</a4j:region>
+							</aon:panelGroup>
+						</aon:panelGrid>
+
+						<aon:panelGrid id="percep_right" columns="1" dir="true"
+							width="100%" style="margin-bottom=2px;">
+							<aon:panel>
+								<f:facet name="header">
+									<aon:outputLabel for="Indicador_complemento"
+										value="#{appBundle.aon_payroll_auxiliares_convenios__ind_comp}" />
+								</f:facet>
+								<aon:div styleClass="">
+									<aon:selectOneRadio id="Indicador_complemento" required="#{percepbasic.new}"
+										value="#{percepbasic.to.indcom}">
+										<f:selectItems value="#{percepbasic.listaIndiceComplemento}" />
+									</aon:selectOneRadio>
+								</aon:div>
+							</aon:panel>
+
+
+							<aon:panel>
+								<f:facet name="header">
+									<aon:outputLabel for="fijo_variable"
+										value="#{appBundle.aon_payroll_auxiliares_convenios__fijo_var}" />
+								</f:facet>
+								<aon:div styleClass="">
+									<aon:selectOneRadio id="fijo_variable" required="#{percepbasic.new}"
+										value="#{percepbasic.to.fijovar}">
+										<f:selectItems value="#{percepbasic.listaFijoVariable}" />
+									</aon:selectOneRadio>
+								</aon:div>
+							</aon:panel>
+
+							<aon:panel>
+								<f:facet name="header">
+									<aon:outputLabel for="Retribucion"
+										value="#{appBundle.aon_payroll_auxiliares_convenios__retrib}" />
+								</f:facet>
+								<aon:div styleClass="">
+									<aon:selectOneRadio id="Retribucion" required="#{percepbasic.new}"
+										value="#{percepbasic.to.dinesp}">
+										<f:selectItems value="#{percepbasic.listaRetribuciones}" />
+									</aon:selectOneRadio>
+								</aon:div>
+							</aon:panel>
+						</aon:panelGrid>
+
+
+					</aon:div>
+
+				</aon:div>
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{trabajadorLookup}" />
+		<aon:lookupButtonPopup lookup="#{complementoLookup}" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

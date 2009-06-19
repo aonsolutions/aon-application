@@ -1,0 +1,91 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich">
+
+<aon:div id="actDataDiv">
+
+	<aon:editDataTable id="actividadData" var="to" rows="3"
+						value="#{actividad.model}"
+						columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,">
+								
+								
+			 <aon:rowSelector 
+			 reRender="tabsInfo"  >
+			<aon:actionListener method="#{actividad.onSelect}" />
+			</aon:rowSelector>
+
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+
+					<h:commandButton alt="[#{bundle.aon_reset}]"
+						rendered="#{to==actividad.to}" 
+						styleClass="aon-editDataTable-button aon-icon-rowSelector "
+						action="actividad_form" />
+
+				<!--  	<aon:commandButton
+						styleClass="aon-editDataTable-button aon-icon-cancel"
+						rendered="#{to==actividad.to}" reRender="tabsInfo"
+						actionListener="#{actividad.onCancel}" immediate="true" />-->
+
+
+					<f:facet name="footer">
+						<aon:div>
+							<h:commandButton alt="[#{bundle.aon_reset}]"
+								styleClass="aon-editDataTable-button aon-icon-reset"
+								actionListener="#{empreact.onReset}"
+								action="actividad_form"
+								accesskey="#{bundle.aon_key_new_line}" />
+						</aon:div>
+					</f:facet>
+			</aon:column>
+
+			<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
+							</f:facet>
+							<aon:outputText value="#{to.cdg}"  />
+							
+						</aon:column>
+						
+						
+						<aon:column  >
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_principales_actividad_nombre}" />
+							</f:facet>
+							<aon:outputText value="#{to.descripcion}"  />
+							
+						</aon:column>
+					
+				 	
+						<aon:column  >
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_principales_actividad_con}" />
+							</f:facet>
+							<aon:outputText value="#{to.convenio.description}"  />
+							
+						</aon:column>
+					  
+					  
+						<aon:column  >
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_principales_actividad_regimen}" />
+							</f:facet>
+							<aon:outputText value="#{to.indregimen}"  />
+							
+						</aon:column>
+					  
+						
+						
+					</aon:editDataTable>
+					<aon:dataScroller2 for="actividadData" showNote="true" />
+	
+</aon:div>
+
+</ui:composition>

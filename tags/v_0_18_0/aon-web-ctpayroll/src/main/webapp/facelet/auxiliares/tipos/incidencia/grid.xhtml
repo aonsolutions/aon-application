@@ -1,0 +1,168 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="incidenciaGrid">
+	
+			<aon:div ajaxRendered="true" layout="none">
+				
+				<ui:include src="/facelet/templates/gridPrintToolbar.xhtml">
+					<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_tipos__tipinc}" />
+					<ui:param name="controller" value="#{tiposIncidencia}"/>
+					<ui:param name="reportKey" value="tiposIncidenciaList"/>
+					<aon:valueParam name="skipSearchButton" default="false" />
+					<aon:valueParam name="skipBackButton" default="false" />
+					<aon:methodParam name="backAction" value="auxiliares" />
+				</ui:include>
+	
+				<!-- region-body -->
+	 			<aon:div styleClass="aon-scroll-area">
+					
+					<aon:editDataTable id="incidenciaData" var="to" rows="20"
+						rendered="#{(tiposIncidencia.model.rowCount > 0) or (tiposIncidencia.new)}" value="#{tiposIncidencia.model}"
+						columnClasses="aon-editDataTable-iconColumn
+							, aon-editDataTable-textColumn, aon-editDataTable-textColumn
+							, aon-editDataTable-iconColumn, aon-editDataTable-iconColumn
+							, aon-editDataTable-buttonsColumn">
+								
+						<aon:rowSelector toggleOnClick="#{tiposIncidencia.to == null}"
+							actionListener="#{tiposIncidencia.onSelect}" />
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:outputText value="&#160;" />
+							<f:facet name="footer">
+								<aon:div>
+									<aon:commandButton alt="[#{bundle.aon_reset}]"
+										styleClass="aon-editDataTable-button aon-icon-reset"
+										actionListener="#{tiposIncidencia.onReset}" value=""
+										rendered="#{!tiposIncidencia.new}"
+										accesskey="#{bundle.aon_key_new_line}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
+							</f:facet>
+							<aon:outputText value="#{to.cdg}" rendered="#{to!=tiposIncidencia.to}" />
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==tiposIncidencia.to}" size="10"
+								value="#{tiposIncidencia.to.cdg}" maxlength="10" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{tiposIncidencia.new}" size="10" maxlength="10"
+									value="#{tiposIncidencia.to.cdg}" />
+							</f:facet>
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}" rendered="#{to!=tiposIncidencia.to}" />
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==tiposIncidencia.to}" size="25"
+								value="#{tiposIncidencia.to.description}" maxlength="25" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{tiposIncidencia.new}" size="25"
+									value="#{tiposIncidencia.to.description}" maxlength="25" />
+							</f:facet>
+						</aon:column>
+						
+						 <aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_indresta}" />
+							</f:facet>
+							<aon:outputText value="&#160;" 
+								styleClass="#{(to.indresta=='S')?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
+								rendered="#{to!=tiposIncidencia.to}" />
+							<aon:selectBooleanCheckbox rendered="#{to==tiposIncidencia.to}"
+									value="#{tiposIncidencia.to.indresta}" />
+							<f:facet name="footer">
+								<aon:selectBooleanCheckbox rendered="#{tiposIncidencia.new}"
+										value="#{tiposIncidencia.to.indrestabol}" />
+							</f:facet>
+						</aon:column>
+ 
+						 <aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_inddto}" />
+							</f:facet>
+							<aon:outputText value="&#160;" 
+								styleClass="#{(to.inddto=='S')?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
+								rendered="#{to!=tiposIncidencia.to}" />
+							<aon:selectBooleanCheckbox rendered="#{to==tiposIncidencia.to}"
+									value="#{tiposIncidencia.to.inddtobol}" />
+							<f:facet name="footer">
+								<aon:selectBooleanCheckbox rendered="#{tiposIncidencia.new}"
+										value="#{tiposIncidencia.to.inddtobol}" />
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:div>
+								<f:verbatim rendered="#{to!=tiposIncidencia.to}">&#160;</f:verbatim>
+								<aon:commandButton id="acceptEdit-Scope" title="[#{bundle.aon_accept}]" 
+									rendered="#{to==tiposIncidencia.to}"
+									styleClass="aon-editDataTable-button aon-icon-accept"
+									actionListener="#{tiposIncidencia.onAccept}"
+									accesskey="#{bundle.aon_key_save_line}" />
+								<aon:commandButton title="[#{bundle.aon_cancel}]"
+									styleClass="aon-editDataTable-button aon-icon-cancel"
+									rendered="#{to==tiposIncidencia.to}"
+									actionListener="#{tiposIncidencia.onCancel}" immediate="true"
+									accesskey="#{bundle.aon_key_cancel_line}" />
+								<aon:confirmButton title="[#{bundle.aon_remove}]"
+									styleClass="aon-editDataTable-button aon-icon-delete"
+									rendered="#{to==tiposIncidencia.to}"
+									confirmTitle="#{bundle.aon_confirm_title}" 
+									confirmMessage="#{bundle.aon_remove_confirm}"
+									confirmActionListener="#{tiposIncidencia.onRemove}" immediate="true"
+									accesskey="#{bundle.aon_key_remove_line}" />								
+							</aon:div>
+							<f:facet name="footer">
+								<aon:div>
+									<f:verbatim rendered="#{!tiposIncidencia.new}">&#160;</f:verbatim>
+									<aon:commandButton title="[#{bundle.aon_accept}]" 
+										styleClass="aon-editDataTable-button aon-icon-accept"
+										rendered="#{tiposIncidencia.new}"
+										actionListener="#{tiposIncidencia.onAccept}"
+										accesskey="#{bundle.aon_key_save_line}" />
+									<aon:confirmButton title="[#{bundle.aon_cancel}]"
+										styleClass="aon-editDataTable-button aon-icon-cancel"
+										rendered="#{tiposIncidencia.new}"
+										confirmTitle="#{bundle.aon_confirm_title}" 
+										confirmMessage="#{bundle.aon_cancel_confirm}"
+										confirmActionListener="#{tiposIncidencia.onCancel}" immediate="true"
+										accesskey="#{bundle.aon_key_cancel_line}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+						
+					</aon:editDataTable>
+					<aon:dataScroller2 for="incidenciaData" showNote="true" />
+				</aon:div>
+			</aon:div>
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
+<body>
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="minoracionesGrid">
+
+			<aon:div ajaxRendered="true" layout="none">
+
+				<ui:include src="/facelet/templates/gridPrintToolbar.xhtml">
+					<ui:param name="toolbarTitle"
+						value="#{menuBundle.auxiliares_irpf_foral__minor_01}" />
+					<ui:param name="controller" value="#{minoracionesAlava}" />
+					<ui:param name="reportKey" value="MinoracionesAlavaList" />
+					<aon:valueParam name="skipSearchButton" default="false" />
+					<aon:valueParam name="skipBackButton" default="false" />
+					<aon:methodParam name="backAction" value="auxiliares" />
+				</ui:include>
+
+				<!-- region-body -->
+				<aon:div styleClass="aon-scroll-area">
+
+					<aon:editDataTable id="minoracionesAlavaData" var="to" rows="20"
+						rendered="#{(minoracionesAlava.model.rowCount > 0) or (minoracionesAlava.new)}"
+						value="#{minoracionesAlava.model}"
+						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-numberColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn, aon-editDataTable-buttonsColumn">
+
+						<aon:rowSelector toggleOnClick="#{minoracionesAlava.to == null}"
+							actionListener="#{minoracionesAlava.onSelect}" />
+
+						<f:facet name="header">
+							<rich:columnGroup>
+								<rich:column colspan="2">
+									<rich:spacer />
+								</rich:column>
+								<rich:column colspan="2">
+									<aon:outputText
+										value="#{appBundle.aon_payroll_auxiliares_irpf_foral__minor_01_vigencia}" />
+								</rich:column>
+								<rich:column colspan="2">
+									<aon:outputText
+										value="#{appBundle.aon_payroll_auxiliares_irpf_foral__minor_01_importe}" />
+								</rich:column>
+								<rich:column colspan="3">
+									<aon:outputText
+										value="#{appBundle.aon_payroll_auxiliares_irpf_foral__minor_01_minusvalia}" />
+								</rich:column>
+								<rich:column colspan="1">
+									<rich:spacer />
+								</rich:column>
+							</rich:columnGroup>
+						</f:facet>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:outputText value="&#160;" />
+							<f:facet name="footer">
+								<aon:div>
+									<aon:commandButton alt="[#{bundle.aon_reset}]"
+										styleClass="aon-editDataTable-button aon-icon-reset"
+										actionListener="#{minoracionesAlava.onReset}" value=""
+										rendered="#{!minoracionesAlava.new}"
+										accesskey="#{bundle.aon_key_new_line}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_tramo}" />
+							</f:facet>
+							<aon:outputText value="#{to.id.numTramo}"
+								rendered="#{to!=minoracionesAlava.to}" />
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								requiredMessage="numTramo"
+								rendered="#{to==minoracionesAlava.to}" size="2"
+								value="#{minoracionesAlava.to.id.numTramo}" maxlength="2" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{minoracionesAlava.new}" size="2"
+									value="#{minoracionesAlava.to.id.numTramo}" maxlength="2"
+									requiredMessage="numTramo" />
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{appBundle.aon_payroll_auxiliares_irpf_foral__minor_01_fecini}" />
+							</f:facet>
+							<aon:outputText value="#{to.id.fecini}"
+								rendered="#{to!=minoracionesAlava.to}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+							<aon:selectInputDate required="true" requiredMessage="fecini"
+								inputSize="10" rendered="#{to==minoracionesAlava.to}"
+								value="#{minoracionesAlava.to.id.fecini}" renderAsPopup="true"
+								popupDateFormat="#{appBundle.aon_date_pattern}">
+							</aon:selectInputDate>
+							<f:facet name="footer">
+								<aon:selectInputDate required="true" requiredMessage="fecini"
+									inputSize="10" rendered="#{minoracionesAlava.new}"
+									value="#{minoracionesAlava.to.id.fecini}" renderAsPopup="true"
+									popupDateFormat="#{appBundle.aon_date_pattern}">
+								</aon:selectInputDate>
+
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{appBundle.aon_payroll_auxiliares_irpf_foral__minor_01_fecfin}" />
+							</f:facet>
+							<aon:outputText value="#{to.fecfin}"
+								rendered="#{to!=minoracionesAlava.to}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+							<aon:selectInputDate required="true" requiredMessage="fecfin"
+								inputSize="10" rendered="#{to==minoracionesAlava.to}"
+								value="#{minoracionesAlava.to.fecfin}" renderAsPopup="true"
+								popupDateFormat="#{appBundle.aon_date_pattern}">
+							</aon:selectInputDate>
+							<f:facet name="footer">
+								<aon:selectInputDate required="true" requiredMessage="fecfin"
+									inputSize="10" rendered="#{minoracionesAlava.new}"
+									value="#{minoracionesAlava.to.fecfin}" renderAsPopup="true"
+									popupDateFormat="#{appBundle.aon_date_pattern}">
+								</aon:selectInputDate>
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{appBundle.aon_payroll_auxiliares_irpf_foral__minor_01_desdeimporte}" />
+							</f:facet>
+							<aon:outputText value="#{to.desdeImporte}"
+								rendered="#{to!=minoracionesAlava.to}">
+								<f:convertNumber type="number" pattern="###,###.###" />
+							</aon:outputText>
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								requiredMessage="hasta" rendered="#{to==minoracionesAlava.to}"
+								size="11" value="#{minoracionesAlava.to.desdeImporte}"
+								maxlength="11" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									requiredMessage="hasta" rendered="#{minoracionesAlava.new}"
+									size="11" value="#{minoracionesAlava.to.desdeImporte}"
+									maxlength="11" />
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{appBundle.aon_payroll_auxiliares_irpf_foral__minor_01_hastaimporte}" />
+							</f:facet>
+							<aon:outputText value="#{to.hastaImporte}"
+								rendered="#{to!=minoracionesAlava.to}">
+								<f:convertNumber type="number" pattern="###,###.###" />
+							</aon:outputText>
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								requiredMessage="hasta" rendered="#{to==minoracionesAlava.to}"
+								size="11" value="#{minoracionesAlava.to.hastaImporte}"
+								maxlength="11" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									requiredMessage="hasta" rendered="#{minoracionesAlava.new}"
+									size="11" value="#{minoracionesAlava.to.hastaImporte}"
+									maxlength="11" />
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{appBundle.aon_payroll_auxiliares_irpf_foral__minor_01_minMinus}" />
+							</f:facet>
+							<aon:outputText value="#{to.minMinus}"
+								rendered="#{to!=minoracionesAlava.to}">
+								<f:convertNumber minFractionDigits="2" />
+							</aon:outputText>
+							<aon:inputText id="minminup" styleClass="aon-form-input-text"
+								rendered="#{to==minoracionesAlava.to}" size="5"
+								value="#{minoracionesAlava.to.minMinus}" maxlength="5">
+								<f:validator validatorId="porcentajeValidator" />
+							</aon:inputText>
+							<f:facet name="footer">
+								<aon:inputText id="minminnew" styleClass="aon-form-input-text"
+									rendered="#{minoracionesAlava.new}" size="5"
+									value="#{minoracionesAlava.to.minMinus}" maxlength="5">
+									<f:validator validatorId="porcentajeValidator" />
+								</aon:inputText>
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{appBundle.aon_payroll_auxiliares_irpf_foral__minor_01_minAyuda}" />
+							</f:facet>
+							<aon:outputText value="#{to.minAyuda}"
+								rendered="#{to!=minoracionesAlava.to}">
+								<f:convertNumber minFractionDigits="2" />
+							</aon:outputText>
+							<aon:inputText id="minayuup" styleClass="aon-form-input-text"
+								rendered="#{to==minoracionesAlava.to}" size="5"
+								value="#{minoracionesAlava.to.minAyuda}" maxlength="5">
+								<f:validator validatorId="porcentajeValidator" />
+							</aon:inputText>
+							<f:facet name="footer">
+								<aon:inputText id="minayunew" styleClass="aon-form-input-text"
+									rendered="#{minoracionesAlava.new}" size="5"
+									value="#{minoracionesAlava.to.minAyuda}" maxlength="5">
+									<f:validator validatorId="porcentajeValidator" />
+								</aon:inputText>
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{appBundle.aon_payroll_auxiliares_irpf_foral__minor_01_minGranminus}" />
+							</f:facet>
+							<aon:outputText value="#{to.minGranminus}"
+								rendered="#{to!=minoracionesAlava.to}">
+								<f:convertNumber minFractionDigits="2" />
+							</aon:outputText>
+							<aon:inputText id="mingramup" styleClass="aon-form-input-text"
+								rendered="#{to==minoracionesAlava.to}" size="5"
+								value="#{minoracionesAlava.to.minGranminus}" maxlength="5">
+								<f:validator validatorId="porcentajeValidator" />
+							</aon:inputText>
+							<f:facet name="footer">
+								<aon:inputText id="mingramnew" styleClass="aon-form-input-text"
+									rendered="#{minoracionesAlava.new}" size="5"
+									value="#{minoracionesAlava.to.minGranminus}" maxlength="5">
+									<f:validator validatorId="porcentajeValidator" />
+								</aon:inputText>
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:div>
+								<f:verbatim rendered="#{to!=minoracionesAlava.to}">&#160;</f:verbatim>
+								<aon:commandButton id="acceptEdit-Scope"
+									title="[#{bundle.aon_accept}]"
+									rendered="#{to==minoracionesAlava.to}"
+									styleClass="aon-editDataTable-button aon-icon-accept"
+									actionListener="#{minoracionesAlava.onAccept}"
+									accesskey="#{bundle.aon_key_save_line}" />
+								<aon:commandButton title="[#{bundle.aon_cancel}]"
+									styleClass="aon-editDataTable-button aon-icon-cancel"
+									rendered="#{to==minoracionesAlava.to}"
+									actionListener="#{minoracionesAlava.onCancel}" immediate="true"
+									accesskey="#{bundle.aon_key_cancel_line}" />
+								<aon:confirmButton title="[#{bundle.aon_remove}]"
+									styleClass="aon-editDataTable-button aon-icon-delete"
+									rendered="#{to==minoracionesAlava.to}"
+									confirmTitle="#{bundle.aon_confirm_title}"
+									confirmMessage="#{bundle.aon_remove_confirm}"
+									confirmActionListener="#{minoracionesAlava.onRemove}"
+									immediate="true" accesskey="#{bundle.aon_key_remove_line}" />
+							</aon:div>
+							<f:facet name="footer">
+								<aon:div>
+									<f:verbatim rendered="#{!minoracionesAlava.new}">&#160;</f:verbatim>
+									<aon:commandButton title="[#{bundle.aon_accept}]"
+										styleClass="aon-editDataTable-button aon-icon-accept"
+										rendered="#{minoracionesAlava.new}"
+										actionListener="#{minoracionesAlava.onAccept}"
+										accesskey="#{bundle.aon_key_save_line}" />
+									<aon:confirmButton title="[#{bundle.aon_cancel}]"
+										styleClass="aon-editDataTable-button aon-icon-cancel"
+										rendered="#{minoracionesAlava.new}"
+										confirmTitle="#{bundle.aon_confirm_title}"
+										confirmMessage="#{bundle.aon_cancel_confirm}"
+										confirmActionListener="#{minoracionesAlava.onCancel}"
+										immediate="true" accesskey="#{bundle.aon_key_cancel_line}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+
+					</aon:editDataTable>
+					<aon:dataScroller2 for="minoracionesAlavaData" showNote="true" />
+				</aon:div>
+			</aon:div>
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>
+</body>
+</html>
