@@ -8,7 +8,7 @@ import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
-import com.code.aon.product.Tariff;
+import com.code.aon.config.Tariff;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
