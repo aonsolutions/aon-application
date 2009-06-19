@@ -1,5 +1,7 @@
 package com.code.aon.ui.cms.tree;
 
+import java.io.File;
+
 import com.code.aon.ui.cms.controller.GalleryController;
 import com.code.aon.ui.cms.controller.ICMSConstants;
 import com.code.aon.ui.cms.util.ControllerUtil;
@@ -23,9 +25,9 @@ public class FileSystemBean implements ICMSConstants {
         return srcRoots;
     }
 
-	public void setSelected(FileSystemNode fileSystemNode) {
+	public void setSelected(File path) {
 		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean(current); 
-		controller.setCurrentPath(fileSystemNode.getPath());
+		controller.setCurrentPath(path);
 		controller.chargeImageList();
 	}
 

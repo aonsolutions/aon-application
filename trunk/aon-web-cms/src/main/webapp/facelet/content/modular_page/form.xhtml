@@ -12,87 +12,29 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 		<aon:form id="modular">
-			<aon:div id="buttonsMain" styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid columns="3" dir="true" 
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+		
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.modular_page}" />
+				<ui:param name="controller" value="#{modular_page}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
 				
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.modular_page}"/>	  						
-					</aon:div>					
-					
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{modular_page.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-					</aon:div>					
-						
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">					
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							rendered="#{!modular_page.new and cms.roleEditor}"
-							action="modular_page_form"
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}">
-							<aon:actionListener method="#{modular_page.onReset}" />
-						</aon:commandButton>
-						<aon:commandButton id="save"
-							value="#{bundle.aon_save}" 
-							rendered="#{modular_page.to!=null or modular_page.new}"
-							reRender="modular"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}">
-							<aon:actionListener method="#{modular_page.accept}" />
-						</aon:commandButton>
-						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" 
-							rendered="#{!modular_page.new and !modular_page.to.homepage and cms.roleEditor}" 
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-delete"
-							confirmTitle="Confirmation Dialog" 
-							confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{modular_page.onRemove}"
-							confirmAction="modular_page_list"
-							accesskey="#{bundle.aon_key_remove}"/>
-						<aon:commandButton id="search" 
-							value="#{bundle.aon_search}"
-							immediate="#{true}"
-							action="modular_page_search"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}">
-							<aon:actionListener method="#{modular_page.onEditSearch}" />
-						</aon:commandButton>
-						<aon:commandButton id="list"
-							value="#{bundle.aon_list}"
-							action="modular_page_list" 
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}">
-							<aon:actionListener method="#{modular_page.onCancel}" />
-						</aon:commandButton>
-						<aon:commandButton id="home"
-							value="#{bundle.aon_home}"
-							action="home" 
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}">
-							<aon:actionListener method="#{modular_page.onCancel}" />
-						</aon:commandButton>
-						<aon:commandButton id="generate_modular" reRender="aonStatus"
-							value="#{appBundle.aon_generate}" 
-							rendered="#{modular_page.to!=null and cms.roleEditor}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}">
-							<aon:actionListener method="#{generator.onGenerateCurrentModular}" />
-							<a4j:support 
-								event="onclick" reRender="poll,grid" 
-								actionListener="#{generator_status.onActivePoll}"  
-								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
-						</aon:commandButton>
-					</aon:div>
-					
-					<!-- end toolbar navigation -->
-				</aon:panelGrid>
-			</aon:div>
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="generate_modular" reRender="aonStatus"
+						value="#{appBundle.aon_generate}" 
+						rendered="#{modular_page.to!=null and (!modular_page.new) and cms.roleEditor}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_save}">
+						<aon:actionListener method="#{generator.onGenerateCurrentModular}" />
+						<a4j:support 
+							event="onclick" reRender="poll,grid" 
+							actionListener="#{generator_status.onActivePoll}"  
+							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+					</aon:commandButton>
+				</ui:define>				
+			</ui:decorate>		
+		
 			
 			<aon:div id="mainForm" styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2" dir="true">

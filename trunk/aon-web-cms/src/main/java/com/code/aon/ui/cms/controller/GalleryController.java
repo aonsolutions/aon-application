@@ -12,7 +12,9 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
@@ -127,18 +129,19 @@ public abstract class GalleryController extends BasicController implements IGall
 	}
 
 	public void createFolder( ActionEvent event ) throws IOException {
-		if (folderName!=null){
-			String folder = File.separator+getFolderName();
-			File file = new File( currentPath+File.separator+folder);
+		if (! StringUtils.isEmpty(folderName) ){
+			File file = new File( currentPath, folderName );
 			if (!file.exists()){
 				file.mkdir();
 			}
+			setCurrentPath( file );
+			chargeImageList();			
 			folderName = null;
 		}
 	}
 
 	public void deleteFolder( ActionEvent event ) throws IOException {
-		currentPath.delete();
+		FileUtils.deleteDirectory(currentPath);
 		currentPath = recoverFilesPath();
 		chargeImageList();
 	}
