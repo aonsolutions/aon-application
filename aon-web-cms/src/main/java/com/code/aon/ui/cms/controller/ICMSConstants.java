@@ -37,6 +37,7 @@ public interface ICMSConstants {
 	DOWNLOAD_CATEGORY			= "download_category",
 	FAQ							= "faq",
 	FAQ_CATEGORY				= "faq_category",
+	FILE_SYSTEM_BEAN			= "fileSystemBean",
 	FOOTER						= "footer",
 	FOOTER_BANNNER_CATEGORY		= "footer_banner_category",
 	GALLERY						= "gallery",

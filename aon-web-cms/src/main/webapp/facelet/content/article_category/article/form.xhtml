@@ -49,22 +49,17 @@
 				<aon:panelTabSet selectedTab="#{article.selectedTab}">
  
 					<aon:panelTab id="content" label="#{appBundle.aon_content}">
-						<c:if test="#{(article.selectedTab == null) or (article.selectedTab == 'content')}" >
-							<ui:include src="/facelet/content/article_category/article/formContent.xhtml" />
-						</c:if>
+						<ui:include src="/facelet/content/article_category/article/formContent.xhtml" />
 					</aon:panelTab>
 
-					<aon:panelTab id="article_related" label="#{appBundle.article_related_list}">
-						<c:if test="#{article.selectedTab == 'article_related'}" >
-							<ui:include src="/facelet/content/article_category/article/gridArticleRelated.xhtml" />
-						</c:if>													
+					<aon:panelTab id="article_related"
+						rendered="#{!article.new}" label="#{appBundle.article_related_list}">
+						<ui:include src="/facelet/content/article_category/article/gridArticleRelated.xhtml" />												
 					</aon:panelTab>
 
-
-					<aon:panelTab id="document_related" label="#{appBundle.document_related_list}">
-						<c:if test="#{article.selectedTab == 'document_related'}" >
-							<ui:include src="/facelet/content/article_category/article/gridDocumentRelated.xhtml" />
-						</c:if>
+					<aon:panelTab id="document_related"
+						rendered="#{!article.new}" label="#{appBundle.document_related_list}">
+						<ui:include src="/facelet/content/article_category/article/gridDocumentRelated.xhtml" />
 					</aon:panelTab>
 
 				</aon:panelTabSet>		

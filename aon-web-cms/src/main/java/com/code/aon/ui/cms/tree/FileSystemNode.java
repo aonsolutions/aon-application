@@ -38,7 +38,7 @@ public class FileSystemNode {
 	}
 
 	public void onSelectFolder(){
-		bean_.setSelected(this);
+		bean_.setSelected( getPath() );
     }
 
 	@Override
