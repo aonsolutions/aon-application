@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+	
+	<ui:define name="content">
+
+		<aon:form id="mutuaMaestroSearch">
+			
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__mutua}" />
+				<ui:param name="controller" value="#{mutuaMaestro}" />
+				<ui:param name="skipResetButton" value="true" />
+			</ui:decorate>
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener" value="#{mutuaMaestro.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="mutuaMaestro_list" />				
+				
+					<aon:outputLabel for="Mutua_cdg"
+						value="#{appBundle.aon_payroll_cdg}" />
+					<aon:inputText id="Mutua_cdg" size="10" maxlength="8"
+						valueChangeListener="#{mutuaMaestro.addExpression}" />
+
+					<aon:outputLabel for="Mutua_description"
+						value="#{appBundle.aon_payroll_description}" />
+					<aon:inputText id="Mutua_description" size="60" maxlength="50"
+						valueChangeListener="#{mutuaMaestro.addExpression}" />
+					 	 
+					<aon:outputLabel for="Mutua_mutuas_id_fecini"
+						value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__mutua_ini}" />
+					<aon:selectInputDate id="Mutua_mutuas_id_fecini" 
+						inputSize="10" renderAsPopup="true"
+						value="#{mutuaMaestro.searchFecini}" 
+						popupDateFormat="#{appBundle.aon_date_pattern}">
+					</aon:selectInputDate>
+					
+					<aon:outputLabel for="Mutua_mutuas_fecfin"
+						value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__mutua_fin}" />
+					<aon:selectInputDate id="Mutua_mutuas_fecfin" 
+						inputSize="10" renderAsPopup="true"
+						value="#{mutuaMaestro.searchFecfin}" 
+						popupDateFormat="#{appBundle.aon_date_pattern}">
+					</aon:selectInputDate>
+					
+					<aon:outputLabel for="Mutua_mutuas_prcacctrab"
+						value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__mutua_acc}" />
+					<aon:inputText id="Mutua_mutuas_prcacctrab" size="60" maxlength="50"
+						valueChangeListener="#{mutuaMaestro.addDirectExpression}" />
+					
+					<aon:outputLabel for="Mutua_mutuas_prcit"
+						value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__mutua_it}" />
+					<aon:inputText id="Mutua_mutuas_prcit" size="60" maxlength="50"
+						valueChangeListener="#{mutuaMaestro.addDirectExpression}" />
+					
+				</ui:define>
+			</ui:decorate>
+
+		</aon:form>
+	</ui:define>
+		
+</ui:composition>

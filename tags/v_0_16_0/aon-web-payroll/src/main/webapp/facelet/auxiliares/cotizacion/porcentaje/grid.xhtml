@@ -1,0 +1,176 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div>
+		<aon:editDataTable id="porcentajeData" value="#{porcentaje.model}" 
+			var="to" rows="0"
+			rendered="#{(porcentaje.model.rowCount > 0) or (porcentaje.new)}" 
+			columnClasses="aon-editDataTable-iconColumn
+				, aon-editDataTable-dateColumn, aon-editDataTable-dateColumn
+				, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn
+				, aon-editDataTable-buttonsColumn">
+					
+			<aon:rowSelector toggleOnClick="#{porcentaje.to == null}" actionListener="#{porcentaje.onSelect}" />
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:outputText value="&#160;" />
+				<f:facet name="footer">
+					<aon:div>
+						<aon:commandButton alt="[#{bundle.aon_reset}]"
+							styleClass="aon-editDataTable-button aon-icon-reset"
+							actionListener="#{porcentaje.onReset}" value=""
+							rendered="#{!porcentaje.new}"
+							accesskey="#{bundle.aon_key_new_line}" />
+					</aon:div>
+					
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_cotizacion_fecini}" />
+				</f:facet>
+				<aon:outputText value="#{to.id.fecini}" rendered="#{to!=porcentaje.to}" >
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				<aon:selectInputDate value="#{porcentaje.to.id.fecini}"
+					rendered="#{to==porcentaje.to}" disabled="#{to==porcentaje.to}"
+					renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+				</aon:selectInputDate>
+				<f:facet name="footer">
+					<aon:selectInputDate value="#{porcentaje.to.id.fecini}"
+						rendered="#{porcentaje.new}"
+						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_cotizacion_fecfin}" />
+				</f:facet>
+				<aon:outputText value="#{to.fecfin}" rendered="#{to!=porcentaje.to}" >
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				<aon:selectInputDate value="#{porcentaje.to.fecfin}"
+					rendered="#{to==porcentaje.to}"
+					renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+				</aon:selectInputDate>
+				<f:facet name="footer">
+					<aon:selectInputDate value="#{porcentaje.to.fecfin}"
+						rendered="#{porcentaje.new}"
+						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_cotizacion_empresa}" />
+				</f:facet>
+				<aon:outputText value="#{to.pctemp}" rendered="#{to!=porcentaje.to}" >
+					<f:convertNumber minFractionDigits="2" />
+				</aon:outputText>
+				<aon:inputText id="pctemp_edit" styleClass="aon-form-input-text"
+					rendered="#{to==porcentaje.to}" 
+					value="#{porcentaje.to.pctemp}" maxlength="8" size="10" 
+					validator="#{porcentaje.validatePercent}" />
+				<f:facet name="footer">
+					<aon:inputText id="pctemp_new" styleClass="aon-form-input-text"  
+						rendered="#{porcentaje.new}" 
+						value="#{porcentaje.to.pctemp}" maxlength="8" size="10" 
+						validator="#{porcentaje.validatePercent}" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_cotizacion_trabajador}" />
+				</f:facet>
+				<aon:outputText value="#{to.pcttra}" rendered="#{to!=porcentaje.to}" >
+					<f:convertNumber minFractionDigits="2" />
+				</aon:outputText>
+				<aon:inputText id="pcttra_edit" styleClass="aon-form-input-text"
+					rendered="#{to==porcentaje.to}" 
+					value="#{porcentaje.to.pcttra}" maxlength="8" size="10"
+					validator="#{porcentaje.validatePercent}" />
+				<f:facet name="footer">
+					<aon:inputText id="pcttra_new" styleClass="aon-form-input-text"  
+						rendered="#{porcentaje.new}" 
+						value="#{porcentaje.to.pcttra}" maxlength="8" size="10"
+						validator="#{porcentaje.validatePercent}" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_cotizacion_total}" />
+				</f:facet>
+				<aon:outputText value="#{to.pcttot}" rendered="#{to!=porcentaje.to}" >
+					<f:convertNumber minFractionDigits="2" />
+				</aon:outputText>
+				<aon:inputText styleClass="aon-form-input-text"
+					rendered="#{to==porcentaje.to}" 
+					value="#{porcentaje.to.pcttot}" maxlength="8" size="10" />
+				<f:facet name="footer">
+					<aon:inputText styleClass="aon-form-input-text"  
+						rendered="#{porcentaje.new}" 
+						value="#{porcentaje.to.pcttot}" maxlength="8" size="10"/>
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:div>
+					<f:verbatim rendered="#{to!=porcentaje.to}">&#160;</f:verbatim>
+					<aon:commandButton title="[#{bundle.aon_accept}]" 
+						rendered="#{to==porcentaje.to}"
+						styleClass="aon-editDataTable-button aon-icon-accept"
+						actionListener="#{porcentaje.onAccept}"
+						accesskey="#{bundle.aon_key_save_line}" />
+					<aon:commandButton title="[#{bundle.aon_cancel}]"
+						styleClass="aon-editDataTable-button aon-icon-cancel"
+						rendered="#{to==porcentaje.to}"
+						actionListener="#{porcentaje.onCancel}" immediate="true"
+						accesskey="#{bundle.aon_key_cancel_line}" />
+					<aon:confirmButton id="remove-Porcentaje" title="[#{bundle.aon_remove}]"
+						styleClass="aon-editDataTable-button aon-icon-delete"
+						rendered="#{to==porcentaje.to}"
+						confirmTitle="#{bundle.aon_confirm_title}" 
+						confirmMessage="#{bundle.aon_remove_confirm}"
+						confirmActionListener="#{porcentaje.onRemove}" immediate="true"
+						accesskey="#{bundle.aon_key_remove_line}" />								
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div>
+						<f:verbatim rendered="#{!porcentaje.new}">&#160;</f:verbatim>
+						<aon:commandButton title="[#{bundle.aon_accept}]" 
+							styleClass="aon-editDataTable-button aon-icon-accept"
+							rendered="#{porcentaje.new}"
+							actionListener="#{porcentaje.onAccept}"
+							accesskey="#{bundle.aon_key_save_line}" />
+						<aon:confirmButton id="cancel-Porcentaje" title="[#{bundle.aon_cancel}]"
+							styleClass="aon-editDataTable-button aon-icon-cancel"
+							rendered="#{porcentaje.new}"
+							confirmTitle="#{bundle.aon_confirm_title}" 
+							confirmMessage="#{bundle.aon_cancel_confirm}"
+							confirmActionListener="#{porcentaje.onCancel}" immediate="true"
+							accesskey="#{bundle.aon_key_cancel_line}" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+			
+		</aon:editDataTable>
+	</aon:div>
+
+</ui:composition>

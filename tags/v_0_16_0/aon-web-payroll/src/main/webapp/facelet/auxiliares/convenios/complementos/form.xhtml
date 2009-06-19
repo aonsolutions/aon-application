@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="complementoForm">
+			
+			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_convenios__complemento}" />				
+				<ui:param name="controller" value="#{complemento}" />
+				<ui:param name="reportKey" value="convenioComplementoList"/>
+			</ui:include>
+
+			<aon:div id="complemento" styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2" dir="true" width="100%" style="margin-bottom=2px;">
+					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_cdg}" />
+					<aon:inputText id="Codigo" value="#{complemento.to.cdg}" disabled="#{!complemento.new}" 
+						required="true" size="1" maxlength="2" />
+					
+					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_tipcot}" />
+					<aon:selectOneMenu id="TipoCotizacion" value="#{complemento.to.tipcot}" >
+						<f:selectItem value="#{null}" itemLabel=" -  " />
+						<f:selectItems value="#{complemento.listaCotizaciones}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_description}" />
+					<aon:inputText id="Descripcion" value="#{complemento.to.description}" 
+						size="50" maxlength="50" />
+						
+					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_desabr}" />
+					<aon:inputText id="DescripcionAbreviada" value="#{complemento.to.desabr}"  
+						size="20" maxlength="15" />
+						
+					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_tipcom}" />
+					<aon:selectOneMenu id="TipoComplemento" value="#{complemento.to.tipcom}" >	
+						<f:selectItem value="#{null}" itemLabel=" -  " />											
+						<f:selectItems value="#{complemento.listaComplementos}"/>
+					</aon:selectOneMenu>
+
+					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_dinesp}" />
+					<aon:selectOneRadio id="Retribucion" value="#{complemento.to.dinesp}" >	
+						<f:selectItems value="#{complemento.listaRetribuciones}"/>											
+					</aon:selectOneRadio>
+					
+					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_fijovar}" />
+					<aon:selectOneRadio id="FijoVariable" value="#{complemento.to.fijovar}" >	
+						<f:selectItems value="#{complemento.listaFijoVariable}"/>											
+					</aon:selectOneRadio>
+					
+					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_indcom}" />
+					<aon:selectOneRadio id="IndComplemento" value="#{complemento.to.indcom}" >	
+						<f:selectItems value="#{complemento.listaIndiceComplemento}"/>											
+					</aon:selectOneRadio>
+					
+				</aon:panelGrid>
+
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

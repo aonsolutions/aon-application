@@ -1,0 +1,39 @@
+/*************************/
+/******  EDITTABLE  ******/
+/*************************/
+.aon-editDataTable-dateColumn{
+	width:auto;
+	text-align:center;
+	}
+/*************************/
+/*******  ICONS  *********/
+/*************************/	
+.aon-icon-pdf{
+	background:transparent url(../images/aon-icon-pdf-file.png) scroll left center no-repeat;
+}
+
+.aon-icon-excel{
+	background:transparent url(../images/aon-icon-excel-file.png) scroll left center no-repeat;
+}
+
+.aon-icon-csv{
+	background:transparent url(../images/aon-icon-csv-file.png) scroll left center no-repeat;
+}
+
+.aon-portlets-column{
+	vertical-align:top;
+	padding: 0 5px;
+	}
+	
+.aon-direct-access-list{
+	margin:0;
+	padding:0;
+	list-style-type:none;
+	display:block;
+	width:100%;
+}
+.aon-direct-access-list div{
+ 	background:transparent url(../images/aon-ul-list.png) scroll left 6px no-repeat;
+ 	padding:5px 0 5px 12px;
+ 	border-bottom:#f2f2f2 1px solid;
+}
