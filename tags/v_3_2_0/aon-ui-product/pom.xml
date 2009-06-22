@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>com.code.aon</groupId>
+		<artifactId>aon.parent</artifactId>
+		<version>1.0.1</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.code.aon</groupId>
+	<artifactId>aon.ui.product</artifactId>
+	<version>3.2.0</version>
+	<description>AON UI PRODUCT</description>
+	<name>AON UI PRODUCT</name>
+	<dependencies>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.form</artifactId>
+			<version>3.4.1</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.company</artifactId>
+			<version>3.2.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.config</artifactId>
+			<version>3.4.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.product</artifactId>
+			<version>3.2.4</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.account</artifactId>
+			<version>3.4.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.config</artifactId>
+			<version>3.7.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.4</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.faces</groupId>
+			<artifactId>jsf-api</artifactId>
+			<version>1.2_02</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+</project>

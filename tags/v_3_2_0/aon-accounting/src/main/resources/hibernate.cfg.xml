@@ -1,0 +1,55 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+	<session-factory>
+
+		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon-dini-es?autoReconnect=true</property>		
+		<property name="connection.username">dbuser</property>		
+		<property name="show_sql">true</property>		
+		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
+		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
+		<property name="connection.password">serubd2000</property>		
+
+		<!-- Mapping files -->
+		<mapping class="com.code.aon.accounting.AccountBudget"/>
+		<mapping class="com.code.aon.accounting.AutoConcept"/>
+		<mapping class="com.code.aon.accounting.AccountEntry"/>
+		<mapping class="com.code.aon.accounting.AccountEntryDetail"/>
+		<mapping class="com.code.aon.accounting.AccountSummary"/>
+		<mapping class="com.code.aon.accounting.Amortization"/>
+		<mapping class="com.code.aon.accounting.AmortizationDetail"/>
+		<mapping class="com.code.aon.accounting.AmortizationType"/>
+		<mapping class="com.code.aon.accounting.Loan"/>
+		<mapping class="com.code.aon.accounting.Leasing"/>
+		<mapping class="com.code.aon.accounting.Period"/>
+		
+		<!-- ACCOUNT -->
+		<mapping class="com.code.aon.account.Account"/>
+
+		<!-- FINANCE -->
+		<mapping class="com.code.aon.finance.RegistryBank"/>
+		<mapping class="com.code.aon.finance.Bank"/>
+				
+		<!-- REGISTRY -->
+		<mapping class="com.code.aon.registry.Registry"/>
+		<mapping class="com.code.aon.registry.RegistryAddress"/>
+		<mapping class="com.code.aon.registry.RegistryMedia"/>
+		
+		<!-- GEOZONE -->
+		<mapping class="com.code.aon.geozone.GeoZone"/>
+		
+		<!-- PRODUCT -->
+		<mapping class="com.code.aon.product.Item"/>
+		<mapping class="com.code.aon.product.Product"/>
+		<mapping class="com.code.aon.product.ProductCategory"/>
+		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
+		<mapping class="com.code.aon.product.Brand"/>
+
+		<!-- CONFIG -->
+		<mapping class="com.code.aon.config.Tax"/>
+	</session-factory>
+
+</hibernate-configuration>

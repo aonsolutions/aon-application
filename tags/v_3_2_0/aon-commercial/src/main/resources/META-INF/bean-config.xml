@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE bean-config 
+	PUBLIC "-//CODE-AON//DTD Bean Config//EN" 
+	"http://co-de.com/aon/bean-config.dtd">
+
+<bean-config>
+
+	<bean description="">
+		<pojo>com.code.aon.customer.Customer</pojo>
+		<listeners>
+	        <listener>com.code.aon.commercial.event.TargetFromCustomerBeanListener</listener>
+		</listeners>
+	</bean>
+
+</bean-config>

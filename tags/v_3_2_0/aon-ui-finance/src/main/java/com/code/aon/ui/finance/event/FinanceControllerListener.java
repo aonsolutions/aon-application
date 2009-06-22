@@ -1,0 +1,82 @@
+package com.code.aon.ui.finance.event;
+
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.finance.Finance;
+import com.code.aon.finance.enumeration.FinanceStatus;
+import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryBank;
+import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.ui.finance.controller.FinanceController;
+import com.code.aon.ui.form.event.ControllerAdapter;
+import com.code.aon.ui.form.event.ControllerEvent;
+import com.code.aon.ui.form.event.ControllerListenerException;
+
+public class FinanceControllerListener extends ControllerAdapter{
+
+	private static final Logger LOGGER = Logger.getLogger(FinanceControllerListener.class.getName());
+	
+	@Override
+	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		FinanceController feeFinanceController = (FinanceController)event.getController();
+		Finance finance = (Finance)feeFinanceController.getTo();
+		fillFinanceData(finance, feeFinanceController.getRegistryBank());
+	}
+	
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		FinanceController feeFinanceController = (FinanceController)event.getController();
+		Finance finance = (Finance)feeFinanceController.getTo();
+		fillFinanceData(finance, feeFinanceController.getRegistryBank());
+	}
+	
+	@Override
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		FinanceController financeController = (FinanceController) event.getController();
+		financeController.setRegistryBank(obtainRegistryBank((Finance)financeController.getTo()));
+	}
+
+	private void fillFinanceData(Finance finance, RegistryBank registryBank) {
+		finance.setInvoice(finance.getInvoice());
+		if(finance.getInvoice().getType().equals(InvoiceType.SALES)){
+			finance.setPayment(false);
+		}else{
+			finance.setPayment(true);
+		}
+		finance.setFinanceStatus(FinanceStatus.PENDING);
+		finance.setRegistry(finance.getInvoice().getRegistry());
+		finance.setSecurityLevel(finance.getInvoice().getSecurityLevel());
+		if(registryBank == null){
+			finance.setBank(null);
+			finance.setBankAccount(null);
+		}else{
+			finance.setBank(registryBank.getBank());
+			finance.setBankAccount(registryBank.getBankAccount());
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private RegistryBank obtainRegistryBank(Finance finance) {
+		try {
+			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), finance.getRegistry().getId());
+			criteria.addEqualExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_BANK_ID), finance.getBank().getId());
+			Iterator iter = rBankBean.getList(criteria).iterator();
+			if(iter.hasNext()){
+				RegistryBank rBank = (RegistryBank)iter.next();
+				return rBank;
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining registryBankId for Finance with id= " + finance.getId(), e);
+		}
+		return null;
+	}
+
+}

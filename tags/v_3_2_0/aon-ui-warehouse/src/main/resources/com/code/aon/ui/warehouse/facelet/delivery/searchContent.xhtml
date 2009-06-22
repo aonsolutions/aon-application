@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:outputLabel for="Delivery_series"
+		value="#{bundle.aon_series}/#{bundle.aon_number}" />
+	<aon:panelGrid columns="2">
+		<aon:inputText id="Delivery_series" size="4"
+			valueChangeListener="#{controller.addExpression}" />
+		<aon:inputText id="Delivery_number" size="7"
+			valueChangeListener="#{controller.addExpression}" />
+	</aon:panelGrid>
+
+	<aon:outputLabel value="#{bundle.aon_date}" />
+	<aon:div>
+		<aon:outputLabel for="Delivery_issueTime-From" styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_from}:" />
+		<aon:selectInputDate id="Delivery_issueTime-From"
+			valueChangeListener="#{delivery.addGreaterThanOrEqualExpression}" 
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+		<aon:outputLabel for="Delivery_issueTime-To" styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_to}:" />
+		<aon:selectInputDate id="Delivery_issueTime-To"
+			valueChangeListener="#{delivery.addLessThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	</aon:div>
+							
+	<aon:outputLabel for="Delivery_customer_id"
+		value="#{customerBundle.customer_customer}" />
+	<aon:div styleClass="aon-lookup">
+		<aon:lookupInputText id="Delivery_customer_id" value="#{deliverySearch.customer.id}"
+			lookup="#{customerLookup}" reRender="Delivery_customer_full_name"
+			size="5" />
+		<aon:lookupButton 
+			windowTitle="#{customerBundle.customer_selection}" actionType="search"
+			property="#{deliverySearch.customer}" selectReRender="Delivery_customer_id,Delivery_customer_full_name" 
+			lookup="#{customerLookup}" minHeight="460" minWidth="650">
+		</aon:lookupButton>
+		<aon:inputText id="Delivery_customer_full_name"
+			value="#{(deliverySearch.customer.registry.name!=null)?(deliverySearch.customer.registry.fullName):('')}"
+			size="50" disabled="true" />							
+	</aon:div>
+
+	<aon:outputLabel for="Delivery_status"
+		value="#{bundle.aon_status}" />
+	<aon:selectOneMenu id="Delivery_status"
+		converter="aon.EnumConverter"
+		valueChangeListener="#{controller.addEqualExpression}">
+		<f:selectItem itemLabel="-" itemValue="" itemDisabled="true" />
+		<f:selectItems value="#{warehouseCollections.deliveryStatuses}" />
+	</aon:selectOneMenu>
+
+</ui:composition>

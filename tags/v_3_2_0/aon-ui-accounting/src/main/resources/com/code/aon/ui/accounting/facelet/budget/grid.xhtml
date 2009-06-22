@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+
+	<aon:div ajaxRendered="true" layout="none">
+		<aon:div styleClass="aon-scroll-area">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+				<ui:param name="controller" value="#{accountBudget}" />
+				<ui:param name="columnClasses" value="aon-editDataTable-text" />
+
+				<ui:define name="columns">
+
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{accountBundle.account_period}: " />
+						</f:facet>
+						<aon:outputText value="#{to.period}"
+							rendered="#{to.id!=accountBudget.to.id}" />
+						<aon:selectOneMenu id="accountBudget_accountPeriod-Edit"
+							rendered="#{to.id==accountBudget.to.id}"
+							value="#{accountBudget.to.period}">
+							<f:selectItems value="#{accountingCollections.accountPeriodKeys}" />
+						</aon:selectOneMenu>
+						<f:facet name="footer">
+							<aon:selectOneMenu id="accountBudget_accountPeriod-New"
+								rendered="#{accountBudget.new}"
+								value="#{accountBudget.to.period}">
+								<f:selectItems value="#{accountingCollections.accountPeriodKeys}" />
+							</aon:selectOneMenu>
+						</f:facet>
+					</aon:column>
+
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_date_from}" />
+						</f:facet>
+						<aon:outputText value="#{to.date}"
+							rendered="#{to.id!=accountBudget.to.id}">
+							<f:convertDateTime pattern="MMMMMMMMMMMM yyyy"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+						<aon:selectInputDate id="accountBudget_date-Edit"
+							rendered="#{to.id==accountBudget.to.id}"
+							value="#{accountBudget.to.date}"
+							datePattern="MMMMMMMMMMMM yyyy"
+							timeZone="#{timeZoneController.timeZone}" />
+						<f:facet name="footer">
+							<aon:selectInputDate id="accountBudget_date-New"
+								rendered="#{accountBudget.new}" value="#{accountBudget.to.date}"
+								datePattern="MMMMMMMMMMMM yyyy"
+								timeZone="#{timeZoneController.timeZone}" />
+						</f:facet>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{accountBundle.account_debit}" />
+						</f:facet>
+						<aon:outputText value="#{to.debit}"
+							rendered="#{to!=accountBudget.to}">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+						<aon:inputText value="#{accountBudget.to.debit}"
+							rendered="#{to==accountBudget.to}" required="true" size="10">
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<f:facet name="footer">
+							<aon:inputText value="#{accountBudget.to.debit}"
+								rendered="#{accountBudget.new}" required="true" size="10">
+								<f:validateDoubleRange />
+							</aon:inputText>
+						</f:facet>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{accountBundle.account_credit}" />
+						</f:facet>
+						<aon:outputText value="#{to.credit}"
+							rendered="#{to!=accountBudget.to}">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+						<aon:inputText value="#{accountBudget.to.credit}"
+							rendered="#{to==accountBudget.to}" required="true" size="10">
+							<f:validateDoubleRange />
+						</aon:inputText>
+						<f:facet name="footer">
+							<aon:inputText value="#{accountBudget.to.credit}"
+								rendered="#{accountBudget.new}" required="true" size="10">
+								<f:validateDoubleRange />
+							</aon:inputText>
+						</f:facet>
+					</aon:column>
+
+				</ui:define>
+			</ui:decorate>
+		</aon:div>
+	</aon:div>
+</ui:composition>

@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+	
+		<aon:form id="invoiceRecordingList">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_invoice_removing_module}" />
+				<ui:param name="controller" value="#{invoiceRemover}" />
+				<ui:param name="skipResetButton" value="true" />
+				
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="record_selected"
+						value="#{financeBundle.finance_record_selected}"
+						rendered="#{invoiceRecording.model.rowCount > 0}"
+						reRender="invoiceRecordingDataDiv"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						actionListener="#{invoiceRecording.onRecordSelected}" 
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+				</ui:define>				
+				
+			</ui:decorate>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:div styleClass="aon-toolbar" rendered="#{invoiceRecording.model.rowCount > 0}">
+					<aon:commandButton title="#{bundle.aon_check_all}"
+						styleClass="aon-finding-toolbar-item aon-icon-checkAll"
+						value="#{bundle.aon_check_all}"
+						actionListener="#{invoiceRecording.checkAll}" reRender="invoiceRecordingDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
+					<aon:commandButton title="#{bundle.aon_uncheck_all}"
+						styleClass="aon-finding-toolbar-item aon-icon-checkNone"
+						value="#{bundle.aon_uncheck_all}"
+						actionListener="#{invoiceRecording.checkNone}" reRender="invoiceRecordingDataDiv"
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+				</aon:div>
+
+				<aon:div id="invoiceRecordingDataDiv" rendered="#{invoiceRecording.model.rowCount > 0}">
+					<aon:dataTable id="invoiceRecordingData" value="#{invoiceRecording.model}"
+						var="to" rows="20"
+						columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+							 aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:selectBooleanCheckbox id="Included_Row_checked"
+								value="#{invoiceRecording.rowChecked}"
+								rendered="#{invoiceRecording.modelToRecordable}"/>	
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
+							</f:facet>
+							<aon:outputText value="#{to.series} / #{to.number}" />
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{customerBundle.customer_customer}" />
+							</f:facet>
+							<aon:outputText value="#{to.registryName}" />
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.issueDate}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_status}" />
+							</f:facet>
+							<aon:outputText value="#{to.status}" />
+						</aon:column>
+					</aon:dataTable>
+					<aon:dataScroller2 for="invoiceRecordingData" showNote="true" />
+				</aon:div>
+			</aon:div>
+		</aon:form>
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+	</ui:define>
+</ui:composition>
