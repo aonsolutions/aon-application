@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
-import com.code.aon.accounting.util.AccountUtils;
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.accounting.util.Balance;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
@@ -27,7 +27,7 @@ public class StatementController extends BasicController {
 
 	private static final String STATEMENT_DETAIL_CONTROLLER_NAME = "statementDetail";
 
-	private AccountUtils utils = new AccountUtils();
+	private AccountingUtil utils = new AccountingUtil();
 
 	private Balance openingEntry;
 	private Balance fromOpeningEntry;

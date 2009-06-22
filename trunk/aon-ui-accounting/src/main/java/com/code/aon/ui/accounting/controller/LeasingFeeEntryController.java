@@ -21,7 +21,7 @@ import com.code.aon.accounting.Leasing;
 import com.code.aon.accounting.LeasingFeeEntryHeader;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
-import com.code.aon.accounting.util.AccountUtils;
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -40,7 +40,7 @@ import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.accounting.utils.AccountPeriodValidator;
+import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
@@ -56,13 +56,13 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 	
 	private LeasingFeeEntryHeader header;
 
-	private AccountUtils accountUtils;
+	private AccountingUtil accountingUtil;
 
-	public AccountUtils getAccountUtils() {
-		if (accountUtils == null) {
-			accountUtils = new AccountUtils();
+	public AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
 		}
-		return accountUtils;
+		return accountingUtil;
 	}
 
 	public AccountEntryInvoice getAccountEntryInvoice() {
@@ -106,7 +106,7 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 		return header;
 	}
 	
-	public void accept(ActionEvent event) throws ManagerBeanException{
+	public void accept(ActionEvent event) {
 		//inicio transaccion
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
@@ -117,7 +117,7 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
 				// operaciones de la transaccion
-				AccountPeriodValidator.validateAccountPeriod(getHeader().getLeasingFeeDate());
+				AccountingPeriodUtil.validateAccountPeriod(getHeader().getLeasingFeeDate());
 				AccountEntry entry = new AccountEntry();
 				if(!this.isNew){
 					deleteAccountEntryInvoice(this.getAccountEntryInvoice());
@@ -176,79 +176,71 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 		insertInvoiceTaxes(detail);
 	}
 
-	private AccountEntry insertorUpdateAccountEntry(AccountEntry entry) {
-		try {
-			IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
-			if(this.isNew){
-				entry = (AccountEntry)entryBean.insert(entry);
-			}else{
-				entry = (AccountEntry)entryBean.update(entry);
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error inserting AccountEntry", e);
+	private AccountEntry insertorUpdateAccountEntry(AccountEntry entry) throws ManagerBeanException {
+		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
+		if(this.isNew){
+			entry = (AccountEntry)entryBean.insert(entry);
+		}else{
+			entry = (AccountEntry)entryBean.update(entry);
 		}
 		return entry;
 	}
 	
-	private void insertEntryDetails(AccountEntry entry, Invoice invoice) {
-		try {
-			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
-			// Primer Apunte
-			AccountEntryDetail detail = new AccountEntryDetail();
-			Account rBankAccount = AccountUtil.obtainRBankAccount(getHeader().getRBank());
-			Account leasingAccount = AccountUtil.obtainLeasingAccount(getHeader().getLeasing());
-			detail.setAccount(rBankAccount);
-			detail.setAccountEntry(entry);
-			StringBuilder builder = new StringBuilder();
-			if (header.getConcept() != null) {
-				builder.append(header.getConcept().getDescription());
-				builder.append(" ");
-			}
-			builder.append(invoice.getSeries());
-			builder.append("/");
-			builder.append(invoice.getNumber());
-			detail.setConcept(builder.toString());
-			detail.setCredit(getHeader().getTotal());
-			detail.setBalancingAccount(leasingAccount);
-			accountEntryDetailBean.insert(detail);
-			// Segundo Apunte
-			detail = new AccountEntryDetail();
-			detail.setAccount(leasingAccount);
-			detail.setAccountEntry(entry);
-			detail.setConcept(builder.toString());
-			detail.setDebit(getHeader().getAmortization());
-			detail.setBalancingAccount(rBankAccount);
-			accountEntryDetailBean.insert(detail);
-			// Tercer Apunte
-			detail = new AccountEntryDetail();
-			Account debtInterestAccount = AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT);
-			detail.setAccount(debtInterestAccount);
-			detail.setAccountEntry(entry);
-			detail.setConcept("Intereses Leasing");
-			detail.setDebit(getHeader().getInterest());
-			detail.setBalancingAccount(rBankAccount);
-			accountEntryDetailBean.insert(detail);
-			// Cuarto Apunte
-			detail = new AccountEntryDetail();
-			Account financialExpensesAccount = AccountUtil.obtainDefaultAccount(DefaultAccounts.FINANCIAL_EXPENSES_ACCOUNT);
-			detail.setAccount(financialExpensesAccount);
-			detail.setAccountEntry(entry);
-			detail.setConcept("Gastos Financieros");
-			detail.setDebit(getHeader().getExpenses());
-			detail.setBalancingAccount(rBankAccount);
-			accountEntryDetailBean.insert(detail);
-			// Quinto Apunte
-			detail = new AccountEntryDetail();
-			Account vatAccount = AccountUtil.obtainDefaultAccount(DefaultAccounts.PAID_VAT_ACCOUNT);
-			detail.setAccount(vatAccount);
-			detail.setAccountEntry(entry);
-			detail.setConcept(builder.toString());
-			detail.setDebit(getHeader().getVatQuota());
-			detail.setBalancingAccount(rBankAccount);
-			accountEntryDetailBean.insert(detail);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error inserting details for AccountEntry with id = " + entry.getId(), e);
+	private void insertEntryDetails(AccountEntry entry, Invoice invoice) throws ManagerBeanException {
+		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+		// Primer Apunte
+		AccountEntryDetail detail = new AccountEntryDetail();
+		Account rBankAccount = AccountUtil.obtainRBankAccount(getHeader().getRBank());
+		Account leasingAccount = AccountUtil.obtainLeasingAccount(getHeader().getLeasing());
+		detail.setAccount(rBankAccount);
+		detail.setAccountEntry(entry);
+		StringBuilder builder = new StringBuilder();
+		if (header.getConcept() != null) {
+			builder.append(header.getConcept().getDescription());
+			builder.append(" ");
 		}
+		builder.append(invoice.getSeries());
+		builder.append("/");
+		builder.append(invoice.getNumber());
+		detail.setConcept(builder.toString());
+		detail.setCredit(getHeader().getTotal());
+		detail.setBalancingAccount(leasingAccount);
+		accountEntryDetailBean.insert(detail);
+		// Segundo Apunte
+		detail = new AccountEntryDetail();
+		detail.setAccount(leasingAccount);
+		detail.setAccountEntry(entry);
+		detail.setConcept(builder.toString());
+		detail.setDebit(getHeader().getAmortization());
+		detail.setBalancingAccount(rBankAccount);
+		accountEntryDetailBean.insert(detail);
+		// Tercer Apunte
+		detail = new AccountEntryDetail();
+		Account debtInterestAccount = AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT);
+		detail.setAccount(debtInterestAccount);
+		detail.setAccountEntry(entry);
+		detail.setConcept("Intereses Leasing");
+		detail.setDebit(getHeader().getInterest());
+		detail.setBalancingAccount(rBankAccount);
+		accountEntryDetailBean.insert(detail);
+		// Cuarto Apunte
+		detail = new AccountEntryDetail();
+		Account financialExpensesAccount = AccountUtil.obtainDefaultAccount(DefaultAccounts.FINANCIAL_EXPENSES_ACCOUNT);
+		detail.setAccount(financialExpensesAccount);
+		detail.setAccountEntry(entry);
+		detail.setConcept("Gastos Financieros");
+		detail.setDebit(getHeader().getExpenses());
+		detail.setBalancingAccount(rBankAccount);
+		accountEntryDetailBean.insert(detail);
+		// Quinto Apunte
+		detail = new AccountEntryDetail();
+		Account vatAccount = AccountUtil.obtainDefaultAccount(DefaultAccounts.PAID_VAT_ACCOUNT);
+		detail.setAccount(vatAccount);
+		detail.setAccountEntry(entry);
+		detail.setConcept(builder.toString());
+		detail.setDebit(getHeader().getVatQuota());
+		detail.setBalancingAccount(rBankAccount);
+		accountEntryDetailBean.insert(detail);
 	}
 
 	public AccountEntryInvoice insertAccountEntryInvoice(AccountEntry entry, Invoice invoice) throws ManagerBeanException {
@@ -297,26 +289,21 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 		}
 	}
 	
-	private Invoice insertInvoice() {
-		try {
-			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-			Invoice invoice = new Invoice();
-			invoice.setIssueDate(getHeader().getLeasingFeeDate());
-			invoice.setSeries(getHeader().getSeries());
-			invoice.setNumber(getHeader().getNumber());
-			invoice.setReferenceCode(getHeader().getReferenceCode());
-			// A INVOICE SE LE METE COMPANY EN REGISTRY
-			invoice.setRegistry(obtainCompany());
-			invoice.setRegistryDocument(getHeader().getLeasing().getSupplierDocument());
-			invoice.setRegistryName(getHeader().getLeasing().getSupplierName());
-			invoice.setStatus(InvoiceStatus.SCORED);
-			invoice.setType(InvoiceType.LEASING);
-			invoice.setSecurityLevel(getHeader().getSecurityLevel());
-			return (Invoice)invoiceBean.insert(invoice);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error inserting invoice", e);
-		}
-		return null;
+	private Invoice insertInvoice() throws ManagerBeanException {
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		Invoice invoice = new Invoice();
+		invoice.setIssueDate(getHeader().getLeasingFeeDate());
+		invoice.setSeries(getHeader().getSeries());
+		invoice.setNumber(getHeader().getNumber());
+		invoice.setReferenceCode(getHeader().getReferenceCode());
+		// A INVOICE SE LE METE COMPANY EN REGISTRY
+		invoice.setRegistry(obtainCompany());
+		invoice.setRegistryDocument(getHeader().getLeasing().getSupplierDocument());
+		invoice.setRegistryName(getHeader().getLeasing().getSupplierName());
+		invoice.setStatus(InvoiceStatus.SCORED);
+		invoice.setType(InvoiceType.LEASING);
+		invoice.setSecurityLevel(getHeader().getSecurityLevel());
+		return (Invoice)invoiceBean.insert(invoice);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -449,13 +436,13 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 			AccountEntryInvoice accountEntryInvoice = (AccountEntryInvoice)iter.next();
 			setAccountEntryInvoice(accountEntryInvoice);
 			LeasingFeeEntryHeader header = new LeasingFeeEntryHeader();
-			AccountEntryDetail detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
+			AccountEntryDetail detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
 			header.setRBank(AccountUtil.obtainRBank(detail.getAccount().getId()));
-			detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "");
+			detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "");
 			header.setInterest(detail.getDebit());
-			detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.LEASING_ACCOUNT_PREFIX + "*");
+			detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.LEASING_ACCOUNT_PREFIX + "*");
 			header.setAmortization(detail.getDebit());
-			detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.FINANCIAL_EXPENSES_ACCOUNT).getId() + "");
+			detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.FINANCIAL_EXPENSES_ACCOUNT).getId() + "");
 			header.setExpenses(detail.getDebit());
 			header.setLeasing(obtainLeasing(entry));
 			header.setLeasingFeeDate(accountEntryInvoice.getInvoice().getIssueDate());
@@ -469,7 +456,7 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 
 	@SuppressWarnings("unchecked")
 	private Leasing obtainLeasing(AccountEntry entry) throws ManagerBeanException {
-		AccountEntryDetail detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.LEASING_ACCOUNT_PREFIX + "*");
+		AccountEntryDetail detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.LEASING_ACCOUNT_PREFIX + "*");
 		IManagerBean loanAccountBean = BeanManager.getManagerBean(LeasingAccount.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(loanAccountBean.getFieldName(IAccountBridgeAlias.LEASING_ACCOUNT_ACCOUNT_ID), detail.getAccount().getId());
@@ -487,9 +474,9 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 	
 	public String getPeriodMessage() {
 		try {
-			return AccountPeriodValidator.getValidAccountPeriod(getHeader().getLeasingFeeDate());
+			return AccountingPeriodUtil.getValidAccountPeriod(getHeader().getLeasingFeeDate());
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			return " - ";
 		}
 	}

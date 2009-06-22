@@ -11,6 +11,7 @@ import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -73,7 +74,11 @@ public class JournalReportController extends BasicController {
 	}
 
 	private void initialize() {
-		setPeriod(null);
+		try {
+			setPeriod(AccountingPeriodUtil.getDefaultPeriod());
+		} catch (ManagerBeanException e) {
+			setPeriod(null);
+		}
 		setFromDate(null);
 		setToDate(null);
 		setDate(new Date());

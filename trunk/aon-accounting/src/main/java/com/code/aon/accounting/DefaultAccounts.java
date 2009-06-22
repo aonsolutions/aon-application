@@ -48,6 +48,7 @@ public class DefaultAccounts {
 	public static final String DEFAULT_SURCHARGE_PERCENT = "ACC_DEFAULT_SURCHARGE_PERCENT";
 	public static final String DEFAULT_RETENTION_PERCENT = "ACC_DEFAULT_RETENTION_PERCENT";
 	public static final String DEFAULT_INVOICE_SERIES = "ACC_DEFAULT_INVOICE_SERIES";
+	public static final String DEFAULT_PERIOD = "ACC_DEFAULT_PERIOD";
 
 
 }

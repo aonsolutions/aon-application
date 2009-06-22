@@ -35,7 +35,7 @@ import com.code.aon.accounting.InvoiceEntryHeader;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
-import com.code.aon.accounting.util.AccountUtils;
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -75,6 +75,7 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.supplier.Supplier;
+import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -109,7 +110,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 
 	private Finance currentFinance;
 	private String onGenerateKey;
-	private AccountUtils accountUtils;
+	private AccountingUtil accountingUtil;
 	
 	private Date invoiceDate;
 	
@@ -132,11 +133,11 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		this.taxDate = taxDate;
 	}
 
-	public AccountUtils getAccountUtils() {
-		if (accountUtils == null) {
-			accountUtils = new AccountUtils();
+	public AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
 		}
-		return accountUtils;
+		return accountingUtil;
 	}
 	
 	public AccountEntryInvoiceWriter getWriter() {
@@ -299,12 +300,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	}
 
 	private void initializeHeader() throws ManagerBeanException {
-//		Account account = new Account();
-//		account.setEntryEnabled(true);
-//		header.setAccount(account);
-
 		header.setAccount(null);
-		
+		header.setPeriod( AccountingPeriodUtil.getDefaultPeriod());
 		header.setRegistry(new Registry());
 		if(invoiceDate!=null){		
 			header.setDate(this.getInvoiceDate());
@@ -1202,17 +1199,17 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			AccountEntryDetail detail = null;
 			if (entry.getType().equals(AccountEntryType.SALES_INVOICE)) {
 				header.setType(InvoiceType.SALES);
-				detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, "70*");
+				detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "70*");
 				header.setAccount((detail != null) ? detail.getAccount() : null);
 			}
 			if (entry.getType().equals(AccountEntryType.PURCHASE_INVOICE)) {
 				header.setType(InvoiceType.PURCHASE);
-				detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, "60*");
+				detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "60*");
 				header.setAccount((detail != null) ? detail.getAccount() : null);
 			}
 			if (entry.getType().equals(AccountEntryType.EXPENSE_INVOICE)) {
 				header.setType(InvoiceType.EXPENSES);
-				detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, "6*");
+				detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "6*");
 				header.setAccount((detail != null) ? detail.getAccount() : null);
 			}
 			header.setDate(entry.getEntryDate());

@@ -48,7 +48,16 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="dataTable" columns="8" style="width:100%;">
+				<aon:panelGrid id="dataTable" columns="8" style="width:100%;"
+						columnClasses="
+						 aon-panelGrid-odd aon-width-100
+						,aon-panelGrid-even aon-width-100
+						,aon-panelGrid-odd aon-width-100
+						,aon-panelGrid-even aon-width-100
+						,aon-panelGrid-odd aon-width-100
+						,aon-panelGrid-even aon-width-100
+						,aon-panelGrid-odd aon-width-100
+						,aon-panelGrid-even aon-width-auto">
 					<aon:outputLabel for="reportDate"
 						value="#{accountingBundle.accounting_report_date}" />
 					<aon:outputText

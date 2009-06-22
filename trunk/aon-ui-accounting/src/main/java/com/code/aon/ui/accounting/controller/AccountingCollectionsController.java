@@ -26,7 +26,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ql.util.ExpressionUtilities;
 
 /**
  * Collections controller.

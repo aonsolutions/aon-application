@@ -15,7 +15,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountBudget;
 import com.code.aon.accounting.AccountBudgetDetail;
 import com.code.aon.accounting.Period;
@@ -263,7 +262,18 @@ public class AccountBudgetController extends BasicController {
 				creditTotal = sumSet.getDouble(2);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.severe(e.getMessage());
+		} finally {
+			try {
+				sum.close();
+			} catch (SQLException e) {
+				//nothing
+			}
+			try {
+				sumSet.close();
+			} catch (SQLException e) {
+				//nothing
+			}
 		}
 	}
 	
@@ -278,26 +288,35 @@ public class AccountBudgetController extends BasicController {
 				AccountBudget to = (AccountBudget)it.next();
 				String id = to.getAccount().getId();
 				String period = to.getPeriod();
-				try {
-					StringWriter sumStmt = new StringWriter();
-					sumStmt.append("SELECT SUM(s.debit),SUM(s.credit)");
-					sumStmt.append(" FROM account_budget_detail s ");
-					sumStmt.append(" WHERE s.account LIKE ?");
-					sumStmt.append(" AND s.account_period = ?");
-					sum = HibernateUtil.getSQLConnection().prepareStatement(sumStmt.toString());
-					sum.setString(1, id);
-					sum.setString(2, period);
-					sumSet = sum.executeQuery();
-					if (sumSet.next()) {
-						getDebitList().add(sumSet.getDouble(1));
-						getCreditList().add(sumSet.getDouble(2));
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
+				StringWriter sumStmt = new StringWriter();
+				sumStmt.append("SELECT SUM(s.debit),SUM(s.credit)");
+				sumStmt.append(" FROM account_budget_detail s ");
+				sumStmt.append(" WHERE s.account LIKE ?");
+				sumStmt.append(" AND s.account_period = ?");
+				sum = HibernateUtil.getSQLConnection().prepareStatement(sumStmt.toString());
+				sum.setString(1, id);
+				sum.setString(2, period);
+				sumSet = sum.executeQuery();
+				if (sumSet.next()) {
+					getDebitList().add(sumSet.getDouble(1));
+					getCreditList().add(sumSet.getDouble(2));
 				}
 			}
+		} catch (SQLException e) {
+			LOGGER.severe(e.getMessage());
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.severe(e.getMessage());
+		} finally {
+			try {
+				sum.close();
+			} catch (SQLException e) {
+				//nothing
+			}
+			try {
+				sumSet.close();
+			} catch (SQLException e) {
+				//nothing
+			}
 		}
 	}
 	
@@ -308,8 +327,9 @@ public class AccountBudgetController extends BasicController {
 				getCriteria().addEqualExpression(getFieldName(IAccountingAlias.ACCOUNT_BUDGET_ACCOUNT_ID),account.getId());
 			}
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String msg = "No se pudo realizar la búsqueda";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
 		}
 		super.onSearch(event);
 	}

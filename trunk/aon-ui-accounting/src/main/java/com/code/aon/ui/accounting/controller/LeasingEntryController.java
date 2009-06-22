@@ -19,7 +19,7 @@ import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Leasing;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
-import com.code.aon.accounting.util.AccountUtils;
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -30,7 +30,7 @@ import com.code.aon.config.Tax;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.ui.accounting.utils.AccountPeriodValidator;
+import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
@@ -46,13 +46,13 @@ public class LeasingEntryController implements ISpecialAccountEntry{
 	
 	private Leasing leasing;
 	
-	private AccountUtils accountUtils;
+	private AccountingUtil accountingUtil;
 
-	public AccountUtils getAccountUtils() {
-		if (accountUtils == null) {
-			accountUtils = new AccountUtils();
+	public AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
 		}
-		return accountUtils;
+		return accountingUtil;
 	}
 
 	public boolean isNew() {
@@ -99,10 +99,7 @@ public class LeasingEntryController implements ISpecialAccountEntry{
 		return leasing;
 	}
 	
-	public void accepto(ActionEvent event) throws ManagerBeanException {
-		System.out.println("entra en accept");
-	}
-	public void accept(ActionEvent event) throws ManagerBeanException {
+	public void accept(ActionEvent event) {
 		//inicio transaccion
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
@@ -113,7 +110,7 @@ public class LeasingEntryController implements ISpecialAccountEntry{
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
 				// operaciones de la transaccion
-				AccountPeriodValidator.validateAccountPeriod(getLeasing().getLeasingDate());
+				AccountingPeriodUtil.validateAccountPeriod(getLeasing().getLeasingDate());
 				AccountEntry entry = new AccountEntry();
 				if(!this.isNew){
 					deleteAccountEntryDetails(getAccountEntry());
@@ -158,7 +155,7 @@ public class LeasingEntryController implements ISpecialAccountEntry{
 		return (Leasing) leasingBean.insert(leasing);
 	}
 
-	public void onRemove(ActionEvent event) throws ManagerBeanException{
+	public void onRemove(ActionEvent event) {
 		//inicio transaccion
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
@@ -200,67 +197,51 @@ public class LeasingEntryController implements ISpecialAccountEntry{
 		}
 	}
 	
-	private AccountEntry insertorUpdateAccountEntry(AccountEntry entry) {
-		try {
-			IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
-			if(this.isNew){
-				entry = (AccountEntry)entryBean.insert(entry);
-			}else{
-				entry = (AccountEntry)entryBean.update(entry);
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error inserting AccountEntry", e);
+	private AccountEntry insertorUpdateAccountEntry(AccountEntry entry) throws ManagerBeanException {
+		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
+		if(this.isNew){
+			entry = (AccountEntry)entryBean.insert(entry);
+		}else{
+			entry = (AccountEntry)entryBean.update(entry);
 		}
 		return entry;
 	}
 	
-	private void insertEntryDetails(AccountEntry entry) {
-		try {
-			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
-			// Primer Apunte
-			AccountEntryDetail detail = new AccountEntryDetail();
-			detail.setAccount(getLeasing().getFixedAssetAccount());
-			detail.setAccountEntry(entry);
-			detail.setConcept(getLeasing().getDescription());
-			detail.setDebit(getLeasing().getAmount());
-			Account leasingAccount = AccountUtil.obtainLeasingAccount(getLeasing());
-			detail.setBalancingAccount(leasingAccount);
-			accountEntryDetailBean.insert(detail);
-			// Segundo Apunte
-			detail = new AccountEntryDetail();
-			detail.setAccount(leasingAccount);
-			detail.setAccountEntry(entry);
-			detail.setConcept(getLeasing().getDescription());
-			detail.setCredit(getLeasing().getAmount());
-			detail.setBalancingAccount(getLeasing().getFixedAssetAccount());
-			accountEntryDetailBean.insert(detail);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error inserting details for AccountEntry with id = " + entry.getId(), e);
-		}
+	private void insertEntryDetails(AccountEntry entry) throws ManagerBeanException {
+		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+		// Primer Apunte
+		AccountEntryDetail detail = new AccountEntryDetail();
+		detail.setAccount(getLeasing().getFixedAssetAccount());
+		detail.setAccountEntry(entry);
+		detail.setConcept(getLeasing().getDescription());
+		detail.setDebit(getLeasing().getAmount());
+		Account leasingAccount = AccountUtil.obtainLeasingAccount(getLeasing());
+		detail.setBalancingAccount(leasingAccount);
+		accountEntryDetailBean.insert(detail);
+		// Segundo Apunte
+		detail = new AccountEntryDetail();
+		detail.setAccount(leasingAccount);
+		detail.setAccountEntry(entry);
+		detail.setConcept(getLeasing().getDescription());
+		detail.setCredit(getLeasing().getAmount());
+		detail.setBalancingAccount(getLeasing().getFixedAssetAccount());
+		accountEntryDetailBean.insert(detail);
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void deleteAccountEntryDetails(AccountEntry accountEntry) {
-		try {
-			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
-			Iterator iter = accountEntryDetailBean.getList(criteria).iterator();
-			while(iter.hasNext()){
-				accountEntryDetailBean.remove((AccountEntryDetail)iter.next());
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error deleting details related with AccountEntry with id=" + accountEntry.getId(), e);
+	private void deleteAccountEntryDetails(AccountEntry accountEntry) throws ManagerBeanException {
+		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
+		Iterator iter = accountEntryDetailBean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			accountEntryDetailBean.remove((AccountEntryDetail)iter.next());
 		}
 	}
 
-	private void deleteAccountEntry(AccountEntry accountEntry) {
-		try {
-			IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
-			accountEntryBean.remove(accountEntry);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error deleting AccountEntry with id= " + accountEntry.getId(), e);
-		}
+	private void deleteAccountEntry(AccountEntry accountEntry) throws ManagerBeanException {
+		IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
+		accountEntryBean.remove(accountEntry);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -293,18 +274,14 @@ public class LeasingEntryController implements ISpecialAccountEntry{
 		}
 	}
 	
-	private void loadAccountEntryController(AccountEntry entry) {
-		try {
-			AccountEntryController entryController = (AccountEntryController)FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
-			entryController.setCriteria(criteria);
-			entryController.onSearch(null);
-			entryController.getModel().setRowIndex(0);
-			entryController.onSelect(null);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading AccountEntryController", e);
-		}
+	private void loadAccountEntryController(AccountEntry entry) throws ManagerBeanException {
+		AccountEntryController entryController = (AccountEntryController)FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
+		entryController.setCriteria(criteria);
+		entryController.onSearch(null);
+		entryController.getModel().setRowIndex(0);
+		entryController.onSelect(null);
 	}
 
 	@Override
@@ -318,7 +295,7 @@ public class LeasingEntryController implements ISpecialAccountEntry{
 
 	@SuppressWarnings("unchecked")
 	private Leasing obtainLeasing(AccountEntry entry) throws ManagerBeanException {
-		AccountEntryDetail detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.LEASING_ACCOUNT_PREFIX + "*");
+		AccountEntryDetail detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.LEASING_ACCOUNT_PREFIX + "*");
 		IManagerBean loanAccountBean = BeanManager.getManagerBean(LeasingAccount.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(loanAccountBean.getFieldName(IAccountBridgeAlias.LEASING_ACCOUNT_ACCOUNT_ID), detail.getAccount().getId());
@@ -336,9 +313,9 @@ public class LeasingEntryController implements ISpecialAccountEntry{
 	
 	public String getPeriodMessage() {
 		try {
-			return AccountPeriodValidator.getValidAccountPeriod(getLeasing().getLeasingDate());
+			return AccountingPeriodUtil.getValidAccountPeriod(getLeasing().getLeasingDate());
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			return " - ";
 		}
 	}

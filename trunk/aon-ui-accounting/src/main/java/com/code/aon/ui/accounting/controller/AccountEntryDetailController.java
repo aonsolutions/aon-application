@@ -45,7 +45,8 @@ public class AccountEntryDetailController extends LinesController {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			throw new AbortProcessingException(e.getMessage());
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(),e);
 		}
 		 
 	}
