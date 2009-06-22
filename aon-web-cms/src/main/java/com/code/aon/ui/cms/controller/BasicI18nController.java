@@ -185,8 +185,7 @@ public class BasicI18nController extends BasicController implements I18NControll
 				List<ITransferObject> list = beanI18n.getList(criteria);
 				if (list.size() > 0) {
 					setToI18n(list.get(0));
-				}
-				else {
+				} else {
 					setToI18n(beanI18n.createNewTo());
 				}
 			}
