@@ -18,12 +18,11 @@ public class Generator {
 	}
 
 	public static void generate(VelocityUtil vu, Templates type, String contentTemplate, String name) {
-		String template = getIndexTemplate();
+		File template = getIndexTemplate();
 		if (type == Templates.LANGUAGE) template = getLanguageTemplate();
 		if (type == Templates.CAPTCHA) template = getCaptchaTemplate();
 		String content = contentTemplate;
-		String page = getPage(type);
-		page = page.replaceAll("%NAME%", name);
+		File page = getPage(type, name);
 		
 	    if (template != null && content != null) {
 	        vu.put("content", content);
@@ -36,22 +35,31 @@ public class Generator {
 	    }
 	}
 
-	private static String getIndexTemplate() {
+	private static File getIndexTemplate() {
 		String template = Templates.INDEX.getTemplateName();
-		if (validateTemplate(template)) return ControllerUtil.getCurrentVmTemplatePath() + "/" + template;
-		else return null;
+		File file = new File( ControllerUtil.getCurrentVmTemplatePath(), template );
+		if ( file.exists() ) {
+			return file;
+		}
+		return null;
 	}
 
-	private static String getLanguageTemplate() {
+	private static File getLanguageTemplate() {
 		String template = Templates.LANGUAGE.getTemplateName();
-		if (validateTemplate(template)) return ControllerUtil.getCurrentVmTemplatePath() + "/" + template;
-		else return null;
+		File file = new File( ControllerUtil.getCurrentVmTemplatePath(), template );
+		if ( file.exists() ) {
+			return file;
+		}
+		return null;
 	}
 
-	private static String getCaptchaTemplate() {
+	private static File getCaptchaTemplate() {
 		String template = Templates.CAPTCHA.getTemplateName();
-		if (validateTemplate(template)) return ControllerUtil.getCurrentVmTemplatePath() + "/" + template;
-		else return null;
+		File file = new File( ControllerUtil.getCurrentVmTemplatePath(), template );
+		if ( file.exists() ) {
+			return file;
+		}
+		return null;
 	}
 
 	private static String getContentTemplate(Templates t) {
@@ -60,11 +68,12 @@ public class Generator {
 		else return null;
 	}
 
-	private static String getPage(Templates t) {
-		String page = t.getHtmlName();
-		String page_full_path = ControllerUtil.getLanguagePreviewPath() + "/" + page;
-		if (t == Templates.LANGUAGE) page_full_path = ControllerUtil.getPreviewPath() + "/" + page;
-		return page_full_path;
+	private static File getPage(Templates t, String name) {
+		String page = t.getHtmlName().replaceAll("%NAME%", name);
+		if (t == Templates.LANGUAGE) {
+			return new File( ControllerUtil.getPreviewPath(), page );
+		}
+		return new File( ControllerUtil.getLanguagePreviewPath(), page );
 	}
 
 	private static String getPageHtmlName(Templates t, String name) {
@@ -74,14 +83,8 @@ public class Generator {
 	}
 
 	private static boolean validateTemplate(String template) {
-		String full_path = ControllerUtil.getCurrentVmTemplatePath() + "/" + template;
-		return validate(full_path);
-	}
-	
-	private static boolean validate(String path) {
-	    File f = new File(path);
-	    if (f.exists()) return true;
-	    else return false;
+		File full_path = new File( ControllerUtil.getCurrentVmTemplatePath(), template );
+		return full_path.exists();
 	}
 
 }

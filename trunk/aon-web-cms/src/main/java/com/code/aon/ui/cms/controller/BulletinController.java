@@ -175,11 +175,8 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 
 				VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
 				
-				String template = ControllerUtil.getCurrentVmTemplatePath() 
-					+ "/" 
-					+ Templates.BULLETIN.getTemplateName();
-			    File f = new File(template);
-			    if (!f.exists()){
+				File template = new File( ControllerUtil.getCurrentVmTemplatePath(), Templates.BULLETIN.getTemplateName() );  
+			    if (!template.exists()){
 			    	status.error("No se ha encontrado plantilla " 
 			    			+ Templates.BULLETIN.getTemplateName());
 			    }else{

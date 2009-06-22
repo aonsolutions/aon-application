@@ -69,7 +69,7 @@ public class CommonGenerator extends Generator implements ICMSConstants {
 		VelocityUtil vu = new VelocityUtil();
 		vu.setLogger(logger);
 		CommonGenerator.getCommonGenerator().init(vu);
-		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
+		vu.setTemplatePath(ControllerUtil.getCurrentVmTemplatePath());
 		vu.initialize();
 		return vu;
 	}    

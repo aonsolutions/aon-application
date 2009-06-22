@@ -65,11 +65,8 @@ public class ControllerUtil implements Constants, ICMSConstants {
 		return new File( getTemplatePath(), getCurrentConfig().getTemplate() );
 	}	
 	
-	public static String getCurrentVmTemplatePath() {
-		String path = null;
-		path = getCurrentTemplatePath() +  
-					File.separator + VM_PATH; 
-		return path;
+	public static File getCurrentVmTemplatePath() {
+		return new File( getCurrentTemplatePath(), VM_PATH );
 	}	
 
 	public static String getBundlePath() {
