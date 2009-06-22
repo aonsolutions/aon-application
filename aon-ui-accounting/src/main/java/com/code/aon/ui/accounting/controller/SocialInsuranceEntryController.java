@@ -24,7 +24,7 @@ import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.SocialInsuranceEntryHeader;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
-import com.code.aon.accounting.util.AccountUtils;
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -40,7 +40,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.ui.accounting.utils.AccountPeriodValidator;
+import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
@@ -58,13 +58,13 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 
 	private Company company;
 
-	private AccountUtils accountUtils;
+	private AccountingUtil accountingUtil;
 
-	public AccountUtils getAccountUtils() {
-		if (accountUtils == null) {
-			accountUtils = new AccountUtils();
+	public AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
 		}
-		return accountUtils;
+		return accountingUtil;
 	}
 
 	public boolean isNew() {
@@ -163,7 +163,7 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 				HibernateUtil.beginTransaction(sessionName);
 				// operaciones de la transaccion
 				try {
-					AccountPeriodValidator.validateAccountPeriod(getHeader().getDate());
+					AccountingPeriodUtil.validateAccountPeriod(getHeader().getDate());
 					AccountEntry entry = new AccountEntry();
 					if (!this.isNew) {
 						deleteAccountEntryDetails(getAccountEntry());
@@ -406,41 +406,29 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 	}
 
 	@SuppressWarnings("unchecked")
-	private void deleteAccountEntryDetails(AccountEntry accountEntry) {
-		try {
-			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
-			Iterator iter = accountEntryDetailBean.getList(criteria).iterator();
-			while(iter.hasNext()){
-				accountEntryDetailBean.remove((AccountEntryDetail)iter.next());
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error deleting details related with AccountEntry with id=" + accountEntry.getId(), e);
+	private void deleteAccountEntryDetails(AccountEntry accountEntry) throws ManagerBeanException {
+		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
+		Iterator iter = accountEntryDetailBean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			accountEntryDetailBean.remove((AccountEntryDetail)iter.next());
 		}
 	}
 
-	private void deleteAccountEntry(AccountEntry accountEntry) {
-		try {
-			IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
-			accountEntryBean.remove(accountEntry);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error deleting AccountEntry with id= " + accountEntry.getId(), e);
-		}
+	private void deleteAccountEntry(AccountEntry accountEntry) throws ManagerBeanException {
+		IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
+		accountEntryBean.remove(accountEntry);
 	}
 	
-	private void loadAccountEntryController(AccountEntry entry) {
-		try {
-			AccountEntryController entryController = (AccountEntryController)FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
-			entryController.setCriteria(criteria);
-			entryController.onSearch(null);
-			entryController.getModel().setRowIndex(0);
-			entryController.onSelect(null);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading AccountEntryController", e);
-		}
+	private void loadAccountEntryController(AccountEntry entry) throws ManagerBeanException {
+		AccountEntryController entryController = (AccountEntryController)FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
+		entryController.setCriteria(criteria);
+		entryController.onSearch(null);
+		entryController.getModel().setRowIndex(0);
+		entryController.onSelect(null);
 	}
 
 	@Override
@@ -451,9 +439,9 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 
 		SocialInsuranceEntryHeader header = new SocialInsuranceEntryHeader();
 		header.setDate(entry.getEntryDate());
-		AccountEntryDetail accountEntryDetail = getAccountUtils().getEntryDetailFromAccountPattern(entry, "570*");
+		AccountEntryDetail accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "570*");
 		if (accountEntryDetail == null) {
-			accountEntryDetail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
+			accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
 			header.setRegistryBank(AccountUtil.obtainRBank(accountEntryDetail.getAccount().getId()));
 		}
 		header.setConcept(accountEntryDetail.getConcept());
@@ -469,9 +457,9 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 	
 	public String getPeriodMessage() {
 		try {
-			return AccountPeriodValidator.getValidAccountPeriod(getHeader().getDate());
+			return AccountingPeriodUtil.getValidAccountPeriod(getHeader().getDate());
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			return " - ";
 		}
 	}

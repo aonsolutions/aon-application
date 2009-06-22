@@ -19,7 +19,7 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.util.ExpressionException;
 
-public class AccountUtils {
+public class AccountingUtil {
 
 	public Balance getOpeningEntryBalance(Date date, String accountId) throws ManagerBeanException {
 		return getAccountEntryBalance(date, accountId, AccountEntryType.OPENING);

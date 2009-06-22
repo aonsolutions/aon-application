@@ -29,7 +29,6 @@ import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
-import com.code.aon.accounting.util.AccountUtils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -86,7 +85,6 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	private ArrayList<Finance> lineChecks = new ArrayList<Finance>();
 
 	private ArrayList<Finance> financeChecks = new ArrayList<Finance>();
-	private AccountUtils accountUtils;
 	private String onGenerateKey;
 		
 	public Date getFinanceDate() {
@@ -103,13 +101,6 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
 	public void setFinanceRegistryBank(RegistryBank financeRegistryBank) {
 		this.financeRegistryBank = financeRegistryBank;
-	}
-
-	public AccountUtils getAccountUtils() {
-		if (accountUtils == null) {
-			accountUtils = new AccountUtils();
-		}
-		return accountUtils;
 	}
 
 	public AccountEntryFinanceWriter getWriter() {

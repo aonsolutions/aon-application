@@ -25,7 +25,7 @@ import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
-import com.code.aon.accounting.util.AccountUtils;
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -34,7 +34,7 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.accounting.utils.AccountPeriodValidator;
+import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
@@ -51,13 +51,13 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 	
 	private LoanFeeEntryHeader header;
 
-	private AccountUtils accountUtils;
+	private AccountingUtil accountingUtil;
 
-	public AccountUtils getAccountUtils() {
-		if (accountUtils == null) {
-			accountUtils = new AccountUtils();
+	public AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
 		}
-		return accountUtils;
+		return accountingUtil;
 	}
 
 	public boolean isNew() {
@@ -110,7 +110,7 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
 				// operaciones de la transaccion
-				AccountPeriodValidator.validateAccountPeriod(getHeader().getFeeDate());
+				AccountingPeriodUtil.validateAccountPeriod(getHeader().getFeeDate());
 				IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 				AccountEntry entry = new AccountEntry();
 				if(!this.isNew){
@@ -268,24 +268,24 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 		setAccountEntry(entry);
 		LoanFeeEntryHeader header = new LoanFeeEntryHeader();
 		Loan loan = obtainLoan(entry);
-		AccountEntryDetail accountEntryDetail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.LONG_TERM_LOAN_ACCOUNT_PREFIX + "*");
+		AccountEntryDetail accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.LONG_TERM_LOAN_ACCOUNT_PREFIX + "*");
 		if (accountEntryDetail == null) {
-			accountEntryDetail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.SHORT_TERM_LOAN_ACCOUNT_PREFIX + "*");	
+			accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.SHORT_TERM_LOAN_ACCOUNT_PREFIX + "*");	
 		}
 		header.setAmortization(accountEntryDetail.getDebit());
 		header.setDescription(accountEntryDetail.getConcept());
 		header.setFeeDate(entry.getEntryDate());
 		header.setLoan(loan);
-		accountEntryDetail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "*");
+		accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "*");
 		header.setInterest(accountEntryDetail.getDebit());
 		setHeader(header);
 	}
 	
 	@SuppressWarnings("unchecked")
 	private Loan obtainLoan(AccountEntry entry) throws ManagerBeanException {
-		AccountEntryDetail detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.LONG_TERM_LOAN_ACCOUNT_PREFIX + "*");
+		AccountEntryDetail detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.LONG_TERM_LOAN_ACCOUNT_PREFIX + "*");
 		if (detail == null) {
-			detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.SHORT_TERM_LOAN_ACCOUNT_PREFIX + "*");	
+			detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.SHORT_TERM_LOAN_ACCOUNT_PREFIX + "*");	
 		}
 		IManagerBean loanAccountBean = BeanManager.getManagerBean(LoanAccount.class);
 		Criteria criteria = new Criteria();
@@ -304,7 +304,7 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 	
 	public String getPeriodMessage() {
 		try {
-			return AccountPeriodValidator.getValidAccountPeriod(getHeader().getFeeDate());
+			return AccountingPeriodUtil.getValidAccountPeriod(getHeader().getFeeDate());
 		} catch (ManagerBeanException e) {
 			LOGGER.warning("No se puede obtener el periodo: " + e.getMessage());
 			return " - ";
@@ -322,7 +322,7 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 			params.setAccountExpression( getRelatedAccount().getId());
 			params.setAccountLevel(5);
 			params.setBudgeted(false);
-			Period period = AccountPeriodValidator.getPeriod( getHeader().getFeeDate() );
+			Period period = AccountingPeriodUtil.getPeriod( getHeader().getFeeDate() );
 			params.setPeriod(period);
 			params.setFromDate(period.getInitiationDate());
 			params.setToDate(period.getDeadline());
@@ -345,7 +345,7 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 			SummaryProviderParameters spp = new SummaryProviderParameters();
 			spp.setAccountExpression(account.getId());
 			
-			Period period = AccountPeriodValidator.getPeriod( getHeader().getFeeDate() );
+			Period period = AccountingPeriodUtil.getPeriod( getHeader().getFeeDate() );
 			spp.setPeriod(period);
 			spp.setFromDate(period.getInitiationDate());
 			spp.setToDate(period.getDeadline());

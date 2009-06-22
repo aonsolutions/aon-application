@@ -2,7 +2,6 @@ package com.code.aon.ui.accounting.controller;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,9 +13,9 @@ import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.common.ICollectionProvider;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class ProfitAndLossReportController implements ICollectionProvider {
@@ -80,6 +79,11 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 	public SummaryProviderParameters getParameters() {
 		if (parameters == null) {
 			SummaryProviderParameters p = new SummaryProviderParameters();
+			try {
+				p.setPeriod(AccountingPeriodUtil.getDefaultPeriod());
+			} catch (ManagerBeanException e) {
+				p.setPeriod(null);
+			}
 			p.setBudgeted(isBudgeted());
 			p.setLowerLevelVisible(false);
 			setParameters(p);
@@ -138,12 +142,10 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 	}
 	
 	public void onNetExpenses(ActionEvent event) {
-
 		List<Summary> summaryList;
 		netExpenses = new LinkedList<Summary>();
 		summaryList = getTotalExpenses().getSummaryList();
-		for (Iterator iterator = summaryList.iterator(); iterator.hasNext();) {
-			Summary summary = (Summary) iterator.next();
+		for (Summary summary: summaryList) {
 			if ((summary.getId().substring(0, 3).equals("640"))
 					|| (summary.getId().substring(0, 3).equals("642"))) {
 
@@ -165,8 +167,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		List<Summary> summaryList;
 		salesList = new LinkedList<Summary>();
 		summaryList = getGrossMargin().getSummaryList();
-		for (Iterator iterator = summaryList.iterator(); iterator.hasNext();) {
-			Summary summary = (Summary) iterator.next();
+		for (Summary summary: summaryList) {
 			if (summary.getId().substring(0, 1).equals("7")) {
 				salesList.add(summary);
 				amount += summary.getCreditBalance();
@@ -186,8 +187,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		List<Summary> summaryList;
 		purchaseList = new LinkedList<Summary>();
 		summaryList = getGrossMargin().getSummaryList();
-		for (Iterator iterator = summaryList.iterator(); iterator.hasNext();) {
-			Summary summary = (Summary) iterator.next();
+		for (Summary summary: summaryList) {
 			if (summary.getId().substring(0, 2).equals("60")) {
 				purchaseList.add(summary);
 				amount += summary.getUnpaidBalance();

@@ -25,6 +25,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class EndPeriodEntriesController {
@@ -75,6 +76,18 @@ public class EndPeriodEntriesController {
 		this.securityLevel = securityLevel;
 	}
 
+	public void onInit(ActionEvent event) {
+		setDate(null);
+		try {
+			setPeriod( AccountingPeriodUtil.getDefaultPeriod());
+		} catch (ManagerBeanException e) {
+			setPeriod( null );
+		}
+		setPreviousPeriod(null);
+		setConcept(null);
+		setSecurityLevel(SecurityLevel.OFFICIAL);
+	}
+		
 	private void validateParameters(AccountEntryType accountEntryType) throws ManagerBeanException {
 		if (period == null) {
 			String msg = "El periodo es un campo requerido.";

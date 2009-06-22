@@ -11,6 +11,8 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.accounting.ProfitAndLossComparison;
 import com.code.aon.accounting.summary.Summary;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 
 public class ProfitAndLossComparisonController {
 
@@ -216,9 +218,7 @@ public class ProfitAndLossComparisonController {
 		comparissonList = new LinkedList<ProfitAndLossComparison>();
 		salesList = new LinkedList<ProfitAndLossComparison>();
 		summaryList = list;
-		for (Iterator iterator = summaryList.iterator(); iterator.hasNext();) {
-			ProfitAndLossComparison summary = (ProfitAndLossComparison) iterator.next();
-			
+		for (ProfitAndLossComparison summary:summaryList) {
 			if (summary.getId()!=null && summary.getDescription()!=null &&( summary.getId().substring(0, 1).equals("7") || summary.getId().substring(0, 2).equals("60"))) {
 				comparissonList.add(summary);
 					}else{
@@ -239,16 +239,24 @@ public class ProfitAndLossComparisonController {
 	}
 
 	public void onSearch(ActionEvent event) {
-		if (parameters == null)
-			parameters = new SummaryProviderParameters();
 		loadCollection();
+	}
+
+	public void onEditSearch(ActionEvent event) {
+		
 	}
 
 	public SummaryProviderParameters getParameters() {
 		if (parameters == null) {
 			SummaryProviderParameters p = new SummaryProviderParameters();
+			try {
+				p.setPeriod(AccountingPeriodUtil.getDefaultPeriod());
+			} catch (ManagerBeanException e) {
+				p.setPeriod(null);
+			}
 			//p.setBudgeted(null);
 			p.setLowerLevelVisible(false);
+			
 			setParameters(p);
 		}
 		return parameters;

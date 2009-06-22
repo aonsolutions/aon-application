@@ -53,9 +53,9 @@
 				</aon:menuGroup>
 				<aon:menuSeparator/>
 				<aon:menuGroup value="#{appBundle.account_end_period_entries}">
-					<aon:menuItem action="accountOperatingEntry" value="#{accountingBundle.accounting_operating_entry_module}"/>
-					<aon:menuItem action="accountClosingEntry" value="#{accountingBundle.accounting_closing_entry_module}" />
-					<aon:menuItem action="accountOpeningEntry" value="#{accountingBundle.accounting_opening_entry_module}" />
+					<aon:menuItem action="accountOperatingEntry" actionListener="#{endPeriodEntries.onInit}" value="#{accountingBundle.accounting_operating_entry_module}"/>
+					<aon:menuItem action="accountClosingEntry" actionListener="#{endPeriodEntries.onInit}" value="#{accountingBundle.accounting_closing_entry_module}" />
+					<aon:menuItem action="accountOpeningEntry" actionListener="#{endPeriodEntries.onInit}" value="#{accountingBundle.accounting_opening_entry_module}" />
 				</aon:menuGroup>
 			</aon:dropDownMenu>
  
@@ -108,7 +108,7 @@
 			<aon:dropDownMenu value="#{appBundle.account_budget}">
 				<aon:menuItem actionListener="#{accountBudget.onEditSearch}" action="accountBudget_search" value="#{accountingBundle.accounting_account_budget_module}"/>
 				<aon:menuItem actionListener="#{budgetedProfitAndLossReport.onEditSearch}" action="budgeted_profit_and_loss_search" value="#{accountingBundle.accounting_budgeted_balance_sheet_module}"/>
-				<aon:menuItem actionListener="#{budgetedProfitAndLossComparison.onSearch}" action="compared_budgeted_profit_and_loss_search" value="#{accountingBundle.accounting_compared_budgeted_balance_sheet_module}"/>
+				<aon:menuItem actionListener="#{budgetedProfitAndLossComparison.onEditSearch}" action="compared_budgeted_profit_and_loss_search" value="#{accountingBundle.accounting_compared_budgeted_balance_sheet_module}"/>
 			</aon:dropDownMenu>
 <!-- 
 			<aon:dropDownMenu value="#{appBundle.account_utilities}">

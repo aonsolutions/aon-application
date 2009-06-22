@@ -688,6 +688,10 @@
 					<key>ACC_DEFAULT_INVOICE_SERIES</key>
 					<value>[NULL]</value>
 				</map-entry>
+				<map-entry>
+					<key>ACC_DEFAULT_PERIOD</key>
+					<value>[NULL]</value>
+				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>

@@ -21,6 +21,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
@@ -36,7 +37,11 @@ public class TrialBalanceController implements ICollectionProvider {
 	public SummaryProviderParameters getParameters() {
 		if (parameters == null) {
 			SummaryProviderParameters p = new SummaryProviderParameters();
-			p.setPeriod(null);
+			try {
+				p.setPeriod(AccountingPeriodUtil.getDefaultPeriod());
+			} catch (ManagerBeanException e) {
+				p.setPeriod(null);
+			}
 			p.setFromDate(null);
 			p.setToDate(null);
 			p.setDate(new Date());
@@ -44,7 +49,7 @@ public class TrialBalanceController implements ICollectionProvider {
 			p.setLowerLevelVisible(false);
 			p.setNoTouchedAccountVisible(false);
 			p.setRowsPerPage(20);
-			p.setAccountLevel(4);
+			p.setAccountLevel(5);
 			setParameters(p);
 		}
 		return parameters;

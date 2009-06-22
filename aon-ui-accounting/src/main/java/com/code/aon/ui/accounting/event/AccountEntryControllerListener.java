@@ -3,12 +3,14 @@ package com.code.aon.ui.accounting.event;
 import java.util.Date;
 
 import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -20,9 +22,17 @@ public class AccountEntryControllerListener extends ControllerAdapter {
 
     @Override
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-        AccountEntry to = (AccountEntry)event.getController().getTo();
-        to.setType(AccountEntryType.MANUAL);
-        to.setEntryDate(new Date());
+        try {
+	        AccountEntry to = (AccountEntry)event.getController().getTo();
+	        to.setType(AccountEntryType.MANUAL);
+	        to.setEntryDate(new Date());
+	        Period period = AccountingPeriodUtil.getDefaultPeriod();
+	        if (period != null) {
+	        	to.setAccountPeriod(period.getId());
+	        }
+        } catch (ManagerBeanException e) {
+            throw new ControllerListenerException(e);
+        }
     }
 
     @Override

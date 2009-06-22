@@ -30,6 +30,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class BalanceSheetController implements ICollectionProvider{
@@ -52,7 +53,11 @@ public class BalanceSheetController implements ICollectionProvider{
 
 	public void onReset(ActionEvent event) {
 		parameters = new SummaryProviderParameters();
-		parameters.setPeriod(null);
+		try {
+			parameters.setPeriod(AccountingPeriodUtil.getDefaultPeriod());
+		} catch (ManagerBeanException e) {
+			parameters.setPeriod(null);
+		}
 		parameters.setFromDate(null);
 		parameters.setToDate(null);
 		parameters.setDate(new Date());
@@ -202,7 +207,6 @@ public class BalanceSheetController implements ICollectionProvider{
 		try {
 			summaryCollection = summaryProvider.getSummaryCollection(params);;
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		Double amount;

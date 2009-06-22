@@ -75,7 +75,9 @@ public class AccountEntryController extends BasicController {
                 this.setTo((AccountEntry)this.getModel().getRowData());
             }
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error removing Account Entry", e);
+			String msg = "No se pudo borrar el apunte.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
         }
     }
 

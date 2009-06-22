@@ -32,6 +32,14 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2">
 
+					<aon:outputLabel for="ACC_default_period"
+						value="#{accountingBundle.accounting_def_period}" />
+					<aon:selectOneMenu id="ACC_default_period"
+						value="#{accAppParams.parameters['ACC_DEFAULT_PERIOD'].value}">
+						<f:selectItem itemValue="" itemLabel=" " />
+						<f:selectItems value="#{accountingCollections.accountPeriodKeys}" />
+					</aon:selectOneMenu>
+
 					<aon:outputLabel for="ACC_default_sales_account"
 						value="#{accountingBundle.accounting_def_sales_acc}" />
 					<aon:selectOneMenu id="ACC_default_sales_account"

@@ -19,14 +19,14 @@ import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.Loan;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
-import com.code.aon.accounting.util.AccountUtils;
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.accounting.utils.AccountPeriodValidator;
+import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
@@ -42,13 +42,13 @@ public class LoanEntryController implements ISpecialAccountEntry {
 	
 	private Loan loan;
 
-	private AccountUtils accountUtils;
+	private AccountingUtil accountingUtil;
 
-	public AccountUtils getAccountUtils() {
-		if (accountUtils == null) {
-			accountUtils = new AccountUtils();
+	public AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
 		}
-		return accountUtils;
+		return accountingUtil;
 	}
 
 	public boolean isNew() {
@@ -111,7 +111,7 @@ public class LoanEntryController implements ISpecialAccountEntry {
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
 				// operaciones de la transaccion
-				AccountPeriodValidator.validateAccountPeriod(getLoan().getLoanDate());
+				AccountingPeriodUtil.validateAccountPeriod(getLoan().getLoanDate());
 				AccountEntry entry = new AccountEntry();
 				entry.setEntryDate(getLoan().getLoanDate());
 				entry.setAccountPeriod(AccountUtil.obtainPeriod(getLoan().getLoanDate()).getId());
@@ -290,9 +290,9 @@ public class LoanEntryController implements ISpecialAccountEntry {
 
 	@SuppressWarnings("unchecked")
 	private Loan obtainLoan(AccountEntry entry) throws ManagerBeanException {
-		AccountEntryDetail detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.SHORT_TERM_LOAN_ACCOUNT_PREFIX + "*");
+		AccountEntryDetail detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.SHORT_TERM_LOAN_ACCOUNT_PREFIX + "*");
 		if (detail == null) {
-			detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.LONG_TERM_LOAN_ACCOUNT_PREFIX + "*");	
+			detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.LONG_TERM_LOAN_ACCOUNT_PREFIX + "*");	
 		}
 		IManagerBean loanAccountBean = BeanManager.getManagerBean(LoanAccount.class);
 		Criteria criteria = new Criteria();
@@ -311,9 +311,9 @@ public class LoanEntryController implements ISpecialAccountEntry {
 	
 	public String getPeriodMessage() {
 		try {
-			return AccountPeriodValidator.getValidAccountPeriod(getLoan().getLoanDate());
+			return AccountingPeriodUtil.getValidAccountPeriod(getLoan().getLoanDate());
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			return " - ";
 		}
 	}
