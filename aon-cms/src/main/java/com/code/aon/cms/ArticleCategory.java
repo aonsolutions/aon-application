@@ -90,11 +90,11 @@ public class ArticleCategory implements ITransferObject, IPositionObject {
 	}
 
 	@OneToMany(mappedBy = "articleCategory", cascade={CascadeType.REMOVE})
-	public Set<Article> getArticless() {
+	public Set<Article> getArticles() {
 		return this.articles;
 	}
 
-	public void setArticless( Set<Article> articles) {
+	public void setArticles( Set<Article> articles) {
 		this.articles = articles;
 	}
 	

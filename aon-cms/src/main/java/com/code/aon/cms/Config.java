@@ -10,11 +10,18 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name = "config")
 public class Config implements ITransferObject {
+
+	private static final long serialVersionUID = 3317067109884317395L;
 
 	private Integer id;
 
@@ -258,4 +265,65 @@ public class Config implements ITransferObject {
 		this.preview_ftp_path = preview_ftp_path;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Config o = (Config) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.domain, o.domain)
+				.append(this.from_email, o.from_email)
+				.append(this.from_name, o.from_name)
+				.append(this.ftp_password, o.ftp_password)
+				.append(this.ftp_path, o.ftp_path)
+				.append(this.ftp_server, o.ftp_server)
+				.append(this.host, o.host)
+				.append(this.online, o.online)
+				.append(this.preview_ftp_password, o.preview_ftp_password)
+				.append(this.preview_ftp_path, o.preview_ftp_path)
+				.append(this.preview_ftp_server, o.preview_ftp_server)
+				.append(this.preview_ftp_user, o.preview_ftp_user)
+				.append(this.preview_host, o.preview_host)
+				.append(this.smtp_auth, o.smtp_auth)
+				.append(this.smtp_password, o.smtp_password)
+				.append(this.smtp_server, o.smtp_server)
+				.append(this.smtp_user, o.smtp_user)
+				.append(this.template, o.template)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(domain)
+			.append(from_email)
+			.append(from_name)
+			.append(ftp_password)
+			.append(ftp_path)
+			.append(ftp_server)
+			.append(host)
+			.append(id)	
+			.append(online)
+			.append(preview_ftp_password)
+			.append(preview_ftp_path)
+			.append(preview_ftp_server)
+			.append(preview_ftp_user)
+			.append(preview_host)
+			.append(smtp_auth)
+			.append(smtp_password)
+			.append(smtp_server)
+			.append(smtp_user)
+			.append(template)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}	
+	
 }
