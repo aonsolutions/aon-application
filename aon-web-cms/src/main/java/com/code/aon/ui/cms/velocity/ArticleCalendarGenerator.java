@@ -29,7 +29,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
@@ -43,9 +42,10 @@ import com.code.aon.ui.cms.velocity.utils.MonthContent;
 public class ArticleCalendarGenerator extends Generator {
 	
 	private static final Logger LOGGER = Logger.getLogger(ArticleCalendarGenerator.class.getName());
+
+	public static String DIARY_INDEX_PAGE = "diary_index";
 	
-	public static void generate() {
-		IGeneratorLogger logger = CommonGenerator.getLogger();
+	public void generate() {
 		List<ITransferObject> articleList;
 		List<ITransferObject> articleDetailList;
 		Map<String, MonthContent> months;
@@ -85,7 +85,7 @@ public class ArticleCalendarGenerator extends Generator {
 			Map<Integer,ArticleCategoryHandler> map = new HashMap<Integer,ArticleCategoryHandler>(); 
 			for (int i=0; i < articleList.size(); i++) {
 				article = (Article)articleList.get(i);
-				ArticleCalendarGenerator.addArticleCategoryHandler(map, article.getArticleCategory());
+				addArticleCategoryHandler(map, article.getArticleCategory());
 				articleDetailCriteria = new Criteria();
 				articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), article.getId());
 				articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
@@ -234,8 +234,7 @@ public class ArticleCalendarGenerator extends Generator {
 			vu.remove("previous_article_diary_year");
 			vu.remove("previous_article_diary_month");
 			vu.remove("next_article_diary_year");
-			vu.remove("next_article_diary_month");
-			vu = null;		
+			vu.remove("next_article_diary_month");	
 		} catch (ManagerBeanException e) {
 			logger.error(e.getMessage());
 		} finally {
@@ -254,7 +253,7 @@ public class ArticleCalendarGenerator extends Generator {
 			articleCategoryDetailCriteria.addEqualExpression(articleCategoryDetailBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 			List<ITransferObject> articleCategoryDetailList = (List<ITransferObject>)articleCategoryDetailBean.getList(articleCategoryDetailCriteria);
 			if (articleCategoryDetailList.isEmpty()) {
-				CommonGenerator.getLogger().warning(" Categoria de articulos " + articleCategory.getAlias() + " no internacionalizada.");
+				getLogger().warning(" Categoria de articulos " + articleCategory.getAlias() + " no internacionalizada.");
 			}else{
 				ArticleCategoryDetail articleCategoryDetail = (ArticleCategoryDetail)articleCategoryDetailList.get(0);
 				ArticleCategoryHandler achandler = new ArticleCategoryHandler(articleCategoryDetail,ArticleType.EVENTS,null);
@@ -374,7 +373,7 @@ public class ArticleCalendarGenerator extends Generator {
 				articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				articleDetailList = (List<ITransferObject>)articleDetailBean.getList(articleDetailCriteria);
 				if (articleDetailList.isEmpty()) {
-					CommonGenerator.getLogger().warning(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.");
+					getLogger().warning(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.");
 				}else{
 					articleDetail = (ArticleDetail)articleDetailList.get(0);
 					ahandler = new ArticleHandler(articleDetail);
@@ -384,7 +383,7 @@ public class ArticleCalendarGenerator extends Generator {
 			ahandler = null;
 		
 		} catch (ManagerBeanException e) {
-			CommonGenerator.getLogger().error(e.getMessage());
+			getLogger().error(e.getMessage());
 		} finally {
 			article = null;
 			articleDetail = null;
@@ -392,8 +391,6 @@ public class ArticleCalendarGenerator extends Generator {
 		}
 		return list;
 	}
-	
-	public static String DIARY_INDEX_PAGE = "diary_index";
 	
 	public static Object getNextArticlesHandler() {
 		List<ITransferObject> articleList;
@@ -424,7 +421,7 @@ public class ArticleCalendarGenerator extends Generator {
 
 			return nah;
 		} catch (ManagerBeanException e) {
-			CommonGenerator.getLogger().error(e.getMessage());
+			getLogger().error(e.getMessage());
 		} finally {
 			articleList = null;
 		}
@@ -465,13 +462,13 @@ public class ArticleCalendarGenerator extends Generator {
 			Map<Integer,ArticleCategoryHandler> map = new HashMap<Integer,ArticleCategoryHandler>(); 
 			for (int i=0; i < articleList.size(); i++) {
 				article = (Article)articleList.get(i);
-				ArticleCalendarGenerator.addArticleCategoryHandler(map, article.getArticleCategory());
+				addArticleCategoryHandler(map, article.getArticleCategory());
 				articleDetailCriteria = new Criteria();
 				articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), article.getId());
 				articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				articleDetailList = (List<ITransferObject>)articleDetailBean.getList(articleDetailCriteria);
 				if (articleDetailList.isEmpty()) {
-					CommonGenerator.getLogger().warning(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.");
+					getLogger().warning(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.");
 				}else{
 					articleDetail = (ArticleDetail)articleDetailList.get(0);
 					Date initDate = article.getInitDate();
@@ -494,7 +491,7 @@ public class ArticleCalendarGenerator extends Generator {
 			DiaryCalendarHandler diaryCalendarHandler = new DiaryCalendarHandler(monthsList);
 			return diaryCalendarHandler;
 		} catch (ManagerBeanException e) {
-			CommonGenerator.getLogger().error(e.getMessage());
+			getLogger().error(e.getMessage());
 		} finally {
 			articleList = null;
 			articleDetailList = null;

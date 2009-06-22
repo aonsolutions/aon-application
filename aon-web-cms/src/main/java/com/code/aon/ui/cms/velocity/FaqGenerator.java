@@ -19,7 +19,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
@@ -32,14 +31,12 @@ public class FaqGenerator extends Generator {
 
 	public static final String FAQ_CATEGORY_BY_SECTION_PAGE = "category_section_";
 	
-	public static void generate() {
-		FaqGenerator.generate(null);
+	public void generate() {
+		generate(null);
 	}
 
-	public static void generate(FaqCategory selectedCategory) {
-		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
-		IGeneratorLogger logger = CommonGenerator.getLogger();
-		
+	public void generate(FaqCategory selectedCategory) {
+		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();	
 		ArrayList<FaqCategoryHandler> fchList;
 		List<ITransferObject> faqCategoryList;
 		List<ITransferObject> faqCategoryDetailList;
@@ -125,11 +122,9 @@ public class FaqGenerator extends Generator {
 			faqCategoryDetailList = null;
 			categoryMap = null;
 		}
-		vu = null;
 	}
 	
-	private static ArrayList<FaqHandler> getFaqList(FaqCategory fc) {
-		IGeneratorLogger logger = CommonGenerator.getLogger();
+	private ArrayList<FaqHandler> getFaqList(FaqCategory fc) {
 		ArrayList<FaqHandler> list = new ArrayList<FaqHandler>();
 		List<ITransferObject> ld;
 		try {

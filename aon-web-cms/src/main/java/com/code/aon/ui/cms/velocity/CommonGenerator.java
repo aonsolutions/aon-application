@@ -31,9 +31,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.Constants;
-import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.controller.GeneratorConfigController;
-import com.code.aon.ui.cms.controller.GeneratorStatusController;
 import com.code.aon.ui.cms.controller.ICMSConstants;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
@@ -41,7 +39,6 @@ import com.code.aon.ui.cms.velocity.attribute.FooterHandler;
 import com.code.aon.ui.cms.velocity.attribute.HeaderHandler;
 import com.code.aon.ui.cms.velocity.attribute.LanguageHandler;
 import com.code.aon.ui.cms.velocity.attribute.SidebarOptionHandler;
-import com.code.aon.ui.util.AonUtil;
 
 public class CommonGenerator extends Generator implements ICMSConstants {
 
@@ -49,13 +46,7 @@ public class CommonGenerator extends Generator implements ICMSConstants {
 	
 	private Section previousSection = null;
 	
-	private IGeneratorLogger logger;
-
-    static private CommonGenerator singleton = null;
-
-    private CommonGenerator() { 
-    	logger = (GeneratorStatusController) AonUtil.getRegisteredBean(GENERATOR_STATUS);
-    }
+    private static CommonGenerator singleton = null;
 
     static public CommonGenerator getCommonGenerator() {
 
@@ -65,19 +56,15 @@ public class CommonGenerator extends Generator implements ICMSConstants {
         return singleton;
     }
     
-	public VelocityUtil initVelocityUtil(){
+	public VelocityUtil initVelocityUtil() {
 		VelocityUtil vu = new VelocityUtil();
-		vu.setLogger(logger);
+		vu.setLogger( getLogger() );
 		CommonGenerator.getCommonGenerator().init(vu);
 		vu.setTemplatePath(ControllerUtil.getCurrentVmTemplatePath());
 		vu.initialize();
 		return vu;
 	}    
     
-    public static IGeneratorLogger getLogger() {
-		return getCommonGenerator().logger;
-	}
-
 	private void init(VelocityUtil vu) {
     	this.previousSection = null;
     	
@@ -248,7 +235,6 @@ public class CommonGenerator extends Generator implements ICMSConstants {
         vu.remove("every_languages");
         vu.remove("default_language");
         vu.remove("current_language");
-		vu = null;
 	}
 	
 	private HeaderHandler getHeaderHandler(Header h) {
@@ -330,8 +316,6 @@ public class CommonGenerator extends Generator implements ICMSConstants {
 		f = ControllerUtil.getLanguagePreviewPath();
 		if (!f.exists()) f.mkdirs();
 		generate(vu, Templates.LANGUAGE);
-		
-		vu = null;
 	}
 
 	public void generateEmailSendPage() {
@@ -369,7 +353,6 @@ public class CommonGenerator extends Generator implements ICMSConstants {
 		} catch (ManagerBeanException e) {
 		}
 		generate(vu, Templates.SEARCH);
-		vu = null;
 	}
 
 	public void generateCaptchaPage() {
@@ -380,8 +363,6 @@ public class CommonGenerator extends Generator implements ICMSConstants {
 		f = ControllerUtil.getLanguagePreviewPath();
 		if (!f.exists()) f.mkdirs();
 		generate(vu, Templates.CAPTCHA);
-		
-		vu = null;
 	}
 
 	private static Object getDefaultLanguage() {

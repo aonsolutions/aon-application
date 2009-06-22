@@ -21,7 +21,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
@@ -36,14 +35,12 @@ public class LinkGenerator extends Generator {
 
 	public static final String LINK_CATEGORY_BY_SECTION_PAGE = "category_section_";
 	
-	public static void generate() {
-		LinkGenerator.generate(null);
+	public void generate() {
+		generate(null);
 	}
 
-	public static void generate(LinkCategory selectedCategory) {
-		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
-		IGeneratorLogger logger = CommonGenerator.getLogger();
-
+	public void generate(LinkCategory selectedCategory) {
+		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();	
 		ArrayList<LinkCategoryHandler> lchList;
 		List<ITransferObject> linkCategoryList;
 		List<ITransferObject> linkCategoryDetailList;
@@ -132,7 +129,6 @@ public class LinkGenerator extends Generator {
 			lchList = null;
 			categoryMap = null;
 		}
-		vu = null;
 	}
 	
 	private static ArrayList<LinkHandler> getlinkList(LinkCategory lc) {
@@ -148,7 +144,7 @@ public class LinkGenerator extends Generator {
 			criteria.addOrder(bean.getFieldName(ICMSAlias.LINK_POSITION));
 			linkList = (List<ITransferObject>)bean.getList(criteria);
 			if (linkList.isEmpty())
-				CommonGenerator.getLogger().warning("La categoria de links " + lc.getAlias() + " no tiene links asociados.");
+				getLogger().warning("La categoria de links " + lc.getAlias() + " no tiene links asociados.");
 			Link l;
 			Criteria detailCriteria;
 			for (int i = 0; i < linkList.size(); i++) {
@@ -158,7 +154,7 @@ public class LinkGenerator extends Generator {
 				detailCriteria.addEqualExpression(detailBean.getFieldName(ICMSAlias.LINK_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				linkDetailList = (List<ITransferObject>)detailBean.getList(detailCriteria);
 				if (linkDetailList.isEmpty()) {
-					CommonGenerator.getLogger().warning("El link " + l.getAlias() + " no esta internacionalizado.");
+					getLogger().warning("El link " + l.getAlias() + " no esta internacionalizado.");
 				}else{
 					LinkDetail fd = (LinkDetail)linkDetailList.get(0);
 					LinkHandler fh = new LinkHandler(fd);
@@ -182,7 +178,7 @@ public class LinkGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.LINK_CATEGORY_ID), ident);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.isEmpty()){
-				CommonGenerator.getLogger().warning("CATEGORIA DE LINKS "+ident+" REFERENCIADA NO EXISTE !!!");
+				getLogger().warning("CATEGORIA DE LINKS "+ident+" REFERENCIADA NO EXISTE !!!");
 				return null;
 			}
 			LinkCategory link = (LinkCategory)l.get(0);
@@ -193,7 +189,7 @@ public class LinkGenerator extends Generator {
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.LINK_CATEGORY_DETAIL_LINK_CATEGORY_ID), ident);
 				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
 				if (ld.isEmpty()){
-					CommonGenerator.getLogger().warning("El categoria de links " + link.getAlias() + " no esta internacionalizado.");
+					getLogger().warning("El categoria de links " + link.getAlias() + " no esta internacionalizado.");
 				}else{
 					LinkCategoryDetail lcd = (LinkCategoryDetail)ld.get(0);
 					LinkCategoryHandler lch = new LinkCategoryHandler(lcd,getlinkList(link));
@@ -201,7 +197,7 @@ public class LinkGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			CommonGenerator.getLogger().error(e.getMessage());
+			getLogger().error(e.getMessage());
 		}
 		return null;
 	}

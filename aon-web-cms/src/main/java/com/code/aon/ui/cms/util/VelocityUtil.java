@@ -46,12 +46,12 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 		return context;
 	}
 
-	public void setContext(VelocityContext context) {
-		this.context = context;
-	}
-	
     public void setLogger(IGeneratorLogger logger) {
 		this.logger = logger;
+	}
+    
+	public IGeneratorLogger getLogger() {
+		return logger;
 	}
 
 	public void initialize() {
@@ -72,6 +72,10 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 
 	public void remove(String key) {
 		this.context.remove(key);
+	}
+	
+	public void reset() {
+		this.context = new VelocityContext();
 	}
 
     public boolean generate(File template, File page) {

@@ -1,3 +1,9 @@
 .aon-label-required {
 	color:#F9553B;
 }
+
+.generator-log-panel {
+	width:920px;
+    height:178px;
+    overflow:auto;
+}

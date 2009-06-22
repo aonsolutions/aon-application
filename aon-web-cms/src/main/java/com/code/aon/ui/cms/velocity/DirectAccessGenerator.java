@@ -14,7 +14,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.attribute.DirectAccessGroupHandler;
@@ -22,13 +21,12 @@ import com.code.aon.ui.cms.velocity.attribute.DirectAccessHandler;
 
 public class DirectAccessGenerator extends Generator {
 	
-	public static void generate() {
+	public void generate() {
 		generate(null);
 	}
 	
-	public static void generate(DirectAccessGroup selectedCategory) {
+	public void generate(DirectAccessGroup selectedCategory) {
 		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();		
-		IGeneratorLogger logger = CommonGenerator.getLogger();
 		
 		List<ITransferObject> directAccessGroupList;
 		List<ITransferObject> directAccessGroupDetailList;
@@ -69,7 +67,6 @@ public class DirectAccessGenerator extends Generator {
 			directAccessGroupList = null;
 			directAccessGroupDetailList = null;
 		}
-		vu = null;
 	}
 	
 	private static ArrayList<DirectAccessHandler> getDirectAccessList(DirectAccessGroup group) {
@@ -85,7 +82,7 @@ public class DirectAccessGenerator extends Generator {
 			criteria.addOrder(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_POSITION));
 			directAccessList = (List<ITransferObject>)bean.getList(criteria);
 			if (directAccessList.isEmpty())
-				CommonGenerator.getLogger().warning("La categoria de accesos directos " + group.getAlias() + " no tiene accesos directos.");
+				getLogger().warning("La categoria de accesos directos " + group.getAlias() + " no tiene accesos directos.");
 			DirectAccess da;
 			DirectAccessDetail detail;
 			Criteria criteria_detail;
@@ -96,7 +93,7 @@ public class DirectAccessGenerator extends Generator {
 				criteria_detail.addEqualExpression(detailBean.getFieldName(ICMSAlias.DIRECT_ACCESS_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				directAccessDetailList = (List<ITransferObject>)detailBean.getList(criteria_detail);
 				if (directAccessDetailList.isEmpty()) {
-					CommonGenerator.getLogger().warning("El acceso directo " + da.getAlias() + " no esta internacionalizado.");
+					getLogger().warning("El acceso directo " + da.getAlias() + " no esta internacionalizado.");
 				}else{
 					detail = (DirectAccessDetail)directAccessDetailList.get(0);
 					DirectAccessHandler handler = new DirectAccessHandler(detail);
@@ -104,7 +101,7 @@ public class DirectAccessGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			CommonGenerator.getLogger().error(e.getMessage());
+			getLogger().error(e.getMessage());
 		} finally {
 			directAccessList = null;
 			directAccessDetailList = null;
@@ -120,7 +117,7 @@ public class DirectAccessGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_ID), ident);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.isEmpty()){
-				CommonGenerator.getLogger().warning("ACCESO DIRECTO "+ident+" REFERENCIADO NO EXISTE !!!");
+				getLogger().warning("ACCESO DIRECTO "+ident+" REFERENCIADO NO EXISTE !!!");
 				return null;
 			}
 			DirectAccess a = (DirectAccess)l.get(0);
@@ -131,7 +128,7 @@ public class DirectAccessGenerator extends Generator {
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.DIRECT_ACCESS_DETAIL_DIRECT_ACCESS_ID), ident);
 				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
 				if (ld.isEmpty()){
-					CommonGenerator.getLogger().warning("El acceso directo " + a.getAlias() + " no esta internacionalizado.");
+					getLogger().warning("El acceso directo " + a.getAlias() + " no esta internacionalizado.");
 				}else{
 					DirectAccessDetail ad = (DirectAccessDetail)ld.get(0);
 					DirectAccessHandler ah = new DirectAccessHandler(ad);
@@ -139,7 +136,7 @@ public class DirectAccessGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			CommonGenerator.getLogger().error(e.getMessage());
+			getLogger().error(e.getMessage());
 		}
 		return null;
 	}
@@ -151,7 +148,7 @@ public class DirectAccessGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_ID), ident);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.isEmpty()){
-				CommonGenerator.getLogger().warning("GRUPO DE ACCESO DIRECTO "+ident+" REFERENCIADO NO EXISTE !!!");
+				getLogger().warning("GRUPO DE ACCESO DIRECTO "+ident+" REFERENCIADO NO EXISTE !!!");
 				return null;
 			}
 			DirectAccessGroup a = (DirectAccessGroup)l.get(0);
@@ -162,7 +159,7 @@ public class DirectAccessGenerator extends Generator {
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_DETAIL_DIRECT_ACCESS_GROUP_ID), ident);
 				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
 				if (ld.isEmpty()){
-					CommonGenerator.getLogger().warning("El grupo de accesos directos " + a.getAlias() + " no esta internacionalizado.");
+					getLogger().warning("El grupo de accesos directos " + a.getAlias() + " no esta internacionalizado.");
 				}else{
 					DirectAccessGroupDetail ad = (DirectAccessGroupDetail)ld.get(0);
 					DirectAccessGroupHandler ah = new DirectAccessGroupHandler(ad,getDirectAccessList(a));
@@ -170,7 +167,7 @@ public class DirectAccessGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			CommonGenerator.getLogger().error(e.getMessage());
+			getLogger().error(e.getMessage());
 		}
 		return null;
 	}

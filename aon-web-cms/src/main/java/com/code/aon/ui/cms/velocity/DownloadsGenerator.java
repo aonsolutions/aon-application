@@ -17,7 +17,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
@@ -28,14 +27,13 @@ public class DownloadsGenerator extends Generator {
 
 	public static final String DOWNLOAD_CATEGORY_LIST_PAGE = "categories";
 	
-	public static void generate() {
-		DownloadsGenerator.generate(null);
+	public void generate() {
+		generate(null);
 	}
 
-	public static void generate(DownloadCategory selectedCategory) {
+	public void generate(DownloadCategory selectedCategory) {
 		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
-		IGeneratorLogger logger = CommonGenerator.getLogger();
-		
+			
 		try {
 			Section configSection = GeneratorConfigController.currentSection(DownloadConfig.class);
 			IManagerBean bean = BeanManager.getManagerBean(DownloadCategory.class);
@@ -105,7 +103,6 @@ public class DownloadsGenerator extends Generator {
 		} catch (ManagerBeanException e) {
 			logger.error(e.getMessage());
 		}
-		vu = null;
 	}
 	
 	public static ArrayList<DownloadHandler> getDownloadsList(DownloadCategoryDetail groupDetail) {
@@ -119,7 +116,7 @@ public class DownloadsGenerator extends Generator {
 			criteria.addOrder(bean.getFieldName(ICMSAlias.DOWNLOAD_POSITION));
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.isEmpty())
-				CommonGenerator.getLogger().warning("La categoria de descargas " + groupDetail.getDownloadCategory().getAlias() + " no tiene descargas.");
+				getLogger().warning("La categoria de descargas " + groupDetail.getDownloadCategory().getAlias() + " no tiene descargas.");
 			for (int i = 0; i < l.size(); i++) {
 				Download da = (Download)l.get(i);
 				IManagerBean detailBean = BeanManager.getManagerBean(DownloadDetail.class);
@@ -128,7 +125,7 @@ public class DownloadsGenerator extends Generator {
 				criteria_detail.addEqualExpression(detailBean.getFieldName(ICMSAlias.DOWNLOAD_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				List<ITransferObject> ld = (List<ITransferObject>)detailBean.getList(criteria_detail);
 				if (ld.isEmpty()) {
-					CommonGenerator.getLogger().warning("La descarga " + da.getAlias() + " no esta internacionalizada.");
+					getLogger().warning("La descarga " + da.getAlias() + " no esta internacionalizada.");
 				}else{
 					DownloadDetail detail = (DownloadDetail)ld.get(0);
 					DownloadHandler handler = new DownloadHandler(detail);
@@ -136,7 +133,7 @@ public class DownloadsGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			CommonGenerator.getLogger().error(e.getMessage());
+			getLogger().error(e.getMessage());
 		}
 		
 		return list;
@@ -150,7 +147,7 @@ public class DownloadsGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_ID), ident);
 			l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.isEmpty()){
-				CommonGenerator.getLogger().warning("CATEGORIA DE DESCARGAS "+ident+" REFERENCIADA NO EXISTE !!!");
+				getLogger().warning("CATEGORIA DE DESCARGAS "+ident+" REFERENCIADA NO EXISTE !!!");
 				return null;
 			}
 			DownloadCategory dc = (DownloadCategory) l.get(0);
@@ -160,14 +157,14 @@ public class DownloadsGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 			l = (List<ITransferObject>)bean.getList(criteria);
 			if  (l.isEmpty()) {
-				CommonGenerator.getLogger().warning("La categoria de descarga " + dc.getAlias() + " no esta internacionalizada.");
+				getLogger().warning("La categoria de descarga " + dc.getAlias() + " no esta internacionalizada.");
 			}else{
 				DownloadCategoryDetail groupDetail = (DownloadCategoryDetail)l.get(0);
 				DownloadCategoryHandler h = new DownloadCategoryHandler(groupDetail,getDownloadsList(groupDetail));
 				return h;
 			}
 		} catch (ManagerBeanException e) {
-			CommonGenerator.getLogger().error(e.getMessage());
+			getLogger().error(e.getMessage());
 		}finally{
 			l = null;
 		}

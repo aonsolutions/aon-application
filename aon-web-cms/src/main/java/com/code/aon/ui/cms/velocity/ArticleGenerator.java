@@ -21,7 +21,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
@@ -32,7 +31,7 @@ public class ArticleGenerator extends Generator {
 
 	public static final String ARTICLE_LIST_PAGE = "article_categories";
 	
-	public static void generateArticle(Article article){
+	public void generateArticle(Article article){
 		try{
 			IManagerBean articleDetailBean = BeanManager.getManagerBean(ArticleDetail.class);
 			Criteria articleDetailCriteria = new Criteria();
@@ -40,23 +39,21 @@ public class ArticleGenerator extends Generator {
 			articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 			List<ITransferObject> articleDetailList = articleDetailBean.getList(articleDetailCriteria);
 			if (articleDetailList.isEmpty()) {
-				CommonGenerator.getLogger().warning(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.");
-			}else{
+				logger.warning(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.");
+			} else {
 				ArticleDetail articleDetail = (ArticleDetail)articleDetailList.get(0);
-				String backURL = ArticleGenerator.getBackURL(article.getArticleType(),article.getArticleCategory());
-				Templates templates = ArticleGenerator.getTemplate(article.getArticleType().ordinal());
+				String backURL = getBackURL(article.getArticleType(),article.getArticleCategory());
+				Templates templates = getTemplate(article.getArticleType());
 				VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
-				ArticleGenerator.chargeArticleContext(vu, article.getArticleCategory());
-				ArticleGenerator.generateArticle(vu, templates, backURL, articleDetail);
-				vu = null;		
+				chargeArticleContext(vu, article.getArticleCategory());
+				generateArticle(vu, templates, backURL, articleDetail);		
 			}
 		} catch (ManagerBeanException e) {
-			CommonGenerator.getLogger().error(e.getMessage());
-		} finally {
+			logger.error(e.getMessage());
 		}
 	}
 	
-	private static void chargeArticleCategoryContext(VelocityUtil vu, ArticleCategory articleCategory) throws ManagerBeanException{
+	private void chargeArticleCategoryContext(VelocityUtil vu, ArticleCategory articleCategory) throws ManagerBeanException{
 		if (articleCategory.getSection()!=null){
 			CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
 		}else{
@@ -65,7 +62,7 @@ public class ArticleGenerator extends Generator {
 		}
 	}
 
-	private static void chargeArticleContext(VelocityUtil vu, ArticleCategory articleCategory) throws ManagerBeanException{
+	private void chargeArticleContext(VelocityUtil vu, ArticleCategory articleCategory) throws ManagerBeanException{
 		if (articleCategory.getElementSection()!=null){
 			CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getElementSection());
 		}else{
@@ -78,14 +75,14 @@ public class ArticleGenerator extends Generator {
 		}
 	}
 	
-	private static String getBackURL(ArticleType articleType, ArticleCategory articleCategory){
-		Templates templates = ArticleGenerator.getTemplate(articleType.ordinal());
+	private String getBackURL(ArticleType articleType, ArticleCategory articleCategory){
+		Templates templates = getTemplate(articleType);
 		String back_url = templates.getHtmlName();
 		back_url = back_url.replaceAll("%NAME%", articleType.getName()+"_"+articleCategory.getAlias());
 		return back_url; 
 	}
 	
-	private static void generateArticle(
+	private void generateArticle(
 			VelocityUtil vu,
 			Templates templates,
 			String back_url,
@@ -93,14 +90,13 @@ public class ArticleGenerator extends Generator {
 		ArticleHandler ahandler = new ArticleHandler(articleDetail);
 		vu.put("back_url", back_url);
 		vu.put("article", ahandler);
-		CommonGenerator.getLogger().info(" Generando article " + articleDetail.getArticle().getAlias() + ".");
+		logger.info(" Generando article " + articleDetail.getArticle().getAlias() + ".");
 		generate(vu, templates, articleDetail.getArticle().getAlias());
 		vu.remove("article");
 		vu.remove("back_url");
 	}
 	
-	public static void generate(ArticleType articleType, ArticleCategory selectedArticleCategory) {
-		IGeneratorLogger logger = CommonGenerator.getLogger();
+	public void generate(ArticleType articleType, ArticleCategory selectedArticleCategory) {
 		List<ITransferObject> articleCategoryList;
 		List<ITransferObject> articleCategoryDetailList;
 		List<ITransferObject> articleList;
@@ -142,7 +138,7 @@ public class ArticleGenerator extends Generator {
 				}else{
 					articleCategoryDetail = (ArticleCategoryDetail)articleCategoryDetailList.get(0);
 					boolean emptyCategory = true;
-					templates = ArticleGenerator.getTemplate(articleType.ordinal());
+					templates = getTemplate(articleType);
 					articleCriteria = new Criteria();
 					articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_CATEGORY_ID), articleCategory.getId());
 					articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ACTIVE), true);
@@ -157,7 +153,7 @@ public class ArticleGenerator extends Generator {
 					if (!articleList.isEmpty()){
 						emptyCategory = false;
 						String back_url = getBackURL(articleType, articleCategory);
-						ArticleGenerator.chargeArticleContext(vu, articleCategory);
+						chargeArticleContext(vu, articleCategory);
 						for (int i=0; i < articleList.size(); i++) {
 							article = (Article)articleList.get(i);
 							articleDetailCriteria = new Criteria();
@@ -178,7 +174,7 @@ public class ArticleGenerator extends Generator {
 								vu.remove("back_url");
 							}
 						}
-						ArticleGenerator.chargeArticleCategoryContext(vu, articleCategory);
+						chargeArticleCategoryContext(vu, articleCategory);
 						
 						ArticleCategoryHandler achandler = new ArticleCategoryHandler(articleCategoryDetail,articleType,ahlist);
 						vu.put("article_category", achandler);
@@ -193,8 +189,7 @@ public class ArticleGenerator extends Generator {
 					if (emptyCategory){
 						logger.warning("La categoria de articulos " + articleCategory.getAlias() + " no tiene " + articleType.getName() + ".");
 					}
-				}
-				vu = null;		
+				}	
 			}
 		} catch (ManagerBeanException e) {
 			logger.error(e.getMessage());
@@ -206,19 +201,19 @@ public class ArticleGenerator extends Generator {
 		}
 	}
 
-	public static void generate(ArticleType articleType) {
-		ArticleGenerator.generate(articleType,null);
+	public void generate(ArticleType articleType) {
+		generate( articleType, null );
 	}
 	
-	public static Templates getTemplate(int art_type) {
+	public static Templates getTemplate(ArticleType art_type) {
 		switch (art_type) {
-		case 0:
+		case NEWS:
 			return Templates.ARTICLE_NEWS;
-		case 1:
+		case SERVICES:
 			return Templates.ARTICLE_SERVICES;
-		case 2:
+		case EVENTS:
 			return Templates.ARTICLE_EVENTS;
-		case 3:
+		case OTHER:
 			return Templates.ARTICLE_OTHER;
 		default:
 			return Templates.ARTICLE_OTHER;
@@ -232,7 +227,7 @@ public class ArticleGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ID), ident);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.isEmpty()){
-				CommonGenerator.getLogger().warning("ARTICULO "+ident+" REFERENCIADO NO EXISTE !!!");
+				getLogger().warning("ARTICULO "+ident+" REFERENCIADO NO EXISTE !!!");
 				return null;
 			}
 			
@@ -244,7 +239,7 @@ public class ArticleGenerator extends Generator {
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), ident);
 				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
 				if (ld.isEmpty()){
-					CommonGenerator.getLogger().warning(" Articulo " + a.getAlias() + " no internacionalizada.");
+					getLogger().warning(" Articulo " + a.getAlias() + " no internacionalizada.");
 				}else{
 					ArticleDetail ad = (ArticleDetail)ld.get(0);
 					ArticleHandler ah = new ArticleHandler(ad);
@@ -252,7 +247,7 @@ public class ArticleGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			CommonGenerator.getLogger().error(e.getMessage());
+			getLogger().error(e.getMessage());
 		}
 		return null;
 	}
@@ -270,7 +265,7 @@ public class ArticleGenerator extends Generator {
 			ArticleCategory ac = null;
 			lc = bean.getList(criteria);
 			if (lc.isEmpty()){
-				CommonGenerator.getLogger().warning("CATEGORIA DE ARTICULO "+ident+" REFERENCIADA NO EXISTE !!!");
+				getLogger().warning("CATEGORIA DE ARTICULO "+ident+" REFERENCIADA NO EXISTE !!!");
 				return null;
 			}else{
 				ac = (ArticleCategory) lc.get(0);
@@ -281,7 +276,7 @@ public class ArticleGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_ARTICLE_CATEGORY_ID), ident);
 			lcd = (List<ITransferObject>)bean.getList(criteria);
 			if (lcd.isEmpty()){
-				CommonGenerator.getLogger().warning(" Categoria de Articulo " + ac.getAlias() + " no internacionalizada.");
+				getLogger().warning(" Categoria de Articulo " + ac.getAlias() + " no internacionalizada.");
 				return null;
 			}
 			ArticleCategoryDetail acd = (ArticleCategoryDetail) lcd.get(0);
@@ -308,7 +303,7 @@ public class ArticleGenerator extends Generator {
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), a.getId());
 				ld = (List<ITransferObject>)bean.getList(criteria);
 				if (ld.isEmpty()){
-					CommonGenerator.getLogger().warning(" Articulo " + a.getAlias() + " de categoria " + ac.getAlias() + " no internacionalizada.");
+					getLogger().warning(" Articulo " + a.getAlias() + " de categoria " + ac.getAlias() + " no internacionalizada.");
 				}else{
 					ArticleDetail ad = (ArticleDetail)ld.get(0);
 					ArticleHandler ah = new ArticleHandler(ad);
@@ -318,7 +313,7 @@ public class ArticleGenerator extends Generator {
 			ArticleCategoryHandler ach = new ArticleCategoryHandler(acd,type,ahlist);
 			return ach;
 		} catch (ManagerBeanException e) {
-			CommonGenerator.getLogger().error(e.getMessage());
+			getLogger().error(e.getMessage());
 		} finally {
 			l = null;
 			ld = null;
