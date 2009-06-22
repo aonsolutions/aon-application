@@ -16,7 +16,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.attribute.ModularPageHandler;
@@ -26,10 +25,8 @@ public class ModularPageGenerator extends Generator {
 	
 	private static final Logger LOGGER = Logger.getLogger(ModularPageGenerator.class.getName());
 
-	public static void generate(ModularPage selected_modular) {
-		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();		
-		IGeneratorLogger logger = CommonGenerator.getLogger();
-		
+	public void generate(ModularPage selected_modular) {
+		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();			
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ModularPage.class);
 			IManagerBean moBean = BeanManager.getManagerBean(ModularPageOption.class);
@@ -119,11 +116,10 @@ public class ModularPageGenerator extends Generator {
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
-		vu = null;
 	}
 
-	public static void generate() {
-		ModularPageGenerator.generate(null);
+	public void generate() {
+		generate(null);
 	}
 	
 }

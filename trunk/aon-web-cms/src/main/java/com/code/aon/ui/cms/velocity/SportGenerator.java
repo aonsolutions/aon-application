@@ -17,7 +17,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.attribute.SportCategoryHandler;
@@ -36,9 +35,8 @@ public class SportGenerator extends Generator {
 	
 	public static String MAIN_PAGE = "index";
 
-	public static void generate() {
-		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
-		IGeneratorLogger logger = CommonGenerator.getLogger();
+	public void generate() {
+		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();	
 		List<ITransferObject> categoryDetailList;
 		List<ITransferObject> clubList;
 		List<ITransferObject> positionList;
@@ -147,7 +145,6 @@ public class SportGenerator extends Generator {
 			positionList = null;
 			playerList = null;
 		}
-		vu = null;
 	}
 
 }

@@ -90,7 +90,7 @@ public class ArticleHandler {
 		if (this.article.getEndDate()!=null)
 			this.endDate = formatter.format(this.article.getEndDate());
 		
-		this.url = ArticleGenerator.getTemplate(this.article.getArticleType().ordinal()).getHtmlName();
+		this.url = ArticleGenerator.getTemplate(this.article.getArticleType()).getHtmlName();
 		this.url = this.url.replaceAll("%NAME%", ad.getArticle().getAlias());
 	}
 

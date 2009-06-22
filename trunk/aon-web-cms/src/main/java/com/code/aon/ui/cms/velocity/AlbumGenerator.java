@@ -19,7 +19,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
@@ -31,14 +30,13 @@ public class AlbumGenerator extends Generator {
 
 	public static final String ALBUM_LIST_PAGE = "album_categories";
 	
-	public static void generate() {
-		AlbumGenerator.generate(null);
+	public void generate() {
+		generate(null);
 	}
 
-	public static void generate(AlbumCategory selectedCategory) {
+	public void generate(AlbumCategory selectedCategory) {
 		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
-		IGeneratorLogger logger = CommonGenerator.getLogger();
-		
+			
 		List<ITransferObject> albumCategoryList;
 		List<ITransferObject> albumCategoryDetailList;
 		List<ITransferObject> albumList;
@@ -175,10 +173,9 @@ public class AlbumGenerator extends Generator {
 			albumList = null;
 			albumDetailList = null;
 		}
-		vu = null;
 	}
 
-	public static ArrayList<AlbumImageHandler> getAlbumImageList(AlbumDetail albumDetail) {
+	public ArrayList<AlbumImageHandler> getAlbumImageList(AlbumDetail albumDetail) {
 		ArrayList<AlbumImageHandler> list = new ArrayList<AlbumImageHandler>();
 		List<ITransferObject> albumImageList;
 		List<ITransferObject> albumImageDetailList;
@@ -194,7 +191,7 @@ public class AlbumGenerator extends Generator {
 			criteria.addOrder(albumImageBean.getFieldName(ICMSAlias.ALBUM_IMAGE_POSITION));
 			albumImageList = (List<ITransferObject>)albumImageBean.getList(criteria);
 			if(albumImageList.isEmpty())
-				CommonGenerator.getLogger().warning("El album "+albumDetail.getAlbum().getAlias()+" no tiene imagenes.");
+				logger.warning("El album "+albumDetail.getAlbum().getAlias()+" no tiene imagenes.");
 			for (int i = 0; i < albumImageList.size(); i++) {
 				albumImage = (AlbumImage)albumImageList.get(i);
 				criteria_detail = new Criteria();
@@ -202,7 +199,7 @@ public class AlbumGenerator extends Generator {
 				criteria_detail.addEqualExpression(albumImageDetailBean.getFieldName(ICMSAlias.ALBUM_IMAGE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				albumImageDetailList = (List<ITransferObject>)albumImageDetailBean.getList(criteria_detail);
 				if (albumImageDetailList.isEmpty()) {
-					CommonGenerator.getLogger().warning("La imagen "+albumImage.getImage()+" no esta internacionalizada.");
+					logger.warning("La imagen "+albumImage.getImage()+" no esta internacionalizada.");
 				}else{
 					albumImageDetail = (AlbumImageDetail)albumImageDetailList.get(0);
 					AlbumImageHandler handler = new AlbumImageHandler(albumImageDetail);
@@ -210,7 +207,7 @@ public class AlbumGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			CommonGenerator.getLogger().error(e.getMessage());
+			logger.error(e.getMessage());
 		}finally{
 			albumImageList = null;
 			albumImageDetailList = null;
@@ -230,7 +227,7 @@ public class AlbumGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_CATEGORY_ID), ident);
 			lc = bean.getList(criteria); 
 			if (lc.isEmpty()){
-				CommonGenerator.getLogger().warning("CATEGORIA DE ALBUM "+ident+" REFERENCIADA NO EXISTE !!!");
+				getLogger().warning("CATEGORIA DE ALBUM "+ident+" REFERENCIADA NO EXISTE !!!");
 				return null;
 			}
 			
@@ -242,7 +239,7 @@ public class AlbumGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_CATEGORY_DETAIL_ALBUM_CATEGORY_ID), ident);
 			lcd = (List<ITransferObject>)bean.getList(criteria);
 			if (lcd.isEmpty()){
-				CommonGenerator.getLogger().warning("La categoria de albumes "+albumCategory.getAlias()+" no esta internacionalizado.");
+				getLogger().warning("La categoria de albumes "+albumCategory.getAlias()+" no esta internacionalizado.");
 				return null;
 			}
 			AlbumCategoryDetail acd = (AlbumCategoryDetail) lcd.get(0);
@@ -254,7 +251,7 @@ public class AlbumGenerator extends Generator {
 			criteria.addOrder(bean.getFieldName(ICMSAlias.ALBUM_POSITION));
 			l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.isEmpty())
-				CommonGenerator.getLogger().warning("La categoria de albumes "+albumCategory.getAlias()+" no tiene albumes.");
+				getLogger().warning("La categoria de albumes "+albumCategory.getAlias()+" no tiene albumes.");
 			iter = l.iterator();
 			ArrayList<AlbumHandler> ahlist = new ArrayList<AlbumHandler>();
 			Album album;
@@ -266,7 +263,7 @@ public class AlbumGenerator extends Generator {
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_DETAIL_ALBUM_ID), album.getId());
 				ld = (List<ITransferObject>)bean.getList(criteria);
 				if (ld.isEmpty()){
-					CommonGenerator.getLogger().warning("El album "+album.getAlias()+" no esta internacionalizado.");
+					getLogger().warning("El album "+album.getAlias()+" no esta internacionalizado.");
 				}else{
 					AlbumDetail ad = (AlbumDetail)ld.get(0);
 					AlbumHandler ah = new AlbumHandler(ad);
@@ -276,7 +273,7 @@ public class AlbumGenerator extends Generator {
 			AlbumCategoryHandler ach = new AlbumCategoryHandler(acd,ahlist);
 			return ach;
 		} catch (ManagerBeanException e) {
-			CommonGenerator.getLogger().error(e.getMessage());
+			getLogger().error(e.getMessage());
 		} finally {
 			l = null;
 			ld = null;

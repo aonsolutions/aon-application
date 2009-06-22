@@ -3,21 +3,35 @@ package com.code.aon.ui.cms.velocity;
 import java.io.File;
 
 import com.code.aon.cms.enumeration.Templates;
+import com.code.aon.ui.cms.IGeneratorLogger;
+import com.code.aon.ui.cms.controller.GeneratorStatusController;
+import com.code.aon.ui.cms.controller.ICMSConstants;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
+import com.code.aon.ui.util.AonUtil;
 
-public class Generator {
+public class Generator implements ICMSConstants {
 
-	public static void generate(VelocityUtil vu, Templates type) {
+	protected IGeneratorLogger logger;
+	
+	public Generator() {
+		this.logger = getLogger();		
+	}
+	
+    protected static IGeneratorLogger getLogger() {
+    	return (GeneratorStatusController) AonUtil.getRegisteredBean(GENERATOR_STATUS);
+	}	
+	
+	public void generate(VelocityUtil vu, Templates type) {
 		generate(vu, type, ""); 
 	}
 
-	public static void generate(VelocityUtil vu, Templates type, String name) {
+	public void generate(VelocityUtil vu, Templates type, String name) {
 		String contentTemplate = getContentTemplate(type);
-		Generator.generate(vu, type, contentTemplate, name);
+		generate(vu, type, contentTemplate, name);
 	}
 
-	public static void generate(VelocityUtil vu, Templates type, String contentTemplate, String name) {
+	public void generate(VelocityUtil vu, Templates type, String contentTemplate, String name) {
 		File template = getIndexTemplate();
 		if (type == Templates.LANGUAGE) template = getLanguageTemplate();
 		if (type == Templates.CAPTCHA) template = getCaptchaTemplate();
@@ -31,7 +45,7 @@ public class Generator {
 	        vu.remove("current_page");
 	        vu.remove("content");
 	    } else {
-	    	CommonGenerator.getLogger().error("No se ha encontrado plantilla " + type.getTemplateName());
+	    	logger.error("No se ha encontrado plantilla " + type.getTemplateName());
 	    }
 	}
 

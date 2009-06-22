@@ -33,6 +33,11 @@ public class GeneratorStatusController implements IGeneratorLogger {
 
 	private List<String> errors;
 
+	public GeneratorStatusController() {
+		this.status = new ArrayList<String>();
+		this.errors = new ArrayList<String>();
+	}
+
 	public void onInit(ActionEvent event) {
 		onReset(event);
 		this.activePoll = true;
@@ -43,14 +48,14 @@ public class GeneratorStatusController implements IGeneratorLogger {
 		this.generatedOk = false;
 		this.published = false;
 		this.activePoll = false;
-		this.status = new ArrayList<String>();
-		this.errors = new ArrayList<String>();
+		this.status.clear();
+		this.errors.clear();
 	}
 	
 	public List<String> getStatus() {
 		return this.status;
 	}
-	
+
 	public List<String> getErrors() {
 		return this.errors;
 	}
@@ -110,8 +115,8 @@ public class GeneratorStatusController implements IGeneratorLogger {
 
 	public void onPublish(ActionEvent event) throws ManagerBeanException {
 		this.activePoll = true;
-		this.status = new ArrayList<String>();
-		this.errors = new ArrayList<String>();
+		this.status.clear();
+		this.errors.clear();
 		try {
 			if (FTPUtil.uploadFTP())  {
 				this.published = true;
@@ -125,8 +130,8 @@ public class GeneratorStatusController implements IGeneratorLogger {
 
 	public void onPublishPreview(ActionEvent event) throws ManagerBeanException {
 		this.activePoll = true;
-		this.status = new ArrayList<String>();
-		this.errors = new ArrayList<String>();
+		this.status.clear();
+		this.errors.clear();
 		try {
 			if (FTPUtil.uploadPreviewFTP())
 				this.published = true;

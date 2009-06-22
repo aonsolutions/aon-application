@@ -16,14 +16,13 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
-import com.code.aon.ui.cms.velocity.attribute.BannerHandler;
 import com.code.aon.ui.cms.velocity.attribute.BannerCategoryHandler;
+import com.code.aon.ui.cms.velocity.attribute.BannerHandler;
 
 public class BannerGenerator extends Generator {
 
 	public static ArrayList<BannerHandler> getBannerList(BannerCategoryDetail groupDetail) {
 		ArrayList<BannerHandler> list = new ArrayList<BannerHandler>();
-
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Banner.class);
 			Criteria criteria = new Criteria();
@@ -32,7 +31,7 @@ public class BannerGenerator extends Generator {
 			criteria.addOrder(bean.getFieldName(ICMSAlias.BANNER_POSITION));
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.isEmpty())
-				CommonGenerator.getLogger().warning("La categoria de banners " + groupDetail.getBannerCategory().getAlias() + " no tiene banners.");
+				getLogger().warning("La categoria de banners " + groupDetail.getBannerCategory().getAlias() + " no tiene banners.");
 			for (int i = 0; i < l.size(); i++) {
 				Banner da = (Banner)l.get(i);
 				IManagerBean detailBean = BeanManager.getManagerBean(BannerDetail.class);
@@ -41,7 +40,7 @@ public class BannerGenerator extends Generator {
 				criteria_detail.addEqualExpression(detailBean.getFieldName(ICMSAlias.BANNER_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				List<ITransferObject> ld = (List<ITransferObject>)detailBean.getList(criteria_detail);
 				if (ld.isEmpty()){
-					CommonGenerator.getLogger().warning("El banner " + da.getAlias() + " no esta internacionalizado.");
+					getLogger().warning("El banner " + da.getAlias() + " no esta internacionalizado.");
 				}else{
 					BannerDetail detail = (BannerDetail)ld.get(0);
 					BannerHandler handler = new BannerHandler(detail);
@@ -49,13 +48,13 @@ public class BannerGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			CommonGenerator.getLogger().error(e.getMessage());
+			getLogger().error(e.getMessage());
 		}
 		
 		return list;
 	}
 	
-	public static void generate(VelocityUtil vu) {
+	public void generate(VelocityUtil vu) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(BannerCategory.class);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(null);
@@ -67,7 +66,7 @@ public class BannerGenerator extends Generator {
 				detailCriteria.addEqualExpression(detailBean.getFieldName(ICMSAlias.BANNER_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				List<ITransferObject> detailList = (List<ITransferObject>)detailBean.getList(detailCriteria);
 				if (detailList.isEmpty()){
-					CommonGenerator.getLogger().warning("La categoria de banners " + group.getAlias() + " no esta internacionalizada.");
+					logger.warning("La categoria de banners " + group.getAlias() + " no esta internacionalizada.");
 				}else{
 					BannerCategoryDetail detail = (BannerCategoryDetail)detailList.get(0);
 					BannerCategoryHandler bch = new BannerCategoryHandler(detail);
@@ -75,7 +74,7 @@ public class BannerGenerator extends Generator {
 					if (accessList != null && accessList.size() > 0) {
 						vu.put("banner_category", bch);
 						vu.put("banner_list", accessList);
-						CommonGenerator.getLogger().info(" Generando banners " + group.getAlias() + ".");
+						logger.info(" Generando banners " + group.getAlias() + ".");
 						CommonGenerator.getCommonGenerator().chargeContext(vu, group.getSection());
 						generate(vu, Templates.BANNERS, group.getAlias());
 						vu.remove("banner_category");
@@ -84,9 +83,10 @@ public class BannerGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			CommonGenerator.getLogger().error(e.getMessage());
+			logger.error(e.getMessage());
 		}
 	}
+	
 	public static Object getBannerHandler(Integer ident) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Banner.class);
@@ -94,7 +94,7 @@ public class BannerGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.BANNER_ID), ident);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.isEmpty()){
-				CommonGenerator.getLogger().warning("BANNER "+ident+" REFERENCIADO NO EXISTE !!!");
+				getLogger().warning("BANNER "+ident+" REFERENCIADO NO EXISTE !!!");
 				return null;
 			}
 			Banner a = (Banner)l.get(0);
@@ -105,7 +105,7 @@ public class BannerGenerator extends Generator {
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.BANNER_DETAIL_BANNER_ID), ident);
 				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
 				if (ld.isEmpty()){
-					CommonGenerator.getLogger().warning("El banner " + a.getAlias() + " no esta internacionalizado.");
+					getLogger().warning("El banner " + a.getAlias() + " no esta internacionalizado.");
 				}else{
 					BannerDetail ad = (BannerDetail)ld.get(0);
 					BannerHandler ah = new BannerHandler(ad);
@@ -113,7 +113,7 @@ public class BannerGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			CommonGenerator.getLogger().error(e.getMessage());
+			getLogger().error(e.getMessage());
 		}
 		return null;
 	}
@@ -125,7 +125,7 @@ public class BannerGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.BANNER_CATEGORY_ID), ident);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.isEmpty()){
-				CommonGenerator.getLogger().warning("CATEGORIA DE BANNER "+ident+" REFERENCIADO NO EXISTE !!!");
+				getLogger().warning("CATEGORIA DE BANNER "+ident+" REFERENCIADO NO EXISTE !!!");
 				return null;
 			}
 			BannerCategory a = (BannerCategory)l.get(0);
@@ -136,7 +136,7 @@ public class BannerGenerator extends Generator {
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.BANNER_CATEGORY_DETAIL_BANNER_CATEGORY_ID), ident);
 				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
 				if (ld.isEmpty()){
-					CommonGenerator.getLogger().warning("La categoria de banner " + a.getAlias() + " no esta internacionalizado.");
+					getLogger().warning("La categoria de banner " + a.getAlias() + " no esta internacionalizado.");
 				}else{
 					BannerCategoryDetail ad = (BannerCategoryDetail)ld.get(0);
 					BannerCategoryHandler ah = new BannerCategoryHandler(ad);
@@ -144,7 +144,7 @@ public class BannerGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			CommonGenerator.getLogger().error(e.getMessage());
+			getLogger().error(e.getMessage());
 		}
 		return null;
 	}

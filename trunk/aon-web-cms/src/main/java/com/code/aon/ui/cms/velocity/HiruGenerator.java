@@ -5,9 +5,9 @@ import java.util.Date;
 import java.util.List;
 
 import com.code.aon.cms.HiruConfig;
-import com.code.aon.cms.HiruOrganizerCentre;
 import com.code.aon.cms.HiruCourse;
 import com.code.aon.cms.HiruCourseDetail;
+import com.code.aon.cms.HiruOrganizerCentre;
 import com.code.aon.cms.Section;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.Templates;
@@ -16,7 +16,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
@@ -27,9 +26,8 @@ public class HiruGenerator extends Generator {
 
 	public static String COURSES_HTML = "main";
 	
-	public static void generate() {
-		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
-		IGeneratorLogger logger = CommonGenerator.getLogger();
+	public void generate() {
+		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();	
 		List<ITransferObject> center_list = null;
 		ArrayList<HiruCenterHandler> center_handler_list_started = null;
 		ArrayList<HiruCenterHandler> center_handler_list_future = null;
@@ -133,7 +131,6 @@ public class HiruGenerator extends Generator {
 		} catch (ManagerBeanException e) {
 			logger.error(e.getMessage());
 		} finally {
-			vu = null;
 			center_list = null;
 			course_handler_list = null;
 			center_handler_list_started = null;

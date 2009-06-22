@@ -51,7 +51,6 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 		this.page = page;
 	}
 
-
 	private Date publishDate = new Date();
 	
 	private Date expireDate;

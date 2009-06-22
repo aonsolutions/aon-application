@@ -11,21 +11,18 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.attribute.GenericPageHandler;
 
 public class GenericGenerator extends Generator {
 
-	public static void generate() {
-		GenericGenerator.generate(null);
+	public void generate() {
+		generate(null);
 	}
 
-	public static void generate(GenericPage selectedPage) {
-		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
-		IGeneratorLogger logger = CommonGenerator.getLogger();
-		
+	public void generate(GenericPage selectedPage) {
+		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();	
 		List<ITransferObject> genericPageList;
 		List<ITransferObject> genericPageDetailList;
 		try {
@@ -73,20 +70,18 @@ public class GenericGenerator extends Generator {
 			genericPageList = null;
 			genericPageDetailList = null;
 		}
-		vu = null;
 	}
 
 	public static Object getGenericHandler(Integer ident) {
 		List<ITransferObject> genericPageList;
 		List<ITransferObject> genericPageDetailList;
-		IGeneratorLogger logger = CommonGenerator.getLogger();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(GenericPage.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.GENERIC_PAGE_ID), ident);
 			genericPageList = (List<ITransferObject>)bean.getList(criteria);
 			if (genericPageList.isEmpty()){
-				logger.warning("PAGINA GENERICA "+ident+" REFERENCIADA NO EXISTE !!!");
+				getLogger().warning("PAGINA GENERICA "+ident+" REFERENCIADA NO EXISTE !!!");
 				return null;
 			}
 			GenericPage gp = (GenericPage)genericPageList.get(0);
@@ -97,7 +92,7 @@ public class GenericGenerator extends Generator {
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.GENERIC_PAGE_DETAIL_GENERIC_PAGE_ID), ident);
 				genericPageDetailList = (List<ITransferObject>)beanDetail.getList(criteria);
 				if (genericPageDetailList.isEmpty()){
-					logger.warning("La pagina generica " + gp.getAlias() + " no esta internacionalizada.");
+					getLogger().warning("La pagina generica " + gp.getAlias() + " no esta internacionalizada.");
 				}else{
 					GenericPageDetail gpd = (GenericPageDetail)genericPageDetailList.get(0);
 					GenericPageHandler gph = new GenericPageHandler(gpd);
@@ -105,7 +100,7 @@ public class GenericGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			logger.error(e.getMessage());
+			getLogger().error(e.getMessage());
 		} finally {
 			genericPageList = null;
 			genericPageDetailList = null;

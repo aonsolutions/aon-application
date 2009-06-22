@@ -7,7 +7,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
 
 import com.code.aon.cms.AlbumCategory;
@@ -55,46 +54,47 @@ public class GeneratorController implements Constants, ICMSConstants {
 	
 	private String sessionFactoryName;
 
+	public GeneratorController(){
+		status = (GeneratorStatusController)AonUtil.getRegisteredBean(GENERATOR_STATUS);
+	}
+
 	public GeneratorStatusController getStatus() {
 		return status;
 	}
 
-	public GeneratorController(){
-		status = (GeneratorStatusController)AonUtil.getRegisteredBean(GENERATOR_STATUS);
-	}
-	
 	public void onGenerate(GeneratorApplicationController applicationController) throws ManagerBeanException {
 		this.applicationController = applicationController;		
 		try {
 			initGenerator();
 	
 			//Generar index.html del idioma seleccionado
-			ModularPageGenerator.generate();
+			new ModularPageGenerator().generate();
 			//Generar menus
-			MenuGenerator.generate();
+			new MenuGenerator().generate();
 			//Generar generic
-			GenericGenerator.generate();
+			new GenericGenerator().generate();
 			//Generar faq
-			FaqGenerator.generate();
+			new FaqGenerator().generate();
 			//Generar link
-			LinkGenerator.generate();
+			new LinkGenerator().generate();
 			//Generar direct access
-			DirectAccessGenerator.generate();
+			new DirectAccessGenerator().generate();
 			//Generar image album
-			AlbumGenerator.generate();
-			ArticleCalendarGenerator.generate();
-			ArticleGenerator.generate(ArticleType.NEWS);
-			ArticleGenerator.generate(ArticleType.SERVICES);
-			ArticleGenerator.generate(ArticleType.EVENTS);
-			ArticleGenerator.generate(ArticleType.OTHER);
+			new AlbumGenerator().generate();
+			new ArticleCalendarGenerator().generate();
+			ArticleGenerator ag = new ArticleGenerator();
+			ag.generate(ArticleType.NEWS);
+			ag.generate(ArticleType.SERVICES);
+			ag.generate(ArticleType.EVENTS);
+			ag.generate(ArticleType.OTHER);
 			//Generar articulo
-			DownloadsGenerator.generate();
+			new DownloadsGenerator().generate();
 			//Generar cursos
-			HiruGenerator.generate();
+			new HiruGenerator().generate();
 			//Generar productos
-			ProductGenerator.generate();
+			new ProductGenerator().generate();
 			//Generar sports
-			SportGenerator.generate();
+			new SportGenerator().generate();
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -104,7 +104,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 	public void onGenerateDiary(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		try {
 			initGenerator();
-			ArticleCalendarGenerator.generate();
+			new ArticleCalendarGenerator().generate();
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -114,11 +114,12 @@ public class GeneratorController implements Constants, ICMSConstants {
 	public void onGenerateArticles(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		try {		
 			initGenerator();
-			ArticleCalendarGenerator.generate();
-			ArticleGenerator.generate(ArticleType.NEWS);
-			ArticleGenerator.generate(ArticleType.SERVICES);
-			ArticleGenerator.generate(ArticleType.EVENTS);
-			ArticleGenerator.generate(ArticleType.OTHER);
+			new ArticleCalendarGenerator().generate();
+			ArticleGenerator ag = new ArticleGenerator();
+			ag.generate(ArticleType.NEWS);
+			ag.generate(ArticleType.SERVICES);
+			ag.generate(ArticleType.EVENTS);
+			ag.generate(ArticleType.OTHER);
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -129,7 +130,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 		try {
 			initGenerator();
 			ArticleController controller = (ArticleController)AonUtil.getRegisteredBean(ARTICLE);
-			ArticleGenerator.generateArticle((Article) controller.getTo());
+			new ArticleGenerator().generateArticle((Article) controller.getTo());
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -142,7 +143,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 			ArticleCategoryController controller = (ArticleCategoryController)AonUtil.getRegisteredBean(ARTICLE_CATEGORY);
 			ArticleType[] types_ = ArticleType.values();
 			for (int i = 0; i < types_.length; i++) {
-				ArticleGenerator.generate(types_[i],(ArticleCategory) controller.getTo());
+				new ArticleGenerator().generate(types_[i],(ArticleCategory) controller.getTo());
 			}
 			finalizeGenerator();
 		} catch ( Throwable th ) {
@@ -153,7 +154,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 	public void onGenerateModular(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		try {
 			initGenerator();
-			ModularPageGenerator.generate();
+			new ModularPageGenerator().generate();
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -164,7 +165,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 		try {
 			initGenerator();
 			ModularPageController controller = (ModularPageController)AonUtil.getRegisteredBean(MODULAR_PAGE);
-			ModularPageGenerator.generate((ModularPage) controller.getTo());
+			new ModularPageGenerator().generate((ModularPage) controller.getTo());
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -174,7 +175,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 	public void onGenerateGenericPages(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		try {
 			initGenerator();
-			GenericGenerator.generate();
+			new GenericGenerator().generate();
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -185,7 +186,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 		try {
 			initGenerator();
 			GenericPageController controller = (GenericPageController)AonUtil.getRegisteredBean(GENERIC_PAGE);
-			GenericGenerator.generate((GenericPage) controller.getTo());
+			new GenericGenerator().generate((GenericPage) controller.getTo());
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -195,7 +196,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 	public void onGenerateLinks(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		try {
 			initGenerator();
-			LinkGenerator.generate();
+			new LinkGenerator().generate();
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -206,7 +207,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 		try {
 			initGenerator();
 			LinkCategoryController controller = (LinkCategoryController)AonUtil.getRegisteredBean(LINK_CATEGORY);
-			LinkGenerator.generate((LinkCategory) controller.getTo());
+			new LinkGenerator().generate((LinkCategory) controller.getTo());
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -216,7 +217,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 	public void onGenerateFaqs(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		try {
 			initGenerator();
-			FaqGenerator.generate();
+			new FaqGenerator().generate();
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -227,7 +228,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 		try {
 			initGenerator();
 			FaqCategoryController controller = (FaqCategoryController)AonUtil.getRegisteredBean(FAQ_CATEGORY);
-			FaqGenerator.generate((FaqCategory) controller.getTo());
+			new FaqGenerator().generate((FaqCategory) controller.getTo());
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -237,7 +238,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 	public void onGenerateDownloads(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		try {
 			initGenerator();
-			DownloadsGenerator.generate();
+			new DownloadsGenerator().generate();
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -248,7 +249,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 		try {
 			initGenerator();
 			DownloadCategoryController controller = (DownloadCategoryController)AonUtil.getRegisteredBean(DOWNLOAD_CATEGORY);
-			DownloadsGenerator.generate((DownloadCategory) controller.getTo());
+			new DownloadsGenerator().generate((DownloadCategory) controller.getTo());
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -258,7 +259,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 	public void onGenerateAlbums(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		try {
 			initGenerator();
-			AlbumGenerator.generate();
+			new AlbumGenerator().generate();
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -269,7 +270,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 		try {
 			initGenerator();
 			AlbumCategoryController controller = (AlbumCategoryController)AonUtil.getRegisteredBean(ALBUM_CATEGORY);
-			AlbumGenerator.generate((AlbumCategory) controller.getTo());
+			new AlbumGenerator().generate((AlbumCategory) controller.getTo());
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -279,7 +280,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 	public void onGenerateDirectAccess(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		try {
 			initGenerator();
-			DirectAccessGenerator.generate();
+			new DirectAccessGenerator().generate();
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -290,7 +291,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 		try {
 			initGenerator();
 			DirectAccessGroupController controller = (DirectAccessGroupController)AonUtil.getRegisteredBean(DIRECT_ACCESS_GROUP);
-			DirectAccessGenerator.generate((DirectAccessGroup) controller.getTo());
+			new DirectAccessGenerator().generate((DirectAccessGroup) controller.getTo());
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -300,7 +301,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 	public void onGenerateProducts(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		try {
 			initGenerator();
-			ProductGenerator.generate();
+			new ProductGenerator().generate();
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -310,7 +311,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 	public void onGenerateSports(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		try {
 			initGenerator();
-			SportGenerator.generate();
+			new SportGenerator().generate();
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);
@@ -320,7 +321,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 	public void onGenerateHiru(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		try {
 			initGenerator();
-			HiruGenerator.generate();
+			new HiruGenerator().generate();
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);

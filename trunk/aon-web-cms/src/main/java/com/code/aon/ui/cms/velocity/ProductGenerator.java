@@ -18,7 +18,6 @@ import com.code.aon.cms.Section;
 import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.ui.cms.IGeneratorLogger;
 import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
@@ -32,13 +31,12 @@ public class ProductGenerator extends Generator {
 	
 	public static final String MAIN_PAGE = "main_page"; 
 
-	public static void generate() {
-		IGeneratorLogger logger = CommonGenerator.getLogger();
+	public void generate() {
 		List<ProductCategoryDetail> productCategoryDetailList;
 		List<ProductCategoryDetail> productSubCategoryDetailList;
 		List<BrandDetail> brandDetailList;
 		try {
-			String mainPageURL = ProductGenerator.getMainPageUrl();
+			String mainPageURL = getMainPageUrl();
 			
 			String stmtPC = "SELECT pcd FROM ProductCategory pc,ProductCategoryDetail pcd " +
 					"WHERE pcd.productCategory.id = pc.id " +
@@ -73,7 +71,7 @@ public class ProductGenerator extends Generator {
 				queryPSC.setBoolean(2, Boolean.TRUE);
 				productSubCategoryDetailList = queryPSC.list();
 
-				ProductGenerator.chargeProductCategoryContext(vu, productCategoryDetail.getProductCategory());
+				chargeProductCategoryContext(vu, productCategoryDetail.getProductCategory());
 
 				List<ProductCategoryHandler> listSubCategoryHandler = new ArrayList<ProductCategoryHandler>();
 				
@@ -81,7 +79,7 @@ public class ProductGenerator extends Generator {
 					ProductCategoryDetail productSubCategoryDetail = iteratorPSC.next();
 					ProductGenerator.chargeProductSubCategoryContext(vu, productSubCategoryDetail.getProductCategory());
 					List<ProductHandler> listProductHandler = new ArrayList<ProductHandler>();
-					listProductHandler = ProductGenerator.getProducts(productSubCategoryDetail.getProductCategory(),vu,true);
+					listProductHandler = getProducts(productSubCategoryDetail.getProductCategory(),vu,true);
 					
 					ProductCategoryHandler subCategoryHandler = new ProductCategoryHandler(productSubCategoryDetail);
 					listSubCategoryHandler.add(subCategoryHandler);
@@ -107,23 +105,21 @@ public class ProductGenerator extends Generator {
 
 				listSubCategoryHandler = null;
 
-				vu.remove("mainPageURL");
-				vu = null;		
+				vu.remove("mainPageURL");	
 			}
 			
 			VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
-			ProductGenerator.chargeProductCategoryContext(vu, null);
+			chargeProductCategoryContext(vu, null);
 			vu.put("mainPageURL", mainPageURL);
 			vu.put("mainCategoryList", listCategoryHandler);
 			logger.info(" Generando category main.");
 			generate(vu, Templates.PRODUCT_CATEGORY, ProductGenerator.MAIN_PAGE);
 			vu.remove("mainCategoryList");
 			vu.remove("mainPageURL");
-			vu = null;		
 			
 			listCategoryHandler = null;
 
-			mainPageURL = ProductGenerator.getBrandMainPageUrl();
+			mainPageURL = getBrandMainPageUrl();
 
 			String stmtB = "SELECT bd FROM Brand b,BrandDetail bd " +
 					"WHERE bd.brand.id = b.id " +
@@ -137,7 +133,7 @@ public class ProductGenerator extends Generator {
 			List<BrandHandler> listBrandHandler = new ArrayList<BrandHandler>();
 
 			vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
-			ProductGenerator.chargeProductCategoryContext(vu, null);
+			chargeProductCategoryContext(vu, null);
 			vu.put("mainPageURL", mainPageURL);
 			
 			for (Iterator<BrandDetail> iteratorB = brandDetailList.iterator(); iteratorB.hasNext();) {
@@ -147,7 +143,7 @@ public class ProductGenerator extends Generator {
 				listBrandHandler.add(brandHandler);
 				
 				List<ProductHandler> listProductHandler = new ArrayList<ProductHandler>();
-				listProductHandler = ProductGenerator.getProducts(brandDetail.getBrand(),vu,false);
+				listProductHandler = getProducts(brandDetail.getBrand(),vu,false);
 
 				vu.put("brand", brandHandler);
 				vu.put("products", listProductHandler);
@@ -165,7 +161,6 @@ public class ProductGenerator extends Generator {
 			vu.remove("brandList");
 
 			vu.remove("mainPageURL");
-			vu = null;		
 
 		} catch (Throwable th) {
 			LOGGER.log(Level.SEVERE, th.getMessage(), th);
@@ -176,20 +171,19 @@ public class ProductGenerator extends Generator {
 		}
 	}
 	
-	private static String getMainPageUrl(){
+	private String getMainPageUrl(){
 		String url = Templates.PRODUCT_CATEGORY.getHtmlName();
 		url = url.replaceAll("%NAME%", ProductGenerator.MAIN_PAGE);
 		return url;
 	}
 
-	private static String getBrandMainPageUrl(){
+	private String getBrandMainPageUrl(){
 		String url = Templates.BRAND.getHtmlName();
 		url = url.replaceAll("%NAME%", ProductGenerator.MAIN_PAGE);
 		return url;
 	}
 
-	private static List<ProductHandler> getProducts(ProductCategory category,VelocityUtil vu,boolean generate) throws ManagerBeanException{
-		IGeneratorLogger logger = CommonGenerator.getLogger();
+	private List<ProductHandler> getProducts(ProductCategory category,VelocityUtil vu,boolean generate) throws ManagerBeanException{
 		List<ProductHandler> list = new ArrayList<ProductHandler>();
 
 		String stmtP = "SELECT pd FROM Product p,ProductDetail pd " +
@@ -221,8 +215,7 @@ public class ProductGenerator extends Generator {
 		return list;
 	}
 
-	private static List<ProductHandler> getProducts(Brand brand,VelocityUtil vu, boolean generate) throws ManagerBeanException{
-		IGeneratorLogger logger = CommonGenerator.getLogger();
+	private List<ProductHandler> getProducts(Brand brand,VelocityUtil vu, boolean generate) throws ManagerBeanException{
 		List<ProductHandler> list = new ArrayList<ProductHandler>();
 
 		String stmtP = "SELECT pd FROM Product p,ProductDetail pd " +
@@ -253,7 +246,7 @@ public class ProductGenerator extends Generator {
 		return list;
 	}
 
-	private static void chargeProductCategoryContext(VelocityUtil vu, ProductCategory productCategory) throws ManagerBeanException{
+	private void chargeProductCategoryContext(VelocityUtil vu, ProductCategory productCategory) throws ManagerBeanException{
 		if (productCategory!=null && productCategory.getSection()!=null){
 			CommonGenerator.getCommonGenerator().chargeContext(vu, productCategory.getSection());
 		}else{
@@ -265,10 +258,6 @@ public class ProductGenerator extends Generator {
 	private static void chargeProductSubCategoryContext(VelocityUtil vu, ProductCategory productCategory) throws ManagerBeanException{
 		if (productCategory.getSection()!=null)
 			CommonGenerator.getCommonGenerator().chargeContext(vu, productCategory.getSection());
-	}
-	
-	public static void main(String[] args) {
-		ProductGenerator.generate();
 	}
 
 
