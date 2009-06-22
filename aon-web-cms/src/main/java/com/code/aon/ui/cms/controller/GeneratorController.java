@@ -356,11 +356,11 @@ public class GeneratorController implements Constants, ICMSConstants {
 		try {
 			File cssPath = ControllerUtil.getCssTemplatePath();
 			if ( cssPath.exists() ) {
-				FileUtils.copyDirectory(cssPath, ControllerUtil.getPreviewPath());	
+				FileUtils.copyDirectoryToDirectory(cssPath, ControllerUtil.getPreviewPath());	
 			}
 			File jsPath = ControllerUtil.getJsTemplatePath();
 			if ( jsPath.exists() ) {
-				FileUtils.copyDirectory(jsPath, ControllerUtil.getPreviewPath());
+				FileUtils.copyDirectoryToDirectory(jsPath, ControllerUtil.getPreviewPath());
 			}
 		} catch (IOException e) {
 			generatorError(e);
