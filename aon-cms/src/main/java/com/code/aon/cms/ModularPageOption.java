@@ -13,12 +13,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import com.code.aon.cms.enumeration.ModularPageOptionType;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name = "modular_page_option")
 public class ModularPageOption implements ITransferObject, IPositionObject {
+
+	private static final long serialVersionUID = 8111919153303825510L;
 
 	private Integer id;
 
@@ -110,5 +117,42 @@ public class ModularPageOption implements ITransferObject, IPositionObject {
 	public void setDetails( Set<ModularPageOptionDetail> details ) {
 		this.details = details;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final ModularPageOption o = (ModularPageOption) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.active, o.active)
+				.append(this.alias, o.alias)
+				.append(this.ident, o.ident)
+				.append(this.modular_page, o.modular_page)
+				.append(this.position, o.position)
+				.append(this.type, o.type)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(active)
+			.append(alias)
+			.append(id)	
+			.append(ident)			
+			.append(modular_page)			
+			.append(position)
+			.append(type)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}	
 
 }

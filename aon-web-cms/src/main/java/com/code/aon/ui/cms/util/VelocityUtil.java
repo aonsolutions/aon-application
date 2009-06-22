@@ -28,17 +28,17 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 
 	public static final int WARN = 2;
 
-	private String template_path;
+	private File templatePath;
 	
 	private IGeneratorLogger logger;
 	
 	private VelocityContext context = new VelocityContext();
 	
-	public void setTemplate_path(String template_path) {
-		this.template_path = template_path;
-		File f = new File(template_path + "/" + Templates.INDEX.getTemplateName());
+	public void setTemplatePath(File templatePath) {
+		this.templatePath = templatePath;
+		File f = new File(templatePath, Templates.INDEX.getTemplateName());
 		if (!f.exists()) { 
-			logger.error("No se han encontrado plantillas en '" + template_path + "'");
+			logger.error("No se han encontrado plantillas en '" + templatePath + "'");
 		}
 	}
 	
@@ -55,10 +55,10 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 	}
 
 	public void initialize() {
-        this.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, template_path + "/");
+        this.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, templatePath.getAbsolutePath() + "/");
         this.setProperty(Velocity.INPUT_ENCODING, VELOCITY_FILE_ENCODING);
         this.setProperty(Velocity.OUTPUT_ENCODING, VELOCITY_FILE_ENCODING);
-        this.setProperty(Velocity.RUNTIME_LOG, template_path + "/" + VELOCITY_LOG_FILE);
+        this.setProperty(Velocity.RUNTIME_LOG, templatePath.getAbsolutePath() + "/" + VELOCITY_LOG_FILE);
         try {
         	this.init();
         } catch (Throwable th) {
@@ -74,21 +74,14 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 		this.context.remove(key);
 	}
 
-    public boolean generate(String template, String page) {
-        String pageShortName;
-        try{
-        	pageShortName = page.substring(page.lastIndexOf('/'));
-        }catch (Throwable th) {
-        	pageShortName = page;
-		}
+    public boolean generate(File template, File page) {
+        String pageShortName = page.getName();
         
 		boolean error = false;
-		File fo;
         FileWriter fw = null;
         BufferedWriter writer = null;
     	try{
-	        fo = new File(page);
-	        fw = new FileWriter(fo);
+	        fw = new FileWriter(page);
 	        writer = new BufferedWriter(fw);
 	        
 	        error = generate(template, writer, pageShortName);
@@ -106,24 +99,22 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 	        }
 	        IOUtils.closeQuietly(writer);
 	        IOUtils.closeQuietly(fw);
-	        fo = null;
 	    }
 	    return error;
     }
 	
-    public boolean generate(String template, BufferedWriter writer, String pageShortName) {
+    public boolean generate(File template, BufferedWriter writer, String pageShortName) {
 		boolean error = false;
 
-        File fi = new File(template);
         BufferedReader reader = null;
         FileReader fr = null;
 
         try {
-			if (!fi.exists()) {
+			if (!template.exists()) {
 				error = true;
 				logger.error("Fichero de plantilla '" + template + "' no encontrado.");
 			} else {
-                fr = new FileReader(fi);
+                fr = new FileReader(template);
 				reader = new BufferedReader(fr);
 			}
 
@@ -147,9 +138,8 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 		} finally {
 			IOUtils.closeQuietly(reader);
 			IOUtils.closeQuietly(fr);
-            fi = null;
         }
-
 		return error;
     }
+    
 }

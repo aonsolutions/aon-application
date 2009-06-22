@@ -23,55 +23,59 @@ public class ModularPageOptionHandler {
 	private String type;
 	
 	public ModularPageOptionHandler(ModularPageOptionDetail mpod) {
-		template = mpod.getModular_page_option().getType().getTemplateName();
-		type = mpod.getModular_page_option().getType().getName();
-		if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.ARTICLE)) {
-			content = ArticleGenerator.getArticleHandler(mpod.getModular_page_option().getIdent());
-		}
-		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.ARTICLE_NEWS)) {
-			content = ArticleGenerator.getArticleCategoryHandler(mpod.getModular_page_option().getIdent(),ArticleType.NEWS);
-		}
-		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.ARTICLE_EVENTS)) {
-			content = ArticleGenerator.getArticleCategoryHandler(mpod.getModular_page_option().getIdent(),ArticleType.EVENTS);
-		}
-		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.ARTICLE_SERVICES)) {
-			content = ArticleGenerator.getArticleCategoryHandler(mpod.getModular_page_option().getIdent(),ArticleType.SERVICES);
-		}
-		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.ARTICLE_OTHER)) {
-			content = ArticleGenerator.getArticleCategoryHandler(mpod.getModular_page_option().getIdent(),ArticleType.OTHER);
-		}
-		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.BANNER_GROUP)) {
-			content = BannerGenerator.getBannerCategoryHandler(mpod.getModular_page_option().getIdent());
-		}
-		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.BANNER)) {
-			content = BannerGenerator.getBannerHandler(mpod.getModular_page_option().getIdent());
-		}
-		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.GENERIC)) {
-			content = GenericGenerator.getGenericHandler(mpod.getModular_page_option().getIdent());
-		}
-		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.DIRECT_ACCESS_GROUP)) {
-			content = DirectAccessGenerator.getDirectAccessGroupHandler(mpod.getModular_page_option().getIdent());
-		}
-		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.DOWNLOADS)) {
-			content = DownloadsGenerator.getDownloadsHandler(mpod.getModular_page_option().getIdent());
-		}
-		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.DIRECT_ACCESS)) {
-			content = DirectAccessGenerator.getDirectAccessHandler(mpod.getModular_page_option().getIdent());
-		}
-		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.LINK_CATEGORY)) {
-			content = LinkGenerator.getLinkCategoryHandler(mpod.getModular_page_option().getIdent());
-		}
-		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.ACTIVITY)) {
-			content = ActivityGenerator.getActivityHandler(mpod.getModular_page_option().getIdent());
-		}
-		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.ALBUM_CATEGORY)) {
-			content = AlbumGenerator.getAlbumCategoryHandler(mpod.getModular_page_option().getIdent());
-		}
-		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.BULLETIN_SUSCRIBE)) {
-			content = BulletinSuscribeGenerator.getBulletinSuscribeHandler();
-		}
-		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.NEXT_ARTICLES)) {
-			content = ArticleCalendarGenerator.getNextArticlesHandler();
+		ModularPageOptionType optionType = mpod.getModular_page_option().getType();
+		template = optionType.getTemplateName();
+		type = optionType.getName();
+		Integer id = mpod.getModular_page_option().getIdent();
+		switch ( optionType ) {
+			case ACTIVITY:
+				content = ActivityGenerator.getActivityHandler(id);
+				break;
+			case ALBUM_CATEGORY:
+				content = AlbumGenerator.getAlbumCategoryHandler(id);
+				break;
+			case ARTICLE:
+				content = ArticleGenerator.getArticleHandler( id );
+				break;
+			case ARTICLE_NEWS:
+				content = ArticleGenerator.getArticleCategoryHandler( id, ArticleType.NEWS);
+				break;
+			case ARTICLE_EVENTS:
+				content = ArticleGenerator.getArticleCategoryHandler( id, ArticleType.EVENTS);
+				break;
+			case ARTICLE_SERVICES:
+				content = ArticleGenerator.getArticleCategoryHandler( id, ArticleType.SERVICES);
+				break;
+			case ARTICLE_OTHER:
+				content = ArticleGenerator.getArticleCategoryHandler( id, ArticleType.OTHER);
+				break;
+			case BANNER_GROUP:
+				content = BannerGenerator.getBannerCategoryHandler(id);
+				break;
+			case BANNER:
+				content = BannerGenerator.getBannerHandler(id);
+				break;
+			case BULLETIN_SUSCRIBE:
+				content = BulletinSuscribeGenerator.getBulletinSuscribeHandler();
+				break;
+			case GENERIC:
+				content = GenericGenerator.getGenericHandler(id);
+				break;
+			case DIRECT_ACCESS_GROUP:
+				content = DirectAccessGenerator.getDirectAccessGroupHandler(id);
+				break;
+			case DOWNLOADS:
+				content = DownloadsGenerator.getDownloadsHandler(id);
+				break;
+			case DIRECT_ACCESS:
+				content = DirectAccessGenerator.getDirectAccessHandler(id);
+				break;
+			case LINK_CATEGORY:
+				content = LinkGenerator.getLinkCategoryHandler(id);
+				break;
+			case NEXT_ARTICLES:
+				content = ArticleCalendarGenerator.getNextArticlesHandler();
+				break; 
 		}
 	}
 
