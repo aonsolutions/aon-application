@@ -6,7 +6,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 
 import com.code.aon.common.enumeration.IResourceable;
-import com.code.aon.ui.common.converter.EnumLocaleConverter;
+import com.code.aon.ui.converter.EnumLocaleConverter;
 import com.sun.facelets.util.ReflectionUtil;
 
 public class EnumConverter extends EnumLocaleConverter implements StateHolder {
@@ -27,10 +27,7 @@ public class EnumConverter extends EnumLocaleConverter implements StateHolder {
 	
 	@Override
 	protected Class getEnumClass(FacesContext ctx, UIComponent comp) {
-		if ( this.enumClass != null ) {
-			return this.enumClass;
-		}
-		return super.getEnumClass(ctx, comp);
+		return this.enumClass;
 	}	
 	
     // ----------------------------------------------------- StateHolder Methods

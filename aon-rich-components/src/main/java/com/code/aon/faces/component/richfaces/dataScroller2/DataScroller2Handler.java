@@ -30,6 +30,8 @@ public class DataScroller2Handler extends TagHandler {
 
 	private static final String TEMPLATE = TEMPLATE_PATH + "dataScroller2.xhtml";
 	
+	private static final String RENDERED = "rendered";
+	
 	private static final String DATA_TABLE = "dataTable";
 	
 	private static final String FOR = "for";
@@ -122,6 +124,15 @@ public class DataScroller2Handler extends TagHandler {
 		FaceletUtil.insertTemplate(ctx, tag, component, FaceletUtil.getTemplate(TEMPLATE), newMapper);
 	}
 
+	private boolean isRendered( FaceletContext ctx ) {
+		boolean rendered = true;
+		TagAttribute renderedTag = getAttribute(RENDERED);
+		if ( renderedTag != null ) {
+			rendered = renderedTag.getBoolean(ctx);
+		}
+		return rendered;
+	}
+	
 	private void updateDataTableFirst( FaceletContext ctx, UIComponent table ) {
 		if ( table != null ) {
 			String expression = "#{" + getScrollerDataExpression(ctx)+  ".first}";
@@ -139,7 +150,7 @@ public class DataScroller2Handler extends TagHandler {
 	
 	@Override
 	public void apply(FaceletContext ctx, UIComponent parent) {
-		if ( FaceletUtil.isRendered(ctx, tag) && parent.isRendered() ) {
+		if ( isRendered(ctx) && parent.isRendered() ) {
 			UIData table = getDataTable(ctx, parent);
 			ScrollerDataModel scrollerModel = getScrollerDataModel( ctx, table );
 			updatePage(ctx, scrollerModel);

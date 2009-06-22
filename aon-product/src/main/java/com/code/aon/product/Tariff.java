@@ -34,6 +34,23 @@ public class Tariff implements ITransferObject {
     private String name;
 
     /**
+     * Void constructor.
+     * 
+     */
+    public Tariff() {
+    }
+
+    /**
+     * Constructor for this unique key.
+     * 
+     * @param pk
+     *            Unique key.
+     */
+    public Tariff(Integer pk) {
+        this.id = pk;
+    }
+
+    /**
      * Returns unique key.
      * 
      * @return unique key.
@@ -77,15 +94,12 @@ public class Tariff implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (this == obj) {
+			return true;
 		}
 		if (obj instanceof Tariff) {
-			Tariff o = (Tariff) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
+			Tariff tariff = (Tariff) obj;
+			if (ObjectUtils.equals(getId(), tariff.getId())) {
 				return true;
 			}
 		}
@@ -93,8 +107,7 @@ public class Tariff implements ITransferObject {
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
-
+	public int hashCode() {
+		return 0;
+	}
 }

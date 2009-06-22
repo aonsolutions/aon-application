@@ -51,6 +51,23 @@ public final class ProductCategory implements ITransferObject {
     private ProductCategoryGroup group;
 
     /**
+     * Void contructor.
+     * 
+     */
+    public ProductCategory() {
+    }
+
+    /**
+     * Constructor for this unique key.
+     * 
+     * @param pk
+     *            Unique key.
+     */
+    public ProductCategory(Integer pk) {
+        this.id = pk;
+    }
+
+    /**
      * Return the unique key.
      * 
      * @return unique key.
@@ -135,15 +152,12 @@ public final class ProductCategory implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (this == obj) {
+			return true;
 		}
 		if (obj instanceof ProductCategory) {
-			ProductCategory o = (ProductCategory) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
+			ProductCategory productCategory = (ProductCategory) obj;
+			if (ObjectUtils.equals(getId(), productCategory.getId())) {
 				return true;
 			}
 		}
@@ -151,8 +165,7 @@ public final class ProductCategory implements ITransferObject {
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
-
+	public int hashCode() {
+		return 0;
+	}
 }

@@ -6,15 +6,17 @@ package com.code.aon.faces.component.richfaces.lookup.inputText;
 import java.io.IOException;
 
 import javax.el.ELException;
-import javax.el.ValueExpression;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
+import javax.faces.el.ValueBinding;
+import javax.faces.webapp.UIComponentTag;
 
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.FaceletException;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.TagAttributeException;
 import com.sun.facelets.tag.TagConfig;
+import com.sun.facelets.tag.TagException;
 import com.sun.facelets.tag.TagHandler;
 
 /**
@@ -38,20 +40,24 @@ public class JoinPropertyHandler extends TagHandler {
 		this.valueTag = this.getRequiredAttribute("value");
 	}
 
-	@Override
+
+	/* (non-Javadoc)
+	 * @see com.sun.facelets.FaceletHandler#apply(com.sun.facelets.FaceletContext, javax.faces.component.UIComponent)
+	 */
 	public void apply(FaceletContext ctx, UIComponent parent)
 			throws IOException, FacesException, FaceletException, ELException {
 
 		if (parent instanceof HtmlLookupInputText) {
             // only process if parent was just created
             if (parent.getParent() == null) {
-	            if (! valueTag.isLiteral() ) {
+				String value = valueTag.getValue();
+	            if ( UIComponentTag.isValueReference(value) ) {
 	    			String alias = aliasTag.getValue(ctx);
-	            	ValueExpression ve = valueTag.getValueExpression(ctx, Object.class);
+	            	ValueBinding vb = ctx.getFacesContext().getApplication().createValueBinding(value);
 	    			HtmlLookupInputText text = (HtmlLookupInputText) parent;
-	    			text.addJoinProperty(alias, ve);
+	    			text.addJoinProperty(alias, vb);
 	            } else {
-	                throw new TagAttributeException( this.tag, valueTag, "Tag " + this.tagId + " attribute value must be a value reference, was " + valueTag.getValue());
+	                throw new TagAttributeException( this.tag, valueTag, "Tag " + this.tagId + " attribute value must be a value reference, was " + value);
 	            }
             }
 		}

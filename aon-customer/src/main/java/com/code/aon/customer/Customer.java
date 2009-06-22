@@ -12,14 +12,19 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
+import com.code.aon.config.Tariff;
 import com.code.aon.customer.enumeration.CustomerStatus;
-import com.code.aon.product.Tariff;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
@@ -129,6 +134,7 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
      * 
      * @return True if a surcharge has to be applied.
      */
+    @Column(nullable=true)
     public boolean isSurcharge() {
         return surcharge;
     }
@@ -147,6 +153,7 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
      * 
      * @return True if taxes has to be applied to the customer.
      */
+    @Column(name="taxfree")
     public boolean isTaxFree() {
         return taxFree;
     }
@@ -156,7 +163,6 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
      * 
      * @param taxFree True if taxes has to be applied to the customer or not.
      */
-    @Column(name="taxfree")
     public void setTaxFree(boolean taxFree) {
         this.taxFree = taxFree;
     }
@@ -168,6 +174,8 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	 */
     @ManyToOne
     @JoinColumn(name="tariff")
+    @ForeignKey(name = "FK_CUSTOMER_TARIFF")
+    @Index(name = "IDX_CUSTOMER_TARIFF")        
 	public Tariff getTariff() {
 		return tariff;
 	}
@@ -186,6 +194,7 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	 * 
 	 * @return true, if a withholding is applied
 	 */
+	@Column(nullable=true)
 	public boolean isWithholding() {
 		return withholding;
 	}
@@ -206,6 +215,8 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	 */
 	@ManyToOne
     @JoinColumn(name="segment")
+    @ForeignKey(name = "FK_CUSTOMER_SEGMENT")
+    @Index(name = "IDX_CUSTOMER_SEGMENT")    
 	public CustomerSegment getCustomerSegment() {
 		return customerSegment;
 	}
@@ -221,6 +232,8 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	
 	@ManyToOne
     @JoinColumn(name="scope", nullable=false)
+    @ForeignKey(name = "FK_CUSTOMER_SCOPE")
+    @Index(name = "IDX_CUSTOMER_SCOPE")
 	public Scope getScope() {
 		return scope;
 	}
@@ -231,24 +244,43 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Customer o = (Customer) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.customerSegment, o.customerSegment)
+				.append(this.registry, o.registry)
+				.append(this.scope, o.scope)
+				.append(this.status, o.status)
+				.append(this.surcharge, o.surcharge)
+				.append(this.tariff, o.tariff)
+				.append(this.taxFree, o.taxFree)
+				.append(this.withholding, o.withholding)
+				.isEquals();
 		}
-		if (obj instanceof Customer) {
-			Customer o = (Customer) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(customerSegment)
+			.append(id)
+			.append(registry)
+			.append(scope)
+			.append(status)
+			.append(surcharge)
+			.append(tariff)
+			.append(taxFree)
+			.append(withholding)
+			.toHashCode();
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
 
 }

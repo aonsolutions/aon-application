@@ -13,6 +13,7 @@
 		<property name="connection.password">serubd2000</property>	
 	
 		<!-- AON-SALES Mapping files -->	
+		<mapping class="com.code.aon.sales.PointOfSale"/>		
 		<mapping class="com.code.aon.sales.Sales"/>		
 		<mapping class="com.code.aon.sales.SalesAttachment"/>
 		<mapping class="com.code.aon.sales.SalesDetail"/>

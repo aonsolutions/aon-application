@@ -28,7 +28,6 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.ql.Criteria;
-import com.code.aon.registry.RegistryBank;
 
 /**
  * Transfer Object that represents a Finance Batch.
@@ -255,8 +254,7 @@ public class FinanceBatch implements ITransferObject {
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
-
+	public int hashCode() {
+		return 0;
+	}
 }

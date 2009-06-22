@@ -16,10 +16,10 @@ import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.form.FormUtil;
 
 public class CorporateIdentityAttachControllerListener extends ControllerAdapter {
 	
@@ -47,23 +47,18 @@ public class CorporateIdentityAttachControllerListener extends ControllerAdapter
 				AonFile aonFile = ciaController.getAonFile(); 
 				if (aonFile.getSize() > 1048576){
 			        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME); 
-					throw new ControllerListenerException(bundle.getString("company_image_max_size_error"));
+					throw new ControllerListenerException(bundle.getString("aon_company_image_max_size_error"));
 				}
 				RegistryAttachment attach = (RegistryAttachment)ciaController.getTo();
 				CompanyController companyController = (CompanyController)FormUtil.getController(COMPANY_CONTROLLER_NAME);
 				attach.setRegistry((Company)companyController.getTo());
 				attach.setCategory(null);
 				attach.setData(aonFile.getData());
-				String ext = aonFile.getFileName().substring(aonFile.getFileName().lastIndexOf(".") + 1);
-				MimeType mt = MimeType.getByExtension(ext);
-				attach.setMimeType(mt);
 				if (attach.getDescription() == null || attach.getDescription().trim().equals("")) {
-					attach.setDescription(aonFile.getFileName().substring(aonFile.getFileName().lastIndexOf("\\") + 1));
-				}
-				else {
-					if (attach.getDescription().indexOf(".") < 0) attach.setDescription(attach.getDescription() + "." + ext);
+					attach.setDescription(aonFile.getFileName().substring(aonFile.getFileName().lastIndexOf("\\") + 1, aonFile.getFileName().lastIndexOf(".")));
 				}
 				attach.setRegistryAttachmentType(RegistryAttachmentType.CORPORATE_IDENTITY);
+				attach.setMimeType(MimeType.getByExtension(aonFile.getFileName().substring(aonFile.getFileName().lastIndexOf(".") + 1)));
 			}	
 		} catch (IOException e) {
 			throw new ControllerListenerException("Error uploading file");

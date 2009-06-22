@@ -127,8 +127,8 @@ public class DiscountExpression implements Serializable, Comparable{
     /**
      * Compares this object with the one specified. .
      * 
-     * @param discountExpression 
-     *            The discount expression.
+     * @param object *
+     *            The object to be compared.
      * @return int Returns a negative integer, zero or a positive integer if is less, the same o larger.
      * 
      * @see java.lang.Comparable#compareTo(Object)

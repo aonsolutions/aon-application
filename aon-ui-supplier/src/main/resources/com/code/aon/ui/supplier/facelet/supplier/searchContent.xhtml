@@ -6,14 +6,14 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<ui:include src="/com/code/aon/ui/registry/facelet/registry/searchContent.xhtml">
-		<ui:param name="controller" value="#{controller}" />
+		<ui:param name="controller" value="#{supplier}" />
 	</ui:include>
 		
 	<aon:outputLabel for="Supplier_supplierSegment_id"
 		value="#{bundle.aon_segment}" />
 	<aon:selectOneMenu id="Supplier_supplierSegment_id"
 		value="#{supplierCollections.supplierSegment}"
-		valueChangeListener="#{controller.addIdEqualExpression}">
+		valueChangeListener="#{controller.addDirectIdEqualExpression}">
 		<f:selectItem itemLabel="-" value="#{null}"/>		
 		<f:selectItems value="#{supplierCollections.supplierSegments}" />
 	</aon:selectOneMenu>

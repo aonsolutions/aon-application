@@ -29,13 +29,13 @@
 			<c:if test="#{model.showControls}">
 				<aon:div>
 	
-					<aon:commandButton ajaxSingle="true" process="#{dataTable}"
+					<aon:commandButton ajaxSingle="true" process="messageDataTable"
 						disabled="#{!model.previousNeeded}" actionListener="#{model.first}"
 						reRender="#{dataTable},#{dataTable}MessageDataScroller"
 						styleClass="aon-dataScroller2-button #{model.previousNeeded?'aon-dataScroller2-button-first':'aon-dataScroller2-button-first-disabled'}">
 					</aon:commandButton>
 	
-					<aon:commandButton ajaxSingle="true" process="#{dataTable}"
+					<aon:commandButton ajaxSingle="true" process="messageDataTable"
 						disabled="#{!model.previousNeeded}" actionListener="#{model.previous}"
 						reRender="#{dataTable},#{dataTable}MessageDataScroller"
 						styleClass="aon-dataScroller2-button #{model.previousNeeded?'aon-dataScroller2-button-previous':'aon-dataScroller2-button-previous-disabled'}">
@@ -43,7 +43,7 @@
 					
 					<a4j:repeat value="#{model.pages}" var="page">
 						<aon:commandLink rendered="#{(model.currentPage+1) != page}"
-							ajaxSingle="true" process="#{dataTable}" 
+							ajaxSingle="true" process="messageDataTable" 
 							actionListener="#{model.moveToPage}"
 							reRender="#{dataTable},#{dataTable}MessageDataScroller"
 							styleClass="aon-dataScroller2-inactive">
@@ -55,13 +55,13 @@
 							value="#{page}"/>
 					</a4j:repeat>
 					
-					<aon:commandButton ajaxSingle="true" process="#{dataTable}"
+					<aon:commandButton ajaxSingle="true" process="messageDataTable"
 						disabled="#{!model.nextNeeded}" actionListener="#{model.next}"
 						reRender="#{dataTable},#{dataTable}MessageDataScroller"
 						styleClass="aon-dataScroller2-button #{model.nextNeeded?'aon-dataScroller2-button-next':'aon-dataScroller2-button-next-disabled'}">
 					</aon:commandButton>
 	
-					<aon:commandButton ajaxSingle="true" process="#{dataTable}"
+					<aon:commandButton ajaxSingle="true" process="messageDataTable"
 						disabled="#{!model.nextNeeded}" actionListener="#{model.last}"
 						reRender="#{dataTable},#{dataTable}MessageDataScroller"
 						styleClass="aon-dataScroller2-button #{model.nextNeeded?'aon-dataScroller2-button-last':'aon-dataScroller2-button-last-disabled'}">

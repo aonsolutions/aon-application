@@ -3,12 +3,13 @@ package com.code.aon.config;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.apache.commons.lang.ObjectUtils;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.company.WorkPlace;
 
 @SuppressWarnings("serial")
 @Entity
@@ -18,6 +19,8 @@ public class Series implements ITransferObject {
 	private String id;
 	
 	private String description;
+	
+	private WorkPlace workPlace;
 	
 	private SecurityLevel securityLevel;
 	
@@ -42,6 +45,16 @@ public class Series implements ITransferObject {
 		this.description = description;
 	}
 
+	@ManyToOne
+	@JoinColumn(name="workplace")
+	public WorkPlace getWorkPlace() {
+		return workPlace;
+	}
+
+	public void setWorkPlace(WorkPlace workPlace) {
+		this.workPlace = workPlace;
+	}
+
 	@Column(name="security_level")
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
@@ -61,24 +74,13 @@ public class Series implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (id == null) {
+			return super.equals(obj);
 		}
 		if (obj instanceof Series) {
-			Series o = (Series) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
+			return (this.id.equals(((Series) obj).getId()));
 		}
 		return false;
 	}
-
-	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
-
+	
 }

@@ -23,8 +23,6 @@ public class LinkDetail implements ITransferObject {
 
 	private String label;
 
-	private String description;
-
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)
@@ -64,15 +62,5 @@ public class LinkDetail implements ITransferObject {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-
-	@Column(name = "description", nullable = true)
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 
 }

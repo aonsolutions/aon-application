@@ -27,31 +27,31 @@
 
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputLabel for="PayMethod_name" value="#{bundle.aon_name}" />
+									<aon:outputText value="#{bundle.aon_name}" />
 								</f:facet>
-								<aon:outputText value="#{to.name}" rendered="#{formList}" />
-								<aon:inputText id="PayMethod_name"
-									rendered="#{formEdit}" size="40" maxlength="32"
+								<aon:outputText value="#{to.name}" rendered="#{to.id!=payMethod.to.id}" />
+								<aon:inputText rendered="#{to.id==payMethod.to.id}"
+									size="40" maxlength="32"
 									value="#{payMethod.to.name}" required="true" />
 								<f:facet name="footer">
-									<aon:inputText id="PayMethod_name-New"
-										rendered="#{formNew}" size="40" maxlength="32"
+									<aon:inputText rendered="#{payMethod.new}"										 
+										size="40" maxlength="32"
 										value="#{payMethod.to.name}" required="true" />
 								</f:facet>
 							</aon:column>
 							
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputLabel for="PayMethod_type" value="#{bundle.aon_type}" />
+									<aon:outputText value="#{bundle.aon_type}" />
 								</f:facet>
-								<aon:outputText value="#{to.type}" rendered="#{formList}" />
-								<aon:selectOneMenu id="PayMethod_type"
-									rendered="#{formEdit}" value="#{payMethod.to.type}">
+								<aon:outputText value="#{to.type}" rendered="#{to.id!=payMethod.to.id}" />
+								<aon:selectOneMenu rendered="#{to.id==payMethod.to.id}"
+									value="#{payMethod.to.type}">
 									<f:selectItems value="#{configCollections.payMethodTypes}" />
 								</aon:selectOneMenu>
 								<f:facet name="footer">
-									<aon:selectOneMenu id="PayMethod_type-New"
-										rendered="#{formNew}" value="#{payMethod.to.type}" >
+									<aon:selectOneMenu rendered="#{payMethod.new}"
+										value="#{payMethod.to.type}" >
 										<f:selectItems value="#{configCollections.payMethodTypes}" />
 									</aon:selectOneMenu>
 								</f:facet>

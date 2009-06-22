@@ -15,11 +15,15 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
-				<ui:param name="controller" value="#{customer}" />
 				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener"
+						value="#{customer.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="customer_list" />
 
-					<ui:include src="/com/code/aon/ui/customer/facelet/customer/searchContent.xhtml" />
-					
+					<ui:include src="/com/code/aon/ui/customer/facelet/customer/searchContent.xhtml" >
+						<ui:param name="controller" value="#{customer}" />
+					</ui:include>
+
 				</ui:define>
 			</ui:decorate>
 		</aon:form>

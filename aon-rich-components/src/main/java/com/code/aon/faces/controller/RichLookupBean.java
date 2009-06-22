@@ -7,15 +7,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import javax.el.ExpressionFactory;
-import javax.el.ValueExpression;
+import javax.faces.application.Application;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.el.MethodBinding;
+import javax.faces.el.ValueBinding;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.IManagerBean;
@@ -28,7 +28,6 @@ import com.code.aon.faces.component.richfaces.lookup.button.HtmlLookupButton;
 import com.code.aon.faces.component.richfaces.lookup.inputText.HtmlLookupInputText;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.IControllerListener;
 
@@ -62,7 +61,7 @@ public class RichLookupBean {
 	private String newPagePath;
 
 	/** The value binding of foreign Pojo. */
-	private ValueExpression sourcePojoBinding;
+	private ValueBinding sourcePojoBinding;
 
 	private ILookupComponent component;
 	
@@ -147,15 +146,14 @@ public class RichLookupBean {
 		this.searchPagePath = pagePath;
 	}
 
-	private Map<String, ValueExpression> calculateJoinBindings() {
-		Map<String, ValueExpression> joinBindingsMap = new HashMap<String, ValueExpression>();
+	private Map<String, ValueBinding> calculateJoinBindings() {
+		Map<String, ValueBinding> joinBindingsMap = new HashMap<String, ValueBinding>();
 		DAOConstantsResolver resolver = new DAOConstantsResolver();
 		String expression = this.sourcePojoBinding.getExpressionString();
-		FacesContext ctx = FacesContext.getCurrentInstance();
-		ExpressionFactory factory = ctx.getApplication().getExpressionFactory();
+		Application app = FacesContext.getCurrentInstance().getApplication();
 		for (AliasEntry entry : resolver.getIdentifierAliasEntryList(getController().getPojo())) {
 			String value = FaceletUtil.appendExpression(expression, entry.getAccessPath());
-			joinBindingsMap.put(entry.getAlias(), factory.createValueExpression(ctx.getELContext(),value, Object.class));
+			joinBindingsMap.put(entry.getAlias(), app.createValueBinding(value));
 		}
 		return joinBindingsMap;
 	}
@@ -168,8 +166,8 @@ public class RichLookupBean {
 	 * 
 	 * @return the join bindings map
 	 */
-	public Map<String, ValueExpression> getJoinBindingsMap(ValueChangeEvent event) {
-		Map<String, ValueExpression> joinBindingsMap = Collections.emptyMap();
+	public Map<String, ValueBinding> getJoinBindingsMap(ValueChangeEvent event) {
+		Map<String, ValueBinding> joinBindingsMap = Collections.emptyMap();
 		if (event.getComponent() instanceof HtmlLookupInputText) {
 			HtmlLookupInputText lookupComponent = (HtmlLookupInputText) event.getComponent();
 			joinBindingsMap = lookupComponent.getJoinBindingsMap();
@@ -217,15 +215,6 @@ public class RichLookupBean {
 		getController().setBeanName(beanName);
 	}
 
-	/**
-	 * Return the POJO class short name associated to controller.
-	 * 
-	 * @return String
-	 */
-	public String getPojoShortName() {
-		return getController().getPojoShortName();
-	}
-	
 	/**
 	 * Set the limit of page in the model associated to controller.
 	 * 
@@ -321,6 +310,18 @@ public class RichLookupBean {
 
 	/**
 	 * Add a new expression to the criteria to condition the following searches.
+	 * The id component is managed as the property path, replacing
+	 * <code>_</code> with <code>.</code>.
+	 * 
+	 * @param event
+	 * @throws ManagerBeanException
+	 */
+	public void addDirectExpression(ValueChangeEvent event) throws ManagerBeanException {
+		getController().addDirectExpression(event);
+	}
+
+	/**
+	 * Add a new expression to the criteria to condition the following searches.
 	 * The id component is managed as an alias to resolve the real property
 	 * path.
 	 * 
@@ -339,34 +340,10 @@ public class RichLookupBean {
 	 * @param event
 	 * @throws ManagerBeanException
 	 */
-	public void addIdEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
-		getController().addIdEqualExpression(event);
+	public void addDirectEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
+		getController().addDirectEqualExpression(event);
 	}
-	
-	/**
-	 * Add a new >= expression to the criteria to condition the following searches.
-	 * The id component is managed as an alias to resolve the real property
-	 * path.
-	 * 
-	 * @param event
-	 * @throws ManagerBeanException
-	 */
-	public void addGreaterThanOrEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
-		getController().addGreaterThanOrEqualExpression(event);
-	}
-
-	/**
-	 * Add a new <= expression to the criteria to condition the following searches.
-	 * The id component is managed as an alias to resolve the real property
-	 * path.
-	 * 
-	 * @param event
-	 * @throws ManagerBeanException
-	 */
-	public void addLessThanOrEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
-		getController().addLessThanOrEqualExpression(event);
-	}
-	
+		
 	
 	/**
 	 * Execute cancel action.
@@ -476,11 +453,11 @@ public class RichLookupBean {
 	 * 
 	 * @return the values map
 	 */
-	private Map<String, Object> getValuesMap(Map<String, ValueExpression> joinBindingsMap) {
+	private Map<String, Object> getValuesMap(Map<String, ValueBinding> joinBindingsMap) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		FacesContext ctx = FacesContext.getCurrentInstance();
-		for (Entry<String, ValueExpression> entry : joinBindingsMap.entrySet()) {
-			Object value = entry.getValue().getValue(ctx.getELContext());
+		for (Entry<String, ValueBinding> entry : joinBindingsMap.entrySet()) {
+			Object value = entry.getValue().getValue(ctx);
 			map.put(entry.getKey(), value);
 		}
 		return map;
@@ -506,69 +483,47 @@ public class RichLookupBean {
 		return criteria;
 	}
 
-	private void restoreValues(Map<String, ValueExpression> joinBindingsMap, Map<String, Object> valuesMap) {
+	private void restoreValues(Map<String, ValueBinding> joinBindingsMap, Map<String, Object> valuesMap) {
 		FacesContext ctx = FacesContext.getCurrentInstance();
-		for (Entry<String, ValueExpression> entry : joinBindingsMap.entrySet()) {
+		for (Entry<String, ValueBinding> entry : joinBindingsMap.entrySet()) {
 			Object value = valuesMap.get(entry.getKey());
-			entry.getValue().setValue(ctx.getELContext(), value);
+			entry.getValue().setValue(ctx, value);
 		}
 	}
 	
-	private void fireLookupChangeListener(UIComponent component, boolean resolved) {
-		if ( getComponent().getLookupChangeListener() != null ) {
-			LookupChangeEvent event = null;
+	private Object getCurrentSourcePojo() {
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		try {
+			return this.sourcePojoBinding.getValue(ctx);
+		} catch ( Throwable th ) {
+			LOGGER.fine( this.sourcePojoBinding + " is possibly null" );
+		}
+		return null;
+	}
+	
+	private void fireValueChangeListener(UIComponent component) {
+		if ( getButtonValueChangeListener() != null ) {
+			ValueChangeEvent event = null;
 			FacesContext ctx = FacesContext.getCurrentInstance();
-			Object newValue = null;
-			if ( resolved ) {
-				if ( getController().isNew() ) {
-					newValue = getController().getTo();
-				} else {
-					try {
-						newValue = getController().getModel().getRowData();
-					} catch (ManagerBeanException e) {
-						LOGGER.severe( e.getMessage() );
-					}
-				}				
+			if ( getController().isNew() ) {
+				event = new ValueChangeEvent(component, null, getController().getTo() );
+			} else {
+				Object newValue = null;
+				try {
+					newValue = getController().getModel().getRowData();
+				} catch (ManagerBeanException e) {
+					LOGGER.severe( e.getMessage() );
+				}
+				Object oldValue = getCurrentSourcePojo();
+				event = new ValueChangeEvent(component, oldValue, newValue );
 			}
-			event = new LookupChangeEvent(component, newValue );
-			getComponent().getLookupChangeListener().invoke(ctx.getELContext(), new Object[]{event});
+			getButtonValueChangeListener().invoke(ctx, new Object[]{event});
 		}
 	}
 
-	private Object getLookupValue() {
-		Object value = getController().getTo();
-		if ( getComponent().getLookupProperty() != null ) {
-			try {
-				value = PropertyUtils.getProperty( value, getComponent().getLookupProperty() );
-			} catch (Throwable e) {
-				LOGGER.severe( e.getMessage() );
-				value = null;
-			}
-		}
-		return value; 
-	}
-	
-	private String getLookupPojo() {
-		String pojo = null;		
-		if ( getComponent().getLookupProperty() != null ) {
-			try {
-				Object value = this.controller.getManagerBean().createNewTo();
-				Class<?> _class = PropertyUtils.getPropertyType( value, getComponent().getLookupProperty() );
-				if ( _class != null ) {
-					pojo = _class.getName();
-				}
-			} catch (Throwable e) {
-				LOGGER.severe( e.getMessage() );
-			}
-			return pojo;
-		} 
-		pojo = getController().getPojo();			
-		return pojo;
-	}
-	
 	private void updateSourcePojo() {
 		FacesContext ctx = FacesContext.getCurrentInstance();
-		sourcePojoBinding.setValue(ctx.getELContext(), getLookupValue());
+		sourcePojoBinding.setValue(ctx, getController().getTo());
 	}
 	
 	/**
@@ -582,7 +537,7 @@ public class RichLookupBean {
 		LOGGER.info("lookupChanged: " + event.getNewValue() + " old: " + event.getOldValue());
 		boolean restoreValues = false;
 		setBindings(event.getComponent());
-		Map<String, ValueExpression> joinBindingsMap = getJoinBindingsMap(event);
+		Map<String, ValueBinding> joinBindingsMap = getJoinBindingsMap(event);
 		Map<String, Object> valuesMap = getValuesMap(joinBindingsMap);
 		Criteria criteria = getCriteria(valuesMap);
 		getController().setCriteria(criteria);
@@ -594,7 +549,6 @@ public class RichLookupBean {
 			onReset(null);
 			restoreValues = true;
 		}
-		fireLookupChangeListener(event.getComponent(), !restoreValues);
 		updateSourcePojo();
 		if (restoreValues) {
 			restoreValues(joinBindingsMap, valuesMap);
@@ -611,12 +565,12 @@ public class RichLookupBean {
 	 * 
 	 * @return the parent binding
 	 */
-	private ValueExpression getParentBinding(FacesContext ctx, ValueExpression ve) {
-		String parentExpression = ve.getExpressionString();
+	private ValueBinding getParentBinding(FacesContext ctx, ValueBinding vb) {
+		String parentExpression = vb.getExpressionString();
 		int pos = parentExpression.lastIndexOf('.');
 		if (pos != -1) {
 			String expression = parentExpression.substring(0, pos) + "}";
-			return ctx.getApplication().getExpressionFactory().createValueExpression(ctx.getELContext(),expression, Object.class);
+			return ctx.getApplication().createValueBinding(expression);
 		}
 		return null;
 	}
@@ -629,16 +583,16 @@ public class RichLookupBean {
 	 * 
 	 * @return the foreign binding
 	 */
-	private ValueExpression getSourcePojoBinding(UIComponent component) {
+	private ValueBinding getSourcePojoBinding(UIComponent component) {
 		FacesContext ctx = FacesContext.getCurrentInstance();
-		ValueExpression ve = component.getValueExpression("value");
-		String pojo = getLookupPojo();
-		while (ve != null) {
-			String type = ve.getType(ctx.getELContext()).getName();
-			if (type.equals(pojo)) {
-				return ve;
-			} 
-			ve = getParentBinding(ctx, ve);
+		ValueBinding vb = component.getValueBinding("value");
+		while (vb != null) {
+			String type = vb.getType(ctx).getName();
+			if (type.equals(this.controller.getPojo())) {
+				return vb;
+			} else {
+				vb = getParentBinding(ctx, vb);
+			}
 		}
 		return null;
 	}
@@ -728,7 +682,7 @@ public class RichLookupBean {
 	 *            the event
 	 */
 	public void onListSelect(ActionEvent event) {
-		fireLookupChangeListener(event.getComponent(), true);
+		fireValueChangeListener(event.getComponent());
 		onSelect(null);
 		updateSourcePojo();
 		setShowWindow(false);
@@ -743,7 +697,7 @@ public class RichLookupBean {
 	 */
 	public void onFormSelect(ActionEvent event) {
 		LOGGER.info("onFormSelect: " + getController().getTo());
-		fireLookupChangeListener(event.getComponent(), true);
+		fireValueChangeListener(event.getComponent());
 		updateSourcePojo();
 		setShowWindow(false);
 		clearModel();
@@ -790,6 +744,10 @@ public class RichLookupBean {
 
 	private void clearModel() {
 		getController().setModel(null);
+	}
+
+	public MethodBinding getButtonValueChangeListener() {
+		return this.component.getValueChangeListener();
 	}
 
 	public ILookupComponent getComponent() {

@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.component.UIComponent;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -169,7 +170,11 @@ public class BasicController extends AbstractPojoController implements IControll
 		dataModelListeners.add(listener);
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.code.aon.ui.form.IController#getModel()
+	 */
 	public DataModel getModel() throws ManagerBeanException {
 		if (model == null) {
 			if (isQueryOnStartUP()) {
@@ -183,7 +188,12 @@ public class BasicController extends AbstractPojoController implements IControll
 		return model;
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.code.aon.ui.form.IController#setModel(javax.faces.model.DataModel)
+	 */
 	public void setModel(DataModel model) {
 		this.model = model;
 	}
@@ -218,12 +228,20 @@ public class BasicController extends AbstractPojoController implements IControll
 		return this.selectedIndex;
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.code.aon.ui.form.IController#isNew()
+	 */
 	public boolean isNew() {
 		return isNew;
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.code.aon.ui.form.IController#setNew(boolean)
+	 */
 	public void setNew(boolean isNew) {
 		if (isNew) {
 			this.selectedIndex = -1;
@@ -256,7 +274,12 @@ public class BasicController extends AbstractPojoController implements IControll
 		return (count > 0) && ((count - 1) == getSelectedIndex());
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.code.aon.ui.form.IController#onAccept(javax.faces.event.ActionEvent)
+	 */
 	public void onAccept(ActionEvent event) {
 		accept(event);
 		resetTo();
@@ -319,7 +342,12 @@ public class BasicController extends AbstractPojoController implements IControll
 		}
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.code.aon.ui.form.IController#onSearch(javax.faces.event.ActionEvent)
+	 */
 	public void onSearch(ActionEvent event) {
 		try {
 			ControllerEvent evt = new ControllerEvent(this);
@@ -336,7 +364,12 @@ public class BasicController extends AbstractPojoController implements IControll
 		}
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.code.aon.ui.form.IController#onRemove(javax.faces.event.ActionEvent)
+	 */
 	public void onRemove(ActionEvent event) {
 		remove(event);
 		resetTo();
@@ -365,7 +398,12 @@ public class BasicController extends AbstractPojoController implements IControll
 		}
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.code.aon.ui.form.IController#onCancel(javax.faces.event.ActionEvent)
+	 */
 	public void onCancel(ActionEvent event) {
 		cancel(event);
 		resetTo();
@@ -391,7 +429,12 @@ public class BasicController extends AbstractPojoController implements IControll
 		}
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.code.aon.ui.form.IController#onReset(javax.faces.event.ActionEvent)
+	 */
 	public void onReset(ActionEvent event) {
 		try {
 			ControllerEvent evt = new ControllerEvent(this);
@@ -410,7 +453,13 @@ public class BasicController extends AbstractPojoController implements IControll
 		}
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.code.aon.ui.form.IController#onEditSearch(javax.faces.event.ActionEvent
+	 * )
+	 */
 	public void onEditSearch(ActionEvent event) {
 		try {
 			ControllerEvent evt = new ControllerEvent(this);
@@ -505,7 +554,12 @@ public class BasicController extends AbstractPojoController implements IControll
 		}
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.code.aon.ui.form.IController#onSelect(javax.faces.event.ActionEvent)
+	 */
 	public void onSelect(ActionEvent event) {
 		try {
 			ControllerEvent evt = new ControllerEvent(this);
@@ -529,96 +583,124 @@ public class BasicController extends AbstractPojoController implements IControll
 		}
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.code.aon.ui.form.IController#getTo()
+	 */
 	public ITransferObject getTo() {
 		return this.to;
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seecom.code.aon.ui.form.ISearchable#addExpression(javax.faces.event.
+	 * ValueChangeEvent)
+	 */
 	public void addExpression(ValueChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null) {
 			String value = event.getNewValue().toString();
-			if (! StringUtils.isBlank(value) ) {
-				String fieldName = resolveAlias(event.getComponent().getId()); 
-				try {
-					criteria.addExpression(fieldName, value);
-				} catch (ExpressionException e) {
-					throw new ManagerBeanException(e.getMessage(), e);
-				}
-			}
+			addExpression(getFieldName(event.getComponent().getId()), value);
 		}
 	}
 	
-	@Override
 	public void addEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null) {
-			String fieldName = resolveAlias(event.getComponent().getId());
+			String fieldName = getFieldName(event.getComponent().getId());
 			criteria.addEqualExpression(fieldName, event.getNewValue());
 		}
 	}	
 
-	@Override
-	public void addGreaterThanOrEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
+	private String getDirectAlias( UIComponent component ) {
+		String fieldName = component.getId().replace('_', '.');
+		return fieldName;
+	}
+	
+	public void addDirectEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null) {
-			String fieldName = resolveAlias(event.getComponent().getId());
-			criteria.addGreaterThanOrEqualExpression(fieldName, event.getNewValue());
-		}
-	}	
-
-	@Override
-	public void addLessThanOrEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
-		if (event.getNewValue() != null) {
-			String fieldName = resolveAlias(event.getComponent().getId());
-			criteria.addLessThanOrEqualExpression(fieldName, event.getNewValue());
+			String fieldName = getDirectAlias(event.getComponent());
+			criteria.addEqualExpression(fieldName, event.getNewValue());
 		}
 	}	
 	
-	@Override
-	public void addIdEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.code.aon.ui.form.ISearchable#addDirectExpression(javax.faces.event
+	 * .ValueChangeEvent)
+	 */
+	public void addDirectExpression(ValueChangeEvent event) throws ManagerBeanException {
+		if (event.getNewValue() != null) {
+			String value = event.getNewValue().toString();
+			String property = getDirectAlias(event.getComponent());
+			addExpression(property, value);
+		}
+	}
+
+	public void addDirectIdEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null) {
 			ITransferObject to = (ITransferObject) event.getNewValue();
-			String fieldName = resolveAlias(event.getComponent().getId());
+			String fieldName = getDirectAlias(event.getComponent());
 			IManagerBean bean = BeanManager.getManagerBean(to.getClass());
 			Serializable id = bean.getId(to);
 			criteria.addEqualExpression(fieldName, id);
 		}
-	}	
-	
-	/**
-	 * Resolves the alias.
-	 * 
-	 * @param alias
-	 * @return Field path.
-	 */
-	protected String resolveAlias( String alias ) {
-		String fieldName = null;
-		try {
-			fieldName = getFieldName(alias);
-		} catch (ManagerBeanException e) {
-			fieldName = alias.replace('_', '.');
-			fieldName = StringUtils.substringBefore(fieldName, "-");
-		}
-		return fieldName;
 	}
 	
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.code.aon.ui.form.ISearchable#clearCriteria()
+	 */
 	public void clearCriteria() throws ManagerBeanException {
 		this.criteria = new Criteria();
 		updateOrderList();
 		updateInitExpression();
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.code.aon.common.ICriteriaProvider#getCriteria()
+	 */
 	public Criteria getCriteria() throws ManagerBeanException {
 		return criteria;
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.code.aon.ui.form.ISearchable#setCriteria(com.code.aon.ql.Criteria)
+	 */
 	public void setCriteria(Criteria criteria) throws ManagerBeanException {
 		this.criteria = criteria;
 	}
 
-	@Override
+	/**
+	 * Add a new expression to the criteria to condition the following searches.
+	 * 
+	 * @param key
+	 * @param value
+	 * @throws ManagerBeanException
+	 */
+	public void addExpression(String key, String value) throws ManagerBeanException {
+		try {
+			if (value.length() > 0) {
+				criteria.addExpression(key, value);
+			}
+		} catch (ExpressionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.code.aon.ui.form.IController#initializeModel()
+	 */
 	public void initializeModel() {
 		try {
 			ControllerEvent evt = new ControllerEvent(this);
@@ -721,7 +803,11 @@ public class BasicController extends AbstractPojoController implements IControll
 		getManagerBean().remove(getTo());
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.code.aon.ui.form.ISearchable#search(int, int)
+	 */
 	public List<ITransferObject> search(int start, int count) throws ManagerBeanException {
 		Criteria criteria = getCriteria();
 		LOGGER.info("Searching Expression:[" + ((criteria != null) ? criteria.toString() : null)

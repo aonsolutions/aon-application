@@ -14,7 +14,6 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.NoteType;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class CustomerNoteController extends BasicController {
@@ -77,7 +76,7 @@ public class CustomerNoteController extends BasicController {
 			customCriteria.addEqualExpression(this.getFieldName(IRegistryAlias.REGISTRY_NOTE_NOTETYPE), getNoteType());
 		}
 		customCriteria.addExpression(ExpressionUtilities.getNotEqualExpression(this.getFieldName(IRegistryAlias.REGISTRY_NOTE_NOTETYPE), NoteType.OBSERVATION));
-		CustomerController customerController = (CustomerController)FormUtil.getController(CUSTOMER_CONTROLLER_NAME);
+		CustomerController customerController = (CustomerController)AonUtil.getController(CUSTOMER_CONTROLLER_NAME);
 		customCriteria.addEqualExpression(this.getFieldName(IRegistryAlias.REGISTRY_NOTE_REGISTRY_ID), ((Customer)customerController.getTo()).getId());
 		return customCriteria;
 	}

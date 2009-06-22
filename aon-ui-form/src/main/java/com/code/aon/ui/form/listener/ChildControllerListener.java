@@ -9,11 +9,11 @@ import org.apache.commons.beanutils.PropertyUtils;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * ChildControllerListener is a listener that must be registered in <code>faces-bean-config.xml</code> asociated
@@ -66,12 +66,23 @@ public class ChildControllerListener extends ControllerAdapter {
 	}
 
 	/**
+	 * Gets the controller.
+	 * 
+	 * @param controllerName the controller name
+	 * 
+	 * @return the controller
+	 */
+	private IController getController(String controllerName) {
+		return AonUtil.getController(controllerName);
+	}
+	
+	/**
 	 * Gets the master controller.
 	 * 
 	 * @return the master controller
 	 */
 	private IController getMasterController() {
-		return FormUtil.getController( getMasterBean() );
+		return getController( getMasterBean() );
 	}
 
 	/* (non-Javadoc)
@@ -125,7 +136,7 @@ public class ChildControllerListener extends ControllerAdapter {
 		for (int i = 0; st.hasMoreTokens();++i) {
 			String token = st.nextToken();
 			if (i == 0) {
-				IController masterController = FormUtil.getController(token);
+				IController masterController = getController(token);
 				to = masterController.getTo();
 			} else {
 				try {

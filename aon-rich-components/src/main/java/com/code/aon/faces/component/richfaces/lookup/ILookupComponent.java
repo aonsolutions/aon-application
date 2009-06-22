@@ -1,16 +1,14 @@
 package com.code.aon.faces.component.richfaces.lookup;
 
-import javax.el.MethodExpression;
-import javax.el.ValueExpression;
+import javax.faces.el.MethodBinding;
+import javax.faces.el.ValueBinding;
 
 public interface ILookupComponent {
 
-	ValueExpression getLookup();
+	ValueBinding getLookup();
 
-	ValueExpression getProperty();
+	ValueBinding getProperty();
 	
-	String getLookupProperty();
-	
-	MethodExpression getLookupChangeListener();
+	MethodBinding getValueChangeListener();
 	
 }

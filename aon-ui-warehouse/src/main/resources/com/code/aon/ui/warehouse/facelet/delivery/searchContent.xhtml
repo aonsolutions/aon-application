@@ -6,7 +6,14 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
+	<aon:outputLabel for="Delivery_series"
+		value="#{bundle.aon_series}/#{bundle.aon_number}" />
+	<aon:panelGrid columns="2">
+		<aon:inputText id="Delivery_series" size="4"
+			valueChangeListener="#{controller.addExpression}" />
+		<aon:inputText id="Delivery_number" size="7"
+			valueChangeListener="#{controller.addExpression}" />
+	</aon:panelGrid>
 
 	<aon:outputLabel value="#{bundle.aon_date}" />
 	<aon:div>

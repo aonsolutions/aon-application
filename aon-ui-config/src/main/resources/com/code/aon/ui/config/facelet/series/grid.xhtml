@@ -23,51 +23,67 @@
 						<ui:param name="controller" value="#{series}" />
 						<ui:param name="columnClasses"
 							value="aon-editDataTable-textColumn aon-width-80,
+									aon-editDataTable-textColumn aon-width-150,
 									aon-editDataTable-textColumn,
 									aon-editDataTable-textColumn aon-width-150,
 									aon-editDataTable-textColumn aon-width-60" />
 						<ui:define name="columns">
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputLabel for="Series_id" value="#{bundle.aon_id}" />
+									<aon:outputText value="#{bundle.aon_id}" />
 								</f:facet>
 								<aon:outputText value="#{to.id}" />
 								<f:facet name="footer">
-									<aon:inputText id="Series_id"
-										rendered="#{formNew}" size="7" maxlength="5"
+									<aon:inputText rendered="#{series.new}" size="7" maxlength="5"
 										value="#{series.to.id}" required="#{true}" />
 								</f:facet>
 							</aon:column>
 
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputLabel for="Series_description" value="#{bundle.aon_description}" />
+									<aon:outputText value="#{bundle.aon_description}" />
 								</f:facet>
-								<aon:outputText rendered="#{formList}"
+								<aon:outputText rendered="#{to.id!=series.to.id}"
 									value="#{to.description}" />
-								<aon:inputText id="Series_description"
-									rendered="#{formEdit}" size="40" maxlength="32" 
+								<aon:inputText rendered="#{to.id==series.to.id}" size="40" maxlength="32" 
 									value="#{series.to.description}" required="#{true}" />
 								<f:facet name="footer">
-									<aon:inputText id="Series_description-New"
-										rendered="#{formNew}" size="40" maxlength="32" 
+									<aon:inputText rendered="#{series.new}" size="40" maxlength="32" 
 										value="#{series.to.description}" required="#{true}" />
 								</f:facet>
 							</aon:column>
 
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputLabel for="Series_securityLevel" value="#{bundle.aon_security_level}" />
+									<aon:outputText value="#{configBundle.config_series_workplace}" />
 								</f:facet>
-								<aon:outputText rendered="#{formList}"
+								<aon:outputText rendered="#{to.id!=series.to.id}"
+									value="#{to.workPlace.description}" />
+								<aon:selectOneMenu rendered="#{to.id==series.to.id}"
+									value="#{series.to.workPlace}">
+									<f:selectItems value="#{companyCollections.workPlaces}" />
+								</aon:selectOneMenu>
+								<f:facet name="footer">
+									<aon:selectOneMenu rendered="#{series.new}"
+										value="#{series.to.workPlace}">
+										<f:selectItems value="#{companyCollections.workPlaces}" />
+									</aon:selectOneMenu>
+								</f:facet>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_security_level}" />
+								</f:facet>
+								<aon:outputText rendered="#{to.id!=series.to.id}"
 									value="#{to.securityLevel}" />
-								<aon:selectOneMenu id="Series_securityLevel"
-									rendered="#{formEdit}" value="#{series.to.securityLevel}">
+								<aon:selectOneMenu rendered="#{to.id==series.to.id}"
+									value="#{series.to.securityLevel}">
 									<f:selectItems value="#{commonCollections.securityLevels}" />
 								</aon:selectOneMenu>
 								<f:facet name="footer">
-									<aon:selectOneMenu id="Series_securityLevel-New"
-										rendered="#{formNew}" value="#{series.to.securityLevel}">
+									<aon:selectOneMenu rendered="#{series.new}"
+										value="#{series.to.securityLevel}">
 										<f:selectItems value="#{commonCollections.securityLevels}" />
 									</aon:selectOneMenu>
 								</f:facet>
@@ -75,16 +91,16 @@
 
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputLabel for="Series_active" value="#{configBundle.config_series_active}" />
+									<aon:outputText value="#{configBundle.config_series_active}" />
 								</f:facet>
-								<aon:outputText rendered="#{formList}"
+								<aon:outputText rendered="#{to.id!=series.to.id}"
 									value="&#160;&#160;&#160;&#160;&#160;"
 									styleClass="#{to.active?'aon-icon-checked':'aon-icon-check'}" />
-								<aon:selectBooleanCheckbox id="Series_active"
-									rendered="#{formEdit}" value="#{series.to.active}" />
+								<aon:selectBooleanCheckbox rendered="#{to.id==series.to.id}"
+									value="#{series.to.active}" />
 								<f:facet name="footer">
-									<aon:selectBooleanCheckbox id="Series_active-New"
-										rendered="#{formNew}" value="#{series.to.active}">
+									<aon:selectBooleanCheckbox rendered="#{series.new}"
+										value="#{series.to.active}">
 									</aon:selectBooleanCheckbox>
 								</f:facet>
 							</aon:column>

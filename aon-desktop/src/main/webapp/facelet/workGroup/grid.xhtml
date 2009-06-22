@@ -31,43 +31,106 @@
 				<!--  aon-region-body -->
 	 			<aon:div styleClass="aon-scroll-area">
 					
-					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
-						<ui:param name="controller" value="#{workGroup}" />
-						<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn aon-width-150" />
-						<ui:define name="columns">
-					
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_description}" />
-								</f:facet>
-								<aon:outputText value="#{to.description}" rendered="#{to!=workGroup.to}" />
-								<aon:inputText styleClass="aon-form-input-text " required="true"
-									rendered="#{to==workGroup.to}" size="60"
+					<aon:editDataTable id="workGroupData" var="to" rows="0"
+						rendered="#{(workGroup.model.rowCount > 0) or (workGroup.new)}" value="#{workGroup.model}"
+						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+								
+						<aon:rowSelector toggleOnClick="#{workGroup.to == null}"
+							actionListener="#{workGroup.onSelect}" />
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:outputText value="&#160;" />
+							<f:facet name="footer">
+								<aon:div>
+									<aon:commandButton alt="[#{bundle.aon_reset}]"
+										styleClass="aon-editDataTable-button aon-icon-reset"
+										actionListener="#{workGroup.onReset}" value=""
+										rendered="#{!workGroup.new}"
+										accesskey="#{bundle.aon_key_new_line}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{groupwareBundle.aon_workgroup_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}" rendered="#{to!=workGroup.to}" />
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==workGroup.to}" size="60"
+								value="#{workGroup.to.description}" maxlength="45" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{workGroup.new}" size="60"
 									value="#{workGroup.to.description}" maxlength="45" />
-								<f:facet name="footer">
-									<aon:inputText styleClass="aon-form-input-text" required="true"
-										rendered="#{workGroup.new}" size="60"
-										value="#{workGroup.to.description}" maxlength="45" />
-								</f:facet>
-							</aon:column>
-	
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_status}" />
-								</f:facet>
-								<aon:outputText value="#{to.status}" rendered="#{to!=workGroup.to}" />
-								<aon:selectOneMenu rendered="#{to==workGroup.to}" value="#{workGroup.to.status}">
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{groupwareBundle.aon_workgroup_status}" />
+							</f:facet>
+							<aon:outputText value="#{to.status}" rendered="#{to!=workGroup.to}" />
+							<aon:selectOneMenu rendered="#{to==workGroup.to}" value="#{workGroup.to.status}">
+								<f:selectItems value="#{configCollections.workGroupStatuses}" />
+							</aon:selectOneMenu>
+							<f:facet name="footer">
+								<aon:selectOneMenu id="workGroupStatuses" rendered="#{workGroup.new}" value="#{workGroup.to.status}">
 									<f:selectItems value="#{configCollections.workGroupStatuses}" />
 								</aon:selectOneMenu>
-								<f:facet name="footer">
-									<aon:selectOneMenu id="workGroupStatuses" rendered="#{workGroup.new}" value="#{workGroup.to.status}">
-										<f:selectItems value="#{configCollections.workGroupStatuses}" />
-									</aon:selectOneMenu>
-								</f:facet>
-							</aon:column>
-						</ui:define>
-					</ui:decorate>
-				</aon:div>
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:div>
+								<f:verbatim rendered="#{to!=workGroup.to}">&#160;</f:verbatim>
+								<aon:commandButton title="[#{bundle.aon_accept}]" 
+									actionListener="#{workGroup.onAccept}" 
+									rendered="#{to==workGroup.to}"
+									styleClass="aon-editDataTable-button aon-icon-accept"
+									accesskey="#{bundle.aon_key_save_line}" />
+								<aon:commandButton title="[#{bundle.aon_cancel}]"
+									styleClass="aon-editDataTable-button aon-icon-cancel"
+									rendered="#{to==workGroup.to}"
+									actionListener="#{workGroup.onCancel}" immediate="true"
+									accesskey="#{bundle.aon_key_cancel_line}" />
+								<aon:confirmButton id="editRemove" title="[#{bundle.aon_remove}]"
+									styleClass="aon-editDataTable-button aon-icon-delete"
+									rendered="#{to==workGroup.to}"
+									confirmTitle="#{bundle.aon_confirm_title}" 
+									confirmMessage="#{bundle.aon_remove_confirm}"
+									confirmActionListener="#{workGroup.onRemove}" immediate="true"
+									accesskey="#{bundle.aon_key_remove_line}" />
+							</aon:div>
+							<f:facet name="footer">
+								<aon:div>
+									<f:verbatim rendered="#{!workGroup.new}">&#160;</f:verbatim>
+									<aon:commandButton title="[#{bundle.aon_accept}]" 
+										actionListener="#{workGroup.onAccept}" 
+										rendered="#{workGroup.new}"
+										styleClass="aon-editDataTable-button aon-icon-accept"
+										accesskey="#{bundle.aon_key_save_line}" />
+									<aon:confirmButton id="editCancel" title="[#{bundle.aon_cancel}]"
+										styleClass="aon-editDataTable-button aon-icon-cancel"
+										rendered="#{workGroup.new}"
+										confirmTitle="#{bundle.aon_confirm_title}" 
+										confirmMessage="#{bundle.aon_cancel_confirm}"
+										confirmActionListener="#{workGroup.onCancel}" immediate="true"
+										accesskey="#{bundle.aon_key_cancel_line}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+					</aon:editDataTable>
+ 
+					<aon:dataScroller for="workGroupData" rowCount="#{workGroup.model.rowCount}" showNote="true" />
+					 
+				</aon:div>				
 			</aon:div>
 		</aon:form>
 	</ui:define>

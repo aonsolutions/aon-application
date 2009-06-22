@@ -1,112 +1,95 @@
 package com.code.aon.ui.registry.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.richfaces.event.UploadEvent;
-import org.richfaces.model.UploadItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.registry.RecordData;
+import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.form.LinesController;
 
 public class RecordDataController extends LinesController {
 	
 	private static final Logger LOGGER = Logger.getLogger(RecordDataController.class.getName());
 	
-	private RegistryAttachment attach;
+	public String listNavigation;
+	public String formNavigation;
+	
+	private AonFile aonFile;
+	
+	public String getListNavigation() {
+		return listNavigation;
+	}
 
-	public RegistryAttachment getAttach() {
-		return attach;
-	}
-	
-	public void setAttach(RegistryAttachment attach) {
-		this.attach = attach;
+	public void setListNavigation(String listNavigation) {
+		this.listNavigation = listNavigation;
 	}
 
-	public boolean isAttachAvailable() {
-		return ( attach != null ) && (! ArrayUtils.isEmpty(attach.getData()) );
+	public String getFormNavigation() {
+		return formNavigation;
 	}
-	
-	private String getName( RegistryAttachment attach ) {
-		String name = attach.getDescription();
-		if(attach.getMimeType() != null){
-			name += "." + attach.getMimeType().getExtension();
-		}
-		return name;
+
+	public void setFormNavigation(String formNavigation) {
+		this.formNavigation = formNavigation;
 	}
-	
-	public String getAttachDescription(){
-		int sizeKb = attach.getData().length >> 10;
-		return getName(attach) + " (" + sizeKb + " Kb)";
+
+	public AonFile getAonFile() {
+		return aonFile;
 	}
-	
-	public void fileUploaded(UploadEvent event) {
-		try {
-			UploadItem item = event.getUploadItem();
-			File file = item.getFile();
-			if (file != null) {
-				FileInputStream in = new FileInputStream(file);
-				byte[] data = IOUtils.toByteArray(in);
-				setAttach( new RegistryAttachment() );
-				String name = item.getFileName();
-				attach.setData( data );	
-				attach.setMimeType(MimeType.getByExtension(FilenameUtils.getExtension(name)));
-				attach.setDescription(FilenameUtils.getBaseName(name));
-				attach.setCategory(null);
-			}
-		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e );
-			throw new AbortProcessingException(e.getMessage());
-		}
-	}	
+
+	public void setAonFile(AonFile aonFile) {
+		this.aonFile = aonFile;
+	}
 
 	@SuppressWarnings("unused")
-	public void downloadAttachment(ActionEvent event) {		
+	public void onAttachDownload(ActionEvent event) throws ManagerBeanException{
 		try {
 			FacesContext ctx = FacesContext.getCurrentInstance();
 			HttpServletResponse response = (HttpServletResponse)ctx.getExternalContext().getResponse();
-			if(attach.getMimeType() != null){
-				response.setContentType(attach.getMimeType().getName());
+			RecordData recordData = (RecordData)this.getTo();
+			if(recordData.getAttach().getMimeType() != null){
+				response.setContentType(recordData.getAttach().getMimeType().getName());
 			}
-			response.setHeader("Content-Disposition", "attachment; filename=\"" + getName(attach) + "\";");
-			response.getOutputStream().write(attach.getData());
-			response.flushBuffer();
+			response.setHeader("Content-Disposition", "attachment; filename=\"" + recordData.getAttach().getDescription() + "\";");
+			response.getOutputStream().write(recordData.getAttach().getData());
 			ctx.responseComplete();
 		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e );
-			throw new AbortProcessingException(e);
+			throw new ManagerBeanException(e);
 		}
 	}
 	
 	@SuppressWarnings("unused")
-	public void onAttachRemove(ActionEvent event) {
-		setAttach( null );		
+	public void onAttachRemove(ActionEvent event) throws ManagerBeanException{
+		try {
+			IManagerBean recordDataBean = BeanManager.getManagerBean(RecordData.class);
+			RecordData recordData = (RecordData)this.getTo();
+			RegistryAttachment attach = recordData.getAttach();
+			recordData.setAttach(null);
+			recordDataBean.update(recordData);
+			deleteAttachment(attach);
+			RegistryAttachment attachment = new RegistryAttachment();
+			attachment.setRegistry(new Registry());
+			recordData.setAttach(attachment);
+		} catch (ManagerBeanException e) {
+			throw new ManagerBeanException(e);
+		}
 	}
 
-	public void removeAttachment() throws ManagerBeanException {
-		RecordData recordData = (RecordData) getTo();
-		RegistryAttachment attach = recordData.getAttach();
-		if ( (attach != null) && (attach.getId() != null) ) {
-			recordData.setAttach( null );
-			getManagerBean().update(recordData);
+	private void deleteAttachment(RegistryAttachment attach) {
+		try {
 			IManagerBean rAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 			rAttachBean.remove(attach);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error deleting attach with id= " + attach.getId(), e);
 		}
 	}
 

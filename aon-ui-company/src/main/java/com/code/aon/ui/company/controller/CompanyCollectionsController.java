@@ -45,13 +45,6 @@ public class CompanyCollectionsController {
     	return addresses;
     }
 
-	public WorkPlace getWorkPlace() {
-		return null;
-	}
-
-	public void setWorkPlace( WorkPlace workPlace ) {
-	}
-	
 	public List<SelectItem> getWorkPlaces() throws ManagerBeanException {
 		List<SelectItem> workPlaces = new LinkedList<SelectItem>();
 		IManagerBean workplaceBean = BeanManager.getManagerBean(WorkPlace.class);

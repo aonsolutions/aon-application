@@ -20,7 +20,7 @@
 				<aon:panelGrid columns="2" dir="true">
 
 					<aon:outputLabel for="Favorite_description"
-						value="#{bundle.aon_description}" />
+						value="#{groupwareBundle.favorite_description}" />
 					<aon:inputText id="Favorite_description"
 						maxlength="128" size="100"
 						value="#{favorite.to.description}" />
@@ -34,7 +34,7 @@
 					<aon:outputLabel for="Favorite_favoriteCategory_id"
 						value="#{groupwareBundle.favorite_favorite_category}" />
 					<aon:selectOneMenu id="Favorite_favoriteCategory_id"
-						value="#{favorite.to.favoriteCategory}" required="#{true}">
+						value="#{favorite.to.favoriteCategory.id}" required="#{true}">
 						<f:selectItems value="#{groupWareCollections.favoriteCategories}" />
 					</aon:selectOneMenu>
 							

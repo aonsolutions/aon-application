@@ -6,7 +6,6 @@ import java.io.IOException;
 import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.config.ApplicationParameter;
-import com.code.aon.config.Bank;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
@@ -25,18 +24,17 @@ public class ConfigAliasWriter {
 	 */
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-PROJECT/aon-config/src/main/java/com/code/aon/config/dao/IConfigAlias.java");
-		String[] classes = new String[11]; 
+		String[] classes = new String[10]; 
 		classes[0] = ApplicationParameter.class.getName();
-		classes[1] = Bank.class.getName();
-		classes[2] = PayMethod.class.getName();
-		classes[3] = Scope.class.getName();
-		classes[4] = Series.class.getName();
-		classes[5] = Tax.class.getName();
-		classes[6] = TaxDetail.class.getName();
-		classes[7] = User.class.getName();
-		classes[8] = UserScope.class.getName();
-		classes[9] = UserWorkGroup.class.getName();
-		classes[10] = WorkGroup.class.getName();
+		classes[1] = PayMethod.class.getName();
+		classes[2] = Scope.class.getName();
+		classes[3] = Series.class.getName();
+		classes[4] = User.class.getName();
+		classes[5] = UserScope.class.getName();
+		classes[6] = UserWorkGroup.class.getName();
+		classes[7] = Tax.class.getName();
+		classes[8] = TaxDetail.class.getName();
+		classes[9] = WorkGroup.class.getName();
 		HibernateUtil.getSessionFactory();
 		AliasWriter writer = new AliasWriter("com.code.aon.config.dao");
 		writer.write(classes, file);

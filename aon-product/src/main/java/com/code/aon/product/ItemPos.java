@@ -59,6 +59,12 @@ public class ItemPos implements ITransferObject {
     private PluProductType pluProductType;
     
 	/**
+	 * Void constructor.
+	 */
+	public ItemPos() {
+	}
+
+	/**
 	 * Returns the unique key.
 	 * 
 	 * @return unique key.
@@ -176,15 +182,12 @@ public class ItemPos implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (this == obj) {
+			return true;
 		}
 		if (obj instanceof ItemPos) {
-			ItemPos o = (ItemPos) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
+			ItemPos itemPos = (ItemPos) obj;
+			if (ObjectUtils.equals(getId(), itemPos.getId())) {
 				return true;
 			}
 		}
@@ -192,8 +195,7 @@ public class ItemPos implements ITransferObject {
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
-
+	public int hashCode() {
+		return 0;
+	}	
 }

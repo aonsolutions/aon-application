@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Iterator;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -29,8 +30,8 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * Controller used in the company maintenance.
@@ -80,11 +81,9 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 	private boolean printRecordData;
 	
-	private boolean showRegistryBank = true;
+	private boolean showFinanceRegistryBank = true;
 
 	private boolean showCompanyOtherData = true;
-	
-	private boolean showPanelTabSet = true;
 
     /**
      * The empty constructor.
@@ -398,7 +397,7 @@ public class CompanyParentController extends BasicController implements ICompany
 		try {
 			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 			IController master = this;
-			IController detail = FormUtil.getController(getChildBean());
+			IController detail = AonUtil.getController(getChildBean());
 			ITransferObject to = master.getTo();
 			String reg = detail.getFieldName(getMasterFieldName());
 			Criteria criteria = new Criteria();
@@ -488,7 +487,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	}
 
 	@SuppressWarnings("unchecked")
-	public RecordData getCompanyRecordData() throws ManagerBeanException{
+	public RecordData getCompanyRecordData() throws IOException, ManagerBeanException{
 		IManagerBean recordDataBean = BeanManager.getManagerBean(RecordData.class);
 		Company company = (Company)getTo();
 		Criteria criteria = new Criteria();
@@ -594,11 +593,22 @@ public class CompanyParentController extends BasicController implements ICompany
 		return IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID;
 	}
 	
-	public String getOnNew() throws ManagerBeanException {
-		if(this.getTo() == null) {
-			this.onLoad();
+	/**
+	 * If the company has been defined navigates to the homepage, 
+	 * otherwise navigates to the company maintenance.
+	 * 
+	 * @return The url of the page that will be loaded
+	 * 
+	 * @throws ManagerBeanException
+	 */
+	public String getCompanyNavigation() throws ManagerBeanException {
+		String context = 
+			FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
+		if ( this.getModel().getRowCount() > 0 ) {
+			return context + "/facelet/homepage/firstContent.faces";
 		}
-		return "";
+		this.onLoad();
+		return context + "/facelet/registry/company/init.faces";
 	}
 
 	/** COMPANY_ADDRESS_CONTROLLER_NAME. */
@@ -626,12 +636,12 @@ public class CompanyParentController extends BasicController implements ICompany
 		return null;
 	}
 
-	public boolean isShowRegistryBank() {
-		return showRegistryBank;
+	public boolean isShowFinanceRegistryBank() {
+		return showFinanceRegistryBank;
 	}
 
-	public void setShowRegistryBank(boolean showRegistryBank) {
-		this.showRegistryBank = showRegistryBank;
+	public void setShowFinanceRegistryBank(boolean showFinanceRegistryBank) {
+		this.showFinanceRegistryBank = showFinanceRegistryBank;
 	}
 
 	public boolean isShowCompanyOtherData() {
@@ -641,13 +651,4 @@ public class CompanyParentController extends BasicController implements ICompany
 	public void setShowCompanyOtherData(boolean showCompanyOtherData) {
 		this.showCompanyOtherData = showCompanyOtherData;
 	}
-
-	public boolean isShowPanelTabSet() {
-		return showPanelTabSet;
-	}
-
-	public void setShowPanelTabSet(boolean showPanelTabSet) {
-		this.showPanelTabSet = showPanelTabSet;
-	}
-
 }

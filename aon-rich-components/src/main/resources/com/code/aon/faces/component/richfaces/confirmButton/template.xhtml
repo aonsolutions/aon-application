@@ -21,8 +21,7 @@
 						</aon:div>
 					</f:facet>
 					<f:facet name="controls">
-						<aon:commandButton id="#{confirmId}-close"
-							reRender="#{confirmId}ReRender" immediate="true"
+						<aon:commandButton id="#{confirmId}-close" immediate="true"
 							type="button" styleClass="aon-popupWindow-close" >
 							<f:setPropertyActionListener target="#{confirmShowWindow}" value="false" />						
 							<rich:componentControl for="#{confirmId}" event="onclick"
@@ -50,8 +49,7 @@
 										disableDefault="true" operation="hide"/>
 								</aon:commandButton>
 								<aon:commandButton id="#{confirmId}-no" value="#{bundle.aon_no}"
-									reRender="#{confirmId}ReRender" immediate="true"
-									styleClass="aon-commandButton">
+									styleClass="aon-commandButton" immediate="true">
 									<f:setPropertyActionListener target="#{confirmShowWindow}" value="false" />								
 									<rich:componentControl for="#{confirmId}" event="onclick"
 										disableDefault="true" operation="hide"/>

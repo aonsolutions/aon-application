@@ -1,7 +1,5 @@
 package com.code.aon.desktop.report;
 
-import java.util.Date;
-
 import com.code.aon.company.Company;
 import com.code.aon.registry.RecordData;
 import com.code.aon.registry.RegistryAddress;
@@ -17,8 +15,6 @@ public class IdentityReport {
 	private RegistryAddress address;
 
 	private String addressStr;
-
-	private String addressStr2;
 
 	private String addressLine1;
 	
@@ -49,8 +45,6 @@ public class IdentityReport {
 	private String fax_phone_number;
 
 	private String fax_page_number;
-	
-	private Date fax_date;
 
 	// LETTER
 
@@ -75,30 +69,12 @@ public class IdentityReport {
 	private String pagare_cantidad;
 	
 	private String pagare_cantidad_num;
-
-	private String pagare_concepto;
-
-	private String pagare_fecha;
-
-	private String pagare_para;
-
-	private String pagare_info;
-
-	private String label_to;
-
-	private String label_att;
 	
-	private String label_to_address;
+	private String pagare_fecha_dia;
 
-	private String label_to_address2;
+	private String pagare_fecha_mes;
 
-	private String label_to_phone;
-	
-	private String label_to_fax;
-	
-	private String label_to_obs;
-	
-	private String label_to_bultos;
+	private String pagare_fecha_ano;
 
 	public Company getCompany() {
 		return company;
@@ -123,7 +99,6 @@ public class IdentityReport {
 	public void setAddress(RegistryAddress address) {
 		this.address = address;
 		addressStr = "";
-		addressStr2 = "";
 		if (address.getStreetType()!=null)
 			addressStr += address.getStreetType().toString()+" ";
 		if (address.getAddress()!=null)
@@ -133,11 +108,11 @@ public class IdentityReport {
 		if (address.getAddress3()!=null)
 			addressStr += " " + address.getAddress3()+"";
 		if (address.getZip()!=null)
-			addressStr2 += "" + address.getZip().trim()+"";
+			addressStr += " " + address.getZip().trim()+"";
 		if (address.getCity()!=null)
-			addressStr2 += " " + address.getCity().trim()+"";
+			addressStr += " " + address.getCity().trim()+"";
 		if (address.getGeozone() != null)
-			addressStr2 += " - " + address.getGeozone().getName().trim() + "";
+			addressStr += " - " + address.getGeozone().getName().trim() + "";
 		
 		addressLine1 = "";
 		addressLine2 = "";
@@ -159,10 +134,6 @@ public class IdentityReport {
 
 	public String getAddressStr() {
 		return addressStr;
-	}
-
-	public String getAddressStr2() {
-		return addressStr2;
 	}
 
 	public String getAddressLine1() {
@@ -271,14 +242,6 @@ public class IdentityReport {
 		this.fax_page_number = fax_page_number;
 	}
 
-	public Date getFax_date() {
-		return fax_date;
-	}
-
-	public void setFax_date(Date fax_date) {
-		this.fax_date = fax_date;
-	}
-
 	// LETTER
 
 	public String getLetter_date() {
@@ -349,14 +312,14 @@ public class IdentityReport {
 	}
 
 	public String getPagare_cantidad_line1() {
-		if (pagare_cantidad.length()>55)
-			return pagare_cantidad.substring(0,pagare_cantidad.indexOf(" ", 55));
+		if (pagare_cantidad.length()>90)
+			return pagare_cantidad.substring(0,90);
 		return pagare_cantidad;
 	}
 
 	public String getPagare_cantidad_line2() {
-		if (pagare_cantidad.length()>55)
-			return pagare_cantidad.substring(pagare_cantidad.indexOf(" ", 55), pagare_cantidad.length());
+		if (pagare_cantidad.length()>90)
+			return pagare_cantidad.substring(90, pagare_cantidad.length());
 		return "";
 	}
 
@@ -368,48 +331,28 @@ public class IdentityReport {
 		this.pagare_cantidad_num = pagare_cantidad_num;
 	}
 
-	public void setPagare_concepto(String pagare_concepto) {
-		this.pagare_concepto = pagare_concepto;
+	public String getPagare_fecha_dia() {
+		return pagare_fecha_dia;
 	}
 
-	public String getPagare_concepto() {
-		return this.pagare_concepto;
+	public void setPagare_fecha_dia(String pagare_fecha_dia) {
+		this.pagare_fecha_dia = pagare_fecha_dia;
 	}
 
-	public String getPagare_concepto_line1() {
-		if (pagare_concepto.length()>75)
-			return pagare_concepto.substring(0, pagare_concepto.indexOf(" ", 75));
-		return pagare_concepto;
+	public String getPagare_fecha_mes() {
+		return pagare_fecha_mes;
 	}
 
-	public String getPagare_concepto_line2() {
-		if (pagare_concepto.length()>75)
-			return pagare_concepto.substring(pagare_concepto.indexOf(" ", 75), pagare_concepto.length());
-		return "";
+	public void setPagare_fecha_mes(String pagare_fecha_mes) {
+		this.pagare_fecha_mes = pagare_fecha_mes;
 	}
 
-	public String getPagare_fecha() {
-		return pagare_fecha;
+	public String getPagare_fecha_ano() {
+		return pagare_fecha_ano;
 	}
 
-	public void setPagare_fecha(String pagare_fecha) {
-		this.pagare_fecha = pagare_fecha;
-	}
-
-	public String getPagare_para() {
-		return pagare_para;
-	}
-
-	public void setPagare_para(String pagare_para) {
-		this.pagare_para = pagare_para;
-	}
-
-	public String getPagare_info() {
-		return pagare_info;
-	}
-
-	public void setPagare_info(String pagare_info) {
-		this.pagare_info = pagare_info;
+	public void setPagare_fecha_ano(String pagare_fecha_ano) {
+		this.pagare_fecha_ano = pagare_fecha_ano;
 	}
 
 	public boolean isPrintRegistryData() {
@@ -418,70 +361,6 @@ public class IdentityReport {
 
 	public void setPrintRegistryData(boolean printRegistryData) {
 		this.printRegistryData = printRegistryData;
-	}
-
-	public String getLabel_to() {
-		return label_to;
-	}
-
-	public void setLabel_to(String label_to) {
-		this.label_to = label_to;
-	}
-
-	public String getLabel_att() {
-		return label_att;
-	}
-
-	public void setLabel_att(String label_att) {
-		this.label_att = label_att;
-	}
-
-	public String getLabel_to_address() {
-		return label_to_address;
-	}
-
-	public void setLabel_to_address(String label_to_address) {
-		this.label_to_address = label_to_address;
-	}
-
-	public String getLabel_to_phone() {
-		return label_to_phone;
-	}
-
-	public void setLabel_to_phone(String label_to_phone) {
-		this.label_to_phone = label_to_phone;
-	}
-
-	public String getLabel_to_fax() {
-		return label_to_fax;
-	}
-
-	public void setLabel_to_fax(String label_to_fax) {
-		this.label_to_fax = label_to_fax;
-	}
-
-	public String getLabel_to_obs() {
-		return label_to_obs;
-	}
-
-	public void setLabel_to_obs(String label_to_obs) {
-		this.label_to_obs = label_to_obs;
-	}
-
-	public String getLabel_to_bultos() {
-		return label_to_bultos;
-	}
-
-	public void setLabel_to_bultos(String label_to_bultos) {
-		this.label_to_bultos = label_to_bultos;
-	}
-
-	public String getLabel_to_address2() {
-		return label_to_address2;
-	}
-
-	public void setLabel_to_address2(String label_to_address2) {
-		this.label_to_address2 = label_to_address2;
 	}
 
 }

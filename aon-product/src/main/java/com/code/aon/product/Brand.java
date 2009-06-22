@@ -36,6 +36,23 @@ public class Brand implements ITransferObject {
     private String name;
 
     /**
+     * Constructor.
+     * 
+     */
+    public Brand() {
+    }
+
+    /**
+     * Constructor for this unique key.
+     * 
+     * @param pk
+     *            Unique key.
+     */
+    public Brand(Integer pk) {
+        this.id = pk;
+    }
+
+    /**
      * Returns the unique key.
      * 
      * @return Unique key.
@@ -78,15 +95,12 @@ public class Brand implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (this == obj) {
+			return true;
 		}
 		if (obj instanceof Brand) {
-			Brand o = (Brand) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
+			Brand brand = (Brand) obj;
+			if (ObjectUtils.equals(getId(), brand.getId())) {
 				return true;
 			}
 		}
@@ -94,8 +108,7 @@ public class Brand implements ITransferObject {
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
-
+	public int hashCode() {
+		return 0;
+	}
 }

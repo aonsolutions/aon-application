@@ -24,8 +24,8 @@ public class CatalogueItem implements ITransferObject {
 
 	private static final long serialVersionUID = 9026585458569586807L;
 
-	/** The id. */
-	private Integer id;
+	/** The Id. */
+	private Integer Id;
 
 	/** The catalogue. */
 	private Catalogue catalogue;
@@ -51,7 +51,7 @@ public class CatalogueItem implements ITransferObject {
 	@GeneratedValue
 	@Column(nullable=false)
     public Integer getId() {
-		return id;
+		return Id;
 	}
 
 	/**
@@ -60,7 +60,7 @@ public class CatalogueItem implements ITransferObject {
 	 * @param id the id
 	 */
 	public void setId(Integer id) {
-		this.id = id;
+		Id = id;
 	}
 
 	/**
@@ -159,15 +159,12 @@ public class CatalogueItem implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (this == obj) {
+			return true;
 		}
 		if (obj instanceof CatalogueItem) {
-			CatalogueItem o = (CatalogueItem) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
+			CatalogueItem catalogueItem = (CatalogueItem) obj;
+			if (ObjectUtils.equals(getId(), catalogueItem.getId())) {
 				return true;
 			}
 		}
@@ -175,8 +172,7 @@ public class CatalogueItem implements ITransferObject {
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
-
+	public int hashCode() {
+		return 0;
+	}
 }

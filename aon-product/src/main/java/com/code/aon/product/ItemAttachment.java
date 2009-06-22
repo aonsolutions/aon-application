@@ -58,6 +58,13 @@ public class ItemAttachment implements IAttachment, Cloneable {
     private Integer size;
     
     /**
+     * Default contructor.
+     * 
+     */
+    public ItemAttachment() {
+    }
+
+    /**
      * Returns the unique key of the item attachment.
      *
      * @return unique key. 
@@ -191,15 +198,12 @@ public class ItemAttachment implements IAttachment, Cloneable {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (this == obj) {
+			return true;
 		}
 		if (obj instanceof ItemAttachment) {
-			ItemAttachment o = (ItemAttachment) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
+			ItemAttachment itemAttachment = (ItemAttachment) obj;
+			if (ObjectUtils.equals(getId(), itemAttachment.getId())) {
 				return true;
 			}
 		}
@@ -207,8 +211,7 @@ public class ItemAttachment implements IAttachment, Cloneable {
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
-
+	public int hashCode() {
+		return 0;
+	}
 }

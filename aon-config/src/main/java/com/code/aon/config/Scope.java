@@ -6,8 +6,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.apache.commons.lang.ObjectUtils;
-
 import com.code.aon.common.ITransferObject;
 
 @Entity
@@ -42,24 +40,12 @@ public class Scope implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (id == null) {
+			return super.equals(obj);
 		}
 		if (obj instanceof Scope) {
-			Scope o = (Scope) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
+			return (this.id.equals(((Scope) obj).getId()));
 		}
 		return false;
 	}
-
-	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
-
 }

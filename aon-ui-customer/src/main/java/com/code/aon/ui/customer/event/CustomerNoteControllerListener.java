@@ -6,10 +6,10 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryNote;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.customer.controller.CustomerController;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 public class CustomerNoteControllerListener extends ControllerAdapter {
 	
@@ -17,7 +17,7 @@ public class CustomerNoteControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		CustomerController customerController = (CustomerController)FormUtil.getController(CUSTOMER_CONTROLLER_NAME);
+		CustomerController customerController = (CustomerController)AonUtil.getController(CUSTOMER_CONTROLLER_NAME);
 		Customer customer = (Customer)customerController.getTo();
 		((RegistryNote)event.getController().getTo()).setRegistry(customer.getRegistry());
 	}

@@ -196,15 +196,12 @@ public class Tax implements ITransferObject{
  
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (this == obj) {
+			return true;
 		}
 		if (obj instanceof Tax) {
-			Tax o = (Tax) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
+			Tax tax = (Tax) obj;
+			if (ObjectUtils.equals(getId(), tax.getId())) {
 				return true;
 			}
 		}
@@ -212,8 +209,8 @@ public class Tax implements ITransferObject{
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
-
+	public int hashCode() {
+		return 0;
+	}
+    
 }

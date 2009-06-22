@@ -89,9 +89,20 @@ public class CommunicationCenterController implements IMarketingConstants {
 	
 	private int pendingTargets;
 	
+	private boolean showTarget;
+	
 	public CommunicationCenterController() {
 		this.date = new Date();
 		this.questionValues = new LinkedList<SelectItem>();
+		this.showTarget = true;
+	}
+
+	public boolean isShowTarget() {
+		return showTarget;
+	}
+
+	public void setShowTarget(boolean showTarget) {
+		this.showTarget = showTarget;
 	}
 
 	public Date getDate() {
@@ -471,7 +482,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 			setAction(action);
 			try {				
 				Survey survey = null;
-				if (action.getSurvey().getId() != null) {
+				if ( (action.getSurvey() != null) && (action.getSurvey().getId() != null) ) {
 					IManagerBean bean = BeanManager.getManagerBean(Survey.class);
 					survey = (Survey) bean.get(action.getSurvey().getId());
 				}
@@ -520,7 +531,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<ActionTarget> getActionTargets( boolean onlyFirst ) throws ManagerBeanException {
+	public List<ActionTarget> getActionTargets( boolean onlyFirst ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
 		Criteria criteria = getPendingTargetsCriteria(bean, false);
 		List list = onlyFirst ? bean.getList(criteria, 0, 1) : bean.getList(criteria);

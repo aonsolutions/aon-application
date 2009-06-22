@@ -6,10 +6,14 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<aon:div id="recordDataContent">
-	
-		<ui:include src="#{((controller.to != null)?'form.xhtml':'list.xhtml')}" />
+	<aon:div ajaxRendered="true">
 
+		<c:if test="#{controller.to != null}">
+			<ui:include src="/com/code/aon/ui/registry/facelet/record_data/form.xhtml" />
+		</c:if>
+
+		<c:if test="#{controller.to == null}">
+			<ui:include src="/com/code/aon/ui/registry/facelet/record_data/list.xhtml" />
+		</c:if>
 	</aon:div>
-
 </ui:composition>

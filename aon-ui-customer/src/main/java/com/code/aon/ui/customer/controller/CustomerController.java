@@ -14,11 +14,6 @@ public class CustomerController extends BasicController {
 	
 	private boolean newPerson;
 	
-	private String selectedTab;
-	
-	private boolean showFinanceData = true;
-	
-	private boolean showAccount;
 	
 	public Person getPerson() {
 		return person;
@@ -40,29 +35,5 @@ public class CustomerController extends BasicController {
     	Customer customer = (Customer)getTo();
     	return customer.getRegistry().getType().equals(RegistryType.NATURAL);
     }
-
-	public boolean isShowFinanceData() {
-		return showFinanceData;
-	}
-
-	public void setShowFinanceData(boolean showFinanceData) {
-		this.showFinanceData = showFinanceData;
-	}
-        
-	public String getSelectedTab() {
-		return selectedTab;
-	}
-
-	public void setSelectedTab(String selectedTab) {
-		this.selectedTab = selectedTab;
-	}
-
-	public boolean isShowAccount() {
-		return showAccount;
-	}
-
-	public void setShowAccount(boolean showAccount) {
-		this.showAccount = showAccount;
-	}
-	
+    
 }

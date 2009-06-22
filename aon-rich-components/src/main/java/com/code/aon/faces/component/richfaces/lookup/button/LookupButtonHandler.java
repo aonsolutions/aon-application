@@ -6,7 +6,9 @@ import javax.el.ELException;
 import javax.el.MethodExpression;
 import javax.el.ValueExpression;
 import javax.faces.FacesException;
+import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
+import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.richfaces.AonAjaxComponentHandler;
@@ -15,6 +17,7 @@ import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.faces.component.util.HTML;
 import com.sun.facelets.FaceletContext;
+import com.sun.facelets.el.LegacyMethodBinding;
 import com.sun.facelets.tag.MetaRuleset;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.jsf.ComponentConfig;
@@ -43,6 +46,8 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
    	private static final String SEARCH_ACTION_LISTENER = "onShowSearchWindow";
    	
    	private static final String NEW_ACTION_LISTENER = "onShowNewWindow";
+   	
+   	private static final Class[] VALUE_LISTENER_ARGS = {ValueChangeEvent.class};
    	
    	private TagAttribute lookup;
    	
@@ -136,10 +141,30 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 		if (! FaceletUtil.hasValue(ctx, tag, HTML.TITLE_ATTR) ) {
 			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, HTML.TITLE_ATTR, getTitle(type) );			
 		}
-		TagAttribute vcl = getAttribute(LOOKUP_CHANGE_LISTENER);
+		TagAttribute vcl = getAttribute("valueChangeListener");
 		if ( vcl != null ) {
-			MethodExpression me = vcl.getMethodExpression(ctx, null, FaceletUtil.LOOKUP_CHANGE_LISTENER_SIG);
-			button.setLookupChangeListener( me );
+			MethodExpression me = vcl.getMethodExpression(ctx, null, VALUE_LISTENER_ARGS);
+			button.setValueChangeListener( new LegacyMethodBinding(me) );
+		}
+		TagAttribute windowTitle = getAttribute(WINDOW_TITLE);
+		if ( windowTitle != null ) {
+			String value = windowTitle.getValue(ctx);
+			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, WINDOW_TITLE, value );
+		}
+		TagAttribute selectReRender = getAttribute(SELECT_RE_RENDER);
+		if ( selectReRender != null ) {
+			String value = selectReRender.getValue(ctx);
+			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, SELECT_RE_RENDER, value );
+		}
+		TagAttribute minHeight = getAttribute(MIN_HEIGHT);
+		if ( minHeight != null ) {
+			String value = minHeight.getValue(ctx);
+			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, MIN_HEIGHT, value );
+		}
+		TagAttribute minWidth = getAttribute(MIN_WIDTH);
+		if ( minWidth != null ) {
+			String value = minWidth.getValue(ctx);
+			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, MIN_WIDTH, value );
 		}
 		setActionListener(ctx, button);
 		String id = getModalPanelId(ctx, lookup) + "ReRender";

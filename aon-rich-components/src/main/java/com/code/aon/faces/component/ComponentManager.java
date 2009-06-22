@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 
 import javax.faces.component.UIComponent;
 
-import org.apache.commons.lang.StringUtils;
 import org.richfaces.component.html.HtmlCalendar;
 
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
@@ -26,8 +25,6 @@ public class ComponentManager {
 	private static final String SUFFIX = ".aonlib.xml";
 
 	private static final String DISABLED_STYLE_CLASS = "disabledStyleClass";		
-	
-	private static final String RENDERED_ON_USER_ROLE = "renderedOnUserRole";
 	
 	private static final String SELECT_INPUT_DATE_STYLE_CLASS = "inputClass";
 	
@@ -92,8 +89,7 @@ public class ComponentManager {
 				}
 			}			
 		}
-		set.ignore(DISABLED_STYLE_CLASS);
-		set.ignore(RENDERED_ON_USER_ROLE);
+		set.ignore(DISABLED_STYLE_CLASS);		
 	}
 	
 	private String getInputStyleClass( UIComponent c ) {
@@ -103,7 +99,7 @@ public class ComponentManager {
 		return HTML.STYLE_CLASS_ATTR;
 	}
 	
-	private void updateDisabledStyleClass(Tag tag, FaceletContext ctx, UIComponent c) {
+	public void updateDisabledStyleClass(Tag tag, FaceletContext ctx, UIComponent c) {
 		TagAttribute disabled = FaceletUtil.getAttribute(tag, HTML.DISABLED_ATTR);
 		if ( (disabled != null) && disabled.getBoolean(ctx) ) {
 			String disabledClass = null;
@@ -119,23 +115,6 @@ public class ComponentManager {
 		}
 	}		
 	
-	private void updateRendered(Tag tag, FaceletContext ctx, UIComponent c) {
-		if ( c.isRendered() ) {
-			TagAttribute rolesTag = FaceletUtil.getAttribute(tag, RENDERED_ON_USER_ROLE);
-			if ( rolesTag != null ) {
-				boolean rendered = false;
-				String[] roles = StringUtils.split(rolesTag.getValue(ctx), ", " );
-				for( String role : roles ) {
-					if ( ctx.getFacesContext().getExternalContext().isUserInRole(role) ) {
-						rendered = true;
-						break;
-					}
-				}
-				c.setRendered(rendered);
-			}
-		}
-	}
-	
 	public void setAttributes( Tag tag, FaceletContext ctx, UIComponent component ) {
 		ComponentInfo componentInfo = getComponentInfo( tag );
 		if ( componentInfo != null ) {
@@ -143,7 +122,6 @@ public class ComponentManager {
 				attribute.update( tag, ctx, component );
 			}
 		}
-		updateRendered(tag, ctx, component);
 		updateDisabledStyleClass(tag, ctx, component);
 	}
 	

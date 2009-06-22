@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.warehouse</artifactId>
-	<version>3.2.1</version>
+	<version>3.2.0</version>
 	<description>AON UI WAREHOUSE</description>
 	<name>AON UI WAREHOUSE</name>
 	<dependencies>
@@ -77,19 +77,19 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>3.6.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.customer</artifactId>
 			<version>3.5.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.customer</artifactId>
+			<version>3.5.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.product</artifactId>
-			<version>3.1.5</version>
+			<version>3.1.4</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

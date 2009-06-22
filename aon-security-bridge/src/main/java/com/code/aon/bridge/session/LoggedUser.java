@@ -1,24 +1,29 @@
 package com.code.aon.bridge.session;
 
-import javax.faces.event.AbortProcessingException;
+import java.util.AbstractMap;
+import java.util.Set;
+
+import javax.faces.context.FacesContext;
+import javax.naming.Name;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.IConstants;
-import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.BasicLdap;
-import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
-import com.code.aon.ldap.LdapException;
-import com.code.aon.ldap.LdapSession;
+import com.code.aon.ldap.NameResolver;
 
 public class LoggedUser implements ILdapConstants, IAonObjectClasses {
 
 	private boolean logged;
 	
 	private Entry aonUser;
+	
+	private static final FakeMap USER_IN_ROLE = new FakeMap();
 	
 	public LoggedUser() {
 		AuthPrincipal principal = Utils.getAuthPrincipal();
@@ -29,18 +34,9 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
 	}
 
 	private Entry getAonUser( AuthPrincipal principal ) {
-		Entry entry = null;
 		BasicLdap ldap = new BasicLdap();
-		try {
-			DistinguishedName dn = AonDN.getUserDN(principal.getDomain(), principal.getShortName());
-			String filter = LdapSession.getObjectClass(USER);
-			entry = ldap.getLdapSession().get(dn.toString(), filter);
-		} catch ( LdapException e ) {
-			throw new AbortProcessingException( "Error getting aonUser for " + principal + ". " + e.getMessage(), e );
-		} finally {
-			ldap.closeSession();
-		}
-		return entry;
+		Name dn = NameResolver.getUserDN(principal.getDomain(), principal.getShortName());
+		return ldap.get(dn, USER);
 	}		
     
     public boolean isLogged(){
@@ -61,5 +57,34 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
     	}
         return userName;
     }    
+    
+	public FakeMap getUserInRole() {
+		return USER_IN_ROLE;
+	}
+    
+	@SuppressWarnings("unchecked")
+	private static class FakeMap extends AbstractMap<String,Boolean> {
+		
+		@Override
+		public Set entrySet() {
+			return null;
+		}
+		
+		@Override
+		public Boolean get(Object key) {
+			if ( key != null ) {
+				String value = key.toString();
+				String[] roles = StringUtils.split(value, ", " );
+				FacesContext ctx = FacesContext.getCurrentInstance();
+				for( String role : roles ) {
+					if ( ctx.getExternalContext().isUserInRole(role) ) {
+						return Boolean.TRUE;
+					}
+				}				
+			}
+			return Boolean.FALSE;
+		}
+		
+	}
 	
 }

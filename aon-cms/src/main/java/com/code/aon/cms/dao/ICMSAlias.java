@@ -745,34 +745,28 @@ public interface ICMSAlias {
 	DAOConstantsEntry LINK_DETAIL_ENTRY = DAOConstants.getDAOConstant(LinkDetail.class);
 
 	/** 
-	* Alias value: LinkDetail_description
-	* Hibernate value: LinkDetail.description
-	*/
-	String  LINK_DETAIL_DESCRIPTION = LINK_DETAIL_ENTRY.getAliasNames()[0];
-
-	/** 
 	* Alias value: LinkDetail_id
 	* Hibernate value: LinkDetail.id
 	*/
-	String  LINK_DETAIL_ID = LINK_DETAIL_ENTRY.getAliasNames()[1];
+	String  LINK_DETAIL_ID = LINK_DETAIL_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: LinkDetail_label
 	* Hibernate value: LinkDetail.label
 	*/
-	String  LINK_DETAIL_LABEL = LINK_DETAIL_ENTRY.getAliasNames()[2];
+	String  LINK_DETAIL_LABEL = LINK_DETAIL_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: LinkDetail_language_id
 	* Hibernate value: LinkDetail.language.id
 	*/
-	String  LINK_DETAIL_LANGUAGE_ID = LINK_DETAIL_ENTRY.getAliasNames()[3];
+	String  LINK_DETAIL_LANGUAGE_ID = LINK_DETAIL_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: LinkDetail_link_id
 	* Hibernate value: LinkDetail.link.id
 	*/
-	String  LINK_DETAIL_LINK_ID = LINK_DETAIL_ENTRY.getAliasNames()[4];
+	String  LINK_DETAIL_LINK_ID = LINK_DETAIL_ENTRY.getAliasNames()[3];
 
 
 

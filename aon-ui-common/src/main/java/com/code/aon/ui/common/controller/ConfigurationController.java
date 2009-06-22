@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Map.Entry;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.logging.Logger;
@@ -45,15 +47,17 @@ public class ConfigurationController implements Serializable {
 	/** The properties. */
 	private Map<String, String> properties;
 	
-	private boolean versionChecked;
-	
-	private String version;
-	
+	/** The user bundles. */
+	private Map<String, String> applicationBundles;
+
+	private Map<String, ResourceBundle> bundles;
+
 	/**
 	 * The Constructor.
 	 */
 	public ConfigurationController() {
 		this.properties = new HashMap<String, String>();
+		this.applicationBundles = new HashMap<String, String>();
 		this.styleSheets = new ArrayList<String>();
 	}
 
@@ -154,6 +158,31 @@ public class ConfigurationController implements Serializable {
 	}
 
 	/**
+	 * Gets the user bundles.
+	 * 
+	 * @return the user bundles
+	 */
+	public Map<String, String> getApplicationBundles() {
+		return applicationBundles;
+	}
+
+	/**
+	 * Sets the user bundles.
+	 * 
+	 * @param userBundles the user bundles
+	 */
+	public void setApplicationBundles(Map<String, String> userBundles) {
+		this.applicationBundles = userBundles;
+	}
+	
+	/**
+	 * @return list of userBundles
+	 */
+	public List<Entry<String, String>> getApplicationBundleList(){
+		return new ArrayList<Entry<String, String>>( getApplicationBundles().entrySet() );
+	}
+
+	/**
 	 * Gets the style sheets.
 	 * 
 	 * @return the style sheets
@@ -178,24 +207,22 @@ public class ConfigurationController implements Serializable {
 	 * @return the application version number
 	 */
 	public String getApplicationVersion() {
-		if (! versionChecked ) {
-			this.versionChecked = true;
-			try {
-				ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-				InputStream in = ec.getResourceAsStream("META-INF/MANIFEST.MF");
-				Manifest m = new Manifest(in);
-				Attributes attrs = m.getMainAttributes();
-				String version = attrs.getValue("Implementation-Version");
-				if(version != null){
-					LOGGER.info(version);
-				} else {
-					LOGGER.warning("Imposible determinar la versión");
-				}
-			} catch (Throwable e) {
-				LOGGER.warning("Imposible determinar la versión" + e.getMessage());
+		try {
+			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+			InputStream in = ec.getResourceAsStream("META-INF/MANIFEST.MF");
+			Manifest m = new Manifest(in);
+			Attributes attrs = m.getMainAttributes();
+			String version = attrs.getValue("Implementation-Version");
+			if(version != null){
+				LOGGER.info(version);
+			}else{
+				LOGGER.warning("Imposible determinar la versión");
 			}
+			return version;
+		} catch (Throwable e) {
+			LOGGER.warning("Imposible determinar la versión" + e.getMessage());
+			return null;
 		}
-		return version;
 	}
 	
     /**
@@ -217,5 +244,31 @@ public class ConfigurationController implements Serializable {
     	HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
     	session.invalidate();    	
     }
+    
+    
+    /**
+     * @param bundleKey
+     * @param messageKey
+     * @return String
+     */
+    public String getMessage(String bundleKey, String messageKey) {
+    	ResourceBundle bundle = getBundle( bundleKey );
+    	return bundle.getString(messageKey);
+    }
+
+	private ResourceBundle getBundle(String bundleKey) {
+		if (bundles == null) {
+			bundles = new HashMap<String, ResourceBundle>();
+		}
+		if (!bundles.containsKey(bundleKey) ) {
+			if (!applicationBundles.containsKey(bundleKey) ) {
+				throw new IllegalArgumentException( "ResourceBundle '"+bundleKey+"' not found in ConfigurationController.");
+			}
+			String baseName = applicationBundles.get(bundleKey);
+			ResourceBundle bundle = ResourceBundle.getBundle(baseName);
+			bundles.put(bundleKey,bundle);
+		}
+		return bundles.get(bundleKey);
+	}
     
 }

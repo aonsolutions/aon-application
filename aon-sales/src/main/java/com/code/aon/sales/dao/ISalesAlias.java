@@ -6,6 +6,7 @@ import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesAttachment;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.SalesType;
+import com.code.aon.sales.PointOfSale;
 
 /** 
 * Interface for holding entity properties constants.
@@ -62,40 +63,46 @@ public interface ISalesAlias {
 	String  SALES_PAY_METHOD_ID = SALES_ENTRY.getAliasNames()[6];
 
 	/** 
+	* Alias value: Sales_pos_id
+	* Hibernate value: Sales.pos.id
+	*/
+	String  SALES_POS_ID = SALES_ENTRY.getAliasNames()[7];
+
+	/** 
 	* Alias value: Sales_securityLevel
 	* Hibernate value: Sales.securityLevel
 	*/
-	String  SALES_SECURITY_LEVEL = SALES_ENTRY.getAliasNames()[7];
+	String  SALES_SECURITY_LEVEL = SALES_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Sales_seller_id
 	* Hibernate value: Sales.seller.id
 	*/
-	String  SALES_SELLER_ID = SALES_ENTRY.getAliasNames()[8];
+	String  SALES_SELLER_ID = SALES_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Sales_series
 	* Hibernate value: Sales.series
 	*/
-	String  SALES_SERIES = SALES_ENTRY.getAliasNames()[9];
+	String  SALES_SERIES = SALES_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Sales_shippingAddress_id
 	* Hibernate value: Sales.shippingAddress.id
 	*/
-	String  SALES_SHIPPING_ADDRESS_ID = SALES_ENTRY.getAliasNames()[10];
+	String  SALES_SHIPPING_ADDRESS_ID = SALES_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Sales_status
 	* Hibernate value: Sales.status
 	*/
-	String  SALES_STATUS = SALES_ENTRY.getAliasNames()[11];
+	String  SALES_STATUS = SALES_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: Sales_workPlace_id
 	* Hibernate value: Sales.workPlace.id
 	*/
-	String  SALES_WORK_PLACE_ID = SALES_ENTRY.getAliasNames()[12];
+	String  SALES_WORK_PLACE_ID = SALES_ENTRY.getAliasNames()[13];
 
 
 
@@ -213,6 +220,31 @@ public interface ISalesAlias {
 	* Hibernate value: SalesType.id
 	*/
 	String  SALES_TYPE_ID = SALES_TYPE_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for PointOfSale entity.
+	*/ 
+	DAOConstantsEntry POINT_OF_SALE_ENTRY = DAOConstants.getDAOConstant(PointOfSale.class);
+
+	/** 
+	* Alias value: PointOfSale_RAddress_id
+	* Hibernate value: PointOfSale.RAddress.id
+	*/
+	String  POINT_OF_SALE_RADDRESS_ID = POINT_OF_SALE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: PointOfSale_description
+	* Hibernate value: PointOfSale.description
+	*/
+	String  POINT_OF_SALE_DESCRIPTION = POINT_OF_SALE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: PointOfSale_id
+	* Hibernate value: PointOfSale.id
+	*/
+	String  POINT_OF_SALE_ID = POINT_OF_SALE_ENTRY.getAliasNames()[2];
 
 
 }

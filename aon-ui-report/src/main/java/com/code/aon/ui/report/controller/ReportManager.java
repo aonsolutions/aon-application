@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,6 +34,7 @@ import com.code.aon.report.IReportDynamicParamsProvider;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.report.config.ReportConfig;
+import com.code.aon.report.config.ReportConfigurationParser;
 import com.code.aon.report.jr.JRReport;
 import com.code.aon.report.jr.JRReportFactory;
 
@@ -43,6 +46,31 @@ import com.code.aon.report.jr.JRReportFactory;
  * 
  */
 public class ReportManager {
+
+	public static final String FACES_DEFAULT_REPORT_CONFIGURATION_FILE = "/WEB-INF/conf/report-config.xml";
+
+	public ReportManager() {
+		String configFile = System
+				.getProperty(ReportConfigurationParser.REPORT_CONFIGURATION_FILE_PROPERTY);
+		if (configFile == null) {
+			try {
+				ExternalContext ec = FacesContext.getCurrentInstance()
+						.getExternalContext();
+				configFile = ec
+						.getInitParameter(ReportConfigurationParser.REPORT_CONFIGURATION_FILE_PROPERTY);
+				if (configFile == null) {
+					configFile = FACES_DEFAULT_REPORT_CONFIGURATION_FILE;
+				}
+				URL url = ec.getResource(configFile);
+				System
+						.setProperty(
+								ReportConfigurationParser.REPORT_CONFIGURATION_FILE_PROPERTY,
+								url.toString());
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	/**
 	 * Obtains a suitable <code>Logger</code>.
@@ -365,7 +393,7 @@ public class ReportManager {
 					Object c = vb.getValue(ctx);
 					if (c instanceof ICollectionProvider) {
 						ICollectionProvider crpr = (ICollectionProvider) c;
-						return crpr.getCollection(config.isForceRefresh());
+						return crpr.getCollection();
 					} else {
 						if (c instanceof Collection) {
 							return (Collection) c;
@@ -377,7 +405,7 @@ public class ReportManager {
 				Class collectionProviderClass = Class.forName(provider);
 				ICollectionProvider collectionProvider = (ICollectionProvider) collectionProviderClass
 						.newInstance();
-				return collectionProvider.getCollection(config.isForceRefresh());
+				return collectionProvider.getCollection();
 
 			}
 			return null;
@@ -392,8 +420,6 @@ public class ReportManager {
 		} catch (InstantiationException e) {
 			throw new ReportException(e.getMessage(), e);
 		} catch (IllegalAccessException e) {
-			throw new ReportException(e.getMessage(), e);
-		} catch (ManagerBeanException e) {
 			throw new ReportException(e.getMessage(), e);
 		}
 	}

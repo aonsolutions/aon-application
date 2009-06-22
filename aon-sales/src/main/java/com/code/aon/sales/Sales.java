@@ -88,6 +88,9 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
     /** The status. */
     private SalesStatus status;
     
+	/** The pos. */
+	private PointOfSale pos;
+	
 	/** The detail of this sale. */
 	private Set<SalesDetail> lines = new HashSet<SalesDetail>();
 
@@ -334,6 +337,26 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 		this.status = status;
 	}
 
+	/**
+	 * Gets the PointOfSale.
+	 * 
+	 * @return the PointOfSale
+	 */
+	@ManyToOne
+	@JoinColumn( name="pos" )
+	public PointOfSale getPos() {
+		return pos;
+	}
+
+	/**
+	 * Sets the PointOfSale.
+	 * 
+	 * @param pos the PointOfSale
+	 */
+	public void setPos(PointOfSale pos) {
+		this.pos = pos;
+	}
+	
     @ManyToOne
     @JoinColumn(name="workplace", nullable = false)
 	public WorkPlace getWorkPlace() {

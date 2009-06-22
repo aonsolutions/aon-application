@@ -24,8 +24,8 @@ public class TariffCatalogue implements ITransferObject {
 
 	private static final long serialVersionUID = 3292328259769166649L;
 
-	/** The id. */
-	private Integer id;
+	/** The Id. */
+	private Integer Id;
 
 	/** The tariff. */
 	private Tariff tariff;
@@ -42,7 +42,7 @@ public class TariffCatalogue implements ITransferObject {
 	@GeneratedValue
 	@Column(nullable=false)
     public Integer getId() {
-		return id;
+		return Id;
 	}
 
 	/**
@@ -51,7 +51,7 @@ public class TariffCatalogue implements ITransferObject {
 	 * @param id the id
 	 */
 	public void setId(Integer id) {
-		this.id = id;
+		Id = id;
 	}
 
 	/**
@@ -96,15 +96,12 @@ public class TariffCatalogue implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (this == obj) {
+			return true;
 		}
 		if (obj instanceof TariffCatalogue) {
-			TariffCatalogue o = (TariffCatalogue) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
+			TariffCatalogue tariffCatalogue = (TariffCatalogue) obj;
+			if (ObjectUtils.equals(getId(), tariffCatalogue.getId())) {
 				return true;
 			}
 		}
@@ -112,8 +109,7 @@ public class TariffCatalogue implements ITransferObject {
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
-
+	public int hashCode() {
+		return 0;
+	}
 }

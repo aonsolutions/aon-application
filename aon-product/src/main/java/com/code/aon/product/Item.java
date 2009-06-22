@@ -79,6 +79,26 @@ public class Item implements ITransferObject {
     private double purchasePrice;
 
     /**
+     * Default contructor.
+     * 
+     */
+    public Item() {
+    }
+
+    /**
+     * Constructor for this unique key and product.
+     * 
+     * @param pk
+     *            Unique key.
+     * @param product
+     *            Product that references this item.
+     */
+    public Item(Integer pk, Product product) {
+        this.id = pk;
+        this.setProduct(product);
+    }
+
+    /**
      * Returns the unique key.
      * 
      * @return Unique key.
@@ -280,15 +300,12 @@ public class Item implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (this == obj) {
+			return true;
 		}
 		if (obj instanceof Item) {
-			Item o = (Item) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
+			Item item = (Item) obj;
+			if (ObjectUtils.equals(getId(), item.getId())) {
 				return true;
 			}
 		}
@@ -296,8 +313,7 @@ public class Item implements ITransferObject {
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
-
+	public int hashCode() {
+		return 0;
+	}
 }

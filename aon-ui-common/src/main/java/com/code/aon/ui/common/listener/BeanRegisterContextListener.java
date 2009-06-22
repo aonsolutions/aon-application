@@ -4,18 +4,15 @@
  */
 package com.code.aon.ui.common.listener;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.bean.BeanConfigParser;
-import com.code.aon.common.util.Classpath;
 
 /**
  * BeanRegisterContextListener is used to parse the configuration file bean-config.xml. 
@@ -43,41 +40,25 @@ public class BeanRegisterContextListener implements ServletContextListener {
 	private static Logger LOGGER = Logger.getLogger(BeanRegisterContextListener.class.getName());
 	
 	/** The Constant CONFIG_FILE_PARAM. */
-	private static final String CONFIG_FILE = "bean-config.xml";
+	private static final String CONFIG_FILE_PARAM = "config-file";
 
-	private void addBeanConfig( URL resource ) throws IOException {
-		try {
-			InputStream is = resource.openStream();
-			
-			BeanConfigParser parser = BeanConfigParser.getInstance();
-			parser.parse( is );
-			
-			is.close();
-		} catch (ManagerBeanException e) {
-			LOGGER.severe( e.getMessage() );
-		}		
-	}
-	
 	/**
 	 * Parses the config file.
 	 * 
 	 * @param sce the ServletContextEvent
 	 */
 	public void contextInitialized(ServletContextEvent sce) {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        try {
-	        URL[] urls = Classpath.search(cl, "META-INF/", CONFIG_FILE);
-	        for (int i = 0; i < urls.length; i++) {
-	            try {
-	            	addBeanConfig( urls[i] );
-	            	LOGGER.info("Added Bean Config from: " + urls[i]);
-	            } catch (Exception e) {
-	                LOGGER.log(Level.SEVERE, "Error Loading Library: " + urls[i], e);
-	            }
-	        }
-		} catch (IOException e) {
-        	LOGGER.log(Level.SEVERE, "Error searching files: " + CONFIG_FILE, e);
-        }		
+		try {
+			ServletContext ctx = sce.getServletContext();
+			String configFile = ctx.getInitParameter(CONFIG_FILE_PARAM);
+			InputStream is = ctx.getResourceAsStream(configFile);
+			
+			BeanConfigParser parser = BeanConfigParser.getInstance();
+			parser.parse( is );
+			
+		} catch (ManagerBeanException e) {
+			LOGGER.severe( e.getMessage() );
+		}
 	}
 
 	/**

@@ -10,10 +10,9 @@
 
 	<aon:div styleClass="aon-toolbar">
 		<aon:commandButton id="clear" value="#{bundle.aon_clear}"
-			type="reset" ajaxSingle="true" reRender="#{lookupId}LookupContent"
+			type="reset" ajaxSingle="true"
 			styleClass="aon-finding-toolbar-item aon-icon-rubber" />			
 		<aon:commandButton id="back" value="#{bundle.aon_back}"
-			reRender="#{lookupId}ReRender"
 			actionListener="#{lookup.onCloseWindow}" immediate="true"
 			styleClass="aon-finding-toolbar-item aon-icon-cancel"
 			accesskey="#{bundle.aon_key_cancel}" >

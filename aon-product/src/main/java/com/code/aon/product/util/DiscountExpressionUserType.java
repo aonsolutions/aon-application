@@ -9,6 +9,16 @@ import java.sql.Types;
 import org.hibernate.HibernateException;
 import org.hibernate.usertype.UserType;
 
+
+/**
+ * Hibernate custom mapping type for Rating.
+ * <p>
+ * This mapping type persists comment ratings to a <tt>TINYINT</tt> database
+ * column.
+ * 
+ * @see CustomerStatus
+ * @author Christian Bauer <christian@hibernate.org>
+ */
 public class DiscountExpressionUserType implements UserType {
 
 	/**

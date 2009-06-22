@@ -41,6 +41,12 @@ public class ProductCategoryTree implements ITransferObject {
     private ProductCategory child;
 
     /**
+     * Void contructor.
+     */
+    public ProductCategoryTree() {
+    }
+
+    /**
      * Constructor for this node.
      * 
      * @param pk
@@ -121,15 +127,12 @@ public class ProductCategoryTree implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (this == obj) {
+			return true;
 		}
 		if (obj instanceof ProductCategoryTree) {
-			ProductCategoryTree o = (ProductCategoryTree) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
+			ProductCategoryTree productCategoryTree = (ProductCategoryTree) obj;
+			if (ObjectUtils.equals(getId(), productCategoryTree.getId())) {
 				return true;
 			}
 		}
@@ -137,8 +140,7 @@ public class ProductCategoryTree implements ITransferObject {
 	}
 
 	@Override
-    public int hashCode() {
-        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
-    }
-
+	public int hashCode() {
+		return 0;
+	}
 }
