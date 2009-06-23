@@ -12,6 +12,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.payroll.auxiliares.Admon;
@@ -33,8 +34,18 @@ public class EmpresaController extends LinesController  implements IPayrollAlias
 
 	private String edad;
 	private Integer year;
+	private List<ITransferObject> selectedList;
 	
 
+	
+	@Override
+	public void onSelect(ActionEvent event) {
+		selectedList = new LinkedList<ITransferObject>();
+		super.onSelect(event);		
+		selectedList.add(this.getTo());		
+						
+	}
+	
 	public Integer getYear() {
 		Calendar calendar = Calendar.getInstance();
 		year = (calendar.get(Calendar.YEAR));
@@ -477,7 +488,14 @@ public class EmpresaController extends LinesController  implements IPayrollAlias
 	}
 	
    
-    
+	public List<ITransferObject> getSelectedList() {
+		return selectedList;
+	}
+
+	public void setSelectedList(List<ITransferObject> selectedList) {
+		this.selectedList = selectedList;
+	}
+
 }
 
 
