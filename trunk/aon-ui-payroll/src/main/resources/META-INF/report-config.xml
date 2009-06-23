@@ -1323,8 +1323,7 @@
 	<!--  *********  Impresion de lista de Personas - Lista ********* -->
 	<report id="actividadDetail" description="Listado de Actividad">
 		<template path="/com/code/aon/ui/payroll/report/actividadDetail.jasper" />
-		<bean key="com.code.aon.payroll.principales.empresa.Actividad" />
-		<criteria provider="#{empreact}" />
+		<collection provider="#{empreact.selectedList}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />
