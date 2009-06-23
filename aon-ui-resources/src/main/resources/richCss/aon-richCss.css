@@ -1903,14 +1903,16 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	}
 .aon-search-add{
 	background:transparent url(images/aon-icon/aon-icon-search-add.png) scroll left center no-repeat;
-	position: relative;
-	top: -5px;	
-	border: 0;	
- }
+	border: 0;
+	padding-left: 15px;
+	padding-top: 15px;
+	margin-left: 5px;
+}
 
 .aon-search-minus{
 	background:transparent url(images/aon-icon/aon-icon-search-minus.png) scroll left center no-repeat;
-	position: relative;
-	top: -5px;	
 	border: 0;
- }
+	padding-left: 15px;
+	padding-top: 15px;
+	margin-left: 5px;
+}
