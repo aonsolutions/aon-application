@@ -19,9 +19,11 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
+import com.code.aon.account.bridge.util.AccountConstants;
 import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
 import com.code.aon.account.bridge.writer.FinanceRecordingTo;
@@ -70,9 +72,19 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	
 	private Date financeDate;
 
+	private int deposit;
+
+	private int financeDeposit;
+
 	private RegistryBank registryBank;
 	
 	private RegistryBank financeRegistryBank;
+
+	private Account cashAccount;
+
+	private Account financeCashAccount;
+
+	private SecurityLevel securityLevel;
 
 	private String concept;
 
@@ -85,24 +97,9 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	private ArrayList<Finance> lineChecks = new ArrayList<Finance>();
 
 	private ArrayList<Finance> financeChecks = new ArrayList<Finance>();
+
 	private String onGenerateKey;
 		
-	public Date getFinanceDate() {
-		return financeDate;
-	}
-
-	public void setFinanceDate(Date financeDate) {
-		this.financeDate = financeDate;
-	}
-
-	public RegistryBank getFinanceRegistryBank() {
-		return financeRegistryBank;
-	}
-
-	public void setFinanceRegistryBank(RegistryBank financeRegistryBank) {
-		this.financeRegistryBank = financeRegistryBank;
-	}
-
 	public AccountEntryFinanceWriter getWriter() {
 		if (writer == null) {
 			writer = new AccountEntryFinanceWriter();
@@ -142,12 +139,68 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		this.date = date;
 	}
 
+	public Date getFinanceDate() {
+		return financeDate;
+	}
+
+	public void setFinanceDate(Date financeDate) {
+		this.financeDate = financeDate;
+	}
+
+	public int getDeposit() {
+		return deposit;
+	}
+
+	public void setDeposit(int deposit) {
+		this.deposit = deposit;
+	}
+
+	public int getFinanceDeposit() {
+		return financeDeposit;
+	}
+
+	public void setFinanceDeposit(int financeDeposit) {
+		this.financeDeposit = financeDeposit;
+	}
+
 	public RegistryBank getRegistryBank() {
 		return registryBank;
 	}
 
 	public void setRegistryBank(RegistryBank registryBank) {
 		this.registryBank = registryBank;
+	}
+
+	public RegistryBank getFinanceRegistryBank() {
+		return financeRegistryBank;
+	}
+
+	public void setFinanceRegistryBank(RegistryBank financeRegistryBank) {
+		this.financeRegistryBank = financeRegistryBank;
+	}
+
+	public Account getCashAccount() {
+		return cashAccount;
+	}
+
+	public void setCashAccount(Account cashAccount) {
+		this.cashAccount = cashAccount;
+	}
+
+	public Account getFinanceCashAccount() {
+		return financeCashAccount;
+	}
+
+	public void setFinanceCashAccount(Account financeCashAccount) {
+		this.financeCashAccount = financeCashAccount;
+	}
+
+	public SecurityLevel getSecurityLevel() {
+		return securityLevel;
+	}
+
+	public void setSecurityLevel(SecurityLevel securityLevel) {
+		this.securityLevel = securityLevel;
 	}
 
 	public String getConcept() {
@@ -216,17 +269,11 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
 	private void initializeHeader(){
 		payment = null;
-		if (financeDate != null) {
-			setDate(financeDate);
-		} else {
-			date = new Date();
-		}
-		if (financeRegistryBank != null) {
-			setRegistryBank(financeRegistryBank);
-		} else {
-			registryBank = null;
-		}
-		
+		date = (financeDate != null) ? financeDate : new Date();
+		deposit = financeDeposit;
+		registryBank = financeRegistryBank;
+		cashAccount = financeCashAccount;
+		securityLevel = SecurityLevel.OFFICIAL;
 		concept = null;
 	}
 
@@ -371,7 +418,9 @@ public class FinanceEntryController implements ISpecialAccountEntry{
     public void accept(ActionEvent event) {
     	
     	setFinanceDate(date);
+    	setFinanceDeposit(deposit);
     	setFinanceRegistryBank(registryBank);
+    	setFinanceCashAccount(cashAccount);
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
@@ -390,9 +439,9 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 			FinanceRecordingTo recordingTo = new FinanceRecordingTo();
 			recordingTo.setType((getPayment().booleanValue())?AccountEntryType.PAYMENT:AccountEntryType.COLLECTION);
 			recordingTo.setDate(getDate());
-			recordingTo.setRegistryBank(getRegistryBank());
+			recordingTo.setPaymentAccount((getDeposit()==0)?AccountUtil.obtainRBankAccount(getRegistryBank()):getCashAccount());
 			recordingTo.setBalancingConcept(getConcept());
-			recordingTo.setSecurityLevel(SecurityLevel.OFFICIAL);
+			recordingTo.setSecurityLevel(getSecurityLevel());
 			recordingTo.setFinanceList((List)lines.getWrappedData());
 			accountEntry = getWriter().recordFinances(recordingTo, accountEntry);
 
@@ -532,11 +581,12 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
 		accountEntry.setAccountPeriod(AccountUtil.obtainPeriod(getDate()).getId());
 		accountEntry.setEntryDate(getDate());
+		accountEntry.setSecurityLevel(getSecurityLevel());
 		accountEntry = (AccountEntry)accountEntryBean.update(accountEntry);
 	}
 
 	public boolean isLastTracking() throws ManagerBeanException {
-		if (accountEntry != null && lines.isRowAvailable()) {
+		if (lines.isRowAvailable()) {
 			Finance finance = (Finance)lines.getRowData();
 			return isLastTracking(finance);
 		}
@@ -545,14 +595,16 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
 	@SuppressWarnings("unchecked")
 	private boolean isLastTracking(Finance finance) throws ManagerBeanException {
-		IManagerBean accountEntryFTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(accountEntryFTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY_ID), accountEntry.getId());
-		criteria.addEqualExpression(accountEntryFTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_FINANCE_ID), finance.getId());
-		Iterator iterator = accountEntryFTrackingBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
-			AccountEntryFinanceTracking accountEntryFinanceTracking = (AccountEntryFinanceTracking)iterator.next();
-			return FinanceTrackingWriter.isLastTracking(accountEntryFinanceTracking.getFinanceTracking());
+		if (accountEntry != null) {
+			IManagerBean accountEntryFTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(accountEntryFTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY_ID), accountEntry.getId());
+			criteria.addEqualExpression(accountEntryFTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_FINANCE_ID), finance.getId());
+			Iterator iterator = accountEntryFTrackingBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				AccountEntryFinanceTracking accountEntryFinanceTracking = (AccountEntryFinanceTracking)iterator.next();
+				return FinanceTrackingWriter.isLastTracking(accountEntryFinanceTracking.getFinanceTracking());
+			}
 		}
 		return true;
 	}
@@ -703,6 +755,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		setAccountEntry(entry);
 		setPayment(entry.getType().equals(AccountEntryType.PAYMENT) ? true : false);
 		setDate(entry.getEntryDate());
+		setSecurityLevel(entry.getSecurityLevel());
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		criteria = new Criteria();
 		criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
@@ -710,7 +763,15 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		iter = accountEntryDetailBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			AccountEntryDetail accountEntryDetail = (AccountEntryDetail)iter.next();
-			setRegistryBank(AccountUtil.obtainRBank(accountEntryDetail.getAccount().getId()));
+			if (accountEntryDetail.getAccount().getId().substring(0, 3).equals(AccountConstants.BANK_ACCOUNT_PREFIX.substring(0, 3))) {
+				setDeposit(0);
+				setRegistryBank(AccountUtil.obtainRBank(accountEntryDetail.getAccount().getId()));
+				setCashAccount(null);
+			} else {
+				setDeposit(1);
+				setRegistryBank(null);
+				setCashAccount(accountEntryDetail.getAccount());
+			}
 			setConcept(accountEntryDetail.getConcept());
 		}
 
