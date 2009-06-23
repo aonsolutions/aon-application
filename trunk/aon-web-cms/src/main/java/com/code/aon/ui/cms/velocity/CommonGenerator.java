@@ -73,26 +73,26 @@ public class CommonGenerator extends Generator implements ICMSConstants {
 		// $default_css from config
 		String css = "";
 		if (configDetail != null) css = configDetail.getCss();
-		vu.put("default_css", css);
+		vu.put(DEFAULT_CSS_KEY, css);
 		
 		// $default_javascript from config
 		String javascript = "";
 		if (configDetail != null) javascript = configDetail.getJavascript();
-		vu.put("default_javascript", javascript);
+		vu.put(DEFAULT_JAVASCRIPT_KEY, javascript);
 
 		// $default_description from config
 		String description = "";
 		if (configDetail != null) description = configDetail.getDescription();
-		vu.put("default_description", description);
+		vu.put(DEFAULT_DESCRIPTION_KEY, description);
 		
 		// $default_keywords from config
 		String keywords = "";
 		if (configDetail != null) keywords = configDetail.getKeywords();
-		vu.put("default_keywords", keywords);
+		vu.put(DEFAULT_KEYWORDS_KEY, keywords);
 		
-        vu.put("every_languages", getActiveLanguages());
-        vu.put("default_language", getDefaultLanguage());
-        vu.put("current_language", getCurrentLanguage());
+        vu.put(EVERY_LANGUAGES_KEY, getActiveLanguages());
+        vu.put(DEFAULT_LANGUAGE_KEY, getDefaultLanguage());
+        vu.put(CURRENT_LANGUAGE_KEY, getCurrentLanguage());
 
     }
 
@@ -102,98 +102,98 @@ public class CommonGenerator extends Generator implements ICMSConstants {
 		}
 		
 		logger.info(". . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ." +
-								" . . . . . . . . . . . . . . Cargando sección... ["+section.getAlias()+"]");
+								" Cargando sección... ["+section.getAlias()+"]");
 		
 		if (previousSection==null ||
 				section.getId().intValue()!=previousSection.getId().intValue()){
 			
 			
 			// $default_menu from default sidebar menu in database
-			vu.put("is_menu", section.isShow_menu());
+			vu.put(IS_MENU_KEY, section.isShow_menu());
 			if (section.isShow_menu()){
 				Menu m = section.getMenuToShow();
 				if (m==null){
-					vu.put("is_menu", false);
+					vu.put(IS_MENU_KEY, false);
 				}else{
 					if (previousSection==null ||
 							previousSection.getMenuToShow() == null ||
 							!previousSection.getMenuToShow().getId().equals(m.getId())){
-						vu.put("default_menu", MenuGenerator.getMenuOptionList(m));
+						vu.put(DEFAULT_MENU_KEY, MenuGenerator.getMenuOptionList(m));
 					}
 				}
 			}
 
-			vu.put("is_menu_alt", section.isShow_menu_alt());
+			vu.put(IS_MENU_ALT_KEY, section.isShow_menu_alt());
 			if (section.isShow_menu_alt()){
 				Menu m = section.getMenuAltToShow();
 				if (m==null){
-					vu.put("is_menu_alt", false);
+					vu.put(IS_MENU_ALT_KEY, false);
 				}else{
 					if (previousSection==null ||
 							previousSection.getMenuAltToShow() == null ||
 							!previousSection.getMenuAltToShow().getId().equals(m.getId())){
-						vu.put("default_menu_alt", MenuGenerator.getMenuOptionList(m));
+						vu.put(DEFAULT_MENU_ALT_KEY, MenuGenerator.getMenuOptionList(m));
 					}
 				}
 			}
 
 			// $default_header from default header in database
-			vu.put("is_header", section.isShow_header());
+			vu.put(IS_HEADER_KEY, section.isShow_header());
 			if (section.isShow_header()){
 				Header h = section.getHeaderToShow();
 				if (h==null){
-					vu.put("is_header", false);
+					vu.put(IS_HEADER_KEY, false);
 				}else{
 					if (previousSection==null ||
 							previousSection.getHeaderToShow() == null ||
 							!previousSection.getHeaderToShow().getId().equals(h.getId())){
-						vu.put("default_header", getHeaderHandler(h));
+						vu.put(DEFAULT_HEADER_KEY, getHeaderHandler(h));
 					}
 				}
 			}
 			
 			// $default_sidebar from default header in database
-			vu.put("is_sidebar_left", section.isShow_sidebar_left());
-			vu.put("is_sidebar_right", section.isShow_sidebar_right());
+			vu.put(IS_SIDEBAR_LEFT_KEY, section.isShow_sidebar_left());
+			vu.put(IS_SIDEBAR_RIGHT_KEY, section.isShow_sidebar_right());
 			if (section.isShow_sidebar_left() ||
 					section.isShow_sidebar_right()){
 				if (section.isShow_sidebar_left()){
 					Sidebar sb = section.getSidebarToLeftShow();
 					if (sb==null){
-						vu.put("is_sidebar_left", false);
+						vu.put(IS_SIDEBAR_LEFT_KEY, false);
 					}else{
 						if (previousSection==null ||
 								previousSection.getSidebarToLeftShow() == null ||
 								!previousSection.getSidebarToLeftShow().getId().equals(sb.getId())){
-							vu.put("default_sidebar_left", getSidebarHandler(sb, SidebarSide.LEFT));
+							vu.put(DEFAULT_SIDEBAR_LEFT_KEY, getSidebarHandler(sb, SidebarSide.LEFT));
 						}
 					}
 				}
 				if (section.isShow_sidebar_right()){
 					Sidebar sb = section.getSidebarToRightShow();
 					if (sb==null){
-						vu.put("is_sidebar_right", false);
+						vu.put(IS_SIDEBAR_RIGHT_KEY, false);
 					}else{
 						if (previousSection==null ||
 								previousSection.getSidebarToRightShow() == null ||
 								!previousSection.getSidebarToRightShow().getId().equals(sb.getId())){
-							vu.put("default_sidebar_right", getSidebarHandler(sb, SidebarSide.RIGHT));
+							vu.put(DEFAULT_SIDEBAR_RIGHT_KEY, getSidebarHandler(sb, SidebarSide.RIGHT));
 						}
 					}
 				}
 			}
 			
 			// $default_footer from default footer in database
-			vu.put("is_footer", section.isShow_footer());
+			vu.put(IS_FOOTER_KEY, section.isShow_footer());
 			if (section.isShow_footer()){
 				Footer f = section.getFooterToShow();
 				if (f==null){
-					vu.put("is_footer", false);
+					vu.put(IS_FOOTER_KEY, false);
 				}else{
 					if (previousSection==null ||
 							previousSection.getFooterToShow() == null ||
 							!previousSection.getFooterToShow().getId().equals(f.getId())){
-						vu.put("default_footer", getFooterHandler(f));
+						vu.put(DEFAULT_FOOTER_KEY, getFooterHandler(f));
 					}
 				}
 			}
@@ -204,8 +204,8 @@ public class CommonGenerator extends Generator implements ICMSConstants {
 			// $bundle from config
 			try {
 				ResourceBundle bundle = ResourceBundle.getBundle(Constants.MESSAGES_FILE, ControllerUtil.getCurrentLanguage().getLanguage().getLocale(), new TemplateBundleClassLoader());
-		        vu.put("language", ControllerUtil.getCurrentLanguage().getLanguage().getLocale().getLanguage());
-				vu.put("bundle", bundle);
+		        vu.put(LANGUAGE_KEY, ControllerUtil.getCurrentLanguage().getLanguage().getLocale().getLanguage());
+				vu.put(BUNDLE_KEY, bundle);
 			}
 			catch (MissingResourceException mre) {
 				logger.warning(" - No se ha encontrado fichero de mensajes para el idioma actual.");
@@ -214,27 +214,27 @@ public class CommonGenerator extends Generator implements ICMSConstants {
 	}
 
 	public void removeContext(VelocityUtil vu){
-		vu.remove("is_menu");
-		vu.remove("default_menu");
-		vu.remove("is_menu_alt");
-		vu.remove("default_menu_alt");
-		vu.remove("is_header");
-		vu.remove("default_header");
-		vu.remove("is_sidebar_left");
-		vu.remove("is_sidebar_right");
-		vu.remove("default_sidebar_left");
-		vu.remove("default_sidebar_right");
-		vu.remove("is_footer");
-		vu.remove("default_footer");
-		vu.remove("default_css");
-		vu.remove("default_javascript");
-		vu.remove("default_description");
-		vu.remove("default_keywords");
-        vu.remove("language");
-		vu.remove("bundle");
-        vu.remove("every_languages");
-        vu.remove("default_language");
-        vu.remove("current_language");
+		vu.remove(IS_MENU_KEY);
+		vu.remove(DEFAULT_MENU_KEY);
+		vu.remove(IS_MENU_ALT_KEY);
+		vu.remove(DEFAULT_MENU_ALT_KEY);
+		vu.remove(IS_HEADER_KEY);
+		vu.remove(DEFAULT_HEADER_KEY);
+		vu.remove(IS_SIDEBAR_LEFT_KEY);
+		vu.remove(IS_SIDEBAR_RIGHT_KEY);
+		vu.remove(DEFAULT_SIDEBAR_LEFT_KEY);
+		vu.remove(DEFAULT_SIDEBAR_RIGHT_KEY);
+		vu.remove(IS_FOOTER_KEY);
+		vu.remove(DEFAULT_FOOTER_KEY);
+		vu.remove(DEFAULT_CSS_KEY);
+		vu.remove(DEFAULT_JAVASCRIPT_KEY);
+		vu.remove(DEFAULT_DESCRIPTION_KEY);
+		vu.remove(DEFAULT_KEYWORDS_KEY);
+        vu.remove(LANGUAGE_KEY);
+		vu.remove(BUNDLE_KEY);
+        vu.remove(EVERY_LANGUAGES_KEY);
+        vu.remove(DEFAULT_LANGUAGE_KEY);
+        vu.remove(CURRENT_LANGUAGE_KEY);
 	}
 	
 	private HeaderHandler getHeaderHandler(Header h) {
@@ -307,9 +307,9 @@ public class CommonGenerator extends Generator implements ICMSConstants {
 	
 	public void generateLanguagePage() {
 		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();		
-        vu.put("every_languages", getActiveLanguages());
-        vu.put("default_language", getDefaultLanguage());
-        vu.put("current_language", getCurrentLanguage());
+        vu.put(EVERY_LANGUAGES_KEY, getActiveLanguages());
+        vu.put(DEFAULT_LANGUAGE_KEY, getDefaultLanguage());
+        vu.put(CURRENT_LANGUAGE_KEY, getCurrentLanguage());
 
 		File f = ControllerUtil.getPreviewPath();
 		if (!f.exists()) f.mkdirs();

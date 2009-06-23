@@ -16,23 +16,15 @@
 	<a4j:region>
 		<aon:selectBooleanCheckbox id="#{inputTextId}_richTextEnabled"
 			value="#{richTextEnabled}" >
-			<a4j:support reRender="#{inputTextId}Div" event="onclick"	/>
+			<a4j:support reRender="#{inputTextId}" event="onclick"	/>
 		</aon:selectBooleanCheckbox>
 		<aon:outputLabel for="#{inputTextId}_richTextEnabled"
 			value="#{appBundle.cms_richtext_enabled}" />	
-		<aon:div id="#{inputTextId}Div" style="width:640px" >	
-			<c:if test="#{richTextEnabled}" >
-				<rich:editor id="#{inputTextId}"
-					value="#{inputTextValue}" required="#{inputTextRequired}"
-					height="250" configuration="tinyMCE" 
-					language="#{facesContext.application.defaultLocale.language}" />																		
-			</c:if>
-			<c:if test="#{!richTextEnabled}" >
-				<aon:inputTextarea id="#{inputTextId}-TA"
-					style="width:98%" rows="20" required="#{inputTextRequired}"
-					value="#{inputTextValue}" />
-			</c:if>
-		</aon:div>
+		<rich:editor id="#{inputTextId}"
+			viewMode="#{richTextEnabled?'visual':'source'}"
+			value="#{inputTextValue}" required="#{inputTextRequired}"
+			height="250" width="640" configuration="tinyMCE" 
+			language="#{facesContext.application.defaultLocale.language}" />																		
 	</a4j:region>
 
 </ui:composition>
