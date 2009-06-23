@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="periodTaskForm">
+
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{menuBundle.aon_period_task}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{periodTask.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<h:commandButton id="save" value="#{bundle.aon_save}"
+							rendered="#{periodTask.to!=null or periodTask.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							onclick="return confirm('#{bundle.aon_save_confirm}');"
+							actionListener="#{periodTask.accept}"
+							accesskey="#{bundle.aon_key_save}" />
+						<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							rendered="#{periodTask.to!=null or periodTask.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="true"
+							onclick="return confirm('#{bundle.aon_cancel_confirm}');"
+							actionListener="#{periodTask.onCancel}" action="period_task_list"
+							accesskey="#{bundle.aon_key_cancel}" />
+						<h:commandButton id="remove" value="#{bundle.aon_remove}"
+							rendered="#{!periodTask.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							actionListener="#{periodTask.onRemove}"
+							action="period_task_list"
+							onclick="return confirm('#{bundle.aon_remove_confirm}');"
+							accesskey="#{bundle.aon_key_remove}" />
+						<h:commandButton id="search" value="#{bundle.aon_search}"
+							immediate="true" action="period_task_search"
+							actionListener="#{periodTask.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
+							actionListener="#{periodTask.onReset}"
+							rendered="#{!periodTask.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}" />
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:div styleClass="aon-group">
+					<aon:div styleClass="aon-group-title">
+						<aon:outputText value="#{projectBundle.period_task_recurrence}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-group-body">
+						<aon:panelGrid columns="6">
+
+							<aon:outputLabel for="PeriodicalTask_startDate"
+								value="#{projectBundle.period_task_initial_date}" />
+							<aon:selectInputDate id="PeriodicalTask_startDate"
+								required="true" value="#{periodTask.to.startDate}"
+								renderAsPopup="true" enableManualInput="true"
+								popupDateFormat="#{bundle.aon_date_pattern}"
+								rendered="#{periodTask.new}">
+							</aon:selectInputDate>
+							<aon:outputText value="#{periodTask.to.startDate}"
+								rendered="#{!periodTask.new}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+
+							<aon:outputLabel for="PeriodicalTask_endDate"
+								value="#{projectBundle.period_task_end_date}" />
+							<aon:selectInputDate id="PeriodicalTask_endDate" required="true"
+								renderAsPopup="true" enableManualInput="true"
+								popupDateFormat="#{bundle.aon_date_pattern}"
+								value="#{periodTask.to.endDate}">
+							</aon:selectInputDate>
+
+							<aon:outputLabel for="PeriodicalTask_nextDate"
+								rendered="#{!periodTask.new}"
+								value="#{projectBundle.period_task_next_date}" />
+							<aon:selectInputDate id="PeriodicalTask_nextDate" required="true"
+								renderAsPopup="true" value="#{periodTask.to.nextDate}"
+								enableManualInput="true"
+								popupDateFormat="#{bundle.aon_date_pattern}"
+								rendered="#{!periodTask.new}">
+							</aon:selectInputDate>
+
+							<aon:outputLabel for="PeriodicalTask_quantity"
+								value="#{projectBundle.period_task_frequency}" />
+							<aon:div>
+								<aon:inputText id="PeriodicalTask_quantity"
+									styleClass="aon-inputText" required="true" size="5"
+									maxlength="2" value="#{periodTask.to.quantity}" />
+								<aon:selectOneMenu id="PeriodicalTask_priority"
+									value="#{periodTask.to.period}">
+									<f:selectItems value="#{projectCollections.taskPeriods}" />
+								</aon:selectOneMenu>
+							</aon:div>
+
+						</aon:panelGrid>
+					</aon:div>
+				</aon:div>
+
+
+				<aon:div styleClass="aon-group">
+					<aon:div styleClass="aon-group-title">
+						<aon:outputText value="#{projectBundle.task_task}" />
+					</aon:div>
+					<aon:div styleClass="aon-group-body">
+						<aon:panelGrid columns="2">
+							<aon:outputLabel for="Task_descripcion"
+								value="#{projectBundle.aon_description}" />
+							<aon:inputText id="Task_descripcion" styleClass="aon-inputText"
+								required="true" size="60" maxlength="50"
+								value="#{periodTask.to.task.description}" />
+
+							<aon:outputLabel for="Task_startDate"
+								value="#{projectBundle.aon_initial_date}" />
+							<aon:selectInputDate id="Task_startDate" required="true"
+								renderAsPopup="true" value="#{periodTask.to.task.startDate}"
+								enableManualInput="true"
+								popupDateFormat="#{bundle.aon_date_pattern}"
+								disabled="#{!periodTask.new}">
+							</aon:selectInputDate>
+
+							<aon:outputLabel for="Task_dueDate"
+								value="#{projectBundle.aon_due_date}" />
+							<aon:selectInputDate id="Task_dueDate" required="true"
+								renderAsPopup="true" value="#{periodTask.to.task.dueDate}"
+								enableManualInput="true"
+								popupDateFormat="#{bundle.aon_date_pattern}"
+								disabled="#{!periodTask.new}">
+							</aon:selectInputDate>
+
+							<aon:outputLabel for="Task_priority"
+								value="#{projectBundle.task_priority}" />
+							<aon:selectOneMenu id="Task_priority"
+								value="#{periodTask.to.task.priority}"
+								disabled="#{!periodTask.new}">
+								<f:selectItems value="#{projectCollections.taskPriorities}" />
+							</aon:selectOneMenu>
+
+							<aon:outputLabel for="Task_workgroup"
+								value="#{projectBundle.aon_work_group}" />
+							<aon:selectOneMenu id="Task_workgroup"
+								value="#{periodTask.to.task.workGroup.id}" required="#{true}"
+								valueChangeListener="#{periodTask.workgroupChanged}"
+								reRender="Task_user" disabled="#{!periodTask.new}">
+								<f:selectItem value="#{nullSelectItem.value}" />
+								<f:selectItems value="#{configCollections.workgroups}" />
+							</aon:selectOneMenu>
+
+							<aon:outputLabel for="Task_user"
+								value="#{projectBundle.task_assigned}" />
+							<aon:selectOneMenu id="Task_user"
+								value="#{periodTask.to.task.user.id}"
+								disabled="#{!periodTask.new}">
+								<f:selectItem value="#{nullSelectItem.value}" />
+								<f:selectItems value="#{periodTask.users}" />
+							</aon:selectOneMenu>
+
+							<aon:outputLabel for="Customer_Lookup_id"
+								value="#{customerBundle.customer_customer}" />
+							<ui:include src="/facelet/shared/customer/customerIdInput.xhtml">
+								<ui:param name="customer_id" value="Customer_Lookup_id" />
+								<ui:param name="renderedAttr" value="#{periodTask.new}" />
+								<ui:param name="disabled" value="false" />
+								<ui:param name="reRenderAttr"
+									value="Task_customer_name, Task_dossier_id, Task_activity_id" />
+								<ui:param name="required" value="false" />
+								<ui:param name="customerEntity"
+									value="#{periodTask.to.task.dossier.customer}" />
+								<ui:param name="customerELExpression"
+									value="periodTask.to.task.dossier.customer" />
+								<ui:param name="valueChangeListener"
+									value="periodTask.customerPojoChange" />
+							</ui:include>
+							<aon:inputText id="Task_customer"
+								value="#{periodTask.to.task.dossier.customer.registry.fullName}"
+								styleClass="aon-inputText" size="60" disabled="#{true}"
+								rendered="#{!periodTask.new}" />
+
+							<aon:outputLabel for="Task_dossier_id"
+								value="#{projectBundle.dossier_dossier}" />
+							<aon:selectOneMenu id="Task_dossier_id"
+								value="#{periodTask.to.task.dossier.id}"
+								valueChangeListener="#{periodTask.dossierChange}"
+								rendered="#{periodTask.new}" reRender="Task_activity_id">
+								<f:selectItem value="#{nullSelectItem.value}" />
+								<f:selectItems value="#{periodTask.dossiers}" />
+							</aon:selectOneMenu>
+							<aon:inputText id="Task_dossier"
+								value="#{periodTask.to.task.dossier.number}"
+								styleClass="aon-inputText" size="60" disabled="#{true}"
+								rendered="#{!periodTask.new}" />
+
+							<aon:outputLabel for="Task_activity_id"
+								value="#{projectBundle.activity_activity}" />
+							<aon:selectOneMenu id="Task_activity_id"
+								rendered="#{periodTask.new}"
+								value="#{periodTask.to.task.activity.id}">
+								<f:selectItem value="#{nullSelectItem.value}" />
+								<f:selectItems value="#{periodTask.activities}" />
+							</aon:selectOneMenu>
+							<aon:inputText id="Task_activity"
+								value="#{periodTask.to.task.activity.activityType.description}"
+								styleClass="aon-inputText" size="60" disabled="#{true}"
+								rendered="#{!periodTask.new}" />
+
+							<aon:outputLabel for="Task_comments"
+								value="#{projectBundle.aon_comments}" />
+							<aon:inputTextarea id="Task_comments"
+								value="#{periodTask.to.task.comments}" cols="60" rows="5" />
+
+						</aon:panelGrid>
+					</aon:div>
+				</aon:div>
+
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

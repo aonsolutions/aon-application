@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:outputLabel for="Offer_series"
+		value="#{bundle.aon_series}/#{bundle.aon_number}" />
+	<aon:panelGrid columns="2">
+		<aon:inputText id="Offer_series" size="4"
+			valueChangeListener="#{controller.addExpression}" />
+		<aon:inputText id="Offer_number" size="7"
+			valueChangeListener="#{controller.addExpression}" />
+	</aon:panelGrid>
+
+	<aon:outputLabel value="#{bundle.aon_date}" />
+	<aon:div>
+		<aon:outputLabel for="Offer_issueDate-From" styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_from}:" />
+		<aon:selectInputDate id="Offer_issueDate-From"
+			value="#{offerSearch.issueDateFrom}" 
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+		<aon:outputLabel for="Offer_issueDate-To" styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_to}:" />
+		<aon:selectInputDate id="Offer_issueDate-To"
+			value="#{offerSearch.issueDateTo}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	</aon:div>
+							
+	<aon:outputLabel for="Offer_target_id"
+		value="#{commercialBundle.commercial_target}" />
+	<aon:div styleClass="aon-lookup">
+		<aon:lookupInputText id="Offer_target_id" value="#{offerSearch.target.id}"
+			lookup="#{targetLookup}" reRender="Offer_target_full_name"
+			size="5" />
+		<aon:lookupButton 
+			windowTitle="#{commercialBundle.commercial_target_selection}" actionType="search"
+			property="#{offerSearch.target}" selectReRender="Offer_target_id,Offer_target_full_name" 
+			lookup="#{targetLookup}" minHeight="460" minWidth="650">
+		</aon:lookupButton>
+		<aon:inputText id="Offer_target_full_name"
+			value="#{(offerSearch.target.registry.name!=null)?(offerSearch.target.registry.fullName):('')}"
+			size="50" disabled="true" />							
+	</aon:div>
+
+	<aon:outputLabel for="Offer_status"
+		value="#{bundle.aon_status}" />
+	<aon:selectOneMenu id="Offer_status"
+		converter="aon.EnumConverter"
+		valueChangeListener="#{controller.addEqualExpression}">
+		<f:selectItem itemLabel="-" itemValue="" itemDisabled="true" />
+		<f:selectItems value="#{commercialCollections.offerStatuses}" />
+	</aon:selectOneMenu>
+
+</ui:composition>

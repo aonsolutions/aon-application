@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:div styleClass="aon-toolbar" rendered="#{finance.model.rowCount > 0}">
+	
+		<aon:commandButton title="#{bundle.aon_check_all}"
+			styleClass="aon-finding-toolbar-item aon-icon-checkAll"
+			value="#{bundle.aon_check_all}"
+			actionListener="#{finance.checkAll}" reRender="financeDataDiv"
+			onclick="Richfaces.showModalPanel('waitProccess')" 
+     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+		<aon:commandButton title="#{bundle.aon_uncheck_all}"
+			styleClass="aon-finding-toolbar-item aon-icon-checkNone"
+			value="#{bundle.aon_uncheck_all}"
+			actionListener="#{finance.checkNone}" reRender="financeDataDiv"
+			onclick="Richfaces.showModalPanel('waitProccess')" 
+     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+		<aon:commandButton title="#{financeBundle.finance_add_batch}"
+			styleClass="aon-finding-toolbar-item aon-icon-reset"
+			value="#{financeBundle.finance_add_batch}"
+			actionListener="#{fbatch.onBatchSelected}" reRender="fbatchPanelTabSet"
+			onclick="Richfaces.showModalPanel('waitProccess')" 
+     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+	</aon:div>
+
+	<aon:div id="financeDataDiv">
+		<aon:dataTable id="financeData" value="#{finance.model}"
+			var="to" rows="10" rendered="#{finance.model.rowCount > 0}"
+			columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+				aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn
+				aon-editDataTable-textColumn, aon-editDataTable-numberColumn">				
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:selectBooleanCheckbox id="Included_Row_checked"
+					value="#{finance.rowChecked}"
+					valueChangeListener="#{finance.rowSelected}" />	
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{financeBundle.finance_invoice}" />
+				</f:facet>
+				<aon:outputText value="#{to.invoice.series} / #{to.invoice.number}" />
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_description}" />
+				</f:facet>
+				<aon:outputText value="#{to.registry.surname}, " rendered="#{to.registry.surname != null and to.registry.surname != ''}"/>								
+				<aon:outputText value="#{to.registry.name}" />
+			</aon:column>
+	
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{financeBundle.finance_finance_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.dueDate}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+	
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{configBundle.config_pay_method}" />
+				</f:facet>
+				<aon:outputText value="#{to.payMethod.name}" />
+			</aon:column>
+	
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{financeBundle.finance_bank_account}" />
+				</f:facet>
+				<aon:outputText value="#{to.bankAccount}"/>
+			</aon:column>
+	
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_status}" />
+				</f:facet>
+				<aon:outputText value="#{to.financeStatus}"/>
+			</aon:column>
+	
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_amount}" />
+				</f:facet>
+				<aon:outputText value="#{to.totalAmount}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:column>
+			
+		</aon:dataTable>
+		
+		<aon:dataScroller2 for="financeData" showNote="true" />
+	</aon:div>
+	
+</ui:composition>

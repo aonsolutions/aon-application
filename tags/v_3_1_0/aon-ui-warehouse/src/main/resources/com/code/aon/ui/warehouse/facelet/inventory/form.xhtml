@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="inventoryForm">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_inventory_remake_module}" />
+				<ui:param name="controller" value="#{inventory}" />
+				<ui:param name="skipSaveButton" value="true" />
+				<ui:param name="skipResetButton" value="true" />
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<h:commandLink value="#{warehouseBundle.warehouse_inventory_report_title}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="inventory_close" />
+					</h:commandLink>
+
+					<h:commandLink value="#{warehouseBundle.warehouse_inventory_valued_title}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="inventory_valued" />
+					</h:commandLink>
+				</ui:define>				
+				
+			</ui:decorate>
+	
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:div styleClass="aon-padding-bottom">
+					<aon:panelGrid columns="2">
+						<aon:outputLabel for="Inventory_id"
+							value="#{bundle.aon_id}" />
+						<aon:outputText id="Inventory_id"
+							value="#{inventory.to.id}" size="14" />
+	
+						<aon:outputLabel for="Inventory_inventoryDate"
+							value="#{bundle.aon_date}" />
+						<aon:outputText id="Inventory_inventoryDate" value="#{inventory.to.inventoryDate}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								type="both" timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+						
+						<aon:outputLabel for="Inventory_description"
+							value="#{bundle.aon_description}" />
+						<aon:outputText id="Inventory_description"
+							value="#{inventory.to.description}" size="64" />
+					</aon:panelGrid>
+				</aon:div>
+								
+				<aon:div styleClass="aon-padding-bottom">								
+					<aon:panelGrid columns="2"> 
+						<aon:outputLabel for="Inventory_category"
+							value="#{productBundle.product_category}"  />
+						<aon:div>
+							<aon:selectOneMenu id="Inventory_category" 
+								value="#{inventoryDetail.category}">
+								<f:selectItem itemLabel="-" value="#{null}"/>
+								<f:selectItems value="#{productCollections.categories}" />
+							</aon:selectOneMenu>
+							<aon:commandButton title="#{bundle.aon_accept}"
+								actionListener="#{inventoryDetail.loadDetailModel}"
+								reRender="inventoryDetailDiv" value="" 
+								styleClass="aon-editDataTable-button aon-icon-accept aon-margin-left" 
+								accesskey="#{bundle.aon_key_save_line}" />
+						</aon:div>
+					</aon:panelGrid>
+				</aon:div>
+
+				<aon:div layout="none" id="inventoryDetailDiv" >
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+						<ui:param name="controller" value="#{inventoryDetail}" />				
+						<ui:param name="skipResetButton" value="true" />
+						<ui:param name="skipRemoveButton" value="true" />
+						<ui:param name="showNote" value="true" />
+						<ui:param name="showDataTable" value="#{inventoryDetail.model.rowCount > 0}" />
+						<ui:define name="columns">
+							<aon:methodParam name="saveActionListener" value="#{inventoryDetail.onAcceptNext}" type="actionListener" />					
+						
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_id}" />
+								</f:facet>
+								<aon:outputText value="#{to.item.product.code}" />
+							</aon:column>
+			
+							<aon:column styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{productBundle.product_item}" />
+								</f:facet>
+								<aon:div>
+									<aon:outputText value="#{to.item.product.name} #{to.item.detail}" />
+								</aon:div>
+							</aon:column>
+							
+							<aon:column styleClass="aon-editDataTable-numberColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{warehouseBundle.warehouse_inventory}" />
+								</f:facet>
+								<aon:div>
+									<aon:outputText value="#{to.realQuantity}" rendered="#{to.id!=inventoryDetail.to.id}">
+										<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
+									</aon:outputText>
+									<aon:inputText rendered="#{to.id==inventoryDetail.to.id}"
+										value="#{inventoryDetail.to.realQuantity}" required="true" />
+								</aon:div>
+							</aon:column>
+		
+							<aon:column styleClass="aon-editDataTable-numberColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{warehouseBundle.warehouse_inventoryDetail_cost}"	/>
+								</f:facet>
+								<aon:div>
+									<aon:outputText value="#{to.cost}" rendered="#{to.id!=inventoryDetail.to.id}">
+										<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
+									</aon:outputText>
+									<aon:outputText value="#{inventoryDetail.to.cost}" rendered="#{to.id==inventoryDetail.to.id}">
+										<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
+									</aon:outputText>
+								</aon:div>
+							</aon:column>
+		
+							<aon:column styleClass="aon-editDataTable-numberColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_total}" />
+								</f:facet>
+								<aon:div>
+									<aon:outputText value="#{to.realQuantity * to.cost}">
+										<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
+									</aon:outputText>
+								</aon:div>
+							</aon:column>
+						
+						</ui:define>
+					</ui:decorate>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>					

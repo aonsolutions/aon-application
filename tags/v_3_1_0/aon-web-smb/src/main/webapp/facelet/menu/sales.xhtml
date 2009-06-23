@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="salesMenu">
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting"
+					columnClasses="aon-portlets-column,aon-portlets-column">
+
+					<aon:panelGroup>
+						<aon:panel headerClass="aon-panel-title">
+							<f:facet name="header">
+								<aon:outputText value="#{customerBundle.customer_module}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="customer" action="customer_search"
+										actionListener="#{customer.onEditSearch}"
+										value="#{customerBundle.customer_module}">
+										<f:setPropertyActionListener value="#{true}"
+											target="#{customer.showAccount}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="customerSegment" 
+										action="customerSegment" actionListener="#{customerSegment.onSearch}"
+										value="#{customerBundle.customer_segment_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panel>
+
+						<aon:panel headerClass="aon-panel-title">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.menu_invoices}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="aon_invoice_management"
+										action="saleInvoice_search"
+										actionListener="#{saleInvoice.onEditSearch}"
+										value="#{financeBundle.finance_sale_invoice_management_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink
+										value="#{financeBundle.finance_invoice_print_module}"
+										actionListener="#{invoicePrint.onEditSearch}"
+										action="invoicePrint_search" />
+								</aon:div>
+							</aon:div>
+						</aon:panel>
+
+						<aon:panel headerClass="aon-panel-title">
+							<f:facet name="header">
+								<aon:outputText value="#{financeBundle.finance_fees_module}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="aon_pre_invoicing"
+										value="#{financeBundle.finance_pre_invoicing_module}"
+										actionListener="#{preInvoicing.onInitialize}"
+										action="feePreInvoicing" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="aon_invoicing"
+										value="#{financeBundle.finance_fee_invoicing_module}"
+										actionListener="#{feeInvoicing.onInitialize}"
+										action="feeInvoicing" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="aon_fee_print"
+										value="#{financeBundle.finance_fee_print_module}"
+										actionListener="#{feePrint.onEditSearch}"
+										action="feePrint_search" />
+								</aon:div>
+							</aon:div>
+						</aon:panel>
+
+						<aon:panel headerClass="aon-panel-title">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_utilities}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="aon_invoicing_group"
+										value="#{financeBundle.finance_invoicing_group_module}"
+										action="invoicingGroup_list" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink
+										value="#{financeBundle.finance_invoice_signing_module}"
+										actionListener="#{invoiceSigner.onEditSearch}"
+										action="invoiceSigner_search" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink
+										value="#{financeBundle.finance_invoice_recording_module}"
+										actionListener="#{invoiceRecorder.onEditSearch}"
+										action="invoiceRecorder_search" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink
+										value="#{financeBundle.finance_invoice_removing_module}"
+										actionListener="#{invoiceRemover.onEditSearch}"
+										action="invoiceRemover_search" />
+								</aon:div>
+							</aon:div>
+						</aon:panel>
+					</aon:panelGroup>
+
+					<aon:panel headerClass="aon-panel-title">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_reports}" />
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink action="sales_accumulate_search" 
+									value="#{statBundle.stat_menu_acumulado}">
+									<aon:actionListener method="#{stat.onReset}"/>
+								</aon:commandLink>
+							</aon:div>
+						
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink action="segment_stats_search" 
+									value="#{statBundle.stat_menu_segment}" >
+									<aon:actionListener method="#{stat.onReset}"/>
+								</aon:commandLink>
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink action="category_stats_search" 
+									value="#{statBundle.stat_menu_category}" >
+									<aon:actionListener method="#{stat.onReset}"/>
+								</aon:commandLink>
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink disabled="true" value="Comparativa Periodos" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink action="summary_stats_search" 
+									value="#{statBundle.stat_menu_summary}"  >
+									<aon:actionListener method="#{stat.onReset}"/>
+								</aon:commandLink>
+							</aon:div>
+							
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink action="abc_stats_search" 
+									value="#{statBundle.stat_abc_customer}" >
+									<aon:actionListener method="#{stat.onReset}"/>
+								</aon:commandLink>
+							</aon:div>
+							
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink action="abc_stats_searchProduct" 
+									value="#{statBundle.stat_abc_product}" >
+									<aon:actionListener method="#{stat.onReset}"/>
+								</aon:commandLink>
+							</aon:div>
+							
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink action="abc_stats_searchCategory" 
+									value="#{statBundle.stat_abc_category}" >
+									<aon:actionListener method="#{stat.onReset}"/>
+								</aon:commandLink>
+							</aon:div>
+						</aon:div>
+					</aon:panel>
+
+				</aon:panelGrid>
+
+			</aon:div>
+
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>

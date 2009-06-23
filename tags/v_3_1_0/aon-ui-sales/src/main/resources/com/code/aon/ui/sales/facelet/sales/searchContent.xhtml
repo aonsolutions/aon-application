@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:outputLabel for="Sales_series"
+		value="#{bundle.aon_series}/#{bundle.aon_number}" />
+	<aon:panelGrid columns="2">
+		<aon:inputText id="Sales_series" size="4"
+			valueChangeListener="#{controller.addExpression}" />
+		<aon:inputText id="Sales_number" size="7"
+			valueChangeListener="#{controller.addExpression}" />
+	</aon:panelGrid>
+
+	<aon:outputLabel value="#{bundle.aon_date}" />
+	<aon:div>
+		<aon:outputLabel for="Sales_issueDate-From" styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_from}:" />
+		<aon:selectInputDate id="Sales_issueDate-From"
+			value="#{salesSearch.issueDateFrom}" 
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+		<aon:outputLabel for="Sales_issueDate-To" styleClass="aon-form-date-label"
+			value="#{bundle.aon_date_to}:" />
+		<aon:selectInputDate id="Sales_issueDate-To"
+			value="#{salesSearch.issueDateTo}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	</aon:div>
+							
+	<aon:outputLabel for="Sales_customer_id"
+		value="#{customerBundle.customer_customer}" />
+	<aon:div styleClass="aon-lookup">
+		<aon:lookupInputText id="Sales_customer_id" value="#{salesSearch.customer.id}"
+			lookup="#{customerLookup}" reRender="Sales_customer_full_name"
+			size="5" />
+		<aon:lookupButton 
+			windowTitle="#{customerBundle.customer_selection}" actionType="search"
+			property="#{salesSearch.customer}" selectReRender="Sales_customer_id,Sales_customer_full_name" 
+			lookup="#{customerLookup}" minHeight="460" minWidth="650">
+		</aon:lookupButton>
+		<aon:inputText id="Sales_customer_full_name"
+			value="#{(salesSearch.customer.registry.name!=null)?(salesSearch.customer.registry.fullName):('')}"
+			size="50" disabled="true" />							
+	</aon:div>
+
+	<aon:outputLabel for="Sales_status"
+		value="#{bundle.aon_status}" />
+	<aon:selectOneMenu id="Sales_status"
+		converter="aon.EnumConverter"
+		valueChangeListener="#{controller.addEqualExpression}">
+		<f:selectItem itemLabel="-" itemValue="" itemDisabled="true" />
+		<f:selectItems value="#{salesCollections.salesStatuses}" />
+	</aon:selectOneMenu>
+
+</ui:composition>

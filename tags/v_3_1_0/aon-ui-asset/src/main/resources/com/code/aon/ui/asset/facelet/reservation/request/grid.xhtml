@@ -1,0 +1,116 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGrid id="activityDialogTable" columns="2" width="100%">
+
+		<aon:outputLabel for="Asset_name" value="#{assetBundle.asset_asset}" />
+		<aon:div styleClass="aon-lookup" id="Asset_id">
+			<aon:lookupInputText id="Asset_name" lookup="#{assetLookup}"
+				reRender="Asset_description" value="#{activityDialog.asset.name}"
+				required="true" size="10" disabled="#{!activityDialog.new}">
+			</aon:lookupInputText>
+			<aon:lookupButton id="Asset_lookup"
+				windowTitle="#{assetBundle.asset_asset}"
+				selectReRender="Asset_name,Asset_description"
+				lookup="#{assetLookup}" minHeight="440"
+				property="#{activityDialog.asset}"
+				disabled="#{!activityDialog.new}">
+			</aon:lookupButton>
+			<aon:inputText id="Asset_description"
+				value="#{(activityDialog.asset.description!=null)?(activityDialog.asset.description):('')}"
+				size="70" disabled="true" />
+		</aon:div>
+
+		<aon:outputLabel for="ActivityDialog_startDate"
+			value="#{assetBundle.asset_startDate}" />
+		<aon:selectInputDate renderAsPopup="true" id="ActivityDialog_startDate"
+			popupDateFormat="#{assetBundle.aon_date_pattern}" inputSize="8"
+			value="#{activityDialog.fromDate}" enableManualInput="true" 
+			disabled="#{!activityDialog.new}"/>
+
+		<aon:outputLabel for="ActivityDialog_endDate"
+			value="#{assetBundle.asset_endDate}" />
+		<aon:selectInputDate renderAsPopup="true" id="ActivityDialog_endDate"
+			popupDateFormat="#{assetBundle.aon_date_pattern}" inputSize="8"
+			value="#{activityDialog.toDate}" enableManualInput="true" 
+			disabled="#{!activityDialog.new}"/>
+
+		<aon:outputLabel for="ActivityDialog_fromTime"
+			value="#{assetBundle.asset_fromTime}" />
+		<aon:div id="ActivityDialog_fromTime">
+			<aon:selectOneMenu id="fromTimeHours" disabled="#{!activityDialog.new}"
+				value="#{activityDialog.fromTimeHours}">
+				<f:selectItems value="#{activityDialog.hours}" />
+			</aon:selectOneMenu>
+			<aon:outputLabel 
+				value="#{assetBundle.asset_hours}" />
+			<aon:selectOneMenu id="fromTimeMins" disabled="#{!activityDialog.new}"
+				value="#{activityDialog.fromTimeMins}">
+				<f:selectItems value="#{activityDialog.mins}" />
+			</aon:selectOneMenu>
+			<aon:outputLabel
+				value="#{assetBundle.asset_minutes}" />
+		</aon:div>
+
+		<aon:outputLabel for="ActivityDialog_toTime"
+			value="#{assetBundle.asset_toTime}" />
+		<aon:div id="ActivityDialog_toTime">
+			<aon:selectOneMenu id="toTimeHours" disabled="#{!activityDialog.new}"
+				value="#{activityDialog.toTimeHours}">
+				<f:selectItems value="#{activityDialog.hours}" />
+			</aon:selectOneMenu>
+			<aon:outputLabel 
+				value="#{assetBundle.asset_hours}" />
+			<aon:selectOneMenu id="toTimeMins" disabled="#{!activityDialog.new}"
+				value="#{activityDialog.toTimeMins}">
+				<f:selectItems value="#{activityDialog.mins}" />
+			</aon:selectOneMenu>
+			<aon:outputLabel
+				value="#{assetBundle.asset_minutes}" />
+		</aon:div>
+
+		<aon:outputLabel for="tivityDialog_who"
+			value="#{assetBundle.asset_activity_who}" />
+		<aon:div>
+			<aon:inputText id="ActivityDialog_who" value="#{activityDialog.who}"
+				
+				required="#{true}" size="20" disabled="#{(!activityDialog.new) or activityDialog.request}">
+				<f:validateLength maximum="20" />
+			</aon:inputText>
+			
+			<aon:outputText id="ActivityDialog_who_request" value="#{activityDialog.who}"
+				size="20" />
+				
+		</aon:div>
+		
+		<aon:outputLabel for="ActivityDialog_why"
+			value="#{assetBundle.asset_activity_why}" />
+		<aon:inputTextarea id="ActivityDialog_why" value="#{activityDialog.why}"
+			required="#{true}" cols="50" rows="4" disabled="#{!activityDialog.new}">
+			<f:validateLength maximum="128" />
+		</aon:inputTextarea>
+		
+		<aon:outputLabel 
+			value="&#160;" />
+		<aon:div>
+			<h:commandButton id="activityDialog-reset"
+				value="#{bundle.aon_reset}" reRender="activityDialogTable"
+				rendered="#{!activityDialog.new and activityDialog.request}" 
+				actionListener="#{activityDialog.onInitializeRequest}"
+				styleClass="aon-icon-new"
+				accesskey="#{bundle.aon_key_new}" />
+			<h:commandButton id="activityDialog-email"
+				value="#{assetBundle.asset_activity_send_request}" reRender="activityDialogTable"
+				rendered="#{activityDialog.new and activityDialog.request}"
+				actionListener="#{activityDialog.onEmail}"
+				styleClass="aon-icon-webmail2"
+				accesskey="#{bundle.aon_key_new}" />
+		</aon:div>
+	</aon:panelGrid>
+
+</ui:composition>

@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="accountEntryForm" styleClass="aon-form">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_entry_module}" />
+				<ui:param name="controller" value="#{accountEntry}" />
+			</ui:include>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+
+				<ui:param name="controller" value="#{accountEntry}" />
+				
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchAction" value="accountEntry_form" />
+
+					<aon:outputLabel for="AccountEntry_id"
+						value="#{bundle.aon_id}" />
+					<aon:inputText id="AccountEntry_id" size="10"
+						valueChangeListener="#{accountEntry.addExpression}" />
+
+					<aon:outputLabel for="AccountEntry_accountPeriod"
+						value="#{accountingBundle.accounting_period}" />
+					<aon:inputText id="AccountEntry_accountPeriod" size="10"
+						valueChangeListener="#{accountEntry.addExpression}" />
+
+					<aon:outputLabel for="AccountEntry_type"
+						value="#{bundle.aon_type}" />
+					<aon:selectOneMenu id="AccountEntry_type"
+						converter="aon.EnumConverter"
+						valueChangeListener="#{accountEntry.addEqualExpression}">
+						<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+						<f:selectItems value="#{accountingCollections.accountTypes}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel value="#{bundle.aon_date}" />
+					<aon:div>
+						<aon:outputLabel for="AccountEntry_entryDate-From"
+							styleClass="aon-tip" value="#{bundle.aon_date_from}" />
+						<aon:selectInputDate id="AccountEntry_entryDate-From"
+							value="#{accountEntry.fromDate}"
+							valueChangeListener="#{accountEntry.addEntryDateFromExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+						<aon:outputLabel for="AccountEntry_entryDate-To"
+							styleClass="aon-tip" value="#{bundle.aon_date_to}" />
+						<aon:selectInputDate id="AccountEntry_entryDate-To"
+							value="#{accountEntry.toDate}"
+							valueChangeListener="#{accountEntry.addEntryDateToExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+					</aon:div>
+
+					<aon:outputLabel for="AccountEntry_securityLevel"
+						value="#{bundle.aon_security_level}" />
+					<aon:selectOneMenu id="AccountEntry_securityLevel"
+						valueChangeListener="#{accountEntry.addDirectExpression}">
+						<f:selectItem value="#{nullItem.value}" />
+						<f:selectItems value="#{commonCollections.securityLevels}" />
+					</aon:selectOneMenu>
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+	</ui:define>
+</ui:composition>

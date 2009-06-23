@@ -1,0 +1,281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+
+	<aon:panel>
+		<f:facet name="header">
+			<aon:outputText value="#{accountingBundle.accounting_concepts}" />
+		</f:facet>
+
+		<aon:editDataTable id="TaxesData" var="to" rows="0"
+			value="#{invoiceEntry.details}">
+
+			<aon:rowSelector immediate="true"
+				rendered="#{!invoiceEntry.newDetail and to!=invoiceEntry.currentDetail}"
+				disabled="#{!invoiceEntry.accountSource}"
+				actionListener="#{invoiceEntry.onSelectDetail}" />
+
+			<aon:column styleClass="aon-editDataTable-iconColumn aon-column-5">
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<f:facet name="footer">
+					<aon:div>
+						<aon:commandButton value=""
+							styleClass="aon-editDataTable-button aon-icon-new"
+							reRender="TaxesData,invoiceTables"
+							actionListener="#{invoiceEntry.onNewDetail}"
+							rendered="#{!invoiceEntry.newDetail}"
+							disabled="#{!invoiceEntry.accountSource}"
+							accesskey="#{bundle.aon_key_new_line}"
+							focus="Account_Taxable_Base_New">
+						</aon:commandButton>
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-column-10">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_taxable_base}" />
+				</f:facet>
+				<aon:outputText id="Account_Taxable_Base"
+					rendered="#{to!=invoiceEntry.currentDetail}"
+					value="#{to.taxableBase}">
+					<f:convertNumber pattern="#,##0.00" />
+				</aon:outputText>
+				<aon:inputText id="Account_Taxable_Base_Upd" size="8"
+					rendered="#{to==invoiceEntry.currentDetail}"
+					value="#{invoiceEntry.currentDetail.taxableBase}" required="true" />
+				<f:facet name="footer">
+					<aon:div style="text-align:right;">
+						<aon:inputText id="Account_Taxable_Base_New" size="8"
+							reRender="newRetention,newVat,newSurcharge,newTotal"
+							rendered="#{invoiceEntry.newDetail}"
+							value="#{invoiceEntry.currentDetail.taxableBase}">
+
+							<a4j:support event="onkeyup"
+								onsubmit="if(event.keyCode != 27) return false;"
+								eventsQueue="lineEscKeyUp" ignoreDupResponses="true"
+								requestDelay="100"
+								reRender="TaxesData,aonToolbar,invoiceContainer"
+								actionListener="#{invoiceEntry.onCancelDetail}"
+								immediate="true" focus="newFinance">
+							</a4j:support>
+
+						</aon:inputText>
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-column-10">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_retention}" />
+				</f:facet>
+				<aon:outputText value="#{to.retention.percentage}"
+					rendered="#{to!=invoiceEntry.currentDetail}">
+					<f:convertNumber pattern="#,##0.00" />
+				</aon:outputText>
+
+				<aon:selectOneMenu id="Account_Retention-Edit"
+					styleClass="aon-form-selectOneMenu-field"
+					rendered="#{to==invoiceEntry.currentDetail}"
+					value="#{invoiceEntry.currentDetail.retention}">
+					<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+					<f:selectItems value="#{productCollections.retentionTaxes}" />
+				</aon:selectOneMenu>
+				<aon:outputText value="&#160;" />
+				<f:facet name="footer">
+					<aon:selectOneMenu id="Account_Retention-New"
+						styleClass="aon-form-selectOneMenu-field"
+						rendered="#{invoiceEntry.newDetail}"
+						value="#{invoiceEntry.currentDetail.retention}"
+						reRender="newRetention,newVat,newSurcharge,newTotal">
+						<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+						<f:selectItems value="#{productCollections.retentionTaxes}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-column-15">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_vat}" />
+				</f:facet>
+				<aon:outputText value="#{to.vat.percentage}"
+					rendered="#{to!=invoiceEntry.currentDetail}">
+					<f:convertNumber pattern="#,##0.00" />
+				</aon:outputText>
+				<aon:selectOneMenu id="Account_Vat-Edit"
+					styleClass="aon-form-selectOneMenu-field"
+					rendered="#{to==invoiceEntry.currentDetail}"
+					value="#{invoiceEntry.currentDetail.vat}">
+					<f:selectItems value="#{productCollections.vatTaxes}" />
+				</aon:selectOneMenu>
+				<aon:outputText value="&#160;" />
+				<f:facet name="footer">
+					<aon:selectOneMenu id="Account_Vat-New"
+						styleClass="aon-form-selectOneMenu-field"
+						rendered="#{invoiceEntry.newDetail}"
+						value="#{invoiceEntry.currentDetail.vat}" ajaxSingle="true"
+						reRender="newRetention,newVat,newSurcharge,newTotal">
+						<f:selectItems value="#{productCollections.vatTaxes}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-column-10">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_retention_quota}" />
+				</f:facet>
+				<aon:outputText value="#{to.retentionQuota}">
+					<f:convertNumber pattern="#,##0.00" />
+				</aon:outputText>
+				<f:facet name="footer">
+					<aon:div id="newRetention" rendered="#{invoiceEntry.newDetail}">
+						<aon:outputText
+							value="#{invoiceEntry.currentDetail.retentionQuota}">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-column-10">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_vat_quota}" />
+				</f:facet>
+				<aon:outputText value="#{to.vatQuota}">
+					<f:convertNumber pattern="#,##0.00" />
+				</aon:outputText>
+				<f:facet name="footer">
+					<aon:div id="newVat" rendered="#{invoiceEntry.newDetail}">
+						<aon:outputText value="#{invoiceEntry.currentDetail.vatQuota}">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-column-5">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_surcharge}" />
+				</f:facet>
+				<aon:outputText value="#{to.surcharge}">
+					<f:convertNumber pattern="#,##0.00" />
+				</aon:outputText>
+				<f:facet name="footer">
+					<aon:div id="newSurcharge" rendered="#{invoiceEntry.newDetail}">
+						<aon:outputText value="#{invoiceEntry.currentDetail.surcharge}">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-column-10">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_total}" />
+				</f:facet>
+				<aon:outputText value="#{to.total}">
+					<f:convertNumber pattern="#,##0.00" />
+				</aon:outputText>
+				<f:facet name="footer">
+					<aon:div id="newTotal" rendered="#{invoiceEntry.newDetail}">
+						<aon:outputText value="#{invoiceEntry.currentDetail.total}">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{accountBundle.account_account}" />
+				</f:facet>
+				<aon:outputText value="#{to.account}"
+					rendered="#{to!=invoiceEntry.currentDetail}" />
+				<ui:include
+					src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
+					<ui:param name="wizard" value="#{accountWizard}" />
+					<ui:param name="id" value="accountUpdateId" />
+					<ui:param name="required" value="#{true}" />
+					<ui:param name="size" value="12" />
+					<ui:param name="renderDescription" value="#{false}" />
+					<ui:param name="renderedAttr"
+						value="#{to==invoiceEntry.currentDetail}" />
+					<ui:param name="disabled" value="#{false}" />
+					<ui:param name="reRenderAttr" value="none" />
+					<ui:param name="entity"
+						value="#{invoiceEntry.currentDetail.account}" />
+					<ui:param name="ELExpression"
+						value="invoiceEntry.currentDetail.account" />
+				</ui:include>
+				<f:facet name="footer">
+					<ui:include
+						src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
+						<ui:param name="wizard" value="#{accountWizard}" />
+						<ui:param name="id" value="accountNewId" />
+						<ui:param name="required" value="#{true}" />
+						<ui:param name="renderDescription" value="#{false}" />
+						<ui:param name="renderedAttr" value="#{invoiceEntry.newDetail}" />
+						<ui:param name="disabled" value="#{false}" />
+						<ui:param name="size" value="12" />
+						<ui:param name="reRenderAttr" value="none" />
+						<ui:param name="entity"
+							value="#{invoiceEntry.currentDetail.account}" />
+						<ui:param name="ELExpression"
+							value="invoiceEntry.currentDetail.account" />
+					</ui:include>
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-buttonsColumn aon-column-5">
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:div rendered="#{to==invoiceEntry.currentDetail}">
+					<aon:commandButton title="#{bundle.aon_save}"
+						reRender="TaxesData,aonToolbar"
+						actionListener="#{invoiceEntry.onUpdateDetail}"
+						styleClass="aon-editDataTable-button aon-icon-accept" value=""
+						accesskey="#{bundle.aon_key_save_line}" />
+					<aon:commandButton title="#{bundle.aon_cancel}"
+						reRender="TaxesData,aonToolbar,invoiceContainer"
+						actionListener="#{invoiceEntry.onCancelDetail}" immediate="true"
+						onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
+						styleClass="aon-editDataTable-button aon-icon-cancel" value=""
+						accesskey="#{bundle.aon_key_cancel_line}" />
+					<aon:commandButton title="#{bundle.aon_remove}"
+						reRender="TaxesData,aonToolbar"
+						actionListener="#{invoiceEntry.onRemoveDetail}" immediate="true"
+						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;;"
+						styleClass="aon-editDataTable-button aon-icon-delete" value=""
+						accesskey="#{bundle.aon_key_remove_line}" />
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div>
+						<aon:div rendered="#{invoiceEntry.newDetail}">
+							<aon:commandButton title="#{bundle.aon_save}"
+								reRender="TaxesData,aonToolbar"
+								actionListener="#{invoiceEntry.onAddDetail}"
+								onclick="if (!confirm('#{bundle.aon_accept_confirm}')) return false;"
+								styleClass="aon-editDataTable-button aon-icon-accept" value=""
+								accesskey="#{bundle.aon_key_save_line}"
+								focus="Account_Taxable_Base_New" />
+							<aon:commandButton title="#{bundle.aon_cancel}"
+								reRender="TaxesData,aonToolbar,invoiceContainer"
+								actionListener="#{invoiceEntry.onCancelDetail}"
+								immediate="true"
+								onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
+								styleClass="aon-editDataTable-button aon-icon-cancel" value=""
+								accesskey="#{bundle.aon_key_cancel_line}" />
+						</aon:div>
+					</aon:div>
+				</f:facet>
+			</aon:column>
+		</aon:editDataTable>
+	</aon:panel>
+</ui:composition>

@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="dailyTrackingList">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{menuBundle.aon_daily_tracking}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_listing}" />
+					</aon:div>
+
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							actionListener="#{dailyTracking.onReset}"
+							action="daily_tracking_form" accesskey="#{bundle.aon_key_new}" />
+						<h:commandButton id="search" value="#{bundle.aon_search}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							actionListener="#{dailyTracking.onEditSearch}"
+							action="daily_tracking_search"
+							accesskey="#{bundle.aon_key_search}" />
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+				<aon:editDataTable id="dailyTrackingDataList"
+					value="#{dailyTracking.model}" rows="20" var="to"
+					columnClasses="aon-editDataTable-iconColumn,
+								aon-editDataTable-text,
+								aon-editDataTable-text,
+								aon-editDataTable-text,
+								aon-editDataTable-text,
+								aon-editDataTable-number">
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<h:commandButton
+							styleClass="aon-icon-commandButton aon-icon-rowSelector"
+							actionListener="#{dailyTracking.onSelect}"
+							action="daily_tracking_form">
+						</h:commandButton>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{projectBundle.aon_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.trackingDate}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{customerBundle.customer_customer}" />
+						</f:facet>
+						<aon:outputText value="#{to.customer.registry.fullName}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText
+								value="#{projectBundle.aon_daily_tracking_dossier}" />
+						</f:facet>
+						<aon:outputText value="#{to.dossier.number}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText
+								value="#{projectBundle.aon_daily_tracking_activity}" />
+						</f:facet>
+						<aon:outputText value="#{to.activity.activityType.description}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText
+								value="#{projectBundle.aon_daily_tracking_job_type}" />
+						</f:facet>
+						<aon:outputText value="#{to.jobType.description}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText
+								value="#{projectBundle.aon_daily_tracking_duration}" />
+						</f:facet>
+						<aon:outputText value="#{to.trackingDuration}" />
+					</aon:column>
+					</aon:editDataTable>
+					<aon:dataScroller for="dailyTrackingDataList"
+						rowCount="#{dailyTracking.model.rowCount}" showNote="true" />
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>

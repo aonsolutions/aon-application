@@ -1,0 +1,19 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:include src="/com/code/aon/ui/registry/facelet/registry/searchContent.xhtml" />
+		
+	<aon:outputLabel for="Target_advertising"
+		value="#{commercialBundle.commercial_target_advertising}" />
+	<aon:selectOneMenu id="Target_advertising"
+		converter="aon.EnumConverter"
+		valueChangeListener="#{controller.addDirectExpression}">
+		<f:selectItem itemLabel="-" value="#{null}"/>
+		<f:selectItems value="#{commercialCollections.advertisings}" />		
+	</aon:selectOneMenu>	
+	
+</ui:composition>

@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+
+	<aon:panelGroup id="showResourceModalPanel">
+		<c:if test="#{webPage.showResourceModalPanel}">
+			<rich:modalPanel id="resourceModalPanel"
+				rendered="#{webPage.showResourceModalPanel}" showWhenRendered="true"
+				headerClass="aon-popupWindow-title" minHeight="400" height="400"
+				width="580" top="50" left="100">
+
+				<f:facet name="header">
+					<h:outputText
+						value="#{appBundle.aon_web_info_page_resource}" />
+				</f:facet>
+
+				<aon:form id="pagesResourcesForm">
+					<aon:div id="infoR" ajaxRendered="true">
+						<rich:panel
+							bodyClass="aon-modal-panel-resource-body">
+							<aon:editDataTable
+								id="WebInfoPageResource_datatable" value="#{webPage.resources}"
+								var="to" rows="10"
+								columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
+									aon-editDataTable-textColumn aon-width-auto, aon-editDataTable-textColumn, 
+									aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+
+								<aon:rowSelector
+									toggleOnClick="#{webPage.resource == null}"
+									actionListener="#{webPage.onSelectResource}" />
+
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="&#160;" />
+									</f:facet>
+									<aon:outputText value="&#160;" />
+									<f:facet name="footer">
+										<aon:commandButton id="resetR"
+											styleClass="aon-icon-reset aon-icon-commandButton" value=""
+											rendered="#{!webPage.newResource}"
+											actionListener="#{webPage.onResetResource}"
+											accesskey="#{bundle.aon_key_new_line}">
+										</aon:commandButton>
+									</f:facet>
+								</aon:column>
+
+								<aon:column style="width:140px">
+									<f:facet name="header">
+										<aon:outputText
+											value="#{appBundle.aon_web_info_page_resource}" />
+									</f:facet>
+									<aon:outputText
+										value="#{to.rattach.description}"
+										rendered="#{to != webPage.resource}" />
+									<aon:selectOneMenu
+										id="WebInfoPageResource_rattach" value="#{webPage.rattachId}"
+										rendered="#{to == webPage.resource}">
+										<f:selectItems
+											value="#{webPage.images}" />
+									</aon:selectOneMenu>
+									<f:facet name="footer">
+										<aon:selectOneMenu
+											id="WebInfoPageResource_rattach_new"
+											value="#{webPage.rattachId}"
+											rendered="#{webPage.newResource}">
+											<f:selectItems
+												value="#{webPage.images}" />
+										</aon:selectOneMenu>
+									</f:facet>
+								</aon:column>
+
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText
+											value="#{appBundle.aon_web_info_page_resource_description}" />
+									</f:facet>
+									<aon:outputText
+										value="#{to.content}" rendered="#{to!=webPage.resource}" />
+									<aon:inputText
+										value="#{webPage.resource.content}"
+										rendered="#{to==webPage.resource}" size="32" />
+									<f:facet name="footer">
+										<aon:inputText
+											value="#{webPage.resource.content}"
+											rendered="#{webPage.newResource}" size="32" />
+									</f:facet>
+								</aon:column>
+
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="&#160;" />
+									</f:facet>
+									<aon:div
+										rendered="#{to == webPage.resource}">
+										<aon:commandButton
+											title="#{bundle.aon_save}"
+											actionListener="#{webPage.onAcceptResource}" value=""
+											styleClass="aon-editDataTable-button aon-icon-accept"
+											accesskey="#{bundle.aon_key_save_line}" reRender="infoR" />
+										<aon:commandButton
+											title="#{bundle.aon_cancel}"
+											actionListener="#{webPage.onCancelResource}"
+											immediate="#{true}"
+											styleClass="aon-editDataTable-button aon-icon-cancel"
+											reRender="infoR" value=""
+											accesskey="#{bundle.aon_key_cancel_line}" />
+										<aon:commandButton
+											title="#{bundle.aon_remove}"
+											actionListener="#{webPage.onRemoveResource}"
+											styleClass="aon-editDataTable-button aon-icon-delete"
+											value="" accesskey="#{bundle.aon_key_remove_line}"
+											reRender="infoR" />
+									</aon:div>
+									<f:facet name="footer">
+										<aon:div>
+											<aon:outputText
+												rendered="#{!webPage.newResource}" value="&#160;" />
+											<aon:commandButton
+												title="#{bundle.aon_save}"
+												actionListener="#{webPage.onAcceptResource}"
+												rendered="#{webPage.newResource}" value=""
+												styleClass="aon-editDataTable-button aon-icon-accept"
+												accesskey="#{bundle.aon_key_save_line}" reRender="infoR" />
+											<aon:commandButton
+												title="#{bundle.aon_cancel}"
+												actionListener="#{webPage.onCancelResource}"
+												immediate="#{true}" rendered="#{webPage.newResource}"
+												reRender="infoR"
+												styleClass="aon-editDataTable-button aon-icon-cancel"
+												value="" accesskey="#{bundle.aon_key_cancel_line}" />
+										</aon:div>
+									</f:facet>
+								</aon:column>
+							</aon:editDataTable>
+
+							<aon:dataScroller2
+								for="WebInfoPageResource_datatable" showNote="true" />
+
+						</rich:panel>
+					</aon:div>
+
+					<aon:div id="closeResourceModalPanel">
+						<aon:div style="text-align:right;">
+							<rich:spacer height="3" />
+							<br />
+							<aon:panelGrid
+								style="float:right;border:1px gray solid">
+								<aon:commandButton
+									reRender="infoR, closeResourceModalPanel"
+									style="padding-right:15px"
+									value="#{appBundle.aon_web_info_close}" immediate="true"
+									styleClass="aon-icon-commandButton aon-icon-cancel">
+									<f:setPropertyActionListener
+										target="#{webPage.showResourceModalPanel}" value="#{false}" />
+									<rich:componentControl
+										for="resourceModalPanel" operation="hide" event="onclick" />
+								</aon:commandButton>
+							</aon:panelGrid>
+						</aon:div>
+					</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+</ui:composition>

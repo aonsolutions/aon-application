@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="financePrinterForm">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_checking_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+				<ui:define name="toolbarContent">
+					<h:commandLink value="#{customerBundle.customer_module}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="customeFeeChecking" />
+					</h:commandLink>
+					<h:commandLink value="#{customerBundle.customer_module}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="customeFeeChecking" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</h:commandLink>
+
+					<h:commandLink value="#{financeBundle.finance_finances}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="financeChecking" />
+					</h:commandLink>
+					<h:commandLink value="#{financeBundle.finance_finances}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="financeChecking" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</h:commandLink>
+				</ui:define>
+			</ui:decorate>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="dataTable" columns="2">
+
+					<aon:outputLabel for="Customer_status"
+						value="#{financeBundle.finance_checking_customer_status}" />
+					<aon:selectOneMenu id="Customer_status"
+						value="#{financePrint.customerStatus}">
+						<f:selectItem itemLabel="-" value="#{null}"/> 
+						<f:selectItems value="#{customerCollections.customerStatuses}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Finance_status"
+						value="#{financeBundle.finance_checking_finance_status}" />
+					<aon:selectOneMenu id="Finance_status"
+						value="#{financePrint.financeStatus}">
+						<f:selectItem itemLabel="-" value="#{null}"/> 
+						<f:selectItems value="#{financeCollections.financeStatuses}" />
+					</aon:selectOneMenu>
+
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+	
+</ui:composition>

@@ -1,0 +1,229 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<aon:div id="#{customer_id}Container" rendered="#{renderedAttr}">
+		<a4j:region>
+			<aon:inputText id="#{customer_id}" value="#{customerEntity}"
+				disabled="#{disabled}" required="#{required}" size="5">
+				<!--
+				El siguiente a4j:support activa el acelerador F2, para mostrar la ventana 
+				de seleccion.
+			 -->
+				<a4j:support event="onkeyup"
+					onsubmit="if(event.keyCode != 113) return false;"
+					eventsQueue="#{customer_id}KeyUp" ignoreDupResponses="true"
+					requestDelay="100" actionListener="#{customerWizard.onShow}"
+					immediate="true" reRender="#{customer_id}Container"
+					oncomplete="searchFieldForFocus('#{customer_id}searchName')">
+				</a4j:support>
+
+				<a4j:support eventsQueue="#{customer_id}OnChange"
+					actionListener="#{customerWizard.onLookup}"
+					ignoreDupResponses="true" requestDelay="100" event="onchange"
+					reRender="#{customer_id}Name,#{reRenderAttr}">
+					<a4j:actionparam name="customerActionParam"
+						value="#{customerELExpression}"
+						assignTo="#{customerWizard.valueExpression}">
+					</a4j:actionparam>
+					<a4j:actionparam name="lookupActionParam"
+						value="#{onLookupELExpression}"
+						assignTo="#{customerWizard.extendedAttributesValueExpression}">
+					</a4j:actionparam>
+					<a4j:actionparam name="valueChangeListener"
+						value="#{valueChangeListener}"
+						assignTo="#{customerWizard.valueChangeListener}">
+					</a4j:actionparam>
+				</a4j:support>
+			</aon:inputText>
+		</a4j:region>
+		<a4j:commandButton styleClass="aon-lookupButton" value=""
+			actionListener="#{customerWizard.onShow}" immediate="true"
+			oncomplete="searchFieldForFocus('#{customer_id}searchName')"
+			reRender="#{customer_id}Container" />
+		<aon:div id="#{customer_id}Name" style="display:inline">
+			<aon:outputText rendered="#{customerEntity.registry.name != null}"
+				value="#{customerEntity.registry.fullName}" />
+			<aon:outputText rendered="#{customerEntity.registry.name == null}"
+				value="---------------------------------" />
+		</aon:div>
+		<rich:modalPanel id="#{customer_id}customerPanel" minHeight="600"
+			rendered="#{customerWizard.visible}" showWhenRendered="true"
+			minWidth="650" top="50" left="100" height="600" width="650"
+			zindex="2000" resizeable="true">
+
+			<a4j:support event="onkeyup"
+				onsubmit="if(event.keyCode != 27) return false;"
+				eventsQueue="#{customer_id}EscKeyUp" ignoreDupResponses="true"
+				requestDelay="100" actionListener="#{customerWizard.onClose}"
+				immediate="true" reRender="#{customer_id}Container"
+				oncomplete="searchFieldForFocus('#{customer_id}')">
+			</a4j:support>
+
+			<f:facet name="header">
+				<aon:div styleClass="aon-popupWindow-title">
+					<h:outputText value="#{customerBundle.customer_selection}" />
+				</aon:div>
+			</f:facet>
+			<f:facet name="controls">
+			
+				<a4j:commandButton type="button" styleClass="aon-popupWindow-close"
+						actionListener="#{customerWizard.onClose}" immediate="true"
+						reRender="#{customer_id}Container"
+						oncomplete="searchFieldForFocus('#{customer_id}')">
+				</a4j:commandButton>
+<!-- 			
+				<h:outputText value="&#160;&#160;&#160;&#160;&#160;"
+					style="cursor:pointer;margin-top:2px;"
+					styleClass="aon-popupWindow-close">
+					<a4j:support event="onclick"
+						actionListener="#{customerWizard.onClose}" immediate="true"
+						reRender="#{customer_id}Container"
+						oncomplete="searchFieldForFocus('#{customer_id}')">
+					</a4j:support>
+				</h:outputText>
+ -->
+			</f:facet>
+			<a4j:region>
+				<aon:panelGrid columns="2">
+					<aon:outputText value="#{customerBundle.customer_name}" />
+					<aon:inputText value="#{customerWizard.name}" size="40">
+						<a4j:support event="onchange" ajaxSingle="true"
+							eventsQueue="#{customer_id}nm" ignoreDupResponses="true"
+							requestDelay="100"
+							actionListener="#{customerWizard.inputChanged}" />
+					</aon:inputText>
+
+					<aon:outputText value="#{customerBundle.customer_surname}" />
+					<aon:inputText value="#{customerWizard.surname}" size="40">
+						<a4j:support event="onchange" ajaxSingle="true"
+							eventsQueue="#{customer_id}sn" ignoreDupResponses="true"
+							requestDelay="100"
+							actionListener="#{customerWizard.inputChanged}" />
+					</aon:inputText>
+
+					<aon:outputText value="#{customerBundle.customer_alias}" />
+					<aon:inputText value="#{customerWizard.alias}" size="20">
+						<a4j:support event="onchange" ajaxSingle="true"
+							eventsQueue="#{customer_id}ac" ignoreDupResponses="true"
+							requestDelay="100"
+							actionListener="#{customerWizard.inputChanged}" />
+					</aon:inputText>
+
+					<aon:outputText value="#{customerBundle.customer_document}" />
+					<aon:div>
+						<aon:inputText value="#{customerWizard.document}" size="15">
+							<a4j:support event="onchange" ajaxSingle="true"
+								eventsQueue="#{customer_id}ic" ignoreDupResponses="true"
+								requestDelay="100"
+								actionListener="#{customerWizard.inputChanged}" />
+						</aon:inputText>
+						<a4j:commandButton value="#{bundle.aon_search}"
+							style="margin-left: 5px;"
+							actionListener="#{customerWizard.onSearch}"
+							accesskey="#{bundle.aon_key_search}"
+							eventsQueue="#{customer_id}SearchQueue" ignoreDupResponses="true"
+							requestDelay="100" reRender="#{customer_id}tableContainer"
+							oncomplete="selectFirstRow('#{customer_id}table')">
+						</a4j:commandButton>
+					</aon:div>
+				</aon:panelGrid>
+			</a4j:region>
+
+			<rich:separator height="2px;"
+				style="margin-top: 5px;margin-bottom: 5px;" />
+
+			<aon:div id="#{customer_id}tableContainer">
+				<aon:div styleClass="aon-form-note"
+					rendered="#{customerWizard.model.rowCount == 0}">
+					<aon:div styleClass="aon-form-note-internal">
+						<aon:panelGroup>
+							<aon:outputText value="#{bundle.aon_search_no_results}" />
+						</aon:panelGroup>
+					</aon:div>
+				</aon:div>
+				<aon:editDataTable id="#{customer_id}table"
+					value="#{customerWizard.model}" var="cust"
+					rendered="#{customerWizard.model.rowCount > 0}"
+					columnClasses="aon-editDataTable-iconColumn,
+						aon-editDataTable-textColumn,
+						aon-editDataTable-textColumn,
+						aon-editDataTable-textColumn">
+					<h:column>
+						<aon:commandButton id="#{customer_id}RowSelector"
+							styleClass="aon-editDataTable-button aon-icon-rowSelector"
+							actionListener="#{customerWizard.onSelect}" immediate="true"
+							ajaxSingle="true" eventsQueue="#{customer_id}SelectQueue"
+							requestDelay="100" ignoreDupResponses="true"
+							onkeyup="tableKeyUp(event.keyCode)"
+							reRender="#{customer_id}Container,#{reRenderAttr}">
+							<a4j:actionparam name="customerActionParam"
+								value="#{customerELExpression}"
+								assignTo="#{customerWizard.valueExpression}">
+							</a4j:actionparam>
+							<a4j:actionparam name="lookupActionParam"
+								value="#{onLookupELExpression}"
+								assignTo="#{customerWizard.extendedAttributesValueExpression}">
+							</a4j:actionparam>
+							<a4j:actionparam name="valueChangeListener"
+								value="#{valueChangeListener}"
+								assignTo="#{customerWizard.valueChangeListener}">
+							</a4j:actionparam>
+						</aon:commandButton>
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							<aon:outputText value="#{customerBundle.customer_code}" />
+						</f:facet>
+						<aon:outputText value="#{cust.id}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<aon:outputText value="#{customerBundle.customer_document}" />
+						</f:facet>
+						<aon:outputText value="#{cust.registry.document}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<aon:outputText value="#{customerBundle.customer_name}" />
+						</f:facet>
+						<aon:outputText value="#{cust.registry.fullName}" />
+					</h:column>
+				</aon:editDataTable>
+
+				<aon:panelGrid columns="2" style="border: 0;" cellpadding="5"
+					columnClasses="aon-dataScroller-text,aon-dataScroller-buttons">
+
+					<aon:div style="padding-left: 2em;">
+						<a4j:commandButton immediate="true"
+							eventsQueue="#{customer_id}PreviousQueue" requestDelay="100"
+							ignoreDupResponses="true" reRender="#{customer_id}tableContainer"
+							styleClass="aon-dataScroller-button aon-dataScroller-button-previous"
+							rendered="#{customerWizard.previousPageAvailable}"
+							actionListener="#{customerWizard.previousPage}"
+							oncomplete="selectFirstRow('#{customer_id}table')" />
+
+						<a4j:commandButton immediate="true"
+							eventsQueue="#{customer_id}NextQueue" ignoreDupResponses="true"
+							requestDelay="100" reRender="#{customer_id}tableContainer"
+							styleClass="aon-dataScroller-button aon-dataScroller-button-next"
+							rendered="#{customerWizard.nextPageAvailable}"
+							actionListener="#{customerWizard.nextPage}"
+							oncomplete="selectFirstRow('#{customer_id}table')" />
+					</aon:div>
+
+				</aon:panelGrid>
+
+			</aon:div>
+		</rich:modalPanel>
+
+		<a4j:loadScript src="/facelet/shared/customer/customerId.js" />
+
+	</aon:div>
+</ui:composition>

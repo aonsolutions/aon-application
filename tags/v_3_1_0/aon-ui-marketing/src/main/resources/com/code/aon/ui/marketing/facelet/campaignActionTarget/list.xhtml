@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="targetList">
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_target_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_listing}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="accept" value="#{bundle.aon_accept}"
+						action="campaignAction_form" actionListener="#{campaignActionTarget.onAcceptTargets}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_accept}" />				
+					<aon:commandButton value="#{bundle.aon_search}"
+						action="campaignActionTarget_search" actionListener="#{target.onEditSearch}"
+						styleClass="aon-finding-toolbar-item aon-icon-search"
+						accesskey="#{bundle.aon_key_search}" />
+					<aon:commandButton value="#{bundle.aon_back}"
+						action="campaignAction_form" actionListener="#{target.onCancel}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+						accesskey="#{bundle.aon_key_cancel}" />			
+				</ui:define>
+			</ui:decorate>			
+
+			<ui:include src="/com/code/aon/ui/commercial/facelet/target/listContent.xhtml" >
+				<ui:param name="skipRowSelector" value="#{true}" />
+			</ui:include>
+
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="stockList">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_stock_module}" />
+				<ui:param name="controller" value="#{stock}" />
+				<ui:param name="skipResetButton" value="true" />
+				
+				<ui:define name="additionalToolbarContent">
+					<h:commandLink value="#{warehouseBundle.warehouse_print_by_warehouse}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="stockWarehouseList" />
+					</h:commandLink>
+					<h:commandLink value="#{warehouseBundle.warehouse_print_by_item}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="stockItemList" />
+					</h:commandLink>
+				</ui:define>				
+				
+			</ui:decorate>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:dataTable id="stockData" value="#{stock.model}"
+					var="to" rows="20" rendered="#{stock.model.rowCount > 0}"
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn aon-width-100,
+						aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
+
+					<aon:rowSelector action="stock_form" actionListener="#{stock.onSelect}" />
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{warehouseBundle.warehouse_warehouse}" />
+						</f:facet>
+						<aon:outputText value="#{to.warehouse.name}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_id}" />
+						</f:facet>
+						<aon:outputText value="#{to.item.product.code}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{productBundle.product_item}" />
+						</f:facet>
+						<aon:outputText value="#{to.item.product.name} #{to.item.detail}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:panelGroup>
+								<aon:outputText value="#{bundle.aon_quantity}" />
+							</aon:panelGroup>
+						</f:facet>
+						<aon:outputText value="#{to.quantity}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					</aon:column>
+
+				</aon:dataTable>
+
+				<aon:dataScroller2 for="stockData" showNote="true" />
+			</aon:div>
+			
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>					

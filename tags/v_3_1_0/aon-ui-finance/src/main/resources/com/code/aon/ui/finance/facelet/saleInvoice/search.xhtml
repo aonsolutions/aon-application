@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="saleInvoiceForm">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_sale_invoice_management_module}" />
+				<ui:param name="controller" value="#{saleInvoice}" />
+			</ui:include>
+
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:param name="controller" value="#{saleInvoice}" />
+				<ui:define name="searchContent">
+				
+					<aon:outputLabel for="Invoice_series"
+						value="#{bundle.aon_series}/#{bundle.aon_number}" />
+
+					<aon:panelGrid columns="2">
+						<aon:inputText id="Invoice_series"
+							valueChangeListener="#{saleInvoice.addExpression}"
+							size="4" />
+						<aon:inputText id="Invoice_number"
+							valueChangeListener="#{saleInvoice.addExpression}"
+							size="7" />
+					</aon:panelGrid>
+<!-- 					
+							<t:outputLabel for="Customer_Lookup_id" value="#{customerBundle.customer_customer}" 
+								styleClass="aon-form-input-text-label" />
+							<t:div>
+								<t:inputText id="Customer_Lookup_id" forceId="#{true}"
+									styleClass="aon-form-input-text" size="5" 
+									onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');"
+									valueChangeListener="#{feeInvoicing.addCustomerExpression}" />
+								<h:commandButton id="find_Customer_Lookup_id"
+									styleClass="aon-form-lookup-button" value="" immediate="true"
+									onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');return false;" />
+								<t:inputText id="Customer_full_name" forceId="#{true}"
+									disabled="true" 
+									styleClass="aon-form-input-text-disabled" size="40" />
+							</t:div>
+-->
+					
+				</ui:define>
+			</ui:decorate>
+<!-- 
+			<t:div styleClass="aon_content">
+				<t:div forceId="#{true}" id="aon-scroll-area">
+					<t:div styleClass="aon-scroll-area-internal">
+						<h:panelGrid columns="2" styleClass="aon-form-table"
+							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+							
+
+							<h:outputLabel
+								styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+								for="Invoice_issue_date1" value="#{financeBundle.aon_date}" />
+							<t:div>
+								<h:outputLabel for="Invoice_fromDate" value="#{financeBundle.finance_date_from}"
+									styleClass="aon-form-input-text-label" />								
+								<t:inputCalendar id="Invoice_fromDate" size="10"
+									valueChangeListener="#{feeInvoicing.addFromIssueDateExpression}"
+									monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+									currentDayCellClass="currentDayCell" renderAsPopup="true"
+									styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+									popupTodayString="#{bundle.aon_popup_today}"
+									popupWeekString="#{bundle.aon_popup_week}" />
+								<h:outputLabel for="Invoice_toDate" value="#{financeBundle.finance_date_to}"
+									styleClass="aon-form-input-text-label" />								
+								<t:inputCalendar id="Invoice_toDate" size="10"
+									valueChangeListener="#{feeInvoicing.addToIssueDateExpression}"
+									monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+									currentDayCellClass="currentDayCell" renderAsPopup="true"
+									styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+									popupTodayString="#{bundle.aon_popup_today}"
+									popupWeekString="#{bundle.aon_popup_week}" />
+							</t:div>
+
+						</h:panelGrid>
+					</t:div>
+				</t:div>
+			</t:div>
+ -->			
+		</aon:form>
+	</ui:define>
+</ui:composition>

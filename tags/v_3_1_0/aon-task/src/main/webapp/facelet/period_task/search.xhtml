@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="periodTaskForm">
+
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{menuBundle.aon_period_task}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_search}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<h:commandButton id="search" value="#{bundle.aon_search}"
+							action="period_task_list" actionListener="#{periodTask.onSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="period_task_form" actionListener="#{periodTask.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}" />
+						<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							action="period_task_list" actionListener="#{periodTask.onCancel}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_cancel}" />
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+			<!-- end toolbar navigation -->
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-scroll-area-internal">
+
+					<aon:panelGrid columns="2">
+
+						<aon:outputLabel for="PeriodicalTask_task_description"
+							value="#{projectBundle.aon_description}" />
+						<aon:inputText id="PeriodicalTask_task_description" size="60"
+							valueChangeListener="#{periodTask.addDirectExpression}" />
+
+						<aon:outputLabel value="#{projectBundle.period_task_next_date}" />
+						<aon:panelGrid columns="4" styleClass="aon-nowrap">
+							<aon:outputLabel for="PeriodicalTask_nextDate-From"
+								value="#{projectBundle.aon_date_from}" />
+							<aon:selectInputDate id="PeriodicalTask_nextDate-From"
+								mode="client"
+								value="#{periodTask.nextDateFrom}"
+								valueChangeListener="#{periodTask.addNextDateFromExpression}"
+								popupDateFormat="#{bundle.aon_date_pattern}"
+								renderAsPopup="true">
+							</aon:selectInputDate>
+
+							<aon:outputLabel for="PeriodicalTask_nextDate-To"
+								value="#{projectBundle.aon_date_to}" />
+							<aon:selectInputDate id="PeriodicalTask_nextDate-To"
+								value="#{periodTask.nextDateTo}"
+								valueChangeListener="#{periodTask.addNextDateToExpression}"
+								popupDateFormat="#{bundle.aon_date_pattern}"
+								renderAsPopup="true">
+							</aon:selectInputDate>
+						</aon:panelGrid>
+
+					</aon:panelGrid>
+
+				</aon:div>
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>

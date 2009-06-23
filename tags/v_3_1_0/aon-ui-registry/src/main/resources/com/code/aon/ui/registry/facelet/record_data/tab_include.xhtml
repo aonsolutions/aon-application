@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:div ajaxRendered="true">
+
+		<c:if test="#{controllerAlias.to != null}">
+			<ui:include
+				src="/com/code/aon/ui/registry/facelet/record_data/form.xhtml">
+				<ui:param name="controllerAlias" value="#{controllerAlias}" />
+			</ui:include>
+		</c:if>
+
+		<c:if test="#{controllerAlias.to == null}">
+			<ui:include
+				src="/com/code/aon/ui/registry/facelet/record_data/list.xhtml">
+				<ui:param name="controllerAlias" value="#{controllerAlias}" />
+				<ui:param name="dataTableId" value="recordDataDataTable" />
+			</ui:include>
+		</c:if>
+	</aon:div>
+</ui:composition>

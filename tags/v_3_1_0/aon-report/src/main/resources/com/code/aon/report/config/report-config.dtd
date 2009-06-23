@@ -1,0 +1,43 @@
+<?xml encoding="UTF-8"?>
+
+<!ELEMENT report-config (default-config?,report+)>
+<!ELEMENT default-config (fetch-mode?,params?)>
+<!ELEMENT report (template,((bean,criteria,fetch-mode?)|collection)?,params?,nested-report*,dynamic-params?)>
+<!ELEMENT template EMPTY>
+<!ELEMENT bean EMPTY>
+<!ELEMENT criteria EMPTY>
+<!ELEMENT nested-report EMPTY>
+<!ELEMENT fetch-mode EMPTY>
+<!ELEMENT collection EMPTY>
+<!ELEMENT params (param)+>
+<!ELEMENT param EMPTY>
+<!ELEMENT dynamic-params EMPTY>
+
+
+<!ATTLIST report-config xmlns CDATA #FIXED ''>
+<!ATTLIST default-config xmlns CDATA #FIXED ''>
+<!ATTLIST report xmlns CDATA #FIXED ''
+  description CDATA #REQUIRED
+  id NMTOKEN #REQUIRED>
+<!ATTLIST template xmlns CDATA #FIXED ''
+  path CDATA #REQUIRED>
+<!ATTLIST bean xmlns CDATA #FIXED ''
+  key CDATA #REQUIRED>
+<!ATTLIST criteria xmlns CDATA #FIXED ''
+  provider CDATA #REQUIRED>
+<!ATTLIST collection xmlns CDATA #FIXED ''
+  provider CDATA #REQUIRED>
+<!ATTLIST nested-report xmlns CDATA #FIXED ''
+  report NMTOKEN #REQUIRED>
+<!ATTLIST fetch-mode xmlns CDATA #FIXED ''
+  paginated CDATA #REQUIRED
+  page-count CDATA #IMPLIED
+  virtualizer-max-size CDATA #IMPLIED>
+<!ATTLIST params
+  xmlns CDATA #FIXED ''>
+<!ATTLIST param
+  xmlns CDATA #FIXED ''
+  id CDATA #REQUIRED
+  value CDATA #REQUIRED>
+<!ATTLIST dynamic-params xmlns CDATA #FIXED ''
+  provider CDATA #REQUIRED>

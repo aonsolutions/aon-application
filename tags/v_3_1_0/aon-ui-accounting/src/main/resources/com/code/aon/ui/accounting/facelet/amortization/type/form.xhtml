@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="amortizationTypeForm">
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{accountingBundle.accounting_amortization_type_module}" />
+				<ui:param name="controller" value="#{amortizationType}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="dataTable" columns="2">
+
+					<aon:outputLabel for="AmortizationType_id" value="#{bundle.aon_id}" />
+					<aon:inputText id="AmortizationType_id"
+						value="#{amortizationType.to.id}" size="5" disabled="true" />
+
+					<aon:outputLabel for="AmortizationType_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="Amortization_description"
+						value="#{amortizationType.to.description}" required="true"
+						size="70">
+						<f:validateLength maximum="64" />
+					</aon:inputText>
+
+					<aon:outputLabel for="fixedAccountId"
+						value="#{accountingBundle.accounting_fixed_asset_account}" />
+					<ui:decorate
+						template="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
+						<ui:param name="wizard" value="#{accountWizard}" />
+						<ui:param name="id" value="fixedAccountId" />
+						<ui:param name="required" value="#{true}" />
+						<ui:param name="size" value="12" />
+						<ui:param name="renderDescription" value="#{true}" />
+						<ui:param name="renderedAttr" value="#{true}" />
+						<ui:param name="disabled" value="#{false}" />
+						<ui:param name="reRenderAttr" value="none" />
+						<ui:param name="entity"
+							value="#{amortizationType.to.fixedAssetAccount}" />
+						<ui:param name="ELExpression"
+							value="amortizationType.to.fixedAssetAccount" />
+					</ui:decorate>
+
+					<aon:outputLabel for="accumulatedAccountId"
+						value="#{accountingBundle.accounting_accumulated_account}" />
+					<ui:decorate
+						template="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
+						<ui:param name="wizard" value="#{accountWizard}" />
+						<ui:param name="id" value="accumulatedAccountId" />
+						<ui:param name="required" value="#{true}" />
+						<ui:param name="size" value="12" />
+						<ui:param name="renderDescription" value="#{true}" />
+						<ui:param name="renderedAttr" value="#{true}" />
+						<ui:param name="disabled" value="#{false}" />
+						<ui:param name="reRenderAttr" value="none" />
+						<ui:param name="entity"
+							value="#{amortizationType.to.accumulatedAccount}" />
+						<ui:param name="ELExpression"
+							value="amortizationType.to.accumulatedAccount" />
+					</ui:decorate>
+
+					<aon:outputLabel for="allocationAccountId"
+						value="#{accountingBundle.accounting_allocation_account}" />
+					<ui:decorate
+						template="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
+						<ui:param name="wizard" value="#{accountWizard}" />
+						<ui:param name="id" value="allocationAccountId" />
+						<ui:param name="required" value="#{true}" />
+						<ui:param name="size" value="12" />
+						<ui:param name="renderDescription" value="#{true}" />
+						<ui:param name="renderedAttr" value="#{true}" />
+						<ui:param name="disabled" value="#{false}" />
+						<ui:param name="reRenderAttr" value="none" />
+						<ui:param name="entity"
+							value="#{amortizationType.to.allocationAccount}" />
+						<ui:param name="ELExpression"
+							value="amortizationType.to.allocationAccount" />
+					</ui:decorate>
+
+					<aon:outputLabel for="AmortizationType_percentage"
+						value="#{bundle.aon_percentage}" />
+					<aon:div>
+						<aon:inputText id="AmortizationType_percentage"
+							value="#{amortizationType.to.percentage}" size="5"/>
+						<aon:outputText value="%" />
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
