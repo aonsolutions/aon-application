@@ -35,7 +35,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.account.bridge</artifactId>
-			<version>3.12.1</version>
+			<version>3.13.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
