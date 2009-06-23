@@ -13,7 +13,7 @@
 	<artifactId>aon-web-payroll</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB PAYROLL</name>
-	<version>0.18.0</version>
+	<version>0.18.1</version>
 	<description>AON WEB PAYROLL</description>
 	<build>
 		<finalName>aon-payroll</finalName>
