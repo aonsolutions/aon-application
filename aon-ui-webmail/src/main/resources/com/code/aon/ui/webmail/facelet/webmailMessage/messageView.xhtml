@@ -250,7 +250,7 @@
 					value="#{webmailBundle.webmail_subject}: " />
 				<aon:div>
 					<aon:outputText value="&#160;" />
-					<aon:outputText escape="false" converter="longString" value="#{webmailMessage.message.displaySubject}" />
+					<aon:outputText escape="true" converter="longString" value="#{webmailMessage.message.subject}" />
 				</aon:div>
 						
 				<!-- Date -->
