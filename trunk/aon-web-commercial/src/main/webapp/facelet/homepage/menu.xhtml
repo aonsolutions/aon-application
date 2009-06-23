@@ -56,7 +56,9 @@
 				<aon:dropDownMenu value="#{marketingBundle.marketing_marketing}">
 					<aon:menuItem id="campaign"
 						value="#{marketingBundle.marketing_campaign_module}"
-						action="campaign_list" actionListener="#{campaign.onSearch}" />
+						action="campaign_list" actionListener="#{campaign.onSearch}" >
+						<f:setPropertyActionListener value="#{true}" target="#{target.showSearchOnlyCustomers}" />
+					</aon:menuItem>
 					<aon:menuItem id="survey" 
 						value="#{marketingBundle.marketing_survey_module}" 
 						action="survey_list" actionListener="#{survey.onSearch}" />
