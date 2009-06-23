@@ -9,7 +9,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.account</artifactId>
 	<packaging>war</packaging>
-	<version>3.1.0</version>
+	<version>3.1.1</version>
 	<description>AON WEB ACCOUNT</description>
 	<name>AON WEB ACCOUNT</name>
 	<build>
@@ -70,7 +70,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.finance</artifactId>
-			<version>3.18.0</version>
+			<version>3.19.0</version>
 			<scope>runtime</scope>
 			<exclusions>
 				<exclusion>

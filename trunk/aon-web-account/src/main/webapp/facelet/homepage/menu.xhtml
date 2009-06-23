@@ -94,7 +94,6 @@
 
 			</aon:dropDownMenu>
 
-<!-- 
 			<aon:dropDownMenu value="#{appBundle.account_fixed_assets}">
 				<aon:menuItem style="color:red;" action="amortization_list" value="#{accountingBundle.accounting_amortization_form_module}"/>
 				<aon:menuSeparator/>
@@ -103,20 +102,12 @@
 				<aon:menuSeparator/>
 				<aon:menuItem action="amortizationType_list" value="#{accountingBundle.accounting_amortization_type_module}"/>				
 			</aon:dropDownMenu>
--->
 
 			<aon:dropDownMenu value="#{appBundle.account_budget}">
 				<aon:menuItem actionListener="#{accountBudget.onEditSearch}" action="accountBudget_search" value="#{accountingBundle.accounting_account_budget_module}"/>
 				<aon:menuItem actionListener="#{budgetedProfitAndLossReport.onEditSearch}" action="budgeted_profit_and_loss_search" value="#{accountingBundle.accounting_budgeted_balance_sheet_module}"/>
 				<aon:menuItem actionListener="#{budgetedProfitAndLossComparison.onEditSearch}" action="compared_budgeted_profit_and_loss_search" value="#{accountingBundle.accounting_compared_budgeted_balance_sheet_module}"/>
 			</aon:dropDownMenu>
-<!-- 
-			<aon:dropDownMenu value="#{appBundle.account_utilities}">
-				<aon:menuItem disabled="true" value="#{appBundle.account_transfer}"/>
-				<aon:menuItem disabled="true" value="#{appBundle.account_import_data}"/>
-				<aon:menuItem disabled="true" value="#{appBundle.account_export_data}"/>
-			</aon:dropDownMenu>
--->
 
 			<aon:dropDownMenu value="#{financeBundle.finance_menu_group}">
 				<aon:menuItem value="#{financeBundle.finance_charge_module}" actionListener="#{finance.onEditSearchCharge}" action="finance_search" />
@@ -132,10 +123,6 @@
 				<aon:menuItem action="defaultParams" actionListener="#{accAppParams.onLoad}" value="#{accountingBundle.accounting_default_params_module}"/>
 				<aon:menuItem action="series" value="#{configBundle.config_series_module}"/>
 				<aon:menuItem action="tax" value="#{configBundle.config_tax_module}"/>
-<!-- 
-				<aon:menuSeparator/>
-				<aon:menuItem action="officialBalance_list" value="#{accountingBundle.accounting_official_balance_configuration_module}"/>
- -->				
 				<aon:menuSeparator/>
 				<aon:menuGroup value="#{appBundle.account_utilities}">
 					<aon:menuItem action="accountChange_form" actionListener="#{accountChange.onReset}" value="#{accountingBundle.accounting_change_account}"/>
