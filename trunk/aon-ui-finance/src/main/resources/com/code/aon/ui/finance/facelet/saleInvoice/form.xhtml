@@ -17,6 +17,7 @@
 				<ui:param name="toolbarTitle"
 					value="#{financeBundle.finance_sale_invoice_management_module}" />
 				<ui:param name="controller" value="#{saleInvoice}" />
+				<ui:param name="skipRemoveButton" value="#{!saleInvoice.removable or !saleInvoiceFinance.allPending}" />
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="finances"
 						value="#{financeBundle.finance_generate}"
@@ -34,7 +35,7 @@
 					<aon:commandButton id="unrecord"
 						value="#{financeBundle.finance_unrecord}"
 						actionListener="#{saleInvoice.onUnrecordInvoice}"
-						rendered="#{saleInvoice.recorded}"
+						rendered="#{saleInvoice.recorded and !saleInvoice.accountSource}"
 						styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
 						reRender="saleInvoiceForm"
 						onclick="Richfaces.showModalPanel('waitProccess')" 
