@@ -96,21 +96,21 @@ public class AlbumGenerator extends Generator {
 									ahlist.add(ahandler);
 									for (int k=0;k<accessList.size();k++){
 										if (Math.abs(k / album.getItemsPerPage())==0){
-											vu.put("back_url", ahandler.getUrl());
+											vu.put(BACK_URL_KEY, ahandler.getUrl());
 										}else if (Math.abs(k / album.getItemsPerPage())>0){
-											vu.put("back_url", Templates.ALBUM.getHtmlName().replaceAll("%NAME%", ahandler.getAlias()+"_"+(Math.abs(k / album.getItemsPerPage())+1)));
+											vu.put(BACK_URL_KEY, Templates.ALBUM.getHtmlName().replaceAll("%NAME%", ahandler.getAlias()+"_"+(Math.abs(k / album.getItemsPerPage())+1)));
 										}
-										vu.put("album_image", accessList.get(k));
+										vu.put(ALBUM_IMAGE_KEY, accessList.get(k));
 										if (k>0)
-											vu.put("album_image_previous", accessList.get(k-1).getUrl());
+											vu.put(ALBUM_IMAGE_PREVIOUS_KEY, accessList.get(k-1).getUrl());
 										if (k+1<accessList.size())
-											vu.put("album_image_next", accessList.get(k+1).getUrl());
+											vu.put(ALBUM_IMAGE_NEXT_KEY, accessList.get(k+1).getUrl());
 										logger.info(" Generando imagen.");
 										generate(vu, Templates.ALBUM_IMAGES, "ALBUM_IMAGE_"+accessList.get(k).getId());
-										vu.remove("back_url");
-										vu.remove("album_image");
-										vu.remove("album_image_previous");
-										vu.remove("album_image_next");
+										vu.remove(BACK_URL_KEY);
+										vu.remove(ALBUM_IMAGE_KEY);
+										vu.remove(ALBUM_IMAGE_PREVIOUS_KEY);
+										vu.remove(ALBUM_IMAGE_NEXT_KEY);
 									}
 									int page = 0;
 									Iterator<AlbumImageHandler> iter = accessList.iterator();
@@ -120,24 +120,24 @@ public class AlbumGenerator extends Generator {
 										if (partialLst.size() == album.getItemsPerPage()
 												|| !iter.hasNext()){
 											page++;
-											vu.put("album", ahandler);
-											vu.put("back_url", achandler.getUrl() );
+											vu.put(ALBUM_KEY, ahandler);
+											vu.put(BACK_URL_KEY, achandler.getUrl() );
 											if (page==2){
-												vu.put("album_previous", ahandler.getUrl());
+												vu.put(ALBUM_PREVIOUS_KEY, ahandler.getUrl());
 											}else if (page>2){
-												vu.put("album_previous", Templates.ALBUM.getHtmlName().replaceAll("%NAME%", ahandler.getAlias()+"_"+(page-1)));
+												vu.put(ALBUM_PREVIOUS_KEY, Templates.ALBUM.getHtmlName().replaceAll("%NAME%", ahandler.getAlias()+"_"+(page-1)));
 											}
 											if (iter.hasNext()){
-												vu.put("album_next", Templates.ALBUM.getHtmlName().replaceAll("%NAME%", ahandler.getAlias()+"_"+(page+1)));
+												vu.put(ALBUM_NEXT_KEY, Templates.ALBUM.getHtmlName().replaceAll("%NAME%", ahandler.getAlias()+"_"+(page+1)));
 											}
-											vu.put("album_image_list", partialLst);
+											vu.put(ALBUM_IMAGE_LIST_KEY, partialLst);
 											logger.info(" Generando album de imagenes " + album.getAlias() + ".");
 											generate(vu, Templates.ALBUM, album.getAlias()+(page==1?"":"_"+page));
-											vu.remove("back_url");
-											vu.remove("album_previous");
-											vu.remove("album_next");
-											vu.remove("album");
-											vu.remove("album_image_list");
+											vu.remove(BACK_URL_KEY);
+											vu.remove(ALBUM_PREVIOUS_KEY);
+											vu.remove(ALBUM_NEXT_KEY);
+											vu.remove(ALBUM_KEY);
+											vu.remove(ALBUM_IMAGE_LIST_KEY);
 											partialLst = new ArrayList<AlbumImageHandler>();
 										}
 									}
@@ -146,25 +146,25 @@ public class AlbumGenerator extends Generator {
 								}
 							}
 						}
-						vu.put("back_url", Templates.ALBUM_CATEGORY.getHtmlName().replaceAll("%NAME%", ALBUM_LIST_PAGE));
-						vu.put("album_category", achandler);
-						vu.put("album_list", ahlist);
+						vu.put(BACK_URL_KEY, Templates.ALBUM_CATEGORY.getHtmlName().replaceAll("%NAME%", ALBUM_LIST_PAGE));
+						vu.put(ALBUM_CATEGORY_KEY, achandler);
+						vu.put(ALBUM_LIST_KEY, ahlist);
 						logger.info(" Generando list de album.");
 						generate(vu, Templates.ALBUM_CATEGORY, albumCategory.getAlias());
-						vu.remove("back_url");
-						vu.remove("album_category");
-						vu.remove("album_list");
+						vu.remove(BACK_URL_KEY);
+						vu.remove(ALBUM_CATEGORY_KEY);
+						vu.remove(ALBUM_LIST_KEY);
 
 						achlist.add(achandler);
 					}
 					ahlist = null;
 				}
 			}
-			vu.put("album_category_list", achlist);
+			vu.put(ALBUM_CATEGORY_LIST_KEY, achlist);
 			logger.info(" Generando categorias de album.");
 			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 			generate(vu, Templates.ALBUM_CATEGORY, ALBUM_LIST_PAGE);
-			vu.remove("album_category_list");
+			vu.remove(ALBUM_CATEGORY_LIST_KEY);
 		} catch (ManagerBeanException e) {
 			logger.error(e.getMessage());
 		}finally{

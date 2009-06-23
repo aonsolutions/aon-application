@@ -88,12 +88,12 @@ public class ArticleGenerator extends Generator {
 			String back_url,
 			ArticleDetail articleDetail) {
 		ArticleHandler ahandler = new ArticleHandler(articleDetail);
-		vu.put("back_url", back_url);
-		vu.put("article", ahandler);
+		vu.put(BACK_URL_KEY, back_url);
+		vu.put(ARTICLE_KEY, ahandler);
 		logger.info(" Generando article " + articleDetail.getArticle().getAlias() + ".");
 		generate(vu, templates, articleDetail.getArticle().getAlias());
-		vu.remove("article");
-		vu.remove("back_url");
+		vu.remove(ARTICLE_KEY);
+		vu.remove(BACK_URL_KEY);
 	}
 	
 	public void generate(ArticleType articleType, ArticleCategory selectedArticleCategory) {
@@ -166,23 +166,23 @@ public class ArticleGenerator extends Generator {
 								articleDetail = (ArticleDetail)articleDetailList.get(0);
 								ArticleHandler ahandler = new ArticleHandler(articleDetail);
 								ahlist.add(ahandler);
-								vu.put("back_url", back_url);
-								vu.put("article", ahandler);
+								vu.put(BACK_URL_KEY, back_url);
+								vu.put(ARTICLE_KEY, ahandler);
 								logger.info(" Generando article " + article.getAlias() + ".");
 								generate(vu, templates, article.getAlias());
-								vu.remove("article");
-								vu.remove("back_url");
+								vu.remove(ARTICLE_KEY);
+								vu.remove(BACK_URL_KEY);
 							}
 						}
 						chargeArticleCategoryContext(vu, articleCategory);
 						
 						ArticleCategoryHandler achandler = new ArticleCategoryHandler(articleCategoryDetail,articleType,ahlist);
-						vu.put("article_category", achandler);
-						vu.put("article_list", ahlist);
+						vu.put(ARTICLE_CATEGORY_KEY, achandler);
+						vu.put(ARTICLE_LIST_KEY, ahlist);
 						logger.info(" Generando list de article.");
 						generate(vu, templates,articleType.getName()+"_"+articleCategory.getAlias());
-						vu.remove("article_category");
-						vu.remove("article_list");
+						vu.remove(ARTICLE_CATEGORY_KEY);
+						vu.remove(ARTICLE_LIST_KEY);
 						achlist.add(achandler);
 					}
 					ahlist = null;

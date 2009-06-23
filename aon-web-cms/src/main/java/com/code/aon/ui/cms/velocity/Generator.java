@@ -10,7 +10,7 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class Generator implements ICMSConstants {
+public class Generator implements ICMSConstants, IVelocityConstants {
 
 	protected IGeneratorLogger logger;
 	

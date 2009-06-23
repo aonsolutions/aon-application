@@ -34,12 +34,13 @@ import com.code.aon.ui.cms.email.Emailer;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.CommonGenerator;
+import com.code.aon.ui.cms.velocity.IVelocityConstants;
 import com.code.aon.ui.cms.velocity.attribute.ArticleHandler;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class BulletinController extends BasicI18nController implements ICMSConstants {
+public class BulletinController extends BasicI18nController implements ICMSConstants, IVelocityConstants {
 
 	private int page;
 	
@@ -181,13 +182,13 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 			    }else{
 			    	StringWriter writer = new StringWriter();
 			    	buff = new BufferedWriter(writer);
-			        vu.put("title", bulletinDetail.getTitle());
-			        vu.put("content", bulletinDetail.getContent());
-			        vu.put("articles", article_content);
+			        vu.put(TITLE_KEY, bulletinDetail.getTitle());
+			        vu.put(CONTENT_KEY, bulletinDetail.getContent());
+			        vu.put(ARTICLES_KEY, article_content);
 					vu.generate(template, buff, "Bulletin");
-			        vu.remove("articles");
-			        vu.remove("content");
-			        vu.remove("title");
+			        vu.remove(ARTICLES_KEY);
+			        vu.remove(CONTENT_KEY);
+			        vu.remove(TITLE_KEY);
 			        
 			        status.info("Enviando mails...");
 

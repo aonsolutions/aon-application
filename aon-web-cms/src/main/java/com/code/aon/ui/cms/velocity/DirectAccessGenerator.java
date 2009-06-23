@@ -54,11 +54,11 @@ public class DirectAccessGenerator extends Generator {
 				}else{
 					detail = (DirectAccessGroupDetail)directAccessGroupDetailList.get(0);
 					dagh = new DirectAccessGroupHandler(detail,getDirectAccessList(group));
-					vu.put("direct_access_group", dagh);
+					vu.put(DIRECT_ACCESS_GROUP_KEY, dagh);
 					logger.info(" Generando accesos directos " + group.getAlias() + ".");
 					CommonGenerator.getCommonGenerator().chargeContext(vu, group.getSection());
 					generate(vu, Templates.DIRECT_ACCESS, group.getAlias());
-					vu.remove("direct_access_group");
+					vu.remove(DIRECT_ACCESS_GROUP_KEY);
 				}
 			}
 		} catch (ManagerBeanException e) {

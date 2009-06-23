@@ -80,10 +80,10 @@ public class MenuGenerator extends Generator {
 				Menu menu = (Menu)l.get(i);
 				ArrayList<MenuOptionHandler> menu_list = getMenuOptionList(menu);
 				if (menu_list != null && menu_list.size() > 0) {  
-					vu.put("menu_list", menu_list);
+					vu.put(MENU_LIST_KEY, menu_list);
 					logger.info(" Generando Menu " + menu.getAlias() + ".");
 					generate(vu, Templates.MENU, menu.getAlias());
-					vu.remove("menu_list");
+					vu.remove(MENU_LIST_KEY);
 				}
 			}
 		} catch (ManagerBeanException e) {

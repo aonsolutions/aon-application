@@ -72,13 +72,13 @@ public class BannerGenerator extends Generator {
 					BannerCategoryHandler bch = new BannerCategoryHandler(detail);
 					ArrayList<BannerHandler> accessList = getBannerList(detail);
 					if (accessList != null && accessList.size() > 0) {
-						vu.put("banner_category", bch);
-						vu.put("banner_list", accessList);
+						vu.put(BANNER_CATEGORY_KEY, bch);
+						vu.put(BANNER_LIST_KEY, accessList);
 						logger.info(" Generando banners " + group.getAlias() + ".");
 						CommonGenerator.getCommonGenerator().chargeContext(vu, group.getSection());
 						generate(vu, Templates.BANNERS, group.getAlias());
-						vu.remove("banner_category");
-						vu.remove("banner_list");
+						vu.remove(BANNER_CATEGORY_KEY);
+						vu.remove(BANNER_LIST_KEY);
 					}
 				}
 			}
