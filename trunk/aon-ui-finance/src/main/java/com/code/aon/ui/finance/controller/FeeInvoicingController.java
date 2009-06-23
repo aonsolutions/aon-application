@@ -5,16 +5,12 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.common.BeanManager;
@@ -144,7 +140,6 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void onInvoice(ActionEvent event) {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
@@ -181,15 +176,14 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 					HibernateUtil.getSession(sessionName).flush();
 					HibernateUtil.commitTransaction(sessionName);
 				}
-				DataModel invoiceModel;
-				if (invoicedList instanceof List) {
-					invoiceModel = new ListDataModel((List) invoicedList);
-				} else {
-					List invoices = new LinkedList(invoicedList);
-					invoiceModel = new ListDataModel(invoices);
-				}
+
+				Invoice firstInvoice = (Invoice)invoicedList.toArray()[0];
+				Invoice lastInvoice = (Invoice)invoicedList.toArray()[invoicedList.size()-1];
 				IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
-				invoiceController.setModel(invoiceModel);
+				Criteria criteria = new Criteria();
+				criteria.addBetweenExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), firstInvoice.getId(), lastInvoice.getId());
+				invoiceController.setCriteria(criteria);
+				invoiceController.onSearch(null);
 				setRedirect(true);
 			} else {
 				setRedirect(false);
