@@ -813,6 +813,16 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- **************** FINANCIAL STATEMENTS ************************** -->
+	<managed-bean>
+		<managed-bean-name>financialStatement</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.accounting.controller.FinancialStatementController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+
+
 	<!--  ****************************************** -->
 	<!--  ******** Navigation Rules **************** -->
 	<!--  ****************************************** -->
@@ -1147,6 +1157,17 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	<!-- **************** FINANCIAL STATEMENTS ************************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>financialStatement_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/financial/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>financialStatement_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/financial/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
 	
 	
 </faces-config>

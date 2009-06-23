@@ -121,6 +121,8 @@
 			<aon:dropDownMenu value="#{financeBundle.finance_menu_group}">
 				<aon:menuItem value="#{financeBundle.finance_charge_module}" actionListener="#{finance.onEditSearchCharge}" action="finance_search" />
 				<aon:menuItem value="#{financeBundle.finance_payment_module}" actionListener="#{finance.onEditSearchPayment}" action="finance_search" />
+				<aon:menuSeparator/>
+				<aon:menuItem action="financialStatement_search" actionListener="#{financialStatement.onReset}" value="#{accountingBundle.accounting_financial_statements}"/>
 			</aon:dropDownMenu>
 
 			<aon:dropDownMenu value="#{appBundle.account_configuration}">
