@@ -31,5 +31,7 @@ public class AonConstants {
 	public static final String BEAN_AUTOCOMPLETEEMAILDICC = "autoCompleteEmailDictionary";
 	public static final String BEAN_AUTOCOMPLETEEMAIL = "autoCompleteEmailBean";
 	public static final String BEAN_MULTISELECTIONEMAIL = "multiSelectionEmailBean";
+
+	public static final String RESOURCE_BUNDLE = "com.code.aon.ui.webmail.i18n.messages";
 	
 }

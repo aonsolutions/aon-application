@@ -17,6 +17,7 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
+import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.groupware.Contact;
@@ -105,7 +106,7 @@ public class BlackListController extends AbstractLdap {
 		MailAccount mailAccount = webMailController.getServer().getAccount();
 		if ( mailAccount.isDefault() ) {
 			LoginController loginController = (LoginController)AonUtil.getRegisteredBean(AonConstants.BEAN_LOGIN);
-			AuthPrincipal principal = loginController.getPrincipal();
+			AuthPrincipal principal = Utils.getAuthPrincipal();
 			return AonDN.getUserDN( principal.getDomain(), principal.getShortName() );
 		}
 		return null;

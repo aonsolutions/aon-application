@@ -20,7 +20,10 @@
 		<a4j:loadStyle src="#{styleSheet}"/>
 	</c:forEach>
 
+	<a4j:loadScript src="/js/Utils.js"/>	
 	<a4j:loadScript src="/js/Window.js"/>
+	<a4j:loadScript src="/js/Form.js"/>
+	<a4j:loadScript src="/fckfaces/FCKeditor/fckeditor.js"/>
 	<link rel="shortcut icon" type="image/x-icon" href="#{facesContext.externalContext.requestContextPath}/aonResources/images/favicon.ico" />
 	<ui:insert name="head" />
 </head>
