@@ -124,10 +124,10 @@
 
 					<aon:outputLabel for="Leasing_securityLevel"
 						value="#{bundle.aon_security_level}" />
-					<aon:selectOneMenu id="Leasing_securityLevel"
+					<aon:selectOneRadio id="Leasing_securityLevel"
 						value="#{loanEntry.loan.securityLevel}">
 						<f:selectItems value="#{commonCollections.securityLevels}" />
-					</aon:selectOneMenu>
+					</aon:selectOneRadio>
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>

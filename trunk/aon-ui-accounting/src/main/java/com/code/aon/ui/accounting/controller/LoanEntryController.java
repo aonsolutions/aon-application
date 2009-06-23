@@ -25,6 +25,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
@@ -88,6 +89,7 @@ public class LoanEntryController implements ISpecialAccountEntry {
 	private Loan initializeLoan() {
 		Loan loan = new Loan();
 		loan.setLoanDate(new Date());
+		loan.setSecurityLevel(SecurityLevel.OFFICIAL);
 		return loan;
 	}
 	

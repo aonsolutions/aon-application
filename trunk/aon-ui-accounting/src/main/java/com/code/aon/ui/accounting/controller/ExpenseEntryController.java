@@ -28,6 +28,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
 import com.code.aon.ql.Criteria;
@@ -119,6 +120,7 @@ public class ExpenseEntryController implements ISpecialAccountEntry{
 		ExpenseEntryHeader header = new ExpenseEntryHeader();
 		header.setDate(new Date());
 		header.setAccount(null);
+		header.setSecurityLevel(SecurityLevel.OFFICIAL);
 		return header;
 	}
 	
