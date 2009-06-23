@@ -3,12 +3,12 @@ package com.code.aon.account.bridge.writer;
 import java.util.Date;
 import java.util.List;
 
+import com.code.aon.account.Account;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatchDetail;
-import com.code.aon.registry.RegistryBank;
 
 public class FinanceRecordingTo implements ITransferObject {
 
@@ -18,7 +18,7 @@ public class FinanceRecordingTo implements ITransferObject {
 	
 	private Date date;
 	
-	private RegistryBank registryBank;
+	private Account paymentAccount;
 	
 	private SecurityLevel securityLevel;
 
@@ -44,12 +44,12 @@ public class FinanceRecordingTo implements ITransferObject {
 		this.date = date;
 	}
 
-	public RegistryBank getRegistryBank() {
-		return registryBank;
+	public Account getPaymentAccount() {
+		return paymentAccount;
 	}
 
-	public void setRegistryBank(RegistryBank registryBank) {
-		this.registryBank = registryBank;
+	public void setPaymentAccount(Account paymentAccount) {
+		this.paymentAccount = paymentAccount;
 	}
 
 	public SecurityLevel getSecurityLevel() {
