@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	
+	<bean class="com.code.aon.payroll.avanzadas.gestel.Variable" sqlName="variables">
+		<alias names="cdg,descripcion,linvariable_diurna,linvariable_domingo,linvariable_fecfin,linvariable_festdiurna,linvariable_festivo,linvariable_festivoesp,linvariable_festnocturna,linvariable_id_cdg,linvariable_id_fecini,Linvariable_nocturna,Linvariable_nocturnidad,Linvariable_transporte" />
+		<hibernate names="cdg,descripcion,linvariable.diurna,linvariable.domingo,linvariable.fecfin,linvariable.festdiurna,linvariable.festivo,linvariable.festivoesp,linvariable.festnocturna,linvariable.id.cdg,linvariable.id.fecini,Linvariable.nocturna,Linvariable.nocturnidad,Linvariable.transporte" />
+	</bean>
+	
+</dao>
+
+ 
+
+
