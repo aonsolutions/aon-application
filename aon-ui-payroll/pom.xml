@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.payroll</artifactId>
-	<version>0.18.0</version>
+	<version>1.0.0</version>
 	<description>AON UI PAYROLL</description>
 	<name>AON UI PAYROLL</name>
 	<build>
@@ -46,25 +46,25 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon-payroll</artifactId>
-			<version>0.15.0</version>
+			<version>1.0.0</version>
 			<scope>compile</scope>
 		</dependency>			
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security.bridge</artifactId>
-			<version>3.1.0</version>
+			<version>3.3.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId> 
 			<artifactId>aon.security</artifactId>
-			<version>1.7.0</version>
+			<version>1.8.0</version>
 			<scope>provided</scope>
 		</dependency>	
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>3.4.1</version>
+			<version>3.5.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
