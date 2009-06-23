@@ -5,26 +5,28 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<ui:include src="/com/code/aon/ui/registry/facelet/registry/searchContent.xhtml">
-		<ui:param name="controller" value="#{customer}" />
-	</ui:include>
-		
-	<aon:outputLabel for="Customer_customerSegment_id"
-		value="#{bundle.aon_segment}" />
-	<aon:selectOneMenu id="Customer_customerSegment_id"
-		value="#{customerCollections.customerSegment}"
-		valueChangeListener="#{controller.addDirectIdEqualExpression}">
-		<f:selectItem itemLabel="-" value="#{null}"/>		
-		<f:selectItems value="#{customerCollections.customerSegments}" />
-	</aon:selectOneMenu>
-		
-	<aon:outputLabel for="Customer_status"
-		value="#{bundle.aon_status}" />
-	<aon:selectOneMenu id="Customer_status"
-		converter="aon.EnumConverter"
-		valueChangeListener="#{controller.addExpression}">
-		<f:selectItem itemLabel="-" value="#{null}"/>
-		<f:selectItems value="#{customerCollections.customerStatuses}" />
-	</aon:selectOneMenu>
-	
+	<aon:outputLabel for="Customer_id" value="#{bundle.aon_id}" />
+	<aon:inputText id="Customer_id" size="10"
+		valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel for="Customer_registry_document"
+		value="#{bundle.aon_company_document}"
+		styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+	<aon:inputText id="Customer_registry_document" size="20"
+		valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel for="Customer_registry_name"
+		value="#{bundle.aon_company_name}" />
+	<aon:inputText id="Customer_registry_name" size="40"
+		valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel for="Customer_registry_surname"
+		value="#{registryBundle.registry_surname}" />
+	<aon:inputText id="Customer_registry_surname" size="40"
+		valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel for="Customer_registry_alias"
+		value="#{bundle.aon_company_alias}" />
+	<aon:inputText id="Customer_registry_alias" size="40"
+		valueChangeListener="#{controller.addExpression}" />
 </ui:composition>

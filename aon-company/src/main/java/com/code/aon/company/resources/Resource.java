@@ -26,6 +26,8 @@ import com.code.aon.company.WorkPlace;
 @Table(name="resource")
 public class Resource implements ITransferObject {
 
+	private static final long serialVersionUID = -4406916296529969516L;
+
 	/** Transfer Object Identifier. */
 	private Integer id;
 	

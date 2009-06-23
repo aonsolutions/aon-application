@@ -11,6 +11,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.registry.enumeration.NoteType;
 
@@ -18,6 +20,8 @@ import com.code.aon.registry.enumeration.NoteType;
 @Table(name="rnote")
 public class RegistryNote implements ITransferObject {
 	
+	private static final long serialVersionUID = 1710105082036901638L;
+
 	private Integer id;
 	
 	private Registry registry;
@@ -93,15 +97,35 @@ public class RegistryNote implements ITransferObject {
 		this.notetype = notetype;
 	}
 	
+	private int SHORT_DESC_LENGTH = 45; 
+
 	@Transient
 	public String getShortComments() {
-		if (comments != null &&
-				comments.length()>SHORT_DESC_LENGTH)
+		if (comments != null && comments.length()>SHORT_DESC_LENGTH)
 			return comments.substring(0,SHORT_DESC_LENGTH)+"...";
 		return comments;
 	}
 
-	private int SHORT_DESC_LENGTH = 45; 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof RegistryNote) {
+			RegistryNote o = (RegistryNote) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-	
+	@Override
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
+
 }

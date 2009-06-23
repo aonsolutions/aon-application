@@ -31,13 +31,13 @@
 							accesskey="#{bundle.aon_key_save}" />
 						<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							actionListener="#{dailyTracking.onCancel}"
-							action="daily_tracking_list" immediate="#{true}"
+							action="#{dailyTracking.getReturnAction}" immediate="#{true}"
 							onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_cancel}" />
 						<h:commandButton id="remove" value="#{bundle.aon_remove}"
 							actionListener="#{dailyTracking.onRemove}"
-							action="daily_tracking_list" rendered="#{!dailyTracking.new}"
+							action="#{dailyTracking.getReturnAction}" rendered="#{!dailyTracking.new}"
 							onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							accesskey="#{bundle.aon_key_remove}" />
@@ -52,7 +52,18 @@
 							actionListener="#{dailyTracking.onEditSearch}"
 							action="daily_tracking_search"
 							accesskey="#{bundle.aon_key_search}" />
- 
+<!-- 							
+						<aon:commandButton title="#{projectBundle.load_tasks}"
+							rendered="#{dailyTracking.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-tree"
+							value="#{projectBundle.load_tasks}"
+							actionListener="#{dailyTracking.onLoadFinishedTasks}">
+							<a4j:support event="onclick"
+								oncomplete="#{rich:component('finishedTask')}.show();"
+								reRender="finishedTaskTable" />
+
+						</aon:commandButton>
+ -->
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>
@@ -67,15 +78,6 @@
 						value="#{dailyTracking.to.trackingDate}" required="#{true}"
 						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>
-
-					<aon:outputLabel for="user" rendered="#{!dailyTracking.new and dailyTracking.monitor}"
-						value="#{projectBundle.aon_daily_tracking_user}" />
-					<aon:selectOneMenu id="user"
-						rendered="#{!dailyTracking.new and dailyTracking.monitor}"
-						value="#{dailyTracking.to.user.id}">
-						<f:selectItem value="#{nullSelectItem.value}" />
-						<f:selectItems value="#{dailyTracking.users}" />
-					</aon:selectOneMenu>
 
 					<aon:outputLabel for="DailyTracking_dossier"
 						value="#{projectBundle.aon_daily_tracking_dossier}"

@@ -14,13 +14,10 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.config.UserWorkGroup;
-import com.code.aon.config.WorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
-import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.groupware.Notice;
 import com.code.aon.groupware.dao.IGroupWareAlias;
 import com.code.aon.jaas.auth.AuthPrincipal;
@@ -72,7 +69,6 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	private Integer workGroupId;
 
 	public List<SelectItem> getUsers() {
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>GET USERS<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 		if (users.size() == 0 && workGroupId == null) loadUsers(); 
 		return users;
 	}
@@ -82,7 +78,6 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	}
 	
 	public void workGroupChange(ValueChangeEvent event) {
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>GROUP CHANGE<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 		mailList = null;
 		resetSMS();
         if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
@@ -96,7 +91,6 @@ public class NoticeController extends BasicController implements IAonObjectClass
     }
 
 	public void recipientChange(ValueChangeEvent event) {
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>RECIPIENT CHANGE<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 		mailList = null;
 		resetSMS();
 		if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
@@ -104,24 +98,8 @@ public class NoticeController extends BasicController implements IAonObjectClass
         }
     }
 
-	public List<SelectItem> getWorkgroups() throws ManagerBeanException {
-		List<SelectItem> workgroups = new LinkedList<SelectItem>(); 
-		IManagerBean workGroupBean = BeanManager.getManagerBean(WorkGroup.class); 
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(workGroupBean.getFieldName(IConfigAlias.WORK_GROUP_STATUS), WorkGroupStatus.ACTIVE);
-		criteria.addOrder(workGroupBean.getFieldName(IConfigAlias.WORK_GROUP_DESCRIPTION));
-		Iterator<ITransferObject> iter = workGroupBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			WorkGroup workGroup = (WorkGroup)iter.next();
-			SelectItem item = new SelectItem(workGroup.getId(), workGroup.getDescription());
-			workgroups.add(item);
-		}
-		return workgroups;
-	}
-
     @SuppressWarnings("unchecked")
     public void loadUsers() {
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>LOAD USERS<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     	users = new LinkedList<SelectItem>();
         try {
 	    	if (workGroupId == null) {

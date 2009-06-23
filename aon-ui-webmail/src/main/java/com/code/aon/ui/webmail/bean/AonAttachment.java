@@ -1,21 +1,19 @@
 package com.code.aon.ui.webmail.bean;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import javax.faces.context.FacesContext;
 import javax.mail.MessagingException;
 import javax.mail.Part;
 import javax.mail.internet.MimeUtility;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
+import com.code.aon.ui.webmail.exception.WebmailException;
 
-public class AonAttachment {
-	
-	private static final Logger LOGGER = Logger.getLogger(AonAttachment.class.getName());
+public class AonAttachment{
 	
 	private int position;
 	
@@ -68,9 +66,45 @@ public class AonAttachment {
 			size = size * 75 /100 / 1000;
 			return String.valueOf(size)+" Kb";
 		} catch (MessagingException e) {
-			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 		return "";
+	}
+	
+	public void download() throws WebmailException {
+		try {
+			String filename = part.getFileName();
+			if (filename==null)
+				filename = "no_name_file";
+			FacesContext faces = FacesContext.getCurrentInstance();
+			HttpServletResponse response = (HttpServletResponse) faces
+					.getExternalContext().getResponse();
+			response.setContentType("aplication/disk");
+			response.setHeader("content-disposition", "attachment;filename=\""
+					+ filename + "\"");
+			BufferedOutputStream bos = new BufferedOutputStream(response
+					.getOutputStream());
+
+			byte[] data = new byte[1024];
+			BufferedInputStream bis = new BufferedInputStream(part.getInputStream());
+			boolean eof = false;
+			while (!eof) {
+				int length = bis.read(data);
+				if (length == -1) {
+					eof = true;
+				} else {
+					bos.write(data, 0, length);
+				}
+			}
+			bos.flush();
+			bos.close();
+			bis.close();
+			//JavascriptContext.addJavascriptCall(FacesContext.getCurrentInstance(), "window.open('report.iface', 'myWindow');"); 
+			faces.responseComplete();
+		} catch (IOException e) {
+			throw new WebmailException(e);
+		} catch (MessagingException e) {
+			throw new WebmailException(e);
+		}
 	}
 	
 	public void download(HttpServletResponse response) {
@@ -80,15 +114,24 @@ public class AonAttachment {
 			response.setHeader("content-disposition", "attachment;filename=\""
 					+ filename + "\"");
 			ServletOutputStream sos = response.getOutputStream();
+			byte[] data = new byte[1024];
 			BufferedInputStream bis = new BufferedInputStream(part.getInputStream());
-			IOUtils.copy( bis, sos );
-			response.flushBuffer();
+			boolean eof = false;
+			while (!eof) {
+				int length = bis.read(data);
+				if (length == -1) {
+					eof = true;
+				} else {
+					sos.write(data, 0, length);
+				}
+			}
+			sos.flush();
 			sos.close();
 			bis.close();
 		} catch (IOException e) {
-			LOGGER.log( Level.SEVERE, e.getMessage(), e );
+			e.printStackTrace();
 		} catch (MessagingException e) {
-			LOGGER.log( Level.SEVERE, e.getMessage(), e );
+			e.printStackTrace();
 		}
 	}
 

@@ -28,6 +28,7 @@ import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.messaging.util.Utils;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonFile;
 import com.code.aon.ui.webmail.bean.AonFolder;
@@ -138,7 +139,7 @@ public class FAXManager extends MessageController {
 // ********************************** End of IServices methods implementation **********************************
 
 	private AonMessage compoundMessage() throws ManagerBeanException, UnsupportedEncodingException, MessagingException, WebmailException {
-		IManagerBean mailAccountBean = AonUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();	
+		IManagerBean mailAccountBean = FormUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();	
 		MailAccount mailAccount = (MailAccount) mailAccountBean.get( super.getSenderMailAccountId() );
 		String cc = getCountrycode();
     	AonMessage aonMessage = compoundMessage(

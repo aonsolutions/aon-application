@@ -4,7 +4,6 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:a4j="http://richfaces.org/a4j"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -41,34 +40,14 @@
 							action="daily_tracking_form"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
-
-						<aon:selectBooleanCheckbox id="monitor"
-							value="#{dailyTracking.monitor}" rendered="#{role.monitorRole}">
-							<a4j:support event="onclick"
-								reRender="searchPanel"
-								actionListener="#{dailyTracking.onSwicthMonitor}">
-							</a4j:support>
-						</aon:selectBooleanCheckbox>
-						<aon:outputLabel for="monitor" value="Monitor"
-							rendered="#{role.monitorRole}" />
-
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>
 			<aon:div styleClass="aon-scroll-area">
 				<aon:div styleClass="aon-scroll-area-internal">
 
-					<aon:panelGrid id="searchPanel" columns="2">
+					<aon:panelGrid columns="2">
 
-						<aon:outputLabel for="user" rendered="#{dailyTracking.monitor}"
-							value="#{projectBundle.aon_daily_tracking_user}" />
-						<aon:selectOneMenu id="user"
-							rendered="#{dailyTracking.monitor}"
-							value="#{dailyTracking.userId}">
-							<f:selectItem value="#{nullSelectItem.value}" />
-							<f:selectItems value="#{dailyTracking.users}" />
-						</aon:selectOneMenu>
-	
 						<aon:outputText value="#{projectBundle.aon_customer}" />
 						<ui:include src="/facelet/shared/customer/customerIdInput.xhtml">
 							<ui:param name="customer_id" value="customerId" />

@@ -1,9 +1,7 @@
 package com.code.aon.registry;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -17,8 +15,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.BeanManager;
-import com.code.aon.common.ILookupObject;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -37,10 +36,9 @@ import com.code.aon.registry.enumeration.RegistryType;
 @Entity
 @Table(name="registry")
 @Inheritance(strategy=InheritanceType.JOINED )
-public class Registry implements ITransferObject, ILookupObject {
+public class Registry implements ITransferObject {
 	
-	/** REGISTRY_FULL_NAME. */
-	private static final String REGISTRY_FULL_NAME = "Registry_full_name";
+	private static final long serialVersionUID = 8635760095705923309L;
 
 	/** The id. */
 	private Integer id;
@@ -65,12 +63,6 @@ public class Registry implements ITransferObject, ILookupObject {
 	
 	/** The medias. */
 	private Set<RegistryMedia> medias = new HashSet<RegistryMedia>();
-
-	/**
-	 * The empty constructor.
-	 */
-	public Registry() {
-	}
 
 	/**
 	 * Gets the id.
@@ -245,7 +237,12 @@ public class Registry implements ITransferObject, ILookupObject {
 		this.medias.add( media );
 	}
 	
-	/**
+    @Transient
+    public String getFullName() {
+    	return getName() + " " + ((getSurname() == null) ? "" : getSurname());
+    }
+
+    /**
 	 * Gets the default address.
 	 * 
 	 * @return the default address
@@ -253,6 +250,7 @@ public class Registry implements ITransferObject, ILookupObject {
 	 * @throws ManagerBeanException the manager bean exception
 	 */
 	@Transient
+	@SuppressWarnings("unchecked")
 	public RegistryAddress getDefaultAddress() throws ManagerBeanException {
 		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 		Criteria criteria = new Criteria();
@@ -323,6 +321,7 @@ public class Registry implements ITransferObject, ILookupObject {
 	 * @throws ManagerBeanException the manager bean exception
 	 */
 	@Transient 
+	@SuppressWarnings("unchecked")
 	private RegistryMedia getRegistryMedia(MediaType type) throws ManagerBeanException{
 		IManagerBean rMediaBean = BeanManager.getManagerBean(RegistryMedia.class);
 		Criteria criteria = new Criteria();
@@ -335,26 +334,46 @@ public class Registry implements ITransferObject, ILookupObject {
 		return null;
 	}
 
-	/**
-	 * Gets the map of values used by the lookup.
+    /**
+	 * Gets the pay method.
 	 * 
-	 * @return the map
+	 * @return the pay method
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
 	 */
-    @Transient
-    public Map<String,Object> getLookups() {
-        Map<String,Object> map = new HashMap<String,Object>();
-        map.put(IRegistryAlias.REGISTRY_ID, getId());
-        map.put(IRegistryAlias.REGISTRY_DOCUMENT, getDocument());
-        map.put(IRegistryAlias.REGISTRY_NAME, getName());
-        map.put(IRegistryAlias.REGISTRY_SURNAME, getSurname());
-        map.put(IRegistryAlias.REGISTRY_ALIAS, getAlias());
-        map.put(REGISTRY_FULL_NAME, getName() + " " + ((getSurname() == null) ? "" : getSurname()) );
-        return map;
+	@Transient
+	@SuppressWarnings("unchecked")
+	public RegistryPayMethod getPayMethod() throws ManagerBeanException {
+		IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(rPayMethodBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), getId());
+		Iterator iter = rPayMethodBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			return (RegistryPayMethod)iter.next(); 
+		}
+		return null;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof Registry) {
+			Registry o = (Registry) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
     }
-    
-    @Transient
-    public String getFullName() {
-    	return getName() + " " + ((getSurname() == null) ? "" : getSurname());
-    }
-    
+
 }

@@ -2,20 +2,18 @@ package com.code.aon.ui.webmail.controller;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.mail.MessagingException;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.bean.AonFolder;
-import com.code.aon.ui.webmail.bean.AonMessage;
 import com.code.aon.ui.webmail.bean.AonMessageSortableList;
 import com.code.aon.ui.webmail.bean.AonSearcher;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.exception.WebmailException;
 
-public class SearchController implements WebMailConstants {
+public class SearchController {
 
 	private AonMessageSortableList sortableList;
 	
@@ -109,7 +107,7 @@ public class SearchController implements WebMailConstants {
 	
 	public void searchMessagesCurrentFolder(ActionEvent event) {
 		try{
-			FolderController folderController = (FolderController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_FOLDER);
+			FolderController folderController = (FolderController)AonUtil.getRegisteredBean(AonConstants.BEAN_FOLDER);
 			AonFolder sourceFolder = folderController.getFolder();
 			sortableList = new AonMessageSortableList(sourceFolder.getFolder());
 			AonSearcher as = new AonSearcher();
@@ -127,8 +125,8 @@ public class SearchController implements WebMailConstants {
 				as.addStringTerm(subject,AonSearcher.SUBJECT);
 			}
 			sortableList.setMessageList(as.search());
-	    	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
-	    	messageController.setReturnAction(WebMailConstants.NAVIGATION_SEARCH);
+	    	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
+	    	messageController.setReturnAction(AonConstants.NAVIGATION_SEARCH);
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
@@ -136,15 +134,12 @@ public class SearchController implements WebMailConstants {
 	}
 
 	public void onExit(ActionEvent event) {
-		MessageController messageController = (MessageController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
-		messageController.setReturnAction(WebMailConstants.NAVIGATION_FOLDER);
+		MessageController messageController = (MessageController)AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
+		messageController.setReturnAction(AonConstants.NAVIGATION_FOLDER);
 	}
 	
 	public boolean isResultFound(){
-		if ( this.sortableList != null ) {
-			return ! ArrayUtils.isEmpty(this.sortableList.getMessageList());	
-		}
-		return false;
+		return ! ArrayUtils.isEmpty(this.sortableList.getMessageList());
 	}
 
 	public boolean isResultSelected(){
@@ -152,11 +147,5 @@ public class SearchController implements WebMailConstants {
 			return false;
 		return true;
 	}
-	
-    public void changeSelectedMessage(ActionEvent event) throws MessagingException {
-    	AonMessage aonMessage = (AonMessage) getSortableList().getModel().getRowData();
-    	MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
-       	messageController.setMessage( aonMessage );      				
-    }	
 
 }

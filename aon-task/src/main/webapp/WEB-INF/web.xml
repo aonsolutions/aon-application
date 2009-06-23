@@ -1,21 +1,22 @@
 <?xml version="1.0"?>
-<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
 						http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
 
 	<!-- AON CONFIGURATION -->
 	<!-- Enables and Registers session for concurrent sessions -->
-	<!-- BackDoorAuthentication Filter -->
 	<filter>
 		<filter-name>BackDoorAuthenticationFilter</filter-name>
 		<filter-class>com.code.aon.bridge.session.BackDoorAuthenticationFilter</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>BackDoorAuthenticationFilter</filter-name>
-		<url-pattern>*.jsp</url-pattern>
+		<url-pattern>/auth/*</url-pattern>
 	</filter-mapping>
-	
+
 	<!-- Resource Servlet -->
 	<servlet>
 		<servlet-name>ResourceServlet</servlet-name>
@@ -29,14 +30,19 @@
 	<!-- JSF STANDARD CONFIGURATION -->
 	<context-param>
 		<param-name>javax.faces.CONFIG_FILES</param-name>
-		<param-value> /WEB-INF/beans-faces-config.xml ,/WEB-INF/navigation-faces-config.xml </param-value>
+		<param-value>
+			/WEB-INF/beans-faces-config.xml ,/WEB-INF/navigation-faces-config.xml
+		</param-value>
 	</context-param>
+
 	<context-param>
-		<description> State saving method: "client" or "server" (= default) See JSF Specification 2.5.2 
+		<description>
+			State saving method: "client" or "server" (= default) See JSF Specification 2.5.2
 		</description>
 		<param-name>javax.faces.STATE_SAVING_METHOD</param-name>
 		<param-value>server</param-value>
 	</context-param>
+
 	<context-param>
 		<description>Use Documents Saved as *.xhtml</description>
 		<param-name>javax.faces.DEFAULT_SUFFIX</param-name>
@@ -68,89 +74,124 @@
 
 	<!-- JSF SUN-RI CONFIGURATION -->
 	<context-param>
-		<description> Improving render phase performance. You should increase response buffer (to reduce
-			reallocations at render time) </description>
+		<description>
+			Improving render phase performance. You should increase response buffer (to reduce
+			reallocations at render time)
+		</description>
 		<param-name>com.sun.faces.responseBufferSize</param-name>
 		<param-value>500000</param-value>
 	</context-param>
+
 	<context-param>
 		<param-name>com.sun.faces.displayConfiguration</param-name>
 		<param-value>true</param-value>
 	</context-param>
+
 	<context-param>
-		<description> Defines the maximum number of serialized views stored in the session. Works with
-			server state saving. </description>
+		<description>
+			Defines the maximum number of serialized views stored in the session. Works with server
+			state saving.
+		</description>
 		<param-name>com.sun.faces.numberOfViewsInSession</param-name>
 		<param-value>50</param-value>
 	</context-param>
+
 	<context-param>
-		<description> This parameter defines the maximum number of logical views to store per session. The
-			map used to store the logical views uses an LRU algorighm to keep the map from growing beyone the
-			configured value. </description>
+		<description>
+			This parameter defines the maximum number of logical views to store per session. The map
+			used to store the logical views uses an LRU algorighm to keep the map from growing
+			beyone the configured value.
+		</description>
 		<param-name>com.sun.faces.numberOfLogicalViews</param-name>
 		<param-value>50</param-value>
 	</context-param>
+
 	<context-param>
-		<description> This parameter specifies a class that implements the SerializationProvider SPI. This
-			implementation represents a hook the JSF implementation will use in order to allow the use of
-			alternate Serialization implementations. See the documentation of the interface for more details 
+		<description>
+			This parameter specifies a class that implements the SerializationProvider SPI. This
+			implementation represents a hook the JSF implementation will use in order to allow the
+			use of alternate Serialization implementations. See the documentation of the interface
+			for more details
 		</description>
 		<param-name>com.sun.faces.serializationProvider</param-name>
-		<param-value> org.jboss.web.jsf.integration.serialization.JBossSerializationProvider 
+		<param-value>
+			org.jboss.web.jsf.integration.serialization.JBossSerializationProvider
 		</param-value>
 	</context-param>
 
 
 	<!-- JSF-FACELETS CONFIGURATION -->
 	<context-param>
-		<description> A boolean value that tells the compiler to skip comments (default is true). Even if
-			you comment out code in your page, the tags will not be compiled but expressions (EL) will be
-			treated as if they were inlined-- still compiled and evaluated for output in the document.
-			Skipping comments will remove all comments completely from the document. </description>
+		<description>
+			A boolean value that tells the compiler to skip comments (default is true). Even if you
+			comment out code in your page, the tags will not be compiled but expressions (EL) will
+			be treated as if they were inlined-- still compiled and evaluated for output in the
+			document. Skipping comments will remove all comments completely from the document.
+		</description>
 		<param-name>facelets.SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
 	</context-param>
+
 	<context-param>
-		<description> Setting this to true will cause the FaceletViewHandler to print out debug
-			information in an easy to use screen when an error occurs during the rendering process. 
+		<description>
+			Setting this to true will cause the FaceletViewHandler to print out debug information in
+			an easy to use screen when an error occurs during the rendering process.
 		</description>
 		<param-name>facelets.DEVELOPMENT</param-name>
 		<param-value>false</param-value>
 	</context-param>
+
+<!-- 
 	<context-param>
-		<param-name>facelets.RESOURCE_RESOLVER</param-name>
-		<param-value>com.code.aon.ui.resources.TemplateResolver</param-value>
+		<description>
+			When a page is requested, what interval in seconds should the compiler check for
+			changes. If you don't want the compiler to check for changes once the page is compiled,
+			then use a value of -1. Setting a low refresh period helps during development to be able
+			to edit pages in a running application
+		</description>
+		<param-name>facelets.REFRESH_PERIOD</param-name>		
+		<param-value>-1</param-value>
 	</context-param>
-	<!--
-		<context-param> <description> When a page is requested, what interval in seconds should the
-		compiler check for changes. If you don't want the compiler to check for changes once the page is
-		compiled, then use a value of -1. Setting a low refresh period helps during development to be able
-		to edit pages in a running application </description>
-		<param-name>facelets.REFRESH_PERIOD</param-name> <param-value>-1</param-value> </context-param>
-	-->
+ -->
+ 
 	<context-param>
-		<description> Improving render phase performance. You should increase response buffer (to reduce
-			reallocations at render time) </description>
+		<description>
+			Improving render phase performance. You should increase response buffer (to reduce
+			reallocations at render time)
+		</description>
 		<param-name>facelets.BUFFER_SIZE</param-name>
 		<param-value>500000</param-value>
 	</context-param>
 
 	<!-- JBOSS RICH FACES CONFIGURATION -->
-	<!--
-		<context-param> <param-name>org.richfaces.LoadScriptStrategy</param-name>
-		<param-value>ALL</param-value> </context-param> <context-param>
-		<param-name>org.ajax4jsf.COMPRESS_SCRIPT</param-name> <param-value>false</param-value>
-		</context-param> <context-param> <param-name>org.richfaces.LoadStyleStrategy</param-name>
-		<param-value>ALL</param-value> </context-param>
-	-->
+<!-- 	
 	<context-param>
-		<description> Is a name of a skin used in an application. It can be a literal string with a skin
-			name, or the EL expression (#{...}) pointed to a String property (skin name) or a property of a
-			org.richfaces.framework.skin type. Skin in last case, this instance is used as a current skin 
+		<param-name>org.richfaces.LoadScriptStrategy</param-name>
+		<param-value>ALL</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>org.ajax4jsf.COMPRESS_SCRIPT</param-name>
+		<param-value>false</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>org.richfaces.LoadStyleStrategy</param-name>
+		<param-value>ALL</param-value>
+	</context-param>
+ -->
+ 
+	<context-param>
+		<description>
+			Is a name of a skin used in an application. It can be a literal string with a skin name,
+			or the EL expression (#{...}) pointed to a String property (skin name) or a property of
+			a org.richfaces.framework.skin type. Skin in last case, this instance is used as a
+			current skin
 		</description>
 		<param-name>org.richfaces.SKIN</param-name>
 		<param-value>aon</param-value>
 	</context-param>
+
 	<context-param>
 		<param-name>org.ajax4jsf.xmlparser.ORDER</param-name>
 		<param-value>NONE</param-value>
@@ -159,6 +200,7 @@
 		<param-name>org.ajax4jsf.xmlparser.NONE</param-name>
 		<param-value>/*\.xhtml</param-value>
 	</context-param>
+
 	<filter>
 		<display-name>RichFaces Filter</display-name>
 		<filter-name>richfaces</filter-name>
@@ -181,11 +223,23 @@
 	<servlet-mapping>
 		<servlet-name>InputRichText Servlet</servlet-name>
 		<url-pattern>/fckfaces/*</url-pattern>
-	</servlet-mapping>
+	</servlet-mapping> 
 	<context-param>
 		<param-name>org.fckfaces.CUSTOM_CONFIGURATIONS_PATH</param-name>
 		<param-value>/js/fckconfig.js</param-value>
 	</context-param>
+
+
+	<!-- Sessions Filter -->
+	<filter>
+		<filter-name>SessionFilter</filter-name>
+		<filter-class>com.code.aon.bridge.session.SessionFilter</filter-class>
+	</filter>
+	<!-- Enables and Registers session for concurrent sessions -->
+	<filter-mapping>
+		<filter-name>SessionFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
 
 	<!-- Listener, that enables Concurrent Sessions per User. -->
 	<listener>
@@ -203,9 +257,9 @@
 			<web-resource-name>facelet</web-resource-name>
 			<url-pattern>/facelet/*</url-pattern>
 		</web-resource-collection>
- 		<web-resource-collection>
-			<web-resource-name>jsp</web-resource-name>
-			<url-pattern>*.jsp</url-pattern>
+		<web-resource-collection>
+			<web-resource-name>index.jsp</web-resource-name>
+			<url-pattern>/index.jsp</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>jsf</web-resource-name>
@@ -217,13 +271,15 @@
 			<role-name>User</role-name>
 		</auth-constraint>
 	</security-constraint>
+
 	<login-config>
 		<auth-method>FORM</auth-method>
 		<form-login-config>
-			<form-login-page>/com/code/aon/ui/resources/facelet/login/login.jaas</form-login-page>
-			<form-error-page>/com/code/aon/ui/resources/facelet/login/errorlogin.jaas</form-error-page>
+			<form-login-page>/login/login.jspx</form-login-page>
+			<form-error-page>/login/errorlogin.jspx</form-error-page>
 		</form-login-config>
 	</login-config>
+
 	<security-role>
 		<role-name>Manager</role-name>
 	</security-role>
@@ -233,8 +289,10 @@
 	<security-role>
 		<role-name>User</role-name>
 	</security-role>
+
 	<resource-env-ref>
 		<resource-env-ref-name>jdbc/AonTask</resource-env-ref-name>
 		<resource-env-ref-type>javax.sql.DataSource</resource-env-ref-type>
 	</resource-env-ref>
+
 </web-app>

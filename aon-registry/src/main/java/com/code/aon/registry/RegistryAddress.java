@@ -25,7 +25,9 @@ import com.code.aon.registry.enumeration.StreetType;
 @Table(name="raddress")
 public class RegistryAddress implements ITransferObject, IAddress {
 
-    /** The id. */
+	private static final long serialVersionUID = -104685154793784862L;
+
+	/** The id. */
     private Integer id;
 
     /** The registry. */
@@ -57,12 +59,6 @@ public class RegistryAddress implements ITransferObject, IAddress {
 
     /** The geozone. */
     private GeoZone geozone;
-
-    /**
-     * The empty constructor.
-     */
-    public RegistryAddress() {
-    }
 
     /**
      * Gets the id.
@@ -276,7 +272,7 @@ public class RegistryAddress implements ITransferObject, IAddress {
         this.zip = zip;
     }
 
-    @Override
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {
     		return super.equals(obj);
@@ -292,5 +288,10 @@ public class RegistryAddress implements ITransferObject, IAddress {
 		}
 		return false;
 	}
-    
+
+	@Override
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
+
 }

@@ -223,7 +223,7 @@
 		</phase-listener>
 	</lifecycle>   
 	<converter>
-		<converter-id>aon.AbbreviateConverter</converter-id>
+		<converter-id>com.code.aon.faces.AbbreviateConverter</converter-id>
 		<converter-class>com.code.aon.faces.component.converter.AbbreviateConverter</converter-class>
 		<property>
 			<property-name>maxWidth</property-name>
@@ -231,7 +231,7 @@
 		</property>
 	</converter>
 	<converter>
-		<converter-id>aon.EnumConverter</converter-id>
+		<converter-id>com.code.aon.faces.EnumConverter</converter-id>
 		<converter-class>com.code.aon.faces.component.converter.EnumConverter</converter-class>
 		<property>
 			<property-name>enum</property-name>

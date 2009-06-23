@@ -6,8 +6,7 @@
 	<context-param>
 		<param-name>javax.faces.CONFIG_FILES</param-name>
 		<param-value>
-			/WEB-INF/lookup-beans-faces-config.xml
-			,/WEB-INF/navigation-faces-config.xml
+			/WEB-INF/navigation-faces-config.xml
 		</param-value>
 	</context-param>
 	<context-param>
@@ -36,12 +35,10 @@
 		<param-name>facelets.SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
 	</context-param>
-	<!-- 
 	<context-param>
 		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>-1</param-value>
 	</context-param>
-	 -->
 	<context-param>
 		<param-name>facelets.BUFFER_SIZE</param-name>
 		<param-value>500000</param-value>
@@ -96,18 +93,19 @@
 		<param-name>org.ajax4jsf.DEFAULT_EXPIRE</param-name>
 		<param-value>8640000</param-value>
 	</context-param>
+	<!-- RichFaces 3.3.0.GA: Necesario para que funcione el rich:editor -->
 	<context-param>
-		<param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
-		<param-value>richFaces3.2.1/</param-value>
+		<param-name>org.richfaces.LoadScriptStrategy</param-name>
+		<param-value>ALL</param-value>
+    </context-param>	
+	<context-param>
+		<param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
+		<param-value>richFaces3.3.0/</param-value>
 	</context-param>	
 	<context-param>
 		<param-name>org.richfaces.SKIN</param-name>
 		<param-value>aon</param-value>
 	</context-param>
-	<context-param>
-        <param-name>com.code.aon.report.config.file</param-name>
-        <param-value>/WEB-INF/conf/report-config.xml</param-value>
-    </context-param>
 
 	<!-- Sessions Filter -->
 	<filter>
@@ -128,6 +126,7 @@
 			com.code.aon.bridge.session.ConcurrentSessionListener
 		</listener-class>
 	</listener>
+	
 	<!-- Attachment Servlet -->
 	<servlet>
 		<servlet-name>CompanyLogo</servlet-name>
@@ -144,6 +143,24 @@
 	<servlet-mapping>
 		<servlet-name>CompanyLogo</servlet-name>
 		<url-pattern>*.logo</url-pattern>
+	</servlet-mapping>
+
+	<!-- Attachment Servlet -->
+	<servlet>
+		<servlet-name>CorporateIdentityDocument</servlet-name>
+		<servlet-class>
+			com.code.aon.desktop.servlet.CorporateIdentityDocumentServlet
+		</servlet-class>
+		<init-param>
+			<param-name>pojo</param-name>
+			<param-value>
+				com.code.aon.registry.RegistryAttachment
+			</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CorporateIdentityDocument</servlet-name>
+		<url-pattern>*.cidocument</url-pattern>
 	</servlet-mapping>
 	<filter>
 		<filter-name>Expires Filter</filter-name>
@@ -214,29 +231,12 @@
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>INCLUDE</dispatcher>
-		<dispatcher>ERROR</dispatcher>
 	</filter-mapping>
 
 	<session-config>
 		<session-timeout>240</session-timeout>
 	</session-config>
 
-	<!-- FCK Faces Servlet -->
-	<servlet>
-		<servlet-name>InputRichText Servlet</servlet-name>
-		<servlet-class>
-			com.code.aon.faces.component.richfaces.inputRichText.InputRichTextServlet
-		</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>InputRichText Servlet</servlet-name>
-		<url-pattern>/fckfaces/*</url-pattern>
-	</servlet-mapping>
-	<context-param>
-		<param-name>org.fckfaces.CUSTOM_CONFIGURATIONS_PATH</param-name>
-		<param-value>/js/fckconfig.js</param-value>
-	</context-param>
-	
 	<!-- Resource Servlet -->
 	<servlet>
 		<servlet-name>ResourceServlet</servlet-name>
@@ -261,10 +261,6 @@
 		<web-resource-collection>
 			<web-resource-name>facelet</web-resource-name>
 			<url-pattern>/facelet/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>groupware</web-resource-name>
-			<url-pattern>/groupware/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>

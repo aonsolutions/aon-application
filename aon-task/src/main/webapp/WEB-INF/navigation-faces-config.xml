@@ -5,15 +5,7 @@
 
 <faces-config>
 
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>logout</from-outcome>
-			<to-view-id>/home.jsf</to-view-id> 
-			<redirect/>
-		</navigation-case>
-	</navigation-rule>
-
-	<!-- =================== Dossier Type ================= -->
+    <!-- =================== Dossier Type ================= -->	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>dossier_type_list</from-outcome>
@@ -27,9 +19,9 @@
 			<from-outcome>dossier_type_search</from-outcome>
 			<to-view-id>/facelet/dossier/dossier_type/search.jsf</to-view-id>
 		</navigation-case>
-	</navigation-rule>
+	</navigation-rule>	
 
-	<!-- =================== Employee ================= -->
+    <!-- =================== Employee ================= -->	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>employee_list</from-outcome>
@@ -43,14 +35,10 @@
 			<from-outcome>employee_search</from-outcome>
 			<to-view-id>/facelet/employee/search.jsf</to-view-id>
 		</navigation-case>
-	</navigation-rule>
-
-	<!-- =================== Customer ================= -->
+	</navigation-rule>	
+	
+	<!-- =================== Customer ================= -->	
 	<navigation-rule>
-		<navigation-case>
-			<from-outcome>customer</from-outcome>
-			<to-view-id>/facelet/customer/search.jsf</to-view-id>
-		</navigation-case>
 		<navigation-case>
 			<from-outcome>customer_list</from-outcome>
 			<to-view-id>/facelet/customer/list.jsf</to-view-id>
@@ -63,9 +51,9 @@
 			<from-outcome>customer_search</from-outcome>
 			<to-view-id>/facelet/customer/search.jsf</to-view-id>
 		</navigation-case>
-	</navigation-rule>
+	</navigation-rule>	
 
-	<!-- =================== Dossier ================= -->
+    <!-- =================== Dossier ================= -->	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>dossier_list</from-outcome>
@@ -79,46 +67,82 @@
 			<from-outcome>dossier_search</from-outcome>
 			<to-view-id>/facelet/dossier/search.jsf</to-view-id>
 		</navigation-case>
-	</navigation-rule>
+	</navigation-rule>	
 
-	<!-- =================== Task ================= -->
+	<!-- =================== Task ================= -->	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>task_list</from-outcome>
 			<to-view-id>/facelet/task/list.jsf</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>task_form</from-outcome>
-			<to-view-id>/facelet/task/form.jsf</to-view-id>
-		</navigation-case>
+	        <from-outcome>task_form</from-outcome>
+	        <to-view-id>/facelet/task/form.jsf</to-view-id>
+	    </navigation-case>
 		<navigation-case>
-			<from-outcome>task_search</from-outcome>
-			<to-view-id>/facelet/task/search.jsf</to-view-id>
-		</navigation-case>
+	        <from-outcome>task_search</from-outcome>
+	        <to-view-id>/facelet/task/search.jsf</to-view-id>
+	    </navigation-case>
 	</navigation-rule>
-
-	<!-- =================== Process Launcher ================= -->
+  
+	<!-- =================== Task Monitor ================= -->	
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>process_wizard_step0</from-outcome>
-			<to-view-id>/facelet/process/launcher/step0.jsf</to-view-id>
+			<from-outcome>task_monitor_list</from-outcome>
+			<to-view-id>/facelet/task/monitor/list.jsf</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>process_wizard_step1</from-outcome>
-			<to-view-id>/facelet/process/launcher/step1.jsf</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>process_wizard_step2</from-outcome>
-			<to-view-id>/facelet/process/launcher/step2.jsf</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>process_wizard_step3</from-outcome>
-			<to-view-id>/facelet/process/launcher/step3.jsf</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>process_wizard_step4</from-outcome>
-			<to-view-id>/facelet/process/launcher/step4.jsf</to-view-id>
-		</navigation-case>
+	        <from-outcome>task_monitor_search</from-outcome>
+	        <to-view-id>/facelet/task/monitor/search.jsf</to-view-id>
+	    </navigation-case>
 	</navigation-rule>
+	
+	<!-- =================== Periodical Task ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>period_task_list</from-outcome>
+			<to-view-id>/facelet/period_task/list.jsf</to-view-id>
+		</navigation-case>
+		<navigation-case>
+	        <from-outcome>period_task_form</from-outcome>
+	        <to-view-id>/facelet/period_task/form.jsf</to-view-id>
+	    </navigation-case>
+		<navigation-case>
+	        <from-outcome>period_task_search</from-outcome>
+	        <to-view-id>/facelet/period_task/search.jsf</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+  
+  <!-- =================== Application Menu Navigation Rules ================= -->	
+  <navigation-rule>
+	<navigation-case>
+		<from-outcome>firstContent</from-outcome>
+		<to-view-id>/facelet/homepage/firstContent.jsf</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>content</from-outcome>
+		<to-view-id>/facelet/homepage/content.jsf</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>work_group</from-outcome>
+		<to-view-id>/facelet/workGroup/grid.jsf</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>customer</from-outcome>
+		<to-view-id>/facelet/customer/list.jsf</to-view-id>
+	</navigation-case>
+ 	<navigation-case>
+        <from-outcome>task</from-outcome>
+        <to-view-id>/facelet/task/list.jsf</to-view-id>
+    </navigation-case>
+ 	<navigation-case>
+        <from-outcome>task_monitor</from-outcome>
+        <to-view-id>/facelet/task/monitor/search.jsf</to-view-id>
+    </navigation-case>
+    <navigation-case>
+        <from-outcome>period_task</from-outcome>
+        <to-view-id>/facelet/period_task/form.jsf</to-view-id>
+    </navigation-case>
+  </navigation-rule>
 
 </faces-config>

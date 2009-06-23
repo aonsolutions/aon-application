@@ -1,49 +1,34 @@
 package com.code.aon.ui.webmail.bean;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
-import java.util.logging.Logger;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.io.*;
 
-import javax.faces.context.FacesContext;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
+import javax.mail.*;
 import javax.mail.internet.MimeMultipart;
-import javax.servlet.http.HttpServletRequest;
-
-import com.sun.mail.util.BASE64DecoderStream;
 
 /**
  * Used to store message information.
  */
-public class AonMessageTracer implements IMimeType {
+public class AonMessageTracer {
 
-	private static final Logger LOGGER = Logger.getLogger(AonMessageTracer.class.getName());
-
-	private static final Pattern CID_PATTERN = Pattern.compile(
-			"(cid:[^\"\']+)(\"|\')", Pattern.CASE_INSENSITIVE);
-	
 	private Message message;
 
-	private Set<String> cids;
-	
-	private ArrayList<BodyPart> relateds;
-	
-	private String traceText(Object mimepart) throws MessagingException, IOException {
-		String value = parseCids((String) mimepart);
-		value = AonMessageUtils.parse_tags(value);
-		value = AonMessageUtils.parse_cr(value);
-		return value;
+	private void trace_Text(Object mimepart) throws MessagingException,
+			IOException {
+		String cadena = AonMessageUtils.parse_cid((String) mimepart);
+		cadena = AonMessageUtils.parse_tags(cadena);
+		cadena = AonMessageUtils.parse_cr(cadena);
+		SelectedPart += cadena;
 	}
 
-	private String traceHTML(Object mimepart) throws MessagingException, IOException {
-		return parseCids((String) mimepart);
+	private void trace_HTML(Object mimepart) throws MessagingException,
+			IOException {
+		String cadena = AonMessageUtils.parse_cid((String) mimepart);
+		SelectedPart += cadena;
 	}
 
 	private String trace_alternative(Object mimepart)
@@ -52,19 +37,15 @@ public class AonMessageTracer implements IMimeType {
 		if (mimepart instanceof Multipart) {
 			Multipart multipart = (Multipart) mimepart;
 			for (int i = 0; i < multipart.getCount(); i++) {
-				BodyPart bodyPart = multipart.getBodyPart(i);
-				Object content = bodyPart.getContent();
-				if (content instanceof Multipart) {
-					data = traceAll((Multipart) content).toString();
-				} else if (content instanceof String) {
-					data = (String) content;
-					if (bodyPart.isMimeType(TEXT_PLAIN)) {
+				if (mimepart instanceof Multipart) {
+					data = traceAll(mimepart);
+				} else if (mimepart instanceof String) {
+					data = (String) multipart.getBodyPart(i).getContent();
+					if (multipart.getBodyPart(i).isMimeType("text/plain")) {
 						data = AonMessageUtils.parse_tags(data);
 						data = AonMessageUtils.parse_cr(data);
 					}
-					data = parseCids(data);
-				} else {
-					LOGGER.severe( "Multipart/alternative unexpected content: " + bodyPart.getContentType() );					
+					data = AonMessageUtils.parse_cid(data);
 				}
 			}
 		}
@@ -77,45 +58,44 @@ public class AonMessageTracer implements IMimeType {
 		if (mimepart instanceof Multipart) {
 			Multipart multipart = (Multipart) mimepart;
 			for (int i = 0; i < multipart.getCount(); i++) {
-				BodyPart bodyPart = multipart.getBodyPart(i);
-				if (bodyPart.isMimeType(MULTIPART_ALTERNATIVE)) {
-					Multipart multipart2 = (Multipart) bodyPart.getContent();
-					if (multipart2.getBodyPart(i).isMimeType(TEXT_ANY)) {
+				if (multipart.getBodyPart(i).isMimeType("multipart/alternative")) {
+					Multipart multipart2 = (Multipart) multipart.getBodyPart(i)
+							.getContent();
+					if (multipart2.getBodyPart(i).isMimeType("text/*")) {
 						int numPartsAltRel = multipart2.getCount();
 						for (int j = 0; j < numPartsAltRel; ++j) {
-							data = (String) multipart2.getBodyPart(j)
-									.getContent();
-							if (multipart2.getBodyPart(i)
-									.isMimeType(TEXT_PLAIN)) {
+							data = (String) multipart2.getBodyPart(j).getContent();
+							if (multipart2.getBodyPart(i).isMimeType("text/plain")) {
 							}
 						}
-						data = parseCids(data);
+						data = AonMessageUtils.parse_cid(data);
 					} else {
-						if (bodyPart.isMimeType(APPLICATION_ANY)) {
-							BASE64DecoderStream b64ds = (BASE64DecoderStream) bodyPart
-									.getContent();
+						if (multipart.getBodyPart(i).isMimeType("application/*")) {
+							com.sun.mail.util.BASE64DecoderStream b64ds = (com.sun.mail.util.BASE64DecoderStream) multipart
+									.getBodyPart(i).getContent();
 						}
 					}
-				} else if (bodyPart.isMimeType(TEXT_HTML) || bodyPart.isMimeType(TEXT_PLAIN)) {
-					String tmpdata = (String) bodyPart.getContent();
-					if (bodyPart.isMimeType(TEXT_PLAIN)) {
-						tmpdata = AonMessageUtils.parse_tags(tmpdata);
-						tmpdata = AonMessageUtils.parse_cr(tmpdata);
-					}
-					if (bodyPart.getFileName() == null) {
-						data = tmpdata;
+				} else {
+					if (multipart.getBodyPart(i).isMimeType("text/html")
+							|| multipart.getBodyPart(i).isMimeType("text/plain")) {
+						String tmpdata = (String) multipart.getBodyPart(i)
+								.getContent();
+						if (multipart.getBodyPart(i).isMimeType("text/plain")) {
+							tmpdata = AonMessageUtils.parse_tags(tmpdata);
+							tmpdata = AonMessageUtils.parse_cr(tmpdata);
+						}
+						if (multipart.getBodyPart(i).getFileName() == null) {
+							data = tmpdata;
+						} else {
+						}
 					}
 					return data;
-				} else {
-					LOGGER.severe( "Multipart/mixed unexpected content: " + bodyPart.getContentType() );					
 				}
-			}
+			}			
 		} else if (mimepart instanceof String) {
-			data = parseCids((String) mimepart);
+			data = AonMessageUtils.parse_cid((String) mimepart);
 			data = AonMessageUtils.parse_tags(data);
 			data = AonMessageUtils.parse_cr(data);
-		} else {
-			LOGGER.severe( "Multipart/mixed unexpected content: " + mimepart );
 		}
 		return data;
 	}
@@ -126,114 +106,118 @@ public class AonMessageTracer implements IMimeType {
 		if (mimepart instanceof Multipart) {
 			Multipart multipart = (Multipart) mimepart;
 			for (int i = 0; i < multipart.getCount(); i++) {
-				BodyPart bodyPart = multipart.getBodyPart(i);
-				if (bodyPart.isMimeType(MULTIPART_ALTERNATIVE)) {
-					Multipart multipart2 = (Multipart) bodyPart.getContent();
-					if (multipart2.getBodyPart(i).isMimeType(TEXT_ANY)) {
+				if (multipart.getBodyPart(i).isMimeType("multipart/alternative")) {
+					Multipart multipart2 = (Multipart) multipart.getBodyPart(i)
+							.getContent();
+					if (multipart2.getBodyPart(i).isMimeType("text/*")) {
 						int numPartsAltRel = multipart2.getCount();
 						for (int j = 0; j < numPartsAltRel; ++j) {
-							data = (String) multipart2.getBodyPart(j)
-									.getContent();
-							if (multipart2.getBodyPart(i)
-									.isMimeType(TEXT_PLAIN)) {
+							data = (String) multipart2.getBodyPart(j).getContent();
+							if (multipart2.getBodyPart(i).isMimeType("text/plain")) {
 							}
 						}
-						data = parseCids(data);
+						data = AonMessageUtils.parse_cid(data);
 					}
-				} else if (bodyPart.isMimeType(TEXT_HTML) || bodyPart.isMimeType(TEXT_PLAIN)) {
-					String tmpdata = (String) bodyPart.getContent();
-					tmpdata = parseCids(tmpdata);
-					if (bodyPart.isMimeType(TEXT_PLAIN)) {
-						tmpdata = AonMessageUtils.parse_tags(tmpdata);
-						tmpdata = AonMessageUtils.parse_cr(tmpdata);
-					}
-					if (bodyPart.getFileName() == null) {
-						data = tmpdata;
+				} else {
+					if (multipart.getBodyPart(i).isMimeType("text/html")
+							|| multipart.getBodyPart(i).isMimeType("text/plain")) {
+						String tmpdata = (String) multipart.getBodyPart(i)
+								.getContent();
+						tmpdata = AonMessageUtils.parse_cid(tmpdata);
+						if (multipart.getBodyPart(i).isMimeType("text/plain")) {
+							tmpdata = AonMessageUtils.parse_tags(tmpdata);
+							tmpdata = AonMessageUtils.parse_cr(tmpdata);
+						}
+						if (multipart.getBodyPart(i).getFileName() == null) {
+							data = tmpdata;
+						} else {
+						}
 					}
 					return data;
-				} else {
-					LOGGER.severe( "Multipart/related unexpected content: " + bodyPart.getContentType() );										
 				}
-			}
+			}			
 		} else if (mimepart instanceof String) {
-			data = parseCids((String) mimepart);
+			data = AonMessageUtils.parse_cid((String) mimepart);
 			data = AonMessageUtils.parse_tags(data);
 			data = AonMessageUtils.parse_cr(data);
-		} else {
-			LOGGER.severe( "Multipart/related unexpected content: " + mimepart );
 		}
 		return data;
 	}
 
-	private String traceAll(Multipart multipart) throws MessagingException, IOException {
-		StringBuffer data = new StringBuffer();
-		for (int i = 0; i < multipart.getCount(); i++) {
-			BodyPart bodyPart = multipart.getBodyPart(i);
-			if (bodyPart.isMimeType(MULTIPART_MIXED)) {
-				data.append( trace_mixed(bodyPart.getContent()) );
-			} else if (bodyPart.isMimeType(MULTIPART_ALTERNATIVE)) {
-				data.append( trace_alternative(bodyPart.getContent()) );
-			} else if (bodyPart.isMimeType(MULTIPART_RELATED)) {
-				data.append( trace_related(bodyPart.getContent()) );
-			} else if (bodyPart.isMimeType(MESSAGE_RFC822)) {
-				data.append( traceMessage((Message) bodyPart.getContent()) );
-			} else if (bodyPart.isMimeType(TEXT_HTML) || bodyPart.isMimeType(TEXT_PLAIN)) {
-				String tmpdata = (String) bodyPart.getContent();
-				tmpdata = parseCids(tmpdata);
-				if (bodyPart.isMimeType(TEXT_PLAIN)) {
-					tmpdata = AonMessageUtils.parse_tags(tmpdata);
-					tmpdata = AonMessageUtils.parse_cr(tmpdata);
-				}
-				if (bodyPart.getFileName() == null) {
-					data = new StringBuffer( tmpdata );
-				}
-			} else {
-				LOGGER.severe( "Multipart/* unexpected content: " + bodyPart.getContentType() );
-			}
-		}
-		return data.toString();
-	}
-
-	private String trace(Object mimepart) throws MessagingException, IOException {
-		String value = null;
+	private String traceAll(Object mimepart) throws MessagingException, IOException {
+		String data = "";
 		if (mimepart instanceof Multipart) {
-			value = traceAll( (Multipart) mimepart);
-		} else if (mimepart instanceof String) {
-			value = parseCids((String) mimepart);
-			value = AonMessageUtils.parse_tags(value);
-			value = AonMessageUtils.parse_cr(value);
-			return value;
-		} else {
-			LOGGER.severe( "Unexpected content: " + mimepart );
+			Multipart multipart = (Multipart) mimepart;
+			for (int i = 0; i < multipart.getCount(); i++) {
+				if (multipart.getBodyPart(i).isMimeType("multipart/mixed")) {
+					data += trace_mixed(multipart.getBodyPart(i).getContent());
+				} else {
+					if (multipart.getBodyPart(i).isMimeType(
+							"multipart/alternative")) {
+						data += trace_alternative(multipart.getBodyPart(i)
+								.getContent());
+					} else {
+						if (multipart.getBodyPart(i).isMimeType(
+								"multipart/related")) {
+							data += trace_related(multipart.getBodyPart(i)
+									.getContent());
+						} else {
+							if (multipart.getBodyPart(i)
+									.isMimeType("text/html")
+									|| multipart.getBodyPart(i).isMimeType(
+											"text/plain")) {
+								String tmpdata = (String) multipart
+										.getBodyPart(i).getContent();
+								tmpdata = AonMessageUtils.parse_cid(tmpdata);
+								if (multipart.getBodyPart(i).isMimeType(
+										"text/plain")) {
+									tmpdata = AonMessageUtils.parse_tags(tmpdata);
+									tmpdata = AonMessageUtils.parse_cr(tmpdata);
+								}
+								if (multipart.getBodyPart(i).getFileName() == null) {
+									data = tmpdata;
+								} else {
+								}
+							}
+						}
+					}
+				}
+			}
 		}
-		return value;
+		return data;
 	}
 	
-	private String traceMessage( Message message ) throws IOException, MessagingException {
-		String content = AonMessageUtils.extractBodyInnerHTML(traceContent(message));
-		return AonMessage.getMessageEnvelope(message, content, null);
+	private void trace(Object mimepart) throws MessagingException, IOException {
+		if (mimepart instanceof Multipart) {
+			Multipart multipart = (Multipart) mimepart;
+			String data = "";
+			data = traceAll(multipart);
+			SelectedPart += data;
+		} else if (mimepart instanceof String) {
+			String cadena = AonMessageUtils.parse_cid((String) mimepart);
+			cadena = AonMessageUtils.parse_tags(cadena);
+			cadena = AonMessageUtils.parse_cr(cadena);
+			SelectedPart += cadena;
+		} else {
+		}
 	}
 
-	private String traceContent( Message message ) throws IOException, MessagingException {
-		String value = null;
+	public String getBodyHTML() throws MessagingException, java.io.IOException {
+		SelectedPart = "";
+		relateds = new ArrayList<BodyPart>();
 		Object content = message.getContent();
-		if (message.isMimeType(TEXT_HTML)) {
+		if (message.isMimeType("text/html")) {
 			if (message.getFileName() == null) {
-				value = traceHTML(content);
+				trace_HTML(content);
 			}
-		} else if (message.isMimeType(TEXT_PLAIN)) {
-			value = traceText(content);
+		} else if (message.isMimeType("text/plain")) {
+			trace_Text(content);
 		} else {
-			value = trace(content);
-		}		
-		return value;
-	}
-	
-	public String getBodyHTML() throws MessagingException, IOException {
-		this.cids = new HashSet<String>();
-		String data = traceContent(message);
-		parseRelateds(data);
-		return AonMessageUtils.extractInnerHTML(data);
+			trace(content);
+		}
+		parseRelateds(SelectedPart);
+		SelectedPart = AonMessageUtils.extractBodyInnerHTML(new StringBuffer(SelectedPart)).toString();
+		return SelectedPart;
 	}
 
 	/**
@@ -250,56 +234,36 @@ public class AonMessageTracer implements IMimeType {
 		this.message = message;
 	}
 
+	private String SelectedPart;
+
+	private ArrayList<BodyPart> relateds;
+	
 	/**
 	 * @return the relateds
 	 */
 	public ArrayList<BodyPart> getRelateds() {
 		return relateds;
 	}
-
-	private void parseRelateds(String msgText) throws IOException, MessagingException {
-		this.relateds = new ArrayList<BodyPart>();
+	
+	private void parseRelateds(String msgText) throws IOException, MessagingException{
+		List cids = AonMessageUtils.getAllCid(msgText);
 		Object obj = message.getContent();
-		if (obj instanceof MimeMultipart) {
+		if (obj instanceof MimeMultipart){
 			MimeMultipart parts = (MimeMultipart) obj;
-			Iterator<String> iter = cids.iterator();
-			while (iter.hasNext()) {
-				String cid = "<" + iter.next() + ">";
+			Iterator iter = cids.iterator();
+			while (iter.hasNext()){
+				String cid = "<"+iter.next()+">";
 				BodyPart part = parts.getBodyPart(cid);
 				relateds.add(part);
 			}
 		}
 	}
 
-    private String getURLPreffix() {
-		FacesContext context = FacesContext.getCurrentInstance();
-		String contextPath = context.getExternalContext().getRequestContextPath(); 
-		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-		StringBuffer url = request.getRequestURL();
-		int pos = url.indexOf( contextPath );
-		String preffix = url.substring(0, pos + contextPath.length()+1 );
-		return preffix;
-	}
-	
-    private String parseCids(String content){
-		Matcher tagMatcher = CID_PATTERN.matcher(content);
-		if ( tagMatcher.find() ) {
-			StringBuffer sb = new StringBuffer(content);
-			String preffix = getURLPreffix();
-			int offset = 0;
-			do {
-				String fullCid = tagMatcher.group(1);
-				String cid = fullCid.substring(4);
-				this.cids.add( cid );
-				String newText = preffix + cid + ".cid";
-				int start = tagMatcher.start(1) + offset;
-				int end = tagMatcher.end(1) + offset;
-				sb.replace( start, end, newText);
-				offset += (newText.length() - fullCid.length());
-			} while( tagMatcher.find() );
-			return sb.toString();
+	public void writeTo(OutputStream os) {
+		try {
+			message.writeTo(os);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		return content;
-    }
-	
+	}
 }

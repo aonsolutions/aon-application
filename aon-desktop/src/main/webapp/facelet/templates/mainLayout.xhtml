@@ -6,9 +6,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 <f:view>
-<c:forEach items="#{aonConfiguration.applicationBundleList}" var="aBundle">
-	<f:loadBundle basename="#{aBundle.value}" var="#{aBundle.key}" />
-</c:forEach>
+
 <head>
 	<title><ui:insert name="title">Title</ui:insert></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -19,7 +17,9 @@
 		<a4j:loadStyle src="#{styleSheet}"/>
 	</c:forEach>
 
-	<a4j:loadScript src="/fckfaces/FCKeditor/fckeditor.js"/>	
+	<!-- Necesario si se pone el LoadScriptStrategy a ALL -->
+	<a4j:loadScript src="#{aonResource.resolve['/com/code/aon/faces/component/richfaces/rowSelector/rowSelector.js']}"/>
+
 	<a4j:loadScript src="#{aonResource.resolveLocal['/js/richFaces.js']}"/>
 	<a4j:loadScript src="#{aonResource.resolveLocal['/js/sms.js']}"/>
 	<link rel="shortcut icon" type="image/x-icon" href="#{facesContext.externalContext.requestContextPath}/#{aonResource.resolve['/images/favicon.ico']}" />

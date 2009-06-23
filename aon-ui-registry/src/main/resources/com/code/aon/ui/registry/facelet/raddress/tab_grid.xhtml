@@ -8,6 +8,7 @@
 
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="controller" value="#{controllerAlias}" />
 
 		<ui:define name="columns">
 
@@ -17,13 +18,13 @@
 						<aon:outputText value="#{bundle.aon_type}" />
 					</f:facet>
 					<aon:outputText value="#{to.addressType}"
-						rendered="#{formList}" />
-					<aon:selectOneMenu rendered="#{formEdit}"
+						rendered="#{to!=controller.to}" />
+					<aon:selectOneMenu rendered="#{to==controller.to}"
 						value="#{controller.to.addressType}">
 						<f:selectItems value="#{registryCollections.addressTypes}" />
 					</aon:selectOneMenu>
 					<f:facet name="footer">
-						<aon:selectOneMenu rendered="#{formNew}"
+						<aon:selectOneMenu rendered="#{controller.new}"
 							value="#{controller.to.addressType}">
 							<f:selectItems value="#{registryCollections.addressTypes}" />
 						</aon:selectOneMenu>
@@ -36,23 +37,23 @@
 					<aon:outputText value="#{registryBundle.registry_address}" />
 				</f:facet>
 				<aon:outputText value="#{to.address} #{to.address2} #{to.address3}"
-					rendered="#{formList}" />
+					rendered="#{to!=controller.to}" />
 				<aon:inputText value="#{controller.to.address}"
-					style="display:block" rendered="#{formEdit}"
+					style="display:block" rendered="#{to==controller.to}"
 					required="true" size="40" />
 				<aon:inputText value="#{controller.to.address2}"
-					style="display:block" rendered="#{formEdit}" size="40" />
+					style="display:block" rendered="#{to==controller.to}" size="40" />
 				<aon:inputText value="#{controller.to.address3}"
-					style="display:block" rendered="#{formEdit}" size="40" />
+					style="display:block" rendered="#{to==controller.to}" size="40" />
 				<f:facet name="footer">
 					<aon:div>
 						<aon:inputText value="#{controller.to.address}"
-							style="display:block" rendered="#{formNew}"
+							style="display:block" rendered="#{controller.new}"
 							required="true" size="40" />
 						<aon:inputText value="#{controller.to.address2}"
-							style="display:block" rendered="#{formNew}" size="40" />
+							style="display:block" rendered="#{controller.new}" size="40" />
 						<aon:inputText value="#{controller.to.address3}"
-							style="display:block" rendered="#{formNew}" size="40" />
+							style="display:block" rendered="#{controller.new}" size="40" />
 					</aon:div>
 				</f:facet>
 			</aon:column>
@@ -61,12 +62,12 @@
 				<f:facet name="header">
 					<aon:outputText value="#{registryBundle.registry_zip}" />
 				</f:facet>
-				<aon:outputText value="#{to.zip}" rendered="#{formList}" />
+				<aon:outputText value="#{to.zip}" rendered="#{to!=controller.to}" />
 				<aon:inputText value="#{controller.to.zip}"
-					rendered="#{formEdit}" required="true" size="8" />
+					rendered="#{to==controller.to}" required="true" size="8" />
 				<f:facet name="footer">
 					<aon:inputText value="#{controller.to.zip}"
-						rendered="#{formNew}" required="true" size="8" />
+						rendered="#{controller.new}" required="true" size="8" />
 				</f:facet>
 			</aon:column>
 
@@ -74,12 +75,12 @@
 				<f:facet name="header">
 					<aon:outputText value="#{registryBundle.registry_city}" />
 				</f:facet>
-				<aon:outputText value="#{to.city}" rendered="#{formList}" />
+				<aon:outputText value="#{to.city}" rendered="#{to!=controller.to}" />
 				<aon:inputText value="#{controller.to.city}"
-					rendered="#{formEdit}" required="true" size="20" />
+					rendered="#{to==controller.to}" required="true" size="20" />
 				<f:facet name="footer">
 					<aon:inputText value="#{controller.to.city}" required="true"
-						rendered="#{formNew}" size="20" />
+						rendered="#{controller.new}" size="20" />
 				</f:facet>
 			</aon:column>
 
@@ -88,14 +89,14 @@
 					<aon:outputText value="#{registryBundle.registry_geozone}" />
 				</f:facet>
 				<aon:outputText value="#{to.geozone.name}"
-					rendered="#{formList}" />
+					rendered="#{to!=controller.to}" />
 				<aon:selectOneMenu value="#{controller.to.geozone}"
-					rendered="#{formEdit}">
+					rendered="#{to==controller.to}">
 					<f:selectItems value="#{geozoneCollections.geoTrees}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
 					<aon:selectOneMenu value="#{controller.to.geozone}"
-						rendered="#{formNew}">
+						rendered="#{controller.new}">
 						<f:selectItems value="#{geozoneCollections.geoTrees}" />
 					</aon:selectOneMenu>
 				</f:facet>

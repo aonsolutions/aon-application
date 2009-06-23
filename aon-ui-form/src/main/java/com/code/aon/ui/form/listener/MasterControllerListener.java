@@ -8,11 +8,11 @@ import org.apache.commons.beanutils.PropertyUtils;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * MasterControllerListener is a listener that must be registered in
@@ -53,7 +53,7 @@ public class MasterControllerListener extends ControllerAdapter {
 	 * @return the detail controller
 	 */
 	public IController getDetailController() {
-		return FormUtil.getController(this.childBean);
+		return AonUtil.getController(this.childBean);
 	}
 
 	/**

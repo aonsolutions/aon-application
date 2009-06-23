@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.event.ActionEvent;
 import javax.mail.FetchProfile;
 import javax.mail.Flags;
 import javax.mail.Folder;
@@ -12,9 +13,8 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-
+import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.ui.webmail.exception.WebmailException;
 
 public class AonFolder extends AonMessageSortableList {
@@ -37,14 +37,8 @@ public class AonFolder extends AonMessageSortableList {
 	private static final Logger LOGGER = Logger.getLogger(AonFolder.class
 			.getName());
 	
-	private int pageSize = 20;
-
 	public AonFolder(Folder folder) {
 		super(DATE_COLUMN,folder);
-	}
-
-	public int getPageSize() {
-		return pageSize;
 	}
 
     public void refresh() throws WebmailException {
@@ -55,6 +49,7 @@ public class AonFolder extends AonMessageSortableList {
 	public ArrayList<AonFolder> getFolderList() throws WebmailException {
 		ArrayList<AonFolder> folderList = null;
 		try {
+			open(Folder.READ_ONLY);
             Folder[] folders = folder.list();
             folderList = new ArrayList<AonFolder>(folders.length);
             for (int i = 0; i < folders.length; i++) {
@@ -63,7 +58,7 @@ public class AonFolder extends AonMessageSortableList {
                 }
             }
 		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE, "Folder list " + folder.getName(), e);
+			LOGGER.log(Level.ALL, "Folder list " + folder.getName(), e);
 			throw new WebmailException(e);
 		}
 		return folderList;
@@ -74,7 +69,7 @@ public class AonFolder extends AonMessageSortableList {
 			close(false);
 			folder.delete(content);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,"Deleting folder failed", e);
+			LOGGER.log(Level.ALL,"Deleting folder failed", e);
 			throw new WebmailException(e);
 		}
 	}
@@ -88,22 +83,18 @@ public class AonFolder extends AonMessageSortableList {
 			profile.add(FetchProfile.Item.ENVELOPE);
 			folder.fetch(messages, profile);
 
-			int realLength = 0;
 			AonMessage[] list = new AonMessage[messages.length];
-			for (int i = 0; i < messages.length; i++) {
+			for (int i = 0, n = 0; i < messages.length; i++) {
 				if (messages[i] != null && !messages[i].isExpunged()) {
 					AonMessage aonMessage = new AonMessage();
                 	aonMessage.setParent(this);
                 	aonMessage.setMessage((MimeMessage)messages[i]);
-                	list[realLength++] = aonMessage;
+                	list[n++] = aonMessage;
                 }
             }
-			if ( realLength != messages.length ) {
-				list = (AonMessage[]) ArrayUtils.subarray( list, 0, realLength);
-			}
 			setMessageList(list);
         } catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,"Error reading messages ", e);
+			LOGGER.log(Level.ALL,"Error reading messages ", e);
 			throw new WebmailException(e);
         }
     }
@@ -115,7 +106,7 @@ public class AonFolder extends AonMessageSortableList {
     		}
 			return true;
 		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,"Error opening folder " + folder.getName() + " in mode " +mode, e);
+			LOGGER.log(Level.ALL,"Error opening folder in mode " +mode, e);
 		}
 		return false;
     }
@@ -124,7 +115,7 @@ public class AonFolder extends AonMessageSortableList {
     	try {
 	    	folder.close(mode);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,"Error closing folder " + folder.getName() + " in mode " +mode, e);
+			LOGGER.log(Level.ALL,"Error closing folder in mode " +mode, e);
 		}
 		return false;
     }
@@ -135,18 +126,17 @@ public class AonFolder extends AonMessageSortableList {
 			if (Folder.HOLDS_FOLDERS != folder.getType())
 				return true;
 		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,"Error getting folder type", e);
+			LOGGER.log(Level.ALL,"Error getting folder type", e);
 		}
     	return false;
     }
     
 	public boolean isRoot(){
 		try {
-			if (folder.getParent()==null) {
+			if (folder.getParent()==null)
 				return true;
-			}
 		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,"Error checking if is root", e);
+			//throw new WebmailException(e);
 		}
 		return false;
 	}
@@ -245,10 +235,6 @@ public class AonFolder extends AonMessageSortableList {
     	return "other";
     }
     
-    public boolean isDraftFolder() {
-    	return AonFolder.DRAFT_FOLDER_NAME.equals( getFolder().getFullName() );	
-    }
-    
     //**************************************************************
     // SELECTED ROWS
     //**************************************************************
@@ -262,23 +248,11 @@ public class AonFolder extends AonMessageSortableList {
 		}
     	return selectedAonMessages.toArray(new AonMessage[selectedAonMessages.size()]);
     }
-    
-    public AonMessage getSelectedMessage() {
-    	return (AonMessage) getModel().getRowData();
+
+    public void changeSelectedMessage(ActionEvent event) {
+    	AonMessage message = (AonMessage) getModel().getRowData();
+       	MessageController messageController = (MessageController) AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
+       	messageController.setMessage( message );      	
     }
     
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj instanceof AonFolder) {
-			AonFolder f = (AonFolder) obj;
-			if (!StringUtils.equals(getName(), f.getName())) {
-				return false;
-			}
-			return true;
-		}
-		return false;
-	}    
 }

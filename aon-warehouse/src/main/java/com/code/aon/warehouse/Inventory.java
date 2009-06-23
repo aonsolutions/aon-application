@@ -1,17 +1,13 @@
 package com.code.aon.warehouse;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -51,9 +47,6 @@ public class Inventory implements ITransferObject {
 	 */
 	private String description;
 
-	/** The details. */
-	private Set<InventoryDetail> details = new HashSet<InventoryDetail>();
-	
 	/**
 	 * Returns the unique key
 	 * 
@@ -131,25 +124,6 @@ public class Inventory implements ITransferObject {
 	 */
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	/**
-	 * Gets the details.
-	 * 
-	 * @return the details
-	 */
-	@OneToMany(mappedBy = "inventory", cascade={CascadeType.REMOVE})
-	public Set<InventoryDetail> getDetails() {
-		return details;
-	}
-
-	/**
-	 * Sets the details.
-	 * 
-	 * @param details the new details
-	 */
-	public void setDetails(Set<InventoryDetail> details) {
-		this.details = details;
 	}
 
 	@Override

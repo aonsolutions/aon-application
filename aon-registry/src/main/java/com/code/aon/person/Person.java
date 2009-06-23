@@ -11,6 +11,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -28,6 +29,8 @@ import com.code.aon.registry.Registry;
 @Entity
 @Table(name="person")
 public class Person implements ITransferObject {
+
+	private static final long serialVersionUID = -8638619556227571794L;
 
 	/** The id. */
 	private Integer id;
@@ -145,4 +148,27 @@ public class Person implements ITransferObject {
 	public void setMaritalStatus(MaritalStatus maritalStatus) {
 		this.maritalStatus = maritalStatus;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof Person) {
+			Person o = (Person) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
+
 }

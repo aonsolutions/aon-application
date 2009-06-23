@@ -17,7 +17,6 @@ import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.config.PayMethod;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.registry.Registry;
 

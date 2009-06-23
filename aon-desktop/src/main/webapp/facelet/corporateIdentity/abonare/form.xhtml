@@ -28,87 +28,78 @@
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<h:commandLink id="export2pdf_abonare" value="PDF" title="PDF"
+							styleClass="aon-finding-toolbar-item aon-icon-pdf"
+							action="#{report.onExecute}" target="_blank">
+							<f:param name="reportKey" value="abonare_to" />
+						</h:commandLink>
+						<aon:commandButton id="remove" value="#{bundle.aon_clear}"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							actionListener="#{corporateIdentity.onClear}" 
+							action="corporate_identity_abonare"
+							immediate="true" accesskey="#{bundle.aon_key_remove}" />
 						<aon:commandButton id="cancel" value="#{bundle.aon_back}"
 							action="corporate_identity"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							immediate="true"
-							accesskey="#{bundle.aon_key_cancel}" />
+							accesskey="#{bundle.aon_key_cancel}" /> 
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>
 			
-			<aon:panelGrid columns="3" styleClass="aon-panelGrid-formatting"
-				columnClasses="aon-portlets-column1,aon-portlets-column1,aon-portlets-column1">
-
-				<aon:div styleClass="aon-portlet">
-					<aon:div styleClass="aon-portlet-title">
-						<aon:outputText value="#{appBundle.aon_corporate_identity_abonare}" styleClass="aon-portlet-title-text"/>
-					</aon:div>
-					<aon:div styleClass="aon-portlet-body">
-						<h:commandLink id="export2pdf_abonare" value="PDF"
-								title=""
-								styleClass="aon-finding-toolbar-item aon-icon-pdf"
-								action="#{report.onExecute}"  
-								target="_blank">
-							<f:param name="reportKey" value="abonare_to" />
-						</h:commandLink>
-						<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-abonare.png']}" />
-					</aon:div>
-				</aon:div>
-
-			</aon:panelGrid>
-
-			<aon:panelGrid columns="2" dir="true">
-
-				<aon:outputLabel for="pagare_num"
-					value="#{appBundle.aon_corporate_identity_pagare_num}" />
-				<aon:inputText id="pagare_num" 
-					size="15" 
-					value="#{corporateIdentity.identityReport.pagare_num}" />
-
-				<aon:outputLabel for="pagare_de"
-					value="#{appBundle.aon_corporate_identity_pagare_de}" />
-				<aon:inputText id="pagare_de" 
-					size="85" 
-					value="#{corporateIdentity.identityReport.pagare_de}" />
-
-				<aon:outputLabel for="pagare_catidad_num"
-					value="#{appBundle.aon_corporate_identity_pagare_cantidad_num}" />
-				<aon:inputText id="pagare_catidad_num" 
-					size="85" 
-					value="#{corporateIdentity.identityReport.pagare_cantidad_num}">
-					<a4j:support 
-						event="onblur" 
-						actionListener="#{corporateIdentity.onN2T}"  
-						reRender="pagare_catidad" />					
-				</aon:inputText>
-
-				<aon:outputLabel for="pagare_catidad"
-					value="#{appBundle.aon_corporate_identity_pagare_cantidad}" />
-				<aon:inputTextarea id="pagare_catidad"
-					value="#{corporateIdentity.identityReport.pagare_cantidad}"
-					style="width:90%"
-					cols="80" rows="5"/>
-
-				<aon:outputLabel for="pagare_fecha_dia"
-					value="#{appBundle.aon_corporate_identity_pagare_fecha_dia}" />
-				<aon:inputText id="pagare_fecha_dia" 
-					size="85" 
-					value="#{corporateIdentity.identityReport.pagare_fecha_dia}" />
-
-				<aon:outputLabel for="pagare_fecha_mes"
-					value="#{appBundle.aon_corporate_identity_pagare_fecha_mes}" />
-				<aon:inputText id="pagare_fecha_mes" 
-					size="85" 
-					value="#{corporateIdentity.identityReport.pagare_fecha_mes}" />
-
-				<aon:outputLabel for="pagare_fecha_ano"
-					value="#{appBundle.aon_corporate_identity_pagare_fecha_ano}" />
-				<aon:inputText id="pagare_fecha_ano" 
-					size="85" 
-					value="#{corporateIdentity.identityReport.pagare_fecha_ano}" />
-
-			</aon:panelGrid>
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2" dir="true">
+	
+					<aon:outputLabel for="pagare_num"
+						value="#{appBundle.aon_corporate_identity_pagare_num}" />
+					<aon:inputText id="pagare_num" 
+						size="15" 
+						value="#{corporateIdentity.identityReport.pagare_num}" />
+	
+					<aon:outputLabel for="pagare_de"
+						value="#{appBundle.aon_corporate_identity_pagare_de}" />
+					<aon:inputText id="pagare_de" 
+						size="85" 
+						value="#{corporateIdentity.identityReport.pagare_de}" />
+	
+					<aon:outputLabel for="pagare_catidad_num"
+						value="#{appBundle.aon_corporate_identity_pagare_cantidad_num}" />
+					<aon:inputText id="pagare_catidad_num" 
+						size="85" 
+						value="#{corporateIdentity.identityReport.pagare_cantidad_num}">
+						<a4j:support 
+							event="onblur" 
+							actionListener="#{corporateIdentity.onN2T}"  
+							reRender="pagare_catidad" />					
+					</aon:inputText>
+	
+					<aon:outputLabel for="pagare_catidad"
+						value="#{appBundle.aon_corporate_identity_pagare_cantidad}" />
+					<aon:inputTextarea id="pagare_catidad"
+						value="#{corporateIdentity.identityReport.pagare_cantidad}"
+						style="width:90%"
+						cols="80" rows="5"/>
+	
+					<aon:outputLabel for="pagare_fecha_dia"
+						value="#{appBundle.aon_corporate_identity_pagare_fecha_dia}" />
+					<aon:inputText id="pagare_fecha_dia" 
+						size="85" 
+						value="#{corporateIdentity.identityReport.pagare_fecha_dia}" />
+	
+					<aon:outputLabel for="pagare_fecha_mes"
+						value="#{appBundle.aon_corporate_identity_pagare_fecha_mes}" />
+					<aon:inputText id="pagare_fecha_mes" 
+						size="85" 
+						value="#{corporateIdentity.identityReport.pagare_fecha_mes}" />
+	
+					<aon:outputLabel for="pagare_fecha_ano"
+						value="#{appBundle.aon_corporate_identity_pagare_fecha_ano}" />
+					<aon:inputText id="pagare_fecha_ano" 
+						size="85" 
+						value="#{corporateIdentity.identityReport.pagare_fecha_ano}" />
+	
+				</aon:panelGrid>
+			</aon:div>
 
 		</aon:form>
 	</ui:define>

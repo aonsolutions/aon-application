@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="statsForm">
+			
+			<!-- TOOLBAR -->
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle"
+						value="#{assetBundle.asset_statistic_module}" />
+				<ui:param name="toolbarDescription"
+						value="#{bundle.aon_list}" />
+
+				<ui:define name="toolbarContent">
+				<!--  
+					<a4j:htmlCommandLink id="export2pdf" value="PDF"
+						title="Listado Pdf"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						action="#{report.onExecute}" target="_blank">
+						<f:param name="reportKey" value="yearStatsList" />
+					</a4j:htmlCommandLink>
+					<a4j:htmlCommandLink id="export2excel" value="XLS"
+						title="Listado Xls"
+						styleClass="aon-finding-toolbar-item aon-icon-excel"
+						action="#{report.onExecute}" target="_blank">
+						<f:param name="reportKey" value="yearStatsList" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</a4j:htmlCommandLink>
+				-->
+				</ui:define>
+			</ui:decorate>
+
+			<!-- TOOLBAR END -->
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid id="assetTable" columns="2" width="30%">
+					<aon:outputLabel value="#{assetBundle.asset_stat_statType_filterBy}" />
+					<aon:selectOneRadio value="#{assetCollections.statType}" >
+						<f:selectItem itemLabel="#{assetBundle.asset_stat_statType_asset}" itemValue="ASSET" />
+						<f:selectItem itemLabel="#{assetBundle.asset_stat_statType_user}" itemValue="USER" />
+						<a4j:support event="onclick" ajaxSingle="true" reRender="statsForm">
+							<aon:actionListener method="#{assetCollections.refreshStats}" />
+						</a4j:support>
+					</aon:selectOneRadio>
+					
+					<aon:outputLabel value="#{assetBundle.asset_stat_year}" />
+					<rich:inputNumberSpinner inputSize="4" value="#{assetCollections.year}"
+						maxValue="9999" required="true" enableManualInput="false" >
+						<a4j:support event="onchange" ajaxSingle="true" reRender="statsForm">
+							<aon:actionListener method="#{assetCollections.refreshStats}" />
+						</a4j:support>
+					</rich:inputNumberSpinner>
+					
+				</aon:panelGrid>
+
+				<aon:panel id="assetRequestData" rendered="#{!asset.new}">
+					<f:facet name="header">
+						<aon:outputLabel value="#{assetBundle.asset_stat_financial_year} #{assetCollections.year}" />
+					</f:facet>
+					
+					<ui:include src="list.xhtml" />
+					
+				</aon:panel>
+				
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

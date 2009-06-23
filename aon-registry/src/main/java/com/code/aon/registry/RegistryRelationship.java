@@ -8,6 +8,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 
 /**
@@ -19,6 +21,8 @@ import com.code.aon.common.ITransferObject;
 @Entity
 @Table(name = "rrelationship")
 public class RegistryRelationship implements ITransferObject {
+
+	private static final long serialVersionUID = -363214031769789728L;
 
 	/** The id. */
 	private Integer id;
@@ -34,12 +38,6 @@ public class RegistryRelationship implements ITransferObject {
 
 	/** The comments. */
 	private String comments;
-
-	/**
-	 * The empty constructor.
-	 */
-	public RegistryRelationship() {
-	}
 
 	/**
 	 * Gets the id.
@@ -145,4 +143,26 @@ public class RegistryRelationship implements ITransferObject {
 		this.comments = comments;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof RegistryRelationship) {
+			RegistryRelationship o = (RegistryRelationship) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
+    
 }

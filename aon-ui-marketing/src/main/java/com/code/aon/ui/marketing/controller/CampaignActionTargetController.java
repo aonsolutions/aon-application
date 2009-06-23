@@ -17,8 +17,8 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.util.AonUtil;
 
 public class CampaignActionTargetController extends BasicController {
 
@@ -31,13 +31,13 @@ public class CampaignActionTargetController extends BasicController {
 	}
 	
 	private Action getAction() {
-		IController actionController = AonUtil.getController(IMarketingConstants.CAMPAIGN_ACTION_CONTROLLER_NAME);
+		IController actionController = FormUtil.getController(IMarketingConstants.CAMPAIGN_ACTION_CONTROLLER_NAME);
 		return (Action) actionController.getTo();
 	}
 	
 	public void onAcceptTargets( ActionEvent event ) throws ManagerBeanException {
 		List<Integer> currentTargets = getCurrentTargets();
-		IController targetController = AonUtil.getController(ICommercialConstants.TARGET_CONTROLLER_NAME);
+		IController targetController = FormUtil.getController(ICommercialConstants.TARGET_CONTROLLER_NAME);
 		Criteria criteria = targetController.getCriteria();
 		String filedId = targetController.getFieldName(ICommercialAlias.TARGET_ID);
 		ProjectionList projectList = new ProjectionList(Projection.property(filedId));

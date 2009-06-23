@@ -4,6 +4,9 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
 	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 
@@ -11,48 +14,36 @@
 
 	<ui:define name="content">
 
-		<aon:form id="webmailForm">
-			
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid  columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-					
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.aon_webmail_main}" />
-					</aon:div>
-					
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{appBundle.aon_webmail_newmail}" />
-					</aon:div>
-					
-					<aon:div styleClass="aon-finding-toolbar-item-group">						
-						<aon:commandButton id="send"
-							value="#{appBundle.aon_webmail_send}"
-							styleClass="aon-icon-accept aon-finding-toolbar-item"
-							action="#{message.getReturnAction}"
-							actionListener="#{message.send}"
-							onclick="Richfaces.showModalPanel('waitProccess')" 
-			     			oncomplete="Richfaces.hideModalPanel('waitProccess')" />						
-						<aon:commandButton id="save_draft"
-							value="#{appBundle.aon_webmail_save_draft}"
-							styleClass="aon-icon aon-icon-mail-save aon-finding-toolbar-item"
-							action="messageNew"
-							actionListener="#{message.saveDraft}" />
-			     		<aon:confirmButton id="back" immediate="true"
-							title="#{bundle.aon_back}" value="#{bundle.aon_back}"
-							confirmTitle="#{bundle.aon_confirm_title}"
-							confirmMessage="#{appBundle.aon_webmail_back_confirm}"
-							confirmAction="#{message.getReturnAction}"
-							accesskey="#{bundle.aon_key_cancel}"
-							styleClass="aon-icon-cancel aon-finding-toolbar-item" />	
-					</aon:div>
-				</aon:panelGrid>
-			</aon:div>
-			<aon:div styleClass="aon-scroll-area">
+		<aon:form id="webmailForm" enctype="multipart/form-data">
 		
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-section-title">
+					<aon:outputText value="#{appBundle.aon_webmail_newmail}" />
+				</aon:div>
+				
+				<aon:div styleClass="aon-toolbar">
+						
+					<aon:commandButton id="send"
+						value="#{appBundle.aon_webmail_send}"
+						styleClass="aon-icon-accept aon-finding-toolbar-item"
+						action="#{message.getReturnAction}"
+						actionListener="#{message.send}"
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+		     			oncomplete="Richfaces.hideModalPanel('waitProccess')"						
+						>
+					</aon:commandButton>					 
+					<aon:confirmButton id="back" immediate="true"
+						title="#{bundle.aon_back}" value="#{bundle.aon_back}"
+						confirmTitle="#{bundle.aon_confirm_title}"
+						confirmMessage="#{appBundle.aon_webmail_back_confirm}"
+						confirmAction="#{message.getReturnAction}"
+						accesskey="#{bundle.aon_key_cancel}"
+						styleClass="aon-icon-cancel aon-finding-toolbar-item" />						
+				</aon:div>
+			
 				<aon:div>
 					<aon:panelGrid columns="2" cellpadding="0" cellspacing="0" style="width:100%;"
-					columnClasses="aon-panelGrid-odd aon-width-130 aon-text-right,aon-panelGrid-even">
+					>
 
 						<aon:div rendered="#{mailAccount.model.rowCount>1}">
 							<aon:outputLabel for="NewMail_From" 
@@ -65,11 +56,10 @@
 							<f:selectItems value="#{mailAccount.mailAccounts}" />
 						</aon:selectOneMenu>
 						
-						<aon:div styleClass="aon-text-right">							
-							<aon:commandButton id="addToEmail" reRender="showEmailWindow"
-							actionListener="#{message.openEmailsToPanelPopup}" styleClass="new-mail-button"
-							value="#{appBundle.aon_webmail_to}"/>							
-						</aon:div>
+						<aon:commandButton id="addToEmail" reRender="showEmailWindow"
+							actionListener="#{message.openEmailsToPanelPopup}"
+							styleClass="aon-commandButton aon-icon-search" 
+							value="#{appBundle.aon_webmail_to}" style="background-position:4px 2px;width:60px;padding:2px 1em 2px 22px !important;text-align:left;"/>
 						<aon:div>
 							<aon:inputText id="NewMail_to"
 								size="120"
@@ -77,23 +67,20 @@
 							
 						</aon:div>
 	
-						<aon:div styleClass="aon-text-right">						
-							<aon:commandButton id="addCcEmail" reRender="showEmailWindow"
-								actionListener="#{message.openEmailsCcPanelPopup}" styleClass="new-mail-button"
-								value="#{appBundle.aon_webmail_cc}" />							
-						</aon:div>
+						<aon:commandButton id="addCcEmail" reRender="showEmailWindow"
+							actionListener="#{message.openEmailsCcPanelPopup}" 
+							styleClass="aon-commandButton aon-icon-search" 
+							value="#{appBundle.aon_webmail_cc}" style="background-position:4px 2px;width:60px;padding:2px 1em 2px 22px !important;text-align:left;"/>
 						<aon:div>
 							<aon:inputText id="NewMail_cc"
-							size="120"
-							value="#{message.recipientsCc}"/>								
+								size="120"
+								value="#{message.recipientsCc}"/>								
 						</aon:div>
-						
-						<aon:div styleClass="aon-text-right">							
-							<aon:commandButton id="addBccEmail" reRender="showEmailWindow"
-								actionListener="#{message.openEmailsBccPanelPopup}" 
-								styleClass="new-mail-button"
-								value="#{appBundle.aon_webmail_bcc}" />							
-						</aon:div>
+	
+						<aon:commandButton id="addBccEmail" reRender="showEmailWindow"
+							actionListener="#{message.openEmailsBccPanelPopup}" 
+							styleClass="aon-commandButton aon-icon-search" 
+							value="#{appBundle.aon_webmail_bcc}" style="background-position:4px 2px;width:60px;padding:2px 1em 2px 22px !important;text-align:left;"/>
 						<aon:div>
 							<aon:inputText id="NewMail_Bcc"
 								size="120"
@@ -111,33 +98,32 @@
 						<aon:outputLabel for="attach_file" 
 							value="#{appBundle.aon_webmail_attach_file}: " />
 						<aon:div>
-							<aon:fileUpload id="attach_file"
-								addControlLabel="#{bundle.aon_fileUpload_add}" 
-								stopControlLabel="#{bundle.aon_fileUpload_stop}" 
-								stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
-								uploadControlLabel="#{bundle.aon_fileUpload_upload}"
-								fileUploadListener="#{message.fileUploaded}"
-								maxFilesQuantity="20" listHeight="0px"
-								immediateUpload="true" autoclear="true"
-								onupload="startUpload();" onuploadcanceled="endUpload();" onerror="endUpload();">
-								<f:facet name="label">
-									<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
-								</f:facet>								
-								<a4j:support event="onuploadcomplete" oncomplete="endUpload();" reRender="attachDataTable" />
-							</aon:fileUpload>								
-							<aon:div id="attachDataTable">					
-								<aon:dataTable value="#{message.files}" 
-									var="attachment" styleClass="aon-panelGrid-formatting">
-									<aon:column>
-										<aon:outputText value="#{attachment.fileName}" styleClass="aon-bold" />
-										<aon:commandLink
-											reRender="attachDataTable" style="font-size:0.9em;margin-left:20px;"
-											value="#{appBundle.aon_webmail_deletemail}"
-											styleClass="aon-icon-commandButton aon-icon-delete"
-											actionListener="#{attachment.fileDeleted}">
-										</aon:commandLink>
-									</aon:column>
+							<t:inputFileUpload id="attach_file"
+								value="#{message.inputFile}"
+								accept="*/*" size="45"
+								storage="file"/>
+							<h:commandButton value="#{bundle.aon_fileupload_insert}"
+								reRender="attachDataTable" style="margin-left:10px;"
+								styleClass="aon-commandButton"
+								actionListener="#{message.fileUploaded}"/>
+								
+							<aon:div>
+									
+								<aon:dataTable id="attachDataTable" 
+									value="#{message.files}" 
+									var="attachment"
+									styleClass="aon-panelGrid-formatting">
+										<aon:column>
+											<aon:outputText value="#{attachment.file.name}" styleClass="aon-bold" />
+											<aon:commandLink
+												reRender="attachDataTable" style="font-size:0.9em;margin-left:20px;"
+												value="#{appBundle.aon_webmail_deletemail}"
+												styleClass="aon-icon-commandButton aon-icon-delete"
+												actionListener="#{attachment.fileDeleted}">
+											</aon:commandLink>
+										</aon:column>
 								</aon:dataTable>									
+								
 							</aon:div>		
 						</aon:div>
 
@@ -148,7 +134,7 @@
 				<!-- Message Body -->
 				<aon:div id="messageContent" styleClass="padding-top">
 					<aon:panelGroup scrollWidth="90%">
-						<aon:inputRichText id="messageEditor" height="400" toolbarSet="AonWebMail" value="#{message.content}" />
+						<aon:inputRichText toolbarSet="AonWebMail" value="#{message.content}" />
 					</aon:panelGroup>
 				</aon:div>
 			</aon:div>

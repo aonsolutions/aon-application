@@ -3,53 +3,11 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ice="http://www.icesoft.com/icefaces/component"
-	xmlns:h="http://java.sun.com/jsf/html"	
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:aon="http://www.code.es/aon-rich-components"
-	>
-	
+	xmlns:aon="http://www.code.es/aon-ice-components">
 <body>
 
 <ui:composition>
-	<aon:form>
-		<aon:div id="treeButtonsGrid" styleClass="aon-top-menu">
-			
-			<aon:commandLink id="mail"
-				title="#{appBundle.aon_webmail_main}" action="folder"
-				value="#{appBundle.aon_webmail_main}"
-				styleClass="aon-top-menu-item aon-icon-webmail2">
-			</aon:commandLink>
-						
-			<aon:commandLink id="contacts"
-				title="#{appBundle.aon_webmail_email}" action="contact_list"
-				value="#{appBundle.aon_webmail_email}"
-				styleClass="aon-top-menu-item aon-icon-agenda">
-			</aon:commandLink>
-	
-			<aon:commandLink id="signature"
-				title="#{appBundle.aon_webmail_signature}" action="signature_list"
-				value="#{appBundle.aon_webmail_signature}" actionListener="#{signature.onSearch}"
-				styleClass="aon-top-menu-item aon-icon-signature">
-			</aon:commandLink>
-	
-			<aon:commandLink id="mailAccountCahnge"
-				title="#{appBundle.aon_webmail_mailAccount}" actionListener="#{mailAccount.onSearch}"
-				action="mailAccount_list" value="#{appBundle.aon_webmail_mailAccount}"
-				styleClass="aon-top-menu-item aon-icon-mailAccountChange">
-			</aon:commandLink>
-	
-			<aon:commandLink id="spam"
-				rendered="#{spam.spamEnabled}"
-				title="#{appBundle.aon_webmail_spam}" action="spam"
-				actionListener="#{spam.onLoad}"
-				value="#{appBundle.aon_webmail_spam}"
-				styleClass="aon-top-menu-item aon-icon-mail-spam">
-			</aon:commandLink>
-			
-		</aon:div>
-	</aon:form>
+
 </ui:composition>
 
 </body>

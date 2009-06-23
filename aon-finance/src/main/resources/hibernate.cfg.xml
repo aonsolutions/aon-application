@@ -13,22 +13,21 @@
 		<property name="connection.password">serubd2000</property>	
 	
 		<!-- AON-FINANCE Mapping files -->	
-		<mapping class="com.code.aon.finance.Bank"/>	
-		<mapping class="com.code.aon.finance.CustomerFee"/>	
-		<mapping class="com.code.aon.finance.Creditor"/>
+		<mapping class="com.code.aon.finance.InvoiceTax"/>
+		<mapping class="com.code.aon.finance.InvoiceAddress"/>
+		<mapping class="com.code.aon.finance.InvoiceDetail"/>
+		<mapping class="com.code.aon.finance.Invoice"/>
+		<mapping class="com.code.aon.finance.Bank"/>		
+		<mapping class="com.code.aon.finance.PayMethod"/>		
 		<mapping class="com.code.aon.finance.Finance"/>
 		<mapping class="com.code.aon.finance.FinanceBatch"/>
 		<mapping class="com.code.aon.finance.FinanceBatchDetail"/>
-		<mapping class="com.code.aon.finance.FinanceSales"/>
-		<mapping class="com.code.aon.finance.FinanceTracking"/>
-		<mapping class="com.code.aon.finance.Invoice"/>
-		<mapping class="com.code.aon.finance.InvoiceAddress"/>
-		<mapping class="com.code.aon.finance.InvoiceDetail"/>
-		<mapping class="com.code.aon.finance.InvoiceTax"/>
-		<mapping class="com.code.aon.finance.InvoicingGroup"/>
-		<mapping class="com.code.aon.finance.InvoicingGroupDetail"/>
 		<mapping class="com.code.aon.finance.RegistryBank"/>
 		<mapping class="com.code.aon.finance.RegistryPayMethod"/>
+		<mapping class="com.code.aon.finance.Creditor"/>
+		<mapping class="com.code.aon.finance.FinanceTracking"/>
+		<mapping class="com.code.aon.finance.InvoicingGroup"/>
+		<mapping class="com.code.aon.finance.InvoicingGroupDetail"/>
 		
 		<!-- AON-PRODUCT Mapping files -->	
 		<mapping class="com.code.aon.product.Item"/>
@@ -36,6 +35,7 @@
 		<mapping class="com.code.aon.product.Tariff"/>
 		<mapping class="com.code.aon.product.ProductCategory"/>
 		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
+		<mapping class="com.code.aon.product.Tax"/>
 		<mapping class="com.code.aon.product.Brand"/>
 		
 		<!-- AON-REGISTRY Mapping files -->
@@ -57,19 +57,6 @@
 
 		<!-- AON-CONFIG Mapping files -->		
 		<mapping class="com.code.aon.config.Scope"/>			
-		<mapping class="com.code.aon.config.Tax"/>
-		<mapping class="com.code.aon.config.PayMethod"/>		
-
-		<!-- AON-CUSTOMER Mapping files -->		
-		<mapping class="com.code.aon.customer.Customer"/>			
-		<mapping class="com.code.aon.customer.CustomerSegment"/>			
-
-		<!-- AON-SALES Mapping files -->		
-		<mapping class="com.code.aon.sales.PointOfSale"/>			
-		<mapping class="com.code.aon.sales.Sales"/>			
-		<mapping class="com.code.aon.sales.SalesDetail"/>			
-		<mapping class="com.code.aon.sales.Seller"/>			
-
 	</session-factory>
 
 </hibernate-configuration>

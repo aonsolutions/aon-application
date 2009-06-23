@@ -1,15 +1,17 @@
-<?xml version="1.0"?>
-<!DOCTYPE 
-faces-config PUBLIC "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
-"http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
-<faces-config>
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
 	<application>
-		<message-bundle>
-			com.code.aon.ui.common.i18n.messages
-		</message-bundle>
+		<message-bundle>com.code.aon.ui.common.i18n.messages</message-bundle>	
 		<locale-config>
 			<default-locale>es</default-locale>
 		</locale-config>
+		<resource-bundle>
+		   <base-name>com.code.aon.desktop.i18n.messages</base-name>
+		   <var>appBundle</var>
+		</resource-bundle>
 	</application>
 
 	<!-- *************** RESOURCE RESOLVER ***************** --> 
@@ -21,7 +23,7 @@ faces-config PUBLIC "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1/
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/3.2.0</value>
+			<value>/aonResource/3.4.0</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -41,45 +43,7 @@ faces-config PUBLIC "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1/
 				<value>#{aonResource.resolveLocal['/css/desktop.css']}</value>				
 			</list-entries>
 		</managed-property>
-		<managed-property>
-			<property-name>applicationBundles</property-name>
-			<map-entries>
-				<map-entry>
-					<key>bundle</key>
-					<value>com.code.aon.ui.common.i18n.messages</value>
-				</map-entry>
-				<map-entry>
-					<key>appBundle</key>
-					<value>com.code.aon.desktop.i18n.messages</value>
-				</map-entry>
-				<map-entry>
-					<key>registryBundle</key>
-					<value>
-						com.code.aon.ui.registry.i18n.messages
-					</value>
-				</map-entry>
-				<map-entry>
-					<key>groupwareBundle</key>
-					<value>
-						com.code.aon.ui.groupware.i18n.messages
-					</value>
-				</map-entry>
-				<map-entry>
-					<key>configBundle</key>
-					<value>com.code.aon.ui.config.i18n.messages</value>
-				</map-entry>
-				<map-entry>
-					<key>companyBundle</key>
-					<value>com.code.aon.ui.company.i18n.messages</value>
-				</map-entry>
-				<map-entry>
-					<key>securityBundle</key>
-					<value>com.code.aon.bridge.i18n.messages</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
 	</managed-bean>
-
 
 	<!-- ************ DESKTOP ************** -->
 	<managed-bean>
@@ -170,6 +134,42 @@ faces-config PUBLIC "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1/
 		<managed-bean-name>corporateIdentity</managed-bean-name>
 		<managed-bean-class>com.code.aon.desktop.controller.CorporateIdentity</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- **** CORPORATE IDENTITY DOCUMENTS **** --> 
+	<managed-bean>
+		<managed-bean-name>corporateIdentityAttach</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.desktop.controller.CorporateIdentityAttachController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryAttachment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>maximumSize</property-name>
+			<value>1048576</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{corporateIdentityAttachControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>corporateIdentityAttachControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.desktop.event.CorporateIdentityAttachControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 </faces-config>

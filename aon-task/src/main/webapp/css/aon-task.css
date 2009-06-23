@@ -1,7 +1,3 @@
-.aon-commandButton{
-	padding:0 0.5em 0 1.5em !important;
-}
-
 #aon-content .aon-table-header-link:hover {
 	text-decoration: underline;
 }
@@ -26,32 +22,3 @@
 	padding-left: 18px;	
 }
 
-.aon-icon-launch-process{
-	background:transparent url(images/icons/aon-launch-process.gif) scroll left center no-repeat;
-	padding-left: 18px;	
- }
-
-.aon-icon-launch-process-previous{
-	background:transparent url(images/icons/aon-launch-process-previous.gif) scroll left center no-repeat;
-	padding-left: 18px;	
-}
-.aon-icon-launch-process-next{
-	background:transparent url(images/icons/aon-launch-process-next.gif) scroll left center no-repeat;
-	padding-left: 18px;	
-}
-
-.aon-icon-process-start{
-	background:transparent url(images/icons/aon-task-start.gif) scroll left center no-repeat;
-	padding-left: 18px;	
-}
-.aon-icon-process-stop{
-	background:transparent url(images/icons/aon-task-stop.gif) scroll left center no-repeat;
-	padding-left: 18px;	
-}
-
-.aon-icon-process-transition-selection{
-	background:transparent url(images/icons/aon-process-transition-selection.gif) scroll left center no-repeat;
-	padding-left: 18px;	
-}
-
- 

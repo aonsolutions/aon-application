@@ -390,18 +390,6 @@ public interface IWarehouseAlias {
 	*/
 	String  INVENTORY_DETAIL_ITEM_PRODUCT_NAME = INVENTORY_DETAIL_ENTRY.getAliasNames()[6];
 
-	/** 
-	* Alias value: InventoryDetail_item_product_category_id
-	* Hibernate value: InventoryDetail.item.product.category.id
-	*/
-	String  INVENTORY_DETAIL_ITEM_PRODUCT_CATEGORY_ID = INVENTORY_DETAIL_ENTRY.getAliasNames()[7];
-
-	/** 
-	* Alias value: InventoryDetail_item_product_category_name
-	* Hibernate value: InventoryDetail.item.product.category.name
-	*/
-	String  INVENTORY_DETAIL_ITEM_PRODUCT_CATEGORY_NAME = INVENTORY_DETAIL_ENTRY.getAliasNames()[8];
-
 
 
 	/** 

@@ -8,6 +8,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.registry.enumeration.MediaType;
 
@@ -21,7 +23,9 @@ import com.code.aon.registry.enumeration.MediaType;
 @Table(name="rmedia")
 public class RegistryMedia implements ITransferObject {
 
-    /** The id. */
+	private static final long serialVersionUID = -8159019613531419719L;
+
+	/** The id. */
     private Integer id;
 
     /** The registry. */
@@ -35,12 +39,6 @@ public class RegistryMedia implements ITransferObject {
 
     /** The comment. */
     private String comment;
-
-    /**
-     * The empty constructor.
-     */
-    public RegistryMedia() {
-    }
 
     /**
      * Gets the id.
@@ -139,4 +137,27 @@ public class RegistryMedia implements ITransferObject {
     public void setComment(String comment) {
         this.comment = comment;
     }
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof RegistryMedia) {
+			RegistryMedia o = (RegistryMedia) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
+
 }

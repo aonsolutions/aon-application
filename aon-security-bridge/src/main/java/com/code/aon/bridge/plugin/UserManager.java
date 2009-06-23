@@ -477,11 +477,11 @@ public class UserManager implements Serializable {
 				if ( areEqualPasswords() ) {
 					setPassword( getNewPassword() );
 				} else {
-					Messages.addInfoMessage( bundle.getString("aon_security_new_passwd_error") );
+					Messages.addErrorMessage( bundle.getString("aon_security_new_passwd_error") );
 					return null;
 				}
 			} else {
-				Messages.addInfoMessage( bundle.getString("aon_security_passwd_error") );
+				Messages.addErrorMessage( bundle.getString("aon_security_passwd_error") );
 				return null;
 			}
 			this.user.changePasswd( encryptPassword( app ) );
@@ -504,7 +504,7 @@ public class UserManager implements Serializable {
 			if ( areEqualPasswords() ) {
 				setPassword( getNewPassword() );
 			} else {
-				Messages.addInfoMessage( bundle.getString("aon_security_new_passwd_error") );
+				Messages.addErrorMessage( bundle.getString("aon_security_new_passwd_error") );
 				return;
 			}
 			IApplication app = getApplication();

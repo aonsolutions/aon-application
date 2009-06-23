@@ -11,7 +11,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name="geotree")
@@ -56,6 +63,8 @@ public class GeoTree implements ITransferObject {
 	 */
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="parent")
+    @ForeignKey(name = "FK_GEOTREE_PARENT")
+    @Index(name = "IDX_GEOTREE_PARENT")        
 	public GeoZone getParent() {
 		return parent;
 	}
@@ -77,7 +86,9 @@ public class GeoTree implements ITransferObject {
     @OneToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	@org.hibernate.annotations.Cascade(value={org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE})
 	@ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="child")
+    @JoinColumn(name="child", nullable = false)
+    @ForeignKey(name = "FK_GEOTREE_CHILD")
+    @Index(name = "IDX_GEOTREE_CHILD")    
     public GeoZone getChild() {
 		return child;
 	}
@@ -93,12 +104,31 @@ public class GeoTree implements ITransferObject {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (id == null) {
-			return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final GeoTree o = (GeoTree) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.child, o.child)
+				.append(this.parent, o.parent)
+				.isEquals();
 		}
-		if (obj instanceof GeoTree) {
-			return (this.id.equals(((GeoTree) obj).getId()));
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
 	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(child)
+			.append(id)
+			.append(parent)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
+
 }

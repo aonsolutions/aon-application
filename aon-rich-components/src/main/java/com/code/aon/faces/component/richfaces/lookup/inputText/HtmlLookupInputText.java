@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.faces.component.html.HtmlInputText;
 import javax.faces.context.FacesContext;
-import javax.faces.el.MethodBinding;
 import javax.faces.el.ValueBinding;
 
 import com.code.aon.faces.component.richfaces.lookup.ILookupComponent;
@@ -23,10 +22,6 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
     private ValueBinding property;
     
     private ValueBinding lookup;
-    
-    private String lookupProperty;
-    
-    private MethodBinding lookupChangeListener;    
     
 	/** The map of join value bindings. */
 	private Map<String,ValueBinding> joinBindingsMap;
@@ -62,27 +57,7 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
 	public void setProperty(ValueBinding property) {
 		this.property = property;
 	}
-	
-	public MethodBinding getLookupChangeListener() {
-		return this.lookupChangeListener;
-	}
 
-	public void setLookupChangeListener(MethodBinding lookupChangeListener) {
-		this.lookupChangeListener = lookupChangeListener;
-	}
-
-	public String getLookupProperty() {
-    	if (null != this.lookupProperty) {
-            return this.lookupProperty;
-        }
-        ValueBinding _vb = getValueBinding(LOOKUP_PROPERTY);
-        return ((_vb != null) ? (String)_vb.getValue(getFacesContext()) : null);
-	}	
-
-	public void setLookupProperty(String lookupProperty) {
-		this.lookupProperty = lookupProperty;
-	}
-	
 	public void addJoinProperty( String alias, ValueBinding vb ) {
 		if ( this.joinBindingsMap.isEmpty() ) {
 			this.joinBindingsMap = new HashMap<String, ValueBinding>();
@@ -112,8 +87,6 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
   		lookup = (ValueBinding) this._state[1];
   		property = (ValueBinding) this._state[2];
   		joinBindingsMap = (Map<String, ValueBinding>) this._state[3];
-  		lookupChangeListener = (MethodBinding) this._state[4];  	
-  		lookupProperty = (String) this._state[5];  		
   	}  
    
     /**
@@ -125,15 +98,12 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
      */
   	public Object saveState(FacesContext _context) {  
   		if (_state == null) {  
-  			_state = new Object[6];  
+  			_state = new Object[4];  
   		}  
   		_state[0] = super.saveState(_context);  
   		_state[1] = lookup;
   		_state[2] = property;
   		_state[3] = joinBindingsMap;
-  		_state[4] = lookupChangeListener;  
-  		_state[5] = lookupProperty;
-  		
   		return _state;  
   	}
 	

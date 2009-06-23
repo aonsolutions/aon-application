@@ -90,16 +90,16 @@ public class AonServer {
 
             return true;
         }catch (NoSuchProviderException e) {
-        	LOGGER.log(Level.SEVERE,"Connection Error - No such provider for " + account.toString(),e);
+        	LOGGER.log(Level.ALL,"Connection Error - No such provider for " + account.toString(),e);
             return false;
         }catch(AuthenticationFailedException e){
-        	LOGGER.log(Level.SEVERE,"Connection Error - Authentication error " + account.toString(),e);
+        	LOGGER.log(Level.ALL,"Connection Error - Authentication error " + account.toString(),e);
             return false;
         }catch (MessagingException e) {
-        	LOGGER.log(Level.SEVERE,"Connection Error - Messaging Exception " + account.toString(),e);
+        	LOGGER.log(Level.ALL,"Connection Error - Messaging Exception " + account.toString(),e);
             return false;
         }catch (Throwable e) {
-        	LOGGER.log(Level.SEVERE,"Connection Error - Misc. Exception " + account.toString(),e);
+        	LOGGER.log(Level.ALL,"Connection Error - Misc. Exception " + account.toString(),e);
             return false;
         }
     }
@@ -112,7 +112,7 @@ public class AonServer {
     	try {
     		store.close();
     	} catch (MessagingException e) {
-    		LOGGER.log(Level.SEVERE,"Messaging Exception on disconnect method",e);
+    		LOGGER.log(Level.ALL,"Messaging Exception on disconnect method",e);
     	}
     }
 
@@ -128,7 +128,7 @@ public class AonServer {
         try {
             return store.getDefaultFolder();
         } catch (MessagingException e) {
-        	LOGGER.log(Level.SEVERE,"getRoot failed " , e);
+        	LOGGER.log(Level.ALL,"getRoot failed " , e);
             return null;
         }
     }
@@ -138,7 +138,7 @@ public class AonServer {
         try {
             return new AonFolder(store.getFolder(folderName));
         } catch (MessagingException e) {
-        	LOGGER.log(Level.SEVERE,"getAonFolder failed " , e);
+        	LOGGER.log(Level.ALL,"getAonFolder failed " , e);
             return null;
         }
     }
@@ -159,7 +159,7 @@ public class AonServer {
 			}
 			return new AonFolder(new_folder);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.SEVERE,
+			LOGGER.log(Level.ALL,
 					"Creating new folder failed ", e);
 		}
 		return null;
@@ -210,19 +210,19 @@ public class AonServer {
                 transport.sendMessage(message,
                         message.getAllRecipients());
             } else {
-            	LOGGER.log(Level.SEVERE,"Could not send message, null message");
+            	LOGGER.log(Level.ALL,"Could not send message, null message");
             }
             return true;
         } catch (SendFailedException e) {
-        	LOGGER.log(Level.SEVERE,"Message send failed " , e);
+        	LOGGER.log(Level.ALL,"Message send failed " , e);
 			AonUtil.addErrorMessage(e.getMessage());
 			return false;
         } catch (MessagingException e) {
-        	LOGGER.log(Level.SEVERE,"Message was not sent correctly " , e);
+        	LOGGER.log(Level.ALL,"Message was not sent correctly " , e);
 			AonUtil.addErrorMessage(e.getMessage());
 			return false;
         } catch (Throwable e) {
-        	LOGGER.log(Level.SEVERE,"Message was not sent correctly " , e);
+        	LOGGER.log(Level.ALL,"Message was not sent correctly " , e);
 			AonUtil.addErrorMessage(e.getMessage());
 			return false;
         }

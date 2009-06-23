@@ -14,6 +14,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * LinesController is used to implement child Controllers.
@@ -88,7 +89,7 @@ public class LinesController extends BasicController {
 	 */
 	public IController getMasterController() {
 		if (this.masterController == null) {
-			this.masterController = FormUtil.getController(masterControllerName);
+			this.masterController = AonUtil.getController(masterControllerName);
 		}
 		return this.masterController;
 	}

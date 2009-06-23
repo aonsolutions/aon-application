@@ -7,11 +7,11 @@ import org.apache.commons.beanutils.PropertyUtils;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.registry.Registry;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * Listener added to the detail controllers of Registry.
@@ -27,7 +27,7 @@ public class RegistryChildControllerListener extends ControllerAdapter {
 	 * @return the master controller
 	 */
 	public IController getMasterController() {
-		return FormUtil.getController(COMPANY_CONTROLLER_NAME);
+		return AonUtil.getController(COMPANY_CONTROLLER_NAME);
 	}
 
 	/**

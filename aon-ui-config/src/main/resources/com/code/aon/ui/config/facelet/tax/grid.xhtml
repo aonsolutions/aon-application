@@ -68,16 +68,16 @@
 										timeZone="#{timeZoneController.timeZoneId}" />
 								</aon:outputText>
 								<aon:panelGrid columns="1" rendered="#{to.id==tax.to.id}">
-									<aon:selectInputDate id="Tax_start_date-Edit"
-										value="#{tax.to.startDate}"
-										timeZone="#{timeZoneController.timeZone}"
-										popupDateFormat="#{bundle.aon_date_pattern}"/>
+									<aon:selectInputDate size="8" id="Tax_start_date-Edit"
+										value="#{tax.to.startDate}" enableManualInput="true"
+										datePattern="dd/MM/yyyy"
+										timeZone="#{timeZoneController.timeZone}" />
 								</aon:panelGrid>
 								<f:facet name="footer">
-									<aon:selectInputDate id="Tax_start_date-New"
+									<aon:selectInputDate size="8" id="Tax_start_date-New"
 										rendered="#{tax.new}" value="#{tax.to.startDate}"
-										timeZone="#{timeZoneController.timeZone}"
-										popupDateFormat="#{bundle.aon_date_pattern}"/>
+										enableManualInput="true" datePattern="dd/MM/yyyy"
+										timeZone="#{timeZoneController.timeZone}" />
 								</f:facet>
 							</aon:column>
 

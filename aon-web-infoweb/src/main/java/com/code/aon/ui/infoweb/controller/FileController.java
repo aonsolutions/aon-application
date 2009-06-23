@@ -1,33 +1,27 @@
 package com.code.aon.ui.infoweb.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Random;
 
-import javax.faces.event.AbortProcessingException;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.validator.LengthValidator;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.ui.common.io.AonFile;
-import com.code.aon.ui.common.io.IAonFileListener;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
 
-public class FileController extends BasicController implements IAonFileListener {
-
-	/** The uploaded file. */
-	private AonFile aonFile;
+public class FileController extends BasicController {
 
 	private long maximumSize = -1;
 	
-
 	public FileController() {
 		this.maximumSize = -1;
 	}
@@ -44,45 +38,22 @@ public class FileController extends BasicController implements IAonFileListener 
 		return (IAttachment) getTo();
 	}
 	
-	/**
-	 * Gets the uploaded file.
-	 * 
-	 * @return the file
-	 */
-	public AonFile getAonFile() {
-		return this.aonFile;
-	}
-
-	/**
-	 * Sets the file.
-	 * 
-	 * @param file
-	 *            the file
-	 */
-	public void setAonFile(AonFile aonFile) {
-		this.aonFile = aonFile;
-	}
-
-	public void fileUploaded(UploadEvent event) {
-		try {
-			UploadItem item = event.getUploadItem();
-			AonFile f = new AonFile();
-			File file = item.getFile();
-			if (file != null) {
-				FileInputStream in = new FileInputStream(file);
-				byte[] data = IOUtils.toByteArray(in);
-				f.setData(data);
-			}
-			f.setFileName(item.getFileName());
-			f.addAonFileListener(this);
-			setAonFile(f);
-		} catch (IOException e) {
-			throw new AbortProcessingException(e.getMessage());
+	public void uploadListener(UploadEvent event) throws IOException{
+		UploadItem item = event.getUploadItem();
+		byte[] data = item.getData();
+		long size = data.length;
+		String fileName = item.getFileName();
+		String contentType = item.getContentType();
+		MimeType mimeType = MimeType.get(contentType);
+		System.out.println("-----------========== MAX: " + maximumSize + " SIZE: " + size);
+		if ( (maximumSize != -1) && (size > maximumSize) ) {
+			FacesContext ctx = FacesContext.getCurrentInstance();
+			FacesMessage message = AonUtil.getMessage( ctx, LengthValidator.MAXIMUM_MESSAGE_ID, new Object[]{maximumSize, fileName} );
+			AonUtil.addErrorMessage(message.getDetail());
 		}
-	}
-
-	public void fileDeleted(AonFile aonFile) {
-		setAonFile(null);
+		else {
+			updateFile( fileName, data, mimeType);
+		}
 	}
 
 	public void updateFile( String fileName, byte[] data, MimeType mimeType ) {
@@ -123,6 +94,7 @@ public class FileController extends BasicController implements IAonFileListener 
     
     public void paint(OutputStream out, Object data) throws IOException {
     	if ( getFileData() != null ) {
+    		System.out.println(getFileData());
     		out.write( getFileData() );
     	}
     }

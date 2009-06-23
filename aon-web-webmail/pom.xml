@@ -13,7 +13,7 @@
 	<artifactId>aon-web-webmail</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB WEBMAIL</name>
-	<version>4.2.0</version>
+	<version>3.1.0</version>
 	<description>AON WEB WEBMAIL</description>
 	<build>
 		<finalName>aon-webmail</finalName>
@@ -21,45 +21,21 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.security</artifactId>
+			<version>1.2.11</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.webmail</artifactId>
-			<version>4.2.0</version>
-			<scope>compile</scope>
-		</dependency>
-	    <dependency>
-	      <groupId>com.code.aon</groupId>
-	      <artifactId>aon.ui.resources</artifactId>
-	      <version>3.2.0</version>
-	      <scope>compile</scope>
-	    </dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.form</artifactId>
 			<version>3.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.groupware</artifactId>
-			<version>3.1.0</version>
+		    <groupId>commons-fileupload</groupId>
+		    <artifactId>commons-fileupload</artifactId>
+		    <version>1.0</version>
 			<scope>compile</scope>
-			<exclusions>
-				<exclusion>			
-					<groupId>com.code.aon</groupId>
-					<artifactId>aon.ui.config</artifactId>
-				</exclusion>
-				<exclusion>
-					<artifactId>Esendex</artifactId>
-					<groupId>com.esendex</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>wsdl4j</artifactId>
-					<groupId>wsdl4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>axis</artifactId>
-					<groupId>axis</groupId>
-				</exclusion>
-			</exclusions>			
 		</dependency>
 		<dependency>
 		    <groupId>commons-el</groupId>
@@ -68,9 +44,83 @@
 			<scope>runtime</scope>
 		</dependency>			
 		<dependency>
+			<groupId>org.apache.myfaces.tomahawk</groupId>
+			<artifactId>tomahawk</artifactId>
+			<version>1.1.6</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>oro</groupId>
+					<artifactId>oro</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>jstl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-lang</groupId>
+					<artifactId>commons-lang</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-collections</groupId>
+					<artifactId>commons-collections</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-fileupload</groupId>
+					<artifactId>commons-fileupload</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-validator</groupId>
+					<artifactId>commons-validator</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-el</groupId>
+					<artifactId>commons-el</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.sun</groupId>
+			<artifactId>jimi</artifactId>
+			<version>1.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+			<version>1.4.1</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>1.4</version>
-		</dependency>		
+			<version>1.3.2</version>
+		</dependency>
+	    <dependency>
+	      <groupId>com.code.aon</groupId>
+	      <artifactId>aon.ui.resources</artifactId>
+	      <version>1.0.4</version>
+	      <scope>compile</scope>
+	    </dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.groupware</artifactId>
+			<version>2.1.9</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>			
+					<groupId>com.code.aon</groupId>
+					<artifactId>aon.ui.config</artifactId>
+				</exclusion>
+			</exclusions>			
+		</dependency>
 	</dependencies>
 </project>

@@ -10,11 +10,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name="rdir_staff")
 public class RegistryDirStaff implements ITransferObject {
+
+	private static final long serialVersionUID = -2674917501167731593L;
 
 	private Integer id;
 	
@@ -139,4 +143,27 @@ public class RegistryDirStaff implements ITransferObject {
 	public void setDueDate(Date dueDate) {
 		this.dueDate = dueDate;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof RegistryDirStaff) {
+			RegistryDirStaff o = (RegistryDirStaff) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
+
 }

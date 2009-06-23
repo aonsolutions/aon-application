@@ -1,14 +1,9 @@
-<faces-config version="1.2"
-	xmlns="http://java.sun.com/xml/ns/javaee"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
 
-	<application>
-		<resource-bundle>
-			<base-name>com.code.aon.ui.config.i18n.messages</base-name>
-			<var>configBundle</var>
-		</resource-bundle>
-	</application>
+<faces-config>
 
 	<!--  *************** COLLECTIONS ***************** -->
 	<managed-bean>
@@ -330,28 +325,6 @@
 		</managed-property>
 	</managed-bean>
 
-	<!-- ************* PAYMETHOD ***************** -->
-	<managed-bean>
-		<managed-bean-name>payMethod</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.BasicController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.config.PayMethod</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>payMethod</value>
-		</managed-property>		
-	</managed-bean>
-	
-
   <!-- *************************************** -->
   <!-- ************ NAVIGATION *************** -->
   <!-- *************************************** -->
@@ -367,11 +340,4 @@
 		</navigation-case>
 	</navigation-rule>
 
-	<!-- =================== PAY METHOD ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>payMethod</from-outcome>
-			<to-view-id>/com/code/aon/ui/config/facelet/payMethod/grid.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
 </faces-config>

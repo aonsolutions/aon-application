@@ -9,6 +9,8 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
 
@@ -23,6 +25,8 @@ import com.code.aon.registry.Registry;
 @PrimaryKeyJoinColumn(name="registry")
 public class Company extends Registry implements ITaxInfo{
 
+	private static final long serialVersionUID = -4187068086094343444L;
+
 	/** Indicates if the company is active or not. */
 	private boolean active;    
 
@@ -31,12 +35,6 @@ public class Company extends Registry implements ITaxInfo{
     
     /** Indicates the company calendar identifier. */
     private Integer calendar;
-
-    /**
-	 * The empty constructor.
-	 */
-	public Company() {
-	}
 
 	/**
 	 * Checks if is active.
@@ -97,4 +95,27 @@ public class Company extends Registry implements ITaxInfo{
 	public boolean isWithholding() {
 		return false;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof Company) {
+			Company o = (Company) obj;
+			if (o.getId() == null && getId() == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+    public int hashCode() {
+        return getId() != null ? this.getClass().hashCode() + getId().hashCode() : super.hashCode();
+    }
+
 }

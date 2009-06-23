@@ -3,8 +3,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -33,25 +31,21 @@
 							actionListener="#{dailyTracking.onEditSearch}"
 							action="daily_tracking_search"
 							accesskey="#{bundle.aon_key_search}" />
-						<aon:selectBooleanCheckbox id="monitor"
-							value="#{dailyTracking.monitor}" rendered="#{role.monitorRole}">
-							<a4j:support event="onclick"
-								reRender="toolbar,dailyTrackingData"
-								actionListener="#{dailyTracking.onSwicthMonitor}">
-							</a4j:support>
-						</aon:selectBooleanCheckbox>
-						<aon:outputLabel for="monitor" value="Monitor"
-							rendered="#{role.monitorRole}" />
-
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>
 
 			<!--  aon-region-body -->
-			<aon:div id="dailyTrackingData" styleClass="aon-scroll-area">
+			<aon:div styleClass="aon-scroll-area">
 				<aon:editDataTable id="dailyTrackingDataList"
-					value="#{dailyTracking.model}" rows="20" var="to">
-					<aon:column styleClass="aon-editDataTable-iconColumn">
+					value="#{dailyTracking.model}" rows="20" var="to"
+					columnClasses="aon-editDataTable-iconColumn,
+								aon-editDataTable-text,
+								aon-editDataTable-text,
+								aon-editDataTable-text,
+								aon-editDataTable-text,
+								aon-editDataTable-number">
+					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="&#160;" />
 						</f:facet>
@@ -62,7 +56,7 @@
 						</h:commandButton>
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-text">
+					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{projectBundle.aon_date}" />
 						</f:facet>
@@ -72,30 +66,14 @@
 						</aon:outputText>
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-iconColumn">
+					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="C" />
+							<aon:outputText value="#{customerBundle.customer_customer}" />
 						</f:facet>
-						<aon:div style="display:inline;cursor:pointer;"
-							rendered="#{to.comments != null and to.comments!=''	}">
-							<aon:graphicImage url="/css/images/icons/aon-task-comment.gif" />
-							<rich:toolTip value="#{to.comments}" showEvent="onclick"
-								hideDelay="2000">
-								<f:facet name="defaultContent">
-									<aon:outputText value="#{projectBundle.aon_wait}" />
-								</f:facet>
-							</rich:toolTip>
-						</aon:div>
+						<aon:outputText value="#{to.customer.registry.fullName}" />
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-text" rendered="#{dailyTracking.monitor}">
-						<f:facet name="header">
-							<aon:outputText value="#{projectBundle.task_user}" />
-						</f:facet>
-						<aon:outputText value="#{to.user.name}" />
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-text">
+					<aon:column>
 						<f:facet name="header">
 							<aon:outputText
 								value="#{projectBundle.aon_daily_tracking_dossier}" />
@@ -103,7 +81,7 @@
 						<aon:outputText value="#{to.dossier.number}" />
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-text">
+					<aon:column>
 						<f:facet name="header">
 							<aon:outputText
 								value="#{projectBundle.aon_daily_tracking_activity}" />
@@ -111,7 +89,7 @@
 						<aon:outputText value="#{to.activity.activityType.description}" />
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-text">
+					<aon:column>
 						<f:facet name="header">
 							<aon:outputText
 								value="#{projectBundle.aon_daily_tracking_job_type}" />
@@ -119,25 +97,16 @@
 						<aon:outputText value="#{to.jobType.description}" />
 					</aon:column>
 
-					<aon:column styleClass="aon-editDataTable-text">
-						<f:facet name="header">
-							<aon:outputText value="#{customerBundle.customer_customer}" />
-						</f:facet>
-						<aon:outputText value="#{to.customer.registry.fullName}" />
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-number">
+					<aon:column>
 						<f:facet name="header">
 							<aon:outputText
 								value="#{projectBundle.aon_daily_tracking_duration}" />
 						</f:facet>
-						<aon:outputText value="#{to.trackingDuration}">
-							<f:convertNumber pattern="#,##0.00" />
-						</aon:outputText>
+						<aon:outputText value="#{to.trackingDuration}" />
 					</aon:column>
-				</aon:editDataTable>
-				<aon:dataScroller for="dailyTrackingDataList"
-					rowCount="#{dailyTracking.model.rowCount}" showNote="true" />
+					</aon:editDataTable>
+					<aon:dataScroller for="dailyTrackingDataList"
+						rowCount="#{dailyTracking.model.rowCount}" showNote="true" />
 			</aon:div>
 		</aon:form>
 	</ui:define>

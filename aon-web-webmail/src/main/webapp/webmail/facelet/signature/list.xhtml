@@ -15,24 +15,40 @@
 
 		<aon:form id="list">
 
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.aon_webmail_signature}" />
-				<ui:param name="toolbarDescription" value="#{bundle.aon_listing}" />
-				<ui:define name="toolbarContent">
-					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-						action="signature_form" actionListener="#{signature.onReset}"
-						styleClass="aon-finding-toolbar-item aon-icon-reset"
-						accesskey="#{bundle.aon_key_new}" />
-					<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
-						rendered="#{!signature.checklistEmpty}" inmediate="true"
-						styleClass="aon-finding-toolbar-item aon-icon-delete"
-						confirmTitle="#{bundle.aon_confirm_title}"
-						confirmMessage="#{bundle.aon_remove_confirm}"
-						confirmActionListener="#{signature.onRemoveSelected}"
-						confirmAction="signature_list"
-						accesskey="#{bundle.aon_key_remove}" />
-				</ui:define>
-			</ui:decorate>
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.aon_webmail_signature}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_listing}" />
+					</aon:div>
+
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="signature_form" actionListener="#{signature.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}" />
+						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
+							rendered="#{!signature.checklistEmpty}" inmediate="true"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							confirmTitle="#{bundle.aon_confirm_title}"
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{signature.onRemoveSelected}"
+							confirmAction="signature_list"
+							accesskey="#{bundle.aon_key_remove}" />
+						<aon:commandButton id="back"
+							value="#{bundle.aon_back}" action="folder"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel" />
+					</aon:div>
+
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
@@ -41,22 +57,20 @@
 					rows="#{signature.pageLimit}"
 					columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
 								aon-editDataTable-textColumn">
-					
-					<aon:rowSelector action="signature_form"
-						actionListener="#{signature.onSelect}" />
+
+					<aon:rowSelector 
+						action="signature_form" actionListener="#{signature.onSelect}" />
 						
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_check}" />
 						</f:facet>
-						<aon:div styleClass="aon-text-center">
-							<aon:selectBooleanCheckbox
-								onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
-								value="#{signature.rowChecked}">
-								<a4j:support event="onclick"
-									reRender="dataTable,aonToolbar" />
-							</aon:selectBooleanCheckbox>
-						</aon:div>
+						<aon:selectBooleanCheckbox
+							onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
+							value="#{signature.rowChecked}">
+							<a4j:support event="onclick"
+								reRender="dataTable,buttonsGrid" />
+						</aon:selectBooleanCheckbox>
 					</aon:column>
 
 					<aon:column>
@@ -68,7 +82,7 @@
 
 				</aon:editDataTable>
 
-				<aon:dataScroller2 for="dataTable" showNote="true" />
+				<aon:dataScroller for="dataTable" rowCount="#{signature.model.rowCount}" showNote="true" />
 
 			</aon:div>
 		</aon:form>

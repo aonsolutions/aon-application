@@ -22,15 +22,12 @@ public class MarketingTargetController extends TargetController {
 	private IManagerBean mtBean;
 	
 	@Override
-	public void addExpression(String key, String value)
-			throws ManagerBeanException {
-		String newKey = key;
-		if ( value.length() > 0 ) {
-			if ( newKey.startsWith("Target.") ) {
-				newKey = newKey.replace("Target.", "MarketingTarget.target.");
-			}			
-		}
-		super.addExpression(newKey, value);
+	protected String resolveAlias( String alias ) {
+		String newKey = alias;
+		if ( newKey.startsWith("Target_") ) {
+			newKey = newKey.replace("Target_", "MarketingTarget_target_");
+		}			
+		return super.resolveAlias( newKey );
 	}
 
 	public MarketingTarget getMT() {

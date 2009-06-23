@@ -40,6 +40,7 @@ import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class AonDomainController extends BasicController implements IAonObjectClasses, ILdapConstants {
@@ -208,19 +209,24 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 	}
 	
 	public String getCurrentUserProfiles() {
-		IRelation user = (IRelation) this.users.getRowData();
-		List<String> relations = user.relations();
-		if ( (relations != null) && (!relations.isEmpty()) ) {
-			String profiles = StringUtils.join(relations.toArray(), ", ");
-			return StringUtils.abbreviate(profiles, 140);
+		if ( this.users.isRowAvailable() ) {
+			IRelation user = (IRelation) this.users.getRowData();
+			List<String> relations = user.relations();
+			if ( (relations != null) && (!relations.isEmpty()) ) {
+				String profiles = StringUtils.join(relations.toArray(), ", ");
+				return StringUtils.abbreviate(profiles, 140);
+			}
 		}
 		return "";
 	}	
 
 	public String getCurrentUserName() {
-		IRelation user = (IRelation) this.users.getRowData();
-		AonUserController userController = (AonUserController) AonUtil.getRegisteredBean("currentUser");		
-		return userController.getUserName(user.getId());
+		if ( this.users.isRowAvailable() ) {
+			IRelation user = (IRelation) this.users.getRowData();
+			AonUserController userController = (AonUserController) AonUtil.getRegisteredBean("currentUser");		
+			return userController.getUserName(user.getId());
+		}
+		return "";
 	}	
 	
 	@SuppressWarnings("unchecked")
@@ -390,14 +396,17 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 	}
 
 	public boolean isCurrentSystemProfile() {
-		Relation profile = (Relation)this.profiles.getRowData();
-		return isSystemProfile(profile.getId());
+		if ( this.profiles.isRowAvailable() ) {
+			Relation profile = (Relation)this.profiles.getRowData();
+			return isSystemProfile(profile.getId());
+		}
+		return false;
 	}
 
 	public boolean isUserManagement() {
 		if ( userManagement == null ) {
 			userManagement = Boolean.FALSE;
-			AonUserController userController = (AonUserController) AonUtil.getController("currentUser");
+			AonUserController userController = (AonUserController) FormUtil.getController("currentUser");
 			DistinguishedName dn = AonDN.getDomainDN(userController.getDomain());			
 			BasicLdap ldap = new BasicLdap();
 			try {

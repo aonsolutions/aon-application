@@ -29,10 +29,12 @@ public class WebInfoControllerListener extends ControllerAdapter {
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		IController companyController = (IController) AonUtil.getController(COMPANY_CONTROLLER_NAME);
 		Company company = ((Company)companyController.getTo());
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> COMPANY: " + company.getId());
 
 		CompanyWebInfoController webInfoController = (CompanyWebInfoController) AonUtil.getController(WEB_INFO_CONTROLLER_NAME);
 		WebInfo wi = (WebInfo)webInfoController.getTo();
 		wi.setCompany(company);
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> GUARDANDO SLOGAN " + wi.getSlogan());
 	}
 
 }

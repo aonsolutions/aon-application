@@ -134,7 +134,7 @@ public class Product implements ITransferObject{
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "brand", nullable = false)
+	@JoinColumn(name = "brand", nullable = true)
 	public Brand getBrand() {
 		return brand;
 	}

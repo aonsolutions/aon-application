@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.common.util.CommonUtil;
-import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.product.enumeration.TaxType;
 import com.code.aon.product.strategy.BasicPriceStrategy;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.TaxBreakDown;
@@ -45,9 +44,9 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 			Iterator iterator = map.values().iterator();
 			while(iterator.hasNext()){
 				TaxBreakDown tbd = (TaxBreakDown)iterator.next();
-				tbd.setTaxQuota(CommonUtil.round(tbd.getBase() * tbd.getTaxPercent()/100));
+				tbd.setTaxQuota(round(tbd.getBase() * tbd.getTaxPercent()/100 , 2));
 				if(iti.isSurcharge()){
-					tbd.setSurchargeQuota(CommonUtil.round(tbd.getBase() * tbd.getSurchargePercent()/100));
+					tbd.setSurchargeQuota(round(tbd.getBase() * tbd.getSurchargePercent()/100 , 2));
 				}else{
 					tbd.setSurchargeQuota(0.0);
 					tbd.setSurchargePercent(0.0);
@@ -69,7 +68,7 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 				total += taxBreakDown.getSurchargeQuota();
 			}
 		}
-		return CommonUtil.round(total);
+		return round(total,2);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -82,6 +81,6 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 				total = total - taxBreakDown.getTaxQuota();
 			}
 		}
-		return CommonUtil.round(total);
+		return round(total,2);
 	}
 }

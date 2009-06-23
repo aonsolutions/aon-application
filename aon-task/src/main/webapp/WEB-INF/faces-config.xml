@@ -111,10 +111,6 @@
 					<value>com.code.aon.ui.project.i18n.messagesTask</value>
 				</map-entry>
 				<map-entry>
-					<key>campaignBundle</key>
-					<value>com.code.aon.ui.campaign.i18n.messagesTask</value>
-				</map-entry>
-				<map-entry>
 					<key>registryBundle</key>
 					<value>
 						com.code.aon.ui.registry.i18n.messages

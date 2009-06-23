@@ -1,18 +1,14 @@
 package com.code.aon.registry;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
-import com.code.aon.common.ILookupObject;
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
-import com.code.aon.registry.dao.IRegistryAlias;
 
 /**
  * Transfer Object that represents the Category.
@@ -23,9 +19,11 @@ import com.code.aon.registry.dao.IRegistryAlias;
  */
 @Entity
 @Table(name="category")
-public class Category implements ITransferObject, ILookupObject  {
+public class Category implements ITransferObject {
 
-    /** The id. */
+	private static final long serialVersionUID = -4682457922593197659L;
+
+	/** The id. */
     private Integer id;
 
     /** The name. */
@@ -86,16 +84,26 @@ public class Category implements ITransferObject, ILookupObject  {
         this.name = name;
     }
 
-    /**
-	 * Gets the map of values used by the lookup.
-	 * 
-	 * @return the map
-	 */
-    @Transient
-	public Map<String,Object> getLookups() {
-        Map<String,Object> map = new HashMap<String,Object>();
-        map.put(IRegistryAlias.CATEGORY_ID, getId());
-        map.put(IRegistryAlias.CATEGORY_NAME, getName());
-        return map;
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof Category) {
+			Category o = (Category) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
     }
+
 }

@@ -8,6 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.Formula;
 
 import com.code.aon.common.IAttachment;
@@ -24,7 +25,9 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
 @Table(name="rattach")
 public class RegistryAttachment implements IAttachment {
 
-    /** The id. */
+	private static final long serialVersionUID = -6774043069274297973L;
+
+	/** The id. */
     private Integer id;
 
     /** The registry. */
@@ -205,8 +208,7 @@ public class RegistryAttachment implements IAttachment {
 	 * 
 	 * @param registryAttachmentType the registry attachment type
 	 */
-	public void setRegistryAttachmentType(
-			RegistryAttachmentType registryAttachmentType) {
+	public void setRegistryAttachmentType(RegistryAttachmentType registryAttachmentType) {
 		this.registryAttachmentType = registryAttachmentType;
 	}
 
@@ -221,4 +223,27 @@ public class RegistryAttachment implements IAttachment {
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof RegistryAttachment) {
+			RegistryAttachment o = (RegistryAttachment) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
+
 }

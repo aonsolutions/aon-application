@@ -4,11 +4,11 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * Controller used in the RegistryAttachment maintenance
@@ -24,7 +24,7 @@ public class RegistryAttachmentControllerListener extends ControllerAdapter {
 	 * @return the detail controller
 	 */
 	public IController getDetailController() {
-		return FormUtil.getController(ATTACHMENT_CONTROLLER_NAME);
+		return AonUtil.getController(ATTACHMENT_CONTROLLER_NAME);
 	}
 
 	/**

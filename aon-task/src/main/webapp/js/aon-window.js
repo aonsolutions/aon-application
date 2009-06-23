@@ -20,7 +20,6 @@ function aonFocus(){
 			}
 		}
 	} catch(e) {
-		alert(e);
 	}
 }
 

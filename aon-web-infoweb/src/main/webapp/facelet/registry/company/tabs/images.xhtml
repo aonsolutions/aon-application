@@ -104,7 +104,7 @@
 											progressLabel="#{appBundle.aon_web_info_progress}" 
 											sizeErrorLabel="#{appBundle.aon_web_info_size_error}" 
 											transferErrorLabel="#{appBundle.aon_web_info_transfer_error}" 
-											fileUploadListener="#{companyImages.fileUploaded}"
+											fileUploadListener="#{companyImages.uploadListener}"
 											immediateUpload="true" autoclear="false" listHeight="70px" listWidth="100%">
 										<a4j:support event="onuploadcomplete" reRender="image_preview" />
 									</aon:fileUpload>

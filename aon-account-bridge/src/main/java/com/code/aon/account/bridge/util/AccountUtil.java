@@ -28,11 +28,11 @@ import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.finance.Creditor;
-import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryBank;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.supplier.dao.ISupplierAlias;
 

@@ -6,7 +6,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Logger;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang.ClassUtils;
 import org.hibernate.annotations.Cascade;
 
 import com.code.aon.common.BeanManager;
@@ -50,15 +49,6 @@ public class AbstractPojoController {
 		return pojo;
 	}
 
-	/**
-	 * Return the POJO class short name associated to controller.
-	 * 
-	 * @return String
-	 */
-	public String getPojoShortName() {
-		return ClassUtils.getShortClassName(pojo);
-	}
-	
 	/**
 	 * Set the POJO associated to controller.
 	 * 

@@ -8,24 +8,25 @@
 
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="controller" value="#{controllerAlias}" />
 		<ui:param name="columnClasses"
-			value="aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap,
-			aon-editDataTable-textColumn aon-vertical-align-top aon-width-200 aon-nowrap,
-			aon-editDataTable-textColumn aon-vertical-align-top aon-nowrap" />
+			value="aon-editDataTable-textColumn aon-vertical-align-top aon-width-40 aon-nowrap,
+			aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap,
+			aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap" />
 		<ui:define name="columns">
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText value="#{registryBundle.registry_media_type}" />
 				</f:facet>
 				<aon:outputText value="#{to.mediaType}"
-					rendered="#{formList}" />
-				<aon:selectOneMenu value="#{controller.to.mediaType}"
-					rendered="#{formEdit}">
+					rendered="#{to!=controllerAlias.to}" />
+				<aon:selectOneMenu value="#{controllerAlias.to.mediaType}"
+					rendered="#{to==controllerAlias.to}">
 					<f:selectItems value="#{registryCollections.mediaTypes}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
-					<aon:selectOneMenu value="#{controller.to.mediaType}"
-						rendered="#{formNew}">
+					<aon:selectOneMenu value="#{controllerAlias.to.mediaType}"
+						rendered="#{controllerAlias.new}">
 						<f:selectItems value="#{registryCollections.mediaTypes}" />
 					</aon:selectOneMenu>
 				</f:facet>
@@ -36,13 +37,13 @@
 					<aon:outputText value="#{bundle.aon_value}" />
 				</f:facet>
 				<aon:outputText value="#{to.value}"
-					rendered="#{formList}" />
+					rendered="#{to!=controllerAlias.to}" />
 				<aon:inputText value="#{to.value}"
-					rendered="#{formEdit}" required="true" size="40"
+					rendered="#{to==controllerAlias.to}" required="true" size="40"
 					onblur="toLowerCase(this);" />
 				<f:facet name="footer">
-					<aon:inputText id="Media" value="#{controller.to.value}"
-						rendered="#{formNew}" required="true" size="40"
+					<aon:inputText id="Media" value="#{controllerAlias.to.value}"
+						rendered="#{controllerAlias.new}" required="true" size="40"
 						onblur="toLowerCase(this);" />
 				</f:facet>
 			</aon:column>
@@ -52,12 +53,12 @@
 					<aon:outputText value="#{bundle.aon_comment}" />
 				</f:facet>
 				<aon:outputText value="#{to.comment}"
-					rendered="#{formList}" />
+					rendered="#{to!=controllerAlias.to}" />
 				<aon:inputText value="#{to.comment}"
-					rendered="#{formEdit}" size="40" />
+					rendered="#{to==controllerAlias.to}" size="40" />
 				<f:facet name="footer">
-					<aon:inputText value="#{controller.to.comment}"
-						rendered="#{formNew}" size="40" />
+					<aon:inputText value="#{controllerAlias.to.comment}"
+						rendered="#{controllerAlias.new}" size="40" />
 				</f:facet>
 			</aon:column>
 		</ui:define>

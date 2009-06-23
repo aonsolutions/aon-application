@@ -28,23 +28,6 @@ public class GeozoneCollectionsController {
 	/** The geoTrees list. */
 	private List<SelectItem> geoTrees;
 
-	/**
-	 * Gets the geo zone.
-	 * 
-	 * @return the geo zone
-	 */
-	public GeoZone getGeoZone() {
-		return null;
-	}
-	
-	/**
-	 * Sets the geo zone.
-	 * 
-	 * @param geoZone the new geo zone
-	 */
-	public void setGeoZone( GeoZone geoZone ) {
-	}
-	
     /**
      * Gets the geoZones.
      * 

@@ -34,12 +34,6 @@ public class ReportConfigLoaderTest extends TestCase {
 			assertEquals(50, rcg.getFetchMode().getVirtualizerPageMax() );
 			assertNotNull( rcg.getParams());
 			assertEquals("#{company.obtainCompany}", rcg.getParams().get("company") );
-			ReportConfig rcg1 = rc.getReport( "customer" );
-			assertTrue(rcg1.isForceRefresh());
-			ReportConfig rcg2 = rc.getReport( "payform" );
-			assertFalse(rcg2.isForceRefresh());
-			ReportConfig rcg3 = rc.getReport( "item" );
-			assertTrue(rcg3.isForceRefresh());
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail( e.getMessage() );

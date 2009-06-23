@@ -1,8 +1,5 @@
 package com.code.aon.composition;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,9 +8,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
-import com.code.aon.common.ILookupObject;
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 
 /**
@@ -26,9 +23,11 @@ import com.code.aon.common.ITransferObject;
  */
 @Entity
 @Table(name="production_expense")
-public class ProductionExpense implements ITransferObject, ILookupObject {
+public class ProductionExpense implements ITransferObject {
 
-    /**
+	private static final long serialVersionUID = 5841388198365030564L;
+
+	/**
      * Unique key.
      */
     private Integer id;
@@ -160,15 +159,26 @@ public class ProductionExpense implements ITransferObject, ILookupObject {
         this.price = price;
     }
 
-    /**
-     * Returns a Map containing some attributes to use as lookups.
-     *
-     * @return Map<String,Object>
-     */
-	@Transient
-    public Map<String,Object> getLookups() {
-        Map<String,Object> map = new HashMap<String,Object>();
-        return map;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof ProductionExpense) {
+			ProductionExpense o = (ProductionExpense) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
 
+	@Override
+	public int hashCode() {
+		return getId().hashCode();
+	}
+	
 }

@@ -17,14 +17,10 @@ import com.code.aon.config.Tax;
 import com.code.aon.config.TaxDetail;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.TaxType;
-import com.code.aon.product.CatalogueCategory;
-import com.code.aon.product.CatalogueItem;
 import com.code.aon.product.Tariff;
 import com.code.aon.product.TariffCatalogue;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.ITaxInfo;
 
 /**
@@ -152,48 +148,16 @@ public class BasicPriceStrategy implements IPriceStrategy {
 	/* (non-Javadoc)
 	 * @see com.code.aon.product.strategy.IPriceStrategy#getUnitPrice(com.code.aon.product.strategy.ICalculable, com.code.aon.product.Tariff)
 	 */
-	public double getUnitPrice(ICalculable calc, Date date, Tariff tariff) {
+	public double getUnitPrice(ICalculable calc, ICalculableContainer icc, Tariff tariff) {
 		try {
 			if (tariff != null) {
 				IManagerBean tariffCatalogueBean = BeanManager.getManagerBean(TariffCatalogue.class);
-				IManagerBean catalogueItemBean = BeanManager.getManagerBean(CatalogueItem.class);
-				IManagerBean catalogueCategoryBean = BeanManager.getManagerBean(CatalogueCategory.class);
-
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(tariffCatalogueBean.getFieldName(IProductAlias.TARIFF_CATALOGUE_TARIFF_ID), tariff.getId());
-				criteria.addLessThanOrEqualExpression(tariffCatalogueBean.getFieldName(IProductAlias.TARIFF_CATALOGUE_CATALOGUE_START_DATE), date);
-				Expression dateExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(tariffCatalogueBean.getFieldName(IProductAlias.TARIFF_CATALOGUE_CATALOGUE_END_DATE), date);
-				Expression nullExpr = ExpressionUtilities.getNullExpression(tariffCatalogueBean.getFieldName(IProductAlias.TARIFF_CATALOGUE_CATALOGUE_END_DATE));
-				criteria.addExpression(ExpressionUtilities.getOrExpression(dateExpr, nullExpr));
-				criteria.addOrder(tariffCatalogueBean.getFieldName(IProductAlias.TARIFF_CATALOGUE_CATALOGUE_START_DATE), false);
-				Iterator iterator = tariffCatalogueBean.getList(criteria).iterator();
-				while (iterator.hasNext()) {
-					TariffCatalogue tariffCatalogue = (TariffCatalogue)iterator.next();
+				criteria.addLessThanOrEqualExpression(tariffCatalogueBean.getFieldName(IProductAlias.TARIFF_CATALOGUE_CATALOGUE_START_DATE), icc.getDate());
 
-					criteria = new Criteria();
-					criteria.addEqualExpression(catalogueItemBean.getFieldName(IProductAlias.CATALOGUE_ITEM_CATALOGUE_ID), tariffCatalogue.getCatalogue().getId());
-					criteria.addEqualExpression(catalogueItemBean.getFieldName(IProductAlias.CATALOGUE_ITEM_ITEM_ID), calc.getItem().getId());
-					criteria.addLessThanOrEqualExpression(catalogueItemBean.getFieldName(IProductAlias.CATALOGUE_ITEM_QUANTITY), calc.getQuantity());
-					criteria.addOrder(catalogueItemBean.getFieldName(IProductAlias.CATALOGUE_ITEM_QUANTITY), false);
-					Iterator itemIterator = catalogueItemBean.getList(criteria, 0, 1).iterator();
-					if (itemIterator.hasNext()) {
-						CatalogueItem catalogueItem = (CatalogueItem)itemIterator.next();
-						calc.getDiscountExpression().setDiscountExpr(Double.toString(catalogueItem.getDiscount()));
-						return (catalogueItem.getPrice() > 0)?catalogueItem.getPrice():getUnitPrice(calc);
-					}
 
-					criteria = new Criteria();
-					criteria.addEqualExpression(catalogueCategoryBean.getFieldName(IProductAlias.CATALOGUE_CATEGORY_CATALOGUE_ID), tariffCatalogue.getCatalogue().getId());
-					criteria.addEqualExpression(catalogueCategoryBean.getFieldName(IProductAlias.CATALOGUE_CATEGORY_CATALOGUE_ID), calc.getItem().getProduct().getCategory().getId());
-					criteria.addLessThanOrEqualExpression(catalogueCategoryBean.getFieldName(IProductAlias.CATALOGUE_CATEGORY_QUANTITY), calc.getQuantity());
-					criteria.addOrder(catalogueCategoryBean.getFieldName(IProductAlias.CATALOGUE_CATEGORY_QUANTITY), false);
-					Iterator categoryIterator = catalogueCategoryBean.getList(criteria, 0, 1).iterator();
-					if (categoryIterator.hasNext()) {
-						CatalogueCategory catalogueCategory = (CatalogueCategory)categoryIterator.next();
-						calc.getDiscountExpression().setDiscountExpr(Double.toString(catalogueCategory.getDiscount()));
-						return getUnitPrice(calc);
-					}
-				}
+				criteria.addOrder(tariffCatalogueBean.getFieldName(IProductAlias.TARIFF_CATALOGUE_CATALOGUE_END_DATE), false);
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error obtaining unitPrice for tariff = " + tariff.getName(), e);
@@ -232,8 +196,8 @@ public class BasicPriceStrategy implements IPriceStrategy {
 			IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_TAX_ID), vat.getId());
-			criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_START_DATE), date);
-			criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_END_DATE), date);
+			criteria.addGreaterThanExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_START_DATE), date);
+			criteria.addLessThanExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_END_DATE), date);
 			Iterator iter = taxDetailBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				return (TaxDetail)iter.next();

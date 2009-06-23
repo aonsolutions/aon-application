@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 <body>
@@ -11,56 +12,85 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 		<aon:form id="signature">
-		
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.aon_webmail_mailAccount}" />
-				<ui:param name="controller" value="#{mailAccount}" />
-				<ui:param name="skipSearchButton" value="true" />
-			</ui:include>			
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.aon_webmail_mailAccount}"/>: 
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{mailAccount.new?(bundle.aon_reset):(bundle.aon_editing)}" /> 						
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">					
+						<aon:commandButton id="save"
+							value="#{bundle.aon_save}" action="mailAccount_form"  
+							rendered="#{mailAccount.to!=null or mailAccount.new}"
+							actionListener="#{mailAccount.accept}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}"/>
+						<aon:confirmButton id="cancel" immediate="true"
+							value="#{bundle.aon_cancel}" rendered="#{mailAccount.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							confirmTitle="#{bundle.aon_confirm_title}" 
+							confirmMessage="#{bundle.aon_cancel_confirm}"
+							confirmActionListener="#{mailAccount.onCancel}" 
+							confirmAction="mailAccount_list"
+							accesskey="#{bundle.aon_key_cancel}"/>
+						<aon:confirmButton id="remove"
+							value="#{bundle.aon_remove}" 
+							rendered="#{!mailAccount.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-delete" 
+							immediate="true"
+							confirmTitle="#{bundle.aon_confirm_title}" 
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{mailAccount.onRemove}" 
+							confirmAction="mailAccount_list"
+							accesskey="#{bundle.aon_key_remove}"/>
+						<aon:commandButton id="back" value="#{bundle.aon_back}"
+							rendered="#{!mailAccount.new}" immediate="true"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							actionListener="#{mailAccount.onCancel}"
+							action="mailAccount_list"
+							accesskey="#{bundle.aon_key_cancel}" />		
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
 			
 			<aon:div styleClass="aon-scroll-area">
-			<div>
-				<div style="margin-bottom:1.5em;">
-					<aon:div styleClass="aon-form-group-title">
-						<aon:div styleClass="aon-form-group-title-internal">
-							<aon:outputText value="#{appBundle.aon_webmail_mailAccount_data}"/>
-						</aon:div>
-					</aon:div>
-					<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width:500px;">
-						<aon:outputLabel for="MailAccount_name"
-							value="#{appBundle.aon_webmail_mailAccount_name}" />
-						<aon:inputText id="MailAccount_name" disabled="#{mailAccount.to.default}"
-							size="60" maxlength="45" required="true"
-							value="#{mailAccount.to.name}" />
-		
-						<aon:outputLabel for="MailAccount_email"
-							value="#{appBundle.aon_webmail_mailAccount_email}" />
-						<aon:inputText id="MailAccount_email" disabled="#{mailAccount.to.default}"
-							size="60" maxlength="45" required="true"
-							value="#{mailAccount.to.email}" />
+				<aon:panelGrid id="menuGrid" columns="2" dir="true"  width="100%">
+
+					<aon:outputLabel for="MailAccount_name"
+						value="#{appBundle.aon_webmail_mailAccount_name}" />
+					<aon:inputText id="MailAccount_name" disabled="#{mailAccount.to.default}"
+						size="60" maxlength="45" required="true"
+						value="#{mailAccount.to.name}" />
 	
-						<aon:outputLabel for="MailAccount_signature"
-							value="#{appBundle.aon_webmail_signature_signature}" />
-						<aon:selectOneMenu id="MailAccount_signature"
-							value="#{mailAccount.to.signature.id}">
-							<f:selectItems value="#{signature.signatures}" />
-						</aon:selectOneMenu>
-	
-						<aon:outputLabel for="MailAccount_protocol"
-							value="#{appBundle.aon_webmail_mailAccount_protocol}" />
-						<aon:inputText id="MailAccount_protocol"
-							size="60" maxlength="45"
-							disabled="true"
-							value="#{mailAccount.to.protocol}" />
-				</aon:panelGrid>
-			</div>
-			<div style="margin-bottom:1.5em;">
-				<aon:div styleClass="aon-form-group-title">
-					<aon:div styleClass="aon-form-group-title-internal">
-						<aon:outputText value="#{appBundle.aon_webmail_mailAccount_incoming_host}"/>
-					</aon:div>
-				</aon:div>
-				<aon:panelGrid columns="2" dir="true" style="width:500px;">
+					<aon:outputLabel for="MailAccount_email"
+						value="#{appBundle.aon_webmail_mailAccount_email}" />
+					<aon:inputText id="MailAccount_email" disabled="#{mailAccount.to.default}"
+						size="60" maxlength="45" required="true"
+						value="#{mailAccount.to.email}" />
+
+					<aon:outputLabel for="MailAccount_signature"
+						value="#{appBundle.aon_webmail_signature_signature}" />
+					<aon:selectOneMenu id="MailAccount_signature"
+						value="#{mailAccount.to.signature.id}">
+						<f:selectItems value="#{signature.signatures}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="MailAccount_protocol"
+						value="#{appBundle.aon_webmail_mailAccount_protocol}" />
+					<aon:inputText id="MailAccount_protocol"
+						size="60" maxlength="45"
+						disabled="true"
+						value="#{mailAccount.to.protocol}" />
+
 					<aon:outputLabel for="MailAccount_host"
 						value="#{appBundle.aon_webmail_mailAccount_host}" />
 					<aon:inputText id="MailAccount_host"
@@ -84,15 +114,7 @@
 	                <aon:selectBooleanCheckbox id="MailAccount_incomingSsl"
 						disabled="#{mailAccount.to.default}"
 						value="#{mailAccount.to.incomingSsl}"/>
-			</aon:panelGrid>
-		   </div>
-		   <div>
-				<aon:div styleClass="aon-form-group-title">
-					<aon:div styleClass="aon-form-group-title-internal">
-						<aon:outputText value="#{appBundle.aon_webmail_mailAccount_outgoing_host}"/>
-					</aon:div>
-				</aon:div>
-				<aon:panelGrid columns="2" dir="true" style="width:500px;">	
+					
 					<aon:outputLabel for="MailAccount_outgoingVerification"
 						value="#{appBundle.aon_webmail_mailAccount_outgoingVerification}" />
 	                <aon:selectBooleanCheckbox id="MailAccount_outgoingVerification"
@@ -130,10 +152,7 @@
 						value="#{mailAccount.to.passwordString}" />							
 						
 				</aon:panelGrid>
-				</div>
-			</div>
 			</aon:div>
-			
 		</aon:form>
 	</ui:define>
 </ui:composition>

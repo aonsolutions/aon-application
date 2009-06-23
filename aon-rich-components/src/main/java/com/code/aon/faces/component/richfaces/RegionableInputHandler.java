@@ -8,6 +8,7 @@ import javax.faces.component.UIComponent;
 
 import com.code.aon.faces.component.richfaces.inputRichText.InputRichTextHandler;
 import com.code.aon.faces.component.richfaces.lookup.inputText.LookupInputTextHandler;
+import com.code.aon.faces.component.richfaces.selectInputDate.SelectInputDateHandler;
 import com.code.aon.faces.component.util.BasicComponentConfig;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.TagAttribute;
@@ -53,6 +54,8 @@ public class RegionableInputHandler extends TagHandler implements IRichFacesTags
 		String componentType = config.getComponentType();
 		if ( LOOKUP_INPUT_TEXT_COMPONENT_TYPE.equals(componentType) ) {
 			return new LookupInputTextHandler(config);
+		} else if ( SELECT_INPUT_DATE_COMPONENT_TYPE.equals(componentType) ) {
+			return new SelectInputDateHandler(config);
 		} else if ( INPUT_RICH_TEXT_COMPONENT_TYPE.equals(componentType) ) {
 			return new InputRichTextHandler(config);
 		}

@@ -8,7 +8,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.customer.Customer;
 import com.code.aon.project.enumeration.DossierStatus;
 
@@ -43,6 +50,8 @@ public class Dossier implements ITransferObject {
 
 	@ManyToOne
 	@JoinColumn( name="customer",nullable=false )
+	@ForeignKey(name = "FK_DOSSIER_CUSTOMER")
+	@Index(name = "IDX_DOSSIER_CUSTOMER")						            	
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -53,6 +62,8 @@ public class Dossier implements ITransferObject {
 
 	@ManyToOne
 	@JoinColumn(name="dossier_type", nullable=false)
+	@ForeignKey(name = "FK_DOSSIER_DOSSIER_TYPE")
+	@Index(name = "IDX_DOSSIER_DOSSIER_TYPE")						            		
 	public DossierType getDossierType() {
 		return dossierType;
 	}
@@ -62,6 +73,7 @@ public class Dossier implements ITransferObject {
 	}
 
 	@Column(length=16, nullable=false)
+	@Index(name = "IDX_DOSSIER_NUMBER")	
 	public String getNumber() {
 		return number;
 	}
@@ -88,15 +100,36 @@ public class Dossier implements ITransferObject {
 		this.status = status;
 	}
 
-	@Override
+	@Override	
 	public boolean equals(Object obj) {
-		if (id == null) {
-			return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Dossier o = (Dossier) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.customer, o.customer)
+				.append(this.dossierType, o.dossierType)
+				.append(this.location, o.location)
+				.append(this.number, o.number)
+				.append(this.status, o.status)
+				.isEquals();
 		}
-		if (obj instanceof Dossier) {
-			return (this.id.equals(((Dossier) obj).getId()));
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().
+			append(customer).append(dossierType).
+			append(id).append(location).
+			append(number).append(status).
+			toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
 	}
 	
 }

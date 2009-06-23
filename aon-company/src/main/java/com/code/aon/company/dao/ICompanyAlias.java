@@ -185,6 +185,7 @@ public interface ICompanyAlias {
 	String  RESOURCE_WORK_PLACE_ID = RESOURCE_ENTRY.getAliasNames()[5];
 
 
+
 	/** 
 	* DAOConstantsEntry for WorkPlace entity.
 	*/ 

@@ -196,6 +196,38 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ************* PERIOD TASK ***************** -->
+	<managed-bean>
+		<managed-bean-name>periodTask</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.project.controller.PeriodicalTaskController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.project.PeriodicalTask</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{periodTaskControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>periodTaskControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.project.event.PeriodicalTaskControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 	<!--  **** COMPANY **** -->
 	<managed-bean>
 		<managed-bean-name>company</managed-bean-name>

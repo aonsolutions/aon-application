@@ -164,9 +164,13 @@
 		<filter-name>richfaces</filter-name>
 		<filter-class>org.ajax4jsf.Filter</filter-class>
 		<init-param>
-			<param-name>forceparser</param-name>
+			<param-name>createTempFiles</param-name>
 			<param-value>false</param-value>
-		</init-param>		
+		</init-param>
+		<init-param> 
+			<param-name>maxRequestSize</param-name>
+			<param-value>12582912</param-value>
+		</init-param>
 	</filter>
 
 	<filter-mapping>

@@ -71,7 +71,7 @@
 				</aon:commandLink>
 			</aon:div>
 
-			<aon:div styleClass="aon-sidebarIcons-icon" rendered="#{desktop.roleManager}">
+			<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Manager">
 				<aon:commandLink 
 					actionListener="#{user.onSearch}" action="user">
 					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-users.png']}" />
@@ -79,7 +79,7 @@
 				</aon:commandLink>
 			</aon:div>
 
-			<aon:div styleClass="aon-sidebarIcons-icon" rendered="#{desktop.roleManager}">
+			<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Manager">
 				<aon:commandLink 
 					actionListener="#{domain.onLoadCurrentDomain}" action="application_list">
 					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-ambito.png']}" />
@@ -87,11 +87,11 @@
 				</aon:commandLink>
 			</aon:div>
 
-			<aon:div styleClass="aon-sidebarIcons-icon" rendered="#{desktop.roleManager}">
+			<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Manager">
 				<aon:commandLink action="company" actionListener="#{company.onLoad}">
 					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-enterprise-configure.png']}" />
 					<aon:div><aon:outputText value="#{companyBundle.company_data_module}"/></aon:div>
-					<f:setPropertyActionListener value="#{false}" target="#{company.showFinanceRegistryBank}" />
+					<f:setPropertyActionListener value="#{false}" target="#{company.showRegistryBank}" />
 					<f:setPropertyActionListener value="#{false}" target="#{company.showCompanyOtherData}" />
 				</aon:commandLink>
 			</aon:div>

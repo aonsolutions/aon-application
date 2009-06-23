@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 import com.code.aon.common.dao.AliasWriter;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.DeliveryDetailLabour;
@@ -27,17 +26,16 @@ public class WarehouseAliasWriter {
 	 */
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-PROJECT/aon-warehouse/src/main/java/com/code/aon/warehouse/dao/IWarehouseAlias.java");
-		String[] classes = new String[] { 
-			Delivery.class.getName(),
-			DeliveryDetail.class.getName(),
-			DeliveryDetailLabour.class.getName(),
-			Income.class.getName(),
-			IncomeDetail.class.getName(),
-			Inventory.class.getName(),
-			InventoryDetail.class.getName(),
-			Stock.class.getName(),
-			Warehouse.class.getName() };
-		HibernateUtil.getSessionFactory();
+		String[] classes = new String[9]; 
+		classes[0] = Delivery.class.getName();
+		classes[1] = DeliveryDetail.class.getName();
+		classes[2] = DeliveryDetailLabour.class.getName();
+		classes[3] = Income.class.getName();
+		classes[4] = IncomeDetail.class.getName();
+		classes[5] = Inventory.class.getName();
+		classes[6] = InventoryDetail.class.getName();
+		classes[7] = Stock.class.getName();
+		classes[8] = Warehouse.class.getName();
 		AliasWriter writer = new AliasWriter("com.code.aon.warehouse.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

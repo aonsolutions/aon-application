@@ -10,10 +10,10 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.time.DateUtils;
 
-import com.code.aon.common.AonException;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.DistinguishedName;
@@ -25,6 +25,7 @@ import com.code.aon.ldap.LdapSession;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.UserController;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -95,7 +96,7 @@ public class AonUserController extends UserController implements ILdapConstants,
 	public void onLoadUser(ActionEvent event)  {
 		try {
 			this.managerChangingPassword = true;
-			IController userController = AonUtil.getController(ConfigConstants.USER);
+			IController userController = FormUtil.getController(ConfigConstants.USER);
 			loadUser( (User) userController.getTo() );
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
@@ -126,20 +127,15 @@ public class AonUserController extends UserController implements ILdapConstants,
 		}
 	}
 
-	public void updateExpirationTimestamp( String userName, boolean today ) {
+	public void updateExpirationTimestamp( String userName, boolean expireToday ) {
 		DistinguishedName userDN = AonDN.getUserDN( domain, userName );
 		BasicLdap ldap = new BasicLdap();
 		if ( ldap.exists(userDN, USER) ) {
 			try {
-				Date newDate = null;
+				Date newDate = new Date();
 				LdapSession session = ldap.getLdapSession();
-				if ( today ) {
-					newDate = new Date();
-				} else {
-					String filter = LdapSession.getObjectClass(USER);
-					Entry user = session.get(userDN.toString(), filter, PASSWORD_EXPIRATION_TIMESTAMP);
-					Date date = user.getAsDate(PASSWORD_EXPIRATION_TIMESTAMP);
-					newDate = DateUtils.addDays(date, 180);
+				if ( ! expireToday ) {
+					newDate = DateUtils.addDays(newDate, 180);
 				}	
 				session.replaceAttribute(userDN, PASSWORD_EXPIRATION_TIMESTAMP, newDate);
 			} catch (LdapException e) {
@@ -165,38 +161,35 @@ public class AonUserController extends UserController implements ILdapConstants,
 		}
 	}
 
-	public void acceptPassword(ActionEvent event) {
+	public void acceptPassword(ActionEvent event) throws DeploymentException {
 		User user = (User) getTo();
 		int status = user.getStatus();
 		user.setStatus(status + 2);
-		try {
-			if (!managerChangingPassword && (getUserManager().getPassword() == null || getUserManager().getPassword().equals("")  
-					|| getUserManager().getNewPassword() == null || getUserManager().getNewPassword().equals("")
-					|| getUserManager().getConfirmPassword() == null || getUserManager().getConfirmPassword().equals(""))) {
-				AonUtil.addErrorMessage("Debe rellenar todos los campos de contraseña.");
-				throw new AonException();
-			}
-			if (!getUserManager().areEqualPasswords()) {
-				AonUtil.addErrorMessage("Las contraseña nueva no coincide con la confirmacion.");
-				throw new AonException();
-			}
+		if (!managerChangingPassword && (getUserManager().getPassword() == null || getUserManager().getPassword().equals("")  
+				|| getUserManager().getNewPassword() == null || getUserManager().getNewPassword().equals("")
+				|| getUserManager().getConfirmPassword() == null || getUserManager().getConfirmPassword().equals(""))) {
+			String message = AonUtil.addErrorMessageFromBundle( "securityBundle", "aon_security_passwd_fill_error");
+			throw new AbortProcessingException( message );
+		}
+		if (!getUserManager().areEqualPasswords()) {
+			String message = AonUtil.addErrorMessageFromBundle( "securityBundle", "aon_security_new_passwd_error");
+			throw new AbortProcessingException( message );
+		}
 
-			if ( managerChangingPassword ) {
-				getUserManager().savePassword();
-			} else {
-				super.accept(event);
-			}
-			FacesContext ctx = FacesContext.getCurrentInstance();
-			if ( ctx.getMaximumSeverity() == null ) {
-				updateExpirationTimestamp( user.getLogin(), managerChangingPassword );
-				changeDefaultMailAccountPassword( user.getLogin(), getUserManager().getPassword() );				
-				AonDomainController domainController = (AonDomainController) AonUtil.getController("domain");
-				domainController.flushAuthenticationCache( user.getLogin() );
-				setShowPasswordChangedWindow(true);
-			}
-		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error cambiando la contraseña.", e );
-			user.setStatus(status);
+		if ( managerChangingPassword ) {
+			getUserManager().savePassword();
+		} else {
+			super.accept(event);
+		}
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		if ( ctx.getMaximumSeverity() == null ) {
+			updateExpirationTimestamp( user.getLogin(), managerChangingPassword );
+			changeDefaultMailAccountPassword( user.getLogin(), getUserManager().getPassword() );				
+			AonDomainController domainController = (AonDomainController) FormUtil.getController("domain");
+			domainController.flushAuthenticationCache( user.getLogin() );
+			setShowPasswordChangedWindow(true);
+		} else {
+			throw new AbortProcessingException();
 		}
 	}
 

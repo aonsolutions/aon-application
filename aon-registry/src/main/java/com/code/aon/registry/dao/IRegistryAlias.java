@@ -3,15 +3,17 @@ package com.code.aon.registry.dao;
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.registry.Category;
+import com.code.aon.registry.RecordData;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.RegistryMedia;
-import com.code.aon.registry.Relationship;
-import com.code.aon.registry.RegistryRelationship;
-import com.code.aon.registry.RegistryNote;
+import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.RegistryDirStaff;
-import com.code.aon.registry.RecordData;
+import com.code.aon.registry.RegistryMedia;
+import com.code.aon.registry.RegistryNote;
+import com.code.aon.registry.RegistryPayMethod;
+import com.code.aon.registry.RegistryRelationship;
+import com.code.aon.registry.Relationship;
 
 /** 
 * Interface for holding entity properties constants.
@@ -36,6 +38,91 @@ public interface IRegistryAlias {
 	* Hibernate value: Category.name
 	*/
 	String  CATEGORY_NAME = CATEGORY_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for RecordData entity.
+	*/ 
+	DAOConstantsEntry RECORD_DATA_ENTRY = DAOConstants.getDAOConstant(RecordData.class);
+
+	/** 
+	* Alias value: RecordData_attach_id
+	* Hibernate value: RecordData.attach.id
+	*/
+	String  RECORD_DATA_ATTACH_ID = RECORD_DATA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: RecordData_creationDate
+	* Hibernate value: RecordData.creationDate
+	*/
+	String  RECORD_DATA_CREATION_DATE = RECORD_DATA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: RecordData_description
+	* Hibernate value: RecordData.description
+	*/
+	String  RECORD_DATA_DESCRIPTION = RECORD_DATA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: RecordData_id
+	* Hibernate value: RecordData.id
+	*/
+	String  RECORD_DATA_ID = RECORD_DATA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: RecordData_notary
+	* Hibernate value: RecordData.notary
+	*/
+	String  RECORD_DATA_NOTARY = RECORD_DATA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: RecordData_number
+	* Hibernate value: RecordData.number
+	*/
+	String  RECORD_DATA_NUMBER = RECORD_DATA_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: RecordData_page
+	* Hibernate value: RecordData.page
+	*/
+	String  RECORD_DATA_PAGE = RECORD_DATA_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: RecordData_recordDate
+	* Hibernate value: RecordData.recordDate
+	*/
+	String  RECORD_DATA_RECORD_DATE = RECORD_DATA_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: RecordData_registration
+	* Hibernate value: RecordData.registration
+	*/
+	String  RECORD_DATA_REGISTRATION = RECORD_DATA_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: RecordData_registry_id
+	* Hibernate value: RecordData.registry.id
+	*/
+	String  RECORD_DATA_REGISTRY_ID = RECORD_DATA_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: RecordData_section
+	* Hibernate value: RecordData.section
+	*/
+	String  RECORD_DATA_SECTION = RECORD_DATA_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: RecordData_sheet
+	* Hibernate value: RecordData.sheet
+	*/
+	String  RECORD_DATA_SHEET = RECORD_DATA_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: RecordData_volume
+	* Hibernate value: RecordData.volume
+	*/
+	String  RECORD_DATA_VOLUME = RECORD_DATA_ENTRY.getAliasNames()[12];
 
 
 
@@ -211,138 +298,39 @@ public interface IRegistryAlias {
 
 
 	/** 
-	* DAOConstantsEntry for RegistryMedia entity.
+	* DAOConstantsEntry for RegistryBank entity.
 	*/ 
-	DAOConstantsEntry REGISTRY_MEDIA_ENTRY = DAOConstants.getDAOConstant(RegistryMedia.class);
+	DAOConstantsEntry REGISTRY_BANK_ENTRY = DAOConstants.getDAOConstant(RegistryBank.class);
 
 	/** 
-	* Alias value: RegistryMedia_comment
-	* Hibernate value: RegistryMedia.comment
+	* Alias value: RegistryBank_bankAccount
+	* Hibernate value: RegistryBank.bankAccount
 	*/
-	String  REGISTRY_MEDIA_COMMENT = REGISTRY_MEDIA_ENTRY.getAliasNames()[0];
+	String  REGISTRY_BANK_BANK_ACCOUNT = REGISTRY_BANK_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: RegistryMedia_id
-	* Hibernate value: RegistryMedia.id
+	* Alias value: RegistryBank_bank_id
+	* Hibernate value: RegistryBank.bank.id
 	*/
-	String  REGISTRY_MEDIA_ID = REGISTRY_MEDIA_ENTRY.getAliasNames()[1];
+	String  REGISTRY_BANK_BANK_ID = REGISTRY_BANK_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: RegistryMedia_mediaType
-	* Hibernate value: RegistryMedia.mediaType
+	* Alias value: RegistryBank_id
+	* Hibernate value: RegistryBank.id
 	*/
-	String  REGISTRY_MEDIA_MEDIA_TYPE = REGISTRY_MEDIA_ENTRY.getAliasNames()[2];
+	String  REGISTRY_BANK_ID = REGISTRY_BANK_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: RegistryMedia_registry_id
-	* Hibernate value: RegistryMedia.registry.id
+	* Alias value: RegistryBank_registry_id
+	* Hibernate value: RegistryBank.registry.id
 	*/
-	String  REGISTRY_MEDIA_REGISTRY_ID = REGISTRY_MEDIA_ENTRY.getAliasNames()[3];
+	String  REGISTRY_BANK_REGISTRY_ID = REGISTRY_BANK_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: RegistryMedia_value
-	* Hibernate value: RegistryMedia.value
+	* Alias value: RegistryBank_sufix
+	* Hibernate value: RegistryBank.sufix
 	*/
-	String  REGISTRY_MEDIA_VALUE = REGISTRY_MEDIA_ENTRY.getAliasNames()[4];
-
-
-
-	/** 
-	* DAOConstantsEntry for Relationship entity.
-	*/ 
-	DAOConstantsEntry RELATIONSHIP_ENTRY = DAOConstants.getDAOConstant(Relationship.class);
-
-	/** 
-	* Alias value: Relationship_description
-	* Hibernate value: Relationship.description
-	*/
-	String  RELATIONSHIP_DESCRIPTION = RELATIONSHIP_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: Relationship_id
-	* Hibernate value: Relationship.id
-	*/
-	String  RELATIONSHIP_ID = RELATIONSHIP_ENTRY.getAliasNames()[1];
-
-
-
-	/** 
-	* DAOConstantsEntry for RegistryRelationship entity.
-	*/ 
-	DAOConstantsEntry REGISTRY_RELATIONSHIP_ENTRY = DAOConstants.getDAOConstant(RegistryRelationship.class);
-
-	/** 
-	* Alias value: RegistryRelationship_comments
-	* Hibernate value: RegistryRelationship.comments
-	*/
-	String  REGISTRY_RELATIONSHIP_COMMENTS = REGISTRY_RELATIONSHIP_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: RegistryRelationship_id
-	* Hibernate value: RegistryRelationship.id
-	*/
-	String  REGISTRY_RELATIONSHIP_ID = REGISTRY_RELATIONSHIP_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: RegistryRelationship_registry_id
-	* Hibernate value: RegistryRelationship.registry.id
-	*/
-	String  REGISTRY_RELATIONSHIP_REGISTRY_ID = REGISTRY_RELATIONSHIP_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: RegistryRelationship_relatedRegistry_id
-	* Hibernate value: RegistryRelationship.relatedRegistry.id
-	*/
-	String  REGISTRY_RELATIONSHIP_RELATED_REGISTRY_ID = REGISTRY_RELATIONSHIP_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: RegistryRelationship_relationship_id
-	* Hibernate value: RegistryRelationship.relationship.id
-	*/
-	String  REGISTRY_RELATIONSHIP_RELATIONSHIP_ID = REGISTRY_RELATIONSHIP_ENTRY.getAliasNames()[4];
-
-
-
-	/** 
-	* DAOConstantsEntry for RegistryNote entity.
-	*/ 
-	DAOConstantsEntry REGISTRY_NOTE_ENTRY = DAOConstants.getDAOConstant(RegistryNote.class);
-
-	/** 
-	* Alias value: RegistryNote_comments
-	* Hibernate value: RegistryNote.comments
-	*/
-	String  REGISTRY_NOTE_COMMENTS = REGISTRY_NOTE_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: RegistryNote_description
-	* Hibernate value: RegistryNote.description
-	*/
-	String  REGISTRY_NOTE_DESCRIPTION = REGISTRY_NOTE_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: RegistryNote_id
-	* Hibernate value: RegistryNote.id
-	*/
-	String  REGISTRY_NOTE_ID = REGISTRY_NOTE_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: RegistryNote_noteDate
-	* Hibernate value: RegistryNote.noteDate
-	*/
-	String  REGISTRY_NOTE_NOTE_DATE = REGISTRY_NOTE_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: RegistryNote_notetype
-	* Hibernate value: RegistryNote.notetype
-	*/
-	String  REGISTRY_NOTE_NOTETYPE = REGISTRY_NOTE_ENTRY.getAliasNames()[4];
-
-	/** 
-	* Alias value: RegistryNote_registry_id
-	* Hibernate value: RegistryNote.registry.id
-	*/
-	String  REGISTRY_NOTE_REGISTRY_ID = REGISTRY_NOTE_ENTRY.getAliasNames()[5];
+	String  REGISTRY_BANK_SUFIX = REGISTRY_BANK_ENTRY.getAliasNames()[4];
 
 
 
@@ -420,87 +408,187 @@ public interface IRegistryAlias {
 
 
 	/** 
-	* DAOConstantsEntry for RecordData entity.
+	* DAOConstantsEntry for RegistryMedia entity.
 	*/ 
-	DAOConstantsEntry RECORD_DATA_ENTRY = DAOConstants.getDAOConstant(RecordData.class);
+	DAOConstantsEntry REGISTRY_MEDIA_ENTRY = DAOConstants.getDAOConstant(RegistryMedia.class);
 
 	/** 
-	* Alias value: RecordData_attach_id
-	* Hibernate value: RecordData.attach.id
+	* Alias value: RegistryMedia_comment
+	* Hibernate value: RegistryMedia.comment
 	*/
-	String  RECORD_DATA_ATTACH_ID = RECORD_DATA_ENTRY.getAliasNames()[0];
+	String  REGISTRY_MEDIA_COMMENT = REGISTRY_MEDIA_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: RecordData_creationDate
-	* Hibernate value: RecordData.creationDate
+	* Alias value: RegistryMedia_id
+	* Hibernate value: RegistryMedia.id
 	*/
-	String  RECORD_DATA_CREATION_DATE = RECORD_DATA_ENTRY.getAliasNames()[1];
+	String  REGISTRY_MEDIA_ID = REGISTRY_MEDIA_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: RecordData_description
-	* Hibernate value: RecordData.description
+	* Alias value: RegistryMedia_mediaType
+	* Hibernate value: RegistryMedia.mediaType
 	*/
-	String  RECORD_DATA_DESCRIPTION = RECORD_DATA_ENTRY.getAliasNames()[2];
+	String  REGISTRY_MEDIA_MEDIA_TYPE = REGISTRY_MEDIA_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: RecordData_id
-	* Hibernate value: RecordData.id
+	* Alias value: RegistryMedia_registry_id
+	* Hibernate value: RegistryMedia.registry.id
 	*/
-	String  RECORD_DATA_ID = RECORD_DATA_ENTRY.getAliasNames()[3];
+	String  REGISTRY_MEDIA_REGISTRY_ID = REGISTRY_MEDIA_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: RecordData_notary
-	* Hibernate value: RecordData.notary
+	* Alias value: RegistryMedia_value
+	* Hibernate value: RegistryMedia.value
 	*/
-	String  RECORD_DATA_NOTARY = RECORD_DATA_ENTRY.getAliasNames()[4];
+	String  REGISTRY_MEDIA_VALUE = REGISTRY_MEDIA_ENTRY.getAliasNames()[4];
+
+
 
 	/** 
-	* Alias value: RecordData_number
-	* Hibernate value: RecordData.number
-	*/
-	String  RECORD_DATA_NUMBER = RECORD_DATA_ENTRY.getAliasNames()[5];
+	* DAOConstantsEntry for RegistryNote entity.
+	*/ 
+	DAOConstantsEntry REGISTRY_NOTE_ENTRY = DAOConstants.getDAOConstant(RegistryNote.class);
 
 	/** 
-	* Alias value: RecordData_page
-	* Hibernate value: RecordData.page
+	* Alias value: RegistryNote_comments
+	* Hibernate value: RegistryNote.comments
 	*/
-	String  RECORD_DATA_PAGE = RECORD_DATA_ENTRY.getAliasNames()[6];
+	String  REGISTRY_NOTE_COMMENTS = REGISTRY_NOTE_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: RecordData_recordDate
-	* Hibernate value: RecordData.recordDate
+	* Alias value: RegistryNote_description
+	* Hibernate value: RegistryNote.description
 	*/
-	String  RECORD_DATA_RECORD_DATE = RECORD_DATA_ENTRY.getAliasNames()[7];
+	String  REGISTRY_NOTE_DESCRIPTION = REGISTRY_NOTE_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: RecordData_registration
-	* Hibernate value: RecordData.registration
+	* Alias value: RegistryNote_id
+	* Hibernate value: RegistryNote.id
 	*/
-	String  RECORD_DATA_REGISTRATION = RECORD_DATA_ENTRY.getAliasNames()[8];
+	String  REGISTRY_NOTE_ID = REGISTRY_NOTE_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: RecordData_registry_id
-	* Hibernate value: RecordData.registry.id
+	* Alias value: RegistryNote_noteDate
+	* Hibernate value: RegistryNote.noteDate
 	*/
-	String  RECORD_DATA_REGISTRY_ID = RECORD_DATA_ENTRY.getAliasNames()[9];
+	String  REGISTRY_NOTE_NOTE_DATE = REGISTRY_NOTE_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: RecordData_section
-	* Hibernate value: RecordData.section
+	* Alias value: RegistryNote_notetype
+	* Hibernate value: RegistryNote.notetype
 	*/
-	String  RECORD_DATA_SECTION = RECORD_DATA_ENTRY.getAliasNames()[10];
+	String  REGISTRY_NOTE_NOTETYPE = REGISTRY_NOTE_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: RecordData_sheet
-	* Hibernate value: RecordData.sheet
+	* Alias value: RegistryNote_registry_id
+	* Hibernate value: RegistryNote.registry.id
 	*/
-	String  RECORD_DATA_SHEET = RECORD_DATA_ENTRY.getAliasNames()[11];
+	String  REGISTRY_NOTE_REGISTRY_ID = REGISTRY_NOTE_ENTRY.getAliasNames()[5];
+
+
 
 	/** 
-	* Alias value: RecordData_volume
-	* Hibernate value: RecordData.volume
+	* DAOConstantsEntry for RegistryPayMethod entity.
+	*/ 
+	DAOConstantsEntry REGISTRY_PAY_METHOD_ENTRY = DAOConstants.getDAOConstant(RegistryPayMethod.class);
+
+	/** 
+	* Alias value: RegistryPayMethod_daysBetweenPayments
+	* Hibernate value: RegistryPayMethod.daysBetweenPayments
 	*/
-	String  RECORD_DATA_VOLUME = RECORD_DATA_ENTRY.getAliasNames()[12];
+	String  REGISTRY_PAY_METHOD_DAYS_BETWEEN_PAYMENTS = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: RegistryPayMethod_daysToFirstPayment
+	* Hibernate value: RegistryPayMethod.daysToFirstPayment
+	*/
+	String  REGISTRY_PAY_METHOD_DAYS_TO_FIRST_PAYMENT = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: RegistryPayMethod_id
+	* Hibernate value: RegistryPayMethod.id
+	*/
+	String  REGISTRY_PAY_METHOD_ID = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: RegistryPayMethod_numberOfPayments
+	* Hibernate value: RegistryPayMethod.numberOfPayments
+	*/
+	String  REGISTRY_PAY_METHOD_NUMBER_OF_PAYMENTS = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: RegistryPayMethod_paymentDays
+	* Hibernate value: RegistryPayMethod.paymentDays
+	*/
+	String  REGISTRY_PAY_METHOD_PAYMENT_DAYS = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: RegistryPayMethod_payment_id
+	* Hibernate value: RegistryPayMethod.payment.id
+	*/
+	String  REGISTRY_PAY_METHOD_PAYMENT_ID = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: RegistryPayMethod_registry_id
+	* Hibernate value: RegistryPayMethod.registry.id
+	*/
+	String  REGISTRY_PAY_METHOD_REGISTRY_ID = REGISTRY_PAY_METHOD_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for RegistryRelationship entity.
+	*/ 
+	DAOConstantsEntry REGISTRY_RELATIONSHIP_ENTRY = DAOConstants.getDAOConstant(RegistryRelationship.class);
+
+	/** 
+	* Alias value: RegistryRelationship_comments
+	* Hibernate value: RegistryRelationship.comments
+	*/
+	String  REGISTRY_RELATIONSHIP_COMMENTS = REGISTRY_RELATIONSHIP_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: RegistryRelationship_id
+	* Hibernate value: RegistryRelationship.id
+	*/
+	String  REGISTRY_RELATIONSHIP_ID = REGISTRY_RELATIONSHIP_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: RegistryRelationship_registry_id
+	* Hibernate value: RegistryRelationship.registry.id
+	*/
+	String  REGISTRY_RELATIONSHIP_REGISTRY_ID = REGISTRY_RELATIONSHIP_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: RegistryRelationship_relatedRegistry_id
+	* Hibernate value: RegistryRelationship.relatedRegistry.id
+	*/
+	String  REGISTRY_RELATIONSHIP_RELATED_REGISTRY_ID = REGISTRY_RELATIONSHIP_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: RegistryRelationship_relationship_id
+	* Hibernate value: RegistryRelationship.relationship.id
+	*/
+	String  REGISTRY_RELATIONSHIP_RELATIONSHIP_ID = REGISTRY_RELATIONSHIP_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for Relationship entity.
+	*/ 
+	DAOConstantsEntry RELATIONSHIP_ENTRY = DAOConstants.getDAOConstant(Relationship.class);
+
+	/** 
+	* Alias value: Relationship_description
+	* Hibernate value: Relationship.description
+	*/
+	String  RELATIONSHIP_DESCRIPTION = RELATIONSHIP_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Relationship_id
+	* Hibernate value: Relationship.id
+	*/
+	String  RELATIONSHIP_ID = RELATIONSHIP_ENTRY.getAliasNames()[1];
 
 
 }

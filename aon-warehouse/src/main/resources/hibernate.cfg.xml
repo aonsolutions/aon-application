@@ -29,11 +29,11 @@
 		<mapping class="com.code.aon.product.Tariff"/>
 		<mapping class="com.code.aon.product.ProductCategory"/>
 		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
+		<mapping class="com.code.aon.product.Tax"/>
 		<mapping class="com.code.aon.product.Brand"/>
 		
-		<!-- AON-CONFIG Mapping files -->
+		<!-- AON-CONFIG Mapping files -->	
 		<mapping class="com.code.aon.config.Scope"/>
-		<mapping class="com.code.aon.config.Tax"/>
 
 		<!-- AON-REGISTRY Mapping files -->	
 		<mapping class="com.code.aon.registry.Registry"/>
@@ -57,11 +57,9 @@
 		<mapping class="com.code.aon.sales.PointOfSale"/>
 		<mapping class="com.code.aon.sales.Seller"/>
 		
-		<!-- AON-SUPPLIER Mapping files -->	
-		<mapping class="com.code.aon.supplier.Supplier"/>
-		<mapping class="com.code.aon.supplier.SupplierSegment"/>
-				
 		<!-- AON-PURCHASE Mapping files -->	
+		<mapping class="com.code.aon.purchase.Supplier"/>
+		<mapping class="com.code.aon.purchase.SupplierSegment"/>
 		<mapping class="com.code.aon.purchase.Purchase"/>
 		<mapping class="com.code.aon.purchase.PurchaseDetail"/>
 		

@@ -43,7 +43,6 @@
 			</aon:inputText>
 		</a4j:region>
 		<a4j:commandButton styleClass="aon-lookupButton" value=""
-			disabled="#{disabled}"
 			actionListener="#{customerWizard.onShow}" immediate="true"
 			oncomplete="searchFieldForFocus('#{customer_id}searchName')"
 			reRender="#{customer_id}Container" />
@@ -72,11 +71,23 @@
 				</aon:div>
 			</f:facet>
 			<f:facet name="controls">
+			
 				<a4j:commandButton type="button" styleClass="aon-popupWindow-close"
 						actionListener="#{customerWizard.onClose}" immediate="true"
 						reRender="#{customer_id}Container"
 						oncomplete="searchFieldForFocus('#{customer_id}')">
 				</a4j:commandButton>
+<!-- 			
+				<h:outputText value="&#160;&#160;&#160;&#160;&#160;"
+					style="cursor:pointer;margin-top:2px;"
+					styleClass="aon-popupWindow-close">
+					<a4j:support event="onclick"
+						actionListener="#{customerWizard.onClose}" immediate="true"
+						reRender="#{customer_id}Container"
+						oncomplete="searchFieldForFocus('#{customer_id}')">
+					</a4j:support>
+				</h:outputText>
+ -->
 			</f:facet>
 			<a4j:region>
 				<aon:panelGrid columns="2">
@@ -212,7 +223,7 @@
 			</aon:div>
 		</rich:modalPanel>
 
-		<a4j:loadScript src="/facelet/shared/customer/customerIdInput.js" />
+		<a4j:loadScript src="/facelet/shared/customer/customerId.js" />
 
 	</aon:div>
 </ui:composition>

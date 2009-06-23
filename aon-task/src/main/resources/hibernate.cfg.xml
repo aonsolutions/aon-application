@@ -33,18 +33,11 @@
 		<mapping class="com.code.aon.project.DossierType"/>
 		<mapping class="com.code.aon.project.JobType"/>
 		<mapping class="com.code.aon.project.Task"/>
-
-		<!-- AON-CAMPAIGN Mapping files -->
-		<mapping class="com.code.aon.campaign.ActivityProcess"/>
-		<mapping class="com.code.aon.campaign.Campaign"/>
-		<mapping class="com.code.aon.campaign.CampaignDossier"/>
-		<mapping class="com.code.aon.campaign.Process"/>
-		<mapping class="com.code.aon.campaign.ProcessDetail"/>
-		<mapping class="com.code.aon.campaign.ProcessDetailTransition"/>
-		<mapping class="com.code.aon.campaign.ProcessTransitionType"/>
+		<mapping class="com.code.aon.project.PeriodicalTask"/>
 
 		<!-- AON-COMPANY Mapping files -->
 		<mapping class="com.code.aon.company.Company"/>
+		<mapping class="com.code.aon.company.WebInfo"/>
 		<mapping class="com.code.aon.company.WorkPlace"/>
 		<mapping class="com.code.aon.company.WorkActivity"/>
 		<mapping class="com.code.aon.company.resources.Resource"/>
@@ -78,7 +71,7 @@
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoZone"/>			
 
-		<!-- AON-CONFIG Mapping files -->		
+		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
 		<mapping class="com.code.aon.config.Series"/>
 		<mapping class="com.code.aon.config.Scope"/>
@@ -86,15 +79,6 @@
 		<mapping class="com.code.aon.config.UserScope"/>
 		<mapping class="com.code.aon.config.WorkGroup"/>
 		<mapping class="com.code.aon.config.UserWorkGroup"/>
-
-		<!-- AON GROUPWARE -->
-		<mapping class="com.code.aon.groupware.Alarm"/>
-		<mapping class="com.code.aon.groupware.Note"/>
-		<mapping class="com.code.aon.groupware.Notice"/>
-		<mapping class="com.code.aon.groupware.FavoriteCategory"/>
-		<mapping class="com.code.aon.groupware.Favorite"/>
-		<mapping class="com.code.aon.groupware.Message"/>
-		<mapping class="com.code.aon.groupware.MessageContent"/>
 
 	</session-factory>
 

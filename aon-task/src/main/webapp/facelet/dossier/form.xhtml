@@ -17,6 +17,7 @@
 			<aon:div styleClass="aon-finding-toolbar-item-group">
 
 				<aon:commandButton id="saveDossier" value="#{bundle.aon_save}"
+					reRender="customerTab"
 					rendered="#{dossier.to!=null or dossier.new}"
 					styleClass="aon-finding-toolbar-item aon-icon-accept"
 					onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;"

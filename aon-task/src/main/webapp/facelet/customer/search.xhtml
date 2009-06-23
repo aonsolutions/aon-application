@@ -44,14 +44,9 @@
 
 					<aon:panelGrid columns="2">
 
-						<aon:outputLabel for="Customer_registry_alias"
-							value="#{registryBundle.aon_alias}" />
-						<aon:inputText id="Customer_registry_alias" size="50"
-							valueChangeListener="#{customer.addExpression}" />
-
 						<aon:outputLabel for="Customer_registry_id"
 							value="#{registryBundle.aon_id}" />
-						<aon:inputText id="Customer_registry_id" size="10"
+						<aon:inputText id="Customer_registry_id" size="50"
 							valueChangeListener="#{customer.addExpression}" />
 							
 						<aon:outputLabel for="Customer_registry_name"
@@ -69,7 +64,6 @@
 							value="#{registryBundle.aon_cif}" />
 						<aon:inputText id="Customer_registry_document" size="20"
 							valueChangeListener="#{customer.addExpression}" />
-
 					</aon:panelGrid>
 				</aon:div>
 			</aon:div>

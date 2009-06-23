@@ -18,7 +18,7 @@ public class FTPUtil {
 
 		try {
 			FTPClient ftp = new FTPClient();
-			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> Connecting to aon-web-server (47)" );
+			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> Connecting to server " + server);
 			ftp.connect(server); // + domain
 			ftp.login(user, password);
 			ftp.changeWorkingDirectory(destination);

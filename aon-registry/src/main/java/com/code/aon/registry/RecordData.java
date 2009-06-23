@@ -10,12 +10,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name="record_data")
 public class RecordData implements ITransferObject {
 	
+	private static final long serialVersionUID = 364687326411697134L;
+
 	private Integer id;
 	
 	private Registry registry;
@@ -162,4 +166,27 @@ public class RecordData implements ITransferObject {
 	public void setAttach(RegistryAttachment attach) {
 		this.attach = attach;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+    		return super.equals(obj);
+		}
+		if (obj instanceof RecordData) {
+			RecordData o = (RecordData) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
+
 }

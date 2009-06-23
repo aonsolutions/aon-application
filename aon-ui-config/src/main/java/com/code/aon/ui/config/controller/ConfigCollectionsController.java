@@ -12,13 +12,11 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.PayMethod;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
 import com.code.aon.config.Tax;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
-import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.ql.Criteria;
@@ -44,13 +42,6 @@ public class ConfigCollectionsController {
 		return series;
 	}
 
-	public Scope getScope() {
-		return null;
-	}
-
-	public void setScope( Scope scope ) {
-	}
-	
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getScopes() throws ManagerBeanException {
 		List<SelectItem> scopes = new LinkedList<SelectItem>();
@@ -215,51 +206,6 @@ public class ConfigCollectionsController {
 			types.add(item);
 		}
 		return types;
-	}
-
-	/**
-	 * Fills and Returns PayMethod collection
-	 * 
-	 * @return PayMethod collection
-	 * @throws ManagerBeanException
-	 */
-	public List<SelectItem> getPayMethods() throws ManagerBeanException {
-		List<SelectItem> payMethods = new LinkedList<SelectItem>();
-		IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
-		Criteria criteria = new Criteria();
-		criteria.addOrder(payMethodBean.getFieldName(IConfigAlias.PAY_METHOD_NAME));
-		Iterator<?> iter = payMethodBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			PayMethod pMethod = (PayMethod) iter.next();
-			SelectItem item = new SelectItem(pMethod, pMethod.getName());
-			payMethods.add(item);
-		}
-		return payMethods;
-	}
-
-	/**
-	 * Returns a list of PayMethodType
-	 * 
-	 * @return list of PayMethodType
-	 */
-	public List<SelectItem> getPayMethodTypes() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-		PayMethodType[] payMethodType = PayMethodType.values();
-		for (int i = 0; i < payMethodType.length; i++) {
-			PayMethodType type = payMethodType[i];
-			String name = type.getName(locale);
-			SelectItem item = new SelectItem(type, name);
-			types.add(item);
-		}
-		return types;
-	}
-	
-	public PayMethod getPayMethod() {
-		return null;
-	}
-
-	public void setPayMethod( PayMethod payMethod ) {
 	}
 
 }
