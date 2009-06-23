@@ -12,6 +12,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.EstadoCivil;
@@ -27,6 +28,7 @@ import com.code.aon.payroll.tipos.Tipovia;
 public class PersonaController extends PayrollBasicController {
 	
 	private List<SelectItem> sexo;
+	private List<ITransferObject> selectedList;
 	/**
 	 * Recupera los tipos de sexo 
 	 * 
@@ -44,6 +46,15 @@ public class PersonaController extends PayrollBasicController {
 		}
 		return sexo;
 	}
+	
+	@Override
+	public void onSelect(ActionEvent event) {
+		selectedList = new LinkedList<ITransferObject>();
+		super.onSelect(event);		
+		selectedList.add(this.getTo());		
+						
+	}
+
 	
 	private List<SelectItem> estciv;
 	/**
@@ -301,7 +312,15 @@ public class PersonaController extends PayrollBasicController {
 	public void changeTabValue(ValueChangeEvent event){
 		setTabName(event.getNewValue().toString());
 	}
-	
+
+	public List<ITransferObject> getSelectedList() {
+		return selectedList;
+	}
+
+	public void setSelectedList(List<ITransferObject> selectedList) {
+		this.selectedList = selectedList;
+	}
+
     
 }
 

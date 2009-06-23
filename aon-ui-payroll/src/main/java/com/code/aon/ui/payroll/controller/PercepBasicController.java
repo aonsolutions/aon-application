@@ -10,6 +10,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.auxiliares.convenios.Complemento;
 import com.code.aon.payroll.dao.IPayrollAlias;
@@ -32,6 +34,7 @@ public class PercepBasicController extends PayrollBasicController {
 	private Complemento complemento;
 	private Complemento complemento1;
 	private Trabajador trabajador;
+	private List<ITransferObject> selectedList;
 
 	public List<SelectItem> getListaComplementos() {
 		refreshComplementos();
@@ -143,17 +146,19 @@ public class PercepBasicController extends PayrollBasicController {
 		}
 		super.onSearch(event);
 	}
-
-	public void generarNumero(ActionEvent event) {
-		/*	
-	 	int cdg = ((Httrabajador)(FormUtil.getController(IPayrollConstants.HTTRABAJADOR_CONTROLLER_NAME)).getTo()).getCdg();
-		int numero= Integer.parseInt(Utils.maxCode("Httaviso","id.numero","id.cdg="+cdg));
-		
-		((Httaviso)getTo()).getId().setCdg(((Httrabajador)(FormUtil.getController(IPayrollConstants.HTTRABAJADOR_CONTROLLER_NAME)).getTo()).getCdg());
-		((Httaviso)getTo()).getId().setOrden(orden +1);
-		*/
+	
+	
+	@Override
+	public void onSelect(ActionEvent event) {
+		selectedList = new LinkedList<ITransferObject>();
+		super.onSelect(event);		
+		selectedList.add(this.getTo());		
+						
 	}
 
+	
+	
+	
 	public Date getFecini() {
 		return fecini;
 	}
@@ -201,5 +206,15 @@ public class PercepBasicController extends PayrollBasicController {
 	public void setTrabajador(Trabajador trabajador) {
 		this.trabajador = trabajador;
 	}
+	
+
+	public List<ITransferObject> getSelectedList() {
+		return selectedList;
+	}
+
+	public void setSelectedList(List<ITransferObject> selectedList) {
+		this.selectedList = selectedList;
+	}
+
 	
 }

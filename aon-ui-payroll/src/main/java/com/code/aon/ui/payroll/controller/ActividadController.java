@@ -10,6 +10,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.auxiliares.convenios.Convenio;
 import com.code.aon.payroll.dao.IPayrollAlias;
@@ -45,6 +47,17 @@ public class ActividadController extends LinesController {
 	private boolean ingespemp;
 	private boolean indlogo;
 	private boolean indfirma;
+	private List<ITransferObject> selectedList;
+	
+
+	
+	@Override
+	public void onSelect(ActionEvent event) {
+		selectedList = new LinkedList<ITransferObject>();
+		super.onSelect(event);		
+		selectedList.add(this.getTo());		
+						
+	}
 
 	/**
 	 * genera un cdg siguiendo al maximo
@@ -398,5 +411,12 @@ public class ActividadController extends LinesController {
      ((Empresa)(FormUtil.getController(IPayrollConstants.EMPRESA_CONTROLLER_NAME)).getTo()).setCdg(((Empresa)event.getNewValue()).getCdg());	
 		 
 	 }
+	}
+	public List<ITransferObject> getSelectedList() {
+		return selectedList;
+	}
+
+	public void setSelectedList(List<ITransferObject> selectedList) {
+		this.selectedList = selectedList;
 	}
 }

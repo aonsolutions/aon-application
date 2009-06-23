@@ -1242,8 +1242,7 @@
 	<!--  *********  Impresion de lista de Personas - Lista ********* -->
 	<report id="personaDetail" description="Listado de personas">
 		<template path="/com/code/aon/ui/payroll/report/personaDetail.jasper" />
-		<bean key="com.code.aon.payroll.principales.personas.Persona" />
-		<criteria provider="#{persona}" />
+		<collection provider="#{persona.selectedList}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />
@@ -1255,8 +1254,7 @@
 	<!--  *********  Impresion de Detalle de Percepciones ********* -->
 	<report id="percepcionDetail" description="Detalle de Percepciones">
 		<template path="/com/code/aon/ui/payroll/report/percepcionesDetail.jasper" />
-		<bean key="com.code.aon.payroll.principales.personas.Percep" />
-		<criteria provider="#{percepbasic}" />
+		<collection provider="#{percepbasic.selectedList}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />
@@ -1277,8 +1275,7 @@
 	</report>
 	<report id="empresaDetail" description="Listado del detalle empresas">
 		<template path="/com/code/aon/ui/payroll/report/empresaDetail.jasper" />
-		<bean key="com.code.aon.payroll.principales.empresa.Empresa" />
-		<criteria provider="#{empresa}" />
+		<collection provider="#{empresa.selectedList}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />
