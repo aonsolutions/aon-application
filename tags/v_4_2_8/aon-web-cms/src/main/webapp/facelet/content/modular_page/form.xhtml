@@ -1,0 +1,272 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+		<aon:form id="modular">
+		
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.modular_page}" />
+				<ui:param name="controller" value="#{modular_page}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="generate_modular" reRender="aonStatus"
+						value="#{appBundle.aon_generate}" 
+						rendered="#{modular_page.to!=null and (!modular_page.new) and cms.roleEditor}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_save}">
+						<aon:actionListener method="#{generator.onGenerateCurrentModular}" />
+						<a4j:support 
+							event="onclick" reRender="poll,grid" 
+							actionListener="#{generator_status.onActivePoll}"  
+							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+					</aon:commandButton>
+				</ui:define>				
+			</ui:decorate>		
+		
+			
+			<aon:div id="mainForm" styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2" dir="true">
+	
+					<aon:outputLabel for="modular_page_alias" style="width:100px"
+						value="#{appBundle.cms_alias}" />
+					<aon:inputText id="modular_page_alias"
+						required="true" size="32" maxlength="32"
+						value="#{modular_page.to.alias}">
+						<f:validator validatorId="AliasValidator" />
+					</aon:inputText>
+						
+					<aon:outputLabel for="modular_page_label" 
+						value="#{appBundle.modular_page_label}" />
+					<aon:inputText id="modular_page_label"
+						required="true" 
+						value="#{modular_page.toI18n.label}" />
+
+					<aon:outputLabel for="modular_page_section"
+						value="#{appBundle.section}"/>
+					<aon:selectOneMenu id="modular_page_section"
+						styleClass="aon-form-selectOneMenu-field"
+						value="#{modular_page.to.section.id}">
+						<f:selectItem itemLabel="-" itemValue="-1" />
+						<f:selectItems value="#{collections.sectionList}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel for="modular_page_type"
+						value="#{appBundle.modular_page_type}"/>
+					<aon:selectOneMenu id="modular_page_type"
+						styleClass="aon-form-selectOneMenu-field"
+						value="#{modular_page.to.modularType}">
+						<f:selectItems value="#{collections.modularTypes}" />
+					</aon:selectOneMenu>
+					
+				</aon:panelGrid>
+				<aon:div id="detail">
+					<aon:div styleClass="aon-form-group"
+						rendered="#{!modular_page.new and modular_page.toI18n.id != null}">
+						<aon:div styleClass="aon-form-group-title">
+							<aon:div styleClass="aon-form-group-title-internal">
+								<aon:outputLabel for="dataTable" value="#{appBundle.sidebar_option}" />
+							</aon:div>
+						</aon:div>
+						<aon:div rendered="#{modular_page_option.to==null}">
+					
+							<aon:div styleClass="aon-toolbar">
+									
+								<!-- start toolbar navigation -->
+								<aon:div id="detailButtonsGrid" styleClass="aon-finding-toolbar-item-group">
+									<aon:commandButton id="reset_list"
+										rendered="#{!modular_page_option.new and cms.roleEditor}"
+										reRender="detail"
+										value="#{bundle.aon_reset}"
+										styleClass="aon-finding-toolbar-item aon-icon-reset"
+										accesskey="#{bundle.aon_key_new}">
+										<aon:actionListener method="#{modular_page_option.onReset}" />
+									</aon:commandButton>
+							    </aon:div>
+		
+							</aon:div>
+						
+							<aon:dataTable id="dataTable" value="#{modular_page_option.model}" var="to"
+								rows="#{modular_page_option.pageLimit}"
+								columnClasses="aon-editDataTable-textColumn aon-width-300, aon-editDataTable-textColumn,
+										aon-editDataTable-iconColumn, aon-editDataTable-textColumn">
+											
+								<aon:rowSelector immediate="true"
+									reRender="detail" actionListener="#{modular_page_option.onSelect}" />							
+																				
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{appBundle.cms_alias}"/>
+									</f:facet>
+									<aon:outputText value="#{to.alias}" 
+										styleClass="aon-editDataTable-button"/>
+								</aon:column>
+	
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{appBundle.cms_label}"/>
+									</f:facet>
+									<aon:outputText value="#{modular_page_option.i18nLabel}" 
+										styleClass="aon-editDataTable-button"/>
+								</aon:column>
+	
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{appBundle.cms_active}" />
+									</f:facet>
+									<aon:div onmouseover="disableRowSelector();"
+										onmouseout="enableRowSelector();" >																																	
+										<aon:commandLink title="#{appBundle.cms_activate}" 
+											actionListener="#{modular_page_option.onActivate}"
+											reRender="dataTable"
+											rendered="#{!to.active}">
+											<aon:graphicImage id="modular_page_option_active" alt="#{appBundle.sidebar_option_activate}"
+												url="#{aonResource.resolveLocal['/images/cms/inactive.png']}" />
+										</aon:commandLink>
+										<aon:commandLink title="#{appBundle.cms_deactivate}" 
+											actionListener="#{modular_page_option.onDeactivate}" 
+											reRender="dataTable"
+											rendered="#{to.active}">
+											<aon:graphicImage id="modular_page_option_deactive" alt="#{appBundle.modular_page_option_deactivate}"
+												url="#{aonResource.resolveLocal['/images/cms/active.png']}" />
+										</aon:commandLink>
+									</aon:div>
+								</aon:column>
+	
+								<aon:column styleClass="aon-width-80">
+									<f:facet name="header">
+										<aon:outputText value="#{appBundle.cms_position}" />
+									</f:facet>
+									<aon:div onmouseover="disableRowSelector();"
+										onmouseout="enableRowSelector();" >		
+										<aon:commandLink id="moveUp" reRender="dataTable"
+											title="#{appBundle.cms_move_up}" immediate="true"
+											actionListener="#{modular_page_option.onMoveUp}" 
+											styleClass="aon-margin-right"
+											rendered="#{to.position != 0 and modular_page_option.to==null}">
+											<aon:graphicImage alt="#{appBundle.cms_move_up}"
+												url="#{aonResource.resolveLocal['/images/cms/up.gif']}" />
+										</aon:commandLink>
+										<aon:commandLink id="moveDown" reRender="dataTable"
+											title="#{appBundle.cms_move_down}" immediate="true"
+											actionListener="#{modular_page_option.onMoveDown}" 
+											rendered="#{to.position &lt; (modular_page_option.model.rowCount - 1)  and modular_page_option.to==null}">
+											<aon:graphicImage alt="#{appBundle.cms_move_down}"
+												url="#{aonResource.resolveLocal['/images/cms/down.gif']}" />
+										</aon:commandLink>
+									</aon:div>
+								</aon:column>
+	
+							</aon:dataTable>
+								
+							<aon:dataScroller2 for="dataTable" showNote="true" />					
+
+						</aon:div>
+						
+						<aon:div rendered="#{modular_page_option.new or modular_page_option.to != null}">
+
+							<aon:div styleClass="aon-toolbar">
+								
+								<!-- start toolbar navigation -->
+								<aon:div styleClass="aon-finding-toolbar-item-group">
+									<aon:commandButton id="reset_list_form"
+										rendered="#{!modular_page_option.new and cms.roleEditor}"
+										reRender="detail"
+										value="#{bundle.aon_reset}"
+										styleClass="aon-finding-toolbar-item aon-icon-reset"
+										accesskey="#{bundle.aon_key_new}">
+										<aon:actionListener method="#{modular_page_option.onReset}" />
+									</aon:commandButton>
+									<aon:commandButton id="save_list_form"
+										value="#{bundle.aon_save}" 
+										rendered="#{modular_page_option.to!=null or modular_page_option.new}"
+										reRender="detail"
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										accesskey="#{bundle.aon_key_save}">
+										<aon:actionListener method="#{modular_page_option.accept}" />
+									</aon:commandButton>
+									<aon:commandButton id="cancel_list_form"
+										value="#{bundle.aon_cancel}" 
+										rendered="#{modular_page_option.to!=null or modular_page_option.new}" immediate="#{true}"
+										reRender="detail"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel"
+										accesskey="#{bundle.aon_key_cancel}">
+										<aon:actionListener method="#{modular_page_option.onCancel}" />
+									</aon:commandButton>
+									<aon:confirmButton id="remove_list_form"
+										value="#{bundle.aon_remove}" 
+										rendered="#{!modular_page_option.new and cms.roleEditor}" 
+										immediate="true"
+										confirmTitle="Confirmation Dialog" 
+										confirmMessage="#{bundle.aon_remove_confirm}"
+										confirmActionListener="#{modular_page_option.onRemove}" 
+										reRender="detail"
+										styleClass="aon-finding-toolbar-item aon-icon-delete"
+										accesskey="#{bundle.aon_key_remove}"/>
+							    </aon:div>
+									
+								<!-- end toolbar navigation -->
+							</aon:div>
+					
+							<aon:div styleClass="aon-scroll-area">
+								<aon:panelGrid id="sidebarOptionGrid" columns="2" dir="true">
+	
+									<aon:outputLabel for="modular_page_option_alias"
+										value="#{appBundle.cms_alias}" />
+									<aon:inputText id="modular_page_option_alias"
+										required="true" size="32" maxlength="32"
+										value="#{modular_page_option.to.alias}">
+										<f:validator validatorId="AliasValidator" />
+									</aon:inputText>
+		
+									<aon:outputLabel for="modular_page_option_label"
+										value="#{appBundle.modular_page_option_label}" />
+									<aon:inputText id="modular_page_option_label"
+										required="true" size="50" maxlength="64"
+										value="#{modular_page_option.toI18n.label}" />
+		
+									<aon:outputLabel for="modular_page_option_type"
+										value="#{appBundle.modular_page_option_type}" />
+									<aon:selectOneMenu id="modular_page_option_type"  
+										value="#{modular_page_option.to.type}" 
+										required="true">
+										<f:selectItems value="#{collections.modularPageOptionTypes}" />
+										<a4j:support 
+											event="onchange"  
+											reRender="sidebarOptionGrid" />
+									</aon:selectOneMenu> 
+		
+									<aon:outputLabel for="modular_page_option_ident"
+										value="#{appBundle.modular_page_option_ident}" 
+										rendered="#{modular_page_option.visibleIdent}"/>
+									<aon:selectOneMenu id="modular_page_option_ident"
+										rendered="#{modular_page_option.visibleIdent}" 
+										value="#{modular_page_option.to.ident}">
+										<f:selectItems value="#{modular_page_option.idents}" />
+									</aon:selectOneMenu>
+					
+								</aon:panelGrid>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="list">
+		
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.article}" />
+				<ui:param name="controller" value="#{article}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+			</ui:include>		
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:param name="controller" value="#{article}" />
+				<ui:define name="searchContent">
+	
+					<aon:outputLabel for="Article_alias"
+						value="#{appBundle.cms_alias}" />
+					<aon:inputText id="Article_alias" size="50"
+						valueChangeListener="#{article.addExpression}" />
+
+					<aon:outputLabel for="ArticleDetail_title"
+						value="#{appBundle.article_title}" />
+					<aon:inputText id="ArticleDetail_title" size="50"
+						value="#{article.title}" />
+
+					<aon:outputLabel for="ArticleDetail_subtitle"
+						value="#{appBundle.article_subtitle}" />
+					<aon:inputText id="ArticleDetail_subtitle" size="50"
+						value="#{article.subtitle}" />
+
+					<aon:outputLabel for="Article_articleCategory_id"
+						value="#{appBundle.article_category}"/>
+					<aon:selectOneMenu id="Article_articleCategory_id"  
+						valueChangeListener="#{article.addExpression}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{collections.articleCategoryList}" />
+					</aon:selectOneMenu>
+	
+					<aon:outputLabel for="Article_position"
+						value="#{appBundle.article_position}" />
+					<aon:inputText id="Article_position" size="10"
+						valueChangeListener="#{article.addExpression}" />
+
+					<aon:outputLabel value="#{appBundle.article_publishDate}" />
+					<aon:div>
+						<aon:outputLabel for="Article_publishDate-From" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_from}:" />
+						<aon:selectInputDate id="Article_publishDate-From"
+							valueChangeListener="#{article.addGreaterThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+						<aon:outputLabel for="Article_publishDate-To" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_to}:" />
+						<aon:selectInputDate id="Article_publishDate-To"
+							valueChangeListener="#{article.addLessThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+					</aon:div>
+
+					<aon:outputLabel value="#{appBundle.article_expireDate}" />
+					<aon:div>
+						<aon:outputLabel for="Article_expireDate-From" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_from}:" />
+						<aon:selectInputDate id="Article_expireDate-From"
+							valueChangeListener="#{article.addGreaterThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+						<aon:outputLabel for="Article_expireDate-To" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_to}:" />
+						<aon:selectInputDate id="Article_expireDate-To"
+							valueChangeListener="#{article.addLessThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+					</aon:div>
+					
+					<aon:outputLabel for="Article_active"
+						value="#{appBundle.article_active}" />
+					<aon:selectOneMenu id="Article_active"
+						valueChangeListener="#{article.addExpression}">
+						<f:selectItem itemLabel="-"	itemValue="#{null}" />
+						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+					</aon:selectOneMenu>											
+				
+				</ui:define>
+			</ui:decorate>	
+			
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

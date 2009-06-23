@@ -1,0 +1,424 @@
+package com.code.aon.ui.cms.velocity;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.code.aon.cms.ConfigDetail;
+import com.code.aon.cms.Footer;
+import com.code.aon.cms.FooterDetail;
+import com.code.aon.cms.Header;
+import com.code.aon.cms.HeaderDetail;
+import com.code.aon.cms.Language;
+import com.code.aon.cms.Menu;
+import com.code.aon.cms.Section;
+import com.code.aon.cms.Sidebar;
+import com.code.aon.cms.SidebarOption;
+import com.code.aon.cms.SidebarOptionDetail;
+import com.code.aon.cms.dao.ICMSAlias;
+import com.code.aon.cms.enumeration.SidebarSide;
+import com.code.aon.cms.enumeration.Templates;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ui.cms.Constants;
+import com.code.aon.ui.cms.controller.GeneratorConfigController;
+import com.code.aon.ui.cms.controller.ICMSConstants;
+import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.cms.util.VelocityUtil;
+import com.code.aon.ui.cms.velocity.attribute.FooterHandler;
+import com.code.aon.ui.cms.velocity.attribute.HeaderHandler;
+import com.code.aon.ui.cms.velocity.attribute.LanguageHandler;
+import com.code.aon.ui.cms.velocity.attribute.SidebarOptionHandler;
+
+public class CommonGenerator extends Generator implements ICMSConstants {
+
+	private static final Logger LOGGER = Logger.getLogger(CommonGenerator.class.getName());
+	
+	private Section previousSection = null;
+	
+    private static CommonGenerator singleton = null;
+
+    static public CommonGenerator getCommonGenerator() {
+
+        if (singleton == null) {
+            singleton = new CommonGenerator();
+        }
+        return singleton;
+    }
+    
+	public VelocityUtil initVelocityUtil() {
+		VelocityUtil vu = new VelocityUtil();
+		vu.setLogger( getLogger() );
+		CommonGenerator.getCommonGenerator().init(vu);
+		vu.setTemplatePath(ControllerUtil.getCurrentVmTemplatePath());
+		vu.initialize();
+		return vu;
+	}    
+    
+	private void init(VelocityUtil vu) {
+    	this.previousSection = null;
+    	
+		ConfigDetail configDetail = ControllerUtil.getCurrentConfigDetail();
+		
+		// $default_css from config
+		String css = "";
+		if (configDetail != null) css = configDetail.getCss();
+		vu.put(DEFAULT_CSS_KEY, css);
+		
+		// $default_javascript from config
+		String javascript = "";
+		if (configDetail != null) javascript = configDetail.getJavascript();
+		vu.put(DEFAULT_JAVASCRIPT_KEY, javascript);
+
+		// $default_description from config
+		String description = "";
+		if (configDetail != null) description = configDetail.getDescription();
+		vu.put(DEFAULT_DESCRIPTION_KEY, description);
+		
+		// $default_keywords from config
+		String keywords = "";
+		if (configDetail != null) keywords = configDetail.getKeywords();
+		vu.put(DEFAULT_KEYWORDS_KEY, keywords);
+		
+        vu.put(EVERY_LANGUAGES_KEY, getActiveLanguages());
+        vu.put(DEFAULT_LANGUAGE_KEY, getDefaultLanguage());
+        vu.put(CURRENT_LANGUAGE_KEY, getCurrentLanguage());
+
+    }
+
+	public void chargeContext(VelocityUtil vu, Section section) throws ManagerBeanException {
+		if (section == null){
+			section = GeneratorConfigController.defaultSection();
+		}
+		
+		logger.info(". . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ." +
+								" Cargando sección... ["+section.getAlias()+"]");
+		
+		if (previousSection==null ||
+				section.getId().intValue()!=previousSection.getId().intValue()){
+			
+			
+			// $default_menu from default sidebar menu in database
+			vu.put(IS_MENU_KEY, section.isShow_menu());
+			if (section.isShow_menu()){
+				Menu m = section.getMenuToShow();
+				if (m==null){
+					vu.put(IS_MENU_KEY, false);
+				}else{
+					if (previousSection==null ||
+							previousSection.getMenuToShow() == null ||
+							!previousSection.getMenuToShow().getId().equals(m.getId())){
+						vu.put(DEFAULT_MENU_KEY, MenuGenerator.getMenuOptionList(m));
+					}
+				}
+			}
+
+			vu.put(IS_MENU_ALT_KEY, section.isShow_menu_alt());
+			if (section.isShow_menu_alt()){
+				Menu m = section.getMenuAltToShow();
+				if (m==null){
+					vu.put(IS_MENU_ALT_KEY, false);
+				}else{
+					if (previousSection==null ||
+							previousSection.getMenuAltToShow() == null ||
+							!previousSection.getMenuAltToShow().getId().equals(m.getId())){
+						vu.put(DEFAULT_MENU_ALT_KEY, MenuGenerator.getMenuOptionList(m));
+					}
+				}
+			}
+
+			// $default_header from default header in database
+			vu.put(IS_HEADER_KEY, section.isShow_header());
+			if (section.isShow_header()){
+				Header h = section.getHeaderToShow();
+				if (h==null){
+					vu.put(IS_HEADER_KEY, false);
+				}else{
+					if (previousSection==null ||
+							previousSection.getHeaderToShow() == null ||
+							!previousSection.getHeaderToShow().getId().equals(h.getId())){
+						vu.put(DEFAULT_HEADER_KEY, getHeaderHandler(h));
+					}
+				}
+			}
+			
+			// $default_sidebar from default header in database
+			vu.put(IS_SIDEBAR_LEFT_KEY, section.isShow_sidebar_left());
+			vu.put(IS_SIDEBAR_RIGHT_KEY, section.isShow_sidebar_right());
+			if (section.isShow_sidebar_left() ||
+					section.isShow_sidebar_right()){
+				if (section.isShow_sidebar_left()){
+					Sidebar sb = section.getSidebarToLeftShow();
+					if (sb==null){
+						vu.put(IS_SIDEBAR_LEFT_KEY, false);
+					}else{
+						if (previousSection==null ||
+								previousSection.getSidebarToLeftShow() == null ||
+								!previousSection.getSidebarToLeftShow().getId().equals(sb.getId())){
+							vu.put(DEFAULT_SIDEBAR_LEFT_KEY, getSidebarHandler(sb, SidebarSide.LEFT));
+						}
+					}
+				}
+				if (section.isShow_sidebar_right()){
+					Sidebar sb = section.getSidebarToRightShow();
+					if (sb==null){
+						vu.put(IS_SIDEBAR_RIGHT_KEY, false);
+					}else{
+						if (previousSection==null ||
+								previousSection.getSidebarToRightShow() == null ||
+								!previousSection.getSidebarToRightShow().getId().equals(sb.getId())){
+							vu.put(DEFAULT_SIDEBAR_RIGHT_KEY, getSidebarHandler(sb, SidebarSide.RIGHT));
+						}
+					}
+				}
+			}
+			
+			// $default_footer from default footer in database
+			vu.put(IS_FOOTER_KEY, section.isShow_footer());
+			if (section.isShow_footer()){
+				Footer f = section.getFooterToShow();
+				if (f==null){
+					vu.put(IS_FOOTER_KEY, false);
+				}else{
+					if (previousSection==null ||
+							previousSection.getFooterToShow() == null ||
+							!previousSection.getFooterToShow().getId().equals(f.getId())){
+						vu.put(DEFAULT_FOOTER_KEY, getFooterHandler(f));
+					}
+				}
+			}
+			
+			previousSection = section;
+			
+
+			// $bundle from config
+			try {
+				ResourceBundle bundle = ResourceBundle.getBundle(Constants.MESSAGES_FILE, ControllerUtil.getCurrentLanguage().getLanguage().getLocale(), new TemplateBundleClassLoader());
+		        vu.put(LANGUAGE_KEY, ControllerUtil.getCurrentLanguage().getLanguage().getLocale().getLanguage());
+				vu.put(BUNDLE_KEY, bundle);
+			}
+			catch (MissingResourceException mre) {
+				logger.warning(" - No se ha encontrado fichero de mensajes para el idioma actual.");
+			}
+		}
+	}
+
+	public void removeContext(VelocityUtil vu){
+		vu.remove(IS_MENU_KEY);
+		vu.remove(DEFAULT_MENU_KEY);
+		vu.remove(IS_MENU_ALT_KEY);
+		vu.remove(DEFAULT_MENU_ALT_KEY);
+		vu.remove(IS_HEADER_KEY);
+		vu.remove(DEFAULT_HEADER_KEY);
+		vu.remove(IS_SIDEBAR_LEFT_KEY);
+		vu.remove(IS_SIDEBAR_RIGHT_KEY);
+		vu.remove(DEFAULT_SIDEBAR_LEFT_KEY);
+		vu.remove(DEFAULT_SIDEBAR_RIGHT_KEY);
+		vu.remove(IS_FOOTER_KEY);
+		vu.remove(DEFAULT_FOOTER_KEY);
+		vu.remove(DEFAULT_CSS_KEY);
+		vu.remove(DEFAULT_JAVASCRIPT_KEY);
+		vu.remove(DEFAULT_DESCRIPTION_KEY);
+		vu.remove(DEFAULT_KEYWORDS_KEY);
+        vu.remove(LANGUAGE_KEY);
+		vu.remove(BUNDLE_KEY);
+        vu.remove(EVERY_LANGUAGES_KEY);
+        vu.remove(DEFAULT_LANGUAGE_KEY);
+        vu.remove(CURRENT_LANGUAGE_KEY);
+	}
+	
+	private HeaderHandler getHeaderHandler(Header h) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(HeaderDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.HEADER_DETAIL_HEADER_ID), h.getId());
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.HEADER_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+			if (l.size() > 0) {
+				HeaderDetail hd = (HeaderDetail)l.get(0);
+				HeaderHandler hh = new HeaderHandler(hd);
+				return hh;
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return null;
+	}
+
+	private ArrayList<SidebarOptionHandler> getSidebarHandler(Sidebar s, SidebarSide sidebarSide) {
+		ArrayList<SidebarOptionHandler> list = new ArrayList<SidebarOptionHandler>();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(SidebarOption.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SIDEBAR_OPTION_SIDEBAR_ID), s.getId());
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SIDEBAR_OPTION_ACTIVE), true);
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SIDEBAR_OPTION_SIDE), sidebarSide);
+			criteria.addOrder(bean.getFieldName(ICMSAlias.SIDEBAR_OPTION_POSITION));
+			List<ITransferObject> sidebarOption_lst = (List<ITransferObject>)bean.getList(criteria);
+			Iterator<ITransferObject> sidebarOption_iter = sidebarOption_lst.iterator();
+			while (sidebarOption_iter.hasNext()) {
+				SidebarOption sidebarOption = (SidebarOption)sidebarOption_iter.next(); 
+				
+				bean = BeanManager.getManagerBean(SidebarOptionDetail.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SIDEBAR_OPTION_DETAIL_SIDEBAR_OPTION_ID), sidebarOption.getId());
+				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SIDEBAR_OPTION_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+				List<ITransferObject> sidebarOptionDetail_lst = (List<ITransferObject>)bean.getList(criteria);
+				Iterator<ITransferObject> sidebarOptionDetail_iter = sidebarOptionDetail_lst.iterator();
+				while (sidebarOptionDetail_iter.hasNext()) {
+					SidebarOptionDetail current = (SidebarOptionDetail)sidebarOptionDetail_iter.next();
+					SidebarOptionHandler current_h = new SidebarOptionHandler(current);
+					list.add(current_h);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return list;
+	}
+
+	private FooterHandler getFooterHandler(Footer f) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(FooterDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.FOOTER_DETAIL_FOOTER_ID), f.getId());
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.FOOTER_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+			if (l.size() > 0) {
+				FooterDetail fd = (FooterDetail)l.get(0);
+				FooterHandler fh = new FooterHandler(fd);
+				return fh;
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return null;
+	}
+	
+	public void generateLanguagePage() {
+		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();		
+        vu.put(EVERY_LANGUAGES_KEY, getActiveLanguages());
+        vu.put(DEFAULT_LANGUAGE_KEY, getDefaultLanguage());
+        vu.put(CURRENT_LANGUAGE_KEY, getCurrentLanguage());
+
+		File f = ControllerUtil.getPreviewPath();
+		if (!f.exists()) f.mkdirs();
+		f = ControllerUtil.getLanguagePreviewPath();
+		if (!f.exists()) f.mkdirs();
+		generate(vu, Templates.LANGUAGE);
+	}
+
+	public void generateEmailSendPage() {
+		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();		
+		File f = ControllerUtil.getPreviewPath();
+		if (!f.exists()) f.mkdirs();
+		f = ControllerUtil.getLanguagePreviewPath();
+		if (!f.exists()) f.mkdirs();
+		try {
+			CommonGenerator.getCommonGenerator().chargeContext(vu, null);
+		} catch (ManagerBeanException e) {
+		}
+		vu.put("smtpServer", ControllerUtil.getCurrentConfig().getSmtp_server());
+		vu.put("username", ControllerUtil.getCurrentConfig().getSmtp_user());
+		vu.put("password", ControllerUtil.getCurrentConfig().getSmtp_password());
+		vu.put("from", ControllerUtil.getCurrentConfig().getFrom_email());
+		vu.put("name_from", ControllerUtil.getCurrentConfig().getFrom_name());
+		generate(vu, Templates.SENDMAIL);
+		vu.remove("smtpServer");
+		vu.remove("username");
+		vu.remove("password");
+		vu.remove("from");
+		vu.remove("name_from");
+		vu = null;
+	}
+
+	public void generateSearchPage() {
+		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();		
+		File f = ControllerUtil.getPreviewPath();
+		if (!f.exists()) f.mkdirs();
+		f = ControllerUtil.getLanguagePreviewPath();
+		if (!f.exists()) f.mkdirs();
+		try {
+			CommonGenerator.getCommonGenerator().chargeContext(vu, null);
+		} catch (ManagerBeanException e) {
+		}
+		generate(vu, Templates.SEARCH);
+	}
+
+	public void generateCaptchaPage() {
+		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();		
+
+		File f = ControllerUtil.getPreviewPath();
+		if (!f.exists()) f.mkdirs();
+		f = ControllerUtil.getLanguagePreviewPath();
+		if (!f.exists()) f.mkdirs();
+		generate(vu, Templates.CAPTCHA);
+	}
+
+	private static Object getDefaultLanguage() {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Language.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.LANGUAGE_DEFAULT_LANGUAGE), true);
+			criteria.addOrder(bean.getFieldName(ICMSAlias.LANGUAGE_POSITION));
+			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+			if (l.size() > 0) {
+				Language lang = (Language)l.get(0);
+				return lang.getLanguage().getLocale().getLanguage();
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return null;
+	}
+
+	private static Object getCurrentLanguage() {
+		Language lang = ControllerUtil.getCurrentLanguage();
+		return lang.getLanguage().getLocale().getLanguage();
+	}
+	
+	private ArrayList<LanguageHandler> getActiveLanguages() {
+		ArrayList<LanguageHandler> list = new ArrayList<LanguageHandler>();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Language.class);
+			Criteria criteria = new Criteria();
+			criteria.addOrder(bean.getFieldName(ICMSAlias.LANGUAGE_POSITION));
+			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+			for (int i = 0; i < l.size(); i++) {
+				Language lang = (Language)l.get(i);
+				LanguageHandler lh = new LanguageHandler(lang);
+				list.add(lh);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return list;
+	}
+
+	private class TemplateBundleClassLoader extends ClassLoader {
+
+		@Override
+		protected URL findResource(String name) {
+			File f = new File(name);
+			String bundle_file = ControllerUtil.getBundlePath() + "/" + f.getName();
+			f = new File(bundle_file);
+			try {
+				return new URL("file", null, f.getAbsolutePath()) ;
+			} catch (MalformedURLException e) {
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			}
+			return super.findResource(name);
+		}
+
+	}
+}
