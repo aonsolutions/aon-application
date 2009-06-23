@@ -12,7 +12,7 @@ public class AonSqlTest {
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws FileNotFoundException, AonSQLException {
 		Connection c = HibernateUtil.getSQLConnection();
-		File file = new File("/aonexp/con00037/account.xml");
+		File file = new File("/tmp/balance_def.sql");
 		FileInputStream input = new FileInputStream( file );
 		
 		AonSQLFile sqlFile = new AonSQLFile( input );
