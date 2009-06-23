@@ -15,7 +15,10 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.account.Account;
+import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
+import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -36,6 +39,7 @@ import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.RegistryPayMethod;
@@ -64,6 +68,8 @@ public class FinanceController extends BasicController implements IFinanceConsta
 
 	private double paymentAmount;
 
+	private Account paymentCashAccount;
+	
 	private RegistryBank paymentRegistryBank;
 	
 	private RegistryPayMethod paymentRegistryPayMethod;
@@ -72,6 +78,10 @@ public class FinanceController extends BasicController implements IFinanceConsta
 
 	private double returnExpenses;
 
+	private int returnDeposit;
+
+	private Account returnCashAccount;
+	
 	private RegistryBank returnRegistryBank;
 	
 	private FinanceGenerator financeGenerator;
@@ -82,7 +92,9 @@ public class FinanceController extends BasicController implements IFinanceConsta
 
 	private boolean showFinanceReturnWindow;
 	
-	private List orderedList;
+	private List<SelectItem> cashAccountList;
+
+	private List<?> orderedList;
 
 	/**
 	 * A list of finances currently checked
@@ -125,6 +137,14 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		this.paymentAmount = paymentAmount;
 	}
 
+	public Account getPaymentCashAccount() {
+		return paymentCashAccount;
+	}
+
+	public void setPaymentCashAccount(Account paymentCashAccount) {
+		this.paymentCashAccount = paymentCashAccount;
+	}
+
 	public RegistryBank getPaymentRegistryBank() {
 		return paymentRegistryBank;
 	}
@@ -155,6 +175,22 @@ public class FinanceController extends BasicController implements IFinanceConsta
 
 	public void setReturnExpenses(double returnExpenses) {
 		this.returnExpenses = returnExpenses;
+	}
+
+	public int getReturnDeposit() {
+		return returnDeposit;
+	}
+
+	public void setReturnDeposit(int returnDeposit) {
+		this.returnDeposit = returnDeposit;
+	}
+
+	public Account getReturnCashAccount() {
+		return returnCashAccount;
+	}
+
+	public void setReturnCashAccount(Account returnCashAccount) {
+		this.returnCashAccount = returnCashAccount;
 	}
 
 	public RegistryBank getReturnRegistryBank() {
@@ -195,10 +231,15 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		this.showFinanceReturnWindow = value;
 	}
 	
-	public void onFinancePaymentShow(ActionEvent event) {
-		super.accept();
-
+	public void onFinancePaymentShow(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		Finance finance = (Finance) getTo();
+		if (finance.getPayMethod() == null || finance.getPayMethod().getId() == null) {
+			AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.PAYMENT_PAY_METHOD_UNDEFINED_ERROR);
+			throw new AbortProcessingException();
+		} else {
+			super.accept();
+		}
+
 		setPaymentDate(finance.getDueDate());
 		setPaymentAmount(finance.getTotalAmount());
 		if (finance.getPayMethod().getType() == PayMethodType.CASH_BASIS) {
@@ -206,13 +247,33 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		} else {
 			setPaymentRegistryBank(obtainPaymentRegistryBank(getCompany(), finance.getBank(), finance.getBankAccount()));
 		}
+		if (getCashAccountsSize() < 2) {
+			//No se renderiza la lista de Cajas, por lo tanto se le asigna el valor por defecto.
+			setReturnCashAccount(AccountUtil.obtainCashAccount());
+		} else {
+			//Se resetea el valor.
+			setReturnCashAccount(null);
+		}
 	}
 
-	public void onFinanceReturnShow(ActionEvent event) {
+	public void onFinanceReturnShow(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		Finance finance = (Finance) getTo();
 		setReturnDate(new Date());
 		setReturnExpenses(finance.getExpenses());
-		setReturnRegistryBank(obtainReturnRegistryBank(getCompany(), finance));
+		if (finance.getPayMethod().getType() == PayMethodType.CASH_BASIS) {
+			setReturnDeposit(1);
+			setReturnRegistryBank(null);
+		} else {
+			setReturnDeposit(0);
+			setReturnRegistryBank(obtainReturnRegistryBank(getCompany(), finance));
+		}
+		if (getCashAccountsSize() < 2) {
+			//No se renderiza la lista de Cajas, por lo tanto se le asigna el valor por defecto.
+			setReturnCashAccount(AccountUtil.obtainCashAccount());
+		} else {
+			//Se resetea el valor.
+			setReturnCashAccount(null);
+		}
 	}
 
 	private RegistryBank obtainPaymentRegistryBank(Registry registry, Bank bank, BankAccount bankAccount) {
@@ -295,6 +356,28 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		}
 	}
 
+	public List<SelectItem> getCashAccounts() throws ManagerBeanException, ExpressionException {
+		if (cashAccountList == null) {
+			cashAccountList = new LinkedList<SelectItem>();
+			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+			Criteria criteria = new Criteria();
+			criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "570*");
+			criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED), new Boolean(true));
+			criteria.addOrder(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID));
+			Iterator<?> iter = accountBean.getList(criteria).iterator();
+			while (iter.hasNext()) {
+				Account account = (Account) iter.next();
+				SelectItem item = new SelectItem(account, account.getFullDescription());
+				cashAccountList.add(item);
+			}
+		}
+		return cashAccountList;
+	}
+
+	public int getCashAccountsSize() throws ManagerBeanException, ExpressionException {
+		return getCashAccounts().size();
+	}
+
 	public List<SelectItem> getBanks() {
 		Finance finance = (Finance) getTo();
 		if (finance != null && finance.getPayMethod() != null) {
@@ -355,9 +438,12 @@ public class FinanceController extends BasicController implements IFinanceConsta
 
 	public void onFinancePayment(ActionEvent event) throws ManagerBeanException {
 		Finance finance = (Finance)this.getTo();
-		if (getPaymentAmount() == 0 || getPaymentAmount() > finance.getTotalAmount()){
+		if (getPaymentAmount() == 0) {
 			AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.PAYMENT_INVALID_AMOUNT_ERROR);
 			throw new AbortProcessingException();
+		}
+		if (getPaymentAmount() != finance.getTotalAmount()) {
+			AonUtil.addWarningMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.PAYMENT_NOT_MATCH_AMOUNT_ERROR);
 		}
 
 		if (getPaymentAmount() != finance.getTotalAmount()) {
@@ -369,7 +455,8 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		finance.setFinanceStatus(FinanceStatus.PAID);
 		getManagerBean().update(finance);
 
-		AccountEntry entry = getWriter().recordFinance(finance, getPaymentRegistryBank(), getPaymentDate());
+		Account paymentAccount = (getPaymentRegistryBank() != null)?AccountUtil.obtainRBankAccount(getPaymentRegistryBank()):paymentCashAccount;
+		AccountEntry entry = getWriter().recordFinance(finance, paymentAccount, getPaymentDate());
 		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId();
 		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, entry.getEntryDate(), FinanceTrackingType.RECORDED, message);
 		getWriter().insertAccountEntryFinanceTracking(entry, tracking);
@@ -385,7 +472,8 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		getManagerBean().update(finance);
 		returnFinanceBatchDetail(finance);
 
-		AccountEntry entry = getWriter().returnFinance(finance, getReturnRegistryBank(), getReturnDate());
+		Account returnAccount = (getReturnDeposit() == 0)?AccountUtil.obtainRBankAccount(getReturnRegistryBank()):returnCashAccount;
+		AccountEntry entry = getWriter().returnFinance(finance, returnAccount, getReturnDate());
 		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId();
 		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, entry.getEntryDate(), FinanceTrackingType.RETURNED, message);
 		getWriter().insertAccountEntryFinanceTracking(entry, tracking);
@@ -472,10 +560,12 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		clearCheckedFinances();
 	}
 
+	@SuppressWarnings("unchecked")
 	public List getOrderedList() {
 		return orderedList;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setOrderedList(List orderedList) {
 		this.orderedList = orderedList;
 	}
@@ -527,6 +617,5 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		cr.addOrder(id,true);
 		orderedList=bean.getList(cr);
 	}
-
 
 }
