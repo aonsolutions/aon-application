@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="campaignActionForm">		
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >		
+				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_actions}" />
+				<ui:param name="controller" value="#{campaignAction}" />
+				<ui:param name="skipSearchButton" value="true" />				
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton value="#{campaign.bundle.marketing_action_add_targets}"
+						action="campaignActionTarget_search" actionListener="#{target.onEditSearch}"
+						styleClass="aon-finding-toolbar-item aon-icon-new" rendered="#{!formNew}" />
+				</ui:define>				
+			</ui:decorate>		
+
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:panelGrid id="menuGrid" columns="2" dir="true">
+
+					<aon:outputLabel for="Action_id"
+						rendered="#{!campaignAction.new}" value="#{bundle.aon_id}" />
+					<aon:inputText id="Action_id" value="#{campaignAction.to.id}"
+						rendered="#{!campaignAction.new}" size="15" disabled="true" />
+
+					<aon:outputLabel for="Action_mediaType"
+						value="#{marketingBundle.marketing_action_media_type}" />
+					<aon:selectOneMenu id="Action_mediaType" required="true"
+						value="#{campaignAction.to.mediaType}">
+						<f:selectItem value="#{null}" itemLabel="    " />
+						<f:selectItems value="#{campaign.actionMediaTypes}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel for="Action_startDate"
+						value="#{marketingBundle.marketing_action_start_date}" />
+					<aon:selectInputDate id="Action_startDate" 
+						value="#{campaignAction.to.startDate}" required="true"
+						timeZone="#{timeZoneController.timeZone}"
+						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>
+
+					<aon:outputLabel for="Action_endDate"
+						value="#{marketingBundle.marketing_action_end_date}" />
+					<aon:selectInputDate id="Action_endDate" 
+						value="#{campaignAction.to.endDate}" 
+						timeZone="#{timeZoneController.timeZone}"
+						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>
+
+					<c:if test="#{campaign.showSurvey}" >
+						<aon:outputLabel for="Action_survey_id" 
+							value="#{marketingBundle.marketing_survey}" />
+						<aon:div styleClass="aon-lookup">
+							<aon:lookupInputText id="Action_survey_id"
+								lookup="#{surveyLookup}"
+								reRender="Action_survey_detail"
+								value="#{campaignAction.to.survey.id}" size="5">
+							</aon:lookupInputText>
+							<aon:lookupButton id="Action_survey_lookup"
+								windowTitle="#{marketingBundle.marketing_survey_selection}"
+								selectReRender="Action_survey_id,Action_survey_detail"
+								lookup="#{surveyLookup}" minHeight="440"
+								property="#{campaignAction.to.survey}">
+							</aon:lookupButton>
+							<aon:inputText id="Action_survey_detail"
+								value="#{campaignAction.to.survey.description}"
+								size="80" disabled="true" />
+						</aon:div>
+					</c:if>
+				</aon:panelGrid>
+
+				<aon:div styleClass="aon-form-group" rendered="#{!campaignAction.new}">
+					<aon:div styleClass="aon-form-group-title">
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputLabel for="campaignActionTargetData" value="#{target.bundle.commercial_target_module}" />
+						</aon:div>
+					</aon:div>
+					<ui:include src="/com/code/aon/ui/marketing/facelet/campaignActionTarget/grid.xhtml" />
+				</aon:div>
+				
+			</aon:div>
+		</aon:form>	
+		<c:if test="#{campaign.showSurvey}" >
+			<aon:lookupButtonPopup lookup="#{surveyLookup}" />
+		</c:if>
+		<aon:lookupButtonPopup lookup="#{targetLookup}" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>
