@@ -101,10 +101,10 @@
 
 					<aon:outputLabel for="AccountEntry_securityLevel"
 						value="#{bundle.aon_security_level}" />
-					<aon:selectOneMenu id="AccountEntry_securityLevel"
+					<aon:selectOneRadio id="AccountEntry_securityLevel"
 						value="#{expenseEntry.header.securityLevel}">
 						<f:selectItems value="#{commonCollections.securityLevels}" />
-					</aon:selectOneMenu>
+					</aon:selectOneRadio>
 
 					<aon:outputLabel for="Account_amount"
 						value="#{bundle.aon_amount}" />

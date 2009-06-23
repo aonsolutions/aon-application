@@ -96,10 +96,10 @@
 
 					<aon:outputLabel for="AccountEntry_securityLevel"
 						value="#{bundle.aon_security_level}" />
-					<aon:selectOneMenu id="AccountEntry_securityLevel"
+					<aon:selectOneRadio id="AccountEntry_securityLevel"
 						value="#{salaryEntry.header.securityLevel}">
 						<f:selectItems value="#{commonCollections.securityLevels}" />
-					</aon:selectOneMenu>
+					</aon:selectOneRadio>
 
 					<aon:outputLabel for="Account_gross_salary"
 						value="#{accountingBundle.accounting_gross_salary}" />

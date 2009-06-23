@@ -28,6 +28,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.Company;
 import com.code.aon.config.Bank;
 import com.code.aon.ql.Criteria;
@@ -118,6 +119,7 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 		header.setDate(new Date());
 		header.setRegistryBank(new RegistryBank());
 		header.getRegistryBank().setBank(new Bank());
+		header.setSecurityLevel(SecurityLevel.OFFICIAL);
 		return header;
 	}
 	
