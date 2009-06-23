@@ -67,6 +67,7 @@
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.Series"/>
 		<mapping class="com.code.aon.config.Scope"/>
+		<mapping class="com.code.aon.config.Tariff"/>
 		<mapping class="com.code.aon.config.Tax"/>
 		<mapping class="com.code.aon.config.TaxDetail"/>
 		<mapping class="com.code.aon.config.User"/>
@@ -108,7 +109,6 @@
 		<mapping class="com.code.aon.product.ProductCategory"/>
 		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
 		<mapping class="com.code.aon.product.ProductCategoryTree"/>
-		<mapping class="com.code.aon.product.Tariff"/>
 		<mapping class="com.code.aon.product.TariffCatalogue"/>
 		
 		<!-- AON-PURCHASE Mapping files -->	
