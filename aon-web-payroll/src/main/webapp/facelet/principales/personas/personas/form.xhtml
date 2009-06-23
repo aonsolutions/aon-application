@@ -16,9 +16,10 @@
 
 				<aon:form id="personaForm">
 
-					<!-- <ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">-->
-					<ui:decorate
-						template="/facelet/templates/formPrintToolbarCliente.xhtml">
+					<!-- 
+					<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+					-->
+					<ui:decorate template="/facelet/templates/formPrintToolbar.xhtml">
 
 						<ui:param name="toolbarTitle"
 							value="#{appBundle.aon_payroll_pricipales_personas_mnto_personas}" />
@@ -26,31 +27,28 @@
 						<ui:param name="reportKey" value="personaDetail" />
 						<ui:param name="reportKeyXls"	value="personaListXls" />
 
-						<ui:define name="beforeSpinToolbarContent">
-							<h:commandLink  target="_blank" value="Integral Trabajadores"
+						<ui:define name="additionalToolbarContent">
+							<h:commandLink target="_blank" value="&#160;"
 								title="#{appBundle.aon_payroll_principales_integral_trabajadores}"
 								styleClass="aon-finding-toolbar-item aon-icon-tree"
-								action="integralTrab_search" rendered="#{!controller.new}"
-								>
-							</h:commandLink>
-							<h:commandLink  target="_blank" value="Otras Percepciones"
+								action="integralTrab_search"  rendered="#{!persona.new}" />
+							
+							<h:commandLink  target="_blank" value="&#160;"
 								title="#{appBundle.aon_payroll_principales_personas_otrperc}"
 								styleClass="aon-finding-toolbar-item aon-icon-agenda"
-								action="otrperc_search" rendered="#{!controller.new}"
-								>
-							</h:commandLink>
-							
-							<!-- 
+								action="otrperc_search" rendered="#{!persona.new}" />
+						</ui:define>
+						
+<!-- 
 							<aon:commandButton 
 								title="#{appBundle.aon_payroll_principales_fichero_contrato}"
 								styleClass="aon-finding-toolbar-item aon-icon-category"
 								action="cuenta_form" rendered="#{!controller.new}"
 								actionListener="#{cuenta.onSelectFirst}" disabled="#{true}">
 							</aon:commandButton>
-							-->
-						</ui:define>
+-->
 					</ui:decorate>
-
+					
 					<aon:div id="personaForm"
 						styleClass="aon-scroll-area aon-scroll-area-principales">
 
