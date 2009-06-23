@@ -77,7 +77,7 @@ public class AccountSummaryManager {
 	public static void deleteAccountSummary(Period accountPeriod) {
 		String delete = "delete from AccountSummary as summary";
 		delete += (accountPeriod != null)?" where summary.accountPeriod = '" + accountPeriod.getId() + "'":"";
-        Session session = HibernateUtil.getSession(null);
+        Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
         Transaction t = session.beginTransaction();
         Query query = session.createQuery(delete);
         int rows = query.executeUpdate();
@@ -96,7 +96,7 @@ public class AccountSummaryManager {
 						"where entry.id = entryDetail.accountEntry.id " +
 						"and entry.accountPeriod = '" + accountPeriod.getId() + "' " + 
 						"group by entryDetail.account, entry.securityLevel, entry.entryDate ";
-        Session session = HibernateUtil.getSession(null);
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
         Query query = session.createQuery(select);
         List list = query.list();
         int count = list.size();

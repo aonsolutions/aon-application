@@ -47,7 +47,7 @@
 					rows="20" var="to" rendered="#{vatReport.model.rowCount > 0}">
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{financeBundle.finance_tax_date}" />
+							<aon:outputText value="#{bundle.aon_date}" />
 						</f:facet>
 						<aon:outputText value="#{to.date}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -60,16 +60,6 @@
 							<aon:outputText value="#{financeBundle.finance_invoice_number}" />
 						</f:facet>
 						<aon:outputText value="#{to.reference}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_date}" />
-						</f:facet>
-						<aon:outputText value="#{to.invoiceDate}">
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
 					</aon:column>
 
 					<aon:column>

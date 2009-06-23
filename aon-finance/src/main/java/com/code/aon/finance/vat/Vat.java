@@ -22,7 +22,6 @@ public class Vat {
 	String document;
 	String name;
 	Date date;
-	Date invoiceDate;
 	int month;
 	int year;
 	int quarter;
@@ -178,14 +177,6 @@ public class Vat {
 
 	public void setYear(int year) {
 		this.year = year;
-	}
-
-	public Date getInvoiceDate() {
-		return invoiceDate;
-	}
-
-	public void setInvoiceDate(Date invoiceDate) {
-		this.invoiceDate = invoiceDate;
 	}
 
 	public double getTotal() {

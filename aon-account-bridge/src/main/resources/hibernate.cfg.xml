@@ -48,6 +48,7 @@
 		<mapping class="com.code.aon.config.Scope"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.Tax"/>
+		<mapping class="com.code.aon.config.Tariff"/>
 
 		<mapping class="com.code.aon.customer.Customer"/>
 		<mapping class="com.code.aon.customer.CustomerSegment"/>
@@ -60,7 +61,6 @@
 		<mapping class="com.code.aon.product.Product"/>
 		<mapping class="com.code.aon.product.ProductCategory"/>
 		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
-		<mapping class="com.code.aon.product.Tariff"/>
 
 		<mapping class="com.code.aon.registry.Registry"/>
 		<mapping class="com.code.aon.registry.RegistryAddress"/>
