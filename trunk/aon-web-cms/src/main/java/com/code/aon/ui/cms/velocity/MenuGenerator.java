@@ -53,17 +53,14 @@ public class MenuGenerator extends Generator {
 		return list;
 	}
 	
-	public static ArrayList<MenuOptionHandler> getMenuOptionList(Integer menu) {
+	public static ArrayList<MenuOptionHandler> getMenuOptionList(Integer id) {
 		try {
 			IManagerBean menuBean = BeanManager.getManagerBean(Menu.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(menuBean.getFieldName(ICMSAlias.MENU_ID), menu);
-			List<ITransferObject> l = (List<ITransferObject>)menuBean.getList(criteria);
-			if (l.isEmpty()) {
-				getLogger().warning("EL MENU "+menu+" REFERENCIADO NO EXISTE !!!");
-			}else{
-				Menu m = (Menu)l.get(0);
-				return getMenuOptionList(m);
+			Menu menu = (Menu) menuBean.get(id);
+			if ( menu == null ) {
+				getLogger().warning("EL MENU "+id+" REFERENCIADO NO EXISTE !!!");
+			} else {
+				return getMenuOptionList(menu);
 			}
 		} catch (ManagerBeanException e) {
 			getLogger().error(e.getMessage());
