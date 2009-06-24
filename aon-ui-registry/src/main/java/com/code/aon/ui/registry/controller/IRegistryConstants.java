@@ -15,6 +15,8 @@ public interface IRegistryConstants {
 	// BEAN
 	// ************************************************************
 
+	String COLLECTIONS_CONTROLLER_NAME = "registryCollections";
+
 	String ADDRESS_CONTROLLER_NAME = "address"; 
 	
 	String ATTACHMENT_CONTROLLER_NAME = "attachment";
