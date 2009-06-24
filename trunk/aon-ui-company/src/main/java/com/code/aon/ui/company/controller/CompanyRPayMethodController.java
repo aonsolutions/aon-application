@@ -12,7 +12,7 @@ public class CompanyRPayMethodController extends RegistryPayMethodController{
 	
 	public List<SelectItem> getBanks() throws ManagerBeanException {
 		Company company = (Company) getMasterController().getTo();
-		return getBanks(company.getId());
+		return getBanks(company);
 	}
 
 }

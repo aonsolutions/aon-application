@@ -16,7 +16,7 @@ public class SupplierRPayMethodController extends RegistryPayMethodController{
 	public List<SelectItem> getBanks() throws ManagerBeanException {
 		if (isBankTransfer()) {
 			Supplier supplier = (Supplier) getMasterController().getTo();
-			return getBanks(supplier.getId());
+			return getBanks(supplier.getRegistry());
 		} else {
 			CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 			return c.getCompanyBanks();
