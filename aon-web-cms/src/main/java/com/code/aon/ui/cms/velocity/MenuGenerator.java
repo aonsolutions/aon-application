@@ -58,7 +58,7 @@ public class MenuGenerator extends Generator {
 			IManagerBean menuBean = BeanManager.getManagerBean(Menu.class);
 			Menu menu = (Menu) menuBean.get(id);
 			if ( menu == null ) {
-				getLogger().warning("EL MENU "+id+" REFERENCIADO NO EXISTE !!!");
+				getLogger().error("EL MENU "+id+" REFERENCIADO NO EXISTE !!!");
 			} else {
 				return getMenuOptionList(menu);
 			}
@@ -67,6 +67,22 @@ public class MenuGenerator extends Generator {
 		}
 		return null; 
 	}
+	
+	public static MenuHandler getMenuHandler(Integer id) {
+		try {
+			IManagerBean menuBean = BeanManager.getManagerBean(Menu.class);
+			Menu menu = (Menu) menuBean.get(id);
+			if ( menu == null ) {
+				getLogger().error("EL MENU "+id+" REFERENCIADO NO EXISTE !!!");
+			}else{
+				MenuHandler mh = new MenuHandler(menu);
+				return mh;
+			}
+		} catch (ManagerBeanException e) {
+			getLogger().error(e.getMessage());
+		}
+		return null;
+	}	
 
 	public void generate() {
 		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();	
@@ -86,25 +102,6 @@ public class MenuGenerator extends Generator {
 		} catch (ManagerBeanException e) {
 			logger.error(e.getMessage());
 		}
-	}
-	
-	public static Object getMenuHandler(Integer ident) {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(Menu.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.MENU_ID), ident);
-			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
-			if (l.isEmpty()) {
-				getLogger().warning("EL MENU "+ident+" REFERENCIADO NO EXISTE !!!");
-			}else{
-				Menu menu = (Menu)l.get(0);
-				MenuHandler mh = new MenuHandler(menu);
-				return mh;
-			}
-		} catch (ManagerBeanException e) {
-			getLogger().error(e.getMessage());
-		}
-		return null;
 	}
 
 }
