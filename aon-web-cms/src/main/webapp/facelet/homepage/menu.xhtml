@@ -118,7 +118,8 @@
 					rendered="#{domainUtils.productMenu and ( cms.roleEditor or cms.roleRevisor )}"
 					actionListener="#{product.onSearch}" 
 					action="product_list"/>
-				<aon:menuSeparator/>
+				<aon:menuSeparator
+					rendered="#{domainUtils.albumMenu and ( cms.roleEditor or cms.roleRevisor )}" />
 				<aon:menuItem id="album" 
 					value="#{menuBundle.cms_album}"
 					rendered="#{domainUtils.albumMenu and ( cms.roleEditor or cms.roleRevisor )}"
