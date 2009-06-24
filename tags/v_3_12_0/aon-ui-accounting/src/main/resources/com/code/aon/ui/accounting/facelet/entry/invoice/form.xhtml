@@ -1,0 +1,354 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="invoiceEntryForm">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarID" value="aonToolbar" />
+				<ui:param name="toolbarTitle"
+					value="#{accountingBundle.accounting_entry_invoice_module}" />
+				<ui:param name="toolbarDescription"
+					value="#{invoiceEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+
+				<ui:define name="toolbarContent">
+
+					<aon:commandButton 
+						value="#{accountingBundle.accounting_entry_generate}"
+						id="saveInvoice"
+						accesskey="#{bundle.aon_key_save}"
+						actionListener="#{invoiceEntry.onGenerate}"
+						action="#{invoiceEntry.generate}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						disabled="#{invoiceEntry.details.rowCount == 0 or !invoiceEntry.accountSource}"
+						onclick="if (!confirm('#{accountingBundle.accounting_entry_generate}?'))  return false;" />
+					<aon:commandButton value="#{bundle.aon_reset}"
+						accesskey="#{bundle.aon_key_new}"
+						actionListener="#{invoiceEntry.onReset}"
+						rendered="#{!invoiceEntry.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset" />
+					<aon:commandButton value="#{bundle.aon_remove}"
+						accesskey="#{bundle.aon_key_remove}" action="accountEntry_search"
+						actionListener="#{invoiceEntry.onRemove}"
+						rendered="#{!invoiceEntry.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-delete"
+						immediate="true"
+						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;"
+						disabled="#{!invoiceEntry.accountSource}" />
+					<aon:commandButton id="finances" reRender="FinancesData"
+						value="#{accountingBundle.accounting_generate_finances}"
+						actionListener="#{invoiceEntry.generateFinances}" accesskey="W"
+						disabled="#{!invoiceEntry.accountSource}"
+						styleClass="aon-finding-toolbar-item aon-icon-sincronize"
+						rendered="#{invoiceEntry.details.rowCount > 0 and invoiceEntry.finances.rowCount==0}" />
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div id="invoiceContainer">
+					<aon:panelGrid id="invoiceTables" columns="4" style="width: 100%;"
+						columnClasses="aon-panelGrid-odd aon-width-150
+					,aon-panelGrid-even aon-width-200
+					,aon-panelGrid-odd aon-width-150
+					,aon-panelGrid-even aon-width-auto">
+
+						<aon:outputLabel for="AccountEntry_accountPeriod"
+							value="#{accountingBundle.accounting_period}" />
+						<aon:div>
+							<aon:selectOneMenu id="Account_Period"
+								disabled="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}"
+								value="#{invoiceEntry.header.period}">
+								<f:selectItems value="#{accountingCollections.accountPeriods}" />
+								<a4j:support event="onchange" ajaxSingle="true" reRender="Account_Period"/>
+							</aon:selectOneMenu>
+							<h:commandLink immediate="true" target="_blank"
+								rendered="#{!invoiceEntry.new}" 
+								styleClass="aon-dataTable-link"
+								title="#{accountingBundle.accounting_lookup_account_entry}"
+								actionListener="#{invoiceEntry.onViewAccountEntry}"
+								action="accountEntry_form">
+								<aon:outputText styleClass="aon-italic aon-margin-left"
+								value="(#{financeBundle.finance_account_entry}: "/>
+								<aon:outputText styleClass="aon-bold"
+									value="#{invoiceEntry.header.accountEntryId}"/>
+								<aon:outputText styleClass="aon-italic" value=")"/>
+								
+								
+								<f:setPropertyActionListener value="#{true}" 
+									target="#{aonConfiguration.properties.hideHeaderLinks}" />
+							</h:commandLink>
+							
+						</aon:div>
+
+						<aon:outputLabel for="AccountEntry_type"
+							value="#{bundle.aon_type}" />
+						<aon:div>
+							<aon:selectOneMenu id="Account_invoiceType"
+								disabled="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}"
+								value="#{invoiceEntry.header.type}">
+								<f:selectItems value="#{accountingCollections.invoiceTypes}" />
+								<a4j:support event="onchange" ajaxSingle="true"
+									actionListener="#{invoiceEntry.onTypeChanged}"
+									reRender="invoiceTables,TaxesData">
+								</a4j:support>
+							</aon:selectOneMenu>
+							<aon:div style="display:inline; margin-left: 5px;">
+								<aon:selectOneMenu id="Account_invoiceTransactionType"
+									disabled="#{invoiceEntry.newDetail}"
+									value="#{invoiceEntry.header.transaction}">
+									<f:selectItems
+										value="#{financeCollections.invoiceTransactionTypes}" />
+								</aon:selectOneMenu>
+							</aon:div>
+							<aon:div style="display:inline; margin-left: 5px;">
+								<aon:selectBooleanCheckbox id="Account_investment"
+									disabled="#{invoiceEntry.newDetail}"
+									rendered="#{invoiceEntry.purchase}"
+									value="#{invoiceEntry.header.investment}" />
+								<aon:outputLabel for="Account_investment"
+									rendered="#{invoiceEntry.purchase}"
+									value="#{accountingBundle.accounting_investment}" />
+							</aon:div>
+						</aon:div>
+
+						<aon:outputLabel for="Account_invoice_series"
+							rendered="#{invoiceEntry.sales and invoiceEntry.new}"
+							value="#{bundle.aon_series}/#{bundle.aon_number}" />
+						<aon:outputLabel for="Account_invoice_seriesI"
+							rendered="#{invoiceEntry.sales and !invoiceEntry.new}"
+							value="#{bundle.aon_series}/#{bundle.aon_number}" />
+						<aon:outputLabel for="Account_invoice_referenceCode"
+							rendered="#{!invoiceEntry.sales}"  
+							value="#{financeBundle.finance_invoice_number}" />
+						<aon:div>
+							<aon:selectOneMenu id="Account_invoice_series"
+								rendered="#{invoiceEntry.sales and invoiceEntry.new}"
+								disabled="#{invoiceEntry.newDetail}"
+								valueChangeListener="#{invoiceEntry.onSeriesChanged}"
+								reRender="Account_invoice_number"
+								value="#{invoiceEntry.header.series}">
+								<f:selectItem itemValue="" itemLabel=" " />
+								<f:selectItems value="#{configCollections.seriesIds}" />
+							</aon:selectOneMenu>
+							<aon:inputText id="Account_invoice_seriesI"
+								style="margin-left: 5px; margin-bottom: 2px;"
+								rendered="#{invoiceEntry.sales and !invoiceEntry.new}"
+								disabled="true" value="#{invoiceEntry.header.series}" 
+								size="7" maxlength="7" />
+							<aon:inputText id="Account_invoice_number"
+								style="margin-left: 5px; margin-bottom: 2px;"
+								rendered="#{invoiceEntry.sales}" required="true"
+								disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
+								value="#{invoiceEntry.header.number}" size="7" maxlength="7">
+								<f:validateLength maximum="7" />
+							</aon:inputText>
+
+							<aon:inputText id="Account_invoice_referenceCode"
+								rendered="#{!invoiceEntry.sales}" required="true"
+								disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
+								value="#{invoiceEntry.header.referenceCode}" size="25"
+								maxlength="25" onblur="toUpperCase(this);">
+								<f:validateLength maximum="32" />
+							</aon:inputText>
+						</aon:div>
+
+						<aon:outputLabel for="Account_date" value="#{bundle.aon_date}" />
+						<aon:div>
+							<aon:selectInputDate size="8" id="Account_date"
+								disabled="#{invoiceEntry.newDetail}"
+								value="#{invoiceEntry.header.date}"
+								timeZone="#{timeZoneController.timeZone}"
+								reRender="Account_taxDate" ajaxSingle="true"
+								popupDateFormat="#{bundle.aon_date_pattern}">
+								<a4j:support 
+									event="oninputchange"
+									actionListener="#{invoiceEntry.onDateChanged}"
+									reRender="Account_taxDate"/>
+								<a4j:support 
+									event="onchanged"
+									actionListener="#{invoiceEntry.onDateChanged}"
+									reRender="Account_taxDate"/>
+							</aon:selectInputDate>
+								
+							<aon:outputLabel for="Account_taxDate"
+								styleClass="aon-form-date-label" 
+								style="margin-right: 5px;"
+								value="#{accountingBundle.accounting_tax_date}" />
+							<aon:selectInputDate size="8" id="Account_taxDate"
+								disabled="#{invoiceEntry.newDetail}"
+								value="#{invoiceEntry.header.taxDate}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}" />
+						</aon:div>
+						
+						<aon:outputLabel for="AccountEntry_securityLevel"
+							value="#{bundle.aon_security_level}" />
+						<aon:selectOneRadio id="AccountEntry_securityLevel"
+							style="display:inline;"
+							disabled="#{invoiceEntry.newDetail}"
+							value="#{invoiceEntry.header.securityLevel}">
+							<f:selectItems value="#{commonCollections.securityLevels}" />
+						</aon:selectOneRadio>
+
+						<aon:outputText value="#{customerBundle.customer_customer}"
+							rendered="#{invoiceEntry.sales}" />
+						<aon:outputText value="#{supplierBundle.supplier_supplier}"
+							rendered="#{invoiceEntry.purchase}" />
+						<aon:outputText value="#{financeBundle.finance_creditor}"
+							rendered="#{invoiceEntry.expense}" />
+
+						<aon:div styleClass="aon-lookup">
+							<aon:panelGroup rendered="#{invoiceEntry.sales}">
+								 <a4j:region>
+									<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
+										reRender="Customer_name,Invoice_document,invoiceDetails"
+										lookupProperty="registry" ajaxSingle="false"
+										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
+										lookupChangeListener="#{invoiceEntry.registryChanged}"
+										value="#{invoiceEntry.header.registry.id}" size="5" />
+									<aon:lookupButton
+										windowTitle="#{customerBundle.customer_selection}"
+										selectReRender="Customer_id,Customer_name,Invoice_document,invoiceDetails"
+										lookupChangeListener="#{invoiceEntry.registryChanged}"
+										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
+										actionType="search" lookup="#{customerLookup}" minHeight="460"
+										minWidth="650" property="#{invoiceEntry.header.registry}"
+										lookupProperty="registry">
+									</aon:lookupButton>
+									<aon:lookupButton 
+										windowTitle="#{customerBundle.customer_new}"
+										selectReRender="Customer_id,Customer_name,Invoice_document,invoiceDetails,aonToolbar"
+										lookup="#{customerLookup}" actionType="new" 
+										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
+										minWidth="650" minHeight="600"
+										lookupChangeListener="#{invoiceEntry.registryChanged}"
+										property="#{invoiceEntry.header.registry}"
+										lookupProperty="registry">
+									</aon:lookupButton>
+									<aon:inputText id="Customer_name"
+										disabled="#{invoiceEntry.newDetail}" 
+										value="#{invoiceEntry.header.name}" 
+										size="50" />
+								</a4j:region>
+							</aon:panelGroup>
+							
+							<aon:panelGroup rendered="#{invoiceEntry.purchase}">
+								 <a4j:region>
+									<aon:lookupInputText id="Supplier_id" lookup="#{supplierLookup}"
+										reRender="Supplier_name,Invoice_document,invoiceDetails"
+										lookupProperty="registry" ajaxSingle="false"
+										lookupChangeListener="#{invoiceEntry.registryChanged}"
+										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
+										value="#{invoiceEntry.header.registry.id}" size="5" />
+									<aon:lookupButton
+										windowTitle="#{supplierBundle.supplier_selection}"
+										selectReRender="Supplier_id,Supplier_name,Invoice_document,invoiceDetails"
+										lookupChangeListener="#{invoiceEntry.registryChanged}"
+										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
+										actionType="search" lookup="#{supplierLookup}" minHeight="460"
+										minWidth="650" property="#{invoiceEntry.header.registry}"
+										lookupProperty="registry">
+									</aon:lookupButton>
+									<aon:lookupButton 
+										windowTitle="#{supplierBundle.supplier_new}"
+										selectReRender="Supplier_id,Supplier_name,Invoice_document,invoiceDetails,aonToolbar"
+										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
+										lookup="#{supplierLookup}" actionType="new" 
+										minWidth="650" minHeight="600"
+										lookupChangeListener="#{invoiceEntry.registryChanged}"
+										property="#{invoiceEntry.header.registry}"
+										lookupProperty="registry">
+									</aon:lookupButton>
+									<aon:inputText id="Supplier_name"
+										disabled="#{invoiceEntry.newDetail}" 
+										value="#{invoiceEntry.header.name}" 
+										size="50"/>
+								</a4j:region>
+							</aon:panelGroup>
+							
+							<aon:panelGroup rendered="#{invoiceEntry.expense}">
+								 <a4j:region>
+									<aon:lookupInputText id="Creditor_id" lookup="#{creditorLookup}"
+										reRender="Creditor_name,Invoice_document,invoiceDetails"
+										lookupProperty="registry" ajaxSingle="false"
+										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
+										lookupChangeListener="#{invoiceEntry.registryChanged}"
+										value="#{invoiceEntry.header.registry.id}" size="5" />
+									<aon:lookupButton
+										windowTitle="#{financeBundle.finance_creditor_selection}"
+										selectReRender="Creditor_id,Creditor_name,Invoice_document,invoiceDetails"
+										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
+										lookupChangeListener="#{invoiceEntry.registryChanged}"
+										actionType="search" lookup="#{creditorLookup}" minHeight="460"
+										minWidth="650" property="#{invoiceEntry.header.registry}"
+										lookupProperty="registry">
+									</aon:lookupButton>
+									<aon:lookupButton 
+										windowTitle="#{financeBundle.finance_creditor_new}"
+										selectReRender="Creditor_id,Creditor_name,Invoice_document,invoiceDetails,aonToolbar"
+										lookup="#{creditorLookup}" actionType="new" 
+										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
+										minWidth="650" minHeight="550"
+										lookupChangeListener="#{invoiceEntry.registryChanged}"
+										property="#{invoiceEntry.header.registry}"
+										lookupProperty="registry">
+									</aon:lookupButton>
+									<aon:inputText id="Creditor_name" 
+										value="#{invoiceEntry.header.name}"
+										disabled="#{invoiceEntry.newDetail}" 
+										size="50"/>
+								</a4j:region>
+							</aon:panelGroup>
+						</aon:div>
+
+						<aon:outputLabel for="Invoice_document"
+							value="#{bundle.aon_company_document}" />
+						<aon:inputText id="Invoice_document"
+							value="#{invoiceEntry.header.document}" size="10"
+							disabled="#{invoiceEntry.newDetail}">
+						</aon:inputText>
+
+						<aon:outputLabel for="accountId"
+							value="#{accountBundle.account_account}" />
+						<ui:decorate
+							template="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
+							<ui:param name="wizard" value="#{accountWizard}" />
+							<ui:param name="id" value="accountId" />
+							<ui:param name="size" value="12" />
+							<ui:param name="maxlength" value="12" />
+							<ui:param name="renderDescription" value="#{true}" />
+							<ui:param name="renderedAttr" value="#{true}" />
+							<ui:param name="disabled"
+								value="#{invoiceEntry.newDetail}" />
+							<ui:param name="reRenderAttr" value="none" />
+							<ui:param name="required" value="false" />
+							<ui:param name="entity" value="#{invoiceEntry.header.account}" />
+							<ui:param name="ELExpression"
+								value="invoiceEntry.header.account" />
+						</ui:decorate>
+
+					</aon:panelGrid>
+				</aon:div>
+				<aon:div id="invoiceDetails">
+				<ui:include
+					src="/com/code/aon/ui/accounting/facelet/entry/invoice/form_lines.xhtml" />
+
+				<ui:include
+					src="/com/code/aon/ui/accounting/facelet/entry/invoice/form_finances.xhtml" />
+				</aon:div>
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{bankLookup}" />
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
+		<aon:lookupButtonPopup lookup="#{creditorLookup}" />
+	</ui:define>
+</ui:composition>

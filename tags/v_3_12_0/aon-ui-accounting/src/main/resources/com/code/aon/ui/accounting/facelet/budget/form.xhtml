@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="accountForm">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{accountingBundle.accounting_account_budget_module}" />
+				<ui:param name="controller" value="#{accountBudget}" />
+				<ui:param name="controller" value="#{accountBudget}" />
+				valuesTable
+				<ui:define name="additionalToolbarContent">
+					<h:commandLink target="_blank"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						value="#{bundle.aon_listing}" action="#{report.onExecute}"
+						rendered="#{!accountBudget.new}">
+						<f:param name="reportKey" value="budgetDetailList" />
+						<f:param name="outputFormat" value="PDF" />
+					</h:commandLink>
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="dataTable" columns="2" style="width: 100%;">
+
+					<aon:outputLabel for="accountId"
+						value="#{accountBundle.account_account}" />
+					<ui:decorate
+						template="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
+						<ui:param name="wizard" value="#{accountWizard}" />
+						<ui:param name="id" value="accountId" />
+						<ui:param name="size" value="12" />
+						<ui:param name="maxlength" value="12" />
+						<ui:param name="renderDescription" value="true" />
+						<ui:param name="renderedAttr" value="true" />
+						<ui:param name="disabled" value="#{!accountBudget.new}" />
+						<ui:param name="reRenderAttr" value="none" />
+						<ui:param name="required" value="true" />
+						<ui:param name="entity" value="#{accountBudget.to.account}" />
+						<ui:param name="ELExpression" value="accountBudget.to.account" />
+						<!--  
+						<a4j:support ajaxSingle="true" event="onchange"
+							actionListener="#{accountBudget.onValidateAccount}" />
+						<aon:actionListener method="#{accountBudget}" />
+						-->
+					</ui:decorate>
+
+					<aon:outputLabel for="AccountBudget_accountPeriod"
+						value="#{accountingBundle.accounting_period}" />
+					<aon:selectOneMenu id="AccountBudget_accountPeriod"
+						disabled="#{!accountBudget.new}"
+						value="#{accountBudget.to.period}">
+						<f:selectItems value="#{accountingCollections.accountPeriodKeys}" />
+					</aon:selectOneMenu>
+					
+					<!--  
+					<aon:outputLabel for="AccountBudget_date" value="#{bundle.aon_date}" />
+					<aon:selectInputDate size="8" id="AccountBudget_date"
+						value="#{accountBudget.to.date}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+					-->
+
+					<aon:outputLabel for="AccountBudget_debit" 
+						value="#{accountingBundle.accounting_debit}"
+						rendered="#{accountBudget.new}"/>
+					<aon:inputText id="AccountBudget_debit" value="#{accountBudget.debit}"
+						size="10" rendered="#{accountBudget.new}">
+						<f:validateDoubleRange />
+						<!--  
+						<a4j:support ajaxSingle="true" event="onkeyup" disabled="#{!accountBudget.new}"
+							actionListener="#{accountBudget.onChangeDebit}"/>
+						-->
+					</aon:inputText>
+
+					<aon:outputLabel for="AccountBudget_credit" 
+						value="#{accountingBundle.accounting_credit}"
+						rendered="#{accountBudget.new}"/>
+					<aon:inputText id="AccountBudget_credit" value="#{accountBudget.credit}"
+						size="10" rendered="#{accountBudget.new}">
+						<f:validateDoubleRange />
+						<!--  
+						<a4j:support ajaxSingle="true" event="onkeyup" disabled="#{!accountBudget.new}"
+							actionListener="#{accountBudget.onChangeCredit}"/>
+						-->
+					</aon:inputText>
+		
+				</aon:panelGrid>
+				
+				<!--  
+				<aon:panelGrid id="panelDataTable" columns="3" style="width: 40%;">
+				
+				</aon:panelGrid>
+				-->
+				
+			</aon:div>
+					
+			<aon:div id="valuesTable" styleClass="aon-scroll-area" style="width:400px"
+				rendered="#{!accountBudget.new}">
+				<ui:include	src="form_lines.xhtml" />
+			</aon:div>
+ 			
+		</aon:form>
+	</ui:define>
+</ui:composition>
