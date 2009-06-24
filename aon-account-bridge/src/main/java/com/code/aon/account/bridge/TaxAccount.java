@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
@@ -120,5 +121,18 @@ public class TaxAccount implements ITransferObject, IAccount {
 	 */
 	public void setType(TaxAccountType type) {
 		this.type = type;
+	}
+
+	@Transient
+	public ITransferObject getLinkedTo() {
+		return getTax();
+	}
+	public void setLinkedTo(ITransferObject to) {
+		setTax((Tax) to);
+	}
+
+	@Transient
+	public String getAccountDescription() {
+		return getTax()==null?null:getTax().getName();
 	}
 }

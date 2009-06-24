@@ -9,15 +9,13 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.registry.controller.IRegistryConstants;
 
 /**
  * Controller used in the RegistryAddres maintenance
  */
-public class RegistryAddressControllerListener extends ControllerAdapter {
+public class RegistryAddressControllerListener extends ControllerAdapter implements IRegistryConstants {
 
-	/** ADDRESS_CONTROLLER_NAME. */
-	private static final String ADDRESS_CONTROLLER_NAME = "address"; 
-	
 	/**
 	 * Gets the detail controller.
 	 * 

@@ -12,57 +12,38 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle"
-					value="#{(finance.payment) ? (financeBundle.finance_payment_module) : (financeBundle.finance_charge_module)}" />
+				<ui:param name="toolbarTitle" value="#{(finance.payment) ? (financeBundle.finance_payment_module) : (financeBundle.finance_charge_module)}" />
 				<ui:param name="controller" value="#{finance}" />
 				<ui:param name="skipResetButton" value="true" />
-
+				
 				<ui:define name="additionalToolbarContent">
 					<h:commandLink value="&#160;" target="_blank"
 						action="#{report.onExecute}"
-						actionListener="#{finance.onOrderFinanceList}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 						<f:param name="reportKey" value="financeList" />
 						<f:param name="outputFormat" value="MS Excel" />
 					</h:commandLink>
 					<h:commandLink value="#{bundle.aon_listing}" target="_blank"
 						action="#{report.onExecute}"
-						actionListener="#{finance.onOrderFinanceList}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="financeList" />
 					</h:commandLink>
-					<h:commandLink value="#{financeBundle.finance_list_by_account}"
-						target="_blank" action="#{report.onExecute}"
-						actionListener="#{finance.onOrderFinanceListByRegistry}"
-						styleClass="aon-finding-toolbar-item aon-icon-pdf"
-						accesskey="#{bundle.aon_key_print}">
-						<f:param name="reportKey" value="financeListByAccount" />
-					</h:commandLink>
-
-					<h:commandLink value="#{financeBundle.finance_list_by_date}"
-						target="_blank" action="#{report.onExecute}"
-						actionListener="#{finance.onOrderFinanceListByDate}"
-						styleClass="aon-finding-toolbar-item aon-icon-pdf"
-						accesskey="#{bundle.aon_key_print}">
-						<f:param name="reportKey" value="financeListByDate" />
-					</h:commandLink>
-				</ui:define>
-
+				</ui:define>				
+				
 			</ui:decorate>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="financeData" value="#{finance.model}" var="to"
-					rows="20" rendered="#{finance.model.rowCount > 0}"
+				<aon:dataTable id="financeData" value="#{finance.model}"
+					var="to" rows="20" rendered="#{finance.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
 						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
 						aon-editDataTable-numberColumn">
 
-					<aon:rowSelector action="finance_form"
-						actionListener="#{finance.onSelect}" />
-
+					<aon:rowSelector action="finance_form" actionListener="#{finance.onSelect}" />
+	
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{financeBundle.finance_invoice}" />
@@ -82,8 +63,7 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText
-								value="#{(finance.payment) ? (financeBundle.finance_creditor) : (financeBundle.finance_debtor)}" />
+							<aon:outputText value="#{(finance.payment) ? (financeBundle.finance_creditor) : (financeBundle.finance_debtor)}" />
 						</f:facet>
 						<aon:outputText value="#{to.invoice.registryName}" />
 					</aon:column>
@@ -101,19 +81,19 @@
 						</f:facet>
 						<aon:outputText value="#{to.payMethod.name}" />
 					</aon:column>
-
+					
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_status}" />
 						</f:facet>
 						<aon:outputText value="#{to.financeStatus}" />
 					</aon:column>
-
+					
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_amount}" />
 						</f:facet>
-						<aon:outputText value="#{to.totalAmount}">
+						<aon:outputText value="#{to.totalAmount}" >
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 					</aon:column>
@@ -121,7 +101,7 @@
 
 				<aon:dataScroller2 for="financeData" showNote="true" />
 			</aon:div>
-
+			
 		</aon:form>
 
 	</ui:define>

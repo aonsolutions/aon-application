@@ -11,6 +11,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.code.aon.accounting.enumeration.BalanceType;
 import com.code.aon.common.ITransferObject;
 
 /**
@@ -25,7 +26,7 @@ public class Balance implements ITransferObject {
 	private Integer id;
 	private String name;
 	private boolean removable;
-	private Integer type;
+	private BalanceType type;
 
 
 	@Id
@@ -47,7 +48,7 @@ public class Balance implements ITransferObject {
 	}
 
 	@Column(name="removable")
-	public boolean getRemovable() {
+	public boolean isRemovable() {
 		return removable;
 	}
 	public void setRemovable(boolean removable) {
@@ -55,10 +56,10 @@ public class Balance implements ITransferObject {
 	}
 
 	@Column(name="type")
-	public Integer getType() {
+	public BalanceType getType() {
 		return type;
 	}
-	public void setType(Integer type) {
+	public void setType(BalanceType type) {
 		this.type = type;
 	}
 
@@ -71,7 +72,7 @@ public class Balance implements ITransferObject {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 			.append(this.getName(), o.getName())
-			.append(this.getRemovable(), o.getRemovable())
+			.append(this.isRemovable(), o.isRemovable())
 			.append(this.getType(), o.getType())
 			.isEquals();
 		}
@@ -83,7 +84,7 @@ public class Balance implements ITransferObject {
 		return new HashCodeBuilder()
 			.append(this.getId())
 			.append(this.getName())
-			.append(this.getRemovable())
+			.append(this.isRemovable())
 			.append(this.getType())
 			.toHashCode();
 	}

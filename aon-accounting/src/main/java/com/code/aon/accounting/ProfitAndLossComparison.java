@@ -1,6 +1,7 @@
 package com.code.aon.accounting;
 
 
+
 public class ProfitAndLossComparison {
 	
     private String id;
@@ -71,18 +72,18 @@ public class ProfitAndLossComparison {
 	 * Acumulado, haber - debe
 	 */
 	public Double getAccumulated() {
-		if(unpaidBalance!=null && creditBalance!=null)
-			return creditBalance - unpaidBalance;
-		return 0.0;
+		if(getId()==null)
+			return getCreditBalance()+getUnpaidBalance();
+		return getAcumulatedlDifference(getUnpaidBalance(), getCreditBalance()); 
 	}
 
 	/**
 	 * PResupuestado, haber - debe
 	 */
 	public Double getBudgeted() {
-		if(budgetUnpaidBalance!=null && budgetCreditBalance!=null)
-			return budgetCreditBalance - budgetUnpaidBalance;
-		return 0.0;
+		if(getId()==null)
+			return getBudgetCreditBalance()+getBudgetUnpaidBalance();
+		return getAcumulatedlDifference(getBudgetUnpaidBalance(), getBudgetCreditBalance());
 	}
 
 	/**
@@ -98,9 +99,21 @@ public class ProfitAndLossComparison {
 	 * Porcentaje de la diferencia sobre el acumulado
 	 */
 	public Double getPercent() {
-		if(getAccumulated()!=0.0 && getDifference()!=0.0)
+		if(getAccumulated()!=0.0 && getDifference()!=0.0){
 			return (getDifference().doubleValue()/getAccumulated().doubleValue());
+		}
+		if(getAccumulated()==0.0){
+			return (getDifference().doubleValue()/getBudgeted().doubleValue());
+		}
 		return 0.0;
+	}
+	
+	private Double getAcumulatedlDifference(Double debit, Double credit){
+		if(getId().charAt(0)=='7'){
+			return credit-debit;
+		}else{
+			return debit-credit;
+		}
 	}
 	
 }

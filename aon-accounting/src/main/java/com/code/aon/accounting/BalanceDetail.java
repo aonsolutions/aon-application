@@ -9,8 +9,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -45,7 +47,7 @@ public class BalanceDetail implements ITransferObject {
 
 	@Id
 	@GeneratedValue
-	@Column(nullable = false)
+	@Column(nullable = false, length=11)
 	public Integer getId() {
 		return id;
 	}
@@ -146,6 +148,14 @@ public class BalanceDetail implements ITransferObject {
 			
 	public void setCreditNature(boolean creditNature) {
 		this.creditNature = creditNature;
+	}
+	
+	@Transient
+	public int getLevel() {
+		if ( getCode() != null) {
+			return StringUtils.countMatches(getCode(), ".");
+		}
+		return 0;
 	}
 	
 	@Override

@@ -3,6 +3,8 @@ package com.code.aon.accounting.dao;
 import java.io.File;
 import java.io.IOException;
 
+import org.hibernate.Session;
+
 import com.code.aon.accounting.AccountBudget;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
@@ -47,7 +49,7 @@ public class AccountingAliasWriter {
 		classes[12] = Period.class.getName();
 		
 		
-		HibernateUtil.getSessionFactory(null);
+		HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName());
 		AliasWriter writer = new AliasWriter("com.code.aon.accounting.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.accounting</artifactId>
-	<version>3.9.0</version>
+	<version>3.12.0</version>
 	<description>AON ACCOUNTING</description>
 	<name>AON-ACCOUNTING</name>
 	<dependencies>
@@ -23,25 +23,25 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.account</artifactId>
-			<version>3.1.0</version>
+			<version>3.3.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.config</artifactId>
-			<version>3.5.0</version>
+			<version>3.6.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.finance</artifactId>
-			<version>3.13.0</version>
+			<version>3.15.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.registry</artifactId>
-			<version>3.4.0</version>
+			<version>3.5.1</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
