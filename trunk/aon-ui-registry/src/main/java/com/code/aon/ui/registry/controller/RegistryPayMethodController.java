@@ -25,7 +25,7 @@ public class RegistryPayMethodController extends LinesController {
 		PayMethod newPay = (PayMethod) event.getNewValue();
 		if (oldPay == null || newPay == null || oldPay.getType() != newPay.getType()) {
 			RegistryPayMethod rpm = (RegistryPayMethod) getTo();
-			rpm.setRegistryBank(new RegistryBank() );
+			rpm.setRegistryBank(new RegistryBank());
 		}
 	}
 
@@ -39,12 +39,11 @@ public class RegistryPayMethodController extends LinesController {
 		LinkedList<SelectItem> rBanks = new LinkedList<SelectItem>();
 		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rBankBean
-				.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), id);
+		criteria.addEqualExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), id);
 		Iterator<?> iter = rBankBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			RegistryBank rBank = (RegistryBank) iter.next();
-			SelectItem item = new SelectItem(rBank, rBank.getFullName() );
+			SelectItem item = new SelectItem(rBank, rBank.getFullName());
 			rBanks.add(item);
 		}
 		return rBanks;
