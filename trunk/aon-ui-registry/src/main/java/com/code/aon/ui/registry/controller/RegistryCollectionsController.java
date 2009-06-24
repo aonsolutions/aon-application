@@ -17,6 +17,7 @@ import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Category;
+import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.Relationship;
 import com.code.aon.registry.dao.IRegistryAlias;
@@ -210,6 +211,21 @@ public class RegistryCollectionsController {
 			users.add(item);
 		}
 		return users;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<SelectItem> getRegistryBanks(Registry registry) throws ManagerBeanException {
+		List<SelectItem> rBanks = new LinkedList<SelectItem>();
+		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
+		Iterator iter = rBankBean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			RegistryBank rBank = (RegistryBank)iter.next();
+			SelectItem item = new SelectItem(rBank, rBank.getFullName());
+			rBanks.add(item);
+		}
+		return rBanks;
 	}
 
 	public RegistryBank getRegistryBank() {
