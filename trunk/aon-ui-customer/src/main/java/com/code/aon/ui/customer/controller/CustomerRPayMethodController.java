@@ -14,7 +14,7 @@ import com.code.aon.ui.util.AonUtil;
 public class CustomerRPayMethodController extends RegistryPayMethodController{
 	
 	public List<SelectItem> getBanks() throws ManagerBeanException {
-		if (!isBankTransfer()) {
+		if (isNegotiableDocument()) {
 			Customer customer = (Customer) getMasterController().getTo();
 			return getBanks(customer.getRegistry());
 		} else {
