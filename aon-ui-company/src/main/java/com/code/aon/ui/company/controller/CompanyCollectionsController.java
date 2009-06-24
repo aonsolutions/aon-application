@@ -15,6 +15,7 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
+import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.dao.IRegistryAlias;
 
 public class CompanyCollectionsController {
@@ -43,6 +44,25 @@ public class CompanyCollectionsController {
     		}
     	}
     	return addresses;
+    }
+
+	@SuppressWarnings("unchecked")
+    public List<SelectItem> getCompanyBanks() throws ManagerBeanException {
+    	LinkedList<SelectItem> banks = new LinkedList<SelectItem>();
+    	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+    	Iterator iterator = companyBean.getList(null).iterator();
+    	if(iterator.hasNext()) {
+    		Company company = (Company)iterator.next();
+    		IManagerBean registryBankBean = BeanManager.getManagerBean(RegistryBank.class);
+    		Criteria criteria = new Criteria();
+    		criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), company.getId());
+    		List<ITransferObject> list = registryBankBean.getList(criteria);
+    		for (ITransferObject to : list) {
+    			RegistryBank rBank = (RegistryBank)to;
+    			banks.add(new SelectItem(rBank, rBank.getFullName()));
+    		}
+    	}
+    	return banks;
     }
 
 	public WorkPlace getWorkPlace() {
