@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.controller;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -8,11 +7,6 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
-import com.code.aon.company.Company;
 import com.code.aon.finance.enumeration.BillingPeriod;
 import com.code.aon.finance.enumeration.CreditorStatus;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
@@ -23,12 +17,6 @@ import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.VatType;
-import com.code.aon.ql.Criteria;
-import com.code.aon.registry.RegistryBank;
-import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.util.AonUtil;
 
 /**
  * Collections controller
@@ -177,25 +165,6 @@ public class FinanceCollectionsController {
 			}
 		}
 		return invoiceStatuses;
-	}
-
-	public List<SelectItem> getCompanyBanks() throws ManagerBeanException {
-		LinkedList<SelectItem> rBanks = new LinkedList<SelectItem>();
-		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		Company company = companyController.obtainCompany();
-		if ( company != null ) {
-			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rBankBean
-					.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), company.getId());
-			Iterator<ITransferObject> iter = rBankBean.getList(criteria).iterator();
-			while (iter.hasNext()) {
-				RegistryBank rBank = (RegistryBank) iter.next();
-				SelectItem item = new SelectItem(rBank, rBank.getBank().getName());
-				rBanks.add(item);
-			}
-		}
-		return rBanks;
 	}
 
 }
