@@ -11,6 +11,7 @@ import javax.faces.model.ListDataModel;
 import com.code.aon.ui.accounting.check.AccountEntryEnabledCheck;
 import com.code.aon.ui.accounting.check.AccountingCheckException;
 import com.code.aon.ui.accounting.check.AccountingCheckParams;
+import com.code.aon.ui.accounting.check.BalanceCheck;
 import com.code.aon.ui.accounting.check.EmptyAccountEntryCheck;
 import com.code.aon.ui.accounting.check.IAccountCheck;
 import com.code.aon.ui.accounting.check.ICheckEntry;
@@ -42,6 +43,7 @@ public class AccountCheckController {
 			accountChecks.add( new AccountEntryEnabledCheck() );
 			accountChecks.add( new EmptyAccountEntryCheck() );
 			accountChecks.add( new UnbalancedAccountEntryCheck() );
+			accountChecks.add( new BalanceCheck() );
 		}
 		return accountChecks;
 	}
@@ -85,7 +87,7 @@ public class AccountCheckController {
 		try {
 			executeCheck();
 		} catch (AccountingCheckException e) {
-			String msg = "Error en el proceso de veridifcación. " + e.getMessage();
+			String msg = "Error en el proceso de verificación. " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
