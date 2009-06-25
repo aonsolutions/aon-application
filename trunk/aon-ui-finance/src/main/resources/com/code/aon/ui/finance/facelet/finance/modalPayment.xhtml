@@ -75,7 +75,7 @@
 										<aon:selectOneMenu id="Finance_paymentRegistryBank"
 											value="#{finance.paymentRegistryBank}"
 											rendered="#{finance.paymentRegistryBank != null}">
-											<f:selectItems value="#{finance.companyRegistryBanks}" />
+											<f:selectItems value="#{companyCollections.companyBanks}" />
 										</aon:selectOneMenu>
 										<aon:outputLabel for="Finance_paymentCashAccount"
 											value="#{configBundle.config_bank}"
