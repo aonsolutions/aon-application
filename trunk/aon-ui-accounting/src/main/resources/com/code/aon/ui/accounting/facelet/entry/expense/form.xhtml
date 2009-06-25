@@ -83,7 +83,7 @@
 					<aon:selectOneMenu id="Account_registryBank"
 						value="#{expenseEntry.header.registryBank}">
 						<f:selectItem itemLabel="#{accountingBundle.accounting_def_cash_acc}" value="#{null}" />
-						<f:selectItems value="#{expenseEntry.companyRegistryBanks}" />
+						<f:selectItems value="#{companyCollections.companyBanks}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Account_concept"

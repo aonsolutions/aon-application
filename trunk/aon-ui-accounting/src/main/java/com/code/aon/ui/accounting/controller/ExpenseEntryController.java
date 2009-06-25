@@ -2,16 +2,11 @@ package com.code.aon.ui.accounting.controller;
 
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
-
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.util.AccountConstants;
@@ -24,17 +19,12 @@ import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.company.Company;
 import com.code.aon.ql.Criteria;
-import com.code.aon.registry.Registry;
-import com.code.aon.registry.RegistryBank;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -51,8 +41,6 @@ public class ExpenseEntryController implements ISpecialAccountEntry{
 	
 	private ExpenseEntryHeader header;
 
-	private Company company;
-	
 	private String navigationKey;
 
 	private AccountingUtil accountingUtil;
@@ -88,25 +76,6 @@ public class ExpenseEntryController implements ISpecialAccountEntry{
 		this.header = header;
 	}
 	
-	public Company getCompany() {
-		try {
-			if (company == null) {
-				IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
-				Iterator<ITransferObject> iter = companyBean.getList(null, 0, 1).iterator();
-				if (iter.hasNext()) {
-					setCompany((Company) iter.next());
-				}
-			}
-		} catch (ManagerBeanException e) {
-			throw new AbortProcessingException("Error obtaining Company!");
-		}
-		return company;
-	}
-
-	public void setCompany(Company company) {
-		this.company = company;
-	}
-
 	public void onReset(ActionEvent event){
 		reset();
 	}
@@ -122,32 +91,6 @@ public class ExpenseEntryController implements ISpecialAccountEntry{
 		header.setAccount(null);
 		header.setSecurityLevel(SecurityLevel.OFFICIAL);
 		return header;
-	}
-	
-	public List<SelectItem> getCompanyRegistryBanks() {
-		return getRegistryBanks(getCompany());
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<SelectItem> getRegistryBanks(Registry registry) {
-		List<SelectItem> rBanks = new LinkedList<SelectItem>();
-		try {
-			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
-			Iterator iter = rBankBean.getList(criteria).iterator();
-			while(iter.hasNext()){
-				RegistryBank rBank = (RegistryBank)iter.next();
-				SelectItem item = new SelectItem(rBank, StringUtils.abbreviate(rBank.getBank().getName(), 30)
-						+ " [" + rBank.getBankAccount().toString() + "]");
-				rBanks.add(item);
-			}
-		} catch (ManagerBeanException e) {
-			String message  = "Error obtaining Banks";
-			LOGGER.log(Level.SEVERE, message , e);
-			AonUtil.addErrorMessage(message);
-		}
-		return rBanks;
 	}
 	
 	public String accept(){
