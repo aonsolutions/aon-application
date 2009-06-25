@@ -13,6 +13,7 @@ import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
@@ -215,8 +216,9 @@ public class AccountEntryFinanceWriter {
 	}
 
 	private AccountEntry createAccountEntry(FinanceRecordingTo to) throws ManagerBeanException {
+		Period period = to.getPeriod();
 		AccountEntry entry = new AccountEntry();
-		entry.setAccountPeriod(AccountUtil.obtainPeriod(to.getDate()).getId());
+		entry.setAccountPeriod((period!=null && period.getId()!=null) ? period.getId() : AccountUtil.obtainPeriod(to.getDate()).getId());
 		entry.setEntryDate(to.getDate());
 		entry.setType(to.getType());
 		entry.setJournal(null);
