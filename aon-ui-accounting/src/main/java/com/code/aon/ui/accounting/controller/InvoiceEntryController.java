@@ -73,11 +73,14 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.company.controller.CompanyCollectionsController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.registry.controller.IRegistryConstants;
+import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 
 public class InvoiceEntryController implements ISpecialAccountEntry {
@@ -109,7 +112,9 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	private Company company;
 
 	private Finance currentFinance;
+
 	private String onGenerateKey;
+
 	private AccountingUtil accountingUtil;
 	
 	private Date invoiceDate;
@@ -206,26 +211,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		this.company = company;
 	}
 
-/*
-	public boolean isAccountSource() throws ManagerBeanException {
-		if (isNew || getAccountEntryInvoice() == null) {
-			return true;
-		}
-		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean
-				.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), getAccountEntryInvoice()
-				.getInvoice().getId());
-		Iterator<?> iter = invoiceDetailBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			InvoiceDetail detail = (InvoiceDetail) iter.next();
-			if (!detail.getSource().equals(InvoiceSource.ACCOUNT)) {
-				return false;
-			}
-		}
-		return true;
-	}
-*/
 	public void setNewFinance(boolean isNewFinance) {
 		this.isNewFinance = isNewFinance;
 	}
@@ -1094,42 +1079,18 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		}
 	}
 
-	public List<SelectItem> getBanks() {
-		try {
-			if (getCurrentFinance() != null && getCurrentFinance().getPayMethod() != null) {
-				PayMethod pm = getCurrentFinance().getPayMethod();
-				if ((isSales() && pm.getType() == PayMethodType.NEGOTIABLE_DOCUMENT)
-						|| (!isSales() && pm.getType() == PayMethodType.BANK_TRANSFER)) {
-					return getRegistryBanks(getCurrentFinance().getRegistry());
-				}
-				return getRegistryBanks(getCompany());
+	public List<SelectItem> getBanks() throws ManagerBeanException {
+		if (getCurrentFinance() != null && getCurrentFinance().getPayMethod() != null) {
+			PayMethod pm = getCurrentFinance().getPayMethod();
+			if ((isSales() && pm.getType() == PayMethodType.NEGOTIABLE_DOCUMENT) || (!isSales() && pm.getType() == PayMethodType.BANK_TRANSFER)) {
+				RegistryCollectionsController c = (RegistryCollectionsController)AonUtil.getRegisteredBean(IRegistryConstants.COLLECTIONS_CONTROLLER_NAME);
+				return c.getRegistryBanks(getCurrentFinance().getRegistry());
+			} else {
+				CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+				return c.getCompanyBanks();
 			}
-			return new LinkedList<SelectItem>();
-		} catch (ManagerBeanException e) {
-			String m = "Error obtaining Banks!";
-			AonUtil.addErrorMessage(m);
-			throw new AbortProcessingException(m);
 		}
-
-	}
-
-	private List<SelectItem> getRegistryBanks(Registry registry) throws ManagerBeanException {
-		LinkedList<SelectItem> rBanks = new LinkedList<SelectItem>();
-		if (isSales()) {
-		}
-		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rBankBean
-				.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
-		Iterator<?> iter = rBankBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			RegistryBank rBank = (RegistryBank) iter.next();
-			SelectItem item = new SelectItem(rBank, StringUtils.abbreviate(rBank.getBank()
-					.getName(), 30)
-					+ " [" + rBank.getBankAccount().toString() + "]");
-			rBanks.add(item);
-		}
-		return rBanks;
+		return new LinkedList<SelectItem>();
 	}
 
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
