@@ -43,10 +43,18 @@
 						<aon:outputText value="#{manager.label}" />
 					</aon:column>
 
-					<rich:subTable value="#{manager.financialStatements}" var="to">
+					<rich:subTable value="#{manager.model}" var="to">
 						<aon:column>
-							<aon:outputText value="#{to.code}" />
+							<h:commandLink ajaxSingle="true"
+								rendered="#{to.code != null}"
+								styleClass="aon-dataTable-link"
+								actionListener="#{manager.onAccountStatement}"
+								title="#{accountingBundle.accounting_statement_module}"
+								action="account_statement_list">
+								<aon:outputText value="#{to.code}" />
+							</h:commandLink>
 						</aon:column>
+						
 						<aon:column>
 							<aon:outputText value="#{to.description}" />
 						</aon:column>

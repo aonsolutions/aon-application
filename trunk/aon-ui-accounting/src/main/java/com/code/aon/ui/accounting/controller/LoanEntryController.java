@@ -94,15 +94,6 @@ public class LoanEntryController implements ISpecialAccountEntry {
 	}
 	
 	public void accept(ActionEvent event) {
-
-		try {
-			Integer.parseInt( loan.getTerm() );
-		} catch (NumberFormatException e) {
-			String msg = "El plazo de la operación no es un valor numérico válido";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException( msg );
-		}
-		
 		//inicio transaccion
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();

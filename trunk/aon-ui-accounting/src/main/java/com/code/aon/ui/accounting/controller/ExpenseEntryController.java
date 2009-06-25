@@ -108,40 +108,34 @@ public class ExpenseEntryController implements ISpecialAccountEntry{
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
 				// operaciones de la transaccion
-				try {
-					this.navigationKey = "accountEntry_form";
-					AccountingPeriodUtil.validateAccountPeriod(getHeader().getDate());
-					IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
-					AccountEntry entry = new AccountEntry();
-					if (!this.isNew) {
-						deleteAccountEntryDetails(getAccountEntry());
-						entry = this.getAccountEntry();
-					}
-					entry.setEntryDate(getHeader().getDate());
-					entry.setAccountPeriod(AccountUtil.obtainPeriod(getHeader().getDate()).getId());
-					entry.setType(AccountEntryType.EXPENSES);
-					entry.setSecurityLevel(getHeader().getSecurityLevel());
-					if (this.isNew) {
-						entry = (AccountEntry)entryBean.insert(entry);
-					} else {
-						entry = (AccountEntry) HibernateUtil.getSession(sessionName).merge(entry);
-						entry = (AccountEntry) entryBean.update(entry);
-					}
-					insertEntryDetails(entry);
-					setAccountEntry(entry);
-					
-					this.isNew = false;
-					loadAccountEntryController(entry);
-				} catch (ManagerBeanException e) {
-					navigationKey = null;
-					String message = "Error accepting AccountEntry";
-					LOGGER.log(Level.SEVERE, message , e);
-					AonUtil.addErrorMessage(message);
+				this.navigationKey = "accountEntry_form";
+				AccountingPeriodUtil.validateAccountPeriod(getHeader().getDate());
+				IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
+				AccountEntry entry = new AccountEntry();
+				if (!this.isNew) {
+					deleteAccountEntryDetails(getAccountEntry());
+					entry = this.getAccountEntry();
 				}
+				entry.setEntryDate(getHeader().getDate());
+				entry.setAccountPeriod(AccountUtil.obtainPeriod(getHeader().getDate()).getId());
+				entry.setType(AccountEntryType.EXPENSES);
+				entry.setSecurityLevel(getHeader().getSecurityLevel());
+				if (this.isNew) {
+					entry = (AccountEntry)entryBean.insert(entry);
+				} else {
+					entry = (AccountEntry) HibernateUtil.getSession(sessionName).merge(entry);
+					entry = (AccountEntry) entryBean.update(entry);
+				}
+				insertEntryDetails(entry);
+				setAccountEntry(entry);
+				
+				this.isNew = false;
+				loadAccountEntryController(entry);
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
 			} catch (Exception e) {
+				navigationKey = null;
 				try {
 					HibernateUtil.rollbackTransaction(sessionName);
 				} catch (DAOException daoe) {

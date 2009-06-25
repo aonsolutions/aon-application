@@ -83,31 +83,21 @@
 							value="#{accountingBundle.accounting_period}" />
 						<aon:div>
 							<aon:selectOneMenu id="Account_Period"
-								disabled="#{invoiceEntry.details.rowCount > 0 or invoiceEntry.newDetail}"
-								value="#{invoiceEntry.header.period}">
+								disabled="#{invoiceEntry.newDetail}"
+								value="#{invoiceEntry.header.period}"
+								focus="Account_invoiceType">
 								<f:selectItems value="#{accountingCollections.accountPeriods}" />
-								<a4j:support event="onchange" ajaxSingle="true" reRender="Account_Period"/>
 							</aon:selectOneMenu>
-							<h:commandLink immediate="true" target="_blank"
-								rendered="#{!invoiceEntry.new}" 
-								styleClass="aon-dataTable-link"
-								title="#{accountingBundle.accounting_lookup_account_entry}"
-								actionListener="#{invoiceEntry.onViewAccountEntry}"
-								action="accountEntry_form">
+							<aon:div rendered="#{invoiceEntry.header.accountEntryId != null}">	
 								<aon:outputText styleClass="aon-italic aon-margin-left"
-								value="(#{financeBundle.finance_account_entry}: "/>
+									value="(#{financeBundle.finance_account_entry}: "/>
 								<aon:outputText styleClass="aon-bold"
 									value="#{invoiceEntry.header.accountEntryId}"/>
 								<aon:outputText styleClass="aon-italic" value=")"/>
-								
-								
-								<f:setPropertyActionListener value="#{true}" 
-									target="#{aonConfiguration.properties.hideHeaderLinks}" />
-							</h:commandLink>
-							
+							</aon:div>
 						</aon:div>
 
-						<aon:outputLabel for="AccountEntry_type"
+						<aon:outputLabel for="Account_invoiceType"
 							value="#{bundle.aon_type}" />
 						<aon:div>
 							<aon:selectOneMenu id="Account_invoiceType"
@@ -116,7 +106,8 @@
 								<f:selectItems value="#{accountingCollections.invoiceTypes}" />
 								<a4j:support event="onchange" ajaxSingle="true"
 									actionListener="#{invoiceEntry.onTypeChanged}"
-									reRender="invoiceTables,TaxesData">
+									reRender="invoiceTables,TaxesData"
+									focus="Account_invoiceTransactionType">
 								</a4j:support>
 							</aon:selectOneMenu>
 							<aon:div style="display:inline; margin-left: 5px;">
@@ -127,13 +118,12 @@
 										value="#{financeCollections.invoiceTransactionTypes}" />
 								</aon:selectOneMenu>
 							</aon:div>
-							<aon:div style="display:inline; margin-left: 5px;">
+							<aon:div style="display:inline; margin-left: 5px;" 
+								rendered="#{invoiceEntry.purchase or invoiceEntry.expense}">
 								<aon:selectBooleanCheckbox id="Account_investment"
 									disabled="#{invoiceEntry.newDetail}"
-									rendered="#{invoiceEntry.purchase}"
 									value="#{invoiceEntry.header.investment}" />
 								<aon:outputLabel for="Account_investment"
-									rendered="#{invoiceEntry.purchase}"
 									value="#{accountingBundle.accounting_investment}" />
 							</aon:div>
 						</aon:div>
@@ -185,16 +175,21 @@
 								disabled="#{invoiceEntry.newDetail}"
 								value="#{invoiceEntry.header.date}"
 								timeZone="#{timeZoneController.timeZone}"
-								reRender="Account_taxDate" ajaxSingle="true"
 								popupDateFormat="#{bundle.aon_date_pattern}">
-								<a4j:support 
+								<a4j:support
+									ajaxSingle="true" 
 									event="oninputchange"
 									actionListener="#{invoiceEntry.onDateChanged}"
-									reRender="Account_taxDate"/>
-								<a4j:support 
+									reRender="Account_taxDate"
+									focus="#{invoiceEntry.sales?'Customer_id':(invoiceEntry.purchase?'Supplier_id':'Creditor_id')}"
+									/>
+								<a4j:support
+									ajaxSingle="true" 
 									event="onchanged"
 									actionListener="#{invoiceEntry.onDateChanged}"
-									reRender="Account_taxDate"/>
+									reRender="Account_taxDate"
+									focus="#{invoiceEntry.sales?'Customer_id':(invoiceEntry.purchase?'Supplier_id':'Creditor_id')}"
+									/>
 							</aon:selectInputDate>
 								
 							<aon:outputLabel for="Account_taxDate"
@@ -232,6 +227,7 @@
 										lookupProperty="registry" ajaxSingle="false"
 										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
+										focus="#{invoiceEntry.sales?'Account_sales':(invoiceEntry.purchase?'Account_purchase':'Account_expense')}"
 										value="#{invoiceEntry.header.registry.id}" size="5" />
 									<aon:lookupButton
 										windowTitle="#{customerBundle.customer_selection}"
@@ -240,6 +236,7 @@
 										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										actionType="search" lookup="#{customerLookup}" minHeight="460"
 										minWidth="650" property="#{invoiceEntry.header.registry}"
+										focus="#{invoiceEntry.sales?'Account_sales':(invoiceEntry.purchase?'Account_purchase':'Account_expense')}"
 										lookupProperty="registry">
 									</aon:lookupButton>
 									<aon:lookupButton 
@@ -292,7 +289,7 @@
 										size="50"/>
 								</a4j:region>
 							</aon:panelGroup>
-							
+
 							<aon:panelGroup rendered="#{invoiceEntry.expense}">
 								 <a4j:region>
 									<aon:lookupInputText id="Creditor_id" lookup="#{creditorLookup}"
@@ -335,23 +332,38 @@
 							disabled="#{invoiceEntry.newDetail}">
 						</aon:inputText>
 
-						<aon:outputLabel for="accountId"
+						<aon:outputLabel for="Account_sales"
+							rendered="#{invoiceEntry.sales}"
 							value="#{accountBundle.account_account}" />
-						<ui:decorate
-							template="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-							<ui:param name="wizard" value="#{accountWizard}" />
-							<ui:param name="id" value="accountId" />
-							<ui:param name="renderDescription" value="#{true}" />
-							<ui:param name="renderedAttr" value="#{true}" />
-							<ui:param name="disabled"
-								value="#{invoiceEntry.newDetail}" />
-							<ui:param name="reRenderAttr" value="none" />
-							<ui:param name="required" value="false" />
-							<ui:param name="entity" value="#{invoiceEntry.header.account}" />
-							<ui:param name="ELExpression"
-								value="invoiceEntry.header.account" />
-						</ui:decorate>
+						<aon:selectOneMenu id="Account_sales" 
+							rendered="#{invoiceEntry.sales}"
+							disabled="#{invoiceEntry.newDetail}"
+							value="#{invoiceEntry.header.account}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{accountCollections.salesAccounts}" />
+						</aon:selectOneMenu>
 
+						<aon:outputLabel for="Account_purchase"
+							rendered="#{invoiceEntry.purchase}"
+							value="#{accountBundle.account_account}" />
+						<aon:selectOneMenu id="Account_purchase" 
+							rendered="#{invoiceEntry.purchase}"
+							disabled="#{invoiceEntry.newDetail}"
+							value="#{invoiceEntry.header.account}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{accountCollections.purchaseAccounts}" />
+						</aon:selectOneMenu>
+
+						<aon:outputLabel for="Account_expense"
+							rendered="#{invoiceEntry.expense}"
+							value="#{accountBundle.account_account}" />
+						<aon:selectOneMenu id="Account_expense" 
+							rendered="#{invoiceEntry.expense}"
+							disabled="#{invoiceEntry.newDetail}"
+							value="#{invoiceEntry.header.account}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{accountCollections.expensesAccounts}" />
+						</aon:selectOneMenu>
 					</aon:panelGrid>
 				</aon:div>
 				<aon:div id="invoiceDetails">

@@ -18,6 +18,7 @@
 					<aon:commandButton id="save" value="#{accountingBundle.accounting_entry_generate}"
 						accesskey="#{bundle.aon_key_save}"
 						actionListener="#{endPeriodEntries.onOperatingEntry}"
+						action="#{endPeriodEntries.navigate}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;" />
 				</ui:define>
