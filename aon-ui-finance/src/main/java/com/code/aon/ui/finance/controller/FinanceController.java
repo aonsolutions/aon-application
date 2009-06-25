@@ -5,15 +5,11 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
-
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.util.AccountUtil;
@@ -45,11 +41,14 @@ import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.registry.controller.IRegistryConstants;
+import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -57,8 +56,6 @@ import com.code.aon.ui.util.AonUtil;
  * 
  */
 public class FinanceController extends BasicController implements IFinanceConstants {
-
-	private static final Logger LOGGER = Logger.getLogger(FinanceController.class.getName());
 
 	private Company company;
 
@@ -276,52 +273,44 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		}
 	}
 
-	private RegistryBank obtainPaymentRegistryBank(Registry registry, Bank bank, BankAccount bankAccount) {
-		try {
-			IManagerBean registryBankBean = BeanManager.getManagerBean(RegistryBank.class);
-			Criteria criteria = new Criteria();
+	private RegistryBank obtainPaymentRegistryBank(Registry registry, Bank bank, BankAccount bankAccount) throws ManagerBeanException {
+		IManagerBean registryBankBean = BeanManager.getManagerBean(RegistryBank.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
+		if (bank != null && bank.getId() != null) {
+			criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_BANK_ID), bank.getId());
+		}
+		if (bankAccount != null && bankAccount.getValue() != null) {
+			criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_BANK_ACCOUNT), bankAccount);
+		}
+		Iterator<ITransferObject> iterator = registryBankBean.getList(criteria, 0, 1).iterator();
+		if (iterator.hasNext()) {
+			return (RegistryBank)iterator.next();
+		} else {
+			criteria = new Criteria();
 			criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
-			if (bank != null && bank.getId() != null) {
-				criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_BANK_ID), bank.getId());
-			}
-			if (bankAccount != null && bankAccount.getValue() != null) {
-				criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_BANK_ACCOUNT), bankAccount);
-			}
-			Iterator<ITransferObject> iterator = registryBankBean.getList(criteria, 0, 1).iterator();
+			iterator = registryBankBean.getList(criteria, 0, 1).iterator();
 			if (iterator.hasNext()) {
 				return (RegistryBank)iterator.next();
-			} else {
-				criteria = new Criteria();
-				criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
-				iterator = registryBankBean.getList(criteria, 0, 1).iterator();
-				if (iterator.hasNext()) {
-					return (RegistryBank)iterator.next();
-				}
 			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining registry Banks", e);
-		} 
+		}
 		return null;
 	}
 
 	@SuppressWarnings("unchecked")
-	private RegistryBank obtainReturnRegistryBank(Registry registry, Finance finance) {
+	private RegistryBank obtainReturnRegistryBank(Registry registry, Finance finance) throws ManagerBeanException {
 		Bank bank = finance.getBank();
 		BankAccount bankAccount = finance.getBankAccount();
-		try {
-			IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
-			criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.PAID);
-			Iterator iterator = fBatchDetailBean.getList(criteria).iterator();
-			if (iterator.hasNext()) {
-				FinanceBatchDetail detail = (FinanceBatchDetail)iterator.next();
-				bank = detail.getFinanceBatch().getRegistryBank().getBank();
-				bankAccount = detail.getFinanceBatch().getRegistryBank().getBankAccount();
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining registry Banks", e);
-		} 
+		IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
+		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.PAID);
+		Iterator iterator = fBatchDetailBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			FinanceBatchDetail detail = (FinanceBatchDetail)iterator.next();
+			bank = detail.getFinanceBatch().getRegistryBank().getBank();
+			bankAccount = detail.getFinanceBatch().getRegistryBank().getBankAccount();
+		}
 		return obtainPaymentRegistryBank(registry, bank, bankAccount);
 	}
 
@@ -378,40 +367,19 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		return getCashAccounts().size();
 	}
 
-	public List<SelectItem> getBanks() {
+	public List<SelectItem> getBanks() throws ManagerBeanException {
 		Finance finance = (Finance) getTo();
 		if (finance != null && finance.getPayMethod() != null) {
 			PayMethod pm = finance.getPayMethod();
 			if ((!isPayment() && pm.getType() == PayMethodType.NEGOTIABLE_DOCUMENT) || (isPayment() && pm.getType() == PayMethodType.BANK_TRANSFER)) {
-				return getRegistryBanks(finance.getRegistry());
+				RegistryCollectionsController c = (RegistryCollectionsController)AonUtil.getRegisteredBean(IRegistryConstants.COLLECTIONS_CONTROLLER_NAME);
+				return c.getRegistryBanks(finance.getRegistry());
+			} else {
+				CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+				return c.getCompanyBanks();
 			}
-			return getRegistryBanks(getCompany());
 		}
 		return new LinkedList<SelectItem>();
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<SelectItem> getRegistryBanks(Registry registry) {
-		List<SelectItem> rBanks = new LinkedList<SelectItem>();
-		try {
-			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
-			Iterator iter = rBankBean.getList(criteria).iterator();
-			while(iter.hasNext()){
-				RegistryBank rBank = (RegistryBank)iter.next();
-				SelectItem item = new SelectItem(rBank, StringUtils.abbreviate(rBank.getBank().getName(), 30)
-						+ " [" + rBank.getBankAccount().toString() + "]");
-				rBanks.add(item);
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining Banks", e);
-		}
-		return rBanks;
-	}
-
-	public List<SelectItem> getCompanyRegistryBanks() {
-		return getRegistryBanks(getCompany());
 	}
 
 	public boolean isPending() {
