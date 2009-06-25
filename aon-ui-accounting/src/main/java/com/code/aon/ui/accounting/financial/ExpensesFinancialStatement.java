@@ -1,7 +1,6 @@
 package com.code.aon.ui.accounting.financial;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import com.code.aon.accounting.ProfitAndLossComparison;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
@@ -9,26 +8,12 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ui.accounting.controller.ProfitAndLossComparisonController;
 
-public class ExpensesFinancialStatement implements IFinancialStatementManager {
-
-	private List<FinancialStatement> list;
-	private double total;
-
-	@Override
-	public void initialize() {
-		list = null;
-		total = 0;
-	}
-
-	@Override
-	public List<FinancialStatement> getFinancialStatements(){
-		return list;
-	}
+public class ExpensesFinancialStatement extends AbstractFinancialStatement {
 
 	@Override
 	public void search(FinancialStatementParams params) throws ManagerBeanException {
-		if (list == null) {
-			list = new LinkedList<FinancialStatement>();
+		if (getFinancialStatements() == null) {
+			setFinancialStatements(new LinkedList<FinancialStatement>());
 			ProfitAndLossComparisonController pc = new ProfitAndLossComparisonController();
 			SummaryProviderParameters spp = new SummaryProviderParameters();
 			spp.setFromDate(params.getIncludeExpensesDate());
@@ -42,8 +27,8 @@ public class ExpensesFinancialStatement implements IFinancialStatementManager {
 					fs.setCode(to.getId());
 					fs.setDescription(to.getDescription());
 					fs.setAmount(dif);
-					total = CommonUtil.round(total + dif);
-					list.add(fs);
+					setTotal(CommonUtil.round(getTotal() + dif));
+					getFinancialStatements().add(fs);
 				}
 			}
 		}
@@ -55,12 +40,7 @@ public class ExpensesFinancialStatement implements IFinancialStatementManager {
 	}
 
 	@Override
-	public double getTotal() {
-		return total;
-	}
-
-	@Override
 	public double getTotalForSummary() {
-		return CommonUtil.round(total * -1);
+		return CommonUtil.round(getTotal() * -1);
 	}
 }

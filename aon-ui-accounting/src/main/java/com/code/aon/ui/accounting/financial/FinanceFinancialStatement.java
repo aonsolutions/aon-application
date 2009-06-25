@@ -14,27 +14,13 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 
-public class FinanceFinancialStatement implements IFinancialStatementManager {
-
-	private List<FinancialStatement> list;
-	private double total;
-
-	@Override
-	public void initialize() {
-		list = null;
-		total = 0;
-	}
-
-	@Override
-	public List<FinancialStatement> getFinancialStatements(){
-		return list;
-	}
+public class FinanceFinancialStatement extends AbstractFinancialStatement {
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void search(FinancialStatementParams params) throws ManagerBeanException {
-		if (list == null) {
-			list = new LinkedList<FinancialStatement>();
+		if (getFinancialStatements() == null) {
+			setFinancialStatements( new LinkedList<FinancialStatement>() );
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_PAYMENT), false );
@@ -46,12 +32,12 @@ public class FinanceFinancialStatement implements IFinancialStatementManager {
 			List charges = financeBean.getList(pl, criteria);
 			if (charges.size() > 0) {
 				Double amount = charges.get(0) != null ? (Double) charges.get(0) : new Double(0);
-				total = amount.doubleValue(); 
+				setTotal( amount.doubleValue()); 
 				FinancialStatement fs = new FinancialStatement();
 				fs.setCode( null );
 				fs.setDescription("Cobros Pendientes" );
 				fs.setAmount(amount);
-				list.add(fs);
+				getFinancialStatements().add(fs);
 			}
 
 			criteria = new Criteria();
@@ -64,12 +50,12 @@ public class FinanceFinancialStatement implements IFinancialStatementManager {
 			List payments = financeBean.getList(pl, criteria);
 			if (payments.size() > 0) {
 				Double amount = payments.get(0) != null ? (Double) payments.get(0) : new Double(0);
-				total = CommonUtil.round( total - amount.doubleValue());
+				setTotal( CommonUtil.round( getTotal() - amount.doubleValue()));
 				FinancialStatement fs = new FinancialStatement();
 				fs.setCode( null );
 				fs.setDescription("Pagos Pendientes" );
 				fs.setAmount(amount);
-				list.add(fs);
+				getFinancialStatements().add(fs);
 			}
 }
 	}
@@ -79,13 +65,4 @@ public class FinanceFinancialStatement implements IFinancialStatementManager {
 		return "SALDO TESORERÍA";
 	}
 
-	@Override
-	public double getTotal() {
-		return total;
-	}
-
-	@Override
-	public double getTotalForSummary() {
-		return total;
-	}
 }

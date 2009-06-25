@@ -19,9 +19,10 @@
 
 				<ui:define name="toolbarContent">
 
-					<h:commandButton id="save" value="#{bundle.aon_save}"
+					<aon:commandButton id="save" value="#{bundle.aon_save}"
 						accesskey="#{bundle.aon_key_save}"
 						actionListener="#{endPeriodEntries.onOpeningEntry}"
+						action="#{endPeriodEntries.navigate}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;" />
 				</ui:define>

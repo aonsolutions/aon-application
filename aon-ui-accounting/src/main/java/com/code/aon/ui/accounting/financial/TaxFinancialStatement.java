@@ -1,7 +1,6 @@
 package com.code.aon.ui.accounting.financial;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.dao.IAccountAlias;
@@ -17,27 +16,13 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 
-public class TaxFinancialStatement implements IFinancialStatementManager {
-
-	private List<FinancialStatement> list;
-	private double total;
-
-	@Override
-	public void initialize() {
-		list = null;
-		total = 0;
-	}
-
-	@Override
-	public List<FinancialStatement> getFinancialStatements(){
-		return list;
-	}
+public class TaxFinancialStatement extends AbstractFinancialStatement {
 
 	@Override
 	public void search(FinancialStatementParams params) throws ManagerBeanException {
 		try {
-			if (list == null) {
-				list = new LinkedList<FinancialStatement>();
+			if (getFinancialStatements() == null) {
+				setFinancialStatements( new LinkedList<FinancialStatement>());
 				AccountingUtil util = new AccountingUtil();
 				Period period = AccountingPeriodUtil.getPeriod(params.getFinancialDate());
 				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
@@ -56,13 +41,13 @@ public class TaxFinancialStatement implements IFinancialStatementManager {
 					if (account.getId().startsWith("472")) {
 						amount = CommonUtil.round(amount * -1 ) ;	
 					}
-					total = CommonUtil.round(total + amount);  
+					setTotal( CommonUtil.round(getTotal() + amount));  
 				}
 				FinancialStatement fs = new FinancialStatement();
 				fs.setCode( "4750,477,472" );
 				fs.setDescription("IVA Pendiente de Pago" );
-				fs.setAmount( total );
-				list.add(fs);
+				fs.setAmount( getTotal() );
+				getFinancialStatements().add(fs);
 				
 				// IRPF PENDIENTE DE PAGO
 				criteria = new Criteria();
@@ -73,13 +58,13 @@ public class TaxFinancialStatement implements IFinancialStatementManager {
 					Account account = (Account) to;
 					Balance balance = util.getPeriodBalance(period.getInitiationDate(), period.getDeadline(), account.getId(), false, false);
 					double amount = CommonUtil.round(balance.getCredit() - balance.getDebit() ) ;
-					total = CommonUtil.round(total + amount);  
+					setTotal( CommonUtil.round(getTotal() + amount));  
 				}
 				fs = new FinancialStatement();
 				fs.setCode( "4751" );
 				fs.setDescription("IRPF Pendiente de Pago" );
-				fs.setAmount( total );
-				list.add(fs);
+				fs.setAmount( getTotal() );
+				getFinancialStatements().add(fs);
 				
 				// SS PENDIENTE DE PAGO
 				criteria = new Criteria();
@@ -90,13 +75,13 @@ public class TaxFinancialStatement implements IFinancialStatementManager {
 					Account account = (Account) to;
 					Balance balance = util.getPeriodBalance(period.getInitiationDate(), period.getDeadline(), account.getId(), false, false);
 					double amount = CommonUtil.round(balance.getCredit() - balance.getDebit() ) ;
-					total = CommonUtil.round(total + amount);  
+					setTotal( CommonUtil.round(getTotal() + amount));  
 				}
 				fs = new FinancialStatement();
 				fs.setCode( "4760" );
 				fs.setDescription("SS Pendiente de Pago" );
-				fs.setAmount( total );
-				list.add(fs);
+				fs.setAmount( getTotal() );
+				getFinancialStatements().add(fs);
 			}
 		} catch (ExpressionException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
@@ -109,13 +94,8 @@ public class TaxFinancialStatement implements IFinancialStatementManager {
 	}
 
 	@Override
-	public double getTotal() {
-		return total;
-	}
-
-	@Override
 	public double getTotalForSummary() {
-		return CommonUtil.round(total * -1);
+		return CommonUtil.round(getTotal() * -1);
 	}
 
 }

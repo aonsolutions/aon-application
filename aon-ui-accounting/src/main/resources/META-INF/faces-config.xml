@@ -148,6 +148,25 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<!-- **************** LOAN ************************* -->
+	<managed-bean>
+		<managed-bean-name>loan</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.accounting.Loan</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>loan</value>
+		</managed-property>
+	</managed-bean>
+
 	<!-- **************** BALANCE************************** -->
 	<managed-bean>
 		<managed-bean-name>balance</managed-bean-name>
@@ -859,27 +878,41 @@
 			<from-outcome>balance_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/balance/search.xhtml</to-view-id>
 		</navigation-case>
-	
 	</navigation-rule>
 	
 	
 	<navigation-rule>
-	
 		<navigation-case>
 			<from-outcome>balance_sheet_search</from-outcome>
 			<to-view-id>
 				/com/code/aon/ui/accounting/facelet/balance/sheet/search.xhtml</to-view-id>
 		</navigation-case>
-		
-			<navigation-case>
+		<navigation-case>
 			<from-outcome>balance_sheet_list</from-outcome>
 			<to-view-id>
 				/com/code/aon/ui/accounting/facelet/balance/sheet/list.xhtml</to-view-id>
 		</navigation-case>
-	
-	
 	</navigation-rule>
 
+
+	<!-- **************** LOAN ************************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>loan_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/loan/form.xhtml</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>loan_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/loan/list.xhtml</to-view-id>
+		</navigation-case>
+	   	
+	    <navigation-case>
+			<from-outcome>loan_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/loan/search.xhtml</to-view-id>
+		</navigation-case>
+	
+	</navigation-rule>
 
 	<!-- ****************** AUT CONCEPT **************** -->
 	<navigation-rule>
@@ -997,7 +1030,7 @@
 				/com/code/aon/ui/accounting/facelet/entry/operating/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	<!-- **************** LEASING ********************* -->
+	<!-- **************** LOAN ENTRY ********************* -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>account_loan_fee_entry</from-outcome>
@@ -1087,8 +1120,7 @@
 		</navigation-case>
 	</navigation-rule>
 	<!--
-		**************** BUDGETED PROFIT AND LOSS BALANCE
-		**************************
+		******** BUDGETED PROFIT AND LOSS BALANCE   *****************
 	-->
 	<navigation-rule>
 		<navigation-case>
@@ -1103,8 +1135,7 @@
 		</navigation-case>
 	</navigation-rule>
 	<!--
-		**************** COMPARED BUDGETED PROFIT AND LOSS BALANCE
-		**************************
+		******** COMPARED BUDGETED PROFIT AND LOSS BALANCE ***************
 	-->
 	<navigation-rule>
 		<navigation-case>

@@ -67,6 +67,25 @@ public class AccountEntryController extends BasicController {
         }
     }
 
+    public boolean isRemovable() {
+    	if (isNew()) {
+    		return false;
+    	}
+    	if (isManual()) {
+    		return true;
+    	}
+    	AccountEntry entry = (AccountEntry) this.getTo();
+    	if (entry == null) {
+    		return false;
+    	}
+    	AccountEntryType type = entry.getType();
+        return (type == AccountEntryType.OPENING 
+        		|| type == AccountEntryType.OPERATING 
+        		|| type == AccountEntryType.CLOSING);
+    	
+    }
+    
+/*
     @Override
     public void onRemove(ActionEvent event) {
         super.onRemove(event);
@@ -80,7 +99,7 @@ public class AccountEntryController extends BasicController {
 			throw new AbortProcessingException(msg,e);
         }
     }
-
+*/
 	public void onSelectEntry(ActionEvent event) throws ManagerBeanException {
 		AccountEntry entry = (AccountEntry)this.getModel().getRowData();
 		this.setTo(entry);
@@ -117,7 +136,7 @@ public class AccountEntryController extends BasicController {
 
     public boolean isManual() {
     	AccountEntry entry = (AccountEntry) this.getTo();
-        return (this.getTo() != null && (entry.getType() == AccountEntryType.MANUAL || entry.getType() == AccountEntryType.OPENING));
+        return (this.getTo() != null && (entry.getType() == AccountEntryType.MANUAL));
     }
 
     @SuppressWarnings("unchecked")

@@ -49,9 +49,10 @@
 
 					<aon:commandButton id="remove" value="#{bundle.aon_remove}"
 						title="#{bundle.aon_remove} (ALT+#{bundle.aon_key_remove})"
-						accesskey="#{bundle.aon_key_remove}" action="accountEntry_form"
+						accesskey="#{bundle.aon_key_remove}" 
 						actionListener="#{accountEntry.onRemove}"
-						rendered="#{!accountEntry.new and accountEntry.manual}"
+						action="#{accountEntry.searchAction}"
+						rendered="#{accountEntry.removable}"
 						styleClass="aon-finding-toolbar-item aon-icon-delete"
 						immediate="true"
 						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;" />
@@ -68,7 +69,7 @@
 						accesskey="Q" title="#{bundle.aon_update} Alt+Q"
 						action="#{accountEntry.onNavigate}"
 						actionListener="#{accountEntry.onSelectEntry}"
-						rendered="#{!accountEntry.manual}"
+						rendered="#{!accountEntry.manual and !accountEntry.removable}"
 						styleClass="aon-finding-toolbar-item aon-icon-refresh"
 						immediate="true" />
 

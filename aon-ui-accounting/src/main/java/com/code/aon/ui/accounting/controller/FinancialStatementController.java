@@ -28,7 +28,9 @@ public class FinancialStatementController {
 	private Month expensesMonth;
 	private int expensesYear;
 	List<IFinancialStatementManager> managers;
-	
+	private Date expensesDate;
+	private Date financialDate;
+
 	public Month getFinancialMonth() {
 		return financialMonth;
 	}
@@ -69,6 +71,22 @@ public class FinancialStatementController {
 		this.expensesYear = expensesYear;
 	}
 
+	public Date getExpensesDate() {
+		return expensesDate;
+	}
+
+	public void setExpensesDate(Date expensesDate) {
+		this.expensesDate = expensesDate;
+	}
+
+	public Date getFinancialDate() {
+		return financialDate;
+	}
+
+	public void setFinancialDate(Date financialDate) {
+		this.financialDate = financialDate;
+	}
+
 	public List<IFinancialStatementManager> getManagers() {
 		if (managers == null) {
 			managers = new LinkedList<IFinancialStatementManager>();
@@ -80,11 +98,14 @@ public class FinancialStatementController {
 		}
 		return managers;
 	}
+
 	public void setManagers(List<IFinancialStatementManager> managers) {
 		this.managers = managers;
 	}
 
 	public void onReset(ActionEvent event) {
+		expensesDate = null;
+		financialDate = null;
 		Calendar c = Calendar.getInstance();
 		int month = c.get(Calendar.MONTH);
 		int year = c.get(Calendar.YEAR);
@@ -97,26 +118,26 @@ public class FinancialStatementController {
 		c.set(Calendar.YEAR, year);
 		financeDate = c.getTime();
 
-		for (IFinancialStatementManager manager:getManagers()) {
+		for (IFinancialStatementManager manager : getManagers()) {
 			manager.initialize();
 		}
 	}
 
 	public void onSearch(ActionEvent event) {
 		try {
-			
+
 			Calendar c = Calendar.getInstance();
 			c.set(Calendar.DAY_OF_MONTH, 1);
 			c.set(Calendar.MONTH, getFinancialMonth().getValue());
 			c.set(Calendar.YEAR, getFinancialYear());
 			c.add(Calendar.MONTH, 1);
 			c.add(Calendar.DAY_OF_MONTH, -1);
-			Date financialDate = c.getTime();
+			financialDate = c.getTime();
 
 			c.set(Calendar.DAY_OF_MONTH, 1);
 			c.set(Calendar.MONTH, getExpensesMonth().getValue());
 			c.set(Calendar.YEAR, getExpensesYear());
-			Date expensesDate = c.getTime();
+			expensesDate = c.getTime();
 
 			if (financialDate.before(expensesDate)) {
 				String msg = "La fecha de inclusión de gastos, no puede ser superior a la fecha del estado financiero";
@@ -130,12 +151,12 @@ public class FinancialStatementController {
 			}
 
 			FinancialStatementParams params = new FinancialStatementParams();
-			
+
 			params.setFinancialDate(financialDate);
 			params.setIncludeExpensesDate(expensesDate);
 			params.setExcludeFinanceDate(financeDate);
-			
-			for (IFinancialStatementManager manager:getManagers()) {
+
+			for (IFinancialStatementManager manager : getManagers()) {
 				manager.search(params);
 			}
 
@@ -147,8 +168,8 @@ public class FinancialStatementController {
 
 	public double getTotal() {
 		double total = 0;
-		for (IFinancialStatementManager manager:getManagers()) {
-			total = CommonUtil.round(total +  manager.getTotalForSummary());
+		for (IFinancialStatementManager manager : getManagers()) {
+			total = CommonUtil.round(total + manager.getTotalForSummary());
 		}
 		return total;
 	}
