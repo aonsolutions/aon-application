@@ -9,9 +9,9 @@
 	<aon:outputText value="" />
 	<aon:div style="width:600px;">
 	
-		<aon:panelCollapsible expanded="true" label="#{financeBundle.finance_sale_invoice}">
+		<aon:panelCollapsible expanded="true" label="#{financeBundle.finance_invoice}">
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
-				<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/searchBasicContent.xhtml" />
+				<ui:include src="/com/code/aon/ui/finance/facelet/invoiceRemover/searchBasicContent.xhtml" />
 			</aon:panelGrid>
 		</aon:panelCollapsible>					
 					
@@ -24,20 +24,20 @@
 					<aon:lookupInputText id="InvoiceDetail_item_code" 
 						lookup="#{itemLookup}"
 						reRender="InvoiceDetail_item_detail"
-						value="#{saleInvoiceSearch.item.product.code}" size="10">
+						value="#{invoiceRemoverSearch.item.product.code}" size="10">
 						<aon:joinProperty alias="Item_product_code"
-							value="#{saleInvoiceSearch.item.product.code}" />
+							value="#{invoiceRemoverSearch.item.product.code}" />
 					</aon:lookupInputText>
 					<aon:lookupButton
 						windowTitle="#{productBundle.product_item_selection}" actionType="search"
 						selectReRender="InvoiceDetail_item_code,InvoiceDetail_item_detail"
 						lookup="#{itemLookup}" minHeight="460" minWidth="650"
-						property="#{saleInvoiceSearch.item}">
+						property="#{invoiceRemoverSearch.item}">
 						<aon:joinProperty alias="Item_product_code"
-							value="#{saleInvoiceDetail.to.item.product.code}" />
+							value="#{invoiceRemoverDetail.to.item.product.code}" />
 					</aon:lookupButton>
 					<aon:inputText id="InvoiceDetail_item_detail"
-						value="#{(saleInvoiceSearch.item.product.name!=null)?(saleInvoiceSearch.item.product.name):('')}"
+						value="#{(invoiceRemoverSearch.item.product.name!=null)?(invoiceRemoverSearch.item.product.name):('')}"
 						size="60" disabled="true" />
 				</aon:div>
 								
@@ -94,17 +94,17 @@
 				<aon:div styleClass="aon-lookup">
 					<aon:lookupInputText id="Bank_code" lookup="#{bankLookup}"
 						reRender="Bank_name"
-						value="#{saleInvoiceSearch.bank.code}" size="5">
-						<aon:joinProperty alias="Bank_code" value="#{saleInvoiceSearch.bank.code}" />
+						value="#{invoiceRemoverSearch.bank.code}" size="5">
+						<aon:joinProperty alias="Bank_code" value="#{invoiceRemoverSearch.bank.code}" />
 					</aon:lookupInputText>
 					<aon:lookupButton 
 						windowTitle="#{configBundle.config_bank_selection}"
 						selectReRender="Bank_code,Bank_name" actionType="search"
 						lookup="#{bankLookup}" minHeight="460" minWidth="650"
-						property="#{saleInvoiceSearch.bank}">
+						property="#{invoiceRemoverSearch.bank}">
 					</aon:lookupButton>
 					<aon:inputText id="Bank_name"
-						value="#{saleInvoiceSearch.bank.name}"
+						value="#{invoiceRemoverSearch.bank.name}"
 						size="50" disabled="true" />							
 				</aon:div>
 				

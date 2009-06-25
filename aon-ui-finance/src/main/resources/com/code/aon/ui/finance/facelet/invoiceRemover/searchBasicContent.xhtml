@@ -12,14 +12,14 @@
 	<aon:div styleClass="aon-lookup">
 		<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
 			reRender="Customer_full_name" lookupProperty="registry"
-			value="#{saleInvoiceSearch.registry.id}" size="5" />
+			value="#{invoiceRemoverSearch.registry.id}" size="5" />
 		<aon:lookupButton windowTitle="#{customerBundle.customer_selection}"
 			selectReRender="Customer_id,Customer_full_name" actionType="search"
 			lookup="#{customerLookup}" minHeight="460" minWidth="650"
-			property="#{saleInvoiceSearch.registry}" lookupProperty="registry">
+			property="#{invoiceRemoverSearch.registry}" lookupProperty="registry">
 		</aon:lookupButton>
 		<aon:inputText id="Customer_full_name"
-			value="#{(saleInvoiceSearch.registry.name!=null)?(saleInvoiceSearch.registry.fullName):('')}"
+			value="#{(invoiceRemoverSearch.registry.name!=null)?(invoiceRemoverSearch.registry.fullName):('')}"
 			size="50" disabled="true" />
 	</aon:div>
 
@@ -47,13 +47,6 @@
 		valueChangeListener="#{controller.addEqualExpression}">
 		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{commonCollections.securityLevels}" />
-	</aon:selectOneMenu>
-
-	<aon:outputLabel for="Invoice_status" value="#{bundle.aon_status}" />
-	<aon:selectOneMenu id="Invoice_status" converter="aon.EnumConverter"
-		valueChangeListener="#{controller.addEqualExpression}">
-		<f:selectItem itemLabel="-" value="#{null}" />
-		<f:selectItems value="#{financeCollections.invoiceStatuses}" />
 	</aon:selectOneMenu>
 
 </ui:composition>

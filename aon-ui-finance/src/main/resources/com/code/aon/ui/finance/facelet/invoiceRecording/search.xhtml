@@ -7,22 +7,23 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="invoiceRemoverForm">
+		<aon:form id="invoiceRecordingForm">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_invoice_removing_module}" />
-				<ui:param name="controller" value="#{invoiceRemover}" />
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_invoice_recording_module}" />
+				<ui:param name="controller" value="#{invoiceRecording}" />
 			</ui:include>
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
-				<ui:param name="controller" value="#{invoiceRemover}" />
+				<ui:param name="controller" value="#{invoiceRecording}" />
 				<ui:define name="searchContent">
-					<ui:include src="/com/code/aon/ui/finance/facelet/invoiceRemover/searchContent.xhtml" />
+					<ui:include src="/com/code/aon/ui/finance/facelet/invoiceRecording/searchContent.xhtml" />
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+		<aon:lookupButtonPopup lookup="#{supplierLookup}" />		
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 	</ui:define>

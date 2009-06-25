@@ -13,16 +13,18 @@ import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.controller.FBatchController;
 import com.code.aon.ui.finance.controller.FBatchDetailController;
 import com.code.aon.ui.finance.controller.FinanceController;
-import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 
-public class FBatchControllerListener extends ControllerAdapter implements IFinanceConstants {
+public class FBatchControllerListener extends ControllerAdapter {
 	
 	private static final Logger LOGGER = Logger.getLogger(FBatchControllerListener.class.getName());
+	
+	private static final String FINANCE_CONTROLLER = "finance"; 
+	private static final String FINANCE_BATCH_DETAIL_CONTROLLER = "fBatchDetail"; 
 	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
@@ -77,9 +79,9 @@ public class FBatchControllerListener extends ControllerAdapter implements IFina
 		fBatchController.setRecordDate(fBatch.getIssueDate());
 		fBatchController.setCsbOutput(null);
 
-        FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
+        FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER);
         fBatchDetailController.clearCheckedFinanceBatchDetails();
-        FinanceController financeController = (FinanceController)FormUtil.getController(FINANCE_CONTROLLER_NAME);
+        FinanceController financeController = (FinanceController)FormUtil.getController(FINANCE_CONTROLLER);
         financeController.clearCheckedFinances();
     }
 

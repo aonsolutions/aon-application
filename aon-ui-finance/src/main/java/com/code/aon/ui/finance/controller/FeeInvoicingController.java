@@ -5,12 +5,16 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.common.BeanManager;
@@ -37,14 +41,17 @@ import com.code.aon.finance.invoicing.engine.fee.CustomerFeeInvoicingDAO;
 import com.code.aon.finance.invoicing.engine.fee.CustomerFeeInvoicingEngine;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
-public class FeeInvoicingController implements IProgression, IFinanceConstants, IFinanceMessages {
+public class FeeInvoicingController  implements IProgression{
 
 	private static final Logger LOGGER = Logger.getLogger(FeeInvoicingController.class.getName());
+
+	private final static String BUNDLE_KEY = "financeBundle";
+	private final static String NO_INVOICE_KEY = "finance_invoicing_no_invoice";
+	private final static String SALE_INVOICE_CONTROLLER = "saleInvoice";
 
 	private InvoicingParameters invoicingParams;
 	private IInvoicingEngine engine;
@@ -54,7 +61,6 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 	private boolean progressionPanelVisible;
 	private boolean progressionEnabled;
 	private Long progressionValue;
-	private boolean progressStart;
 	private boolean recording;
 	private boolean redirect;
 	private int invoicesToRecord;
@@ -104,7 +110,6 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 		setProgressionPanelVisible(false);
 		setProgressionEnabled(false);
 		setProgressionValue(-1L);
-		progressStart = false;
 		recording = false;
 		invoicesToRecord = 0;
 		recordingInvoice = 0;
@@ -140,6 +145,7 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void onInvoice(ActionEvent event) {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
@@ -148,7 +154,6 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 			HibernateUtil.setBeginTransaction(false);
 			HibernateUtil.setCloseSession(false);
 
-			progressStart = true;
 			recording = false;
 			setProgressionEnabled(true);
 
@@ -176,14 +181,15 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 					HibernateUtil.getSession(sessionName).flush();
 					HibernateUtil.commitTransaction(sessionName);
 				}
-
-				Invoice firstInvoice = (Invoice)invoicedList.toArray()[0];
-				Invoice lastInvoice = (Invoice)invoicedList.toArray()[invoicedList.size()-1];
-				IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
-				Criteria criteria = new Criteria();
-				criteria.addBetweenExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), firstInvoice.getId(), lastInvoice.getId());
-				invoiceController.setCriteria(criteria);
-				invoiceController.onSearch(null);
+				DataModel invoiceModel;
+				if (invoicedList instanceof List) {
+					invoiceModel = new ListDataModel((List) invoicedList);
+				} else {
+					List invoices = new LinkedList(invoicedList);
+					invoiceModel = new ListDataModel(invoices);
+				}
+				IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER);
+				invoiceController.setModel(invoiceModel);
 				setRedirect(true);
 			} else {
 				setRedirect(false);
@@ -205,9 +211,9 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 			HibernateUtil.closeSession(sessionName);
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
-			setProgressionPanelVisible(false);
-			setProgressionEnabled(false);
 			setProgressionValue(101L);
+			setProgressionEnabled(false);
+			setProgressionPanelVisible(false);
 		}
 	}
 
@@ -219,7 +225,6 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 		setProgressionPanelVisible(true);
 		setProgressionEnabled(true);
 		setProgressionValue(-1L);
-		progressStart = false;
 		recording = false;
 		invoicesToRecord = 0;
 		recordingInvoice = 0;
@@ -228,7 +233,6 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 		setProgressionPanelVisible(false);
 		setProgressionEnabled(false);
 		setProgressionValue(-101L);
-		progressStart = false;
 		recording = false;
 		invoicesToRecord = 0;
 		recordingInvoice = 0;
@@ -253,22 +257,20 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 
 	@Override
 	public Long getProgressionCurrentValue() {
-		if (progressStart) {
-			if (!recording) {
-				int row = getInvoicingFeedBack().getCurrentRow();
-				int count = getInvoicingFeedBack().getRowCount();
-				if (count > 0) {
-					int pro = (int) CommonUtil.round(row * 100 / count);
-					if (getParams().isInvoiceRecordable()) {
-						pro = pro / 2;
-					}
-					setProgressionValue(new Long(pro));
+		if (!recording) {
+			int row = getInvoicingFeedBack().getCurrentRow();
+			int count = getInvoicingFeedBack().getRowCount();
+			if (count > 0) {
+				int pro = (int) CommonUtil.round(row * 100 / count);
+				if (getParams().isInvoiceRecordable()) {
+					pro = pro / 2;
 				}
-			} else {
-				if (invoicesToRecord > 0) {
-					int pro = (int) CommonUtil.round(((recordingInvoice * 100 / invoicesToRecord) / 2)+50);
-					setProgressionValue(new Long(pro));
-				}
+				setProgressionValue(new Long(pro));
+			}
+		} else {
+			if (invoicesToRecord > 0) {
+				int pro = (int) CommonUtil.round(((recordingInvoice * 100 / invoicesToRecord) / 2)+50);
+				setProgressionValue(new Long(pro));
 			}
 		}
 		return getProgressionValue();

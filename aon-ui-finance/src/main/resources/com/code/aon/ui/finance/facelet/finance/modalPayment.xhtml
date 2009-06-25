@@ -29,7 +29,7 @@
 						</aon:commandButton>
 					</aon:form>
 				</f:facet>
-				<aon:form id="financePaymentForm">
+				<aon:form id="financePaymentFrom">
 				<aon:div styleClass="aon-popupWindow-content">
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
@@ -75,15 +75,7 @@
 										<aon:selectOneMenu id="Finance_paymentRegistryBank"
 											value="#{finance.paymentRegistryBank}"
 											rendered="#{finance.paymentRegistryBank != null}">
-											<f:selectItems value="#{companyCollections.companyBanks}" />
-										</aon:selectOneMenu>
-										<aon:outputLabel for="Finance_paymentCashAccount"
-											value="#{configBundle.config_bank}"
-											rendered="#{finance.paymentRegistryBank == null and finance.cashAccountsSize > 1}" />
-										<aon:selectOneMenu id="Finance_paymentCashAccount"
-											value="#{finance.paymentCashAccount}"
-											rendered="#{finance.paymentRegistryBank == null and finance.cashAccountsSize > 1}">
-											<f:selectItems value="#{finance.cashAccounts}" />
+											<f:selectItems value="#{finance.companyRegistryBanks}" />
 										</aon:selectOneMenu>
 
 										<aon:outputLabel for="Finance_paymentPayMethod"

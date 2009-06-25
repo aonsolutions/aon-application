@@ -131,7 +131,7 @@
 					<aon:selectOneMenu id="Finance_registryBank_id"
 						value="#{financeSearch.registryBank}">
 						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{companyCollections.companyBanks}" />
+						<f:selectItems value="#{finance.companyRegistryBanks}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Finance_amount"
@@ -139,35 +139,25 @@
 					<aon:inputText id="Finance_amount"
 						valueChangeListener="#{finance.addExpression}"
 						size="10" />
-
+					
 					<aon:outputLabel for="Finance_payMethod_id"
 						value="#{configBundle.config_pay_method}" />
-					<aon:div id="payMethodDiv">
-						<a4j:repeat value="#{financeSearch.payMethods}" rowKeyVar="index" var="payMth">
-							<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
-								<aon:selectOneMenu id="Finance_payMethod_id"
-									value="#{financeSearch.payMethods[index]}">
-									<f:selectItem itemLabel="-" itemValue="#{financeSearch.emptyPayMethod}"/>
-									<f:selectItems value="#{configCollections.payMethods}" />
-								 	<a4j:support event="onchange" reRender="payMethodDiv"/>
-								</aon:selectOneMenu>
-								<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="payMethodDiv"
-									actionListener="#{financeSearch.onRemovePayMethod}"
-									rendered="#{payMth.id != null}">
-									<f:param name="index" value="#{index}" />
-								</aon:commandButton>
-								<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="payMethodDiv"
-									actionListener="#{financeSearch.onAddPayMethod}"
-									rendered="#{(payMth.id != null) and (index == (financeSearch.payMethodsSize-1))}"/>					
-							</aon:div>						
-						</a4j:repeat>
-					</aon:div>
+					<aon:selectOneMenu id="Finance_payMethod_id"
+						value="#{configCollections.payMethod}"
+						valueChangeListener="#{finance.addIdEqualExpression}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{configCollections.payMethods}" />
+					</aon:selectOneMenu>
 
-					<aon:outputText value="#{bundle.aon_status}"/>
-					<aon:selectManyCheckbox value="#{financeSearch.financeStatuses}">
-						<f:selectItems value="#{financeCollections.financeStatuses}"/>
-					</aon:selectManyCheckbox>							
-	
+					<aon:outputLabel for="Finance_financeStatus"
+						value="#{bundle.aon_status}" />
+					<aon:selectOneMenu id="Finance_financeStatus"
+						converter="aon.EnumConverter"
+						valueChangeListener="#{finance.addEqualExpression}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{financeCollections.financeStatuses}" />
+					</aon:selectOneMenu>
+
 				</ui:define>
 			</ui:decorate>
 		</aon:form>

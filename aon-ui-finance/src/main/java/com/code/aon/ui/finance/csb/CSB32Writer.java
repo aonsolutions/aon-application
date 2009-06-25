@@ -29,10 +29,11 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.finance.controller.FBatchDetailController;
-import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.form.FormUtil;
 
-public class CSB32Writer implements IFinanceConstants {
+public class CSB32Writer {
+
+	private static final String FINANCE_BATCH_DETAIL_CONTROLLER_NAME = "fBatchDetail";
 
 	@SuppressWarnings("unchecked")
 	public CSBOutput createCSB32(Company company, FinanceBatch fbatch) throws ManagerBeanException {

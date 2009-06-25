@@ -110,7 +110,7 @@
 						value="#{fbatch.to.registryBank}"
 						disabled="#{!fbatch.todo}">
 						<f:selectItem itemLabel="-" value="#{null}"  />
-						<f:selectItems value="#{companyCollections.companyBanks}" />
+						<f:selectItems value="#{finance.companyRegistryBanks}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="FinanceBatch_totalAmount"

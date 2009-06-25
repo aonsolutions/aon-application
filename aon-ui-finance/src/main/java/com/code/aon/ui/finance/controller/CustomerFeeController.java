@@ -6,10 +6,10 @@ import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.CustomerFee;
 import com.code.aon.product.Item;
+import com.code.aon.product.Tariff;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ui.common.components.LookupChangeEvent;

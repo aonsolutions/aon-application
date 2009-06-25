@@ -34,8 +34,7 @@
 				<aon:dataTable id="saleInvoiceDataList" value="#{saleInvoice.model}"
 					rows="20" var="to" rendered="#{saleInvoice.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
 
 					<aon:rowSelector action="saleInvoice_form"
 						actionListener="#{saleInvoice.onSelect}" />
@@ -61,9 +60,7 @@
 						<f:facet name="header">
 							<h:outputText value="#{customerBundle.customer_customer}" />
 						</f:facet>
-						<aon:outputText value="#{to.registryName}">
-							<aon:abbreviateConverter maxWidth="50" />
-						</aon:outputText>
+						<aon:outputText value="#{to.registryName}" />
 					</aon:column>
 
 					<aon:column>
@@ -82,29 +79,12 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{configBundle.config_pay_method}" />
-						</f:facet>
-						<aon:outputText value="#{saleInvoice.payMethod}">
-							<aon:abbreviateConverter maxWidth="15" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{financeBundle.finance_checking_finance_status_abbrv}" />
-						</f:facet>
-						<aon:outputText value="#{saleInvoice.financeStatus}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_total}" />
 						</f:facet>
 						<aon:outputText value="#{saleInvoice.invoiceTotalPrice}">
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 					</aon:column>
-
 				</aon:dataTable>
 				<aon:dataScroller2 for="saleInvoiceDataList" showNote="true" />
 			</aon:div>
