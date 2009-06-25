@@ -1,9 +1,14 @@
 package com.code.aon.accounting;
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -28,7 +33,8 @@ public class Balance implements ITransferObject {
 	private boolean removable;
 	private BalanceType type;
 
-
+	private Set<BalanceDetail> lines;
+	
 	@Id
 	@GeneratedValue
 	@Column(nullable = false)
@@ -61,6 +67,16 @@ public class Balance implements ITransferObject {
 	}
 	public void setType(BalanceType type) {
 		this.type = type;
+	}
+
+	@OneToMany(mappedBy = "balance", cascade={CascadeType.REMOVE})
+	@OrderBy()
+	public Set<BalanceDetail> getLines() {
+		return this.lines;
+	}
+
+	public void setLines( Set<BalanceDetail> lines ) {
+		this.lines = lines;
 	}
 
 	@Override
