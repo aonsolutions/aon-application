@@ -14,58 +14,12 @@
 	<ui:define name="content">
 
 		<aon:form id="headerForm">
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
-				
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.header}"/>	  						
-					</aon:div>					
-					
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{headers.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-					</aon:div>					
-						
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="header_form"
-							rendered="#{!headers.new}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}">
-							<aon:actionListener method="#{headers.onReset}" />
-						</aon:commandButton>
-						<aon:commandButton id="save"
-							value="#{bundle.aon_save}" 
-							rendered="#{headers.to!=null or header.new}"
-							action="header_form"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}">
-							<aon:actionListener method="#{headers.accept}" />
-						</aon:commandButton>
-						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" 
-							rendered="#{!headers.new and !headers.to.default_}" 
-							immediate="true"
-							confirmTitle="Confirmation Dialog" 
-							confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{headers.onRemove}" 
-							confirmAction="header_list"
-							styleClass="aon-finding-toolbar-item aon-icon-delete"
-							accesskey="#{bundle.aon_key_remove}"/>
-						<aon:commandButton id="exit" value="#{bundle.aon_close}"
-							action="header_list" 
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}">
-							<aon:actionListener method="#{headers.onSearch}" />
-						</aon:commandButton>
-				    </aon:div>
-					
-					<!-- end toolbar navigation -->
-				</aon:panelGrid>
-			</aon:div>
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.header}" />
+				<ui:param name="controller" value="#{cmsHeader}" />
+				<ui:param name="skipSearchButton" value="#{true}" />
+			</ui:include>		
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:div style="width:99%;">
@@ -78,21 +32,21 @@
 									value="#{appBundle.cms_alias}" />
 								<aon:inputText id="header_alias"
 									required="true" size="32" maxlength="32"
-									value="#{headers.to.alias}">
+									value="#{cmsHeader.to.alias}">
 									<f:validator validatorId="AliasValidator" />
 								</aon:inputText>
 			
 								<aon:outputLabel for="header_menu"
 									value="#{appBundle.header_menu}"/>
 								<aon:selectOneMenu id="header_menu"  
-									value="#{headers.to.menu.id}">
+									value="#{cmsHeader.to.menu.id}">
 									<f:selectItems value="#{collections.menuTopList}" />
 								</aon:selectOneMenu> 
 			
 								<aon:outputLabel for="header_banners"
 									value="#{appBundle.header_banners}"/>
 								<aon:selectOneMenu id="header_banners"  
-									value="#{headers.to.bannerCategory.id}">
+									value="#{cmsHeader.to.bannerCategory.id}">
 									<f:selectItem itemLabel="-" itemValue="" />
 									<f:selectItems value="#{collections.bannerGroupList}" />
 								</aon:selectOneMenu> 
@@ -101,11 +55,11 @@
 									value="#{appBundle.header_hasmenu}" />
 								<aon:div>
 									<aon:selectBooleanCheckbox id="header_language_menu" 
-										value="#{headers.to.language_menu}" />
+										value="#{cmsHeader.to.language_menu}" />
 									<aon:outputLabel for="header_menutype"
 										value="#{appBundle.header_menutype}" />
 									<aon:selectOneMenu id="header_menutype" 
-										value="#{headers.to.language_menu_type}">
+										value="#{cmsHeader.to.language_menu_type}">
 										<f:selectItems value="#{collections.languageTypes}" />
 									</aon:selectOneMenu> 
 								</aon:div>
@@ -114,31 +68,31 @@
 									value="#{appBundle.header_sitename}" />
 								<aon:inputText id="headerDetail_sitename"
 									size="90" maxlength="255"
-									value="#{headers.toI18n.sitename}" />
+									value="#{cmsHeader.toI18n.sitename}" />
 								
 								<ui:include src="/facelet/content/utils/contentInput.xhtml" >
 									<ui:param name="inputTextId" value="headerDetail_content" />
-									<ui:param name="inputTextValue" value="#{headers.toI18n.content}" />
-									<ui:param name="richTextEnabled" value="#{headers.richTextEnabled}" />
+									<ui:param name="inputTextValue" value="#{cmsHeader.toI18n.content}" />
+									<ui:param name="richTextEnabled" value="#{cmsHeader.richTextEnabled}" />
 								</ui:include>																									
 								
 								<aon:outputLabel 
 									value="#{appBundle.cms_image}" />
 								<aon:panelGroup id="thumbnail_preview">
 									<aon:graphicImage styleClass="aon-padding aon-border"
-										url="#{headers.toI18n.image}.thumbnail" 
-										alt="#{headers.toI18n.image}"/>										
+										url="#{cmsHeader.toI18n.image}.thumbnail" 
+										alt="#{cmsHeader.toI18n.image}"/>										
 									<ui:include src="/facelet/content/utils/image_modal.xhtml">
 										<ui:param name="modalPanelName" value="mp" />
 										<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
-										<ui:param name="listenerBean" value="#{headers}" />
+										<ui:param name="listenerBean" value="#{header}" />
 										<ui:param name="reRender" value="thumbnail_preview" />
 										<ui:param name="thumbnail" value="#{false}" />
 									</ui:include>
 					                <aon:commandLink style="padding:2px"
 					                	immediate="#{true}"
 					                	reRender="thumbnail_preview"
-					                    actionListener="#{headers.onDelImage}">
+					                    actionListener="#{cmsHeader.onDelImage}">
 										<aon:graphicImage url="#{aonResource.resolveLocal['/images/cms/inactive.png']}"  alt="#{bundle.aon_remove}" />
 					        		</aon:commandLink>
 								</aon:panelGroup>
@@ -147,7 +101,7 @@
 									value="#{appBundle.cms_image_alt}" />
 								<aon:inputText id="Header_imageAlt"
 									size="64" maxlength="64"
-									value="#{headers.toI18n.alt}" />
+									value="#{cmsHeader.toI18n.alt}" />
 								
 							</aon:panelGrid>
 						</aon:panelTab>
@@ -160,7 +114,7 @@
 									value="#{appBundle.header_css}" />
 								<aon:inputTextarea id="headerDetail_css"
 									cols="60" rows="20" 
-									value="#{headers.to.css}"/>
+									value="#{cmsHeader.to.css}"/>
 							</aon:panelGrid>
 						</aon:panelTab>
 	
@@ -171,7 +125,7 @@
 									value="#{appBundle.header_javascript}" />
 								<aon:inputTextarea id="headerDetail_javascript"
 									cols="60" rows="20" 
-									value="#{headers.to.javascript}"/>
+									value="#{cmsHeader.to.javascript}"/>
 							</aon:panelGrid>
 						</aon:panelTab>
 						

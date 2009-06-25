@@ -1034,7 +1034,7 @@
 	
 	<!-- ************** HEADER ************** -->
 	<managed-bean>
-		<managed-bean-name>headers</managed-bean-name>
+		<managed-bean-name>cmsHeader</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.cms.controller.HeaderController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -1045,6 +1045,10 @@
 			<property-name>pojoI18n</property-name>
 			<value>com.code.aon.cms.HeaderDetail</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cmsHeader</value>
+		</managed-property>								
 		<managed-property>
 			<property-name>joinAlias</property-name>
 			<value>HeaderDetail_header_id</value>

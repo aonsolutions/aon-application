@@ -11,57 +11,13 @@
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
-		<aon:form id="mainForm">
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
-				
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.sidebar}"/>	  						
-					</aon:div>					
-					
-					<aon:div styleClass="aon-finding-subtitle-internal">
-							<aon:outputText
-								value="#{sidebar.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-					</aon:div>					
-						
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">					
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							reRender="mainForm"
-							actionListener="#{sidebar.onReset}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}">
-						</aon:commandButton>
-						<aon:commandButton id="save"
-							value="#{bundle.aon_save}" 
-							actionListener="#{sidebar.accept}"
-							rendered="#{sidebar.to!=null or sidebar.new}"
-							reRender="mainForm"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}">
-						</aon:commandButton>
-						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" 
-							rendered="#{!sidebar.new and !sidebar.to.default_}" 
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-delete"
-							confirmTitle="Confirmation Dialog" 
-							confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{sidebar.onRemove}"
-							confirmAction="sidebar_list"
-							accesskey="#{bundle.aon_key_remove}"/>
-						<aon:commandButton id="exit" value="#{bundle.aon_close}"
-							action="sidebar_list" immediate="#{true}"
-							actionListener="#{sidebar.onSearch}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}">
-						</aon:commandButton>
-				    </aon:div>
-					
-					<!-- end toolbar navigation -->
-				</aon:panelGrid>
-			</aon:div>
+		<aon:form id="sidebarForm">
+		
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.sidebar}" />
+				<ui:param name="controller" value="#{sidebar}" />
+				<ui:param name="skipSearchButton" value="#{true}" />
+			</ui:include>		
 			
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="menuGrid" columns="2" dir="true">
