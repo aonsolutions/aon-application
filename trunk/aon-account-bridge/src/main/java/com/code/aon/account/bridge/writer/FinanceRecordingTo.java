@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.code.aon.account.Account;
+import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -16,6 +17,8 @@ public class FinanceRecordingTo implements ITransferObject {
 
 	private AccountEntryType type;
 	
+	private Period period;
+
 	private Date date;
 	
 	private Account paymentAccount;
@@ -34,6 +37,14 @@ public class FinanceRecordingTo implements ITransferObject {
 
 	public void setType(AccountEntryType type) {
 		this.type = type;
+	}
+
+	public Period getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(Period period) {
+		this.period = period;
 	}
 
 	public Date getDate() {
