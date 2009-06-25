@@ -17,8 +17,6 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
@@ -29,16 +27,15 @@ import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
 import com.code.aon.account.bridge.writer.FinanceRecordingTo;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.company.Company;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.dao.IFinanceAlias;
@@ -48,10 +45,9 @@ import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.accounting.IAccountingMessages;
+import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
@@ -67,6 +63,10 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	private boolean isNew;
 
 	private Boolean payment;
+
+	private Period period;
+
+	private Period financePeriod;
 
 	private Date date;
 	
@@ -87,8 +87,6 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	private SecurityLevel securityLevel;
 
 	private String concept;
-
-	private Company company;
 
 	private DataModel lines;
 
@@ -129,6 +127,22 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
 	public void setPayment(Boolean payment) {
 		this.payment = payment;
+	}
+
+	public Period getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(Period period) {
+		this.period = period;
+	}
+
+	public Period getFinancePeriod() {
+		return financePeriod;
+	}
+
+	public void setFinancePeriod(Period financePeriod) {
+		this.financePeriod = financePeriod;
 	}
 
 	public Date getDate() {
@@ -211,25 +225,6 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		this.concept = concept;
 	}
 
-	public Company getCompany() {
-		try {
-			if (company == null) {
-				IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
-				Iterator<ITransferObject> iter = companyBean.getList(null, 0, 1).iterator();
-				if (iter.hasNext()) {
-					setCompany((Company) iter.next());
-				}
-			}
-		} catch (ManagerBeanException e) {
-			throw new AbortProcessingException("Error obtaining Company!");
-		}
-		return company;
-	}
-
-	public void setCompany(Company company) {
-		this.company = company;
-	}
-
 	public DataModel getLines() {
 		if (lines == null) {
 			lines = new ListDataModel(new LinkedList<Finance>());
@@ -254,10 +249,14 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
 
 	public void onReset(ActionEvent event) {
-		reset();
+		try {
+			reset();
+		} catch (ManagerBeanException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
 	}
 
-	private void reset() {
+	private void reset() throws ManagerBeanException {
 		this.accountEntry = null;
 		this.isNew = true;
 		initializeHeader();
@@ -267,8 +266,9 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		setFinances(new ListDataModel(new LinkedList<Finance>()));
 	}
 
-	private void initializeHeader(){
+	private void initializeHeader() throws ManagerBeanException {
 		payment = null;
+		period = (financePeriod != null && financePeriod.getId() != null) ? financePeriod : AccountingPeriodUtil.getDefaultPeriod();
 		date = (financeDate != null) ? financeDate : new Date();
 		deposit = financeDeposit;
 		registryBank = financeRegistryBank;
@@ -285,30 +285,6 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		types.add(item);
 
 		return types;
-	}
-
-	public List<SelectItem> getCompanyRegistryBanks() {
-		return getRegistryBanks(getCompany());
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<SelectItem> getRegistryBanks(Registry registry) {
-		List<SelectItem> rBanks = new LinkedList<SelectItem>();
-		try {
-			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
-			Iterator iter = rBankBean.getList(criteria).iterator();
-			while(iter.hasNext()){
-				RegistryBank rBank = (RegistryBank)iter.next();
-				SelectItem item = new SelectItem(rBank, StringUtils.abbreviate(rBank.getBank().getName(), 30)
-						+ " [" + rBank.getBankAccount().toString() + "]");
-				rBanks.add(item);
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining Banks", e);
-		}
-		return rBanks;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -416,7 +392,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
     @SuppressWarnings("unchecked")
     public void accept(ActionEvent event) {
-    	
+    	setFinancePeriod(period);
     	setFinanceDate(date);
     	setFinanceDeposit(deposit);
     	setFinanceRegistryBank(registryBank);
@@ -430,14 +406,15 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 			HibernateUtil.beginTransaction(sessionName);
 
 			if (!this.isNew) {
-				accountEntry = (AccountEntry)HibernateUtil.getSession(sessionName).merge(accountEntry);
 				deleteFinanceTracking(false);
 				deleteAccountEntryDetails();
+				accountEntry = (AccountEntry)HibernateUtil.getSession(sessionName).merge(accountEntry);
 				mergeAccountEntry();
 			}
 
 			FinanceRecordingTo recordingTo = new FinanceRecordingTo();
 			recordingTo.setType((getPayment().booleanValue())?AccountEntryType.PAYMENT:AccountEntryType.COLLECTION);
+			recordingTo.setPeriod(getPeriod());
 			recordingTo.setDate(getDate());
 			recordingTo.setPaymentAccount((getDeposit()==0)?AccountUtil.obtainRBankAccount(getRegistryBank()):getCashAccount());
 			recordingTo.setBalancingConcept(getConcept());
@@ -579,7 +556,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
 	private void mergeAccountEntry() throws ManagerBeanException {
 		IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
-		accountEntry.setAccountPeriod(AccountUtil.obtainPeriod(getDate()).getId());
+		accountEntry.setAccountPeriod(getPeriod().getId());
 		accountEntry.setEntryDate(getDate());
 		accountEntry.setSecurityLevel(getSecurityLevel());
 		accountEntry = (AccountEntry)accountEntryBean.update(accountEntry);
@@ -754,6 +731,8 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		} 
 		setAccountEntry(entry);
 		setPayment(entry.getType().equals(AccountEntryType.PAYMENT) ? true : false);
+		setPeriod(new Period());
+		getPeriod().setId(entry.getAccountPeriod());
 		setDate(entry.getEntryDate());
 		setSecurityLevel(entry.getSecurityLevel());
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
