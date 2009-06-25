@@ -32,7 +32,7 @@ public class DownloadsGenerator extends Generator {
 	}
 
 	public void generate(DownloadCategory selectedCategory) {
-		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
+		VelocityUtil vu = context.initVelocityUtil();
 			
 		try {
 			Section configSection = GeneratorConfigController.currentSection(DownloadConfig.class);
@@ -57,11 +57,11 @@ public class DownloadsGenerator extends Generator {
 					DownloadCategoryDetail detail = (DownloadCategoryDetail)detailList.get(0);
 					DownloadCategoryHandler downloadCategoryHandler = new DownloadCategoryHandler(detail,getDownloadsList(detail));
 					downloadCategoryHandlerList.add(downloadCategoryHandler);
-					if (group.getSection()!=null)
-						CommonGenerator.getCommonGenerator().chargeContext(vu, group.getSection());
-					else
-						CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
-					
+					if (group.getSection()!=null) {
+						context.changeSection(vu, group.getSection());
+					} else {
+						context.changeSection(vu, configSection);
+					}
 					int page = 0;
 					Iterator<DownloadHandler> iter = downloadCategoryHandler.getList().iterator();
 					List<DownloadHandler> partialLst = new ArrayList<DownloadHandler>(); 
@@ -97,7 +97,7 @@ public class DownloadsGenerator extends Generator {
 			}
 			vu.put("download_categories", downloadCategoryHandlerList);
 			logger.info(" Generando listado categoria descargas.");
-			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
+			context.changeSection(vu, configSection);
 			generate(vu, Templates.DOWNLOADS, DOWNLOAD_CATEGORY_LIST_PAGE);
 			vu.remove("download_categories");
 		} catch (ManagerBeanException e) {

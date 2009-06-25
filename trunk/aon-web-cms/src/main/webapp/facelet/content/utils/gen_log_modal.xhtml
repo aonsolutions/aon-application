@@ -29,6 +29,8 @@
 				</aon:commandButton>
 	        </f:facet>
 			<rich:panel id="grid">
+				<aon:outputText value="Logs: #{generator_status.statusSize}" />
+				<aon:outputText value="Errors: #{generator_status.errorsSize}" />
          		<aon:div styleClass="aon-header">
 					<aon:panelGrid columns="1" width="100%" columnClasses="aon-header-name">
 						<aon:div>

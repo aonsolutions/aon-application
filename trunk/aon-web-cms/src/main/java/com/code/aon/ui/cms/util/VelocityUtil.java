@@ -32,7 +32,7 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 	
 	private IGeneratorLogger logger;
 	
-	private VelocityContext context = new VelocityContext();
+	private VelocityContext context;
 	
 	public void setTemplatePath(File templatePath) {
 		this.templatePath = templatePath;
@@ -42,10 +42,14 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 		}
 	}
 	
-	public VelocityContext getContext() {
+    public VelocityContext getContext() {
 		return context;
 	}
 
+	public void setContext(VelocityContext context) {
+		this.context = context;
+	}
+	
     public void setLogger(IGeneratorLogger logger) {
 		this.logger = logger;
 	}
@@ -73,12 +77,8 @@ public class VelocityUtil extends VelocityEngine implements Constants, ICMSConst
 	public void remove(String key) {
 		this.context.remove(key);
 	}
-	
-	public void reset() {
-		this.context = new VelocityContext();
-	}
 
-    public boolean generate(File template, File page) {
+	public boolean generate(File template, File page) {
         String pageShortName = page.getName();
         
 		boolean error = false;

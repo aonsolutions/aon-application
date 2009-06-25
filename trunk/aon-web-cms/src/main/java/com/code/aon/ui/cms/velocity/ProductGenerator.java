@@ -57,7 +57,7 @@ public class ProductGenerator extends Generator {
 
 				listCategoryHandler.add(categoryHandler);
 				
-				VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
+				VelocityUtil vu = context.initVelocityUtil();
 				vu.put("mainPageURL", mainPageURL);
 
 				String stmtPSC = "SELECT pcd FROM ProductCategory pc,ProductCategoryDetail pcd " +
@@ -77,7 +77,7 @@ public class ProductGenerator extends Generator {
 				
 				for (Iterator<ProductCategoryDetail> iteratorPSC = productSubCategoryDetailList.iterator(); iteratorPSC.hasNext();) {
 					ProductCategoryDetail productSubCategoryDetail = iteratorPSC.next();
-					ProductGenerator.chargeProductSubCategoryContext(vu, productSubCategoryDetail.getProductCategory());
+					chargeProductSubCategoryContext(vu, productSubCategoryDetail.getProductCategory());
 					List<ProductHandler> listProductHandler = new ArrayList<ProductHandler>();
 					listProductHandler = getProducts(productSubCategoryDetail.getProductCategory(),vu,true);
 					
@@ -108,7 +108,7 @@ public class ProductGenerator extends Generator {
 				vu.remove("mainPageURL");	
 			}
 			
-			VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
+			VelocityUtil vu = context.initVelocityUtil();
 			chargeProductCategoryContext(vu, null);
 			vu.put("mainPageURL", mainPageURL);
 			vu.put("mainCategoryList", listCategoryHandler);
@@ -132,7 +132,7 @@ public class ProductGenerator extends Generator {
 
 			List<BrandHandler> listBrandHandler = new ArrayList<BrandHandler>();
 
-			vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
+			vu = context.initVelocityUtil();
 			chargeProductCategoryContext(vu, null);
 			vu.put("mainPageURL", mainPageURL);
 			
@@ -248,16 +248,16 @@ public class ProductGenerator extends Generator {
 
 	private void chargeProductCategoryContext(VelocityUtil vu, ProductCategory productCategory) throws ManagerBeanException{
 		if (productCategory!=null && productCategory.getSection()!=null){
-			CommonGenerator.getCommonGenerator().chargeContext(vu, productCategory.getSection());
+			context.changeSection(vu, productCategory.getSection());
 		}else{
 			Section configSection = GeneratorConfigController.currentSection(ProductCategoryConfig.class);
-			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
+			context.changeSection(vu, configSection);
 		}
 	}
 
-	private static void chargeProductSubCategoryContext(VelocityUtil vu, ProductCategory productCategory) throws ManagerBeanException{
+	private void chargeProductSubCategoryContext(VelocityUtil vu, ProductCategory productCategory) throws ManagerBeanException{
 		if (productCategory.getSection()!=null)
-			CommonGenerator.getCommonGenerator().chargeContext(vu, productCategory.getSection());
+			context.changeSection(vu, productCategory.getSection());
 	}
 
 

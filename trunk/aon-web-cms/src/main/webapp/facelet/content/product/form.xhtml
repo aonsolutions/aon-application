@@ -116,12 +116,12 @@
 							size="80" maxlength="64"
 							value="#{product.toI18n.shortLabel}" />
 							
-						<aon:outputLabel for="productDetail_label"
-							value="#{appBundle.product_label}" />
-						<rich:editor id="productDetail_label"
-							value="#{product.toI18n.label}" 
-							height="250" width="620" configuration="tinyMCE" 
-							language="#{facesContext.application.defaultLocale.language}" />								
+						<ui:include src="/facelet/content/utils/contentInput.xhtml" >
+							<ui:param name="labelValue" value="#{appBundle.product_label}" />
+							<ui:param name="inputTextId" value="productDetail_label" />
+							<ui:param name="inputTextValue" value="#{product.toI18n.label}" />
+							<ui:param name="richTextEnabled" value="#{product.richTextEnabled}" />
+						</ui:include>																	
 							
 						<aon:outputLabel for="product_brand"
 							value="#{appBundle.product_brand}" />

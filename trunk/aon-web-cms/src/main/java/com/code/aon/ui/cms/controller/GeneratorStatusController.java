@@ -55,9 +55,17 @@ public class GeneratorStatusController implements IGeneratorLogger {
 	public List<String> getStatus() {
 		return this.status;
 	}
+	
+	public int getStatusSize() {
+		return this.status.size();
+	}
 
 	public List<String> getErrors() {
 		return this.errors;
+	}
+	
+	public int getErrorsSize() {
+		return this.errors.size();
 	}
 	
 	private void addMessage(String msg) {

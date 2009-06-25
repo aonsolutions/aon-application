@@ -184,12 +184,12 @@
 						required="true" size="60" maxlength="128"
 						value="#{download.toI18n.title}" />
 
-					<aon:outputLabel for="DownloadDetail_description"
-						value="#{bundle.aon_description}" />
-					<rich:editor id="DownloadDetail_description"
-						value="#{download.toI18n.description}" 
-						height="250" width="620" configuration="tinyMCE" 
-						language="#{facesContext.application.defaultLocale.language}" />					
+					<ui:include src="/facelet/content/utils/contentInput.xhtml" >
+						<ui:param name="labelValue" value="#{bundle.aon_description}" />
+						<ui:param name="inputTextId" value="DownloadDetail_description" />
+						<ui:param name="inputTextValue" value="#{download.toI18n.description}" />
+						<ui:param name="richTextEnabled" value="#{download.richTextEnabled}" />
+					</ui:include>																	
 
 					<aon:outputLabel for="Download_position"
 						value="#{appBundle.download_position}"/>
