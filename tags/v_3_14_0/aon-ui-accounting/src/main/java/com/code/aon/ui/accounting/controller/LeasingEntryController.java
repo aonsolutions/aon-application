@@ -1,0 +1,345 @@
+package com.code.aon.ui.accounting.controller;
+
+import java.util.Date;
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
+
+import com.code.aon.account.Account;
+import com.code.aon.account.bridge.LeasingAccount;
+import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
+import com.code.aon.account.bridge.util.AccountConstants;
+import com.code.aon.account.bridge.util.AccountUtil;
+import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.Leasing;
+import com.code.aon.accounting.dao.IAccountingAlias;
+import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.util.AccountUtils;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.config.Bank;
+import com.code.aon.config.Tax;
+import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryBank;
+import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.ui.accounting.utils.AccountPeriodValidator;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.util.AonUtil;
+
+public class LeasingEntryController implements ISpecialAccountEntry{
+
+	private static final Logger LOGGER = Logger.getLogger(LeasingEntryController.class.getName()); 
+	
+	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
+	
+	private boolean isNew;
+	
+	private AccountEntry accountEntry;
+	
+	private Leasing leasing;
+	
+	private AccountUtils accountUtils;
+
+	public AccountUtils getAccountUtils() {
+		if (accountUtils == null) {
+			accountUtils = new AccountUtils();
+		}
+		return accountUtils;
+	}
+
+	public boolean isNew() {
+		return isNew;
+	}
+
+	public void setNew(boolean isNew) {
+		this.isNew = isNew;
+	}
+	
+	public AccountEntry getAccountEntry() {
+		return accountEntry;
+	}
+
+	public void setAccountEntry(AccountEntry accountEntry) {
+		this.accountEntry = accountEntry;
+	}
+
+	public Leasing getLeasing() {
+		return leasing;
+	}
+
+	public void setLeasing(Leasing leasing) {
+		this.leasing = leasing;
+	}
+
+	
+	public void onReset(ActionEvent event){
+		reset();
+	}
+	
+	private void reset(){
+		this.isNew = true;
+		this.leasing = initializeLeasing();
+	}
+	
+	private Leasing initializeLeasing() {
+		Leasing leasing = new Leasing();
+		leasing.setRegistryBank(new RegistryBank());
+		leasing.getRegistryBank().setBank(new Bank());
+		leasing.setLeasingDate(new Date());
+		leasing.setFixedAssetAccount(new Account());
+		leasing.setVat(new Tax());
+		return leasing;
+	}
+	
+	public void accepto(ActionEvent event) throws ManagerBeanException {
+		System.out.println("entra en accept");
+	}
+	public void accept(ActionEvent event) throws ManagerBeanException {
+		//inicio transaccion
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			try {
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+				HibernateUtil.beginTransaction(sessionName);
+				// operaciones de la transaccion
+				AccountPeriodValidator.validateAccountPeriod(getLeasing().getLeasingDate());
+				AccountEntry entry = new AccountEntry();
+				if(!this.isNew){
+					deleteAccountEntryDetails(getAccountEntry());
+					entry = this.getAccountEntry();
+				}
+				insertLeasing(getLeasing());
+				entry.setEntryDate(getLeasing().getLeasingDate());
+				entry.setAccountPeriod(AccountUtil.obtainPeriod(getLeasing().getLeasingDate()).getId());
+				entry.setJournal(null);
+				entry.setType(AccountEntryType.LEASING);
+				entry.setSecurityLevel(getLeasing().getSecurityLevel());
+				entry = insertorUpdateAccountEntry(entry);
+				insertEntryDetails(entry);
+				setAccountEntry(entry);
+				this.isNew = false;
+				loadAccountEntryController(entry);
+				// FIN operaciones de la transaccion
+				HibernateUtil.getSession(sessionName).flush();
+				HibernateUtil.commitTransaction(sessionName);
+			} catch (Exception e) {
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {
+					String msg = "Unable to rollback transaction!";
+					LOGGER.log(Level.SEVERE, msg, e);
+				}
+				String msg = "Error on aon-accounting:  " + e.getMessage() ;
+				LOGGER.log(Level.SEVERE, msg, e);
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			} finally {
+				HibernateUtil.closeSession(sessionName);
+			}
+		} finally {
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
+	}
+	
+	private Leasing insertLeasing(Leasing leasing) throws ManagerBeanException {
+		IManagerBean leasingBean = BeanManager.getManagerBean(Leasing.class);
+		return (Leasing) leasingBean.insert(leasing);
+	}
+
+	public void onRemove(ActionEvent event) throws ManagerBeanException{
+		//inicio transaccion
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			try {
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+				HibernateUtil.beginTransaction(sessionName);
+				// operaciones de la transaccion
+				try {
+					deleteAccountEntryDetails(getAccountEntry());
+					deleteAccountEntry(getAccountEntry());
+					deleteLeasingAccount(getLeasing());
+					deleteLeasing(getLeasing());
+				} catch (ManagerBeanException e) {
+					throw new ManagerBeanException("Error removing Leasing",e);
+				}
+				// FIN operaciones de la transaccion
+				HibernateUtil.getSession(sessionName).flush();
+				HibernateUtil.commitTransaction(sessionName);
+			} catch (Exception e) {
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {
+					String msg = "Unable to rollback transaction!";
+					LOGGER.log(Level.SEVERE, msg, e);
+				}
+				String msg = "Error on aon-accounting:  " + e.getMessage() ;
+				LOGGER.log(Level.SEVERE, msg, e);
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			} finally {
+				HibernateUtil.closeSession(sessionName);
+			}
+		} finally {
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
+	}
+	
+	private AccountEntry insertorUpdateAccountEntry(AccountEntry entry) {
+		try {
+			IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
+			if(this.isNew){
+				entry = (AccountEntry)entryBean.insert(entry);
+			}else{
+				entry = (AccountEntry)entryBean.update(entry);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error inserting AccountEntry", e);
+		}
+		return entry;
+	}
+	
+	private void insertEntryDetails(AccountEntry entry) {
+		try {
+			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+			// Primer Apunte
+			AccountEntryDetail detail = new AccountEntryDetail();
+			detail.setAccount(getLeasing().getFixedAssetAccount());
+			detail.setAccountEntry(entry);
+			detail.setConcept(getLeasing().getDescription());
+			detail.setDebit(getLeasing().getAmount());
+			Account leasingAccount = AccountUtil.obtainLeasingAccount(getLeasing());
+			detail.setBalancingAccount(leasingAccount);
+			accountEntryDetailBean.insert(detail);
+			// Segundo Apunte
+			detail = new AccountEntryDetail();
+			detail.setAccount(leasingAccount);
+			detail.setAccountEntry(entry);
+			detail.setConcept(getLeasing().getDescription());
+			detail.setCredit(getLeasing().getAmount());
+			detail.setBalancingAccount(getLeasing().getFixedAssetAccount());
+			accountEntryDetailBean.insert(detail);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error inserting details for AccountEntry with id = " + entry.getId(), e);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void deleteAccountEntryDetails(AccountEntry accountEntry) {
+		try {
+			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
+			Iterator iter = accountEntryDetailBean.getList(criteria).iterator();
+			while(iter.hasNext()){
+				accountEntryDetailBean.remove((AccountEntryDetail)iter.next());
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error deleting details related with AccountEntry with id=" + accountEntry.getId(), e);
+		}
+	}
+
+	private void deleteAccountEntry(AccountEntry accountEntry) {
+		try {
+			IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
+			accountEntryBean.remove(accountEntry);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error deleting AccountEntry with id= " + accountEntry.getId(), e);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void deleteLeasingAccount(Leasing leasing) throws ManagerBeanException {
+		IManagerBean leasingAccountBean = BeanManager.getManagerBean(LeasingAccount.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(leasingAccountBean.getFieldName(IAccountBridgeAlias.LEASING_ACCOUNT_LEASING_ID), leasing.getId());
+		Iterator iter = leasingAccountBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			LeasingAccount leasingAccount = (LeasingAccount)iter.next();
+			leasingAccountBean.remove(leasingAccount);
+		}
+	}
+
+	private void deleteLeasing(Leasing leasing) throws ManagerBeanException {
+		IManagerBean leasingBean = BeanManager.getManagerBean(Leasing.class);
+		leasingBean.remove(leasing);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void onRBankChange(ValueChangeEvent event) throws ManagerBeanException {
+		if(event.getNewValue() != null){
+			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_ID), event.getNewValue());
+			Iterator iter = rBankBean.getList(criteria).iterator();
+			if(iter.hasNext()){
+				this.getLeasing().setRegistryBank((RegistryBank)iter.next());
+			}
+		}
+	}
+	
+	private void loadAccountEntryController(AccountEntry entry) {
+		try {
+			AccountEntryController entryController = (AccountEntryController)FormUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
+			entryController.setCriteria(criteria);
+			entryController.onSearch(null);
+			entryController.getModel().setRowIndex(0);
+			entryController.onSelect(null);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error loading AccountEntryController", e);
+		}
+	}
+
+	@Override
+	public void loadEntry(AccountEntry entry) throws ManagerBeanException {
+		onReset(null);
+		setNew(false);
+		setAccountEntry(entry);
+		Leasing leasing = obtainLeasing(entry);
+		setLeasing(leasing);
+	}
+
+	@SuppressWarnings("unchecked")
+	private Leasing obtainLeasing(AccountEntry entry) throws ManagerBeanException {
+		AccountEntryDetail detail = getAccountUtils().getEntryDetailFromAccountPattern(entry, AccountConstants.LEASING_ACCOUNT_PREFIX + "*");
+		IManagerBean loanAccountBean = BeanManager.getManagerBean(LeasingAccount.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(loanAccountBean.getFieldName(IAccountBridgeAlias.LEASING_ACCOUNT_ACCOUNT_ID), detail.getAccount().getId());
+		Iterator iter = loanAccountBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			return ((LeasingAccount)iter.next()).getLeasing();
+		}
+		return null;
+	}
+
+	@Override
+	public String getNavigationKey() {
+		return "account_leasing_entry";
+	}
+	
+	public String getPeriodMessage() {
+		try {
+			return AccountPeriodValidator.getValidAccountPeriod(getLeasing().getLeasingDate());
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+			return " - ";
+		}
+	}
+}

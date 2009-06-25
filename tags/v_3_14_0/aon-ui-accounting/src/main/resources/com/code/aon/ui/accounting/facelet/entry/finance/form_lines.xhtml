@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:div styleClass="aon-toolbar" rendered="#{financeEntry.lines.rowCount > 0}">
+	
+		<aon:commandButton title="#{bundle.aon_check_all}"
+			styleClass="aon-finding-toolbar-item aon-icon-checkAll"
+			value="#{bundle.aon_check_all}"
+			actionListener="#{financeEntry.checkAllLines}" reRender="lineDataDiv"
+			onclick="Richfaces.showModalPanel('waitProccess')" 
+     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+		<aon:commandButton title="#{bundle.aon_uncheck_all}"
+			styleClass="aon-finding-toolbar-item aon-icon-checkNone"
+			value="#{bundle.aon_uncheck_all}"
+			actionListener="#{financeEntry.checkNoneLines}" reRender="lineDataDiv"
+			onclick="Richfaces.showModalPanel('waitProccess')" 
+     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+		<aon:commandButton title="#{accountingBundle.accounting_finance_remove_record_list}"
+			styleClass="aon-finding-toolbar-item aon-icon-newFolder"
+			value="#{accountingBundle.accounting_finance_remove_record_list}"
+			actionListener="#{financeEntry.onRemoveSelected}" reRender="financeEntryForm,financePanelTabSet"
+			onclick="Richfaces.showModalPanel('waitProccess')" 
+     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+	</aon:div>
+
+	<aon:div id="lineDataDiv">
+		<aon:dataTable id="lineData" value="#{financeEntry.lines}"
+			var="to" rows="20" rendered="#{financeEntry.lines.rowCount > 0}"
+			columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+				aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+				aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">				
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:selectBooleanCheckbox id="Checked_Lines"
+					value="#{financeEntry.rowCheckedLines}"
+					valueChangeListener="#{financeEntry.rowSelectedLines}"
+					rendered="#{financeEntry.lastTracking}" />	
+				<aon:div style="display:inline;cursor:pointer;">
+					<aon:outputText value="&#160;"
+						styleClass="aon-icon-errorwarning" style="padding-left:20px"
+						rendered="#{!financeEntry.lastTracking}" />
+					<rich:toolTip value="#{accountingBundle.accounting_finance_payment_returned_info}" />
+				</aon:div>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{financeBundle.finance_invoice}" />
+				</f:facet>
+				<aon:outputText value="#{to.invoice.referenceCode}" />
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_description}" />
+				</f:facet>
+				<aon:outputText value="#{to.invoice.registryName}" />
+			</aon:column>
+	
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{financeBundle.finance_finance_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.dueDate}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+	
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{configBundle.config_pay_method}" />
+				</f:facet>
+				<aon:outputText value="#{to.payMethod.name}" />
+			</aon:column>
+	
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{configBundle.config_bank_account}" />
+				</f:facet>
+				<aon:outputText value="#{to.bankAccount}"/>
+			</aon:column>
+	
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_status}" />
+				</f:facet>
+				<aon:outputText value="#{to.financeStatus}"/>
+			</aon:column>
+	
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_amount}" />
+				</f:facet>
+				<aon:outputText value="#{to.totalAmount}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:column>
+			
+		</aon:dataTable>
+		
+		<aon:dataScroller2 for="lineData" showNote="false" />
+	</aon:div>
+	
+</ui:composition>

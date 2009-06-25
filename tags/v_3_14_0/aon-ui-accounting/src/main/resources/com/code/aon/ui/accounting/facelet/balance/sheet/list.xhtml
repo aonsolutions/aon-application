@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="balanceForm">
+
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbarEx.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{accountingBundle.accounting_balance_sheet} >> #{balanceSheet.balanceName} " />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipSearchButton" value="true" />
+
+
+				<ui:define name="additionalToolbarContent">
+					<h:commandLink value="#{bundle.aon_listing}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="officialBalance" />
+					</h:commandLink>
+					<h:commandLink value="#{bundle.aon_listing}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="officialBalance" />
+						<f:param name="outputFormat" value="MS Excel" />
+					
+					</h:commandLink>
+					
+				</ui:define>
+
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+			
+            		<aon:editDataTable id="balanceDetailData"
+					value="#{balanceSheet.balanceModel}" var="to" rows="150"
+					columnClasses="aon-editDataTable-textColumn,
+								   aon-editDataTable-iconColumn,
+								   aon-editDataTable-numberColumn,
+								   aon-editDataTable-numberColumn">
+
+					<f:facet name="header">
+
+
+						<rich:columnGroup>
+
+							<rich:column colspan="4">
+								<aon:outputText value="#{balanceSheet.balanceName} (#{balanceSheet.parameters.period.id})" />
+							</rich:column>
+						</rich:columnGroup>
+					</f:facet>
+             
+
+					<aon:column  >
+						<f:facet name="header">
+
+						</f:facet>
+						<aon:outputText size="50"
+							style="padding-left: #{to.level * 15}px;#{to.title?'font-weight:bold;':''}"
+							value="#{to.description}" >
+						
+					</aon:outputText>
+
+					</aon:column>
+
+					<aon:column >
+						<f:facet name="header">
+							<aon:outputText
+								value="#{accountingBundle.accounting_balance_sheet_notes}" />
+						</f:facet>
+						<aon:outputText size="20" value="#{to.notes}" />
+					</aon:column>
+
+					<aon:column >
+						<f:facet name="header">
+							<aon:outputText
+								value="#{balanceSheet.parameters.period.id}" />
+						</f:facet>
+						<aon:outputText size="20" value="#{to.amount}">
+							<f:convertNumber pattern="#,##0.00;(#,##0.00)" />
+						</aon:outputText>
+					</aon:column>
+					
+					<aon:column >
+						<f:facet name="header">
+							<aon:outputText
+								value="#{balanceSheet.previousParameters.period.id}" />
+						</f:facet>
+						<aon:outputText size="20" value="#{to.previousAmount}">
+							<f:convertNumber pattern="#,##0.00;(#,##0.00)" />
+						</aon:outputText>
+					</aon:column>
+				</aon:editDataTable>
+				<!--  <aon:dataScroller2 for="balanceDetailData" showNote="true" />-->
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>

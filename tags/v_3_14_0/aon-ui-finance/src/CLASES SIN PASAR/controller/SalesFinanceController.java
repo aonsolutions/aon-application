@@ -1,0 +1,97 @@
+package temp.com.code.aon.ui.finance.deprecated.controller;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.SelectItem;
+
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.PayMethod;
+import com.code.aon.config.dao.IConfigAlias;
+import com.code.aon.finance.Finance;
+import com.code.aon.finance.Invoice;
+import com.code.aon.finance.enumeration.FinanceStatus;
+import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryBank;
+import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.LinesController;
+
+public class SalesFinanceController extends LinesController {
+
+	private static final Logger LOGGER = Logger.getLogger(SalesFinanceController.class.getName());
+
+	private static final String SALES_INVOICING_CONTROLLER_NAME = "salesInvoicing";
+	
+	private Integer registryBankId;
+
+	public Integer getRegistryBankId() {
+		return registryBankId;
+	}
+
+	public void setRegistryBankId(Integer registryBankId) {
+		this.registryBankId = registryBankId;
+	}
+	
+	public boolean isModelToEditable() throws ManagerBeanException{
+		Finance finance = (Finance)this.getModel().getRowData(); 
+		return (finance.getFinanceStatus().equals(FinanceStatus.PENDING) || finance.getFinanceStatus().equals(FinanceStatus.RETURNED));
+	}
+
+	public boolean isModelToPending() throws ManagerBeanException{
+		Finance finance = (Finance)this.getModel().getRowData(); 
+		return (finance.getFinanceStatus().equals(FinanceStatus.PENDING));
+	}
+
+	@SuppressWarnings("unchecked")
+	public boolean isAllPending() throws ManagerBeanException{
+		Iterator iter = ((List)this.getModel().getWrappedData()).iterator();
+		while(iter.hasNext()){
+			Finance finance = (Finance)iter.next();
+			if(!finance.getFinanceStatus().equals(FinanceStatus.PENDING)){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void payMethodChanged(ValueChangeEvent event) throws ManagerBeanException{
+		if(event.getNewValue() != null){
+			IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(payMethodBean.getFieldName(IConfigAlias.PAY_METHOD_ID), event.getNewValue());
+			Iterator iter = payMethodBean.getList(criteria,0,1).iterator();
+			if(iter.hasNext()){
+				((Finance)this.getTo()).setPayMethod((PayMethod)iter.next());
+			}
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List getRegistryBanks(){
+		List<SelectItem> rBanks = new LinkedList<SelectItem>();
+		SalesInvoicingController salesInvoicingController = (SalesInvoicingController)FormUtil.getController(SALES_INVOICING_CONTROLLER_NAME);
+		Invoice invoice = (Invoice)salesInvoicingController.getTo(); 
+		try {
+			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), invoice.getRegistry().getId());
+			Iterator iter = rBankBean.getList(criteria).iterator();
+			while(iter.hasNext()){
+				RegistryBank rBank = (RegistryBank)iter.next();
+				SelectItem item = new SelectItem(rBank.getId(), rBank.getBank().getName());
+				rBanks.add(item);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining Banks for registry with id=" + invoice.getRegistry().getId(), e);
+		}
+		return rBanks;
+	}
+}
