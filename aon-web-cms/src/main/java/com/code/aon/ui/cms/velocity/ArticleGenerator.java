@@ -44,7 +44,7 @@ public class ArticleGenerator extends Generator {
 				ArticleDetail articleDetail = (ArticleDetail)articleDetailList.get(0);
 				String backURL = getBackURL(article.getArticleType(),article.getArticleCategory());
 				Templates templates = getTemplate(article.getArticleType());
-				VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
+				VelocityUtil vu = context.initVelocityUtil();
 				chargeArticleContext(vu, article.getArticleCategory());
 				generateArticle(vu, templates, backURL, articleDetail);		
 			}
@@ -55,22 +55,22 @@ public class ArticleGenerator extends Generator {
 	
 	private void chargeArticleCategoryContext(VelocityUtil vu, ArticleCategory articleCategory) throws ManagerBeanException{
 		if (articleCategory.getSection()!=null){
-			CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
+			context.changeSection(vu, articleCategory.getSection());
 		}else{
 			Section configSection = GeneratorConfigController.currentSection(ArticleConfig.class);
-			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
+			context.changeSection(vu, configSection);
 		}
 	}
 
 	private void chargeArticleContext(VelocityUtil vu, ArticleCategory articleCategory) throws ManagerBeanException{
 		if (articleCategory.getElementSection()!=null){
-			CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getElementSection());
+			context.changeSection(vu, articleCategory.getElementSection());
 		}else{
 			if (articleCategory.getSection()!=null){
-				CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
+				context.changeSection(vu, articleCategory.getSection());
 			}else{
 				Section configSection = GeneratorConfigController.currentSection(ArticleConfig.class);
-				CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
+				context.changeSection(vu, configSection);
 			}
 		}
 	}
@@ -126,7 +126,7 @@ public class ArticleGenerator extends Generator {
 			articleCategoryList = (List<ITransferObject>)articleCategoryBean.getList(articleCategoryCriteria);
 			ArrayList<ArticleCategoryHandler> achlist = new ArrayList<ArticleCategoryHandler>(); 
 			for (int j=0; j < articleCategoryList.size(); j++) {
-				VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
+				VelocityUtil vu = context.initVelocityUtil();
 
 				articleCategory = (ArticleCategory)articleCategoryList.get(j);
 				articleCategoryDetailCriteria = new Criteria();

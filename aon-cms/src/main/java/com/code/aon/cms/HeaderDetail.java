@@ -6,14 +6,24 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name = "header_i18n")
 public class HeaderDetail implements ITransferObject {
+
+	private static final long serialVersionUID = 6073696343533011059L;
 
 	private Integer id;
 
@@ -78,6 +88,8 @@ public class HeaderDetail implements ITransferObject {
 		this.image = image;
 	}
 
+	@Lob
+	@Type(type="stringClob")   	
 	@Column(name = "content")
 	public String getContent() {
 		return content;
@@ -96,5 +108,49 @@ public class HeaderDetail implements ITransferObject {
 		this.alt = alt;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final HeaderDetail o = (HeaderDetail) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.alt, o.alt)
+				.append(this.content, o.content)
+				.append(this.header, o.header)
+				.append(this.image, o.image)
+				.append(this.language, o.language)
+				.append(this.sitename, o.sitename)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(alt)
+			.append(content)
+			.append(header)
+			.append(id)	
+			.append(image)
+			.append(language)
+			.append(sitename)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).
+			append("alt", alt).
+			append("content", StringUtils.abbreviate(content, 32)).			
+			append("header", header.getId()).
+			append("id", id).
+			append("image", image).
+			append("language", language.getId()).
+			append("sitename", sitename).
+			toString();
+	}		
 	
 }

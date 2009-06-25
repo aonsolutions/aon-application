@@ -26,7 +26,7 @@ public class ModularPageGenerator extends Generator {
 	private static final Logger LOGGER = Logger.getLogger(ModularPageGenerator.class.getName());
 
 	public void generate(ModularPage selected_modular) {
-		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();			
+		VelocityUtil vu = context.initVelocityUtil();			
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ModularPage.class);
 			IManagerBean moBean = BeanManager.getManagerBean(ModularPageOption.class);
@@ -88,7 +88,7 @@ public class ModularPageGenerator extends Generator {
 					vu.put("modules", modularPageOptionHandlerList);
 	
 					// Cargar datos comunes a todas las paginas
-					CommonGenerator.getCommonGenerator().chargeContext(vu, mp.getSection());
+					context.changeSection(vu, mp.getSection());
 	
 					logger.info(" Generando Página Modular '" + mp.getAlias()+ "'.");
 					if (mp.isHomepage()){

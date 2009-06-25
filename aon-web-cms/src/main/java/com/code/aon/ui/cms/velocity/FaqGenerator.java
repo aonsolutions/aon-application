@@ -36,7 +36,7 @@ public class FaqGenerator extends Generator {
 	}
 
 	public void generate(FaqCategory selectedCategory) {
-		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();	
+		VelocityUtil vu = context.initVelocityUtil();	
 		ArrayList<FaqCategoryHandler> fchList;
 		List<ITransferObject> faqCategoryList;
 		List<ITransferObject> faqCategoryDetailList;
@@ -83,7 +83,7 @@ public class FaqGenerator extends Generator {
 							else
 								currentSection = GeneratorConfigController.defaultSection();
 						}
-						CommonGenerator.getCommonGenerator().chargeContext(vu, currentSection);
+						context.changeSection(vu, currentSection);
 						generate(vu, Templates.FAQ, fcd.getFaqCategory().getAlias());
 						vu.remove("faq_category");
 						
@@ -103,7 +103,7 @@ public class FaqGenerator extends Generator {
 				faqCategoryHandlerSet = (ArrayList<FaqCategoryHandler>)categoryMap.get(key);
 				vu.put("faq_categories", faqCategoryHandlerSet);
 				logger.info(" Generando listado categoria seccion Faq.");
-				CommonGenerator.getCommonGenerator().chargeContext(vu, key);
+				context.changeSection(vu, key);
 				generate(vu, Templates.FAQ, FAQ_CATEGORY_BY_SECTION_PAGE + key.getId());
 				vu.remove("faq_categories");
 			}
@@ -111,7 +111,7 @@ public class FaqGenerator extends Generator {
 			
 			vu.put("faq_categories", fchList);
 			logger.info(" Generando listado categoria Faq.");
-			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
+			context.changeSection(vu, configSection);
 			generate(vu, Templates.FAQ, FAQ_CATEGORY_LIST_PAGE);
 			vu.remove("faq_categories");
 		} catch (ManagerBeanException e) {

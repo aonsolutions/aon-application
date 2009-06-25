@@ -85,7 +85,7 @@ public class MenuGenerator extends Generator {
 	}	
 
 	public void generate() {
-		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();	
+		VelocityUtil vu = context.initVelocityUtil();	
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Menu.class);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(null);

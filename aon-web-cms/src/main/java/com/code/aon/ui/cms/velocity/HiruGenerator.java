@@ -27,7 +27,7 @@ public class HiruGenerator extends Generator {
 	public static String COURSES_HTML = "main";
 	
 	public void generate() {
-		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();	
+		VelocityUtil vu = context.initVelocityUtil();	
 		List<ITransferObject> center_list = null;
 		ArrayList<HiruCenterHandler> center_handler_list_started = null;
 		ArrayList<HiruCenterHandler> center_handler_list_future = null;
@@ -43,7 +43,7 @@ public class HiruGenerator extends Generator {
 			center_handler_list_future = new ArrayList<HiruCenterHandler>();
 			
 			Section configSection = GeneratorConfigController.currentSection(HiruConfig.class);
-			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
+			context.changeSection(vu, configSection);
 			
 			String back_url = Templates.HIRU_COURSES.getHtmlName();
 			back_url = back_url.replaceAll("%NAME%", COURSES_HTML);

@@ -26,7 +26,7 @@ public class DirectAccessGenerator extends Generator {
 	}
 	
 	public void generate(DirectAccessGroup selectedCategory) {
-		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();		
+		VelocityUtil vu = context.initVelocityUtil();		
 		
 		List<ITransferObject> directAccessGroupList;
 		List<ITransferObject> directAccessGroupDetailList;
@@ -56,7 +56,7 @@ public class DirectAccessGenerator extends Generator {
 					dagh = new DirectAccessGroupHandler(detail,getDirectAccessList(group));
 					vu.put(DIRECT_ACCESS_GROUP_KEY, dagh);
 					logger.info(" Generando accesos directos " + group.getAlias() + ".");
-					CommonGenerator.getCommonGenerator().chargeContext(vu, group.getSection());
+					context.changeSection(vu, group.getSection());
 					generate(vu, Templates.DIRECT_ACCESS, group.getAlias());
 					vu.remove(DIRECT_ACCESS_GROUP_KEY);
 				}

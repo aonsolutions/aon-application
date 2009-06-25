@@ -31,6 +31,7 @@ import com.code.aon.ui.cms.velocity.CommonGenerator;
 import com.code.aon.ui.cms.velocity.DirectAccessGenerator;
 import com.code.aon.ui.cms.velocity.DownloadsGenerator;
 import com.code.aon.ui.cms.velocity.FaqGenerator;
+import com.code.aon.ui.cms.velocity.GeneratorContext;
 import com.code.aon.ui.cms.velocity.GenericGenerator;
 import com.code.aon.ui.cms.velocity.HiruGenerator;
 import com.code.aon.ui.cms.velocity.LinkGenerator;
@@ -46,6 +47,8 @@ public class GeneratorController implements Constants, ICMSConstants {
 	
 	private GeneratorApplicationController applicationController;
 	
+	private GeneratorContext context;
+	
 	private StopWatch stopWatch;
 	
 	private boolean initTransState;
@@ -60,6 +63,10 @@ public class GeneratorController implements Constants, ICMSConstants {
 
 	public GeneratorStatusController getStatus() {
 		return status;
+	}
+	
+	public GeneratorContext getContext() {
+		return context;
 	}
 
 	public void onGenerate(GeneratorApplicationController applicationController) throws ManagerBeanException {
@@ -347,6 +354,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 	}
 	
 	private void initGenerator(){
+		context = new GeneratorContext();
 		stopWatch = new StopWatch();
 		stopWatch.start();		
 		System.gc();
@@ -365,10 +373,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 		} catch (IOException e) {
 			generatorError(e);
 		}
-		CommonGenerator.getCommonGenerator().generateLanguagePage();
-		CommonGenerator.getCommonGenerator().generateEmailSendPage();
-		CommonGenerator.getCommonGenerator().generateSearchPage();
-		CommonGenerator.getCommonGenerator().generateCaptchaPage();
+		new CommonGenerator().generateBasicPages();
 	}
 
 	private void finalizeGenerator() {
@@ -387,6 +392,7 @@ public class GeneratorController implements Constants, ICMSConstants {
 		status.info("----------------------------------------------------------------------------------------------------------------------------------------");
 		status.finalized();
 		closeSession();
+		context = null;
 		System.gc();
 	}
 

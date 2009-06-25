@@ -35,7 +35,7 @@ public class AlbumGenerator extends Generator {
 	}
 
 	public void generate(AlbumCategory selectedCategory) {
-		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
+		VelocityUtil vu = context.initVelocityUtil();
 			
 		List<ITransferObject> albumCategoryList;
 		List<ITransferObject> albumCategoryDetailList;
@@ -58,9 +58,9 @@ public class AlbumGenerator extends Generator {
 			for (int j=0; j < albumCategoryList.size(); j++) {
 				AlbumCategory albumCategory = (AlbumCategory)albumCategoryList.get(j);
 				if (albumCategory.getSection()!=null) {
-					CommonGenerator.getCommonGenerator().chargeContext(vu, albumCategory.getSection());
+					context.changeSection(vu, albumCategory.getSection());
 				} else {
-					CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
+					context.changeSection(vu, configSection);
 				}
 				Criteria albumCategoryDetailCriteria = new Criteria();
 				albumCategoryDetailCriteria.addEqualExpression(albumCategoryDetailBean.getFieldName(ICMSAlias.ALBUM_CATEGORY_DETAIL_ALBUM_CATEGORY_ID), albumCategory.getId());
@@ -162,7 +162,7 @@ public class AlbumGenerator extends Generator {
 			}
 			vu.put(ALBUM_CATEGORY_LIST_KEY, achlist);
 			logger.info(" Generando categorias de album.");
-			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
+			context.changeSection(vu, configSection);
 			generate(vu, Templates.ALBUM_CATEGORY, ALBUM_LIST_PAGE);
 			vu.remove(ALBUM_CATEGORY_LIST_KEY);
 		} catch (ManagerBeanException e) {

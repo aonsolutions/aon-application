@@ -24,6 +24,8 @@ public class ConfigController extends BasicI18nController{
 	private static final Logger LOGGER = Logger.getLogger(ConfigController.class.getName());
 	
 	private Config currentConfig;
+
+	private boolean richTextEnabled;
 	
 	public ConfigController() {
 		try {
@@ -75,4 +77,12 @@ public class ConfigController extends BasicI18nController{
 		session.setAttribute(Constants.SESSION_CONFIG, currentConfig);
 	}
 
+	public boolean isRichTextEnabled() {
+		return richTextEnabled;
+	}
+
+	public void setRichTextEnabled(boolean richTextEnabled) {
+		this.richTextEnabled = richTextEnabled;
+	}
+	
 }

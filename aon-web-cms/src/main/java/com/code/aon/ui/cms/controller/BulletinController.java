@@ -33,7 +33,7 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.email.Emailer;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
-import com.code.aon.ui.cms.velocity.CommonGenerator;
+import com.code.aon.ui.cms.velocity.GeneratorContext;
 import com.code.aon.ui.cms.velocity.IVelocityConstants;
 import com.code.aon.ui.cms.velocity.attribute.ArticleHandler;
 import com.code.aon.ui.form.FormUtil;
@@ -43,6 +43,16 @@ import com.code.aon.ui.util.AonUtil;
 public class BulletinController extends BasicI18nController implements ICMSConstants, IVelocityConstants {
 
 	private int page;
+	
+	private boolean richTextEnabled;
+
+	public boolean isRichTextEnabled() {
+		return richTextEnabled;
+	}
+
+	public void setRichTextEnabled(boolean richTextEnabled) {
+		this.richTextEnabled = richTextEnabled;
+	}
 	
 	public int getPage() {
 		return page;
@@ -120,6 +130,7 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean(GENERATOR_STATUS);
 		status.onInit(event);
 		
+		GeneratorContext context = new GeneratorContext();
 		BufferedWriter buff = null;
 		List<ITransferObject> list;
 		List<ITransferObject> listBulletinArticle;
@@ -173,7 +184,7 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 					++i;
 				}
 
-				VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
+				VelocityUtil vu = context.initVelocityUtil();
 				
 				File template = new File( ControllerUtil.getCurrentVmTemplatePath(), Templates.BULLETIN.getTemplateName() );  
 			    if (!template.exists()){
@@ -205,7 +216,7 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 			status.error("Error de autentificacion.");
 		} catch (Throwable th) {
 			status.error(th.getMessage());
-		}finally {
+		} finally {
 			article_content = null;
 			list = null;
 			article_list = null;

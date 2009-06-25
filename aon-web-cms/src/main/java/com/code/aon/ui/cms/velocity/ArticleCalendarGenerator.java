@@ -125,9 +125,9 @@ public class ArticleCalendarGenerator extends Generator {
 			
 			Section configSection = GeneratorConfigController.currentSection(ArticleConfig.class);
 
-			VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();
+			VelocityUtil vu = context.initVelocityUtil();
 
-			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
+			context.changeSection(vu, configSection);
 
 			for (int pos=0; pos < monthsList.size(); ++pos){
 				MonthContent monthContent = monthsList.get(pos);

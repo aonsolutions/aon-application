@@ -93,12 +93,12 @@
 						</aon:panelTab>
 						<aon:panelTab id="offline" label="#{appBundle.config_offline_message}">
 							<aon:panelGrid columns="2" dir="true">
-								<aon:outputLabel for="ConfigDetail_offline_message"
-									value="#{appBundle.config_offline_message}" />
-								<rich:editor id="ConfigDetail_offline_message"
-									value="#{config.toI18n.offline_message}" 
-									height="250" width="620" configuration="tinyMCE" 
-									language="#{facesContext.application.defaultLocale.language}" />								
+								<ui:include src="/facelet/content/utils/contentInput.xhtml" >
+									<ui:param name="labelValue" value="#{appBundle.config_offline_message}" />
+									<ui:param name="inputTextId" value="ConfigDetail_offline_message" />
+									<ui:param name="inputTextValue" value="#{config.toI18n.offline_message}" />
+									<ui:param name="richTextEnabled" value="#{config.richTextEnabled}" />
+								</ui:include>																	
 							</aon:panelGrid>
 						</aon:panelTab>
 						<aon:panelTab id="smtp" label="#{appBundle.config_smtp_server}" rendered="#{cms.administrator}">

@@ -36,7 +36,7 @@ public class SportGenerator extends Generator {
 	public static String MAIN_PAGE = "index";
 
 	public void generate() {
-		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();	
+		VelocityUtil vu = context.initVelocityUtil();	
 		List<ITransferObject> categoryDetailList;
 		List<ITransferObject> clubList;
 		List<ITransferObject> positionList;
@@ -103,7 +103,7 @@ public class SportGenerator extends Generator {
 			}
 			
 			Section configSection = GeneratorConfigController.currentSection(SportConfig.class);
-			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
+			context.changeSection(vu, configSection);
 			for (Iterator iterCat = sportCategoryHandlerList.iterator(); iterCat.hasNext();) {
 				SportCategoryHandler categoryHandler = (SportCategoryHandler) iterCat.next();
 				vu.put("category", categoryHandler);

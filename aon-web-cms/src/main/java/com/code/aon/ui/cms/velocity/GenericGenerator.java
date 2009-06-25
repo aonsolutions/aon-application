@@ -24,7 +24,7 @@ public class GenericGenerator extends Generator {
 	}
 
 	public void generate(GenericPage selectedPage) {
-		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();	
+		VelocityUtil vu = context.initVelocityUtil();	
 		List<ITransferObject> genericPageList;
 		List<ITransferObject> genericPageDetailList;
 		try {
@@ -68,7 +68,7 @@ public class GenericGenerator extends Generator {
 						vu.remove(KEYWORDS_KEY);
 					}
 					logger.info(" Generando Página Genérica '" + gpd.getGeneric_page().getAlias() + "'.");
-					CommonGenerator.getCommonGenerator().chargeContext(vu, gpd.getGeneric_page().getSection());
+					context.changeSection(vu, gpd.getGeneric_page().getSection());
 					generate(vu, Templates.GENERIC, gpd.getGeneric_page().getAlias());
 					vu.remove(GENERIC_KEY);
 					vu.remove(DESCRIPTION_KEY);

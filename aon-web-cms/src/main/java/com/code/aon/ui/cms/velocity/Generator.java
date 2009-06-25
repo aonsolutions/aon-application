@@ -4,6 +4,7 @@ import java.io.File;
 
 import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.ui.cms.IGeneratorLogger;
+import com.code.aon.ui.cms.controller.GeneratorController;
 import com.code.aon.ui.cms.controller.GeneratorStatusController;
 import com.code.aon.ui.cms.controller.ICMSConstants;
 import com.code.aon.ui.cms.util.ControllerUtil;
@@ -11,11 +12,15 @@ import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class Generator implements ICMSConstants, IVelocityConstants {
+	
+	protected GeneratorContext context;
 
 	protected IGeneratorLogger logger;
 	
 	public Generator() {
-		this.logger = getLogger();		
+		GeneratorController generator = (GeneratorController) AonUtil.getRegisteredBean(GENERATOR);
+		this.context = generator.getContext();
+		this.logger = this.context.getLogger();		
 	}
 	
     protected static IGeneratorLogger getLogger() {

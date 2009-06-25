@@ -100,12 +100,11 @@
 									required="true"
 									value="#{bulletin.toI18n.title}" size="85" maxlength="255" />
 								
-								<aon:outputLabel for="content"
-									value="#{appBundle.bulletin_content}" />
-								<rich:editor id="content"
-									value="#{bulletin.toI18n.content}" 
-									height="250" width="620" configuration="tinyMCE" 
-									language="#{facesContext.application.defaultLocale.language}" />								
+								<ui:include src="/facelet/content/utils/contentInput.xhtml" >
+									<ui:param name="inputTextId" value="content" />
+									<ui:param name="inputTextValue" value="#{bulletin.toI18n.content}" />
+									<ui:param name="richTextEnabled" value="#{bulletin.richTextEnabled}" />
+								</ui:include>																	
 							
 							</aon:panelGrid>
 						</aon:panelTab>

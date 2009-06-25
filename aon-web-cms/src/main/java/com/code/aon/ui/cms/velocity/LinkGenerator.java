@@ -40,7 +40,7 @@ public class LinkGenerator extends Generator {
 	}
 
 	public void generate(LinkCategory selectedCategory) {
-		VelocityUtil vu = CommonGenerator.getCommonGenerator().initVelocityUtil();	
+		VelocityUtil vu = context.initVelocityUtil();	
 		ArrayList<LinkCategoryHandler> lchList;
 		List<ITransferObject> linkCategoryList;
 		List<ITransferObject> linkCategoryDetailList;
@@ -87,7 +87,7 @@ public class LinkGenerator extends Generator {
 						else
 							currentSection = GeneratorConfigController.defaultSection();
 					}
-					CommonGenerator.getCommonGenerator().chargeContext(vu, currentSection);
+					context.changeSection(vu, currentSection);
 
 					generate(vu, Templates.LINK, lcd.getLinkCategory().getAlias());
 					vu.remove("link_category");
@@ -111,14 +111,14 @@ public class LinkGenerator extends Generator {
 				linkCategoryHandlerSet = (ArrayList<LinkCategoryHandler>)categoryMap.get(key);
 				vu.put("link_categories", linkCategoryHandlerSet);
 				logger.info(" Generando listado categoria seccion Link.");
-				CommonGenerator.getCommonGenerator().chargeContext(vu, section);
+				context.changeSection(vu, section);
 				generate(vu, Templates.LINK, LINK_CATEGORY_BY_SECTION_PAGE + section.getId());
 				vu.remove("link_categories");
 			}
 			iter = null;
 			vu.put("link_categories", lchList);
 			logger.info(" Generando listado categoria Link.");
-			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
+			context.changeSection(vu, configSection);
 			generate(vu, Templates.LINK, LINK_CATEGORY_LIST_PAGE);
 			vu.remove("link_categories");
 		} catch (ManagerBeanException e) {

@@ -116,12 +116,11 @@
 									size="90" maxlength="255"
 									value="#{headers.toI18n.sitename}" />
 								
-								<aon:outputLabel for="headerDetail_content"
-									value="#{appBundle.header_content}" />
-								<rich:editor id="headerDetail_content"
-									value="#{headers.toI18n.content}" 
-									height="250" width="620" configuration="tinyMCE" 
-									language="#{facesContext.application.defaultLocale.language}" />								
+								<ui:include src="/facelet/content/utils/contentInput.xhtml" >
+									<ui:param name="inputTextId" value="headerDetail_content" />
+									<ui:param name="inputTextValue" value="#{headers.toI18n.content}" />
+									<ui:param name="richTextEnabled" value="#{headers.richTextEnabled}" />
+								</ui:include>																									
 								
 								<aon:outputLabel 
 									value="#{appBundle.cms_image}" />
