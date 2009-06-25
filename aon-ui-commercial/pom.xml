@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.commercial</artifactId>
-	<version>3.5.0</version>
+	<version>3.4.3</version>
 	<description>AON UI COMMERCIAL</description>
 	<name>AON UI COMMERCIAL</name>
 	<dependencies>
@@ -29,19 +29,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.commercial</artifactId>
-			<version>3.2.0</version>
+			<version>3.1.7</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.company</artifactId>
 			<version>3.3.3</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.config</artifactId>
-			<version>3.6.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -65,7 +59,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.seller</artifactId>
-			<version>3.0.6</version>
+			<version>3.0.5</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
