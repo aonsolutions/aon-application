@@ -72,29 +72,27 @@
 
 						<aon:outputLabel for="AccountEntry_type"
 							value="#{bundle.aon_type}" />
-						<aon:div>
-							<aon:selectOneMenu id="AccountEntry_type"
-								value="#{financeEntry.payment}" disabled="#{financeEntry.payment != null}"
-								valueChangeListener="#{financeEntry.onTypeChanged}" reRender="AccountEntry_type,financePanelTabSet">
-								<f:selectItem itemLabel="" value="#{null}" />
-								<f:selectItem itemLabel="#{accountingBundle.accounting_collection}" itemValue="#{false}" />
-								<f:selectItem itemLabel="#{accountingBundle.accounting_payment}" itemValue="#{true}" />
-							</aon:selectOneMenu>
-							<h:commandLink immediate="true" target="_blank"
-								rendered="#{!financeEntry.new}" 
-								styleClass="aon-dataTable-link"
-								title="#{accountingBundle.accounting_lookup_account_entry}"
-								actionListener="#{financeEntry.onViewAccountEntry}"
-								action="accountEntry_form">
-								<aon:outputText styleClass="aon-italic aon-margin-left"
-									value="(#{accountingBundle.accounting_account_entry}: "/>
-								<aon:outputText styleClass="aon-bold"
-									value="#{financeEntry.accountEntry.id}"/>
-								<aon:outputText styleClass="aon-italic" value=")"/>
-								<f:setPropertyActionListener value="#{true}" 
-									target="#{aonConfiguration.properties.hideHeaderLinks}" />
-							</h:commandLink>
-						</aon:div>
+						<aon:selectOneMenu id="AccountEntry_type"
+							value="#{financeEntry.payment}" disabled="#{financeEntry.payment != null}"
+							valueChangeListener="#{financeEntry.onTypeChanged}" reRender="AccountEntry_type,financePanelTabSet">
+							<f:selectItem itemLabel="" value="#{null}" />
+							<f:selectItem itemLabel="#{accountingBundle.accounting_collection}" itemValue="#{false}" />
+							<f:selectItem itemLabel="#{accountingBundle.accounting_payment}" itemValue="#{true}" />
+						</aon:selectOneMenu>
+
+						<aon:outputLabel for="AccountEntry_balancingConcept"
+							value="#{bundle.aon_concept}" />
+						<aon:inputText id="AccountEntry_balancingConcept"
+							value="#{financeEntry.concept}" size="50" maxlength="32">
+						</aon:inputText>
+
+						<aon:outputLabel for="AccountEntry_accountPeriod"
+							value="#{accountingBundle.accounting_period}" />
+						<aon:selectOneMenu id="AccountEntry_accountPeriod"
+							value="#{financeEntry.period}">
+							<f:selectItems value="#{accountingCollections.accountPeriods}" />
+							<a4j:support event="onchange" ajaxSingle="true" reRender="AccountEntry_accountPeriod"/>
+						</aon:selectOneMenu>
 
 						<aon:outputLabel for="AccountEntry_date" 
 							value="#{bundle.aon_date}" />
@@ -119,7 +117,7 @@
 						<aon:selectOneMenu id="AccountEntry_balancingRegistryBank"
 							value="#{financeEntry.registryBank}"
 							rendered="#{financeEntry.deposit == 0}">
-							<f:selectItems value="#{financeEntry.companyRegistryBanks}" />
+							<f:selectItems value="#{companyCollections.companyBanks}" />
 						</aon:selectOneMenu>
 						<aon:outputLabel for="AccountEntry_balancingCashAccount"
 							value="#{financeBundle.finance_cash}"
@@ -138,12 +136,6 @@
 							<f:selectItems value="#{commonCollections.securityLevels}" />
 						</aon:selectOneRadio>
 
-						<aon:outputLabel for="AccountEntry_balancingConcept"
-							value="#{bundle.aon_concept}" />
-						<aon:inputText id="AccountEntry_balancingConcept"
-							value="#{financeEntry.concept}" size="50" maxlength="32">
-						</aon:inputText>
-
 						<aon:outputLabel for="AccountEntry_total"
 							value="#{bundle.aon_total}" />
 						<aon:outputText id="AccountEntry_total"
@@ -153,8 +145,6 @@
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>	
 
-						<aon:outputText value="&#160;" />
-						<aon:outputText value="&#160;" />
 					</aon:panelGrid>
 				</aon:div>
 
