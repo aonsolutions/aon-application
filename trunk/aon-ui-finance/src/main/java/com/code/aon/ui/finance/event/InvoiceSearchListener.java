@@ -152,8 +152,10 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 			String status = getController().resolveAlias("Invoice.finances.financeStatus");
 			addEnumToCriteria(criteria, status, getFinanceStatuses());
 		}
-		String payMethod = getController().resolveAlias("Invoice.finances.payMethod.id");
-		addEnumToCriteria(criteria, payMethod, getPayMethodsIds().toArray());
+		if (getPayMethods() != null && getPayMethodsSize() > 0) {
+			String payMethod = getController().resolveAlias("Invoice.finances.payMethod.id");
+			addEnumToCriteria(criteria, payMethod, getPayMethodsIds().toArray());
+		}
 	}	
 
 	public void onAddPayMethod(ActionEvent event) {
