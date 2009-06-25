@@ -12,6 +12,7 @@ public enum BalanceType implements IResourceable {
 	
 	CLOSING,
 	OPERATING,
+	PATRIMONY,
 	CUSTOM;
 	
 	/** Message file base path. */
