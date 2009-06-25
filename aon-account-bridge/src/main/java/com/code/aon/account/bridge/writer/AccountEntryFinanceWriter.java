@@ -13,6 +13,7 @@ import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
@@ -27,7 +28,6 @@ import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
-import com.code.aon.registry.RegistryBank;
 
 /**
  * The Class AccountEntryFinanceWriter.
@@ -42,20 +42,19 @@ public class AccountEntryFinanceWriter {
 	@SuppressWarnings("unchecked")
 	public AccountEntry recordFBatchDetails(FinanceRecordingTo to, FinanceBatch fbatch) throws ManagerBeanException {
 		AccountEntry entry = createAccountEntry(to);
-		Account bankAccount = (to.getRegistryBank() != null?AccountUtil.obtainRBankAccount(to.getRegistryBank()):AccountUtil.obtainCashAccount());
 
 		Iterator iterator = to.getFBatchDetailList().iterator();
 		double amount = 0.0;
 		while (iterator.hasNext()) {
 			FinanceBatchDetail fbatchDetail = (FinanceBatchDetail)iterator.next();
 			amount += fbatchDetail.getAmount();
-			insertFBatchDetailEntryDetail(bankAccount, fbatchDetail, entry);
+			insertFBatchDetailEntryDetail(to.getPaymentAccount(), fbatchDetail, entry);
 		}
-		insertFBatchDetailLastEntryDetail(bankAccount, entry, fbatch.getDescription(), amount);
+		insertFBatchDetailLastEntryDetail(to.getPaymentAccount(), entry, fbatch.getDescription(), amount);
 		return entry;
 	}
 
-	private void insertFBatchDetailEntryDetail(Account bankAccount, FinanceBatchDetail fbatchDetail, AccountEntry entry) throws ManagerBeanException {
+	private void insertFBatchDetailEntryDetail(Account paymentAccount, FinanceBatchDetail fbatchDetail, AccountEntry entry) throws ManagerBeanException {
 		AccountEntryDetail detail = new AccountEntryDetail();
 		detail.setAccountEntry(entry);
 		Account registryAccount = null;
@@ -71,16 +70,16 @@ public class AccountEntryFinanceWriter {
 		}
 		detail.setAccount(registryAccount);
 		detail.setConcept(obtainConcept(fbatchDetail.getFinance().getInvoice(), fbatchDetail.getAmount(), fbatchDetail.getFinanceBatch()));
-		detail.setBalancingAccount(bankAccount);
+		detail.setBalancingAccount(paymentAccount);
 
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		accountEntryDetailBean.insert(detail);
 	}
 	
-	private void insertFBatchDetailLastEntryDetail(Account bankAccount, AccountEntry entry, String concept, double amount) throws ManagerBeanException {
+	private void insertFBatchDetailLastEntryDetail(Account paymentAccount, AccountEntry entry, String concept, double amount) throws ManagerBeanException {
 		AccountEntryDetail detail = new AccountEntryDetail();
 		detail.setAccountEntry(entry);
-		detail.setAccount(bankAccount);
+		detail.setAccount(paymentAccount);
 		detail.setConcept(concept);
 		detail.setBalancingAccount(null);
 		if (entry.getType().equals(AccountEntryType.COLLECTION)) {
@@ -93,29 +92,28 @@ public class AccountEntryFinanceWriter {
 		accountEntryDetailBean.insert(detail);
 	}
 	
-	public AccountEntry recordFinance(Finance finance, RegistryBank registryBank, Date paymentDate) throws ManagerBeanException {
+	public AccountEntry recordFinance(Finance finance, Account paymentAccount, Date paymentDate) throws ManagerBeanException {
 		List<Finance> list = new LinkedList<Finance>();
 		list.add(finance);
 
 		FinanceRecordingTo recordingTo = new FinanceRecordingTo();
 		recordingTo.setType((finance.isPayment())?AccountEntryType.PAYMENT:AccountEntryType.COLLECTION);
 		recordingTo.setDate(paymentDate);
-		recordingTo.setRegistryBank(registryBank);
+		recordingTo.setPaymentAccount(paymentAccount);
 		recordingTo.setSecurityLevel((finance.getSecurityLevel()==null)?SecurityLevel.OFFICIAL:finance.getSecurityLevel());
 		recordingTo.setFinanceList(list);
 		return recordFinances(recordingTo, null);
 	}
 
 	public AccountEntry recordFinances(FinanceRecordingTo to, AccountEntry entry) throws ManagerBeanException {
-		Account bankAccount = (to.getRegistryBank()!= null)?AccountUtil.obtainRBankAccount(to.getRegistryBank()):AccountUtil.obtainCashAccount();
 		if (entry == null) {
 			entry = createAccountEntry(to);
 		}
-		insertFinanceEntryDetails(bankAccount, entry, to);
+		insertFinanceEntryDetails(to.getPaymentAccount(), entry, to);
 		return entry;
 	}
 
-	private void insertFinanceEntryDetails(Account bankAccount, AccountEntry entry, FinanceRecordingTo recordingTo) throws ManagerBeanException {
+	private void insertFinanceEntryDetails(Account paymentAccount, AccountEntry entry, FinanceRecordingTo recordingTo) throws ManagerBeanException {
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		Invoice invoice = null;
 		Account registryAccount = null;
@@ -141,7 +139,7 @@ public class AccountEntryFinanceWriter {
 			}
 			detail.setAccount(registryAccount);
 			detail.setConcept(obtainConcept(finance.getInvoice(), finance.getTotalAmount(), null));
-			detail.setBalancingAccount(bankAccount);
+			detail.setBalancingAccount(paymentAccount);
 			accountEntryDetailBean.insert(detail);
 		}
 
@@ -149,7 +147,7 @@ public class AccountEntryFinanceWriter {
 		// Segundo Apunte
 		AccountEntryDetail detail = new AccountEntryDetail();
 		detail.setAccountEntry(entry);
-		detail.setAccount(bankAccount);
+		detail.setAccount(paymentAccount);
 		detail.setConcept((StringUtils.isEmpty(recordingTo.getBalancingConcept()))?obtainConcept(invoice, balancingAmount, null):recordingTo.getBalancingConcept());
 		detail.setBalancingAccount((recordingTo.getFinanceList().size()==1)?registryAccount:null);
 		if (entry.getType().equals(AccountEntryType.COLLECTION)) {
@@ -160,14 +158,14 @@ public class AccountEntryFinanceWriter {
 		accountEntryDetailBean.insert(detail);
 	}
 
-	public AccountEntry returnFinance(Finance finance, RegistryBank registryBank, Date returnDate) throws ManagerBeanException {
+	public AccountEntry returnFinance(Finance finance, Account paymentAccount, Date returnDate) throws ManagerBeanException {
 		List<Finance> list = new LinkedList<Finance>();
 		list.add(finance);
 
 		FinanceRecordingTo recordingTo = new FinanceRecordingTo();
 		recordingTo.setType((finance.isPayment()?AccountEntryType.RETURNED_PAYMENT:AccountEntryType.RETURNED_COLLECTION));
 		recordingTo.setDate(returnDate);
-		recordingTo.setRegistryBank(registryBank);
+		recordingTo.setPaymentAccount(paymentAccount);
 		recordingTo.setSecurityLevel(finance.getSecurityLevel()==null?SecurityLevel.OFFICIAL:finance.getSecurityLevel());
 		recordingTo.setFinanceList(list);
 		return returnFinances(recordingTo);
@@ -175,15 +173,14 @@ public class AccountEntryFinanceWriter {
 
 	private AccountEntry returnFinances(FinanceRecordingTo to) throws ManagerBeanException {
 		AccountEntry entry = createAccountEntry(to);
-		Account bankAccount = (to.getRegistryBank() != null) ? AccountUtil.obtainRBankAccount(to.getRegistryBank()) : AccountUtil.obtainCashAccount();
 		if (to.getFinanceList().size() > 0) {
 			Finance finance = to.getFinanceList().get(0);
-			insertReturnEntryDetails(bankAccount, entry, finance);
+			insertReturnEntryDetails(to.getPaymentAccount(), entry, finance);
 		}
 		return entry;
 	}
 
-	private void insertReturnEntryDetails(Account bankAccount, AccountEntry entry, Finance finance) throws ManagerBeanException {
+	private void insertReturnEntryDetails(Account paymentAccount, AccountEntry entry, Finance finance) throws ManagerBeanException {
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		// Primer Apunte
 		AccountEntryDetail detail = new AccountEntryDetail();
@@ -201,13 +198,13 @@ public class AccountEntryFinanceWriter {
 		}
 		detail.setAccount(registryAccount);
 		detail.setConcept(obtainReturnConcept(finance.getInvoice()));
-		detail.setBalancingAccount(bankAccount);
+		detail.setBalancingAccount(paymentAccount);
 		accountEntryDetailBean.insert(detail);
 
 		// Segundo Apunte
 		detail = new AccountEntryDetail();
 		detail.setAccountEntry(entry);
-		detail.setAccount(bankAccount);
+		detail.setAccount(paymentAccount);
 		detail.setConcept(obtainReturnConcept(finance.getInvoice()));
 		detail.setBalancingAccount(registryAccount);
 		if (entry.getType().equals(AccountEntryType.RETURNED_COLLECTION)) {
@@ -219,8 +216,9 @@ public class AccountEntryFinanceWriter {
 	}
 
 	private AccountEntry createAccountEntry(FinanceRecordingTo to) throws ManagerBeanException {
+		Period period = to.getPeriod();
 		AccountEntry entry = new AccountEntry();
-		entry.setAccountPeriod(AccountUtil.obtainPeriod(to.getDate()).getId());
+		entry.setAccountPeriod((period!=null && period.getId()!=null) ? period.getId() : AccountUtil.obtainPeriod(to.getDate()).getId());
 		entry.setEntryDate(to.getDate());
 		entry.setType(to.getType());
 		entry.setJournal(null);

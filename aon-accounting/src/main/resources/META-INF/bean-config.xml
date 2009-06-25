@@ -55,4 +55,17 @@
 		</vetoListeners>
 	</bean>
 
+	<bean description="Listener para inicializar campos en Balance.">
+		<pojo>com.code.aon.accounting.Balance</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.accounting.event.BalanceBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Listener para controlar los datos del prestamo.">
+		<pojo>com.code.aon.accounting.Loan</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.accounting.event.LoanBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
 </bean-config>

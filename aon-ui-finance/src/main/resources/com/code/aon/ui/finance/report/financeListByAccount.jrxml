@@ -43,7 +43,7 @@
 	</variable>
 
 		<group  name="total" >
-			<groupExpression><![CDATA[]]></groupExpression>
+			<groupExpression><![CDATA[$F{amount}]]></groupExpression>
 			<groupHeader>
 			<band height="0"  isSplitAllowed="true" >
 			</band>
@@ -404,7 +404,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{invoice}.getRegistry().getId()+" "+ $F{invoice}.getRegistry().getName()+ " "+ $F{invoice}.getRegistry().getSurname()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[(($F{invoice}.getRegistry().getSurname() == null || $F{invoice}.getRegistry().getSurname().equals(""))?"":$F{invoice}.getRegistry().getSurname() + ", ") + $F{invoice}.getRegistry().getId()+" "+ $F{invoice}.getRegistry().getName()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
