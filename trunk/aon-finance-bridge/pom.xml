@@ -17,23 +17,23 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.common</artifactId>
-			<version>3.3.0</version>
+			<version>3.4.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.finance</artifactId>
-			<version>3.5.0</version>
+			<version>3.15.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.sales</artifactId>
-			<version>3.3.1</version>
+			<version>3.3.7</version>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.warehouse</artifactId>
-			<version>3.2.3</version>
+			<version>3.2.8</version>
 		</dependency>
 	</dependencies>
 </project>
