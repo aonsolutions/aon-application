@@ -17,11 +17,12 @@
 				<ui:param name="toolbarDescription" value="#{salaryEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="save" value="#{accountingBundle.accounting_entry_generate}"
+					<aon:commandButton id="save" 
+						value="#{accountingBundle.accounting_entry_generate}"
 						accesskey="#{bundle.aon_key_save}"
 						title="#{accountingBundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
-						actionListener="#{salaryEntry.accept}"
-						action="accountEntry_form"
+						actionListener="#{salaryEntry.onAccept}"
+						action="#{salaryEntry.accept}"
 						disabled="#{salaryEntry.header.grossSalary == 0}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						onclick="if (!confirm('#{accountingBundle.accounting_entry_generate}?')) return false;" />
@@ -39,7 +40,6 @@
 						rendered="#{!salaryEntry.new}" immediate="true"
 						styleClass="aon-finding-toolbar-item aon-icon-delete"
 						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;" />
-
 					<aon:commandButton value="#{bundle.aon_back}"
 						accesskey="#{bundle.aon_key_cancel}"
 						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})" 
@@ -62,24 +62,19 @@
 			<aon:div id="entryContainer" styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2">
 
+					<aon:outputLabel for="AccountEntry_accountPeriod"
+						value="#{accountingBundle.accounting_period}" />
+					<aon:selectOneMenu id="AccountEntry_accountPeriod"
+						value="#{salaryEntry.header.period}">
+						<f:selectItems value="#{accountingCollections.accountPeriods}" />
+						<a4j:support event="onchange" ajaxSingle="true" reRender="AccountEntry_accountPeriod"/>
+					</aon:selectOneMenu>
 
 					<aon:outputLabel for="date" value="#{bundle.aon_date}" />
-					<aon:div id="div">
-						<aon:selectInputDate id="date" required="true"
-							value="#{salaryEntry.header.date}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}">
-							<a4j:support event="oninputchange" reRender="dateMsg"
-								ajaxSingle="true" />
-							<a4j:support event="onchanged" reRender="dateMsg"
-								ajaxSingle="true" />
-						</aon:selectInputDate>
-						<aon:outputText
-							style="#{salaryEntry.periodMessage==null?'color:red;':''}"
-							id="dateMsg"
-							value="Ejercicio #{(salaryEntry.periodMessage==null)?'no definido':salaryEntry.periodMessage}" />
-					</aon:div>
-
+					<aon:selectInputDate id="date" required="true"
+						value="#{salaryEntry.header.date}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
 
 					<aon:outputLabel for="Account_registryBank"
 						value="#{configBundle.config_bank}" />
@@ -91,7 +86,7 @@
 
 					<aon:outputLabel for="Account_concept"
 						value="#{bundle.aon_concept}" />
-					<aon:inputText id="Account_concept"
+					<aon:inputText id="Account_concept" required="true"
 						value="#{salaryEntry.header.concept}" size="50" maxlength="32" />
 
 					<aon:outputLabel for="AccountEntry_securityLevel"
@@ -103,25 +98,25 @@
 
 					<aon:outputLabel for="Account_gross_salary"
 						value="#{accountingBundle.accounting_gross_salary}" />
-					<aon:inputText id="Account_gross_salary"
+					<aon:inputText id="Account_gross_salary" required="true"
 						value="#{salaryEntry.header.grossSalary}" size="15"
 						ajaxSingle="true" reRender="save,Account_net_salary" />
 
 					<aon:outputLabel for="Account_retention"
 						value="#{bundle.aon_retention}" />
-					<aon:inputText id="Account_retention"
+					<aon:inputText id="Account_retention" required="true"
 						value="#{salaryEntry.header.retention}" size="15"
 						ajaxSingle="true" reRender="Account_net_salary" />
 
-					<h:outputLabel for="Account_employee_social_insurance"
+					<aon:outputLabel for="Account_employee_social_insurance"
 						value="#{accountingBundle.accounting_employee_social_insurance}" />
-					<aon:inputText id="Account_employee_social_insurance"
+					<aon:inputText id="Account_employee_social_insurance" required="true"
 						value="#{salaryEntry.header.employeeSocialInsurance}" size="15"
 						ajaxSingle="true" reRender="Account_net_salary" />
 
-					<h:outputLabel for="Account_company_social_insurance"
+					<aon:outputLabel for="Account_company_social_insurance"
 						value="#{accountingBundle.accounting_company_social_insurance}" />
-					<aon:inputText id="Account_company_social_insurance"
+					<aon:inputText id="Account_company_social_insurance" required="true"
 						value="#{salaryEntry.header.companySocialInsurance}" size="15" />
 
 					<aon:outputLabel for="Account_net_salary"

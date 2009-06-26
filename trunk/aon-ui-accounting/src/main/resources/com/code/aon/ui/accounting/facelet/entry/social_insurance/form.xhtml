@@ -17,11 +17,12 @@
 				<ui:param name="toolbarDescription" value="#{socialInsuranceEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 						
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="save" value="#{accountingBundle.accounting_entry_generate}"
+					<aon:commandButton id="save" 
+						value="#{accountingBundle.accounting_entry_generate}"
 						accesskey="#{bundle.aon_key_save}"
 						title="#{accountingBundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
-						actionListener="#{socialInsuranceEntry.accept}"
-						action="accountEntry_form"
+						actionListener="#{socialInsuranceEntry.onAccept}"
+						action="#{socialInsuranceEntry.accept}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						onclick="if (!confirm('#{accountingBundle.accounting_entry_generate}?')) return false;" />
 					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
@@ -38,7 +39,6 @@
 						rendered="#{!socialInsuranceEntry.new}" immediate="true"
 						styleClass="aon-finding-toolbar-item aon-icon-delete"
 						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;" />
-						
 					<aon:commandButton value="#{bundle.aon_back}"
 						accesskey="#{bundle.aon_key_cancel}"
 						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})" 
@@ -61,19 +61,20 @@
 			<aon:div id="entryContainer" styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2">
 
+					<aon:outputLabel for="AccountEntry_accountPeriod"
+						value="#{accountingBundle.accounting_period}" />
+					<aon:selectOneMenu id="AccountEntry_accountPeriod"
+						value="#{socialInsuranceEntry.header.period}">
+						<f:selectItems value="#{accountingCollections.accountPeriods}" />
+						<a4j:support event="onchange" ajaxSingle="true" reRender="AccountEntry_accountPeriod"/>
+					</aon:selectOneMenu>
+
 					<aon:outputLabel for="Account_date"
 						value="#{bundle.aon_date}" />
-					<aon:div>
-						<aon:selectInputDate id="Account_date" required="true"
-							value="#{socialInsuranceEntry.header.date}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}">
-							<a4j:support event="oninputchange" reRender="dateMsg" ajaxSingle="true" />
-							<a4j:support event="onchanged" reRender="dateMsg" ajaxSingle="true" />
-						</aon:selectInputDate>
-						<aon:outputText style="#{socialInsuranceEntry.periodMessage==null?'color:red;':''}" id="dateMsg" 
-							value="Ejercicio #{(socialInsuranceEntry.periodMessage==null)?'no definido':socialInsuranceEntry.periodMessage}" />
-					</aon:div>
+					<aon:selectInputDate id="Account_date" required="true"
+						value="#{socialInsuranceEntry.header.date}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
 
 					<aon:outputLabel for="Account_registryBank"
 						value="#{configBundle.config_bank}" />
@@ -85,15 +86,15 @@
 
 					<aon:outputLabel for="Account_concept"
 						value="#{bundle.aon_concept}" />
-					<aon:inputText id="Account_concept"
+					<aon:inputText id="Account_concept" required="true"
 						value="#{socialInsuranceEntry.header.concept}" size="50" maxLength="32" />
 
 					<aon:outputLabel for="AccountEntry_securityLevel"
 						value="#{bundle.aon_security_level}" />
-					<aon:selectOneMenu id="AccountEntry_securityLevel"
+					<aon:selectOneRadio id="AccountEntry_securityLevel"
 						value="#{socialInsuranceEntry.header.securityLevel}">
 						<f:selectItems value="#{commonCollections.securityLevels}" />
-					</aon:selectOneMenu>
+					</aon:selectOneRadio>
 
 					<aon:outputLabel for="Account_amount"
 						value="#{bundle.aon_amount}" />

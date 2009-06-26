@@ -19,7 +19,7 @@
 					<aon:commandButton value="#{accountingBundle.accounting_entry_generate}"
 						accesskey="#{bundle.aon_key_save}"
 						title="#{accountingBundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
-						actionListener="#{loanEntry.accept}" action="accountEntry_form"
+						actionListener="#{loanEntry.onAccept}" action="#{loanEntry.accept}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;" />
 					<aon:commandButton id="remove" value="#{bundle.aon_remove}"
@@ -55,32 +55,30 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="dataTable" columns="2">
 
+					<aon:outputLabel for="AccountEntry_accountPeriod"
+						value="#{accountingBundle.accounting_period}" />
+					<aon:selectOneMenu id="AccountEntry_accountPeriod"
+						value="#{loanEntry.period}">
+						<f:selectItems value="#{accountingCollections.accountPeriods}" />
+						<a4j:support event="onchange" ajaxSingle="true" reRender="AccountEntry_accountPeriod"/>
+					</aon:selectOneMenu>
+
 					<aon:outputLabel for="Account_date"
 						value="#{bundle.aon_date}" />
-					<aon:div>
-						<aon:selectInputDate id="Account_date" required="true"
-							value="#{loanEntry.loan.loanDate}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}">
-							<a4j:support event="oninputchange" reRender="dateMsg" ajaxSingle="true" />
-							<a4j:support event="onchanged" reRender="dateMsg" ajaxSingle="true" />
-						</aon:selectInputDate>
-						<aon:outputText style="#{loanEntry.periodMessage==null?'color:red;':''}" id="dateMsg" 
-							value="Ejercicio #{(loanEntry.periodMessage==null)?'no definido':loanEntry.periodMessage}" />
-					</aon:div>
+					<aon:selectInputDate id="Account_date" required="true"
+						value="#{loanEntry.loan.loanDate}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
 
 					<aon:outputLabel for="Account_description"
 						value="#{bundle.aon_description}" />
-					<aon:inputText id="Account_description"
+					<aon:inputText id="Account_description" required="true"
 						value="#{loanEntry.loan.description}" size="60" />
 
 					<aon:outputLabel for="Account_term"
-						value="#{accountingBundle.accounting_term}" />
-					<aon:div>
-						<aon:inputText id="Account_term" value="#{loanEntry.loan.term}" size="8"/>
-						<aon:outputText value="#{accountingBundle.accounting_term_months}"
-							styleClass="aon-italic aon-margin-left" />						
-					</aon:div>
+						value="#{accountingBundle.accounting_term} (#{accountingBundle.accounting_term_months})" />
+					<aon:inputText id="Account_term" required="true"
+						value="#{loanEntry.loan.term}" size="8"/>
 
 					<aon:outputLabel for="Account_interest"
 						value="#{accountingBundle.accounting_interest}" />
@@ -98,36 +96,30 @@
 						value="#{loanEntry.loan.registryBank}"
 						reRender="RegistryBank_bankAccount"
 						focus="Account_amount">
-						<f:selectItem itemValue="" itemLabel="-" />
 						<f:selectItems value="#{companyCollections.companyBanks}" />
 					</aon:selectOneMenu>
 
-					<aon:outputText value="#{configBundle.config_bank_account}" />
-					<aon:div id="RegistryBank_bankAccount">
-						<aon:outputText value="#{loanEntry.loan.registryBank.bankAccount}"/>
-						<aon:outputText value="&#160;" />
-					</aon:div>
+					<aon:outputLabel for="Account_securityLevel"
+						value="#{bundle.aon_security_level}" />
+					<aon:selectOneRadio id="Account_securityLevel"
+						value="#{loanEntry.loan.securityLevel}">
+						<f:selectItems value="#{commonCollections.securityLevels}" />
+					</aon:selectOneRadio>
 
 					<aon:outputLabel for="Account_amount"
 						value="#{bundle.aon_amount}" />
-					<aon:inputText id="Account_amount"
+					<aon:inputText id="Account_amount" required="true"
 						value="#{loanEntry.loan.amount}" size="15">
 						<f:validateDoubleRange />
 					</aon:inputText>
 
 					<aon:outputLabel for="Account_expenses"
 						value="#{accountingBundle.accounting_expenses}" />
-					<aon:inputText id="Account_expenses"
+					<aon:inputText id="Account_expenses" required="true"
 						value="#{loanEntry.loan.expenses}" size="15">
 						<f:validateDoubleRange />
 					</aon:inputText>
 
-					<aon:outputLabel for="Leasing_securityLevel"
-						value="#{bundle.aon_security_level}" />
-					<aon:selectOneRadio id="Leasing_securityLevel"
-						value="#{loanEntry.loan.securityLevel}">
-						<f:selectItems value="#{commonCollections.securityLevels}" />
-					</aon:selectOneRadio>
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
