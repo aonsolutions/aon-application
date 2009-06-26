@@ -41,16 +41,8 @@
 						<aon:outputLabel for="Customer_account" value="#{accountBundle.account_accounting}" />
 						<h:panelGrid columns="2" id="accountContainer">
 							<ui:include
-								src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-								<ui:param name="wizard" value="#{accountWizard}" />
+								src="/com/code/aon/ui/account/facelet/lookup/account/accountLookup.xhtml">
 								<ui:param name="id" value="Customer_account" />
-								<ui:param name="required" value="#{false}" />
-								<ui:param name="size" value="9" />
-								<ui:param name="maxlength" value="9" />
-								<ui:param name="renderDescription" value="#{true}" />
-								<ui:param name="renderedAttr" value="#{true}" />
-								<ui:param name="disabled" value="#{false}" />
-								<ui:param name="reRenderAttr" value="none" />
 								<ui:param name="entity" value="#{customerAccount.account}" />
 								<ui:param name="ELExpression" value="customerAccount.account" />
 							</ui:include>
