@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="supplierForm">
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{supplierBundle.supplier_module}" />
+				<ui:param name="controller" value="#{supplier}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="dataTable" columns="2">
+
+					<ui:include src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml">
+						<ui:param name="controller" value="#{supplier}" />
+					</ui:include>
+
+					<aon:outputLabel for="Supplier_supplierSegment_id"
+						value="#{bundle.aon_segment}" />
+					<aon:selectOneMenu id="Supplier_supplierSegment_id"
+						value="#{supplier.to.supplierSegment}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{supplierCollections.supplierSegments}" />
+					</aon:selectOneMenu>
+				
+					<aon:outputLabel for="Supplier_scope_id"
+						value="#{bundle.aon_scope}" />
+					<aon:selectOneMenu id="Supplier_scope_id"
+						value="#{supplier.to.scope}">
+						<f:selectItems value="#{configCollections.currentUserScopes}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Supplier_status"
+						value="#{bundle.aon_status}" />
+					<aon:selectOneMenu id="Supplier_status"
+						value="#{supplier.to.status}">
+						<f:selectItems value="#{supplierCollections.supplierStatuses}" />
+					</aon:selectOneMenu>
+				</aon:panelGrid>
+				
+				<c:if test="#{!supplier.new}">
+					<aon:panelTabSet selectedTab="#{supplier.selectedTab}">
+
+						<aon:panelTab id="adddress" label="#{registryBundle.registry_address_module}">
+							<ui:include	src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
+								<ui:param name="controller" value="#{supplierAddress}" />
+							</ui:include>
+						</aon:panelTab>
+
+						<aon:panelTab id="media" label="#{registryBundle.registry_media_module}">
+							<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
+								<ui:param name="controller" value="#{supplierMedia}" />
+							</ui:include>
+						</aon:panelTab>
+ 
+ 						<c:if test="#{supplier.showFinanceRegistryBank}">
+							<aon:panelTab id="finance" label="#{financeBundle.finance_data_module}">
+								<ui:include src="/com/code/aon/ui/finance/facelet/rbank/tab_grid.xhtml">
+									<ui:param name="controller" value="#{supplierRbank}" />							</ui:include>
+							</aon:panelTab>
+						</c:if>
+
+					</aon:panelTabSet>
+				</c:if>
+				
+			</aon:div>
+		</aon:form>
+		<c:if test="#{supplier.showFinanceRegistryBank}">
+			<aon:lookupButtonPopup lookup="#{bankLookup}" />
+		</c:if>
+	</ui:define>
+</ui:composition>
+

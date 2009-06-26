@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<rich:dragIndicator id="messageIndicator">
+			<f:facet name="single">
+				<aon:outputText value="&#160;"
+					styleClass="aon-icon aon-icon-mailInbox-read"
+					style="cursor: pointer;width:16px;" />					
+			</f:facet>
+		</rich:dragIndicator>
+
+		<aon:form id="webmailForm">
+
+			<aon:panelGrid columns="2" style="width:100%"
+				columnClasses="aon-tree-column,aon-messages-column">
+
+				<ui:include src="/webmail/facelet/webmailTree.xhtml" />
+
+				<ui:include src="/webmail/facelet/folderMessagesTable.xhtml" />
+
+			</aon:panelGrid>
+
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

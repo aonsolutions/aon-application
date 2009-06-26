@@ -1,0 +1,226 @@
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<application>
+		<resource-bundle>
+			<base-name>com.code.aon.ui.supplier.i18n.messages</base-name>
+			<var>supplierBundle</var>
+		</resource-bundle>
+	</application>
+
+	<!--  ********* SUPPLIER WIZARD  ***************** -->
+	<managed-bean>
+		<managed-bean-name>supplierWizard</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.supplier.controller.SupplierWizard
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!--  ********* SUPPLIER CONVERTER ***************** -->
+	<converter>
+		<description>Se utiliza cuando se quiere seleccionar un Registry a partir de un Supplier</description>
+		<converter-id>SupplierRegistryConverter</converter-id>
+		<converter-class>com.code.aon.ui.supplier.converter.SupplierRegistryConverter</converter-class>
+	</converter>
+
+	<!--  ********* SUPPLIER COLLECTIONS ***************** -->
+	<managed-bean>
+		<managed-bean-name>supplierCollections</managed-bean-name>
+		<managed-bean-class> com.code.aon.ui.supplier.controller.SupplierCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!--  ********* SUPPLIER ***************** -->
+	<managed-bean>
+		<managed-bean-name>supplier</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.supplier.controller.SupplierController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.supplier.Supplier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>supplier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<value>#{supplierListeners}</value>
+		</managed-property>		
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>supplierListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<list-entries>
+			<value-class>
+				com.code.aon.ui.form.event.IControllerListener
+			</value-class>
+			<value>#{invoiceRegistryVetoListener}</value>
+			<value>#{supplierScopeListener}</value>
+			<value>#{supplierAddressListener}</value>
+			<value>#{supplierMediaListener}</value>			
+		</list-entries>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>supplierScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>Supplier_scope_id</value>
+		</managed-property>
+	</managed-bean>
+
+	<!--  **** ADDRESS **** -->
+	<managed-bean>
+		<managed-bean-name>supplierAddress</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>		
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryAddress</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>supplierAddress</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>supplier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>supplierAddressListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>		
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>supplierAddress</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryAddress_registry_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!--  **** MEDIA **** -->
+	<managed-bean>
+		<managed-bean-name>supplierMedia</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>		
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryMedia</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>supplierMedia</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>supplier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>supplierMediaListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>		
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>supplierMedia</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryMedia_registry_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>	
+
+	<!-- ************ SUPPLIER LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>supplierLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>supplierLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.supplier.Supplier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/supplier/facelet/lookup/supplier/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/supplier/facelet/lookup/supplier/search.xhtml</value>
+		</managed-property>				
+	</managed-bean>
+
+  <!--  ********* NAVIGATION ***************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>supplier_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/supplier/facelet/supplier/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>supplier_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/supplier/facelet/supplier/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>supplier_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/supplier/facelet/supplier/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+</faces-config>
