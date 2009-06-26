@@ -9,11 +9,19 @@ public class LoanFeeEntryHeader implements ITransferObject {
 
 	private static final long serialVersionUID = -8273893100974866857L;
 
+	private Period feePeriod;
 	private Date feeDate;
 	private Loan loan;
 	private String description;
 	private double amortization;
 	private double interest;
+
+	public Period getFeePeriod() {
+		return feePeriod;
+	}
+	public void setFeePeriod(Period feePeriod) {
+		this.feePeriod = feePeriod;
+	}
 
 	public Date getFeeDate() {
 		return feeDate;
