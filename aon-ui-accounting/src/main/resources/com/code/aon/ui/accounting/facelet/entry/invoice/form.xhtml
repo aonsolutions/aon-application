@@ -116,7 +116,7 @@
 							value="#{bundle.aon_series}/#{bundle.aon_number}" />
 						<aon:outputLabel for="Account_invoice_referenceCode"
 							rendered="#{!invoiceEntry.sales}"  
-							value="#{financeBundle.finance_invoice_number}" />
+							value="#{accountingBundle.accounting_referenceCode}" />
 						<aon:div>
 							<aon:selectOneMenu id="Account_invoice_series"
 								rendered="#{invoiceEntry.sales}"
@@ -139,7 +139,7 @@
 								rendered="#{!invoiceEntry.sales}" required="true"
 								disabled="#{invoiceEntry.newDetail}"
 								value="#{invoiceEntry.header.referenceCode}" size="25"
-								maxlength="25" onblur="toUpperCase(this);">
+								maxlength="32" onblur="toUpperCase(this);">
 								<f:validateLength maximum="32" />
 							</aon:inputText>
 						</aon:div>
@@ -183,16 +183,6 @@
 										minWidth="650" property="#{invoiceEntry.header.registry}"
 										lookupProperty="registry">
 									</aon:lookupButton>
-									<aon:lookupButton 
-										windowTitle="#{customerBundle.customer_new}"
-										selectReRender="Customer_id,Customer_name,Invoice_document,invoiceDetails,aonToolbar"
-										lookup="#{customerLookup}" actionType="new" 
-										minWidth="650" 
-										minHeight="600"
-										lookupChangeListener="#{invoiceEntry.registryChanged}"
-										property="#{invoiceEntry.header.registry}"
-										lookupProperty="registry">
-									</aon:lookupButton>
 									<aon:inputText id="Customer_name"
 										disabled="#{invoiceEntry.newDetail}" 
 										value="#{invoiceEntry.header.name}" 
@@ -213,16 +203,6 @@
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										actionType="search" lookup="#{supplierLookup}" minHeight="460"
 										minWidth="650" property="#{invoiceEntry.header.registry}"
-										lookupProperty="registry">
-									</aon:lookupButton>
-									<aon:lookupButton 
-										windowTitle="#{supplierBundle.supplier_new}"
-										selectReRender="Supplier_id,Supplier_name,Invoice_document,invoiceDetails,aonToolbar"
-										lookup="#{supplierLookup}" actionType="new" 
-										minWidth="650" 
-										minHeight="600"
-										lookupChangeListener="#{invoiceEntry.registryChanged}"
-										property="#{invoiceEntry.header.registry}"
 										lookupProperty="registry">
 									</aon:lookupButton>
 									<aon:inputText id="Supplier_name"
@@ -247,16 +227,6 @@
 										minWidth="650" property="#{invoiceEntry.header.registry}"
 										lookupProperty="registry">
 									</aon:lookupButton>
-									<aon:lookupButton 
-										windowTitle="#{financeBundle.finance_creditor_new}"
-										selectReRender="Creditor_id,Creditor_name,Invoice_document,invoiceDetails,aonToolbar"
-										lookup="#{creditorLookup}" actionType="new" 
-										minWidth="650" 
-										minHeight="550"
-										lookupChangeListener="#{invoiceEntry.registryChanged}"
-										property="#{invoiceEntry.header.registry}"
-										lookupProperty="registry">
-									</aon:lookupButton>
 									<aon:inputText id="Creditor_name" 
 										value="#{invoiceEntry.header.name}"
 										disabled="#{invoiceEntry.newDetail}" 
@@ -279,7 +249,6 @@
 							<ui:param name="wizard" value="#{accountWizard}" />
 							<ui:param name="id" value="accountId" />
 							<ui:param name="size" value="12" />
-							<ui:param name="maxlength" value="12" />
 							<ui:param name="renderDescription" value="#{true}" />
 							<ui:param name="renderedAttr" value="#{true}" />
 							<ui:param name="disabled"

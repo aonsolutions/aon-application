@@ -491,9 +491,7 @@ public class InvoiceEntryController {
 	}
 
 	public void accept(ActionEvent event) {
-		double invoiceTotal = getInvoiceTotal();
-		double financeTotal = getFinanceTotal();
-		if (financeTotal > 0 && invoiceTotal != financeTotal) {
+		if (getFinanceTotal() > 0 && getInvoiceTotal() != getFinanceTotal()) {
 			String msg = AonUtil.addErrorMessageFromBundle("financeBundle", "finance_unable_record_inaccuracy_error");
 			throw new AbortProcessingException(msg);
 		}
@@ -533,7 +531,7 @@ public class InvoiceEntryController {
 					}
 				}
 			}
-			Invoice invoice = insertOrUpdateInvoice( sessionName );
+			Invoice invoice = insertOrUpdateInvoice();
 			insertInvoiceDetails(invoice);
 			insertFinances(invoice);
 			if (!isNew) {
@@ -543,8 +541,8 @@ public class InvoiceEntryController {
 			if (isNew) {
 				this.setAccountEntryInvoice(getWriter().insertAccountEntryInvoice(entry, invoice));
 			} 
-			getWriter().insertEntryDetails(entry, account, getWriter().obtainConcept(invoice, invoiceTotal), invoiceTotal, 
-					obtainRetentionQuotasPerAccount(invoice), obtainTaxQuotasPerAccount(invoice), obtainBasesPerAccount(details));
+			getWriter().insertEntryDetails(entry, account, getWriter().obtainConcept(invoice), getInvoiceTotal(), 
+					obtainTotalRetention(), obtainVATandSurchargeQuota(), obtainBasesPerAccount(details));
 			getHeader().setAccountEntryId(entry.getId());
 			this.isNew = false;
 
@@ -606,24 +604,14 @@ public class InvoiceEntryController {
 	 * 
 	 * @return the double
 	 */
-	private Map<Account, Double> obtainTaxQuotasPerAccount(Invoice invoice) throws ManagerBeanException {
-		Account account;
-		if (invoice.getType().equals(InvoiceType.SALES)) {
-			account = AccountUtil.obtainDefaultAccount(DefaultAccounts.CHARGE_VAT_ACCOUNT);
-		} else {
-			account = AccountUtil.obtainDefaultAccount(DefaultAccounts.PAID_VAT_ACCOUNT);
-		}
-
+	private double obtainVATandSurchargeQuota() {
 		double total = 0.0;
 		Iterator<?> iter = ((List<?>) details.getWrappedData()).iterator();
 		while (iter.hasNext()) {
 			InvoiceEntryDetail detail = (InvoiceEntryDetail) iter.next();
 			total += detail.getVatQuota() + detail.getSurcharge();
 		}
-
-		Map<Account, Double> taxQuotasPerAccountMap = new HashMap<Account, Double>();
-		taxQuotasPerAccountMap.put(account, new Double(total));
-		return taxQuotasPerAccountMap;
+		return total;
 	}
 
 	/**
@@ -650,24 +638,14 @@ public class InvoiceEntryController {
 	 * 
 	 * @return the double
 	 */
-	private Map<Account, Double> obtainRetentionQuotasPerAccount(Invoice invoice) throws ManagerBeanException {
-		Account account;
-		if (invoice.getType().equals(InvoiceType.SALES)) {
-			account = AccountUtil.obtainDefaultAccount(DefaultAccounts.PAID_RETENTION_ACCOUNT);
-		} else {
-			account = AccountUtil.obtainDefaultAccount(DefaultAccounts.CHARGED_RETENTION_ACCOUNT);
-		}
-
+	private double obtainTotalRetention() {
 		double total = 0.0;
 		Iterator<?> iter = ((List<?>) details.getWrappedData()).iterator();
 		while (iter.hasNext()) {
 			InvoiceEntryDetail detail = (InvoiceEntryDetail) iter.next();
 			total += detail.getRetentionQuota();
 		}
-
-		Map<Account, Double> retentionQuotasPerAccountMap = new HashMap<Account, Double>();
-		retentionQuotasPerAccountMap.put(account, new Double(total));
-		return retentionQuotasPerAccountMap;
+		return total;
 	}
 
 	public void onRemove(ActionEvent event) {
@@ -706,15 +684,12 @@ public class InvoiceEntryController {
 		}
 	}
 
-	private Invoice insertOrUpdateInvoice(String sessionName) throws ManagerBeanException {
+	private Invoice insertOrUpdateInvoice() throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Invoice invoice = isNew() ? new Invoice() : getAccountEntryInvoice().getInvoice();
 		invoice = mergeInvoice(invoice);
 		if (isNew()) {
 			invoice = (Invoice) invoiceBean.insert(invoice);
-		} else{
-			invoice = (Invoice) HibernateUtil.getSession(sessionName).merge(invoice);
-			invoice = (Invoice) invoiceBean.update(invoice);
 		}
 		// Al convertir el proceso en transaccional, el update
 		// de invoice se realiza al momento del session.flush()
@@ -726,11 +701,11 @@ public class InvoiceEntryController {
 		invoice.setSeries(getHeader().getSeries());
 		if (getHeader().getType().equals(InvoiceType.SALES)) {
 			if (getHeader().getNumber() == 0) {
-				invoice.setNumber(calculateNextNumber(getHeader().getSeries(), getHeader().getType()));
-			} else {
-				invoice.setNumber(getHeader().getNumber());
+				invoice.setNumber(calculateNextNumber(getHeader().getSeries(), getHeader()
+						.getType()));
 			}
-			getHeader().setReferenceCode(obtainReferenceCode(invoice.getSeries(), invoice.getNumber()));
+		} else {
+			invoice.setNumber(getHeader().getNumber());
 		}
 		invoice.setReferenceCode(getHeader().getReferenceCode());
 		invoice.setRegistry(getHeader().getRegistry());
@@ -742,20 +717,9 @@ public class InvoiceEntryController {
 		invoice.setInvestment(getHeader().isInvestment());
 		invoice.setTransaction(getHeader().getTransaction());
 		invoice.setWithholding(getHeader().isWithholding());
-		invoice.setTaxFree(getHeader().isTaxFree());
+		invoice.setTaxFree(getHeader().isTaxFree() );
 		invoice.setSurcharge(getHeader().isSurcharge());
 		return invoice;
-	}
-
-	private String obtainReferenceCode(String series, int number) {
-		StringBuilder sb = new StringBuilder();
-		if (!StringUtils.isEmpty(series)) {
-			sb.append(series);
-			sb.append("/");
-		}
-		sb.append(number);
-
-		return sb.toString();
 	}
 
 	private int calculateNextNumber(String series, InvoiceType invoiceType)

@@ -14,17 +14,17 @@
 			<c:if test="#{!skipTypeColumn}">								
 				<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-80 aon-nowrap">
 					<f:facet name="header">
-						<aon:outputLabel for="RegistryAddress_addressType" value="#{bundle.aon_type}" />
+						<aon:outputText value="#{bundle.aon_type}" />
 					</f:facet>
 					<aon:outputText value="#{to.addressType}"
 						rendered="#{formList}" />
-					<aon:selectOneMenu id="RegistryAddress_addressType"
-						rendered="#{formEdit}" value="#{controller.to.addressType}">
+					<aon:selectOneMenu rendered="#{formEdit}"
+						value="#{controller.to.addressType}">
 						<f:selectItems value="#{registryCollections.addressTypes}" />
 					</aon:selectOneMenu>
 					<f:facet name="footer">
-						<aon:selectOneMenu id="RegistryAddress_addressType-New"
-							rendered="#{formNew}" value="#{controller.to.addressType}">
+						<aon:selectOneMenu rendered="#{formNew}"
+							value="#{controller.to.addressType}">
 							<f:selectItems value="#{registryCollections.addressTypes}" />
 						</aon:selectOneMenu>
 					</f:facet>
@@ -33,12 +33,11 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top">
 				<f:facet name="header">
-					<aon:outputLabel for="RegistryAddress_address" value="#{registryBundle.registry_address}" />
+					<aon:outputText value="#{registryBundle.registry_address}" />
 				</f:facet>
 				<aon:outputText value="#{to.address} #{to.address2} #{to.address3}"
 					rendered="#{formList}" />
-				<aon:inputText id="RegistryAddress_address"
-					value="#{controller.to.address}"
+				<aon:inputText value="#{controller.to.address}"
 					style="display:block" rendered="#{formEdit}"
 					required="true" size="40" />
 				<aon:inputText value="#{controller.to.address2}"
@@ -47,8 +46,7 @@
 					style="display:block" rendered="#{formEdit}" size="40" />
 				<f:facet name="footer">
 					<aon:div>
-						<aon:inputText id="RegistryAddress_address-New"
-							value="#{controller.to.address}"
+						<aon:inputText value="#{controller.to.address}"
 							style="display:block" rendered="#{formNew}"
 							required="true" size="40" />
 						<aon:inputText value="#{controller.to.address2}"
@@ -61,47 +59,43 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-40 aon-nowrap">
 				<f:facet name="header">
-					<aon:outputLabel for="RegistryAddress_zip" value="#{registryBundle.registry_zip}" />
+					<aon:outputText value="#{registryBundle.registry_zip}" />
 				</f:facet>
 				<aon:outputText value="#{to.zip}" rendered="#{formList}" />
-				<aon:inputText id="RegistryAddress_zip" 
-					value="#{controller.to.zip}"
+				<aon:inputText value="#{controller.to.zip}"
 					rendered="#{formEdit}" required="true" size="8" />
 				<f:facet name="footer">
-					<aon:inputText id="RegistryAddress_zip-New"
-						value="#{controller.to.zip}"
+					<aon:inputText value="#{controller.to.zip}"
 						rendered="#{formNew}" required="true" size="8" />
 				</f:facet>
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap">
 				<f:facet name="header">
-					<aon:outputLabel for="RegistryAddress_city" value="#{registryBundle.registry_city}" />
+					<aon:outputText value="#{registryBundle.registry_city}" />
 				</f:facet>
 				<aon:outputText value="#{to.city}" rendered="#{formList}" />
-				<aon:inputText id="RegistryAddress_city" 
-					value="#{controller.to.city}"
+				<aon:inputText value="#{controller.to.city}"
 					rendered="#{formEdit}" required="true" size="20" />
 				<f:facet name="footer">
-					<aon:inputText id="RegistryAddress_city-New"
-						value="#{controller.to.city}" required="true"
+					<aon:inputText value="#{controller.to.city}" required="true"
 						rendered="#{formNew}" size="20" />
 				</f:facet>
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap">
 				<f:facet name="header">
-					<aon:outputLabel for="RegistryAddress_geozone" value="#{registryBundle.registry_geozone}" />
+					<aon:outputText value="#{registryBundle.registry_geozone}" />
 				</f:facet>
 				<aon:outputText value="#{to.geozone.name}"
 					rendered="#{formList}" />
-				<aon:selectOneMenu id="RegistryAddress_geozone"
-					value="#{controller.to.geozone}" rendered="#{formEdit}">
+				<aon:selectOneMenu value="#{controller.to.geozone}"
+					rendered="#{formEdit}">
 					<f:selectItems value="#{geozoneCollections.geoTrees}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
-					<aon:selectOneMenu id="RegistryAddress_geozone-New"
-						value="#{controller.to.geozone}" rendered="#{formNew}">
+					<aon:selectOneMenu value="#{controller.to.geozone}"
+						rendered="#{formNew}">
 						<f:selectItems value="#{geozoneCollections.geoTrees}" />
 					</aon:selectOneMenu>
 				</f:facet>

@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.commercial</artifactId>
-	<version>3.4.0</version>
+	<version>3.4.1</version>
 	<description>AON UI COMMERCIAL</description>
 	<name>AON UI COMMERCIAL</name>
 	<dependencies>
@@ -23,43 +23,43 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.report</artifactId>
-			<version>3.4.1</version>
+			<version>3.4.2</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.commercial</artifactId>
-			<version>3.1.5</version>
+			<version>3.1.6</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.company</artifactId>
-			<version>3.2.1</version>
+			<version>3.3.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.geozone</artifactId>
-			<version>3.0.3</version>
+			<version>3.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.product</artifactId>
-			<version>3.2.5</version>
+			<version>3.4.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.registry</artifactId>
-			<version>3.3.1</version>
+			<version>3.4.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.seller</artifactId>
-			<version>3.0.3</version>
+			<version>3.0.4</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.ClassUtils;
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Cascade;
 
 import com.code.aon.common.BeanManager;
@@ -118,22 +117,49 @@ public class AbstractPojoController {
 	}
 
 	/**
-	 * Resolves the alias.
+	 * Restores de null value in framework created subpojos.
 	 * 
-	 * @param alias
-	 * @return Field path.
+	 * @param to
+	 * @throws ManagerBeanException
 	 */
-	public String resolveAlias( String alias ) {
-		String fieldName = null;
+	@SuppressWarnings("unchecked")
+	protected void restoreNullSubPOJOs(ITransferObject to) throws ManagerBeanException {
 		try {
-			fieldName = getFieldName(alias);
-		} catch (ManagerBeanException e) {
-			fieldName = alias.replace('_', '.');
-			fieldName = StringUtils.substringBefore(fieldName, "-");
+			Class clazz = to.getClass();
+			LOGGER.fine("Restoring null values on " + clazz.getName());
+			PropertyDescriptor[] pds = PropertyUtils.getPropertyDescriptors(clazz);
+			LOGGER.fine("Found " + pds.length + " properties");
+			for (PropertyDescriptor pd : pds) {
+				Class fieldClass = pd.getPropertyType();
+				String name = pd.getName();
+				if (ITransferObject.class.isAssignableFrom(fieldClass)) {
+					if (!pd.getReadMethod().isAnnotationPresent(Cascade.class)) {
+						LOGGER.fine("Initializing TO " + name + " property");
+						ITransferObject childTO = (ITransferObject) PropertyUtils.getProperty(to, name);
+						if (childTO != null ) {
+							IManagerBean bean = BeanManager.getManagerBean(fieldClass);
+							Serializable id = bean.getId(childTO);
+							if (id == null) {
+								if(!pd.getReadMethod().isAnnotationPresent(AonPOJOInitializationInvalidateRestoreNull.class)){
+									PropertyUtils.setProperty(to, name, null);
+									LOGGER.fine("Assigned NULL to " + fieldClass);
+								}
+							}
+						}
+					}
+				}
+			}
+		} catch (SecurityException e) {
+			throw new ManagerBeanException(e.getMessage());
+		} catch (IllegalAccessException e) {
+			throw new ManagerBeanException(e.getMessage());
+		} catch (InvocationTargetException e) {
+			throw new ManagerBeanException(e.getMessage());
+		} catch (NoSuchMethodException e) {
+			throw new ManagerBeanException(e.getMessage());
 		}
-		return fieldName;
 	}
-		
+
 	/**
 	 * Add message to the collection of messages.
 	 * 

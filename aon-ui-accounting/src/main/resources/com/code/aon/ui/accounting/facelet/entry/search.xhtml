@@ -14,7 +14,6 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_entry_module}" />
 				<ui:param name="controller" value="#{accountEntry}" />
-				<aon:methodParam name="backAction" value="accountEntry_form" />				
 			</ui:include>
 
 			<ui:decorate
@@ -23,7 +22,7 @@
 				<ui:param name="controller" value="#{accountEntry}" />
 				
 				<ui:define name="searchContent">
-					<aon:methodParam name="searchAction" value="#{accountEntry.searchAction}" />
+					<aon:methodParam name="searchAction" value="accountEntry_form" />
 
 					<aon:outputLabel for="AccountEntry_id"
 						value="#{bundle.aon_id}" />
@@ -49,13 +48,15 @@
 						<aon:outputLabel for="AccountEntry_entryDate-From"
 							styleClass="aon-tip" value="#{bundle.aon_date_from}" />
 						<aon:selectInputDate id="AccountEntry_entryDate-From"
-							valueChangeListener="#{accountEntry.addGreaterThanOrEqualExpression}"
+							value="#{accountEntry.fromDate}"
+							valueChangeListener="#{accountEntry.addEntryDateFromExpression}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 						<aon:outputLabel for="AccountEntry_entryDate-To"
 							styleClass="aon-tip" value="#{bundle.aon_date_to}" />
 						<aon:selectInputDate id="AccountEntry_entryDate-To"
-							valueChangeListener="#{accountEntry.addLessThanOrEqualExpression}"
+							value="#{accountEntry.toDate}"
+							valueChangeListener="#{accountEntry.addEntryDateToExpression}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
@@ -63,8 +64,7 @@
 					<aon:outputLabel for="AccountEntry_securityLevel"
 						value="#{bundle.aon_security_level}" />
 					<aon:selectOneMenu id="AccountEntry_securityLevel"
-						converter="aon.EnumConverter"
-						valueChangeListener="#{controller.addEqualExpression}">
+						valueChangeListener="#{accountEntry.addExpression}">
 						<f:selectItem value="#{nullItem.value}" />
 						<f:selectItems value="#{commonCollections.securityLevels}" />
 					</aon:selectOneMenu>

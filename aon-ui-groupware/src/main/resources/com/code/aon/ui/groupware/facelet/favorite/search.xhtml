@@ -20,7 +20,7 @@
 					<aon:methodParam name="searchAction" value="favorite_list" />		
 
 					<aon:outputLabel for="Favorite_description"
-						value="#{bundle.aon_description}" />
+						value="#{groupwareBundle.favorite_description}" />
 					<aon:inputText id="Favorite_description"
 						maxlength="128" size="100"
 						valueChangeListener="#{favorite.addExpression}" />
@@ -30,16 +30,6 @@
 					<aon:inputText id="Favorite_url"
 						maxlength="128" size="100"
 						valueChangeListener="#{favorite.addExpression}" />
-						
-					<aon:outputLabel for="Favorite_favoriteCategory_id"
-						value="#{groupwareBundle.favorite_favorite_category}" />
-					<aon:selectOneMenu id="Favorite_favoriteCategory_id"
-						value="#{groupWareCollections.favoriteCategory}"
-						valueChangeListener="#{favorite.addIdEqualExpression}">
-						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItems value="#{groupWareCollections.favoriteCategories}" />
-					</aon:selectOneMenu>
-											
 				</ui:define>
 			</ui:decorate>
 

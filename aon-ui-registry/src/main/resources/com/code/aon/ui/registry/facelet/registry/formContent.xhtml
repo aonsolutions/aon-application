@@ -4,10 +4,10 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:outputLabel for="Registry_id" value="#{bundle.aon_id}" />
+	<aon:outputLabel for="Registry_id"
+		rendered="#{!controller.new}" value="#{bundle.aon_id}" />
 	<aon:inputText id="Registry_id" value="#{controller.to.id}"
 		rendered="#{!controller.new}" size="15" disabled="true" />
-	<aon:outputText value="--------" rendered="#{controller.new}" />		
 
 	<aon:outputLabel for="Registry_document"
 		value="#{bundle.aon_company_document}" />

@@ -72,16 +72,6 @@ public interface ISearchable extends ICriteriaProvider, IDataModelDataProvider {
     String getFieldName(String alias) throws ManagerBeanException;
 
     /**
-     * Return the name of the field that corresponds to the parameter alias.
-     * If it doesn't exist, it will return the same string repacling "_" by ".".
-     * 
-     * @param alias
-     * @return String
-     * @throws ManagerBeanException
-     */
-    String resolveAlias(String alias) throws ManagerBeanException;
-    
-    /**
      * Clear the criteria.
      * 
      * @throws ManagerBeanException

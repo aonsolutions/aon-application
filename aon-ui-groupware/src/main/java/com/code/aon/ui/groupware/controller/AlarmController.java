@@ -13,9 +13,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.groupware.Alarm;
-import com.code.aon.groupware.Notice;
 import com.code.aon.groupware.dao.IGroupWareAlias;
-import com.code.aon.groupware.enumeration.AlarmSource;
 import com.code.aon.groupware.enumeration.AlarmStatus;
 import com.code.aon.groupware.enumeration.DelayTime;
 import com.code.aon.ql.Criteria;
@@ -105,21 +103,5 @@ public class AlarmController extends BasicController {
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error updating alarm with id=" + alarm.getId(), e);
 		}
-	}
-	
-	public String getSender() {
-		Alarm alarm = (Alarm)this.getTo();
-		if ( alarm.getSource() == AlarmSource.NOTICE ) {
-			try {			
-				IManagerBean noticeBean = BeanManager.getManagerBean(Notice.class);
-				Notice notice = (Notice) noticeBean.get(alarm.getSourceId());
-				if ( notice != null ) {
-					return notice.getSender().getName();
-				}
-			} catch (ManagerBeanException e) {
-				LOGGER.log(Level.SEVERE, "Error updating alarm with id=" + alarm.getId(), e);
-			}			
-		}
-		return null;
 	}
 }

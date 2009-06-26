@@ -62,6 +62,25 @@
 
 	<!-- **************** ACCOUNT BUDGET ************************** -->
 	<managed-bean>
+		<managed-bean-name>accountBudgetDetailListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>accountBudget</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>AccountBudget_account_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
 		<managed-bean-name>accountBudget</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.accounting.controller.AccountBudgetController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
@@ -76,6 +95,23 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>accountBudget</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>account</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>account.id</value>
+				</map-entry>
+			</map-entries>
 		</managed-property>
 	</managed-bean>
 
@@ -202,15 +238,11 @@
 	<!--  ACCOUNT ENTRY DETAIL CONTROLLER -->
 	<managed-bean>
 		<managed-bean-name>accountEntryDetail</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.accounting.controller.AccountEntryDetailController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>-1</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -270,13 +302,6 @@
 	<managed-bean>
 		<managed-bean-name>invoiceEntry</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.accounting.controller.InvoiceEntryController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
-	
-	<!-- ********** ACCOUNT FINANCE CONTROLLER ********* -->
-	<managed-bean>
-		<managed-bean-name>financeEntry</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.accounting.controller.FinanceEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 	
@@ -565,22 +590,6 @@
   <!--  ******** Navigation Rules **************** -->
   <!--  ****************************************** -->
 
- 	<!-- **************** ACCOUNT BUDGET ************************** -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>accountBudget_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/accounting/facelet/budget/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>accountBudget_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/accounting/facelet/budget/search.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>accountBudget_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/accounting/facelet/budget/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
   <!-- ****************** AUT CONCEPT **************** -->
 	<navigation-rule>
 		<navigation-case>
@@ -652,10 +661,6 @@
 		<navigation-case>
 			<from-outcome>account_invoice_entry</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/invoice/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>account_finance_entry</from-outcome>
-			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/finance/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>account_expense_entry</from-outcome>

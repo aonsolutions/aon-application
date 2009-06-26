@@ -1,12 +1,12 @@
 package com.code.aon.ui.accounting.controller;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.ListDataModel;
@@ -43,7 +43,6 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.dao.IFinanceAlias;
-import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
@@ -71,9 +70,14 @@ public class AccountEntryController extends BasicController {
 
 	private static final String LEASING_FEE_ENTRY_CONTROLLER_NAME = "leasingFeeEntry";
 	
+	private Date fromDate;
+	private Date toDate;
+	
 	@Override
 	public void onEditSearch(ActionEvent event) {
 		super.onEditSearch(event);
+		this.toDate = null;
+		this.fromDate = null;
 	}
 	
     @Override
@@ -129,42 +133,31 @@ public class AccountEntryController extends BasicController {
 		}
 	}
 	
-	public String searchAction() {
-		try {
-			return (getModel().getRowCount() > 0 )?"accountEntry_form":"accountEntry_list";
-		} catch (ManagerBeanException e) {
-			String msg = "No se pudo realizar la búsqueda.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}
-	}
-	
 	public String onNavigate() {
-		AccountEntry entry = (AccountEntry)getTo(); 
-		if (entry.getType() == AccountEntryType.SALES_INVOICE ||
-			entry.getType() == AccountEntryType.PURCHASE_INVOICE ||
-			entry.getType() == AccountEntryType.EXPENSE_INVOICE){
+		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.SALES_INVOICE) ||
+				((AccountEntry)getTo()).getType().equals(AccountEntryType.PURCHASE_INVOICE) ||
+				((AccountEntry)getTo()).getType().equals(AccountEntryType.EXPENSE_INVOICE)){
 			return "account_invoice_entry";
 		}
-		if(entry.getType() == AccountEntryType.EXPENSES){
+		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.EXPENSES)){
 			return "account_expense_entry";
 		}
-		if(entry.getType() == AccountEntryType.SALARY){
+		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.SALARY)){
 			return "account_salary_entry";
 		}
-		if(entry.getType() == AccountEntryType.SOCIAL_INSURANCE){
+		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.SOCIAL_INSURANCE)){
 			return "account_social_insurance_entry";
 		}
-		if(entry.getType() == AccountEntryType.LOAN) {
+		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.LOAN)){
 			return "account_loan_entry";
 		}
-		if(entry.getType() == AccountEntryType.LOAN_FEE){
+		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.LOAN_FEE)){
 			return "account_loan_fee_entry";
 		}
-		if(entry.getType()== AccountEntryType.LEASING){
+		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.LEASING)){
 			return "account_leasing_entry";
 		}
-		if(entry.getType() == AccountEntryType.LEASING_FEE){
+		if(((AccountEntry)getTo()).getType().equals(AccountEntryType.LEASING_FEE)){
 			return "account_leasing_fee_entry";
 		}
 		return "";
@@ -213,8 +206,6 @@ public class AccountEntryController extends BasicController {
 				header.setWithholding(accountEntryInvoice.getInvoice().isWithholding());
 				header.setSurcharge(accountEntryInvoice.getInvoice().isSurcharge());
 				header.setTaxFree(accountEntryInvoice.getInvoice().isTaxFree());
-				header.setInvestment(accountEntryInvoice.getInvoice().isInvestment());
-				header.setTransaction(accountEntryInvoice.getInvoice().getTransaction());
 				header.setAccountEntryId(entry.getId());
 				invoiceEntryController.setHeader(header);
 				invoiceEntryController.setFinances(new ListDataModel(obtainFinances(accountEntryInvoice.getInvoice())));
@@ -398,11 +389,6 @@ public class AccountEntryController extends BasicController {
 			while(iter.hasNext()){
 				InvoiceEntryDetail detail = new InvoiceEntryDetail();
 				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
-				if (invoiceDetail.getSource() != InvoiceSource.ACCOUNT) {
-					String msg = "Asiento generado automáticamente. No se puede modificar.";
-					AonUtil.addErrorMessage(msg);
-					throw new AbortProcessingException(msg);
-				}
 				detail.setTaxableBase(invoiceDetail.getTaxableBase());
 
 				Criteria taxCriteria = new Criteria();
@@ -505,10 +491,31 @@ public class AccountEntryController extends BasicController {
 			getCriteria().addEqualExpression(accountEntryBean.getFieldName(field), event.getNewValue());
 		}
 	}
+	
+	public void addEntryDateFromExpression(ValueChangeEvent event){
+		if(event.getNewValue() != null && fromDate != null){
+			try {
+				IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
+				getCriteria().addGreaterThanOrEqualExpression(accountEntryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ENTRY_DATE), event.getNewValue());
+			} catch (ManagerBeanException e) {
+				LOGGER.log(Level.SEVERE, "Error adding FROM date expression", e);
+			}
+		}
+	}
+	
+	public void addEntryDateToExpression(ValueChangeEvent event){
+		if(event.getNewValue() != null && toDate != null){
+			try {
+				IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
+				getCriteria().addLessThanOrEqualExpression(accountEntryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ENTRY_DATE), event.getNewValue());
+			} catch (ManagerBeanException e) {
+				LOGGER.log(Level.SEVERE, "Error adding TO date expression", e);
+			}
+		}
+	}
 
     public boolean isManual() {
-    	AccountEntry entry = (AccountEntry) this.getTo();
-        return (this.getTo() != null && (entry.getType() == AccountEntryType.MANUAL || entry.getType() == AccountEntryType.OPENING));
+        return (this.getTo() != null && ((AccountEntry)this.getTo()).getType() == AccountEntryType.MANUAL);
     }
 
     @SuppressWarnings("unchecked")
@@ -553,4 +560,20 @@ public class AccountEntryController extends BasicController {
         return credit;
     }
 
+	public Date getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public Date getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
+	}
+	
 }
