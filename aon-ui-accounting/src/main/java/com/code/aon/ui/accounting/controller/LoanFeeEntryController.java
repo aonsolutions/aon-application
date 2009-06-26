@@ -53,12 +53,7 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 
 	private AccountingUtil accountingUtil;
 
-	public AccountingUtil getAccountingUtil() {
-		if (accountingUtil == null) {
-			accountingUtil = new AccountingUtil();
-		}
-		return accountingUtil;
-	}
+	private String navigationKey;
 
 	public boolean isNew() {
 		return isNew;
@@ -84,22 +79,38 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 		this.header = header;
 	}
 
+	public AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
+		}
+		return accountingUtil;
+	}
+
 	public void onReset(ActionEvent event){
-		reset();
+		try {
+			reset();
+		} catch (ManagerBeanException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
 	}
 	
-	private void reset(){
+	private void reset() throws ManagerBeanException {
 		this.isNew = true;
 		this.header = initializeHeader();
 	}
 	
-	private LoanFeeEntryHeader initializeHeader() {
+	private LoanFeeEntryHeader initializeHeader() throws ManagerBeanException {
 		LoanFeeEntryHeader header = new LoanFeeEntryHeader();
+		header.setFeePeriod(AccountingPeriodUtil.getDefaultPeriod());
 		header.setFeeDate(new Date());
 		return header;
 	}
 	
-	public void accept(ActionEvent event) {
+	public String accept(){
+		return navigationKey; 	
+	}
+
+	public void onAccept(ActionEvent event) {
 		//inicio transaccion
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
@@ -110,7 +121,7 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
 				// operaciones de la transaccion
-				AccountingPeriodUtil.validateAccountPeriod(getHeader().getFeeDate());
+				this.navigationKey = "accountEntry_form";
 				IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 				AccountEntry entry = new AccountEntry();
 				if(!this.isNew){
@@ -118,18 +129,18 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 					entry = this.getAccountEntry();
 				}
 				entry.setEntryDate(getHeader().getFeeDate());
-				entry.setAccountPeriod(AccountUtil.obtainPeriod(getHeader().getFeeDate()).getId());
-				entry.setJournal(null);
+				entry.setAccountPeriod(getHeader().getFeePeriod().getId());
 				entry.setType(AccountEntryType.LOAN_FEE);
 				entry.setSecurityLevel(getHeader().getLoan().getSecurityLevel());
-				if(this.isNew){
+				if (this.isNew){
 					entry = (AccountEntry)entryBean.insert(entry);
-				}else{
+				} else{
 					entry = (AccountEntry) HibernateUtil.getSession(sessionName).merge(entry);
 					entry = (AccountEntry)entryBean.update(entry);
 				}
 				insertEntryDetails(entry);
 				setAccountEntry(entry);
+
 				this.isNew = false;
 				loadAccountEntryController(entry);
 				// FIN operaciones de la transaccion
@@ -274,6 +285,8 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 		}
 		header.setAmortization(accountEntryDetail.getDebit());
 		header.setDescription(accountEntryDetail.getConcept());
+		header.setFeePeriod(new Period());
+		header.getFeePeriod().setId(entry.getAccountPeriod());
 		header.setFeeDate(entry.getEntryDate());
 		header.setLoan(loan);
 		accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "*");
@@ -302,15 +315,6 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 		return "account_loan_fee_entry";
 	}
 	
-	public String getPeriodMessage() {
-		try {
-			return AccountingPeriodUtil.getValidAccountPeriod(getHeader().getFeeDate());
-		} catch (ManagerBeanException e) {
-			LOGGER.warning("No se puede obtener el periodo: " + e.getMessage());
-			return " - ";
-		}
-	}
-	
 	public Account getRelatedAccount() throws ManagerBeanException {
 		return obtainLoanAccount( getHeader().getLoan() );	
 	}
@@ -334,9 +338,7 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 		}
 		return 0;
 	}
-	
-	
-	
+
 	public void onAccountStatement(ActionEvent event) {
 		try {
 			Account account = getRelatedAccount();
