@@ -66,23 +66,13 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
 	private Period period;
 
-	private Period financePeriod;
-
 	private Date date;
 	
-	private Date financeDate;
-
 	private int deposit;
-
-	private int financeDeposit;
 
 	private RegistryBank registryBank;
 	
-	private RegistryBank financeRegistryBank;
-
 	private Account cashAccount;
-
-	private Account financeCashAccount;
 
 	private SecurityLevel securityLevel;
 
@@ -98,6 +88,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
 	private String onGenerateKey;
 		
+
 	public AccountEntryFinanceWriter getWriter() {
 		if (writer == null) {
 			writer = new AccountEntryFinanceWriter();
@@ -137,28 +128,12 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		this.period = period;
 	}
 
-	public Period getFinancePeriod() {
-		return financePeriod;
-	}
-
-	public void setFinancePeriod(Period financePeriod) {
-		this.financePeriod = financePeriod;
-	}
-
 	public Date getDate() {
 		return date;
 	}
 
 	public void setDate(Date date) {
 		this.date = date;
-	}
-
-	public Date getFinanceDate() {
-		return financeDate;
-	}
-
-	public void setFinanceDate(Date financeDate) {
-		this.financeDate = financeDate;
 	}
 
 	public int getDeposit() {
@@ -169,14 +144,6 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		this.deposit = deposit;
 	}
 
-	public int getFinanceDeposit() {
-		return financeDeposit;
-	}
-
-	public void setFinanceDeposit(int financeDeposit) {
-		this.financeDeposit = financeDeposit;
-	}
-
 	public RegistryBank getRegistryBank() {
 		return registryBank;
 	}
@@ -185,28 +152,12 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		this.registryBank = registryBank;
 	}
 
-	public RegistryBank getFinanceRegistryBank() {
-		return financeRegistryBank;
-	}
-
-	public void setFinanceRegistryBank(RegistryBank financeRegistryBank) {
-		this.financeRegistryBank = financeRegistryBank;
-	}
-
 	public Account getCashAccount() {
 		return cashAccount;
 	}
 
 	public void setCashAccount(Account cashAccount) {
 		this.cashAccount = cashAccount;
-	}
-
-	public Account getFinanceCashAccount() {
-		return financeCashAccount;
-	}
-
-	public void setFinanceCashAccount(Account financeCashAccount) {
-		this.financeCashAccount = financeCashAccount;
 	}
 
 	public SecurityLevel getSecurityLevel() {
@@ -268,13 +219,10 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
 	private void initializeHeader() throws ManagerBeanException {
 		payment = null;
-		period = (financePeriod != null && financePeriod.getId() != null) ? financePeriod : AccountingPeriodUtil.getDefaultPeriod();
-		date = (financeDate != null) ? financeDate : new Date();
-		deposit = financeDeposit;
-		registryBank = financeRegistryBank;
-		cashAccount = financeCashAccount;
-		securityLevel = SecurityLevel.OFFICIAL;
 		concept = null;
+		period = (period != null && period.getId() != null) ? period : AccountingPeriodUtil.getDefaultPeriod();
+		date = (date != null) ? date : new Date();
+		securityLevel = (securityLevel != null) ? securityLevel : SecurityLevel.OFFICIAL;
 	}
 
 	public List<SelectItem> getTypes() {
@@ -392,11 +340,6 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
     @SuppressWarnings("unchecked")
     public void accept(ActionEvent event) {
-    	setFinancePeriod(period);
-    	setFinanceDate(date);
-    	setFinanceDeposit(deposit);
-    	setFinanceRegistryBank(registryBank);
-    	setFinanceCashAccount(cashAccount);
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
