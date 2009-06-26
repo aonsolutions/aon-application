@@ -13,7 +13,6 @@ import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
-import com.code.aon.finance.InvoiceAttachment;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.InvoicingGroup;
@@ -31,20 +30,19 @@ public class FinanceAliasWriter {
 	 */
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-PROJECT/aon-finance/src/main/java/com/code/aon/finance/dao/IFinanceAlias.java");
-		String[] classes = new String[13]; 
+		String[] classes = new String[12]; 
 		classes[0] = CustomerFee.class.getName();
 		classes[1] = Finance.class.getName();
 		classes[2] = FinanceBatch.class.getName();
 		classes[3] = FinanceBatchDetail.class.getName();
 		classes[4] = Invoice.class.getName();
 		classes[5] = InvoiceAddress.class.getName();
-		classes[6] = InvoiceAttachment.class.getName();
-		classes[7] = InvoiceDetail.class.getName();
-		classes[8] = InvoiceTax.class.getName();
-		classes[9] = Creditor.class.getName();
-		classes[10] = FinanceTracking.class.getName();
-		classes[11] = InvoicingGroup.class.getName();
-		classes[12] = InvoicingGroupDetail.class.getName();
+		classes[6] = InvoiceDetail.class.getName();
+		classes[7] = InvoiceTax.class.getName();
+		classes[8] = Creditor.class.getName();
+		classes[9] = FinanceTracking.class.getName();
+		classes[10] = InvoicingGroup.class.getName();
+		classes[11] = InvoicingGroupDetail.class.getName();
 		HibernateUtil.getSessionFactory(null);
 		AliasWriter writer = new AliasWriter("com.code.aon.finance.dao");
 		writer.write(classes, file);
