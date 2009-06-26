@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form>
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_social_insurance_entry_module}" />
+				<ui:param name="toolbarDescription" value="#{socialInsuranceEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+						
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="save" value="#{bundle.aon_save}"
+						accesskey="#{bundle.aon_key_save}"
+						actionListener="#{socialInsuranceEntry.accept}"
+						action="accountEntry_form"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;" />
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						accesskey="#{bundle.aon_key_new}"
+						actionListener="#{socialInsuranceEntry.onReset}"
+						rendered="#{!socialInsuranceEntry.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset" />
+					<aon:commandButton id="remove" value="#{bundle.aon_remove}"
+						accesskey="#{bundle.aon_key_remove}" action="accountEntry_search"
+						actionListener="#{socialInsuranceEntry.onRemove}"
+						rendered="#{!socialInsuranceEntry.new}" immediate="true"
+						onclick="if (confirm('#{bundle.aon_remove_confirm}')) return false;"
+						styleClass="aon-finding-toolbar-item aon-icon-delete" />
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div id="entryContainer" styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2">
+
+					<aon:outputLabel for="Account_date"
+						value="#{bundle.aon_date}" />
+					<aon:selectInputDate required="true" id="Account_date"
+						value="#{socialInsuranceEntry.header.date}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+					<aon:outputLabel for="Account_Period"
+						value="#{accountingBundle.accounting_period}" />
+					<aon:selectOneMenu id="Account_Period"
+						value="#{socialInsuranceEntry.header.period}">
+						<f:selectItems value="#{accountingCollections.accountPeriods}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Account_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="Account_description"
+						value="#{socialInsuranceEntry.header.description}" size="60" />
+
+					<aon:outputLabel for="Account_amount"
+						value="#{bundle.aon_amount}" />
+					<aon:inputText id="Account_amount"
+						value="#{socialInsuranceEntry.header.amount}" size="15">
+						<f:validateDoubleRange />
+					</aon:inputText>
+
+					<aon:outputLabel for="RegistryBank_Lookup_id"
+						value="#{configBundle.config_bank}" />
+					<aon:selectOneMenu id="RegistryBank_Lookup_id" required="true"
+						value="#{socialInsuranceEntry.header.RBank}"
+						reRender="RegistryBank_bankAccount">
+						<f:selectItem itemDisabled="true" itemValue="" itemLabel="-" />
+						<f:selectItems value="#{financeCollections.companyBanks}" />
+					</aon:selectOneMenu>
+
+					<aon:outputText value="#{configBundle.config_bank_account}" />
+					<aon:div id="RegistryBank_bankAccount">
+						<aon:outputText value="#{socialInsuranceEntry.header.RBank.bankAccount}" />
+						<aon:outputText value="&#160;" />
+					</aon:div>
+
+					<aon:outputLabel for="AccountEntry_securityLevel"
+						value="#{bundle.aon_security_level}" />
+					<aon:selectOneMenu id="AccountEntry_securityLevel"
+						value="#{socialInsuranceEntry.header.securityLevel}">
+						<f:selectItems value="#{commonCollections.securityLevels}" />
+					</aon:selectOneMenu>
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
