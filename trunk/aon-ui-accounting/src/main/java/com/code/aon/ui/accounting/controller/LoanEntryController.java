@@ -17,6 +17,7 @@ import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.Loan;
+import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
@@ -40,17 +41,14 @@ public class LoanEntryController implements ISpecialAccountEntry {
 	private boolean isNew;
 	
 	private AccountEntry accountEntry;
-	
+
+	private Period period;
+
 	private Loan loan;
 
 	private AccountingUtil accountingUtil;
 
-	public AccountingUtil getAccountingUtil() {
-		if (accountingUtil == null) {
-			accountingUtil = new AccountingUtil();
-		}
-		return accountingUtil;
-	}
+	private String navigationKey;
 
 	public boolean isNew() {
 		return isNew;
@@ -68,6 +66,14 @@ public class LoanEntryController implements ISpecialAccountEntry {
 		this.accountEntry = accountEntry;
 	}
 
+	public Period getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(Period period) {
+		this.period = period;
+	}
+
 	public Loan getLoan() {
 		return loan;
 	}
@@ -76,13 +82,24 @@ public class LoanEntryController implements ISpecialAccountEntry {
 		this.loan = loan;
 	}
 
-	
+	public AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
+		}
+		return accountingUtil;
+	}
+
 	public void onReset(ActionEvent event){
-		reset();
+		try {
+			reset();
+		} catch (ManagerBeanException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
 	}
 	
-	private void reset(){
+	private void reset() throws ManagerBeanException {
 		this.isNew = true;
+		this.period = AccountingPeriodUtil.getDefaultPeriod();
 		this.loan = initializeLoan();
 	}
 	
@@ -92,8 +109,12 @@ public class LoanEntryController implements ISpecialAccountEntry {
 		loan.setSecurityLevel(SecurityLevel.OFFICIAL);
 		return loan;
 	}
-	
-	public void accept(ActionEvent event) {
+
+	public String accept(){
+		return navigationKey; 	
+	}
+
+	public void onAccept(ActionEvent event) {
 		//inicio transaccion
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
@@ -104,20 +125,22 @@ public class LoanEntryController implements ISpecialAccountEntry {
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
 				// operaciones de la transaccion
-				AccountingPeriodUtil.validateAccountPeriod(getLoan().getLoanDate());
+				this.navigationKey = "accountEntry_form";
+				IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 				AccountEntry entry = new AccountEntry();
+				if(!this.isNew){
+					deleteAccountEntryDetails(getAccountEntry());
+					entry = this.getAccountEntry();
+				}
 				entry.setEntryDate(getLoan().getLoanDate());
-				entry.setAccountPeriod(AccountUtil.obtainPeriod(getLoan().getLoanDate()).getId());
-				entry.setJournal(null);
+				entry.setAccountPeriod(getPeriod().getId());
 				entry.setType(AccountEntryType.LOAN);
 				entry.setSecurityLevel(getLoan().getSecurityLevel());
-				IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 				IManagerBean loanBean = BeanManager.getManagerBean(Loan.class);
 				if(this.isNew){
 					loanBean.insert(getLoan());
 					entry = (AccountEntry)entryBean.insert(entry);
 				} else {
-					deleteAccountEntryDetails(getAccountEntry());
 					loan = (Loan) HibernateUtil.getSession(sessionName).merge(loan);
 					loan = (Loan) loanBean.update(loan);
 					
@@ -125,19 +148,19 @@ public class LoanEntryController implements ISpecialAccountEntry {
 					// Nos aseguramos de que el enlace entre cuenta y prestamo sea correcto.
 					deleteLoanAccount(getLoan());
 					
-					entry = this.getAccountEntry();
 					entry = (AccountEntry) HibernateUtil.getSession(sessionName).merge(entry);
 					entry = (AccountEntry)entryBean.update(entry);
-					
 				}
 				insertEntryDetails(entry);
 				setAccountEntry(entry);
+
 				this.isNew = false;
 				loadAccountEntryController(entry);
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
 			} catch (Exception e) {
+				navigationKey = null;
 				try {
 					HibernateUtil.rollbackTransaction(sessionName);
 				} catch (DAOException daoe) {
@@ -277,6 +300,8 @@ public class LoanEntryController implements ISpecialAccountEntry {
 		onReset(null);
 		setNew(false);
 		setAccountEntry(entry);
+		setPeriod(new Period());
+		getPeriod().setId(entry.getAccountPeriod());
 		Loan loan = obtainLoan(entry);
 		setLoan(loan);
 	}
@@ -302,12 +327,4 @@ public class LoanEntryController implements ISpecialAccountEntry {
 		return "account_loan_entry";
 	}
 	
-	public String getPeriodMessage() {
-		try {
-			return AccountingPeriodUtil.getValidAccountPeriod(getLoan().getLoanDate());
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-			return " - ";
-		}
-	}
 }

@@ -14,6 +14,7 @@ import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.ExpenseEntryHeader;
+import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
@@ -38,19 +39,12 @@ public class ExpenseEntryController implements ISpecialAccountEntry{
 	private boolean isNew;
 	
 	private AccountEntry accountEntry;
-	
-	private ExpenseEntryHeader header;
 
-	private String navigationKey;
+	private ExpenseEntryHeader header;
 
 	private AccountingUtil accountingUtil;
 
-	public AccountingUtil getAccountingUtil() {
-		if (accountingUtil == null) {
-			accountingUtil = new AccountingUtil();
-		}
-		return accountingUtil;
-	}
+	private String navigationKey;
 
 	public boolean isNew() {
 		return isNew;
@@ -76,17 +70,29 @@ public class ExpenseEntryController implements ISpecialAccountEntry{
 		this.header = header;
 	}
 	
+	public AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
+		}
+		return accountingUtil;
+	}
+
 	public void onReset(ActionEvent event){
-		reset();
+		try {
+			reset();
+		} catch (ManagerBeanException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
 	}
 	
-	private void reset(){
+	private void reset() throws ManagerBeanException {
 		this.isNew = true;
-		setHeader( initializeHeader() );
+		this.header = initializeHeader();
 	}
 	
-	private ExpenseEntryHeader initializeHeader() {
+	private ExpenseEntryHeader initializeHeader() throws ManagerBeanException {
 		ExpenseEntryHeader header = new ExpenseEntryHeader();
+		header.setPeriod(AccountingPeriodUtil.getDefaultPeriod());
 		header.setDate(new Date());
 		header.setAccount(null);
 		header.setSecurityLevel(SecurityLevel.OFFICIAL);
@@ -109,7 +115,6 @@ public class ExpenseEntryController implements ISpecialAccountEntry{
 				HibernateUtil.beginTransaction(sessionName);
 				// operaciones de la transaccion
 				this.navigationKey = "accountEntry_form";
-				AccountingPeriodUtil.validateAccountPeriod(getHeader().getDate());
 				IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 				AccountEntry entry = new AccountEntry();
 				if (!this.isNew) {
@@ -117,7 +122,7 @@ public class ExpenseEntryController implements ISpecialAccountEntry{
 					entry = this.getAccountEntry();
 				}
 				entry.setEntryDate(getHeader().getDate());
-				entry.setAccountPeriod(AccountUtil.obtainPeriod(getHeader().getDate()).getId());
+				entry.setAccountPeriod(getHeader().getPeriod().getId());
 				entry.setType(AccountEntryType.EXPENSES);
 				entry.setSecurityLevel(getHeader().getSecurityLevel());
 				if (this.isNew) {
@@ -260,9 +265,10 @@ public class ExpenseEntryController implements ISpecialAccountEntry{
 		setAccountEntry(entry);
 
 		ExpenseEntryHeader header = new ExpenseEntryHeader();
+		header.setPeriod(new Period());
+		header.getPeriod().setId(entry.getAccountPeriod());
 		header.setDate(entry.getEntryDate());
-		AccountEntryDetail accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, 
-				 AccountConstants.BANK_ACCOUNT_PREFIX + "*");
+		AccountEntryDetail accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
 		if (accountEntryDetail != null) {
 			header.setRegistryBank(AccountUtil.obtainRBank(accountEntryDetail.getAccount().getId()));
 		}
@@ -278,13 +284,5 @@ public class ExpenseEntryController implements ISpecialAccountEntry{
 	public String getNavigationKey() {
 		return "account_expense_entry";
 	}
-	
-	public String getPeriodMessage() {
-		try {
-			return AccountingPeriodUtil.getValidAccountPeriod(getHeader().getDate());
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-			return " - ";
-		}
-	}
+
 }

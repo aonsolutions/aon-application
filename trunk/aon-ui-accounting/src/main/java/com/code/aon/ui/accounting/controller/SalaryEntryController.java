@@ -13,6 +13,7 @@ import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.DefaultAccounts;
+import com.code.aon.accounting.Period;
 import com.code.aon.accounting.SalaryEntryHeader;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
@@ -23,9 +24,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.config.Bank;
 import com.code.aon.ql.Criteria;
-import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -44,12 +43,7 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 
 	private AccountingUtil accountingUtil;
 
-	public AccountingUtil getAccountingUtil() {
-		if (accountingUtil == null) {
-			accountingUtil = new AccountingUtil();
-		}
-		return accountingUtil;
-	}
+	private String navigationKey;
 
 	public boolean isNew() {
 		return isNew;
@@ -75,25 +69,39 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 		this.header = header;
 	}
 	
+	public AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
+		}
+		return accountingUtil;
+	}
+
 	public void onReset(ActionEvent event){
-		reset();
+		try {
+			reset();
+		} catch (ManagerBeanException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
 	}
 	
-	private void reset(){
+	private void reset() throws ManagerBeanException {
 		this.isNew = true;
 		this.header = initializeHeader();
 	}
 	
-	private SalaryEntryHeader initializeHeader() {
+	private SalaryEntryHeader initializeHeader() throws ManagerBeanException {
 		SalaryEntryHeader header = new SalaryEntryHeader();
+		header.setPeriod(AccountingPeriodUtil.getDefaultPeriod());
 		header.setDate(new Date());
-		header.setRegistryBank(new RegistryBank());
-		header.getRegistryBank().setBank(new Bank());
 		header.setSecurityLevel(SecurityLevel.OFFICIAL);
 		return header;
 	}
 	
-	public void accept(ActionEvent event) {
+	public String accept(){
+		return navigationKey; 	
+	}
+
+	public void onAccept(ActionEvent event) {
 		//inicio transaccion
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
@@ -104,31 +112,33 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
 				// operaciones de la transaccion
-				try {
-					AccountingPeriodUtil.validateAccountPeriod(getHeader().getDate());
-					AccountEntry entry = new AccountEntry();
-					if (!this.isNew) {
-						deleteAccountEntryDetails(getAccountEntry());
-						entry = this.getAccountEntry();
-					}
-					entry.setEntryDate(getHeader().getDate());
-					entry.setAccountPeriod(AccountUtil.obtainPeriod(getHeader().getDate()).getId());
-					entry.setJournal(null);
-					entry.setType(AccountEntryType.SALARY);
-					entry.setSecurityLevel(getHeader().getSecurityLevel());
-					entry = insertorUpdateAccountEntry(entry);
-					insertEntryDetails(entry);
-					setAccountEntry(entry);
-					
-					this.isNew = false;
-					loadAccountEntryController(entry);
-				} catch (ManagerBeanException e) {
-					LOGGER.log(Level.SEVERE, "Error accepting AccountEntry", e);
+				this.navigationKey = "accountEntry_form";
+				IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
+				AccountEntry entry = new AccountEntry();
+				if (!this.isNew) {
+					deleteAccountEntryDetails(getAccountEntry());
+					entry = this.getAccountEntry();
 				}
+				entry.setEntryDate(getHeader().getDate());
+				entry.setAccountPeriod(getHeader().getPeriod().getId());
+				entry.setType(AccountEntryType.SALARY);
+				entry.setSecurityLevel(getHeader().getSecurityLevel());
+				if (this.isNew) {
+					entry = (AccountEntry)entryBean.insert(entry);
+				} else {
+					entry = (AccountEntry) HibernateUtil.getSession(sessionName).merge(entry);
+					entry = (AccountEntry) entryBean.update(entry);
+				}
+				insertEntryDetails(entry);
+				setAccountEntry(entry);
+
+				this.isNew = false;
+				loadAccountEntryController(entry);
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
 			} catch (Exception e) {
+				navigationKey = null;
 				try {
 					HibernateUtil.rollbackTransaction(sessionName);
 				} catch (DAOException daoe) {
@@ -187,20 +197,6 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 		}
 	}
 
-	private AccountEntry insertorUpdateAccountEntry(AccountEntry entry) {
-		try {
-			IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
-			if (this.isNew) {
-				entry = (AccountEntry)entryBean.insert(entry);
-			} else {
-				entry = (AccountEntry)entryBean.update(entry);
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error inserting AccountEntry", e);
-		}
-		return entry;
-	}
-	
 	private void insertEntryDetails(AccountEntry entry) {
 		try {
 			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
@@ -306,6 +302,8 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 		setAccountEntry(entry);
 
 		SalaryEntryHeader header = new SalaryEntryHeader();
+		header.setPeriod(new Period());
+		header.getPeriod().setId(entry.getAccountPeriod());
 		header.setDate(entry.getEntryDate());
 		AccountEntryDetail accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "465*");
 		if (accountEntryDetail != null) {
@@ -334,14 +332,4 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 		return "account_salary_entry";
 	}
 	
-	
-	public String getPeriodMessage() {
-		try {
-			return AccountingPeriodUtil.getValidAccountPeriod(getHeader().getDate());
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-			return " - ";
-		}
-	}
-
 }
