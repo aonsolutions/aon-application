@@ -120,29 +120,7 @@ public class AccountChangeController {
 					bean.update(acc);
 					count++;
 				}
-				
-				IManagerBean summmaryBean = BeanManager.getManagerBean(AccountSummary.class);
-				Criteria criteria3 = new Criteria();
-				criteria3.addEqualExpression(accountBalancing, initAccount
-						.getId());
-				criteria3.addEqualExpression(accperiod, period.getId());
-				if (fromDate != null) {
-					criteria3.addGreaterThanOrEqualExpression(date, fromDate);
-				}
-				if (fromDate != null) {
-					criteria3.addLessThanOrEqualExpression(date, toDate);
-				}
-				if (securityLevel != null) {
-					criteria3.addEqualExpression(security, securityLevel);
-				}
-				List<ITransferObject> accountSummaryList = summmaryBean.getList(criteria3); 
-				for (ITransferObject to : accountSummaryList) {
-					AccountSummary acc = (AccountSummary) to;
-					if(acc.getCredit()==0 && acc.getDebit()==0){
-						summmaryBean.remove(acc);					
-					}					
-				}
-				
+							
 				AonUtil.addInfoMessage("Se han cambiado "+count+" líneas de apuntes");
 				
 				HibernateUtil.getSession(sessionName).flush();
