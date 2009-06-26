@@ -9,7 +9,6 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import com.code.aon.common.ITransferObject;
@@ -55,7 +54,7 @@ public class Employee implements ITransferObject, IEntity {
 	@Column(name="registry")
 	@GeneratedValue(generator="registry_id")
 	@GenericGenerator(name="registry_id", strategy="foreign", parameters = {
-			@Parameter(name="property", value="registry")})			
+			@Parameter(name="property", value="registry")})
 	public Integer getId() {
 		return id;
 	}
@@ -70,11 +69,11 @@ public class Employee implements ITransferObject, IEntity {
 	/**
 	 * @return Returns the registry.
 	 */
-	@OneToOne
+	@OneToOne()
 	@org.hibernate.annotations.Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE,
 										org.hibernate.annotations.CascadeType.MERGE, 
 										org.hibernate.annotations.CascadeType.PERSIST})
-	@PrimaryKeyJoinColumn(name="registry")				
+	@PrimaryKeyJoinColumn 
 	public Registry getRegistry() {
 		return registry;
 	}
@@ -86,8 +85,7 @@ public class Employee implements ITransferObject, IEntity {
 		this.registry = registry;
 	}
 
-	@Column(name="social_security_num", length = 32)
-	@Index(name = "IDX_EMPLOYEE_SOCIAL_SECURITY_NUM")
+	@Column(name="social_security_num")
 	public String getSocialSecurityNumber() {
 		return socialSecurityNumber;
 	}
@@ -134,7 +132,6 @@ public class Employee implements ITransferObject, IEntity {
      * 
 	 * @return the active
 	 */
-	@Column(nullable=true)
 	public boolean isActive() {
 		return active;
 	}

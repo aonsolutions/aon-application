@@ -91,7 +91,7 @@ public class TargetSegment implements ITransferObject {
 	/**
 	 * Sets the segment.
 	 * 
-	 * @param segment the segment
+	 * @param item the segment
 	 */
 	public void setSegment(CommercialSegment segment) {
 		this.segment = segment;

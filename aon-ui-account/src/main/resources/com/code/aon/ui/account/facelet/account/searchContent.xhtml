@@ -7,7 +7,7 @@
 
 	<aon:outputLabel for="Account_id"
 		value="#{bundle.aon_id}" />
-	<aon:inputText id="Account_id" size="15"
+	<aon:inputText id="Account_id" size="50"
 		valueChangeListener="#{controller.addExpression}" />
 
 	<aon:outputLabel for="Account_description"
@@ -17,17 +17,17 @@
 
 	<aon:outputLabel for="Account_alias"
 		value="#{bundle.aon_alias}" />
-	<aon:inputText id="Account_alias" size="30"
+	<aon:inputText id="Account_alias" size="50"
 		valueChangeListener="#{controller.addExpression}" />
 
 	<aon:outputLabel for="Account_entryEnabled"
 		value="#{accountBundle.account_entryEnabled}" />
 	<aon:selectOneMenu id="Account_entryEnabled"
 		valueChangeListener="#{controller.addExpression}">
-		<f:selectItem itemLabel="#{accountBundle.account_entryEnabled_all}"
-			itemValue="#{null}" />
-		<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
-		<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+		<f:selectItem itemLabel="#{bundle.aon_yes}"
+			itemValue="true" />
+		<f:selectItem itemLabel="#{bundle.aon_no}"
+			itemValue="false" />
 	</aon:selectOneMenu>
 
 </ui:composition>

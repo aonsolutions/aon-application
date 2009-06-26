@@ -132,7 +132,7 @@ public class CommercialTracking implements ITransferObject {
 	/**
 	 * Sets the seller.
 	 * 
-	 * @param seller the seller
+	 * @param item the seller
 	 */
 	public void setSeller(Seller seller) {
 		this.seller = seller;
@@ -172,7 +172,7 @@ public class CommercialTracking implements ITransferObject {
 	/**
 	 * Sets the activity.
 	 * 
-	 * @param activity the activity
+	 * @param item the activity
 	 */
 	public void setActivity(CommercialActivity activity) {
 		this.activity = activity;

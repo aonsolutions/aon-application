@@ -52,8 +52,7 @@ public class JRBeanCollectionDataSource extends JRAbstractBeanDataSource impleme
 	
 
 	/**
-	 * @param beanCollection
-	 *            The collection of the data.
+	 *
 	 */
 	public JRBeanCollectionDataSource(Collection beanCollection)
 	{
@@ -62,10 +61,7 @@ public class JRBeanCollectionDataSource extends JRAbstractBeanDataSource impleme
 	
 
 	/**
-	 * @param beanCollection
-	 *            The collection of the data.
-	 * @param isUseFieldDescription
-	 *            The collection of the data.
+	 *
 	 */
 	public JRBeanCollectionDataSource(Collection beanCollection, boolean isUseFieldDescription)
 	{

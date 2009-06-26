@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -17,7 +16,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.wizard.AbstractWizard;
-import com.code.aon.ui.util.AonUtil;
 
 public class AccountWizard extends AbstractWizard {
 
@@ -32,10 +30,6 @@ public class AccountWizard extends AbstractWizard {
 	private String id;
 	private String description;
 	private String alias;
-	private boolean orderById = false;
-	private boolean orderByDescription  = true;
-	private boolean orderByAlias = false;
-	
 
 	static {
 		try {
@@ -106,13 +100,6 @@ public class AccountWizard extends AbstractWizard {
 			criteria.addExpression(ExpressionUtilities.getExpression(getAlias(), ALIAS));
 		}
 		criteria.addEqualExpression(ENTRY_ENABLED, true);
-		if (isOrderById()) {
-			criteria.addOrder(ID);	
-		} else if (isOrderByDescription()) {
-			criteria.addOrder(DESCRIPTION);	
-		} else if (isOrderByAlias()) {
-			criteria.addOrder(ALIAS);	
-		}
 	}
 
 	@Override
@@ -127,49 +114,4 @@ public class AccountWizard extends AbstractWizard {
 		setAlias(null);
 	}
 
-	public boolean isOrderById() {
-		return orderById;
-	}
-
-	public void setOrderById(boolean orderById) {
-		this.orderById = orderById;
-	}
-
-	public boolean isOrderByDescription() {
-		return orderByDescription;
-	}
-
-	public void setOrderByDescription(boolean orderByDescription) {
-		this.orderByDescription = orderByDescription;
-	}
-
-	public boolean isOrderByAlias() {
-		return orderByAlias;
-	}
-
-	public void setOrderByAlias(boolean orderByAlias) {
-		this.orderByAlias = orderByAlias;
-	}
-
-	public void onAccept(ActionEvent event) {
-		if (StringUtils.isEmpty(getId())) {
-			AonUtil.addErrorMessage("El código de cuenta contable es requerido.");
-		} else if (StringUtils.isEmpty(getDescription())) {
-			AonUtil.addErrorMessage("La descripción de la cuenta contable es requerida.");
-		} else {
-			try {
-				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-				Account account = new Account();
-				account.setId(getId());
-				account.setDescription(getDescription());
-				account.setAlias(getAlias());
-				account = (Account) accountBean.insert(account);
-				onSearch(event);
-			} catch (ManagerBeanException e) {
-				FacesContext context = FacesContext.getCurrentInstance();
-				FacesMessage message = new FacesMessage(e.getMessage());
-				context.addMessage(null, message);
-			}
-		}
-	}
 }

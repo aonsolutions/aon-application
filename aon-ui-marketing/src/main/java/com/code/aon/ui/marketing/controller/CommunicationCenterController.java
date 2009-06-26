@@ -89,20 +89,9 @@ public class CommunicationCenterController implements IMarketingConstants {
 	
 	private int pendingTargets;
 	
-	private boolean showTarget;
-	
 	public CommunicationCenterController() {
 		this.date = new Date();
 		this.questionValues = new LinkedList<SelectItem>();
-		this.showTarget = true;
-	}
-
-	public boolean isShowTarget() {
-		return showTarget;
-	}
-
-	public void setShowTarget(boolean showTarget) {
-		this.showTarget = showTarget;
 	}
 
 	public Date getDate() {

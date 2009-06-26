@@ -104,7 +104,7 @@ public class TargetSeller implements ITransferObject {
 	/**
 	 * Sets the seller.
 	 * 
-	 * @param seller the seller
+	 * @param item the seller
 	 */
 	public void setSeller(Seller seller) {
 		this.seller = seller;

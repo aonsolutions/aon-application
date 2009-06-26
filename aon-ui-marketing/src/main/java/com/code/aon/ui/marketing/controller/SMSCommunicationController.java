@@ -30,7 +30,6 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.messaging.controller.IMessagingConstants;
 import com.code.aon.ui.messaging.controller.SMSController;
@@ -159,7 +158,7 @@ public class SMSCommunicationController implements IMarketingConstants {
     	SMSController sms = getSMSController();
 		String username = UserUtils.getInstance().getLoggedUser().getLogin();
 		sms.setUsername(username);
-		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(CompanyController.COMPANY_NAME);
 		sms.setOrganization(companyController.obtainCompany().getAlias());
 		String domainName = UserUtils.getInstance().getPrincipal().getDomain();
 		sms.setDomainName(domainName);

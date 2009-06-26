@@ -37,10 +37,10 @@
 		<mapping class="com.code.aon.product.ProductCategory"/>
 		<mapping class="com.code.aon.product.ProductCategoryGroup"/>		
 		<mapping class="com.code.aon.product.Brand"/>
+		<mapping class="com.code.aon.product.Tariff"/>
  
 		<mapping class="com.code.aon.finance.PayMethod"/>
 		
-		<mapping class="com.code.aon.config.Tariff"/>
 		<mapping class="com.code.aon.config.Tax"/>
 
 		<mapping class="com.code.aon.company.WorkPlace"/>

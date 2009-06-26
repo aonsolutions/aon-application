@@ -5,17 +5,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.mail.MessagingException;
-import javax.naming.Name;
 
-import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.BasicManagerBean;
@@ -24,17 +21,19 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ldap.AonDN;
+import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.MailAccount;
-import com.code.aon.webmail.WebmailUtil;
-import com.code.aon.webmail.bean.BundleConstants;
+import com.code.aon.webmail.Signature;
 
-public class MailAccountController extends BasicController implements WebMailConstants {
+public class MailAccountController extends BasicController {
 
-	private static final String MAIL_ACCOUNT_DUPLICATED = "webmail_mailAccount_duplicated";
+	private static final String MAIL_ACCOUNT_DUPLICATED = "aon_webmail_mailAccount_duplicated";
 
 	private static final Logger LOGGER = Logger.getLogger(MailAccountController.class.getName());
 	
@@ -42,21 +41,20 @@ public class MailAccountController extends BasicController implements WebMailCon
 	
 	private BasicManagerBean ldapManagerBean;
 	
-	private Name accountId;
-	
-	private boolean showMailAccountList;
-	
 	private List<SelectItem> mailAccounts;
-	
-	public MailAccountController() {
-		updateCurrentMailAccount();
-	}
 
+	public LdapDAO getDAO( AuthPrincipal principal ) {
+		LdapDAO dao = new LdapDAO(MailAccount.class);
+		DistinguishedName baseDN = AonDN.getUserAccountsDN(principal.getDomain(), principal.getShortName());
+		LOGGER.info( "MailAccount DAO DN:" + baseDN );
+		dao.setBaseDN( baseDN.toString() );
+		return dao;
+	}
+	
 	@Override
 	public IManagerBean getManagerBean() throws ManagerBeanException {
 		if (this.ldapManagerBean == null) {
-			AuthPrincipal auth = Utils.getAuthPrincipal();
-			this.dao = WebmailUtil.getMailAccountDAO(auth.getDomain(), auth.getShortName());
+			this.dao = getDAO(Utils.getAuthPrincipal());
 			this.ldapManagerBean = new BasicManagerBean(dao);
 		}
 		return this.ldapManagerBean;
@@ -64,22 +62,22 @@ public class MailAccountController extends BasicController implements WebMailCon
 	
 	private void addMessageExpression( String messageId ) {
 		Locale locale = AonUtil.getCurrentLocale();
-		ResourceBundle bundle = ResourceBundle.getBundle(BundleConstants.RESOURCE_BUNDLE, locale);
+		ResourceBundle bundle = ResourceBundle.getBundle(AonConstants.RESOURCE_BUNDLE, locale);
 		addMessage( bundle.getString(messageId) );
 	}
 	
 	@Override
 	public void accept(ActionEvent event) {		
+		String oldId = (String) this.savedToId;
 		try {
-			Name currentId = this.dao.calculateDN(getTo());
+			String currentId = this.dao.calculateDN(getTo());
 			if ( isNew() ) {
 				if ( dao.exists(currentId) ) {
 					addMessageExpression(MAIL_ACCOUNT_DUPLICATED);
 		            return;
 				}			
 			} else {
-				Name oldId = (Name) this.savedToId;				
-				if (! oldId.equals(currentId) ) {
+				if (! StringUtils.equals(oldId, currentId) ) {
 					if ( dao.exists(currentId) ) {
 						addMessageExpression(MAIL_ACCOUNT_DUPLICATED);
 						return;
@@ -102,44 +100,30 @@ public class MailAccountController extends BasicController implements WebMailCon
 		super.accept(event);
 	}
 	
-	private void resetFolderController() {
-		FolderController folderController = (FolderController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_FOLDER);
+	@SuppressWarnings("unused")
+	public void onChangeServer(ActionEvent event){
+		FolderController folderController = (FolderController)AonUtil.getRegisteredBean(AonConstants.BEAN_FOLDER);
 		if (folderController.getFolder()!=null){
 			try {
 				folderController.getFolder().getFolder().expunge();
 				folderController.getFolder().getFolder().close(false);
 				folderController.setFolder(null);
-			} catch (MessagingException e) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			} catch (MessagingException e1) {
+				e1.printStackTrace();
 			}
-		}		
-	}
-	
-	private void changeMailAccount() {
-		WebMailController webmail = (WebMailController)AonUtil.getRegisteredBean(WebMailConstants.BEAN_WEBMAIL);
+		}
+		super.onSelect(event);
+		WebMailController webmail = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
 		webmail.getServer().disconnect();
 		MailAccount previous = webmail.getServer().getAccount();
 		try{
-			webmail.init((MailAccount)super.getSelectedTO());
-		} catch (Throwable e) {
-			try {
-				webmail.init((MailAccount)previous);
-			} catch (MessagingException e1) {
-				LOGGER.log(Level.SEVERE, e.getMessage(), e);
-			}
+			webmail.initFull((MailAccount)super.getSelectedTO());
+		}catch (Exception e) {
+			webmail.initFull((MailAccount)previous);
 			AonUtil.addErrorMessage( e.getMessage() );
-		} finally {
-			this.accountId = webmail.getServer().getAccount().getId();			
 		}
-    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(WebMailConstants.BEAN_TREE);
-    	treeBean.initTree( webmail.getServer() );		
-	}
-	
-	@SuppressWarnings("unused")
-	public void onChangeServer(ActionEvent event) {
-		resetFolderController();
-		super.onSelect(event);
-		changeMailAccount();
+    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
+    	treeBean.loadTree();
 	}
 
 	public boolean isToDefaultAccount(){
@@ -147,22 +131,11 @@ public class MailAccountController extends BasicController implements WebMailCon
 		return account.isDefault();
 	}
 
-	public boolean isCurrentToDefaultAccount() throws ManagerBeanException {
-		if ( getModel().isRowAvailable() ) {
-			MailAccount account = (MailAccount)getSelectedTO();
-			return account.isDefault();
-		}
-		return false;
+	public boolean isCurrentToDefaultAccount(){
+		MailAccount account = (MailAccount)getSelectedTO();
+		return account.isDefault();
 	}
 
-	public boolean isCurrentToActiveAccount() throws ManagerBeanException {
-		if ( getModel().isRowAvailable() ) {
-			MailAccount ma = (MailAccount)getSelectedTO();
-			return ObjectUtils.equals(accountId, ma.getId());
-		}
-		return false;
-	}
-	
 	public List<SelectItem> getMailAccounts() {
 		return mailAccounts;
 	}
@@ -176,51 +149,6 @@ public class MailAccountController extends BasicController implements WebMailCon
 			SelectItem item = new SelectItem(mailAccount.getId(),mailAccount.getEmail());
 			this.mailAccounts.add(item);
 		}
-		updateCurrentMailAccount();
-	}
-
-	@SuppressWarnings("unchecked")
-	public void updateCurrentMailAccount() {
-		WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-		this.accountId = webmail.getServer().getAccount().getId();
-	}
-	
-	public Name getAccountId() {
-		return accountId;
-	}
-
-	public void setAccountId(Name accountId) {
-		this.accountId = accountId;
-	}
-
-	public boolean isShowMailAccountList() {
-		return showMailAccountList;
-	}
-
-	public void setShowMailAccountList(boolean showMailAccountList) {
-		this.showMailAccountList = showMailAccountList;
-	}
-	
-	public void onSelectMailAccount(ActionEvent event) {
-		setShowMailAccountList(false);
-	}
-
-	public void onChangeMailAccount( ValueChangeEvent event ) {
-		resetFolderController();
-		Name newAccountId = (Name) event.getNewValue();
-		for( int i = 0; i < this.mailAccounts.size(); i++ ) {
-			if ( ObjectUtils.equals(newAccountId, this.mailAccounts.get(i).getValue()) ) {
-				try {
-					getModel().setRowIndex(i);
-				} catch (ManagerBeanException e) {
-					LOGGER.log(Level.SEVERE, e.getMessage(), e);
-				}
-				break;
-			}
-		}
-		super.onSelect(null);
-		changeMailAccount();
-		setShowMailAccountList(false);
 	}
 	
 }

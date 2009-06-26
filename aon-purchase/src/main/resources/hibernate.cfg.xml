@@ -29,6 +29,7 @@
 		<mapping class="com.code.aon.product.ProductCategory"/>
 		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
 		<mapping class="com.code.aon.product.ProductCategoryTree"/>
+		<mapping class="com.code.aon.product.Tariff"/>
 		<mapping class="com.code.aon.product.Tax"/>
 		<mapping class="com.code.aon.product.TaxDetail"/>
 		
@@ -46,7 +47,6 @@
 		<mapping class="com.code.aon.company.resources.Resource"/>
 
 		<mapping class="com.code.aon.config.Scope"/>
-		<mapping class="com.code.aon.config.Tariff"/>
 	</session-factory>
 
 </hibernate-configuration>

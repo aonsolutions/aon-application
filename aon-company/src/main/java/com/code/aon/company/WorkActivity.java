@@ -17,14 +17,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.WhereJoinTable;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.company.resources.Employee;
 import com.code.aon.company.resources.Resource;
 
@@ -66,7 +61,7 @@ public class WorkActivity implements ITransferObject, IEntity {
 		this.id = id;
 	}
 	
-	@Column(name="description", length = 64, nullable = false)
+	@Column(name="description")
 	public String getDescription() {
 		return description;
 	}
@@ -76,9 +71,7 @@ public class WorkActivity implements ITransferObject, IEntity {
 	}
 
 	@OneToOne
-    @JoinColumn(name="workplace", updatable = false)
-    @ForeignKey(name = "FK_WORKACTIVITY_WORKPLACE")
-    @Index(name = "IDX_WORKACTIVITY_WORKPLACE")    
+    @JoinColumn(name="workplace", nullable = false, updatable = false)    
     public WorkPlace getWorkPlace() {
 		return workPlace;
 	}
@@ -110,7 +103,6 @@ public class WorkActivity implements ITransferObject, IEntity {
      * 
 	 * @return the active
 	 */
-	@Column(nullable = true)
 	public boolean isActive() {
 		return active;
 	}
@@ -184,35 +176,24 @@ public class WorkActivity implements ITransferObject, IEntity {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (this == obj) return true;
-		if (obj.getClass() != getClass()) return false;
-		final WorkActivity o = (WorkActivity) obj;
-		if (o.getId() == null && getId() == null) {
-			return new EqualsBuilder()
-				.append(this.active, o.active)
-				.append(this.calendar, o.calendar)
-				.append(this.description, o.description)
-				.append(this.workPlace, o.workPlace)
-				.isEquals();
+		if (obj == null) {
+    		return super.equals(obj);
 		}
-		return ObjectUtils.equals(getId(), o.getId());		
-	}
-	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder()
-			.append(active)
-			.append(calendar)
-			.append(description)
-			.append(id)
-			.append(workPlace)
-			.toHashCode();
+		if (obj instanceof WorkActivity) {
+			WorkActivity o = (WorkActivity) obj;
+			if (o.getId() == null && id == null) {
+				return super.equals(obj);	
+			}
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
-	public String toString() {
-		return new PojoToStringBuilder(this).toString();
-	}
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
+    }
 
 }

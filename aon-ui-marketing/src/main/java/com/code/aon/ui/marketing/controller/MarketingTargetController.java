@@ -8,7 +8,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.ReplicationMode;
 import com.code.aon.marketing.MarketingTarget;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
@@ -23,7 +22,7 @@ public class MarketingTargetController extends TargetController {
 	private IManagerBean mtBean;
 	
 	@Override
-	public String resolveAlias( String alias ) {
+	protected String resolveAlias( String alias ) {
 		String newKey = alias;
 		if ( newKey.startsWith("Target_") ) {
 			newKey = newKey.replace("Target_", "MarketingTarget_target_");
@@ -170,18 +169,6 @@ public class MarketingTargetController extends TargetController {
 		public ITransferObject update(ITransferObject to)
 				throws ManagerBeanException {
 			return getMarketingTarget(targetBean.update(to));
-		}
-
-		@Override
-		public ITransferObject replicate(ITransferObject to,
-				ReplicationMode mode) throws ManagerBeanException {
-			return bean.replicate(to, mode);
-		}
-
-		@Override
-		public void restoreNullSubPOJOs(ITransferObject to)
-				throws ManagerBeanException {
-			bean.restoreNullSubPOJOs(to);
 		}
 		
 	}

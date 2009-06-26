@@ -42,8 +42,7 @@ public final class ResourceManager {
 			"WHERE r.employee = e " +
 			"GROUP BY r.employee " +
 			"ORDER BY r.employee";
-		String factoryName = HibernateUtil.getSessionFactoryName();
-		Query query = HibernateUtil.getSession(factoryName).createQuery( select );
+		Query query = HibernateUtil.getSession().createQuery( select );
 		return query.list();
 	}
 
@@ -74,8 +73,7 @@ public final class ResourceManager {
 			"AND r.active = 0 " +
 			"GROUP BY r.employee " +
 			"ORDER BY r.employee";
-		String factoryName = HibernateUtil.getSessionFactoryName();
-		Query query = HibernateUtil.getSession(factoryName).createQuery( select );
+		Query query = HibernateUtil.getSession().createQuery( select );
 		return query.list();
 	}
 
@@ -107,8 +105,7 @@ public final class ResourceManager {
 			"AND r.employee = :employee " +
 			"AND r.endingDate is null " +
 			"GROUP BY r.employee";
-		String factoryName = HibernateUtil.getSessionFactoryName();
-		Query query = HibernateUtil.getSession(factoryName).createQuery( select );
+		Query query = HibernateUtil.getSession().createQuery( select );
 		query.setEntity( "employee", employee );
 		List l = query.list();
 		return ( l.size() > 0 )? (Resource) l.get( l.size() - 1 ): null; 
