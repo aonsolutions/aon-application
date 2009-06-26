@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="list">
+		
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.aon_webmail_mailAccount}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_listing}" />
+					</aon:div>
+
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="mailAccount_form" actionListener="#{mailAccount.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-newMailAccount"
+							accesskey="#{bundle.aon_key_new}" />
+						<aon:commandButton id="back"
+							value="#{bundle.aon_back}" action="folder"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel" />
+					</aon:div>
+
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:editDataTable id="dataTable" value="#{mailAccount.model}" var="to"
+					rows="20" styleClass="dr-table rich-table aon-editDataTable"
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+								aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+
+					<aon:rowSelector
+						action="mailAccount_form" actionListener="#{mailAccount.onSelect}" />
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_webmail_mailAccount_name}" />
+						</f:facet>
+						<aon:outputText value="#{to.name}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_webmail_mailAccount_email}" />
+						</f:facet>
+						<aon:outputText value="#{to.email}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_webmail_signature_signature}" />
+						</f:facet>
+						<aon:outputText value="#{to.signature.name}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText
+								value="#{appBundle.aon_webmail_mailAccount_active}" />
+						</f:facet>
+						<aon:outputText
+							value="#{appBundle.aon_webmail_mailAccount_user_account}"
+							rendered="#{!mailAccount.currentToDefaultAccount}">
+						</aon:outputText>
+						<aon:outputText
+							value="#{appBundle.aon_webmail_mailAccount_default_account}"
+							rendered="#{mailAccount.currentToDefaultAccount}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="&nbsp;" />
+						</f:facet>
+						<aon:outputText
+							value="#{appBundle.aon_webmail_signature_active}"
+							rendered="#{webmail.server.account.name==to.name}" />
+						<aon:commandButton id="mailAccountChange"
+							rendered="#{webmail.server.account.name!=to.name}"
+							onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
+							title="#{appBundle.aon_webmail_mailAccountChange}"
+							action="mailAccount_list" actionListener="#{mailAccount.onChangeServer}"
+							value="#{appBundle.aon_webmail_mailAccountChange}"
+							styleClass="aon-icon-commandButton aon-icon-mailAccountChange">
+						</aon:commandButton>
+					</aon:column>
+
+				</aon:editDataTable>
+
+				<aon:dataScroller2 for="dataTable" showNote="true" />
+
+			</aon:div>
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>
