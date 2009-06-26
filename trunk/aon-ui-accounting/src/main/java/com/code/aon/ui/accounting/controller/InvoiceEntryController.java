@@ -109,42 +109,15 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 
 	private InvoiceEntryDetail currentDetail;
 
-	private Company company;
-
 	private Finance currentFinance;
+
+	private Company company;
 
 	private String onGenerateKey;
 
 	private AccountingUtil accountingUtil;
-	
-	private Date invoiceDate;
-	
-	private Date taxDate;
-	
-		
-	public Date getInvoiceDate() {
-		return invoiceDate;
-	}
 
-	public void setInvoiceDate(Date invoiceDate) {
-		this.invoiceDate = invoiceDate;
-	}
 
-	public Date getTaxDate() {
-		return taxDate;
-	}
-
-	public void setTaxDate(Date taxDate) {
-		this.taxDate = taxDate;
-	}
-
-	public AccountingUtil getAccountingUtil() {
-		if (accountingUtil == null) {
-			accountingUtil = new AccountingUtil();
-		}
-		return accountingUtil;
-	}
-	
 	public AccountEntryInvoiceWriter getWriter() {
 		if (writer == null) {
 			writer = new AccountEntryInvoiceWriter();
@@ -175,11 +148,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		this.isNew = isNew;
 	}
 
-	public boolean isRegistryFilled() {
-		return (getHeader() != null && getHeader().getRegistry() != null && getHeader()
-				.getRegistry().getId() != null);
-	}
-
 	public boolean isNewDetail() {
 		return isNewDetail;
 	}
@@ -190,6 +158,56 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 
 	public boolean isNewFinance() {
 		return isNewFinance;
+	}
+
+	public void setNewFinance(boolean isNewFinance) {
+		this.isNewFinance = isNewFinance;
+	}
+
+	public InvoiceEntryHeader getHeader() {
+		return header;
+	}
+
+	public void setHeader(InvoiceEntryHeader header) {
+		this.header = header;
+	}
+
+	public DataModel getDetails() {
+		if (details == null) {
+			details = new ListDataModel(new LinkedList<InvoiceEntryDetail>());
+		}
+		return details;
+	}
+
+	public void setDetails(DataModel details) {
+		this.details = details;
+	}
+
+	public DataModel getFinances() {
+		if (finances == null) {
+			finances = new ListDataModel(new LinkedList<Finance>());
+		}
+		return finances;
+	}
+
+	public void setFinances(DataModel finances) {
+		this.finances = finances;
+	}
+
+	public InvoiceEntryDetail getCurrentDetail() {
+		return currentDetail;
+	}
+
+	public void setCurrentDetail(InvoiceEntryDetail currentDetail) {
+		this.currentDetail = currentDetail;
+	}
+
+	public Finance getCurrentFinance() {
+		return currentFinance;
+	}
+
+	public void setCurrentFinance(Finance currentFinance) {
+		this.currentFinance = currentFinance;
 	}
 
 	public Company getCompany() {
@@ -211,54 +229,16 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		this.company = company;
 	}
 
-	public void setNewFinance(boolean isNewFinance) {
-		this.isNewFinance = isNewFinance;
-	}
-
-	public InvoiceEntryHeader getHeader() {
-		return header;
-	}
-
-	public void setHeader(InvoiceEntryHeader header) {
-		this.header = header;
-	}
-
-	public DataModel getFinances() {
-		if (finances == null) {
-			finances = new ListDataModel(new LinkedList<Finance>());
+	public AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
 		}
-		return finances;
+		return accountingUtil;
 	}
-
-	public void setFinances(DataModel finances) {
-		this.finances = finances;
-	}
-
-	public DataModel getDetails() {
-		if (details == null) {
-			details = new ListDataModel(new LinkedList<InvoiceEntryDetail>());
-		}
-		return details;
-	}
-
-	public void setDetails(DataModel details) {
-		this.details = details;
-	}
-
-	public InvoiceEntryDetail getCurrentDetail() {
-		return currentDetail;
-	}
-
-	public void setCurrentDetail(InvoiceEntryDetail currentDetail) {
-		this.currentDetail = currentDetail;
-	}
-
-	public Finance getCurrentFinance() {
-		return currentFinance;
-	}
-
-	public void setCurrentFinance(Finance currentFinance) {
-		this.currentFinance = currentFinance;
+	
+	public boolean isRegistryFilled() {
+		return (getHeader() != null && getHeader().getRegistry() != null && getHeader()
+				.getRegistry().getId() != null);
 	}
 
 	public void onReset(ActionEvent event) {
@@ -271,7 +251,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 
 	private void reset() throws ManagerBeanException {
 		this.isNew = true;
-		this.header = new InvoiceEntryHeader();
 		initializeHeader();
 		header.setType(InvoiceType.SALES);
 
@@ -285,28 +264,27 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	}
 
 	private void initializeHeader() throws ManagerBeanException {
+		Period period = (header != null && header.getPeriod() != null) ? header.getPeriod() : AccountingPeriodUtil.getDefaultPeriod();
+		Date date = (header != null && header.getDate() != null) ? header.getDate() : new Date();
+		Date taxDate = (header != null && header.getTaxDate() != null) ? header.getTaxDate() : new Date();
+		SecurityLevel securityLevel = (header != null && header.getSecurityLevel() != null) ? header.getSecurityLevel() : SecurityLevel.OFFICIAL;
+		AccountAppParamsController c = (AccountAppParamsController) AonUtil.getRegisteredBean(ACCOUNT_APP_PARAM_CONTROLLER_NAME);
+		ApplicationParameter param = c.getParameter(DefaultAccounts.DEFAULT_INVOICE_SERIES);
+		String series = (header != null && !StringUtils.isEmpty(header.getSeries())) ? header.getSeries() : (param != null) ? param.getValue() : null;
+
+		this.header = new InvoiceEntryHeader();
 		header.setAccount(null);
-		header.setPeriod( AccountingPeriodUtil.getDefaultPeriod());
+		header.setSeries(series);
+		header.setPeriod(period);
+		header.setDate(date);
+		header.setTaxDate(taxDate);
+		header.setSecurityLevel(securityLevel);
 		header.setRegistry(new Registry());
-		if(invoiceDate!=null){		
-			header.setDate(this.getInvoiceDate());
-			header.setTaxDate(this.getTaxDate());
-		} else {
-			header.setDate(new Date());
-			header.setTaxDate(new Date());
-		}
-		header.setSecurityLevel(SecurityLevel.OFFICIAL);
 		header.setTransaction(InvoiceTransactionType.NATIONAL);
 		header.setInvestment(false);
 		header.setTaxFree(false);
 		header.setWithholding(false);
 		header.setSurcharge(false);
-		AccountAppParamsController c = (AccountAppParamsController) AonUtil
-				.getRegisteredBean(ACCOUNT_APP_PARAM_CONTROLLER_NAME);
-		ApplicationParameter param = c.getParameter(DefaultAccounts.DEFAULT_INVOICE_SERIES);
-		if (param != null) {
-			header.setSeries(param.getValue());
-		}
 	}
 
 	public boolean isSales() {
@@ -527,9 +505,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	}
 
 	public void onGenerate(ActionEvent event) {
-		
-		invoiceDate = header.getDate();
-		taxDate = header.getTaxDate();
 		double invoiceTotal = getInvoiceTotal();
 		double financeTotal = getFinanceTotal();
 		if (financeTotal > 0 && invoiceTotal != financeTotal) {
