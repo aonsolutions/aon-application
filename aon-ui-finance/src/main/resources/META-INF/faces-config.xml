@@ -891,11 +891,11 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ************* INVOICE SIGNER ***************** -->
+	<!-- ************* INVOICE RECORDING ***************** -->
 	<managed-bean>
-		<managed-bean-name>invoiceSigner</managed-bean-name>
+		<managed-bean-name>invoiceRecording</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.controller.InvoiceSignerController
+			com.code.aon.ui.finance.controller.InvoiceRecordingController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -904,7 +904,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>invoiceSigner</value>
+			<value>invoiceRecording</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
@@ -916,66 +916,20 @@
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
-				<value>#{invoiceSignerSearch}</value>
+				<value>#{invoiceRecordingSearch}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 	
 	<managed-bean>
-		<managed-bean-name>invoiceSignerSearch</managed-bean-name>
+		<managed-bean-name>invoiceRecordingSearch</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.event.InvoiceSearchListener
+			com.code.aon.ui.finance.event.InvoiceRecordingSearchListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>defaultType</property-name>
 			<value>SALES</value>
-		</managed-property>		
-	</managed-bean>
-
-	<!-- ************* INVOICE RECORDER ***************** -->
-	<managed-bean>
-		<managed-bean-name>invoiceRecorder</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.controller.InvoiceRecorderController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.finance.Invoice</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>invoiceRecorder</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Invoice_issueDate,Invoice_series,Invoice_number</value>
-		</managed-property>									
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>
-					com.code.aon.ui.form.event.IControllerListener
-				</value-class>
-				<value>#{invoiceRecorderSearch}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>invoiceRecorderSearch</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.event.InvoiceSearchListener
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>defaultType</property-name>
-			<value>SALES</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>defaultStatus</property-name>
-			<value>PENDING</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -1039,6 +993,10 @@
 			com.code.aon.ui.finance.event.InvoiceSearchListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>defaultType</property-name>
+			<value>SALES</value>
+		</managed-property>		
 	</managed-bean>
 
 	<managed-bean>
@@ -1506,13 +1464,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
-	<!-- ************ EMAIL UTIL CONTROLLER ************** -->
-	<managed-bean>
-		<managed-bean-name>emailUtil</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.finance.util.EmailUtilController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
-
   <!-- =================== CREDITOR ================= -->
 	<navigation-rule>
 		<navigation-case>
@@ -1657,27 +1608,15 @@
 		</navigation-case>
 	</navigation-rule>   
 
-	<!-- =================== Invoice Signer ========================== -->
+	<!-- =================== Invoice Recording ========================== -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>invoiceSigner_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/invoiceSigner/list.xhtml</to-view-id>
+			<from-outcome>invoiceRecording_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/invoiceRecording/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>invoiceSigner_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/invoiceSigner/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>   
-  
-	<!-- =================== Invoice Recorder ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>invoiceRecorder_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/invoiceRecorder/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>invoiceRecorder_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/invoiceRecorder/search.xhtml</to-view-id>
+			<from-outcome>invoiceRecording_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/invoiceRecording/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>   
   

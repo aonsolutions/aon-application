@@ -27,8 +27,10 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.PageDataModel;
 import com.code.aon.ui.util.AonUtil;
 
-public class FinanceFractionController implements IFinanceConstants {
+public class FinanceFractionController {
 
+	private static final String FINANCE_CONTROLLER_NAME = "finance";
+	
 	private DataModel model;
 	
 	private Finance currentFinance;

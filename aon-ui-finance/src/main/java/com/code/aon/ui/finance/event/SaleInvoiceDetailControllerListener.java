@@ -25,6 +25,8 @@ public class SaleInvoiceDetailControllerListener extends ControllerAdapter {
 
 	private static final Logger LOGGER = Logger.getLogger(SaleInvoiceDetailControllerListener.class.getName());
 	
+//	private static final String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
+
 	private IPriceStrategy priceStrategy;
 
 	@Override

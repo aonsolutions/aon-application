@@ -10,7 +10,6 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.finance.enumeration.BillingPeriod;
@@ -26,9 +25,6 @@ import com.code.aon.finance.enumeration.VatType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.util.AonUtil;
 
 /**
  * Collections controller
@@ -180,15 +176,16 @@ public class FinanceCollectionsController {
 	}
 
 	public List<SelectItem> getCompanyBanks() throws ManagerBeanException {
+		IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
+		Iterator<?> iter = companyBean.getList(null).iterator();
 		LinkedList<SelectItem> rBanks = new LinkedList<SelectItem>();
-		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		Company company = companyController.obtainCompany();
-		if ( company != null ) {
-			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
+		if (iter.hasNext()) {
+			Company company = (Company) iter.next();
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(rBankBean
 					.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), company.getId());
-			Iterator<ITransferObject> iter = rBankBean.getList(criteria).iterator();
+			iter = rBankBean.getList(criteria).iterator();
 			while (iter.hasNext()) {
 				RegistryBank rBank = (RegistryBank) iter.next();
 				SelectItem item = new SelectItem(rBank, rBank.getBank().getName());

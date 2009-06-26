@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
@@ -41,8 +42,6 @@ import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -52,9 +51,11 @@ import com.code.aon.ui.util.AonUtil;
  * Controller used in the finance maintenance.
  * 
  */
-public class FinanceController extends BasicController implements IFinanceConstants {
+public class FinanceController extends BasicController {
 
 	private static final Logger LOGGER = Logger.getLogger(FinanceController.class.getName());
+
+	private static final String FINANCE_TRACKING_CONTROLLER_NAME = "financeTracking";
 
 	private Company company;
 
@@ -90,9 +91,16 @@ public class FinanceController extends BasicController implements IFinanceConsta
 	private ArrayList<Finance> checks= new ArrayList<Finance>();
 
 	public Company getCompany() {
-		if (company == null) {
-			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-			setCompany( companyController.obtainCompany() );
+		try {
+			if (company == null) {
+				IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+				Iterator<ITransferObject> iter = companyBean.getList(null, 0, 1).iterator();
+				if (iter.hasNext()) {
+					setCompany((Company) iter.next());
+				}
+			}
+		} catch (ManagerBeanException e) {
+			throw new AbortProcessingException("Error obtaining Company!");
 		}
 		return company;
 	}
@@ -512,18 +520,6 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		String date = bean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE);
 		String id = bean.getFieldName(IFinanceAlias.FINANCE_ID);
 		cr.addOrder(date,true);
-		cr.addOrder(id,true);
-		orderedList=bean.getList(cr);
-	}
-	
-	public void onOrderFinanceListByPayment(ActionEvent event) throws ManagerBeanException {
-		Criteria cr = new Criteria();
-		cr=this.getCriteria();
-		cr.setOrderByList(null);
-		IManagerBean bean = BeanManager.getManagerBean(Finance.class);
-		String paymethod = bean.getFieldName(IFinanceAlias.FINANCE_PAY_METHOD_ID);
-		String id = bean.getFieldName(IFinanceAlias.FINANCE_ID);
-		cr.addOrder(paymethod,true);
 		cr.addOrder(id,true);
 		orderedList=bean.getList(cr);
 	}

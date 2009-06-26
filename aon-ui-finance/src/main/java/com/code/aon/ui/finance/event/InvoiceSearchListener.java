@@ -5,21 +5,20 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Bank;
 import com.code.aon.finance.dao.IFinanceAlias;
-import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Registry;
-import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
+import com.code.aon.ui.form.event.ControllerSearchListener;
 
-public class InvoiceSearchListener extends RegistrySearchListener {
+public class InvoiceSearchListener extends ControllerSearchListener {
 	
 	private String defaultType;
-	
-	private String defaultStatus;
 
+	private InvoiceType type;
+	
 	private Registry registry;
 	
     private Item item;
@@ -33,13 +32,13 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 	public void setDefaultType(String defaultType) {
 		this.defaultType = defaultType;
 	}
-	
-	public String getDefaultStatus() {
-		return defaultStatus;
+
+	public InvoiceType getType() {
+		return type;
 	}
 
-	public void setDefaultStatus(String defaultStatus) {
-		this.defaultStatus = defaultStatus;
+	public void setType(InvoiceType type) {
+		this.type = type;
 	}
 
 	public Registry getRegistry() {
@@ -66,9 +65,20 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 		this.bank = bank;
 	}
 	
+	public boolean isPurchase() {
+		return getType() == InvoiceType.PURCHASE;
+	}
+
+	public boolean isSales() {
+		return getType() == InvoiceType.SALES;
+	}
+	
 	@Override
 	protected void init() throws ManagerBeanException {
-		super.init();
+		setType(null);
+		if (getDefaultType() != null) {
+			setType(InvoiceType.valueOf(getDefaultType()));
+		}
 		setRegistry(new Registry());
 		setItem(new Item());
 		getItem().setProduct(new Product());
@@ -77,15 +87,9 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 	
 	@Override
 	protected void completeCriteria() throws ManagerBeanException, ExpressionException {
-		super.completeCriteria();
 		Criteria criteria = getController().getCriteria();
-		if (getDefaultType() != null) {
-			InvoiceType type = InvoiceType.valueOf(getDefaultType()); 
-			criteria.addEqualExpression(getFieldName(IFinanceAlias.INVOICE_TYPE), type);	
-		}
-		if (getDefaultStatus() != null) {
-			InvoiceStatus status = InvoiceStatus.valueOf(getDefaultStatus()); 
-			criteria.addEqualExpression(getFieldName(IFinanceAlias.INVOICE_STATUS), status);	
+		if (getType() != null) {
+			criteria.addEqualExpression(getFieldName(IFinanceAlias.INVOICE_TYPE), getType());	
 		}
 		if ((getRegistry() != null) && (getRegistry().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IFinanceAlias.INVOICE_REGISTRY_ID), getRegistry().getId());

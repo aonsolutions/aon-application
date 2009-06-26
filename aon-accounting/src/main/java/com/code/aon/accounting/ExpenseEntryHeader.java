@@ -11,6 +11,9 @@ public class ExpenseEntryHeader implements ITransferObject {
 	
 	private static final long serialVersionUID = -3850406267453485925L;
 
+	/** The period. */
+	private Period period;
+
 	/** The date. */
 	private Date date;
 	
@@ -29,6 +32,24 @@ public class ExpenseEntryHeader implements ITransferObject {
 	/** The security level. */
 	private SecurityLevel securityLevel;
 	
+	/**
+	 * Gets the period.
+	 * 
+	 * @return the period
+	 */
+	public Period getPeriod() {
+		return period;
+	}
+
+	/**
+	 * Sets the period.
+	 * 
+	 * @param period the period
+	 */
+	public void setPeriod(Period period) {
+		this.period = period;
+	}
+
 	/**
 	 * Gets the date.
 	 * 

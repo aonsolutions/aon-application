@@ -54,8 +54,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.csb.CSB19Writer;
 import com.code.aon.ui.finance.csb.CSB32Writer;
@@ -69,9 +67,13 @@ import com.code.aon.ui.util.AonUtil;
  * Controller used in the fbatch maintenance.
  * 
  */
-public class FBatchController extends BasicController implements ICollectionProvider, IFinanceConstants {
+public class FBatchController extends BasicController implements ICollectionProvider {
 
 	private static final Logger LOGGER = Logger.getLogger(FBatchController.class.getName());
+
+	private static final String FINANCE_CONTROLLER_NAME = "finance";
+
+	private static final String FINANCE_BATCH_DETAIL_CONTROLLER_NAME = "fBatchDetail";
 
 	private Company company;
 
@@ -82,9 +84,16 @@ public class FBatchController extends BasicController implements ICollectionProv
 	private boolean showFbatchRecordWindow;
 
 	public Company getCompany() {
-		if (company == null) {
-			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-			setCompany( companyController.obtainCompany() );
+		try {
+			if (company == null) {
+				IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+				Iterator<ITransferObject> iter = companyBean.getList(null, 0, 1).iterator();
+				if (iter.hasNext()) {
+					setCompany((Company) iter.next());
+				}
+			}
+		} catch (ManagerBeanException e) {
+			throw new AbortProcessingException("Error obtaining Company!");
 		}
 		return company;
 	}
@@ -362,7 +371,7 @@ public class FBatchController extends BasicController implements ICollectionProv
     					"from FinanceBatchDetail as fbatchDetail " +
     					"where fbatchDetail.financeBatch.id = " + fbatch.getId() + " " +
     					"order by substring(fbatchDetail.finance.bankAccount, 1, 8), fbatchDetail.finance.invoice.registry.id";
-		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+    	Session session = HibernateUtil.getSession(null);
     	Query query = session.createQuery(select);
     	return query.list(); 
 	}

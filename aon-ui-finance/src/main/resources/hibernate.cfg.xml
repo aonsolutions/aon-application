@@ -31,11 +31,12 @@
 		<!-- AON-PRODUCT Mapping files -->	
 		<mapping class="com.code.aon.product.Item"/>
 		<mapping class="com.code.aon.product.Product"/>
+		<mapping class="com.code.aon.product.Tariff"/>
 		<mapping class="com.code.aon.product.ProductCategory"/>
 		<mapping class="com.code.aon.product.Tax"/>
 		<mapping class="com.code.aon.product.Brand"/>
 		
-		<!-- AON-COMPANY Mapping files -->	
+		<!-- AON-REGISTRY Mapping files -->	
 		<mapping class="com.code.aon.company.Company"/>
 		<mapping class="com.code.aon.registry.Registry"/>
 		<mapping class="com.code.aon.registry.RegistryAddress"/>
@@ -43,13 +44,10 @@
 		<mapping class="com.code.aon.registry.RegistryAttachment"/>
 		<mapping class="com.code.aon.registry.Category"/>
 		
-		<!-- AON-CUSTOMER Mapping files -->	
+		<!-- AON-REGISTRY Mapping files -->	
 		<mapping class="com.code.aon.customer.Customer"/>
 		
-		<!-- AON-CONFIG Mapping files -->	
-		<mapping class="com.code.aon.config.Tariff"/>
-
-		<!-- AON-SUPPLIER Mapping files -->	
+		<!-- AON-REGISTRY Mapping files -->	
 		<mapping class="com.code.aon.supplier.Supplier"/>
 		
 		<!-- AON-GEOZONE Mapping files -->		

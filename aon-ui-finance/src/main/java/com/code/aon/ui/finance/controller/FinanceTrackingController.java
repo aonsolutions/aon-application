@@ -24,8 +24,10 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 
-public class FinanceTrackingController extends LinesController implements IFinanceConstants {
+public class FinanceTrackingController extends LinesController {
 
+	private static final String FINANCE_CONTROLLER_NAME = "finance";
+	
 	private AccountEntryFinanceWriter writer;
 
 	public AccountEntryFinanceWriter getWriter() {
