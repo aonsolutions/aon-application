@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="financeEntryForm">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarID" value="aonToolbar" />
+				<ui:param name="toolbarTitle"
+					value="#{accountingBundle.accounting_entry_finance_module}" />
+				<ui:param name="toolbarDescription"
+					value="#{financeEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+
+				<ui:define name="toolbarContent">
+					<aon:commandButton
+						value="#{accountingBundle.accounting_entry_generate}" 
+						id="saveFinance" accesskey="#{bundle.aon_key_save}"
+						title="#{accountingBundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
+						actionListener="#{financeEntry.accept}"
+						action="#{financeEntry.generate}"
+						disabled="#{financeEntry.lines.rowCount == 0}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						onclick="if (!confirm('#{accountingBundle.accounting_entry_generate}?')) return false;" />
+					<aon:commandButton value="#{bundle.aon_reset}"
+						accesskey="#{bundle.aon_key_new}"
+						title="#{bundle.aon_reset} (ALT+#{bundle.aon_key_new})"
+						actionListener="#{financeEntry.onReset}"
+						rendered="#{!financeEntry.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset" />
+					<aon:commandButton value="#{bundle.aon_remove}"
+						accesskey="#{bundle.aon_key_remove}"
+						title="#{bundle.aon_remove} (ALT+#{bundle.aon_key_remove})" 
+						action="accountEntry_search"
+						actionListener="#{financeEntry.onRemove}"
+						rendered="#{!financeEntry.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-delete"
+						immediate="true"
+						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;" />
+
+					<aon:commandButton value="#{bundle.aon_back}"
+						accesskey="#{bundle.aon_key_cancel}"
+						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})" 
+						action="accountEntry_form"
+						rendered="#{!financeEntry.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						immediate="true"
+						onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"/>
+					<aon:commandButton value="#{bundle.aon_back}"
+						accesskey="#{bundle.aon_key_cancel}"
+						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})"
+						action="accountEntry_search" rendered="#{financeEntry.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						immediate="true"
+						onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;" />
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div id="financeContainer">
+					<aon:panelGrid id="financeTables" columns="4" style="width: 100%;"
+						columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-200,
+										aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
+
+						<aon:outputLabel for="AccountEntry_type"
+							value="#{bundle.aon_type}" />
+						<aon:div>
+							<aon:selectOneMenu id="AccountEntry_type"
+								value="#{financeEntry.payment}" disabled="#{financeEntry.payment != null}"
+								valueChangeListener="#{financeEntry.onTypeChanged}" reRender="AccountEntry_type,financePanelTabSet">
+								<f:selectItem itemLabel="" value="#{null}" />
+								<f:selectItem itemLabel="#{accountingBundle.accounting_collection}" itemValue="#{false}" />
+								<f:selectItem itemLabel="#{accountingBundle.accounting_payment}" itemValue="#{true}" />
+							</aon:selectOneMenu>
+							<h:commandLink immediate="true" target="_blank"
+								rendered="#{!financeEntry.new}" 
+								styleClass="aon-dataTable-link"
+								title="#{accountingBundle.accounting_lookup_account_entry}"
+								actionListener="#{financeEntry.onViewAccountEntry}"
+								action="accountEntry_form">
+								<aon:outputText styleClass="aon-italic aon-margin-left"
+									value="(#{accountingBundle.accounting_account_entry}: "/>
+								<aon:outputText styleClass="aon-bold"
+									value="#{financeEntry.accountEntry.id}"/>
+								<aon:outputText styleClass="aon-italic" value=")"/>
+								<f:setPropertyActionListener value="#{true}" 
+									target="#{aonConfiguration.properties.hideHeaderLinks}" />
+							</h:commandLink>
+						</aon:div>
+
+						<aon:outputText for="AccountEntry_balancingRegistryBank"
+							value="#{configBundle.config_bank}" />
+						<aon:selectOneMenu id="AccountEntry_balancingRegistryBank"
+							value="#{financeEntry.registryBank}">
+							<f:selectItem itemLabel="#{accountingBundle.accounting_def_cash_acc}" value="#{null}" />
+							<f:selectItems value="#{financeEntry.companyRegistryBanks}" />
+						</aon:selectOneMenu>
+
+						<aon:outputLabel for="AccountEntry_date" 
+							value="#{bundle.aon_date}" />
+						<aon:selectInputDate size="8" id="AccountEntry_date"
+							value="#{financeEntry.date}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+
+						<aon:outputLabel for="AccountEntry_balancingConcept"
+							value="#{bundle.aon_concept}" />
+						<aon:inputText id="AccountEntry_balancingConcept"
+							value="#{financeEntry.concept}" size="50" maxlength="32">
+						</aon:inputText>
+
+						<aon:outputLabel for="AccountEntry_total"
+							value="#{bundle.aon_total}" />
+						<aon:outputText id="AccountEntry_total"
+						 	styleClass="aon-bold"
+							value="#{financeEntry.total}"
+							size="15">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>	
+
+						<aon:outputText value="&#160;" />
+						<aon:outputText value="&#160;" />
+					</aon:panelGrid>
+				</aon:div>
+
+				<aon:div id="financePanelTabSet">
+					<aon:panelTabSet rendered="#{financeEntry.payment != null}">
+
+						<c:if test="#{financeEntry.lines.rowCount > 0}">
+							<aon:panelTab name="lines" label="#{accountingBundle.accounting_finance_record_list}">
+								<ui:include src="/com/code/aon/ui/accounting/facelet/entry/finance/form_lines.xhtml" />
+							</aon:panelTab>
+						</c:if>
+	
+						<c:if test="#{financeEntry.finances.rowCount > 0}">
+							<aon:panelTab name="finances" label="#{accountingBundle.accounting_finance_pending_list}">
+								<ui:include src="/com/code/aon/ui/accounting/facelet/entry/finance/form_finances.xhtml" />
+							</aon:panelTab>
+						</c:if>
+
+					</aon:panelTabSet>
+				</aon:div>
+
+			</aon:div>
+		</aon:form>
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+	</ui:define>
+</ui:composition>

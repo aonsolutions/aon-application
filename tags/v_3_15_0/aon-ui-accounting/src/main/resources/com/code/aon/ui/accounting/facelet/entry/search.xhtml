@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="accountEntryForm" styleClass="aon-form">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_entry_module}" />
+				<ui:param name="controller" value="#{accountEntry}" />
+				<aon:methodParam name="backActionListener" value="#{accountEntry.onSelectFirst}" type="actionListener" />
+				<aon:methodParam name="backAction" value="accountEntry_form" />				
+			</ui:include>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+
+				<ui:param name="controller" value="#{accountEntry}" />
+				
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchAction" value="#{accountEntry.searchAction}" />
+
+					<aon:outputLabel for="AccountEntry_id"
+						value="#{bundle.aon_id}" />
+					<aon:inputText id="AccountEntry_id" size="10"
+						valueChangeListener="#{accountEntry.addExpression}" />
+
+					<aon:outputLabel for="AccountEntry_accountPeriod"
+						value="#{accountingBundle.accounting_period}" />
+					<aon:inputText id="AccountEntry_accountPeriod" size="10"
+						valueChangeListener="#{accountEntry.addExpression}" />
+
+					<aon:outputLabel for="AccountEntry_type"
+						value="#{bundle.aon_type}" />
+					<aon:selectOneMenu id="AccountEntry_type"
+						converter="aon.EnumConverter"
+						valueChangeListener="#{accountEntry.addEqualExpression}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{accountingCollections.accountTypes}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel value="#{bundle.aon_date}" />
+					<aon:div>
+						<aon:outputLabel for="AccountEntry_entryDate-From"
+							styleClass="aon-tip" value="#{bundle.aon_date_from}" />
+						<aon:selectInputDate id="AccountEntry_entryDate-From"
+							valueChangeListener="#{accountEntry.addGreaterThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+						<aon:outputLabel for="AccountEntry_entryDate-To"
+							styleClass="aon-tip" value="#{bundle.aon_date_to}" />
+						<aon:selectInputDate id="AccountEntry_entryDate-To"
+							valueChangeListener="#{accountEntry.addLessThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+					</aon:div>
+
+					<aon:outputLabel for="AccountEntry_securityLevel"
+						value="#{bundle.aon_security_level}" />
+					<aon:selectOneMenu id="AccountEntry_securityLevel"
+						converter="aon.EnumConverter"
+						valueChangeListener="#{controller.addEqualExpression}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{commonCollections.securityLevels}" />
+					</aon:selectOneMenu>
+					
+					<!-- busqueda por lineas -->
+					
+					<aon:outputLabel for="AccountEntry_detail_account_id"
+						value="#{accountBundle.account_account}" />
+					<aon:inputText id="AccountEntry_detail_account_id" size="10"
+						valueChangeListener="#{accountEntry.addExpression}" />
+
+					<aon:outputLabel for="AccountEntry_detail_account_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="AccountEntry_detail_account_description" size="128"
+						valueChangeListener="#{accountEntry.addExpression}" />
+					
+					<aon:outputLabel for="AccountEntry_detail_concept"
+						value="#{bundle.aon_concept}" />
+					<aon:inputText id="AccountEntry_detail_concept" size="10"
+						valueChangeListener="#{accountEntry.addExpression}" />
+
+					<aon:outputLabel for="AccountEntry_detail_debit"
+						value="#{accountingBundle.accounting_debit}" />
+					<aon:inputText id="AccountEntry_detail_debit" size="10"
+						valueChangeListener="#{accountEntry.addExpression}" />
+					
+					<aon:outputLabel for="AccountEntry_detail_credit"
+						value="#{accountingBundle.accounting_credit}" />
+					<aon:inputText id="AccountEntry_detail_credit" size="10"
+						valueChangeListener="#{accountEntry.addExpression}" />
+					
+					<aon:outputLabel for="AccountEntry_detail_balancingAccount_id"
+						value="#{accountingBundle.accounting_balancing_account}" />
+					<aon:inputText id="AccountEntry_detail_balancingAccount_id" size="10"
+						valueChangeListener="#{accountEntry.addExpression}" />
+					
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+	</ui:define>
+</ui:composition>
