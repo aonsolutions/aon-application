@@ -74,6 +74,12 @@ public interface ICompanyAlias {
 	*/
 	String  COMPANY_SURCHARGE = COMPANY_ENTRY.getAliasNames()[8];
 
+	/** 
+	* Alias value: Company_withholding
+	* Hibernate value: Company.withholding
+	*/
+	String  COMPANY_WITHHOLDING = COMPANY_ENTRY.getAliasNames()[9];
+
 
 
 	/** 

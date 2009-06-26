@@ -19,7 +19,9 @@ import com.code.aon.webmail.WebmailException;
 
 public class AonFolder extends AonMessageSortableList {
 
-    // Draft folder
+    public static final String OTHER_FOLDER_NAME = "other";
+
+	// Draft folder
     public static final String DRAFT_FOLDER_NAME = "Borrador";
 
     // Trash folder
@@ -136,14 +138,22 @@ public class AonFolder extends AonMessageSortableList {
     }
 
 
-    public boolean isLeaf(){
+    public boolean isHoldFolders(){
     	try {
-			if (Folder.HOLDS_FOLDERS != folder.getType())
-				return true;
-		} catch (MessagingException e) {
+    		return ( folder.getType() & Folder.HOLDS_FOLDERS ) != 0;
+    	} catch (MessagingException e) {
 			LOGGER.log(Level.SEVERE,"Error getting folder type", e);
 		}
     	return false;
+    }
+    
+    public boolean isHoldMessages() {
+    	try {
+    		return ( folder.getType() & Folder.HOLDS_MESSAGES ) != 0;
+		} catch (MessagingException e) {
+			LOGGER.log(Level.SEVERE,"Error getting folder type", e);
+		}
+    	return false;    	
     }
     
 	public boolean isRoot(){
@@ -181,10 +191,24 @@ public class AonFolder extends AonMessageSortableList {
 
     public int getMessageCount() throws WebmailException{
 		try {
-			return folder.getMessageCount();
+			if ( isHoldMessages() ) {			
+				return folder.getMessageCount();
+			}
+			return 0;
 		} catch (MessagingException e) {
 			throw new WebmailException(e);
 		}
+    }
+    
+    public int getUnreadMessageCount() throws WebmailException {
+		try {
+			if ( isHoldMessages() ) {
+				return folder.getUnreadMessageCount();				
+			}
+			return 0;
+		} catch (MessagingException e) {
+			throw new WebmailException(e);
+		}    	
     }
     
     public boolean isDeleteable() throws WebmailException{
@@ -207,7 +231,7 @@ public class AonFolder extends AonMessageSortableList {
     	return true;
     }
 
-    public boolean isDeleteableAllMessages() {
+    public boolean isPurgableAllMessages() {
     	if ( isTrashFolder() || isSpamFolder() ) {
     		return true;
     	}
@@ -238,7 +262,7 @@ public class AonFolder extends AonMessageSortableList {
 		} else if ( isDraftFolder() ) {
 			return DRAFT_FOLDER_NAME;
 		}
-    	return "other";
+    	return OTHER_FOLDER_NAME;
     }
 
     public boolean isInboxFolder() {

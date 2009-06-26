@@ -6,11 +6,9 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.mail.AuthenticationFailedException;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.NoSuchProviderException;
 import javax.mail.Quota;
 import javax.mail.SendFailedException;
 import javax.mail.Session;
@@ -96,7 +94,7 @@ public class AonServer {
      * Is this service currently connected?
      * @return true if the service is connected, false if it is not connected
      */
-    private boolean isConnected(){
+    public boolean isConnected(){
         return store != null && store.isConnected();
     }
 
@@ -106,52 +104,38 @@ public class AonServer {
      * or if the connection process was successful.
      *
      * @return true if the connection succeded; otherwise, false.
+	 * @throws MessagingException 
      */
-	public synchronized boolean connect() {
-        try {
-            Properties mailProperties = System.getProperties();
+	public void connect() throws MessagingException {
+        Properties mailProperties = System.getProperties();
 
-            // mailProperties.setProperty("mail.debug", "true");
-            // setup SSL connection factory
-            if (account.isIncomingSsl()) {
-                mailProperties.setProperty("mail.imap.socketFactory.class",
-                        "javax.net.ssl.SSLSocketFactory");
-                mailProperties.setProperty("mail.imap.socketFactory.fallback",
-                        "false");
-                mailProperties.setProperty("mail.imap.port",
-                        String.valueOf(account.getIncomingPort()));
-                mailProperties.setProperty("mail.imap.socketFactory.port",
-                        String.valueOf(account.getIncomingPort()));
-            }
-            // otherwise log on using http, avoid using incomingSsl properties as
-            // it will botch the connection .
-            else {
-                mailProperties.remove("mail.imap.socketFactory.class");
-                mailProperties.remove("mail.imap.socketFactory.fallback");
-                mailProperties.remove("mail.imap.port");
-                mailProperties.remove("mail.imap.socketFactory.port");
-            }
-            URLName url = new URLName(IMAP, account.getHost(), -1, "INBOX", account.getMailUsername(),account.getPasswordString());
-            session = Session.getInstance(mailProperties, null);
-            store = session.getStore(url);
-            store.connect();
-            quotaAware = calculateQuotaAware();
-            return true;
-        }catch (NoSuchProviderException e) {
-        	LOGGER.log(Level.SEVERE,"Connection Error - No such provider for " + account.toString(),e);
-            return false;
-        }catch(AuthenticationFailedException e){
-        	LOGGER.log(Level.SEVERE,"Connection Error - Authentication error " + account.toString(),e);
-            return false;
-        }catch (MessagingException e) {
-        	LOGGER.log(Level.SEVERE,"Connection Error - Messaging Exception " + account.toString(),e);
-            return false;
-        }catch (Throwable e) {
-        	LOGGER.log(Level.SEVERE,"Connection Error - Misc. Exception " + account.toString(),e);
-            return false;
+        // mailProperties.setProperty("mail.debug", "true");
+        // setup SSL connection factory
+        mailProperties.setProperty( "mail.mime.decodetext.strict", "false" );
+        if (account.isIncomingSsl()) {
+            mailProperties.setProperty("mail.imap.socketFactory.class",
+                    "javax.net.ssl.SSLSocketFactory");
+            mailProperties.setProperty("mail.imap.socketFactory.fallback",
+                    "false");
+            mailProperties.setProperty("mail.imap.port",
+                    String.valueOf(account.getIncomingPort()));
+            mailProperties.setProperty("mail.imap.socketFactory.port",
+                    String.valueOf(account.getIncomingPort()));
         }
+        // otherwise log on using http, avoid using incomingSsl properties as
+        // it will botch the connection .
+        else {
+            mailProperties.remove("mail.imap.socketFactory.class");
+            mailProperties.remove("mail.imap.socketFactory.fallback");
+            mailProperties.remove("mail.imap.port");
+            mailProperties.remove("mail.imap.socketFactory.port");
+        }
+        URLName url = new URLName(IMAP, account.getHost(), -1, "INBOX", account.getMailUsername(),account.getPasswordString());
+        session = Session.getInstance(mailProperties, null);
+        store = session.getStore(url);
+        store.connect();
+        quotaAware = calculateQuotaAware();
     }
-
 	
     /**
      * Closes the connection incoming mail server.
@@ -164,16 +148,14 @@ public class AonServer {
     	}
     }
 
-    protected void ensureConnection() {
+    private void ensureConnection() throws MessagingException {
         if (ensure_connection && (! isConnected())) {
-            if (!connect()) {
-        		LOGGER.log(Level.INFO,"Error connecting to " + account.getHost() );
-            }
+        	connect();
         }
     }
     public Folder getRoot() {
-    	ensureConnection();
         try {
+        	ensureConnection();
             return store.getDefaultFolder();
         } catch (MessagingException e) {
         	LOGGER.log(Level.SEVERE,"getRoot failed " , e);
@@ -182,8 +164,8 @@ public class AonServer {
     }
     
     public AonFolder getAonFolder(String folderName) {
-    	ensureConnection();
         try {
+        	ensureConnection();
             return new AonFolder(store.getFolder(folderName), this);
         } catch (MessagingException e) {
         	LOGGER.log(Level.SEVERE,"getAonFolder failed " , e);
@@ -280,24 +262,20 @@ public class AonServer {
 		this.account = account;
 	}
 
-	public void createBasicFolders(){
-		try{
-			if (!getRoot().getFolder(getSentFolderName()).exists()){
-				createAonFolder(null, getSentFolderName(), Folder.HOLDS_MESSAGES);
+	public void createBasicFolders() throws MessagingException{
+		if (!getRoot().getFolder(getSentFolderName()).exists()){
+			createAonFolder(null, getSentFolderName(), Folder.HOLDS_MESSAGES);
+		}
+		if (!getRoot().getFolder(getTrashFolderName()).exists()){
+			createAonFolder(null, getTrashFolderName(), Folder.HOLDS_MESSAGES);
+		}
+		if (!getRoot().getFolder(getDraftFolderName()).exists()){
+			createAonFolder(null, getDraftFolderName(), Folder.HOLDS_MESSAGES);
+		}
+		if ( account.isDefault() || (!StringUtils.isEmpty(account.getSpamFolder())) ) {
+			if (!getRoot().getFolder(getSpamFolderName()).exists()){
+				createAonFolder(null, getSpamFolderName(), Folder.HOLDS_MESSAGES);
 			}
-			if (!getRoot().getFolder(getTrashFolderName()).exists()){
-				createAonFolder(null, getTrashFolderName(), Folder.HOLDS_MESSAGES);
-			}
-			if (!getRoot().getFolder(getDraftFolderName()).exists()){
-				createAonFolder(null, getDraftFolderName(), Folder.HOLDS_MESSAGES);
-			}
-			if ( account.isDefault() || (!StringUtils.isEmpty(account.getSpamFolder())) ) {
-				if (!getRoot().getFolder(getSpamFolderName()).exists()){
-					createAonFolder(null, getSpamFolderName(), Folder.HOLDS_MESSAGES);
-				}
-			}
-		} catch (MessagingException e) {
-			LOGGER.severe( e.getMessage() );
 		}
 	}
 	

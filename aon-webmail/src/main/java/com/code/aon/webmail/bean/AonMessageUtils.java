@@ -1,13 +1,11 @@
 package com.code.aon.webmail.bean;
 
-import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.mail.internet.MimeUtility;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -20,8 +18,6 @@ public class AonMessageUtils {
 	private static final DecimalFormat KB_FORMAT = new DecimalFormat("0K");
 	
 	private static final DecimalFormat MB_FORMAT = new DecimalFormat("0.##MB");
-
-	private static final Logger LOGGER = Logger.getLogger(AonMessageUtils.class.getName());
 	
 	public static final String EMAIL_SEPARATOR = ",";
 	
@@ -163,28 +159,6 @@ public class AonMessageUtils {
 		return data.replaceAll(EMAIL_SEPARATOR, "");
 	}
 	
-	public static String decodeText( String text ) {
-		String result = text;
-		if ( result != null ) {
-			int pos = result.indexOf("=?");
-			while ( pos != -1 ) {
-				try {
-					StringBuffer fixedText = new StringBuffer(result);
-					fixedText.insert(pos, ' ');
-					String decodedText = MimeUtility.decodeText(fixedText.toString());
-					StringBuffer decodedTextTrimed = new StringBuffer(decodedText);
-					decodedTextTrimed.deleteCharAt(pos);
-					result = decodedTextTrimed.toString();
-					pos = result.indexOf("=?");
-				} catch (UnsupportedEncodingException e) {
-					LOGGER.log(Level.SEVERE,"Error decoding string" + text, e);
-					return text;
-				}
-			}
-		}
-		return result;
-	}
-	
 	public static String getDisplaySize( long value ) {
 		String result = "";
 		double size = value;
@@ -197,6 +171,24 @@ public class AonMessageUtils {
 			}
 		}
 		return result;		
+	}
+	
+	public static boolean isValidEmail( String email ) {
+		if (! StringUtils.isBlank(email) ) {
+			try {
+				new InternetAddress(email);
+				return hasNameAndDomain(email);
+		    } catch (AddressException ex){
+		    	return false;
+		    }			
+		}
+	    return false;
+	}
+	
+	private static boolean hasNameAndDomain(String email){
+		String[] tokens = email.split("@");
+		return (tokens.length == 2) && (!StringUtils.isBlank(tokens[0])) && 
+			(!StringUtils.isBlank(tokens[1]));
 	}
 	
 }

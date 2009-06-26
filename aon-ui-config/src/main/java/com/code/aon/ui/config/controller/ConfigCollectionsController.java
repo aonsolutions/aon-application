@@ -27,23 +27,9 @@ import com.code.aon.ui.config.util.UserUtils;
 public class ConfigCollectionsController {
 	
 	private List<SelectItem> workGroupStatuses;
-	
-	private List<SelectItem> taxTypes;
-	
-	private List<SelectItem> payMethodTypes;
 
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getSeries() throws ManagerBeanException{
-		return getSeries(false);		
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<SelectItem> getSeriesIds() throws ManagerBeanException {
-		return getSeries(true);
-	}	
-
-	@SuppressWarnings("unchecked")
-	public List<SelectItem> getSeries( boolean onlyId ) throws ManagerBeanException{
 		List<SelectItem> series = new LinkedList<SelectItem>();
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
@@ -52,17 +38,12 @@ public class ConfigCollectionsController {
 		Iterator iter = seriesBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Series serie = (Series)iter.next();
-			SelectItem item;
-			if ( onlyId ) {
-				item = new SelectItem(serie.getId(), serie.getId()); 
-			} else {
-				item = new SelectItem(serie, serie.getId());
-			} 
+			SelectItem item = new SelectItem(serie.getId(),serie.getId().toString());
 			series.add(item);
 		}
 		return series;
-	}		
-	
+	}
+
 	public Scope getScope() {
 		return null;
 	}
@@ -224,16 +205,16 @@ public class ConfigCollectionsController {
 	 * @return the tax types
 	 */
 	public List<SelectItem> getTaxTypes() {
-		if ( taxTypes == null ) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			taxTypes = new LinkedList<SelectItem>();
-			for( TaxType type : TaxType.values() ) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				taxTypes.add(item);
-			}
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
+		TaxType[] taxTypes = TaxType.values();
+		for (int i = 0; i < taxTypes.length; i++) {
+			TaxType type = taxTypes[i];
+			String name = type.getName(locale);
+			SelectItem item = new SelectItem(type, name);
+			types.add(item);
 		}
-		return taxTypes;
+		return types;
 	}
 
 	/**
@@ -262,16 +243,16 @@ public class ConfigCollectionsController {
 	 * @return list of PayMethodType
 	 */
 	public List<SelectItem> getPayMethodTypes() {
-		if ( payMethodTypes == null ) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			payMethodTypes = new LinkedList<SelectItem>();
-			for ( PayMethodType type : PayMethodType.values() ) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				payMethodTypes.add(item);
-			}
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
+		PayMethodType[] payMethodType = PayMethodType.values();
+		for (int i = 0; i < payMethodType.length; i++) {
+			PayMethodType type = payMethodType[i];
+			String name = type.getName(locale);
+			SelectItem item = new SelectItem(type, name);
+			types.add(item);
 		}
-		return payMethodTypes;
+		return types;
 	}
 	
 	public PayMethod getPayMethod() {

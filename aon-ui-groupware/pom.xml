@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.groupware</artifactId>
-	<version>3.4.0</version>
+	<version>3.3.2</version>
 	<description>AON UI GROUPWARE</description>
 	<name>AON UI GROUPWARE</name>
 	<dependencies>
@@ -46,8 +46,8 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.webmail</artifactId>
-			<version>3.0.0</version>
+			<artifactId>aon.ui.webmail</artifactId>
+			<version>4.3.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
