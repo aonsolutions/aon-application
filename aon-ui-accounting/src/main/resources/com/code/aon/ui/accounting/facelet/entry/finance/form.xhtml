@@ -45,7 +45,6 @@
 						styleClass="aon-finding-toolbar-item aon-icon-delete"
 						immediate="true"
 						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;" />
-
 					<aon:commandButton value="#{bundle.aon_back}"
 						accesskey="#{bundle.aon_key_cancel}"
 						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})" 
@@ -67,7 +66,7 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:div id="financeEntryHeader">
 					<aon:panelGrid id="financeTables" columns="4" style="width: 100%;"
-						columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-200,
+						columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-300,
 										aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
 
 						<aon:outputLabel for="AccountEntry_type"
@@ -82,7 +81,7 @@
 
 						<aon:outputLabel for="AccountEntry_balancingConcept"
 							value="#{bundle.aon_concept}" />
-						<aon:inputText id="AccountEntry_balancingConcept"
+						<aon:inputText id="AccountEntry_balancingConcept" required="true"
 							value="#{financeEntry.concept}" size="50" maxlength="32">
 						</aon:inputText>
 
@@ -96,7 +95,7 @@
 
 						<aon:outputLabel for="AccountEntry_date" 
 							value="#{bundle.aon_date}" />
-						<aon:selectInputDate size="8" id="AccountEntry_date"
+						<aon:selectInputDate size="8" id="AccountEntry_date" required="true"
 							value="#{financeEntry.date}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}" />
