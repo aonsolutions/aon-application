@@ -271,6 +271,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		AccountAppParamsController c = (AccountAppParamsController) AonUtil.getRegisteredBean(ACCOUNT_APP_PARAM_CONTROLLER_NAME);
 		ApplicationParameter param = c.getParameter(DefaultAccounts.DEFAULT_INVOICE_SERIES);
 		String series = (header != null && !StringUtils.isEmpty(header.getSeries())) ? header.getSeries() : (param != null) ? param.getValue() : null;
+		InvoiceType type = header == null ? InvoiceType.SALES : header.getType();
 
 		this.header = new InvoiceEntryHeader();
 		header.setAccount(null);
@@ -285,6 +286,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		header.setTaxFree(false);
 		header.setWithholding(false);
 		header.setSurcharge(false);
+		header.setType(type);
 	}
 
 	public boolean isSales() {
