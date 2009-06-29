@@ -29,12 +29,11 @@ public class TaxFinancialStatement extends AbstractFinancialStatement {
 				
 				// IVA Pendiente de Pago
 				Criteria criteria = new Criteria();
-				criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "4750*");
-				criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "477*");
-				criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "472*");
+				criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "4750*|477*|472*");
 				criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
 						new Boolean(true));
 				double amount = 0; 
+				double subtotal = 0;
 				for (ITransferObject to: accountBean.getList(criteria)) {
 					Account account = (Account) to;
 					Balance balance = util.getPeriodBalance(period.getInitiationDate(), period.getDeadline(), account.getId(), false, false);
@@ -42,12 +41,12 @@ public class TaxFinancialStatement extends AbstractFinancialStatement {
 					if (account.getId().startsWith("472")) {
 						amount = CommonUtil.round(amount * -1 ) ;	
 					}
-					  
+					subtotal = CommonUtil.round(subtotal + amount) ; 	  
 				}
 				FinancialStatement fs = new FinancialStatement();
 				fs.setCode( "4750,477,472" );
 				fs.setDescription("IVA Pendiente de Pago" );
-				fs.setAmount( amount );
+				fs.setAmount( subtotal );
 				setTotal( CommonUtil.round(getTotal() + amount));
 				getFinancialStatements().add(fs);
 				
@@ -60,7 +59,7 @@ public class TaxFinancialStatement extends AbstractFinancialStatement {
 				for (ITransferObject to: accountBean.getList(criteria)) {
 					Account account = (Account) to;
 					Balance balance = util.getPeriodBalance(period.getInitiationDate(), period.getDeadline(), account.getId(), false, false);
-					amount = CommonUtil.round(balance.getCredit() - balance.getDebit() ) ;
+					amount = CommonUtil.round(amount + balance.getCredit() - balance.getDebit() ) ;
 				}
 				fs = new FinancialStatement();
 				fs.setCode( "4751" );
@@ -78,7 +77,7 @@ public class TaxFinancialStatement extends AbstractFinancialStatement {
 				for (ITransferObject to: accountBean.getList(criteria)) {
 					Account account = (Account) to;
 					Balance balance = util.getPeriodBalance(period.getInitiationDate(), period.getDeadline(), account.getId(), false, false);
-					amount = CommonUtil.round(balance.getCredit() - balance.getDebit() ) ;
+					amount = CommonUtil.round(amount + balance.getCredit() - balance.getDebit() ) ;
 				}
 				fs = new FinancialStatement();
 				fs.setCode( "4760" );
