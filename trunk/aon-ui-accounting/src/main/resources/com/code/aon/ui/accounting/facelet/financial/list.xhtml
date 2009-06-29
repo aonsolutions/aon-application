@@ -24,13 +24,14 @@
 			</ui:decorate>
 
 			<aon:div id="accountEntryData" styleClass="aon-scroll-area">
-				<aon:dataTable id="financialStatementList" 
+				<aon:dataTable id="financialStatementList"
 					value="#{financialStatement.managers}" var="manager">
-					
+
 					<f:facet name="header">
 						<rich:columnGroup>
 							<aon:column styleClass="aon-dataTable-header" colspan="3">
-								<aon:outputText value="#{accountingBundle.accounting_financial_statements_month}" />
+								<aon:outputText
+									value="#{accountingBundle.accounting_financial_statements_month}" />
 								<aon:outputText value="&#160;" />
 								<aon:outputText value="#{financialStatement.financialMonth}" />
 								<aon:outputText value="/" />
@@ -45,29 +46,37 @@
 
 					<rich:subTable value="#{manager.model}" var="to">
 						<aon:column>
-							<h:commandLink ajaxSingle="true"
-								rendered="#{to.code != null}"
+							<h:commandLink ajaxSingle="true" rendered="#{to.code != null}"
 								styleClass="aon-dataTable-link"
 								actionListener="#{manager.onAccountStatement}"
 								title="#{accountingBundle.accounting_statement_module}"
 								action="account_statement_list">
-								<aon:outputText value="#{to.code}" />
+								<aon:outputText value="#{to.code}"
+									style="#{to.disabled?'text-decoration: line-through; color: #BBB;':''}"
+								 />
 							</h:commandLink>
 						</aon:column>
-						
+
 						<aon:column>
-							<aon:outputText value="#{to.description}" />
+							<aon:outputText value="#{to.description}" style="#{to.disabled?'text-decoration: line-through; color: #BBB;':''}"/>
 						</aon:column>
+						
 						<aon:column styleClass="aon-text-right">
-							<aon:outputText value="#{to.amount}">
-								<f:convertNumber pattern="#,##0.00" />
-							</aon:outputText>
+							<aon:commandLink ajaxSingle="true" reRender="accountEntryData"
+								styleClass="aon-dataTable-link-simple"
+								actionListener="#{manager.onDisable}"
+								title="#{to.disabled?'Tener en cuenta':'No tener en cuenta'}">
+								<aon:outputText value="#{to.amount}" style="#{to.disabled?'text-decoration: line-through; color: #BBB;':''}">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</aon:commandLink>
 						</aon:column>
 					</rich:subTable>
 
 					<aon:column styleClass="aon-text-right aon-bold" colspan="2">
 						<aon:outputText value="#{bundle.aon_total}&#160;#{manager.label}" />
 					</aon:column>
+
 					<aon:column styleClass="aon-text-right aon-bold">
 						<aon:outputText value="#{manager.total}">
 							<f:convertNumber pattern="#,##0.00" />
@@ -77,7 +86,8 @@
 					<f:facet name="footer">
 						<rich:columnGroup>
 							<aon:column styleClass="aon-text-right aon-bold" colspan="2">
-								<aon:outputText value="#{accountingBundle.accounting_financial_statement_total}" />
+								<aon:outputText
+									value="#{accountingBundle.accounting_financial_statement_total}" />
 							</aon:column>
 							<aon:column styleClass="aon-text-right aon-bold">
 								<aon:outputText value="#{financialStatement.total}">

@@ -3,6 +3,7 @@ public class FinancialStatement {
 	private String code;
 	private String description;
 	private double amount;
+	private boolean disabled = false;
 
 	public String getCode() {
 		return code;
@@ -24,4 +25,12 @@ public class FinancialStatement {
 	public void setAmount(double amount) {
 		this.amount = amount;
 	}
+
+	public boolean isDisabled() {
+		return disabled;
+	}
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
+	}
+	
 }
