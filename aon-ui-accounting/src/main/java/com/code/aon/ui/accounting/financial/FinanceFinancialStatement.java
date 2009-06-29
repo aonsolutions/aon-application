@@ -98,7 +98,7 @@ public class FinanceFinancialStatement extends AbstractFinancialStatement {
 					fs.setCode("465");
 					fs.setDescription("Remuneraciones Pendientes de Pago");
 					fs.setAmount(amount);
-					setTotal(CommonUtil.round(getTotal() + amount));
+					setTotal(CommonUtil.round(getTotal() - amount));
 					getFinancialStatements().add(fs);
 				}
 			}
