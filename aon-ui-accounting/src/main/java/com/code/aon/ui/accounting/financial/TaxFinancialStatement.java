@@ -1,5 +1,6 @@
 package com.code.aon.ui.accounting.financial;
 
+import java.util.Calendar;
 import java.util.LinkedList;
 
 import com.code.aon.account.Account;
@@ -69,6 +70,10 @@ public class TaxFinancialStatement extends AbstractFinancialStatement {
 				getFinancialStatements().add(fs);
 				
 				// SS PENDIENTE DE PAGO
+				Calendar c = Calendar.getInstance();
+				c.setTime(params.getFinancialDate());
+				c.set(Calendar.DAY_OF_MONTH, 1);
+				c.add(Calendar.DAY_OF_MONTH, -1);
 				criteria = new Criteria();
 				criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "4760*");
 				criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
@@ -76,7 +81,7 @@ public class TaxFinancialStatement extends AbstractFinancialStatement {
 				amount = 0;
 				for (ITransferObject to: accountBean.getList(criteria)) {
 					Account account = (Account) to;
-					Balance balance = util.getPeriodBalance(period.getInitiationDate(), period.getDeadline(), account.getId(), false, false);
+					Balance balance = util.getPeriodBalance(period.getInitiationDate(), c.getTime(), account.getId(), false, false);
 					amount = CommonUtil.round(amount + balance.getCredit() - balance.getDebit() ) ;
 				}
 				fs = new FinancialStatement();

@@ -11,6 +11,7 @@ import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -119,5 +120,11 @@ public abstract class AbstractFinancialStatement implements IFinancialStatementM
 			throw new AbortProcessingException(msg, e);
 		}
 	}
-	
+
+	public void onDisable(ActionEvent event) {
+		FinancialStatement fs = (FinancialStatement) getModel().getRowData();
+		fs.setDisabled(!fs.isDisabled());
+		double amount = CommonUtil.round(  fs.getAmount() * (fs.isDisabled()?-1:1) );
+		setTotal( CommonUtil.round( getTotal() + amount ) );
+	}
 }
