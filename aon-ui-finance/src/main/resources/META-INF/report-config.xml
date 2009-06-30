@@ -120,7 +120,7 @@
 		<nested-report report="invoiceFinances"/>
 	</report>
 
-	<!--  *********  Receipt  ********* -->
+	<!--  *********  Receipt  ********* -->	
 	<report id="receipt" description="Receipt's Report">
 		<template path="/com/code/aon/ui/finance/report/receipt.jasper"/>
 		<bean key="com.code.aon.finance.Invoice" />
@@ -144,7 +144,7 @@
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="payment" value="#{financeSearch.getPayment}" />
+			<param id="payment" value="#{finance.isPayment}" />
 		</params>
 	</report>
 
@@ -156,7 +156,7 @@
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="payment" value="#{financeSearch.getPayment}" />
+			<param id="payment" value="#{finance.isPayment}" />
 		</params>
 	</report>
 
@@ -168,7 +168,7 @@
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="payment" value="#{financeSearch.getPayment}" />
+			<param id="payment" value="#{finance.isPayment}" />
 		</params>
 	</report>
 	
@@ -180,7 +180,7 @@
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="payment" value="#{financeSearch.getPayment}" />
+			<param id="payment" value="#{finance.isPayment}" />
 		</params>
 	</report>
 	
