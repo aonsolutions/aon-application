@@ -246,10 +246,10 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		}
 		if (getCashAccountsSize() < 2) {
 			//No se renderiza la lista de Cajas, por lo tanto se le asigna el valor por defecto.
-			setReturnCashAccount(AccountUtil.obtainCashAccount());
+			setPaymentCashAccount(AccountUtil.obtainCashAccount());
 		} else {
 			//Se resetea el valor.
-			setReturnCashAccount(null);
+			setPaymentCashAccount(null);
 		}
 	}
 
