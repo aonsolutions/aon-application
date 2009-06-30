@@ -38,10 +38,7 @@ public class TaxFinancialStatement extends AbstractFinancialStatement {
 				for (ITransferObject to: accountBean.getList(criteria)) {
 					Account account = (Account) to;
 					Balance balance = util.getPeriodBalance(period.getInitiationDate(), period.getDeadline(), account.getId(), false, false);
-					amount = CommonUtil.round(balance.getCredit() - balance.getDebit() ) ;
-					if (account.getId().startsWith("472")) {
-						amount = CommonUtil.round(amount * -1 ) ;	
-					}
+					amount = CommonUtil.round(balance.getCredit() - balance.getDebit());
 					subtotal = CommonUtil.round(subtotal + amount) ; 	  
 				}
 				FinancialStatement fs = new FinancialStatement();
