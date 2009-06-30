@@ -264,6 +264,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	}
 
 	private void initializeHeader() throws ManagerBeanException {
+		InvoiceType type = (header != null) ? header.getType() : InvoiceType.SALES;
 		Period period = (header != null && header.getPeriod() != null) ? header.getPeriod() : AccountingPeriodUtil.getDefaultPeriod();
 		Date date = (header != null && header.getDate() != null) ? header.getDate() : new Date();
 		Date taxDate = (header != null && header.getTaxDate() != null) ? header.getTaxDate() : new Date();
@@ -271,10 +272,10 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		AccountAppParamsController c = (AccountAppParamsController) AonUtil.getRegisteredBean(ACCOUNT_APP_PARAM_CONTROLLER_NAME);
 		ApplicationParameter param = c.getParameter(DefaultAccounts.DEFAULT_INVOICE_SERIES);
 		String series = (header != null && !StringUtils.isEmpty(header.getSeries())) ? header.getSeries() : (param != null) ? param.getValue() : null;
-		InvoiceType type = header == null ? InvoiceType.SALES : header.getType();
 
 		this.header = new InvoiceEntryHeader();
 		header.setAccount(null);
+		header.setType(type);
 		header.setSeries(series);
 		header.setPeriod(period);
 		header.setDate(date);
@@ -286,7 +287,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		header.setTaxFree(false);
 		header.setWithholding(false);
 		header.setSurcharge(false);
-		header.setType(type);
 	}
 
 	public boolean isSales() {
