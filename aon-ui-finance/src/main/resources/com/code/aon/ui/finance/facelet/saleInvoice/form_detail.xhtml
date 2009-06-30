@@ -72,7 +72,7 @@
 										<a4j:region>
 											<aon:lookupInputText id="InvoiceDetail_item_product_code-New"
 												value="#{saleInvoiceDetail.to.item.product.code}"
-												lookup="#{itemLookup}"
+												focus="InvoiceDetail_quantity-New" lookup="#{itemLookup}"
 												lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
 												reRender="InvoiceDetail_item_product_name-New,InvoiceDetail_price-New,InvoiceDetail_discount-New,InvoiceDetail_amount-New"
 												required="true" size="10" ajaxSingle="false">
@@ -80,7 +80,7 @@
 													value="#{saleInvoiceDetail.to.item.product.code}" />
 											</aon:lookupInputText>
 											<aon:lookupButton windowTitle="#{productBundle.product_module}"
-												actionType="search"
+												actionType="search" tabindex="-1"
 												lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
 												selectReRender="InvoiceDetail_item_product_code-New,InvoiceDetail_item_product_name-New,InvoiceDetail_price-New,InvoiceDetail_discount-New,InvoiceDetail_amount-New"
 												lookup="#{itemLookup}" minHeight="460" minWidth="650"
@@ -106,13 +106,14 @@
 								valueChangeListener="#{controller.onQuantityChanged}"
 								reRender="InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_amount"
 								rendered="#{formEdit}" value="#{controller.to.quantity}"
-								required="true" size="7" focus="InvoiceDetail_price" />
+								required="true" size="7" />
 							<f:facet name="footer">
 								<aon:inputText id="InvoiceDetail_quantity-New"
+									rendered="#{formNew}" size="7"
 									valueChangeListener="#{controller.onQuantityChanged}"
 									reRender="InvoiceDetail_price-New,InvoiceDetail_discount-New,InvoiceDetail_amount-New"
-									rendered="#{formNew}" value="#{controller.to.quantity}"
-									required="true" size="7" focus="InvoiceDetail_price-New" />
+									value="#{controller.to.quantity}" required="true"
+									focus="InvoiceDetail_price-New" />
 							</f:facet>
 						</aon:column>
 	

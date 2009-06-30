@@ -13,8 +13,6 @@ public interface IFinanceMessages {
 	String INVALID_INVOICING_GROUP_DETAIL_CHILD_KEY = "finance_invalid_invoicing_group_detail_child";
 	String UNABLE_RECORD_INACCURACY_ERROR_KEY = "finance_unable_record_inaccuracy_error";
 	String PAYMENT_INVALID_AMOUNT_ERROR = "finance_payment_invalid_amount_error";
-	String PAYMENT_NOT_MATCH_AMOUNT_ERROR = "finance_payment_not_match_amount_error";
-	String PAYMENT_PAY_METHOD_UNDEFINED_ERROR = "finance_payment_pay_method_undefined_error";
 	String FINANCE_TRACKING_FRACTIONED = "finance_tracking_fractioned";
 	String FINANCE_TRACKING_SETTLED = "finance_tracking_settled";
 	String FINANCE_TRACKING_BATCHED = "finance_tracking_batched";

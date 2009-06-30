@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.finance</artifactId>
-	<version>3.20.1</version>
+	<version>3.18.0</version>
 	<description>AON UI FINANCE</description>
 	<name>AON UI FINANCE</name>
 	<dependencies>
@@ -29,13 +29,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.account.bridge</artifactId>
-			<version>3.14.1</version>
+			<version>3.12.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.accounting</artifactId>
-			<version>3.15.0</version>
+			<version>3.12.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -107,7 +107,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>3.11.0</version>
+			<version>3.10.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -119,13 +119,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.customer</artifactId>
-			<version>3.11.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.registry</artifactId>
-			<version>3.12.0</version>
+			<version>3.9.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

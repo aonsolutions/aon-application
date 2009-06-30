@@ -46,10 +46,7 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
-import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
-import com.code.aon.finance.enumeration.FinanceStatus;
-import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
@@ -248,40 +245,6 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		return financeTotal;
 	}
 
-	public String getPayMethod() throws ManagerBeanException {
-		Invoice invoice = (Invoice)this.getModel().getRowData();
-		String payMethodName = null;
-		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
-		Iterator<ITransferObject> iterator = financeBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			Finance finance = (Finance)iterator.next();
-			if (payMethodName == null) {
-				payMethodName = (finance.getPayMethod() != null) ? finance.getPayMethod().getName() : null;
-			}
-			if (finance.getPayMethod() != null && !finance.getPayMethod().getName().equals(payMethodName)) {
-				return "MULTIPLE";
-			}
-		}
-		return payMethodName;
-	}
-
-	public FinanceStatus getFinanceStatus() throws ManagerBeanException {
-		Invoice invoice = (Invoice)this.getModel().getRowData();
-		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
-		Iterator<ITransferObject> iterator = financeBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			Finance finance = (Finance)iterator.next();
-			if (!FinanceStatus.PAID.equals(finance.getFinanceStatus()) && !FinanceStatus.SETTLED.equals(finance.getFinanceStatus())) {
-				return FinanceStatus.PENDING;
-			}
-		}
-		return FinanceStatus.PAID;
-	}
-
 	public Customer getCustomer() throws ManagerBeanException{
 		IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
 		Criteria criteria = new Criteria();
@@ -298,25 +261,12 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 	public boolean isRemovable() {
 		SaleInvoiceDetailController saleInvoiceDetailController = (SaleInvoiceDetailController)FormUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
 		Invoice invoice = (Invoice)this.getTo();
-		if (saleInvoiceDetailController.getTo() == null && InvoiceStatus.PENDING.equals(invoice.getStatus())) {
+		if (saleInvoiceDetailController.getTo() == null && invoice.getStatus().equals(InvoiceStatus.PENDING)) {
 			return true;
 		}
 		return false;
 	}
 	
-	public boolean isAccountSource() throws ManagerBeanException {
-		Invoice invoice = (Invoice)this.getTo();
-		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-		Iterator<ITransferObject> iterator = invoiceDetailBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			InvoiceDetail invoiceDetail = (InvoiceDetail)iterator.next();
-			return invoiceDetail.getSource().equals(InvoiceSource.ACCOUNT);
-		}
-		return false;
-	}
-
 	public void generateFinances(ActionEvent event) throws ManagerBeanException{
 		Invoice invoice = (Invoice)this.getTo();
 		try {

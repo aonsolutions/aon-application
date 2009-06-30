@@ -23,7 +23,6 @@ import org.hibernate.Session;
 
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
-import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
 import com.code.aon.account.bridge.writer.FinanceRecordingTo;
 import com.code.aon.accounting.AccountEntry;
@@ -33,6 +32,7 @@ import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
@@ -417,7 +417,7 @@ public class FBatchController extends BasicController implements ICollectionProv
         FinanceRecordingTo recordingTo = new FinanceRecordingTo();
         recordingTo.setType(fbatch.isPayment() ? AccountEntryType.PAYMENT : AccountEntryType.COLLECTION);
         recordingTo.setDate((getRecordDate()!=null) ? getRecordDate() : fbatch.getIssueDate());
-        recordingTo.setPaymentAccount((fbatch.getRegistryBank()!= null)?AccountUtil.obtainRBankAccount(fbatch.getRegistryBank()):AccountUtil.obtainCashAccount());
+        recordingTo.setRegistryBank(fbatch.getRegistryBank());
         recordingTo.setFBatchDetailList(fbatchDetailList);
         recordingTo.setSecurityLevel(SecurityLevel.OFFICIAL);
 

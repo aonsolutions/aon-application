@@ -36,7 +36,7 @@ public class ExpensesFinancialStatement extends AbstractFinancialStatement {
 
 	@Override
 	public String getLabel() {
-		return "GASTOS (Presupuesto - Acumulado)";
+		return "PREVISIÓN DE GASTOS (Presupuesto - Acumulado)";
 	}
 
 	@Override

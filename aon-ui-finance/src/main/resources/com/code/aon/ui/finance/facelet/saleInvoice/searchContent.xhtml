@@ -2,10 +2,9 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:h="http://java.sun.com/jsf/html">
+	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:outputText value="" />
 	<aon:div style="width:600px;">
@@ -115,31 +114,21 @@
 				
 				<aon:outputLabel for="Invoice_finances_payMethod_id"
 					value="#{configBundle.config_pay_method}" />
-				<aon:div id="payMethodDiv">
-					<a4j:repeat value="#{searchController.payMethods}" rowKeyVar="index" var="payMth">
-						<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
-							<aon:selectOneMenu id="Invoice_finances_payMethod_id"
-								value="#{searchController.payMethods[index]}">
-								<f:selectItem itemLabel="-" itemValue="#{searchController.emptyPayMethod}"/>
-								<f:selectItems value="#{configCollections.payMethods}" />
-							 	<a4j:support event="onchange" reRender="payMethodDiv"/>
-							</aon:selectOneMenu>
-							<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"
-								actionListener="#{searchController.onRemovePayMethod}" reRender="payMethodDiv"
-								rendered="#{payMth.id != null}">
-								<f:param name="index" value="#{index}" />
-							</aon:commandButton>
-							<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add"
-								actionListener="#{searchController.onAddPayMethod}" reRender="payMethodDiv"
-								rendered="#{(payMth.id != null) and (index == (searchController.payMethodsSize-1))}"/>					
-						</aon:div>						
-					</a4j:repeat>
-				</aon:div>
+				<aon:selectOneMenu id="Invoice_finances_payMethod_id"
+					value="#{configCollections.payMethod}"
+					valueChangeListener="#{controller.addIdEqualExpression}">
+					<f:selectItem itemLabel="-" value="#{null}"/>
+					<f:selectItems value="#{configCollections.payMethods}" />
+				</aon:selectOneMenu>
 
-				<aon:outputText value="#{bundle.aon_status}"/>
-				<aon:selectManyCheckbox value="#{searchController.financeStatuses}">
-					<f:selectItems value="#{financeCollections.financeStatuses}"/>
-				</aon:selectManyCheckbox>							
+				<aon:outputLabel for="Invoice_finances_financeStatus"
+					value="#{bundle.aon_status}" />
+				<aon:selectOneMenu id="Invoice_finances_financeStatus"
+					converter="aon.EnumConverter"
+					valueChangeListener="#{controller.addEqualExpression}">
+					<f:selectItem itemLabel="-" value="#{null}"/>
+					<f:selectItems value="#{financeCollections.financeStatuses}" />
+				</aon:selectOneMenu>
 
 			</aon:panelGrid>
 		</aon:panelCollapsible>
