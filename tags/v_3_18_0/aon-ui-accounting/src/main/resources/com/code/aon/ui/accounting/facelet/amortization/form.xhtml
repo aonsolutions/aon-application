@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="amortizationForm">
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{accountingBundle.accounting_amortization_form_module}" />
+				<ui:param name="controller" value="#{amortization}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area" ajaxRendered="true">
+				<aon:panelGrid columns="4" style="width: 100%;"
+					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-200,aon-panelGrid-odd aon-width-150,aon-panelGrid-even">
+
+					<aon:outputLabel for="Amortization_id" value="#{bundle.aon_id}" />
+					<aon:inputText id="Amortization_id" value="#{amortization.to.id}"
+						size="5" disabled="true" />
+
+					<aon:outputLabel for="Amortization_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="Amortization_description"
+						value="#{amortization.to.description}" required="true" size="70">
+						<f:validateLength maximum="64" />
+					</aon:inputText>
+
+					<aon:outputLabel for="Amortization_initial_date"
+						value="#{bundle.aon_date_from}" />
+					<aon:selectInputDate required="true"
+						id="Amortization_initial_date"
+						value="#{amortization.to.initialDate}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+					<aon:outputLabel for="Amortization_amortizationType"
+						value="#{accountingBundle.accounting_amortization_type}" />
+					<aon:selectOneMenu id="Amortization_amortizationType"
+						value="#{amortization.to.amortizationType}" limitToList="true"
+						reRender="fixedAccountId,accumulatedAccountId,allocationAccountId,AmortizationType_percentage,AmortizationDetails"
+						ajaxSingle="true">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{accountingCollections.amortizationTypes}" />
+					</aon:selectOneMenu>
+
+
+					<aon:outputLabel for="Amortization_amount"
+						value="#{bundle.aon_amount}" />
+					<aon:inputText id="Amortization_amount" required="true"
+						value="#{amortization.to.amount}" size="15" />
+
+					<aon:outputText
+						value="#{accountingBundle.accounting_fixed_asset_account}" />
+					<aon:outputText id="fixedAccountId"
+						value="#{amortization.to.amortizationType.fixedAssetAccount.fullDescription}" />
+
+
+					<aon:outputLabel for="Amortization_amortizationPeriod"
+						value="#{accountingBundle.accounting_amortization_period}" />
+					<aon:selectOneMenu id="Amortization_amortizationPeriod"
+						value="#{amortization.to.feePeriod}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems
+							value="#{accountingCollections.amortizationPeriods}" />
+					</aon:selectOneMenu>
+
+					<aon:outputText
+						value="#{accountingBundle.accounting_accumulated_account}" />
+					<aon:outputText id="accumulatedAccountId"
+						value="#{amortization.to.amortizationType.accumulatedAccount.fullDescription}" />
+
+
+					<aon:outputText value="#{accountingBundle.accounting_coefficient}" />
+					<aon:panelGroup>
+						<aon:outputText id="AmortizationType_percentage"
+							value="#{amortization.to.amortizationType.percentage}">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+						<aon:outputText value="%" />
+					</aon:panelGroup>
+
+					<aon:outputText
+						value="#{accountingBundle.accounting_allocation_account}" />
+					<aon:outputText id="allocationAccountId"
+						value="#{amortization.to.amortizationType.allocationAccount.fullDescription}" />
+
+					<aon:outputLabel for="Amortization_deadline"
+						value="#{bundle.aon_date_to}" />
+					<aon:selectInputDate id="Amortization_deadline"
+						value="#{amortization.to.deadline}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+					<aon:outputLabel for="Amortization_saleAmount"
+						value="#{accountingBundle.accounting_sale_amount}" />
+					<aon:inputText id="Amortization_saleAmount"
+						value="#{amortization.to.saleAmount}" size="15" />
+				</aon:panelGrid>
+
+				<aon:panelGrid columns="2" style="width: 100%;margin-top:2px;"
+					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even">
+					<aon:outputLabel for="Amortization_comments"
+						value="#{bundle.aon_comment}" />
+					<aon:inputText id="Amortization_comments"
+						value="#{amortization.to.comments}" size="140" />
+
+				</aon:panelGrid>
+
+				<aon:panel id="AmortizationDetails" rendereed="#{!amortization.new}">
+					<ui:include
+						src="/com/code/aon/ui/accounting/facelet/amortization/form_lines.xhtml" />
+				</aon:panel>
+
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
