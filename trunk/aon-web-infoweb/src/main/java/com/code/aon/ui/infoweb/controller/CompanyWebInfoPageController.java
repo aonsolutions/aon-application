@@ -64,6 +64,13 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 		this.richTextEnabled = true;
 	}
 
+    public void onInit(ActionEvent event) throws ManagerBeanException {
+    	this.showGenericModalPanel = false;
+    	this.showLocationModalPanel = false;
+    	this.showResourceModalPanel = false;
+    	reorderObjects();
+    }	
+	
 	public int getLastPosition() {
 		int position = 0;
 		try{
@@ -99,29 +106,34 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 	private void move( WebInfoPage wip, int movement ) throws ManagerBeanException, ExpressionException {
 		int oldPosition = wip.getPosition();
 		int newPosition = oldPosition + movement;
-		wip.setPosition(newPosition);
+		
 		Criteria criteria = new Criteria();
-		criteria.addExpression(getManagerBean().getFieldName(IWebInfoAlias.WEB_INFO_PAGE_ID), ""+wip.getId());
+		criteria.addEqualExpression(getFieldName(IWebInfoAlias.WEB_INFO_PAGE_POSITION), newPosition);
 		List<ITransferObject> list = getManagerBean().getList(criteria);
-		if (list.size() > 0) {
-			WebInfoPage wipage = (WebInfoPage)list.get(0);
-			wipage.setPosition(newPosition);
-			getManagerBean().update(wipage);
+		if (!list.isEmpty()) {
+			WebInfoPage otherPage = (WebInfoPage) list.get(0);
+			otherPage.setPosition(oldPosition);
+			getManagerBean().update(otherPage);
 		}
-    	List<WebInfoPage> listObjects = (List<WebInfoPage>) this.model.getWrappedData();
-    	WebInfoPage wipMoved = listObjects.get( newPosition );
-		wipMoved.setPosition( oldPosition );
-		criteria = new Criteria();
-		criteria.addExpression(getManagerBean().getFieldName(IWebInfoAlias.WEB_INFO_PAGE_ID), ""+wipMoved.getId());
-		list = getManagerBean().getList(criteria);
-		if (list.size() > 0) {
-			WebInfoPage option = (WebInfoPage)list.get(0);
-			option.setPosition(oldPosition);
-			getManagerBean().update(option);
-		}
-		listObjects.set( newPosition, wip);
-		listObjects.set( oldPosition, wipMoved );
+		wip.setPosition(newPosition);
+		getManagerBean().update(wip);
+		
+		initializeModel();
 	}
+	
+	public void reorderObjects() throws ManagerBeanException {
+		List<ITransferObject> list = getManagerBean().getList( getCriteria() );
+		for (int i = 0; i < list.size(); i++) {
+			WebInfoPage page = (WebInfoPage) list.get(i);
+			int oldPosition = page.getPosition();
+			int newPosition = i;
+			if (oldPosition != newPosition) {
+				page.setPosition(newPosition);
+				getManagerBean().update( page );
+			}
+		}
+		initializeModel();
+	}	
 	
     public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
     	move((WebInfoPage) this.model.getRowData(), -1);
