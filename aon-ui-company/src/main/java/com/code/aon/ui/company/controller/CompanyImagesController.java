@@ -60,8 +60,6 @@ public class CompanyImagesController extends LinesController implements ICompany
 	
 	private RegistryAttachmentType attachmentType;
 	
-	private boolean showAttachemntTypes;
-	
 	private List<SelectItem> registryAttachmentTypes;
 	
 	public CompanyImagesController() {
@@ -69,7 +67,6 @@ public class CompanyImagesController extends LinesController implements ICompany
 		setDisplayedTypes(DEFAULT_DISPLAYED_TYPES);
 		setAttachmentType(RegistryAttachmentType.ADDITIONAL_IMAGE);
 		setMaximumNumber(DEFAULT_MAXIMUM_NUMBER);
-		setShowAttachemntTypes(false);
 	}
 
 	public long getMaximumSize() {
@@ -121,14 +118,6 @@ public class CompanyImagesController extends LinesController implements ICompany
 		this.attachmentType = attachmentType;
 	}
 
-	public boolean isShowAttachemntTypes() {
-		return showAttachemntTypes;
-	}
-
-	public void setShowAttachemntTypes(boolean showAttachemntTypes) {
-		this.showAttachemntTypes = showAttachemntTypes;
-	}
-	
 	public List<SelectItem> getRegistryAttachmentTypes() {
 		return registryAttachmentTypes;
 	}

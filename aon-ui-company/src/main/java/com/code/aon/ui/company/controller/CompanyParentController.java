@@ -76,25 +76,6 @@ public class CompanyParentController extends BasicController implements ICompany
 	private boolean printHeader;
 	
 	private boolean printRecordData;
-	
-	private boolean showRegistryBank;
-
-	private boolean showCompanyOtherData;
-	
-	private boolean showPanelTabSet;
-	
-	private boolean showDigitalCertificate;
-
-    /**
-     * The empty constructor.
-     * 
-     * @throws ManagerBeanException the manager bean exception
-     */
-    public CompanyParentController() throws ManagerBeanException {
-        this.showRegistryBank = true;
-        this.showCompanyOtherData = true;
-        this.showPanelTabSet = true;
-    }
 
     /**
      * Gets the company label.
@@ -631,36 +612,14 @@ public class CompanyParentController extends BasicController implements ICompany
 		return null;
 	}
 
-	public boolean isShowRegistryBank() {
-		return showRegistryBank;
+	private boolean test = true;
+
+	public boolean isTest() {
+		return test;
 	}
 
-	public void setShowRegistryBank(boolean showRegistryBank) {
-		this.showRegistryBank = showRegistryBank;
+	public void setTest(boolean test) {
+		this.test = test;
 	}
-
-	public boolean isShowCompanyOtherData() {
-		return showCompanyOtherData;
-	}
-
-	public void setShowCompanyOtherData(boolean showCompanyOtherData) {
-		this.showCompanyOtherData = showCompanyOtherData;
-	}
-
-	public boolean isShowPanelTabSet() {
-		return showPanelTabSet;
-	}
-
-	public void setShowPanelTabSet(boolean showPanelTabSet) {
-		this.showPanelTabSet = showPanelTabSet;
-	}
-
-	public boolean isShowDigitalCertificate() {
-		return showDigitalCertificate;
-	}
-
-	public void setShowDigitalCertificate(boolean showDigitalCertificate) {
-		this.showDigitalCertificate = showDigitalCertificate;
-	}
-
+	
 }

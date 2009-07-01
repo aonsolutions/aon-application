@@ -16,13 +16,6 @@ public class CustomerController extends BasicController {
 	
 	private String selectedTab;
 	
-	private boolean showFinanceData = true;
-	private boolean showProjectData = false;
-	private boolean showFinanceFeeData = false;
-	private boolean showAccount = false;
-	private boolean showTariff  = true;
-	private boolean showSegment  = true;
-	
 	public Person getPerson() {
 		return person;
 	}
@@ -44,60 +37,12 @@ public class CustomerController extends BasicController {
     	return customer.getRegistry().getType().equals(RegistryType.NATURAL);
     }
 
-	public boolean isShowFinanceData() {
-		return showFinanceData;
-	}
-
-	public void setShowFinanceData(boolean showFinanceData) {
-		this.showFinanceData = showFinanceData;
-	}
-        
-	public boolean isShowProjectData() {
-		return showProjectData;
-	}
-
-	public void setShowProjectData(boolean showProjectData) {
-		this.showProjectData = showProjectData;
-	}
-
-	public boolean isShowFinanceFeeData() {
-		return showFinanceFeeData;
-	}
-
-	public void setShowFinanceFeeData(boolean showFinanceFeeData) {
-		this.showFinanceFeeData = showFinanceFeeData;
-	}
-
 	public String getSelectedTab() {
 		return selectedTab;
 	}
 
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
-	}
-
-	public boolean isShowAccount() {
-		return showAccount;
-	}
-
-	public void setShowAccount(boolean showAccount) {
-		this.showAccount = showAccount;
-	}
-	
-	public boolean isShowTariff() {
-		return showTariff;
-	}
-
-	public void setShowTariff(boolean showTariff) {
-		this.showTariff = showTariff;
-	}
-
-	public boolean isShowSegment() {
-		return showSegment;
-	}
-
-	public void setShowSegment(boolean showSegment) {
-		this.showSegment= showSegment;
 	}
 	
 }

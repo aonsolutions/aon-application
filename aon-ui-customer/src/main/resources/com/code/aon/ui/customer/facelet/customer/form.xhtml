@@ -37,7 +37,7 @@
 					columns="2" style="width: 100%;"
 					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
 
-					<c:if test="#{customer.showAccount and !customer.new}">
+					<c:if test="#{aonConfiguration.bean.customer.showAccount and !customer.new}">
 						<aon:outputLabel for="Customer_account" value="#{accountBundle.account_accounting}" />
 						<h:panelGrid columns="2" id="accountContainer">
 							<ui:include
@@ -92,7 +92,7 @@
 								<ui:param name="controller" value="#{customerMedia}" />
 							</ui:include>
 						</aon:panelTab>
-						<c:if test="#{customer.showFinanceData}">
+						<c:if test="#{aonConfiguration.bean.customer.showFinanceData}">
 							<aon:panelTab id="finance"
 								label="#{registryBundle.registry_finance_data_module}">
 								<aon:panel>
@@ -118,7 +118,7 @@
 							</aon:panelTab>
 						</c:if>
 
-						<c:if test="#{customer.showFinanceFeeData}">
+						<c:if test="#{aonConfiguration.bean.customer.showFinanceFeeData}">
 							<aon:panelTab id="fee"
 								label="#{financeBundle.finance_fees_module}">
 								<ui:include
@@ -127,7 +127,7 @@
 							</aon:panelTab>
 						</c:if>
 						
-						<c:if test="#{customer.showProjectData}">
+						<c:if test="#{aonConfiguration.bean.customer.showProjectData}">
 							<aon:panelTab id="dossiers"
 								label="#{projectBundle.dossier_dossiers}">
 								<aon:div rendered="#{!customer.new and dossier.form}">
@@ -144,15 +144,15 @@
 			</aon:div>
 		</aon:form>
 		
-		<c:if test="#{customer.showFinanceData}">
+		<c:if test="#{aonConfiguration.bean.customer.showFinanceData}">
 			<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		</c:if>
 		
-		<c:if test="#{customer.showFinanceFeeData}">
+		<c:if test="#{aonConfiguration.bean.customer.showFinanceFeeData}">
 			<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		</c:if>
 		
-		<c:if test="#{customer.showProjectData}">
+		<c:if test="#{aonConfiguration.bean.customer.showProjectData}">
 			<ui:include src="/com/code/aon/ui/project/facelet/dossier/import.xhtml" />
 		</c:if>
 	</ui:define>
