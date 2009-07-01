@@ -380,10 +380,11 @@ public class AonUtil {
     /**
      * @param bundleKey
      * @param messageKey
+     * @param arguments 
      * @return String
      */
-    public static String addFatalMessageFromBundle(String bundleKey,String messageKey) {
-    	String msg = AonUtil.getMessage(bundleKey, messageKey);
+    public static String addFatalMessageFromBundle( String bundleKey, String messageKey, Object ... arguments) {
+    	String msg = AonUtil.getMessage(bundleKey, messageKey, arguments);
     	addFatalMessage(msg);
     	return msg;
     }
@@ -401,10 +402,11 @@ public class AonUtil {
     /**
      * @param bundleKey
      * @param messageKey
+     * @param arguments 
      * @return String
      */
-    public static String addErrorMessageFromBundle(String bundleKey,String messageKey) {
-    	String msg = AonUtil.getMessage(bundleKey, messageKey);
+    public static String addErrorMessageFromBundle( String bundleKey, String messageKey, Object ... arguments) {
+    	String msg = AonUtil.getMessage(bundleKey, messageKey, arguments);
     	addErrorMessage(msg);
     	return msg;
     }
@@ -422,10 +424,11 @@ public class AonUtil {
     /**
      * @param bundleKey
      * @param messageKey
+     * @param arguments 
      * @return String
      */
-    public static String addInfoMessageFromBundle(String bundleKey,String messageKey) {
-    	String msg = AonUtil.getMessage(bundleKey, messageKey);
+    public static String addInfoMessageFromBundle(String bundleKey, String messageKey, Object ... arguments ) {
+    	String msg = AonUtil.getMessage(bundleKey, messageKey, arguments);
     	addInfoMessage(msg);
     	return msg;
     }
