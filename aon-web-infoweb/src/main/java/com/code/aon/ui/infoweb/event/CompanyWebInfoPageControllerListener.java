@@ -1,5 +1,6 @@
 package com.code.aon.ui.infoweb.event;
 
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.infoweb.WebInfoPage;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -15,4 +16,15 @@ public class CompanyWebInfoPageControllerListener extends ControllerAdapter {
 		wip.setPosition(wipc.getLastPosition());
 	}
 
+	@Override
+	public void afterBeanRemoved(ControllerEvent event)
+			throws ControllerListenerException {
+		CompanyWebInfoPageController wipc = (CompanyWebInfoPageController)event.getController();
+		try {
+			wipc.reorderObjects();
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
+		}
+	}
+	
 }

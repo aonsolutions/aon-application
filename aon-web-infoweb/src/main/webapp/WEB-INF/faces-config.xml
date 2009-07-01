@@ -79,6 +79,10 @@
 			<value>com.code.aon.infoweb.WebInfo</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>companyWebInfo</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
@@ -100,6 +104,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.infoweb.WebInfoPage</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>webPage</value>
+		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>WebInfoPage_position</value>
@@ -127,6 +135,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.infoweb.WebInfoStyle</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>webPageStyle</value>
+		</managed-property>				
 	</managed-bean>
 
 	<!-- ******************
@@ -146,20 +158,20 @@
 
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>otherdata</from-outcome>
-			<to-view-id>/facelet/registry/company/tabs/web-info.xhtml</to-view-id>
+			<from-outcome>companyWebInfo</from-outcome>
+			<to-view-id>/com/code/aon/ui/infoweb/facelet/companyWebInfo/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>pages</from-outcome>
-			<to-view-id>/facelet/registry/company/tabs/pages.xhtml</to-view-id>
+			<from-outcome>webPage</from-outcome>
+			<to-view-id>/com/code/aon/ui/infoweb/facelet/webPage/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>templates</from-outcome>
-			<to-view-id>/facelet/registry/company/tabs/templates.xhtml</to-view-id>
+			<from-outcome>webPageStyle</from-outcome>
+			<to-view-id>/com/code/aon/ui/infoweb/facelet/webPageStyle/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>generate</from-outcome>
-			<to-view-id>/facelet/registry/company/form.xhtml</to-view-id>
+			<from-outcome>generator</from-outcome>
+			<to-view-id>/com/code/aon/ui/infoweb/facelet/generator/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

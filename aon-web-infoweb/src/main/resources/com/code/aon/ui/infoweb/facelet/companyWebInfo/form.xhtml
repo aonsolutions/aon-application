@@ -38,21 +38,16 @@
 					<aon:selectBooleanCheckbox id="Generic_content_richTextEnabled"
 						value="#{webPage.richTextEnabled}">
 						<a4j:support ajaxSingle="true" event="onclick"
-							reRender="commercialDescriptionDiv" />
+							reRender="WebInfo_commercialDescription" />
 					</aon:selectBooleanCheckbox>
 
 					<aon:outputLabel for="WebInfo_commercialDescription" value="#{appBundle.infoweb_data_short_description}" />
-					<aon:div id="commercialDescriptionDiv" style="width:600px">
-						<aon:inputTextarea id="WebInfo_commercialDescription"
-							rendered="#{!webPage.richTextEnabled}"
-							value="#{companyWebInfo.to.commercialDescription}" cols="90" rows="15"/>
-						<rich:editor 
-							id="WebInfo_commercialDescription-HTML"
-							value="#{companyWebInfo.to.commercialDescription}"
-							rendered="#{webPage.richTextEnabled}"
-							configuration="tinyMCE" height="280"
-							language="#{facesContext.application.defaultLocale.language}" />
-					</aon:div>
+					<rich:editor 
+						id="WebInfo_commercialDescription"
+						value="#{companyWebInfo.to.commercialDescription}"
+						viewMode="#{webPage.richTextEnabled?'visual':'source'}"
+						height="280" width="640" configuration="tinyMCE"
+						language="#{facesContext.application.defaultLocale.language}" />
 				</aon:panelGrid>
 			</aon:div>
 		
