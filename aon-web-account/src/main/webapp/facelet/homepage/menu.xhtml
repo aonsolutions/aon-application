@@ -15,11 +15,7 @@
 				<aon:menuItem action="account_list" value="#{accountBundle.account_module}"/>
 				<aon:menuItem action="autConcept" value="#{accountingBundle.accounting_aut_concept_module}"/>
 				<aon:menuSeparator/>
-				<aon:menuItem actionListener="#{customer.onEditSearch}" action="customer_search" value="#{customerBundle.customer_module}">
-					<f:setPropertyActionListener value="#{true}" target="#{customer.showAccount}" />
-					<f:setPropertyActionListener value="#{false}" target="#{customer.showTariff}" />
-					<f:setPropertyActionListener value="#{false}" target="#{customer.showSegment}" />
-				</aon:menuItem>
+				<aon:menuItem actionListener="#{customer.onEditSearch}" action="customer_search" value="#{customerBundle.customer_module}" />
 				<aon:menuItem actionListener="#{supplier.onEditSearch}" action="supplier_search" value="#{supplierBundle.supplier_module}">
 					<f:setPropertyActionListener value="#{true}" target="#{supplier.showAccount}" />
 					<f:setPropertyActionListener value="#{false}" target="#{supplier.showSegment}" />
