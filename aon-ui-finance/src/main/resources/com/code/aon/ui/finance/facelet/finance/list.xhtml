@@ -108,6 +108,9 @@
 							<aon:outputText value="#{configBundle.config_pay_method}" />
 						</f:facet>
 						<aon:outputText value="#{to.payMethod.name}" />
+						<f:facet name="footer">
+							<aon:outputText value="#{financeBundle.finance_finances}: #{finance.numFinance}" />
+						</f:facet>
 					</aon:column>
 
 					<aon:column>
@@ -115,6 +118,9 @@
 							<aon:outputText value="#{bundle.aon_status}" />
 						</f:facet>
 						<aon:outputText value="#{to.financeStatus}" />
+							<f:facet name="footer">
+							<aon:outputText value="#{financeBundle.finance_total_amount}" />
+							</f:facet>
 					</aon:column>
 
 					<aon:column>
@@ -124,8 +130,17 @@
 						<aon:outputText value="#{to.totalAmount}">
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
+						
+						<f:facet name="footer">
+						<aon:div style="float:right">
+							<aon:outputText style="text-align:right" value="#{finance.totalFinanceAmount}" >
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						</aon:div>
+						</f:facet>
 					</aon:column>
 				</aon:dataTable>
+				
 
 				<aon:dataScroller2 for="financeData" showNote="true" />
 			</aon:div>
