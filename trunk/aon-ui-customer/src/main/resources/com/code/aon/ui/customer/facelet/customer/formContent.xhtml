@@ -38,7 +38,7 @@
 		<f:selectItems value="#{customerCollections.customerStatuses}" />
 	</aon:selectOneRadio>
 
-	<c:if test="#{customer.showTariff}">
+	<c:if test="#{aonConfiguration.bean.customer.showTariff}">
 		<aon:outputLabel for="Customer_tariff_id"
 			value="#{productBundle.product_tariff}" />
 		<aon:selectOneMenu id="Customer_tariff_id"
@@ -48,7 +48,7 @@
 		</aon:selectOneMenu>
 	</c:if>
 
-	<c:if test="#{customer.showSegment}">
+	<c:if test="#{aonConfiguration.bean.customer.showSegment}">
 		<aon:outputLabel for="Customer_customerSegment_id"
 			value="#{bundle.aon_segment}" />
 		<aon:selectOneMenu id="Customer_customerSegment_id"

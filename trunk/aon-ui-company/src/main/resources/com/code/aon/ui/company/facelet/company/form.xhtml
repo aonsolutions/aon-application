@@ -24,9 +24,6 @@
 							action="home" actionListener="#{company.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}" >
-							<f:setPropertyActionListener target="#{aonConfiguration.properties.hideHeaderLinks}" value="#{false}" />
-							<f:setPropertyActionListener target="#{aonConfiguration.properties.hideMenuBar}" value="#{false}" />
-							<f:setPropertyActionListener target="#{company.showPanelTabSet}" value="#{true}" />
 						</aon:commandButton>
 					</c:if>
 					<c:if test="#{!company.new}" >
@@ -164,7 +161,7 @@
 							</aon:div>
 						</aon:div>
 					</aon:div>
-					<c:if test="#{company.showCompanyOtherData}">
+					<c:if test="#{aonConfiguration.bean.company.showCompanyOtherData}">
 						<aon:div styleClass="aon-group">
 							<aon:div styleClass="aon-group-title">
 								<aon:outputText value="#{companyBundle.company_other_data}"/>
@@ -199,7 +196,7 @@
 				</aon:div>
 			</aon:panelGrid>
 	 
-	 		<c:if test="#{company.showPanelTabSet}">
+	 		<c:if test="#{aonConfiguration.bean.company.showPanelTabSet}">
 				<aon:div styleClass="aon-scroll-area">
 					<aon:panelTabSet>
 	
@@ -209,7 +206,7 @@
 								<ui:param name="controller" value="#{companyAddress}" />
 							</ui:include>
 						</aon:panelTab>
-						<c:if test="#{company.showRegistryBank}">
+						<c:if test="#{aonConfiguration.bean.company.showRegistryBank}">
 							<aon:panelTab label="#{registryBundle.registry_banks_module}">
 								<aon:panel>
 									<f:facet name="header">
@@ -236,7 +233,7 @@
 								<ui:param name="controller" value="#{companyRecordData}" />
 							</ui:include>
 						</aon:panelTab>				
-						<c:if test="#{company.showDigitalCertificate}">
+						<c:if test="#{aonConfiguration.bean.company.showDigitalCertificate}">
 							<aon:panelTab label="#{registryBundle.registry_digital_certificates}">
 								<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">
 									<ui:param name="controller" value="#{companyCertificate}" />
@@ -248,7 +245,7 @@
 				</aon:div>
 			</c:if>
 		</aon:form>
-		<c:if test="#{company.showRegistryBank}">
+		<c:if test="#{aonConfiguration.bean.company.showRegistryBank}">
 			<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		</c:if>
 
