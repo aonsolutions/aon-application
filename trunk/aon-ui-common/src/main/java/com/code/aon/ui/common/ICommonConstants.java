@@ -14,5 +14,8 @@ public interface ICommonConstants {
 	
 	/**	 */
 	String CONVERSION_ERROR = "aon_conversion_error";
+	
+	/**	 */
+	String CONFIGURATION_ERROR = "aon_configuration_error";
 
 }
