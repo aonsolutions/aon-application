@@ -558,34 +558,7 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		this.orderedList = orderedList;
 	}
 	
-	@Override
-	public void onSearch(ActionEvent event) {
-		// TODO Auto-generated method stub
-		super.onSearch(event);
-		try {
-			getFinanceAmount();
-		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-				
-	}
-		
-	public void getFinanceAmount() throws ManagerBeanException  {
-		totalFinanceAmount=0.0;
-		numFinance=0;
-		List<ITransferObject> financeList;		
-		IManagerBean bean;
-		bean = BeanManager.getManagerBean(Finance.class);
-		financeList = bean.getList(this.getCriteria());
-		
-		for (ITransferObject to : financeList) {
-			Finance f = (Finance) to;
-			totalFinanceAmount +=f.getTotalAmount();
-			numFinance++;
-		}
-		
-		}
+
 	
 	public void onOrderFinanceList(ActionEvent event) throws ManagerBeanException {
 		Criteria cr = new Criteria();
