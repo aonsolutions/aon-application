@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showPasswordWindow">
+		<c:if test="#{invoiceSigner.showPasswordWindow}">
+			<rich:modalPanel id="invoiceSignerModalPanel" minHeight="220"
+				minWidth="520" rendered="#{invoiceSigner.showPasswordWindow}"
+				showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{financeBundle.finance_sign_selected}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showPasswordWindow" immediate="true">
+							<f:setPropertyActionListener
+								target="#{invoiceSigner.showPasswordWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="passwordForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="sign_selected"
+										value="#{financeBundle.finance_sign}"
+										reRender="showPasswordWindow,invoiceSignerDataDiv"
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										actionListener="#{invoiceSigner.onSignSelected}">
+										<f:setPropertyActionListener
+											target="#{invoiceSigner.showPasswordWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+									<aon:commandButton id="sign-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showPasswordWindow"
+										immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										<f:setPropertyActionListener
+											target="#{invoiceSigner.showPasswordWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true">
+
+										<aon:outputLabel for="password"
+											value="Password" />
+										<aon:inputSecret id="password" 
+											value="#{invoiceSigner.password}" />
+
+									</aon:panelGrid>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>
