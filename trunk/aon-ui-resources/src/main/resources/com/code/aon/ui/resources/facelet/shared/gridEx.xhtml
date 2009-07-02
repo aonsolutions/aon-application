@@ -21,7 +21,12 @@
 					<f:facet name="header">
 						<aon:outputText value="&#160;" />
 					</f:facet>
-					<aon:outputText value="&#160;" />
+					<aon:div rendered="#{formList}" layout="none">
+						<ui:insert name="beginFormListContent"/>
+					</aon:div>					
+					<aon:div rendered="#{formEdit}" layout="none">
+						<ui:insert name="beginFormEditContent"/>
+					</aon:div>
 					<f:facet name="footer">
 						<aon:div>
 							<aon:commandButton
@@ -41,15 +46,16 @@
 			
 			<aon:column styleClass="aon-editDataTable-buttonsColumn aon-vertical-align-top">
 				<f:facet name="header">
-					<f:verbatim>&#160;</f:verbatim>
+					<aon:outputText value="&#160;" />
 				</f:facet>
-				<aon:div>
-					<f:verbatim rendered="#{formList}">&#160;</f:verbatim>
+				<aon:div rendered="#{formList}" layout="none">
+					<ui:insert name="endFormListContent"/>				
+				</aon:div>
+				<aon:div rendered="#{formEdit}">			
 					<c:if test="#{!skipSaveButton}">		
 						<aon:commandButton
 							id="#{dataTableId}-save" title="#{bundle.aon_accept}"
 							action="#{saveAction}" actionListener="#{saveActionListener}"
-							rendered="#{formEdit}" 
 							reRender="#{dataTableId}Div#{(saveButtonReRender != null)?',':''}#{saveButtonReRender}"
 							styleClass="aon-editDataTable-button aon-icon-accept"
 							accesskey="#{bundle.aon_key_save_line}" />
@@ -58,8 +64,7 @@
 						<aon:commandButton
 							id="#{dataTableId}-cancel" title="#{bundle.aon_cancel}"
 							action="#{cancelEditAction}" actionListener="#{cancelEditActionListener}"
-							immediate="true"
-							rendered="#{formEdit}" reRender="#{cancelButtonReRender}"
+							immediate="true" reRender="#{cancelButtonReRender}"
 							styleClass="aon-editDataTable-button aon-icon-cancel"
 							accesskey="#{bundle.aon_key_cancel_line}" />
 					</c:if>
@@ -67,7 +72,6 @@
 						<aon:confirmButton
 							id="#{dataTableId}-remove" title="#{bundle.aon_remove}"
 							immediate="true"
-							rendered="#{formEdit}" 
 							reRender="#{dataTableId}Div#{(removeButtonReRender != null)?',':''}#{removeButtonReRender}"
 							confirmTitle="#{bundle.aon_confirm_title}"
 							confirmMessage="#{bundle.aon_remove_confirm}"
@@ -79,7 +83,7 @@
 				</aon:div>
 				<f:facet name="footer">
 					<aon:div>
-						<f:verbatim rendered="#{!formNew}">&#160;</f:verbatim>
+						<aon:outputText rendered="#{!formNew}" value="&#160;" />
 						<c:if test="#{!skipSaveButton}">		
 							<aon:commandButton
 								id="#{dataTableId}-new-save" title="#{bundle.aon_save}"
