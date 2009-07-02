@@ -18,8 +18,8 @@
 				</aon:commandLink>
 	
 				<aon:commandLink id="companyWebInfo" 
-					title="#{appBundle.infoweb_data}" action="companyWebInfo" 
-					value="#{appBundle.infoweb_data}"
+					title="#{infowebBundle.infoweb_data}" action="companyWebInfo" 
+					value="#{infowebBundle.infoweb_data}"
 					actionListener="#{companyWebInfo.onInit}" styleClass="aon-top-menu-item">
 				</aon:commandLink>
 	
@@ -31,23 +31,23 @@
 				</aon:commandLink>
 	
 				<aon:commandLink id="webPage" 
-					title="#{appBundle.infoweb_pages}" action="webPage" 
-					value="#{appBundle.infoweb_pages}"
+					title="#{infowebBundle.infoweb_pages}" action="webPage" 
+					value="#{infowebBundle.infoweb_pages}"
 					actionListener="#{companyWebInfo.onInit}" styleClass="aon-top-menu-item">
 					<aon:actionListener method="#{webPage.onInit}" />
 				</aon:commandLink>
 	
 				<aon:commandLink id="webPageStyle" 
-					title="#{appBundle.infoweb_template}" action="webPageStyle" 
-					value="#{appBundle.infoweb_template}"
+					title="#{infowebBundle.infoweb_template}" action="webPageStyle" 
+					value="#{infowebBundle.infoweb_template}"
 					styleClass="aon-top-menu-item">
 					<aon:actionListener method="#{companyWebInfo.onInit}" />
 					<aon:actionListener method="#{webPageStyle.onLoad}" />
 				</aon:commandLink>
 	
 				<aon:commandLink id="generator" 
-					title="#{appBundle.infoweb_generate}" action="generator" 
-					value="#{appBundle.infoweb_generate}"
+					title="#{infowebBundle.infoweb_generate}" action="generator" 
+					value="#{infowebBundle.infoweb_generate}"
 					actionListener="#{companyWebInfo.onInit}" styleClass="aon-top-menu-item">
 				</aon:commandLink>
 				
