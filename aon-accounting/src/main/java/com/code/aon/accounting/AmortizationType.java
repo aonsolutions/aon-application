@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.ForeignKey;
@@ -15,6 +16,7 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.util.CommonUtil;
 
 /**
  * Entity class for representing an account.
@@ -115,6 +117,22 @@ public class AmortizationType implements ITransferObject {
 
 	public void setPercentage(double percentage) {
 		this.percentage = percentage;
+	}
+
+	@Transient
+    public int getYears() {
+		if (percentage!= 0) {
+			return (int) CommonUtil.round( 100 / percentage,0);	
+		}
+		return 0;
+	}
+
+	public void setYears(int years) {
+		if (years != 0) {
+			setPercentage(CommonUtil.round( 100.0 / years));
+		} else {
+			setPercentage(0);	
+		}
 	}
 
 	@Override
