@@ -208,6 +208,7 @@
 			<param id="toDate" value="#{journalReport.getToDate}" />
 			<param id="date" value="#{journalReport.getDate}" />
 			<param id="period" value="#{journalReport.getPeriod}" />
+			<param id="journal" value="#{journalReport.isJournal}" />
 		</params>
 	</report>
 	<report id="journalBookXls" description="Listado Diario para Excel de Apuntes">
@@ -222,6 +223,7 @@
 			<param id="toDate" value="#{journalReport.getToDate}" />
 			<param id="date" value="#{journalReport.getDate}" />
 			<param id="period" value="#{journalReport.getPeriod}" />
+			<param id="journal" value="#{journalReport.isJournal}" />
 		</params>
 	</report>
 	

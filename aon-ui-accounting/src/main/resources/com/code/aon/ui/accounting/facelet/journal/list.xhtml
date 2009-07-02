@@ -106,7 +106,8 @@
 							style="#{journalReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
 							<aon:div style="text-align:center; font-size: 1em;">
 								<aon:outputText styleClass="aon-italic" value="#{accountingBundle.accounting_account_entry}: " />
-								<aon:outputText styleClass="aon-bold" value="#{to.accountEntry.id}" />
+								<aon:outputText styleClass="aon-bold" value="#{to.accountEntry.id}" rendered="#{!journalReport.journal}"/>
+								<aon:outputText styleClass="aon-bold" value="#{to.accountEntry.journal}" rendered="#{journalReport.journal}"/>
 								<aon:outputText styleClass="aon-italic" value=" #{bundle.aon_date}: " />
 								<aon:outputText styleClass="aon-bold" value="#{to.accountEntry.entryDate}">
 									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"

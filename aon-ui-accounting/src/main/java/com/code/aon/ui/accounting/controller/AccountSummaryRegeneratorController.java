@@ -6,11 +6,9 @@ import com.code.aon.accounting.Period;
 import com.code.aon.accounting.event.AccountSummaryManager;
 import com.code.aon.common.IProgression;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
-public class AccountSummaryRegeneratorController extends BasicController implements
-		IProgression {
+public class AccountSummaryRegeneratorController implements IProgression {
 
 	private Period period;
 	private Long progressionCurrentValue = -1L;
@@ -24,7 +22,6 @@ public class AccountSummaryRegeneratorController extends BasicController impleme
 		this.period = period;
 	}
 
-	@Override
 	public void onEditSearch(ActionEvent event) {
 		this.setPeriod(null);
 	}

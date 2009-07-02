@@ -10,10 +10,19 @@
 	<ui:define name="content">
 		<aon:form id="accountEntryList">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_entry_module}" />
 				<ui:param name="controller" value="#{accountEntry}" />
-			</ui:include>
+
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="back" value="#{bundle.aon_back}"
+						accesskey="K" title="#{bundle.aon_back} Alt+K"
+						action="#{accountEntry.backAction}"
+						rendered="#{accountEntry.backAction != null}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						immediate="true" />
+				</ui:define>
+			</ui:decorate>
 
 			<aon:div id="accountEntryData" styleClass="aon-scroll-area">
 				<aon:dataTable id="accountEntryDataList"

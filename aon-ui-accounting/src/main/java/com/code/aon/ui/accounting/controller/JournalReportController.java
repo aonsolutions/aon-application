@@ -21,11 +21,11 @@ public class JournalReportController extends BasicController {
 	private Date fromDate;
 	private Date toDate;
 	private Date date;
+	private boolean journal;
 	private Integer previousAccountEntryDetail;
 	private Integer previousAccountEntry;
 	private boolean currentValue = true;
 	private boolean odd = true;
-
 	private SecurityLevel securityLevel;
 
 	public Period getPeriod() {
@@ -73,6 +73,14 @@ public class JournalReportController extends BasicController {
 		super.onReset(event);
 	}
 
+	public boolean isJournal() {
+		return journal;
+	}
+
+	public void setJournal(boolean journal) {
+		this.journal = journal;
+	}
+
 	private void initialize() {
 		try {
 			setPeriod(AccountingPeriodUtil.getDefaultPeriod());
@@ -83,6 +91,7 @@ public class JournalReportController extends BasicController {
 		setToDate(null);
 		setDate(new Date());
 		setSecurityLevel(null);
+		setJournal(false);
 		previousAccountEntry = null;
 		previousAccountEntryDetail = null;
 		odd = true;
@@ -115,12 +124,16 @@ public class JournalReportController extends BasicController {
 								getToDate());
 			}
 			if (getSecurityLevel() != null) {
-				// TODO Alias para el securityLevel
-				criteria.addEqualExpression("AccountEntryDetail.accountEntry.securityLevel",
+				criteria.addEqualExpression(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL),
 						getSecurityLevel());
 			}
-			getCriteria().addOrder(
-					getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID));
+			if (isJournal()) {
+				getCriteria().addOrder(
+						getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_JOURNAL));
+			} else {
+				getCriteria().addOrder(
+						getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID));
+			}
 			super.onSearch(event);
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());

@@ -73,6 +73,13 @@
 						styleClass="aon-finding-toolbar-item aon-icon-refresh"
 						immediate="true" />
 
+					<aon:commandButton id="back" value="#{bundle.aon_back}"
+						accesskey="K" title="#{bundle.aon_back} Alt+K"
+						action="#{accountEntry.backAction}"
+						rendered="#{accountEntry.backAction != null}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						immediate="true" />
+
 					<aon:spin controller="#{accountEntry}" action="accountEntry_form"
 						rendered="#{!accountEntry.new}" />
 

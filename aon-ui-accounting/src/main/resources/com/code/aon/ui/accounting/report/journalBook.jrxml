@@ -29,6 +29,7 @@
 	<parameter name="toDate" isForPrompting="false" class="java.util.Date"/>
 	<parameter name="period" isForPrompting="false" class="com.code.aon.accounting.Period"/>
 	<parameter name="date" isForPrompting="false" class="java.util.Date"/>
+	<parameter name="journal" isForPrompting="false" class="java.lang.Boolean"/>
 
 	<field name="accountEntry" class="com.code.aon.accounting.AccountEntry"/>
 	<field name="account" class="com.code.aon.account.Account"/>
@@ -63,7 +64,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{account_account_entry} + ": " + $F{accountEntry}.getId() + " " + $R{account_date} + ": "]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{account_account_entry} + ": " + ($P{journal}.booleanValue()?$F{accountEntry}.getJournal():$F{accountEntry}.getId()) + " " + $R{account_date} + ": "]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

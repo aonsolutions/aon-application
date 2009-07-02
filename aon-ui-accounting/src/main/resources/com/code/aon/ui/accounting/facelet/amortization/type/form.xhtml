@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -25,7 +26,7 @@
 
 					<aon:outputLabel for="AmortizationType_description"
 						value="#{bundle.aon_description}" />
-					<aon:inputText id="Amortization_description"
+					<aon:inputText id="AmortizationType_description"
 						value="#{amortizationType.to.description}" required="true"
 						size="70">
 						<f:validateLength maximum="64" />
@@ -33,61 +34,67 @@
 
 					<aon:outputLabel for="fixedAccountId"
 						value="#{accountingBundle.accounting_fixed_asset_account}" />
-					<ui:decorate
-						template="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-						<ui:param name="wizard" value="#{accountWizard}" />
+					<ui:include
+						src="/com/code/aon/ui/account/facelet/lookup/account/accountLookup.xhtml">
 						<ui:param name="id" value="fixedAccountId" />
 						<ui:param name="required" value="#{true}" />
-						<ui:param name="renderDescription" value="#{true}" />
-						<ui:param name="renderedAttr" value="#{true}" />
-						<ui:param name="disabled" value="#{false}" />
-						<ui:param name="reRenderAttr" value="none" />
-						<ui:param name="entity"
-							value="#{amortizationType.to.fixedAssetAccount}" />
-						<ui:param name="ELExpression"
-							value="amortizationType.to.fixedAssetAccount" />
-					</ui:decorate>
+						<ui:param name="entity" value="#{amortizationType.to.fixedAssetAccount}" />
+						<ui:param name="ELExpression" value="amortizationType.to.fixedAssetAccount" />
+					</ui:include>
 
 					<aon:outputLabel for="accumulatedAccountId"
 						value="#{accountingBundle.accounting_accumulated_account}" />
-					<ui:decorate
-						template="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-						<ui:param name="wizard" value="#{accountWizard}" />
+					<ui:include
+						src="/com/code/aon/ui/account/facelet/lookup/account/accountLookup.xhtml">
 						<ui:param name="id" value="accumulatedAccountId" />
 						<ui:param name="required" value="#{true}" />
-						<ui:param name="renderDescription" value="#{true}" />
-						<ui:param name="renderedAttr" value="#{true}" />
-						<ui:param name="disabled" value="#{false}" />
-						<ui:param name="reRenderAttr" value="none" />
-						<ui:param name="entity"
-							value="#{amortizationType.to.accumulatedAccount}" />
-						<ui:param name="ELExpression"
-							value="amortizationType.to.accumulatedAccount" />
-					</ui:decorate>
+						<ui:param name="entity" value="#{amortizationType.to.accumulatedAccount}" />
+						<ui:param name="ELExpression" value="amortizationType.to.accumulatedAccount" />
+					</ui:include>
 
 					<aon:outputLabel for="allocationAccountId"
 						value="#{accountingBundle.accounting_allocation_account}" />
-					<ui:decorate
-						template="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-						<ui:param name="wizard" value="#{accountWizard}" />
+					<ui:include
+						src="/com/code/aon/ui/account/facelet/lookup/account/accountLookup.xhtml">
 						<ui:param name="id" value="allocationAccountId" />
 						<ui:param name="required" value="#{true}" />
-						<ui:param name="renderDescription" value="#{true}" />
-						<ui:param name="renderedAttr" value="#{true}" />
-						<ui:param name="disabled" value="#{false}" />
-						<ui:param name="reRenderAttr" value="none" />
-						<ui:param name="entity"
-							value="#{amortizationType.to.allocationAccount}" />
-						<ui:param name="ELExpression"
-							value="amortizationType.to.allocationAccount" />
-					</ui:decorate>
+						<ui:param name="entity" value="#{amortizationType.to.allocationAccount}" />
+						<ui:param name="ELExpression" value="amortizationType.to.allocationAccount" />
+					</ui:include>
 
 					<aon:outputLabel for="AmortizationType_percentage"
 						value="#{bundle.aon_percentage}" />
-					<aon:div>
+					<aon:div id="percentageBox">
 						<aon:inputText id="AmortizationType_percentage"
+							rendered="#{!amortizationType.yearsEnabled}"
+							ajaxSingle="true"
+							reRender="yearsBox"
 							value="#{amortizationType.to.percentage}" size="5"/>
+						<aon:outputText 
+							rendered="#{amortizationType.yearsEnabled}" 
+							value="#{amortizationType.to.percentage}" >
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
 						<aon:outputText value="%" />
+					</aon:div>
+
+					<aon:outputText value="#{accountingBundle.accounting_years}" />
+					<aon:div id="yearsBox">
+						<aon:selectBooleanCheckbox 
+							value="#{amortizationType.yearsEnabled}">
+							<a4j:support
+								event="onclick"
+								ajaxSingle="true" 
+								reRender="percentageBox,yearsBox"/>
+						</aon:selectBooleanCheckbox>
+						<aon:inputText id="AmortizationType_years"
+							rendered="#{amortizationType.yearsEnabled}"
+							ajaxSingle="true"
+							reRender="percentageBox"
+							value="#{amortizationType.to.years}" size="5"/>
+						<aon:outputText 
+							rendered="#{!amortizationType.yearsEnabled}" 
+							value="#{amortizationType.to.years}" />
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>
