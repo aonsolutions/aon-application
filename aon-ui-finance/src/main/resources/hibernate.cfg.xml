@@ -16,7 +16,6 @@
 		<mapping class="com.code.aon.finance.InvoiceTax"/>
 		<mapping class="com.code.aon.finance.InvoiceDetail"/>
 		<mapping class="com.code.aon.finance.Invoice"/>
-		<mapping class="com.code.aon.finance.InvoiceAttachment"/>		
 		<mapping class="com.code.aon.finance.InvoicingGroup"/>
 		<mapping class="com.code.aon.finance.InvoicingGroupDetail"/>
 		<mapping class="com.code.aon.finance.Bank"/>		

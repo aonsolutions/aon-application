@@ -110,7 +110,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($P{payment}.booleanValue()==true?$R{finance_finance_list_acc}:$R{finance_finance_list_deu})]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{finance_finance_list}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -154,7 +154,7 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$R{finance_invoice}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
 						x="69"
@@ -273,7 +273,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{invoice}.getReferenceCode()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{invoice}.getSeries()!=null?$F{invoice}.getSeries() + "/" + new Integer($F{invoice}.getNumber()).toString():new Integer($F{invoice}.getNumber()).toString())]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -326,7 +326,7 @@
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[$F{dueDate}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="69"
 						y="0"
@@ -341,7 +341,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{invoice}.getRegistry().getId()+" "+ $F{invoice}.getRegistry().getName()+ " "+ $F{invoice}.getRegistry().getSurname()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{invoice}.getRegistry().getId()+" "+ $F{invoice}.getRegistry().getName()+ " "+ $F{invoice}.getRegistry().getSurname() ]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

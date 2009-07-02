@@ -135,10 +135,8 @@ public class FinanceSearchListener extends ControllerSearchListener {
 			String status = getController().resolveAlias(IFinanceAlias.FINANCE_FINANCE_STATUS);
 			addEnumToCriteria(criteria, status, getFinanceStatuses());
 		}
-		if (getPayMethods() != null && getPayMethodsSize() > 0) {
-			String payMethod = getController().resolveAlias(IFinanceAlias.FINANCE_PAY_METHOD_ID);
-			addEnumToCriteria(criteria, payMethod, getPayMethodsIds().toArray());
-		}
+		String payMethod = getController().resolveAlias(IFinanceAlias.FINANCE_PAY_METHOD_ID);
+		addEnumToCriteria(criteria, payMethod, getPayMethodsIds().toArray());
 	}
 
 	public void onAddPayMethod(ActionEvent event) {
