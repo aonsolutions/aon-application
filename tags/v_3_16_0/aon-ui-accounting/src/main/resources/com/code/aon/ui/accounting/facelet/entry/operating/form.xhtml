@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form>
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_operating_entry_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="save" value="#{accountingBundle.accounting_entry_generate}"
+						accesskey="#{bundle.aon_key_save}"
+						actionListener="#{endPeriodEntries.onOperatingEntry}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;" />
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2">
+
+					<aon:outputLabel for="Account_Period"
+						value="#{accountingBundle.accounting_period}" />
+					<aon:selectOneMenu id="Account_Period"
+						value="#{endPeriodEntries.period}">
+						<f:selectItems value="#{accountingCollections.accountPeriods}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Account_date"
+						value="#{bundle.aon_date}" />
+					<aon:selectInputDate id="Account_date"
+						value="#{endPeriodEntries.date}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+					<aon:outputLabel for="Opening_Concept"
+						value="#{bundle.aon_concept}" />
+					<aon:inputText id="Opening_Concept"
+						value="#{endPeriodEntries.concept}" />
+
+					<aon:outputLabel for="Opening_securityLevel"
+						value="#{bundle.aon_security_level}" />
+					<aon:selectOneMenu id="Opening_securityLevel"
+						value="#{endPeriodEntries.securityLevel}">
+						<f:selectItems value="#{commonCollections.securityLevels}" />
+					</aon:selectOneMenu>
+
+				</aon:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

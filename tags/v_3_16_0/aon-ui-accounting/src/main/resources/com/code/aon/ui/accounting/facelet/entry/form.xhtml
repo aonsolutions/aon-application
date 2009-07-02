@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form>
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarID" value="aonToolbar" />
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_entry_module}" />
+				<ui:param name="toolbarDescription"
+					value="#{accountEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+
+				<ui:define name="additionalToolbarContent">
+
+					<aon:commandButton id="reset" 
+						value="#{bundle.aon_reset}"
+						accesskey="#{bundle.aon_key_new}"
+						title="#{bundle.aon_key_new} (ALT+#{bundle.aon_key_new})"
+						action="accountEntry_form"
+						actionListener="#{accountEntry.onReset}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						rendered="#{!accountEntry.new}" />
+
+					<aon:commandButton 
+						value="#{accountingBundle.accounting_new_invoice_entry}"
+						accesskey="X" title="Alt+X"
+						actionListener="#{invoiceEntry.onReset}"
+						action="account_invoice_entry"
+						rendered="#{!accountEntry.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset" />
+
+					<aon:commandButton id="save" value="#{bundle.aon_save}"
+						title="#{bundle.aon_save} (ALT+#{bundle.aon_key_save})"
+						accesskey="#{bundle.aon_key_save}"
+						actionListener="#{accountEntry.accept}"
+						rendered="#{accountEntry.manual and (accountEntry.model.rowCount > 0 or accountEntry.new)}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;"
+						focus="accountId-NEW">
+						<aon:actionListener method="#{accountEntryDetail.onReset}" />
+					</aon:commandButton>
+
+					<aon:commandButton id="remove" value="#{bundle.aon_remove}"
+						title="#{bundle.aon_remove} (ALT+#{bundle.aon_key_remove})"
+						accesskey="#{bundle.aon_key_remove}" action="accountEntry_form"
+						actionListener="#{accountEntry.onRemove}"
+						rendered="#{!accountEntry.new and accountEntry.manual}"
+						styleClass="aon-finding-toolbar-item aon-icon-delete"
+						immediate="true"
+						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;" />
+
+					<aon:commandButton id="search" value="#{bundle.aon_search}"
+						title="#{bundle.aon_search} (ALT+#{bundle.aon_key_search})"
+						accesskey="#{bundle.aon_key_search}" action="accountEntry_search"
+						rendered="#{!accountEntry.new}"
+						actionListener="#{accountEntry.onEditSearch}"
+						styleClass="aon-finding-toolbar-item aon-icon-search"
+						immediate="true" />
+
+					<aon:commandButton id="update" value="#{bundle.aon_update}"
+						accesskey="Q" title="#{bundle.aon_update} Alt+Q"
+						action="#{accountEntry.onNavigate}"
+						actionListener="#{accountEntry.onSelectEntry}"
+						rendered="#{!accountEntry.manual}"
+						styleClass="aon-finding-toolbar-item aon-icon-refresh"
+						immediate="true" />
+
+					<aon:spin controller="#{accountEntry}" action="accountEntry_form"
+						rendered="#{!accountEntry.new}" />
+
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div id="entryContainer" styleClass="aon-scroll-area" >
+				<aon:div
+					rendered="#{accountEntry.model.rowCount > 0 or accountEntry.new}">
+					<aon:panelGrid columns="5" style="width: 99%;margin-bottom: 1em;"
+						columnClasses="
+						 aon-panelGrid-even aon-width-150
+						,aon-panelGrid-even aon-width-150
+						,aon-panelGrid-even aon-width-200
+						,aon-panelGrid-even aon-width-200
+						,aon-panelGrid-even aon-width-auto"
+						rowClasses="aon-panelGrid-odd,aon-panelGrid-even">
+
+						<aon:div>
+							<aon:outputText value="#{accountingBundle.accounting_period}: " />
+							<aon:selectOneMenu id="AccountEntry_accountPeriod"
+								styleClass="aon-form-selectOneMenu-field"
+								value="#{accountEntry.to.accountPeriod}"
+								rendered="#{accountEntry.manual and accountEntry.new}">
+								<f:selectItems value="#{accountingCollections.accountPeriodKeys}" />
+							</aon:selectOneMenu>
+							<aon:outputText value="#{accountEntry.to.accountPeriod}"
+								rendered="#{!accountEntry.manual or !accountEntry.new}" />
+						</aon:div>
+
+						<aon:div>
+							<aon:div rendered="#{!accountEntry.new}">
+								<aon:outputText value="#{bundle.aon_id}: " />
+								<aon:outputText value="#{accountEntry.to.id}&#160;" />
+							</aon:div>
+						</aon:div>
+
+						<aon:div>
+							<aon:outputText value="#{bundle.aon_date}: " />
+							<aon:selectInputDate required="true"
+								id="AccountEntry_entryDate" value="#{accountEntry.to.entryDate}"
+								rendered="#{accountEntry.manual}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}"/>
+							<aon:outputText value="#{accountEntry.to.entryDate}"
+								rendered="#{!accountEntry.manual}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:div>
+
+						<aon:div>
+							<aon:outputText value="#{accountEntry.to.type}" />
+						</aon:div>
+
+						<aon:div>
+							<aon:outputText value="#{bundle.aon_security_level}: "
+								rendered="#{accountEntry.manual and accountEntry.new}" />
+							<aon:selectOneMenu id="AccountEntry_securityLevel"
+								styleClass="aon-form-selectOneMenu-field"
+								value="#{accountEntry.to.securityLevel}"
+								rendered="#{accountEntry.manual and accountEntry.new}">
+								<f:selectItems value="#{commonCollections.securityLevels}" />
+							</aon:selectOneMenu>
+							
+							<aon:outputText value="#{accountEntry.to.securityLevel}"
+								rendered="#{!accountEntry.manual or !accountEntry.new}" />
+						</aon:div>
+					</aon:panelGrid>
+
+					<ui:include
+						src="/com/code/aon/ui/accounting/facelet/entry/linesForm.xhtml" />
+				</aon:div>
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{accountLookup}" />
+	</ui:define>
+</ui:composition>
