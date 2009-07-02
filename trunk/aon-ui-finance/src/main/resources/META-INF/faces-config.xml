@@ -170,11 +170,20 @@
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
+				<value>#{financeControllerListener}</value>
 				<value>#{financeSearch}</value>
 				<value>#{financeTrackingListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>financeControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.FinanceControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
 	
 	<managed-bean>
 		<managed-bean-name>financeSearch</managed-bean-name>
