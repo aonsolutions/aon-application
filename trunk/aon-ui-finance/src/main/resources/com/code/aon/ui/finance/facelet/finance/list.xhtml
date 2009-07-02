@@ -47,13 +47,24 @@
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="financeListByDate" />
 					</h:commandLink>
-					
+
 					<h:commandLink value="#{financeBundle.finance_list_by_paymethod}"
 						target="_blank" action="#{report.onExecute}"
 						actionListener="#{finance.onOrderFinanceListByPayment}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="financeListByPayment" />
+					</h:commandLink>
+					<h:commandLink value="&#160;" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+						<f:param name="reportKey" value="receiptFinance" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</h:commandLink>
+					<h:commandLink value="#{financeBundle.finance_receipts}"
+						target="_blank" action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf">
+						<f:param name="reportKey" value="receiptFinance" />
 					</h:commandLink>
 				</ui:define>
 

@@ -135,7 +135,23 @@
 		
 		<nested-report report="invoiceDetail"/>
 	</report>
-
+		
+	<!--  *********  Receipt Finance ********* -->	
+	<report id="receiptFinance" description=" Finance Receipt's Report">
+		<template path="/com/code/aon/ui/finance/report/receiptFinance.jasper"/>
+		<bean key="com.code.aon.finance.Finance" />
+		<criteria provider="#{finance}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
+			<param id="payment" value="#{finance.isPayment}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+		
+		<nested-report report="invoiceDetail"/>
+	</report>
+	
 	<!--  *********  FinanceList  ********* -->
 	<report id="financeList" description="Finance List">
 		<template path="/com/code/aon/ui/finance/report/financeList.jasper" />
