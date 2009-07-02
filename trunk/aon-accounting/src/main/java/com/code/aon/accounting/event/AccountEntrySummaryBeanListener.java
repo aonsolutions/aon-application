@@ -22,14 +22,16 @@ public class AccountEntrySummaryBeanListener extends ManagerBeanListenerAdapter 
     @SuppressWarnings("unchecked")
     public void beanUpdated(ManagerBeanEvent evt) throws ManagerBeanException {
         AccountEntry accountEntry = (AccountEntry)evt.getTo();
-        IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
-        Criteria criteria = new Criteria();
-        criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
-        Iterator iterator = accountEntryDetailBean.getList(criteria).iterator();
-        while (iterator.hasNext()) {
-        	AccountEntryDetail accountEntryDetail = (AccountEntryDetail)iterator.next();
-            AccountSummaryManager.modifyAccountSummary(accountEntryDetail, 1);
-        }
+		if (accountEntry.isDateDirty()) {
+	        IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+	        Criteria criteria = new Criteria();
+	        criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
+	        Iterator iterator = accountEntryDetailBean.getList(criteria).iterator();
+	        while (iterator.hasNext()) {
+	        	AccountEntryDetail accountEntryDetail = (AccountEntryDetail)iterator.next();
+	            AccountSummaryManager.modifyAccountSummary(accountEntryDetail, 1);
+	        }
+	    }
     }
 
 }

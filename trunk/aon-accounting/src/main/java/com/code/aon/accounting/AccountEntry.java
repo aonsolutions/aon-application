@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Index;
 
@@ -50,7 +51,8 @@ public class AccountEntry implements ITransferObject {
 	/** The security level. */
 	private Set<AccountEntryDetail> detail = new HashSet<AccountEntryDetail>();
 	
-
+	private boolean dateDirty = false;
+	
 	/**
 	 * Gets the id.
 	 * 
@@ -182,4 +184,12 @@ public class AccountEntry implements ITransferObject {
         return this.id.equals(((AccountEntry)obj).getId()); 
     }
 
+    @Transient
+    public boolean isDateDirty() {
+		return dateDirty;
+	}
+
+	public void setDateDirty(boolean dateDirty) {
+		this.dateDirty = dateDirty;
+	}
 }
