@@ -583,18 +583,16 @@ public class AonMessage implements IMimeType, BundleConstants {
 	//**************************************************************************
 	//**************************************************************************
 	private boolean isAttachment( BodyPart part ) throws MessagingException {
-		boolean attachment = false;
 		String disposition = part.getDisposition();
-		if ( (disposition != null) ) {
-			if (disposition.equalsIgnoreCase(Part.ATTACHMENT) ) {
-				attachment = true;
-			} else if (part.getFileName() != null) {
-				if (! part.isMimeType(APPLICATION_APPLEFILE) ) {
-					attachment = part.isMimeType(IMAGE_ANY) || part.isMimeType(APPLICATION_ANY);	
-				}
-			}
+		if ( (disposition != null) && disposition.equalsIgnoreCase(Part.ATTACHMENT) ) {
+			return true;
 		}		
-		return attachment;
+		if (part.getFileName() != null) {
+			if (! part.isMimeType(APPLICATION_APPLEFILE) ) {
+				return part.isMimeType(IMAGE_ANY) || part.isMimeType(APPLICATION_ANY);	
+			}
+		}
+		return false;
 	}
 	
 	public List<Part> getAttachmentParts( Part part ) throws MessagingException, IOException {
