@@ -22,12 +22,49 @@ import com.code.aon.ui.util.AonUtil;
 
 public class AccountEntryDetailController extends LinesController {
 	
+	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 	private static final String STATEMENT_CONTROLLER_NAME = "statement";
 
-	public void onBalanceAmount(ActionEvent event) {
-		
+	public void onBalanceDebit(ActionEvent event) {
+		try {
+			AccountEntryController c = (AccountEntryController) AonUtil.getRegisteredBean(ACCOUNT_ENTRY_CONTROLLER_NAME);
+			if (c.getTotalDebit() != null && c.getTotalCredit() != null) {
+				AccountEntryDetail detail = (AccountEntryDetail) getModel().getRowData();
+				double d = CommonUtil.round(
+							CommonUtil.round(c.getTotalDebit() - c.getTotalCredit()) -
+							CommonUtil.round(detail.getDebit() - detail.getCredit()) );
+				if (d<0) {
+					detail.setDebit(CommonUtil.round( d * (-1) ));
+				} else {
+					detail.setCredit(d);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(),e);
+		}
 	}
 	
+	public void onBalanceCredit(ActionEvent event) {
+		try {
+			AccountEntryController c = (AccountEntryController) AonUtil.getRegisteredBean(ACCOUNT_ENTRY_CONTROLLER_NAME);
+			if (c.getTotalDebit() != null && c.getTotalCredit() != null) {
+				AccountEntryDetail detail = (AccountEntryDetail) getModel().getRowData();
+				double cr = CommonUtil.round(
+						CommonUtil.round(c.getTotalCredit() - c.getTotalDebit()) -
+						CommonUtil.round(detail.getCredit() - detail.getDebit()) );
+				if (cr<0) {
+					detail.setCredit(CommonUtil.round( cr * (-1) ));
+				} else {
+					detail.setDebit(cr);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(),e);
+		}
+	}
+
 	public void onBalance(ActionEvent event) {
 		
 	}

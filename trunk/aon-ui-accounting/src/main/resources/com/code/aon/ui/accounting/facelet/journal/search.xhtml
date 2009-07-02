@@ -70,6 +70,15 @@
 						<f:selectItems value="#{commonCollections.securityLevels}" />
 					</aon:selectOneMenu>
 
+					<aon:outputLabel
+						for="AccountEntryDetail_accountEntry_journal"
+						value="#{bunlde.aon_order}" />
+					<aon:selectOneMenu value="#{journalReport.journal}" 
+						id="AccountEntryDetail_accountEntry_journal">
+						<f:selectItem itemLabel="#{accountingBundle.accounting_show_entry_id}" itemValue="#{false}" />
+						<f:selectItem itemLabel="#{accountingBundle.accounting_show_entry_journal}" itemValue="#{true}" />
+					</aon:selectOneMenu>
+
 				</ui:define>
 			</ui:decorate>
 		</aon:form>

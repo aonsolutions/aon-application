@@ -40,6 +40,7 @@ public class StatementController extends BasicController {
 
 	private SummaryProviderParameters params;
 
+
 	public Balance getOpeningEntry() {
 		return openingEntry;
 	}
@@ -76,6 +77,16 @@ public class StatementController extends BasicController {
 	public void onSelect(ActionEvent event) {
 		try {
 			super.onSelect(event);
+			initialize();
+			initializeAmounts();
+			transformDetailModel();
+		} catch (ManagerBeanException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+
+	public void onRefresh(ActionEvent event) {
+		try {
 			initialize();
 			initializeAmounts();
 			transformDetailModel();

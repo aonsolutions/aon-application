@@ -9,18 +9,21 @@
 	<ui:define name="content">
 		<aon:form id="accountList">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_amortization_type_module}" />
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{accountingBundle.accounting_amortization_type_module}" />
 				<ui:param name="controller" value="#{amortizationType}" />
 			</ui:include>
- 
-			<aon:div styleClass="aon-scroll-area">
-				<aon:dataTable id="amortizationTypeDataList" value="#{amortizationType.model}"
-					rows="20" var="to" rendered="#{amortizationType.model.rowCount > 0}">
 
-					<aon:rowSelector action="amortizationType_form" 
+			<aon:div styleClass="aon-scroll-area">
+				<aon:dataTable id="amortizationTypeDataList"
+					value="#{amortizationType.model}" rows="20" var="to"
+					rendered="#{amortizationType.model.rowCount > 0}">
+
+					<aon:rowSelector action="amortizationType_form"
 						actionListener="#{amortizationType.onSelect}" />
- 
+
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_id}" />
@@ -34,6 +37,25 @@
 						</f:facet>
 						<aon:outputText value="#{to.description}" />
 					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_percentage}" />
+						</f:facet>
+						<aon:outputText value="#{to.percentage}">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+						<aon:outputText value="%" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{accountingBundle.accounting_years}" />
+						</f:facet>
+						<aon:outputText value="#{to.years}" />
+					</aon:column>
+
+
 				</aon:dataTable>
 				<aon:dataScroller2 for="amortizationTypeDataList" showNote="true" />
 			</aon:div>

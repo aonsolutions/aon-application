@@ -49,14 +49,16 @@
 						</aon:column>
 						<aon:column>
 							<aon:div styleClass="aon-italic aon-bold aon-text-right">
-								<aon:outputText value="#{accountEntry.totalDebit}">
+								<aon:outputText value="#{accountEntry.totalDebit}"
+									style="#{accountEntry.balanced?'color:green':'color:red'}">
 									<f:convertNumber pattern="#,##0.00" />
 								</aon:outputText>
 							</aon:div>
 						</aon:column>
 						<aon:column>
 							<aon:div styleClass="aon-italic aon-bold aon-text-right">
-								<aon:outputText value="#{accountEntry.totalCredit}">
+								<aon:outputText value="#{accountEntry.totalCredit}"
+									style="#{accountEntry.balanced?'color:green':'color:red'}">
 									<f:convertNumber pattern="#,##0.00" />
 								</aon:outputText>
 							</aon:div>
@@ -75,13 +77,16 @@
 
 					<aon:div style="width: 90%;"
 						rendered="#{to!=accountEntryDetail.to}" styleClass="aon-nowrap">
+
 						<h:commandLink immediate="#{true}"
 							styleClass="aon-dataTable-link"
+							rendered="#{accountEntry.statementAvailable}"
 							actionListener="#{accountEntryDetail.onAccountStatement}"
 							title="#{accountingBundle.accounting_statement_module}"
 							action="account_statement_list">
 								<aon:outputText value="#{to.account.id}" />
 						</h:commandLink>
+						<aon:outputText rendered="#{!accountEntry.statementAvailable}" value="#{to.account.id}" />
 						<aon:panelGroup styleClass="aon-italic"
 							style="font-size: 0.8em; margin-left: 10px;">
 							<aon:outputText value="#{to.account.description}">
@@ -158,24 +163,33 @@
 						rendered="#{to!=accountEntryDetail.to}">
 						<f:convertNumber pattern="#,##0.00" />
 					</aon:outputText>
-					<aon:inputText value="#{accountEntryDetail.to.debit}"
+					<aon:inputText id="debit1" value="#{accountEntryDetail.to.debit}"
 						rendered="#{to==accountEntryDetail.to}" required="true" size="10">
 						<f:validateDoubleRange />
+						<a4j:support event="onkeyup"
+							onsubmit="if(event.keyCode != 120) return false;"
+							eventsQueue="debitKeyUp" ignoreDupResponses="true"
+							reRender="debit1,credit1"
+							requestDelay="100"
+							actionListener="#{accountEntryDetail.onBalanceDebit}">
+						</a4j:support>
 					</aon:inputText>
 					<f:facet name="footer">
 						<aon:div styleClass="aon-italic"
 							style="text-align:right; font-weight:bold;">
-							<aon:inputText value="#{accountEntryDetail.to.debit}"
+							<aon:inputText id="debit2" value="#{accountEntryDetail.to.debit}"
 								rendered="#{accountEntryDetail.new}" required="true" size="10">
 								<f:validateDoubleRange />
 								<a4j:support event="onkeyup"
 									onsubmit="if(event.keyCode != 120) return false;"
 									eventsQueue="debitKeyUp" ignoreDupResponses="true"
 									requestDelay="100"
-									actionListener="#{accountEntryDetail.onBalanceAmount}">
+									reRender="debit2,credit2"
+									actionListener="#{accountEntryDetail.onBalanceDebit}">
 								</a4j:support>
 							</aon:inputText>
 							<aon:outputText value="#{accountEntry.totalDebit}"
+								style="#{accountEntry.balanced?'color:green':'color:red'}"
 								rendered="#{!accountEntryDetail.new}">
 								<f:convertNumber pattern="#,##0.00" />
 							</aon:outputText>
@@ -191,18 +205,33 @@
 						rendered="#{to!=accountEntryDetail.to}">
 						<f:convertNumber pattern="#,##0.00" />
 					</aon:outputText>
-					<aon:inputText value="#{accountEntryDetail.to.credit}"
+					<aon:inputText id="credit1" value="#{accountEntryDetail.to.credit}"
 						rendered="#{to==accountEntryDetail.to}" required="true" size="10">
 						<f:validateDoubleRange />
+						<a4j:support event="onkeyup"
+							onsubmit="if(event.keyCode != 120) return false;"
+							eventsQueue="debitKeyUp" ignoreDupResponses="true"
+							requestDelay="100"
+							reRender="debit1,credit1"
+							actionListener="#{accountEntryDetail.onBalanceCredit}">
+						</a4j:support>
 					</aon:inputText>
 					<f:facet name="footer">
 						<aon:div styleClass="aon-italic"
 							style="text-align:right; font-weight:bold;">
-							<aon:inputText value="#{accountEntryDetail.to.credit}"
+							<aon:inputText id="credit2" value="#{accountEntryDetail.to.credit}"
 								rendered="#{accountEntryDetail.new}" required="true" size="10">
 								<f:validateDoubleRange />
+								<a4j:support event="onkeyup"
+									onsubmit="if(event.keyCode != 120) return false;"
+									eventsQueue="debitKeyUp" ignoreDupResponses="true"
+									requestDelay="100"
+									reRender="debit2,credit2"
+									actionListener="#{accountEntryDetail.onBalanceCredit}">
+								</a4j:support>
 							</aon:inputText>
 							<aon:outputText value="#{accountEntry.totalCredit}"
+								style="#{accountEntry.balanced?'color:green':'color:red'}"
 								rendered="#{!accountEntryDetail.new}">
 								<f:convertNumber pattern="#,##0.00" />
 							</aon:outputText>
@@ -265,9 +294,11 @@
 							<aon:outputText value="&#160;" />
 							<aon:commandButton id="entryDetailTable-save"
 								title="#{bundle.aon_accept} (ALT+#{bundle.aon_key_save_line})" 
-								actionListener="#{accountEntryDetail.onAccept}" rendered="#{to==accountEntryDetail.to}"
+								actionListener="#{accountEntryDetail.onAccept}" 
+								rendered="#{to==accountEntryDetail.to}"
 								reRender="entryDetailTableDataScroller"
 								styleClass="aon-editDataTable-button aon-icon-accept"
+								focus="accountId"
 								accesskey="#{bundle.aon_key_save_line}" />
 							<aon:commandButton id="entryDetailTable-cancel"
 								title="#{bundle.aon_cancel} (ALT+#{bundle.aon_key_cancel_line})" 

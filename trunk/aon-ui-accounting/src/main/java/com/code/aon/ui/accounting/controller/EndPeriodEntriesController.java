@@ -19,6 +19,7 @@ import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -115,8 +116,8 @@ public class EndPeriodEntriesController {
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
-	
-			if (existsEntry(getPeriod(), accountEntryType, getSecurityLevel())) {
+			AccountingUtil util = new AccountingUtil();
+			if (util.existsEntry(getPeriod(), accountEntryType, getSecurityLevel())) {
 				String msg = "Ya existe el asiento en el ejercicio " + getPeriod().getId() + ".";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
@@ -129,7 +130,7 @@ public class EndPeriodEntriesController {
 					throw new AbortProcessingException(msg);
 				}
 	
-				if (existsEntry(previousPeriod, AccountEntryType.CLOSING, getSecurityLevel())) {
+				if (!util.existsEntry(previousPeriod, AccountEntryType.CLOSING, getSecurityLevel())) {
 					String msg = "No existe asiento de cierre el ejercicio " + previousPeriod.getId()
 							+ ".";
 					AonUtil.addErrorMessage(msg);
@@ -138,7 +139,7 @@ public class EndPeriodEntriesController {
 			} else if (accountEntryType == AccountEntryType.OPERATING) {
 				// Si no existe asiento de apertura y el ejercicio no es el primero,
 				// se lanza el error.
-				if (!existsEntry(getPeriod(), AccountEntryType.OPENING, getSecurityLevel())) {
+				if (!util.existsEntry(getPeriod(), AccountEntryType.OPENING, getSecurityLevel())) {
 					IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 					Criteria c = new Criteria();
 					c.addLessThanExpression(periodBean
@@ -152,7 +153,7 @@ public class EndPeriodEntriesController {
 					}
 				}
 			} else if (accountEntryType == AccountEntryType.CLOSING) {
-				if (!existsEntry(getPeriod(), AccountEntryType.OPERATING, getSecurityLevel())) {
+				if (!util.existsEntry(getPeriod(), AccountEntryType.OPERATING, getSecurityLevel())) {
 					String msg = "No existe el asiento de explotación en el ejercicio "
 							+ getPeriod().getId() + ".";
 					AonUtil.addErrorMessage(msg);
@@ -164,20 +165,6 @@ public class EndPeriodEntriesController {
 			throw new AbortProcessingException(e.getMessage(),e);
 		}
 
-	}
-
-	private boolean existsEntry(Period period, AccountEntryType accountEntryType,
-			SecurityLevel securityLevel) throws ManagerBeanException {
-		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(entryBean
-				.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), period.getId());
-		criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_TYPE),
-				accountEntryType);
-		criteria.addEqualExpression(entryBean
-				.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel);
-		List<ITransferObject> list = entryBean.getList(criteria);
-		return (list.size() > 0);
 	}
 
 	public void onOpeningEntry(ActionEvent event) {

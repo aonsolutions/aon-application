@@ -157,6 +157,7 @@ public class TrialBalanceController implements ICollectionProvider {
 			entryController.onSearch(null);
 			entryController.getModel().setRowIndex(0);
 			entryController.onSelect(null);
+			entryController.setBackAction("account_statement_list");
 		} catch (ManagerBeanException e) {
 			String msg = "Error al cargar el apunte.";
 			AonUtil.addErrorMessage(msg);
