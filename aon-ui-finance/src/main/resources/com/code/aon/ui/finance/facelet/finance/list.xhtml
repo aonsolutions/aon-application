@@ -47,14 +47,6 @@
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="financeListByDate" />
 					</h:commandLink>
-					
-					<h:commandLink value="#{financeBundle.finance_list_by_paymethod}"
-						target="_blank" action="#{report.onExecute}"
-						actionListener="#{finance.onOrderFinanceListByPayment}"
-						styleClass="aon-finding-toolbar-item aon-icon-pdf"
-						accesskey="#{bundle.aon_key_print}">
-						<f:param name="reportKey" value="financeListByPayment" />
-					</h:commandLink>
 				</ui:define>
 
 			</ui:decorate>

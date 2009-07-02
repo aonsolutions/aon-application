@@ -29,7 +29,7 @@
 						</aon:commandButton>
 					</aon:form>
 				</f:facet>
-				<aon:form id="financeReturnForm">
+				<aon:form id="financeReturnFrom">
 				<aon:div styleClass="aon-popupWindow-content">
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
@@ -69,31 +69,12 @@
 										<aon:inputText id="Finance_returnExpenses"
 											value="#{finance.returnExpenses}" size="10" />
 
-										<aon:outputLabel for="Finance_returnDeposit"
-											value="#{financeBundle.finance_deposit}" />
-										<aon:selectOneRadio id="Finance_returnDeposit"
-											style="display:inline;" ajaxSingle="true"
-											value="#{finance.returnDeposit}"
-											reRender="menuGrid">
-											<f:selectItem itemLabel="#{configBundle.config_bank}" itemValue="0" />
-											<f:selectItem itemLabel="#{financeBundle.finance_cash}" itemValue="1" />
-										</aon:selectOneRadio>
-
 										<aon:outputLabel for="Finance_returnRegistryBank"
-											value="#{configBundle.config_bank}"
-											rendered="#{finance.returnDeposit == 0}" />
+											value="#{configBundle.config_bank}" />
 										<aon:selectOneMenu id="Finance_returnRegistryBank"
-											value="#{finance.returnRegistryBank}"
-											rendered="#{finance.returnDeposit == 0}">
+											value="#{finance.returnRegistryBank}">
+											<f:selectItem itemLabel="#{financeBundle.finance_cash}" value="#{null}" />
 											<f:selectItems value="#{finance.companyRegistryBanks}" />
-										</aon:selectOneMenu>
-										<aon:outputLabel for="Finance_returnCashAccount"
-											value="#{financeBundle.finance_cash}"
-											rendered="#{finance.returnDeposit == 1 and finance.cashAccountsSize > 1}" />
-										<aon:selectOneMenu id="Finance_returnCashAccount"
-											value="#{finance.returnCashAccount}"
-											rendered="#{finance.returnDeposit == 1 and finance.cashAccountsSize > 1}">
-											<f:selectItems value="#{finance.cashAccounts}" />
 										</aon:selectOneMenu>
 
 									</aon:panelGrid>

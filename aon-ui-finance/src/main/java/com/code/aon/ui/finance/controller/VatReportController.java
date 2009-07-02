@@ -26,12 +26,11 @@ import com.code.aon.finance.enumeration.VatType;
 import com.code.aon.finance.vat.Vat;
 import com.code.aon.finance.vat.VatCollection;
 import com.code.aon.finance.vat.VatCollectionParameters;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.vat.VatReportTypeBreakdown;
 import com.code.aon.ui.finance.vat.VatTypeBreakdown;
 import com.code.aon.ui.util.AonUtil;
 
-public class VatReportController implements ICollectionProvider, IFinanceMessages {
+public class VatReportController implements ICollectionProvider{
 
 	private static final Double GENERAL_PERCENT = new Double(16);
 	private static final Double REDUCED_PERCENT = new Double(7);
@@ -160,11 +159,11 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 		Locale locale = AonUtil.getCurrentLocale();
 		StringBuilder buf = new StringBuilder(); 
 		if (params.getVatType() == VatType.OUTPUT) {
-			buf.append(AonUtil.getMessage(BUNDLE_KEY,"finance_output_vat_report"));
+			buf.append(AonUtil.getMessage("financeBundle","finance_output_vat_report"));
 		} else if (params.getVatType() == VatType.INPUT) {
-			buf.append(AonUtil.getMessage(BUNDLE_KEY,"finance_input_vat_report"));	
+			buf.append(AonUtil.getMessage("financeBundle","finance_input_vat_report"));	
 		} else if (params.getVatType() == VatType.INVESTMENT) {
-			buf.append(AonUtil.getMessage(BUNDLE_KEY,"finance_investment_vat_report"));
+			buf.append(AonUtil.getMessage("financeBundle","finance_investment_vat_report"));
 		}
 		if (params.getVatReportType() != null) {
 			Double percent = params.getVatPercent(); 

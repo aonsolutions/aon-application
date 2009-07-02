@@ -10,6 +10,9 @@ public class SocialInsuranceEntryHeader implements ITransferObject{
 
 	private static final long serialVersionUID = 9083596439112054168L;
 
+	/** The period. */
+	private Period period;
+
 	/** The date. */
 	private Date date;
 	
@@ -24,6 +27,24 @@ public class SocialInsuranceEntryHeader implements ITransferObject{
 	
 	/** The security level. */
 	private SecurityLevel securityLevel;
+
+	/**
+	 * Gets the period.
+	 * 
+	 * @return the period
+	 */
+	public Period getPeriod() {
+		return period;
+	}
+
+	/**
+	 * Sets the period.
+	 * 
+	 * @param period the period
+	 */
+	public void setPeriod(Period period) {
+		this.period = period;
+	}
 
 	/**
 	 * Gets the date.

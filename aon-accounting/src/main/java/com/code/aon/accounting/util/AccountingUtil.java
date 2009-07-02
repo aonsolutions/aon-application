@@ -7,12 +7,14 @@ import java.util.List;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.AccountSummary;
+import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
@@ -157,4 +159,17 @@ public class AccountingUtil {
 		}
 	}
 	
+	public boolean existsEntry(Period period, AccountEntryType accountEntryType,
+			SecurityLevel securityLevel) throws ManagerBeanException {
+		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(entryBean
+				.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), period.getId());
+		criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_TYPE),
+				accountEntryType);
+		criteria.addEqualExpression(entryBean
+				.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel);
+		List<ITransferObject> list = entryBean.getList(criteria);
+		return (list.size() > 0);
+	}
 }

@@ -11,6 +11,9 @@ public class SalaryEntryHeader implements ITransferObject {
 	
 	private static final long serialVersionUID = -3872966060253678894L;
 
+	/** The period. */
+	private Period period;
+
 	/** The date. */
 	private Date date;
 	
@@ -35,6 +38,24 @@ public class SalaryEntryHeader implements ITransferObject {
 	/** The company social insurance. */
 	private double companySocialInsurance;
 	
+	/**
+	 * Gets the period.
+	 * 
+	 * @return the period
+	 */
+	public Period getPeriod() {
+		return period;
+	}
+
+	/**
+	 * Sets the period.
+	 * 
+	 * @param period the period
+	 */
+	public void setPeriod(Period period) {
+		this.period = period;
+	}
+
 	/**
 	 * Gets the date.
 	 * 

@@ -133,46 +133,52 @@ public interface IAccountingAlias {
 	String  ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[4];
 
 	/** 
+	* Alias value: AccountEntryDetail_accountEntry_journal
+	* Hibernate value: AccountEntryDetail.accountEntry.journal
+	*/
+	String  ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_JOURNAL = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[5];
+
+	/** 
 	* Alias value: AccountEntryDetail_account_id
 	* Hibernate value: AccountEntryDetail.account.id
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[5];
+	String  ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: AccountEntryDetail_balancingAccount_id
 	* Hibernate value: AccountEntryDetail.balancingAccount.id
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_BALANCING_ACCOUNT_ID = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[6];
+	String  ACCOUNT_ENTRY_DETAIL_BALANCING_ACCOUNT_ID = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: AccountEntryDetail_concept
 	* Hibernate value: AccountEntryDetail.concept
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_CONCEPT = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[7];
+	String  ACCOUNT_ENTRY_DETAIL_CONCEPT = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: AccountEntryDetail_credit
 	* Hibernate value: AccountEntryDetail.credit
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_CREDIT = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[8];
+	String  ACCOUNT_ENTRY_DETAIL_CREDIT = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: AccountEntryDetail_debit
 	* Hibernate value: AccountEntryDetail.debit
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_DEBIT = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[9];
+	String  ACCOUNT_ENTRY_DETAIL_DEBIT = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: AccountEntryDetail_id
 	* Hibernate value: AccountEntryDetail.id
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_ID = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[10];
+	String  ACCOUNT_ENTRY_DETAIL_ID = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: AccountEntryDetail_line
 	* Hibernate value: AccountEntryDetail.line
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_LINE = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[11];
+	String  ACCOUNT_ENTRY_DETAIL_LINE = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[12];
 
 
 

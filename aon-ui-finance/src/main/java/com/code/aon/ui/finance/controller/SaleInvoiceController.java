@@ -1,32 +1,15 @@
 package com.code.aon.ui.finance.controller;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.dom4j.Element;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
-import org.dom4j.tree.DefaultElement;
-import org.hibernate.EntityMode;
-import org.hibernate.Session;
-import org.xml.sax.SAXException;
 
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
@@ -35,9 +18,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.company.Company;
 import com.code.aon.config.Series;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.customer.Customer;
@@ -46,10 +27,7 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
-import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
-import com.code.aon.finance.enumeration.FinanceStatus;
-import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
@@ -58,24 +36,20 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.registry.RegistryAddress;
-import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.finance.IFinanceMessages;
-import com.code.aon.ui.finance.util.EmailUtilController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.webmail.EmailSender;
 
-public class SaleInvoiceController extends InvoiceController implements IFinanceConstants, IFinanceMessages {
+public class SaleInvoiceController extends InvoiceController {
 	
-	private static final Logger LOGGER = Logger.getLogger(SaleInvoiceController.class.getName());
+	private static final String SALE_INVOICE_ADDRESS_CONTROLLER_NAME = "saleInvoiceAddress";
+	private static final String SALE_INVOICE_DETAIL_CONTROLLER_NAME = "saleInvoiceDetail";
+	private static final String SALE_INVOICE_FINANCE_CONTROLLER_NAME = "saleInvoiceFinance";
 	
 	private IPriceStrategy priceStrategy;
 	
@@ -248,40 +222,6 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		return financeTotal;
 	}
 
-	public String getPayMethod() throws ManagerBeanException {
-		Invoice invoice = (Invoice)this.getModel().getRowData();
-		String payMethodName = null;
-		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
-		Iterator<ITransferObject> iterator = financeBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			Finance finance = (Finance)iterator.next();
-			if (payMethodName == null) {
-				payMethodName = (finance.getPayMethod() != null) ? finance.getPayMethod().getName() : null;
-			}
-			if (finance.getPayMethod() != null && !finance.getPayMethod().getName().equals(payMethodName)) {
-				return "MULTIPLE";
-			}
-		}
-		return payMethodName;
-	}
-
-	public FinanceStatus getFinanceStatus() throws ManagerBeanException {
-		Invoice invoice = (Invoice)this.getModel().getRowData();
-		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
-		Iterator<ITransferObject> iterator = financeBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			Finance finance = (Finance)iterator.next();
-			if (!FinanceStatus.PAID.equals(finance.getFinanceStatus()) && !FinanceStatus.SETTLED.equals(finance.getFinanceStatus())) {
-				return FinanceStatus.PENDING;
-			}
-		}
-		return FinanceStatus.PAID;
-	}
-
 	public Customer getCustomer() throws ManagerBeanException{
 		IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
 		Criteria criteria = new Criteria();
@@ -298,25 +238,12 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 	public boolean isRemovable() {
 		SaleInvoiceDetailController saleInvoiceDetailController = (SaleInvoiceDetailController)FormUtil.getController(SALE_INVOICE_DETAIL_CONTROLLER_NAME);
 		Invoice invoice = (Invoice)this.getTo();
-		if (saleInvoiceDetailController.getTo() == null && InvoiceStatus.PENDING.equals(invoice.getStatus())) {
+		if (saleInvoiceDetailController.getTo() == null && invoice.getStatus().equals(InvoiceStatus.PENDING)) {
 			return true;
 		}
 		return false;
 	}
 	
-	public boolean isAccountSource() throws ManagerBeanException {
-		Invoice invoice = (Invoice)this.getTo();
-		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-		Iterator<ITransferObject> iterator = invoiceDetailBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			InvoiceDetail invoiceDetail = (InvoiceDetail)iterator.next();
-			return invoiceDetail.getSource().equals(InvoiceSource.ACCOUNT);
-		}
-		return false;
-	}
-
 	public void generateFinances(ActionEvent event) throws ManagerBeanException{
 		Invoice invoice = (Invoice)this.getTo();
 		try {
@@ -411,104 +338,5 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 			addressController.onReset(event);
 		}
 	}
-	
-	public String getSendEmailToTitle() throws ManagerBeanException {
-		Invoice invoice = (Invoice) getTo();
-		String message = AonUtil.getMessage(BUNDLE_KEY, FINANCE_SEND_EMAIL_TO);
-		return MessageFormat.format(message, invoice.getRegistry().getEmail().getValue() );
-	}
 
-	public String getRegistryWithoutEmailTitle() throws ManagerBeanException {
-		Invoice invoice = (Invoice) getTo();
-		String message = AonUtil.getMessage(BUNDLE_KEY, FINANCE_REGISTRY_WITHOUT_EMAIL);
-		return MessageFormat.format(message, invoice.getRegistry().getFullName() );
-	}
-
-	public void sendInvoiceByEmail( ActionEvent event ) {
-		EmailUtilController emailController = (EmailUtilController) AonUtil.getRegisteredBean(EMAIL_UTIL_CONTROLLER_NAME);
-		try {
-			EmailSender sender = emailController.getEmailSender();
-			sender.connect();
-			emailController.sendInvoice( (Invoice) getTo(), isDigitalCertificate() );
-			sender.disconnect();
-		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
-			AonUtil.addErrorMessage(th.getMessage());
-			throw new AbortProcessingException(th.getMessage(), th);
-		}
-	}
-	
-	private Company getCompany() {
-		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		return companyController.obtainCompany();		
-	}
-	
-	public boolean isDigitalCertificate() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
-		Criteria criteria = new Criteria();
-		String type = bean.getFieldName( IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE );
-		criteria.addEqualExpression( type, RegistryAttachmentType.DIGITAL_CERTIFICATE );
-		String registry = bean.getFieldName( IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID );
-		criteria.addEqualExpression( registry, getCompany().getId() );
-		int count = bean.getCount(criteria);
-		return count > 0;
-	}
-	
-	public RegistryAttachment getDigitalCertificate() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
-		Criteria criteria = new Criteria();
-		String type = bean.getFieldName( IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE );
-		criteria.addEqualExpression( type, RegistryAttachmentType.DIGITAL_CERTIFICATE );
-		String registry = bean.getFieldName( IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID );
-		criteria.addEqualExpression( registry, getCompany().getId() );		
-		List<ITransferObject> list = bean.getList(criteria);
-		if (! list.isEmpty() ) {
-			return (RegistryAttachment) list.get(0);
-		}
-		return null;
-	}
-	
-	public String getInvoiceSignature() throws ManagerBeanException {
-		RegistryAttachment ra = getDigitalCertificate();
-		return new String( Base64.encodeBase64(ra.getData()) );
-	}
-	
-    private XMLWriter createWriter( Writer out ) throws IOException {
-        OutputFormat format = OutputFormat.createPrettyPrint();   
-        format.setEncoding( "UTF-8" );
-        XMLWriter writer = new XMLWriter( new BufferedWriter(out), format );
-        writer.setMaximumAllowedCharacter(0x7F);
-        return writer;
-    }
-	
-	public void writeInvoiceXml( Writer out, Serializable id ) throws IOException, SAXException {
-		String factoryName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
-		Session session = HibernateUtil.getSession(factoryName);
-		Session dom4jSession = session.getSession(EntityMode.DOM4J);
-		Object object = dom4jSession.get(Invoice.class.getName(), id);
-		
-		XMLWriter writer = createWriter(out);
-        Element root = new DefaultElement( "root" );
-        writer.startDocument();
-        writer.writeOpen( root );
-        writer.write( object );
-        writer.writeClose( root );
-        writer.endDocument();
-        writer.close();        
-        
-        dom4jSession.close();
-        HibernateUtil.closeSession( factoryName );
-	}
-	
-	public String getEInvoice() throws IOException, SAXException {
-		StringWriter sw = new StringWriter();
-		Invoice invoice = (Invoice) getTo();
-		writeInvoiceXml(sw, invoice.getId());
-		return sw.toString();
-	}
-	
-	public InputStream getImage() throws IOException, ManagerBeanException{
-		return SaleInvoiceController.class.getResourceAsStream("/com/code/aon/ui/finance/report/barras.gif");
-	}
-	
 }

@@ -15,26 +15,31 @@ import com.code.aon.ql.Criteria;
 
 /**
  * @author Consulting & Development
- *
+ * 
  */
 public class AccountEntrySummaryBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
-        AccountEntry accountEntry = (AccountEntry)evt.getTo();
-        try {
-            IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
-            Criteria criteria = new Criteria();
-            criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
-            Iterator iterator = accountEntryDetailBean.getList(criteria).iterator();
-            while (iterator.hasNext()) {
-            	AccountEntryDetail accountEntryDetail = (AccountEntryDetail)iterator.next();
-                AccountSummaryManager.modifyAccountSummary(accountEntryDetail, -1);
-            }
-        } catch (ManagerBeanException e) {
-            throw new ManagerBeanVetoListenerException(e);
-        }
-    }
+	@Override
+	@SuppressWarnings("unchecked")
+	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+		try {
+			AccountEntry accountEntry = (AccountEntry) evt.getTo();
+			if (accountEntry.isDateDirty()) {
+				IManagerBean accountEntryDetailBean = BeanManager
+						.getManagerBean(AccountEntryDetail.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(accountEntryDetailBean
+						.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID),
+						accountEntry.getId());
+				Iterator iterator = accountEntryDetailBean.getList(criteria).iterator();
+				while (iterator.hasNext()) {
+					AccountEntryDetail accountEntryDetail = (AccountEntryDetail) iterator.next();
+					AccountSummaryManager.modifyAccountSummary(accountEntryDetail, -1);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			throw new ManagerBeanVetoListenerException(e);
+		}
+	}
 
 }

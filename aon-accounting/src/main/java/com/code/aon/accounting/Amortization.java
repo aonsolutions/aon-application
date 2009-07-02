@@ -16,15 +16,16 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.accounting.enumeration.AmortizationPeriod;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.util.CommonUtil;
 
 /**
  * Entity class for representing an account.
@@ -140,7 +141,7 @@ public class Amortization implements ITransferObject {
 		this.comments = comments;
 	}
 
-	@OneToMany(mappedBy = "amortization", cascade={CascadeType.REMOVE}, fetch=FetchType.EAGER)
+	@OneToMany(mappedBy = "amortization", cascade={CascadeType.REMOVE})
 	public List<AmortizationDetail> getDetails() {
 		return details;
 	}
@@ -151,33 +152,39 @@ public class Amortization implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() !=  getClass()) return false;
+		final Amortization o = (Amortization) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+			.append(this.getAmortizationType(), o.getAmortizationType())
+			.append(this.getAmount(), o.getAmount())
+			.append(this.getDescription(), o.getDescription())
+			.append(this.getInitialDate(), o.getInitialDate())
+			.isEquals();
 		}
-		if (obj instanceof Amortization) {
-			Amortization account = (Amortization) obj;
-			if (ObjectUtils.equals(getId(), account.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());
 	}
 
 	@Override
 	public int hashCode() {
-		return 0;
+		return new HashCodeBuilder()
+			.append(this.getId())
+			.append(this.getAmortizationType())
+			.append(this.getAmount())
+			.append(this.getDescription())
+			.append(this.getInitialDate())
+			.toHashCode();
 	}
 	
-	@Transient
-	public List<AmortizationDetail> getInformedDetails() {
-		double accumulated = 0;
-		double pending = getAmount();
-		for (AmortizationDetail detail: getDetails()) {
-			accumulated = CommonUtil.round(accumulated + detail.getAllocation());
-			detail.setAccumulated(accumulated);
-			pending = CommonUtil.round(pending - detail.getAllocation());
-			detail.setPending(pending);
-		}
-		return getDetails();
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+		.append("id",this.getId())
+		.append("description",this.getDescription())
+		.append("amortizationType",this.getAmortizationType())
+		.append("initialDate",this.getInitialDate()).toString();
 	}
+
 }

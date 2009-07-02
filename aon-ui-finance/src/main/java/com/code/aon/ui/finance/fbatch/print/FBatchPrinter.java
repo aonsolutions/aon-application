@@ -12,13 +12,14 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.print.ReportFinanceBatch;
 import com.code.aon.ui.finance.controller.FBatchController;
-import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.form.FormUtil;
 
-public class FBatchPrinter implements ICollectionProvider, IFinanceConstants {
+public class FBatchPrinter implements ICollectionProvider {
 	
 	private static final Logger LOGGER = Logger.getLogger(FBatchPrinter.class.getName());
 	
+	private static final String FINANCE_BATCH_CONTROLLER_NAME = "fbatch";
+
 	public Collection getCollection() {
 		List<ReportFinanceBatch> reportFBatchList = new LinkedList<ReportFinanceBatch>();
 		try {
