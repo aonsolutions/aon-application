@@ -11,12 +11,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.CharEncoding;
+
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ui.util.ServleJSFtUtil;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
 
 public class MessageServlet extends HttpServlet {
+	
+	private static final long serialVersionUID = 8241784167281247172L;
 	
 	private static final Logger LOGGER = Logger.getLogger(MessageServlet.class.getName());
 
@@ -30,11 +34,11 @@ public class MessageServlet extends HttpServlet {
 		MessageController messageController = (MessageController) ServleJSFtUtil.getManagedBean( request, response, WebMailConstants.BEAN_MESSAGE );
 		try {	
             response.setContentType( MimeType.MIME_HTML.getName() );
-            String encoding = response.getCharacterEncoding(); 
-            response.setCharacterEncoding( encoding );
-            Writer writer = new OutputStreamWriter( response.getOutputStream() );
+           	response.setCharacterEncoding( CharEncoding.UTF_8 );
+            Writer writer = new OutputStreamWriter( response.getOutputStream(), CharEncoding.UTF_8 );
             writer.write( "<html><body>");
-            writer.write( messageController.getMessageContent() );
+            String context = messageController.getMessageContent();
+            writer.write( context );
             writer.write( "</body></html>");
             writer.flush();
             response.flushBuffer();
