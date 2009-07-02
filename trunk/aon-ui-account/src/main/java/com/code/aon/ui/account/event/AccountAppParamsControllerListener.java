@@ -14,26 +14,6 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 public class AccountAppParamsControllerListener extends ControllerAdapter {
 
 	@Override
-	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		Account account = (Account)event.getController().getTo();
-		try {
-			updateAppParams(account);
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException("Error updating AppParams for Account: " + account.getId());
-		}
-	}
-	
-	@Override
-	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		Account account = (Account)event.getController().getTo();
-		try {
-			updateAppParams(account);
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException("Error updating AppParams for Account: " + account.getId());
-		}
-	}
-	
-	@Override
 	@SuppressWarnings("unchecked")
 	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
 		Account account = (Account)event.getController().getTo();
@@ -51,18 +31,5 @@ public class AccountAppParamsControllerListener extends ControllerAdapter {
 			}
 		}
 	}
-	
-	@SuppressWarnings("unchecked")
-	private void updateAppParams(Account account) throws ManagerBeanException {
-		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
-		Iterator iter = appParamBean.getList(null).iterator();
-		while(iter.hasNext()){
-			ApplicationParameter param = (ApplicationParameter)iter.next();
-			if(account.getId().startsWith(param.getValue())){
-				param.setValue(account.getId());
-				appParamBean.update(param);
-				break;
-			}
-		}
-	}
+
 }
