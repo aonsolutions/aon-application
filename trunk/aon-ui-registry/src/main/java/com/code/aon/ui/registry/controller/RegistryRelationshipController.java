@@ -20,6 +20,7 @@ public class RegistryRelationshipController extends BasicController {
 	
 	private static final Logger LOGGER = Logger.getLogger(RegistryRelationshipController.class.getName());
 	
+	@SuppressWarnings("unchecked")
 	public void onRegistryChanged(ValueChangeEvent event){
 		if(event.getNewValue() != null){
 			try {
@@ -37,6 +38,7 @@ public class RegistryRelationshipController extends BasicController {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void onRelationshipChanged(ValueChangeEvent event){
 		if(event.getNewValue() != null){
 			try {
