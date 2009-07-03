@@ -45,7 +45,7 @@ public class FeeCheckingPrinter implements ICollectionProvider, IFinanceConstant
 							"FROM RegistryPayMethod rPayMethod) " +
 						obtainPrintCondition() +
 						"ORDER BY customer.registry.surname, customer.registry.name";
-		Session session = HibernateUtil.getSession();
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		return query.list();
 	}
@@ -61,7 +61,7 @@ public class FeeCheckingPrinter implements ICollectionProvider, IFinanceConstant
 							"FROM RegistryBank rBank) " +
 						obtainPrintCondition() +
 						"ORDER BY customer.registry.surname, customer.registry.name";
-		Session session = HibernateUtil.getSession();
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		return query.list();
 	}
@@ -75,7 +75,7 @@ public class FeeCheckingPrinter implements ICollectionProvider, IFinanceConstant
 						"AND rPayMethod.payment.type <> " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " +
 						obtainPrintCondition() +
 						"ORDER BY customer.registry.surname, customer.registry.name";
-		Session session = HibernateUtil.getSession();
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		return query.list();
 	}
