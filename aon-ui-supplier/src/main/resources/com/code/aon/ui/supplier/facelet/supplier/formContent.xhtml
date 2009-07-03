@@ -12,7 +12,7 @@
 		<ui:param name="controller" value="#{controller}" />
 	</ui:include>
 
-	<c:if test="#{supplier.showSegment}">
+	<c:if test="#{aonConfiguration.bean.supplier.showSegment}">
 		<aon:outputLabel for="Supplier_supplierSegment_id"
 			value="#{bundle.aon_segment}" />
 		<aon:selectOneMenu id="Supplier_supplierSegment_id"

@@ -17,10 +17,9 @@ public class SupplierRPayMethodController extends RegistryPayMethodController{
 		if (isBankTransfer()) {
 			Supplier supplier = (Supplier) getMasterController().getTo();
 			return getBanks(supplier.getRegistry());
-		} else {
-			CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
-			return c.getCompanyBanks();
-		}
+		} 
+		CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+		return c.getCompanyBanks();
 	}
 
 }

@@ -32,7 +32,7 @@ public class CompanyAddressListener extends ControllerAdapter {
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		RegistryAddress address = null;
-		if ( address == null && event.getController().getTo() instanceof RegistryAddress ) {
+		if ( event.getController().getTo() instanceof RegistryAddress ) {
 			address = (RegistryAddress)event.getController().getTo();
 			address.setAddressType( (address.getAddressType() == null)? AddressType.DELEGATION: address.getAddressType() ); 
 		}

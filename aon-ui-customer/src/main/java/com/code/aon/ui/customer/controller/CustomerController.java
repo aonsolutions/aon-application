@@ -3,18 +3,16 @@ package com.code.aon.ui.customer.controller;
 import com.code.aon.customer.Customer;
 import com.code.aon.person.Person;
 import com.code.aon.registry.enumeration.RegistryType;
-import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.registry.controller.RegistryController;
 
 /**
  * Controller used in the customer maintenance.
  */
-public class CustomerController extends BasicController {
+public class CustomerController extends RegistryController {
 	
 	private Person person;
 	
 	private boolean newPerson;
-	
-	private String selectedTab;
 	
 	public Person getPerson() {
 		return person;
@@ -37,12 +35,4 @@ public class CustomerController extends BasicController {
     	return customer.getRegistry().getType().equals(RegistryType.NATURAL);
     }
 
-	public String getSelectedTab() {
-		return selectedTab;
-	}
-
-	public void setSelectedTab(String selectedTab) {
-		this.selectedTab = selectedTab;
-	}
-	
 }
