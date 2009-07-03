@@ -76,7 +76,6 @@ public class RecordDataController extends LinesController {
 		}
 	}	
 
-	@SuppressWarnings("unused")
 	public void downloadAttachment(ActionEvent event) {		
 		try {
 			FacesContext ctx = FacesContext.getCurrentInstance();
@@ -94,7 +93,6 @@ public class RecordDataController extends LinesController {
 		}
 	}
 	
-	@SuppressWarnings("unused")
 	public void onAttachRemove(ActionEvent event) {
 		setAttach( null );		
 	}

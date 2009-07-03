@@ -57,9 +57,8 @@ public class RegistryObservationController {
 		List<ITransferObject> l = rNoteBean.getList(criteria);
 		if (!l.isEmpty()){
 			return (RegistryNote)l.iterator().next();
-		}else{
-			return null;
 		}
+		return null;
 	}
 	
 	public void onSave() throws ManagerBeanException {

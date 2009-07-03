@@ -14,6 +14,8 @@ import com.code.aon.ui.common.servlet.AttachmentServlet;
  */
 public class RegistryAttachmentServlet extends AttachmentServlet {
 
+	private static final long serialVersionUID = 7864119079272432129L;
+	
 	/** The bean. */
 	private IManagerBean bean;
 	
