@@ -26,6 +26,8 @@ import com.code.aon.ui.registry.servlet.RegistryAttachmentServlet;
  */
 public class CompanyLogoServlet extends RegistryAttachmentServlet {
 
+	private static final long serialVersionUID = 2658337530508553434L;
+
 	/**
 	 * Retrieves the required RegistryAttachment from the database
 	 * 

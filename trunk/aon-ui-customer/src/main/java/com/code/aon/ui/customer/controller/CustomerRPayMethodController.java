@@ -17,10 +17,9 @@ public class CustomerRPayMethodController extends RegistryPayMethodController{
 		if (isNegotiableDocument()) {
 			Customer customer = (Customer) getMasterController().getTo();
 			return getBanks(customer.getRegistry());
-		} else {
-			CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
-			return c.getCompanyBanks();
 		}
+		CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+		return c.getCompanyBanks();
 	}
 
 }

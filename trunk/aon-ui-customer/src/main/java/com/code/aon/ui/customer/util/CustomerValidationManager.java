@@ -21,16 +21,18 @@ import com.code.aon.ui.util.AonUtil;
 public class CustomerValidationManager {
 
 	public boolean isBlocked(Customer customer) {
-		try {
-			if (customer.getStatus() == CustomerStatus.BLOCKED) {
+		if (customer.getStatus() == CustomerStatus.BLOCKED) {
+			String obs = null;
+			try {
 				RegistryNote observation = getRegistryObservation(customer.getRegistry());
-				Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-				AonUtil.addErrorMessage("[" + CustomerStatus.BLOCKED.getName(locale) + "]" + ": "
-						+ observation.getComments());
-				return true;
+				obs = observation!=null?observation.getComments():null;
+			} catch (ManagerBeanException e) {
+				// Si falla, no saldrá el mensaje en pantalla. Se desprecia el error a posta.
 			}
-		} catch (ManagerBeanException e) {
-			// Nothing
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			AonUtil.addErrorMessage("[" + CustomerStatus.BLOCKED.getName(locale) + "]"
+					+ (obs == null ? "" : ": " + obs));
+			return true;
 		}
 		return false;
 	}
@@ -45,9 +47,8 @@ public class CustomerValidationManager {
 		List<ITransferObject> l = rNoteBean.getList(criteria);
 		if (!l.isEmpty()) {
 			return (RegistryNote) l.iterator().next();
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 }
