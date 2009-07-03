@@ -17,10 +17,9 @@ public class CreditorRPayMethodController extends RegistryPayMethodController{
 		if (isBankTransfer()) {
 			Creditor creditor = (Creditor) getMasterController().getTo();
 			return getBanks(creditor.getRegistry());
-		} else {
-			CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
-			return c.getCompanyBanks();
-		}
+		} 
+		CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+		return c.getCompanyBanks();
 	}
 	
 }

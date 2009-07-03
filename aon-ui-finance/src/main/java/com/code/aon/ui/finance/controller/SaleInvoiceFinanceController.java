@@ -87,10 +87,9 @@ public class SaleInvoiceFinanceController extends LinesController implements IFi
 			if (pm.getType() == PayMethodType.NEGOTIABLE_DOCUMENT) {
 				RegistryCollectionsController c = (RegistryCollectionsController)AonUtil.getRegisteredBean(IRegistryConstants.COLLECTIONS_CONTROLLER_NAME);
 				return c.getRegistryBanks(finance.getRegistry());
-			} else {
-				CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
-				return c.getCompanyBanks();
-			}
+			} 
+			CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+			return c.getCompanyBanks();
 		}
 		return new LinkedList<SelectItem>();
 	}

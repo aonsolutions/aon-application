@@ -321,7 +321,7 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		Invoice invoice = (Invoice)this.getTo();
 		try {
 			IController feeFinanceController = FormUtil.getController(SALE_INVOICE_FINANCE_CONTROLLER_NAME);
-			List<?> financeList = (List<?>) feeFinanceController.getManagerBean().getList(feeFinanceController.getCriteria());
+			List<?> financeList = feeFinanceController.getManagerBean().getList(feeFinanceController.getCriteria());
 			if (existFinanceTrackings(financeList)) {
 				AonUtil.addInfoMessageFromBundle(IFinanceMessages.BUNDLE_KEY,IFinanceMessages.VALIDATE_FINANCES_GENERATION_ERROR_KEY);
 				throw new AbortProcessingException();
@@ -418,7 +418,7 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		return MessageFormat.format(message, invoice.getRegistry().getEmail().getValue() );
 	}
 
-	public String getRegistryWithoutEmailTitle() throws ManagerBeanException {
+	public String getRegistryWithoutEmailTitle(){
 		Invoice invoice = (Invoice) getTo();
 		String message = AonUtil.getMessage(BUNDLE_KEY, FINANCE_REGISTRY_WITHOUT_EMAIL);
 		return MessageFormat.format(message, invoice.getRegistry().getFullName() );
@@ -473,7 +473,7 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		return new String( Base64.encodeBase64(ra.getData()) );
 	}
 	
-    private XMLWriter createWriter( Writer out ) throws IOException {
+    private XMLWriter createWriter( Writer out ) {
         OutputFormat format = OutputFormat.createPrettyPrint();   
         format.setEncoding( "UTF-8" );
         XMLWriter writer = new XMLWriter( new BufferedWriter(out), format );
@@ -507,7 +507,7 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		return sw.toString();
 	}
 	
-	public InputStream getImage() throws IOException, ManagerBeanException{
+	public InputStream getImage(){
 		return SaleInvoiceController.class.getResourceAsStream("/com/code/aon/ui/finance/report/barras.gif");
 	}
 	
