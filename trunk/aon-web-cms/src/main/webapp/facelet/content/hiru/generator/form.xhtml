@@ -35,9 +35,9 @@
 							actionListener="#{hiru_generator.onGenerateXmlFiles}" 
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
 							<a4j:support 
-								event="onclick"
-								actionListener="#{hiru_generator.onActivePoll}"  
-								reRender="poll,grid_messages" />
+								event="onclick" reRender="poll,grid" 
+								actionListener="#{generator_status.onActivePoll}"  
+								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 						</aon:commandButton>
 						<aon:commandButton id="publish"
 							value="#{appBundle.aon_publish}" 
@@ -46,9 +46,9 @@
 							actionListener="#{hiru_generator.onPublish}" 
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
 							<a4j:support 
-								event="onclick"
+								event="onclick" reRender="poll,grid" 
 								actionListener="#{generator_status.onActivePoll}"  
-								reRender="poll,grid_messages" />
+								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 						</aon:commandButton>
 				    </aon:div>
 					
@@ -57,22 +57,9 @@
 			</aon:div>
 
 		</aon:form>
-	    <a4j:region>
-	        <h:form>
-	            <a4j:poll id="poll" interval="2000" enabled="#{hiru_generator.activePoll}" reRender="poll,grid_messages"/>
-	        </h:form>
-	    </a4j:region>
-		<aon:form>
-			<rich:panel bodyClass="inpanelBody" id="grid_messages">
-	        	<f:facet name="header">
-	        		<aon:outputText value="Console Log"/>
-	            </f:facet>
-		        <rich:dataList id="dataList_Messages" var="msg" value="#{hiru_generator.messages}" rows="20">
-					<aon:outputText style="color:red;" value="#{msg}"/>
-				</rich:dataList>
-				<rich:datascroller align="left" for="dataList_Messages" maxPages="20" />
-			</rich:panel>
-		</aon:form>
+		
+		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
+
 	</ui:define>
 </ui:composition>
 
