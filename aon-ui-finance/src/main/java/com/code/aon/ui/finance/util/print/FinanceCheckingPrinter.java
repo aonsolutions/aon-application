@@ -37,7 +37,7 @@ public class FinanceCheckingPrinter implements ICollectionProvider, IFinanceCons
 		return getCollection();
 	}
 	
-	@SuppressWarnings({"unchecked", "unused"})
+	@SuppressWarnings("unchecked")
 	private List<ITransferObject> obtainNoPaymethodList() {
 		String select = "SELECT finance " +
 						"FROM Finance finance, Customer customer " +
@@ -46,7 +46,7 @@ public class FinanceCheckingPrinter implements ICollectionProvider, IFinanceCons
 						"AND finance.payMethod.id IS NULL " +
 						obtainPrintCondition() +
 						"ORDER BY finance.registry.surname, finance.registry.name";
-		Session session = HibernateUtil.getSession();
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		return query.list();
 	}
@@ -61,7 +61,7 @@ public class FinanceCheckingPrinter implements ICollectionProvider, IFinanceCons
 						"AND (finance.bankAccount IS NULL OR finance.bankAccount = '') " +
 						obtainPrintCondition() +
 						"ORDER BY finance.registry.surname, finance.registry.name";
-		Session session = HibernateUtil.getSession();
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		return query.list();
 	}
@@ -77,7 +77,7 @@ public class FinanceCheckingPrinter implements ICollectionProvider, IFinanceCons
 						"AND finance.bankAccount <> '' " +
 						obtainPrintCondition() +
 						"ORDER BY finance.registry.surname, finance.registry.name";
-		Session session = HibernateUtil.getSession();
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		return query.list();
 	}

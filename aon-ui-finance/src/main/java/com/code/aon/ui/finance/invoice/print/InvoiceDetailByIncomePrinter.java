@@ -19,8 +19,9 @@ public class InvoiceDetailByIncomePrinter implements ICollectionProvider {
 		this.id = id;
 	}
 
+	@SuppressWarnings("unchecked")
 	public Collection getCollection() {
-		Session session = HibernateUtil.getSession();
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
         Query q = session.createQuery("SELECT " +
         		"new com.code.aon.ui.finance.invoice.print.InvoiceDetailByDeliveryCollectionProvider(invoiceDetail, income.series, income.number, income.issueTime) " +
         		"FROM InvoiceDetail invoiceDetail, IncomeDetail incomeDetail, Income income " + 
@@ -32,6 +33,8 @@ public class InvoiceDetailByIncomePrinter implements ICollectionProvider {
         TreeSet<InvoiceDetailByDeliveryCollectionProvider> treeSet = new TreeSet<InvoiceDetailByDeliveryCollectionProvider>(results);
 		return treeSet;
 	}
+	
+	@SuppressWarnings("unchecked")
 	@Override
 	public Collection getCollection(boolean forceRefresh)
 			throws ManagerBeanException {

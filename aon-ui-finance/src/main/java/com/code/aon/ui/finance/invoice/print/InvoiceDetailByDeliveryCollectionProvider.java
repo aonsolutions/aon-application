@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.code.aon.finance.InvoiceDetail;
 
-public class InvoiceDetailByDeliveryCollectionProvider implements Comparable {
+public class InvoiceDetailByDeliveryCollectionProvider implements Comparable<InvoiceDetailByDeliveryCollectionProvider> {
 	
 	private InvoiceDetail invoiceDetail;
 	
@@ -43,8 +43,8 @@ public class InvoiceDetailByDeliveryCollectionProvider implements Comparable {
 		this.date = date;
 	}
 
-	public int compareTo(Object o) {
-		InvoiceDetailByDeliveryCollectionProvider invoiceDetailPrinter = (InvoiceDetailByDeliveryCollectionProvider)o;
+	@Override
+	public int compareTo(InvoiceDetailByDeliveryCollectionProvider invoiceDetailPrinter) {
 		return (this.getSerieNumber().compareTo(invoiceDetailPrinter.getSerieNumber())==0?1:this.getSerieNumber().compareTo(invoiceDetailPrinter.getSerieNumber()));
 	}
 	
@@ -55,4 +55,5 @@ public class InvoiceDetailByDeliveryCollectionProvider implements Comparable {
 		}
 		return formattedNumber;
 	}
+
 }

@@ -19,6 +19,7 @@ public class FBatchPrinter implements ICollectionProvider, IFinanceConstants {
 	
 	private static final Logger LOGGER = Logger.getLogger(FBatchPrinter.class.getName());
 	
+	@SuppressWarnings("unchecked")
 	public Collection getCollection() {
 		List<ReportFinanceBatch> reportFBatchList = new LinkedList<ReportFinanceBatch>();
 		try {
@@ -38,6 +39,7 @@ public class FBatchPrinter implements ICollectionProvider, IFinanceConstants {
 		return reportFBatchList;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Collection getCollection(boolean forceRefresh)
 			throws ManagerBeanException {
