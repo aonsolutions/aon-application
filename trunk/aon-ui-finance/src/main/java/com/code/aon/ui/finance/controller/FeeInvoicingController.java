@@ -133,7 +133,7 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 		return 1;
 	}
 
-	private SecurityLevel obtainSeriesSecurityLevel(Series series) throws ManagerBeanException {
+	private SecurityLevel obtainSeriesSecurityLevel(Series series) {
 		if (series != null) {
 			return series.getSecurityLevel();
 		}

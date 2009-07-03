@@ -110,7 +110,7 @@ public class InvoiceRecorderController extends BasicController{
 		return InvoiceStatus.PENDING.equals(invoice.getStatus()) && (getInvoiceTotal(invoice) == getFinanceTotal(invoice));
 	}
 
-	private double getInvoiceTotal(Invoice invoice) throws ManagerBeanException {
+	private double getInvoiceTotal(Invoice invoice) {
 		return getPriceStrategy().getTotalPrice(invoice,invoice);
 	}
 

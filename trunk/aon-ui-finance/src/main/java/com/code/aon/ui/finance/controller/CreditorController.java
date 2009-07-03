@@ -1,40 +1,11 @@
 package com.code.aon.ui.finance.controller;
 
-import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.registry.controller.RegistryController;
 
 /**
  * Controller used in the creditor maintenance.
  */
-public class CreditorController extends BasicController {
+public class CreditorController extends RegistryController {
 	
-	private String selectedTab;
-	
-	private boolean showFinanceData = true;
-	
-	private boolean showAccount;
-	
-	public boolean isShowFinanceData() {
-		return showFinanceData;
-	}
-
-	public void setShowFinanceData(boolean showFinanceData) {
-		this.showFinanceData = showFinanceData;
-	}
-        
-	public String getSelectedTab() {
-		return selectedTab;
-	}
-
-	public void setSelectedTab(String selectedTab) {
-		this.selectedTab = selectedTab;
-	}
-
-	public boolean isShowAccount() {
-		return showAccount;
-	}
-
-	public void setShowAccount(boolean showAccount) {
-		this.showAccount = showAccount;
-	}
 	
 }

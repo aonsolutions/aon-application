@@ -253,9 +253,8 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		if (finance.getPayMethod() == null || finance.getPayMethod().getId() == null) {
 			AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.PAYMENT_PAY_METHOD_UNDEFINED_ERROR);
 			throw new AbortProcessingException();
-		} else {
-			super.accept();
-		}
+		} 
+		super.accept();
 
 		setPaymentDate(finance.getDueDate());
 		setPaymentAmount(finance.getTotalAmount());
@@ -306,13 +305,12 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		Iterator<ITransferObject> iterator = registryBankBean.getList(criteria, 0, 1).iterator();
 		if (iterator.hasNext()) {
 			return (RegistryBank)iterator.next();
-		} else {
-			criteria = new Criteria();
-			criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
-			iterator = registryBankBean.getList(criteria, 0, 1).iterator();
-			if (iterator.hasNext()) {
-				return (RegistryBank)iterator.next();
-			}
+		}
+		criteria = new Criteria();
+		criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
+		iterator = registryBankBean.getList(criteria, 0, 1).iterator();
+		if (iterator.hasNext()) {
+			return (RegistryBank)iterator.next();
 		}
 		return null;
 	}
@@ -394,10 +392,9 @@ public class FinanceController extends BasicController implements IFinanceConsta
 			if ((!isPayment() && pm.getType() == PayMethodType.NEGOTIABLE_DOCUMENT) || (isPayment() && pm.getType() == PayMethodType.BANK_TRANSFER)) {
 				RegistryCollectionsController c = (RegistryCollectionsController)AonUtil.getRegisteredBean(IRegistryConstants.COLLECTIONS_CONTROLLER_NAME);
 				return c.getRegistryBanks(finance.getRegistry());
-			} else {
-				CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
-				return c.getCompanyBanks();
-			}
+			} 
+			CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+			return c.getCompanyBanks();
 		}
 		return new LinkedList<SelectItem>();
 	}
