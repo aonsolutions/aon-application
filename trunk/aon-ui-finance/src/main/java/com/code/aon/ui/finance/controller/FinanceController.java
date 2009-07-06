@@ -29,6 +29,7 @@ import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.FinanceTracking;
+import com.code.aon.finance.Invoice;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
@@ -96,7 +97,7 @@ public class FinanceController extends BasicController implements IFinanceConsta
 	private Double totalFinanceAmount;
 	
 	private Integer numFinance;
-
+	
 	public Integer getNumFinance() {
 		return numFinance;
 	}
@@ -604,5 +605,18 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		cr.addOrder(id,true);
 		orderedList=bean.getList(cr);
 	}
+	
+	public void onShowInvoice(ActionEvent event) throws ManagerBeanException {
+				
+		IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
+		String invoice = bean.getFieldName(IFinanceAlias.INVOICE_ID);
+		FormUtil.getController("invoicePrint").clearCriteria();
+		Criteria c= FormUtil.getController("invoicePrint").getCriteria();		
+		c.addEqualExpression(invoice,((Finance)this.getTo()).getInvoice().getId());
+				
+	}
+	
+	
+	
 
 }
