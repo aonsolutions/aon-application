@@ -95,17 +95,7 @@ public class FinanceController extends BasicController implements IFinanceConsta
 	private List<?> orderedList;
 	
 	private Double totalFinanceAmount;
-	
-	private Integer numFinance;
-	
-	public Integer getNumFinance() {
-		return numFinance;
-	}
-
-	public void setNumFinance(Integer numFinance) {
-		this.numFinance = numFinance;
-	}
-
+		
 	public Double getTotalFinanceAmount() {
 		return totalFinanceAmount;
 	}
