@@ -23,7 +23,6 @@ public class FinanceControllerListener extends ControllerAdapter {
 				IManagerBean financeBean;	
 				Criteria criteria =((FinanceController)getController()).getCriteria();
 				financeBean = BeanManager.getManagerBean(Finance.class);
-				((FinanceController)getController()).setNumFinance(financeBean.getCount(criteria));
 				Projection amountProjection = Projection.sum(financeBean.getFieldName(IFinanceAlias.FINANCE_AMOUNT));
 				Projection expensesProjection = Projection.sum(financeBean.getFieldName(IFinanceAlias.FINANCE_EXPENSES));
 				Object amount = financeBean.getUniqueResult(amountProjection,criteria);
@@ -36,6 +35,5 @@ public class FinanceControllerListener extends ControllerAdapter {
 				e.printStackTrace();
 				}		
 			}
-		
 	}
 

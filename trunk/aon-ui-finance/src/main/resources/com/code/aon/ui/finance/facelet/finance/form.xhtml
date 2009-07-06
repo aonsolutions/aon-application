@@ -47,6 +47,11 @@
 						immediate="#{true}" rendered="#{finance.pending or finance.returned}"
 						styleClass="aon-finding-toolbar-item-no-icon"
 						actionListener="#{financeFraction.onFractionFinance}" action="finance_fraction" />
+						<h:commandLink value="#{financeBundle.finance_show_invoice}"
+						target="_blank" action="#{report.onExecute}" actionListener="#{finance.onShowInvoice}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf">
+						<f:param name="reportKey" value="invoicePrint" />
+					</h:commandLink>
 				</ui:define>				
 			</ui:decorate>
 
