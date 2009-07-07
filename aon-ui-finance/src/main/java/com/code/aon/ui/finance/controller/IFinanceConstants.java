@@ -4,6 +4,8 @@ public interface IFinanceConstants {
 	
 	String COLLECTIONS_CONTROLLER_NAME = "financeCollections";
 	
+	String INVOICE_PRINTER_CONTROLLER = "invoicePrint";
+
 	String FINANCE_CONTROLLER_NAME = "finance";
 	
 	String FINANCE_PRINTER_CONTROLLER = "financePrint";
