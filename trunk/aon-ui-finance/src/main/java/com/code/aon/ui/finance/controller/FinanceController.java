@@ -95,15 +95,7 @@ public class FinanceController extends BasicController implements IFinanceConsta
 	private List<?> orderedList;
 	
 	private Double totalFinanceAmount;
-		
-	public Double getTotalFinanceAmount() {
-		return totalFinanceAmount;
-	}
-
-	public void setTotalFinanceAmount(Double totalFinanceAmount) {
-		this.totalFinanceAmount = totalFinanceAmount;
-	}
-
+	
 	/**
 	 * A list of finances currently checked
 	 */
@@ -239,6 +231,14 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		this.showFinanceReturnWindow = value;
 	}
 	
+	public Double getTotalFinanceAmount() {
+		return totalFinanceAmount;
+	}
+
+	public void setTotalFinanceAmount(Double totalFinanceAmount) {
+		this.totalFinanceAmount = totalFinanceAmount;
+	}
+
 	public void onFinancePaymentShow(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		Finance finance = (Finance) getTo();
 		if (finance.getPayMethod() == null || finance.getPayMethod().getId() == null) {
@@ -546,67 +546,46 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		this.orderedList = orderedList;
 	}
 	
-
-	
 	public void onOrderFinanceList(ActionEvent event) throws ManagerBeanException {
-		Criteria cr = new Criteria();
-		cr=this.getCriteria();
-		cr.setOrderByList(null);
-		IManagerBean bean = BeanManager.getManagerBean(Finance.class);
-		String date = bean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE);
-		String invoiceseries = bean.getFieldName(IFinanceAlias.FINANCE_INVOICE_SERIES);
-		String invoicenumber = bean.getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER);
-		cr.addOrder(date,true);
-		cr.addOrder(invoiceseries,true);
-		cr.addOrder(invoicenumber,true);
-		orderedList=bean.getList(cr);
+		Criteria criteria = getCriteria();
+		criteria.setOrderByList(null);
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_INVOICE_SERIES));
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER));
+		orderedList=getManagerBean().getList(criteria);
 	}
 	
 	public void onOrderFinanceListByRegistry(ActionEvent event) throws ManagerBeanException {
-		Criteria cr = new Criteria();
-		cr=this.getCriteria();
-		cr.setOrderByList(null);
-		IManagerBean bean = BeanManager.getManagerBean(Finance.class);
-		String registry = bean.getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID);		
-		cr.addOrder(registry,true);
-		orderedList=bean.getList(cr);
+		Criteria criteria = getCriteria();
+		criteria.setOrderByList(null);
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID));
+		orderedList=getManagerBean().getList(criteria);
 	}
 	
 	public void onOrderFinanceListByDate(ActionEvent event) throws ManagerBeanException {
-		Criteria cr = new Criteria();
-		cr=this.getCriteria();
-		cr.setOrderByList(null);
-		IManagerBean bean = BeanManager.getManagerBean(Finance.class);
-		String date = bean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE);
-		String id = bean.getFieldName(IFinanceAlias.FINANCE_ID);
-		cr.addOrder(date,true);
-		cr.addOrder(id,true);
-		orderedList=bean.getList(cr);
+		Criteria criteria = getCriteria();
+		criteria.setOrderByList(null);
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_ID));
+		orderedList=getManagerBean().getList(criteria);
 	}
 	
 	public void onOrderFinanceListByPayment(ActionEvent event) throws ManagerBeanException {
-		Criteria cr = new Criteria();
-		cr=this.getCriteria();
-		cr.setOrderByList(null);
-		IManagerBean bean = BeanManager.getManagerBean(Finance.class);
-		String paymethod = bean.getFieldName(IFinanceAlias.FINANCE_PAY_METHOD_ID);
-		String id = bean.getFieldName(IFinanceAlias.FINANCE_ID);
-		cr.addOrder(paymethod,true);
-		cr.addOrder(id,true);
-		orderedList=bean.getList(cr);
+		Criteria criteria = getCriteria();
+		criteria.setOrderByList(null);
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_PAY_METHOD_ID));
+		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_ID));
+		orderedList=getManagerBean().getList(criteria);
 	}
-	
+
 	public void onShowInvoice(ActionEvent event) throws ManagerBeanException {
-				
-		IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
-		String invoice = bean.getFieldName(IFinanceAlias.INVOICE_ID);
-		FormUtil.getController("invoicePrint").clearCriteria();
-		Criteria c= FormUtil.getController("invoicePrint").getCriteria();		
-		c.addEqualExpression(invoice,((Finance)this.getTo()).getInvoice().getId());
-				
+		Finance to = (Finance)this.getTo();
+		if (to != null) {
+			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ID), to.getInvoice().getId());
+			FormUtil.getController(IFinanceConstants.INVOICE_PRINTER_CONTROLLER).setCriteria(criteria);
+		}
 	}
-	
-	
-	
 
 }
