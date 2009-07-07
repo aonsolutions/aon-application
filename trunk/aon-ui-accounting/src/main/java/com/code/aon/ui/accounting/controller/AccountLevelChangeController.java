@@ -238,29 +238,26 @@ public class AccountLevelChangeController extends BasicController implements IPr
 			if (sourceAccount.getId().length() == 12) {
 				newId = newId + sourceAccount.getId().substring(7);
 			}
-
-			if (level >= 4) {
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), newId);
-				Iterator<ITransferObject> iterator = accountBean.getList(criteria).iterator();
-				if (iterator.hasNext()) {
-	    			resultList.add(sourceAccount.getId() + " se ha convertido en la cuenta " + newId);
-
-					Account newAccount = (Account)iterator.next();
-					newAccount.setDescription(sourceAccount.getDescription());
-					newAccount.setAlias(sourceAccount.getAlias());
-					return newAccount;
-				}
-			}
 		}
 
-		Account newAccount = new Account();
-		newAccount.setId(newId);
-		newAccount.setDescription(sourceAccount.getDescription());
-		newAccount.setAlias(sourceAccount.getAlias());
-		newAccount.setEntryEnabled(level==5);
-		newAccount.setLevel(level);
-		return (Account)accountBean.insert(newAccount);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), newId);
+		Iterator<ITransferObject> iterator = accountBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			resultList.add(sourceAccount.getId() + " se ha convertido en la cuenta " + newId);
+			Account newAccount = (Account)iterator.next();
+			newAccount.setDescription(sourceAccount.getDescription());
+			newAccount.setAlias(sourceAccount.getAlias());
+			return newAccount;
+		} else {
+			Account newAccount = new Account();
+			newAccount.setId(newId);
+			newAccount.setDescription(sourceAccount.getDescription());
+			newAccount.setAlias(sourceAccount.getAlias());
+			newAccount.setEntryEnabled(level==5);
+			newAccount.setLevel(level);
+			return (Account)accountBean.insert(newAccount);
+		}
 	}
 
 	private Account disableEntryEnabled(Account account) throws ManagerBeanException {
