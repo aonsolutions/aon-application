@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+	
+	<aon:form>
+	<aon:menuBar id="mainMenu"> 
+		<c:if test="#{!aonConfiguration.properties.hideMenuBar}">	
+		<!--  
+			<aon:dropDownMenu value="#{customerBundle.customer_module}">
+				<aon:menuSeparator/>
+				<aon:menuItem actionListener="#{customer.onEditSearch}" action="customer_search" value="#{customerBundle.customer_module}">
+					<f:setPropertyActionListener value="#{true}" target="#{customer.showAccount}" />
+				</aon:menuItem>
+				<aon:menuSeparator/>
+			</aon:dropDownMenu>
+		-->
+			<aon:outputText value="&#160;" />
+			
+		</c:if>
+	</aon:menuBar>
+	</aon:form>
+	
+</ui:composition>
