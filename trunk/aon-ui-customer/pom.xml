@@ -14,12 +14,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.form</artifactId>
-			<version>4.0.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
 			<artifactId>aon.company</artifactId>
 			<version>3.3.3</version>
 			<scope>compile</scope>
@@ -38,8 +32,8 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.registry</artifactId>
-			<version>3.5.1</version>
+			<artifactId>aon.ui.account</artifactId>
+			<version>4.0.0</version> 
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -56,8 +50,8 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.account</artifactId>
-			<version>4.0.0</version> 
+			<artifactId>aon.ui.form</artifactId>
+			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

@@ -18,6 +18,9 @@
 			<xs:attribute name="showAccount" type="xs:boolean" use="required"/>
 			<xs:attribute name="showTariff" type="xs:boolean" use="required"/>
 			<xs:attribute name="showSegment" type="xs:boolean" use="required"/>
+			<xs:attribute name="showNote" type="xs:boolean" use="required"/>
+			<xs:attribute name="showRelationship" type="xs:boolean" use="required"/>
+			<xs:attribute name="showRecordData" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>
