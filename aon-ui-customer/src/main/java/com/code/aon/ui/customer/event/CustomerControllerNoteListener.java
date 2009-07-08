@@ -9,15 +9,15 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryNote;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.NoteType;
-import com.code.aon.ui.customer.controller.CustomerNoteController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.registry.controller.RegistryNoteController;
 
 public class CustomerControllerNoteListener extends ControllerAdapter {
 	
-	private static final String REGISTRY_NOTE_CONTROLLER_NAME = "rnote";
+	private static final String REGISTRY_NOTE_CONTROLLER_NAME = "customerNote";
 
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
@@ -31,7 +31,7 @@ public class CustomerControllerNoteListener extends ControllerAdapter {
 
 	private void applyCustomerCriteria(ControllerEvent event) throws ControllerListenerException {
 		Customer customer = (Customer)event.getController().getTo();
-		CustomerNoteController rNoteController = (CustomerNoteController)FormUtil.getController(REGISTRY_NOTE_CONTROLLER_NAME);
+		RegistryNoteController rNoteController = (RegistryNoteController)FormUtil.getController(REGISTRY_NOTE_CONTROLLER_NAME);
 		try {
 			IManagerBean rNoteBean = BeanManager.getManagerBean(RegistryNote.class);
 			rNoteController.setFromDate(null);
@@ -41,6 +41,7 @@ public class CustomerControllerNoteListener extends ControllerAdapter {
 			rNoteController.getCriteria().addEqualExpression(rNoteBean.getFieldName(IRegistryAlias.REGISTRY_NOTE_REGISTRY_ID), customer.getId());
 			Expression expression = ExpressionUtilities.getNotEqualExpression(rNoteBean.getFieldName(IRegistryAlias.REGISTRY_NOTE_NOTETYPE), NoteType.OBSERVATION);
 			rNoteController.getCriteria().addExpression(expression);
+			rNoteController.onSearch(null);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
