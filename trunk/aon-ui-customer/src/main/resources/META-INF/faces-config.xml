@@ -360,7 +360,7 @@
 	<managed-bean>
 		<managed-bean-name>customerNote</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.registry.controller.RegistryNoteController
+			com.code.aon.ui.registry.controller.RegistryNoteLinesController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -418,9 +418,12 @@
 	
 	<managed-bean>
 		<managed-bean-name>customerRelationship</managed-bean-name>
+		<!--  
 		<managed-bean-class>
 			com.code.aon.ui.registry.controller.RegistryRelationshipController
 		</managed-bean-class>
+		-->
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>beanName</property-name>

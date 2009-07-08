@@ -13,7 +13,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.registry.controller.RegistryNoteController;
+import com.code.aon.ui.registry.controller.RegistryNoteLinesController;
 
 public class CustomerControllerNoteListener extends ControllerAdapter {
 	
@@ -31,7 +31,7 @@ public class CustomerControllerNoteListener extends ControllerAdapter {
 
 	private void applyCustomerCriteria(ControllerEvent event) throws ControllerListenerException {
 		Customer customer = (Customer)event.getController().getTo();
-		RegistryNoteController rNoteController = (RegistryNoteController)FormUtil.getController(REGISTRY_NOTE_CONTROLLER_NAME);
+		RegistryNoteLinesController rNoteController = (RegistryNoteLinesController)FormUtil.getController(REGISTRY_NOTE_CONTROLLER_NAME);
 		try {
 			IManagerBean rNoteBean = BeanManager.getManagerBean(RegistryNote.class);
 			rNoteController.setFromDate(null);
