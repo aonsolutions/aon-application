@@ -40,4 +40,47 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ========================================================== -->
+	<!-- ======================= LOOKUPS ========================== -->
+	<!-- ========================================================== -->
+	
+	<!-- ************ REGISTRY LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>registryLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>registryLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.registry.Registry</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/lookup/registry/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/lookup/registry/search.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>newPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/lookup/registry/form.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{registryLookupListener}</value>
+			</list-entries>
+		</managed-property>				
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>registryLookupListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryLookupListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+		
 </faces-config>
