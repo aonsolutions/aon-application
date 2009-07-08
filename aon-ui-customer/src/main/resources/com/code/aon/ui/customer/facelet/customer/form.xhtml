@@ -139,6 +139,42 @@
 							</aon:panelTab>
 						</c:if>
 
+						<c:if test="#{aonConfiguration.bean.customer.showNote}">
+							<aon:panelTab id="rnotes"
+								label="#{registryBundle.registry_note}">
+								<aon:div rendered="#{true}">
+									<ui:include	src="/com/code/aon/ui/registry/facelet/rnote/grid.xhtml">
+										<ui:param name="controller" value="#{customerNote}" />
+									</ui:include>
+								</aon:div>
+							</aon:panelTab>
+						</c:if>
+
+						<c:if test="#{aonConfiguration.bean.customer.showRelationship}">
+							<aon:panelTab id="rrelationship"
+								label="#{registryBundle.registry_relationship}">
+								<aon:div rendered="#{true}">
+									<ui:include	src="/com/code/aon/ui/registry/facelet/rrelationship/grid.xhtml">
+										<ui:param name="controller" value="#{customerRelationship}" />
+										<!--  
+										<ui:param name="lookup" value="#{customerLookup}" />
+										-->
+									</ui:include>
+								</aon:div>
+							</aon:panelTab>
+						</c:if>
+
+						<c:if test="#{aonConfiguration.bean.customer.showRecordData}">
+							<aon:panelTab id="recordData"
+								label="#{registryBundle.registry_rd_module}">
+								<aon:div rendered="#{true}">
+									<ui:include	src="/com/code/aon/ui/registry/facelet/record_data/tab_include.xhtml">
+										<ui:param name="controller" value="#{customerRecordData}" />
+									</ui:include>
+								</aon:div>
+							</aon:panelTab>
+						</c:if>
+
 					</aon:panelTabSet>
 				</c:if>
 			</aon:div>
@@ -146,6 +182,10 @@
 		
 		<c:if test="#{aonConfiguration.bean.customer.showFinanceData}">
 			<aon:lookupButtonPopup lookup="#{bankLookup}" />
+		</c:if>
+
+		<c:if test="#{aonConfiguration.bean.customer.showRelationship}">
+			<aon:lookupButtonPopup lookup="#{registryLookup}" />
 		</c:if>
 		
 		<c:if test="#{aonConfiguration.bean.customer.showFinanceFeeData}">
