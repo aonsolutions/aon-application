@@ -12,10 +12,11 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.bridge.util.AccountUtil;
+import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -59,47 +60,42 @@ import com.code.aon.ui.util.AonUtil;
 public class FinanceController extends BasicController implements IFinanceConstants {
 
 	private Company company;
-
 	private boolean payment;
-
 	private Date paymentDate;
-
 	private double paymentAmount;
-
 	private Account paymentCashAccount;
-	
 	private RegistryBank paymentRegistryBank;
-	
 	private RegistryPayMethod paymentRegistryPayMethod;
-	
 	private Date returnDate;
-
 	private double returnExpenses;
-
 	private int returnDeposit;
-
 	private Account returnCashAccount;
-	
 	private RegistryBank returnRegistryBank;
-	
 	private FinanceGenerator financeGenerator;
-	
 	private AccountEntryFinanceWriter writer;
-
 	private boolean showFinancePaymentWindow;
-
 	private boolean showFinanceReturnWindow;
-	
 	private List<SelectItem> cashAccountList;
-
 	private List<?> orderedList;
-	
 	private Double totalFinanceAmount;
-	
-	/**
-	 * A list of finances currently checked
-	 */
 	private ArrayList<Finance> checks= new ArrayList<Finance>();
+	
+	private AccountingUtil accountingUtil;
+	private AccountBridgeUtil accountBridgeUtil;
+
+	private AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
+		}
+		return accountingUtil;
+	}
+
+	private AccountBridgeUtil getAccountBridgeUtil() {
+		if (accountBridgeUtil == null) {
+			accountBridgeUtil = new AccountBridgeUtil();
+		}
+		return accountBridgeUtil;
+	}
 
 	public Company getCompany() {
 		if (company == null) {
@@ -256,7 +252,7 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		}
 		if (getCashAccountsSize() < 2) {
 			//No se renderiza la lista de Cajas, por lo tanto se le asigna el valor por defecto.
-			setPaymentCashAccount(AccountUtil.obtainCashAccount());
+			setPaymentCashAccount(getAccountingUtil().obtainCashAccount());
 		} else {
 			//Se resetea el valor.
 			setPaymentCashAccount(null);
@@ -276,7 +272,7 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		}
 		if (getCashAccountsSize() < 2) {
 			//No se renderiza la lista de Cajas, por lo tanto se le asigna el valor por defecto.
-			setReturnCashAccount(AccountUtil.obtainCashAccount());
+			setReturnCashAccount(getAccountingUtil().obtainCashAccount());
 		} else {
 			//Se resetea el valor.
 			setReturnCashAccount(null);
@@ -431,7 +427,7 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		finance.setFinanceStatus(FinanceStatus.PAID);
 		getManagerBean().update(finance);
 
-		Account paymentAccount = (getPaymentRegistryBank() != null)?AccountUtil.obtainRBankAccount(getPaymentRegistryBank()):paymentCashAccount;
+		Account paymentAccount = (getPaymentRegistryBank() != null)?getAccountBridgeUtil().obtainRBankAccount(getPaymentRegistryBank()):paymentCashAccount;
 		AccountEntry entry = getWriter().recordFinance(finance, paymentAccount, getPaymentDate());
 		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId();
 		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, entry.getEntryDate(), FinanceTrackingType.RECORDED, message);
@@ -448,7 +444,7 @@ public class FinanceController extends BasicController implements IFinanceConsta
 		getManagerBean().update(finance);
 		returnFinanceBatchDetail(finance);
 
-		Account returnAccount = (getReturnDeposit() == 0)?AccountUtil.obtainRBankAccount(getReturnRegistryBank()):returnCashAccount;
+		Account returnAccount = (getReturnDeposit() == 0)?getAccountBridgeUtil().obtainRBankAccount(getReturnRegistryBank()):returnCashAccount;
 		AccountEntry entry = getWriter().returnFinance(finance, returnAccount, getReturnDate());
 		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId();
 		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, entry.getEntryDate(), FinanceTrackingType.RETURNED, message);

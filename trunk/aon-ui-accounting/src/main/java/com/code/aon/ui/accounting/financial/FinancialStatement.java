@@ -1,8 +1,10 @@
 package com.code.aon.ui.accounting.financial;
 public class FinancialStatement {
+
 	private String code;
 	private String description;
 	private double amount;
+	private boolean addition;
 	private boolean disabled = false;
 
 	public String getCode() {
@@ -33,4 +35,10 @@ public class FinancialStatement {
 		this.disabled = disabled;
 	}
 	
+	public boolean isAddition() {
+		return addition;
+	}
+	public void setAddition(boolean addition) {
+		this.addition = addition;
+	}
 }

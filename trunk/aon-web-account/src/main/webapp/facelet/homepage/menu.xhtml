@@ -16,13 +16,8 @@
 				<aon:menuItem action="autConcept" value="#{accountingBundle.accounting_aut_concept_module}"/>
 				<aon:menuSeparator/>
 				<aon:menuItem actionListener="#{customer.onEditSearch}" action="customer_search" value="#{customerBundle.customer_module}" />
-				<aon:menuItem actionListener="#{supplier.onEditSearch}" action="supplier_search" value="#{supplierBundle.supplier_module}">
-					<f:setPropertyActionListener value="#{true}" target="#{supplier.showAccount}" />
-					<f:setPropertyActionListener value="#{false}" target="#{supplier.showSegment}" />
-				</aon:menuItem>
-				<aon:menuItem actionListener="#{creditor.onEditSearch}" action="creditor_search" value="#{financeBundle.finance_creditor_module}">
-					<f:setPropertyActionListener value="#{true}" target="#{creditor.showAccount}" />
-				</aon:menuItem>
+				<aon:menuItem actionListener="#{supplier.onEditSearch}" action="supplier_search" value="#{supplierBundle.supplier_module}" />
+				<aon:menuItem actionListener="#{creditor.onEditSearch}" action="creditor_search" value="#{financeBundle.finance_creditor_module}" />
 				<aon:menuSeparator/>
 				<aon:menuItem action="geotreeParent_list" value="#{geozoneBundle.geozone_module}"/>
 				<aon:menuSeparator/>
@@ -104,12 +99,9 @@
 			<aon:dropDownMenu value="#{appBundle.account_fixed_assets}">
 				<aon:menuItem style="color:red;" action="amortization_list" value="#{accountingBundle.accounting_amortization_form_module}"/>
 				<aon:menuSeparator/>
-				<aon:menuItem disabled="true" value="#{appBundle.accoung_amortization_report}"/>
-				<aon:menuItem disabled="true" value="#{appBundle.accoung_amortization_entries}"/>
-				<aon:menuSeparator/>
 				<aon:menuItem action="amortizationType_list" value="#{accountingBundle.accounting_amortization_type_module}"/>				
 			</aon:dropDownMenu>
- -->
+-->
  
 			<aon:dropDownMenu value="#{appBundle.account_budget}">
 				<aon:menuItem actionListener="#{accountBudget.onEditSearch}" action="accountBudget_search" value="#{accountingBundle.accounting_account_budget_module}"/>
@@ -135,6 +127,8 @@
 				<aon:menuGroup value="#{appBundle.account_utilities}">
 					<aon:menuItem action="accountChange_form" actionListener="#{accountChange.onReset}" value="#{accountingBundle.accounting_change_account}"/>
 					<aon:menuItem action="regenerateAccountSummary" value="#{accountingBundle.accounting_regenerate_summary_module}"/>
+					<aon:menuItem action="regenerateAccountHelper" value="#{accountingBundle.accounting_regenerate_helper_module}"/>
+					<aon:menuItem action="regenerateJournalCounter" value="#{accountingBundle.accounting_regenerate_journal_counter_module}"/>
 					<aon:menuItem action="check_form" actionListener="#{accountCheck.onInitialize}" value="#{accountingBundle.accounting_check_balance_module}"/>
 					<aon:menuSeparator/>
 					<aon:menuItem action="accountLevelChange" value="#{accountingBundle.accounting_account_level_change_module}"/>

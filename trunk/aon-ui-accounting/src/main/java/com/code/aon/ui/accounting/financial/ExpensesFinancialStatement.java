@@ -27,6 +27,7 @@ public class ExpensesFinancialStatement extends AbstractFinancialStatement {
 					fs.setCode(to.getId());
 					fs.setDescription(to.getDescription());
 					fs.setAmount(dif);
+					fs.setAddition(true);
 					setTotal(CommonUtil.round(getTotal() + dif));
 					getFinancialStatements().add(fs);
 				}

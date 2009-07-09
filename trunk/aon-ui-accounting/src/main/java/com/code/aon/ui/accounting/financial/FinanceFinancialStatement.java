@@ -6,7 +6,6 @@ import java.util.List;
 import com.code.aon.account.Account;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.accounting.util.Balance;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -14,16 +13,13 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Finance;
-import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
-import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 
 public class FinanceFinancialStatement extends AbstractFinancialStatement {
 
@@ -57,6 +53,7 @@ public class FinanceFinancialStatement extends AbstractFinancialStatement {
 					fs.setCode(null);
 					fs.setDescription("Vencimientos Pendientes de Cobro");
 					fs.setAmount(amount);
+					fs.setAddition(true);
 					getFinancialStatements().add(fs);
 				}
 				
@@ -79,6 +76,7 @@ public class FinanceFinancialStatement extends AbstractFinancialStatement {
 					fs.setCode(null);
 					fs.setDescription("Vencimientos Remesados Pendientes de Cobro");
 					fs.setAmount(amount);
+					fs.setAddition(true);
 					getFinancialStatements().add(fs);
 				}
 				
@@ -105,13 +103,13 @@ public class FinanceFinancialStatement extends AbstractFinancialStatement {
 					fs.setCode(null);
 					fs.setDescription("Vencimientos Pendientes de Pago");
 					fs.setAmount(amount);
+					fs.setAddition(false);
 					getFinancialStatements().add(fs);
 				}
 
 				// Remuneraciones Pendientes de Pago
 				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-				AccountingUtil util = new AccountingUtil();
-				Period period = AccountingPeriodUtil.getPeriod(params.getFinancialDate());
+				Period period = getAccountingUtil().getPeriod(params.getFinancialDate());
 				criteria = new Criteria();
 				criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "465*");
 				criteria.addEqualExpression(accountBean
@@ -119,7 +117,7 @@ public class FinanceFinancialStatement extends AbstractFinancialStatement {
 				double amount = 0;
 				for (ITransferObject to : accountBean.getList(criteria)) {
 					Account account = (Account) to;
-					Balance balance = util.getPeriodBalance(period.getInitiationDate(), period
+					Balance balance = getAccountingUtil().getPeriodBalance(period.getInitiationDate(), period
 							.getDeadline(), account.getId(), false, false);
 					amount = CommonUtil.round(amount + balance.getCredit() - balance.getDebit());
 				}
@@ -128,6 +126,7 @@ public class FinanceFinancialStatement extends AbstractFinancialStatement {
 					fs.setCode("465");
 					fs.setDescription("Remuneraciones Pendientes de Pago");
 					fs.setAmount(amount);
+					fs.setAddition(false);
 					setTotal(CommonUtil.round(getTotal() - amount));
 					getFinancialStatements().add(fs);
 				}

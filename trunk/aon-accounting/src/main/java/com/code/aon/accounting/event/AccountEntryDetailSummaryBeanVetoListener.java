@@ -1,6 +1,7 @@
 package com.code.aon.accounting.event;
 
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.util.AccountSummaryManager;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -14,6 +15,15 @@ import com.code.aon.common.event.ManagerBeanVetoListenerException;
  */
 public class AccountEntryDetailSummaryBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
+	private AccountSummaryManager manager;
+	
+    private AccountSummaryManager getManager() {
+    	if (manager == null) {
+    		manager = new AccountSummaryManager();
+    	}
+		return manager;
+	}
+
     @Override
     public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
         AccountEntryDetail accountEntryDetail = (AccountEntryDetail)evt.getTo();
@@ -21,7 +31,7 @@ public class AccountEntryDetailSummaryBeanVetoListener extends ManagerBeanVetoLi
             IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
             accountEntryDetail = (AccountEntryDetail) accountEntryDetailBean.get(accountEntryDetail.getId());
             if (accountEntryDetail != null) {
-                AccountSummaryManager.modifyAccountSummary(accountEntryDetail, -1);
+                getManager().modifyAccountSummary(accountEntryDetail, -1);
             }
         } catch (ManagerBeanException e) {
             throw new ManagerBeanVetoListenerException(e);

@@ -681,6 +681,14 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ********** ACCOUNT HELPER REGENERATOR CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>accountHelperRegenerator</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.accounting.controller.AccountHelperRegeneratorController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ********** ACCOUNT JOURNAL COUNTER REGENERATOR CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>accountJournalRegenerator</managed-bean-name>
@@ -1132,6 +1140,15 @@
 			<from-outcome>regenerateAccountSummary</from-outcome>
 			<to-view-id>
 				/com/code/aon/ui/accounting/facelet/util/summary/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- **************** REGENERATE ACCOUNT SUMMARY ********************* -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>regenerateAccountHelper</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/accounting/facelet/util/helper/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

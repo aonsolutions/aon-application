@@ -16,38 +16,32 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.form</artifactId>
+			<artifactId>aon.account</artifactId>
 			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.account</artifactId>
-			<version>3.3.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
 			<artifactId>aon.account.bridge</artifactId>
-			<version>3.14.2</version>
+			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.accounting</artifactId>
-			<version>3.16.0</version>
+			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.company</artifactId>
-			<version>3.3.3</version>
+			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.config</artifactId>
-			<version>3.6.0</version>
+			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -59,13 +53,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.customer</artifactId>
-			<version>3.2.0</version>
+			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.finance</artifactId>
-			<version>3.15.0</version>
+			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -77,19 +71,19 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.product</artifactId>
-			<version>3.5.0</version>
+			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.registry</artifactId>
-			<version>3.5.1</version>
+			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.supplier</artifactId>
-			<version>3.2.3</version>
+			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -124,6 +118,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.form</artifactId>
+			<version>4.0.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.registry</artifactId>
 			<version>4.0.0</version>
 			<scope>compile</scope>
@@ -131,7 +131,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.report</artifactId>
-			<version>3.5.0</version>
+			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>

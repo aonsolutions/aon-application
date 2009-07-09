@@ -24,11 +24,12 @@ import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.InvoiceDetailAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
-import com.code.aon.account.bridge.util.AccountUtil;
+import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.AccountHelper;
 import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.InvoiceEntryDetail;
 import com.code.aon.accounting.InvoiceEntryHeader;
@@ -71,9 +72,13 @@ import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.supplier.Supplier;
+import com.code.aon.ui.account.controller.AccountCollectionsController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
@@ -88,35 +93,24 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	private static final Logger LOGGER = Logger.getLogger(InvoiceEntryController.class.getName());
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 	private static final String ACCOUNT_APP_PARAM_CONTROLLER_NAME = "accAppParams";
+	private static final String ACCOUNT_COLLECTIONS_CONTROLLER_NAME = "accountCollections";
 
 	private AccountEntryInvoiceWriter writer;
-
 	private FinanceGenerator financeGenerator;
-
 	private AccountEntryInvoice accountEntryInvoice;
-
 	private boolean isNew;
-
 	private boolean isNewDetail;
-
 	private boolean isNewFinance;
-
 	private InvoiceEntryHeader header;
-
 	private DataModel details;
-
 	private DataModel finances;
-
 	private InvoiceEntryDetail currentDetail;
-
 	private Finance currentFinance;
-
 	private Company company;
-
 	private String onGenerateKey;
-
 	private AccountingUtil accountingUtil;
-
+	private AccountBridgeUtil accountBridgeUtil;
+	private List<SelectItem> relatedAccounts;
 
 	public AccountEntryInvoiceWriter getWriter() {
 		if (writer == null) {
@@ -132,6 +126,20 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		return financeGenerator;
 	}
 
+	private AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
+		}
+		return accountingUtil;
+	}
+	
+	private AccountBridgeUtil getAccountBridgeUtil() {
+		if (accountBridgeUtil == null) {
+			accountBridgeUtil = new AccountBridgeUtil();
+		}
+		return accountBridgeUtil;
+	}
+	
 	public AccountEntryInvoice getAccountEntryInvoice() {
 		return accountEntryInvoice;
 	}
@@ -210,6 +218,18 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		this.currentFinance = currentFinance;
 	}
 
+
+	public List<SelectItem> getRelatedAccounts() {
+		if (relatedAccounts == null) {
+			relatedAccounts = getAccounts();
+		}
+		return relatedAccounts;
+	}
+
+	public void setRelatedAccounts(List<SelectItem> relatedAccounts) {
+		this.relatedAccounts = relatedAccounts;
+	}
+
 	public Company getCompany() {
 		try {
 			if (company == null) {
@@ -229,12 +249,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		this.company = company;
 	}
 
-	public AccountingUtil getAccountingUtil() {
-		if (accountingUtil == null) {
-			accountingUtil = new AccountingUtil();
-		}
-		return accountingUtil;
-	}
 	
 	public boolean isRegistryFilled() {
 		return (getHeader() != null && getHeader().getRegistry() != null && getHeader()
@@ -257,7 +271,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		this.details = new ListDataModel(new LinkedList<InvoiceEntryDetail>());
 		this.currentDetail = null;
 		this.setNewDetail(false);
-
 		this.finances = new ListDataModel(new LinkedList<Finance>());
 		this.currentFinance = null;
 		this.setNewFinance(false);
@@ -287,6 +300,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		header.setTaxFree(false);
 		header.setWithholding(false);
 		header.setSurcharge(false);
+
+		this.relatedAccounts = null;
 	}
 
 	public boolean isSales() {
@@ -538,15 +553,15 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			Account account = new Account();
 			if (getHeader().getType().equals(InvoiceType.SALES)) {
 				entry.setType(AccountEntryType.SALES_INVOICE);
-				account = AccountUtil.obtainCustomerAccount(getHeader().getRegistry());
+				account = getAccountBridgeUtil().obtainCustomerAccount(getHeader().getRegistry());
 			} else {
 				if (getHeader().getType().equals(InvoiceType.PURCHASE)) {
 					entry.setType(AccountEntryType.PURCHASE_INVOICE);
-					account = AccountUtil.obtainSupplierAccount(getHeader().getRegistry());
+					account = getAccountBridgeUtil().obtainSupplierAccount(getHeader().getRegistry());
 				} else {
 					if (getHeader().getType().equals(InvoiceType.EXPENSES)) {
 						entry.setType(AccountEntryType.EXPENSE_INVOICE);
-						account = AccountUtil.obtainCreditorAccount(getHeader().getRegistry());
+						account = getAccountBridgeUtil().obtainCreditorAccount(getHeader().getRegistry());
 					}
 				}
 			}
@@ -634,9 +649,9 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			throws ManagerBeanException {
 		Account account;
 		if (invoice.getType().equals(InvoiceType.SALES)) {
-			account = AccountUtil.obtainDefaultAccount(DefaultAccounts.CHARGE_VAT_ACCOUNT);
+			account = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.CHARGE_VAT_ACCOUNT);
 		} else {
-			account = AccountUtil.obtainDefaultAccount(DefaultAccounts.PAID_VAT_ACCOUNT);
+			account = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.PAID_VAT_ACCOUNT);
 		}
 
 		double total = 0.0;
@@ -679,9 +694,9 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			throws ManagerBeanException {
 		Account account;
 		if (invoice.getType().equals(InvoiceType.SALES)) {
-			account = AccountUtil.obtainDefaultAccount(DefaultAccounts.PAID_RETENTION_ACCOUNT);
+			account = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.PAID_RETENTION_ACCOUNT);
 		} else {
-			account = AccountUtil.obtainDefaultAccount(DefaultAccounts.CHARGED_RETENTION_ACCOUNT);
+			account = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.CHARGED_RETENTION_ACCOUNT);
 		}
 
 		double total = 0.0;
@@ -990,34 +1005,44 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	public void registryChanged(LookupChangeEvent event) {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Company company = getCompany();
-			Registry registry = null;
 			if (isSales()) {
 				Customer customer = (Customer) event.getNewValue();
-				registry = customer.getRegistry();
+				getHeader().setRegistry( customer.getRegistry());
 				getHeader().setWithholding(company.isWithholding() && customer.isWithholding());
 				getHeader().setSurcharge(customer.isSurcharge());
 				getHeader().setTaxFree(customer.isTaxFree());
 			} else if (isPurchase()) {
 				Supplier supplier = (Supplier) event.getNewValue();
-				registry = supplier.getRegistry();
+				getHeader().setRegistry( supplier.getRegistry());
 				getHeader().setWithholding(supplier.isWithholding());
 				getHeader().setSurcharge(company.isSurcharge());
 				getHeader().setTaxFree(company.isTaxFree());
 			} else if (isExpense()) {
 				Creditor creditor = (Creditor) event.getNewValue();
-				registry = creditor.getRegistry();
+				getHeader().setRegistry(creditor.getRegistry());
 				getHeader().setWithholding(creditor.isWithholding());
 				getHeader().setSurcharge(company.isSurcharge());
 				getHeader().setTaxFree(company.isTaxFree());
 			}
-			getHeader().setDocument(registry.getDocument());
-			getHeader().setName(registry.getFullName());
+			getHeader().setDocument( getHeader().getRegistry().getDocument());
+			getHeader().setName(getHeader().getRegistry().getFullName());
+			
+			setRelatedAccounts( null ); // se inicializa.
+			List<SelectItem> list = getRelatedAccounts();
+			getHeader().setAccount( null );
+			if (list.size() > 0 ) { // Se asigna el primer elemento de la lista de cuentas.
+				SelectItem i = list.get(0);
+				if (!i.isDisabled()) {
+					getHeader().setAccount(  (Account) i.getValue() );	
+				}
+			}
 		} else {
 			getHeader().setDocument(null);
 			getHeader().setName(null);
 			getHeader().setWithholding(false);
 			getHeader().setSurcharge(false);
 			getHeader().setTaxFree(false);
+			getHeader().setAccount( null );
 		}
 	}
 
@@ -1246,6 +1271,85 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	public String getNavigationKey() {
 		return "account_invoice_entry";
 	}
+	
+	private List<SelectItem> getAccounts() {
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		try {
+			AccountCollectionsController acc = (AccountCollectionsController) AonUtil.getRegisteredBean( ACCOUNT_COLLECTIONS_CONTROLLER_NAME );
+			if (isSales()) {
+				if (getHeader().getRegistry() != null && getHeader().getRegistry().getId() != null) {
+					Account a = getAccountBridgeUtil().getCustomerAccount(getHeader().getRegistry());
+					list = getRelatedAccounts(a);
+				}
+				list = mergeLists(list, acc.getSalesAccounts() );
+			} else if (isPurchase()) {
+				if (getHeader().getRegistry() != null && getHeader().getRegistry().getId() != null) {
+					Account a = getAccountBridgeUtil().getSupplierAccount(getHeader().getRegistry());
+					list = getRelatedAccounts(a);
+				}
+				list = mergeLists(list, acc.getPurchaseAccounts() );
+			} else {
+				if (getHeader().getRegistry() != null && getHeader().getRegistry().getId() != null) {
+					Account a = getAccountBridgeUtil().getCreditorAccount(getHeader().getRegistry());
+					list = getRelatedAccounts(a);
+				}
+				list = mergeLists(list, acc.getExpensesAccounts() );
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error related accounts", e);
+		} catch (ExpressionException e) {
+			LOGGER.log(Level.SEVERE, "Error related accounts", e);
+		}
+		return list;
+	}
+	
+	private List<SelectItem> mergeLists(List<SelectItem> related, List<SelectItem> global) {
+		for (SelectItem i: global) {
+			boolean found = false;
+			for (SelectItem x: related) {
+				if (x.getValue() != null && x.getValue().equals(i.getValue())) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				related.add(i);
+			}
+		}
+		return related;
+	}
 
+	private List<SelectItem> getRelatedAccounts(Account a) throws ManagerBeanException {
+		List<SelectItem> retList = new LinkedList<SelectItem>();
+		if (a != null) {
+			IManagerBean helperBean = BeanManager.getManagerBean(AccountHelper.class);
+			String accountAlias = helperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_ACCOUNT_ID);
+			String balAccountAlias = helperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_BALANCING_ACCOUNT_ID);
+			String counterAlias = helperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_COUNTER);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(accountAlias, a.getId());
+			String c = "%";
+			if (a.getId().startsWith("430")) {
+				c = "7%";
+			} else if (a.getId().startsWith("400")) {
+				c = "6%";
+			} else if (a.getId().startsWith("410")) {
+				c = "6%";
+			}
+			Expression exp = ExpressionUtilities.getLikeExpression(balAccountAlias, c);	
+			criteria.addExpression(exp);
+			criteria.addOrder(counterAlias, false );
+			List<ITransferObject> list = helperBean.getList(criteria);
+			for (ITransferObject to : list) {
+				AccountHelper ah = (AccountHelper) to;
+				Account account = ah.getBalancingAccount();
+				SelectItem item = new SelectItem(account, account.getFullDescription());
+				retList.add(item);
+			}
+			retList.add(new SelectItem(null,"---------------","---------------",true) );
+		}
+		return retList;
+	}
+	
 }
 

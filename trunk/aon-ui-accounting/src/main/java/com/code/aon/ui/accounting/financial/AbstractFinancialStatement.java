@@ -10,6 +10,7 @@ import javax.faces.model.ListDataModel;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
@@ -17,7 +18,6 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.accounting.controller.FinancialStatementController;
 import com.code.aon.ui.accounting.controller.StatementController;
-import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public abstract class AbstractFinancialStatement implements IFinancialStatementManager {
@@ -25,10 +25,19 @@ public abstract class AbstractFinancialStatement implements IFinancialStatementM
 	private static final String FINANCIAL_STATEMENT_CONTROLLER_NAME = "financialStatement";
 	private static final String STATEMENT_CONTROLLER_NAME = "statement";
 
+	private AccountingUtil accountingUtil;
 	private List<FinancialStatement> list;
 	private DataModel model;
 	private double total;
 
+	protected AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
+		}
+		return accountingUtil;
+	}
+
+	
 	@Override
 	public void initialize() {
 		list = null;
@@ -87,7 +96,7 @@ public abstract class AbstractFinancialStatement implements IFinancialStatementM
 			c.onReset(event);
 			SummaryProviderParameters spp = new SummaryProviderParameters();
 			spp.setAccountExpression(accounts);
-			Period period = AccountingPeriodUtil.getPeriod(fsc.getFinancialDate());
+			Period period = getAccountingUtil().getPeriod(fsc.getFinancialDate());
 			spp.setPeriod(period);
 			spp.setFromDate(period.getInitiationDate());
 			spp.setToDate(period.getDeadline());
@@ -124,7 +133,9 @@ public abstract class AbstractFinancialStatement implements IFinancialStatementM
 	public void onDisable(ActionEvent event) {
 		FinancialStatement fs = (FinancialStatement) getModel().getRowData();
 		fs.setDisabled(!fs.isDisabled());
-		double amount = CommonUtil.round(  fs.getAmount() * (fs.isDisabled()?-1:1) );
+		int sign = (fs.isAddition()?1:-1);
+		sign = sign * (fs.isDisabled()?-1:1);
+		double amount = CommonUtil.round(  fs.getAmount() * sign );
 		setTotal( CommonUtil.round( getTotal() + amount ) );
 	}
 }

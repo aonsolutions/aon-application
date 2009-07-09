@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import com.code.aon.account.Account;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.accounting.util.Balance;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -14,7 +13,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 
 public class BankFinancialStatement extends  AbstractFinancialStatement {
 
@@ -23,8 +21,7 @@ public class BankFinancialStatement extends  AbstractFinancialStatement {
 		try {
 			if (getFinancialStatements() == null) {
 				setFinancialStatements( new LinkedList<FinancialStatement>());
-				AccountingUtil util = new AccountingUtil();
-				Period period = AccountingPeriodUtil.getPeriod(params.getFinancialDate());
+				Period period = getAccountingUtil().getPeriod(params.getFinancialDate());
 				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 				Criteria criteria = new Criteria();
 
@@ -36,7 +33,8 @@ public class BankFinancialStatement extends  AbstractFinancialStatement {
 					FinancialStatement fs = new FinancialStatement();
 					fs.setCode(account.getId());
 					fs.setDescription(account.getDescription());
-					Balance balance = util.getPeriodBalance(period.getInitiationDate(), period
+					fs.setAddition(true);
+					Balance balance = getAccountingUtil().getPeriodBalance(period.getInitiationDate(), period
 							.getDeadline(), account.getId(), false, false);
 					double amount = CommonUtil.round(balance.getDebit() - balance.getCredit());
 					fs.setAmount(amount);

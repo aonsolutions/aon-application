@@ -14,13 +14,14 @@ import com.code.aon.account.bridge.InvoiceTaxAccount;
 import com.code.aon.account.bridge.ProductAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.enumeration.ProductAccountType;
-import com.code.aon.account.bridge.util.AccountUtil;
+import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.account.bridge.writer.pricing.AccountInvoicePriceStrategy;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -50,12 +51,26 @@ public class AccountEntryInvoiceWriter {
 	private Account purchaseDefaultAccount;
 
 	private IPriceStrategy priceStrategy;
+	private AccountBridgeUtil accountBridgeUtil;
+	private AccountingUtil accountingUtil;
 
 	private IPriceStrategy getPriceStrategy() {
 		if (priceStrategy == null) {
 			priceStrategy = new AccountInvoicePriceStrategy();
 		}
 		return priceStrategy;
+	}
+	private AccountBridgeUtil getAccountBridgeUtil() {
+		if (accountBridgeUtil == null) {
+			accountBridgeUtil = new AccountBridgeUtil();
+		}
+		return accountBridgeUtil;
+	}
+	private AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
+		}
+		return accountingUtil;
 	}
 
 	public void unrecordAndUpdateInvoice(Invoice invoice) throws ManagerBeanException {
@@ -89,7 +104,7 @@ public class AccountEntryInvoiceWriter {
 	
 	public void recordInvoice(Invoice invoice) throws ManagerBeanException {
 		AccountEntry entry = new AccountEntry();
-		entry.setAccountPeriod(AccountUtil.obtainPeriod(invoice.getIssueDate()).getId());
+		entry.setAccountPeriod(getAccountingUtil().obtainPeriod(invoice.getIssueDate()).getId());
 		entry.setEntryDate(invoice.getIssueDate());
 		entry.setJournal(null);
 		AccountEntryType accountEntryType = null;
@@ -104,8 +119,8 @@ public class AccountEntryInvoiceWriter {
 		entry.setSecurityLevel(invoice.getSecurityLevel());
 		entry = insertOrUpdateAccountEntry(entry);
 		Account account = (invoice.getType().equals(InvoiceType.SALES) ? 
-				AccountUtil.obtainCustomerAccount(invoice.getRegistry()) : 
-				AccountUtil.obtainSupplierAccount(invoice.getRegistry()));
+				getAccountBridgeUtil().obtainCustomerAccount(invoice.getRegistry()) : 
+				getAccountBridgeUtil().obtainSupplierAccount(invoice.getRegistry()));
 		double total = getPriceStrategy().getTotalPrice(invoice, invoice);
 		List<TaxBreakDown> taxBreakDownList = getPriceStrategy().getTaxBreakDowns(invoice, invoice);
 		Map<Account, Double> retentionQuotas = obtainRetentionQuotasPerAccount(taxBreakDownList, invoice);
@@ -359,7 +374,7 @@ public class AccountEntryInvoiceWriter {
 			}
 		}
 		// Cuarto Apunte (Ventas o Compras, puede haber varios apuntes en funcion de las cuentas de los productos de la factura)
-		if (basesPerAccount != null) {
+		if (basesPerAccount.size() > 0) {
 			Iterator<Account> iterator = basesPerAccount.keySet().iterator();
 			while (iterator.hasNext()) {
 				entryDetail = new AccountEntryDetail();

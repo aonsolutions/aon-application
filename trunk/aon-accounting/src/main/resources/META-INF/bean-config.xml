@@ -24,6 +24,7 @@
 		<vetoListeners>
 	        <vetoListener>com.code.aon.accounting.event.AccountEntryDetailBeanVetoListener</vetoListener>
 	        <vetoListener>com.code.aon.accounting.event.AccountEntryDetailSummaryBeanVetoListener</vetoListener>
+	        <vetoListener>com.code.aon.accounting.event.AccountHelperBeanVetoListener</vetoListener>
 		</vetoListeners>
 	</bean>
 	

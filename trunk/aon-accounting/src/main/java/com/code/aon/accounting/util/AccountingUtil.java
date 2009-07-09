@@ -1,12 +1,17 @@
 package com.code.aon.accounting.util;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
+import com.code.aon.account.Account;
+import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.AccountSummary;
+import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
@@ -16,12 +21,74 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.util.ExpressionException;
 
 public class AccountingUtil {
+
+	public Account obtainDefaultAccount(String defaultAccountName) throws ManagerBeanException {
+		IManagerBean accAppParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(accAppParamBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), defaultAccountName);
+		Iterator<ITransferObject> iter = accAppParamBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			ApplicationParameter param = (ApplicationParameter)iter.next();
+			IManagerBean accountBean  = BeanManager.getManagerBean(Account.class);
+			return (Account) accountBean.get(param.getValue());
+		}
+		return null;
+	}
+
+	public Account obtainCashAccount() throws ManagerBeanException {
+		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), obtainDefaultAccount(DefaultAccounts.CASH_ACCOUNT).getId());
+		List<ITransferObject> list = accountBean.getList(criteria);
+		if(list.size() > 0){
+			return (Account)list.iterator().next();
+		}
+		return null;
+	}
+
+	public Period getPeriod(Date date) throws ManagerBeanException {
+		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
+		Criteria criteria = new Criteria();
+		criteria.addGreaterThanOrEqualExpression(periodBean
+				.getFieldName(IAccountingAlias.PERIOD_DEADLINE), date);
+		criteria.addLessThanOrEqualExpression(periodBean
+				.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE), date);
+		Iterator<ITransferObject> iter = periodBean.getList(criteria).iterator();
+		if (iter.hasNext()) {
+			return (Period) iter.next();
+		}
+		return null;
+	}
+
+	public Period obtainPeriod(Date date) throws ManagerBeanException {
+		Period period = getPeriod(date);
+		if (period == null) {
+			Calendar initiation = new GregorianCalendar();
+			initiation.setTime(date);
+			initiation.set(Calendar.DAY_OF_MONTH, 1);
+			initiation.set(Calendar.MONTH, 0);
+			Calendar deadline = new GregorianCalendar();
+			deadline.setTime(date);
+			deadline.set(Calendar.DAY_OF_MONTH, 31);
+			deadline.set(Calendar.MONTH, 11);
+
+			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
+			period = new Period();
+			period.setId(Integer.toString(initiation.get(Calendar.YEAR)));
+			period.setInitiationDate(initiation.getTime());
+			period.setDeadline(deadline.getTime());
+			period =(Period) periodBean.insert(period);
+		}
+		return period;
+	}
 
 	public Balance getOpeningEntryBalance(Date date, String accountId) throws ManagerBeanException {
 		return getAccountEntryBalance(date, accountId, AccountEntryType.OPENING);

@@ -50,34 +50,4 @@ public class AccountingPeriodUtil {
 			throw new AbortProcessingException(msg);
 		}
 	}
-
-	@SuppressWarnings("unchecked")
-	public static String getValidAccountPeriod(Date date) throws ManagerBeanException {
-		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
-		Criteria criteria = new Criteria();
-		criteria.addGreaterThanOrEqualExpression(periodBean
-				.getFieldName(IAccountingAlias.PERIOD_DEADLINE), date);
-		criteria.addLessThanOrEqualExpression(periodBean
-				.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE), date);
-		Iterator iter = periodBean.getList(criteria).iterator();
-		if (iter.hasNext()) {
-			return ((Period) iter.next()).getId();
-		}
-		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	public static Period getPeriod(Date date) throws ManagerBeanException {
-		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
-		Criteria criteria = new Criteria();
-		criteria.addGreaterThanOrEqualExpression(periodBean
-				.getFieldName(IAccountingAlias.PERIOD_DEADLINE), date);
-		criteria.addLessThanOrEqualExpression(periodBean
-				.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE), date);
-		Iterator iter = periodBean.getList(criteria).iterator();
-		if (iter.hasNext()) {
-			return (Period) iter.next();
-		}
-		return null;
-	}
 }

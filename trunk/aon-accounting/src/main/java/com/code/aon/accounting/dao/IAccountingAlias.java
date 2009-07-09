@@ -5,6 +5,7 @@ import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.accounting.AccountBudget;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.AccountHelper;
 import com.code.aon.accounting.AccountSummary;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationDetail;
@@ -183,6 +184,37 @@ public interface IAccountingAlias {
 
 
 	/** 
+	* DAOConstantsEntry for AccountHelper entity.
+	*/ 
+	DAOConstantsEntry ACCOUNT_HELPER_ENTRY = DAOConstants.getDAOConstant(AccountHelper.class);
+
+	/** 
+	* Alias value: AccountHelper_account_id
+	* Hibernate value: AccountHelper.account.id
+	*/
+	String  ACCOUNT_HELPER_ACCOUNT_ID = ACCOUNT_HELPER_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AccountHelper_balancingAccount_id
+	* Hibernate value: AccountHelper.balancingAccount.id
+	*/
+	String  ACCOUNT_HELPER_BALANCING_ACCOUNT_ID = ACCOUNT_HELPER_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AccountHelper_counter
+	* Hibernate value: AccountHelper.counter
+	*/
+	String  ACCOUNT_HELPER_COUNTER = ACCOUNT_HELPER_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: AccountHelper_id
+	* Hibernate value: AccountHelper.id
+	*/
+	String  ACCOUNT_HELPER_ID = ACCOUNT_HELPER_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
 	* DAOConstantsEntry for AccountSummary entity.
 	*/ 
 	DAOConstantsEntry ACCOUNT_SUMMARY_ENTRY = DAOConstants.getDAOConstant(AccountSummary.class);
@@ -237,58 +269,82 @@ public interface IAccountingAlias {
 	DAOConstantsEntry AMORTIZATION_ENTRY = DAOConstants.getDAOConstant(Amortization.class);
 
 	/** 
+	* Alias value: Amortization_accumulatedAccount_id
+	* Hibernate value: Amortization.accumulatedAccount.id
+	*/
+	String  AMORTIZATION_ACCUMULATED_ACCOUNT_ID = AMORTIZATION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Amortization_allocationAccount_id
+	* Hibernate value: Amortization.allocationAccount.id
+	*/
+	String  AMORTIZATION_ALLOCATION_ACCOUNT_ID = AMORTIZATION_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: Amortization_amortizationType_id
 	* Hibernate value: Amortization.amortizationType.id
 	*/
-	String  AMORTIZATION_AMORTIZATION_TYPE_ID = AMORTIZATION_ENTRY.getAliasNames()[0];
+	String  AMORTIZATION_AMORTIZATION_TYPE_ID = AMORTIZATION_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Amortization_amount
 	* Hibernate value: Amortization.amount
 	*/
-	String  AMORTIZATION_AMOUNT = AMORTIZATION_ENTRY.getAliasNames()[1];
+	String  AMORTIZATION_AMOUNT = AMORTIZATION_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Amortization_comments
 	* Hibernate value: Amortization.comments
 	*/
-	String  AMORTIZATION_COMMENTS = AMORTIZATION_ENTRY.getAliasNames()[2];
+	String  AMORTIZATION_COMMENTS = AMORTIZATION_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Amortization_deadline
 	* Hibernate value: Amortization.deadline
 	*/
-	String  AMORTIZATION_DEADLINE = AMORTIZATION_ENTRY.getAliasNames()[3];
+	String  AMORTIZATION_DEADLINE = AMORTIZATION_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Amortization_description
 	* Hibernate value: Amortization.description
 	*/
-	String  AMORTIZATION_DESCRIPTION = AMORTIZATION_ENTRY.getAliasNames()[4];
+	String  AMORTIZATION_DESCRIPTION = AMORTIZATION_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Amortization_feePeriod
 	* Hibernate value: Amortization.feePeriod
 	*/
-	String  AMORTIZATION_FEE_PERIOD = AMORTIZATION_ENTRY.getAliasNames()[5];
+	String  AMORTIZATION_FEE_PERIOD = AMORTIZATION_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Amortization_fixedAssetAccount_id
+	* Hibernate value: Amortization.fixedAssetAccount.id
+	*/
+	String  AMORTIZATION_FIXED_ASSET_ACCOUNT_ID = AMORTIZATION_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Amortization_id
 	* Hibernate value: Amortization.id
 	*/
-	String  AMORTIZATION_ID = AMORTIZATION_ENTRY.getAliasNames()[6];
+	String  AMORTIZATION_ID = AMORTIZATION_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Amortization_initialDate
 	* Hibernate value: Amortization.initialDate
 	*/
-	String  AMORTIZATION_INITIAL_DATE = AMORTIZATION_ENTRY.getAliasNames()[7];
+	String  AMORTIZATION_INITIAL_DATE = AMORTIZATION_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: Amortization_percentage
+	* Hibernate value: Amortization.percentage
+	*/
+	String  AMORTIZATION_PERCENTAGE = AMORTIZATION_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Amortization_saleAmount
 	* Hibernate value: Amortization.saleAmount
 	*/
-	String  AMORTIZATION_SALE_AMOUNT = AMORTIZATION_ENTRY.getAliasNames()[8];
+	String  AMORTIZATION_SALE_AMOUNT = AMORTIZATION_ENTRY.getAliasNames()[12];
 
 
 
@@ -322,28 +378,34 @@ public interface IAccountingAlias {
 	String  AMORTIZATION_DETAIL_COEFFICIENT = AMORTIZATION_DETAIL_ENTRY.getAliasNames()[3];
 
 	/** 
+	* Alias value: AmortizationDetail_fiscalAllocation
+	* Hibernate value: AmortizationDetail.fiscalAllocation
+	*/
+	String  AMORTIZATION_DETAIL_FISCAL_ALLOCATION = AMORTIZATION_DETAIL_ENTRY.getAliasNames()[4];
+
+	/** 
 	* Alias value: AmortizationDetail_fromDate
 	* Hibernate value: AmortizationDetail.fromDate
 	*/
-	String  AMORTIZATION_DETAIL_FROM_DATE = AMORTIZATION_DETAIL_ENTRY.getAliasNames()[4];
+	String  AMORTIZATION_DETAIL_FROM_DATE = AMORTIZATION_DETAIL_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: AmortizationDetail_id
 	* Hibernate value: AmortizationDetail.id
 	*/
-	String  AMORTIZATION_DETAIL_ID = AMORTIZATION_DETAIL_ENTRY.getAliasNames()[5];
+	String  AMORTIZATION_DETAIL_ID = AMORTIZATION_DETAIL_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: AmortizationDetail_status
 	* Hibernate value: AmortizationDetail.status
 	*/
-	String  AMORTIZATION_DETAIL_STATUS = AMORTIZATION_DETAIL_ENTRY.getAliasNames()[6];
+	String  AMORTIZATION_DETAIL_STATUS = AMORTIZATION_DETAIL_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: AmortizationDetail_toDate
 	* Hibernate value: AmortizationDetail.toDate
 	*/
-	String  AMORTIZATION_DETAIL_TO_DATE = AMORTIZATION_DETAIL_ENTRY.getAliasNames()[7];
+	String  AMORTIZATION_DETAIL_TO_DATE = AMORTIZATION_DETAIL_ENTRY.getAliasNames()[8];
 
 
 
