@@ -8,7 +8,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.registry</artifactId>
-	<version>3.5.1</version>
+	<version>4.0.0</version>
 	<description>AON REGISTRY</description>
 	<name>AON-REGISTRY</name>
 	<dependencies>
@@ -27,7 +27,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.config</artifactId>
-			<version>3.6.0</version>
+			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
