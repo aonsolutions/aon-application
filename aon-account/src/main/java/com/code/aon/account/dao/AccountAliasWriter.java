@@ -21,7 +21,7 @@ public class AccountAliasWriter {
 		File file = new File("/AON-PROJECT/aon-account/src/main/java/com/code/aon/account/dao/IAccountAlias.java");
 		String[] classes = new String[1]; 
 		classes[0] = Account.class.getName();
-		HibernateUtil.getSessionFactory();
+		HibernateUtil.getSessionFactory( HibernateUtil.getSessionFactoryName() );
 		AliasWriter writer = new AliasWriter("com.code.aon.account.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );
