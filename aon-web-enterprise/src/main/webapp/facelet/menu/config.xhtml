@@ -30,21 +30,18 @@
 									<aon:commandLink id="customer" 
 										action="customer_search" actionListener="#{customer.onEditSearch}"
 										value="#{customerBundle.customer_module}" >
-										<f:setPropertyActionListener value="#{true}" target="#{customer.showAccount}" />
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="supplier" 
 										action="supplier_search" actionListener="#{supplier.onEditSearch}"
 										value="#{supplierBundle.supplier_module}" >
-										<f:setPropertyActionListener value="#{true}" target="#{supplier.showAccount}" />
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="creditor" 
 										action="creditor_search" actionListener="#{creditor.onEditSearch}"
 										value="#{financeBundle.finance_creditor_module}" >
-										<f:setPropertyActionListener value="#{true}" target="#{creditor.showAccount}" />
 									</aon:commandLink>
 								</aon:div>						
 								<aon:div styleClass="aon-direct-access-list-element">
