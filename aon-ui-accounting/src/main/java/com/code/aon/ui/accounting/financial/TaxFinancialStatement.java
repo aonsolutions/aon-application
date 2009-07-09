@@ -1,21 +1,22 @@
 package com.code.aon.ui.accounting.financial;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.accounting.util.Balance;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
+import com.code.aon.ui.util.AonUtil;
 
 public class TaxFinancialStatement extends AbstractFinancialStatement {
 
@@ -24,69 +25,24 @@ public class TaxFinancialStatement extends AbstractFinancialStatement {
 		try {
 			if (getFinancialStatements() == null) {
 				setFinancialStatements( new LinkedList<FinancialStatement>());
-				AccountingUtil util = new AccountingUtil();
-				Period period = AccountingPeriodUtil.getPeriod(params.getFinancialDate());
-				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-				
-				// IVA Pendiente de Pago
-				Criteria criteria = new Criteria();
-				criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "4750*|477*|472*");
-				criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
-						new Boolean(true));
-				double amount = 0; 
-				double subtotal = 0;
-				for (ITransferObject to: accountBean.getList(criteria)) {
-					Account account = (Account) to;
-					Balance balance = util.getPeriodBalance(period.getInitiationDate(), period.getDeadline(), account.getId(), false, false);
-					amount = CommonUtil.round(balance.getCredit() - balance.getDebit());
-					subtotal = CommonUtil.round(subtotal + amount) ; 	  
-				}
-				FinancialStatement fs = new FinancialStatement();
-				fs.setCode( "4750,477,472" );
-				fs.setDescription("IVA Pendiente de Pago" );
-				fs.setAmount( subtotal );
-				setTotal( CommonUtil.round(getTotal() + amount));
-				getFinancialStatements().add(fs);
-				
+				Period period = getAccountingUtil().getPeriod(params.getFinancialDate());
+
+				// H.P. ACREEDORA POR IVA
+				addStatement(period.getInitiationDate(), period.getDeadline(), "4750", true);
+				// Hacienda Pública, IVA repercutido.
+				addStatement(period.getInitiationDate(), period.getDeadline(), "477", true);
+				// Hacienda Pública, IVA soportado.
+				addStatement(period.getInitiationDate(), period.getDeadline(), "472", false);
 				// IRPF PENDIENTE DE PAGO
-				criteria = new Criteria();
-				criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "4751*");
-				criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
-						new Boolean(true));
-				amount = 0;
-				for (ITransferObject to: accountBean.getList(criteria)) {
-					Account account = (Account) to;
-					Balance balance = util.getPeriodBalance(period.getInitiationDate(), period.getDeadline(), account.getId(), false, false);
-					amount = CommonUtil.round(amount + balance.getCredit() - balance.getDebit() ) ;
-				}
-				fs = new FinancialStatement();
-				fs.setCode( "4751" );
-				fs.setDescription("IRPF Pendiente de Pago" );
-				fs.setAmount( amount );
-				setTotal( CommonUtil.round(getTotal() + amount));
-				getFinancialStatements().add(fs);
-				
+				addStatement(period.getInitiationDate(), period.getDeadline(), "4751", true);
 				// SS PENDIENTE DE PAGO
 				Calendar c = Calendar.getInstance();
 				c.setTime(params.getFinancialDate());
 				c.set(Calendar.DAY_OF_MONTH, 1);
 				c.add(Calendar.DAY_OF_MONTH, -1);
-				criteria = new Criteria();
-				criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "4760*");
-				criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
-						new Boolean(true));
-				amount = 0;
-				for (ITransferObject to: accountBean.getList(criteria)) {
-					Account account = (Account) to;
-					Balance balance = util.getPeriodBalance(period.getInitiationDate(), c.getTime(), account.getId(), false, false);
-					amount = CommonUtil.round(amount + balance.getCredit() - balance.getDebit() ) ;
-				}
-				fs = new FinancialStatement();
-				fs.setCode( "4760" );
-				fs.setDescription("SS Pendiente de Pago" );
-				fs.setAmount( amount );
-				setTotal( CommonUtil.round(getTotal() + amount));
-				getFinancialStatements().add(fs);
+				FinancialStatement fs = addStatement(period.getInitiationDate(), c.getTime(), "4760", true);
+				Month m = Month.getMonthByValue( c.get(Calendar.MONTH));
+				fs.setDescription(fs.getDescription() + " (hasta "  + m.getName(AonUtil.getCurrentLocale())+ ")");
 			}
 		} catch (ExpressionException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
@@ -103,4 +59,29 @@ public class TaxFinancialStatement extends AbstractFinancialStatement {
 		return CommonUtil.round(getTotal() * -1);
 	}
 
+	private FinancialStatement addStatement(Date fromDate, Date toDate, String prefix, boolean addition) throws ManagerBeanException, ExpressionException {
+		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+		Criteria criteria = new Criteria();
+		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), prefix + "*");
+		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED),
+				new Boolean(true));
+		double amount = 0; 
+		double subtotal = 0;
+		for (ITransferObject to: accountBean.getList(criteria)) {
+			Account account = (Account) to;
+			Balance balance = getAccountingUtil().getPeriodBalance(fromDate, toDate, account.getId(), false, false);
+			amount = CommonUtil.round(balance.getCredit() - balance.getDebit());
+			subtotal = CommonUtil.round(subtotal + amount) ; 	  
+		}
+		FinancialStatement fs = new FinancialStatement();
+		Account account = (Account) accountBean.get(prefix);
+		fs.setCode( prefix );
+		fs.setDescription(account.getDescription());
+		setTotal( CommonUtil.round(getTotal() + subtotal));
+		subtotal = CommonUtil.round(subtotal * (addition?1:-1)) ;
+		fs.setAmount( subtotal );
+		fs.setAddition(addition);
+		getFinancialStatements().add(fs);
+		return fs;
+	}
 }

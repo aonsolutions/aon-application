@@ -10,7 +10,6 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.AccountSummary;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;

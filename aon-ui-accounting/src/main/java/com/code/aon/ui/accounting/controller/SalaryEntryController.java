@@ -8,8 +8,8 @@ import java.util.logging.Logger;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.account.bridge.util.AccountConstants;
-import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.DefaultAccounts;
@@ -36,15 +36,28 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 	
 	private boolean isNew;
-	
 	private AccountEntry accountEntry;
-	
 	private SalaryEntryHeader header;
-
-	private AccountingUtil accountingUtil;
-
 	private String navigationKey;
+	private AccountingUtil accountingUtil;
+	private AccountBridgeUtil accountBridgeUtil;
 
+	private AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
+		}
+		return accountingUtil;
+	}
+
+	private AccountBridgeUtil getAccountBridgeUtil() {
+		if (accountBridgeUtil == null) {
+			accountBridgeUtil = new AccountBridgeUtil();
+		}
+		return accountBridgeUtil;
+	}
+
+
+	
 	public boolean isNew() {
 		return isNew;
 	}
@@ -69,13 +82,6 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 		this.header = header;
 	}
 	
-	public AccountingUtil getAccountingUtil() {
-		if (accountingUtil == null) {
-			accountingUtil = new AccountingUtil();
-		}
-		return accountingUtil;
-	}
-
 	public void onReset(ActionEvent event){
 		try {
 			reset();
@@ -203,7 +209,7 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 
 			// Primer Apunte
 			AccountEntryDetail detail = new AccountEntryDetail();
-			detail.setAccount(AccountUtil.obtainDefaultAccount(DefaultAccounts.SALARY_ACCOUNT));
+			detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.SALARY_ACCOUNT));
 			detail.setAccountEntry(entry);
 			detail.setBalancingAccount(null);
 			detail.setConcept(getHeader().getConcept());
@@ -212,7 +218,7 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 
 			// Segundo Apunte
 			detail = new AccountEntryDetail();
-			detail.setAccount(AccountUtil.obtainDefaultAccount(DefaultAccounts.COMPANY_SOCIAL_INSURANCE_ACCOUNT));
+			detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.COMPANY_SOCIAL_INSURANCE_ACCOUNT));
 			detail.setAccountEntry(entry);
 			detail.setBalancingAccount(null);
 			detail.setConcept(getHeader().getConcept());
@@ -222,7 +228,7 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 			// Tercer Apunte
 			if (getHeader().getRetention() != 0) {
 				detail = new AccountEntryDetail();
-				detail.setAccount(AccountUtil.obtainDefaultAccount(DefaultAccounts.CHARGED_RETENTION_ACCOUNT));
+				detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.CHARGED_RETENTION_ACCOUNT));
 				detail.setAccountEntry(entry);
 				detail.setBalancingAccount(null);
 				detail.setConcept(getHeader().getConcept());
@@ -232,7 +238,7 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 
 			// Cuarto Apunte
 			detail = new AccountEntryDetail();
-			detail.setAccount(AccountUtil.obtainDefaultAccount(DefaultAccounts.SOCIAL_INSURANCE_ACCOUNT));
+			detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.SOCIAL_INSURANCE_ACCOUNT));
 			detail.setAccountEntry(entry);
 			detail.setBalancingAccount(null);
 			detail.setConcept(getHeader().getConcept());
@@ -242,9 +248,9 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 			// Quinto Apunte
 			detail = new AccountEntryDetail();
 			if (getHeader().getRegistryBank() != null && getHeader().getRegistryBank().getId() != null) {
-				detail.setAccount(AccountUtil.obtainRBankAccount(getHeader().getRegistryBank()));
+				detail.setAccount(getAccountBridgeUtil().obtainRBankAccount(getHeader().getRegistryBank()));
 			} else {
-				detail.setAccount(AccountUtil.obtainDefaultAccount(DefaultAccounts.PENDING_SALARY_ACCOUNT));
+				detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.PENDING_SALARY_ACCOUNT));
 			}
 			detail.setAccountEntry(entry);
 			detail.setBalancingAccount(null);
@@ -311,7 +317,7 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 		} else {
 			accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
 			if (accountEntryDetail != null) {
-				header.setRegistryBank(AccountUtil.obtainRBank(accountEntryDetail.getAccount().getId()));
+				header.setRegistryBank(getAccountBridgeUtil().obtainRBank(accountEntryDetail.getAccount().getId()));
 				header.setConcept(accountEntryDetail.getConcept());
 			}
 		}

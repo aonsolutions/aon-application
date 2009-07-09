@@ -11,7 +11,7 @@ import com.code.aon.account.IAccount;
 import com.code.aon.account.bridge.CreditorAccount;
 import com.code.aon.account.bridge.CustomerAccount;
 import com.code.aon.account.bridge.SupplierAccount;
-import com.code.aon.account.bridge.util.AccountUtil;
+import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -31,6 +31,15 @@ public class BasicAccountListener extends ControllerAdapter {
 	private String alias;
 	private Account account;
 	private IAccount to;
+	
+	private AccountBridgeUtil accountBridgeUtil;
+	
+	private AccountBridgeUtil getAccountBridgeUtil() {
+		if (accountBridgeUtil == null) {
+			accountBridgeUtil = new AccountBridgeUtil();
+		}
+		return accountBridgeUtil;
+	}
 
 	public String getPojo() {
 		return pojo;
@@ -181,7 +190,7 @@ public class BasicAccountListener extends ControllerAdapter {
 			IAccount toAccount = (IAccount) newTo;
 			IController c = FormUtil.getController(getMasterController());
 			toAccount.setLinkedTo(c.getTo());
-			toAccount.setAccount(AccountUtil.obtainIRegistryAccount((IRegistry) c.getTo()));
+			toAccount.setAccount(getAccountBridgeUtil().obtainIRegistryAccount((IRegistry) c.getTo()));
 			newTo = bean.insert(newTo);
 			setTo(toAccount);
 			setAccount(toAccount.getAccount());

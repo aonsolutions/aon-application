@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -24,8 +25,10 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
+import com.code.aon.account.Account;
 import com.code.aon.accounting.enumeration.AmortizationPeriod;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.util.CommonUtil;
 
 /**
  * Entity class for representing an account.
@@ -48,6 +51,10 @@ public class Amortization implements ITransferObject {
     private AmortizationPeriod feePeriod;
     private Double saleAmount;
 	private String comments;
+    private Account fixedAssetAccount;
+    private Account accumulatedAccount;
+    private Account allocationAccount;
+    private double percentage;
 	
 	private List<AmortizationDetail> details;
 
@@ -139,6 +146,67 @@ public class Amortization implements ITransferObject {
 
 	public void setComments(String comments) {
 		this.comments = comments;
+	}
+
+	@ManyToOne (fetch=FetchType.EAGER)
+	@JoinColumn( name="fixed_asset_account", nullable=false )
+	@ForeignKey(name = "FK_AMORTIZATION_FIXED_ASSET_ACCOUNT")
+	@Index(name = "IDX_AMORTIZATION_FIXED_ASSET_ACCOUNT")							
+	public Account getFixedAssetAccount() {
+		return fixedAssetAccount;
+	}
+
+	public void setFixedAssetAccount(Account fixedAssetAccount) {
+		this.fixedAssetAccount = fixedAssetAccount;
+	}
+
+	@ManyToOne (fetch=FetchType.EAGER)
+	@JoinColumn( name="accumulated_account", nullable=false )
+	@ForeignKey(name = "FK_AMORTIZATION_ACCUMULATED_ACCOUNT")
+	@Index(name = "IDX_AMORTIZATION_ACCUMULATED_ACCOUNT")						
+	public Account getAccumulatedAccount() {
+		return accumulatedAccount;
+	}
+
+	public void setAccumulatedAccount(Account accumulatedAccount) {
+		this.accumulatedAccount = accumulatedAccount;
+	}
+
+	@ManyToOne (fetch=FetchType.EAGER)
+	@JoinColumn( name="allocation_account", nullable=false )
+	@ForeignKey(name = "FK_AMORTIZATION_ALLOCATION_ACCOUNT")
+	@Index(name = "IDX_AMORTIZATION_ALLOCATION_ACCOUNT")					
+	public Account getAllocationAccount() {
+		return allocationAccount;
+	}
+
+	public void setAllocationAccount(Account allocationAccount) {
+		this.allocationAccount = allocationAccount;
+	}
+
+	@Column(nullable=true)
+    public double getPercentage() {
+		return percentage;
+	}
+
+	public void setPercentage(double percentage) {
+		this.percentage = percentage;
+	}
+
+	@Transient
+    public int getYears() {
+		if (percentage!= 0) {
+			return (int) CommonUtil.round( 100 / percentage,0);	
+		}
+		return 0;
+	}
+
+	public void setYears(int years) {
+		if (years != 0) {
+			setPercentage(CommonUtil.round( 100.0 / years));
+		} else {
+			setPercentage(0);	
+		}
 	}
 
 	@OneToMany(mappedBy = "amortization", cascade={CascadeType.REMOVE})

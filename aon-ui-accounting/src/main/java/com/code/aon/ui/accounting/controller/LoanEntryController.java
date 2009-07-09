@@ -11,8 +11,8 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.LoanAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
+import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.account.bridge.util.AccountConstants;
-import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.DefaultAccounts;
@@ -39,16 +39,27 @@ public class LoanEntryController implements ISpecialAccountEntry {
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 	
 	private boolean isNew;
-	
 	private AccountEntry accountEntry;
-
 	private Period period;
-
 	private Loan loan;
+	private String navigationKey;
 
 	private AccountingUtil accountingUtil;
+	private AccountBridgeUtil accountBridgeUtil;
 
-	private String navigationKey;
+	private AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
+		}
+		return accountingUtil;
+	}
+	private AccountBridgeUtil getAccountBridgeUtil() {
+		if (accountBridgeUtil == null) {
+			accountBridgeUtil = new AccountBridgeUtil();
+		}
+		return accountBridgeUtil;
+	}
+
 
 	public boolean isNew() {
 		return isNew;
@@ -80,13 +91,6 @@ public class LoanEntryController implements ISpecialAccountEntry {
 
 	public void setLoan(Loan loan) {
 		this.loan = loan;
-	}
-
-	public AccountingUtil getAccountingUtil() {
-		if (accountingUtil == null) {
-			accountingUtil = new AccountingUtil();
-		}
-		return accountingUtil;
 	}
 
 	public void onReset(ActionEvent event){
@@ -226,8 +230,8 @@ public class LoanEntryController implements ISpecialAccountEntry {
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		// Primer Apunte
 		AccountEntryDetail detail = new AccountEntryDetail();
-		Account loanAccount = AccountUtil.obtainLoanAccount(getLoan());
-		Account rBankAccount = AccountUtil.obtainRBankAccount(getLoan().getRegistryBank());
+		Account loanAccount = getAccountBridgeUtil().obtainLoanAccount(getLoan());
+		Account rBankAccount = getAccountBridgeUtil().obtainRBankAccount(getLoan().getRegistryBank());
 		detail.setAccount(loanAccount);
 		detail.setAccountEntry(entry);
 		detail.setConcept(getLoan().getDescription());
@@ -244,7 +248,7 @@ public class LoanEntryController implements ISpecialAccountEntry {
 		accountEntryDetailBean.insert(detail);
 		// Tercer Apunte
 		detail = new AccountEntryDetail();
-		detail.setAccount(AccountUtil.obtainDefaultAccount(DefaultAccounts.FINANCIAL_EXPENSES_ACCOUNT));;
+		detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.FINANCIAL_EXPENSES_ACCOUNT));;
 		detail.setAccountEntry(entry);
 		detail.setConcept(getLoan().getDescription());
 		detail.setDebit(getLoan().getExpenses());

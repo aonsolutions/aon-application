@@ -3,11 +3,10 @@ package com.code.aon.accounting.dao;
 import java.io.File;
 import java.io.IOException;
 
-import org.hibernate.Session;
-
 import com.code.aon.accounting.AccountBudget;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.AccountHelper;
 import com.code.aon.accounting.AccountSummary;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationDetail;
@@ -33,20 +32,21 @@ public class AccountingAliasWriter {
 	 */
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-PROJECT/aon-accounting/src/main/java/com/code/aon/accounting/dao/IAccountingAlias.java");
-		String[] classes = new String[13]; 
+		String[] classes = new String[14]; 
 		classes[0] = AccountBudget.class.getName();
 		classes[1] = AccountEntry.class.getName();
 		classes[2] = AccountEntryDetail.class.getName();
-		classes[3] = AccountSummary.class.getName();
-		classes[4] = Amortization.class.getName();
-		classes[5] = AmortizationDetail.class.getName();
-		classes[6] = AmortizationType.class.getName();
-		classes[7] = AutoConcept.class.getName();
-		classes[8] = Balance.class.getName();
-		classes[9] = BalanceDetail.class.getName();	
-		classes[10] = Loan.class.getName();
-		classes[11] = Leasing.class.getName();
-		classes[12] = Period.class.getName();
+		classes[3] = AccountHelper.class.getName();
+		classes[4] = AccountSummary.class.getName();
+		classes[5] = Amortization.class.getName();
+		classes[6] = AmortizationDetail.class.getName();
+		classes[7] = AmortizationType.class.getName();
+		classes[8] = AutoConcept.class.getName();
+		classes[9] = Balance.class.getName();
+		classes[10] = BalanceDetail.class.getName();	
+		classes[11] = Loan.class.getName();
+		classes[12] = Leasing.class.getName();
+		classes[13] = Period.class.getName();
 		
 		
 		HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName());

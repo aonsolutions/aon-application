@@ -5,6 +5,7 @@ import java.util.Iterator;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.dao.IAccountingAlias;
+import com.code.aon.accounting.util.AccountSummaryManager;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -19,7 +20,16 @@ import com.code.aon.ql.Criteria;
  */
 public class AccountEntrySummaryBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
-	@Override
+	private AccountSummaryManager manager;
+	
+    private AccountSummaryManager getManager() {
+    	if (manager == null) {
+    		manager = new AccountSummaryManager();
+    	}
+		return manager;
+	}
+
+    @Override
 	@SuppressWarnings("unchecked")
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		try {
@@ -34,7 +44,7 @@ public class AccountEntrySummaryBeanVetoListener extends ManagerBeanVetoListener
 				Iterator iterator = accountEntryDetailBean.getList(criteria).iterator();
 				while (iterator.hasNext()) {
 					AccountEntryDetail accountEntryDetail = (AccountEntryDetail) iterator.next();
-					AccountSummaryManager.modifyAccountSummary(accountEntryDetail, -1);
+					getManager().modifyAccountSummary(accountEntryDetail, -1);
 				}
 			}
 		} catch (ManagerBeanException e) {

@@ -39,6 +39,7 @@ public class AmortizationDetail implements ITransferObject {
     private Date toDate;
     private Double coefficient;
     private Double allocation;
+    private Double fiscalAllocation;
     private AmortizationDetailStatus status;
     private AccountEntry accountEntry;
     private Double accumulated;
@@ -96,7 +97,16 @@ public class AmortizationDetail implements ITransferObject {
         this.allocation = allocation;
     }
 	
-	@Column(nullable = false, precision=15, scale=3)
+	@Column(name = "fiscal_allocation", nullable = false, precision=15, scale=3)
+    public Double getFiscalAllocation() {
+        return fiscalAllocation;
+    }
+
+    public void setFiscalAllocation(Double fiscalAllocation) {
+        this.fiscalAllocation = fiscalAllocation;
+    }
+
+    @Column(nullable = false, precision=15, scale=3)
     public Double getCoefficient() {
         return coefficient;
     }

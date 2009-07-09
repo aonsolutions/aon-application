@@ -11,8 +11,8 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.LoanAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
+import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.account.bridge.util.AccountConstants;
-import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
@@ -46,14 +46,25 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 	private static final String STATEMENT_CONTROLLER_NAME = "statement";
 	
 	private boolean isNew;
-	
 	private AccountEntry accountEntry;
-	
 	private LoanFeeEntryHeader header;
-
-	private AccountingUtil accountingUtil;
-
 	private String navigationKey;
+	private AccountingUtil accountingUtil;
+	private AccountBridgeUtil accountBridgeUtil; 
+
+	private AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
+		}
+		return accountingUtil;
+	}
+
+	private AccountBridgeUtil getAccountBridgeUtil() {
+		if (accountBridgeUtil == null) {
+			accountBridgeUtil = new AccountBridgeUtil();
+		}
+		return accountBridgeUtil;
+	}
 
 	public boolean isNew() {
 		return isNew;
@@ -77,13 +88,6 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 
 	public void setHeader(LoanFeeEntryHeader header) {
 		this.header = header;
-	}
-
-	public AccountingUtil getAccountingUtil() {
-		if (accountingUtil == null) {
-			accountingUtil = new AccountingUtil();
-		}
-		return accountingUtil;
 	}
 
 	public void onReset(ActionEvent event){
@@ -206,7 +210,7 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		// Primer Apunte
 		AccountEntryDetail detail = new AccountEntryDetail();
-		Account rBankAccount = AccountUtil.obtainRBankAccount(getHeader().getLoan().getRegistryBank());
+		Account rBankAccount = getAccountBridgeUtil().obtainRBankAccount(getHeader().getLoan().getRegistryBank());
 		Account loanAccount = obtainLoanAccount(getHeader().getLoan());
 		detail.setAccount(rBankAccount);
 		detail.setAccountEntry(entry);
@@ -224,7 +228,7 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 		accountEntryDetailBean.insert(detail);
 		// Tercer Apunte
 		detail = new AccountEntryDetail();
-		detail.setAccount(AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT));
+		detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT));
 		detail.setAccountEntry(entry);
 		detail.setConcept(getHeader().getDescription());
 		detail.setDebit(getHeader().getInterest());
@@ -289,7 +293,7 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 		header.getFeePeriod().setId(entry.getAccountPeriod());
 		header.setFeeDate(entry.getEntryDate());
 		header.setLoan(loan);
-		accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "*");
+		accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, getAccountingUtil().obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "*");
 		header.setInterest(accountEntryDetail.getDebit());
 		setHeader(header);
 	}
@@ -326,7 +330,7 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 			params.setAccountExpression( getRelatedAccount().getId());
 			params.setAccountLevel(5);
 			params.setBudgeted(false);
-			Period period = AccountingPeriodUtil.getPeriod( getHeader().getFeeDate() );
+			Period period = getAccountingUtil().getPeriod( getHeader().getFeeDate() );
 			params.setPeriod(period);
 			params.setFromDate(period.getInitiationDate());
 			params.setToDate(period.getDeadline());
@@ -347,7 +351,7 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 			SummaryProviderParameters spp = new SummaryProviderParameters();
 			spp.setAccountExpression(account.getId());
 			
-			Period period = AccountingPeriodUtil.getPeriod( getHeader().getFeeDate() );
+			Period period = getAccountingUtil().getPeriod( getHeader().getFeeDate() );
 			spp.setPeriod(period);
 			spp.setFromDate(period.getInitiationDate());
 			spp.setToDate(period.getDeadline());

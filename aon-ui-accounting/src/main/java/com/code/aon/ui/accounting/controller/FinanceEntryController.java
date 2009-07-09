@@ -21,8 +21,8 @@ import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
+import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.account.bridge.util.AccountConstants;
-import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
 import com.code.aon.account.bridge.writer.FinanceRecordingTo;
 import com.code.aon.accounting.AccountEntry;
@@ -57,37 +57,31 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 
 	private AccountEntryFinanceWriter writer;
-
 	private AccountEntry accountEntry;
+	private AccountBridgeUtil accountBridgeUtil;
 
 	private boolean isNew;
-
 	private Boolean payment;
-
 	private Period period;
-
 	private Date date;
-	
 	private int deposit;
-
 	private RegistryBank registryBank;
-	
 	private Account cashAccount;
-
 	private SecurityLevel securityLevel;
-
 	private String concept;
-
 	private DataModel lines;
-
 	private DataModel finances;
-
 	private ArrayList<Finance> lineChecks = new ArrayList<Finance>();
-
 	private ArrayList<Finance> financeChecks = new ArrayList<Finance>();
-
 	private String onGenerateKey;
+
 		
+	private AccountBridgeUtil getAccountBridgeUtil() {
+		if (accountBridgeUtil == null) {
+			accountBridgeUtil = new AccountBridgeUtil();
+		}
+		return accountBridgeUtil;
+	}
 
 	public AccountEntryFinanceWriter getWriter() {
 		if (writer == null) {
@@ -359,7 +353,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 			recordingTo.setType((getPayment().booleanValue())?AccountEntryType.PAYMENT:AccountEntryType.COLLECTION);
 			recordingTo.setPeriod(getPeriod());
 			recordingTo.setDate(getDate());
-			recordingTo.setPaymentAccount((getDeposit()==0)?AccountUtil.obtainRBankAccount(getRegistryBank()):getCashAccount());
+			recordingTo.setPaymentAccount((getDeposit()==0)?getAccountBridgeUtil().obtainRBankAccount(getRegistryBank()):getCashAccount());
 			recordingTo.setBalancingConcept(getConcept());
 			recordingTo.setSecurityLevel(getSecurityLevel());
 			recordingTo.setFinanceList((List)lines.getWrappedData());
@@ -687,7 +681,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 			AccountEntryDetail accountEntryDetail = (AccountEntryDetail)iter.next();
 			if (accountEntryDetail.getAccount().getId().substring(0, 3).equals(AccountConstants.BANK_ACCOUNT_PREFIX.substring(0, 3))) {
 				setDeposit(0);
-				setRegistryBank(AccountUtil.obtainRBank(accountEntryDetail.getAccount().getId()));
+				setRegistryBank(getAccountBridgeUtil().obtainRBank(accountEntryDetail.getAccount().getId()));
 				setCashAccount(null);
 			} else {
 				setDeposit(1);

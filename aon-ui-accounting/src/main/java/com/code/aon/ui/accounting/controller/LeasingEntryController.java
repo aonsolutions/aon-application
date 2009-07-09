@@ -12,11 +12,12 @@ import javax.faces.event.ValueChangeEvent;
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.LeasingAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
+import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.account.bridge.util.AccountConstants;
-import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Leasing;
+import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
@@ -47,12 +48,28 @@ public class LeasingEntryController implements ISpecialAccountEntry{
 	private Leasing leasing;
 	
 	private AccountingUtil accountingUtil;
-
-	public AccountingUtil getAccountingUtil() {
+	private AccountBridgeUtil accountBridgeUtil;
+	private AccountingPeriodUtil accountingPeriodUtil;
+	
+	private AccountingUtil getAccountingUtil() {
 		if (accountingUtil == null) {
 			accountingUtil = new AccountingUtil();
 		}
 		return accountingUtil;
+	}
+
+	private AccountBridgeUtil getAccountBridgeUtil() {
+		if (accountBridgeUtil == null) {
+			accountBridgeUtil = new AccountBridgeUtil();
+		}
+		return accountBridgeUtil;
+	}
+
+	public AccountingPeriodUtil getAccountingPeriodUtil() {
+		if (accountingPeriodUtil == null) {
+			accountingPeriodUtil = new AccountingPeriodUtil();
+		}
+		return accountingPeriodUtil;
 	}
 
 	public boolean isNew() {
@@ -118,7 +135,7 @@ public class LeasingEntryController implements ISpecialAccountEntry{
 				}
 				insertLeasing(getLeasing());
 				entry.setEntryDate(getLeasing().getLeasingDate());
-				entry.setAccountPeriod(AccountUtil.obtainPeriod(getLeasing().getLeasingDate()).getId());
+				entry.setAccountPeriod(getAccountingUtil().obtainPeriod(getLeasing().getLeasingDate()).getId());
 				entry.setJournal(null);
 				entry.setType(AccountEntryType.LEASING);
 				entry.setSecurityLevel(getLeasing().getSecurityLevel());
@@ -215,7 +232,7 @@ public class LeasingEntryController implements ISpecialAccountEntry{
 		detail.setAccountEntry(entry);
 		detail.setConcept(getLeasing().getDescription());
 		detail.setDebit(getLeasing().getAmount());
-		Account leasingAccount = AccountUtil.obtainLeasingAccount(getLeasing());
+		Account leasingAccount = getAccountBridgeUtil().obtainLeasingAccount(getLeasing());
 		detail.setBalancingAccount(leasingAccount);
 		accountEntryDetailBean.insert(detail);
 		// Segundo Apunte
@@ -313,7 +330,8 @@ public class LeasingEntryController implements ISpecialAccountEntry{
 	
 	public String getPeriodMessage() {
 		try {
-			return AccountingPeriodUtil.getValidAccountPeriod(getLeasing().getLeasingDate());
+			Period period = getAccountingUtil().getPeriod(getLeasing().getLeasingDate()); 
+			return period.getId();
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			return " - ";

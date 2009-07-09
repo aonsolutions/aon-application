@@ -12,13 +12,14 @@ import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.LeasingAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
+import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.account.bridge.util.AccountConstants;
-import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.Leasing;
 import com.code.aon.accounting.LeasingFeeEntryHeader;
+import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
@@ -57,12 +58,20 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 	private LeasingFeeEntryHeader header;
 
 	private AccountingUtil accountingUtil;
+	private AccountBridgeUtil accountBridgeUtil;
 
-	public AccountingUtil getAccountingUtil() {
+	private AccountingUtil getAccountingUtil() {
 		if (accountingUtil == null) {
 			accountingUtil = new AccountingUtil();
 		}
 		return accountingUtil;
+	}
+
+	private AccountBridgeUtil getAccountBridgeUtil() {
+		if (accountBridgeUtil == null) {
+			accountBridgeUtil = new AccountBridgeUtil();
+		}
+		return accountBridgeUtil;
 	}
 
 	public AccountEntryInvoice getAccountEntryInvoice() {
@@ -125,7 +134,7 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 					deleteAccountEntryDetails(getAccountEntryInvoice().getAccountEntry());
 					entry = this.getAccountEntryInvoice().getAccountEntry();
 				}
-				entry.setAccountPeriod(AccountUtil.obtainPeriod(getHeader().getLeasingFeeDate()).getId());
+				entry.setAccountPeriod(getAccountingUtil().obtainPeriod(getHeader().getLeasingFeeDate()).getId());
 				entry.setEntryDate(getHeader().getLeasingFeeDate());
 				entry.setJournal(null);
 				entry.setSecurityLevel(getHeader().getSecurityLevel());
@@ -190,8 +199,8 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		// Primer Apunte
 		AccountEntryDetail detail = new AccountEntryDetail();
-		Account rBankAccount = AccountUtil.obtainRBankAccount(getHeader().getRBank());
-		Account leasingAccount = AccountUtil.obtainLeasingAccount(getHeader().getLeasing());
+		Account rBankAccount = getAccountBridgeUtil().obtainRBankAccount(getHeader().getRBank());
+		Account leasingAccount = getAccountBridgeUtil().obtainLeasingAccount(getHeader().getLeasing());
 		detail.setAccount(rBankAccount);
 		detail.setAccountEntry(entry);
 		StringBuilder builder = new StringBuilder();
@@ -216,7 +225,7 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 		accountEntryDetailBean.insert(detail);
 		// Tercer Apunte
 		detail = new AccountEntryDetail();
-		Account debtInterestAccount = AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT);
+		Account debtInterestAccount = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT);
 		detail.setAccount(debtInterestAccount);
 		detail.setAccountEntry(entry);
 		detail.setConcept("Intereses Leasing");
@@ -225,7 +234,7 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 		accountEntryDetailBean.insert(detail);
 		// Cuarto Apunte
 		detail = new AccountEntryDetail();
-		Account financialExpensesAccount = AccountUtil.obtainDefaultAccount(DefaultAccounts.FINANCIAL_EXPENSES_ACCOUNT);
+		Account financialExpensesAccount = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.FINANCIAL_EXPENSES_ACCOUNT);
 		detail.setAccount(financialExpensesAccount);
 		detail.setAccountEntry(entry);
 		detail.setConcept("Gastos Financieros");
@@ -234,7 +243,7 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 		accountEntryDetailBean.insert(detail);
 		// Quinto Apunte
 		detail = new AccountEntryDetail();
-		Account vatAccount = AccountUtil.obtainDefaultAccount(DefaultAccounts.PAID_VAT_ACCOUNT);
+		Account vatAccount = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.PAID_VAT_ACCOUNT);
 		detail.setAccount(vatAccount);
 		detail.setAccountEntry(entry);
 		detail.setConcept(builder.toString());
@@ -437,12 +446,12 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 			setAccountEntryInvoice(accountEntryInvoice);
 			LeasingFeeEntryHeader header = new LeasingFeeEntryHeader();
 			AccountEntryDetail detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
-			header.setRBank(AccountUtil.obtainRBank(detail.getAccount().getId()));
-			detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "");
+			header.setRBank(getAccountBridgeUtil().obtainRBank(detail.getAccount().getId()));
+			detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, getAccountingUtil().obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "");
 			header.setInterest(detail.getDebit());
 			detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.LEASING_ACCOUNT_PREFIX + "*");
 			header.setAmortization(detail.getDebit());
-			detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.FINANCIAL_EXPENSES_ACCOUNT).getId() + "");
+			detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, getAccountingUtil().obtainDefaultAccount(DefaultAccounts.FINANCIAL_EXPENSES_ACCOUNT).getId() + "");
 			header.setExpenses(detail.getDebit());
 			header.setLeasing(obtainLeasing(entry));
 			header.setLeasingFeeDate(accountEntryInvoice.getInvoice().getIssueDate());
@@ -474,7 +483,8 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 	
 	public String getPeriodMessage() {
 		try {
-			return AccountingPeriodUtil.getValidAccountPeriod(getHeader().getLeasingFeeDate());
+			Period period = getAccountingUtil().getPeriod(getHeader().getLeasingFeeDate()); 
+			return period.getId();
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			return " - ";

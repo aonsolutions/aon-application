@@ -105,17 +105,6 @@
 							</aon:div>
 
 							<aon:div>
-<!-- 
-								<aon:div styleClass="aonSubMenu aonSubMenuOptionEntry">
-									<aon:outputText
-										value="#{accountingBundle.accounting__fee_entry_module}" />
-									<aon:commandLink immediate="true"
-										actionListener="#{leasingFeeEntry.onReset}"
-										action="account_leasing_fee_entry">
-										<aon:outputText value="[#{bundle.aon_reset}]" />
-									</aon:commandLink>
-								</aon:div>
- -->
 							</aon:div>
 						</h:panelGrid>
 					</aon:panelCollapsible>
@@ -172,19 +161,11 @@
 									<aon:commandLink immediate="true"
 										actionListener="#{supplier.onReset}" action="supplier_form">
 										<aon:outputText value="[#{bundle.aon_reset}]" />
-										<f:setPropertyActionListener value="#{true}"
-											target="#{supplier.showAccount}" />
-										<f:setPropertyActionListener value="#{false}"
-											target="#{supplier.showSegment}" />
 									</aon:commandLink>
 									<aon:commandLink immediate="true"
 										actionListener="#{supplier.onEditSearch}"
 										action="supplier_search">
 										<aon:outputText value="[#{bundle.aon_search}]" />
-										<f:setPropertyActionListener value="#{true}"
-											target="#{supplier.showAccount}" />
-										<f:setPropertyActionListener value="#{false}"
-											target="#{supplier.showSegment}" />
 									</aon:commandLink>
 								</aon:div>
 							</aon:div>
@@ -199,15 +180,11 @@
 									<aon:commandLink immediate="true"
 										actionListener="#{creditor.onReset}" action="creditor_form">
 										<aon:outputText value="[#{bundle.aon_reset}]" />
-										<f:setPropertyActionListener value="#{true}"
-											target="#{creditor.showAccount}" />
 									</aon:commandLink>
 									<aon:commandLink immediate="true"
 										actionListener="#{creditor.onEditSearch}"
 										action="creditor_search">
 										<aon:outputText value="[#{bundle.aon_search}]" />
-										<f:setPropertyActionListener value="#{true}"
-											target="#{creditor.showAccount}" />
 									</aon:commandLink>
 								</aon:div>
 							</aon:div>

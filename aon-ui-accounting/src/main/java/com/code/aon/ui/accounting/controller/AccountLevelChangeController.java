@@ -29,7 +29,7 @@ import com.code.aon.accounting.AccountBudgetDetail;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.AmortizationType;
 import com.code.aon.accounting.Leasing;
-import com.code.aon.accounting.event.AccountSummaryManager;
+import com.code.aon.accounting.util.AccountSummaryManager;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.IProgression;
@@ -162,7 +162,8 @@ public class AccountLevelChangeController extends BasicController implements IPr
 
 	@SuppressWarnings("unchecked")
 	private void changeLevel() throws ManagerBeanException {
-		AccountSummaryManager.deleteAccountSummary(null);
+		AccountSummaryManager manager = new AccountSummaryManager();
+		manager.deleteAccountSummary(null);
 
 		String select = "SELECT account.id, account.description, account.alias, account.entryEnabled, account.level " +
 						"FROM Account as account " +
@@ -249,15 +250,14 @@ public class AccountLevelChangeController extends BasicController implements IPr
 			newAccount.setDescription(sourceAccount.getDescription());
 			newAccount.setAlias(sourceAccount.getAlias());
 			return newAccount;
-		} else {
-			Account newAccount = new Account();
-			newAccount.setId(newId);
-			newAccount.setDescription(sourceAccount.getDescription());
-			newAccount.setAlias(sourceAccount.getAlias());
-			newAccount.setEntryEnabled(level==5);
-			newAccount.setLevel(level);
-			return (Account)accountBean.insert(newAccount);
 		}
+		Account newAccount = new Account();
+		newAccount.setId(newId);
+		newAccount.setDescription(sourceAccount.getDescription());
+		newAccount.setAlias(sourceAccount.getAlias());
+		newAccount.setEntryEnabled(level==5);
+		newAccount.setLevel(level);
+		return (Account)accountBean.insert(newAccount);
 	}
 
 	private Account disableEntryEnabled(Account account) throws ManagerBeanException {

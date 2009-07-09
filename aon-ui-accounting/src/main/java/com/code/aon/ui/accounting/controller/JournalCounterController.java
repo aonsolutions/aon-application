@@ -20,7 +20,6 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 public class JournalCounterController implements IProgression {

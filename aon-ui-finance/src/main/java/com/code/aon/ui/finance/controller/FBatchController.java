@@ -23,13 +23,14 @@ import org.hibernate.Session;
 
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
-import com.code.aon.account.bridge.util.AccountUtil;
+import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
 import com.code.aon.account.bridge.writer.FinanceRecordingTo;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -74,12 +75,25 @@ public class FBatchController extends BasicController implements ICollectionProv
 	private static final Logger LOGGER = Logger.getLogger(FBatchController.class.getName());
 
 	private Company company;
-
 	private CSBOutput csbOutput;
-
 	private Date recordDate;
-
 	private boolean showFbatchRecordWindow;
+	private AccountingUtil accountingUtil;
+	private AccountBridgeUtil accountBridgeUtil;
+
+	private AccountBridgeUtil getAccountBridgeUtil() {
+		if (accountBridgeUtil == null) {
+			accountBridgeUtil = new AccountBridgeUtil();
+		}
+		return accountBridgeUtil;
+	}
+	
+	private AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
+		}
+		return accountingUtil;
+	}
 
 	public Company getCompany() {
 		if (company == null) {
@@ -417,7 +431,7 @@ public class FBatchController extends BasicController implements ICollectionProv
         FinanceRecordingTo recordingTo = new FinanceRecordingTo();
         recordingTo.setType(fbatch.isPayment() ? AccountEntryType.PAYMENT : AccountEntryType.COLLECTION);
         recordingTo.setDate((getRecordDate()!=null) ? getRecordDate() : fbatch.getIssueDate());
-        recordingTo.setPaymentAccount((fbatch.getRegistryBank()!= null)?AccountUtil.obtainRBankAccount(fbatch.getRegistryBank()):AccountUtil.obtainCashAccount());
+        recordingTo.setPaymentAccount((fbatch.getRegistryBank()!= null)?getAccountBridgeUtil().obtainRBankAccount(fbatch.getRegistryBank()):getAccountingUtil().obtainCashAccount());
         recordingTo.setFBatchDetailList(fbatchDetailList);
         recordingTo.setSecurityLevel(SecurityLevel.OFFICIAL);
 

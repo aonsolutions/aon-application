@@ -1,4 +1,4 @@
-package com.code.aon.accounting.event;
+package com.code.aon.accounting.util;
 
 import java.util.Date;
 import java.util.Iterator;
@@ -29,13 +29,13 @@ import com.code.aon.ql.Criteria;
  */
 public class AccountSummaryManager {
 
-	public static void addAccountSummary(AccountSummary accountSummary) throws ManagerBeanException {
+	public void addAccountSummary(AccountSummary accountSummary) throws ManagerBeanException {
 		IManagerBean accountSummaryBean = BeanManager.getManagerBean(AccountSummary.class);
 		accountSummaryBean.insert(accountSummary);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void modifyAccountSummary(AccountEntryDetail accountEntryDetail, int factor) throws ManagerBeanException {
+	public void modifyAccountSummary(AccountEntryDetail accountEntryDetail, int factor) throws ManagerBeanException {
         AccountSummary accountSummary;
         String period = accountEntryDetail.getAccountEntry().getAccountPeriod();
         Account account = accountEntryDetail.getAccount();
@@ -74,7 +74,7 @@ public class AccountSummaryManager {
         }
     }
 
-	public static void deleteAccountSummary(Period accountPeriod) {
+	public void deleteAccountSummary(Period accountPeriod) {
 		String delete = "delete from AccountSummary as summary";
 		delete += (accountPeriod != null)?" where summary.accountPeriod = '" + accountPeriod.getId() + "'":"";
         Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
@@ -87,7 +87,7 @@ public class AccountSummaryManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void regenerateAccountSummary(Period accountPeriod, IProgression progressionBean) throws ManagerBeanException {
+	public void regenerateAccountSummary(Period accountPeriod, IProgression progressionBean) throws ManagerBeanException {
 		deleteAccountSummary(accountPeriod);
 
 		String select = "select entryDetail.account, entry.securityLevel, entry.entryDate, " +

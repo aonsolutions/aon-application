@@ -10,12 +10,13 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
-import com.code.aon.account.bridge.util.AccountUtil;
+import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -38,6 +39,23 @@ public class AccountEntryFinanceWriter {
 	private static final String P_FRA = "Pago Fra: ";
 	private static final String A_FRA = "Abono Fra: ";
 	private static final String D_FRA = "Dev. Fra: ";
+	
+	private AccountBridgeUtil accountBridgeUtil;
+	private AccountingUtil accountingUtil;
+
+	private AccountBridgeUtil getAccountBridgeUtil() {
+		if (accountBridgeUtil == null) {
+			accountBridgeUtil = new AccountBridgeUtil();
+		}
+		return accountBridgeUtil;
+	}
+
+	private AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
+		}
+		return accountingUtil;
+	}
 
 	@SuppressWarnings("unchecked")
 	public AccountEntry recordFBatchDetails(FinanceRecordingTo to, FinanceBatch fbatch) throws ManagerBeanException {
@@ -59,13 +77,13 @@ public class AccountEntryFinanceWriter {
 		detail.setAccountEntry(entry);
 		Account registryAccount = null;
 		if (fbatchDetail.getFinance().getInvoice().getType().equals(InvoiceType.SALES)) {
-			registryAccount = AccountUtil.obtainCustomerAccount(fbatchDetail.getFinance().getRegistry());
+			registryAccount = getAccountBridgeUtil().obtainCustomerAccount(fbatchDetail.getFinance().getRegistry());
 			detail.setCredit(fbatchDetail.getAmount());
 		} else if(fbatchDetail.getFinance().getInvoice().getType().equals(InvoiceType.PURCHASE)) {
-			registryAccount = AccountUtil.obtainSupplierAccount(fbatchDetail.getFinance().getRegistry());
+			registryAccount = getAccountBridgeUtil().obtainSupplierAccount(fbatchDetail.getFinance().getRegistry());
 			detail.setDebit(fbatchDetail.getAmount());
 		} else {
-			registryAccount = AccountUtil.obtainCreditorAccount(fbatchDetail.getFinance().getRegistry());
+			registryAccount = getAccountBridgeUtil().obtainCreditorAccount(fbatchDetail.getFinance().getRegistry());
 			detail.setDebit(fbatchDetail.getAmount());
 		}
 		detail.setAccount(registryAccount);
@@ -128,13 +146,13 @@ public class AccountEntryFinanceWriter {
 			AccountEntryDetail detail = new AccountEntryDetail();
 			detail.setAccountEntry(entry);
 			if (finance.getInvoice().getType().equals(InvoiceType.SALES)) {
-				registryAccount = AccountUtil.obtainCustomerAccount(finance.getRegistry());
+				registryAccount = getAccountBridgeUtil().obtainCustomerAccount(finance.getRegistry());
 				detail.setCredit(finance.getTotalAmount());
 			} else if(finance.getInvoice().getType().equals(InvoiceType.PURCHASE)) {
-				registryAccount = AccountUtil.obtainSupplierAccount(finance.getRegistry());
+				registryAccount = getAccountBridgeUtil().obtainSupplierAccount(finance.getRegistry());
 				detail.setDebit(finance.getTotalAmount());
 			} else {
-				registryAccount = AccountUtil.obtainCreditorAccount(finance.getRegistry());
+				registryAccount = getAccountBridgeUtil().obtainCreditorAccount(finance.getRegistry());
 				detail.setDebit(finance.getTotalAmount());
 			}
 			detail.setAccount(registryAccount);
@@ -187,13 +205,13 @@ public class AccountEntryFinanceWriter {
 		detail.setAccountEntry(entry);
 		Account registryAccount = null;
 		if (finance.getInvoice().getType().equals(InvoiceType.SALES)) {
-			registryAccount = AccountUtil.obtainCustomerAccount(finance.getRegistry());
+			registryAccount = getAccountBridgeUtil().obtainCustomerAccount(finance.getRegistry());
 			detail.setDebit(finance.getTotalAmount());
 		} else if(finance.getInvoice().getType().equals(InvoiceType.PURCHASE)) {
-			registryAccount = AccountUtil.obtainSupplierAccount(finance.getRegistry());
+			registryAccount = getAccountBridgeUtil().obtainSupplierAccount(finance.getRegistry());
 			detail.setCredit(finance.getTotalAmount());
 		} else {
-			registryAccount = AccountUtil.obtainCreditorAccount(finance.getRegistry());
+			registryAccount = getAccountBridgeUtil().obtainCreditorAccount(finance.getRegistry());
 			detail.setCredit(finance.getTotalAmount());
 		}
 		detail.setAccount(registryAccount);
@@ -218,7 +236,7 @@ public class AccountEntryFinanceWriter {
 	private AccountEntry createAccountEntry(FinanceRecordingTo to) throws ManagerBeanException {
 		Period period = to.getPeriod();
 		AccountEntry entry = new AccountEntry();
-		entry.setAccountPeriod((period!=null && period.getId()!=null) ? period.getId() : AccountUtil.obtainPeriod(to.getDate()).getId());
+		entry.setAccountPeriod((period!=null && period.getId()!=null) ? period.getId() : getAccountingUtil().obtainPeriod(to.getDate()).getId());
 		entry.setEntryDate(to.getDate());
 		entry.setType(to.getType());
 		entry.setJournal(null);

@@ -11,8 +11,8 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.account.Account;
+import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.account.bridge.util.AccountConstants;
-import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.DefaultAccounts;
@@ -42,14 +42,26 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 	private static final String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 	
 	private boolean isNew;
-	
 	private AccountEntry accountEntry;
-	
 	private SocialInsuranceEntryHeader header;
+	private String navigationKey;
 
 	private AccountingUtil accountingUtil;
+	private AccountBridgeUtil accountBridgeUtil;
 
-	private String navigationKey;
+	private AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
+		}
+		return accountingUtil;
+	}
+	
+	private AccountBridgeUtil getAccountBridgeUtil() {
+		if (accountBridgeUtil == null) {
+			accountBridgeUtil = new AccountBridgeUtil();
+		}
+		return accountBridgeUtil;
+	}
 
 	public boolean isNew() {
 		return isNew;
@@ -75,13 +87,6 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 		this.header = header;
 	}
 	
-	public AccountingUtil getAccountingUtil() {
-		if (accountingUtil == null) {
-			accountingUtil = new AccountingUtil();
-		}
-		return accountingUtil;
-	}
-
 	public void onReset(ActionEvent event){
 		try {
 			reset();
@@ -208,12 +213,12 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 		try {
 			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 
-			Account socialInsuranceAccount = AccountUtil.obtainDefaultAccount(DefaultAccounts.SOCIAL_INSURANCE_ACCOUNT);
+			Account socialInsuranceAccount = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.SOCIAL_INSURANCE_ACCOUNT);
 			Account bankAccount = null;
 			if (header.getRegistryBank() != null && header.getRegistryBank().getId() != null) {
-				bankAccount = AccountUtil.obtainRBankAccount(header.getRegistryBank());
+				bankAccount = getAccountBridgeUtil().obtainRBankAccount(header.getRegistryBank());
 			} else {
-				bankAccount = AccountUtil.obtainCashAccount();
+				bankAccount = getAccountingUtil().obtainCashAccount();
 			}
 			// Primer Apunte
 			AccountEntryDetail detail = new AccountEntryDetail();
@@ -260,8 +265,8 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 		int acumEntryId = 0; 
 		double acumAmount = 0;
 		boolean found = false; 
-		Account socialInsuranceAccount = AccountUtil.obtainDefaultAccount(DefaultAccounts.SOCIAL_INSURANCE_ACCOUNT);
-		Account companySocialInsuranceAccount = AccountUtil.obtainDefaultAccount(DefaultAccounts.COMPANY_SOCIAL_INSURANCE_ACCOUNT);
+		Account socialInsuranceAccount = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.SOCIAL_INSURANCE_ACCOUNT);
+		Account companySocialInsuranceAccount = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.COMPANY_SOCIAL_INSURANCE_ACCOUNT);
 
 		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 		IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
@@ -298,7 +303,7 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 			acumEntryId = acumEntry.getId();
 		} else {
 			acumEntry.setEntryDate(previousTo.getTime());
-			acumEntry.setAccountPeriod(AccountUtil.obtainPeriod(previousTo.getTime()).getId());
+			acumEntry.setAccountPeriod(getAccountingUtil().obtainPeriod(previousTo.getTime()).getId());
 			acumEntry.setJournal(null);
 			acumEntry.setType(AccountEntryType.SALARY);
 			acumEntry.setSecurityLevel(getHeader().getSecurityLevel());
@@ -388,7 +393,7 @@ public class SocialInsuranceEntryController implements ISpecialAccountEntry{
 		AccountEntryDetail accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "570*");
 		if (accountEntryDetail == null) {
 			accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
-			header.setRegistryBank(AccountUtil.obtainRBank(accountEntryDetail.getAccount().getId()));
+			header.setRegistryBank(getAccountBridgeUtil().obtainRBank(accountEntryDetail.getAccount().getId()));
 		}
 		header.setConcept(accountEntryDetail.getConcept());
 		header.setSecurityLevel(entry.getSecurityLevel());

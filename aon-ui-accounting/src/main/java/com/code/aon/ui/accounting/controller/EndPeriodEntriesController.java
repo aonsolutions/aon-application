@@ -312,6 +312,7 @@ public class EndPeriodEntriesController {
 
 	@SuppressWarnings("unchecked")
 	private AccountEntry saveClosingEntry(List list) throws ManagerBeanException {
+		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 		AccountEntry entry = new AccountEntry();
 		entry.setAccountPeriod(getPeriod().getId());
@@ -324,8 +325,7 @@ public class EndPeriodEntriesController {
 		for (i = 0; i < list.size(); i++) {
 			AccountEntryDetail detail = new AccountEntryDetail();
 			Object[] data = (Object[]) list.get(i);
-			Account account = new Account();
-			account.setId((String) data[0]);
+			Account account = (Account) accountBean.get((String) data[0]);
 			detail.setAccount(account);
 			detail.setAccountEntry(entry);
 			detail.setConcept(getConcept());
@@ -383,6 +383,7 @@ public class EndPeriodEntriesController {
 
 	@SuppressWarnings("unchecked")
 	private AccountEntry saveOperatingEntry(List list) throws ManagerBeanException {
+		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 		AccountEntry entry = new AccountEntry();
 		entry.setAccountPeriod(getPeriod().getId());
@@ -396,8 +397,7 @@ public class EndPeriodEntriesController {
 		for (i = 0; i < list.size(); i++) {
 			AccountEntryDetail detail = new AccountEntryDetail();
 			Object[] data = (Object[]) list.get(i);
-			Account account = new Account();
-			account.setId((String) data[0]);
+			Account account = (Account) accountBean.get((String) data[0]);
 			detail.setAccount(account);
 			detail.setAccountEntry(entry);
 			detail.setConcept(getConcept());
@@ -418,8 +418,7 @@ public class EndPeriodEntriesController {
 		}
 
 		AccountEntryDetail detail = new AccountEntryDetail();
-		Account account = new Account();
-		account.setId("129");
+		Account account = getResultAcount();
 		detail.setAccount(account);
 		detail.setAccountEntry(entry);
 		detail.setConcept(getConcept());
@@ -434,6 +433,32 @@ public class EndPeriodEntriesController {
 		detail.setLine(i);
 		entryDetailBean.insert(detail);
 		return entry;
+	}
+
+	private Account getResultAcount() throws ManagerBeanException {
+		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+		Account account = (Account) accountBean.get("129");
+		if (account == null) {
+			account = new Account();
+			account.setId("129");
+			account.setDescription("Resultados del ejercicio.");
+			accountBean.insert(account);
+		}
+		account = (Account) accountBean.get("1290");
+		if (account == null) {
+			account = new Account();
+			account.setId("1290");
+			account.setDescription("Resultados del ejercicio.");
+			accountBean.insert(account);
+		}
+		account = (Account) accountBean.get("129000000");
+		if (account == null) {
+			account = new Account();
+			account.setId("129000000");
+			account.setDescription("Resultados del ejercicio.");
+			accountBean.insert(account);
+		}
+		return account;
 	}
 
 	@SuppressWarnings("unchecked")
