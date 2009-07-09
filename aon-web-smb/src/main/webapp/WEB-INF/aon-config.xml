@@ -8,7 +8,7 @@
 		<company:company 
 			showRegistryBank="true" 
 			showCompanyOtherData="true"
-			showPanelTabSet="false" 
+			showPanelTabSet="true" 
 			showDigitalCertificate="true"
 		/>
 	</company:config>
