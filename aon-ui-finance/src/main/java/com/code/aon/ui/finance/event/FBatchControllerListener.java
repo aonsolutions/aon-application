@@ -1,7 +1,6 @@
 package com.code.aon.ui.finance.event;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,7 +9,6 @@ import javax.faces.context.FacesContext;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.FinanceBatch;
-import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.ql.Criteria;
@@ -88,16 +86,5 @@ public class FBatchControllerListener extends ControllerAdapter {
         FinanceController financeController = (FinanceController)AonUtil.getController(FINANCE_CONTROLLER);
         financeController.clearCheckedFinances();
     }
-
-    @Override
-    @SuppressWarnings("unchecked")
-	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
-        FBatchDetailController fBatchDetailController = (FBatchDetailController)AonUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER);
-        Iterator iter = fBatchDetailController.getWrappedList().iterator();
-		while (iter.hasNext()) {
-			FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iter.next();
-			((FBatchController)event.getController()).updateRelatedInfo(fBatchDetail);
-        }
-	}
 
 }

@@ -19,7 +19,6 @@ public class AccountInvoiceDetailRemover implements IInvoiceDetailRemover {
 	
 	private static final Logger LOGGER = Logger.getLogger(AccountInvoiceDetailRemover.class.getName());
 
-	@Override
 	public void removeDetail(InvoiceDetail invoiceDetail) {
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);

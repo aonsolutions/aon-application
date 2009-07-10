@@ -97,6 +97,7 @@ public class SalesInvoicingListener extends ControllerAdapter {
 	 * @param invoice the invoice
 	 * @throws ManagerBeanException 
 	 */
+	@SuppressWarnings("unchecked")
 	private void updateSalesPos(Invoice invoice, Integer posId) throws ManagerBeanException {
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
@@ -104,7 +105,7 @@ public class SalesInvoicingListener extends ControllerAdapter {
 		Iterator iter = invoiceDetailBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
-			DeliveryDetail deliveryDetail = obtainDeliveryDetail(invoiceDetail.getDeliveryDetail());
+			DeliveryDetail deliveryDetail = obtainDeliveryDetail(invoiceDetail.getSourceId());
 			Sales sales = deliveryDetail.getSalesDetail().getSales();
 			sales.setPos(obtainPos(posId));
 
@@ -178,6 +179,7 @@ public class SalesInvoicingListener extends ControllerAdapter {
 	 * 
 	 * @param invoice related invoice
 	 */
+	@SuppressWarnings("unchecked")
 	private void fillTaxInfo(Invoice invoice) {
 		try {
 			IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
@@ -208,6 +210,7 @@ public class SalesInvoicingListener extends ControllerAdapter {
 	 * 
 	 * @return warehouse ident
 	 */
+	@SuppressWarnings("unchecked")
 	private Integer obtainWarehouseId(Invoice invoice) {
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
@@ -218,14 +221,14 @@ public class SalesInvoicingListener extends ControllerAdapter {
 			DeliveryDetail deliveryDetail = null;
 			if(iter.hasNext()){
 				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
-				deliveryDetail = obtainDeliveryDetail(invoiceDetail.getDeliveryDetail());
+				deliveryDetail = obtainDeliveryDetail(invoiceDetail.getSourceId());
 			}else{
 				criteria = new Criteria();
 				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 				iter = invoiceDetailBean.getList(criteria, 0, 1).iterator();
 				if(iter.hasNext()){
 					InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
-					deliveryDetail = obtainDeliveryDetail(invoiceDetail.getDeliveryDetail());
+					deliveryDetail = obtainDeliveryDetail(invoiceDetail.getSourceId());
 				}
 			}
 			if(deliveryDetail != null){
@@ -244,6 +247,7 @@ public class SalesInvoicingListener extends ControllerAdapter {
 	 * 
 	 * @return the integer
 	 */
+	@SuppressWarnings("unchecked")
 	private Integer obtainPosId(Invoice invoice) {
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
@@ -252,7 +256,7 @@ public class SalesInvoicingListener extends ControllerAdapter {
 			Iterator iter = invoiceDetailBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
-				DeliveryDetail deliveryDetail = obtainDeliveryDetail(invoiceDetail.getDeliveryDetail());
+				DeliveryDetail deliveryDetail = obtainDeliveryDetail(invoiceDetail.getSourceId());
 				if(deliveryDetail != null){
 					return deliveryDetail.getSalesDetail().getSales().getPos().getId();
 				}
@@ -272,6 +276,7 @@ public class SalesInvoicingListener extends ControllerAdapter {
 	 * 
 	 * @throws ManagerBeanException the manager bean exception
 	 */
+	@SuppressWarnings("unchecked")
 	private DeliveryDetail obtainDeliveryDetail(Integer deliveryDetail) throws ManagerBeanException {
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 		Criteria criteria = new Criteria();
@@ -289,6 +294,7 @@ public class SalesInvoicingListener extends ControllerAdapter {
 	 * @param delivery the Delivery
 	 * @return the Ident of the Warehouse
 	 */
+	@SuppressWarnings("unchecked")
 	private PointOfSale obtainPos(Integer posId) {
 		try {
 			IManagerBean posBean = BeanManager.getManagerBean(PointOfSale.class);

@@ -47,8 +47,8 @@ public class CSB58Writer {
 		presenter.setSufix(companyRBank.getSufix());
 		presenter.setMakeDate(fbatch.getIssueDate());
 		presenter.setName(company.getName());
-		presenter.setEntity(companyRBank.getBankAccount().substring(0,3));
-		presenter.setOffice(companyRBank.getBankAccount().substring(4,7));
+		presenter.setEntity(companyRBank.getBankAccount().substring(0,4));
+		presenter.setOffice(companyRBank.getBankAccount().substring(4,8));
 		lot.setPresenter(presenter);
 
 		Orderer orderer = new Orderer();
@@ -97,13 +97,12 @@ public class CSB58Writer {
 		RegistryAddress customerAddress = obtainRegistryAddress(fBatchDetail.getFinance().getRegistry().getId());
 		if(customerAddress != null){
 			individual.setAccountUserAddress(customerAddress.getAddress());
-			individual.setAccountUserAddress2(customerAddress.getAddress2());
+			individual.setAccountUserAddress2(customerAddress.getCity());
 			try {
 				individual.setAccountUserPCode(new Integer(customerAddress.getZip()));
 			} catch (NumberFormatException e) {
 				individual.setAccountUserPCode(new Integer(0));
 			}
-			individual.setOrdererCounty(customerAddress.getCity());
 		}
 		individual.setInitDate(new Date());
 		return individual;

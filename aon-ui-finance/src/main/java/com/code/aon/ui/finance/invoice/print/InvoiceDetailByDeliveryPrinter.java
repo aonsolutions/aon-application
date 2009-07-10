@@ -32,9 +32,8 @@ public class InvoiceDetailByDeliveryPrinter implements ICollectionProvider {
         TreeSet<InvoiceDetailByDeliveryCollectionProvider> treeSet = new TreeSet<InvoiceDetailByDeliveryCollectionProvider>(results);
 		return treeSet;
 	}
-	@Override
-	public Collection getCollection(boolean forceRefresh)
-			throws ManagerBeanException {
+
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return getCollection();
 	}
 }

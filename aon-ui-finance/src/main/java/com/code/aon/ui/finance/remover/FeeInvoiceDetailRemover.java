@@ -22,7 +22,6 @@ public class FeeInvoiceDetailRemover implements IInvoiceDetailRemover {
 	
 	private static final Logger LOGGER = Logger.getLogger(FeeInvoiceDetailRemover.class.getName());
 
-	@Override
 	@SuppressWarnings("unchecked")
 	public void removeDetail(InvoiceDetail invoiceDetail) {
 		try {

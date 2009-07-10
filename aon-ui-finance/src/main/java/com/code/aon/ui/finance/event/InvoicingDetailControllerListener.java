@@ -70,7 +70,7 @@ public class InvoicingDetailControllerListener extends ControllerAdapter {
 		invoiceDetail.setInvoice((Invoice)invoicingController.getTo());
 		obtainTaxableBase(invoiceDetail);
 		((InvoiceDetail)event.getController().getTo()).setSource(InvoiceSource.DIRECT_PURCHASE);
-		invoiceDetail.setDeliveryDetail(insertIncomeDetail(invoiceDetail,invoicingDetailController));
+		invoiceDetail.setSourceId(insertIncomeDetail(invoiceDetail,invoicingDetailController));
 	}
 	
 	/**
@@ -292,7 +292,7 @@ public class InvoicingDetailControllerListener extends ControllerAdapter {
 		try {
 			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_ID),invoiceDetail.getDeliveryDetail());
+			criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_ID),invoiceDetail.getSourceId());
 			Iterator iter = incomeDetailBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				IncomeDetail incomeDetail = (IncomeDetail)iter.next();
@@ -344,7 +344,7 @@ public class InvoicingDetailControllerListener extends ControllerAdapter {
 		try {
 			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_ID),invoiceDetail.getDeliveryDetail());
+			criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_ID),invoiceDetail.getSourceId());
 			Iterator iter = incomeDetailBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				IncomeDetail incomeDetail = (IncomeDetail)iter.next();

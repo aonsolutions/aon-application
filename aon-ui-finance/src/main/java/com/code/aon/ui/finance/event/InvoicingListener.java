@@ -129,6 +129,7 @@ public class InvoicingListener extends ControllerAdapter {
 	 * @param invoice related invoice
 	 * @return warehouse ident
 	 */
+	@SuppressWarnings("unchecked")
 	private Integer obtainWarehouseId(Invoice invoice) {
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
@@ -139,14 +140,14 @@ public class InvoicingListener extends ControllerAdapter {
 			IncomeDetail incomeDetail = null;
 			if(iter.hasNext()){
 				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
-				incomeDetail = obtainIncomeDetail(invoiceDetail.getDeliveryDetail());
+				incomeDetail = obtainIncomeDetail(invoiceDetail.getSourceId());
 			}else{
 				criteria = new Criteria();
 				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 				iter = invoiceDetailBean.getList(criteria, 0, 1).iterator();
 				if(iter.hasNext()){
 					InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
-					incomeDetail = obtainIncomeDetail(invoiceDetail.getDeliveryDetail());
+					incomeDetail = obtainIncomeDetail(invoiceDetail.getSourceId());
 				}
 			}
 			if(incomeDetail != null){
@@ -165,6 +166,7 @@ public class InvoicingListener extends ControllerAdapter {
 	 * @return income detail
 	 * @throws ManagerBeanException
 	 */
+	@SuppressWarnings("unchecked")
 	private IncomeDetail obtainIncomeDetail(Integer deliveryDetail) throws ManagerBeanException {
 		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 		Criteria criteria = new Criteria();

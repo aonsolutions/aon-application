@@ -545,7 +545,7 @@ public class SalesInvoicingController extends BasicController {
 			while(iter.hasNext()){
 				DeliveryDetail deliveryDetail = (DeliveryDetail)iter.next();
 				InvoiceDetail invoiceDetail = new InvoiceDetail();
-				invoiceDetail.setDeliveryDetail(deliveryDetail.getId());
+				invoiceDetail.setSourceId(deliveryDetail.getId());
 				invoiceDetail.setDescription(deliveryDetail.getDescription());
 				invoiceDetail.setDiscountExpression(deliveryDetail.getDiscountExpression());
 				invoiceDetail.setInvoice(invoice);
@@ -678,7 +678,7 @@ public class SalesInvoicingController extends BasicController {
 			while(iter.hasNext()){
 				DeliveryDetail deliveryDetail = (DeliveryDetail)iter.next();
 				criteria = new Criteria();
-				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_DELIVERY_DETAIL), deliveryDetail.getId());
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), deliveryDetail.getId());
 				Iterator iterator = invoiceDetailBean.getList(criteria).iterator();
 				while(iterator.hasNext()){
 					invoiceDetailBean.remove((InvoiceDetail)iterator.next());
@@ -806,7 +806,7 @@ public class SalesInvoicingController extends BasicController {
 				IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
 				criteria = new Criteria();
-				criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID), invoiceDetail.getDeliveryDetail());
+				criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID), invoiceDetail.getSourceId());
 				iter = deliveryDetailBean.getList(criteria).iterator();
 				if(iter.hasNext()){
 					DeliveryDetail deliveryDetail = (DeliveryDetail)iter.next();

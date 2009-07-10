@@ -23,12 +23,11 @@ public class DirectInvoiceDetailRemover implements IInvoiceDetailRemover {
 
 	private static final Logger LOGGER = Logger.getLogger(DirectInvoiceDetailRemover.class.getName());
 	
-	@Override
 	public void removeDetail(InvoiceDetail invoiceDetail) {
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-			if(invoiceDetail.getDeliveryDetail() != null){
-				removeDeliveryDetail(invoiceDetail.getDeliveryDetail());
+			if(invoiceDetail.getSourceId() != null){
+				removeDeliveryDetail(invoiceDetail.getSourceId());
 			}
 			invoiceDetailBean.remove(invoiceDetail);
 		} catch (ManagerBeanException e) {

@@ -125,7 +125,6 @@ public class InvoicingController extends BasicController {
 	 * 
 	 * @param event menu event
 	 */
-	@SuppressWarnings("unused")
 	public void onReset(MenuEvent event){
 		super.onReset(null);
 	}
@@ -176,7 +175,7 @@ public class InvoicingController extends BasicController {
 	 * @param event the action event
 	 * @throws ManagerBeanException
 	 */
-	@SuppressWarnings({"unused","unchecked"})
+	@SuppressWarnings("unchecked")
 	public void onInvoice(ActionEvent event) throws ManagerBeanException{
 		IncomeController incomeController = (IncomeController)AonUtil.getController(INCOME_CONTROLLER_NAME);
 		Iterator iter = ((List)incomeController.getModel().getWrappedData()).iterator();
@@ -195,13 +194,11 @@ public class InvoicingController extends BasicController {
 		invoicingDetailController.onSearch(null);
 	}
 	
-	@SuppressWarnings("unused")
 	public void onRecordInvoice(ActionEvent event) throws ManagerBeanException, ExpressionException{
 		Invoice invoice = (Invoice)this.getTo();
 		recordInvoice(invoice);
 	}
 	
-	@SuppressWarnings("unused")
 	public void onUnrecordInvoice(ActionEvent event) throws ManagerBeanException, ExpressionException{
 		Invoice invoice = (Invoice)this.getTo();
 		removeInvoiceDetailAccount(invoice);
@@ -345,7 +342,6 @@ public class InvoicingController extends BasicController {
 	 * @param event
 	 * @throws ManagerBeanException
 	 */
-	@SuppressWarnings("unused")
 	public void onRemoveIncome(ActionEvent event) throws ManagerBeanException{
 		IncomeController incomeController = (IncomeController)AonUtil.getController(INCOME_CONTROLLER_NAME);
 		Income income = (Income)incomeController.getModel().getRowData();
@@ -377,7 +373,7 @@ public class InvoicingController extends BasicController {
 			while(iter.hasNext()){
 				IncomeDetail incomeDetail = (IncomeDetail)iter.next();
 				InvoiceDetail invoiceDetail = new InvoiceDetail();
-				invoiceDetail.setDeliveryDetail(incomeDetail.getId());
+				invoiceDetail.setSourceId(incomeDetail.getId());
 				invoiceDetail.setDescription(incomeDetail.getDescription());
 				invoiceDetail.setDiscountExpression(incomeDetail.getDiscountExpression());
 				invoiceDetail.setInvoice(invoice);
@@ -471,7 +467,7 @@ public class InvoicingController extends BasicController {
 		return financeGenerator;
 	}
 	
-	@SuppressWarnings({"unused","unchecked"})
+	@SuppressWarnings("unchecked")
 	public void generateFinances(ActionEvent event) throws ManagerBeanException{
 		Invoice invoice = (Invoice)this.getTo();
 		try {
@@ -517,7 +513,7 @@ public class InvoicingController extends BasicController {
 			while(iter.hasNext()){
 				IncomeDetail incomeDetail = (IncomeDetail)iter.next();
 				criteria = new Criteria();
-				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_DELIVERY_DETAIL), incomeDetail.getId());
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), incomeDetail.getId());
 				Iterator iterator = invoiceDetailBean.getList(criteria).iterator();
 				while(iterator.hasNext()){
 					invoiceDetailBean.remove((InvoiceDetail)iterator.next());
@@ -616,7 +612,6 @@ public class InvoicingController extends BasicController {
      * 
      * @param event that launched report
      */
-	@SuppressWarnings("unused")
     public void onReport(ActionEvent event) {
         ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
         manager.setReportKey("invoice");
