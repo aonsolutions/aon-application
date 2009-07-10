@@ -78,24 +78,9 @@ public class FinanceController extends BasicController implements IFinanceConsta
 	private List<SelectItem> cashAccountList;
 	private List<?> orderedList;
 	private Double totalFinanceAmount;
-	private ArrayList<Finance> checks= new ArrayList<Finance>();
-	
 	private AccountingUtil accountingUtil;
 	private AccountBridgeUtil accountBridgeUtil;
-
-	private AccountingUtil getAccountingUtil() {
-		if (accountingUtil == null) {
-			accountingUtil = new AccountingUtil();
-		}
-		return accountingUtil;
-	}
-
-	private AccountBridgeUtil getAccountBridgeUtil() {
-		if (accountBridgeUtil == null) {
-			accountBridgeUtil = new AccountBridgeUtil();
-		}
-		return accountBridgeUtil;
-	}
+	private ArrayList<Finance> checks= new ArrayList<Finance>();
 
 	public Company getCompany() {
 		if (company == null) {
@@ -233,6 +218,20 @@ public class FinanceController extends BasicController implements IFinanceConsta
 
 	public void setTotalFinanceAmount(Double totalFinanceAmount) {
 		this.totalFinanceAmount = totalFinanceAmount;
+	}
+
+	private AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
+		}
+		return accountingUtil;
+	}
+
+	private AccountBridgeUtil getAccountBridgeUtil() {
+		if (accountBridgeUtil == null) {
+			accountBridgeUtil = new AccountBridgeUtil();
+		}
+		return accountBridgeUtil;
 	}
 
 	public void onFinancePaymentShow(ActionEvent event) throws ManagerBeanException, ExpressionException {
