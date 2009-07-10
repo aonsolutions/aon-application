@@ -141,4 +141,75 @@ public class Utils {
 		} else
 			return null;
 	}
+	
+	public static boolean isValidNif(String nifParam){
+		char[] nif = nifParam.toCharArray();
+		if (nif.length == 9) {
+
+// [ÑAPA PARA EVITAR QUE LOS NIF DE LOS EXTRANJEROS DEN ERROR,
+//  SE SUSTITUYE LA X INICIAL POR UN CERO]
+			nif[0] = (nif[0] == 'X')?'0':nif[0];
+// [FIN ÑAPA]
+			return ((nif[0] >= '0' && nif[0] <= '9')?checkDNI(nif):checkNIF(nif));
+		}
+		else {
+			return false;
+		}
+	}
+
+	public static boolean checkDNI ( char[] nif ){
+		char[] letters = {'T','R','W','A','G','M','Y','F','P','D','X','B','N','J',
+											'Z','S','Q','V','H','L','C','K','E'};
+		String numbers = new String(nif, 0, 8);
+		int iDni = 0;
+		try {
+			iDni = Integer.parseInt(numbers);
+		} catch (NumberFormatException ex) {
+			return false;
+		}
+		int rest = iDni % 23;
+		return ( nif[8] == letters[rest] );
+	}
+
+	public static boolean checkNIF ( char[] nif ){
+		int lInDC = 0;
+		for (int i = 1; i < 8 ; ++i ) {
+			String strDigit = new String(nif, i, 1);
+			int digit = 0;
+			try {
+				digit = Integer.parseInt( strDigit );
+			} catch (NumberFormatException ex) {
+				return false;
+			}
+			if ((i % 2) != 0) {
+				digit *= 2;
+				if ( digit >= 10 ) {
+					digit -= 9;
+				}
+			}
+			lInDC += digit;
+		}
+		//Buscamos el multiplo de diez mas cercano mayor al numero calculado.
+		lInDC = ( ( (lInDC / 10)  + 1) * 10 ) - lInDC;
+		if (lInDC == 10) {
+        lInDC = 0;
+    }
+		if (nif[0] == 'P' || nif[0] == 'S' || nif[0] == 'Q') {
+			char[] letras = {'J','A','B','C','D','E','F','G','H','I'};
+			return (letras[lInDC] == nif[8]);
+		}
+		else {
+			String strDC = new String(nif, 8, 1);
+			int comp = 0;
+			try {
+				comp = Integer.parseInt( strDC );
+			} catch (NumberFormatException ex) {
+					return false;
+			}
+			return (comp==lInDC);
+		}
+	}
+	
+	
+	
 }

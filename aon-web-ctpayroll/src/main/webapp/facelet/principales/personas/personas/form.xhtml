@@ -31,12 +31,12 @@
 							<h:commandLink target="_blank" value="&#160;"
 								title="#{appBundle.aon_payroll_principales_integral_trabajadores}"
 								styleClass="aon-finding-toolbar-item aon-icon-tree"
-								action="integralTrab_search"  rendered="#{!persona.new}" />
+								action="integralTrab_form"  rendered="#{!persona.new}" />
 							
 							<h:commandLink  target="_blank" value="&#160;"
 								title="#{appBundle.aon_payroll_principales_personas_otrperc}"
 								styleClass="aon-finding-toolbar-item aon-icon-agenda"
-								action="otrperc_search" rendered="#{!persona.new}" />
+								action="otrperc_form" rendered="#{!persona.new}" />
 						
 <!-- 
 							<aon:commandButton 
@@ -137,7 +137,7 @@
 
 						<rich:spacer />
 
-						<aon:panelGrid columns="4" dir="true"
+						<aon:panelGrid id="address" columns="4" dir="true"
 							width="100%">
 
 							<aon:outputLabel for="Documento_cdg"
@@ -161,7 +161,7 @@
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_pricipales_personas_desc_via}" />
 							<aon:inputText value="#{persona.to.nomvia}"
-								size="30" maxlength="40" />
+								size="70" maxlength="70" />
 
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_pricipales_personas_numero}" />
@@ -174,16 +174,20 @@
 								size="15" maxlength="12" />
 
 							<aon:outputLabel
-								value="#{appBundle.aon_payroll_pricipales_personas_cp}" />
+								value="#{appBundle.aon_payroll_pricipales_personas_cp} iudsoghioufwehsihis" />
 							<aon:inputText value="#{persona.to.codpos}"
-								size="5" maxlength="5" />
-
+								size="5" maxlength="5">
+								<a4j:support event="onblur" rendered="address">
+								<aon:actionListener method="#{persona.onProvince}" />
+								</a4j:support>
+							</aon:inputText>
+							
 							<aon:outputLabel
 								value="#{appBundle.aon_payroll_pricipales_personas_localidad}" />
 							<aon:inputText
-								value="#{persona.to.localidad}" size="20" maxlength="30" />
+								value="#{persona.to.localidad}" size="70" maxlength="50" />
 
-							<aon:outputLabel for="Provincia_cdg"
+							<aon:outputLabel for="Provincia_cdg" id="provincia"
 								value="#{appBundle.aon_payroll_pricipales_personas_provincia}" />
 							<aon:div styleClass="aon-lookup">
 								<aon:lookupInputText id="Provincia_cdg"
