@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+	<t:div styleClass="aon-form-group">
+		<t:div styleClass="aon-form-group-title">
+			<h:outputText value="#{content.label}" />
+		</t:div>
+		<t:div styleClass="aon-form-group-body">
+			<t:dataTable width="95%" cellpadding="0" cellspacing="0" border="0" align="center"
+				value="#{content.contentsList}" var="compositeContent"
+				rendered="#{content.columnLayoutContent}">
+				<h:column>
+					<t:div rendered="#{compositeContent.formView}" >
+						<ui:include src="/facelet/hyperview/content/composite/form.xhtml" />
+					</t:div>
+					<t:div rendered="#{compositeContent.listView}" >
+						<ui:include src="/facelet/hyperview/content/composite/list.xhtml" />
+					</t:div>
+					<t:div rendered="#{compositeContent.imageView}" >
+						<ui:include src="/facelet/hyperview/content/composite/image.xhtml" />
+					</t:div>
+					<t:div rendered="#{compositeContent.hyperLinkView}" >
+						<ui:include src="/facelet/hyperview/content/composite/hyperlink.xhtml" />
+					</t:div>
+				</h:column>
+			</t:dataTable>
+
+			<t:dataTable width="95%" cellpadding="0" cellspacing="10" border="0" align="center"
+				value="#{runnableTree.uniqueRowList}" var="uniqueRow" 
+				rendered="#{content.rowLayoutContent}">
+
+				<t:columns value="#{content.contentsList}" var="compositeContent">	
+					<t:div rendered="#{compositeContent.listView}" >
+						<ui:include src="/facelet/hyperview/content/composite/list.xhtml" />
+					</t:div>
+					<t:div rendered="#{compositeContent.formView}" >
+						<ui:include src="/facelet/hyperview/content/composite/form.xhtml" />
+					</t:div>
+					<t:div rendered="#{compositeContent.hyperLinkView}" >
+						<ui:include src="/facelet/hyperview/content/composite/hyperlink.xhtml" />
+					</t:div>
+					<t:div rendered="#{compositeContent.imageView}" >
+						<ui:include src="/facelet/hyperview/content/composite/image.xhtml" />
+					</t:div>
+				</t:columns>
+			</t:dataTable>
+
+		</t:div>
+	</t:div>
+</ui:composition>
+
+</body>
+</html>
+

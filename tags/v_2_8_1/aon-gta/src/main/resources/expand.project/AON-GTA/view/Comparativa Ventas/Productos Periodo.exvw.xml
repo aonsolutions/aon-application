@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Productos Periodo" label="Productos Periodo" sqlSentence="SELECT invoice_detail.item, product.name description,&#xd;&#xa;   &#x9;SUM(IF(invoice.issue_date BETWEEN ? AND ?, TRUNCATE(invoice_detail.taxable_base, 2), 0)),&#xd;&#xa;   &#x9;SUM(IF(invoice.issue_date BETWEEN ? AND ?, 0, TRUNCATE(invoice_detail.taxable_base, 2)))&#xd;&#xa;  FROM invoice_detail, invoice, item, product &#xd;&#xa; WHERE product.id = item.product &#xd;&#xa;   AND invoice_detail.item = item.id &#xd;&#xa;   AND invoice_detail.invoice = invoice.id &#xd;&#xa;   AND (&#xd;&#xa;       invoice.issue_date BETWEEN ? AND ?&#xd;&#xa;       OR invoice.issue_date BETWEEN DATE_SUB(?, INTERVAL 1 YEAR) AND DATE_SUB(?, INTERVAL 1 YEAR)&#xd;&#xa;       )&#xd;&#xa;   AND invoice.type = ?&#xd;&#xa; GROUP BY 1,2">
+    <parameters>
+        <parameter name="iniDate" type="DATE"/>
+        <parameter name="endDate" type="DATE"/>
+        <parameter name="iniDate2" type="DATE"/>
+        <parameter name="endDate2" type="DATE"/>
+        <parameter name="iniDate3" type="DATE"/>
+        <parameter name="endDate3" type="DATE"/>
+        <parameter name="iniDate4" type="DATE"/>
+        <parameter name="endDate4" type="DATE"/>
+        <parameter name="type" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result accessName="ITEM_ID" columnId="item" export="true"
+            label="Codigo" tableId="invoice_detail" type="INTEGER"/>
+        <result accessName="ITEM_NAME" columnId="name" export="true"
+            label="Articulo" tableId="product" type="STRING"/>
+        <result
+            accessName="SUM(IF(invoice.issue_date BETWEEN ? AND ?, TRUNCATE(invoice_detail.taxable_base, 2), 0))"
+            columnId="SUM(IF(invoice.issue_date BETWEEN ? AND ?, TRUNCATE(invoice_detail.taxable_base, 2), 0))"
+            label="Periodo" type="DOUBLE"/>
+        <result
+            accessName="SUM(IF(invoice.issue_date BETWEEN ? AND ?, 0, TRUNCATE(invoice_detail.taxable_base, 2)))"
+            columnId="SUM(IF(invoice.issue_date BETWEEN ? AND ?, 0, TRUNCATE(invoice_detail.taxable_base, 2)))"
+            label="Mismo periodo Año Anterior" type="DOUBLE"/>
+    </results>
+    <dataModelReferences/>
+</view>

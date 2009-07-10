@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:t="http://myfaces.apache.org/tomahawk"      
+	xmlns:c="http://java.sun.com/jstl/core"			
+	xmlns:h="http://java.sun.com/jsf/html">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<!-- 
+	<t:stylesheet path="/css/aon.css" />
+	<t:stylesheet path="/css/layout.css" />	
+ -->
+	<c:forEach items="#{aonConfiguration.styleSheets}" var="styleSheet">	
+		<t:stylesheet path="#{styleSheet}" />
+	</c:forEach>
+</head>
+<body>
+	<t:div id="aon-scroll-area">
+		<t:div styleClass="aon-content-home">
+			<h:graphicImage url="/images/aon-home.jpg" alt="" />
+		</t:div>		
+	</t:div>
+</body>
+</html>
