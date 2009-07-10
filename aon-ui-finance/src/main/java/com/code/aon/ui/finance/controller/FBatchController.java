@@ -165,6 +165,23 @@ public class FBatchController extends BasicController implements ICollectionProv
     	}
     }
     
+	/**
+	 * Adds to criteria the generic equal expression.
+	 * 
+	 * @param event the event that contains the new value
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 * @throws ExpressionException the expression exception
+	 */
+	public void addEqualExpression(ValueChangeEvent event) throws ManagerBeanException, ExpressionException {
+	    if (event.getNewValue() != null && !event.getNewValue().equals(new Integer(Integer.MAX_VALUE))) {
+	    	Criteria criteria = getCriteria();
+			Object value = event.getNewValue();
+            criteria.addExpression(getFieldName(event.getComponent().getId()), value.toString());
+			setCriteria(criteria);
+		}
+	}
+	
 	public void addRBankExpression(ValueChangeEvent event) throws ManagerBeanException{
 		if(event.getNewValue() != null){
 			Criteria criteria = getCriteria();

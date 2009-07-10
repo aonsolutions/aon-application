@@ -248,4 +248,19 @@ public class FinanceCheckingController extends GridController {
 		}
 	}
 	
+	/**
+	 * Adds to criteria the generic equal expression
+	 * 
+	 * @param event the event that contains the new value
+	 * @throws ManagerBeanException
+	 * @throws ExpressionException
+	 */
+	public void addEqualExpression(ValueChangeEvent event) throws ManagerBeanException, ExpressionException {
+	    if (event.getNewValue() != null && !event.getNewValue().equals(new Integer(Integer.MAX_VALUE))) {
+	    	Criteria c = getCriteria();
+			Object value = event.getNewValue();
+			c.addExpression(getFieldName(event.getComponent().getId()), value.toString());
+			setCriteria(c);
+		}
+	}
 }

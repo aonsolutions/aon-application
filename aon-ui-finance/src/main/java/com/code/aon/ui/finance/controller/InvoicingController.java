@@ -476,15 +476,15 @@ public class InvoicingController extends BasicController {
 		Invoice invoice = (Invoice)this.getTo();
 		try {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			IController purchaseFinanceController = AonUtil.getController(PURCHASE_FINANCE_CONTROLLER_NAME);
-			Iterator iter = ((List)purchaseFinanceController.getModel().getWrappedData()).iterator();
+			IController salesFinanceController = AonUtil.getController(PURCHASE_FINANCE_CONTROLLER_NAME);
+			Iterator iter = ((List)salesFinanceController.getModel().getWrappedData()).iterator();
 			while(iter.hasNext()){
 				Finance finance = (Finance)iter.next();
 				financeBean.remove(finance);
 			}
 			Company company = obtainCompany();
 			getFinanceGenerator().generateFinances(invoice, company, getPriceStrategy().getTotalPrice(invoice, invoice));
-			purchaseFinanceController.onSearch(null);
+			salesFinanceController.onSearch(null);
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanException("Error generating finances for invoice with id= " + invoice.getId(),e);
 		}
@@ -519,8 +519,8 @@ public class InvoicingController extends BasicController {
 				criteria = new Criteria();
 				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_DELIVERY_DETAIL), incomeDetail.getId());
 				Iterator iterator = invoiceDetailBean.getList(criteria).iterator();
-				while(iterator.hasNext()){
-					invoiceDetailBean.remove((InvoiceDetail)iterator.next());
+				if(iterator.hasNext()){
+					invoiceDetailBean.remove((ITransferObject)iterator.next());
 				}
 			}
 		} catch (ManagerBeanException e) {
