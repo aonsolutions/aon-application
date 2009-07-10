@@ -78,11 +78,10 @@
 									<aon:inputText id="Documento_description"
 										value="#{(persona.tipdoc.description!=null)?(persona.tipdoc.description):('')}"
 										size="55" disabled="true" />
-									<!--  
-						<br />
-						<aon:inputText value="#{persona.to.numdoc}" size="10"
-							maxlength="10" />
-						-->
+										<aon:inputText id="Persona_numdoc" size="10" maxlength="10"
+										valueChangeListener="#{persona.addExpression}" >
+									</aon:inputText>
+																			
 								</aon:div>
 								<aon:outputLabel for="Pais_cdg"
 									value="#{appBundle.aon_payroll_pricipales_personas_pais}" />
@@ -102,7 +101,7 @@
 										size="55" disabled="true" />
 								</aon:div>
 							</h:panelGrid>
-
+							
 						</aon:panelCollapsible>
 
 						<aon:panelCollapsible expanded="false"

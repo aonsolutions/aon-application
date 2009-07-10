@@ -151,6 +151,17 @@ public class PersonaController extends PayrollBasicController {
 		
 	}
 	
+	
+	public void onProvince(ActionEvent e){
+		
+		this.getProvincia().setCdg(((Persona)this.getTo()).getCodpos().substring(0, 1));
+	}
+	
+	public void onOtraperc(ActionEvent e){
+		
+		
+	}
+	
 	/**
 	 * Se incluyen manualmente a las búsquedas los campos lookup y de fechas 
 	 */
