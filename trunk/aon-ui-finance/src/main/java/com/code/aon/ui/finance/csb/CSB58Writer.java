@@ -100,13 +100,12 @@ public class CSB58Writer implements IFinanceConstants {
 		IAddress detailAddress = obtainInvoiceAddress(fBatchDetail.getFinance().getInvoice());
 		if(detailAddress != null){
 			individual.setAccountUserAddress(detailAddress.getAddress());
-			individual.setAccountUserAddress2(detailAddress.getAddress2());
+			individual.setAccountUserAddress2(detailAddress.getCity());
 			try {
 				individual.setAccountUserPCode(new Integer(detailAddress.getZip()));
 			} catch (NumberFormatException e) {
 				individual.setAccountUserPCode(new Integer(0));
 			}
-			individual.setOrdererCounty(detailAddress.getCity());
 		}
 		individual.setInitDate(new Date());
 		return individual;
