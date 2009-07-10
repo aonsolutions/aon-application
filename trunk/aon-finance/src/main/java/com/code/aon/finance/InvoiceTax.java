@@ -39,6 +39,12 @@ public class InvoiceTax implements ITransferObject {
 	/** The surcharge. */
 	private double surcharge;
 
+	/** The quota. */
+	private double quota;
+
+	/** The surcharge quota. */
+	private double surchargeQuota;
+
 	/**
 	 * Gets the id.
 	 * 
@@ -82,6 +88,25 @@ public class InvoiceTax implements ITransferObject {
 	}
 	
 	/**
+	 * Gets the tax type.
+	 * 
+	 * @return the tax type
+	 */
+	@Column(name="tax_type")
+	public TaxType getTaxType() {
+		return taxType;
+	}
+
+	/**
+	 * Sets the tax type.
+	 * 
+	 * @param taxType the tax type
+	 */
+	public void setTaxType(TaxType taxType) {
+		this.taxType = taxType;
+	}
+
+	/**
 	 * Gets the percentage.
 	 * 
 	 * @return the percentage
@@ -119,24 +144,43 @@ public class InvoiceTax implements ITransferObject {
 		this.surcharge = surcharge;
 	}
 
-	/**
-	 * Gets the tax type.
-	 * 
-	 * @return the tax type
-	 */
-	@Column(name="tax_type")
-	public TaxType getTaxType() {
-		return taxType;
-	}
+    /**
+     * Gets the quota.
+     * 
+     * @return the quota
+     */
+    @Column(nullable=true)
+    public double getQuota() {
+        return quota;
+    }
 
-	/**
-	 * Sets the tax type.
-	 * 
-	 * @param taxType the tax type
-	 */
-	public void setTaxType(TaxType taxType) {
-		this.taxType = taxType;
-	}
+    /**
+     * Sets the quota.
+     * 
+     * @param quota the quota
+     */
+    public void setQuota(double quota) {
+        this.quota = quota;
+    }
+
+    /**
+     * Gets the surcharge quota.
+     * 
+     * @return the surcharge quota
+     */
+    @Column(nullable=true)
+    public double getSurchargeQuota() {
+        return surchargeQuota;
+    }
+
+    /**
+     * Sets the surcharge quota.
+     * 
+     * @param surchargeQuota the surcharge quota
+     */
+    public void setSurchargeQuota(double surchargeQuota) {
+        this.surchargeQuota = surchargeQuota;
+    }
 
 	@Override
 	public boolean equals(Object obj) {
