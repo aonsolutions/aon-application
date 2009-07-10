@@ -81,20 +81,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 	private AccountingUtil accountingUtil;
 	private AccountBridgeUtil accountBridgeUtil;
 
-	private AccountBridgeUtil getAccountBridgeUtil() {
-		if (accountBridgeUtil == null) {
-			accountBridgeUtil = new AccountBridgeUtil();
-		}
-		return accountBridgeUtil;
-	}
-	
-	private AccountingUtil getAccountingUtil() {
-		if (accountingUtil == null) {
-			accountingUtil = new AccountingUtil();
-		}
-		return accountingUtil;
-	}
-
 	public Company getCompany() {
 		if (company == null) {
 			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
@@ -129,6 +115,20 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	public void setShowFbatchRecordWindow(boolean value) {
 		this.showFbatchRecordWindow = value;
+	}
+	
+	private AccountingUtil getAccountingUtil() {
+		if (accountingUtil == null) {
+			accountingUtil = new AccountingUtil();
+		}
+		return accountingUtil;
+	}
+
+	private AccountBridgeUtil getAccountBridgeUtil() {
+		if (accountBridgeUtil == null) {
+			accountBridgeUtil = new AccountBridgeUtil();
+		}
+		return accountBridgeUtil;
 	}
 	
     public boolean isTodo() {
