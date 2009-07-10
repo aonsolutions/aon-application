@@ -170,7 +170,7 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
      * 
      * @return the description
      */
-    @Column(length=64)
+    @Column(length=1024)
     public String getDescription() {
         return description;
     }
