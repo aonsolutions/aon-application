@@ -93,7 +93,7 @@ public class CSB58Writer {
 		individual.setName(fBatchDetail.getFinance().getInvoice().getRegistryName());
 		individual.setReferenceCode(fBatchDetail.getFinance().getInvoice().getRegistryDocument()); 
 		individual.setReturnCode(fBatchDetail.getFinance().getId().toString());
-		individual.setExpiryDate((Date)fBatchDetail.getFinance().getDueDate());
+		individual.setExpiryDate(fBatchDetail.getFinance().getDueDate());
 		RegistryAddress customerAddress = obtainRegistryAddress(fBatchDetail.getFinance().getRegistry().getId());
 		if(customerAddress != null){
 			individual.setAccountUserAddress(customerAddress.getAddress());
