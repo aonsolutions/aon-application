@@ -38,17 +38,18 @@
 							<f:facet name="header">
 								<aon:outputLabel for="InvoiceDetail_item_product_code" value="#{productBundle.product_item}" />
 							</f:facet>
-							<aon:outputText value="#{to.description}"
-								rendered="#{formList}" />
+							<aon:outputText value="#{to.description}" rendered="#{formList}">
+								<aon:abbreviateConverter maxWidth="64" />
+							</aon:outputText>
 	
-							<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
+							<aon:div id="invoiceDetailItemEdit" styleClass="aon-lookup" rendered="#{formEdit}">
 								<c:if test="#{!skipLineEdition}"> 
 									<a4j:region>
 										<aon:lookupInputText id="InvoiceDetail_item_product_code"
 											value="#{saleInvoiceDetail.to.item.product.code}"
 											lookup="#{itemLookup}"
 											lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
-											reRender="InvoiceDetail_item_product_name-Edit,InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_amount"
+											reRender="invoiceDetailItemEdit,InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_amount"
 											required="true" size="10" ajaxSingle="false">
 											<aon:joinProperty alias="Item_product_code"
 												value="#{saleInvoiceDetail.to.item.product.code}" />
@@ -56,25 +57,33 @@
 										<aon:lookupButton windowTitle="#{productBundle.product_module}"
 											actionType="search"
 											lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
-											selectReRender="InvoiceDetail_item_product_code,InvoiceDetail_item_product_name-Edit,InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_amount"
+											selectReRender="invoiceDetailItemEdit,InvoiceDetail_price,InvoiceDetail_discount,InvoiceDetail_amount"
 											lookup="#{itemLookup}" minHeight="460" minWidth="650"
 											property="#{saleInvoiceDetail.to.item}">
 										</aon:lookupButton>
-										<aon:inputText id="InvoiceDetail_item_product_name-Edit"
-											value="#{saleInvoiceDetail.to.description}" size="60" maxlength="64" />
+										<aon:inputTextarea id="InvoiceDetail_item_product_name-Edit"
+											value="#{saleInvoiceDetail.to.description}"
+											cols="64" rows="#{!saleInvoiceDetail.longDescription?1:5}" size="50"
+											style="#{!saleInvoiceDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}" />
 									</a4j:region>
+									<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
+										actionListener="#{saleInvoiceDetail.onShortDescription}" reRender="InvoiceDetail_item_product_name-Edit"
+										rendered="#{saleInvoiceDetail.longDescription and saleInvoiceDetail.to.item.product.code != null}" />
+									<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" immediate="true"
+										actionListener="#{saleInvoiceDetail.onLongDescription}" reRender="InvoiceDetail_item_product_name-Edit"
+										rendered="#{!saleInvoiceDetail.longDescription and saleInvoiceDetail.to.item.product.code != null}" />
 								</c:if>
 							</aon:div>
 	
 							<f:facet name="footer">
-								<aon:div styleClass="aon-lookup" rendered="#{formNew}">
+								<aon:div id="invoiceDetailItemNew" styleClass="aon-lookup" rendered="#{formNew}">
 									<c:if test="#{!skipResetButton}">
 										<a4j:region>
 											<aon:lookupInputText id="InvoiceDetail_item_product_code-New"
 												value="#{saleInvoiceDetail.to.item.product.code}"
 												lookup="#{itemLookup}"
 												lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
-												reRender="InvoiceDetail_item_product_name-New,InvoiceDetail_price-New,InvoiceDetail_discount-New,InvoiceDetail_amount-New"
+												reRender="invoiceDetailItemNew,InvoiceDetail_price-New,InvoiceDetail_discount-New,InvoiceDetail_amount-New"
 												required="true" size="10" ajaxSingle="false">
 												<aon:joinProperty alias="Item_product_code"
 													value="#{saleInvoiceDetail.to.item.product.code}" />
@@ -82,13 +91,21 @@
 											<aon:lookupButton windowTitle="#{productBundle.product_module}"
 												actionType="search"
 												lookupChangeListener="#{saleInvoiceDetail.onItemChanged}"
-												selectReRender="InvoiceDetail_item_product_code-New,InvoiceDetail_item_product_name-New,InvoiceDetail_price-New,InvoiceDetail_discount-New,InvoiceDetail_amount-New"
+												selectReRender="invoiceDetailItemNew,InvoiceDetail_price-New,InvoiceDetail_discount-New,InvoiceDetail_amount-New"
 												lookup="#{itemLookup}" minHeight="460" minWidth="650"
 												property="#{saleInvoiceDetail.to.item}">
 											</aon:lookupButton>
-											<aon:inputText id="InvoiceDetail_item_product_name-New"
-												value="#{saleInvoiceDetail.to.description}"	size="60" maxlength="64" />
+											<aon:inputTextarea id="InvoiceDetail_item_product_name-New"
+												value="#{saleInvoiceDetail.to.description}"
+												cols="64" rows="#{!saleInvoiceDetail.longDescription?1:5}" size="50"
+												style="#{!saleInvoiceDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}" />
 										</a4j:region>
+										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
+											actionListener="#{saleInvoiceDetail.onShortDescription}" reRender="InvoiceDetail_item_product_name-New"
+											rendered="#{saleInvoiceDetail.longDescription and saleInvoiceDetail.to.item.product.code != null}" />
+										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" immediate="true"
+											actionListener="#{saleInvoiceDetail.onLongDescription}" reRender="InvoiceDetail_item_product_name-New"
+											rendered="#{!saleInvoiceDetail.longDescription and saleInvoiceDetail.to.item.product.code != null}" />
 									</c:if>
 								</aon:div>
 							</f:facet>

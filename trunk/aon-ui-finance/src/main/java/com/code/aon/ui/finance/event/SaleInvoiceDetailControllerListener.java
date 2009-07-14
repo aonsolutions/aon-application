@@ -13,10 +13,9 @@ import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.BillingPeriod;
 import com.code.aon.finance.enumeration.InvoiceSource;
-import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
-import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
+import com.code.aon.ui.finance.controller.SaleInvoiceDetailController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -25,24 +24,39 @@ public class SaleInvoiceDetailControllerListener extends ControllerAdapter {
 
 	private static final Logger LOGGER = Logger.getLogger(SaleInvoiceDetailControllerListener.class.getName());
 	
-	private IPriceStrategy priceStrategy;
+	@Override
+	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		SaleInvoiceDetailController controller = (SaleInvoiceDetailController)event.getController();
+		controller.setLongDescription(false);
+	}
+
+	@Override
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		SaleInvoiceDetailController controller = (SaleInvoiceDetailController)event.getController();
+		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
+		if (invoiceDetail.getDescription().length() > 64) {
+			controller.setLongDescription(true);
+		} else {
+			controller.setLongDescription(false);
+		}
+	}
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		InvoiceDetail invoiceDetail = (InvoiceDetail) event.getController().getTo();
+		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
 		invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
-		obtainTaxableBase(invoiceDetail);
+		obtainTaxableBase(event, invoiceDetail);
 	}
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		InvoiceDetail invoiceDetail = (InvoiceDetail) event.getController().getTo();
-		obtainTaxableBase(invoiceDetail);
+		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
+		obtainTaxableBase(event, invoiceDetail);
 	}
 
 	@Override
 	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
-		InvoiceDetail invoiceDetail = (InvoiceDetail) event.getController().getTo();
+		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
 		if (invoiceDetail.getSource().equals(InvoiceSource.FEE)) {
 			try {
 				IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
@@ -66,36 +80,6 @@ public class SaleInvoiceDetailControllerListener extends ControllerAdapter {
 		}
 	}
 
-//	@Override
-//	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-//		try {
-//			SaleInvoiceDetailController detailController = (SaleInvoiceDetailController)event.getController();
-//			InvoiceDetail detail = (InvoiceDetail) detailController.getTo();
-//			if (detailController.getWorkPlace() != null) {
-//				detail.setWorkPlace(detailController.getWorkPlace());
-//			} else {
-//				SaleInvoiceController saleInvoiceController = (SaleInvoiceController)FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
-//				detail.setWorkPlace(obtainSeriesWorkplace(((Invoice)saleInvoiceController.getTo()).getSeries()));
-//			}
-//		} catch (ManagerBeanException e) {
-//			throw new ControllerListenerException("Error obtaining workplace related with the selected serie");
-//		}
-//	}
-
-//	@Override
-//	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
-//		SaleInvoiceDetailController detailController = (SaleInvoiceDetailController)event.getController();
-//		InvoiceDetail invoiceDetail = (InvoiceDetail) detailController.getTo();
-//		detailController.setWorkPlace(invoiceDetail.getWorkPlace());
-//	}
-
-//	@Override
-//	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-//		SaleInvoiceDetailController detailController = (SaleInvoiceDetailController)event.getController();
-//		InvoiceDetail invoiceDetail = (InvoiceDetail) detailController.getTo();
-//		detailController.setWorkPlace(invoiceDetail.getWorkPlace());
-//	}
-
 	@SuppressWarnings("unchecked")
 	private Customer obtainCustomer(Registry registry) {
 		try {
@@ -112,30 +96,9 @@ public class SaleInvoiceDetailControllerListener extends ControllerAdapter {
 		return null;
 	}
 
-	/*
-	@SuppressWarnings("unchecked")
-	private WorkPlace obtainSeriesWorkplace(String series) throws ManagerBeanException {
-		WorkPlace workPlace = null;
-		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), series);
-		Iterator iter = seriesBean.getList(criteria).iterator();
-		if (iter.hasNext()) {
-			Series dbSeries = (Series)iter.next();
-			workPlace = (dbSeries.getWorkPlace() != null?dbSeries.getWorkPlace():workPlace);
-		}
-		return workPlace;
-	}
-	*/
-
-	private void obtainTaxableBase(InvoiceDetail invoiceDetail) {
-		invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
+	private void obtainTaxableBase(ControllerEvent event, InvoiceDetail invoiceDetail) {
+		SaleInvoiceDetailController controller = (SaleInvoiceDetailController)event.getController();
+		invoiceDetail.setTaxableBase(controller.getPriceStrategy().getBasePrice(invoiceDetail));
 	}
 
-	private IPriceStrategy getPriceStrategy() {
-		if (priceStrategy == null) {
-			priceStrategy = new InvoicePriceStrategy();
-		}
-		return priceStrategy;
-	}
 }
