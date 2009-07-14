@@ -17,7 +17,7 @@
 		<customer:customer
 			showFinanceData="true" 
 			showProjectData="false"
-			showFinanceFeeData="false" 
+			showFinanceFeeData="true" 
 			showAccount="true"
 			showTariff="true" 
 			showSegment="true"
