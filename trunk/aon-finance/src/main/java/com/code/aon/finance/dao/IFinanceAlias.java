@@ -714,6 +714,18 @@ public interface IFinanceAlias {
 	*/
 	String  INVOICE_TAX_SURCHARGE = INVOICE_TAX_ENTRY.getAliasNames()[5];
 
+	/** 
+	* Alias value: InvoiceTax_quota
+	* Hibernate value: InvoiceTax.quota
+	*/
+	String  INVOICE_TAX_QUOTA = INVOICE_TAX_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: InvoiceTax_surchargeQuota
+	* Hibernate value: InvoiceTax.surchargeQuota
+	*/
+	String  INVOICE_TAX_SURCHARGE_QUOTA = INVOICE_TAX_ENTRY.getAliasNames()[7];
+
 
 
 	/** 

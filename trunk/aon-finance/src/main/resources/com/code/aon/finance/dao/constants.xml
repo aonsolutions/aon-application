@@ -21,8 +21,8 @@
 	</bean>
 	
 	<bean class="com.code.aon.finance.InvoiceTax" sqlName="invoice_tax">
-		<alias names="id,invoiceDetail_id,invoiceDetail_invoice_id,taxType,percentage,surcharge" />
-		<hibernate names="id,invoiceDetail.id,invoiceDetail.invoice.id,taxType,percentage,surcharge" />
+		<alias names="id,invoiceDetail_id,invoiceDetail_invoice_id,taxType,percentage,surcharge,quota,surchargeQuota" />
+		<hibernate names="id,invoiceDetail.id,invoiceDetail.invoice.id,taxType,percentage,surcharge,quota,surchargeQuota" />
 	</bean>
 	
 	<bean class="com.code.aon.finance.InvoicingGroup" sqlName="invoicing_group">
