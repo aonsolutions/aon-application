@@ -41,4 +41,12 @@
 			showAccount="true"
 		/>
 	</finance:config>
+
+	<product:config version="1.0" xmlns:product="http://www.esferalia.com/product">
+		<product:product
+			showStock="false"
+			showAccount="true"
+			showAttachment="false"
+		/>
+	</product:config>
 </config>
