@@ -411,25 +411,25 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 			addressController.onReset(event);
 		}
 	}
-	
+
 	public String getSendEmailToTitle() throws ManagerBeanException {
 		Invoice invoice = (Invoice) getTo();
 		String message = AonUtil.getMessage(BUNDLE_KEY, FINANCE_SEND_EMAIL_TO);
-		return MessageFormat.format(message, invoice.getRegistry().getEmail().getValue() );
+		return MessageFormat.format(message, invoice.getRegistry().getEmail().getValue());
 	}
 
 	public String getRegistryWithoutEmailTitle(){
 		Invoice invoice = (Invoice) getTo();
 		String message = AonUtil.getMessage(BUNDLE_KEY, FINANCE_REGISTRY_WITHOUT_EMAIL);
-		return MessageFormat.format(message, invoice.getRegistry().getFullName() );
+		return MessageFormat.format(message, invoice.getRegistry().getFullName());
 	}
 
-	public void sendInvoiceByEmail( ActionEvent event ) {
+	public void sendInvoiceByEmail(ActionEvent event) {
 		EmailUtilController emailController = (EmailUtilController) AonUtil.getRegisteredBean(EMAIL_UTIL_CONTROLLER_NAME);
 		try {
 			EmailSender sender = emailController.getEmailSender();
 			sender.connect();
-			emailController.sendInvoice( (Invoice) getTo(), isDigitalCertificate() );
+			emailController.sendInvoice((Invoice) getTo(), isDigitalCertificate());
 			sender.disconnect();
 		} catch (Throwable th) {
 			LOGGER.log(Level.SEVERE, th.getMessage(), th);
