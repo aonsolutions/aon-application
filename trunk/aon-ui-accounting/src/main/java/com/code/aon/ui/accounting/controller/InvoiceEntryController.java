@@ -325,11 +325,109 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		return false;
 	}
 
+	public void onAdjustTaxableBase(ActionEvent event) {
+		if (header.getTaxableBase() != null) {
+			try {
+				AccountAppParamsController c = (AccountAppParamsController) AonUtil
+				.getRegisteredBean(ACCOUNT_APP_PARAM_CONTROLLER_NAME);
+				ApplicationParameter param = c.getParameter(DefaultAccounts.DEFAULT_VAT_PERCENT);
+				if (param != null) {
+					String value = param.getValue();
+					Integer id = Integer.parseInt(value);
+					IManagerBean taxBean = BeanManager.getManagerBean(Tax.class);
+					Tax tax = (Tax) taxBean.get(id);
+					if (tax != null) {
+						header.setTaxableBase(CommonUtil.round(header.getTaxableBase() / (1 + (tax.getPercentage()/100))));						
+					} 
+				}
+				onTaxableBaseWizard(event);
+			} catch (Exception e) {
+				LOGGER.warning("NO SE PUEDE ASIGNAR EL PORCENTAJE DE IVA POR DEFECTO.");
+			}
+		} else {
+			String msg="La Base Imponible es un dato requerido para esta utilidad.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		
+	}
+	public void onTaxableBaseWizard(ActionEvent event) {
+		if (header.getAccount() != null) {
+			if (header.getTaxableBase() != null) {
+				onNewDetail(event);
+				onAddDetail(event);
+				onCancelDetail(event);
+			} else {
+				String msg="La Base Imponible es un dato requerido para esta utilidad.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+		} else {
+			String msg="La Cuenta Contable es un dato requerido para esta utilidad.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+
+	}
+
+	public void onChangeTaxableBase(ValueChangeEvent event) {
+		if (event.getNewValue() != null) {
+			double t = (Double) event.getNewValue();
+
+			currentDetail.setVatQuota(0.0);
+			currentDetail.setSurchargeQuota(0.0);
+			currentDetail.setRetentionQuota(0.0);
+			
+			if(currentDetail.getVatPercent() != 0){
+				currentDetail.setVatQuota(CommonUtil.round(t * currentDetail.getVatPercent() / 100, 2));
+			}
+			if(currentDetail.getSurchargePercent() != 0){
+				currentDetail.setSurchargeQuota( CommonUtil.round(t * currentDetail.getSurchargePercent() / 100, 2));
+			}
+			if(currentDetail.getRetentionPercent() != 0){
+				currentDetail.setRetentionQuota( CommonUtil.round(t * currentDetail.getRetentionPercent() / 100, 2));
+			}
+		}
+	}
+	public void onChangeVatPercent(ValueChangeEvent event) {
+		if (event.getNewValue() != null) {
+			double p = (Double) event.getNewValue();
+
+			currentDetail.setVatQuota(0.0);
+			if(currentDetail.getVatPercent() != 0){
+				currentDetail.setVatQuota(CommonUtil.round(currentDetail.getTaxableBase() * p / 100, 2));
+			}
+		}
+	}
+	
+	public void onChangeSurchargePercent(ValueChangeEvent event) {
+		if (event.getNewValue() != null) {
+			double p = (Double) event.getNewValue();
+
+			currentDetail.setSurchargeQuota(0.0);
+			if(currentDetail.getSurchargePercent() != 0){
+				currentDetail.setSurchargeQuota(CommonUtil.round(currentDetail.getTaxableBase() * p / 100, 2));
+			}
+		}
+	}
+	
+	public void onChangeRetentionPercent(ValueChangeEvent event) {
+		if (event.getNewValue() != null) {
+			double p = (Double) event.getNewValue();
+
+			currentDetail.setRetentionQuota(0.0);
+			if(currentDetail.getRetentionPercent() != 0){
+				currentDetail.setRetentionQuota(CommonUtil.round(currentDetail.getTaxableBase() * p / 100, 2));
+			}
+		}
+	}
+
 	public void onNewDetail(ActionEvent event) {
 		this.isNewDetail = true;
 		this.currentDetail = new InvoiceEntryDetail();
 		Account a = (header.getAccount() != null) ? header.getAccount() : null;
 		this.currentDetail.setAccount(a);
+		this.currentDetail.setTaxableBase( header.getTaxableBase()==null?0.0:header.getTaxableBase());
 
 		AccountAppParamsController c = (AccountAppParamsController) AonUtil
 				.getRegisteredBean(ACCOUNT_APP_PARAM_CONTROLLER_NAME);
@@ -658,7 +756,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		Iterator<?> iter = ((List<?>) details.getWrappedData()).iterator();
 		while (iter.hasNext()) {
 			InvoiceEntryDetail detail = (InvoiceEntryDetail) iter.next();
-			total += detail.getVatQuota() + detail.getSurcharge();
+			total += detail.getVatQuota() + detail.getSurchargeQuota();
 		}
 
 		Map<Account, Double> taxQuotasPerAccountMap = new HashMap<Account, Double>();
@@ -867,7 +965,9 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		if (detail.getVatPercent() > 0) {
 			invoiceTax.setInvoiceDetail(invoiceDetail);
 			invoiceTax.setPercentage(detail.getVatPercent());
+			invoiceTax.setQuota(detail.getVatQuota());
 			invoiceTax.setSurcharge(detail.getSurchargePercent());
+			invoiceTax.setSurchargeQuota(detail.getSurchargeQuota());
 			invoiceTax.setTaxType(TaxType.VAT);
 			invoiceTaxBean.insert(invoiceTax);
 		}
@@ -875,6 +975,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			invoiceTax = new InvoiceTax();
 			invoiceTax.setInvoiceDetail(invoiceDetail);
 			invoiceTax.setPercentage(detail.getRetentionPercent());
+			invoiceTax.setQuota(detail.getRetentionQuota());
 			invoiceTax.setSurcharge(0);
 			invoiceTax.setTaxType(TaxType.RETENTION);
 			invoiceTaxBean.insert(invoiceTax);
@@ -1244,10 +1345,12 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 					InvoiceTax invoiceTax = (InvoiceTax)taxIter.next();
 					if(invoiceTax.getTaxType().equals(TaxType.VAT)){
 						detail.setVatPercent(invoiceTax.getPercentage());
+						detail.setVatQuota(invoiceTax.getQuota());
 						detail.setSurchargePercent(invoiceTax.getSurcharge());
-						
+						detail.setSurchargeQuota(invoiceTax.getSurchargeQuota());
 					} else if(invoiceTax.getTaxType().equals(TaxType.RETENTION)){
 						detail.setRetentionPercent(invoiceTax.getPercentage());
+						detail.setRetentionQuota(invoiceTax.getQuota());
 					}
 				}
 

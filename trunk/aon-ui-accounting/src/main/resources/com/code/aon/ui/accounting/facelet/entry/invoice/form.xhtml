@@ -149,6 +149,13 @@
 								maxlength="25" onblur="toUpperCase(this);">
 								<f:validateLength maximum="32" />
 							</aon:inputText>
+							
+							<aon:selectOneRadio id="AccountEntry_securityLevel"
+								style="display:inline;"
+								disabled="#{invoiceEntry.newDetail}"
+								value="#{invoiceEntry.header.securityLevel}">
+								<f:selectItems value="#{commonCollections.securityLevels}" />
+							</aon:selectOneRadio>
 						</aon:div>
 
 						<aon:outputLabel for="AccountEntry_accountPeriod"
@@ -205,7 +212,7 @@
 							<aon:panelGroup rendered="#{invoiceEntry.sales}">
 								 <a4j:region>
 									<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
-										reRender="Customer_name,Invoice_document,invoiceDetails,Account_Related"
+										reRender="Customer_name,Invoice_document,invoiceDetails,Account_Related,InvoiceDetail_wizard"
 										lookupProperty="registry" ajaxSingle="false"
 										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
@@ -213,7 +220,7 @@
 										value="#{invoiceEntry.header.registry.id}" size="5" />
 									<aon:lookupButton
 										windowTitle="#{customerBundle.customer_selection}"
-										selectReRender="Customer_id,Customer_name,Invoice_document,invoiceDetails,Account_Related"
+										selectReRender="Customer_id,Customer_name,Invoice_document,invoiceDetails,Account_Related,InvoiceDetail_wizard"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										actionType="search" lookup="#{customerLookup}" minHeight="460"
@@ -223,7 +230,7 @@
 									</aon:lookupButton>
 									<aon:lookupButton 
 										windowTitle="#{customerBundle.customer_new}"
-										selectReRender="Customer_id,Customer_name,Invoice_document,Account_Related,invoiceDetails,aonToolbar"
+										selectReRender="Customer_id,Customer_name,Invoice_document,Account_Related,invoiceDetails,aonToolbar,InvoiceDetail_wizard"
 										lookup="#{customerLookup}" actionType="new" 
 										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										minWidth="650" minHeight="600"
@@ -241,14 +248,14 @@
 							<aon:panelGroup rendered="#{invoiceEntry.purchase}">
 								 <a4j:region>
 									<aon:lookupInputText id="Supplier_id" lookup="#{supplierLookup}"
-										reRender="Supplier_name,Invoice_document,invoiceDetails,Account_Related"
+										reRender="Supplier_name,Invoice_document,invoiceDetails,Account_Related,InvoiceDetail_wizard"
 										lookupProperty="registry" ajaxSingle="false"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										value="#{invoiceEntry.header.registry.id}" size="5" />
 									<aon:lookupButton
 										windowTitle="#{supplierBundle.supplier_selection}"
-										selectReRender="Supplier_id,Supplier_name,Invoice_document,invoiceDetails,Account_Related"
+										selectReRender="Supplier_id,Supplier_name,Invoice_document,invoiceDetails,Account_Related,InvoiceDetail_wizard"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										actionType="search" lookup="#{supplierLookup}" minHeight="460"
@@ -257,7 +264,7 @@
 									</aon:lookupButton>
 									<aon:lookupButton 
 										windowTitle="#{supplierBundle.supplier_new}"
-										selectReRender="Supplier_id,Supplier_name,Invoice_document,Account_Related,invoiceDetails,aonToolbar"
+										selectReRender="Supplier_id,Supplier_name,Invoice_document,Account_Related,invoiceDetails,aonToolbar,InvoiceDetail_wizard"
 										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										lookup="#{supplierLookup}" actionType="new" 
 										minWidth="650" minHeight="600"
@@ -275,14 +282,14 @@
 							<aon:panelGroup rendered="#{invoiceEntry.expense}">
 								 <a4j:region>
 									<aon:lookupInputText id="Creditor_id" lookup="#{creditorLookup}"
-										reRender="Creditor_name,Invoice_document,invoiceDetails,Account_Related"
+										reRender="Creditor_name,Invoice_document,invoiceDetails,Account_Related,InvoiceDetail_wizard"
 										lookupProperty="registry" ajaxSingle="false"
 										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										value="#{invoiceEntry.header.registry.id}" size="5" />
 									<aon:lookupButton
 										windowTitle="#{financeBundle.finance_creditor_selection}"
-										selectReRender="Creditor_id,Creditor_name,Invoice_document,invoiceDetails,Account_Related"
+										selectReRender="Creditor_id,Creditor_name,Invoice_document,invoiceDetails,Account_Related,InvoiceDetail_wizard"
 										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										actionType="search" lookup="#{creditorLookup}" minHeight="460"
@@ -291,7 +298,7 @@
 									</aon:lookupButton>
 									<aon:lookupButton 
 										windowTitle="#{financeBundle.finance_creditor_new}"
-										selectReRender="Creditor_id,Creditor_name,Invoice_document,Account_Related,invoiceDetails,aonToolbar"
+										selectReRender="Creditor_id,Creditor_name,Invoice_document,Account_Related,invoiceDetails,aonToolbar,InvoiceDetail_wizard"
 										lookup="#{creditorLookup}" actionType="new" 
 										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										minWidth="650" minHeight="550"
@@ -323,6 +330,32 @@
 							<f:selectItems value="#{invoiceEntry.relatedAccounts}" />
 						</aon:selectOneMenu>
  
+						<aon:outputLabel for="Invoice_TaxableBase"
+							value="#{bundle.aon_taxable_base} (F9)" />
+						<aon:div id="InvoiceDetail_wizard">
+							<aon:inputText id="Invoice_TaxableBase"
+								value="#{invoiceEntry.header.taxableBase}" size="10"
+								disabled="#{invoiceEntry.newDetail}">
+								<a4j:support event="onkeyup"
+									onsubmit="if(event.keyCode != 120) return false;"
+									eventsQueue="debitKeyUp" ignoreDupResponses="true"
+									requestDelay="100"
+									reRender="Invoice_TaxableBase,invoiceDetails,TaxesData,aonToolbar,financesTotal"
+									actionListener="#{invoiceEntry.onAdjustTaxableBase}"
+									focus="saveInvoice">
+								</a4j:support>
+							</aon:inputText>
+							<aon:commandButton 
+								value="Generar"
+								rendered="#{invoiceEntry.registryFilled}"
+								styleClass="aon-finding-toolbar-item aon-icon-favorite"
+								actionListener="#{invoiceEntry.onTaxableBaseWizard}"
+								reRender="invoiceDetails,TaxesData,aonToolbar,financesTotal"
+								focus="saveInvoice">
+							</aon:commandButton>
+						</aon:div>
+
+<!--
 						<aon:outputLabel for="AccountEntry_securityLevel"
 							value="#{bundle.aon_security_level}" />
 						<aon:selectOneRadio id="AccountEntry_securityLevel"
@@ -332,6 +365,9 @@
 							<f:selectItems value="#{commonCollections.securityLevels}" />
 						</aon:selectOneRadio>
 
+						<aon:outputText value="&#160;" />
+						<aon:outputText value="&#160;" />
+-->						
 					</aon:panelGrid>
 				</aon:div>
 				<aon:div id="invoiceDetails">
