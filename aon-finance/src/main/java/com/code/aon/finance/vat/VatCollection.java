@@ -24,7 +24,8 @@ public class VatCollection {
 			stmt.append("SELECT i.type,YEAR(i.tax_date) YEAR,QUARTER(i.tax_date) QUARTER, ");
 			stmt.append("	   MONTH(i.tax_date) MONTH,it.percentage,it.surcharge,i.transaction,");
 			stmt.append("	   i.investment,SUM(id.taxable_base),");
-			stmt.append("	   SUM(ROUND(id.taxable_base * it.percentage / 100, 2)),SUM(ROUND(id.taxable_base * it.surcharge / 100, 2))");
+			stmt.append("	   SUM( IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) ) ) IVA,");
+			stmt.append("	   SUM( IF(it.surcharge_quota != 0,it.surcharge_quota,ROUND(id.taxable_base * it.surcharge / 100, 2) ) ) RE");
 			stmt.append(" FROM invoice_tax it ");
 			stmt.append(" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)"); 
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)"); 
@@ -100,7 +101,8 @@ public class VatCollection {
 			StringWriter stmt = new StringWriter();
 			stmt.append(" SELECT i.type,i.transaction,i.tax_date,i.issue_date,i.reference_code,i.rdocument,i.rname ");
 			stmt.append("  ,it.percentage,it.surcharge,SUM(id.taxable_base) ");
-			stmt.append("  ,SUM(ROUND(id.taxable_base * it.percentage / 100, 2)),SUM(ROUND(id.taxable_base * it.surcharge / 100, 2)),");
+			stmt.append("  ,SUM( IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) ) ) IVA");
+			stmt.append("  ,SUM( IF(it.surcharge_quota != 0,it.surcharge_quota,ROUND(id.taxable_base * it.surcharge / 100, 2) ) ) RE,");
 			stmt.append(operation + " vatType ");
 			stmt.append("  FROM invoice_tax it ");
 			stmt.append("  INNER JOIN invoice_detail id ON (it.invoice_detail = id.id) ");

@@ -61,74 +61,32 @@ public class InvoiceEntryHeader implements ITransferObject {
 	
 	private Integer accountEntryId;
 
-	/**
-	 * Gets the type.
-	 * 
-	 * @return the type
-	 */
+	private Double taxableBase;
+
 	public InvoiceType getType() {
 		return type;
 	}
-
-	/**
-	 * Sets the type.
-	 * 
-	 * @param type the type
-	 */
 	public void setType(InvoiceType type) {
 		this.type = type;
 	}
 
-	/**
-	 * Gets the registry.
-	 * 
-	 * @return the registry
-	 */
 	public Registry getRegistry() {
 		return registry;
 	}
-
-	/**
-	 * Sets the registry.
-	 * 
-	 * @param registry the registry
-	 */
 	public void setRegistry(Registry registry) {
 		this.registry = registry;
 	}
 	
-	/**
-	 * Gets the name.
-	 * 
-	 * @return the name
-	 */
 	public String getName() {
 		return name;
 	}
-
-	/**
-	 * Sets the name.
-	 * 
-	 * @param name the name
-	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	/**
-	 * Gets the document.
-	 * 
-	 * @return the document
-	 */
 	public String getDocument() {
 		return document;
 	}
-
-	/**
-	 * Sets the document.
-	 * 
-	 * @param document the document
-	 */
 	public void setDocument(String document) {
 		this.document = document;
 	}
@@ -154,92 +112,37 @@ public class InvoiceEntryHeader implements ITransferObject {
 		this.period = period;
 	}
 
-	/**
-	 * Gets the series.
-	 * 
-	 * @return the series
-	 */
 	public String getSeries() {
 		return series;
 	}
-
-	/**
-	 * Sets the series.
-	 * 
-	 * @param series the series
-	 */
 	public void setSeries(String series) {
 		this.series = series;
 	}
 
-	/**
-	 * Gets the number.
-	 * 
-	 * @return the number
-	 */
 	public int getNumber() {
 		return number;
 	}
-
-	/**
-	 * Sets the number.
-	 * 
-	 * @param number the number
-	 */
 	public void setNumber(int number) {
 		this.number = number;
 	}
 
-	/**
-	 * Gets the reference code.
-	 * 
-	 * @return the reference code
-	 */
 	public String getReferenceCode() {
 		return referenceCode;
 	}
-
-	/**
-	 * Sets the reference code.
-	 * 
-	 * @param referenceCode the reference code
-	 */
 	public void setReferenceCode(String referenceCode) {
 		this.referenceCode = referenceCode;
 	}
 
-	/**
-	 * Gets the account.
-	 * 
-	 * @return the account
-	 */
 	public Account getAccount() {
 		return account;
 	}
-
-	/**
-	 * Sets the account.
-	 * 
-	 * @param account the account
-	 */
 	public void setAccount(Account account) {
 		this.account = account;
 	}
 
-	/**
-	 * Gets the security level.
-	 * 
-	 * @return the security level
-	 */
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
-
-	/**
-	 * Sets the security level.
-	 * 
-	 * @param securityLevel the security level
-	 */
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
 	}
@@ -247,7 +150,6 @@ public class InvoiceEntryHeader implements ITransferObject {
 	public boolean isInvestment() {
 		return investment;
 	}
-
 	public void setInvestment(boolean investment) {
 		this.investment = investment;
 	}
@@ -263,9 +165,15 @@ public class InvoiceEntryHeader implements ITransferObject {
 	public Integer getAccountEntryId() {
 		return accountEntryId;
 	}
-
 	public void setAccountEntryId(Integer accountEntryId) {
 		this.accountEntryId = accountEntryId;
+	}
+
+	public Double getTaxableBase() {
+		return taxableBase;
+	}
+	public void setTaxableBase(Double taxableBase) {
+		this.taxableBase = taxableBase;
 	}
 
 	public boolean isTaxFree() {

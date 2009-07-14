@@ -51,12 +51,14 @@
 				<aon:inputText size="8" id="Account_Taxable_Base"
 					reRender="editRetention,editVat,editSurcharge,editTotal,invoiceTotal"
 					rendered="#{to==invoiceEntry.currentDetail}"
+					valueChangeListener="#{invoiceEntry.onChangeTaxableBase}"
 					value="#{invoiceEntry.currentDetail.taxableBase}" required="true" />
 				<f:facet name="footer">
 					<aon:div styleClass="aon-text-right">
 						<aon:inputText id="Account_Taxable_Base-New" size="8"
 							reRender="newRetention,newVat,newSurcharge,newTotal"
 							rendered="#{invoiceEntry.newDetail}"
+							valueChangeListener="#{invoiceEntry.onChangeTaxableBase}"
 							value="#{invoiceEntry.currentDetail.taxableBase}">
 
 							<a4j:support event="onkeyup"
@@ -68,8 +70,6 @@
 								focus="newFinance">
 							</a4j:support>
 						</aon:inputText>
-						<aon:outputText rendered="#{!invoiceEntry.newDetail}"
-							value="&#160;" />
 					</aon:div>
 				</f:facet>
 			</aon:column>
@@ -86,12 +86,14 @@
 				<aon:inputText id="Account_Retention" size="5"
 					reRender="editRetention,editVat,editSurcharge,editTotal,invoiceTotal"
 					rendered="#{to==invoiceEntry.currentDetail}"
+					valueChangeListener="#{invoiceEntry.onChangeRetentionPercent}"
 					value="#{invoiceEntry.currentDetail.retentionPercent}" />
 				<f:facet name="footer">
 					<aon:div styleClass="aon-text-right">
 						<aon:inputText id="Account_Retention-New" size="5"
 							rendered="#{invoiceEntry.newDetail}"
 							value="#{invoiceEntry.currentDetail.retentionPercent}"
+							valueChangeListener="#{invoiceEntry.onChangeRetentionPercent}"
 							reRender="newRetention,newVat,newSurcharge,newTotal" />
 						<aon:outputText rendered="#{!invoiceEntry.newDetail}"
 							value="&#160;" />
@@ -104,19 +106,21 @@
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_retention_quota}" />
 				</f:facet>
-				<aon:outputText id="editRetention" value="#{to.retentionQuota}">
+				<aon:outputText rendered="#{to!=invoiceEntry.currentDetail}" 
+					value="#{to.retentionQuota}">
 					<f:convertNumber pattern="#,##0.00" />
 				</aon:outputText>
+				<aon:inputText id="editRetention" size="8"
+					rendered="#{to==invoiceEntry.currentDetail}"
+					value="#{invoiceEntry.currentDetail.retentionQuota}"
+					reRender="editRetention,editVat,editSurcharge,editTotal,invoiceTotal"
+					required="true" />
 				<f:facet name="footer">
-					<aon:div id="newRetention" rendered="#{invoiceEntry.newDetail}"
-						styleClass="aon-text-right">
-						<aon:outputText
-							value="#{invoiceEntry.currentDetail.retentionQuota}">
-							<f:convertNumber pattern="#,##0.00" />
-						</aon:outputText>
-						<aon:outputText rendered="#{!invoiceEntry.newDetail}"
-							value="&#160;" />
-					</aon:div>
+					<aon:inputText id="newRetention" size="8"
+						rendered="#{invoiceEntry.newDetail}" 
+						value="#{invoiceEntry.currentDetail.retentionQuota}"
+						reRender="newRetention,newVat,newSurcharge,newTotal"
+						required="true" />
 				</f:facet>
 			</aon:column>
 
@@ -125,25 +129,22 @@
 					<aon:outputLabel for="Account_Vat" value="#{bundle.aon_vat}" />
 				</f:facet>
 				<aon:outputText value="#{to.vatPercent}"
-					reRender="editRetention,editVat,editSurcharge,editTotal,invoiceTotal"
 					rendered="#{to!=invoiceEntry.currentDetail}">
 					<f:convertNumber pattern="#,##0.00" />
 				</aon:outputText>
 				<aon:inputText id="Account_Vat" size="5"
 					rendered="#{to==invoiceEntry.currentDetail}"
 					value="#{invoiceEntry.currentDetail.vatPercent}"
+					valueChangeListener="#{invoiceEntry.onChangeVatPercent}"
 					reRender="editRetention,editVat,editSurcharge,editTotal,invoiceTotal"
-					required="true" />
+					required="true" focus="editVat"/>
 				<f:facet name="footer">
-					<aon:div styleClass="aon-text-right">
-						<aon:inputText id="Account_Vat-New" size="5"
-							rendered="#{invoiceEntry.newDetail}"
-							value="#{invoiceEntry.currentDetail.vatPercent}"
-							reRender="newRetention,newVat,newSurcharge,newTotal"
-							required="true" />
-						<aon:outputText rendered="#{!invoiceEntry.newDetail}"
-							value="&#160;" />
-					</aon:div>
+					<aon:inputText id="Account_Vat-New" size="5"
+						rendered="#{invoiceEntry.newDetail}"
+						value="#{invoiceEntry.currentDetail.vatPercent}"
+						valueChangeListener="#{invoiceEntry.onChangeVatPercent}"
+						reRender="newRetention,newVat,newSurcharge,newTotal"
+						required="true" focus="newVat"/>
 				</f:facet>
 			</aon:column>
 
@@ -151,18 +152,21 @@
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_vat_quota}" />
 				</f:facet>
-				<aon:outputText id="editVat" value="#{to.vatQuota}">
+				<aon:outputText value="#{to.vatQuota}"
+					rendered="#{to!=invoiceEntry.currentDetail}">
 					<f:convertNumber pattern="#,##0.00" />
 				</aon:outputText>
+				<aon:inputText id="editVat" size="8"
+					rendered="#{to==invoiceEntry.currentDetail}"
+					value="#{invoiceEntry.currentDetail.vatQuota}"
+					reRender="editRetention,editVat,editSurcharge,editTotal,invoiceTotal"
+					required="true" />
 				<f:facet name="footer">
-					<aon:div id="newVat" rendered="#{invoiceEntry.newDetail}"
-						styleClass="aon-text-right">
-						<aon:outputText value="#{invoiceEntry.currentDetail.vatQuota}">
-							<f:convertNumber pattern="#,##0.00" />
-						</aon:outputText>
-						<aon:outputText rendered="#{!invoiceEntry.newDetail}"
-							value="&#160;" />
-					</aon:div>
+					<aon:inputText id="newVat" size="8"
+						rendered="#{invoiceEntry.newDetail}" 
+						value="#{invoiceEntry.currentDetail.vatQuota}"
+						reRender="newRetention,newVat,newSurcharge,newTotal"
+						required="true" />
 				</f:facet>
 			</aon:column>
 
@@ -178,18 +182,16 @@
 				<aon:inputText id="Account_Surcharge-Edit" size="5"
 					rendered="#{to==invoiceEntry.currentDetail}"
 					value="#{invoiceEntry.currentDetail.surchargePercent}"
+					valueChangeListener="#{invoiceEntry.onChangeSurchargePercent}"
 					reRender="editRetention,editVat,editSurcharge,editTotal,invoiceTotal"
 					/>
 				<f:facet name="footer">
-					<aon:div styleClass="aon-text-right">
-						<aon:inputText id="Account_Surcharge-New" size="5"
-							rendered="#{invoiceEntry.newDetail}"
-							value="#{invoiceEntry.currentDetail.surchargePercent}"
-							reRender="newRetention,newVat,newSurcharge,newTotal"
-							/>
-						<aon:outputText rendered="#{!invoiceEntry.newDetail}"
-							value="&#160;" />
-					</aon:div>
+					<aon:inputText id="Account_Surcharge-New" size="5"
+						rendered="#{invoiceEntry.newDetail}"
+						value="#{invoiceEntry.currentDetail.surchargePercent}"
+						valueChangeListener="#{invoiceEntry.onChangeSurchargePercent}"
+						reRender="newRetention,newVat,newSurcharge,newTotal"
+						/>
 				</f:facet>
 			</aon:column>
 
@@ -198,18 +200,20 @@
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_surcharge_quota}" />
 				</f:facet>
-				<aon:outputText id="editSurcharge" value="#{to.surcharge}">
+				<aon:outputText value="#{to.surchargeQuota}"
+					rendered="#{to!=invoiceEntry.currentDetail}">
 					<f:convertNumber pattern="#,##0.00" />
 				</aon:outputText>
+				<aon:inputText id="editSurcharge" size="8"
+					rendered="#{to==invoiceEntry.currentDetail}"
+					value="#{invoiceEntry.currentDetail.surchargeQuota}"
+					reRender="editRetention,editVat,editSurcharge,editTotal,invoiceTotal"
+					required="true" />
 				<f:facet name="footer">
-					<aon:div id="newSurcharge" rendered="#{invoiceEntry.newDetail}"
-						styleClass="aon-text-right">
-						<aon:outputText value="#{invoiceEntry.currentDetail.surcharge}">
-							<f:convertNumber pattern="#,##0.00" />
-						</aon:outputText>
-						<aon:outputText rendered="#{!invoiceEntry.newDetail}"
-							value="&#160;" />
-					</aon:div>
+					<aon:inputText id="newSurcharge" size="8"
+						rendered="#{invoiceEntry.newDetail}"
+						value="#{invoiceEntry.currentDetail.surchargeQuota}"
+						reRender="newRetention,newVat,newSurcharge,newTotal" />
 				</f:facet>
 			</aon:column>
 

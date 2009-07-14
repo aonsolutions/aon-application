@@ -9,13 +9,12 @@ public class InvoiceEntryDetail implements ITransferObject {
 	private static final long serialVersionUID = -2335488721813209995L;
 
 	private double taxableBase;
-
 	private double vatPercent;
-
+	private double vatQuota;
 	private double surchargePercent;
-
+	private double surchargeQuota;
 	private double retentionPercent;
-
+	private double retentionQuota;
 	private Account account;
 
 	public InvoiceEntryDetail() {
@@ -25,7 +24,6 @@ public class InvoiceEntryDetail implements ITransferObject {
 	public double getTaxableBase() {
 		return taxableBase;
 	}
-
 	public void setTaxableBase(double taxableBase) {
 		this.taxableBase = taxableBase;
 	}
@@ -33,67 +31,72 @@ public class InvoiceEntryDetail implements ITransferObject {
 	public double getVatPercent() {
 		return vatPercent;
 	}
-
 	public void setVatPercent(double vatPercent) {
 		this.vatPercent = vatPercent;
 	}
 
-	public double getSurcharge() {
-		return CommonUtil.round(this.getTaxableBase() * this.getSurchargePercent() / 100, 2);
+	public double getVatQuota() {
+		return vatQuota;
 	}
+	public void setVatQuota(double vatQuota) {
+		this.vatQuota = vatQuota;
+	}
+
 
 	public double getSurchargePercent() {
 		return surchargePercent;
 	}
-
 	public void setSurchargePercent(double surchargePercent) {
 		this.surchargePercent = surchargePercent;
 	}
 
+	public double getSurchargeQuota() {
+		return surchargeQuota;
+	}
+	public void setSurchargeQuota(double surchargeQuota) {
+		this.surchargeQuota = surchargeQuota;
+	}
+
+
 	public double getRetentionPercent() {
 		return retentionPercent;
 	}
-
 	public void setRetentionPercent(double retentionPercent) {
 		this.retentionPercent = retentionPercent;
+	}
+
+	public double getRetentionQuota() {
+		return retentionQuota;
+	}
+	public void setRetentionQuota(double retentionQuota) {
+		this.retentionQuota = retentionQuota;
 	}
 
 	public Account getAccount() {
 		return account;
 	}
-
 	public void setAccount(Account account) {
 		this.account = account;
 	}
 
-	public double getVatQuota() {
-		double vatQuota = 0.0;
-		if(this.getVatPercent() != 0){
-			vatQuota = CommonUtil.round(this.getTaxableBase() * getVatPercent() / 100, 2);
+	public void calculate() {
+		setVatQuota(0.0);
+		setSurchargeQuota(0.0);
+		setRetentionQuota(0.0);
+		
+		if(getVatPercent() != 0){
+			setVatQuota(CommonUtil.round(getTaxableBase() * getVatPercent() / 100, 2));
 		}
-		return vatQuota;
-	}
-
-	/**
-	 * Gets the retention quota.
-	 * 
-	 * @return the retention quota
-	 */
-	public double getRetentionQuota() {
-		double retentionQuota = 0.0;
-		if(this.getRetentionPercent() != 0){
-			retentionQuota = CommonUtil.round(this.getTaxableBase() * this.getRetentionPercent() / 100, 2);
+		if(getSurchargePercent() != 0){
+			setSurchargePercent( CommonUtil.round(getTaxableBase() * getSurchargePercent() / 100, 2));
 		}
-		return retentionQuota;
+		if(getRetentionPercent() != 0){
+			setRetentionQuota( CommonUtil.round(getTaxableBase() * getRetentionPercent() / 100, 2));
+		}
 	}
-
-	/**
-	 * Gets the total.
-	 * 
-	 * @return the total
-	 */
+	
 	public double getTotal() {
-		return CommonUtil.round((getTaxableBase() + getSurcharge() + getVatQuota()) - getRetentionQuota(), 2);
+		return CommonUtil.round((getTaxableBase() + getSurchargeQuota() + getVatQuota()) - getRetentionQuota(), 2);
 	}
 	
 }
