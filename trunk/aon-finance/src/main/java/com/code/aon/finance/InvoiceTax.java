@@ -168,7 +168,7 @@ public class InvoiceTax implements ITransferObject {
      * 
      * @return the surcharge quota
      */
-    @Column(nullable=true)
+    @Column(name="surcharge_quota", nullable=true)
     public double getSurchargeQuota() {
         return surchargeQuota;
     }
