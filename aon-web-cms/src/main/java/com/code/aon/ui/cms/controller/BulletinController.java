@@ -30,6 +30,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.email.Emailer;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
@@ -40,7 +41,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class BulletinController extends BasicI18nController implements ICMSConstants, IVelocityConstants {
+public class BulletinController extends BasicI18nController implements ICMSConstants, Constants, IVelocityConstants {
 
 	private int page;
 	
@@ -228,5 +229,12 @@ public class BulletinController extends BasicI18nController implements ICMSConst
 	}
 	
 	// END SENDER
+	
+	public String getI18nTitle() throws ManagerBeanException {
+		String label = NO_VALUE_LABEL;
+		BulletinDetail bd = (BulletinDetail) getModelRowdataI18n();
+		if (bd != null) label = bd.getTitle();
+		return label;
+	}	
 	
 }

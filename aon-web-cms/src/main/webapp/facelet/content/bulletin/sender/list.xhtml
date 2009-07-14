@@ -46,94 +46,100 @@
 			
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
-					<aon:dataTable id="dataTable" value="#{bulletin.model}" var="to"
-						rows="#{bulletin.pageLimit}" 
-						columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-							    aon-editDataTable-buttonsColumn">
-								
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.cms_alias}"/>
-								</f:facet>
-								<aon:outputText value="->" styleClass="aon-editDataTable-button"
-									rendered="#{to==bulletin.to}" />
-								<aon:outputText value="#{to.alias}"
-									styleClass="aon-editDataTable-button">
-									<a4j:support 
-										actionListener="#{bulletin.onSelect}"
-										event="onclick" 
-										reRender="dataTable,buttonsGrid" />
-								</aon:outputText>									
-							</aon:column>
+				<aon:dataTable id="dataTable" value="#{bulletin.model}" var="to"
+					rows="#{bulletin.pageLimit}" 
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+						    aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+							    
+					<aon:rowSelector toggleOnClick="#{bulletin.to == null}"
+						reRender="dataTable,buttonsGrid" actionListener="#{bulletin.onSelect}" />
+							    
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.cms_alias}"/>
+						</f:facet>
+						<aon:outputText value="->" rendered="#{to==bulletin.to}" />
+						<aon:outputText value="#{to.alias}" />									
+					</aon:column>
 
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.bulletin_publishDate}"/>
-								</f:facet>
-								<aon:outputText value="#{to.publish_date}"
-									styleClass="aon-editDataTable-button">
-									<a4j:support 
-										actionListener="#{bulletin.onSelect}"
-										event="onclick" 
-										reRender="dataTable,buttonsGrid" />
-								</aon:outputText>
-							</aon:column>
-
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="&#160;" />
-								</f:facet>
-								<f:verbatim rendered="#{to!=bulletin.to}">&#160;</f:verbatim>
-								<aon:div rendered="#{to==bulletin.to}">
-									<aon:commandButton id="lineAccept"
-										title="[#{bundle.aon_accept}]"
-										styleClass="aon-editDataTable-button aon-icon-accept"
-										reRender="dataTable,gridToolbar"
-										rendered="#{cms.roleEditor or cms.rolePublisher}" 
-										actionListener="#{bulletin.onGenerate}">
-										<a4j:support 
-											event="onclick"
-											actionListener="#{generator_status.onActivePoll}"  
-											reRender="poll,grid,grid_errors" />
-									</aon:commandButton>
-								</aon:div>
-							</aon:column>
-
-						</aon:dataTable>
-						
-						<aon:dataScroller2 for="dataTable" showNote="true" />					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.article_title}" />
+						</f:facet>
+						<aon:outputText value="#{bulletin.i18nTitle}">
+							<aon:abbreviateConverter maxWidth="60" />
+						</aon:outputText>
+					</aon:column>
 					
-				</aon:div>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.bulletin_publishDate}"/>
+						</f:facet>
+						<aon:outputText value="#{to.publish_date}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>						
+					</aon:column>					
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:outputText value="&#160;" rendered="#{to!=bulletin.to}" />
+						<aon:div rendered="#{to==bulletin.to}">
+							<aon:commandButton id="lineAccept"
+								title="[#{bundle.aon_accept}]"
+								styleClass="aon-editDataTable-button aon-icon-accept"
+								reRender="dataTable,buttonsGrid"
+								rendered="#{cms.roleEditor or cms.rolePublisher}" 
+								actionListener="#{bulletin.onGenerate}">
+								<a4j:support 
+									event="onclick"
+									actionListener="#{generator_status.onActivePoll}"  
+									reRender="poll,grid,grid_errors" />
+							</aon:commandButton>
+						</aon:div>
+					</aon:column>
+
+				</aon:dataTable>
+						
+				<aon:dataScroller2 for="dataTable" showNote="true" />					
+					
+			</aon:div>
 		</aon:form>
+
+	    <aon:div styleClass="aon-scroll-area">
+			<h:form>
+				<rich:panel bodyClass="inpanelBody" id="grid_errors">
+		        	<f:facet name="header">
+		        		<aon:outputText value="Error Console Log"/>
+		            </f:facet>
+		            <aon:div styleClass="aon-margin-left aon-margin-bottom">
+				        <rich:dataList id="dataList_Error" var="msg" value="#{generator_status.errors}" rows="5">
+							<aon:outputText style="color:red;" value="#{msg}"/>
+						</rich:dataList>
+					</aon:div>
+					<rich:datascroller align="left" for="dataList_Error" maxPages="20" />
+				</rich:panel>
+				<rich:panel styleClass="aon-margin-top" bodyClass="inpanelBody" id="grid">
+		        	<f:facet name="header">
+						<aon:outputText value="Console Log"/>	        	
+		            </f:facet>
+		            <aon:div styleClass="aon-margin-left aon-margin-bottom">
+				        <rich:dataList id="dataList" var="msg" value="#{generator_status.status}" rows="15">
+							<aon:outputText value="#{msg}"/>
+						</rich:dataList>
+					</aon:div>
+					<rich:datascroller align="left" for="dataList" maxPages="20" />
+				</rich:panel>
+		    </h:form>
+		</aon:div>
+		
 	    <a4j:region>
 	        <h:form>
 	            <a4j:poll id="poll" interval="2000" enabled="#{generator_status.activePoll}" reRender="poll,grid,grid_errors"/>
 	        </h:form>
 	    </a4j:region>
-		<h:form>
-			<rich:panel bodyClass="inpanelBody" id="grid_errors">
-	        	<f:facet name="header">
-	                    Error Console Log
-	            </f:facet>
-		        <rich:dataList id="dataList_Error" var="msg" value="#{generator_status.errors}" rows="5">
-					<aon:outputText style="color:red;" value="#{msg}"/>
-				</rich:dataList>
-				<rich:datascroller align="left" for="dataList_Error" maxPages="20" />
-			</rich:panel>
-		</h:form>
-		<h:form>
-			<br/>
-			<rich:separator height="2" lineType="dashed"/><br/>
-			<rich:panel bodyClass="inpanelBody" id="grid">
-	        	<f:facet name="header">
-	                    Console Log
-	            </f:facet>
-		        <rich:dataList id="dataList" var="msg" value="#{generator_status.status}" rows="15">
-					<aon:outputText value="#{msg}"/>
-				</rich:dataList>
-				<rich:datascroller align="left" for="dataList" maxPages="20" />
-			</rich:panel>
-	    </h:form>    		
 	</ui:define>
 
 </ui:composition>
