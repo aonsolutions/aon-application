@@ -28,5 +28,4 @@ public class ItemController extends BasicController {
 		}
 		((Item)getTo()).setPrice(price);
 	}
-
 }
