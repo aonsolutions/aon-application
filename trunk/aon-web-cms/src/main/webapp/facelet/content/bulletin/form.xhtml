@@ -84,15 +84,9 @@
 								<aon:outputLabel for="bulletin_publishDate"
 									value="#{appBundle.bulletin_publishDate}" />
 								<aon:selectInputDate id="bulletin_publishDate" 
-									required="true"
-									 style="z-index:2001;margin:0;vertical-align:middle;"
-									 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
-									 value="#{bulletin.to.publish_date}" renderAsPopup="true"
-									 enableManualInput="true"
-									 popupDateFormat="#{bundle.aon_date_pattern}">
-									 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-											timeZone="#{timeZoneController.timeZoneId}" />
-								</aon:selectInputDate>	
+									value="#{bulletin.to.publish_date}" required="true"
+									timeZone="#{timeZoneController.timeZone}"
+									popupDateFormat="#{bundle.aon_date_pattern}"/>
 								
 								<aon:outputLabel for="title"
 									value="#{appBundle.bulletin_title}" />
@@ -114,27 +108,17 @@
 
 							<aon:outputLabel for="BulletinArticle_publishDate"
 								value="#{appBundle.article_publishDate}" />
-							<aon:selectInputDate id="BulletinArticle_publishDate"
-								 style="z-index:2001;margin:0;vertical-align:middle;"
-								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
-								 value="#{bulletin.publishDate}" renderAsPopup="true"
-								 enableManualInput="true"
-								 popupDateFormat="#{bundle.aon_date_pattern}">
-								 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-										timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:selectInputDate>	
+							<aon:selectInputDate id="BulletinArticle_publishDate" 
+								value="#{bulletin.publishDate}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}"/>								
 							
 							<aon:outputLabel for="BulletinArticle_expireDate"
 								value="#{appBundle.article_expireDate}" />
 							<aon:selectInputDate id="BulletinArticle_expireDate" 
-								 style="z-index:2001;margin:0;vertical-align:middle;"
-								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
-								 value="#{bulletin.expireDate}" renderAsPopup="true"
-								 enableManualInput="true"
-								 popupDateFormat="#{bundle.aon_date_pattern}">
-								 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-										timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:selectInputDate>	
+								value="#{bulletin.expireDate}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 							<aon:commandButton id="reset_articles" 
 								value="#{appBundle.bulletin_refresh_articles}"
