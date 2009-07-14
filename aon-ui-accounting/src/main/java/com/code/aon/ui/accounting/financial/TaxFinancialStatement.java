@@ -27,22 +27,30 @@ public class TaxFinancialStatement extends AbstractFinancialStatement {
 				setFinancialStatements( new LinkedList<FinancialStatement>());
 				Period period = getAccountingUtil().getPeriod(params.getFinancialDate());
 
-				// H.P. ACREEDORA POR IVA
-				addStatement(period.getInitiationDate(), period.getDeadline(), "4750", true);
-				// Hacienda Pública, IVA repercutido.
-				addStatement(period.getInitiationDate(), period.getDeadline(), "477", true);
-				// Hacienda Pública, IVA soportado.
+				//470*  -> HP, deudora por diversos conceptos
+				addStatement(period.getInitiationDate(), period.getDeadline(), "470", false);
+				//471*  -> SS Deudora
+				addStatement(period.getInitiationDate(), period.getDeadline(), "471", false);
+				//472*  -> HP, IVA Soportado
 				addStatement(period.getInitiationDate(), period.getDeadline(), "472", false);
-				// IRPF PENDIENTE DE PAGO
+				//4750* -> HP, Acreedor por IVA
+				addStatement(period.getInitiationDate(), period.getDeadline(), "4750", true);
+				//4751* -> HP, Acreedor por Retenciones
 				addStatement(period.getInitiationDate(), period.getDeadline(), "4751", true);
-				// SS PENDIENTE DE PAGO
+				//4752* -> HP, Acreedor por Imp. Sociedades
+				addStatement(period.getInitiationDate(), period.getDeadline(), "4752", true);
+
+				//476*  -> SS Acreedora (-1 mes)
 				Calendar c = Calendar.getInstance();
 				c.setTime(params.getFinancialDate());
 				c.set(Calendar.DAY_OF_MONTH, 1);
 				c.add(Calendar.DAY_OF_MONTH, -1);
-				FinancialStatement fs = addStatement(period.getInitiationDate(), c.getTime(), "4760", true);
+				FinancialStatement fs = addStatement(period.getInitiationDate(), c.getTime(), "476", true);
 				Month m = Month.getMonthByValue( c.get(Calendar.MONTH));
 				fs.setDescription(fs.getDescription() + " (hasta "  + m.getName(AonUtil.getCurrentLocale())+ ")");
+
+				//477*  -> HP, IVA Repercutido
+				addStatement(period.getInitiationDate(), period.getDeadline(), "477", true);
 			}
 		} catch (ExpressionException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
@@ -51,7 +59,7 @@ public class TaxFinancialStatement extends AbstractFinancialStatement {
 
 	@Override
 	public String getLabel() {
-		return "IMPUESTOS";
+		return "ADMINISTRACIONES PÚBLICAS";
 	}
 
 	@Override
@@ -73,15 +81,18 @@ public class TaxFinancialStatement extends AbstractFinancialStatement {
 			amount = CommonUtil.round(balance.getCredit() - balance.getDebit());
 			subtotal = CommonUtil.round(subtotal + amount) ; 	  
 		}
-		FinancialStatement fs = new FinancialStatement();
-		Account account = (Account) accountBean.get(prefix);
-		fs.setCode( prefix );
-		fs.setDescription(account.getDescription());
-		setTotal( CommonUtil.round(getTotal() + subtotal));
-		subtotal = CommonUtil.round(subtotal * (addition?1:-1)) ;
-		fs.setAmount( subtotal );
-		fs.setAddition(addition);
-		getFinancialStatements().add(fs);
-		return fs;
+		if (subtotal != 0) {
+			FinancialStatement fs = new FinancialStatement();
+			Account account = (Account) accountBean.get(prefix);
+			fs.setCode( prefix );
+			fs.setDescription(account.getDescription());
+			setTotal( CommonUtil.round(getTotal() + subtotal));
+			subtotal = CommonUtil.round(subtotal * (addition?1:-1)) ;
+			fs.setAmount( subtotal );
+			fs.setAddition(addition);
+			getFinancialStatements().add(fs);
+			return fs;
+		}
+		return null;
 	}
 }
