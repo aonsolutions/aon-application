@@ -130,7 +130,7 @@ public class BalanceSheetController implements ICollectionProvider{
 				b.setDescription(bd.getDescription().trim());
 			}
 
-			if (bd.getAccounts() != null && bd.isInternalCalculation() == false) {
+			if (bd.getAccounts() != null && !bd.isInternalCalculation()) {
 				// Calcula el String con las  cuentas  de un balanceDetail
 				String accounts = bd.getAccounts();
 				String line = new String();
@@ -149,7 +149,7 @@ public class BalanceSheetController implements ICollectionProvider{
 
 			}
 
-			if ( StringUtils.isEmpty(bd.getAccounts()) && bd.isInternalCalculation()) {// Calcula el String con las cuentas de un balanceDetail que esta compesto por otros(UN TOTAL)
+			if ( !StringUtils.isEmpty(bd.getAccounts()) && bd.isInternalCalculation()) {// Calcula el String con las cuentas de un balanceDetail que esta compesto por otros(UN TOTAL)
 				String line = new String();
 				String accounts = bd.getAccounts();// linea de total que proviene de la BD
 				String[] data = new String[30];
@@ -199,16 +199,11 @@ public class BalanceSheetController implements ICollectionProvider{
 		}
 	
 	
-	public Double getAccountsAmount(SummaryProviderParameters params, Boolean creditNature) {
+	private Double getAccountsAmount(SummaryProviderParameters params, Boolean creditNature) throws ManagerBeanException {
 		
 		summaryCollection = new SummaryCollection();
 		summaryProvider = new SummaryProvider();
-				
-		try {
-			summaryCollection = summaryProvider.getSummaryCollection(params);;
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		}
+		summaryCollection = summaryProvider.getSummaryCollection(params);;
 		Double amount;
 		if (creditNature) {
 			amount = CommonUtil.round( summaryCollection.getCredit() -  summaryCollection.getDebit() ); 
@@ -229,7 +224,6 @@ public class BalanceSheetController implements ICollectionProvider{
 	}
 
 	public DataModel getBalanceModel() {		
-		
 		if (balanceModel == null) {
 			balanceModel = new ListDataModel(getBalanceList());
 		}
@@ -258,7 +252,6 @@ public class BalanceSheetController implements ICollectionProvider{
 		private Double previousAmount;
 		private boolean visible;
 		private boolean title;
-
 
 		public boolean isTitle() {
 			return title;
