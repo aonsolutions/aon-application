@@ -14,6 +14,7 @@ import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
@@ -209,7 +210,9 @@ public class AccountEntryController extends BasicController {
 	public boolean isBalanced() {
 		return (getTotalDebit() != null && 
 				getTotalCredit() != null &&
-				getTotalDebit().doubleValue() == getTotalCredit().doubleValue()); 
+				CommonUtil.round(getTotalDebit().doubleValue()) == 
+				CommonUtil.round(getTotalCredit().doubleValue())
+				); 
 	}
 	
 }
