@@ -127,6 +127,9 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
     /** If the Invoice is an investiment. */
     private InvoiceTransactionType transaction;
 
+    /** If the Invoice is signed. */
+    private boolean signed;    
+    
     /** The detail of this invoice. */
 	private Set<InvoiceDetail> lines = new HashSet<InvoiceDetail>();
 
@@ -465,6 +468,15 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 
 	public void setInvestment(boolean investment) {
 		this.investment = investment;
+	}
+	
+	@Column(nullable = false)
+	public boolean isSigned() {
+		return signed;
+	}
+
+	public void setSigned(boolean signed) {
+		this.signed = signed;
 	}
 
 	@Column(name = "transaction")

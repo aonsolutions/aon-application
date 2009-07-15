@@ -11,8 +11,8 @@
 	</bean>
 
 	<bean class="com.code.aon.finance.Invoice" sqlName="invoice">
-		<alias names="id,series,number,referenceCode,registry_id,registryAddress_id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,type,taxFree,surcharge,withholding,comments,investment,transaction" />
-		<hibernate names="id,series,number,referenceCode,registry.id,registryAddress.id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,type,taxFree,surcharge,withholding,comments,investment,transaction" />
+		<alias names="id,series,number,referenceCode,registry_id,registryAddress_id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,signed,type,taxFree,surcharge,withholding,comments,investment,transaction" />
+		<hibernate names="id,series,number,referenceCode,registry.id,registryAddress.id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,signed,type,taxFree,surcharge,withholding,comments,investment,transaction" />
 	</bean>
 	
 	<bean class="com.code.aon.finance.InvoiceDetail" sqlName="invoice_detail">

@@ -441,46 +441,52 @@ public interface IFinanceAlias {
 	String  INVOICE_REGISTRY_DOCUMENT = INVOICE_ENTRY.getAliasNames()[11];
 
 	/** 
+	* Alias value: Invoice_signed
+	* Hibernate value: Invoice.signed
+	*/
+	String  INVOICE_SIGNED = INVOICE_ENTRY.getAliasNames()[12];
+
+	/** 
 	* Alias value: Invoice_type
 	* Hibernate value: Invoice.type
 	*/
-	String  INVOICE_TYPE = INVOICE_ENTRY.getAliasNames()[12];
+	String  INVOICE_TYPE = INVOICE_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: Invoice_taxFree
 	* Hibernate value: Invoice.taxFree
 	*/
-	String  INVOICE_TAX_FREE = INVOICE_ENTRY.getAliasNames()[13];
+	String  INVOICE_TAX_FREE = INVOICE_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: Invoice_surcharge
 	* Hibernate value: Invoice.surcharge
 	*/
-	String  INVOICE_SURCHARGE = INVOICE_ENTRY.getAliasNames()[14];
+	String  INVOICE_SURCHARGE = INVOICE_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: Invoice_withholding
 	* Hibernate value: Invoice.withholding
 	*/
-	String  INVOICE_WITHHOLDING = INVOICE_ENTRY.getAliasNames()[15];
+	String  INVOICE_WITHHOLDING = INVOICE_ENTRY.getAliasNames()[16];
 
 	/** 
 	* Alias value: Invoice_comments
 	* Hibernate value: Invoice.comments
 	*/
-	String  INVOICE_COMMENTS = INVOICE_ENTRY.getAliasNames()[16];
+	String  INVOICE_COMMENTS = INVOICE_ENTRY.getAliasNames()[17];
 
 	/** 
 	* Alias value: Invoice_investment
 	* Hibernate value: Invoice.investment
 	*/
-	String  INVOICE_INVESTMENT = INVOICE_ENTRY.getAliasNames()[17];
+	String  INVOICE_INVESTMENT = INVOICE_ENTRY.getAliasNames()[18];
 
 	/** 
 	* Alias value: Invoice_transaction
 	* Hibernate value: Invoice.transaction
 	*/
-	String  INVOICE_TRANSACTION = INVOICE_ENTRY.getAliasNames()[18];
+	String  INVOICE_TRANSACTION = INVOICE_ENTRY.getAliasNames()[19];
 
 
 
