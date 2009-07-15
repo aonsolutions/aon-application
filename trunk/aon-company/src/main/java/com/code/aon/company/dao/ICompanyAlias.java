@@ -57,28 +57,34 @@ public interface ICompanyAlias {
 	String  COMPANY_TYPE = COMPANY_ENTRY.getAliasNames()[5];
 
 	/** 
+	* Alias value: Company_EInvoice
+	* Hibernate value: Company.EInvoice
+	*/
+	String  COMPANY_EINVOICE = COMPANY_ENTRY.getAliasNames()[6];
+
+	/** 
 	* Alias value: Company_active
 	* Hibernate value: Company.active
 	*/
-	String  COMPANY_ACTIVE = COMPANY_ENTRY.getAliasNames()[6];
+	String  COMPANY_ACTIVE = COMPANY_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Company_calendar
 	* Hibernate value: Company.calendar
 	*/
-	String  COMPANY_CALENDAR = COMPANY_ENTRY.getAliasNames()[7];
+	String  COMPANY_CALENDAR = COMPANY_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Company_surcharge
 	* Hibernate value: Company.surcharge
 	*/
-	String  COMPANY_SURCHARGE = COMPANY_ENTRY.getAliasNames()[8];
+	String  COMPANY_SURCHARGE = COMPANY_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Company_withholding
 	* Hibernate value: Company.withholding
 	*/
-	String  COMPANY_WITHHOLDING = COMPANY_ENTRY.getAliasNames()[9];
+	String  COMPANY_WITHHOLDING = COMPANY_ENTRY.getAliasNames()[10];
 
 
 
