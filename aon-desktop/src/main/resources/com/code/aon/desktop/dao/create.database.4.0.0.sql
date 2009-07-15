@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 3.4.0
+# Version: 4.0.0
 # Created by: girazu
-# Creation Date: 21/05/2009 17:58
+# Creation Date: 15/07/2009 09:05
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -191,6 +191,7 @@ CREATE TABLE `customer` (
   `status` tinyint(2) default NULL COMMENT 'Estado del Cliente',
   `segment` int(4) default NULL COMMENT 'Segmento del Cliente',
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
+  `e_invoice` tinyint(1) default '0' COMMENT 'Indica si el Cliente desea recibir Facturas electronicas',
   PRIMARY KEY  (`registry`),
   KEY `idx_ctmr_trff` (`tariff`),
   KEY `segment` (`segment`),
@@ -438,6 +439,7 @@ CREATE TABLE `invoice` (
   `comments` text collate latin1_spanish_ci COMMENT 'Comentarios de la Factura',
   `investment` tinyint(1) default '0' COMMENT 'Indica si la Factura es una inversion',
   `transaction` tinyint(2) default '0' COMMENT 'Tipo de transaccion',
+  `signed` tinyint(1) default '0' COMMENT 'Indica si la Factura esta firmada electronicamente',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `series` (`series`,`number`,`type`),
   KEY `idx_invc_radr` (`raddress`),
@@ -524,6 +526,22 @@ CREATE TABLE `account_entry_invoice` (
   CONSTRAINT `account_entry_invoice_fk_2` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
   CONSTRAINT `account_entry_invoice_ibfk_1` FOREIGN KEY (`account_entry`) REFERENCES `account_entry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Asientos Contables y Facturas';
+
+#
+# Structure for the `account_helper` table : 
+#
+
+CREATE TABLE `account_helper` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `counter` int(4) NOT NULL default '0' COMMENT 'Contador, veces que se ha usado',
+  `account` char(12) collate latin1_spanish_ci NOT NULL COMMENT 'Cuenta contable',
+  `balancing_account` char(12) collate latin1_spanish_ci NOT NULL COMMENT 'Contrapartida',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_ACCOUNT_HELPER_ACCOUNT` (`account`),
+  KEY `IDX_ACCOUNT_HELPER_BALANCING_ACCOUNT` (`balancing_account`),
+  CONSTRAINT `FK_ACCOUNT_HELPER_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
+  CONSTRAINT `FK_ACCOUNT_HELPER_BALANCING_ACCOUNT` FOREIGN KEY (`balancing_account`) REFERENCES `account` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ayuda a la introduccion de apuntes';
 
 #
 # Structure for the `account_summary` table : 
@@ -806,9 +824,19 @@ CREATE TABLE `amortization` (
   `fee_period` tinyint(2) NOT NULL default '0' COMMENT 'Periodo de las cuotas de Amortizacion',
   `sale_amount` double default NULL COMMENT 'Importe de la venta',
   `comments` text collate latin1_spanish_ci COMMENT 'Comentarios',
+  `fixed_asset_account` char(12) collate latin1_spanish_ci NOT NULL COMMENT 'Cuenta de inmovilizado',
+  `accumulated_account` char(12) collate latin1_spanish_ci NOT NULL COMMENT 'Cuenta de Amortizacion acumulada',
+  `allocation_account` char(12) collate latin1_spanish_ci NOT NULL COMMENT 'Cuenta para la dotacion de la Amortizacion',
+  `percentage` double default '0' COMMENT 'Porcentaje de Amortizacion',
   PRIMARY KEY  (`id`),
   KEY `amortization_type` (`amortization_type`),
-  CONSTRAINT `fk_amortization_amortization_type` FOREIGN KEY (`amortization_type`) REFERENCES `amortization_type` (`id`)
+  KEY `IDX_AMORTIZATION_FIXED_ASSET_ACCOUNT` (`fixed_asset_account`),
+  KEY `IDX_AMORTIZATION_ALLOCATION_ACCOUNT` (`allocation_account`),
+  KEY `IDX_AMORTIZATION_ACCUMULATED_ACCOUNT` (`accumulated_account`),
+  CONSTRAINT `FK_AMORTIZATION_ACCUMULATED_ACCOUNT` FOREIGN KEY (`allocation_account`) REFERENCES `account` (`id`),
+  CONSTRAINT `FK_AMORTIZATION_ALLOCATION_ACCOUNT` FOREIGN KEY (`accumulated_account`) REFERENCES `account` (`id`),
+  CONSTRAINT `fk_amortization_amortization_type` FOREIGN KEY (`amortization_type`) REFERENCES `amortization_type` (`id`),
+  CONSTRAINT `FK_AMORTIZATION_FIXED_ASSET_ACCOUNT` FOREIGN KEY (`fixed_asset_account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Fichas de Amortizacion Contables';
 
 #
@@ -824,6 +852,7 @@ CREATE TABLE `amortization_detail` (
   `allocation` double(15,3) NOT NULL COMMENT 'Dotacion de la Amortizacion',
   `status` tinyint(2) NOT NULL default '0' COMMENT 'Estatus del Detalle de Amortizacion',
   `account_entry` int(4) default NULL COMMENT 'Posicion del Apunte Contable',
+  `fiscal_allocation` double(15,3) default '0.000' COMMENT 'Dotacion fiscal',
   PRIMARY KEY  (`id`),
   KEY `amortization` (`amortization`),
   KEY `account_entry` (`account_entry`),
@@ -1168,6 +1197,7 @@ CREATE TABLE `company` (
   `surcharge` tinyint(1) default '0' COMMENT 'Indica si la Compañia tiene de recargo de equivalencia',
   `calendar` int(4) default NULL COMMENT 'Identificador del Calendario Laboral',
   `withholding` tinyint(1) default '0' COMMENT 'Indica si la Compañia aplica retencion de impuestos',
+  `e_invoice` tinyint(1) default '0' COMMENT 'Indica si la Compañia desea emitir Facturas electronicas',
   PRIMARY KEY  (`registry`),
   KEY `calendar` (`calendar`),
   CONSTRAINT `company_ibfk_1` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`),
@@ -1909,7 +1939,8 @@ CREATE TABLE `iattach` (
   `item` int(4) NOT NULL default '0' COMMENT 'Identificador de Articulo',
   `mimeType` tinyint(2) default NULL COMMENT 'Mime Type del Archivo Adjunto',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Archivo Adjunto',
-  `data` blob COMMENT 'Archivo Adjunto en binario',
+  `data` mediumblob COMMENT 'Archivo Adjunto en binario',
+  `type` tinyint(2) default NULL COMMENT 'Tipo de Archivo Adjunto',
   PRIMARY KEY  (`id`),
   KEY `item` (`item`),
   CONSTRAINT `iattach_ibfk_1` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
@@ -2099,6 +2130,21 @@ CREATE TABLE `invoice_address` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Direcciones de la Factura';
 
 #
+# Structure for the `invoice_attach` table : 
+#
+
+CREATE TABLE `invoice_attach` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `invoice` int(4) NOT NULL COMMENT 'Identificador de la Factura',
+  `mimeType` tinyint(2) default '0' COMMENT 'Mime Type del Archivo Adjunto',
+  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Archivo Adjunto',
+  `data` mediumblob COMMENT 'Archivo Adjunto en binario',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_INVOICE_ATTACH_INVOICE` (`invoice`),
+  CONSTRAINT `FK_INVOICE_ATTACH_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Facturas';
+
+#
 # Structure for the `invoice_detail` table : 
 #
 
@@ -2107,7 +2153,7 @@ CREATE TABLE `invoice_detail` (
   `invoice` int(4) NOT NULL default '0' COMMENT 'Identificador de la Factura',
   `line` smallint(2) default '1' COMMENT 'Numero de línea del Detalle dentro de la Factura',
   `item` int(4) default NULL COMMENT 'Identificador del Articulo del Detalle de Factura',
-  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Detalle de Factura',
+  `description` varchar(1024) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Detalle de Factura',
   `quantity` double default '0' COMMENT 'Cantidad del Detalle de Factura',
   `price` double default '0' COMMENT 'Precio del Detalle de Factura',
   `discount_expr` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Descuentos del Detalle de Factura',
@@ -2149,8 +2195,10 @@ CREATE TABLE `invoice_tax` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Impuesto de la Factura',
   `invoice_detail` int(4) NOT NULL default '0' COMMENT 'Identificador del Detalle de la Factura',
   `tax_type` tinyint(2) default '0' COMMENT 'Tipo de Impuesto del Detalle de la Factura',
-  `percentage` double(15,3) default '0.000' COMMENT 'Porcentaje de recargo del Detalle de la Factura',
+  `percentage` double(15,3) default '0.000' COMMENT 'Porcentaje de Impuesto del Detalle de la Factura',
   `surcharge` double(15,3) default '0.000' COMMENT 'Porcentaje del recargo de equivalencia del Detalle de la Factura',
+  `quota` double default '0' COMMENT 'Cuota de Impuesto del Detalle de la Factura',
+  `surcharge_quota` double default '0' COMMENT 'Cuota de recargo de equivalencia del Detalle de la Factura',
   PRIMARY KEY  (`id`),
   KEY `invoice_detail` (`invoice_detail`),
   CONSTRAINT `invoice_tax_ibfk_1` FOREIGN KEY (`invoice_detail`) REFERENCES `invoice_detail` (`id`)
@@ -3505,7 +3553,7 @@ RETURN (SELECT IF (SUM(inventory_detail.cost) IS NULL, 0, SUM(inventory_detail.c
        AND inventory.inventory_date = d);
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('3.4.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('4.0.0');
 
 COMMIT;
 
