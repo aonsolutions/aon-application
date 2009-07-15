@@ -41,14 +41,17 @@ public class PeriodBeanVetoListener extends ManagerBeanVetoListenerAdapter {
             	Period period = (Period)p;
             	pFrom = period.getInitiationDate();
         		pTo = period.getDeadline();
-            	if(toFrom.compareTo(pFrom)>=0 && toFrom.compareTo(pTo)<=0)
-            		throw new ManagerBeanVetoListenerException("Solape con la fecha de inicio y el periodo "+period.getId());
-            	if(toTo.compareTo(pFrom)>=0 && toTo.compareTo(pTo)<=0) 
-            		throw new ManagerBeanVetoListenerException("Solape con la fecha fin y el periodo "+period.getId());
+            	if(!(to.getId().equals(period.getId()))){
+	        		if(toFrom.compareTo(pFrom)>=0 && toFrom.compareTo(pTo)<=0){
+	            		throw new ManagerBeanVetoListenerException("Solape con la fecha de inicio y el periodo "+period.getId());
+	        		}	
+	            	if(toTo.compareTo(pFrom)>=0 && toTo.compareTo(pTo)<=0){
+	            		throw new ManagerBeanVetoListenerException("Solape con la fecha fin y el periodo "+period.getId());
+	            	}
+	        	}
             }
         } catch (ManagerBeanException e) {
             throw new ManagerBeanVetoListenerException(e);
         }
 	}
-	
 }
