@@ -19,15 +19,27 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 public class AccountEntryControllerListener extends ControllerAdapter {
 
     private int index;
+    private Date lastDate;
     
 
-    @Override
+    public Date getLastDate() {
+    	if (lastDate == null) {
+    		lastDate = new Date();
+    	}
+		return lastDate;
+	}
+	public void setLastDate(Date lastDate) {
+		this.lastDate = lastDate;
+	}
+
+
+	@Override
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
         try {
         	AccountEntryController c = (AccountEntryController) event.getController();
 	        AccountEntry to = (AccountEntry)event.getController().getTo();
 	        to.setType(AccountEntryType.MANUAL);
-	        to.setEntryDate(new Date());
+	        to.setEntryDate(getLastDate());
 	        Period period = AccountingPeriodUtil.getDefaultPeriod();
 	        if (period != null) {
 	        	to.setAccountPeriod(period.getId());
@@ -72,7 +84,9 @@ public class AccountEntryControllerListener extends ControllerAdapter {
     public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
         try {
         	AccountEntryController c = (AccountEntryController) event.getController();
-            Integer id = ((AccountEntry)event.getController().getTo()).getId();
+        	AccountEntry entry = (AccountEntry)event.getController().getTo();
+        	setLastDate(entry.getEntryDate());
+            Integer id = entry.getId();
             IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
             Criteria criteria = new Criteria();
             criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), id);

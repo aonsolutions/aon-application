@@ -69,6 +69,10 @@
 				<value>#{accountBudgetDetailListener}</value>
 			</list-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>AccountEntry_accountPeriod,AccountBudget_account_id</value>
+		</managed-property>
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>accountBudgetControllerListener</managed-bean-name>

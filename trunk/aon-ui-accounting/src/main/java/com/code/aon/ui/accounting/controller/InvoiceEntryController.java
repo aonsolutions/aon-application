@@ -355,6 +355,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		if (header.getAccount() != null) {
 			if (header.getTaxableBase() != null) {
 				onNewDetail(event);
+				this.currentDetail.setTaxableBase( header.getTaxableBase()==null?0.0:header.getTaxableBase());
+				taxableBaseChanged(header.getTaxableBase());
 				onAddDetail(event);
 				onCancelDetail(event);
 			} else {
@@ -373,22 +375,25 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	public void onChangeTaxableBase(ValueChangeEvent event) {
 		if (event.getNewValue() != null) {
 			double t = (Double) event.getNewValue();
-
-			currentDetail.setVatQuota(0.0);
-			currentDetail.setSurchargeQuota(0.0);
-			currentDetail.setRetentionQuota(0.0);
-			
-			if(currentDetail.getVatPercent() != 0){
-				currentDetail.setVatQuota(CommonUtil.round(t * currentDetail.getVatPercent() / 100, 2));
-			}
-			if(currentDetail.getSurchargePercent() != 0){
-				currentDetail.setSurchargeQuota( CommonUtil.round(t * currentDetail.getSurchargePercent() / 100, 2));
-			}
-			if(currentDetail.getRetentionPercent() != 0){
-				currentDetail.setRetentionQuota( CommonUtil.round(t * currentDetail.getRetentionPercent() / 100, 2));
-			}
+			taxableBaseChanged(t);
 		}
 	}
+	private void taxableBaseChanged(double taxableBase) {
+		currentDetail.setVatQuota(0.0);
+		currentDetail.setSurchargeQuota(0.0);
+		currentDetail.setRetentionQuota(0.0);
+		
+		if(currentDetail.getVatPercent() != 0){
+			currentDetail.setVatQuota(CommonUtil.round(taxableBase * currentDetail.getVatPercent() / 100, 2));
+		}
+		if(currentDetail.getSurchargePercent() != 0){
+			currentDetail.setSurchargeQuota( CommonUtil.round(taxableBase * currentDetail.getSurchargePercent() / 100, 2));
+		}
+		if(currentDetail.getRetentionPercent() != 0){
+			currentDetail.setRetentionQuota( CommonUtil.round(taxableBase * currentDetail.getRetentionPercent() / 100, 2));
+		}
+	}
+	
 	public void onChangeVatPercent(ValueChangeEvent event) {
 		if (event.getNewValue() != null) {
 			double p = (Double) event.getNewValue();
@@ -427,7 +432,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		this.currentDetail = new InvoiceEntryDetail();
 		Account a = (header.getAccount() != null) ? header.getAccount() : null;
 		this.currentDetail.setAccount(a);
-		this.currentDetail.setTaxableBase( header.getTaxableBase()==null?0.0:header.getTaxableBase());
 
 		AccountAppParamsController c = (AccountAppParamsController) AonUtil
 				.getRegisteredBean(ACCOUNT_APP_PARAM_CONTROLLER_NAME);
@@ -1346,11 +1350,23 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 					if(invoiceTax.getTaxType().equals(TaxType.VAT)){
 						detail.setVatPercent(invoiceTax.getPercentage());
 						detail.setVatQuota(invoiceTax.getQuota());
+						// el siguiente IF --> para dar soporte a las facturas grabadas antes de la versión 4.0.0 donde no habia cuotas.
+						if (invoiceTax.getPercentage() > 0 && invoiceTax.getQuota() == 0) {
+							detail.setVatQuota(CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceTax.getPercentage() / 100, 2));
+						}
 						detail.setSurchargePercent(invoiceTax.getSurcharge());
 						detail.setSurchargeQuota(invoiceTax.getSurchargeQuota());
+						// el siguiente IF --> para dar soporte a las facturas grabadas antes de la versión 4.0.0 donde no habia cuotas.
+						if (invoiceTax.getSurcharge() > 0 && invoiceTax.getSurchargeQuota() == 0) {
+							detail.setSurchargeQuota( CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceTax.getSurcharge() / 100, 2));
+						}
 					} else if(invoiceTax.getTaxType().equals(TaxType.RETENTION)){
 						detail.setRetentionPercent(invoiceTax.getPercentage());
 						detail.setRetentionQuota(invoiceTax.getQuota());
+						// el siguiente IF --> para dar soporte a las facturas grabadas antes de la versión 4.0.0 donde no habia cuotas.
+						if (invoiceTax.getPercentage() > 0 && invoiceTax.getQuota() == 0) {
+							detail.setVatQuota(CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceTax.getPercentage() / 100, 2));
+						}
 					}
 				}
 
