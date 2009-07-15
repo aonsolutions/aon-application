@@ -30,6 +30,42 @@
 		</repository>	
 	</repositories>	
 	<dependencies>
+		<!-- PINRREL  -->
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.company</artifactId>
+			<version>4.0.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- PINRREL  -->
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.customer</artifactId>
+			<version>4.0.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- PINRREL  -->
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.product</artifactId>
+			<version>4.0.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- PINRREL  -->
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.registry</artifactId>
+			<version>4.0.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- PINRREL  -->
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.supplier</artifactId>
+			<version>4.0.0</version>
+			<scope>compile</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
@@ -96,6 +132,13 @@
 			<version>4.0.0</version>
 			<scope>runtime</scope>
 		</dependency>
+		<!-- PINRREL  -->
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.customer</artifactId>
+			<version>4.0.0</version>
+			<scope>runtime</scope>
+		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.finance</artifactId>
@@ -111,7 +154,7 @@
  		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.product</artifactId>
-			<version>3.4.1</version>
+			<version>4.0.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
