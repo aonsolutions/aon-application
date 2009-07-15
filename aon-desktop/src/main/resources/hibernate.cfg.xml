@@ -33,8 +33,9 @@
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
 		<mapping class="com.code.aon.config.Bank"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
-		<mapping class="com.code.aon.config.Scope"/>
 		<mapping class="com.code.aon.config.Series"/>
+		<mapping class="com.code.aon.config.Scope"/>
+		<mapping class="com.code.aon.config.Tariff"/>
 		<mapping class="com.code.aon.config.Tax"/>
 		<mapping class="com.code.aon.config.TaxDetail"/>
 		<mapping class="com.code.aon.config.User"/>
@@ -69,9 +70,6 @@
 		<!-- AON-CUSTOMER Mapping files -->
 		<mapping class="com.code.aon.customer.Customer"/>
 		<mapping class="com.code.aon.customer.CustomerSegment"/>
-
-		<!-- AON-PRODUCT Mapping files -->	
-		<mapping class="com.code.aon.product.Tariff"/>
 
 	</session-factory>
 
