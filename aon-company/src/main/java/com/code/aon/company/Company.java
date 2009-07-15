@@ -40,6 +40,9 @@ public class Company extends Registry implements ITaxInfo{
 	/** Indicates if a holding has to be applied to the company. */
     private boolean withholding;
 
+	/** Indicates if the company works with e-Invoice. */
+    private boolean eInvoice;
+    
     /** Indicates the company calendar identifier. */
     private Integer calendar;
 
@@ -98,6 +101,25 @@ public class Company extends Registry implements ITaxInfo{
 	 */
 	public void setWithholding(boolean withholding) {
 		this.withholding = withholding;
+	}
+	
+	/**
+	 * Checks if is e invoice.
+	 * 
+	 * @return true, if is e invoice
+	 */
+	@Column(name="e_invoice", nullable=true)
+	public boolean isEInvoice() {
+		return eInvoice;
+	}
+
+	/**
+	 * Sets the e invoice.
+	 * 
+	 * @param invoice the new e invoice
+	 */
+	public void setEInvoice(boolean invoice) {
+		eInvoice = invoice;
 	}
 
 	/**
