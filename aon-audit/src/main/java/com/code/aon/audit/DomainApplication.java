@@ -12,10 +12,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
 
 import com.code.aon.audit.enumeration.AuditLevel;
 import com.code.aon.common.ITransferObject;
+
 
 /**
  * Transfer Object that represents the domain application.
@@ -27,7 +27,6 @@ import com.code.aon.common.ITransferObject;
 @Entity
 @Table(name = "DOMAIN_APPLICATION", schema = "AUDIT")
 @SequenceGenerator(name="DOMAIN_APPLICATION_GENERATOR", sequenceName="SEQ_DOMAIN_APPLICATION",allocationSize=1)
-@org.hibernate.annotations.Table( appliesTo = "DOMAIN_APPLICATION", indexes = { @Index(name="IDX_DOMAIN_APPLICATION", columnNames={"DOMAIN","APPLICATION"})})
 public class DomainApplication implements ITransferObject {
 
 	private static final long serialVersionUID = 487088709544792491L;

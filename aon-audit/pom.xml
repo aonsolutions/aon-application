@@ -10,14 +10,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.audit</artifactId>
-	<version>0.7.1</version>
+	<version>0.5.3</version>
 	<description>AON AUDIT</description>
 	<name>AON-AUDIT</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.common</artifactId>
-			<version>3.2.0</version>
+			<version>2.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>

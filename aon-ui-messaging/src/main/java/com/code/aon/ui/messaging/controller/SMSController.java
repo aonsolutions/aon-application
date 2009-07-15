@@ -79,6 +79,7 @@ public class SMSController implements Serializable {
 
 	private boolean allowUpdateRecipients;
 	private boolean showToolbar;
+	private boolean showDemoMessage;
 	
 	@SuppressWarnings("unchecked")
 	public SMSController() {
@@ -261,7 +262,7 @@ public class SMSController implements Serializable {
 		if ( this.recipients.size() > 0 ) {
 			checkMessageLength();
 			try {
-				// sendMessage( this.message );
+				sendMessage( this.message );
 				reset(event);
 			} catch ( Throwable e ) {
 				LOGGER.severe(">>>> sendMessage " + e.getMessage());
@@ -406,6 +407,14 @@ public class SMSController implements Serializable {
 
 	public void setShowToolbar(boolean showToolbar) {
 		this.showToolbar = showToolbar;
+	}
+
+	public boolean isShowDemoMessage() {
+		return showDemoMessage;
+	}
+
+	public void setShowDemoMessage(boolean showDemoMessage) {
+		this.showDemoMessage = showDemoMessage;
 	}
 	
 }

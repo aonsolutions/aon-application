@@ -110,34 +110,22 @@ public interface IAuditAlias {
 	String  SESSION_ID = SESSION_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: Session_remoteAddress
-	* Hibernate value: Session.remoteAddress
-	*/
-	String  SESSION_REMOTE_ADDRESS = SESSION_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: Session_remoteHost
-	* Hibernate value: Session.remoteHost
-	*/
-	String  SESSION_REMOTE_HOST = SESSION_ENTRY.getAliasNames()[4];
-
-	/** 
 	* Alias value: Session_sessionId
 	* Hibernate value: Session.sessionId
 	*/
-	String  SESSION_SESSION_ID = SESSION_ENTRY.getAliasNames()[5];
+	String  SESSION_SESSION_ID = SESSION_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Session_startDate
 	* Hibernate value: Session.startDate
 	*/
-	String  SESSION_START_DATE = SESSION_ENTRY.getAliasNames()[6];
+	String  SESSION_START_DATE = SESSION_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Session_user_id
 	* Hibernate value: Session.user.id
 	*/
-	String  SESSION_USER_ID = SESSION_ENTRY.getAliasNames()[7];
+	String  SESSION_USER_ID = SESSION_ENTRY.getAliasNames()[5];
 
 
 

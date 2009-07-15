@@ -27,7 +27,6 @@ import com.code.aon.common.ITransferObject;
 @Entity
 @Table(name = "ACTION", schema = "AUDIT")
 @SequenceGenerator(name="ACTION_GENERATOR", sequenceName="SEQ_ACTION",allocationSize=1)
-@org.hibernate.annotations.Table( appliesTo = "ACTION", indexes = { @Index(name="IDX_ACTION", columnNames={"NAME","APPLICATION"})})
 public class Action implements ITransferObject {
 
 	private static final long serialVersionUID = -7135601793952520234L;
