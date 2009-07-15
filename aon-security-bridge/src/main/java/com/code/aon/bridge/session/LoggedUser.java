@@ -58,7 +58,7 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
         	}
         	Entry domain = getAonDomain( principal );
         	if ( domain != null ) {
-            	if (domain.containsKey(PARENT_DOMAIN_ATTRIBUTE) ) {
+            	if (domain.containsKey(PARENT_DOMAIN_ATTRIBUTE) && domain.containsKey(ORGANIZATION_NAME_ATTRIBUTE) ) {
             		companyName = domain.getAsString(ORGANIZATION_NAME_ATTRIBUTE);
             	}    	        		
         	}
