@@ -3,6 +3,7 @@ package com.code.aon.ui.product.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -22,10 +23,15 @@ import org.apache.commons.lang.ArrayUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.ItemAttachment;
+import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.enumeration.AttachmentType;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.form.LinesController;
 
@@ -146,22 +152,53 @@ public class ItemAttachController extends LinesController {
 		context.responseComplete();
 	}
 
+	private List<SelectItem> typesList;
 	/**
 	 * Recupera los tipos de adjuntos
 	 * 
 	 * @return
 	 */
 	public List<SelectItem> getTypesList() {
-		List<SelectItem> typeList = new LinkedList<SelectItem>();
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot()
-				.getLocale();
-		typeList = new LinkedList<SelectItem>();
+		if(typesList==null){
+		}
+		refreshTypeList();
+		return typesList;
+	}
+	
+	public void setTypesList(List<SelectItem> typesList) {
+		this.typesList = typesList;
+	}
+	
+	public void refreshTypeList(){
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		typesList = new LinkedList<SelectItem>();
+		boolean dis=false;
 		for (AttachmentType p : AttachmentType.values()) {
 			String name = p.getName(locale);
-			SelectItem item = new SelectItem(p, name);
-			typeList.add(item);
+			SelectItem item = new SelectItem(p, name,name,dis);
+			if((p.compareTo(AttachmentType.THUMBNAIL)==0 && !hasThumbnail())
+					|| p.compareTo(AttachmentType.THUMBNAIL)!=0){
+				typesList.add(item);
+			}
 		}
-		return typeList;
 	}
-
+	
+	public boolean hasThumbnail() {
+		try {
+			IManagerBean attachmentBean = BeanManager.getManagerBean(ItemAttachment.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(attachmentBean.getFieldName(IProductAlias.ITEM_ATTACHMENT_TYPE),AttachmentType.THUMBNAIL);
+			Iterator<ITransferObject> iter = attachmentBean.getList(criteria).iterator();
+			return iter.hasNext();
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+	
+	//*******************************
+	//*******************************
+	// FALTA CONTROLAR TAMAÑO DE THUMBNAIL, REDIMENSIONAR LA IMAGEN
+	//*******************************
+	//*******************************
 }
