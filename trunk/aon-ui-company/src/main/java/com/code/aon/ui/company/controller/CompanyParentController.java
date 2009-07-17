@@ -9,6 +9,7 @@ import java.util.Iterator;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.persistence.Column;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -612,14 +613,16 @@ public class CompanyParentController extends BasicController implements ICompany
 		return null;
 	}
 
-	private boolean test = true;
-
-	public boolean isTest() {
-		return test;
-	}
-
-	public void setTest(boolean test) {
-		this.test = test;
+	/**
+	 * Checks if is e invoice.
+	 * 
+	 * @return true, if is e invoice
+	 */
+	public boolean isEInvoice() {
+		if(this.getTo() == null){
+			this.onLoad();
+		}
+		return ( (Company) getTo()).isEInvoice();
 	}
 	
 }
