@@ -11,7 +11,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.parent</artifactId>
-	<version>1.0.5</version>
+	<version>1.0.6</version>
 	<packaging>pom</packaging>
 	<description>POM padre de los proyectos WEB de AON</description>
 	<name>AON WEB ENTITY PARENT</name>
@@ -89,12 +89,6 @@
 			<artifactId>el-api</artifactId>
 			<version>1.0</version>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.el</groupId>
-			<artifactId>el.ri</artifactId>
-			<version>1.0.0</version>
-			<scope>runtime</scope>
 		</dependency>
 		<!-- FIN para construir el war-->
 	</dependencies>
