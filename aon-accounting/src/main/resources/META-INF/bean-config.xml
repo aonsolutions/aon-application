@@ -20,6 +20,7 @@
 		<pojo>com.code.aon.accounting.AccountEntryDetail</pojo>
 		<listeners>
 	        <listener>com.code.aon.accounting.event.AccountEntryDetailSummaryBeanListener</listener>
+	        <listener>com.code.aon.accounting.event.AccountHelperBeanListener</listener>
 		</listeners>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.accounting.event.AccountEntryDetailBeanVetoListener</vetoListener>
