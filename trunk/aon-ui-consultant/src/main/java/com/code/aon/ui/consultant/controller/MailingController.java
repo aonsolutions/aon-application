@@ -6,8 +6,8 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.customer.controller.CustomerController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.mailing.MailingManager;
-import com.code.aon.ui.util.AonUtil;
 
 public class MailingController {
 
@@ -15,7 +15,7 @@ public class MailingController {
 
 	@SuppressWarnings({"unchecked", "unused"})
 	public void onGenerateCustomerMailing(ActionEvent event) throws ManagerBeanException {
-        CustomerController customerController = (CustomerController)AonUtil.getController(CUSTOMER_CONTROLLER_NAME);
+        CustomerController customerController = (CustomerController)FormUtil.getController(CUSTOMER_CONTROLLER_NAME);
         Collection collection = customerController.getManagerBean().getList(customerController.getCriteria());
         MailingManager.generateMailing(collection);
 	}
