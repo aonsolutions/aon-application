@@ -1,0 +1,79 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<c:forEach items="#{aonConfiguration.applicationBundleList}" var="appBundle">
+	<f:loadBundle basename="#{appBundle.value}" var="#{appBundle.key}" />
+</c:forEach>
+<f:view>
+	<head>
+	<title><ui:insert name="title">Title</ui:insert></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<meta http-equiv="Expires" content="0" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Cache-Control" content="no-store" />
+  	<c:forEach items="#{aonConfiguration.styleSheets}" var="styleSheet">	
+		<t:stylesheet path="#{styleSheet}" />
+	</c:forEach>
+	<script type='text/javascript'
+		src="${facesContext.externalContext.requestContextPath}/js/Accelerators.js">
+		// nothing
+	</script>
+	<script type='text/javascript'
+		src="${facesContext.externalContext.requestContextPath}/js/Utils.js">
+		// nothing
+	</script>
+	<script type='text/javascript'
+		src="${facesContext.externalContext.requestContextPath}/js/Window.js">
+		// nothing
+	</script>
+	</head>
+	<body id="aon-body" onload="windowLoaded();"
+		onresize="aonResizeBody();">
+	<t:div id="aon-content-container">
+
+		<ui:insert name="header" />
+		<t:div>
+			<t:div styleClass="aon-errors" id="aon-errors">
+				<t:messages showSummary="false" showDetail="true"
+					errorClass="aon-error-message" fatalClass="aon-fatal-error-message"
+					infoClass="aon-info-message" replaceIdWithLabel="true" />
+			</t:div>
+			<h:form id="companyForm" enctype="multipart/form-data">
+				<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
+					forceId="#{true}">
+					<t:div styleClass="aon-content-toolbar-internal">
+						<t:div styleClass="aon-content-toolbar-item-group">
+							<t:commandButton id="save" value="#{bundle.aon_save}"
+								actionListener="#{company.onAccept}" forceId="#{true}"
+								action="company_init"
+								onclick="return (confirm('#{bundle.aon_accept_confirm}'))"
+								styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+								onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+								onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
+								disabled="#{companyAddress.to!=null}"
+								accesskey="#{bundle.aon_key_save}" />
+						</t:div>
+					</t:div>
+				</t:div>
+
+				<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+					forceId="#{true}">
+					<t:div styleClass="aon-content-subtitle-internal">
+						<h:outputText
+							value="#{appBundle.aon_initial_register}" />
+					</t:div>
+				</t:div>
+
+				<ui:include src="/facelet/registry/company/companyContent.xhtml" >
+					<ui:param name="viewDetails" value="#{false}"/>
+				</ui:include>
+
+			</h:form>
+		</t:div>
+	</t:div>
+	</body>
+</f:view>
+</html>

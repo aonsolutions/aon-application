@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="person">
+    <columns>
+        <column label="" name="registry" sqlType="integer" type="integer"/>
+        <column label="" name="birthDate" sqlType="date" type="date"/>
+        <column label="" length="4" name="gender" sqlType="tinyint" type="string"/>
+        <column label="" length="4" name="maritalStatus"
+            sqlType="tinyint" type="string"/>
+        <column label="" length="1" name="active" sqlType="bit" type="string"/>
+        <column label="" length="255" name="comments" sqlType="varchar" type="string"/>
+        <column label="" name="birthplace" sqlType="integer" type="integer"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="registry"/>
+    </primaryKey>
+    <joins>
+        <join description="person_ibfk_1" foreignPath="data/registry.exdm.xml">
+            <sourceColumns>
+                <column name="registry"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>
