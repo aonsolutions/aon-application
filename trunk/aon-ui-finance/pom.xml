@@ -35,7 +35,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.company</artifactId>
-			<version>4.0.0</version>
+			<version>4.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -95,13 +95,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.webmail</artifactId>
-			<version>3.6.0</version>
+			<version>3.6.2</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>4.0.0</version>
+			<version>4.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -133,7 +133,13 @@
 			<artifactId>aon.ui.report</artifactId>
 			<version>4.0.0</version>
 			<scope>compile</scope>
-		</dependency>		
+		</dependency>
+		<dependency>
+			<groupId>sinadura</groupId>
+			<artifactId>sinaduraCore</artifactId>
+			<version>1.3.0.MOD</version>
+			<scope>compile</scope>
+		</dependency>				
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
@@ -149,13 +155,7 @@
 		<dependency>
 			<groupId>javax.faces</groupId>
 			<artifactId>jsf-api</artifactId>
-			<version>1.2_09</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.el</groupId>
-			<artifactId>el-api</artifactId>
-			<version>1.0</version>
+			<version>1.2_13</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
