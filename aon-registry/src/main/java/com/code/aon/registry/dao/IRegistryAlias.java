@@ -413,34 +413,52 @@ public interface IRegistryAlias {
 	DAOConstantsEntry REGISTRY_MEDIA_ENTRY = DAOConstants.getDAOConstant(RegistryMedia.class);
 
 	/** 
+	* Alias value: RegistryMedia_administrative
+	* Hibernate value: RegistryMedia.administrative
+	*/
+	String  REGISTRY_MEDIA_ADMINISTRATIVE = REGISTRY_MEDIA_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: RegistryMedia_comment
 	* Hibernate value: RegistryMedia.comment
 	*/
-	String  REGISTRY_MEDIA_COMMENT = REGISTRY_MEDIA_ENTRY.getAliasNames()[0];
+	String  REGISTRY_MEDIA_COMMENT = REGISTRY_MEDIA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: RegistryMedia_commercial
+	* Hibernate value: RegistryMedia.commercial
+	*/
+	String  REGISTRY_MEDIA_COMMERCIAL = REGISTRY_MEDIA_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: RegistryMedia_id
 	* Hibernate value: RegistryMedia.id
 	*/
-	String  REGISTRY_MEDIA_ID = REGISTRY_MEDIA_ENTRY.getAliasNames()[1];
+	String  REGISTRY_MEDIA_ID = REGISTRY_MEDIA_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: RegistryMedia_mediaType
 	* Hibernate value: RegistryMedia.mediaType
 	*/
-	String  REGISTRY_MEDIA_MEDIA_TYPE = REGISTRY_MEDIA_ENTRY.getAliasNames()[2];
+	String  REGISTRY_MEDIA_MEDIA_TYPE = REGISTRY_MEDIA_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: RegistryMedia_registry_id
 	* Hibernate value: RegistryMedia.registry.id
 	*/
-	String  REGISTRY_MEDIA_REGISTRY_ID = REGISTRY_MEDIA_ENTRY.getAliasNames()[3];
+	String  REGISTRY_MEDIA_REGISTRY_ID = REGISTRY_MEDIA_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: RegistryMedia_technical
+	* Hibernate value: RegistryMedia.technical
+	*/
+	String  REGISTRY_MEDIA_TECHNICAL = REGISTRY_MEDIA_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: RegistryMedia_value
 	* Hibernate value: RegistryMedia.value
 	*/
-	String  REGISTRY_MEDIA_VALUE = REGISTRY_MEDIA_ENTRY.getAliasNames()[4];
+	String  REGISTRY_MEDIA_VALUE = REGISTRY_MEDIA_ENTRY.getAliasNames()[7];
 
 
 
