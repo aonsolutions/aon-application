@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.company</artifactId>
-			<version>4.0.0</version>
+			<version>4.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<!-- PINRREL  -->
@@ -123,7 +123,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>4.0.0</version>
+			<version>4.1.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -181,6 +181,15 @@
 			<version>4.0.0</version>
 			<scope>runtime</scope>
 		</dependency>
+
+		<!-- Es necesaria esta version para firmar los PDF -->
+	  	<dependency>
+	  		<groupId>bouncycastle</groupId>
+	  		<artifactId>bcprov-jdk14</artifactId>
+	  		<version>138</version>
+	  		<type>jar</type>
+	  		<scope>compile</scope>
+	  	</dependency>		
 
 		<!--
 			PARA CONSTRUIR CORRECTAMENTE EL WAR 		

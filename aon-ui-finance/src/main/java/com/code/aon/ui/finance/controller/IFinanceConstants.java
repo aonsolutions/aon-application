@@ -26,4 +26,6 @@ public interface IFinanceConstants {
 	
 	String EMAIL_UTIL_CONTROLLER_NAME = "emailUtil";
 	
+	String INVOICE_SIGNER_CONTROLLER_NAME = "invoiceSigner";
+	
 }
