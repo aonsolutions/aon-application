@@ -45,7 +45,13 @@ public class RegistryMedia implements ITransferObject {
     /** The comment. */
     private String comment;
 
-    /**
+	private boolean administrative;
+
+	private boolean commercial;
+
+	private boolean technical;
+
+	/**
      * Gets the id.
      * 
      * @return the id
@@ -145,6 +151,33 @@ public class RegistryMedia implements ITransferObject {
         this.comment = comment;
     }
 
+	@Column(name="administrative")
+	public boolean isAdministrative() {
+		return administrative;
+	}
+
+	public void setAdministrative(boolean administrative) {
+		this.administrative = administrative;
+	}
+
+	@Column(name="commercial")
+	public boolean isCommercial() {
+		return commercial;
+	}
+
+	public void setCommercial(boolean commercial) {
+		this.commercial = commercial;
+	}
+
+	@Column(name="technical")
+	public boolean isTechnical() {
+		return technical;
+	}
+
+	public void setTechnical(boolean technical) {
+		this.technical = technical;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -157,6 +190,9 @@ public class RegistryMedia implements ITransferObject {
 				.append(this.media, o.media)				
 				.append(this.registry, o.registry)
 				.append(this.value, o.value)
+				.append(this.administrative, o.administrative)
+				.append(this.commercial, o.commercial)
+				.append(this.technical, o.technical)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -170,6 +206,9 @@ public class RegistryMedia implements ITransferObject {
 			.append(media)
 			.append(registry)	
 			.append(value)
+			.append(administrative)
+			.append(commercial)
+			.append(technical)
 			.toHashCode();
 	}
 

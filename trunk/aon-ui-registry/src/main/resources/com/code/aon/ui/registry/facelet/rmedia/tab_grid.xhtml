@@ -11,7 +11,10 @@
 		<ui:param name="columnClasses"
 			value="aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap,
 			aon-editDataTable-textColumn aon-vertical-align-top aon-width-200 aon-nowrap,
-			aon-editDataTable-textColumn aon-vertical-align-top aon-nowrap" />
+			aon-editDataTable-textColumn aon-vertical-align-top aon-nowrap,
+			aon-editDataTable-textColumn aon-vertical-align-top aon-width-100 aon-nowrap,
+			aon-editDataTable-textColumn aon-vertical-align-top aon-width-100 aon-nowrap,
+			aon-editDataTable-textColumn aon-vertical-align-top aon-width-100 aon-nowrap" />
 		<ui:define name="columns">
 			<aon:column>
 				<f:facet name="header">
@@ -60,6 +63,52 @@
 						value="#{controller.to.comment}" rendered="#{formNew}" size="40" />
 				</f:facet>
 			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryMedia_administrative" value="#{registryBundle.registry_administrative}" />
+				</f:facet>
+				<aon:div rendered="#{formList}" styleClass="#{to.administrative?'aon-icon-checked':'aon-icon-check'}">
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:selectBooleanCheckbox id="RegistryMedia_administrative" styleClass="aon-margin-left"
+					value="#{to.administrative}" rendered="#{formEdit}" />
+				<f:facet name="footer">
+					<aon:selectBooleanCheckbox id="RegistryMedia_administrative-New" styleClass="aon-margin-left"
+						value="#{to.administrative}" rendered="#{formNew}" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryMedia_commercial" value="#{registryBundle.registry_commercial}" />
+				</f:facet>
+				<aon:div rendered="#{formList}" styleClass="#{to.commercial?'aon-icon-checked':'aon-icon-check'}">
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:selectBooleanCheckbox id="RegistryMedia_commercial" styleClass="aon-margin-left"
+					value="#{to.commercial}" rendered="#{formEdit}" />
+				<f:facet name="footer">
+					<aon:selectBooleanCheckbox id="RegistryMedia_commercial-New" styleClass="aon-margin-left"
+						value="#{to.commercial}" rendered="#{formNew}" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryMedia_technical" value="#{registryBundle.registry_technical}" />
+				</f:facet>
+				<aon:div rendered="#{formList}" styleClass="#{to.technical?'aon-icon-checked':'aon-icon-check'}">
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:selectBooleanCheckbox id="RegistryMedia_technical" styleClass="aon-margin-left"
+					value="#{to.technical}" rendered="#{formEdit}" />
+				<f:facet name="footer">
+					<aon:selectBooleanCheckbox id="RegistryMedia_technical-New" styleClass="aon-margin-left"
+						value="#{to.technical}" rendered="#{formNew}" />
+				</f:facet>
+			</aon:column>
+
 		</ui:define>
 	</ui:decorate>
 </ui:composition>
