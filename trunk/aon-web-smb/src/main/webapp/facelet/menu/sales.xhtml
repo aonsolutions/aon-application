@@ -94,12 +94,14 @@
 										value="#{financeBundle.finance_invoicing_group_module}"
 										action="invoicingGroup_list" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink
-										value="#{financeBundle.finance_invoice_signing_module}"
-										actionListener="#{invoiceSigner.onEditSearch}"
-										action="invoiceSigner_search" />
-								</aon:div>
+								<c:if test="#{company.EInvoice}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink
+											value="#{financeBundle.finance_invoice_signing_module}"
+											actionListener="#{invoiceSigner.onEditSearch}"
+											action="invoiceSigner_search" />
+									</aon:div>
+								</c:if>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink
 										value="#{financeBundle.finance_invoice_recording_module}"

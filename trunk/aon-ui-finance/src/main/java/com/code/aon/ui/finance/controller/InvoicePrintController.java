@@ -16,6 +16,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.finance.util.EmailUtilController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.EmailSender;
+import com.code.aon.webmail.SecurityInfo;
 
 public class InvoicePrintController extends InvoiceController implements IFinanceConstants {
 	
@@ -40,12 +41,12 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 		SaleInvoiceController invoiceController = (SaleInvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
 		try {
 			EmailSender sender = emailController.getEmailSender();
-			boolean eInvoice = invoiceController.isDigitalCertificate();
+			SecurityInfo si = invoiceController.getDigitalCertificate( invoiceController.getDigitalCertificate(), "esferalia");
 			sender.connect();
 			Criteria criteria = getCriteria();
 			List<ITransferObject> list = getManagerBean().getList(criteria);
 			for( ITransferObject to : list ) {
-				emailController.sendInvoice( (Invoice) to, eInvoice );	
+				emailController.sendInvoice( (Invoice) to, si );	
 			}
 			sender.disconnect();
 		} catch (Throwable th) {

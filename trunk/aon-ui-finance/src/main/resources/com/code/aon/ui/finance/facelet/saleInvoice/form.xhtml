@@ -40,24 +40,32 @@
 						reRender="saleInvoiceForm"
 						onclick="Richfaces.showModalPanel('waitProccess')" 
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					<aon:commandButton id="email"
+						title="#{saleInvoice.sendEmailToTitle}" value="&#160;"
+						rendered="#{!saleInvoice.new and saleInvoice.to.registry.email != null}"
+						actionListener="#{saleInvoice.sendInvoiceByEmail}"
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+		     			oncomplete="Richfaces.hideModalPanel('waitProccess')"							
+						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border" />
 					<h:commandLink id="saleInvoice" value="#{financeBundle.finance_invoice}"
 						target="_new" rendered="#{!saleInvoice.new and saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
-						action="#{report.onExecute}"
+						action="#{saleInvoice.onReport}"
 						accesskey="#{bundle.aon_key_print}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						<f:param name="reportKey" value="saleInvoice" />
-						<f:param name="outputFormat" value="PDF" />
 					</h:commandLink>
-					<c:if test="#{saleInvoice.digitalCertificate}">
-						<h:commandLink id="saleEInvoice" value="e#{financeBundle.finance_invoice}"
-							target="_new" rendered="#{!saleInvoice.new and saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
-							action="#{report.onExecute}" 
-							accesskey="#{bundle.aon_key_print}"
-							styleClass="aon-finding-toolbar-item aon-icon-pdf">
-							<f:param name="reportKey" value="saleEInvoice" />
-							<f:param name="outputFormat" value="PDF" />
-						</h:commandLink>
-					</c:if>
+					<aon:commandButton id="sign"
+						value="#{financeBundle.finance_sign}"
+						actionListener="#{invoiceSigner.onShowSignWindow}"
+						rendered="#{company.EInvoice and !saleInvoice.new and !saleInvoice.to.signed}"
+						styleClass="aon-finding-toolbar-item aon-icon-sign aon-finding-toolbar-item-no-border"
+						reRender="showSignWindow" />
+					<aon:commandButton id="cancel_sign"
+						value="#{financeBundle.finance_cancel_sign}"
+						actionListener="#{saleInvoice.onCancelSignInvoice}"
+						rendered="#{company.EInvoice and !saleInvoice.new and saleInvoice.to.signed}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel-sign aon-finding-toolbar-item-no-border"
+						reRender="saleInvoiceForm" />
 				</ui:define>
 			</ui:decorate>
 		</aon:div>
@@ -87,11 +95,18 @@
 							required="true" size="7" />
 
 						<aon:selectOneMenu id="Invoice_securityLevel"
-							styleClass="aon-margin-left" disabled="#{saleInvoice.recorded}"
+							styleClass="aon-margin-left" disabled="#{saleInvoice.readOnly}"
 							value="#{saleInvoice.to.securityLevel}">
 							<f:selectItems value="#{commonCollections.securityLevels}" />
 						</aon:selectOneMenu>
-
+						<c:if test="#{company.EInvoice}">
+							<aon:graphicImage rendered="#{!saleInvoice.new and saleInvoice.to.signed}"
+								styleClass="aon-vertical-align-top aon-margin-left" title="#{financeBundle.finance_signed}"
+								url="#{aonResource.resolve['/com/code/aon/ui/finance/facelet/invoiceSigner/signed.png']}"/>
+							<aon:graphicImage rendered="#{!saleInvoice.new and !saleInvoice.to.signed}"
+								styleClass="aon-vertical-align-top aon-margin-left" alt="#{financeBundle.finance_sign_pending}"
+								url="#{aonResource.resolve['/com/code/aon/ui/finance/facelet/invoiceSigner/not-signed.png']}"/>
+						</c:if>
 						<aon:outputText styleClass="aon-margin-left"
 							value="#{saleInvoice.to.status}" />
 						<aon:outputText styleClass="aon-italic aon-margin-left"
@@ -108,7 +123,7 @@
 						value="#{bundle.aon_date}" />
 					<aon:selectInputDate id="Invoice_issueDate"
 						value="#{saleInvoice.to.issueDate}" required="true"
-						disabled="#{saleInvoice.recorded}"
+						disabled="#{saleInvoice.readOnly}"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
@@ -118,49 +133,36 @@
 						<a4j:region>
 							<aon:lookupInputText id="Customer_id"
 								value="#{saleInvoice.to.registry.id}"
-								disabled="#{saleInvoice.recorded}" size="5"
+								disabled="#{saleInvoice.readOnly}" size="5"
 								lookupProperty="registry" lookup="#{customerLookup}"
 								lookupChangeListener="#{saleInvoice.customerData}"
 								reRender="Customer_full_name,Customer_registry_document,InvoiceAddress"
 								ajaxSingle="true" required="true" />
 							<aon:lookupButton
 								windowTitle="#{customerBundle.customer_selection}"
-								disabled="#{saleInvoice.recorded}" minHeight="460" minWidth="650" 
+								disabled="#{saleInvoice.readOnly}" minHeight="460" minWidth="650" 
 								property="#{saleInvoice.to.registry}" lookupProperty="registry" lookup="#{customerLookup}"
 								lookupChangeListener="#{saleInvoice.customerData}"
 								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,InvoiceAddress"
 								actionType="search">
 							</aon:lookupButton>
-							<aon:inputText id="Customer_full_name" disabled="#{saleInvoice.recorded}"
+							<aon:inputText id="Customer_full_name" disabled="#{saleInvoice.readOnly}"
 								value="#{saleInvoice.to.registryName}" size="50" />
 						</a4j:region>
-						<aon:commandButton
-							value="#{financeBundle.finance_send_email}"
-							rendered="#{!saleInvoice.new and saleInvoice.to.registry.email != null}"
-							title="#{saleInvoice.sendEmailToTitle}"
-							actionListener="#{saleInvoice.sendInvoiceByEmail}"
-							onclick="Richfaces.showModalPanel('waitProccess')" 
-			     			oncomplete="Richfaces.hideModalPanel('waitProccess')"							
-							styleClass="aon-margin-left aon-icon-commandButton aon-icon-mailForward"/>
-						<aon:commandButton
-							value="#{financeBundle.finance_without_email}" disabled="true"
-							rendered="#{!saleInvoice.new and saleInvoice.to.registry.email == null}"
-							title="#{saleInvoice.registryWithoutEmailTitle}"
-							styleClass="aon-margin-left aon-icon-commandButton aon-icon-mailDelete"/>
 					</aon:div>
 
 					<aon:outputLabel for="Customer_registry_document"
 						value="#{bundle.aon_company_document}" />
 					<aon:inputText id="Customer_registry_document"
 						value="#{saleInvoice.to.registryDocument}"
-						disabled="#{saleInvoice.recorded}" size="10" />
+						disabled="#{saleInvoice.readOnly}" size="10" />
 
 					<aon:outputLabel for="Invoice_registryAddress_id"
 						value="#{registryBundle.registry_address}" />
 					<aon:div id="InvoiceAddress">
 						<aon:selectOneMenu id="Invoice_registryAddress_id"
 							rendered="#{(saleInvoice.new or saleInvoiceAddress.to.id == null) and saleInvoice.addressCount > 0}"
-							disabled="#{saleInvoice.recorded}"
+							disabled="#{saleInvoice.readOnly}"
 							value="#{saleInvoice.to.registryAddress.id}">
 							<f:selectItems value="#{saleInvoice.addresses}" />
 						</aon:selectOneMenu>
@@ -176,7 +178,7 @@
 						<aon:div layout="inline" styleClass="aon-margin-left">
 							<aon:commandButton id="popupButton"
 								reRender="showInvoiceAddressWindow"
-								rendered="#{!saleInvoice.new and !saleInvoice.recorded}"
+								rendered="#{!saleInvoice.new and !saleInvoice.readOnly}"
 								actionListener="#{saleInvoice.onInvoiceAddressShow}"
 								styleClass="aon-icon-commandButton aon-icon-file-entrance"
 								value="#{registryBundle.registry_address_other}" >
@@ -202,7 +204,7 @@
 					<aon:outputLabel for="Invoice_comments"
 						value="#{bundle.aon_comment}" />
 					<aon:inputTextarea id="Invoice_comments" cols="150" rows="2"
-						disabled="#{saleInvoice.recorded}"
+						disabled="#{saleInvoice.readOnly}"
 						value="#{saleInvoice.to.comments}" />
 
 				</aon:panelGrid>
@@ -221,5 +223,9 @@
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoiceAddress/modalPanel.xhtml" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoiceSigner/modal.xhtml" >
+			<ui:param name="signButtonreRender" value="saleInvoiceForm" />
+			<aon:methodParam name="signActionListener" value="#{saleInvoice.onSignInvoice}" type="actionListener" />
+		</ui:include>
 	</ui:define>
 </ui:composition>
