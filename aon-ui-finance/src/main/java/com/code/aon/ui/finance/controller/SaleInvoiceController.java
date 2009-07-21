@@ -1,6 +1,7 @@
 package com.code.aon.ui.finance.controller;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -17,6 +18,10 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
+
+import net.esle.sinadura.core.firma.SignStoreFactory;
+import net.esle.sinadura.core.firma.SignStoreIFace;
+import net.esle.sinadura.core.firma.exceptions.SinaduraCoreException;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -61,6 +66,7 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.report.ReportException;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -72,6 +78,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.EmailSender;
+import com.code.aon.webmail.SecurityInfo;
 
 public class SaleInvoiceController extends InvoiceController implements IFinanceConstants, IFinanceMessages {
 	
@@ -89,6 +96,10 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 	
 	private boolean showInvoiceAddressWindow;
 
+	public Invoice getInvoice() {
+		return (Invoice) getTo();
+	}
+	
 	public IPriceStrategy getPriceStrategy() {
 		if (priceStrategy == null) {
 			priceStrategy = new InvoicePriceStrategy();
@@ -376,6 +387,17 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		return false;
 	}
 
+	public boolean isReadOnly() {
+		Invoice invoice = (Invoice)this.getTo();
+		if ( invoice.isSigned() ) {
+			return true;
+		}
+		if ( invoice.getStatus() != null ) {
+			return invoice.getStatus().equals(InvoiceStatus.SCORED);
+		}
+		return false;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public Integer getAccountEntryId() throws ManagerBeanException {
     	Invoice invoice = (Invoice)this.getTo();
@@ -411,25 +433,46 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 			addressController.onReset(event);
 		}
 	}
+	
+	public void onSignInvoice( ActionEvent event ) {
+		InvoiceSignerController invoiceSigner = (InvoiceSignerController) AonUtil.getRegisteredBean(INVOICE_SIGNER_CONTROLLER_NAME);
+		try {
+			if (! invoiceSigner.resolveCertificado() ) {
+				return;
+			}
+			invoiceSigner.signInvoice( getInvoice() );
+		} catch (Throwable e) {
+			LOGGER.severe(">>>> onSignInvoice " + e.getMessage());
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
+			invoiceSigner.setShowSignWindow(false);
+		}
+	}
 
+	public void onCancelSignInvoice( ActionEvent event ) throws ManagerBeanException {
+		InvoiceSignerController invoiceSigner = (InvoiceSignerController) AonUtil.getRegisteredBean(INVOICE_SIGNER_CONTROLLER_NAME);
+		invoiceSigner.cancelSignInvoice( getInvoice() );
+	}
+
+	public String onReport() throws ReportException, ManagerBeanException, IOException {
+		InvoiceSignerController invoiceSigner = (InvoiceSignerController) AonUtil.getRegisteredBean(INVOICE_SIGNER_CONTROLLER_NAME);
+		return invoiceSigner.onReport( getInvoice() );
+	}
+	
 	public String getSendEmailToTitle() throws ManagerBeanException {
 		Invoice invoice = (Invoice) getTo();
 		String message = AonUtil.getMessage(BUNDLE_KEY, FINANCE_SEND_EMAIL_TO);
-		return MessageFormat.format(message, invoice.getRegistry().getEmail().getValue());
+		return MessageFormat.format(message, invoice.getRegistry().getEmail().getValue() );
 	}
 
-	public String getRegistryWithoutEmailTitle(){
-		Invoice invoice = (Invoice) getTo();
-		String message = AonUtil.getMessage(BUNDLE_KEY, FINANCE_REGISTRY_WITHOUT_EMAIL);
-		return MessageFormat.format(message, invoice.getRegistry().getFullName());
-	}
-
-	public void sendInvoiceByEmail(ActionEvent event) {
+	public void sendInvoiceByEmail( ActionEvent event ) {
 		EmailUtilController emailController = (EmailUtilController) AonUtil.getRegisteredBean(EMAIL_UTIL_CONTROLLER_NAME);
 		try {
 			EmailSender sender = emailController.getEmailSender();
 			sender.connect();
-			emailController.sendInvoice((Invoice) getTo(), isDigitalCertificate());
+			SecurityInfo si = getDigitalCertificate( getDigitalCertificate(), "esferalia");
+			emailController.sendInvoice( getInvoice(), si );
 			sender.disconnect();
 		} catch (Throwable th) {
 			LOGGER.log(Level.SEVERE, th.getMessage(), th);
@@ -468,6 +511,13 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		return null;
 	}
 	
+	public SecurityInfo getDigitalCertificate( RegistryAttachment ra, String password ) throws ManagerBeanException, IOException, SinaduraCoreException {
+		ByteArrayInputStream in = new ByteArrayInputStream( ra.getData() );
+		SignStoreIFace signStore = SignStoreFactory.buildSingStorePKSC12( in, password );
+		SecurityInfo si = new SecurityInfo( signStore.getKeySore(), password );
+		return si;
+	}		
+	
 	public String getInvoiceSignature() throws ManagerBeanException {
 		RegistryAttachment ra = getDigitalCertificate();
 		return new String( Base64.encodeBase64(ra.getData()) );
@@ -502,8 +552,7 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 	
 	public String getEInvoice() throws IOException, SAXException {
 		StringWriter sw = new StringWriter();
-		Invoice invoice = (Invoice) getTo();
-		writeInvoiceXml(sw, invoice.getId());
+		writeInvoiceXml(sw, getInvoice().getId());
 		return sw.toString();
 	}
 	

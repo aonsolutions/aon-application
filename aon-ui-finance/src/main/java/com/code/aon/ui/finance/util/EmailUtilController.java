@@ -6,9 +6,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.text.MessageFormat;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,18 +14,14 @@ import javax.mail.Address;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.xml.sax.SAXException;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.ICollectionProvider;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.finance.Invoice;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.controller.CompanyController;
@@ -36,55 +29,24 @@ import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
-import com.code.aon.ui.finance.controller.InvoicePrintController;
+import com.code.aon.ui.finance.controller.InvoiceSignerController;
 import com.code.aon.ui.finance.controller.SaleInvoiceController;
-import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.AonFile;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.SecurityInfo;
 import com.code.aon.webmail.WebmailUtil;
 
-public class EmailUtilController implements ICollectionProvider, IFinanceMessages, IFinanceConstants {
+public class EmailUtilController implements IFinanceMessages, IFinanceConstants {
 
 	private static final String SALE_INVOICE_REPORT = "saleInvoice";
-	
-	private static final String SALE_EINVOICE_REPORT = "saleEInvoice";
 
-	private static final Logger LOGGER = Logger.getLogger(InvoicePrintController.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(EmailUtilController.class.getName());
 	
 	private EmailSender sender;
 	
 	private Company company;
-	
-	private Invoice currentInvoice;
-	
-	@SuppressWarnings("unchecked")
-	public Collection getCollection() {
-		try {
-			return getCollection(false);
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-		}
-		return null;
-	}
-
-	@SuppressWarnings("unchecked")	
-	public Collection getCollection(boolean forceRefresh)
-			throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
-		List<ITransferObject> l = new LinkedList<ITransferObject>();
-		l.add( bean.get(getCurrentInvoice().getId()) );
-		return l;
-	}
-	
-	public Invoice getCurrentInvoice() {
-		return currentInvoice;
-	}
-
-	public void setCurrentInvoice(Invoice currentInvoice) {
-		this.currentInvoice = currentInvoice;
-	}
 
 	private MailAccount getDefaultMailAccount( AuthPrincipal user ) {		
 		String domain = user.getDomain();
@@ -106,15 +68,17 @@ public class EmailUtilController implements ICollectionProvider, IFinanceMessage
 		return company;
 	}
 
-	public String getEmailSubject( Invoice invoice, boolean eInvoice ) {
-		String key = eInvoice ? FINANCE_EINVOICE_EMAIL_SUBJECT : FINANCE_INVOICE_EMAIL_SUBJECT; 
+	public String getEmailSubject( Invoice invoice ) {
+		String key = invoice.isSigned() ? FINANCE_EINVOICE_EMAIL_SUBJECT : FINANCE_INVOICE_EMAIL_SUBJECT; 
 		String message = AonUtil.getMessage(BUNDLE_KEY, key);
 		return MessageFormat.format(message, invoice.getReferenceCode() );
 	}
 
-	public String getEmailBody( Invoice invoice ) {
+	public String getEmailBody( Invoice invoice ) throws UnsupportedEncodingException {
 		StringBuffer body = new StringBuffer();
-		body.append( "<html><body>" );
+		body.append( "<html><head>" );
+		body.append( "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />" );
+		body.append( "</head><body>" );
 		body.append(AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_EMAIL_BODY_HEADER) );
 		String bodyPart = AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_EMAIL_BODY); 
 		body.append( MessageFormat.format(bodyPart, invoice.getReferenceCode(), invoice.getIssueDate()) );
@@ -125,7 +89,8 @@ public class EmailUtilController implements ICollectionProvider, IFinanceMessage
 		RegistryMedia phone = companyController.getPhone();
 		if ( phone != null ) {
 			String phoneLabel = AonUtil.getMessage("registryBundle", "registry_phone");
-			body.append(phoneLabel).append( ": " ).append( phone.getValue() ).append( "<br/>" );
+			body.append( StringEscapeUtils.escapeHtml(phoneLabel));
+			body.append( ": " ).append( phone.getValue()).append( "<br/>" );
 		}
 		RegistryMedia fax = companyController.getFax();
 		if ( fax != null ) {
@@ -136,7 +101,6 @@ public class EmailUtilController implements ICollectionProvider, IFinanceMessage
 		if ( web != null ) {
 			body.append( "<a href=\"" ).append( web.getValue() ).append( "\">").append( web.getValue() ).append("</a>" );
 		}
-		body.append( "</body></html>" );
 		return body.toString();
 	}
 	
@@ -156,34 +120,27 @@ public class EmailUtilController implements ICollectionProvider, IFinanceMessage
 		return this.sender;
 	}
 	
-	public AonFile getInvoiceFile( String fileName, boolean eInvoice ) throws IOException, ReportException {
-		ReportManager report = new ReportManager();
-		report.setCollectionProvider(this);
-		String reporkey = eInvoice ? SALE_EINVOICE_REPORT : SALE_INVOICE_REPORT;
-		File file = File.createTempFile( reporkey, ".pdf" );
-		report.execute( file, reporkey);
+	public AonFile getInvoiceFile( Invoice invoice, String fileName ) throws IOException, ReportException, ManagerBeanException {
+		InvoiceSignerController invoiceSigner = (InvoiceSignerController) AonUtil.getRegisteredBean(INVOICE_SIGNER_CONTROLLER_NAME);
+		File file = File.createTempFile( SALE_INVOICE_REPORT, ".pdf" );
+		byte[] data = null;
+		if ( invoice.isSigned() ) {
+			data = invoiceSigner.getSignedInvoice(invoice).getData();
+		} else {
+			data = invoiceSigner.getInvoicePDF(invoice);
+		}
+		FileUtils.writeByteArrayToFile(file, data);
 		AonFile aonFile = new AonFile();
-		aonFile.setFile(file);
+		aonFile.setFile(file);	
 		aonFile.setFileName( fileName );
 		return aonFile;
 	}
-	
-	public AonFile getDigitalCertificate() throws ManagerBeanException, IOException {
-		SaleInvoiceController invoiceController = (SaleInvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
-		RegistryAttachment ra = invoiceController.getDigitalCertificate();
-		File file = File.createTempFile( ra.getDescription(), ".cer" );
-		FileUtils.writeByteArrayToFile(file, ra.getData());
-		AonFile aonFile = new AonFile();
-		aonFile.setFile(file);
-		aonFile.setFileName( ra.getDescription() );
-		return aonFile;
-	}	
 
-	private AonFile getInvoiceXml() throws IOException, SAXException {
+	private AonFile getInvoiceXml( Invoice invoice ) throws IOException, SAXException {
 		SaleInvoiceController invoiceController = (SaleInvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);		
 		File file = File.createTempFile( "facturae", ".xml" );
 		Writer writer = new FileWriter( file );
-		invoiceController.writeInvoiceXml( writer, currentInvoice.getId());
+		invoiceController.writeInvoiceXml( writer, invoice.getId());
 		writer.close();
 		AonFile aonFile = new AonFile();
 		aonFile.setFile(file);
@@ -191,7 +148,7 @@ public class EmailUtilController implements ICollectionProvider, IFinanceMessage
 		return aonFile;
 	}
 	
-	public void sendInvoice( Invoice invoice, boolean eInvoice ) {
+	public void sendInvoice( Invoice invoice, SecurityInfo si ) {
 		try {
 			RegistryMedia email = invoice.getRegistry().getEmail();
 			if ( email == null) {
@@ -200,16 +157,13 @@ public class EmailUtilController implements ICollectionProvider, IFinanceMessage
 				AonUtil.addErrorMessage(message);				
 			} else {
 				Address to = new InternetAddress( email.getValue(), invoice.getRegistryName() );
-				String subject = getEmailSubject(invoice, eInvoice);
+				String subject = getEmailSubject(invoice);
 				String content = getEmailBody(invoice);
 				String name = "invoice_" + invoice.getSeries() + "-" + invoice.getNumber() + ".pdf";
-				setCurrentInvoice(invoice);
-				AonFile file = getInvoiceFile(name, eInvoice);
-				if ( eInvoice ) {
-					AonFile dc = getDigitalCertificate();
-					AonFile xml = getInvoiceXml();
-					getEmailSender().sendMessage(to, subject, content, MimeType.MIME_HTML, file, dc, xml );
-					dc.getFile().delete();
+				AonFile file = getInvoiceFile(invoice, name);
+				if ( si != null ) {
+					AonFile xml = getInvoiceXml(invoice);
+					getEmailSender().sendMessage(to, subject, content, MimeType.MIME_HTML, si, file, xml );
 					xml.getFile().delete();
 				} else {
 					getEmailSender().sendMessage(to, subject, content, MimeType.MIME_HTML, file);

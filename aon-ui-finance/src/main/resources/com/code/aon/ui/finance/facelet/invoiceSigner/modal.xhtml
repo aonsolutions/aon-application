@@ -8,11 +8,11 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:panelGroup id="showPasswordWindow">
-		<c:if test="#{invoiceSigner.showPasswordWindow}">
-			<rich:modalPanel id="invoiceSignerModalPanel" minHeight="220"
-				minWidth="520" rendered="#{invoiceSigner.showPasswordWindow}"
-				showWhenRendered="true" zindex="90">
+	<aon:panelGroup id="showSignWindow">
+		<c:if test="#{invoiceSigner.showSignWindow}">
+			<rich:modalPanel id="invoiceSignerModalPanel" 
+				rendered="#{invoiceSigner.showSignWindow}" showWhenRendered="true"
+				minWidth="400" height="180" minHeight="180" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{financeBundle.finance_sign_selected}" />
@@ -22,9 +22,9 @@
 					<aon:form>
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
-							reRender="showPasswordWindow" immediate="true">
+							reRender="showSignWindow" immediate="true">
 							<f:setPropertyActionListener
-								target="#{invoiceSigner.showPasswordWindow}"
+								target="#{invoiceSigner.showSignWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
@@ -37,31 +37,55 @@
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="sign_selected"
 										value="#{financeBundle.finance_sign}"
-										reRender="showPasswordWindow,invoiceSignerDataDiv"
+										reRender="showSignWindow,#{signButtonreRender}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
-										actionListener="#{invoiceSigner.onSignSelected}">
-										<f:setPropertyActionListener
-											target="#{invoiceSigner.showPasswordWindow}"
-											value="#{false}" />
-									</aon:commandButton>
+										actionListener="#{signActionListener}"
+										onclick="Richfaces.showModalPanel('waitProccess')" 
+							     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />											
 									<aon:commandButton id="sign-cancel"
 										value="#{bundle.aon_cancel}"
-										reRender="showPasswordWindow"
+										reRender="showSignWindow"
 										immediate="true"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel">
 										<f:setPropertyActionListener
-											target="#{invoiceSigner.showPasswordWindow}"
+											target="#{invoiceSigner.showSignWindow}"
 											value="#{false}" />
 									</aon:commandButton>
 								</aon:div>
 								<aon:div styleClass="aon-scroll-area">
 									<aon:panelGrid id="menuGrid" columns="2" dir="true">
 
-										<aon:outputLabel for="password"
-											value="Password" />
-										<aon:inputSecret id="password" 
-											value="#{invoiceSigner.password}" />
+										<aon:outputLabel for="keystore"
+											value="#{financeBundle.finance_keystore}" />
+										<c:if test="#{empty invoiceSigner.certificates}">											
+											<aon:selectOneMenu id="keystore"
+												value="#{invoiceSigner.keystore}">
+												<f:selectItems value="#{invoiceSigner.digitalCertificates}" />
+											</aon:selectOneMenu>
+										
+											<aon:outputLabel for="password"
+												value="#{bundle.aon_login_passwd}" />
+											<aon:inputSecret id="password" 
+												value="#{invoiceSigner.password}" />
+										</c:if>
 
+										<c:if test="#{!(empty invoiceSigner.certificates)}">
+											<aon:outputText id="keystore"
+												value="#{invoiceSigner.keystore.description}" />
+											
+											<aon:outputLabel for="certificates"
+												value="#{financeBundle.finance_digital_certificate}" />
+											<aon:selectOneMenu id="certificates"
+												value="#{invoiceSigner.alias}">
+												<f:selectItems value="#{invoiceSigner.certificates}" />
+											</aon:selectOneMenu>
+										</c:if>
+										<c:if test="#{invoiceSigner.showCertificatePassword}">
+											<aon:outputLabel for="certificatePassword"
+												value="#{financeBundle.finance_digital_certificate_password}" />
+											<aon:inputSecret id="certificatePassword" 
+												value="#{invoiceSigner.certificatePassword}" />
+										</c:if>										
 									</aon:panelGrid>
 								</aon:div>
 							</aon:div>

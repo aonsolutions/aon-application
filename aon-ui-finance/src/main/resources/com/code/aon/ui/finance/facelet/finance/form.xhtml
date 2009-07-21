@@ -269,5 +269,10 @@
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalPayment.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalReturn.xhtml" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoiceSigner/modal.xhtml" >
+			<ui:param name="signButtonreRender" value="invoiceSignerDataDiv,aonToolbar" />
+			<aon:methodParam name="signActionListener" value="#{invoiceSigner.onSignSelected}" type="actionListener" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />				
 	</ui:define>
 </ui:composition>

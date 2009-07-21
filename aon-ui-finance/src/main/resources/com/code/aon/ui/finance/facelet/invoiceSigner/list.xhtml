@@ -19,13 +19,18 @@
 				<ui:param name="skipResetButton" value="true" />
 				
 				<ui:define name="additionalToolbarContent">
-					<aon:commandButton id="popup"
+					<aon:commandButton id="sign"
 						value="#{financeBundle.finance_sign_selected}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						actionListener="#{invoiceSigner.onPasswordShow}"
-						reRender="showPasswordWindow">
-						<f:setPropertyActionListener target="#{invoiceSigner.showPasswordWindow}"
-							value="#{true}" />
+						actionListener="#{invoiceSigner.onShowSignWindow}"
+						disabled="#{invoiceSigner.selectionEmpty}"
+						reRender="showSignWindow">
+					</aon:commandButton>
+					<aon:commandButton id="cancel_sign"
+						value="#{financeBundle.finance_cancel_sign_selected}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						actionListener="#{invoiceSigner.onCancelSignSelected}"
+						disabled="#{invoiceSigner.selectionEmpty}" >
 					</aon:commandButton>
 				</ui:define>				
 				
@@ -38,15 +43,15 @@
 					<aon:commandButton title="#{bundle.aon_check_all}"
 						styleClass="aon-finding-toolbar-item aon-icon-checkAll"
 						value="#{bundle.aon_check_all}"
-						ajaxSingle="true"
-						actionListener="#{invoiceSigner.checkAll}" reRender="invoiceSignerDataDiv"
+						ajaxSingle="true" reRender="invoiceSignerDataDiv, aonToolbar"
+						actionListener="#{invoiceSigner.checkAll}"
 						onclick="Richfaces.showModalPanel('waitProccess')" 
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
 					<aon:commandButton title="#{bundle.aon_uncheck_all}"
 						styleClass="aon-finding-toolbar-item aon-icon-checkNone"
 						value="#{bundle.aon_uncheck_all}"
-						ajaxSingle="true"
-						actionListener="#{invoiceSigner.checkNone}" reRender="invoiceSignerDataDiv"
+						ajaxSingle="true" reRender="invoiceSignerDataDiv, aonToolbar"
+						actionListener="#{invoiceSigner.checkNone}"
 						onclick="Richfaces.showModalPanel('waitProccess')" 
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 				</aon:div>
@@ -54,8 +59,8 @@
 				<aon:div id="invoiceSignerDataDiv">
 					<aon:dataTable id="invoiceSignerData" value="#{invoiceSigner.model}"
 						var="to" rows="20" rendered="#{invoiceSigner.model.rowCount > 0}"
-						columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-							 aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
+						columnClasses="aon-editDataTable-buttonsColumn, aon-editDataTable-textColumn,
+							 aon-editDataTable-textColumn aon-width-150, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
 						<aon:column>
 							<f:facet name="header">
@@ -63,7 +68,7 @@
 							</f:facet>
 							<aon:selectBooleanCheckbox id="Included_Row_checked"
 								value="#{invoiceSigner.rowChecked}"
-								rendered="#{!invoiceSigner.modelToSigned}" />	
+								ajaxSingle="true" reRender="aonToolbar" />	
 						</aon:column>
 	
 						<aon:column>
@@ -94,6 +99,8 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_status}" />
 							</f:facet>
+							<aon:outputText
+								value="#{to.signed ?(financeBundle.finance_signed):(financeBundle.finance_sign_pending)}, " />
 							<aon:outputText value="#{to.status}" />
 						</aon:column>
 					</aon:dataTable>
@@ -101,7 +108,10 @@
 				</aon:div>
 			</aon:div>
 		</aon:form>
-		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
-		<ui:include src="/com/code/aon/ui/finance/facelet/invoiceSigner/modal.xhtml" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoiceSigner/modal.xhtml" >
+			<ui:param name="signButtonreRender" value="invoiceSignerDataDiv,aonToolbar" />
+			<aon:methodParam name="signActionListener" value="#{invoiceSigner.onSignSelected}" type="actionListener" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />		
 	</ui:define>
 </ui:composition>
