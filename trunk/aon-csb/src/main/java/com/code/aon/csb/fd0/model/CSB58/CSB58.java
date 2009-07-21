@@ -127,7 +127,7 @@ public class CSB58 extends AbstractFileFiller {
 							}
 						}
 					}
-					orderer.setNumRegs(numRegInd);
+					orderer.setNumRegs(numRegInd+2);
 					numreg+=numRegInd;
 					if (createLine("Total_Ordenante",properties)!=null)			
 						++numreg;
