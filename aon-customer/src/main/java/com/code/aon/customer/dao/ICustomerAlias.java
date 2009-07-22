@@ -95,6 +95,12 @@ public interface ICustomerAlias {
 	*/
 	String  CUSTOMER_SCOPE_ID = CUSTOMER_ENTRY.getAliasNames()[12];
 
+	/** 
+	* Alias value: Customer_eInvoice
+	* Hibernate value: Customer.eInvoice
+	*/
+	String  CUSTOMER_E_INVOICE = CUSTOMER_ENTRY.getAliasNames()[13];
+
 
 
 	/** 

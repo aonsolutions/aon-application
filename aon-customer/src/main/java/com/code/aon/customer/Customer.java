@@ -58,6 +58,9 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
     
     /** The withholding. */
     private boolean withholding;
+    
+	/** Indicates if the customer wants to receive e-Invoice. */
+    private boolean eInvoice;    
 
     /** The status of the customer. */
     private CustomerStatus status;
@@ -241,6 +244,26 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	public void setScope(Scope scope) {
 		this.scope = scope;
 	}
+	
+	/**
+	 * Checks if is e invoice.
+	 * 
+	 * @return true, if is e invoice
+	 */
+	@Column(name="e_invoice", nullable=true)
+	public boolean isEInvoice() {
+		return eInvoice;
+	}
+
+	/**
+	 * Sets the e invoice.
+	 * 
+	 * @param invoice the new e invoice
+	 */
+	public void setEInvoice(boolean invoice) {
+		eInvoice = invoice;
+	}
+	
 
 	@Override
 	public boolean equals(Object obj) {
@@ -251,6 +274,7 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.customerSegment, o.customerSegment)
+				.append(this.eInvoice, o.eInvoice)
 				.append(this.registry, o.registry)
 				.append(this.scope, o.scope)
 				.append(this.status, o.status)
@@ -267,6 +291,7 @@ public class Customer implements ITransferObject, ITaxInfo, IScopable, IRegistry
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(customerSegment)
+			.append(eInvoice)
 			.append(id)
 			.append(registry)
 			.append(scope)
