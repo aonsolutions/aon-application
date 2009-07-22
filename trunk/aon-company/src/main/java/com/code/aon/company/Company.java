@@ -152,6 +152,7 @@ public class Company extends Registry implements ITaxInfo{
 				.appendSuper(super.equals(obj))
 				.append(this.active, o.active)
 				.append(this.calendar, o.calendar)
+				.append(this.eInvoice, o.eInvoice)
 				.append(this.surcharge, o.surcharge)
 				.append(this.withholding, o.withholding)
 				.isEquals();
@@ -165,6 +166,7 @@ public class Company extends Registry implements ITaxInfo{
 			.appendSuper(super.hashCode())
 			.append(active)
 			.append(calendar)
+			.append(eInvoice)
 			.append(surcharge)
 			.append(withholding)
 			.toHashCode();
