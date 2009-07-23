@@ -128,6 +128,18 @@ color:#000;
 .aon-width-100{
 	width:100px;
 }	
+.aon-width-110{
+	width:110px;
+}	
+.aon-width-120{
+	width:120px;
+}	
+.aon-width-140{
+	width:140px;
+}	
+.aon-width-140{
+	width:140px;
+}	
 .aon-width-150{
 	width:150px;
 }	
@@ -1915,4 +1927,14 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	padding-left: 15px;
 	padding-top: 15px;
 	margin-left: 5px;
+}
+
+.new-mail-button{
+    font-weight:bold;
+	cursor:hand;
+	background:transparent url(images/aon-content/aon-fileupload-button.png) scroll left center no-repeat;	
+	padding:4px 1em !important;
+	margin:0;
+	border:transparent 1px solid;
+	width:100px;
 }
