@@ -7,10 +7,13 @@ import java.util.Map;
 
 import javax.el.ELException;
 import javax.faces.FacesException;
+import javax.faces.component.EditableValueHolder;
 import javax.faces.component.UIComponent;
+import javax.faces.component.UIOutput;
 import javax.faces.component.UIViewRoot;
 
 import org.ajax4jsf.taglib.html.facelets.AjaxSupportHandler;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.faces.component.AonComponentHandler;
@@ -36,6 +39,8 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 	private static final String SUPPORT_COMPONENT_TYPE = "org.ajax4jsf.Support";
 	
 	private static final String PARTIAL_SUBMIT = "partialSubmit";
+
+	private static final String INPUT_REQUIRED_STYLE_CLASS = "aon-input-required";
 	
 	private TagHandler ajaxSupportHandler; 
 	
@@ -70,14 +75,34 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 		updateLabel(ctx, component);
 	}
 	
+	private void updateLabelStyleClass(FaceletContext ctx, UIOutput label) {
+		String styleClassAttribute = ComponentManager.getInputStyleClass(label);
+		String styleClass = INPUT_REQUIRED_STYLE_CLASS;
+		Object styleClassValue = FaceletUtil.getProperty(ctx.getFacesContext(), label, styleClassAttribute);
+		String value = ObjectUtils.toString( styleClassValue );
+		if (! StringUtils.isEmpty(value) ) {
+			styleClass += " " + value;
+		}
+		UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), label, styleClassAttribute, styleClass);
+	}	
+	
 	private void updateLabel(FaceletContext ctx, UIComponent c) {
 		UIViewRoot root = ComponentSupport.getViewRoot(ctx, c);		
 		Map map = (Map) root.getAttributes().get(OutputLabelHandler.LABELS_MAP);
 		if (map != null) {
 			String id = StringUtils.substringBefore(getId(ctx), "-");
-			Object value = map.get(id);
-			if ( value != null ) {
-				UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), c, LABEL_ATTR, value.toString());				
+			UIOutput label = (UIOutput) map.get(id);
+			if ( label != null ) {
+				String value = ObjectUtils.toString(label.getValue());
+				if (! StringUtils.isEmpty(value) ) {
+					UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), c, LABEL_ATTR, value.toString());	
+				}
+				if ( (c instanceof EditableValueHolder)  ) {
+					EditableValueHolder evh = (EditableValueHolder) c;
+					if ( evh.isRequired() ) {
+						updateLabelStyleClass(ctx, label);
+					}
+				}
 			}
 		}
 	}
