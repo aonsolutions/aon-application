@@ -94,8 +94,8 @@
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.webmail</artifactId>
-			<version>3.6.2</version>
+			<artifactId>aon.ui.webmail</artifactId>
+			<version>4.12.1</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
