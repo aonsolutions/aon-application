@@ -196,13 +196,6 @@
 		</converter-class>
     </converter>
 
-    <converter>
-		<converter-id>chromeEditorConverter</converter-id>
-		<converter-class>
-			com.code.aon.ui.webmail.converter.ChromeEditorConverter
-		</converter-class>
-    </converter>
-
    	<!-- ************* LDAP NAME CONVERTER ***************** -->
 	<converter>
 		<converter-for-class>javax.naming.Name</converter-for-class>

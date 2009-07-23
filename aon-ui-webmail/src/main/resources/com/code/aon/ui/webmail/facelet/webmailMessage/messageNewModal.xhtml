@@ -14,7 +14,7 @@
 		<c:if test="#{webmailMessage.showNewMessageWindow}">
 			<rich:modalPanel id="showNewMessageModalPanel"
 				rendered="#{webmailMessage.showNewMessageWindow}" showWhenRendered="true"
-				minHeight="540" height="540" width="680" >
+				minHeight="540" height="590" width="680" >
 				
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -37,7 +37,7 @@
 				<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewContent.xhtml" >
 					<aon:valueParam name="inputTextSize" default="70" />
 					<aon:valueParam name="skipSaveDraftButton" default="true" />				
-					<aon:valueParam name="skipBackButton" default="true" />
+					<aon:valueParam name="skipSendCancelButton" default="true" />
 					<aon:valueParam name="sendButtonReRender" default="showNewMessageWindow" />
 					<aon:valueParam name="contentHeight" default="250" />
 					<aon:valueParam name="innerToolbar" default="true" />

@@ -10,7 +10,6 @@ import java.io.Writer;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
@@ -23,6 +22,7 @@ import net.esle.sinadura.core.firma.SignStoreIFace;
 import net.esle.sinadura.core.firma.exceptions.SinaduraCoreException;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
@@ -76,7 +76,8 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.webmail.EmailSender;
+import com.code.aon.ui.webmail.bean.WebMailConstants;
+import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.SecurityInfo;
 
 public class SaleInvoiceController extends InvoiceController implements IFinanceConstants, IFinanceMessages {
@@ -459,21 +460,23 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		return invoiceSigner.onReport( getInvoice() );
 	}
 	
-	public void sendInvoiceByEmail( ActionEvent event ) {
-		/*
+	public void onSendInvoiceByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
+		Invoice invoice = getInvoice();
 		EmailUtilController emailController = (EmailUtilController) AonUtil.getRegisteredBean(EMAIL_UTIL_CONTROLLER_NAME);
-		try {
-			EmailSender sender = emailController.getEmailSender();
-			sender.connect();
-			SecurityInfo si = getDigitalCertificate( getDigitalCertificate(), "esferalia");
-			emailController.sendInvoice( getInvoice(), si );
-			sender.disconnect();
-		} catch (Throwable th) {
-			LOGGER.log(Level.SEVERE, th.getMessage(), th);
-			AonUtil.addErrorMessage(th.getMessage());
-			throw new AbortProcessingException(th.getMessage(), th);
+		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
+		messageController.initNewMessage();
+		String[] emails = emailController.getEmails(invoice);
+		if (! ArrayUtils.isEmpty(emails) ) {
+			messageController.setRecipientsTo( emails[0] );
+			if ( emails.length > 1 ) { 
+				String recipientsCc = StringUtils.join( emails, ',', 1, emails.length );
+				messageController.setRecipientsCc( recipientsCc );
+			}
 		}
-		*/
+		messageController.setSubject( emailController.getEmailSubject(invoice) );
+		messageController.setContent( emailController.getEmailBody(invoice) );
+		messageController.addAttachment( emailController.getInvoiceFile(invoice) );
+		messageController.addAttachment( emailController.getInvoiceXml(invoice) );
 	}
 	
 	private Company getCompany() {

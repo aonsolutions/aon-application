@@ -13,16 +13,16 @@
 		<aon:methodParam name="sendAction" default="#{webmailMessage.getReturnAction}" />
 		<aon:methodParam name="saveDraftActionListener" default="#{webmailMessage.onSaveDraft}" type="actionListener" />
 		<aon:methodParam name="saveDraftAction" default="" />
-		<aon:methodParam name="cancelActionListener" default="#{webmailMessage.onCancelSend}" type="actionListener" />
-		<aon:methodParam name="cancelAction" default="#{webmailMessage.getReturnAction}" />
+		<aon:methodParam name="sendCancelActionListener" default="#{webmailMessage.onCancelSend}" type="actionListener" />
+		<aon:methodParam name="sendCancelAction" default="#{webmailMessage.getReturnAction}" />
 		<aon:valueParam name="inputTextSize" default="120" />
-		<aon:valueParam name="contentHeight" default="400" />
-		
+		<aon:valueParam name="contentHeight" default="400" />		
+		<c:if test="#{!innerToolbar}">
+			<ui:param name="toolbarTitle" value="#{webmailBundle.webmail_main}" />
+			<ui:param name="toolbarDescription" value="#{webmailBundle.webmail_newmail}" />
+		</c:if>
+
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-			<c:if test="#{!innerToolbar}">
-				<ui:param name="toolbarTitle" value="#{webmailBundle.webmail_main}" />
-				<ui:param name="toolbarDescription" value="#{webmailBundle.webmail_newmail}" />
-			</c:if>
 			<ui:define name="toolbarContent">
 				<c:if test="#{!skipSendButton}">
 					<aon:commandButton id="send"
@@ -40,21 +40,15 @@
 						action="#{saveDraftAction}" actionListener="#{saveDraftActionListener}"
 						reRender="#{saveDraftButtonReRender}" />
 				</c:if>
-				<c:if test="#{!skipBackButton}">				
-					<aon:commandButton id="back" immediate="true"
-						title="#{bundle.aon_back}" value="#{bundle.aon_back}"
-						styleClass="aon-icon-cancel aon-finding-toolbar-item"
-						action="#{cancelAction}" actionListener="#{cancelActionListener}"
-						accesskey="#{bundle.aon_key_cancel}"
-						reRender="#{backButtonReRender}" /> 				 
-		     		<aon:confirmButton id="back" immediate="true"
+				<c:if test="#{!skipSendCancelButton}">				
+		     		<aon:confirmButton id="sendCancel" immediate="true"
 						title="#{bundle.aon_back}" value="#{bundle.aon_back}"
 						confirmTitle="#{bundle.aon_confirm_title}"
 						confirmMessage="#{webmailBundle.webmail_back_confirm}"
-						confirmActionListener="#{cancelActionListener}"
-						confirmAction="#{cancelAction}"
+						confirmActionListener="#{sendCancelActionListener}"
+						confirmAction="#{sendCancelAction}"
 						accesskey="#{bundle.aon_key_cancel}"
-						confirmReRender="#{backButtonReRender}"
+						confirmReRender="#{sendCancelButtonReRender}"
 						styleClass="aon-icon-cancel aon-finding-toolbar-item" >
 					</aon:confirmButton>
 				</c:if>	
@@ -140,7 +134,7 @@
 							stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
 							uploadControlLabel="#{bundle.aon_fileUpload_upload}"
 							fileUploadListener="#{webmailMessage.fileUploaded}"
-							maxFilesQuantity="20" listHeight="0px"
+							maxFilesQuantity="20" listHeight="0px;"
 							immediateUpload="true" autoclear="true">
 							<f:facet name="label">
 								<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
@@ -172,11 +166,10 @@
 			
 			<!-- Message Body -->
 			<aon:div id="messageContent" styleClass="padding-top">
-				<rich:editor id="messageEditor"
+				<aon:inputRichText id="messageEditor"
 					value="#{webmailMessage.content}" 
 					height="#{contentHeight}" configuration="tinyMCE"
-					converter="chromeEditorConverter" 
-					language="#{facesContext.application.defaultLocale.language}" />													
+					converter="chromeEditorConverter" />													
 			</aon:div>
 		</aon:div>
 

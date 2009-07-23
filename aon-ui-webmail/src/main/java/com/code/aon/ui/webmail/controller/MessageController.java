@@ -42,6 +42,7 @@ import javax.mail.internet.MimeMultipart;
 import javax.naming.Name;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -169,11 +170,11 @@ public class MessageController implements WebMailConstants, BundleConstants {
 	}
 
 	public void onNewMessage(ActionEvent event){
-		initVars();
+		initNewMessage();
     }
 
 	public void editDraftMessage(AonMessage message, long uid) {
-		initVars();
+		initNewMessage();
 		this.parentMessage = message;
 		this.draftMessageUID = uid;
 		try {
@@ -190,7 +191,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 	}	
 	
 	public void onReplyMessage(ActionEvent event) {
-		initVars();
+		initNewMessage();
 		parentMessage = message;
 		try {
 			recipientsTo = AonMessage.parseDisplayAddress(message.getSender());
@@ -232,7 +233,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 	}
 
 	public void onReplyAllMessage(ActionEvent event) {
-		initVars();
+		initNewMessage();
 		parentMessage = message;
 		try{
 	       	String dest = getReplyToAllRecipients(message);
@@ -255,6 +256,17 @@ public class MessageController implements WebMailConstants, BundleConstants {
     		folderController.getFolder().close(false);
     		folderController.refresh(null);
     	}
+	}
+	
+	private void finishMessage() {
+    	setShowNewMessageWindow(false);
+		content = null;
+		for( AonFile af : newMsgFileList ) {
+			if ( af.getFile().exists() ) {
+				FileUtils.deleteQuietly( af.getFile() );
+			}
+		}
+    	newMsgFileList = null;		
 	}
 
 	private void copyAttachmentsToFileList( AonMessage message ) throws WebmailException {
@@ -283,7 +295,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 	}
 	
 	public void onForwardMessage(ActionEvent event) {
-		initVars();
+		initNewMessage();
 		parentMessage = message;
 		try {
 			copyAttachmentsToFileList( message );
@@ -334,8 +346,12 @@ public class MessageController implements WebMailConstants, BundleConstants {
     	AonFile f = new AonFile();
     	f.setFile(item.getFile());
     	f.setFileName(item.getFileName());
-    	newMsgFileList.add(f);
+    	addAttachment( f );
 	}	
+	
+	public void addAttachment( AonFile aonFile ) {
+    	newMsgFileList.add( aonFile );		
+	}
 	
 	//***************************************************************
 	//*********** END ATTACH ****************************************
@@ -369,6 +385,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 	    	dest.close(false);
 	    	deleteDraftMessage();
 	    	refreshDraftFolder();
+	    	finishMessage();
 		} catch (Throwable th) {
 			AonUtil.addErrorMessage(th.getMessage());
 			throw new AbortProcessingException(th);
@@ -376,9 +393,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
     }
 
     public void onCancelSend(ActionEvent event) {
-    	setShowNewMessageWindow(false);
-		content = null;
-    	newMsgFileList = null;
+    	finishMessage();
     }
     
     private void deleteDraftMessage() throws MessagingException {
@@ -518,7 +533,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
     	return aonMessage;
 	}
 	
-	private void initVars(){
+	public void initNewMessage(){
     	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
     	MailAccount account = webMailController.getServer().getAccount();
 		sender = account.getEmail();
@@ -829,7 +844,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 		setMessage(getPreviousMessage());
 	}
 
-	public void nextMessage(ActionEvent event) {
+	public void onNextMessage(ActionEvent event) {
 		setMessage(getNextMessage());
 	}
 
@@ -855,7 +870,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 	}
 
 	//********************************************************************************************
-	// TO, CC, BCC LONG/SHOT
+	// TO, CC, BCC LONG/SHORT
 	//********************************************************************************************
 
     private void initShortMessageToCcBcc(){
@@ -881,12 +896,12 @@ public class MessageController implements WebMailConstants, BundleConstants {
 		return false;
 	}
 	
-	public boolean isShotMessageToControlUp(){
+	public boolean isShortMessageToControlUp(){
 		if (isShortMessageToControl()) return shortMessageTo;
 		return false;
 	}
 	
-	public boolean isShotMessageToControlDown(){
+	public boolean isShortMessageToControlDown(){
 		if (isShortMessageToControl()) return !shortMessageTo;
 		return false;
 	}
@@ -1112,7 +1127,8 @@ public class MessageController implements WebMailConstants, BundleConstants {
 	}
 	
 	public void onRemoveAttachment( ActionEvent event ) {
-		getFiles().remove(this.attachRemoveIndex);
+		AonFile af = getFiles().remove(this.attachRemoveIndex);
+		FileUtils.deleteQuietly( af.getFile() );
 	}
 
 	public boolean isShowNewMessageWindow() {

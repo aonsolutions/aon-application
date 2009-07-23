@@ -75,7 +75,7 @@
 					value="#{to.administrative}" rendered="#{formEdit}" />
 				<f:facet name="footer">
 					<aon:selectBooleanCheckbox id="RegistryMedia_administrative-New" styleClass="aon-margin-left"
-						value="#{to.administrative}" rendered="#{formNew}" />
+						value="#{controller.to.administrative}" rendered="#{formNew}" />
 				</f:facet>
 			</aon:column>
 
@@ -90,7 +90,7 @@
 					value="#{to.commercial}" rendered="#{formEdit}" />
 				<f:facet name="footer">
 					<aon:selectBooleanCheckbox id="RegistryMedia_commercial-New" styleClass="aon-margin-left"
-						value="#{to.commercial}" rendered="#{formNew}" />
+						value="#{controller.to.commercial}" rendered="#{formNew}" />
 				</f:facet>
 			</aon:column>
 
@@ -105,7 +105,7 @@
 					value="#{to.technical}" rendered="#{formEdit}" />
 				<f:facet name="footer">
 					<aon:selectBooleanCheckbox id="RegistryMedia_technical-New" styleClass="aon-margin-left"
-						value="#{to.technical}" rendered="#{formNew}" />
+						value="#{controller.to.technical}" rendered="#{formNew}" />
 				</f:facet>
 			</aon:column>
 
