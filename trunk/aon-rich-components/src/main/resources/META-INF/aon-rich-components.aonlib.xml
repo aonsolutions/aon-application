@@ -101,7 +101,7 @@
 
 	<component localName="inputRichText">
     	<attribute name="styleClass" value="aon-inputRichText" />
-    	<attribute name="style" value="display: none;" />			
+    	<attribute name="language" value="#{facesContext.application.defaultLocale.language}" />			
 	</component>
 
 	<component localName="inputSecret">
