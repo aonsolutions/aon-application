@@ -186,13 +186,13 @@
 		<tag-name>inputRichText</tag-name>
 		<component>
 			<component-type>
-				com.code.aon.faces.InputRichText
+				org.richfaces.Editor
 			</component-type>
 			<renderer-type>
-				com.code.aon.faces.InputRichTextRenderer
+				org.richfaces.EditorRenderer
 			</renderer-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.inputRichText.InputRichTextHandler
+				com.code.aon.faces.component.AonComponentHandler
 			</handler-class>
 		</component>
 	</tag>
