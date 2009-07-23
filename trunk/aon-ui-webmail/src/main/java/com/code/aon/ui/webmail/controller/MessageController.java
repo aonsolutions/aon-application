@@ -120,18 +120,15 @@ public class MessageController implements WebMailConstants, BundleConstants {
     private String messageBody;
     
     private VelocityHelper velocityHelper;
+       
+    private boolean shortMessageTo;
     
-    private boolean showRecipients;
-    
-    private boolean showToolbar;
+    private boolean shortMessageCc;
     
     private int attachRemoveIndex;
     
-	public MessageController() {
-		this.showRecipients = true;
-		this.showToolbar = true;
-	}
-
+    private boolean showNewMessageWindow;
+    
 	/**
 	 * @return the message
 	 */
@@ -152,7 +149,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 
 
 	private void afterSetMessage(){
-		initShotMessageToCcBcc();
+		initShortMessageToCcBcc();
 		initContactName();
 	}
 	
@@ -171,7 +168,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 		this.returnAction = returnAction;
 	}
 
-	public void createNewMessage(ActionEvent event){
+	public void onNewMessage(ActionEvent event){
 		initVars();
     }
 
@@ -192,7 +189,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 		}
 	}	
 	
-	public void replyToSelectedMessage(ActionEvent event) {
+	public void onReplyMessage(ActionEvent event) {
 		initVars();
 		parentMessage = message;
 		try {
@@ -234,7 +231,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 		return recipients.substring(0, recipients.length() - 1).toString();		
 	}
 
-	public void replyToAllMessage(ActionEvent event) {
+	public void onReplyAllMessage(ActionEvent event) {
 		initVars();
 		parentMessage = message;
 		try{
@@ -285,7 +282,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
        	}		
 	}
 	
-	public void forwardMessage(ActionEvent event) {
+	public void onForwardMessage(ActionEvent event) {
 		initVars();
 		parentMessage = message;
 		try {
@@ -345,7 +342,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 	//***************************************************************
 	
 	
-    public void send(ActionEvent event) {
+    public void onSend(ActionEvent event) {
     	try {
 	    	AonMessage aonMessage = compoundMessage();
 	    	AonFolder dest = null;
@@ -377,6 +374,12 @@ public class MessageController implements WebMailConstants, BundleConstants {
 			throw new AbortProcessingException(th);
 		}
     }
+
+    public void onCancelSend(ActionEvent event) {
+    	setShowNewMessageWindow(false);
+		content = null;
+    	newMsgFileList = null;
+    }
     
     private void deleteDraftMessage() throws MessagingException {
     	if ( this.draftMessageUID != null ) {
@@ -394,7 +397,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
     	}    	
     }
 
-    public void saveDraft(ActionEvent event) {
+    public void onSaveDraft(ActionEvent event) {
     	try {
 	    	AonMessage aonMessage = compoundMessage();    		
 	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
@@ -654,7 +657,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 	}
 
 
-	public void acceptAllEmailItems(ActionEvent event){
+	public void onAcceptAllEmailItems(ActionEvent event){
 		MultiSelectionEmailBean bean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(BEAN_MULTISELECTIONEMAIL);
 		List<Contact> lst = bean.getSelectedRows();
 		String emails = "";
@@ -822,7 +825,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 		return null;
 	}
 	
-	public void previousMessage(ActionEvent event) {
+	public void onPreviousMessage(ActionEvent event) {
 		setMessage(getPreviousMessage());
 	}
 
@@ -854,51 +857,49 @@ public class MessageController implements WebMailConstants, BundleConstants {
 	//********************************************************************************************
 	// TO, CC, BCC LONG/SHOT
 	//********************************************************************************************
-    
-    private boolean shotMessageTo;
-    private boolean shotMessageCc;
 
-    private void initShotMessageToCcBcc(){
-        shotMessageTo = false;
-        shotMessageCc = false;
+    private void initShortMessageToCcBcc(){
+        this.shortMessageTo = false;
+        this.shortMessageCc = false;
     }
     
-    public boolean isShotMessageTo() {
-    	return shotMessageTo;
+    public boolean isShortMessageTo() {
+    	return shortMessageTo;
 	}
 
-	public void changeShotMessageTo(ActionEvent event){
-    	shotMessageTo = !shotMessageTo;
+	public void onChangeShortMessageTo(ActionEvent event){
+    	shortMessageTo = !shortMessageTo;
     }
 
-	private boolean isShotMessageToControl(){
+	private boolean isShortMessageToControl(){
     	try {
-			if (message.getRecipientsTo().length()>MAX_LENGTH_STRING)
+			if (message.getRecipientsTo().length()>MAX_LENGTH_STRING) {
 				return true;
+			}
 		} catch (Exception e) {
 		}
 		return false;
 	}
 	
 	public boolean isShotMessageToControlUp(){
-		if (isShotMessageToControl()) return shotMessageTo;
+		if (isShortMessageToControl()) return shortMessageTo;
 		return false;
 	}
 	
 	public boolean isShotMessageToControlDown(){
-		if (isShotMessageToControl()) return !shotMessageTo;
+		if (isShortMessageToControl()) return !shortMessageTo;
 		return false;
 	}
 	
-    public boolean isShotMessageCc() {
-    	return shotMessageCc;
+    public boolean isShortMessageCc() {
+    	return shortMessageCc;
 	}
 
-	public void changeShotMessageCc(ActionEvent event){
-    	shotMessageCc = !shotMessageCc;
+	public void onChangeShortMessageCc(ActionEvent event){
+    	shortMessageCc = !shortMessageCc;
     }
 	
-    private boolean isShotMessageCcControl() {
+    private boolean isShortMessageCcControl() {
     	try {
 			if (message.getRecipientsCc().length()>MAX_LENGTH_STRING)
 				return true;
@@ -907,13 +908,13 @@ public class MessageController implements WebMailConstants, BundleConstants {
 		return false;
 	}
 
-	public boolean isShotMessageCcControlUp(){
-		if (isShotMessageCcControl()) return shotMessageCc;
+	public boolean isShortMessageCcControlUp(){
+		if (isShortMessageCcControl()) return shortMessageCc;
 		return false;
 	}
 	
-	public boolean isShotMessageCcControlDown(){
-		if (isShotMessageCcControl()) return !shotMessageCc;
+	public boolean isShortMessageCcControlDown(){
+		if (isShortMessageCcControl()) return !shortMessageCc;
 		return false;
 	}
 	
@@ -1102,22 +1103,6 @@ public class MessageController implements WebMailConstants, BundleConstants {
 		return this.messageContent;
 	}
 	
-	public boolean isShowRecipients() {
-		return showRecipients;
-	}
-
-	public void setShowRecipients(boolean showRecipients) {
-		this.showRecipients = showRecipients;
-	}
-
-	public boolean isShowToolbar() {
-		return showToolbar;
-	}
-
-	public void setShowToolbar(boolean showToolbar) {
-		this.showToolbar = showToolbar;
-	}
-
 	public int getAttachRemoveIndex() {
 		return attachRemoveIndex;
 	}
@@ -1126,8 +1111,16 @@ public class MessageController implements WebMailConstants, BundleConstants {
 		this.attachRemoveIndex = attachRemoveIndex;
 	}
 	
-	public void removeAttachment( ActionEvent event ) {
+	public void onRemoveAttachment( ActionEvent event ) {
 		getFiles().remove(this.attachRemoveIndex);
+	}
+
+	public boolean isShowNewMessageWindow() {
+		return showNewMessageWindow;
+	}
+
+	public void setShowNewMessageWindow(boolean showNewMessageWindow) {
+		this.showNewMessageWindow = showNewMessageWindow;
 	}
 	
 }

@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -460,13 +459,8 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		return invoiceSigner.onReport( getInvoice() );
 	}
 	
-	public String getSendEmailToTitle() throws ManagerBeanException {
-		Invoice invoice = (Invoice) getTo();
-		String message = AonUtil.getMessage(BUNDLE_KEY, FINANCE_SEND_EMAIL_TO);
-		return MessageFormat.format(message, invoice.getRegistry().getEmail().getValue() );
-	}
-
 	public void sendInvoiceByEmail( ActionEvent event ) {
+		/*
 		EmailUtilController emailController = (EmailUtilController) AonUtil.getRegisteredBean(EMAIL_UTIL_CONTROLLER_NAME);
 		try {
 			EmailSender sender = emailController.getEmailSender();
@@ -479,6 +473,7 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 			AonUtil.addErrorMessage(th.getMessage());
 			throw new AbortProcessingException(th.getMessage(), th);
 		}
+		*/
 	}
 	
 	private Company getCompany() {
