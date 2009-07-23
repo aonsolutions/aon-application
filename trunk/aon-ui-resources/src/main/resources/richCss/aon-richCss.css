@@ -303,6 +303,9 @@ color:#000;
 .aon-icon-big-configuration{
 	background:transparent url(images/aon-icon-big/aon-icon-big-configuration.png) center  center no-repeat;
 	}
+ .aon-icon-big-sendingMail{
+	background:transparent url(images/aon-icon-big/aon-icon-big-sending-mail.gif) scroll left center no-repeat;	
+ }
 
 /*************************/
 /*******  ICONS  *********/

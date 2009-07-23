@@ -43,7 +43,7 @@
 					<aon:commandButton id="email"
 						title="#{financeBundle.finance_send_email}" value=""
 						rendered="#{!saleInvoice.new}" reRender="showNewMessageWindow"
-						actionListener="#{saleInvoice.sendInvoiceByEmail}"
+						actionListener="#{saleInvoice.onSendInvoiceByEmail}"
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border" >
 						<f:setPropertyActionListener target="#{webmailMessage.showNewMessageWindow}" value="#{true}" />
 					</aon:commandButton>
@@ -119,7 +119,7 @@
 							rendered="#{saleInvoice.recorded}" />
 					</aon:div>
 
-					<aon:outputLabel for="Invoice_issueDate" 
+					<aon:outputLabel for="Invoice_issueDate" styleClass="pupu"
 						value="#{bundle.aon_date}" />
 					<aon:selectInputDate id="Invoice_issueDate"
 						value="#{saleInvoice.to.issueDate}" required="true"

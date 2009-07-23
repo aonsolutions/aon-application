@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,12 +20,18 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.xml.sax.SAXException;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.finance.Invoice;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryMedia;
+import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -68,6 +77,27 @@ public class EmailUtilController implements IFinanceMessages, IFinanceConstants 
 		return company;
 	}
 
+	public String[] getEmails( Invoice invoice ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(RegistryMedia.class);
+		Criteria criteria = new Criteria();
+		String type = bean.getFieldName( IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE );
+		criteria.addEqualExpression( type, MediaType.EMAIL );
+		String registry = bean.getFieldName( IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID );
+		criteria.addEqualExpression( registry, invoice.getRegistry().getId() );		
+		String administrative = bean.getFieldName( IRegistryAlias.REGISTRY_MEDIA_ADMINISTRATIVE );
+		criteria.addEqualExpression( administrative, Boolean.TRUE );
+		List<ITransferObject> list = bean.getList(criteria);
+		if (! list.isEmpty() ) {
+			String[] emails = new String[list.size()];
+			for( int i = 0; i < list.size(); i++ ) {
+				RegistryMedia rm = (RegistryMedia) list.get(i);
+				emails[i] = rm.getValue();
+			}
+			return emails;
+		}
+		return null;
+	}	
+	
 	public String getEmailSubject( Invoice invoice ) {
 		String key = invoice.isSigned() ? FINANCE_EINVOICE_EMAIL_SUBJECT : FINANCE_INVOICE_EMAIL_SUBJECT; 
 		String message = AonUtil.getMessage(BUNDLE_KEY, key);
@@ -120,7 +150,7 @@ public class EmailUtilController implements IFinanceMessages, IFinanceConstants 
 		return this.sender;
 	}
 	
-	public AonFile getInvoiceFile( Invoice invoice, String fileName ) throws IOException, ReportException, ManagerBeanException {
+	public AonFile getInvoiceFile( Invoice invoice ) throws IOException, ReportException, ManagerBeanException {
 		InvoiceSignerController invoiceSigner = (InvoiceSignerController) AonUtil.getRegisteredBean(INVOICE_SIGNER_CONTROLLER_NAME);
 		File file = File.createTempFile( SALE_INVOICE_REPORT, ".pdf" );
 		byte[] data = null;
@@ -132,11 +162,12 @@ public class EmailUtilController implements IFinanceMessages, IFinanceConstants 
 		FileUtils.writeByteArrayToFile(file, data);
 		AonFile aonFile = new AonFile();
 		aonFile.setFile(file);	
+		String fileName = "invoice_" + invoice.getSeries() + "-" + invoice.getNumber() + ".pdf";
 		aonFile.setFileName( fileName );
 		return aonFile;
 	}
 
-	private AonFile getInvoiceXml( Invoice invoice ) throws IOException, SAXException {
+	public AonFile getInvoiceXml( Invoice invoice ) throws IOException, SAXException {
 		SaleInvoiceController invoiceController = (SaleInvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);		
 		File file = File.createTempFile( "facturae", ".xml" );
 		Writer writer = new FileWriter( file );
@@ -159,8 +190,7 @@ public class EmailUtilController implements IFinanceMessages, IFinanceConstants 
 				Address to = new InternetAddress( email.getValue(), invoice.getRegistryName() );
 				String subject = getEmailSubject(invoice);
 				String content = getEmailBody(invoice);
-				String name = "invoice_" + invoice.getSeries() + "-" + invoice.getNumber() + ".pdf";
-				AonFile file = getInvoiceFile(invoice, name);
+				AonFile file = getInvoiceFile(invoice);
 				if ( si != null ) {
 					AonFile xml = getInvoiceXml(invoice);
 					getEmailSender().sendMessage(to, subject, content, MimeType.MIME_HTML, si, file, xml );
