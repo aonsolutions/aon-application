@@ -96,7 +96,7 @@ public class ComponentManager {
 		set.ignore(RENDERED_ON_USER_ROLE);
 	}
 	
-	private String getInputStyleClass( UIComponent c ) {
+	public static String getInputStyleClass( UIComponent c ) {
 		if ( HtmlCalendar.COMPONENT_FAMILY.equals(c.getFamily()) ) {
 			return SELECT_INPUT_DATE_STYLE_CLASS;
 		}
