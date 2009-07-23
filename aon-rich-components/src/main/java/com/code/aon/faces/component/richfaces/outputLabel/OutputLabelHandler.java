@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.faces.component.UIComponent;
+import javax.faces.component.UIOutput;
 import javax.faces.component.UIViewRoot;
 
 import org.apache.commons.lang.StringUtils;
@@ -30,14 +31,12 @@ public class OutputLabelHandler extends AonComponentHandler {
 			map = new HashMap();
 			root.getAttributes().put(LABELS_MAP, map);
 		}
+		
 		TagAttribute _for = getAttribute("for");
 		if ( _for != null ) {
 			TagAttribute value = getAttribute("value");
 			if (value != null) {
-				String label = value.getValue(ctx);
-				if (! StringUtils.isEmpty(label) ) {
-					map.put(_for.getValue(ctx), label );					
-				}
+				map.put(_for.getValue(ctx), (UIOutput) c );					
 			}
 		}
 	}
