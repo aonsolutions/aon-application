@@ -130,6 +130,8 @@ public class MessageController implements WebMailConstants, BundleConstants {
     
     private boolean showNewMessageWindow;
     
+    private boolean loadContacts;
+    
 	/**
 	 * @return the message
 	 */
@@ -548,6 +550,7 @@ public class MessageController implements WebMailConstants, BundleConstants {
 		parentMessage = null;
 		messageContent = null;
 		messageBody = null;
+		loadContacts = true;
 	}
 	//********************************************************************************************
 
@@ -651,7 +654,8 @@ public class MessageController implements WebMailConstants, BundleConstants {
 	
 	public void openEmailsPanelPopup(ActionEvent event){
 		MultiSelectionEmailBean multiSelectionEmailBean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(BEAN_MULTISELECTIONEMAIL);
-		multiSelectionEmailBean.reload();
+		multiSelectionEmailBean.init(loadContacts);
+		loadContacts = false;
 		setShowEmailsWindow(true);
 	}
 
@@ -675,20 +679,20 @@ public class MessageController implements WebMailConstants, BundleConstants {
 	public void onAcceptAllEmailItems(ActionEvent event){
 		MultiSelectionEmailBean bean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(BEAN_MULTISELECTIONEMAIL);
 		List<Contact> lst = bean.getSelectedRows();
-		String emails = "";
+		StringBuffer emails = new StringBuffer();
         for (int i = 0, max = lst.size(); i < max; i++) {
         	Contact e = lst.get(i);
-        	emails += StringEscapeUtils.unescapeHtml(e.getEmailLarge());
+        	emails.append( StringEscapeUtils.unescapeHtml(e.getEmailLarge()) );
         	if (i+1 < max) {
-        		emails += AonMessageUtils.EMAIL_SEPARATOR + " ";
+        		emails.append(AonMessageUtils.EMAIL_SEPARATOR).append(" ");
         	}
 		}
         if (CONTAINER_TO.equals(selectedDestinyContainer)){
-            recipientsTo = acceptEmailItem(emails, recipientsTo);
-        }else if (CONTAINER_CC.equals(selectedDestinyContainer)){
-            recipientsCc = acceptEmailItem(emails, recipientsCc);
-        }else if (CONTAINER_BCC.equals(selectedDestinyContainer)){
-            recipientsBcc = acceptEmailItem(emails, recipientsBcc);
+            recipientsTo = acceptEmailItem(emails.toString(), recipientsTo);
+        } else if (CONTAINER_CC.equals(selectedDestinyContainer)) {
+            recipientsCc = acceptEmailItem(emails.toString(), recipientsCc);
+        } else if (CONTAINER_BCC.equals(selectedDestinyContainer)) {
+            recipientsBcc = acceptEmailItem(emails.toString(), recipientsBcc);
         } 
 	}
 
@@ -778,11 +782,11 @@ public class MessageController implements WebMailConstants, BundleConstants {
 			response.flushBuffer();
 			out.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		} catch (MessagingException e) {
-			e.printStackTrace();
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		} catch (WebmailException e) {
-			e.printStackTrace();
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 	}
 	

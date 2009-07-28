@@ -34,7 +34,7 @@
 		     			oncomplete="Richfaces.hideModalPanel('emailWaitProccess')" />
 				</c:if>
 				<c:if test="#{!skipSaveDraftButton}">
-					<aon:commandButton id="save_draft"
+					<aon:commandButton id="save_draft" 
 						value="#{webmailBundle.webmail_save_draft}"
 						styleClass="aon-icon aon-icon-mail-save aon-finding-toolbar-item"
 						action="#{saveDraftAction}" actionListener="#{saveDraftActionListener}"
