@@ -3,8 +3,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
-
 
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
@@ -110,5 +110,22 @@
 			</aon:column>
 
 		</ui:define>
+		
+		<ui:define name="endFormListContent">
+			<c:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">			
+				<aon:div onmouseover="disableRowSelector();"
+					onmouseout="enableRowSelector();" >										
+					<aon:commandLink title="#{financeBundle.finance_send_email}" 
+						ajaxSingle="true" reRender="showNewMessageWindow"
+						actionListener="#{controller.masterController.onSendEmail}" value="&#160;"
+						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
+						rendered="#{to.mediaType == 'EMAIL'}" >
+						<f:setPropertyActionListener target="#{webmailMessage.showNewMessageWindow}" value="#{true}" />
+						<f:param name="email" value="#{to.value}" />
+					</aon:commandLink>
+				</aon:div>
+			</c:if>
+		</ui:define>
+		
 	</ui:decorate>
 </ui:composition>
