@@ -29,6 +29,7 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 				Iterator breakDownIter =  invoiceDetail.getTaxBreakDowns().iterator();
 				while(breakDownIter.hasNext()){
 					TaxBreakDown breakDown = (TaxBreakDown)breakDownIter.next();
+					setTaxBreakDownAddInfo(breakDown, invoiceDetail);
 					TaxKey key = new TaxKey();
 					key.setType(breakDown.getTaxType());
 					key.setPercent(breakDown.getTaxPercent());
@@ -36,6 +37,8 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 					if(map.containsKey(key)){
 						mapBreakDown  = (TaxBreakDown)map.get(key);
 						mapBreakDown.setBase(mapBreakDown.getBase() + breakDown.getBase());
+						mapBreakDown.setTaxQuota(mapBreakDown.getTaxQuota() + breakDown.getTaxQuota());
+						mapBreakDown.setSurchargeQuota(mapBreakDown.getSurchargeQuota() + breakDown.getSurchargeQuota());
 					} else {
 						mapBreakDown = breakDown;
 					}
@@ -45,9 +48,13 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 			Iterator iterator = map.values().iterator();
 			while(iterator.hasNext()){
 				TaxBreakDown tbd = (TaxBreakDown)iterator.next();
-				tbd.setTaxQuota(CommonUtil.round(tbd.getBase() * tbd.getTaxPercent()/100));
+				if(tbd.getTaxQuota() == 0){
+					tbd.setTaxQuota(CommonUtil.round(tbd.getBase() * tbd.getTaxPercent()/100));
+				}
 				if(iti.isSurcharge()){
-					tbd.setSurchargeQuota(CommonUtil.round(tbd.getBase() * tbd.getSurchargePercent()/100));
+					if(tbd.getSurchargeQuota() == 0){
+						tbd.setSurchargeQuota(CommonUtil.round(tbd.getBase() * tbd.getSurchargePercent()/100));
+					}
 				}else{
 					tbd.setSurchargeQuota(0.0);
 					tbd.setSurchargePercent(0.0);
@@ -57,7 +64,11 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 		}
 		return taxBreakDowns;
 	}
-	
+
+	protected void setTaxBreakDownAddInfo(TaxBreakDown breakDown, InvoiceDetail invoiceDetail) {
+		//Para redefinir en los hijos.
+	}
+
 	@SuppressWarnings("unchecked")
 	public double getTotalVatQuota(ICalculableContainer icc, ITaxInfo iti) {
 		double total = 0;
