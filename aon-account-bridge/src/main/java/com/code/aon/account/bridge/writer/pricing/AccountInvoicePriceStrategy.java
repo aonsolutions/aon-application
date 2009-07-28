@@ -1,10 +1,6 @@
 package com.code.aon.account.bridge.writer.pricing;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,18 +13,14 @@ import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tax;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.Item;
-import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.TaxBreakDown;
-import com.code.aon.product.strategy.TaxKey;
 import com.code.aon.ql.Criteria;
-import com.code.aon.registry.ITaxInfo;
 
 public class AccountInvoicePriceStrategy extends InvoicePriceStrategy {
 	
@@ -43,46 +35,8 @@ public class AccountInvoicePriceStrategy extends InvoicePriceStrategy {
 		return accountingUtil;
 	}
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<TaxBreakDown> getTaxBreakDowns(ICalculableContainer icc, ITaxInfo iti) {
-		List<TaxBreakDown> taxBreakDowns = new LinkedList<TaxBreakDown>();
-		if(!iti.isTaxFree()){
-			Iterator iter = icc.getDetailList().iterator();
-			Map map = new HashMap();
-			while(iter.hasNext()){
-				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
-				Iterator breakDownIter =  invoiceDetail.getTaxBreakDowns().iterator();
-				while(breakDownIter.hasNext()){
-					TaxBreakDown breakDown = (TaxBreakDown)breakDownIter.next();
-					breakDown.setAccount(obtainTaxAccount(breakDown.getTaxType(), invoiceDetail));
-					TaxKey key = new TaxKey();
-					key.setType(breakDown.getTaxType());
-					key.setPercent(breakDown.getTaxPercent());
-					TaxBreakDown mapBreakDown;
-					if(map.containsKey(key)){
-						mapBreakDown = (TaxBreakDown)map.get(key);
-						mapBreakDown.setBase(mapBreakDown.getBase() + breakDown.getBase());
-					} else {
-						mapBreakDown = breakDown;
-					}
-					map.put(key, mapBreakDown);
-				}
-			}
-			Iterator iterator = map.values().iterator();
-			while(iterator.hasNext()){
-				TaxBreakDown tbd = (TaxBreakDown)iterator.next();
-				tbd.setTaxQuota(CommonUtil.round(tbd.getBase() * tbd.getTaxPercent()/100));
-				if(iti.isSurcharge()){
-					tbd.setSurchargeQuota(CommonUtil.round(tbd.getBase() * tbd.getSurchargePercent()/100));
-				}else{
-					tbd.setSurchargeQuota(0.0);
-					tbd.setSurchargePercent(0.0);
-				}
-				taxBreakDowns.add(tbd);
-			}
-		}
-		return taxBreakDowns;
+	protected void setTaxBreakDownAddInfo(TaxBreakDown breakDown, InvoiceDetail invoiceDetail) {
+		breakDown.setAccount(obtainTaxAccount(breakDown.getTaxType(), invoiceDetail));
 	}
 
 	@SuppressWarnings("unchecked")
