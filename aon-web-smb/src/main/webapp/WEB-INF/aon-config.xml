@@ -3,7 +3,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.esferalia.com/finance finance.xsd"
 	xmlns="http://www.esferalia.com/config" >
-	
+
+	<registry:config version="1.0" xmlns:registry="http://www.esferalia.com/registry">
+		<registry:rmedia 
+			showSendEmail="true" 
+		/>
+	</registry:config>
+		
 	<company:config version="1.0" xmlns:company="http://www.esferalia.com/company">
 		<company:company 
 			showRegistryBank="true" 
