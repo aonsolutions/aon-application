@@ -88,6 +88,8 @@ public class AccountEntryInvoiceWriter {
 		AccountEntryInvoice accEntryInvoice = obtainAccountEntryInvoice(invoice);
 		if (accEntryInvoice != null) {
 			removeAccountEntryInvoice(accEntryInvoice);
+			removeInvoiceDetailAccounts(accEntryInvoice.getInvoice());
+			removeInvoiceTaxAccounts(accEntryInvoice.getInvoice());
 		}
 	}
 
@@ -427,6 +429,28 @@ public class AccountEntryInvoiceWriter {
 	private void removeAccountEntryInvoice(AccountEntryInvoice accEntryInvoice) throws ManagerBeanException {
 		IManagerBean accountEntryInvoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
 		accountEntryInvoiceBean.remove(accEntryInvoice);
+	}
+
+	private void removeInvoiceDetailAccounts(Invoice invoice) throws ManagerBeanException {
+		IManagerBean invoiceDetailAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceDetailAccountBean.getFieldName(IAccountBridgeAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+		Iterator<?> iterator = invoiceDetailAccountBean.getList(criteria).iterator();
+		while (iterator.hasNext()) {
+			InvoiceDetailAccount invoiceDetailAccount = (InvoiceDetailAccount)iterator.next();
+			invoiceDetailAccountBean.remove(invoiceDetailAccount);
+		}
+	}
+
+	private void removeInvoiceTaxAccounts(Invoice invoice) throws ManagerBeanException {
+		IManagerBean invoiceTaxAccountBean = BeanManager.getManagerBean(InvoiceTaxAccount.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceTaxAccountBean.getFieldName(IAccountBridgeAlias.INVOICE_TAX_ACCOUNT_INVOICE_TAX_INVOICE_ID), invoice.getId());
+		Iterator<?> iterator = invoiceTaxAccountBean.getList(criteria).iterator();
+		while (iterator.hasNext()) {
+			InvoiceTaxAccount invoiceTaxAccount = (InvoiceTaxAccount)iterator.next();
+			invoiceTaxAccountBean.remove(invoiceTaxAccount);
+		}
 	}
 
 }
