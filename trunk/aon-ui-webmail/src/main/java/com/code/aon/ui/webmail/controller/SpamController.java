@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
@@ -213,7 +214,7 @@ public class SpamController extends BasicLdap implements WebMailConstants {
 			IManagerBean bean = FormUtil.getController(BEAN_CONTACT).getManagerBean();
 			contacts = bean.getList(null);
 		}catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 		Iterator iterContacts = contacts.iterator();
 		AonListEmail aonListEmail;
