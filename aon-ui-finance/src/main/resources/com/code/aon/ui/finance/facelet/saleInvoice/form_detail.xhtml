@@ -63,8 +63,10 @@
 										</aon:lookupButton>
 										<aon:inputTextarea id="InvoiceDetail_item_product_name-Edit"
 											value="#{saleInvoiceDetail.to.description}"
-											cols="64" rows="#{!saleInvoiceDetail.longDescription?1:5}" size="50"
-											style="#{!saleInvoiceDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}" />
+											cols="64" rows="#{!saleInvoiceDetail.longDescription?1:5}"
+											style="#{!saleInvoiceDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+											<f:validateLength maximum="1024" />
+										</aon:inputTextarea>
 									</a4j:region>
 									<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
 										actionListener="#{saleInvoiceDetail.onShortDescription}" reRender="InvoiceDetail_item_product_name-Edit"
@@ -97,8 +99,10 @@
 											</aon:lookupButton>
 											<aon:inputTextarea id="InvoiceDetail_item_product_name-New"
 												value="#{saleInvoiceDetail.to.description}"
-												cols="64" rows="#{!saleInvoiceDetail.longDescription?1:5}" size="50"
-												style="#{!saleInvoiceDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}" />
+												cols="64" rows="#{!saleInvoiceDetail.longDescription?1:5}"
+												style="#{!saleInvoiceDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+												<f:validateLength maximum="1024" />
+											</aon:inputTextarea>
 										</a4j:region>
 										<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
 											actionListener="#{saleInvoiceDetail.onShortDescription}" reRender="InvoiceDetail_item_product_name-New"
