@@ -48,17 +48,17 @@ public class EmailSender {
 		server.connect();
 	}
 	
-	public void sendMessage( Address to, String subject, String content ) throws WebmailException, MessagingException {
+	public void sendMessage( Address[] to, String subject, String content ) throws WebmailException, MessagingException {
 		sendMessage(to, subject, content, null);
 	}
 	
-	public void sendMessage( Address to, String subject, String content, MimeType mimeType, AonFile ... attachemnts  ) throws WebmailException {
+	public void sendMessage( Address[] to, String subject, String content, MimeType mimeType, AonFile ... attachemnts  ) throws WebmailException {
 		sendMessage(to, subject, content, mimeType, null, attachemnts);
 	}
 
-	public void sendMessage( Address to, String subject, String content, MimeType mimeType, SecurityInfo si, AonFile ... attachemnts  ) throws WebmailException {
+	public void sendMessage( Address[] to, String subject, String content, MimeType mimeType, SecurityInfo si, AonFile ... attachemnts  ) throws WebmailException {
 		AonMessage aonMessage = server.createAonMessage(from);
-		aonMessage.setRecipientsTo( new Address[]{to} );
+		aonMessage.setRecipientsTo( to );
 		aonMessage.setSubject(subject);
 		if (! ArrayUtils.isEmpty(attachemnts) ) {
 	       	MimeMultipart multipart =new MimeMultipart(IMimeType.RELATED);

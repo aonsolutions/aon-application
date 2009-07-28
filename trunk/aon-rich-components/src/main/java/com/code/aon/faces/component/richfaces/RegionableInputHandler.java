@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.faces.component.UIComponent;
 
-import com.code.aon.faces.component.richfaces.inputRichText.InputRichTextHandler;
 import com.code.aon.faces.component.richfaces.lookup.inputText.LookupInputTextHandler;
 import com.code.aon.faces.component.util.BasicComponentConfig;
 import com.sun.facelets.FaceletContext;
@@ -28,8 +27,6 @@ public class RegionableInputHandler extends TagHandler implements IRichFacesTags
 	private static final String REGION_COMPONENT_TYPE = "org.ajax4jsf.AjaxRegion";
 	
 	private static final String LOOKUP_INPUT_TEXT_COMPONENT_TYPE = "com.code.aon.faces.HtmlLookupInputText";
-	
-	private static final String INPUT_RICH_TEXT_COMPONENT_TYPE = "com.code.aon.faces.InputRichText";
 
 	private ComponentConfig config;
 	
@@ -52,8 +49,6 @@ public class RegionableInputHandler extends TagHandler implements IRichFacesTags
 		String componentType = config.getComponentType();
 		if ( LOOKUP_INPUT_TEXT_COMPONENT_TYPE.equals(componentType) ) {
 			return new LookupInputTextHandler(config);
-		} else if ( INPUT_RICH_TEXT_COMPONENT_TYPE.equals(componentType) ) {
-			return new InputRichTextHandler(config);
 		}
 		return new AonAjaxInputHandler(config);
 	}
