@@ -5,6 +5,8 @@ import java.util.List;
 
 public class AccountConstants {
 
+	public static final String CASH_ACCOUNT_PREFIX = "570";
+
 	public static final String BANK_ACCOUNT_PREFIX = "5720";
 	
 	public static final String CUSTOMER_ACCOUNT_PREFIX = "4300";
@@ -26,6 +28,7 @@ public class AccountConstants {
 	public static List<String> getSystemAccounts(){
 		if(systemAccounts == null){
 			systemAccounts = new LinkedList<String>();
+			systemAccounts.add(CASH_ACCOUNT_PREFIX);
 			systemAccounts.add(BANK_ACCOUNT_PREFIX);
 			systemAccounts.add(CUSTOMER_ACCOUNT_PREFIX);
 			systemAccounts.add(SUPPLIER_ACCOUNT_PREFIX);
