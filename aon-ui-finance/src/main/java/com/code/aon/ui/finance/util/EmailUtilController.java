@@ -6,17 +6,17 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.text.MessageFormat;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.mail.Address;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.xml.sax.SAXException;
 
@@ -97,7 +97,22 @@ public class EmailUtilController implements IFinanceMessages, IFinanceConstants 
 		}
 		return null;
 	}	
-	
+
+	private Address[] getEmailAddresses( Invoice invoice, String name ) throws ManagerBeanException, UnsupportedEncodingException, AddressException {
+		Address[] addresses = null;
+		String[] emails = getEmails(invoice);
+		if (! ArrayUtils.isEmpty(emails) ) {
+			addresses = new Address[emails.length];
+			for( int i = 0; i < emails.length; i++ ) {
+				if ( i == 0 ) {
+					addresses[i] = new InternetAddress( emails[i], name );
+				} else {
+					addresses[i] = new InternetAddress( emails[i] );	
+				}
+			} 
+		}
+		return addresses;
+	}		
 	public String getEmailSubject( Invoice invoice ) {
 		String key = invoice.isSigned() ? FINANCE_EINVOICE_EMAIL_SUBJECT : FINANCE_INVOICE_EMAIL_SUBJECT; 
 		String message = AonUtil.getMessage(BUNDLE_KEY, key);
@@ -187,18 +202,18 @@ public class EmailUtilController implements IFinanceMessages, IFinanceConstants 
 				String message = MessageFormat.format(text, invoice.getReferenceCode(), invoice.getRegistryName() );				
 				AonUtil.addErrorMessage(message);				
 			} else {
-				Address to = new InternetAddress( email.getValue(), invoice.getRegistryName() );
+				Address[] recipients = getEmailAddresses(invoice, invoice.getRegistryName() );
 				String subject = getEmailSubject(invoice);
 				String content = getEmailBody(invoice);
 				AonFile file = getInvoiceFile(invoice);
+				AonFile xml = getInvoiceXml(invoice);
 				if ( si != null ) {
-					AonFile xml = getInvoiceXml(invoice);
-					getEmailSender().sendMessage(to, subject, content, MimeType.MIME_HTML, si, file, xml );
-					xml.getFile().delete();
+					getEmailSender().sendMessage(recipients, subject, content, MimeType.MIME_HTML, si, file, xml );
 				} else {
-					getEmailSender().sendMessage(to, subject, content, MimeType.MIME_HTML, file);
+					getEmailSender().sendMessage(recipients, subject, content, MimeType.MIME_HTML, file, xml );
 				}
 				file.getFile().delete();
+				xml.getFile().delete();
 			}
 		} catch (Throwable th) {
 			LOGGER.log(Level.SEVERE, th.getMessage(), th);

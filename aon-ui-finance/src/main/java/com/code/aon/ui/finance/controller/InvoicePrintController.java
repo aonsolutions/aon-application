@@ -41,7 +41,7 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 		SaleInvoiceController invoiceController = (SaleInvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
 		try {
 			EmailSender sender = emailController.getEmailSender();
-			SecurityInfo si = invoiceController.getDigitalCertificate( invoiceController.getDigitalCertificate(), "esferalia");
+			SecurityInfo si = null;
 			sender.connect();
 			Criteria criteria = getCriteria();
 			List<ITransferObject> list = getManagerBean().getList(criteria);
