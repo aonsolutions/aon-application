@@ -2,6 +2,8 @@ package com.code.aon.ui.webmail.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
@@ -17,27 +19,57 @@ import com.code.aon.webmail.dao.IWebMailAlias;
 
 public class MultiSelectionEmailBean {
 
+	private static final Logger LOGGER = Logger.getLogger(MultiSelectionEmailBean.class.getName());
+	
 	private ListDataModel model;
 	
 	private List<SelectionEmail> emails; 
+
+	private int pageSize = 10;
 	
-	public void reload() {
-        emails = new ArrayList<SelectionEmail>();
-    	try{
-			IManagerBean bean = FormUtil.getController(WebMailConstants.BEAN_CONTACT).getManagerBean();
-			Criteria criteria = new Criteria();
-			criteria.addOrder(bean.getFieldName(IWebMailAlias.CONTACT_NAME));
-			List<ITransferObject> lst = bean.getList(criteria);
-            for (int i = 0, max = lst.size(); i < max; i++) {
-            	SelectionEmail se = new SelectionEmail();
-            	se.setEmail((Contact) lst.get(i));
-            	se.setSelected(Boolean.FALSE);
-            	emails.add(se);
-            }
-    	} catch (ManagerBeanException e) {
-    		e.printStackTrace();
+	private int currentPage;
+	
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	public int getCurrentPage() {
+		return currentPage;
+	}
+
+	public void setCurrentPage(int currentPage) {
+		this.currentPage = currentPage;
+	}
+
+	public void init( boolean loadContacts ) {
+		this.currentPage = 1;
+		if ( loadContacts ) {
+	        emails = new ArrayList<SelectionEmail>();
+	    	try{
+				IManagerBean bean = FormUtil.getController(WebMailConstants.BEAN_CONTACT).getManagerBean();
+				Criteria criteria = new Criteria();
+				criteria.addNotNullExpression(bean.getFieldName(IWebMailAlias.CONTACT_EMAIL));
+				criteria.addOrder(bean.getFieldName(IWebMailAlias.CONTACT_NAME));
+				List<ITransferObject> lst = bean.getList(criteria);
+	            for (int i = 0, max = lst.size(); i < max; i++) {
+	            	SelectionEmail se = new SelectionEmail();
+	            	se.setEmail((Contact) lst.get(i));
+	            	se.setSelected(Boolean.FALSE);
+	            	emails.add(se);
+	            }
+	    	} catch (ManagerBeanException e) {
+	    		LOGGER.log( Level.SEVERE, e.getMessage(), e );
+			}
+	    	this.model = new ListDataModel( emails );
+		} else {
+			for( SelectionEmail email : emails ) {
+				email.setSelected( false );
+			}
 		}
-    	this.model = new ListDataModel( emails );
     }
     
 	public ListDataModel getModel() {
@@ -50,14 +82,28 @@ public class MultiSelectionEmailBean {
 			selectionEmail.setSelected(! selectionEmail.isSelected() );
 		}
 	}	
+
+	private void setSelectAllPageContacts( boolean value ) {
+		int start = (this.currentPage - 1) * this.pageSize;
+		for( int i = 0; i < this.pageSize; i++ ) {
+			this.emails.get(i+start).setSelected(value);
+		}
+	}	
+	
+	public void onSelectAllPageContacts(ActionEvent event) {
+		setSelectAllPageContacts(true);
+	}
+
+	public void onDeselectAllPageContacts(ActionEvent event) {
+		setSelectAllPageContacts(false);
+	}
 	
 	/**
 	 * @return the selectedRows
 	 */
 	public List<Contact> getSelectedRows() {
 	    List<Contact> selectedRows = new ArrayList<Contact>();
-        selectedRows.clear();
-        for (int i = emails.size()-1; i >= 0 ; i--) {
+        for (int i = 0; i < emails.size(); i++) {
             if (emails.get(i).isSelected()) {
                 selectedRows.add(emails.get(i).getEmail());
             }

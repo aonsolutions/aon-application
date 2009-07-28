@@ -44,7 +44,7 @@
 	
 	
 					<aon:div styleClass="aon-toolbar">
-						<aon:commandButton id="selectEmail" action="messageNew"
+						<aon:commandButton id="selectEmail"
 							actionListener="#{webmailMessage.onAcceptAllEmailItems}"
 							value="#{webmailBundle.webmail_accept}"
 							reRender="showEmailWindow,newMessageHeader"
@@ -57,8 +57,9 @@
 					</aon:div>
 					<aon:div>
 	
-						<aon:dataTable id="emailData" style="width:100%" rows="10"
+						<aon:dataTable id="emailData" style="width:100%" rows="#{multiSelectionEmailBean.pageSize}"
 							value="#{multiSelectionEmailBean.model}" var="to"
+							rendered="#{multiSelectionEmailBean.model.rowCount > 0}"
 							columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
 								aon-editDataTable-textColumn">
 	
@@ -67,7 +68,19 @@
 	
 							<aon:column id="selectionCol">
 								<f:facet name="header">
-									<aon:outputText value="&#160;" />
+									<aon:div>
+										<aon:commandButton id="selectButton" style="margin-right:10px;"
+											actionListener="#{multiSelectionEmailBean.onSelectAllPageContacts}"
+											reRender="messageSelected"
+											styleClass="aon-icon-commandButton-disabled aon-icon-checkAll">
+										</aon:commandButton>
+						
+										<aon:commandButton id="deselectButton"
+											actionListener="#{multiSelectionEmailBean.onDeselectAllPageContacts}"
+											reRender="messageSelected"
+											styleClass="aon-icon-commandButton-disabled aon-icon-checkNone">
+										</aon:commandButton>
+									</aon:div>
 								</f:facet>
 								<aon:selectBooleanCheckbox id="messageSelected"
 									styleClass="aon-float-left" value="#{to.readOnlySelected}">
@@ -75,7 +88,7 @@
 							</aon:column>
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText value="#{groupwareBundle.contact_displayName}" />
+									<aon:outputText value="#{webmailBundle.webmail_contact_displayName}" />
 								</f:facet>
 								<aon:outputText value="#{to.email.displayName}" />
 							</aon:column>
@@ -87,7 +100,7 @@
 							</aon:column>
 						</aon:dataTable>
 	
-						<aon:dataScroller2 for="emailData" showNote="true" />
+						<aon:dataScroller2 for="emailData" page="#{multiSelectionEmailBean.currentPage}" showNote="true" />
 	
 					</aon:div>
 				</rich:modalPanel>
