@@ -348,6 +348,8 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 				taxBreakDown.setTaxType(invoiceTax.getTaxType());
 				taxBreakDown.setTaxPercent(invoiceTax.getPercentage());
 				taxBreakDown.setSurchargePercent(invoiceTax.getSurcharge());
+				taxBreakDown.setTaxQuota(invoiceTax.getQuota());
+				taxBreakDown.setSurchargeQuota(invoiceTax.getSurchargeQuota());
 				taxBreakDowns.add(taxBreakDown);
 			}
 		} catch (ManagerBeanException e) {
