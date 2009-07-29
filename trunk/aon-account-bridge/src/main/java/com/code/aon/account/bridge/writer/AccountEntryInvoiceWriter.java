@@ -445,7 +445,7 @@ public class AccountEntryInvoiceWriter {
 	private void removeInvoiceTaxAccounts(Invoice invoice) throws ManagerBeanException {
 		IManagerBean invoiceTaxAccountBean = BeanManager.getManagerBean(InvoiceTaxAccount.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceTaxAccountBean.getFieldName(IAccountBridgeAlias.INVOICE_TAX_ACCOUNT_INVOICE_TAX_INVOICE_ID), invoice.getId());
+		criteria.addEqualExpression(invoiceTaxAccountBean.getFieldName(IAccountBridgeAlias.INVOICE_TAX_ACCOUNT_INVOICE_TAX_INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 		Iterator<?> iterator = invoiceTaxAccountBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			InvoiceTaxAccount invoiceTaxAccount = (InvoiceTaxAccount)iterator.next();
