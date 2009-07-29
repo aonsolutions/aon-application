@@ -13,6 +13,8 @@
 		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
 		<property name="connection.password">serubd2000</property>		
 
+        <mapping package="com.code.aon.common.dao.hibernate.type"/>
+
 		<!-- Mapping files -->
 		<mapping class="com.code.aon.account.bridge.CustomerAccount"/>
 		<mapping class="com.code.aon.account.bridge.SupplierAccount"/>		
@@ -31,12 +33,14 @@
 		<mapping class="com.code.aon.account.Account"/>
 
 		<mapping class="com.code.aon.accounting.AccountEntry"/>
+		<mapping class="com.code.aon.accounting.AccountEntryDetail"/>
 		<mapping class="com.code.aon.accounting.Leasing"/>
 		<mapping class="com.code.aon.accounting.Loan"/>
 
 		<mapping class="com.code.aon.finance.Creditor"/>
  		<mapping class="com.code.aon.finance.Invoice"/>
 		<mapping class="com.code.aon.finance.InvoiceAddress"/>
+		<mapping class="com.code.aon.finance.InvoiceAttachment"/>
 		<mapping class="com.code.aon.finance.InvoiceDetail"/>
 		<mapping class="com.code.aon.finance.InvoiceTax"/>
 		<mapping class="com.code.aon.finance.Finance"/>
