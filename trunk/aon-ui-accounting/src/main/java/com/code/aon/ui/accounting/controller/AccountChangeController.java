@@ -1,6 +1,7 @@
 package com.code.aon.ui.accounting.controller;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -9,12 +10,18 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.account.Account;
+import com.code.aon.account.bridge.AccountEntryInvoice;
+import com.code.aon.account.bridge.InvoiceDetailAccount;
+import com.code.aon.account.bridge.InvoiceTaxAccount;
+import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
+import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -95,23 +102,25 @@ public class AccountChangeController {
 					acc.setAccount(finalAccount);
 					bean.update(acc);
 					count++;
+
+					removeRelatedInvoiceAccounts(acc.getAccountEntry());
 				}
 
-				Criteria criteria2 = new Criteria();
-				criteria2.addEqualExpression(accountBalancing, initAccount
+				criteria = new Criteria();
+				criteria.addEqualExpression(accountBalancing, initAccount
 						.getId());
-				criteria2.addEqualExpression(accperiod, period.getId());
+				criteria.addEqualExpression(accperiod, period.getId());
 				if (fromDate != null) {
-					criteria2.addGreaterThanOrEqualExpression(date, fromDate);
+					criteria.addGreaterThanOrEqualExpression(date, fromDate);
 				}
 				if (fromDate != null) {
-					criteria2.addLessThanOrEqualExpression(date, toDate);
+					criteria.addLessThanOrEqualExpression(date, toDate);
 				}
 				if (securityLevel != null) {
-					criteria2.addEqualExpression(security, securityLevel);
+					criteria.addEqualExpression(security, securityLevel);
 				}
 
-				accountDetailList = bean.getList(criteria2);
+				accountDetailList = bean.getList(criteria);
 
 				for (ITransferObject to : accountDetailList) {
 					AccountEntryDetail acc = (AccountEntryDetail) to;
@@ -119,7 +128,7 @@ public class AccountChangeController {
 					bean.update(acc);
 					count++;
 				}
-							
+
 				AonUtil.addInfoMessage("Se han cambiado "+count+" líneas de apuntes");
 				
 				HibernateUtil.getSession(sessionName).flush();
@@ -141,6 +150,38 @@ public class AccountChangeController {
 		} finally {
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
+	}
+
+	private void removeRelatedInvoiceAccounts(AccountEntry accEntry) throws ManagerBeanException {
+		IManagerBean accEntryInvoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(accEntryInvoiceBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_INVOICE_ACCOUNT_ENTRY_ID), accEntry.getId());
+		Iterator<?> iterator = accEntryInvoiceBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			AccountEntryInvoice accEntryInvoice = (AccountEntryInvoice)iterator.next();
+
+			IManagerBean invoiceDetailAccBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailAccBean.getFieldName(IAccountBridgeAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_INVOICE_ID), accEntryInvoice.getInvoice().getId());
+			criteria.addEqualExpression(invoiceDetailAccBean.getFieldName(IAccountBridgeAlias.INVOICE_DETAIL_ACCOUNT_ACCOUNT_ID), initAccount.getId());
+			Iterator<?> iter = invoiceDetailAccBean.getList(criteria).iterator();
+			while (iter.hasNext()) {
+				InvoiceDetailAccount invoiceDetailAcc = (InvoiceDetailAccount)iter.next();
+				invoiceDetailAcc.setAccount(finalAccount);
+				invoiceDetailAccBean.update(invoiceDetailAcc);
+			}
+			
+			IManagerBean invoiceTaxAccBean = BeanManager.getManagerBean(InvoiceTaxAccount.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(invoiceTaxAccBean.getFieldName(IAccountBridgeAlias.INVOICE_TAX_ACCOUNT_INVOICE_TAX_INVOICE_ID), accEntryInvoice.getInvoice().getId());
+			criteria.addEqualExpression(invoiceTaxAccBean.getFieldName(IAccountBridgeAlias.INVOICE_TAX_ACCOUNT_ACCOUNT_ID), initAccount.getId());
+			iter = invoiceTaxAccBean.getList(criteria).iterator();
+			while (iter.hasNext()) {
+				InvoiceTaxAccount invoiceTaxAcc = (InvoiceTaxAccount)iter.next();
+				invoiceTaxAcc.setAccount(finalAccount);
+				invoiceTaxAccBean.update(invoiceTaxAcc);
+			}
 		}
 	}
 
