@@ -174,7 +174,7 @@ public class AccountChangeController {
 			
 			IManagerBean invoiceTaxAccBean = BeanManager.getManagerBean(InvoiceTaxAccount.class);
 			criteria = new Criteria();
-			criteria.addEqualExpression(invoiceTaxAccBean.getFieldName(IAccountBridgeAlias.INVOICE_TAX_ACCOUNT_INVOICE_TAX_INVOICE_ID), accEntryInvoice.getInvoice().getId());
+			criteria.addEqualExpression(invoiceTaxAccBean.getFieldName(IAccountBridgeAlias.INVOICE_TAX_ACCOUNT_INVOICE_TAX_INVOICE_DETAIL_INVOICE_ID), accEntryInvoice.getInvoice().getId());
 			criteria.addEqualExpression(invoiceTaxAccBean.getFieldName(IAccountBridgeAlias.INVOICE_TAX_ACCOUNT_ACCOUNT_ID), initAccount.getId());
 			iter = invoiceTaxAccBean.getList(criteria).iterator();
 			while (iter.hasNext()) {
