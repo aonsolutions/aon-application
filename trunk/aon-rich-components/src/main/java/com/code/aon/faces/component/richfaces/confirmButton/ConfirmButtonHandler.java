@@ -39,6 +39,8 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 
 	private static final String CANCEL_ACTION_LISTENER = "cancelActionListener";
 	
+	private static final String CANCEL_RE_RENDER = "cancelReRender";
+	
 	private static final String CONFIRM_TITLE = "confirmTitle";
 
 	private static final String CONFIRM_MESSAGE = "confirmMessage";
@@ -163,6 +165,10 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 		TagAttribute reRender = getAttribute(RERENDER);
 		if (reRender != null) {
 			mapper.setVariable(CONFIRM_RE_RENDER, getValueExpression(ctx, reRender));
+		}
+		TagAttribute cancelReRender = getAttribute(CANCEL_RE_RENDER);
+		if (cancelReRender != null) {
+			mapper.setVariable(CANCEL_RE_RENDER, getValueExpression(ctx, cancelReRender));
 		}
 	}
 
