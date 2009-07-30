@@ -69,7 +69,9 @@ import com.code.aon.ui.webmail.bean.AonMessageTracer;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.webmail.AonFile;
 import com.code.aon.webmail.Contact;
+import com.code.aon.webmail.EmailSecurity;
 import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.SecurityInfo;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonAttachment;
 import com.code.aon.webmail.bean.AonFolder;
@@ -131,6 +133,8 @@ public class MessageController implements WebMailConstants, BundleConstants {
     private boolean showNewMessageWindow;
     
     private boolean loadContacts;
+    
+    private SecurityInfo securityInfo;
     
 	/**
 	 * @return the message
@@ -479,23 +483,22 @@ public class MessageController implements WebMailConstants, BundleConstants {
        	}
        	newMessage.getMessage().setHeader("X-Mailer", "OfficeWeb - AonWebMail 1.0");
 
-       	MimeMultipart multipart1 =new MimeMultipart("related");
-       	MimeBodyPart part=new MimeBodyPart();
-       	part=new MimeBodyPart();
-       	part.setContent(text,"text/html");
-       	multipart1.addBodyPart(part);
+       	MimeMultipart mainPart = new MimeMultipart("related");
+       	MimeBodyPart part = new MimeBodyPart();
+       	part.setContent( text, "text/html" );
+       	mainPart.addBodyPart(part);
        	if (parentAonMsg!=null){
        		AonMessageTracer amt = new AonMessageTracer(parentAonMsg.getMessage());
 	       	List<BodyPart> list = amt.getRelateds();
 	       	Iterator<BodyPart> iter = list.iterator();
 	       	while (iter.hasNext()){
-		       	part=new MimeBodyPart();
 		       	BodyPart bp = iter.next();
 		       	if (bp != null){
-					part.setDataHandler(bp.getDataHandler());
-					part.setContentID(bp.getHeader("Content-ID")[0]);
-					part.setDisposition(Part.INLINE);
-					multipart1.addBodyPart(part);
+		       		MimeBodyPart relatedPart = new MimeBodyPart();		       		
+		       		relatedPart.setDataHandler(bp.getDataHandler());
+		       		relatedPart.setContentID(bp.getHeader("Content-ID")[0]);
+		       		relatedPart.setDisposition(Part.INLINE);
+					mainPart.addBodyPart(relatedPart);
 		       	}
 	       	}
        	}
@@ -508,14 +511,14 @@ public class MessageController implements WebMailConstants, BundleConstants {
 				String name = FilenameUtils.getName(file.getFileName());
 				mbpNext.setFileName( name );
 				mbpNext.setDataHandler(new DataHandler(fds));
-				multipart1.addBodyPart(mbpNext);
+				mainPart.addBodyPart(mbpNext);
 			}
-			newMessage.setContent( (MimeMultipart) multipart1 );
 		}       	
-		newMessage.setContent(multipart1);
-
+       	if ( securityInfo != null ) {
+       		mainPart = EmailSecurity.sign( mainPart, securityInfo );
+       	}		
+		newMessage.setContent(mainPart);
 		newMessage.setSentDate( new Date() );
-		//newMessage.getMessage().saveChanges();
 		return newMessage; 
 	}
 
@@ -1141,6 +1144,14 @@ public class MessageController implements WebMailConstants, BundleConstants {
 
 	public void setShowNewMessageWindow(boolean showNewMessageWindow) {
 		this.showNewMessageWindow = showNewMessageWindow;
+	}
+
+	public SecurityInfo getSecurityInfo() {
+		return securityInfo;
+	}
+
+	public void setSecurityInfo(SecurityInfo securityInfo) {
+		this.securityInfo = securityInfo;
 	}
 	
 }
