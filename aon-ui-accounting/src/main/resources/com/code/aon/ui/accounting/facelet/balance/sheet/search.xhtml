@@ -13,7 +13,7 @@
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{accountingBundle.accounting_balance_sheet} >> #{balanceSheet.balanceName} " />
+					value="#{accountingBundle.accounting_balance_sheet}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
 			</ui:include>
@@ -38,7 +38,7 @@
 						value="#{balanceSheet.parameters.period}">
 						<f:selectItems value="#{accountingCollections.accountPeriods}" />
 					</aon:selectOneMenu>
-
+ 
 					<aon:outputLabel for="balanceSheet_entryDate-From"
 						value="#{bundle.aon_date_from}" />
 					<aon:panelGrid columns="3">
@@ -55,6 +55,7 @@
 							popupDateFormat="#{bundle.aon_date_pattern}" />
 					</aon:panelGrid>
 
+<!-- 					
 					<aon:outputText value="&#160;" />
 					<aon:div>
 						<aon:selectBooleanCheckbox id="Account_zero_sum"
@@ -62,7 +63,7 @@
 						<aon:outputLabel for="Account_zero_sum"
 							value="#{accountingBundle.accounting_no_touched_account}" />
 					</aon:div>
-
+-->
 
 					<aon:outputText value="&#160;" />
 					<aon:div>
@@ -90,8 +91,6 @@
 						action="balance_sheet_list" />
 				</ui:define>
 			</ui:decorate>
-
-
 
 		</aon:form>
 		<ui:include

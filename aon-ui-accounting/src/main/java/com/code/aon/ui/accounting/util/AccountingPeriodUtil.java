@@ -12,6 +12,7 @@ import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.ql.Criteria;
@@ -49,5 +50,18 @@ public class AccountingPeriodUtil {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
+	}
+
+	public Period getPreviousPeriod(Period period) throws ManagerBeanException {
+		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
+		Criteria criteria = new Criteria();
+		String deadlineAlias = periodBean.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE);
+		criteria.addLessThanOrEqualExpression(deadlineAlias, period.getInitiationDate());
+		criteria.addOrder(deadlineAlias, false);
+		Iterator<ITransferObject> iter = periodBean.getList(criteria).iterator();
+		if (iter.hasNext()) {
+			return (Period) iter.next();
+		}
+		return null;
 	}
 }

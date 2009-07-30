@@ -33,6 +33,18 @@ public class TrialBalanceController implements ICollectionProvider {
 	private SummaryProviderParameters parameters;
 	private SummaryCollection summaryCollection;
 	private DataModel model;
+	private String backAction;
+
+	public String getBackAction() {
+		return backAction;
+	}
+	public void setBackAction(String backAction) {
+		this.backAction = backAction;
+	}
+
+	public String backAction() {
+		return backAction;
+	}
 
 	public SummaryProviderParameters getParameters() {
 		if (parameters == null) {
@@ -61,6 +73,7 @@ public class TrialBalanceController implements ICollectionProvider {
 
 
 	public void onReset(ActionEvent event) {
+		setBackAction(null);
 		setParameters(null);
 		setSummaryCollection(null);
 	}
