@@ -50,6 +50,7 @@ import com.code.aon.ui.finance.util.SingleCollectionProvider;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.webmail.SecurityInfo;
 
 public class InvoiceSignerController extends BasicController{
 	
@@ -482,6 +483,11 @@ public class InvoiceSignerController extends BasicController{
 			throw new AbortProcessingException(e.getMessage());
 		}
 		return resolved;
+	}	
+	public SecurityInfo getSecurityInfo() {
+		SecurityInfo si = new SecurityInfo( signStore.getKeySore(), certificado.getAlias(), password);
+		return si;
 	}
+	
 	
 }

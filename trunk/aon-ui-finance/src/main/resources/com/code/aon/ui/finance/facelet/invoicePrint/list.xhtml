@@ -18,13 +18,14 @@
 				<ui:param name="skipResetButton" value="true" />
 				
 				<ui:define name="additionalToolbarContent">
-					<aon:commandButton value="&#160;"
-						title="#{financeBundle.finance_send_email}"
-						actionListener="#{invoicePrint.sendInvoicesByEmail}"
-						onclick="Richfaces.showModalPanel('waitProccess')" 
-		     			oncomplete="Richfaces.hideModalPanel('waitProccess')"							
+					<aon:confirmButton value="&#160;" id="sendEmail"
+						confirmTitle="#{financeBundle.finance_send_email}"
+						confirmMessage="#{financeBundle.finance_sign_email_confirm}"
+						confirmActionListener="#{invoiceSigner.onShowSignWindow}"
+						reRender="showSignWindow"
+						cancelActionListener="#{invoicePrint.onSendInvoicesByEmail}"
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
-					</aon:commandButton>											
+					</aon:confirmButton>											
 					<h:commandLink value="&#160;" target="_blank"
 						action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
@@ -129,7 +130,9 @@
 		</aon:form>
 
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
-
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoiceSigner/modal.xhtml" >
+			<aon:methodParam name="signActionListener" value="#{invoicePrint.onSendInvoicesBySignedEmail}" type="actionListener" />
+		</ui:include>
 	</ui:define>
 
 </ui:composition>
