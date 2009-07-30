@@ -1,11 +1,13 @@
 package com.code.aon.ui.finance.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.mail.MessagingException;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -36,23 +38,42 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 		return getPriceStrategy().getTotalPrice(invoice, invoice);
 	}
 
-	public void sendInvoicesByEmail( ActionEvent event ) {
-		EmailUtilController emailController = (EmailUtilController) AonUtil.getRegisteredBean(EMAIL_UTIL_CONTROLLER_NAME);
-		SaleInvoiceController invoiceController = (SaleInvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
-		try {
-			EmailSender sender = emailController.getEmailSender();
-			SecurityInfo si = null;
-			sender.connect();
-			Criteria criteria = getCriteria();
-			List<ITransferObject> list = getManagerBean().getList(criteria);
-			for( ITransferObject to : list ) {
-				emailController.sendInvoice( (Invoice) to, si );	
-			}
-			sender.disconnect();
+	public void onSendInvoicesBySignedEmail( ActionEvent event ) {
+		InvoiceSignerController invoiceSigner = (InvoiceSignerController) AonUtil.getRegisteredBean(INVOICE_SIGNER_CONTROLLER_NAME);
+		if (! invoiceSigner.resolveCertificado() ) {
+			return;
+		}
+		try {		
+			sendInvoicesByEmail( invoiceSigner.getSecurityInfo() );
+		} catch (Throwable th) {
+			LOGGER.log(Level.SEVERE, th.getMessage(), th);
+			AonUtil.addErrorMessage(th.getMessage());
+			throw new AbortProcessingException(th.getMessage(), th);
+		} finally {
+			invoiceSigner.setShowSignWindow(false);
+		}
+	}	
+	
+	public void onSendInvoicesByEmail( ActionEvent event ) {
+		try {		
+			sendInvoicesByEmail( null );
 		} catch (Throwable th) {
 			LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			AonUtil.addErrorMessage(th.getMessage());
 			throw new AbortProcessingException(th.getMessage(), th);
 		}
 	}	
+
+	public void sendInvoicesByEmail( SecurityInfo si ) throws UnsupportedEncodingException, MessagingException, ManagerBeanException {
+		EmailUtilController emailController = (EmailUtilController) AonUtil.getRegisteredBean(EMAIL_UTIL_CONTROLLER_NAME);
+		EmailSender sender = emailController.getEmailSender();
+		sender.connect();
+		Criteria criteria = getCriteria();
+		List<ITransferObject> list = getManagerBean().getList(criteria);
+		for( ITransferObject to : list ) {
+			emailController.sendInvoice( (Invoice) to, si );	
+		}
+		sender.disconnect();
+	}	
+	
 }

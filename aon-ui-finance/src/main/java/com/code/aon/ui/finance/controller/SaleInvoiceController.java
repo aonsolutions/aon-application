@@ -94,6 +94,8 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 
 	private List<SelectItem> addresses;
 	
+	private boolean signEmail;
+	
 	private boolean showInvoiceAddressWindow;
 
 	public Invoice getInvoice() {
@@ -434,18 +436,29 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		}
 	}
 	
-	public void onSignInvoice( ActionEvent event ) {
+	public void onSignEmail( ActionEvent event ) throws ManagerBeanException {
+		this.signEmail = true;
 		InvoiceSignerController invoiceSigner = (InvoiceSignerController) AonUtil.getRegisteredBean(INVOICE_SIGNER_CONTROLLER_NAME);
+		invoiceSigner.onShowSignWindow(event);
+	}
+	
+	public void onSign( ActionEvent event ) {
+		InvoiceSignerController invoiceSigner = (InvoiceSignerController) AonUtil.getRegisteredBean(INVOICE_SIGNER_CONTROLLER_NAME);
+		if (! invoiceSigner.resolveCertificado() ) {
+			return;
+		}
 		try {
-			if (! invoiceSigner.resolveCertificado() ) {
-				return;
+			if ( this.signEmail ) {
+				sendInvoiceByEmail( invoiceSigner.getSecurityInfo() );
+			} else {
+				invoiceSigner.signInvoice( getInvoice() );
 			}
-			invoiceSigner.signInvoice( getInvoice() );
 		} catch (Throwable e) {
 			LOGGER.severe(">>>> onSignInvoice " + e.getMessage());
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		} finally {
+			this.signEmail = false;
 			invoiceSigner.setShowSignWindow(false);
 		}
 	}
@@ -461,6 +474,10 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 	}
 	
 	public void onSendInvoiceByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
+		sendInvoiceByEmail( null );
+	}
+
+	public void sendInvoiceByEmail( SecurityInfo securyInfo ) throws ManagerBeanException, ReportException, IOException, SAXException {
 		Invoice invoice = getInvoice();
 		EmailUtilController emailController = (EmailUtilController) AonUtil.getRegisteredBean(EMAIL_UTIL_CONTROLLER_NAME);
 		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(WebMailConstants.BEAN_MESSAGE);
@@ -477,6 +494,8 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		messageController.setContent( emailController.getEmailBody(invoice) );
 		messageController.addAttachment( emailController.getInvoiceFile(invoice) );
 		messageController.addAttachment( emailController.getInvoiceXml(invoice) );
+		messageController.setShowNewMessageWindow(true);
+		messageController.setSecurityInfo( securyInfo );
 	}
 	
 	private Company getCompany() {

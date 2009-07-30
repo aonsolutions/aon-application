@@ -30,83 +30,81 @@
 
 			</ui:decorate>
 
-			<aon:div id="saleInvoiceData" styleClass="aon-scroll-area">
-				<aon:dataTable id="saleInvoiceDataList" value="#{saleInvoice.model}"
-					rows="20" var="to" rendered="#{saleInvoice.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+			<aon:div styleClass="aon-scroll-area">
+			
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{saleInvoice}" />
+					<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
 						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
+						aon-editDataTable-textColumn, aon-editDataTable-numberColumn" />
+					<ui:define name="columns">
+						<aon:column>
+							<f:facet name="header">
+								<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
+							</f:facet>
+							<aon:outputText value="#{to.referenceCode}" />
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.issueDate}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<h:outputText value="#{customerBundle.customer_customer}" />
+							</f:facet>
+							<aon:outputText value="#{to.registryName}">
+								<aon:abbreviateConverter maxWidth="50" />
+							</aon:outputText>
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<h:outputText value="#{bundle.aon_company_document}" />
+							</f:facet>
+							<aon:outputText value="#{to.registryDocument}" />
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_status}" />
+							</f:facet>
+							<aon:outputText value="#{to.status}" />
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{configBundle.config_pay_method}" />
+							</f:facet>
+							<aon:outputText value="#{saleInvoice.payMethod}">
+								<aon:abbreviateConverter maxWidth="15" />
+							</aon:outputText>
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{financeBundle.finance_checking_finance_status_abbrv}" />
+							</f:facet>
+							<aon:outputText value="#{saleInvoice.financeStatus}" />
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_total}" />
+							</f:facet>
+							<aon:outputText value="#{saleInvoice.invoiceTotalPrice}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>					
+					</ui:define>
+				</ui:decorate>			
 
-					<aon:rowSelector action="saleInvoice_form"
-						actionListener="#{saleInvoice.onSelect}" />
-
-					<aon:column>
-						<f:facet name="header">
-							<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
-						</f:facet>
-						<aon:outputText value="#{to.referenceCode}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_date}" />
-						</f:facet>
-						<aon:outputText value="#{to.issueDate}">
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<h:outputText value="#{customerBundle.customer_customer}" />
-						</f:facet>
-						<aon:outputText value="#{to.registryName}">
-							<aon:abbreviateConverter maxWidth="50" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<h:outputText value="#{bundle.aon_company_document}" />
-						</f:facet>
-						<aon:outputText value="#{to.registryDocument}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_status}" />
-						</f:facet>
-						<aon:outputText value="#{to.status}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{configBundle.config_pay_method}" />
-						</f:facet>
-						<aon:outputText value="#{saleInvoice.payMethod}">
-							<aon:abbreviateConverter maxWidth="15" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{financeBundle.finance_checking_finance_status_abbrv}" />
-						</f:facet>
-						<aon:outputText value="#{saleInvoice.financeStatus}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_total}" />
-						</f:facet>
-						<aon:outputText value="#{saleInvoice.invoiceTotalPrice}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-					</aon:column>
-
-				</aon:dataTable>
-				<aon:dataScroller2 for="saleInvoiceDataList" showNote="true" />
 			</aon:div>
 		</aon:form>
 	</ui:define>
