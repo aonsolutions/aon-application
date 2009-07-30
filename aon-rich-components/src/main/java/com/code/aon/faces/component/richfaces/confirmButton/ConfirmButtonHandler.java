@@ -35,6 +35,10 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 
 	private static final String CONFIRM_ACTION_LISTENER = "confirmActionListener";
 
+	private static final String CANCEL_ACTION = "cancelAction";
+
+	private static final String CANCEL_ACTION_LISTENER = "cancelActionListener";
+	
 	private static final String CONFIRM_TITLE = "confirmTitle";
 
 	private static final String CONFIRM_MESSAGE = "confirmMessage";
@@ -143,6 +147,18 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 				null, FaceletUtil.ACTION_LISTENER_SIG);
 		if (al != null) {
 			mapper.setVariable(CONFIRM_ACTION_LISTENER, al);
+		}
+		ValueExpression cancelAction = getMethodExpression(ctx, CANCEL_ACTION,
+				String.class, FaceletUtil.ACTION_SIG);
+		if (cancelAction == null) {
+			cancelAction = FaceletUtil.getMethodEmptyExpression(ctx, CANCEL_ACTION,
+					String.class, FaceletUtil.ACTION_SIG);
+		}
+		mapper.setVariable(CANCEL_ACTION, cancelAction);
+		ValueExpression cl = getMethodExpression(ctx, CANCEL_ACTION_LISTENER,
+				null, FaceletUtil.ACTION_LISTENER_SIG);
+		if (cl != null) {
+			mapper.setVariable(CANCEL_ACTION_LISTENER, cl);
 		}
 		TagAttribute reRender = getAttribute(RERENDER);
 		if (reRender != null) {

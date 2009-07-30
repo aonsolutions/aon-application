@@ -50,8 +50,12 @@
 										disableDefault="true" operation="hide"/>
 								</aon:commandButton>
 								<aon:commandButton id="#{confirmId}-no" value="#{bundle.aon_no}"
-									reRender="#{confirmId}ReRender" immediate="true"
-									styleClass="aon-commandButton">
+									action="#{cancelAction}" reRender="#{confirmId}ReRender"
+									styleClass="aon-commandButton"
+									immediate="true">
+									<c:if test="#{cancelActionListener != null}">									
+										<aon:actionListener method="#{cancelActionListener}" />
+									</c:if>
 									<f:setPropertyActionListener target="#{confirmShowWindow}" value="false" />								
 									<rich:componentControl for="#{confirmId}" event="onclick"
 										disableDefault="true" operation="hide"/>
