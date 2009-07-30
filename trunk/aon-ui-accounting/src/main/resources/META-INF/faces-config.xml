@@ -174,8 +174,7 @@
 	<!-- **************** BALANCE************************** -->
 	<managed-bean>
 		<managed-bean-name>balance</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.BalanceController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.BalanceController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -197,7 +196,6 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
-
 
 	<managed-bean>
 		<managed-bean-name>balanceDetailListener</managed-bean-name>
@@ -230,6 +228,10 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>1000</value>
+		</managed-property>
+		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.accounting.BalanceDetail</value>
 		</managed-property>
@@ -255,31 +257,18 @@
 			</map-entries>
 		</managed-property>
 		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{balanceDetailControllerListener}</value>
-			</list-entries>
+			<property-name>defaultOrder</property-name>
+			<value>BalanceDetail_sortKey</value>
 		</managed-property>
 	</managed-bean>
 
-	<managed-bean>
-		<managed-bean-name>balanceDetailControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.event.BalanceDetailControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
 	<!--**************** BALANCE SHEET CONTROLLER ************************** -->
-	
 		<managed-bean>
 		<managed-bean-name>balanceSheet</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.accounting.controller.BalanceSheetController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-	
 	</managed-bean>
-	
 
 	<!-- **************** AMORTIZATION ************************** -->
 	<managed-bean>
@@ -677,27 +666,11 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ********** ACCOUNT SUMMARY REGENERATOR CONTROLLER ********* -->
+	<!-- ********** ACCOUNT REGENERATOR CONTROLLER ********* -->
 	<managed-bean>
-		<managed-bean-name>accountSummaryRegenerator</managed-bean-name>
+		<managed-bean-name>accountRegenerator</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.AccountSummaryRegeneratorController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<!-- ********** ACCOUNT HELPER REGENERATOR CONTROLLER ********* -->
-	<managed-bean>
-		<managed-bean-name>accountHelperRegenerator</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.AccountHelperRegeneratorController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	
-	<!-- ********** ACCOUNT JOURNAL COUNTER REGENERATOR CONTROLLER ********* -->
-	<managed-bean>
-		<managed-bean-name>accountJournalRegenerator</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.JournalCounterController</managed-bean-class>
+			com.code.aon.ui.accounting.controller.AccountRegeneratorController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -1141,27 +1114,9 @@
 	<!-- **************** REGENERATE ACCOUNT SUMMARY ********************* -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>regenerateAccountSummary</from-outcome>
+			<from-outcome>regenerateAccount</from-outcome>
 			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/util/summary/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-	<!-- **************** REGENERATE ACCOUNT SUMMARY ********************* -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>regenerateAccountHelper</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/util/helper/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-	<!-- **************** REGENERATE JOURNAL COUNTER ********************* -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>regenerateJournalCounter</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/util/journal/search.xhtml</to-view-id>
+				/com/code/aon/ui/accounting/facelet/util/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

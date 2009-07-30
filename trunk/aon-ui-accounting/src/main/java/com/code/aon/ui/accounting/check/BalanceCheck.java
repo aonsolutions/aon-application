@@ -53,6 +53,7 @@ public class BalanceCheck implements IAccountCheck{
 						if (buf.length() > 0) {
 							buf.append(",");
 						}
+						buf = new StringBuilder( buf.toString().replace("(","").replace(")","") );
 						Criteria criteria = new Criteria();
 						criteria.addEqualExpression(entryAlias, true);
 						if (balance.getType() == BalanceType.CLOSING) {

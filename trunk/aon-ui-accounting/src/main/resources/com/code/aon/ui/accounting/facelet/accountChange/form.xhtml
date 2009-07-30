@@ -23,12 +23,14 @@
 						accesskey="#{bundle.aon_key_save}"
 						actionListener="#{accountChange.onChangeAccounts}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						onclick="if (!confirm('#{accountingBundle.accounting_change_account_button}?'))  return false;" />
+						onclick="if (!confirm('#{accountingBundle.accounting_change_account_button}?')){ return false;} else {Richfaces.showModalPanel('waitProccess')}"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 				</ui:define>
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid columns="2" style="width: 100%;">
+				<aon:panelGrid columns="2" style="width: 100%;"
+					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
 					<aon:outputLabel
 						value="#{accountingBundle.accounting_change_account_origin}" />
 					<ui:decorate
@@ -119,5 +121,7 @@
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
+		<ui:include
+			src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 	</ui:define>
 </ui:composition>

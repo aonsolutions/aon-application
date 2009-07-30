@@ -9,7 +9,7 @@
 
 	<aon:div style="margin-top: 10px;">
 		<aon:editDataTable id="balanceDetailData" rendered="#{!balance.new}"
-			value="#{balanceDetail.model}" var="to" rows="20"
+			value="#{balanceDetail.model}" var="to" rows="1000"
 			columnClasses="aon-editDataTable-iconColumn
 				,aon-editDataTable-iconColumn aon-width-40
 				,aon-editDataTable-textColumn aon-width-100
@@ -30,7 +30,9 @@
 					actionListener="#{balanceDetail.onSelect}"
 					rendered="#{to!=accountEntryDetail.to}"
 					reRender="#{balanceDetailData}"
+					value="#{to.sortKey}"
 					styleClass="aon-editDataTable-button aon-icon-rowSelector" />
+				
 				<f:facet name="footer">
 					<aon:div>
 						<aon:commandButton alt="[#{bundle.aon_reset}]"
@@ -47,14 +49,19 @@
 				<f:facet name="header">
 					<aon:outputText value="&#160;" />
 				</f:facet>
+				<aon:inputText required="true" 
+					rendered="#{to==balanceDetail.to}" value="#{balanceDetail.to.sortKey}"
+					maxlength="4" size="2" />
 				<aon:div styleClass="aon-nowrap" rendered="#{to!=balanceDetail.to}">
 					<aon:graphicImage url="/css/images/aon-icon/aon-arrow-up.gif"
+						title="#[#{to.sortKey}]"
 						style="cursor:pointer" rendered="#{to.sortKey != 0}">
 						<a4j:support event="onclick"
 							actionListener="#{balanceDetail.onMoveUp}"
 							reRender="balanceDetailData" />
 					</aon:graphicImage>
 					<aon:graphicImage url="/css/images/aon-icon/aon-arrow-down.gif"
+						title="#[#{to.sortKey}]"
 						style="cursor:pointer"
 						rendered="#{to.sortKey &lt; (balanceDetail.model.rowCount-1)}">
 						<a4j:support event="onclick"
@@ -62,6 +69,11 @@
 							reRender="balanceDetailData" />
 					</aon:graphicImage>
 				</aon:div>
+				<f:facet name="footer">
+					<aon:inputText required="true"
+						rendered="#{balanceDetail.new}" value="#{balanceDetail.to.sortKey}"
+						maxlength="4" size="2" />
+				</f:facet>
 			</aon:column>
 
 
@@ -71,11 +83,11 @@
 				</f:facet>
 				<aon:outputText value="#{to.code}"
 					rendered="#{to!=balanceDetail.to}" />
-				<aon:inputText styleClass="aon-form-input-text"
+				<aon:inputText 
 					rendered="#{to==balanceDetail.to}" value="#{balanceDetail.to.code}"
 					maxlength="16" size="10" />
 				<f:facet name="footer">
-					<aon:inputText styleClass="aon-form-input-text"
+					<aon:inputText 
 						rendered="#{balanceDetail.new}" value="#{balanceDetail.to.code}"
 						maxlength="16" size="10" />
 				</f:facet>
@@ -91,11 +103,11 @@
 					rendered="#{to!=balanceDetail.to}">
 					<f:convertNumber minFractionDigits="2" />
 				</aon:outputText>
-				<aon:inputText styleClass="aon-form-input-text"
+				<aon:inputText 
 					rendered="#{to==balanceDetail.to}"
 					value="#{balanceDetail.to.description}" maxlength="128" size="50" />
 				<f:facet name="footer">
-					<aon:inputText styleClass="aon-form-input-text"
+					<aon:inputText 
 						rendered="#{balanceDetail.new}"
 						value="#{balanceDetail.to.description}" maxlength="128" size="50" />
 				</f:facet>
@@ -242,14 +254,13 @@
 						value="#{balanceDetail.to.creditNature}" />
 				</f:facet>
 			</aon:column>
-
-
+ 
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText value="&#160;" />
 				</f:facet>
-				<aon:div>
-					<f:verbatim rendered="#{to!=balanceDetail.to}">&#160;</f:verbatim>
+				<aon:div styleClass="aon-nowrap" >
+					<aon:outputText rendered="#{to!=balanceDetail.to}">&#160;</aon:outputText>
 					<aon:commandButton title="[#{bundle.aon_accept}]"
 						rendered="#{to==balanceDetail.to}"
 						styleClass="aon-editDataTable-button aon-icon-accept"
@@ -270,8 +281,8 @@
 						accesskey="#{bundle.aon_key_remove_line}" />
 				</aon:div>
 				<f:facet name="footer">
-					<aon:div>
-						<f:verbatim rendered="#{!porcentaje.new}">&#160;</f:verbatim>
+					<aon:div styleClass="aon-nowrap">
+						<aon:outputText rendered="#{!porcentaje.new}">&#160;</aon:outputText> 
 						<aon:commandButton title="[#{bundle.aon_accept}]"
 							styleClass="aon-editDataTable-button aon-icon-accept"
 							rendered="#{balanceDetail.new}"

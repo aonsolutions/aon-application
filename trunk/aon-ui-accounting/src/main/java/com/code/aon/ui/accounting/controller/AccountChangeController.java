@@ -84,7 +84,7 @@ public class AccountChangeController {
 				if (fromDate != null) {
 					criteria.addGreaterThanOrEqualExpression(date, fromDate);
 				}
-				if (fromDate != null) {
+				if (toDate != null) {
 					criteria.addLessThanOrEqualExpression(date, toDate);
 				}
 				if (securityLevel != null) {
@@ -129,7 +129,10 @@ public class AccountChangeController {
 					count++;
 				}
 
-				AonUtil.addInfoMessage("Se han cambiado "+count+" líneas de apuntes");
+				AonUtil.addInfoMessage("Se han cambiado "+count+" líneas de apuntes. " +
+						"Debe regenerar la contabilidad, (acumulados de " +
+						"cuentas y ayudas de contrapartidas), para que los cambios " +
+						"sean realmente efectivos.");
 				
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);

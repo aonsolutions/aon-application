@@ -826,6 +826,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			deleteAccountEntryInvoice(this.getAccountEntryInvoice());
 			deleteFinances(getAccountEntryInvoice().getInvoice());
 			deleteInvoiceDetails(getAccountEntryInvoice().getInvoice());
+			deleteInvoice(getAccountEntryInvoice().getInvoice());
 			deleteAccountEntryDetails(getAccountEntryInvoice().getAccountEntry());
 			deleteAccountEntry(getAccountEntryInvoice().getAccountEntry());
 
@@ -1036,6 +1037,11 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	private void deleteAccountEntry(AccountEntry accountEntry) throws ManagerBeanException {
 		IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
 		accountEntryBean.remove(accountEntry);
+	}
+
+	private void deleteInvoice(Invoice invoice) throws ManagerBeanException {
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		invoiceBean.remove(invoice);
 	}
 
 	private void deleteInvoiceDetails(Invoice invoice) throws ManagerBeanException {

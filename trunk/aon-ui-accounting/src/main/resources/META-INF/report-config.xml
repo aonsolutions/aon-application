@@ -234,10 +234,10 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="balanceName" value="#{balanceSheet.getBalanceName}" />
-			<param id="year" value="#{balanceSheet.getActualYear}" />
-			<param id="lastYear" value="#{balanceSheet.getPreviousYear}}" />
-			<param id="flagAccounts" value="#{balanceSheet.getFlagAccounts}}" />
+			<param id="balance" value="#{balanceSheet.getBalance}" />
+			<param id="params" value="#{balanceSheet.getParameters}" />
+			<param id="previousPeriod" value="#{balanceSheet.getPreviousPeriodID}" />
+			<param id="flagAccounts" value="#{balanceSheet.getFlagAccounts}" />
 		</params>
 	</report>
 	

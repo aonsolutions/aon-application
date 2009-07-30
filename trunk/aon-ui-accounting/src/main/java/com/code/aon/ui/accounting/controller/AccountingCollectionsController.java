@@ -226,10 +226,13 @@ public class AccountingCollectionsController {
 	public List<SelectItem> getOperatingBalances() throws ManagerBeanException {
 		return getBalances(BalanceType.OPERATING );
 	}
+	public List<SelectItem> getPatrimonyBalances() throws ManagerBeanException {
+		return getBalances(BalanceType.PATRIMONY);
+	}
 	public List<SelectItem> getCustomBalances() throws ManagerBeanException {
 		return getBalances(BalanceType.CUSTOM );
 	}
-	private List<SelectItem> getBalances(BalanceType balanceType) throws ManagerBeanException {
+	public List<SelectItem> getBalances(BalanceType balanceType) throws ManagerBeanException {
 		List<SelectItem> balances = new LinkedList<SelectItem>();
 		IManagerBean balanceBean = BeanManager.getManagerBean(Balance.class);
 		Criteria c = new Criteria();

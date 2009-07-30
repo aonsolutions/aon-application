@@ -16,6 +16,16 @@
 					<aon:methodParam name="searchActionListener" value="#{trialBalance.onReset}" type="actionListener" />
 					<aon:methodParam name="searchAction" value="account_statement_search" />
 				</ui:define>
+				
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="trialBalance-back"
+						value="#{bundle.aon_back}"
+						rendered="#{trialBalance.backAction != null}" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						action="#{trialBalance.backAction}"
+						accesskey="#{bundle.aon_key_cancel}" />
+				</ui:define>
+				
 			</ui:decorate>
 
 			<aon:div id="accountEntryData" styleClass="aon-scroll-area">

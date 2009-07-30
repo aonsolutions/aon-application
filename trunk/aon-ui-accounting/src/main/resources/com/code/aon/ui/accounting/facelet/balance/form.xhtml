@@ -16,6 +16,19 @@
 				<ui:param name="toolbarTitle"
 					value="#{accountingBundle.accounting_balance_menu}" />
 				<ui:param name="controller" value="#{balance}" />
+				
+				<ui:param name="skipRemoveButton" value="#{!balance.new and !balance.to.removable}" />
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="defaults" value="CARGAR VALORES DEFECTO"
+						actionListener="#{balance.onLoadDefaults}"
+						onclick="if (!confirm('Desea borrar el balance seleccionado y cargar los valores por defecto del mismo?')){ return false;} else {Richfaces.showModalPanel('waitProccess')}"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')"
+						rendered="#{!balance.new and !balance.to.removable}"
+						styleClass="aon-finding-toolbar-item aon-icon-refresh"
+						immediate="true" />
+				</ui:define>
+				
 				<ui:define name="additionalToolbarContent">
 					<h:commandLink value="&#160;" target="_blank"
 						action="#{report.onExecute}"
@@ -36,6 +49,11 @@
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid columns="4" dir="true" width="100%"
+					columnClasses="aon-panelGrid-odd aon-width-150,
+								   aon-panelGrid-even aon-width-auto,
+								   aon-panelGrid-odd aon-width-150,
+								   aon-panelGrid-even aon-width-auto"
+					
 					style="margin-bottom=2px;">
 					<aon:outputLabel for="Balance_Id" 
 						value="#{accountingBundle.accounting_balance_cdg}" />
@@ -67,5 +85,7 @@
 				<ui:include src="grid.xhtml" />
 			</aon:div>
 		</aon:form>
+		<ui:include
+			src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 	</ui:define>
 </ui:composition>

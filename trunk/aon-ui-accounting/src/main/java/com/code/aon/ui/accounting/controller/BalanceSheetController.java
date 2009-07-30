@@ -1,14 +1,10 @@
 package com.code.aon.ui.accounting.controller;
 
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.StringTokenizer;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
@@ -19,39 +15,59 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.BalanceDetail;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
-import com.code.aon.accounting.summary.SummaryCollection;
-import com.code.aon.accounting.summary.SummaryProvider;
+import com.code.aon.accounting.balance.BalanceItem;
+import com.code.aon.accounting.balance.BalanceManager;
+import com.code.aon.accounting.enumeration.BalanceType;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
-import com.code.aon.common.BeanManager;
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.ICollectionProvider;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.CommonUtil;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class BalanceSheetController implements ICollectionProvider{
+public class BalanceSheetController implements ICollectionProvider {
+
+	private static final String TRIAL_BALANCE_CONTROLLER_NAME = "trialBalance";
+	private static final String EMPTY = "";
+	private static final String OPEN_BRACKET = "(";
+	private static final String CLOSE_BRACKET = ")";
+	private static final String PIPE = "|";
+	private static final String ASTERISK = "*";
+	private static final String COMMA = ",";
 
 	private DataModel balanceModel;
-	private List<ITransferObject> balanceDetailList;
-	private List<BalanceItem> balanceList = new LinkedList<BalanceItem>();
 	private SummaryProviderParameters parameters;
-	private SummaryProvider summaryProvider;
-	private SummaryCollection summaryCollection;
-	private String balanceType;
+	private BalanceType balanceType;
 	private Balance balance;
-	private String balanceName;
-	private Integer actualYear;
-	private Integer previousYear;
-	private SummaryProviderParameters previousParameters;
-	private  Boolean flagAccounts;
-	
+	private Boolean flagAccounts;
+	private Period previousPeriod;
 
+	private List<BalanceItem> list;
+
+	public void onClosingBalance(ActionEvent event) {
+		setBalanceType(BalanceType.CLOSING);
+		onReset(event);
+	}
+
+	public void onOperatingBalance(ActionEvent event) {
+		setBalanceType(BalanceType.OPERATING);
+		onReset(event);
+	}
+
+	public void onPatrimonyBalance(ActionEvent event) {
+		setBalanceType(BalanceType.PATRIMONY);
+		onReset(event);
+	}
+
+	public void onCustomBalance(ActionEvent event) {
+		setBalanceType(BalanceType.CUSTOM);
+		onReset(event);
+	}
 
 	public void onReset(ActionEvent event) {
+		list = null;
+		balanceModel = null;
+		previousPeriod = null;
 		parameters = new SummaryProviderParameters();
 		try {
 			parameters.setPeriod(AccountingPeriodUtil.getDefaultPeriod());
@@ -65,265 +81,30 @@ public class BalanceSheetController implements ICollectionProvider{
 		parameters.setLowerLevelVisible(false);
 		parameters.setNoTouchedAccountVisible(false);
 		parameters.setRowsPerPage(20);
-		parameters.setAccountLevel(4);
-		parameters.setBudgeted(false);	
-		setFlagAccounts(false);
+		parameters.setAccountLevel(5);
+		parameters.setBudgeted(false);
 	}
-	
-	public void onBalance(ActionEvent event) {	
-		
+
+	public void onBalance(ActionEvent event) {
 		try {
-			setBalanceName(balance.getName());
-			getBalanceCollection(balance.getId());
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage(e.getMessage());
+			BalanceManager balanceManager = new BalanceManager();
+			list = balanceManager.getBalanceCollection(getParameters(), getBalance());
+		} catch (Throwable e) {
+			String msg = "No se pudo realizar el Balance. " + e.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
 		}
 	}
 
-	private void getBalanceCollection(Integer type) throws ManagerBeanException {
-				
-		Calendar firstDay = new GregorianCalendar();
-		firstDay.setTime(parameters.getPeriod().getInitiationDate());
-		firstDay.set(Calendar.YEAR,firstDay.get(Calendar.YEAR)-1);
-	    
-		Calendar lastDay = new GregorianCalendar();
-		lastDay.setTime(parameters.getPeriod().getDeadline());
-		lastDay.set(Calendar.YEAR,lastDay.get(Calendar.YEAR)-1);
-		
-		Integer year= Integer.valueOf(parameters.getPeriod().getId());
-		setActualYear(year);
-		year--;		
-		setPreviousYear(year);
-		String anyo = year.toString();
-		Period p= new Period();
-		p.setDeadline(lastDay.getTime());
-		p.setInitiationDate(firstDay.getTime());
-		p.setId(anyo);
-		
-		previousParameters= new SummaryProviderParameters();
-		previousParameters.setPeriod(p);
-		previousParameters.setFromDate(parameters.getFromDate());
-		previousParameters.setToDate(parameters.getToDate());
-		previousParameters.setDate(parameters.getDate());
-		previousParameters.setAccountExpression(parameters.getAccountExpression());
-		previousParameters.setLowerLevelVisible(parameters.isLowerLevelVisible());
-		previousParameters.setNoTouchedAccountVisible(parameters.isNoTouchedAccountVisible());
-		previousParameters.setRowsPerPage(20);
-		previousParameters.setAccountLevel(4);
-		previousParameters.setBudgeted(parameters.isBudgeted());
-			
-		
-		
-		balanceList.clear();
-		IManagerBean bean;
-		bean = BeanManager.getManagerBean(BalanceDetail.class);
-		String balanceDetailId = bean.getFieldName(IAccountingAlias.BALANCE_DETAIL_BALANCE_ID);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(balanceDetailId, type);
-		balanceDetailList = bean.getList(criteria);
-		     
-		for (ITransferObject to : balanceDetailList) {
-			BalanceDetail bd = (BalanceDetail) to;
-			BalanceItem b = new BalanceItem();
-			b.setCode(bd.getCode());
-			if (bd.getDescription() != null) {
-				b.setDescription(bd.getDescription().trim());
-			}
-
-			if (bd.getAccounts() != null && !bd.isInternalCalculation()) {
-				// Calcula el String con las  cuentas  de un balanceDetail
-				String accounts = bd.getAccounts();
-				String line = new String();
-				StringTokenizer tokenizer = new StringTokenizer(accounts, ",");
-				while (tokenizer.hasMoreTokens()) {
-					line = line + tokenizer.nextToken() + "*|";
-				}
-				if (line.length() >= 2) {
-					line = line.substring(0, line.length() - 1);
-					b.setAccounts(line);
-					parameters.setAccountExpression(line);
-					b.setAmount(getAccountsAmount(parameters, bd.isCreditNature()));
-					previousParameters.setAccountExpression(line);					
-				 	b.setPreviousAmount(getAccountsAmount(previousParameters, bd.isCreditNature()));
-				}
-
-			}
-
-			if ( !StringUtils.isEmpty(bd.getAccounts()) && bd.isInternalCalculation()) {// Calcula el String con las cuentas de un balanceDetail que esta compesto por otros(UN TOTAL)
-				String line = new String();
-				String accounts = bd.getAccounts();// linea de total que proviene de la BD
-				String[] data = new String[30];
-				StringTokenizer tokenizer = new StringTokenizer(accounts, ",");// Trocea el total para averiguar que cuantas forman cada parte
-				int i = 0;
-				while (tokenizer.hasMoreTokens()) {
-					data[i] = tokenizer.nextToken();
-					++i;
-				}
-
-				// recorrer la lista "balanceList" para encontrar el code y asi aprovechar sus accounts
-				Iterator<BalanceItem> li = balanceList.iterator();
-				while (li.hasNext()) {
-					BalanceItem balItem = li.next();
-					String code = balItem.getCode();
-					String account = balItem.getAccounts();
-
-					int j = 0;
-					while (data[j] != null) {
-						if (code.equals(data[j])) {
-							line = line + "|" + account;// si ya lo tenemos,metemos las cuentas en line
-						}
-						j++;
-					}
-				}
-
-				line = line.substring(1, line.length());
-				parameters.setAccountExpression(line);
-				b.setAmount(getAccountsAmount(parameters, bd.isCreditNature()));
-				
-				previousParameters.setAccountExpression(line);				
-				b.setPreviousAmount(getAccountsAmount(previousParameters, bd.isCreditNature()));
-				b.setAccounts(line);
-			}		
-			
-			b.setVisible(true);
-			if (bd.isZeroFlag() || (bd.isZeroFlag() && b.getAmount() != 0 )) {
-				b.setVisible(false);
-			}
-			if (!bd.isVisible()) {
-				b.setVisible(false);
-			}
-			b.setTitle(bd.isTitle());
-			balanceList.add(b);
-			}
-			balanceModel = null;
-		}
-	
-	
-	private Double getAccountsAmount(SummaryProviderParameters params, Boolean creditNature) throws ManagerBeanException {
-		
-		summaryCollection = new SummaryCollection();
-		summaryProvider = new SummaryProvider();
-		summaryCollection = summaryProvider.getSummaryCollection(params);;
-		Double amount;
-		if (creditNature) {
-			amount = CommonUtil.round( summaryCollection.getCredit() -  summaryCollection.getDebit() ); 
-		} else {
-			amount = CommonUtil.round( summaryCollection.getDebit() -  summaryCollection.getCredit() ); 
-		}
-		return amount;
-
-	}
-		
-
-	public List<BalanceItem> getBalanceList() {
-		return balanceList;
-	}
-
-	public void setBalanceList(List<BalanceItem> balanceList) {
-		this.balanceList = balanceList;
-	}
-
-	public DataModel getBalanceModel() {		
+	public DataModel getBalanceModel() {
 		if (balanceModel == null) {
-			balanceModel = new ListDataModel(getBalanceList());
+			balanceModel = new ListDataModel(list);
 		}
 		return balanceModel;
 	}
 
 	public void setBalanceModel(DataModel balanceModel) {
 		this.balanceModel = balanceModel;
-	}
-
-	public List<ITransferObject> getBalanceDetailList() {
-		return balanceDetailList;
-	}
-
-	public void setBalanceDetailList(List<ITransferObject> balanceList) {
-		this.balanceDetailList = balanceList;
-	}
-
-	public class BalanceItem {
-
-		private String code;
-		private String description;
-		private String notes;
-		private String accounts;
-		private Double amount;
-		private Double previousAmount;
-		private boolean visible;
-		private boolean title;
-
-		public boolean isTitle() {
-			return title;
-		}
-
-		public void setTitle(boolean title) {
-			this.title = title;
-		}
-
-		public boolean isVisible() {
-			return visible;
-		}
-
-		public void setVisible(boolean visible) {
-			this.visible = visible;
-		}
-
-		public String getCode() {
-			return code;
-		}
-
-		public void setCode(String code) {
-			this.code = code;
-		}
-
-		public String getAccounts() {
-			return accounts;
-		}
-
-		public void setAccounts(String accounts) {
-			this.accounts = accounts;
-		}
-
-		public String getDescription() {
-			return description;
-		}
-
-		public String getReportDescription() {
-					return StringUtils.leftPad(description, (getLevel() * 5)+description.length());
-		}
-
-		public void setDescription(String description) {
-			this.description = description;
-		}
-
-		public String getNotes() {
-			return notes;
-		}
-
-		public void setNotes(String notes) {
-			this.notes = notes;
-		}
-
-		public Double getAmount() {
-			return amount;
-		}
-
-		public void setAmount(Double amount) {
-			this.amount = amount;
-		}
-
-		public Double getPreviousAmount() {
-			return previousAmount;
-		}
-
-		public void setPreviousAmount(Double amount2) {
-			this.previousAmount = amount2;
-		}
-
-		public int getLevel() {
-			return getCode() == null?0:StringUtils.countMatches(getCode(), ".");
-		}
 	}
 
 	public Balance getBalance() {
@@ -334,9 +115,7 @@ public class BalanceSheetController implements ICollectionProvider{
 		this.balance = balance;
 	}
 
-
 	public SummaryProviderParameters getParameters() {
-	
 		return parameters;
 	}
 
@@ -344,17 +123,31 @@ public class BalanceSheetController implements ICollectionProvider{
 		this.parameters = parameters;
 	}
 
-	
-	public SummaryProviderParameters getPreviousParameters() {
-		return previousParameters;
+
+	public Period getPreviousPeriod() {
+		if (previousPeriod == null) {
+			if (getParameters().getPeriod() != null && getParameters().getPeriod().getId() != null) {
+				AccountingUtil au = new AccountingUtil();
+				try {
+					previousPeriod = au.getPreviousPeriod(getParameters().getPeriod());
+				} catch (ManagerBeanException e) {
+					previousPeriod = null;
+				} 
+			}
+		}
+		return previousPeriod;
 	}
-	public void setPreviousParameters(SummaryProviderParameters previousParameters) {
-		this.previousParameters = previousParameters;
+	public String getPreviousPeriodID() {
+		return getPreviousPeriod()==null?"":getPreviousPeriod().getId();
 	}
-	@SuppressWarnings("unchecked")
+
+	public void setPreviousPeriod(Period previousPeriod) {
+		this.previousPeriod = previousPeriod;
+	}
+
 	@Override
-	public Collection getCollection() {
-		return (List<BalanceItem>) getBalanceModel().getWrappedData();
+	public List<BalanceItem> getCollection() {
+		return list;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -363,29 +156,13 @@ public class BalanceSheetController implements ICollectionProvider{
 		return getCollection();
 	}
 
-	public Integer getActualYear() {
-		return actualYear;
+	public BalanceType getBalanceType() {
+		return balanceType;
 	}
 
-	public void setActualYear(Integer actualYear) {
-		this.actualYear = actualYear;
+	public void setBalanceType(BalanceType balanceType) {
+		this.balanceType = balanceType;
 	}
-
-	public Integer getPreviousYear() {
-		return previousYear;
-	}
-
-	public void setPreviousYear(Integer previousYear) {
-		this.previousYear = previousYear;
-	}
-	
-	public String getBalanceName() {
-		return balanceName;
-	}
-	public void setBalanceName(String balanceName) {
-		this.balanceName = balanceName;
-	}
-	
 
 	public Boolean getFlagAccounts() {
 		return flagAccounts;
@@ -395,22 +172,55 @@ public class BalanceSheetController implements ICollectionProvider{
 		this.flagAccounts = flagAccounts;
 	}
 
-	public String getBalanceType() {
-		return balanceType;
-	}
-
-	public void setBalanceType(String balanceType) {
-		this.balanceType = balanceType;
-	}
-
 	public List<SelectItem> getBalances() throws ManagerBeanException {
-		AccountingCollectionsController c =  (AccountingCollectionsController) AonUtil.getRegisteredBean("accountingCollections");
-		if ("0".equals(balanceType)) {
-			return c.getClosingBalances();
-		} else if ("1".equals(balanceType)) {
-			return c.getOperatingBalances();
-		} 
-		return c.getCustomBalances();
+		AccountingCollectionsController c = (AccountingCollectionsController) AonUtil
+				.getRegisteredBean("accountingCollections");
+		return c.getBalances(balanceType);
 	}
-}
 
+	public void onAccountStatement(ActionEvent event) {
+		try {
+			BalanceItem item = (BalanceItem) getBalanceModel().getRowData();
+			TrialBalanceController c = (TrialBalanceController) AonUtil
+					.getRegisteredBean(TRIAL_BALANCE_CONTROLLER_NAME);
+			c.onReset(event);
+			SummaryProviderParameters spp = getParameters().clone();
+
+			BalanceDetail bd = item.getDetail();
+			String[] tokens = StringUtils.split(bd.getAccounts(), COMMA);
+			StringBuilder exp = new StringBuilder();
+			for (String token : tokens) {
+				token = token.trim();
+				if (StringUtils.isNotBlank(token)) {
+					exp.append(exp.length() > 0 ? PIPE : EMPTY);
+					if (token.startsWith(OPEN_BRACKET) && token.endsWith(CLOSE_BRACKET)) {
+						token = token.replace(OPEN_BRACKET, EMPTY).replace(CLOSE_BRACKET, EMPTY);
+					}
+					exp.append(token);
+					exp.append(ASTERISK);
+				}
+			}
+			spp.setAccountExpression(exp.toString());
+			if (spp.getFromDate() == null) {
+				spp.setFromDate(spp.getPeriod().getInitiationDate());
+			}
+			if (spp.getToDate() == null) {
+				spp.setToDate(spp.getPeriod().getDeadline());
+			}
+			c.onResetStatement(event);
+			c.setParameters(spp);
+			c.setBackAction("balance_sheet_list");
+			c.onSearch(event);
+			if (c.getModel().getRowCount() == 0) {
+				String msg = "No existen cuentas contables para la cuenta.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+		} catch (CloneNotSupportedException e) {
+			String msg = "No se pudo realizar el acceso al extracto.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
+	}
+
+}
