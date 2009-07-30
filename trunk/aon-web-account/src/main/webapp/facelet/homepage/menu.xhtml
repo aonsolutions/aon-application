@@ -67,27 +67,23 @@
 
 			<aon:dropDownMenu value="#{accountingBundle.accounting_balance}">
 				<aon:menuItem value="#{accountingBundle.accounting_balance_menu_bs}" 
-				    actionListener="#{balanceSheet.onReset}"						
+				    actionListener="#{balanceSheet.onClosingBalance}"						
 					action="balance_sheet_search">
-					<f:setPropertyActionListener value="0" target="#{balanceSheet.balanceType}" />
 				</aon:menuItem>
 				<aon:menuItem 
 					value="#{accountingBundle.accounting_balance_menu_pyg}"
-					actionListener="#{balanceSheet.onReset}"				
+				    actionListener="#{balanceSheet.onOperatingBalance}"						
 					action="balance_sheet_search">
-					<f:setPropertyActionListener value="1" target="#{balanceSheet.balanceType}" />
 				</aon:menuItem>
 				<aon:menuItem 
 					value="#{accountingBundle.accounting_balance_menu_patrimony}"
-					actionListener="#{balanceSheet.onReset}"				
+				    actionListener="#{balanceSheet.onPatrimonyBalance}"						
 					action="balance_sheet_search">
-					<f:setPropertyActionListener value="2" target="#{balanceSheet.balanceType}" />
 				</aon:menuItem>
 				<aon:menuItem 
 					value="#{accountingBundle.accounting_balance_menu_custom}"
-					actionListener="#{balanceSheet.onReset}"				
+					actionListener="#{balanceSheet.onCustomBalance}"				
 					action="balance_sheet_search">
-					<f:setPropertyActionListener value="3" target="#{balanceSheet.balanceType}" />
 				</aon:menuItem>
 				<aon:menuSeparator />
 				<aon:menuItem value="#{accountingBundle.accounting_balance_menu}"
@@ -126,9 +122,7 @@
 				<aon:menuSeparator/>
 				<aon:menuGroup value="#{appBundle.account_utilities}">
 					<aon:menuItem action="accountChange_form" actionListener="#{accountChange.onReset}" value="#{accountingBundle.accounting_change_account}"/>
-					<aon:menuItem action="regenerateAccountSummary" value="#{accountingBundle.accounting_regenerate_summary_module}"/>
-					<aon:menuItem action="regenerateAccountHelper" value="#{accountingBundle.accounting_regenerate_helper_module}"/>
-					<aon:menuItem action="regenerateJournalCounter" value="#{accountingBundle.accounting_regenerate_journal_counter_module}"/>
+					<aon:menuItem action="regenerateAccount" value="#{accountingBundle.accounting_regenerate_account_module}"/>
 					<aon:menuItem action="check_form" actionListener="#{accountCheck.onInitialize}" value="#{accountingBundle.accounting_check_balance_module}"/>
 					<aon:menuSeparator/>
 <!-- 
