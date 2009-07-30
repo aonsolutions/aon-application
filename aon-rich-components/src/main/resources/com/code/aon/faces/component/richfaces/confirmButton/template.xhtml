@@ -39,9 +39,9 @@
 						
 							<aon:div styleClass="aon-text-center">
 								<aon:commandButton id="#{confirmId}-yes" value="#{bundle.aon_yes}"
-									action="#{confirmAction}" reRender="#{confirmReRender}"
-									styleClass="aon-commandButton"
-									immediate="#{immediate}">
+									action="#{confirmAction}" immediate="#{immediate}"
+									reRender="#{confirmId}ReRender,#{confirmReRender}"
+									styleClass="aon-commandButton" >
 									<c:if test="#{confirmActionListener != null}">									
 										<aon:actionListener method="#{confirmActionListener}" />
 									</c:if>
@@ -50,9 +50,9 @@
 										disableDefault="true" operation="hide"/>
 								</aon:commandButton>
 								<aon:commandButton id="#{confirmId}-no" value="#{bundle.aon_no}"
-									action="#{cancelAction}" reRender="#{confirmId}ReRender"
-									styleClass="aon-commandButton"
-									immediate="true">
+									action="#{cancelAction}" immediate="true"
+									reRender="#{confirmId}ReRender,#{cancelReRender}"
+									styleClass="aon-commandButton" >
 									<c:if test="#{cancelActionListener != null}">									
 										<aon:actionListener method="#{cancelActionListener}" />
 									</c:if>
