@@ -5,7 +5,7 @@ import java.util.Date;
 import com.code.aon.accounting.Period;
 import com.code.aon.common.enumeration.SecurityLevel;
 
-public class SummaryProviderParameters {
+public class SummaryProviderParameters implements Cloneable{
 
 	/**
 	 * Literal AON-QL válido ej: 430*|400*
@@ -152,7 +152,6 @@ public class SummaryProviderParameters {
 	public Period getPeriod() {
 		return period;
 	}
-
 	public void setPeriod(Period period) {
 		this.period = period;
 	}
@@ -194,5 +193,25 @@ public class SummaryProviderParameters {
 
 	public void setMonthlyGrouping(boolean monthlyGrouping) {
 		this.monthlyGrouping = monthlyGrouping;
+	}
+	
+	@Override
+	public SummaryProviderParameters clone() throws CloneNotSupportedException {
+		SummaryProviderParameters cloned = new SummaryProviderParameters();
+		cloned.setAccountAlias(getAccountAlias());
+		cloned.setAccountDescription(getAccountDescription());
+		cloned.setAccountExpression(getAccountExpression());
+		cloned.setAccountLevel(getAccountLevel());
+		cloned.setBudgeted(isBudgeted());
+		cloned.setDate(getDate());
+		cloned.setFromDate(getFromDate());
+		cloned.setLowerLevelVisible(isLowerLevelVisible());
+		cloned.setMonthlyGrouping(isMonthlyGrouping());
+		cloned.setNoTouchedAccountVisible(isNoTouchedAccountVisible());
+		cloned.setPeriod(getPeriod());
+		cloned.setRowsPerPage(getRowsPerPage());
+		cloned.setSecurityLevel(getSecurityLevel());
+		cloned.setToDate(getToDate());
+		return cloned;
 	}
 }

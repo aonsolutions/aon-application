@@ -68,6 +68,19 @@ public class AccountingUtil {
 		return null;
 	}
 
+	public Period getPreviousPeriod(Period period) throws ManagerBeanException {
+		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
+		Criteria criteria = new Criteria();
+		String alias = periodBean.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE);
+		criteria.addLessThanExpression(alias, period.getInitiationDate());
+		criteria.addOrder(alias,false);
+		Iterator<ITransferObject> iter = periodBean.getList(criteria).iterator();
+		if (iter.hasNext()) {
+			return (Period) iter.next();
+		}
+		return null;
+	}
+
 	public Period obtainPeriod(Date date) throws ManagerBeanException {
 		Period period = getPeriod(date);
 		if (period == null) {

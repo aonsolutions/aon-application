@@ -107,7 +107,11 @@ public class Balance implements ITransferObject {
 	
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		return new ToStringBuilder(this)
+		.append(this.getId())
+		.append(this.getName())
+		.append(this.isRemovable())
+		.append(this.getType()).toString();
 	}
 
 }

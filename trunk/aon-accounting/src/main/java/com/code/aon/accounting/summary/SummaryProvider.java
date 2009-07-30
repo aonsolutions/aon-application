@@ -26,7 +26,12 @@ public class SummaryProvider {
 
 	private static final String PERCENT = "%";
 
+	
 	public SummaryCollection getSummaryCollection(SummaryProviderParameters params) throws ManagerBeanException {
+		return getSummaryCollection(params,true);
+	}
+
+	public SummaryCollection getSummaryCollection(SummaryProviderParameters params, boolean authomaticBalance ) throws ManagerBeanException {
 		PreparedStatement sum = null;
 		ResultSet sumSet = null;
 		try {
@@ -135,12 +140,15 @@ public class SummaryProvider {
 					while (sumSet.next()) {
 						debit = CommonUtil.round(sumSet.getDouble(1));
 						credit = CommonUtil.round(sumSet.getDouble(2));
-						if (account.getId().startsWith("7")) {
-							months.set((sumSet.getInt(3) - 1), CommonUtil.round(credit - debit));
+						if (authomaticBalance) {
+							if (account.getId().startsWith("7")) {
+								months.set((sumSet.getInt(3) - 1), CommonUtil.round(credit - debit));
+							} else {
+								months.set((sumSet.getInt(3) - 1), CommonUtil.round(debit - credit));
+							}
 						} else {
 							months.set((sumSet.getInt(3) - 1), CommonUtil.round(debit - credit));
 						}
-
 					}
 					SummaryMonthly sm = new SummaryMonthly();
 					sm.setMonths(months);
