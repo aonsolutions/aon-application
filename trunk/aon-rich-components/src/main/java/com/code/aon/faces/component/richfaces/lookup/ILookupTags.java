@@ -20,4 +20,6 @@ public interface ILookupTags {
 	
 	String LOOKUP_CHANGE_LISTENER = "lookupChangeListener";
 	
+	String CONTROLLER_LISTENER = "controllerListener";
+	
 }
