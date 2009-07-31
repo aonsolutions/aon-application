@@ -11,11 +11,11 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.smb</artifactId>
 	<packaging>war</packaging>
-	<version>4.1.0</version>
+	<version>4.1.1</version>
 	<description>AON WEB SMB</description>
 	<name>AON WEB SMB</name>
 	<properties>
-		<dbVersion>4.0.0</dbVersion>
+		<dbVersion>4.1.0</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-smb</finalName>
