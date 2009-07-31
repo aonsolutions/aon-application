@@ -40,7 +40,7 @@
 							<aon:div styleClass="aon-text-center">
 								<aon:commandButton id="#{confirmId}-yes" value="#{bundle.aon_yes}"
 									action="#{confirmAction}" immediate="#{immediate}"
-									reRender="#{confirmId}ReRender,#{confirmReRender}"
+									reRender="#{confirmReRender}"
 									styleClass="aon-commandButton" >
 									<c:if test="#{confirmActionListener != null}">									
 										<aon:actionListener method="#{confirmActionListener}" />
