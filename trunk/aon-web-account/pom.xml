@@ -9,14 +9,14 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.account</artifactId>
 	<packaging>war</packaging>
-	<version>4.1.0</version>
+	<version>4.1.1</version>
 	<description>AON WEB ACCOUNT</description>
 	<name>AON WEB ACCOUNT</name>
 	<build>
 		<finalName>aon-account</finalName>
 	</build>
 	<properties>
-		<dbVersion>4.0.0</dbVersion>
+		<dbVersion>4.1.0</dbVersion>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -82,10 +82,6 @@
 				<exclusion>
 					<groupId>com.code.aon</groupId>
 					<artifactId>aon.csb</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.code.aon</groupId>
-					<artifactId>aon.webmail</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
