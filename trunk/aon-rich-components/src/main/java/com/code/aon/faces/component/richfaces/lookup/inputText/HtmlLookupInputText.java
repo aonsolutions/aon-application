@@ -12,6 +12,7 @@ import javax.faces.context.FacesContext;
 import com.code.aon.faces.component.richfaces.lookup.ILookupComponent;
 import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
 import com.code.aon.faces.controller.RichLookupBean;
+import com.code.aon.ui.form.event.IControllerListener;
 
 public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, ILookupComponent {
 
@@ -22,6 +23,8 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
             "com.code.aon.faces.HtmlLookupInputText";
     
     private ValueExpression property;
+    
+    private IControllerListener controllerListener;
     
     private RichLookupBean lookup;
     
@@ -63,6 +66,18 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
 	public void setProperty(ValueExpression property) {
 		this.property = property;
 	}
+	
+	public IControllerListener getControllerListener() {
+    	if (null != this.controllerListener) {
+            return this.controllerListener;
+        }
+    	ValueExpression vb = getValueExpression(CONTROLLER_LISTENER);
+    	return (vb != null) ? (IControllerListener)vb.getValue(getFacesContext().getELContext()) : null;
+	}
+
+	public void setControllerListener(IControllerListener controllerListener) {
+		this.controllerListener = controllerListener;
+	}	
 	
 	public MethodExpression getLookupChangeListener() {
 		return this.lookupChangeListener;
@@ -124,6 +139,7 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
   		joinBindingsMap = (Map<String, ValueExpression>) this._state[3];
   		lookupChangeListener = (MethodExpression) this._state[4];  	
   		lookupProperty = (String) this._state[5];  		
+  		controllerListener = (IControllerListener) this._state[6];
   	}  
    
     /**
@@ -135,7 +151,7 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
      */
   	public Object saveState(FacesContext _context) {  
   		if (_state == null) {  
-  			_state = new Object[6];  
+  			_state = new Object[7];  
   		}  
   		_state[0] = super.saveState(_context);  
   		_state[1] = lookup;
@@ -143,6 +159,7 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
   		_state[3] = joinBindingsMap;
   		_state[4] = lookupChangeListener;  
   		_state[5] = lookupProperty;
+  		_state[6] = controllerListener;
   		
   		return _state;  
   	}

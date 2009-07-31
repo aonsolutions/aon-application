@@ -8,40 +8,28 @@
 
 <ui:composition>
 
-	<!--  <aon:div styleClass="aon-finding-title-toolbar">
-		<aon:panelGrid columns="2" dir="true"
-				columnClasses="aon-finding-title,aon-finding-toolbar">					
-			 
-			<aon:div styleClass="aon-finding-title-internal">
-				<aon:outputText
-					value="#{lookup.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-			</aon:div>
- 			-->
-			<aon:div styleClass="aon-toolbar">
-				<aon:commandButton id="saveLookup" value="#{bundle.aon_save}"
-					actionListener="#{lookup.accept}" reRender="#{lookupId}LookupContent"
-					styleClass="aon-finding-toolbar-item aon-icon-accept"
-					accesskey="#{bundle.aon_key_save}" />
-				<aon:commandButton id="cancelLookup" value="#{bundle.aon_cancel}" immediate="true"
-					actionListener="#{lookup.onCloseWindow}" rendered="#{lookup.new}"
-					styleClass="aon-finding-toolbar-item aon-icon-cancel"
-					accesskey="#{bundle.aon_key_cancel}" >
-					<rich:componentControl for="#{lookupId}" event="onclick"
-						disableDefault="true" operation="hide" />					
-				</aon:commandButton>
-				<aon:commandButton id="closeLookup" value="#{bundle.aon_close}"
-					rendered="#{!lookup.new}" immediate="true" 
-					actionListener="#{lookup.onFormSelect}"
-					styleClass="aon-finding-toolbar-item aon-icon-cancel"
-					accesskey="#{bundle.aon_key_close}"
-					reRender="#{lookup.component.selectReRender}">
-					<rich:componentControl for="#{lookupId}" event="onclick"
-						disableDefault="true" operation="hide" />					
-				</aon:commandButton>					
-			</aon:div>
-			<!-- 
-	  </aon:panelGrid>
-	</aon:div>	 -->
+	<aon:div styleClass="aon-toolbar">
+		<aon:commandButton id="saveLookup" value="#{bundle.aon_save}"
+			actionListener="#{lookup.accept}" reRender="#{lookupId}LookupContent"
+			styleClass="aon-finding-toolbar-item aon-icon-accept"
+			accesskey="#{bundle.aon_key_save}" />
+		<aon:commandButton id="cancelLookup" value="#{bundle.aon_cancel}" immediate="true"
+			actionListener="#{lookup.onCloseWindow}" rendered="#{lookup.new}"
+			styleClass="aon-finding-toolbar-item aon-icon-cancel"
+			accesskey="#{bundle.aon_key_cancel}" >
+			<rich:componentControl for="#{lookupId}" event="onclick"
+				disableDefault="true" operation="hide" />					
+		</aon:commandButton>
+		<aon:commandButton id="closeLookup" value="#{bundle.aon_close}"
+			rendered="#{!lookup.new}" immediate="true" 
+			actionListener="#{lookup.onFormSelect}"
+			styleClass="aon-finding-toolbar-item aon-icon-cancel"
+			accesskey="#{bundle.aon_key_close}"
+			reRender="#{lookup.component.selectReRender}">
+			<rich:componentControl for="#{lookupId}" event="onclick"
+				disableDefault="true" operation="hide" />					
+		</aon:commandButton>					
+	</aon:div>
 
 	<aon:div styleClass="aon-scroll-area">
 		<aon:panelGrid id="menuGrid" columns="2" dir="true">

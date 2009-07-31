@@ -9,6 +9,7 @@ import org.ajax4jsf.component.html.HtmlAjaxCommandButton;
 import com.code.aon.faces.component.richfaces.lookup.ILookupComponent;
 import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
 import com.code.aon.faces.controller.RichLookupBean;
+import com.code.aon.ui.form.event.IControllerListener;
 
 public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTags, ILookupComponent {
 
@@ -25,6 +26,8 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTa
     private LookupButtonType actionType;
     
     private ValueExpression property;
+    
+    private IControllerListener controllerListener;
     
     private RichLookupBean lookup;
     
@@ -85,6 +88,18 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTa
 		this.property = property;
 	}
 
+	public IControllerListener getControllerListener() {
+    	if (null != this.controllerListener) {
+            return this.controllerListener;
+        }
+    	ValueExpression vb = getValueExpression(CONTROLLER_LISTENER);
+    	return (vb != null) ? (IControllerListener)vb.getValue(getFacesContext().getELContext()) : null;
+	}
+
+	public void setControllerListener(IControllerListener controllerListener) {
+		this.controllerListener = controllerListener;
+	}	
+	
 	public String getWindowTitle() {
     	if (null != this.windowTitle) {
             return this.windowTitle;
@@ -164,6 +179,7 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTa
   		minWidth = (String) this._state[7];
   		minHeight = (String) this._state[8];
   		lookupProperty = (String) this._state[9];
+  		controllerListener = (IControllerListener) this._state[10];
   	}  
    
     /**
@@ -175,7 +191,7 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTa
      */
   	public Object saveState(FacesContext _context) {  
   		if (_state == null) {  
-  			_state = new Object[10];  
+  			_state = new Object[11];  
   		}  
   		_state[0] = super.saveState(_context);  
   		_state[1] = lookup;
@@ -187,6 +203,7 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTa
   		_state[7] = minWidth;
   		_state[8] = minHeight;
   		_state[9] = lookupProperty;
+  		_state[10] = controllerListener;
   		return _state;  
   	}
 	

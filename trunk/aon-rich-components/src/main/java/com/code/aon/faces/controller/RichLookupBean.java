@@ -81,6 +81,8 @@ public class RichLookupBean {
 	
 	/** The minimum height. */
 	private String minHeight;
+	
+	private IControllerListener controllerListener;
 
 	/**
 	 * The Constructor.
@@ -564,12 +566,17 @@ public class RichLookupBean {
 		if (restoreValues) {
 			restoreValues(joinBindingsMap, valuesMap);
 		}
+		removeControllerListener();
 	}
 
 	private void setBindings(UIComponent component) {
 		if (component instanceof ILookupComponent) {
 			this.component = (ILookupComponent) component;
 			this.sourcePojoBinding = this.component.getProperty();
+			this.controllerListener = this.component.getControllerListener();
+			if ( this.controllerListener != null ) {
+				addControllerListener( this.controllerListener );
+			}
 		}
 	}
 
@@ -651,8 +658,7 @@ public class RichLookupBean {
 		fireLookupChangeListener(event.getComponent(), true);
 		onSelect(null);
 		updateSourcePojo();
-		setShowWindow(false);
-		clearModel();
+		beforeCloseWindow();
 	}
 
 	/**
@@ -665,8 +671,7 @@ public class RichLookupBean {
 		LOGGER.info("onFormSelect: " + getController().getTo());
 		fireLookupChangeListener(event.getComponent(), true);
 		updateSourcePojo();
-		setShowWindow(false);
-		clearModel();
+		beforeCloseWindow();
 	}
 
 	/**
@@ -676,8 +681,7 @@ public class RichLookupBean {
 	 *            the event
 	 */
 	public void onCloseWindow(ActionEvent event) {
-		setShowWindow(false);
-		clearModel();
+		beforeCloseWindow();
 	}
 
 	/**
@@ -738,6 +742,19 @@ public class RichLookupBean {
 		if ( StringUtils.isEmpty(this.windowTitle) ) {
 			this.windowTitle = DEFAULT_WINDOW_TITLE;	
 		}
+	}
+	
+	private void removeControllerListener() {
+		if ( this.controllerListener != null ) {
+			removeControllerListener(this.controllerListener);
+			this.controllerListener = null;
+		}		
+	}
+	
+	private void beforeCloseWindow() {
+		setShowWindow(false);
+		clearModel();
+		removeControllerListener();
 	}
 	
 }
