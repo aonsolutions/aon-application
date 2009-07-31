@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.smb</artifactId>
 	<packaging>war</packaging>
-	<version>4.0.0</version>
+	<version>4.1.0</version>
 	<description>AON WEB SMB</description>
 	<name>AON WEB SMB</name>
 	<properties>
@@ -20,52 +20,17 @@
 	<build>
 		<finalName>aon-smb</finalName>
 	</build>
+<!-- 	Necesario para iReport-utils	
 	<repositories>
-		<!-- Necesario para iReport-utils  -->
 		<repository>
 			<id>jasperforge.org</id>
 			<name>iReport Repository for Maven</name>
 			<url>http://jasperforge.org/maven2/</url>
 			<layout>default</layout>
 		</repository>	
-	</repositories>	
+	</repositories>
+ -->
 	<dependencies>
-		<!-- PINRREL  -->
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.company</artifactId>
-			<version>4.1.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<!-- PINRREL  -->
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.customer</artifactId>
-			<version>4.1.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<!-- PINRREL  -->
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.product</artifactId>
-			<version>4.0.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<!-- PINRREL  -->
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.registry</artifactId>
-			<version>4.0.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<!-- PINRREL  -->
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.supplier</artifactId>
-			<version>4.0.0</version>
-			<scope>compile</scope>
-		</dependency>
-
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
@@ -105,25 +70,25 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.accounting</artifactId>
-			<version>4.0.0</version>
+			<version>4.1.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.account.bridge</artifactId>
-			<version>4.0.0</version>
+			<version>4.1.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.commercial</artifactId>
-			<version>3.5.0</version>
+			<version>4.0.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>4.1.0</version>
+			<version>4.1.1</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -132,17 +97,10 @@
 			<version>4.0.0</version>
 			<scope>runtime</scope>
 		</dependency>
-		<!-- PINRREL  -->
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.customer</artifactId>
-			<version>4.1.0</version>
-			<scope>runtime</scope>
-		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.finance</artifactId>
-			<version>4.0.0</version>
+			<version>4.1.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -154,31 +112,31 @@
  		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.product</artifactId>
-			<version>4.0.0</version>
+			<version>4.1.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.registry</artifactId>
-			<version>4.0.0</version>
+			<version>4.1.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.sales</artifactId>
-			<version>3.3.2</version>
+			<version>4.0.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.stat</artifactId>
-			<version>3.2.0</version>
+			<version>4.0.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.supplier</artifactId>
-			<version>4.0.0</version>
+			<version>4.0.1</version>
 			<scope>runtime</scope>
 		</dependency>
 
