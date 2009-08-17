@@ -11,8 +11,7 @@
 	<aon:valueParam name="labelValue" default="#{appBundle.cms_content}" />
 	<aon:valueParam name="inputTextRequired" default="#{false}" />
 
-	<aon:outputLabel styleClass="#{(inputTextRequired)?'aon-label-required':''}"
-		for="#{inputTextId}" value="#{labelValue}" />
+	<aon:outputLabel for="#{inputTextId}" value="#{labelValue}" />
 	<a4j:region>
 		<aon:selectBooleanCheckbox id="#{inputTextId}_richTextEnabled"
 			value="#{richTextEnabled}" >
