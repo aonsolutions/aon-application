@@ -156,7 +156,7 @@
 							<aon:div styleClass="aon-scroll-area">
 								<aon:panelGrid id="menuOptionGrid" columns="2" dir="true">
 
-									<aon:outputText for="Alias" 
+									<aon:outputLabel for="Alias" 
 										value="#{appBundle.cms_alias}" />
 									<aon:inputText id="Alias"
 										value="#{sidebar_option.to.alias}" 
@@ -165,37 +165,33 @@
 										<f:validator validatorId="AliasValidator" />
 									</aon:inputText>
 										
-									<aon:outputText for="Label" 
+									<aon:outputLabel for="Label" 
 										value="#{appBundle.sidebar_option_label}" />
 									<aon:inputText id="Label"
 										value="#{sidebar_option.toI18n.label}" 
 										required="true"
 										size="50" maxlength="64" />
 		
-									<aon:outputText for="Type" 
+									<aon:outputLabel for="SidebarOption_type" 
 										value="#{appBundle.sidebar_option_type}" />
 									<aon:selectOneMenu  
-										id="Type"
+										id="SidebarOption_type" 
 										value="#{sidebar_option.to.type}" 
 										required="true">
 										<f:selectItems value="#{collections.sidebarTypes}" />
-										<a4j:support 
-											event="onchange"  
-											reRender="sidebarOptionGrid" />
+										<a4j:support event="onchange" reRender="menuOptionGrid" />										
 									</aon:selectOneMenu> 
 		
-									<aon:outputText for="Ident"
-											value="#{appBundle.sidebar_option_ident}" 
-											rendered="#{sidebar_option.visibleIdent}" />
-									<aon:div id="selectOneMenu_edit"
-										rendered="#{sidebar_option.visibleIdent}">
-										<aon:selectOneMenu id="Ident"
-											value="#{sidebar_option.to.ident}">
-											<f:selectItems value="#{sidebar_option.idents}" />
-										</aon:selectOneMenu>
-									</aon:div> 
+									<aon:outputLabel for="SidebarOption_ident"
+										value="#{appBundle.sidebar_option_ident}" 
+										rendered="#{sidebar_option.visibleIdent}" />
+									<aon:selectOneMenu id="SidebarOption_ident"
+										rendered="#{sidebar_option.visibleIdent}"
+										value="#{sidebar_option.to.ident}">
+										<f:selectItems value="#{sidebar_option.idents}" />
+									</aon:selectOneMenu>
 		
-									<aon:outputText for="Side"
+									<aon:outputLabel for="Side"
 										value="#{appBundle.sidebar_option_side}" />
 									<aon:selectOneMenu id="Side"
 										value="#{sidebar_option.to.side}" >
