@@ -65,6 +65,10 @@ public class ModularPageGenerator extends Generator {
 					List<ModularPageOptionHandler> modularPageOptionHandlerList = new ArrayList<ModularPageOptionHandler>();
 					for (int j = 0; j < modularPageOptionList.size(); j++) {
 						ModularPageOption mpo = (ModularPageOption) modularPageOptionList.get(j);
+						if ( mpo.getIdent() == null ) {
+							getLogger().error("OPCION " + mpo.getAlias() + " DE PAGINA MODULAR " + mp.getAlias() + " NO REFERENCIA A NINGUN ELEMENTO");
+							continue;
+						}						
 						Criteria criteria_modBean = new Criteria();
 						criteria_modBean.addEqualExpression(modBean.getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_DETAIL_MODULAR_PAGE_OPTION_ID),mpo.getId());
 						criteria_modBean.addEqualExpression(modBean.getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_DETAIL_LANGUAGE_ID),ControllerUtil.getCurrentLanguage().getId());

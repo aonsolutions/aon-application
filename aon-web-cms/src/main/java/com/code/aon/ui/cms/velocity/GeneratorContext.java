@@ -196,7 +196,10 @@ public class GeneratorContext implements IVelocityConstants {
 			Iterator<ITransferObject> sidebarOption_iter = sidebarOption_lst.iterator();
 			while (sidebarOption_iter.hasNext()) {
 				SidebarOption sidebarOption = (SidebarOption)sidebarOption_iter.next(); 
-				
+				if ( sidebarOption.getIdent() == null ) {
+					getLogger().error("OPCION " + sidebarOption.getAlias() + " DE BARRA LATERAL "+ s.getAlias() + " NO REFERENCIA A NINGUN ELEMENTO");
+					continue;
+				}
 				bean = BeanManager.getManagerBean(SidebarOptionDetail.class);
 				criteria = new Criteria();
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SIDEBAR_OPTION_DETAIL_SIDEBAR_OPTION_ID), sidebarOption.getId());
