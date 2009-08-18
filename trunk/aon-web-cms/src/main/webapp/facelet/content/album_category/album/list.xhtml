@@ -26,7 +26,7 @@
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						accesskey="#{bundle.aon_key_close}">
 					</aon:commandButton>
-					<aon:commandButton id="generate" reRender="aonStatus"
+					<aon:commandButton id="album_generate" reRender="aonStatus"
 						actionListener="#{generator.onGenerateAlbums}"
 						value="#{appBundle.aon_generate}" 
 						rendered="#{cms.roleEditor}"
@@ -39,11 +39,12 @@
 					</aon:commandButton>
 					<aon:commandButton id="create_album" reRender="showAlbumWindow"
 						value="#{appBundle.aon_create_album}"
+						actionListener="#{album.onInitGenerateFromGallery}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset">
 						<f:setPropertyActionListener target="#{album.showAlbumWindow}"
 							value="#{true}" />
 					</aon:commandButton>							
-					<aon:commandButton id="categories"
+					<aon:commandButton id="album_categories"
 						value="#{appBundle.album_category}"
 						action="album_category_list"
 						immediate="#{true}"
@@ -55,7 +56,7 @@
 			</ui:decorate>		
 
 			<!--  aon-region-body -->
-			<aon:div styleClass="aon-scroll-area">
+			<aon:div id="dataTableDiv" styleClass="aon-scroll-area">
 					
 				<aon:dataTable id="dataTable" rows="#{album.pageLimit}" var="to"  
 					value="#{album.model}" rendered="#{album.model.rowCount > 0}"
@@ -125,7 +126,7 @@
 			</aon:div>
 			<ui:include src="/facelet/content/utils/album_modal.xhtml">
 				<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
-				<ui:param name="reRender" value="list" />
+				<ui:param name="reRender" value="dataTableDiv" />
 			</ui:include>			
 		</aon:form>
 
