@@ -12,7 +12,7 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="list">
+		<aon:form id="albumList">
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{appBundle.album}" />
@@ -36,14 +36,13 @@
 							event="onclick" reRender="poll,grid"
 							actionListener="#{generator_status.onActivePoll}"   
 							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
-					</aon:commandButton>	
-					<aon:commandButton id="images"
-						value="#{appBundle.albumImage}"
-						action="album_image_list"
-						immediate="#{true}"
-						styleClass="aon-finding-toolbar-item-no-icon">
-						<aon:actionListener method="#{albumImage.onSearch}" />
 					</aon:commandButton>
+					<aon:commandButton id="create_album" reRender="showAlbumWindow"
+						value="#{appBundle.aon_create_album}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset">
+						<f:setPropertyActionListener target="#{album.showAlbumWindow}"
+							value="#{true}" />
+					</aon:commandButton>							
 					<aon:commandButton id="categories"
 						value="#{appBundle.album_category}"
 						action="album_category_list"
@@ -61,7 +60,7 @@
 				<aon:dataTable id="dataTable" rows="#{album.pageLimit}" var="to"  
 					value="#{album.model}" rendered="#{album.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-							aon-editDataTable-iconColumn">
+							aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-iconColumn">
 							
 					<aon:rowSelector
 						action="album_form" actionListener="#{album.onSelect}" />							
@@ -80,6 +79,13 @@
 						<aon:outputText value="#{album.i18nTitle}" >
 							<aon:abbreviateConverter maxWidth="60" />
 						</aon:outputText>						
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.album_category}" />
+						</f:facet>
+						<aon:outputText value="#{to.albumCategory.alias}" />
 					</aon:column>
 
 					<aon:column>
@@ -117,6 +123,10 @@
 				<aon:dataScroller2 for="dataTable" showNote="true" />					
 
 			</aon:div>
+			<ui:include src="/facelet/content/utils/album_modal.xhtml">
+				<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+				<ui:param name="reRender" value="list" />
+			</ui:include>			
 		</aon:form>
 
 		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />

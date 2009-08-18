@@ -143,8 +143,10 @@
 								value="#{menuBundle.cms_album_image}"
 								image="#{aonResource.resolveLocal['/images/cms/icons/cms-icon-album.png']}"
 								styleClass="aon-icon-commandButton" 
-								action="album_image_form">
-								<aon:actionListener method="#{albumImage.onReset}" />
+								action="albumImage_form"
+								actionListener="#{albumImage.onReset}" >
+								<aon:actionListener method="#{albumImage.onEditSearch}" />
+								<aon:actionListener method="#{albumImage.onSearch}" />
 							</aon:commandButton>
 			                <aon:outputText value="#{menuBundle.cms_album_image}"/>
 			            </h:panelGrid>

@@ -290,15 +290,15 @@
       <to-view-id>/facelet/content/album_category/album/search.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
-      <from-outcome>album_image_list</from-outcome>
+      <from-outcome>albumImage_list</from-outcome>
       <to-view-id>/facelet/content/album_category/album/album_image//list.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
-      <from-outcome>album_image_form</from-outcome>
+      <from-outcome>albumImage_form</from-outcome>
       <to-view-id>/facelet/content/album_category/album/album_image/form.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
-      <from-outcome>album_image_search</from-outcome>
+      <from-outcome>albumImage_search</from-outcome>
       <to-view-id>/facelet/content/album_category/album/album_image/search.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>

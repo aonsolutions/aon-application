@@ -128,8 +128,11 @@
 				<aon:menuItem id="album_image" 
 					value="#{menuBundle.cms_album_image}"
 					rendered="#{domainUtils.albumMenu and ( cms.roleEditor or cms.roleRevisor )}"
-					action="album_image_form"
-					actionListener="#{albumImage.onReset}" />
+					action="albumImage_form"
+					actionListener="#{albumImage.onReset}" >
+					<aon:actionListener method="#{albumImage.onEditSearch}" />
+					<aon:actionListener method="#{albumImage.onSearch}" />
+				</aon:menuItem>
 			</aon:dropDownMenu>
 			<aon:dropDownMenu id="hiru"
 				value="#{menuBundle.cms_hiru}"

@@ -11,83 +11,15 @@
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
-		<aon:form id="main_form">
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
-				
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.albumImage}"/>	  						
-					</aon:div>					
-					
-					<aon:div styleClass="aon-finding-subtitle-internal">
-							<aon:outputText
-								value="#{albumImage.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-					</aon:div>					
-						
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">					
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							rendered="#{!albumImage.new and cms.roleEditor}"
-							action="album_image_form"
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}">
-							<aon:actionListener method="#{albumImage.onReset}" />
-						</aon:commandButton>
-						<aon:commandButton id="save"
-							value="#{bundle.aon_save}" 
-							rendered="#{albumImage.to!=null or albumImage.new}"
-							reRender="main_form"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}">
-							<aon:actionListener method="#{albumImage.accept}" />
-						</aon:commandButton>
-						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" 
-							rendered="#{!albumImage.new and cms.roleEditor}" 
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-delete"
-							confirmTitle="Confirmation Dialog" 
-							confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{albumImage.onRemove}"
-							confirmAction="album_image_list"
-							accesskey="#{bundle.aon_key_remove}"/>
-						<aon:commandButton id="search" 
-							value="#{bundle.aon_search}"
-							immediate="#{true}"
-							action="album_image_search"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}">
-							<aon:actionListener method="#{albumImage.onEditSearch}" />
-						</aon:commandButton>
-						<aon:commandButton id="list"
-							value="#{bundle.aon_list}"
-							action="album_image_list" 
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}">
-							<aon:actionListener method="#{albumImage.onCancel}" />
-						</aon:commandButton>
-						<aon:commandButton id="home"
-							value="#{bundle.aon_home}"
-							action="home" 
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}">
-							<aon:actionListener method="#{albumImage.onCancel}" />
-						</aon:commandButton>
-						<aon:commandButton id="categories"
-							value="#{appBundle.album}"
-							action="album_list"
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item-no-icon">
-						</aon:commandButton>
-				    </aon:div>
-					
-					<!-- end toolbar navigation -->
-				</aon:panelGrid>
-			</aon:div>
+		<aon:form id="albumImageForm">
+		
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.albumImage}" />
+				<ui:param name="controller" value="#{albumImage}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
+			</ui:include>	
 			
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="main_panel" columns="2" dir="true">
@@ -103,7 +35,7 @@
 						</aon:selectOneMenu>
 						<aon:commandButton id="categories_new"
 							rendered="#{albumImage.new}" 
-							value="#{appBundle.album}"
+							value="#{appBundle.album_new}"
 							action="album_form"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item-no-icon">
@@ -111,10 +43,10 @@
 						</aon:commandButton>
 						<aon:commandButton id="categories_edit"
 							rendered="#{!albumImage.new}" 
-							value="#{appBundle.album}"
+							value="#{appBundle.album_edit}"
 							action="album_form"
 							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item-no-icon">
+							styleClass="aon-finding-toolbar-item-no-icon aon-finding-toolbar-item-no-border">
 							<aon:actionListener method="#{album.onAlbumImageCriteria}" />
 							<aon:actionListener method="#{album.onSearch}" />
 							<aon:actionListener method="#{album.onSelectFirst}" />
