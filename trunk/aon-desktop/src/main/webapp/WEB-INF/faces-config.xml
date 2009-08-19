@@ -23,7 +23,7 @@
 		<managed-bean-scope>application</managed-bean-scope>
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/3.6.1</value>
+			<value>/aonResource/3.8.0</value>
 		</managed-property>		
 	</managed-bean>
 
