@@ -1,0 +1,43 @@
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<application>
+		<resource-bundle>
+			<base-name>com.code.aon.ui.registry.i18n.messages</base-name>
+			<var>registryBundle</var>
+		</resource-bundle>
+	</application>
+	
+	<!-- ************ COLLECTION **************** -->
+	<managed-bean>
+		<managed-bean-name>registryCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.RegistryCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ CATEGORY ************** -->
+	<managed-bean>
+		<managed-bean-name>category</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.Category</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>category</value>
+		</managed-property>
+	</managed-bean>
+	
+</faces-config>
