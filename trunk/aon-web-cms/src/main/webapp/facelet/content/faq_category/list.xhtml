@@ -61,8 +61,8 @@
 							value="#{appBundle.section}"/>
 							
 						<aon:selectOneMenu id="faqCategory_section"  
-							value="#{generator_config.sectionId}">
-							<f:selectItem itemLabel="-" itemValue="-1" />
+							value="#{generator_config.section}">
+							<f:selectItem itemLabel="-" value="#{null}" />
 							<f:selectItems value="#{collections.sectionList}" />
 						</aon:selectOneMenu>
 						

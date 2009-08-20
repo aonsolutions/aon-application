@@ -2,8 +2,8 @@ package com.code.aon.ui.cms.velocity.attribute;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import com.code.aon.cms.GenericPageDetail;
@@ -18,7 +18,7 @@ public class GenericPageHandler {
 
 	private Date date;
 	
-	private ArrayList<MenuOptionHandler> menu;
+	private List<MenuOptionHandler> menu;
 
 	private String description;
 	
@@ -54,7 +54,7 @@ public class GenericPageHandler {
         return formatter.format(date);
 	}
 
-	public ArrayList<MenuOptionHandler> getMenu() {
+	public List<MenuOptionHandler> getMenu() {
 		return menu;
 	}
 

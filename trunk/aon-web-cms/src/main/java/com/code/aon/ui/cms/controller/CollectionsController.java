@@ -87,6 +87,94 @@ public class CollectionsController implements ICMSConstants {
 		}
 		return languageTypes;
 	}
+
+	public List<SelectItem> getArticleTypes() throws ManagerBeanException {
+		if ( articleTypes == null ) {
+			this.articleTypes = new LinkedList<SelectItem>();
+			Locale locale = AonUtil.getCurrentLocale();
+			for (ArticleType articleType : ArticleType.values()) {
+				String name = articleType.getName(locale);
+				SelectItem item = new SelectItem(articleType, name);
+				articleTypes.add(item);
+			}
+			sort(articleTypes);
+		}
+		return articleTypes;
+	}
+
+	public List<SelectItem> getMenuTypes() throws ManagerBeanException {
+		if ( menuTypes == null ) {
+			List<SelectItem> menuTypes = new LinkedList<SelectItem>();
+			Locale locale = AonUtil.getCurrentLocale();
+			SelectItem item = new SelectItem("", "");
+			menuTypes.add(item);
+			for (MenuType menuType : MenuType.values()) {
+				String name = menuType.getName(locale);
+				item = new SelectItem(menuType, name);
+				menuTypes.add(item);
+			}
+			sort( menuTypes );
+		}
+		return menuTypes;
+	}
+
+
+	public List<SelectItem> getSidebarSides() throws ManagerBeanException, ExpressionException {
+		if ( sidebarSides == null ) {
+			this.sidebarSides = new LinkedList<SelectItem>();
+			Locale locale = AonUtil.getCurrentLocale();
+			for (SidebarSide sidebarSide : SidebarSide.values()) {
+				String name = sidebarSide.getName(locale);
+				SelectItem item = new SelectItem(sidebarSide, name);
+				this.sidebarSides.add(item);
+			}
+		}
+		return sidebarSides;
+	}
+
+	public List<SelectItem> getContentLevels() throws ManagerBeanException, ExpressionException {
+		if ( contentLevels == null ) {
+			contentLevels = new LinkedList<SelectItem>();
+			Locale locale = AonUtil.getCurrentLocale();
+			for (ContentLevel contentLevel : ContentLevel.values()) {
+				String name = contentLevel.getName(locale);
+				SelectItem item = new SelectItem(contentLevel, name);
+				contentLevels.add(item);
+			}
+			sort( contentLevels );
+		}
+		return contentLevels;
+	}
+	
+	public List<SelectItem> getHiruCourseSubjects() throws ManagerBeanException {
+		if ( hiruCourseSubjects == null ) {
+			this.hiruCourseSubjects = new LinkedList<SelectItem>();
+			Locale locale = AonUtil.getCurrentLocale();
+			for (HiruCourseSubject hiruCourseSubject : HiruCourseSubject.values()) {
+				String name = hiruCourseSubject.getName(locale);
+				SelectItem item = new SelectItem(hiruCourseSubject, name);
+				hiruCourseSubjects.add(item);
+			}
+			sort( hiruCourseSubjects );
+		}
+		return hiruCourseSubjects;
+	}
+	
+	public List<SelectItem> getModularTypes() throws ManagerBeanException, ExpressionException {
+		if ( modularTypes == null ) {
+			this.modularTypes = new LinkedList<SelectItem>();
+			Locale locale = AonUtil.getCurrentLocale();
+			SelectItem item = new SelectItem("", "");
+			this.modularTypes.add(item);
+			for (ModularType modularType : ModularType.values()) {
+				String name = modularType.getName(locale);
+				item = new SelectItem(modularType, name);
+				this.modularTypes.add(item);
+			}
+			sort( modularTypes );
+		}
+		return modularTypes;
+	}
 	
 	public List<SelectItem> getLanguages() throws ManagerBeanException {
 		List<SelectItem> languajes = new LinkedList<SelectItem>();
@@ -104,20 +192,6 @@ public class CollectionsController implements ICMSConstants {
 		return languajes;
 	}
 	
-	public List<SelectItem> getArticleTypes() throws ManagerBeanException {
-		if ( articleTypes == null ) {
-			this.articleTypes = new LinkedList<SelectItem>();
-			Locale locale = AonUtil.getCurrentLocale();
-			for (ArticleType articleType : ArticleType.values()) {
-				String name = articleType.getName(locale);
-				SelectItem item = new SelectItem(articleType, name);
-				articleTypes.add(item);
-			}
-			sort(articleTypes);
-		}
-		return articleTypes;
-	}
-
 	public List<SelectItem> getBrands() throws ManagerBeanException, ExpressionException {
 		List<SelectItem> brands = new LinkedList<SelectItem>();
 		IManagerBean brandBean = BeanManager.getManagerBean(Brand.class);
@@ -186,22 +260,6 @@ public class CollectionsController implements ICMSConstants {
 			linkCategory.add(item);
 		}
 		return linkCategory;
-	}
-
-	public List<SelectItem> getMenuTypes() throws ManagerBeanException {
-		if ( menuTypes == null ) {
-			List<SelectItem> menuTypes = new LinkedList<SelectItem>();
-			Locale locale = AonUtil.getCurrentLocale();
-			SelectItem item = new SelectItem("", "");
-			menuTypes.add(item);
-			for (MenuType menuType : MenuType.values()) {
-				String name = menuType.getName(locale);
-				item = new SelectItem(menuType, name);
-				menuTypes.add(item);
-			}
-			sort( menuTypes );
-		}
-		return menuTypes;
 	}
 
 	public List<SelectItem> getMenuList() throws ManagerBeanException {
@@ -284,33 +342,6 @@ public class CollectionsController implements ICMSConstants {
 		types.add( 0, new SelectItem("", "") );
 		return types;
 	}
-
-	public List<SelectItem> getSidebarSides() throws ManagerBeanException, ExpressionException {
-		if ( sidebarSides == null ) {
-			this.sidebarSides = new LinkedList<SelectItem>();
-			Locale locale = AonUtil.getCurrentLocale();
-			for (SidebarSide sidebarSide : SidebarSide.values()) {
-				String name = sidebarSide.getName(locale);
-				SelectItem item = new SelectItem(sidebarSide, name);
-				this.sidebarSides.add(item);
-			}
-		}
-		return sidebarSides;
-	}
-
-	public List<SelectItem> getContentLevels() throws ManagerBeanException, ExpressionException {
-		if ( contentLevels == null ) {
-			contentLevels = new LinkedList<SelectItem>();
-			Locale locale = AonUtil.getCurrentLocale();
-			for (ContentLevel contentLevel : ContentLevel.values()) {
-				String name = contentLevel.getName(locale);
-				SelectItem item = new SelectItem(contentLevel, name);
-				contentLevels.add(item);
-			}
-			sort( contentLevels );
-		}
-		return contentLevels;
-	}
 	
 	public List<SelectItem> getPageTypes() throws ManagerBeanException, ExpressionException {
 		DomainUtilities domainUtilities = (DomainUtilities)AonUtil.getRegisteredBean(DOMAIN_UTILS);
@@ -359,6 +390,13 @@ public class CollectionsController implements ICMSConstants {
 		}
 		return itemList;
 	}
+	
+	public Section getSection() {
+		return null;
+	}
+
+	public void setSection(Section section) {
+	}
 
 	public List<SelectItem> getSectionList() throws ManagerBeanException {
 		List<SelectItem> itemList = new LinkedList<SelectItem>();
@@ -368,28 +406,12 @@ public class CollectionsController implements ICMSConstants {
 		List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
 		for (int i = 0; i < list.size(); i++) {
 			Section section = (Section)list.get(i);
-			int id = section.getId();
 			String name = section.getAlias();
-			SelectItem item = new SelectItem(id, name);
+			SelectItem item = new SelectItem(section, name);
 			itemList.add(item);
 		}
+		sort( itemList );
 		return itemList;
-	}
-	
-	public List<SelectItem> getModularTypes() throws ManagerBeanException, ExpressionException {
-		if ( modularTypes == null ) {
-			this.modularTypes = new LinkedList<SelectItem>();
-			Locale locale = AonUtil.getCurrentLocale();
-			SelectItem item = new SelectItem("", "");
-			this.modularTypes.add(item);
-			for (ModularType modularType : ModularType.values()) {
-				String name = modularType.getName(locale);
-				item = new SelectItem(modularType, name);
-				this.modularTypes.add(item);
-			}
-			sort( modularTypes );
-		}
-		return modularTypes;
 	}
 
 	public List<SelectItem> getModularPageOptionTypes() throws ManagerBeanException, ExpressionException {
@@ -671,20 +693,6 @@ public class CollectionsController implements ICMSConstants {
 			select_list.add(item);
 		}
 		return select_list;
-	}
-	
-	public List<SelectItem> getHiruCourseSubjects() throws ManagerBeanException {
-		if ( hiruCourseSubjects == null ) {
-			this.hiruCourseSubjects = new LinkedList<SelectItem>();
-			Locale locale = AonUtil.getCurrentLocale();
-			for (HiruCourseSubject hiruCourseSubject : HiruCourseSubject.values()) {
-				String name = hiruCourseSubject.getName(locale);
-				SelectItem item = new SelectItem(hiruCourseSubject, name);
-				hiruCourseSubjects.add(item);
-			}
-			sort( hiruCourseSubjects );
-		}
-		return hiruCourseSubjects;
 	}
 
 	public List<SelectItem> getParentCategories() throws ManagerBeanException, ExpressionException {

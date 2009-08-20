@@ -54,8 +54,8 @@
 					<aon:outputLabel for="AlbumCategory_section"
 						value="#{appBundle.section}"/>
 					<aon:selectOneMenu id="AlbumCategory_section"  
-						value="#{album_category.to.section.id}">
-						<f:selectItem itemLabel="-" itemValue="-1" />
+						value="#{album_category.to.section}">
+						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{collections.sectionList}" />
 					</aon:selectOneMenu>
 					

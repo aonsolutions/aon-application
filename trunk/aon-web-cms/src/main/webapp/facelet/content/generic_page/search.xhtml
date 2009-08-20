@@ -38,7 +38,7 @@
 						value="#{appBundle.section}"/>
 					<aon:selectOneMenu id="GenericPage_section_id"  
 						valueChangeListener="#{controller.addExpression}">
-						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{collections.sectionList}" />
 					</aon:selectOneMenu>
 	
