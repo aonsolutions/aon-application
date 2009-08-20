@@ -1,6 +1,6 @@
 package com.code.aon.ui.cms.velocity.attribute;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.code.aon.cms.HeaderDetail;
 import com.code.aon.cms.enumeration.LanguageMenuType;
@@ -17,7 +17,7 @@ public class HeaderHandler {
 
 	private LanguageMenuType languageType;
 	
-	private ArrayList<MenuOptionHandler> menu;
+	private List<MenuOptionHandler> menu;
 
 	private BannerCategoryHandler bannerCategory;
 
@@ -64,7 +64,7 @@ public class HeaderHandler {
 		return languageType == LanguageMenuType.FLAGS;
 	}
 
-	public ArrayList<MenuOptionHandler> getMenu() {
+	public List<MenuOptionHandler> getMenu() {
 		return menu;
 	}
 

@@ -31,15 +31,15 @@ public class GeneratorConfigController {
 	
 	private static final Logger LOGGER = Logger.getLogger(GeneratorConfigController.class.getName());
 
-	private Integer sectionId;
+	private Section section;
 	
 	
-	public Integer getSectionId() {
-		return sectionId;
+	public Section getSection() {
+		return section;
 	}
 
-	public void setSectionId(Integer sectionId) {
-		this.sectionId = sectionId;
+	public void setSection(Section section) {
+		this.section = section;
 	}
 
 	public static Section defaultSection() throws ManagerBeanException{
@@ -68,9 +68,9 @@ public class GeneratorConfigController {
 		ISectionContainer config = null;
 		try {
 			config = (ISectionContainer)GeneratorConfigController.currentConfig(c);
-			sectionId = config.getSection().getId();
+			section = config.getSection();
 		} catch (Throwable th) {
-			sectionId = -1;
+			section = null;
 		}
 	}
 	
@@ -80,11 +80,6 @@ public class GeneratorConfigController {
 			if (config == null){
 				config = (ITransferObject)c.newInstance();
 			}
-			Section section = new Section();
-			if (sectionId != -1)
-				section.setId(sectionId);
-			else
-				section = null;
 			((ISectionContainer)config).setSection(section);
 			IManagerBean bean = BeanManager.getManagerBean(c);
 			bean.insertOrUpdate(config);

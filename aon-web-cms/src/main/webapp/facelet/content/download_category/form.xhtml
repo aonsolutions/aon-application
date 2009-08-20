@@ -145,7 +145,7 @@
 						value="#{appBundle.section}"/>
 					<aon:selectOneMenu id="DownloadCategory_section"  
 						value="#{download_category.to.section.id}">
-						<f:selectItem itemLabel="-" itemValue="-1" />
+						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{collections.sectionList}" />
 					</aon:selectOneMenu>
 

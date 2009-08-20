@@ -20,9 +20,9 @@ public class FooterHandler {
 	
 	private static final Logger LOGGER = Logger.getLogger(FooterHandler.class.getName());
 
-	private ArrayList<MenuOptionHandler> menu;
+	private List<MenuOptionHandler> menu;
 
-	private ArrayList<BannerCategoryHandler> bannerCategory;
+	private List<BannerCategoryHandler> bannerCategory;
 
 	private String content;
 	
@@ -32,11 +32,11 @@ public class FooterHandler {
 		bannerCategory = getBanners(footer.getFooter().getId());
 	}
 
-	public ArrayList<MenuOptionHandler> getMenu() {
+	public List<MenuOptionHandler> getMenu() {
 		return menu;
 	}
 
-	public ArrayList<BannerCategoryHandler> getBannerCategory() {
+	public List<BannerCategoryHandler> getBannerCategory() {
 		return bannerCategory;
 	}
 

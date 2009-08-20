@@ -116,7 +116,7 @@
 						value="#{appBundle.section}"/>
 					<aon:selectOneMenu id="ProductCategory_section"  
 						value="#{productCategory.to.section.id}">
-						<f:selectItem itemLabel="-" itemValue="-1" />
+						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{collections.sectionList}" />
 					</aon:selectOneMenu>
 					
@@ -272,7 +272,7 @@
 									value="#{appBundle.section}"/>
 								<aon:selectOneMenu id="ProductSubCategory_section"  
 									value="#{subCategory.to.section.id}">
-									<f:selectItem itemLabel="-" itemValue="-1" />
+									<f:selectItem itemLabel="-" value="#{null}" />
 									<f:selectItems value="#{collections.sectionList}" />
 								</aon:selectOneMenu>
 																		

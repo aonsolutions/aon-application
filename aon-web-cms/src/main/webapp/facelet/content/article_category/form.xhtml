@@ -11,7 +11,8 @@
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
-		<aon:form id="main_form">
+	
+		<aon:form id="articleCategoryForm">
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{appBundle.article_category}" />
@@ -54,16 +55,16 @@
 					<aon:outputLabel for="ArticleCategory_section"
 						value="#{appBundle.section}"/>
 					<aon:selectOneMenu id="ArticleCategory_section"  
-						value="#{article_category.to.section.id}">
-						<f:selectItem itemLabel="-" itemValue="-1" />
+						value="#{article_category.to.section}">
+						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{collections.sectionList}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ArticleCategory_elementSection"
 						value="#{appBundle.section} (Only Elements)"/>
 					<aon:selectOneMenu id="ArticleCategory_elementSection"  
-						value="#{article_category.to.elementSection.id}">
-						<f:selectItem itemLabel="-" itemValue="-1" />
+						value="#{article_category.to.elementSection}">
+						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{collections.sectionList}" />
 					</aon:selectOneMenu>
 

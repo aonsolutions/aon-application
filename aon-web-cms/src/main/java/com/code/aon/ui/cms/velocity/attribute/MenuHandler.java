@@ -1,6 +1,6 @@
 package com.code.aon.ui.cms.velocity.attribute;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.code.aon.cms.Menu;
 import com.code.aon.ui.cms.velocity.MenuGenerator;
@@ -9,7 +9,7 @@ public class MenuHandler {
 
 	private String alias;
 	
-	private ArrayList<MenuOptionHandler> list;
+	private List<MenuOptionHandler> list;
 	
 	public MenuHandler (Menu menu) {
 		alias = menu.getAlias();
@@ -20,7 +20,7 @@ public class MenuHandler {
 		return alias;
 	}
 
-	public ArrayList<MenuOptionHandler> getList() {
+	public List<MenuOptionHandler> getList() {
 		return list;
 	}
 
