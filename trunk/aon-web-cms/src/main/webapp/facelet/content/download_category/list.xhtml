@@ -12,7 +12,7 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="list">
+		<aon:form id="faqCategoryList">
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
@@ -84,7 +84,7 @@
 				<aon:dataTable id="dataTable" rows="#{download_category.pageLimit}" var="to"
 					value="#{download_category.model}" rendered="#{download_category.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-							aon-editDataTable-textColumn, aon-editDataTable-iconColumn">
+							aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-iconColumn">
 			
 					<aon:rowSelector
 						action="download_category_form" actionListener="#{download_category.onSelect}" />			
@@ -102,6 +102,13 @@
 						</f:facet>
 						<aon:outputText value="#{download_category.i18nLabel}"
 							styleClass="aon-editDataTable-button"/>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.section}" />
+						</f:facet>
+						<aon:outputText value="#{to.section.alias}" />
 					</aon:column>
 
 					<aon:column>
