@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.code.aon.cms.Activity;
 import com.code.aon.cms.ActivityDetail;
+import com.code.aon.cms.Company;
 import com.code.aon.cms.CompanyActivity;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
@@ -43,11 +44,14 @@ public class ActivityGenerator extends Generator {
 				IManagerBean beanCompanyActivity = BeanManager.getManagerBean(CompanyActivity.class);
 				criteria = new Criteria();
 				criteria.addEqualExpression(beanCompanyActivity.getFieldName(ICMSAlias.COMPANY_ACTIVITY_ACTIVITY_ID), ident);
+				criteria.addOrder(beanCompanyActivity.getFieldName(ICMSAlias.COMPANY_ACTIVITY_COMPANY_NAME));
 				List<ITransferObject> l_company = (List<ITransferObject>)beanCompanyActivity.getList(criteria);
-				if (l_company.isEmpty())
-					getLogger().warning("La actividad "+a.getAlias()+" no tiene empresas.");
-				for (ITransferObject company : l_company){
-					lstCompanies.add(new CompanyHandler(((CompanyActivity)company).getCompany()));
+				if ( l_company.isEmpty() ) {
+					getLogger().warning("La actividad "+a.getAlias()+" no tiene empresas.");	
+				}
+				for (ITransferObject to : l_company){
+					Company company = ((CompanyActivity)to).getCompany();
+					lstCompanies.add( new CompanyHandler(company) );
 				}
 				ActivityHandler lch = new ActivityHandler(lcd,lstCompanies);
 				return lch;

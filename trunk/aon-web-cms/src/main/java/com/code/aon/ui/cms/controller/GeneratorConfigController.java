@@ -46,7 +46,11 @@ public class GeneratorConfigController {
 		IManagerBean bean = BeanManager.getManagerBean(Section.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SECTION_DEFAULT_), true);
-		return (Section)bean.getList(criteria).iterator().next();
+		List<ITransferObject> list = bean.getList(criteria);
+		if (! list.isEmpty() ) {
+			return (Section) list.get(0);
+		}
+		return null;
 	}
 
 	public static Section currentSection(Class pojoClass) throws ManagerBeanException{
