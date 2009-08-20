@@ -11,89 +11,30 @@
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
-		<aon:form id="main_form">
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
-				
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.product_category}"/>	  						
-					</aon:div>					
-					
-					<aon:div styleClass="aon-finding-subtitle-internal">
-							<aon:outputText
-								value="#{productCategory.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-					</aon:div>					
-						
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">					
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							rendered="#{!product_category.new and cms.roleEditor}"
-							action="product_category_form"
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}">
-							<aon:actionListener method="#{productCategory.onReset}" />
-						</aon:commandButton>
-						<aon:commandButton id="save"
-							value="#{bundle.aon_save}" 
-							rendered="#{productCategory.to!=null or productCategory.new}"
-							reRender="main_form"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}">
-							<aon:actionListener method="#{productCategory.accept}" />
-						</aon:commandButton>
-						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" 
-							rendered="#{!productCategory.new and cms.roleEditor}" 
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-delete"
-							confirmTitle="Confirmation Dialog" 
-							confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{productCategory.onRemove}"
-							confirmAction="product_category_list"
-							accesskey="#{bundle.aon_key_remove}"/>
-						<aon:commandButton id="search" 
-							value="#{bundle.aon_search}"
-							immediate="#{true}"
-							action="product_category_search"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}">
-							<aon:actionListener method="#{productCategory.onEditSearch}" />
-						</aon:commandButton>
-						<aon:commandButton id="list"
-							value="#{bundle.aon_list}"
-							action="product_category_list" 
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}">
-							<aon:actionListener method="#{productCategory.onCancel}" />
-						</aon:commandButton>
-						<aon:commandButton id="exit"
-							value="#{bundle.aon_close}"
-							action="#{productCategory.getBack}" 
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}">
-							<aon:actionListener method="#{productCategory.onCancel}" />
-						</aon:commandButton>
-						<!-- 
-						<aon:commandButton id="partial_generate" reRender="aonStatus"
-							value="#{appBundle.aon_generate}" 
-							rendered="#{productCategory.to!=null}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}">
-							<aon:actionListener method="#{generator.onGenerateCurrentProductCategory}" />
-							<a4j:support 
-								event="onclick" reRender="poll,grid" 
-								actionListener="#{generator_status.onActivePoll}"  
-								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
-						</aon:commandButton>
-						 -->
-				    </aon:div>
-					
-				</aon:panelGrid>
-			</aon:div>
+	
+		<aon:form id="productCategoryForm">
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.product_category}" />
+				<ui:param name="controller" value="#{productCategory}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:param name="skipRemoveButton" value="#{!cms.roleEditor}" />
+				<ui:define name="beforeSpinToolbarContent">
+					<!-- 
+					<aon:commandButton id="partial_generate" reRender="aonStatus"
+						value="#{appBundle.aon_generate}" 
+						rendered="#{productCategory.to!=null}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_save}">
+						<aon:actionListener method="#{generator.onGenerateCurrentProductCategory}" />
+						<a4j:support 
+							event="onclick" reRender="poll,grid" 
+							actionListener="#{generator_status.onActivePoll}"  
+							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+					</aon:commandButton>
+					 -->
+				</ui:define>
+			</ui:decorate>
 			
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="main_panel" columns="2" dir="true">
@@ -115,7 +56,7 @@
 					<aon:outputLabel for="ProductCategory_section"
 						value="#{appBundle.section}"/>
 					<aon:selectOneMenu id="ProductCategory_section"  
-						value="#{productCategory.to.section.id}">
+						value="#{productCategory.to.section}">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{collections.sectionList}" />
 					</aon:selectOneMenu>
@@ -243,7 +184,7 @@
 										confirmTitle="Confirmation Dialog" 
 										confirmMessage="#{bundle.aon_remove_confirm}"
 										confirmActionListener="#{subCategory.onRemove}" 
-										confirmAction="product_category_form"
+										confirmAction="productCategory_form"
 										styleClass="aon-finding-toolbar-item aon-icon-delete"
 										accesskey="#{bundle.aon_key_remove}"/>
 							    </aon:div>

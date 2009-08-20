@@ -11,7 +11,8 @@
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
-		<aon:form id="main_form">
+	
+		<aon:form id="faqCategoryForm">
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
@@ -144,7 +145,7 @@
 					<aon:outputLabel for="DownloadCategory_section"
 						value="#{appBundle.section}"/>
 					<aon:selectOneMenu id="DownloadCategory_section"  
-						value="#{download_category.to.section.id}">
+						value="#{download_category.to.section}">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{collections.sectionList}" />
 					</aon:selectOneMenu>

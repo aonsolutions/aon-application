@@ -40,6 +40,8 @@ public class ModularPage implements ITransferObject {
 	private Section section;
 	
 	private Set<ModularPageOption> options;
+	
+	private Set<ModularPageDetail> details;
 
 	@Id
 	@GeneratedValue
@@ -96,6 +98,15 @@ public class ModularPage implements ITransferObject {
 	public void setOptions( Set<ModularPageOption> options ) {
 		this.options = options;
 	}
+	
+	@OneToMany(mappedBy = "modular_page", cascade={CascadeType.REMOVE})
+	public Set<ModularPageDetail> getDetails() {
+		return this.details;
+	}
+
+	public void setDetails( Set<ModularPageDetail> details ) {
+		this.details = details;
+	}	
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "section")

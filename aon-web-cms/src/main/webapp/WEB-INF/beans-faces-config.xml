@@ -117,18 +117,9 @@
 			<value>GenericPageDetail_language_id</value>
 		</managed-property>
 		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{genericPageControllerListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>genericPageControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.cms.event.GenericPageControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
+			<property-name>defaultOrder</property-name>
+			<value>GenericPage_active DESC,GenericPage_alias</value>
+		</managed-property>								
 	</managed-bean>
 
 	<!-- ************** MENU ************** -->
@@ -233,18 +224,9 @@
 			<value>LinkCategoryDetail_language_id</value>
 		</managed-property>
 		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{linkCategoryListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>linkCategoryListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.cms.event.LinkCategoryControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
+			<property-name>defaultOrder</property-name>
+			<value>LinkCategory_alias</value>
+		</managed-property>										
 	</managed-bean>
 
 	<!-- ************** LINK ************** -->
@@ -313,18 +295,9 @@
 			<value>FaqCategoryDetail_language_id</value>
 		</managed-property>
 		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{faqCategoryListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>faqCategoryListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.cms.event.FaqCategoryControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
+			<property-name>defaultOrder</property-name>
+			<value>FaqCategory_alias</value>
+		</managed-property>								
 	</managed-bean>
 
 	<!-- ************** FAQ ************** -->
@@ -704,18 +677,9 @@
 			<value>DownloadCategoryDetail_language_id</value>
 		</managed-property>
 		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{downloadCategoryListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>downloadCategoryListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.cms.event.DownloadCategoryControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
+			<property-name>defaultOrder</property-name>
+			<value>AlbumCategory_alias</value>
+		</managed-property>								
 	</managed-bean>
 
 	<!-- ************** DOWNLOAD ************** -->
@@ -1083,6 +1047,10 @@
 			<property-name>languageAlias</property-name>
 			<value>ModularPageDetail_language_id</value>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ModularPage_homepage DESC,ModularPage_active DESC,ModularPage_alias</value>
+		</managed-property>										
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
