@@ -117,7 +117,7 @@ public class BannerCategory implements ITransferObject, IPositionObject {
 			.append(alias)
 			.append(id)	
 			.append(position)
-			.append(section)
+			.append( section != null ? section.getId() : null )
 			.toHashCode();
 	}
 
