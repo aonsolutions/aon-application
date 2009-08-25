@@ -399,6 +399,10 @@ public class CollectionsController implements ICMSConstants {
 	}
 
 	public List<SelectItem> getSectionList() throws ManagerBeanException {
+		return getSectionList(true);
+	}
+
+	public List<SelectItem> getSectionList( boolean onlyId ) throws ManagerBeanException {
 		List<SelectItem> itemList = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(Section.class);
 		Criteria criteria = new Criteria();
@@ -407,13 +411,12 @@ public class CollectionsController implements ICMSConstants {
 		for (int i = 0; i < list.size(); i++) {
 			Section section = (Section)list.get(i);
 			String name = section.getAlias();
-			SelectItem item = new SelectItem(section, name);
+			SelectItem item = new SelectItem( onlyId ? section.getId() : section, name);
 			itemList.add(item);
 		}
-		sort( itemList );
 		return itemList;
 	}
-
+	
 	public List<SelectItem> getModularPageOptionTypes() throws ManagerBeanException, ExpressionException {
 		DomainUtilities domainUtilities = (DomainUtilities)AonUtil.getRegisteredBean(DOMAIN_UTILS);
 		List<SelectItem> types = new LinkedList<SelectItem>();

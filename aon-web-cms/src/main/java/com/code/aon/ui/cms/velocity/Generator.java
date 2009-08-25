@@ -38,8 +38,6 @@ public class Generator implements ICMSConstants, IVelocityConstants {
 
 	public void generate(VelocityUtil vu, Templates type, String contentTemplate, String name) {
 		File template = getIndexTemplate();
-		if (type == Templates.LANGUAGE) template = getLanguageTemplate();
-		if (type == Templates.CAPTCHA) template = getCaptchaTemplate();
 		String content = contentTemplate;
 		File page = getPage(type, name);
 		
@@ -55,30 +53,7 @@ public class Generator implements ICMSConstants, IVelocityConstants {
 	}
 
 	private static File getIndexTemplate() {
-		String template = Templates.INDEX.getTemplateName();
-		File file = new File( ControllerUtil.getCurrentVmTemplatePath(), template );
-		if ( file.exists() ) {
-			return file;
-		}
-		return null;
-	}
-
-	private static File getLanguageTemplate() {
-		String template = Templates.LANGUAGE.getTemplateName();
-		File file = new File( ControllerUtil.getCurrentVmTemplatePath(), template );
-		if ( file.exists() ) {
-			return file;
-		}
-		return null;
-	}
-
-	private static File getCaptchaTemplate() {
-		String template = Templates.CAPTCHA.getTemplateName();
-		File file = new File( ControllerUtil.getCurrentVmTemplatePath(), template );
-		if ( file.exists() ) {
-			return file;
-		}
-		return null;
+		return getTemplateFile(Templates.INDEX);
 	}
 
 	private static String getContentTemplate(Templates t) {
@@ -87,6 +62,10 @@ public class Generator implements ICMSConstants, IVelocityConstants {
 		else return null;
 	}
 
+	public static File getPage(Templates t) {
+		return getPage(t, "");
+	}
+	
 	private static File getPage(Templates t, String name) {
 		String page = t.getHtmlName().replaceAll("%NAME%", name);
 		if (t == Templates.LANGUAGE) {
@@ -106,4 +85,13 @@ public class Generator implements ICMSConstants, IVelocityConstants {
 		return full_path.exists();
 	}
 
+	public static File getTemplateFile( Templates t ) {
+		String template = t.getTemplateName();
+		File file = new File( ControllerUtil.getCurrentVmTemplatePath(), template );
+		if ( file.exists() ) {
+			return file;
+		}
+		return null;
+	}
+	
 }
