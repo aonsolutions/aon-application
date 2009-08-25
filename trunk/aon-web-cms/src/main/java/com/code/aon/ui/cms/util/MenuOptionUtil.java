@@ -194,7 +194,7 @@ public class MenuOptionUtil implements ICMSConstants {
 				break;
 			case FAQ:
 				if (ContentLevel.SECTION.equals(level)){
-					idents = collections.getSectionList();
+					idents = collections.getSectionList(true);
 				} else if (ContentLevel.CATEGORY.equals(level)){
 					idents = collections.getFaqCategoryList();
 				} else if (ContentLevel.ELEMENT.equals(level)){
@@ -203,7 +203,7 @@ public class MenuOptionUtil implements ICMSConstants {
 				break;
 			case LINK:
 				if (ContentLevel.SECTION.equals(level)){
-					idents = collections.getSectionList();
+					idents = collections.getSectionList(true);
 				} else if (ContentLevel.CATEGORY.equals(level)){
 					idents = collections.getLinkCategoryList();
 				} else if (ContentLevel.ELEMENT.equals(level)){

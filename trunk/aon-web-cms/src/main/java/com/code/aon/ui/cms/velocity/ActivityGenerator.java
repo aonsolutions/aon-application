@@ -22,23 +22,19 @@ public class ActivityGenerator extends Generator {
 	public static Object getActivityHandler(Integer ident) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Activity.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ACTIVITY_ID), ident);
-			List<ITransferObject> l = bean.getList(criteria);
-			if (l.isEmpty()){
+			Activity a = (Activity) bean.get(ident);
+			if ( a == null ){
 				getLogger().warning("ACTIVIDAD "+ident+" REFERENCIADA NO EXISTE !!!");
 				return null;
-			}
-			Activity a = (Activity) l.get(0);
-			
+			}		
 			IManagerBean beanDetail = BeanManager.getManagerBean(ActivityDetail.class);
-			criteria = new Criteria();
+			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.ACTIVITY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 			criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.ACTIVITY_DETAIL_ACTIVITY_ID), ident);
 			List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
-			if (ld.isEmpty()){
+			if (ld.isEmpty()) {
 				getLogger().warning("La actividad "+a.getAlias()+" no esta internacionalizada");
-			}else{
+			} else {
 				ActivityDetail lcd = (ActivityDetail)ld.get(0);
 				List<CompanyHandler> lstCompanies = new ArrayList<CompanyHandler>();
 				IManagerBean beanCompanyActivity = BeanManager.getManagerBean(CompanyActivity.class);
@@ -49,8 +45,8 @@ public class ActivityGenerator extends Generator {
 				if ( l_company.isEmpty() ) {
 					getLogger().warning("La actividad "+a.getAlias()+" no tiene empresas.");	
 				}
-				for (ITransferObject to : l_company){
-					Company company = ((CompanyActivity)to).getCompany();
+				for (ITransferObject _company : l_company) {
+					Company company = ((CompanyActivity)_company).getCompany();
 					lstCompanies.add( new CompanyHandler(company) );
 				}
 				ActivityHandler lch = new ActivityHandler(lcd,lstCompanies);

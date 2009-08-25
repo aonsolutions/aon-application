@@ -22,8 +22,7 @@
 					</aon:div>					
 					
 					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{appBundle.aon_listing}" />
+						<aon:outputText value="#{appBundle.aon_listing}" />
 					</aon:div>					
 						
 					<!-- start toolbar navigation -->
@@ -51,34 +50,36 @@
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
 				
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText
-							value="#{appBundle.aon_editing}:" />
+						<aon:outputText value="#{appBundle.aon_editing}:" />
 					</aon:div>					
 						
 					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{menu.currentType.name}" />
+						<aon:outputText value="#{menu.currentType.name}" />
 					</aon:div>					
 						
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
 						<aon:commandButton id="tab_0" 
 							value="#{appBundle.menu_sidebar}"
+							disabled="#{menu.currentType == 'SIDEBAR'}"
 							styleClass="aon-finding-toolbar-item-no-icon"
 							reRender="menuListDiv,parentGrid"
 							actionListener="#{menu.onTab0}" />
 						<aon:commandButton id="tab_1" 
 							value="#{appBundle.menu_top}"
+							disabled="#{menu.currentType == 'TOP'}"
 							styleClass="aon-finding-toolbar-item-no-icon"
 							reRender="menuListDiv,parentGrid"
 							actionListener="#{menu.onTab1}" />
 						<aon:commandButton id="tab_2" 
 							value="#{appBundle.menu_foot}"
+							disabled="#{menu.currentType == 'FOOT'}"
 							styleClass="aon-finding-toolbar-item-no-icon"
 							reRender="menuListDiv,parentGrid"
 							actionListener="#{menu.onTab2}" />
 						<aon:commandButton id="tab_3" 
 							value="#{appBundle.menu_inner}"
+							disabled="#{menu.currentType == 'INNER'}"
 							styleClass="aon-finding-toolbar-item-no-icon"
 							reRender="menuListDiv,parentGrid"
 							actionListener="#{menu.onTab3}" />

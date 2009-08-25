@@ -370,10 +370,10 @@ public class GeneratorController implements Constants, ICMSConstants {
 			if ( jsPath.exists() ) {
 				FileUtils.copyDirectoryToDirectory(jsPath, ControllerUtil.getPreviewPath());
 			}
+			new CommonGenerator().generateBasicPages();			
 		} catch (IOException e) {
 			generatorError(e);
 		}
-		new CommonGenerator().generateBasicPages();
 	}
 
 	private void finalizeGenerator() {
