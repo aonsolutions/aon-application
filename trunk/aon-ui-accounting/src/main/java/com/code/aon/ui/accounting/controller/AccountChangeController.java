@@ -91,8 +91,7 @@ public class AccountChangeController {
 					criteria.addEqualExpression(security, securityLevel);
 				}
 				if (balancingAccount != null) {
-					criteria.addEqualExpression(accountBalancing,
-							balancingAccount.getId());
+					criteria.addEqualExpression(accountBalancing, balancingAccount.getId());
 				}
 
 				List<ITransferObject> accountDetailList = bean.getList(criteria);
@@ -107,17 +106,19 @@ public class AccountChangeController {
 				}
 
 				criteria = new Criteria();
-				criteria.addEqualExpression(accountBalancing, initAccount
-						.getId());
+				criteria.addEqualExpression(accountBalancing, initAccount.getId());
 				criteria.addEqualExpression(accperiod, period.getId());
 				if (fromDate != null) {
 					criteria.addGreaterThanOrEqualExpression(date, fromDate);
 				}
-				if (fromDate != null) {
+				if (toDate != null) {
 					criteria.addLessThanOrEqualExpression(date, toDate);
 				}
 				if (securityLevel != null) {
 					criteria.addEqualExpression(security, securityLevel);
+				}
+				if (balancingAccount != null) {
+					criteria.addEqualExpression(accountInit, balancingAccount.getId());
 				}
 
 				accountDetailList = bean.getList(criteria);
