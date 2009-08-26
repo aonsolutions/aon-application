@@ -46,7 +46,7 @@ public class CommonGenerator extends Generator implements ICMSConstants {
 
 	private void generatePage( Templates template) throws IOException {
 		File file = Generator.getTemplateFile(template);
-		if ( file.exists() ) {
+		if ( (file != null) && file.exists() ) {
 			FileUtils.copyFile( file, Generator.getPage(template) );
 		}
 	}

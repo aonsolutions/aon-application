@@ -192,7 +192,7 @@ public class CollectionsController implements ICMSConstants {
 		return languajes;
 	}
 	
-	public List<SelectItem> getBrands() throws ManagerBeanException, ExpressionException {
+	public List<SelectItem> getBrands() throws ManagerBeanException {
 		List<SelectItem> brands = new LinkedList<SelectItem>();
 		IManagerBean brandBean = BeanManager.getManagerBean(Brand.class);
 		Criteria criteria = new Criteria();
@@ -698,7 +698,7 @@ public class CollectionsController implements ICMSConstants {
 		return select_list;
 	}
 
-	public List<SelectItem> getParentCategories() throws ManagerBeanException, ExpressionException {
+	public List<SelectItem> getParentCategories() throws ManagerBeanException {
 		List<SelectItem> categories = new LinkedList<SelectItem>();
 		IManagerBean categoryBean = BeanManager.getManagerBean(ProductCategory.class);
 		Criteria criteria = new Criteria();
@@ -715,7 +715,7 @@ public class CollectionsController implements ICMSConstants {
 		return categories;
 	}
 	
-	public List<SelectItem> getCategories() throws ManagerBeanException, ExpressionException {
+	public List<SelectItem> getCategories() throws ManagerBeanException {
 		List<SelectItem> categories = new LinkedList<SelectItem>();
 		IManagerBean categoryBean = BeanManager.getManagerBean(ProductCategory.class);
 		Criteria criteria = new Criteria();
@@ -723,21 +723,19 @@ public class CollectionsController implements ICMSConstants {
 		criteria.addNullExpression(categoryBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_PARENT_ID));
 		List<ITransferObject> list = (List<ITransferObject>)categoryBean.getList(criteria);
 		for (int i = 0; i < list.size(); i++) {
-			SelectItem item;
 			ProductCategory pcd = (ProductCategory)list.get(i);
 			IManagerBean categorySubCatBean = BeanManager.getManagerBean(ProductCategory.class);
 			Criteria criteriaSubCat = new Criteria();
 			criteriaSubCat.addEqualExpression(categorySubCatBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_ACTIVE),true);
-			criteriaSubCat.addExpression(categorySubCatBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_PARENT_ID), ""+pcd.getId());
+			criteriaSubCat.addEqualExpression(categorySubCatBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_PARENT_ID), pcd.getId());
 			List<ITransferObject> listSubCat = (List<ITransferObject>)categorySubCatBean.getList(criteriaSubCat);
 			SelectItem[] subList = new SelectItem[listSubCat.size()];
 			for (int j = 0; j < listSubCat.size(); j++) {
-				SelectItem subItem;
 				ProductCategory pcdSubCat = (ProductCategory)listSubCat.get(j);
-				subItem = new SelectItem(pcdSubCat.getId(),"-"+pcdSubCat.getAlias());
+				SelectItem subItem = new SelectItem(pcdSubCat.getId(),"-"+pcdSubCat.getAlias());
 				subList[j] = subItem; 
 			}
-			item = new SelectItemGroup(pcd.getAlias(),pcd.getAlias(),true,subList);
+			SelectItem item = new SelectItemGroup(pcd.getAlias(),pcd.getAlias(),true,subList);
 			categories.add(item);
 		}
 		return categories;

@@ -48,7 +48,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.cms</artifactId>
-			<version>3.5.0</version>
+			<version>3.5.1</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>

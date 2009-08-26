@@ -180,7 +180,7 @@
 							<aon:dataScroller2 for="dataTable" showNote="true" />
 						</aon:div>					
 						
-						<aon:div rendered="#{menu_option.new or menu_option.to != null}">
+						<c:if test="#{menu_option.new or menu_option.to != null}">
 						
 							<aon:div styleClass="aon-toolbar">
 								
@@ -193,12 +193,12 @@
 										<aon:actionListener method="#{menu_option.onReset}" />
 									</aon:commandButton>
 									<aon:commandButton id="save_list_form"
-										value="#{bundle.aon_save}" 
+										value="#{bundle.aon_save}"
+										actionListener="#{menu_option.accept}" 
 										rendered="#{menu_option.to!=null or menu_option.new}"
 										reRender="detail_panel"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										accesskey="#{bundle.aon_key_save}">
-										<aon:actionListener method="#{menu_option.accept}" />
 									</aon:commandButton>
 									<aon:commandButton id="cancel_list_form"
 										value="#{bundle.aon_cancel}" 
@@ -241,37 +241,34 @@
 									<aon:outputText for="MenuOption_separator"
 										value="#{appBundle.menu_option_separator}" />
 									<aon:selectBooleanCheckbox id="MenuOption_separator"
-											value="#{menu_option.to.separator}">
+										value="#{menu_option.to.separator}">
 									</aon:selectBooleanCheckbox>
 									
 									<aon:outputLabel for="MenuOption_type"
 										value="#{appBundle.menu_option_type}" />
-									<aon:selectOneMenu id="MenuOption_type" 
+									<aon:selectOneMenu id="MenuOption_type" required="true"
 										value="#{menu_option.to.type}" >
-										<f:selectItems value="#{collections.pageTypes}">
-										</f:selectItems>
-											<a4j:support 
-												event="onchange"  
-												reRender="menuOptionGrid" />
+										<f:selectItems value="#{collections.pageTypes}" />
+										<a4j:support event="onchange" reRender="menuOptionGrid" />
 									</aon:selectOneMenu> 
 				
 									<aon:outputLabel for="MenuOption_level"
 										value="#{appBundle.menu_option_level}" rendered="#{menu_option.visibleLevel}"/>
 									<aon:selectOneMenu id="MenuOption_level" rendered="#{menu_option.visibleLevel}" 
 										value="#{menu_option.to.level}" required="true">
-										<f:selectItems value="#{menu_option.levels}">
-										</f:selectItems>
-											<a4j:support 
-												event="onchange"  
-												reRender="menuOptionGrid" />
+										<f:selectItems value="#{menu_option.levels}" />
+										<a4j:support event="onchange" reRender="menuOptionGrid" />
 									</aon:selectOneMenu>
 				
 									<aon:outputLabel for="MenuOption_ident"
 										value="#{appBundle.menu_option_ident}" rendered="#{menu_option.visibleIdent}"/>
-									<aon:selectOneMenu id="MenuOption_ident" rendered="#{menu_option.visibleIdent}" 
-										value="#{menu_option.to.ident}">
-										<f:selectItems value="#{menu_option.idents}" />
-									</aon:selectOneMenu> 
+									<aon:div rendered="#{menu_option.visibleIdent}">
+										<aon:selectOneMenu id="MenuOption_ident" rendered="#{!(empty menu_option.idents)}" 
+											value="#{menu_option.to.ident}" required="true">
+											<f:selectItems value="#{menu_option.idents}" />
+										</aon:selectOneMenu>
+										<aon:outputText value="No hay elementos" rendered="#{empty menu_option.idents}" />											
+									</aon:div>
 				
 									<aon:outputLabel for="MenuOptionDetail_url"
 										value="#{appBundle.menu_option_url}" rendered="#{menu_option.visibleUrl}"/>
@@ -281,7 +278,7 @@
 				
 								</aon:panelGrid>
 							</aon:div>
-						</aon:div>
+						</c:if>
 					</aon:div>
 				</aon:div>
 			</aon:div>
