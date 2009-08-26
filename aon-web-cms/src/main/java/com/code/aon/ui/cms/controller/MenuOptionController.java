@@ -1,5 +1,6 @@
 package com.code.aon.ui.cms.controller;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -114,7 +115,7 @@ public class MenuOptionController extends BasicI18nController implements IOrdere
 		return MenuOptionUtil.getLevels(mo.getType());
 	}
 
-	public List<SelectItem> getIdents() throws ManagerBeanException, ExpressionException {
+	public List<SelectItem> getIdents() throws ManagerBeanException {
 		MenuOption mo = (MenuOption)getTo();
 		return MenuOptionUtil.getIdents(mo.getType(),mo.getLevel());
 	}
@@ -145,4 +146,11 @@ public class MenuOptionController extends BasicI18nController implements IOrdere
 		}
 	}
 
+	public void onClearPageType(ActionEvent event) {
+		MenuOption mo = (MenuOption)getTo();
+		mo.setType( null );
+		mo.setLevel( null );
+		mo.setIdent( null );
+	}
+	
 }
