@@ -379,17 +379,21 @@ public class AccountEntryInvoiceWriter {
 		if (basesPerAccount.size() > 0) {
 			Iterator<Account> iterator = basesPerAccount.keySet().iterator();
 			while (iterator.hasNext()) {
-				entryDetail = new AccountEntryDetail();
-				entryDetail.setAccount(iterator.next());
-				entryDetail.setAccountEntry(entry);
-				entryDetail.setBalancingAccount(account);
-				entryDetail.setConcept(concept);
-				if (entry.getType().equals(AccountEntryType.SALES_INVOICE)) {
-					entryDetail.setCredit((basesPerAccount.get(entryDetail.getAccount())).doubleValue());
-				} else {
-					entryDetail.setDebit((basesPerAccount.get(entryDetail.getAccount())).doubleValue());
+				Account baseAccount = iterator.next();
+				double base = (basesPerAccount.get(baseAccount)).doubleValue();
+				if (base != 0) {
+					entryDetail = new AccountEntryDetail();
+					entryDetail.setAccount(baseAccount);
+					entryDetail.setAccountEntry(entry);
+					entryDetail.setBalancingAccount(account);
+					entryDetail.setConcept(concept);
+					if (entry.getType().equals(AccountEntryType.SALES_INVOICE)) {
+						entryDetail.setCredit(base);
+					} else {
+						entryDetail.setDebit(base);
+					}
+					entryDetailBean.insert(entryDetail);
 				}
-				entryDetailBean.insert(entryDetail);
 			}
 		}
 	}
