@@ -250,13 +250,14 @@ public class AccountBridgeUtil {
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Account account = new Account();
 			
-			int term = 0; 
-			try {
-				term = Integer.parseInt(loan.getTerm());
-			} catch (NumberFormatException e) {
-				 
-			}
-			String prefix = (term>12)?AccountConstants.LONG_TERM_LOAN_ACCOUNT_PREFIX:AccountConstants.SHORT_TERM_LOAN_ACCOUNT_PREFIX; 
+//			int term = 0; 
+//			try {
+//				term = Integer.parseInt(loan.getTerm());
+//			} catch (NumberFormatException e) {
+//				 
+//			}
+//			String prefix = (term>12)?AccountConstants.LONG_TERM_LOAN_ACCOUNT_PREFIX:AccountConstants.SHORT_TERM_LOAN_ACCOUNT_PREFIX; 
+			String prefix = AccountConstants.SHORT_TERM_LOAN_ACCOUNT_PREFIX;
 			account.setId(getAccountUtil().obtainNextAccountId(prefix));
 			account.setDescription(loan.getDescription());
 			account.setEntryEnabled(true);

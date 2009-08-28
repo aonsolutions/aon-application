@@ -17,6 +17,7 @@ import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.IProgression;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -34,23 +35,29 @@ public class AccountSummaryManager {
 		accountSummaryBean.insert(accountSummary);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void modifyAccountSummary(AccountEntryDetail accountEntryDetail, int factor) throws ManagerBeanException {
-        AccountSummary accountSummary;
         String period = accountEntryDetail.getAccountEntry().getAccountPeriod();
         Account account = accountEntryDetail.getAccount();
         SecurityLevel securityLevel = accountEntryDetail.getAccountEntry().getSecurityLevel();
         Date entryDate = accountEntryDetail.getAccountEntry().getEntryDate();
-        double debit = accountEntryDetail.getDebit() * factor;
-        double credit = accountEntryDetail.getCredit() * factor;
+        double debit = accountEntryDetail.getDebit();
+        double credit = accountEntryDetail.getCredit();
+        modifyAccountSummary(period, account, securityLevel, entryDate, debit, credit, factor);
+	}
+	
+    public void modifyAccountSummary(String period,Account account,SecurityLevel securityLevel,
+    		Date entryDate,double debit,double credit,int factor) throws ManagerBeanException {
 
+        debit = debit * factor;
+        credit = credit * factor;
+    	AccountSummary accountSummary;
         IManagerBean accountSummaryBean = BeanManager.getManagerBean(AccountSummary.class);
         Criteria criteria = new Criteria();
         criteria.addEqualExpression(accountSummaryBean.getFieldName(IAccountingAlias.ACCOUNT_SUMMARY_ACCOUNT_PERIOD), period);
         criteria.addEqualExpression(accountSummaryBean.getFieldName(IAccountingAlias.ACCOUNT_SUMMARY_ACCOUNT_ID), account.getId());
         criteria.addEqualExpression(accountSummaryBean.getFieldName(IAccountingAlias.ACCOUNT_SUMMARY_SECURITY_LEVEL), securityLevel);
         criteria.addEqualExpression(accountSummaryBean.getFieldName(IAccountingAlias.ACCOUNT_SUMMARY_ENTRY_DATE), entryDate);
-        Iterator iterator = accountSummaryBean.getList(criteria).iterator();
+        Iterator<ITransferObject> iterator = accountSummaryBean.getList(criteria).iterator();
         if (iterator.hasNext()) {
             accountSummary = (AccountSummary)iterator.next();
         } else {

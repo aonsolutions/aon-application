@@ -22,6 +22,7 @@
 	        <listener>com.code.aon.accounting.event.AccountEntryDetailSummaryBeanListener</listener>
 	        <listener>com.code.aon.accounting.event.AccountHelperBeanListener</listener>
 		</listeners>
+
 		<vetoListeners>
 	        <vetoListener>com.code.aon.accounting.event.AccountEntryDetailBeanVetoListener</vetoListener>
 	        <vetoListener>com.code.aon.accounting.event.AccountEntryDetailSummaryBeanVetoListener</vetoListener>
@@ -29,6 +30,16 @@
 		</vetoListeners>
 	</bean>
 	
+	<bean description="Listener que se encarga de crear las lineas de amortizacion.">
+		<pojo>com.code.aon.accounting.Amortization</pojo>
+		<listeners>
+	        <listener>com.code.aon.accounting.event.AmortizationBeanListener</listener>
+		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.accounting.event.AmortizationVetoableBeanListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
 	<bean description="Listener que se encarga de validar los tipos de amortizacion.">
 		<pojo>com.code.aon.accounting.AmortizationType</pojo>
 		<vetoListeners>

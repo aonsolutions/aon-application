@@ -59,7 +59,7 @@ public class Summary {
 	}
 
 	public String getShortDescription() {
-		return StringUtils.abbreviate(getDescription(), 50);
+		return StringUtils.abbreviate(getDescription(), 70);
 	}
 
 	public void setDescription(String description) {

@@ -8,6 +8,7 @@ public class InvoiceEntryDetail implements ITransferObject {
 
 	private static final long serialVersionUID = -2335488721813209995L;
 
+	private Integer id;
 	private double taxableBase;
 	private double vatPercent;
 	private double vatQuota;
@@ -19,6 +20,13 @@ public class InvoiceEntryDetail implements ITransferObject {
 
 	public InvoiceEntryDetail() {
 		super();
+	}
+
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public double getTaxableBase() {
