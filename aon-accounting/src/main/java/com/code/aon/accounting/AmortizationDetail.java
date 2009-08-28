@@ -20,6 +20,7 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.util.CommonUtil;
 
 /**
  * Entity class for representing an account.
@@ -44,8 +45,10 @@ public class AmortizationDetail implements ITransferObject {
     private AccountEntry accountEntry;
     private Double accumulated;
     private Double pending;
+    private Double fiscalAccumulated;
+	private Double fiscalPending;
+	private boolean checked;
 
-	
 	@Id
     @GeneratedValue	
 	public Integer getId() {
@@ -153,6 +156,52 @@ public class AmortizationDetail implements ITransferObject {
 
 	public void setPending(Double pending) {
 		this.pending = pending;
+	}
+
+	@Transient
+	public Double getFiscalAccumulated() {
+		return fiscalAccumulated;
+	}
+
+	public void setFiscalAccumulated(Double fiscalAccumulated) {
+		this.fiscalAccumulated = fiscalAccumulated;
+	}
+
+	@Transient
+	public Double getFiscalPending() {
+		return fiscalPending;
+	}
+
+	public void setFiscalPending(Double fiscalPending) {
+		this.fiscalPending = fiscalPending;
+	}
+
+	@Transient
+	public double getTaxAdjust() {
+		double a = getAllocation()==null?0.0:getAllocation();
+		double b = getFiscalAllocation()==null?0.0:getFiscalAllocation();
+		return CommonUtil.round(a-b);
+	}
+	
+	@Transient
+	public boolean isUpdatable() {
+		return getStatus() == AmortizationDetailStatus.PENDING;
+	}
+	@Transient
+	public boolean isBlocked() {
+		return getStatus() == AmortizationDetailStatus.BLOCKED;
+	}
+	@Transient
+	public boolean isScored() {
+		return getStatus() == AmortizationDetailStatus.SCORED;
+	}
+
+	@Transient
+	public boolean isChecked() {
+		return checked;
+	}
+	public void setChecked(boolean checked) {
+		this.checked = checked;
 	}
 
 	@Override

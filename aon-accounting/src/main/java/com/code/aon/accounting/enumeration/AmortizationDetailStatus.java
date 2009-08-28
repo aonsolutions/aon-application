@@ -12,7 +12,9 @@ public enum AmortizationDetailStatus implements IResourceable {
 	
     PENDING,
 
-    SCORED;
+    SCORED,
+    
+    BLOCKED;
 	
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.accounting.i18n.messages";
