@@ -34,33 +34,24 @@
 
 					<aon:outputLabel for="fixedAccountId"
 						value="#{accountingBundle.accounting_fixed_asset_account}" />
-					<ui:include
-						src="/com/code/aon/ui/account/facelet/lookup/account/accountLookup.xhtml">
-						<ui:param name="id" value="fixedAccountId" />
-						<ui:param name="required" value="#{true}" />
-						<ui:param name="entity" value="#{amortizationType.to.fixedAssetAccount}" />
-						<ui:param name="ELExpression" value="amortizationType.to.fixedAssetAccount" />
-					</ui:include>
+					<aon:selectOneMenu id="fixedAccountId" required="true"  value="#{amortizationType.to.fixedAssetAccount}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{accountCollections.fixedAssetAccounts}" />
+					</aon:selectOneMenu>
 
 					<aon:outputLabel for="accumulatedAccountId"
 						value="#{accountingBundle.accounting_accumulated_account}" />
-					<ui:include
-						src="/com/code/aon/ui/account/facelet/lookup/account/accountLookup.xhtml">
-						<ui:param name="id" value="accumulatedAccountId" />
-						<ui:param name="required" value="#{true}" />
-						<ui:param name="entity" value="#{amortizationType.to.accumulatedAccount}" />
-						<ui:param name="ELExpression" value="amortizationType.to.accumulatedAccount" />
-					</ui:include>
-
+					<aon:selectOneMenu id="accumulatedAccountId" required="true"  value="#{amortizationType.to.accumulatedAccount}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{accountCollections.accumulatedDepreciationAccounts}" />
+					</aon:selectOneMenu>
+ 
 					<aon:outputLabel for="allocationAccountId"
 						value="#{accountingBundle.accounting_allocation_account}" />
-					<ui:include
-						src="/com/code/aon/ui/account/facelet/lookup/account/accountLookup.xhtml">
-						<ui:param name="id" value="allocationAccountId" />
-						<ui:param name="required" value="#{true}" />
-						<ui:param name="entity" value="#{amortizationType.to.allocationAccount}" />
-						<ui:param name="ELExpression" value="amortizationType.to.allocationAccount" />
-					</ui:include>
+					<aon:selectOneMenu id="allocationAccountId" required="true"  value="#{amortizationType.to.allocationAccount}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{accountCollections.amortizationAllocationAccounts}" />
+					</aon:selectOneMenu>
 
 					<aon:outputLabel for="AmortizationType_percentage"
 						value="#{bundle.aon_percentage}" />

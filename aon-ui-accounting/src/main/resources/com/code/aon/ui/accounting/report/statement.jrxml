@@ -79,9 +79,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="198"
+						x="238"
 						y="21"
-						width="63"
+						width="56"
 						height="11"
 						key="textField-46">
 							<printWhenExpression><![CDATA[new Boolean($P{openingEntry} != null && $P{openingEntry}.getDebit() != 0)]]></printWhenExpression>
@@ -98,9 +98,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="261"
+						x="294"
 						y="21"
-						width="63"
+						width="56"
 						height="11"
 						key="textField-47">
 							<printWhenExpression><![CDATA[new Boolean($P{openingEntry} != null && $P{openingEntry}.getCredit() != 0)]]></printWhenExpression>
@@ -138,7 +138,7 @@
 					<reportElement
 						x="144"
 						y="21"
-						width="54"
+						width="93"
 						height="11"
 						key="textField-51">
 							<printWhenExpression><![CDATA[new Boolean($P{openingEntry} != null)]]></printWhenExpression>
@@ -157,7 +157,7 @@
 					<reportElement
 						x="62"
 						y="32"
-						width="136"
+						width="175"
 						height="11"
 						key="textField-52">
 							<printWhenExpression><![CDATA[new Boolean($P{fromOpeningEntry} != null)]]></printWhenExpression>
@@ -174,9 +174,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="198"
+						x="238"
 						y="32"
-						width="63"
+						width="56"
 						height="11"
 						key="textField-54">
 							<printWhenExpression><![CDATA[new Boolean($P{fromOpeningEntry} != null && $P{openingEntry}.getCreditBalance() != 0)]]></printWhenExpression>
@@ -193,9 +193,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="261"
+						x="294"
 						y="32"
-						width="63"
+						width="56"
 						height="11"
 						key="textField-55">
 							<printWhenExpression><![CDATA[new Boolean($P{fromOpeningEntry} != null && $P{fromOpeningEntry}.getCredit() != 0)]]></printWhenExpression>
@@ -212,9 +212,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="324"
+						x="350"
 						y="21"
-						width="63"
+						width="56"
 						height="11"
 						key="textField-56">
 							<printWhenExpression><![CDATA[new Boolean($P{openingEntry} != null && $P{openingEntry}.getUnpaidBalance() != 0)]]></printWhenExpression>
@@ -231,9 +231,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="387"
+						x="406"
 						y="21"
-						width="63"
+						width="56"
 						height="11"
 						key="textField-57">
 							<printWhenExpression><![CDATA[new Boolean($P{openingEntry} != null && $P{openingEntry}.getCreditBalance() != 0)]]></printWhenExpression>
@@ -250,9 +250,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="324"
+						x="350"
 						y="32"
-						width="63"
+						width="56"
 						height="11"
 						key="textField-58">
 							<printWhenExpression><![CDATA[new Boolean($P{fromOpeningEntry} != null && $P{fromOpeningEntry}.getCredit() != 0)]]></printWhenExpression>
@@ -269,9 +269,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="387"
+						x="406"
 						y="32"
-						width="63"
+						width="56"
 						height="11"
 						key="textField-59">
 							<printWhenExpression><![CDATA[new Boolean($P{fromOpeningEntry} != null && $P{fromOpeningEntry}.getCreditBalance() != 0)]]></printWhenExpression>
@@ -292,9 +292,9 @@
 			<band height="16"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="198"
+						x="238"
 						y="2"
-						width="63"
+						width="56"
 						height="12"
 						key="textField-31"/>
 					<box rightPadding="2">					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -309,9 +309,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="261"
+						x="294"
 						y="2"
-						width="63"
+						width="56"
 						height="12"
 						key="textField-32"/>
 					<box rightPadding="2">					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -326,9 +326,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="324"
+						x="350"
 						y="2"
-						width="63"
+						width="56"
 						height="12"
 						key="textField-33"/>
 					<box rightPadding="2">					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -343,9 +343,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="387"
+						x="406"
 						y="2"
-						width="63"
+						width="56"
 						height="12"
 						key="textField-34"/>
 					<box rightPadding="2">					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -528,7 +528,7 @@
 						mode="Opaque"
 						x="0"
 						y="0"
-						width="43"
+						width="33"
 						height="15"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -546,9 +546,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="43"
+						x="33"
 						y="0"
-						width="62"
+						width="52"
 						height="15"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -566,9 +566,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="105"
+						x="85"
 						y="0"
-						width="93"
+						width="152"
 						height="15"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -586,9 +586,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="198"
+						x="238"
 						y="0"
-						width="63"
+						width="56"
 						height="15"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -606,9 +606,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="261"
+						x="294"
 						y="0"
-						width="63"
+						width="56"
 						height="15"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -626,9 +626,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="452"
+						x="462"
 						y="0"
-						width="82"
+						width="73"
 						height="15"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -646,9 +646,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="324"
+						x="350"
 						y="0"
-						width="63"
+						width="56"
 						height="15"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -666,9 +666,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="388"
+						x="406"
 						y="0"
-						width="63"
+						width="56"
 						height="15"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -691,7 +691,7 @@
 					<reportElement
 						x="0"
 						y="0"
-						width="43"
+						width="33"
 						height="11"
 						key="textField-8"/>
 					<box leftPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -706,9 +706,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="261"
+						x="294"
 						y="0"
-						width="63"
+						width="56"
 						height="11"
 						key="textField-9">
 							<printWhenExpression><![CDATA[new Boolean($F{credit}.doubleValue() != 0)]]></printWhenExpression>
@@ -725,9 +725,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="198"
+						x="238"
 						y="0"
-						width="63"
+						width="56"
 						height="11"
 						key="textField-10">
 							<printWhenExpression><![CDATA[new Boolean($F{debit}.doubleValue() != 0)]]></printWhenExpression>
@@ -744,9 +744,10 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="105"
+						mode="Opaque"
+						x="85"
 						y="0"
-						width="93"
+						width="152"
 						height="11"
 						key="textField-11"/>
 					<box leftPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -761,9 +762,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="43"
+						x="33"
 						y="0"
-						width="62"
+						width="52"
 						height="11"
 						key="textField-12"/>
 					<box leftPadding="2">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -778,9 +779,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="450"
+						x="462"
 						y="0"
-						width="85"
+						width="73"
 						height="11"
 						key="textField-24"/>
 					<box leftPadding="7">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -795,9 +796,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="324"
+						x="350"
 						y="0"
-						width="63"
+						width="56"
 						height="11"
 						key="textField-28">
 							<printWhenExpression><![CDATA[new Boolean($F{unpaidBalance}.doubleValue() != 0)]]></printWhenExpression>
@@ -814,9 +815,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="387"
+						x="406"
 						y="0"
-						width="63"
+						width="56"
 						height="11"
 						key="textField-29">
 							<printWhenExpression><![CDATA[new Boolean($F{creditBalance}.doubleValue() != 0)]]></printWhenExpression>

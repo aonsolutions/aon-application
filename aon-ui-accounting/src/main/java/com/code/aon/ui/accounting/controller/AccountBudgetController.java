@@ -320,6 +320,7 @@ public class AccountBudgetController extends BasicController {
 		}
 	}
 	
+/*
 	@Override
 	public void onSearch(ActionEvent event) {
 		try {
@@ -333,5 +334,5 @@ public class AccountBudgetController extends BasicController {
 		}
 		super.onSearch(event);
 	}
-
+*/
 }

@@ -31,6 +31,13 @@
 					<aon:inputText id="Loan_description"
 						value="#{loan.to.description}" size="60" />
 
+					<aon:outputLabel for="Loan_date"
+						value="#{bundle.aon_date}" />
+					<aon:selectInputDate id="Loan_date" required="true"
+						value="#{loan.to.loanDate}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+
 					<aon:outputLabel for="Loan_term"
 						value="#{accountingBundle.accounting_term}" />
 					<aon:div>

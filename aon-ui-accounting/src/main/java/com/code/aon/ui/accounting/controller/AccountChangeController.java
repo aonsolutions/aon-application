@@ -9,6 +9,8 @@ import java.util.logging.Logger;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.InvoiceDetailAccount;
@@ -36,6 +38,9 @@ public class AccountChangeController {
 	private Date fromDate;
 	private Date toDate;
 	private Period period;
+	private String concept;
+	private String debit;
+	private String credit;
 	private SecurityLevel securityLevel;
 	private static final Logger LOGGER = Logger.getLogger(AccountEntryDetail.class.getName());
 	
@@ -48,6 +53,9 @@ public class AccountChangeController {
 		setToDate(null);
 		setPeriod(null);
 		setSecurityLevel(null);
+		setConcept(null);
+		setDebit(null);
+		setCredit(null);
 	}
 	
 
@@ -76,6 +84,9 @@ public class AccountChangeController {
 				String date = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE);
 				String accperiod = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD);
 				String security = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL);
+				String conceptAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_CONCEPT);
+				String debitAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_DEBIT);
+				String creditAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_CREDIT);
 
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(accountInit, initAccount.getId());
@@ -93,7 +104,15 @@ public class AccountChangeController {
 				if (balancingAccount != null) {
 					criteria.addEqualExpression(accountBalancing, balancingAccount.getId());
 				}
-
+				if (!StringUtils.isEmpty(getConcept())) {
+					criteria.addExpression(conceptAlias, getConcept());
+				}
+				if (!StringUtils.isEmpty(getDebit())) {
+					criteria.addExpression(debitAlias, getDebit());
+				}
+				if (!StringUtils.isEmpty(getCredit())) {
+					criteria.addExpression(creditAlias, getCredit());
+				}
 				List<ITransferObject> accountDetailList = bean.getList(criteria);
 
 				for (ITransferObject to : accountDetailList) {
@@ -120,7 +139,15 @@ public class AccountChangeController {
 				if (balancingAccount != null) {
 					criteria.addEqualExpression(accountInit, balancingAccount.getId());
 				}
-
+				if (!StringUtils.isEmpty(getConcept())) {
+					criteria.addExpression(conceptAlias, getConcept());
+				}
+				if (!StringUtils.isEmpty(getDebit())) {
+					criteria.addExpression(debitAlias, getDebit());
+				}
+				if (!StringUtils.isEmpty(getCredit())) {
+					criteria.addExpression(creditAlias, getCredit());
+				}
 				accountDetailList = bean.getList(criteria);
 
 				for (ITransferObject to : accountDetailList) {
@@ -130,10 +157,7 @@ public class AccountChangeController {
 					count++;
 				}
 
-				AonUtil.addInfoMessage("Se han cambiado "+count+" líneas de apuntes. " +
-						"Debe regenerar la contabilidad, (acumulados de " +
-						"cuentas y ayudas de contrapartidas), para que los cambios " +
-						"sean realmente efectivos.");
+				AonUtil.addInfoMessage("Se han cambiado "+count+" líneas de apuntes. ");
 				
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
@@ -243,6 +267,34 @@ public class AccountChangeController {
 
 	public void setFinalAccount(Account finalAccount) {
 		this.finalAccount = finalAccount;
+	}
+	public String getConcept() {
+		return concept;
+	}
+
+
+	public void setConcept(String concept) {
+		this.concept = concept;
+	}
+
+
+	public String getDebit() {
+		return debit;
+	}
+
+
+	public void setDebit(String debit) {
+		this.debit = debit;
+	}
+
+
+	public String getCredit() {
+		return credit;
+	}
+
+
+	public void setCredit(String credit) {
+		this.credit = credit;
 	}
 
 }

@@ -291,7 +291,7 @@
 						mode="Opaque"
 						x="0"
 						y="0"
-						width="77"
+						width="68"
 						height="15"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -309,9 +309,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="78"
+						x="68"
 						y="0"
-						width="204"
+						width="214"
 						height="15"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -417,7 +417,7 @@
 					<reportElement
 						x="0"
 						y="0"
-						width="78"
+						width="68"
 						height="11"
 						forecolor="#000000"
 						key="textField-19">
@@ -435,9 +435,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="78"
+						x="68"
 						y="0"
-						width="205"
+						width="215"
 						height="11"
 						key="textField-20">
 							<printWhenExpression><![CDATA[$F{lastLevel}]]></printWhenExpression>
@@ -532,7 +532,7 @@
 					<reportElement
 						x="0"
 						y="0"
-						width="78"
+						width="68"
 						height="11"
 						forecolor="#999999"
 						key="textField-49">
@@ -550,9 +550,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="78"
+						x="68"
 						y="0"
-						width="205"
+						width="215"
 						height="11"
 						forecolor="#999999"
 						key="textField-50">

@@ -111,6 +111,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	private AccountingUtil accountingUtil;
 	private AccountBridgeUtil accountBridgeUtil;
 	private List<SelectItem> relatedAccounts;
+	private List<InvoiceEntryDetail> removedDetails;
+	private List<Finance> removedFinances;
 
 	public AccountEntryInvoiceWriter getWriter() {
 		if (writer == null) {
@@ -142,6 +144,26 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	
 	public AccountEntryInvoice getAccountEntryInvoice() {
 		return accountEntryInvoice;
+	}
+
+	private List<InvoiceEntryDetail> getRemovedDetails() {
+		if (removedDetails == null) {
+			removedDetails = new LinkedList<InvoiceEntryDetail>();
+		}
+		return removedDetails;
+	}
+	private void setRemovedDetails(List<InvoiceEntryDetail> details) {
+		removedDetails = details;	
+	}
+	
+	private List<Finance> getRemovedFinances() {
+		if (removedFinances == null) {
+			removedFinances = new LinkedList<Finance>();
+		}
+		return removedFinances;
+	}
+	private void setRemovedFinances(List<Finance> details) {
+		removedFinances = details;	
 	}
 
 	public void setAccountEntryInvoice(AccountEntryInvoice accountEntryInvoice) {
@@ -264,69 +286,71 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	}
 
 	private void reset() throws ManagerBeanException {
-		this.isNew = true;
+		setNew(true);
 		initializeHeader();
-		header.setType(InvoiceType.SALES);
+		getHeader().setType(InvoiceType.SALES);
 
-		this.details = new ListDataModel(new LinkedList<InvoiceEntryDetail>());
-		this.currentDetail = null;
-		this.setNewDetail(false);
-		this.finances = new ListDataModel(new LinkedList<Finance>());
-		this.currentFinance = null;
-		this.setNewFinance(false);
+		setDetails(  new ListDataModel(new LinkedList<InvoiceEntryDetail>()));
+		setCurrentDetail(null);
+		setNewDetail(false);
+		setFinances( new ListDataModel(new LinkedList<Finance>()) );
+		setCurrentFinance( null );
+		setNewFinance(false);
+		setRemovedDetails(null);
+		setRemovedFinances(null);
 	}
 
 	private void initializeHeader() throws ManagerBeanException {
-		InvoiceType type = (header != null) ? header.getType() : InvoiceType.SALES;
-		Period period = (header != null && header.getPeriod() != null) ? header.getPeriod() : AccountingPeriodUtil.getDefaultPeriod();
-		Date date = (header != null && header.getDate() != null) ? header.getDate() : new Date();
-		Date taxDate = (header != null && header.getTaxDate() != null) ? header.getTaxDate() : new Date();
-		SecurityLevel securityLevel = (header != null && header.getSecurityLevel() != null) ? header.getSecurityLevel() : SecurityLevel.OFFICIAL;
+		InvoiceType type = (header != null) ? getHeader().getType() : InvoiceType.SALES;
+		Period period = (header != null && getHeader().getPeriod() != null) ? getHeader().getPeriod() : AccountingPeriodUtil.getDefaultPeriod();
+		Date date = (header != null && getHeader().getDate() != null) ? getHeader().getDate() : new Date();
+		Date taxDate = (header != null && getHeader().getTaxDate() != null) ? getHeader().getTaxDate() : new Date();
+		SecurityLevel securityLevel = (header != null && getHeader().getSecurityLevel() != null) ? getHeader().getSecurityLevel() : SecurityLevel.OFFICIAL;
 		AccountAppParamsController c = (AccountAppParamsController) AonUtil.getRegisteredBean(ACCOUNT_APP_PARAM_CONTROLLER_NAME);
 		ApplicationParameter param = c.getParameter(DefaultAccounts.DEFAULT_INVOICE_SERIES);
-		String series = (header != null && !StringUtils.isEmpty(header.getSeries())) ? header.getSeries() : (param != null) ? param.getValue() : null;
+		String series = (header != null && !StringUtils.isEmpty(getHeader().getSeries())) ? getHeader().getSeries() : (param != null) ? param.getValue() : null;
 
-		this.header = new InvoiceEntryHeader();
-		header.setAccount(null);
-		header.setType(type);
-		header.setSeries(series);
-		header.setPeriod(period);
-		header.setDate(date);
-		header.setTaxDate(taxDate);
-		header.setSecurityLevel(securityLevel);
-		header.setRegistry(new Registry());
-		header.setTransaction(InvoiceTransactionType.NATIONAL);
-		header.setInvestment(false);
-		header.setTaxFree(false);
-		header.setWithholding(false);
-		header.setSurcharge(false);
+		setHeader( new InvoiceEntryHeader() );
+		getHeader().setAccount(null);
+		getHeader().setType(type);
+		getHeader().setSeries(series);
+		getHeader().setPeriod(period);
+		getHeader().setDate(date);
+		getHeader().setTaxDate(taxDate);
+		getHeader().setSecurityLevel(securityLevel);
+		getHeader().setRegistry(new Registry());
+		getHeader().setTransaction(InvoiceTransactionType.NATIONAL);
+		getHeader().setInvestment(false);
+		getHeader().setTaxFree(false);
+		getHeader().setWithholding(false);
+		getHeader().setSurcharge(false);
 
-		this.relatedAccounts = null;
+		setRelatedAccounts( null );
 	}
 
 	public boolean isSales() {
-		if (this.header != null) {
-			return header.getType().equals(InvoiceType.SALES);
+		if (getHeader() != null) {
+			return getHeader().getType().equals(InvoiceType.SALES);
 		}
 		return false;
 	}
 
 	public boolean isPurchase() {
-		if (this.header != null) {
-			return header.getType().equals(InvoiceType.PURCHASE);
+		if (getHeader() != null) {
+			return getHeader().getType().equals(InvoiceType.PURCHASE);
 		}
 		return false;
 	}
 
 	public boolean isExpense() {
-		if (this.header != null) {
-			return header.getType().equals(InvoiceType.EXPENSES);
+		if (getHeader() != null) {
+			return getHeader().getType().equals(InvoiceType.EXPENSES);
 		}
 		return false;
 	}
 
 	public void onAdjustTaxableBase(ActionEvent event) {
-		if (header.getTaxableBase() != null) {
+		if (getHeader().getTaxableBase() != null) {
 			try {
 				AccountAppParamsController c = (AccountAppParamsController) AonUtil
 				.getRegisteredBean(ACCOUNT_APP_PARAM_CONTROLLER_NAME);
@@ -337,7 +361,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 					IManagerBean taxBean = BeanManager.getManagerBean(Tax.class);
 					Tax tax = (Tax) taxBean.get(id);
 					if (tax != null) {
-						header.setTaxableBase(CommonUtil.round(header.getTaxableBase() / (1 + (tax.getPercentage()/100))));						
+						getHeader().setTaxableBase(CommonUtil.round(getHeader().getTaxableBase() / (1 + (tax.getPercentage()/100))));						
 					} 
 				}
 				onTaxableBaseWizard(event);
@@ -352,11 +376,11 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		
 	}
 	public void onTaxableBaseWizard(ActionEvent event) {
-		if (header.getAccount() != null) {
-			if (header.getTaxableBase() != null) {
+		if (getHeader().getAccount() != null) {
+			if (getHeader().getTaxableBase() != null) {
 				onNewDetail(event);
-				this.currentDetail.setTaxableBase( header.getTaxableBase()==null?0.0:header.getTaxableBase());
-				taxableBaseChanged(header.getTaxableBase());
+				getCurrentDetail().setTaxableBase( getHeader().getTaxableBase()==null?0.0:getHeader().getTaxableBase());
+				taxableBaseChanged(getHeader().getTaxableBase());
 				onAddDetail(event);
 				onCancelDetail(event);
 			} else {
@@ -428,10 +452,10 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	}
 
 	public void onNewDetail(ActionEvent event) {
-		this.isNewDetail = true;
-		this.currentDetail = new InvoiceEntryDetail();
-		Account a = (header.getAccount() != null) ? header.getAccount() : null;
-		this.currentDetail.setAccount(a);
+		setNewDetail(true);
+		setCurrentDetail( new InvoiceEntryDetail() );
+		Account a = (getHeader().getAccount() != null) ? getHeader().getAccount() : null;
+		getCurrentDetail().setAccount(a);
 
 		AccountAppParamsController c = (AccountAppParamsController) AonUtil
 				.getRegisteredBean(ACCOUNT_APP_PARAM_CONTROLLER_NAME);
@@ -443,9 +467,9 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				IManagerBean taxBean = BeanManager.getManagerBean(Tax.class);
 				Tax tax = (Tax) taxBean.get(id);
 				if (tax != null) {
-					this.currentDetail.setVatPercent(tax.getPercentage());
+					getCurrentDetail().setVatPercent(tax.getPercentage());
 					if (isWithSurcharge()) {
-						this.currentDetail.setSurchargePercent(tax.getSurcharge());
+						getCurrentDetail().setSurchargePercent(tax.getSurcharge());
 					}
 				} else {
 					LOGGER
@@ -467,7 +491,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 					IManagerBean taxBean = BeanManager.getManagerBean(Tax.class);
 					Tax tax = (Tax) taxBean.get(id);
 					if (tax != null) {
-						this.currentDetail.setRetentionPercent(tax.getPercentage());
+						getCurrentDetail().setRetentionPercent(tax.getPercentage());
 					}
 				}
 			} catch (Exception e) {
@@ -477,40 +501,43 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	}
 
 	public void onSelectDetail(ActionEvent event) {
-		this.currentDetail = (InvoiceEntryDetail) details.getRowData();
+		setCurrentDetail((InvoiceEntryDetail) details.getRowData());
 	}
 
 	@SuppressWarnings("unchecked")
 	public void onAddDetail(ActionEvent event) {
-		if (validateDetail(this.currentDetail)) {
+		if (validateDetail(getCurrentDetail())) {
 			// applySurcharge();
-			((List<InvoiceEntryDetail>) this.details.getWrappedData()).add(this.currentDetail);
-			this.currentDetail = new InvoiceEntryDetail();
-			this.setNewDetail(false);
+			((List<InvoiceEntryDetail>) getDetails().getWrappedData()).add(getCurrentDetail());
+			setCurrentDetail(new InvoiceEntryDetail());
+			setNewDetail(false);
 			onNewDetail(event);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public void onRemoveDetail(ActionEvent event) {
-		((LinkedList<InvoiceEntryDetail>) this.details.getWrappedData()).remove(this.currentDetail);
+		if (getCurrentDetail().getId() != null) {
+			getRemovedDetails().add(getCurrentDetail());	
+		}
+		((LinkedList<InvoiceEntryDetail>) getDetails().getWrappedData()).remove(getCurrentDetail());
 	}
 
 	public void onCancelDetail(ActionEvent event) {
-		this.currentDetail = new InvoiceEntryDetail();
-		this.setNewDetail(false);
+		setCurrentDetail( new InvoiceEntryDetail() );
+		setNewDetail(false);
 	}
 
 	@SuppressWarnings("unchecked")
 	public void onUpdateDetail(ActionEvent event) {
-		if (validateDetail(this.currentDetail)) {
+		if (validateDetail(getCurrentDetail())) {
 			// applySurcharge();
-			int i = ((LinkedList<InvoiceEntryDetail>) this.details.getWrappedData())
-					.indexOf(this.currentDetail);
-			((LinkedList<InvoiceEntryDetail>) this.details.getWrappedData()).remove(i);
-			((LinkedList<InvoiceEntryDetail>) this.details.getWrappedData()).add(i,
-					this.currentDetail);
-			this.currentDetail = new InvoiceEntryDetail();
+			int i = ((LinkedList<InvoiceEntryDetail>) getDetails().getWrappedData())
+					.indexOf(getCurrentDetail());
+			((LinkedList<InvoiceEntryDetail>) getDetails().getWrappedData()).remove(i);
+			((LinkedList<InvoiceEntryDetail>) getDetails().getWrappedData()).add(i,
+					getCurrentDetail());
+			setCurrentDetail( new InvoiceEntryDetail() );
 		}
 	}
 
@@ -546,14 +573,14 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 
 	public void onNewFinance(ActionEvent event) {
 		try {
-			this.isNewFinance = true;
-			this.currentFinance = initializeFinance();
+			setNewFinance( true );
+			setCurrentFinance( initializeFinance() );
 			Invoice invoice = isNew() ? new Invoice() : getAccountEntryInvoice().getInvoice();
 			invoice = mergeInvoice(invoice);
-			this.currentFinance.setInvoice(invoice);
-			getFinanceGenerator().initializeFinanceData(this.currentFinance, obtainInitialAmount());
-			if (this.currentFinance.getBank() == null) {
-				this.currentFinance.setBank(new Bank());
+			getCurrentFinance().setInvoice(invoice);
+			getFinanceGenerator().initializeFinanceData(getCurrentFinance(), obtainInitialAmount());
+			if (getCurrentFinance().getBank() == null) {
+				getCurrentFinance().setBank(new Bank());
 			}
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("Error al inicializar el vencimiento");
@@ -561,32 +588,44 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	}
 
 	public void onSelectFinance(ActionEvent event) {
-		this.currentFinance = (Finance) finances.getRowData();
+		Finance finance = (Finance) finances.getRowData();
+		if (finance.getFinanceStatus() == FinanceStatus.PAID ||
+			finance.getFinanceStatus() == FinanceStatus.BATCHED ||
+			finance.getFinanceStatus() == FinanceStatus.SETTLED ) {
+
+			String msg = "No se puede modificar un vencimiento no pendiente.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		setCurrentFinance( (Finance) finances.getRowData() );
 	}
 
 	@SuppressWarnings("unchecked")
 	public void onAddFinance(ActionEvent event) {
-		((List<Finance>) this.finances.getWrappedData()).add(this.currentFinance);
-		this.currentFinance = initializeFinance();
-		this.setNewFinance(false);
+		((List<Finance>) getFinances().getWrappedData()).add(getCurrentFinance());
+		setCurrentFinance( initializeFinance() );
+		setNewFinance(false);
 	}
 
 	@SuppressWarnings("unchecked")
 	public void onRemoveFinance(ActionEvent event) {
-		((List<Finance>) this.finances.getWrappedData()).remove(this.currentFinance);
+		if (getCurrentFinance().getId() != null) {
+			getRemovedFinances().add(getCurrentFinance());
+		}
+		((List<Finance>) getFinances().getWrappedData()).remove(getCurrentFinance());
 	}
 
 	public void onCancelFinance(ActionEvent event) {
-		this.currentFinance = initializeFinance();
-		this.setNewFinance(false);
+		setCurrentFinance( initializeFinance() );
+		setNewFinance(false);
 	}
 
 	@SuppressWarnings("unchecked")
 	public void onUpdateFinance(ActionEvent event) {
-		int i = ((List<Finance>) this.finances.getWrappedData()).indexOf(this.currentFinance);
-		((List<Finance>) this.finances.getWrappedData()).remove(i);
-		((List<Finance>) this.finances.getWrappedData()).add(i, this.currentFinance);
-		this.currentFinance = initializeFinance();
+		int i = ((List<Finance>) getFinances().getWrappedData()).indexOf(getCurrentFinance() );
+		((List<Finance>) getFinances().getWrappedData()).remove(i);
+		((List<Finance>) getFinances().getWrappedData()).add(i, getCurrentFinance());
+		setCurrentFinance( initializeFinance() );
 	}
 
 	private Finance initializeFinance() {
@@ -595,14 +634,14 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 
 	@SuppressWarnings("unchecked")
 	private double obtainInitialAmount() {
-		Iterator<InvoiceEntryDetail> iter = ((List<InvoiceEntryDetail>) this.details
+		Iterator<InvoiceEntryDetail> iter = ((List<InvoiceEntryDetail>) getDetails()
 				.getWrappedData()).iterator();
 		double detailSum = 0;
 		while (iter.hasNext()) {
 			InvoiceEntryDetail detail = iter.next();
 			detailSum += detail.getTotal();
 		}
-		Iterator financeIter = ((LinkedList) this.finances.getWrappedData()).iterator();
+		Iterator financeIter = ((LinkedList) getFinances().getWrappedData()).iterator();
 		double financeSum = 0;
 		while (financeIter.hasNext()) {
 			Finance finance = (Finance) financeIter.next();
@@ -639,51 +678,13 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			HibernateUtil.setCloseSession(false);
 
 			HibernateUtil.beginTransaction(sessionName);
-			AccountEntry entry = null;
-			if (!this.isNew) {
-				deleteFinances(getAccountEntryInvoice().getInvoice());
-				deleteInvoiceDetails(getAccountEntryInvoice().getInvoice());
-				deleteAccountEntryDetails(getAccountEntryInvoice().getAccountEntry());
-				entry = this.getAccountEntryInvoice().getAccountEntry();
-			} else {
-				entry = new AccountEntry();
-			}
-			entry.setAccountPeriod(getHeader().getPeriod().getId());
-			entry.setEntryDate(getHeader().getDate());
-			entry.setJournal(null);
-			entry.setSecurityLevel(getHeader().getSecurityLevel());
-			Account account = new Account();
-			if (getHeader().getType().equals(InvoiceType.SALES)) {
-				entry.setType(AccountEntryType.SALES_INVOICE);
-				account = getAccountBridgeUtil().obtainCustomerAccount(getHeader().getRegistry());
-			} else {
-				if (getHeader().getType().equals(InvoiceType.PURCHASE)) {
-					entry.setType(AccountEntryType.PURCHASE_INVOICE);
-					account = getAccountBridgeUtil().obtainSupplierAccount(getHeader().getRegistry());
-				} else {
-					if (getHeader().getType().equals(InvoiceType.EXPENSES)) {
-						entry.setType(AccountEntryType.EXPENSE_INVOICE);
-						account = getAccountBridgeUtil().obtainCreditorAccount(getHeader().getRegistry());
-					}
-				}
-			}
-			Invoice invoice = insertOrUpdateInvoice(sessionName);
-			insertInvoiceDetails(invoice);
-			insertFinances(invoice);
-			if (!isNew) {
-				entry = (AccountEntry) HibernateUtil.getSession(sessionName).merge(entry);
-			}
-			entry = getWriter().insertOrUpdateAccountEntry(entry);
+
 			if (isNew) {
-				this.setAccountEntryInvoice(getWriter().insertAccountEntryInvoice(entry, invoice));
+				generateInvoiceEntry(sessionName,invoiceTotal);
+			} else {
+				updateInvoiceEntry(sessionName,invoiceTotal);
 			}
-			getWriter().insertEntryDetails(entry, account,
-					getWriter().obtainConcept(invoice, invoiceTotal), invoiceTotal,
-					obtainRetentionQuotasPerAccount(invoice), obtainTaxQuotasPerAccount(invoice),
-					obtainBasesPerAccount(details));
-			getHeader().setAccountEntryId(entry.getId());
-			this.isNew = false;
-			// loadAccountEntryController(entry);
+			setNew(false);
 			HibernateUtil.getSession(sessionName).flush();
 			HibernateUtil.commitTransaction(sessionName);
 			onViewAccountEntry(event);
@@ -705,7 +706,71 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
+	}
 
+	private void updateInvoiceEntry(String sessionName, double invoiceTotal) throws ManagerBeanException {
+			//deleteFinances(getAccountEntryInvoice().getInvoice());
+			deleteInvoiceDetails(getAccountEntryInvoice().getInvoice());
+			deleteAccountEntryDetails(getAccountEntryInvoice().getAccountEntry());
+
+			AccountEntry entry = getAccountEntryInvoice().getAccountEntry();
+			Account account = fillAccountEntry(entry);
+
+			Invoice invoice = insertOrUpdateInvoice(sessionName);
+			insertInvoiceDetails(invoice);
+			insertFinances(invoice);
+			deleteRemovedFinances();
+			entry = (AccountEntry) HibernateUtil.getSession(sessionName).merge(entry);
+			entry = getWriter().insertOrUpdateAccountEntry(entry);
+			getWriter().insertEntryDetails(entry, account,
+					getWriter().obtainConcept(invoice, invoiceTotal), invoiceTotal,
+					obtainRetentionQuotasPerAccount(invoice), obtainTaxQuotasPerAccount(invoice),
+					obtainBasesPerAccount(details));
+			getHeader().setAccountEntryId(entry.getId());
+	}
+
+	private void deleteRemovedFinances() throws ManagerBeanException {
+		if (getRemovedFinances() != null) {
+			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+			for (Finance f: getRemovedFinances()) {
+				financeBean.remove(f);
+			}
+		}
+	}
+
+	private void generateInvoiceEntry(String sessionName, double invoiceTotal) throws ManagerBeanException {
+			AccountEntry entry = new AccountEntry();
+			Account account = fillAccountEntry(entry);
+			
+			Invoice invoice = insertOrUpdateInvoice(sessionName);
+			insertInvoiceDetails(invoice);
+			insertFinances(invoice);
+			entry = getWriter().insertOrUpdateAccountEntry(entry);
+			setAccountEntryInvoice(getWriter().insertAccountEntryInvoice(entry, invoice));
+			getWriter().insertEntryDetails(entry, account,
+					getWriter().obtainConcept(invoice, invoiceTotal), invoiceTotal,
+					obtainRetentionQuotasPerAccount(invoice), obtainTaxQuotasPerAccount(invoice),
+					obtainBasesPerAccount(details));
+			getHeader().setAccountEntryId(entry.getId());
+	}
+
+	private Account fillAccountEntry(AccountEntry entry) throws ManagerBeanException {
+		Account account = null;
+		entry.setAccountPeriod(getHeader().getPeriod().getId());
+		entry.setEntryDate(getHeader().getDate());
+		entry.setJournal(null);
+		entry.setSecurityLevel(getHeader().getSecurityLevel());
+		if (getHeader().getType().equals(InvoiceType.SALES)) {
+			entry.setType(AccountEntryType.SALES_INVOICE);
+			account = getAccountBridgeUtil().obtainCustomerAccount(getHeader().getRegistry());
+		} else if (getHeader().getType().equals(InvoiceType.PURCHASE)) {
+			entry.setType(AccountEntryType.PURCHASE_INVOICE);
+			account = getAccountBridgeUtil().obtainSupplierAccount(getHeader().getRegistry());
+		} else if (getHeader().getType().equals(InvoiceType.EXPENSES)) {
+			entry.setType(AccountEntryType.EXPENSE_INVOICE);
+			account = getAccountBridgeUtil().obtainCreditorAccount(getHeader().getRegistry());
+		}
+		return account;
 	}
 
 	/**
@@ -823,7 +888,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 
 			HibernateUtil.beginTransaction(sessionName);
 
-			deleteAccountEntryInvoice(this.getAccountEntryInvoice());
+			deleteAccountEntryInvoice(getAccountEntryInvoice());
 			deleteFinances(getAccountEntryInvoice().getInvoice());
 			deleteInvoiceDetails(getAccountEntryInvoice().getInvoice());
 			deleteInvoice(getAccountEntryInvoice().getInvoice());
@@ -1008,8 +1073,10 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			Finance finance = iter.next();
 			finance.setInvoice(invoice);
 			finance.setRegistry(invoice.getRegistry());
-			finance.setFinanceStatus(FinanceStatus.PENDING);
-			financeBean.insert(finance);
+			if (finance.getId() == null) {
+				finance.setFinanceStatus(FinanceStatus.PENDING);
+			}
+			financeBean.insertOrUpdate(finance);
 		}
 	}
 
@@ -1018,8 +1085,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		Invoice invoice = isNew() ? new Invoice() : getAccountEntryInvoice().getInvoice();
 		invoice = mergeInvoice(invoice);
 		financeList = getFinanceGenerator()
-				.generateFinances(invoice, this.getInvoiceTotal(), false);
-		this.finances = new ListDataModel(financeList);
+				.generateFinances(invoice, getInvoiceTotal(), false);
+		setFinances( new ListDataModel(financeList) );
 	}
 
 	private void deleteAccountEntryDetails(AccountEntry accountEntry) throws ManagerBeanException {
@@ -1269,42 +1336,41 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		if (iter.hasNext()) {
 			AccountEntryInvoice accountEntryInvoice = (AccountEntryInvoice) iter.next();
 			setAccountEntryInvoice(accountEntryInvoice);
-			InvoiceEntryHeader header = new InvoiceEntryHeader();
+			setHeader( new InvoiceEntryHeader() );
 			AccountEntryDetail detail = null;
 			if (entry.getType().equals(AccountEntryType.SALES_INVOICE)) {
-				header.setType(InvoiceType.SALES);
+				getHeader().setType(InvoiceType.SALES);
 				detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "70*");
-				header.setAccount((detail != null) ? detail.getAccount() : null);
+				getHeader().setAccount((detail != null) ? detail.getAccount() : null);
 			}
 			if (entry.getType().equals(AccountEntryType.PURCHASE_INVOICE)) {
-				header.setType(InvoiceType.PURCHASE);
+				getHeader().setType(InvoiceType.PURCHASE);
 				detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "60*");
-				header.setAccount((detail != null) ? detail.getAccount() : null);
+				getHeader().setAccount((detail != null) ? detail.getAccount() : null);
 			}
 			if (entry.getType().equals(AccountEntryType.EXPENSE_INVOICE)) {
-				header.setType(InvoiceType.EXPENSES);
+				getHeader().setType(InvoiceType.EXPENSES);
 				detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "6*");
-				header.setAccount((detail != null) ? detail.getAccount() : null);
+				getHeader().setAccount((detail != null) ? detail.getAccount() : null);
 			}
-			header.setDate(entry.getEntryDate());
-			header.setDocument(accountEntryInvoice.getInvoice().getRegistryDocument());
-			header.setName(accountEntryInvoice.getInvoice().getRegistryName());
-			header.setSeries(accountEntryInvoice.getInvoice().getSeries());
-			header.setNumber(accountEntryInvoice.getInvoice().getNumber());
-			header.setDate(entry.getEntryDate());
-			header.setTaxDate(accountEntryInvoice.getInvoice().getTaxDate());
-			header.setReferenceCode(accountEntryInvoice.getInvoice().getReferenceCode());
-			header.setPeriod(new Period());
-			header.getPeriod().setId(entry.getAccountPeriod());
-			header.setSecurityLevel(entry.getSecurityLevel());
-			header.setRegistry(accountEntryInvoice.getInvoice().getRegistry());
-			header.setWithholding(accountEntryInvoice.getInvoice().isWithholding());
-			header.setSurcharge(accountEntryInvoice.getInvoice().isSurcharge());
-			header.setTaxFree(accountEntryInvoice.getInvoice().isTaxFree());
-			header.setInvestment(accountEntryInvoice.getInvoice().isInvestment());
-			header.setTransaction(accountEntryInvoice.getInvoice().getTransaction());
-			header.setAccountEntryId(entry.getId());
-			setHeader(header);
+			getHeader().setDate(entry.getEntryDate());
+			getHeader().setDocument(accountEntryInvoice.getInvoice().getRegistryDocument());
+			getHeader().setName(accountEntryInvoice.getInvoice().getRegistryName());
+			getHeader().setSeries(accountEntryInvoice.getInvoice().getSeries());
+			getHeader().setNumber(accountEntryInvoice.getInvoice().getNumber());
+			getHeader().setDate(entry.getEntryDate());
+			getHeader().setTaxDate(accountEntryInvoice.getInvoice().getTaxDate());
+			getHeader().setReferenceCode(accountEntryInvoice.getInvoice().getReferenceCode());
+			getHeader().setPeriod(new Period());
+			getHeader().getPeriod().setId(entry.getAccountPeriod());
+			getHeader().setSecurityLevel(entry.getSecurityLevel());
+			getHeader().setRegistry(accountEntryInvoice.getInvoice().getRegistry());
+			getHeader().setWithholding(accountEntryInvoice.getInvoice().isWithholding());
+			getHeader().setSurcharge(accountEntryInvoice.getInvoice().isSurcharge());
+			getHeader().setTaxFree(accountEntryInvoice.getInvoice().isTaxFree());
+			getHeader().setInvestment(accountEntryInvoice.getInvoice().isInvestment());
+			getHeader().setTransaction(accountEntryInvoice.getInvoice().getTransaction());
+			getHeader().setAccountEntryId(entry.getId());
 			setFinances(new ListDataModel(
 					obtainFinances(accountEntryInvoice.getInvoice())));
 			setDetails(new ListDataModel(
@@ -1341,6 +1407,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			while(iter.hasNext()){
 				InvoiceEntryDetail detail = new InvoiceEntryDetail();
 				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
+				detail.setId(invoiceDetail.getId());
 				if (invoiceDetail.getSource() != InvoiceSource.ACCOUNT) {
 					String msg = "Asiento generado automáticamente. No se puede modificar.";
 					AonUtil.addErrorMessage(msg);
