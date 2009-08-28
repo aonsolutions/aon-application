@@ -31,6 +31,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -227,13 +228,15 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 		detail.setBalancingAccount(rBankAccount);
 		accountEntryDetailBean.insert(detail);
 		// Tercer Apunte
-		detail = new AccountEntryDetail();
-		detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT));
-		detail.setAccountEntry(entry);
-		detail.setConcept(getHeader().getDescription());
-		detail.setDebit(getHeader().getInterest());
-		detail.setBalancingAccount(loanAccount);
-		accountEntryDetailBean.insert(detail);
+		if (CommonUtil.round(getHeader().getInterest()) != 0.0) {
+			detail = new AccountEntryDetail();
+			detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT));
+			detail.setAccountEntry(entry);
+			detail.setConcept(getHeader().getDescription());
+			detail.setDebit(getHeader().getInterest());
+			detail.setBalancingAccount(loanAccount);
+			accountEntryDetailBean.insert(detail);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -283,10 +286,7 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 		setAccountEntry(entry);
 		LoanFeeEntryHeader header = new LoanFeeEntryHeader();
 		Loan loan = obtainLoan(entry);
-		AccountEntryDetail accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.LONG_TERM_LOAN_ACCOUNT_PREFIX + "*");
-		if (accountEntryDetail == null) {
-			accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.SHORT_TERM_LOAN_ACCOUNT_PREFIX + "*");	
-		}
+		AccountEntryDetail accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.SHORT_TERM_LOAN_ACCOUNT_PREFIX + "*");	
 		header.setAmortization(accountEntryDetail.getDebit());
 		header.setDescription(accountEntryDetail.getConcept());
 		header.setFeePeriod(new Period());
@@ -300,10 +300,7 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 	
 	@SuppressWarnings("unchecked")
 	private Loan obtainLoan(AccountEntry entry) throws ManagerBeanException {
-		AccountEntryDetail detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.LONG_TERM_LOAN_ACCOUNT_PREFIX + "*");
-		if (detail == null) {
-			detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.SHORT_TERM_LOAN_ACCOUNT_PREFIX + "*");	
-		}
+		AccountEntryDetail detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.SHORT_TERM_LOAN_ACCOUNT_PREFIX + "*");	
 		IManagerBean loanAccountBean = BeanManager.getManagerBean(LoanAccount.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(loanAccountBean.getFieldName(IAccountBridgeAlias.LOAN_ACCOUNT_ACCOUNT_ID), detail.getAccount().getId());

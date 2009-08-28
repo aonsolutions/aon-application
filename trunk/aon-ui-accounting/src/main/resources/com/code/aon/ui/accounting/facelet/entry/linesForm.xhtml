@@ -134,7 +134,7 @@
 						rendered="#{to!=accountEntryDetail.to}" />
 					<aon:inputText id="AccountEntryDetail_concept-Edit"
 						value="#{accountEntryDetail.to.concept}"
-						rendered="#{to==accountEntryDetail.to}" required="true" size="20" />
+						rendered="#{to==accountEntryDetail.to}" required="true" size="30" maxlength="32"/>
 					<f:facet name="footer">
 					<aon:div>
 <!-- 					
@@ -144,13 +144,14 @@
  -->
 						<rich:comboBox suggestionValues="#{accountingCollections.conceptsDescriptions}"
 							value="#{accountEntryDetail.to.concept}"
+							maxlength="32" width="200"	
 							directInputSuggestions="true"
 							inputStyle="font-family: arial,lucida Grande, Trebuchet MS,sans-serif;
 										font-size:1em;"
 							buttonDisabledStyle="display:none;"
 							buttonInactiveStyle="display:none;"
 							buttonStyle="display:none;"	
-							rendered="#{accountEntryDetail.new}" required="true" size="20" />
+							rendered="#{accountEntryDetail.new}" required="true"/>
 					</aon:div>
 					</f:facet>
 				</aon:column>
@@ -251,7 +252,7 @@
 							hideEvent="onmouseout" showDelay="200">
 						</rich:toolTip>
 					</aon:div>
-
+ 
 					<ui:include
 						src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
 						<ui:param name="wizard" value="#{accountWizard}" />
@@ -266,6 +267,7 @@
 						<ui:param name="ELExpression"
 							value="accountEntryDetail.to.balancingAccount" />
 					</ui:include>
+
 					<f:facet name="footer">
 						<ui:include
 							src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">

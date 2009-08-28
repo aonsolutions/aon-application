@@ -293,6 +293,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{amortizationDetailListener}</value>
+				<value>#{amortizationControllerListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -317,11 +318,18 @@
 		</managed-property>
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>amortizationControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.accounting.event.AmortizationListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 	<!--  AMORTIZATION DETAIL CONTROLLER -->
 	<managed-bean>
 		<managed-bean-name>amortizationDetail</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.LinesController
+			com.code.aon.ui.accounting.controller.AmortizationDetailController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -353,8 +361,46 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{amortizationDetailControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+		
+	<managed-bean>
+		<managed-bean-name>amortizationDetailControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.accounting.event.AmortizationDetailListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<!-- **************** AMORTIZATION ************************** -->
+	<managed-bean>
+		<managed-bean-name>periodAmortization</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.accounting.controller.PeriodAmortizationController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.accounting.AmortizationDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>periodAmortization</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>periodAmortization</value>
+		</managed-property>
+	</managed-bean>
+		
 	<!-- **************** AMORTIZATION TYPE ************************** -->
 	<managed-bean>
 		<managed-bean-name>amortizationType</managed-bean-name>
@@ -993,6 +1039,20 @@
 			<from-outcome>amortization_search</from-outcome>
 			<to-view-id>
 				/com/code/aon/ui/accounting/facelet/amortization/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- ****************** PERIOD AMORTIZATION **************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>periodAmortization_search</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/accounting/facelet/amortization/period/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>periodAmortization_list</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/accounting/facelet/amortization/period/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

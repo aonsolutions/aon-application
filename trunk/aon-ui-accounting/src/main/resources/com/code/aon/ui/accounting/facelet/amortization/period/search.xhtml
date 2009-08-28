@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="amortizationForm">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_period_amortization_module}" />
+				<ui:param name="controller" value="#{periodAmortization}" />
+			</ui:include>
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener" value="#{periodAmortization.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="periodAmortization_list" />				
+				
+					<aon:outputLabel for="Amortization_period"
+						value="#{accountingBundle.accounting_period}" />
+					<aon:selectOneMenu id="Amortization_period" 
+						value="#{periodAmortization.period}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{accountingCollections.accountPeriods}" />
+					</aon:selectOneMenu>
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+	</ui:define>
+</ui:composition>

@@ -1,5 +1,7 @@
 package com.code.aon.ui.accounting.event;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -41,6 +43,12 @@ public class AccountEntryDetailControllerValidatorListener extends ControllerAda
 
         if (isAccountEmpty(entryDetail.getBalancingAccount())) {
             entryDetail.setBalancingAccount(null);
+        }
+        
+        if (entryDetail.getConcept() != null) {
+        	if (entryDetail.getConcept().length() > 32) {
+        		entryDetail.setConcept( StringUtils.abbreviate(entryDetail.getConcept(), 32) );
+        	}
         }
     }
 
