@@ -17,8 +17,49 @@
 
 		<!-- Mapping files -->
 		
+		<!-- EBACKOFFICE -->		
+		<mapping class="com.code.aon.ebackoffice.EcTarget"/>
+		
+		<!-- CONFIG -->		
+		<mapping class="com.code.aon.config.Tariff"/>
+		<mapping class="com.code.aon.config.Tax"/>
+		<mapping class="com.code.aon.config.PayMethod"/>
+		
 		<!-- COMMERCIAL -->		
+		<mapping class="com.code.aon.commercial.Offer"/>
+		<mapping class="com.code.aon.commercial.OfferDetail"/>
 		<mapping class="com.code.aon.commercial.Target"/>
+		<mapping class="com.code.aon.commercial.CommercialActivity"/>
+		<mapping class="com.code.aon.commercial.CommercialSegment"/>
+		<mapping class="com.code.aon.commercial.CommercialTracking"/>
+		<mapping class="com.code.aon.commercial.TargetItem"/>
+		<mapping class="com.code.aon.commercial.TargetSegment"/>
+		<mapping class="com.code.aon.commercial.TargetSeller"/>
+		
+		<!-- COMPANY -->		
+		<mapping class="com.code.aon.company.WorkPlace"/>
+		<mapping class="com.code.aon.company.WorkActivity"/>
+		<mapping class="com.code.aon.company.resources.Employee"/>
+		<mapping class="com.code.aon.company.resources.Resource"/>
+		
+		<!-- GEOZONE -->		
+		<mapping class="com.code.aon.geozone.GeoZone"/>
+		
+		<!-- REGISTRY -->		
+		<mapping class="com.code.aon.registry.Registry"/>
+		<mapping class="com.code.aon.registry.RegistryAddress"/>
+		<mapping class="com.code.aon.registry.RegistryMedia"/>
+		
+		<!-- PRODUCT -->		
+		<mapping class="com.code.aon.product.Brand"/>
+		<mapping class="com.code.aon.product.Item"/>
+		<mapping class="com.code.aon.product.Product"/>
+		<mapping class="com.code.aon.product.ProductCategory"/>
+		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
+		
+		<!-- SELLER -->
+		<mapping class="com.code.aon.seller.Seller"/>
+		
 
 	</session-factory>
 

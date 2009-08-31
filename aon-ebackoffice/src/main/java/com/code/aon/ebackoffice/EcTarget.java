@@ -1,6 +1,6 @@
 package com.code.aon.ebackoffice;
 
-import java.sql.Date;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,7 +27,7 @@ import com.code.aon.common.ITransferObject;
 /**
  * Transfer Object that represents a eCommerce Target.
  * 
- * @author Esferalia Networks. Ekain Agirrezabal - 18/07/2008
+ * @author Esferalia Networks. Ekain Agirrezabal - 31/08/2009
  */
 @Entity
 @Table(name="ec_target")
