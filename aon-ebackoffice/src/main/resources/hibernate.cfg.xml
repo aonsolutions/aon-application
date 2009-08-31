@@ -16,22 +16,9 @@
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
 		<!-- Mapping files -->
-		<mapping class="com.code.aon.product.Brand"/>
-		<mapping class="com.code.aon.product.Catalogue"/>
-		<mapping class="com.code.aon.product.CatalogueCategory"/>
-		<mapping class="com.code.aon.product.CatalogueItem"/>
-		<mapping class="com.code.aon.product.Item"/>
-		<mapping class="com.code.aon.product.ItemAttachment"/>
-		<mapping class="com.code.aon.product.ItemPos"/>
-		<mapping class="com.code.aon.product.Product"/>
-		<mapping class="com.code.aon.product.ProductCategory"/>
-		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
-		<mapping class="com.code.aon.product.ProductCategoryTree"/>
-		<mapping class="com.code.aon.product.TariffCatalogue"/>
 		
-		<mapping class="com.code.aon.config.Tariff"/>
-		<mapping class="com.code.aon.config.Tax"/>
-		<mapping class="com.code.aon.config.TaxDetail"/>
+		<!-- COMMERCIAL -->		
+		<mapping class="com.code.aon.commercial.Target"/>
 
 	</session-factory>
 
