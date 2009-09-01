@@ -45,7 +45,7 @@ public class ArticleGenerator extends Generator {
 				String backURL = getBackURL(article.getArticleType(),article.getArticleCategory());
 				Templates templates = getTemplate(article.getArticleType());
 				VelocityUtil vu = context.initVelocityUtil();
-				chargeArticleContext(vu, article.getArticleCategory());
+				changeArticleContext(vu, article.getArticleCategory());
 				generateArticle(vu, templates, backURL, articleDetail);		
 			}
 		} catch (ManagerBeanException e) {
@@ -53,7 +53,7 @@ public class ArticleGenerator extends Generator {
 		}
 	}
 	
-	private void chargeArticleCategoryContext(VelocityUtil vu, ArticleCategory articleCategory) throws ManagerBeanException{
+	private void changeArticleCategoryContext(VelocityUtil vu, ArticleCategory articleCategory) throws ManagerBeanException{
 		if (articleCategory.getSection()!=null){
 			context.changeSection(vu, articleCategory.getSection());
 		}else{
@@ -62,7 +62,7 @@ public class ArticleGenerator extends Generator {
 		}
 	}
 
-	private void chargeArticleContext(VelocityUtil vu, ArticleCategory articleCategory) throws ManagerBeanException{
+	private void changeArticleContext(VelocityUtil vu, ArticleCategory articleCategory) throws ManagerBeanException{
 		if (articleCategory.getElementSection()!=null){
 			context.changeSection(vu, articleCategory.getElementSection());
 		}else{
@@ -153,7 +153,7 @@ public class ArticleGenerator extends Generator {
 					if (!articleList.isEmpty()){
 						emptyCategory = false;
 						String back_url = getBackURL(articleType, articleCategory);
-						chargeArticleContext(vu, articleCategory);
+						changeArticleContext(vu, articleCategory);
 						for (int i=0; i < articleList.size(); i++) {
 							article = (Article)articleList.get(i);
 							articleDetailCriteria = new Criteria();
@@ -174,7 +174,7 @@ public class ArticleGenerator extends Generator {
 								vu.remove(BACK_URL_KEY);
 							}
 						}
-						chargeArticleCategoryContext(vu, articleCategory);
+						changeArticleCategoryContext(vu, articleCategory);
 						
 						ArticleCategoryHandler achandler = new ArticleCategoryHandler(articleCategoryDetail,articleType,ahlist);
 						vu.put(ARTICLE_CATEGORY_KEY, achandler);

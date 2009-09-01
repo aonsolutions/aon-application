@@ -28,6 +28,30 @@
 					</aon:commandButton>				
 				</ui:define>
 			</ui:decorate>
+			
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="sectionGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+					
+						<aon:outputLabel for="ArticleCategory_section"
+							value="#{appBundle.section}"/>
+							
+						<aon:selectOneMenu id="ArticleCategory_section"  
+							value="#{generator_config.section}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{collections.sectionList}" />
+						</aon:selectOneMenu>
+						
+						<aon:div styleClass="aon-finding-toolbar-item-group">					
+							<aon:commandButton id="save"
+								value="#{bundle.aon_save}"
+								action="faq_category_list" 
+								styleClass="aon-finding-toolbar-item aon-icon-accept">
+								<aon:actionListener method="#{generator_config.onSaveArticleConfig}" />
+							</aon:commandButton>
+						</aon:div>		
+				</aon:panelGrid>
+			</aon:div>			
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">

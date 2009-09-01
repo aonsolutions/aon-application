@@ -40,9 +40,10 @@
 					<aon:commandButton id="categories"
 						value="#{appBundle.article_category}"
 						action="article_category_list"
+						actionListener="#{article_category.onSearch}"
 						immediate="#{true}"
 						styleClass="aon-finding-toolbar-item-no-icon">
-						<aon:actionListener method="#{article_category.onSearch}" />
+						<aon:actionListener method="#{article_category.onInit}" />
 					</aon:commandButton>
 					<aon:commandButton id="diary"
 						value="#{appBundle.diary}"
