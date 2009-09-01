@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:dataTable id="productList" value="#{shopItems.model}" rows="20"
+		var="to" style="width=100%"
+		columnClasses="
+		aon-editDataTable-numberColumn,aon-editDataTable-textColumn,
+		aon-editDataTable-numberColumn,
+		aon-editDataTable-buttonsColumn aon-vertical-align-top">
+
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_id}" />
+			</f:facet>
+			<aon:outputText value="#{to.id}" />
+		</aon:column>
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_name}" />
+			</f:facet>
+			<aon:outputText value="#{to.product.name}" />
+		</aon:column>
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="price -i18n-" />
+			</f:facet>
+			<aon:outputText value="#{to.price}" />
+		</aon:column>
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="&#160;" />
+			</f:facet>
+
+			<aon:commandButton value="&#160;" action="shop_form"
+				title="+ info -i18n-" reRender="shopForm"
+				styleClass="aon-editDataTable-button aon-icon-info">
+				<aon:actionListener method="#{shopItems.onSelect}" />
+			</aon:commandButton>
+			<aon:commandButton value="&#160;" action="shopingCart_list"
+				title="add to cart -i18n-"
+				styleClass="aon-editDataTable-button aon-icon-new">
+				<aon:actionListener method="#{shopItems.addToCart}" />
+			</aon:commandButton>
+		</aon:column>
+	</aon:dataTable>
+
+	<aon:dataScroller for="productList"
+		rowCount="#{shopItems.model.rowCount}" showNote="true" />
+</ui:composition>
