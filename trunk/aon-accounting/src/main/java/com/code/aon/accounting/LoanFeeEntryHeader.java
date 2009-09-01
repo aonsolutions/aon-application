@@ -2,6 +2,7 @@ package com.code.aon.accounting;
 
 import java.util.Date;
 
+import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.util.CommonUtil;
 
@@ -15,6 +16,9 @@ public class LoanFeeEntryHeader implements ITransferObject {
 	private String description;
 	private double amortization;
 	private double interest;
+	private Account interestAccount;
+	private double expenses;
+	private Account expensesAccount;
 
 	public Period getFeePeriod() {
 		return feePeriod;
@@ -51,6 +55,13 @@ public class LoanFeeEntryHeader implements ITransferObject {
 		this.interest = interest;
 	}
 
+	public Account getInterestAccount() {
+		return interestAccount;
+	}
+	public void setInterestAccount(Account interestAccount) {
+		this.interestAccount = interestAccount;
+	}
+
 	public double getAmortization() {
 		return amortization;
 	}
@@ -58,7 +69,21 @@ public class LoanFeeEntryHeader implements ITransferObject {
 		this.amortization = amortization;
 	}
 
-	public double getFee(){
-		return CommonUtil.round( getAmortization() + getInterest());
+	public double getExpenses() {
+		return expenses;
 	}
+	public void setExpenses(double expenses) {
+		this.expenses = expenses;
+	}
+	public Account getExpensesAccount() {
+		return expensesAccount;
+	}
+	public void setExpensesAccount(Account expensesAccount) {
+		this.expensesAccount = expensesAccount;
+	}
+
+	public double getFee(){
+		return CommonUtil.round( getAmortization() + getInterest() + getExpenses());
+	}
+
 }

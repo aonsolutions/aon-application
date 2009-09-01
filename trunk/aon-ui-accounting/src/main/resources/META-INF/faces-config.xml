@@ -768,6 +768,10 @@
 					<value>47501</value>
 				</map-entry>
 				<map-entry>
+					<key>ACC_SALARY_CHARGED_RET_ACC</key>
+					<value>47501</value>
+				</map-entry>
+				<map-entry>
 					<key>ACC_DEFAULT_CASH_ACC</key>
 					<value>570</value>
 				</map-entry>

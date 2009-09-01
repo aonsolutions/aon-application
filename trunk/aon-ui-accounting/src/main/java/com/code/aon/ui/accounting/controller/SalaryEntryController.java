@@ -228,7 +228,7 @@ public class SalaryEntryController implements ISpecialAccountEntry{
 			// Tercer Apunte
 			if (getHeader().getRetention() != 0) {
 				detail = new AccountEntryDetail();
-				detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.CHARGED_RETENTION_ACCOUNT));
+				detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.SALARY_CHARGED_RETENTION_ACCOUNT));
 				detail.setAccountEntry(entry);
 				detail.setBalancingAccount(null);
 				detail.setConcept(getHeader().getConcept());

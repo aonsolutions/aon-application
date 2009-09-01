@@ -90,6 +90,14 @@
 							value="#{accountCollections.chargedRetentionAccountsIds}" />
 					</aon:selectOneMenu>
 
+					<aon:outputLabel for="ACC_salary_charged_retention_account"
+						value="#{accountingBundle.accounting_sal_charged_ret_acc}" />
+					<aon:selectOneMenu id="ACC_salary_charged_retention_account"
+						value="#{accAppParams.parameters['ACC_SALARY_CHARGED_RET_ACC'].value}">
+						<f:selectItems
+							value="#{accountCollections.chargedRetentionAccountsIds}" />
+					</aon:selectOneMenu>
+
 					<aon:outputLabel for="ACC_default_salary_account"
 						value="#{accountingBundle.accounting_def_salary_acc}" />
 					<aon:selectOneMenu id="ACC_default_salary_account"
