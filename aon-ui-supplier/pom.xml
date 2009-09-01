@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.supplier</artifactId>
-	<version>4.0.2</version>
+	<version>4.0.3</version>
 	<description>AON UI SUPPLIER</description>
 	<name>AON UI SUPPLIER</name>
 	<dependencies>
@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.account</artifactId>
-			<version>4.1.0</version> 
+			<version>4.2.0</version> 
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
