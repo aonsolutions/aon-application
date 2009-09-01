@@ -4,9 +4,6 @@
 	<comment></comment>
 	<projects>
 		<project>aon-ui-ecommerce</project>
-		<project>aon-ebackoffice</project>
-		<project>aon-commercial</project>
-		<project>aon-ui-commercial</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
