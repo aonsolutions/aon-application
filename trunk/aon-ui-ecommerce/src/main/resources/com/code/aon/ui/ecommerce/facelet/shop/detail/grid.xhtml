@@ -1,0 +1,211 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	
+		
+<!--  
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarID" value="aonToolbar" />
+				<ui:param name="toolbarTitle"
+					value="Product detail -i18-" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="aonToolbar-back" 
+						value="#{bundle.aon_back}"
+						action="#{shopItem.backAction}" 
+						styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+						accesskey="#{bundle.aon_key_cancel}" />	
+					<aon:commandButton id="aonToolbar-addToCart"
+						value="Ainadir al carrito -i18n-" 
+						action="shoppingCart_list"
+						title="add to cart -i18n-"
+						styleClass="aon-finding-toolbar-item aon-icon-new">
+						<aon:actionListener method="#{shopItem.addToCart}" />
+					</aon:commandButton>		
+					
+					<aon:commandButton id="aonToolbar-view" value="VIEW CART -i18-"
+						action="shopingCart_list" immediate="true" 
+						styleClass="aon-finding-toolbar-item aon-icon-new"/>
+						
+					
+				</ui:define>
+			</ui:decorate>
+-->
+
+			<aon:div styleClass="aon-scroll-area">
+			<!--  
+				<aon:div>
+					<aon:commandButton id="detail-back" 
+						rendered="#{!shop.items}"
+						value="#{bundle.aon_back}"
+						action="shop_from" 
+						styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+						accesskey="#{bundle.aon_key_cancel}" >
+						<aon:actionListener method="#{shop.refreshView}" />
+					</aon:commandButton>	
+						
+					<aon:commandButton id="detail-addToCart"
+						rendered="#{shop.detail}"
+						value="Ainadir al carrito -i18n-" 
+						action="shop_from" 
+						title="add to cart -i18n-"
+						styleClass="aon-finding-toolbar-item aon-icon-new">
+						<aon:actionListener method="#{shopItem.addToCart}" />
+					</aon:commandButton>
+				</aon:div>
+			-->	
+				
+				<aon:panelGrid id="itemDetail" columns="4" style="width=100%;">
+					<aon:outputLabel value="#{bundle.aon_id}" />
+					<aon:outputText value="#{shopItem.item.id}" />
+
+					<aon:outputLabel value="#{bundle.aon_name}" />
+					<aon:outputText value="#{shopItem.item.product.name}" />
+
+					<aon:outputLabel value="product code -i18n-" />
+					<aon:outputText value="#{shopItem.item.product.code}" />
+
+					<aon:outputLabel value="product brand -i18n-" />
+					<aon:outputText value="#{shopItem.item.product.brand}" />
+
+					<aon:outputLabel value="product category name -i18n-" />
+					<aon:outputText value="#{shopItem.item.product.category.name}" />
+
+					<aon:outputLabel value="product inventoriable -i18n-" />
+					<aon:outputText value="#{shopItem.item.product.inventoriable}" />
+
+					<aon:outputLabel value="product status -i18n-" />
+					<aon:outputText value="#{shopItem.item.product.status}" />
+
+					<aon:outputLabel value="product vat name -i18n-" />
+					<aon:outputText value="#{shopItem.item.product.vat.name}" />
+
+					<aon:outputLabel value="product retention -i18n-" />
+					<aon:outputText value="#{shopItem.item.product.retention}" />
+
+					<aon:outputLabel value="product type -i18n-" />
+					<aon:outputText value="#{shopItem.item.product.type}" />
+
+					<aon:outputLabel value="product composition -i18n-" />
+					<aon:outputText value="#{shopItem.item.product.composition}" />
+					
+					<aon:outputLabel value="detail -i18n-" />
+					<aon:outputText value="#{shopItem.item.detail}" size="65" />
+
+					<aon:outputLabel value="description -i18n-" />
+					<aon:outputText value="#{shopItem.item.description}" />
+
+					<aon:outputLabel value="price -i18n-" />
+					<aon:outputText value="#{shopItem.item.price}" />
+
+					<aon:outputLabel value="status -i18n-" />
+					<aon:outputText value="#{shopItem.item.status}" />
+
+					<aon:outputLabel value="expensesPercent -i18n-" />
+					<aon:outputText value="#{shopItem.item.expensesPercent}" />
+
+					<aon:outputLabel value="expensesFixed -i18n-" />
+					<aon:outputText value="#{shopItem.item.expensesFixed}" />
+
+					<aon:outputLabel value="profitPercent -i18n-" />
+					<aon:outputText value="#{shopItem.item.profitPercent}" />
+
+					<aon:outputLabel value="purchasePrice -i18n-" />
+					<aon:outputText value="#{shopItem.item.purchasePrice}" />
+				</aon:panelGrid>
+				
+				<rich:spacer height="15"></rich:spacer>
+
+				<aon:panel>
+					<f:facet name="header">
+	                    <h:outputText value="Archivos adjuntos -i18n-"></h:outputText>
+	                </f:facet>
+					<rich:dataGrid id="attchmentGrid" value="#{shopItem.model}" var="attach" 
+						columns="3" elements="9" width="600px">
+			            <rich:panel bodyClass="pbody">
+			                <f:facet name="header">
+			                    <h:outputText value="titulo -i18n-"></h:outputText>
+			                </f:facet>
+			                <h:panelGrid columns="1">
+			                    <h:outputText value="mimeType -i18n-" styleClass="label"></h:outputText>
+			                    <h:outputText value="#{attach.mimeType}" />
+			                    <h:outputText value="description -i18n-" styleClass="label"></h:outputText>
+			                    <h:outputText value="#{attach.description}" />
+			                    <h:outputText value="data -i18n-" styleClass="label"></h:outputText>
+			                    <h:outputText value="#{attach.type}" />
+			                    <h:outputText value="type -i18n-" styleClass="label"></h:outputText>
+			                    <h:outputText value="#{attach.type}" />
+			         
+			                    
+			                    <a4j:mediaOutput id="RegistryAttachment_preview" 
+									element="img" cacheable="false"
+									value="#{to.data.key}" style="width:200px"
+									createContent="#{shopItem.paint}" 
+									mimeType="#{to.mimeType}" />
+<!--  
+			                    <a4j:mediaOutput id="RegistryAttachment_preview" 
+									element="img" cacheable="false"
+									value="#{shopItem.aonFile.key}" style="width:200px"
+									rendered="#{shopItem.aonFile.size > 0}" 
+									createContent="#{shopItem.paint}" 
+									mimeType="#{to.mimeType}" />
+-->
+			                </h:panelGrid>
+			            </rich:panel>
+			       </rich:dataGrid>
+			       <aon:dataScroller for="attchmentGrid"
+						rowCount="#{shopItem.model.rowCount}" showNote="true" />
+				</aon:panel>
+			</aon:div>
+
+<!--  
+	<aon:dataTable id="productList"
+		value="#{itemDetailAttach.model}" rows="20" var="to"
+		style="width=100%">
+
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="id -i18n-" />
+			</f:facet>
+			<aon:outputText value="#{to.id}" />
+		</aon:column>
+		
+-->
+		<!--  
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="name -i18n-" />
+			</f:facet>
+			<aon:outputText value="#{to.item.product.name}" />
+		</aon:column>
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="price -i18n-" />
+			</f:facet>
+			<aon:outputText value="#{to.price}" />
+		</aon:column>
+		-->
+<!--  
+		<aon:column>
+			<f:facet name="header">
+				<aon:outputText value="ficha tecnica -i18n-" />
+			</f:facet>
+			<aon:commandButton value="+ info -i18n-"
+				accesskey="#{bundle.aon_key_accept}"
+				styleClass="aon-finding-toolbar-item aon-icon-info" />
+			
+		</aon:column>
+-->		
+<!--  
+			</aon:dataTable>
+-->
+	
+		
+</ui:composition>

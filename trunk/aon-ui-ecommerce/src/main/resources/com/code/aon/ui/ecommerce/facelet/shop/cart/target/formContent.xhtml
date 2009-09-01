@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	
+<!--	
+	<ui:include src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" />
+-->
+
+<aon:outputLabel for="Registry_id" value="#{bundle.aon_id}" />
+	<aon:inputText id="Registry_id" value="#{shoppingCart.cartTarget.target.registry.id}"
+		size="15" disabled="true" />
+	
+	<aon:outputLabel for="Registry_document"
+		value="#{bundle.aon_company_document}" />
+	<aon:inputText id="Registry_document" maxlength="16"
+		value="#{shoppingCart.cartTarget.target.registry.document}" size="16">
+		<f:validateLength minimum="1" maximum="16" />
+	</aon:inputText>
+
+	<aon:outputLabel for="Registry_name"
+		value="#{bundle.aon_company_name}" />
+	<aon:inputText id="Registry_name" maxlength="64"
+		value="#{shoppingCart.cartTarget.target.registry.name}" size="64">
+		<f:validateLength minimum="1" maximum="64" />
+	</aon:inputText>
+
+	<aon:outputLabel for="Registry_surname"
+		value="#{registryBundle.registry_surname}" />
+	<aon:inputText id="Registry_surname" maxlength="64"
+		value="#{shoppingCart.cartTarget.target.registry.surname}" size="64">
+		<f:validateLength minimum="1" maximum="64" />
+	</aon:inputText>
+
+	<aon:outputLabel for="Registry_alias"
+		value="#{bundle.aon_company_alias}" />
+	<aon:inputText id="Registry_alias" maxlength="32"
+		value="#{shoppingCart.cartTarget.target.registry.alias}" size="32">
+		<f:validateLength minimum="1" maximum="32" />
+	</aon:inputText>
+
+	<aon:outputLabel for="Target_advertising"
+		value="#{commercialBundle.commercial_target_advertising}" />
+	<aon:selectOneMenu id="Target_advertising" required="true"
+		value="#{shoppingCart.cartTarget.target.advertising}">
+		<f:selectItem itemLabel="-" value="#{null}"/>
+		<f:selectItems value="#{commercialCollections.advertisings}" />
+	</aon:selectOneMenu>
+
+</ui:composition>

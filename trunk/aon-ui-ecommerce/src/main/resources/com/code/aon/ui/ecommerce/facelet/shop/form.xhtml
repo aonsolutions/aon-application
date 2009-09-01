@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="shopForm">
+					<!--  
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarID" value="aonToolbar" />
+				<ui:param name="toolbarTitle" value="Catalogue categories -i18-" />
+				<ui:define name="toolbarContent">
+							
+					<aon:commandButton id="aonToolbar-back" 
+						rendered="#{!shop.items}"
+						value="#{bundle.aon_back}"
+						action="shop_from" 
+						styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+						accesskey="#{bundle.aon_key_cancel}" >
+						<aon:actionListener method="#{shop.refreshView}" />
+					</aon:commandButton>	
+						
+					<aon:commandButton id="aonToolbar-addToCart"
+						rendered="#{shop.detail}"
+						value="Ainadir al carrito -i18n-" 
+						action="shop_from" 
+						title="add to cart -i18n-"
+						styleClass="aon-finding-toolbar-item aon-icon-new">
+						<aon:actionListener method="#{shopItem.addToCart}" />
+					</aon:commandButton>	
+				
+					<aon:commandButton id="aonToolbar-view" 
+						rendered="true"
+						value="VIEW CART -i18-"
+						action="shop_from"  immediate="true" 
+						styleClass="aon-finding-toolbar-item aon-icon-new">
+						<aon:actionListener method="#{shop.onViewCart}" />
+					</aon:commandButton>
+					
+					<aon:commandButton id="aonToolbar-bundle" 
+						rendered="#{shop.cart}"
+						value="REQUEST A BUNDLE -i18n-"
+						title="request a bundle -i18n-"
+						action="#{shoppingCart.budgetRequest}"
+						styleClass="aon-finding-toolbar-item aon-icon-predetermine" >
+					</aon:commandButton>
+				
+				</ui:define>
+			</ui:decorate>
+					-->
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="productPanel" columns="3" style="width=100%">
+					<aon:div id="search-panel">
+						<aon:dataTable id="cataloguesGadget"
+							value="#{catalogueGadget.model}" rows="20" var="to"
+							style="width=90%">
+							<aon:rowSelector actionListener="#{catalogueGadget.onSelect}"
+								reRender="itemContent" />
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="catalogues -i18n-" />
+								</f:facet>
+								<aon:outputText value="#{to.name}" />
+							</aon:column>
+						</aon:dataTable>
+
+						<rich:spacer height="20" />
+
+						<aon:dataTable id="categoriesGadget" value="#{categoryGadget.model}"
+							rows="20" var="to" style="width=90%">
+							<aon:rowSelector actionListener="#{categoryGadget.onSelect}"
+								reRender="itemContent" />
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="category -i18n-" />
+								</f:facet>
+								<aon:outputText value="#{to.name}" />
+							</aon:column>
+						</aon:dataTable>
+					</aon:div>
+
+					<aon:div id="itemContent" styleClass="aon-scroll-area"
+						style="width=90%">
+						
+						<aon:div>
+							<aon:commandButton id="aonToolbar-back" 
+								rendered="#{!shop.items}"
+								value="#{bundle.aon_back}"
+								action="shop_from" 
+								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+								accesskey="#{bundle.aon_key_cancel}" >
+								<aon:actionListener method="#{shop.refreshView}" />
+							</aon:commandButton>	
+								
+							<aon:commandButton id="aonToolbar-addToCart"
+								rendered="#{shop.detail}"
+								value="Ainadir al carrito -i18n-" 
+								action="shop_from" 
+								title="add to cart -i18n-"
+								styleClass="aon-finding-toolbar-item aon-icon-new">
+								<aon:actionListener method="#{shopItem.addToCart}" />
+							</aon:commandButton>	
+							
+							<aon:commandButton id="aonToolbar-bundle" 
+								rendered="#{shop.cart}"
+								value="REQUEST A BUNDLE -i18n-"
+								title="request a bundle -i18n-"
+								action="#{shoppingCart.budgetRequest}"
+								styleClass="aon-finding-toolbar-item aon-icon-predetermine" >
+							</aon:commandButton>
+						
+						</aon:div>
+						
+						<!--  
+						<aon:div>
+							<ui:include src="#{shop.contentView}" />
+						</aon:div>
+						-->
+						<aon:div rendered="#{shop.items}" >
+							<ui:include src="items/list.xhtml" />
+						</aon:div>
+						<aon:div rendered="#{shop.detail}" >
+							<ui:include src="detail/grid.xhtml" />
+						</aon:div>
+						<aon:div rendered="#{shop.cart}" >
+							<ui:include src="cart/list.xhtml" />
+						</aon:div>
+					</aon:div>
+					
+					<aon:div id="utility-panel">
+							<!--  
+						<aon:panelGrid id="productSearchPanel" columns="1"
+							style="width=100%;">
+							<aon:outputLabel for="Item_product_name"
+								value="#{bundle.aon_search}" />
+						</aon:panelGrid>
+							-->
+						<aon:div>
+							<aon:inputText id="Item_product_name"
+								value="#{shopItemsSearch.search}" size="25" maxLength="64" />
+							<aon:commandLink id="search_bottom" value="&#160;"
+								styleClass="aon-icon-commandButton-right aon-icon-search"
+								title="#{bundle.aon_search}"
+								accesskey="#{bundle.aon_key_accept}" reRender="itemContent">
+								<aon:outputText value="&#160;" />
+								<aon:actionListener method="#{shopItemsSearch.onSearch}" />
+							</aon:commandLink>
+						</aon:div>
+					
+						<rich:spacer height="20" />
+						
+						<aon:div>
+							<aon:panelGrid columns="2" dir="true">		
+								<aon:outputLabel for="Login" value="login -i18n-"  />
+								<aon:inputText id="Login" value="#{userLogin.login}" size="5" />
+				
+								<aon:outputLabel for="Password"	value="password -i18n-"  />
+								<aon:inputText id="Password" value="#{userLogin.password}" size="5" />
+							</aon:panelGrid>
+							
+							<aon:commandButton id="login-buttom"
+								value="Aceptar -i18n-" 
+								action="shop_form"
+								styleClass="aon-finding-toolbar-item aon-icon-accept">
+								<!--  
+								-->
+								<aon:actionListener method="#{userLogin.onLogin}" />
+							</aon:commandButton>
+						</aon:div>
+						
+						<rich:spacer height="20" />
+						
+						<aon:panelGrid columns="2" dir="true">		
+							<aon:commandButton id="lateral-view" 
+								rendered="true"
+								value="VIEW CART -i18-"
+								action="shop_from"  immediate="true" 
+								styleClass="aon-finding-toolbar-item aon-icon-new">
+								<aon:actionListener method="#{shop.onViewCart}" />
+							</aon:commandButton>
+							<aon:outputText value="&#160;"  />
+							
+							<aon:outputLabel for="cart_quantity" value="CANTIDAD -i18n-"  />
+							<aon:outputText id="cart_quantity" value="#{shoppingCart.quantity}" />
+							
+							<aon:outputLabel for="cart_total" value="TOTAL -i18n-"  />
+							<aon:outputText id="cart_total" value="#{shoppingCart.total}" />
+						</aon:panelGrid>
+
+						
+					
+					</aon:div>
+
+				</aon:panelGrid>
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>
