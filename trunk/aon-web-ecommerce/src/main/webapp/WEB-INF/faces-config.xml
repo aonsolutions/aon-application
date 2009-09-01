@@ -11,7 +11,7 @@
 		</locale-config>
 		<view-handler>com.sun.facelets.FaceletViewHandler</view-handler>  
 		<resource-bundle>
-			<base-name>com.code.aon.ui.ecommerce.i18n.messages</base-name>
+			<base-name>com.code.aon.web.ecommerce.i18n.messages</base-name>
 			<var>appBundle</var>
 		</resource-bundle>
 	</application>
