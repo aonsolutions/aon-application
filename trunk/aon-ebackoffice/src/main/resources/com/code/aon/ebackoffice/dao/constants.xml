@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.code.aon.ebackoffice.EcTarget" sqlName="ec_target">
+		<alias names="id,lastAccess,login,password,target_id,type" />
+		<hibernate names="id,lastAccess,login,password,target.id,type" />
+	</bean>
+</dao>
