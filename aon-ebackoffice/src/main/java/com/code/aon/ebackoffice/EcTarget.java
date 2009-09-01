@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -66,10 +67,10 @@ public class EcTarget implements ITransferObject {
 	 * 
 	 * @return the name
 	 */
-	@ManyToOne (fetch=FetchType.EAGER)
-	@JoinColumn(name="target_id", nullable=false)
+	@OneToOne (fetch=FetchType.EAGER)
+	@JoinColumn(name="target", nullable=false)
 	@ForeignKey(name = "EC_TARGET_FK")
-	@Index(name = "TARGET_ID")
+	@Index(name = "TARGET")
 	public Target getTarget() {
 		return target;
 	}

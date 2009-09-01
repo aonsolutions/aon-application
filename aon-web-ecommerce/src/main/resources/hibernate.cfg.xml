@@ -46,6 +46,9 @@
 		<mapping class="com.code.aon.config.UserScope"/>
 		<mapping class="com.code.aon.config.WorkGroup"/>
 
+		<!-- EBACKOFFICE -->		
+		<mapping class="com.code.aon.ebackoffice.EcTarget"/>
+		
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoTree"/>
 		<mapping class="com.code.aon.geozone.GeoZone"/>

@@ -7,10 +7,9 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.Item;
 import com.code.aon.product.ItemAttachment;
-import com.code.aon.product.Product;
+import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
 import com.code.aon.ui.form.BasicController;
@@ -51,12 +50,12 @@ public class ShopItemController extends BasicController {
 	private void refreshModel() throws ManagerBeanException{
 		Criteria criteria = new Criteria();
 		String alias = IProductAlias.ITEM_ATTACHMENT_ITEM_ID;
-		//String alias = "ItemAttachment.item.id";
-		String identifier = AonUtil.getManagerBean(Product.class).getFieldName(alias);
+		String identifier = AonUtil.getManagerBean(ItemAttachment.class).getFieldName(alias);
 		criteria.addEqualExpression(identifier, item.getId());
 		
 		this.clearCriteria();
 		this.setCriteria(criteria);
+		//this.setCriteria(null);
 		this.onSearch(null);
 	}
 

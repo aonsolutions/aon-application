@@ -19,7 +19,7 @@
 		
 		<!-- EBACKOFFICE -->		
 		<mapping class="com.code.aon.ebackoffice.EcTarget"/>
-		
+						
 		<!-- CONFIG -->		
 		<mapping class="com.code.aon.config.Tariff"/>
 		<mapping class="com.code.aon.config.Tax"/>
