@@ -857,15 +857,13 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	 * 
 	 * @return the double
 	 */
-	private Map<Account, Double> obtainRetentionQuotasPerAccount(Invoice invoice)
-			throws ManagerBeanException {
-		Account account;
-		if (invoice.getType().equals(InvoiceType.SALES)) {
-			account = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.PAID_RETENTION_ACCOUNT);
-		} else {
-			account = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.CHARGED_RETENTION_ACCOUNT);
-		}
-
+	private Map<Account, Double> obtainRetentionQuotasPerAccount(Invoice invoice) {
+		Account account = getHeader().getRetentionAccount();
+//		if (invoice.getType().equals(InvoiceType.SALES)) {
+//			account = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.PAID_RETENTION_ACCOUNT);
+//		} else {
+//			account = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.CHARGED_RETENTION_ACCOUNT);
+//		}
 		double total = 0.0;
 		Iterator<?> iter = ((List<?>) details.getWrappedData()).iterator();
 		while (iter.hasNext()) {
@@ -1181,46 +1179,61 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	}
 
 	public void registryChanged(LookupChangeEvent event) {
-		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-			Company company = getCompany();
-			if (isSales()) {
-				Customer customer = (Customer) event.getNewValue();
-				getHeader().setRegistry( customer.getRegistry());
-				getHeader().setWithholding(company.isWithholding() && customer.isWithholding());
-				getHeader().setSurcharge(customer.isSurcharge());
-				getHeader().setTaxFree(customer.isTaxFree());
-			} else if (isPurchase()) {
-				Supplier supplier = (Supplier) event.getNewValue();
-				getHeader().setRegistry( supplier.getRegistry());
-				getHeader().setWithholding(supplier.isWithholding());
-				getHeader().setSurcharge(company.isSurcharge());
-				getHeader().setTaxFree(company.isTaxFree());
-			} else if (isExpense()) {
-				Creditor creditor = (Creditor) event.getNewValue();
-				getHeader().setRegistry(creditor.getRegistry());
-				getHeader().setWithholding(creditor.isWithholding());
-				getHeader().setSurcharge(company.isSurcharge());
-				getHeader().setTaxFree(company.isTaxFree());
-			}
-			getHeader().setDocument( getHeader().getRegistry().getDocument());
-			getHeader().setName(getHeader().getRegistry().getFullName());
-			
-			setRelatedAccounts( null ); // se inicializa.
-			List<SelectItem> list = getRelatedAccounts();
-			getHeader().setAccount( null );
-			if (list.size() > 0 ) { // Se asigna el primer elemento de la lista de cuentas.
-				SelectItem i = list.get(0);
-				if (!i.isDisabled()) {
-					getHeader().setAccount(  (Account) i.getValue() );	
+		try {
+			if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+				Company company = getCompany();
+				if (isSales()) {
+					Customer customer = (Customer) event.getNewValue();
+					getHeader().setRegistry( customer.getRegistry());
+					getHeader().setWithholding(company.isWithholding() && customer.isWithholding());
+					getHeader().setSurcharge(customer.isSurcharge());
+					getHeader().setTaxFree(customer.isTaxFree());
+				} else if (isPurchase()) {
+					Supplier supplier = (Supplier) event.getNewValue();
+					getHeader().setRegistry( supplier.getRegistry());
+					getHeader().setWithholding(supplier.isWithholding());
+					getHeader().setSurcharge(company.isSurcharge());
+					getHeader().setTaxFree(company.isTaxFree());
+				} else if (isExpense()) {
+					Creditor creditor = (Creditor) event.getNewValue();
+					getHeader().setRegistry(creditor.getRegistry());
+					getHeader().setWithholding(creditor.isWithholding());
+					getHeader().setSurcharge(company.isSurcharge());
+					getHeader().setTaxFree(company.isTaxFree());
 				}
+				getHeader().setDocument( getHeader().getRegistry().getDocument());
+				getHeader().setName(getHeader().getRegistry().getFullName());
+				
+				setRelatedAccounts( null ); // se inicializa.
+				List<SelectItem> list = getRelatedAccounts();
+				getHeader().setAccount( null );
+				if (list.size() > 0 ) { // Se asigna el primer elemento de la lista de cuentas.
+					SelectItem i = list.get(0);
+					if (!i.isDisabled()) {
+						getHeader().setAccount(  (Account) i.getValue() );	
+					}
+				}
+				if (getHeader().isWithholding()) {
+					if (isSales()) {
+						getHeader().setRetentionAccount( getAccountingUtil().obtainDefaultAccount(DefaultAccounts.PAID_RETENTION_ACCOUNT) );
+					} else {
+						getHeader().setRetentionAccount( getAccountingUtil().obtainDefaultAccount(DefaultAccounts.CHARGED_RETENTION_ACCOUNT) );
+					}
+				} else {
+					getHeader().setRetentionAccount( null );
+				}
+			} else {
+				getHeader().setDocument(null);
+				getHeader().setName(null);
+				getHeader().setWithholding(false);
+				getHeader().setSurcharge(false);
+				getHeader().setTaxFree(false);
+				getHeader().setAccount( null );
 			}
-		} else {
-			getHeader().setDocument(null);
-			getHeader().setName(null);
-			getHeader().setWithholding(false);
-			getHeader().setSurcharge(false);
-			getHeader().setTaxFree(false);
-			getHeader().setAccount( null );
+		} catch (ManagerBeanException e) {
+			String m = "Error al inicializar los datos";
+			AonUtil.addErrorMessage(m);
+			LOGGER.log(Level.SEVERE, m, e);
 		}
 	}
 
@@ -1342,17 +1355,24 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				getHeader().setType(InvoiceType.SALES);
 				detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "70*");
 				getHeader().setAccount((detail != null) ? detail.getAccount() : null);
+				detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "473*");
+				getHeader().setRetentionAccount((detail != null) ? detail.getAccount() : null);
 			}
 			if (entry.getType().equals(AccountEntryType.PURCHASE_INVOICE)) {
 				getHeader().setType(InvoiceType.PURCHASE);
 				detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "60*");
 				getHeader().setAccount((detail != null) ? detail.getAccount() : null);
+				detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "475*");
+				getHeader().setRetentionAccount((detail != null) ? detail.getAccount() : null);
 			}
 			if (entry.getType().equals(AccountEntryType.EXPENSE_INVOICE)) {
 				getHeader().setType(InvoiceType.EXPENSES);
 				detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "6*");
 				getHeader().setAccount((detail != null) ? detail.getAccount() : null);
+				detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, "475*");
+				getHeader().setRetentionAccount((detail != null) ? detail.getAccount() : null);
 			}
+			
 			getHeader().setDate(entry.getEntryDate());
 			getHeader().setDocument(accountEntryInvoice.getInvoice().getRegistryDocument());
 			getHeader().setName(accountEntryInvoice.getInvoice().getRegistryName());

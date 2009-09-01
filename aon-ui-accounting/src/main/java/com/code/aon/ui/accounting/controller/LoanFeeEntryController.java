@@ -2,6 +2,7 @@ package com.code.aon.ui.accounting.controller;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,7 +17,6 @@ import com.code.aon.account.bridge.util.AccountConstants;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.Loan;
 import com.code.aon.accounting.LoanFeeEntryHeader;
 import com.code.aon.accounting.Period;
@@ -28,6 +28,7 @@ import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
@@ -216,7 +217,7 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 		detail.setAccount(rBankAccount);
 		detail.setAccountEntry(entry);
 		detail.setConcept(getHeader().getDescription());
-		detail.setCredit(getHeader().getAmortization() + getHeader().getInterest());
+		detail.setCredit(getHeader().getFee());
 		detail.setBalancingAccount(loanAccount);
 		accountEntryDetailBean.insert(detail);
 		// Segundo Apunte
@@ -230,10 +231,20 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 		// Tercer Apunte
 		if (CommonUtil.round(getHeader().getInterest()) != 0.0) {
 			detail = new AccountEntryDetail();
-			detail.setAccount(getAccountingUtil().obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT));
+			detail.setAccount(getHeader().getInterestAccount());
 			detail.setAccountEntry(entry);
 			detail.setConcept(getHeader().getDescription());
 			detail.setDebit(getHeader().getInterest());
+			detail.setBalancingAccount(loanAccount);
+			accountEntryDetailBean.insert(detail);
+		}
+		// Cuarto Apunte
+		if (CommonUtil.round(getHeader().getExpenses()) != 0.0) {
+			detail = new AccountEntryDetail();
+			detail.setAccount(getHeader().getExpensesAccount());
+			detail.setAccountEntry(entry);
+			detail.setConcept(getHeader().getDescription());
+			detail.setDebit(getHeader().getExpenses());
 			detail.setBalancingAccount(loanAccount);
 			accountEntryDetailBean.insert(detail);
 		}
@@ -281,21 +292,44 @@ public class LoanFeeEntryController implements ISpecialAccountEntry{
 
 	@Override
 	public void loadEntry(AccountEntry entry) throws ManagerBeanException {
-		onReset(null);
-		setNew(false);
-		setAccountEntry(entry);
-		LoanFeeEntryHeader header = new LoanFeeEntryHeader();
-		Loan loan = obtainLoan(entry);
-		AccountEntryDetail accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.SHORT_TERM_LOAN_ACCOUNT_PREFIX + "*");	
-		header.setAmortization(accountEntryDetail.getDebit());
-		header.setDescription(accountEntryDetail.getConcept());
-		header.setFeePeriod(new Period());
-		header.getFeePeriod().setId(entry.getAccountPeriod());
-		header.setFeeDate(entry.getEntryDate());
-		header.setLoan(loan);
-		accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, getAccountingUtil().obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "*");
-		header.setInterest(accountEntryDetail.getDebit());
-		setHeader(header);
+		try {
+			onReset(null);
+			setNew(false);
+			setAccountEntry(entry);
+			LoanFeeEntryHeader header = new LoanFeeEntryHeader();
+			Loan loan = obtainLoan(entry);
+			
+			
+			AccountEntryDetail accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.SHORT_TERM_LOAN_ACCOUNT_PREFIX + "*");	
+			header.setAmortization(accountEntryDetail.getDebit());
+			header.setDescription(accountEntryDetail.getConcept());
+			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
+			header.setFeePeriod((Period) periodBean.get(entry.getAccountPeriod()) );
+			header.setFeeDate(entry.getEntryDate());
+			header.setLoan(loan);
+			
+			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
+			criteria.addExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), "6*");
+			List<ITransferObject> iter = accountEntryDetailBean.getList(criteria);
+			for (ITransferObject detail: iter) {
+				AccountEntryDetail entryDetail = (AccountEntryDetail) detail;
+				if (entryDetail.getAccount().getId().startsWith("662")) {
+					header.setInterest(entryDetail.getDebit());
+					header.setInterestAccount(entryDetail.getAccount());
+				} else {
+					if (entryDetail.getAccount().getId().startsWith("6")) {
+						header.setExpenses(entryDetail.getDebit());
+						header.setExpensesAccount(entryDetail.getAccount());
+					}
+				}
+			}
+			//accountEntryDetail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, getAccountingUtil().obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "*");
+			setHeader(header);
+		} catch (ExpressionException e) {
+			throw new ManagerBeanException(e);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")

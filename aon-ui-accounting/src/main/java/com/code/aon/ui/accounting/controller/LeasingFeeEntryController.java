@@ -225,7 +225,9 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 		accountEntryDetailBean.insert(detail);
 		// Tercer Apunte
 		detail = new AccountEntryDetail();
-		Account debtInterestAccount = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT);
+		Account debtInterestAccount = null;
+		// Comentado porque las cte. DefaultAccounts.DEBT_INTEREST_ACCOUNT ha desaparecido. 
+		//		Account debtInterestAccount = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT);
 		detail.setAccount(debtInterestAccount);
 		detail.setAccountEntry(entry);
 		detail.setConcept("Intereses Leasing");
@@ -447,7 +449,8 @@ public class LeasingFeeEntryController implements ISpecialAccountEntry{
 			LeasingFeeEntryHeader header = new LeasingFeeEntryHeader();
 			AccountEntryDetail detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
 			header.setRBank(getAccountBridgeUtil().obtainRBank(detail.getAccount().getId()));
-			detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, getAccountingUtil().obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "");
+			// Comentado porque las cte. DefaultAccounts.DEBT_INTEREST_ACCOUNT ha desaparecido. 
+//			detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, getAccountingUtil().obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "");
 			header.setInterest(detail.getDebit());
 			detail = getAccountingUtil().getEntryDetailFromAccountPattern(entry, AccountConstants.LEASING_ACCOUNT_PREFIX + "*");
 			header.setAmortization(detail.getDebit());

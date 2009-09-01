@@ -88,7 +88,7 @@
 								<f:selectItems value="#{accountingCollections.invoiceTypes}" />
 								<a4j:support event="onchange" ajaxSingle="true"
 									actionListener="#{invoiceEntry.onTypeChanged}"
-									reRender="invoiceTables,TaxesData"
+									reRender="invoiceTables,TaxesData,retentionTable"
 									focus="Account_invoiceTransactionType">
 								</a4j:support>
 							</aon:selectOneMenu>
@@ -212,7 +212,7 @@
 							<aon:panelGroup rendered="#{invoiceEntry.sales}">
 								 <a4j:region>
 									<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
-										reRender="Customer_name,Invoice_document,invoiceDetails,Account_Related,InvoiceDetail_wizard"
+										reRender="Customer_name,Invoice_document,invoiceDetails,Account_Related,InvoiceDetail_wizard,retentionTable"
 										lookupProperty="registry" ajaxSingle="false"
 										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
@@ -220,7 +220,7 @@
 										value="#{invoiceEntry.header.registry.id}" size="5" />
 									<aon:lookupButton
 										windowTitle="#{customerBundle.customer_selection}"
-										selectReRender="Customer_id,Customer_name,Invoice_document,invoiceDetails,Account_Related,InvoiceDetail_wizard"
+										selectReRender="Customer_id,Customer_name,Invoice_document,invoiceDetails,Account_Related,InvoiceDetail_wizard,retentionTable"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										actionType="search" lookup="#{customerLookup}" minHeight="460"
@@ -230,7 +230,7 @@
 									</aon:lookupButton>
 									<aon:lookupButton 
 										windowTitle="#{customerBundle.customer_new}"
-										selectReRender="Customer_id,Customer_name,Invoice_document,Account_Related,invoiceDetails,aonToolbar,InvoiceDetail_wizard"
+										selectReRender="Customer_id,Customer_name,Invoice_document,Account_Related,invoiceDetails,aonToolbar,InvoiceDetail_wizard,retentionTable"
 										lookup="#{customerLookup}" actionType="new" 
 										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										minWidth="650" minHeight="600"
@@ -248,14 +248,14 @@
 							<aon:panelGroup rendered="#{invoiceEntry.purchase}">
 								 <a4j:region>
 									<aon:lookupInputText id="Supplier_id" lookup="#{supplierLookup}"
-										reRender="Supplier_name,Invoice_document,invoiceDetails,Account_Related,InvoiceDetail_wizard"
+										reRender="Supplier_name,Invoice_document,invoiceDetails,Account_Related,InvoiceDetail_wizard,retentionTable"
 										lookupProperty="registry" ajaxSingle="false"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										value="#{invoiceEntry.header.registry.id}" size="5" />
 									<aon:lookupButton
 										windowTitle="#{supplierBundle.supplier_selection}"
-										selectReRender="Supplier_id,Supplier_name,Invoice_document,invoiceDetails,Account_Related,InvoiceDetail_wizard"
+										selectReRender="Supplier_id,Supplier_name,Invoice_document,invoiceDetails,Account_Related,InvoiceDetail_wizard,retentionTable"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										actionType="search" lookup="#{supplierLookup}" minHeight="460"
@@ -264,7 +264,7 @@
 									</aon:lookupButton>
 									<aon:lookupButton 
 										windowTitle="#{supplierBundle.supplier_new}"
-										selectReRender="Supplier_id,Supplier_name,Invoice_document,Account_Related,invoiceDetails,aonToolbar,InvoiceDetail_wizard"
+										selectReRender="Supplier_id,Supplier_name,Invoice_document,Account_Related,invoiceDetails,aonToolbar,InvoiceDetail_wizard,retentionTable"
 										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										lookup="#{supplierLookup}" actionType="new" 
 										minWidth="650" minHeight="600"
@@ -282,14 +282,14 @@
 							<aon:panelGroup rendered="#{invoiceEntry.expense}">
 								 <a4j:region>
 									<aon:lookupInputText id="Creditor_id" lookup="#{creditorLookup}"
-										reRender="Creditor_name,Invoice_document,invoiceDetails,Account_Related,InvoiceDetail_wizard"
+										reRender="Creditor_name,Invoice_document,invoiceDetails,Account_Related,InvoiceDetail_wizard,retentionTable"
 										lookupProperty="registry" ajaxSingle="false"
 										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										value="#{invoiceEntry.header.registry.id}" size="5" />
 									<aon:lookupButton
 										windowTitle="#{financeBundle.finance_creditor_selection}"
-										selectReRender="Creditor_id,Creditor_name,Invoice_document,invoiceDetails,Account_Related,InvoiceDetail_wizard"
+										selectReRender="Creditor_id,Creditor_name,Invoice_document,invoiceDetails,Account_Related,InvoiceDetail_wizard,retentionTable"
 										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										actionType="search" lookup="#{creditorLookup}" minHeight="460"
@@ -298,7 +298,7 @@
 									</aon:lookupButton>
 									<aon:lookupButton 
 										windowTitle="#{financeBundle.finance_creditor_new}"
-										selectReRender="Creditor_id,Creditor_name,Invoice_document,Account_Related,invoiceDetails,aonToolbar,InvoiceDetail_wizard"
+										selectReRender="Creditor_id,Creditor_name,Invoice_document,Account_Related,invoiceDetails,aonToolbar,InvoiceDetail_wizard,retentionTable"
 										lookup="#{creditorLookup}" actionType="new" 
 										disabled="#{invoiceEntry.newDetail or !invoiceEntry.new}"
 										minWidth="650" minHeight="550"
@@ -354,20 +354,33 @@
 								focus="saveInvoice">
 							</aon:commandButton>
 						</aon:div>
+					</aon:panelGrid>
 
-<!--
-						<aon:outputLabel for="AccountEntry_securityLevel"
-							value="#{bundle.aon_security_level}" />
-						<aon:selectOneRadio id="AccountEntry_securityLevel"
-							style="display:inline;"
-							disabled="#{invoiceEntry.newDetail}"
-							value="#{invoiceEntry.header.securityLevel}">
-							<f:selectItems value="#{commonCollections.securityLevels}" />
-						</aon:selectOneRadio>
+					<aon:panelGrid id="retentionTable" columns="2" style="width: 100%;"
+						columnClasses="aon-panelGrid-odd aon-width-150
+							,aon-panelGrid-even aon-width-auto">
+						<aon:outputLabel for="Invoice_charged_retention_account"
+							rendered="#{invoiceEntry.withHolding and !invoiceEntry.sales}"
+							value="#{accountingBundle.accounting_retention_account}" />
+						<aon:selectOneMenu id="Invoice_charged_retention_account"
+							rendered="#{invoiceEntry.withHolding and !invoiceEntry.sales}"
+							style="width: 380px;"
+							value="#{invoiceEntry.header.retentionAccount}">
+							<f:selectItems
+								value="#{accountCollections.chargedRetentionAccounts}" />
+						</aon:selectOneMenu>
 
-						<aon:outputText value="&#160;" />
-						<aon:outputText value="&#160;" />
--->						
+						<aon:outputLabel for="Invoice_paid_retention_account"
+							rendered="#{invoiceEntry.withHolding and invoiceEntry.sales}"
+							value="#{accountingBundle.accounting_retention_account}" />
+						<aon:selectOneMenu id="Invoice_paid_retention_account"
+							rendered="#{invoiceEntry.withHolding and invoiceEntry.sales}"
+							style="width: 380px;"
+							value="#{invoiceEntry.header.retentionAccount}">
+							<f:selectItems
+								value="#{accountCollections.paidRetentionAccounts}" />
+						</aon:selectOneMenu>
+
 					</aon:panelGrid>
 				</aon:div>
 				<aon:div id="invoiceDetails">
