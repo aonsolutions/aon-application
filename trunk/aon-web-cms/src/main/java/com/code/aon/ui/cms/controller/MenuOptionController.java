@@ -6,12 +6,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.cms.Menu;
 import com.code.aon.cms.MenuOption;
 import com.code.aon.cms.MenuOptionDetail;
 import com.code.aon.cms.dao.ICMSAlias;
+import com.code.aon.cms.enumeration.PageType;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
@@ -145,12 +147,17 @@ public class MenuOptionController extends BasicI18nController implements IOrdere
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
-
-	public void onClearPageType(ActionEvent event) {
+	
+	public void onTypeChange( ValueChangeEvent event ) throws ManagerBeanException {
+		PageType type = (PageType) event.getNewValue();
 		MenuOption mo = (MenuOption)getTo();
-		mo.setType( null );
-		mo.setLevel( null );
-		mo.setIdent( null );
+		if ( type == null ) {
+			mo.setLevel( null );
+			mo.setIdent( null );			
+		} else {
+			mo.setLevel( MenuOptionUtil.getDefaultLevel(type) );
+			mo.setIdent( null );			
+		}
 	}
 	
 }

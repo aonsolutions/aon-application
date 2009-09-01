@@ -199,13 +199,11 @@ public class CollectionsController implements ICMSConstants {
 		criteria.addEqualExpression(brandBean.getFieldName(ICMSAlias.BRAND_ACTIVE), true);
 		criteria.addOrder(brandBean.getFieldName(ICMSAlias.BRAND_ALIAS));
 		List<ITransferObject> list = (List<ITransferObject>)brandBean.getList(criteria);
-		SelectItem item = new SelectItem(null, "");
-		brands.add(item);
 		for (int i = 0; i < list.size(); i++) {
 			Brand brand = (Brand)list.get(i);
 			int id = brand.getId();
 			String name = brand.getAlias();
-			item = new SelectItem(id, name);
+			SelectItem item = new SelectItem(id, name);
 			brands.add(item);
 		}
 		return brands;
@@ -399,7 +397,7 @@ public class CollectionsController implements ICMSConstants {
 	}
 
 	public List<SelectItem> getSectionList() throws ManagerBeanException {
-		return getSectionList(true);
+		return getSectionList(false);
 	}
 
 	public List<SelectItem> getSectionList( boolean onlyId ) throws ManagerBeanException {
@@ -705,11 +703,9 @@ public class CollectionsController implements ICMSConstants {
 		criteria.addEqualExpression(categoryBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_ACTIVE),true);
 		criteria.addNullExpression(categoryBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_PARENT_ID));
 		List<ITransferObject> list = (List<ITransferObject>)categoryBean.getList(criteria);
-		SelectItem item = new SelectItem(null,"------");
-		categories.add(item);
 		for (int i = 0; i < list.size(); i++) {
 			ProductCategory pcd = (ProductCategory)list.get(i);
-			item = new SelectItem(pcd.getId(),pcd.getAlias());
+			SelectItem item = new SelectItem(pcd.getId(),pcd.getAlias());
 			categories.add(item);
 		}
 		return categories;

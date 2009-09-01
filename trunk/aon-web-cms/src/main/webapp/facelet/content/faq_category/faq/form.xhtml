@@ -25,10 +25,10 @@
 					<aon:commandButton id="categories"
 						value="#{appBundle.faq_category}"
 						action="faq_category_list"
+						actionListener="#{faq_category.onSearch}"
 						immediate="#{true}"
 						styleClass="aon-finding-toolbar-item-no-icon">
 						<aon:actionListener method="#{faq_category.onInit}" />
-						<aon:actionListener method="#{faq_category.onSearch}" />
 					</aon:commandButton>
 				</ui:define>				
 			</ui:decorate>

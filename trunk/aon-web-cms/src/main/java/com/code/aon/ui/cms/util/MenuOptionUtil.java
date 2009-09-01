@@ -138,22 +138,30 @@ public class MenuOptionUtil implements ICMSConstants {
 		return false;
 	}
 
-	public static List<SelectItem> getLevels(PageType type) {
+	public static List<SelectItem> getLevels(PageType type) throws ManagerBeanException {
 		List<SelectItem> levels = new LinkedList<SelectItem>();
 		if (type != null) {
 			switch ( type ) {
 				case FAQ:
 				case LINK:					
 					levels.add(LEVEL_TOP);
-					levels.add(LEVEL_CATEGORY);
-					levels.add(LEVEL_SECTION);
+					if (! getIdents(type, ContentLevel.CATEGORY).isEmpty() ) {
+						levels.add(LEVEL_CATEGORY);
+					}
+					if (! getIdents(type, ContentLevel.SECTION).isEmpty() ) {
+						levels.add(LEVEL_SECTION);
+					}
 					break;
 				case ALBUM_IMAGES:
 				case DOWNLOAD:
 				case SPORT:					
 					levels.add(LEVEL_TOP);
-					levels.add(LEVEL_CATEGORY);
-					levels.add(LEVEL_ELEMENT);
+					if (! getIdents(type, ContentLevel.CATEGORY).isEmpty() ) {
+						levels.add(LEVEL_CATEGORY);
+					}
+					if (! getIdents(type, ContentLevel.ELEMENT).isEmpty() ) {
+						levels.add(LEVEL_ELEMENT);
+					}					
 					break;
 				case ARTICLE_EVENTS:
 				case ARTICLE_NEWS:
@@ -161,18 +169,43 @@ public class MenuOptionUtil implements ICMSConstants {
 				case ARTICLE_SERVICES:					
 				case BRANDS:
 				case PRODUCT_CATEGORIES:					
-					levels.add(LEVEL_CATEGORY);
-					levels.add(LEVEL_ELEMENT);
+					if (! getIdents(type, ContentLevel.CATEGORY).isEmpty() ) {
+						levels.add(LEVEL_CATEGORY);
+					}
+					if (! getIdents(type, ContentLevel.ELEMENT).isEmpty() ) {
+						levels.add(LEVEL_ELEMENT);
+					}					
 					break;
 				case ACTIVITY:
 					levels.add(LEVEL_TOP);
-					levels.add(LEVEL_ELEMENT);
+					if (! getIdents(type, ContentLevel.ELEMENT).isEmpty() ) {
+						levels.add(LEVEL_ELEMENT);
+					}					
 					break;
 			}
 		}
 		return levels;
 	}
 
+	public static ContentLevel getDefaultLevel(PageType type) throws ManagerBeanException {
+		switch ( type ) {
+			case ARTICLE_EVENTS:
+			case ARTICLE_NEWS:
+			case ARTICLE_OTHER:
+			case ARTICLE_SERVICES:					
+			case BRANDS:
+			case PRODUCT_CATEGORIES:					
+				if (! getIdents(type, ContentLevel.CATEGORY).isEmpty() ) {
+					return ContentLevel.CATEGORY;
+				}
+				if (! getIdents(type, ContentLevel.ELEMENT).isEmpty() ) {
+					return ContentLevel.ELEMENT;
+				}					
+			default:
+				return ContentLevel.TOP;
+		}
+	}
+	
 	public static List<SelectItem> getIdents(PageType type, ContentLevel level) throws ManagerBeanException {
 		List<SelectItem> idents = Collections.emptyList();
 		if ( type != null ) {

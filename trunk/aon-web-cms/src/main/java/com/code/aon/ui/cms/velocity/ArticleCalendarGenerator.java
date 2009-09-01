@@ -40,31 +40,38 @@ import com.code.aon.ui.cms.velocity.attribute.NextArticlesHandler;
 import com.code.aon.ui.cms.velocity.utils.MonthContent;
 
 public class ArticleCalendarGenerator extends Generator {
-	
+
 	private static final Logger LOGGER = Logger.getLogger(ArticleCalendarGenerator.class.getName());
 
-	public static String DIARY_INDEX_PAGE = "diary_index";
+	public static final String DIARY_INDEX_PAGE = "diary_index";
+
+	private static final String NEXT_ARTICLE_DIARY_MONTH_KEY = "next_article_diary_month";
+
+	private static final String NEXT_ARTICLE_DIARY_YEAR_KEY = "next_article_diary_year";
+
+	private static final String PREVIOUS_ARTICLE_DIARY_MONTH_KEY = "previous_article_diary_month";
+
+	private static final String PREVIOUS_ARTICLE_DIARY_YEAR_KEY = "previous_article_diary_year";
+
+	private static final String ARTICLE_DIARY_MONTH_KEY = "article_diary_month";
+
+	private static final String ARTICLE_DIARY_YEAR_KEY = "article_diary_year";
+
+	private static final String NEXT_ARTICLE_DIARY_KEY = "next_article_diary";
+
+	private static final String PREVIOUS_ARTICLE_DIARY_KEY = "previous_article_diary";
+
+	private static final String ARTICLE_DIARY_KEY = "article_diary";
+
+	private static final String DIARY_CATEGORIES_KEY = "diaryCategories";
 	
 	public void generate() {
-		List<ITransferObject> articleList;
-		List<ITransferObject> articleDetailList;
-		Map<String, MonthContent> months;
-		List<MonthContent> monthsList;
-		ArrayList<ArticleDetail> dayArticleDetailList;
-		ArrayList<ArticleHandler> index_ahlist = new ArrayList<ArticleHandler>();
-		DiaryCategoriesHandler dch = null;
-		try {
-			
+		try {		
 			IManagerBean articleDetailBean = BeanManager.getManagerBean(ArticleDetail.class);
 
 			GregorianCalendar currentDate = new GregorianCalendar();
 			GregorianCalendar diaryIndexDate = null;
 
-			Criteria articleDetailCriteria;
-			
-			Article article;
-			ArticleDetail articleDetail;
-			
 	        GregorianCalendar firstDay = new GregorianCalendar();
 	        firstDay.set(Calendar.DATE, 1);
 	        firstDay.add(Calendar.MONTH, -1);
@@ -73,27 +80,29 @@ public class ArticleCalendarGenerator extends Generator {
 	        lastDay.set(Calendar.DATE, MonthContent.diasDelMes(lastDay.get(Calendar.MONTH), lastDay.get(Calendar.YEAR)));
 
 	        Diary diary = getDiary();
+	        List<ITransferObject> articleList; 
 	        if (diary !=null)
 	        	articleList = ArticleCalendarGenerator.getEventList(firstDay, lastDay, diary.isPastEvents());
 	        else
 	        	articleList = ArticleCalendarGenerator.getEventList(firstDay, lastDay, true);
 	        	
-			months = new HashMap<String, MonthContent>();
-			monthsList = new ArrayList<MonthContent>();
+	        Map<String, MonthContent> months = new HashMap<String, MonthContent>();
+	        List<MonthContent> monthsList = new ArrayList<MonthContent>();
 			
 			init(firstDay.getTime(),months,monthsList);
 			Map<Integer,ArticleCategoryHandler> map = new HashMap<Integer,ArticleCategoryHandler>(); 
+			List<ArticleHandler> index_ahlist = new ArrayList<ArticleHandler>();
 			for (int i=0; i < articleList.size(); i++) {
-				article = (Article)articleList.get(i);
+				Article article = (Article) articleList.get(i);
 				addArticleCategoryHandler(map, article.getArticleCategory());
-				articleDetailCriteria = new Criteria();
+				Criteria articleDetailCriteria = new Criteria();
 				articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), article.getId());
 				articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-				articleDetailList = (List<ITransferObject>)articleDetailBean.getList(articleDetailCriteria);
+				List<ITransferObject> articleDetailList = articleDetailBean.getList(articleDetailCriteria);
 				if (articleDetailList.isEmpty()) {
-					logger.warning(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.");
+					logger.warning("Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.");
 				}else{
-					articleDetail = (ArticleDetail)articleDetailList.get(0);
+					ArticleDetail articleDetail = (ArticleDetail)articleDetailList.get(0);
 					Date initDate = article.getInitDate();
 					
 					if (currentDate.getTime().compareTo(initDate)<=0
@@ -123,46 +132,45 @@ public class ArticleCalendarGenerator extends Generator {
 				}
 			}
 			
-			Section configSection = GeneratorConfigController.currentSection(ArticleConfig.class);
-
 			VelocityUtil vu = context.initVelocityUtil();
 
+			Section configSection = GeneratorConfigController.currentSection(ArticleConfig.class);
+			
 			context.changeSection(vu, configSection);
 
 			for (int pos=0; pos < monthsList.size(); ++pos){
 				MonthContent monthContent = monthsList.get(pos);
 				
-				
 				Object[] array = monthContent.getValues();
 				for (int i = 0;i < array.length; i++){
-					dayArticleDetailList = (ArrayList<ArticleDetail>)array[i];
-					ArrayList<ArticleHandler> ahlist = new ArrayList<ArticleHandler>();
+					List<ArticleDetail> dayArticleDetailList = (List<ArticleDetail>)array[i];
+					List<ArticleHandler> ahlist = new ArrayList<ArticleHandler>();
 					if (dayArticleDetailList!=null){
 						for (int j=0; j < dayArticleDetailList.size(); j++) {
-							articleDetail = dayArticleDetailList.get(j);
+							ArticleDetail articleDetail = dayArticleDetailList.get(j);
 							ArticleHandler ahandler = new ArticleHandler(articleDetail);
 							ahlist.add(ahandler);
 						}
-						vu.put("article_list", ahlist);
+						vu.put(ARTICLE_LIST_KEY, ahlist);
 						
 						try{
-							vu.put("previous_article_diary", (monthsList.get(0)).getCalendar());
-							vu.put("previous_article_diary_year", (monthsList.get(0)).getYear());
-							vu.put("previous_article_diary_month", (monthsList.get(0)).getMonth());
+							vu.put(PREVIOUS_ARTICLE_DIARY_KEY, (monthsList.get(0)).getCalendar());
+							vu.put(PREVIOUS_ARTICLE_DIARY_YEAR_KEY, (monthsList.get(0)).getYear());
+							vu.put(PREVIOUS_ARTICLE_DIARY_MONTH_KEY, (monthsList.get(0)).getMonth());
 						}catch (Throwable th) {
 							LOGGER.log(Level.SEVERE, th.getMessage(), th);
 						}
 						try{
-							vu.put("article_diary", (monthsList.get(1)).getCalendar());
-							vu.put("article_diary_year", (monthsList.get(1)).getYear());
-							vu.put("article_diary_month", (monthsList.get(1)).getMonth());
+							vu.put(ARTICLE_DIARY_KEY, (monthsList.get(1)).getCalendar());
+							vu.put(ARTICLE_DIARY_YEAR_KEY, (monthsList.get(1)).getYear());
+							vu.put(ARTICLE_DIARY_MONTH_KEY, (monthsList.get(1)).getMonth());
 						}catch (Throwable th) {
 							LOGGER.log(Level.SEVERE, th.getMessage(), th);
 						}
 						try{
-							vu.put("next_article_diary", (monthsList.get(2)).getCalendar());
-							vu.put("next_article_diary_year", (monthsList.get(2)).getYear());
-							vu.put("next_article_diary_month", (monthsList.get(2)).getMonth());
+							vu.put(NEXT_ARTICLE_DIARY_KEY, (monthsList.get(2)).getCalendar());
+							vu.put(NEXT_ARTICLE_DIARY_YEAR_KEY, (monthsList.get(2)).getYear());
+							vu.put(NEXT_ARTICLE_DIARY_MONTH_KEY, (monthsList.get(2)).getMonth());
 						}catch (Throwable th) {
 							LOGGER.log(Level.SEVERE, th.getMessage(), th);
 						}
@@ -175,17 +183,17 @@ public class ArticleCalendarGenerator extends Generator {
 						String name = calendar.get(Calendar.YEAR)+"_"+calendar.get(Calendar.MONTH)+"_"+calendar.get(Calendar.DATE);
 						logger.info(" Generando diario "+name+".");
 						generate(vu, Templates.DIARY, name);
-						vu.remove("article_list");
+						vu.remove(ARTICLE_LIST_KEY);
 						vu.remove("current_date");
-						vu.remove("article_diary");
-						vu.remove("previous_article_diary");
-						vu.remove("next_article_diary");
-						vu.remove("article_diary_month");
-						vu.remove("article_diary_year");
-						vu.remove("previous_article_diary_month");
-						vu.remove("previous_article_diary_year");
-						vu.remove("next_article_diary_month");
-						vu.remove("next_article_diary_year");
+						vu.remove(ARTICLE_DIARY_KEY);
+						vu.remove(PREVIOUS_ARTICLE_DIARY_KEY);
+						vu.remove(NEXT_ARTICLE_DIARY_KEY);
+						vu.remove(ARTICLE_DIARY_MONTH_KEY);
+						vu.remove(ARTICLE_DIARY_YEAR_KEY);
+						vu.remove(PREVIOUS_ARTICLE_DIARY_MONTH_KEY);
+						vu.remove(PREVIOUS_ARTICLE_DIARY_YEAR_KEY);
+						vu.remove(NEXT_ARTICLE_DIARY_MONTH_KEY);
+						vu.remove(NEXT_ARTICLE_DIARY_YEAR_KEY);
 					}
 					ahlist = null;
 				}
@@ -195,53 +203,48 @@ public class ArticleCalendarGenerator extends Generator {
 			for (Iterator<ArticleCategoryHandler> iterator = map.values().iterator(); iterator.hasNext();) {
 				achlist.add(iterator.next());
 			}
-			dch = assignDiaryCategories(achlist);
+			DiaryCategoriesHandler dch = assignDiaryCategories(diary, achlist);
 			
-			vu.put("diaryCategories", dch);
-			vu.put("article_list", index_ahlist);
+			vu.put(DIARY_CATEGORIES_KEY, dch);
+			vu.put(ARTICLE_LIST_KEY, index_ahlist);
 			
 			try{
-				vu.put("previous_article_diary", (monthsList.get(0)).getCalendar());
-				vu.put("previous_article_diary_year", (monthsList.get(0)).getYear());
-				vu.put("previous_article_diary_month", (monthsList.get(0)).getMonth());
+				vu.put(PREVIOUS_ARTICLE_DIARY_KEY, (monthsList.get(0)).getCalendar());
+				vu.put(PREVIOUS_ARTICLE_DIARY_YEAR_KEY, (monthsList.get(0)).getYear());
+				vu.put(PREVIOUS_ARTICLE_DIARY_MONTH_KEY, (monthsList.get(0)).getMonth());
 			}catch (Throwable th) {
 				LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			}
 			try{
-				vu.put("article_diary", (monthsList.get(1)).getCalendar());
-				vu.put("article_diary_year", (monthsList.get(1)).getYear());
-				vu.put("article_diary_month", (monthsList.get(1)).getMonth());
+				vu.put(ARTICLE_DIARY_KEY, (monthsList.get(1)).getCalendar());
+				vu.put(ARTICLE_DIARY_YEAR_KEY, (monthsList.get(1)).getYear());
+				vu.put(ARTICLE_DIARY_MONTH_KEY, (monthsList.get(1)).getMonth());
 			}catch (Throwable th) {
 				LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			}
 			try{
-				vu.put("next_article_diary", (monthsList.get(2)).getCalendar());
-				vu.put("next_article_diary_year", (monthsList.get(2)).getYear());
-				vu.put("next_article_diary_month", (monthsList.get(2)).getMonth());
+				vu.put(NEXT_ARTICLE_DIARY_KEY, (monthsList.get(2)).getCalendar());
+				vu.put(NEXT_ARTICLE_DIARY_YEAR_KEY, (monthsList.get(2)).getYear());
+				vu.put(NEXT_ARTICLE_DIARY_MONTH_KEY, (monthsList.get(2)).getMonth());
 			}catch (Throwable th) {
 				LOGGER.log(Level.SEVERE, th.getMessage(), th);
 			}
 
-			logger.info(" Generando diario indice.");
+			logger.info("Generando diario indice.");
 			generate(vu, Templates.DIARY, DIARY_INDEX_PAGE);
-			vu.remove("diaryCategories");
-			vu.remove("article_list");
-			vu.remove("article_diary");
-			vu.remove("previous_article_diary");
-			vu.remove("next_article_diary");
-			vu.remove("article_diary_year");
-			vu.remove("article_diary_month");
-			vu.remove("previous_article_diary_year");
-			vu.remove("previous_article_diary_month");
-			vu.remove("next_article_diary_year");
-			vu.remove("next_article_diary_month");	
+			vu.remove(DIARY_CATEGORIES_KEY);
+			vu.remove(ARTICLE_LIST_KEY);
+			vu.remove(ARTICLE_DIARY_KEY);
+			vu.remove(PREVIOUS_ARTICLE_DIARY_KEY);
+			vu.remove(NEXT_ARTICLE_DIARY_KEY);
+			vu.remove(ARTICLE_DIARY_YEAR_KEY);
+			vu.remove(ARTICLE_DIARY_MONTH_KEY);
+			vu.remove(PREVIOUS_ARTICLE_DIARY_YEAR_KEY);
+			vu.remove(PREVIOUS_ARTICLE_DIARY_MONTH_KEY);
+			vu.remove(NEXT_ARTICLE_DIARY_YEAR_KEY);
+			vu.remove(NEXT_ARTICLE_DIARY_MONTH_KEY);	
 		} catch (ManagerBeanException e) {
 			logger.error(e.getMessage());
-		} finally {
-			articleList = null;
-			articleDetailList = null;
-			months = null;
-			dayArticleDetailList = null;
 		}
 	}
 
@@ -271,11 +274,8 @@ public class ArticleCalendarGenerator extends Generator {
 		return null;
 	}
 	
-	private static DiaryCategoriesHandler assignDiaryCategories(ArrayList<ArticleCategoryHandler> achlist) throws ManagerBeanException{
-		IManagerBean diaryBean = BeanManager.getManagerBean(Diary.class);
-		List<ITransferObject> diaryLst = diaryBean.getList(null);
-		if (!diaryLst.isEmpty()){
-			Diary diary = (Diary)diaryLst.get(0);
+	private static DiaryCategoriesHandler assignDiaryCategories(Diary diary, ArrayList<ArticleCategoryHandler> achlist) throws ManagerBeanException{
+		if ( diary != null ) {
 			IManagerBean diaryDetailBean = BeanManager.getManagerBean(DiaryDetail.class);
 			Criteria diaryDetailCriteria = new Criteria();
 			diaryDetailCriteria.addEqualExpression(diaryDetailBean.getFieldName(ICMSAlias.DIARY_DETAIL_DIARY_ID), diary.getId());
@@ -429,19 +429,10 @@ public class ArticleCalendarGenerator extends Generator {
 	}
 
 	public static Object getDiaryCalendarHandler() {
-		List<ITransferObject> articleList;
-		List<ITransferObject> articleDetailList;
-		Map<String, MonthContent> months;
-		List<MonthContent> monthsList;
 		try {
 			
 			IManagerBean articleDetailBean = BeanManager.getManagerBean(ArticleDetail.class);
 
-			Criteria articleDetailCriteria;
-			
-			Article article;
-			ArticleDetail articleDetail;
-			
 	        GregorianCalendar firstDay = new GregorianCalendar();
 	        firstDay.set(Calendar.DATE, 1);
 	        firstDay.add(Calendar.MONTH, -1);
@@ -450,27 +441,28 @@ public class ArticleCalendarGenerator extends Generator {
 	        lastDay.set(Calendar.DATE, MonthContent.diasDelMes(lastDay.get(Calendar.MONTH), lastDay.get(Calendar.YEAR)));
 
 	        Diary diary = getDiary();
+			List<ITransferObject> articleList;
 	        if (diary !=null)
 	        	articleList = ArticleCalendarGenerator.getEventList(firstDay, lastDay, diary.isPastEvents());
 	        else
 	        	articleList = ArticleCalendarGenerator.getEventList(firstDay, lastDay, true);
 	        	
-			months = new HashMap<String, MonthContent>();
-			monthsList = new ArrayList<MonthContent>();
+	        Map<String, MonthContent> months = new HashMap<String, MonthContent>();
+	        List<MonthContent> monthsList = new ArrayList<MonthContent>();
 			
 			init(firstDay.getTime(),months,monthsList);
 			Map<Integer,ArticleCategoryHandler> map = new HashMap<Integer,ArticleCategoryHandler>(); 
 			for (int i=0; i < articleList.size(); i++) {
-				article = (Article)articleList.get(i);
+				Article article = (Article)articleList.get(i);
 				addArticleCategoryHandler(map, article.getArticleCategory());
-				articleDetailCriteria = new Criteria();
+				Criteria articleDetailCriteria = new Criteria();
 				articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), article.getId());
 				articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-				articleDetailList = (List<ITransferObject>)articleDetailBean.getList(articleDetailCriteria);
+				List<ITransferObject> articleDetailList = (List<ITransferObject>)articleDetailBean.getList(articleDetailCriteria);
 				if (articleDetailList.isEmpty()) {
 					getLogger().warning(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.");
 				}else{
-					articleDetail = (ArticleDetail)articleDetailList.get(0);
+					ArticleDetail articleDetail = (ArticleDetail)articleDetailList.get(0);
 					Date initDate = article.getInitDate();
 					Date endDate = article.getEndDate();
 					if (endDate == null){
@@ -492,10 +484,6 @@ public class ArticleCalendarGenerator extends Generator {
 			return diaryCalendarHandler;
 		} catch (ManagerBeanException e) {
 			getLogger().error(e.getMessage());
-		} finally {
-			articleList = null;
-			articleDetailList = null;
-			months = null;
 		}
 		return null;
 	}
