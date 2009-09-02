@@ -3079,16 +3079,28 @@ public interface ICMSAlias {
 	String  DIARY_CATEGORIES = DIARY_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: Diary_elementSection_id
+	* Hibernate value: Diary.elementSection.id
+	*/
+	String  DIARY_ELEMENT_SECTION_ID = DIARY_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: Diary_id
 	* Hibernate value: Diary.id
 	*/
-	String  DIARY_ID = DIARY_ENTRY.getAliasNames()[1];
+	String  DIARY_ID = DIARY_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Diary_pastEvents
 	* Hibernate value: Diary.pastEvents
 	*/
-	String  DIARY_PAST_EVENTS = DIARY_ENTRY.getAliasNames()[2];
+	String  DIARY_PAST_EVENTS = DIARY_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Diary_section_id
+	* Hibernate value: Diary.section.id
+	*/
+	String  DIARY_SECTION_ID = DIARY_ENTRY.getAliasNames()[4];
 
 
 

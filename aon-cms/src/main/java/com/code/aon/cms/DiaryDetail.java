@@ -9,11 +9,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
 @Table(name = "diary_i18n")
 public class DiaryDetail implements ITransferObject {
+
+	private static final long serialVersionUID = -7278149395315303099L;
 
 	private Integer id;
 
@@ -63,4 +70,35 @@ public class DiaryDetail implements ITransferObject {
 		this.content = content;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final DiaryDetail o = (DiaryDetail) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.content, o.content)				
+				.append(this.diary, o.diary)
+				.append(this.language, o.language)				
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(content)
+			.append(diary)
+			.append(id)	
+			.append(language)			
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}		
+	
 }

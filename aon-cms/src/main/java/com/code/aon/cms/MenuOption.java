@@ -87,7 +87,7 @@ public class MenuOption implements ITransferObject, IPositionObject {
 		this.separator = separator;
 	}
 
-	@Column(name = "type")
+	@Column(name = "type", nullable=false)
 	public PageType getType() {
 		return this.type;
 	}
