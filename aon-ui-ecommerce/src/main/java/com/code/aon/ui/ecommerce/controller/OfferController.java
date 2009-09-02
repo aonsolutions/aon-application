@@ -14,6 +14,7 @@ import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Series;
 import com.code.aon.config.util.SeriesNumberUtil;
@@ -127,6 +128,12 @@ public class OfferController extends BasicController {
 	public Boolean exist(Target target){
 		// comprobar si existe el offer en la BD.
 		return false;
+	}
+	
+	@Override
+	public ITransferObject getTo() {
+		// TODO Auto-generated method stub
+		return super.getTo();
 	}
 	
 }
