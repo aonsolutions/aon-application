@@ -227,7 +227,7 @@ public class AlbumGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_CATEGORY_ID), ident);
 			lc = bean.getList(criteria); 
 			if (lc.isEmpty()){
-				getLogger().warning("CATEGORIA DE ALBUM "+ident+" REFERENCIADA NO EXISTE !!!");
+				getLogger().error("CATEGORIA DE ALBUM "+ident+" REFERENCIADA NO EXISTE");
 				return null;
 			}
 			

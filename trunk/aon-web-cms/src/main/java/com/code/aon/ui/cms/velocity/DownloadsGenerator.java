@@ -147,7 +147,7 @@ public class DownloadsGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_ID), ident);
 			l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.isEmpty()){
-				getLogger().error("CATEGORIA DE DESCARGAS "+ident+" REFERENCIADA NO EXISTE !!!");
+				getLogger().error("CATEGORIA DE DESCARGAS "+ident+" REFERENCIADA NO EXISTE");
 				return null;
 			}
 			DownloadCategory dc = (DownloadCategory) l.get(0);

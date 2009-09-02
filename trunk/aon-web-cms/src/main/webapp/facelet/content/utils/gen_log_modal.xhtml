@@ -50,7 +50,7 @@
 				</aon:div>
 				<rich:panel bodyClass="generator-log-panel">
 			        <rich:dataList id="dataList_Error" var="msg" value="#{generator_status.errors}">
-						<aon:outputText style="color:red;" value="#{msg}"/>
+						<aon:outputText style="color:red;" escape="false" value="#{msg}"/>
 					</rich:dataList>
 				</rich:panel>
 			</rich:panel>

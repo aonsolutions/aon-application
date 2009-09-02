@@ -51,21 +51,13 @@ public class MenuGenerator extends Generator {
 				getLogger().error(e.getMessage());
 			}
 		}
-		
 		return list;
 	}
 	
 	public static List<MenuOptionHandler> getMenuOptionList(Integer id) {
-		try {
-			IManagerBean menuBean = BeanManager.getManagerBean(Menu.class);
-			Menu menu = (Menu) menuBean.get(id);
-			if ( menu == null ) {
-				getLogger().error("EL MENU "+id+" REFERENCIADO NO EXISTE !!!");
-			} else {
-				return getMenuOptionList(menu);
-			}
-		} catch (ManagerBeanException e) {
-			getLogger().error(e.getMessage());
+		MenuHandler mh = getMenuHandler(id);
+		if ( mh != null ) {
+			return mh.getList();
 		}
 		return null; 
 	}
@@ -75,7 +67,7 @@ public class MenuGenerator extends Generator {
 			IManagerBean menuBean = BeanManager.getManagerBean(Menu.class);
 			Menu menu = (Menu) menuBean.get(id);
 			if ( menu == null ) {
-				getLogger().error("EL MENU "+id+" REFERENCIADO NO EXISTE !!!");
+				getLogger().error("EL MENU "+id+" REFERENCIADO NO EXISTE");
 			}else{
 				MenuHandler mh = new MenuHandler(menu);
 				return mh;
