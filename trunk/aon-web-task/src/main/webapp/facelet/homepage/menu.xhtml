@@ -1,12 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
-<body>
-
-<ui:composition>
 
 	<aon:panelGroup>
 		<!-- main menu declaration  -->
@@ -33,6 +30,10 @@
 							value="#{false}" />
 						<f:setPropertyActionListener target="#{customer.showProjectData}"
 							value="#{true}" />
+						<f:setPropertyActionListener target="#{customer.showTariff}"
+							value="#{false}" />
+						<f:setPropertyActionListener target="#{customer.showSegment}"
+							value="#{false}" />
 					</aon:menuItem>
 					<aon:menuSeparator />
 					<rich:menuItem id="task" value="#{appBundle.aon_task}"
@@ -77,6 +78,3 @@
 		</aon:form>
 	</aon:panelGroup>
 </ui:composition>
-
-</body>
-</html>

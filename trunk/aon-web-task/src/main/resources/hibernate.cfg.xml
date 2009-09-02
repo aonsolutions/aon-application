@@ -33,6 +33,7 @@
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.Scope"/>
 		<mapping class="com.code.aon.config.Series"/>
+		<mapping class="com.code.aon.config.Tariff"/>
 		<mapping class="com.code.aon.config.Tax"/>
 		<mapping class="com.code.aon.config.TaxDetail"/>
 		<mapping class="com.code.aon.config.User"/>
@@ -59,21 +60,6 @@
 		<mapping class="com.code.aon.messaging.Message"/>
 		<mapping class="com.code.aon.messaging.MessageContent"/>		
 
-		<!-- AON-PRODUCT Mapping files --> 	
-		<mapping class="com.code.aon.product.Brand"/>
-		<mapping class="com.code.aon.product.Catalogue"/>
-		<mapping class="com.code.aon.product.CatalogueCategory"/>
-		<mapping class="com.code.aon.product.CatalogueItem"/>
-		<mapping class="com.code.aon.product.Item"/>
-		<mapping class="com.code.aon.product.ItemAttachment"/>
-		<mapping class="com.code.aon.product.ItemPos"/>
-		<mapping class="com.code.aon.product.Product"/>
-		<mapping class="com.code.aon.product.ProductCategory"/>
-		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
-		<mapping class="com.code.aon.product.ProductCategoryTree"/>
-		<mapping class="com.code.aon.product.Tariff"/>
-		<mapping class="com.code.aon.product.TariffCatalogue"/>
-		
 		<!-- AON-PROJECT Mapping files -->  
 		<mapping class="com.code.aon.project.Activity"/>
 		<mapping class="com.code.aon.project.ActivityType"/>
