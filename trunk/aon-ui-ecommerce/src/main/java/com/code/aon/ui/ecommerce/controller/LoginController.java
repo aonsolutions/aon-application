@@ -24,8 +24,7 @@ public class LoginController {
 	
 	public void onLogin(ActionEvent event){
 		System.out.println("USER LOGIN event");
-		
-		
+				
 		try {
 			Criteria criteria = new Criteria();
 			String alias = IEbackofficeAlias.EC_TARGET_LOGIN;
@@ -51,7 +50,7 @@ public class LoginController {
 			}
 			
 		} catch (ManagerBeanException e) {
-			String msg = "La búsqueda falló";
+			String msg = "La búsqueda de usuario falló";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e); 
 		}
