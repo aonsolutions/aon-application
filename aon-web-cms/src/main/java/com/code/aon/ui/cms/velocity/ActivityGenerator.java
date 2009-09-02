@@ -24,7 +24,7 @@ public class ActivityGenerator extends Generator {
 			IManagerBean bean = BeanManager.getManagerBean(Activity.class);
 			Activity a = (Activity) bean.get(ident);
 			if ( a == null ){
-				getLogger().warning("ACTIVIDAD "+ident+" REFERENCIADA NO EXISTE !!!");
+				getLogger().error("ACTIVIDAD "+ident+" REFERENCIADA NO EXISTE");
 				return null;
 			}		
 			IManagerBean beanDetail = BeanManager.getManagerBean(ActivityDetail.class);

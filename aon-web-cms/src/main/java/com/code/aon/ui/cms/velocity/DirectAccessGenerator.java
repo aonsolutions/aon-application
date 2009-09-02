@@ -117,7 +117,7 @@ public class DirectAccessGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_ID), ident);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.isEmpty()){
-				getLogger().warning("ACCESO DIRECTO "+ident+" REFERENCIADO NO EXISTE !!!");
+				getLogger().error("ACCESO DIRECTO "+ident+" REFERENCIADO NO EXISTE");
 				return null;
 			}
 			DirectAccess a = (DirectAccess)l.get(0);
@@ -148,7 +148,7 @@ public class DirectAccessGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_ID), ident);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.isEmpty()){
-				getLogger().warning("GRUPO DE ACCESO DIRECTO "+ident+" REFERENCIADO NO EXISTE !!!");
+				getLogger().error("GRUPO DE ACCESO DIRECTO "+ident+" REFERENCIADO NO EXISTE");
 				return null;
 			}
 			DirectAccessGroup a = (DirectAccessGroup)l.get(0);

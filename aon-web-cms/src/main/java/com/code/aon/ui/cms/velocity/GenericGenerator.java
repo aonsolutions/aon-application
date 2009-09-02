@@ -88,7 +88,7 @@ public class GenericGenerator extends Generator {
 			IManagerBean bean = BeanManager.getManagerBean(GenericPage.class);
 			GenericPage gp = (GenericPage) bean.get(ident);
 			if ( gp == null ){
-				getLogger().warning("PAGINA GENERICA "+ident+" REFERENCIADA NO EXISTE !!!");
+				getLogger().error("PAGINA GENERICA "+ident+" REFERENCIADA NO EXISTE");
 				return null;
 			}
 			if (gp.isActive()) {

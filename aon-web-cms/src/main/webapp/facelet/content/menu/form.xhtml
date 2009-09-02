@@ -56,7 +56,7 @@
 							</aon:div>
 								
 							<aon:dataTable id="dataTable" value="#{menu_option.model}" var="to"
-								rows="#{menu_option.pageLimit}" 
+								rows="#{menu_option.pageLimit}" rendered="#{menu_option.model.rowCount > 0}"
 								columnClasses="aon-editDataTable-textColumn, 
 										aon-editDataTable-textColumn, aon-editDataTable-textColumn,
 										aon-editDataTable-iconColumn, aon-editDataTable-textColumn">

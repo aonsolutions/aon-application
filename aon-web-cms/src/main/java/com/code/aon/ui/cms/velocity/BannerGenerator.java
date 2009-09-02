@@ -94,7 +94,7 @@ public class BannerGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.BANNER_ID), ident);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.isEmpty()){
-				getLogger().warning("BANNER "+ident+" REFERENCIADO NO EXISTE !!!");
+				getLogger().error("BANNER "+ident+" REFERENCIADO NO EXISTE");
 				return null;
 			}
 			Banner a = (Banner)l.get(0);
@@ -125,7 +125,7 @@ public class BannerGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.BANNER_CATEGORY_ID), ident);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.isEmpty()){
-				getLogger().warning("CATEGORIA DE BANNER "+ident+" REFERENCIADO NO EXISTE !!!");
+				getLogger().error("CATEGORIA DE BANNER "+ident+" REFERENCIADO NO EXISTE");
 				return null;
 			}
 			BannerCategory a = (BannerCategory)l.get(0);
