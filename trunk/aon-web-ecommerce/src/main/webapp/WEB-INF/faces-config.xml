@@ -44,8 +44,8 @@
 			<property-name>styleSheets</property-name>
 			<list-entries>
 				<value>#{aonResource.resolve['/aon-richCss.css']}</value>
+				<value>#{aonResource.resolveLocal['/css/ecomerce-default.css']}</value>
 				<!--  
-				<value>#{aonResource.resolveLocal['/css/smb.css']}</value>
 				-->
 			</list-entries>
 		</managed-property>

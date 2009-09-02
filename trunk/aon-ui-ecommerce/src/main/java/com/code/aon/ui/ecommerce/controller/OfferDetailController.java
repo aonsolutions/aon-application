@@ -6,6 +6,7 @@ import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tariff;
 import com.code.aon.product.Item;
@@ -66,6 +67,12 @@ public class OfferDetailController extends LinesController {
 		//return getPriceStrategy().getBasePrice((ICalculable)this.getModel().getRowData());
 		//return ((OfferDetail)getTo()).getPrice();
 		return 0;//getPriceStrategy().getBasePrice((ICalculable)this.getModel().getRowData());
+	}
+	
+	@Override
+	public ITransferObject getTo() {
+		// TODO Auto-generated method stub
+		return super.getTo();
 	}
 
 }

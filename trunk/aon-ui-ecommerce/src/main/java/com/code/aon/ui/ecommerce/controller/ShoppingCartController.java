@@ -65,6 +65,7 @@ public class ShoppingCartController {
 		if (!isRegistered()) {
 			return IECommerceConstants.REGISTRY_ACTION;
 		}
+		initializeOffer();
 		return IECommerceConstants.OFFER_ACTION;
 	}
 
@@ -233,8 +234,9 @@ public class ShoppingCartController {
 		to.setRegistry(getCartTarget().getTarget().getRegistry());
 		
 		tagetBean.insertOrUpdate(to);
-		
-		
+		String message = "target guardado \n oo";
+		System.out.println(message);
+		//AonUtil.addInfoMessage(message);
 		
 		
 //		if (! isEmpty(getTarget()) ) {
@@ -250,21 +252,25 @@ public class ShoppingCartController {
 	public void onAcceptTarget(ActionEvent event) {
 		try {
 			acceptTarget();
+			initializeOffer();
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException( e.getMessage(), e );
-		}
-
-		String message = "target guardado \n oo";
-		System.out.println(message);
-		//AonUtil.addInfoMessage(message);
-		
-//****************************
-//creacion del presupuesto
-//****************************
+		}		
+	}
+	
+	/**
+	 * creacion del presupuesto 
+	 */
+	public void initializeOffer() {
 		OfferController offerController = (OfferController)FormUtil.getController(IECommerceConstants.OFFER_CONTROLLER);
 		OfferDetailController offerDetailController = (OfferDetailController)FormUtil.getController(IECommerceConstants.OFFER_DETAIL_CONTROLLER);
 		if(offerController.exist(getCartTarget().getTarget())){
-			// 
+			// ********************************************************
+			// ********************************************************
+			//  EN CASO DE EXISTIR AINADIR EL TARGET CORRESPONDIENTE AL OFFER
+			// ********************************************************
+			// ********************************************************
+			 
 		} else {
 			offerController.onReset(null);
 			Offer to = (Offer)offerController.getTo();
@@ -272,13 +278,18 @@ public class ShoppingCartController {
 			to.setTarget(getCartTarget().getTarget());
 			to.setStatus(OfferStatus.PENDING);
 			try {
+				// ********************************************************
+				// ********************************************************
+				//  REPASAR EL WORKPLACE QUE HAY QUE AINADIR POR DEFECTO
+				// ********************************************************
+				// ********************************************************
 				to.setWorkPlace((WorkPlace)((CompanyCollectionsController)AonUtil.getRegisteredBean("companyCollections")).getWorkPlaces().get(0).getValue());
 				//to.setWorkPlace((WorkPlace)ECommerceUtil.getWorkPlaces().get(0));
 			} catch (ManagerBeanException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			offerController.accept(event);
+			offerController.accept(null);
 			for(CartItem ci:getList()){
 				offerDetailController.onReset(null);
 				OfferDetail tod = (OfferDetail)offerDetailController.getTo();
@@ -288,11 +299,13 @@ public class ShoppingCartController {
 				tod.setQuantity(ci.getQuantity());
 				tod.setPrice(ci.getItem().getPrice());
 				tod.setDiscountExpression(null);
-				offerDetailController.onAccept(event);
+				offerDetailController.onAccept(null);
 			}
 		}
+		
 	}
-	
+
+		
 	public void afterBeanAdded() {
 //		IController controller = event.getController();
 //		Registry registry = ((IRegistry) controller.getTo()).getRegistry();
