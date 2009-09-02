@@ -16,76 +16,27 @@
 				<ui:param name="toolbarID" value="aonToolbar" />
 				<ui:param name="toolbarTitle" value="Registry -i18-" />
 				<ui:define name="toolbarContent">
-					<!--  
 					<aon:commandButton id="aonToolbar-back" value="#{bundle.aon_back}"
-						action="#{shopItem.backAction}"
+						action="shop_form"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						immediate="true" accesskey="#{bundle.aon_key_cancel}" />
-					<aon:commandButton id="aonToolbar-addToCart"
-						value="Ainadir al carrito -i18n-" action="shopingCart_list"
-						title="add to cart -i18n-"
-						styleClass="aon-finding-toolbar-item aon-icon-new">
-						<aon:actionListener method="#{shopItem.addToCart}" />
-					</aon:commandButton>
-					<aon:commandButton id="aonToolbar-view" value="VIEW CART -i18-"
-						action="shopingCart_list" immediate="true"
-						styleClass="aon-finding-toolbar-item aon-icon-new" />
-					-->
 				</ui:define>
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<!--  
-				<aon:div styleClass="aon-lookup"
-					id="CommunicationCenter_target_lookup">
-					<aon:lookupInputText id="CommunicationCenter_target_id"
-						lookup="#{targetLookup}" required="true"
-						lookupChangeListener="#{communicationCenter.onTargetLookupChange}"
-						disabled="#{communicationCenter.actionSelected}"
-						reRender="CommunicationCenter_target_detail,aonToolbar"
-						value="#{communicationCenter.target.id}" size="5">
-					</aon:lookupInputText>
-					<aon:lookupButton
-						windowTitle="#{target.bundle.commercial_target_selection}"
-						actionType="search"
-						selectReRender="CommunicationCenter_target_id,CommunicationCenter_target_detail,aonToolbar"
-						disabled="#{communicationCenter.actionSelected}"
-						lookup="#{targetLookup}" minHeight="460" minWidth="650"
-						lookupChangeListener="#{communicationCenter.onTargetLookupChange}"
-						property="#{communicationCenter.target}">
-					</aon:lookupButton>
-					<aon:lookupButton
-						windowTitle="#{target.bundle.commercial_target_new}"
-						selectReRender="CommunicationCenter_target_id,CommunicationCenter_target_detail,aonToolbar"
-						lookup="#{targetLookup}" actionType="new" minWidth="650"
-						minHeight="490"
-						lookupChangeListener="#{communicationCenter.onTargetLookupChange}"
-						disabled="#{communicationCenter.actionSelected}"
-						property="#{communicationCenter.target}">
-					</aon:lookupButton>
-				</aon:div>
-				-->
-						
-					
+				
 				<aon:panel>
 					<f:facet name="header">
-							<aon:inputText value="Usuario registrado -i18n-"/>
-					</f:facet>		
-					<aon:panelGrid columns="2" dir="true">		
-						
-						<aon:outputLabel for="Login"
-							value="login -i18n-"  />
-						<aon:inputText id="Login"
-										value="" size="64" />
-		
-						<aon:outputLabel for="Password"
-							value="password -i18n-"  />
-						<aon:inputText id="Password"
-										value="" size="64" />
-		
+						<aon:inputText value="Usuario registrado -i18n-" />
+					</f:facet>
+					<aon:panelGrid columns="2" dir="true">
+						<aon:outputLabel for="Login" value="login -i18n-" />
+						<aon:inputText id="Login" value="" size="64" />
+
+						<aon:outputLabel for="Password" value="password -i18n-" />
+						<aon:inputText id="Password" value="" size="64" />
 					</aon:panelGrid>
-					<aon:commandButton id="login-buttom"
-						value="Aceptar -i18n-" 
+					<aon:commandButton id="login-buttom" value="Aceptar -i18n-"
 						action="new_registry_form"
 						styleClass="aon-finding-toolbar-item aon-icon-accept">
 						<!--  
@@ -93,115 +44,23 @@
 						-->
 					</aon:commandButton>
 				</aon:panel>
-			
+			</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panel>
+					<f:facet name="header">
+						<aon:inputText value="Registro de usuario -i18n-" />
+					</f:facet>
+
+					<aon:commandButton id="newUser-buttom" value="Nuevo usuario -i18n-"
+						action="new_registry_form"
+						styleClass="aon-finding-toolbar-item aon-icon-new">
+						<aon:actionListener method="#{shoppingCart.onResetTarget}" />
+					</aon:commandButton>
+
+				</aon:panel>
 			</aon:div>
 			
-			
-			
-			
-		<aon:div styleClass="aon-scroll-area">
-			<aon:panel>
-				<f:facet name="header">
-						<aon:inputText value="Registro de usuario -i18n-"/>
-				</f:facet>		
-			
-			<aon:commandButton id="newUser-buttom"
-				value="Nuevo usuario -i18n-" 
-				action="new_registry_form"
-				styleClass="aon-finding-toolbar-item aon-icon-new">
-				<aon:actionListener method="#{shoppingCart.onResetTarget}" />
-				<!--  
-				-->
-			</aon:commandButton>
-			<aon:panelGrid columns="2" dir="true">	
-			
-			
-			
-			
-			
-			
-			<!--  
-			<aon:outputLabel for="CommunicationCenter_status"
-				value="new user -i18n-"  />
-			<aon:lookupButton
-					windowTitle="#{target.bundle.commercial_target_new}"
-					selectReRender="CommunicationCenter_target_id,CommunicationCenter_target_detail,aonToolbar"
-					lookup="#{targetLookup}" actionType="new" minWidth="650"
-					minHeight="490"
-					lookupChangeListener="#{communicationCenter.onTargetLookupChange}"
-					disabled="#{communicationCenter.actionSelected}"
-					property="#{communicationCenter.target}">
-			</aon:lookupButton>
-			-->
-			<!--
-			<ui:include src="/com/code/aon/ui/commercial/facelet/target/formContent.xhtml">
-				<ui:param name="controller" value="#{target}"/>
-			</ui:include>
-			
-			<aon:outputLabel for="Company_address" 
-		value="#{registryBundle.registry_address}" />
-	<aon:div>
-		<aon:div>
-			<aon:inputText id="Company_address"
-				value="#{targetLookupListener.mainAddress.address}" size="64" maxlength="128"/>
-		</aon:div>
-		<aon:div>
-			<aon:inputText id="Company_address2"
-				value="#{targetLookupListener.mainAddress.address2}" size="64" maxlength="128"/>
-		</aon:div>
-		<aon:div>
-			<aon:inputText id="Company_address3"
-				value="#{targetLookupListener.mainAddress.address3}" size="64" maxlength="128"/>		
-		</aon:div>
-	</aon:div>
-	<aon:outputLabel for="Company_address_city" 
-		value="#{registryBundle.registry_city}" />
-	<aon:inputText id="Company_address_city" 
-		value="#{targetLookupListener.mainAddress.city}" size="64" maxlength="64"/>
-		
-	<aon:outputLabel for="Company_address_zip" 
-		value="#{registryBundle.registry_zip}" />
-	<aon:inputText id="Company_address_zip" 
-		value="#{targetLookupListener.mainAddress.zip}" size="32" maxlength="16"/>
-		
-	<aon:outputLabel for="Company_address_geozone" 
-		value="#{registryBundle.registry_geozone}" />
-	<aon:selectOneMenu id="Company_address_geozone"
-		value="#{targetLookupListener.mainAddress.geozone}">
-		<f:selectItems value="#{geozoneCollections.geoTrees}" />
-	</aon:selectOneMenu>
-	
-	<aon:outputLabel for="Company_telephone" 
-		value="#{registryBundle.registry_phone}" />
-	<aon:inputText id="Company_telephone" 
-		value="#{targetLookupListener.phone.value}" size="32" maxlength="64"/>
-		
-	<aon:outputLabel 
-		for="Company_fax" 
-		value="#{registryBundle.registry_fax}" />
-	<aon:inputText  id="Company_fax"
-		value="#{targetLookupListener.fax.value}" size="32" maxlength="64"/>
-		
-	<aon:outputLabel 
-		for="Company_email" 
-		value="#{registryBundle.registry_email}" />
-	<aon:inputText id="Company_email" 
-		value="#{targetLookupListener.email.value}" size="64" maxlength="64" onblur="toLowerCase(this);" />
-		
-	<aon:outputLabel for="Company_web" 
-		value="#{registryBundle.registry_web}" />
-	<aon:inputText id="Company_web" 
-		value="#{targetLookupListener.web.value}" size="64" maxlength="64" onblur="toLowerCase(this);" />
-			-->
-				
-		
-			</aon:panelGrid>
-			</aon:panel>
-		</aon:div>
 		</aon:form>
-		<!--  
-		<aon:lookupButtonPopup lookup="#{targetLookup}" />
-		-->
-
 	</ui:define>
 </ui:composition>

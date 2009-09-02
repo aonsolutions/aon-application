@@ -54,10 +54,10 @@ public class OfferController extends BasicController {
 	}
 
 	public boolean isProcessed(){
-		Offer offer = (Offer)this.getTo();
-		if (offer.getStatus() != null) {
-			return offer.getStatus().equals(OfferStatus.PROCESSED);
-		}
+//		Offer offer = (Offer)this.getTo();
+//		if (offer.getStatus() != null) {
+//			return offer.getStatus().equals(OfferStatus.PROCESSED);
+//		}
 		return false;
 	}
 

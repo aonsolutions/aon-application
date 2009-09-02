@@ -38,7 +38,7 @@ public class ShopItemsController {
 		try {
 			if (list == null) {
 				IManagerBean bean = BeanManager.getManagerBean(Item.class);
-				list = bean.getList(criteria);
+				list = bean.getList(getCriteria());
 			}
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
