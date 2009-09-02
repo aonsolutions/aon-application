@@ -28,7 +28,7 @@
 		</aon:column>
 		<aon:column>
 			<f:facet name="header">
-				<aon:outputText value="price -i18n-" />
+				<aon:outputText value="#{ecommerceBundle.aon_acommerce_price}" />
 			</f:facet>
 			<aon:outputText value="#{to.price}" />
 		</aon:column>
@@ -38,12 +38,12 @@
 			</f:facet>
 
 			<aon:commandButton value="&#160;" action="shop_form"
-				title="+ info -i18n-" reRender="shopForm"
+				title="#{ecommerceBundle.aon_acommerce_extended_info}" reRender="shopForm"
 				styleClass="aon-editDataTable-button aon-icon-info">
 				<aon:actionListener method="#{shopItems.onSelect}" />
 			</aon:commandButton>
 			<aon:commandButton value="&#160;" action="shopingCart_list"
-				title="add to cart -i18n-"
+				title="#{ecommerceBundle.aon_acommerce_addToCart}"
 				styleClass="aon-editDataTable-button aon-icon-new">
 				<aon:actionListener method="#{shopItems.addToCart}" />
 			</aon:commandButton>

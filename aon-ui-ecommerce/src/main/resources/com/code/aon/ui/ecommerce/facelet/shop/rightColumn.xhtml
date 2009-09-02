@@ -32,20 +32,20 @@
 
 		<aon:div id="login-box">
 			<aon:panelGrid columns="2" dir="true" rendered="#{shop.logged}">
-				<aon:outputLabel for="User" value="Bienvenido -i18n-" />
+				<aon:outputLabel for="User" value="#{ecommerceBundle.aon_acommerce_user_registered}" />
 				<aon:outputText id="User" value="#{userLogin.login}" size="5" />
 			</aon:panelGrid>
 
 			<aon:panelGrid columns="2" dir="true" rendered="#{! shop.logged}">
-				<aon:outputLabel for="Login" value="login -i18n-" />
+				<aon:outputLabel for="Login" value="#{ecommerceBundle.aon_acommerce_user_name}" />
 				<aon:inputText id="Login" value="#{userLogin.login}" size="5" />
 
-				<aon:outputLabel for="Password" value="password -i18n-" />
+				<aon:outputLabel for="Password" value="#{ecommerceBundle.aon_acommerce_user_passwd}" />
 				<aon:inputText id="Password" value="#{userLogin.password}" size="5" />
 			</aon:panelGrid>
 
 			<aon:commandButton id="login-buttom" 
-				value="Aceptar -i18n-"
+				value="#{bundle.aon_accept}"
 				action="shop_form"
 				rendered="#{! shop.logged}"
 				styleClass="aon-finding-toolbar-item aon-icon-accept">
@@ -60,16 +60,17 @@
 		<aon:div id="list-info-box">
 			<aon:panelGrid columns="2" dir="true">
 				<aon:commandButton id="lateral-view" rendered="true"
-					value="VIEW CART -i18-" action="shop_from" immediate="true"
+					value="#{ecommerceBundle.aon_acommerce_view_cart}" 
+					action="shop_from" immediate="true"
 					styleClass="aon-finding-toolbar-item aon-icon-new">
 					<aon:actionListener method="#{shop.onViewCart}" />
 				</aon:commandButton>
 				<aon:outputText value="&#160;" />
 	
-				<aon:outputLabel for="cart_quantity" value="CANTIDAD -i18n-" />
+				<aon:outputLabel for="cart_quantity" value="#{ecommerceBundle.aon_acommerce_list_size}" />
 				<aon:outputText id="cart_quantity" value="#{shoppingCart.quantity}" />
 	
-				<aon:outputLabel for="cart_total" value="TOTAL -i18n-" />
+				<aon:outputLabel for="cart_total" value="#{ecommerceBundle.aon_acommerce_total}" />
 				<aon:outputText id="cart_total" value="#{shoppingCart.total}" />
 			</aon:panelGrid>
 		</aon:div>
