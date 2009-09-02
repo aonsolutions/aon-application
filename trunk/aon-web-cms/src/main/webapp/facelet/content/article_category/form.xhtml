@@ -53,7 +53,7 @@
 						value="#{article_category.toI18n.label}" />
 
 					<aon:outputLabel for="ArticleCategory_section"
-						value="#{appBundle.section}"/>
+						value="#{appBundle.cms_section}"/>
 					<aon:selectOneMenu id="ArticleCategory_section"  
 						value="#{article_category.to.section}">
 						<f:selectItem itemLabel="-" value="#{null}" />
@@ -61,7 +61,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ArticleCategory_elementSection"
-						value="#{appBundle.section} (Only Elements)"/>
+						value="#{appBundle.cms_section_elements}"/>
 					<aon:selectOneMenu id="ArticleCategory_elementSection"  
 						value="#{article_category.to.elementSection}">
 						<f:selectItem itemLabel="-" value="#{null}" />

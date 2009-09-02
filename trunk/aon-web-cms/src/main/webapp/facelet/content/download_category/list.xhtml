@@ -55,19 +55,20 @@
 			</aon:div>
 
 			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="sectionGrid" columns="3" dir="true" 
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				<aon:panelGrid id="sectionGrid" columns="2" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-toolbar">				
 					
 						<aon:outputLabel for="LinkCategory_section"
-							value="#{appBundle.section}"/>
+							styleClass="aon-margin-right" value="#{appBundle.cms_section_default}"/>
 							
-						<aon:selectOneMenu id="LinkCategory_section"  
-							value="#{generator_config.section}">
-							<f:selectItem itemLabel="-" value="#{null}" />
-							<f:selectItems value="#{collections.sectionList}" />
-						</aon:selectOneMenu>
-						
 						<aon:div styleClass="aon-finding-toolbar-item-group">					
+
+							<aon:selectOneMenu id="LinkCategory_section"  
+								value="#{generator_config.section}">
+								<f:selectItem itemLabel="-" value="#{null}" />
+								<f:selectItems value="#{collections.sectionList}" />
+							</aon:selectOneMenu>
+						
 							<aon:commandButton id="save"
 								value="#{bundle.aon_save}"
 								action="download_category_list" 
@@ -106,7 +107,7 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.section}" />
+							<aon:outputText value="#{appBundle.cms_section}" />
 						</f:facet>
 						<aon:outputText value="#{to.section.alias}" />
 					</aon:column>
