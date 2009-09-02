@@ -25,7 +25,7 @@
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="generate_article" reRender="aonStatus"
 						value="#{appBundle.aon_generate}" 
-						rendered="#{article.to!=null and cms.roleEditor}"
+						rendered="#{!article.new and cms.roleEditor}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						accesskey="#{bundle.aon_key_save}">
 						<aon:actionListener method="#{generator.onGenerateCurrentArticle}" />

@@ -12,55 +12,31 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="list">
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
-				
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.company}"/>	  						
-					</aon:div>					
-					
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{appBundle.aon_listing}" />
-					</aon:div>					
-						
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">					
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="company_form"
-							rendered="#{cms.roleEditor}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}">
-							<aon:actionListener method="#{company.onReset}" />
-						</aon:commandButton>
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							action="company_search"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}">
-							<aon:actionListener method="#{company.onEditSearch}" />
-						</aon:commandButton>
-						<aon:commandButton id="home"
-							value="#{bundle.aon_home}"
-							action="home" 
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}">
-						</aon:commandButton>
-						<aon:commandButton id="activities_link"
-							value="#{appBundle.activity}"
-							action="activity_list"
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item-no-icon">
-							<aon:actionListener method="#{activity.onSearch}" />
-						</aon:commandButton>
-				    </aon:div>
-					
-					<!-- end toolbar navigation -->
-				</aon:panelGrid>
-			</aon:div>
+		<aon:form id="companyList">
 		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.company}" />
+				<ui:param name="controller" value="#{company}" />
+				<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="home"
+						value="#{bundle.aon_home}"
+						action="home" 
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_close}">
+					</aon:commandButton>
+					<aon:commandButton id="activities_link"
+						value="#{appBundle.activity}"
+						action="activity_list"
+						actionListener="#{activity.onSearch}"
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item-no-icon">
+						<aon:actionListener method="#{activity.onInit}" />
+					</aon:commandButton>
+				</ui:define>
+			</ui:decorate>	
+							
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
@@ -76,14 +52,14 @@
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.company_name}" />
 						</f:facet>
-						<aon:outputText value="#{to.name}" styleClass="aon-editDataTable-button"/>
+						<aon:outputText value="#{to.name}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.company_telephone}" />
 						</f:facet>
-						<aon:outputText value="#{to.telephone}" styleClass="aon-editDataTable-button"/>
+						<aon:outputText value="#{to.telephone}" />
 					</aon:column>
 
 				</aon:dataTable>

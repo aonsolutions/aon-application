@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.cms.ActivityConfig;
 import com.code.aon.cms.AlbumConfig;
 import com.code.aon.cms.ArticleConfig;
 import com.code.aon.cms.DownloadConfig;
@@ -125,5 +126,9 @@ public class GeneratorConfigController {
 	public void onSaveSportConfig(ActionEvent event) throws ManagerBeanException{
 		onSaveConfig(SportConfig.class);
 	}
-	
+
+	public void onSaveActivityConfig(ActionEvent event) throws ManagerBeanException{
+		onSaveConfig(ActivityConfig.class);
+	}
+
 }

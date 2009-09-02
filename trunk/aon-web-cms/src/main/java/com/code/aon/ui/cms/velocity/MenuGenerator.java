@@ -54,20 +54,20 @@ public class MenuGenerator extends Generator {
 		return list;
 	}
 	
-	public static List<MenuOptionHandler> getMenuOptionList(Integer id) {
-		MenuHandler mh = getMenuHandler(id);
+	public static List<MenuOptionHandler> getMenuOptionList(Integer id, String message) {
+		MenuHandler mh = getMenuHandler(id, message);
 		if ( mh != null ) {
 			return mh.getList();
 		}
 		return null; 
 	}
 	
-	public static MenuHandler getMenuHandler(Integer id) {
+	public static MenuHandler getMenuHandler(Integer id, String message) {
 		try {
 			IManagerBean menuBean = BeanManager.getManagerBean(Menu.class);
 			Menu menu = (Menu) menuBean.get(id);
 			if ( menu == null ) {
-				getLogger().error("EL MENU "+id+" REFERENCIADO NO EXISTE");
+				getLogger().error( message + " REFERENCIA A UN MENU ("+ id +") INEXISTENTE");
 			}else{
 				MenuHandler mh = new MenuHandler(menu);
 				return mh;

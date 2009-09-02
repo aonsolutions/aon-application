@@ -212,21 +212,18 @@ public class ArticleGenerator extends Generator {
 		}
 	}
 
-	public static Object getArticleHandler(Integer ident) {
+	public static Object getArticleHandler(Integer ident, String message) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Article.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ID), ident);
-			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
-			if (l.isEmpty()){
-				getLogger().error("ARTICULO "+ident+" REFERENCIADO NO EXISTE");
+			Article a = (Article) bean.get(ident);
+			if ( a == null ){
+				getLogger().error( message + " REFERENCIA UN ARTICULO ("+ident+") INEXISTENTE");
 				return null;
 			}
 			
-			Article a = (Article)l.get(0);
 			if (a.isActive()) {
 				IManagerBean beanDetail = BeanManager.getManagerBean(ArticleDetail.class);
-				criteria = new Criteria();
+				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), ident);
 				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
@@ -244,29 +241,19 @@ public class ArticleGenerator extends Generator {
 		return null;
 	}
 
-	public static Object getArticleCategoryHandler(Integer ident, ArticleType type) {
-		List<ITransferObject> l;
-		List<ITransferObject> ld;
-		List<ITransferObject> lc;
-		List<ITransferObject> lcd;
-		Iterator<ITransferObject> iter;
+	public static Object getArticleCategoryHandler(Integer ident, ArticleType type, String message) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ArticleCategory.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_ID), ident);
-			ArticleCategory ac = null;
-			lc = bean.getList(criteria);
-			if (lc.isEmpty()){
-				getLogger().error("CATEGORIA DE ARTICULO "+ident+" REFERENCIADA NO EXISTE");
+			ArticleCategory ac = (ArticleCategory) bean.get(ident);
+			if ( ac == null ){
+				getLogger().error( message + " REFERENCIA UNA CATEGORIA DE ARTICULO ("+ident+") INEXISTENTE");
 				return null;
-			}else{
-				ac = (ArticleCategory) lc.get(0);
 			}
 			bean = BeanManager.getManagerBean(ArticleCategoryDetail.class);
-			criteria = new Criteria();
+			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_ARTICLE_CATEGORY_ID), ident);
-			lcd = (List<ITransferObject>)bean.getList(criteria);
+			List<ITransferObject> lcd = (List<ITransferObject>)bean.getList(criteria);
 			if (lcd.isEmpty()){
 				getLogger().warning(" Categoria de Articulo " + ac.getAlias() + " no internacionalizada.");
 				return null;
@@ -283,8 +270,8 @@ public class ArticleGenerator extends Generator {
             criteria.addExpression(ExpressionUtilities.getOrExpression(nullableExpr, greaterExpr));
 			criteria.addLessThanOrEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_PUBLISH_DATE), new Date());
 			criteria.addOrder(bean.getFieldName(ICMSAlias.ARTICLE_PUBLISH_DATE),false);
-			l = (List<ITransferObject>)bean.getList(criteria);
-			iter = l.iterator();
+			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+			Iterator<ITransferObject> iter = l.iterator();
 			ArrayList<ArticleHandler> ahlist = new ArrayList<ArticleHandler>();
 			Article a;
 			while (iter.hasNext()){
@@ -293,7 +280,7 @@ public class ArticleGenerator extends Generator {
 				criteria = new Criteria();
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), a.getId());
-				ld = (List<ITransferObject>)bean.getList(criteria);
+				List<ITransferObject> ld = (List<ITransferObject>)bean.getList(criteria);
 				if (ld.isEmpty()){
 					getLogger().warning(" Articulo " + a.getAlias() + " de categoria " + ac.getAlias() + " no internacionalizada.");
 				}else{
@@ -306,11 +293,6 @@ public class ArticleGenerator extends Generator {
 			return ach;
 		} catch (ManagerBeanException e) {
 			getLogger().error(e.getMessage());
-		} finally {
-			l = null;
-			ld = null;
-			lcd = null;
-			iter = null;
 		}
 		return null;
 	}

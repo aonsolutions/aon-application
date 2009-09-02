@@ -41,13 +41,37 @@
 								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 						</aon:commandButton>	
 					</ui:define>
-				</ui:decorate>	
+				</ui:decorate>
+				
+				<aon:div styleClass="aon-finding-title-toolbar">
+					<aon:panelGrid columns="2" dir="true"
+						columnClasses="aon-finding-title,aon-finding-toolbar">				
+						
+							<aon:outputLabel for="ActivityConfig_section"
+								styleClass="aon-margin-right" value="#{appBundle.cms_section_default}"/>
+								
+							<aon:div styleClass="aon-finding-toolbar-item-group">					
+	
+								<aon:selectOneMenu id="ActivityConfig_section"  
+									value="#{generator_config.section}">
+									<f:selectItem itemLabel="-" value="#{null}" />
+									<f:selectItems value="#{collections.sectionList}" />
+								</aon:selectOneMenu>
+							
+								<aon:commandButton id="save"
+									value="#{bundle.aon_save}"
+									styleClass="aon-finding-toolbar-item aon-icon-accept">
+									<aon:actionListener method="#{generator_config.onSaveActivityConfig}" />
+								</aon:commandButton>
+							</aon:div>		
+					</aon:panelGrid>
+				</aon:div>			
 	
 				<aon:div styleClass="aon-scroll-area">
 	
 					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 						<ui:param name="controller" value="#{activity}" />
-						<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
+						<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
 						<ui:param name="skipResetButton" value="#{!cms.roleEditor}" />						
 						<ui:define name="columns">
 	
@@ -56,8 +80,7 @@
 									<aon:outputText value="#{appBundle.cms_alias}" />
 								</f:facet>
 								<aon:outputText value="#{to.alias}"
-									rendered="#{formList}" 
-									styleClass="aon-editDataTable-button">
+									rendered="#{formList}" >
 								</aon:outputText>	
 								<aon:inputText value="#{to.alias}"
 									id="#{to.id}_alias"
@@ -80,8 +103,7 @@
 									<aon:outputText value="#{bundle.aon_description}" />
 								</f:facet>
 								<aon:outputText value="#{activity.i18nDescription}"
-									rendered="#{formList}" 
-									styleClass="aon-editDataTable-button">
+									rendered="#{formList}" >
 								</aon:outputText>	
 								<aon:inputText value="#{activity.toI18n.description}"
 									id="#{to.id}_description"
@@ -94,7 +116,28 @@
 										required="#{true}" size="70" maxlength="64" />
 								</f:facet>
 							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputLabel for="Activity_section"
+										value="#{appBundle.cms_section}" />
+								</f:facet>
+								<aon:outputText value="#{to.section.alias}" rendered="#{formList}" />	
+								<aon:selectOneMenu id="Activity_section"  
+									value="#{activity.to.section}" rendered="#{formEdit}">
+									<f:selectItem itemLabel="-" value="#{null}" />
+									<f:selectItems value="#{collections.sectionList}" />
+								</aon:selectOneMenu>
+								<f:facet name="footer">
+									<aon:selectOneMenu id="Activity_section-New"  
+										value="#{activity.to.section}" rendered="#{formNew}">
+										<f:selectItem itemLabel="-" value="#{null}" />
+										<f:selectItems value="#{collections.sectionList}" />
+									</aon:selectOneMenu>
+								</f:facet>
+							</aon:column>
 						</ui:define>
+
 					</ui:decorate>
 				
 				</aon:div>

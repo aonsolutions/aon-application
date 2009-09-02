@@ -53,7 +53,7 @@ public class FooterHandler {
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			for (Iterator iterator = l.iterator(); iterator.hasNext();) {
 				FooterBannerCategory fbc = (FooterBannerCategory) iterator.next();
-				list.add((BannerCategoryHandler)BannerGenerator.getBannerCategoryHandler(fbc.getBannerCategory().getId()));
+				list.add(BannerGenerator.getBannerCategoryHandler(fbc.getBannerCategory()));
 			}
 		}catch (Throwable th) {
 			LOGGER.log(Level.SEVERE, th.getMessage(), th);
