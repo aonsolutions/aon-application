@@ -9,7 +9,6 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.time.StopWatch;
 
-import com.code.aon.cms.Activity;
 import com.code.aon.cms.AlbumCategory;
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleCategory;
@@ -41,8 +40,6 @@ import com.code.aon.ui.cms.velocity.MenuGenerator;
 import com.code.aon.ui.cms.velocity.ModularPageGenerator;
 import com.code.aon.ui.cms.velocity.ProductGenerator;
 import com.code.aon.ui.cms.velocity.SportGenerator;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
 public class GeneratorController implements Constants, ICMSConstants {
@@ -78,8 +75,6 @@ public class GeneratorController implements Constants, ICMSConstants {
 		try {
 			initGenerator();
 	
-			//Generar actividades
-			new ActivityGenerator().generate();
 			//Generar index.html del idioma seleccionado
 			new ModularPageGenerator().generate();
 			//Generar menus
@@ -108,6 +103,8 @@ public class GeneratorController implements Constants, ICMSConstants {
 			new ProductGenerator().generate();
 			//Generar sports
 			new SportGenerator().generate();
+			//Generar actividades
+			new ActivityGenerator().generate();			
 			finalizeGenerator();
 		} catch ( Throwable th ) {
 			generatorError(th);

@@ -80,7 +80,7 @@
 						</aon:commandButton>
 						<aon:commandButton id="partial_generate" reRender="aonStatus"
 							value="#{appBundle.aon_generate}" 
-							rendered="#{download_category.to!=null and cms.roleEditor}"
+							rendered="#{!download_category.new and cms.roleEditor}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{generator.onGenerateCurrentDownloadCategory}" />

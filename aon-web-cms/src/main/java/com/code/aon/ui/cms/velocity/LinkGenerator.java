@@ -171,14 +171,14 @@ public class LinkGenerator extends Generator {
 	}
 
 
-	public static Object getLinkCategoryHandler(Integer ident) {
+	public static LinkCategoryHandler getLinkCategoryHandler(Integer ident, String message) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(LinkCategory.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.LINK_CATEGORY_ID), ident);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.isEmpty()){
-				getLogger().error("CATEGORIA DE ENLACES "+ident+" REFERENCIADA NO EXISTE");
+				getLogger().error( message + " REFERENCIA A UNA CATEGORIA DE ENLACES ("+ident+") INEXISTENTE");
 				return null;
 			}
 			LinkCategory link = (LinkCategory)l.get(0);

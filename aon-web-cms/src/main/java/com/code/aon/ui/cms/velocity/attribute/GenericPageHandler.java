@@ -33,7 +33,8 @@ public class GenericPageHandler {
 		keywords = gpd.getKeywords();
 		date = gpd.getGeneric_page().getCreate_date();
 		if (gpd.getGeneric_page().getMenu() > 0) {
-			menu = MenuGenerator.getMenuOptionList(gpd.getGeneric_page().getMenu());
+			String message = "LA PAGINA GENERICA " + gpd.getGeneric_page().getAlias();
+			menu = MenuGenerator.getMenuOptionList(gpd.getGeneric_page().getMenu(), message);
 		}
 		
 		Locale locale = ControllerUtil.getCurrentLanguage().getLanguage().getLocale();

@@ -1,6 +1,6 @@
 package com.code.aon.ui.cms.velocity.attribute;
 
-import com.code.aon.cms.SidebarOptionDetail;
+import com.code.aon.cms.SidebarOption;
 import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.ui.cms.velocity.AlbumGenerator;
 import com.code.aon.ui.cms.velocity.ArticleCalendarGenerator;
@@ -18,51 +18,53 @@ public class SidebarOptionHandler {
 	
 	private Object content;
 
-	public SidebarOptionHandler(SidebarOptionDetail sidebarOptionDetail) {
-		template = sidebarOptionDetail.getSidebar_option().getType().getTemplateName();
-		Integer ident = sidebarOptionDetail.getSidebar_option().getIdent();
-		switch ( sidebarOptionDetail.getSidebar_option().getType() ) {
+	public SidebarOptionHandler(SidebarOption so) {
+		template = so.getType().getTemplateName();
+		Integer ident = so.getIdent();
+		String message = "LA OPCION " + so.getAlias() + " DEL LATERAL " + so.getSidebar().getAlias();
+		switch ( so.getType() ) {
 			case ALBUM_CATEGORY:
-				content = AlbumGenerator.getAlbumCategoryHandler(ident);
+				content = AlbumGenerator.getAlbumCategoryHandler(ident, message);
 				break;
 			case ARTICLE:
-				content = ArticleGenerator.getArticleHandler(ident);
+				content = ArticleGenerator.getArticleHandler(ident, message);
 				break;
 			case ARTICLE_EVENTS_CATEGORY:
-				content = ArticleGenerator.getArticleCategoryHandler(ident,ArticleType.EVENTS);
+				content = ArticleGenerator.getArticleCategoryHandler(ident,ArticleType.EVENTS, message);
 				break;
 			case ARTICLE_NEWS_CATEGORY:
-				content = ArticleGenerator.getArticleCategoryHandler(ident,ArticleType.NEWS);
+				content = ArticleGenerator.getArticleCategoryHandler(ident,ArticleType.NEWS, message);
 				break;
 			case ARTICLE_OTHER_CATEGORY:
-				content = ArticleGenerator.getArticleCategoryHandler(ident,ArticleType.OTHER);
+				content = ArticleGenerator.getArticleCategoryHandler(ident,ArticleType.OTHER, message);
 				break;
 			case ARTICLE_SERVICES_CATEGORY:
-				content = ArticleGenerator.getArticleCategoryHandler(ident,ArticleType.SERVICES);
+				content = ArticleGenerator.getArticleCategoryHandler(ident,ArticleType.SERVICES, message);
 				break;
 			case BANNER:
-				content = BannerGenerator.getBannerHandler(ident);
+				content = BannerGenerator.getBannerHandler(ident, message);
 				break;
 			case BANNER_GROUP:
-				content = BannerGenerator.getBannerCategoryHandler(ident);
+				content = BannerGenerator.getBannerCategoryHandler(ident, message);
 				break;
 			case DIARY_CALENDAR:
 				content = ArticleCalendarGenerator.getDiaryCalendarHandler();
 				break; 
 			case DIRECT_ACCESS:
-				content = DirectAccessGenerator.getDirectAccessGroupHandler(ident);
+				content = DirectAccessGenerator.getDirectAccessGroupHandler(ident, message);
 				break;
 			case DOWNLOAD_CATEGORY:
-				content = DownloadsGenerator.getDownloadsHandler(ident);
+				content = DownloadsGenerator.getDownloadsHandler(ident, message);
 				break;
 			case GENERIC:
-				content = GenericGenerator.getGenericHandler(ident);
+				content = GenericGenerator.getGenericHandler(ident, message);
 				break;
 			case LINK:
-				content = LinkGenerator.getLinkCategoryHandler(ident);
+				content = LinkGenerator.getLinkCategoryHandler(ident, message);
 				break;
 			case MENU:
-				content = MenuGenerator.getMenuHandler(ident);
+				content = MenuGenerator.getMenuHandler(ident, message);
+				break;
 		}
 	}
 

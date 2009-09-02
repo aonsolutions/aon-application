@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.code.aon.cms.Activity;
+import com.code.aon.cms.ActivityConfig;
 import com.code.aon.cms.ActivityDetail;
 import com.code.aon.cms.Album;
 import com.code.aon.cms.AlbumCategory;
@@ -96,6 +97,7 @@ import com.code.aon.cms.SportPosition;
 import com.code.aon.cms.SportPositionDetail;
 import com.code.aon.cms.SportSeason;
 import com.code.aon.common.dao.AliasWriter;
+import com.code.aon.common.dao.DAOConstantsWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 
 public class CMSAliasWriter {
@@ -103,100 +105,102 @@ public class CMSAliasWriter {
 	public static void main(String[] args) throws IOException {
 
 		File file = new File("/AON-PROJECT/aon-cms/src/main/java/com/code/aon/cms/dao/ICMSAlias.java");
-		String[] classes = new String[92]; 
-		classes[0] = Language.class.getName();
-		classes[1] = Config.class.getName();
-		classes[2] = ConfigDetail.class.getName();
-		classes[3] = GenericPage.class.getName();
-		classes[4] = GenericPageDetail.class.getName();
-		classes[5] = Menu.class.getName();
-		classes[6] = MenuOption.class.getName();
-		classes[7] = MenuOptionDetail.class.getName();
-		classes[8] = Header.class.getName();
-		classes[9] = HeaderDetail.class.getName();
-		classes[10] = Footer.class.getName();
-		classes[11] = FooterDetail.class.getName();
-		classes[12] = Link.class.getName();
-		classes[13] = LinkDetail.class.getName();
-		classes[14] = LinkCategory.class.getName();
-		classes[15] = LinkCategoryDetail.class.getName();
-		classes[16] = Faq.class.getName();
-		classes[17] = FaqDetail.class.getName();
-		classes[18] = FaqCategory.class.getName();
-		classes[19] = FaqCategoryDetail.class.getName();
-		classes[20] = Brand.class.getName();
-		classes[21] = BrandDetail.class.getName();
-		classes[22] = ProductCategory.class.getName();
-		classes[23] = ProductCategoryDetail.class.getName();
-		classes[24] = Product.class.getName();
-		classes[25] = ProductDetail.class.getName();
-		classes[26] = Article.class.getName();
-		classes[27] = ArticleDetail.class.getName();
-		classes[28] = ArticleCategory.class.getName();
-		classes[29] = ArticleCategoryDetail.class.getName();
-		classes[30] = Banner.class.getName();
-		classes[31] = BannerDetail.class.getName();
-		classes[32] = BannerCategory.class.getName();
-		classes[33] = BannerCategoryDetail.class.getName();
-		classes[34] = Download.class.getName();
-		classes[35] = DownloadDetail.class.getName();
-		classes[36] = DownloadCategory.class.getName();
-		classes[37] = DownloadCategoryDetail.class.getName();
-		classes[38] = AlbumCategory.class.getName();
-		classes[39] = AlbumCategoryDetail.class.getName();
-		classes[40] = Album.class.getName();
-		classes[41] = AlbumDetail.class.getName();
-		classes[42] = AlbumImage.class.getName();
-		classes[43] = AlbumImageDetail.class.getName();
-		classes[44] = Sidebar.class.getName();
-		classes[45] = SidebarOption.class.getName();
-		classes[46] = SidebarOptionDetail.class.getName();
-		classes[47] = Section.class.getName();		
-		classes[48] = ModularPage.class.getName();
-		classes[49] = ModularPageOption.class.getName();
-		classes[50] = ModularPageOptionDetail.class.getName();		
-		classes[51] = DirectAccessGroup.class.getName();
-		classes[52] = DirectAccessGroupDetail.class.getName();
-		classes[53] = DirectAccess.class.getName();
-		classes[54] = DirectAccessDetail.class.getName();
-		classes[55] = FaqConfig.class.getName();
-		classes[56] = LinkConfig.class.getName();
-		classes[57] = AlbumConfig.class.getName();
-		classes[58] = ArticleConfig.class.getName();
-		classes[59] = ModularPageDetail.class.getName();
-		classes[60] = ArticleRelated.class.getName();
-		classes[61] = ArticleDocument.class.getName();
-		classes[62] = ArticleDocumentDetail.class.getName();
-		classes[63] = DownloadConfig.class.getName();
-		classes[64] = Company.class.getName();
-		classes[65] = Activity.class.getName();
-		classes[66] = ActivityDetail.class.getName();
-		classes[67] = CompanyActivity.class.getName();
-		classes[68] = Bulletin.class.getName();
-		classes[69] = BulletinDetail.class.getName();
-		classes[70] = BulletinArticle.class.getName();
-		classes[71] = BulletinEmail.class.getName();
-		classes[72] = FooterBannerCategory.class.getName();
-		classes[73] = Diary.class.getName();
-		classes[74] = DiaryDetail.class.getName();
-		classes[75] = HiruOrganizerCentre.class.getName();
-		classes[76] = HiruCourse.class.getName();
-		classes[77] = HiruCourseDetail.class.getName();
-		classes[78] = HiruConfig.class.getName();
-		classes[79] = ProductCategoryConfig.class.getName();
-		classes[80] = SportCategory.class.getName();
-		classes[81] = SportCategoryDetail.class.getName();
-		classes[82] = SportClub.class.getName();
-		classes[83] = SportPosition.class.getName();
-		classes[84] = SportPositionDetail.class.getName();
-		classes[85] = SportNationality.class.getName();
-		classes[86] = SportNationalityDetail.class.getName();
-		classes[87] = SportSeason.class.getName();
-		classes[88] = SportPlayer.class.getName();
-		classes[89] = SportCareerPath.class.getName();
-		classes[90] = SportCoach.class.getName();
-		classes[91] = SportConfig.class.getName();
-		HibernateUtil.getSessionFactory();
+		String[] classes = new String[] { 
+			Language.class.getName(),
+			Config.class.getName(),
+			ConfigDetail.class.getName(),
+			GenericPage.class.getName(),
+			GenericPageDetail.class.getName(),
+			Menu.class.getName(),
+			MenuOption.class.getName(),
+			MenuOptionDetail.class.getName(),
+			Header.class.getName(),
+			HeaderDetail.class.getName(),
+			Footer.class.getName(),
+			FooterDetail.class.getName(),
+			Link.class.getName(),
+			LinkDetail.class.getName(),
+			LinkCategory.class.getName(),
+			LinkCategoryDetail.class.getName(),
+			Faq.class.getName(),
+			FaqDetail.class.getName(),
+			FaqCategory.class.getName(),
+			FaqCategoryDetail.class.getName(),
+			Brand.class.getName(),
+			BrandDetail.class.getName(),
+			ProductCategory.class.getName(),
+			ProductCategoryDetail.class.getName(),
+			Product.class.getName(),
+			ProductDetail.class.getName(),
+			Article.class.getName(),
+			ArticleDetail.class.getName(),
+			ArticleCategory.class.getName(),
+			ArticleCategoryDetail.class.getName(),
+			Banner.class.getName(),
+			BannerDetail.class.getName(),
+			BannerCategory.class.getName(),
+			BannerCategoryDetail.class.getName(),
+			Download.class.getName(),
+			DownloadDetail.class.getName(),
+			DownloadCategory.class.getName(),
+			DownloadCategoryDetail.class.getName(),
+			AlbumCategory.class.getName(),
+			AlbumCategoryDetail.class.getName(),
+			Album.class.getName(),
+			AlbumDetail.class.getName(),
+			AlbumImage.class.getName(),
+			AlbumImageDetail.class.getName(),
+			Sidebar.class.getName(),
+			SidebarOption.class.getName(),
+			SidebarOptionDetail.class.getName(),
+			Section.class.getName(),		
+			ModularPage.class.getName(),
+			ModularPageOption.class.getName(),
+			ModularPageOptionDetail.class.getName(),		
+			DirectAccessGroup.class.getName(),
+			DirectAccessGroupDetail.class.getName(),
+			DirectAccess.class.getName(),
+			DirectAccessDetail.class.getName(),
+			FaqConfig.class.getName(),
+			LinkConfig.class.getName(),
+			AlbumConfig.class.getName(),
+			ArticleConfig.class.getName(),
+			ModularPageDetail.class.getName(),
+			ArticleRelated.class.getName(),
+			ArticleDocument.class.getName(),
+			ArticleDocumentDetail.class.getName(),
+			DownloadConfig.class.getName(),
+			Company.class.getName(),
+			Activity.class.getName(),
+			ActivityDetail.class.getName(),
+			CompanyActivity.class.getName(),
+			Bulletin.class.getName(),
+			BulletinDetail.class.getName(),
+			BulletinArticle.class.getName(),
+			BulletinEmail.class.getName(),
+			FooterBannerCategory.class.getName(),
+			Diary.class.getName(),
+			DiaryDetail.class.getName(),
+			HiruOrganizerCentre.class.getName(),
+			HiruCourse.class.getName(),
+			HiruCourseDetail.class.getName(),
+			HiruConfig.class.getName(),
+			ProductCategoryConfig.class.getName(),
+			SportCategory.class.getName(),
+			SportCategoryDetail.class.getName(),
+			SportClub.class.getName(),
+			SportPosition.class.getName(),
+			SportPositionDetail.class.getName(),
+			SportNationality.class.getName(),
+			SportNationalityDetail.class.getName(),
+			SportSeason.class.getName(),
+			SportPlayer.class.getName(),
+			SportCareerPath.class.getName(),
+			SportCoach.class.getName(),
+			SportConfig.class.getName(),
+			ActivityConfig.class.getName() 
+		};
+		HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName());
 		AliasWriter writer = new AliasWriter("com.code.aon.cms.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

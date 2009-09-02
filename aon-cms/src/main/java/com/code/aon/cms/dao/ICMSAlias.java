@@ -94,6 +94,7 @@ import com.code.aon.cms.SportPlayer;
 import com.code.aon.cms.SportCareerPath;
 import com.code.aon.cms.SportCoach;
 import com.code.aon.cms.SportConfig;
+import com.code.aon.cms.ActivityConfig;
 
 /** 
 * Interface for holding entity properties constants.
@@ -2854,6 +2855,24 @@ public interface ICMSAlias {
 	*/
 	String  ACTIVITY_ID = ACTIVITY_ENTRY.getAliasNames()[1];
 
+	/** 
+	* Alias value: Activity_section_id
+	* Hibernate value: Activity.section.id
+	*/
+	String  ACTIVITY_SECTION_ID = ACTIVITY_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Activity_details_description
+	* Hibernate value: Activity.details.description
+	*/
+	String  ACTIVITY_DETAILS_DESCRIPTION = ACTIVITY_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Activity_details_language_id
+	* Hibernate value: Activity.details.language.id
+	*/
+	String  ACTIVITY_DETAILS_LANGUAGE_ID = ACTIVITY_ENTRY.getAliasNames()[4];
+
 
 
 	/** 
@@ -3791,6 +3810,25 @@ public interface ICMSAlias {
 	* Hibernate value: SportConfig.section.id
 	*/
 	String  SPORT_CONFIG_SECTION_ID = SPORT_CONFIG_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for ActivityConfig entity.
+	*/ 
+	DAOConstantsEntry ACTIVITY_CONFIG_ENTRY = DAOConstants.getDAOConstant(ActivityConfig.class);
+
+	/** 
+	* Alias value: ActivityConfig_id
+	* Hibernate value: ActivityConfig.id
+	*/
+	String  ACTIVITY_CONFIG_ID = ACTIVITY_CONFIG_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ActivityConfig_section_id
+	* Hibernate value: ActivityConfig.section.id
+	*/
+	String  ACTIVITY_CONFIG_SECTION_ID = ACTIVITY_CONFIG_ENTRY.getAliasNames()[1];
 
 
 }
