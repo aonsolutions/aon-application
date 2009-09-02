@@ -28,7 +28,18 @@
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}">
-						</aon:commandButton>					
+						</aon:commandButton>
+						<aon:commandButton id="generate" reRender="aonStatus"
+							value="#{appBundle.aon_generate}" 
+							rendered="#{cms.roleEditor}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{generator.onGenerateActivity}" />
+							<a4j:support 
+								event="onclick" reRender="poll,grid" 
+								actionListener="#{generator_status.onActivePoll}"  
+								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
+						</aon:commandButton>	
 					</ui:define>
 				</ui:decorate>	
 	
@@ -90,6 +101,9 @@
 			</aon:div>
 			
 		</aon:form>
+
+		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml" />
+
 	</ui:define>
 </ui:composition>
 </body>

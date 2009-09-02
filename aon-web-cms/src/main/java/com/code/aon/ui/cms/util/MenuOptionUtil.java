@@ -10,6 +10,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.cms.Activity;
 import com.code.aon.cms.Album;
 import com.code.aon.cms.AlbumCategory;
 import com.code.aon.cms.Article;
@@ -38,6 +39,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.controller.CollectionsController;
 import com.code.aon.ui.cms.controller.ICMSConstants;
+import com.code.aon.ui.cms.velocity.ActivityGenerator;
 import com.code.aon.ui.cms.velocity.AlbumGenerator;
 import com.code.aon.ui.cms.velocity.ArticleCalendarGenerator;
 import com.code.aon.ui.cms.velocity.DownloadsGenerator;
@@ -661,6 +663,28 @@ public class MenuOptionUtil implements ICMSConstants {
 					LOGGER.log(Level.SEVERE, e.getMessage(), e);
 				}
 				return null;
+			case ACTIVITY:
+				try {
+					if (ContentLevel.TOP.equals(level)){
+						String activityLink = Templates.ACTIVITY.getHtmlName();
+						activityLink = activityLink.replaceAll("%NAME%", ActivityGenerator.ACTIVITY_LIST_PAGE);
+						return activityLink;
+					}else if (ContentLevel.ELEMENT.equals(level)){
+						IManagerBean bean = BeanManager.getManagerBean(Activity.class);
+						Criteria criteria = new Criteria();
+						criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ACTIVITY_ID), ident);
+						List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+						if (l.size() > 0) {
+							Activity a = (Activity)l.get(0);
+							String activityLink = Templates.ACTIVITY.getHtmlName();
+							activityLink = activityLink.replaceAll("%NAME%", "ACTIVITY_" + a.getId());
+							return activityLink;
+						}
+					}
+				} catch (ManagerBeanException e) {
+					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+				}
+				return null;				
 		}		
 		return null;
 	}
