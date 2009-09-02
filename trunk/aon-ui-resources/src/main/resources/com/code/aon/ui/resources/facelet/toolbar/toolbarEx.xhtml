@@ -8,13 +8,13 @@
 		<aon:panelGrid columns="3" dir="true"
 			columnClasses="#{(toolbarTitle!=null)?'aon-finding-title,':''}#{(toolbarDescription!=null)?'aon-finding-subtitle,':''}aon-finding-toolbar">
 
-			<c:if test="#{toolbarTitle!=null}">
+			<c:if test="#{(toolbarTitle!=null) and (!skipToolbarTitle)}">
 				<aon:div styleClass="aon-finding-title-internal">
 					<aon:outputText value="#{toolbarTitle}" />
 				</aon:div>
 			</c:if>
 
-			<c:if test="#{toolbarDescription!=null}">
+			<c:if test="#{(toolbarDescription!=null) and (!skipToolbarDescription)}">
 				<aon:div styleClass="aon-finding-subtitle-internal">
 					<aon:outputText value="#{toolbarDescription}" />			
 				</aon:div>
