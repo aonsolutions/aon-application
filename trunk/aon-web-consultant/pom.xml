@@ -10,11 +10,11 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.consultant</artifactId>
 	<packaging>war</packaging>
-	<version>4.0.0</version>
+	<version>4.1.0</version>
 	<description>AON WEB CONSULTANT</description>
 	<name>AON WEB CONSULTANT</name>
 	<properties>
-		<dbVersion>3.5.0</dbVersion>
+		<dbVersion>4.1.0</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-consultant</finalName>
@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>4.0.0</version>
+			<version>4.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -36,7 +36,7 @@
  		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>4.0.0</version>
+			<version>4.1.2</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -48,13 +48,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.customer</artifactId>
-			<version>4.0.0</version>
+			<version>4.1.4</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>3.7.0</version>
+			<version>3.8.0</version>
 			<scope>compile</scope>
 		</dependency>
 		
