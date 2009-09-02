@@ -178,7 +178,7 @@ public class LinkGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.LINK_CATEGORY_ID), ident);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.isEmpty()){
-				getLogger().error("CATEGORIA DE LINKS "+ident+" REFERENCIADA NO EXISTE");
+				getLogger().error("CATEGORIA DE ENLACES "+ident+" REFERENCIADA NO EXISTE");
 				return null;
 			}
 			LinkCategory link = (LinkCategory)l.get(0);

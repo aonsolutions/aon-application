@@ -8,18 +8,60 @@ import com.code.aon.cms.ActivityDetail;
 import com.code.aon.cms.Company;
 import com.code.aon.cms.CompanyActivity;
 import com.code.aon.cms.dao.ICMSAlias;
+import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.attribute.ActivityHandler;
 import com.code.aon.ui.cms.velocity.attribute.CompanyHandler;
 
 public class ActivityGenerator extends Generator {
 
-	public static Object getActivityHandler(Integer ident) {
+	private static final String ACTIVITIES_KEY = "activities";
+	
+	private static final String ACTIVITY_KEY = "activity";
+	
+	public static final String ACTIVITY_LIST_PAGE = "main";
+	
+	public void generate() {
+		generate(null);
+	}
+	
+	public void generate(Activity selectedActivity) {
+		VelocityUtil vu = context.initVelocityUtil();
+			
+		context.changeDefaultSection(vu);		
+		
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Activity.class);
+			Criteria criteria = new Criteria();
+			if ( selectedActivity != null ) {
+				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ACTIVITY_ID), selectedActivity.getId());
+			}
+			List<ITransferObject> l = bean.getList(criteria);
+			List<ActivityHandler> activityHandlerList = new ArrayList<ActivityHandler>();
+			for (int i=0; i < l.size(); i++) {
+				Activity activity = (Activity)l.get(i);
+				ActivityHandler ah = getActivityHandler(activity.getId());
+				activityHandlerList.add( ah );
+				vu.put(ACTIVITY_KEY, ah);
+				generate(vu, Templates.ACTIVITY, "ACTIVITY_" + activity.getId());
+				vu.remove(ACTIVITY_KEY);
+			}
+			vu.put(ACTIVITIES_KEY, activityHandlerList);
+			logger.info(" Generando listado actividades.");
+			generate(vu, Templates.ACTIVITY, ACTIVITY_LIST_PAGE);
+			vu.remove(ACTIVITIES_KEY);
+		} catch (ManagerBeanException e) {
+			logger.error(e.getMessage());
+		}
+	}
+	
+	public static ActivityHandler getActivityHandler(Integer ident) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Activity.class);
 			Activity a = (Activity) bean.get(ident);
