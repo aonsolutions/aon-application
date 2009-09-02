@@ -11,8 +11,8 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ebackoffice.EcTarget;
 import com.code.aon.ebackoffice.dao.IEbackofficeAlias;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.ecommerce.util.IECommerceConstants;
 import com.code.aon.ui.util.AonUtil;
 
 
@@ -28,7 +28,6 @@ public class LoginController {
 		
 		try {
 			Criteria criteria = new Criteria();
-			String alias2 = IProductAlias.BRAND_ID;
 			String alias = IEbackofficeAlias.EC_TARGET_LOGIN;
 			String identifier = AonUtil.getManagerBean(EcTarget.class).getFieldName(alias); 
 			criteria.addEqualExpression(identifier, getLogin());
@@ -39,11 +38,16 @@ public class LoginController {
 			IManagerBean bean = BeanManager.getManagerBean(EcTarget.class);
 			List<ITransferObject> list = bean.getList(criteria);
 			if(list.isEmpty()){
-				System.out.println("LOGIN INCORRECTO");
+				//System.out.println("LOGIN INCORRECTO");
 				AonUtil.addErrorMessage("LOGIN INCORRECTO");
 			} else {
-				System.out.println("LOGIADOOO");
-				AonUtil.addErrorMessage("LOGIADOOO");
+				EcTarget ect = (EcTarget)list.iterator().next();
+				//System.out.println("LOGIADOOO");
+				//AonUtil.addErrorMessage("LOGIADOOO");
+				((ShopController)AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER)).setLogged(true);
+				((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).onResetTarget(null);
+				((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).getCartTarget().setTarget(ect.getTarget());
+				
 			}
 			
 		} catch (ManagerBeanException e) {

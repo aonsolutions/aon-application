@@ -12,6 +12,7 @@ public class ShopController {
 	private boolean items;
 	private boolean detail;
 	private boolean cart;
+	private boolean logged;
 	
 
 	public String getBackView() {
@@ -68,6 +69,14 @@ public class ShopController {
 			setItems(false);
 		}
 		this.cart = cart;
+	}
+
+	public boolean isLogged() {
+		return logged;
+	}
+
+	public void setLogged(boolean logged) {
+		this.logged = logged;
 	}
 	
 	public void refreshView(ActionEvent event) {

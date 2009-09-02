@@ -17,7 +17,7 @@ public interface IECommerceConstants {
 	//static final String ITEM_DETAIL_ACTION = "shopItem_grid";
 	//static final String ITEMS_ACTION = "shopItems_form";
 	static final String REGISTRY_ACTION = "registry_form";
-	static final String BUDGET_ACTION = "budget_form";
+	static final String OFFER_ACTION = "cartOffer_form";
 	
 	/* ALIAS */
 	static final String ITEM_ALIAS = "Item_id";

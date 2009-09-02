@@ -27,10 +27,8 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
-import com.code.aon.ui.ecommerce.util.ECommerceUtil;
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
 import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 
 public class ShoppingCartController {
@@ -67,10 +65,11 @@ public class ShoppingCartController {
 		if (!isRegistered()) {
 			return IECommerceConstants.REGISTRY_ACTION;
 		}
-		return IECommerceConstants.BUDGET_ACTION;
+		return IECommerceConstants.OFFER_ACTION;
 	}
 
 	public boolean isRegistered() {
+		registered = ((ShopController)AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER)).isLogged();
 		return registered;
 	}
 
@@ -105,7 +104,6 @@ public class ShoppingCartController {
 		// ci.setDiscount(0);
 		// ci.setPrice(item.getPrice());
 
-		// int index = getList().indexOf(ci);
 		int index = getItemIndex(item);
 		if (index == -1) {
 			ci.setTotal(ci.getItem().getPrice());
