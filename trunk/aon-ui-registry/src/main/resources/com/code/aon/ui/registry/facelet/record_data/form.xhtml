@@ -26,7 +26,13 @@
 	</ui:include>
 	
 	<aon:div styleClass="aon-scroll-area">
-		<aon:panelGrid id="recordDataTable" columns="4">
+		<aon:panelGrid id="recordDataTable" columns="4"
+				style="width: 100%"
+				columnClasses="aon-panelGrid-odd aon-width-150
+							,aon-panelGrid-even aon-width-150
+							,aon-panelGrid-odd aon-width-150
+							,aon-panelGrid-odd aon-width-auto">
+		
 
 			<aon:outputLabel for="RecordData_creationDate"
 				value="#{registryBundle.registry_rd_creation_date}" />
@@ -40,6 +46,13 @@
 			<aon:inputText id="RecordData_description"
 				value="#{controller.to.description}" size="40" />
 
+			<aon:outputLabel for="RecordData_recordDate"
+				value="#{registryBundle.registry_rd_record_date}" />
+			<aon:selectInputDate id="RecordData_recordDate"
+				value="#{controller.to.recordDate}"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}"/>
+
 			<aon:outputLabel for="RecordData_notary"
 				value="#{registryBundle.registry_rd_notary}" />
 			<aon:inputText id="RecordData_notary" value="#{controller.to.notary}"
@@ -49,13 +62,6 @@
 				value="#{registryBundle.registry_rd_number}" />
 			<aon:inputText id="RecordData_number" value="#{controller.to.number}"
 				size="16" />
-
-			<aon:outputLabel for="RecordData_recordDate"
-				value="#{registryBundle.registry_rd_record_date}" />
-			<aon:selectInputDate id="RecordData_recordDate"
-				value="#{controller.to.recordDate}"
-				timeZone="#{timeZoneController.timeZone}"
-				popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 			<aon:outputLabel for="RecordData_volume"
 				value="#{registryBundle.registry_rd_volume}" />
@@ -84,7 +90,9 @@
 		</aon:panelGrid>
 
 		<aon:div styleClass="aon-padding-top" id="recordDataGrid">
-			<aon:panelGrid columns="2">
+			<aon:panelGrid columns="2" style="width: 100%"
+				columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
+			
 				<aon:outputLabel for="RecordData_file"
 					value="#{bundle.aon_fileupload_element}" />
 				<aon:div>
