@@ -11,48 +11,63 @@
 
 	<ui:define name="content">
 		<aon:form id="shopItemForm">
+			<!--  
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
-				<ui:param name="toolbarTitle" value="Registry -i18-" />
+				<ui:param name="toolbarTitle" value="#{ecommerceBundle.aon_acommerce_user_identification}" />
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="aonToolbar-back" value="#{bundle.aon_back}"
-						action="shop_form"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						immediate="true" accesskey="#{bundle.aon_key_cancel}" />
 				</ui:define>
 			</ui:decorate>
+			-->
 
 			<aon:div styleClass="aon-scroll-area">
+				<aon:commandButton id="aonToolbar-back" value="#{bundle.aon_back}"
+					action="shop_form"
+					styleClass="aon-finding-toolbar-item aon-icon-cancel"
+					immediate="true" accesskey="#{bundle.aon_key_cancel}" />
 				
 				<aon:panel>
 					<f:facet name="header">
-						<aon:inputText value="Usuario registrado -i18n-" />
+						<aon:outputText value="#{ecommerceBundle.aon_acommerce_user_identification}" />
 					</f:facet>
 					<aon:panelGrid columns="2" dir="true">
-						<aon:outputLabel for="Login" value="login -i18n-" />
-						<aon:inputText id="Login" value="" size="64" />
+						<aon:outputLabel for="Login" value="#{ecommerceBundle.aon_acommerce_user_name}" />
+						<aon:inputText id="Login" required="false" 
+							value="#{userLogin.login}" size="15" />
 
-						<aon:outputLabel for="Password" value="password -i18n-" />
-						<aon:inputText id="Password" value="" size="64" />
+						<aon:outputLabel for="Password" value="#{ecommerceBundle.aon_acommerce_user_passwd}" />
+						<aon:inputText id="Password" required="false" 
+							value="#{userLogin.password}" size="15" />
+
+						<aon:outputLabel for="login-buttom" value="&#160;" />
+						<aon:commandButton id="login-buttom" 
+							value="#{bundle.aon_accept}"
+							action="cartOffer_form"
+							styleClass="aon-finding-toolbar-item aon-icon-accept">
+							<aon:actionListener method="#{userLogin.onLogin}" />
+						</aon:commandButton>
+							<!--  
+						<aon:commandButton id="login-buttom" value="#{bundle.aon_accept}"
+							action="new_registry_form"
+							styleClass="aon-finding-toolbar-item aon-icon-accept">
+							<aon:actionListener method="#{shopItem.addToCart}" />
+						</aon:commandButton>
+							-->
+						
+						
+						
 					</aon:panelGrid>
-					<aon:commandButton id="login-buttom" value="Aceptar -i18n-"
-						action="new_registry_form"
-						styleClass="aon-finding-toolbar-item aon-icon-accept">
-						<!--  
-						<aon:actionListener method="#{shopItem.addToCart}" />
-						-->
-					</aon:commandButton>
 				</aon:panel>
 			</aon:div>
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panel>
 					<f:facet name="header">
-						<aon:inputText value="Registro de usuario -i18n-" />
+						<aon:outputText value="#{ecommerceBundle.aon_acommerce_user_registry}" />
 					</f:facet>
 
-					<aon:commandButton id="newUser-buttom" value="Nuevo usuario -i18n-"
+					<aon:commandButton id="newUser-buttom" value="#{ecommerceBundle.aon_acommerce_user_new}"
 						action="new_registry_form"
 						styleClass="aon-finding-toolbar-item aon-icon-new">
 						<aon:actionListener method="#{shoppingCart.onResetTarget}" />

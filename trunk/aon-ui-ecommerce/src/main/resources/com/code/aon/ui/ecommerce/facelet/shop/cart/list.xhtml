@@ -30,7 +30,7 @@
 				</aon:column>
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="quantity -i18n-" />
+						<aon:outputText value="#{ecommerceBundle.aon_acommerce_quantity}" />
 					</f:facet>
 					<aon:inputText value="#{to.quantity}" size="2" maxlength="3" >
 						<f:convertNumber pattern="#,##0" />
@@ -46,17 +46,17 @@
 				</aon:column>
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="price -i18n-" />
+						<aon:outputText value="#{ecommerceBundle.aon_acommerce_price}" />
 					</f:facet>
 					<aon:outputText value="#{to.item.price}" />
 				</aon:column>
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="importe -i18n-" />
+						<aon:outputText value="#{ecommerceBundle.aon_acommerce_amount}" />
 					</f:facet>
 					<aon:outputText value="#{to.total}" />
 					<f:facet name="footer">
-						<aon:outputText value="#{shoppingCart.total} &#160; (*IVA incluido -i18n-)" />
+						<aon:outputText value="#{shoppingCart.total} &#160; (#{ecommerceBundle.aon_acommerce_vat_included})" />
 					</f:facet>
 				</aon:column>
 				<aon:column>
@@ -65,12 +65,12 @@
 					</f:facet>
 
 					<aon:commandButton value="&#160;" action="shopItem_grid"
-						title="+ info -i18n-"
+						title="#{ecommerceBundle.aon_acommerce_extended_info}"
 						styleClass="aon-editDataTable-button aon-icon-info">
 						<aon:actionListener method="#{shoppingCart.onSelect}" />
 					</aon:commandButton>
 					<aon:commandButton value="&#160;" 
-						title="delete from cart -i18n-"
+						title="#{ecommerceBundle.aon_acommerce_del_list_item}"
 						styleClass="aon-editDataTable-button aon-icon-rubber">
 						<aon:actionListener method="#{shoppingCart.removeFromCart}" />
 					</aon:commandButton>

@@ -77,17 +77,15 @@
 								
 							<aon:commandButton id="aonToolbar-addToCart"
 								rendered="#{shop.detail}"
-								value="Ainadir al carrito -i18n-" 
+								value="#{ecommerceBundle.aon_acommerce_addToCart}" 
 								action="shop_from" 
-								title="add to cart -i18n-"
 								styleClass="aon-finding-toolbar-item aon-icon-new">
 								<aon:actionListener method="#{shopItem.addToCart}" />
 							</aon:commandButton>	
 							
-							<aon:commandButton id="aonToolbar-bundle" 
+							<aon:commandButton id="aonToolbar-offer-request" 
 								rendered="#{shop.cart}"
-								value="REQUEST A BUNDLE -i18n-"
-								title="request a bundle -i18n-"
+								value="#{ecommerceBundle.aon_acommerce_offer_request}"
 								action="#{shoppingCart.budgetRequest}"
 								styleClass="aon-finding-toolbar-item aon-icon-predetermine" >
 							</aon:commandButton>

@@ -11,24 +11,26 @@
 
 	<ui:define name="content">
 		<aon:form id="shopItemForm">
+			<!--  
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
-				<ui:param name="toolbarTitle" value="Registry -i18-" />
+				<ui:param name="toolbarTitle" value="#{ecommerceBundle.aon_acommerce_user_registry}" />
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="aonToolbar-back" value="#{bundle.aon_back}"
-						action="shop_form"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						immediate="true" accesskey="#{bundle.aon_key_cancel}" />
-					<h:commandButton id="aonToolbar-accept"
-						value="#{bundle.aon_accept}" action="cartOffer_form"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						accesskey="#{bundle.aon_key_accept}"
-						actionListener="#{shoppingCart.onAcceptTarget}" />
 				</ui:define>
 			</ui:decorate>
+			-->
 
 			<aon:div styleClass="aon-scroll-area">
+				<aon:commandButton id="aonToolbar-back" value="#{bundle.aon_back}"
+					action="shop_form"
+					styleClass="aon-finding-toolbar-item aon-icon-cancel"
+					immediate="true" accesskey="#{bundle.aon_key_cancel}" />
+				<h:commandButton id="aonToolbar-accept"
+					value="#{bundle.aon_accept}" action="cartOffer_form"
+					styleClass="aon-finding-toolbar-item aon-icon-cancel"
+					accesskey="#{bundle.aon_key_accept}"
+					actionListener="#{shoppingCart.onAcceptTarget}" />
 
 				<aon:panelGrid columns="2" dir="true">
 
