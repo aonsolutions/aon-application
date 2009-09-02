@@ -134,9 +134,7 @@ public class ArticleCalendarGenerator extends Generator {
 			
 			VelocityUtil vu = context.initVelocityUtil();
 
-			Section configSection = GeneratorConfigController.currentSection(ArticleConfig.class);
-			
-			context.changeSection(vu, configSection);
+			changeDiaryElementContext( vu, diary );
 
 			for (int pos=0; pos < monthsList.size(); ++pos){
 				MonthContent monthContent = monthsList.get(pos);
@@ -231,6 +229,7 @@ public class ArticleCalendarGenerator extends Generator {
 			}
 
 			logger.info("Generando diario indice.");
+			changeDiaryContext(vu, diary);
 			generate(vu, Templates.DIARY, DIARY_INDEX_PAGE);
 			vu.remove(DIARY_CATEGORIES_KEY);
 			vu.remove(ARTICLE_LIST_KEY);
@@ -247,7 +246,23 @@ public class ArticleCalendarGenerator extends Generator {
 			logger.error(e.getMessage());
 		}
 	}
+	
+	private void changeDiaryElementContext(VelocityUtil vu, Diary diary) {
+		if (diary.getElementSection()!=null){
+			context.changeSection(vu, diary.getElementSection());
+		} else {
+			changeDiaryContext(vu, diary);
+		}
+	}	
 
+	private void changeDiaryContext(VelocityUtil vu, Diary diary) {
+		if (diary.getSection()!=null) {
+			context.changeSection(vu, diary.getSection());
+		} else {
+			context.changeDefaultSection(vu);
+		}
+	}	
+	
 	private static void addArticleCategoryHandler(Map<Integer,ArticleCategoryHandler> map,ArticleCategory articleCategory) throws ManagerBeanException{
 		IManagerBean articleCategoryDetailBean = BeanManager.getManagerBean(ArticleCategoryDetail.class);
 		if (map.get(articleCategory.getId())==null){

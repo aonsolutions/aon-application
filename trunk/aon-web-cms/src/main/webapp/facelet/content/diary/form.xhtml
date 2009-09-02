@@ -79,6 +79,22 @@
 									<aon:selectBooleanCheckbox id="past_events" 
 										value="#{diary.to.pastEvents}" />
 								</aon:div>
+								
+								<aon:outputLabel for="Diary_section_id"
+									value="#{appBundle.cms_section}"/>
+								<aon:selectOneMenu id="Diary_section_id"  
+									value="#{diary.to.section}">
+									<f:selectItem itemLabel="-" value="#{null}" />
+									<f:selectItems value="#{collections.sectionList}" />
+								</aon:selectOneMenu>
+			
+								<aon:outputLabel for="Diary_elementSection_id"
+									value="#{appBundle.cms_section_elements}"/>
+								<aon:selectOneMenu id="Diary_elementSection_id"  
+									value="#{diary.to.elementSection}">
+									<f:selectItem itemLabel="-" value="#{null}" />
+									<f:selectItems value="#{collections.sectionList}" />
+								</aon:selectOneMenu>								
 
 								<ui:include src="/facelet/content/utils/contentInput.xhtml" >
 									<ui:param name="inputTextId" value="content" />
