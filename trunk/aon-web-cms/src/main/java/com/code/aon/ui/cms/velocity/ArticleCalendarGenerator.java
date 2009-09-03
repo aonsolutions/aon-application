@@ -14,11 +14,9 @@ import java.util.logging.Logger;
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleCategory;
 import com.code.aon.cms.ArticleCategoryDetail;
-import com.code.aon.cms.ArticleConfig;
 import com.code.aon.cms.ArticleDetail;
 import com.code.aon.cms.Diary;
 import com.code.aon.cms.DiaryDetail;
-import com.code.aon.cms.Section;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.cms.enumeration.Templates;
@@ -29,7 +27,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.attribute.ArticleCategoryHandler;
@@ -248,15 +245,19 @@ public class ArticleCalendarGenerator extends Generator {
 	}
 	
 	private void changeDiaryElementContext(VelocityUtil vu, Diary diary) {
-		if (diary.getElementSection()!=null){
-			context.changeSection(vu, diary.getElementSection());
+		if ( diary != null ) {
+			if (diary.getElementSection()!=null){
+				context.changeSection(vu, diary.getElementSection());
+			} else {
+				changeDiaryContext(vu, diary);
+			}			
 		} else {
-			changeDiaryContext(vu, diary);
+			context.changeDefaultSection(vu);
 		}
 	}	
 
 	private void changeDiaryContext(VelocityUtil vu, Diary diary) {
-		if (diary.getSection()!=null) {
+		if ( (diary != null) && (diary.getSection()!=null) ) {
 			context.changeSection(vu, diary.getSection());
 		} else {
 			context.changeDefaultSection(vu);
