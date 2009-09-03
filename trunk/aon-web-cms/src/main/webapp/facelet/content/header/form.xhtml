@@ -40,6 +40,7 @@
 									value="#{appBundle.header_menu}"/>
 								<aon:selectOneMenu id="header_menu"  
 									value="#{cmsHeader.to.menu.id}">
+									<f:selectItem itemLabel="-" value="#{null}" />
 									<f:selectItems value="#{collections.menuTopList}" />
 								</aon:selectOneMenu> 
 			
