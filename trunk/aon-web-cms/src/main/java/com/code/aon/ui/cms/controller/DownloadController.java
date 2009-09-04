@@ -22,9 +22,9 @@ import com.code.aon.ui.util.AonUtil;
 
 public class DownloadController extends BasicI18nController implements ICMSConstants, Constants {
 
-	private String title;
+	private boolean showWindow;
 	
-	private int page;
+	private String title;
 	
 	private boolean richTextEnabled;
 
@@ -36,14 +36,14 @@ public class DownloadController extends BasicI18nController implements ICMSConst
 		this.richTextEnabled = richTextEnabled;
 	}
 	
-	public int getPage() {
-		return page;
+	public boolean isShowWindow() {
+		return showWindow;
 	}
 
-	public void setPage(int page) {
-		this.page = page;
+	public void setShowWindow(boolean showWindow) {
+		this.showWindow = showWindow;
 	}
-	
+
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
 		super.onSelect(event);
@@ -71,7 +71,7 @@ public class DownloadController extends BasicI18nController implements ICMSConst
 		return title;
 	}
 
-	public void onDelImage(ActionEvent event) {
+	public void onDelDocument(ActionEvent event) {
 		DownloadDetail current = (DownloadDetail)getToI18n();
 		current.setFile(null);
 	}
@@ -94,10 +94,10 @@ public class DownloadController extends BasicI18nController implements ICMSConst
 		Criteria criteria = new Criteria();
 		try {
 			criteria.addExpression(bean.getFieldName(alias_value), value);
-			List objects = (List<ITransferObject>)bean.getList(criteria);
+			List<ITransferObject> objects = bean.getList(criteria);
 			String alias = getFieldName(ICMSAlias.DOWNLOAD_ID);
 			Expression expr = null;
-			for (Iterator iterator = objects.iterator(); iterator.hasNext();) {
+			for (Iterator<ITransferObject> iterator = objects.iterator(); iterator.hasNext();) {
 				if (expr==null)
 					expr = ExpressionUtilities.getExpression(((DownloadDetail) iterator.next()).getDownload().getId().toString(),alias);
 				else
