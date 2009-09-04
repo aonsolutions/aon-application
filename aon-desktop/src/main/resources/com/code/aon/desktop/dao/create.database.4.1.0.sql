@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 4.0.0
-# Created by: girazu
-# Creation Date: 15/07/2009 09:05
+# Version: 4.1.0
+# Created by: ecastellano
+# Creation Date: 31/07/2009 13:05
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -2946,6 +2946,9 @@ CREATE TABLE `rmedia` (
   `media` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Medio de Contacto de la Persona o Empresa',
   `value` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Valor del Medio de Contacto de la Persona o Empresa',
   `comment` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Comentarios acerca del Medio de Contacto de la Persona o Empresa',
+  `administrative` tinyint(1) default '1' COMMENT 'Indica si el Contacto es de caracter administrativo',
+  `commercial` tinyint(1) default '1' COMMENT 'Indica si el Contacto es de caracter comercial',
+  `technical` tinyint(1) default '1' COMMENT 'Indica si el Contacto es de caracter tecnico',
   PRIMARY KEY  (`id`),
   KEY `idx_rmed_rgty` (`registry`),
   CONSTRAINT `rmedia_ibfk_1` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
@@ -3553,7 +3556,7 @@ RETURN (SELECT IF (SUM(inventory_detail.cost) IS NULL, 0, SUM(inventory_detail.c
        AND inventory.inventory_date = d);
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('4.0.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('4.1.0');
 
 COMMIT;
 
