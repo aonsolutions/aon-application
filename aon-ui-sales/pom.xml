@@ -10,22 +10,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.sales</artifactId>
-	<version>4.0.1</version>
+	<version>4.0.2</version>
 	<description>AON UI SALES</description>
 	<name>AON UI SALES</name>
 	<dependencies>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.form</artifactId>
-			<version>4.0.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.report</artifactId>
-			<version>4.0.0</version>
-			<scope>runtime</scope>
-		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.company</artifactId>
@@ -70,21 +58,33 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.warehouse</artifactId>
+			<version>4.0.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>4.1.1</version>
+			<version>4.1.2</version>
 			<scope>compile</scope>
 		</dependency>
  		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.customer</artifactId>
-			<version>4.1.2</version>
+			<version>4.2.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.warehouse</artifactId>
+			<artifactId>aon.ui.form</artifactId>
 			<version>4.0.0</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.report</artifactId>
+			<version>4.0.0</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.faces</groupId>
