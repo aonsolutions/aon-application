@@ -58,11 +58,4 @@
 		</aon:selectOneMenu>
 	</c:if>
 
-	<c:if test="#{company.EInvoice}">
-		<aon:outputLabel for="Customer_eInvoice"
-			value="#{customerBundle.customer_receive_eInvoice}" />
-		<aon:selectBooleanCheckbox id="Customer_eInvoice"
-			value="#{controller.to.EInvoice}" />
-	</c:if>
-
 </ui:composition>
