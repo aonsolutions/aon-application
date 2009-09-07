@@ -367,7 +367,7 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 	}
 
 	public void onRecordInvoice(ActionEvent event) throws ManagerBeanException{
-		if (getToInvoiceTotalPrice() != getToInvoiceFinanceTotal()) {
+		if (getToInvoiceFinanceTotal() != 0 && getToInvoiceTotalPrice() != getToInvoiceFinanceTotal()) {
 			String message = AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.UNABLE_RECORD_INACCURACY_ERROR_KEY);
 			throw new AbortProcessingException(message);
 		}
