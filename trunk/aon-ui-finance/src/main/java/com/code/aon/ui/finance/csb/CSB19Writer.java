@@ -157,8 +157,8 @@ public class CSB19Writer implements IFinanceConstants {
 			String descConcept = new String();
 			String priceConcept = new String();
 			if(detail.getDescription().length() > 40){
-				descConcept = detail.getDescription().substring(0,39);
-				priceConcept = (detail.getDescription().length() > 48)?detail.getDescription().substring(40, 47):detail.getDescription().substring(40, detail.getDescription().length());
+				descConcept = detail.getDescription().substring(0, 40);
+				priceConcept = (detail.getDescription().length() > 48)?detail.getDescription().substring(40, 48):detail.getDescription().substring(40, detail.getDescription().length());
 			}else{
 				descConcept = detail.getDescription();
 			}
@@ -202,6 +202,12 @@ public class CSB19Writer implements IFinanceConstants {
 												  formatter.format(taxBreakDown.getSurchargeQuota());
 						individual.addConcept(surchargeConcept);
 					}
+				}
+				if(taxBreakDown.getTaxType().equals(TaxType.RETENTION)){
+					String taxConcept = formatter.format(taxBreakDown.getTaxPercent()) + "% IRPF SOBRE  " + 
+										formatter.format(taxBreakDown.getBase()) + "  =  " + 
+										formatter.format(taxBreakDown.getTaxQuota());
+					individual.addConcept(taxConcept);
 				}
 			}
 		}
