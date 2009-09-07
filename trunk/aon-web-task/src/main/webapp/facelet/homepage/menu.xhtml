@@ -26,14 +26,6 @@
 					<aon:menuItem id="customer" value="#{appBundle.aon_customer}"
 						icon="/css/images/menu_icons/task_customer.gif"
 						actionListener="#{customer.onEditSearch}" action="customer_search">
-						<f:setPropertyActionListener target="#{customer.showFinanceData}"
-							value="#{false}" />
-						<f:setPropertyActionListener target="#{customer.showProjectData}"
-							value="#{true}" />
-						<f:setPropertyActionListener target="#{customer.showTariff}"
-							value="#{false}" />
-						<f:setPropertyActionListener target="#{customer.showSegment}"
-							value="#{false}" />
 					</aon:menuItem>
 					<aon:menuSeparator />
 					<rich:menuItem id="task" value="#{appBundle.aon_task}"
