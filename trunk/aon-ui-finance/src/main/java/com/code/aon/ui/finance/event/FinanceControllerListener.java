@@ -23,11 +23,10 @@ public class FinanceControllerListener extends ControllerAdapter {
 			Projection expensesProjection = Projection.sum(financeBean.getFieldName(IFinanceAlias.FINANCE_EXPENSES));
 			Double amount = (Double)financeBean.getUniqueResult(amountProjection, controller.getCriteria());
 			Double expenses = (Double)financeBean.getUniqueResult(expensesProjection, controller.getCriteria());
-			controller.setTotalFinanceAmount(CommonUtil.round(amount + expenses));
+			controller.setTotalFinanceAmount(CommonUtil.round((amount==null?0:amount) + (expenses==null?0:expenses)));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}		
 	}
 
 }
-
