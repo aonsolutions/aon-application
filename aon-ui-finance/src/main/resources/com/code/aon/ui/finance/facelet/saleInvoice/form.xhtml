@@ -40,15 +40,6 @@
 						reRender="saleInvoiceForm"
 						onclick="Richfaces.showModalPanel('waitProccess')" 
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-			     	<!-- 
-					<aon:commandButton id="email"
-						title="#{financeBundle.finance_send_email}" value=""
-						rendered="#{!saleInvoice.new}" reRender="showNewMessageWindow"
-						actionListener="#{saleInvoice.onSendInvoiceByEmail}"
-						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border" >
-						<f:setPropertyActionListener target="#{webmailMessage.showNewMessageWindow}" value="#{true}" />
-					</aon:commandButton>
-					-->
 					<aon:confirmButton value="&#160;" id="email"
 						confirmTitle="#{financeBundle.finance_send_email}"
 						confirmMessage="#{financeBundle.finance_sign_email_confirm}"
