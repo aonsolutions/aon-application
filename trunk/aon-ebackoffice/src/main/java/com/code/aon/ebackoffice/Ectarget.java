@@ -8,13 +8,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -23,16 +21,17 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.commercial.Target;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.ebackoffice.enumeration.TargetType;
 
 
 /**
  * Transfer Object that represents a eCommerce Target.
  * 
- * @author Esferalia Networks. Ekain Agirrezabal - 31/08/2009
+ * @author Esferalia Networks. Ekain Aguirrezabal - 31/08/2009
  */
 @Entity
 @Table(name="ec_target")
-public class EcTarget implements ITransferObject {
+public class Ectarget implements ITransferObject {
 	
 	/** The id. */
 	private Integer id;
@@ -43,7 +42,7 @@ public class EcTarget implements ITransferObject {
 	/** The password. */
 	private String password;
 	/** The type. */
-	private Integer type;
+	//private TargetType type;
 	/** The last_access. */
 	private Date lastAccess;
 	
@@ -69,8 +68,8 @@ public class EcTarget implements ITransferObject {
 	 */
 	@OneToOne (fetch=FetchType.EAGER)
 	@JoinColumn(name="target", nullable=false)
-	@ForeignKey(name = "EC_TARGET_FK")
-	@Index(name = "TARGET")
+	@ForeignKey(name = "FK_ECTARGET_TARGET")
+	@Index(name = "IDX_ECTARGET_TARGET")
 	public Target getTarget() {
 		return target;
 	}
@@ -83,7 +82,7 @@ public class EcTarget implements ITransferObject {
 	 * 
 	 * @return the login
 	 */
-	@Column(length=32, nullable = false)
+	@Column(length=48, nullable = false)
 	public String getLogin() {
 		return login;
 	}
@@ -109,20 +108,21 @@ public class EcTarget implements ITransferObject {
 	 * 
 	 * @return the type
 	 */
-	@Column(length=32, nullable = false)
-	public Integer getType() {
+	/*
+	@Column(name = "type", length = 1)
+	public TargetType getType() {
 		return type;
 	}
-	public void setType(Integer type) {
+	public void setType(TargetType type) {
 		this.type = type;
-	}
+	}*/
 	
 	/**
 	 * Gets the last access.
 	 * 
 	 * @return the last access
 	 */
-	@Column(name="last_access", nullable = false)
+	@Column(name="last_access")
 	@Temporal(TemporalType.DATE)
 	public Date getLastAccess() {
 		return lastAccess;
@@ -131,40 +131,6 @@ public class EcTarget implements ITransferObject {
 		this.lastAccess = lastAccess;
 	}
 	
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (this == obj) return true;
-		if (obj.getClass() != getClass()) return false;
-		final EcTarget o = (EcTarget) obj;
-		if (o.getId() == null && getId() == null) {
-			return new EqualsBuilder()
-				.append(this.target, o.target)
-				.append(this.login, o.login)				
-				.append(this.password, o.password)				
-				.append(this.type, o.type)				
-				.append(this.lastAccess, o.lastAccess)				
-				.isEquals();
-		}
-		return ObjectUtils.equals(getId(), o.getId());		
-	}
-	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder()
-			.append(id)			
-			.append(target)
-			.append(login)				
-			.append(password)				
-			.append(type)				
-			.append(lastAccess)
-			.toHashCode();
-	}
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
-	}
 	
 	
 }
