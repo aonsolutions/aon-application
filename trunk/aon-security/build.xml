@@ -3,7 +3,7 @@
 
 	<property name="mgr" value="aon-security-mgr" />
 	<property name="client" value="aon.security" />
-	<property name="version" value="1.9.0" />
+	<property name="version" value="1.9.2" />
 	<property name="vendor" value="Consulting &amp; Development" />
 	<property name="jar.valve.name" value="valve-${version}" />
 
@@ -35,6 +35,8 @@
 	<property name="commons.logging.jar" value="commons-logging-1.1.jar" />
 	<property name="commons.lang.home" value="${user.home}/.m2/repository/commons-lang/commons-lang/2.4" />
 	<property name="commons.lang.jar" value="commons-lang-2.4.jar" />
+	<property name="commons.io.home" value="${user.home}/.m2/repository/commons-io/commons-io/1.4" />
+	<property name="commons.io.jar" value="commons-io-1.4.jar" />
 
 	<!-- AON -->
 	<property name="aon.ldap.home" value="${user.home}/.m2/repository/com/code/aon/aon.ldap/1.0.0" />
@@ -82,6 +84,7 @@
 		<path refid="jboss.javac.classpath"/>
         <pathelement path="${aon.ldap.home}/aon.ldap-1.0.0.jar"/>		
     	<pathelement path="${commons.lang.home}/${commons.lang.jar}"/>
+    	<pathelement path="${commons.io.home}/${commons.io.jar}"/>
     </path>
 
     <!-- Tomcat 5.5.x Container -->
@@ -464,6 +467,9 @@
    			</fileset>
     		<fileset dir="${commons.lang.home}">
 				<include name="${commons.lang.jar}"/>
+			</fileset>
+    		<fileset dir="${commons.io.home}">
+				<include name="${commons.io.jar}"/>
 			</fileset>
     		<fileset dir="${aon.ldap.home}">
 				<include name="aon.ldap-1.0.0.jar"/>
