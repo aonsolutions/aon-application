@@ -9,8 +9,8 @@
 
 	<aon:panelGroup id="#{confirmId}ReRender" styleClass="aon-popupWindow">
 		<c:if test="#{confirmShowWindow}">
-			<rich:hotKey key="esc" handler="#{closeHandler}"/>		
-			<rich:hotKey key="return" handler="#{yesHandler}"/>
+			<aon:hotKey key="esc" elementId="#{confirmId}-close" handlerEx="{element}.click();"/>		
+			<aon:hotKey key="return" elementId="#{confirmId}-yes" handlerEx="{element}.click();"/>
 			<aon:subForm id="#{confirmId}Form">
 				<rich:modalPanel 
 					id="#{confirmId}"

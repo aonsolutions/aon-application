@@ -1,7 +1,9 @@
 package com.code.aon.faces.component.richfaces.confirmButton;
 
+import java.io.IOException;
 import java.net.URL;
 
+import javax.el.ELException;
 import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 import javax.faces.FacesException;
@@ -49,10 +51,6 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 	
 	private static final String CONFIRM_RE_RENDER = "confirmReRender";
 	
-	private static final String CLOSE_HANDLER = "closeHandler";
-	
-	private static final String YES_HANDLER = "yesHandler";
-
 	private static final String TEMPLATE_PATH = "com/code/aon/faces/component/richfaces/confirmButton/";
 
 	private static final String TEMPLATE = TEMPLATE_PATH + "template.xhtml";
@@ -110,7 +108,7 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 
 	private ValueExpression getButtonClickExpression( FaceletContext ctx, String id ) {
 		String expr = "#{rich:element('" + id + "')}.click();";
-		return ctx.getExpressionFactory().createValueExpression( ctx, expr, Object.class );
+		return FaceletUtil.getValueExpression(ctx, expr, Object.class);
 	}	
 	
 	private void insertInnerTemplate(FaceletContext ctx, UIComponent component) {
@@ -180,25 +178,26 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 		if (cancelReRender != null) {
 			mapper.setVariable(CANCEL_RE_RENDER, getValueExpression(ctx, cancelReRender));
 		}
-		mapper.setVariable(YES_HANDLER, getButtonClickExpression(ctx, panelId + "-yes") );
-		mapper.setVariable(CLOSE_HANDLER, getButtonClickExpression(ctx, panelId + "-close") );
 	}
 
 	@Override
-	protected void applyNextHandler(FaceletContext ctx, UIComponent component) {
-		URL path = FaceletUtil.getTemplate(TEMPLATE);
-		VariableMapper orig = ctx.getVariableMapper();
-		ctx.setVariableMapper(new VariableMapperWrapper(orig));
-		try {
-			super.nextHandler.apply(ctx, component);
-			addAttribues(ctx, component);
-			ctx.includeFacelet(component, path );
-		} catch (Exception e) {
-			throw new FacesException("UIInclude component "
-					+ component.getClientId(ctx.getFacesContext())
-					+ " could't include page with path " + path, e);
-		} finally {
-			ctx.setVariableMapper(orig);
+	protected void applyNextHandler(FaceletContext ctx, UIComponent component) 
+		throws IOException, FacesException, ELException {
+		super.applyNextHandler(ctx, component);	
+		if ( component.isRendered() ) {
+			URL path = FaceletUtil.getTemplate(TEMPLATE);
+			VariableMapper orig = ctx.getVariableMapper();
+			ctx.setVariableMapper(new VariableMapperWrapper(orig));
+			try {
+				addAttribues(ctx, component);
+				ctx.includeFacelet(component, path );
+			} catch (Exception e) {
+				throw new FacesException("UIInclude component "
+						+ component.getClientId(ctx.getFacesContext())
+						+ " could't include page with path " + path, e);
+			} finally {
+				ctx.setVariableMapper(orig);
+			}
 		}
 	}
 	
