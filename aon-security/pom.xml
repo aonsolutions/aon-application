@@ -6,7 +6,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.security</artifactId>
 	<packaging>jar</packaging>
-	<version>1.3.0</version>
+	<version>1.9.0</version>
 	<description>AON SECURITY</description>
 	<name>AON SECURITY</name>
 	<dependencies>
@@ -27,6 +27,12 @@
 			<version>1.8.1</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>1.4</version>
+			<scope>compile</scope>
+		</dependency>	    		
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc14</artifactId>
