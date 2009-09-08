@@ -2,7 +2,7 @@ package com.code.aon.ebackoffice.dao;
 
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
-import com.code.aon.ebackoffice.EcTarget;
+import com.code.aon.ebackoffice.Ectarget;
 
 /** 
 * Interface for holding entity properties constants.
@@ -12,45 +12,45 @@ public interface IEbackofficeAlias {
 
 
 	/** 
-	* DAOConstantsEntry for EcTarget entity.
+	* DAOConstantsEntry for Ectarget entity.
 	*/ 
-	DAOConstantsEntry EC_TARGET_ENTRY = DAOConstants.getDAOConstant(EcTarget.class);
+	DAOConstantsEntry ECTARGET_ENTRY = DAOConstants.getDAOConstant(Ectarget.class);
 
 	/** 
-	* Alias value: EcTarget_id
-	* Hibernate value: EcTarget.id
+	* Alias value: Ectarget_id
+	* Hibernate value: Ectarget.id
 	*/
-	String  EC_TARGET_ID = EC_TARGET_ENTRY.getAliasNames()[0];
+	String  ECTARGET_ID = ECTARGET_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: EcTarget_lastAccess
-	* Hibernate value: EcTarget.lastAccess
+	* Alias value: Ectarget_lastAccess
+	* Hibernate value: Ectarget.lastAccess
 	*/
-	String  EC_TARGET_LAST_ACCESS = EC_TARGET_ENTRY.getAliasNames()[1];
+	String  ECTARGET_LAST_ACCESS = ECTARGET_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: EcTarget_login
-	* Hibernate value: EcTarget.login
+	* Alias value: Ectarget_login
+	* Hibernate value: Ectarget.login
 	*/
-	String  EC_TARGET_LOGIN = EC_TARGET_ENTRY.getAliasNames()[2];
+	String  ECTARGET_LOGIN = ECTARGET_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: EcTarget_password
-	* Hibernate value: EcTarget.password
+	* Alias value: Ectarget_password
+	* Hibernate value: Ectarget.password
 	*/
-	String  EC_TARGET_PASSWORD = EC_TARGET_ENTRY.getAliasNames()[3];
+	String  ECTARGET_PASSWORD = ECTARGET_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: EcTarget_target_id
-	* Hibernate value: EcTarget.target.id
+	* Alias value: Ectarget_target_id
+	* Hibernate value: Ectarget.target.id
 	*/
-	String  EC_TARGET_TARGET_ID = EC_TARGET_ENTRY.getAliasNames()[4];
+	String  ECTARGET_TARGET_ID = ECTARGET_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: EcTarget_type
-	* Hibernate value: EcTarget.type
+	* Alias value: Ectarget_type
+	* Hibernate value: Ectarget.type
 	*/
-	String  EC_TARGET_TYPE = EC_TARGET_ENTRY.getAliasNames()[5];
+	String  ECTARGET_TYPE = ECTARGET_ENTRY.getAliasNames()[5];
 
 
 }
