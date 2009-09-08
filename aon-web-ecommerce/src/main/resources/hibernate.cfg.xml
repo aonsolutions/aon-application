@@ -47,7 +47,7 @@
 		<mapping class="com.code.aon.config.WorkGroup"/>
 
 		<!-- EBACKOFFICE -->		
-		<mapping class="com.code.aon.ebackoffice.EcTarget"/>
+		<mapping class="com.code.aon.ebackoffice.Ectarget"/>
 		
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoTree"/>

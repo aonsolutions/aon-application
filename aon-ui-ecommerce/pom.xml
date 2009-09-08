@@ -28,13 +28,13 @@
 			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>
+<!--  
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.commercial</artifactId>
 			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>
-<!--  
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.company</artifactId>

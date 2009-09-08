@@ -13,9 +13,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
@@ -42,7 +39,7 @@ public class Ectarget implements ITransferObject {
 	/** The password. */
 	private String password;
 	/** The type. */
-	//private TargetType type;
+	private TargetType type;
 	/** The last_access. */
 	private Date lastAccess;
 	
@@ -108,14 +105,13 @@ public class Ectarget implements ITransferObject {
 	 * 
 	 * @return the type
 	 */
-	/*
 	@Column(name = "type", length = 1)
 	public TargetType getType() {
 		return type;
 	}
 	public void setType(TargetType type) {
 		this.type = type;
-	}*/
+	}
 	
 	/**
 	 * Gets the last access.
