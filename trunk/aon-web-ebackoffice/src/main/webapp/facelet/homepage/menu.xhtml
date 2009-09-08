@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+	
+	<aon:form>
+	<aon:menuBar id="mainMenu"> 
+			<aon:commandLink id="EC-TARGET"
+				value="EC-TARGET"
+				action="ectarget_grid" immediate="true"
+				styleClass="aon-top-menu-item" />
+			<aon:commandLink id="EC-CONFIG"
+				value="EC-CONFIG"
+				action="ecconfig_grid" immediate="true"
+				styleClass="aon-top-menu-item" />
+			<aon:commandLink id="avanzadas"
+				value="EC-CATALOGUE"
+				action="eccatalogue_grid" immediate="true"
+				styleClass="aon-top-menu-item" />
+	</aon:menuBar>
+	</aon:form>
+	
+</ui:composition>
