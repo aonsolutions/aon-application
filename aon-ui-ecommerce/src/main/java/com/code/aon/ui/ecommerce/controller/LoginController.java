@@ -9,7 +9,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ebackoffice.EcTarget;
+import com.code.aon.ebackoffice.Ectarget;
 import com.code.aon.ebackoffice.dao.IEbackofficeAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
@@ -27,20 +27,20 @@ public class LoginController {
 				
 		try {
 			Criteria criteria = new Criteria();
-			String alias = IEbackofficeAlias.EC_TARGET_LOGIN;
-			String identifier = AonUtil.getManagerBean(EcTarget.class).getFieldName(alias); 
+			String alias = IEbackofficeAlias.ECTARGET_LOGIN;
+			String identifier = AonUtil.getManagerBean(Ectarget.class).getFieldName(alias); 
 			criteria.addEqualExpression(identifier, getLogin());
-			alias = IEbackofficeAlias.EC_TARGET_PASSWORD;
-			identifier = AonUtil.getManagerBean(EcTarget.class).getFieldName(alias);
+			alias = IEbackofficeAlias.ECTARGET_PASSWORD;
+			identifier = AonUtil.getManagerBean(Ectarget.class).getFieldName(alias);
 			criteria.addEqualExpression(identifier, getPassword());
 
-			IManagerBean bean = BeanManager.getManagerBean(EcTarget.class);
+			IManagerBean bean = BeanManager.getManagerBean(Ectarget.class);
 			List<ITransferObject> list = bean.getList(criteria);
 			if(list.isEmpty()){
 				//System.out.println("LOGIN INCORRECTO");
 				AonUtil.addErrorMessage("LOGIN INCORRECTO");
 			} else {
-				EcTarget ect = (EcTarget)list.iterator().next();
+				Ectarget ect = (Ectarget)list.iterator().next();
 				//System.out.println("LOGIADOOO");
 				//AonUtil.addErrorMessage("LOGIADOOO");
 				((ShopController)AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER)).setLogged(true);
