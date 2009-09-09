@@ -144,9 +144,9 @@
 								image="#{aonResource.resolveLocal['/images/cms/icons/cms-icon-album.png']}"
 								styleClass="aon-icon-commandButton" 
 								action="albumImage_form"
-								actionListener="#{albumImage.onReset}" >
-								<aon:actionListener method="#{albumImage.onEditSearch}" />
+								actionListener="#{albumImage.onEditSearch}" >
 								<aon:actionListener method="#{albumImage.onSearch}" />
+								<aon:actionListener method="#{albumImage.onReset}" />
 							</aon:commandButton>
 			                <aon:outputText value="#{menuBundle.cms_album_image}"/>
 			            </h:panelGrid>

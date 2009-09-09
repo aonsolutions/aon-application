@@ -43,13 +43,13 @@
 							<aon:actionListener method="#{hiru_course.onEditSearch}" />
 						</aon:commandButton>
 						<aon:commandButton id="generate" reRender="aonStatus"
-							value="#{appBundle.aon_generate}" 
+							value="#{appBundle.aon_generate}" immediate="true"
 							rendered="#{cms.roleEditor}"
+							actionListener="#{generator.onGenerateHiru}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
-							<aon:actionListener method="#{generator.onGenerateHiru}" />
 							<a4j:support 
-								event="onclick" reRender="poll,grid" 
+								event="onclick" reRender="poll,grid" ajaxSingle="true" 
 								actionListener="#{generator_status.onActivePoll}"  
 								onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 						</aon:commandButton>	
