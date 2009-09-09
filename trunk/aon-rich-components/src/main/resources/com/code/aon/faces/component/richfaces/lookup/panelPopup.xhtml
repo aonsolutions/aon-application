@@ -12,6 +12,8 @@
 
 	<aon:panelGroup id="#{lookupId}ReRender" styleClass="aon-popupWindow">
 		<c:if test="#{lookup.showWindow}">
+			<aon:hotKey key="esc" elementId="#{lookupId}-close" handlerEx="{element}.click();"/>		
+		
 			<rich:modalPanel id="#{lookupId}" rendered="#{lookup.showWindow}"
 				showWhenRendered="true" minWidth="#{lookup.minWidth}" minHeight="#{lookup.minHeight}">
 	
@@ -22,8 +24,8 @@
 				</f:facet>
 				<f:facet name="controls">
 					<aon:form>
-						<aon:commandButton type="button" styleClass="aon-popupWindow-close"
-							reRender="#{lookupId}ReRender"
+						<aon:commandButton id="#{lookupId}-close" type="button"
+							reRender="#{lookupId}ReRender" styleClass="aon-popupWindow-close"
 							actionListener="#{lookup.onCloseWindow}" immediate="true">
 							<rich:componentControl for="#{lookupId}" event="onclick"
 								disableDefault="true" operation="hide" />
