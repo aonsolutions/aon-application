@@ -44,6 +44,7 @@
 						confirmTitle="#{financeBundle.finance_send_email}"
 						confirmMessage="#{financeBundle.finance_sign_email_confirm}"
 						confirmActionListener="#{saleInvoice.onSignEmail}"
+						rendered="#{!saleInvoice.new}"
 						reRender="showSignWindow" cancelReRender="showNewMessageWindow"
 						cancelActionListener="#{saleInvoice.onSendInvoiceByEmail}"
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border" >
