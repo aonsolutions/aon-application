@@ -28,12 +28,12 @@
 					</aon:commandButton>
 					<aon:commandButton id="album_generate" reRender="aonStatus"
 						actionListener="#{generator.onGenerateAlbums}"
-						value="#{appBundle.aon_generate}" 
+						value="#{appBundle.aon_generate}" immediate="true"
 						rendered="#{cms.roleEditor}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						accesskey="#{bundle.aon_key_save}">							
 						<a4j:support 
-							event="onclick" reRender="poll,grid"
+							event="onclick" reRender="poll,grid" ajaxSingle="true"
 							actionListener="#{generator_status.onActivePoll}"   
 							onclick="javascript:Richfaces.showModalPanel('showGeneratorLogModalPanel');" />
 					</aon:commandButton>
