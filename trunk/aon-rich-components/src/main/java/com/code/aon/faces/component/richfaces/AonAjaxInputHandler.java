@@ -3,25 +3,17 @@ package com.code.aon.faces.component.richfaces;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.el.ELException;
 import javax.faces.FacesException;
-import javax.faces.component.EditableValueHolder;
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIOutput;
-import javax.faces.component.UIViewRoot;
 
 import org.ajax4jsf.taglib.html.facelets.AjaxSupportHandler;
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.faces.component.AonComponentHandler;
 import com.code.aon.faces.component.AttributeInfo;
 import com.code.aon.faces.component.ComponentInfo;
 import com.code.aon.faces.component.ComponentManager;
-import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
-import com.code.aon.faces.component.richfaces.outputLabel.OutputLabelHandler;
 import com.code.aon.faces.component.util.BasicComponentConfig;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.faces.component.util.HTML;
@@ -30,17 +22,14 @@ import com.sun.facelets.tag.MetaRuleset;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.TagHandler;
 import com.sun.facelets.tag.jsf.ComponentConfig;
-import com.sun.facelets.tag.jsf.ComponentSupport;
 
-public class AonAjaxInputHandler extends AonComponentHandler implements IRichFacesTags, HTML {
+public class AonAjaxInputHandler extends AonComponentHandler implements IRichFacesTags {
 
 	private static final String SUPPORT_RENDERER_TYPE = "org.ajax4jsf.components.AjaxSupportRenderer";
 
 	private static final String SUPPORT_COMPONENT_TYPE = "org.ajax4jsf.Support";
 	
 	private static final String PARTIAL_SUBMIT = "partialSubmit";
-
-	private static final String INPUT_REQUIRED_STYLE_CLASS = "aon-input-required";
 	
 	private TagHandler ajaxSupportHandler; 
 	
@@ -72,39 +61,6 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 	protected void setAttributes( FaceletContext ctx, Object instance ) {
 		super.setAttributes(ctx, instance);
 		UIComponent component = (UIComponent) instance;
-		updateLabel(ctx, component);
-	}
-	
-	private void updateLabelStyleClass(FaceletContext ctx, UIOutput label) {
-		String styleClassAttribute = ComponentManager.getInputStyleClass(label);
-		String styleClass = INPUT_REQUIRED_STYLE_CLASS;
-		Object styleClassValue = FaceletUtil.getProperty(ctx.getFacesContext(), label, styleClassAttribute);
-		String value = ObjectUtils.toString( styleClassValue );
-		if (! StringUtils.isEmpty(value) ) {
-			styleClass += " " + value;
-		}
-		UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), label, styleClassAttribute, styleClass);
-	}	
-	
-	private void updateLabel(FaceletContext ctx, UIComponent c) {
-		UIViewRoot root = ComponentSupport.getViewRoot(ctx, c);		
-		Map map = (Map) root.getAttributes().get(OutputLabelHandler.LABELS_MAP);
-		if (map != null) {
-			String id = StringUtils.substringBefore(getId(ctx), "-");
-			UIOutput label = (UIOutput) map.get(id);
-			if ( label != null ) {
-				String value = ObjectUtils.toString(label.getValue());
-				if (! StringUtils.isEmpty(value) ) {
-					UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), c, LABEL_ATTR, value.toString());	
-				}
-				if ( (c instanceof EditableValueHolder)  ) {
-					EditableValueHolder evh = (EditableValueHolder) c;
-					if ( evh.isRequired() ) {
-						updateLabelStyleClass(ctx, label);
-					}
-				}
-			}
-		}
 	}
 
 	public boolean isAjaxNeeded() {
@@ -127,7 +83,7 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 				return ainfo.getValue();
 			}
 		}
-		return ONCHANGE_ATTR;
+		return HTML.ONCHANGE_ATTR;
 	}
 	
 	@Override
