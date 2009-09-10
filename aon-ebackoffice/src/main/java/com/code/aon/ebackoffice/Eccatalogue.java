@@ -6,6 +6,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -31,7 +32,7 @@ import com.code.aon.product.Catalogue;
  * @author Esferalia Networks. David Uriarte - 3/09/2009
  */
 @Entity
-@Table(name="ec_config")
+@Table(name="ec_catalogue")
 public class Eccatalogue implements ITransferObject {
 	
 	
@@ -61,7 +62,8 @@ public class Eccatalogue implements ITransferObject {
 	public void setCatalogue(Catalogue catalogue) {
 		this.catalogue = catalogue;
 	}
-		
+	@Lob
+	@Column(name = "catalogue_img")	
 	public String getCatalogueImg() {
 		return catalogueImg;
 	}
@@ -69,7 +71,6 @@ public class Eccatalogue implements ITransferObject {
 		this.catalogueImg = catalogueImg;
 	}
 	
-	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.ebackoffice.enumeration.CatalogueType")} )
 	@Column(name = "type", length = 1)
 	public CatalogueType getType() {
 		return type;
