@@ -71,7 +71,6 @@
 					<value>#{customerRBankChildListener}</value>
 					<value>#{customerRPayMethodChildListener}</value>
 					<value>#{customerSearch}</value>
-					<value>#{customerControllerNoteListener}</value>
 					<value>#{customerRecordDataChildListener}</value>
 					<value>#{customerRelationshipChildListener}</value>
 					<value>#{customerNoteChildListener}</value>
@@ -108,12 +107,6 @@
 	<managed-bean>
 		<managed-bean-name>customerObservationListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.customer.event.CustomerObservationListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>customerControllerNoteListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.customer.event.CustomerControllerNoteListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
@@ -392,8 +385,21 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener 
+				</value-class>
+				<value>#{customerControllerNoteListener}</value>
+			</list-entries>
+		</managed-property>
 	</managed-bean>
-		
+
+	<managed-bean>
+		<managed-bean-name>customerControllerNoteListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.customer.event.CustomerControllerNoteListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
 	<!-- ************* REGISTRY RELATIONSHIP ***************** -->
 	<managed-bean>
 		<managed-bean-name>customerRelationshipChildListener</managed-bean-name>
