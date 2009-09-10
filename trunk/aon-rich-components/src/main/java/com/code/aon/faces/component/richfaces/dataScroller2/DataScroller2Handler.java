@@ -40,6 +40,8 @@ public class DataScroller2Handler extends TagHandler {
    	
    	private static final String PAGE = "page";
    	
+   	private static final String DISABLE_HOT_KEYS = "disableHotKeys";
+   	
 	private TagAttribute forTag;
 
 	/**
@@ -116,6 +118,8 @@ public class DataScroller2Handler extends TagHandler {
 		newMapper.setVariable( MODEL, getScrollerModelExpression(ctx) );	
 		ValueExpression showNote = FaceletUtil.getBooleanValueExpression(ctx, getAttribute(SHOW_NOTE));
 		newMapper.setVariable(SHOW_NOTE, showNote);
+		ValueExpression disableHotKeys = FaceletUtil.getBooleanValueExpression(ctx, getAttribute(DISABLE_HOT_KEYS));
+		newMapper.setVariable(DISABLE_HOT_KEYS, disableHotKeys);
 		FaceletUtil.insertTemplate(ctx, tag, component, FaceletUtil.getTemplate(TEMPLATE), newMapper);
 	}
 
