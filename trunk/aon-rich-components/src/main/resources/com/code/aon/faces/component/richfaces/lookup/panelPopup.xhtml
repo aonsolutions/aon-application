@@ -12,9 +12,7 @@
 
 	<aon:panelGroup id="#{lookupId}ReRender" styleClass="aon-popupWindow">
 		<c:if test="#{lookup.showWindow}">
-			<aon:hotKey key="esc" elementId="#{lookupId}-close" handlerEx="{element}.click();"/>		
-		
-			<rich:modalPanel id="#{lookupId}" rendered="#{lookup.showWindow}"
+			<rich:modalPanel id="#{lookupId}" rendered="#{lookup.showWindow}" onshow="#{onLookupShow}"
 				showWhenRendered="true" minWidth="#{lookup.minWidth}" minHeight="#{lookup.minHeight}">
 	
 				<f:facet name="header">
@@ -37,8 +35,9 @@
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
-								<aon:form>
-	
+								<aon:form id="#{lookup.beanName}Form">
+								
+									<aon:hotKey key="esc" elementId="#{lookupId}-close" handlerEx="{element}.click();"/>	
 									<c:if
 										test="#{(lookup.listPagePath != null) and (lookup.selectedPanel == 'list')}">
 										<a4j:include viewId="listContent.xhtml" />
@@ -53,13 +52,13 @@
 										test="#{(lookup.newPagePath != null) and (lookup.selectedPanel == 'form')}">
 										<a4j:include viewId="formContent.xhtml" />
 									</c:if>
-	
 								</aon:form>
 							</aon:div>
 						</aon:div>
 					</aon:div>
 				</aon:div>
-			</rich:modalPanel>
+			</rich:modalPanel> 
+			<a4j:loadScript src="/aonResource/com/code/aon/faces/component/richfaces/lookup/extendedInput.js" />			
 		</c:if>
 	</aon:panelGroup>
 

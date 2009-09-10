@@ -29,16 +29,31 @@
 		<!-- end toolbar navigation -->
 		<aon:div style="width:98%;">
 			<aon:dataTable id="#{lookup.beanName}Data" var="to"
-				value="#{lookup.model}" rows="15">
+				value="#{lookup.model}" rows="15" rowKeyVar="rowKey" stateVar="state">
 				<aon:rowSelector actionListener="#{lookup.onListSelect}"
 					reRender="#{lookup.component.selectReRender}"
 					oncomplete="Richfaces.hideModalPanel('#{lookupId}')" />
+					
+				<aon:column styleClass="aon-editDataTable-iconColumn">
+					<aon:commandButton id="selectButton"
+						styleClass="aon-editDataTable-button aon-icon-rowSelector"
+						immediate="true" ajaxSingle="true" requestDelay="100"
+						actionListener="#{lookup.onListSelect}"
+						reRender="#{lookup.component.selectReRender}"
+						title="Soy #{rowKey-state.range.firstRow}" alt="Soy #{rowKey-state.range.firstRow}"
+						onkeyup="tableKeyUp(event.keyCode,#{rowKey-state.range.firstRow})"
+						onfocus="changeRowSelection(#{rowKey-state.range.firstRow})"
+						oncomplete="Richfaces.hideModalPanel('#{lookupId}')" >
+					</aon:commandButton>
+				</aon:column>
+					
 				<ui:include src="#{lookup.listPagePath}" />
 			</aon:dataTable>
 
 			<aon:dataScroller2 for="#{lookup.beanName}Data" showNote="true" />
 
 		</aon:div>
+		
 	</aon:div>
 </ui:composition>
 
