@@ -29,6 +29,8 @@ public class Ecconfig implements ITransferObject {
 	
 	
 	private Integer id;	
+	private Boolean active;
+	private String name;
 	private SkinType skin;	
 	private String headerImg;
 	private String footerImg;
@@ -49,7 +51,21 @@ public class Ecconfig implements ITransferObject {
 		this.id = id;
 	}
 	
-	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.ebackoffice.enumeration.SkinType")} )
+	public Boolean getActive() {
+		return active;
+	}
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+	
+	@Column(length = 64)
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 	@Column(name = "skin", length = 1)
 	public SkinType getSkin() {
 		return skin;
@@ -58,7 +74,7 @@ public class Ecconfig implements ITransferObject {
 		this.skin = skin;
 	}
 	
-	
+	@Column(name = "header_img")
 	public String getHeaderImg() {
 		return headerImg;
 	}
@@ -66,7 +82,7 @@ public class Ecconfig implements ITransferObject {
 		this.headerImg = headerImg;
 	}
 	
-	
+	@Column(name = "footer_img")
 	public String getFooterImg() {
 		return footerImg;
 	}
@@ -82,7 +98,6 @@ public class Ecconfig implements ITransferObject {
 		this.commerce = commerce;
 	}
 	
-	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.ebackoffice.enumeration.LoginType")} )
 	@Column(name = "show_login", length = 1)
 	public LoginType getShowLogin() {
 		return showLogin;
@@ -91,7 +106,6 @@ public class Ecconfig implements ITransferObject {
 		this.showLogin = showLogin;
 	}
 	
-	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.ebackoffice.enumeration.PriceType")} )
 	@Column(name = "show_price", length = 1)
 	public PriceType getShowPrice() {
 		return showPrice;
@@ -100,7 +114,6 @@ public class Ecconfig implements ITransferObject {
 		this.showPrice = showPrice;
 	}
 	
-	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.ebackoffice.enumeration.TaxType")} )
 	@Column(name = "tax_in_price", length = 1)
 	public TaxType getTaxInType() {
 		return taxInType;
@@ -109,7 +122,6 @@ public class Ecconfig implements ITransferObject {
 		this.taxInType = taxInType;
 	}
 	
-	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.ebackoffice.enumeration.OriginalPrice")} )
 	@Column(name = "show_item_price", length = 1)
 	public OriginalPrice getShowItemPrice() {
 		return showItemPrice;
@@ -118,7 +130,6 @@ public class Ecconfig implements ITransferObject {
 		this.showItemPrice = showItemPrice;
 	}
 	
-	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.ebackoffice.enumeration.WishList")} )
 	@Column(name = "show_wish_list", length = 1)
 	public WishList getWishList() {
 		return wishList;

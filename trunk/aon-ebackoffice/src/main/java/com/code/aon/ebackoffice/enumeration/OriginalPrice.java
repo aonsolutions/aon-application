@@ -11,10 +11,9 @@ import com.code.aon.common.enumeration.IStringEnum;
  */
 public enum OriginalPrice implements IResourceable, IStringEnum {
 
-	B2B("0"),
-	RED("1"),
-	BLUE("2"),
-	GREEN("3");
+	DEFAULT("0"),
+	YES("1"),
+	NO("2");
 	
 
 
