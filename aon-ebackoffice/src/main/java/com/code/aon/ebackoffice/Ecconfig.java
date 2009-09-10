@@ -31,7 +31,7 @@ public class Ecconfig implements ITransferObject {
 	private SkinType skin;	
 	private String headerImg;
 	private String footerImg;
-	private Boolean commerce;
+	private boolean commerce;
 	private LoginType showLogin;
 	private PriceType showPrice;
 	private TaxType taxInType;
@@ -88,10 +88,10 @@ public class Ecconfig implements ITransferObject {
 	}
 	
 	
-	public Boolean getCommerce() {
+	public boolean isCommerce() {
 		return commerce;
 	}
-	public void setCommerce(Boolean commerce) {
+	public void setCommerce(boolean commerce) {
 		this.commerce = commerce;
 	}
 	
