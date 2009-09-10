@@ -6,9 +6,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-
 import com.code.aon.common.ITransferObject;
 import com.code.aon.ebackoffice.enumeration.LoginType;
 import com.code.aon.ebackoffice.enumeration.OriginalPrice;
@@ -29,7 +26,7 @@ public class Ecconfig implements ITransferObject {
 	
 	
 	private Integer id;	
-	private Boolean active;
+	private boolean active;
 	private String name;
 	private SkinType skin;	
 	private String headerImg;
@@ -51,10 +48,10 @@ public class Ecconfig implements ITransferObject {
 		this.id = id;
 	}
 	
-	public Boolean getActive() {
+	public boolean isActive() {
 		return active;
 	}
-	public void setActive(Boolean active) {
+	public void setActive(boolean active) {
 		this.active = active;
 	}
 	
