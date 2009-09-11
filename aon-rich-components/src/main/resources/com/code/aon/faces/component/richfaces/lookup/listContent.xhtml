@@ -15,6 +15,7 @@
 		<aon:div styleClass="aon-toolbar" rendered="#{lookup.showSearchButtons}">
 			<aon:commandButton value="#{bundle.aon_search}"
 				actionListener="#{lookup.onListCancel}" reRender="#{lookupId}LookupContent"
+				oncomplete="#{focusFirstInput}"
 				styleClass="aon-finding-toolbar-item aon-icon-accept"
 				accesskey="#{bundle.aon_key_search}" />
 			<aon:commandButton value="#{bundle.aon_back}"

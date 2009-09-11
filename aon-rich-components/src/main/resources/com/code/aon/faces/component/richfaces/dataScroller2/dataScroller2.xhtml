@@ -46,7 +46,7 @@
 					<a4j:repeat value="#{model.pages}" var="page">
 						<aon:commandLink rendered="#{(model.currentPage+1) != page}"
 							ajaxSingle="true" process="#{dataTable}" 
-							actionListener="#{model.moveToPage}"
+							actionListener="#{model.moveToPage}" oncomplete="#{oncomplete}"
 							reRender="#{dataTable},#{dataTable}MessageDataScroller"
 							styleClass="aon-dataScroller2-inactive">
 							<f:param name="page" value="#{page}" />
