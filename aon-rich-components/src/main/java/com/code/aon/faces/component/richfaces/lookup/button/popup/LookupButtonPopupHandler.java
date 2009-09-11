@@ -8,9 +8,12 @@ import javax.el.VariableMapper;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
 import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
 import com.code.aon.faces.component.richfaces.lookup.button.LookupButtonHandler;
+import com.code.aon.faces.component.richfaces.lookup.button.LookupButtonType;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.el.VariableMapperWrapper;
@@ -33,6 +36,10 @@ public class LookupButtonPopupHandler extends TagHandler implements ILookupTags,
 	private static final String TEMPLATE_PATH = "com/code/aon/faces/component/richfaces/lookup/";
 
 	private static final String TEMPLATE = TEMPLATE_PATH + "panelPopup.xhtml";
+	
+	private static final String ON_LOOKUP_SHOW = "onLookupShow";
+	
+	private static final String SELECT_FIRST_ROW = "selectFirstRow";
 
 	private TagAttribute lookup;
 
@@ -64,6 +71,39 @@ public class LookupButtonPopupHandler extends TagHandler implements ILookupTags,
 		return insert;
 	}
 	
+	public LookupButtonType getType(FaceletContext ctx) {
+		String expr = FaceletUtil.appendExpression(lookup.getValue(), "selectedPanel" );
+		ValueExpression panel = ctx.getExpressionFactory().createValueExpression(
+				ctx, expr, String.class);		
+		String value = (String) panel.getValue(ctx);
+		return StringUtils.isEmpty(value) ? null : LookupButtonType.get(value);
+	}	
+	
+	private ValueExpression getSelectFirstRow( FaceletContext ctx ) {
+		String lookupName = LookupButtonHandler.getLookupBeanName(ctx, lookup);
+		String expression = "aonSelectFirstRow('" + lookupName + "Data')";
+		return FaceletUtil.getValueExpression(ctx, expression, Object.class);
+	}
+
+	private ValueExpression getFocusInFirstInput( FaceletContext ctx ) {
+		String lookupName = LookupButtonHandler.getLookupBeanName(ctx, lookup);
+		String expression = "focusInFirstInput('#{rich:clientId('" + lookupName + "Form')}')";
+		return FaceletUtil.getValueExpression(ctx, expression, Object.class);		
+	}
+	
+	private ValueExpression getOnLookupShow( FaceletContext ctx ) {
+		ValueExpression result = null;
+		LookupButtonType type = getType(ctx);
+		if ( type != null ) {
+			if ( getType(ctx) == LookupButtonType.LIST ) {
+				result = getSelectFirstRow(ctx);
+			} else {
+				result = getFocusInFirstInput(ctx);
+			}			
+		}
+		return result;
+	}
+	
 	private void insertTemplate(FaceletContext ctx, UIComponent component) {
 		VariableMapper newMapper = new VariableMapperWrapper(ctx.getVariableMapper());
 		newMapper.setVariable(LOOKUP, lookup.getValueExpression(ctx, Object.class));
@@ -71,6 +111,11 @@ public class LookupButtonPopupHandler extends TagHandler implements ILookupTags,
 		ValueExpression id = ctx.getExpressionFactory().createValueExpression(
 				ctx, panelId, String.class);
 		newMapper.setVariable(LOOKUP_ID, id);
+		ValueExpression onLookupShow = getOnLookupShow(ctx);
+		if ( onLookupShow != null ) {
+			newMapper.setVariable(ON_LOOKUP_SHOW, onLookupShow);	
+		}
+		newMapper.setVariable(SELECT_FIRST_ROW, getSelectFirstRow(ctx));
 		FaceletUtil.insertTemplate(ctx, tag, component, FaceletUtil.getTemplate(TEMPLATE), newMapper);
 	}
 	
