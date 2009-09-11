@@ -28,70 +28,75 @@ function focusInFirstInput( formId ) {
 			}
  		}
 	} catch(ex) {
-		alert("focusInFirstInput: " + ex );
 	}	  		
 }
 
 var oldRow;
-var tableId;
+var currentTableId;
 
-function selectFirstRow(tableName) {
+function aonSelectFirstRow( tableId ) {
 	var t = document.getElementsByTagName("table");
-	var table;
-	var row;
 	for (i=0;i<t.length;i++) {
-		if (t[i].id.indexOf(tableName) > - 1 ) {
+		if (t[i].id.endsWith(tableId) ) {
 			table = t[i];
-			tableId = t[i].id; 
+			currentTableId = t[i].id; 
 			break; 
 		}
 	}
 	if (table) {
-		row = table.rows[1];
-		focusOnRow( row );
+		if ( table.rows.length > 0 ) {
+			row = table.rows[1];
+			aon_focusOnRow( row );
+		}
+	} else {
+		currentTableId = null;
+		oldRow = null;
 	}
 }
-function changeRowSelection(rowIndex) {
+function aonChangeRowSelection(rowIndex) {
 	try {
 		if (oldRow!=undefined) {
 		    oldRow.style.backgroundColor='#ffffff';
 		} 
-		var table = document.getElementById(tableId);
+		var table = document.getElementById(currentTableId);
 		row = table.rows[rowIndex+1];
 	    row.style.backgroundColor= '#AAAAAA';
 	    oldRow=row;
 	} catch(ex) {
-		alert("changeRowSelection: " + ex );
 	}	    
 }
-function focusOnRow(row) {
-    e = row.getElementsByTagName("input");
-    if (e && e.length>0) {
-    	for (i=0;i<e.length;i++) {
-    		try {
-    			e[i].focus();
-    			break;
-    		} catch(ex) {}
-    	}
-    }
+function aon_focusOnRow(row) {
+	try {
+	    inputs = row.getElementsByTagName("input");
+	    if (inputs && inputs.length>0) {
+	    	for (i=0; i<inputs.length; i++) {
+	    		input = inputs[i];
+	    		if (input.id.endsWith("selectButton") ) {
+					input.focus();
+	    			break;
+				}
+	    	}
+	    }
+	} catch(ex) {
+	}    
 }
-function tableKeyUp(keyCode,rowIndex) {
+function aonTableKeyUp(keyCode,rowIndex) {
 	rowIndex++;
 	if (keyCode == DOWN) {
-		var table = document.getElementById(tableId);	
+		var table = document.getElementById(currentTableId);	
 		if (rowIndex<table.rows.length) {
 			rowIndex++;
 			row = table.rows[rowIndex];
 			if (row) {
-				focusOnRow ( row );
+				aon_focusOnRow ( row );
 			}		
 		}		
 	} else if (keyCode == UP) {
 		if (rowIndex>1) {
 			rowIndex--;
-			var table = document.getElementById(tableId);
+			var table = document.getElementById(currentTableId);
 			row = table.rows[rowIndex];
-			focusOnRow ( row );		
+			aon_focusOnRow ( row );		
 		}
 	}
 }
