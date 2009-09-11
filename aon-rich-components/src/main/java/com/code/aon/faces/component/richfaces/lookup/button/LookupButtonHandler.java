@@ -112,12 +112,16 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 		}
 		UIComponentTagUtils.setActionListenerProperty( ctx.getFacesContext(), button, actionListener);
 	}
+
+	public static String getLookupBeanName(FaceletContext ctx, TagAttribute lookupTag) {
+		String value = FaceletUtil.appendExpression(lookupTag.getValue(), "beanName" );
+		ValueExpression name = ctx.getExpressionFactory().createValueExpression(
+				ctx, value, String.class);		
+		return (String) name.getValue(ctx);
+	}
 	
 	public static String getModalPanelId(FaceletContext ctx, TagAttribute lookupTag) {
-		String value = FaceletUtil.appendExpression(lookupTag.getValue(), "beanName" );
-		ValueExpression id = ctx.getExpressionFactory().createValueExpression(
-				ctx, value, String.class);		
-		return id.getValue(ctx) + "ModalPanel";
+		return getLookupBeanName(ctx, lookupTag) + "ModalPanel";
 	}
 	
 	/**
