@@ -14,4 +14,6 @@ public interface IRichFacesTags {
 	
 	String FOCUS = "focus";
 	
+	String ON_COMPLETE = "oncomplete";
+	
 }
