@@ -26,6 +26,7 @@
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 		<ui:define name="searchContent">
 			<ui:param name="searchReRender" value="#{lookupId}LookupContent" />
+			<ui:param name="searchButtonId" value="#{lookupId}Search" />
 			<ui:param name="searchOnComplete" value="#{selectFirstRow}" />
 			<aon:methodParam name="searchActionListener" value="#{lookup.onFilterSearch}" type="actionListener" />
 			<aon:methodParam name="searchAction" />
