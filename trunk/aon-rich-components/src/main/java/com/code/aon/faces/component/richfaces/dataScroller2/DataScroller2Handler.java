@@ -8,6 +8,7 @@ import javax.faces.component.UIViewRoot;
 import javax.faces.model.DataModel;
 
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
+import com.code.aon.faces.component.richfaces.IRichFacesTags;
 import com.code.aon.faces.component.richfaces.form.FormHandler;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
@@ -22,7 +23,7 @@ import com.sun.facelets.tag.jsf.ComponentSupport;
  * 
  * @author atellitu
  */
-public class DataScroller2Handler extends TagHandler {
+public class DataScroller2Handler extends TagHandler implements IRichFacesTags {
 
 	private static final String TEMPLATE_PATH = "com/code/aon/faces/component/richfaces/dataScroller2/";
 
@@ -120,6 +121,10 @@ public class DataScroller2Handler extends TagHandler {
 		newMapper.setVariable(SHOW_NOTE, showNote);
 		ValueExpression disableHotKeys = FaceletUtil.getBooleanValueExpression(ctx, getAttribute(DISABLE_HOT_KEYS));
 		newMapper.setVariable(DISABLE_HOT_KEYS, disableHotKeys);
+		TagAttribute onCompleteTag = getAttribute(ON_COMPLETE);
+		if ( onCompleteTag != null ) {
+			newMapper.setVariable(ON_COMPLETE, FaceletUtil.getStringValueExpression(ctx, onCompleteTag));			
+		}
 		FaceletUtil.insertTemplate(ctx, tag, component, FaceletUtil.getTemplate(TEMPLATE), newMapper);
 	}
 
