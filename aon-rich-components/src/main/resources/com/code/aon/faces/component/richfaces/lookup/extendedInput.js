@@ -1,29 +1,40 @@
 function aonFocusFirstInput( formId ) {
 	try {
+		mainForm = null;
 		if (formId!=undefined) {
-			mainForm = document.getElementById(formId);
-		} else {
-			mainForm = document.forms[0];
-		}
-		for (i=0;i<mainForm.length;i++) {
-			el = mainForm[i];
-			if(!el.isDisabled && !el.readOnly) {
-				if (el.type != undefined) {
-					switch (el.type.toLowerCase()) {
-						case "text":
-						case "textarea":
-						case "checkbox":
-						case "radio":
-						case "file":
-						case "password":
-						case "select-one":
-						case "select-multiple":
-							el.focus(); 
-							return;
-					}
+			var forms = document.getElementsByTagName("form");
+			for (i=0; i<forms.length; i++) {
+				if (forms[i].id.endsWith(formId) ) {
+					mainForm = forms[i];
+					break;
 				}
 			}
- 		}
+		} else {
+			if ( document.forms.length>0 ) {
+				mainForm = document.forms[0];
+			}
+		}
+		if ( mainForm != null ) {		
+			for (i=0;i<mainForm.length;i++) {
+				el = mainForm[i];
+				if(!el.isDisabled && !el.readOnly) {
+					if (el.type != undefined) {
+						switch (el.type.toLowerCase()) {
+							case "text":
+							case "textarea":
+							case "checkbox":
+							case "radio":
+							case "file":
+							case "password":
+							case "select-one":
+							case "select-multiple":
+								el.focus(); 
+								return;
+						}
+					}
+				}
+	 		}
+	 	}
 	} catch(ex) {
 	}	  		
 }
