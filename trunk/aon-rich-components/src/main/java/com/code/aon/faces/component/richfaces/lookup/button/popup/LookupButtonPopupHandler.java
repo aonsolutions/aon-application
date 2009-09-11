@@ -40,6 +40,8 @@ public class LookupButtonPopupHandler extends TagHandler implements ILookupTags,
 	private static final String ON_LOOKUP_SHOW = "onLookupShow";
 	
 	private static final String SELECT_FIRST_ROW = "selectFirstRow";
+	
+	private static final String FOCUS_FIRST_INPUT = "focusFirstInput";
 
 	private TagAttribute lookup;
 
@@ -85,23 +87,10 @@ public class LookupButtonPopupHandler extends TagHandler implements ILookupTags,
 		return FaceletUtil.getValueExpression(ctx, expression, Object.class);
 	}
 
-	private ValueExpression getFocusInFirstInput( FaceletContext ctx ) {
+	private ValueExpression getFocusFirstInput( FaceletContext ctx ) {
 		String lookupName = LookupButtonHandler.getLookupBeanName(ctx, lookup);
-		String expression = "focusInFirstInput('#{rich:clientId('" + lookupName + "Form')}')";
+		String expression = "aonFocusFirstInput('#{rich:clientId('" + lookupName + "Form')}')";
 		return FaceletUtil.getValueExpression(ctx, expression, Object.class);		
-	}
-	
-	private ValueExpression getOnLookupShow( FaceletContext ctx ) {
-		ValueExpression result = null;
-		LookupButtonType type = getType(ctx);
-		if ( type != null ) {
-			if ( getType(ctx) == LookupButtonType.LIST ) {
-				result = getSelectFirstRow(ctx);
-			} else {
-				result = getFocusInFirstInput(ctx);
-			}			
-		}
-		return result;
 	}
 	
 	private void insertTemplate(FaceletContext ctx, UIComponent component) {
@@ -111,11 +100,18 @@ public class LookupButtonPopupHandler extends TagHandler implements ILookupTags,
 		ValueExpression id = ctx.getExpressionFactory().createValueExpression(
 				ctx, panelId, String.class);
 		newMapper.setVariable(LOOKUP_ID, id);
-		ValueExpression onLookupShow = getOnLookupShow(ctx);
-		if ( onLookupShow != null ) {
-			newMapper.setVariable(ON_LOOKUP_SHOW, onLookupShow);	
-		}
-		newMapper.setVariable(SELECT_FIRST_ROW, getSelectFirstRow(ctx));
+		ValueExpression selectFirstRow = getSelectFirstRow(ctx);
+		newMapper.setVariable(SELECT_FIRST_ROW, selectFirstRow);
+		ValueExpression focusFirstInput = getFocusFirstInput(ctx);
+		newMapper.setVariable(FOCUS_FIRST_INPUT, focusFirstInput);
+		LookupButtonType type = getType(ctx);
+		if ( type != null ) {
+			if ( getType(ctx) == LookupButtonType.LIST ) {
+				newMapper.setVariable(ON_LOOKUP_SHOW, selectFirstRow);
+			} else {
+				newMapper.setVariable(ON_LOOKUP_SHOW, focusFirstInput);
+			}			
+		}		
 		FaceletUtil.insertTemplate(ctx, tag, component, FaceletUtil.getTemplate(TEMPLATE), newMapper);
 	}
 	

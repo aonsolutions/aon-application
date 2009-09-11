@@ -1,7 +1,4 @@
-var UP = 38;
-var DOWN = 40;
-
-function focusInFirstInput( formId ) {
+function aonFocusFirstInput( formId ) {
 	try {
 		if (formId!=undefined) {
 			mainForm = document.getElementById(formId);
@@ -31,15 +28,15 @@ function focusInFirstInput( formId ) {
 	}	  		
 }
 
-var oldRow;
-var currentTableId;
+var aon_oldRow;
+var aon_tableId;
 
 function aonSelectFirstRow( tableId ) {
 	var t = document.getElementsByTagName("table");
 	for (i=0;i<t.length;i++) {
 		if (t[i].id.endsWith(tableId) ) {
 			table = t[i];
-			currentTableId = t[i].id; 
+			aon_tableId = t[i].id; 
 			break; 
 		}
 	}
@@ -49,22 +46,24 @@ function aonSelectFirstRow( tableId ) {
 			aon_focusOnRow( row );
 		}
 	} else {
-		currentTableId = null;
-		oldRow = null;
+		aon_tableId = null;
+		aon_oldRow = null;
 	}
 }
+
 function aonChangeRowSelection(rowIndex) {
 	try {
-		if (oldRow!=undefined) {
-		    oldRow.style.backgroundColor='#ffffff';
+		if (aon_oldRow!=undefined) {
+		    aon_oldRow.style.backgroundColor='#ffffff';
 		} 
-		var table = document.getElementById(currentTableId);
+		var table = document.getElementById(aon_tableId);
 		row = table.rows[rowIndex+1];
 	    row.style.backgroundColor= '#AAAAAA';
-	    oldRow=row;
+	    aon_oldRow=row;
 	} catch(ex) {
 	}	    
 }
+
 function aon_focusOnRow(row) {
 	try {
 	    inputs = row.getElementsByTagName("input");
@@ -80,10 +79,14 @@ function aon_focusOnRow(row) {
 	} catch(ex) {
 	}    
 }
+
+var UP_KEY_CODE = 38;
+var DOWN_KEY_CODE = 40;
+
 function aonTableKeyUp(keyCode,rowIndex) {
 	rowIndex++;
-	if (keyCode == DOWN) {
-		var table = document.getElementById(currentTableId);	
+	if (keyCode == DOWN_KEY_CODE) {
+		var table = document.getElementById(aon_tableId);	
 		if (rowIndex<table.rows.length) {
 			rowIndex++;
 			row = table.rows[rowIndex];
@@ -91,10 +94,10 @@ function aonTableKeyUp(keyCode,rowIndex) {
 				aon_focusOnRow ( row );
 			}		
 		}		
-	} else if (keyCode == UP) {
+	} else if (keyCode == UP_KEY_CODE) {
 		if (rowIndex>1) {
 			rowIndex--;
-			var table = document.getElementById(currentTableId);
+			var table = document.getElementById(aon_tableId);
 			row = table.rows[rowIndex];
 			aon_focusOnRow ( row );		
 		}
