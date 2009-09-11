@@ -26,10 +26,13 @@
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 		<ui:define name="searchContent">
 			<ui:param name="searchReRender" value="#{lookupId}LookupContent" />
+			<ui:param name="searchOnComplete" value="#{selectFirstRow}" />
 			<aon:methodParam name="searchActionListener" value="#{lookup.onFilterSearch}" type="actionListener" />
 			<aon:methodParam name="searchAction" />
 	
 			<ui:include src="#{lookup.searchPagePath}" />
+			
+			<aon:hotKey key="return" elementId="#{searchButtonId}" handlerEx="{element}.click();"/>
 		</ui:define>
 	</ui:decorate>
 
