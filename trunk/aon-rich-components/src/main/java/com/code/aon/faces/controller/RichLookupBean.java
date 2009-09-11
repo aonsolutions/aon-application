@@ -22,6 +22,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.faces.component.richfaces.lookup.ILookupComponent;
 import com.code.aon.faces.component.richfaces.lookup.button.HtmlLookupButton;
+import com.code.aon.faces.component.richfaces.lookup.button.LookupButtonType;
 import com.code.aon.faces.component.richfaces.lookup.inputText.HtmlLookupInputText;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
@@ -35,11 +36,11 @@ import com.code.aon.ui.form.event.IControllerListener;
  */
 public class RichLookupBean {
 
-	private static final String LIST_ID = "list";
+	private static final String LIST_ID = LookupButtonType.LIST.getName();
 
-	private static final String FORM_ID = "form";
+	private static final String NEW_ID = LookupButtonType.NEW.getName();
 
-	private static final String SEARCH_ID = "search";
+	private static final String SEARCH_ID = LookupButtonType.SEARCH.getName();
 	
 	private static final String DEFAULT_WINDOW_TITLE = "Select Window";
 
@@ -505,7 +506,7 @@ public class RichLookupBean {
 			FacesContext ctx = FacesContext.getCurrentInstance();
 			Object newValue = null;
 			if ( resolved ) {
-				if ( FORM_ID.equals(getSelectedPanel()) ) {
+				if ( NEW_ID.equals(getSelectedPanel()) ) {
 					newValue = getController().getTo();
 				} else {
 					try {
@@ -622,7 +623,7 @@ public class RichLookupBean {
 		setBindings(event.getComponent());
 		updateWindowProperties();
 		setShowWindow(true);
-		setSelectedPanel(FORM_ID);
+		setSelectedPanel(NEW_ID);
 		onReset(null);
 	}
 

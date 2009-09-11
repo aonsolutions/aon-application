@@ -89,7 +89,7 @@ public class LookupButtonPopupHandler extends TagHandler implements ILookupTags,
 
 	private ValueExpression getFocusFirstInput( FaceletContext ctx ) {
 		String lookupName = LookupButtonHandler.getLookupBeanName(ctx, lookup);
-		String expression = "aonFocusFirstInput('#{rich:clientId('" + lookupName + "Form')}')";
+		String expression = "aonFocusFirstInput('" + lookupName + "Form')";
 		return FaceletUtil.getValueExpression(ctx, expression, Object.class);		
 	}
 	
