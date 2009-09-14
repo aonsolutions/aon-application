@@ -79,6 +79,8 @@ public class Ectarget implements ITransferObject {
 	 * 
 	 * @return the login
 	 */
+	
+	
 	@Column(length=48, nullable = false)
 	public String getLogin() {
 		return login;
