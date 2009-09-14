@@ -4,6 +4,7 @@ import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 import javax.faces.component.UIComponent;
 
+import com.code.aon.faces.component.richfaces.IRichFacesTags;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.faces.component.util.HTML;
 import com.sun.facelets.FaceletContext;
@@ -17,7 +18,7 @@ import com.sun.facelets.tag.TagHandler;
  * 
  * @author atellitu
  */
-public class SpinHandler extends TagHandler {
+public class SpinHandler extends TagHandler implements IRichFacesTags {
 
 	private static final String TEMPLATE_PATH = "com/code/aon/faces/component/richfaces/spin/";
 
@@ -66,6 +67,8 @@ public class SpinHandler extends TagHandler {
 			id = ctx.getExpressionFactory().createValueExpression(ctx, idValue, String.class);
 		}
 		newMapper.setVariable(SPIN_ID, id);
+		ValueExpression disableHotKeys = FaceletUtil.getBooleanValueExpression(ctx, getAttribute(DISABLE_HOT_KEYS));
+		newMapper.setVariable(DISABLE_HOT_KEYS, disableHotKeys);		
 		FaceletUtil.insertTemplate(ctx, tag, component, FaceletUtil.getTemplate(TEMPLATE), newMapper);
 	}
 	
