@@ -41,8 +41,6 @@ public class DataScroller2Handler extends TagHandler implements IRichFacesTags {
    	
    	private static final String PAGE = "page";
    	
-   	private static final String DISABLE_HOT_KEYS = "disableHotKeys";
-   	
 	private TagAttribute forTag;
 
 	/**
