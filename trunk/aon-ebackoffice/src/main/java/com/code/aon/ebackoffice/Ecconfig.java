@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import com.code.aon.common.ITransferObject;
@@ -29,8 +30,8 @@ public class Ecconfig implements ITransferObject {
 	private boolean active;
 	private String name;
 	private SkinType skin;	
-	private String headerImg;
-	private String footerImg;
+	private byte[] headerImg;
+	private byte[] footerImg;
 	private boolean commerce;
 	private LoginType showLogin;
 	private PriceType showPrice;
@@ -71,19 +72,21 @@ public class Ecconfig implements ITransferObject {
 		this.skin = skin;
 	}
 	
+	@Lob
 	@Column(name = "header_img")
-	public String getHeaderImg() {
+	public byte[] getHeaderImg() {
 		return headerImg;
 	}
-	public void setHeaderImg(String headerImg) {
+	public void setHeaderImg(byte[] headerImg) {
 		this.headerImg = headerImg;
 	}
 	
+	@Lob
 	@Column(name = "footer_img")
-	public String getFooterImg() {
+	public byte[] getFooterImg() {
 		return footerImg;
 	}
-	public void setFooterImg(String footerImg) {
+	public void setFooterImg(byte[] footerImg) {
 		this.footerImg = footerImg;
 	}
 	

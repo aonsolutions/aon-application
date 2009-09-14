@@ -19,8 +19,11 @@
 		
 		<!-- EBACKOFFICE -->		
 		<mapping class="com.code.aon.ebackoffice.Ectarget"/>
+		<!--  
 		<mapping class="com.code.aon.ebackoffice.Ecconfig"/>
 		<mapping class="com.code.aon.ebackoffice.Eccatalogue"/>			
+		-->
+		
 		<!-- CONFIG -->		
 		<mapping class="com.code.aon.config.Tariff"/>
 		<mapping class="com.code.aon.config.Tax"/>
@@ -53,6 +56,7 @@
 		
 		<!-- PRODUCT -->		
 		<mapping class="com.code.aon.product.Brand"/>
+		<mapping class="com.code.aon.product.Catalogue"/>
 		<mapping class="com.code.aon.product.Item"/>
 		<mapping class="com.code.aon.product.Product"/>
 		<mapping class="com.code.aon.product.ProductCategory"/>
