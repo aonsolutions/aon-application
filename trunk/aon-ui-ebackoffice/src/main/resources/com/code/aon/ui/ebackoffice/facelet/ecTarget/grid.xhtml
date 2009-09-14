@@ -13,7 +13,8 @@
 
 				<ui:include
 					src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
-					<ui:param name="toolbarTitle" value="MNTO" />
+					<ui:param name="toolbarTitle"
+						value="#{ebackofficeBundle.aon_ebackoffice_ectarget}" />
 					<ui:param name="controller" value="#{ectarget}" />
 
 				</ui:include>
@@ -24,7 +25,7 @@
 					<aon:editDataTable id="ectargetData" var="to" rows="20"
 						rendered="#{(ectarget.model.rowCount > 0) or (ectarget.new)}"
 						value="#{ectarget.model}"
-						columnClasses="aon-editDataTable-iconColumn, aon-width-150, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-dateColumn,  aon-editDataTable-buttonsColumn">
 
 						<aon:rowSelector toggleOnClick="#{ectarget.to == null}"
 							actionListener="#{ectarget.onSelect}" />
@@ -49,59 +50,56 @@
 							</f:facet>
 						</aon:column>
 
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
-							</f:facet>
-							<aon:outputText value="#{to.id}" rendered="#{to!=ectarget.to}" />
-							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==ectarget.to}" size="2" value="#{ectarget.to.id}"
-								maxlength="2" />
-							<f:facet name="footer">
-								<aon:inputText styleClass="aon-form-input-text" required="true" 
-									rendered="#{ectarget.new}" size="2" value="#{ectarget.to.id}"
-									maxlength="2" />
-							</f:facet>
-						</aon:column>
+
 
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ectarget_client}" />
 							</f:facet>
 							<aon:outputText value="#{to.target.registry.name}"
 								rendered="#{to!=ectarget.to}" />
-							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==ectarget.to}" size="2"
-								value="#{ectarget.to.target.registry.name}" maxlength="20" />
-							<f:facet name="footer">
-								<!--  <aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{ectarget.new}" size="20"
-									value="#{ectarget.to.target.registry.name}" maxlength="2" />-->
 
-								<aon:lookupInputText id="Offer_target_id"
-									rendered="#{ectarget.new}"
+							<aon:lookupInputText id="Target_id1" rendered="#{to==ectarget.to}"
+								value="#{ectarget.to.target.registry.id}"
+								lookup="#{targetLookup}" reRender="Target_full_name1"
+								required="true" size="5" />
+							<aon:lookupButton actionType="search"
+								windowTitle="#{commercialBundle.commercial_target_selection}"
+								property="#{ectarget.to.target}" rendered="#{to==ectarget.to}"
+								selectReRender="Target_id1,Target_full_name1"
+								lookup="#{targetLookup}" minHeight="460" minWidth="650">
+							</aon:lookupButton>
+							<aon:inputText id="Target_full_name1"
+								rendered="#{to==ectarget.to}"
+								value="#{ectarget.to.target.registry.name}"
+								disabled="true" size="30" />
+							<f:facet name="footer">
+							<aon:div>
+								<aon:lookupInputText id="Target_id" rendered="#{ectarget.new}"
 									value="#{ectarget.to.target.registry.id}"
-									lookup="#{targetLookup}" ajaxSingle="true"
-									lookupProperty="registry" required="true" size="5" />
-								<aon:lookupButton
+									lookup="#{targetLookup}" reRender="Target_full_name"
+									required="true" size="5" />
+								<aon:lookupButton actionType="search"
 									windowTitle="#{commercialBundle.commercial_target_selection}"
-									actionType="search" property="#{ectarget.to.target.registry}"
-									lookup="#{targetLookup}" minHeight="460" minWidth="650"
-									rendered="#{ectarget.new}" lookupProperty="registry">
+									property="#{ectarget.to.target}" rendered="#{ectarget.new}"
+									selectReRender="Target_id,Target_full_name"
+									lookup="#{targetLookup}" minHeight="460" minWidth="650">
 								</aon:lookupButton>
-								<aon:inputText id="Offer_target_full_name"
-									rendered="#{ectarget.new}"
-									value="#{(ectarget.to.target.registry.name!=null)?(ectarget.to.target.registry.fullName):('')}"
-									disabled="true" size="50" />
+								 <aon:inputText id="Target_full_name" rendered="#{ectarget.new}"
+									value="#{ectarget.to.target.registry.name}"
+									 size="20" />
+						</aon:div>
 							</f:facet>
 						</aon:column>
 
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ectarget_login}" />
 							</f:facet>
 							<aon:outputText value="#{to.login}" rendered="#{to!=ectarget.to}" />
-							<aon:inputText styleClass="aon-form-input-text " required="true"
+							<aon:inputText  required="true"
 								rendered="#{to==ectarget.to}" size="20"
 								value="#{ectarget.to.login}" maxlength="20" />
 							<f:facet name="footer">
@@ -113,27 +111,12 @@
 
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ectarget_password}" />
 							</f:facet>
 							<aon:outputText value="#{to.password}"
 								rendered="#{to!=ectarget.to}" />
-							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==ectarget.to}" size="20"
-								value="#{ectarget.to.password}" maxlength="20" />
-							<f:facet name="footer">
-								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{ectarget.new}" size="20"
-									value="#{ectarget.to.password}" maxlength="20" />
-							</f:facet>
-						</aon:column>
-
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
-							</f:facet>
-							<aon:outputText value="#{to.password}"
-								rendered="#{to!=ectarget.to}" />
-							<aon:inputText styleClass="aon-form-input-text " required="true"
+							<aon:inputText required="true"
 								rendered="#{to==ectarget.to}" size="20"
 								value="#{ectarget.to.password}" maxlength="20" />
 							<f:facet name="footer">
@@ -144,25 +127,34 @@
 						</aon:column>
 
 
-					<!-- 	<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
-							</f:facet>
-							<aon:outputText value="#{to.type}" rendered="#{to!=ectarget.to}" />
-							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==ectarget.to}" size="20"
-								value="#{ectarget.to.type}" maxlength="20" />
-							<f:facet name="footer">
-								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{ectarget.new}" size="20"
-									value="#{ectarget.to.type}" maxlength="20" />
-							</f:facet>
-						</aon:column> -->
+
 
 						<aon:column>
 							<f:facet name="header">
 								<aon:outputText
-									value="#{appBundle.aon_payroll_cotizacion_fecini}" />
+									value="#{ebackofficeBundle.aon_ebackoffice_ectarget_type}" />
+							</f:facet>
+							<aon:outputText value="#{to.type}" rendered="#{to!=ectarget.to}" />
+
+							<aon:selectOneMenu value="#{ectarget.to.type}"
+								rendered="#{to==ectarget.to}">
+								<f:selectItems value="#{ectarget.targetTypes}" />
+							</aon:selectOneMenu>
+
+
+							<f:facet name="footer">
+								<aon:selectOneMenu value="#{ectarget.to.type}"
+									rendered="#{ectarget.new}">
+									<f:selectItems value="#{ectarget.targetTypes}" />
+								</aon:selectOneMenu>
+
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ectarget_lastAccess}" />
 							</f:facet>
 							<aon:outputText value="#{to.lastAccess}"
 								rendered="#{to!=ectarget.to}">
@@ -171,11 +163,11 @@
 							</aon:outputText>
 							<aon:selectInputDate value="#{ectarget.to.lastAccess}"
 								inputSize="10" rendered="#{to==ectarget.to}"
-								disabled="#{to==ectarget.to}" renderAsPopup="true"
+								renderAsPopup="true"
 								popupDateFormat="#{bundle.aon_date_pattern}">
 							</aon:selectInputDate>
 							<f:facet name="footer">
-								<aon:selectInputDate value="#{ectarget.to.lastAccess}"
+								<aon:selectInputDate styleClass="aon-form-input-text" value="#{ectarget.to.lastAccess}"
 									rendered="#{ectarget.new}" inputSize="10" renderAsPopup="true"
 									popupDateFormat="#{bundle.aon_date_pattern}">
 								</aon:selectInputDate>
@@ -210,7 +202,7 @@
 							</aon:div>
 							<f:facet name="footer">
 								<aon:div>
-									
+
 									<aon:commandButton title="[#{bundle.aon_accept}]"
 										styleClass="aon-editDataTable-button aon-icon-accept"
 										rendered="#{ectarget.new}"
