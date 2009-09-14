@@ -72,10 +72,14 @@
 					</aon:commandButton>
 					
 					<c:if test="#{!disableHotKeys}" >
-						<aon:hotKey key="home" elementId="#{dataTable}First" handlerEx="{element}.onclick();"/>
-						<aon:hotKey key="pageUp" elementId="#{dataTable}Previous" handlerEx="{element}.onclick();"/>
-						<aon:hotKey key="pageDown" elementId="#{dataTable}Next" handlerEx="{element}.onclick();"/>
-						<aon:hotKey key="end" elementId="#{dataTable}Last" handlerEx="{element}.onclick();"/>
+						<aon:hotKey key="home" handlerEx="{element}.onclick();"
+							elementId="#{dataTable}First" rendered="#{model.previousNeeded}" />
+						<aon:hotKey key="pageUp" handlerEx="{element}.onclick();"
+							elementId="#{dataTable}Previous" rendered="#{model.previousNeeded}" />
+						<aon:hotKey key="pageDown" handlerEx="{element}.onclick();"
+							elementId="#{dataTable}Next" rendered="#{model.nextNeeded}" />
+						<aon:hotKey key="end" handlerEx="{element}.onclick();"
+							elementId="#{dataTable}Last" rendered="#{model.nextNeeded}" />
 					</c:if>
 					
 				</aon:div>
