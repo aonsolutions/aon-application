@@ -7,13 +7,15 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
+
 		<aon:form id="ectargetGrid">
 
 			<aon:div ajaxRendered="true" layout="none">
 
 				<ui:include
 					src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
-					<ui:param name="toolbarTitle" value="MNTO" />
+					<ui:param name="toolbarTitle"
+						value="#{ebackofficeBundle.aon_ebackoffice_ecconfig}" />
 					<ui:param name="controller" value="#{ecconfig}" />
 
 				</ui:include>
@@ -24,7 +26,7 @@
 					<aon:editDataTable id="ecconfigData" var="to" rows="20"
 						rendered="#{(ecconfig.model.rowCount > 0) or (ecconfig.new)}"
 						value="#{ecconfig.model}"
-						columnClasses="aon-editDataTable-iconColumn, aon-width-150, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+						columnClasses="aon-editDataTable-iconColumn,aon-editDataTable-iconColumn aon-width-60,  aon-editDataTable-textColumn,aon-editDataTable-iconColumn aon-width-60,aon-editDataTable-textColumn aon-width-auto , aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
 
 						<aon:rowSelector toggleOnClick="#{ecconfig.to == null}"
 							actionListener="#{ecconfig.onSelect}" />
@@ -51,20 +53,192 @@
 
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_active}" />
 							</f:facet>
-							<aon:outputText value="#{to.id}" rendered="#{to!=ecconfig.to}" />
-							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==ecconfig.to}" size="2" value="#{ecconfig.to.id}"
-								maxlength="2" />
+							<aon:outputText value="&#160;" style="text-align:center;"
+								styleClass="#{(to.active)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
+								rendered="#{to!=ecconfig.to}" />
+							<aon:selectBooleanCheckbox rendered="#{to==ecconfig.to}"
+								value="#{ecconfig.to.active}" />
 							<f:facet name="footer">
-								<aon:inputText styleClass="aon-form-input-text" required="true" 
-									rendered="#{ecconfig.new}" size="2" value="#{ecconfig.to.id}"
-									maxlength="2" />
+								<aon:selectBooleanCheckbox rendered="#{ecconfig.new}"
+									value="#{ecconfig.to.active}" />
 							</f:facet>
 						</aon:column>
 
-					
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.name}" rendered="#{to!=ecconfig.to}" />
+
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==ecconfig.to}" value="#{ecconfig.to.name}"
+								size="15" maxlength="64" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{ecconfig.new}" size="20"
+									value="#{ecconfig.to.name}" maxlength="64" />
+
+							</f:facet>
+						</aon:column>
+
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_skin}" />
+							</f:facet>
+							<aon:outputText value="#{to.skin}" rendered="#{to!=ecconfig.to}" />
+
+							<aon:selectOneMenu value="#{ecconfig.to.skin}"
+								rendered="#{to==ecconfig.to}">
+								<f:selectItems value="#{ecconfig.skins}" />
+							</aon:selectOneMenu>
+
+							<f:facet name="footer">
+								<aon:selectOneMenu value="#{ecconfig.to.skin}"
+									rendered="#{ecconfig.new}">
+									<f:selectItems value="#{ecconfig.skins}" />
+								</aon:selectOneMenu>
+
+							</f:facet>
+						</aon:column>
+
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_commerce}" />
+							</f:facet>
+							<aon:outputText value="&#160;" style="text-align:center;"
+								styleClass="#{(to.commerce)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
+								rendered="#{to!=ecconfig.to}" />
+							<aon:selectBooleanCheckbox rendered="#{to==ecconfig.to}"
+								value="#{ecconfig.to.commerce}" />
+							<f:facet name="footer">
+								<aon:selectBooleanCheckbox rendered="#{ecconfig.new}"
+									value="#{ecconfig.to.commerce}" />
+							</f:facet>
+						</aon:column>
+
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_login}" />
+							</f:facet>
+							<aon:outputText value="#{to.showLogin}"
+								rendered="#{to!=ecconfig.to}" />
+
+							<aon:selectOneMenu value="#{ecconfig.to.showLogin}"
+								rendered="#{to==ecconfig.to}">
+								<f:selectItems value="#{ecconfig.loginTypes}" />
+							</aon:selectOneMenu>
+
+							<f:facet name="footer">
+								<aon:selectOneMenu value="#{ecconfig.to.showLogin}"
+									rendered="#{ecconfig.new}">
+									<f:selectItems value="#{ecconfig.loginTypes}" />
+								</aon:selectOneMenu>
+
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_pricetype}" />
+							</f:facet>
+							<aon:outputText value="#{to.showPrice}"
+								rendered="#{to!=ecconfig.to}" />
+
+							<aon:selectOneMenu value="#{ecconfig.to.showPrice}"
+								rendered="#{to==ecconfig.to}">
+								<f:selectItems value="#{ecconfig.priceTypes}" />
+							</aon:selectOneMenu>
+
+							<f:facet name="footer">
+								<aon:selectOneMenu value="#{ecconfig.to.showPrice}"
+									rendered="#{ecconfig.new}">
+									<f:selectItems value="#{ecconfig.priceTypes}" />
+								</aon:selectOneMenu>
+
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_taxinprice}" />
+							</f:facet>
+							<aon:outputText value="#{to.taxInType}"
+								rendered="#{to!=ecconfig.to}" />
+
+							<aon:selectOneMenu value="#{ecconfig.to.taxInType}"
+								rendered="#{to==ecconfig.to}">
+								<f:selectItems value="#{ecconfig.taxPriceTypes}" />
+							</aon:selectOneMenu>
+
+							<f:facet name="footer">
+								<aon:selectOneMenu value="#{ecconfig.to.taxInType}"
+									rendered="#{ecconfig.new}">
+									<f:selectItems value="#{ecconfig.taxPriceTypes}" />
+								</aon:selectOneMenu>
+
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_originalprice}" />
+							</f:facet>
+							<aon:outputText value="#{to.showItemPrice}"
+								rendered="#{to!=ecconfig.to}" />
+
+							<aon:selectOneMenu value="#{ecconfig.to.showItemPrice}"
+								rendered="#{to==ecconfig.to}">
+								<f:selectItems value="#{ecconfig.originalPriceTypes}" />
+							</aon:selectOneMenu>
+
+							<f:facet name="footer">
+								<aon:selectOneMenu value="#{ecconfig.to.showItemPrice}"
+									rendered="#{ecconfig.new}">
+									<f:selectItems value="#{ecconfig.originalPriceTypes}" />
+								</aon:selectOneMenu>
+
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_wish}" />
+							</f:facet>
+							<aon:outputText value="#{to.wishList}"
+								rendered="#{to!=ecconfig.to}" />
+
+							<aon:selectOneMenu value="#{ecconfig.to.wishList}"
+								rendered="#{to==ecconfig.to}">
+								<f:selectItems value="#{ecconfig.wishListTypes}" />
+							</aon:selectOneMenu>
+
+							<f:facet name="footer">
+								<aon:selectOneMenu value="#{ecconfig.to.wishList}"
+									rendered="#{ecconfig.new}">
+									<f:selectItems value="#{ecconfig.wishListTypes}" />
+								</aon:selectOneMenu>
+
+							</f:facet>
+						</aon:column>
+
+
+
+
 						<aon:column>
 							<f:facet name="header">
 								<aon:outputText value="&#160;" />
@@ -92,7 +266,7 @@
 							</aon:div>
 							<f:facet name="footer">
 								<aon:div>
-									
+
 									<aon:commandButton title="[#{bundle.aon_accept}]"
 										styleClass="aon-editDataTable-button aon-icon-accept"
 										rendered="#{ecconfig.new}"
