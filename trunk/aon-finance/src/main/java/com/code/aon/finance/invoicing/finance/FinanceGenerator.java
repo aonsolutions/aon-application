@@ -12,6 +12,9 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
+import com.code.aon.config.Bank;
+import com.code.aon.config.BankAccount;
+import com.code.aon.config.IPayMethod;
 import com.code.aon.config.PayMethod;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
@@ -56,6 +59,32 @@ public class FinanceGenerator {
 		}
 		return finance;
 	}
+	
+	public List<Finance> generateFinances(Invoice invoice, IPayMethod payMethod, double totalPrice, boolean insert) throws ManagerBeanException{
+		List<Finance> financeList = new LinkedList<Finance>();
+		Date date = invoice.getIssueDate();
+		if(payMethod == null || payMethod.getNumberOfPayments() == 1){
+			date = (payMethod == null?date:calculatePaymentDate(payMethod.getDaysToFirstPayment(),payMethod.getPaymentDaysArray(),date));
+			financeList.add(createFinance(invoice,date,(payMethod==null?null:payMethod.getPayment()),totalPrice,payMethod.getBank(),payMethod.getBankAccount()));
+		}else{
+			double paymentPrice = CommonUtil.round((totalPrice/payMethod.getNumberOfPayments()),2);
+			date = calculatePaymentDate(payMethod.getDaysToFirstPayment(),payMethod.getPaymentDaysArray(),date);
+			financeList.add(createFinance(invoice,date,payMethod.getPayment(),paymentPrice,payMethod.getBank(),payMethod.getBankAccount()));
+			for(int i = 2;i <= payMethod.getNumberOfPayments() - 1;i++){
+				date = calculatePaymentDate(payMethod.getDaysBetweenPayments(), payMethod.getPaymentDaysArray(), date);
+				financeList.add(createFinance(invoice,date,payMethod.getPayment(),paymentPrice,payMethod.getBank(),payMethod.getBankAccount()));
+				}
+			paymentPrice = CommonUtil.round(totalPrice - (paymentPrice * (payMethod.getNumberOfPayments() - 1)), 2);
+			date = calculatePaymentDate(payMethod.getDaysBetweenPayments(), payMethod.getPaymentDaysArray(), date);
+			financeList.add(createFinance(invoice,date,payMethod.getPayment(),paymentPrice,payMethod.getBank(),payMethod.getBankAccount()));
+		}
+		if(insert){
+			insertFinances(financeList);
+		}
+		return financeList;
+	}
+	
+	
 	public List<Finance> generateFinances(Invoice invoice, double totalPrice, boolean insert) throws ManagerBeanException{
 		List<Finance> financeList = new LinkedList<Finance>();
 		RegistryPayMethod rPayMethod = obtainRPayMethod(invoice);
@@ -117,11 +146,11 @@ public class FinanceGenerator {
 		return null;
 	}
 
-	private Finance createFinance(Invoice invoice, Date date, PayMethod payMethod, double totalPrice, RegistryBank rBank){
+	private Finance createFinance(Invoice invoice, Date date, PayMethod payMethod, double totalPrice, Bank bank, BankAccount bankAccount){
 		Finance finance = new Finance();
 		finance.setAmount(totalPrice);
-		finance.setBank((rBank==null?null:rBank.getBank()));
-		finance.setBankAccount((rBank==null?null:rBank.getBankAccount()));
+		finance.setBank(bank);
+		finance.setBankAccount(bankAccount);
 		finance.setDueDate(date);
 		finance.setInvoice(invoice);
 		finance.setFinanceStatus(FinanceStatus.PENDING);
@@ -136,6 +165,12 @@ public class FinanceGenerator {
 		return finance;
 	}
 	
+	private Finance createFinance(Invoice invoice, Date date, PayMethod payMethod, double totalPrice, RegistryBank rBank){
+		Bank bank = (rBank==null?null:rBank.getBank());
+		BankAccount bankAccount = (rBank==null?null:rBank.getBankAccount());
+		return createFinance(invoice,date,payMethod,totalPrice, bank, bankAccount);
+	}
+
 	@SuppressWarnings("unchecked")
 	private void insertFinances(List<Finance> financeList) throws ManagerBeanException {
 		try {
