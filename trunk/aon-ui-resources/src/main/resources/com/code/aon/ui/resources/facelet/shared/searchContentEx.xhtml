@@ -22,7 +22,11 @@
 							value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
 							action="#{searchAction}" actionListener="#{searchActionListener}"
 							reRender="#{searchReRender}" oncomplete="#{searchOnComplete}"
-							requestDelay="100" accesskey="#{bundle.aon_key_search}" /> 
+							requestDelay="100" accesskey="#{bundle.aon_key_search}" >
+							<c:if test="#{!disableSearchHotKey}" >
+								<aon:actionHotKey key="return" />
+							</c:if>
+						</aon:commandButton> 
 					</aon:div>	
 				</c:if>			
 			</aon:panelGrid>
