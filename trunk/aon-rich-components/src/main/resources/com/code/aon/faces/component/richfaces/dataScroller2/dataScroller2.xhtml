@@ -34,6 +34,9 @@
 						oncomplete="#{oncomplete}" requestDelay="100"
 						reRender="#{dataTable},#{dataTable}MessageDataScroller"
 						styleClass="aon-dataScroller2-button #{model.previousNeeded?'aon-dataScroller2-button-first':'aon-dataScroller2-button-first-disabled'}">
+						<c:if test="#{!disableHotKeys and model.previousNeeded}" >
+							<aon:actionHotKey key="home" />
+						</c:if>
 					</aon:commandButton>
 	
 					<aon:commandButton id="#{dataTable}Previous" ajaxSingle="true" process="#{dataTable}"
@@ -41,6 +44,9 @@
 						oncomplete="#{oncomplete}" requestDelay="100"
 						reRender="#{dataTable},#{dataTable}MessageDataScroller"
 						styleClass="aon-dataScroller2-button #{model.previousNeeded?'aon-dataScroller2-button-previous':'aon-dataScroller2-button-previous-disabled'}">
+						<c:if test="#{!disableHotKeys and model.previousNeeded}" >
+							<aon:actionHotKey key="pageUp" />
+						</c:if>						
 					</aon:commandButton>
 					
 					<a4j:repeat value="#{model.pages}" var="page">
@@ -62,6 +68,9 @@
 						oncomplete="#{oncomplete}" requestDelay="100"
 						reRender="#{dataTable},#{dataTable}MessageDataScroller"
 						styleClass="aon-dataScroller2-button #{model.nextNeeded?'aon-dataScroller2-button-next':'aon-dataScroller2-button-next-disabled'}">
+						<c:if test="#{!disableHotKeys and model.nextNeeded}" >
+							<aon:actionHotKey key="pageDown" />
+						</c:if>						
 					</aon:commandButton>
 	
 					<aon:commandButton id="#{dataTable}Last" ajaxSingle="true" process="#{dataTable}"
@@ -69,18 +78,10 @@
 						oncomplete="#{oncomplete}" requestDelay="100"
 						reRender="#{dataTable},#{dataTable}MessageDataScroller"
 						styleClass="aon-dataScroller2-button #{model.nextNeeded?'aon-dataScroller2-button-last':'aon-dataScroller2-button-last-disabled'}">
+						<c:if test="#{!disableHotKeys and model.nextNeeded}" >
+							<aon:actionHotKey key="end" />
+						</c:if>
 					</aon:commandButton>
-					
-					<c:if test="#{!disableHotKeys}" >
-						<aon:hotKey key="home" handlerEx="{element}.onclick();"
-							elementId="#{dataTable}First" rendered="#{model.previousNeeded}" />
-						<aon:hotKey key="pageUp" handlerEx="{element}.onclick();"
-							elementId="#{dataTable}Previous" rendered="#{model.previousNeeded}" />
-						<aon:hotKey key="pageDown" handlerEx="{element}.onclick();"
-							elementId="#{dataTable}Next" rendered="#{model.nextNeeded}" />
-						<aon:hotKey key="end" handlerEx="{element}.onclick();"
-							elementId="#{dataTable}Last" rendered="#{model.nextNeeded}" />
-					</c:if>
 					
 				</aon:div>
 			</c:if>

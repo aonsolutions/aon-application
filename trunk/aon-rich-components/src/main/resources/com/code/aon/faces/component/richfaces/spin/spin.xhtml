@@ -13,12 +13,18 @@
 			<aon:commandButton id="#{spinId}-first" disabled="#{controller.inFirst}" immediate="true"
 				action="#{action}" actionListener="#{controller.onSelectFirst}" ajaxSingle="true" requestDelay="100"
 				styleClass="aon-dataScroller-button #{controller.inFirst?'aon-dataScroller-button-first-disabled':'aon-dataScroller-button-first'}">
+				<c:if test="#{!disableHotKeys}" >
+					<aon:actionHotKey key="ctrl+home" rendered="#{!controller.inFirst}" />
+				</c:if>
 			</aon:commandButton>
 		</aon:div>
 		<aon:div styleClass="aon-spin-control-element"> 
 			<aon:commandButton id="#{spinId}-previous" disabled="#{controller.inFirst}" immediate="true"
 				action="#{action}" actionListener="#{controller.onSelectPrevious}" ajaxSingle="true" requestDelay="100"
 				styleClass="aon-dataScroller-button #{controller.inFirst?'aon-dataScroller-button-previous-disabled':'aon-dataScroller-button-previous'}">
+				<c:if test="#{!disableHotKeys}" >
+					<aon:actionHotKey key="ctrl+pageUp" rendered="#{!controller.inFirst}" />
+				</c:if>
 			</aon:commandButton>
 		</aon:div>
 		<aon:div styleClass="aon-spin-control-element aon-nowrap"> 
@@ -31,24 +37,20 @@
 			<aon:commandButton id="#{spinId}-next" disabled="#{controller.inLast}" immediate="true"
 				action="#{action}" actionListener="#{controller.onSelectNext}" ajaxSingle="true" requestDelay="100"
 				styleClass="aon-dataScroller-button #{controller.inLast?'aon-dataScroller-button-next-disabled':'aon-dataScroller-button-next'}">
+				<c:if test="#{!disableHotKeys}" >
+					<aon:actionHotKey key="ctrl+pageDown" rendered="#{!controller.inLast}" />
+				</c:if>
 			</aon:commandButton>
 		</aon:div>
 		<aon:div styleClass="aon-spin-control-element"> 
 			<aon:commandButton id="#{spinId}-last" disabled="#{controller.inLast}" immediate="true"
 				action="#{action}" actionListener="#{controller.onSelectLast}" ajaxSingle="true" requestDelay="100"
 				styleClass="aon-dataScroller-button #{controller.inLast?'aon-dataScroller-button-last-disabled':'aon-dataScroller-button-last'}">
+				<c:if test="#{!disableHotKeys}" >
+					<aon:actionHotKey key="ctrl+end" rendered="#{!controller.inLast}" />
+				</c:if>
 			</aon:commandButton>
 		</aon:div>
-		<c:if test="#{!disableHotKeys}" >
-			<aon:hotKey key="ctrl+home" handlerEx="{element}.onclick();"
-				elementId="#{spinId}-first" rendered="#{!controller.inFirst}" />
-			<aon:hotKey key="ctrl+pageUp" handlerEx="{element}.onclick();"
-				elementId="#{spinId}-previous" rendered="#{!controller.inFirst}" />
-			<aon:hotKey key="ctrl+pageDown" handlerEx="{element}.onclick();"
-				elementId="#{spinId}-next" rendered="#{!controller.inLast}" />
-			<aon:hotKey key="ctrl+end" handlerEx="{element}.onclick();"
-				elementId="#{spinId}-last" rendered="#{!controller.inLast}" />
-		</c:if>		
 	</aon:div>
 
 </ui:composition>
