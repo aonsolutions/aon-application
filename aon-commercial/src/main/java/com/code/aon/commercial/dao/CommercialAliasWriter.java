@@ -37,7 +37,7 @@ public class CommercialAliasWriter {
 				TargetItem.class.getName(),
 				TargetSegment.class.getName(),
 				TargetSeller.class.getName() };
-		HibernateUtil.getSessionFactory();
+		HibernateUtil.getSessionFactory(null);
 		AliasWriter writer = new AliasWriter("com.code.aon.commercial.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );
