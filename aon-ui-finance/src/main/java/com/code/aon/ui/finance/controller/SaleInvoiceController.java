@@ -245,7 +245,7 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 		return getPriceStrategy().getTotalPrice(invoice,invoice);
 	}
 	
-	public double getInvoiceTotalPrice() throws ManagerBeanException{
+	public double getInvoiceTotalPrice() throws ManagerBeanException {
 		Invoice invoice = (Invoice)this.getModel().getRowData();
 		return getPriceStrategy().getTotalPrice(invoice, invoice);
 	}
