@@ -89,7 +89,7 @@
 							value="#{accountingBundle.accounting_period}" />
 						<aon:selectOneMenu id="AccountEntry_accountPeriod"
 							value="#{financeEntry.period}">
-							<f:selectItems value="#{accountingCollections.accountPeriods}" />
+							<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
 							<a4j:support event="onchange" ajaxSingle="true" reRender="AccountEntry_accountPeriod"/>
 						</aon:selectOneMenu>
 

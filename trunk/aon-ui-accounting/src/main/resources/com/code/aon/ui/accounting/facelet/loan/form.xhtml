@@ -46,6 +46,20 @@
 							styleClass="aon-italic aon-margin-left" />						
 					</aon:div>
 
+					<aon:outputLabel for="Loan_recurrence"
+						value="#{accountingBundle.accounting_recurrence}" />
+					<aon:inputText id="Loan_recurrence"
+						value="#{loan.to.recurrence}" size="5">
+						<f:validateLongRange />
+					</aon:inputText>
+
+					<aon:outputLabel for="Loan_pay_day"
+						value="#{accountingBundle.accounting_pay_day}" />
+					<aon:inputText id="Loan_pay_day"
+						value="#{loan.to.payDay}" size="5">
+						<f:validateLongRange />
+					</aon:inputText>
+
 					<aon:outputLabel for="Loan_interest"
 						value="#{accountingBundle.accounting_interest}" />
 					<aon:inputText id="Loan_interest"
@@ -75,6 +89,13 @@
 						value="#{accountingBundle.accounting_expenses}" />
 					<aon:inputText id="Loan_expenses"
 						value="#{loan.to.expenses}" size="15">
+						<f:validateDoubleRange />
+					</aon:inputText>
+
+					<aon:outputLabel for="Loan_fee_amount"
+						value="#{accountingBundle.accounting_fee_amount}" />
+					<aon:inputText id="Loan_fee_amount"
+						value="#{loan.to.feeAmount}" size="15">
 						<f:validateDoubleRange />
 					</aon:inputText>
 

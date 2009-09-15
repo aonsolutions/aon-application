@@ -31,7 +31,7 @@
 						value="#{accountingBundle.accounting_period}" />
 					<aon:selectOneMenu id="AccountBudget_period" 
 						valueChangeListener="#{accountBudget.addExpression}" >
-						<f:selectItems value="#{accountingCollections.accountPeriodKeys}" />
+						<f:selectItems value="#{accountingCollections.activeAccountPeriodKeys}" />
 					</aon:selectOneMenu>
 				</ui:define>
 			</ui:decorate>

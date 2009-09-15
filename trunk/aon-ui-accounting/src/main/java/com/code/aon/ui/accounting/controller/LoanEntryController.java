@@ -111,6 +111,7 @@ public class LoanEntryController implements ISpecialAccountEntry {
 		Loan loan = new Loan();
 		loan.setLoanDate(new Date());
 		loan.setSecurityLevel(SecurityLevel.OFFICIAL);
+		loan.setFeeAmount(0.0);
 		return loan;
 	}
 

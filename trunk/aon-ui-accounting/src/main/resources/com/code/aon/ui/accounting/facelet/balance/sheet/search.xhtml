@@ -36,7 +36,7 @@
 						value="#{accountingBundle.accounting_period}" />
 					<aon:selectOneMenu required="true" id="balanceSheet_accountPeriod"
 						value="#{balanceSheet.parameters.period}">
-						<f:selectItems value="#{accountingCollections.accountPeriods}" />
+						<f:selectItems value="#{accountingCollections.activeAccountPeriods}" />
 					</aon:selectOneMenu>
  
 					<aon:outputLabel for="balanceSheet_entryDate-From"

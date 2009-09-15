@@ -59,7 +59,7 @@
 						value="#{accountingBundle.accounting_period}" />
 					<aon:selectOneMenu id="AccountEntry_accountPeriod"
 						value="#{loanEntry.period}">
-						<f:selectItems value="#{accountingCollections.accountPeriods}" />
+						<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
 						<a4j:support event="onchange" ajaxSingle="true" reRender="AccountEntry_accountPeriod"/>
 					</aon:selectOneMenu>
 
@@ -79,6 +79,20 @@
 						value="#{accountingBundle.accounting_term} (#{accountingBundle.accounting_term_months})" />
 					<aon:inputText id="Account_term" required="true"
 						value="#{loanEntry.loan.term}" size="8"/>
+
+					<aon:outputLabel for="Account_recurrence"
+						value="#{accountingBundle.accounting_recurrence}" />
+					<aon:inputText id="Account_recurrence"
+						value="#{loanEntry.loan.recurrence}" size="5">
+						<f:validateLongRange />
+					</aon:inputText>
+
+					<aon:outputLabel for="Account_pay_day"
+						value="#{accountingBundle.accounting_pay_day}" />
+					<aon:inputText id="Account_pay_day"
+						value="#{loanEntry.loan.payDay}" size="5">
+						<f:validateLongRange />
+					</aon:inputText>
 
 					<aon:outputLabel for="Account_interest"
 						value="#{accountingBundle.accounting_interest}" />
@@ -117,6 +131,13 @@
 						value="#{accountingBundle.accounting_expenses}" />
 					<aon:inputText id="Account_expenses" required="true"
 						value="#{loanEntry.loan.expenses}" size="15">
+						<f:validateDoubleRange />
+					</aon:inputText>
+
+					<aon:outputLabel for="Account_fee_amount"
+						value="#{accountingBundle.accounting_fee_amount}" />
+					<aon:inputText id="Account_fee_amount"
+						value="#{loanEntry.loan.feeAmount}" size="15">
 						<f:validateDoubleRange />
 					</aon:inputText>
 
