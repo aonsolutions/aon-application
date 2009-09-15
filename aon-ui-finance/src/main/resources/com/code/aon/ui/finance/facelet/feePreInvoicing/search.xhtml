@@ -76,7 +76,7 @@
 						value="#{companyBundle.company_workplace}" />
 					<aon:selectOneMenu id="CustomerFee_WorkPlace"
 						value="#{preInvoicing.invoicingParams.workPlace}">
-						<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+						<f:selectItem itemLabel="-" itemValue="#{null}" />
 						<f:selectItems value="#{companyCollections.workPlaces}" />
 					</aon:selectOneMenu>
 
