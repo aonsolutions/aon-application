@@ -12,7 +12,11 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
+import com.code.aon.config.IScopable;
+import com.code.aon.config.Scope;
 import com.code.aon.config.util.SeriesNumberUtil;
+import com.code.aon.customer.Customer;
+import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
@@ -26,6 +30,8 @@ import com.code.aon.finance.invoicing.remover.IInvoiceDetailRemover;
 import com.code.aon.finance.invoicing.remover.InvoiceRemoverFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.Registry;
+import com.code.aon.supplier.Supplier;
 
 public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -51,7 +57,10 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			}
 		}
 		if (invoice.getTaxDate() == null) {
-			invoice.setTaxDate( invoice.getIssueDate());
+			invoice.setTaxDate(invoice.getIssueDate());
+		}
+		if (invoice.getScope() == null || invoice.getScope().getId() == null) {
+			invoice.setScope(obtainInvoiceScope(invoice.getType(), invoice.getRegistry()));
 		}
 	}
 
@@ -72,6 +81,23 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
 		} catch (InvoicingException e) {
+			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
+		}
+	}
+
+	private Scope obtainInvoiceScope(InvoiceType type, Registry registry) throws ManagerBeanVetoListenerException {
+		try {
+			IManagerBean bean;
+			if (type == InvoiceType.SALES) {
+				bean = BeanManager.getManagerBean(Customer.class);
+			} else if (type == InvoiceType.PURCHASE) {
+				bean = BeanManager.getManagerBean(Supplier.class);
+			} else {
+				bean = BeanManager.getManagerBean(Creditor.class);
+			}
+			IScopable scopable = (IScopable)bean.get(registry.getId());
+			return scopable.getScope();
+		} catch (ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
 		}
 	}
