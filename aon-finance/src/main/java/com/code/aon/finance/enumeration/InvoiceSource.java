@@ -17,26 +17,35 @@ public enum InvoiceSource implements IResourceable {
 	/** UNKNOWN. */
 	UNKNOWN,
 
-	/** DIRECT PURCHASE. */
+	/** DIRECT PURCHASE. Facturas directas de compra que generan albaranes y pedidos */
 	DIRECT_PURCHASE,
 	
-	/** DIRECT SALES. */
+	/** DIRECT SALES. Facturas directas de venta que generan albaranes y pedidos */
 	DIRECT_SALES,
 
-    /** DELIVERY. */
+    /** DELIVERY. Facturacion de un albaran de venta */
     DELIVERY,
     
-    /** INCOME. */
+    /** INCOME. Facturacion de un albaran de compra */
     INCOME,
 
-    /** FEE. */
+    /** FEE. Facturacion de una cuota */
     FEE,
     
-    /** ACCOUNT */
+    /** ACCOUNT. Facturacion desde un apunte contable */
     ACCOUNT, 
     
-    /** DIRECT INVOICE */
-    DIRECT_INVOICE;
+    /** DIRECT INVOICE. Factura directa y punto */
+    DIRECT_INVOICE,
+
+    /** OFFER. Facturacion de un presupuesto */
+    OFFER,
+
+    /** SALES. Facturacion de un pedido de venta */
+    SALES,
+
+    /** PURCHASE. Facturacion de un pedido de compra */
+    PURCHASE;
 
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.finance.i18n.messages";
