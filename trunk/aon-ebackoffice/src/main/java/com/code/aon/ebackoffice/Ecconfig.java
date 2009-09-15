@@ -8,6 +8,7 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.ebackoffice.enumeration.LoginType;
 import com.code.aon.ebackoffice.enumeration.OriginalPrice;
@@ -39,11 +40,11 @@ public class Ecconfig implements ITransferObject {
 	private TaxType taxInType;
 	private OriginalPrice showItemPrice;
 	private WishList wishList;
-	private PayMethodType bankTransfer;
-	private PayMethodType cashOnDelivery;
-	private PayMethodType visa;
-	private PayMethodType paypal;
-	private PayMethodType bankDraft;
+	private PayMethod bankTransfer;
+	private PayMethod cashOnDelivery;
+	private PayMethod visa;
+	private PayMethod paypal;
+	private PayMethod bankDraft;
 	
 	@Id
 	@GeneratedValue
@@ -145,41 +146,41 @@ public class Ecconfig implements ITransferObject {
 	}
 	
 	@Column(name = "bank_transfer")
-	public PayMethodType getBankTransfer() {
+	public PayMethod getBankTransfer() {
 		return bankTransfer;
 	}
-	public void setBankTransfer(PayMethodType bankTransfer) {
+	public void setBankTransfer(PayMethod bankTransfer) {
 		this.bankTransfer = bankTransfer;
 	}
 	
 	@Column(name = "cash_on_delivery")
-	public PayMethodType getCashOnDelivery() {
+	public PayMethod getCashOnDelivery() {
 		return cashOnDelivery;
 	}
-	public void setCashOnDelivery(PayMethodType cashOnDelivery) {
+	public void setCashOnDelivery(PayMethod cashOnDelivery) {
 		this.cashOnDelivery = cashOnDelivery;
 	}
 	
-	public PayMethodType getVisa() {
+	public PayMethod getVisa() {
 		return visa;
 	}
-	public void setVisa(PayMethodType visa) {
+	public void setVisa(PayMethod visa) {
 		this.visa = visa;
 	}
 	
 	
-	public PayMethodType getPaypal() {
+	public PayMethod getPaypal() {
 		return paypal;
 	}
-	public void setPaypal(PayMethodType paypal) {
+	public void setPaypal(PayMethod paypal) {
 		this.paypal = paypal;
 	}
 	
 	@Column(name = "bank_draft")
-	public PayMethodType getBankDraft() {
+	public PayMethod getBankDraft() {
 		return bankDraft;
 	}
-	public void setBankDraft(PayMethodType bankDraft) {
+	public void setBankDraft(PayMethod bankDraft) {
 		this.bankDraft = bankDraft;
 	}
 	
