@@ -82,10 +82,8 @@ public class DomainController extends BasicController implements IDesktopConstan
 		AonUserController auc = (AonUserController) AonUtil.getRegisteredBean(CURRENT_USER_CONTROLLER_NAME);
 		this.currentDomain = auc.getDomain();
 		String[] parts = StringUtils.split(this.currentDomain, ".");
-		if ( ArrayUtils.getLength(parts) > 2 ) {
-			this.domainSuffix = parts[parts.length-2] + "." + parts[parts.length-1]; 
-		} else {
-			this.domainSuffix = this.currentDomain;
+		if ( ArrayUtils.getLength(parts) > 0 ) {
+			this.domainSuffix = parts[parts.length-1]; 
 		}
 		manager = new DBManager();
 	}
