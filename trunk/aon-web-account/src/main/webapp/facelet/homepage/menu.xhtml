@@ -114,7 +114,7 @@
 			<aon:dropDownMenu value="#{appBundle.account_configuration}">
 				<aon:menuItem action="company" actionListener="#{company.onLoad}" value="#{companyBundle.company_data_module}"/>
 				<aon:menuSeparator/>
-				<aon:menuItem action="accPeriod" value="#{accountingBundle.accounting_period_module}"  />
+				<aon:menuItem action="accPeriod" actionListener="#{accPeriod.onSearch}"  value="#{accountingBundle.accounting_period_module}"  />
 				<aon:menuItem action="defaultParams" actionListener="#{accAppParams.onLoad}" value="#{accountingBundle.accounting_default_params_module}"/>
 				<aon:menuItem action="series" value="#{configBundle.config_series_module}"/>
 				<aon:menuItem action="tax" value="#{configBundle.config_tax_module}"/>
