@@ -20,7 +20,7 @@
 				<ui:param name="toolbarDescription" value="#{bundle.aon_reset}" />
 				<ui:define name="toolbarContent">
 					<c:if test="#{(communicationCenter.actionSelected) and (communicationCenter.pendingTargets &gt; 0)}" >
-						<c:if test="#{campaign.showPhoneActionMediaType}" >
+						<c:if test="#{aonConfiguration.bean.campaign.showPhoneActionMediaType}" >
 							<c:if test="#{communicationCenter.action.mediaType  == 'PHONE'}" >
 								<aon:commandButton id="accept" value="#{bundle.aon_accept}"
 									action="communicationCenter_response" actionListener="#{communicationCenter.onStartSurveyResponse}"
@@ -116,7 +116,7 @@
 						</aon:div>
 					</aon:div>
 					
-					<c:if test="#{campaign.showSurvey}" >
+					<c:if test="#{aonConfiguration.bean.campaign.showSurvey}" >
 						<aon:outputLabel for="CommunicationCenter_survey_id" 
 							value="#{marketingBundle.marketing_survey}" />
 						<aon:div styleClass="aon-lookup" id="CommunicationCenter_survey">
@@ -197,7 +197,7 @@
 		<c:if test="#{communicationCenter.showTarget}" >
 			<aon:lookupButtonPopup lookup="#{targetLookup}" />
 		</c:if>
-		<c:if test="#{campaign.showSurvey}" >
+		<c:if test="#{aonConfiguration.bean.campaign.showSurvey}" >
 			<aon:lookupButtonPopup lookup="#{surveyLookup}" />
 		</c:if>
 	</ui:define>
