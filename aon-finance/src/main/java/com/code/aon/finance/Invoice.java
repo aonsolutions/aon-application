@@ -34,6 +34,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.config.Scope;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceTransactionType;
@@ -129,7 +130,10 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 
     /** If the Invoice is signed. */
     private boolean signed;    
-    
+
+    /** The scope. */
+    private Scope scope;
+
     /** The detail of this invoice. */
 	private Set<InvoiceDetail> lines = new HashSet<InvoiceDetail>();
 
@@ -470,6 +474,15 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 		this.investment = investment;
 	}
 	
+	@Column(name = "transaction")
+	public InvoiceTransactionType getTransaction() {
+		return transaction;
+	}
+
+	public void setTransaction(InvoiceTransactionType transaction) {
+		this.transaction = transaction;
+	}
+
 	@Column(nullable = false)
 	public boolean isSigned() {
 		return signed;
@@ -479,14 +492,27 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 		this.signed = signed;
 	}
 
-	@Column(name = "transaction")
-	public InvoiceTransactionType getTransaction() {
-		return transaction;
-	}
+	/**
+	 * Gets the scope.
+	 * 
+	 * @return the scope
+	 */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="scope", nullable = false)
+    @ForeignKey(name="FK_INVOICE_SCOPE")
+    @Index(name="IDX_INVOICE_SCOPE") 
+    public Scope getScope() {
+        return scope;
+    }
 
-	public void setTransaction(InvoiceTransactionType transaction) {
-		this.transaction = transaction;
-	}
+    /**
+     * Sets the scope.
+     * 
+     * @param scope the scope
+     */
+    public void setScope(Scope scope) {
+        this.scope = scope;
+    }
 
 	@Formula("year(issue_date)")
 	public int getIssueYear() {
