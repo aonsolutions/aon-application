@@ -8,6 +8,7 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.ebackoffice.enumeration.LoginType;
 import com.code.aon.ebackoffice.enumeration.OriginalPrice;
 import com.code.aon.ebackoffice.enumeration.PriceType;
@@ -38,6 +39,11 @@ public class Ecconfig implements ITransferObject {
 	private TaxType taxInType;
 	private OriginalPrice showItemPrice;
 	private WishList wishList;
+	private PayMethodType bankTransfer;
+	private PayMethodType cashOnDelivery;
+	private PayMethodType visa;
+	private PayMethodType paypal;
+	private PayMethodType bankDraft;
 	
 	@Id
 	@GeneratedValue
@@ -136,6 +142,45 @@ public class Ecconfig implements ITransferObject {
 	}
 	public void setWishList(WishList wishList) {
 		this.wishList = wishList;
+	}
+	
+	@Column(name = "bank_transfer")
+	public PayMethodType getBankTransfer() {
+		return bankTransfer;
+	}
+	public void setBankTransfer(PayMethodType bankTransfer) {
+		this.bankTransfer = bankTransfer;
+	}
+	
+	@Column(name = "cash_on_delivery")
+	public PayMethodType getCashOnDelivery() {
+		return cashOnDelivery;
+	}
+	public void setCashOnDelivery(PayMethodType cashOnDelivery) {
+		this.cashOnDelivery = cashOnDelivery;
+	}
+	
+	public PayMethodType getVisa() {
+		return visa;
+	}
+	public void setVisa(PayMethodType visa) {
+		this.visa = visa;
+	}
+	
+	
+	public PayMethodType getPaypal() {
+		return paypal;
+	}
+	public void setPaypal(PayMethodType paypal) {
+		this.paypal = paypal;
+	}
+	
+	@Column(name = "bank_draft")
+	public PayMethodType getBankDraft() {
+		return bankDraft;
+	}
+	public void setBankDraft(PayMethodType bankDraft) {
+		this.bankDraft = bankDraft;
 	}
 	
 	
