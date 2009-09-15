@@ -20,6 +20,9 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.config.Bank;
+import com.code.aon.config.BankAccount;
+import com.code.aon.config.IPayMethod;
 import com.code.aon.config.PayMethod;
 
 /**
@@ -30,7 +33,7 @@ import com.code.aon.config.PayMethod;
  */
 @Entity
 @Table(name = "rpaymethod")
-public class RegistryPayMethod implements ITransferObject {
+public class RegistryPayMethod implements ITransferObject, IPayMethod {
 
 	private static final long serialVersionUID = -8346359421638707402L;
 
@@ -273,6 +276,18 @@ public class RegistryPayMethod implements ITransferObject {
 	@Override
 	public String toString() {
 		return new PojoToStringBuilder(this).toString();
+	}
+
+	@Override
+	@Transient
+	public Bank getBank() {
+		return getRegistryBank()==null?null:getRegistryBank().getBank();
+	}
+
+	@Transient
+	@Override
+	public BankAccount getBankAccount() {
+		return getRegistryBank()==null?null:getRegistryBank().getBankAccount();
 	} 
     
 }
