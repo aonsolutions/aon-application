@@ -5,6 +5,7 @@ import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.accounting.AccountBudget;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.AccountEntryLink;
 import com.code.aon.accounting.AccountHelper;
 import com.code.aon.accounting.AccountSummary;
 import com.code.aon.accounting.Amortization;
@@ -180,6 +181,31 @@ public interface IAccountingAlias {
 	* Hibernate value: AccountEntryDetail.line
 	*/
 	String  ACCOUNT_ENTRY_DETAIL_LINE = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[12];
+
+
+
+	/** 
+	* DAOConstantsEntry for AccountEntryLink entity.
+	*/ 
+	DAOConstantsEntry ACCOUNT_ENTRY_LINK_ENTRY = DAOConstants.getDAOConstant(AccountEntryLink.class);
+
+	/** 
+	* Alias value: AccountEntryLink_entryFrom_id
+	* Hibernate value: AccountEntryLink.entryFrom.id
+	*/
+	String  ACCOUNT_ENTRY_LINK_ENTRY_FROM_ID = ACCOUNT_ENTRY_LINK_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AccountEntryLink_entryTo_id
+	* Hibernate value: AccountEntryLink.entryTo.id
+	*/
+	String  ACCOUNT_ENTRY_LINK_ENTRY_TO_ID = ACCOUNT_ENTRY_LINK_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AccountEntryLink_id
+	* Hibernate value: AccountEntryLink.id
+	*/
+	String  ACCOUNT_ENTRY_LINK_ID = ACCOUNT_ENTRY_LINK_ENTRY.getAliasNames()[2];
 
 
 
@@ -599,46 +625,64 @@ public interface IAccountingAlias {
 	String  LOAN_EXPENSES = LOAN_ENTRY.getAliasNames()[2];
 
 	/** 
+	* Alias value: Loan_feeAmount
+	* Hibernate value: Loan.feeAmount
+	*/
+	String  LOAN_FEE_AMOUNT = LOAN_ENTRY.getAliasNames()[3];
+
+	/** 
 	* Alias value: Loan_id
 	* Hibernate value: Loan.id
 	*/
-	String  LOAN_ID = LOAN_ENTRY.getAliasNames()[3];
+	String  LOAN_ID = LOAN_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Loan_interest
 	* Hibernate value: Loan.interest
 	*/
-	String  LOAN_INTEREST = LOAN_ENTRY.getAliasNames()[4];
+	String  LOAN_INTEREST = LOAN_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Loan_loanDate
 	* Hibernate value: Loan.loanDate
 	*/
-	String  LOAN_LOAN_DATE = LOAN_ENTRY.getAliasNames()[5];
+	String  LOAN_LOAN_DATE = LOAN_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Loan_payDay
+	* Hibernate value: Loan.payDay
+	*/
+	String  LOAN_PAY_DAY = LOAN_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Loan_recurrence
+	* Hibernate value: Loan.recurrence
+	*/
+	String  LOAN_RECURRENCE = LOAN_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Loan_registryBank_id
 	* Hibernate value: Loan.registryBank.id
 	*/
-	String  LOAN_REGISTRY_BANK_ID = LOAN_ENTRY.getAliasNames()[6];
+	String  LOAN_REGISTRY_BANK_ID = LOAN_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Loan_review
 	* Hibernate value: Loan.review
 	*/
-	String  LOAN_REVIEW = LOAN_ENTRY.getAliasNames()[7];
+	String  LOAN_REVIEW = LOAN_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Loan_securityLevel
 	* Hibernate value: Loan.securityLevel
 	*/
-	String  LOAN_SECURITY_LEVEL = LOAN_ENTRY.getAliasNames()[8];
+	String  LOAN_SECURITY_LEVEL = LOAN_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Loan_term
 	* Hibernate value: Loan.term
 	*/
-	String  LOAN_TERM = LOAN_ENTRY.getAliasNames()[9];
+	String  LOAN_TERM = LOAN_ENTRY.getAliasNames()[12];
 
 
 
@@ -755,6 +799,12 @@ public interface IAccountingAlias {
 	* Hibernate value: Period.initiationDate
 	*/
 	String  PERIOD_INITIATION_DATE = PERIOD_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Period_status
+	* Hibernate value: Period.status
+	*/
+	String  PERIOD_STATUS = PERIOD_ENTRY.getAliasNames()[3];
 
 
 }

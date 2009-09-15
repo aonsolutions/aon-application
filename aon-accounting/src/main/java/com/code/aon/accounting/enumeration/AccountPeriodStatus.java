@@ -8,38 +8,23 @@ import com.code.aon.common.enumeration.IResourceable;
 /**
  * The Enum AccountEntryType.
  */
-public enum AccountEntryType implements IResourceable {
+public enum AccountPeriodStatus implements IResourceable {
 	
-	OPENING,
-	CLOSING,
-	OPERATING,
-	MANUAL,
-	SALES_INVOICE,
-	PURCHASE_INVOICE,
-	EXPENSE_INVOICE,
-	INVESTMENT_INVOICE,
-	EXPENSES,
-	SALARY,
-	TAX,
-	LOAN,
-	LEASING,
-	PAYMENT,
-	COLLECTION,
-	STOCK_VARIATION,
-	AMORTIZATION,
-	SOCIAL_INSURANCE,
-	LOAN_FEE,
-	LEASING_FEE,
-	RETURNED_PAYMENT,
-	RETURNED_COLLECTION,
-	SOCIAL_INSURANCE_ADJUST;
-	
-	
+    ACTIVE,
+
+    INACTIVE,
+
+    OPENING,
+
+    OPERATING,
+
+    CLOSED;
+
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.accounting.i18n.messages";
 
     /** Message key prefix. */
-    private static final String MSG_KEY_PREFIX = "aon_enum_account_type_";
+    private static final String MSG_KEY_PREFIX = "aon_enum_account_period_status_";
 	
 	/**
 	 * Returns a <code>String</code> with the transalation <code>Locale</code>
