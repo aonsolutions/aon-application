@@ -60,7 +60,7 @@
 						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>
 
-					<c:if test="#{campaign.showSurvey}" >
+					<c:if test="#{aonConfiguration.bean.campaign.showSurvey}" >
 						<aon:outputLabel for="Action_survey_id" 
 							value="#{marketingBundle.marketing_survey}" />
 						<aon:div styleClass="aon-lookup">
@@ -93,7 +93,7 @@
 				
 			</aon:div>
 		</aon:form>	
-		<c:if test="#{campaign.showSurvey}" >
+		<c:if test="#{aonConfiguration.bean.campaign.showSurvey}" >
 			<aon:lookupButtonPopup lookup="#{surveyLookup}" />
 		</c:if>
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />

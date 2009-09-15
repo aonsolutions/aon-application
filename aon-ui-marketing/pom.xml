@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>3.5.1</version>
+			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>				
 		<dependency>
@@ -41,19 +41,19 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.commercial</artifactId>
-			<version>3.5.0</version>
+			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>3.10.1</version>			
+			<version>4.1.2</version>			
 			<scope>compile</scope>
 		</dependency>				
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
-			<version>3.10.0</version>
+			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
@@ -65,7 +65,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.messaging</artifactId>
-			<version>0.5.2</version>
+			<version>0.5.4</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -76,7 +76,7 @@
 		<dependency>
 			<groupId>javax.faces</groupId>
 			<artifactId>jsf-api</artifactId>
-			<version>1.2_12</version>
+			<version>1.2_13</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
