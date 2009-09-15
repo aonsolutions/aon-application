@@ -48,9 +48,9 @@ public class BasicPriceStrategy implements IPriceStrategy {
 	public double getBasePrice(ICalculable calc, boolean forceUnitPrice) {
 		double price = 0;
 		try {
-			if(forceUnitPrice){
+			if(forceUnitPrice) {
 				price = getUnitPrice(calc);
-			}else{
+			} else {
 				price = calc.getPrice();
 			}
 			price = (price + calc.getTaxes()) * calc.getQuantity();
@@ -83,31 +83,33 @@ public class BasicPriceStrategy implements IPriceStrategy {
 			Map<Integer,TaxBreakDown> map = new HashMap<Integer, TaxBreakDown>();
 			while(iter.hasNext()){
 				ICalculable calc = (ICalculable)iter.next();
-				double percent = 0;
-				double surcharge = 0;
-				TaxType taxType = calc.getItem().getProduct().getVat().getType();
-				if(icc.getDate().before(calc.getItem().getProduct().getVat().getStartDate())){
-					TaxDetail taxDetail = obtainTaxDetail(calc.getItem().getProduct().getVat(),icc.getDate());
-					if(taxDetail != null){
-						percent  = taxDetail.getValue();
-						surcharge = taxDetail.getSurcharge();
+				if (calc.getItem() != null && calc.getItem().getId() != null) {
+					double percent = 0;
+					double surcharge = 0;
+					TaxType taxType = calc.getItem().getProduct().getVat().getType();
+					if(icc.getDate().before(calc.getItem().getProduct().getVat().getStartDate())){
+						TaxDetail taxDetail = obtainTaxDetail(calc.getItem().getProduct().getVat(),icc.getDate());
+						if(taxDetail != null){
+							percent  = taxDetail.getValue();
+							surcharge = taxDetail.getSurcharge();
+						}
+					}else{
+						percent = calc.getItem().getProduct().getVat().getPercentage();
+						surcharge = calc.getItem().getProduct().getVat().getSurcharge();
 					}
-				}else{
-					percent = calc.getItem().getProduct().getVat().getPercentage();
-					surcharge = calc.getItem().getProduct().getVat().getSurcharge();
+					TaxBreakDown taxBreakDown;
+					if(map.containsKey(calc.getItem().getProduct().getVat().getId())){
+						taxBreakDown = map.get(calc.getItem().getProduct().getVat().getId());
+						taxBreakDown.setBase(taxBreakDown.getBase() + getBasePrice(calc)); 
+					}else{
+						taxBreakDown = new TaxBreakDown();
+						taxBreakDown.setTaxType(taxType);
+						taxBreakDown.setTaxPercent(percent);
+						taxBreakDown.setSurchargePercent(surcharge);
+						taxBreakDown.setBase(getBasePrice(calc));
+					}
+					map.put(calc.getItem().getProduct().getVat().getId(), taxBreakDown);
 				}
-				TaxBreakDown taxBreakDown;
-				if(map.containsKey(calc.getItem().getProduct().getVat().getId())){
-					taxBreakDown = map.get(calc.getItem().getProduct().getVat().getId());
-					taxBreakDown.setBase(taxBreakDown.getBase() + getBasePrice(calc)); 
-				}else{
-					taxBreakDown = new TaxBreakDown();
-					taxBreakDown.setTaxType(taxType);
-					taxBreakDown.setTaxPercent(percent);
-					taxBreakDown.setSurchargePercent(surcharge);
-					taxBreakDown.setBase(getBasePrice(calc));
-				}
-				map.put(calc.getItem().getProduct().getVat().getId(), taxBreakDown);
 			}
 			Iterator<TaxBreakDown> iterator = map.values().iterator();
 			while(iterator.hasNext()){
@@ -134,7 +136,9 @@ public class BasicPriceStrategy implements IPriceStrategy {
 		Iterator iter = icc.getDetailList().iterator();
 		while(iter.hasNext()){
 			ICalculable calc = (ICalculable)iter.next();
-			taxableBase += getBasePrice(calc);
+			if (calc.getItem() != null && calc.getItem().getId() != null) {
+				taxableBase += getBasePrice(calc);
+			}
 		}
 		if(icc.getDiscountExpression().getDiscounts() != null){
 			for(int i = 0;i<icc.getDiscountExpression().getDiscounts().length;i++){
@@ -148,13 +152,17 @@ public class BasicPriceStrategy implements IPriceStrategy {
 	 * @see com.code.aon.product.strategy.IPriceStrategy#getUnitPrice(com.code.aon.product.strategy.ICalculable)
 	 */
 	public double getUnitPrice(ICalculable calc) {
-		return calc.getItem().getPrice();
+		double price = 0;
+		if (calc.getItem() != null && calc.getItem().getId() != null) {
+			price = calc.getItem().getPrice();
+		}
+		return price;
 	}
 
 	@SuppressWarnings("unchecked")
 	public double getUnitPrice(ICalculable calc, Date date, Tariff tariff) {
 		try {
-			if (tariff != null) {
+			if (calc.getItem() != null && calc.getItem().getId() != null && tariff != null && tariff.getId() != null) {
 				IManagerBean tariffCatalogueBean = BeanManager.getManagerBean(TariffCatalogue.class);
 				IManagerBean catalogueItemBean = BeanManager.getManagerBean(CatalogueItem.class);
 				IManagerBean catalogueCategoryBean = BeanManager.getManagerBean(CatalogueCategory.class);
