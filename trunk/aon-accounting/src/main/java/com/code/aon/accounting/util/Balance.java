@@ -3,6 +3,7 @@ package com.code.aon.accounting.util;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.common.util.CommonUtil;
 
 public class Balance implements Serializable {
@@ -94,6 +95,19 @@ public class Balance implements Serializable {
 		if ( b > 0 ) {
 			setUnpaidBalance(b);
 		} else {
+			setCreditBalance(CommonUtil.round(b*(-1)));
+		}
+	}
+
+	public void addBalance( AccountEntryDetail detail) {
+		setDebit( CommonUtil.round(detail.getDebit() + getDebit()) );
+		setCredit( CommonUtil.round(detail.getCredit() + getCredit()) );
+		double b = CommonUtil.round(getDebit() - getCredit());
+		if ( b > 0 ) {
+			setUnpaidBalance(b);
+			setCreditBalance(0);
+		} else {
+			setUnpaidBalance(0);
 			setCreditBalance(CommonUtil.round(b*(-1)));
 		}
 	}

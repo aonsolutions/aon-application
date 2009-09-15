@@ -86,4 +86,13 @@ public class LoanFeeEntryHeader implements ITransferObject {
 		return CommonUtil.round( getAmortization() + getInterest() + getExpenses());
 	}
 
+	public boolean isSameAmount(){
+		if (getLoan() == null || getLoan().getId() == null) {
+			return false;
+		}
+		double a = getFee();
+		double b = getLoan().getFeeAmount();
+		return ( CommonUtil.round(a) == CommonUtil.round(b) );
+	}
+
 }
