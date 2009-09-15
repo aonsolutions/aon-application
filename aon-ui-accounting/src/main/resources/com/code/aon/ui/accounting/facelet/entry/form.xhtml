@@ -104,7 +104,7 @@
 								styleClass="aon-form-selectOneMenu-field"
 								value="#{accountEntry.to.accountPeriod}"
 								rendered="#{accountEntry.manual and accountEntry.new}">
-								<f:selectItems value="#{accountingCollections.accountPeriodKeys}" />
+								<f:selectItems value="#{accountingCollections.enabledAccountPeriodKeys}" />
 							</aon:selectOneMenu>
 							<aon:outputText value="#{accountEntry.to.accountPeriod}"
 								rendered="#{!accountEntry.manual or !accountEntry.new}" />

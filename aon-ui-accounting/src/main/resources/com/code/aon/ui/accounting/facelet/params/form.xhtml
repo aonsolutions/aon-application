@@ -37,7 +37,7 @@
 					<aon:selectOneMenu id="ACC_default_period"
 						value="#{accAppParams.parameters['ACC_DEFAULT_PERIOD'].value}">
 						<f:selectItem itemValue="" itemLabel=" " />
-						<f:selectItems value="#{accountingCollections.accountPeriodKeys}" />
+						<f:selectItems value="#{accountingCollections.enabledAccountPeriodKeys}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_sales_account"
@@ -103,6 +103,20 @@
 					<aon:selectOneMenu id="ACC_default_salary_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_SALARY_ACC'].value}">
 						<f:selectItems value="#{accountCollections.salaryAccountsIds}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel for="ACC_default_salary_allowance_account"
+						value="#{accountingBundle.accounting_def_salary_allowance_acc}" />
+					<aon:selectOneMenu id="ACC_default_salary_allowance_account"
+						value="#{accAppParams.parameters['ACC_DEFAULT_ALLOWANCE_ACC'].value}">
+						<f:selectItems value="#{accountCollections.salaryAllowanceAccountsIds}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="ACC_default_salary_compensation_account"
+						value="#{accountingBundle.accounting_def_salary_compensation_acc}" />
+					<aon:selectOneMenu id="ACC_default_salary_compensation_account"
+						value="#{accAppParams.parameters['ACC_DEFAULT_COMPENSATION_ACC'].value}">
+						<f:selectItems value="#{accountCollections.salaryCompensationAccountsIds}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_pending_salary_account"

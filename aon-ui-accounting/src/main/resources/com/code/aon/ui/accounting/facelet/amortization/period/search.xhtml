@@ -25,7 +25,7 @@
 					<aon:selectOneMenu id="Amortization_period" 
 						value="#{periodAmortization.period}">
 						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{accountingCollections.accountPeriods}" />
+						<f:selectItems value="#{accountingCollections.activeAccountPeriods}" />
 					</aon:selectOneMenu>
 				</ui:define>
 			</ui:decorate>

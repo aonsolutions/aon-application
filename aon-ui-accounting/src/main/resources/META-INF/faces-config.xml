@@ -745,59 +745,67 @@
 				<value-class>java.lang.String</value-class>
 				<map-entry>
 					<key>ACC_DEFAULT_SALES_ACC</key>
-					<value>700</value>
+					<value>700000000</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_PURCHASE_ACC</key>
-					<value>600</value>
+					<value>600000000</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_CHARGED_VAT_ACC</key>
-					<value>47700</value>
+					<value>477000000</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_PAID_VAT_ACC</key>
-					<value>47200</value>
+					<value>472000000</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_PAID_RET_ACC</key>
-					<value>47300</value>
+					<value>473000000</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_CHARGED_RET_ACC</key>
-					<value>47501</value>
+					<value>475100000</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_SALARY_CHARGED_RET_ACC</key>
-					<value>47501</value>
+					<value>475100000</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_CASH_ACC</key>
-					<value>570</value>
+					<value>570000000</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_SALARY_ACC</key>
-					<value>640</value>
+					<value>640000000</value>
+				</map-entry>
+				<map-entry>
+					<key>ACC_DEFAULT_ALLOWANCE_ACC</key>
+					<value>629000000</value>
+				</map-entry>
+				<map-entry>
+					<key>ACC_DEFAULT_COMPENSATION_ACC</key>
+					<value>641000000</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_PENDING_SALARY_ACC</key>
-					<value>465</value>
+					<value>465000000</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_SOCIAL_INSURANCE_ACC</key>
-					<value>476</value>
+					<value>476000000</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_COMPANY_SOC_INS_ACC</key>
-					<value>642</value>
+					<value>642000000</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_DEBT_INTEREST_ACC</key>
-					<value>662</value>
+					<value>662000000</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_FINAN_EXPENSES_ACC</key>
-					<value>669</value>
+					<value>669000000</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_VAT_PERCENT</key>
