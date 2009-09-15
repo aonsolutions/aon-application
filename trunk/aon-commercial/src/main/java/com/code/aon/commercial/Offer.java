@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,6 +21,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.commercial.dao.ICommercialAlias;
@@ -32,7 +34,12 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.Bank;
+import com.code.aon.config.BankAccount;
+import com.code.aon.config.IBankAccountContainer;
+import com.code.aon.config.IPayMethod;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.Scope;
 import com.code.aon.config.Tariff;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
@@ -45,7 +52,7 @@ import com.code.aon.seller.Seller;
  */
 @Entity
 @Table(name="offer")
-public class Offer implements ITransferObject, IHeaderObject, ICalculableContainer {
+public class Offer implements ITransferObject, IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod {
 	
 	private static final long serialVersionUID = 851446217271328802L;
 
@@ -98,10 +105,34 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
     /** The offer type. */
     private OfferType type;
     
+    /** The workplace. */
+	private WorkPlace workPlace;
+
+    /** The scope. */
+	private Scope scope;
+
+    /** The number of payments. */
+    private int numberOfPayments;
+
+    /** The days to first payment. */
+    private int daysToFirstPayment;
+
+    /** The days between payments. */
+    private int daysBetweenPayments;
+
+    /** The payment days. */
+    private String paymentDays;
+
+    private int[] paymentDaysArray;
+
+	/** The bank. */
+	private Bank bank;
+	
+	/** The bank account. */
+	private BankAccount bankAccount;
+	
 	/** The detail of this offer. */
 	private Set<OfferDetail> lines = new HashSet<OfferDetail>();
-
-	private WorkPlace workPlace;
 
     /**
      * Gets the id.
@@ -161,6 +192,15 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	public void setNumber(int number) {
 		this.number = number;
 	}
+
+    @Transient
+    public String getReferenceCode() {
+    	String referenceCode = "" + getNumber();
+		if (!StringUtils.isEmpty(getSeries())) {
+			referenceCode = getSeries() + "/" + referenceCode;
+		}
+    	return referenceCode;
+    }
 
 	/**
 	 * Gets the target.
@@ -356,16 +396,176 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 		this.type = type;
 	}
 	
+	/**
+	 * Gets the workplace.
+	 * 
+	 * @return the workplace
+	 */
     @ManyToOne
     @JoinColumn(name="workplace", nullable = false)
 	public WorkPlace getWorkPlace() {
 		return workPlace;
 	}
 
+	/**
+	 * Sets the workplace.
+	 * 
+	 * @param workplace the workplace
+	 */
 	public void setWorkPlace(WorkPlace workPlace) {
 		this.workPlace = workPlace;
 	}
 	
+	/**
+	 * Gets the scope.
+	 * 
+	 * @return the scope
+	 */
+    @ManyToOne
+    @JoinColumn(name="scope", nullable = false)
+	public Scope getScope() {
+		return scope;
+	}
+
+	/**
+	 * Sets the scope.
+	 * 
+	 * @param scope the scope
+	 */
+	public void setScope(Scope scope) {
+		this.scope = scope;
+	}
+	
+    /**
+     * Gets the number of payments.
+     * 
+     * @return the number of payments
+     */
+    @Column(name = "number_of_pymnts")
+    public int getNumberOfPayments() {
+        return numberOfPayments;
+    }
+
+    /**
+     * Sets the number of payments.
+     * 
+     * @param numberOfPayments the number of payments
+     */
+    public void setNumberOfPayments(int numberOfPayments) {
+        this.numberOfPayments = numberOfPayments;
+    }
+    
+    /**
+     * Gets the days to first payment.
+     * 
+     * @return the days to first payment
+     */
+    @Column(name = "days_to_first_pymnt")
+    public int getDaysToFirstPayment() {
+        return daysToFirstPayment;
+    }
+
+    /**
+     * Sets the days to first payment.
+     * 
+     * @param daysToFirstPayment the days to first payment
+     */
+    public void setDaysToFirstPayment(int daysToFirstPayment) {
+        this.daysToFirstPayment = daysToFirstPayment;
+    }
+
+    /**
+     * Gets the days between payments.
+     * 
+     * @return the days between payments
+     */
+    @Column(name = "days_between_pymnts")
+    public int getDaysBetweenPayments() {
+        return daysBetweenPayments;
+    }
+
+    /**
+     * Sets the days between payments.
+     * 
+     * @param daysBetweenPayment the days between payments
+     */
+    public void setDaysBetweenPayments(int daysBetweenPayment) {
+        this.daysBetweenPayments = daysBetweenPayment;
+    }
+
+    /**
+     * Gets the payment days.
+     * 
+     * @return the payment days
+     */
+    @Column(name="pymnt_days", length=8)
+    public String getPaymentDays() {
+        return paymentDays;
+    }
+    
+    /** The DELIM. */
+    private final String DELIM = " ";
+    
+    /**
+     * Sets the payment days.
+     * 
+     * @param paymentDays the payment days
+     */
+    public void setPaymentDays(String paymentDays) {
+        this.paymentDays = paymentDays;
+        StringTokenizer strTknzr = new StringTokenizer(this.paymentDays,DELIM);
+    	int[] values = new int[strTknzr.countTokens()];
+    	for (int i = 0; i < values.length; i++){
+    		values[i] = Integer.parseInt(strTknzr.nextToken());
+    	}    	
+        this.paymentDaysArray = values;
+    }
+
+    @Transient
+    public int[] getPaymentDaysArray() {
+    	return paymentDaysArray;
+    }
+
+	/**
+	 * Gets the bank.
+	 * 
+	 * @return the bank
+	 */
+	@ManyToOne
+    @JoinColumn(name="bank")
+	public Bank getBank() {
+		return bank;
+	}
+
+	/**
+	 * Sets the bank.
+	 * 
+	 * @param bank the bank
+	 */
+	public void setBank(Bank bank) {
+		this.bank = bank;
+	}
+
+	/**
+	 * Gets the bank account.
+	 * 
+	 * @return the bank account
+	 */
+	@Column(name="bank_account", length=30)
+	@Type(type="com.code.aon.config.hibernate.BankAccountType")
+	public BankAccount getBankAccount() {
+		return bankAccount;
+	}
+
+	/**
+	 * Sets the bank account.
+	 * 
+	 * @param bankAccount the bank account
+	 */
+	public void setBankAccount(BankAccount bankAccount) {
+		this.bankAccount = bankAccount;
+	}
+
 	/**
 	 * Gets the lines.
 	 * 
@@ -394,6 +594,16 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	@Transient
 	public Date getDate() {
 		return issueDate;
+	}
+
+	/**
+	 * Gets the payMethod. Necessary to implement <code>IPayMethod</code>
+	 * 
+	 * @return the payMethod
+	 */
+	@Transient
+	public PayMethod getPayment() {
+		return payMethod;
 	}
 
 	/**
