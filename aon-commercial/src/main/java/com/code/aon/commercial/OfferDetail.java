@@ -35,6 +35,9 @@ public class OfferDetail implements ITransferObject, ICalculable {
 	/** The offer. */
 	private Offer offer;
 	
+	/** The line. */
+	private Integer line;
+
 	/** The item. */
 	private Item item;
 
@@ -95,12 +98,30 @@ public class OfferDetail implements ITransferObject, ICalculable {
 	}
 
 	/**
+	 * Gets the line.
+	 * 
+	 * @return the line
+	 */
+    public Integer getLine() {
+		return line;
+	}
+
+	/**
+	 * Sets the line.
+	 * 
+	 * @param line the line
+	 */
+	public void setLine(Integer line) {
+		this.line = line;
+	}
+
+	/**
 	 * Gets the item.
 	 * 
 	 * @return the item
 	 */
 	@ManyToOne (fetch=FetchType.EAGER)
-	@JoinColumn( name="item", nullable=false )
+	@JoinColumn( name="item" )
 	public Item getItem() {
 		return item;
 	}
@@ -119,6 +140,7 @@ public class OfferDetail implements ITransferObject, ICalculable {
      * 
      * @return the description
      */
+	@Column(length=1024)
     public String getDescription() {
         return description;
     }

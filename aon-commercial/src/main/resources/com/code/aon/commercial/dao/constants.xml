@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dao>
 	<bean class="com.code.aon.commercial.Target" sqlName="target">
-		<alias names="advertising,id,registry_id,registry_name,registry_surname,registry_alias,registry_document,withholding"/>
-		<hibernate names="advertising,id,registry.id,registry.name,registry.surname,registry.alias,registry.document,withholding"/>
+		<alias names="id,registry_id,registry_name,registry_surname,registry_alias,registry_document,advertising,withholding"/>
+		<hibernate names="id,registry.id,registry.name,registry.surname,registry.alias,registry.document,advertising,withholding"/>
 	</bean>	
 	<bean class="com.code.aon.commercial.OfferDetail">
-		<alias names="description,discountExpression,id,item_id,offer_id,price,quantity,status,item_product_type"/>
-		<hibernate names="description,discountExpression,id,item.id,offer.id,price,quantity,status,item.product.type"/>
+		<alias names="id,offer_id,line,item_id,item_product_type,description,quantity,price,discountExpression,status"/>
+		<hibernate names="id,offer.id,line,item.id,item.product.type,description,quantity,price,discountExpression,status"/>
 	</bean>
 </dao>
