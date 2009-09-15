@@ -245,7 +245,7 @@ public class Registry implements ITransferObject {
 	
     @Transient
     public String getFullName() {
-    	return getName() + " " + ((getSurname() == null) ? "" : getSurname());
+    	return ((getName() == null) ? "" : getName()) + " " + ((getSurname() == null) ? "" : getSurname());
     }
 
     /**
