@@ -25,6 +25,7 @@
 						<aon:commandButton id="#{lookupId}-close" type="button"
 							reRender="#{lookupId}ReRender" styleClass="aon-popupWindow-close"
 							actionListener="#{lookup.onCloseWindow}" immediate="true">
+							<aon:actionHotKey key="esc" />
 							<rich:componentControl for="#{lookupId}" event="onclick"
 								disableDefault="true" operation="hide" />
 						</aon:commandButton>
@@ -37,7 +38,6 @@
 							<aon:div style="width:99%">
 								<aon:form id="#{lookup.beanName}Form">
 								
-									<aon:hotKey key="esc" elementId="#{lookupId}-close" handlerEx="{element}.click();"/>	
 									<c:if
 										test="#{(lookup.listPagePath != null) and (lookup.selectedPanel == 'list')}">
 										<a4j:include viewId="listContent.xhtml" />

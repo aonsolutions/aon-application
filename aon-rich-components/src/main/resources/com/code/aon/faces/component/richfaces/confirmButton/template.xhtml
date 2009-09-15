@@ -9,8 +9,6 @@
 
 	<aon:panelGroup id="#{confirmId}ReRender" styleClass="aon-popupWindow">
 		<c:if test="#{confirmShowWindow}">
-			<aon:hotKey key="esc" elementId="#{confirmId}-close" handlerEx="{element}.click();"/>		
-			<aon:hotKey key="return" elementId="#{confirmId}-yes" handlerEx="{element}.click();"/>
 			<aon:subForm id="#{confirmId}Form">
 				<rich:modalPanel 
 					id="#{confirmId}"
@@ -26,9 +24,10 @@
 						<aon:commandButton id="#{confirmId}-close"
 							reRender="#{confirmId}ReRender" immediate="true"
 							type="button" styleClass="aon-popupWindow-close" >
+							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener target="#{confirmShowWindow}" value="false" />						
 							<rich:componentControl for="#{confirmId}" event="onclick"
-								disableDefault="true" operation="hide"/>
+								disableDefault="true" operation="hide"/>								
 						</aon:commandButton>	
 					</f:facet>
 	
@@ -44,6 +43,7 @@
 									action="#{confirmAction}" immediate="#{immediate}"
 									reRender="#{confirmReRender}"
 									styleClass="aon-commandButton" >
+									<aon:actionHotKey key="return" />
 									<c:if test="#{confirmActionListener != null}">									
 										<aon:actionListener method="#{confirmActionListener}" />
 									</c:if>

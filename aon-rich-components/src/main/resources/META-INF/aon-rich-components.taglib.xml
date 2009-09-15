@@ -543,13 +543,13 @@
 		</component>
 	</tag>
 	<tag>
-		<tag-name>hotKey</tag-name>
+		<tag-name>actionHotKey</tag-name>
 		<component>
 			<component-type>
 				com.code.aon.faces.HotKey
 			</component-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.hotkey.HotKeyHandler
+				com.code.aon.faces.component.richfaces.actionHotKey.ActionHotKeyHandler
 			</handler-class>
 		</component>
 	</tag>	<tag>
