@@ -17,12 +17,12 @@ public enum OfferDetailStatus implements IResourceable {
 	/** PENDING. */
 	PENDING,
     
-	/** SETTLED. */
-	SETTLED,
-    
-	/** CLOSED. */
-	CLOSED;
-    
+	/** ON_SALE. */
+	ON_SALE,
+
+	/** ON_INVOICE. */
+	ON_INVOICE;
+
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.commercial.i18n.messages";
     
