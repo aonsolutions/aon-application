@@ -22,13 +22,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.commercial</artifactId>
-			<version>4.0.0</version>
+			<version>4.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.product</artifactId>
-			<version>4.1.0</version>
+			<version>4.2.0</version>
 			<scope>compile</scope>
 		</dependency>
 		 <dependency>
