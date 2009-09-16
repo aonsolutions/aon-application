@@ -16,6 +16,14 @@ public interface IRichFacesTags {
 	
 	String ON_COMPLETE = "oncomplete";
 	
-   	String DISABLE_HOT_KEYS = "disableHotKeys";   	
+   	String DISABLE_HOT_KEYS = "disableHotKeys";
+   	
+   	String VALUE = "value";
+   	
+   	String CONVERTER = "converter";
+   	
+	String NAME = "name";	
+	
+	String DEFAULT = "default";   	
 	
 }

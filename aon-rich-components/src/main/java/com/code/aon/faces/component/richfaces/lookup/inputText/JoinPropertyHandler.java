@@ -10,6 +10,7 @@ import javax.el.ValueExpression;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 
+import com.code.aon.faces.component.richfaces.IRichFacesTags;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.FaceletException;
 import com.sun.facelets.tag.TagAttribute;
@@ -21,7 +22,7 @@ import com.sun.facelets.tag.TagHandler;
  * @author Consulting & Development. Iñaki Ayerbe - 27/11/2006
  *
  */
-public class JoinPropertyHandler extends TagHandler {
+public class JoinPropertyHandler extends TagHandler implements IRichFacesTags {
 
     private final TagAttribute aliasTag;
     
@@ -35,7 +36,7 @@ public class JoinPropertyHandler extends TagHandler {
 	public JoinPropertyHandler(TagConfig config) {
 		super(config);
 		this.aliasTag = this.getRequiredAttribute("alias");
-		this.valueTag = this.getRequiredAttribute("value");
+		this.valueTag = this.getRequiredAttribute(VALUE);
 	}
 
 	@Override

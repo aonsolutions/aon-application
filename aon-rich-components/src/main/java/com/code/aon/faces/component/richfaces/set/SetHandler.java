@@ -7,13 +7,14 @@ import javax.el.ValueExpression;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 
+import com.code.aon.faces.component.richfaces.IRichFacesTags;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.FaceletException;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.TagConfig;
 import com.sun.facelets.tag.TagHandler;
 
-public class SetHandler extends TagHandler {
+public class SetHandler extends TagHandler implements IRichFacesTags {
 
     private final TagAttribute var;
     
@@ -21,7 +22,7 @@ public class SetHandler extends TagHandler {
     
     public SetHandler(TagConfig config) {
         super(config);
-        this.value = this.getRequiredAttribute("value");
+        this.value = this.getRequiredAttribute(VALUE);
         this.var = this.getRequiredAttribute("var");
     }
 

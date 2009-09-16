@@ -89,7 +89,7 @@ public class LookupInputTextHandler extends AonAjaxInputHandler implements ILook
 	}		
 	
 	private ValueExpression getPropertyExpression( FaceletContext ctx, HtmlLookupInputText text ) {
-		ValueExpression ve = text.getValueExpression("value");
+		ValueExpression ve = text.getValueExpression(VALUE);
 		String propertyClassName = getPropertyClassName(ctx, text);
 		while (ve != null) {
 			Class<?> type = null;
