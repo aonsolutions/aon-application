@@ -2,6 +2,7 @@ package com.code.aon.ui.commercial.controller;
 
 import java.util.Date;
 
+import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.commercial.Offer;
@@ -17,13 +18,31 @@ import com.code.aon.ui.form.LinesController;
 
 public class OfferDetailController extends LinesController {
 
+	private boolean longDescription;
+
 	private IPriceStrategy priceStrategy;
 	
+	public boolean isLongDescription() {
+		return longDescription;
+	}
+
+	public void setLongDescription(boolean longDescription) {
+		this.longDescription = longDescription;
+	}
+
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
 		}
 		return priceStrategy;
+	}
+
+	public void onLongDescription(ActionEvent event) {
+		setLongDescription(true);
+	}
+
+	public void onShortDescription(ActionEvent event) {
+		setLongDescription(false);
 	}
 
 	public void onItemChanged(LookupChangeEvent event) {
