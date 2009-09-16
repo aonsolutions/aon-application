@@ -1,9 +1,11 @@
 package com.code.aon.ui.commercial.controller;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
@@ -15,32 +17,80 @@ import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Bank;
+import com.code.aon.config.BankAccount;
+import com.code.aon.config.PayMethod;
 import com.code.aon.config.Series;
 import com.code.aon.config.util.SeriesNumberUtil;
+import com.code.aon.finance.Invoice;
+import com.code.aon.finance.bridge.invoicing.OfferInvoicingManager;
+import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
+import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 
 /**
  * Controller used in the offer maintenance.
  */
 public class OfferController extends BasicController {
 
+	private static final String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
+
 	private List<SelectItem> addresses;
 
+	private Boolean defaultPayMethod;
+
 	private IPriceStrategy priceStrategy;
+	
+	public List<SelectItem> getAddresses() {
+		return addresses;
+	}
+	
+	public void setAddresses(List<SelectItem> addresses) {
+		this.addresses = addresses;
+	}
+	
+	public Boolean getDefaultPayMethod() {
+		return defaultPayMethod;
+	}
+	
+	public void setDefaultPayMethod(Boolean defaultPayMethod) {
+		this.defaultPayMethod = defaultPayMethod;
+		if (defaultPayMethod != null && defaultPayMethod) {
+			resetOfferPayMethod();
+		}
+	}
 	
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
 		}
 		return priceStrategy;
+	}
+
+	public boolean isPending(){
+		Offer offer = (Offer)this.getTo();
+		if (offer.getStatus() != null) {
+			return offer.getStatus().equals(OfferStatus.PENDING);
+		}
+		return false;
+	}
+
+	public boolean isApproved(){
+		Offer offer = (Offer)this.getTo();
+		if (offer.getStatus() != null) {
+			return offer.getStatus().equals(OfferStatus.APPROVED);
+		}
+		return false;
 	}
 
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
@@ -51,19 +101,12 @@ public class OfferController extends BasicController {
 		}
 	}
 
-	public boolean isProcessed(){
-		Offer offer = (Offer)this.getTo();
-		if (offer.getStatus() != null) {
-			return offer.getStatus().equals(OfferStatus.PROCESSED);
-		}
-		return false;
-	}
-
 	public void targetData(LookupChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Target target = (Target)event.getNewValue();
 			((Offer)this.getTo()).setTarget(target);
 			loadAddresses(target.getId());
+			loadDefaultPayMethod(target.getId());
 		} else {
 			setAddresses(null);
 		}
@@ -89,21 +132,39 @@ public class OfferController extends BasicController {
 		this.addresses = addresses;
 	}
 
-	public List<SelectItem> getAddresses() {
-		return addresses;
-	}
-	
-	public void setAddresses(List<SelectItem> addresses) {
-		this.addresses = addresses;
-	}
-	
 	public int getAddressCount() {
 		if (addresses != null){
 			return addresses.size();
 		}
 		return 0;
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	public void loadDefaultPayMethod(Integer id) throws ManagerBeanException {
+		if (id != null) {
+			if (((Offer)this.getTo()).getPayMethod() != null && ((Offer)this.getTo()).getPayMethod().getId() != null) {
+				setDefaultPayMethod(false);
+			} else {
+				IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(rPayMethodBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), id);
+				Iterator iter = rPayMethodBean.getList(criteria).iterator();
+				setDefaultPayMethod(iter.hasNext());
+			}
+		}
+	}
+
+	public void resetOfferPayMethod() {
+		Offer to = (Offer)this.getTo();
+		to.setPayMethod(new PayMethod());
+		to.setNumberOfPayments(1);
+		to.setDaysToFirstPayment(0);
+		to.setDaysBetweenPayments(0);
+		to.setPaymentDays("");
+		to.setBank(new Bank());
+		to.setBankAccount(new BankAccount());
+	}
+
 	public void sellerData(LookupChangeEvent event) {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Seller seller = (Seller)event.getNewValue();
@@ -119,15 +180,23 @@ public class OfferController extends BasicController {
 		return getPriceStrategy().getTotalPrice((ICalculableContainer)getTo(), ((Offer)getTo()).getTarget());
 	}
 
-	
-	/*
-	@SuppressWarnings("unused")
-    public void onReport(ActionEvent event) {
-        ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
-        manager.setReportKey("offer");
-        manager.setOutputFormat(OutputFormat.PDF);
-    }
-    */
+	public double getOfferTotalPrice() throws ManagerBeanException {
+		Offer offer = (Offer)this.getModel().getRowData();
+		return getPriceStrategy().getTotalPrice(offer, offer.getTarget());
+	}
+
+	public void onInvoice(ActionEvent event) throws ManagerBeanException {
+		Offer to = (Offer)this.getTo();
+		OfferInvoicingManager invoicingManager = new OfferInvoicingManager();
+		Invoice invoice = invoicingManager.invoice(to, to.getSeries(), new Date());
+
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		IController saleInvoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
+		saleInvoiceController.clearCriteria();
+		saleInvoiceController.getCriteria().addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
+		saleInvoiceController.onSearch(null);
+	}
+
 
 	/***************************************************************************************
 	 *	BOTON DE TRASPASO A PEDIDO CREADO PARA DEMO DEL 03/12/2008. BORRAR POSTERIORMENTE 
@@ -140,7 +209,7 @@ public class OfferController extends BasicController {
 		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 
 		Sales sales = new Sales();
-		sales.setSeries(offer.getSeries());
+		sales.setSeries(offer.getSeries()); //Pedir!!
 		sales.setNumber(SeriesNumberUtil.obtainNumber(offer.getSeries(), "Sales"));
 		sales.setCustomer(obtainCustomer(offer));
 		sales.setShippingAddress(offer.getAddress());
@@ -177,43 +246,6 @@ public class OfferController extends BasicController {
 		salesController.onSearch(null);
 	}
 
-	private Customer obtainCustomer(Offer offer) throws ManagerBeanException {
-		IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(customerBean.getFieldName(ICustomerAlias.CUSTOMER_REGISTRY_ID), offer.getTarget().getRegistry().getId());
-		Iterator iterator = customerBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
-			return (Customer)iterator.next();
-		} else {
-			Customer customer = new Customer();
-			customer.setRegistry(offer.getTarget().getRegistry());
-			customer.setTariff(offer.getTariff());
-			customer.setStatus(CustomerStatus.ACTIVE);
-			customer.setScope(obtainGenericScope());
-			return (Customer)customerBean.insert(customer);
-		}
-	}
-
-	private Scope obtainGenericScope() {
-		Scope scope = new Scope();
-		scope.setId(1);
-		return scope;
-	}
-
-	
-	public void sendFarsaMail(ActionEvent event ) {
-		Offer offer = (Offer)getTo();
-		String email = "cliente@esferalia.com";
-		try {
-			email = offer.getTarget().getRegistry().getEmail().getValue(); 
-		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-		}	
-		AonUtil.addErrorMessage("No se pudo enviar el correo electrónico a " +
-				email + "." +
-				" No se puede resolver la dirección del servidor de correo saliente (pop3.esferalia.com)."
-				);
-	}
 */
 	/***************************************************************************************
 	 *	BOTON DE TRASPASO A PEDIDO CREADO PARA DEMO DEL 03/12/2008. BORRAR POSTERIORMENTE 
