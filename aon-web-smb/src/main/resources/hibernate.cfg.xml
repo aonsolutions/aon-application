@@ -18,6 +18,7 @@
 		<mapping class="com.code.aon.accounting.AutoConcept"/>
 		<mapping class="com.code.aon.accounting.AccountEntry"/>
 		<mapping class="com.code.aon.accounting.AccountEntryDetail"/>
+		<mapping class="com.code.aon.accounting.AccountEntryLink"/>		
 		<mapping class="com.code.aon.accounting.AccountHelper"/>
 		<mapping class="com.code.aon.accounting.AccountSummary"/>
 		<mapping class="com.code.aon.accounting.Amortization"/>
@@ -28,7 +29,7 @@
 		<mapping class="com.code.aon.accounting.Loan"/>
 		<mapping class="com.code.aon.accounting.Leasing"/>
 		<mapping class="com.code.aon.accounting.Period"/>
-		
+
 		<!-- AON-ACCOUNT-BRIDGE Mapping files -->
 		<mapping class="com.code.aon.account.bridge.CustomerAccount"/>
 		<mapping class="com.code.aon.account.bridge.SupplierAccount"/>
