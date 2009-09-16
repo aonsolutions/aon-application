@@ -186,7 +186,6 @@ public class CommercialCollectionsController {
 		return activities;
 	}	
 
-	@SuppressWarnings("unchecked")
 	public void refreshActivities() throws ManagerBeanException {
 		activities = new LinkedList<SelectItem>();
 		IManagerBean activityBean = BeanManager.getManagerBean(CommercialActivity.class);
