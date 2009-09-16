@@ -285,13 +285,6 @@
 		</component>
 	</tag>
 	<tag>
-		<tag-name>subForm</tag-name>
-		<component>
-			<component-type>org.apache.myfaces.SubForm</component-type>
-			<renderer-type>org.apache.myfaces.SubForm</renderer-type>
-		</component>
-	</tag>
-	<tag>
 		<tag-name>confirmButton</tag-name>
 		<component>
 			<component-type>
