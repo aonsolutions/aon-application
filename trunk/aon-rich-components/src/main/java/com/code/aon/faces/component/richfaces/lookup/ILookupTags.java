@@ -10,6 +10,8 @@ public interface ILookupTags {
 	
 	String WINDOW_TITLE = "windowTitle";
 	
+	String WINDOW_CLOSE_FOCUS = "windowCloseFocus";
+	
 	String SELECT_RE_RENDER = "selectReRender";
 	
 	String MIN_WIDTH = "minWidth";

@@ -13,7 +13,7 @@
 			type="reset" ajaxSingle="true" reRender="#{lookupId}LookupContent"
 			styleClass="aon-finding-toolbar-item aon-icon-rubber" />			
 		<aon:commandButton id="back" value="#{bundle.aon_back}"
-			reRender="#{lookupId}ReRender"
+			reRender="#{lookupId}ReRender" focus="#{lookup.windowCloseFocus}"
 			actionListener="#{lookup.onCloseWindow}" immediate="true"
 			styleClass="aon-finding-toolbar-item aon-icon-cancel"
 			accesskey="#{bundle.aon_key_cancel}" >
