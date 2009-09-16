@@ -159,7 +159,10 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 		if (! FaceletUtil.hasValue(ctx, tag, HTML.STYLE_CLASS_ATTR) ) {
 			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, HTML.STYLE_CLASS_ATTR, getStyleClass(button, type) );
 		}
+		String buttonId = button.getClientId(ctx.getFacesContext());
+		button.setWindowCloseFocus( buttonId );
 		super.applyNextHandler(ctx, c);
 	}
+
 	
 }

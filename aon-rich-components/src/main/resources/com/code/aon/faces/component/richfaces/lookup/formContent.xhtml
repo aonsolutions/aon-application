@@ -13,19 +13,20 @@
 			actionListener="#{lookup.accept}" reRender="#{lookupId}LookupContent"
 			styleClass="aon-finding-toolbar-item aon-icon-accept"
 			accesskey="#{bundle.aon_key_save}" />
-		<aon:commandButton id="cancelLookup" value="#{bundle.aon_cancel}" immediate="true"
+		<aon:commandButton id="cancelLookup" value="#{bundle.aon_cancel}"
 			actionListener="#{lookup.onCloseWindow}" rendered="#{lookup.new}"
+			focus="#{lookup.windowCloseFocus}" immediate="true"
 			styleClass="aon-finding-toolbar-item aon-icon-cancel"
 			accesskey="#{bundle.aon_key_cancel}" >
 			<rich:componentControl for="#{lookupId}" event="onclick"
 				disableDefault="true" operation="hide" />					
 		</aon:commandButton>
-		<aon:commandButton id="closeLookup" value="#{bundle.aon_close}"
-			rendered="#{!lookup.new}" immediate="true" 
-			actionListener="#{lookup.onFormSelect}"
+		<aon:commandButton id="closeLookup" value="#{bundle.aon_close}"  
+			actionListener="#{lookup.onFormSelect}" rendered="#{!lookup.new}"
+			focus="#{lookup.windowCloseFocus}" immediate="true"
+			reRender="#{lookup.component.selectReRender}"
 			styleClass="aon-finding-toolbar-item aon-icon-cancel"
-			accesskey="#{bundle.aon_key_close}"
-			reRender="#{lookup.component.selectReRender}">
+			accesskey="#{bundle.aon_key_close}" >
 			<rich:componentControl for="#{lookupId}" event="onclick"
 				disableDefault="true" operation="hide" />					
 		</aon:commandButton>					
