@@ -196,8 +196,8 @@ public class SaleInvoiceController extends InvoiceController implements IFinance
 
 	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
     	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression(StringUtils.capitalize(this.getBeanName()) + ".type", InvoiceType.SALES.ordinal());
-    	return SeriesNumberUtil.obtainNumber(seriesId, this.getBeanName(), criteria);
+    	criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
+    	return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
 	}
 
 	@SuppressWarnings("unchecked")
