@@ -14,6 +14,7 @@ import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.richfaces.AonAjaxCommandHandler;
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
 import com.code.aon.faces.component.util.FaceletUtil;
+import com.code.aon.faces.component.util.HTML;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.el.VariableMapperWrapper;
 import com.sun.facelets.tag.TagAttribute;
@@ -25,17 +26,21 @@ import com.sun.facelets.tag.jsf.ComponentSupport;
  * 
  * @author atellitu
  */
-public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRichFacesTags {
+public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRichFacesTags, HTML {
 
-	private static final String CONFIRM_ID = "confirmId";
-
+	private static final String PREFFIX = "aon_cb_";
+	
     private static final String COMPONENT_TYPE = "com.code.aon.faces.HtmlConfirmButton";
 	
-	private static final String CONFIRM_SHOW_WINDOW = "confirmShowWindow";
+	private static final String CONFIRM_SHOW_WINDOW = "showWindow";
 	
 	private static final String CONFIRM_ACTION = "confirmAction";
 
 	private static final String CONFIRM_ACTION_LISTENER = "confirmActionListener";
+	
+	private static final String CONFIRM_ON_CLICK = "confirmOnClick";
+	
+	private static final String CONFIRM_ON_COMPLETE = "confirmOnComplete";
 
 	private static final String CANCEL_ACTION = "cancelAction";
 
@@ -48,8 +53,6 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 	private static final String CONFIRM_MESSAGE = "confirmMessage";
 
 	private static final String IMMEDIATE = "immediate";
-	
-	private static final String CONFIRM_RE_RENDER = "confirmReRender";
 	
 	private static final String TEMPLATE_PATH = "com/code/aon/faces/component/richfaces/confirmButton/";
 
@@ -105,15 +108,10 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 		String expr = "#{view.attributes['" + getStateKey(component) + "']}";
 		return ctx.getExpressionFactory().createValueExpression( ctx, expr, Object.class );
 	}
-
-	private ValueExpression getButtonClickExpression( FaceletContext ctx, String id ) {
-		String expr = "#{rich:element('" + id + "')}.click();";
-		return FaceletUtil.getValueExpression(ctx, expr, Object.class);
-	}	
 	
 	private void insertInnerTemplate(FaceletContext ctx, UIComponent component) {
 		VariableMapper newMapper = new VariableMapperWrapper(ctx.getVariableMapper());
-		newMapper.setVariable(CONFIRM_SHOW_WINDOW, getStateExpression(ctx, component));
+		newMapper.setVariable(PREFFIX + CONFIRM_SHOW_WINDOW, getStateExpression(ctx, component));
 		FaceletUtil.insertTemplate(ctx, tag, component, FaceletUtil.getTemplate(INNER_TEMPLATE), newMapper);
 	}
 	
@@ -131,20 +129,14 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 	private void addAttribues( FaceletContext ctx, UIComponent component ) {
 		VariableMapper mapper = ctx.getVariableMapper();
 		TagAttribute tagImmediate = getAttribute(IMMEDIATE);
-		if (tagImmediate != null) {
-			mapper.setVariable(IMMEDIATE, getValueExpression(ctx,
-					tagImmediate));
-		} else {
-			mapper.setVariable(IMMEDIATE, ctx.getExpressionFactory()
-					.createValueExpression(ctx, "false", Boolean.class));
-		}
+		mapper.setVariable(PREFFIX + IMMEDIATE, FaceletUtil.getBooleanValueExpression(ctx, tagImmediate));
 		String panelId = getModalPanelId(ctx);
 		ValueExpression id = ctx.getExpressionFactory().createValueExpression(
 				ctx, panelId, String.class);
-		mapper.setVariable(CONFIRM_ID, id);
-		mapper.setVariable(CONFIRM_SHOW_WINDOW, getStateExpression(ctx, component));
-		mapper.setVariable(CONFIRM_TITLE, getValueExpression(ctx, titleTag));
-		mapper.setVariable(CONFIRM_MESSAGE, getValueExpression(ctx,
+		mapper.setVariable(PREFFIX + ID_ATTR, id);
+		mapper.setVariable(PREFFIX + CONFIRM_SHOW_WINDOW, getStateExpression(ctx, component));
+		mapper.setVariable(PREFFIX + CONFIRM_TITLE, getValueExpression(ctx, titleTag));
+		mapper.setVariable(PREFFIX + CONFIRM_MESSAGE, getValueExpression(ctx,
 				messageTag));
 		ValueExpression action = getMethodExpression(ctx, CONFIRM_ACTION,
 				String.class, FaceletUtil.ACTION_SIG);
@@ -152,7 +144,7 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 			action = FaceletUtil.getMethodEmptyExpression(ctx, CONFIRM_ACTION,
 					String.class, FaceletUtil.ACTION_SIG);
 		}
-		mapper.setVariable(CONFIRM_ACTION, action);
+		mapper.setVariable(PREFFIX + CONFIRM_ACTION, action);
 		ValueExpression al = getMethodExpression(ctx, CONFIRM_ACTION_LISTENER,
 				null, FaceletUtil.ACTION_LISTENER_SIG);
 		if (al != null) {
@@ -164,19 +156,27 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 			cancelAction = FaceletUtil.getMethodEmptyExpression(ctx, CANCEL_ACTION,
 					String.class, FaceletUtil.ACTION_SIG);
 		}
-		mapper.setVariable(CANCEL_ACTION, cancelAction);
+		mapper.setVariable(PREFFIX + CANCEL_ACTION, cancelAction);
 		ValueExpression cl = getMethodExpression(ctx, CANCEL_ACTION_LISTENER,
 				null, FaceletUtil.ACTION_LISTENER_SIG);
 		if (cl != null) {
-			mapper.setVariable(CANCEL_ACTION_LISTENER, cl);
+			mapper.setVariable(PREFFIX + CANCEL_ACTION_LISTENER, cl);
 		}
 		TagAttribute reRender = getAttribute(RERENDER);
 		if (reRender != null) {
-			mapper.setVariable(CONFIRM_RE_RENDER, getValueExpression(ctx, reRender));
+			mapper.setVariable(PREFFIX + RERENDER, getValueExpression(ctx, reRender));
 		}
 		TagAttribute cancelReRender = getAttribute(CANCEL_RE_RENDER);
 		if (cancelReRender != null) {
-			mapper.setVariable(CANCEL_RE_RENDER, getValueExpression(ctx, cancelReRender));
+			mapper.setVariable(PREFFIX + CANCEL_RE_RENDER, getValueExpression(ctx, cancelReRender));
+		}
+		TagAttribute onClick = getAttribute(CONFIRM_ON_CLICK);
+		if (onClick != null) {
+			mapper.setVariable(PREFFIX + CONFIRM_ON_CLICK, getValueExpression(ctx, onClick));
+		}
+		TagAttribute onComplete = getAttribute(CONFIRM_ON_COMPLETE);
+		if (onComplete != null) {
+			mapper.setVariable(PREFFIX + CONFIRM_ON_COMPLETE, getValueExpression(ctx, onComplete));
 		}
 	}
 
