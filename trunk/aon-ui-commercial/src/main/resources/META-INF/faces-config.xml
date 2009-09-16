@@ -539,9 +539,11 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{offerSearch}</value>
+				<value>#{offerScopeListener}</value>
 				<value>#{offerHeaderControllerListener}</value>
 				<value>#{offerControllerListener}</value>
 				<value>#{offerDetailChildListener}</value>
+				<value>#{bankAccountValidatorListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -554,6 +556,16 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>offerScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>Offer_scope_id</value>
+		</managed-property>
+	</managed-bean>
+	
  	<managed-bean>
 		<managed-bean-name>offerHeaderControllerListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.config.event.HeaderControllerListener</managed-bean-class>
@@ -613,6 +625,10 @@
 			<value>offerDetail</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>OfferDetail_line</value>
+		</managed-property>
+		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>offer</value>
 		</managed-property>
@@ -629,6 +645,21 @@
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{offerDetailControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>offerDetailControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.event.OfferDetailControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
    	<!-- ************* NAVIGATION RULES ***************** -->

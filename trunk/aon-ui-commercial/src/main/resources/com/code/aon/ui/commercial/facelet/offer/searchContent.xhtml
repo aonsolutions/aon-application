@@ -8,6 +8,23 @@
 
 	<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
 
+	<aon:outputLabel for="Target_id"
+		value="#{target.bundle.commercial_target}" />
+	<aon:div styleClass="aon-lookup">
+		<aon:lookupInputText id="Target_id" lookup="#{targetLookup}"
+ 			reRender="Offer_target_full_name"
+			value="#{offerSearch.target.id}"
+			size="5" />
+		<aon:lookupButton 
+			windowTitle="#{commercialBundle.commercial_target_selection}" actionType="search"
+			property="#{offerSearch.target}" selectReRender="Offer_target_id,Offer_target_full_name" 
+			lookup="#{targetLookup}" minHeight="460" minWidth="650">
+		</aon:lookupButton>
+		<aon:inputText id="Offer_target_full_name"
+			value="#{(offerSearch.target.registry.name!=null)?(offerSearch.target.registry.fullName):('')}"
+			size="50" disabled="true" />							
+	</aon:div>
+
 	<aon:outputLabel value="#{bundle.aon_date}" />
 	<aon:div>
 		<aon:outputLabel for="Offer_issueDate-From" styleClass="aon-form-date-label"
@@ -25,28 +42,21 @@
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
 							
-	<aon:outputLabel for="Offer_target_id"
-		value="#{target.bundle.commercial_target}" />
-	<aon:div styleClass="aon-lookup">
-		<aon:lookupInputText id="Offer_target_id" value="#{offerSearch.target.id}"
-			lookup="#{targetLookup}" reRender="Offer_target_full_name"
-			size="5" />
-		<aon:lookupButton 
-			windowTitle="#{commercialBundle.commercial_target_selection}" actionType="search"
-			property="#{offerSearch.target}" selectReRender="Offer_target_id,Offer_target_full_name" 
-			lookup="#{targetLookup}" minHeight="460" minWidth="650">
-		</aon:lookupButton>
-		<aon:inputText id="Offer_target_full_name"
-			value="#{(offerSearch.target.registry.name!=null)?(offerSearch.target.registry.fullName):('')}"
-			size="50" disabled="true" />							
-	</aon:div>
+	<aon:outputLabel for="Offer_securityLevel"
+		value="#{bundle.aon_security_level}" />
+	<aon:selectOneMenu id="Offer_securityLevel"
+		converter="aon.EnumConverter"
+		valueChangeListener="#{controller.addEqualExpression}">
+		<f:selectItem itemLabel="-" value="#{null}" />
+		<f:selectItems value="#{commonCollections.securityLevels}" />
+	</aon:selectOneMenu>
 
 	<aon:outputLabel for="Offer_status"
 		value="#{bundle.aon_status}" />
 	<aon:selectOneMenu id="Offer_status"
 		converter="aon.EnumConverter"
 		valueChangeListener="#{controller.addEqualExpression}">
-		<f:selectItem itemLabel="-" itemValue="" itemDisabled="true" />
+		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{commercialCollections.offerStatuses}" />
 	</aon:selectOneMenu>
 
