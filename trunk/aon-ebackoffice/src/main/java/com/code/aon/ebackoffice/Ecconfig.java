@@ -2,10 +2,16 @@ package com.code.aon.ebackoffice;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.PayMethod;
@@ -41,10 +47,10 @@ public class Ecconfig implements ITransferObject {
 	private OriginalPrice showItemPrice;
 	private WishList wishList;
 	private PayMethod bankTransfer;
-	private PayMethod cashOnDelivery;
+	/*	private PayMethod cashOnDelivery;
 	private PayMethod visa;
 	private PayMethod paypal;
-	private PayMethod bankDraft;
+	private PayMethod bankDraft;*/
 	
 	@Id
 	@GeneratedValue
@@ -145,7 +151,10 @@ public class Ecconfig implements ITransferObject {
 		this.wishList = wishList;
 	}
 	
-	@Column(name = "bank_transfer")
+	@OneToOne (fetch=FetchType.EAGER)
+	@JoinColumn(name="id", nullable=false)
+	@ForeignKey(name = "FK_ECCONFIG_BANK_TRANSFER")
+	@Index(name = "IDX_ECCONFIG_BANK_TRANSFER")
 	public PayMethod getBankTransfer() {
 		return bankTransfer;
 	}
@@ -153,6 +162,7 @@ public class Ecconfig implements ITransferObject {
 		this.bankTransfer = bankTransfer;
 	}
 	
+	/*
 	@Column(name = "cash_on_delivery")
 	public PayMethod getCashOnDelivery() {
 		return cashOnDelivery;
@@ -184,7 +194,7 @@ public class Ecconfig implements ITransferObject {
 		this.bankDraft = bankDraft;
 	}
 	
-	
+	*/
 
 	
 }
