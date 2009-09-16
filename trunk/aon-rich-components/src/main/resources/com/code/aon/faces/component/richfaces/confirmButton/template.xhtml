@@ -47,9 +47,7 @@
 								<c:if test="#{confirmActionListener != null}">									
 									<aon:actionListener method="#{confirmActionListener}" />
 								</c:if>
-								<f:setPropertyActionListener target="#{aon_cb_showWindow}" value="false" />								
-								<rich:componentControl for="#{aon_cb_id}" event="onclick"
-									disableDefault="true" operation="hide"/>
+								<f:setPropertyActionListener target="#{aon_cb_showWindow}" value="false" />	
 							</aon:commandButton>
 							<aon:commandButton id="#{aon_cb_id}-no" value="#{bundle.aon_no}"
 								action="#{aon_cb_cancelAction}" immediate="true" ajaxSingle="true"
