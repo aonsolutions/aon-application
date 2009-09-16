@@ -34,13 +34,13 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.webapp.UIComponentTag;
 
-import com.code.aon.faces.component.tomahawk.JSFAttr;
+import com.code.aon.faces.component.richfaces.IRichFacesTags;
 
 /**
  * @author Manfred Geiler (latest modification by $Author$)
  * @version $Revision$ $Date$
  */
-public class UIComponentTagUtils {
+public class UIComponentTagUtils implements IRichFacesTags {
 
     private static final Class[] VALIDATOR_ARGS = {FacesContext.class,
                                                    UIComponent.class,
@@ -148,7 +148,7 @@ public class UIComponentTagUtils {
             if (isValueReference(value))
             {
                 ValueBinding vb = context.getApplication().createValueBinding(value);
-                component.setValueBinding(JSFAttr.VALUE_ATTR, vb);
+                component.setValueBinding(VALUE, vb);
             }
             else if (component instanceof UICommand)
             {
@@ -190,7 +190,7 @@ public class UIComponentTagUtils {
                 if (isValueReference(value))
                 {
                     ValueBinding vb = context.getApplication().createValueBinding(value);
-                    component.setValueBinding(JSFAttr.CONVERTER_ATTR, vb);
+                    component.setValueBinding(CONVERTER, vb);
                 }
                 else
                 {
