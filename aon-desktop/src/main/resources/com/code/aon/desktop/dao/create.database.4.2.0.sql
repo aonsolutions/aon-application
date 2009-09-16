@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 4.1.0
-# Created by: ecastellano
-# Creation Date: 31/07/2009 13:05
+# Version: 4.2.0
+# Created by: girazu
+# Creation Date: 16/09/2009 10:50
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -265,6 +265,7 @@ CREATE TABLE `account_period` (
   `id` char(4) collate latin1_spanish_ci NOT NULL COMMENT 'Código del Ejercicio',
   `initiation_date` date NOT NULL COMMENT 'Fecha de inicio del Ejercicio',
   `deadline` date NOT NULL COMMENT 'Fecha final del Ejercicio',
+  `status` tinyint(2) default '0' COMMENT 'Estado del Ejercicio',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ejercicios Contables';
 
@@ -440,6 +441,7 @@ CREATE TABLE `invoice` (
   `investment` tinyint(1) default '0' COMMENT 'Indica si la Factura es una inversion',
   `transaction` tinyint(2) default '0' COMMENT 'Tipo de transaccion',
   `signed` tinyint(1) default '0' COMMENT 'Indica si la Factura esta firmada electronicamente',
+  `scope` int(4) NOT NULL COMMENT 'Ambito de la Factura',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `series` (`series`,`number`,`type`),
   KEY `idx_invc_radr` (`raddress`),
@@ -447,6 +449,8 @@ CREATE TABLE `invoice` (
   KEY `registry` (`registry`),
   KEY `series_number` (`series`,`number`),
   KEY `idx_invc_tax_date` (`tax_date`),
+  KEY `IDX_INVOICE_SCOPE` (`scope`),
+  CONSTRAINT `FK_INVOICE_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
   CONSTRAINT `invoice_ibfk_3` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `invoice_ibfk_4` FOREIGN KEY (`raddress`) REFERENCES `raddress` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Facturas';
@@ -526,6 +530,21 @@ CREATE TABLE `account_entry_invoice` (
   CONSTRAINT `account_entry_invoice_fk_2` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
   CONSTRAINT `account_entry_invoice_ibfk_1` FOREIGN KEY (`account_entry`) REFERENCES `account_entry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Asientos Contables y Facturas';
+
+#
+# Structure for the `account_entry_link` table : 
+#
+
+CREATE TABLE `account_entry_link` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `account_entry_from` int(4) NOT NULL COMMENT 'Asiento original',
+  `account_entry_to` int(4) NOT NULL COMMENT 'Asiento vinculado',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_ACCOUNT_ENTRY_LINK_FROM` (`account_entry_from`),
+  KEY `IDX_ACCOUNT_ENTRY_LINK_TO` (`account_entry_to`),
+  CONSTRAINT `FK_ACCOUNT_ENTRY_LINK_FROM` FOREIGN KEY (`account_entry_from`) REFERENCES `account_entry` (`id`),
+  CONSTRAINT `FK_ACCOUNT_ENTRY_LINK_TO` FOREIGN KEY (`account_entry_to`) REFERENCES `account_entry` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Asientos Contables';
 
 #
 # Structure for the `account_helper` table : 
@@ -1740,8 +1759,8 @@ CREATE TABLE `sales_detail` (
 
 CREATE TABLE `delivery_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle del Albaran de Venta',
-  `line` smallint(2) default '0' COMMENT 'Numero de linea del Detalle dentro del Albaran',
   `delivery` int(4) default NULL COMMENT 'Identificador del Albaran de Venta',
+  `line` smallint(2) default '0' COMMENT 'Numero de linea del Detalle dentro del Albaran',
   `item` int(4) default NULL COMMENT 'Identificador del Articulo del Detalle de Albaran',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Detalle de Albaran',
   `warehouse` int(4) default NULL COMMENT 'Identificador del Almacen',
@@ -2405,6 +2424,9 @@ CREATE TABLE `loan` (
   `expenses` double(15,3) default '0.000' COMMENT 'Gastos asociados al Prestamo',
   `rbank` int(4) NOT NULL COMMENT 'Banco por el que se paga el Prestamo',
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de Seguridad',
+  `fee_amount` double(15,3) default '0.000' COMMENT 'Importe de la cuota',
+  `recurrence` int(4) default '0' COMMENT 'Periodicidad',
+  `pay_day` int(4) default '1' COMMENT 'Dia de Pago',
   PRIMARY KEY  (`id`),
   KEY `rbank` (`rbank`),
   CONSTRAINT `loan_fk` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`)
@@ -2647,6 +2669,13 @@ CREATE TABLE `offer` (
   `status` tinyint(2) default '0' COMMENT 'Estado del Presupuesto',
   `type` tinyint(2) default '0' COMMENT 'Tipo de Presupuesto',
   `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
+  `scope` int(4) NOT NULL COMMENT 'Ambito del Presupuesto',
+  `number_of_pymnts` smallint(2) default '0' COMMENT 'Numero de Vencimientos',
+  `days_to_first_pymnt` smallint(2) default '0' COMMENT 'Dias al primer Vencimiento',
+  `days_between_pymnts` smallint(2) default '0' COMMENT 'Dias entre Vencimientos',
+  `pymnt_days` varchar(8) collate latin1_spanish_ci default '0' COMMENT 'Dias de pago',
+  `bank` int(4) default NULL COMMENT 'Identificador de la Entidad Bancaria',
+  `bank_account` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'Numero de cuenta en la Entidad Bancaria',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `series` (`series`,`number`),
   KEY `target` (`target`),
@@ -2654,6 +2683,10 @@ CREATE TABLE `offer` (
   KEY `pay_method` (`pay_method`),
   KEY `workplace` (`workplace`),
   KEY `tariff` (`tariff`),
+  KEY `IDX_OFFER_SCOPE` (`scope`),
+  KEY `IDX_OFFER_BANK` (`bank`),
+  CONSTRAINT `FK_OFFER_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
+  CONSTRAINT `FK_OFFER_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
   CONSTRAINT `offer_ibfk_1` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
   CONSTRAINT `offer_ibfk_2` FOREIGN KEY (`seller`) REFERENCES `seller` (`registry`),
   CONSTRAINT `offer_ibfk_3` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
@@ -2668,8 +2701,9 @@ CREATE TABLE `offer` (
 CREATE TABLE `offer_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle de Presupuesto',
   `offer` int(4) NOT NULL COMMENT 'Identificador del Presupuesto',
-  `item` int(4) NOT NULL COMMENT 'Identificador del Articulo',
-  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripción del Articulo',
+  `line` smallint(2) default '1' COMMENT 'Numero de línea del Detalle dentro del Presupuesto',
+  `item` int(4) default NULL COMMENT 'Identificador del Articulo',
+  `description` varchar(1024) collate latin1_spanish_ci default NULL COMMENT 'Descripción del Articulo',
   `quantity` double(15,3) NOT NULL COMMENT 'Cantidad del Articulo',
   `price` double(15,3) NOT NULL COMMENT 'Precio del Articulo',
   `discount_expr` varchar(32) collate latin1_spanish_ci default '0' COMMENT 'Descuentos del Articulo',
@@ -3556,7 +3590,7 @@ RETURN (SELECT IF (SUM(inventory_detail.cost) IS NULL, 0, SUM(inventory_detail.c
        AND inventory.inventory_date = d);
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('4.1.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('4.2.0');
 
 COMMIT;
 
