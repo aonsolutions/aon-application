@@ -11,7 +11,8 @@
 
 	<managed-bean>
 		<managed-bean-name>ectarget</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.ebackoffice.controller.EctargetController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.ebackoffice.controller.EctargetController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -35,7 +36,8 @@
 
 	<managed-bean>
 		<managed-bean-name>ecconfig</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.ebackoffice.controller.EcconfigController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.ebackoffice.controller.EcconfigController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -53,13 +55,22 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{ecConfigControllerListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 
 	<managed-bean>
+		<managed-bean-name>ecConfigControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.ebackoffice.event.EcConfigControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
 		<managed-bean-name>eccatalogue</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.ebackoffice.controller.EccatalogueController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.ebackoffice.controller.EccatalogueController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -77,10 +88,18 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{ecCatalogueControllerListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
-	
+
+	<managed-bean>
+		<managed-bean-name>ecCatalogueControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.ebackoffice.event.EcCatalogueControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>ectarget_grid</from-outcome>
@@ -91,10 +110,16 @@
 			<from-outcome>ecconfig_grid</from-outcome>
 			<to-view-id>/com/code/aon/ui/ebackoffice/facelet/ecConfig/grid.xhtml</to-view-id>
 		</navigation-case>
-	   	
-	    <navigation-case>
+
+		<navigation-case>
+			<from-outcome>ecconfig_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/ebackoffice/facelet/ecConfig/form.xhtml</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
 			<from-outcome>eccatalogue_grid</from-outcome>
-			<to-view-id>/com/code/aon/ui/ebackoffice/facelet/ecCatalogue/grid.xhtml</to-view-id>
+			<to-view-id>
+				/com/code/aon/ui/ebackoffice/facelet/ecCatalogue/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 </faces-config>
