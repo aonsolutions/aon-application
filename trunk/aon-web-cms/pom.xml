@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-web-cms</artifactId>
 	<packaging>war</packaging>
-	<version>4.5.3</version>
+	<version>4.5.4</version>
 	<description>WEB CMS</description>
 	<name>WEB CMS</name>
 	<build>
@@ -24,9 +24,9 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>4.1.1</version>
+			<version>4.2.0</version>
 			<scope>compile</scope>
-		</dependency>					
+		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security</artifactId>
@@ -39,12 +39,12 @@
 			<version>3.3.0</version>
 			<scope>compile</scope>
 		</dependency>
-	    <dependency>
-	      <groupId>com.code.aon</groupId>
-	      <artifactId>aon.ui.resources</artifactId>
-	      <version>3.8.0</version>
-	      <scope>compile</scope>
-	    </dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.resources</artifactId>
+			<version>3.9.0</version>
+			<scope>compile</scope>
+		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.cms</artifactId>
@@ -58,9 +58,9 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-		    <groupId>commons-fileupload</groupId>
-		    <artifactId>commons-fileupload</artifactId>
-		    <version>1.0</version>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
