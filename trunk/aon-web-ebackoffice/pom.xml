@@ -18,12 +18,11 @@
 	<properties>
 		<dbVersion>3.5.0</dbVersion>
 	</properties>
-	<dependencies>
-		
+	<dependencies>	
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>4.0.0</version>
+			<version>4.2.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -55,7 +54,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>3.8.0</version>
+			<version>3.9.0</version>
 			<scope>compile</scope>
 		</dependency>
 		
