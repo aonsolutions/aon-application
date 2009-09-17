@@ -27,82 +27,27 @@
 					styleClass="aon-finding-toolbar-item aon-icon-cancel"
 					immediate="true" accesskey="#{bundle.aon_key_cancel}" />
 				<h:commandButton id="aonToolbar-accept"
-					value="#{bundle.aon_accept}" action="cartOffer_form"
-					styleClass="aon-finding-toolbar-item aon-icon-cancel"
+					value="#{bundle.aon_accept}" action="paymethod_form"
+					styleClass="aon-finding-toolbar-item aon-icon-accept"
 					accesskey="#{bundle.aon_key_accept}"
-					actionListener="#{shoppingCart.onAcceptTarget}" />
+					actionListener="#{shoppingCart.onAddTarget}" />
 
-				<aon:panelGrid columns="2" dir="true">
+				<aon:panelGrid columns="2">
+					<aon:outputLabel for="ectarget_email" value="#{bundle.aon_email}" />
+					<aon:inputText id="ectarget_email"
+						value="#{shoppingCart.cartTarget.ecTarget.login}" size="20" maxlength="48"/>
 
-					<ui:include
-						src="/com/code/aon/ui/ecommerce/facelet/shop/cart/target/formContent.xhtml">
-						<ui:param name="controller" value="#{shoppingCart}" />
-					</ui:include>
-
-					<aon:outputLabel for="Company_address"
-						value="#{registryBundle.registry_address}" />
-					<aon:div>
-						<aon:div>
-							<aon:inputText id="Company_address"
-								value="#{shoppingCart.cartTarget.mainAddress.address}" size="64"
-								maxlength="128" />
-						</aon:div>
-						<aon:div>
-							<aon:inputText id="Company_address2"
-								value="#{shoppingCart.cartTarget.mainAddress.address2}"
-								size="64" maxlength="128" />
-						</aon:div>
-						<aon:div>
-							<aon:inputText id="Company_address3"
-								value="#{shoppingCart.cartTarget.mainAddress.address3}"
-								size="64" maxlength="128" />
-						</aon:div>
-					</aon:div>
-					<aon:outputLabel for="Company_address_city"
-						value="#{registryBundle.registry_city}" />
-					<aon:inputText id="Company_address_city"
-						value="#{shoppingCart.cartTarget.mainAddress.city}" size="64"
-						maxlength="64" />
-
-					<aon:outputLabel for="Company_address_zip"
-						value="#{registryBundle.registry_zip}" />
-					<aon:inputText id="Company_address_zip"
-						value="#{shoppingCart.cartTarget.mainAddress.zip}" size="32"
-						maxlength="16" />
-
-					<aon:outputLabel for="Company_address_geozone"
-						value="#{registryBundle.registry_geozone}" />
-					<aon:selectOneMenu id="Company_address_geozone"
-						value="#{shoppingCart.cartTarget.mainAddress.geozone}">
-						<f:selectItems value="#{geozoneCollections.geoTrees}" />
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Company_telephone"
-						value="#{registryBundle.registry_phone}" />
-					<aon:inputText id="Company_telephone"
-						value="#{shoppingCart.cartTarget.phone.value}" size="32"
-						maxlength="64" />
-
-					<aon:outputLabel for="Company_fax"
-						value="#{registryBundle.registry_fax}" />
-					<aon:inputText id="Company_fax"
-						value="#{shoppingCart.cartTarget.fax.value}" size="32"
-						maxlength="64" />
-
-					<aon:outputLabel for="Company_email"
-						value="#{registryBundle.registry_email}" />
-					<aon:inputText id="Company_email"
-						value="#{shoppingCart.cartTarget.email.value}" size="64"
-						maxlength="64" onblur="toLowerCase(this);" />
-
-					<aon:outputLabel for="Company_web"
-						value="#{registryBundle.registry_web}" />
-					<aon:inputText id="Company_web"
-						value="#{shoppingCart.cartTarget.web.value}" size="64"
-						maxlength="64" onblur="toLowerCase(this);" />
-
-
+					<aon:outputLabel for="ectarget_password" value="#{bundle.aon_passwd}" />
+					<aon:inputText id="ectarget_password"
+						value="#{shoppingCart.cartTarget.ecTarget.password}" size="20"  maxlength="32"/>
+				
 				</aon:panelGrid>
+				
+				<ui:include
+					src="/com/code/aon/ui/ecommerce/facelet/shop/cart/target/formContent.xhtml">
+					<ui:param name="controller" value="#{shoppingCart}" />
+				</ui:include>
+				
 			</aon:div>
 		</aon:form>
 		

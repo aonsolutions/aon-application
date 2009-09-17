@@ -48,6 +48,8 @@
 
 		<!-- EBACKOFFICE -->		
 		<mapping class="com.code.aon.ebackoffice.Ectarget"/>
+		<mapping class="com.code.aon.ebackoffice.Ecconfig"/>
+		<mapping class="com.code.aon.ebackoffice.Eccatalogue"/>
 		
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoTree"/>

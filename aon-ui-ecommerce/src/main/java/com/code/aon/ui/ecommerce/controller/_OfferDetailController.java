@@ -15,7 +15,7 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.LinesController;
 
-public class OfferDetailController extends LinesController {
+public class _OfferDetailController extends LinesController {
 
 	private IPriceStrategy priceStrategy;
 	
@@ -36,8 +36,8 @@ public class OfferDetailController extends LinesController {
 
 			Date date = offerDetail.getOffer().getIssueDate();
 			OfferController master = (OfferController)getMasterController();
-			Tariff tariff = ((Offer)master.getTo()).getTariff();
-			price = getPriceStrategy().getUnitPrice(offerDetail, date, tariff);
+			//Tariff tariff = ((Offer)master.getTo()).getTariff();
+			//price = getPriceStrategy().getUnitPrice(offerDetail, date, tariff);
 		}
 		offerDetail.setPrice(price);
 	}	
@@ -51,8 +51,8 @@ public class OfferDetailController extends LinesController {
 	
 				Date date = offerDetail.getOffer().getIssueDate();
 				OfferController master = (OfferController)getMasterController();
-				Tariff tariff = ((Offer)master.getTo()).getTariff();
-				price = getPriceStrategy().getUnitPrice(offerDetail, date, tariff);
+				//Tariff tariff = ((Offer)master.getTo()).getTariff();
+				//price = getPriceStrategy().getUnitPrice(offerDetail, date, tariff);
 			}
 			offerDetail.setPrice(price);
 		}

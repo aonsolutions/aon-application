@@ -5,6 +5,7 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.commercial.Target;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -45,7 +46,10 @@ public class LoginController {
 				//AonUtil.addErrorMessage("LOGIADOOO");
 				((ShopController)AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER)).setLogged(true);
 				((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).onResetTarget(null);
-				((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).getCartTarget().setTarget(ect.getTarget());
+				Ectarget ecTtarget = (Ectarget)list.get(0); 
+				((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).getCartTarget().setEcTarget(ecTtarget);
+				((OfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER)).initialize();
+				((OfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER)).getOffer().setTarget(ecTtarget.getTarget());
 				
 			}
 			
@@ -54,6 +58,12 @@ public class LoginController {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e); 
 		}
+	}
+	
+	public void onLogout(ActionEvent event){
+		setLogin(null);
+		setPassword(null);
+		((ShopController)AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER)).setLogged(false);
 	}
 
 	public String getLogin() {

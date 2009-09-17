@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 <body>
 
@@ -8,11 +9,14 @@
 
 	<ui:define name="content">
 		<aon:div>
-<!--  
 			<ui:include src="/facelet/homepage/homepage.xhtml" />
+<!--  
 			<ui:include src="#{shop_form}" />
+			<a4j:support event="onLoad" action="#{shop_form}">
+			</a4j:support>
 -->
 			<ui:composition template="/com/code/aon/ui/ecommerce/facelet/shop/form.xhtml" />
+			
 		</aon:div>
 
 	</ui:define>

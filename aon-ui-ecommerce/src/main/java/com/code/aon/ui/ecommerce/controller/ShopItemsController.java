@@ -42,6 +42,10 @@ public class ShopItemsController {
 			}
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
+			String msg = "La obtencion de datos falló";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+			
 		}
 		return list;
 	}
@@ -69,7 +73,7 @@ public class ShopItemsController {
 				.setItem((Item) getModel().getRowData());
 		((ShopController) AonUtil
 				.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER))
-				.setDetail(true);
+				.setDetailView(true);
 		((ShopController) AonUtil
 				.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER))
 				.setBackView(IECommerceConstants.ITEM_LIST_VIEW);
@@ -97,7 +101,7 @@ public class ShopItemsController {
 				.addToCart((Item) model.getRowData());
 		((ShopController) AonUtil
 				.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER))
-				.setCart(true);
+				.setCartView(true);
 	}
 
 }

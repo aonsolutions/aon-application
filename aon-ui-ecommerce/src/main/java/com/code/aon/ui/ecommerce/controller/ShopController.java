@@ -9,9 +9,9 @@ public class ShopController {
 	
 	private String backView;
 	private String contentView;
-	private boolean items;
-	private boolean detail;
-	private boolean cart;
+	private boolean itemsView;
+	private boolean detailView;
+	private boolean cartView;
 	private boolean logged;
 	
 
@@ -35,40 +35,40 @@ public class ShopController {
 		this.contentView = contentView;
 	}
 
-	public boolean isItems() {
-		return items;
+	public boolean isItemsView() {
+		return itemsView;
 	}
 
-	public void setItems(boolean items) {
-		if (items == true) {
-			setDetail(false);
-			setCart(false);
+	public void setItemsView(boolean itemsView) {
+		if (itemsView == true) {
+			setDetailView(false);
+			setCartView(false);
 		}
-		this.items = items;
+		this.itemsView = itemsView;
 	}
 
-	public boolean isDetail() {
-		return detail;
+	public boolean isDetailView() {
+		return detailView;
 	}
 
-	public void setDetail(boolean detail) {
-		if (detail == true) {
-			setItems(false);
-			setCart(false);
+	public void setDetailView(boolean detailView) {
+		if (detailView == true) {
+			setItemsView(false);
+			setCartView(false);
 		}
-		this.detail = detail;
+		this.detailView = detailView;
 	}
 
-	public boolean isCart() {
-		return cart;
+	public boolean isCartView() {
+		return cartView;
 	}
 
-	public void setCart(boolean cart) {
-		if (cart == true) {
-			setDetail(false);
-			setItems(false);
+	public void setCartView(boolean cartView) {
+		if (cartView == true) {
+			setDetailView(false);
+			setItemsView(false);
 		}
-		this.cart = cart;
+		this.cartView = cartView;
 	}
 
 	public boolean isLogged() {
@@ -81,20 +81,20 @@ public class ShopController {
 	
 	public void refreshView(ActionEvent event) {
 		if (getBackView()==null) {
-			setItems(true);
+			setItemsView(true);
 		} else if (getBackView().equals(IECommerceConstants.ITEM_DETAIL_VIEW)) {
-			setDetail(true);
+			setDetailView(true);
 		} else if (getBackView().equals(IECommerceConstants.ITEM_LIST_VIEW)) {
-			setItems(true);
+			setItemsView(true);
 		} else if (getBackView().equals(IECommerceConstants.SHOPPING_CART_VIEW)) {
-			setCart(true);
+			setCartView(true);
 		} else {
-			setItems(true);
+			setItemsView(true);
 		}
 	}
 	
 	public void onViewCart(ActionEvent event) {
-		setCart(true);
+		setCartView(true);
 		setBackView(IECommerceConstants.ITEM_LIST_VIEW);
 		
 //		((ShopController) AonUtil

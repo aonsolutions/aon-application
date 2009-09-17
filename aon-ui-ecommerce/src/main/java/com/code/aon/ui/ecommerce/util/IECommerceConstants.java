@@ -10,6 +10,7 @@ public interface IECommerceConstants {
 	static final String SHOPPING_CART_CONTROLLER = "shoppingCart";
 	static final String OFFER_CONTROLLER = "cartOffer";
 	static final String OFFER_DETAIL_CONTROLLER = "cartOfferDetail";
+	static final String LOGIN_CONTROLLER = "userLogin";
 	
 	/* ACTION */
 	static final String SHOP_ACTION = "shop_form";
@@ -18,6 +19,7 @@ public interface IECommerceConstants {
 	//static final String ITEMS_ACTION = "shopItems_form";
 	static final String REGISTRY_ACTION = "registry_form";
 	static final String OFFER_ACTION = "cartOffer_form";
+	static final String PAYMETHOD_ACTION = "paymethod_form";
 	
 	/* ALIAS */
 	static final String ITEM_ALIAS = "Item_id";

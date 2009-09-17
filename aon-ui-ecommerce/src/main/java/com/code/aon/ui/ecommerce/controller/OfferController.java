@@ -1,139 +1,176 @@
 package com.code.aon.ui.ecommerce.controller;
 
-import java.util.Iterator;
-import java.util.LinkedList;
+
+import java.util.Calendar;
 import java.util.List;
 
-import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.SelectItem;
-
-import org.apache.commons.lang.StringUtils;
+import javax.faces.event.ActionEvent;
 
 import com.code.aon.commercial.Offer;
-import com.code.aon.commercial.Target;
+import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.enumeration.OfferStatus;
+import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.Series;
-import com.code.aon.config.util.SeriesNumberUtil;
-import com.code.aon.product.strategy.ICalculableContainer;
-import com.code.aon.product.strategy.IPriceStrategy;
-import com.code.aon.product.strategy.PriceStrategyFactory;
-import com.code.aon.ql.Criteria;
-import com.code.aon.registry.RegistryAddress;
-import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.seller.Seller;
-import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.ecommerce.util.IECommerceConstants;
-import com.code.aon.ui.form.BasicController;
+import com.code.aon.company.WorkPlace;
+import com.code.aon.config.Scope;
+import com.code.aon.ui.company.controller.CompanyCollectionsController;
+import com.code.aon.ui.ecommerce.util.ECommerceUtil;
 import com.code.aon.ui.util.AonUtil;
 
 /**
- * Controller used in the offer maintenance.
- */
-public class OfferController extends BasicController {
+* Controller used in the cart offer maintenance.  
+* 
+* @author Esferalia Networks. Ekain Agirrezabal- 15-sep-2009
+* @since 1.0
+*  
+*/
+public class OfferController {
 
-	private List<SelectItem> addresses;
+	private Offer offer;
+	private List<OfferDetail> offerDetail;
 
-	private IPriceStrategy priceStrategy;
+	public Offer getOffer() {
+		return offer;
+	}
+	public void setOffer(Offer offer) {
+		this.offer = offer;
+	}
+	public List<OfferDetail> getOfferDetail() {
+		return offerDetail;
+	}
+	public void setOfferDetail(List<OfferDetail> offerDetail) {
+		this.offerDetail = offerDetail;
+	}
 	
-	public IPriceStrategy getPriceStrategy(){
-		if(priceStrategy == null){
-			priceStrategy = PriceStrategyFactory.getPriceStrategy();
-		}
-		return priceStrategy;
+	/**
+	 * Insert current offer
+	 * @param offer
+	 * @throws ManagerBeanException 
+	 */
+	public void insert() throws ManagerBeanException{
+		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
+		offerBean.insert(getOffer());
 	}
 
-	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		Series series = SeriesNumberUtil.obtainSeries((String)event.getNewValue());
-		if (this.getTo() != null) {
-			((Offer)this.getTo()).setNumber(SeriesNumberUtil.obtainNumber((String)event.getNewValue(), StringUtils.capitalize(this.getBeanName())));
-			((Offer)this.getTo()).setSecurityLevel((series!=null)?series.getSecurityLevel():null);
+	/**
+	 * Adds a new item to the offer detail list
+	 */
+	public void addItem(){
+		
+	}
+	
+	
+	public void onAccept(ActionEvent event) {
+		try {
+			insert();
+		} catch (ManagerBeanException e) {
+			AonUtil.addInfoMessage("Fallo al recuperar el offer.");
 		}
 	}
-
-	public boolean isProcessed(){
-//		Offer offer = (Offer)this.getTo();
-//		if (offer.getStatus() != null) {
-//			return offer.getStatus().equals(OfferStatus.PROCESSED);
+	
+	/**
+	 * creacion del presupuesto 
+	 */
+	public void initialize() {
+		
+//		OfferController offerController = (OfferController)FormUtil.getController(IECommerceConstants.OFFER_CONTROLLER);
+//		offerController.setOffer(new Offer());
+		
+		setOffer(new Offer());
+		
+//		Offer offer = offerController.getOffer();
+		//Target target = ((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).getCartTarget().getEcTarget().getTarget();
+		//offer.setTarget(target);
+		offer.setWorkPlace(new WorkPlace());
+//		try {
+//			//offer.setWorkPlace((WorkPlace)((CompanyCollectionsController)AonUtil.getRegisteredBean("companyCollections")).getWorkPlaces().get(0).getValue());
+//			//offer.setWorkPlace((WorkPlace)(WorkPlace)ECommerceUtil.getWorkPlaces().get(0));
+//		} catch (ManagerBeanException e) {
+//			//offer.setWorkPlace(new WorkPlace());
+//			AonUtil.addInfoMessage("Fallo al recuperar el workplace.");
 //		}
-		return false;
-	}
-
-	public void targetData(LookupChangeEvent event) throws ManagerBeanException {
-		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-			Target target = (Target)event.getNewValue();
-			((Offer)this.getTo()).setTarget(target);
-			loadAddresses(target.getId());
-		} else {
-			setAddresses(null);
-		}
+		
+		offer.setNumber(0);
+		// El type debe ser INTERNET
+		offer.setType(OfferType.INTERNET);
+		offer.setScope(new Scope());
+		offer.setStatus(OfferStatus.PENDING);
+		offer.setIssueDate(Calendar.getInstance().getTime());
+		
+//		try {
+//			offerController.insert();
+//		} catch (ManagerBeanException e) {
+//			AonUtil.addInfoMessage("Fallo al recuperar el offer.");
+//		}
+		
+		
+		/*
+		private String series;
+	    ?-private int number;
+	    private Target target;
+	    private RegistryAddress address;
+	    private Tariff tariff;
+	    private Seller seller;
+	    private DiscountExpression discountExpression;
+	    -private Date issueDate;
+	    private PayMethod payMethod;
+	    private SecurityLevel securityLevel;
+		?-status;
+		?-type;
+		?-workPlace;
+		  
+		 */
+		
+		
+		
+		
+		
+		
+		
+		
+//		OfferController offerController = (OfferController)FormUtil.getController(IECommerceConstants.OFFER_CONTROLLER);
+//		//OfferDetailController offerDetailController = (OfferDetailController)FormUtil.getController(IECommerceConstants.OFFER_DETAIL_CONTROLLER);
+//		if(offerController.exist(getCartTarget().getTarget())){
+//			// ********************************************************
+//			// ********************************************************
+//			//  EN CASO DE EXISTIR AINADIR EL TARGET CORRESPONDIENTE AL OFFER
+//			// ********************************************************
+//			// ********************************************************
+//			 
+//		} else {
+//			offerController.onReset(null);
+//			Offer to = (Offer)offerController.getTo();
+//			getCartTarget().getTarget().setId(738);
+//			to.setTarget(getCartTarget().getTarget());
+//			to.setStatus(OfferStatus.PENDING);
+//			try {
+//				// ********************************************************
+//				// ********************************************************
+//				//  REPASAR EL WORKPLACE QUE HAY QUE AINADIR POR DEFECTO
+//				// ********************************************************
+//				// ********************************************************
+//				to.setWorkPlace((WorkPlace)((CompanyCollectionsController)AonUtil.getRegisteredBean("companyCollections")).getWorkPlaces().get(0).getValue());
+//				//to.setWorkPlace((WorkPlace)ECommerceUtil.getWorkPlaces().get(0));
+//			} catch (ManagerBeanException e) {
+//				e.printStackTrace();
+//			}
+//			offerController.accept(null);
+//			for(CartItem ci:getList()){
+//				offerDetailController.onReset(null);
+//				OfferDetail tod = (OfferDetail)offerDetailController.getTo();
+//				tod.setOffer(to);
+//				tod.setItem(ci.getItem());
+//				tod.setDescription(ci.getItem().getProduct().getName());
+//				tod.setQuantity(ci.getQuantity());
+//				tod.setPrice(ci.getItem().getPrice());
+//				tod.setDiscountExpression(null);
+//				offerDetailController.onAccept(null);
+//			}
+//		}
+//		
 	}
 	
-	@SuppressWarnings("unchecked")
-	public void loadAddresses(Integer id) throws ManagerBeanException {
-		List<SelectItem> addresses = new LinkedList<SelectItem>();
-		if (id != null) {
-			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
-			Iterator iter = rAddressBean.getList(criteria).iterator();
-			while(iter.hasNext()){
-				RegistryAddress address = (RegistryAddress)iter.next();
-				String addressLabel = address.getAddress() + " " + address.getAddress2() + " " + address.getAddress3();
-				addressLabel = ((addressLabel.length()>30)?addressLabel.substring(0,27)+"...":addressLabel) + " - " + address.getCity();
-				addressLabel = ((addressLabel.length()>48)?addressLabel.substring(0,45)+"...":addressLabel);
-				SelectItem item = new SelectItem(address, addressLabel);
-				addresses.add(item);
-			}
-		}
-		this.addresses = addresses;
-	}
-
-	public List<SelectItem> getAddresses() {
-		return addresses;
-	}
-	
-	public void setAddresses(List<SelectItem> addresses) {
-		this.addresses = addresses;
-	}
-	
-	public int getAddressCount() {
-		if (addresses != null){
-			return addresses.size();
-		}
-		return 0;
-	}
-	
-	public void sellerData(LookupChangeEvent event) {
-		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-			Seller seller = (Seller)event.getNewValue();
-			((Offer)this.getTo()).setSeller(seller);
-		}
-	}
-
-	public double getTaxableBase(){
-		return 0;// getPriceStrategy().getTaxableBase((ICalculableContainer)getTo());
-	}
-
-	public double getTotalPrice(){
-		//return ;//getPriceStrategy().getTotalPrice((ICalculableContainer)getTo(), ((Offer)getTo()).getTarget());
-		return ((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).getTotal();
-	}
-
-	
-	
-	public Boolean exist(Target target){
-		// comprobar si existe el offer en la BD.
-		return false;
-	}
-	
-	@Override
-	public ITransferObject getTo() {
-		// TODO Auto-generated method stub
-		return super.getTo();
-	}
 	
 }

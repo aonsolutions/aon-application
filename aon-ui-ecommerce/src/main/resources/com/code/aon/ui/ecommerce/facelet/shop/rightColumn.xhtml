@@ -11,69 +11,179 @@
 	
 		<!--  
 						<aon:panelGrid id="productSearchPanel" columns="1"
-							style="width=100%;">
+							style="width:100%;">
 							<aon:outputLabel for="Item_product_name"
 								value="#{bundle.aon_search}" />
 						</aon:panelGrid>
-							-->
-		<aon:div id="search-box">
+		-->
+		
+		<aon:div id="search-box" styleClass="search-box">
 			<aon:inputText id="Item_product_name"
-				value="#{shopItemsSearch.search}" size="25" maxLength="64" />
-			<aon:commandLink id="search_bottom" value="&#160;"
+				value="#{shopItemsSearch.search}" size="44" maxLength="64" />
+			<aon:commandButton id="search_bottom" value="&#160;"
 				styleClass="aon-icon-commandButton-right aon-icon-search"
 				title="#{bundle.aon_search}" accesskey="#{bundle.aon_key_accept}"
 				reRender="itemContent">
-				<aon:outputText value="&#160;" />
 				<aon:actionListener method="#{shopItemsSearch.onSearch}" />
-			</aon:commandLink>
+			</aon:commandButton>
 		</aon:div>
 
-		<rich:spacer height="20" />
-
-		<aon:div id="login-box">
+<!--  
+		<aon:panel id="login-box" styleClass="login-box">
+			<f:facet name="header">
+				<aon:div id="login-box-icon" layout="inline"
+					styleClass="login-box-icon" />
+				<aon:outputText value="#{ecommerceBundle.aon_acommerce_user_registry}" />
+			</f:facet>
+		
+		
 			<aon:panelGrid columns="2" dir="true" rendered="#{shop.logged}">
 				<aon:outputLabel for="User" value="#{ecommerceBundle.aon_acommerce_user_registered}" />
-				<aon:outputText id="User" value="#{userLogin.login}" size="5" />
+				<aon:outputText id="User" value="#{userLogin.login}" />
 			</aon:panelGrid>
+			<aon:commandButton style="border-right:0;" 
+				value="#{securityBundle.aon_login_user_logout}"
+				action="#"
+				rendered="#{shop.logged}"
+				actionListener="#{userLogin.onLogout}"
+				styleClass="aon-finding-toolbar-item aon-icon-accept">
+			</aon:commandButton>
 
 			<aon:panelGrid columns="2" dir="true" rendered="#{! shop.logged}">
 				<aon:outputLabel for="Login" value="#{ecommerceBundle.aon_acommerce_user_name}" />
-				<aon:inputText id="Login" value="#{userLogin.login}" size="5" />
+				<aon:inputText id="Login" value="#{userLogin.login}" />
 
 				<aon:outputLabel for="Password" value="#{ecommerceBundle.aon_acommerce_user_passwd}" />
-				<aon:inputText id="Password" value="#{userLogin.password}" size="5" />
+				<aon:inputText id="Password" value="#{userLogin.password}" />
 			</aon:panelGrid>
-
 			<aon:commandButton id="login-buttom" 
 				value="#{bundle.aon_accept}"
-				action="shop_form"
+				action="#"
 				rendered="#{! shop.logged}"
 				styleClass="aon-finding-toolbar-item aon-icon-accept">
+				<aon:actionListener method="#{userLogin.onLogin}" />
+			</aon:commandButton>
+		</aon:panel>
+-->
+		<aon:div id="login-box" styleClass="login-box">
+			<aon:div id="login-box-header" styleClass="box-header">
+				<aon:div id="login-box-icon" styleClass="login-box-header-icon"></aon:div>
+				<aon:outputText value="#{ecommerceBundle.aon_acommerce_user_registry}" />
+			</aon:div>
+		
+		
+			<aon:panelGrid columns="2" dir="true" rendered="#{shop.logged}">
+				<aon:outputLabel for="User" value="#{ecommerceBundle.aon_acommerce_user_registered}" />
+				<aon:outputText id="User" value="#{userLogin.login}" />
+			</aon:panelGrid>
+			<aon:commandButton style="border-right:0;" 
+				value="#{securityBundle.aon_login_user_logout}"
+				action="#"
+				rendered="#{shop.logged}"
+				actionListener="#{userLogin.onLogout}"
+				styleClass="aon-finding-toolbar-item aon-icon-accept">
 				<!--  
+					<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
 				-->
+			</aon:commandButton>
+
+			<aon:panelGrid columns="2" dir="true" rendered="#{! shop.logged}">
+				<aon:outputLabel for="Login" value="#{ecommerceBundle.aon_acommerce_user_name}" />
+				<aon:inputText id="Login" value="#{userLogin.login}" />
+
+				<aon:outputLabel for="Password" value="#{ecommerceBundle.aon_acommerce_user_passwd}" />
+				<aon:inputText id="Password" value="#{userLogin.password}" />
+			</aon:panelGrid>
+			<aon:commandButton id="login-buttom" 
+				value="#{bundle.aon_accept}"
+				action="#"
+				rendered="#{! shop.logged}"
+				styleClass="aon-finding-toolbar-item aon-icon-accept">
 				<aon:actionListener method="#{userLogin.onLogin}" />
 			</aon:commandButton>
 		</aon:div>
 
 		<rich:spacer height="20" />
 
-		<aon:div id="list-info-box">
+<!--  
+		<aon:panel id="list-info-box" styleClass="list-info-box">
+			<f:facet name="header">
+				<aon:div id="list-info-box-icon" styleClass="list-info-box-icon"></aon:div>
+				<aon:outputText value="#{ecommerceBundle.aon_acommerce_cart_summary}" />
+			</f:facet>
+			
 			<aon:panelGrid columns="2" dir="true">
-				<aon:commandButton id="lateral-view" rendered="true"
-					value="#{ecommerceBundle.aon_acommerce_view_cart}" 
-					action="shop_from" immediate="true"
-					styleClass="aon-finding-toolbar-item aon-icon-new">
-					<aon:actionListener method="#{shop.onViewCart}" />
-				</aon:commandButton>
-				<aon:outputText value="&#160;" />
-	
 				<aon:outputLabel for="cart_quantity" value="#{ecommerceBundle.aon_acommerce_list_size}" />
 				<aon:outputText id="cart_quantity" value="#{shoppingCart.quantity}" />
 	
 				<aon:outputLabel for="cart_total" value="#{ecommerceBundle.aon_acommerce_total}" />
 				<aon:outputText id="cart_total" value="#{shoppingCart.total}" />
 			</aon:panelGrid>
+
+			<aon:commandButton id="lateral-view" rendered="true"
+				value="#{ecommerceBundle.aon_acommerce_view_cart}" 
+				action="shop_from" immediate="true"
+				styleClass="aon-finding-toolbar-item aon-icon-cart">
+				<aon:actionListener method="#{shop.onViewCart}" />
+			</aon:commandButton>
+		</aon:panel>
+-->
+		<aon:div id="list-info-box" styleClass="list-info-box">
+			<aon:div id="list-info-box-header" styleClass="box-header">
+				<aon:div id="list-info-box-icon" styleClass="list-info-box-header-icon"></aon:div>
+				<aon:outputText value="#{ecommerceBundle.aon_acommerce_cart_summary}" />
+			</aon:div>
+			
+			<aon:panelGrid columns="2" dir="true">
+				<aon:outputLabel for="cart_quantity" value="#{ecommerceBundle.aon_acommerce_list_size}" />
+				<aon:outputText id="cart_quantity" value="#{shoppingCart.quantity}" />
+	
+				<aon:outputLabel for="cart_total" value="#{ecommerceBundle.aon_acommerce_total}" />
+				<aon:outputText id="cart_total" value="#{shoppingCart.total}" />
+			</aon:panelGrid>
+
+			<aon:commandButton id="lateral-view" rendered="true"
+				value="#{ecommerceBundle.aon_acommerce_view_cart}" 
+				action="shop_from" immediate="true"
+				styleClass="aon-finding-toolbar-item aon-icon-cart">
+				<aon:actionListener method="#{shop.onViewCart}" />
+			</aon:commandButton>
 		</aon:div>
+		
+		<aon:div id="helpdesk-box" styleClass="helpdesk-box">
+			<aon:div id="helpdesk-box-header" styleClass="box-header">
+				<aon:div id="helpdesk-box-icon" styleClass="helpdesk-box-header-icon"></aon:div>
+				<aon:outputText value="Soporte -i18n-" />
+			</aon:div>
+			
+			<aon:panelGrid columns="2" dir="true">
+				<aon:outputLabel value="Formulario contacto" />
+				<aon:commandButton rendered="true"
+					value="GUTUNA" 
+					action="shop_from" immediate="true"
+					styleClass="aon-finding-toolbar-item aon-icon-letter">
+					<aon:actionListener method="#{shop.onViewCart}" />
+				</aon:commandButton>
+	
+				<aon:outputLabel value="Telefono: " />
+				<aon:outputText value="999229119" />
+			</aon:panelGrid>
+
+		</aon:div>
+<!--  
+		<aon:div id="contact-box" styleClass="contact-box">
+			<aon:commandButton rendered="true"
+				value="#{ecommerceBundle.aon_acommerce_contact}" 
+				/>
+		</aon:div>
+		
+		<aon:div id="helpdesk-box" styleClass="helpdesk-box">
+			<aon:commandButton rendered="true"
+				value="#{ecommerceBundle.aon_acommerce_helpdesk}" 
+				/>
+		</aon:div>
+-->		
+		
 		
 
 

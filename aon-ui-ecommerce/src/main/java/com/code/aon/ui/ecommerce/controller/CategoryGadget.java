@@ -68,7 +68,7 @@ public class CategoryGadget {
 		}
 		((ShopController) AonUtil
 			.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER))
-			.setItems(true);
+			.setItemsView(true);
 	}
 
 }

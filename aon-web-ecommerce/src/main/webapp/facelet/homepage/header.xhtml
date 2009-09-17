@@ -51,30 +51,44 @@
 
 			<aon:div styleClass="aon-nowrap">
 				<aon:div style="white-space:nowrap;">
+<!--  
 					<aon:outputText value="#{loggedUser.companyName}" />
+-->
+					<aon:outputText value="#{ecConfig.companyName}" />
 					<aon:outputText value=" / " />
+					<aon:div id="company-info" layout="inline"
+						styleClass="aon-company-info"
+						style="display: none" />
+<!--  
 					<aon:outputText value="#{loggedUser.loggedUserName}"
 						styleClass="aon-bold" />
+-->					
 				</aon:div>
 			</aon:div>
 		</aon:panelGrid>
 		
 		<aon:panelGrid columns="3" width="100%" 
-			columnClasses="aon-header-name,aon-header-slogan,aon-header-info">
+			columnClasses="aon-logo-name,aon-header-slogan,aon-header-info">
 
 			<aon:div>
-<!--  
-				<aon:graphicImage rendered="#{company.withLogo}" url="company.logo"/>
--->		
-				<a4j:mediaOutput element="img" cacheable="false"
-					rendered="#{company.withLogo}" 
-					value="#{company.aonFile.key}"
-					createContent="#{company.createLogoContent}" />
+				<aon:div id="company-logo">
+					<a4j:mediaOutput id="company-logo-left" 
+						element="img" cacheable="false"
+						rendered="#{company.withLogo}" 
+						value="#{company.aonFile.key}"
+						createContent="#{company.createLogoContent}" />
+				</aon:div>
+				<aon:div id="header-image">
+					<a4j:mediaOutput id="header-image-right" 
+						element="img" cacheable="false" 
+						value="#{ecConfig.activeConfig.id}"
+						createContent="#{ecConfig.paint}" 
+						 />
+				</aon:div>
 			</aon:div>
 		</aon:panelGrid>
-		
-		
 
+<!--  
 		<aon:form>
 			<aon:div styleClass="aon-header-additionalInfo">
 				<c:if test="#{!aonConfiguration.properties.hideHeaderLinks}">
@@ -84,15 +98,24 @@
 								value="${facesContext.externalContext.requestContextPath}">
 								<h:outputText value="#{bundle.aon_home}" />
 							</h:outputLink>
-						<aon:commandLink style="border-right:0;" action="logout"
-								actionListener="#{aonConfiguration.logout}">
-								<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
-						</aon:commandLink>
+						
+							<aon:commandLink style="border-right:0;" action="#"
+								rendered="#{shop.logged}"
+								reRender="aonHeader"
+									actionListener="#{userLogin.onLogout}">
+									<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
+							</aon:commandLink>
+						
+							<aon:commandLink style="border-right:0;" action="logout"
+									actionListener="#{aonConfiguration.logout}">
+									<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
+							</aon:commandLink>
 						</aon:div>
 					</aon:div>
 				</c:if>
 				<aon:outputText value="#{aonConfiguration.currentDate}" />
 			</aon:div>
 		</aon:form>
+-->
 	</aon:div>
 </ui:composition>

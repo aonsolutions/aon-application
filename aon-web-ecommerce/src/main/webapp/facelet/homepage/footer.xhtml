@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+	
+	<aon:div id="aonFooter" styleClass="aon-footer">
+		<aon:form>
+			<aon:div styleClass="aon-header-additionalInfo">
+<!--  
+				<c:if test="#{!aonConfiguration.properties.hideHeaderLinks}">
+-->
+					<aon:div styleClass="aon-float-right">
+						<aon:div styleClass="aon-footer-menu-item">
+							<h:outputLink target="_top"
+								value="${facesContext.externalContext.requestContextPath}">
+								<h:outputText value="#{bundle.aon_home}" />
+							</h:outputLink>
+						
+							<aon:commandLink style="border-right:0;" action="#"
+								rendered="#{shop.logged}"
+								reRender="aonHeader"
+									actionListener="#{userLogin.onLogout}">
+									<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
+							</aon:commandLink>
+						</aon:div>
+					</aon:div>
+<!--  
+				</c:if>
+				<aon:outputText value="#{aonConfiguration.currentDate}" />
+-->
+				<aon:commandButton  
+					value="privacidad-18n-"
+					action="#"
+					actionListener="#{userLogin.onLogout}"
+					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
+					<!--  
+						<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
+					-->
+				</aon:commandButton>
+				<aon:commandButton  
+					value="nota legal-18n-"
+					action="#"
+					actionListener="#{userLogin.onLogout}"
+					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
+					<!--  
+						<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
+					-->
+				</aon:commandButton>
+				<aon:commandButton  
+					value="proteccion de datos-18n-"
+					action="#"
+					actionListener="#{userLogin.onLogout}"
+					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
+					<!--  
+						<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
+					-->
+				</aon:commandButton>
+			</aon:div>
+		</aon:form>
+	</aon:div>
+</ui:composition>
+

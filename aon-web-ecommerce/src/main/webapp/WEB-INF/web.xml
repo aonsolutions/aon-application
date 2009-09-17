@@ -118,6 +118,7 @@
 
 	<!-- JSF-FACELETS CONFIGURATION -->
 
+	<!-- 
 	<context-param>
 		<description>
 			When a page is requested, what interval in seconds should 
@@ -129,6 +130,7 @@
 		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>0</param-value>
 	</context-param>
+	-->
 
 	<context-param>
 		<param-name>facelets.SKIP_COMMENTS</param-name>
@@ -157,6 +159,7 @@
    </context-param>
 
 	<!-- JBOSS RICH FACES CONFIGURATION -->
+	<!--  
 	<context-param>
 		<description>
 			Is a name of a skin used in an application. It can be a
@@ -168,6 +171,14 @@
 		<param-name>org.richfaces.SKIN</param-name>
 		<param-value>aon</param-value>
 	</context-param>
+	-->
+	
+	<!-- Activa el css integrado con richfaces. -->
+	<context-param>
+	    <param-name>org.richfaces.LoadStyleStrategy</param-name>
+	    <param-value>NONE</param-value>
+	</context-param>
+	
 	 
 	<context-param>
 		<description>

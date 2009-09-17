@@ -1,8 +1,12 @@
 package com.code.aon.ui.ecommerce.controller;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -15,17 +19,24 @@ import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.OfferStatus;
+import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.PayMethod;
+import com.code.aon.config.Tariff;
+import com.code.aon.ebackoffice.Ectarget;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.product.Item;
+import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
+import com.code.aon.seller.Seller;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
 import com.code.aon.ui.form.FormUtil;
@@ -65,8 +76,13 @@ public class ShoppingCartController {
 		if (!isRegistered()) {
 			return IECommerceConstants.REGISTRY_ACTION;
 		}
-		initializeOffer();
-		return IECommerceConstants.OFFER_ACTION;
+		//initializeOffer();
+		((OfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER)).initialize();
+		return IECommerceConstants.PAYMETHOD_ACTION;
+	}
+
+	public void budgetRequest(ActionEvent event) {
+		((OfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER)).initialize();
 	}
 
 	public boolean isRegistered() {
@@ -172,13 +188,14 @@ public class ShoppingCartController {
 			.setItem(((CartItem) getModel().getRowData()).getItem());
 		((ShopController) AonUtil
 				.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER))
-				.setDetail(true);
+				.setDetailView(true);
 	}
 	
 	public void onResetTarget(ActionEvent event) {
 		setCartTarget(new CartTarget());
-		getCartTarget().setTarget(new Target());
-		getCartTarget().getTarget().setRegistry(new Registry());
+		getCartTarget().setEcTarget(new Ectarget());
+		getCartTarget().getEcTarget().setTarget(new Target());
+		//getCartTarget().getEcTarget().setRegistry(new Registry());
 		getCartTarget().setMainAddress(new RegistryAddress());
 		getCartTarget().getMainAddress().setAddressType( AddressType.MAIN );
 		getCartTarget().getMainAddress().setGeozone( new GeoZone() );
@@ -225,15 +242,19 @@ public class ShoppingCartController {
 		updateRegistryMedia(registry, getCartTarget().getWeb());
 	}
 
-	private void acceptTarget() throws ManagerBeanException {
+	private void addTarget() throws ManagerBeanException {
 		IManagerBean tagetBean = BeanManager.getManagerBean(Target.class);
+		IManagerBean ecTagetBean = BeanManager.getManagerBean(Ectarget.class);
 		
 		
-		Target to = new Target();
-		to.setAdvertising(getCartTarget().getTarget().getAdvertising());
-		to.setRegistry(getCartTarget().getTarget().getRegistry());
+		//Ectarget to = new Ectarget();
+		Ectarget to = getCartTarget().getEcTarget();
+		//to.setTarget(new Target());
+		to.getTarget().setAdvertising(getCartTarget().getEcTarget().getTarget().getAdvertising());
+		to.getTarget().setRegistry(getCartTarget().getEcTarget().getTarget().getRegistry());
 		
-		tagetBean.insertOrUpdate(to);
+		tagetBean.insertOrUpdate(to.getTarget());
+		ecTagetBean.insertOrUpdate(to);
 		String message = "target guardado \n oo";
 		System.out.println(message);
 		//AonUtil.addInfoMessage(message);
@@ -249,68 +270,28 @@ public class ShoppingCartController {
 		afterBeanAdded();
 	}
 	
-	public void onAcceptTarget(ActionEvent event) {
+	public void onAddTarget(ActionEvent event) {
 		try {
-			acceptTarget();
-			initializeOffer();
+			addTarget();
+			OfferController offerController = (OfferController)FormUtil.getController(IECommerceConstants.OFFER_CONTROLLER);
+			offerController.getOffer().setTarget(getCartTarget().getEcTarget().getTarget());
+			((OfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER)).initialize();
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException( e.getMessage(), e );
 		}		
 	}
 	
-	/**
-	 * creacion del presupuesto 
-	 */
-	public void initializeOffer() {
-		OfferController offerController = (OfferController)FormUtil.getController(IECommerceConstants.OFFER_CONTROLLER);
-		OfferDetailController offerDetailController = (OfferDetailController)FormUtil.getController(IECommerceConstants.OFFER_DETAIL_CONTROLLER);
-		if(offerController.exist(getCartTarget().getTarget())){
-			// ********************************************************
-			// ********************************************************
-			//  EN CASO DE EXISTIR AINADIR EL TARGET CORRESPONDIENTE AL OFFER
-			// ********************************************************
-			// ********************************************************
-			 
-		} else {
-			offerController.onReset(null);
-			Offer to = (Offer)offerController.getTo();
-			getCartTarget().getTarget().setId(738);
-			to.setTarget(getCartTarget().getTarget());
-			to.setStatus(OfferStatus.PENDING);
-			try {
-				// ********************************************************
-				// ********************************************************
-				//  REPASAR EL WORKPLACE QUE HAY QUE AINADIR POR DEFECTO
-				// ********************************************************
-				// ********************************************************
-				to.setWorkPlace((WorkPlace)((CompanyCollectionsController)AonUtil.getRegisteredBean("companyCollections")).getWorkPlaces().get(0).getValue());
-				//to.setWorkPlace((WorkPlace)ECommerceUtil.getWorkPlaces().get(0));
-			} catch (ManagerBeanException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			offerController.accept(null);
-			for(CartItem ci:getList()){
-				offerDetailController.onReset(null);
-				OfferDetail tod = (OfferDetail)offerDetailController.getTo();
-				tod.setOffer(to);
-				tod.setItem(ci.getItem());
-				tod.setDescription(ci.getItem().getProduct().getName());
-				tod.setQuantity(ci.getQuantity());
-				tod.setPrice(ci.getItem().getPrice());
-				tod.setDiscountExpression(null);
-				offerDetailController.onAccept(null);
-			}
-		}
-		
-	}
+	
 
 		
 	public void afterBeanAdded() {
 //		IController controller = event.getController();
 //		Registry registry = ((IRegistry) controller.getTo()).getRegistry();
 		try {
-			updateRegistryLines( getCartTarget().getTarget().getRegistry() );
+			((ShopController)AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER)).setLogged(true);
+			((LoginController)AonUtil.getRegisteredBean(IECommerceConstants.LOGIN_CONTROLLER)).setLogin(getCartTarget().getEcTarget().getLogin());
+			
+			updateRegistryLines( getCartTarget().getEcTarget().getTarget().getRegistry() );
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException( e.getMessage(), e );
 		}
@@ -320,7 +301,7 @@ public class ShoppingCartController {
 //		IController controller = event.getController();
 //		Registry registry = ((IRegistry) controller.getTo()).getRegistry();
 		try {
-			updateRegistryLines( getCartTarget().getTarget().getRegistry() );
+			updateRegistryLines( getCartTarget().getEcTarget().getTarget().getRegistry() );
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException( e.getMessage(), e );
 		}
