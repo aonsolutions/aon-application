@@ -31,6 +31,12 @@
 			<artifactId>aon.ui.company</artifactId>
 			<version>4.1.3</version>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+		            <groupId>com.code.aon</groupId>
+		            <artifactId>aon.ui.webmail</artifactId>
+				</exclusion>
+			</exclusions>			
 		</dependency>
 		<dependency>
 			<groupId>com.sun</groupId>
