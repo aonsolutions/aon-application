@@ -1,13 +1,16 @@
 package com.code.aon.jaas.auth.util;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,7 +21,6 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -178,16 +180,18 @@ public class Util {
      */
     public static final String findStoredApplicationIp(String thisIp, String contextPath) 
     			throws UnknownHostException {
-		String ip = null;
 		File[] files = new File( IConstants.RESOURCES_DEFAULT_DIR ).listFiles();
 		for (int i = 0; i < files.length; i++) {
-			ip = files[i].getName(); 
-			if ( !ip.equals( thisIp ) ) {
-				Iterator<String> it = deserialize( ip ).iterator();
-				while (it.hasNext()) {
-					String elem = it.next();
-					if ( elem.indexOf( contextPath ) > -1 )
-						return ip;
+			File file = files[i];
+			if ( file.isFile() && file.canRead() ) {
+				String ip = file.getName(); 
+				if ( !ip.equals( thisIp ) ) {
+					Iterator<String> it = deserialize( ip ).iterator();
+					while (it.hasNext()) {
+						String elem = it.next();
+						if ( elem.indexOf( contextPath ) > -1 )
+							return ip;
+					}
 				}
 			}
 		}
@@ -201,23 +205,25 @@ public class Util {
 	 * @throws IOException
 	 */
 	public static void serialize(List<String> l) throws IOException {
+		FileOutputStream ostream = null;
 		try {
 			String thisIp = InetAddress.getLocalHost().getHostAddress();
 			String path = IConstants.RESOURCES_DEFAULT_DIR + thisIp;
 			if ( LOGGER.isDebugEnabled() )
 				LOGGER.debug( "Serializing deployed applications:" + l + " on " + thisIp );
-			File file = new File( path );
-			File directory = file.getParentFile();
-			if (! directory.exists() ) {
-				LOGGER.info( "Creating directory:" + directory );
-				directory.mkdirs();
-			}
-			FileUtils.writeLines(file, l);
+			ostream = new FileOutputStream( path );
+			/* Create the output stream */
+			ObjectOutputStream oopstream = new ObjectOutputStream( ostream );
+			oopstream.writeObject( l );
+			oopstream.flush();
 		} catch (UnknownHostException e) {
 			LOGGER.fatal( e );
 		} catch(IOException e) {
 			LOGGER.fatal( e.getMessage() );
 			throw e;
+		} finally {
+			if ( ostream != null ) 
+				ostream.close();
 		}
 	}
 
@@ -229,18 +235,25 @@ public class Util {
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<String> deserialize(String thisIp) {
+		FileInputStream istream = null;
 		try {
 			String path = IConstants.RESOURCES_DEFAULT_DIR + thisIp;
 			if ( LOGGER.isDebugEnabled() )
 				LOGGER.debug( "Deserializing deployed applications from " + thisIp );
-			File file = new File( path );
-			if (! file.exists() ) {
-				LOGGER.warn( "File not found " + file );
-				return Collections.emptyList();
-			}
-			return FileUtils.readLines(file);
+			istream = new FileInputStream( path );
+			/* Create the output stream */
+			ObjectInputStream p = new ObjectInputStream( istream );
+			return (List) p.readObject();
 		} catch(IOException e) {
 			LOGGER.fatal( e.getMessage() );
+		} catch (ClassNotFoundException e) {
+			LOGGER.fatal( e.getMessage() );
+		} finally {
+			if ( istream != null )
+				try {
+					istream.close();
+				} catch(IOException e) {
+				}
 		}
 		return null;
 	}
