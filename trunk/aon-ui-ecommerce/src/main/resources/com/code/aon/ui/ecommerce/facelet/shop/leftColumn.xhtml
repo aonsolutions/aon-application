@@ -8,8 +8,9 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j">
 
+<!--  
 	<aon:dataTable id="cataloguesGadget" value="#{catalogueGadget.model}"
-		rows="20" var="to" style="width=90%">
+		rows="20" var="to" style="width:90%">
 		<aon:rowSelector actionListener="#{catalogueGadget.onSelect}"
 			reRender="itemContent" />
 		<aon:column>
@@ -19,11 +20,13 @@
 			<aon:outputText value="#{to.name}" />
 		</aon:column>
 	</aon:dataTable>
-
 	<rich:spacer height="20" />
+-->
+
 
 	<aon:dataTable id="categoriesGadget" value="#{categoryGadget.model}"
-		rows="20" var="to" style="width=90%">
+		rows="20" var="to" style="width:100%" 
+		styleClass="searchGadget">
 		<aon:rowSelector actionListener="#{categoryGadget.onSelect}"
 			reRender="itemContent" />
 		<aon:column>

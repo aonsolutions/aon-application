@@ -62,7 +62,7 @@
 				</aon:div>
 			-->	
 				
-				<aon:panelGrid id="itemDetail" columns="4" style="width=100%;">
+				<aon:panelGrid id="itemDetail" columns="4" style="width:100%;">
 					<aon:outputLabel value="#{bundle.aon_id}" />
 					<aon:outputText value="#{shopItem.item.id}" />
 
@@ -127,8 +127,50 @@
 					<f:facet name="header">
 	                    <h:outputText value="Archivos adjuntos -i18n-"></h:outputText>
 	                </f:facet>
+
+
+
+
+				
+					<a4j:repeat value="#{shopItem.model}" rowKeyVar="index" var="to">
+<!--  
+					<a4j:repeat value="#{targetSearch.mediaTypes}" rowKeyVar="index" var="mediaType">
+						<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+-->
+						<aon:div>
+							<a4j:mediaOutput id="RegistryAttachment_preview" 
+								element="img" cacheable="false"
+								value="#{shopItem.key}" style="width:200px"
+								createContent="#{shopItem.paint}" 
+								mimeType="#{to.mimeType}" />
+
+
+<!--  
+							<aon:selectOneMenu id="Target_registry_medias_mediaType"
+								converter="aon.EnumConverter" 
+								value="#{targetSearch.mediaTypes[index]}">
+								<f:selectItem itemLabel="-" value="#{null}"/>
+								<f:selectItems value="#{registryCollections.mediaTypes}" />
+								<a4j:support event="onchange" reRender="mediaTypeDiv"/>
+							</aon:selectOneMenu>
+							<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="mediaTypeDiv"
+								actionListener="#{targetSearch.onRemoveMediaType}"
+								rendered="#{mediaType != null}">
+								<f:param name="index" value="#{index}" />
+							</aon:commandButton>
+							<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="mediaTypeDiv"
+								actionListener="#{targetSearch.onAddMediaType}"
+								rendered="#{(mediaType != null) and (index == (targetSearch.mediaTypesSize-1))}"/>					
+-->
+						</aon:div>						
+					</a4j:repeat>
+
+
+
+
+<!--  
 					<rich:dataGrid id="attchmentGrid" value="#{shopItem.model}" var="attach" 
-						columns="3" elements="9" width="600px">
+						columns="3" elements="9" width:"600px">
 			            <rich:panel bodyClass="pbody">
 			                <f:facet name="header">
 			                    <h:outputText value="titulo -i18n-"></h:outputText>
@@ -142,33 +184,32 @@
 			                    <h:outputText value="#{attach.type}" />
 			                    <h:outputText value="type -i18n-" styleClass="label"></h:outputText>
 			                    <h:outputText value="#{attach.type}" />
-			         
 			                    
 			                    <a4j:mediaOutput id="RegistryAttachment_preview" 
 									element="img" cacheable="false"
 									value="#{to.data.key}" style="width:200px"
 									createContent="#{shopItem.paint}" 
 									mimeType="#{to.mimeType}" />
-<!--  
+
 			                    <a4j:mediaOutput id="RegistryAttachment_preview" 
 									element="img" cacheable="false"
 									value="#{shopItem.aonFile.key}" style="width:200px"
 									rendered="#{shopItem.aonFile.size > 0}" 
 									createContent="#{shopItem.paint}" 
 									mimeType="#{to.mimeType}" />
--->
 			                </h:panelGrid>
 			            </rich:panel>
 			       </rich:dataGrid>
 			       <aon:dataScroller for="attchmentGrid"
 						rowCount="#{shopItem.model.rowCount}" showNote="true" />
+-->
 				</aon:panel>
 			</aon:div>
 
 <!--  
 	<aon:dataTable id="productList"
 		value="#{itemDetailAttach.model}" rows="20" var="to"
-		style="width=100%">
+		style="width:100%">
 
 		<aon:column>
 			<f:facet name="header">

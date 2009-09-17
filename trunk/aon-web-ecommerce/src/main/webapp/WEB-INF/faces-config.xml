@@ -29,7 +29,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/3.7.0</value>
+			<value>/aonResource/3.8.0</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -44,11 +44,17 @@
 			<property-name>styleSheets</property-name>
 			<list-entries>
 				<value>#{aonResource.resolve['/aon-richCss.css']}</value>
+			<!--  
 				<value>#{aonResource.resolveLocal['/css/ecomerce-default.css']}</value>
-				<!--  
-				-->
+				<value>#{aonResource.resolveLocal['/css/ecConfig.skin']}</value>
+			-->
+			<!--  
+				<value>#{aonResource.resolveLocal['/css/ecomerce-red.css']}</value>
+			-->
 			</list-entries>
 		</managed-property>
+		
+		
 
 		<managed-property>
 			<property-name>properties</property-name>

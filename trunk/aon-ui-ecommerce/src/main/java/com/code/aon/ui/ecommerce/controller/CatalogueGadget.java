@@ -1,5 +1,7 @@
 package com.code.aon.ui.ecommerce.controller;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -11,6 +13,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ebackoffice.Eccatalogue;
 import com.code.aon.product.Catalogue;
 import com.code.aon.product.CatalogueItem;
 import com.code.aon.product.Item;
@@ -29,6 +32,7 @@ public class CatalogueGadget {
 		if (model == null) {
 			model = new ListDataModel(getList());
 		}
+		setList(null);
 		return model;
 	}
 
@@ -39,11 +43,14 @@ public class CatalogueGadget {
 	public List<ITransferObject> getList() {
 		try {
 			if (list == null) {
-				IManagerBean bean = BeanManager.getManagerBean(Catalogue.class);
+				IManagerBean bean = BeanManager.getManagerBean(Eccatalogue.class);
 				list = bean.getList(null);
 			}
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
+			String msg = "La búsqueda falló";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
 		}
 		return list;
 	}
@@ -65,20 +72,20 @@ public class CatalogueGadget {
 		}
 		((ShopController) AonUtil
 			.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER))
-			.setItems(true);
+			.setItemsView(true);
 	}
 
 	private Criteria buildItemCriteria() {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(CatalogueItem.class);
 			list = bean.getList(null);
-			Catalogue cat = (Catalogue) getModel().getRowData();
+			Eccatalogue ecCat = (Eccatalogue) getModel().getRowData();
 			String identifier = BeanManager.getManagerBean(Item.class)
 					.getFieldName(IECommerceConstants.ITEM_ALIAS);
 			Criteria criteria = null;
 			for (ITransferObject to : list) {
 				CatalogueItem c = (CatalogueItem) to;
-				if (c.getCatalogue().getId().equals(cat.getId())) {
+				if (c.getCatalogue().getId().equals(ecCat.getId())) {
 					if (criteria == null) {
 						criteria = new Criteria();
 						criteria.addEqualExpression(identifier, c.getItem()
@@ -102,6 +109,10 @@ public class CatalogueGadget {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public void paint(OutputStream out, Object data) throws IOException {
+		out.write(((Eccatalogue)getList().get(0)).getCatalogueImg());
 	}
 
 }

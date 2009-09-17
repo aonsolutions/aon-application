@@ -8,6 +8,14 @@
 			<var>ecommerceBundle</var>
 		</resource-bundle>
 	</application>
+	
+	<!-- ****** APP CONFIGURATION ****** -->
+	<managed-bean>
+		<managed-bean-name>ecConfig</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.ecommerce.controller.ConfigController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
 	<!-- ****** CATEGORY SEARCH GADGET ****** -->
 	<managed-bean>
@@ -28,6 +36,15 @@
 	<!-- ****** OFFER ****** -->
 	<managed-bean>
 		<managed-bean-name>cartOffer</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.ecommerce.controller.OfferController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+		
+	<!-- ****** OFFER ****** -->
+	<managed-bean>
+		<managed-bean-name>_cartOffer</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.ecommerce.controller.OfferController
 		</managed-bean-class>
@@ -90,7 +107,7 @@
 	
 	<!-- ****** OFFER DETAIL ****** -->
 	<managed-bean>
-		<managed-bean-name>cartOfferDetail</managed-bean-name>
+		<managed-bean-name>_cartOfferDetail</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.ecommerce.controller.OfferDetailController
 		</managed-bean-class>
@@ -141,7 +158,7 @@
 			com.code.aon.ui.ecommerce.controller.ShopController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>items</property-name>
+			<property-name>itemsView</property-name>
 			<value>true</value>
 		</managed-property>
 	</managed-bean>
@@ -228,6 +245,12 @@
 		<navigation-case>
 			<from-outcome>cartOffer_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/ecommerce/facelet/offer/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>paymethod_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/ecommerce/facelet/paymethod/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

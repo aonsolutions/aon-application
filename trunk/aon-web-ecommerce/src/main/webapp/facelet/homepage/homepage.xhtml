@@ -9,6 +9,7 @@
 
 	<aon:div id="aon-scroll-area">
 		<aon:div>
+			
 			<aon:div style="text-align:center;padding-top: 100px;">
 				<aon:graphicImage rendered="#{company.withLogo}" url="company.logo"/>
 				<a4j:mediaOutput element="img" cacheable="false"
@@ -19,6 +20,13 @@
 					<aon:outputText value="#{company.companyLabel}" />
 				</aon:div>
 			</aon:div>
+			
+<!--  
+			<ui:include src="#{shop_form}" />
+			<ui:composition template="/com/code/aon/ui/ecommerce/facelet/shop/form.xhtml" />
+			<a4j:support event="onLoad" action="#{shop_form}" >
+			</a4j:support>
+-->
 		</aon:div>
 	</aon:div>
 </ui:composition>

@@ -37,7 +37,7 @@ public class SearchGadget {
 		setSearch(null);
 		((ShopController) AonUtil
 			.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER))
-			.setItems(true);
+			.setItemsView(true);
 	}
 
 	public void search(Criteria criteria) {

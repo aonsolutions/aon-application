@@ -1,6 +1,6 @@
 package com.code.aon.ui.ecommerce.controller;
 
-import com.code.aon.commercial.Target;
+import com.code.aon.ebackoffice.Ectarget;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
 
@@ -12,7 +12,7 @@ public class CartTarget {
 	/** The advertising. */
 	//private Advertising advertising;
 	
-	private Target target;
+	private Ectarget ecTarget;
 	
 	private RegistryAddress mainAddress;
 	
@@ -24,12 +24,12 @@ public class CartTarget {
 	
 	private RegistryMedia web;	
 	
-	public Target getTarget() {
-		return target;
+	public Ectarget getEcTarget() {
+		return ecTarget;
 	}
 	
-	public void setTarget(Target target) {
-		this.target = target;
+	public void setEcTarget(Ectarget ecTarget) {
+		this.ecTarget = ecTarget;
 	}
 
 //	public Registry getRegistry() {
