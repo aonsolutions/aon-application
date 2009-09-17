@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.PayMethod;
@@ -47,10 +48,15 @@ public class Ecconfig implements ITransferObject {
 	private OriginalPrice showItemPrice;
 	private WishList wishList;
 	private PayMethod bankTransfer;
-	/*	private PayMethod cashOnDelivery;
+	private PayMethod cashOnDelivery;
 	private PayMethod visa;
 	private PayMethod paypal;
-	private PayMethod bankDraft;*/
+	private PayMethod bankDraft;
+	private String series;
+	private String privatePolicy;
+	private String legalNote;
+	private String dataProtection;
+	
 	
 	@Id
 	@GeneratedValue
@@ -152,7 +158,7 @@ public class Ecconfig implements ITransferObject {
 	}
 	
 	@OneToOne (fetch=FetchType.EAGER)
-	@JoinColumn(name="id", nullable=false)
+	@JoinColumn(name="bank_transfer", nullable=false)
 	@ForeignKey(name = "FK_ECCONFIG_BANK_TRANSFER")
 	@Index(name = "IDX_ECCONFIG_BANK_TRANSFER")
 	public PayMethod getBankTransfer() {
@@ -161,9 +167,11 @@ public class Ecconfig implements ITransferObject {
 	public void setBankTransfer(PayMethod bankTransfer) {
 		this.bankTransfer = bankTransfer;
 	}
-	
-	/*
-	@Column(name = "cash_on_delivery")
+
+	@OneToOne (fetch=FetchType.EAGER)
+	@JoinColumn(name="cash_on_delivery", nullable=false)
+	@ForeignKey(name = "FK_ECCONFIG_CASH_ON_DELIVERY")
+	@Index(name = "IDX_ECCONFIG_CASH_ON_DELIVERY")
 	public PayMethod getCashOnDelivery() {
 		return cashOnDelivery;
 	}
@@ -171,6 +179,11 @@ public class Ecconfig implements ITransferObject {
 		this.cashOnDelivery = cashOnDelivery;
 	}
 	
+	
+	@OneToOne (fetch=FetchType.EAGER)
+	@JoinColumn(name="visa", nullable=false)
+	@ForeignKey(name = "FK_ECCONFIG_VISA")
+	@Index(name = "IDX_ECCONFIG_VISA")
 	public PayMethod getVisa() {
 		return visa;
 	}
@@ -178,7 +191,10 @@ public class Ecconfig implements ITransferObject {
 		this.visa = visa;
 	}
 	
-	
+	@OneToOne (fetch=FetchType.EAGER)
+	@JoinColumn(name="paypal", nullable=false)
+	@ForeignKey(name = "FK_ECCONFIG_PAYPAL")
+	@Index(name = "IDX_ECCONFIG_PAYPAL")
 	public PayMethod getPaypal() {
 		return paypal;
 	}
@@ -186,7 +202,10 @@ public class Ecconfig implements ITransferObject {
 		this.paypal = paypal;
 	}
 	
-	@Column(name = "bank_draft")
+	@OneToOne (fetch=FetchType.EAGER)
+	@JoinColumn(name="bank_draft", nullable=false)
+	@ForeignKey(name = "FK_ECCONFIG_BANK_DRAFT")
+	@Index(name = "IDX_ECCONFIG_BANK_DRAFT")
 	public PayMethod getBankDraft() {
 		return bankDraft;
 	}
@@ -194,8 +213,43 @@ public class Ecconfig implements ITransferObject {
 		this.bankDraft = bankDraft;
 	}
 	
-	*/
-
+	@Column(length=5)
+	public String getSeries() {
+		return series;
+	}
+	public void setSeries(String series) {
+		this.series = series;
+	}
+	
+	@Lob
+	@Type(type="stringClob")
+	@Column(name = "private_policy")
+	public String getPrivatePolicy() {
+		return privatePolicy;
+	}
+	public void setPrivatePolicy(String privatePolicy) {
+		this.privatePolicy = privatePolicy;
+	}
+	
+	@Lob
+	@Type(type="stringClob")
+	@Column(name = "legal_note")
+	public String getLegalNote() {
+		return legalNote;
+	}
+	public void setLegalNote(String legalNote) {
+		this.legalNote = legalNote;
+	}
+	
+	@Lob
+	@Type(type="stringClob")
+	@Column(name = "data_protection")
+	public String getDataProtection() {
+		return dataProtection;
+	}
+	public void setDataProtection(String dataProtection) {
+		this.dataProtection = dataProtection;
+	}
 	
 }
 	
