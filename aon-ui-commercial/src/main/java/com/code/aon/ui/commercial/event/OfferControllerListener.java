@@ -32,7 +32,7 @@ public class OfferControllerListener extends ControllerAdapter {
 		OfferController controller = (OfferController)event.getController();
 		try {
 			controller.loadAddresses(((Offer)controller.getTo()).getTarget().getRegistry().getId());
-			controller.loadDefaultPayMethod(((Offer)controller.getTo()).getTarget().getRegistry().getId());
+			controller.loadDefaultPayMethod(((Offer)controller.getTo()).getTarget().getRegistry().getId(), true);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
