@@ -20,6 +20,7 @@ import com.code.aon.ui.util.AonUtil;
 public class ShopItemController extends BasicController {
 	
 	private Item item;
+	private ItemAttachment itemThumbnail;
 	private AonFile file;
 
 	
@@ -38,6 +39,13 @@ public class ShopItemController extends BasicController {
 		}
 	}
 	
+	public ItemAttachment getItemThumbnail() {
+		return itemThumbnail;
+	}
+
+	public void setItemThumbnail(ItemAttachment itemThumbnail) {
+		this.itemThumbnail = itemThumbnail;
+	}
 
 	public AonFile getFile() {
 		return file;
@@ -57,6 +65,8 @@ public class ShopItemController extends BasicController {
 		this.setCriteria(criteria);
 		//this.setCriteria(null);
 		this.onSearch(null);
+		onSelectFirst(null);
+		setItemThumbnail((ItemAttachment)getTo());
 	}
 
 	public void addToCart(ActionEvent event) {
@@ -68,6 +78,7 @@ public class ShopItemController extends BasicController {
 			.setCartView(true);
 	}
 	
+	/*
 	public void paint(OutputStream out, Object data) throws IOException {
 //		if (getAonFile() != null && (getAonFile().getSize() > 0) ) {
 //			out.write(getAonFile().getData());
@@ -78,20 +89,19 @@ public class ShopItemController extends BasicController {
 		
 	} 
 	
-	/*
+	 */
 	public void paint(OutputStream out, Object data) throws IOException {
 		try {
 			Integer id = (Integer) data;
-			Eccatalogue e = (Eccatalogue) getManagerBean().get(id);
-			if (e != null && e.getCatalogueImg() != null) {
-				out.write(e.getCatalogueImg());	
+			ItemAttachment ia = (ItemAttachment) getManagerBean().get(id);
+			if (ia != null && ia.getData() != null) {
+				out.write(ia.getData());	
 			}
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
 		
 	} 
-	*/
 	
 	
 	public Integer getKey() {
@@ -106,6 +116,8 @@ public class ShopItemController extends BasicController {
 		// TODO Auto-generated method stub
 		return super.getModel();
 	}
+
+
 
 
 	
