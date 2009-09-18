@@ -543,7 +543,7 @@
 				<value>#{offerHeaderControllerListener}</value>
 				<value>#{offerControllerListener}</value>
 				<value>#{offerDetailChildListener}</value>
-				<value>#{bankAccountValidatorListener}</value>
+				<value>#{nullableBankAccountValidatorListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
