@@ -12,19 +12,27 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.commercial.Offer;
+import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.Target;
+import com.code.aon.commercial.dao.ICommercialAlias;
+import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Series;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.OfferInvoicingManager;
 import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.InvoiceSource;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
@@ -46,19 +54,21 @@ public class OfferController extends BasicController {
 	private static final String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
 
 	private List<SelectItem> addresses;
-
 	private Boolean defaultPayMethod;
-
 	private IPriceStrategy priceStrategy;
-	
+	private boolean showInvoiceWindow;
+	private String invoiceSeries;
+	private int invoiceNumber;
+	private Date invoiceDate;
+
 	public List<SelectItem> getAddresses() {
 		return addresses;
 	}
-	
+
 	public void setAddresses(List<SelectItem> addresses) {
 		this.addresses = addresses;
 	}
-	
+
 	public Boolean getDefaultPayMethod() {
 		return defaultPayMethod;
 	}
@@ -77,6 +87,38 @@ public class OfferController extends BasicController {
 		return priceStrategy;
 	}
 
+	public boolean isShowInvoiceWindow() {
+		return showInvoiceWindow;
+	}
+
+	public void setShowInvoiceWindow(boolean value) {
+		this.showInvoiceWindow = value;
+	}
+	
+	public String getInvoiceSeries() {
+		return invoiceSeries;
+	}
+
+	public void setInvoiceSeries(String invoiceSeries) {
+		this.invoiceSeries = invoiceSeries;
+	}
+
+	public int getInvoiceNumber() {
+		return invoiceNumber;
+	}
+
+	public void setInvoiceNumber(int invoiceNumber) {
+		this.invoiceNumber = invoiceNumber;
+	}
+
+	public Date getInvoiceDate() {
+		return invoiceDate;
+	}
+
+	public void setInvoiceDate(Date invoiceDate) {
+		this.invoiceDate = invoiceDate;
+	}
+
 	public boolean isPending(){
 		Offer offer = (Offer)this.getTo();
 		if (offer.getStatus() != null) {
@@ -93,12 +135,66 @@ public class OfferController extends BasicController {
 		return false;
 	}
 
-	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		Series series = SeriesNumberUtil.obtainSeries((String)event.getNewValue());
-		if (this.getTo() != null) {
-			((Offer)this.getTo()).setNumber(SeriesNumberUtil.obtainNumber((String)event.getNewValue(), StringUtils.capitalize(this.getBeanName())));
-			((Offer)this.getTo()).setSecurityLevel((series!=null)?series.getSecurityLevel():null);
+	public boolean isInvoiced(){
+		Offer offer = (Offer)this.getTo();
+		if (offer.getStatus() != null) {
+			return offer.getStatus().equals(OfferStatus.INVOICED);
 		}
+		return false;
+	}
+
+	@SuppressWarnings("unchecked")
+	public String getInvoiceCode() throws ManagerBeanException {
+		Offer offer = (Offer)this.getTo();
+		if (offer != null && offer.getId() != null) {
+			IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), offer.getId());
+			criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.ON_INVOICE);
+			Iterator<?> iterator = offerDetailBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				OfferDetail offerDetail = (OfferDetail)iterator.next();
+
+				IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.OFFER);
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), offerDetail.getId());
+				Iterator iter = invoiceDetailBean.getList(criteria).iterator();
+				if (iter.hasNext()) {
+					InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
+					return invoiceDetail.getInvoice().getReferenceCode();
+				}
+			}
+		}
+    	return null;
+	}
+
+	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
+		int number = obtainMaxNumber((String)event.getNewValue());
+		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String)event.getNewValue());
+		if (this.getTo() != null) {
+			((Offer)this.getTo()).setNumber(number);
+			((Offer)this.getTo()).setSecurityLevel(securityLevel);
+		}
+	}
+
+	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
+    	return SeriesNumberUtil.obtainNumber(seriesId, StringUtils.capitalize(this.getBeanName()));
+	}
+
+	@SuppressWarnings("unchecked")
+	private SecurityLevel obtainSeriesSecurityLevel(String seriesId) throws ManagerBeanException {
+		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
+		Iterator iter = seriesBean.getList(criteria).iterator();
+		if (iter.hasNext()) {
+			Series series = (Series)iter.next(); 
+			if (series.getSecurityLevel() != null) {
+				return series.getSecurityLevel();
+			}
+		}
+		return null;
 	}
 
 	public void targetData(LookupChangeEvent event) throws ManagerBeanException {
@@ -106,7 +202,7 @@ public class OfferController extends BasicController {
 			Target target = (Target)event.getNewValue();
 			((Offer)this.getTo()).setTarget(target);
 			loadAddresses(target.getId());
-			loadDefaultPayMethod(target.getId());
+			loadDefaultPayMethod(target.getId(), false);
 		} else {
 			setAddresses(null);
 		}
@@ -140,16 +236,20 @@ public class OfferController extends BasicController {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void loadDefaultPayMethod(Integer id) throws ManagerBeanException {
+	public void loadDefaultPayMethod(Integer id, boolean forceDefault) throws ManagerBeanException {
 		if (id != null) {
 			if (((Offer)this.getTo()).getPayMethod() != null && ((Offer)this.getTo()).getPayMethod().getId() != null) {
 				setDefaultPayMethod(false);
 			} else {
-				IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(rPayMethodBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), id);
-				Iterator iter = rPayMethodBean.getList(criteria).iterator();
-				setDefaultPayMethod(iter.hasNext());
+				if (forceDefault) {
+					setDefaultPayMethod(true);
+				} else {
+					IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(rPayMethodBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), id);
+					Iterator iter = rPayMethodBean.getList(criteria).iterator();
+					setDefaultPayMethod(iter.hasNext());
+				}
 			}
 		}
 	}
@@ -185,10 +285,27 @@ public class OfferController extends BasicController {
 		return getPriceStrategy().getTotalPrice(offer, offer.getTarget());
 	}
 
+	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
+		Offer to = (Offer)this.getTo();
+		setInvoiceSeries(to.getSeries());
+		setInvoiceNumber(obtainMaxInvoiceNumber(to.getSeries()));
+		setInvoiceDate(new Date());
+	}
+
+	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
+		setInvoiceNumber(obtainMaxInvoiceNumber((String)event.getNewValue()));
+	}
+
+	private int obtainMaxInvoiceNumber(String seriesId) {
+    	Criteria criteria = new Criteria();
+    	criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
+		return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
+	}
+
 	public void onInvoice(ActionEvent event) throws ManagerBeanException {
 		Offer to = (Offer)this.getTo();
 		OfferInvoicingManager invoicingManager = new OfferInvoicingManager();
-		Invoice invoice = invoicingManager.invoice(to, to.getSeries(), new Date());
+		Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
 
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		IController saleInvoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
