@@ -10,6 +10,8 @@ import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryBank;
+import com.code.aon.registry.RegistryPayMethod;
 
 public class SalesBridgeUtil {
 
@@ -21,13 +23,47 @@ public class SalesBridgeUtil {
 		if (iterator.hasNext()) {
 			return (Customer)iterator.next();
 		} else {
-			Customer customer = new Customer();
-			customer.setRegistry(offer.getTarget().getRegistry());
-			customer.setTariff(offer.getTariff());
-			customer.setStatus(CustomerStatus.ACTIVE);
-			customer.setScope(offer.getScope());
-			return (Customer)customerBean.insert(customer);
+			RegistryBank rBank = null;
+			if (offer.getBank() != null && offer.getBank().getId() != null) {
+				rBank = createRegistryBank(offer);
+			}
+			if (offer.getPayMethod() != null && offer.getPayMethod().getId() != null) {
+				createRegistryPayMethod(offer, rBank);
+			}
+			return createCustomer(offer);
 		}
+	}
+
+	private Customer createCustomer(Offer offer) throws ManagerBeanException {
+		IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
+		Customer customer = new Customer();
+		customer.setRegistry(offer.getTarget().getRegistry());
+		customer.setTariff((offer.getTariff()!=null && offer.getTariff().getId()!=null) ? offer.getTariff() : null);
+		customer.setStatus(CustomerStatus.ACTIVE);
+		customer.setScope(offer.getScope());
+		return (Customer)customerBean.insert(customer);
+	}
+
+	private RegistryBank createRegistryBank(Offer offer) throws ManagerBeanException {
+		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
+		RegistryBank rBank = new RegistryBank();
+		rBank.setRegistry(offer.getTarget().getRegistry());
+		rBank.setBank(offer.getBank());
+		rBank.setBankAccount(offer.getBankAccount());
+		return (RegistryBank)rBankBean.insert(rBank);
+	}
+
+	private RegistryPayMethod createRegistryPayMethod(Offer offer, RegistryBank rBank) throws ManagerBeanException {
+		IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
+		RegistryPayMethod rPayMethod = new RegistryPayMethod();
+		rPayMethod.setRegistry(offer.getTarget().getRegistry());
+		rPayMethod.setPayment(offer.getPayMethod());
+		rPayMethod.setNumberOfPayments(offer.getNumberOfPayments());
+		rPayMethod.setDaysToFirstPayment(offer.getDaysToFirstPayment());
+		rPayMethod.setDaysBetweenPayments(offer.getDaysBetweenPayments());
+		rPayMethod.setPaymentDays(offer.getPaymentDays());
+		rPayMethod.setRegistryBank(rBank);
+		return (RegistryPayMethod)rPayMethodBean.insert(rPayMethod);
 	}
 
 }
