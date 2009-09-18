@@ -3,6 +3,7 @@ package com.code.aon.ui.commercial.event;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.dao.ICommercialAlias;
+import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -23,6 +24,7 @@ public class OfferDetailControllerListener extends ControllerAdapter {
 		controller.setLongDescription(false);
 		try {
 			offerDetail.setLine(calculateNextLine((Offer)controller.getMasterController().getTo()));
+			offerDetail.setStatus(OfferDetailStatus.PENDING);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
