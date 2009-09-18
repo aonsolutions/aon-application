@@ -159,7 +159,6 @@
    </context-param>
 
 	<!-- JBOSS RICH FACES CONFIGURATION -->
-	<!--  
 	<context-param>
 		<description>
 			Is a name of a skin used in an application. It can be a
@@ -171,12 +170,11 @@
 		<param-name>org.richfaces.SKIN</param-name>
 		<param-value>aon</param-value>
 	</context-param>
-	-->
 	
 	<!-- Activa el css integrado con richfaces. -->
 	<context-param>
 	    <param-name>org.richfaces.LoadStyleStrategy</param-name>
-	    <param-value>NONE</param-value>
+	    <param-value>ALL</param-value>
 	</context-param>
 	
 	 
@@ -204,13 +202,14 @@
 		<param-name>org.richfaces.LoadScriptStrategy</param-name>
 		<param-value>ALL</param-value>
     </context-param>
-<!-- 
+
+ <!-- 
 	<context-param>
 		<param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
 		<param-value>../aon-desktop/richFaces3.3.1/</param-value>
 	</context-param>
--->
-
+ -->
+ 
 	<filter>
 		<display-name>RichFaces Filter</display-name>
 		<filter-name>richfaces</filter-name>
@@ -274,47 +273,6 @@
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
     
-    <!-- Security Constraint -->  
-	<!--  
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>facelet</web-resource-name>
-			<url-pattern>/facelet/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>account</web-resource-name>
-			<url-pattern>/_account/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>finance</web-resource-name>
-			<url-pattern>/finance/*</url-pattern>
-		</web-resource-collection>
- 		<web-resource-collection>
-			<web-resource-name>jsp</web-resource-name>
-			<url-pattern>*.jsp</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>actions</web-resource-name>
-			<url-pattern>*.jsf</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>Invitado</role-name>
-		</auth-constraint>
-	</security-constraint>
-	-->
-
-<!-- 
-	<login-config>
-		<auth-method>FORM</auth-method>
-		<form-login-config>
-			<form-login-page>/com/code/aon/ui/resources/facelet/login/login.jaas</form-login-page>
-			<form-error-page>/com/code/aon/ui/resources/facelet/login/errorlogin.jaas</form-error-page>
-		</form-login-config>
-	</login-config>
-
-	<security-role><role-name>Invitado</role-name></security-role>
- -->
-
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/AonECOMMERCE</resource-env-ref-name>
 	  <resource-env-ref-type>javax.sql.DataSource</resource-env-ref-type>
