@@ -9,36 +9,43 @@
 
 	<ui:define name="content">
 		<aon:form id="offerForm">
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle"
-					value="#{commercialBundle.commercial_offer_module}" />
-				<ui:param name="controller" value="#{offer}" />
-				<ui:param name="skipRemoveButton" value="#{!offer.pending}" />
-				<ui:define name="beforeSpinToolbarContent">
-<!-- 
-					<aon:commandButton id="sales"
-						value="Hacer Pedido"
-						actionListener="#{offer.createSales}" action="sales_list"
-						rendered="#{offer.pending and offerDetail.model.rowCount > 0}"
-						styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
- -->
-					<aon:commandButton id="invoice"
-						value="Facturar"
-						actionListener="#{offer.onInvoice}" action="saleInvoice_list"
-						rendered="#{(offer.pending or offer.approved) and offerDetail.model.rowCount > 0}"
-						styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
-					<h:commandLink id="offer" value="#{bundle.aon_report}"
-						target="_new" rendered="#{!offer.new}"
-						action="#{report.onExecute}"
-						disabled="#{offerDetail.to != null}"
-						accesskey="#{bundle.aon_key_print}"
-						styleClass="aon-finding-toolbar-item aon-icon-printer">
-						<f:param name="reportKey" value="offer" />
-						<f:param name="outputFormat" value="PDF" />
-					</h:commandLink>
-				</ui:define>
-			</ui:decorate>
+			<aon:div id="menuExt"> 
+				<ui:decorate
+					template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+					<ui:param name="toolbarTitle"
+						value="#{commercialBundle.commercial_offer_module}" />
+					<ui:param name="controller" value="#{offer}" />
+					<ui:param name="skipSaveButton" value="#{!offer.pending}" />
+					<ui:param name="skipRemoveButton" value="#{!offer.pending}" />
+					<ui:define name="beforeSpinToolbarContent">
+	<!-- 
+						<aon:commandButton id="sales"
+							value="Hacer Pedido"
+							actionListener="#{offer.createSales}" action="sales_list"
+							rendered="#{offer.pending and offerDetail.model.rowCount > 0}"
+							styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
+	 -->
+						<aon:commandButton id="invoice"
+							value="#{commercialBundle.commercial_offer_to_invoice}"
+							immediate="#{true}" rendered="#{(offer.pending or offer.approved) and offerDetail.model.rowCount > 0}"
+							styleClass="aon-finding-toolbar-item aon-icon-favorite"
+							actionListener="#{offer.onInvoiceShow}"
+							reRender="showInvoiceWindow">
+							<f:setPropertyActionListener target="#{offer.showInvoiceWindow}"
+								value="#{true}" />
+						</aon:commandButton>
+						<h:commandLink id="offer" value="#{bundle.aon_report}"
+							target="_new" rendered="#{!offer.new}"
+							action="#{report.onExecute}"
+							disabled="#{offerDetail.to != null}"
+							accesskey="#{bundle.aon_key_print}"
+							styleClass="aon-finding-toolbar-item aon-icon-printer">
+							<f:param name="reportKey" value="offer" />
+							<f:param name="outputFormat" value="PDF" />
+						</h:commandLink>
+					</ui:define>
+				</ui:decorate>
+			</aon:div>			
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
@@ -53,7 +60,7 @@
 						<aon:selectOneMenu id="Offer_series-New" 
 							value="#{offer.to.series}" rendered="#{offer.new}"
 							valueChangeListener="#{offer.onSeriesChanged}" 
-							reRender="Offer_number,Offer_securityLevel,Offer_workPlace">
+							reRender="Offer_number,Offer_securityLevel">
 							<f:selectItem itemLabel=" " itemValue="#{null}" />
 							<f:selectItems value="#{configCollections.seriesIds}" />
 						</aon:selectOneMenu>
@@ -71,6 +78,14 @@
 
 						<aon:outputText styleClass="aon-margin-left"
 							value="#{offer.to.status}" />
+						<aon:outputText styleClass="aon-italic aon-margin-left"
+							value="(Factura:"
+							rendered="#{offer.invoiced}" />
+						<aon:outputText styleClass="aon-bold"
+							value="#{offer.invoiceCode}"
+							rendered="#{offer.invoiced}" />
+						<aon:outputText styleClass="aon-italic" value=")"
+							rendered="#{offer.invoiced}" />
  					</aon:div>
 
 					<aon:outputLabel for="Offer_issueDate" 
@@ -90,14 +105,14 @@
 								disabled="#{!offer.pending}" size="5" 
 								lookupProperty="registry" lookup="#{targetLookup}"
 								lookupChangeListener="#{offer.targetData}" 
-								reRender="Target_full_name,Target_registry_document,OfferAddress,Offer_defaultPayMethod"
+								reRender="Target_full_name,Target_registry_document,OfferAddress,Offer_defaultPayMethod,payMethodDiv"
 								ajaxSingle="true" required="true" />
 							<aon:lookupButton
 								windowTitle="#{commercialBundle.commercial_target_selection}"
 								disabled="#{!offer.pending}" minHeight="460" minWidth="650"
 								property="#{offer.to.target.registry}" lookupProperty="registry" lookup="#{targetLookup}"
 								lookupChangeListener="#{offer.targetData}"
-								selectReRender="Target_id,Target_full_name,Target_registry_document,OfferAddress,Offer_defaultPayMethod"
+								selectReRender="Target_id,Target_full_name,Target_registry_document,OfferAddress,Offer_defaultPayMethod,payMethodDiv"
 								actionType="search">
 							</aon:lookupButton>
 							<aon:inputText id="Target_full_name" 
@@ -305,9 +320,13 @@
 							<ui:param name="showDataScroller" value="false" />
 							<ui:param name="skipResetButton" value="#{!offer.pending}" />
 							<ui:param name="skipLineEdition" value="#{!offer.pending}" />
-							<ui:param name="newSaveButtonReRender" value="Offer_total" />
-							<ui:param name="saveButtonReRender" value="Offer_total" />
-							<ui:param name="removeButtonReRender" value="Offer_total" />
+							<ui:param name="rowSelectorReRender" value="menuExt" />
+							<ui:param name="resetButtonReRender" value="menuExt" />
+							<ui:param name="newCancelButtonReRender" value="menuExt" />
+							<ui:param name="cancelButtonReRender" value="menuExt" />
+							<ui:param name="newSaveButtonReRender" value="menuExt,Offer_total" />
+							<ui:param name="saveButtonReRender" value="menuExt,Offer_total" />
+							<ui:param name="removeButtonReRender" value="menuExt,Offer_total" />
 							<ui:param name="focusOnAdd" value="OfferDetail_item_product_code-New" />
 							<ui:param name="focusOnSelect" value="OfferDetail_item_product_code" />
 		
@@ -506,5 +525,6 @@
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<ui:include src="/com/code/aon/ui/commercial/facelet/offer/modalInvoice.xhtml" />
 	</ui:define>
 </ui:composition>
