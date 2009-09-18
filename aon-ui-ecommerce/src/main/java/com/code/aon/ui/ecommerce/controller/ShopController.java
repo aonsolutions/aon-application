@@ -3,6 +3,7 @@ package com.code.aon.ui.ecommerce.controller;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
+import com.code.aon.ui.util.AonUtil;
 
 
 public class ShopController {
@@ -12,6 +13,7 @@ public class ShopController {
 	private boolean itemsView;
 	private boolean detailView;
 	private boolean cartView;
+	private boolean infoView;
 	private boolean logged;
 	
 
@@ -38,11 +40,25 @@ public class ShopController {
 	public boolean isItemsView() {
 		return itemsView;
 	}
+	
+	public boolean isInfoView() {
+		if (infoView == true) {
+			setDetailView(false);
+			setCartView(false);
+			setItemsView(false);
+		}
+		return infoView;
+	}
+
+	public void setInfoView(boolean infoView) {
+		this.infoView = infoView;
+	}
 
 	public void setItemsView(boolean itemsView) {
 		if (itemsView == true) {
 			setDetailView(false);
 			setCartView(false);
+			setInfoView(false);
 		}
 		this.itemsView = itemsView;
 	}
@@ -55,6 +71,7 @@ public class ShopController {
 		if (detailView == true) {
 			setItemsView(false);
 			setCartView(false);
+			setInfoView(false);
 		}
 		this.detailView = detailView;
 	}
@@ -67,6 +84,7 @@ public class ShopController {
 		if (cartView == true) {
 			setDetailView(false);
 			setItemsView(false);
+			setInfoView(false);
 		}
 		this.cartView = cartView;
 	}
@@ -88,6 +106,8 @@ public class ShopController {
 			setItemsView(true);
 		} else if (getBackView().equals(IECommerceConstants.SHOPPING_CART_VIEW)) {
 			setCartView(true);
+		} else if (getBackView().equals(IECommerceConstants.INFO_VIEW)) {
+			setInfoView(true);
 		} else {
 			setItemsView(true);
 		}
@@ -103,6 +123,10 @@ public class ShopController {
 //		((ShopController) AonUtil
 //				.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER))
 //				.setBackView(IECommerceConstants.ITEM_LIST_VIEW);		
+	}
+
+	public void onInfoView(ActionEvent event) {
+		setInfoView(true);		
 	}
 	
 }

@@ -33,32 +33,41 @@
 				<aon:outputText value="#{aonConfiguration.currentDate}" />
 -->
 				<aon:commandButton  
+					action="#"
 					value="privacidad-18n-"
-					action="#"
-					actionListener="#{userLogin.onLogout}"
 					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
 					<!--  
+					rendered="#{!(ecConfig.activeConfig.privatePolicy == null)}"
 						<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
 					-->
+					<f:param name="info" value="#{ecConfig.activeConfig.privatePolicy}" />
 				</aon:commandButton>
-				<aon:commandButton  
+				<aon:commandButton
+					action="#"  
 					value="nota legal-18n-"
-					action="#"
-					actionListener="#{userLogin.onLogout}"
+					reRender="itemContent"
 					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
 					<!--  
+					rendered="#{!(ecConfig.activeConfig.legalNote == null)}"
 						<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
 					-->
+					<aon:actionListener method="#{shop.onInfoView}" />
+					<f:param name="info" value="#{ecConfig.activeConfig.legalNote}" />
 				</aon:commandButton>
-				<aon:commandButton  
+				<aon:commandLink  
+					action="#"
 					value="proteccion de datos-18n-"
-					action="#"
-					actionListener="#{userLogin.onLogout}"
+					reRender="itemContent"
 					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
 					<!--  
+					rendered="#{!(ecConfig.activeConfig.dataProtection == null)}"
 						<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
 					-->
-				</aon:commandButton>
+					
+					<aon:actionListener method="#{shop.onInfoView}" />
+					<f:param name="info" value="#{ecConfig.activeConfig.dataProtection}" />
+				</aon:commandLink>
+				
 			</aon:div>
 		</aon:form>
 	</aon:div>

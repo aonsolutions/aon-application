@@ -11,7 +11,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.ebackoffice.Ecconfig;
-import com.code.aon.ebackoffice.enumeration.SkinType;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -22,7 +21,37 @@ public class ConfigController {
 
 	private List<ITransferObject> configList;
 	private Ecconfig activeConfig;
+	
+	/*
+	private String privatePolicy;
+	private String legalNote;
+	private String dataProtection;
 
+	public String getPrivatePolicy() {
+		return privatePolicy;
+	}
+
+	public void setPrivatePolicy(String privatePolicy) {
+		this.privatePolicy = privatePolicy;
+	}
+
+	public String getLegalNote() {
+		return legalNote;
+	}
+
+	public void setLegalNote(String legalNote) {
+		this.legalNote = legalNote;
+	}
+
+	public String getDataProtection() {
+		return dataProtection;
+	}
+
+	public void setDataProtection(String dataProtection) {
+		this.dataProtection = dataProtection;
+	}
+	*/
+	
 	public Ecconfig getActiveConfig() {
 		return activeConfig;
 	}
@@ -83,6 +112,7 @@ public class ConfigController {
 		((CompanyController)FormUtil.getController("company")).onSelectFirst(null);
 		return ((Company)FormUtil.getController("company").getTo()).getName();
 	}
+
 
 	
 	

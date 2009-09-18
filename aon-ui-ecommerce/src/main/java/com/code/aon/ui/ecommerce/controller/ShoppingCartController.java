@@ -275,7 +275,8 @@ public class ShoppingCartController {
 			addTarget();
 			OfferController offerController = (OfferController)FormUtil.getController(IECommerceConstants.OFFER_CONTROLLER);
 			offerController.getOffer().setTarget(getCartTarget().getEcTarget().getTarget());
-			((OfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER)).initialize();
+			offerController.initialize();
+			//((OfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER)).initialize();
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException( e.getMessage(), e );
 		}		

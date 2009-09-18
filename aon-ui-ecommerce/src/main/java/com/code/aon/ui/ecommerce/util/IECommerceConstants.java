@@ -31,5 +31,6 @@ public interface IECommerceConstants {
 	static final String ITEM_LIST_VIEW = "items";
 	static final String ITEM_DETAIL_VIEW = "detail";
 	static final String SHOPPING_CART_VIEW = "cart";
+	static final String INFO_VIEW = "info";
 	
 }

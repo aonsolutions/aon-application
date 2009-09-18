@@ -20,13 +20,15 @@
 				</ui:define>
 			</ui:decorate>
 			-->
-
-			<aon:div styleClass="aon-scroll-area">
+			
+			<aon:div styleClass="menu" />
+			
+			<aon:div styleClass="user-login-box">
 				<aon:commandButton id="aonToolbar-back" value="#{bundle.aon_back}"
 					action="shop_form"
 					styleClass="aon-finding-toolbar-item aon-icon-cancel"
 					immediate="true" accesskey="#{bundle.aon_key_cancel}" />
-				
+					
 				<aon:panel>
 					<f:facet name="header">
 						<aon:outputText value="#{ecommerceBundle.aon_acommerce_user_identification}" />
@@ -61,7 +63,7 @@
 				</aon:panel>
 			</aon:div>
 
-			<aon:div styleClass="aon-scroll-area">
+			<aon:div styleClass="new-user-registry">
 				<aon:panel>
 					<f:facet name="header">
 						<aon:outputText value="#{ecommerceBundle.aon_acommerce_user_registry}" />
