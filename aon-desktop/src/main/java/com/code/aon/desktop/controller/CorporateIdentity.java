@@ -145,8 +145,6 @@ public class CorporateIdentity implements ICollectionProvider{
 		User loggedUser = UserUtils.getInstance().getLoggedUser();
 		String name = loggedUser.getName();
 		
-		String registryData = "";
-
     	identityReport.setFax_to("");
     	identityReport.setFax_from("");
     	identityReport.setFax_subject("");
@@ -181,7 +179,7 @@ public class CorporateIdentity implements ICollectionProvider{
 
 	private Company recoverCompany() throws ManagerBeanException{
     	IManagerBean bean = BeanManager.getManagerBean(Company.class);
-        List list = bean.getList(null);
+        List<ITransferObject> list = bean.getList(null);
         if (list.size() > 0) {
             return (Company)list.get(0);
         }
@@ -192,7 +190,7 @@ public class CorporateIdentity implements ICollectionProvider{
     	IManagerBean bean = BeanManager.getManagerBean(RecordData.class);
     	Criteria criteria = new Criteria();
     	criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.RECORD_DATA_REGISTRY_ID), company.getId());
-        List list = bean.getList(criteria);
+    	List<ITransferObject> list = bean.getList(criteria);
         if (list.size() > 0) {
             return (RecordData)list.get(0);
         }
@@ -204,7 +202,7 @@ public class CorporateIdentity implements ICollectionProvider{
     	Criteria criteria = new Criteria();
     	criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), company.getId());
     	criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), AddressType.MAIN);
-    	List list = bean.getList(criteria);
+    	List<ITransferObject> list = bean.getList(criteria);
     	if (list.isEmpty())
     		return null;
     	return (RegistryAddress)list.iterator().next();
