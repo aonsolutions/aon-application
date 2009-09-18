@@ -3,7 +3,6 @@ package com.code.aon.ui.ecommerce.controller;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
-import com.code.aon.ui.util.AonUtil;
 
 
 public class ShopController {

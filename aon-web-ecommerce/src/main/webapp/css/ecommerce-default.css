@@ -347,8 +347,8 @@ a.aon-top-menu-item-icon:hover {
 	margin: 0 1em;
 }
 
-.aon-scroll-area {
-/*	margin: 0px 0.2em 0.5em;*/
+#aon-scroll-area{
+	margin: 0px 0.2em 0.5em;
 }
 
 /*************************/ /*******  ICONS  BIG*********/
@@ -524,6 +524,7 @@ a.aon-top-menu-item-icon:hover {
 .aon-icon-cancel {
 	background: transparent url(images/aon-icon/aon-icon-cancel.png) scroll
 		left center no-repeat;
+		margin-bottom:10px;
 
 }
 
@@ -1252,8 +1253,8 @@ a.aon-top-menu-item-icon:hover {
 /*margin: 1em 0 1em 0;*/
 	padding: 0 0 0.5em 0;
 	/*min-width:340px;*/
-/*	margin-top:10px;
-	margin-left:5px;
+	margin-top:20px;
+	/*margin-left:5px;
 	margin-right:5px;*/
 }
 
@@ -1471,6 +1472,8 @@ color:#999;
 vertical-align:top;
 white-space:nowrap;
 width:230px;
+height:20px;
+
 
 /*font-weight:bold;*/}
 
@@ -1886,7 +1889,10 @@ background-color:#000;
 .aon-logo {
 	padding: 0px 0 0 20px;
 	float: left;
+	height:150px;
+	
 }
+tr.aon-logo-name{height:150px;}
 
 .aon-applicationName {
 	color: #f2f2f2;
@@ -2878,7 +2884,7 @@ border-width:1px;
 padding:2px;
 }
 .dr-pnl-b {
-/*padding:10px*/;
+margin:30px;;
 }
 .dr-pnl {
 background-color:#FFFFFF;
@@ -3374,12 +3380,15 @@ color:#C4C0B9;
 	
 }
 td.aon-panelGrid-even .aon-outputText { width:30px;
+color:#999;
+text-transform:none;
 
 /*	border:#c4c4c4 1px solid;*/
 	
 }
 .search-box .aon-inputText {
 	border:1px solid #fff;
+	width:230px;
 
 }
 #header-image{
@@ -3434,7 +3443,8 @@ text-transform:uppercase;
 			
 					}
 			#company-logo img{padding-top:20px;
-			padding-bottom:10px;}
+			padding-bottom:10px;
+			max-width:100px;}
 
 	.box-header{
 		background:#000;
@@ -3443,6 +3453,7 @@ text-transform:uppercase;
 		padding:10px;
 		margin-left:6px;
 		margin-right:6px;
+		margin-bottom:20px;
 			background-image:url(images/aon-icon/MESSENGER - MSN.png) no-repeat scroll left center;
 
 	}
@@ -3481,6 +3492,8 @@ background:url(images/aon-icon/MESSENGERMSN.png) no-repeat scroll left center;
 	.aon-icon-letter{
 		background:url(images/aon-icon/MAIL.png) no-repeat scroll left center;
 border:none;
+margin-left:160px;
+
 		}
 	.login-box-header-icon{
 	background:transparent url(images/aon-icon/MESSENGERMSN.png) no-repeat scroll left center;
@@ -3513,3 +3526,29 @@ padding-bottom:7px;
 margin-top:-7px;
 padding-top:20px;
 width:40px;}
+
+/*	td.detailImageColumn
+	{
+	border:1px solid #ccc;
+	padding:20px;
+	margin:20px;}*/
+
+.detailImageColumn div
+	{
+	border:1px solid #ccc;
+	padding:20px;
+	margin:20px;
+	height:50px;
+	width:50px;}
+.detailImageColumn div	img{
+	margin-left:20px;}
+
+	.aon-vertical-align-top .aon-scroll-area {
+	margin:20px;
+	}
+	.aon-panelGrid-odd  .aon-outputLabel{
+		color:#000;
+		text-transform:uppercase;
+		font-weight:bold;
+		}
+		

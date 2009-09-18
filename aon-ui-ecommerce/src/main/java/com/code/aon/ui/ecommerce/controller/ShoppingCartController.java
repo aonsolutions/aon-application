@@ -1,12 +1,8 @@
 package com.code.aon.ui.ecommerce.controller;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -15,29 +11,18 @@ import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.commercial.Offer;
-import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.Target;
-import com.code.aon.commercial.enumeration.OfferStatus;
-import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.company.WorkPlace;
-import com.code.aon.config.PayMethod;
-import com.code.aon.config.Tariff;
 import com.code.aon.ebackoffice.Ectarget;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.product.Item;
-import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
-import com.code.aon.seller.Seller;
-import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
