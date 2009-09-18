@@ -20,6 +20,8 @@
 				</ui:define>
 			</ui:decorate>
 			-->
+			
+			<aon:div styleClass="menu" />
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:commandButton id="aonToolbar-back" value="#{bundle.aon_back}"
@@ -32,21 +34,26 @@
 					accesskey="#{bundle.aon_key_accept}"
 					actionListener="#{shoppingCart.onAddTarget}" />
 
-				<aon:panelGrid columns="2">
-					<aon:outputLabel for="ectarget_email" value="#{bundle.aon_email}" />
-					<aon:inputText id="ectarget_email"
-						value="#{shoppingCart.cartTarget.ecTarget.login}" size="20" maxlength="48"/>
-
-					<aon:outputLabel for="ectarget_password" value="#{bundle.aon_passwd}" />
-					<aon:inputText id="ectarget_password"
-						value="#{shoppingCart.cartTarget.ecTarget.password}" size="20"  maxlength="32"/>
-				
-				</aon:panelGrid>
-				
-				<ui:include
-					src="/com/code/aon/ui/ecommerce/facelet/shop/cart/target/formContent.xhtml">
-					<ui:param name="controller" value="#{shoppingCart}" />
-				</ui:include>
+				<aon:panel>
+					<f:facet name="header">
+						<aon:outputText value="#{ecommerceBundle.aon_acommerce_user_registry}" />
+					</f:facet>
+					<aon:panelGrid columns="2">
+						<aon:outputLabel for="ectarget_email" value="#{bundle.aon_email}" />
+						<aon:inputText id="ectarget_email"
+							value="#{shoppingCart.cartTarget.ecTarget.login}" size="20" maxlength="48"/>
+	
+						<aon:outputLabel for="ectarget_password" value="#{bundle.aon_passwd}" />
+						<aon:inputText id="ectarget_password"
+							value="#{shoppingCart.cartTarget.ecTarget.password}" size="20"  maxlength="32"/>
+					
+					</aon:panelGrid>
+					
+					<ui:include
+						src="/com/code/aon/ui/ecommerce/facelet/shop/cart/target/formContent.xhtml">
+						<ui:param name="controller" value="#{shoppingCart}" />
+					</ui:include>
+				</aon:panel>
 				
 			</aon:div>
 		</aon:form>

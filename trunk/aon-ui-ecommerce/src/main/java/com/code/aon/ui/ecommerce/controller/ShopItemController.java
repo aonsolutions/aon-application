@@ -74,9 +74,25 @@ public class ShopItemController extends BasicController {
 //		}
 //		out.write(((ItemAttachment)getTo()).getData());
 		out.write(((ItemAttachment)getTo()).getData());
-		this.onSelectNext(null);
+		//this.onSelectNext(null);
 		
 	} 
+	
+	/*
+	public void paint(OutputStream out, Object data) throws IOException {
+		try {
+			Integer id = (Integer) data;
+			Eccatalogue e = (Eccatalogue) getManagerBean().get(id);
+			if (e != null && e.getCatalogueImg() != null) {
+				out.write(e.getCatalogueImg());	
+			}
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		}
+		
+	} 
+	*/
+	
 	
 	public Integer getKey() {
 		if(getTo()==null){

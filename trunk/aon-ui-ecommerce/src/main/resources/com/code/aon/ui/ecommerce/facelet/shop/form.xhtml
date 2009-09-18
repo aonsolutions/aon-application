@@ -173,9 +173,12 @@
 						<aon:div rendered="#{shop.cartView}" >
 							<ui:include src="cart/list.xhtml" />
 						</aon:div>
+						<aon:div rendered="#{shop.infoView}" >
+							<ui:include src="info/form.xhtml" />
+						</aon:div>
 					</aon:div>
 					
-					<aon:div id="utility-panel">
+					<aon:div id="right-panel" styleClass="right-panel">
 						<ui:include src="rightColumn.xhtml" />
 					</aon:div>
 
