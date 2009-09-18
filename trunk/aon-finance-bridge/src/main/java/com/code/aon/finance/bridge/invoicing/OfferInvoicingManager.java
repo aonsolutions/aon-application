@@ -6,6 +6,7 @@ import java.util.Iterator;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.dao.ICommercialAlias;
+import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -52,21 +53,25 @@ public class OfferInvoicingManager {
 		return financeGenerator;
 	}
 
-	public Invoice invoice(Offer offer, String series, Date issueDate) throws ManagerBeanException {
-		Invoice invoice = createInvoice(offer, series, issueDate);
+	public Invoice invoice(Offer offer, String series, int number, Date issueDate) throws ManagerBeanException {
+		Invoice invoice = createInvoice(offer, series, number, issueDate);
 		createInvoiceDetails(invoice, offer);
-		getFinanceGenerator().generateFinances(invoice, offer, getPriceStrategy().getTotalPrice(invoice, invoice), true);
+		if (offer.getPayMethod() != null && offer.getPayMethod().getId() != null) {
+			getFinanceGenerator().generateFinances(invoice, offer, getPriceStrategy().getTotalPrice(invoice, invoice), true);
+		} else {
+			getFinanceGenerator().generateFinances(invoice, getPriceStrategy().getTotalPrice(invoice, invoice), true);
+		}
 		updateOfferStatus(offer);
 
 		return invoice;
 	}
 
-	private Invoice createInvoice(Offer offer, String series, Date issueDate) throws ManagerBeanException {
+	private Invoice createInvoice(Offer offer, String series, int number, Date issueDate) throws ManagerBeanException {
 		Customer customer = getSalesBridgeUtil().obtainCustomer(offer);
 
 		Invoice invoice = new Invoice();
 		invoice.setSeries(series);
-		invoice.setNumber(obtainMaxNumber(series));
+		invoice.setNumber((number > 0) ? number : obtainMaxNumber(series));
 		invoice.setRegistry(customer.getRegistry());
 		invoice.setRegistryDocument(customer.getRegistry().getDocument());
 		invoice.setRegistryName(customer.getRegistry().getFullName());
@@ -107,16 +112,19 @@ public class OfferInvoicingManager {
 			invoiceDetail.setDiscountExpression(offerDetail.getDiscountExpression());
 			invoiceDetail.setWorkPlace(offer.getWorkPlace());
 			invoiceDetail.setSource(InvoiceSource.OFFER);
-			invoiceDetail.setSourceId(offer.getId());
+			invoiceDetail.setSourceId(offerDetail.getId());
 			invoiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(invoiceDetail));
-
 			invoiceDetailBean.insert(invoiceDetail);
+
+			offerDetail.setStatus(OfferDetailStatus.ON_INVOICE);
+			offerDetailBean.update(offerDetail);
 		}
 	}
 
 	private void updateOfferStatus(Offer offer) throws ManagerBeanException {
 		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
 		offer.setStatus(OfferStatus.INVOICED);
+		offerBean.restoreNullSubPOJOs(offer);
 		offerBean.update(offer);
 	}
 
