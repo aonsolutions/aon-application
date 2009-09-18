@@ -39,6 +39,7 @@ public class Eccatalogue implements ITransferObject {
 	private Integer id;	
 	private Catalogue catalogue;	
 	private byte[] catalogueImg;
+	private byte[] catalogueIcon;
 	private CatalogueType type;
 	
 	
@@ -72,6 +73,14 @@ public class Eccatalogue implements ITransferObject {
 		this.catalogueImg = catalogueImg;
 	}
 	
+	@Lob
+	@Column(name = "catalogue_icon")	
+	public byte[] getCatalogueIcon() {
+		return catalogueIcon;
+	}
+	public void setCatalogueIcon(byte[] iconImg) {
+		this.catalogueIcon = iconImg;
+	}
 	@Column(name = "type", length = 1)
 	public CatalogueType getType() {
 		return type;
