@@ -63,20 +63,21 @@ public class SeriesNumberUtil {
 	public static int obtainNumber(String series, String table,	Criteria criteria) {
 		Session session = HibernateUtil.getSession();
 		String hqlQuery = 
-			"SELECT MAX(" + table.toLowerCase() + ".number) "
-				+ "FROM " + table + " " + table.toLowerCase() + " WHERE "
-				+ table.toLowerCase() + ".series = :series";
+			"SELECT MAX(" + table.toLowerCase() + ".number)"
+				+ " FROM " + table + " " + table.toLowerCase()
+				+ " WHERE "	+ table.toLowerCase() + ".series " + ((series==null) ? "IS NULL" : " = '" + series + "'");
 		if (criteria != null) {
 			hqlQuery = CriteriaUtilities.toSQLString(criteria, hqlQuery);
 		}
 		Query query = session.createQuery(hqlQuery);
-		query.setString("series", series);
-		Integer results = (Integer)query.list().iterator().next();
-		if (results != null) {
-			return (results.intValue() + 1);
+		Iterator<?> iterator = query.list().iterator();
+		if (iterator.hasNext()) {
+			Integer results = (Integer)iterator.next();
+			if (results != null) {
+				return (results.intValue() + 1);
+			}
 		}
 		return 1;
-
 	}
 
 }
