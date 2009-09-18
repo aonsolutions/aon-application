@@ -15,8 +15,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Scope;
-import com.code.aon.ui.company.controller.CompanyCollectionsController;
-import com.code.aon.ui.ecommerce.util.ECommerceUtil;
+import com.code.aon.ui.ecommerce.util.IECommerceConstants;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -92,12 +91,17 @@ public class OfferController {
 //			AonUtil.addInfoMessage("Fallo al recuperar el workplace.");
 //		}
 		
+		String series = ((ConfigController)AonUtil.getRegisteredBean(IECommerceConstants.CONFIG_CONTROLLER)).getActiveConfig().getSeries();
+
 		offer.setNumber(0);
 		// El type debe ser INTERNET
 		offer.setType(OfferType.INTERNET);
-		offer.setScope(new Scope());
 		offer.setStatus(OfferStatus.PENDING);
 		offer.setIssueDate(Calendar.getInstance().getTime());
+		offer.setSeries(series);
+		//
+		offer.setScope(new Scope());
+		//offer.set
 		
 //		try {
 //			offerController.insert();
@@ -107,7 +111,7 @@ public class OfferController {
 		
 		
 		/*
-		private String series;
+		-private String series;
 	    ?-private int number;
 	    private Target target;
 	    private RegistryAddress address;

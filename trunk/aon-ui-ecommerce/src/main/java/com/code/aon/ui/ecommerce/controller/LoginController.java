@@ -5,7 +5,6 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.commercial.Target;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -41,7 +40,7 @@ public class LoginController {
 				//System.out.println("LOGIN INCORRECTO");
 				AonUtil.addErrorMessage("LOGIN INCORRECTO");
 			} else {
-				Ectarget ect = (Ectarget)list.iterator().next();
+				//Ectarget ect = (Ectarget)list.iterator().next();
 				//System.out.println("LOGIADOOO");
 				//AonUtil.addErrorMessage("LOGIADOOO");
 				((ShopController)AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER)).setLogged(true);

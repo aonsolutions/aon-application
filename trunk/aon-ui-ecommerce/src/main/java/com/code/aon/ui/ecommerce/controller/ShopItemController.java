@@ -65,8 +65,11 @@ public class ShopItemController extends BasicController {
 		this.setCriteria(criteria);
 		//this.setCriteria(null);
 		this.onSearch(null);
-		onSelectFirst(null);
-		setItemThumbnail((ItemAttachment)getTo());
+		setItemThumbnail(null);
+		if(this.getModel().getRowCount()>0){
+			onSelectFirst(null);
+			setItemThumbnail((ItemAttachment)getTo());
+		}
 	}
 
 	public void addToCart(ActionEvent event) {

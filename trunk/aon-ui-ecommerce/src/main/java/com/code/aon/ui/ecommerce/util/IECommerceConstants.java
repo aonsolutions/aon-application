@@ -11,6 +11,7 @@ public interface IECommerceConstants {
 	static final String OFFER_CONTROLLER = "cartOffer";
 	static final String OFFER_DETAIL_CONTROLLER = "cartOfferDetail";
 	static final String LOGIN_CONTROLLER = "userLogin";
+	static final String CONFIG_CONTROLLER = "ecConfig";
 	
 	/* ACTION */
 	static final String SHOP_ACTION = "shop_form";

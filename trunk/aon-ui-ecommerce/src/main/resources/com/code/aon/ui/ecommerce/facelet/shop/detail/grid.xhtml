@@ -74,7 +74,6 @@
 						<aon:outputLabel value="profitPercent -i18n-" />
 						<aon:outputText value="#{shopItem.item.profitPercent}" />
 -->						
-	
 						<aon:outputLabel value="purchasePrice -i18n-" />
 						<aon:outputText value="#{shopItem.item.purchasePrice}" />
 					</aon:panelGrid>
@@ -104,48 +103,5 @@
 			       </rich:dataGrid>
 				</aon:panel>
 			</aon:div>
-
-<!--  
-	<aon:dataTable id="productList"
-		value="#{itemDetailAttach.model}" rows="20" var="to"
-		style="width:100%">
-
-		<aon:column>
-			<f:facet name="header">
-				<aon:outputText value="id -i18n-" />
-			</f:facet>
-			<aon:outputText value="#{to.id}" />
-		</aon:column>
-		
--->
-		<!--  
-		<aon:column>
-			<f:facet name="header">
-				<aon:outputText value="name -i18n-" />
-			</f:facet>
-			<aon:outputText value="#{to.item.product.name}" />
-		</aon:column>
-		<aon:column>
-			<f:facet name="header">
-				<aon:outputText value="price -i18n-" />
-			</f:facet>
-			<aon:outputText value="#{to.price}" />
-		</aon:column>
-		-->
-<!--  
-		<aon:column>
-			<f:facet name="header">
-				<aon:outputText value="ficha tecnica -i18n-" />
-			</f:facet>
-			<aon:commandButton value="+ info -i18n-"
-				accesskey="#{bundle.aon_key_accept}"
-				styleClass="aon-finding-toolbar-item aon-icon-info" />
-			
-		</aon:column>
--->		
-<!--  
-			</aon:dataTable>
--->
-	
 		
 </ui:composition>
