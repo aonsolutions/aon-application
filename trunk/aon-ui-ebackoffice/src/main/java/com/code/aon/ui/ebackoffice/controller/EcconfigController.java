@@ -50,7 +50,7 @@ public class EcconfigController extends BasicController {
 	private List<SelectItem> paymethods;
 	private List<SelectItem> tariffs;
 	/** The uploaded file. */
-	private AonFile aonFile1;
+	private AonFile aonFile;
 
 
 	public List<SelectItem> getSkins() {
@@ -164,7 +164,7 @@ public class EcconfigController extends BasicController {
 			paymethods.add(item);
 		}
 	}
-	
+
 	public void refreshTariffs() throws ManagerBeanException {
 		tariffs = new LinkedList<SelectItem>();
 		IManagerBean tariffBean = BeanManager
@@ -206,12 +206,12 @@ public class EcconfigController extends BasicController {
 		this.tariffs = tariffs;
 	}
 
-	public AonFile getAonFile1() {
-		return aonFile1;
+	public AonFile getAonFile() {
+		return aonFile;
 	}
 
-	public void setAonFile1(AonFile aonFile1) {
-		this.aonFile1 = aonFile1;
+	public void setAonFile(AonFile aonFile1) {
+		this.aonFile = aonFile1;
 	}
 
 	public void headerUploaded(UploadEvent event) {
@@ -225,35 +225,16 @@ public class EcconfigController extends BasicController {
 				f.setData(data);
 			}
 			f.setFileName(item.getFileName());
-			setAonFile1(f);
+			setAonFile(f);
 		} catch (IOException e) {
 			throw new AbortProcessingException(e.getMessage());
 		}
 	}
 
 	public void paintHeader(OutputStream out, Object data) throws IOException {
-		
-		if (((Ecconfig) getTo()).getHeaderImg() != null) {
-			this.onSelectFirst(null);
-			out.write(((Ecconfig) getTo()).getHeaderImg());
-		} else
-			out.write(null);
-
+		if (getAonFile().getData() != null) {
+			out.write(getAonFile().getData());
+		}
 	}
-	
-
-	public void paintFile(OutputStream out, Object data) throws IOException {
-		
-		if (aonFile1.getData() != null) {
-			//this.onSelectFirst(null);
-			out.write(aonFile1.getData());
-		} else
-			out.write(null);
-
-	}
-	
-	
-
-
 
 }
