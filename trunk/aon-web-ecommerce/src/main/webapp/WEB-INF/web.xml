@@ -257,6 +257,13 @@
        </listener-class>
     </listener>
 
+	<!-- Hibernate config context Listener -->
+    <listener>
+       <listener-class>
+           com.code.aon.ui.ecommerce.hibernate.HibernateConfigContextListener
+       </listener-class>
+    </listener>
+
 	<!-- Listener, that does all the startup work (configuration, init). -->
 	<listener>
 		<listener-class>
