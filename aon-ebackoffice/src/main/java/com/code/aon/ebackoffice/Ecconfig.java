@@ -16,6 +16,7 @@ import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.Tariff;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.ebackoffice.enumeration.LoginType;
 import com.code.aon.ebackoffice.enumeration.OriginalPrice;
@@ -56,6 +57,7 @@ public class Ecconfig implements ITransferObject {
 	private String privatePolicy;
 	private String legalNote;
 	private String dataProtection;
+	private Tariff tariff;
 	
 	
 	@Id
@@ -250,6 +252,20 @@ public class Ecconfig implements ITransferObject {
 	public void setDataProtection(String dataProtection) {
 		this.dataProtection = dataProtection;
 	}
+	
+	
+	@OneToOne (fetch=FetchType.EAGER)
+	@JoinColumn(name="tariff")
+	@ForeignKey(name = "FK_ECCONFIG_TARIFF")
+	@Index(name = "IDX_ECCONFIG_TARIFF")
+	public Tariff getTariff() {
+		return tariff;
+	}
+	public void setTariff(Tariff tariff) {
+		this.tariff = tariff;
+	}
+	
+	
 	
 }
 	

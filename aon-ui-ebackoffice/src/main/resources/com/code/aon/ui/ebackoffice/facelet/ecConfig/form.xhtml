@@ -91,6 +91,15 @@
 								<aon:selectOneMenu value="#{ecconfig.to.wishList}">
 									<f:selectItems value="#{ecconfig.wishListTypes}" />
 								</aon:selectOneMenu>
+								
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_tariff}" />
+
+
+								<aon:selectOneMenu value="#{ecconfig.to.tariff}">
+									<f:selectItems value="#{ecconfig.tariffs}" />
+								</aon:selectOneMenu>
+								
 
 							</aon:panelGrid>
 
