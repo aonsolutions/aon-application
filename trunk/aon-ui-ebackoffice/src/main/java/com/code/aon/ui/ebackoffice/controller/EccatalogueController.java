@@ -21,10 +21,18 @@ import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.PayMethod;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ebackoffice.Eccatalogue;
 import com.code.aon.ebackoffice.enumeration.CatalogueType;
+import com.code.aon.product.Catalogue;
 import com.code.aon.product.ItemAttachment;
+import com.code.aon.product.dao.IProductAlias;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.form.BasicController;
 
@@ -32,10 +40,10 @@ import com.code.aon.ui.form.BasicController;
 public class EccatalogueController extends BasicController {
 	private static final Logger LOGGER = Logger
 	.getLogger(EccatalogueController.class.getName());
-	
-	/** The uploaded file. */
-	private AonFile aonFile;
-	
+
+	private AonFile image;
+	private AonFile icon;	
+	private List<SelectItem> catalogues;	
 	private List<SelectItem> catalogueTypes;
 	
 	
@@ -47,53 +55,58 @@ public class EccatalogueController extends BasicController {
 				String name = e.getName( locale );
 				SelectItem item = new SelectItem( e, name );
 				catalogueTypes.add(item);
-				
-			}
+			}}
+		return catalogueTypes;}
+		
+		
+	public List<SelectItem> getCatalogues() throws ManagerBeanException {
+		catalogues=null;
+		if (catalogues==null) {
+			
+			refreshCatalogues();
 		}
 		
-		return catalogueTypes;
+		return catalogues;
 	}
 
 
-	public AonFile getAonFile() {
-		return aonFile;
+
+	public void setCatalogues(List<SelectItem> catalogues) {
+		this.catalogues = catalogues;
 	}
 
 
-	public void setAonFile(AonFile aonFile) {
-		this.aonFile = aonFile;
-	}
-	
-	
-	private void writeAttachment(AonFile file,HttpServletResponse response) {
-		try {
-			String filename = aonFile.getFileName();
-		
-			response.setHeader("Content-disposition", "attachment;filename=\""
-					+ filename + "\"");
-			byte[] data = aonFile.getData();
-			response.setHeader("Content-Length", String.valueOf(data.length));
-			ServletOutputStream sos = response.getOutputStream();
-			sos.write(data);
-			sos.close();
-			response.flushBuffer();
-		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+
+	public void refreshCatalogues() throws ManagerBeanException {
+		catalogues = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Catalogue.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(IProductAlias.CATALOGUE_ID));
+		List<ITransferObject> lista;
+		lista = bean.getList(criteria);
+		for (ITransferObject rec : lista) {
+			Catalogue cat = (Catalogue) rec;
+			SelectItem item = new SelectItem(cat, cat.getName());
+			catalogues.add(item);
 		}
 	}
 
-	public void downloadImage(ActionEvent event)
-			throws NumberFormatException, ManagerBeanException {
-		FacesContext context = FacesContext.getCurrentInstance();
-		String id = context.getExternalContext().getRequestParameterMap().get("index");
-		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-		AonFile file= (AonFile)getManagerBean().get(Integer.valueOf(id));
-		writeAttachment(file, response);
-		context.responseComplete();
+
+	
+	public AonFile getImage() {
+		return image;
+	}
+	public void setImage(AonFile image) {
+		this.image = image;
+	}
+	public AonFile getIcon() {
+		return icon;
+	}
+	public void setIcon(AonFile icon) {
+		this.icon = icon;
 	}
 	
-	
-	public void fileUploaded(UploadEvent event) {
+	public void uploadImage(UploadEvent event) {
 		try {
 			UploadItem item = event.getUploadItem();
 			AonFile f = new AonFile();
@@ -104,13 +117,30 @@ public class EccatalogueController extends BasicController {
 				f.setData(data);
 			}
 			f.setFileName(item.getFileName());
-			setAonFile(f);
+			setImage(f);
 		} catch (IOException e) {
 			throw new AbortProcessingException(e.getMessage());
 		}
 	}
 	
-	public void paint(OutputStream out, Object data) throws IOException {
+	public void uploadIcon(UploadEvent event) {
+		try {
+			UploadItem item = event.getUploadItem();
+			AonFile f = new AonFile();
+			File file = item.getFile();
+			if (file != null) {
+				FileInputStream in = new FileInputStream(file);
+				byte[] data = IOUtils.toByteArray(in);
+				f.setData(data);
+			}
+			f.setFileName(item.getFileName());
+			setIcon(f);
+		} catch (IOException e) {
+			throw new AbortProcessingException(e.getMessage());
+		}
+	}
+	
+	public void paintImage(OutputStream out, Object data) throws IOException {
 		try {
 			Integer id = (Integer) data;
 			Eccatalogue e = (Eccatalogue) getManagerBean().get(id);
@@ -122,9 +152,19 @@ public class EccatalogueController extends BasicController {
 		}
 		
 	} 
-
 	
-	
+	public void paintIcon(OutputStream out, Object data) throws IOException {
+		try {
+			Integer id = (Integer) data;
+			Eccatalogue e = (Eccatalogue) getManagerBean().get(id);
+			if (e != null && e.getCatalogueIcon() != null) {
+				out.write(e.getCatalogueIcon());	
+			}
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		}
+		
+	} 
 
 	
 }

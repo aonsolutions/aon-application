@@ -26,213 +26,197 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="dataTable" columns="4" style="width: 100%;">
 
-					<aon:outputText
-						value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_name}" />
+ 			
+ 			<aon:panel  height="60" header="#{ebackofficeBundle.aon_ebackoffice_ecconfig_funtion_params}">
+ 				
 
-
-					<aon:inputText styleClass="aon-form-input-text " required="true"
-						value="#{ecconfig.to.name}" size="25" maxlength="64" />
-
-					<aon:outputText
-						value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_active}" />
-
-					<aon:selectBooleanCheckbox value="#{ecconfig.to.active}" />
-
-
-
-					<aon:outputText
-						value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_skin}" />
-
-					<aon:selectOneMenu value="#{ecconfig.to.skin}">
-						<f:selectItems value="#{ecconfig.skins}" />
-					</aon:selectOneMenu>
-
-
-
-					<aon:outputText
-						value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_login}" />
-
-					<aon:selectOneMenu value="#{ecconfig.to.showLogin}">
-						<f:selectItems value="#{ecconfig.loginTypes}" />
-					</aon:selectOneMenu>
-
-					<aon:outputText
-						value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_commerce}" />
-
-					<aon:selectBooleanCheckbox value="#{ecconfig.to.commerce}" />
-
-					<aon:outputLabel for="Offer_series-New"
-						value="#{bundle.aon_series}/#{bundle.aon_number}" />
-					<aon:selectOneMenu id="Offer_series-New"
-						value="#{ecconfig.to.series}"
-						valueChangeListener="#{offer.onSeriesChanged}">
-						<f:selectItem itemLabel=" " itemValue="#{null}" />
-						<f:selectItems value="#{configCollections.seriesIds}" />
-					</aon:selectOneMenu>
-
-
-					<!--  <aon:outputText
-						value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_footer}" />
-
-					<aon:div id="footerFile">
-						<a4j:mediaOutput id="footer_preview" element="img"
-							cacheable="false" value="#{to.footerImg}" style="width:200px"
-							createContent="#{ecconfig.paintFooter}" />
-
-
-						<a4j:region>
-							<aon:fileUpload addControlLabel="Cambiar "
-								stopControlLabel="#{bundle.aon_fileUpload_stop}"
-								stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
-								uploadControlLabel="#{bundle.aon_fileUpload_upload}"
-								fileUploadListener="#{ecconfig.footerUploaded}" listHeight="0px"
-								immediateUpload="true" autoclear="true">
-								<f:facet name="label">
-									<h:outputText value="Cambiar Footer" />
-								</f:facet>
-								
-							</aon:fileUpload>
-						</a4j:region>
-					</aon:div>
--->
-
-
-
-
-
-					<aon:outputText
-						value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_pricetype}" />
-
-					<aon:selectOneMenu value="#{ecconfig.to.showPrice}">
-						<f:selectItems value="#{ecconfig.priceTypes}" />
-					</aon:selectOneMenu>
-					
-					<aon:outputText
-						value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_paymethod}" />
-
-					<aon:outputText
-						value=" " />
-					
-
-					<aon:outputText
-						value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_paymethod_contra}" />
-
-					<aon:selectOneMenu value="#{ecconfig.to.cashOnDelivery}">
-						<f:selectItem itemValue="0" itemLabel=" " />
-						<f:selectItems value="#{ecconfig.paymethods}" />
-					</aon:selectOneMenu>
-
-					<aon:outputText
-						value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_wish}" />
-
-
-					<aon:selectOneMenu value="#{ecconfig.to.wishList}">
-						<f:selectItems value="#{ecconfig.wishListTypes}" />
-					</aon:selectOneMenu>
-
-					<aon:outputText
-						value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_paymethod_tarns}" />
-
-					<aon:selectOneMenu value="#{ecconfig.to.bankTransfer}">
-						<f:selectItem itemValue="0" itemLabel=" " />
-						<f:selectItems value="#{ecconfig.paymethods}" />
-					</aon:selectOneMenu>
-
-					<aon:outputText
-						value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_originalprice}" />
-
-					<aon:selectOneMenu value="#{ecconfig.to.showItemPrice}">
-						<f:selectItems value="#{ecconfig.originalPriceTypes}" />
-					</aon:selectOneMenu>
-
-
-					<aon:outputText
-						value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_paymethod_visa}" />
-
-					<aon:selectOneMenu value="#{ecconfig.to.visa}">
-						<f:selectItem itemValue="0" itemLabel=" " />
-						<f:selectItems value="#{ecconfig.paymethods}" />
-					</aon:selectOneMenu>
-
-
-
-					<aon:outputText
-						value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_taxinprice}" />
-
-					<aon:selectOneMenu value="#{ecconfig.to.taxInType}">
-						<f:selectItems value="#{ecconfig.taxPriceTypes}" />
-					</aon:selectOneMenu>
-
-					<aon:outputText
-						value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_paymethod_paypal}" />
-
-					<aon:selectOneMenu value="#{ecconfig.to.paypal}">
-						<f:selectItem itemValue="0" itemLabel=" " />
-						<f:selectItems value="#{ecconfig.paymethods}" />
-					</aon:selectOneMenu>
-
-					<aon:outputText
-						value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_paymethod_giro}" />
-
-					<aon:selectOneMenu value="#{ecconfig.to.bankDraft}">
-						<f:selectItem itemValue="0" itemLabel=" " />
-						<f:selectItems value="#{ecconfig.paymethods}" />
-					</aon:selectOneMenu>
-
-
-
-
-				</aon:panelGrid>
-
-				<aon:outputText
-					value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_header}" />
-				<aon:div id="header">
-					<a4j:mediaOutput id="header_preview" element="img"
-						cacheable="false" value="#{to.headerImg}" style="width:200px"
-						createContent="#{ecconfig.paintHeader}" />
-
-					<a4j:region>
-						<aon:fileUpload addControlLabel="Cambiar "
-							stopControlLabel="#{bundle.aon_fileUpload_stop}"
-							stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
-							uploadControlLabel="#{bundle.aon_fileUpload_upload}"
-							fileUploadListener="#{ecconfig.headerUploaded}" listHeight="0px"
-							immediateUpload="true" autoclear="true">
-							<f:facet name="label">
-								<h:outputText value="Cambiar header" />
-							</f:facet>
-
-						</aon:fileUpload>
-					</a4j:region>
-				</aon:div>
-
+				
 				<rich:tabPanel switchType="ajax">
 
 					<rich:tab id="tab1"
+						label="#{ebackofficeBundle.aon_ebackoffice_ecconfig_funtion}">
+						<aon:panelGrid id="f" columns="2" style="width: 50%;">
+
+							<aon:outputText
+								value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_login}" />
+
+							<aon:selectOneMenu value="#{ecconfig.to.showLogin}">
+								<f:selectItems value="#{ecconfig.loginTypes}" />
+							</aon:selectOneMenu>
+
+							<aon:outputText
+								value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_commerce}" />
+
+							<aon:selectBooleanCheckbox value="#{ecconfig.to.commerce}" />
+
+							<aon:outputLabel for="Offer_series-New"
+								value="#{bundle.aon_series}/#{bundle.aon_number}" />
+							<aon:selectOneMenu id="Offer_series-New"
+								value="#{ecconfig.to.series}"
+								valueChangeListener="#{offer.onSeriesChanged}">
+								<f:selectItem itemLabel=" " itemValue="#{null}" />
+								<f:selectItems value="#{configCollections.seriesIds}" />
+							</aon:selectOneMenu>
+
+							<aon:outputText
+								value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_pricetype}" />
+
+							<aon:selectOneMenu value="#{ecconfig.to.showPrice}">
+								<f:selectItems value="#{ecconfig.priceTypes}" />
+							</aon:selectOneMenu>
+
+
+
+							<aon:outputText
+								value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_originalprice}" />
+
+							<aon:selectOneMenu value="#{ecconfig.to.showItemPrice}">
+								<f:selectItems value="#{ecconfig.originalPriceTypes}" />
+							</aon:selectOneMenu>
+
+
+							<aon:outputText
+								value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_taxinprice}" />
+
+							<aon:selectOneMenu value="#{ecconfig.to.taxInType}">
+								<f:selectItems value="#{ecconfig.taxPriceTypes}" />
+							</aon:selectOneMenu>
+
+							<aon:outputText
+								value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_wish}" />
+
+
+							<aon:selectOneMenu value="#{ecconfig.to.wishList}">
+								<f:selectItems value="#{ecconfig.wishListTypes}" />
+							</aon:selectOneMenu>
+
+						</aon:panelGrid>
+
+					</rich:tab>
+
+					<rich:tab id="tab2"
+						label="#{ebackofficeBundle.aon_ebackoffice_ecconfig_design}">
+						<aon:panelGrid id="d" columns="2" style="width: 50%;">
+							<aon:outputText
+								value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_skin}" />
+
+							<aon:selectOneMenu value="#{ecconfig.to.skin}">
+								<f:selectItems value="#{ecconfig.skins}" />
+							</aon:selectOneMenu>
+
+							<aon:outputText
+								value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_header}" />
+							<aon:div id="header">
+								<a4j:mediaOutput id="header_preview" element="img"
+									cacheable="false" value="#{to.headerImg}" style="width:500px"
+									createContent="#{ecconfig.paintHeader}" />
+								<!--  	<a4j:mediaOutput id="aonfile" element="img"
+									cacheable="false" value="#{ecconfig.aonFile1}" style="width:500px"
+									createContent="#{ecconfig.paintHeader}" />-->
+
+								<a4j:region>
+									<aon:fileUpload addControlLabel="Cambiar "
+										stopControlLabel="#{bundle.aon_fileUpload_stop}"
+										stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+										uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+										fileUploadListener="#{ecconfig.headerUploaded}"
+										listHeight="0px" immediateUpload="true" autoclear="true">
+										<f:facet name="label">
+											<h:outputText value="Cambiar header" />
+										</f:facet>
+										<a4j:support event="onuploadcomplete"
+											reRender="tab2" />
+
+									</aon:fileUpload>
+								</a4j:region>
+							</aon:div>
+
+						</aon:panelGrid>
+
+					</rich:tab>
+
+
+					<rich:tab id="tab3"
+						label="#{ebackofficeBundle.aon_ebackoffice_ecconfig_paymethod}">
+
+						<aon:panelGrid id="paymethods" columns="2" style="width: 50%;">
+
+
+							<aon:outputText
+								value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_paymethod_contra}" />
+
+							<aon:selectOneMenu value="#{ecconfig.to.cashOnDelivery}">
+								<f:selectItem itemValue="0" itemLabel=" " />
+								<f:selectItems value="#{ecconfig.paymethods}" />
+							</aon:selectOneMenu>
+
+
+							<aon:outputText
+								value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_paymethod_tarns}" />
+
+							<aon:selectOneMenu value="#{ecconfig.to.bankTransfer}">
+								<f:selectItem itemValue="0" itemLabel=" " />
+								<f:selectItems value="#{ecconfig.paymethods}" />
+							</aon:selectOneMenu>
+
+
+
+							<aon:outputText
+								value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_paymethod_visa}" />
+
+							<aon:selectOneMenu value="#{ecconfig.to.visa}">
+								<f:selectItem itemValue="0" itemLabel=" " />
+								<f:selectItems value="#{ecconfig.paymethods}" />
+							</aon:selectOneMenu>
+
+
+							<aon:outputText
+								value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_paymethod_paypal}" />
+
+							<aon:selectOneMenu value="#{ecconfig.to.paypal}">
+								<f:selectItem itemValue="0" itemLabel=" " />
+								<f:selectItems value="#{ecconfig.paymethods}" />
+							</aon:selectOneMenu>
+
+							<aon:outputText
+								value="#{ebackofficeBundle.aon_ebackoffice_ecconfig_paymethod_giro}" />
+
+							<aon:selectOneMenu value="#{ecconfig.to.bankDraft}">
+								<f:selectItem itemValue="0" itemLabel=" " />
+								<f:selectItems value="#{ecconfig.paymethods}" />
+							</aon:selectOneMenu>
+						</aon:panelGrid>
+
+					</rich:tab>
+
+
+					<rich:tab id="tab4"
 						label="#{ebackofficeBundle.aon_ebackoffice_ecconfig_private}">
 
 						<h:inputTextarea value="#{ecconfig.to.privatePolicy}" cols="150"
 							rows="10" size="700" maxlength="150" />
 
 					</rich:tab>
-					<rich:tab id="tab2"
+					<rich:tab id="tab5"
 						label="#{ebackofficeBundle.aon_ebackoffice_ecconfig_note}">
 
 						<h:inputTextarea value="#{ecconfig.to.legalNote}" cols="150"
 							rows="10" size="300" maxlength="150" />
 
 					</rich:tab>
-					<rich:tab id="tab3"
+					<rich:tab id="tab6"
 						label="#{ebackofficeBundle.aon_ebackoffice_ecconfig_data}">
 
 						<h:inputTextarea value="#{ecconfig.to.dataProtection}" cols="150"
 							rows="10" size="300" maxlength="150" />
 					</rich:tab>
 
-				</rich:tabPanel>
 
+				</rich:tabPanel>
+				
+				
+				</aon:panel>
 
 			</aon:div>
 

@@ -59,5 +59,19 @@ public class EcConfigControllerListener extends ControllerAdapter implements
 		}
 		
 	}
+	
+	
+	
+	@Override
+	public void afterBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		// TODO Auto-generated method stub
+		super.afterBeanSelected(event);
+		
+	/*	EcconfigController controller = (EcconfigController) event
+		.getController();
+		controller.getAonFile1().setData((((Ecconfig)(this.getController()).getTo()).getHeaderImg()));
+		System.out.println("ii");*/
+	}
 
 }
