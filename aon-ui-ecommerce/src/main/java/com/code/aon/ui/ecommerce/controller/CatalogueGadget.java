@@ -14,9 +14,9 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ebackoffice.Eccatalogue;
-import com.code.aon.product.Catalogue;
 import com.code.aon.product.CatalogueItem;
 import com.code.aon.product.Item;
+import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.ecommerce.util.ECommerceUtil;
@@ -60,43 +60,36 @@ public class CatalogueGadget {
 	}
 
 	public void onSelect(ActionEvent event) {
-		try {
-			ShopItemsController shop = ECommerceUtil.getShopItems();
-			System.out.println();
-			shop.resetCriteria(buildItemCriteria());
-			shop.onSearch(null);
-		} catch (ManagerBeanException e) {
-			String msg = "La búsqueda falló";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		}
-		((ShopController) AonUtil
-			.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER))
-			.setItemsView(true);
+		ShopItemsController shop = ECommerceUtil.getShopItems();
+		shop.resetCriteria(buildItemCriteria());
+		shop.onSearch(null);
+		ShopController sc = (ShopController) AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER);
+		sc.setBackView( sc.getContentView() );
+		sc.setContentView( ViewEnum.ITEM_LIST );
 	}
 
 	private Criteria buildItemCriteria() {
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(CatalogueItem.class);
-			list = bean.getList(null);
 			Eccatalogue ecCat = (Eccatalogue) getModel().getRowData();
 			String identifier = BeanManager.getManagerBean(Item.class)
 					.getFieldName(IECommerceConstants.ITEM_ALIAS);
 			Criteria criteria = null;
-			for (ITransferObject to : list) {
+			IManagerBean bean = BeanManager.getManagerBean(CatalogueItem.class);
+			Criteria crit = new Criteria();
+			crit.addEqualExpression(bean.getFieldName(IProductAlias.CATALOGUE_ITEM_CATALOGUE_ID) , ecCat.getCatalogue().getId());
+			List<ITransferObject> cata = bean.getList(crit); 
+			for (ITransferObject to : cata) {
 				CatalogueItem c = (CatalogueItem) to;
-				if (c.getCatalogue().getId().equals(ecCat.getId())) {
-					if (criteria == null) {
-						criteria = new Criteria();
-						criteria.addEqualExpression(identifier, c.getItem()
-								.getId());
-					} else {
-						try {
-							criteria.addOrExpression(identifier, c.getItem()
-									.getId().toString());
-						} catch (ExpressionException e) {
-							e.printStackTrace();
-						}
+				if (criteria == null) {
+					criteria = new Criteria();
+					criteria.addEqualExpression(identifier, c.getItem()
+							.getId());
+				} else {
+					try {
+						criteria.addOrExpression(identifier, c.getItem()
+								.getId().toString());
+					} catch (ExpressionException e) {
+						e.printStackTrace();
 					}
 				}
 			}

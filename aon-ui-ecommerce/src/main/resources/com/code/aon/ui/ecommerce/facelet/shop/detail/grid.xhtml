@@ -8,100 +8,55 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="itemDetail" columns="2" 
-					columnClasses="detailImageColumn, detailInfoColumn">
-					<aon:div id="item-detail-image" styleClass="item-detail-image">
-						<a4j:mediaOutput element="img" 
-							cacheable="false" value="#{shopItem.item.id}"
-							style="width:100px" 
-							createContent="#{shopItem.paint}" />
-					</aon:div>
-					<aon:panelGrid columns="2" >
-						<aon:outputLabel value="#{bundle.aon_id}" />
-						<aon:outputText value="#{shopItem.item.id}" />
-	
-						<aon:outputLabel value="#{bundle.aon_name}" />
-						<aon:outputText value="#{shopItem.item.product.name}" />
-	
-						<aon:outputLabel value="product code -i18n-" />
-						<aon:outputText value="#{shopItem.item.product.code}" />
-	
-						<aon:outputLabel value="product brand -i18n-" />
-						<aon:outputText value="#{shopItem.item.product.brand}" />
-	
-						<aon:outputLabel value="product category name -i18n-" />
-						<aon:outputText value="#{shopItem.item.product.category.name}" />
-	
-<!--  
-						<aon:outputLabel value="product inventoriable -i18n-" />
-						<aon:outputText value="#{shopItem.item.product.inventoriable}" />
-	
-						<aon:outputLabel value="product status -i18n-" />
-						<aon:outputText value="#{shopItem.item.product.status}" />
-	
-						<aon:outputLabel value="product vat name -i18n-" />
-						<aon:outputText value="#{shopItem.item.product.vat.name}" />
-	
-						<aon:outputLabel value="product retention -i18n-" />
-						<aon:outputText value="#{shopItem.item.product.retention}" />
-	
-						<aon:outputLabel value="product type -i18n-" />
-						<aon:outputText value="#{shopItem.item.product.type}" />
-	
-						<aon:outputLabel value="product composition -i18n-" />
-						<aon:outputText value="#{shopItem.item.product.composition}" />
-						
-						<aon:outputLabel value="detail -i18n-" />
-						<aon:outputText value="#{shopItem.item.detail}" size="65" />
--->	
-						<aon:outputLabel value="description -i18n-" />
-						<aon:outputText value="#{shopItem.item.description}" />
-	
-						<aon:outputLabel value="price -i18n-" />
-						<aon:outputText value="#{shopItem.item.price}" />
-<!--  
-	
-						<aon:outputLabel value="status -i18n-" />
-						<aon:outputText value="#{shopItem.item.status}" />
-	
-						<aon:outputLabel value="expensesPercent -i18n-" />
-						<aon:outputText value="#{shopItem.item.expensesPercent}" />
-	
-						<aon:outputLabel value="expensesFixed -i18n-" />
-						<aon:outputText value="#{shopItem.item.expensesFixed}" />
-	
-						<aon:outputLabel value="profitPercent -i18n-" />
-						<aon:outputText value="#{shopItem.item.profitPercent}" />
--->						
-						<aon:outputLabel value="purchasePrice -i18n-" />
-						<aon:outputText value="#{shopItem.item.purchasePrice}" />
-					</aon:panelGrid>
-				</aon:panelGrid>
-			
-				<aon:panel styleClass="itemDetailAttach">
-					<f:facet name="header">
-	                    <h:outputText value="Archivos adjuntos -i18n-"></h:outputText>
-	                </f:facet>
-
-					<rich:dataGrid id="attchmentGrid" value="#{shopItem.model}" var="to" 
-						columns="3" elements="9" style="width:600px">
-<!--  
-			                    <h:outputText value="mimeType -i18n-" styleClass="label"></h:outputText>
-			                    <h:outputText value="#{attach.mimeType}" />
-			                    <h:outputText value="description -i18n-" styleClass="label"></h:outputText>
-			                    <h:outputText value="#{attach.description}" />
-			                    <h:outputText value="data -i18n-" styleClass="label"></h:outputText>
-			                    <h:outputText value="#{attach.type}" />
-			                    <h:outputText value="type -i18n-" styleClass="label"></h:outputText>
-			                    <h:outputText value="#{attach.type}" />
--->									
-								<a4j:mediaOutput element="img" 
-									cacheable="false" value="#{to.id}"
-									style="width:100px" 
-									createContent="#{shopItem.paint}" />
-			       </rich:dataGrid>
-				</aon:panel>
+	<aon:div styleClass="aon-scroll-area">
+		<aon:panelGrid id="itemDetail" columns="2"
+			columnClasses="detailImageColumn, detailInfoColumn">
+			<aon:div id="item-detail-image" styleClass="item-detail-image">
+				<h:graphicImage
+					style="width:70px; height: 70px;"
+					rendered="#{shopItem.item.thumbnail == null}" 
+					value="/css/images/nophoto.gif" />
+				<a4j:mediaOutput element="img" cacheable="false"
+					value="#{shopItem.item.id}" style="width:70px; height: 70px;"
+					createContent="#{shopItem.paintThumbnail}" />
 			</aon:div>
-		
+			<aon:panelGrid columns="2">
+				<aon:outputLabel value="#{bundle.aon_name}" />
+				<aon:outputText value="#{shopItem.item.product.name}" />
+
+				<aon:outputLabel value="#{bundle.aon_id}" />
+				<aon:outputText value="#{shopItem.item.product.code}" />
+
+				<aon:outputLabel value="#{productBundle.product_brand}" />
+				<aon:outputText value="#{shopItem.item.product.brand}" />
+
+				<aon:outputLabel value="#{productBundle.product_category}" />
+				<aon:outputText value="#{shopItem.item.product.category.name}" />
+
+				<aon:outputLabel value="#{bundle.aon_price}" />
+				<aon:outputText value="#{shopItem.item.price}">
+					<f:convertNumber pattern="#,##0.00"/>
+				</aon:outputText>
+
+				<aon:outputLabel value="#{bundle.aon_description}" />
+				<aon:outputText value="#{shopItem.item.description}" />
+			</aon:panelGrid>
+		</aon:panelGrid>
+
+<!-- 
+		<aon:panel styleClass="itemDetailAttach">
+			<f:facet name="header">
+				<h:outputText value="Archivos adjuntos -i18n-"></h:outputText>
+			</f:facet>
+
+			<rich:dataGrid id="attchmentGrid" value="#{shopItem.model}" var="to"
+				columns="3" elements="9" style="width:600px">
+
+				<a4j:mediaOutput element="img" cacheable="false" value="#{to.id}"
+					style="width:100px" createContent="#{shopItem.paint}" />
+			</rich:dataGrid>
+		</aon:panel>
+ -->
+	</aon:div>
+
 </ui:composition>

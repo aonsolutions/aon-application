@@ -11,173 +11,70 @@
 
 	<ui:define name="content">
 		<aon:form id="shopForm">
-					<!--  
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarID" value="aonToolbar" />
-				<ui:param name="toolbarTitle" value="Catalogue categories -i18-" />
-				<ui:define name="toolbarContent">
-							
-					<aon:commandButton id="aonToolbar-back" 
-						rendered="#{!shop.items}"
-						value="#{bundle.aon_back}"
-						action="shop_from" 
-						styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-						accesskey="#{bundle.aon_key_cancel}" >
-						<aon:actionListener method="#{shop.refreshView}" />
-					</aon:commandButton>	
-						
-					<aon:commandButton id="aonToolbar-addToCart"
-						rendered="#{shop.detail}"
-						value="Ainadir al carrito -i18n-" 
-						action="shop_from" 
-						title="add to cart -i18n-"
-						styleClass="aon-finding-toolbar-item aon-icon-new">
-						<aon:actionListener method="#{shopItem.addToCart}" />
-					</aon:commandButton>	
-				
-					<aon:commandButton id="aonToolbar-view" 
-						rendered="true"
-						value="VIEW CART -i18-"
-						action="shop_from"  immediate="true" 
-						styleClass="aon-finding-toolbar-item aon-icon-new">
-						<aon:actionListener method="#{shop.onViewCart}" />
-					</aon:commandButton>
-					
-					<aon:commandButton id="aonToolbar-bundle" 
-						rendered="#{shop.cart}"
-						value="REQUEST A BUNDLE -i18n-"
-						title="request a bundle -i18n-"
-						action="#{shoppingCart.budgetRequest}"
-						styleClass="aon-finding-toolbar-item aon-icon-predetermine" >
-					</aon:commandButton>
-				
-				</ui:define>
-			</ui:decorate>
-					-->
-
 			<aon:div styleClass="aon-scroll-area">
-
-<!--
-				<rich:dataTable id="menu1" value="#{catalogueGadget.model}"
-					rows="20" var="to" style="width:90%" styleClass="menu">
-					<aon:rowSelector actionListener="#{catalogueGadget.onSelect}"
-						reRender="itemContent" />
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{ecommerceBundle.aon_acommerce_catalogues}" />
-						</f:facet>
-						<aon:outputText value="#{to.name}" />
-					</aon:column>
-				</rich:dataTable>
--->				
-
-				<aon:div styleClass="menu">	
-					<rich:dataGrid id="cataloguesGadget" value="#{catalogueGadget.model}" var="to" 
-						columns="#{catalogueGadget.model.rowCount}" elements="9" 
+				<aon:div styleClass="menu">
+					<rich:dataGrid id="cataloguesGadget"
+						value="#{catalogueGadget.model}" var="to"
+						columns="#{catalogueGadget.model.rowCount}" elements="9"
 						styleClass="menu">
-<!--  
-						<f:facet name="header">
-							<aon:outputText value="#{ecommerceBundle.aon_acommerce_catalogues}" />
-						</f:facet>
-						<aon:outputText value="#{to.name}" />
-						<aon:commandButton action="#" value="#{to.name}" />
--->
-						
 						<aon:div>
-<!--  
-							<a4j:mediaOutput id="RegistryAttachment_preview" 
-								element="img" cacheable="false" 
-								value="#{to.id}" style="width:10px"
-								createContent="#{catalogueGadget.paint}" 
-								 />
-							<aon:outputText value="#{to.catalogue.name.substring(0,0)}" />	
--->
 						</aon:div>
-<!-- CAPITAL LETTER DEL CATALOGUE NAME -->
-							<aon:outputText value="B" styleClass="catalogue-capital-letter"/>	
-							<aon:commandLink  
-								value="#{to.catalogue.name}">
-								<aon:actionListener method="#{catalogueGadget.onSelect}" />
-							</aon:commandLink>
-						
+						<!-- CAPITAL LETTER DEL CATALOGUE NAME -->
+						<aon:outputText value="B" styleClass="catalogue-capital-letter" />
+						<aon:commandLink value="#{to.catalogue.name}">
+							<aon:actionListener method="#{catalogueGadget.onSelect}" />
+						</aon:commandLink>
+
 					</rich:dataGrid>
 				</aon:div>
 
-<!--  
-				<rich:dataTable id="menu" value="1"
-						rows="20" var="to" style="width:90%" styleClass="menu">
-						
-					<aon:rowSelector actionListener="#{catalogueGadget.onSelect}"
-						reRender="itemContent" />
-					<rich:columns value="#{catalogueGadget.list}" var="cat" index="idx"	>
-						<f:facet name="header">
-							<aon:outputText value="#{cat.name}" />
-						</f:facet>
-							<aon:outputText value="#{cat.name}" />
-					</rich:columns>
-				</rich:dataTable>
-				<rich:spacer height="20" />
--->	
-				
-				
-				
 				<aon:panelGrid id="productPanel" columns="3" style="width: 100%"
 					columnClasses="aon-panelGrid-odd,aon-vertical-align-top,aon-width-300 aon-vertical-align-top">
 					<aon:div id="left-panel" styleClass="left-panel">
 						<ui:include src="leftColumn.xhtml" />
 					</aon:div>
 
-					<aon:div id="itemContent"
-						style="width: 100%;">
-						
+					<aon:div id="itemContent" style="width: 100%;">
+
 						<aon:div>
-							<aon:commandButton id="aonToolbar-back" 
-								rendered="#{!shop.itemsView}"
-								value="#{bundle.aon_back}"
-								action="shop_from" 
-								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-								accesskey="#{bundle.aon_key_cancel}" >
+							<aon:commandButton id="aonToolbar-back"
+								rendered="#{!shop.itemsView}" value="#{bundle.aon_back}"
+								action="shop_from"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel"
+								immediate="true" accesskey="#{bundle.aon_key_cancel}">
 								<aon:actionListener method="#{shop.refreshView}" />
-							</aon:commandButton>	
-								
+							</aon:commandButton>
+
 							<aon:commandButton id="aonToolbar-addToCart"
 								rendered="#{shop.detailView}"
-								value="#{ecommerceBundle.aon_acommerce_addToCart}" 
-								action="shop_from" 
+								value="#{ecommerceBundle.aon_acommerce_addToCart}"
+								action="shop_from"
 								styleClass="aon-finding-toolbar-item aon-icon-new">
 								<aon:actionListener method="#{shopItem.addToCart}" />
-							</aon:commandButton>	
-							
-							<aon:commandButton id="aonToolbar-offer-request" 
+							</aon:commandButton>
+
+							<aon:commandButton id="aonToolbar-offer-request"
 								rendered="#{shop.cartView}"
 								value="#{ecommerceBundle.aon_acommerce_offer_request}"
 								action="#{shoppingCart.budgetRequest}"
-								styleClass="aon-finding-toolbar-item aon-icon-predetermine" >
+								styleClass="aon-finding-toolbar-item aon-icon-predetermine">
 								<aon:actionListener method="#{shoppingCart.budgetRequest}" />
 							</aon:commandButton>
-						
+
 						</aon:div>
-						
-						<!--  
-						<aon:div>
-							<ui:include src="#{shop.contentView}" />
-						</aon:div>
-						-->
-						<aon:div rendered="#{shop.itemsView}" >
+						<c:if test="#{shop.itemsView}">
 							<ui:include src="items/list.xhtml" />
-						</aon:div>
-						<aon:div rendered="#{shop.detailView}" >
+						</c:if>
+
+						<c:if test="#{shop.detailView}">
 							<ui:include src="detail/grid.xhtml" />
-						</aon:div>
-						<aon:div rendered="#{shop.cartView}" >
+						</c:if>
+							
+						<c:if test="#{shop.cartView}">
 							<ui:include src="cart/list.xhtml" />
-						</aon:div>
-						<aon:div rendered="#{shop.infoView}" >
-							<ui:include src="info/form.xhtml" />
-						</aon:div>
+						</c:if>
 					</aon:div>
-					
+
 					<aon:div id="right-panel" styleClass="right-panel">
 						<ui:include src="rightColumn.xhtml" />
 					</aon:div>
