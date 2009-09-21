@@ -23,64 +23,64 @@
 			
 			<aon:div styleClass="menu" />
 			
-			<aon:panelGrid columns="2" style="width:100%">
-			<aon:div styleClass="user-login-box">
-				<aon:commandButton id="aonToolbar-back" value="#{bundle.aon_back}"
-					action="shop_form"
-					styleClass="aon-finding-toolbar-item aon-icon-cancel"
-					immediate="true" accesskey="#{bundle.aon_key_cancel}" />
-					
-				<aon:panel>
-					<f:facet name="header">
-						<aon:outputText value="#{ecommerceBundle.aon_acommerce_user_identification}" />
-					</f:facet>
-					<aon:outputText value="Introduzca sus datos de acceso si ya es un usuario registrado " />
-					<aon:panelGrid columns="2" dir="true">
-						<aon:outputLabel for="Login" value="#{ecommerceBundle.aon_acommerce_user_name}" />
-						<aon:inputText id="Login" required="false" 
-							value="#{userLogin.login}" size="15" />
-
-						<aon:outputLabel for="Password" value="#{ecommerceBundle.aon_acommerce_user_passwd}" />
-						<aon:inputText id="Password" required="false" 
-							value="#{userLogin.password}" size="15" />
-
-						<aon:outputLabel for="login-buttom" value="&#160;" />
-						<aon:commandButton id="login-buttom" 
-							value="#{bundle.aon_accept}"
-							action="paymethod_form"
-							styleClass="aon-finding-toolbar-item aon-icon-accept">
-							<aon:actionListener method="#{userLogin.onLogin}" />
-						</aon:commandButton>
-							<!--  
-						<aon:commandButton id="login-buttom" value="#{bundle.aon_accept}"
-							action="new_registry_form"
-							styleClass="aon-finding-toolbar-item aon-icon-accept">
-							<aon:actionListener method="#{shopItem.addToCart}" />
-						</aon:commandButton>
-							-->
-						
-						
-						
-					</aon:panelGrid>
-				</aon:panel>
-			</aon:div>
-
-			<aon:div styleClass="new-user-registry">
-				<aon:panel>
-					<f:facet name="header">
-						<aon:outputText value="#{ecommerceBundle.aon_acommerce_user_registry}" />
-					</f:facet>
-					<aon:outputText value="Para darse de alta como usuario registrado pulse en el siguiente enlace" />
-					<aon:div>
-						<aon:commandButton id="newUser-buttom" value="#{ecommerceBundle.aon_acommerce_user_new}"
-							action="new_registry_form"
-							styleClass="aon-finding-toolbar-item aon-icon-new">
-							<aon:actionListener method="#{shoppingCart.onResetTarget}" />
-						</aon:commandButton>
-					</aon:div>
-
-				</aon:panel>
-			</aon:div>
+			<aon:commandButton id="aonToolbar-back" value="#{bundle.aon_back}"
+				action="shop_form"
+				styleClass="aon-finding-toolbar-item aon-icon-cancel"
+				immediate="true" accesskey="#{bundle.aon_key_cancel}" />
+				
+			<aon:panelGrid columns="2" style="width:100%" columnClasses="registryColumn, registryColumn">
+				<aon:div styleClass="user-login-box">
+					<aon:panel>
+						<f:facet name="header">
+							<aon:outputText value="#{ecommerceBundle.aon_acommerce_user_identification}" />
+						</f:facet>
+						<aon:outputText value="Introduzca sus datos de acceso si ya es un usuario registrado " />
+						<aon:panelGrid columns="2" dir="true">
+							<aon:outputLabel for="Login" value="#{ecommerceBundle.aon_acommerce_user_name}" />
+							<aon:inputText id="Login" required="false" 
+								value="#{userLogin.login}" size="15" />
+	
+							<aon:outputLabel for="Password" value="#{ecommerceBundle.aon_acommerce_user_passwd}" />
+							<aon:inputText id="Password" required="false" 
+								value="#{userLogin.password}" size="15" />
+	
+							<aon:outputLabel for="login-buttom" value="&#160;" />
+							<aon:commandButton id="login-buttom" 
+								value="#{bundle.aon_accept}"
+								action="paymethod_form"
+								styleClass="aon-finding-toolbar-item aon-icon-accept">
+								<aon:actionListener method="#{userLogin.onLogin}" />
+							</aon:commandButton>
+								<!--  
+							<aon:commandButton id="login-buttom" value="#{bundle.aon_accept}"
+								action="new_registry_form"
+								styleClass="aon-finding-toolbar-item aon-icon-accept">
+								<aon:actionListener method="#{shopItem.addToCart}" />
+							</aon:commandButton>
+								-->
+							
+							
+							
+						</aon:panelGrid>
+					</aon:panel>
+				</aon:div>
+	
+				<aon:div styleClass="new-user-registry">
+					<aon:panel>
+						<f:facet name="header">
+							<aon:outputText value="#{ecommerceBundle.aon_acommerce_user_registry}" />
+						</f:facet>
+						<aon:outputText value="Para darse de alta como usuario registrado pulse en el siguiente enlace" />
+						<aon:div>
+							<aon:commandButton id="newUser-buttom" value="#{ecommerceBundle.aon_acommerce_user_new}"
+								action="new_registry_form"
+								styleClass="aon-finding-toolbar-item aon-icon-new">
+								<aon:actionListener method="#{shoppingCart.onResetTarget}" />
+							</aon:commandButton>
+						</aon:div>
+	
+					</aon:panel>
+				</aon:div>
 			</aon:panelGrid>
 			
 		</aon:form>

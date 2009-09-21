@@ -62,12 +62,12 @@ public class ShoppingCartController {
 			return IECommerceConstants.REGISTRY_ACTION;
 		}
 		//initializeOffer();
-		((OfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER)).initialize();
+		((CartOfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER)).initialize();
 		return IECommerceConstants.PAYMETHOD_ACTION;
 	}
 
 	public void budgetRequest(ActionEvent event) {
-		((OfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER)).initialize();
+		((CartOfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER)).initialize();
 	}
 
 	public boolean isRegistered() {
@@ -258,7 +258,7 @@ public class ShoppingCartController {
 	public void onAddTarget(ActionEvent event) {
 		try {
 			addTarget();
-			OfferController offerController = (OfferController)FormUtil.getController(IECommerceConstants.OFFER_CONTROLLER);
+			CartOfferController offerController = (CartOfferController)FormUtil.getController(IECommerceConstants.OFFER_CONTROLLER);
 			offerController.getOffer().setTarget(getCartTarget().getEcTarget().getTarget());
 			offerController.initialize();
 			//((OfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER)).initialize();

@@ -43,12 +43,17 @@ public class LoginController {
 				//Ectarget ect = (Ectarget)list.iterator().next();
 				//System.out.println("LOGIADOOO");
 				//AonUtil.addErrorMessage("LOGIADOOO");
-				((ShopController)AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER)).setLogged(true);
+				ShopController shopController = ((ShopController)AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER));
+				
+				shopController.setLogged(true);
 				((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).onResetTarget(null);
-				Ectarget ecTtarget = (Ectarget)list.get(0); 
-				((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).getCartTarget().setEcTarget(ecTtarget);
-				((OfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER)).initialize();
-				((OfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER)).getOffer().setTarget(ecTtarget.getTarget());
+				Ectarget ecTarget = (Ectarget)list.get(0); 
+				((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).getCartTarget().setEcTarget(ecTarget);
+
+				CartOfferController cartOfferController = ((CartOfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER));
+				
+				cartOfferController.initialize();
+				cartOfferController.getOffer().setTarget(ecTarget.getTarget());
 				
 			}
 			
