@@ -1,10 +1,13 @@
 package com.code.aon.ui.ecommerce.controller;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 
@@ -25,7 +28,9 @@ public class ShopItemController extends BasicController {
 
 	private Item item;
 	private AonFile file;
-
+	private static final int DEFAULT_BUFFER_SIZE = 1024;
+	private static byte[] NO_IMAGE_BUFFER = new byte[DEFAULT_BUFFER_SIZE];
+	
 	public Item getItem() {
 		return item;
 	}
@@ -59,7 +64,7 @@ public class ShopItemController extends BasicController {
 	 * 
 	 * }
 	 */
-	public void paint(OutputStream out, Object data) throws IOException {
+	public void paint(OutputStream out, Object data) {
 		try {
 			IManagerBean attachBean = AonUtil.getManagerBean(ItemAttachment.class);
 			Criteria criteria = new Criteria();
@@ -72,12 +77,50 @@ public class ShopItemController extends BasicController {
 			if (list != null && list.size() > 0) {
 				ItemAttachment attach = (ItemAttachment) list.get(0);
 				out.write(attach.getData());
+			} else {
+				if (NO_IMAGE_BUFFER.length > 0 ) {
+					initializeNoImageBuffer();
+				}
+				out.write(NO_IMAGE_BUFFER);
+				out.flush();
 			}
 		} catch (ManagerBeanException e) {
+			// Nada. La foto no se ve y punto.
+		} catch (IOException e) {
 			// Nada. La foto no se ve y punto.
 		}
 	}
 
+	private void initializeNoImageBuffer() throws IOException {
+		InputStream is = ShopItemController.class.getResourceAsStream("/com/code/aon/ui/ecommerce/i18n/nophoto.gif");
+        BufferedInputStream input = null;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
+        try {
+            input = new BufferedInputStream(is, DEFAULT_BUFFER_SIZE);
+            int length;
+            byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+            while ((length = input.read(buffer)) > 0) {
+            	baos.write(buffer, 0, length);
+            }
+            NO_IMAGE_BUFFER = baos.toByteArray();
+        } finally {
+            close(input);
+        }
+
+	}
+
+	private void close(Closeable resource) {
+        if (resource != null) {
+            try {
+                resource.close();
+            } catch (IOException e) {
+                // Do your thing with the exception. Print it, log it or mail it.
+                e.printStackTrace();
+            }
+        }
+    }
+
+	
 	public Integer getKey() {
 		if (getTo() == null) {
 			this.onSelectFirst(null);
