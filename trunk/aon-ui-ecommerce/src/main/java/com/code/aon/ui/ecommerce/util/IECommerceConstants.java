@@ -28,10 +28,4 @@ public interface IECommerceConstants {
 	static final String CATEGORY_ALIAS = "Item_product_category_id";
 	static final String CATALOGUE_ALIAS = "Item_product_category_id";
 	
-	/* SHOP VIEWS PATH*/
-	static final String ITEM_LIST_VIEW = "items";
-	static final String ITEM_DETAIL_VIEW = "detail";
-	static final String SHOPPING_CART_VIEW = "cart";
-	static final String INFO_VIEW = "info";
-	
 }

@@ -1,5 +1,7 @@
 package com.code.aon.ui.ecommerce.controller;
 
+import java.io.OutputStream;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -14,12 +16,11 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class ShopItemsController {
 
-	private List<ITransferObject> list;
+	private List<ShopItem> list;
 	private DataModel model;
 	private Criteria criteria;
 
@@ -34,11 +35,17 @@ public class ShopItemsController {
 		this.model = model;
 	}
 
-	public List<ITransferObject> getList() {
+	public List<ShopItem> getList() {
 		try {
 			if (list == null) {
 				IManagerBean bean = BeanManager.getManagerBean(Item.class);
-				list = bean.getList(getCriteria());
+				List<ITransferObject> itemList = bean.getList(getCriteria());
+				setList(new LinkedList<ShopItem>());
+				for (ITransferObject to: itemList) {
+					Item item = (Item) to;
+					getList().add( new ShopItem(item) );
+				}
+				
 			}
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
@@ -50,7 +57,7 @@ public class ShopItemsController {
 		return list;
 	}
 
-	public void setList(List<ITransferObject> list) {
+	public void setList(List<ShopItem> list) {
 		this.list = list;
 	}
 
@@ -62,32 +69,14 @@ public class ShopItemsController {
 		this.criteria = criteria;
 	}
 
-	public void resetCriteria(Criteria criteria) throws ManagerBeanException {
+	public void resetCriteria(Criteria criteria) {
 		setModel(null);
 		setCriteria(criteria);
 	}
 
-	public void onSelect(ActionEvent event) {
-		((ShopItemController) FormUtil
-				.getController(IECommerceConstants.SHOP_ITEM_CONTROLLER))
-				.setItem((Item) getModel().getRowData());
-		((ShopController) AonUtil
-				.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER))
-				.setDetailView(true);
-		((ShopController) AonUtil
-				.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER))
-				.setBackView(IECommerceConstants.ITEM_LIST_VIEW);
-	}
-
 	public void onReset(ActionEvent event) {
-		try {
-			Criteria criteria = null;
-			resetCriteria(criteria);
-		} catch (ManagerBeanException e) {
-			String msg = "La búsqueda falló";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		}
+		Criteria criteria = null;
+		resetCriteria(criteria);
 	}
 
 	public void onSearch(ActionEvent event) {
@@ -95,13 +84,30 @@ public class ShopItemsController {
 		model = new ListDataModel(getList());
 	}
 
+	public void onSelect(ActionEvent event) {
+		ShopItemController sic = (ShopItemController) AonUtil.getRegisteredBean(IECommerceConstants.SHOP_ITEM_CONTROLLER);
+		ShopItem item = (ShopItem) getModel().getRowData();
+		sic.setItem(item);
+		ShopController sc = (ShopController) AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER);
+		sc.setBackView( ViewEnum.ITEM_LIST );
+		sc.setContentView( ViewEnum.ITEM_DETAIL);
+	}
+
 	public void addToCart(ActionEvent event) {
 		((ShoppingCartController) AonUtil
 				.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER))
-				.addToCart((Item) model.getRowData());
-		((ShopController) AonUtil
-				.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER))
-				.setCartView(true);
+				.addToCart((ShopItem) model.getRowData());
+		ShopController sc = (ShopController) AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER);
+		sc.setBackView( ViewEnum.ITEM_LIST );
+		sc.setContentView( ViewEnum.SHOPPING_CART );
 	}
 
+	public void paintThumbnail(OutputStream out, Object data) {
+		Integer id = (Integer) data;
+		for (ShopItem shopItem: getList()) {
+			if (id.equals(shopItem.getId())) {
+				shopItem.paintThumbnail(out, data);		
+			}
+		}
+	}
 }

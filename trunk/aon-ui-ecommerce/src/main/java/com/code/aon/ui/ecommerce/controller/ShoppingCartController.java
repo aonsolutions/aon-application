@@ -17,7 +17,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ebackoffice.Ectarget;
 import com.code.aon.geozone.GeoZone;
-import com.code.aon.product.Item;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
@@ -99,20 +98,18 @@ public class ShoppingCartController {
 		return getList().size();
 	}
 
-	public void addToCart(Item item) {
+	public void addToCart(ShopItem item) {
 		CartItem ci = new CartItem();
 		ci.setItem(item);
 		ci.setQuantity(1);
-		// ci.setDiscount(0);
-		// ci.setPrice(item.getPrice());
-
+		
 		int index = getItemIndex(item);
 		if (index == -1) {
 			ci.setTotal(ci.getItem().getPrice());
 			getList().add(ci);
 			setTotal(getTotal() + ci.getTotal());
 		} else {
-			CartItem c = (CartItem) getList().get(index);
+			CartItem c = getList().get(index);
 			c.setQuantity(c.getQuantity() + 1);
 			c.setTotal(c.getItem().getPrice() * c.getQuantity());
 			setTotal(getTotal() + c.getItem().getPrice());
@@ -125,12 +122,12 @@ public class ShoppingCartController {
 	 * @param item
 	 * @return index
 	 */
-	private int getItemIndex(Item item) {
+	private int getItemIndex(ShopItem item) {
 		int index = -1;
 		boolean found = false;
 		Iterator<CartItem> iterator = getList().iterator();
 		while (iterator.hasNext() && !found) {
-			CartItem listItem = ((CartItem) iterator.next());
+			CartItem listItem = iterator.next();
 			if (listItem.getItem().getId().equals(item.getId())) {
 				index = getList().indexOf(listItem);
 				found = true;
@@ -168,19 +165,18 @@ public class ShoppingCartController {
 	}
 	
 	public void onSelect(ActionEvent event) {
-		((ShopItemController) FormUtil
-			.getController(IECommerceConstants.SHOP_ITEM_CONTROLLER))
-			.setItem(((CartItem) getModel().getRowData()).getItem());
-		((ShopController) AonUtil
-				.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER))
-				.setDetailView(true);
+		ShopItemController sic = (ShopItemController) FormUtil.getController(IECommerceConstants.SHOP_ITEM_CONTROLLER);
+		CartItem ci =  (CartItem) getModel().getRowData();
+		sic.setItem(ci.getItem());
+		ShopController sc = (ShopController) AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER);
+		sc.setBackView( ViewEnum.SHOPPING_CART );
+		sc.setContentView( ViewEnum.ITEM_DETAIL );
 	}
 	
 	public void onResetTarget(ActionEvent event) {
 		setCartTarget(new CartTarget());
 		getCartTarget().setEcTarget(new Ectarget());
 		getCartTarget().getEcTarget().setTarget(new Target());
-		//getCartTarget().getEcTarget().setRegistry(new Registry());
 		getCartTarget().setMainAddress(new RegistryAddress());
 		getCartTarget().getMainAddress().setAddressType( AddressType.MAIN );
 		getCartTarget().getMainAddress().setGeozone( new GeoZone() );

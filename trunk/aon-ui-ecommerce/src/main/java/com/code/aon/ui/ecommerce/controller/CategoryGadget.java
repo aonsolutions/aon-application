@@ -66,9 +66,9 @@ public class CategoryGadget {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
 		}
-		((ShopController) AonUtil
-			.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER))
-			.setItemsView(true);
+		ShopController sc = (ShopController) AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER);
+		sc.setBackView( sc.getContentView() );
+		sc.setContentView( ViewEnum.ITEM_LIST );
 	}
 
 }

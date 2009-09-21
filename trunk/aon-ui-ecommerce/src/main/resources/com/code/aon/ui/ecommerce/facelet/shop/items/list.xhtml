@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
@@ -15,30 +16,68 @@
 			style="margin: 0px; padding: 0px; border:solid #EEE 1px; width:100%"
 			columnClasses="aon-width-100,aon-width-auto">
 
-			<aon:div style="width:80px; height: 80px; border:solid #DDD 1px;">
-				<a4j:mediaOutput element="img" cacheable="false" 
-					value="#{to.id}"
-					style="width:80px; height: 80px;" createContent="#{shopItem.paint}" />
+			<aon:div style="width:70px; height: 70px; border:solid #DDD 1px;">
+				<h:graphicImage style="width:70px; height: 70px;"
+					rendered="#{to.thumbnail == null}" value="/css/images/nophoto.gif" />
+				<a4j:mediaOutput element="img" cacheable="false"
+					rendered="#{to.thumbnail != null}" value="#{to.id}"
+					style="width:70px; height: 70px;"
+					createContent="#{shopItems.paintThumbnail}" />
 			</aon:div>
 
 			<aon:div>
-				<aon:div style="margin-bottom: 5px;">
+				<aon:div style="margin-bottom: 5px; ">
 					<aon:outputText value="#{to.product.name}"
 						style="font-weight: bold" />
 				</aon:div>
-				<aon:div style="padding-left: 5px;">
-					<aon:outputText value="#{to.description}"
-						style="font-style: italic">
+				<aon:div>
+					<aon:outputText value="#{to.description}" style="color: #999;">
 						<aon:abbreviateConverter maxWidth="100" />
 					</aon:outputText>
 				</aon:div>
-				<h:panelGrid columns="3" style="width: 100%;" 
-					columnClasses="aon-width-auto,aon-width-20,aon-width-20">
+
+<!-- 
+				<c:if test="#{ecConfig.showOriginalPrice}">
+					<aon:div style="text-align: right;">
+						<aon:outputText value="#{to.originalPrice}">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+						<aon:outputText value="&#8364;"/>
+					</aon:div>
+				</c:if>
+ -->
+				<c:if test="#{!ecConfig.taxIncluded}">
 					<aon:div style="text-align: center;">
 						<aon:outputText value="#{to.price}" style="font-size: 1.4em;">
-							<f:convertNumber pattern="#,##0.00"/>
+							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
+						<aon:outputText value="&#8364;*" style="font-size: 1.4em;" />
 					</aon:div>
+				</c:if>
+
+				<c:if test="#{ecConfig.taxIncluded}">
+					<aon:div style="text-align: center;">
+						<aon:outputText value="#{to.total}" style="font-size: 1.4em;">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+						<aon:outputText value="&#8364;*" style="font-size: 1.4em;" />
+					</aon:div>
+				</c:if>
+
+				<h:panelGrid columns="3" style="width: 100%;"
+					columnClasses="aon-width-auto,aon-width-20,aon-width-20">
+					<c:if test="#{!ecConfig.taxIncluded}">
+						<aon:div style="text-align: center;">
+							<aon:outputText
+								value="#{ecommerceBundle.aon_acommerce_vat_not_included}" />
+						</aon:div>
+					</c:if>
+					<c:if test="#{ecConfig.taxIncluded}">
+						<aon:div style="text-align: center;">
+							<aon:outputText
+								value="#{ecommerceBundle.aon_acommerce_vat_included}" />
+						</aon:div>
+					</c:if>
 					<aon:commandButton value="&#160;" action="shop_form"
 						title="#{ecommerceBundle.aon_acommerce_extended_info}"
 						reRender="shopForm"

@@ -14,6 +14,9 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.ebackoffice.Ecconfig;
+import com.code.aon.ebackoffice.enumeration.OriginalPrice;
+import com.code.aon.ebackoffice.enumeration.PriceType;
+import com.code.aon.ebackoffice.enumeration.TaxType;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.ecommerce.util.ECommerceUtil;
 import com.code.aon.ui.form.FormUtil;
@@ -28,6 +31,9 @@ public class ConfigController {
 	private Company company;
 	
 	public Ecconfig getActiveConfig() {
+		if (activeConfig == null) {
+			searchActiveConfig();
+		}
 		return activeConfig;
 	}
 
@@ -47,9 +53,7 @@ public class ConfigController {
 	}
 	
 	public String getSkin(){
-		searchActiveConfig();
 		return getActiveConfig().getSkin().getName(AonUtil.getCurrentLocale());
-		//return skinName;
 	}
 	
 	private void searchActiveConfig() {
@@ -94,5 +98,22 @@ public class ConfigController {
 	public List<SelectItem> getPayMethodList(){
 		return ECommerceUtil.payMethodList();
 	}
+
+	public boolean isTaxIncluded() {
+		return (getActiveConfig().getTaxInType() == TaxType.DEFAULT || getActiveConfig().getTaxInType() == TaxType.YES); 
+	}
+	public boolean isShowOriginalPrice() {
+		return (getActiveConfig().getShowItemPrice()  == OriginalPrice.DEFAULT || getActiveConfig().getShowItemPrice()  == OriginalPrice.YES); 
+	}
+	public boolean isShowPriceCrossOut() {
+		return (getActiveConfig().getShowPrice()  == PriceType.CROSS_OUT); 
+	}
+	public boolean isShowDiscount() {
+		return (getActiveConfig().getShowPrice()  == PriceType.DISCOUNT); 
+	}
+	public boolean isShowDiscountPercent() {
+		return (getActiveConfig().getShowPrice()  == PriceType.PERCENT); 
+	}
+	
 	
 }

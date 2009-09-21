@@ -2,130 +2,65 @@ package com.code.aon.ui.ecommerce.controller;
 
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.ui.ecommerce.util.IECommerceConstants;
-
 
 public class ShopController {
 	
-	private String backView;
-	private String contentView;
-	private boolean itemsView;
-	private boolean detailView;
-	private boolean cartView;
-	private boolean infoView;
 	private boolean logged;
-	
 
-	public String getBackView() {
+	private ViewEnum backView;
+	private ViewEnum contentView;
+	
+	public ShopController() {
+		setBackView(ViewEnum.ITEM_LIST);
+		setContentView(ViewEnum.ITEM_LIST);
+	}
+
+	public ViewEnum getBackView() {
 		return backView;
 	}
-	
-	public void setBackView(String backView) {
+	public void setBackView(ViewEnum backView) {
 		this.backView = backView;
 	}
-
 	public String backView() {
-		return backView;
+		return backView.getOutcome();
 	}
 	
-	public String getContentView() {
+	public ViewEnum getContentView() {
 		return contentView;
 	}
-
-	public void setContentView(String contentView) {
+	public void setContentView(ViewEnum contentView) {
 		this.contentView = contentView;
+	}
+	public String contentView() {
+		return contentView.getOutcome();
 	}
 
 	public boolean isItemsView() {
-		return itemsView;
+		return getContentView() == ViewEnum.ITEM_LIST;
 	}
-	
-	public boolean isInfoView() {
-		if (infoView == true) {
-			setDetailView(false);
-			setCartView(false);
-			setItemsView(false);
-		}
-		return infoView;
-	}
-
-	public void setInfoView(boolean infoView) {
-		this.infoView = infoView;
-	}
-
-	public void setItemsView(boolean itemsView) {
-		if (itemsView == true) {
-			setDetailView(false);
-			setCartView(false);
-			setInfoView(false);
-		}
-		this.itemsView = itemsView;
-	}
-
 	public boolean isDetailView() {
-		return detailView;
+		return getContentView() == ViewEnum.ITEM_DETAIL;
 	}
-
-	public void setDetailView(boolean detailView) {
-		if (detailView == true) {
-			setItemsView(false);
-			setCartView(false);
-			setInfoView(false);
-		}
-		this.detailView = detailView;
-	}
-
 	public boolean isCartView() {
-		return cartView;
-	}
-
-	public void setCartView(boolean cartView) {
-		if (cartView == true) {
-			setDetailView(false);
-			setItemsView(false);
-			setInfoView(false);
-		}
-		this.cartView = cartView;
+		return getContentView() == ViewEnum.SHOPPING_CART;
 	}
 
 	public boolean isLogged() {
 		return logged;
 	}
-
 	public void setLogged(boolean logged) {
 		this.logged = logged;
 	}
 	
 	public void refreshView(ActionEvent event) {
-		if (getBackView()==null) {
-			setItemsView(true);
-		} else if (getBackView().equals(IECommerceConstants.ITEM_DETAIL_VIEW)) {
-			setDetailView(true);
-		} else if (getBackView().equals(IECommerceConstants.ITEM_LIST_VIEW)) {
-			setItemsView(true);
-		} else if (getBackView().equals(IECommerceConstants.SHOPPING_CART_VIEW)) {
-			setCartView(true);
-		} else if (getBackView().equals(IECommerceConstants.INFO_VIEW)) {
-			setInfoView(true);
-		} else {
-			setItemsView(true);
-		}
+		ViewEnum newContentView = (getBackView()==null || getBackView()==ViewEnum.SHOPPING_CART)?ViewEnum.ITEM_LIST:getBackView(); 
+		setBackView( getContentView() );
+		setContentView(newContentView);
 	}
 	
 	public void onViewCart(ActionEvent event) {
-		setCartView(true);
-		setBackView(IECommerceConstants.ITEM_LIST_VIEW);
-		
-//		((ShopController) AonUtil
-//				.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER))
-//				.setCart(true);
-//		((ShopController) AonUtil
-//				.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER))
-//				.setBackView(IECommerceConstants.ITEM_LIST_VIEW);		
-	}
-
-	public void onInfoView(ActionEvent event) {
-		setInfoView(true);		
+		setContentView(ViewEnum.SHOPPING_CART);
+		setBackView(ViewEnum.ITEM_LIST);
 	}
 	
 }
