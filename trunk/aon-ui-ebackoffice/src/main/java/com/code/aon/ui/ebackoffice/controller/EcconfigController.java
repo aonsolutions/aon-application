@@ -23,6 +23,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.Tariff;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.ebackoffice.Ecconfig;
@@ -47,6 +48,7 @@ public class EcconfigController extends BasicController {
 	private List<SelectItem> originalPriceTypes;
 	private List<SelectItem> wishListTypes;
 	private List<SelectItem> paymethods;
+	private List<SelectItem> tariffs;
 	/** The uploaded file. */
 	private AonFile aonFile1;
 
@@ -162,6 +164,22 @@ public class EcconfigController extends BasicController {
 			paymethods.add(item);
 		}
 	}
+	
+	public void refreshTariffs() throws ManagerBeanException {
+		tariffs = new LinkedList<SelectItem>();
+		IManagerBean tariffBean = BeanManager
+				.getManagerBean(Tariff.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(tariffBean
+				.getFieldName(IConfigAlias.TARIFF_ID));
+		List<ITransferObject> lista;
+		lista = tariffBean.getList(criteria);
+		for (ITransferObject rec : lista) {
+			Tariff tar = (Tariff) rec;
+			SelectItem item = new SelectItem(tar, tar.getName());
+			tariffs.add(item);
+		}
+	}
 
 	public List<SelectItem> getPaymethods() throws ManagerBeanException {
 		paymethods=null;
@@ -175,6 +193,18 @@ public class EcconfigController extends BasicController {
 		this.paymethods = paymethods;
 	}
 
+
+	public List<SelectItem> getTariffs() throws ManagerBeanException {
+		tariffs=null;
+		if (tariffs == null) {
+			refreshTariffs();
+		}
+		return tariffs;
+	}
+
+	public void setTariffs(List<SelectItem> tariffs) {
+		this.tariffs = tariffs;
+	}
 
 	public AonFile getAonFile1() {
 		return aonFile1;
