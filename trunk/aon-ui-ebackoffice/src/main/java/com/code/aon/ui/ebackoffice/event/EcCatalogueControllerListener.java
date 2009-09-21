@@ -22,10 +22,10 @@ public class EcCatalogueControllerListener extends ControllerAdapter implements
 		EccatalogueController controller = (EccatalogueController) event
 				.getController();
 		AonFile img = controller.getImage();
-		AonFile ico = controller.getIcon();
 		if (img!=null) {		
 			((Eccatalogue)controller.getTo()).setCatalogueImg(img.getData());
 		}
+		AonFile ico = controller.getIcon();
 		if (ico!=null) {		
 			((Eccatalogue)controller.getTo()).setCatalogueIcon(ico.getData());
 		}
@@ -36,15 +36,14 @@ public class EcCatalogueControllerListener extends ControllerAdapter implements
 			throws ControllerListenerException {
 		EccatalogueController controller = (EccatalogueController) event
 				.getController();
-		
-	
 		AonFile img = controller.getImage();
-		AonFile ico = controller.getImage();
-	if (img!=null) {		
-		((Eccatalogue)controller.getTo()).setCatalogueImg(img.getData());
+		if (img!=null) {		
+			((Eccatalogue)controller.getTo()).setCatalogueImg(img.getData());
+		}
+		AonFile ico = controller.getIcon();
+		if (ico!=null) {		
+			((Eccatalogue)controller.getTo()).setCatalogueIcon(ico.getData());
+		}
 	}
-	if (ico!=null) {		
-		((Eccatalogue)controller.getTo()).setCatalogueIcon(ico.getData());
-	}
-	}
+	
 }
