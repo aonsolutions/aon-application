@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
 	template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
@@ -26,7 +27,7 @@
 					<aon:editDataTable id="eccatalogueData" var="to" rows="20"
 						rendered="#{(eccatalogue.model.rowCount > 0) or (eccatalogue.new)}"
 						value="#{eccatalogue.model}"
-						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
 
 						<aon:rowSelector toggleOnClick="#{eccatalogue.to == null}"
 							actionListener="#{eccatalogue.onSelect}" />
@@ -58,39 +59,20 @@
 							<aon:outputText value="#{to.catalogue.name}"
 								rendered="#{to!=eccatalogue.to}" />
 
-							<aon:div>
-								<aon:lookupInputText id="Catalogue_id"
-									rendered="#{to==eccatalogue.to}"
-									value="#{eccatalogue.to.catalogue.id}"
-									lookup="#{catalogueLookup}" reRender="Catalogue_full_name"
-									required="true" size="5" />
-								<aon:lookupButton windowTitle="Catalogos"
-									property="#{eccatalogue.to.catalogue}"
-									rendered="#{to==eccatalogue.to}"
-									selectReRender="Catalogue_id,Catalogue_full_name"
-									lookup="#{catalogueLookup}" minHeight="460" minWidth="650">
-								</aon:lookupButton>
-								<aon:inputText id="Catalogue_full_name"
-									rendered="#{to==eccatalogue.to}"
-									value="#{eccatalogue.to.catalogue.name}" size="20" />
-							</aon:div>
+							<aon:selectOneMenu value="#{eccatalogue.to.catalogue}"
+								rendered="#{to==eccatalogue.to}">
+								<f:selectItem itemValue="0" itemLabel=" " />
+								<f:selectItems value="#{eccatalogue.catalogues}" />
+							</aon:selectOneMenu>
+
 							<f:facet name="footer">
-								<!--	<aon:div>
-								<aon:lookupInputText id="Catalogue_id1"
-									rendered="#{to==eccatalogue.to}"
-									value="#{eccatalogue.to.catalogue.id}"
-									lookup="#{catalogueLookup}" reRender="Catalogue_full_name1"
-									required="true" size="5" />
-								<aon:lookupButton windowTitle="Catalogos"
-									property="#{eccatalogue.to.catalogue}"
-									rendered="#{to==eccatalogue.to}"
-									selectReRender="Catalogue_id1,Catalogue_full_name1"
-									lookup="#{catalogueLookup}" minHeight="460" minWidth="650">
-								</aon:lookupButton>
-								<aon:inputText id="Catalogue_full_name1"
-									rendered="#{to==eccatalogue.to}"
-									value="#{eccatalogue.to.catalogue.name}" size="20" />
-							</aon:div>  -->
+
+								<aon:selectOneMenu value="#{eccatalogue.to.catalogue}"
+									rendered="#{eccatalogue.new}">
+									<f:selectItem itemValue="0" itemLabel=" " />
+									<f:selectItems value="#{eccatalogue.catalogues}" />
+								</aon:selectOneMenu>
+
 							</f:facet>
 						</aon:column>
 
@@ -99,44 +81,35 @@
 								<aon:outputText
 									value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_img}" />
 							</f:facet>
-						
+
 							<a4j:mediaOutput element="img" rendered="#{to!=eccatalogue.to}"
-								cacheable="false" value="#{to.id}"
-								style="width:30px" 
-								createContent="#{eccatalogue.paint}" />
+								cacheable="false" value="#{to.id}" style="width:30px"
+								createContent="#{eccatalogue.paintImage}" />
 
 
-							<aon:div id="attachFilechange" rendered="#{to==eccatalogue.to}">
-								<a4j:region>
-									<aon:fileUpload addControlLabel="#{bundle.aon_fileUpload_add}"
+							<aon:div id="imgchange" rendered="#{to==eccatalogue.to}">
+								
+									<rich:fileUpload addControlLabel="#{bundle.aon_fileUpload_add}"
 										stopControlLabel="#{bundle.aon_fileUpload_stop}"
 										stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
 										uploadControlLabel="#{bundle.aon_fileUpload_upload}"
-										fileUploadListener="#{eccatalogue.fileUploaded}"
+										fileUploadListener="#{eccatalogue.uploadImage}"
 										listHeight="0px" immediateUpload="true" autoclear="true">
-										<f:facet name="label">
-											<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
-										</f:facet>
-										<a4j:support event="onuploadcomplete"
-											reRender="attachFileNew,ItemAttach_description-New" />
-									</aon:fileUpload>
-								</a4j:region>
+
+									</rich:fileUpload>
+								
 							</aon:div>
 
 							<f:facet name="footer">
-								<aon:div id="attachFileNew" rendered="#{eccatalogue.new}">
+								<aon:div id="imgNew" rendered="#{eccatalogue.new}">
 									<a4j:region>
 										<aon:fileUpload addControlLabel="#{bundle.aon_fileUpload_add}"
 											stopControlLabel="#{bundle.aon_fileUpload_stop}"
 											stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
 											uploadControlLabel="#{bundle.aon_fileUpload_upload}"
-											fileUploadListener="#{eccatalogue.fileUploaded}"
+											fileUploadListener="#{eccatalogue.uploadImage}"
 											listHeight="0px" immediateUpload="true" autoclear="true">
-											<f:facet name="label">
-												<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
-											</f:facet>
-											<a4j:support event="onuploadcomplete"
-												reRender="attachFileNew,ItemAttach_description-New" />
+
 										</aon:fileUpload>
 									</a4j:region>
 								</aon:div>
@@ -144,7 +117,46 @@
 							</f:facet>
 						</aon:column>
 
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_ico}" />
+							</f:facet>
 
+							<a4j:mediaOutput element="img" rendered="#{to!=eccatalogue.to}"
+								cacheable="false" value="#{to.id}" style="width:30px"
+								createContent="#{eccatalogue.paintIcon}" />
+
+
+							<aon:div id="iconchange" rendered="#{to==eccatalogue.to}">
+								<a4j:region>
+									<aon:fileUpload addControlLabel="#{bundle.aon_fileUpload_add}"
+										stopControlLabel="#{bundle.aon_fileUpload_stop}"
+										stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+										uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+										fileUploadListener="#{eccatalogue.uploadIcon}"
+										listHeight="0px" immediateUpload="true" autoclear="true">
+
+									</aon:fileUpload>
+								</a4j:region>
+							</aon:div>
+
+							<f:facet name="footer">
+								<aon:div id="iconnew" rendered="#{eccatalogue.new}">
+									<a4j:region>
+										<aon:fileUpload addControlLabel="#{bundle.aon_fileUpload_add}"
+											stopControlLabel="#{bundle.aon_fileUpload_stop}"
+											stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+											uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+											fileUploadListener="#{eccatalogue.uploadIcon}"
+											listHeight="0px" immediateUpload="true" autoclear="true">
+
+										</aon:fileUpload>
+									</a4j:region>
+								</aon:div>
+
+							</f:facet>
+						</aon:column>
 
 						<aon:column>
 							<f:facet name="header">

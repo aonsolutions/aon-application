@@ -49,7 +49,7 @@ public class EcconfigController extends BasicController {
 	private List<SelectItem> paymethods;
 	/** The uploaded file. */
 	private AonFile aonFile1;
-	private AonFile aonFile2;
+
 
 	public List<SelectItem> getSkins() {
 		if (skins == null) {
@@ -164,6 +164,7 @@ public class EcconfigController extends BasicController {
 	}
 
 	public List<SelectItem> getPaymethods() throws ManagerBeanException {
+		paymethods=null;
 		if (paymethods == null) {
 			refreshPaymethods();
 		}
@@ -174,13 +175,6 @@ public class EcconfigController extends BasicController {
 		this.paymethods = paymethods;
 	}
 
-	// @Override
-	// public void onAccept(ActionEvent event) {
-	//	
-	//		
-	// super.onAccept(event);
-	// this.setModel(null);
-	// }
 
 	public AonFile getAonFile1() {
 		return aonFile1;
@@ -188,52 +182,6 @@ public class EcconfigController extends BasicController {
 
 	public void setAonFile1(AonFile aonFile1) {
 		this.aonFile1 = aonFile1;
-	}
-
-	public AonFile getAonFile2() {
-		return aonFile2;
-	}
-
-	public void setAonFile2(AonFile aonFile2) {
-		this.aonFile2 = aonFile2;
-	}
-
-	/*
-	 * private void writeAttachment(AonFile file,HttpServletResponse response) {
-	 * try { String filename = aonFile1.getFileName();
-	 * 
-	 * response.setHeader("Content-disposition", "attachment;filename=\"" +
-	 * filename + "\""); byte[] data = aonFile1.getData();
-	 * response.setHeader("Content-Length", String.valueOf(data.length));
-	 * ServletOutputStream sos = response.getOutputStream(); sos.write(data);
-	 * sos.close(); response.flushBuffer(); } catch (IOException e) {
-	 * LOGGER.log(Level.SEVERE, e.getMessage(), e); } }
-	 * 
-	 * public void downloadImage(ActionEvent event) throws
-	 * NumberFormatException, ManagerBeanException { FacesContext context =
-	 * FacesContext.getCurrentInstance(); String id =
-	 * context.getExternalContext().getRequestParameterMap().get("index");
-	 * HttpServletResponse response = (HttpServletResponse)
-	 * context.getExternalContext().getResponse(); AonFile file=
-	 * (AonFile)getManagerBean().get(Integer.valueOf(id)); writeAttachment(file,
-	 * response); context.responseComplete(); }
-	 */
-
-	public void footerUploaded(UploadEvent event) {
-		try {
-			UploadItem item = event.getUploadItem();
-			AonFile f = new AonFile();
-			File file = item.getFile();
-			if (file != null) {
-				FileInputStream in = new FileInputStream(file);
-				byte[] data = IOUtils.toByteArray(in);
-				f.setData(data);
-			}
-			f.setFileName(item.getFileName());
-			setAonFile2(f);
-		} catch (IOException e) {
-			throw new AbortProcessingException(e.getMessage());
-		}
 	}
 
 	public void headerUploaded(UploadEvent event) {
@@ -266,18 +214,18 @@ public class EcconfigController extends BasicController {
 			out.write(null);
 
 	}
+	
 
-	public void paintFooter(OutputStream out, Object data) throws IOException {
-		// if (getAonFile() != null && (getAonFile().getSize() > 0) ) {
-		// out.write(getAonFile().getData());
-		// }
-		// out.write(((ItemAttachment)getTo()).getData());
-		if (((Ecconfig) getTo()).getFooterImg() != null) {
-			this.onSelectFirst(null);
-			out.write(((Ecconfig) getTo()).getFooterImg());
+	public void paintFile(OutputStream out, Object data) throws IOException {
+		
+		if (aonFile1.getData() != null) {
+			//this.onSelectFirst(null);
+			out.write(aonFile1.getData());
 		} else
 			out.write(null);
 
 	}
+
+
 
 }
