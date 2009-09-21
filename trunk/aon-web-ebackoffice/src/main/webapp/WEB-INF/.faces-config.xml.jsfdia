@@ -6,50 +6,6 @@
     PATH="/home.jsf" TARGET="rules:#home.jsf" TITLE="logout" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules::1" SHAPE="32,129,0,0" model-entity="JSFProcessGroup">
-  <PROCESS-ITEM ID="rules::1" NAME="item" model-entity="JSFProcessItem">
-   <PROCESS-ITEM-OUTPUT ID="menu_products::#facelet#menu#products.xhtml"
-    NAME="output" PATH="/facelet/menu/products.xhtml"
-    TARGET="rules:#facelet#menu#products.xhtml" TITLE="menu_products" model-entity="JSFProcessItemOutput"/>
-   <PROCESS-ITEM-OUTPUT
-    ID="menu_commercial::#facelet#menu#commercial.xhtml" NAME="output1"
-    PATH="/facelet/menu/commercial.xhtml"
-    TARGET="rules:#facelet#menu#commercial.xhtml"
-    TITLE="menu_commercial" model-entity="JSFProcessItemOutput"/>
-   <PROCESS-ITEM-OUTPUT ID="menu_sales::#facelet#menu#sales.xhtml"
-    NAME="output2" PATH="/facelet/menu/sales.xhtml"
-    TARGET="rules:#facelet#menu#sales.xhtml" TITLE="menu_sales" model-entity="JSFProcessItemOutput"/>
-   <PROCESS-ITEM-OUTPUT
-    ID="menu_purchases::#facelet#menu#purchases.xhtml" NAME="output3"
-    PATH="/facelet/menu/purchases.xhtml"
-    TARGET="rules:#facelet#menu#purchases.xhtml" TITLE="menu_purchases" model-entity="JSFProcessItemOutput"/>
-   <PROCESS-ITEM-OUTPUT ID="menu_treasury::#facelet#menu#treasury.xhtml"
-    NAME="output4" PATH="/facelet/menu/treasury.xhtml"
-    TARGET="rules:#facelet#menu#treasury.xhtml" TITLE="menu_treasury" model-entity="JSFProcessItemOutput"/>
-   <PROCESS-ITEM-OUTPUT
-    ID="menu_accounting::#facelet#menu#accounting.xhtml" NAME="output5"
-    PATH="/facelet/menu/accounting.xhtml"
-    TARGET="rules:#facelet#menu#accounting.xhtml"
-    TITLE="menu_accounting" model-entity="JSFProcessItemOutput"/>
-   <PROCESS-ITEM-OUTPUT ID="menu_config::#facelet#menu#config.xhtml"
-    NAME="output6" PATH="/facelet/menu/config.xhtml"
-    TARGET="rules:#facelet#menu#config.xhtml" TITLE="menu_config" model-entity="JSFProcessItemOutput"/>
-  </PROCESS-ITEM>
- </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules:#facelet#menu#products.xhtml"
-  PATH="/facelet/menu/products.xhtml" SHAPE="304,145,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM NAME="rules:#facelet#menu#commercial.xhtml"
-  PATH="/facelet/menu/commercial.xhtml" SHAPE="304,449,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM NAME="rules:#facelet#menu#accounting.xhtml"
-  PATH="/facelet/menu/accounting.xhtml" SHAPE="304,897,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM NAME="rules:#facelet#menu#treasury.xhtml"
-  PATH="/facelet/menu/treasury.xhtml" SHAPE="304,785,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM NAME="rules:#facelet#menu#purchases.xhtml"
-  PATH="/facelet/menu/purchases.xhtml" SHAPE="304,673,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM NAME="rules:#home.jsf" PATH="/home.jsf"
   SHAPE="240,33,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM NAME="rules:#facelet#menu#config.xhtml"
-  PATH="/facelet/menu/config.xhtml" SHAPE="304,1009,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM NAME="rules:#facelet#menu#sales.xhtml"
-  PATH="/facelet/menu/sales.xhtml" SHAPE="304,561,0,0" model-entity="JSFProcessGroup"/>
 </PROCESS>

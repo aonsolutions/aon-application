@@ -202,11 +202,7 @@ public class EcconfigController extends BasicController {
 	}
 
 	public void paintHeader(OutputStream out, Object data) throws IOException {
-		// if (getAonFile() != null && (getAonFile().getSize() > 0) ) {
-		// out.write(getAonFile().getData());
-		// }
-		// out.write(((ItemAttachment)getTo()).getData());
-
+		
 		if (((Ecconfig) getTo()).getHeaderImg() != null) {
 			this.onSelectFirst(null);
 			out.write(((Ecconfig) getTo()).getHeaderImg());
@@ -225,6 +221,8 @@ public class EcconfigController extends BasicController {
 			out.write(null);
 
 	}
+	
+	
 
 
 
