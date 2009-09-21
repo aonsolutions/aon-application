@@ -15,8 +15,7 @@
 	
 	<ecommerce:config version="1.0" xmlns:ecommerce="http://www.esferalia.com/ecommerce">
 		<ecommerce:ecommerce
-			showStocks="false"
-			showEbackoffice="false"
+			showEcommerce="false"
 		/>
 	</ecommerce:config>
 	

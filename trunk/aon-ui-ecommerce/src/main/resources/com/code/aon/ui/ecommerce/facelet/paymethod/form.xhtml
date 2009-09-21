@@ -56,37 +56,43 @@
 					</aon:commandButton>
 				</aon:div>
 				
-				<aon:panel id="offer-detail-list"
-					styleClass="aon-padding-left aon-padding-right">
-					<!--  
-					<f:facet name="header">
-						<aon:outputText value="Forma de pago -18n-*" />
-					</f:facet>
-					<aon:outputLabel for="Login" value="#{ecommerceBundle.aon_acommerce_user_name}" />
-						<aon:selectOneRadio id="Offer_paymethod"
-							value="#{cartOffer.to.series}" 
-							layout="pageDirection"
-							required="true"
-							valueChangeListener="#{cartOffer.onSeriesChanged}" >
-							<f:selectItem itemValue="paypal" itemLabel="PayPal" />
-							<f:selectItem itemDisabled="true" itemValue="visa" itemLabel="Visa/4B" />
-							<f:selectItem itemValue="contra" itemLabel="Contrareembolso" />
-							<f:selectItem itemValue="giro" itemLabel="Giro" />
-							<f:selectItem itemValue="transf" itemLabel="Transferencia" />
-							<f:selectItems value="#{configCollections.series}" />
-						</aon:selectOneRadio>
-					-->
+				<aon:panelGrid columns="2" style="width:100%" 
+					columnClasses="aon-width-300, none">
+					<aon:panel id="offer-detail-list"
+						styleClass="aon-padding-left aon-padding-right">
+						<!--  
+						<f:facet name="header">
+							<aon:outputText value="Forma de pago -18n-*" />
+						</f:facet>
+						<aon:outputLabel for="Login" value="#{ecommerceBundle.aon_acommerce_user_name}" />
+							<aon:selectOneRadio id="Offer_paymethod"
+								value="#{cartOffer.to.series}" 
+								layout="pageDirection"
+								required="true"
+								valueChangeListener="#{cartOffer.onSeriesChanged}" >
+								<f:selectItem itemValue="paypal" itemLabel="PayPal" />
+								<f:selectItem itemDisabled="true" itemValue="visa" itemLabel="Visa/4B" />
+								<f:selectItem itemValue="contra" itemLabel="Contrareembolso" />
+								<f:selectItem itemValue="giro" itemLabel="Giro" />
+								<f:selectItem itemValue="transf" itemLabel="Transferencia" />
+								<f:selectItems value="#{configCollections.series}" />
+							</aon:selectOneRadio>
+						-->
+							<aon:outputLabel for="Offer_paymethod" value="Seleccione la forma de pago -i18n-" />
+							<aon:selectOneRadio id="Offer_paymethod"
+								value="#{cartOffer.offer.payMethod}"
+								layout="pageDirection"
+								required="true">
+				
+								<f:selectItems value="#{ecConfig.payMethodList}"/>
+							</aon:selectOneRadio>
+					</aon:panel>
+					
+					<aon:panel >
 						<aon:outputLabel for="Offer_paymethod" value="Seleccione la forma de pago -i18n-" />
-						<aon:selectOneRadio id="Offer_paymethod"
-							layout="pageDirection"
-							required="true">
-							<f:selectItem itemValue="paypal" itemLabel="PayPal" />
-							<f:selectItem itemDisabled="true" itemValue="visa" itemLabel="Visa/4B" />
-							<f:selectItem itemValue="contra" itemLabel="Contrareembolso" />
-							<f:selectItem itemValue="giro" itemLabel="Giro" />
-							<f:selectItem itemValue="transf" itemLabel="Transferencia" />
-						</aon:selectOneRadio>
-				</aon:panel>
+					</aon:panel>
+				
+				</aon:panelGrid>
 			</aon:div>
 
 		

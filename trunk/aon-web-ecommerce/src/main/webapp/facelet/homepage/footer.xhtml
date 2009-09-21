@@ -10,9 +10,17 @@
 
 	<aon:div id="aonFooter" styleClass="aon-footer">
 		<aon:form>
-			<aon:div styleClass="aon-header-additionalInfo">
+			<aon:div styleClass="aon-footer-additionalInfo">
+				<aon:outputText value="#{ecConfig.company.name}" />
+				<aon:outputText value=" / " />
+				<aon:outputText value="#{ecConfig.company.document}" />
+				<aon:outputText value=" / " />
+				<aon:outputText value="#{ecConfig.company.defaultAddress.address}" />
+			</aon:div>
+<!--  
 				<aon:div styleClass="aon-float-right">
 					<aon:div styleClass="aon-footer-menu-item">
+						
 						<h:outputLink target="_top"
 							value="${facesContext.externalContext.requestContextPath}">
 							<h:outputText value="#{bundle.aon_home}" />
@@ -25,7 +33,9 @@
 						</aon:commandLink>
 					</aon:div>
 				</aon:div>
+-->				
 
+<!-- 
 				<aon:commandButton action="#" value="privacidad-18n-"
 					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
 					<f:param name="info" value="#{ecConfig.activeConfig.privatePolicy}" />
@@ -37,7 +47,6 @@
 					<aon:actionListener method="#{shop.onInfoView}" />
 					<f:param name="info" value="#{ecConfig.activeConfig.legalNote}" />
 				</aon:commandButton>
-				<!-- 
 				<aon:commandLink action="#" value="proteccion de datos-18n-"
 					reRender="itemContent"
 					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
@@ -45,18 +54,79 @@
 					<f:param name="info"
 						value="#{ecConfig.activeConfig.dataProtection}" />
 				</aon:commandLink>
- -->
-				<aon:outputLink value="#" id="link"
+-->
+			<aon:div styleClass="aon-footer-buttoms">
+				<aon:outputLink value="#" id="private-policy"
+					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
+					<aon:outputText value="private_policy-18n-" />
+					<rich:componentControl for="privatePolicyProcess" attachTo="private-policy"
+						operation="show" event="onclick" />
+				</aon:outputLink>
+				<aon:outputLink value="#" id="legal-note"
+					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
+					<aon:outputText value="legal-note-18n-" />
+					<rich:componentControl for="legalNoteProcess" attachTo="legal-note"
+						operation="show" event="onclick" />
+				</aon:outputLink>
+				<aon:outputLink value="#" id="data-protection"
 					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
 					<aon:outputText value="proteccion de datos-18n-" />
-					<rich:componentControl for="waitProccess" attachTo="link"
+					<rich:componentControl for="dataProtectionProcess" attachTo="data-protection"
 						operation="show" event="onclick" />
 				</aon:outputLink>
 
 			</aon:div>
 		</aon:form>
 
-		<rich:modalPanel id="waitProccess" height="490" width="570"
+		<rich:modalPanel id="privatePolicyProcess" height="490" width="570"
+			zindex="2000" style="top: 0px; left:0px;">
+
+			<rich:effect event="onshow"  type="Highlight" params="duration:0.8" />
+
+        	<f:facet name="header">
+				<aon:div styleClass="aon-popupWindow-title">
+					<aon:outputText value="POLITICA DE PRIVACIDAD" />
+				</aon:div>
+			</f:facet>
+			<aon:div styleClass="aon-popupWindow-content">
+				<aon:div styleClass="aon-popupWindow-content-internal">
+					<aon:div id="privatePolicy" styleClass="extra-info">
+						<aon:outputText value="#{ecConfig.activeConfig.privatePolicy}" />
+					</aon:div>
+					<aon:div styleClass="aon-text-center">
+						<aon:outputLink id="privatePolicy-hidelink" value="#">
+							<aon:outputText value="[#{bundle.aon_close}]" style="color:black;"/>	
+						</aon:outputLink>
+						<rich:componentControl for="privatePolicyProcess" attachTo="privatePolicy-hidelink" operation="hide" event="onclick"/>
+					</aon:div>
+				</aon:div>
+			</aon:div>
+		</rich:modalPanel>
+		<rich:modalPanel id="legalNoteProcess" height="490" width="570"
+			zindex="2000" style="top: 0px; left:0px;">
+
+			<rich:effect event="onshow"  type="Highlight" params="duration:0.8" />
+
+        	<f:facet name="header">
+				<aon:div styleClass="aon-popupWindow-title">
+					<aon:outputText value="NOTA LEGAL" />
+				</aon:div>
+			</f:facet>
+			<aon:div styleClass="aon-popupWindow-content">
+				<aon:div styleClass="aon-popupWindow-content-internal">
+					<aon:div id="legalNote" styleClass="extra-info">
+						<aon:outputText value="#{ecConfig.activeConfig.legalNote}" />
+					</aon:div>
+					<aon:div styleClass="aon-text-center">
+						<aon:outputLink id="legalNote-hidelink" value="#">
+							<aon:outputText value="[#{bundle.aon_close}]" style="color:black;"/>	
+						</aon:outputLink>
+						<rich:componentControl for="legalNoteProcess" attachTo="legalNote-hidelink" operation="hide" event="onclick"/>
+					</aon:div>
+				</aon:div>
+			</aon:div>
+		</rich:modalPanel>
+		<rich:modalPanel id="dataProtectionProcess" height="490" width="570"
 			zindex="2000" style="top: 0px; left:0px;">
 
 			<rich:effect event="onshow"  type="Highlight" params="duration:0.8" />
@@ -68,14 +138,14 @@
 			</f:facet>
 			<aon:div styleClass="aon-popupWindow-content">
 				<aon:div styleClass="aon-popupWindow-content-internal">
-					<aon:div id="extra-info" styleClass="extra-info">
+					<aon:div id="dataProtection" styleClass="extra-info">
 						<aon:outputText value="#{ecConfig.activeConfig.dataProtection}" />
 					</aon:div>
 					<aon:div styleClass="aon-text-center">
-						<aon:outputLink id="hidelink" value="#">
+						<aon:outputLink id="dataProtection-hidelink" value="#">
 							<aon:outputText value="[#{bundle.aon_close}]" style="color:black;"/>	
 						</aon:outputLink>
-						<rich:componentControl for="waitProccess" attachTo="hidelink" operation="hide" event="onclick"/>
+						<rich:componentControl for="dataProtectionProcess" attachTo="dataProtection-hidelink" operation="hide" event="onclick"/>
 					</aon:div>
 				</aon:div>
 			</aon:div>

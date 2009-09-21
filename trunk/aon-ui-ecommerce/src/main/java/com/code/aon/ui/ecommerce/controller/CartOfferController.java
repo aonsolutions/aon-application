@@ -4,6 +4,7 @@ package com.code.aon.ui.ecommerce.controller;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.commercial.Offer;
@@ -15,7 +16,13 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Scope;
+import com.code.aon.config.Tariff;
+import com.code.aon.product.util.DiscountExpression;
+import com.code.aon.registry.RegistryAddress;
+import com.code.aon.seller.Seller;
+import com.code.aon.ui.commercial.controller.OfferController;
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -25,7 +32,7 @@ import com.code.aon.ui.util.AonUtil;
 * @since 1.0
 *  
 */
-public class OfferController {
+public class CartOfferController {
 
 	private Offer offer;
 	private List<OfferDetail> offerDetail;
@@ -48,9 +55,18 @@ public class OfferController {
 	 * @param offer
 	 * @throws ManagerBeanException 
 	 */
-	public void insert() throws ManagerBeanException{
-		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
-		offerBean.insert(getOffer());
+	public void insert() {
+		IManagerBean offerBean;
+		try {
+//			OfferController o = (OfferController)FormUtil.getController("offer");
+//			Offer offer = (Offer)o.getTo();
+			
+			offerBean = BeanManager.getManagerBean(Offer.class);
+			offerBean.insert(getOffer());
+		} catch (ManagerBeanException e) {
+			AonUtil.addInfoMessage("Fallo al recuperar el offer.");
+			throw new AbortProcessingException();
+		}
 	}
 
 	/**
@@ -62,11 +78,11 @@ public class OfferController {
 	
 	
 	public void onAccept(ActionEvent event) {
-		try {
 			insert();
-		} catch (ManagerBeanException e) {
-			AonUtil.addInfoMessage("Fallo al recuperar el offer.");
-		}
+//		try {
+//		} catch (ManagerBeanException e) {
+//			AonUtil.addInfoMessage("Fallo al recuperar el offer.");
+//		}
 	}
 	
 	/**
@@ -101,6 +117,11 @@ public class OfferController {
 		offer.setSeries(series);
 		//
 		offer.setScope(new Scope());
+		offer.setDiscountExpression(new DiscountExpression());
+		offer.setAddress(new RegistryAddress());
+		offer.setTariff(new Tariff());
+		offer.setSeller(new Seller());
+		
 		//offer.set
 		
 //		try {
@@ -114,10 +135,10 @@ public class OfferController {
 		-private String series;
 	    ?-private int number;
 	    private Target target;
-	    private RegistryAddress address;
-	    private Tariff tariff;
-	    private Seller seller;
-	    private DiscountExpression discountExpression;
+	    -private RegistryAddress address;
+	    -private Tariff tariff;
+	    -private Seller seller;
+	    -private DiscountExpression discountExpression;
 	    -private Date issueDate;
 	    private PayMethod payMethod;
 	    private SecurityLevel securityLevel;

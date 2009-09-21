@@ -37,7 +37,7 @@
 	<managed-bean>
 		<managed-bean-name>cartOffer</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.ecommerce.controller.OfferController
+			com.code.aon.ui.ecommerce.controller.CartOfferController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
