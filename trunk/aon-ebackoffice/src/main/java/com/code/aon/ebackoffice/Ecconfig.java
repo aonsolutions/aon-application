@@ -158,7 +158,7 @@ public class Ecconfig implements ITransferObject {
 	}
 	
 	@OneToOne (fetch=FetchType.EAGER)
-	@JoinColumn(name="bank_transfer", nullable=false)
+	@JoinColumn(name="bank_transfer")
 	@ForeignKey(name = "FK_ECCONFIG_BANK_TRANSFER")
 	@Index(name = "IDX_ECCONFIG_BANK_TRANSFER")
 	public PayMethod getBankTransfer() {
@@ -169,7 +169,7 @@ public class Ecconfig implements ITransferObject {
 	}
 
 	@OneToOne (fetch=FetchType.EAGER)
-	@JoinColumn(name="cash_on_delivery", nullable=false)
+	@JoinColumn(name="cash_on_delivery")
 	@ForeignKey(name = "FK_ECCONFIG_CASH_ON_DELIVERY")
 	@Index(name = "IDX_ECCONFIG_CASH_ON_DELIVERY")
 	public PayMethod getCashOnDelivery() {
@@ -181,7 +181,7 @@ public class Ecconfig implements ITransferObject {
 	
 	
 	@OneToOne (fetch=FetchType.EAGER)
-	@JoinColumn(name="visa", nullable=false)
+	@JoinColumn(name="visa")
 	@ForeignKey(name = "FK_ECCONFIG_VISA")
 	@Index(name = "IDX_ECCONFIG_VISA")
 	public PayMethod getVisa() {
@@ -192,7 +192,7 @@ public class Ecconfig implements ITransferObject {
 	}
 	
 	@OneToOne (fetch=FetchType.EAGER)
-	@JoinColumn(name="paypal", nullable=false)
+	@JoinColumn(name="paypal")
 	@ForeignKey(name = "FK_ECCONFIG_PAYPAL")
 	@Index(name = "IDX_ECCONFIG_PAYPAL")
 	public PayMethod getPaypal() {
@@ -203,7 +203,7 @@ public class Ecconfig implements ITransferObject {
 	}
 	
 	@OneToOne (fetch=FetchType.EAGER)
-	@JoinColumn(name="bank_draft", nullable=false)
+	@JoinColumn(name="bank_draft")
 	@ForeignKey(name = "FK_ECCONFIG_BANK_DRAFT")
 	@Index(name = "IDX_ECCONFIG_BANK_DRAFT")
 	public PayMethod getBankDraft() {
