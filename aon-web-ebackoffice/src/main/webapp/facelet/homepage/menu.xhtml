@@ -12,7 +12,7 @@
 			
 			<aon:commandLink id="offers"
 				value="#{commercialBundle.commercial_offers_module}"
-				action="offer_search" immediate="true"
+				action="offer_search"  actionListener="#{offer.onEditSearch}"
 				styleClass="aon-top-menu-item" />
 			<aon:commandLink id="target" action="target_search"
 				actionListener="#{target.onEditSearch}"

@@ -45,6 +45,8 @@ public class EcConfigControllerListener extends ControllerAdapter implements
 	
 	}
 
+	
+	
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
@@ -60,8 +62,7 @@ public class EcConfigControllerListener extends ControllerAdapter implements
 		
 	}
 	
-	
-	
+		
 	@Override
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
