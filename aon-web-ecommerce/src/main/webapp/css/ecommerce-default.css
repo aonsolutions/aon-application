@@ -524,7 +524,7 @@ a.aon-top-menu-item-icon:hover {
 .aon-icon-cancel {
 	background: transparent url(images/aon-icon/aon-icon-cancel.png) scroll
 		left center no-repeat;
-		margin-bottom:10px;
+	
 
 }
 
@@ -1248,14 +1248,8 @@ a.aon-top-menu-item-icon:hover {
 /********* GRUPOS ***********/
 	/***** PARA QUE QUEDE COMO UN FIELDSET   *******/
 #aon-content .aon-group {
-	border: #ccc 1px solid;
-		border-top: #000 36px solid;
-/*margin: 1em 0 1em 0;*/
-	padding: 0 0 0.5em 0;
-	/*min-width:340px;*/
-	margin-top:20px;
-	/*margin-left:5px;
-	margin-right:5px;*/
+	margin-bottom:30px;
+
 }
 
 
@@ -1268,15 +1262,24 @@ padding:-10px 14px 10px 2px;
 	font-size: 0.9em;
 	background-color: #000;
 	border: 0;
-	background-image:url(images/aon-icon/MESSENGER - MSN.png);
+	background-image:none;
 	color:#fff;
 	padding-left:30px;
 }
 
+
 .aon-group-body {
 	padding: 0 1em;
 }
+.aon-header-additionalInfo a, .aon-header-additionalInfo a:hover {
 
+
+cursor:pointer;
+padding:0 30px;
+font-size:9px;
+text-transform:none;
+font-weight:bold;
+}
 .aon-group-body-internal {
 	width: 100%;
 }
@@ -1333,7 +1336,9 @@ padding:-10px 14px 10px 2px;
 
 .aon-outputLabel {
 		padding: 0 5px 0 0em;
-	margin-left:30px;
+	margin-left:20px;
+	font-weight:bold;
+	margin-bottom:20px;
 	
 	
 }
@@ -1462,7 +1467,7 @@ text-transform:uppercase;
 /*	margin: 0 auto;*/
 
 	margin-bottom:20px;
-	width:200px;
+
 }
 
 .aon-panelGrid-odd { /*	border:#c4c4c4 1px solid;*/
@@ -1927,25 +1932,30 @@ tr.aon-logo-name{height:150px;}
 	text-align: right;
 	font-size: 0.9em;
 	background-color: #fff;
+	border-bottom:1px solid #000;
 }
 
 /* barra con la fecha y el boton de desconectar*/
 .aon-header-additionalInfo {
 	background: #ccc 
 		scroll left top repeat-x;
-	color: #f2f2f2;
+	color: #000;
 	padding: 3px 1em 3px 1.5em;
-	font-size: 0.9em;
+
 	overflow: auto;
 	height: 100%;
+	margin-top:20px;
 }
 
 .aon-header-additionalInfo a,.aon-header-additionalInfo a:visited,.aon-header-additionalInfo a:hover
 	{
-	color: #fff;
+	color: #000;
 	cursor: pointer;
 	padding: 0 0.5em;
-	border-right: #fff 1px solid;
+	border-right: #000 1px solid;
+	padding-left:20px;
+	padding-right:20px;
+	font-size:10px;
 }
 
 /********************************/ /*****   MENU DESPLEGABLE  ******/
@@ -2798,7 +2808,7 @@ td.search-box {
 	margin-top: 3px;
 }
 .dr-table-cell {
-border-bottom:1px solid #C4C0C9;
+border-bottom:none;
 border-right:none!important;
 color:#000000;
 font-family:lucida Grande,Trebuchet MS,Arial,sans-serif;
@@ -2875,6 +2885,8 @@ padding:6px;
 margin-left:6px;
 margin-right:6px;
 border-top:37px solid #000;
+border-color:#000;
+min-height:200px;
 }
 .dr-pnl-h {
 background-position:left top;
@@ -2888,6 +2900,7 @@ margin:30px;;
 }
 .dr-pnl {
 background-color:#FFFFFF;
+margin-top:20px;
 
 }
 .dr-pnl-h {
@@ -2907,14 +2920,14 @@ font-size:13px;
 .dr-table {
 background-color:#FFFFFF;
 border-collapse:collapse;
-/*border-left:1px solid #C4C0C9;*/
+border-left:none;
+border-top:none;
+border-right:none;
 
 empty-cells:show;
 }
 .dr-table-cell {
-border-bottom:1px solid #C4C0C9;
-/*border-right:1px solid #C4C0C9;*/
-color:#000000;
+
 font-family:lucida Grande,Trebuchet MS,Arial,sans-serif;
 font-size:13px;
 padding:4px;
@@ -2937,8 +2950,7 @@ background-repeat:repeat-x;
 background-color:#D4CFC7;
 }
 .dr-table-headercell {
-border-bottom:1px solid #C4C0C9;
-border-right:1px solid #C4C0C9;
+
 color:#000000;
 font-family:lucida Grande,Trebuchet MS,Arial,sans-serif;
 font-size:13px;
@@ -2982,8 +2994,7 @@ background-color:#CCCCCC;
 background-color:#CCCCCC;
 }
 .dr-table-footercell {
-border-bottom:1px solid #C4C0C9;
-border-right:1px solid #C4C0C9;
+
 color:#000000;
 font-family:lucida Grande,Trebuchet MS,Arial,sans-serif;
 font-size:13px;
@@ -2995,8 +3006,7 @@ text-align:left;
 background-color:#F1F1F1;
 }
 .dr-table-subfootercell {
-border-bottom:1px solid #C4C0C9;
-border-right:1px solid #C4C0C9;
+
 color:#000000;
 font-family:lucida Grande,Trebuchet MS,Arial,sans-serif;
 font-size:13px;
@@ -3379,7 +3389,7 @@ color:#C4C0B9;
 /*	border:#c4c4c4 1px solid;*/
 	
 }
-td.aon-panelGrid-even .aon-outputText { width:30px;
+td.aon-panelGrid-even .aon-outputText { 
 color:#999;
 text-transform:none;
 
@@ -3396,7 +3406,7 @@ float:right;
 background:#fff;
 	}
 	.menu td:hover{
-background-color:#000;
+background-color:#FDE46D;
 border-left:3px solid #FFFFFF;
 color:#FFFFFF;
 padding-left:15px;
@@ -3408,8 +3418,7 @@ padding-left:15px;
 #j_id23{
 		background-color:#fff;}
 		.dr-pnl-b img{
-			width:25%;
-			float:left;
+		
 			margin:10px;
 			}
 			.contact-box{
@@ -3475,13 +3484,10 @@ text-transform:uppercase;
 		border-top:37px solid #000;
 	}
 	
-	#helpdesk-box{
-		background: transparent url(images/aon-icon/MESSENGER - MSN.png) no-repeat scroll left center;}
+
 
 	
-	.aon-icon-footer-note{
-		background: transparent url(images/aon-icon/aon-icon-save.png) no-repeat scroll left center;
-	}
+	
 	.box-header-icon{
 border:1px solid #fff;
 width:30px;
@@ -3496,34 +3502,34 @@ margin-left:160px;
 
 		}
 	.login-box-header-icon{
-	background:transparent url(images/aon-icon/MESSENGERMSN.png) no-repeat scroll left center;
+	background:transparent url(images/aon-icon/MESSENGERMSN.png) no-repeat;
 border-right:1px dotted #FFFFFF;
 float:left;
 font-size:15px;
-
-padding-bottom:7px;
 margin-top:-7px;
+padding-bottom:7px;
+
 padding-top:20px;
 width:40px;}
 		.list-info-box-header-icon
 		{
-		background:url(images/aon-icon/80-shopping-cart2.png) no-repeat scroll left center;
+		background:url(images/aon-icon/80-shopping-cart2.png) no-repeat;
 	border-right:1px dotted #FFFFFF;
 float:left;
 font-size:15px;
-
-padding-bottom:7px;
 margin-top:-7px;
+padding-bottom:7px;
+
 padding-top:20px;
 width:40px;}
 	
-		.helpdesk-box-header-icon{background:url(images/aon-icon/75-phone2.png) no-repeat scroll left center;
+		.helpdesk-box-header-icon{background:url(images/aon-icon/INFO1.png) no-repeat;
 	border-right:1px dotted #FFFFFF;
 float:left;
 font-size:15px;
-
-padding-bottom:7px;
 margin-top:-7px;
+padding-bottom:7px;
+
 padding-top:20px;
 width:40px;}
 
@@ -3538,10 +3544,9 @@ width:40px;}
 	border:1px solid #ccc;
 	padding:20px;
 	margin:20px;
-	height:50px;
-	width:50px;}
+	}
 .detailImageColumn div	img{
-	margin-left:20px;}
+	}
 
 	.aon-vertical-align-top .aon-scroll-area {
 	margin:20px;
@@ -3550,5 +3555,26 @@ width:40px;}
 		color:#000;
 		text-transform:uppercase;
 		font-weight:bold;
+			
+		}
+			.aon-vertical-align-top .aon-scroll-area {
+	margin:20px;
+	}
+	.aon-panelGrid-odd  .aon-outputLabel{
+		color:#000;
+		text-transform:uppercase;
+		font-weight:bold;
 		}
 		
+
+			.new-user-registry .dr-pnl rich-panel aon-group{
+				height:200px;}
+.aon-panelGrid #registryColumn{
+	color:#555;	}
+	
+
+.aon-header-additionalInfo a, .aon-header-additionalInfo a:hover {
+	color:#fff;
+	font-size:10px;
+	text-transform:none;
+	border-right:1px solid #fff;}
