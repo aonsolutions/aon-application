@@ -184,20 +184,18 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 	protected void applyNextHandler(FaceletContext ctx, UIComponent component) 
 		throws IOException, FacesException, ELException {
 		super.applyNextHandler(ctx, component);	
-		if ( component.isRendered() ) {
-			URL path = FaceletUtil.getTemplate(TEMPLATE);
-			VariableMapper orig = ctx.getVariableMapper();
-			ctx.setVariableMapper(new VariableMapperWrapper(orig));
-			try {
-				addAttribues(ctx, component);
-				ctx.includeFacelet(component, path );
-			} catch (Exception e) {
-				throw new FacesException("UIInclude component "
-						+ component.getClientId(ctx.getFacesContext())
-						+ " could't include page with path " + path, e);
-			} finally {
-				ctx.setVariableMapper(orig);
-			}
+		URL path = FaceletUtil.getTemplate(TEMPLATE);
+		VariableMapper orig = ctx.getVariableMapper();
+		ctx.setVariableMapper(new VariableMapperWrapper(orig));
+		try {
+			addAttribues(ctx, component);
+			ctx.includeFacelet(component, path );
+		} catch (Exception e) {
+			throw new FacesException("UIInclude component "
+					+ component.getClientId(ctx.getFacesContext())
+					+ " could't include page with path " + path, e);
+		} finally {
+			ctx.setVariableMapper(orig);
 		}
 	}
 	
