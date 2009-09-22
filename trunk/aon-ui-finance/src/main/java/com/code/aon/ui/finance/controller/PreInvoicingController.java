@@ -21,6 +21,8 @@ import com.code.aon.finance.invoicing.engine.InvoicingEngineFactory;
 import com.code.aon.finance.invoicing.engine.fee.CustomerFeeInvoicingEngine;
 import com.code.aon.finance.invoicing.engine.fee.CustomerFeePreInvoicingDAO;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
+import com.code.aon.product.Item;
+import com.code.aon.product.Product;
 import com.code.aon.product.strategy.IPriceStrategy;
 
 public class PreInvoicingController implements ICollectionProvider {
@@ -46,6 +48,9 @@ public class PreInvoicingController implements ICollectionProvider {
 		this.invoicingParams.setSecurityLevel(SecurityLevel.OFFICIAL);
 		this.invoicingParams.setInvoiceDate(new Date());
 		this.invoicingParams.setCustomer(new Customer());
+		Item item = new Item();
+		item.setProduct(new Product());
+		this.invoicingParams.setItem(item);
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(new Date());
 		invoicingParams.setMonth(Month.getMonthByValue(calendar.get(Calendar.MONTH)));
