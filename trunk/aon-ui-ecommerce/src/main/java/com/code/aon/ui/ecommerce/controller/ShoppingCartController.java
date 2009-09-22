@@ -12,6 +12,7 @@ import javax.faces.model.ListDataModel;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.commercial.Target;
+import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -189,6 +190,10 @@ public class ShoppingCartController {
 		getCartTarget().getEmail().setMediaType(MediaType.FAX);
 		getCartTarget().setWeb(new RegistryMedia());	
 		getCartTarget().getWeb().setMediaType(MediaType.FAX);	
+		getCartTarget().getWeb().setMediaType(MediaType.FAX);	
+		
+		getCartTarget().getEcTarget().getTarget().setAdvertising(Advertising.ALLOWED);
+		//#{shoppingCart.cartTarget.ecTarget.target.advertising}
 	}
 	
 	private boolean isEmpty( RegistryAddress address ) {

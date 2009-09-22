@@ -75,11 +75,8 @@
 						</aon:div>
 					</aon:div>
 					
-					<aon:outputLabel for="Company_telephone"
-						value="#{registryBundle.registry_phone}" />
-					<aon:inputText id="Company_telephone"
-						value="#{shoppingCart.cartTarget.phone.value}" size="32"
-						maxlength="64" />
+					<aon:outputLabel value="&#160;" />
+					<aon:outputLabel value="&#160;" />
 					
 					<aon:outputLabel for="Company_address_zip"
 						value="#{registryBundle.registry_zip}" />
@@ -87,27 +84,32 @@
 						value="#{shoppingCart.cartTarget.mainAddress.zip}" size="32"
 						maxlength="16" />
 						
+					<aon:outputLabel for="Company_telephone"
+						value="#{registryBundle.registry_phone}" />
+					<aon:inputText id="Company_telephone"
+						value="#{shoppingCart.cartTarget.phone.value}" size="32"
+						maxlength="64" />
 					
-	<aon:outputLabel for="Target_advertising"
-		value="#{commercialBundle.commercial_target_advertising}" />
-	<aon:selectOneMenu id="Target_advertising" required="true"
-		value="#{shoppingCart.cartTarget.ecTarget.target.advertising}">
-		<f:selectItem itemLabel="-" value="#{null}" />
-		<f:selectItems value="#{commercialCollections.advertisings}" />
-	</aon:selectOneMenu>
-	
+					
 					<aon:outputLabel for="Company_address_city"
 						value="#{registryBundle.registry_city}" />
 					<aon:div>
 						<aon:inputText id="Company_address_city"
 							value="#{shoppingCart.cartTarget.mainAddress.city}" size="60"
 							maxlength="64" />
+					<!--  
 						<aon:div><aon:outputLabel value="&#160;" /></aon:div>
 						<aon:div><aon:outputLabel value="&#160;" /></aon:div>
+					-->	
 					</aon:div>
 					
-					<aon:outputLabel value="&#160;" />
-					<aon:outputLabel value="&#160;" />
+					<aon:outputLabel for="Target_advertising"
+						value="#{commercialBundle.commercial_target_advertising}" />
+					<aon:selectOneMenu id="Target_advertising" required="true"
+						value="#{shoppingCart.cartTarget.ecTarget.target.advertising}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{commercialCollections.advertisings}" />
+					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Company_address_geozone"
 						value="#{registryBundle.registry_geozone}" />
@@ -115,6 +117,9 @@
 						value="#{shoppingCart.cartTarget.mainAddress.geozone}">
 						<f:selectItems value="#{geozoneCollections.geoTrees}" />
 					</aon:selectOneMenu>
+					
+					<aon:outputLabel value="&#160;" />
+					<aon:outputLabel value="&#160;" />
 
 					
 
@@ -137,6 +142,19 @@
 						value="#{shoppingCart.cartTarget.web.value}" size="60"
 						maxlength="64" onblur="toLowerCase(this);" />
 -->
+
+
+					
+					<aon:outputLabel value="&#160;" />
+					<aon:outputLabel value="&#160;" />
+
+					<aon:outputLabel value="&#160;" />
+					<aon:commandButton id="aonToolbar-accept"
+						value="#{bundle.aon_accept}" 
+						action="paymethod_form"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_accept}"
+						actionListener="#{shoppingCart.onAddTarget}" />
 				</aon:panelGrid>
 
 </ui:composition>
