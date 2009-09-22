@@ -19,16 +19,6 @@
 	color: #8D8D8D;
 }
 
-.aon-dataTable-link {
-	background:#fff url(images/aon-icon/aon-icon-arrow-dataTable-item.png) scroll right center no-repeat;
-	padding-right: 10px;
-}
-
-.aon-dataTable-link:hover {
-	color: #285E9C; 
-	text-decoration: underline;
-}
-
 .aon-portlets-column{
 	vertical-align:top;
 	padding: 0 5px;
@@ -51,3 +41,70 @@
 	text-transform:uppercase;
 	margin-bottom:0.5em;	
 }
+
+.aon-panelGrid2-odd{
+	width: 115px;
+	border:#c4c4c4 1px solid;
+	background-color:#ffffff;
+	white-space: nowrap;
+	padding:1px 0.5em 1px 0.5em;
+	vertical-align:top;
+	text-align: right;
+}
+.aon-panelGrid2-even{
+	width: 60px;
+	border:#c4c4c4 1px solid;
+	border-collapse: collapse;
+	background-color:#f2f2f2;
+	white-space: nowrap;
+	padding:1px 0.5em 1px 0.5em;
+	vertical-align:top;
+	text-align: center;
+}
+.aon-panelGrid2-header-first{
+	width: 150px;
+	border:#c4c4c4 1px solid;
+	border-collapse: collapse;
+	background-color:#f2f2f2;
+	white-space: nowrap;
+	vertical-align:middle;
+}
+.aon-panelGrid2-header{
+	border-collapse: collapse;
+	width: 300px;
+	border:#c4c4c4 1px solid;
+	background-color:#ffffff;
+	white-space: nowrap;
+	vertical-align:top;
+}
+.aon-panelGrid2-header-text{
+	font-weight: bold;
+	text-align: center;
+	background-color:#f2f2f2;
+}
+.aon-panelGrid2-total-text{
+	font-style: italic;
+	font-weight: bold;
+	background-color:#f2f2f2;
+}
+.aon-panelGrid2-total-title{
+	font-weight: normal;
+	font-style: italic;
+	text-align: right;
+	padding-right: 5px;
+	background-color:#ffffff;
+}
+
+.aon-dataTable-link-noicon {}
+.aon-dataTable-link-noicon:hover {
+	color: #285E9C; 
+	text-decoration: underline;
+}
+
+.aon-icon-sign{
+	background:transparent url(images/sign.png) scroll left center no-repeat;
+ }
+ 
+.aon-icon-cancel-sign{
+	background:transparent url(images/cancel-sign.png) scroll left center no-repeat;
+ }
