@@ -8,10 +8,10 @@
 
 	<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
 
-	<aon:outputLabel for="Target_id"
+	<aon:outputLabel for="Offer_target_id"
 		value="#{target.bundle.commercial_target}" />
 	<aon:div styleClass="aon-lookup">
-		<aon:lookupInputText id="Target_id" lookup="#{targetLookup}"
+		<aon:lookupInputText id="Offer_target_id" lookup="#{targetLookup}"
  			reRender="Offer_target_full_name"
 			value="#{offerSearch.target.id}"
 			size="5" />
