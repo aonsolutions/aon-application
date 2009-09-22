@@ -6,6 +6,7 @@
 <hibernate-configuration>
 
 	<session-factory>
+
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
 		<!-- AON-ACCOUNT Mapping files -->
@@ -17,6 +18,8 @@
 		<mapping class="com.code.aon.accounting.AutoConcept"/>
 		<mapping class="com.code.aon.accounting.AccountEntry"/>
 		<mapping class="com.code.aon.accounting.AccountEntryDetail"/>
+		<mapping class="com.code.aon.accounting.AccountEntryLink"/>		
+		<mapping class="com.code.aon.accounting.AccountHelper"/>
 		<mapping class="com.code.aon.accounting.AccountSummary"/>
 		<mapping class="com.code.aon.accounting.Amortization"/>
 		<mapping class="com.code.aon.accounting.AmortizationDetail"/>
@@ -60,15 +63,6 @@
 		<mapping class="com.code.aon.company.resources.Resource"/>
 		<mapping class="com.code.aon.company.resources.Employee"/>
 
-		<!-- AON-COMPOSITE Mapping files 		
-		<mapping class="com.code.aon.composition.Composition"/>
-		<mapping class="com.code.aon.composition.CompositionDetail"/>
-		<mapping class="com.code.aon.composition.CompositionExpense"/>
-		<mapping class="com.code.aon.composition.Production"/>
-		<mapping class="com.code.aon.composition.ProductionDetail"/>
-		<mapping class="com.code.aon.composition.ProductionExpense"/>
-		-->
-		
 		<!-- AON-CONFIG Mapping files -->
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
 		<mapping class="com.code.aon.config.Bank"/>
@@ -139,9 +133,7 @@
 
 		<!-- AON-SALES Mapping files -->	
 		<mapping class="com.code.aon.sales.Sales"/>
-		<mapping class="com.code.aon.sales.SalesAttachment"/>
 		<mapping class="com.code.aon.sales.SalesDetail"/>
-		<mapping class="com.code.aon.sales.SalesType"/>
 
 		<!-- AON-SELLER Mapping files -->	
 		<mapping class="com.code.aon.seller.Seller"/>
@@ -160,6 +152,7 @@
 		<mapping class="com.code.aon.warehouse.InventoryDetail"/>
 		<mapping class="com.code.aon.warehouse.Stock"/>
 		<mapping class="com.code.aon.warehouse.Warehouse"/>
+
 	</session-factory>
 
 </hibernate-configuration>
