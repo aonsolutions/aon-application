@@ -55,6 +55,7 @@
 					</aon:div>
 
 					<aon:outputText value="&#160;" />
+					<aon:outputText rendered="#{to.samePrice}"  value="&#160;" />
 					<aon:div rendered="#{!to.samePrice}" style="text-align: right;" styleClass="aon-nowrap">
 						<c:if test="#{ecConfig.showOriginalPrice}">
 							<c:if test="#{ecConfig.showPriceCrossOut}">
