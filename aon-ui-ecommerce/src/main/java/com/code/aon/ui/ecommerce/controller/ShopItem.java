@@ -9,6 +9,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.Tariff;
 import com.code.aon.config.Tax;
 import com.code.aon.ebackoffice.Ecconfig;
 import com.code.aon.product.Item;
@@ -28,14 +29,28 @@ public class ShopItem implements ICalculable{
 	
 	private Item item;
 	private ItemAttachment thumbnail;
+
 	private Double price;
 	private Double vat;
 	private Double total;
+	
 	private Double discount;
 	private Double discountPercent;
+
+	private Double originalTotalPrice;
+	private Double totalDiscount;
+	private Double totalDiscountPercent;
+	
+	private Tariff tariff;
 	
 	public ShopItem(Item item) {
 		this.item = item;
+	}
+
+	public ShopItem(Item item, Tariff tariff) {
+		this(item);
+		this.tariff = tariff;
+		initializePrices();
 	}
 
 	public Ecconfig getConfig() {
@@ -79,7 +94,11 @@ public class ShopItem implements ICalculable{
 	public double getOriginalPrice() {
 		return getItem().getPrice();
 	}
-	
+
+	public double getOriginalTotalPrice() {
+		return originalTotalPrice;
+	}
+
 	public Double getDiscount() {
 		if (discount == null) {
 			discount = CommonUtil.round(getOriginalPrice() - getPrice());
@@ -89,9 +108,23 @@ public class ShopItem implements ICalculable{
 
 	public Double getDiscountPercent() {
 		if (discountPercent == null) {
-			discountPercent = CommonUtil.round(getPrice()*getDiscount()/100);
+			discountPercent = CommonUtil.round(100 - (getPrice()*100/getOriginalPrice()) );
 		}
 		return discountPercent;
+	}
+
+	public Double getTotalDiscount() {
+		if (totalDiscount == null) {
+			totalDiscount = CommonUtil.round(getOriginalTotalPrice() - getTotal());
+		}
+		return totalDiscount;
+	}
+
+	public Double getTotalDiscountPercent() {
+		if (totalDiscountPercent == null) {
+			totalDiscountPercent = CommonUtil.round(100 - (getTotal()*100/getOriginalTotalPrice()));
+		}
+		return totalDiscountPercent;
 	}
 
 	public double getPrice() {
@@ -115,10 +148,22 @@ public class ShopItem implements ICalculable{
 	
 	private void initializePrices() {
 		BasicPriceStrategy strategy = new BasicPriceStrategy();
-		price = strategy.getUnitPrice(this,new Date(), null);
+		if (tariff == null) {
+			price = strategy.getUnitPrice(this);
+		} else {
+			price = strategy.getUnitPrice(this,new Date(), tariff);	
+		}
 		Tax tax = getItem().getProduct().getVat();
 		vat = CommonUtil.round(price*tax.getPercentage()/100);
 		total = CommonUtil.round(price + vat);
+		
+		double originalVat = CommonUtil.round(getOriginalPrice()*tax.getPercentage()/100);
+		originalTotalPrice = CommonUtil.round(getOriginalPrice() + originalVat);
+	}
+	
+	public boolean isSamePrice() {
+		double dif = CommonUtil.round(getPrice()-getOriginalPrice()); 
+		return (dif == 0.0);
 	}
 	
 	public void setPrice(double price) {

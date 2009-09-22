@@ -13,6 +13,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Tariff;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.ecommerce.util.IECommerceConstants;
@@ -38,14 +39,16 @@ public class ShopItemsController {
 	public List<ShopItem> getList() {
 		try {
 			if (list == null) {
+				ConfigController cc  = (ConfigController) AonUtil.getRegisteredBean(IECommerceConstants.CONFIG_CONTROLLER);
+				Tariff tariff = cc.getActiveConfig().getTariff();
 				IManagerBean bean = BeanManager.getManagerBean(Item.class);
 				List<ITransferObject> itemList = bean.getList(getCriteria());
 				setList(new LinkedList<ShopItem>());
 				for (ITransferObject to: itemList) {
 					Item item = (Item) to;
-					getList().add( new ShopItem(item) );
+					ShopItem si = new ShopItem(item, tariff);
+					getList().add( si );
 				}
-				
 			}
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();

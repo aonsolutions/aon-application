@@ -36,33 +36,68 @@
 					</aon:outputText>
 				</aon:div>
 
-<!-- 
-				<c:if test="#{ecConfig.showOriginalPrice}">
-					<aon:div style="text-align: right;">
-						<aon:outputText value="#{to.originalPrice}">
-							<f:convertNumber pattern="#,##0.00" />
-						</aon:outputText>
-						<aon:outputText value="&#8364;"/>
-					</aon:div>
-				</c:if>
- -->
-				<c:if test="#{!ecConfig.taxIncluded}">
-					<aon:div style="text-align: center;">
-						<aon:outputText value="#{to.price}" style="font-size: 1.4em;">
-							<f:convertNumber pattern="#,##0.00" />
-						</aon:outputText>
-						<aon:outputText value="&#8364;*" style="font-size: 1.4em;" />
-					</aon:div>
-				</c:if>
 
-				<c:if test="#{ecConfig.taxIncluded}">
-					<aon:div style="text-align: center;">
+				<aon:div rendered="#{!to.samePrice}" style="text-align: right;">
+					<c:if test="#{ecConfig.showOriginalPrice}">
+						<c:if test="#{ecConfig.showPriceCrossOut}">
+							<c:if test="#{ecConfig.taxIncluded}">
+								<aon:outputText value="#{to.originalTotalPrice}" style="text-decoration: line-through;">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</c:if>
+							<c:if test="#{!ecConfig.taxIncluded}">
+								<aon:outputText value="#{to.originalPrice}" style="text-decoration: line-through;">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</c:if>
+							<aon:outputText value="&#8364;" />
+						</c:if>
+						
+						<c:if test="#{ecConfig.showDiscount}">
+							<c:if test="#{ecConfig.taxIncluded}">
+								<aon:outputText value="#{to.totalDiscount}">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</c:if>
+							<c:if test="#{!ecConfig.taxIncluded}">
+								<aon:outputText value="#{to.discount}">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</c:if>
+							<aon:outputText value="&#8364;" />
+						</c:if>
+						
+						<c:if test="#{ecConfig.showDiscountPercent}">
+							<c:if test="#{ecConfig.taxIncluded}">
+								<aon:outputText value="#{to.totalDiscountPercent}">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</c:if>
+							<c:if test="#{!ecConfig.taxIncluded}">
+								<aon:outputText value="#{to.discountPercent}">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</c:if>
+							<aon:outputText value="% Dto." />
+						</c:if>
+						
+					</c:if>
+				</aon:div>
+
+				<aon:div style="text-align: center;">
+					<c:if test="#{ecConfig.taxIncluded}">
 						<aon:outputText value="#{to.total}" style="font-size: 1.4em;">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
-						<aon:outputText value="&#8364;*" style="font-size: 1.4em;" />
-					</aon:div>
-				</c:if>
+					</c:if>
+					<c:if test="#{!ecConfig.taxIncluded}">
+						<aon:outputText value="#{to.price}" style="font-size: 1.4em;">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+					</c:if>
+					<aon:outputText value="&#8364;" style="font-size: 1.4em;" />
+				</aon:div>
+
 
 				<h:panelGrid columns="3" style="width: 100%;"
 					columnClasses="aon-width-auto,aon-width-20,aon-width-20">
