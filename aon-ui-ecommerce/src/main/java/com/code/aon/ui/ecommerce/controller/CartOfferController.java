@@ -127,6 +127,11 @@ public class CartOfferController {
 //		} catch (ManagerBeanException e) {
 //			AonUtil.addInfoMessage("Fallo al recuperar el offer.");
 //		}
+		
+		// inicializa el offer, itemList y el backAction
+		//setOffer(null);
+		((ShoppingCartController)AonUtil.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER)).setList(null);
+		((ShopController)AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER)).setBackView(ViewEnum.ITEM_LIST);
 	}
 	
 	/**

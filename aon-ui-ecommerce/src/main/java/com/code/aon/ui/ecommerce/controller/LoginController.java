@@ -38,7 +38,10 @@ public class LoginController {
 			List<ITransferObject> list = bean.getList(criteria);
 			if(list.isEmpty()){
 				//System.out.println("LOGIN INCORRECTO");
-				AonUtil.addErrorMessage("LOGIN INCORRECTO");
+				//AonUtil.addErrorMessage("LOGIN INCORRECTO");
+				String msg = "Nombre o contraseña incorrectos.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
 			} else {
 				//Ectarget ect = (Ectarget)list.iterator().next();
 				//System.out.println("LOGIADOOO");

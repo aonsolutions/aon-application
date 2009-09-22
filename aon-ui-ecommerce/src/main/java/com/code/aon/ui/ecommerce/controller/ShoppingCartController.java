@@ -66,6 +66,7 @@ public class ShoppingCartController {
 	}
 
 	public void budgetRequest(ActionEvent event) {
+		checkItemList();
 		((CartOfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER)).initialize();
 	}
 
@@ -286,6 +287,14 @@ public class ShoppingCartController {
 			updateRegistryLines( getCartTarget().getEcTarget().getTarget().getRegistry() );
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException( e.getMessage(), e );
+		}
+	}
+	
+	private void checkItemList(){
+		if(getList().size()<=0){
+			String message = "Imposible realizar el pedido. Ningun articulo seleccionado.";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message);
 		}
 	}
 

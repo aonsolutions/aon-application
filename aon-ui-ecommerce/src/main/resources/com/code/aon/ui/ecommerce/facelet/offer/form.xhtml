@@ -71,13 +71,15 @@
 					<aon:outputText id="Offer_issueDate"
 						value="#{cartOffer.offer.issueDate}" 
 						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}" />
+						popupDateFormat="#{bundle.aon_date_pattern}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"/>
+					</aon:outputText>
 
 					<aon:outputLabel for="Offer_target_id"
 						value="#{target.bundle.commercial_target}" />
 					<aon:div styleClass="aon-lookup">
 						<aon:outputText id="Offer_target_id"
-							value="#{cartOffer.offer.target.registry.id}" size="5" />
+							value="#{cartOffer.offer.target.registry.id} " size="5" />
 						<aon:outputText id="Offer_target_full_name"
 							value="#{(cartOffer.offer.target.registry.name!=null)?(cartOffer.offer.target.registry.fullName):('')}"
 							size="50" />
@@ -185,6 +187,7 @@
 				</aon:panelGrid>
 			</aon:div>
 
+			
 			<aon:panel id="offer-detail-list"
 				styleClass="aon-padding-left aon-padding-right">
 				<f:facet name="header">
@@ -197,10 +200,5 @@
 			</aon:panel>
 
 		</aon:form>
-<!--  
-		<aon:lookupButtonPopup lookup="#{targetLookup}" />
-		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
-		<aon:lookupButtonPopup lookup="#{itemLookup}" />
--->
 	</ui:define>
 </ui:composition>
