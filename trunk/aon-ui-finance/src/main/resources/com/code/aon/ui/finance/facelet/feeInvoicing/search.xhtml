@@ -64,6 +64,26 @@
 							size="50" disabled="true" />
 					</aon:div>
 
+					<aon:outputLabel for="Item_product_code"
+						value="#{productBundle.product_item}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:lookupInputText id="Item_product_code" lookup="#{itemLookup}"
+							reRender="Item_product_name"
+							value="#{feeInvoicing.params.item.product.code}" size="5">
+							<aon:joinProperty alias="Item_product_code"
+								value="#{feeInvoicing.params.item.product.code}" />
+						</aon:lookupInputText>
+						<aon:lookupButton
+							windowTitle="#{productBundle.product_selection}"
+							selectReRender="Item_product_code,Item_product_name"
+							actionType="search" lookup="#{itemLookup}" minHeight="460"
+							minWidth="650" property="#{feeInvoicing.params.item}">
+						</aon:lookupButton>
+						<aon:inputText id="Item_product_name"
+							value="#{feeInvoicing.params.item.product.name}"
+							size="50" disabled="true" />
+					</aon:div>
+
 					<aon:outputLabel value="#{bundle.aon_date}" />
 					<aon:panelGrid columns="4">
 						<aon:outputLabel for="BillingDate_Month"
@@ -113,6 +133,7 @@
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<ui:include
 			src="/com/code/aon/ui/resources/facelet/shared/progressBar.xhtml">
 			<ui:param name="progressLabel" value="#{financeBundle.finance_fee_invoicing_module}" />
