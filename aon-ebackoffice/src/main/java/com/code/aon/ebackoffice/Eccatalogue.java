@@ -89,8 +89,9 @@ public class Eccatalogue implements ITransferObject {
 		this.type = type;
 	}
 	
-	
-	
+	public String getCapitalLetter(){
+		return this.catalogue.getName().substring(0, 1);
+	}
 	
 }
 	
