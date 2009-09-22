@@ -5,12 +5,14 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:panelGrid columns="4" dir="true">
+	<aon:panelGrid columns="4" dir="true" style="width:100%">
 	
+<!--  
 	<aon:outputLabel for="Registry_id" value="#{bundle.aon_id}" />
 	<aon:inputText id="Registry_id"
 		value="#{shoppingCart.cartTarget.ecTarget.target.registry.id}" size="15"
 		disabled="true" />
+-->
 
 	<aon:outputLabel for="Registry_document"
 		value="#{bundle.aon_company_document}" />
@@ -21,14 +23,14 @@
 
 	<aon:outputLabel for="Registry_name" value="#{bundle.aon_company_name}" />
 	<aon:inputText id="Registry_name" maxlength="64"
-		value="#{shoppingCart.cartTarget.ecTarget.target.registry.name}" size="64">
+		value="#{shoppingCart.cartTarget.ecTarget.target.registry.name}" size="60">
 		<f:validateLength minimum="1" maximum="64" />
 	</aon:inputText>
 
 	<aon:outputLabel for="Registry_surname"
 		value="#{registryBundle.registry_surname}" />
 	<aon:inputText id="Registry_surname" maxlength="64"
-		value="#{shoppingCart.cartTarget.ecTarget.target.registry.surname}" size="64">
+		value="#{shoppingCart.cartTarget.ecTarget.target.registry.surname}" size="60">
 		<f:validateLength minimum="1" maximum="64" />
 	</aon:inputText>
 
@@ -48,34 +50,42 @@
 	</aon:selectOneMenu>
 	
 	
-					
+					<!--  
 					<rich:spacer height="20" />
 					<rich:spacer height="20" />
+					-->
+		<aon:outputLabel value="&#160;" />
+		<aon:outputLabel value="&#160;" />
 					
 					<aon:outputLabel for="Company_address"
 						value="#{registryBundle.registry_address}" />
 					<aon:div>
 						<aon:div>
 							<aon:inputText id="Company_address"
-								value="#{shoppingCart.cartTarget.mainAddress.address}" size="64"
-								maxlength="128" />
+								value="#{shoppingCart.cartTarget.mainAddress.address}" 
+								size="60" maxlength="128" />
 						</aon:div>
 						<aon:div>
 							<aon:inputText id="Company_address2"
 								value="#{shoppingCart.cartTarget.mainAddress.address2}"
-								size="64" maxlength="128" />
+								size="60" maxlength="128" />
 						</aon:div>
 						<aon:div>
 							<aon:inputText id="Company_address3"
 								value="#{shoppingCart.cartTarget.mainAddress.address3}"
-								size="64" maxlength="128" />
+								size="60" maxlength="128" />
 						</aon:div>
 					</aon:div>
+					
 					<aon:outputLabel for="Company_address_city"
 						value="#{registryBundle.registry_city}" />
-					<aon:inputText id="Company_address_city"
-						value="#{shoppingCart.cartTarget.mainAddress.city}" size="64"
-						maxlength="64" />
+					<aon:div>
+						<aon:inputText id="Company_address_city"
+							value="#{shoppingCart.cartTarget.mainAddress.city}" size="60"
+							maxlength="64" />
+						<aon:div><aon:outputLabel value="&#160;" /></aon:div>
+						<aon:div><aon:outputLabel value="&#160;" /></aon:div>
+					</aon:div>
 
 					<aon:outputLabel for="Company_address_zip"
 						value="#{registryBundle.registry_zip}" />
@@ -105,13 +115,13 @@
 					<aon:outputLabel for="Company_email"
 						value="#{registryBundle.registry_email}" />
 					<aon:inputText id="Company_email"
-						value="#{shoppingCart.cartTarget.email.value}" size="64"
+						value="#{shoppingCart.cartTarget.email.value}" size="60"
 						maxlength="64" onblur="toLowerCase(this);" />
 
 					<aon:outputLabel for="Company_web"
 						value="#{registryBundle.registry_web}" />
 					<aon:inputText id="Company_web"
-						value="#{shoppingCart.cartTarget.web.value}" size="64"
+						value="#{shoppingCart.cartTarget.web.value}" size="60"
 						maxlength="64" onblur="toLowerCase(this);" />
 				</aon:panelGrid>
 

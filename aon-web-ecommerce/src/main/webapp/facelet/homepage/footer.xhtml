@@ -12,10 +12,15 @@
 		<aon:form>
 			<aon:div styleClass="aon-footer-additionalInfo">
 				<aon:outputText value="#{ecConfig.company.name}" />
-				<aon:outputText value=" / " />
+				<aon:outputText value=" &#183; " />
+				<aon:outputText value="#{bundle.aon_person_document} " />
 				<aon:outputText value="#{ecConfig.company.document}" />
-				<aon:outputText value=" / " />
+				<aon:outputText value=" &#183; " />
 				<aon:outputText value="#{ecConfig.company.defaultAddress.address}" />
+				<aon:outputText value=" &#183; " />
+				<aon:outputText value="#{ecConfig.company.defaultAddress.zip} " />
+				<aon:outputText value=" &#183; " />
+				<aon:outputText value="#{ecConfig.company.defaultAddress.city}" />
 			</aon:div>
 <!--  
 				<aon:div styleClass="aon-float-right">
@@ -57,20 +62,23 @@
 -->
 			<aon:div styleClass="aon-footer-buttoms">
 				<aon:outputLink value="#" id="private-policy"
+					rendered="#{!(ecConfig.activeConfig.privatePolicy=='')}"
 					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
-					<aon:outputText value="private_policy-18n-" />
+					<aon:outputText value="#{ecommerceBundle.aon_acommerce_private_policy}" />
 					<rich:componentControl for="privatePolicyProcess" attachTo="private-policy"
 						operation="show" event="onclick" />
 				</aon:outputLink>
 				<aon:outputLink value="#" id="legal-note"
+					rendered="#{!(ecConfig.activeConfig.legalNote=='')}"
 					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
-					<aon:outputText value="legal-note-18n-" />
+					<aon:outputText value="#{ecommerceBundle.aon_acommerce_legal_note}" />
 					<rich:componentControl for="legalNoteProcess" attachTo="legal-note"
 						operation="show" event="onclick" />
 				</aon:outputLink>
 				<aon:outputLink value="#" id="data-protection"
+					rendered="#{!(ecConfig.activeConfig.dataProtection=='')}"
 					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
-					<aon:outputText value="proteccion de datos-18n-" />
+					<aon:outputText value="#{ecommerceBundle.aon_acommerce_data_protection}" />
 					<rich:componentControl for="dataProtectionProcess" attachTo="data-protection"
 						operation="show" event="onclick" />
 				</aon:outputLink>

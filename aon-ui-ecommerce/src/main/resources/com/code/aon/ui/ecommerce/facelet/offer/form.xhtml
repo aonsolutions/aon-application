@@ -45,17 +45,142 @@
 						aon-panelGrid-even aon-width-auto,
 						aon-panelGrid-odd aon-width-150,
 						aon-panelGrid-even aon-width-200">
-						
-						
-					<aon:outputLabel for="Offer_target_registry_document"
-						value="ID" />
-					<aon:outputText id="Offer_target_registry_document"
-						value="#{cartOffer.offer.id}" size="10" />
-						
-						
-						
 
-					
+					<aon:outputLabel for="Offer_series"
+						value="#{bundle.aon_series}/#{bundle.aon_number}" />
+					<aon:div>
+						<aon:outputText id="Offer_series"
+							value="#{cartOffer.offer.series}">
+						</aon:outputText>
+						<aon:outputText id="Offer_series-Edit"
+							value="#{cartOffer.offer.series}" size="4" />
+						<aon:outputText id="Offer_number" value="#{cartOffer.offer.number}"
+							size="7"
+							styleClass="aon-margin-left" />
+
+						<aon:outputText id="Offer_securityLevel"
+							value="#{cartOffer.offer.securityLevel}" 
+							styleClass="aon-margin-left">
+						</aon:outputText>
+
+						<aon:outputText styleClass="aon-margin-left"
+							value="#{cartOffer.offer.status}" />
+					</aon:div>
+
+					<aon:outputLabel for="Offer_issueDate" value="#{bundle.aon_date}" />
+					<aon:outputText id="Offer_issueDate"
+						value="#{cartOffer.offer.issueDate}" 
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+
+					<aon:outputLabel for="Offer_target_id"
+						value="#{target.bundle.commercial_target}" />
+					<aon:div styleClass="aon-lookup">
+						<aon:outputText id="Offer_target_id"
+							value="#{cartOffer.offer.target.registry.id}" size="5" />
+						<aon:outputText id="Offer_target_full_name"
+							value="#{(cartOffer.offer.target.registry.name!=null)?(cartOffer.offer.target.registry.fullName):('')}"
+							size="50" />
+<!--  
+						<aon:lookupInputText id="Offer_target_id"
+							value="#{cartOffer.to.target.registry.id}"
+							lookup="#{targetLookup}" ajaxSingle="true"
+							reRender="Offer_target_full_name,Offer_target_registry_document,OfferAddress"
+							lookupChangeListener="#{cartOffer.targetData}"
+							lookupProperty="registry" required="true"
+							disabled="#{cartOffer.processed}" size="5" />
+						<aon:lookupButton
+							windowTitle="#{commercialBundle.commercial_target_selection}"
+							actionType="search" property="#{cartOffer.to.target.registry}"
+							selectReRender="Offer_target_id,Offer_target_full_name,Offer_target_registry_document,OfferAddress"
+							lookup="#{targetLookup}" minHeight="460" minWidth="650"
+							lookupChangeListener="#{cartOffer.targetData}"
+							lookupProperty="registry" disabled="#{cartOffer.processed}">
+						</aon:lookupButton>
+						<aon:inputText id="Offer_target_full_name"
+							value="#{(cartOffer.to.target.registry.name!=null)?(cartOffer.to.target.registry.fullName):('')}"
+							disabled="true" size="50" />
+-->
+						<!-- FARSA BOTON -->
+<!--  
+						<aon:commandButton value="Enviar" style="margin-left: 0.7em;"
+							rendered="#{!cartOffer.new and cartOffer.to.target.registry.email != null}"
+							title="Enviar Mail a #{cartOffer.to.target.registry.email.value}"
+							actionListener="#{cartOffer.sendFarsaMail}"
+							styleClass="aon-icon-commandButton aon-icon-mailForward" />
+						<aon:commandButton value="Sin Email" style="margin-left: 0.7em;"
+							rendered="#{!cartOffer.new and cartOffer.to.target.registry.email == null}"
+							title="#{cartOffer.to.target.registry.fullName} no tiene eMail definido."
+							styleClass="aon-icon-commandButton aon-icon-mailDelete" />
+-->					
+						<!-- END FARSA BOTON -->
+					</aon:div>
+
+					<aon:outputLabel for="Offer_target_registry_document"
+						value="#{bundle.aon_company_document}" />
+					<aon:outputText id="Offer_target_registry_document"
+						value="#{cartOffer.offer.target.registry.document}"
+						size="10" />
+
+					<aon:outputLabel for="Offer_address"
+						value="#{registryBundle.registry_address}" />
+					<aon:div id="OfferAddress">
+						<aon:outputText id="Offer_address"
+							value="#{cartOffer.offer.address}">
+						</aon:outputText>
+					</aon:div>
+
+<!--  
+					<aon:outputLabel for="Offer_workPlace"
+						value="#{companyBundle.company_workplace}" />
+					<aon:outputText id="Offer_workPlace"
+						value=" "/>
+-->
+<!--  
+					<aon:outputText id="Offer_workPlace"
+						value="#{cartOffer.offer.workPlace}"/>
+-->
+
+					<aon:outputLabel for="Offer_seller_id"
+						value="#{salesBundle.sales_seller}" />
+					<aon:div styleClass="aon-lookup">
+						<!--  
+						<aon:lookupInputText id="Offer_seller_id" value="#{cartOffer.to.seller.registry.id}"
+							lookup="#{sellerLookup}" reRender="Offer_seller_full_name"
+							lookupChangeListener="#{cartOffer.sellerData}" lookupProperty="registry"
+							disabled="#{cartOffer.processed}" size="5" />
+						<aon:lookupButton
+							windowTitle="#{salesBundle.sales_seller_selection}" actionType="search"
+							property="#{cartOffer.to.seller.registry}" selectReRender="Offer_seller_id,Offer_seller_full_name"
+							lookup="#{sellerLookup}" minHeight="460" minWidth="650"
+							lookupChangeListener="#{cartOffer.sellerData}" lookupProperty="registry"
+							disabled="#{cartOffer.processed}">
+						</aon:lookupButton>
+						<aon:inputText id="Offer_seller_full_name" 
+							value="#{(cartOffer.to.seller.registry.name!=null)?(cartOffer.to.seller.registry.fullName):('')}"
+							disabled="true" size="50" />
+						-->
+					</aon:div>
+
+					<aon:outputLabel for="Offer_payMethod"
+						value="#{configBundle.config_pay_method}" />
+					<aon:outputText id="Offer_payMethod"
+						value="#{cartOffer.offer.payMethod.name}">
+					</aon:outputText>
+
+<!--  
+					<aon:outputLabel for="Offer_tariff"
+						value="#{productBundle.product_tariff}" />
+					<aon:outputText id="Offer_tariff" value="#{cartOffer.offer.tariff}"/>
+-->
+
+<!--  
+					<aon:outputLabel for="Offer_total" value="#{bundle.aon_total}" />
+					<aon:outputText id="Offer_total" value="#{cartOffer.totalPrice}"
+						styleClass="aon-bold">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+-->
 
 				</aon:panelGrid>
 			</aon:div>
@@ -65,14 +190,17 @@
 				<f:facet name="header">
 					<aon:outputText value="#{commercialBundle.commercial_offer_detail}" />
 				</f:facet>
-<!--  
 				<ui:include src="list.xhtml" />
+<!--  
+				<ui:include src="/com/code/aon/ui/ecommerce/facelet/shop/cart/list.xhtml" />
 -->
 			</aon:panel>
 
 		</aon:form>
 <!--  
+		<aon:lookupButtonPopup lookup="#{targetLookup}" />
+		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
+		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 -->
-		
 	</ui:define>
 </ui:composition>
