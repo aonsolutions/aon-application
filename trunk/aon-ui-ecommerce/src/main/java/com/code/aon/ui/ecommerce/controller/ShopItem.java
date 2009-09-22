@@ -41,6 +41,7 @@ public class ShopItem implements ICalculable{
 	private Double originalTotalPrice;
 	private Double totalDiscount;
 	private Double totalDiscountPercent;
+	private DiscountExpression discountExpression;
 	
 	private Tariff tariff;
 	
@@ -130,21 +131,12 @@ public class ShopItem implements ICalculable{
 	}
 
 	public double getPrice() {
-		if (price == null) {
-			initializePrices();
-		}
 		return price;
 	}
 	public double getVat() {
-		if (vat == null) {
-			initializePrices();
-		}
 		return vat;
 	}
 	public double getTotal() {
-		if (total == null) {
-			initializePrices();
-		}
 		return total;
 	}
 	
@@ -153,7 +145,8 @@ public class ShopItem implements ICalculable{
 		if (tariff == null) {
 			price = strategy.getUnitPrice(this);
 		} else {
-			price = strategy.getUnitPrice(this,new Date(), tariff);	
+			price = strategy.getUnitPrice(this,new Date(), tariff);
+			price = strategy.getBasePrice(this);
 		}
 		Tax tax = getItem().getProduct().getVat();
 		vat = CommonUtil.round(price*tax.getPercentage()/100);
@@ -266,7 +259,10 @@ public class ShopItem implements ICalculable{
 
 	@Override
 	public DiscountExpression getDiscountExpression() {
-		return new DiscountExpression("0");
+		if (discountExpression == null){
+			discountExpression = new DiscountExpression("0");
+		}
+		return discountExpression;
 	}
 
 	@Override

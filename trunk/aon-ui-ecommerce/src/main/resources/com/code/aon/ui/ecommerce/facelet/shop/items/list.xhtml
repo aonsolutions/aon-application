@@ -70,12 +70,12 @@
 						<c:if test="#{ecConfig.showDiscountPercent}">
 							<c:if test="#{ecConfig.taxIncluded}">
 								<aon:outputText value="#{to.totalDiscountPercent}">
-									<f:convertNumber pattern="#,##0.00" />
+									<f:convertNumber pattern="#,##0" />
 								</aon:outputText>
 							</c:if>
 							<c:if test="#{!ecConfig.taxIncluded}">
 								<aon:outputText value="#{to.discountPercent}">
-									<f:convertNumber pattern="#,##0.00" />
+									<f:convertNumber pattern="#,##0" />
 								</aon:outputText>
 							</c:if>
 							<aon:outputText value="% Dto." />
