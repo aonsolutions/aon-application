@@ -254,7 +254,7 @@ public class ShoppingCartController {
 	public void onAddTarget(ActionEvent event) {
 		try {
 			addTarget();
-			CartOfferController offerController = (CartOfferController)FormUtil.getController(IECommerceConstants.OFFER_CONTROLLER);
+			CartOfferController offerController = (CartOfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER);
 			offerController.getOffer().setTarget(getCartTarget().getEcTarget().getTarget());
 			offerController.initialize();
 			//((OfferController)AonUtil.getRegisteredBean(IECommerceConstants.OFFER_CONTROLLER)).initialize();

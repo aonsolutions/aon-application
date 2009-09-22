@@ -78,7 +78,8 @@
 								<f:selectItems value="#{configCollections.series}" />
 							</aon:selectOneRadio>
 						-->
-							<aon:outputLabel for="Offer_paymethod" value="Seleccione la forma de pago -i18n-" />
+							<aon:outputLabel for="Offer_paymethod" 
+								value="#{ecommerceBundle.aon_acommerce_paymethod}" />
 							<aon:selectOneRadio id="Offer_paymethod"
 								value="#{cartOffer.offer.payMethod}"
 								layout="pageDirection"
@@ -89,7 +90,7 @@
 					</aon:panel>
 					
 					<aon:panel >
-						<aon:outputLabel for="Offer_paymethod" value="Seleccione la forma de pago -i18n-" />
+						<aon:outputLabel value=" " />
 					</aon:panel>
 				
 				</aon:panelGrid>
