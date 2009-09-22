@@ -47,7 +47,7 @@
 						immediate="#{true}" rendered="#{finance.pending or finance.returned}"
 						styleClass="aon-finding-toolbar-item-no-icon"
 						actionListener="#{financeFraction.onFractionFinance}" action="finance_fraction" />
-						<h:commandLink value="#{financeBundle.finance_show_invoice}"
+					<h:commandLink value="#{financeBundle.finance_show_invoice}"
 						target="_blank" action="#{report.onExecute}" actionListener="#{finance.onShowInvoice}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						<f:param name="reportKey" value="invoicePrint" />
@@ -269,10 +269,6 @@
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalPayment.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalReturn.xhtml" />
-		<ui:include src="/com/code/aon/ui/finance/facelet/invoiceSigner/modal.xhtml" >
-			<ui:param name="signButtonreRender" value="invoiceSignerDataDiv,aonToolbar" />
-			<aon:methodParam name="signActionListener" value="#{invoiceSigner.onSignSelected}" type="actionListener" />
-		</ui:include>
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />				
 	</ui:define>
 </ui:composition>
