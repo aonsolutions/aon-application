@@ -28,12 +28,7 @@
 					action="shop_form"
 					styleClass="aon-finding-toolbar-item aon-icon-cancel"
 					immediate="true" accesskey="#{bundle.aon_key_cancel}" />
-				<aon:commandButton id="aonToolbar-accept"
-					value="#{bundle.aon_accept}" 
-					action="paymethod_form"
-					styleClass="aon-finding-toolbar-item aon-icon-accept"
-					accesskey="#{bundle.aon_key_accept}"
-					actionListener="#{shoppingCart.onAddTarget}" />
+				
 
 				<aon:panel>
 					<f:facet name="header">
@@ -44,7 +39,7 @@
 						<aon:div>
 							<aon:inputText id="ectarget_email" required="true"
 								value="#{shoppingCart.cartTarget.ecTarget.login}" size="20" maxlength="48"/>
-							<aon:outputLabel for="ectarget_email" value="*debe ser un email valido" />
+							<aon:outputLabel for="ectarget_email" value="*debe ser un email v&#225;lido" />
 						</aon:div>
 	
 						<aon:outputLabel for="ectarget_password" value="#{bundle.aon_login_passwd}" />
@@ -59,6 +54,8 @@
 						src="/com/code/aon/ui/ecommerce/facelet/shop/cart/target/formContent.xhtml">
 						<ui:param name="controller" value="#{shoppingCart}" />
 					</ui:include>
+					
+					
 				</aon:panel>
 				
 			</aon:div>
