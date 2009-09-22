@@ -192,7 +192,7 @@ public class BasicPriceStrategy implements IPriceStrategy {
 
 					criteria = new Criteria();
 					criteria.addEqualExpression(catalogueCategoryBean.getFieldName(IProductAlias.CATALOGUE_CATEGORY_CATALOGUE_ID), tariffCatalogue.getCatalogue().getId());
-					criteria.addEqualExpression(catalogueCategoryBean.getFieldName(IProductAlias.CATALOGUE_CATEGORY_CATALOGUE_ID), calc.getItem().getProduct().getCategory().getId());
+					criteria.addEqualExpression(catalogueCategoryBean.getFieldName(IProductAlias.CATALOGUE_CATEGORY_CATEGORY_ID), calc.getItem().getProduct().getCategory().getId());
 					criteria.addLessThanOrEqualExpression(catalogueCategoryBean.getFieldName(IProductAlias.CATALOGUE_CATEGORY_QUANTITY), calc.getQuantity());
 					criteria.addOrder(catalogueCategoryBean.getFieldName(IProductAlias.CATALOGUE_CATEGORY_QUANTITY), false);
 					Iterator categoryIterator = catalogueCategoryBean.getList(criteria, 0, 1).iterator();
