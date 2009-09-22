@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
@@ -89,6 +90,7 @@ public class Eccatalogue implements ITransferObject {
 		this.type = type;
 	}
 	
+	@Transient
 	public String getCapitalLetter(){
 		return this.catalogue.getName().substring(0, 1);
 	}
