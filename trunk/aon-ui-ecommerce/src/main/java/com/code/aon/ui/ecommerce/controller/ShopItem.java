@@ -111,7 +111,7 @@ public class ShopItem implements ICalculable{
 
 	public Double getDiscountPercent() {
 		if (discountPercent == null) {
-			discountPercent = CommonUtil.round(100 - (getPrice()*100/getOriginalPrice()) );
+			discountPercent = CommonUtil.round(100 - (getPrice()*100/getOriginalPrice()),0 );
 		}
 		return discountPercent;
 	}
@@ -125,7 +125,7 @@ public class ShopItem implements ICalculable{
 
 	public Double getTotalDiscountPercent() {
 		if (totalDiscountPercent == null) {
-			totalDiscountPercent = CommonUtil.round(100 - (getTotal()*100/getOriginalTotalPrice()));
+			totalDiscountPercent = CommonUtil.round(100 - (getTotal()*100/getOriginalTotalPrice()),0);
 		}
 		return totalDiscountPercent;
 	}
