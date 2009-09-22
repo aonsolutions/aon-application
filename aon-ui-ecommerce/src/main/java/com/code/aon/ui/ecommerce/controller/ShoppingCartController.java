@@ -166,7 +166,7 @@ public class ShoppingCartController {
 	}
 	
 	public void onSelect(ActionEvent event) {
-		ShopItemController sic = (ShopItemController) FormUtil.getController(IECommerceConstants.SHOP_ITEM_CONTROLLER);
+		ShopItemController sic = (ShopItemController) AonUtil.getRegisteredBean(IECommerceConstants.SHOP_ITEM_CONTROLLER);
 		CartItem ci =  (CartItem) getModel().getRowData();
 		sic.setItem(ci.getItem());
 		ShopController sc = (ShopController) AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER);
