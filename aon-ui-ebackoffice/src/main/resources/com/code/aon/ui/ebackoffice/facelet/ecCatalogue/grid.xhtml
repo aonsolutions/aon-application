@@ -63,23 +63,28 @@
 									<aon:outputLabel for="Eccatalogue_catalogueImg"
 										value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_img}" />
 								</f:facet>
-	
-								<a4j:mediaOutput element="img" rendered="#{formList}"
-									cacheable="false" value="#{to.id}" style="width:30px"
-									createContent="#{eccatalogue.paintImage}" />
-	
-								<aon:div rendered="#{formEdit}">
+							<aon:div id="image" >
+																			
+									<a4j:mediaOutput element="img" rendered="#{formList}"
+										cacheable="false" value="#{to.id}" style="width:30px"
+										createContent="#{eccatalogue.paintImage}" />
+
+									<a4j:mediaOutput element="img" rendered="#{formEdit}"
+										cacheable="false" value="#{eccatalogue.image.key}" style="width:30px"
+										createContent="#{eccatalogue.paintImagee}" />
 									
-										<rich:fileUpload id="Eccatalogue_catalogueImg"
-											addControlLabel="#{bundle.aon_fileUpload_add}"
-											stopControlLabel="#{bundle.aon_fileUpload_stop}"
-											stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
-											uploadControlLabel="#{bundle.aon_fileUpload_upload}"
-											fileUploadListener="#{eccatalogue.uploadImage}"
-											listHeight="0px" immediateUpload="true" autoclear="true">
-	
-										</rich:fileUpload>
-									
+									<aon:div rendered="#{formEdit}"> 
+									<rich:fileUpload id="Eccatalogue_catalogueImg"
+										addControlLabel="#{bundle.aon_fileUpload_add}"
+										stopControlLabel="#{bundle.aon_fileUpload_stop}"
+										stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+										uploadControlLabel="#{bundle.aon_fileUpload_upload}"
+										fileUploadListener="#{eccatalogue.uploadImage}"
+										listHeight="0px" immediateUpload="true" autoclear="true">
+										<a4j:support event="onuploadcomplete" reRender="image" />
+									</rich:fileUpload>
+
+								</aon:div>
 								</aon:div>
 	
 								<f:facet name="footer">
@@ -106,11 +111,18 @@
 										value="#{ebackofficeBundle.aon_ebackoffice_eccatalogue_ico}" />
 								</f:facet>
 	
-								<a4j:mediaOutput element="img" rendered="#{formList}"
-									cacheable="false" value="#{to.id}" style="width:30px"
-									createContent="#{eccatalogue.paintIcon}" />
-	
-								<aon:div rendered="#{formEdit}">
+								<aon:div id="icon" >
+
+									<a4j:mediaOutput element="img" rendered="#{formList}"
+										cacheable="false" value="#{to.id}" style="width:30px"
+										createContent="#{eccatalogue.paintIcon}" />
+
+								 	<a4j:mediaOutput element="img" rendered="#{formEdit}"
+										cacheable="false" value="#{eccatalogue.icon.key}" style="width:30px"
+										createContent="#{eccatalogue.paintIconn}" />
+
+
+									<aon:div rendered="#{formEdit}">
 									<a4j:region>
 										<aon:fileUpload id="Eccatalogue_catalogueIcon"
 											addControlLabel="#{bundle.aon_fileUpload_add}"
@@ -119,12 +131,17 @@
 											uploadControlLabel="#{bundle.aon_fileUpload_upload}"
 											fileUploadListener="#{eccatalogue.uploadIcon}"
 											listHeight="0px" immediateUpload="true" autoclear="true">
-	
+										<a4j:support event="onuploadcomplete" reRender="icon" />
 										</aon:fileUpload>
 									</a4j:region>
 								</aon:div>
+								</aon:div>
 	
 								<f:facet name="footer">
+									
+									<a4j:mediaOutput element="img" rendered="#{formNew}"
+									cacheable="false" value="#{to.id}" style="width:30px"
+									createContent="#{eccatalogue.paintIcon}" />
 									<aon:div rendered="#{formNew}">
 										<a4j:region>
 											<aon:fileUpload id="Eccatalogue_catalogueIcon-New"
@@ -138,7 +155,7 @@
 											</aon:fileUpload>
 										</a4j:region>
 									</aon:div>
-	
+										
 								</f:facet>
 							</aon:column>
 	
