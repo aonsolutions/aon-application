@@ -12,7 +12,8 @@ import javax.faces.model.ListDataModel;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.config.Tariff;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
@@ -37,25 +38,42 @@ public class ShopItemsController {
 	}
 
 	public List<ShopItem> getList() {
-		try {
-			if (list == null) {
-				ConfigController cc  = (ConfigController) AonUtil.getRegisteredBean(IECommerceConstants.CONFIG_CONTROLLER);
+		if (list == null) {
+			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+			boolean mustCloseSession = HibernateUtil.mustCloseSession();
+			String sessionName = HibernateUtil.getSessionFactoryName();
+			try {
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+				HibernateUtil.beginTransaction(sessionName);
+
+				ConfigController cc = (ConfigController) AonUtil
+						.getRegisteredBean(IECommerceConstants.CONFIG_CONTROLLER);
 				Tariff tariff = cc.getActiveConfig().getTariff();
 				IManagerBean bean = BeanManager.getManagerBean(Item.class);
 				List<ITransferObject> itemList = bean.getList(getCriteria());
 				setList(new LinkedList<ShopItem>());
-				for (ITransferObject to: itemList) {
+				for (ITransferObject to : itemList) {
 					Item item = (Item) to;
 					ShopItem si = new ShopItem(item, tariff);
-					getList().add( si );
+					getList().add(si);
 				}
+				HibernateUtil.getSession(sessionName).flush();
+				HibernateUtil.commitTransaction(sessionName);
+			} catch (Exception e) {
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {
+					// nothing
+				}
+				String msg = "La obtencion de datos falló";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			} finally {
+				HibernateUtil.closeSession(sessionName);
+				HibernateUtil.setCloseSession(mustCloseSession);
+				HibernateUtil.setBeginTransaction(mustBeginTransaction);
 			}
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-			String msg = "La obtencion de datos falló";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-			
 		}
 		return list;
 	}
@@ -88,28 +106,31 @@ public class ShopItemsController {
 	}
 
 	public void onSelect(ActionEvent event) {
-		ShopItemController sic = (ShopItemController) AonUtil.getRegisteredBean(IECommerceConstants.SHOP_ITEM_CONTROLLER);
+		ShopItemController sic = (ShopItemController) AonUtil
+				.getRegisteredBean(IECommerceConstants.SHOP_ITEM_CONTROLLER);
 		ShopItem item = (ShopItem) getModel().getRowData();
 		sic.setItem(item);
-		ShopController sc = (ShopController) AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER);
-		sc.setBackView( ViewEnum.ITEM_LIST );
-		sc.setContentView( ViewEnum.ITEM_DETAIL);
+		ShopController sc = (ShopController) AonUtil
+				.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER);
+		sc.setBackView(ViewEnum.ITEM_LIST);
+		sc.setContentView(ViewEnum.ITEM_DETAIL);
 	}
 
 	public void addToCart(ActionEvent event) {
 		((ShoppingCartController) AonUtil
 				.getRegisteredBean(IECommerceConstants.SHOPPING_CART_CONTROLLER))
 				.addToCart((ShopItem) model.getRowData());
-		ShopController sc = (ShopController) AonUtil.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER);
-		sc.setBackView( ViewEnum.ITEM_LIST );
-		sc.setContentView( ViewEnum.SHOPPING_CART );
+		ShopController sc = (ShopController) AonUtil
+				.getRegisteredBean(IECommerceConstants.SHOP_CONTROLLER);
+		sc.setBackView(ViewEnum.ITEM_LIST);
+		sc.setContentView(ViewEnum.SHOPPING_CART);
 	}
 
 	public void paintThumbnail(OutputStream out, Object data) {
 		Integer id = (Integer) data;
-		for (ShopItem shopItem: getList()) {
+		for (ShopItem shopItem : getList()) {
 			if (id.equals(shopItem.getId())) {
-				shopItem.paintThumbnail(out, data);		
+				shopItem.paintThumbnail(out, data);
 			}
 		}
 	}
