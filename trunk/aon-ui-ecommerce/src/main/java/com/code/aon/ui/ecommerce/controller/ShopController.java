@@ -53,7 +53,7 @@ public class ShopController {
 	}
 	
 	public void refreshView(ActionEvent event) {
-		ViewEnum newContentView = (getBackView()==null || getBackView()==ViewEnum.SHOPPING_CART)?ViewEnum.ITEM_LIST:getBackView(); 
+		ViewEnum newContentView = (getBackView()==null)?ViewEnum.ITEM_LIST:getBackView(); 
 		setBackView( getContentView() );
 		setContentView(newContentView);
 	}

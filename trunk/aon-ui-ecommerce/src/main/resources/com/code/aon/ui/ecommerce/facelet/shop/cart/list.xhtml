@@ -51,7 +51,9 @@
 					</f:facet>
 					<aon:outputText value="#{to.total}" />
 					<f:facet name="footer">
-						<aon:outputText value="#{shoppingCart.total} &#160; (#{ecommerceBundle.aon_acommerce_vat_included})" />
+						<aon:outputText value="#{shoppingCart.total}">
+							<f:convertNumber pattern="#,##0.00" />
+						 </aon:outputText>
 					</f:facet>
 				</aon:column>
 				<aon:column>
@@ -69,6 +71,9 @@
 						styleClass="aon-editDataTable-button aon-icon-rubber">
 						<aon:actionListener method="#{shoppingCart.removeFromCart}" />
 					</aon:commandButton>
+					<f:facet name="footer">
+						<aon:outputText value="&#160; (#{ecommerceBundle.aon_acommerce_vat_included})" />
+					</f:facet>
 				</aon:column>
 			</aon:dataTable>
 

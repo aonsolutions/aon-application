@@ -79,7 +79,9 @@
 				<aon:outputText id="cart_quantity" value="#{shoppingCart.quantity}" />
 	
 				<aon:outputLabel for="cart_total" value="#{ecommerceBundle.aon_acommerce_total}" />
-				<aon:outputText id="cart_total" value="#{shoppingCart.total}" />
+				<aon:outputText id="cart_total" value="#{shoppingCart.total}">
+					<f:convertNumber pattern="#,##0.00" />
+				 </aon:outputText>
 			</aon:panelGrid>
 
 			<aon:commandButton id="lateral-view" rendered="true"
