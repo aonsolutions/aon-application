@@ -39,12 +39,12 @@
 						<aon:outputText value="#{ecommerceBundle.aon_acommerce_user_registry}" />
 					</f:facet>
 					<aon:panelGrid columns="2">
-						<aon:outputLabel for="ectarget_email" value="#{bundle.aon_email}" />
-						<aon:inputText id="ectarget_email"
+						<aon:outputLabel for="ectarget_email" value="#{ecommerceBundle.aon_ecommerce_email}" />
+						<aon:inputText id="ectarget_email" required="true"
 							value="#{shoppingCart.cartTarget.ecTarget.login}" size="20" maxlength="48"/>
 	
-						<aon:outputLabel for="ectarget_password" value="#{bundle.aon_passwd}" />
-						<aon:inputText id="ectarget_password"
+						<aon:outputLabel for="ectarget_password" value="#{bundle.aon_login_passwd}" />
+						<aon:inputText id="ectarget_password" required="true"
 							value="#{shoppingCart.cartTarget.ecTarget.password}" size="20"  maxlength="32"/>
 					
 					</aon:panelGrid>

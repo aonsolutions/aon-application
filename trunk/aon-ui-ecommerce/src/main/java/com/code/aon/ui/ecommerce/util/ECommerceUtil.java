@@ -46,18 +46,22 @@ public class ECommerceUtil implements IECommerceConstants{
 		
 		
 		//**************************************
-		// REVISAR LOS VALORES DE LOS PAYMETHOD NO ACTIVOS, NULOS
+		//**************************************
+		//**************************************
+		// REVISAR LOS VALORES DE LOS PAYMETHOD NO ACTIVOS, NULOS (null o cero ?????)
+		//**************************************
+		//**************************************
 		//**************************************
 		if(config.getActiveConfig().getBankDraft().getId()!=0){
 			payMethods.add(new SelectItem(config.getActiveConfig().getBankDraft(), config.getActiveConfig().getBankDraft().getName()));
 		}
-		if(config.getActiveConfig().getBankTransfer()!=null){
+		if(config.getActiveConfig().getBankTransfer().getId()!=0){
 			payMethods.add(new SelectItem(config.getActiveConfig().getBankTransfer(), config.getActiveConfig().getBankTransfer().getName()));
 		}
-		if(config.getActiveConfig().getCashOnDelivery()!=null){
+		if(config.getActiveConfig().getCashOnDelivery().getId()!=0){
 			payMethods.add(new SelectItem(config.getActiveConfig().getCashOnDelivery(), config.getActiveConfig().getCashOnDelivery().getName()));
 		}
-		if(config.getActiveConfig().getPaypal()!=null){
+		if(config.getActiveConfig().getPaypal().getId()!=0){
 			payMethods.add(new SelectItem(config.getActiveConfig().getPaypal(), config.getActiveConfig().getPaypal().getName()));
 		}
 		if(config.getActiveConfig().getVisa().getId()!=0){
