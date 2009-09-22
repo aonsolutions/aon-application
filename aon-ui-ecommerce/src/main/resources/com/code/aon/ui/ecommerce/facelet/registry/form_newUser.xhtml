@@ -28,8 +28,9 @@
 					action="shop_form"
 					styleClass="aon-finding-toolbar-item aon-icon-cancel"
 					immediate="true" accesskey="#{bundle.aon_key_cancel}" />
-				<h:commandButton id="aonToolbar-accept"
-					value="#{bundle.aon_accept}" action="paymethod_form"
+				<aon:commandButton id="aonToolbar-accept"
+					value="#{bundle.aon_accept}" 
+					action="paymethod_form"
 					styleClass="aon-finding-toolbar-item aon-icon-accept"
 					accesskey="#{bundle.aon_key_accept}"
 					actionListener="#{shoppingCart.onAddTarget}" />
