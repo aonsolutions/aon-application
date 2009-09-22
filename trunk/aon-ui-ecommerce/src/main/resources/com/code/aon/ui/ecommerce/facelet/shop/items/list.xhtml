@@ -18,9 +18,9 @@
 
 			<aon:div style="width:70px; height: 70px; border:solid #DDD 1px;">
 				<h:graphicImage style="width:70px; height: 70px;"
-					rendered="#{to.thumbnail == null}" value="/css/images/nophoto.gif" />
+					rendered="#{!to.thumbnailPresent}" value="/css/images/nophoto.gif" />
 				<a4j:mediaOutput element="img" cacheable="false"
-					rendered="#{to.thumbnail != null}" value="#{to.id}"
+					rendered="#{to.thumbnailPresent}" value="#{to.id}"
 					style="width:70px; height: 70px;"
 					createContent="#{shopItems.paintThumbnail}" />
 			</aon:div>

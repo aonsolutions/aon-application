@@ -29,6 +29,7 @@ public class ShopItem implements ICalculable{
 	
 	private Item item;
 	private ItemAttachment thumbnail;
+	private boolean thumbnailPresent;
 
 	private Double price;
 	private Double vat;
@@ -45,6 +46,7 @@ public class ShopItem implements ICalculable{
 	
 	public ShopItem(Item item) {
 		this.item = item;
+		getThumbnail();
 	}
 
 	public ShopItem(Item item, Tariff tariff) {
@@ -230,6 +232,9 @@ public class ShopItem implements ICalculable{
 				List<ITransferObject> list = attachBean.getList(criteria);
 				if (list != null && list.size() > 0) {
 					thumbnail = (ItemAttachment) list.get(0);
+					setThumbnailPresent(true);
+				} else {
+					setThumbnailPresent(false);
 				}
 			} catch (ManagerBeanException e) {
 				// Nada. La foto no se ve y punto.
@@ -242,6 +247,13 @@ public class ShopItem implements ICalculable{
 		this.thumbnail = thumbnail;
 	}
 
+	public boolean isThumbnailPresent() {
+		return thumbnailPresent;
+	}
+	public void setThumbnailPresent(boolean thumbnailPresent) {
+		this.thumbnailPresent = thumbnailPresent;
+	}
+	
 	public void paintThumbnail(OutputStream out, Object data) {
 		try {
 			if (getThumbnail() != null) {
