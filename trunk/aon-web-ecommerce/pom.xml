@@ -36,20 +36,6 @@
 			<version>4.2.0</version>
 			<scope>compile</scope>
 		</dependency>
-		<!--  
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.security.bridge</artifactId>
-			<version>3.3.0</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.commercial</artifactId>
-			<version>4.0.0</version>
-			<scope>compile</scope>
-		</dependency>
-		-->
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
@@ -68,32 +54,6 @@
 			<version>3.9.0</version>
 			<scope>compile</scope>
 		</dependency>
-<!--  
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.account</artifactId>
-			<version>4.0.0</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.accounting</artifactId>
-			<version>4.0.0</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.account.bridge</artifactId>
-			<version>4.0.0</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.commercial</artifactId>
-			<version>3.5.0</version>
-			<scope>runtime</scope>
-		</dependency>
--->
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
@@ -112,53 +72,12 @@
 			<version>4.0.0</version>
 			<scope>runtime</scope>
 		</dependency>
-<!--  
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.finance</artifactId>
-			<version>4.0.0</version>
-			<scope>runtime</scope>
-		</dependency>
--->
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.geozone</artifactId>
 			<version>4.0.0</version>
 			<scope>runtime</scope>
 		</dependency>
-<!--  
- 		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.product</artifactId>
-			<version>4.1.0</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.registry</artifactId>
-			<version>4.0.0</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.sales</artifactId>
-			<version>3.3.2</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.stat</artifactId>
-			<version>3.2.0</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.supplier</artifactId>
-			<version>4.0.0</version>
-			<scope>runtime</scope>
-		</dependency>
--->
-
 		<!--
 			PARA CONSTRUIR CORRECTAMENTE EL WAR 		
 		-->
