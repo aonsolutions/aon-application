@@ -29,7 +29,7 @@ import com.code.aon.ebackoffice.enumeration.WishList;
 /**
  * Transfer Object that represents a eCommerce Target.
  * 
- * @author Esferalia Networks. David Uriarte - 3/09/2009
+ * @author Esferalia Networks. EKAIN - 3/09/2009
  */
 @Entity
 @Table(name="ec_config")
