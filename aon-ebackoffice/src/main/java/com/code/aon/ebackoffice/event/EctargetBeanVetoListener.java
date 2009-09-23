@@ -6,6 +6,7 @@ import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.ebackoffice.Ectarget;
+import com.code.aon.ebackoffice.util.EmailUtils;
 
 public class EctargetBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -16,7 +17,7 @@ public class EctargetBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	public void vetoableBeanInserted(ManagerBeanEvent evt)
 			throws ManagerBeanVetoListenerException {
 		
-		if(!validateEmailAddress(((Ectarget)evt.getTo()).getLogin())){
+		if(!EmailUtils.validateEmailAddress(((Ectarget)evt.getTo()).getLogin())){
     		throw new ManagerBeanVetoListenerException(
 			"El email es incorrecto.");
 		}
@@ -27,17 +28,11 @@ public class EctargetBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	public void vetoableBeanUpdated(ManagerBeanEvent evt)
 			throws ManagerBeanVetoListenerException {
 
-		if(!validateEmailAddress(((Ectarget)evt.getTo()).getLogin())){
+		if(!EmailUtils.validateEmailAddress(((Ectarget)evt.getTo()).getLogin())){
     		throw new ManagerBeanVetoListenerException(
 			"El email es incorrecto.");
 		}
 		
 	}
-
-	public static boolean validateEmailAddress(String sEmail){
-		EmailValidator emailValidator = EmailValidator.getInstance();
-		return emailValidator.isValid(sEmail);
-	}
-		
 
 }
