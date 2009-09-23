@@ -38,7 +38,7 @@
 		</aon:panelGrid>
 -->		
 
-		<aon:panelGrid columns="3" width="100%"
+		<aon:panelGrid columns="3" width="100%" style="background-color:#{ecConfig.activeConfig.headerColor};"
 			columnClasses="aon-logo-name,aon-header-slogan,aon-header-info">
 
 			<aon:div>
@@ -54,7 +54,7 @@
 				<aon:div id="header-image">
 					<a4j:mediaOutput id="header-image-right" element="img"
 						cacheable="false" value="#{ecConfig.activeConfig.id}"
-						createContent="#{ecConfig.paint}" />
+						createContent="#{ecConfig.paintHeader}" />
 				</aon:div>
 			</aon:div>
 		</aon:panelGrid>

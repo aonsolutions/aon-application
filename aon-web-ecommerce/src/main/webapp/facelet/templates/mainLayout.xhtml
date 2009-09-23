@@ -18,22 +18,29 @@
 	</c:forEach>
 -->
 	<a4j:loadStyle src="/css/#{ecConfig.skin}"/>
-	
 
 	<!-- Necesario si se pone el LoadScriptStrategy a ALL -->
 	<a4j:loadScript src="#{aonResource.resolve['/com/code/aon/faces/component/richfaces/rowSelector/rowSelector.js']}"/>
 <!-- 	
 	<a4j:loadScript src="#{aonResource.resolveLocal['/js/richFaces.js']}"/>
-	<a4j:loadScript src="#{aonResource.resolveLocal['/js/richFaces.js']}"/>
-	<a4j:loadScript src="#{aonResource.resolveLocal['/js/richFaces.js']}"/>
  -->
 </head>
 <body>
-	<aon:div id="aon-content">			
-		<ui:insert name="mainHeader" />
-		<ui:insert name="mainContent" />
-		<ui:insert name="mainFooter" />
-	</aon:div>
+	<c:if test="#{(ecConfig.onDemandLogin || ecConfig.neverLogin)}">
+		<aon:div id="aon-content">			
+			<ui:insert name="mainHeader" />
+			<ui:insert name="mainContent" />
+			<ui:insert name="mainFooter" />
+		</aon:div>
+	</c:if>
+	<c:if test="#{ecConfig.alwaisLogin}">
+		<aon:div id="aon-content">			
+			<ui:insert name="mainHeader" />
+			<!--  
+			-->
+			<ui:insert name="/facelet/login/login.xhtml" />
+		</aon:div>
+	</c:if>
 </body>
 </f:view>
 </html>

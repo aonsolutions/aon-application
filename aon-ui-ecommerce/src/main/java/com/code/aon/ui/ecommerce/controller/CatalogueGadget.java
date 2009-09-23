@@ -107,5 +107,21 @@ public class CatalogueGadget {
 	public void paint(OutputStream out, Object data) throws IOException {
 		out.write(((Eccatalogue)getList().get(0)).getCatalogueImg());
 	}
+	
+	public void paintIcon(OutputStream out, Object data) {
+		Integer id = (Integer) data;
+		for (ITransferObject to : getList()) {
+			Eccatalogue ecCatalogue = (Eccatalogue)to;  
+			if (id.equals(ecCatalogue.getId())) {
+				try {
+					out.write(ecCatalogue.getCatalogueIcon());
+				} catch (IOException e) {
+					// Nada. La foto no se ve y punto.
+				}
+			}
+		}
+	}
+	
+	
 
 }

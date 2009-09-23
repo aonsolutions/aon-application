@@ -56,11 +56,11 @@
 
 					<c:if test="#{!ecConfig.taxIncluded}">
 						<aon:outputText
-							value="#{ecommerceBundle.aon_acommerce_vat_not_included}" />
+							value="#{ecommerceBundle.aon_ecommerce_vat_not_included}" />
 					</c:if>
 					<c:if test="#{ecConfig.taxIncluded}">
 						<aon:outputText
-							value="#{ecommerceBundle.aon_acommerce_vat_included}" />
+							value="#{ecommerceBundle.aon_ecommerce_vat_included}" />
 					</c:if>
 
 					<aon:panelGroup rendered="#{!shopItem.item.samePrice}"

@@ -14,7 +14,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{ecommerceBundle.aon_acommerce_offer}" />
+					value="#{ecommerceBundle.aon_ecommerce_offer}" />
 				<ui:param name="controller" value="#{cartOffer}" />
 				<ui:param name="skipSaveButton" value="true" />
 				<ui:param name="skipRemoveButton" value="true" />
@@ -38,13 +38,10 @@
 				</ui:define>
 			</ui:decorate>
 					-->
-
+			<aon:div styleClass="menu" />
+			
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
-					columnClasses="aon-panelGrid-odd aon-width-150,
-						aon-panelGrid-even aon-width-auto,
-						aon-panelGrid-odd aon-width-150,
-						aon-panelGrid-even aon-width-200">
+				<aon:panelGrid id="dataTable" columns="4" style="border:000 2px solid;">
 
 					<aon:outputLabel for="Offer_series"
 						value="#{bundle.aon_series}/#{bundle.aon_number}" />
@@ -83,39 +80,6 @@
 						<aon:outputText id="Offer_target_full_name"
 							value="#{(cartOffer.offer.target.registry.name!=null)?(cartOffer.offer.target.registry.fullName):('')}"
 							size="50" />
-<!--  
-						<aon:lookupInputText id="Offer_target_id"
-							value="#{cartOffer.to.target.registry.id}"
-							lookup="#{targetLookup}" ajaxSingle="true"
-							reRender="Offer_target_full_name,Offer_target_registry_document,OfferAddress"
-							lookupChangeListener="#{cartOffer.targetData}"
-							lookupProperty="registry" required="true"
-							disabled="#{cartOffer.processed}" size="5" />
-						<aon:lookupButton
-							windowTitle="#{commercialBundle.commercial_target_selection}"
-							actionType="search" property="#{cartOffer.to.target.registry}"
-							selectReRender="Offer_target_id,Offer_target_full_name,Offer_target_registry_document,OfferAddress"
-							lookup="#{targetLookup}" minHeight="460" minWidth="650"
-							lookupChangeListener="#{cartOffer.targetData}"
-							lookupProperty="registry" disabled="#{cartOffer.processed}">
-						</aon:lookupButton>
-						<aon:inputText id="Offer_target_full_name"
-							value="#{(cartOffer.to.target.registry.name!=null)?(cartOffer.to.target.registry.fullName):('')}"
-							disabled="true" size="50" />
--->
-						<!-- FARSA BOTON -->
-<!--  
-						<aon:commandButton value="Enviar" style="margin-left: 0.7em;"
-							rendered="#{!cartOffer.new and cartOffer.to.target.registry.email != null}"
-							title="Enviar Mail a #{cartOffer.to.target.registry.email.value}"
-							actionListener="#{cartOffer.sendFarsaMail}"
-							styleClass="aon-icon-commandButton aon-icon-mailForward" />
-						<aon:commandButton value="Sin Email" style="margin-left: 0.7em;"
-							rendered="#{!cartOffer.new and cartOffer.to.target.registry.email == null}"
-							title="#{cartOffer.to.target.registry.fullName} no tiene eMail definido."
-							styleClass="aon-icon-commandButton aon-icon-mailDelete" />
--->					
-						<!-- END FARSA BOTON -->
 					</aon:div>
 
 					<aon:outputLabel for="Offer_target_registry_document"
@@ -128,20 +92,13 @@
 						value="#{registryBundle.registry_address}" />
 					<aon:div id="OfferAddress">
 						<aon:outputText id="Offer_address"
-							value="#{cartOffer.offer.address}">
-						</aon:outputText>
+							value="#{cartOffer.offer.address.address}, " />
+						<aon:outputText id="Offer_address2"
+							value="#{cartOffer.offer.address.address2}, " />
+						<aon:outputText id="Offer_address3"
+							value="#{cartOffer.offer.address.address3}" />
 					</aon:div>
 
-<!--  
-					<aon:outputLabel for="Offer_workPlace"
-						value="#{companyBundle.company_workplace}" />
-					<aon:outputText id="Offer_workPlace"
-						value=" "/>
--->
-<!--  
-					<aon:outputText id="Offer_workPlace"
-						value="#{cartOffer.offer.workPlace}"/>
--->
 
 					<aon:outputLabel for="Offer_seller_id"
 						value="#{salesBundle.sales_seller}" />

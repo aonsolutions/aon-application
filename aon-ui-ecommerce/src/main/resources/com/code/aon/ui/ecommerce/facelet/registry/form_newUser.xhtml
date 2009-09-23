@@ -15,7 +15,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
-				<ui:param name="toolbarTitle" value="#{ecommerceBundle.aon_acommerce_user_registry}" />
+				<ui:param name="toolbarTitle" value="#{ecommerceBundle.aon_ecommerce_user_registry}" />
 				<ui:define name="toolbarContent">
 				</ui:define>
 			</ui:decorate>
@@ -30,9 +30,9 @@
 					immediate="true" accesskey="#{bundle.aon_key_cancel}" />
 				
 
-				<aon:panel>
+				<aon:panel id="login-panel">
 					<f:facet name="header">
-						<aon:outputText value="#{ecommerceBundle.aon_acommerce_user_registry}" />
+						<aon:outputText value="#{ecommerceBundle.aon_ecommerce_user_registry}" />
 					</f:facet>
 					<aon:panelGrid columns="2" style="width:100%;border:000 2px solid;">
 						<aon:outputLabel for="ectarget_email" value="#{bundle.aon_login_user}" />
@@ -45,6 +45,13 @@
 						<aon:outputLabel for="ectarget_password" value="#{bundle.aon_login_passwd}" />
 						<aon:inputText id="ectarget_password" required="true"
 							value="#{shoppingCart.cartTarget.ecTarget.password}" size="20"  maxlength="32"/>
+					
+						<aon:outputLabel for="ectarget_password_retype" value="#{bundle.aon_login_passwd}" />
+						<aon:inputText id="ectarget_password_retype" required="true"
+							value="#{shoppingCart.newPasswd}" size="20"  maxlength="32">
+							<a4j:support event="onblur" reRender="login-panel" focus="ectarget_password"
+								actionListener="#{shoppingCart.checkUserPasswd}"/>
+						</aon:inputText>
 					
 					</aon:panelGrid>
 					

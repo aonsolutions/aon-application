@@ -64,21 +64,21 @@
 				<aon:outputLink value="#" id="private-policy"
 					rendered="#{!(ecConfig.activeConfig.privatePolicy=='')}"
 					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
-					<aon:outputText value="#{ecommerceBundle.aon_acommerce_private_policy}" />
+					<aon:outputText value="#{ecommerceBundle.aon_ecommerce_private_policy}" />
 					<rich:componentControl for="privatePolicyProcess" attachTo="private-policy"
 						operation="show" event="onclick" />
 				</aon:outputLink>
 				<aon:outputLink value="#" id="legal-note"
 					rendered="#{!(ecConfig.activeConfig.legalNote=='')}"
 					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
-					<aon:outputText value="#{ecommerceBundle.aon_acommerce_legal_note}" />
+					<aon:outputText value="#{ecommerceBundle.aon_ecommerce_legal_note}" />
 					<rich:componentControl for="legalNoteProcess" attachTo="legal-note"
 						operation="show" event="onclick" />
 				</aon:outputLink>
 				<aon:outputLink value="#" id="data-protection"
 					rendered="#{!(ecConfig.activeConfig.dataProtection=='')}"
 					styleClass="aon-finding-toolbar-item aon-icon-footer-note">
-					<aon:outputText value="#{ecommerceBundle.aon_acommerce_data_protection}" />
+					<aon:outputText value="#{ecommerceBundle.aon_ecommerce_data_protection}" />
 					<rich:componentControl for="dataProtectionProcess" attachTo="data-protection"
 						operation="show" event="onclick" />
 				</aon:outputLink>

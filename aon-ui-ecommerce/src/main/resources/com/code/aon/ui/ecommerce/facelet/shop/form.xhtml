@@ -17,10 +17,15 @@
 						value="#{catalogueGadget.model}" var="to"
 						columns="#{catalogueGadget.model.rowCount}" elements="9"
 						styleClass="menu">
-						<aon:div>
-						</aon:div>
 						<!-- CAPITAL LETTER DEL CATALOGUE NAME -->
-						<aon:outputText value="B" styleClass="catalogue-capital-letter" />
+						<!--  
+						<a4j:mediaOutput element="img" cacheable="false"
+							value="#{to.id}" 
+							style="width:15px; height: 15px;"
+							createContent="#{catalogueGadget.paintIcon}" />
+						<aon:outputText value="#{catalogueGadget.capitalLetter}" styleClass="catalogue-capital-letter" />
+						-->
+						<aon:outputText value="#{to.capitalLetter}" styleClass="catalogue-capital-letter" />
 						<aon:commandLink value="#{to.catalogue.name}">
 							<aon:actionListener method="#{catalogueGadget.onSelect}" />
 						</aon:commandLink>
@@ -29,7 +34,7 @@
 				</aon:div>
 
 				<aon:panelGrid id="productPanel" columns="3" style="width: 100%"
-					columnClasses="aon-panelGrid-odd,aon-vertical-align-top,aon-width-300 aon-vertical-align-top">
+					columnClasses="aon-panelGrid-odd,aon-vertical-align-top,aon-vertical-align-top-right">
 					<aon:div id="left-panel" styleClass="left-panel">
 						<ui:include src="leftColumn.xhtml" />
 					</aon:div>
@@ -47,7 +52,7 @@
 
 							<aon:commandButton id="aonToolbar-addToCart"
 								rendered="#{shop.detailView}"
-								value="#{ecommerceBundle.aon_acommerce_addToCart}"
+								value="#{ecommerceBundle.aon_ecommerce_addToCart}"
 								action="shop_from"
 								styleClass="aon-finding-toolbar-item aon-icon-new">
 								<aon:actionListener method="#{shopItem.addToCart}" />
@@ -55,7 +60,7 @@
 
 							<aon:commandButton id="aonToolbar-offer-request"
 								rendered="#{shop.cartView}"
-								value="#{ecommerceBundle.aon_acommerce_offer_request}"
+								value="#{ecommerceBundle.aon_ecommerce_offer_request}"
 								action="#{shoppingCart.budgetRequest}"
 								styleClass="aon-finding-toolbar-item aon-icon-predetermine">
 								<aon:actionListener method="#{shoppingCart.budgetRequest}" />

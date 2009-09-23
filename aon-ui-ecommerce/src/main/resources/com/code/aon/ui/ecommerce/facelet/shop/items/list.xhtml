@@ -17,18 +17,30 @@
 			columnClasses="aon-width-100,aon-width-auto">
 
 			<aon:div style="width:70px; height: 70px; border:solid #DDD 1px;">
-				<h:graphicImage style="width:70px; height: 70px;"
-					rendered="#{!to.thumbnailPresent}" value="/css/images/nophoto.gif" />
-				<a4j:mediaOutput element="img" cacheable="false"
-					rendered="#{to.thumbnailPresent}" value="#{to.id}"
-					style="width:70px; height: 70px;"
-					createContent="#{shopItems.paintThumbnail}" />
+				<aon:commandLink action="shop_form"
+					title="#{ecommerceBundle.aon_ecommerce_extended_info}"
+					reRender="shopForm"
+					styleClass="none">
+					<aon:actionListener method="#{shopItems.onSelect}" />
+					<h:graphicImage style="width:70px; height: 70px;"
+						rendered="#{!to.thumbnailPresent}" value="/css/images/nophoto.gif" />
+					<a4j:mediaOutput element="img" cacheable="false"
+						rendered="#{to.thumbnailPresent}" value="#{to.id}"
+						style="width:70px; height: 70px;"
+						createContent="#{shopItems.paintThumbnail}" />
+				</aon:commandLink>
 			</aon:div>
 
 			<aon:div>
 				<aon:div style="margin-bottom: 5px; ">
-					<aon:outputText value="#{to.product.name}"
-						style="font-weight: bold" />
+					<aon:commandLink action="shop_form"
+						title="#{ecommerceBundle.aon_ecommerce_extended_info}"
+						reRender="shopForm"
+						styleClass="none">
+						<aon:actionListener method="#{shopItems.onSelect}" />
+						<aon:outputText value="#{to.product.name}" 
+							style="font-weight: bold;color:#000;"/>
+					</aon:commandLink>
 				</aon:div>
 				<aon:div>
 					<aon:outputText value="#{to.description}" style="color: #999;">
@@ -109,23 +121,23 @@
 					<c:if test="#{!ecConfig.taxIncluded}">
 						<aon:div style="text-align: center;">
 							<aon:outputText
-								value="#{ecommerceBundle.aon_acommerce_vat_not_included}" />
+								value="#{ecommerceBundle.aon_ecommerce_vat_not_included}" />
 						</aon:div>
 					</c:if>
 					<c:if test="#{ecConfig.taxIncluded}">
 						<aon:div style="text-align: center;">
 							<aon:outputText
-								value="#{ecommerceBundle.aon_acommerce_vat_included}" />
+								value="#{ecommerceBundle.aon_ecommerce_vat_included}" />
 						</aon:div>
 					</c:if>
 					<aon:commandButton value="&#160;" action="shop_form"
-						title="#{ecommerceBundle.aon_acommerce_extended_info}"
+						title="#{ecommerceBundle.aon_ecommerce_extended_info}"
 						reRender="shopForm"
 						styleClass="aon-editDataTable-button aon-icon-info">
 						<aon:actionListener method="#{shopItems.onSelect}" />
 					</aon:commandButton>
 					<aon:commandButton value="&#160;" action="shopingCart_list"
-						title="#{ecommerceBundle.aon_acommerce_addToCart}"
+						title="#{ecommerceBundle.aon_ecommerce_addToCart}"
 						styleClass="aon-editDataTable-button aon-icon-new">
 						<aon:actionListener method="#{shopItems.addToCart}" />
 					</aon:commandButton>
